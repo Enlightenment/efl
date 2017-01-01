@@ -113,7 +113,7 @@ _load(Eina_File *ef, const char *key,
    Eina_Bool res = EINA_FALSE;
    int w = 0, h = 0, alpha = 0;
    const char *dot1 = NULL, *dot2 = NULL, *end, *p;
-   char *cmd = NULL, decoders[3][128], buf[4096];
+   char *cmd = NULL, decoders[3][4096], buf[4096];
    char *loader = "/evas/utils/evas_image_loader";
    char *img_loader = NULL;
    const char *libdir;
@@ -132,16 +132,16 @@ _load(Eina_File *ef, const char *key,
    strcat(img_loader, loader);
 
    // params excluding file, key and loadopts
-   cmd_len += 1024;
-   cmd_len += strlen(eina_file_filename_get(ef)) * 2;
-   if (key) cmd_len += strlen(key) * 2;
+   cmd_len += 5120; // up to 4096 for cmd plus 1024 for cmd line opts
+   cmd_len += strlen(eina_file_filename_get(ef)) * 2; // double in case of esc
+   if (key) cmd_len += strlen(key) * 2; // double in case every char is esc
    cmd = alloca(cmd_len + 1);
 
    len = strlen(eina_file_filename_get(ef));
    if (len < 1)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
+        return EINA_FALSE;
      }
    end = eina_file_filename_get(ef) + len;
    for (p = end - 1; p >= eina_file_filename_get(ef); p--)
@@ -155,21 +155,21 @@ _load(Eina_File *ef, const char *key,
         // double extn not too long
         if (((end - dot2) <= 10) && (!illegal_char(dot2)))
           {
-             strncpy(&(decoders[decoders_num][0]), img_loader, 127);
-             decoders[decoders_num][127] = 0;
+             strncpy(&(decoders[decoders_num][0]), img_loader, 4000);
+             decoders[decoders_num][4000] = 0;
              dotcat(&(decoders[decoders_num][0]), dot2);
              decoders_num++;
           }
         // single extn not too long
         if (((end - dot1) <= 5) && (!illegal_char(dot1)))
           {
-             strncpy(&(decoders[decoders_num][0]), img_loader, 127);
-             decoders[decoders_num][127] = 0;
+             strncpy(&(decoders[decoders_num][0]), img_loader, 4000);
+             decoders[decoders_num][4000] = 0;
              dotcat(&(decoders[decoders_num][0]), dot1);
              decoders_num++;
           }
-        strncpy(decoders[decoders_num], img_loader, 127);
-        decoders[decoders_num][127] = 0;
+        strncpy(decoders[decoders_num], img_loader, 4000);
+        decoders[decoders_num][4000] = 0;
         decoders_num++;
      }
    else if (dot1)
@@ -177,19 +177,19 @@ _load(Eina_File *ef, const char *key,
         // single extn not too long
         if (((end - dot1) <= 5) && (!illegal_char(dot1)))
           {
-             strncpy(&(decoders[decoders_num][0]), img_loader, 127);
-             decoders[decoders_num][127] = 0;
+             strncpy(&(decoders[decoders_num][0]), img_loader, 4000);
+             decoders[decoders_num][4000] = 0;
              dotcat(&(decoders[decoders_num][0]), dot1);
              decoders_num++;
           }
-        strncpy(decoders[decoders_num], img_loader, 127);
-        decoders[decoders_num][127] = 0;
+        strncpy(decoders[decoders_num], img_loader, 4000);
+        decoders[decoders_num][4000] = 0;
         decoders_num++;
      }
    else
      {
-        strncpy(decoders[decoders_num], img_loader, 127);
-        decoders[decoders_num][127] = 0;
+        strncpy(decoders[decoders_num], img_loader, 4000);
+        decoders[decoders_num][4000] = 0;
         decoders_num++;
      }
 
@@ -206,6 +206,9 @@ _load(Eina_File *ef, const char *key,
         strcat(cmd, " ");
         // filename first arg
         len = strlen(cmd);
+        // escape any special chars with \ + char so if every char in a
+        // path is illegal/needs escape then at most we double the mem use
+        // for it and we accounted for that above when we calculated cmd_len
         escape_copy(eina_file_filename_get(ef), cmd + len);
         if (!get_data)
           {
@@ -215,6 +218,7 @@ _load(Eina_File *ef, const char *key,
           {
              strcat(cmd, " -key ");
              len = strlen(cmd);
+             // same here - already escape dobule size handled
              escape_copy(key, cmd + len);
           }
         if (opts->emile.scale_down_by > 1)
@@ -241,8 +245,8 @@ _load(Eina_File *ef, const char *key,
      }
    if (!f)
      {
-	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-	return EINA_FALSE;
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        return EINA_FALSE;
      }
    while (fgets(buf, sizeof(buf), f))
      {
@@ -301,14 +305,14 @@ _load(Eina_File *ef, const char *key,
 getdata:
    if ((!read_data) && (!tmpfname) && (!shmfname))
      {
-	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	goto on_error;
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        goto on_error;
      }
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
      {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	goto on_error;
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto on_error;
      }
 
    if (!get_data)
