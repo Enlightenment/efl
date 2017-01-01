@@ -165,21 +165,21 @@ _cserve2_client_open(Client *client)
         // FIXME: Check message size first?
 
         DBG("Load Options:");
-        DBG("\tdpi: %03.1f", opts->dpi);
-        DBG("\tsize: %dx%d", opts->w, opts->h);
-        DBG("\tscale down: %d", opts->scale_down_by);
+        DBG("\tdpi: %03.1f", opts->emile.dpi);
+        DBG("\tsize: %dx%d", opts->emile.w, opts->emile.h);
+        DBG("\tscale down: %d", opts->emile.scale_down_by);
         DBG("\tregion: %d,%d + %dx%d",
-            opts->region.x, opts->region.y, opts->region.w, opts->region.h);
+            opts->emile.region.x, opts->emile.region.y, opts->emile.region.w, opts->emile.region.h);
         DBG("\toriginal image's source coord: %d,%d",
-            opts->scale_load.src_x, opts->scale_load.src_y);
+            opts->emile.scale_load.src_x, opts->emile.scale_load.src_y);
         DBG("\toriginal image size: %dx%d",
-            opts->scale_load.src_w, opts->scale_load.src_h);
+            opts->emile.scale_load.src_w, opts->emile.scale_load.src_h);
         DBG("\tscale size: %dx%d",
-            opts->scale_load.dst_w, opts->scale_load.dst_h);
-        DBG("\tscale smooth: %d", opts->scale_load.smooth);
-        DBG("\tscale hint: %d", opts->scale_load.scale_hint);
-        DBG("\tdegree: %d", opts->degree);
-        DBG("\torientation: %d", opts->orientation);
+            opts->emile.scale_load.dst_w, opts->emile.scale_load.dst_h);
+        DBG("\tscale smooth: %d", opts->emile.scale_load.smooth);
+        DBG("\tscale hint: %d", opts->emile.scale_load.scale_hint);
+        DBG("\tdegree: %d", opts->emile.degree);
+        DBG("\torientation: %d", opts->emile.orientation);
 
         cserve2_cache_image_entry_create(client, msg->base.rid,
                                          msg->file_id, msg->image_id,

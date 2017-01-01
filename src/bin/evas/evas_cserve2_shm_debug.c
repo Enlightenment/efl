@@ -515,20 +515,20 @@ _images_all_print_full(void)
                id->valid ? "YES" : "NO");
         printf("Shm Path:       '%s'\n",
                id->shm_id ? _shared_string_get(id->shm_id) : "");
-        printf("LoadOpts: width          %d\n", id->opts.w);
-        printf("          height         %d\n", id->opts.h);
-        printf("          degree         %d\n", id->opts.degree);
-        printf("          scale_down_by  %d\n", id->opts.scale_down_by);
-        if (!EINA_DBL_CMP(id->opts.dpi, 0.0))
-          printf("          dpi            %.2f\n", id->opts.dpi);
+        printf("LoadOpts: width          %d\n", id->opts.emile.w);
+        printf("          height         %d\n", id->opts.emile.h);
+        printf("          degree         %d\n", id->opts.emile.degree);
+        printf("          scale_down_by  %d\n", id->opts.emile.scale_down_by);
+        if (!EINA_DBL_CMP(id->opts.emile.dpi, 0.0))
+          printf("          dpi            %.2f\n", id->opts.emile.dpi);
         else
           printf("          dpi            0\n");
-        printf("          orientation    %s\n", id->opts.orientation ? "YES" : "NO");
+        printf("          orientation    %s\n", id->opts.emile.orientation ? "YES" : "NO");
         printf("          region         (%d,%d) %dx%d\n",
-               id->opts.region.x, id->opts.region.y,
-               id->opts.region.w, id->opts.region.h);
+               id->opts.emile.region.x, id->opts.emile.region.y,
+               id->opts.emile.region.w, id->opts.emile.region.h);
 
-        switch (id->opts.scale_load.scale_hint)
+        switch (id->opts.emile.scale_load.scale_hint)
           {
            case EVAS_IMAGE_SCALE_HINT_NONE:
              scale_hint = "EVAS_IMAGE_SCALE_HINT_NONE"; break;
@@ -541,14 +541,14 @@ _images_all_print_full(void)
           }
 
         printf("          scale src      (%d,%d) %dx%d\n",
-               id->opts.scale_load.src_x, id->opts.scale_load.src_y,
-               id->opts.scale_load.src_w, id->opts.scale_load.src_h);
+               id->opts.emile.scale_load.src_x, id->opts.emile.scale_load.src_y,
+               id->opts.emile.scale_load.src_w, id->opts.emile.scale_load.src_h);
         printf("          scale dst      %dx%d\n",
-               id->opts.scale_load.dst_w, id->opts.scale_load.dst_h);
+               id->opts.emile.scale_load.dst_w, id->opts.emile.scale_load.dst_h);
         printf("          scale smooth   %s\n",
-               id->opts.scale_load.smooth ? "YES" : "NO");
+               id->opts.emile.scale_load.smooth ? "YES" : "NO");
         printf("          scale hint     %s (%d)\n",
-               scale_hint, id->opts.scale_load.scale_hint);
+               scale_hint, id->opts.emile.scale_load.scale_hint);
 
         fd = (File_Data *)
               _shared_index_item_get_by_id(sf_files, sizeof(*fd), id->file_id);

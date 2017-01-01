@@ -311,9 +311,22 @@ _evas_cache2_image_preloaded_cb(void *data, Eina_Bool success)
      {
         ie->targets = (Evas_Cache_Target *)
            eina_inlist_remove(EINA_INLIST_GET(ie->targets),
-                            EINA_INLIST_GET(ie->targets));
+                              EINA_INLIST_GET(ie->targets));
         if (!ie->flags.delete_me)
-            evas_object_inform_call_image_preloaded((Evas_Object *) tmp->target);
+          {
+             if (tmp->simple_cb)
+               {
+                  if (!tmp->delete_me)
+                    {
+                       tmp->simple_cb(tmp->simple_data);
+                    }
+               }
+             else
+               {
+                  evas_object_inform_call_image_preloaded
+                    ((Evas_Object *)tmp->target);
+               }
+          }
         free(tmp);
      }
 
@@ -329,7 +342,7 @@ _evas_cache2_image_entry_preload_add(Image_Entry *ie, const void *target)
    if (ie->flags.preload_done)
      return EINA_FALSE;
 
-   tg = malloc(sizeof(Evas_Cache_Target));
+   tg = calloc(1, sizeof(Evas_Cache_Target));
    if (!tg)
      return EINA_TRUE;
 
@@ -580,62 +593,62 @@ evas_cache2_image_cache_key_create(char *hkey, const char *path, size_t pathlen,
      {
         memcpy(hkey + size, "//@/", 4);
         size += 4;
-        size += eina_convert_xtoa(lo->scale_down_by, hkey + size);
+        size += eina_convert_xtoa(lo->emile.scale_down_by, hkey + size);
         hkey[size] = '/';
         size += 1;
-        size += eina_convert_dtoa(lo->dpi, hkey + size);
+        size += eina_convert_dtoa(lo->emile.dpi, hkey + size);
         hkey[size] = '/';
         size += 1;
-        size += eina_convert_xtoa(lo->w, hkey + size);
+        size += eina_convert_xtoa(lo->emile.w, hkey + size);
         hkey[size] = 'x';
         size += 1;
-        size += eina_convert_xtoa(lo->h, hkey + size);
+        size += eina_convert_xtoa(lo->emile.h, hkey + size);
         hkey[size] = '/';
         size += 1;
-        size += eina_convert_xtoa(lo->region.x, hkey + size);
+        size += eina_convert_xtoa(lo->emile.region.x, hkey + size);
         hkey[size] = '+';
         size += 1;
-        size += eina_convert_xtoa(lo->region.y, hkey + size);
+        size += eina_convert_xtoa(lo->emile.region.y, hkey + size);
         hkey[size] = '.';
         size += 1;
-        size += eina_convert_xtoa(lo->region.w, hkey + size);
+        size += eina_convert_xtoa(lo->emile.region.w, hkey + size);
         hkey[size] = 'x';
         size += 1;
 
-        size += eina_convert_xtoa(lo->region.h, hkey + size);
+        size += eina_convert_xtoa(lo->emile.region.h, hkey + size);
         hkey[size++] = '!';
         hkey[size++] = '(';
 
         hkey[size] = '[';
         size += 1;
-        size += eina_convert_xtoa(lo->scale_load.src_x, hkey + size);
+        size += eina_convert_xtoa(lo->emile.scale_load.src_x, hkey + size);
         hkey[size] = ',';
         size += 1;
-        size += eina_convert_xtoa(lo->scale_load.src_y, hkey + size);
+        size += eina_convert_xtoa(lo->emile.scale_load.src_y, hkey + size);
         hkey[size] = ':';
         size += 1;
-        size += eina_convert_xtoa(lo->scale_load.src_w, hkey + size);
+        size += eina_convert_xtoa(lo->emile.scale_load.src_w, hkey + size);
         hkey[size] = 'x';
         size += 1;
-        size += eina_convert_xtoa(lo->scale_load.src_h, hkey + size);
+        size += eina_convert_xtoa(lo->emile.scale_load.src_h, hkey + size);
         hkey[size++] = ']';
 
         hkey[size++] = '-';
 
         hkey[size] = '[';
         size += 1;
-        size += eina_convert_xtoa(lo->scale_load.dst_w, hkey + size);
+        size += eina_convert_xtoa(lo->emile.scale_load.dst_w, hkey + size);
         hkey[size] = 'x';
         size += 1;
-        size += eina_convert_xtoa(lo->scale_load.dst_h, hkey + size);
+        size += eina_convert_xtoa(lo->emile.scale_load.dst_h, hkey + size);
         hkey[size] = ':';
         size += 1;
-        size += eina_convert_xtoa(lo->scale_load.smooth, hkey + size);
+        size += eina_convert_xtoa(lo->emile.scale_load.smooth, hkey + size);
         hkey[size++] = ']';
 
         hkey[size++] = ')';
 
-        if (lo->orientation)
+        if (lo->emile.orientation)
           {
              hkey[size] = '/';
              size += 1;
@@ -679,12 +692,12 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key,
    /* use local var to copy default load options to the image entry */
    if ((!lo) ||
        (lo &&
-           (lo->scale_down_by == 0) &&
-           (EINA_DBL_CMP(lo->dpi, 0.0)) &&
-           ((lo->w == 0) || (lo->h == 0)) &&
-           ((lo->region.w == 0) || (lo->region.h == 0)) &&
-           ((lo->scale_load.dst_w == 0) || (lo->scale_load.dst_h == 0)) &&
-           (lo->orientation == 0)
+           (lo->emile.scale_down_by == 0) &&
+           (EINA_DBL_CMP(lo->emile.dpi, 0.0)) &&
+           ((lo->emile.w == 0) || (lo->emile.h == 0)) &&
+           ((lo->emile.region.w == 0) || (lo->emile.region.h == 0)) &&
+           ((lo->emile.scale_load.dst_w == 0) || (lo->emile.scale_load.dst_h == 0)) &&
+           (lo->emile.orientation == 0)
        ))
      {
         lo = &prevent;
@@ -819,17 +832,17 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w,
    hkey = alloca(sizeof(char) * size);
 
    memcpy(&lo, &im->load_opts, sizeof lo);
-   lo.scale_load.src_x = src_x;
-   lo.scale_load.src_y = src_y;
-   lo.scale_load.src_w = src_w;
-   lo.scale_load.src_h = src_h;
-   lo.scale_load.dst_w = dst_w;
-   lo.scale_load.dst_h = dst_h;
-   lo.scale_load.smooth = smooth;
+   lo.emile.scale_load.src_x = src_x;
+   lo.emile.scale_load.src_y = src_y;
+   lo.emile.scale_load.src_w = src_w;
+   lo.emile.scale_load.src_h = src_h;
+   lo.emile.scale_load.dst_w = dst_w;
+   lo.emile.scale_load.dst_h = dst_h;
+   lo.emile.scale_load.smooth = smooth;
 
    if (!smooth)
      {
-        lo.scale_load.smooth = 1;
+        lo.emile.scale_load.smooth = 1;
         evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
                                            im->key, keylen, &lo);
 
@@ -839,7 +852,7 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w,
         ret = eina_hash_find(im->cache2->inactiv, hkey);
         if (ret) goto handle_inactiv;
 
-        lo.scale_load.smooth = smooth;
+        lo.emile.scale_load.smooth = smooth;
      }
 
    evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
@@ -906,14 +919,14 @@ evas_cache2_image_scale_load(Image_Entry *im,
    hkey = alloca(sizeof(char) * size);
 
    memcpy(&lo, &im->load_opts, sizeof lo);
-   lo.scale_load.src_x = src_x;
-   lo.scale_load.src_y = src_y;
-   lo.scale_load.src_w = src_w;
-   lo.scale_load.src_h = src_h;
-   lo.scale_load.dst_w = dst_w;
-   lo.scale_load.dst_h = dst_h;
-   lo.scale_load.smooth = smooth;
-   lo.scale_load.scale_hint = (Emile_Image_Scale_Hint) im->scale_hint;
+   lo.emile.scale_load.src_x = src_x;
+   lo.emile.scale_load.src_y = src_y;
+   lo.emile.scale_load.src_w = src_w;
+   lo.emile.scale_load.src_h = src_h;
+   lo.emile.scale_load.dst_w = dst_w;
+   lo.emile.scale_load.dst_h = dst_h;
+   lo.emile.scale_load.smooth = smooth;
+   lo.emile.scale_load.scale_hint = (Emile_Image_Scale_Hint) im->scale_hint;
 
    evas_cache2_image_cache_key_create(hkey, im->file, pathlen,
                                       im->key, keylen, &lo);

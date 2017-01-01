@@ -119,7 +119,16 @@ struct _Evas_Module
    unsigned char	loaded : 1;
 };
 
-typedef Emile_Image_Load_Opts Evas_Image_Load_Opts;
+typedef struct _Evas_Image_Load_Opts  Evas_Image_Load_Opts;
+
+struct _Evas_Image_Load_Opts
+{
+   Emile_Image_Load_Opts emile;
+   Eina_Bool             skip_head; // skip open of file and header load and
+                                    // defer this until a preload is done
+                                    // to allow for real async/threaded load
+};
+
 typedef Emile_Image_Animated  Evas_Image_Animated;
 typedef Emile_Image_Property  Evas_Image_Property;
 

@@ -27,19 +27,22 @@
 typedef Eina_Bool (*Op_Callback)(void *data, const void *msg, int size);
 
 static const Evas_Image_Load_Opts empty_lo = {
-  { 0, 0, 0, 0 },
-  {
-    0, 0, 0, 0,
-    0, 0,
-    0,
-    0
-  },
-  0.0,
-  0, 0,
-  0,
-  0,
+   {
+        { 0, 0, 0, 0 },
+        {
+           0, 0, 0, 0,
+           0, 0,
+           0,
+           0
+        },
+      0.0,
+      0, 0,
+      0,
+      0,
 
-  EINA_FALSE
+      EINA_FALSE
+   },
+   EINA_FALSE
 };
 
 struct _File_Entry {
@@ -921,16 +924,16 @@ _evas_image_load_opts_empty(Evas_Image_Load_Opts *lo)
 {
    if (!lo) return EINA_TRUE;
 
-   return ((lo->scale_down_by == 0)
-           && (EINA_DBL_CMP(lo->dpi, 0.0))
-           && (lo->w == 0) && (lo->h == 0)
-           && (lo->region.x == 0) && (lo->region.y == 0)
-           && (lo->region.w == 0) && (lo->region.h == 0)
-           && (lo->orientation == 0)
-           && (lo->scale_load.src_x == 0) && (lo->scale_load.src_y == 0)
-           && (lo->scale_load.src_w == 0) && (lo->scale_load.src_h == 0)
-           && (lo->scale_load.dst_w == 0) && (lo->scale_load.dst_h == 0)
-           && (lo->scale_load.scale_hint == 0)); // Skip smooth
+   return ((lo->emile.scale_down_by == 0)
+           && (EINA_DBL_CMP(lo->emile.dpi, 0.0))
+           && (lo->emile.w == 0) && (lo->emile.h == 0)
+           && (lo->emile.region.x == 0) && (lo->emile.region.y == 0)
+           && (lo->emile.region.w == 0) && (lo->emile.region.h == 0)
+           && (lo->emile.orientation == 0)
+           && (lo->emile.scale_load.src_x == 0) && (lo->emile.scale_load.src_y == 0)
+           && (lo->emile.scale_load.src_w == 0) && (lo->emile.scale_load.src_h == 0)
+           && (lo->emile.scale_load.dst_w == 0) && (lo->emile.scale_load.dst_h == 0)
+           && (lo->emile.scale_load.scale_hint == 0)); // Skip smooth
 }
 
 // Valgrind complains about uninitialized memory, because the load_opts
@@ -942,24 +945,24 @@ static Eina_Bool
 _evas_image_load_opts_equal(const Evas_Image_Load_Opts *lo1,
                             const Evas_Image_Load_Opts *lo2)
 {
-   return ((lo1->scale_down_by == lo2->scale_down_by)
-       && (EINA_DBL_CMP(lo1->dpi, lo2->dpi))
-       && (lo1->w == lo2->w)
-       && (lo1->h == lo2->h)
-       && (lo1->region.x == lo2->region.x)
-       && (lo1->region.y == lo2->region.y)
-       && (lo1->region.w == lo2->region.w)
-       && (lo1->region.h == lo2->region.h)
-       && (lo1->scale_load.src_x == lo2->scale_load.src_x)
-       && (lo1->scale_load.src_y == lo2->scale_load.src_y)
-       && (lo1->scale_load.src_w == lo2->scale_load.src_w)
-       && (lo1->scale_load.src_h == lo2->scale_load.src_h)
-       && (lo1->scale_load.dst_w == lo2->scale_load.dst_w)
-       && (lo1->scale_load.dst_h == lo2->scale_load.dst_h)
-       && (lo1->scale_load.smooth == lo2->scale_load.smooth)
-       && (lo1->scale_load.scale_hint == lo2->scale_load.scale_hint)
-       && (lo1->orientation == lo2->orientation)
-       && (lo1->degree == lo2->degree));
+   return ((lo1->emile.scale_down_by == lo2->emile.scale_down_by)
+       && (EINA_DBL_CMP(lo1->emile.dpi, lo2->emile.dpi))
+       && (lo1->emile.w == lo2->emile.w)
+       && (lo1->emile.h == lo2->emile.h)
+       && (lo1->emile.region.x == lo2->emile.region.x)
+       && (lo1->emile.region.y == lo2->emile.region.y)
+       && (lo1->emile.region.w == lo2->emile.region.w)
+       && (lo1->emile.region.h == lo2->emile.region.h)
+       && (lo1->emile.scale_load.src_x == lo2->emile.scale_load.src_x)
+       && (lo1->emile.scale_load.src_y == lo2->emile.scale_load.src_y)
+       && (lo1->emile.scale_load.src_w == lo2->emile.scale_load.src_w)
+       && (lo1->emile.scale_load.src_h == lo2->emile.scale_load.src_h)
+       && (lo1->emile.scale_load.dst_w == lo2->emile.scale_load.dst_w)
+       && (lo1->emile.scale_load.dst_h == lo2->emile.scale_load.dst_h)
+       && (lo1->emile.scale_load.smooth == lo2->emile.scale_load.smooth)
+       && (lo1->emile.scale_load.scale_hint == lo2->emile.scale_load.scale_hint)
+       && (lo1->emile.orientation == lo2->emile.orientation)
+       && (lo1->emile.degree == lo2->emile.degree));
 }
 
 static void
@@ -967,24 +970,24 @@ _evas_image_load_opts_set(Evas_Image_Load_Opts *lo1,
                           const Evas_Image_Load_Opts *lo2)
 {
    memset(lo1, 0, sizeof(Evas_Image_Load_Opts));
-   lo1->scale_down_by = lo2->scale_down_by;
-   lo1->dpi = lo2->dpi;
-   lo1->w = lo2->w;
-   lo1->h = lo2->h;
-   lo1->region.x = lo2->region.x;
-   lo1->region.y = lo2->region.y;
-   lo1->region.w = lo2->region.w;
-   lo1->region.h = lo2->region.h;
-   lo1->scale_load.src_x = lo2->scale_load.src_x;
-   lo1->scale_load.src_y = lo2->scale_load.src_y;
-   lo1->scale_load.src_w = lo2->scale_load.src_w;
-   lo1->scale_load.src_h = lo2->scale_load.src_h;
-   lo1->scale_load.dst_w = lo2->scale_load.dst_w;
-   lo1->scale_load.dst_h = lo2->scale_load.dst_h;
-   lo1->scale_load.smooth = lo2->scale_load.smooth;
-   lo1->scale_load.scale_hint = lo2->scale_load.scale_hint;
-   lo1->orientation = lo2->orientation;
-   lo1->degree = lo2->degree;
+   lo1->emile.scale_down_by = lo2->emile.scale_down_by;
+   lo1->emile.dpi = lo2->emile.dpi;
+   lo1->emile.w = lo2->emile.w;
+   lo1->emile.h = lo2->emile.h;
+   lo1->emile.region.x = lo2->emile.region.x;
+   lo1->emile.region.y = lo2->emile.region.y;
+   lo1->emile.region.w = lo2->emile.region.w;
+   lo1->emile.region.h = lo2->emile.region.h;
+   lo1->emile.scale_load.src_x = lo2->emile.scale_load.src_x;
+   lo1->emile.scale_load.src_y = lo2->emile.scale_load.src_y;
+   lo1->emile.scale_load.src_w = lo2->emile.scale_load.src_w;
+   lo1->emile.scale_load.src_h = lo2->emile.scale_load.src_h;
+   lo1->emile.scale_load.dst_w = lo2->emile.scale_load.dst_w;
+   lo1->emile.scale_load.dst_h = lo2->emile.scale_load.dst_h;
+   lo1->emile.scale_load.smooth = lo2->emile.scale_load.smooth;
+   lo1->emile.scale_load.scale_hint = lo2->emile.scale_load.scale_hint;
+   lo1->emile.orientation = lo2->emile.orientation;
+   lo1->emile.degree = lo2->emile.degree;
 }
 
 static void
@@ -999,17 +1002,17 @@ _file_hkey_get(char *buf, size_t sz, const char *path, const char *key,
      snprintf(buf, sz, "%s:%s", path, key);
    else
      {
-        if (lo->orientation)
+        if (lo->emile.orientation)
           {
              snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d",
-                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
-                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+                      path, key, lo->emile.scale_down_by, lo->emile.dpi, lo->emile.w, lo->emile.h,
+                      lo->emile.region.x, lo->emile.region.y, lo->emile.region.w, lo->emile.region.h);
           }
         else
           {
              snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d/o",
-                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
-                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+                      path, key, lo->emile.scale_down_by, lo->emile.dpi, lo->emile.w, lo->emile.h,
+                      lo->emile.region.x, lo->emile.region.y, lo->emile.region.w, lo->emile.region.h);
           }
      }
 }
@@ -2754,15 +2757,15 @@ _shared_image_entry_file_data_find(Image_Entry *ie)
              continue;
           }
 
-        lo.region.x = fd->lo.region.x;
-        lo.region.y = fd->lo.region.y;
-        lo.region.w = fd->lo.region.w;
-        lo.region.h = fd->lo.region.h;
-        lo.dpi = fd->lo.dpi;
-        lo.w = fd->lo.w;
-        lo.h = fd->lo.h;
-        lo.scale_down_by = fd->lo.scale_down_by;
-        lo.orientation = fd->lo.orientation;
+        lo.emile.region.x = fd->lo.region.x;
+        lo.emile.region.y = fd->lo.region.y;
+        lo.emile.region.w = fd->lo.region.w;
+        lo.emile.region.h = fd->lo.region.h;
+        lo.emile.dpi = fd->lo.dpi;
+        lo.emile.w = fd->lo.w;
+        lo.emile.h = fd->lo.h;
+        lo.emile.scale_down_by = fd->lo.scale_down_by;
+        lo.emile.orientation = fd->lo.orientation;
 
         _file_hkey_get(fd_hkey, sizeof(fd_hkey), file, key, &lo);
 

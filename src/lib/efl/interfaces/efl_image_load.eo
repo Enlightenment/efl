@@ -182,6 +182,21 @@ interface Efl.Image.Load ()
             ]]
          }
       }
+      @property load_skip_header {
+         [[Initial load should skip header check and leave it all to data load
+
+           If this is true, then future loads of images will defer header
+           loading to a preload stage and/or data load later on rather than
+           at the start when the load begins (e.g. when file is set).
+         ]]
+         set {
+            [[Set the skip header state for susbsequent loads of a file. ]]
+         }
+         get {}
+         values {
+            skip: bool; [[Will be true if header is to be skipped. ]]
+         }
+      }
    }
    events {
       load,done; [[Called when he image was loaded]]

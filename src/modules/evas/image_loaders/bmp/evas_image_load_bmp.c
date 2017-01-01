@@ -369,24 +369,24 @@ evas_image_load_file_head_bmp(void *loader_data,
 	goto close_file;
      }
 
-   if (load_opts->region.w > 0 && load_opts->region.h > 0)
+   if (load_opts->emile.region.w > 0 && load_opts->emile.region.h > 0)
      {
-        if ((load_opts->region.w + load_opts->region.x > header.width) ||
-            (load_opts->region.h + load_opts->region.y > header.height))
+        if ((load_opts->emile.region.w + load_opts->emile.region.x > header.width) ||
+            (load_opts->emile.region.h + load_opts->emile.region.y > header.height))
           {
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto close_file;
           }
-        header.width = load_opts->region.w;
-        header.height = load_opts->region.h;
+        header.width = load_opts->emile.region.w;
+        header.height = load_opts->emile.region.h;
      }
 
    /* It is not bad idea that bmp loader support scale down decoding 
     * because of memory issue in mobile world.*/
-   if (load_opts->scale_down_by > 1)
+   if (load_opts->emile.scale_down_by > 1)
      {
-        header.width /= load_opts->scale_down_by;
-        header.height /= load_opts->scale_down_by;
+        header.width /= load_opts->emile.scale_down_by;
+        header.height /= load_opts->emile.scale_down_by;
      }
 
    if (header.bit_count < 16)
@@ -517,27 +517,27 @@ evas_image_load_file_data_bmp(void *loader_data,
    image_w = region_w = header.width;
    image_h = region_h = header.height;
 
-   if (opts->region.w > 0 && opts->region.h > 0)
+   if (opts->emile.region.w > 0 && opts->emile.region.h > 0)
      {
-        if ((opts->region.w + opts->region.x > header.width) ||
-            (opts->region.h + opts->region.y > header.height))
+        if ((opts->emile.region.w + opts->emile.region.x > header.width) ||
+            (opts->emile.region.h + opts->emile.region.y > header.height))
           {
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto close_file;
           }
         region_set = 1;
-        region_x = opts->region.x;
-        region_y = image_h - (opts->region.h + opts->region.y);
-        region_w = opts->region.w;
-        region_h = opts->region.h;
+        region_x = opts->emile.region.x;
+        region_y = image_h - (opts->emile.region.h + opts->emile.region.y);
+        region_w = opts->emile.region.w;
+        region_h = opts->emile.region.h;
 
-        header.width = opts->region.w;
-        header.height = opts->region.h;
+        header.width = opts->emile.region.w;
+        header.height = opts->emile.region.h;
      }
    /* It is not bad idea that bmp loader support scale down decoding 
     * because of memory issue in mobile world. */
-   if (opts->scale_down_by > 1)
-     scale_ratio = opts->scale_down_by;
+   if (opts->emile.scale_down_by > 1)
+     scale_ratio = opts->emile.scale_down_by;
 
    if (scale_ratio > 1)
      {

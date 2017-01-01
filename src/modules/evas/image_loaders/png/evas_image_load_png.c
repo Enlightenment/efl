@@ -157,29 +157,29 @@ evas_image_load_file_head_png(void *loader_data,
 	goto close_file;
      }
 
-   if (opts->region.w > 0 && opts->region.h > 0)
+   if (opts->emile.region.w > 0 && opts->emile.region.h > 0)
      {
-        if (((int) w32 < opts->region.x + opts->region.w) ||
-            ((int) h32 < opts->region.y + opts->region.h))
+        if (((int) w32 < opts->emile.region.x + opts->emile.region.w) ||
+            ((int) h32 < opts->emile.region.y + opts->emile.region.h))
           {
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto close_file;
           }
-        if(opts->scale_down_by > 1)
+        if(opts->emile.scale_down_by > 1)
           {
-             prop->w = opts->region.w / opts->scale_down_by;
-             prop->h = opts->region.h / opts->scale_down_by;
+             prop->w = opts->emile.region.w / opts->emile.scale_down_by;
+             prop->h = opts->emile.region.h / opts->emile.scale_down_by;
           }
         else
           {
-             prop->w = opts->region.w;
-             prop->h = opts->region.h;
+             prop->w = opts->emile.region.w;
+             prop->h = opts->emile.region.h;
           }
      }
-   else if (opts->scale_down_by > 1)
+   else if (opts->emile.scale_down_by > 1)
      {
-        prop->w = (int) w32 / opts->scale_down_by;
-        prop->h = (int) h32 / opts->scale_down_by;
+        prop->w = (int) w32 / opts->emile.scale_down_by;
+        prop->h = (int) h32 / opts->emile.scale_down_by;
         if ((prop->w < 1) || (prop->h < 1))
           {
              *error = EVAS_LOAD_ERROR_GENERIC;
@@ -302,18 +302,18 @@ evas_image_load_file_data_png(void *loader_data,
 		&interlace_type, NULL, NULL);
    image_w = w32;
    image_h = h32;
-   if (opts->scale_down_by > 1)
+   if (opts->emile.scale_down_by > 1)
      {
-        scale_ratio = opts->scale_down_by;
+        scale_ratio = opts->emile.scale_down_by;
         w32 /= scale_ratio;
         h32 /= scale_ratio;
      }
 
-   if ((opts->region.w > 0 && opts->region.h > 0) &&
-       (opts->region.w != image_w || opts->region.h != image_h))
+   if ((opts->emile.region.w > 0 && opts->emile.region.h > 0) &&
+       (opts->emile.region.w != image_w || opts->emile.region.h != image_h))
      {
-        w32 = opts->region.w / scale_ratio;
-        h32 = opts->region.h / scale_ratio;
+        w32 = opts->emile.region.w / scale_ratio;
+        h32 = opts->emile.region.h / scale_ratio;
         region_set = 1;
      }
 
@@ -401,8 +401,8 @@ evas_image_load_file_data_png(void *loader_data,
 
         if (region_set)
           {
-             region_x = opts->region.x;
-             region_y = opts->region.y;
+             region_x = opts->emile.region.x;
+             region_y = opts->emile.region.y;
           }
 
         if (passes == 1)

@@ -323,6 +323,32 @@ _efl_canvas_image_efl_image_load_load_scale_down_get(Eo *eo_obj, void *_pd EINA_
 }
 
 void
+_evas_image_load_head_skip_set(const Eo *eo_obj, Eina_Bool skip)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   o->skip_head = skip;
+}
+
+EOLIAN static void
+_efl_canvas_image_efl_image_load_load_skip_header_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool skip)
+{
+   _evas_image_load_head_skip_set(eo_obj, skip);
+}
+
+Eina_Bool
+_evas_image_load_head_skip_get(const Eo *eo_obj)
+{
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   return o->skip_head;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_image_efl_image_load_load_skip_header_get(Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   return _evas_image_load_head_skip_get(eo_obj);
+}
+
+void
 _evas_image_load_region_set(Eo *eo_obj, int x, int y, int w, int h)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);

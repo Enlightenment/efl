@@ -217,23 +217,23 @@ _load(Eina_File *ef, const char *key,
              len = strlen(cmd);
              escape_copy(key, cmd + len);
           }
-        if (opts->scale_down_by > 1)
+        if (opts->emile.scale_down_by > 1)
           {
              strcat(cmd, " -opt-scale-down-by ");
-             snprintf(buf, sizeof(buf), "%i", opts->scale_down_by);
+             snprintf(buf, sizeof(buf), "%i", opts->emile.scale_down_by);
              strcat(cmd, buf);
           }
-        if (opts->dpi > 0.0)
+        if (opts->emile.dpi > 0.0)
           {
              strcat(cmd, " -opt-dpi ");
-             snprintf(buf, sizeof(buf), "%i", (int)(opts->dpi * 1000.0));
+             snprintf(buf, sizeof(buf), "%i", (int)(opts->emile.dpi * 1000.0));
              strcat(cmd, buf);
           }
-        if ((opts->w > 0) &&
-            (opts->h > 0))
+        if ((opts->emile.w > 0) &&
+            (opts->emile.h > 0))
           {
              strcat(cmd, " -opt-size ");
-             snprintf(buf, sizeof(buf), "%i %i", opts->w, opts->h);
+             snprintf(buf, sizeof(buf), "%i %i", opts->emile.w, opts->emile.h);
              strcat(cmd, buf);
          }
         f = popen(cmd, "r");

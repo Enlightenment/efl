@@ -475,8 +475,8 @@ image_load(const char *file, const char *key, const char *shmfile,
      }
 
    memset(&property, 0, sizeof (property));
-   property.w = params->opts.w; // Should we rather use params->w ?
-   property.h = params->opts.h;
+   property.w = params->opts.emile.w; // Should we rather use params->w ?
+   property.h = params->opts.emile.h;
 
    skey = eina_stringshare_add(key);
    loader_data = _image_file_open(fd, skey, opts, module, &property, &animated, &funcs);
@@ -544,15 +544,15 @@ handle_image_open(int wfd, void *params)
    size_t resp_size;
 
    memset(&load_opts, 0, sizeof(load_opts));
-   load_opts.region.x = msg->lo.region.x;
-   load_opts.region.y = msg->lo.region.y;
-   load_opts.region.w = msg->lo.region.w;
-   load_opts.region.h = msg->lo.region.h;
-   load_opts.dpi = msg->lo.dpi;
-   load_opts.w = msg->lo.w;
-   load_opts.h = msg->lo.h;
-   load_opts.scale_down_by = msg->lo.scale_down_by;
-   load_opts.orientation = msg->lo.orientation;
+   load_opts.emile.region.x = msg->lo.region.x;
+   load_opts.emile.region.y = msg->lo.region.y;
+   load_opts.emile.region.w = msg->lo.region.w;
+   load_opts.emile.region.h = msg->lo.region.h;
+   load_opts.emile.dpi = msg->lo.dpi;
+   load_opts.emile.w = msg->lo.w;
+   load_opts.emile.h = msg->lo.h;
+   load_opts.emile.scale_down_by = msg->lo.scale_down_by;
+   load_opts.emile.orientation = msg->lo.orientation;
 
    file = (const char *) (msg + 1);
    key = file + strlen(file) + 1;

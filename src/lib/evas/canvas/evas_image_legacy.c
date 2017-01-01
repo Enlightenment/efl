@@ -325,6 +325,20 @@ evas_object_image_load_scale_down_get(const Evas_Object *obj)
    return _evas_image_load_scale_down_get(obj);
 }
 
+EAPI void
+evas_object_image_load_head_skip_set(Evas_Object *obj, Eina_Bool skip)
+{
+   EVAS_IMAGE_API(obj);
+   _evas_image_load_head_skip_set(obj, skip);
+}
+
+EAPI Eina_Bool
+evas_object_image_load_head_skip_get(const Evas_Object *obj)
+{
+   EVAS_IMAGE_API(obj, EINA_FALSE);
+   return _evas_image_load_head_skip_get(obj);
+}
+
 EAPI Evas_Load_Error
 evas_object_image_load_error_get(const Evas_Object *obj)
 {

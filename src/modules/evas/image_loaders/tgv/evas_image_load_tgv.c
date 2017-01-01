@@ -24,7 +24,8 @@ evas_image_load_file_open_tgv(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
    Emile_Image *image;
    Emile_Image_Load_Error image_error;
 
-   image = emile_image_tgv_file_open(f, opts, NULL, &image_error);
+   image = emile_image_tgv_file_open(f, opts ? &(opts->emile) : NULL,
+                                     NULL, &image_error);
    if (!image)
      {
         *error = image_error;
@@ -39,13 +40,13 @@ evas_image_load_file_open_tgv(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
      }
 
    loader->image = image;
-   if (opts && (opts->region.w > 0) && (opts->region.h > 0))
+   if (opts && (opts->emile.region.w > 0) && (opts->emile.region.h > 0))
      {
         EINA_RECTANGLE_SET(&loader->region,
-                           opts->region.x,
-                           opts->region.y,
-                           opts->region.w,
-                           opts->region.h);
+                           opts->emile.region.x,
+                           opts->emile.region.y,
+                           opts->emile.region.w,
+                           opts->emile.region.h);
      }
    else
      {

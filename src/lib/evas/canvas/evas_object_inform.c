@@ -1,4 +1,5 @@
 #include "evas_common_private.h"
+#include "evas_image_private.h"
 #include "evas_private.h"
 
 /* local calls */
@@ -59,6 +60,7 @@ evas_object_inform_call_image_preloaded(Evas_Object *eo_obj)
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
    if (!_evas_object_image_preloading_get(eo_obj)) return;
+   _evas_image_load_post_update(eo_obj, obj);
    _evas_object_image_preloading_check(eo_obj);
    _evas_object_image_preloading_set(eo_obj, 0);
 

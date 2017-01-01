@@ -31,6 +31,7 @@ class Efl.Canvas.Image (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer,
       Efl.Image.Load.load_size { get; set; }
       Efl.Image.Load.load_orientation { get; set; }
       Efl.Image.Load.load_scale_down { get; set; }
+      Efl.Image.Load.load_skip_header { get; set; }
       Efl.Image.Load.load_region { get; set; }
       Efl.Image.Load.load_region_support { get; }
       Efl.Object.dbg_info_get;

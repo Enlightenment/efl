@@ -21,7 +21,7 @@ struct ext_loader_s
 };
 
 #define MATCHING(Ext, Module)                   \
-  { sizeof (Ext), Ext, Module }
+{ sizeof (Ext), Ext, Module }
 
 static const struct ext_loader_s loaders[] =
 { /* map extensions to loaders to use for good first-guess tries */
@@ -181,7 +181,7 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    Eina_Bool r = EINA_TRUE;
-   
+
    if (!evas_module_load(em)) goto load_error;
    evas_image_load_func = em->functions;
    evas_module_use(em);
@@ -196,24 +196,19 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
              ie->f = eina_file_open(ie->file, EINA_FALSE);
              file = ie->file;
           }
-        else
-          {
-             file = eina_file_filename_get(ie->f);
-          }
+        else file = eina_file_filename_get(ie->f);
+
         if (!ie->f)
           {
              *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
              goto load_error;
           }
 
-	ie->loader_data = evas_image_load_func->file_open(ie->f, ie->key,
-							  &ie->load_opts,
-							  &ie->animated,
-							  error);
-	if (!ie->loader_data)
-	  {
-             goto load_error;
-	  }
+        ie->loader_data = evas_image_load_func->file_open(ie->f, ie->key,
+                                                          &ie->load_opts,
+                                                          &ie->animated,
+                                                          error);
+        if (!ie->loader_data) goto load_error;
 
         memset(&property, 0, sizeof (property));
         if (evas_image_load_func->file_head(ie->loader_data, &property,
@@ -231,8 +226,7 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
              ie->borders.b = property.borders.b;
              ie->scale = property.scale;
              ie->flags.alpha = property.alpha;
-             if (property.cspaces)
-               ie->cspaces = property.cspaces;
+             if (property.cspaces) ie->cspaces = property.cspaces;
              ie->flags.rotated = property.rotated;
              ie->flags.flipped = property.flipped;
              r = EINA_FALSE;
@@ -249,11 +243,10 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
      }
    else
      {
-     load_error:
+load_error:
         evas_module_unload(em);
         WRN("failed to load module '%s'.", em->definition->name);
      }
-
    return r;
 }
 
@@ -266,9 +259,7 @@ _evas_image_foreach_loader(const Eina_Hash *hash EINA_UNUSED, const void *key EI
    Eina_Bool r;
 
    r = _evas_image_file_header(em, ie, d->error);
-
-   if (!r)
-     d->em = em;
+   if (!r) d->em = em;
    return r;
 }
 
@@ -281,12 +272,14 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    unsigned int          i;
    int                   len, ret = EVAS_LOAD_ERROR_NONE;
    struct evas_image_foreach_loader_data fdata;
+   Eina_Bool             skip;
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
      CRI("This function shouldn't be called anymore!");
 #endif
 
+   skip = ie->load_opts.skip_head;
    if (ie->f)
      {
         len = strlen(eina_file_filename_get(ie->f));
@@ -295,14 +288,16 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
      }
    else
      {
-        struct stat st;
-
-        if (stat(ie->file, &st) != 0 || S_ISDIR(st.st_mode))
+        if (!skip)
           {
-             DBG("trying to open directory '%s' !", ie->file);
-             return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-          }
+             struct stat st;
 
+             if (stat(ie->file, &st) != 0 || S_ISDIR(st.st_mode))
+               {
+                  DBG("trying to open directory '%s' !", ie->file);
+                  return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+               }
+          }
         len = strlen(ie->file);
         end = ie->file + len;
         file = ie->file;
@@ -323,15 +318,19 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 
    if (loader)
      {
-	em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
-	if (em)
-	  {
-	     DBG("found image loader '%s' (%p)", loader, em);
-             if (!_evas_image_file_header(em, ie, &ret))
-               goto end;
-	  }
-	else
-	  INF("image loader '%s' is not enabled or missing!", loader);
+        em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
+        if (em)
+          {
+             if (!((Evas_Image_Load_Func *)em->functions)->threadable)
+               skip = EINA_FALSE;
+             DBG("found image loader '%s' (%p)", loader, em);
+             if (!skip)
+               {
+                  if (!_evas_image_file_header(em, ie, &ret)) goto end;
+               }
+          }
+        else INF("image loader '%s' is not enabled or missing!", loader);
+        if (skip) goto end;
      }
 
    fdata.ie = ie;
@@ -346,38 +345,37 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    /* FIXME: We could use eina recursive module search ability. */
    for (i = 0; i < sizeof (loaders_name) / sizeof (char *); i++)
      {
-	em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loaders_name[i]);
-	if (em)
-	  {
-             if (!_evas_image_file_header(em, ie, &ret))
-               goto end;
-	  }
-	else
-	  DBG("could not find module '%s'", loaders_name[i]);
+        em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loaders_name[i]);
+        if (em)
+          {
+             if (!ie->load_opts.skip_head)
+               {
+                  if (!_evas_image_file_header(em, ie, &ret)) goto end;
+               }
+          }
+        else
+          DBG("could not find module '%s'", loaders_name[i]);
      }
-
    INF("exhausted all means to load image '%s'", file);
    return EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 
- end:
-
    if (ret != EVAS_LOAD_ERROR_NONE)
      {
-	const char *modname = NULL;
-	int modversion = -1;
-	if (em && em->definition)
-	  {
-	     modname = em->definition->name;
-	     modversion = em->definition->version;
-	  }
-	WRN("loader '%s' (version %d) "
-	    "handled file '%s', key '%s' with errors: %s",
-	    modname ? modname : "<UNKNOWN>", modversion,
-	    file, ie->key ? ie->key : "",
-	    evas_load_error_str(ret));
-	goto end;
-     }
+        const char *modname = NULL;
+        int modversion = -1;
 
+        if (em && em->definition)
+          {
+             modname = em->definition->name;
+             modversion = em->definition->version;
+          }
+        WRN("loader '%s' (version %d) "
+            "handled file '%s', key '%s' with errors: %s",
+            modname ? modname : "<UNKNOWN>", modversion,
+            file, ie->key ? ie->key : "",
+            evas_load_error_str(ret));
+     }
+end:
    DBG("loader '%s' used for file %s",
        (em && em->definition && em->definition->name) ?
        em->definition->name : "<UNKNOWN>",
@@ -389,6 +387,21 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    return ret;
 }
 
+static void
+_timestamp_build(Image_Timestamp *tstamp, struct stat *st)
+{
+   tstamp->mtime = st->st_mtime;
+   tstamp->size = st->st_size;
+   tstamp->ino = st->st_ino;
+#ifdef _STAT_VER_LINUX
+# if (defined __USE_MISC && defined st_mtime)
+   tstamp->mtime_nsec = (unsigned long int)st->st_mtim.tv_nsec;
+# else
+   tstamp->mtime_nsec = (unsigned long int)st->st_mtimensec;
+# endif
+#endif
+}
+
 EAPI int
 evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 {
@@ -396,6 +409,8 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    Evas_Image_Load_Func *evas_image_load_func = NULL;
    Evas_Image_Property property;
    int ret = EVAS_LOAD_ERROR_NONE;
+   struct stat st;
+   unsigned int i;
 
    if ((ie->flags.loaded) && (!ie->animated.animated)) return EVAS_LOAD_ERROR_GENERIC;
 
@@ -406,11 +421,43 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 
    if (!ie->info.module) return EVAS_LOAD_ERROR_GENERIC;
 
-//   printf("load data [%p] %s %s\n", ie, ie->file, ie->key);
    evas_image_load_func = ie->info.loader;
    evas_module_use(ie->info.module);
 
+   if (!ie->f)
+     {
+        Evas_Module *em = ie->info.module;
+
+        if (_evas_image_file_header(em, ie, &ret))
+          {
+             em = NULL;
+             for (i = 0; i < sizeof(loaders_name) / sizeof (char *); i++)
+               {
+                  em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER,
+                                             loaders_name[i]);
+                  if (em)
+                    {
+                       if (!ie->load_opts.skip_head)
+                         {
+                            if (!_evas_image_file_header(em, ie, &ret))
+                              goto end;
+                         }
+                    }
+                  else DBG("could not find module '%s'", loaders_name[i]);
+                  em = NULL;
+               }
+          }
+end:
+        if (ie->info.module != em)
+          {
+             evas_module_ref(em);
+             evas_module_unref(ie->info.module);
+             ie->info.module = em;
+          }
+     }
    if (!ie->f) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+
+   if (stat(ie->file, &st) == 0) _timestamp_build(&(ie->tstamp), &st);
 
    memset(&property, 0, sizeof (property));
    property.w = ie->w;
@@ -429,17 +476,13 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    property.borders.b = ie->borders.b;
 
    pixels = evas_cache_image_pixels(ie);
-   if (!pixels)
-     return EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+   if (!pixels) return EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 
    evas_image_load_func->file_data(ie->loader_data, &property, pixels, &ret);
 
    ie->flags.alpha_sparse = property.alpha_sparse;
 
-   if (property.premul)
-     evas_common_image_premul(ie);
-//   evas_module_unref(ie->info.module);
-//   ie->info.module = NULL;
+   if (property.premul) evas_common_image_premul(ie);
 
    return ret;
 }
@@ -456,7 +499,6 @@ evas_common_load_rgba_image_frame_duration_from_file(Image_Entry *ie, const int 
    if (evas_image_load_func->frame_duration)
      {
         if (!ie->f) return -1;
-
         return evas_image_load_func->frame_duration(ie->loader_data, start, frame_num);
      }
    return -1;
@@ -478,6 +520,5 @@ evas_common_extension_can_load_get(const char *file)
         if (!strcasecmp(loaders[i].extension, file + length - loaders[i].length))
           return EINA_TRUE;
      }
-
    return EINA_FALSE;
 }

@@ -582,13 +582,13 @@ eng_image_size_get(void *data EINA_UNUSED, void *image, int *w, int *h)
        im->orient == EVAS_IMAGE_FLIP_TRANSPOSE ||
        im->orient == EVAS_IMAGE_FLIP_TRANSVERSE)
      {
-        if (w) *w = ((Evas_GL_Image *)image)->h;
-        if (h) *h = ((Evas_GL_Image *)image)->w;
+        if (w) *w = im->h;
+        if (h) *h = im->w;
      }
    else
      {
-        if (w) *w = ((Evas_GL_Image *)image)->w;
-        if (h) *h = ((Evas_GL_Image *)image)->h;
+        if (w) *w = im->w;
+        if (h) *h = im->h;
      }
 }
 
@@ -1081,7 +1081,7 @@ static void
 eng_image_data_preload_request(void *data, void *image, const Eo *target)
 {
    Evas_GL_Image *gim = image;
-   Render_Engine_GL_Generic *re = data;
+//   Render_Engine_GL_Generic *re = data;
    RGBA_Image *im;
 
    if (!gim) return;
@@ -1089,12 +1089,14 @@ eng_image_data_preload_request(void *data, void *image, const Eo *target)
    im = (RGBA_Image *)gim->im;
    if (!im) return;
 
+   evas_gl_common_image_preload_watch(gim);
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
      evas_cache2_image_preload_data(&im->cache_entry, target);
    else
 #endif
      evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL, NULL);
+/*
    if (!gim->tex)
      {
         Evas_Engine_GL_Context *gl_context;
@@ -1107,6 +1109,7 @@ eng_image_data_preload_request(void *data, void *image, const Eo *target)
         im->cache_entry.flags.updated_data = 1;
      }
    evas_gl_preload_target_register(gim->tex, (Eo*) target);
+ */
 }
 
 static void
@@ -1120,13 +1123,14 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *tar
    im = (RGBA_Image *)gim->im;
    if (!im) return;
 
+   evas_gl_common_image_preload_unwatch(gim);
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
      evas_cache2_image_preload_cancel(&im->cache_entry, target);
    else
 #endif
      evas_cache_image_preload_cancel(&im->cache_entry, target);
-   evas_gl_preload_target_unregister(gim->tex, (Eo*) target);
+//   if (gim->tex) evas_gl_preload_target_unregister(gim->tex, (Eo*) target);
 }
 
 static Eina_Bool

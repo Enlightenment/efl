@@ -281,7 +281,10 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
    SLKI(ie->lock_cancel);
    SLKI(ie->lock_task);
 
-   if (lo) ie->load_opts = *lo;
+   if (lo)
+     {
+        ie->load_opts = *lo;
+     }
    if (ie->file || ie->f)
      {
         *error = cache->func.constructor(ie);
@@ -417,10 +420,20 @@ _evas_cache_image_async_end(void *data)
 
    while ((tmp = ie->targets))
      {
-        evas_object_inform_call_image_preloaded((Evas_Object*) tmp->target);
         ie->targets = (Evas_Cache_Target *)
-           eina_inlist_remove(EINA_INLIST_GET(ie->targets), 
-                              EINA_INLIST_GET(ie->targets));
+          eina_inlist_remove(EINA_INLIST_GET(ie->targets),
+                             EINA_INLIST_GET(ie->targets));
+        if (tmp->simple_cb)
+          {
+             if (!tmp->delete_me)
+               {
+                  tmp->simple_cb(tmp->simple_data);
+               }
+          }
+        else
+          {
+             evas_object_inform_call_image_preloaded((Evas_Object*) tmp->target);
+          }
         free(tmp);
      }
 
@@ -460,14 +473,14 @@ _evas_cache_image_async_cancel(void *data)
 // entry. make sure you only add once, or remove first, then add
 static int
 _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target,
-				    Evas_Engine_Thread_Task_Cb func, const void *engine_data, const void *custom_data)
+                                    Evas_Engine_Thread_Task_Cb func, const void *engine_data, const void *custom_data)
 {
    Evas_Cache_Target *tg;
    Image_Entry_Task *task;
 
    if (ie->flags.preload_done) return 0;
 
-   tg = malloc(sizeof (Evas_Cache_Target));
+   tg = calloc(1, sizeof(Evas_Cache_Target));
    if (!tg) return 0;
    tg->target = target;
 
@@ -688,19 +701,22 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 }
 
 static const Evas_Image_Load_Opts prevent = {
-  { 0, 0, 0, 0 },
-  {
-    0, 0, 0, 0,
-    0, 0,
-    0,
-    0
-  },
-  0.0,
-  0, 0,
-  0,
-  0,
+   {
+        { 0, 0, 0, 0 },
+        {
+           0, 0, 0, 0,
+           0, 0,
+           0,
+           0
+        },
+      0.0,
+      0, 0,
+      0,
+      0,
 
-  EINA_FALSE
+      EINA_FALSE
+   },
+   EINA_FALSE
 };
 
 static size_t
@@ -711,11 +727,11 @@ _evas_cache_image_loadopts_append(char *hkey, Evas_Image_Load_Opts **plo)
 
    if ((!lo) ||
        (lo &&
-           (lo->scale_down_by == 0) &&
-           (EINA_DBL_CMP(lo->dpi, 0.0)) &&
-           ((lo->w == 0) || (lo->h == 0)) &&
-           ((lo->region.w == 0) || (lo->region.h == 0)) &&
-           (lo->orientation == 0)
+           (lo->emile.scale_down_by == 0) &&
+           (EINA_DBL_CMP(lo->emile.dpi, 0.0)) &&
+           ((lo->emile.w == 0) || (lo->emile.h == 0)) &&
+           ((lo->emile.region.w == 0) || (lo->emile.region.h == 0)) &&
+           (lo->emile.orientation == 0)
        ))
      {
         *plo = (Evas_Image_Load_Opts*) &prevent;
@@ -724,30 +740,30 @@ _evas_cache_image_loadopts_append(char *hkey, Evas_Image_Load_Opts **plo)
      {
         memcpy(hkey, "//@/", 4);
         offset += 4;
-        offset += eina_convert_xtoa(lo->scale_down_by, hkey + offset);
+        offset += eina_convert_xtoa(lo->emile.scale_down_by, hkey + offset);
         hkey[offset] = '/';
         offset += 1;
-        offset += eina_convert_dtoa(lo->dpi, hkey + offset);
+        offset += eina_convert_dtoa(lo->emile.dpi, hkey + offset);
         hkey[offset] = '/';
         offset += 1;
-        offset += eina_convert_xtoa(lo->w, hkey + offset);
+        offset += eina_convert_xtoa(lo->emile.w, hkey + offset);
         hkey[offset] = 'x';
         offset += 1;
-        offset += eina_convert_xtoa(lo->h, hkey + offset);
+        offset += eina_convert_xtoa(lo->emile.h, hkey + offset);
         hkey[offset] = '/';
         offset += 1;
-        offset += eina_convert_xtoa(lo->region.x, hkey + offset);
+        offset += eina_convert_xtoa(lo->emile.region.x, hkey + offset);
         hkey[offset] = '+';
         offset += 1;
-        offset += eina_convert_xtoa(lo->region.y, hkey + offset);
+        offset += eina_convert_xtoa(lo->emile.region.y, hkey + offset);
         hkey[offset] = '.';
         offset += 1;
-        offset += eina_convert_xtoa(lo->region.w, hkey + offset);
+        offset += eina_convert_xtoa(lo->emile.region.w, hkey + offset);
         hkey[offset] = 'x';
         offset += 1;
-        offset += eina_convert_xtoa(lo->region.h, hkey + offset);
+        offset += eina_convert_xtoa(lo->emile.region.h, hkey + offset);
 
-        if (lo->orientation)
+        if (lo->emile.orientation)
           {
              hkey[offset] = '/';
              offset += 1;
@@ -839,6 +855,8 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    size_t                key_length;
    struct stat           st;
    Image_Timestamp       tstamp;
+   Eina_Bool             skip = lo->skip_head;
+   Evas_Image_Load_Opts  tlo;
 
    if (!file)
      {
@@ -859,6 +877,8 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    memcpy(hkey + size, ckey, key_length);
    size += key_length;
    size += _evas_cache_image_loadopts_append(hkey + size, &lo);
+   tlo = *lo;
+   tlo.skip_head = skip;
 
    /* find image by key in active hash */
    im = eina_hash_find(cache->activ, hkey);
@@ -867,12 +887,15 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
         int ok = 1;
 
         stat_done = 1;
-        if (stat(file, &st) < 0)
+        if (!skip)
           {
-             stat_failed = 1;
-             ok = 0;
+             if (stat(file, &st) < 0)
+               {
+                  stat_failed = 1;
+                  ok = 0;
+               }
+             else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
           }
-        else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
         if (ok) goto on_ok;
         /* image we found doesn't match what's on disk (stat info wise)
          * so dirty the active cache entry so we never find it again. this
@@ -889,17 +912,20 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
      {
         int ok = 1;
 
-        if (!stat_done)
+        if (!skip)
           {
-             stat_done = 1;
-             if (stat(file, &st) < 0)
+             if (!stat_done)
                {
-                  stat_failed = 1;
-                  ok = 0;
+                  stat_done = 1;
+                  if (stat(file, &st) < 0)
+                    {
+                       stat_failed = 1;
+                       ok = 0;
+                    }
+                  else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
                }
              else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
           }
-        else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
 
         if (ok)
           {
@@ -916,13 +942,21 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
      }
    if (stat_failed) goto on_stat_error;
 
-   if (!stat_done)
+   if (!skip)
      {
-        if (stat(file, &st) < 0) goto on_stat_error;
+        if (!stat_done)
+          {
+             if (stat(file, &st) < 0) goto on_stat_error;
+          }
+        _timestamp_build(&tstamp, &st);
+        im = _evas_cache_image_entry_new(cache, hkey, &tstamp, NULL,
+                                         file, key, &tlo, error);
      }
-   _timestamp_build(&tstamp, &st);
-   im = _evas_cache_image_entry_new(cache, hkey, &tstamp, NULL, file, key, 
-                                    lo, error);
+   else
+     {
+        im = _evas_cache_image_entry_new(cache, hkey, NULL, NULL,
+                                         file, key, &tlo, error);
+     }
    if (!im) goto on_stat_error;
    if (cache->func.debug) cache->func.debug("request", im);
 

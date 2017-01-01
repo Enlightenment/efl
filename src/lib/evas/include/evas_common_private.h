@@ -588,9 +588,12 @@ struct _Image_Entry_Frame
 
 struct _Evas_Cache_Target
 {
-  EINA_INLIST;
-  const Eo *target;
-  void *data;
+   EINA_INLIST;
+   const Eo *target;
+   void *data;
+   void (*simple_cb) (void *data);
+   void *simple_data;
+   Eina_Bool delete_me;
 };
 
 struct _Image_Timestamp

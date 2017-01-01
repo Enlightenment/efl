@@ -28,19 +28,22 @@ typedef struct _Font_Source Font_Source;
 typedef struct _Font_Entry Font_Entry;
 
 static const Evas_Image_Load_Opts empty_lo = {
-  { 0, 0, 0, 0 },
-  {
-    0, 0, 0, 0,
-    0, 0,
-    0,
-    0
-  },
-  0.0,
-  0, 0,
-  0,
-  0,
+   {
+        { 0, 0, 0, 0 },
+        {
+           0, 0, 0, 0,
+           0, 0,
+           0,
+           0
+        },
+      0.0,
+      0, 0,
+      0,
+      0,
 
-  EINA_FALSE
+      EINA_FALSE
+   },
+   EINA_FALSE
 };
 
 typedef enum {
@@ -761,13 +764,13 @@ _load_request_build(Image_Entry *ientry, int *bufsize)
    msg.alpha = fd->alpha;
 
    // NOTE: Not passing scale_load options
-   msg.opts.w = idata->opts.w;
-   msg.opts.h = idata->opts.h;
-   msg.opts.region = idata->opts.region;
-   msg.opts.scale_down_by = idata->opts.scale_down_by;
-   msg.opts.dpi = idata->opts.dpi;
-   msg.opts.degree = idata->opts.degree;
-   msg.opts.orientation = idata->opts.orientation;
+   msg.opts.emile.w = idata->opts.emile.w;
+   msg.opts.emile.h = idata->opts.emile.h;
+   msg.opts.emile.region = idata->opts.emile.region;
+   msg.opts.emile.scale_down_by = idata->opts.emile.scale_down_by;
+   msg.opts.emile.dpi = idata->opts.emile.dpi;
+   msg.opts.emile.degree = idata->opts.emile.degree;
+   msg.opts.emile.orientation = idata->opts.emile.orientation;
 
    msg.shm.mmap_offset = cserve2_shm_map_offset_get(ientry->shm);
    msg.shm.image_offset = cserve2_shm_offset_get(ientry->shm);
@@ -798,9 +801,9 @@ _load_request_build(Image_Entry *ientry, int *bufsize)
 static inline Eina_Bool
 _scaling_needed(Image_Data *idata, Slave_Msg_Image_Loaded *resp)
 {
-   return (((idata->opts.scale_load.dst_w) && (idata->opts.scale_load.dst_h)) &&
-           ((idata->opts.scale_load.dst_w != resp->w) ||
-            (idata->opts.scale_load.dst_h != resp->h)));
+   return (((idata->opts.emile.scale_load.dst_w) && (idata->opts.emile.scale_load.dst_h)) &&
+           ((idata->opts.emile.scale_load.dst_w != resp->w) ||
+            (idata->opts.emile.scale_load.dst_h != resp->h)));
 }
 
 static int
@@ -838,20 +841,20 @@ _scaling_do(Shm_Handle *scale_shm, Image_Data *idata, Image_Entry *original)
 
    DBG("Scaling image ([%dx%d]:[%d,%d:%dx%d] --> [%d,%d:%dx%d])",
        orig_idata->w, orig_idata->h,
-       idata->opts.scale_load.src_x, idata->opts.scale_load.src_y,
-       idata->opts.scale_load.src_w, idata->opts.scale_load.src_h,
+       idata->opts.emile.scale_load.src_x, idata->opts.emile.scale_load.src_y,
+       idata->opts.emile.scale_load.src_w, idata->opts.emile.scale_load.src_h,
        0, 0,
-       idata->opts.scale_load.dst_w, idata->opts.scale_load.dst_h);
+       idata->opts.emile.scale_load.dst_w, idata->opts.emile.scale_load.dst_h);
 
    idata->alpha = orig_idata->alpha;
    cserve2_rgba_image_scale_do(
             src_data, orig_idata->w, orig_idata->h,
             dst_data,
-            idata->opts.scale_load.src_x, idata->opts.scale_load.src_y,
-            idata->opts.scale_load.src_w, idata->opts.scale_load.src_h,
+            idata->opts.emile.scale_load.src_x, idata->opts.emile.scale_load.src_y,
+            idata->opts.emile.scale_load.src_w, idata->opts.emile.scale_load.src_h,
             0, 0,
-            idata->opts.scale_load.dst_w, idata->opts.scale_load.dst_h,
-            idata->alpha, idata->opts.scale_load.smooth);
+            idata->opts.emile.scale_load.dst_w, idata->opts.emile.scale_load.dst_h,
+            idata->alpha, idata->opts.emile.scale_load.smooth);
 
    cserve2_shm_unmap(original->shm);
    cserve2_shm_unmap(scale_shm);
@@ -864,8 +867,8 @@ _scaling_prepare_and_do(Image_Entry *ientry, Image_Data *idata)
 {
    Shm_Handle *scale_shm;
 
-   scale_shm = cserve2_shm_request("img", idata->opts.scale_load.dst_w
-                                   * idata->opts.scale_load.dst_h * 4);
+   scale_shm = cserve2_shm_request("img", idata->opts.emile.scale_load.dst_w
+                                   * idata->opts.emile.scale_load.dst_h * 4);
 
    if (!scale_shm)
      return -1;
@@ -881,8 +884,8 @@ _scaling_prepare_and_do(Image_Entry *ientry, Image_Data *idata)
    cserve2_shared_string_del(idata->shm_id);
    ientry->shm = scale_shm;
    idata->shm_id = 0;
-   idata->w = idata->opts.scale_load.dst_w;
-   idata->h = idata->opts.scale_load.dst_h;
+   idata->w = idata->opts.emile.scale_load.dst_w;
+   idata->h = idata->opts.emile.scale_load.dst_h;
 
    return 0;
 }
@@ -938,14 +941,14 @@ _image_key_set(unsigned int file_id, const Evas_Image_Load_Opts *opts,
 
    snprintf(buf, size,
             "%u:%0.3f:%dx%d:%d:%d,%d+%dx%d:!([%d,%d:%dx%d]-[%dx%d:%d]):%d:%d",
-            file_id, opts->dpi, opts->w, opts->h,
-            opts->scale_down_by, opts->region.x, opts->region.y,
-            opts->region.w, opts->region.h,
-            opts->scale_load.src_x, opts->scale_load.src_y,
-            opts->scale_load.src_w, opts->scale_load.src_h,
-            opts->scale_load.dst_w, opts->scale_load.dst_h,
-            opts->scale_load.smooth, opts->degree,
-            opts->orientation);
+            file_id, opts->emile.dpi, opts->emile.w, opts->emile.h,
+            opts->emile.scale_down_by, opts->emile.region.x, opts->emile.region.y,
+            opts->emile.region.w, opts->emile.region.h,
+            opts->emile.scale_load.src_x, opts->emile.scale_load.src_y,
+            opts->emile.scale_load.src_w, opts->emile.scale_load.src_h,
+            opts->emile.scale_load.dst_w, opts->emile.scale_load.dst_h,
+            opts->emile.scale_load.smooth, opts->emile.degree,
+            opts->emile.orientation);
 }
 
 static unsigned int
@@ -975,12 +978,12 @@ _evas_image_load_opts_empty(Evas_Image_Load_Opts *lo)
 {
    if (!lo) return EINA_TRUE;
 
-   return ((lo->scale_down_by == 0)
-           && (lo->dpi == 0.0)
-           && (lo->w == 0) && (lo->h == 0)
-           && (lo->region.x == 0) && (lo->region.y == 0)
-           && (lo->region.w == 0) && (lo->region.h == 0)
-           && (lo->orientation == 0));
+   return ((lo->emile.scale_down_by == 0)
+           && (lo->emile.dpi == 0.0)
+           && (lo->emile.w == 0) && (lo->emile.h == 0)
+           && (lo->emile.region.x == 0) && (lo->emile.region.y == 0)
+           && (lo->emile.region.w == 0) && (lo->emile.region.h == 0)
+           && (lo->emile.orientation == 0));
 }
 
 static void
@@ -995,17 +998,17 @@ _file_hkey_get(char *buf, size_t sz, const char *path, const char *key,
      snprintf(buf, sz, "%s:%s", path, key);
    else
      {
-        if (lo->orientation)
+        if (lo->emile.orientation)
           {
              snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d",
-                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
-                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+                      path, key, lo->emile.scale_down_by, lo->emile.dpi, lo->emile.w, lo->emile.h,
+                      lo->emile.region.x, lo->emile.region.y, lo->emile.region.w, lo->emile.region.h);
           }
         else
           {
              snprintf(buf, sz, "%s:%s//@/%d/%f/%dx%d/%d+%d.%dx%d/o",
-                      path, key, lo->scale_down_by, lo->dpi, lo->w, lo->h,
-                      lo->region.x, lo->region.y, lo->region.w, lo->region.h);
+                      path, key, lo->emile.scale_down_by, lo->emile.dpi, lo->emile.w, lo->emile.h,
+                      lo->emile.region.x, lo->emile.region.y, lo->emile.region.w, lo->emile.region.h);
           }
      }
 }
@@ -1016,15 +1019,15 @@ _file_id_free(File_Data *fd)
    Evas_Image_Load_Opts lo = empty_lo;
    char buf[4096];
 
-   lo.region.x = fd->lo.region.x;
-   lo.region.y = fd->lo.region.y;
-   lo.region.w = fd->lo.region.w;
-   lo.region.h = fd->lo.region.h;
-   lo.dpi = fd->lo.dpi;
-   lo.w = fd->lo.w;
-   lo.h = fd->lo.h;
-   lo.scale_down_by = fd->lo.scale_down_by;
-   lo.orientation = fd->lo.orientation;
+   lo.emile.region.x = fd->lo.region.x;
+   lo.emile.region.y = fd->lo.region.y;
+   lo.emile.region.w = fd->lo.region.w;
+   lo.emile.region.h = fd->lo.region.h;
+   lo.emile.dpi = fd->lo.dpi;
+   lo.emile.w = fd->lo.w;
+   lo.emile.h = fd->lo.h;
+   lo.emile.scale_down_by = fd->lo.scale_down_by;
+   lo.emile.orientation = fd->lo.orientation;
 
    _file_hkey_get(buf, sizeof(buf), cserve2_shared_string_get(fd->path),
                   cserve2_shared_string_get(fd->key), &lo);
@@ -1629,24 +1632,24 @@ _image_entry_new(Client *client, int rid,
    ientry->base.type = CSERVE2_IMAGE_DATA;
    if (opts)
      {
-        idata->opts.dpi = opts->dpi;
-        idata->opts.w = opts->w;
-        idata->opts.h = opts->h;
-        idata->opts.scale_down_by = opts->scale_down_by;
-        idata->opts.region.x = opts->region.x;
-        idata->opts.region.y = opts->region.y;
-        idata->opts.region.w = opts->region.w;
-        idata->opts.region.h = opts->region.h;
-        idata->opts.scale_load.src_x = opts->scale_load.src_x;
-        idata->opts.scale_load.src_y = opts->scale_load.src_y;
-        idata->opts.scale_load.src_w = opts->scale_load.src_w;
-        idata->opts.scale_load.src_h = opts->scale_load.src_h;
-        idata->opts.scale_load.dst_w = opts->scale_load.dst_w;
-        idata->opts.scale_load.dst_h = opts->scale_load.dst_h;
-        idata->opts.scale_load.smooth = opts->scale_load.smooth;
-        idata->opts.scale_load.scale_hint = opts->scale_load.scale_hint;
-        idata->opts.degree = opts->degree;
-        idata->opts.orientation = opts->orientation;
+        idata->opts.emile.dpi = opts->emile.dpi;
+        idata->opts.emile.w = opts->emile.w;
+        idata->opts.emile.h = opts->emile.h;
+        idata->opts.emile.scale_down_by = opts->emile.scale_down_by;
+        idata->opts.emile.region.x = opts->emile.region.x;
+        idata->opts.emile.region.y = opts->emile.region.y;
+        idata->opts.emile.region.w = opts->emile.region.w;
+        idata->opts.emile.region.h = opts->emile.region.h;
+        idata->opts.emile.scale_load.src_x = opts->emile.scale_load.src_x;
+        idata->opts.emile.scale_load.src_y = opts->emile.scale_load.src_y;
+        idata->opts.emile.scale_load.src_w = opts->emile.scale_load.src_w;
+        idata->opts.emile.scale_load.src_h = opts->emile.scale_load.src_h;
+        idata->opts.emile.scale_load.dst_w = opts->emile.scale_load.dst_w;
+        idata->opts.emile.scale_load.dst_h = opts->emile.scale_load.dst_h;
+        idata->opts.emile.scale_load.smooth = opts->emile.scale_load.smooth;
+        idata->opts.emile.scale_load.scale_hint = opts->emile.scale_load.scale_hint;
+        idata->opts.emile.degree = opts->emile.degree;
+        idata->opts.emile.orientation = opts->emile.orientation;
      }
    idata->valid = EINA_FALSE;
    idata->file_id = ref->entry->id;
@@ -2622,15 +2625,15 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id,
    fd->path = cserve2_shared_string_add(path);
    fd->key = cserve2_shared_string_add(key);
    if (!lo) lo = (Evas_Image_Load_Opts *) &empty_lo;
-   fd->lo.region.x = lo->region.x;
-   fd->lo.region.y = lo->region.y;
-   fd->lo.region.w = lo->region.w;
-   fd->lo.region.h = lo->region.h;
-   fd->lo.dpi = lo->dpi;
-   fd->lo.w = lo->w;
-   fd->lo.h = lo->h;
-   fd->lo.scale_down_by = lo->scale_down_by;
-   fd->lo.orientation = lo->orientation;
+   fd->lo.region.x = lo->emile.region.x;
+   fd->lo.region.y = lo->emile.region.y;
+   fd->lo.region.w = lo->emile.region.w;
+   fd->lo.region.h = lo->emile.region.h;
+   fd->lo.dpi = lo->emile.dpi;
+   fd->lo.w = lo->emile.w;
+   fd->lo.h = lo->emile.h;
+   fd->lo.scale_down_by = lo->emile.scale_down_by;
+   fd->lo.orientation = lo->emile.orientation;
    fd->refcount = 1;
    fd->id = file_id;
 
@@ -2698,23 +2701,23 @@ _cserve2_cache_fast_scaling_check(Client *client, Image_Entry *ientry,
    idata = _image_data_find(ENTRYID(ientry));
    if (!idata) return -1;
 
-   dst_w = idata->opts.scale_load.dst_w;
-   dst_h = idata->opts.scale_load.dst_h;
+   dst_w = idata->opts.emile.scale_load.dst_w;
+   dst_h = idata->opts.emile.scale_load.dst_h;
 
    // Copy opts w/o scaling
    memset(&unscaled, 0, sizeof(unscaled));
-   unscaled.dpi = idata->opts.dpi;
-   unscaled.w = idata->opts.w;
-   unscaled.h = idata->opts.h;
-   unscaled.scale_down_by = idata->opts.scale_down_by;
-   unscaled.region.x = idata->opts.region.x;
-   unscaled.region.y = idata->opts.region.y;
-   unscaled.region.w = idata->opts.region.w;
-   unscaled.region.h = idata->opts.region.h;
-   unscaled.scale_load.scale_hint = 0;
-   unscaled.degree = idata->opts.degree;
-   unscaled.orientation = idata->opts.orientation;
-   unscaled.scale_load.smooth = idata->opts.scale_load.smooth;
+   unscaled.emile.dpi = idata->opts.emile.dpi;
+   unscaled.emile.w = idata->opts.emile.w;
+   unscaled.emile.h = idata->opts.emile.h;
+   unscaled.emile.scale_down_by = idata->opts.emile.scale_down_by;
+   unscaled.emile.region.x = idata->opts.emile.region.x;
+   unscaled.emile.region.y = idata->opts.emile.region.y;
+   unscaled.emile.region.w = idata->opts.emile.region.w;
+   unscaled.emile.region.h = idata->opts.emile.region.h;
+   unscaled.emile.scale_load.scale_hint = 0;
+   unscaled.emile.degree = idata->opts.emile.degree;
+   unscaled.emile.orientation = idata->opts.emile.orientation;
+   unscaled.emile.scale_load.smooth = idata->opts.emile.scale_load.smooth;
 
 try_again:
    image_id = _image_opts_id_get(idata->file_id, &unscaled, buf, sizeof(buf));
@@ -2725,17 +2728,17 @@ try_again:
         if (!orig_data || !orig_entry) return -1;
 
         DBG("Found original image in hash: %d,%d:%dx%d -> %dx%d shm %p",
-            orig_data->opts.scale_load.src_x, orig_data->opts.scale_load.src_y,
-            orig_data->opts.scale_load.src_w, orig_data->opts.scale_load.src_h,
-            orig_data->opts.scale_load.dst_w, orig_data->opts.scale_load.dst_h,
+            orig_data->opts.emile.scale_load.src_x, orig_data->opts.emile.scale_load.src_y,
+            orig_data->opts.emile.scale_load.src_w, orig_data->opts.emile.scale_load.src_h,
+            orig_data->opts.emile.scale_load.dst_w, orig_data->opts.emile.scale_load.dst_h,
             orig_entry->shm);
         goto do_scaling;
      }
 
-   if (first_attempt && unscaled.scale_load.smooth)
+   if (first_attempt && unscaled.emile.scale_load.smooth)
      {
         first_attempt = EINA_FALSE;
-        unscaled.scale_load.smooth = 0;
+        unscaled.emile.scale_load.smooth = 0;
         goto try_again;
      }
 
@@ -2749,14 +2752,14 @@ try_again:
         id = _image_data_find(ENTRYID(i));
         if (!id) continue;
 
-        if (id->opts.w && id->opts.h &&
-            (!id->opts.scale_load.dst_w &&
-             !id->opts.scale_load.dst_h))
+        if (id->opts.emile.w && id->opts.emile.h &&
+            (!id->opts.emile.scale_load.dst_w &&
+             !id->opts.emile.scale_load.dst_h))
           {
              DBG("Found image in list: %d,%d:%dx%d -> %dx%d shm %p",
-                 id->opts.scale_load.src_x, id->opts.scale_load.src_y,
-                 id->opts.scale_load.src_w, id->opts.scale_load.src_h,
-                 id->opts.scale_load.dst_w, id->opts.scale_load.dst_h,
+                 id->opts.emile.scale_load.src_x, id->opts.emile.scale_load.src_y,
+                 id->opts.emile.scale_load.src_w, id->opts.emile.scale_load.src_h,
+                 id->opts.emile.scale_load.dst_w, id->opts.emile.scale_load.dst_h,
                  i->shm);
              if (i->base.request || !i->shm) continue; // Not loaded yet
              orig_entry = i;
@@ -2905,7 +2908,7 @@ cserve2_cache_image_entry_create(Client *client, int rid,
      return -1;
    fentry->images = eina_list_append(fentry->images, ientry);
 
-   if (opts && opts->scale_load.dst_w && opts->scale_load.dst_h)
+   if (opts && opts->emile.scale_load.dst_w && opts->emile.scale_load.dst_h)
      {
         if (!_cserve2_cache_fast_scaling_check(client, ientry, client_file_id))
           return 0;

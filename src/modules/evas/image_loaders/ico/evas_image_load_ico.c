@@ -164,10 +164,10 @@ evas_image_load_file_head_ico(void *loader_data,
    //   more ?
 
    search = BIGGEST;
-   if ((opts->w > 0) && (opts->h > 0))
+   if ((opts->emile.w > 0) && (opts->emile.h > 0))
      {
-        wanted_w = opts->w;
-        wanted_h = opts->h;
+        wanted_w = opts->emile.w;
+        wanted_h = opts->emile.h;
         search = SMALLER;
      }
 
@@ -396,10 +396,10 @@ evas_image_load_file_data_ico(void *loader_data,
    //   more ?
 
    search = BIGGEST;
-   if ((opts->w > 0) && (opts->h > 0))
+   if ((opts->emile.w > 0) && (opts->emile.h > 0))
      {
-        wanted_w = opts->w;
-        wanted_h = opts->h;
+        wanted_w = opts->emile.w;
+        wanted_h = opts->emile.h;
         search = SMALLER;
      }
 

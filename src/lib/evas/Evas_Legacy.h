@@ -4068,6 +4068,31 @@ EAPI void evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down
 EAPI int evas_object_image_load_scale_down_get(const Evas_Object *obj);
 
 /**
+ * @brief Set a load option to skip initial header load and defer to preload
+ * 
+ * This is meant to be used in conjunction with evas_object_image_file_set()
+ * and evas_object_image_preload() by deferring any header loading until
+ * a evas_object_image_preload() is issued making the file file set simply
+ * set up the file to refer to without any validation of its type or
+ * file existence or even inspecting the image header to get size or alpha
+ * channel flags etc. All of this will then be done as part of the preload
+ * stage.
+ * 
+ * @since 1.19
+ */
+EAPI void evas_object_image_load_head_skip_set(Evas_Object *obj, Eina_Bool skip);
+
+/**
+ * @breif Get the load option to skip header loads before preload
+ * 
+ * This gets the heade skip value set by evas_object_image_load_head_skip_set()
+ * 
+ * @see evas_object_image_load_head_skip_set
+ * @since 1.19
+ */
+EAPI Eina_Bool evas_object_image_load_head_skip_get(const Evas_Object *obj);
+
+/**
  * @brief Retrieves a number representing any error that occurred during the
  * last loading of the given image object's source image.
  *
