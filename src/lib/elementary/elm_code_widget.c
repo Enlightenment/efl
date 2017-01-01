@@ -1261,8 +1261,8 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
    Elm_Code *code;
    Elm_Code_Line *line;
    Elm_Code_Widget_Change_Info *change;
-   unsigned int row, col, position, col_width, curlen, indent, count;
-   char *curtext, *leading;
+   unsigned int row, col, position, col_width, curlen, indent;
+   const char *curtext, *indent_text;
 
    _elm_code_widget_delete_selection(widget);
    code = elm_obj_code_widget_code_get(widget);
@@ -1276,29 +1276,18 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
      }
    if (text[0] == '}')
      {
-        curtext = (char *)elm_code_line_text_get(line, &curlen);
+        curtext = elm_code_line_text_get(line, &curlen);
 
-        count = 0;
-        while (count < curlen)
+        if (elm_code_text_is_whitespace(curtext, line->length))
           {
-             if (*curtext != ' ' && *curtext != '\t')
-               break;
-
-             count++;
-             curtext++;
-          }
-
-        if (count + 1 == col)
-          {
-             leading = elm_code_line_indent_matching_braces_get(line);
+             indent_text = elm_code_line_indent_matching_braces_get(line, &indent);
              elm_code_line_text_leading_whitespace_strip(line);
-             elm_code_line_text_insert(line, 0, leading, strlen(leading));
 
-             indent = elm_obj_code_widget_line_text_column_width_to_position(
-                widget, line, strlen(leading));
-             elm_obj_code_widget_cursor_position_set(widget, row, indent);
+             if (indent > 0)
+               elm_code_line_text_insert(line, 0, indent_text, indent);
+
+             elm_obj_code_widget_cursor_position_set(widget, row, indent + 1);
              elm_obj_code_widget_cursor_position_get(widget, &row, &col);
-             free(leading);
           }
      }
 
