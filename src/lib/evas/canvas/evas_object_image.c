@@ -2068,20 +2068,30 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                             bt = o->cur->border.t;
                             bb = o->cur->border.b;
                             // fix impossible border settings if img pixels not enough
-                            if ((bl + br) > imw)
+                            if ((bl + br) > 0)
                               {
-                                 if ((bl + br) > 0)
+                                 if ((bl + br) > imw)
                                    {
                                       bl = (bl * imw) / (bl + br);
                                       br = imw - bl;
                                    }
+                                 if ((bl + br) == imw)
+                                   {
+                                      if (bl < br) br--;
+                                      else bl--;
+                                   }
                               }
-                            if ((bt + bb) > imh)
+                            if ((bt + bb) > 0)
                               {
-                                 if ((bt + bb) > 0)
+                                 if ((bt + bb) > imh)
                                    {
                                       bt = (bt * imh) / (bt + bb);
                                       bb = imh - bt;
+                                   }
+                                 if ((bt + bb) == imh)
+                                   {
+                                      if (bt < bb) bb--;
+                                      else bt--;
                                    }
                               }
                             if (!EINA_DBL_CMP(o->cur->border.scale, 1.0))
