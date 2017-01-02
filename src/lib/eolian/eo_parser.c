@@ -1593,6 +1593,8 @@ propbeg:
              goto propend;
           }
 propend:
+        if (!has_get && !has_set)
+          eo_lexer_syntax_error(ls, "property implements need at least get or set specified");
         check_next(ls, '}');
      }
    else
