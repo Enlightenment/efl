@@ -26,53 +26,22 @@ eolian_implement_function_get(const Eolian_Implement *impl,
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, NULL);
 
-   if (impl->foo_id)
-     {
-        if (!func_type)
-          return impl->foo_id;
+   if (!impl->foo_id)
+     return NULL; /* normally unreachable */
 
-        if (impl->is_prop_get && impl->is_prop_set)
-          *func_type = EOLIAN_PROPERTY;
-        else if (impl->is_prop_get)
-          *func_type = EOLIAN_PROP_GET;
-        else if (impl->is_prop_set)
-          *func_type = EOLIAN_PROP_SET;
-        else
-          *func_type = eolian_function_type_get(impl->foo_id);
-
-        return impl->foo_id;
-     }
-
-   const Eolian_Class *klass = eolian_implement_class_get(impl);
-   if (!klass)
-     return NULL;
-
-   const char *func_name = impl->full_name + strlen(klass->full_name) + 1;
-
-   Eolian_Function_Type tp = EOLIAN_UNRESOLVED;
+   if (!func_type)
+     return impl->foo_id;
 
    if (impl->is_prop_get && impl->is_prop_set)
-     tp = EOLIAN_PROPERTY;
-   if (impl->is_prop_get)
-     tp = EOLIAN_PROP_GET;
+     *func_type = EOLIAN_PROPERTY;
+   else if (impl->is_prop_get)
+     *func_type = EOLIAN_PROP_GET;
    else if (impl->is_prop_set)
-     tp = EOLIAN_PROP_SET;
+     *func_type = EOLIAN_PROP_SET;
+   else
+     *func_type = eolian_function_type_get(impl->foo_id);
 
-   const Eolian_Function *fid = eolian_class_function_get_by_name(klass,
-                                                                  func_name,
-                                                                  tp);
-
-   if (func_type)
-     {
-        if (tp == EOLIAN_UNRESOLVED)
-          *func_type = eolian_function_type_get(fid);
-        else
-          *func_type = tp;
-     }
-
-   ((Eolian_Implement*)impl)->foo_id = fid;
-
-   return fid;
+   return impl->foo_id;
 }
 
 EAPI Eina_Bool
