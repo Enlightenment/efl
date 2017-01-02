@@ -543,7 +543,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Widget.on_focus;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.sub_object_del;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Widget.focused_item { get; }
       Elm.Widget.item_loop_enabled { get; set; }
       Elm.Layout.sub_object_add_enable;

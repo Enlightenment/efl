@@ -706,7 +706,7 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
+_elm_spinner_elm_widget_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    Evas_Event_Mouse_Wheel *mev = event_info;

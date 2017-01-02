@@ -1661,7 +1661,7 @@ _elm_code_widget_scroll_event_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED,
+_elm_code_widget_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED,
                                   Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;

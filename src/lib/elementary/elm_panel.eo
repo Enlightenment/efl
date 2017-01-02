@@ -80,7 +80,7 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Widget.focus_next;
       Elm.Widget.disable;
       Elm.Widget.access;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Widget.on_focus_region;
       Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }

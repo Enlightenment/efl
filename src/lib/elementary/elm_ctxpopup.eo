@@ -164,7 +164,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
       Elm.Widget.disable;
       Elm.Widget.translate;
       Elm.Widget.theme_apply;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Efl.Ui.Menu.selected_item { get; }
       Efl.Ui.Menu.first_item { get; }
       Efl.Ui.Menu.last_item { get; }

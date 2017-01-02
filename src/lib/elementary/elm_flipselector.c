@@ -513,7 +513,7 @@ _elm_flipselector_efl_ui_spin_value_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Da
 }
 
 EOLIAN static Eina_Bool
-_elm_flipselector_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_flipselector_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    (void) src;

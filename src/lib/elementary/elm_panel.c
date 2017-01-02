@@ -933,7 +933,7 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_elm_widget_event(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_panel_elm_widget_widget_event(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;

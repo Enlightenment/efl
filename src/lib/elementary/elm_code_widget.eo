@@ -270,7 +270,7 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Canvas.Group.group_add;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
    }

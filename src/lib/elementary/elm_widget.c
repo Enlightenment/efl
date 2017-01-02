@@ -1736,7 +1736,7 @@ _elm_widget_parent2_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Obj
 }
 
 EOLIAN static void
-_elm_widget_event_callback_add(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Event_Cb func, const void *data)
+_elm_widget_widget_event_callback_add(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Event_Cb func, const void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(func);
 
@@ -1752,7 +1752,7 @@ _elm_widget_event_callback_add(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, E
 }
 
 EOLIAN static void*
-_elm_widget_event_callback_del(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Event_Cb func, const void *data)
+_elm_widget_widget_event_callback_del(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Event_Cb func, const void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
    Eina_List *l;
@@ -1769,7 +1769,7 @@ _elm_widget_event_callback_del(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, E
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_event_propagate(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Callback_Type type, void *event_info, Evas_Event_Flags *event_flags)
+_elm_widget_widget_event_propagate(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Callback_Type type, void *event_info, Evas_Event_Flags *event_flags)
 {
    Evas_Object *parent = obj;
    Elm_Event_Cb_Data *ecd;
@@ -5898,7 +5898,7 @@ _elm_widget_disable(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *source EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
+_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *source EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    return EINA_FALSE;
 }

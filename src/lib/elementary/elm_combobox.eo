@@ -44,7 +44,7 @@ class Elm.Combobox (Elm.Button, Efl.Ui.Selectable,
       Elm.Widget.part_text { get; set; }
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Button.admits_autorepeat { get; }
       Elm.Genlist.filter { set; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }

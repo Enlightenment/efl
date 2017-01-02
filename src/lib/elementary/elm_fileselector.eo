@@ -41,7 +41,7 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_direction;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Layout.text { set; }

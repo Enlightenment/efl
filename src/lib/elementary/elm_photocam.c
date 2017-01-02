@@ -1024,7 +1024,7 @@ _key_action_zoom(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elm_photocam_elm_widget_event(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_photocam_elm_widget_widget_event(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    Evas_Event_Key_Down *ev = event_info;

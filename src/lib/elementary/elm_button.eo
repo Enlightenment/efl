@@ -81,7 +81,7 @@ class Elm.Button (Elm.Layout, Efl.Ui.Clickable,
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Layout.text_aliases { get; }
       Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;

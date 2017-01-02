@@ -555,7 +555,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Widget.focus_direction;
       Elm.Widget.on_focus;
       Elm.Widget.on_focus_region;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Widget.focus_highlight_geometry_get;
       Elm.Widget.focused_item { get; }
       Elm.Widget.item_loop_enabled { get; set; }

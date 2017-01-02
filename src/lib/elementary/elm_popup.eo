@@ -179,7 +179,7 @@ class Elm.Popup (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.widget_parent { set; }
       Elm.Widget.translate;
       Elm.Widget.sub_object_del;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Layout.text { get; set; }
       Elm.Layout.sizing_eval;
       Elm.Layout.signal_emit;

@@ -210,7 +210,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Widget.on_focus;
       Elm.Widget.translate;
       Elm.Widget.sub_object_del;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Interface_Scrollable.policy;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }

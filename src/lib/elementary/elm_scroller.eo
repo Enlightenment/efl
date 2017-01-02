@@ -72,7 +72,7 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction;
       Elm.Widget.sub_object_del;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Layout.sizing_eval;
       Elm.Interface_Scrollable.page_size { set; }
       Elm.Interface_Scrollable.policy { set; }

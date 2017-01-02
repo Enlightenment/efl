@@ -2127,7 +2127,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_colorselector_elm_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_colorselector_elm_widget_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    (void) src;

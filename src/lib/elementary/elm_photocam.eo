@@ -197,7 +197,7 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
       Efl.Canvas.Group.group_member_add;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Interface_Scrollable.region_bring_in;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.File.file { get; set; }

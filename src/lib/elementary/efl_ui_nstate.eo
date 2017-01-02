@@ -33,7 +33,7 @@ class Efl.Ui.Nstate(Elm.Button)
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
    }
    events {
       state,changed; [[Called when nstate widget changed]]

@@ -180,7 +180,7 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_focus;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Layout.text_aliases { get; }
       Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;

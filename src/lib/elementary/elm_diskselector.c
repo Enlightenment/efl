@@ -997,7 +997,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elm_diskselector_elm_widget_event(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_diskselector_elm_widget_widget_event(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down  *ev = event_info;
 

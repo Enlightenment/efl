@@ -512,8 +512,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          return: bool; [[$true on success, $false otherwise]]
          legacy: null;
       }
-      event {
+      widget_event {
          [['Virtual' function handling input events on the widget.]]
+         legacy: elm_widget_event;
          params {
             @in source: Efl.Canvas.Object; [[Source object]]
             @in type: Evas.Callback_Type; [[Callback type]]
@@ -521,8 +522,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      event_callback_add {
-      	 [[Add event callback]]
+      widget_event_callback_add {
+         [[Add event callback]]
+         legacy: elm_widget_event_callback_add;
          params {
             @in func: Elm_Event_Cb; [[Callback function]]
             @in data: const(void_ptr) @optional; [[Data pointer]]
@@ -541,8 +543,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             @in cur: ptr(Elm.Cursor); [[Cursor to be deleted]]
          }
       }
-      event_callback_del {
-      	 [[Delete event callback handler]]
+      widget_event_callback_del {
+         [[Delete event callback handler]]
+         legacy: elm_widget_event_callback_del;
          return: void_ptr; [[Handle to deleted callback]]
          params {
             @in func: Elm_Event_Cb; [[Callback handler]]
@@ -584,8 +587,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      event_propagate {
-      	 [[Propagate event]]
+      widget_event_propagate {
+         [[Propagate event]]
+         legacy: elm_widget_event_propagate;
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in type: Evas.Callback_Type; [[Event type]]

@@ -328,7 +328,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
       Elm.Widget.translate;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Widget.focus_highlight_geometry_get;
       Elm.Widget.focused_item { get; }
       Efl.Orientation.orientation;

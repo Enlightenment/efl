@@ -472,7 +472,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_combobox_elm_widget_event(Eo *obj, Elm_Combobox_Data *sd,
+_elm_combobox_elm_widget_widget_event(Eo *obj, Elm_Combobox_Data *sd,
                                Evas_Object *src EINA_UNUSED,
                                Evas_Callback_Type type, void *event_info)
 {

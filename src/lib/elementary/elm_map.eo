@@ -634,7 +634,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
       Efl.Canvas.Group.group_member_add;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {

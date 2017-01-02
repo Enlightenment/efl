@@ -445,7 +445,7 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
       Elm.Widget.on_focus;
       Elm.Widget.translate;
       Elm.Widget.sub_object_del;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Widget.focused_item { get; }
       Elm.Widget.item_loop_enabled { get; set; }
       Elm.Layout.sizing_eval;

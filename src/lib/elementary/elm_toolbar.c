@@ -940,7 +940,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_event(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_toolbar_elm_widget_widget_event(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    (void) type;

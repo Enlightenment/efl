@@ -1656,7 +1656,7 @@ _elm_calendar_elm_widget_on_focus(Eo *obj, Elm_Calendar_Data *sd, Elm_Object_Ite
 }
 
 EOLIAN static Eina_Bool
-_elm_calendar_elm_widget_event(Eo *obj, Elm_Calendar_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_calendar_elm_widget_widget_event(Eo *obj, Elm_Calendar_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    Evas_Event_Key_Down *ev = event_info;

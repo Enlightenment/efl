@@ -100,7 +100,7 @@ class Elm.Hoversel (Elm.Button, Efl.Ui.Selectable,
       Elm.Widget.widget_parent { set; }
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
-      Elm.Widget.event;
+      Elm.Widget.widget_event;
       Elm.Button.admits_autorepeat { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
