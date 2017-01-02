@@ -457,7 +457,8 @@ end:
      }
    if (!ie->f) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 
-   if (stat(ie->file, &st) == 0) _timestamp_build(&(ie->tstamp), &st);
+   if ((ie->file) && (stat(ie->file, &st) == 0))
+     _timestamp_build(&(ie->tstamp), &st);
 
    memset(&property, 0, sizeof (property));
    property.w = ie->w;
