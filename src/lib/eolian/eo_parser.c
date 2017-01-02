@@ -1536,15 +1536,16 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
    if (ls->t.token == '.')
      {
         if (!impl->is_auto && !impl->is_empty)
-          goto fullclass;
+          eo_lexer_syntax_error(ls, "class name expected");
         check_next(ls, '.');
         if (ls->t.token != TOK_VALUE)
           eo_lexer_syntax_error(ls, "name expected");
-        impl->full_name = eina_stringshare_printf(".%s", ls->t.value.s);
+        impl->full_name = eina_stringshare_printf("%s.%s",
+                                                  ls->tmp.kls->full_name,
+                                                  ls->t.value.s);
         eo_lexer_get(ls);
         goto propbeg;
      }
-fullclass:
    if (ls->t.token != TOK_VALUE)
      eo_lexer_syntax_error(ls, "class name expected");
    buf = push_strbuf(ls);
