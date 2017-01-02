@@ -527,6 +527,11 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
         EINA_LIST_FOREACH(copy, l, eo_child)
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
+             //FIXME: When object is deleted in the src_event_in list,
+             //the src_event_in list should be updated. But now there is no way.
+             //So add checking NULL logic, please delete it if you make a better way.
+             if (!child) continue;
+
              obj_pdata = _evas_object_pointer_data_get(pdata, child);
              if (!obj_pdata)
                {
@@ -602,6 +607,10 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
         EINA_LIST_FOREACH(copy, l, eo_child)
           {
              child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
+             //FIXME: When object is deleted in the src_event_in list,
+             //the src_event_in list should be updated. But now there is no way.
+             //So add checking NULL logic, please delete it if you make a better way.
+             if (!child) continue;
 
              obj_pdata = _evas_object_pointer_data_get(pdata, child);
              if (!obj_pdata)
@@ -815,6 +824,11 @@ _evas_event_source_wheel_events(Evas_Object *eo_obj, Evas *eo_e,
 
         if (src->delete_me) return;
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
+        //FIXME: When object is deleted in the src_event_in list,
+        //the src_event_in list should be updated. But now there is no way.
+        //So add checking NULL logic, please delete it if you make a better way.
+        if (!child) continue;
+
         obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)
           {
