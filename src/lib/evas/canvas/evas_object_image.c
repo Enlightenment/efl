@@ -350,12 +350,14 @@ _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Dat
      {
         int w, h;
         int stride;
+        Evas_Image_Orient orient;
 
         ENFN->image_size_get(ENDT, o->engine_data, &w, &h);
         if (ENFN->image_stride_get)
           ENFN->image_stride_get(ENDT, o->engine_data, &stride);
         else
           stride = w * 4;
+        orient = ENFN->image_orient_get(ENDT, o->engine_data);
 
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
           {
@@ -368,6 +370,7 @@ _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Dat
              state_write->image.w = w;
              state_write->image.h = h;
              state_write->image.stride = stride;
+             state_write->orient = orient;
           }
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
@@ -387,6 +390,7 @@ _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Dat
              state_write->image.w = 0;
              state_write->image.h = 0;
              state_write->image.stride = 0;
+             state_write->orient = EVAS_IMAGE_ORIENT_NONE;
           }
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
