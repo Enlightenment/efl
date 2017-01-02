@@ -24,7 +24,7 @@ mixin Efl.Ui.Focus.Object
     }
     implements {
         @empty .geometry_get;
-        @empty .focus.get;
+        @empty .focus { get; }
     }
     events {
         focus,changed : bool; [[Emitted if the focus state has changed]]

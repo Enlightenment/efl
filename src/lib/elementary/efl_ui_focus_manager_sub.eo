@@ -17,6 +17,6 @@ class Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Object)
     implements {
         Efl.Object.constructor;
         Efl.Object.destructor;
-        Efl.Object.parent.set;
+        Efl.Object.parent { set; }
     }
 }
