@@ -4346,7 +4346,8 @@ elm_main(int    argc,
 
         web_backend = elm_object_text_get(web_backend_entry);
         fprintf(stderr, "[%s] vs [%s]\n", web_backend, web_backend_set);
-        if (strcmp(web_backend, web_backend_set))
+        if (web_backend_set != web_backend ||
+           (web_backend && web_backend_set && !!strcmp(web_backend, web_backend_set)))
           {
              elm_config_web_backend_set(web_backend);
              fprintf(stderr, "web backend set to : [%s]\n", elm_config_web_backend_get());
