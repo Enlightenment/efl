@@ -1069,7 +1069,7 @@ compile(void)
 
              inc = ecore_file_dir_get(file_in);
              if (depfile)
-               snprintf(buf, sizeof(buf), "%s -MMD \"%s\" -MT \"%s\" \"%s\""
+               snprintf(buf, sizeof(buf), "\"%s\" -MMD \"%s\" -MT \"%s\" \"%s\""
                         " -I\"%s\" \"%s\" -o \"%s\""
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
@@ -1077,7 +1077,7 @@ compile(void)
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else if (annotate)
-               snprintf(buf, sizeof(buf), "%s -annotate -a \"%s\" \"%s\""
+               snprintf(buf, sizeof(buf), "\"%s\" -annotate -a \"%s\" \"%s\""
                         " -I\"%s\" \"%s\" -o \"%s\""
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
@@ -1085,8 +1085,8 @@ compile(void)
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else
-               snprintf(buf, sizeof(buf), "%s -a \"%s\" \"%s\" -I\"%s\" \"%s\""
-                        " -o \"%s\""
+               snprintf(buf, sizeof(buf), "\"%s\" -a \"%s\" \"%s\" -I\"%s\""
+                        " \"%s\" -o \"%s\""
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
