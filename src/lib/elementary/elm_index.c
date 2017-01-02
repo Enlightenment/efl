@@ -58,7 +58,7 @@ _box_custom_layout(Evas_Object *o,
                    Evas_Object_Box_Data *priv,
                    void *data)
 {
-   Elm_Index_Data *sd = data;
+   ELM_INDEX_DATA_GET(data, sd);
    Eina_Bool horizontal;
 
    if (sd->orientation == EFL_ORIENT_HORIZONTAL)
@@ -66,7 +66,7 @@ _box_custom_layout(Evas_Object *o,
    else
      horizontal = EINA_FALSE;
 
-   _els_box_layout(o, priv, horizontal, EINA_TRUE, EINA_FALSE);
+   _els_box_layout(o, priv, horizontal, EINA_TRUE, elm_widget_mirrored_get(data));
 }
 
 static void
@@ -469,7 +469,7 @@ _elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
           {
              sd->bx[1] = evas_object_box_add(evas_object_evas_get(obj));
              evas_object_box_layout_set
-               (sd->bx[1], _box_custom_layout, sd, NULL);
+               (sd->bx[1], _box_custom_layout, obj, NULL);
              elm_widget_sub_object_add(obj, sd->bx[1]);
           }
         elm_layout_content_set(obj, "elm.swallow.index.1", sd->bx[1]);
@@ -1096,7 +1096,7 @@ _elm_index_efl_canvas_group_group_add(Eo *obj, Elm_Index_Data *priv)
      }
 
    priv->bx[0] = evas_object_box_add(evas_object_evas_get(obj));
-   evas_object_box_layout_set(priv->bx[0], _box_custom_layout, priv, NULL);
+   evas_object_box_layout_set(priv->bx[0], _box_custom_layout, obj, NULL);
    elm_layout_content_set(obj, "elm.swallow.index.0", priv->bx[0]);
    evas_object_show(priv->bx[0]);
 
@@ -1107,7 +1107,7 @@ _elm_index_efl_canvas_group_group_add(Eo *obj, Elm_Index_Data *priv)
      {
         priv->bx[1] = evas_object_box_add(evas_object_evas_get(obj));
         evas_object_box_layout_set
-          (priv->bx[1], _box_custom_layout, priv, NULL);
+          (priv->bx[1], _box_custom_layout, obj, NULL);
         elm_widget_sub_object_add(obj, priv->bx[1]);
         elm_layout_content_set(obj, "elm.swallow.index.1", priv->bx[1]);
         evas_object_show(priv->bx[1]);
