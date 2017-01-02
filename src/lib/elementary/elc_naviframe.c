@@ -1132,15 +1132,16 @@ _on_item_pop_finished(void *data,
                       const char *source EINA_UNUSED)
 {
    Elm_Naviframe_Item_Data *it = data;
-   Elm_Naviframe_Item_Data *prev_it = NULL;
+   Elm_Object_Item *eo_prev_it = NULL;
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
-   if (sd->stack && sd->stack->last)
+   eo_prev_it = elm_naviframe_top_item_get(WIDGET(it));
+   if (eo_prev_it)
      {
-        prev_it = EINA_INLIST_CONTAINER_GET
-           (sd->stack->last, Elm_Naviframe_Item_Data);
-        _resize_object_reset(WIDGET(it), prev_it);
+        ELM_NAVIFRAME_ITEM_DATA_GET(eo_prev_it, prev_it);
+
+        evas_object_raise(VIEW(prev_it));
      }
 
    if (sd->preserve)
@@ -1812,6 +1813,8 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
              evas_object_freeze_events_set(VIEW(it), EINA_TRUE);
              evas_object_freeze_events_set(VIEW(prev_it), EINA_TRUE);
           }
+
+        elm_widget_resize_object_set(obj, VIEW(prev_it), EINA_FALSE);
 
         /* these 2 signals MUST take place simultaneously */
         elm_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
