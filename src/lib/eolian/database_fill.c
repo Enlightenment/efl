@@ -190,9 +190,21 @@ _db_fill_implements(Eolian_Class *cl)
    Eolian_Function *foo_id;
    Eina_List *l;
 
+   Eina_Hash *th = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(cl->implements, l, impl)
-     if (!_db_fill_implement(cl, impl))
-       return EINA_FALSE;
+     {
+        if (eina_hash_find(th, impl->full_name))
+          {
+             fprintf(stderr, "eolian:%s:%d:%d: duplicate implement '%s'\n",
+                     impl->base.file, impl->base.line, impl->base.column,
+                     impl->full_name);
+             return EINA_FALSE;
+          }
+        if (!_db_fill_implement(cl, impl))
+          return EINA_FALSE;
+        eina_hash_add(th, impl->full_name, impl->full_name);
+     }
+   eina_hash_free(th);
 
    EINA_LIST_FOREACH(cl->properties, l, foo_id)
      _db_build_implement(cl, foo_id);

@@ -963,8 +963,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Efl.Canvas.object_top_at_xy_get;
       Efl.Canvas.objects_in_rectangle_get;
       Efl.Canvas.object_top_in_rectangle_get;
-      Efl.Container.content { set; }
-      Efl.Container.content { get; }
+      Efl.Container.content { get; set; }
       Efl.Container.content_unset;
       Efl.Part.part;
    }

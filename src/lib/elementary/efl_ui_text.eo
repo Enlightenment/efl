@@ -416,11 +416,10 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Widget.focus_next_manager_is;
       Elm.Layout.theme_enable;
       Elm.Layout.sizing_eval;
-      Elm.Layout.text { get; }
+      Elm.Layout.text { get; set; }
       Elm.Layout.signal_callback_add;
       Elm.Layout.signal_callback_del;
       Elm.Layout.signal_emit;
-      Elm.Layout.text { set; }
       Elm.Layout.content_aliases { get; }
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.bounce_allow { set; }
@@ -438,11 +437,10 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Interface.Atspi.Text.offset_at_point { get; }
       Elm.Interface.Atspi.Text.bounded_ranges { get; }
       Elm.Interface.Atspi.Text.range_extents { get; }
-      Elm.Interface.Atspi.Text.selection { get; }
+      Elm.Interface.Atspi.Text.selection { get; set; }
       Elm.Interface.Atspi.Text.selections_count { get; }
       Elm.Interface.Atspi.Text.selection_add;
       Elm.Interface.Atspi.Text.selection_remove;
-      Elm.Interface.Atspi.Text.selection { set; }
       Elm.Interface.Atspi.Text.Editable.content { set; }
       Elm.Interface.Atspi.Text.Editable.insert;
       Elm.Interface.Atspi.Text.Editable.copy;
