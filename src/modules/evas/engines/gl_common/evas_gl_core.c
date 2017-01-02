@@ -234,19 +234,26 @@ _texture_allocate_2d(GLuint tex, GLint ifmt, GLenum fmt, GLenum type, int w, int
 {
    //if (!(*tex))
    //   glGenTextures(1, tex);
+   GLint curr_tex = 0;
+   glGetIntegerv(GL_TEXTURE_BINDING_2D, &curr_tex);
+
    glBindTexture(GL_TEXTURE_2D, tex);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexImage2D(GL_TEXTURE_2D, 0, ifmt, w, h, 0, fmt, type, NULL);
-   glBindTexture(GL_TEXTURE_2D, 0);
+   glBindTexture(GL_TEXTURE_2D, (GLuint)curr_tex);
 }
 
 // Destroy Texture
 static void
 _texture_destroy(GLuint *tex)
 {
+   GLint curr_tex = 0;
+   glGetIntegerv(GL_TEXTURE_BINDING_2D, &curr_tex);
+
+   if ((GLuint)curr_tex == *tex) glBindTexture(GL_TEXTURE_2D, 0);
    if (*tex)
      {
         glDeleteTextures(1, tex);
