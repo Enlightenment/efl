@@ -4191,8 +4191,11 @@ _elm_config_accel_preference_parse(const char *pref, Eina_Stringshare **accel,
    DBG("gl depth: %d", *gl_depth);
    DBG("gl stencil: %d", *gl_stencil);
    DBG("gl msaa: %d", *gl_msaa);
-   free(arr[0]);
-   free(arr);
+   if (arr)
+     {
+        free(arr[0]);
+        free(arr);
+     }
 
    return is_hw_accel;
 }
