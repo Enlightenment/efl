@@ -655,19 +655,6 @@ database_class_to_filename(const char *cname)
    return ret;
 }
 
-const Eolian_Class *
-database_object_class_fill(const char *class_name, const Eolian_Class **cl)
-{
-   if (*cl) return *cl;
-   char *name = strdup(class_name);
-   char *ldot = strrchr(name + 1, '.');
-   if (ldot) *ldot = '\0';
-   const Eolian_Class *found = eolian_class_get_by_name(name);
-   *cl = found;
-   free(name);
-   return found;
-}
-
 static Eina_Bool
 _eolian_file_parse_nodep(const char *filepath)
 {

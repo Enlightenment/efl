@@ -204,9 +204,44 @@ _db_fill_implements(Eolian_Class *cl)
 }
 
 static Eina_Bool
+_db_fill_ctors(Eolian_Class *cl)
+{
+   Eolian_Constructor *ctor;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(cl->constructors, l, ctor)
+     {
+        const char *ldot = strrchr(ctor->full_name, '.');
+        if (!ldot)
+          return EINA_FALSE;
+        char *cnbuf = alloca(ldot - ctor->full_name + 1);
+        memcpy(cnbuf, ctor->full_name, ldot - ctor->full_name);
+        cnbuf[ldot - ctor->full_name] = '\0';
+        const Eolian_Class *tcl = NULL;
+        /* referencing self */
+        if (!strcmp(cnbuf, cl->full_name))
+          tcl = cl;
+        else
+          tcl = eolian_class_get_by_name(cnbuf);
+        if (!tcl)
+          {
+             fprintf(stderr, "eolian:%s:%d:%d: class not found for ctor '%s'\n",
+                ctor->base.file, ctor->base.line, ctor->base.column, ctor->full_name);
+             return EINA_FALSE;
+          }
+        ctor->klass = tcl;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _db_fill_class(Eolian_Class *cl)
 {
    if (!_db_fill_implements(cl))
+     return EINA_FALSE;
+
+   if (!_db_fill_ctors(cl))
      return EINA_FALSE;
 
    eina_hash_set(_classes, cl->full_name, cl);

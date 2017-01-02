@@ -16,8 +16,7 @@ EAPI const Eolian_Class *
 eolian_implement_class_get(const Eolian_Implement *impl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, NULL);
-   Eolian_Implement *mimpl = (Eolian_Implement *)impl;
-   return database_object_class_fill(impl->full_name, &mimpl->klass);
+   return impl->klass;
 }
 
 EAPI const Eolian_Function *

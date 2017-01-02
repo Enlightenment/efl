@@ -16,8 +16,7 @@ EAPI const Eolian_Class *
 eolian_constructor_class_get(const Eolian_Constructor *ctor)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctor, NULL);
-   Eolian_Constructor *mctor = (Eolian_Constructor *)ctor;
-   return database_object_class_fill(ctor->full_name, &mctor->klass);
+   return ctor->klass;
 }
 
 EAPI const Eolian_Function *
