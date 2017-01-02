@@ -4,6 +4,14 @@
 
 #include "eo_parser.h"
 
+const Eolian_Class *
+_get_impl_class(const Eolian_Class *cl, const char *cln)
+{
+   if (!strcmp(cl->full_name, cln))
+     return cl;
+   return eolian_class_get_by_name(cln);
+}
+
 static Eina_Bool
 _func_error(Eolian_Class *cl, Eolian_Implement *impl)
 {
@@ -14,7 +22,7 @@ _func_error(Eolian_Class *cl, Eolian_Implement *impl)
 }
 
 static Eina_Bool
-_get_impl_func(Eolian_Class *cl EINA_UNUSED, Eolian_Implement *impl,
+_get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
                Eolian_Function_Type ftype, Eolian_Function **foo_id)
 {
    size_t imlen = strlen(impl->full_name);
@@ -29,7 +37,7 @@ _get_impl_func(Eolian_Class *cl EINA_UNUSED, Eolian_Implement *impl,
    const char *clname = clbuf;
    const char *fnname = ldot + 1;
 
-   const Eolian_Class *tcl = eolian_class_get_by_name(clname);
+   const Eolian_Class *tcl = _get_impl_class(cl, clname);
    if (!tcl)
      return EINA_FALSE;
 
@@ -45,17 +53,6 @@ _get_impl_func(Eolian_Class *cl EINA_UNUSED, Eolian_Implement *impl,
    return EINA_TRUE;
 }
 
-static void
-_write_impl(Eolian_Function *fid, Eolian_Function_Type ftype,
-            Eolian_Implement *impl)
-{
-   if (ftype == EOLIAN_PROP_GET)
-     fid->get_impl = impl;
-   else if (ftype == EOLIAN_PROP_SET)
-     fid->set_impl = impl;
-   else
-     fid->get_impl = fid->set_impl = impl;
-}
 
 static Eina_Bool
 _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
@@ -74,17 +71,41 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
      {
         if (!_get_impl_func(cl, impl, ftype, &foo_id))
           return _func_error(cl, impl);
-        foo_id->get_auto = impl->is_prop_get;
-        foo_id->set_auto = impl->is_prop_set;
-        _write_impl(foo_id, ftype, impl);
+        if (ftype == EOLIAN_PROP_GET)
+          {
+             foo_id->get_impl = impl;
+             foo_id->get_auto = EINA_TRUE;
+          }
+        else if (ftype == EOLIAN_PROP_SET)
+          {
+             foo_id->set_impl = impl;
+             foo_id->set_auto = EINA_TRUE;
+          }
+        else
+          {
+             foo_id->get_impl = foo_id->set_impl = impl;
+             foo_id->get_auto = foo_id->set_auto = EINA_TRUE;
+          }
      }
    else if (impl->is_empty)
      {
         if (!_get_impl_func(cl, impl, ftype, &foo_id))
           return _func_error(cl, impl);
-        foo_id->get_empty = impl->is_prop_get;
-        foo_id->set_empty = impl->is_prop_set;
-        _write_impl(foo_id, ftype, impl);
+        if (ftype == EOLIAN_PROP_GET)
+          {
+             foo_id->get_impl = impl;
+             foo_id->get_empty = EINA_TRUE;
+          }
+        else if (ftype == EOLIAN_PROP_SET)
+          {
+             foo_id->set_impl = impl;
+             foo_id->set_empty = EINA_TRUE;
+          }
+        else
+          {
+             foo_id->get_impl = foo_id->set_impl = impl;
+             foo_id->get_empty = foo_id->set_empty = EINA_TRUE;
+          }
      }
    else if (!_get_impl_func(cl, impl, ftype, &foo_id))
      return _func_error(cl, impl);
@@ -229,12 +250,7 @@ _db_fill_ctors(Eolian_Class *cl)
         char *cnbuf = alloca(ldot - ctor->full_name + 1);
         memcpy(cnbuf, ctor->full_name, ldot - ctor->full_name);
         cnbuf[ldot - ctor->full_name] = '\0';
-        const Eolian_Class *tcl = NULL;
-        /* referencing self */
-        if (!strcmp(cnbuf, cl->full_name))
-          tcl = cl;
-        else
-          tcl = eolian_class_get_by_name(cnbuf);
+        const Eolian_Class *tcl = _get_impl_class(cl, cnbuf);
         if (!tcl)
           {
              fprintf(stderr, "eolian:%s:%d:%d: class not found for ctor '%s'\n",
