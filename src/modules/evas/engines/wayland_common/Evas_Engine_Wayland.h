@@ -27,7 +27,6 @@ struct _Evas_Engine_Info_Wayland
    Evas_Engine_Render_Mode render_mode;
    Evas *evas;
 
-   Eina_Bool vsync : 1;
    Eina_Bool indirect : 1;
 
    Eina_Bool www_avail : 1;

@@ -516,13 +516,6 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_
    eng_window_use(ob);
    glsym_evas_gl_common_context_done(ob->gl_context);
 
-   if (!ob->vsync)
-     {
-        if (ob->info->vsync) eglSwapInterval(ob->egl_disp, 1);
-        else eglSwapInterval(ob->egl_disp, 0);
-        ob->vsync = EINA_TRUE;
-     }
-
    if ((glsym_eglSwapBuffersWithDamage) && (surface_damage) &&
        (ob->swap_mode != MODE_FULL))
      {
