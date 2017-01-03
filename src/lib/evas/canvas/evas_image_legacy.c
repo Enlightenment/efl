@@ -593,7 +593,11 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
    else
      {
         if (o->engine_data)
-          ENFN->image_free(ENDT, o->engine_data);
+          {
+             ENFN->image_free(ENDT, o->engine_data);
+             o->changed = EINA_TRUE;
+             evas_object_change(eo_obj, obj);
+          }
         o->load_error = EVAS_LOAD_ERROR_NONE;
         if ((o->cur->image.w != 0) || (o->cur->image.h != 0))
           resize_call = EINA_TRUE;
