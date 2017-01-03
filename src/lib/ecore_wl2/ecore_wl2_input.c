@@ -35,7 +35,6 @@ typedef struct _Ecore_Wl2_Mouse_Down_Info
 static Eina_Inlist *_ecore_wl2_mouse_down_info_list = NULL;
 
 static void _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state);
-static void _pointer_cb_frame(void *data, struct wl_callback *callback, unsigned int timestamp EINA_UNUSED);
 
 static Ecore_Wl2_Mouse_Down_Info *
 _ecore_wl2_input_mouse_down_info_get(int device)
@@ -723,38 +722,6 @@ static const struct wl_pointer_listener _pointer_listener =
    NULL, /* axis_discrete */
 };
 
-static const struct wl_callback_listener _pointer_surface_listener =
-{
-   _pointer_cb_frame
-};
-
-static void
-_pointer_cb_frame(void *data, struct wl_callback *callback, unsigned int timestamp EINA_UNUSED)
-{
-   Ecore_Wl2_Input *input;
-
-   input = data;
-   if (!input) return;
-
-   if (callback)
-     {
-        if ((input->cursor.frame_cb) &&
-            (callback != input->cursor.frame_cb)) return;
-        wl_callback_destroy(callback);
-        input->cursor.frame_cb = NULL;
-     }
-
-   if ((!input->cursor.frame_cb) && (input->cursor.surface))
-     {
-        input->cursor.frame_cb = wl_surface_frame(input->cursor.surface);
-        if (input->cursor.frame_cb)
-          wl_callback_add_listener(input->cursor.frame_cb,
-                                   &_pointer_surface_listener, input);
-        else
-          WRN("Failed to create surface frame callback for cursor surface");
-     }
-}
-
 static void
 _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int format, int fd, unsigned int size)
 {
@@ -1332,9 +1299,6 @@ _ecore_wl2_input_cursor_update(void *data)
      wl_pointer_set_cursor(input->wl.pointer, input->pointer.enter_serial,
                            input->cursor.surface,
                            input->cursor.hot_x, input->cursor.hot_y);
-
-   if (input->cursor.surface && (!input->cursor.frame_cb))
-     _pointer_cb_frame(input, NULL, 0);
 
    return ECORE_CALLBACK_RENEW;
 }
