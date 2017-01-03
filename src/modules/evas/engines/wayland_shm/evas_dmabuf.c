@@ -305,7 +305,11 @@ _buffer_manager_get(void)
    int fd;
    Eina_Bool success = EINA_FALSE;
 
-   if (buffer_manager) return buffer_manager;
+   if (buffer_manager)
+     {
+        buffer_manager->refcount++;
+        return buffer_manager;
+     }
 
    buffer_manager = calloc(1, sizeof(Buffer_Manager));
    if (!buffer_manager) goto err_alloc;
@@ -411,12 +415,15 @@ _fallback(Dmabuf_Surface *s, int w, int h)
 {
    Evas_Public_Data *epd;
    Dmabuf_Buffer *b;
-   Surface *surf = s->surface;
+   Surface *surf;
    Eina_Bool recovered;
    unsigned char *new_data, *old_data;
    int y;
 
    dmabuf_totally_hosed = EINA_TRUE;
+   surf = s->surface;
+   if (!surf) goto out;
+
    recovered = _evas_surface_init(surf, w, h, s->nbuf);
    if (!recovered)
      {
@@ -704,8 +711,6 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    struct zwp_linux_buffer_params_v1 *dp;
    uint32_t flags = 0;
 
-   if (!_buffer_manager_get()) return NULL;
-
    out = calloc(1, sizeof(Dmabuf_Buffer));
    if (!out) return NULL;
 
@@ -759,9 +764,8 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    if (dmabuf_totally_hosed) return EINA_FALSE;
 
    if (!s->info->info.wl_dmabuf) return EINA_FALSE;
-   if (!_buffer_manager_get()) return EINA_FALSE;
 
-   if (!(s->surf.dmabuf = calloc(1, sizeof(Dmabuf_Surface)))) goto err;
+   if (!(s->surf.dmabuf = calloc(1, sizeof(Dmabuf_Surface)))) return EINA_FALSE;
    surf = s->surf.dmabuf;
 
    surf->surface = s;
@@ -776,13 +780,16 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    surf->buffer = calloc(surf->nbuf, sizeof(Dmabuf_Buffer *));
    if (!surf->buffer) goto err;
 
+   if (!_buffer_manager_get()) goto err;
+
    for (i = 0; i < num_buff; i++)
      {
         surf->buffer[i] = _evas_dmabuf_buffer_init(surf, w, h);
         if (!surf->buffer[i])
           {
              ERR("Could not create buffers");
-             goto err;
+             /* _init() handled surface cleanup when it failed */
+             return EINA_FALSE;
           }
      }
 
@@ -796,6 +803,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    return EINA_TRUE;
 
 err:
-   if (surf) _fallback(surf, w, h);
+   if (surf) free(surf->buffer);
+   free(surf);
    return EINA_FALSE;
 }
