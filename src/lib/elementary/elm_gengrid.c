@@ -4489,11 +4489,46 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
   return it;
 }
 
-/* common layout sizing won't apply here */
 EOLIAN static void
-_elm_gengrid_elm_layout_sizing_eval(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *_pd EINA_UNUSED)
+_elm_gengrid_elm_layout_sizing_eval(Eo *obj, Elm_Gengrid_Data *sd)
 {
-   return;  /* no-op */
+   Evas_Coord minw = 0, minh = 0, maxw = -1, maxh = -1, vw = 0, vh = 0;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   evas_object_size_hint_min_get(obj, &minw, &minh);
+   evas_object_size_hint_max_get(obj, &maxw, &maxh);
+   edje_object_size_min_calc(wd->resize_obj, &vw, &vh);
+
+   if (sd->scr_minw)
+     {
+        maxw = -1;
+        minw = vw + sd->minw;
+     }
+   if (sd->scr_minh)
+     {
+        maxh = -1;
+        minh = vh + sd->minh;
+     }
+
+   if ((maxw > 0) && (minw > maxw))
+     minw = maxw;
+   if ((maxh > 0) && (minh > maxh))
+     minh = maxh;
+
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, maxw, maxh);
+}
+
+static void
+_content_min_limit_cb(Evas_Object *obj, Eina_Bool w, Eina_Bool h)
+{
+   ELM_GENGRID_DATA_GET(obj, sd);
+
+   sd->scr_minw = !!w;
+   sd->scr_minh = !!h;
+
+   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -4543,6 +4578,7 @@ _elm_gengrid_efl_canvas_group_group_add(Eo *obj, Elm_Gengrid_Data *priv)
    elm_interface_scrollable_edge_bottom_cb_set(obj, _edge_bottom_cb);
    elm_interface_scrollable_scroll_cb_set(obj, _scroll_cb);
    elm_interface_scrollable_page_change_cb_set(obj, _scroll_page_change_cb);
+   elm_interface_scrollable_content_min_limit_cb_set(obj, _content_min_limit_cb);
 
    priv->align_x = 0.5;
    priv->align_y = 0.5;

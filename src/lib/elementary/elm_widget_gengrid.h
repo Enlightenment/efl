@@ -146,6 +146,9 @@ struct _Elm_Gengrid_Data
    unsigned int                       *custom_tot_sum; /* array to store total sum of all widths or heights. this is used for item alignment calculations. */
    unsigned int                       custom_tot_max; /* maximum of the total sums over all rows or columns. this is also used for item alignment calculations. */
    unsigned int                       custom_alloc_size; /* amount of memory allocated to above dynamic arrays in terms of number of rows or columns. */
+
+   Eina_Bool                          scr_minw;
+   Eina_Bool                          scr_minh;
 };
 
 struct Elm_Gen_Item_Type
