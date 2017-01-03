@@ -41,11 +41,17 @@ nosigint(int val EINA_UNUSED)
 EAPI int
 ecore_fb_init(const char *name)
 {
+   const char *s;
+
    if (++_ecore_fb_init_count != 1)
       return _ecore_fb_init_count;
 
-   if (!ecore_fb_vt_init())
-      return --_ecore_fb_init_count;
+   s = getenv("ECORE_FB_NO_VT");
+   if ((!s) || (atoi(s) == 0))
+     {
+        if (!ecore_fb_vt_init())
+          return --_ecore_fb_init_count;
+     }
 
    if (!oldhand)
      {
@@ -69,6 +75,8 @@ ecore_fb_init(const char *name)
 EAPI int
 ecore_fb_shutdown(void)
 {
+   const char *s;
+
    if (--_ecore_fb_init_count != 0)
       return _ecore_fb_init_count;
 
@@ -77,8 +85,12 @@ ecore_fb_shutdown(void)
         signal(SIGINT, oldhand);
         oldhand = NULL;
      }
-   
-   ecore_fb_vt_shutdown();
+
+   s = getenv("ECORE_FB_NO_VT");
+   if ((!s) || (atoi(s) == 0))
+     {
+        ecore_fb_vt_shutdown();
+     }
 
    return _ecore_fb_init_count;
 }
