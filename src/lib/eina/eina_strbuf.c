@@ -220,6 +220,17 @@ eina_strbuf_substr_get(Eina_Strbuf *buf, size_t pos, size_t len)
    return eina_strbuf_manage_new(str);
 }
 
+EAPI char*
+eina_strbuf_free_return(Eina_Strbuf *buf)
+{
+   char *result;
+
+   result = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+
+   return result;
+}
+
 /* Unicode */
 
 #include "eina_strbuf_template_c.x"

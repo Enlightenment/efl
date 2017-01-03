@@ -718,6 +718,19 @@ EAPI Eina_Slice eina_strbuf_slice_get(const Eina_Strbuf *buf) EINA_WARN_UNUSED_R
  */
 EAPI Eina_Rw_Slice eina_strbuf_rw_slice_get(const Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
+
+/**
+ * @brief Get the string of the buffer and free the buffer
+ *
+ * @param buf the buffer to get the string from and which will be freed
+ *
+ * @return The string contained by bug. The caller must release the memory of the returned string by calling
+ * free().
+ *
+ * @since 1.19
+ */
+EAPI char* eina_strbuf_free_return(Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
 /**
  * @}
  */
