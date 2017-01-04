@@ -360,7 +360,6 @@ struct _Ecore_Wl2_Input
         const char *name;
         unsigned int size;
         struct wl_surface *surface;
-        struct wl_callback *frame_cb;
         int hot_x, hot_y;
      } cursor;
 
@@ -455,7 +454,6 @@ void _ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, uns
 
 void _ecore_wl2_input_cursor_set(Ecore_Wl2_Input *input, const char *cursor);
 Eina_Bool _ecore_wl2_input_cursor_update(void *data);
-void _ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input);
 void _ecore_wl2_input_window_remove(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window);
 
 void _ecore_wl2_dnd_add(Ecore_Wl2_Input *input, struct wl_data_offer *offer);

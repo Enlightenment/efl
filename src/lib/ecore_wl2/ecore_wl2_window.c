@@ -1240,8 +1240,6 @@ ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surfac
    input = ecore_wl2_window_input_get(window);
    if (!input) return;
 
-   _ecore_wl2_input_cursor_update_stop(input);
-
    input->cursor.surface = surface;
    input->cursor.hot_x = hot_x;
    input->cursor.hot_y = hot_y;

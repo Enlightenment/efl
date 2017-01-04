@@ -1459,8 +1459,6 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 
    if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
 
-   _ecore_wl2_input_cursor_update_stop(input);
-
    if (input->cursor.name) eina_stringshare_del(input->cursor.name);
 
    if (input->data.types.data)
@@ -1498,20 +1496,8 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 void
 _ecore_wl2_input_cursor_set(Ecore_Wl2_Input *input, const char *cursor)
 {
-   _ecore_wl2_input_cursor_update_stop(input);
-
    eina_stringshare_replace(&input->cursor.name, cursor);
    if (!cursor) eina_stringshare_replace(&input->cursor.name, "left_ptr");
-}
-
-void
-_ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input)
-{
-   if (input->cursor.frame_cb)
-     {
-        wl_callback_destroy(input->cursor.frame_cb);
-        input->cursor.frame_cb = NULL;
-     }
 }
 
 void
