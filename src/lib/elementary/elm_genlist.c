@@ -4533,6 +4533,8 @@ newblock:
                        itbp->items = eina_list_append(itbp->items, it2);
                        it2->item->block = itbp;
                        itbp->count++;
+
+                       if (it2->realized) itbp->realized = EINA_TRUE;
                     }
 
                   done = EINA_TRUE;
@@ -4558,6 +4560,8 @@ newblock:
                        itbn->items = eina_list_prepend(itbn->items, it2);
                        it2->item->block = itbn;
                        itbn->count++;
+
+                       if (it2->realized) itbn->realized = EINA_TRUE;
                     }
 
                   done = EINA_TRUE;
@@ -4586,6 +4590,8 @@ newblock:
                   itb2->items = eina_list_prepend(itb2->items, it2);
                   it2->item->block = itb2;
                   itb2->count++;
+
+                  if (it2->realized) itb2->realized = EINA_TRUE;
                }
           }
      }
