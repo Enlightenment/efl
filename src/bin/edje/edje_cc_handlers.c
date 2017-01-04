@@ -6303,7 +6303,6 @@ st_collections_group_program_remove(void)
         success |= _program_remove(name, pc->programs.strrncmp, pc->programs.strrncmp_count);
         success |= _program_remove(name, pc->programs.nocmp, pc->programs.nocmp_count);
 
-        copied_program_lookup_delete(pc, name);
         if (anonymous_delete)
           {
              copied_program_anonymous_lookup_delete(pc, anonymous_delete);
