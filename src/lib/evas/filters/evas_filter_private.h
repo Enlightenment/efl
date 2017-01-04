@@ -116,6 +116,7 @@ struct _Evas_Filter_Context
    Eina_List *buffers; // Evas_Filter_Buffer *
    int last_buffer_id;
    int last_command_id;
+   int context_id; // used by textblock
 
    // Variables changing at each run
    int w, h; // Dimensions of the input/output buffers

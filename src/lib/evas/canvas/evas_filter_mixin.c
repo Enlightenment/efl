@@ -278,7 +278,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
              _evas_filter_state_set_internal(pd->data->chain, pd);
           }
 
-        filter = evas_filter_context_new(obj->layer->evas, do_async);
+        filter = evas_filter_context_new(obj->layer->evas, do_async, 0);
 
         // Run script
         ok = evas_filter_context_program_use(filter, pd->data->chain);

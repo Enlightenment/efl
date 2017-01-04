@@ -49,7 +49,7 @@ _evas_image_get(Ector_Buffer *buf)
 /* Main functions */
 
 Evas_Filter_Context *
-evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async)
+evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, int id)
 {
    Evas_Filter_Context *ctx;
 
@@ -60,8 +60,17 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async)
 
    ctx->evas = evas;
    ctx->async = async;
+   ctx->context_id = id;
 
    return ctx;
+}
+
+int
+evas_filter_context_id_get(Evas_Filter_Context *ctx)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
+
+   return ctx->context_id;
 }
 
 /* Private function to reset the filter context. Used from parser.c */

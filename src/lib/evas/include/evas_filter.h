@@ -132,15 +132,16 @@ EAPI Evas_Filter_Program *evas_filter_program_new(const char *name, Eina_Bool in
 EAPI Eina_Bool           evas_filter_program_state_set(Evas_Filter_Program *pgm, const Efl_Canvas_Filter_State *state);
 EAPI Eina_Bool           evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
 EAPI void                evas_filter_program_del(Evas_Filter_Program *pgm);
-Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm);
 EAPI Eina_Bool           evas_filter_program_padding_get(Evas_Filter_Program *pgm, int *l, int *r, int *t, int *b);
 EAPI void                evas_filter_program_source_set_all(Evas_Filter_Program *pgm, Eina_Hash *sources);
-void                     evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj, Eina_Bool do_async);
 void                     evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Inlist *data);
 
 /* Filter context (low level) */
-Evas_Filter_Context     *evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async);
+Evas_Filter_Context     *evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, int id);
+int                      evas_filter_context_id_get(Evas_Filter_Context *ctx);
 void                     evas_filter_context_destroy(Evas_Filter_Context *ctx);
+Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm);
+void                     evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj, Eina_Bool do_async);
 void                     evas_filter_context_post_run_callback_set(Evas_Filter_Context *ctx, Evas_Filter_Cb cb, void *data);
 #define                  evas_filter_context_autodestroy(ctx) evas_filter_context_post_run_callback_set(ctx, ((Evas_Filter_Cb) evas_filter_context_destroy), ctx)
 Eina_Bool                evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx);
