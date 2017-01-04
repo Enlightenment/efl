@@ -123,6 +123,18 @@ _spinner_fill(Eo *obj)
 }
 
 static void
+_filter_apply(Eo *win, const char *code, const char *name)
+{
+   Eo *text, *tb;
+
+   text = efl_key_wref_get(win, "text");
+   tb = efl_key_wref_get(win, "textblock");
+
+   efl_gfx_filter_program_set(text, code, name);
+   efl_gfx_filter_program_set(tb, code, "main");
+}
+
+static void
 _spinner_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *win = data;
@@ -137,7 +149,7 @@ _spinner_cb(void *data, const Efl_Event *ev EINA_UNUSED)
      {
         const Filter *f = &templates[k];
 
-        efl_gfx_filter_program_set(text, f->code, f->name);
+        _filter_apply(win, f->code, f->name);
         efl_text_set(code, f->code);
 
         if (f->images)
@@ -179,7 +191,7 @@ _code_changed(void *data, const Efl_Event *ev EINA_UNUSED)
    }
 
    elm_spinner_value_set(spinner, 0);
-   efl_gfx_filter_program_set(text, source, elm_spinner_special_value_get(spinner, 0));
+   _filter_apply(win, source, elm_spinner_special_value_get(spinner, 0));
    eina_strbuf_free(buf);
 }
 
@@ -252,10 +264,20 @@ _font_size_change(void *data, const Efl_Event *ev)
    efl_text_properties_font_set(text, font, elm_spinner_value_get(ev->object));
 }
 
+static void
+_flip_click(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *flip = efl_key_wref_get(win, "flip");
+
+   /* FIXME: The flip APIs don't make sense for N items (front!?) */
+   efl_ui_flip_go(flip, EFL_UI_FLIP_CROSS_FADE);
+}
+
 void
 test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *box, *box2, *o, *text = NULL, *spinner, *code, *split;
+   Eo *win, *box, *box2, *o, *text = NULL, *spinner, *code, *split, *flip, *tb;
 
    win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
                  efl_text_set(efl_added, "Gfx Filter Editor"),
@@ -298,7 +320,14 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                   elm_spinner_value_set(efl_added, default_font_size),
                   efl_event_callback_add(efl_added, ELM_SPINNER_EVENT_DELAY_CHANGED, _font_size_change, win),
                   efl_gfx_visible_set(efl_added, 1));
+      efl_pack(box2, o);
 
+      o = efl_add(ELM_BUTTON_CLASS, win,
+                  efl_text_set(efl_added, "Flip"),
+                  efl_gfx_size_hint_weight_set(efl_added, 0.0, 1.0),
+                  efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
+                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _flip_click, win),
+                  efl_gfx_visible_set(efl_added, 1));
       efl_pack(box2, o);
    }
 
@@ -345,14 +374,20 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_pack(box, split);
 
    {
-      o = box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
-                         efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-                         efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                         efl_pack_align_set(efl_added, 0.5, 0.5));
-      efl_content_set(efl_part(split, "top"), box2);
+      flip = efl_add(EFL_UI_FLIP_CLASS, win,
+                     efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+                     efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+                     efl_gfx_visible_set(efl_added, 1));
+      efl_content_set(efl_part(split, "top"), flip);
 
-      /* FIXME: No textblock support! TEXT is not part of EO public API. */
-      /*
+      box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
+                     efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+                     efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+                     efl_pack_align_set(efl_added, 0.5, 0.5),
+                     efl_gfx_visible_set(efl_added, 1));
+      efl_pack(flip, box2);
+
+      // Note: No TEXT object with EO APIs
       o = text = evas_object_text_add(evas_object_evas_get(win));
       efl_event_callback_add(o, EFL_GFX_EVENT_RESIZE, _text_resize, NULL);
       efl_text_properties_font_set(o, "Sans:style=Bold", default_font_size);
@@ -360,25 +395,33 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_text_set(o, "EFL");
       efl_gfx_visible_set(o, 1);
       efl_pack(box2, o);
-      // */
+
+      o = box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
+                         efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+                         efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+                         efl_pack_align_set(efl_added, 0.5, 0.5));
+      efl_pack(flip, box2);
 
       const char *codes[] = {
-         "fill{color='#0033'} padding_set{20} blur{3} blend{}",
-         "blur{15,color='red'} blend{}"
+         "padding_set{20} blur{3} blend{}",
+         "blur{15,color='red'} blend{}",
+         "blend{}"
       };
       const char *names[] = {
          "one",
-         "two"
+         "two",
+         "main"
       };
-      const char *tbtxt = "Hey dude, <gfx_filter='one'>hello</> world!<br>"
-                          "<gfx_filter='two'>Wanna dance?<br>"
-                          "What's going on here???</>";
+      const char *tbtxt = "Classic <gfx_filter='one'>hello</> world!<br>"
+                          "And <gfx_filter='two'>This filter over<br>"
+                          "multiple lines</> :)<br/>"
+                          "<gfx_filter='main'>Main filter</>";
 
-      /* EXPERIMENTAL TEXTBLOCK FILTER */
-      o = evas_object_textblock_add(evas_object_evas_get(win));
+      // Experimental textblock support
+      o = tb = evas_object_textblock_add(evas_object_evas_get(win));
       efl_event_callback_add(o, EFL_GFX_EVENT_RESIZE, _textblock_resize, NULL);
       Evas_Textblock_Style *st = evas_textblock_style_new();
-      evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=24 color=#FFF wrap=word'");
+      evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=20 color=#FFF wrap=word'");
       for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(codes); k++)
         efl_gfx_filter_program_set(o, codes[k], names[k]);
       evas_object_textblock_style_set(o, st);
@@ -387,7 +430,6 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_pack(box2, o);
       evas_object_resize(o, 1, 1);
       efl_gfx_visible_set(o, 1);
-      // */
    }
 
    {
@@ -404,7 +446,9 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    }
 
    efl_key_wref_set(win, "text", text);
+   efl_key_wref_set(win, "textblock", tb);
    efl_key_wref_set(win, "code", code);
+   efl_key_wref_set(win, "flip", flip);
    efl_key_wref_set(win, "spinner", spinner);
    efl_event_callback_add(spinner, ELM_SPINNER_EVENT_CHANGED, _spinner_cb, win);
    elm_spinner_value_set(spinner, 1.0);
