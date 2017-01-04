@@ -283,7 +283,7 @@ _recovery_timer(Ecore_Wl2_Display *ewd)
 static void
 _recovery_timer_add(Ecore_Wl2_Display *ewd)
 {
-   Eina_Inlist *tmp;
+   Eina_Inlist *tmp, *tmp2;
    Ecore_Wl2_Output *output;
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Window *window;
@@ -320,7 +320,7 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
      {
         Ecore_Wl2_Subsurface *subsurf;
 
-        EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
+        EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp2, subsurf)
           _ecore_wl2_subsurf_unmap(subsurf);
         _ecore_wl_window_semi_free(window);
         window->configure_serial = 0;
