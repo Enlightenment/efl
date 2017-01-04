@@ -202,10 +202,11 @@ _text_resize(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _textblock_resize(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   int w = 0, h = 0;
+   int w = 0, h = 0, l = 0, r = 0, t = 0, b = 0;
 
    evas_object_textblock_size_native_get(ev->object, &w, &h);
-   efl_gfx_size_hint_min_set(ev->object, w + 1, h + 1);
+   evas_object_textblock_style_insets_get(ev->object, &l, &r, &t, &b);
+   efl_gfx_size_hint_min_set(ev->object, w + l + r, h + t + b);
 }
 
 static Evas_Object *

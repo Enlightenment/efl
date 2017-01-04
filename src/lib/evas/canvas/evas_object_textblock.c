@@ -718,6 +718,7 @@ static void _evas_textblock_cursor_at_format_set(Efl_Canvas_Text_Cursor_Data *cu
 static void _evas_textblock_cursor_paragraph_char_last(Efl_Canvas_Text_Cursor_Data *cur);
 static void _evas_textblock_cursor_init(Efl_Canvas_Text_Cursor_Data *cur, const Evas_Object *tb);
 static int _efl_canvas_text_cursor_text_append(Efl_Canvas_Text_Cursor_Data *cur, const char *text);
+static Evas_Filter_Program *_format_filter_program_get(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Format *fmt);
 
 #ifdef HAVE_HYPHEN
 /* Hyphenation */
@@ -3991,6 +3992,23 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
                                         &ti->text_props);
      }
 
+   if (EINA_UNLIKELY(ti->parent.format->gfx_filter != NULL))
+     {
+        int l = 0, r = 0, t = 0, b = 0;
+        Evas_Filter_Program *pgm;
+
+        pgm = _format_filter_program_get(c->o, ti->parent.format);
+        evas_filter_program_padding_get(pgm, &l, &r, &t, &b);
+
+        // FIXME: Those values are very very strange
+        ti->x_adjustment = r + l;
+        ti->parent.w = tw + ti->x_adjustment;
+        ti->parent.h = th;
+        ti->parent.adv = advw;
+        ti->parent.x = 0;
+        return;
+     }
+
    /* These adjustments are calculated and thus heavily linked to those in
     * textblock_render!!! Don't change one without the other. */
 
@@ -4321,6 +4339,54 @@ _format_finalize(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
    if (of) evas_font_free(obj->layer->evas->evas, of);
 }
 
+static Efl_Canvas_Text_Filter_Program *
+_filter_program_find(Efl_Canvas_Text_Data *o, const char *name)
+{
+   Efl_Canvas_Text_Filter_Program *prg;
+
+   EINA_INLIST_FOREACH(o->gfx_filter.programs, prg)
+     {
+        if (eina_streq(name, prg->name))
+          return prg;
+     }
+
+   return NULL;
+}
+
+static Evas_Filter_Program *
+_format_filter_program_get(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Format *fmt)
+{
+   Efl_Canvas_Text_Filter_Program *program;
+   Efl_Canvas_Text_Filter *filter;
+   Evas_Filter_Program *pgm;
+
+   filter = fmt->gfx_filter;
+   if (!filter->name) return NULL;
+
+   program = _filter_program_find(o, filter->name);
+   if (program->changed)
+     {
+        evas_filter_program_del(program->pgm);
+        program->pgm = NULL;
+     }
+   pgm = program->pgm;
+   if (!pgm)
+     {
+        // TODO: data set
+        pgm = evas_filter_program_new(program->name, EINA_FALSE);
+        if (!evas_filter_program_parse(pgm, program->code))
+          {
+             evas_filter_program_del(pgm);
+             filter->invalid = EINA_TRUE;
+             return NULL;
+          }
+        filter->invalid = EINA_FALSE;
+        program->pgm = pgm;
+     }
+
+   return pgm;
+}
+
 /**
  * @internal
  * Returns true if the item is a tab
@@ -4371,7 +4437,7 @@ _format_finalize(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
  * @return fi if created.
  */
 static Evas_Object_Textblock_Format_Item *
-_layout_do_format(const Evas_Object *obj EINA_UNUSED, Ctxt *c,
+_layout_do_format(const Evas_Object *obj, Ctxt *c,
       Evas_Object_Textblock_Format **_fmt, Evas_Object_Textblock_Node_Format *n,
       int *style_pad_l, int *style_pad_r, int *style_pad_t, int *style_pad_b,
       Eina_Bool create_item)
@@ -4520,7 +4586,18 @@ _layout_do_format(const Evas_Object *obj EINA_UNUSED, Ctxt *c,
      {
         Evas_Coord pad_l, pad_r, pad_t, pad_b;
         pad_l = pad_r = pad_t = pad_b = 0;
-        evas_text_style_pad_get(fmt->style, &pad_l, &pad_r, &pad_t, &pad_b);
+
+        if (EINA_LIKELY(!fmt->gfx_filter))
+          evas_text_style_pad_get(fmt->style, &pad_l, &pad_r, &pad_t, &pad_b);
+        else
+          {
+             Evas_Filter_Program *pgm;
+             Efl_Canvas_Text_Data *o;
+
+             o = efl_data_scope_get(obj, MY_CLASS);
+             pgm = _format_filter_program_get(o, fmt);
+             evas_filter_program_padding_get(pgm, &pad_l, &pad_r, &pad_t, &pad_b);
+          }
         if (pad_l > *style_pad_l) *style_pad_l = pad_l;
         if (pad_r > *style_pad_r) *style_pad_r = pad_r;
         if (pad_t > *style_pad_t) *style_pad_t = pad_t;
@@ -12854,20 +12931,6 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
    evas_post_render_job_add(filter->evas, _filter_post_render_cb, post_data);
 }
 
-static Efl_Canvas_Text_Filter_Program *
-_filter_program_find(Efl_Canvas_Text_Data *o, const char *name)
-{
-   Efl_Canvas_Text_Filter_Program *prg;
-
-   EINA_INLIST_FOREACH(o->gfx_filter.programs, prg)
-     {
-        if (eina_streq(name, prg->name))
-          return prg;
-     }
-
-   return NULL;
-}
-
 static void
 evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 			     Evas_Object_Protected_Data *obj,
@@ -13174,7 +13237,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
      {
         Efl_Canvas_Filter_State state = EFL_CANVAS_FILTER_STATE_DEFAULT;
         Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(itr);
-        Efl_Canvas_Text_Filter_Program *program;
         Efl_Canvas_Text_Filter *filter;
         Evas_Filter_Program *pgm;
         Evas_Filter_Context *ctx;
@@ -13182,34 +13244,12 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         Eina_Bool ok;
 
         filter = ti->parent.format->gfx_filter;
-        if (!filter->name || filter->invalid)
-          {
-             ti->gfx_filter_id = 0;
-             continue;
-          }
-
-        program = _filter_program_find(o, filter->name);
-        if (!program)
+        pgm = _format_filter_program_get(o, ti->parent.format);
+        if (!pgm)
           {
              WRN("Filter '%s' not found on this object", filter->name);
              ti->gfx_filter_id = 0;
              continue;
-          }
-
-        pgm = program->pgm;
-        if (!pgm)
-          {
-             // TODO: data set
-             pgm = evas_filter_program_new(program->name, EINA_FALSE);
-             ok = evas_filter_program_parse(pgm, program->code);
-             if (!ok)
-               {
-                  evas_filter_program_del(pgm);
-                  filter->invalid = EINA_TRUE;
-                  ti->gfx_filter_id = 0;
-                  continue;
-               }
-             program->pgm = pgm;
           }
 
 #ifdef DEBUG
@@ -13246,8 +13286,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                                         &filter->pad.t, &filter->pad.b);
         evas_filter_context_buffers_allocate_all(ctx);
         evas_filter_target_set(ctx, context, surface,
-                               obj->cur->geometry.x + ti->parent.x + x - filter->pad.l,
-                               obj->cur->geometry.y + ln->par->y + y - filter->pad.t);
+                               obj->cur->geometry.x + ln->x + ti->parent.x + x - filter->pad.l,
+                               obj->cur->geometry.y + ln->par->y + ln->y + y - filter->pad.t);
         if (!filter->dc)
           {
              filter->dc = ENFN->context_new(ENDT);
@@ -13573,7 +13613,7 @@ _efl_canvas_text_efl_canvas_filter_internal_filter_state_prepare(
 
    program = _filter_program_find(o, ti->parent.format->gfx_filter->name);
    if (program) evas_filter_program_padding_get(program->pgm, &l, &r, &t, &b);
-   state->w = ti->parent.w + l + r;
+   state->w = ti->parent.w; // + l + r; (already included)
    state->h = ti->parent.h + t + b;
    state->scale = obj->cur->scale;
 }
@@ -13588,7 +13628,7 @@ _efl_canvas_text_efl_canvas_filter_internal_filter_input_render(
    return evas_filter_font_draw(filter, drawctx,
                                 EVAS_FILTER_BUFFER_INPUT_ID,
                                 ti->parent.format->font.font,
-                                l, t + ti->parent.ln->y + ti->parent.yoff,
+                                l, t + ti->parent.yoff,
                                 &ti->text_props, do_async);
 }
 
@@ -13619,6 +13659,9 @@ _efl_canvas_text_efl_gfx_filter_filter_program_set(Eo *eo_obj, Efl_Canvas_Text_D
      }
    eina_stringshare_replace(&prg->code, code);
    prg->changed = EINA_TRUE;
+   pd->format_changed = EINA_TRUE;
+   _evas_textblock_invalidate_all(pd);
+   _evas_textblock_changed(pd, eo_obj);
 
    evas_object_change(eo_obj, obj);
 }
