@@ -1431,7 +1431,10 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
 
    if (!ecore_wl2_window_has_shell_surface(wdata->win)) return;
 
-   if (wdata->win->configure_ack && wdata->win->configure_serial)
+   if (wdata->win->zxdg_configure_ack && wdata->win->configure_serial)
+     wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
+                                    wdata->win->configure_serial);
+   else if (wdata->win->configure_ack && wdata->win->configure_serial)
      wdata->win->configure_ack(wdata->win->xdg_surface,
                                wdata->win->configure_serial);
    wdata->win->configure_serial = 0;
