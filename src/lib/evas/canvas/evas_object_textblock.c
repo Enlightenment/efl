@@ -436,7 +436,6 @@ struct _Evas_Object_Textblock_Text_Item
 {
    Evas_Object_Textblock_Item       parent;  /**< Textblock item. */
    Evas_Text_Props                  text_props;  /**< Props for this item. */
-   Evas_Coord                       inset;  /**< Inset of text item. */
    Evas_Coord                       x_adjustment; /**< Used to indicate by how much we adjusted sizes */
    int                              gfx_filter_id; /**< Index for the filter context in parent.format->gfx_filter */
 };
@@ -3978,24 +3977,19 @@ _layout_item_merge_and_free(Ctxt *c,
 static void
 _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
 {
-   int tw, th, inset, advw;
+   int tw = 0, th = 0, advw = 0;
    const Evas_Object_Textblock_Format *fmt = ti->parent.format;
    int shad_sz = 0, shad_dst = 0, out_sz = 0;
    int dx = 0, minx = 0, maxx = 0, shx1, shx2;
-
-   tw = th = 0;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
+
    if (fmt->font.font)
-     ENFN->font_string_size_get(ENDT, fmt->font.font,
-           &ti->text_props, &tw, &th);
-   inset = 0;
-   if (fmt->font.font)
-     inset = ENFN->font_inset_get(ENDT, fmt->font.font,
-           &ti->text_props);
-   advw = 0;
-   if (fmt->font.font)
-      advw = ENFN->font_h_advance_get(ENDT, fmt->font.font,
-           &ti->text_props);
+     {
+        ENFN->font_string_size_get(ENDT, fmt->font.font,
+                                   &ti->text_props, &tw, &th);
+        advw = ENFN->font_h_advance_get(ENDT, fmt->font.font,
+                                        &ti->text_props);
+     }
 
    /* These adjustments are calculated and thus heavily linked to those in
     * textblock_render!!! Don't change one without the other. */
@@ -4059,10 +4053,8 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    shx2 += shad_sz;
    if (shx1 < minx) minx = shx1;
    if (shx2 > maxx) maxx = shx2;
-   inset += -minx;
    ti->x_adjustment = maxx - minx;
    
-   ti->inset = inset;
    ti->parent.w = tw + ti->x_adjustment;
    ti->parent.h = th;
    ti->parent.adv = advw;
