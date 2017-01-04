@@ -1443,6 +1443,7 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
    Ecore_Wl2_Display *display;
    Eina_Inlist *l = NULL;
    Ecore_Wl2_Mouse_Down_Info *info = NULL;
+   Ecore_Wl2_Window *window;
 
    if (!input) return;
 
@@ -1489,6 +1490,9 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 
    display->inputs =
      eina_inlist_remove(display->inputs, EINA_INLIST_GET(input));
+
+   EINA_INLIST_FOREACH(display->windows, window)
+     if (window->input == input) window->input = NULL;
 
    free(input);
 }
