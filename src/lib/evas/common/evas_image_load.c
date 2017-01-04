@@ -450,12 +450,12 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 end:
         if (ie->info.module != em)
           {
-             evas_module_ref(em);
+             if (em) evas_module_ref(em);
              evas_module_unref(ie->info.module);
              ie->info.module = em;
           }
      }
-   if (!ie->f) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+   if ((!ie->f) || (!ie->info.module)) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 
    if ((ie->file) && (stat(ie->file, &st) == 0))
      _timestamp_build(&(ie->tstamp), &st);
