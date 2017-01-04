@@ -128,25 +128,6 @@ EAPI Eina_Bool elm_layout_mmap_set(Eo *obj, const Eina_File *file, const char *g
 EAPI void elm_layout_mmap_get(Eo *obj, const Eina_File **file, const char **group);
 
 /**
- * @brief Set the text of the given part.
- *
- * @param[in] part The TEXT part where to set the text.
- * @param[in] text The text to set.
- *
- * @return @c true on success, @c false otherwise
- */
-EAPI Eina_Bool elm_layout_text_set(Evas_Object *obj, const char * part, const char *text);
-
-/**
- * @brief Get the text set in the given part.
- *
- * @param[in] part The TEXT part where to set the text.
- *
- * @return The text to set.
- */
-EAPI const char *elm_layout_text_get(const Evas_Object *obj, const char * part);
-
-/**
  * @brief Append child to layout box part.
  *
  * Once the object is appended, it will become child of the layout. Its
