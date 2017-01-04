@@ -1078,7 +1078,7 @@ eng_image_orient_get(void *data EINA_UNUSED, void *image)
 }
 
 static void
-eng_image_data_preload_request(void *data, void *image, const Eo *target)
+eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *target)
 {
    Evas_GL_Image *gim = image;
 //   Render_Engine_GL_Generic *re = data;
