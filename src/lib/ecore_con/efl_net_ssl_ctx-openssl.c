@@ -272,6 +272,7 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
               ERR("ssl_ctx=%p SSLv3 is disabled in your OpenSSL build", ctx);
 #endif
               break;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
            case EFL_NET_SSL_CIPHER_TLSV1:
               ctx->ssl_ctx = SSL_CTX_new(TLSv1_client_method());
               break;
@@ -281,6 +282,7 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
            case EFL_NET_SSL_CIPHER_TLSV1_2:
               ctx->ssl_ctx = SSL_CTX_new(TLSv1_2_client_method());
               break;
+#endif
            default:
               ERR("ssl_ctx=%p unsupported cipher %d", ctx, cfg.cipher);
               return EINVAL;
@@ -302,6 +304,7 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
               ERR("ssl_ctx=%p SSLv3 is disabled in your OpenSSL build", ctx);
 #endif
               break;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
            case EFL_NET_SSL_CIPHER_TLSV1:
               ctx->ssl_ctx = SSL_CTX_new(TLSv1_server_method());
               break;
@@ -311,6 +314,7 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
            case EFL_NET_SSL_CIPHER_TLSV1_2:
               ctx->ssl_ctx = SSL_CTX_new(TLSv1_2_server_method());
               break;
+#endif
            default:
               ERR("ssl_ctx=%p unsupported cipher %d", ctx, cfg.cipher);
               return EINVAL;

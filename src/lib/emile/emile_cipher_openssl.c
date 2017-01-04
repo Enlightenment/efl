@@ -75,6 +75,16 @@ emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20])
 {
    const EVP_MD *md = EVP_sha1();
    Eina_Slice slice = eina_binbuf_slice_get(data);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+
+   EVP_DigestInit_ex(ctx, md, NULL);
+
+   EVP_DigestUpdate(ctx, slice.mem, slice.len);
+   EVP_DigestFinal_ex(ctx, digest, NULL);
+
+   EVP_MD_CTX_free(ctx);
+#else
    EVP_MD_CTX ctx;
 
    EVP_MD_CTX_init(&ctx);
@@ -84,6 +94,7 @@ emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20])
    EVP_DigestFinal_ex(&ctx, digest, NULL);
 
    EVP_MD_CTX_cleanup(&ctx);
+#endif
    return EINA_TRUE;
 }
 
@@ -308,9 +319,11 @@ emile_cipher_server_listen(Emile_Cipher_Type t)
          SSL_CTX_set_options(r->ssl_ctx,
                              options | SSL_OP_NO_SSLv2 | SSL_OP_SINGLE_DH_USE);
          break;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
       case EMILE_TLSv1:
          r->ssl_ctx = SSL_CTX_new(TLSv1_server_method());
          break;
+#endif
       default:
          free(r);
          return NULL;
@@ -754,8 +767,10 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
                              options | SSL_OP_NO_SSLv2 | SSL_OP_SINGLE_DH_USE);
          break;
       case EMILE_TLSv1:
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
          r->ssl_ctx = SSL_CTX_new(TLSv1_client_method());
          break;
+#endif
       default:
          free(r);
          return NULL;

@@ -33,10 +33,16 @@
 static int
 efl_net_socket_bio_create(BIO *b)
 {
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   BIO_set_init(b, 1);
+   BIO_set_data(b, NULL);
+   BIO_set_flags(b, 0);
+#else
    b->init = 1;
    b->num = 0;
    b->ptr = NULL;
    b->flags = 0;
+#endif
    return 1;
 }
 
@@ -44,9 +50,15 @@ static int
 efl_net_socket_bio_destroy(BIO *b)
 {
    if (!b) return 0;
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   BIO_set_init(b, 0);
+   BIO_set_data(b, NULL);
+   BIO_set_flags(b, 0);
+#else
    b->init = 0;
    b->ptr = NULL;
    b->flags = 0;
+#endif
    return 1;
 }
 
@@ -57,7 +69,11 @@ efl_net_socket_bio_read(BIO *b, char *buf, int len)
      .mem = buf,
      .len = len
    };
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   Eo *sock = BIO_get_data(b);
+#else
    Eo *sock = b->ptr;
+#endif
    Eina_Error err;
 
    if ((!buf) || (len <= 0)) return 0;
@@ -89,7 +105,11 @@ efl_net_socket_bio_write(BIO *b, const char *buf, int len)
      .mem = buf,
      .len = len
    };
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   Eo *sock = BIO_get_data(b);
+#else
    Eo *sock = b->ptr;
+#endif
    Eina_Error err;
 
    if ((!buf) || (len <= 0)) return 0;
@@ -129,17 +149,39 @@ efl_net_socket_bio_puts(BIO *b, const char *str)
    return efl_net_socket_bio_write(b, str, strlen(str));
 }
 
-static BIO_METHOD efl_net_socket_bio = {
-  0x400, /* 0x400 means source & sink */
-  "efl_net_socket wrapper",
-  efl_net_socket_bio_write,
-  efl_net_socket_bio_read,
-  efl_net_socket_bio_puts,
-  NULL, /* no gets */
-  efl_net_socket_bio_ctrl,
-  efl_net_socket_bio_create,
-  efl_net_socket_bio_destroy
-};
+static BIO_METHOD *
+__efl_net_socket_bio_get(void)
+{
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   static BIO_METHOD *efl_net_socket_bio = NULL;
+
+   if (efl_net_socket_bio) return efl_net_socket_bio;
+   efl_net_socket_bio = BIO_meth_new(0x400 /* 0x400 means source & sink */,
+                                     "efl_net_socket wrapper");
+   BIO_meth_set_write(efl_net_socket_bio, efl_net_socket_bio_write);
+   BIO_meth_set_read(efl_net_socket_bio, efl_net_socket_bio_read);
+   BIO_meth_set_puts(efl_net_socket_bio, efl_net_socket_bio_puts);
+   BIO_meth_set_ctrl(efl_net_socket_bio, efl_net_socket_bio_ctrl);
+   BIO_meth_set_create(efl_net_socket_bio, efl_net_socket_bio_create);
+   BIO_meth_set_destroy(efl_net_socket_bio, efl_net_socket_bio_destroy);
+   // FIXME: some day we need to clean up, but for now a singleton alloc is ok
+   // BIO_meth_free(efl_net_socket_bio);
+   return efl_net_socket_bio;
+#else
+   static BIO_METHOD efl_net_socket_bio = {
+      0x400, /* 0x400 means source & sink */
+      "efl_net_socket wrapper",
+      efl_net_socket_bio_write,
+      efl_net_socket_bio_read,
+      efl_net_socket_bio_puts,
+      NULL, /* no gets */
+      efl_net_socket_bio_ctrl,
+      efl_net_socket_bio_create,
+      efl_net_socket_bio_destroy
+   };
+   return &efl_net_socket_bio;
+#endif
+}
 
 struct _Efl_Net_Ssl_Conn
 {
@@ -314,10 +356,14 @@ efl_net_ssl_conn_setup(Efl_Net_Ssl_Conn *conn, Eina_Bool is_dialer, Efl_Net_Sock
    conn->ssl = efl_net_ssl_context_connection_new(context);
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn->ssl, ENOSYS);
 
-   conn->bio = BIO_new(&efl_net_socket_bio);
+   conn->bio = BIO_new(__efl_net_socket_bio_get());
    EINA_SAFETY_ON_NULL_GOTO(conn->bio, error_bio);
 
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   BIO_set_data(conn->bio, sock);
+#else
    conn->bio->ptr = sock;
+#endif
 
    SSL_set_bio(conn->ssl, conn->bio, conn->bio);
    if (is_dialer)

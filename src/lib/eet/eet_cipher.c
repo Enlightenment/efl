@@ -475,7 +475,11 @@ eet_identity_sign(FILE    *fp,
    gnutls_datum_t signum = { NULL, 0 };
    gnutls_privkey_t privkey;
 # else /* ifdef HAVE_GNUTLS */
+#  if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   EVP_MD_CTX *md_ctx;
+#  else
    EVP_MD_CTX md_ctx;
+#  endif
    unsigned int sign_len = 0;
    int cert_len = 0;
 # endif /* ifdef HAVE_GNUTLS */
@@ -561,12 +565,24 @@ eet_identity_sign(FILE    *fp,
      }
 
    /* Do the signature. */
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   md_ctx = EVP_MD_CTX_new();
+   EVP_SignInit(md_ctx, EVP_sha1());
+   EVP_SignUpdate(md_ctx, data, st_buf.st_size);
+   err = EVP_SignFinal(md_ctx,
+                       sign,
+                       (unsigned int *)&sign_len,
+                       key->private_key);
+   EVP_MD_CTX_free(md_ctx);
+#else
    EVP_SignInit(&md_ctx, EVP_sha1());
    EVP_SignUpdate(&md_ctx, data, st_buf.st_size);
    err = EVP_SignFinal(&md_ctx,
                        sign,
                        (unsigned int *)&sign_len,
                        key->private_key);
+   EVP_MD_CTX_cleanup(&md_ctx);
+#endif
    if (err != 1)
      {
         ERR_print_errors_fp(stdout);
@@ -738,7 +754,11 @@ eet_identity_check(const void   *data_base,
    const unsigned char *tmp;
    EVP_PKEY *pkey;
    X509 *x509;
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   EVP_MD_CTX *md_ctx;
+#else
    EVP_MD_CTX md_ctx;
+#endif
    int err;
 
    /* Strange but d2i_X509 seems to put 0 all over the place. */
@@ -757,9 +777,18 @@ eet_identity_check(const void   *data_base,
      }
 
    /* Verify the signature */
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+   md_ctx = EVP_MD_CTX_new();
+   EVP_VerifyInit(md_ctx, EVP_sha1());
+   EVP_VerifyUpdate(md_ctx, data_base, data_length);
+   err = EVP_VerifyFinal(md_ctx, sign, sign_len, pkey);
+   EVP_MD_CTX_free(md_ctx);
+#else
    EVP_VerifyInit(&md_ctx, EVP_sha1());
    EVP_VerifyUpdate(&md_ctx, data_base, data_length);
    err = EVP_VerifyFinal(&md_ctx, sign, sign_len, pkey);
+   EVP_MD_CTX_cleanup(&md_ctx);
+#endif
 
    X509_free(x509);
    EVP_PKEY_free(pkey);
