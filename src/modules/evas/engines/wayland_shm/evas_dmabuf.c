@@ -803,7 +803,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    return EINA_TRUE;
 
 err:
-   if (surf) free(surf->buffer);
+   free(surf->buffer);
    free(surf);
    return EINA_FALSE;
 }
