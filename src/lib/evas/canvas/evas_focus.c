@@ -263,9 +263,3 @@ _evas_canvas_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e)
 {
    return _evas_canvas_seat_focus_get(eo_obj, e, NULL);
 }
-
-EOLIAN Eina_Iterator *
-_evas_canvas_focused_objects_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e)
-{
-   return eina_hash_iterator_tuple_new(e->focused_objects);
-}

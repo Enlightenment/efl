@@ -138,7 +138,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
               See also \@ref evas_object_focus_set,
               \@ref evas_object_focus_get, \@ref evas_object_key_grab,
               \@ref evas_object_key_ungrab, @.seat_focus.get,
-              @.focused_objects.get, @Efl.Canvas.Object.seat_focus_check,
+              @Efl.Canvas.Object.seat_focus_check,
               @Efl.Canvas.Object.seat_focus_add,
               @Efl.Canvas.Object.seat_focus_del.
             ]]
@@ -156,14 +156,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             */
             return: Efl.Canvas.Object @warn_unused; [[The object that has focus
                                                   or $null if there is not one.]]
-         }
-      }
-      @property focused_objects {
-         [[Return an iterator of focused objects. @since 1.19]]
-         get {
-            return: free(own(iterator<Eina_Hash_Tuple>), eina_iterator_free);  [[An iterator that contains
-                                                                                 Eina_Hash_Tuple which the key is an
-                                                                               Efl.Input.Device and the data is an Efl.Canvas.Object or $null on error.]]
          }
       }
       @property seat_focus {
