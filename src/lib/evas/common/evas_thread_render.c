@@ -20,7 +20,8 @@ typedef struct
    Eina_Bool exit_thread;
 } Evas_Thread;
 
-static int evas_threads_init_count = 0;
+static int evas_threads_sw_init_count = 0;
+static int evas_threads_gl_init_count = 0;
 
 static Evas_Thread evas_thread_software;
 static Evas_Thread evas_thread_gl;
@@ -304,11 +305,11 @@ timeout_shutdown:
    eina_inarray_flush(&ev_thread->queue);
 }
 
-int
-evas_threads_init(void)
+EAPI int
+evas_threads_sw_init(void)
 {
-   if (evas_threads_init_count++)
-      return evas_threads_init_count;
+   if (evas_threads_sw_init_count++)
+      return evas_threads_sw_init_count;
 
    if (!eina_threads_init())
      {
@@ -318,37 +319,73 @@ evas_threads_init(void)
 
    if (!evas_thread_init(&evas_thread_software, "Evas-thread-wk-sw"))
       goto fail_on_software_thread_init;
+   return evas_threads_sw_init_count;
+
+fail_on_software_thread_init:
+   eina_threads_shutdown();
+fail_on_eina_thread_init:
+   return --evas_threads_gl_init_count;
+ }
+
+EAPI int
+evas_threads_gl_init(void)
+{
+   if (evas_threads_gl_init_count++)
+      return evas_threads_gl_init_count;
+
+   if (!eina_threads_init())
+     {
+        CRI("Could not init eina threads");
+        goto fail_on_eina_thread_init;
+     }
+
    if (!evas_thread_init(&evas_thread_gl, "Evas-thread-wk-gl"))
       goto fail_on_gl_thread_init;
    if (!evas_thread_init(&evas_thread_evgl, "Evas-thread-wk-evgl"))
       goto fail_on_evgl_thread_init;
-   return evas_threads_init_count;
+   return evas_threads_gl_init_count;
 
 fail_on_evgl_thread_init:
    evas_thread_shutdown(&evas_thread_gl);
 fail_on_gl_thread_init:
-   evas_thread_shutdown(&evas_thread_software);
-fail_on_software_thread_init:
    eina_threads_shutdown();
 fail_on_eina_thread_init:
-   return --evas_threads_init_count;
+   return --evas_threads_gl_init_count;
  }
 
-int
-evas_threads_shutdown(void)
+EAPI int
+evas_threads_sw_shutdown(void)
 {
-   if (evas_threads_init_count <= 0)
+   if (evas_threads_sw_init_count <= 0)
      {
         ERR("Too many calls to shutdown, ignored.");
         return 0;
      }
 
-   if (--evas_threads_init_count)
-     return evas_threads_init_count;
+   if (--evas_threads_sw_init_count)
+     return evas_threads_sw_init_count;
+
+   evas_thread_shutdown(&evas_thread_software);
+
+   eina_threads_shutdown();
+
+   return 0;
+}
+
+EAPI int
+evas_threads_gl_shutdown(void)
+{
+   if (evas_threads_gl_init_count <= 0)
+     {
+        ERR("Too many calls to shutdown, ignored.");
+        return 0;
+     }
+
+   if (--evas_threads_gl_init_count)
+     return evas_threads_gl_init_count;
 
    evas_thread_shutdown(&evas_thread_evgl);
    evas_thread_shutdown(&evas_thread_gl);
-   evas_thread_shutdown(&evas_thread_software);
 
    eina_threads_shutdown();
 
