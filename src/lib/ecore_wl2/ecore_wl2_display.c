@@ -59,6 +59,17 @@ static const struct zwp_linux_dmabuf_v1_listener _dmabuf_listener =
 };
 
 static void
+_zxdg_shell_cb_ping(void *data EINA_UNUSED, struct zxdg_shell_v6 *shell, uint32_t serial)
+{
+   zxdg_shell_v6_pong(shell, serial);
+}
+
+static const struct zxdg_shell_v6_listener _zxdg_shell_listener =
+{
+   _zxdg_shell_cb_ping,
+};
+
+static void
 _cb_global_event_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Global *ev;
@@ -149,6 +160,13 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
 
         EINA_INLIST_FOREACH(ewd->windows, window)
           _ecore_wl2_window_shell_surface_init(window);
+     }
+   else if (!strcmp(interface, "zxdg_shell_v6"))
+     {
+        ewd->wl.zxdg_shell =
+          wl_registry_bind(registry, id, &zxdg_shell_v6_interface, 1);
+        zxdg_shell_v6_add_listener(ewd->wl.zxdg_shell,
+                                   &_zxdg_shell_listener, NULL);
      }
    else if ((eina_streq(interface, "www")) &&
             (!getenv("EFL_WAYLAND_DISABLE_WWW")))
@@ -278,6 +296,7 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
    if (ewd->wl.session_recovery)
      zwp_e_session_recovery_destroy(ewd->wl.session_recovery);
    if (ewd->wl.www) www_destroy(ewd->wl.www);
+   if (ewd->wl.zxdg_shell) zxdg_shell_v6_destroy(ewd->wl.zxdg_shell);
    if (ewd->wl.xdg_shell) xdg_shell_destroy(ewd->wl.xdg_shell);
    if (ewd->wl.wl_shell) wl_shell_destroy(ewd->wl.wl_shell);
    if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
@@ -494,6 +513,7 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.session_recovery)
      zwp_e_session_recovery_destroy(ewd->wl.session_recovery);
    if (ewd->wl.www) www_destroy(ewd->wl.www);
+   if (ewd->wl.zxdg_shell) zxdg_shell_v6_destroy(ewd->wl.zxdg_shell);
    if (ewd->wl.xdg_shell) xdg_shell_destroy(ewd->wl.xdg_shell);
    if (ewd->wl.wl_shell) wl_shell_destroy(ewd->wl.wl_shell);
    if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
@@ -781,7 +801,9 @@ EAPI Eina_Iterator *
 ecore_wl2_display_globals_get(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
-   return display->globals ? eina_hash_iterator_data_new(display->globals) : NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display->globals, NULL);
+
+   return eina_hash_iterator_data_new(display->globals);
 }
 
 EAPI void

@@ -20,6 +20,8 @@
 
 # include "session-recovery.h"
 
+# include "zxdg-shell-client-protocol.h"
+
 extern int _ecore_wl2_log_dom;
 extern Eina_Bool no_session_recovery;
 
@@ -94,6 +96,7 @@ struct _Ecore_Wl2_Display
         struct zwp_linux_dmabuf_v1 *dmabuf;
         struct wl_shell *wl_shell;
         struct xdg_shell *xdg_shell;
+        struct zxdg_shell_v6 *zxdg_shell;
         struct www *www;
         struct zwp_e_session_recovery *session_recovery;
         struct zwp_teamwork *teamwork;
@@ -153,11 +156,15 @@ struct _Ecore_Wl2_Window
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
    struct www_surface *www_surface;
+   struct zxdg_surface_v6 *zxdg_surface;
+   struct zxdg_toplevel_v6 *zxdg_toplevel;
+   struct zxdg_popup_v6 *zxdg_popup;
 
    Eina_Stringshare *uuid;
 
    uint32_t configure_serial;
    void (*configure_ack)(struct xdg_surface *surface, uint32_t serial);
+   void (*zxdg_configure_ack)(struct zxdg_surface_v6 *surface, uint32_t serial);
 
    Eina_Rectangle saved;
    Eina_Rectangle geometry;
