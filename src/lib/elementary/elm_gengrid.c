@@ -636,6 +636,7 @@ _calc_job(void *data)
           {
              sd->minh = minh;
              sd->minw = minw;
+             elm_layout_sizing_eval(sd->obj);
              efl_event_callback_legacy_call
                    (sd->pan_obj, ELM_PAN_EVENT_CHANGED, NULL);
           }
