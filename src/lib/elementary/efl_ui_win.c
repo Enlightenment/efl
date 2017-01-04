@@ -4007,16 +4007,23 @@ _elm_win_frame_cb_menu(void *data,
 {
    ELM_WIN_DATA_GET(data, sd);
 #ifdef HAVE_ELEMENTARY_WL2
+   Ecore_Wl2_Input *input;
    int x, y, wx, wy;
 
-   if ((!sd->wl.win) || (!sd->wl.win->xdg_surface)) return;
+   if (!sd->wl.win) return;
    evas_canvas_pointer_canvas_xy_get(sd->evas, &x, &y);
    ecore_wl2_window_geometry_get(sd->wl.win, &wx, &wy, NULL, NULL);
    if (x < 0) x += wx;
    if (y < 0) y += wy;
-   xdg_surface_show_window_menu(sd->wl.win->xdg_surface,
-     ecore_wl2_input_seat_get(ecore_wl2_window_input_get(sd->wl.win)), 0,
-     x, y);
+
+   input = ecore_wl2_window_input_get(sd->wl.win);
+
+   if (sd->wl.win->zxdg_toplevel)
+     zxdg_toplevel_v6_show_window_menu(sd->wl.win->zxdg_toplevel,
+                                       ecore_wl2_input_seat_get(input), 0, x, y);
+   else if (sd->wl.win->xdg_surface)
+     xdg_surface_show_window_menu(sd->wl.win->xdg_surface,
+                                  ecore_wl2_input_seat_get(input), 0, x, y);
 #else
    (void)sd;
 #endif
