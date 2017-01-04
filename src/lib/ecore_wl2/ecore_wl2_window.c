@@ -71,7 +71,8 @@ _wl_shell_surface_cb_configure(void *data, struct wl_shell_surface *shell_surfac
 {
    Ecore_Wl2_Window *win = data;
 
-   _ecore_wl2_window_configure_send(win, w, h, edges, win->fullscreen, win->maximized);
+   _ecore_wl2_window_configure_send(win, w, h, edges, win->fullscreen,
+                                    win->maximized);
 }
 
 static void
@@ -292,7 +293,8 @@ _ecore_wl2_window_www_surface_init(Ecore_Wl2_Window *window)
    if (window->www_surface) return;
    window->www_surface = www_create(window->display->wl.www, window->surface);
    www_surface_set_user_data(window->www_surface, window);
-   www_surface_add_listener(window->www_surface, &_www_surface_listener, window);
+   www_surface_add_listener(window->www_surface, &_www_surface_listener,
+                            window);
 }
 
 void
@@ -322,13 +324,18 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
              if (window->uuid)
                {
                   zwp_e_session_recovery_set_uuid(window->display->wl.session_recovery,
-                    window->surface, window->uuid);
+                                                  window->surface,
+                                                  window->uuid);
                   xdg_surface_set_window_geometry(window->xdg_surface,
-                    window->geometry.x, window->geometry.y,
-                    window->geometry.w, window->geometry.h);
+                                                  window->geometry.x,
+                                                  window->geometry.y,
+                                                  window->geometry.w,
+                                                  window->geometry.h);
                   ecore_wl2_window_opaque_region_set(window,
-                    window->opaque.x, window->opaque.y,
-                    window->opaque.w, window->opaque.h);
+                                                     window->opaque.x,
+                                                     window->opaque.y,
+                                                     window->opaque.w,
+                                                     window->opaque.h);
                }
              else
                zwp_e_session_recovery_get_uuid(window->display->wl.session_recovery, window->surface);
@@ -447,11 +454,14 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
    _ecore_wl2_window_surface_create(window);
 
    if (window->input_set)
-     ecore_wl2_window_input_region_set(window, window->input_rect.x, window->input_rect.y,
-                                               window->input_rect.w, window->input_rect.h);
+     ecore_wl2_window_input_region_set(window, window->input_rect.x,
+                                       window->input_rect.y,
+                                       window->input_rect.w,
+                                       window->input_rect.h);
    if (window->opaque_set)
-     ecore_wl2_window_opaque_region_set(window, window->opaque.x, window->opaque.y,
-                                               window->opaque.w, window->opaque.h);
+     ecore_wl2_window_opaque_region_set(window, window->opaque.x,
+                                        window->opaque.y, window->opaque.w,
+                                        window->opaque.h);
 
    if ((window->type != ECORE_WL2_WINDOW_TYPE_DND) &&
        (window->type != ECORE_WL2_WINDOW_TYPE_NONE))
@@ -502,7 +512,7 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
 
    if (window->uuid && window->surface && window->display->wl.session_recovery)
      zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
-       window->surface, window->uuid);
+                                         window->surface, window->uuid);
 
    _ecore_wl_window_semi_free(window);
 
@@ -755,7 +765,9 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
              wl_shell_surface_set_toplevel(window->wl_shell_surface);
 
              _ecore_wl2_window_configure_send(window, window->saved.w,
-                                              window->saved.h, 0, window->fullscreen, window->maximized);
+                                              window->saved.h, 0,
+                                              window->fullscreen,
+                                              window->maximized);
           }
      }
 }
@@ -802,7 +814,9 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
              wl_shell_surface_set_toplevel(window->wl_shell_surface);
 
              _ecore_wl2_window_configure_send(window, window->saved.w,
-                                              window->saved.h, 0, window->fullscreen, window->maximized);
+                                              window->saved.h, 0,
+                                              window->fullscreen,
+                                              window->maximized);
           }
      }
 }
@@ -942,9 +956,7 @@ ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y)
 }
 
 EAPI void
-ecore_wl2_window_pointer_device_xy_get(Ecore_Wl2_Window *window,
-                                       const Eo *pointer,
-                                       int *x, int *y)
+ecore_wl2_window_pointer_device_xy_get(Ecore_Wl2_Window *window, const Eo *pointer, int *x, int *y)
 {
    Ecore_Wl2_Input_Devices *devs;
    Eina_List *l;
