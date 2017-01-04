@@ -125,4 +125,17 @@ _ ## type ## _internal_part_efl_container_content_unset(Eo *obj, void *_pd EINA_
    ELM_PART_RETURN_VAL(_ ## type ## _content_unset(pd->obj, sd, pd->part)); \
 }
 
+#define EFL_TEXT_DEFAULT_IMPLEMENT(type, Type) \
+EOLIAN static void \
+_ ## type ## _efl_text_text_set(Eo *obj, Type *pd EINA_UNUSED, const char *text) \
+{ \
+   elm_layout_text_set(obj, NULL, text); \
+} \
+\
+EOLIAN static const char * \
+_ ## type ## _efl_text_text_get(Eo *obj, Elm_Button_Data *pd EINA_UNUSED) \
+{ \
+   return elm_layout_text_get(obj, NULL); \
+}
+
 #endif

@@ -1,4 +1,4 @@
-class Elm.Button (Elm.Layout, Efl.Ui.Clickable,
+class Elm.Button (Elm.Layout, Efl.Ui.Clickable, Efl.Text,
                   Elm.Interface.Atspi_Widget_Action)
 {
    [[Push-button widget
@@ -87,5 +87,6 @@ class Elm.Button (Elm.Layout, Efl.Ui.Clickable,
       Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
+      Efl.Text.text { get; set; }
    }
 }

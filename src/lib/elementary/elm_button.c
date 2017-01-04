@@ -445,6 +445,8 @@ _elm_button_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+EFL_TEXT_DEFAULT_IMPLEMENT(elm_button, Elm_Button_Data)
+
 /* Efl.Part begin */
 
 ELM_PART_OVERRIDE(elm_button, ELM_BUTTON, ELM_LAYOUT, Elm_Button_Data, Elm_Part_Data)
