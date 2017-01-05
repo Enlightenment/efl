@@ -155,7 +155,6 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
    if (!einfo->info.wl_surface) return 0;
 
    _evas_outbuf_surface_set(re->generic.ob, einfo->info.wl_shm, einfo->info.wl_dmabuf, einfo->info.wl_surface);
-   if (!einfo->info.hidden) return 1;
 
    eng_output_resize(re, w, h);
 
