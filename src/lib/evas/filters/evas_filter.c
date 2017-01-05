@@ -49,7 +49,7 @@ _evas_image_get(Ector_Buffer *buf)
 /* Main functions */
 
 Evas_Filter_Context *
-evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, int id)
+evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, void *user_data)
 {
    Evas_Filter_Context *ctx;
 
@@ -60,17 +60,23 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, int id)
 
    ctx->evas = evas;
    ctx->async = async;
-   ctx->context_id = id;
+   ctx->user_data = user_data;
 
    return ctx;
 }
 
-int
-evas_filter_context_id_get(Evas_Filter_Context *ctx)
+void *
+evas_filter_context_data_get(Evas_Filter_Context *ctx)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
 
-   return ctx->context_id;
+   return ctx->user_data;
+}
+
+Eina_Bool
+evas_filter_context_async_get(Evas_Filter_Context *ctx)
+{
+   return ctx->async;
 }
 
 /* Private function to reset the filter context. Used from parser.c */
@@ -1352,6 +1358,8 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
    void *surface = NULL;
 
    fb = _filter_buffer_get(ctx, bufid);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+
    surface = _evas_image_get(fb->buffer);
    if (!surface) return EINA_FALSE;
 
@@ -1364,7 +1372,6 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
         evas_common_font_glyphs_ref(text_props->glyphs);
         evas_unref_queue_glyph_put(ctx->evas, text_props->glyphs);
      }
-   //evas_common_save_image_to_file(surface, "/tmp/input.png", 0, 100, 0 ,0);
 
    return EINA_TRUE;
 }

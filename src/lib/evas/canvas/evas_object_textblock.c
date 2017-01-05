@@ -437,7 +437,8 @@ struct _Evas_Object_Textblock_Text_Item
    Evas_Object_Textblock_Item       parent;  /**< Textblock item. */
    Evas_Text_Props                  text_props;  /**< Props for this item. */
    Evas_Coord                       x_adjustment; /**< Used to indicate by how much we adjusted sizes */
-   int                              gfx_filter_id; /**< Index for the filter context in parent.format->gfx_filter */
+   Evas_Filter_Context             *gfx_filter_ctx; /* temp variable FIXME */
+   void                            *gfx_buffer; /* FIXME */
 };
 
 struct _Evas_Object_Textblock_Format_Item
@@ -453,25 +454,20 @@ struct _Evas_Object_Textblock_Format_Item
 
 struct _Efl_Canvas_Text_Filter
 {
-   // FIXME: sources not handled! --> global to the textblock
-   // FIXME: data not handled! --> global to the textblock
    Eina_Stringshare     *name;
-   Eina_Array           *contexts; /* contains Evas_Filter_Context items for each sub text item */
    Evas_Object          *eo_obj;
    Evas_Public_Data     *evas;
    void                 *dc; /* draw context - no clip, white, no colmul... */
    struct {
       int                l, r, t, b;
    } pad;
-   int                   pending_ctx;
    Eina_Bool             invalid;
-   Eina_Bool             async;
+   Eina_Bool             redraw;
 };
 
 struct _Efl_Canvas_Text_Filter_Post_Render
 {
-   Efl_Canvas_Text_Filter *filter;
-   int                     ctx_id;
+   Evas_Filter_Context    *ctx;
    Eina_Bool               success;
 };
 
@@ -952,6 +948,33 @@ _format_unref_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
    free(fmt);
 }
 
+typedef struct _Post_Render_Image_Unref_Job
+{
+   Evas_Public_Data *evas;
+   void *image;
+} Post_Render_Image_Unref_Job;
+
+static void
+_image_post_render_unref_cb(void *data)
+{
+   Post_Render_Image_Unref_Job *job = data;
+
+   job->evas->engine.func->image_free(job->evas->engine.data.output, job->image);
+   free(job);
+}
+
+static inline void
+_image_safe_unref(Evas_Public_Data *e, void *image)
+{
+   Post_Render_Image_Unref_Job *job;
+
+   if (!image) return;
+   job = calloc(1, sizeof(*job));
+   job->evas = e;
+   job->image = image;
+   evas_post_render_job_add(e, _image_post_render_unref_cb, job);
+}
+
 /**
  * @internal
  * Free a layout item
@@ -967,6 +990,16 @@ _item_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Line *ln, Evas_Objec
         Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
 
         evas_common_text_props_content_unref(&ti->text_props);
+        if (ti->gfx_filter_ctx)
+          {
+             WRN("filter context still alive? (ignored)");
+          }
+        if (ti->gfx_buffer)
+          {
+             Evas_Public_Data *e = efl_data_scope_get(evas_object_evas_get(eo_obj), EVAS_CANVAS_CLASS);
+             _image_safe_unref(e, ti->gfx_buffer);
+             ti->gfx_buffer = NULL;
+          }
      }
    else
      {
@@ -4000,15 +4033,17 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
         Evas_Filter_Program *pgm;
 
         pgm = _format_filter_program_get(c->o, ti->parent.format);
-        evas_filter_program_padding_get(pgm, &l, &r, &t, &b);
+        if (pgm)
+          {
+             evas_filter_program_padding_get(pgm, &l, &r, &t, &b);
 
-        // FIXME: Those values are very very strange
-        ti->x_adjustment = r + l;
-        ti->parent.w = tw + ti->x_adjustment;
-        ti->parent.h = th;
-        ti->parent.adv = advw;
-        ti->parent.x = 0;
-        return;
+             ti->x_adjustment = r + l;
+             ti->parent.w = tw + ti->x_adjustment; // FIXME: why add l+r here,
+             ti->parent.h = th;                    // but not t+b here?
+             ti->parent.adv = advw;
+             ti->parent.x = 0;
+             return;
+          }
      }
 
    /* These adjustments are calculated and thus heavily linked to those in
@@ -4590,20 +4625,17 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
      }
 
      {
-        Evas_Coord pad_l, pad_r, pad_t, pad_b;
-        pad_l = pad_r = pad_t = pad_b = 0;
+        Evas_Coord pad_l = 0, pad_r = 0, pad_t = 0, pad_b = 0;
+        Evas_Filter_Program *pgm = NULL;
 
-        if (EINA_LIKELY(!fmt->gfx_filter))
-          evas_text_style_pad_get(fmt->style, &pad_l, &pad_r, &pad_t, &pad_b);
+        if (EINA_UNLIKELY(fmt->gfx_filter != NULL))
+          pgm = _format_filter_program_get(efl_data_scope_get(obj, MY_CLASS), fmt);
+
+        if (EINA_UNLIKELY(pgm != NULL))
+          evas_filter_program_padding_get(pgm, &pad_l, &pad_r, &pad_t, &pad_b);
         else
-          {
-             Evas_Filter_Program *pgm;
-             Efl_Canvas_Text_Data *o;
+          evas_text_style_pad_get(fmt->style, &pad_l, &pad_r, &pad_t, &pad_b);
 
-             o = efl_data_scope_get(obj, MY_CLASS);
-             pgm = _format_filter_program_get(o, fmt);
-             evas_filter_program_padding_get(pgm, &pad_l, &pad_r, &pad_t, &pad_b);
-          }
         if (pad_l > *style_pad_l) *style_pad_l = pad_l;
         if (pad_r > *style_pad_r) *style_pad_r = pad_r;
         if (pad_t > *style_pad_t) *style_pad_t = pad_t;
@@ -12910,22 +12942,42 @@ evas_object_textblock_free(Evas_Object *eo_obj)
   free(o->utf8);
 }
 
-static void
-_filter_sync_end(Efl_Canvas_Text_Filter *filter, int id, Eina_Bool success)
+static Evas_Filter_Context *
+_filter_context_get(Evas_Object_Textblock_Text_Item *ti)
 {
-   Evas_Filter_Context *ctx;
+   // FIXME: optimize this (memory usage)
+   if (!ti) return NULL;
+   return ti->gfx_filter_ctx;
+}
 
-   EINA_SAFETY_ON_NULL_RETURN(filter->contexts);
-   ctx = eina_array_data_get(filter->contexts, id);
-   eina_array_data_set(filter->contexts, id, NULL);
-   evas_filter_context_destroy(ctx);
-   filter->invalid = !success;
+static void
+_filter_context_set(Evas_Object_Textblock_Text_Item *ti, Evas_Filter_Context *ctx)
+{
+   if (!ti) return;
+   ti->gfx_filter_ctx = ctx;
+}
 
-   if ((--filter->pending_ctx) == 0)
+static void
+_filter_sync_end(Evas_Filter_Context *ctx, Eina_Bool success)
+{
+   Evas_Object_Textblock_Text_Item *ti;
+   Efl_Canvas_Text_Filter *filter;
+   void *buffer;
+
+   ti = evas_filter_context_data_get(ctx);
+   filter = ti->parent.format->gfx_filter;
+
+   buffer = evas_filter_buffer_backing_steal(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
+   if (buffer)
      {
-        eina_array_free(filter->contexts);
-        filter->contexts = NULL;
+        if (ti->gfx_buffer)
+          _image_safe_unref(filter->evas, ti->gfx_buffer);
+        ti->gfx_buffer = buffer;
      }
+
+   evas_filter_context_destroy(ctx);
+   _filter_context_set(ti, NULL);
+   filter->invalid = !success;
 }
 
 static void
@@ -12933,7 +12985,7 @@ _filter_post_render_cb(void *data)
 {
    Efl_Canvas_Text_Filter_Post_Render *post_data = data;
 
-   _filter_sync_end(post_data->filter, post_data->ctx_id, post_data->success);
+   _filter_sync_end(post_data->ctx, post_data->success);
    free(post_data);
 }
 
@@ -12942,20 +12994,16 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
 {
    Efl_Canvas_Text_Filter_Post_Render *post_data;
    Efl_Canvas_Text_Filter *filter = data;
-   int ctx_id;
 
-   ctx_id = evas_filter_context_id_get(ctx);
-
-   if (!filter->async)
+   if (!evas_filter_context_async_get(ctx))
      {
-        _filter_sync_end(filter, ctx_id, success);
+        _filter_sync_end(ctx, success);
         return;
      }
 
    post_data = calloc(1, sizeof(*post_data));
    post_data->success = success;
-   post_data->filter = filter;
-   post_data->ctx_id = ctx_id;
+   post_data->ctx = ctx;
    evas_post_render_job_add(filter->evas, _filter_post_render_cb, post_data);
 }
 
@@ -13098,9 +13146,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         cr = nr; cg = ng; cb = nb; ca = na;                             \
      }
 
-#define DRAW_TEXT_FILTER(gf, gf_id, ox, oy) do {                        \
-   Evas_Filter_Context *ctx = eina_array_data_get(gf->contexts, gf_id); \
-   evas_filter_input_render(eo_obj, ctx, gf->dc, ti,                    \
+#define DRAW_TEXT_FILTER(gf, ox, oy) do {                               \
+   evas_filter_input_render(eo_obj, _filter_context_get(ti), gf->dc, ti, \
                             gf->pad.l, gf->pad.r,                       \
                             gf->pad.t, gf->pad.b, do_async);            \
    } while (0)
@@ -13121,10 +13168,10 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 #define DRAW_TEXT(ox, oy) do {                                          \
    if (ti->parent.format->font.font)                                    \
      {                                                                  \
-        if (EINA_LIKELY(!ti->gfx_filter_id))                            \
+        if (EINA_LIKELY(!ti->gfx_filter_ctx))                           \
           DRAW_TEXT_NOFILTER(ox, oy);                                   \
-        else                                                            \
-          DRAW_TEXT_FILTER(ti->parent.format->gfx_filter, ti->gfx_filter_id - 1, ox, oy); \
+        else if (!ti->gfx_buffer)                                       \
+          DRAW_TEXT_FILTER(ti->parent.format->gfx_filter, ox, oy);      \
      } } while(0)
 
    /* backing */
@@ -13258,8 +13305,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    /* There are size adjustments that depend on the styles drawn here back
     * in "_text_item_update_sizes" should not modify one without the other. */
 
-   /* prepare everything for text draw */
-
    /* gfx filters preparation */
    EINA_LIST_FOREACH(gfx_filters, li, itr)
      {
@@ -13268,27 +13313,29 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         Efl_Canvas_Text_Filter *filter;
         Evas_Filter_Program *pgm;
         Evas_Filter_Context *ctx;
-        int filter_id;
         Eina_Bool ok;
+        int X, Y;
 
+        ln = ti->parent.ln;
         filter = ti->parent.format->gfx_filter;
         pgm = _format_filter_program_get(o, ti->parent.format);
         if (!pgm)
           {
              WRN("Filter '%s' not found on this object", filter->name);
-             ti->gfx_filter_id = 0;
              continue;
           }
 
-#ifdef DEBUG
-        if (filter->contexts) WRN("Previous filter context was not deleted");
-#endif
+        // previous run
+        if (ti->gfx_buffer)
+          {
+             if (!filter->redraw) continue;
 
-        if (!filter->contexts)
-          filter->contexts = eina_array_new(8);
-        filter_id = eina_array_count(filter->contexts);
+             _image_safe_unref(obj->layer->evas, ti->gfx_buffer);
+             ti->gfx_buffer = NULL;
+          }
 
-        ctx = evas_filter_context_new(obj->layer->evas, do_async, filter_id);
+        // prepare filter context
+        ctx = evas_filter_context_new(obj->layer->evas, do_async, ti);
         evas_filter_state_prepare(eo_obj, &state, ti);
         evas_filter_program_state_set(pgm, &state);
         ok = evas_filter_context_program_use(ctx, pgm);
@@ -13296,26 +13343,26 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
           {
              evas_filter_context_destroy(ctx);
              filter->invalid = EINA_TRUE;
-             ti->gfx_filter_id = 0;
              continue;
           }
 
-        eina_array_push(filter->contexts, ctx);
-        ti->gfx_filter_id = filter_id + 1;
+        // target position
+        evas_filter_program_padding_get(pgm,
+                                        &filter->pad.l, &filter->pad.r,
+                                        &filter->pad.t, &filter->pad.b);
+        X = obj->cur->geometry.x + ln->x + ti->parent.x + x - filter->pad.l;
+        Y = obj->cur->geometry.y + ln->par->y + ln->y + y - filter->pad.t;
 
-        ln = ti->parent.ln;
         ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
         ENFN->context_multiplier_set(ENDT, context,
                                      obj->cur->cache.clip.r, obj->cur->cache.clip.g,
                                      obj->cur->cache.clip.b, obj->cur->cache.clip.a);
-        evas_filter_program_padding_get(pgm,
-                                        &filter->pad.l, &filter->pad.r,
-                                        &filter->pad.t, &filter->pad.b);
         evas_filter_context_proxy_render_all(ctx, eo_obj, EINA_FALSE);
         evas_filter_context_buffers_allocate_all(ctx);
-        evas_filter_target_set(ctx, context, surface,
-                               obj->cur->geometry.x + ln->x + ti->parent.x + x - filter->pad.l,
-                               obj->cur->geometry.y + ln->par->y + ln->y + y - filter->pad.t);
+        evas_filter_target_set(ctx, context, surface, X, Y);
+        _filter_context_set(ti, ctx);
+
+        // common data for all items (FIXME: should be common to object)
         if (!filter->dc)
           {
              filter->dc = ENFN->context_new(ENDT);
@@ -13323,8 +13370,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
           }
         filter->eo_obj = eo_obj;
         filter->evas = obj->layer->evas;
-        filter->async = do_async;
-        filter->pending_ctx++;
 
         ENFN->context_multiplier_unset(ENDT, context);
      }
@@ -13342,7 +13387,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         yoff = itr->yoff;
         ln = itr->ln;
 
-        if (EINA_UNLIKELY(ti->gfx_filter_id))
+        if (EINA_UNLIKELY(ti->gfx_filter_ctx != NULL))
           context = ti->parent.format->gfx_filter->dc;
 
         shad_dst = shad_sz = dx = dy = haveshad = 0;
@@ -13457,7 +13502,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         yoff = itr->yoff;
         ln = itr->ln;
 
-        if (EINA_UNLIKELY(ti->gfx_filter_id))
+        if (EINA_UNLIKELY(ti->gfx_filter_ctx != NULL))
           context = ti->parent.format->gfx_filter->dc;
 
         if ((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_GLOW)
@@ -13495,7 +13540,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         yoff = itr->yoff;
         ln = itr->ln;
 
-        if (EINA_UNLIKELY(ti->gfx_filter_id))
+        if (EINA_UNLIKELY(ti->gfx_filter_ctx != NULL))
           context = ti->parent.format->gfx_filter->dc;
 
         if (((ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
@@ -13580,7 +13625,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
           {
              void *fi = _ITEM_TEXT(itr)->text_props.font_instance;
 
-             if (EINA_UNLIKELY(ti->gfx_filter_id))
+             if (EINA_UNLIKELY(ti->gfx_filter_ctx != NULL))
                context = ti->parent.format->gfx_filter->dc;
 
              COLOR_SET(normal);
@@ -13590,13 +13635,30 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 
              context = context_save;
 
-             if (EINA_UNLIKELY(ti->gfx_filter_id))
+             if (EINA_UNLIKELY(ti->parent.format->gfx_filter != NULL))
                {
+                  Evas_Filter_Context *ctx = _filter_context_get(ti);
                   Efl_Canvas_Text_Filter *filter = ti->parent.format->gfx_filter;
-                  Evas_Filter_Context *ctx = eina_array_data_get(filter->contexts, ti->gfx_filter_id - 1);
+                  void *buffer = ti->gfx_buffer;
 
-                  evas_filter_context_post_run_callback_set(ctx, _filter_cb, filter);
-                  evas_filter_run(ctx);
+                  if (buffer)
+                    {
+                       int X, Y, W = 0, H = 0;
+
+                       X = obj->cur->geometry.x + ln->x + ti->parent.x + x - filter->pad.l;
+                       Y = obj->cur->geometry.y + ln->par->y + ln->y + y - filter->pad.t;
+
+                       ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
+                       ENFN->context_multiplier_unset(ENDT, context);
+                       ENFN->image_size_get(ENDT, buffer, &W, &H);
+                       ENFN->image_draw(ENDT, context, surface, buffer,
+                                        0, 0, W, H, X, Y, W, H, 0, do_async);
+                    }
+                  else if (ctx)
+                    {
+                       evas_filter_context_post_run_callback_set(ctx, _filter_cb, filter);
+                       evas_filter_run(ctx);
+                    }
                }
           }
 

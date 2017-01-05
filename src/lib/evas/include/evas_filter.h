@@ -137,8 +137,9 @@ EAPI void                evas_filter_program_source_set_all(Evas_Filter_Program 
 void                     evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Inlist *data);
 
 /* Filter context (low level) */
-Evas_Filter_Context     *evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, int id);
-int                      evas_filter_context_id_get(Evas_Filter_Context *ctx);
+Evas_Filter_Context     *evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, void *user_data);
+void                    *evas_filter_context_data_get(Evas_Filter_Context *ctx);
+Eina_Bool                evas_filter_context_async_get(Evas_Filter_Context *ctx);
 void                     evas_filter_context_destroy(Evas_Filter_Context *ctx);
 Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm);
 void                     evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj, Eina_Bool do_async);
