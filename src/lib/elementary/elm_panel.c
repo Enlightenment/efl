@@ -1121,18 +1121,9 @@ _elm_panel_efl_gfx_position_set(Eo *obj, Elm_Panel_Data *sd, Evas_Coord x, Evas_
    evas_object_move(sd->hit_rect, x, y);
 }
 
-EOLIAN static void
-_elm_panel_efl_gfx_size_set(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
+static void
+_scrollable_layout_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
-     return;
-
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
-
-   if (!sd->scrollable) return;
-
-   evas_object_resize(sd->hit_rect, w, h);
-
    switch (sd->orient)
      {
       case ELM_PANEL_ORIENT_TOP:
@@ -1152,6 +1143,21 @@ _elm_panel_efl_gfx_size_set(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coor
      }
 
    elm_layout_sizing_eval(obj);
+}
+
+EOLIAN static void
+_elm_panel_efl_gfx_size_set(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, Evas_Coord h)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
+
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+
+   if (!sd->scrollable) return;
+
+   evas_object_resize(sd->hit_rect, w, h);
+
+   _scrollable_layout_resize(obj, sd, w, h);
 }
 
 EOLIAN static void
@@ -1420,30 +1426,12 @@ _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio
    sd->content_size_ratio = ratio;
 
    if (sd->scrollable)
-   {
-      Evas_Coord w, h;
-      evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+     {
+        Evas_Coord w, h;
+        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
 
-      switch (sd->orient)
-        {
-         case ELM_PANEL_ORIENT_TOP:
-         case ELM_PANEL_ORIENT_BOTTOM:
-            // vertical
-            evas_object_resize(sd->scr_ly, w, (1 + sd->content_size_ratio) * h);
-            evas_object_size_hint_min_set(sd->scr_panel, w, (sd->content_size_ratio * h));
-            evas_object_size_hint_min_set(sd->scr_event, w, h);
-            break;
-         case ELM_PANEL_ORIENT_LEFT:
-         case ELM_PANEL_ORIENT_RIGHT:
-            // horizontal
-            evas_object_resize(sd->scr_ly, (1 + sd->content_size_ratio) * w, h);
-            evas_object_size_hint_min_set(sd->scr_panel, (sd->content_size_ratio * w), h);
-            evas_object_size_hint_min_set(sd->scr_event, w, h);
-            break;
-        }
-
-      elm_layout_sizing_eval(obj);
-   }
+        _scrollable_layout_resize(obj, sd, w, h);
+     }
 }
 
 EOLIAN static Eina_Bool
