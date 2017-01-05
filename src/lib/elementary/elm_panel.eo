@@ -59,6 +59,12 @@ class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
          set {
             [[Set the size of the scrollable panel.]]
          }
+         get {
+            [[Get the size of the scrollable panel.
+
+              @since 1.19
+            ]]
+         }
          values {
             ratio: double; [[Size ratio]]
          }
