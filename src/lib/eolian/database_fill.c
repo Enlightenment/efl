@@ -7,18 +7,26 @@
 const Eolian_Class *
 _get_impl_class(const Eolian_Class *cl, const char *cln)
 {
-   if (!strcmp(cl->full_name, cln))
+   if (!cl || !strcmp(cl->full_name, cln))
      return cl;
-   return eolian_class_get_by_name(cln);
+   Eina_List *l;
+   const char *s;
+   EINA_LIST_FOREACH(cl->inherits, l, s)
+     {
+        /* we can do a depth first search, it's easier and doesn't matter
+         * which part of the inheritance tree we find the class in
+         */
+        const Eolian_Class *fcl = _get_impl_class(eolian_class_get_by_name(s), cln);
+        if (fcl)
+          return fcl;
+     }
+   return NULL;
 }
 
-static Eina_Bool
-_func_error(Eolian_Class *cl, Eolian_Implement *impl)
+static void
+_print_linecol(const Eolian_Object *base)
 {
-   fprintf(stderr, "eolian:%s:%d:%d: '%s' not known in class '%s'\n",
-           impl->base.file, impl->base.line, impl->base.column, impl->full_name,
-           eolian_class_name_get(cl));
-   return EINA_FALSE;
+   fprintf(stderr, "eolian:%s:%d:%d: ", base->file, base->line, base->column);
 }
 
 static Eina_Bool
@@ -39,13 +47,32 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
 
    const Eolian_Class *tcl = _get_impl_class(cl, clname);
    if (!tcl)
-     return EINA_FALSE;
+     {
+        _print_linecol(&impl->base);
+        fprintf(stderr, "class '%s' not found within the inheritance tree of '%s'\n",
+                clname, cl->full_name);
+        return EINA_FALSE;
+     }
 
    impl->klass = tcl;
 
    const Eolian_Function *fid = eolian_class_function_get_by_name(tcl, fnname, ftype);
    if (!fid)
-     return EINA_FALSE;
+     {
+        _print_linecol(&impl->base);
+        fprintf(stderr, "function '%s' not known in class '%s'\n", fnname, clname);
+        return EINA_FALSE;
+     }
+
+   if ((fid->klass == cl) && !impl->is_auto && !impl->is_empty)
+     {
+        /* only allow explicit implements from other classes, besides auto and
+         * empty... also prevents pure virtuals from being implemented
+         */
+        _print_linecol(&impl->base);
+        fprintf(stderr, "invalid implement '%s'\n", impl->full_name);
+        return EINA_FALSE;
+     }
 
    *foo_id = (Eolian_Function *)fid;
    impl->foo_id = fid;
@@ -67,10 +94,11 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
    else if (impl->is_prop_set)
      ftype = EOLIAN_PROP_SET;
 
+   if (!_get_impl_func(cl, impl, ftype, &foo_id))
+     return EINA_FALSE;
+
    if (impl->is_auto)
      {
-        if (!_get_impl_func(cl, impl, ftype, &foo_id))
-          return _func_error(cl, impl);
         if (ftype == EOLIAN_PROP_GET)
           {
              foo_id->get_impl = impl;
@@ -89,8 +117,6 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
      }
    else if (impl->is_empty)
      {
-        if (!_get_impl_func(cl, impl, ftype, &foo_id))
-          return _func_error(cl, impl);
         if (ftype == EOLIAN_PROP_GET)
           {
              foo_id->get_impl = impl;
@@ -106,15 +132,6 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
              foo_id->get_impl = foo_id->set_impl = impl;
              foo_id->get_empty = foo_id->set_empty = EINA_TRUE;
           }
-     }
-   else if (!_get_impl_func(cl, impl, ftype, &foo_id))
-     return _func_error(cl, impl);
-
-   if (foo_id && foo_id->klass == cl && eolian_function_is_virtual_pure(foo_id, ftype))
-     {
-        fprintf(stderr, "eolian:%s:%d:%d: impl of pure virtual '%s'\n",
-                impl->base.file, impl->base.line, impl->base.column, impl->full_name);
-        return EINA_FALSE;
      }
 
    return EINA_TRUE;
@@ -216,9 +233,8 @@ _db_fill_implements(Eolian_Class *cl)
      {
         if (eina_hash_find(th, impl->full_name))
           {
-             fprintf(stderr, "eolian:%s:%d:%d: duplicate implement '%s'\n",
-                     impl->base.file, impl->base.line, impl->base.column,
-                     impl->full_name);
+             _print_linecol(&impl->base);
+             fprintf(stderr, "duplicate implement '%s'\n", impl->full_name);
              return EINA_FALSE;
           }
         if (!_db_fill_implement(cl, impl))
@@ -242,8 +258,15 @@ _db_fill_ctors(Eolian_Class *cl)
    Eolian_Constructor *ctor;
    Eina_List *l;
 
+   Eina_Hash *th = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(cl->constructors, l, ctor)
      {
+        if (eina_hash_find(th, ctor->full_name))
+          {
+             _print_linecol(&ctor->base);
+             fprintf(stderr, "duplicate ctor '%s'\n", ctor->full_name);
+             return EINA_FALSE;
+          }
         const char *ldot = strrchr(ctor->full_name, '.');
         if (!ldot)
           return EINA_FALSE;
@@ -253,12 +276,15 @@ _db_fill_ctors(Eolian_Class *cl)
         const Eolian_Class *tcl = _get_impl_class(cl, cnbuf);
         if (!tcl)
           {
-             fprintf(stderr, "eolian:%s:%d:%d: class not found for ctor '%s'\n",
-                ctor->base.file, ctor->base.line, ctor->base.column, ctor->full_name);
+             _print_linecol(&ctor->base);
+             fprintf(stderr, "class '%s' not found within the inheritance "
+                             "tree of '%s'\n", cnbuf, cl->full_name);
              return EINA_FALSE;
           }
         ctor->klass = tcl;
+        eina_hash_add(th, ctor->full_name, ctor->full_name);
      }
+   eina_hash_free(th);
 
    return EINA_TRUE;
 }
