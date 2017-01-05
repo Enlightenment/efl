@@ -1361,7 +1361,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_display_mode_set(Eo *eo_obj EINA_UNUSE
    if (!obj) return;
    if (obj->delete_me) return;
    evas_object_async_block(obj);
-   _evas_object_size_hint_alloc(eo_obj, obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (dispmode == EVAS_DISPLAY_MODE_NONE) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
    if (obj->size_hints->dispmode == dispmode) return;
    obj->size_hints->dispmode = dispmode;
 
@@ -1387,7 +1391,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_restricted_min_set(Eo *eo_obj, Evas_Ob
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
-   _evas_object_size_hint_alloc(eo_obj, obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (!w && !h) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
    if ((obj->size_hints->min.w == w) && (obj->size_hints->min.h == h)) return;
    obj->size_hints->min.w = w;
    obj->size_hints->min.h = h;
@@ -1427,7 +1435,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_max_set(Eo *eo_obj, Evas_Object_Protec
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
-   _evas_object_size_hint_alloc(eo_obj, obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if ((w == -1) && (h == -1)) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
    if ((obj->size_hints->max.w == w) && (obj->size_hints->max.h == h)) return;
    obj->size_hints->max.w = w;
    obj->size_hints->max.h = h;
@@ -1454,7 +1466,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_request_set(Eo *eo_obj, Evas_Object_Pr
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
-   _evas_object_size_hint_alloc(eo_obj, obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (!w && !h) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
    if ((obj->size_hints->request.w == w) && (obj->size_hints->request.h == h)) return;
    obj->size_hints->request.w = w;
    obj->size_hints->request.h = h;
@@ -1481,7 +1497,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_min_set(Eo *eo_obj, Evas_Object_Protec
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
-   _evas_object_size_hint_alloc(eo_obj, obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (!w && !h) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
    if ((obj->size_hints->user_min.w == w) && (obj->size_hints->user_min.h == h)) return;
    obj->size_hints->user_min.w = w;
    obj->size_hints->user_min.h = h;
@@ -1510,7 +1530,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_aspect_set(Eo *eo_obj, Evas_Object_Pro
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
-   _evas_object_size_hint_alloc(eo_obj, obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (!w && !h) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
    if ((obj->size_hints->aspect.mode == aspect) && (obj->size_hints->aspect.size.w == w) && (obj->size_hints->aspect.size.h == h)) return;
    obj->size_hints->aspect.mode = aspect;
    obj->size_hints->aspect.size.w = w;
@@ -1538,7 +1562,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_align_set(Eo *eo_obj, Evas_Object_Prot
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
-   _evas_object_size_hint_alloc(eo_obj, obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (EINA_DBL_CMP(x, 0.5) && EINA_DBL_CMP(y, 0.5)) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
    if ((EINA_DBL_CMP(obj->size_hints->align.x, x)) &&
        (EINA_DBL_CMP(obj->size_hints->align.y, y)))
      return;
@@ -1567,7 +1595,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_weight_set(Eo *eo_obj, Evas_Object_Pro
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
-   _evas_object_size_hint_alloc(eo_obj, obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (EINA_DBL_CMP(x, 0.0) && EINA_DBL_CMP(y, 0.0)) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
    if ((EINA_DBL_CMP(obj->size_hints->weight.x, x)) &&
        (EINA_DBL_CMP(obj->size_hints->weight.y, y)))
      return;
@@ -1600,7 +1632,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_margin_set(Eo *eo_obj, Evas_Object_Pro
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
-   _evas_object_size_hint_alloc(eo_obj, obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (!l && !r && !t && !b) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
    if ((obj->size_hints->padding.l == l) && (obj->size_hints->padding.r == r) && (obj->size_hints->padding.t == t) && (obj->size_hints->padding.b == b)) return;
    obj->size_hints->padding.l = l;
    obj->size_hints->padding.r = r;
