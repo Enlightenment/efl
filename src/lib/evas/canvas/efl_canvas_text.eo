@@ -369,6 +369,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Canvas.Filter.Internal)
       Efl.Text.text { get; set; }
       Efl.Gfx.Filter.filter_program { get; set; }
       Efl.Gfx.Filter.filter_data { get; set; }
+      Efl.Gfx.Filter.filter_source { get; set; }
       Efl.Canvas.Filter.Internal.filter_dirty;
       Efl.Canvas.Filter.Internal.filter_input_render;
       Efl.Canvas.Filter.Internal.filter_state_prepare;

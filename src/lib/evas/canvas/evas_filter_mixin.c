@@ -107,8 +107,8 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
    evas_post_render_job_add(obj->layer->evas, _filter_async_post_render_cb, post_data);
 }
 
-static void
-_filter_source_hash_free_cb(void *data)
+void
+_evas_filter_source_hash_free_cb(void *data)
 {
    Evas_Filter_Proxy_Binding *pb = data;
    Evas_Object_Protected_Data *proxy, *source;
@@ -423,7 +423,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_source_set(Eo *eo_obj, Evas_Fi
 
    fcow = FCOW_BEGIN(pd);
    if (!fcow->sources)
-     fcow->sources = eina_hash_string_small_new(EINA_FREE_CB(_filter_source_hash_free_cb));
+     fcow->sources = eina_hash_string_small_new(_evas_filter_source_hash_free_cb);
    else if (pb_old)
      eina_hash_del(fcow->sources, name, pb_old);
 

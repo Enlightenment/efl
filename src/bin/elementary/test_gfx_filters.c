@@ -25,7 +25,7 @@ static const Filter_Image images[] = {
    { "sky_01.jpg", "sky" },
    { "sky_04.jpg", "cloud" },
    { "wood_01.jpg", "wood" },
-   { "icon_00.png", "love" },
+   { "animated_logo.gif", "logo" },
    { NULL, NULL }
 };
 
@@ -36,6 +36,11 @@ static const Filter_Image images_wood[] = {
 
 static const Filter_Image images_cloud[] = {
    { "sky_04.jpg", "cloud" },
+   { NULL, NULL },
+};
+
+static const Filter_Image images_anim[] = {
+   { "animated_logo.gif", "logo" },
    { NULL, NULL },
 };
 
@@ -104,6 +109,13 @@ static const Filter templates[] = {
    { "Displaced cloud",
      "cloud = buffer { src = 'cloud' }\n"
      "displace { cloud, intensity = 10, fillmode = 'stretch' }", images_cloud },
+   { "Animated ugliness",
+     "logo = buffer { src = 'logo' }\n"
+     "blend { logo, fillmode = 'repeat' }\n"
+     "a = buffer {}\n"
+     "grow { 5, dst = a }\n"
+     "blur { 5, src = a, color = 'darkblue' }\n"
+     "blend { color = 'yellow' }", images_anim }
 };
 
 
@@ -139,10 +151,11 @@ static void
 _spinner_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *win = data;
-   Eo *text, *code, *spinner;
+   Eo *text, *code, *spinner, *tb;
    int k;
 
    text = efl_key_wref_get(win, "text");
+   tb = efl_key_wref_get(win, "textblock");
    code = efl_key_wref_get(win, "code");
    spinner = efl_key_wref_get(win, "spinner");
    k = (int) round(elm_spinner_value_get(spinner));
@@ -160,6 +173,7 @@ _spinner_cb(void *data, const Efl_Event *ev EINA_UNUSED)
                   const char *name = f->images[j].src_name;
                   Eo *source_obj = efl_name_find(win, name);
                   efl_gfx_filter_source_set(text, name, source_obj);
+                  efl_gfx_filter_source_set(tb, name, source_obj);
                }
           }
      }
@@ -228,7 +242,7 @@ _img_click(void *data, const Efl_Event *ev)
    Eina_Strbuf *buf;
    Eo *win = data;
    Eo *img = ev->object;
-   Eo *code, *text;
+   Eo *code, *text, *tb;
    const char *name;
 
    name = efl_name_get(img);
@@ -236,6 +250,7 @@ _img_click(void *data, const Efl_Event *ev)
 
    code = efl_key_wref_get(win, "code");
    text = efl_key_wref_get(win, "text");
+   tb = efl_key_wref_get(win, "textblock");
 
    buf = eina_strbuf_new();
    eina_strbuf_append_printf(buf, "%s = buffer { src = '%s' }\n", name, name);
@@ -245,6 +260,7 @@ _img_click(void *data, const Efl_Event *ev)
    eina_strbuf_free(buf);
 
    efl_gfx_filter_source_set(text, name, ev->object);
+   efl_gfx_filter_source_set(tb, name, ev->object);
 }
 
 static void
@@ -369,6 +385,8 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                        efl_name_set(efl_added, images[k].src_name),
                        elm_object_tooltip_text_set(efl_added, images[k].src_name),
                        efl_gfx_visible_set(efl_added, 1));
+           if (efl_player_playable_get(o))
+             efl_player_play_set(o, 1);
            efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, _img_click, win);
            efl_pack(box2, o);
         }

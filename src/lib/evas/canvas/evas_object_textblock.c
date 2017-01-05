@@ -598,6 +598,7 @@ struct _Evas_Object_Textblock
    struct {
       Efl_Canvas_Text_Filter_Program  *programs;
       Evas_Filter_Data_Binding        *data_bindings;
+      Eina_Hash                       *sources;
    } gfx_filter;
    Eina_Bool                           redraw : 1;
    Eina_Bool                           changed : 1;
@@ -4378,6 +4379,7 @@ _format_filter_program_get(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Format
      {
         pgm = evas_filter_program_new(program->name, EINA_FALSE);
         evas_filter_program_data_set_all(pgm, EINA_INLIST_GET(o->gfx_filter.data_bindings));
+        evas_filter_program_source_set_all(pgm, o->gfx_filter.sources);
         if (!evas_filter_program_parse(pgm, program->code))
           {
              evas_filter_program_del(pgm);
@@ -12875,6 +12877,7 @@ evas_object_textblock_free(Evas_Object *eo_obj)
         eina_stringshare_del(db->value);
         free(db);
      }
+   eina_hash_free(o->gfx_filter.sources);
 
    while (evas_object_textblock_style_user_peek(eo_obj))
      {
@@ -13285,7 +13288,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
           filter->contexts = eina_array_new(8);
         filter_id = eina_array_count(filter->contexts);
 
-        // TODO: sources set
         ctx = evas_filter_context_new(obj->layer->evas, do_async, filter_id);
         evas_filter_state_prepare(eo_obj, &state, ti);
         evas_filter_program_state_set(pgm, &state);
@@ -13309,6 +13311,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         evas_filter_program_padding_get(pgm,
                                         &filter->pad.l, &filter->pad.r,
                                         &filter->pad.t, &filter->pad.b);
+        evas_filter_context_proxy_render_all(ctx, eo_obj, EINA_FALSE);
         evas_filter_context_buffers_allocate_all(ctx);
         evas_filter_target_set(ctx, context, surface,
                                obj->cur->geometry.x + ln->x + ti->parent.x + x - filter->pad.l,
@@ -13774,6 +13777,66 @@ _efl_canvas_text_efl_gfx_filter_filter_data_get(Eo *obj EINA_UNUSED, Efl_Canvas_
 
    if (value) *value = db->value;
    if (execute) *execute = db->execute;
+}
+
+EOLIAN static void
+_efl_canvas_text_efl_gfx_filter_filter_source_set(Eo *eo_obj, Efl_Canvas_Text_Data *pd, const char *name, Efl_Gfx *eo_source)
+{
+   Evas_Object_Protected_Data *obj, *source;
+   Evas_Filter_Proxy_Binding *pb;
+
+   if (!name) return;
+
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   source = efl_data_scope_get(eo_source, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+
+   pb = eina_hash_find(pd->gfx_filter.sources, name);
+   if (pb)
+     {
+        if (pb->eo_source == eo_source) return;
+        eina_hash_del(pd->gfx_filter.sources, name, pb);
+     }
+   else if (!eo_source)
+     {
+        return;
+     }
+   else
+     {
+        pb = calloc(1, sizeof(*pb));
+        pb->eo_proxy = eo_obj;
+        pb->eo_source = eo_source;
+        pb->name = eina_stringshare_add(name);
+     }
+
+   if (!pd->gfx_filter.sources)
+     pd->gfx_filter.sources = eina_hash_string_small_new(_evas_filter_source_hash_free_cb);
+   eina_hash_set(pd->gfx_filter.sources, name, pb);
+
+   if (!eina_list_data_find(source->proxy->proxies, eo_obj))
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy, Evas_Object_Proxy_Data, source_write)
+          source_write->proxies = eina_list_append(source_write->proxies, eo_obj);
+        EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, source_write)
+     }
+
+   if (!obj->proxy->is_proxy)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
+          proxy_write->is_proxy = EINA_TRUE;
+        EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write)
+     }
+
+   pd->format_changed = EINA_TRUE;
+   _evas_textblock_invalidate_all(pd);
+   _evas_textblock_changed(pd, eo_obj);
+   evas_object_change(eo_obj, obj);
+}
+
+EOLIAN static Efl_Gfx *
+_efl_canvas_text_efl_gfx_filter_filter_source_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *pd, const char *name)
+{
+   return eina_hash_find(pd->gfx_filter.sources, name);
 }
 
 static void

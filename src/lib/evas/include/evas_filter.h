@@ -157,6 +157,9 @@ Eina_Bool                evas_filter_font_draw(Evas_Filter_Context *ctx, void *d
 Eina_Bool                evas_filter_image_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid, void *image, Eina_Bool do_async);
 Eina_Bool                evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context, void *surface, int x, int y);
 
+// utility function
+void                     _evas_filter_source_hash_free_cb(void *data);
+
 /**
  * @brief Blend a source buffer into a destination buffer, allowing X,Y offsets, Alpha to RGBA conversion with color
  * @param ctx            Current filter chain
