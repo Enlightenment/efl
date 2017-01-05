@@ -756,6 +756,21 @@ _evas_dmabuf_surface_destroy(Surface *s)
 }
 
 Eina_Bool
+_evas_dmabuf_surface_surface_set(Surface *s, struct wl_shm *wl_shm EINA_UNUSED, struct zwp_linux_dmabuf_v1 *wl_dmabuf, struct wl_surface *wl_surface)
+{
+   Dmabuf_Surface *surf;
+
+   surf = s->surf.dmabuf;
+
+   if ((surf->dmabuf == wl_dmabuf) && (surf->wl_surface == wl_surface))
+     return EINA_FALSE;
+
+   surf->dmabuf = wl_dmabuf;
+   surf->wl_surface = wl_surface;
+   return EINA_TRUE;
+}
+
+Eina_Bool
 _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
 {
    Dmabuf_Surface *surf = NULL;
@@ -799,6 +814,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    s->funcs.data_get = _evas_dmabuf_surface_data_get;
    s->funcs.assign = _evas_dmabuf_surface_assign;
    s->funcs.post = _evas_dmabuf_surface_post;
+   s->funcs.surface_set = _evas_dmabuf_surface_surface_set;
 
    return EINA_TRUE;
 

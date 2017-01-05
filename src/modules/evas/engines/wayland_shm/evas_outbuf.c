@@ -346,16 +346,21 @@ _evas_outbuf_rotation_get(Outbuf *ob)
 void 
 _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize, Eina_Bool hidden)
 {
+   Eina_Bool dirty;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if ((depth == OUTBUF_DEPTH_NONE) || 
        (depth == OUTBUF_DEPTH_INHERIT))
      depth = ob->depth;
 
-   if ((ob->w == w) && (ob->h == h) && 
+   if (!ob->dirty && (ob->w == w) && (ob->h == h) &&
        (ob->rotation == rot) && (ob->depth == depth) && 
        (ob->priv.destination_alpha == alpha))
      return;
+
+   dirty = ob->dirty;
+   ob->dirty = EINA_FALSE;
 
    ob->w = w;
    ob->h = h;
@@ -368,11 +373,11 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        ob->surface->funcs.reconfigure(ob->surface, w, h, resize, EINA_FALSE);
+        ob->surface->funcs.reconfigure(ob->surface, w, h, resize, dirty);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        ob->surface->funcs.reconfigure(ob->surface, h, w, resize, EINA_FALSE);
+        ob->surface->funcs.reconfigure(ob->surface, h, w, resize, dirty);
      }
 
    _evas_outbuf_idle_flush(ob);
@@ -636,4 +641,10 @@ _evas_outbuf_redraws_clear(Outbuf *ob)
      ob->surface->funcs.post(ob->surface, ob->priv.rects, ob->priv.rect_count, ob->hidden);
    free(ob->priv.rects);
    ob->priv.rect_count = 0;
+}
+
+void _evas_outbuf_surface_set(Outbuf *ob, struct wl_shm *wl_shm, struct zwp_linux_dmabuf_v1 *wl_dmabuf, struct wl_surface *wl_surface)
+{
+   if (ob->surface->funcs.surface_set(ob->surface, wl_shm, wl_dmabuf, wl_surface))
+     ob->dirty = EINA_TRUE;
 }
