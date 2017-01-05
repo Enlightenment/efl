@@ -368,11 +368,11 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        ob->surface->funcs.reconfigure(ob->surface, w, h, resize);
+        ob->surface->funcs.reconfigure(ob->surface, w, h, resize, EINA_FALSE);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        ob->surface->funcs.reconfigure(ob->surface, h, w, resize);
+        ob->surface->funcs.reconfigure(ob->surface, h, w, resize, EINA_FALSE);
      }
 
    _evas_outbuf_idle_flush(ob);

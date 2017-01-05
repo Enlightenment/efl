@@ -96,7 +96,7 @@ struct _Surface
    struct
      {
         void (*destroy)(Surface *surface);
-        void (*reconfigure)(Surface *surface, int w, int h, uint32_t flags);
+        void (*reconfigure)(Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
         void *(*data_get)(Surface *surface, int *w, int *h);
         int  (*assign)(Surface *surface);
         void (*post)(Surface *surface, Eina_Rectangle *rects, unsigned int count, Eina_Bool hidden);

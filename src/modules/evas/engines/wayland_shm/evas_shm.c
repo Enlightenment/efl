@@ -414,7 +414,7 @@ _evas_shm_surface_destroy(Surface *surface)
 }
 
 void 
-_evas_shm_surface_reconfigure(Surface *s, int w, int h, uint32_t flags)
+_evas_shm_surface_reconfigure(Surface *s, int w, int h, uint32_t flags, Eina_Bool force)
 {
    Shm_Surface *surface;
    int i = 0, resize = 0;
@@ -423,6 +423,8 @@ _evas_shm_surface_reconfigure(Surface *s, int w, int h, uint32_t flags)
 
    surface = s->surf.shm;
    resize = !!flags;
+
+   if (force) for (; i < surface->num_buff; i++) surface->leaf[i].busy = EINA_FALSE;
 
    for (; i < surface->num_buff; i++)
      {

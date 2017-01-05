@@ -558,7 +558,7 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
 }
 
 static void
-_evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_UNUSED)
+_evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
 {
    Dmabuf_Buffer *buf;
    Dmabuf_Surface *surface;
@@ -571,7 +571,7 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
         int stride = b->stride;
 
         /* If stride is a little bigger than width we still fit */
-        if ((w >= b->w) && (w <= stride / 4) && (h == b->h))
+        if (!force && (w >= b->w) && (w <= stride / 4) && (h == b->h))
           {
              b->w = w;
              continue;
