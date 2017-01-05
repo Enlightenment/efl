@@ -1312,6 +1312,8 @@ _elm_colorselector_elm_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
        (sd->mode == ELM_COLORSELECTOR_ALL) ||
        (sd->mode == ELM_COLORSELECTOR_BOTH))
      {
+        double scale;
+
         hpadstr = edje_object_data_get
             (wd->resize_obj, "horizontal_pad");
         if (hpadstr) h_pad = atoi(hpadstr);
@@ -1319,10 +1321,8 @@ _elm_colorselector_elm_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
             (wd->resize_obj, "vertical_pad");
         if (vpadstr) v_pad = atoi(vpadstr);
 
-        elm_box_padding_set
-          (sd->palette_box,
-          (h_pad * elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj)),
-          (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj)));
+        scale = elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
+        efl_pack_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
 
         EINA_LIST_FOREACH(sd->items, elist, eo_item)
           {
@@ -1506,10 +1506,9 @@ _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
         return;
      }
 
-   elm_box_recalculate(sd->palette_box);
+   efl_pack_layout_request(sd->palette_box);
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void
@@ -1808,7 +1807,7 @@ _palette_colors_load(Evas_Object *obj)
         item->color->b = color->b;
         item->color->a = color->a;
 
-        elm_box_pack_end(sd->palette_box, VIEW(item));
+        efl_pack(sd->palette_box, VIEW(item));
         evas_object_color_set(item->color_obj,
                               (item->color->r * item->color->a) / 255,
                               (item->color->g * item->color->a) / 255,
@@ -1827,32 +1826,25 @@ _create_colorpalette(Evas_Object *obj)
    const char *hpadstr, *vpadstr;
    unsigned int h_pad = DEFAULT_HOR_PAD;
    unsigned int v_pad = DEFAULT_VER_PAD;
+   double scale;
 
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->palette_box) return;
-   sd->palette_box = elm_box_add(obj);
-   elm_box_layout_set
-     (sd->palette_box, evas_object_box_layout_flow_horizontal, NULL, NULL);
-   elm_box_horizontal_set(sd->palette_box, EINA_TRUE);
-   evas_object_size_hint_weight_set
-     (sd->palette_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set
-     (sd->palette_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_homogeneous_set(sd->palette_box, EINA_TRUE);
+   sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj,
+                             efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL),
+                             efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                             efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL));
 
    hpadstr = edje_object_data_get(wd->resize_obj, "horizontal_pad");
    if (hpadstr) h_pad = atoi(hpadstr);
    vpadstr = edje_object_data_get(wd->resize_obj, "vertical_pad");
    if (vpadstr) v_pad = atoi(vpadstr);
 
-   elm_box_padding_set
-     (sd->palette_box,
-     (h_pad * elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj)),
-     (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj)));
-
-   elm_box_align_set(sd->palette_box, 0.0, 0.0);
+   scale = elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
+   efl_pack_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
+   efl_pack_align_set(sd->palette_box, 0.0, 0.0);
    if (!elm_layout_content_set(obj, "elm.palette", sd->palette_box))
      elm_layout_content_set(obj, "palette", sd->palette_box);
    sd->palette_name = eina_stringshare_add("default");
@@ -2452,7 +2444,7 @@ _elm_colorselector_palette_color_add(Eo *obj, Elm_Colorselector_Data *sd, int r,
    item->color->b = b;
    item->color->a = a;
 
-   elm_box_pack_end(sd->palette_box, VIEW(item));
+   efl_pack(sd->palette_box, VIEW(item));
    evas_object_color_set(item->color_obj,
                          (item->color->r * item->color->a) / 255,
                          (item->color->g * item->color->a) / 255,
