@@ -461,6 +461,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_source_set(Eo *eo_obj, Evas_Fi
    eina_hash_add(fcow->sources, pb->name, pb);
    evas_filter_program_source_set_all(fcow->chain, fcow->sources);
    evas_filter_program_data_set_all(fcow->chain, fcow->data);
+   evas_filter_program_parse(fcow->chain, fcow->code);
 
    // Update object
 update:
@@ -658,6 +659,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_data_set(Eo *eo_obj, Evas_Filt
            fcow->data = eina_inlist_append(fcow->data, EINA_INLIST_GET(db));
         }
       evas_filter_program_data_set_all(fcow->chain, fcow->data);
+      evas_filter_program_parse(fcow->chain, fcow->code);
       fcow->changed = 1;
    }
    FCOW_END(fcow, pd);

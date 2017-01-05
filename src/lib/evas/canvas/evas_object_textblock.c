@@ -597,6 +597,7 @@ struct _Evas_Object_Textblock
    } formatted, native;
    struct {
       Efl_Canvas_Text_Filter_Program  *programs;
+      Evas_Filter_Data_Binding        *data_bindings;
    } gfx_filter;
    Eina_Bool                           redraw : 1;
    Eina_Bool                           changed : 1;
@@ -4344,6 +4345,7 @@ _filter_program_find(Efl_Canvas_Text_Data *o, const char *name)
 {
    Efl_Canvas_Text_Filter_Program *prg;
 
+   if (!name) return NULL;
    EINA_INLIST_FOREACH(o->gfx_filter.programs, prg)
      {
         if (eina_streq(name, prg->name))
@@ -4361,9 +4363,11 @@ _format_filter_program_get(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Format
    Evas_Filter_Program *pgm;
 
    filter = fmt->gfx_filter;
-   if (!filter->name) return NULL;
+   if (!filter) return NULL;
 
    program = _filter_program_find(o, filter->name);
+   if (!program) return NULL;
+
    if (program->changed)
      {
         evas_filter_program_del(program->pgm);
@@ -4372,8 +4376,8 @@ _format_filter_program_get(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Format
    pgm = program->pgm;
    if (!pgm)
      {
-        // TODO: data set
         pgm = evas_filter_program_new(program->name, EINA_FALSE);
+        evas_filter_program_data_set_all(pgm, EINA_INLIST_GET(o->gfx_filter.data_bindings));
         if (!evas_filter_program_parse(pgm, program->code))
           {
              evas_filter_program_del(pgm);
@@ -12844,13 +12848,34 @@ _efl_canvas_text_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
+// testing this macro...
+#define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
+
 static void
 evas_object_textblock_free(Evas_Object *eo_obj)
 {
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Efl_Canvas_Text_Filter_Program *prg;
+   Evas_Filter_Data_Binding *db;
 
    _evas_object_textblock_clear(eo_obj);
    evas_object_textblock_style_set(eo_obj, NULL);
+
+   EINA_INLIST_FREE(o->gfx_filter.programs, prg)
+     {
+        EINA_INLIST_REMOVE(o->gfx_filter.programs, prg);
+        eina_stringshare_del(prg->name);
+        eina_stringshare_del(prg->code);
+        free(prg);
+     }
+   EINA_INLIST_FREE(o->gfx_filter.data_bindings, db)
+     {
+        EINA_INLIST_REMOVE(o->gfx_filter.data_bindings, db);
+        eina_stringshare_del(db->name);
+        eina_stringshare_del(db->value);
+        free(db);
+     }
+
    while (evas_object_textblock_style_user_peek(eo_obj))
      {
         evas_object_textblock_style_user_pop(eo_obj);
@@ -13659,10 +13684,10 @@ _efl_canvas_text_efl_gfx_filter_filter_program_set(Eo *eo_obj, Efl_Canvas_Text_D
      }
    eina_stringshare_replace(&prg->code, code);
    prg->changed = EINA_TRUE;
+
    pd->format_changed = EINA_TRUE;
    _evas_textblock_invalidate_all(pd);
    _evas_textblock_changed(pd, eo_obj);
-
    evas_object_change(eo_obj, obj);
 }
 
@@ -13672,6 +13697,83 @@ _efl_canvas_text_efl_gfx_filter_filter_program_get(Eo *obj EINA_UNUSED, Efl_Canv
 {
    // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
    ERR("Invalid API definition for this object! 'name' needs to be an @in or @inout value!");
+}
+
+static Evas_Filter_Data_Binding *
+_filter_data_binding_find(Efl_Canvas_Text_Data *pd, const char *name)
+{
+   Evas_Filter_Data_Binding *db;
+
+   if (!name) return NULL;
+   EINA_INLIST_FOREACH(pd->gfx_filter.data_bindings, db)
+     if (!strcmp(db->name, name))
+       return db;
+
+   return NULL;
+}
+
+EOLIAN static void
+_efl_canvas_text_efl_gfx_filter_filter_data_set(Eo *obj, Efl_Canvas_Text_Data *pd, const char *name, const char *value, Eina_Bool execute)
+{
+   Efl_Canvas_Text_Filter_Program *prg;
+   Evas_Filter_Data_Binding *db;
+
+   if (!name) return;
+   db = _filter_data_binding_find(pd, name);
+   if (db)
+     {
+        if (eina_streq(db->value, value) && (db->execute == execute))
+          return;
+        if (!value)
+          {
+             EINA_INLIST_REMOVE(pd->gfx_filter.data_bindings, db);
+             eina_stringshare_del(db->name);
+             eina_stringshare_del(db->value);
+             free(db);
+          }
+     }
+   else if (!value)
+     {
+        return;
+     }
+   else
+     {
+        db = calloc(1, sizeof(*db));
+        pd->gfx_filter.data_bindings = (Evas_Filter_Data_Binding *)
+              eina_inlist_append(EINA_INLIST_GET(pd->gfx_filter.data_bindings), EINA_INLIST_GET(db));
+        db->name = eina_stringshare_add(name);
+     }
+   eina_stringshare_replace(&db->value, value);
+   db->execute = execute;
+
+   EINA_INLIST_FOREACH(pd->gfx_filter.programs, prg)
+     {
+        if (!prg->code) continue;
+        if (strstr(prg->code, name))
+          prg->changed = EINA_TRUE;
+     }
+
+   pd->format_changed = EINA_TRUE;
+   _evas_textblock_invalidate_all(pd);
+   _evas_textblock_changed(pd, obj);
+   evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
+}
+
+EOLIAN static void
+_efl_canvas_text_efl_gfx_filter_filter_data_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *pd, const char *name, const char **value, Eina_Bool *execute)
+{
+   Evas_Filter_Data_Binding *db;
+
+   db = _filter_data_binding_find(pd, name);
+   if (!db)
+     {
+        if (value) *value = NULL;
+        if (execute) *execute = EINA_FALSE;
+        return;
+     }
+
+   if (value) *value = db->value;
+   if (execute) *execute = db->execute;
 }
 
 static void

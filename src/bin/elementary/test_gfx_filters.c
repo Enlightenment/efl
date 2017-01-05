@@ -43,8 +43,9 @@ static const Filter_Image images_cloud[] = {
 static const Filter templates[] = {
    { "Custom", NULL, NULL },
    { "Black shadow",
+     "if not myColor then myColor = color('yellow') end\n"
      "blur { 6, ox = 2, oy = 2, color = 'black' }\n"
-     "blend {}", NULL },
+     "blend { color = myColor }", NULL },
    { "Fire glow",
      "a = buffer { 'alpha' }\n"
      "grow { 10, dst = a }\n"
@@ -71,8 +72,8 @@ static const Filter templates[] = {
      "blend { color = 'black' }\n"
      "mask { input, b }\n", NULL },
    { "Rocking it",
-     "padding_set { 40 }\n"
      "local len = state.scale * 10\n\n"
+     "padding_set { len * 2 }\n"
      "a = buffer { 'alpha' }\n"
      "grow { len / 2, dst = a }\n"
      "blur { len * 2, oy = len, ox = len / 2, color = 'black', src = a }\n"
@@ -221,12 +222,6 @@ _textblock_resize(void *data EINA_UNUSED, const Efl_Event *ev)
    efl_gfx_size_hint_min_set(ev->object, w + l + r, h + t + b);
 }
 
-static Evas_Object *
-_img_tooltip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
-{
-   return efl_add(EFL_UI_TEXT_CLASS, tt, efl_text_set(efl_added, efl_name_get(tt)));
-}
-
 static void
 _img_click(void *data, const Efl_Event *ev)
 {
@@ -272,6 +267,24 @@ _flip_click(void *data, const Efl_Event *ev EINA_UNUSED)
 
    /* FIXME: The flip APIs don't make sense for N items (front!?) */
    efl_ui_flip_go(flip, EFL_UI_FLIP_CROSS_FADE);
+}
+
+static void
+_colsel_cb(void *data, const Efl_Event *ev)
+{
+   Eo *win = data;
+   Eo *colsel = ev->object;
+   Eo *text, *tb;
+   int r = 0, g = 0, b = 0, a = 255;
+   char buf[64];
+
+   text = efl_key_wref_get(win, "text");
+   tb = efl_key_wref_get(win, "textblock");
+   elm_colorselector_color_get(colsel, &r, &g, &b, &a);
+   sprintf(buf, "color(%d, %d, %d, %d)", r, g, b, a);
+
+   efl_gfx_filter_data_set(text, efl_name_get(colsel), buf, 1);
+   efl_gfx_filter_data_set(tb, efl_name_get(colsel), buf, 1);
 }
 
 void
@@ -332,35 +345,62 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    }
 
    {
-      size_t k;
-
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
                      efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL),
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-                     efl_gfx_size_hint_align_set(efl_added, 0.0, 0.5),
+                     efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
                      efl_pack_padding_set(efl_added, 5, 5, 1),
                      efl_gfx_size_hint_margin_set(efl_added, 5, 5, 5, 5),
                      efl_pack_align_set(efl_added, 0, 0.5));
       efl_pack(box, box2);
 
-      for (k = 0; k < EINA_C_ARRAY_LENGTH(images); k++)
+      for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(images); k++)
         {
            char buf[PATH_MAX];
 
            if (!images[k].path) break;
            snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), images[k].path);
            o = efl_add(EFL_UI_IMAGE_CLASS, win,
-                       efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+                       efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
                        efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
                        efl_gfx_size_hint_max_set(efl_added, ELM_SCALE_SIZE(48), ELM_SCALE_SIZE(48)),
                        efl_gfx_size_hint_min_set(efl_added, ELM_SCALE_SIZE(48), ELM_SCALE_SIZE(48)),
                        efl_file_set(efl_added, buf, NULL),
                        efl_name_set(efl_added, images[k].src_name),
+                       elm_object_tooltip_text_set(efl_added, images[k].src_name),
                        efl_gfx_visible_set(efl_added, 1));
-           elm_object_tooltip_content_cb_set(o, _img_tooltip, NULL, NULL); // GRRRRR
            efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, _img_click, win);
            efl_pack(box2, o);
         }
+
+      const struct { int r, g, b, a; } colors[] = {
+      { 255, 255, 255, 255 },
+      { 0, 0, 0, 255 },
+      { 64, 64, 64, 255 },
+      { 128, 128, 128, 255 },
+      { 196, 196, 196, 255 },
+      { 255, 0, 0, 255 },
+      { 0, 255, 0, 255 },
+      { 0, 0, 255, 255 },
+      { 255, 255, 0, 255 },
+      { 255, 0, 255, 255 },
+      { 0, 255, 255, 255 },
+      { 0, 0, 0, 0 }
+      };
+
+      o = efl_add(ELM_COLORSELECTOR_CLASS, win,
+                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 0),
+                  efl_gfx_size_hint_align_set(efl_added, -1.0, 0),
+                  elm_colorselector_mode_set(efl_added, ELM_COLORSELECTOR_PALETTE),
+                  efl_gfx_size_hint_max_set(efl_added, -1, ELM_SCALE_SIZE(48 * 2)),
+                  efl_name_set(efl_added, "myColor"),
+                  elm_object_tooltip_text_set(efl_added, "Pick a color to use as variable 'myColor'"),
+                  efl_event_callback_add(efl_added, ELM_COLORSELECTOR_EVENT_CHANGED, _colsel_cb, win),
+                  efl_gfx_visible_set(efl_added, 1));
+      efl_pack(box2, o);
+
+      for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(colors); k++)
+        elm_colorselector_palette_color_add(o, colors[k].r, colors[k].g, colors[k].b, colors[k].a);
 
       efl_gfx_visible_set(box2, 1);
    }
@@ -402,16 +442,16 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                          efl_pack_align_set(efl_added, 0.5, 0.5));
       efl_pack(flip, box2);
 
-      const char *codes[] = {
-         "padding_set{20} blur{3} blend{}",
-         "blur{15,color='red'} blend{}",
-         "blend{}"
+      const struct { const char *name, *code; } programs [] = {
+        { "one", "blur { 5, color = 'darkblue' } blend {}" },
+        { "two", "blur { 15, color = 'red' } blend {}" },
+        { "main", "blend {}" }
       };
-      const char *names[] = {
-         "one",
-         "two",
-         "main"
+
+      const struct { const char *name, *value; int exec; } prg_data [] = {
+        { "myColor", "color(255, 0, 255)", EINA_TRUE },
       };
+
       const char *tbtxt = "Classic <gfx_filter='one'>hello</> world!<br>"
                           "And <gfx_filter='two'>This filter over<br>"
                           "multiple lines</> :)<br/>"
@@ -422,8 +462,10 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_event_callback_add(o, EFL_GFX_EVENT_RESIZE, _textblock_resize, NULL);
       Evas_Textblock_Style *st = evas_textblock_style_new();
       evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=20 color=#FFF wrap=word'");
-      for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(codes); k++)
-        efl_gfx_filter_program_set(o, codes[k], names[k]);
+      for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(programs); k++)
+        efl_gfx_filter_program_set(o, programs[k].code, programs[k].name);
+      for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(prg_data); k++)
+        efl_gfx_filter_data_set(o, prg_data[k].name, prg_data[k].value, prg_data[k].exec);
       evas_object_textblock_style_set(o, st);
       evas_object_textblock_text_markup_set(o, tbtxt);
       efl_canvas_object_scale_set(o, elm_config_scale_get());
