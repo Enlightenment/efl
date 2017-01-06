@@ -20,6 +20,7 @@
 #define EINA_UTIL_H_
 
 #include <float.h>
+#include <math.h>
 
 /**
  * @addtogroup Eina_Tools_Group Tools
@@ -80,13 +81,13 @@ EAPI Eina_Bool eina_flteq(float a, float b);
 #define EINA_FLT_EQ(a, b) (!!(fabsf((float)a - (float)b) <= FLT_EPSILON))
 
 /**
- * @brief Determine if a float is nonzero
+ * @brief Determine if a float is not zero
  * @param a The float
  *
- * @return @c true if float is nonzero
+ * @return @c true if float is not zero
  * @since 1.19
  */
-#define EINA_FLT_NONZERO(a) (!EINA_FLT_CMP((a), 0.0))
+#define EINA_FLT_NONZERO(a) (!!(fpclassify((float)(a)) != FP_ZERO))
 
 /**
  * @brief Safe comparison of double
@@ -99,13 +100,13 @@ EAPI Eina_Bool eina_flteq(float a, float b);
 #define EINA_DBL_EQ(a, b) (!!(fabs((double)a - (double)b) <= DBL_EPSILON))
 
 /**
- * @brief Determine if a double is nonzero
+ * @brief Determine if a double is not zero
  * @param a The double
  *
- * @return @c true if double is nonzero
+ * @return @c true if double is not zero
  * @since 1.19
  */
-#define EINA_DBL_NONZERO(a) (!EINA_DBL_CMP((a), 0.0))
+#define EINA_DBL_NONZERO(a) (!!(fpclassify((double)(a)) != FP_ZERO))
 
 /**
  * @}
