@@ -223,7 +223,7 @@ _FUNC_EXPAND(release)(_STRBUF_STRUCT_NAME *buf)
    _STRBUF_DATA_TYPE *result;
 
    result = _FUNC_EXPAND(string_steal)(buf);
-   _FUNC_EXPAND(string_free)(buf);
+   _FUNC_EXPAND(free)(buf);
 
    return result;
 }
