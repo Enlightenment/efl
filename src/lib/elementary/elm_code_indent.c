@@ -2,9 +2,37 @@
 # include "elementary_config.h"
 #endif
 
+#include "regex.h"
 #include "Elementary.h"
 
 #include "elm_code_private.h"
+
+static Eina_Bool
+elm_code_line_indent_startswith_keyword(Elm_Code_Line *line)
+{
+   regex_t regex;
+   char *text;
+   Eina_Bool ret;
+   unsigned int textlen;
+
+   text = (char *)elm_code_line_text_get(line, &textlen);
+   text = strndup(text, textlen);
+
+   regcomp(&regex, "^\\s*("
+                   "((if|else\\s*if|while|for|switch)\\s*\\(.*\\)\\s*\\{?)|"
+                   "((else|do)\\s*\\{?)|"
+                   "(case\\s+.+:)|"
+                   "(default:)"
+                   ")\\s*$", REG_EXTENDED | REG_NOSUB);
+
+   ret = regexec(&regex, text, 0, NULL, 0);
+   free(text);
+
+   if (ret == 0)
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
+}
 
 EAPI char *
 elm_code_line_indent_get(Elm_Code_Line *line)
@@ -22,7 +50,7 @@ elm_code_line_indent_get(Elm_Code_Line *line)
    prevtext = elm_code_line_text_get(prevline, &prevlength);
 
    ptr = (char *)prevtext;
-   buf = malloc((prevlength + 3) * sizeof(char));
+   buf = malloc((prevlength + 5) * sizeof(char));
    while (count < prevlength)
      {
         if (!_elm_code_text_char_is_whitespace(*ptr))
@@ -34,6 +62,13 @@ elm_code_line_indent_get(Elm_Code_Line *line)
 
    strncpy(buf, prevtext, count);
    buf[count] = '\0';
+
+   if (elm_code_line_indent_startswith_keyword(prevline))
+     {
+        strcpy(buf + count, "  ");
+        count += 2;
+     }
+
    if (count < prevlength)
      {
         next = *ptr;

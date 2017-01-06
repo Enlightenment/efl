@@ -75,7 +75,7 @@ START_TEST (elm_code_indent_simple_braces)
    code = elm_code_create();
    file = elm_code_file_new(code);
 
-   _indent_check(file, "if() {", "   ");
+   _indent_check(file, "if() {", "     ");
    _indent_check(file, "}", "");
 
    _indent_check(file, "  {", "     ");
@@ -125,10 +125,47 @@ START_TEST (elm_code_indent_matching_braces)
 }
 END_TEST
 
+START_TEST (elm_code_indent_startswith_keyword)
+{
+   Elm_Code_File *file;
+   Elm_Code *code;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+
+   _indent_check(file, "if ()", "  ");
+   _indent_check(file, "else", "  ");
+   _indent_check(file, "else if ()", "  ");
+   _indent_check(file, "for ()", "  ");
+   _indent_check(file, "while ()", "  ");
+   _indent_check(file, "do", "  ");
+   _indent_check(file, "do {", "     ");
+
+   _indent_check(file, "  switch ()", "    ");
+   _indent_check(file, "   case a:", "     ");
+   _indent_check(file, "   default:", "     ");
+
+   _indent_check(file, "if ();", "");
+   _indent_check(file, "  for ();", "  ");
+
+   _indent_check(file, "  iffy()", "  ");
+   _indent_check(file, "  fi()", "  ");
+   _indent_check(file, "  elihw", "  ");
+
+   _indent_check(file, "   if", "   ");
+   _indent_check(file, "   while", "   ");
+
+   elm_code_free(code);
+   elm_shutdown();
+}
+END_TEST
+
 void elm_code_test_indent(TCase *tc)
 {
    tcase_add_test(tc, elm_code_indent_whitespace_test);
    tcase_add_test(tc, elm_code_indent_comments_test);
    tcase_add_test(tc, elm_code_indent_simple_braces);
    tcase_add_test(tc, elm_code_indent_matching_braces);
+   tcase_add_test(tc, elm_code_indent_startswith_keyword);
 }
