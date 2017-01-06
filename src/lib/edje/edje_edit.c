@@ -10251,6 +10251,7 @@ edje_edit_state_image_set(Evas_Object *obj, const char *part, const char *state,
 {
    Edje_Part_Description_Image *img;
    int id;
+   Eina_Bool image_set = EINA_FALSE;
 
    if ((!obj) || (!part) || (!state) || (!image))
      return EINA_FALSE;
@@ -10261,12 +10262,19 @@ edje_edit_state_image_set(Evas_Object *obj, const char *part, const char *state,
    if (rp->part->type != EDJE_PART_TYPE_IMAGE)
      return EINA_FALSE;
 
-   id = _edje_image_id_find(eed, image);
 
    img = (Edje_Part_Description_Image *)pd;
 
+   id = _edje_image_id_find(eed, image);
+   if (id <= -1)
+     {
+        id = _edje_set_id_find(eed, image);
+        image_set = EINA_TRUE;
+     }
+
    if (id > -1) img->image.id = id;
    else return EINA_FALSE;
+   img->image.set = image_set;
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
