@@ -202,8 +202,8 @@ gl_extn_veto(Render_Engine *re)
           {
              const GLubyte *vendor, *renderer;
 
-             vendor = glGetString(GL_VENDOR);
-             renderer = glGetString(GL_RENDERER);
+             vendor = evas_glGetString_th(GL_VENDOR);
+             renderer = evas_glGetString_th(GL_RENDERER);
              // XXX: workaround mesa bug!
              // looking for mesa and intel build which is known to
              // advertise the EGL_NOK_texture_from_pixmap extension
@@ -811,7 +811,7 @@ _native_cb_bind(void *image)
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      {
-        glBindTexture(GL_TEXTURE_2D, n->ns.data.opengl.texture_id);
+        evas_glBindTexture_th(GL_TEXTURE_2D, n->ns.data.opengl.texture_id);
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_EVASGL)
      {
@@ -836,7 +836,7 @@ _native_cb_bind(void *image)
                }
              else
                {
-                  glBindTexture(GL_TEXTURE_2D, (GLuint)(uintptr_t)surface);
+                  evas_glBindTexture_th(GL_TEXTURE_2D, (GLuint)(uintptr_t)surface);
                }
           }
     }
@@ -869,11 +869,11 @@ _native_cb_unbind(void *image)
 
    if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
      {
-        //glBindTexture(GL_TEXTURE_2D, 0); //really need?
+        //evas_glBindTexture_th(GL_TEXTURE_2D, 0); //really need?
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      {
-        glBindTexture(GL_TEXTURE_2D, 0);
+        evas_glBindTexture_th(GL_TEXTURE_2D, 0);
      }
   else if (n->ns.type == EVAS_NATIVE_SURFACE_EVASGL)
     {

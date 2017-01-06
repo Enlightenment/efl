@@ -136,9 +136,9 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
         return NULL;
      }
 
-   vendor = glGetString(GL_VENDOR);
-   renderer = glGetString(GL_RENDERER);
-   version = glGetString(GL_VERSION);
+   vendor = evas_glGetString_th(GL_VENDOR);
+   renderer = evas_glGetString_th(GL_RENDERER);
+   version = evas_glGetString_th(GL_VERSION);
    if (!vendor) vendor   = (unsigned char *)"-UNKNOWN-";
    if (!renderer) renderer = (unsigned char *)"-UNKNOWN-";
    if (!version) version  = (unsigned char *)"-UNKNOWN-";
