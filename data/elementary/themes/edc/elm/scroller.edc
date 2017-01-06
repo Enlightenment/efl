@@ -1343,6 +1343,7 @@ group { name: "elm/scroller/contents/default";
 
 group { name: "elm/scroller/base/popup/no_inset_shadow";
    inherit: "elm/scroller/base/default";
+   alias: "elm/scroller/base/no_inset_shadow";
    alias: "elm/gengrid/base/no_inset_shadow";
    parts {
       part { name: "elm.swallow.content"; type: SWALLOW;
