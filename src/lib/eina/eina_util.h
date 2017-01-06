@@ -50,6 +50,26 @@ EAPI const char *eina_environment_home_get(void);
 EAPI const char *eina_environment_tmp_get(void);
 
 /**
+ * @brief Warningless comparison of doubles using ==
+ * @param a First member to compare
+ * @param b Second member to compare
+ *
+ * @return @c true if two doubles match
+ * @since 1.19
+ */
+EAPI Eina_Bool eina_dbleq(double a, double b);
+
+/**
+ * @brief Warningless comparison of floats using ==
+ * @param a First member to compare
+ * @param b Second member to compare
+ *
+ * @return @c true if two floats match
+ * @since 1.19
+ */
+EAPI Eina_Bool eina_flteq(float a, float b);
+
+/**
  * @brief Safe comparison of float
  * @param a First member to compar
  * @param b Second member to compar

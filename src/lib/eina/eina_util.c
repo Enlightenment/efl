@@ -100,3 +100,35 @@ eina_environment_tmp_get(void)
    return tmp;
 #endif
 }
+
+#if defined(_MSC_VER)
+#elif defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wfloat-equal"
+#elif defined(__GNUC__)
+# if ((__GNUC__ * 100) + __GNUC_MINOR__) >= 406
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wfloat-equal"
+# endif
+#endif
+
+EAPI Eina_Bool
+eina_dbleq(double a, double b)
+{
+   return a == b;
+}
+
+EAPI Eina_Bool
+eina_flteq(float a, float b)
+{
+   return a == b;
+}
+
+#if defined(_MSC_VER)
+#elif defined(__clang__)
+#  pragma clang diagnostic pop
+#elif defined(__GNUC__)
+# if ((__GNUC__ * 100) + __GNUC_MINOR__) >= 406
+#  pragma GCC diagnostic pop
+# endif
+#endif
