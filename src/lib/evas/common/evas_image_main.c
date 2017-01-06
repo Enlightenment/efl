@@ -610,7 +610,7 @@ evas_common_rgba_pending_unloads_cleanup(void)
 
    EINA_LIST_FOREACH_SAFE(pending_unloads, l, l_next, ie)
      {
-        if ((ie->need_unload) && (!ie->preload) && (!ie->flags.preload_done))
+        if ((ie->need_unload) && (!ie->preload))
           {
              evas_common_rgba_image_unload_real(ie);
              pending_unloads = eina_list_remove_list(pending_unloads, l);
