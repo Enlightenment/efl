@@ -24,7 +24,7 @@ elm_main (int argc, char *argv[])
    win.autohide_set(true);
 
    ::elm::Button btn(win);
-   btn.text_set(nullptr,"Good-Bye, World!");
+   btn.eo_cxx::efl::Text::text_set("Good-Bye, World!");
    btn.eo_cxx::efl::Gfx::size_set(120, 30);
    btn.eo_cxx::efl::Gfx::position_set(60, 15);
    btn.visible_set(true);
