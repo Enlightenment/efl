@@ -79,6 +79,15 @@ EAPI Eina_Bool eina_flteq(float a, float b);
 #define EINA_FLT_CMP(a, b) (fabsf((float)a - (float)b) <= FLT_EPSILON)
 
 /**
+ * @brief Determine if a float is nonzero
+ * @param a The float
+ *
+ * @return @c true if float is nonzero
+ * @since 1.19
+ */
+#define EINA_FLT_NONZERO(a) (!EINA_FLT_CMP((a), 0.0))
+
+/**
  * @brief Safe comparison of double
  * @param a First member to compar
  * @param b Second member to compar
@@ -86,6 +95,15 @@ EAPI Eina_Bool eina_flteq(float a, float b);
  * @return @c true if two double match
  */
 #define EINA_DBL_CMP(a, b) (fabs((double)a - (double)b) <= DBL_EPSILON)
+
+/**
+ * @brief Determine if a double is nonzero
+ * @param a The double
+ *
+ * @return @c true if double is nonzero
+ * @since 1.19
+ */
+#define EINA_DBL_NONZERO(a) (!EINA_DBL_CMP((a), 0.0))
 
 /**
  * @}
