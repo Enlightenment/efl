@@ -376,5 +376,6 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Canvas.Filter.Internal)
    }
    events {
       changed; [[Called when the content (text or annotations) changed.]]
+      style_insets,changed; [[Called when the property @.style_insets changed.]]
    }
 }

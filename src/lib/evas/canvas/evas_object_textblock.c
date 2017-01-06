@@ -6387,6 +6387,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
         _paragraphs_clear(eo_obj, c->paragraphs);
         LYDBG("ZZ: ... layout #2\n");
         _layout(eo_obj, w, h, w_ret, h_ret);
+        efl_event_callback_call((Eo *) eo_obj, EFL_CANVAS_TEXT_EVENT_STYLE_INSETS_CHANGED, NULL);
      }
 
    c->o->obstacle_changed = EINA_FALSE;
