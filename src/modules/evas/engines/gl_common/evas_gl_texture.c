@@ -1173,6 +1173,8 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
 {
    GLuint fmt;
 
+   if ((((int)im->cache_entry.w) <= 0) ||
+       (((int)im->cache_entry.w) <= 0)) return;
    fmt = tex->pt->format;
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    if (tex->gc->shared->info.unpack_row_length)
