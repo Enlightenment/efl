@@ -22,7 +22,7 @@
 
 #include <float.h>
 
-#define EINA_FLT_CMP(a, b) (fabsf((float)a - (float)b) <= FLT_EPSILON)
+#define EINA_FLT_EQ(a, b) (fabsf((float)a - (float)b) <= FLT_EPSILON)
 
 #define RS R_VAL(src + s_idx)
 #define GS G_VAL(src + s_idx)
@@ -132,7 +132,7 @@ hls_to_rgb (DATA8 *hue, DATA8 *lightness, DATA8 *saturation)
   l = *lightness;
   s = *saturation;
 
-  if (EINA_FLT_CMP(s, 0))
+  if (EINA_FLT_EQ(s, 0))
     {
       /*  achromatic case  */
       *hue        = l;
@@ -188,7 +188,7 @@ rgb_to_hsv (DATA8 *red, DATA8 *green, DATA8 *blue)
   else
     s = 0;
 
-  if (EINA_FLT_CMP(s, 0))
+  if (EINA_FLT_EQ(s, 0))
     h = 0;
   else
     {

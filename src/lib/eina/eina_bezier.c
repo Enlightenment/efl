@@ -226,7 +226,7 @@ eina_bezier_t_at(const Eina_Bezier *b, double l)
    double biggest = 1.0;
    double t = 1.0;
 
-   if (l >= len)// || (EINA_DBL_CMP(len, l)))
+   if (l >= len)// || (EINA_DBL_EQ(len, l)))
      return t;
 
    t *= 0.5;
@@ -240,7 +240,7 @@ eina_bezier_t_at(const Eina_Bezier *b, double l)
         _eina_bezier_split_left(&right, t, &left);
         ll = eina_bezier_length_get(&left);
 
-        if (EINA_DBL_CMP(ll, l))
+        if (EINA_DBL_EQ(ll, l))
           break;
 
         if (ll < l)
@@ -317,8 +317,8 @@ eina_bezier_on_interval(Eina_Bezier *b, double t0, double t1, Eina_Bezier *resul
    Eina_Bezier bezier;
    double t;
 
-   if (EINA_DBL_CMP(t0, 0.0) &&
-       EINA_DBL_CMP(t1, 1.0))
+   if (EINA_DBL_EQ(t0, 0.0) &&
+       EINA_DBL_EQ(t1, 1.0))
      {
         *result = *b;
         return;

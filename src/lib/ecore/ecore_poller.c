@@ -99,7 +99,7 @@ _ecore_poller_next_tick_eval(void)
         else
           {
              t = ecore_time_get();
-             if (!EINA_FLT_CMP(interval, poll_cur_interval))
+             if (!EINA_FLT_EQ(interval, poll_cur_interval))
                {
                   t -= last_tick; /* time since we last ticked */
      /* delete the timer and reset it to tick off in the new

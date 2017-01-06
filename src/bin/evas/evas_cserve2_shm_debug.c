@@ -431,7 +431,7 @@ _files_all_print_all(void)
                _shared_string_get(fd->path), _shared_string_get(fd->key));
         printf("LoadOpts:      Region:      %d,%d-%dx%d\n",
                fd->lo.region.x, fd->lo.region.y, fd->lo.region.w, fd->lo.region.h);
-        if (!EINA_DBL_CMP(fd->lo.dpi, 0))
+        if (!EINA_DBL_EQ(fd->lo.dpi, 0))
           printf("               DPI:         %f\n");
         else
           printf("               DPI:         0\n");
@@ -519,7 +519,7 @@ _images_all_print_full(void)
         printf("          height         %d\n", id->opts.emile.h);
         printf("          degree         %d\n", id->opts.emile.degree);
         printf("          scale_down_by  %d\n", id->opts.emile.scale_down_by);
-        if (!EINA_DBL_CMP(id->opts.emile.dpi, 0.0))
+        if (!EINA_DBL_EQ(id->opts.emile.dpi, 0.0))
           printf("          dpi            %.2f\n", id->opts.emile.dpi);
         else
           printf("          dpi            0\n");

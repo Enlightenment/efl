@@ -447,12 +447,12 @@ eina_quaternion_lerp(Eina_Quaternion *out,
                      const Eina_Quaternion *b,
                      double pos)
 {
-   if (EINA_DBL_CMP(pos, 0.0))
+   if (EINA_DBL_EQ(pos, 0.0))
      {
         *out = *a;
         return ;
      }
-   else if (EINA_DBL_CMP(pos, 1.0))
+   else if (EINA_DBL_EQ(pos, 1.0))
      {
         *out = *b;
         return ;
@@ -475,12 +475,12 @@ eina_quaternion_slerp(Eina_Quaternion *out,
    double dot;
    double pos1, pos2;
 
-   if (EINA_DBL_CMP(pos, 0.0))
+   if (EINA_DBL_EQ(pos, 0.0))
      {
         *out = *a;
         return ;
      }
-   else if (EINA_DBL_CMP(pos, 1.0))
+   else if (EINA_DBL_EQ(pos, 1.0))
      {
         *out = *b;
         return ;
@@ -528,12 +528,12 @@ eina_quaternion_nlerp(Eina_Quaternion *out,
    Eina_Quaternion not_normalize;
    double dot;
 
-   if (EINA_DBL_CMP(pos, 0.0))
+   if (EINA_DBL_EQ(pos, 0.0))
      {
         *out = *a;
         return ;
      }
-   else if (EINA_DBL_CMP(pos, 1.0))
+   else if (EINA_DBL_EQ(pos, 1.0))
      {
         *out = *b;
         return ;
@@ -692,7 +692,7 @@ eina_matrix4_quaternion_to(Eina_Quaternion *rotation,
    Eina_Matrix4 n, pm;
    double det, factor;
 
-   if (EINA_DBL_CMP(m->ww, 0.0)) return EINA_FALSE;
+   if (EINA_DBL_EQ(m->ww, 0.0)) return EINA_FALSE;
 
    // Normalize the matrix.
    factor = 1 / m->ww;
@@ -932,7 +932,7 @@ eina_quaternion_matrix4_to(Eina_Matrix4 *m,
 
    // apply skew
    // rm is a identity 4x4 matrix initially
-   if (!EINA_DBL_CMP(skew->z, 0.0))
+   if (!EINA_DBL_EQ(skew->z, 0.0))
      {
         Eina_Matrix4 cp;
 
@@ -943,7 +943,7 @@ eina_quaternion_matrix4_to(Eina_Matrix4 *m,
         tmp = cp;
      }
 
-   if (!EINA_DBL_CMP(skew->y, 0.0))
+   if (!EINA_DBL_EQ(skew->y, 0.0))
      {
         Eina_Matrix4 cp;
 
@@ -955,7 +955,7 @@ eina_quaternion_matrix4_to(Eina_Matrix4 *m,
         tmp = cp;
      }
 
-   if (!EINA_DBL_CMP(skew->x, 0.0))
+   if (!EINA_DBL_EQ(skew->x, 0.0))
      {
         Eina_Matrix4 cp;
 
@@ -1029,7 +1029,7 @@ eina_quaternion_copy(Eina_Quaternion *dst, const Eina_Quaternion *src)
 EAPI void
 eina_quaternion_homogeneous_regulate(Eina_Quaternion *out, const Eina_Quaternion *v)
 {
-   if (!EINA_DBL_CMP(v->w, 0.0))
+   if (!EINA_DBL_EQ(v->w, 0.0))
      {
         double scale = 1.0 / v->w;
 

@@ -136,8 +136,8 @@ _evas_canvas3d_primitive_tex_scale_set(Eo *obj EINA_UNUSED,
                                  Evas_Real x,
                                  Evas_Real y)
 {
-   if (!EINA_DBL_CMP(x, 0.0)) pd->tex_scale.x = x;
-   if (!EINA_DBL_CMP(y, 0.0)) pd->tex_scale.y = y;
+   if (!EINA_DBL_EQ(x, 0.0)) pd->tex_scale.x = x;
+   if (!EINA_DBL_EQ(y, 0.0)) pd->tex_scale.y = y;
 }
 
 EOLIAN static void

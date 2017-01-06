@@ -156,10 +156,10 @@ _drag_button_move_cb(void *data,
 
    edje_object_part_drag_value_get
      (wd->resize_obj, "elm.drag_button_base", &pos, NULL);
-   if (EINA_DBL_CMP(pos, 0.0))
+   if (EINA_DBL_EQ(pos, 0.0))
      efl_event_callback_legacy_call
        (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !elm_widget_mirrored_get(obj) ? "left" : "right");
-   else if (EINA_DBL_CMP(pos, 1.0))
+   else if (EINA_DBL_EQ(pos, 1.0))
      efl_event_callback_legacy_call
        (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !elm_widget_mirrored_get(obj) ? "right" : "left");
    else if (pos >= 0.45 && pos <= 0.55)
@@ -199,8 +199,8 @@ _button_animator(void *data)
       adjusted_final = (!elm_widget_mirrored_get(obj)) ?
         sd->final_position : 1.0 - sd->final_position;
 
-      if ((EINA_DBL_CMP(adjusted_final, 0.0)) ||
-          (EINA_DBL_CMP(adjusted_final, 0.5) && cur_position >= adjusted_final))
+      if ((EINA_DBL_EQ(adjusted_final, 0.0)) ||
+          (EINA_DBL_EQ(adjusted_final, 0.5) && cur_position >= adjusted_final))
         {
            new_position = cur_position - move_amount;
 
@@ -210,8 +210,8 @@ _button_animator(void *data)
                 flag_finish_animation = EINA_TRUE;
              }
         }
-      else if ((EINA_DBL_CMP(adjusted_final, 1.0)) ||
-               (EINA_DBL_CMP(adjusted_final, 0.5) && cur_position < adjusted_final))
+      else if ((EINA_DBL_EQ(adjusted_final, 1.0)) ||
+               (EINA_DBL_EQ(adjusted_final, 0.5) && cur_position < adjusted_final))
         {
            new_position = cur_position + move_amount;
 
@@ -232,15 +232,15 @@ _button_animator(void *data)
 
         _text_get(obj, &left, &right, &center);
 
-        if ((!EINA_DBL_CMP(sd->final_position, 0)) &&
+        if ((!EINA_DBL_EQ(sd->final_position, 0)) &&
             (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
           efl_event_callback_legacy_call
             (obj, EFL_UI_EVENT_SELECTED, (char *)left);
-        else if ((EINA_DBL_CMP(sd->final_position, 0.5)) &&
+        else if ((EINA_DBL_EQ(sd->final_position, 0.5)) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_CENTER))
           efl_event_callback_legacy_call
             (obj, EFL_UI_EVENT_SELECTED, (char *)center);
-        else if ((EINA_DBL_CMP(sd->final_position, 1)) &&
+        else if ((EINA_DBL_EQ(sd->final_position, 1)) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
           efl_event_callback_legacy_call
             (obj, EFL_UI_EVENT_SELECTED, (char *)right);
@@ -276,8 +276,8 @@ _drag_button_up_cb(void *data,
    _text_get(obj, &left, &right, &center);
 
    if ((sd->enabled_position & ELM_ACTIONSLIDER_LEFT) &&
-       ((!elm_widget_mirrored_get(obj) && EINA_DBL_CMP(position, 0.0)) ||
-        (elm_widget_mirrored_get(obj) && EINA_DBL_CMP(position, 1.0))))
+       ((!elm_widget_mirrored_get(obj) && EINA_DBL_EQ(position, 0.0)) ||
+        (elm_widget_mirrored_get(obj) && EINA_DBL_EQ(position, 1.0))))
      {
         sd->final_position = 0;
         efl_event_callback_legacy_call
@@ -300,8 +300,8 @@ _drag_button_up_cb(void *data,
      }
 
    if ((sd->enabled_position & ELM_ACTIONSLIDER_RIGHT) &&
-       ((!elm_widget_mirrored_get(obj) && EINA_DBL_CMP(position, 1)) ||
-        (elm_widget_mirrored_get(obj) && EINA_DBL_CMP(position, 0))))
+       ((!elm_widget_mirrored_get(obj) && EINA_DBL_EQ(position, 1)) ||
+        (elm_widget_mirrored_get(obj) && EINA_DBL_EQ(position, 0))))
      {
         sd->final_position = 1;
         efl_event_callback_legacy_call
@@ -370,7 +370,7 @@ _track_move_cb(void *data,
 
    if (!strcmp(emission, "elm,action,down,right"))
      {
-        if (EINA_DBL_CMP(sd->final_position, 0.0))
+        if (EINA_DBL_EQ(sd->final_position, 0.0))
           {
              if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
                {
@@ -385,7 +385,7 @@ _track_move_cb(void *data,
                   sd->final_position = 1.0;
                }
           }
-        else if (EINA_DBL_CMP(sd->final_position, 0.5) &&
+        else if (EINA_DBL_EQ(sd->final_position, 0.5) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
           {
              efl_event_callback_legacy_call
@@ -404,7 +404,7 @@ _track_move_cb(void *data,
      }
    else
      {
-        if (EINA_DBL_CMP(sd->final_position, 1.0))
+        if (EINA_DBL_EQ(sd->final_position, 1.0))
           {
              if (sd->enabled_position & ELM_ACTIONSLIDER_CENTER)
                {
@@ -419,7 +419,7 @@ _track_move_cb(void *data,
                   sd->final_position = 0.0;
                }
           }
-        else if (EINA_DBL_CMP(sd->final_position, 0.5) &&
+        else if (EINA_DBL_EQ(sd->final_position, 0.5) &&
                 (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
           {
              efl_event_callback_legacy_call
@@ -621,15 +621,15 @@ _elm_actionslider_selected_label_get(Eo *obj, Elm_Actionslider_Data *sd)
 
    _text_get(obj, &left, &right, &center);
 
-   if ((EINA_DBL_CMP(sd->final_position, 0.0)) &&
+   if ((EINA_DBL_EQ(sd->final_position, 0.0)) &&
        (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
      ret = left;
 
-   if ((EINA_DBL_CMP(sd->final_position, 0.5)) &&
+   if ((EINA_DBL_EQ(sd->final_position, 0.5)) &&
        (sd->enabled_position & ELM_ACTIONSLIDER_CENTER))
      ret = center;
 
-   if ((EINA_DBL_CMP(sd->final_position, 1.0)) &&
+   if ((EINA_DBL_EQ(sd->final_position, 1.0)) &&
        (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
      ret = right;
 

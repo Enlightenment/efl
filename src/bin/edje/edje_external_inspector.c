@@ -114,7 +114,7 @@ _param_value_str_get(const Edje_External_Type *type, const Edje_External_Param_I
          return buf;
 
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-         if (EINA_DBL_CMP(param->info.d.def, EDJE_EXTERNAL_DOUBLE_UNSET)) return NULL;
+         if (EINA_DBL_EQ(param->info.d.def, EDJE_EXTERNAL_DOUBLE_UNSET)) return NULL;
          snprintf(buf, buflen, "%g", param->info.d.def);
          return buf;
 
@@ -219,17 +219,17 @@ _param_extra_details(const Edje_External_Type *type, const Edje_External_Param_I
          break;
 
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-         if (EINA_DBL_CMP(param->info.d.min, EDJE_EXTERNAL_DOUBLE_UNSET))
+         if (EINA_DBL_EQ(param->info.d.min, EDJE_EXTERNAL_DOUBLE_UNSET))
            {
               if (machine) printf("MIN: %g\n", param->info.d.min);
               else printf(", min: %g", param->info.d.min);
            }
-         if (EINA_DBL_CMP(param->info.d.max, EDJE_EXTERNAL_DOUBLE_UNSET))
+         if (EINA_DBL_EQ(param->info.d.max, EDJE_EXTERNAL_DOUBLE_UNSET))
            {
               if (machine) printf("MAX: %g\n", param->info.d.max);
               else printf(", max: %g", param->info.d.max);
            }
-         if (EINA_DBL_CMP(param->info.d.step, EDJE_EXTERNAL_DOUBLE_UNSET))
+         if (EINA_DBL_EQ(param->info.d.step, EDJE_EXTERNAL_DOUBLE_UNSET))
            {
               if (machine) printf("STEP: %g\n", param->info.d.step);
               else printf(", step: %g", param->info.d.step);

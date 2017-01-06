@@ -2968,7 +2968,7 @@ _ecore_evas_x_window_group_set(Ecore_Evas *ee, const Ecore_Evas *group_ee)
 static void
 _ecore_evas_x_aspect_set(Ecore_Evas *ee, double aspect)
 {
-   if (EINA_FLT_CMP(ee->prop.aspect, aspect)) return;
+   if (EINA_FLT_EQ(ee->prop.aspect, aspect)) return;
 
    ee->prop.aspect = aspect;
    _ecore_evas_x_size_pos_hints_update(ee);

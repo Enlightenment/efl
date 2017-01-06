@@ -2279,11 +2279,11 @@ _edje_param_validate(const Edje_External_Param *param, const Edje_External_Param
         return EINA_TRUE;
 
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-        if (!EINA_DBL_CMP(info->info.d.min, EDJE_EXTERNAL_DOUBLE_UNSET) &&
+        if (!EINA_DBL_EQ(info->info.d.min, EDJE_EXTERNAL_DOUBLE_UNSET) &&
             (info->info.d.min > param->d))
           return EINA_FALSE;
 
-        if (!EINA_DBL_CMP(info->info.d.max, EDJE_EXTERNAL_DOUBLE_UNSET) &&
+        if (!EINA_DBL_EQ(info->info.d.max, EDJE_EXTERNAL_DOUBLE_UNSET) &&
             (info->info.d.max < param->d))
           return EINA_FALSE;
 

@@ -427,7 +427,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
         if (wait >= 0.0)
           {
              /* finite() tests for NaN, too big, too small, and infinity.  */
-             if ((!ECORE_FINITE(timeout)) || (EINA_FLT_CMP(timeout, 0.0)))
+             if ((!ECORE_FINITE(timeout)) || (EINA_FLT_EQ(timeout, 0.0)))
                {
                   tv.tv_sec = 0;
                   tv.tv_usec = 0;

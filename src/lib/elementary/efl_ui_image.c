@@ -1506,7 +1506,7 @@ _efl_ui_image_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double a
    else if (align_y < 0.0)
      align_y = 0.0;
 
-   if ((EINA_DBL_CMP(align_x, sd->align_x)) && (EINA_DBL_CMP(align_y, sd->align_y))) return;
+   if ((EINA_DBL_EQ(align_x, sd->align_x)) && (EINA_DBL_EQ(align_y, sd->align_y))) return;
 
    sd->align_x = align_x;
    sd->align_y = align_y;

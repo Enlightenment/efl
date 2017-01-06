@@ -507,10 +507,10 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_state_set(Eo *eo_obj, Evas_Fil
 
    evas_object_async_block(obj);
    if ((cur_state != pd->data->state.cur.name) ||
-       (!EINA_DBL_CMP(cur_val, pd->data->state.cur.value)) ||
+       (!EINA_DBL_EQ(cur_val, pd->data->state.cur.value)) ||
        (next_state != pd->data->state.next.name) ||
-       (!EINA_DBL_CMP(next_val, pd->data->state.next.value)) ||
-       (!EINA_DBL_CMP(pos, pd->data->state.pos)))
+       (!EINA_DBL_EQ(next_val, pd->data->state.next.value)) ||
+       (!EINA_DBL_EQ(pos, pd->data->state.pos)))
      {
         Evas_Object_Filter_Data *fcow = FCOW_BEGIN(pd);
         fcow->changed = 1;

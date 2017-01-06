@@ -30,9 +30,9 @@ normal_vector(float x1, float y1, float x2, float y2, float width,
    float dx = x2 - x1;
    float dy = y2 - y1;
 
-   if (EINA_FLT_CMP(dx, 0))
+   if (EINA_FLT_EQ(dx, 0))
      pw = width / fabsf(dy);
-   else if (EINA_FLT_CMP(dy, 0))
+   else if (EINA_FLT_EQ(dy, 0))
      pw = width / fabsf(dx);
    else
      pw = width / sqrtf(dx*dx + dy*dy);
@@ -396,7 +396,7 @@ static inline void
 _skip_duplicate_points(const double **pts, const double *end_pts)
 {
    while ((*pts + 2) < end_pts && (*pts)[0] == (*pts)[2] &&
-          EINA_FLT_CMP((*pts)[1], (*pts)[3]))
+          EINA_FLT_EQ((*pts)[1], (*pts)[3]))
      {
         *pts += 2;
      }
@@ -424,7 +424,7 @@ _path_info_get(const Efl_Gfx_Path_Command *cmds, const double *pts, Eina_Bool *i
               *implicit_close = EINA_TRUE;
               // fall through
            case EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO:
-              if (EINA_FLT_CMP(pts[0], pts[i]) && EINA_FLT_CMP(pts[1], pts[i+1]))
+              if (EINA_FLT_EQ(pts[0], pts[i]) && EINA_FLT_EQ(pts[1], pts[i+1]))
                 *ends_at_start = EINA_TRUE;
               return;
            default:
@@ -432,8 +432,8 @@ _path_info_get(const Efl_Gfx_Path_Command *cmds, const double *pts, Eina_Bool *i
           }
      }
    // this path is the last path with out implicit close.
-   *ends_at_start = EINA_FLT_CMP(pts[0], pts[i]) &&
-                    EINA_FLT_CMP(pts[1], pts[i+1]);
+   *ends_at_start = EINA_FLT_EQ(pts[0], pts[i]) &&
+                    EINA_FLT_EQ(pts[1], pts[i+1]);
 }
 
 void
@@ -492,7 +492,7 @@ triangulator_stroker_process(Triangulator_Stroker *stroker,
                  break;
               }
            case EFL_GFX_PATH_COMMAND_TYPE_LINE_TO:
-              if (!EINA_FLT_CMP(stroker->cx, pts[0]) || !EINA_FLT_CMP(stroker->cy, (float)pts[1]))
+              if (!EINA_FLT_EQ(stroker->cx, pts[0]) || !EINA_FLT_EQ(stroker->cy, (float)pts[1]))
                 {
                    if (previous_type != EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO)
                      add_join(stroker, pts[0], pts[1]);
@@ -502,15 +502,15 @@ triangulator_stroker_process(Triangulator_Stroker *stroker,
               pts+=2;
               break;
            case EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO:
-              if (!EINA_FLT_CMP(stroker->cx, pts[0]) ||
-                  !EINA_FLT_CMP(stroker->cy, pts[1]) ||
-                  !EINA_FLT_CMP(pts[0], pts[2]) ||
-                  !EINA_FLT_CMP(pts[1], pts[3]) ||
-                  !EINA_FLT_CMP(pts[2], pts[4]) ||
-                  !EINA_FLT_CMP(pts[3], pts[5]))
+              if (!EINA_FLT_EQ(stroker->cx, pts[0]) ||
+                  !EINA_FLT_EQ(stroker->cy, pts[1]) ||
+                  !EINA_FLT_EQ(pts[0], pts[2]) ||
+                  !EINA_FLT_EQ(pts[1], pts[3]) ||
+                  !EINA_FLT_EQ(pts[2], pts[4]) ||
+                  !EINA_FLT_EQ(pts[3], pts[5]))
                 {
-                   if (!EINA_FLT_CMP(stroker->cx, pts[0]) ||
-                       !EINA_FLT_CMP(stroker->cy, pts[1]))
+                   if (!EINA_FLT_EQ(stroker->cx, pts[0]) ||
+                       !EINA_FLT_EQ(stroker->cy, pts[1]))
                      {
                         if (previous_type != EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO)
                           add_join(stroker, pts[0], pts[1]);

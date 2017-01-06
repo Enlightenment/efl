@@ -34,7 +34,7 @@ _ector_renderer_software_gradient_linear_ector_renderer_prepare(Eo *obj,
    pd->linear.l = pd->linear.dx * pd->linear.dx + pd->linear.dy * pd->linear.dy;
    pd->linear.off = 0;
 
-   if (!EINA_DBL_CMP(pd->linear.l, 0.0))
+   if (!EINA_DBL_EQ(pd->linear.l, 0.0))
      {
         pd->linear.dx /= pd->linear.l;
         pd->linear.dy /= pd->linear.l;

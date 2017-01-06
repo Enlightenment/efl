@@ -385,7 +385,7 @@ _state_update(State *st)
 
    if (mx < 1) mx = 1; // quick hack to keep curl line visible
 
-   if (EINA_DBL_CMP(mgrad, 0.0)) // special horizontal case
+   if (EINA_DBL_EQ(mgrad, 0.0)) // special horizontal case
       mgrad = 0.001; // quick dirty hack for now
    // else
      {

@@ -939,7 +939,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
              if (bh < 1) bh = 1;
              a = ((double)bw / (double)bh);
 
-             if ((!EINA_FLT_CMP(ee->prop.aspect, 0.0) &&
+             if ((!EINA_FLT_EQ(ee->prop.aspect, 0.0) &&
                   (a < ee->prop.aspect)))
                {
                   if ((h < ee->h) > 0)
@@ -950,7 +950,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
                   w = bw + ee->prop.base.w;
                   h = bh + ee->prop.base.h;
                }
-             else if ((!EINA_FLT_CMP(ee->prop.aspect, 0.0)) &&
+             else if ((!EINA_FLT_EQ(ee->prop.aspect, 0.0)) &&
                       (a > ee->prop.aspect))
                {
                   bw = bh * ee->prop.aspect;
@@ -960,7 +960,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         else
           {
              a = ((double)w / (double)h);
-             if ((!EINA_FLT_CMP(ee->prop.aspect, 0.0)) &&
+             if ((!EINA_FLT_EQ(ee->prop.aspect, 0.0)) &&
                  (a < ee->prop.aspect))
                {
                   if ((h < ee->h) > 0)
@@ -968,7 +968,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
                   else
                     h = w / ee->prop.aspect;
                }
-             else if ((!EINA_FLT_CMP(ee->prop.aspect, 0.0)) &&
+             else if ((!EINA_FLT_EQ(ee->prop.aspect, 0.0)) &&
                       (a > ee->prop.aspect))
                w = h * ee->prop.aspect;
           }
@@ -1272,7 +1272,7 @@ _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if (EINA_FLT_CMP(ee->prop.aspect, aspect)) return;
+   if (EINA_FLT_EQ(ee->prop.aspect, aspect)) return;
    ee->prop.aspect = aspect;
 }
 

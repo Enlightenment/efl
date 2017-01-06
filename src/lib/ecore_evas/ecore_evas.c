@@ -2807,7 +2807,7 @@ _ecore_evas_fps_debug_rendertime_add(double t)
    tim = ecore_time_get();
    rtime += t;
    frames++;
-   if (EINA_DBL_CMP(rlapse, 0.0))
+   if (EINA_DBL_EQ(rlapse, 0.0))
      {
         rlapse = tim;
         flapse = frames;
@@ -4291,8 +4291,8 @@ _pointer_position_set(Efl_Input_Pointer_Data *ev, Ecore_Evas *ee, int x, int y,
 {
    int fx, fy, fw, fh;
 
-   if ((EINA_DBL_CMP(mx, 0.0)) &&
-       (EINA_DBL_CMP(my, 0.0)))
+   if ((EINA_DBL_EQ(mx, 0.0)) &&
+       (EINA_DBL_EQ(my, 0.0)))
      {
         mx = x;
         my = y;

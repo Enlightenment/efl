@@ -543,7 +543,7 @@ efreet_icon_lookup_icon(Efreet_Cache_Icon *icon, unsigned int size)
         distance = efreet_icon_size_distance(icon->icons[i], size);
         if (distance > minimal_distance) continue;
         // prefer downsizing
-        if ((EINA_DBL_CMP(distance, minimal_distance)) &&
+        if ((EINA_DBL_EQ(distance, minimal_distance)) &&
             (icon->icons[i]->normal < ret_size))
          continue;
 

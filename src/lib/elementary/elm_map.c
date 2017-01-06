@@ -2946,7 +2946,7 @@ _kml_parse(Elm_Map_Route *r)
           }
         fclose(f);
 
-        if (!EINA_DBL_CMP(dump.distance, 0)) r->info.distance = dump.distance;
+        if (!EINA_DBL_EQ(dump.distance, 0)) r->info.distance = dump.distance;
         if (dump.description)
           {
              eina_stringshare_replace(&r->info.waypoints, dump.description);

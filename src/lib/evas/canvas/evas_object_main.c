@@ -1564,11 +1564,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_align_set(Eo *eo_obj, Evas_Object_Prot
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
-        if (EINA_DBL_CMP(x, 0.5) && EINA_DBL_CMP(y, 0.5)) return;
+        if (EINA_DBL_EQ(x, 0.5) && EINA_DBL_EQ(y, 0.5)) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((EINA_DBL_CMP(obj->size_hints->align.x, x)) &&
-       (EINA_DBL_CMP(obj->size_hints->align.y, y)))
+   if ((EINA_DBL_EQ(obj->size_hints->align.x, x)) &&
+       (EINA_DBL_EQ(obj->size_hints->align.y, y)))
      return;
    obj->size_hints->align.x = x;
    obj->size_hints->align.y = y;
@@ -1597,11 +1597,11 @@ _efl_canvas_object_efl_gfx_size_hint_hint_weight_set(Eo *eo_obj, Evas_Object_Pro
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
-        if (EINA_DBL_CMP(x, 0.0) && EINA_DBL_CMP(y, 0.0)) return;
+        if (EINA_DBL_EQ(x, 0.0) && EINA_DBL_EQ(y, 0.0)) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((EINA_DBL_CMP(obj->size_hints->weight.x, x)) &&
-       (EINA_DBL_CMP(obj->size_hints->weight.y, y)))
+   if ((EINA_DBL_EQ(obj->size_hints->weight.x, x)) &&
+       (EINA_DBL_EQ(obj->size_hints->weight.y, y)))
      return;
    obj->size_hints->weight.x = x;
    obj->size_hints->weight.y = y;
@@ -1958,7 +1958,7 @@ EOLIAN static void
 _efl_canvas_object_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double scale)
 {
    if (obj->delete_me) return;
-   if (EINA_DBL_CMP(obj->cur->scale, scale)) return;
+   if (EINA_DBL_EQ(obj->cur->scale, scale)) return;
 
    evas_object_async_block(obj);
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)

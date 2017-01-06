@@ -1540,8 +1540,8 @@ _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
    int npos = 0, nlen = 0;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (!EINA_DBL_CMP(pos, sd->pos)) npos = 1;
-   if (!EINA_DBL_CMP(len, sd->len)) nlen = 1;
+   if (!EINA_DBL_EQ(pos, sd->pos)) npos = 1;
+   if (!EINA_DBL_EQ(len, sd->len)) nlen = 1;
    sd->pos = pos;
    sd->len = len;
    if (npos)
@@ -1573,8 +1573,8 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
      }
    if (h > 0) tmp  = (double)w / (double)h;
    else tmp = 1.0;
-   if (!EINA_DBL_CMP(ratio, tmp)) tmp = ratio;
-   if (!EINA_DBL_CMP(tmp, sd->ratio))
+   if (!EINA_DBL_EQ(ratio, tmp)) tmp = ratio;
+   if (!EINA_DBL_EQ(tmp, sd->ratio))
      {
         sd->ratio = tmp;
         changed = 1;
@@ -1619,7 +1619,7 @@ _emotion_open_done(Evas_Object *obj)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->open = 1;
 
-   if (!EINA_DBL_CMP(sd->remember_jump, 0.0))
+   if (!EINA_DBL_EQ(sd->remember_jump, 0.0))
      emotion_object_position_set(obj, sd->remember_jump);
    if (sd->remember_play != sd->play)
      emotion_object_play_set(obj, sd->remember_play);
@@ -1737,8 +1737,8 @@ _emotion_frame_refill(Evas_Object *obj, double w, double h)
    Efl_Canvas_Video_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if ((!EINA_DBL_CMP(sd->fill.w, w)) ||
-       (!EINA_DBL_CMP(sd->fill.h, h)))
+   if ((!EINA_DBL_EQ(sd->fill.w, w)) ||
+       (!EINA_DBL_EQ(sd->fill.h, h)))
      {
         Evas_Coord ow, oh;
 

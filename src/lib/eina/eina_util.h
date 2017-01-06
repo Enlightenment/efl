@@ -73,10 +73,11 @@ EAPI Eina_Bool eina_flteq(float a, float b);
  * @brief Safe comparison of float
  * @param a First member to compar
  * @param b Second member to compar
+ * @since 1.19
  *
  * @return @c true if two floats match
  */
-#define EINA_FLT_CMP(a, b) (fabsf((float)a - (float)b) <= FLT_EPSILON)
+#define EINA_FLT_EQ(a, b) (!!(fabsf((float)a - (float)b) <= FLT_EPSILON))
 
 /**
  * @brief Determine if a float is nonzero
@@ -91,10 +92,11 @@ EAPI Eina_Bool eina_flteq(float a, float b);
  * @brief Safe comparison of double
  * @param a First member to compar
  * @param b Second member to compar
+ * @since 1.19
  *
  * @return @c true if two double match
  */
-#define EINA_DBL_CMP(a, b) (fabs((double)a - (double)b) <= DBL_EPSILON)
+#define EINA_DBL_EQ(a, b) (!!(fabs((double)a - (double)b) <= DBL_EPSILON))
 
 /**
  * @brief Determine if a double is nonzero

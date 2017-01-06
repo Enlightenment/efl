@@ -336,7 +336,7 @@ START_TEST(str_memdup)
    t2 = (struct temp *)eina_memdup((unsigned char *)&t1, sizeof(struct temp), EINA_TRUE);
    fail_if(t2->i != t1.i);
    fail_if(strcmp(t2->s,t1.s) != 0);
-   fail_if(!EINA_FLT_CMP(t2->d, t1.d));
+   fail_if(!EINA_FLT_EQ(t2->d, t1.d));
    free(t2);
 
    memcpy(buf, "aaabbb", 6);

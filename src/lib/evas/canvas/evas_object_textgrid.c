@@ -748,7 +748,7 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj,
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
      }
-   if (!EINA_DBL_CMP(obj->cur->scale, obj->prev->scale))
+   if (!EINA_DBL_EQ(obj->cur->scale, obj->prev->scale))
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;

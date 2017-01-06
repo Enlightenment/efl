@@ -176,8 +176,8 @@ EAPI extern int _edje_default_log_dom ;
 #define COS(a) cos(a)
 #define SIN(a) sin(a)
 #define PI 3.14159265358979323846
-#define EQ(a, b) EINA_DBL_CMP(a, b)
-#define NEQ(a, b) !EINA_DBL_CMP(a, b)
+#define EQ(a, b) EINA_DBL_EQ(a, b)
+#define NEQ(a, b) !EINA_DBL_EQ(a, b)
 
 #endif
 

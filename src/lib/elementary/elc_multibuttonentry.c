@@ -1384,12 +1384,12 @@ _box_layout_cb(Evas_Object *o,
         efl_gfx_size_hint_combined_min_get(obj, &mnw, &mnh);
 
         fw = fh = EINA_FALSE;
-        if (EINA_DBL_CMP(ax, -1)) {fw = 1; ax = 0.5; }
-        if (EINA_DBL_CMP(ay, -1)) {fh = 1; ay = 0.5; }
+        if (EINA_DBL_EQ(ax, -1)) {fw = 1; ax = 0.5; }
+        if (EINA_DBL_EQ(ay, -1)) {fh = 1; ay = 0.5; }
         if (rtl) ax = 1.0 - ax;
 
         ww = mnw;
-        if (!EINA_DBL_CMP(wx, 0))
+        if (!EINA_DBL_EQ(wx, 0))
           {
              if (ww <= w - linew) ww = w - linew;
              else ww = w;

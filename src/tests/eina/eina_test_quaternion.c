@@ -31,10 +31,10 @@
 static inline Eina_Bool
 eina_quaternion_cmp(const Eina_Quaternion *a, const Eina_Quaternion *b)
 {
-   if (EINA_FLT_CMP(a->x, b->x) &&
-       EINA_FLT_CMP(a->y, b->y) &&
-       EINA_FLT_CMP(a->z, b->z) &&
-       EINA_FLT_CMP(a->w, b->w))
+   if (EINA_FLT_EQ(a->x, b->x) &&
+       EINA_FLT_EQ(a->y, b->y) &&
+       EINA_FLT_EQ(a->z, b->z) &&
+       EINA_FLT_EQ(a->w, b->w))
      return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -42,15 +42,15 @@ eina_quaternion_cmp(const Eina_Quaternion *a, const Eina_Quaternion *b)
 static inline Eina_Bool
 eina_matrix3_cmp(const Eina_Matrix3 *a, const Eina_Matrix3 *b)
 {
-   if (EINA_FLT_CMP(a->xx, b->xx) &&
-       EINA_FLT_CMP(a->xy, b->xy) &&
-       EINA_FLT_CMP(a->xz, b->xz) &&
-       EINA_FLT_CMP(a->yx, b->yx) &&
-       EINA_FLT_CMP(a->yy, b->yy) &&
-       EINA_FLT_CMP(a->yz, b->yz) &&
-       EINA_FLT_CMP(a->zx, b->zx) &&
-       EINA_FLT_CMP(a->zy, b->zy) &&
-       EINA_FLT_CMP(a->zz, b->zz))
+   if (EINA_FLT_EQ(a->xx, b->xx) &&
+       EINA_FLT_EQ(a->xy, b->xy) &&
+       EINA_FLT_EQ(a->xz, b->xz) &&
+       EINA_FLT_EQ(a->yx, b->yx) &&
+       EINA_FLT_EQ(a->yy, b->yy) &&
+       EINA_FLT_EQ(a->yz, b->yz) &&
+       EINA_FLT_EQ(a->zx, b->zx) &&
+       EINA_FLT_EQ(a->zy, b->zy) &&
+       EINA_FLT_EQ(a->zz, b->zz))
      return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -74,9 +74,9 @@ eina_matrix3_f16p16_cmp(const Eina_Matrix3_F16p16 *a, const Eina_Matrix3_F16p16 
 static inline Eina_Bool
 eina_point_3d_cmp(const Eina_Point_3D *a, const Eina_Point_3D *b)
 {
-   if (EINA_FLT_CMP(a->x, b->x) &&
-       EINA_FLT_CMP(a->y, b->y) &&
-       EINA_FLT_CMP(a->z, b->z))
+   if (EINA_FLT_EQ(a->x, b->x) &&
+       EINA_FLT_EQ(a->y, b->y) &&
+       EINA_FLT_EQ(a->z, b->z))
      return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -99,7 +99,7 @@ START_TEST(eina_test_quaternion_norm)
 
    eina_init();
 
-   fail_if(!EINA_FLT_CMP(result, sqrt(51)));
+   fail_if(!EINA_FLT_EQ(result, sqrt(51)));
 
    eina_shutdown();
 }

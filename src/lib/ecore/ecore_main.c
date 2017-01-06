@@ -1694,7 +1694,7 @@ _ecore_main_select(double timeout)
    int max_fd, ret, err_no;
 
    t = NULL;
-   if ((!ECORE_FINITE(timeout)) || (EINA_FLT_CMP(timeout, 0.0))) /* finite() tests for NaN, too big, too small, and infinity.  */
+   if ((!ECORE_FINITE(timeout)) || (EINA_FLT_EQ(timeout, 0.0))) /* finite() tests for NaN, too big, too small, and infinity.  */
      {
         tv.tv_sec = 0;
         tv.tv_usec = 0;

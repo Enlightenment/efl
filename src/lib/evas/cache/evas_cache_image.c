@@ -744,7 +744,7 @@ _evas_cache_image_loadopts_append(char *hkey, Evas_Image_Load_Opts **plo)
    if ((!lo) ||
        (lo &&
            (lo->emile.scale_down_by == 0) &&
-           (EINA_DBL_CMP(lo->emile.dpi, 0.0)) &&
+           (EINA_DBL_EQ(lo->emile.dpi, 0.0)) &&
            ((lo->emile.w == 0) || (lo->emile.h == 0)) &&
            ((lo->emile.region.w == 0) || (lo->emile.region.h == 0)) &&
            (lo->emile.orientation == 0)

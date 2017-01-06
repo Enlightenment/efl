@@ -693,7 +693,7 @@ evas_cache2_image_open(Evas_Cache2 *cache, const char *path, const char *key,
    if ((!lo) ||
        (lo &&
            (lo->emile.scale_down_by == 0) &&
-           (EINA_DBL_CMP(lo->emile.dpi, 0.0)) &&
+           (EINA_DBL_EQ(lo->emile.dpi, 0.0)) &&
            ((lo->emile.w == 0) || (lo->emile.h == 0)) &&
            ((lo->emile.region.w == 0) || (lo->emile.region.h == 0)) &&
            ((lo->emile.scale_load.dst_w == 0) || (lo->emile.scale_load.dst_h == 0)) &&

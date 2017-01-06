@@ -1462,7 +1462,7 @@ ecore_thread_global_data_wait(const char *key,
           ret = eina_hash_find(_ecore_thread_global_hash, key);
         LRWKU(_ecore_thread_global_hash_lock);
         if ((ret) ||
-            (!EINA_FLT_CMP(seconds, 0.0)) ||
+            (!EINA_FLT_EQ(seconds, 0.0)) ||
             ((seconds > 0) && (tm <= ecore_time_get())))
           break;
         LKL(_ecore_thread_global_hash_mutex);

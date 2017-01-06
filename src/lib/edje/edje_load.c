@@ -2945,8 +2945,8 @@ _edje_dupe_vector_data(Edje *ed, int svg_id, double width, double height,
    root = evas_vg_container_add(NULL);
    efl_vg_dup(root, vector->vg);
 
-   if (!EINA_DBL_CMP(vector->w, 0) &&
-       !EINA_DBL_CMP(vector->h, 0))
+   if (!EINA_DBL_EQ(vector->w, 0) &&
+       !EINA_DBL_EQ(vector->h, 0))
      {
         _apply_transformation(root, width, height, vector);
      }

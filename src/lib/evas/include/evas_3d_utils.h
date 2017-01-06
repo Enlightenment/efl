@@ -84,11 +84,11 @@ evas_triangle3_is_line(Evas_Triangle3 *v)
 static inline Eina_Bool
 convex_hull_triangle3_not_first_edje(Evas_Triangle3 *v, Eina_Vector3 *a, Eina_Vector3 *b)
 {
-   if ((EINA_DBL_CMP(v->p1.x, a->x) && EINA_DBL_CMP(v->p1.y, a->y) && EINA_DBL_CMP(v->p1.z, a->z)) &&
-       (EINA_DBL_CMP(v->p2.x, b->x) && EINA_DBL_CMP(v->p2.y, b->y) && EINA_DBL_CMP(v->p2.z, b->z)))
+   if ((EINA_DBL_EQ(v->p1.x, a->x) && EINA_DBL_EQ(v->p1.y, a->y) && EINA_DBL_EQ(v->p1.z, a->z)) &&
+       (EINA_DBL_EQ(v->p2.x, b->x) && EINA_DBL_EQ(v->p2.y, b->y) && EINA_DBL_EQ(v->p2.z, b->z)))
      return EINA_TRUE;
-   else if ((EINA_DBL_CMP(v->p2.x, a->x) && EINA_DBL_CMP(v->p2.y, a->y) && EINA_DBL_CMP(v->p2.z, a->z)) &&
-            (EINA_DBL_CMP(v->p1.x, b->x) && EINA_DBL_CMP(v->p1.y, b->y) && EINA_DBL_CMP(v->p1.z, b->z)))
+   else if ((EINA_DBL_EQ(v->p2.x, a->x) && EINA_DBL_EQ(v->p2.y, a->y) && EINA_DBL_EQ(v->p2.z, a->z)) &&
+            (EINA_DBL_EQ(v->p1.x, b->x) && EINA_DBL_EQ(v->p1.y, b->y) && EINA_DBL_EQ(v->p1.z, b->z)))
      return EINA_TRUE;
 
    return EINA_FALSE;
@@ -97,13 +97,13 @@ convex_hull_triangle3_not_first_edje(Evas_Triangle3 *v, Eina_Vector3 *a, Eina_Ve
 static inline Eina_Bool
 convex_hull_triangle3_first_edje(Evas_Triangle3 *v, Eina_Vector3 *a, Eina_Vector3 *b)
 {
-   if ((!EINA_FLT_CMP(v->p0.x, a->x) && !EINA_FLT_CMP(v->p0.y, a->y) &&
-        !EINA_FLT_CMP(v->p0.z, a->z)) && (!EINA_FLT_CMP(v->p1.x, b->x) &&
-        !EINA_FLT_CMP(v->p1.y, b->y) && !EINA_FLT_CMP(v->p1.z, b->z)))
+   if ((!EINA_FLT_EQ(v->p0.x, a->x) && !EINA_FLT_EQ(v->p0.y, a->y) &&
+        !EINA_FLT_EQ(v->p0.z, a->z)) && (!EINA_FLT_EQ(v->p1.x, b->x) &&
+        !EINA_FLT_EQ(v->p1.y, b->y) && !EINA_FLT_EQ(v->p1.z, b->z)))
      return EINA_TRUE;
-   else if ((!EINA_FLT_CMP(v->p1.x, a->x) && !EINA_FLT_CMP(v->p1.y, a->y) &&
-             !EINA_FLT_CMP(v->p1.z, a->z)) && (!EINA_FLT_CMP(v->p0.x, b->x) &&
-             !EINA_FLT_CMP(v->p0.y, b->y) && !EINA_FLT_CMP(v->p0.z, b->z)))
+   else if ((!EINA_FLT_EQ(v->p1.x, a->x) && !EINA_FLT_EQ(v->p1.y, a->y) &&
+             !EINA_FLT_EQ(v->p1.z, a->z)) && (!EINA_FLT_EQ(v->p0.x, b->x) &&
+             !EINA_FLT_EQ(v->p0.y, b->y) && !EINA_FLT_EQ(v->p0.z, b->z)))
      return EINA_TRUE;
 
    return EINA_FALSE;
@@ -112,16 +112,16 @@ convex_hull_triangle3_first_edje(Evas_Triangle3 *v, Eina_Vector3 *a, Eina_Vector
 static inline Eina_Bool
 convex_hull_triangle3_first_point(Evas_Triangle3 *v, Eina_Vector3 *a)
 {
-   return (EINA_DBL_CMP(v->p0.x, a->x) && EINA_DBL_CMP(v->p0.y, a->y) && EINA_DBL_CMP(v->p0.z, a->z));
+   return (EINA_DBL_EQ(v->p0.x, a->x) && EINA_DBL_EQ(v->p0.y, a->y) && EINA_DBL_EQ(v->p0.z, a->z));
 }
 
 static inline Eina_Bool
 eina_vector3_equivalent_as_triangle(Eina_Vector3 *v0, Eina_Vector3 *v1, Eina_Vector3 *v2,
                                     Eina_Vector3 *w0, Eina_Vector3 *w1, Eina_Vector3 *w2)
 {
-   if ((EINA_DBL_CMP(v0->x, w0->x) && EINA_DBL_CMP(v0->y, w0->y) && EINA_DBL_CMP(v0->z, w0->z)) &&
-       (EINA_DBL_CMP(v1->x, w1->x) && EINA_DBL_CMP(v1->y, w1->y) && EINA_DBL_CMP(v1->z, w1->z)) &&
-       (EINA_DBL_CMP(v2->x, w2->x) && EINA_DBL_CMP(v2->y, w2->y) && EINA_DBL_CMP(v2->z, w2->z)))
+   if ((EINA_DBL_EQ(v0->x, w0->x) && EINA_DBL_EQ(v0->y, w0->y) && EINA_DBL_EQ(v0->z, w0->z)) &&
+       (EINA_DBL_EQ(v1->x, w1->x) && EINA_DBL_EQ(v1->y, w1->y) && EINA_DBL_EQ(v1->z, w1->z)) &&
+       (EINA_DBL_EQ(v2->x, w2->x) && EINA_DBL_EQ(v2->y, w2->y) && EINA_DBL_EQ(v2->z, w2->z)))
      return EINA_TRUE;
 
    return EINA_FALSE;
@@ -437,7 +437,7 @@ evas_box2_intersect_2d(const Evas_Box2 *box, const Eina_Vector2 *org, const Eina
         return EINA_TRUE;
      }
    /* minmax algorithm of ray and box intersection */
-   if (!EINA_DBL_CMP(dir->x, 0.0) && !EINA_DBL_CMP(dir->y, 0.0))
+   if (!EINA_DBL_EQ(dir->x, 0.0) && !EINA_DBL_EQ(dir->y, 0.0))
      {
         t1 = (box->p0.x - org->x) / dir->x;
         t2 = (box->p1.x - org->x) / dir->x;
@@ -472,7 +472,7 @@ evas_box2_intersect_2d(const Evas_Box2 *box, const Eina_Vector2 *org, const Eina
           return EINA_FALSE;
      }
    /* case when ray is parallel to one of axes */
-   else if (EINA_DBL_CMP(dir->x, 0.0))
+   else if (EINA_DBL_EQ(dir->x, 0.0))
      {
         if ((org->x < box->p0.x) && (org->x > box->p1.x))
           return EINA_FALSE;
@@ -511,7 +511,7 @@ evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
         return EINA_TRUE;
      }
    /* minmax algorithm of ray and box intersection */
-   if (!EINA_DBL_CMP(ray->dir.x, 0.0) && !EINA_DBL_CMP(ray->dir.y, 0.0) && !EINA_DBL_CMP(ray->dir.z, 0.0))
+   if (!EINA_DBL_EQ(ray->dir.x, 0.0) && !EINA_DBL_EQ(ray->dir.y, 0.0) && !EINA_DBL_EQ(ray->dir.z, 0.0))
      {
         t1 = (box->p0.x - ray->org.x) / ray->dir.x;
         t2 = (box->p1.x - ray->org.x) / ray->dir.x;
@@ -567,7 +567,7 @@ evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
    else
      {
      /* use two-dimensional version here */
-        if (EINA_DBL_CMP(ray->dir.x, 0.0))
+        if (EINA_DBL_EQ(ray->dir.x, 0.0))
           {
              if ((ray->org.x < box->p0.x) || (ray->org.x > box->p1.x))
                return EINA_FALSE;
@@ -580,7 +580,7 @@ evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
                }
           }
 
-        if (EINA_DBL_CMP(ray->dir.y, 0.0))
+        if (EINA_DBL_EQ(ray->dir.y, 0.0))
           {
              if ((ray->org.y < box->p0.y) || (ray->org.y > box->p1.y))
                return EINA_FALSE;
@@ -593,7 +593,7 @@ evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
                }
           }
 
-        if (EINA_DBL_CMP(ray->dir.z, 0.0))
+        if (EINA_DBL_EQ(ray->dir.z, 0.0))
           {
              if (ray->org.z < box->p0.z || ray->org.z > box->p1.z)
                return EINA_FALSE;
@@ -672,11 +672,11 @@ evas_intersection_line_of_two_plains(Evas_Line3 *line, Eina_Quaternion *plane1, 
    line->point.y = (plane2->w * plane1->z - plane1->w * plane2->z) / line->direction.x; \
    line->point.z = (plane2->y * plane1->w - plane1->y * plane2->w) / line->direction.x;
 
-   if (!EINA_DBL_CMP(line->direction.x, 0.0) && !EINA_DBL_CMP(plane1->z, 0.0))
+   if (!EINA_DBL_EQ(line->direction.x, 0.0) && !EINA_DBL_EQ(plane1->z, 0.0))
      {
         SOLVE_EQUATION(x, y, z)
      }
-   else if (!EINA_DBL_CMP(line->direction.y, 0.0) && !EINA_DBL_CMP(plane1->x, 0.0))
+   else if (!EINA_DBL_EQ(line->direction.y, 0.0) && !EINA_DBL_EQ(plane1->x, 0.0))
      {
         SOLVE_EQUATION(y, z, x)
      }
@@ -895,7 +895,7 @@ tangent_new_basis(Eina_Vector3 *out, Evas_Triangle3 *triangle,
 
 
    /* calculation of new basis(in system coordinates of texturing) by solution of system of equations */
-   if (!EINA_DBL_CMP(new2.y, 0.0))
+   if (!EINA_DBL_EQ(new2.y, 0.0))
      {
         eina_vector3_scale(&old2, &old2, (new1.y / new2.y));
         eina_vector2_scale(&new2, &new2, (new1.y / new2.y));
@@ -906,7 +906,7 @@ tangent_new_basis(Eina_Vector3 *out, Evas_Triangle3 *triangle,
         eina_vector3_scale(out, &old1, 1 / new1.x);
      }
 
-   else if (!EINA_DBL_CMP(new1.y, 0.0))
+   else if (!EINA_DBL_EQ(new1.y, 0.0))
      {
         eina_vector3_scale(&old1, &old1, (new2.y / new1.y));
         eina_vector2_scale(&new1, &new1, (new2.y / new1.y));
@@ -977,8 +977,8 @@ convex_hull_first_tr_get(float *data, int count, int stride)
    for (i = 1, j = stride; i < count; i++, j += stride)
       {
          if ((triangle1.z > data[j + 2]) ||
-             ((EINA_FLT_CMP(triangle1.z, data[j + 2])) && (triangle1.y > data[j + 1])) ||
-             ((EINA_FLT_CMP(triangle1.z, data[j + 2])) && (EINA_FLT_CMP(triangle1.y, data[j + 1])) && (triangle1.x > data[j])))
+             ((EINA_FLT_EQ(triangle1.z, data[j + 2])) && (triangle1.y > data[j + 1])) ||
+             ((EINA_FLT_EQ(triangle1.z, data[j + 2])) && (EINA_FLT_EQ(triangle1.y, data[j + 1])) && (triangle1.x > data[j])))
            {
               eina_vector3_set(&triangle1, data[j], data[j + 1], data[j + 2]);
               first_num = i;
@@ -1000,7 +1000,7 @@ convex_hull_first_tr_get(float *data, int count, int stride)
         cos_2d = new_cos_2d;                                          \
         eina_vector3_set(&triangle, data[j], data[j + 1], data[j + 2]);   \
      }                                                                \
-   else if(!EINA_FLT_CMP(little, big) &&                            \
+   else if(!EINA_FLT_EQ(little, big) &&                            \
            (eina_vector3_distance_get(&triangle##_candidate, &previous) >  \
             eina_vector3_distance_get(&triangle, &previous)))              \
      {                                                                \
@@ -1009,9 +1009,9 @@ convex_hull_first_tr_get(float *data, int count, int stride)
    eina_vector3_set(&complanar1, 1, 0, 0);
    for (i = 0, j = 0; i < count; i++, j += stride)
       {
-         if (EINA_FLT_CMP(data[j], triangle1.x) ||
-             EINA_FLT_CMP(data[j + 1], triangle1.y) ||
-             EINA_FLT_CMP(data[j + 2], triangle1.z))
+         if (EINA_FLT_EQ(data[j], triangle1.x) ||
+             EINA_FLT_EQ(data[j + 1], triangle1.y) ||
+             EINA_FLT_EQ(data[j + 2], triangle1.z))
            {
               eina_vector3_set(&triangle2_candidate, data[j], data[j + 1], data[j + 2]);
               eina_vector3_subtract(&diagonal, &triangle2_candidate, &triangle1);
@@ -1024,7 +1024,7 @@ convex_hull_first_tr_get(float *data, int count, int stride)
                    eina_vector3_subtract(&diagonal, &triangle2, &triangle1);
                    cos_2d = eina_vector3_angle_get(&complanar1, &diagonal);
                 }
-              else if (!EINA_FLT_CMP(sin, new_sin))
+              else if (!EINA_FLT_EQ(sin, new_sin))
                 {
                    eina_vector3_subtract(&diagonal, &triangle2_candidate, &triangle1);
                    new_cos_2d = eina_vector3_angle_get(&complanar1, &diagonal);
@@ -1050,12 +1050,12 @@ convex_hull_first_tr_get(float *data, int count, int stride)
       {
          eina_vector3_set(&candidate, data[j], data[j + 1], data[j + 2]);
 
-         if ((EINA_FLT_CMP(data[j], triangle1.x) ||
-             EINA_FLT_CMP(data[j + 1], triangle1.y) ||
-             EINA_FLT_CMP(data[j + 2], triangle1.z)) &&
-             (EINA_FLT_CMP(data[j], triangle2.x) ||
-             EINA_FLT_CMP(data[j + 1], triangle2.y) ||
-             EINA_FLT_CMP(data[j + 2], triangle2.z)))
+         if ((EINA_FLT_EQ(data[j], triangle1.x) ||
+             EINA_FLT_EQ(data[j + 1], triangle1.y) ||
+             EINA_FLT_EQ(data[j + 2], triangle1.z)) &&
+             (EINA_FLT_EQ(data[j], triangle2.x) ||
+             EINA_FLT_EQ(data[j + 1], triangle2.y) ||
+             EINA_FLT_EQ(data[j + 2], triangle2.z)))
            {
               eina_vector3_plane_by_points(&normal_b, &triangle1, &candidate, &triangle2);
 
@@ -1073,7 +1073,7 @@ convex_hull_first_tr_get(float *data, int count, int stride)
                    eina_vector3_set(&triangle3, data[j], data[j + 1], data[j + 2]);
                    cos_2d = eina_vector3_angle_get(&diagonal, &first);
                 }
-              else if (!EINA_FLT_CMP(new_cos, cos))
+              else if (!EINA_FLT_EQ(new_cos, cos))
                 {
                    eina_vector3_set(&triangle3_candidate, data[j], data[j + 1], data[j + 2]);
                    eina_vector3_subtract(&first, &triangle1, &triangle2);
@@ -1156,11 +1156,11 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
            and one new vertex, all vertices should be checked */
         for (i = 0, j = 0; i < count; i++, j += stride)
            {
-              if ((EINA_FLT_CMP(elem->p0.x, data[j]) || EINA_FLT_CMP(elem->p0.y, data[j + 1]) ||
-                   EINA_FLT_CMP(elem->p0.z, data[j + 2])) && (EINA_FLT_CMP(elem->p1.x, data[j]) ||
-                   EINA_FLT_CMP(elem->p1.y, data[j + 1]) || EINA_FLT_CMP(elem->p1.z, data[j + 2])) &&
-                  (EINA_FLT_CMP(elem->p2.x, data[j]) || EINA_FLT_CMP(elem->p2.y, data[j + 1]) ||
-                   EINA_FLT_CMP(elem->p2.z, data[j + 2])))
+              if ((EINA_FLT_EQ(elem->p0.x, data[j]) || EINA_FLT_EQ(elem->p0.y, data[j + 1]) ||
+                   EINA_FLT_EQ(elem->p0.z, data[j + 2])) && (EINA_FLT_EQ(elem->p1.x, data[j]) ||
+                   EINA_FLT_EQ(elem->p1.y, data[j + 1]) || EINA_FLT_EQ(elem->p1.z, data[j + 2])) &&
+                  (EINA_FLT_EQ(elem->p2.x, data[j]) || EINA_FLT_EQ(elem->p2.y, data[j + 1]) ||
+                   EINA_FLT_EQ(elem->p2.z, data[j + 2])))
                 {
                    next = malloc(sizeof(Eina_Vector3));
                    eina_vector3_set(next, data[j], data[j + 1], data[j + 2]);
@@ -1234,7 +1234,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
         /* The case when several points are found, is discussed below.
            This case is interesting because the convex hull in the
            two-dimensional subspace should be filled further */
-        if ((!EINA_FLT_CMP(cos, 1.0)) && (1 < eina_array_count(&arr_candidates)))
+        if ((!EINA_FLT_EQ(cos, 1.0)) && (1 < eina_array_count(&arr_candidates)))
           {
              Eina_Vector3 angle_from, angle_to;
              next_2d = eina_array_data_get(&arr_candidates, 0);
@@ -1265,7 +1265,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                         cos_2d = new_cos;
                         best = eina_array_data_get(&arr_candidates, k);
                      }
-                   else if (!EINA_FLT_CMP(new_cos, cos_2d))
+                   else if (!EINA_FLT_EQ(new_cos, cos_2d))
                      {
                         if ((right && (eina_vector3_distance_get(best, &elem->p0) < eina_vector3_length_get(&angle_from))) ||
                             (!right && (eina_vector3_distance_get(best, &elem->p1) < eina_vector3_length_get(&angle_from))))
@@ -1277,7 +1277,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
         /* This event will take place after the previous,
            in fact, choice of first triangle in a new two-dimensional
            convex hull allows to fill it fan counterclockwise when viewed from the inside */
-        else if ((EINA_FLT_CMP(cos, 1.0)) && (1 < eina_array_count(&arr_candidates)))
+        else if ((EINA_FLT_EQ(cos, 1.0)) && (1 < eina_array_count(&arr_candidates)))
           {
              Eina_Vector3 angle_from, angle_to;
              eina_vector3_subtract(&angle_from, &elem->p0, &elem->p1);
@@ -1297,7 +1297,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                              cos_2d = new_cos;
                              best = eina_array_data_get(&arr_candidates, k);
                           }
-                        else if (!EINA_FLT_CMP(new_cos, cos_2d))
+                        else if (!EINA_FLT_EQ(new_cos, cos_2d))
                           {
                              if (eina_vector3_distance_get(best, &elem->p0) < eina_vector3_length_get(&angle_to))
                                best = eina_array_data_get(&arr_candidates, k);
@@ -1405,9 +1405,9 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
    exist1 = EINA_FALSE;                                                 \
    for (i = 0, new_stride = 0; (i < vertex_count) && !exist1; i++, new_stride += 10) \
      {                                                                  \
-        if ((k > 0) && !EINA_FLT_CMP(el->p##coord.x, found_vertex[new_stride]) && \
-            !EINA_FLT_CMP(el->p##coord.y, found_vertex[new_stride + 1]) && \
-            !EINA_FLT_CMP(el->p##coord.z, found_vertex[new_stride + 2])) \
+        if ((k > 0) && !EINA_FLT_EQ(el->p##coord.x, found_vertex[new_stride]) && \
+            !EINA_FLT_EQ(el->p##coord.y, found_vertex[new_stride + 1]) && \
+            !EINA_FLT_EQ(el->p##coord.z, found_vertex[new_stride + 2])) \
           {                                                             \
              exist1 = EINA_TRUE;                                        \
              found_index[3 * k + coord] = i;                            \
@@ -1536,10 +1536,10 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
              if ((fabs(data[j] - data[m]) < FLT_EPSILON) &&
                  (fabs(data[j + 1] - data[m + 1]) < FLT_EPSILON) &&
                  (fabs(data[j + 2] - data[m + 2]) < FLT_EPSILON) &&
-                 ((m == j) || ((!EINA_FLT_CMP(tex_data[i * tex_stride], 0.0)) &&
-                               !EINA_FLT_CMP(tex_data[i * tex_stride + 1], 0.0) &&
-                               !EINA_FLT_CMP(tex_data[i * tex_stride], 1.0) &&
-                               !EINA_FLT_CMP(tex_data[i * tex_stride + 1], 1.0))))
+                 ((m == j) || ((!EINA_FLT_EQ(tex_data[i * tex_stride], 0.0)) &&
+                               !EINA_FLT_EQ(tex_data[i * tex_stride + 1], 0.0) &&
+                               !EINA_FLT_EQ(tex_data[i * tex_stride], 1.0) &&
+                               !EINA_FLT_EQ(tex_data[i * tex_stride + 1], 1.0))))
                {
                   found_index = l;
                   for (k = 0; k < index_count; k += 3)

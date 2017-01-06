@@ -833,7 +833,7 @@ _evas_canvas3d_mesh_alpha_func_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Evas_Ca
                                     Evas_Real ref_value)
 {
    if (pd->alpha_comparison == comparison &&
-       (EINA_DBL_CMP(pd->alpha_ref_value, ref_value)))
+       (EINA_DBL_EQ(pd->alpha_ref_value, ref_value)))
      return;
    pd->alpha_comparison = comparison;
    pd->alpha_ref_value = ref_value;
@@ -1116,7 +1116,7 @@ EOLIAN static void
 _evas_canvas3d_mesh_shadows_constant_bias_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
                                          Evas_Real bias)
 {
-   if (!EINA_DBL_CMP(pd->shadows_constant_bias, bias))
+   if (!EINA_DBL_EQ(pd->shadows_constant_bias, bias))
      {
         pd->shadows_constant_bias = bias;
         evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_MESH_SHADOWS_CONSTANT_BIAS, NULL);

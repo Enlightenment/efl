@@ -359,7 +359,7 @@ edje_password_show_last_set(Eina_Bool password_show_last)
 EAPI void
 edje_password_show_last_timeout_set(double password_show_last_timeout)
 {
-   if (EINA_DBL_CMP(_edje_password_show_last_timeout, password_show_last_timeout)) return;
+   if (EINA_DBL_EQ(_edje_password_show_last_timeout, password_show_last_timeout)) return;
    _edje_password_show_last_timeout = password_show_last_timeout;
 }
 
