@@ -58,7 +58,7 @@ EAPI const char *eina_environment_tmp_get(void);
  * @return @c true if two doubles match
  * @since 1.19
  */
-EAPI Eina_Bool eina_dbleq(double a, double b);
+static inline Eina_Bool eina_dbl_exact(double a, double b);
 
 /**
  * @brief Warningless comparison of floats using ==
@@ -68,7 +68,7 @@ EAPI Eina_Bool eina_dbleq(double a, double b);
  * @return @c true if two floats match
  * @since 1.19
  */
-EAPI Eina_Bool eina_flteq(float a, float b);
+static inline Eina_Bool eina_flt_exact(float a, float b);
 
 /**
  * @brief Safe comparison of float
@@ -111,5 +111,7 @@ EAPI Eina_Bool eina_flteq(float a, float b);
 /**
  * @}
  */
+
+#include "eina_inline_util.x"
 
 #endif

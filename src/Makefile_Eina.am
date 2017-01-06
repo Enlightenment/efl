@@ -93,6 +93,7 @@ lib/eina/eina_crc.h \
 lib/eina/eina_inline_crc.x \
 lib/eina/eina_evlog.h \
 lib/eina/eina_util.h \
+lib/eina/eina_inline_util.x \
 lib/eina/eina_quaternion.h \
 lib/eina/eina_vector.h \
 lib/eina/eina_inline_vector.x \
