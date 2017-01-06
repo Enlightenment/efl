@@ -469,6 +469,20 @@ _evas_cache_image_async_cancel(void *data)
         cache = ie->cache;
      }
    if (cache) evas_cache_image_flush(cache);
+   SLKL(ie->lock_task);
+   if (ie->targets)
+     {
+        ie->cache->preload = eina_list_append(ie->cache->preload, ie);
+        ie->flags.pending = 0;
+        LKL(wakeup);
+        ie->flags.preload_pending = 1;
+        LKU(wakeup);
+        ie->preload = evas_preload_thread_run(_evas_cache_image_async_heavy,
+                                              _evas_cache_image_async_end,
+                                              _evas_cache_image_async_cancel,
+                                              ie);
+     }
+   SLKU(ie->lock_task);
 }
 
 // note - preload_add assumes a target is ONLY added ONCE to the image
@@ -1372,8 +1386,26 @@ evas_cache_image_preload_data(Image_Entry *im, const Eo *target,
 {
    RGBA_Image *img = (RGBA_Image *)im;
 
-   if (((im->flags.loaded) && (img->image.data)) || (im->flags.textured && !im->flags.updated_data))
+   if (((int)im->w > 0) && ((int)im->h > 0) &&
+       (((im->flags.loaded) && (img->image.data)) ||
+        (im->flags.textured && !im->flags.updated_data)))
      {
+        Evas_Cache_Target *tmp;
+
+        while ((tmp = im->targets))
+          {
+             im->targets = (Evas_Cache_Target *)
+               eina_inlist_remove(EINA_INLIST_GET(im->targets),
+                                  EINA_INLIST_GET(im->targets));
+             if (tmp->simple_cb)
+               {
+                  if (!tmp->delete_me)
+                    {
+                       tmp->simple_cb(tmp->simple_data);
+                    }
+               }
+             free(tmp);
+          }
         evas_object_inform_call_image_preloaded((Evas_Object*)target);
         return;
      }
