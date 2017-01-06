@@ -729,7 +729,7 @@ EAPI Eina_Rw_Slice eina_strbuf_rw_slice_get(const Eina_Strbuf *buf) EINA_WARN_UN
  *
  * @since 1.19
  */
-EAPI char* eina_strbuf_free_return(Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI char* eina_strbuf_release(Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @}

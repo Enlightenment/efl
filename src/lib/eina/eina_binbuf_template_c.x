@@ -216,3 +216,14 @@ _FUNC_EXPAND(rw_slice_get)(const _STRBUF_STRUCT_NAME *buf)
    EINA_MAGIC_CHECK_STRBUF(buf, ret);
    return eina_strbuf_common_rw_slice_get(buf);
 }
+
+EAPI _STRBUF_DATA_TYPE*
+_FUNC_EXPAND(release)(_STRBUF_STRUCT_NAME *buf)
+{
+   _STRBUF_DATA_TYPE *result;
+
+   result = _FUNC_EXPAND(string_steal)(buf);
+   _FUNC_EXPAND(string_free)(buf);
+
+   return result;
+}

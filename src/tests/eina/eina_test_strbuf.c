@@ -646,17 +646,17 @@ START_TEST(strbuf_prepend_print)
 }
 END_TEST
 
-START_TEST(strbuf_free_return_test)
+START_TEST(strbuf_release_test)
 {
    Eina_Strbuf *buf;
    char *string;
 
    buf = eina_strbuf_new();
    ck_assert_ptr_ne(buf, NULL);
-   eina_strbuf_append(buf, "strbuf_free_return_test");
+   eina_strbuf_append(buf, "strbuf_release_test");
 
-   string = eina_strbuf_free_return(buf);
-   ck_assert_str_eq(string, "strbuf_free_return_test");
+   string = eina_strbuf_release(buf);
+   ck_assert_str_eq(string, "strbuf_release_test");
 }
 END_TEST
 
@@ -676,5 +676,5 @@ eina_test_strbuf(TCase *tc)
    tcase_add_test(tc, strbuf_tolower);
    tcase_add_test(tc, strbuf_substr_get);
    tcase_add_test(tc, strbuf_prepend_print);
-   tcase_add_test(tc, strbuf_free_return_test);
+   tcase_add_test(tc, strbuf_release_test);
 }

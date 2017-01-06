@@ -469,6 +469,18 @@ EAPI Eina_Slice eina_ustrbuf_slice_get(const Eina_UStrbuf *buf) EINA_WARN_UNUSED
 EAPI Eina_Rw_Slice eina_ustrbuf_rw_slice_get(const Eina_UStrbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Get the string of the buffer and free the buffer
+ *
+ * @param buf the buffer to get the string from and which will be freed
+ *
+ * @return The string contained by buf. The caller must release the memory of the returned string by calling
+ * free().
+ *
+ * @since 1.19
+ */
+EAPI Eina_Unicode* eina_ustrbuf_release(Eina_UStrbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
  * @}
  */
 

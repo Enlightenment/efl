@@ -388,6 +388,17 @@ EAPI Eina_Slice eina_binbuf_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_R
  * @since 1.19
  */
 EAPI Eina_Rw_Slice eina_binbuf_rw_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+/**
+ * @brief Get the content of the buffer and free the buffer
+ *
+ * @param buf the buffer to get the content from and which will be freed
+ *
+ * @return The content contained by buf. The caller must release the memory of the returned content by calling
+ * free().
+ *
+ * @since 1.19
+ */
+EAPI unsigned char* eina_binbuf_release(Eina_Binbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @}
