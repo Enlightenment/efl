@@ -38,6 +38,7 @@ elementary/themes/edc/comp_effects.edc \
 elementary/themes/edc/conf.edc \
 elementary/themes/edc/connman.edc \
 elementary/themes/edc/cpufreq.edc \
+elementary/themes/edc/cpumonitor.edc \
 elementary/themes/edc/cslider.edc \
 elementary/themes/edc/desklock.edc \
 elementary/themes/edc/deskmirror.edc \
@@ -57,9 +58,11 @@ elementary/themes/edc/illume.edc \
 elementary/themes/edc/init.edc \
 elementary/themes/edc/label.edc \
 elementary/themes/edc/luncher.edc \
+elementary/themes/edc/memusage.edc \
 elementary/themes/edc/menu.edc \
 elementary/themes/edc/mixer.edc \
 elementary/themes/edc/music_control.edc \
+elementary/themes/edc/netstatus.edc \
 elementary/themes/edc/notification.edc \
 elementary/themes/edc/packagekit.edc \
 elementary/themes/edc/pager.edc \
@@ -218,6 +221,7 @@ elementary/themes/img/col_sel_end_bottom.png \
 elementary/themes/img/col_sel_end_left.png \
 elementary/themes/img/col_sel_end_right.png \
 elementary/themes/img/col_sel_end_top.png \
+elementary/themes/img/cpu_icon.png \
 elementary/themes/img/darken_rounded_square_half_h.png \
 elementary/themes/img/darken_rounded_square_half.png \
 elementary/themes/img/darken_rounded_square.png \
@@ -478,6 +482,7 @@ elementary/themes/img/icon_wallpaper_within.png \
 elementary/themes/img/icon_warning.png \
 elementary/themes/img/ic_win_move.png \
 elementary/themes/img/ic_win_resize.png \
+elementary/themes/img/idle.png \
 elementary/themes/img/img_example_1.png \
 elementary/themes/img/img_example_2.png \
 elementary/themes/img/inset_bar_horiz_base.png \
@@ -551,6 +556,7 @@ elementary/themes/img/map_circle.png \
 elementary/themes/img/map_marker.png \
 elementary/themes/img/map_scale.png \
 elementary/themes/img/media_busy_progress.png \
+elementary/themes/img/mem_icon.png \
 elementary/themes/img/mini_blue_glow_arrow_0.png \
 elementary/themes/img/mini_blue_glow_arrow_1.png \
 elementary/themes/img/mini_blue_glow_arrow_2.png \
@@ -565,6 +571,17 @@ elementary/themes/img/pointer_glow.png \
 elementary/themes/img/pointer_mono.png \
 elementary/themes/img/pointer.png \
 elementary/themes/img/pointer_hand1.png \
+elementary/themes/img/meter_00.png \
+elementary/themes/img/meter_01.png \
+elementary/themes/img/meter_02.png \
+elementary/themes/img/meter_03.png \
+elementary/themes/img/meter_04.png \
+elementary/themes/img/meter_05.png \
+elementary/themes/img/meter_06.png \
+elementary/themes/img/meter_07.png \
+elementary/themes/img/meter_08.png \
+elementary/themes/img/meter_09.png \
+elementary/themes/img/meter_10.png \
 elementary/themes/img/ring_shadow.png \
 elementary/themes/img/ring_white_blue_glow.png \
 elementary/themes/img/ring_white_middle.png \
@@ -573,6 +590,7 @@ elementary/themes/img/runner_glow_horiz.png \
 elementary/themes/img/runner_glow_vert.png \
 elementary/themes/img/runner_horiz.png \
 elementary/themes/img/runner_vert.png \
+elementary/themes/img/rx.png \
 elementary/themes/img/screen_base.png \
 elementary/themes/img/screen_bg.png \
 elementary/themes/img/screen_circular_shadow.png \
@@ -662,6 +680,7 @@ elementary/themes/img/tooltip-edge-bottom-tip.png \
 elementary/themes/img/tooltip-edge-left-tip.png \
 elementary/themes/img/tooltip-edge-right-tip.png \
 elementary/themes/img/tooltip-edge-top-tip.png \
+elementary/themes/img/tx.png \
 elementary/themes/img/vert_bar_inset.png \
 elementary/themes/img/vert_glow_run.png \
 elementary/themes/img/vert_glow_range.png \

@@ -223,9 +223,10 @@ group { name: "e/modules/battery/main";
             rel2.offset: -1 2;
             color_class: "module_label_plain";
             color3: 255 255 255 255;
-            text { font: "Sans"; size: 8;
-               min: 0 1;
+            text { font: "Sans";
                fit: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
                text_class: "module_small";
             }
          }
@@ -243,9 +244,10 @@ group { name: "e/modules/battery/main";
             rel2.to: "bg";
             color_class: "module_label_plain";
             color3: 255 255 255 255;
-            text { font: "Sans"; size: 8;
-               min: 0 1;
+            text { font: "Sans";
                fit: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
                text_class: "module_small";
             }
          }

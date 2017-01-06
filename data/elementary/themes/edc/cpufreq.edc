@@ -222,8 +222,8 @@ group { name: "e/modules/cpufreq/main";
             rel2.relative: 0.75 0.75;
             color_class: "module_label";
             color3: 255 255 255 255;
-            text { font: FN; size: 6;
-               min: 1 1;
+            text { font: FNBOLD; size: 6;
+               align: 0.5 0.5;
                ellipsis: -1;
                text_class: "module_small";
             }

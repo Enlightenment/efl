@@ -149,6 +149,9 @@ collections {
 #include "edc/wireless.edc"
 #include "edc/time.edc"
 #include "edc/luncher.edc"
+#include "edc/memusage.edc"
+#include "edc/cpumonitor.edc"
+#include "edc/netstatus.edc"
 
 // icons
 #include "edc/icons.edc"
