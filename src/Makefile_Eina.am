@@ -386,4 +386,5 @@ lib/eina/eina_inline_private.h \
 tests/eina/sample.gpx \
 tests/eina/eina_suite.x \
 lib/eina/eina_config.h.in \
+tests/eina/eina_test_stringshare.c \
 $(bin_SCRIPTS)
