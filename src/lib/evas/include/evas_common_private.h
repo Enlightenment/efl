@@ -617,6 +617,8 @@ struct _Image_Entry
 {
    EINA_INLIST;
 
+   int                    magic;
+
    Evas_Cache_Image      *cache;
 #ifdef EVAS_CSERVE2
    Evas_Cache2           *cache2;
@@ -650,6 +652,7 @@ struct _Image_Entry
    unsigned char          scale;
 
    unsigned char          need_unload : 1;
+   unsigned char          load_failed : 1;
 
    struct
      {

@@ -307,7 +307,7 @@ _evas_cache_image_entry_surface_alloc__locked(Evas_Cache_Image *cache,
                                               unsigned int hmin)
 {
    if ((ie->allocated.w == wmin) && (ie->allocated.h == hmin)) return;
-   if (cache->func.surface_alloc(ie, wmin, hmin))
+   if ((cache->func.surface_alloc(ie, wmin, hmin)) || (ie->load_failed))
      {
         wmin = 0;
         hmin = 0;
@@ -418,6 +418,7 @@ _evas_cache_image_async_end(void *data)
    ie->flags.preload_pending = 0;
    LKU(wakeup);
 
+   evas_cache_image_ref(ie);
    while ((tmp = ie->targets))
      {
         ie->targets = (Evas_Cache_Target *)
@@ -439,6 +440,7 @@ _evas_cache_image_async_end(void *data)
 
    EINA_LIST_FREE(ie->tasks, task)
      if (task != &dummy_task) free(task);
+   evas_cache_image_drop(ie);
 }
 
 static void
@@ -821,15 +823,28 @@ evas_cache_image_mmap_request(Evas_Cache_Image *cache,
 
    /* find image by key in active mmap hash */
    im = eina_hash_find(cache->mmap_activ, hkey);
-   if (im) goto on_ok;
+   if ((im) && (!im->load_failed)) goto on_ok;
+   else if ((im) && (im->load_failed))
+     {
+        _evas_cache_image_dirty_add(im);
+        im = NULL;
+     }
 
    /* find image by key in inactive/lru hash */
    im = eina_hash_find(cache->mmap_inactiv, hkey);
-   if (im)
+   if ((im) && (!im->load_failed))
      {
         _evas_cache_image_lru_del(im);
         _evas_cache_image_activ_add(im);
         goto on_ok;
+     }
+   else if ((im) && (im->load_failed))
+     {
+        /* as active cache find - if we match in lru and its invalid, dirty */
+        _evas_cache_image_dirty_add(im);
+        /* this image never used, so it have to be deleted */
+        _evas_cache_image_entry_delete(cache, im);
+        im = NULL;
      }
 
    im = _evas_cache_image_entry_new(cache, hkey, NULL, f, NULL, key, lo, error);
@@ -882,7 +897,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
 
    /* find image by key in active hash */
    im = eina_hash_find(cache->activ, hkey);
-   if (im)
+   if ((im) && (!im->load_failed))
      {
         int ok = 1;
 
@@ -905,10 +920,15 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
         _evas_cache_image_dirty_add(im);
         im = NULL;
      }
+   else if ((im) && (im->load_failed))
+     {
+        _evas_cache_image_dirty_add(im);
+        im = NULL;
+     }
 
    /* find image by key in inactive/lru hash */
    im = eina_hash_find(cache->inactiv, hkey);
-   if (im)
+   if ((im) && (!im->load_failed))
      {
         int ok = 1;
 
@@ -934,6 +954,14 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
              _evas_cache_image_activ_add(im);
              goto on_ok;
           }
+        /* as active cache find - if we match in lru and its invalid, dirty */
+        _evas_cache_image_dirty_add(im);
+        /* this image never used, so it have to be deleted */
+        _evas_cache_image_entry_delete(cache, im);
+        im = NULL;
+     }
+   else if ((im) && (im->load_failed))
+     {
         /* as active cache find - if we match in lru and its invalid, dirty */
         _evas_cache_image_dirty_add(im);
         /* this image never used, so it have to be deleted */
@@ -1012,7 +1040,7 @@ evas_cache_image_drop(Image_Entry *im)
              _evas_cache_image_entry_preload_remove(im, NULL);
              return;
           }
-        if (im->flags.dirty)
+        if ((im->flags.dirty) || (im->load_failed))
           {
              _evas_cache_image_entry_delete(cache, im);
              return;
@@ -1420,6 +1448,7 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
         Image_Entry *im;
 
         im = (Image_Entry *)cache->lru->last;
+        if (!im) im = (Image_Entry *)cache->lru;
         _evas_cache_image_entry_delete(cache, im);
      }
 
@@ -1427,7 +1456,8 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
      {
         Image_Entry *im;
 
-        im = (Image_Entry *) cache->lru_nodata->last;
+        im = (Image_Entry *)cache->lru_nodata->last;
+        if (!im) im = (Image_Entry *)cache->lru_nodata;
         _evas_cache_image_lru_nodata_del(im);
         cache->func.surface_delete(im);
         im->flags.loaded = 0;

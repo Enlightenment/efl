@@ -383,7 +383,7 @@ end:
 
    ie->info.module = em;
    ie->info.loader = em->functions;
-   evas_module_ref(ie->info.module);
+   if (em) evas_module_ref(em);
    return ret;
 }
 
@@ -419,7 +419,11 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
      CRI("This function shouldn't be called anymore!");
 #endif
 
-   if (!ie->info.module) return EVAS_LOAD_ERROR_GENERIC;
+   if (!ie->info.module)
+     {
+        ie->load_failed = 1;
+        return EVAS_LOAD_ERROR_GENERIC;
+     }
 
    evas_image_load_func = ie->info.loader;
    evas_module_use(ie->info.module);
@@ -431,20 +435,20 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
         if (_evas_image_file_header(em, ie, &ret))
           {
              em = NULL;
-             for (i = 0; i < sizeof(loaders_name) / sizeof (char *); i++)
+             if (!ie->load_opts.skip_head)
                {
-                  em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER,
-                                             loaders_name[i]);
-                  if (em)
+                  for (i = 0; i < sizeof(loaders_name) / sizeof (char *); i++)
                     {
-                       if (!ie->load_opts.skip_head)
+                       em = evas_module_find_type
+                         (EVAS_MODULE_TYPE_IMAGE_LOADER, loaders_name[i]);
+                       if (em)
                          {
                             if (!_evas_image_file_header(em, ie, &ret))
                               goto end;
                          }
+                       else DBG("could not find module '%s'", loaders_name[i]);
+                       em = NULL;
                     }
-                  else DBG("could not find module '%s'", loaders_name[i]);
-                  em = NULL;
                }
           }
 end:
@@ -455,7 +459,11 @@ end:
              ie->info.module = em;
           }
      }
-   if ((!ie->f) || (!ie->info.module)) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+   if ((!ie->f) || (!ie->info.module))
+     {
+        ie->load_failed = 1;
+        return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+     }
 
    if ((ie->file) && (stat(ie->file, &st) == 0))
      _timestamp_build(&(ie->tstamp), &st);
@@ -477,7 +485,11 @@ end:
    property.borders.b = ie->borders.b;
 
    pixels = evas_cache_image_pixels(ie);
-   if (!pixels) return EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+   if (!pixels)
+     {
+        ie->load_failed = 1;
+        return EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+     }
 
    evas_image_load_func->file_data(ie->loader_data, &property, pixels, &ret);
 
