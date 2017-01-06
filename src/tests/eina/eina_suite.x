@@ -18,6 +18,7 @@
 #define EINA_TEST_CODE
 
 #include "eina_test_stringshare.c"
+#include "eina_test_util.c"
 
 #undef EINA_TEST_START
 #undef EINA_TEST_END
@@ -35,6 +36,12 @@ static void
 eina_test_stringshare(TCase *tc)
 {
 #include "eina_test_stringshare.c"
+}
+
+static void
+eina_test_util(TCase *tc)
+{
+#include "eina_test_util.c"
 }
 
 #endif

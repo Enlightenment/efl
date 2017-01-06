@@ -85,6 +85,7 @@ static const Efl_Test_Case etc[] = {
    { "SafePointer", eina_test_safepointer },
    { "Slice", eina_test_slice },
    { "Free Queue", eina_test_freeq },
+   { "Util", eina_test_util },
    { NULL, NULL }
 };
 
