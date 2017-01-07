@@ -393,6 +393,9 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    else
 #endif
      {
+        Eina_Bool repeat;
+        int count = 0;
+
         if ((!output->current) ||
             (output->current->stride != fb->stride))
           {
@@ -419,9 +422,37 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
               */
           }
 
-        ret =
-          sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
-                              DRM_MODE_PAGE_FLIP_EVENT, output->user_data);
+        do
+          {
+             repeat = EINA_FALSE;
+             ret = sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
+                                       DRM_MODE_PAGE_FLIP_EVENT,
+                                       output->user_data);
+             /* Some drivers (RPI - looking at you) are broken and produce
+              * flip events before they are ready for another flip, so be
+              * a little robust in the face of badness and try a few times
+              * until we can flip or we give up (100 tries with a yield
+              * between each try). We can't expect everyone to run the
+              * latest bleeding edge kernel IF a workaround is possible
+              * in userspace, so do this. */
+             if ((ret < 0) && (errno == EBUSY))
+               {
+                  repeat = EINA_TRUE;
+                  if (count == 0)
+                    ERR("Pageflip fail - EBUSY from drmModePageFlip...");
+                  count++;
+                  if (count > 500)
+                    {
+                       ERR("Pageflip EBUSY for %i tries - give up", count);
+                       break;
+                    }
+                  usleep(100);
+               }
+          }
+        while (repeat);
+        if ((ret == 0) && (count > 0))
+          ERR("Pageflip finally succeeded after %i tries due to EBUSY", count);
+
         if ((ret < 0) && (errno != EBUSY))
           {
              DBG("Pageflip Failed for Crtc %u on Connector %u: %m",
