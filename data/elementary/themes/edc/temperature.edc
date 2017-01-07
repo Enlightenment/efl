@@ -2,8 +2,6 @@ group { name: "e/modules/temperature/main";
    images.image: "therm_content.png" COMP;
    images.image: "therm_shadow.png" COMP;
    images.image: "therm_shine.png" COMP;
-   min: 16 16;
-   max: 128 128;
    script {
     public message(Msg_Type:type, id, ...) {
        if ((type == MSG_FLOAT) && (id == 1)) {
@@ -44,8 +42,8 @@ group { name: "e/modules/temperature/main";
          description { state: "default" 0.0;
             color_class: "module_label_invisible";
             color3: 255 255 255 255;
-            text { font: FN; size: 10;
-               min: 1 1;
+            text { font: FN; size: 9;
+               fit: 1 1;
                ellipsis: -1;
                text_class: "module_small";
             }

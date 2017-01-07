@@ -7,8 +7,6 @@ group { name: "e/modules/battery/main";
    images.image: "bat_top0.png" COMP;
    images.image: "bat_top1.png" COMP;
    images.image: "glow_med_white.png" COMP;
-   min: 16 16;
-   max: 160 160;
    script {
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_FLOAT) && (id == 1)) {

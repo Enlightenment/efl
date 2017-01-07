@@ -30,8 +30,6 @@ group { name: "e/modules/cpufreq/main";
       image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
       image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
    }
-   min: 16 16;
-   max: 160 160;
    script {
       public available_frequencies;
       public available_governors;
