@@ -4,6 +4,7 @@ group { name: "e/modules/memusage/main";
    script {
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
+            // mem
             new val = getarg(2);
             if (val > (100 / 9 * 1)) set_state(PART:"mem_led1", "on",  0.0);
             else                     set_state(PART:"mem_led1", "off", 0.0);
@@ -21,9 +22,9 @@ group { name: "e/modules/memusage/main";
             else                     set_state(PART:"mem_led7", "off", 0.0);
             if (val > (100 / 9 * 8)) set_state(PART:"mem_led8", "on",  0.0);
             else                     set_state(PART:"mem_led8", "off", 0.0);
-         }
-         if ((type == MSG_INT_SET) && (id == 2)) {
-            new val = getarg(2);
+
+            // swap
+            val = getarg(3);
             if (val > (100 / 9 * 1)) set_state(PART:"swp_led1", "on",  0.0);
             else                     set_state(PART:"swp_led1", "off", 0.0);
             if (val > (100 / 9 * 2)) set_state(PART:"swp_led2", "on",  0.0);
