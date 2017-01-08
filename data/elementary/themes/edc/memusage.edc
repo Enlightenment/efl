@@ -1,228 +1,105 @@
 group { name: "e/modules/memusage/main";
-   image: "mem_icon.png" COMP;
-   image: "meter_00.png" COMP;
-   image: "meter_01.png" COMP;
-   image: "meter_02.png" COMP;
-   image: "meter_03.png" COMP;
-   image: "meter_04.png" COMP;
-   image: "meter_05.png" COMP;
-   image: "meter_06.png" COMP;
-   image: "meter_07.png" COMP;
-   image: "meter_08.png" COMP;
-   image: "meter_09.png" COMP;
-   image: "meter_10.png" COMP;
+   image: "mem_bar.png" COMP;
+   image: "mem_on.png" COMP;
    script {
-      public slide_status(val) {
-         if (val == 0)
-           set_state(PART:"meter", "default", 0.0);
-         else if (val > 0 && val < 10)
-           set_state(PART:"meter", "default", 0.1);
-         else if (val >= 10 && val < 20)
-           set_state(PART:"meter", "default", 0.2);
-         else if (val >= 20 && val < 30)
-           set_state(PART:"meter", "default", 0.3);
-         else if (val >= 30 && val < 40)
-           set_state(PART:"meter", "default", 0.4);
-         else if (val >= 40 && val < 50)
-           set_state(PART:"meter", "default", 0.5);
-         else if (val >= 50 && val < 60)
-           set_state(PART:"meter", "default", 0.6);
-         else if (val >= 60 && val < 70)
-           set_state(PART:"meter", "default", 0.7);
-         else if (val >= 70 && val < 80)
-           set_state(PART:"meter", "default", 0.8);
-         else if (val >= 80 && val < 90)
-           set_state(PART:"meter", "default", 0.9);
-         else if (val >= 90 && val <= 100)
-           set_state(PART:"meter", "default", 1.0);
-      }
-      public slide_status_two(val) {
-         if (val == 0)
-           set_state(PART:"swap_meter", "default", 0.0);
-         else if (val > 0 && val < 10)
-           set_state(PART:"swap_meter", "default", 0.1);
-         else if (val >= 10 && val < 20)
-           set_state(PART:"swap_meter", "default", 0.2);
-         else if (val >= 20 && val < 30)
-           set_state(PART:"swap_meter", "default", 0.3);
-         else if (val >= 30 && val < 40)
-           set_state(PART:"swap_meter", "default", 0.4);
-         else if (val >= 40 && val < 50)
-           set_state(PART:"swap_meter", "default", 0.5);
-         else if (val >= 50 && val < 60)
-           set_state(PART:"swap_meter", "default", 0.6);
-         else if (val >= 60 && val < 70)
-           set_state(PART:"swap_meter", "default", 0.7);
-         else if (val >= 70 && val < 80)
-           set_state(PART:"swap_meter", "default", 0.8);
-         else if (val >= 80 && val < 90)
-           set_state(PART:"swap_meter", "default", 0.9);
-         else if (val >= 90 && val <= 100)
-           set_state(PART:"swap_meter", "default", 1.0);
-      }
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
-            new status = getarg(2);
-            new text[16];
-
-            slide_status(status);
-            snprintf(text, sizeof(text), "Mem: %i %%", status);
-            set_text(PART:"status", text);
+            new val = getarg(2);
+            if (val > (100 / 9 * 1)) set_state(PART:"mem_led1", "on",  0.0);
+            else                     set_state(PART:"mem_led1", "off", 0.0);
+            if (val > (100 / 9 * 2)) set_state(PART:"mem_led2", "on",  0.0);
+            else                     set_state(PART:"mem_led2", "off", 0.0);
+            if (val > (100 / 9 * 3)) set_state(PART:"mem_led3", "on",  0.0);
+            else                     set_state(PART:"mem_led3", "off", 0.0);
+            if (val > (100 / 9 * 4)) set_state(PART:"mem_led4", "on",  0.0);
+            else                     set_state(PART:"mem_led4", "off", 0.0);
+            if (val > (100 / 9 * 5)) set_state(PART:"mem_led5", "on",  0.0);
+            else                     set_state(PART:"mem_led5", "off", 0.0);
+            if (val > (100 / 9 * 6)) set_state(PART:"mem_led6", "on",  0.0);
+            else                     set_state(PART:"mem_led6", "off", 0.0);
+            if (val > (100 / 9 * 7)) set_state(PART:"mem_led7", "on",  0.0);
+            else                     set_state(PART:"mem_led7", "off", 0.0);
+            if (val > (100 / 9 * 8)) set_state(PART:"mem_led8", "on",  0.0);
+            else                     set_state(PART:"mem_led8", "off", 0.0);
          }
          if ((type == MSG_INT_SET) && (id == 2)) {
-            new status = getarg(2);
-            new text[16];
-
-            slide_status_two(status);
-            snprintf(text, sizeof(text), "Swap: %i %%", status);
-            set_text(PART:"swap_status", text);
+            new val = getarg(2);
+            if (val > (100 / 9 * 1)) set_state(PART:"swp_led1", "on",  0.0);
+            else                     set_state(PART:"swp_led1", "off", 0.0);
+            if (val > (100 / 9 * 2)) set_state(PART:"swp_led2", "on",  0.0);
+            else                     set_state(PART:"swp_led2", "off", 0.0);
+            if (val > (100 / 9 * 3)) set_state(PART:"swp_led3", "on",  0.0);
+            else                     set_state(PART:"swp_led3", "off", 0.0);
+            if (val > (100 / 9 * 4)) set_state(PART:"swp_led4", "on",  0.0);
+            else                     set_state(PART:"swp_led4", "off", 0.0);
+            if (val > (100 / 9 * 5)) set_state(PART:"swp_led5", "on",  0.0);
+            else                     set_state(PART:"swp_led5", "off", 0.0);
+            if (val > (100 / 9 * 6)) set_state(PART:"swp_led6", "on",  0.0);
+            else                     set_state(PART:"swp_led6", "off", 0.0);
+            if (val > (100 / 9 * 7)) set_state(PART:"swp_led7", "on",  0.0);
+            else                     set_state(PART:"swp_led7", "off", 0.0);
+            if (val > (100 / 9 * 8)) set_state(PART:"swp_led8", "on",  0.0);
+            else                     set_state(PART:"swp_led8", "off", 0.0);
          }
       }
    }
    parts {
-      part { name: "fade_clip"; type: RECT;
+      part { name: "base"; type: SPACER;
          description { state: "default" 0.0;
-            color: 255 255 255 255;
-         }
-      }
-      part { name: "base";
-         clip_to: "fade_clip";
-         description { state: "default" 0.0;
-            aspect: 1.0 1.0;
+            aspect: 0.5 1;
             aspect_preference: BOTH;
-            image.normal: "mem_icon.png";
          }
       }
-      part { name: "meter";
-         clip_to: "fade_clip";
-         description { state: "default" 0.0;
-            rel1.relative: 0.1 0.2;
-            rel2.relative: 0.9 0.4;
-            image.normal: "meter_00.png";
-            color: 255 255 255 190;
+
+      #define LED(_name_, _pos_)                            \
+         part { name: _name_;                               \
+            desc { "default"; hid;                          \
+               rel1.relative: 0.0 (1.0 / 8 * (_pos_ - 1));  \
+               rel2.relative: 1.0 (1.0 / 8 * _pos_);        \
+               image.normal: "mem_on.png";                  \
+            }                                               \
+            desc { "on";  inherit: "default"; vis; }        \
+            desc { "off"; inherit: "default"; hid; }        \
+         }                                                  \
+
+      part { name: "mem";
+         desc { "default";
+            rel1.to: "base";
+            rel2.to: "base";
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.5 1.0;
+            image.normal: "mem_bar.png";
+            aspect_preference: SOURCE;
          }
-         description { state: "default" 0.1;
-            inherit: "default" 0.0;
-            image.normal: "meter_01.png";
-         }
-         description { state: "default" 0.2;
-            inherit: "default" 0.0;
-            image.normal: "meter_02.png";
-         }
-         description { state: "default" 0.3;
-            inherit: "default" 0.0;
-            image.normal: "meter_03.png";
-         }
-         description { state: "default" 0.4;
-            inherit: "default" 0.0;
-            image.normal: "meter_04.png";
-         }
-         description { state: "default" 0.5;
-            inherit: "default" 0.0;
-            image.normal: "meter_05.png";
-         }
-         description { state: "default" 0.6;
-            inherit: "default" 0.0;
-            image.normal: "meter_06.png";
-         }
-         description { state: "default" 0.7;
-            inherit: "default" 0.0;
-            image.normal: "meter_07.png";
-         }
-         description { state: "default" 0.8;
-            inherit: "default" 0.0;
-            image.normal: "meter_08.png";
-         }
-         description { state: "default" 0.9;
-            inherit: "default" 0.0;
-            image.normal: "meter_09.png";
-         }
-         description { state: "default" 1.0;
-            inherit: "default" 0.0;
-            image.normal: "meter_10.png";
-         }
+         LED("mem_led1", 8)
+         LED("mem_led2", 7)
+         LED("mem_led3", 6)
+         LED("mem_led4", 5)
+         LED("mem_led5", 4)
+         LED("mem_led6", 3)
+         LED("mem_led7", 2)
+         LED("mem_led8", 1)
       }
-      part { name: "status"; type: TEXT;
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.relative: 0.1 0.2;
-            rel2.relative: 0.9 0.4;
-            color_class: "module_label";
-            color3: 255 255 255 255;
-            text { font: FNBOLD;
-               fit: 1 1;
-               ellipsis: -1;
-               align: 0.5 0.5;
-               text_class: "module_small";
-            }
+
+      part { name: "swp";
+         desc { "default";
+            rel1.to: "base";
+            rel2.to: "base";
+            rel1.relative: 0.5 0.0;
+            rel2.relative: 1.0 1.0;
+            image.normal: "mem_bar.png";
+            aspect_preference: SOURCE;
          }
+         LED("swp_led1", 8)
+         LED("swp_led2", 7)
+         LED("swp_led3", 6)
+         LED("swp_led4", 5)
+         LED("swp_led5", 4)
+         LED("swp_led6", 3)
+         LED("swp_led7", 2)
+         LED("swp_led8", 1)
       }
-      part { name: "swap_meter";
-         clip_to: "fade_clip";
-         description { state: "default" 0.0;
-            rel1.relative: 0.1 0.5;
-            rel2.relative: 0.9 0.7;
-            image.normal: "meter_00.png";
-            color: 255 255 255 192;
-         }
-         description { state: "default" 0.1;
-            inherit: "default" 0.0;
-            image.normal: "meter_01.png";
-         }
-         description { state: "default" 0.2;
-            inherit: "default" 0.0;
-            image.normal: "meter_02.png";
-         }
-         description { state: "default" 0.3;
-            inherit: "default" 0.0;
-            image.normal: "meter_03.png";
-         }
-         description { state: "default" 0.4;
-            inherit: "default" 0.0;
-            image.normal: "meter_04.png";
-         }
-         description { state: "default" 0.5;
-            inherit: "default" 0.0;
-            image.normal: "meter_05.png";
-         }
-         description { state: "default" 0.6;
-            inherit: "default" 0.0;
-            image.normal: "meter_06.png";
-         }
-         description { state: "default" 0.7;
-            inherit: "default" 0.0;
-            image.normal: "meter_07.png";
-         }
-         description { state: "default" 0.8;
-            inherit: "default" 0.0;
-            image.normal: "meter_08.png";
-         }
-         description { state: "default" 0.9;
-            inherit: "default" 0.0;
-            image.normal: "meter_09.png";
-         }
-         description { state: "default" 1.0;
-            inherit: "default" 0.0;
-            image.normal: "meter_10.png";
-         }
-      }
-      part { name: "swap_status"; type: TEXT;
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.relative: 0.1 0.5;
-            rel2.relative: 0.9 0.7;
-            color_class: "module_label";
-            color3: 255 255 255 255;
-            text { font: FNBOLD;
-               fit: 1 1;
-               ellipsis: -1;
-               align: 0.5 0.5;
-               text_class: "module_small";
-            }
-         }
-      }
+
+      #undef LED
    }
 }
-
