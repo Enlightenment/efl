@@ -93,7 +93,6 @@ extern int sd_fd_max;
 #endif
 
 /* init must be called from main thread */
-Eina_Bool ecore_con_libproxy_init(void);
 void ecore_con_libproxy_proxies_free(char **proxies);
 /* BLOCKING! should be called from a worker thread */
 char **ecore_con_libproxy_proxies_get(const char *url);

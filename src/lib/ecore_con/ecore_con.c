@@ -68,15 +68,11 @@ EWAPI Eina_Error EFL_NET_SOCKET_SSL_ERROR_CERTIFICATE_VERIFY_FAILED = 0;
 static int _ecore_con_init_count = 0;
 int _ecore_con_log_dom = -1;
 
-typedef struct pxProxyFactory_  pxProxyFactory;
-typedef struct _Ecore_Con_Libproxy {
-   pxProxyFactory *factory;
-   char **(*px_proxy_factory_get_proxies)(pxProxyFactory *factory, const char *url);
-   void *(*px_proxy_factory_new)(void);
-   void (*px_proxy_factory_free)(pxProxyFactory *);
-   Eina_Module *mod;
-} Ecore_Con_Libproxy;
-static Ecore_Con_Libproxy _ecore_con_libproxy;
+Eina_Bool   _efl_net_proxy_helper_can_do      (void);
+int         _efl_net_proxy_helper_url_req_send(const char *url);
+char      **_efl_net_proxy_helper_url_wait    (int id);
+void        _efl_net_proxy_helper_init        (void);
+void        _efl_net_proxy_helper_shutdown    (void);
 
 EAPI int
 ecore_con_init(void)
@@ -99,6 +95,8 @@ ecore_con_init(void)
         if (_ecore_con_log_dom < 0)
           goto ecore_con_log_error;
      }
+
+   _efl_net_proxy_helper_init();
 
    ecore_con_mempool_init();
    ecore_con_legacy_init();
@@ -145,16 +143,7 @@ ecore_con_shutdown(void)
    if (--_ecore_con_init_count != 0)
      return _ecore_con_init_count;
 
-   if (_ecore_con_libproxy.factory)
-     {
-        _ecore_con_libproxy.px_proxy_factory_free(_ecore_con_libproxy.factory);
-        _ecore_con_libproxy.factory = NULL;
-     }
-   if (_ecore_con_libproxy.mod)
-     {
-        eina_module_free(_ecore_con_libproxy.mod);
-        _ecore_con_libproxy.mod = NULL;
-     }
+   _efl_net_proxy_helper_shutdown();
 
    eina_log_timing(_ecore_con_log_dom,
                    EINA_LOG_STATE_START,
@@ -2079,12 +2068,8 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    proxy = d->proxy;
 
-   if ((!proxy) && (_ecore_con_libproxy.factory))
+   if ((!proxy) && _efl_net_proxy_helper_can_do())
      {
-        /* libproxy is thread-safe but not cancellable.  the provided
-         * parameter must be a URL with schema, otherwise it won't
-         * return anything.
-         */
         Eina_Stringshare *url;
 
         url = eina_stringshare_printf("%s://%s:%s", d->protocol == IPPROTO_UDP ? "udp" : "tcp", host, port);
@@ -2608,64 +2593,12 @@ efl_net_udp_datagram_size_query(SOCKET fd)
    return READBUFSIZ;
 }
 
-Eina_Bool
-ecore_con_libproxy_init(void)
-{
-   if (!_ecore_con_libproxy.mod)
-     {
-#define LOAD(x)                                                         \
-          if (!_ecore_con_libproxy.mod) {                               \
-             _ecore_con_libproxy.mod = eina_module_new(x);              \
-             if (_ecore_con_libproxy.mod) {                             \
-                if (!eina_module_load(_ecore_con_libproxy.mod)) {       \
-                   eina_module_free(_ecore_con_libproxy.mod);           \
-                   _ecore_con_libproxy.mod = NULL;                      \
-                }                                                       \
-             }                                                          \
-          }
-#if defined(_WIN32) || defined(__CYGWIN__)
-        LOAD("libproxy-1.dll");
-        LOAD("libproxy.dll");
-#elif defined(__APPLE__) && defined(__MACH__)
-        LOAD("libproxy.1.dylib");
-        LOAD("libproxy.dylib");
-#else
-        LOAD("libproxy.so.1");
-        LOAD("libproxy.so");
-#endif
-#undef LOAD
-        if (!_ecore_con_libproxy.mod)
-          {
-             DBG("Couldn't find libproxy in your system. Continue without it");
-             return EINA_FALSE;
-          }
-
-#define SYM(x)                                                          \
-        if ((_ecore_con_libproxy.x = eina_module_symbol_get(_ecore_con_libproxy.mod, #x)) == NULL) { \
-           ERR("libproxy (%s) missing symbol %s", eina_module_file_get(_ecore_con_libproxy.mod), #x); \
-           eina_module_free(_ecore_con_libproxy.mod);                   \
-           _ecore_con_libproxy.mod = NULL;                              \
-           return EINA_FALSE;                                           \
-        }
-
-        SYM(px_proxy_factory_new);
-        SYM(px_proxy_factory_free);
-        SYM(px_proxy_factory_get_proxies);
-#undef SYM
-        DBG("using libproxy=%s", eina_module_file_get(_ecore_con_libproxy.mod));
-     }
-
-   if (!_ecore_con_libproxy.factory)
-     _ecore_con_libproxy.factory = _ecore_con_libproxy.px_proxy_factory_new();
-
-   return !!_ecore_con_libproxy.factory;
-}
-
 char **
 ecore_con_libproxy_proxies_get(const char *url)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_con_libproxy.px_proxy_factory_get_proxies, NULL);
-   return _ecore_con_libproxy.px_proxy_factory_get_proxies(_ecore_con_libproxy.factory, url);
+   int id =  _efl_net_proxy_helper_url_req_send(url);
+   if (id < 0) return NULL;
+   return _efl_net_proxy_helper_url_wait(id);
 }
 
 void

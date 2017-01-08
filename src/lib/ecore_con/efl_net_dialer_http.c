@@ -1380,7 +1380,7 @@ _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, co
 #undef IS_HEADER
      }
 
-   if ((!pd->proxy) && (ecore_con_libproxy_init()))
+   if (!pd->proxy)
      {
         Efl_Net_Dialer_Http_Libproxy_Context *ctx;
 
