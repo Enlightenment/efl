@@ -802,7 +802,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
         surf->buffer[i] = _evas_dmabuf_buffer_init(surf, w, h);
         if (!surf->buffer[i])
           {
-             ERR("Could not create buffers");
+             DBG("Could not create buffers");
              /* _init() handled surface cleanup when it failed */
              return EINA_FALSE;
           }
