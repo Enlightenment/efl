@@ -32,58 +32,58 @@ extern Ecore_Wl2_Display *ewd;
 
 typedef struct _WaylandIMContext WaylandIMContext;
 
-EAPI void wayland_im_context_add                (Ecore_IMF_Context    *ctx);
-EAPI void wayland_im_context_del                (Ecore_IMF_Context    *ctx);
-EAPI void wayland_im_context_reset              (Ecore_IMF_Context    *ctx);
-EAPI void wayland_im_context_focus_in           (Ecore_IMF_Context    *ctx);
-EAPI void wayland_im_context_focus_out          (Ecore_IMF_Context    *ctx);
-EAPI void wayland_im_context_preedit_string_get (Ecore_IMF_Context    *ctx,
-                                                 char                **str,
-                                                 int                  *cursor_pos);
-EAPI void wayland_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context  *ctx,
-                                                                char              **str,
-                                                                Eina_List         **attr,
-                                                                int                *cursor_pos);
+void wayland_im_context_add                (Ecore_IMF_Context    *ctx);
+void wayland_im_context_del                (Ecore_IMF_Context    *ctx);
+void wayland_im_context_reset              (Ecore_IMF_Context    *ctx);
+void wayland_im_context_focus_in           (Ecore_IMF_Context    *ctx);
+void wayland_im_context_focus_out          (Ecore_IMF_Context    *ctx);
+void wayland_im_context_preedit_string_get (Ecore_IMF_Context    *ctx,
+                                            char                **str,
+                                            int                  *cursor_pos);
+void wayland_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context  *ctx,
+                                                           char              **str,
+                                                           Eina_List         **attr,
+                                                           int                *cursor_pos);
 
-EAPI void wayland_im_context_cursor_position_set(Ecore_IMF_Context    *ctx,
-                                                 int                   cursor_pos);
-EAPI void wayland_im_context_use_preedit_set    (Ecore_IMF_Context    *ctx,
-                                                 Eina_Bool             use_preedit);
-EAPI void wayland_im_context_client_window_set  (Ecore_IMF_Context    *ctx,
-                                                 void                 *window);
-EAPI void wayland_im_context_client_canvas_set  (Ecore_IMF_Context    *ctx,
-                                                 void                 *canvas);
-EAPI void wayland_im_context_show               (Ecore_IMF_Context    *ctx);
-EAPI void wayland_im_context_hide               (Ecore_IMF_Context    *ctx);
-EAPI Eina_Bool wayland_im_context_filter_event  (Ecore_IMF_Context    *ctx,
-                                                 Ecore_IMF_Event_Type  type,
-                                                 Ecore_IMF_Event      *event);
-EAPI void wayland_im_context_cursor_location_set(Ecore_IMF_Context    *ctx,
-                                                 int                   x,
-                                                 int                   y,
-                                                 int                   width,
-                                                 int                   height);
+void wayland_im_context_cursor_position_set(Ecore_IMF_Context    *ctx,
+                                            int                   cursor_pos);
+void wayland_im_context_use_preedit_set    (Ecore_IMF_Context    *ctx,
+                                            Eina_Bool             use_preedit);
+void wayland_im_context_client_window_set  (Ecore_IMF_Context    *ctx,
+                                            void                 *window);
+void wayland_im_context_client_canvas_set  (Ecore_IMF_Context    *ctx,
+                                            void                 *canvas);
+void wayland_im_context_show               (Ecore_IMF_Context    *ctx);
+void wayland_im_context_hide               (Ecore_IMF_Context    *ctx);
+Eina_Bool wayland_im_context_filter_event  (Ecore_IMF_Context    *ctx,
+                                            Ecore_IMF_Event_Type  type,
+                                            Ecore_IMF_Event      *event);
+void wayland_im_context_cursor_location_set(Ecore_IMF_Context    *ctx,
+                                            int                   x,
+                                            int                   y,
+                                            int                   width,
+                                            int                   height);
 
-EAPI void wayland_im_context_autocapital_type_set(Ecore_IMF_Context *ctx,
-                                                  Ecore_IMF_Autocapital_Type autocapital_type);
+void wayland_im_context_autocapital_type_set(Ecore_IMF_Context *ctx,
+                                             Ecore_IMF_Autocapital_Type autocapital_type);
 
-EAPI void wayland_im_context_input_panel_layout_set(Ecore_IMF_Context *ctx,
-                                                    Ecore_IMF_Input_Panel_Layout layout);
+void wayland_im_context_input_panel_layout_set(Ecore_IMF_Context *ctx,
+                                               Ecore_IMF_Input_Panel_Layout layout);
 
-EAPI void wayland_im_context_input_mode_set(Ecore_IMF_Context *ctx,
-                                            Ecore_IMF_Input_Mode input_mode);
+void wayland_im_context_input_mode_set(Ecore_IMF_Context *ctx,
+                                       Ecore_IMF_Input_Mode input_mode);
 
-EAPI void wayland_im_context_input_hint_set(Ecore_IMF_Context *ctx,
-                                            Ecore_IMF_Input_Hints input_hints);
+void wayland_im_context_input_hint_set(Ecore_IMF_Context *ctx,
+                                       Ecore_IMF_Input_Hints input_hints);
 
-EAPI void wayland_im_context_input_panel_language_set(Ecore_IMF_Context *ctx,
-                                                      Ecore_IMF_Input_Panel_Lang lang);
+void wayland_im_context_input_panel_language_set(Ecore_IMF_Context *ctx,
+                                                 Ecore_IMF_Input_Panel_Lang lang);
 
-EAPI void
+void
 wayland_im_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx,
                                                    char **locale);
 
-EAPI void
+void
 wayland_im_context_prediction_allow_set(Ecore_IMF_Context *ctx,
                                         Eina_Bool prediction);
 

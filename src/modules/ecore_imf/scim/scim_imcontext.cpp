@@ -454,7 +454,7 @@ _ecore_imf_lock_to_scim_mask(unsigned int locks)
  *
  * Return value: A pointer to the newly created EcoreIMFContextISF instance
  */
-EAPI EcoreIMFContextISF *
+EcoreIMFContextISF *
 isf_imf_context_new(void)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -483,7 +483,7 @@ isf_imf_context_new(void)
  * It will be called when the scim im module is unloaded by ecore. It will do some
  * cleanup job.
  */
-EAPI void
+void
 isf_imf_context_shutdown(void)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -495,7 +495,7 @@ isf_imf_context_shutdown(void)
      }
 }
 
-EAPI void
+void
 isf_imf_context_add(Ecore_IMF_Context *ctx)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -575,7 +575,7 @@ isf_imf_context_add(Ecore_IMF_Context *ctx)
    SCIM_DEBUG_FRONTEND(2) << "input context created: id = " << context_scim->id << "\n";
 }
 
-EAPI void
+void
 isf_imf_context_del(Ecore_IMF_Context *ctx)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -652,7 +652,7 @@ isf_imf_context_del(Ecore_IMF_Context *ctx)
  * may be used in order to correctly position status windows, and may also
  * be used for purposes internal to the Input Method Context.
  */
-EAPI void
+void
 isf_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -678,7 +678,7 @@ isf_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
  * This window is used in order to correctly position status windows,
  * and may also be used for purposes internal to the Input Method Context.
  */
-EAPI void
+void
 isf_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -707,7 +707,7 @@ isf_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
  * position has been made. This will typically cause the Input Method Context
  * to clear the preedit state.
  */
-EAPI void
+void
 isf_imf_context_reset(Ecore_IMF_Context *ctx)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -734,7 +734,7 @@ isf_imf_context_reset(Ecore_IMF_Context *ctx)
  *
  * Notify the Input Method Context that the widget to which its correspond has gained focus.
  */
-EAPI void
+void
 isf_imf_context_focus_in(Ecore_IMF_Context *ctx)
 {
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
@@ -845,7 +845,7 @@ isf_imf_context_focus_in(Ecore_IMF_Context *ctx)
  *
  * Notify the Input Method Context that the widget to which its correspond has lost focus.
  */
-EAPI void
+void
 isf_imf_context_focus_out(Ecore_IMF_Context *ctx)
 {
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get(ctx);
@@ -883,7 +883,7 @@ isf_imf_context_focus_out(Ecore_IMF_Context *ctx)
  *
  * Notify the Input Method Context that a change in the cursor location has been made.
  */
-EAPI void
+void
 isf_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int cx, int cy, int cw, int ch)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -947,7 +947,7 @@ isf_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int cx, int cy, int 
  * If is 0 (default is 1), then the IM context may use some other method to
  * display feedback, such as displaying it in a child of the root window.
  */
-EAPI void
+void
 isf_imf_context_use_preedit_set(Ecore_IMF_Context* ctx, Eina_Bool use_preedit)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " = " << (use_preedit ? "true" : "false") << "...\n";
@@ -974,7 +974,7 @@ isf_imf_context_use_preedit_set(Ecore_IMF_Context* ctx, Eina_Bool use_preedit)
      }
 }
 
-EAPI void
+void
 isf_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, char** str, Eina_List **attrs, int *cursor_pos)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -1123,7 +1123,7 @@ isf_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, char*
  *
  * To get the preedit string of the input method.
  */
-EAPI void
+void
 isf_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char** str, int *cursor_pos)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -1166,7 +1166,7 @@ isf_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char** str, int *curs
  *
  * Notify the Input Method Context that a change in the cursor position has been made.
  */
-EAPI void
+void
 isf_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -1196,7 +1196,7 @@ isf_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
  * To set the input mode of input method. The definition of Ecore_IMF_Input_Mode
  * is in Ecore_IMF.h.
  */
-EAPI void
+void
 isf_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -1217,7 +1217,7 @@ isf_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode inpu
  *
  * Set whether the IM context should use the prediction.
  */
-EAPI void
+void
 isf_imf_context_prediction_allow_set(Ecore_IMF_Context* ctx, Eina_Bool prediction)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " = " << (prediction ? "true" : "false") << "...\n";
@@ -1230,7 +1230,7 @@ isf_imf_context_prediction_allow_set(Ecore_IMF_Context* ctx, Eina_Bool predictio
      context_scim->impl->prediction_allow = prediction;
 }
 
-EAPI void
+void
 isf_imf_context_autocapital_type_set(Ecore_IMF_Context* ctx, Ecore_IMF_Autocapital_Type autocapital_type)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " = " << autocapital_type << "...\n";
@@ -1258,7 +1258,7 @@ isf_imf_context_autocapital_type_set(Ecore_IMF_Context* ctx, Ecore_IMF_Autocapit
  * the event was not handled), but there is no obligation of any events to be
  * submitted to this function.
  */
-EAPI Eina_Bool
+Eina_Bool
 isf_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -1307,7 +1307,7 @@ isf_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
    return ret;
 }
 
-EAPI void
+void
 isf_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
@@ -1320,7 +1320,7 @@ isf_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
         (context_scim->impl->client_window, ECORE_X_VIRTUAL_KEYBOARD_STATE_ON);
 }
 
-EAPI void
+void
 isf_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";

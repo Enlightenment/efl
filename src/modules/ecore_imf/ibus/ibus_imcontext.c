@@ -303,7 +303,7 @@ ecore_imf_context_ibus_new(void)
    return context;
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DBG("%s", __FUNCTION__);
@@ -341,7 +341,7 @@ ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
    g_signal_connect(_bus, "connected", G_CALLBACK (_ecore_imf_context_ibus_bus_connected_cb), ibusimcontext);
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DBG("%s", __FUNCTION__);
@@ -373,7 +373,7 @@ ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
      _focus_im_context = NULL;
 }
 
-EAPI Eina_Bool
+Eina_Bool
 ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
                                     Ecore_IMF_Event_Type type,
                                     Ecore_IMF_Event *event)
@@ -470,7 +470,7 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
      return EINA_FALSE;
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_focus_in(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DBG("ctx : %p", ctx);
@@ -494,7 +494,7 @@ ecore_imf_context_ibus_focus_in(Ecore_IMF_Context *ctx)
      _focus_im_context = ctx;
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_focus_out(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DBG("ctx : %p", ctx);
@@ -513,7 +513,7 @@ ecore_imf_context_ibus_focus_out(Ecore_IMF_Context *ctx)
      ibus_input_context_focus_out(ibusimcontext->ibuscontext);
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_reset(Ecore_IMF_Context *ctx)
 {
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
@@ -523,7 +523,7 @@ ecore_imf_context_ibus_reset(Ecore_IMF_Context *ctx)
      ibus_input_context_reset(ibusimcontext->ibuscontext);
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_preedit_string_get(Ecore_IMF_Context *ctx,
                                           char          **str,
                                           int            *cursor_pos)
@@ -555,7 +555,7 @@ ecore_imf_context_ibus_preedit_string_get(Ecore_IMF_Context *ctx,
      EINA_LOG_DBG("cursor_pos : %d", *cursor_pos);
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx,
                                                           char          **str,
                                                           Eina_List     **attrs,
@@ -588,7 +588,7 @@ ecore_imf_context_ibus_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx
      }
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_client_window_set(Ecore_IMF_Context *ctx, void *window)
 {
    EINA_LOG_DBG("canvas : %p", window);
@@ -599,7 +599,7 @@ ecore_imf_context_ibus_client_window_set(Ecore_IMF_Context *ctx, void *window)
      ibusimcontext->client_window = (Ecore_X_Window)(Ecore_Window)window;
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
 {
    EINA_LOG_DBG("canvas : %p", canvas);
@@ -646,7 +646,7 @@ _ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context *ctx)
                                           ibusimcontext->cursor_h);
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context *ctx,
                                            int x,
                                            int y,
@@ -671,7 +671,7 @@ ecore_imf_context_ibus_cursor_location_set(Ecore_IMF_Context *ctx,
      }
 }
 
-EAPI void
+void
 ecore_imf_context_ibus_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
 {
    EINA_LOG_DBG("preedit : %d", use_preedit);

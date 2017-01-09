@@ -728,7 +728,7 @@ static const struct wl_text_input_listener text_input_listener =
    text_input_text_direction
 };
 
-EAPI void
+void
 wayland_im_context_add(Ecore_IMF_Context *ctx)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
@@ -744,7 +744,7 @@ wayland_im_context_add(Ecore_IMF_Context *ctx)
                                 &text_input_listener, imcontext);
 }
 
-EAPI void
+void
 wayland_im_context_del(Ecore_IMF_Context *ctx)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
@@ -763,7 +763,7 @@ wayland_im_context_del(Ecore_IMF_Context *ctx)
    clear_preedit(imcontext);
 }
 
-EAPI void
+void
 wayland_im_context_reset(Ecore_IMF_Context *ctx)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
@@ -779,7 +779,7 @@ wayland_im_context_reset(Ecore_IMF_Context *ctx)
    imcontext->reset_serial = imcontext->serial;
 }
 
-EAPI void
+void
 wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "focus-in");
@@ -791,7 +791,7 @@ wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
        show_input_panel(ctx);
 }
 
-EAPI void
+void
 wayland_im_context_focus_out(Ecore_IMF_Context *ctx)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
@@ -812,7 +812,7 @@ wayland_im_context_focus_out(Ecore_IMF_Context *ctx)
    imcontext->input = NULL;
 }
 
-EAPI void
+void
 wayland_im_context_preedit_string_get(Ecore_IMF_Context  *ctx,
                                       char              **str,
                                       int                *cursor_pos)
@@ -830,7 +830,7 @@ wayland_im_context_preedit_string_get(Ecore_IMF_Context  *ctx,
      *cursor_pos = imcontext->preedit_cursor;
 }
 
-EAPI void
+void
 wayland_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context  *ctx,
                                                       char              **str,
                                                       Eina_List         **attrs,
@@ -862,7 +862,7 @@ wayland_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context  *ctx,
      *cursor_pos = imcontext->preedit_cursor;
 }
 
-EAPI void
+void
 wayland_im_context_cursor_position_set(Ecore_IMF_Context *ctx,
                                        int                cursor_pos)
 {
@@ -875,13 +875,13 @@ wayland_im_context_cursor_position_set(Ecore_IMF_Context *ctx,
    update_state(imcontext);
 }
 
-EAPI void
+void
 wayland_im_context_use_preedit_set(Ecore_IMF_Context *ctx EINA_UNUSED,
                                    Eina_Bool          use_preedit EINA_UNUSED)
 {
 }
 
-EAPI void
+void
 wayland_im_context_client_window_set(Ecore_IMF_Context *ctx,
                                      void              *window)
 {
@@ -896,7 +896,7 @@ wayland_im_context_client_window_set(Ecore_IMF_Context *ctx,
      }
 }
 
-EAPI void
+void
 wayland_im_context_client_canvas_set(Ecore_IMF_Context *ctx,
                                      void              *canvas)
 {
@@ -908,7 +908,7 @@ wayland_im_context_client_canvas_set(Ecore_IMF_Context *ctx,
      imcontext->canvas = canvas;
 }
 
-EAPI void
+void
 wayland_im_context_show(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "context_show");
@@ -916,7 +916,7 @@ wayland_im_context_show(Ecore_IMF_Context *ctx)
    show_input_panel(ctx);
 }
 
-EAPI void
+void
 wayland_im_context_hide(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "context_hide");
@@ -924,7 +924,7 @@ wayland_im_context_hide(Ecore_IMF_Context *ctx)
    _input_panel_hide(ctx, EINA_FALSE);
 }
 
-EAPI Eina_Bool
+Eina_Bool
 wayland_im_context_filter_event(Ecore_IMF_Context    *ctx,
                                 Ecore_IMF_Event_Type  type,
                                 Ecore_IMF_Event      *event EINA_UNUSED)
@@ -939,7 +939,7 @@ wayland_im_context_filter_event(Ecore_IMF_Context    *ctx,
    return EINA_FALSE;
 }
 
-EAPI void
+void
 wayland_im_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int width, int height)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
@@ -960,7 +960,7 @@ wayland_im_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int
      }
 }
 
-EAPI void wayland_im_context_autocapital_type_set(Ecore_IMF_Context *ctx,
+void wayland_im_context_autocapital_type_set(Ecore_IMF_Context *ctx,
                                                   Ecore_IMF_Autocapital_Type autocapital_type)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
@@ -977,7 +977,7 @@ EAPI void wayland_im_context_autocapital_type_set(Ecore_IMF_Context *ctx,
      imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_LOWERCASE;
 }
 
-EAPI void
+void
 wayland_im_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Layout layout)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
@@ -1019,7 +1019,7 @@ wayland_im_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Inpu
    }
 }
 
-EAPI void
+void
 wayland_im_context_input_mode_set(Ecore_IMF_Context *ctx,
                                             Ecore_IMF_Input_Mode input_mode)
 {
@@ -1031,7 +1031,7 @@ wayland_im_context_input_mode_set(Ecore_IMF_Context *ctx,
      imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_PASSWORD;
 }
 
-EAPI void
+void
 wayland_im_context_input_hint_set(Ecore_IMF_Context *ctx,
                                             Ecore_IMF_Input_Hints input_hints)
 {
@@ -1053,7 +1053,7 @@ wayland_im_context_input_hint_set(Ecore_IMF_Context *ctx,
      imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_MULTILINE;
 }
 
-EAPI void
+void
 wayland_im_context_input_panel_language_set(Ecore_IMF_Context *ctx,
                                             Ecore_IMF_Input_Panel_Lang lang)
 {
@@ -1065,7 +1065,7 @@ wayland_im_context_input_panel_language_set(Ecore_IMF_Context *ctx,
      imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_LATIN;
 }
 
-EAPI void
+void
 wayland_im_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx,
                                                    char **locale)
 {
@@ -1075,7 +1075,7 @@ wayland_im_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx,
      *locale = strdup(imcontext->language ? imcontext->language : "");
 }
 
-EAPI void
+void
 wayland_im_context_prediction_allow_set(Ecore_IMF_Context *ctx,
                                         Eina_Bool prediction)
 {
