@@ -225,6 +225,10 @@ elementary/themes/img/cpu_bar.png \
 elementary/themes/img/cpu_green_on.png \
 elementary/themes/img/cpu_red_on.png \
 elementary/themes/img/cpu_yellow_on.png \
+elementary/themes/img/cpu_bar_vert.png \
+elementary/themes/img/cpu_green_on_vert.png \
+elementary/themes/img/cpu_red_on_vert.png \
+elementary/themes/img/cpu_yellow_on_vert.png \
 elementary/themes/img/darken_rounded_square_half_h.png \
 elementary/themes/img/darken_rounded_square_half.png \
 elementary/themes/img/darken_rounded_square.png \
@@ -561,6 +565,8 @@ elementary/themes/img/map_scale.png \
 elementary/themes/img/media_busy_progress.png \
 elementary/themes/img/mem_bar.png \
 elementary/themes/img/mem_on.png \
+elementary/themes/img/mem_bar_vert.png \
+elementary/themes/img/mem_on_vert.png \
 elementary/themes/img/mini_blue_glow_arrow_0.png \
 elementary/themes/img/mini_blue_glow_arrow_1.png \
 elementary/themes/img/mini_blue_glow_arrow_2.png \
