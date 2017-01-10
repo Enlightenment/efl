@@ -6952,7 +6952,7 @@ _efl_canvas_text_style_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o, cons
 {
    Evas_Textblock_Style *ts = _style_by_key_find(o, key);
 
-   return ts->style_text;
+   return ts ? ts->style_text : NULL;
 }
 
 #define _STYLE_USER "_style_user"
