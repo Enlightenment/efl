@@ -466,18 +466,23 @@ static void
 _entry_activated_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    const char *str = elm_entry_entry_get(obj);
-   struct elm_test *t, *found = NULL;
+   struct elm_test *t, *found = NULL, *exact = NULL;
+   int count = 0;
    Eina_List *l;
 
    if (!str) return;
    EINA_LIST_FOREACH(tests, l, t)
      {
+        if (!exact && !strcasecmp(t->name, str)) exact = t;
         if (!strcasestr(t->name, str)) continue;
-        if (found) return;
         found = t;
+        count++;
+        if ((count > 1) && exact) break;
      }
-   if (!found) return;
-   evas_object_smart_callback_call(found->btn, "clicked", NULL);
+   if (exact)
+     evas_object_smart_callback_call(exact->btn, "clicked", NULL);
+   else if (found && (count == 1))
+     evas_object_smart_callback_call(found->btn, "clicked", NULL);
 }
 
 static char *
