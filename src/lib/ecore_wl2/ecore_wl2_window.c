@@ -187,9 +187,14 @@ static const struct xdg_surface_listener _xdg_surface_listener =
 };
 
 static void
-_zxdg_surface_cb_configure(void *data EINA_UNUSED, struct zxdg_surface_v6 *zxdg_surface, uint32_t serial)
+_zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
+   Ecore_Wl2_Window *window;
+
    zxdg_surface_v6_ack_configure(zxdg_surface, serial);
+
+   window = data;
+   window->pending.configure = EINA_FALSE;
 }
 
 static const struct zxdg_surface_v6_listener _zxdg_surface_listener =
@@ -486,6 +491,8 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
         window->zxdg_configure_ack = zxdg_surface_v6_ack_configure;
         _ecore_wl2_window_type_set(window);
+
+        window->pending.configure = EINA_TRUE;
 
         /* TODO: surface commit needed ? */
         wl_surface_commit(window->surface);
