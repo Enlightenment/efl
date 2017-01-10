@@ -246,12 +246,22 @@ enum _Shader_Type {
 #define ARRAY_BUFFER_USE 500
 #define ARRAY_BUFFER_USE_SHIFT 100
 
+typedef struct _Evas_GL_Vbo Evas_GL_Vbo;
+
+struct _Evas_GL_Vbo
+{
+   GLuint       buffer;
+   unsigned int size;
+   unsigned int unused;
+};
+
 struct _Evas_Engine_GL_Context
 {
    int                references;
    int                w, h;
    int                rot;
    int                foc, z0, px, py;
+   unsigned int       frame;
    RGBA_Draw_Context *dc;
 
    Evas_GL_Shared     *shared;
@@ -271,7 +281,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool       anti_alias : 1;
       } current;
    } state;
-   
+
    struct {
       int                x, y, w, h;
       Eina_Bool          enabled : 1;
@@ -307,6 +317,8 @@ struct _Evas_Engine_GL_Context
          GLfloat *texsam;
          GLfloat *mask;
          GLfloat *masksam;
+         Evas_GL_Image *im;
+         GLuint buffer;
          Eina_Bool line: 1;
          Eina_Bool use_vertex : 1; // always true
          Eina_Bool use_color : 1;
@@ -318,17 +330,21 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_mask : 1;
          Eina_Bool use_masksam : 1;
          Eina_Bool anti_alias : 1;
-         Evas_GL_Image *im;
-         GLuint buffer;
-         int buffer_alloc;
-         int buffer_use;
       } array;
    } pipe[MAX_PIPES];
 
    struct {
       Eina_Bool size : 1;
    } change;
-   
+
+#define VBO_POOL_SLOTS 6
+   struct {
+      struct {
+         Eina_List *spare;
+         Eina_List *used;
+      } pool[VBO_POOL_SLOTS];
+   } vbos;
+
    Eina_List *font_glyph_textures;
 
    Eina_Bool havestuff : 1;
@@ -519,6 +535,7 @@ EAPI Eina_Bool    evas_gl_preload_enabled(void);
 EAPI Evas_Engine_GL_Context  *evas_gl_common_context_new(void);
 
 EAPI void         evas_gl_common_context_flush(Evas_Engine_GL_Context *gc);
+EAPI void         evas_gl_common_context_idle_flush(Evas_Engine_GL_Context *gc);
 EAPI void         evas_gl_common_context_free(Evas_Engine_GL_Context *gc);
 EAPI void         evas_gl_common_context_use(Evas_Engine_GL_Context *gc);
 EAPI void         evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc);

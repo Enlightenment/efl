@@ -273,7 +273,7 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
    FINDSYM(glsym_glStartTiling, "glActivateTileQCOM", NULL, glsym_func_void);
    FINDSYM(glsym_glEndTiling, "glEndTilingQCOM", "GL_QCOM_tiled_rendering", glsym_func_void);
    FINDSYM(glsym_glEndTiling, "glEndTiling", NULL, glsym_func_void);
-   
+
    if (!getenv("EVAS_GL_MAPBUFFER_DISABLE"))
      {
         // Not sure there's an EXT variant. (probably no KHR variant)
@@ -773,6 +773,141 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
      }
 }
 
+///////////////////////////////////////////////////////////////////////////
+
+// debugging just for the fbo pool/cache
+#if 0
+# define VD(...) printf(__VA_ARGS__)
+#else
+# define VD(...)
+#endif
+
+// a vbo bigger than MAX_VBO_SIZE is stupid and likely an error so dont
+// even try
+#define MAX_VBO_SIZE (0x7fffffff)
+// if the final vbo we found is more than MAX_VBO_DIFF bigger than what
+// we need then let's not use it and alloc a new vbo anyway
+#define MAX_VBO_DIFF (128 * 1024)
+// if the buffer is up to MIN_VBO_DIFF buffer than what we want just
+// take it and don't look for a better match as this just costs us
+// time hunting rfor a better one and since this is O(n) why bother
+// with that effort when near enough is good enough
+#define MIN_VBO_DIFF (512)
+
+static void
+_vbo_pool_vbo_del(Evas_GL_Vbo *vbo)
+{
+   glDeleteBuffers(1, &(vbo->buffer));
+   free(vbo);
+}
+
+static void
+_vbo_pool_clear(Evas_Engine_GL_Context *gc)
+{
+   int i;
+   Evas_GL_Vbo *vbo;
+
+   if (!(glsym_glMapBuffer && glsym_glUnmapBuffer)) return;
+   for (i = 0; i < VBO_POOL_SLOTS; i++)
+     {
+        EINA_LIST_FREE(gc->vbos.pool[i].spare, vbo)
+          {
+             VD("FREE UP SPARE buf=%i size=%i\n", vbo->buffer, vbo->size);
+             _vbo_pool_vbo_del(vbo);
+          }
+        EINA_LIST_FREE(gc->vbos.pool[i].used, vbo)
+          {
+             VD("FREE UP USED buf=%i size=%i\n", vbo->buffer, vbo->size);
+             _vbo_pool_vbo_del(vbo);
+          }
+     }
+}
+
+static void
+_vbo_pool_newframe(Evas_Engine_GL_Context *gc)
+{
+   int slot;
+   Eina_List *l, *ll;
+   Evas_GL_Vbo *vbo;
+
+   if (!(glsym_glMapBuffer && glsym_glUnmapBuffer)) return;
+   VD("-------------------------------- FRAME %i\n", gc->frame + 1);
+   slot = gc->frame % VBO_POOL_SLOTS;
+   EINA_LIST_FOREACH_SAFE(gc->vbos.pool[slot].spare, l, ll, vbo)
+     {
+        vbo->unused++;
+        if (vbo->unused >= 2)
+          {
+             VD("DEL UNUSED buf=%i size=%i\n", vbo->buffer, vbo->size);
+             _vbo_pool_vbo_del(vbo);
+             gc->vbos.pool[slot].spare =
+               eina_list_remove_list(gc->vbos.pool[slot].spare, l);
+          }
+     }
+   EINA_LIST_FREE(gc->vbos.pool[slot].used, vbo)
+     {
+        gc->vbos.pool[slot].spare =
+          eina_list_prepend(gc->vbos.pool[slot].spare, vbo);
+     }
+}
+
+static GLuint
+_vbo_pool_buffer_find(Evas_Engine_GL_Context *gc, size_t size)
+{
+   Eina_List *l, *l_sel = NULL;
+   Evas_GL_Vbo *vbo, *vbo_sel = NULL;
+   int slot;
+   unsigned int diff, diff_sel = MAX_VBO_SIZE;
+   int hunt = 0;
+
+   if (size > MAX_VBO_SIZE) return 0; // stupidly too big buffer
+   // look up in a specifc buffer pool that is a ring buffer of the last
+   // N frames (one slot with a pool per frame) where N is VBO_POOL_SLOTS
+   slot = gc->frame % VBO_POOL_SLOTS;
+   EINA_LIST_FOREACH(gc->vbos.pool[slot].spare, l, vbo)
+     {
+        hunt++;
+        if (vbo->size < size) continue;
+        diff = size - vbo->size;
+        if (diff < diff_sel)
+          {
+             vbo_sel = vbo;
+             diff_sel = diff;
+             l_sel = l;
+             if (diff < MIN_VBO_DIFF) break;
+          }
+     }
+   VD("FIND SIZE=%i from #=%i/%i - ", (int)size, hunt, eina_list_count(gc->vbos.pool[slot].spare));
+   if ((vbo_sel) && (diff_sel > MAX_VBO_DIFF))
+     {
+        VD("[BIG %i] ", diff_sel);
+        vbo_sel = NULL;
+     }
+   if (vbo_sel)
+     {
+        vbo = vbo_sel;
+        VD("FOUND buf=%i size=%i unused=%i\n", vbo->buffer, vbo->size, vbo->unused);
+        vbo->unused = 0;;
+        gc->vbos.pool[slot].spare =
+          eina_list_remove_list(gc->vbos.pool[slot].spare, l_sel);
+        gc->vbos.pool[slot].used =
+          eina_list_append(gc->vbos.pool[slot].used, vbo);
+        return vbo->buffer;
+     }
+   vbo = calloc(1, sizeof(Evas_GL_Vbo));
+   if (!vbo) return 0;
+   glGenBuffers(1, &(vbo->buffer));
+   glBindBuffer(GL_ARRAY_BUFFER, vbo->buffer);
+   glBufferData(GL_ARRAY_BUFFER, (long)size, NULL, GL_DYNAMIC_DRAW);
+   vbo->size = size;
+   gc->vbos.pool[slot].used =
+     eina_list_append(gc->vbos.pool[slot].used, vbo);
+   VD("** ALLOC ** buf=%i size=%i\n", vbo->buffer, vbo->size);
+   return vbo->buffer;
+}
+
+///////////////////////////////////////////////////////////////////////////
+
 EAPI Evas_Engine_GL_Context *
 evas_gl_common_context_new(void)
 {
@@ -806,12 +941,12 @@ evas_gl_common_context_new(void)
    for (i = 0; i < MAX_PIPES; i++)
      {
         gc->pipe[i].shader.render_op = EVAS_RENDER_BLEND;
-        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
-          {
-             glGenBuffers(1, &gc->pipe[i].array.buffer);
-             gc->pipe[i].array.buffer_alloc = 0;
-             gc->pipe[i].array.buffer_use = 0;
-          }
+//        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
+//          {
+//             glGenBuffers(1, &gc->pipe[i].array.buffer);
+//             gc->pipe[i].array.buffer_alloc = 0;
+//             gc->pipe[i].array.buffer_use = 0;
+//          }
      }
 
    gc->state.current.tex_target = GL_TEXTURE_2D;
@@ -930,11 +1065,13 @@ evas_gl_common_context_new(void)
              else if (strstr(s, "NVIDIA Tegra"))
                 shared->info.tune.pipes.max = DEF_PIPES_TEGRA_2;
           }
+#if 1
         if (!getenv("EVAS_GL_MAPBUFFER"))
           {
              glsym_glMapBuffer = NULL;
              glsym_glUnmapBuffer= NULL;
           }
+#endif
 
 #define GETENVOPT(name, tune_param, min, max) \
         do { \
@@ -1095,6 +1232,12 @@ error:
 }
 
 EAPI void
+evas_gl_common_context_idle_flush(Evas_Engine_GL_Context *gc)
+{
+   _vbo_pool_clear(gc);
+}
+
+EAPI void
 evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
 {
    int i, j;
@@ -1109,11 +1252,12 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
    if (gc->font_surface)
      evas_cache_image_drop(&gc->font_surface->cache_entry);
 
-   if (glsym_glMapBuffer && glsym_glUnmapBuffer)
-     {
-        for (i = 0; i < MAX_PIPES; i++)
-          glDeleteBuffers(1, &gc->pipe[i].array.buffer);
-     }
+   _vbo_pool_clear(gc);
+//   if (glsym_glMapBuffer && glsym_glUnmapBuffer)
+//     {
+//        for (i = 0; i < MAX_PIPES; i++)
+//          glDeleteBuffers(1, &gc->pipe[i].array.buffer);
+//     }
 
    if (gc->shared)
      {
@@ -1186,6 +1330,8 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
 {
    int i;
 
+   _vbo_pool_newframe(gc);
+   gc->frame++;
    if (_evas_gl_common_cutout_rects)
      {
         evas_common_draw_context_apply_clear_cutouts(_evas_gl_common_cutout_rects);
@@ -3313,6 +3459,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
           {
              unsigned char *x;
+             unsigned int pad = 0;
 
 # define VERTEX_SIZE (gc->pipe[i].array.num * sizeof(GLshort) * VERTEX_CNT)
 # define COLOR_SIZE (gc->pipe[i].array.num * sizeof(GLubyte) * COLOR_CNT)
@@ -3320,7 +3467,11 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 # define SAM_SIZE (gc->pipe[i].array.num * sizeof(GLfloat) * SAM_CNT)
 # define MASK_SIZE (gc->pipe[i].array.num * sizeof(GLfloat) * MASK_CNT)
              vertex_ptr = NULL;
-             color_ptr = vertex_ptr + VERTEX_SIZE;
+             // purely for correctness handle alignment. since we do
+             // quads which is 6 points this ends up not needed, but just
+             // in case in future...
+             if (gc->pipe[i].array.num & 1) pad = 2;
+             color_ptr = vertex_ptr + VERTEX_SIZE + pad;
              texuv_ptr = color_ptr + COLOR_SIZE;
              texuv2_ptr = texuv_ptr + TEX_SIZE;
              texuv3_ptr = texuv2_ptr + TEX_SIZE;
@@ -3330,15 +3481,23 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              masksam_ptr = mask_ptr + MASK_SIZE;
 # define END_POINTER (masksam_ptr + SAM_SIZE)
 
-             glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
-             if ((gc->pipe[i].array.buffer_alloc < (long)END_POINTER) ||
-                 (gc->pipe[i].array.buffer_use >= (ARRAY_BUFFER_USE + ARRAY_BUFFER_USE_SHIFT * i)))
+             if (gc->pipe[i].array.buffer == 0)
                {
-                  glBufferData(GL_ARRAY_BUFFER, (long)END_POINTER, NULL, GL_STATIC_DRAW);
-                  gc->pipe[i].array.buffer_alloc = (long)END_POINTER;
-                  gc->pipe[i].array.buffer_use = 0;
+                  gc->pipe[i].array.buffer =
+                    _vbo_pool_buffer_find(gc, (size_t)END_POINTER);
                }
-             gc->pipe[i].array.buffer_use++;
+             glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
+//             glBufferData(GL_ARRAY_BUFFER, (long)0, NULL, GL_DYNAMIC_DRAW);
+//             glBufferData(GL_ARRAY_BUFFER, (long)END_POINTER, NULL, GL_DYNAMIC_DRAW);
+//             if ((gc->pipe[i].array.buffer_alloc < (long)END_POINTER) ||
+//                 (gc->pipe[i].array.buffer_use >= (ARRAY_BUFFER_USE + ARRAY_BUFFER_USE_SHIFT * i)))
+//               {
+//                  glBufferData(GL_ARRAY_BUFFER, (long)0, NULL, GL_DYNAMIC_DRAW);
+//                  glBufferData(GL_ARRAY_BUFFER, (long)END_POINTER, NULL, GL_DYNAMIC_DRAW);
+//                  gc->pipe[i].array.buffer_alloc = (long)END_POINTER;
+//                  gc->pipe[i].array.buffer_use = 0;
+//               }
+//             gc->pipe[i].array.buffer_use++;
 
              x = glsym_glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
              if (x)
@@ -3650,6 +3809,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
           {
              glBindBuffer(GL_ARRAY_BUFFER, 0);
+             gc->pipe[i].array.buffer = 0;
           }
 
         gc->pipe[i].region.x = 0;

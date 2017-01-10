@@ -61,6 +61,7 @@ EVGL_Current_Native_Context_Get_Call glsym_evgl_current_native_context_get = NUL
 Evas_Gl_Symbols glsym_evas_gl_symbols = NULL;
 
 Evas_GL_Common_Context_New glsym_evas_gl_common_context_new = NULL;
+Evas_GL_Common_Context_Call glsym_evas_gl_common_context_idle_flush = NULL;
 Evas_GL_Common_Context_Call glsym_evas_gl_common_context_flush = NULL;
 Evas_GL_Common_Context_Call glsym_evas_gl_common_context_free = NULL;
 Evas_GL_Common_Context_Call glsym_evas_gl_common_context_use = NULL;
@@ -1283,6 +1284,7 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_common_image_free);
    LINK2GENERIC(evas_gl_common_image_native_enable);
    LINK2GENERIC(evas_gl_common_context_new);
+   LINK2GENERIC(evas_gl_common_context_idle_flush);
    LINK2GENERIC(evas_gl_common_context_flush);
    LINK2GENERIC(evas_gl_common_context_free);
    LINK2GENERIC(evas_gl_common_context_use);
@@ -1572,6 +1574,8 @@ eng_outbuf_idle_flush(Outbuf *ob)
 {
    if (glsym_evas_gl_common_shaders_flush)
      glsym_evas_gl_common_shaders_flush(ob->gl_context->shared);
+   if (glsym_evas_gl_common_context_idle_flush)
+     glsym_evas_gl_common_context_idle_flush(ob->gl_context);
 }
 
 static void
