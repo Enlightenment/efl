@@ -294,6 +294,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      }
 
    if ((!nw) && (!nh)) return ECORE_CALLBACK_RENEW;
+
    nw -= fw;
    nh -= fh;
 
@@ -1427,6 +1428,8 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
    surf = ecore_wl2_window_surface_get(wdata->win);
    if (!surf) return;
 
+   if (wdata->win->pending.configure) return;
+
    wdata->anim_callback = wl_surface_frame(surf);
    wl_callback_add_listener(wdata->anim_callback, &_anim_listener, ee);
    ecore_evas_manual_render_set(ee, 1);
@@ -1526,6 +1529,8 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
    if (!ee) return 0;
    if (!(wdata = ee->engine.data)) return 0;
    if (!wdata->sync_done) return 0;
+
+   if (wdata->win->pending.configure) return 0;
 
    /* TODO: handle comp no sync */
 
