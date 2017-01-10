@@ -327,6 +327,8 @@ _ecore_wl2_window_zxdg_popup_create(Ecore_Wl2_Window *win)
    zxdg_popup_v6_set_user_data(win->zxdg_popup, win);
    zxdg_popup_v6_add_listener(win->zxdg_popup, &_zxdg_popup_listener, win);
 
+   win->pending.configure = EINA_TRUE;
+
    wl_surface_commit(win->surface);
 }
 
@@ -495,7 +497,6 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
         window->pending.configure = EINA_TRUE;
 
-        /* TODO: surface commit needed ? */
         wl_surface_commit(window->surface);
      }
    else if ((window->display->wl.xdg_shell) && (!window->xdg_surface))
