@@ -1061,9 +1061,6 @@ evas_gl_common_context_new(void)
           glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
 #endif
 
-        glEnableVertexAttribArray(SHAD_VERTEX);
-        glEnableVertexAttribArray(SHAD_COLOR);
-
         if (!evas_gl_common_shader_program_init(shared))
           goto error;
 
@@ -1266,8 +1263,6 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
 #endif
 
-   glEnableVertexAttribArray(SHAD_VERTEX);
-   glEnableVertexAttribArray(SHAD_COLOR);
    if (gc->state.current.prog != PRG_INVALID)
      glUseProgram(gc->state.current.prog->prog);
 
@@ -3404,11 +3399,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
         if (gc->pipe[i].array.use_color)
           {
-             glEnableVertexAttribArray(SHAD_COLOR);
              glVertexAttribPointer(SHAD_COLOR, COLOR_CNT, GL_UNSIGNED_BYTE, GL_TRUE, 0, color_ptr);
           }
-        else
-          glDisableVertexAttribArray(SHAD_COLOR);
 
         if (gc->pipe[i].array.line)
           {
@@ -3424,16 +3416,9 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glDisable(GL_LINE_SMOOTH);
                }
 
-             glDisableVertexAttribArray(SHAD_TEXUV);
-             glDisableVertexAttribArray(SHAD_TEXUV2);
-             glDisableVertexAttribArray(SHAD_TEXUV3);
-             glDisableVertexAttribArray(SHAD_TEXA);
-             glDisableVertexAttribArray(SHAD_TEXSAM);
-
              /* kopi pasta from below */
              if (gc->pipe[i].array.use_mask)
                {
-                  glEnableVertexAttribArray(SHAD_MASK);
                   glVertexAttribPointer(SHAD_MASK, MASK_CNT, GL_FLOAT, GL_FALSE, 0, mask_ptr);
                   glActiveTexture(MASK_TEXTURE);
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
@@ -3457,37 +3442,23 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
                   if (gc->pipe[i].array.use_masksam)
                     {
-                       glEnableVertexAttribArray(SHAD_MASKSAM);
                        glVertexAttribPointer(SHAD_MASKSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, masksam_ptr);
                     }
-                  else glDisableVertexAttribArray(SHAD_MASKSAM);
                }
-             else
-               {
-                  glDisableVertexAttribArray(SHAD_MASK);
-                  glDisableVertexAttribArray(SHAD_MASKSAM);
-               }
-
              glDrawArrays(GL_LINES, 0, gc->pipe[i].array.num);
           }
         else
           {
              if (gc->pipe[i].array.use_texuv)
                {
-                  glEnableVertexAttribArray(SHAD_TEXUV);
                   glVertexAttribPointer(SHAD_TEXUV, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv_ptr);
 
                   MASK_TEXTURE += 1;
-               }
-             else
-               {
-                  glDisableVertexAttribArray(SHAD_TEXUV);
                }
 
              /* Alpha plane */
              if (gc->pipe[i].array.use_texa)
                {
-                  glEnableVertexAttribArray(SHAD_TEXA);
                   glVertexAttribPointer(SHAD_TEXA, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texa_ptr);
                   glActiveTexture(GL_TEXTURE1);
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texa);
@@ -3511,25 +3482,14 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
                   MASK_TEXTURE += 1;
                }
-             else
-               {
-                  glDisableVertexAttribArray(SHAD_TEXA);
-               }
 
              if (gc->pipe[i].array.use_texsam)
                {
-                  glEnableVertexAttribArray(SHAD_TEXSAM);
                   glVertexAttribPointer(SHAD_TEXSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, texsam_ptr);
-               }
-             else
-               {
-                  glDisableVertexAttribArray(SHAD_TEXSAM);
                }
 
              if ((gc->pipe[i].array.use_texuv2) && (gc->pipe[i].array.use_texuv3))
                {
-                  glEnableVertexAttribArray(SHAD_TEXUV2);
-                  glEnableVertexAttribArray(SHAD_TEXUV3);
                   glVertexAttribPointer(SHAD_TEXUV2, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv2_ptr);
                   glVertexAttribPointer(SHAD_TEXUV3, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv3_ptr);
 
@@ -3560,7 +3520,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                }
              else if (gc->pipe[i].array.use_texuv2)
                {
-                  glEnableVertexAttribArray(SHAD_TEXUV2);
                   glVertexAttribPointer(SHAD_TEXUV2, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv2_ptr);
 
                   glActiveTexture(GL_TEXTURE1);
@@ -3586,19 +3545,12 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                     }
                   glActiveTexture(GL_TEXTURE0);
 
-                  glDisableVertexAttribArray(SHAD_TEXUV3);
                   MASK_TEXTURE += 1;
-               }
-             else
-               {
-                  glDisableVertexAttribArray(SHAD_TEXUV2);
-                  glDisableVertexAttribArray(SHAD_TEXUV3);
                }
 
              /* Mask surface */
              if (gc->pipe[i].array.use_mask)
                {
-                  glEnableVertexAttribArray(SHAD_MASK);
                   glVertexAttribPointer(SHAD_MASK, MASK_CNT, GL_FLOAT, GL_FALSE, 0, mask_ptr);
                   glActiveTexture(MASK_TEXTURE);
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
@@ -3622,15 +3574,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
                   if (gc->pipe[i].array.use_masksam)
                     {
-                       glEnableVertexAttribArray(SHAD_MASKSAM);
                        glVertexAttribPointer(SHAD_MASKSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, masksam_ptr);
                     }
-                  else glDisableVertexAttribArray(SHAD_MASKSAM);
-               }
-             else
-               {
-                  glDisableVertexAttribArray(SHAD_MASK);
-                  glDisableVertexAttribArray(SHAD_MASKSAM);
                }
 
              if (dbgflushnum == 1)

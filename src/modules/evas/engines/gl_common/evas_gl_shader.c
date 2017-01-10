@@ -93,6 +93,103 @@ gl_compile_link_error(GLuint target, const char *action, Eina_Bool is_shader)
      }
 }
 
+static void
+_evas_gl_common_shader_program_attrib_init(GLint prg, unsigned int flags)
+{
+/*
+   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
+   glBindAttribLocation(prg, SHAD_COLOR,   "color");
+   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
+   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
+   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
+   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
+   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
+   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
+   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
+ */
+
+   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
+   glBindAttribLocation(prg, SHAD_COLOR,   "color");
+
+   if (flags & (SHADER_FLAG_TEX | SHADER_FLAG_IMG |
+                SHADER_FLAG_YUV | SHADER_FLAG_YUY2 |
+                SHADER_FLAG_NV12 | SHADER_FLAG_YUV_709 |
+                SHADER_FLAG_EXTERNAL | SHADER_FLAG_BGRA |
+                SHADER_FLAG_SAM12 | SHADER_FLAG_SAM21 |
+                SHADER_FLAG_SAM22))
+     {
+        glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
+     }
+   if (flags & (SHADER_FLAG_YUV | SHADER_FLAG_YUY2 |
+                SHADER_FLAG_NV12 | SHADER_FLAG_YUV_709))
+     {
+        glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
+        glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
+     }
+   if (flags & (SHADER_FLAG_RGB_A_PAIR))
+     {
+        glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
+     }
+   if (flags & (SHADER_FLAG_SAM12 | SHADER_FLAG_SAM21 |
+                SHADER_FLAG_SAM22))
+     {
+        glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
+     }
+   if (flags & (SHADER_FLAG_MASK | SHADER_FLAG_MASKSAM12 |
+                SHADER_FLAG_MASKSAM21 | SHADER_FLAG_MASKSAM22))
+     {
+        glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
+     }
+   if (flags & (SHADER_FLAG_MASKSAM12 | SHADER_FLAG_MASKSAM21 |
+                SHADER_FLAG_MASKSAM22))
+     {
+        glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
+     }
+}
+
+static void
+_evas_gl_common_shader_program_attrib_enable(GLint prg, unsigned int flags)
+{
+   glUseProgram(prg);
+   glEnableVertexAttribArray(SHAD_VERTEX);
+   glEnableVertexAttribArray(SHAD_COLOR);
+
+   if (flags & (SHADER_FLAG_TEX | SHADER_FLAG_IMG |
+                SHADER_FLAG_YUV | SHADER_FLAG_YUY2 |
+                SHADER_FLAG_NV12 | SHADER_FLAG_YUV_709 |
+                SHADER_FLAG_EXTERNAL | SHADER_FLAG_BGRA |
+                SHADER_FLAG_SAM12 | SHADER_FLAG_SAM21 |
+                SHADER_FLAG_SAM22))
+     {
+        glEnableVertexAttribArray(SHAD_TEXUV);
+     }
+   if (flags & (SHADER_FLAG_YUV | SHADER_FLAG_YUY2 |
+                SHADER_FLAG_NV12 | SHADER_FLAG_YUV_709))
+     {
+        glEnableVertexAttribArray(SHAD_TEXUV2);
+        glEnableVertexAttribArray(SHAD_TEXUV3);
+     }
+   if (flags & (SHADER_FLAG_RGB_A_PAIR))
+     {
+        glEnableVertexAttribArray(SHAD_TEXA);
+     }
+   if (flags & (SHADER_FLAG_SAM12 | SHADER_FLAG_SAM21 |
+                SHADER_FLAG_SAM22))
+     {
+        glEnableVertexAttribArray(SHAD_TEXSAM);
+     }
+   if (flags & (SHADER_FLAG_MASK | SHADER_FLAG_MASKSAM12 |
+                SHADER_FLAG_MASKSAM21 | SHADER_FLAG_MASKSAM22))
+     {
+        glEnableVertexAttribArray(SHAD_MASK);
+     }
+   if (flags & (SHADER_FLAG_MASKSAM12 | SHADER_FLAG_MASKSAM21 |
+                SHADER_FLAG_MASKSAM22))
+     {
+        glEnableVertexAttribArray(SHAD_MASKSAM);
+     }
+}
+
 static Evas_GL_Program *
 _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
 {
@@ -136,15 +233,7 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
 #endif
    glsym_glProgramBinary(prg, formats[0], data, length);
 
-   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
-   glBindAttribLocation(prg, SHAD_COLOR,   "color");
-   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
-   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
-   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
-   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
-   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
-   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
-   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
+   _evas_gl_common_shader_program_attrib_init(prg, flags);
 
    glGetProgramiv(prg, GL_LINK_STATUS, &ok);
    if (!ok)
@@ -160,6 +249,7 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
    p->prog = prg;
    p->reset = EINA_TRUE;
    p->bin_saved = EINA_TRUE;
+   _evas_gl_common_shader_program_attrib_enable(p->prog, flags);
    p->uniform.mvp = glGetUniformLocation(prg, "mvp");
    p->uniform.rotation_id = glGetUniformLocation(prg, "rotation_id");
    evas_gl_common_shader_textures_bind(p);
@@ -458,15 +548,7 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
    glAttachShader(prg, vtx);
    glAttachShader(prg, frg);
 
-   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
-   glBindAttribLocation(prg, SHAD_COLOR,   "color");
-   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
-   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
-   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
-   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
-   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
-   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
-   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
+   _evas_gl_common_shader_program_attrib_init(prg, flags);
 
    glLinkProgram(prg);
    glGetProgramiv(prg, GL_LINK_STATUS, &ok);
@@ -479,6 +561,7 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
         glDeleteProgram(prg);
         return 0;
      }
+
 
    p = calloc(1, sizeof(*p));
    p->flags = flags;
@@ -568,6 +651,7 @@ evas_gl_common_shader_generate_and_compile(Evas_GL_Shared *shared, unsigned int 
    if (p)
      {
         shared->needs_shaders_flush = 1;
+        _evas_gl_common_shader_program_attrib_enable(p->prog, flags);
         p->uniform.mvp = glGetUniformLocation(p->prog, "mvp");
         p->uniform.rotation_id = glGetUniformLocation(p->prog, "rotation_id");
         evas_gl_common_shader_textures_bind(p);
@@ -875,7 +959,6 @@ evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
 
    if (hastex)
      {
-        glUseProgram(p->prog); // is this necessary??
         for (i = 0; textures[i].name; i++)
           {
              if (!textures[i].enabled) continue;
