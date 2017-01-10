@@ -237,7 +237,7 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
           }
      }
 
-   win->configure_serial = win->display->serial;
+   win->configure_serial = wl_display_get_serial(win->display->wl.display);
    if ((win->geometry.w == width) && (win->geometry.h == height))
      width = height = 0;
    else if ((!width) && (!height) && (!win->fullscreen) && (!win->maximized) &&
