@@ -140,6 +140,10 @@ static const char o_type[] = "textblock";
      } \
    while(0)
 
+// testing out some macros to maybe add to eina
+#define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
+#define EINA_INLIST_APPEND(l,i) do { l = (__typeof__(l)) eina_inlist_append(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
+
 /* private struct for textblock object internal data */
 /**
  * @internal
@@ -459,6 +463,8 @@ struct _Evas_Object_Textblock_Format_Item
 
 struct _Text_Item_Filter
 {
+   EINA_INLIST; /**< list on the tb object */
+   Efl_Canvas_Text_Data            *textblock;
    Evas_Object_Textblock_Text_Item *ti; /**< associated text item. if null, it was deleted */
    Evas_Filter_Context             *ctx; /**< running context for the filter */
    Evas_Public_Data                *evas; /**< evas instance */
@@ -609,6 +615,7 @@ struct _Evas_Object_Textblock
       Efl_Canvas_Text_Filter_Program  *programs;
       Evas_Filter_Data_Binding        *data_bindings;
       Eina_Hash                       *sources;
+      Text_Item_Filter                *text_items; // inlist
    } gfx_filter;
    Eina_Bool                           redraw : 1;
    Eina_Bool                           changed : 1;
@@ -989,6 +996,8 @@ _item_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Line *ln, Evas_Objec
         evas_common_text_props_content_unref(&ti->text_props);
         if (EINA_UNLIKELY(ti->gfx_filter != NULL))
           {
+             Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+
              if (ti->gfx_filter->output)
                {
                   Evas *eo_evas = evas_object_evas_get(eo_obj);
@@ -998,6 +1007,7 @@ _item_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Line *ln, Evas_Objec
                   _image_safe_unref(evas, ti->gfx_filter->output, async);
                   ti->gfx_filter->output = NULL;
                }
+             EINA_INLIST_REMOVE(o->gfx_filter.text_items, ti->gfx_filter);
              if (!ti->gfx_filter->ctx)
                free(ti->gfx_filter);
              else
@@ -2761,6 +2771,15 @@ _format_dup(Evas_Object *eo_obj, const Evas_Object_Textblock_Format *fmt)
    /* FIXME: just ref the font here... */
    fmt2->font.font = evas_font_load(obj->layer->evas->evas, fmt2->font.fdesc,
          fmt2->font.source, (int)(((double) fmt2->font.size) * obj->cur->scale));
+
+   if (fmt->gfx_filter)
+     {
+        fmt2->gfx_filter = malloc(sizeof(*fmt2->gfx_filter));
+        memcpy(fmt2->gfx_filter, fmt->gfx_filter, sizeof(*fmt->gfx_filter));
+        fmt2->gfx_filter->name = eina_stringshare_ref(fmt->gfx_filter->name);
+        fmt2->gfx_filter->dc = ENFN->context_dup(ENDT, fmt->gfx_filter->dc);
+     }
+
    return fmt2;
 }
 
@@ -12886,9 +12905,6 @@ _efl_canvas_text_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
-// testing this macro...
-#define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
-
 static void
 evas_object_textblock_free(Evas_Object *eo_obj)
 {
@@ -12978,7 +12994,6 @@ _filter_sync_end(Evas_Filter_Context *ctx, Eina_Bool success)
         if (filter->ti->parent.format->gfx_filter)
           filter->ti->parent.format->gfx_filter->invalid = !success;
         // else just avoid sigsegv
-        filter->ti = NULL;
         filter->ctx = NULL;
      }
    else
@@ -13013,6 +13028,66 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
    post_data->success = success;
    post_data->ctx = ctx;
    evas_post_render_job_add(evas, _filter_post_render_cb, post_data);
+}
+
+static Eina_Rectangle
+_filter_relative_bounding_box_get(const Text_Item_Filter *tif)
+{
+   int x_offset, y_offset, l, r, t, b;
+   Eina_Rectangle rect;
+
+   x_offset = tif->ti->parent.ln->x + tif->ti->parent.x;
+   y_offset = tif->ti->parent.ln->par->y + tif->ti->parent.ln->y;
+   l = tif->ti->parent.format->gfx_filter->pad.l;
+   r = tif->ti->parent.format->gfx_filter->pad.r;
+   t = tif->ti->parent.format->gfx_filter->pad.t;
+   b = tif->ti->parent.format->gfx_filter->pad.b;
+
+   rect.x = x_offset - l;
+   rect.y = y_offset - t;
+   rect.w = tif->ti->parent.w;
+   rect.h = tif->ti->parent.h + t + b;
+   return rect;
+}
+
+static void
+_filter_output_cache_prune(Evas_Object_Protected_Data *obj, Efl_Canvas_Text_Data *o)
+{
+   Text_Item_Filter *tif;
+   Eina_Inlist *il;
+   Eina_Rectangle obj_rect;
+
+   // proxy surfaces contain the entire object, nothing to prune
+   if (obj->proxy->proxies)
+     return;
+
+   obj_rect.x = obj->cur->cache.clip.x;
+   obj_rect.y = obj->cur->cache.clip.y;
+   obj_rect.w = obj->cur->cache.clip.w;
+   obj_rect.h = obj->cur->cache.clip.h;
+
+   EINA_INLIST_FOREACH_SAFE(o->gfx_filter.text_items, il, tif)
+     {
+        Eina_Rectangle it_rect;
+
+        if (!tif->ti)
+          {
+             if (tif->ctx) continue;
+          }
+        else
+          {
+             if (!tif->ti->parent.ln || !tif->ti->parent.ln->par) continue;
+
+             it_rect = _filter_relative_bounding_box_get(tif);
+             it_rect.x += obj->cur->geometry.x;
+             it_rect.y += obj->cur->geometry.y;
+             if (eina_rectangles_intersect(&obj_rect, &it_rect)) continue;
+          }
+
+        _image_safe_unref(obj->layer->evas, tif->output, tif->do_async);
+        tif->output = NULL;
+
+     }
 }
 
 static void
@@ -13176,9 +13251,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 #define DRAW_TEXT(ox, oy) do {                                          \
    if (ti->parent.format->font.font)                                    \
      {                                                                  \
-        if (EINA_LIKELY(!_filter_context_get(ti)))                      \
+        if (EINA_LIKELY(!ti->gfx_filter || (!ti->gfx_filter->ctx && !ti->gfx_filter->output))) \
           DRAW_TEXT_NOFILTER(ox, oy);                                   \
-        else if (!_filter_output_get(ti))                               \
+        else if (ti->gfx_filter->ctx != NULL)                           \
           DRAW_TEXT_FILTER(ti->parent.format->gfx_filter, ox, oy);      \
      } } while(0)
 
@@ -13350,6 +13425,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
              ti->gfx_filter = calloc(1, sizeof(*ti->gfx_filter));
              ti->gfx_filter->evas = obj->layer->evas;
              ti->gfx_filter->ti = ti;
+             EINA_INLIST_APPEND(o->gfx_filter.text_items, ti->gfx_filter);
           }
         ctx = evas_filter_context_new(obj->layer->evas, do_async, ti->gfx_filter);
         evas_filter_state_prepare(eo_obj, &state, ti);
@@ -13665,8 +13741,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                        X = obj->cur->geometry.x + ln->x + ti->parent.x + x - filter->pad.l;
                        Y = obj->cur->geometry.y + ln->par->y + ln->y + y - filter->pad.t;
 
+                       ca = cr = cb = cg = 255;
                        ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
-                       ENFN->context_multiplier_unset(ENDT, context);
                        ENFN->image_size_get(ENDT, buffer, &W, &H);
                        ENFN->image_draw(ENDT, context, surface, buffer,
                                         0, 0, W, H, X, Y, W, H, 0, do_async);
@@ -14089,7 +14165,7 @@ done:
 
 static void
 evas_object_textblock_render_post(Evas_Object *eo_obj,
-                                  Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                  Evas_Object_Protected_Data *obj,
                                   void *type_private_data EINA_UNUSED)
 {
    /*   Efl_Canvas_Text_Data *o; */
@@ -14103,6 +14179,7 @@ evas_object_textblock_render_post(Evas_Object *eo_obj,
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
 /*   o->prev = o->cur; */
+   _filter_output_cache_prune(obj, type_private_data);
 }
 
 static unsigned int evas_object_textblock_id_get(Evas_Object *eo_obj)
