@@ -187,7 +187,7 @@ static const struct xdg_surface_listener _xdg_surface_listener =
 };
 
 static void
-_zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA_UNUSED, uint32_t serial EINA_UNUSED)
+_zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface, uint32_t serial)
 {
    Ecore_Wl2_Window *window;
 
