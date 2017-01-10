@@ -13030,7 +13030,7 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
    evas_post_render_job_add(evas, _filter_post_render_cb, post_data);
 }
 
-static Eina_Rectangle
+static inline Eina_Rectangle
 _filter_relative_bounding_box_get(const Text_Item_Filter *tif)
 {
    int x_offset, y_offset, l, r, t, b;
@@ -13088,6 +13088,19 @@ _filter_output_cache_prune(Evas_Object_Protected_Data *obj, Efl_Canvas_Text_Data
         tif->output = NULL;
 
      }
+}
+
+static inline Evas_Coord_Point
+_filter_target_position_calc(Evas_Object_Protected_Data *obj,
+                             Evas_Object_Textblock_Text_Item *ti, int x, int y)
+{
+   Efl_Canvas_Text_Filter *filter = ti->parent.format->gfx_filter;
+   Evas_Object_Textblock_Line *ln = ti->parent.ln;
+   Evas_Coord_Point pt;
+
+   pt.x = obj->cur->geometry.x + ln->x + ti->parent.x + x - filter->pad.l;
+   pt.y = obj->cur->geometry.y + ln->par->y + ln->y + y - filter->pad.t - ti->parent.h + ln->h;
+   return pt;
 }
 
 static void
@@ -13396,9 +13409,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         Efl_Canvas_Text_Filter *filter;
         Evas_Filter_Program *pgm;
         Evas_Filter_Context *ctx;
+        Evas_Coord_Point target;
         void *previous_output;
         Eina_Bool ok;
-        int X, Y;
 
         ln = ti->parent.ln;
         filter = ti->parent.format->gfx_filter;
@@ -13442,16 +13455,14 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         evas_filter_program_padding_get(pgm,
                                         &filter->pad.l, &filter->pad.r,
                                         &filter->pad.t, &filter->pad.b);
-        X = obj->cur->geometry.x + ln->x + ti->parent.x + x - filter->pad.l;
-        Y = obj->cur->geometry.y + ln->par->y + ln->y + y - filter->pad.t;
-
+        target = _filter_target_position_calc(obj, ti, x, y);
         ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
         ENFN->context_multiplier_set(ENDT, context,
                                      obj->cur->cache.clip.r, obj->cur->cache.clip.g,
                                      obj->cur->cache.clip.b, obj->cur->cache.clip.a);
         evas_filter_context_proxy_render_all(ctx, eo_obj, EINA_FALSE);
         evas_filter_context_buffers_allocate_all(ctx);
-        evas_filter_target_set(ctx, context, surface, X, Y);
+        evas_filter_target_set(ctx, context, surface, target.x, target.y);
         ti->gfx_filter->ctx = ctx;
         ti->gfx_filter->do_async = do_async;
 
@@ -13731,21 +13742,19 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
              if (EINA_UNLIKELY(ti->parent.format->gfx_filter != NULL))
                {
                   Evas_Filter_Context *ctx = _filter_context_get(ti);
-                  Efl_Canvas_Text_Filter *filter = ti->parent.format->gfx_filter;
                   void *buffer = _filter_output_get(ti);
 
                   if (buffer)
                     {
-                       int X, Y, W = 0, H = 0;
+                       Evas_Coord_Point target;
+                       int W = 0, H = 0;
 
-                       X = obj->cur->geometry.x + ln->x + ti->parent.x + x - filter->pad.l;
-                       Y = obj->cur->geometry.y + ln->par->y + ln->y + y - filter->pad.t;
-
+                       target = _filter_target_position_calc(obj, ti, x, y);
                        ca = cr = cb = cg = 255;
                        ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
                        ENFN->image_size_get(ENDT, buffer, &W, &H);
                        ENFN->image_draw(ENDT, context, surface, buffer,
-                                        0, 0, W, H, X, Y, W, H, 0, do_async);
+                                        0, 0, W, H, target.x, target.y, W, H, 0, do_async);
                     }
                   else if (ctx)
                     {
@@ -13811,7 +13820,7 @@ _efl_canvas_text_efl_canvas_filter_internal_filter_input_render(
    return evas_filter_font_draw(filter, drawctx,
                                 EVAS_FILTER_BUFFER_INPUT_ID,
                                 ti->parent.format->font.font,
-                                l, t + ti->parent.yoff,
+                                l, t + ti->parent.yoff + ti->parent.h - ti->parent.ln->h,
                                 &ti->text_props, do_async);
 }
 
