@@ -12969,13 +12969,6 @@ _filter_context_get(Evas_Object_Textblock_Text_Item *ti)
    return ti->gfx_filter->ctx;
 }
 
-static inline void *
-_filter_output_get(Evas_Object_Textblock_Text_Item *ti)
-{
-   if (!ti || !ti->gfx_filter) return NULL;
-   return ti->gfx_filter->output;
-}
-
 static void
 _filter_sync_end(Evas_Filter_Context *ctx, Eina_Bool success)
 {
@@ -13410,7 +13403,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         Evas_Filter_Program *pgm;
         Evas_Filter_Context *ctx;
         Evas_Coord_Point target;
-        void *previous_output;
         Eina_Bool ok;
 
         ln = ti->parent.ln;
@@ -13422,17 +13414,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
              continue;
           }
 
-        // previous run
-        previous_output = _filter_output_get(ti);
-        if (previous_output)
-          {
-             if (!filter->redraw) continue;
-
-             _image_safe_unref(obj->layer->evas, previous_output, do_async);
-             previous_output = NULL;
-          }
-
-        // prepare filter context
         if (!ti->gfx_filter)
           {
              ti->gfx_filter = calloc(1, sizeof(*ti->gfx_filter));
@@ -13440,6 +13421,35 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
              ti->gfx_filter->ti = ti;
              EINA_INLIST_APPEND(o->gfx_filter.text_items, ti->gfx_filter);
           }
+        else if (ti->gfx_filter->output)
+          {
+             if (!filter->redraw)
+               {
+                  if (obj->changed)
+                    {
+                       Evas_Filter_Proxy_Binding *pb;
+                       Evas_Object_Protected_Data *source;
+                       Eina_Iterator *iter;
+
+                       iter = eina_hash_iterator_data_new(o->gfx_filter.sources);
+                       EINA_ITERATOR_FOREACH(iter, pb)
+                         {
+                            source = efl_data_scope_get(pb->eo_source, EFL_CANVAS_OBJECT_CLASS);
+                            if (source->changed)
+                              {
+                                 filter->redraw = EINA_TRUE;
+                                 break;
+                              }
+                         }
+                       eina_iterator_free(iter);
+                    }
+                  if (!filter->redraw) continue;
+               }
+
+             ENFN->image_free(ENDT, ti->gfx_filter->output);
+             ti->gfx_filter->output = NULL;
+          }
+
         ctx = evas_filter_context_new(obj->layer->evas, do_async, ti->gfx_filter);
         evas_filter_state_prepare(eo_obj, &state, ti);
         evas_filter_program_state_set(pgm, &state);
@@ -13742,7 +13752,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
              if (EINA_UNLIKELY(ti->parent.format->gfx_filter != NULL))
                {
                   Evas_Filter_Context *ctx = _filter_context_get(ti);
-                  void *buffer = _filter_output_get(ti);
+                  void *buffer = ti->gfx_filter ? ti->gfx_filter->output : NULL;
 
                   if (buffer)
                     {
