@@ -1722,6 +1722,7 @@ _evas_text_efl_canvas_filter_internal_filter_input_render(Eo *eo_obj EINA_UNUSED
                                                           void *_filter, void *drawctx,
                                                           void *data EINA_UNUSED,
                                                           int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
+                                                          int x, int y,
                                                           Eina_Bool do_async)
 {
    Evas_Filter_Context *filter = _filter;
@@ -1732,8 +1733,8 @@ _evas_text_efl_canvas_filter_internal_filter_input_render(Eo *eo_obj EINA_UNUSED
        {
           if (!evas_filter_font_draw(filter, drawctx,
                                      EVAS_FILTER_BUFFER_INPUT_ID, o->font,
-                                     l + it->x,
-                                     t + (int) o->max_ascent,
+                                     x + l + it->x,
+                                     y + t + (int) o->max_ascent,
                                      &it->text_props,
                                      do_async))
             return EINA_FALSE;

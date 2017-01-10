@@ -309,7 +309,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         // Request rendering from the object itself (child class)
         evas_filter_program_padding_get(pd->data->chain, &l, &r, &t, &b);
-        ok = evas_filter_input_render(eo_obj, filter, drawctx, NULL, l, r, t, b, do_async);
+        ok = evas_filter_input_render(eo_obj, filter, drawctx, NULL, l, r, t, b, 0, 0, do_async);
         if (!ok) ERR("Filter input render failed.");
 
         ENFN->context_free(ENDT, drawctx);

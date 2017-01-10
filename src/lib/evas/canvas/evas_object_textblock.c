@@ -13236,9 +13236,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
      }
 
 #define DRAW_TEXT_FILTER(gf, ox, oy) do {                               \
-   evas_filter_input_render(eo_obj, _filter_context_get(ti), gf->dc, ti, \
-                            gf->pad.l, gf->pad.r,                       \
-                            gf->pad.t, gf->pad.b, do_async);            \
+   evas_filter_input_render(eo_obj, ti->gfx_filter->ctx, gf->dc, ti,    \
+                            gf->pad.l, gf->pad.r, gf->pad.t, gf->pad.b, \
+                            (ox), (oy), do_async);                      \
    } while (0)
 
 #define DRAW_TEXT_NOFILTER(ox, oy) do {                                 \
@@ -13823,14 +13823,16 @@ _efl_canvas_text_efl_canvas_filter_internal_filter_state_prepare(
 EOLIAN static Eina_Bool
 _efl_canvas_text_efl_canvas_filter_internal_filter_input_render(
       Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *pd EINA_UNUSED, void *filter, void *drawctx,
-      void *data, int l, int r EINA_UNUSED, int t, int b EINA_UNUSED, Eina_Bool do_async)
+      void *data, int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
+      int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Textblock_Text_Item *ti = data;
 
    return evas_filter_font_draw(filter, drawctx,
                                 EVAS_FILTER_BUFFER_INPUT_ID,
                                 ti->parent.format->font.font,
-                                l, t + ti->parent.yoff + ti->parent.h - ti->parent.ln->h,
+                                x + l,
+                                y + t + ti->parent.yoff + ti->parent.h - ti->parent.ln->h,
                                 &ti->text_props, do_async);
 }
 

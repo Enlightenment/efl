@@ -1751,7 +1751,7 @@ EOLIAN static Eina_Bool
 _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
       Eo *eo_obj, Evas_Image_Data *o, void *_filter, void *context,
       void *data EINA_UNUSED, int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
-      Eina_Bool do_async)
+      int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Context *filter = _filter;
@@ -1794,7 +1794,8 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
    ENFN->context_render_op_set(output, context, EVAS_RENDER_BLEND);
 
    _evas_image_render(eo_obj, obj, output, context, surface,
-                      l - obj->cur->geometry.x, t - obj->cur->geometry.y,
+                      x + l - obj->cur->geometry.x,
+                      y + t - obj->cur->geometry.y,
                       l, t, r, b, do_async);
 
    if (!input_stolen)
