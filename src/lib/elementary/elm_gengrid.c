@@ -886,6 +886,7 @@ _item_highlight(Elm_Gen_Item *it)
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
    if (_is_no_select(it) ||
+       (elm_wdg_item_disabled_get(EO_OBJ(it))) ||
        (!sd->highlight) || (it->highlighted) ||
        (it->generation < sd->generation))
      return;
