@@ -524,6 +524,7 @@ START_TEST (elm_code_test_widget_selection_select_word)
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "word selection test", 19, NULL);
    elm_code_file_line_append(file, "more stuff\tto test", 18, NULL);
+   elm_code_file_line_append(file, "word \"symbols\" test", 19, NULL);
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
@@ -541,6 +542,11 @@ START_TEST (elm_code_test_widget_selection_select_word)
    elm_code_widget_selection_select_word(widget, 2, 9);
    selection = elm_code_widget_selection_text_get(widget);
    ck_assert_str_eq("stuff", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_word(widget, 3, 9);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("symbols", selection);
    free(selection);
    elm_shutdown();
 }

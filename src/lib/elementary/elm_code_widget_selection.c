@@ -6,7 +6,7 @@
 
 #include "elm_code_widget_private.h"
 
-static char _breaking_chars[] = " \t,.?!;:*&()[]{}";
+static char _breaking_chars[] = " \t,.?!;:*&()[]{}'\"";
 
 static Elm_Code_Widget_Selection_Data *
 _elm_code_widget_selection_new()
