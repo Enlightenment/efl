@@ -27,17 +27,11 @@ BUILD_D="build"
 CC="${CC:-"clang"}"
 CFLAGS="${CFLAGS:-"-O0 -ggdb -W -Wall -Wextra -Wshadow"}"
 
-# input files
-MAIN_C="main.c"
-
-# output files
-TEST_D="/tmp/__mtests"
-
 # local vars
-LD=""
-INCLUDE=""
 TEST_N=0
 PASS_N=0
+MAIN_C="main.c"
+TEST_D="/tmp/__mtests"
 
 function fatal
 {
@@ -64,65 +58,6 @@ function say_anyway
       echo -e "$1"
    fi
 }
-
-while [ $# -ge 1 ]; do
-   case "$1" in
-      -s|--src)
-         shift
-         [ $# -lt 1 ] && fatal "option -s is missing directory argument"
-         SRC_D=$1
-         shift
-         ;;
-      -b|--build)
-         shift
-         [ $# -lt 1 ] && fatal "option -b is missing directory argument"
-         BUILD_D=$1
-         shift
-         ;;
-      -a|--abort)
-         shift
-         ABORT=1
-         ;;
-      -c|--color)
-         shift
-         COLOR=1
-         ;;
-      -q|--quiet)
-         shift
-         QUIET=1
-         ;;
-      -h|--help)
-         echo "Usage: $SCRIPT_FILE [options] [tests]"
-         echo
-         echo "Options:"
-         echo "    -b, --abort            Abort on test failure"
-         echo "    -q, --quiet            Only output failed tests"
-         echo "    -c, --color            Pretty pretty"
-         echo "    -s, --src directory    Directory to search for tests into"
-         echo "    -b, --build directory  Directory to search for built files into"
-         echo "    -h, --help             This message."
-         exit 0
-         ;;
-      *)
-         TESTS="$TESTS $1"
-         shift
-         ;;
-   esac
-done
-
-if [ $COLOR -eq 1 ]
-then
-   RESET="\033[0m"
-   RED="\033[0;31m"
-   GREEN="\033[0;32m"
-   BROWN="\033[0;33m"
-   PURPLE="\033[0;35m"
-fi
-
-[ -d "$SRC_D" -a -r "$SRC_D" ] || fatal "$SRC_D is not a valid directory"
-[ -d "$BUILD_D" -a -r "$BUILD_D" ] || fatal "$BUILD_D is not a valid directory"
-rm -fr $TEST_D 2 > /dev/null
-mkdir -p $TEST_D || fatal "cannot create $TEST_D directory"
 
 function load_main
 {
@@ -183,7 +118,7 @@ function run_test
       -DTESTC=$TEST_C -DCALL=$TEST -DFUNC="void $TEST(void)" \
       $CFLAGS $INCLUDE $LDP $LDF || fatal " compilation of $test_c failed"
    TEST_N=$((TEST_N + 1))
-   $TEST_O && rm $TEST_O && say "${GREEN}PASS${RESET}" && PASS_N=$((PASS_N + 1)) && return
+   $TEST_O && rm "$TEST_O" && say "${GREEN}PASS${RESET}" && PASS_N=$((PASS_N + 1)) && return
    say "${RED}FAIL${RESET}"
    say_anyway "        $test_c"
    [ $ABORT -ne 1 ] && return
@@ -206,10 +141,70 @@ function report
    [ $QUIET -eq 1 ] && exit 0
    say "\n$PASS_N/$TEST_N tests passed"
    FAIL_N=$(ls -1 $TEST_D | wc -l)
-   [ $FAIL_N -gt 0 ] && say "see $BROWN$TEST_O$RESET"
+   [ $FAIL_N -gt 0 ] && say "see $BROWN$TEST_D$RESET"
    exit 0
 }
 
+while [ $# -ge 1 ]; do
+   case "$1" in
+      -s|--src)
+         shift
+         [ $# -lt 1 ] && fatal "option -s is missing directory argument"
+         SRC_D=$1
+         shift
+         ;;
+      -b|--build)
+         shift
+         [ $# -lt 1 ] && fatal "option -b is missing directory argument"
+         BUILD_D=$1
+         shift
+         ;;
+      -a|--abort)
+         shift
+         ABORT=1
+         ;;
+      -c|--color)
+         shift
+         COLOR=1
+         ;;
+      -q|--quiet)
+         shift
+         QUIET=1
+         ;;
+      -h|--help)
+         echo "Usage: $SCRIPT_FILE [options] [tests]"
+         echo
+         echo "Options:"
+         echo "    -b, --abort            Abort on test failure"
+         echo "    -q, --quiet            Only output failed tests"
+         echo "    -c, --color            Pretty pretty"
+         echo "    -s, --src directory    Directory to search for tests into"
+         echo "    -b, --build directory  Directory to search for built files into"
+         echo "    -h, --help             This message."
+         exit 0
+         ;;
+      *)
+         TESTS="$TESTS $1"
+         shift
+         ;;
+   esac
+done
+
+# set colors
+if [ $COLOR -eq 1 ]
+then
+   RESET="\033[0m"
+   RED="\033[0;31m"
+   GREEN="\033[0;32m"
+   BROWN="\033[0;33m"
+   PURPLE="\033[0;35m"
+fi
+
+# check arguments
+[ -d "$SRC_D" -a -r "$SRC_D" ] || fatal "$SRC_D is not a valid directory"
+[ -d "$BUILD_D" -a -r "$BUILD_D" ] || fatal "$BUILD_D is not a valid directory"
+rm -fr $TEST_D 2 > /dev/null
+mkdir -p $TEST_D || fatal "cannot create $TEST_D directory"
 if [ -z "$TESTS" ]
 then
    say "search for tests into $BROWN$SRC_D$RESET"
@@ -218,11 +213,11 @@ fi
 
 for test_c in $TESTS
 do
-   if [ -d $test_c ]
+   if [ -d "$test_c" ]
    then
       dir=$test_c
       run_dir
-   elif [ -f $test_c ]
+   elif [ -f "$test_c" ]
    then
       dir=${test_c%/*}
       enter_dir || continue
