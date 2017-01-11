@@ -4,11 +4,11 @@
 
 # TODO
 #  - support test specific subdir test_xxx.d/*.[ch]
-#  - integrate with autofoos (SRC_D BUILD_D CC CFLAGS ...)
 
 SCRIPT_DIR=${0%/*}
 SCRIPT_FILE=${0##*/}
 
+# colors
 RESET=""
 RED=""
 GREEN=""
@@ -179,7 +179,9 @@ function run_test
    TEST_C="$TEST.c"
    TEST_O="$TEST_D/$TEST"
    sayn "    ${BROWN}run ${PURPLE}${test_c##*/}${RESET} "
-   $CC $dir/$MAIN_C -o $TEST_O -DTESTC=$TEST_C -DCALL=$TEST -DFUNC="void $TEST(void)" $CFLAGS $INCLUDE $LDP $LDF || fatal " compilation of $test_c failed"
+   $CC $dir/$MAIN_C -o $TEST_O \
+      -DTESTC=$TEST_C -DCALL=$TEST -DFUNC="void $TEST(void)" \
+      $CFLAGS $INCLUDE $LDP $LDF || fatal " compilation of $test_c failed"
    TEST_N=$((TEST_N + 1))
    $TEST_O && rm $TEST_O && say "${GREEN}PASS${RESET}" && PASS_N=$((PASS_N + 1)) && return
    say "${RED}FAIL${RESET}"
@@ -216,20 +218,18 @@ fi
 
 for test_c in $TESTS
 do
-   if [ ! -r $test_c ]
-   then
-      say "$BROWN$test_c$RESET can't be read"
-      continue
-   fi
    if [ -d $test_c ]
    then
       dir=$test_c
       run_dir
-   else
+   elif [ -f $test_c ]
+   then
       dir=${test_c%/*}
       enter_dir || continue
       run_test
       say "  leave"
+   else
+      say "$BROWN$test_c$RESET can't be read"
    fi
 done
 
