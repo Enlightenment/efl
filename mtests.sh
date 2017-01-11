@@ -97,6 +97,7 @@ while [ $# -ge 1 ]; do
          echo "Options:"
          echo "    -b, --abort            Abort on test failure"
          echo "    -q, --quiet            Only output failed tests"
+         echo "    -c, --color            Pretty pretty"
          echo "    -s, --src directory    Directory to search for tests into"
          echo "    -b, --build directory  Directory to search for built files into"
          echo "    -h, --help             This message."
