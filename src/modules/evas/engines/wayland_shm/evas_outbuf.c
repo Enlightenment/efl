@@ -643,7 +643,8 @@ _evas_outbuf_redraws_clear(Outbuf *ob)
    ob->priv.rect_count = 0;
 }
 
-void _evas_outbuf_surface_set(Outbuf *ob, struct wl_shm *wl_shm, struct zwp_linux_dmabuf_v1 *wl_dmabuf, struct wl_surface *wl_surface)
+void
+_evas_outbuf_surface_set(Outbuf *ob, struct wl_shm *wl_shm, struct zwp_linux_dmabuf_v1 *wl_dmabuf, struct wl_surface *wl_surface)
 {
    if (ob->surface->funcs.surface_set(ob->surface, wl_shm, wl_dmabuf, wl_surface))
      ob->dirty = EINA_TRUE;
