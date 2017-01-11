@@ -356,7 +356,8 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
 
    if (!ob->dirty && (ob->w == w) && (ob->h == h) &&
        (ob->rotation == rot) && (ob->depth == depth) && 
-       (ob->priv.destination_alpha == alpha))
+       (ob->priv.destination_alpha == alpha) &&
+       (ob->hidden == hidden))
      return;
 
    dirty = ob->dirty;
@@ -368,8 +369,6 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
    ob->depth = depth;
    ob->priv.destination_alpha = alpha;
    ob->hidden = hidden;
-
-   if (ob->hidden) return;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
@@ -390,6 +389,8 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
    Eina_Rectangle *rect;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (ob->hidden) return NULL;
 
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, ob->w, ob->h);
    if ((w <= 0) || (h <= 0)) return NULL;
@@ -518,6 +519,8 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
 
    /* check for pending writes */
    if (!ob->priv.pending_writes) return;
+
+   if (ob->hidden) return;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
