@@ -145,6 +145,7 @@ function report
    exit 0
 }
 
+# parse command line
 while [ $# -ge 1 ]; do
    case "$1" in
       -s|--src)
@@ -160,16 +161,16 @@ while [ $# -ge 1 ]; do
          shift
          ;;
       -a|--abort)
-         shift
          ABORT=1
+         shift
          ;;
       -c|--color)
-         shift
          COLOR=1
+         shift
          ;;
       -q|--quiet)
-         shift
          QUIET=1
+         shift
          ;;
       -h|--help)
          echo "Usage: $SCRIPT_FILE [options] [tests]"
@@ -211,6 +212,7 @@ then
    TESTS=$(find $SRC_D -type d -name tests)
 fi
 
+# go
 for test_c in $TESTS
 do
    if [ -d "$test_c" ]
