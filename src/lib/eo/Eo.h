@@ -571,8 +571,8 @@ typedef enum
    EFL_ID_DOMAIN_INVALID = -1, /**< Invalid */
    EFL_ID_DOMAIN_MAIN    =  0, /**< The main loop domain where eo_init() is called */
    EFL_ID_DOMAIN_SHARED  =  1, /**< A special shared domain that all threads can see but has extra locking and unlocking costs to access */
-   EFL_ID_DOMAIN_THREAD, /**< The normal domain for threads so they can adopt the main loop domain at times */
-   EFL_ID_DOMAIN_OTHER /**< A 'spare extra domain that regular threads can talk to or even set themselves to be */
+   EFL_ID_DOMAIN_THREAD /**< The normal domain for threads so they can adopt the main loop domain at times */
+   /* One more slot for future expansion here - maybe fine-grain locked objs */
 } Efl_Id_Domain;
 
 /**
