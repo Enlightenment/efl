@@ -2332,6 +2332,7 @@ _item_new(Evas_Object *obj,
           (it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
         elm_interface_atspi_accessible_type_set(it->icon, ELM_ATSPI_TYPE_DISABLED);
+        elm_widget_tree_unfocusable_set(it->icon, EINA_TRUE);
      }
    if (it->end)
      {
@@ -2340,6 +2341,7 @@ _item_new(Evas_Object *obj,
           (it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
         elm_interface_atspi_accessible_type_set(it->end, ELM_ATSPI_TYPE_DISABLED);
+        elm_widget_tree_unfocusable_set(it->end, EINA_TRUE);
      }
 
    if (_elm_config->atspi_mode)
