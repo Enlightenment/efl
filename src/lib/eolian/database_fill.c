@@ -56,7 +56,7 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
 
    impl->klass = tcl;
 
-   const Eolian_Function *fid = eolian_class_function_get_by_name(tcl, fnname, ftype);
+   const Eolian_Function *fid = eolian_class_function_get_by_name(tcl, fnname, EOLIAN_UNRESOLVED);
    if (!fid)
      {
         _print_linecol(&impl->base);
