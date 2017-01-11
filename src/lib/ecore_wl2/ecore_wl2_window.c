@@ -190,11 +190,19 @@ static void
 _zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface, uint32_t serial)
 {
    Ecore_Wl2_Window *window;
+   Ecore_Wl2_Event_Window_Configure_Complete *ev;
 
    zxdg_surface_v6_ack_configure(zxdg_surface, serial);
 
    window = data;
+   if (!window->pending.configure) return;
    window->pending.configure = EINA_FALSE;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Configure_Complete));
+   if (!ev) return;
+
+   ev->win = window->id;
+   ecore_event_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE, ev, NULL, NULL);
 }
 
 static const struct zxdg_surface_v6_listener _zxdg_surface_listener =

@@ -201,6 +201,11 @@ typedef struct _Ecore_Wl2_Event_Window_Configure
    unsigned int states;
 } Ecore_Wl2_Event_Window_Configure;
 
+typedef struct _Ecore_Wl2_Event_Window_Configure_Complete
+{
+   unsigned int win;
+} Ecore_Wl2_Event_Window_Configure_Complete;
+
 typedef struct _Ecore_Wl2_Event_Sync_Done
 {
    Ecore_Wl2_Display *display;
@@ -250,6 +255,7 @@ EAPI extern int ECORE_WL2_EVENT_SEAT_NAME_CHANGED; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_DEVICE_ADDED; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_DEVICE_REMOVED; /** @since 1.19 */
+EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE; /** @since 1.19 */
 
 /**
  * @file
