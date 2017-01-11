@@ -177,7 +177,7 @@ function run_test
 {
    TEST=$(basename $test_c .c)
    TEST_C="$TEST.c"
-   TEST_O="$TEST_D/$TEST.o"
+   TEST_O="$TEST_D/$TEST"
    sayn "    ${BROWN}run ${PURPLE}${test_c##*/}${RESET} "
    $CC $dir/$MAIN_C -o $TEST_O -DTESTC=$TEST_C -DCALL=$TEST -DFUNC="void $TEST(void)" $CFLAGS $INCLUDE $LDP $LDF || fatal " compilation of $test_c failed"
    TEST_N=$((TEST_N + 1))
@@ -191,7 +191,7 @@ function run_test
 
 function run_dir
 {
-   enter_dir || continue
+   enter_dir || return
    for test_c in $(find $dir -name test_*.c | sort)
    do
       run_test
@@ -208,6 +208,12 @@ function report
    exit 0
 }
 
+if [ -z "$TESTS" ]
+then
+   say "search for tests into $BROWN$SRC_D$RESET"
+   TESTS=$(find $SRC_D -type d -name tests)
+fi
+
 for test_c in $TESTS
 do
    if [ ! -r $test_c ]
@@ -219,7 +225,6 @@ do
    then
       dir=$test_c
       run_dir
-      echo
    else
       dir=${test_c%/*}
       enter_dir || continue
@@ -227,14 +232,5 @@ do
       say "  leave"
    fi
 done
-
-[ ! -z "$TESTS" ] && report
-
-say "search for tests into $SRC_D"
-for dir in $(find $SRC_D -type d -name tests)
-do
-   run_dir
-done
-say "done"
 
 report
