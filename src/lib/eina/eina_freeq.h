@@ -89,7 +89,8 @@ typedef enum _Eina_FreeQ_Type
     * immediately. Use this kind of freeq for debugging and additional memory
     * safety purposes only.
     *
-    * This type of free queue is thread-safe.
+    * As this type of free queue is thread-safe, the free functions used must
+    * also be thread-safe (eg. libc free()).
     *
     * @since 1.19
     */

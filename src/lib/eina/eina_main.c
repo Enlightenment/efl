@@ -69,6 +69,7 @@
 #include "eina_value.h"
 #include "eina_evlog.h"
 #include "eina_freeq.h"
+#include "eina_slstr.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -153,6 +154,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(rbtree);
    S(file);
    S(safepointer);
+   S(slstr);
 #undef S
 
 struct eina_desc_setup
@@ -198,6 +200,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(rbtree),
    S(file),
    S(safepointer),
+   S(slstr),
 #undef S
 };
 static const size_t _eina_desc_setup_len = sizeof(_eina_desc_setup) /

@@ -86,6 +86,7 @@ static const Efl_Test_Case etc[] = {
    { "Slice", eina_test_slice },
    { "Free Queue", eina_test_freeq },
    { "Util", eina_test_util },
+   { "Short Lived Strings", eina_test_slstr },
    { NULL, NULL }
 };
 

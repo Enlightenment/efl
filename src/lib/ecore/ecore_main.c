@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define EINA_SLSTR_INTERNAL
+
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
@@ -2388,6 +2390,11 @@ process_all: /*-*********************************************************/
 done: /*-*****************************************************************/
    /* Agressively flush animator */
    _ecore_animator_flush();
+   if (!once_only)
+     {
+        /* Free all short lived strings */
+        eina_slstr_local_clear();
+     }
    in_main_loop--;
 }
 

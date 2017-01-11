@@ -103,7 +103,8 @@ lib/eina/eina_inline_safepointer.x \
 lib/eina/eina_slice.h \
 lib/eina/eina_inline_slice.x \
 lib/eina/eina_inline_modinfo.x \
-lib/eina/eina_freeq.h
+lib/eina/eina_freeq.h \
+lib/eina/eina_slstr.h
 
 
 lib_eina_libeina_la_SOURCES = \
@@ -177,7 +178,8 @@ lib/eina/eina_strbuf_common.h \
 lib/eina/eina_quaternion.c \
 lib/eina/eina_bezier.c \
 lib/eina/eina_safepointer.c \
-lib/eina/eina_freeq.c
+lib/eina/eina_freeq.c \
+lib/eina/eina_slstr.c
 
 
 if HAVE_WIN32
@@ -348,7 +350,8 @@ tests/eina/eina_test_vector.c \
 tests/eina/eina_test_bezier.c \
 tests/eina/eina_test_safepointer.c \
 tests/eina/eina_test_slice.c \
-tests/eina/eina_test_freeq.c
+tests/eina/eina_test_freeq.c \
+tests/eina/eina_test_slstr.c
 
 tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
