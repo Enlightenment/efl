@@ -113,7 +113,7 @@ struct _EE_Wl_Device
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
-static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[12];
+static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[13];
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
@@ -300,6 +300,31 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
    if (ee->prop.fullscreen || (ee->req.w != nw) || (ee->req.h != nh))
      _ecore_evas_wl_common_resize(ee, nw, nh);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Wl2_Event_Window_Configure_Complete *ev;
+   Evas_Engine_Info_Wayland *einfo;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ev = event;
+   ee = ecore_event_window_match(ev->win);
+   if (!ee) return ECORE_CALLBACK_PASS_ON;
+
+   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+   if (!einfo) return ECORE_CALLBACK_PASS_ON;
+
+   einfo->info.hidden = EINA_FALSE;
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+     ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -822,6 +847,10 @@ _ecore_evas_wl_common_init(void)
    _ecore_evas_wl_event_hdls[11] =
      ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED,
                              _ecore_evas_wl_common_cb_seat_capabilities_changed,
+                             NULL);
+   _ecore_evas_wl_event_hdls[12] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
+                             _ecore_evas_wl_common_cb_window_configure_complete,
                              NULL);
 
    ecore_event_evas_init();
@@ -1740,7 +1769,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
         if (einfo)
           {
              einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
-             einfo->info.hidden = EINA_FALSE;
+             einfo->info.hidden = wdata->win->pending.configure; //EINA_FALSE;
              einfo->www_avail = !!wdata->win->www_surface;
              einfo->just_mapped = EINA_TRUE;
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
@@ -2204,6 +2233,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
              einfo->info.wl_shm = ecore_wl2_display_shm_get(ewd);
              einfo->info.compositor_version =
                ecore_wl2_display_compositor_version_get(ewd);
+             einfo->info.hidden = EINA_TRUE;
 
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
