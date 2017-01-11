@@ -185,7 +185,7 @@ function run_test
    say "${RED}FAIL${RESET}"
    say_anyway "        $test_c"
    [ $ABORT -ne 1 ] && return
-   say "        see $TEST_O"
+   say "        see $BROWN$TEST_O$RESET"
    exit 1
 }
 
@@ -204,7 +204,7 @@ function report
    [ $QUIET -eq 1 ] && exit 0
    say "\n$PASS_N/$TEST_N tests passed"
    FAIL_N=$(ls -1 $TEST_D | wc -l)
-   [ $FAIL_N -gt 0 ] && say "see $TEST_O"
+   [ $FAIL_N -gt 0 ] && say "see $BROWN$TEST_O$RESET"
    exit 0
 }
 
@@ -212,7 +212,7 @@ for test_c in $TESTS
 do
    if [ ! -r $test_c ]
    then
-      say "$test_c does not exists"
+      say "$BROWN$test_c$RESET can't be read"
       continue
    fi
    if [ -d $test_c ]
