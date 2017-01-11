@@ -109,6 +109,7 @@ typedef struct _Edje_Edit_Script_Error Edje_Edit_Script_Error;
  * image is being used and pointed.
  *
  * @see edje_edit_image_usage_list_get()
+ * @see edje_edit_vector_usage_list_get()
  * @see edje_edit_image_usage_list_free()
  */
 struct _Edje_Part_Image_Use
@@ -6747,7 +6748,8 @@ EAPI Eina_Bool edje_edit_image_rename(Evas_Object *obj, const char *name, const 
  */
 EAPI Eina_List* edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool first_only);
 
-/** Free an Eina_List of (Edje_Part_Image_Use *) allocated by an edje_edit_image_usage_list_get() function.
+/** Free an Eina_List of (Edje_Part_Image_Use *) allocated by an edje_edit_image_usage_list_get() or
+ * an edje_edit_vector_usage_list_get() function.
  *
  * @param lst List of strings to free.
  */
@@ -6791,6 +6793,33 @@ EAPI const char * edje_edit_state_image_get(Evas_Object *obj, const char *part, 
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_state_image_set(Evas_Object *obj, const char *part, const char *state, double value, const char *image);
+
+/** Get normal vector name for a given part state.
+ * Part should be of type VECTOR
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get the name that is being used (not including the state value).
+ * @param value The state value.
+ *
+ * @return The name of the vector used by state.
+ * @since 1.19
+ */
+EAPI const char * edje_edit_state_vector_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set normal vector name for a given part state.
+ * Part should be of type VECTOR
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set the vector that will be used (not including the state value).
+ * @param value The state value.
+ * @param image The name of the vector (must be contained in the edje file).
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.19
+ */
+EAPI Eina_Bool edje_edit_state_vector_set(Evas_Object *obj, const char *part, const char *state, double value, const char *image);
 
 /** Get image id for a given image name.
  *
@@ -7025,6 +7054,63 @@ edje_edit_state_tween_insert_at(Evas_Object *obj, const char *part, const char *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state, double value, const char *tween);
+
+//@}
+/******************************************************************************/
+/**************************   VECTORS API   ************************************/
+/******************************************************************************/
+
+/** Get vector id for a given vector name.
+ *
+ * @param obj Object being edited.
+ * @param vector_name The vector name.
+ *
+ * @return The id of the given vector name.
+ * @since 1.19
+ */
+EAPI int edje_edit_vector_id_get(Evas_Object *obj, const char *vector_name);
+
+/** @name Vectors API
+ *  Functions to deal with vector objects of images (see @ref edcref).
+ */ //@{
+
+/** Get the list of all the vectors in the given edje.
+ * Use edje_edit_string_list_free() when you don't need the list anymore.
+ *
+ * @param obj Object being edited.
+ *
+ * @return A List containing all vector names found in the edje file.
+ * @since 1.19
+ */
+EAPI Eina_List * edje_edit_vectors_list_get(Evas_Object *obj);
+
+/** Delete vector from the vector collection
+ *
+ * It actually write directly to the file so you don't have to save.
+ * Can't delete vector if it is used by any part.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the vector file.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise (including the
+ * case when the name is not valid or vector is in use).
+ * @since 1.19
+ */
+EAPI Eina_Bool edje_edit_vector_del(Evas_Object *obj, const char *name);
+
+/** Get list of (Edje_Part_Image_Use *) - group-part-state triplets where given
+ * vector is used.
+ *
+ * Use edje_edit_image_usage_list_free() when you don't need it anymore.
+ *
+ * @param obj Object being edited.
+ * @param name The name of the vector.
+ * @param first_only If EINA_TRUE, return only one triplete.
+ *
+ * @return Eina_List containing Edje_Part_Image_Use if successful, NULL otherwise
+ * @since 1.19
+ */
+EAPI Eina_List* edje_edit_vector_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool first_only);
 
 //@}
 /******************************************************************************/
