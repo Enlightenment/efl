@@ -9,17 +9,17 @@ class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
       Elm.Widget.theme_apply;
       Elm.Button.admits_autorepeat { get; }
       Elm.Interface.Fileselector.selected_models { get; }
-      Elm.Interface.Fileselector.expandable;
-      Elm.Interface.Fileselector.thumbnail_size;
+      Elm.Interface.Fileselector.expandable { get; set; }
+      Elm.Interface.Fileselector.thumbnail_size { get; set; }
       Elm.Interface.Fileselector.selected_model_get;
       Elm.Interface.Fileselector.selected_model_set;
-      Elm.Interface.Fileselector.hidden_visible;
-      Elm.Interface.Fileselector.is_save;
-      Elm.Interface.Fileselector.model;
-      Elm.Interface.Fileselector.sort_method;
-      Elm.Interface.Fileselector.multi_select;
-      Elm.Interface.Fileselector.folder_only;
-      Elm.Interface.Fileselector.mode;
+      Elm.Interface.Fileselector.hidden_visible { get; set; }
+      Elm.Interface.Fileselector.is_save { get; set; }
+      Elm.Interface.Fileselector.model { get; set; }
+      Elm.Interface.Fileselector.sort_method { get; set; }
+      Elm.Interface.Fileselector.multi_select { get; set; }
+      Elm.Interface.Fileselector.folder_only { get; set; }
+      Elm.Interface.Fileselector.mode { get; set; }
    }
    events {
       file,chosen; [[Called when a file was chosen in the fileselector]]

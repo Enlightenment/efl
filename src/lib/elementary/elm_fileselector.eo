@@ -49,18 +49,18 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
       Elm.Interface.Fileselector.selected_model_get;
       Elm.Interface.Fileselector.selected_model_set;
       Elm.Interface.Fileselector.custom_filter_append;
-      Elm.Interface.Fileselector.expandable;
-      Elm.Interface.Fileselector.thumbnail_size;
+      Elm.Interface.Fileselector.expandable { get; set; }
+      Elm.Interface.Fileselector.thumbnail_size { get; set; }
       Elm.Interface.Fileselector.mime_types_filter_append;
-      Elm.Interface.Fileselector.hidden_visible;
+      Elm.Interface.Fileselector.hidden_visible { get; set; }
       Elm.Interface.Fileselector.filters_clear;
-      Elm.Interface.Fileselector.is_save;
-      Elm.Interface.Fileselector.model;
-      Elm.Interface.Fileselector.sort_method;
-      Elm.Interface.Fileselector.multi_select;
-      Elm.Interface.Fileselector.folder_only;
-      Elm.Interface.Fileselector.mode;
-      Elm.Interface.Fileselector.current_name;
+      Elm.Interface.Fileselector.is_save { get; set; }
+      Elm.Interface.Fileselector.model { get; set; }
+      Elm.Interface.Fileselector.sort_method { get; set; }
+      Elm.Interface.Fileselector.multi_select { get; set; }
+      Elm.Interface.Fileselector.folder_only { get; set; }
+      Elm.Interface.Fileselector.mode { get; set; }
+      Elm.Interface.Fileselector.current_name { get; set; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {

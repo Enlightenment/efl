@@ -375,7 +375,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
        Efl.Object.finalize;
        Efl.Io.Closer.close;
        Efl.Io.Closer.closed { get; }
-       Efl.Io.Closer.close_on_exec;
-       Efl.Io.Closer.close_on_destructor;
+       Efl.Io.Closer.close_on_exec { get; set; }
+       Efl.Io.Closer.close_on_destructor { get; set; }
     }
 }

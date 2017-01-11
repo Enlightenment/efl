@@ -88,13 +88,13 @@ class Efl.Net.Socket.Ssl (Efl.Loop_User, Efl.Net.Socket) {
         Efl.Object.finalize;
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
-        Efl.Io.Closer.close_on_exec;
-        Efl.Io.Closer.close_on_destructor;
+        Efl.Io.Closer.close_on_exec { get; set; }
+        Efl.Io.Closer.close_on_destructor { get; set; }
         Efl.Io.Reader.read;
-        Efl.Io.Reader.can_read;
-        Efl.Io.Reader.eos;
+        Efl.Io.Reader.can_read { get; set; }
+        Efl.Io.Reader.eos { get; set; }
         Efl.Io.Writer.write;
-        Efl.Io.Writer.can_write;
+        Efl.Io.Writer.can_write { get; set; }
         Efl.Net.Socket.address_remote { get; }
         Efl.Net.Socket.address_local { get; }
     }

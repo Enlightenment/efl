@@ -74,10 +74,10 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
       Elm.Layout.text_aliases { get; }
       Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;
-      Efl.Ui.Progress.span_size;
-      Efl.Ui.Progress.progress_value;
-      Efl.Ui.Progress.unit_format;
-      Efl.Orientation.orientation;
+      Efl.Ui.Progress.span_size { get; set; }
+      Efl.Ui.Progress.progress_value { get; set; }
+      Efl.Ui.Progress.unit_format { get; set; }
+      Efl.Orientation.orientation { get; set; }
       Efl.Part.part;
    }
    events {

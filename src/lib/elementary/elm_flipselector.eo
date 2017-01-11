@@ -134,10 +134,10 @@ class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.widget_event;
       Elm.Layout.sizing_eval;
-      Efl.Ui.Spin.min_max;
-      Efl.Ui.Spin.step;
-      Efl.Ui.Spin.value;
-      Efl.Ui.Spin.interval;
+      Efl.Ui.Spin.min_max { get; set; }
+      Efl.Ui.Spin.step { get; set; }
+      Efl.Ui.Spin.value { get; set; }
+      Efl.Ui.Spin.interval { get; set; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {

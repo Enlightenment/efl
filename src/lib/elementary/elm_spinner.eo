@@ -157,10 +157,10 @@ class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
       Elm.Widget.on_focus;
       Elm.Widget.widget_event;
       Elm.Layout.sizing_eval;
-      Efl.Ui.Spin.min_max;
-      Efl.Ui.Spin.step;
-      Efl.Ui.Spin.value;
-      Efl.Ui.Spin.interval;
+      Efl.Ui.Spin.min_max { get; set; }
+      Efl.Ui.Spin.step { get; set; }
+      Efl.Ui.Spin.value { get; set; }
+      Efl.Ui.Spin.interval { get; set; }
       Elm.Interface.Atspi_Accessible.name { get; }
       Elm.Interface.Atspi.Value.value_and_text { get; set; }
       Elm.Interface.Atspi.Value.range { get; }

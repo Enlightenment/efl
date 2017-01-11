@@ -273,7 +273,7 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item)
            Elm.Widget.Item.part_content_unset;
            Elm.Interface.Atspi_Accessible.name { get; }
            Elm.Interface.Atspi_Accessible.state_set { get; }
-           Efl.Ui.Item.selected;
+           Efl.Ui.Item.selected { get; set; }
            Efl.Ui.Item.prev { get; }
            Efl.Ui.Item.next { get; }
       }

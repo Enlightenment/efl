@@ -29,9 +29,9 @@ class Efl.Net.Dialer.Udp (Efl.Net.Socket.Udp, Efl.Net.Dialer) {
         Efl.Object.constructor;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
-        Efl.Net.Dialer.address_dial;
-        Efl.Net.Dialer.connected;
-        Efl.Net.Dialer.timeout_dial;
+        Efl.Net.Dialer.address_dial { get; set; }
+        Efl.Net.Dialer.connected { get; set; }
+        Efl.Net.Dialer.timeout_dial { get; set; }
         Efl.Io.Closer.close;
     }
 }

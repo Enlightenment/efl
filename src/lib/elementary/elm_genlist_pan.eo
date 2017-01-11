@@ -12,7 +12,7 @@ class Elm.Genlist.Pan (Elm.Pan)
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_del;
       Elm.Pan.content_size { get; }
-      Elm.Pan.pos;
+      Elm.Pan.pos { get; set; }
       Elm.Pan.pos_min { get; }
       Elm.Pan.pos_max { get; }
    }

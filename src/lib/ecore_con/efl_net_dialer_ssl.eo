@@ -70,9 +70,9 @@ class Efl.Net.Dialer.Ssl (Efl.Net.Socket.Ssl, Efl.Net.Dialer) {
         Efl.Object.finalize;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; }
-        Efl.Net.Dialer.connected;
-        Efl.Net.Dialer.proxy;
-        Efl.Net.Dialer.timeout_dial;
+        Efl.Net.Dialer.connected { get; set; }
+        Efl.Net.Dialer.proxy { get; set; }
+        Efl.Net.Dialer.timeout_dial { get; set; }
         Efl.Io.Closer.close;
     }
 }

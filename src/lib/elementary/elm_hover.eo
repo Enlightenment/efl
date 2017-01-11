@@ -68,7 +68,7 @@ class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action
       Efl.Canvas.Group.group_add;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_add;
-      Elm.Widget.widget_parent;
+      Elm.Widget.widget_parent { get; set; }
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.sub_object_del;

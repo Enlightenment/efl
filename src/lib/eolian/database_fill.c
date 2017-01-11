@@ -64,6 +64,46 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
         return EINA_FALSE;
      }
 
+   Eolian_Function_Type aftype = eolian_function_type_get(fid);
+
+   /* match implement type against function type */
+   if (ftype == EOLIAN_PROPERTY)
+     {
+        /* property */
+        if (aftype != EOLIAN_PROPERTY)
+          {
+             _print_linecol(&impl->base);
+             fprintf(stderr, "function '%s' is not a complete property", fnname);
+             return EINA_FALSE;
+          }
+     }
+   else if (ftype == EOLIAN_PROP_SET)
+     {
+        /* setter */
+        if ((aftype != EOLIAN_PROP_SET) && (aftype != EOLIAN_PROPERTY))
+          {
+             _print_linecol(&impl->base);
+             fprintf(stderr, "function '%s' doesn't have a setter\n", fnname);
+             return EINA_FALSE;
+          }
+     }
+   else if (ftype == EOLIAN_PROP_GET)
+     {
+        /* getter */
+        if ((aftype != EOLIAN_PROP_GET) && (aftype != EOLIAN_PROPERTY))
+          {
+             _print_linecol(&impl->base);
+             fprintf(stderr, "function '%s' doesn't have a getter\n", fnname);
+             return EINA_FALSE;
+          }
+     }
+   else if (aftype != EOLIAN_METHOD)
+     {
+        _print_linecol(&impl->base);
+        fprintf(stderr, "function '%s' is not a method\n", fnname);
+        return EINA_FALSE;
+     }
+
    if ((fid->klass == cl) && !impl->is_auto && !impl->is_empty)
      {
         /* only allow explicit implements from other classes, besides auto and

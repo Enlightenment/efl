@@ -74,12 +74,12 @@ class Efl.Net.Dialer.Simple (Efl.Net.Socket.Simple, Efl.Net.Dialer) {
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; }
         Efl.Net.Dialer.connected { get; }
-        Efl.Net.Dialer.proxy;
-        Efl.Net.Dialer.timeout_dial;
-        Efl.Io.Buffered_Stream.timeout_inactivity;
-        Efl.Io.Buffered_Stream.max_queue_size_input;
-        Efl.Io.Buffered_Stream.max_queue_size_output;
-        Efl.Io.Buffered_Stream.read_chunk_size;
-        Efl.Io.Buffered_Stream.line_delimiter;
+        Efl.Net.Dialer.proxy { get; set; }
+        Efl.Net.Dialer.timeout_dial { get; set; }
+        Efl.Io.Buffered_Stream.timeout_inactivity { get; set; }
+        Efl.Io.Buffered_Stream.max_queue_size_input { get; set; }
+        Efl.Io.Buffered_Stream.max_queue_size_output { get; set; }
+        Efl.Io.Buffered_Stream.read_chunk_size { get; set; }
+        Efl.Io.Buffered_Stream.line_delimiter { get; set; }
     }
 }

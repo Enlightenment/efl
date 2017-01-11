@@ -11,7 +11,7 @@ class Elm.Map.Pan (Elm.Pan)
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_calculate;
       Elm.Pan.content_size { get; }
-      Elm.Pan.pos;
+      Elm.Pan.pos { get; set; }
       Elm.Pan.pos_min { get; }
       Elm.Pan.pos_max { get; }
    }

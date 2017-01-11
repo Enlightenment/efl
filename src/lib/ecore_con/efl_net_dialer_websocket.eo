@@ -316,12 +316,12 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         Efl.Object.constructor;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
-        Efl.Net.Dialer.address_dial;
-        Efl.Net.Dialer.connected;
-        Efl.Net.Dialer.proxy;
-        Efl.Net.Dialer.timeout_dial;
+        Efl.Net.Dialer.address_dial { get; set; }
+        Efl.Net.Dialer.connected { get; set; }
+        Efl.Net.Dialer.proxy { get; set; }
+        Efl.Net.Dialer.timeout_dial { get; set; }
         Efl.Net.Socket.address_local { get; }
-        Efl.Net.Socket.address_remote;
+        Efl.Net.Socket.address_remote { get; set; }
         Efl.Io.Reader.read;
         Efl.Io.Reader.can_read { get; set; }
         Efl.Io.Reader.eos { get; }
@@ -329,7 +329,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         Efl.Io.Writer.can_write { get; set; }
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
-        Efl.Io.Closer.close_on_exec;
-        Efl.Io.Closer.close_on_destructor;
+        Efl.Io.Closer.close_on_exec { get; set; }
+        Efl.Io.Closer.close_on_destructor { get; set; }
     }
 }
