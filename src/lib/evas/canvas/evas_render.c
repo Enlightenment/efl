@@ -21,6 +21,25 @@ static FILE *dbf = NULL;
 static int __RD_level = 0;
 static int __RD_enable = REND_DBG;
 
+static inline Eina_Slstr *
+_efl_object_name(const Evas_Object_Protected_Data *obj)
+{
+   const Eo *eo_obj;
+   const char *name;
+   const char *klass;
+
+   if (!obj) return "(nil)";
+   eo_obj = obj->object;
+   name = obj->name ?: efl_name_get(eo_obj);
+   klass = obj->type; //efl_class_name_get(eo_obj);
+   if (name)
+     return eina_slstr_printf("[%p@%p: %s '%s']", eo_obj, obj, klass, name);
+   else
+     return eina_slstr_printf("[%p@%p: %s]", eo_obj, obj, klass);
+}
+
+#define RDNAME(_obj) _efl_object_name(_obj)
+
 static void
 rend_dbg(const char *txt)
 {
@@ -423,9 +442,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
           eina_array_data_get(render_objects, i);
         eo_obj = obj->object;
 
-        RD(0, "    OBJ [%p", obj);
-        IFRD(obj->name, 0, " '%s'", obj->name);
-        RD(0, "] changed %i\n", obj->changed);
+        RD(0, "    OBJ %s changed %i\n", RDNAME(obj), obj->changed);
 
         if (obj->changed)
           {
@@ -1043,9 +1060,9 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
    obj->is_active = is_active;
 
 #ifdef REND_DBG
-   RD(level, "[--- PROCESS [%p", obj->object);
-   IFRD(obj->name, 0, " '%s'", obj->name);
-   RD(0, "] '%s' active = %i, del = %i | %i %i %ix%i\n", obj->type, is_active, obj->delete_me, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
+   RD(level, "[--- PROCESS %s active = %i, del = %i | %i,%i %ix%i\n",
+      RDNAME(obj), is_active, obj->delete_me, obj->cur->geometry.x,
+      obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
 #endif
 
    if ((!mapped_parent) &&
@@ -1075,9 +1092,9 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
 #ifdef REND_DBG
    if (!is_active)
      {
-        RD(level, "[%p", obj->object);
-        IFRD(obj->name, 0, " '%s'", obj->name);
-        RD(0, "] vis: %i, cache.clip.vis: %i cache.clip.a: %i [%p]\n", obj->cur->visible, obj->cur->cache.clip.visible, obj->cur->cache.clip.a, obj->func->is_visible);
+        RD(level, "%s vis: %i, cache.clip.vis: %i cache.clip.a: %i [func: %p]\n",
+           RDNAME(obj), obj->cur->visible, obj->cur->cache.clip.visible,
+           obj->cur->cache.clip.a, obj->func->is_visible);
      }
 #endif
 
@@ -1280,9 +1297,7 @@ pending_change(void *data, void *gdata EINA_UNUSED)
    if (obj->delete_me) return EINA_FALSE;
    if (obj->pre_render_done)
      {
-        RD(0, "  OBJ [%p", obj);
-        IFRD(obj->name, 0, " '%s'", obj->name);
-        RD(0, "] pending change %i -> 0, pre %i\n", obj->changed, obj->pre_render_done);
+        RD(0, "  OBJ %s pending change %i -> 0, pre %i\n", RDNAME(obj), obj->changed, obj->pre_render_done);
         obj->func->render_post(eo_obj, obj, obj->private_data);
         obj->pre_render_done = EINA_FALSE;
         evas_object_change_reset(eo_obj);
@@ -1696,21 +1711,15 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    eina_evlog("+render_object", eo_obj, 0.0, NULL);
 #ifdef REND_DBG
    RD(level, "{\n");
-   RD(level, "  evas_render_mapped(evas:%p, obj:%p", evas->evas, obj->object);
-   IFRD(obj->name, 0, " '%s'", obj->name);
-   RD(0, ", ctx:%p, sfc:%p, offset:%i,%i, %s, %s)\n", context, surface, off_x, off_y,
+   RD(level, "  evas_render_mapped(evas:%p, obj:%s, ctx:%p, sfc:%p, offset:%i,%i, %s, %s)\n",
+      evas->evas, RDNAME(obj), context, surface, off_x, off_y,
       mapped ? "mapped" : "normal", do_async ? "async" : "sync");
-   RD(level, "  obj: '%s' %s", obj->type, obj->is_smart ? "(smart) " : "");
-   if (obj->is_frame) RD(0, "(frame) ");
-   if (obj->name) RD(0, "'%s'\n", obj->name);
-   else RD(0, "\n");
+   IFRD(obj->is_smart, level, "  is_smart");
+   IFRD(obj->is_frame, level, "  in framespace%s", obj->is_frame_top ? " (top object)" : "");
    if (obj->cur->clipper)
      {
-        RD(level, "  clipper: '%s'%s%s %p (mask: %p) %d,%d %dx%d ; color: {%d,%d,%d,%d} ; cached: {%d,%d,%d,%d}\n",
-           obj->cur->clipper->type,
-           obj->cur->clipper->name ? ":" : "",
-           obj->cur->clipper->name ? obj->cur->clipper->name : "",
-           obj->cur->clipper->object, obj->clip.mask ? obj->clip.mask->object : NULL,
+        RD(level, "  clipper: %s (mask: %s) %d,%d %dx%d ; color: {%d,%d,%d,%d} ; cached: {%d,%d,%d,%d}\n",
+           RDNAME(obj->cur->clipper), RDNAME(obj->clip.mask),
            obj->cur->clipper->cur->geometry.x, obj->cur->clipper->cur->geometry.y,
            obj->cur->clipper->cur->geometry.w, obj->cur->clipper->cur->geometry.h,
            obj->cur->clipper->cur->color.r, obj->cur->clipper->cur->color.g,
@@ -2000,9 +2009,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                        Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
                        Eina_Bool redraw = mask->mask->redraw || !mask->mask->surface;
 
-                       RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p prev_mask:%p\n",
-                          mask->object, mask->name?":":"", mask->name?mask->name:"",
-                          mask->mask->redraw, mask->mask->surface, prev_mask);
+                       RD(level, "  has mask: %s redraw:%d sfc:%p prev_mask:%p\n",
+                          RDNAME(mask), mask->mask->redraw, mask->mask->surface, prev_mask);
                        if (prev_mask && !_mask_apply_inside_proxy(proxy_render_data, prev_mask))
                          {
                             RD(level, "  discard prev mask and redraw (guessed outside proxy)\n");
@@ -2065,9 +2073,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                        Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
                        Eina_Bool redraw = mask->mask->redraw || !mask->mask->surface;
 
-                       RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p prev_mask:%p\n",
-                          mask->object, mask->name?":":"", mask->name?mask->name:"",
-                          mask->mask->redraw, mask->mask->surface, prev_mask);
+                       RD(level, "  has mask: %s redraw:%d sfc:%p prev_mask:%p\n",
+                          RDNAME(mask), mask->mask->redraw, mask->mask->surface, prev_mask);
                        if (prev_mask && !_mask_apply_inside_proxy(proxy_render_data, prev_mask))
                          {
                             RD(level, "  discard prev mask and redraw (guessed outside proxy)\n");
@@ -2158,9 +2165,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                             Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
                             Eina_Bool redraw = mask->mask->redraw || !mask->mask->surface;
 
-                            RD(level, "  has mask: [%p%s%s] redraw:%d sfc:%p prev_mask:%p\n",
-                               mask->object, mask->name?":":"", mask->name?mask->name:"",
-                               mask->mask->redraw, mask->mask->surface, prev_mask);
+                            RD(level, "  has mask: %s redraw:%d sfc:%p prev_mask:%p\n",
+                               RDNAME(mask), mask->mask->redraw, mask->mask->surface, prev_mask);
                             if (prev_mask && !_mask_apply_inside_proxy(proxy_render_data, prev_mask))
                               {
                                  RD(level, "  discard prev mask and redraw (guessed outside proxy)\n");
@@ -2282,7 +2288,8 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
    w = source->cur->geometry.w;
    h = source->cur->geometry.h;
 
-   RD(level, "  proxy_subrender(source: %p, proxy: %p, %dx%d)\n", source, proxy_obj, w, h);
+   RD(level, "  proxy_subrender(source: %s, proxy: %s, %dx%d)\n",
+      RDNAME(source), RDNAME(proxy_obj), w, h);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy,
                         Evas_Object_Proxy_Data, proxy_write)
@@ -2366,8 +2373,8 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
    if (!mask) return;
 
    eina_evlog("+mask_subrender", mask->object, 0.0, NULL);
-   RD(level, "evas_render_mask_subrender(%p, prev: %p, %s)\n",
-      mask, prev_mask, do_async ? "async" : "sync");
+   RD(level, "evas_render_mask_subrender(mask: %s, prev: %s, %s)\n",
+      RDNAME(mask), RDNAME(prev_mask), do_async ? "async" : "sync");
 
    is_image = efl_isa(mask->object, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
@@ -2787,9 +2794,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
         if (obj == top) break;
 
         /* if it's in our outpout rect and it doesn't clip anything */
-        RD(level, "    OBJ: [%p", eo_obj);
-        IFRD(obj->name, 0, " '%s'", obj->name);
-        RD(level, "] '%s' %i %i %ix%i\n", obj->type, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
+        RD(level, "    OBJ: %s %i %i %ix%i\n", RDNAME(obj), obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
         if (
             (!obj->clip.clipees) &&
             (obj->cur->visible) &&
@@ -2901,7 +2906,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
    OBJS_ARRAY_CLEAN(&evas->temporary_objects);
 
 #ifdef REND_DBG
-   if (top) RD(level, "   ---] SNAPSHOT [obj:%p sfc:%p]\n", top, surface);
+   if (top) RD(level, "   ---] SNAPSHOT [obj:%s sfc:%p]\n", RDNAME(top), surface);
    else RD(level, "  ---]\n");
 #endif
 
@@ -3180,7 +3185,7 @@ evas_render_updates_internal(Evas *eo_e,
 
                        pseudo_canvas = _evas_object_image_surface_get(obj->object, obj);
 
-                       RD(0, "  SNAPSHOT [obj:%p sfc:%p ur:%d,%d %dx%d]\n", obj, pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
+                       RD(0, "  SNAPSHOT %s [sfc:%p ur:%d,%d %dx%d]\n", RDNAME(obj), pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
                        ctx = ENFN->context_new(ENDT);
                        clean_them |= evas_render_updates_internal_loop(eo_e, e, pseudo_canvas, ctx,
                                                                        obj,
@@ -3280,14 +3285,10 @@ evas_render_updates_internal(Evas *eo_e,
         obj = ent->obj;
         eo_obj = obj->object;
         obj->pre_render_done = EINA_FALSE;
-        RD(0, "    OBJ [%p", obj);
-        IFRD(obj->name, 0, " '%s'", obj->name);
-        RD(0, "] changed:%i do_draw:%i (%s)\n", obj->changed, do_draw, obj->type);
+        RD(0, "    OBJ %s changed:%i do_draw:%i\n", RDNAME(obj), obj->changed, do_draw);
         if ((clean_them) || (obj->changed && do_draw))
           {
-             RD(0, "    OBJ [%p", obj);
-             IFRD(obj->name, 0, " '%s'", obj->name);
-             RD(0, "] render_post()\n");
+             RD(0, "    OBJ %s render_post()\n", RDNAME(obj));
              obj->func->render_post(eo_obj, obj, obj->private_data);
              obj->restack = EINA_FALSE;
              evas_object_change_reset(eo_obj);
