@@ -255,7 +255,7 @@ eina_init(void)
         mtrace();
      }
 #endif
-   eina_freeq_main_set(eina_freeq_new());
+   eina_freeq_main_set(eina_freeq_new(EINA_FREEQ_DEFAULT));
 
    if (!eina_log_init())
      {

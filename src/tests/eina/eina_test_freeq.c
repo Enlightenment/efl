@@ -14,8 +14,9 @@ START_TEST(freeq_simple)
 
    fail_if(eina_freeq_main_get() == NULL);
    pfq = eina_freeq_main_get();
+   fail_if(eina_freeq_type_get(pfq) != EINA_FREEQ_DEFAULT);
 
-   fq = eina_freeq_new();
+   fq = eina_freeq_new(EINA_FREEQ_DEFAULT);
    fail_if(!fq);
 
    eina_freeq_main_set(fq);
@@ -113,10 +114,91 @@ START_TEST(freeq_reduce)
 }
 END_TEST
 
+static void
+postponed_free(void *data)
+{
+   int *p = data;
+
+   // we leak here (by choice -- to inspect the memory after clear/reduce)
+   *p = 0xDEADBEEF;
+   _n--;
+}
+
+static inline unsigned int *
+new_uint(int val)
+{
+   unsigned int *p;
+
+   p = malloc(sizeof(*p));
+   *p = val;
+   return p;
+}
+
+START_TEST(freeq_postponed)
+{
+   Eina_FreeQ *fq;
+   unsigned int *values[20];
+   size_t k;
+
+   eina_init();
+   _n = 0;
+
+   fq = eina_freeq_new(EINA_FREEQ_POSTPONED);
+
+   fail_if(!fq);
+   fail_if(eina_freeq_type_get(fq) != EINA_FREEQ_POSTPONED);
+
+   // by default: no limit
+   ck_assert_int_eq(eina_freeq_count_max_get(fq), -1);
+   ck_assert_int_eq(eina_freeq_mem_max_get(fq), 0);
+
+   for (k = 0; k < EINA_C_ARRAY_LENGTH(values); k++)
+     {
+        _n++;
+        values[k] = new_uint(k);
+        eina_freeq_ptr_add(fq, values[k], postponed_free, sizeof(int));
+     }
+   ck_assert_int_eq(_n, EINA_C_ARRAY_LENGTH(values));
+
+   fail_if(!eina_freeq_ptr_pending(fq));
+   while (eina_freeq_ptr_pending(fq))
+     eina_freeq_reduce(fq, 1);
+   fail_if(eina_freeq_ptr_pending(fq));
+   ck_assert_int_eq(_n, 0);
+
+   for (k = 0; k < EINA_C_ARRAY_LENGTH(values); k++)
+     ck_assert_int_eq(*(values[k]), 0xDEADBEEF);
+
+   for (k = 0; k < EINA_C_ARRAY_LENGTH(values); k++)
+     {
+        _n++;
+        values[k] = new_uint(k);
+        eina_freeq_ptr_add(fq, values[k], postponed_free, sizeof(int));
+     }
+   ck_assert_int_eq(_n, EINA_C_ARRAY_LENGTH(values));
+
+   fail_if(!eina_freeq_ptr_pending(fq));
+   eina_freeq_clear(fq);
+   fail_if(eina_freeq_ptr_pending(fq));
+   ck_assert_int_eq(_n, 0);
+
+   for (k = 0; k < EINA_C_ARRAY_LENGTH(values); k++)
+     {
+        ck_assert_int_eq(*(values[k]), 0xDEADBEEF);
+        free(values[k]);
+     }
+
+   eina_freeq_free(fq);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_freeq(TCase *tc)
 {
    tcase_add_test(tc, freeq_simple);
    tcase_add_test(tc, freeq_tune);
    tcase_add_test(tc, freeq_reduce);
+   tcase_add_test(tc, freeq_postponed);
 }
