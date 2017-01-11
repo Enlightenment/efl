@@ -1520,14 +1520,15 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
    impl = calloc(1, sizeof(Eolian_Implement));
    FILL_BASE(impl->base, ls, iline, icol);
    ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements, impl);
+   Eina_Bool glob_auto = EINA_FALSE, glob_empty = EINA_FALSE;
    switch (ls->t.kw)
      {
         case KW_at_auto:
-          impl->is_auto = EINA_TRUE;
+          glob_auto = EINA_TRUE;
           eo_lexer_get(ls);
           break;
         case KW_at_empty:
-          impl->is_empty = EINA_TRUE;
+          glob_empty = EINA_TRUE;
           eo_lexer_get(ls);
           break;
         default:
@@ -1535,9 +1536,7 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
      }
    if (ls->t.token == '.')
      {
-        if (!impl->is_auto && !impl->is_empty)
-          eo_lexer_syntax_error(ls, "class name expected");
-        check_next(ls, '.');
+        eo_lexer_get(ls);
         if (ls->t.token != TOK_VALUE)
           eo_lexer_syntax_error(ls, "name expected");
         impl->full_name = eina_stringshare_printf("%s.%s",
@@ -1582,12 +1581,36 @@ propbeg:
              CASE_LOCK(ls, get, "get specifier");
              eo_lexer_get(ls);
              impl->is_prop_get = EINA_TRUE;
+             impl->get_auto = glob_auto;
+             impl->get_empty = glob_empty;
+             if (ls->t.kw == KW_at_auto)
+               {
+                  impl->get_auto = EINA_TRUE;
+                  eo_lexer_get(ls);
+               }
+             else if (ls->t.kw == KW_at_empty)
+               {
+                  impl->get_empty = EINA_TRUE;
+                  eo_lexer_get(ls);
+               }
              check_next(ls, ';');
              break;
            case KW_set:
              CASE_LOCK(ls, set, "set specifier");
              eo_lexer_get(ls);
              impl->is_prop_set = EINA_TRUE;
+             impl->set_auto = glob_auto;
+             impl->set_empty = glob_empty;
+             if (ls->t.kw == KW_at_auto)
+               {
+                  impl->set_auto = EINA_TRUE;
+                  eo_lexer_get(ls);
+               }
+             else if (ls->t.kw == KW_at_empty)
+               {
+                  impl->set_empty = EINA_TRUE;
+                  eo_lexer_get(ls);
+               }
              check_next(ls, ';');
              break;
            default:
@@ -1599,7 +1622,13 @@ propend:
         check_next(ls, '}');
      }
    else
-     check_next(ls, ';');
+     {
+        if (glob_auto)
+          impl->get_auto = impl->set_auto = EINA_TRUE;
+        if (glob_empty)
+          impl->get_empty = impl->set_empty = EINA_TRUE;
+        check_next(ls, ';');
+     }
 end:
    if (buf)
      {

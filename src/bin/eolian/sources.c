@@ -119,8 +119,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
           Eolian_Function_Type ftype, Eina_Strbuf *buf,
           const Eolian_Implement *impl, Eina_Strbuf *lbuf)
 {
-   Eina_Bool is_empty = eolian_implement_is_empty(impl);
-   Eina_Bool is_auto = eolian_implement_is_auto(impl);
+   Eina_Bool is_empty = eolian_implement_is_empty(impl, ftype);
+   Eina_Bool is_auto = eolian_implement_is_auto(impl, ftype);
 
    if ((ftype != EOLIAN_PROP_GET) && (ftype != EOLIAN_PROP_SET))
      ftype = eolian_function_type_get(fid);

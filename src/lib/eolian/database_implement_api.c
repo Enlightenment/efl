@@ -44,24 +44,39 @@ eolian_implement_function_get(const Eolian_Implement *impl,
 }
 
 EAPI Eina_Bool
-eolian_implement_is_auto(const Eolian_Implement *impl)
+eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
-   return impl->is_auto;
+   switch (ftype)
+     {
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return impl->get_auto; break;
+      case EOLIAN_PROP_SET: return impl->set_auto; break;
+      default: return EINA_FALSE;
+     }
 }
 
 EAPI Eina_Bool
-eolian_implement_is_empty(const Eolian_Implement *impl)
+eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
-   return impl->is_empty;
+   switch (ftype)
+     {
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return impl->get_empty; break;
+      case EOLIAN_PROP_SET: return impl->set_empty; break;
+      default: return EINA_FALSE;
+     }
 }
 
 EAPI Eina_Bool
-eolian_implement_is_virtual(const Eolian_Implement *impl)
+eolian_implement_is_virtual(const Eolian_Implement *impl, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
-   return impl->is_virtual;
+   switch (ftype)
+     {
+      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return impl->get_virtual; break;
+      case EOLIAN_PROP_SET: return impl->set_virtual; break;
+      default: return EINA_FALSE;
+     }
 }
 
 EAPI Eina_Bool

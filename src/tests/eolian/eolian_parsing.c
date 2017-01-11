@@ -202,18 +202,18 @@ START_TEST(eolian_override)
    fail_if(!(iter = eolian_class_implements_get(class)));
 
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(eolian_implement_is_auto(impl));
-   fail_if(eolian_implement_is_empty(impl));
-   fail_if(eolian_implement_is_virtual(impl));
+   fail_if(eolian_implement_is_auto(impl, EOLIAN_METHOD));
+   fail_if(eolian_implement_is_empty(impl, EOLIAN_METHOD));
+   fail_if(eolian_implement_is_virtual(impl, EOLIAN_METHOD));
    fail_if(!(impl_class = eolian_implement_class_get(impl)));
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != base);
    fail_if(strcmp(eolian_function_name_get(impl_func), "constructor"));
 
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(!eolian_implement_is_auto(impl));
-   fail_if(eolian_implement_is_empty(impl));
-   fail_if(eolian_implement_is_virtual(impl));
+   fail_if(!eolian_implement_is_auto(impl, EOLIAN_PROP_SET));
+   fail_if(eolian_implement_is_empty(impl, EOLIAN_PROP_SET));
+   fail_if(eolian_implement_is_virtual(impl, EOLIAN_PROP_SET));
    fail_if(!(impl_class = eolian_implement_class_get(impl)));
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != class);
@@ -226,9 +226,9 @@ START_TEST(eolian_override)
    fail_if(eolian_function_is_virtual_pure(impl_func, EOLIAN_PROP_GET));
 
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(eolian_implement_is_auto(impl));
-   fail_if(!eolian_implement_is_empty(impl));
-   fail_if(eolian_implement_is_virtual(impl));
+   fail_if(eolian_implement_is_auto(impl, EOLIAN_METHOD));
+   fail_if(!eolian_implement_is_empty(impl, EOLIAN_METHOD));
+   fail_if(eolian_implement_is_virtual(impl, EOLIAN_METHOD));
    fail_if(!(impl_class = eolian_implement_class_get(impl)));
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != class);

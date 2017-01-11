@@ -273,9 +273,9 @@ ffi.cdef [[
     const char *eolian_implement_full_name_get(const Eolian_Implement *impl);
     const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl);
     const Eolian_Function *eolian_implement_function_get(const Eolian_Implement *impl, Eolian_Function_Type *func_type);
-    Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl);
-    Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl);
-    Eina_Bool eolian_implement_is_virtual(const Eolian_Implement *impl);
+    Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type ftype);
+    Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type ftype);
+    Eina_Bool eolian_implement_is_virtual(const Eolian_Implement *impl, Eolian_Function_Type ftype);
     Eina_Bool eolian_implement_is_prop_get(const Eolian_Implement *impl);
     Eina_Bool eolian_implement_is_prop_set(const Eolian_Implement *impl);
     Eina_Iterator *eolian_class_implements_get(const Eolian_Class *klass);
@@ -919,16 +919,16 @@ ffi.metatype("Eolian_Implement", {
             return v, tp[0]
         end,
 
-        is_auto = function(self)
-            return eolian.eolian_implement_is_auto(self) ~= 0
+        is_auto = function(self, ftype)
+            return eolian.eolian_implement_is_auto(self, ftype) ~= 0
         end,
 
-        is_empty = function(self)
-            return eolian.eolian_implement_is_empty(self) ~= 0
+        is_empty = function(self, ftype)
+            return eolian.eolian_implement_is_empty(self, ftype) ~= 0
         end,
 
-        is_virtual = function(self)
-            return eolian.eolian_implement_is_virtual(self) ~= 0
+        is_virtual = function(self, ftype)
+            return eolian.eolian_implement_is_virtual(self, ftype) ~= 0
         end,
 
         is_prop_get = function(self)

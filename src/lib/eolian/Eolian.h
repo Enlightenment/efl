@@ -1056,31 +1056,34 @@ EAPI const Eolian_Function *eolian_implement_function_get(const Eolian_Implement
  * @brief Get whether an implement is tagged with @auto.
  *
  * @param[in] impl the handle of the implement
+ * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE when it is, EINA_FALSE when it's not.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl);
+EAPI Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type f_type);
 
 /*
  * @brief Get whether an implement is tagged with @empty.
  *
  * @param[in] impl the handle of the implement
+ * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE when it is, EINA_FALSE when it's not.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl);
+EAPI Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type f_type);
 
 /*
  * @brief Get whether an implement is tagged with @virtual.
  *
  * @param[in] impl the handle of the implement
+ * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE when it is, EINA_FALSE when it's not.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_implement_is_virtual(const Eolian_Implement *impl);
+EAPI Eina_Bool eolian_implement_is_virtual(const Eolian_Implement *impl, Eolian_Function_Type f_type);
 
 /*
  * @brief Get whether an implement references a property getter.

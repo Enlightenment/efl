@@ -66,6 +66,8 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
 
    Eolian_Function_Type aftype = eolian_function_type_get(fid);
 
+   Eina_Bool auto_empty = (impl->get_auto || impl->get_empty);
+
    /* match implement type against function type */
    if (ftype == EOLIAN_PROPERTY)
      {
@@ -76,6 +78,7 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
              fprintf(stderr, "function '%s' is not a complete property", fnname);
              return EINA_FALSE;
           }
+        auto_empty = auto_empty && (impl->set_auto || impl->set_empty);
      }
    else if (ftype == EOLIAN_PROP_SET)
      {
@@ -86,6 +89,7 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
              fprintf(stderr, "function '%s' doesn't have a setter\n", fnname);
              return EINA_FALSE;
           }
+        auto_empty = (impl->set_auto || impl->set_empty);
      }
    else if (ftype == EOLIAN_PROP_GET)
      {
@@ -104,7 +108,7 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
         return EINA_FALSE;
      }
 
-   if ((fid->klass == cl) && !impl->is_auto && !impl->is_empty)
+   if ((fid->klass == cl) && !auto_empty)
      {
         /* only allow explicit implements from other classes, besides auto and
          * empty... also prevents pure virtuals from being implemented
@@ -137,42 +141,18 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
    if (!_get_impl_func(cl, impl, ftype, &foo_id))
      return EINA_FALSE;
 
-   if (impl->is_auto)
+   foo_id->get_auto = impl->get_auto;
+   foo_id->set_auto = impl->set_auto;
+   foo_id->get_empty = impl->get_empty;
+   foo_id->set_empty = impl->set_empty;
+   if (foo_id->get_auto || foo_id->get_empty)
      {
-        if (ftype == EOLIAN_PROP_GET)
-          {
-             foo_id->get_impl = impl;
-             foo_id->get_auto = EINA_TRUE;
-          }
-        else if (ftype == EOLIAN_PROP_SET)
-          {
-             foo_id->set_impl = impl;
-             foo_id->set_auto = EINA_TRUE;
-          }
-        else
-          {
-             foo_id->get_impl = foo_id->set_impl = impl;
-             foo_id->get_auto = foo_id->set_auto = EINA_TRUE;
-          }
+        if (ftype == EOLIAN_UNRESOLVED)
+          foo_id->set_impl = impl;
+        foo_id->get_impl = impl;
      }
-   else if (impl->is_empty)
-     {
-        if (ftype == EOLIAN_PROP_GET)
-          {
-             foo_id->get_impl = impl;
-             foo_id->get_empty = EINA_TRUE;
-          }
-        else if (ftype == EOLIAN_PROP_SET)
-          {
-             foo_id->set_impl = impl;
-             foo_id->set_empty = EINA_TRUE;
-          }
-        else
-          {
-             foo_id->get_impl = foo_id->set_impl = impl;
-             foo_id->get_empty = foo_id->set_empty = EINA_TRUE;
-          }
-     }
+   if (foo_id->set_auto || foo_id->set_empty)
+     foo_id->set_impl = impl;
 
    return EINA_TRUE;
 }
@@ -205,10 +185,9 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
 
    if (foo_id->type == EOLIAN_PROPERTY)
      {
-        /* FIXME fugly hack, ideally rework the whole implements api altogether */
         if (foo_id->get_virtual_pure && !foo_id->get_impl)
           {
-             impl->is_virtual = EINA_TRUE;
+             impl->get_virtual = EINA_TRUE;
              impl->is_prop_get = EINA_TRUE;
              foo_id->get_impl = impl;
              cl->implements = eina_list_append(cl->implements, impl);
@@ -218,7 +197,7 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
           }
         else if (foo_id->set_virtual_pure && !foo_id->set_impl)
           {
-             impl->is_virtual = EINA_TRUE;
+             impl->set_virtual = EINA_TRUE;
              impl->is_prop_set = EINA_TRUE;
              foo_id->set_impl = impl;
              cl->implements = eina_list_append(cl->implements, impl);
@@ -229,7 +208,7 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
         if (foo_id->get_impl)
           {
              impl->is_prop_set = EINA_TRUE;
-             impl->is_virtual = foo_id->set_virtual_pure;
+             impl->set_virtual = foo_id->set_virtual_pure;
              foo_id->set_impl = impl;
           }
         else if (foo_id->set_impl)
@@ -243,18 +222,18 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
    else if (foo_id->type == EOLIAN_PROP_SET)
      {
         impl->is_prop_set = EINA_TRUE;
-        impl->is_virtual = foo_id->get_virtual_pure;
+        impl->get_virtual = foo_id->get_virtual_pure;
         foo_id->set_impl = impl;
      }
    else if (foo_id->type == EOLIAN_PROP_GET)
      {
         impl->is_prop_get = EINA_TRUE;
-        impl->is_virtual = foo_id->set_virtual_pure;
+        impl->get_virtual = foo_id->set_virtual_pure;
         foo_id->get_impl = impl;
      }
    else
      {
-        impl->is_virtual = foo_id->get_virtual_pure;
+        impl->get_virtual = foo_id->get_virtual_pure;
         foo_id->get_impl = foo_id->set_impl = impl;
      }
 

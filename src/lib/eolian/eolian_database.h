@@ -201,11 +201,14 @@ struct _Eolian_Implement
    const Eolian_Class *klass;
    const Eolian_Function *foo_id;
    Eina_Stringshare *full_name;
-   Eina_Bool is_virtual :1;
    Eina_Bool is_prop_get :1;
    Eina_Bool is_prop_set :1;
-   Eina_Bool is_auto: 1;
-   Eina_Bool is_empty: 1;
+   Eina_Bool get_virtual :1;
+   Eina_Bool set_virtual :1;
+   Eina_Bool get_auto: 1;
+   Eina_Bool set_auto: 1;
+   Eina_Bool get_empty: 1;
+   Eina_Bool set_empty: 1;
 };
 
 struct _Eolian_Constructor
