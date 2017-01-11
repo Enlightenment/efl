@@ -44,6 +44,7 @@ typedef struct _Ecore_Wl2_Pointer Ecore_Wl2_Pointer;
 typedef struct _Ecore_Wl2_Keyboard Ecore_Wl2_Keyboard;
 typedef struct _Ecore_Wl2_Touch Ecore_Wl2_Touch;
 typedef struct _Ecore_Wl2_Offer Ecore_Wl2_Offer;
+
 /* matches protocol values */
 typedef enum
 {
@@ -66,6 +67,7 @@ struct _Ecore_Wl2_Event_Connection
 {
    Ecore_Wl2_Display *display;
 };
+
 typedef struct _Ecore_Wl2_Event_Connection Ecore_Wl2_Event_Connect;
 typedef struct _Ecore_Wl2_Event_Connection Ecore_Wl2_Event_Disconnect;
 
@@ -204,7 +206,8 @@ typedef struct _Ecore_Wl2_Event_Sync_Done
    Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Sync_Done;
 
-typedef struct _Ecore_Wl2_Event_Offer_Data_Ready{
+typedef struct _Ecore_Wl2_Event_Offer_Data_Ready
+{
    Ecore_Wl2_Offer *offer;
    char *data;
    int len;
@@ -247,6 +250,7 @@ EAPI extern int ECORE_WL2_EVENT_SEAT_NAME_CHANGED; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_DEVICE_ADDED; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_DEVICE_REMOVED; /** @since 1.19 */
+
 /**
  * @file
  * @brief Ecore functions for dealing with the Wayland display protocol
