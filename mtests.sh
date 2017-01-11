@@ -92,7 +92,7 @@ while [ $# -ge 1 ]; do
          QUIET=1
          ;;
       -h|--help)
-         echo "Usage: $SCRIPT_FILE [options]"
+         echo "Usage: $SCRIPT_FILE [options] [tests]"
          echo
          echo "Options:"
          echo "    -b, --abort            Abort on test failure"
@@ -189,6 +189,16 @@ function run_test
    exit 1
 }
 
+function run_dir
+{
+   enter_dir || continue
+   for test_c in $(find $dir -name test_*.c | sort)
+   do
+      run_test
+   done
+   say "  leave"
+}
+
 function report
 {
    [ $QUIET -eq 1 ] && exit 0
@@ -200,15 +210,22 @@ function report
 
 for test_c in $TESTS
 do
-   if [ ! -f $test_c ]
+   if [ ! -r $test_c ]
    then
       say "$test_c does not exists"
       continue
    fi
-   dir=${test_c%/*}
-   enter_dir || continue
-   run_test
-   say "  leave"
+   if [ -d $test_c ]
+   then
+      dir=$test_c
+      run_dir
+      echo
+   else
+      dir=${test_c%/*}
+      enter_dir || continue
+      run_test
+      say "  leave"
+   fi
 done
 
 [ ! -z "$TESTS" ] && report
@@ -216,12 +233,7 @@ done
 say "search for tests into $SRC_D"
 for dir in $(find $SRC_D -type d -name tests)
 do
-   enter_dir || continue
-   for test_c in $(find $dir -name test_*.c | sort)
-   do
-      run_test
-   done
-   say "  leave"
+   run_dir
 done
 say "done"
 
