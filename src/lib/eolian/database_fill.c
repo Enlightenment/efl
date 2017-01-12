@@ -129,7 +129,7 @@ static Eina_Bool
 _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 {
    Eolian_Function *foo_id;
-   Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
+   Eolian_Function_Type ftype = EOLIAN_METHOD;
 
    if (impl->is_prop_get && impl->is_prop_set)
      ftype = EOLIAN_PROPERTY;
@@ -147,7 +147,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
    foo_id->set_empty = impl->set_empty;
    if (foo_id->get_auto || foo_id->get_empty)
      {
-        if (ftype == EOLIAN_UNRESOLVED)
+        if (ftype == EOLIAN_METHOD)
           foo_id->set_impl = impl;
         foo_id->get_impl = impl;
      }

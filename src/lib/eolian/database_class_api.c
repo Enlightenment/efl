@@ -138,6 +138,8 @@ eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name,
      {
         EINA_LIST_FOREACH(cl->properties, itr, fid)
           {
+             if (!database_function_is_type(fid, f_type))
+               continue;
              if (!strcmp(fid->name, func_name))
                 return fid;
           }

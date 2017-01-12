@@ -325,6 +325,7 @@ void database_class_del(Eolian_Class *cl);
 /* functions */
 void database_function_del(Eolian_Function *fid);
 void database_function_constructor_add(Eolian_Function *func, const Eolian_Class *klass);
+Eina_Bool database_function_is_type(Eolian_Function *fid, Eolian_Function_Type ftype);
 
 /* func parameters */
 void database_parameter_del(Eolian_Function_Parameter *pdesc);

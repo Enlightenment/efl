@@ -129,8 +129,8 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
             [[Get the selected item.
 
 
-              The selected item can be unselected with function
-              @.selected_item.set, and the first item of
+              The selected item can be unselected with
+              @Elm.Diskselector.Item.selected.set, and the first item of
               diskselector will be selected.
 
               The selected item always will be centered on diskselector, with

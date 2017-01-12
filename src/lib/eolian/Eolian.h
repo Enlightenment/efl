@@ -655,6 +655,8 @@ EAPI Eina_Iterator *eolian_class_inherits_get(const Eolian_Class *klass);
  * @param[in] func_type type of the functions to insert into the list.
  * @return the iterator
  *
+ * Acceptable inputs are EOLIAN_PROPERTY or EOLIAN_METHOD.
+ *
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_class_functions_get(const Eolian_Class *klass, Eolian_Function_Type func_type);
@@ -675,6 +677,8 @@ EAPI Eolian_Function_Type eolian_function_type_get(const Eolian_Function *functi
  * @param[in] function_id Id of the function
  * @param[in] ftype The type of function to get the scope for
  * @return the function scope
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
  *
  * @ingroup Eolian
  */
@@ -720,6 +724,10 @@ EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *fu
  * @param[in] f_type type of the function
  * @return the function id if found, NULL otherwise.
  *
+ * Providing EOLIAN_UNRESOLVED finds any func, EOLIAN_PROPERTY any property,
+ * EOLIAN_METHOD any method, EOLIAN_PROP_GET properties with either only a getter
+ * or full property, EOLIAN_PROP_SET either only a setter or full property.
+ *
  * @ingroup Eolian
  */
 EAPI const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
@@ -730,6 +738,8 @@ EAPI const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class
  * @param[in] function_id Id of the function
  * @param[in] f_type The function type, for property get/set distinction.
  * @return the legacy name or NULL.
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
  *
  * @ingroup Eolian
  */
@@ -742,6 +752,8 @@ EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *functio
  * @param[in] f_type The function type, for property get/set distinction.
  * @return the documentation or NULL.
  *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
  * @ingroup Eolian
  */
 EAPI const Eolian_Documentation *eolian_function_documentation_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
@@ -752,6 +764,8 @@ EAPI const Eolian_Documentation *eolian_function_documentation_get(const Eolian_
  * @param[in] function_id Id of the function
  * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE if virtual pure, EINA_FALSE othrewise.
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
  *
  * @ingroup Eolian
  */
@@ -764,6 +778,8 @@ EAPI Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_i
  * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE if auto, EINA_FALSE othrewise.
  *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_is_auto(const Eolian_Function *function_id, Eolian_Function_Type f_type);
@@ -775,6 +791,8 @@ EAPI Eina_Bool eolian_function_is_auto(const Eolian_Function *function_id, Eolia
  * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE if empty, EINA_FALSE othrewise.
  *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_is_empty(const Eolian_Function *function_id, Eolian_Function_Type f_type);
@@ -785,6 +803,8 @@ EAPI Eina_Bool eolian_function_is_empty(const Eolian_Function *function_id, Eoli
  * @param[in] function_id Id of the function
  * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE if legacy only, EINA_FALSE otherwise.
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
  *
  * @ingroup Eolian
  */
@@ -848,6 +868,8 @@ EAPI Eina_Iterator *eolian_function_parameters_get(const Eolian_Function *functi
  * @param[in] ftype The function type, for property get/set distinction.
  * @return the iterator
  *
+ * Acceptable input types are PROP_GET and PROP_SET.
+ *
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
@@ -858,6 +880,8 @@ EAPI Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eoli
  * @param[in] function_id Id of the function
  * @param[in] ftype The function type, for property get/set distinction.
  * @return the iterator
+ *
+ * Acceptable input types are PROP_GET and PROP_SET.
  *
  * @ingroup Eolian
  */
@@ -953,6 +977,8 @@ EAPI Eina_Bool eolian_parameter_is_optional(const Eolian_Function_Parameter *par
  * The type of the function is needed because a given function can represent a
  * property, that can be set and get functions.
  *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_function_return_type_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
@@ -967,6 +993,8 @@ EAPI const Eolian_Type *eolian_function_return_type_get(const Eolian_Function *f
  * The return default value is needed to return an appropriate
  * value if an error occurs (eo_do failure...).
  * The default value is not mandatory, so NULL can be returned.
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
  *
  * @ingroup Eolian
  */
@@ -983,6 +1011,8 @@ eolian_function_return_default_value_get(const Eolian_Function *foo_id, Eolian_F
  * The type of the function is needed because a given function can represent a
  * property, that can be set and get functions.
  *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
  * @ingroup Eolian
  */
 EAPI const Eolian_Documentation *eolian_function_return_documentation_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
@@ -996,6 +1026,8 @@ EAPI const Eolian_Documentation *eolian_function_return_documentation_get(const 
  *
  * The type of the function is needed because a given function can represent a
  * property, that can be set and get functions.
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
  *
  * @ingroup Eolian
  */
@@ -1059,6 +1091,8 @@ EAPI const Eolian_Function *eolian_implement_function_get(const Eolian_Implement
  * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE when it is, EINA_FALSE when it's not.
  *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type f_type);
@@ -1070,6 +1104,8 @@ EAPI Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Fun
  * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE when it is, EINA_FALSE when it's not.
  *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type f_type);
@@ -1080,6 +1116,8 @@ EAPI Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Fu
  * @param[in] impl the handle of the implement
  * @param[in] f_type The function type, for property get/set distinction.
  * @return EINA_TRUE when it is, EINA_FALSE when it's not.
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
  *
  * @ingroup Eolian
  */

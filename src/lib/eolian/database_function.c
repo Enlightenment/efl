@@ -60,3 +60,15 @@ database_function_constructor_add(Eolian_Function *func, const Eolian_Class *cls
      (func->ctor_of, EINA_COMPARE_CB(strcmp),
       eina_stringshare_ref(cls->full_name));
 }
+
+Eina_Bool
+database_function_is_type(Eolian_Function *fid, Eolian_Function_Type ftype)
+{
+   if (ftype == EOLIAN_UNRESOLVED)
+     return EINA_TRUE;
+   else if (ftype == EOLIAN_PROP_GET)
+     return (fid->type == EOLIAN_PROP_GET) || (fid->type == EOLIAN_PROPERTY);
+   else if (ftype == EOLIAN_PROP_SET)
+     return (fid->type == EOLIAN_PROP_SET) || (fid->type == EOLIAN_PROPERTY);
+   return (fid->type == ftype);
+}
