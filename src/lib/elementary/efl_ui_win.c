@@ -2998,7 +2998,16 @@ _elm_ee_xwin_get(const Ecore_Evas *ee)
 static void
 _internal_elm_win_xwindow_get(Efl_Ui_Win_Data *sd)
 {
+   Ecore_X_Window pwin = sd->x.xwin;
    sd->x.xwin = _elm_ee_xwin_get(sd->ee);
+   if (sd->x.xwin != pwin)
+     {
+        char buf[128];
+
+        snprintf(buf, sizeof(buf), "%x", sd->x.xwin);
+        eina_stringshare_del(sd->stack_id);
+        sd->stack_id = eina_stringshare_add(buf);
+     }
 }
 #endif
 
@@ -4923,14 +4932,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     {
-        char buf[128];
-
-        ecore_x_io_error_handler_set(_elm_x_io_err, NULL);
-        snprintf(buf, sizeof(buf), "%x", sd->x.xwin);
-        sd->stack_id = eina_stringshare_add(buf);
-     }
+   if (sd->x.xwin) ecore_x_io_error_handler_set(_elm_x_io_err, NULL);
 #endif
 
 #ifdef HAVE_ELEMENTARY_WL2
