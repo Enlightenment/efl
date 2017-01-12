@@ -582,6 +582,8 @@ _touch_create(Elput_Seat *seat)
    touch = calloc(1, sizeof(Elput_Touch));
    if (!touch) return NULL;
 
+   touch->x = -1;
+   touch->y = -1;
    touch->seat = seat;
 
    return touch;
@@ -955,7 +957,7 @@ _pointer_axis(struct libinput_device *idevice, struct libinput_event_pointer *ev
 }
 
 static void
-_touch_event_send(Elput_Device *dev, struct libinput_event_touch *event, int type)
+_touch_event_send(Elput_Device *dev, int type)
 {
    Elput_Touch *touch;
    Ecore_Event_Mouse_Button *ev;
@@ -970,7 +972,7 @@ _touch_event_send(Elput_Device *dev, struct libinput_event_touch *event, int typ
    ev->window = dev->seat->manager->window;
    ev->event_window = dev->seat->manager->window;
    ev->root_window = dev->seat->manager->window;
-   ev->timestamp = libinput_event_touch_get_time(event);
+   ev->timestamp = touch->timestamp;
    ev->same_screen = 1;
 
    ev->x = touch->x;
@@ -1008,8 +1010,6 @@ _touch_down(struct libinput_device *idevice, struct libinput_event_touch *event)
 {
    Elput_Device *dev;
    Elput_Touch *touch;
-   unsigned int timestamp;
-   int slot;
 
    dev = libinput_device_get_user_data(idevice);
    if (!dev) return;
@@ -1017,8 +1017,8 @@ _touch_down(struct libinput_device *idevice, struct libinput_event_touch *event)
    touch = _evdev_touch_get(dev->seat);
    if (!touch) return;
 
-   slot = libinput_event_touch_get_seat_slot(event);
-   timestamp = libinput_event_touch_get_time(event);
+   touch->slot = libinput_event_touch_get_seat_slot(event);
+   touch->timestamp = libinput_event_touch_get_time(event);
 
    touch->x = libinput_event_touch_get_x_transformed(event, dev->ow);
    touch->y = libinput_event_touch_get_y_transformed(event, dev->oh);
@@ -1028,23 +1028,22 @@ _touch_down(struct libinput_device *idevice, struct libinput_event_touch *event)
    /*                                         touch->x, touch->y, */
    /*                                         &touch->x, &touch->y); */
 
-   if (slot == touch->grab.id)
+   if (touch->slot == touch->grab.id)
      {
         touch->grab.x = touch->x;
         touch->grab.y = touch->y;
      }
 
-   touch->slot = slot;
    touch->points++;
 
-   _touch_event_send(dev, event, ECORE_EVENT_MOUSE_BUTTON_DOWN);
+   _touch_event_send(dev, ECORE_EVENT_MOUSE_BUTTON_DOWN);
 
    if (touch->points == 1)
      {
-        touch->grab.id = slot;
+        touch->grab.id = touch->slot;
         touch->grab.x = touch->x;
         touch->grab.y = touch->y;
-        touch->grab.timestamp = timestamp;
+        touch->grab.timestamp = touch->timestamp;
      }
 }
 
@@ -1062,12 +1061,15 @@ _touch_up(struct libinput_device *idevice, struct libinput_event_touch *event)
 
    touch->points--;
    touch->slot = libinput_event_touch_get_seat_slot(event);
+   touch->timestamp = libinput_event_touch_get_time(event);
+   touch->x = 0;
+   touch->y = 0;
 
-   _touch_event_send(dev, event, ECORE_EVENT_MOUSE_BUTTON_UP);
+   _touch_event_send(dev, ECORE_EVENT_MOUSE_BUTTON_UP);
 }
 
 static void
-_touch_motion_send(Elput_Device *dev, struct libinput_event_touch *event)
+_touch_motion_send(Elput_Device *dev)
 {
    Elput_Touch *touch;
    Ecore_Event_Mouse_Move *ev;
@@ -1081,7 +1083,7 @@ _touch_motion_send(Elput_Device *dev, struct libinput_event_touch *event)
    ev->window = dev->seat->manager->window;
    ev->event_window = dev->seat->manager->window;
    ev->root_window = dev->seat->manager->window;
-   ev->timestamp = libinput_event_touch_get_time(event);
+   ev->timestamp = touch->timestamp;
    ev->same_screen = 1;
 
    ev->x = touch->x;
@@ -1126,8 +1128,9 @@ _touch_motion(struct libinput_device *idevice, struct libinput_event_touch *even
    /*                                         &touch->x, &touch->y); */
 
    touch->slot = libinput_event_touch_get_seat_slot(event);
+   touch->timestamp = libinput_event_touch_get_time(event);
 
-   _touch_motion_send(dev, event);
+   _touch_motion_send(dev);
 }
 
 void

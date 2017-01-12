@@ -175,6 +175,7 @@ struct _Elput_Touch
    double x, y;
    int slot;
    unsigned int points;
+   unsigned int timestamp;
 
    struct
      {
