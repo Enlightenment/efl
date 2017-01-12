@@ -37,6 +37,7 @@ struct _Efl_Ui_Text_Data
    Evas_Object                          *mgf_bg;
    Evas_Object                          *mgf_clip;
    Evas_Object                          *mgf_proxy;
+   Eo                                   *text_obj;
    Eo                                   *cursor;
    Eo                                   *cursor_bidi;
    Evas_Object                          *start_handler;
@@ -1072,22 +1073,24 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
 
    evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
 
-
    if (!sd->changed && (sd->last_w == resw))
      {
         if (sd->scroll)
           {
-             Evas_Coord vw = 0, vh = 0, h = 0;
+             if (sd->text_obj)
+             {
+                 Evas_Coord vw = 0, vh = 0, h = 0;
 
-             // Called for line wrapping + scrolling; use the viewport
-             // width and the formatted height as proper constraints.
-             elm_interface_scrollable_content_viewport_geometry_get
-                (obj, NULL, NULL, &vw, &vh);
+                 // Called for line wrapping + scrolling; use the viewport
+                 // width and the formatted height as proper constraints.
+                 elm_interface_scrollable_content_viewport_geometry_get
+                     (obj, NULL, NULL, &vw, &vh);
 
-             efl_canvas_text_size_formatted_get(obj, NULL, &h);
-             if (vh > h) h = vh;
+                 efl_canvas_text_size_formatted_get(sd->text_obj, NULL, &h);
+                 if (vh > h) h = vh;
 
-             evas_object_resize(sd->entry_edje, vw, h);
+                 evas_object_resize(sd->entry_edje, vw, h);
+             }
           }
         return;
      }
@@ -2880,6 +2883,7 @@ _efl_ui_text_elm_layout_text_get(Eo *obj, Efl_Ui_Text_Data *sd, const char *item
 {
    const char *text;
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   sd->text_obj = text_obj;
 
    if (item)
      {
@@ -3527,6 +3531,10 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
    evas_object_event_callback_del_full(sd->entry_edje, EVAS_CALLBACK_MOVE,
          _efl_ui_text_move_cb, obj);
 
+   // XXX: explicitly delete the object, as it's been reparented to the canvas, due to
+   // a specific behavior of SWALLOW parts.
+   efl_del(sd->text_obj);
+   sd->text_obj = NULL;
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
