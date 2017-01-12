@@ -292,7 +292,7 @@ struct klass
      for (auto&& e : cls.events)
        {
            if (!as_generator(scope_tab << scope_tab << "evt_" << grammar::string_replace(',', '_') << "_delegate = "
-                       << "new efl.Event_Cb(on" << grammar::string_replace(',', '_') << "Callback);\n")
+                       << "new efl.Event_Cb(on_" << grammar::string_replace(',', '_') << "NativeCallback);\n")
                    .generate(sink, std::make_tuple(e.name, e.name), context))
                 return false;
        }
@@ -359,112 +359,43 @@ struct klass
      for (auto&& e : cls.events)
        {
            std::string upper_name = to_uppercase(e.name);
-           std::string name = e.name;
-           /* name[0] = toupper(name[0]); */
+           std::string upper_c_name = to_uppercase(e.c_name);
 
            // Wrapper event declaration
           if(!as_generator(
                 scope_tab << "protected event EventHandler " << grammar::string_replace(',', '_') << ";\n"
-                << scope_tab << "protected void On" << grammar::string_replace(',', '_') << "(EventArgs e)\n"
+                << scope_tab << "protected void On_" << grammar::string_replace(',', '_') << "(EventArgs e)\n"
                 << scope_tab << "{\n"
                 << scope_tab << scope_tab << "EventHandler evt = " << grammar::string_replace(',', '_') << ";\n"
                 << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
-                << scope_tab << "}\n")
-                  .generate(sink, std::make_tuple(upper_name, name, upper_name), context))
-              return false;
-
-          // Eo Event callback
-          if(!as_generator(
-                scope_tab << "public void on" << grammar::string_replace(',', '_') << "Callback(System.IntPtr data, System.IntPtr evt)\n"
+                << scope_tab << "}\n"
+                << scope_tab << "public void on_" << grammar::string_replace(',', '_') << "NativeCallback(System.IntPtr data, System.IntPtr evt)\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "On" << grammar::string_replace(',', '_') << "(EventArgs.Empty);\n"
-                << scope_tab << "}\n")
-                  .generate(sink, std::make_tuple(name, name, name), context))
+                << scope_tab << scope_tab << "On_" << grammar::string_replace(',', '_') << "(EventArgs.Empty);\n"
+                << scope_tab << "}\n"
+                << scope_tab << "efl.Event_Cb evt_" << grammar::string_replace(',', '_') << "_delegate;\n"
+                << scope_tab << "event EventHandler " << string << "." << grammar::string_replace(',', '_') << "{\n")
+                  .generate(sink, std::make_tuple(upper_name, e.name, upper_name, e.name, e.name, e.name, cls.cxx_name, upper_name), context))
               return false;
 
-
-          // FIXME Maybe allow contexts mixing cases instead of these successive as_generator?
-          if(!as_generator(scope_tab
-                << "efl.Event_Cb evt_" << grammar::string_replace(',', '_') << "_delegate;\n").generate(sink, e.name, context))
-              return false;
-          if(!as_generator(scope_tab
-                << "event EventHandler " << string << ".")
-                  .generate(sink, cls.cxx_name, context))
-              return false;
-
-          // Open add block body
           // FIXME Add locking
-          if (!as_generator(grammar::string_replace(',', '_') << " {\n"
-                << scope_tab << scope_tab << "add {\n")
-                  .generate(sink, e.name, add_upper_case_context(context)))
-              return false;
-
-          // Add block body
           if (!as_generator(
-                      scope_tab << scope_tab << scope_tab
-                      << "string key = \"_" << string << "\";\n")
-                  .generate(sink, e.c_name, add_upper_case_context(context)))
-              return false;
-
-          if (!as_generator(
-                      scope_tab << scope_tab << scope_tab
-                      << "if (add_cpp_event_handler(key, this.evt_"
-                      << grammar::string_replace(',', '_') << "_delegate))\n")
-                  .generate(sink, e.name, context))
-              return false;
-
-          if (!as_generator(
-                      scope_tab << scope_tab << scope_tab << scope_tab
-                      << grammar::string_replace(',', '_') << " += value;\n")
-                  .generate(sink, e.name, add_upper_case_context(context)))
-              return false;
-
-          if (!as_generator(
-                      scope_tab << scope_tab << scope_tab
-                      << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab
-                      << "Console.WriteLine(\"Error adding proxy for event ${key}\");\n")
-                  .generate(sink, NULL, context))
-              return false;
-
-          // Close add block and open remove block
-          if (!as_generator(scope_tab << scope_tab << "}\n"
-                << scope_tab << scope_tab << "remove {\n")
-                  .generate(sink, NULL, context))
-              return false;
-
-          // Remove block body
-          if (!as_generator(
-                      scope_tab << scope_tab << scope_tab
-                      << "string key = \"_" << string << "\";\n")
-                  .generate(sink, e.c_name, add_upper_case_context(context)))
-              return false;
-
-          if (!as_generator(
-                      scope_tab << scope_tab << scope_tab
-                      << "if (remove_cpp_event_handler(key, this.evt_"
-                      << grammar::string_replace(',', '_') << "_delegate))\n")
-                  .generate(sink, e.name, context))
-              return false;
-
-          if (!as_generator(
-                      scope_tab << scope_tab << scope_tab << scope_tab
-                      << grammar::string_replace(',', '_') << " -= value;\n")
-                  .generate(sink, e.name, add_upper_case_context(context)))
-              return false;
-
-          if (!as_generator(
-                      scope_tab << scope_tab << scope_tab
-                      << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab
-                      << "Console.WriteLine(\"Error removing proxy for event ${key}\");\n")
-                  .generate(sink, NULL, context))
-              return false;
-
-          // Close the remove block
-          if (!as_generator(scope_tab << scope_tab << "}\n"
-                << scope_tab << "}\n")
-                .generate(sink, NULL, context))
+                      scope_tab << scope_tab << "add {\n"
+                      << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
+                      << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << grammar::string_replace(',', '_') << "_delegate))\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << grammar::string_replace(',', '_') << " += value;\n"
+                      << scope_tab << scope_tab << scope_tab << "else\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error adding proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << "}\n"
+                      << scope_tab << scope_tab << "remove {\n"
+                      << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
+                      << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << grammar::string_replace(',', '_') << "_delegate))\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << grammar::string_replace(',', '_') << " -= value;\n"
+                      << scope_tab << scope_tab << scope_tab << "else\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error removing proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << "}\n"
+                      << scope_tab << "}\n")
+                  .generate(sink, std::make_tuple(upper_c_name, e.name, upper_name, upper_c_name, e.name, upper_name), context))
               return false;
        }
 
