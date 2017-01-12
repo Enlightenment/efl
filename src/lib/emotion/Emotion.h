@@ -196,6 +196,12 @@ enum _Emotion_Meta_Info
    EMOTION_META_INFO_TRACK_COUNT /**< track count - number of the track in the album */
 };
 
+enum _Emotion_Artwork_Info
+{
+   EMOTION_ARTWORK_IMAGE,
+   EMOTION_ARTWORK_PREVIEW_IMAGE
+};
+
 /**
  * @enum _Emotion_Vis
  *
@@ -266,6 +272,7 @@ typedef enum _Emotion_Event     Emotion_Event;
 typedef enum _Emotion_Meta_Info Emotion_Meta_Info; /**< Meta info type to be retrieved. */
 typedef enum _Emotion_Vis       Emotion_Vis; /**< Type of visualization. */
 typedef enum _Emotion_Aspect    Emotion_Aspect; /**< Aspect ratio option. */
+typedef enum _Emotion_Artwork_Info Emotion_Artwork_Info;
 
 #define EMOTION_CHANNEL_AUTO -1
 #define EMOTION_CHANNEL_DEFAULT 0
@@ -1340,6 +1347,17 @@ EAPI const char      *emotion_webcam_name_get(const Emotion_Webcam *ew);
  */
 EAPI const char      *emotion_webcam_device_get(const Emotion_Webcam *ew);
 
+/**
+ * @brief Get the album artwork from file meta data tags.
+ *
+ * @param obj The evas object we are working with.
+ * @param path The local path for the file.
+ * @param type The metadata location type (GST_IMAGE_PREVIEW_IMAGE or GST_PREVIEW).
+ * 
+ * @ingroup Emotion_Artwork
+ */
+
+EAPI Evas_Object     *emotion_file_meta_artwork_get(const Evas_Object *obj, const char *path, Emotion_Artwork_Info type);
 /**
  * @}
  */

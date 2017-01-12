@@ -791,6 +791,12 @@ emotion_engine_instance_meta_get(const Emotion_Engine_Instance *inst, int meta)
    EMOTION_ENGINE_INSTANCE_CALL_RET(inst, meta_get, NULL, meta);
 }
 
+void *
+emotion_engine_instance_meta_artwork_get(const Emotion_Engine_Instance *inst, Evas_Object *img, const char *path,  Emotion_Artwork_Info type)
+{
+   EMOTION_ENGINE_INSTANCE_CALL_RET(inst, meta_artwork_get, NULL, img, path, type);
+}
+
 void
 emotion_engine_instance_priority_set(Emotion_Engine_Instance *inst, Eina_Bool priority)
 {

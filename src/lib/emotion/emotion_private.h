@@ -89,6 +89,5 @@ Eina_Bool      emotion_engine_instance_eject(Emotion_Engine_Instance *inst);
 const char *   emotion_engine_instance_meta_get(const Emotion_Engine_Instance *inst, int meta);
 void           emotion_engine_instance_priority_set(Emotion_Engine_Instance *inst, Eina_Bool priority);
 Eina_Bool      emotion_engine_instance_priority_get(const Emotion_Engine_Instance *inst);
-
-
+void       *   emotion_engine_instance_meta_artwork_get(const Emotion_Engine_Instance *inst, Evas_Object *img, const char *path, Emotion_Artwork_Info type);
 #endif

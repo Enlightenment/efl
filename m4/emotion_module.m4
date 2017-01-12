@@ -50,7 +50,7 @@ dnl where want_engine = yes or static
 AC_DEFUN([EMOTION_MODULE_DEP_CHECK_GSTREAMER1],
 [dnl
    GST_VER=1.0
-   requirements="gstreamer-1.0 >= ${GST_VER} gstreamer-plugins-base-1.0 >= ${GST_VER} gstreamer-video-1.0 >= ${GST_VER} gstreamer-audio-1.0 >= ${GST_VER} gstreamer-tag-1.0 >= ${GST_VER}"
+   requirements="gstreamer-1.0 >= ${GST_VER} gstreamer-plugins-base-1.0 >= ${GST_VER} gstreamer-video-1.0 >= ${GST_VER} gstreamer-audio-1.0 >= ${GST_VER} gstreamer-tag-1.0 >= ${GST_VER} gstreamer-pbutils-1.0 >= ${GST_VER}"
    if test "$1" = "static"; then
       EFL_DEPEND_PKG([EMOTION], [EMOTION_MODULE_GSTREAMER1], [${requirements}])
    else

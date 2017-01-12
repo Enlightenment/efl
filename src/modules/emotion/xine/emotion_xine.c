@@ -1556,7 +1556,8 @@ static const Emotion_Engine em_engine =
      em_eject, /* eject */
      em_meta_get, /* meta_get */
      NULL, /* priority_set */
-     NULL /* priority_get */
+     NULL, /* priority_get */
+     NULL /* em_meta_artwork_get */
 };
 
 Eina_Bool

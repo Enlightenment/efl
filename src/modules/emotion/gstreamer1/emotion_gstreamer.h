@@ -9,6 +9,7 @@
 #include <gst/video/navigation.h>
 #include <gst/audio/audio.h>
 #include <gst/tag/tag.h>
+#include <gst/pbutils/pbutils.h>
 
 #include <unistd.h>
 #include <fcntl.h>

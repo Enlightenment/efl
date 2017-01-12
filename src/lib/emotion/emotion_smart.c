@@ -1262,6 +1262,26 @@ emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
    return emotion_engine_instance_meta_get(sd->engine_instance, id);
 }
 
+
+EAPI Evas_Object *
+emotion_file_meta_artwork_get(const Evas_Object *obj, const char *path, Emotion_Artwork_Info type)
+{
+   Efl_Canvas_Video_Data *sd;
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   if (!sd->engine_instance) return NULL;
+
+   Evas *ev = evas_object_evas_get(obj);
+   Evas_Object *artwork = evas_object_image_add(ev);
+
+   Evas_Object *result = emotion_engine_instance_meta_artwork_get(sd->engine_instance, artwork, path, type);
+   if (!result) return NULL;
+
+   Evas_Load_Error _error = evas_object_image_load_error_get(result);
+   if (_error != EVAS_LOAD_ERROR_NONE) return NULL;
+
+   return result;
+}
+
 EAPI void
 emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
 {

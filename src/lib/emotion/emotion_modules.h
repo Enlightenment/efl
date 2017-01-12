@@ -129,6 +129,7 @@ struct _Emotion_Engine
    const char *   (*meta_get) (void *ef, int meta);
    void           (*priority_set) (void *ef, Eina_Bool priority);
    Eina_Bool      (*priority_get) (void *ef);
+   void       *   (*meta_artwork_get)(void *ef, Evas_Object *img, const char *path, Emotion_Artwork_Info type);
 };
 
 EAPI void *_emotion_video_get(const Evas_Object *obj);
