@@ -582,8 +582,6 @@ _touch_create(Elput_Seat *seat)
    touch = calloc(1, sizeof(Elput_Touch));
    if (!touch) return NULL;
 
-   touch->x = -1;
-   touch->y = -1;
    touch->seat = seat;
 
    return touch;
@@ -1006,69 +1004,6 @@ _touch_event_send(Elput_Device *dev, int type)
 }
 
 static void
-_touch_down(struct libinput_device *idevice, struct libinput_event_touch *event)
-{
-   Elput_Device *dev;
-   Elput_Touch *touch;
-
-   dev = libinput_device_get_user_data(idevice);
-   if (!dev) return;
-
-   touch = _evdev_touch_get(dev->seat);
-   if (!touch) return;
-
-   touch->slot = libinput_event_touch_get_seat_slot(event);
-   touch->timestamp = libinput_event_touch_get_time(event);
-
-   touch->x = libinput_event_touch_get_x_transformed(event, dev->ow);
-   touch->y = libinput_event_touch_get_y_transformed(event, dev->oh);
-
-   /* TODO: these needs to run a matrix transform based on output */
-   /* _ecore_drm2_output_coordinate_transform(dev->output, */
-   /*                                         touch->x, touch->y, */
-   /*                                         &touch->x, &touch->y); */
-
-   if (touch->slot == touch->grab.id)
-     {
-        touch->grab.x = touch->x;
-        touch->grab.y = touch->y;
-     }
-
-   touch->points++;
-
-   _touch_event_send(dev, ECORE_EVENT_MOUSE_BUTTON_DOWN);
-
-   if (touch->points == 1)
-     {
-        touch->grab.id = touch->slot;
-        touch->grab.x = touch->x;
-        touch->grab.y = touch->y;
-        touch->grab.timestamp = touch->timestamp;
-     }
-}
-
-static void
-_touch_up(struct libinput_device *idevice, struct libinput_event_touch *event)
-{
-   Elput_Device *dev;
-   Elput_Touch *touch;
-
-   dev = libinput_device_get_user_data(idevice);
-   if (!dev) return;
-
-   touch = _evdev_touch_get(dev->seat);
-   if (!touch) return;
-
-   touch->points--;
-   touch->slot = libinput_event_touch_get_seat_slot(event);
-   touch->timestamp = libinput_event_touch_get_time(event);
-   touch->x = 0;
-   touch->y = 0;
-
-   _touch_event_send(dev, ECORE_EVENT_MOUSE_BUTTON_UP);
-}
-
-static void
 _touch_motion_send(Elput_Device *dev)
 {
    Elput_Touch *touch;
@@ -1105,6 +1040,69 @@ _touch_motion_send(Elput_Device *dev)
    ev->multi.root.y = ev->y;
 
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+}
+
+static void
+_touch_down(struct libinput_device *idevice, struct libinput_event_touch *event)
+{
+   Elput_Device *dev;
+   Elput_Touch *touch;
+
+   dev = libinput_device_get_user_data(idevice);
+   if (!dev) return;
+
+   touch = _evdev_touch_get(dev->seat);
+   if (!touch) return;
+
+   touch->slot = libinput_event_touch_get_seat_slot(event);
+   touch->timestamp = libinput_event_touch_get_time(event);
+
+   touch->x = libinput_event_touch_get_x_transformed(event, dev->ow);
+   touch->y = libinput_event_touch_get_y_transformed(event, dev->oh);
+
+   /* TODO: these needs to run a matrix transform based on output */
+   /* _ecore_drm2_output_coordinate_transform(dev->output, */
+   /*                                         touch->x, touch->y, */
+   /*                                         &touch->x, &touch->y); */
+
+   if (touch->slot == touch->grab.id)
+     {
+        touch->grab.x = touch->x;
+        touch->grab.y = touch->y;
+     }
+
+   touch->points++;
+
+   _touch_motion_send(dev);
+   _touch_event_send(dev, ECORE_EVENT_MOUSE_BUTTON_DOWN);
+
+   if (touch->points == 1)
+     {
+        touch->grab.id = touch->slot;
+        touch->grab.x = touch->x;
+        touch->grab.y = touch->y;
+        touch->grab.timestamp = touch->timestamp;
+     }
+}
+
+static void
+_touch_up(struct libinput_device *idevice, struct libinput_event_touch *event)
+{
+   Elput_Device *dev;
+   Elput_Touch *touch;
+
+   dev = libinput_device_get_user_data(idevice);
+   if (!dev) return;
+
+   touch = _evdev_touch_get(dev->seat);
+   if (!touch) return;
+
+   touch->points--;
+   touch->slot = libinput_event_touch_get_seat_slot(event);
+   touch->timestamp = libinput_event_touch_get_time(event);
+
+   _touch_motion_send(dev);
+   _touch_event_send(dev, ECORE_EVENT_MOUSE_BUTTON_UP);
 }
 
 static void
