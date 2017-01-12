@@ -994,6 +994,99 @@ group { name: "elm/border/base/default";
    }
 }
 
+group { name: "elm/border/base/dialog";
+   inherit: "elm/border/base/default";
+   parts {
+      text {  "elm.text.title";
+         clip: "top_clip";
+         desc { "default";
+            rel2.to_x: "elm.event.close";
+         }
+         desc { "focused";
+            inherit: "default";
+            visible: 0;
+         }
+      }
+      text {  "title2";
+         desc { "default";
+            rel2.to_x: "elm.event.close";
+         }
+         desc { "focused";
+            inherit: "default";
+            visible: 1;
+         }
+      }
+      image { "max1";
+         desc { "default";
+            visible: 0;
+         }
+         desc { "selected";
+            visible: 0;
+         }
+      }
+      image { "min1";
+         desc { "default";
+            visible: 0;
+         }
+         desc { "selected";
+            visible: 0;
+         }
+      }
+      image { "max2";
+         desc { "default";
+            visible: 0;
+         }
+         desc { "selected";
+            visible: 0;
+         }
+      }
+      image { "min2";
+         desc { "default";
+            visible: 0;
+         }
+         desc { "selected";
+            visible: 0;
+         }
+      }
+      rect {  "elm.event.maximize";
+         desc { "default";
+            visible: 0;
+         }
+      }
+      rect {  "elm.event.minimize";
+         desc { "default";
+            visible: 0;
+         }
+      }
+   }
+}
+
+group { name: "elm/border/base/naviframe";
+   images.image: "sym_left_dark_normal.png" COMP;
+   images.image: "sym_left_glow_normal.png" COMP;
+   images.image: "sym_left_light_normal.png" COMP;
+   inherit: "elm/border/base/dialog";
+   parts {
+      image { "close1";
+         desc { "default";
+            image.normal: "sym_left_dark_normal.png";
+         }
+         desc { "selected";
+            image.normal: "sym_left_glow_normal.png";
+         }
+      }
+      image { "close2"; nomouse;
+         clip: "clip2";
+         desc { "default";
+            image.normal: "sym_left_light_normal.png";
+         }
+         desc { "selected";
+            image.normal: "sym_left_glow_normal.png";
+         }
+      }
+   }
+}
+
 #undef UNRESIZABLE
 #undef BORDERLESS
 #undef MAXIMIZED

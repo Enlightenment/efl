@@ -15,11 +15,17 @@ _win_new(Evas_Object *stack_top, const char *title)
    Evas_Object *bg, *bx, *bt, *lb, *win;
 
    if (level >= 3)
-     win = elm_win_add(NULL, "window-stack", ELM_WIN_DIALOG_BASIC);
+     win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                   efl_ui_win_name_set(efl_added, "window-stack"),
+                   efl_ui_win_type_set(efl_added, ELM_WIN_NAVIFRAME_BASIC),
+                   efl_text_set(efl_added, title),
+                   efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    else
-     win = elm_win_add(NULL, "window-stack", ELM_WIN_BASIC);
-   elm_win_title_set(win, title);
-   elm_win_autodel_set(win, EINA_TRUE);
+     win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                   efl_ui_win_name_set(efl_added, "window-stack"),
+                   efl_ui_win_type_set(efl_added, ELM_WIN_DIALOG_BASIC),
+                   efl_text_set(efl_added, title),
+                   efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    if (level == 3) popto_win = win;
 

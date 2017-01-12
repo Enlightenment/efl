@@ -4165,7 +4165,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
    if (v < FRAME_OBJ_THEME_MIN_VERSION)
      {
         // Theme compatibility
-        const char *key = "elm/border/base/default"; // FIXME?
+        const char *key  = "elm/border/base/default"; // FIXME?
         char *sys_theme;
 
         WRN("Selected theme does not support the required border theme API "
@@ -5103,6 +5103,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    /* do not append to list; all windows render as black rects */
    if (type != ELM_WIN_FAKE)
      {
+        const char *style = "default";
+
         _elm_win_list = eina_list_append(_elm_win_list, obj);
         _elm_win_count++;
 
@@ -5111,7 +5113,13 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           {
              TRAP(sd, fullscreen_set, 1);
           }
-        _elm_win_frame_add(sd, "default");
+        switch (type)
+          {
+           case EFL_UI_WIN_DIALOG_BASIC:    style = "dialog"; break;
+           case EFL_UI_WIN_NAVIFRAME_BASIC: style = "naviframe"; break;
+           default: break;
+          }
+        _elm_win_frame_add(sd, style);
 
         if (_elm_config->focus_highlight_enable)
           elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);

@@ -53,11 +53,15 @@ enum Efl.Ui.Win.Type
                    contents will be rendered to an image buffer and can be
                    shown other process's plug image object.
                  ]]
-   fake [[This window was created using a pre-existing canvas. The window
+   fake, [[This window was created using a pre-existing canvas. The window
           widget can be deleted, but the canvas must be managed externally.
 
           @since 1.13
         ]]
+   naviframe_basic [[Used for naviframe style replacement with a back
+                     button instead of a close button.
+                     @since 1.19
+                    ]]
 }
 
 enum Efl.Ui.Win.Keyboard_Mode
