@@ -69,6 +69,7 @@ _generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
 
    const Eolian_Class *cl = eolian_class_get_by_name(bname);
    const Eolian_Function *fn = NULL;
+   /* match methods and properties; we're only figuring out existence */
    Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
    if (!cl)
      {
@@ -415,9 +416,6 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
    int curl = 0;
 
    const char *group = eolian_class_full_name_get(eolian_function_class_get(fid));
-
-   if (ftype == EOLIAN_UNRESOLVED)
-     ftype = EOLIAN_METHOD;
 
    if (ftype == EOLIAN_METHOD)
      {

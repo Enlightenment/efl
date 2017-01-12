@@ -42,8 +42,9 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
    if (!legacy && (fsc == EOLIAN_SCOPE_PROTECTED))
      eina_strbuf_append_printf(buf, "#ifdef %s_PROTECTED\n", cnameu);
 
-   Eina_Bool hasdoc = eolian_function_documentation_get(fid, EOLIAN_UNRESOLVED) ||
-                      eolian_function_documentation_get(fid, ftype);
+   Eina_Bool hasdoc = !!eolian_function_documentation_get(fid, ftype);
+   if (!hasdoc && ((ftype == EOLIAN_PROP_GET) || (ftype == EOLIAN_PROP_SET)))
+     hasdoc = !!eolian_function_documentation_get(fid, EOLIAN_PROPERTY);
    if (hasdoc)
      {
         Eina_Strbuf *dbuf = eo_gen_docs_func_gen(fid, ftype, 0, legacy);
@@ -239,7 +240,7 @@ eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
                 _gen_func(fid, EOLIAN_PROP_GET, buf, cname, cnameu, legacy);
                 break;
               default:
-                _gen_func(fid, EOLIAN_UNRESOLVED, buf, cname, cnameu, legacy);
+                _gen_func(fid, EOLIAN_METHOD, buf, cname, cnameu, legacy);
              }
         }
       eina_iterator_free(itr);

@@ -673,7 +673,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
                 _gen_func(cl, fid, EOLIAN_PROP_GET, buf, imp, lbuf);
                 break;
               default:
-                _gen_func(cl, fid, EOLIAN_UNRESOLVED, buf, imp, lbuf);
+                _gen_func(cl, fid, EOLIAN_METHOD, buf, imp, lbuf);
              }
         }
       eina_iterator_free(itr);
@@ -991,7 +991,7 @@ eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
                 _gen_proto(cl, fid, EOLIAN_PROP_GET, buf, imp, dt, cnamel);
                 break;
               default:
-                _gen_proto(cl, fid, EOLIAN_UNRESOLVED, buf, imp, dt, cnamel);
+                _gen_proto(cl, fid, EOLIAN_METHOD, buf, imp, dt, cnamel);
              }
         }
       eina_iterator_free(itr);
