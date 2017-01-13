@@ -56,10 +56,6 @@
 #include <Embryo.h>
 #include <Efreet.h>
 
-#ifdef HAVE_EIO
-# include <Eio.h>
-#endif
-
 #ifdef HAVE_EPHYSICS
 # include <EPhysics.h>
 #endif

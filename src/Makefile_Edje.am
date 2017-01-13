@@ -209,8 +209,8 @@ bin_edje_edje_pick_LDADD =  $(USE_EDJE_BIN_LIBS)
 bin_edje_edje_pick_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 bin_edje_edje_watch_SOURCES = bin/edje/edje_watch.c
-bin_edje_edje_watch_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
-bin_edje_edje_watch_LDADD =  $(USE_EDJE_BIN_LIBS)
+bin_edje_edje_watch_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS) -I$(top_srcdir)/src/lib/eio
+bin_edje_edje_watch_LDADD =  $(USE_EDJE_BIN_LIBS) $(top_builddir)/src/lib/eio/libeio.la
 bin_edje_edje_watch_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
 # EPP (Edje's CPP)
