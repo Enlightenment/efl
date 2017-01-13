@@ -157,6 +157,7 @@ _elm_bg_efl_file_file_set(Eo *obj, Elm_Bg_Data *sd, const char *file, const char
 
         sd->img = evas_object_image_add
             (evas_object_evas_get(wd->resize_obj));
+        evas_object_image_load_orientation_set(sd->img, EINA_TRUE);
         if ((sd->load_opts.w > 0) && (sd->load_opts.h > 0))
           evas_object_image_load_size_set
             (sd->img, sd->load_opts.w, sd->load_opts.h);
