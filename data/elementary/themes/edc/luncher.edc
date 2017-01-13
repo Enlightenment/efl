@@ -43,6 +43,13 @@ group { name: "e/gadget/luncher/icon";
    script {
       public urgent;
       public style;
+                public Float:engage_scale(cursorpos, iconpos, size) {
+                  new Float:scale = 2.25 - (abs(cursorpos-(iconpos+size/2)) / (size*2));
+                  if (scale < 1.0) scale = 1.0;
+                  if (scale > 2.0) scale = 2.0;
+
+                  return scale;
+               }
       public message(Msg_Type:type, id, ...) {
 
 //Style Variable - Used to Identify Style - Name Must Match an Item in the Data List of e/gadget/luncher/bar
@@ -84,145 +91,44 @@ group { name: "e/gadget/luncher/icon";
                }
             }
             else if (!strcmp(s, "engage")) {
-               if (pos == 0) {
-                  if ((ypos >= y) && (ypos <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.5);
-                     set_state_val(PART:"sizer", STATE_REL2, 2.0, 1.5);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((ypos-h) >= y) && ((ypos-h) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.3);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.6, 1.3);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((ypos+h) >= y) && ((ypos+h) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.3);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.6, 1.3);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((ypos-(h*2)) >= y) && ((ypos-(h*2)) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.2);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.4, 1.2);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((ypos+(h*2)) >= y) && ((ypos+(h*2)) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, 0.0, -0.2);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.4, 1.2);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else {
-                     set_state_anim(PART:"sizer", "default", 0.0, LINEAR, 1.0);
-                  }
+               if (pos == 0 && (xpos >= x) && (xpos <= (x+w))) {
+                  new Float:scale = engage_scale(ypos, y, h);
+                  new Float:halfscale = scale/2;
+
+                  custom_state(PART:"sizer", "default", 0.0);
+                  set_state_val(PART:"sizer", STATE_REL1, 0.0, 0.5-halfscale);
+                  set_state_val(PART:"sizer", STATE_REL2, scale, 0.5+halfscale);
+                  set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                }
-               else if (pos == 1) {
-                  if ((xpos >= x) && (xpos <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.5, 0.0);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.5, 2.0);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((xpos-w) >= x) && ((xpos-w) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.3, 0.0);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.3, 1.6);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((xpos+w) >= x) && ((xpos+w) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.3, 0.0);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.3, 1.6);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((xpos-(w*2)) >= x) && ((xpos-(w*2)) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.2, 0.0);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.2, 1.4);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((xpos+(w*2)) >= x) && ((xpos+(w*2)) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.2, 0.0);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.2, 1.4);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else {
-                     set_state_anim(PART:"sizer", "default", 0.0, LINEAR, 1.0);
-                  }
+               else if (pos == 1 && (ypos >= y) && (ypos <= (y+h))) {
+                  new Float:scale = engage_scale(xpos, x, w);
+                  new Float:halfscale = scale/2;
+
+                  custom_state(PART:"sizer", "default", 0.0);
+                  set_state_val(PART:"sizer", STATE_REL1, 0.5-halfscale, 0.0);
+                  set_state_val(PART:"sizer", STATE_REL2, 0.5+halfscale, scale);
+                  set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                }
-               else if (pos == 2) {
-                  if ((ypos >= y) && (ypos <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -1.0, -0.5);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.5);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((ypos-h) >= y) && ((ypos-h) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.6, -0.3);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.3);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((ypos+h) >= y) && ((ypos+h) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.6, -0.3);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.3);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((ypos-(h*2)) >= y) && ((ypos-(h*2)) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.4, -0.2);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.2);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((ypos+(h*2)) >= y) && ((ypos+(h*2)) <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.4, -0.2);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.0, 1.2);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else {
-                     set_state_anim(PART:"sizer", "default", 0.0, LINEAR, 1.0);
-                  }
+               else if (pos == 2 && (xpos >= x) && (xpos <= (x+w))) {
+                  new Float:scale = engage_scale(ypos, y, h);
+                  new Float:halfscale = scale/2;
+
+                  custom_state(PART:"sizer", "default", 0.0);
+                  set_state_val(PART:"sizer", STATE_REL1, 1.0-scale, 0.5-halfscale);
+                  set_state_val(PART:"sizer", STATE_REL2, 1.0, 0.5+halfscale);
+                  set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
                }
-               else if (pos == 3) {    
-                  if ((xpos >= x) && (xpos <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.5, -1.0);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.5, 1.0);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((xpos-w) >= x) && ((xpos-w) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.3, -0.6);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.3, 1.0);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((xpos+w) >= x) && ((xpos+w) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.3, -0.6);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.3, 1.0);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((xpos-(w*2)) >= x) && ((xpos-(w*2)) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.2, -0.4);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.2, 1.0);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else if (((xpos+(w*2)) >= x) && ((xpos+(w*2)) <= (x+w)) && (ypos >= y) && (ypos <= (y+h))) {
-                     custom_state(PART:"sizer", "default", 0.0);
-                     set_state_val(PART:"sizer", STATE_REL1, -0.2, -0.4);
-                     set_state_val(PART:"sizer", STATE_REL2, 1.2, 1.0);
-                     set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-                  }
-                  else {
-                     set_state_anim(PART:"sizer", "default", 0.0, LINEAR, 1.0);
-                  }
+               else if (pos == 3 && (ypos >= y) && (ypos <= (y+h))) {
+                  new Float:scale = engage_scale(xpos, x, w);
+                  new Float:halfscale = scale/2;
+
+                  custom_state(PART:"sizer", "default", 0.0);
+                  set_state_val(PART:"sizer", STATE_REL1, 0.5-halfscale, 1.0-scale);
+                  set_state_val(PART:"sizer", STATE_REL2, 0.5+halfscale, 1.0);
+                  set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
+               }
+               else {
+                  set_state_anim(PART:"sizer", "default", 0.0, LINEAR, 1.0);
                }
             }
             emit("e,state,resized", "e");
