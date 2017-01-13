@@ -331,7 +331,6 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
                }
           }
      }
-   if (ww < obj_w) ww = obj_w;
    evas_object_size_hint_min_set(sd->spacer, ww, hh);
 }
 

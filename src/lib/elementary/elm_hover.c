@@ -699,6 +699,8 @@ _elm_hover_target_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *target)
           (sd->target, EVAS_CALLBACK_DEL, _target_del_cb, obj);
         evas_object_event_callback_del_full
           (sd->target, EVAS_CALLBACK_MOVE, _target_move_cb, obj);
+        evas_object_event_callback_del_full
+          (sd->target, EVAS_CALLBACK_RESIZE, _target_move_cb, obj);
         elm_widget_hover_object_set(sd->target, NULL);
      }
 
@@ -709,6 +711,8 @@ _elm_hover_target_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *target)
           (sd->target, EVAS_CALLBACK_DEL, _target_del_cb, obj);
         evas_object_event_callback_add
           (sd->target, EVAS_CALLBACK_MOVE, _target_move_cb, obj);
+        evas_object_event_callback_add
+          (sd->target, EVAS_CALLBACK_RESIZE, _target_move_cb, obj);
         elm_widget_hover_object_set(target, obj);
         elm_layout_sizing_eval(obj);
      }
