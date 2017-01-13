@@ -70,6 +70,19 @@ static const struct zxdg_shell_v6_listener _zxdg_shell_listener =
 };
 
 static void
+_session_recovery_create_uuid(void *data EINA_UNUSED, struct zwp_e_session_recovery *session_recovery EINA_UNUSED, struct wl_surface *surface, const char *uuid)
+{
+   Ecore_Wl2_Window *win = wl_surface_get_user_data(surface);
+
+   eina_stringshare_replace(&win->uuid, uuid);
+}
+
+static const struct zwp_e_session_recovery_listener _session_listener =
+{
+   _session_recovery_create_uuid,
+};
+
+static void
 _cb_global_event_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Global *ev;
@@ -185,6 +198,8 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         ewd->wl.session_recovery =
           wl_registry_bind(registry, id,
                            &zwp_e_session_recovery_interface, 1);
+        zwp_e_session_recovery_add_listener(ewd->wl.session_recovery,
+                                            &_session_listener, ewd);
      }
    else if (!strcmp(interface, "zwp_teamwork"))
      {

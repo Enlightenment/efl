@@ -35,18 +35,6 @@ _ecore_wl_window_semi_free(Ecore_Wl2_Window *window)
    window->surface_id = -1;
 }
 
-static void
-_session_recovery_create_uuid(void *data, struct zwp_e_session_recovery *session_recovery EINA_UNUSED, struct wl_surface *surface EINA_UNUSED, const char *uuid)
-{
-   Ecore_Wl2_Window *win = data;
-
-   eina_stringshare_replace(&win->uuid, uuid);
-}
-
-static const struct zwp_e_session_recovery_listener _session_listener =
-{
-   _session_recovery_create_uuid,
-};
 
 static void
 _ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigned int edges, Eina_Bool fs, Eina_Bool max)
@@ -592,13 +580,10 @@ _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
              ERR("Failed to create surface for window");
              return;
           }
+        wl_surface_set_user_data(window->surface, window);
 
         window->surface_id =
           wl_proxy_get_id((struct wl_proxy *)window->surface);
-
-        if (window->display->wl.session_recovery)
-          zwp_e_session_recovery_add_listener(window->display->wl.session_recovery,
-                                              &_session_listener, window);
      }
 }
 
