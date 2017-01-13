@@ -38,9 +38,14 @@ class Elm.Gesture_Layer (Elm.Widget)
    eo_prefix: elm_obj_gesture_layer;
    methods {
       @property zoom_step {
-         [[Control step value for zoom action.]]
-         set {}
-         get {}
+            [[Control step value for zoom action.]]
+         set {
+            [[When recognizing the zoom gesture, it should be recognized as zooming larger
+              than step.
+            ]]
+         }
+         get {
+         }
          values {
             step: double; [[The zoom step value.]]
          }
@@ -85,14 +90,15 @@ class Elm.Gesture_Layer (Elm.Widget)
          }
       }
       @property rotate_step {
+            [[This function returns step-value for rotate action.]]
          set {
-            [[This function sets the step value for rotate action.
+            [[Set to 0 to cancel step setting.
 
-              Set to 0 to cancel step setting.
+              When recognizing the rotate gesture, the rotated size must be larger
+              than step.
             ]]
          }
          get {
-            [[This function returns step-value for rotate action.]]
          }
          values {
             step: double; [[New rotate step value.]]

@@ -107,6 +107,8 @@ typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
 /**
  * This function sets the gesture layer line min length of an object
  *
+ * Sets the minimum line length at which the user's gesture will be recognized as a line.
+ *
  * @param obj gesture-layer.
  * @param line_min_length the length.
  *
@@ -126,6 +128,10 @@ EAPI int elm_gesture_layer_line_min_length_get(const Evas_Object *obj);
 
 /**
  * This function sets the gesture layer zoom distance tolerance of an object
+ *
+ * If the distance between the two tab events becomes larger or smaller
+ * than @c zoom_distance_tolerance, it is recognized as the start of the
+ * zoom gesture.
  *
  * @param obj gesture-layer.
  * @param zoom_distance_tolerance zoom distance tolerance
@@ -147,6 +153,8 @@ EAPI Evas_Coord elm_gesture_layer_zoom_distance_tolerance_get(const Evas_Object 
 /**
  * This function sets the gesture layer line distance tolerance of an object
  *
+ * Sets the minimum @c line_distance_tolerance length for the gesture to be recognized as a line.
+ *
  * @param obj gesture-layer.
  * @param line_distance_tolerance line distance tolerance
  *
@@ -166,6 +174,8 @@ EAPI Evas_Coord elm_gesture_layer_line_distance_tolerance_get(const Evas_Object 
 
 /**
  * This function sets the gesture layer line angular tolerance of an object
+ *
+ * Sets the minimum @c line_angular_tolerance angle for the gesture to be recognized as a line.
  *
  * @param obj gesture-layer.
  * @param line_angular_tolerance line angular tolerance
@@ -187,6 +197,8 @@ EAPI double elm_gesture_layer_line_angular_tolerance_get(const Evas_Object *obj)
 /**
  * This function sets the gesture layer zoom wheel factor of an object
  *
+ * Sets the zoom size when a mouse wheel event occurs.
+ *
  * @param obj gesture-layer.
  * @param zoom_wheel_factor zoom wheel factor
  *
@@ -206,6 +218,9 @@ EAPI double elm_gesture_layer_zoom_wheel_factor_get(const Evas_Object *obj);
 
 /**
  * This function sets the gesture layer zoom finger factor of an object
+ *
+ * Sets the zoom size by multiplaying the zoom value by @c zoom_finger_factor
+ * when zooming.
  *
  * @param obj gesture-layer.
  * @param zoom_finger_factor zoom finger factor
@@ -227,6 +242,10 @@ EAPI double elm_gesture_layer_zoom_finger_factor_get(const Evas_Object *obj);
 /**
  * This function sets the gesture layer rotate angular tolerance of an object
  *
+ * Sets the minimum @c rotate_angular_tolerance angle for the gesture to be recognized as a rotate.
+ * Rotate should be rotated beyond the givin @c rotate_angular_tolerance to recognize
+ * the start of the rotate gestrue.
+ *
  * @param obj gesture-layer.
  * @param rotate_angular_tolerance rotate angular tolerance
  *
@@ -246,6 +265,8 @@ EAPI double elm_gesture_layer_rotate_angular_tolerance_get(const Evas_Object *ob
 
 /**
  * This function sets the gesture layer flick time limit (in ms) of an object
+ *
+ * Recognize as a flick when a gesture occurs over @c flick_time_limit_ms.
  *
  * @param obj gesture-layer.
  * @param flick_time_limit_ms flick time limit (in ms)
@@ -267,6 +288,8 @@ EAPI unsigned int elm_gesture_layer_flick_time_limit_ms_get(const Evas_Object *o
 /**
  * This function sets the gesture layer long tap start timeout of an object
  *
+ * Recognize as a long tap when a tab occurs over @c long_tap_start_timeout.
+ *
  * @param obj gesture-layer.
  * @param long_tap_start_timeout long tap start timeout
  *
@@ -287,6 +310,8 @@ EAPI double elm_gesture_layer_long_tap_start_timeout_get(const Evas_Object *obj)
 /**
  * This function sets the gesture layer continues enable of an object
  *
+ * An option that allows user to start a gesture even when user is in touch move state.
+ *
  * @param obj gesture-layer.
  * @param continues_enable continues enable
  *
@@ -306,6 +331,9 @@ EAPI Eina_Bool elm_gesture_layer_continues_enable_get(const Evas_Object *obj);
 
 /**
  * This function sets the gesture layer double tap timeout of an object
+ *
+ * When the time diffrence between two tabs is less than the @c double_tap_timeout value,
+ * it is recognized as a double tab.
  *
  * @param obj gesture-layer.
  * @param double_tap_timeout double tap timeout
