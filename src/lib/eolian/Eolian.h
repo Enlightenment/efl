@@ -761,17 +761,17 @@ EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *functio
 EAPI const Eolian_Documentation *eolian_function_documentation_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
 
 /*
- * @brief Indicates if a function is virtual pure.
+ * @brief Indicates if a function is pure virtual.
  *
  * @param[in] function_id Id of the function
  * @param[in] f_type The function type, for property get/set distinction.
- * @return EINA_TRUE if virtual pure, EINA_FALSE othrewise.
+ * @return EINA_TRUE if pure virtual, EINA_FALSE othrewise.
  *
  * Acceptable input types are METHOD, PROP_GET and PROP_SET.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_id, Eolian_Function_Type f_type);
+EAPI Eina_Bool eolian_function_is_pure_virtual(const Eolian_Function *function_id, Eolian_Function_Type f_type);
 
 /*
  * @brief Indicates if a function is auto.
@@ -1113,7 +1113,7 @@ EAPI Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Fun
 EAPI Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type f_type);
 
 /*
- * @brief Get whether an implement is tagged with @virtual.
+ * @brief Get whether an implement is pure virtual.
  *
  * @param[in] impl the handle of the implement
  * @param[in] f_type The function type, for property get/set distinction.
@@ -1123,7 +1123,7 @@ EAPI Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Fu
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_implement_is_virtual(const Eolian_Implement *impl, Eolian_Function_Type f_type);
+EAPI Eina_Bool eolian_implement_is_pure_virtual(const Eolian_Implement *impl, Eolian_Function_Type f_type);
 
 /*
  * @brief Get whether an implement references a property getter.
@@ -1152,7 +1152,7 @@ EAPI Eina_Bool eolian_implement_is_prop_set(const Eolian_Implement *impl);
  * @return the iterator
  *
  * Implements include fields specified in the "implements" section of your Eo
- * file (i.e. overriding and virtual/auto/empty functions) and all other
+ * file (i.e. overriding and pure virtual/auto/empty functions) and all other
  * methods/properties of your class (local only) that are not specified
  * within that section.
  *

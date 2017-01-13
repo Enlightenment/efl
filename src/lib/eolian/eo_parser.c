@@ -1166,7 +1166,7 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
    Eina_Bool has_return = EINA_FALSE, has_legacy = EINA_FALSE,
              has_eo     = EINA_FALSE, has_keys   = EINA_FALSE,
              has_values = EINA_FALSE, has_protected = EINA_FALSE,
-             has_virtual_pure = EINA_FALSE;
+             has_virtp  = EINA_FALSE;
    Eina_Bool is_get = (ls->t.kw == KW_get);
    if (is_get)
      {
@@ -1190,9 +1190,9 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
    for (;;) switch (ls->t.kw)
      {
       case KW_at_virtual_pure:
-        CASE_LOCK(ls, virtual_pure, "virtual_pure qualifier");
-        if (is_get) prop->get_virtual_pure = EINA_TRUE;
-        else prop->set_virtual_pure = EINA_TRUE;
+        CASE_LOCK(ls, virtp, "virtual_pure qualifier");
+        if (is_get) prop->get_pure_virtual = EINA_TRUE;
+        else prop->set_pure_virtual = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_protected:
@@ -1291,17 +1291,17 @@ end:
 }
 
 static void
-_func_virtual_set(Eo_Lexer *ls, Eolian_Function *foo_id, Eina_Bool virt)
+_func_pure_virtual_set(Eo_Lexer *ls, Eolian_Function *foo_id, Eina_Bool virt)
 {
    if (ls->tmp.kls->type != EOLIAN_CLASS_INTERFACE && !virt)
      return;
 
    if (foo_id->type == EOLIAN_PROP_GET || foo_id->type == EOLIAN_METHOD)
-     foo_id->get_virtual_pure = EINA_TRUE;
+     foo_id->get_pure_virtual = EINA_TRUE;
    else if (foo_id->type == EOLIAN_PROP_SET)
-     foo_id->set_virtual_pure = EINA_TRUE;
+     foo_id->set_pure_virtual = EINA_TRUE;
    else if (foo_id->type == EOLIAN_PROPERTY)
-     foo_id->get_virtual_pure = foo_id->set_virtual_pure = EINA_TRUE;
+     foo_id->get_pure_virtual = foo_id->set_pure_virtual = EINA_TRUE;
 }
 
 static void
@@ -1387,7 +1387,7 @@ end:
    check_match(ls, '}', '{', line, col);
    if (!has_get && !has_set)
      prop->type = EOLIAN_PROPERTY;
-   _func_virtual_set(ls, prop, has_virtp);
+   _func_pure_virtual_set(ls, prop, has_virtp);
 }
 
 static void
@@ -1487,7 +1487,7 @@ body:
      }
 end:
    check_match(ls, '}', '{', line, col);
-   _func_virtual_set(ls, meth, has_virtp);
+   _func_pure_virtual_set(ls, meth, has_virtp);
 }
 
 static void

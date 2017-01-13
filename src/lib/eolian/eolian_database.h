@@ -133,8 +133,8 @@ struct _Eolian_Function
    Eolian_Documentation *get_return_doc;
    Eolian_Documentation *set_return_doc;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
-   Eina_Bool get_virtual_pure :1;
-   Eina_Bool set_virtual_pure :1;
+   Eina_Bool get_pure_virtual :1;
+   Eina_Bool set_pure_virtual :1;
    Eina_Bool get_auto :1;
    Eina_Bool set_auto :1;
    Eina_Bool get_empty :1;
@@ -203,8 +203,8 @@ struct _Eolian_Implement
    Eina_Stringshare *full_name;
    Eina_Bool is_prop_get :1;
    Eina_Bool is_prop_set :1;
-   Eina_Bool get_virtual :1;
-   Eina_Bool set_virtual :1;
+   Eina_Bool get_pure_virtual :1;
+   Eina_Bool set_pure_virtual :1;
    Eina_Bool get_auto: 1;
    Eina_Bool set_auto: 1;
    Eina_Bool get_empty: 1;

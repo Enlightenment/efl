@@ -272,7 +272,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
 
    Eina_Bool impl_same_class = (eolian_implement_class_get(impl) == cl);
    Eina_Bool impl_need = EINA_TRUE;
-   if (impl_same_class && eolian_function_is_virtual_pure(fid, ftype))
+   if (impl_same_class && eolian_function_is_pure_virtual(fid, ftype))
      impl_need = EINA_FALSE;
 
    Eina_Stringshare *rtpn = rtp ? eolian_type_c_type_get(rtp)
@@ -502,7 +502,7 @@ _gen_opfunc(const Eolian_Function *fid, Eolian_Function_Type ftype,
    eina_strbuf_append(buf, "      EFL_OBJECT_OP_FUNC(");
    eina_strbuf_append(buf, fnm);
    eina_strbuf_append(buf, ", ");
-   if (!ocnamel && eolian_function_is_virtual_pure(fid, ftype))
+   if (!ocnamel && eolian_function_is_pure_virtual(fid, ftype))
      eina_strbuf_append(buf, "NULL),\n");
    else
      {
@@ -840,7 +840,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
            const char *cnamel)
 {
    Eina_Bool impl_same_class = (eolian_implement_class_get(impl) == cl);
-   if (impl_same_class && eolian_function_is_virtual_pure(fid, ftype))
+   if (impl_same_class && eolian_function_is_pure_virtual(fid, ftype))
      return;
 
    char *ocnamel = NULL;

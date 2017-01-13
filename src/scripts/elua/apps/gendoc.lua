@@ -175,7 +175,7 @@ end
 local gen_method_sig = function(fn, cl)
     local buf = {}
     gen_func_namesig(fn, cl, buf, false, false, false)
-    if fn:is_virtual_pure(fn.METHOD) then
+    if fn:is_pure_virtual(fn.METHOD) then
         buf[#buf + 1] = "@virtual_pure "
     end
     buf[#buf + 1] = "{"
@@ -229,8 +229,8 @@ local gen_prop_sig = function(fn, cl)
     local isset = (fnt == fn.PROPERTY or fnt == fn.PROP_SET)
     gen_func_namesig(fn, cl, buf, true, isget, isset)
 
-    local gvirt = fn:is_virtual_pure(fn.PROP_GET)
-    local svirt = fn:is_virtual_pure(fn.PROP_SET)
+    local gvirt = fn:is_pure_virtual(fn.PROP_GET)
+    local svirt = fn:is_pure_virtual(fn.PROP_SET)
 
     if (not isget or gvirt) and (not isset or svirt) then
         buf[#buf + 1] = "@virtual_pure "

@@ -250,7 +250,7 @@ ffi.cdef [[
     const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
     const char *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     const Eolian_Documentation *eolian_function_documentation_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-    Eina_Bool eolian_function_is_virtual_pure(const Eolian_Function *function_id, Eolian_Function_Type f_type);
+    Eina_Bool eolian_function_is_pure_virtual(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     Eina_Bool eolian_function_is_auto(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     Eina_Bool eolian_function_is_empty(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
@@ -277,7 +277,7 @@ ffi.cdef [[
     const Eolian_Function *eolian_implement_function_get(const Eolian_Implement *impl, Eolian_Function_Type *func_type);
     Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type ftype);
     Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type ftype);
-    Eina_Bool eolian_implement_is_virtual(const Eolian_Implement *impl, Eolian_Function_Type ftype);
+    Eina_Bool eolian_implement_is_pure_virtual(const Eolian_Implement *impl, Eolian_Function_Type ftype);
     Eina_Bool eolian_implement_is_prop_get(const Eolian_Implement *impl);
     Eina_Bool eolian_implement_is_prop_set(const Eolian_Implement *impl);
     Eina_Iterator *eolian_class_implements_get(const Eolian_Class *klass);
@@ -783,8 +783,8 @@ M.Function = ffi.metatype("Eolian_Function", {
             return v
         end,
 
-        is_virtual_pure = function(self, ftype)
-            return eolian.eolian_function_is_virtual_pure(self, ftype) ~= 0
+        is_pure_virtual = function(self, ftype)
+            return eolian.eolian_function_is_pure_virtual(self, ftype) ~= 0
         end,
 
         is_auto = function(self, ftype)
@@ -931,8 +931,8 @@ ffi.metatype("Eolian_Implement", {
             return eolian.eolian_implement_is_empty(self, ftype) ~= 0
         end,
 
-        is_virtual = function(self, ftype)
-            return eolian.eolian_implement_is_virtual(self, ftype) ~= 0
+        is_pure_virtual = function(self, ftype)
+            return eolian.eolian_implement_is_pure_virtual(self, ftype) ~= 0
         end,
 
         is_prop_get = function(self)

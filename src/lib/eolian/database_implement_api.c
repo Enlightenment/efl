@@ -82,7 +82,7 @@ eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type fty
 }
 
 EAPI Eina_Bool
-eolian_implement_is_virtual(const Eolian_Implement *impl, Eolian_Function_Type ftype)
+eolian_implement_is_pure_virtual(const Eolian_Implement *impl, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EINA_FALSE);
@@ -90,11 +90,11 @@ eolian_implement_is_virtual(const Eolian_Implement *impl, Eolian_Function_Type f
    switch (ftype)
      {
       case EOLIAN_METHOD:
-        return impl->get_virtual && !impl->is_prop_get && !impl->is_prop_set;
+        return impl->get_pure_virtual && !impl->is_prop_get && !impl->is_prop_set;
       case EOLIAN_PROP_GET:
-        return impl->get_virtual && impl->is_prop_get;
+        return impl->get_pure_virtual && impl->is_prop_get;
       case EOLIAN_PROP_SET:
-        return impl->set_virtual && impl->is_prop_set;
+        return impl->set_pure_virtual && impl->is_prop_set;
       default:
         return EINA_FALSE;
      }

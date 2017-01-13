@@ -321,8 +321,8 @@ M.Function = Node:clone {
         return nil
     end,
 
-    is_virtual_pure = function(self, ft)
-        return self.func:is_virtual_pure(ft)
+    is_pure_virtual = function(self, ft)
+        return self.func:is_pure_virtual(ft)
     end,
 
     is_auto = function(self, ft)

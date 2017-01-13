@@ -197,7 +197,7 @@ eolian_function_documentation_get(const Eolian_Function *fid, Eolian_Function_Ty
 }
 
 EAPI Eina_Bool
-eolian_function_is_virtual_pure(const Eolian_Function *fid, Eolian_Function_Type ftype)
+eolian_function_is_pure_virtual(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EINA_FALSE);
@@ -207,15 +207,15 @@ eolian_function_is_virtual_pure(const Eolian_Function *fid, Eolian_Function_Type
       case EOLIAN_METHOD:
         if (fid->type != EOLIAN_METHOD)
           return EINA_FALSE;
-        return fid->get_virtual_pure;
+        return fid->get_pure_virtual;
       case EOLIAN_PROP_GET:
         if ((fid->type != EOLIAN_PROP_GET) && (fid->type != EOLIAN_PROPERTY))
           return EINA_FALSE;
-        return fid->get_virtual_pure;
+        return fid->get_pure_virtual;
       case EOLIAN_PROP_SET:
         if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
           return EINA_FALSE;
-        return fid->set_virtual_pure;
+        return fid->set_pure_virtual;
       default:
         return EINA_FALSE;
      }

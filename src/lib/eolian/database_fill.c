@@ -185,9 +185,9 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
 
    if (foo_id->type == EOLIAN_PROPERTY)
      {
-        if (foo_id->get_virtual_pure && !foo_id->get_impl)
+        if (foo_id->get_pure_virtual && !foo_id->get_impl)
           {
-             impl->get_virtual = EINA_TRUE;
+             impl->get_pure_virtual = EINA_TRUE;
              impl->is_prop_get = EINA_TRUE;
              foo_id->get_impl = impl;
              cl->implements = eina_list_append(cl->implements, impl);
@@ -195,9 +195,9 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
              _db_build_implement(cl, foo_id);
              return;
           }
-        else if (foo_id->set_virtual_pure && !foo_id->set_impl)
+        else if (foo_id->set_pure_virtual && !foo_id->set_impl)
           {
-             impl->set_virtual = EINA_TRUE;
+             impl->set_pure_virtual = EINA_TRUE;
              impl->is_prop_set = EINA_TRUE;
              foo_id->set_impl = impl;
              cl->implements = eina_list_append(cl->implements, impl);
@@ -208,7 +208,7 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
         if (foo_id->get_impl)
           {
              impl->is_prop_set = EINA_TRUE;
-             impl->set_virtual = foo_id->set_virtual_pure;
+             impl->set_pure_virtual = foo_id->set_pure_virtual;
              foo_id->set_impl = impl;
           }
         else if (foo_id->set_impl)
@@ -222,18 +222,18 @@ _db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
    else if (foo_id->type == EOLIAN_PROP_SET)
      {
         impl->is_prop_set = EINA_TRUE;
-        impl->get_virtual = foo_id->get_virtual_pure;
+        impl->get_pure_virtual = foo_id->get_pure_virtual;
         foo_id->set_impl = impl;
      }
    else if (foo_id->type == EOLIAN_PROP_GET)
      {
         impl->is_prop_get = EINA_TRUE;
-        impl->get_virtual = foo_id->set_virtual_pure;
+        impl->get_pure_virtual = foo_id->set_pure_virtual;
         foo_id->get_impl = impl;
      }
    else
      {
-        impl->get_virtual = foo_id->get_virtual_pure;
+        impl->get_pure_virtual = foo_id->get_pure_virtual;
         foo_id->get_impl = foo_id->set_impl = impl;
      }
 
