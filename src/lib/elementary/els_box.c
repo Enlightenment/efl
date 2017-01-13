@@ -155,7 +155,8 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
         *rminh += *rh;
 
         evas_object_size_hint_aspect_get(opt->obj, &aspect, &asx, &asy);
-        if (aspect && ((asx < 1) || (asy < 1)))
+        if (aspect && ((!EINA_DBL_NONZERO(asx)) || (asx < 0.0) ||
+          (!EINA_DBL_NONZERO(asy)) || (asy < 0.0)))
           {
              aspect = EVAS_ASPECT_CONTROL_NONE;
              ERR("Invalid aspect specified!");
