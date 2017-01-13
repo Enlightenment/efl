@@ -760,13 +760,13 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, int x EINA_UNUSED, int y EINA_UN
 
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_move(window->zxdg_toplevel, input->wl.seat,
-                           wl_display_get_serial(window->display->wl.display));
+                           window->display->serial);
    else if (window->xdg_surface)
      xdg_surface_move(window->xdg_surface, input->wl.seat,
-                      wl_display_get_serial(window->display->wl.display));
+                      window->display->serial);
    else if (window->wl_shell_surface)
      wl_shell_surface_move(window->wl_shell_surface, input->wl.seat,
-                           wl_display_get_serial(window->display->wl.display));
+                           window->display->serial);
 }
 
 EAPI void
@@ -786,16 +786,13 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w EINA_UNUSED, int h EINA_
 
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_resize(window->zxdg_toplevel, input->wl.seat,
-                             wl_display_get_serial(window->display->wl.display),
-                             location);
+                             window->display->serial, location);
    else if (window->xdg_surface)
      xdg_surface_resize(window->xdg_surface, input->wl.seat,
-                        wl_display_get_serial(window->display->wl.display),
-                        location);
+                        window->display->serial, location);
    else if (window->wl_shell_surface)
      wl_shell_surface_resize(window->wl_shell_surface, input->wl.seat,
-                             wl_display_get_serial(window->display->wl.display),
-                             location);
+                             window->display->serial, location);
 }
 
 EAPI void
