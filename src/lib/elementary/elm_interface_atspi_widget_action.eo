@@ -8,7 +8,7 @@ mixin Elm.Interface.Atspi_Widget_Action (Elm.Interface.Atspi_Action)
    methods {
       @property elm_actions @protected {
       	 [[Elementary actions]]
-         get @virtual_pure {
+         get @pure_virtual {
          }
          values {
             actions: ptr(const(Elm_Atspi_Action)); [[NULL-terminated array of Elm_Atspi_Action]]

@@ -22,11 +22,11 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
             val: bool; [[$true if filter is invalid, $false otherwise]]
          }
       }
-      filter_input_alpha @protected @virtual_pure {
+      filter_input_alpha @protected @pure_virtual {
          [[Called by Efl.Canvas.Filter.Internal to determine whether the input is alpha or rgba.]]
          return: bool; [[$true on success, $false otherwise]]
       }
-      filter_input_render @protected @virtual_pure {
+      filter_input_render @protected @pure_virtual {
          [[Called by Efl.Canvas.Filter.Internal when the parent class must render the input.
          ;
          ]]
@@ -41,7 +41,7 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
             do_async: bool; [[$true when the operation should be done asynchronous, $false otherwise]]
          }
       }
-      filter_dirty @protected @virtual_pure {
+      filter_dirty @protected @pure_virtual {
          [[Called when the filter changes must trigger a redraw of the object.
 
            Virtual, to be implemented in the parent class.

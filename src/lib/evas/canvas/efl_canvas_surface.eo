@@ -15,7 +15,7 @@ mixin Efl.Canvas.Surface (Efl.Interface, Efl.Canvas.Image.Internal)
             Set to $null to detach this surface from the external buffer.
           ]]
           get {}
-          set @virtual_pure {
+          set @pure_virtual {
              [[Set the buffer. If this fails, this function returns $false,
                and the surface is left without any attached buffer.
              ]]

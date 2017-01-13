@@ -121,7 +121,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
             ]]
         }
 
-        client_add @protected @virtual_pure {
+        client_add @protected @pure_virtual {
             [[Accept a new client, should emit "client,add".
 
               Remember to create the client object with a callback to
@@ -140,7 +140,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
             }
         }
 
-        client_reject @protected @virtual_pure {
+        client_reject @protected @pure_virtual {
             [[Reject a new client, should emit "client,rejected".
 
               Must always close the client socket when it's done.

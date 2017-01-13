@@ -21,7 +21,7 @@ class Elm.Web (Elm.Widget)
    eo_prefix: elm_obj_web;
    event_prefix: elm_web;
    methods {
-      @property text_matches_highlight @virtual_pure {
+      @property text_matches_highlight @pure_virtual {
          set {
             [[Sets whether to highlight the matched marks.
 
@@ -37,7 +37,7 @@ class Elm.Web (Elm.Widget)
             highlight: bool; [[Whether to highlight the marks or not.]]
          }
       }
-      @property useragent @virtual_pure {
+      @property useragent @pure_virtual {
          set {
             [[Change useragent of a elm_web object.]]
          }
@@ -48,7 +48,7 @@ class Elm.Web (Elm.Widget)
             user_agent: string; [[String for useragent.]]
          }
       }
-      @property url @virtual_pure {
+      @property url @pure_virtual {
          set {
             [[Sets the URL for the web object.
 
@@ -68,7 +68,7 @@ class Elm.Web (Elm.Widget)
             url: string; [[The URL to set.]]
          }
       }
-      @property bg_color @virtual_pure {
+      @property bg_color @pure_virtual {
          set {
             [[Sets the background color to be used by the web object.
 
@@ -92,7 +92,7 @@ class Elm.Web (Elm.Widget)
             a: int; [[Alpha component.]]
          }
       }
-      @property inwin_mode @virtual_pure {
+      @property inwin_mode @pure_virtual {
          set {
             [[Sets the default dialogs to use an Inwin instead of a
               normal window.
@@ -109,7 +109,7 @@ class Elm.Web (Elm.Widget)
             value: bool; [[$true if dialog will be opened as Inwin, $false otherwise]]
          }
       }
-      @property tab_propagate @virtual_pure {
+      @property tab_propagate @pure_virtual {
          set {
             [[Sets whether to use tab propagation.
 
@@ -127,7 +127,7 @@ class Elm.Web (Elm.Widget)
             propagate: bool; [[Whether to propagate Tab keys to Elementary or not.]]
          }
       }
-      @property history_enabled @virtual_pure {
+      @property history_enabled @pure_virtual {
          set {
             [[Enables or disables the browsing history.]]
          }
@@ -138,7 +138,7 @@ class Elm.Web (Elm.Widget)
             enable: bool; [[Whether to enable or disable the browsing history.]]
          }
       }
-      @property zoom_mode @virtual_pure {
+      @property zoom_mode @pure_virtual {
          set {
             [[Sets the zoom mode to use.
 
@@ -165,7 +165,7 @@ class Elm.Web (Elm.Widget)
             mode: Elm.Web.Zoom_Mode; [[The mode to set.]]
          }
       }
-      @property zoom @virtual_pure {
+      @property zoom @pure_virtual {
          set {
             [[Sets the zoom level of the web object.
 
@@ -191,7 +191,7 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property console_message_hook {
-         set @virtual_pure {
+         set @pure_virtual {
             [[Sets the function to call when a console message is emitted
               from JS.
 
@@ -206,7 +206,7 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property window_create_hook {
-         set @virtual_pure {
+         set @pure_virtual {
             [[Sets the function to call when a new window is requested.
 
               This hook will be called when a request to create a new
@@ -222,7 +222,7 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property dialog_file_selector_hook {
-         set @virtual_pure {
+         set @pure_virtual {
             [[Sets the function to call when an file selector dialog.
 
               This hook will be called when a JavaScript file selector
@@ -237,7 +237,7 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property dialog_confirm_hook {
-         set @virtual_pure {
+         set @pure_virtual {
             [[Sets the function to call when an confirm dialog.
 
               This hook will be called when a JavaScript confirm dialog is
@@ -251,7 +251,7 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property popup_selected {
-         set @virtual_pure {
+         set @pure_virtual {
             [[Tells the web object which index in the currently open popup
               was selected.
 
@@ -266,7 +266,7 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property dialog_prompt_hook {
-         set @virtual_pure {
+         set @pure_virtual {
             [[Sets the function to call when an prompt dialog.
 
               This hook will be called when a JavaScript prompt dialog is
@@ -280,7 +280,7 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property dialog_alert_hook {
-         set @virtual_pure {
+         set @pure_virtual {
             [[Sets the function to call when an alert dialog.
 
               This hook will be called when a JavaScript alert dialog is
@@ -294,13 +294,13 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property forward_possible {
-         get @virtual_pure {
+         get @pure_virtual {
             [[Queries whether it's possible to go forward in history.]]
             return: bool; [[$true if it is possible to go forward, $false otherwise]]
          }
       }
       @property webkit_view {
-         get @virtual_pure {
+         get @pure_virtual {
             [[Get internal ewk_view object from web object.
 
               Elementary may not provide some low level features of EWebKit,
@@ -315,13 +315,13 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property back_possible {
-         get @virtual_pure {
+         get @pure_virtual {
             [[Queries whether it's possible to go back in history.]]
             return: bool; [[$true if it is possible to go back, $false otherwise]]
          }
       }
       @property load_progress {
-         get @virtual_pure {
+         get @pure_virtual {
             [[Get the overall loading progress of the page.
 
               Returns the estimated loading progress of the page, with a
@@ -333,7 +333,7 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property selection {
-         get @virtual_pure {
+         get @pure_virtual {
             [[Get a copy of the currently selected text.
 
               The string returned must be freed by the user when it's done
@@ -345,7 +345,7 @@ class Elm.Web (Elm.Widget)
          }
       }
       @property title {
-         get @virtual_pure {
+         get @pure_virtual {
             [[Get the current title.
 
               The returned string must not be freed and is guaranteed to be
@@ -357,7 +357,7 @@ class Elm.Web (Elm.Widget)
             ]]
          }
       }
-      navigate @virtual_pure {
+      navigate @pure_virtual {
          [[Jumps the given number of steps in the browsing history.
 
            The $steps value can be a negative integer to back in history,
@@ -369,14 +369,14 @@ class Elm.Web (Elm.Widget)
             @in steps: int; [[The number of steps to jump.]]
          }
       }
-      back @virtual_pure {
+      back @pure_virtual {
          [[Goes back one step in the browsing history.
 
            This is equivalent to calling elm_web_object_navigate(obj, -1);
          ]]
          return: bool; [[$true on success, $false otherwise]]
       }
-      html_string_load @virtual_pure {
+      html_string_load @pure_virtual {
          [[Loads the specified $html string as the content of the web
            object.
 
@@ -396,7 +396,7 @@ class Elm.Web (Elm.Widget)
             @in unreachable_url: string @optional; [[URL that could not be reached (optional).]]
          }
       }
-      text_search @const @virtual_pure {
+      text_search @const @pure_virtual {
          [[Searches the given string in a document.]]
          return: bool; [[$true if the given string was found, $false if not
                          or failure.]]
@@ -407,7 +407,7 @@ class Elm.Web (Elm.Widget)
             @in wrap: bool; [[If search should wrap at the end.]]
          }
       }
-      popup_destroy @virtual_pure {
+      popup_destroy @pure_virtual {
          [[Dismisses an open dropdown popup
 
            When the popup from a dropdown widget is to be dismissed, either
@@ -419,7 +419,7 @@ class Elm.Web (Elm.Widget)
          return: bool; [[$true if the menu was successfully destroyed, or
                          $false if there was no menu to destroy.]]
       }
-      region_show @virtual_pure {
+      region_show @pure_virtual {
          [[Shows the given region in the web object.]]
          params {
             @in x: int; [[The x coordinate of the region to show.]]
@@ -428,7 +428,7 @@ class Elm.Web (Elm.Widget)
             @in h: int; [[The height of the region to show.]]
          }
       }
-      forward @virtual_pure {
+      forward @pure_virtual {
          [[Goes forward one step in the browsing history.
 
            This is equivalent to calling elm_web_object_navigate(obj, 1);
@@ -438,7 +438,7 @@ class Elm.Web (Elm.Widget)
          ]]
          return: bool; [[$true on success, $false otherwise.]]
       }
-      text_matches_mark @virtual_pure {
+      text_matches_mark @pure_virtual {
          [[Marks matches of the given string in a document.]]
          return: uint; [[Number of matched $string.]]
          params {
@@ -448,7 +448,7 @@ class Elm.Web (Elm.Widget)
             @in limit: uint; [[Maximum amount of matches, or zero to unlimited.]]
          }
       }
-      region_bring_in @virtual_pure {
+      region_bring_in @pure_virtual {
          [[Brings in the region to the visible area.
 
            Like @.region_show, but it animates the scrolling of the object
@@ -461,7 +461,7 @@ class Elm.Web (Elm.Widget)
             @in h: int; [[The height of the region to show.]]
          }
       }
-      stop @virtual_pure {
+      stop @pure_virtual {
          [[Stops loading the current page.
 
            Cancels the loading of the current page in the web object. This
@@ -470,7 +470,7 @@ class Elm.Web (Elm.Widget)
          ]]
          return: bool; [[$true if the cancel was successful, $false otherwise.]]
       }
-      navigate_possible_get @virtual_pure {
+      navigate_possible_get @pure_virtual {
          [[Queries whether it's possible to jump the given number of steps.
 
            The $steps value can be a negative integer to back in history,
@@ -482,17 +482,17 @@ class Elm.Web (Elm.Widget)
             @in steps: int; [[The number of steps to check for.]]
          }
       }
-      reload_full @virtual_pure {
+      reload_full @pure_virtual {
          [[Requests a reload of the current document, avoiding any
            existing caches.
          ]]
          return: bool; [[$true on success, $false otherwise.]]
       }
-      text_matches_unmark_all @virtual_pure {
+      text_matches_unmark_all @pure_virtual {
          [[Clears all marked matches in the document.]]
          return: bool; [[$true on success, $false otherwise.]]
       }
-      reload @virtual_pure {
+      reload @pure_virtual {
          [[Requests a reload of the current document in the object.]]
          return: bool; [[$true on success, $false otherwise.]]
       }

@@ -7,7 +7,7 @@ class Base {
                 c: float;
            }
       }
-      constructor @virtual_pure {
+      constructor @pure_virtual {
       }
       destructor {
       }

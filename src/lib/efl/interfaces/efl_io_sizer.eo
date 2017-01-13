@@ -12,7 +12,7 @@ mixin Efl.Io.Sizer {
     data: null;
 
     methods {
-        resize @virtual_pure {
+        resize @pure_virtual {
             [[Resize object]]
             params {
                 @in size: uint64; [[Object size]]
@@ -22,7 +22,7 @@ mixin Efl.Io.Sizer {
 
         @property size {
             [[Size property]]
-            get @virtual_pure { }
+            get @pure_virtual { }
             set {
                 [[Try to resize the object, check with get if the value was accepted or not.]]
                 return: bool; [[$true if could resize, $false if errors.]]

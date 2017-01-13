@@ -19,7 +19,7 @@ class Object_Impl (Base) {
       @property b {
          set {
          }
-         get @virtual_pure {
+         get @pure_virtual {
             /* set as virtual pure - no implementation expected */
          }
          values {
@@ -50,7 +50,7 @@ class Object_Impl (Base) {
             @in b: string;
          }
       }
-      pure_foo3 @virtual_pure {
+      pure_foo3 @pure_virtual {
          /* set as virtual pure - no implementation expected */
       }
    }

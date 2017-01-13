@@ -43,7 +43,7 @@ mixin Ector.Buffer
             cspace: Efl.Gfx.Colorspace; [[Colorspace]]
          }
       }
-      map @virtual_pure {
+      map @pure_virtual {
          [[Map a region of this buffer for read or write access by the CPU,
            fetch data from the GPU if needed. This operation may be slow if
            cpu_readable_fast or cpu_writeable_fast are not true, or if the
@@ -63,14 +63,14 @@ mixin Ector.Buffer
          }
          return: void_ptr @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
-      unmap @virtual_pure {
+      unmap @pure_virtual {
          [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
          params {
             @in data: void_ptr; [[Data pointer returned by a previous call to map]]
             @in length: uint; [[Must be the same as returned by map.]]
          }
       }
-      pixels_set @virtual_pure {
+      pixels_set @pure_virtual {
          [[Set the source pixels for this buffer, or allocate a new memory region]]
          params {
             @in pixels: void_ptr; [[If $null, allocates an empty buffer]]
@@ -86,7 +86,7 @@ mixin Ector.Buffer
          }
          return: bool; [[True if pixels_set was successful]]
       }
-      span_get @virtual_pure {
+      span_get @pure_virtual {
          [[Get a single horizontal span of length w starting from (x,y)
 
            Call span_free() to release it. This function will try not to
@@ -102,7 +102,7 @@ mixin Ector.Buffer
          }
          return: ptr(uint8); [[A temporary memory buffer containing the pixels requested.]]
       }
-      span_free @virtual_pure {
+      span_free @pure_virtual {
          [[Must be called as soon as possible after span_get]]
          params {
             data: ptr(uint8); [[Data to be freed]]

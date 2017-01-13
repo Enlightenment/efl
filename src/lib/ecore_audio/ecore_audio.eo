@@ -58,7 +58,7 @@ class Ecore.Audio (Efl.Object)
             volume: double; [[The volume]]
          }
       }
-      @property source @virtual_pure {
+      @property source @pure_virtual {
          [[Source of the object
 
            What sources are supported depends on the actual object.
@@ -77,7 +77,7 @@ class Ecore.Audio (Efl.Object)
             source: string; [[The source to set to (i.e. file, URL, device)]]
          }
       }
-      @property format @virtual_pure {
+      @property format @pure_virtual {
          [[Format of the object.]]
          set {
             [[Set the format of the object
@@ -102,7 +102,7 @@ class Ecore.Audio (Efl.Object)
             format: Ecore.Audio.Format; [[The audio format of the object]]
          }
       }
-      vio_set @virtual_pure {
+      vio_set @pure_virtual {
          [[Set the virtual IO functions
 
            @since 1.8

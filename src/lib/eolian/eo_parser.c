@@ -1189,8 +1189,8 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
    eo_lexer_get(ls);
    for (;;) switch (ls->t.kw)
      {
-      case KW_at_virtual_pure:
-        CASE_LOCK(ls, virtp, "virtual_pure qualifier");
+      case KW_at_pure_virtual:
+        CASE_LOCK(ls, virtp, "pure_virtual qualifier");
         if (is_get) prop->get_pure_virtual = EINA_TRUE;
         else prop->set_pure_virtual = EINA_TRUE;
         eo_lexer_get(ls);
@@ -1350,8 +1350,8 @@ parse_property(Eo_Lexer *ls)
         prop->is_beta = EINA_TRUE;
         eo_lexer_get(ls);
         break;
-      case KW_at_virtual_pure:
-        CASE_LOCK(ls, virtp, "virtual_pure qualifier");
+      case KW_at_pure_virtual:
+        CASE_LOCK(ls, virtp, "pure_virtual qualifier");
         eo_lexer_get(ls);
         break;
       default:
@@ -1441,8 +1441,8 @@ parse_method(Eo_Lexer *ls)
         meth->is_beta = EINA_TRUE;
         eo_lexer_get(ls);
         break;
-      case KW_at_virtual_pure:
-        CASE_LOCK(ls, virtp, "virtual_pure qualifier");
+      case KW_at_pure_virtual:
+        CASE_LOCK(ls, virtp, "pure_virtual qualifier");
         eo_lexer_get(ls);
         break;
       default:

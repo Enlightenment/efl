@@ -375,7 +375,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       }
       @property parent_widget {
       	 [[Parent widget property]]
-         get @virtual_pure {
+         get @pure_virtual {
             return: Efl.Canvas.Object; [[Parent widget]]
             legacy: null;
          }
@@ -576,7 +576,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             @in dir: Elm.Focus_Direction; [[Direction to move the focus.]]
          }
       }
-      focus_direction @virtual_pure {
+      focus_direction @pure_virtual {
          [['Virtual' function handling passing focus to sub-objects given a direction, in degrees.]]
          params {
             @in base: const(Efl.Canvas.Object); [[Base object]]
@@ -717,7 +717,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       focus_hide_handle {
          [[Handle hide focus]]
       }
-      focus_next @virtual_pure {
+      focus_next @pure_virtual {
          [['Virtual' function handling passing focus to sub-objects.]]
          params {
             @in dir: Elm.Focus_Direction; [[Focus direction]]

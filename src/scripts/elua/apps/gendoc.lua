@@ -176,7 +176,7 @@ local gen_method_sig = function(fn, cl)
     local buf = {}
     gen_func_namesig(fn, cl, buf, false, false, false)
     if fn:is_pure_virtual(fn.METHOD) then
-        buf[#buf + 1] = "@virtual_pure "
+        buf[#buf + 1] = "@pure_virtual "
     end
     buf[#buf + 1] = "{"
     local params = fn:parameters_get()
@@ -233,7 +233,7 @@ local gen_prop_sig = function(fn, cl)
     local svirt = fn:is_pure_virtual(fn.PROP_SET)
 
     if (not isget or gvirt) and (not isset or svirt) then
-        buf[#buf + 1] = "@virtual_pure "
+        buf[#buf + 1] = "@pure_virtual "
     end
 
     local gkeys = isget and fn:property_keys_get(fn.PROP_GET) or {}

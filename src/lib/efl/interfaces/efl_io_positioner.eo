@@ -16,7 +16,7 @@ mixin Efl.Io.Positioner {
     data: null;
 
     methods {
-        seek @virtual_pure {
+        seek @pure_virtual {
             [[Seek in data]]
             params {
                 @in offset: int64; [[Offset in byte relative to whence]]
@@ -27,7 +27,7 @@ mixin Efl.Io.Positioner {
 
         @property position {
             [[Position property]]
-            get @virtual_pure { }
+            get @pure_virtual { }
             set {
                 [[Try to set position object, relative to start of file. See @.seek()]]
                 return: bool; [[$true if could reposition, $false if errors.]]

@@ -28,7 +28,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
    ]]
    data: null;
    methods {
-      @property map_enable @virtual_pure {
+      @property map_enable @pure_virtual {
          [[Whether map transformation is enabled on this object.
 
            The default map enable state is off ($false). The other

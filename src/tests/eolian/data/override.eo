@@ -1,7 +1,7 @@
 class Override (Base) {
    methods {
       @property a {
-         set @virtual_pure {
+         set @pure_virtual {
          }
          get {
          }
@@ -32,7 +32,7 @@ class Override (Base) {
               c: int(50);
          }
       }
-      foo @virtual_pure {
+      foo @pure_virtual {
       }
       bar {
            params {

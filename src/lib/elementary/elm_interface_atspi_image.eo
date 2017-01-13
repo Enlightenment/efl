@@ -6,7 +6,7 @@ mixin Elm.Interface.Atspi_Image ()
    methods {
       @property extents @protected {
          [[Gets an image extents.]]
-         get @virtual_pure {
+         get @pure_virtual {
          }
          keys {
             screen_coords: bool; [[$true if we got the screen coordinates, $false otherwise]] 

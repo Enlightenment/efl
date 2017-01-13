@@ -7,14 +7,14 @@ mixin Ector.Surface (Ector.Buffer)
    methods {
       @property reference_point {
          [[This define where is (0,0) in pixels coordinate inside the surface]]
-         set @virtual_pure {
+         set @pure_virtual {
          }
          values {
             x: int; [[X coordinate for reference point]]
             y: int; [[Y coordinate for reference point]]
          }
       }
-      renderer_factory_new @virtual_pure {
+      renderer_factory_new @pure_virtual {
          [[Create a new renderer factory for the given type]]
          return: Efl.Object; [[Renderer factory object]] /* FIXME: Should be a more restricted type, only here for cyclic. */
          params {

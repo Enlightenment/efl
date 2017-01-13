@@ -35,13 +35,13 @@ class Evas.Canvas3D.Object (Efl.Object)
       update {
          [[Update request for the object.]]
       }
-      update_notify @virtual_pure {
+      update_notify @pure_virtual {
          [[Pure virtual update_notify function.
 
            Update request for the object.]]
       }
 
-      change_notify @virtual_pure {
+      change_notify @pure_virtual {
          [[Pure virtual change_notify function.
 
            Update request for the object.]]
@@ -50,14 +50,14 @@ class Evas.Canvas3D.Object (Efl.Object)
            @in ref: Evas.Canvas3D.Object; [[The Object that caused the change.]]
          }
       }
-      callback_register @virtual_pure {
+      callback_register @pure_virtual {
          [[Pure virtual register samrt callback function.]]
          params {
            @in event: string; [[Event type.]]
            @in data: const(void_ptr);  [[User data.]]
          }
       }
-      callback_unregister @virtual_pure {
+      callback_unregister @pure_virtual {
          [[Pure virtual unregister smart callback function.]]
          params {
            @in event: string; [[Event type.]]

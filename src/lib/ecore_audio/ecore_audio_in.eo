@@ -44,7 +44,7 @@ class Ecore.Audio.In (Ecore.Audio)
             channels: int; [[The number of channels]]
          }
       }
-      @property preloaded @virtual_pure {
+      @property preloaded @pure_virtual {
          [[Preloaded state of the input
 
            @since 1.8
@@ -82,7 +82,7 @@ class Ecore.Audio.In (Ecore.Audio)
 
            @since 1.8
          ]]
-         set @virtual_pure {
+         set @pure_virtual {
          }
          get {
          }
@@ -134,7 +134,7 @@ class Ecore.Audio.In (Ecore.Audio)
             @in len: size; [[The amount of samples to read]]
          }
       }
-      seek @virtual_pure {
+      seek @pure_virtual {
          [[Seek within the input
 
            @since 1.8
