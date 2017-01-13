@@ -97,8 +97,6 @@ local gen_func_namesig = function(fn, cl, buf, isprop, isget, isset)
     if isprop then
         buf[#buf + 1] = "@property "
     end
-    buf[#buf + 1] = cl:full_name_get()
-    buf[#buf + 1] = "."
     buf[#buf + 1] = fn:name_get()
     buf[#buf + 1] = " "
     if not isprop then
