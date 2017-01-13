@@ -8,7 +8,7 @@
 EAPI Eolian_Parameter_Dir
 eolian_parameter_direction_get(const Eolian_Function_Parameter *param)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EOLIAN_IN_PARAM);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EOLIAN_UNKNOWN_PARAM);
    return param->param_dir;
 }
 

@@ -182,7 +182,8 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_IN_PARAM = 0,
+   EOLIAN_UNKNOWN_PARAM = 0,
+   EOLIAN_IN_PARAM,
    EOLIAN_OUT_PARAM,
    EOLIAN_INOUT_PARAM
 } Eolian_Parameter_Dir;
@@ -198,7 +199,8 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_SCOPE_PUBLIC = 0,
+   EOLIAN_SCOPE_UNKNOWN = 0,
+   EOLIAN_SCOPE_PUBLIC,
    EOLIAN_SCOPE_PRIVATE,
    EOLIAN_SCOPE_PROTECTED
 } Eolian_Object_Scope;
@@ -291,7 +293,7 @@ typedef struct _Eolian_Value
 
 typedef enum
 {
-   EOLIAN_BINOP_INVALID = -1,
+   EOLIAN_BINOP_INVALID = 0,
 
    EOLIAN_BINOP_ADD, /* + int, float */
    EOLIAN_BINOP_SUB, /* - int, float */
@@ -318,7 +320,7 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_UNOP_INVALID = -1,
+   EOLIAN_UNOP_INVALID = 0,
 
    EOLIAN_UNOP_UNM, /* - sint */
    EOLIAN_UNOP_UNP, /* + sint */
@@ -329,7 +331,7 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_DECL_UNKNOWN = -1,
+   EOLIAN_DECL_UNKNOWN = 0,
    EOLIAN_DECL_CLASS,
    EOLIAN_DECL_ALIAS,
    EOLIAN_DECL_STRUCT,
@@ -339,7 +341,7 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_DOC_TOKEN_UNKNOWN = -1,
+   EOLIAN_DOC_TOKEN_UNKNOWN = 0,
    EOLIAN_DOC_TOKEN_TEXT,
    EOLIAN_DOC_TOKEN_REF,
    EOLIAN_DOC_TOKEN_MARK_NOTE,

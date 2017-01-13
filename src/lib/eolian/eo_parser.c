@@ -270,7 +270,7 @@ get_binop_id(int tok)
       case TOK_LSH: return EOLIAN_BINOP_LSH;
       case TOK_RSH: return EOLIAN_BINOP_RSH;
 
-      default: return -1;
+      default: return EOLIAN_BINOP_INVALID;
      }
 }
 
@@ -284,11 +284,13 @@ get_unop_id(int tok)
       case '!': return EOLIAN_UNOP_NOT;
       case '~': return EOLIAN_UNOP_BNOT;
 
-      default: return -1;
+      default: return EOLIAN_UNOP_INVALID;
      }
 }
 
 static const int binprec[] = {
+   -1, /* invalid */
+
    8, /* + */
    8, /* - */
    9, /* * */
@@ -314,13 +316,6 @@ static const int binprec[] = {
 
 #define UNARY_PRECEDENCE 10
 
-static int
-get_binop_prec(Eolian_Binary_Operator id)
-{
-   if (id < 0) return -1;
-   return binprec[id];
-}
-
 static Eolian_Expression *parse_expr_bin(Eo_Lexer *ls, int min_prec);
 static Eolian_Expression *parse_expr(Eo_Lexer *ls);
 
@@ -329,7 +324,7 @@ parse_expr_simple(Eo_Lexer *ls)
 {
    Eolian_Expression *expr;
    Eolian_Unary_Operator unop = get_unop_id(ls->t.token);
-   if (unop >= 0)
+   if (unop != EOLIAN_UNOP_INVALID)
      {
         int line = ls->line_number, col = ls->column;
         eo_lexer_get(ls);
@@ -436,8 +431,8 @@ parse_expr_bin(Eo_Lexer *ls, int min_prec)
      {
         Eolian_Expression *rhs, *bin;
         Eolian_Binary_Operator op = get_binop_id(ls->t.token);
-        int prec = get_binop_prec(op);
-        if ((op < 0) || (prec < 0) || (prec < min_prec))
+        int prec = binprec[op];
+        if ((op == EOLIAN_BINOP_INVALID) || (prec < 0) || (prec < min_prec))
           break;
         eo_lexer_get(ls);
         rhs = parse_expr_bin(ls, prec + 1);
@@ -1073,6 +1068,7 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
    Eina_Bool has_nonull   = EINA_FALSE, has_optional = EINA_FALSE,
              has_nullable = EINA_FALSE;
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
+   par->param_dir = EOLIAN_IN_PARAM;
    FILL_BASE(par->base, ls, ls->line_number, ls->column);
    *params = eina_list_append(*params, par);
    if (allow_inout && ls->t.kw == KW_at_in)
@@ -1321,6 +1317,7 @@ parse_property(Eo_Lexer *ls)
    prop = calloc(1, sizeof(Eolian_Function));
    prop->klass = ls->tmp.kls;
    prop->type = EOLIAN_UNRESOLVED;
+   prop->get_scope = prop->set_scope = EOLIAN_SCOPE_PUBLIC;
    FILL_BASE(prop->base, ls, ls->line_number, ls->column);
    ls->tmp.kls->properties = eina_list_append(ls->tmp.kls->properties, prop);
    check(ls, TOK_VALUE);
@@ -1406,6 +1403,7 @@ parse_method(Eo_Lexer *ls)
    meth = calloc(1, sizeof(Eolian_Function));
    meth->klass = ls->tmp.kls;
    meth->type = EOLIAN_METHOD;
+   meth->get_scope = meth->set_scope = EOLIAN_SCOPE_PUBLIC;
    FILL_BASE(meth->base, ls, ls->line_number, ls->column);
    ls->tmp.kls->methods = eina_list_append(ls->tmp.kls->methods, meth);
    check(ls, TOK_VALUE);
@@ -1692,6 +1690,7 @@ parse_event(Eo_Lexer *ls)
 {
    Eolian_Event *ev = calloc(1, sizeof(Eolian_Event));
    FILL_BASE(ev->base, ls, ls->line_number, ls->column);
+   ev->scope = EOLIAN_SCOPE_PUBLIC;
    Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.kls->events = eina_list_append(ls->tmp.kls->events, ev);
    check(ls, TOK_VALUE);

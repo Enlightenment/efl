@@ -573,10 +573,6 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
 
         switch (dir)
           {
-           case EOLIAN_IN_PARAM:
-             eina_strbuf_append(buf, " * @param[in] ");
-             curl += sizeof(" * @param[in] ") - 1;
-             break;
            case EOLIAN_OUT_PARAM:
              eina_strbuf_append(buf, " * @param[out] ");
              curl += sizeof(" * @param[out] ") - 1;
@@ -584,6 +580,10 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
            case EOLIAN_INOUT_PARAM:
              eina_strbuf_append(buf, " * @param[in,out] ");
              curl += sizeof(" * @param[in,out] ") - 1;
+             break;
+           default:
+             eina_strbuf_append(buf, " * @param[in] ");
+             curl += sizeof(" * @param[in] ") - 1;
              break;
           }
 

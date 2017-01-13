@@ -8,25 +8,25 @@
 EAPI Eolian_Object_Scope
 eolian_function_scope_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EOLIAN_SCOPE_PUBLIC);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EOLIAN_SCOPE_PUBLIC);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, EOLIAN_SCOPE_PUBLIC);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EOLIAN_SCOPE_UNKNOWN);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EOLIAN_SCOPE_UNKNOWN);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, EOLIAN_SCOPE_UNKNOWN);
    switch (ftype)
      {
       case EOLIAN_METHOD:
         if (fid->type != EOLIAN_METHOD)
-          return EOLIAN_SCOPE_PUBLIC;
+          return EOLIAN_SCOPE_UNKNOWN;
         return fid->get_scope;
       case EOLIAN_PROP_GET:
         if ((fid->type != EOLIAN_PROP_GET) && (fid->type != EOLIAN_PROPERTY))
-          return EOLIAN_SCOPE_PUBLIC;
+          return EOLIAN_SCOPE_UNKNOWN;
         return fid->get_scope;
       case EOLIAN_PROP_SET:
         if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
-          return EOLIAN_SCOPE_PUBLIC;
+          return EOLIAN_SCOPE_UNKNOWN;
         return fid->set_scope;
       default:
-        return EOLIAN_SCOPE_PUBLIC;
+        return EOLIAN_SCOPE_UNKNOWN;
      }
 }
 

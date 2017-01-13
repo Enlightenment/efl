@@ -29,7 +29,7 @@ eolian_event_documentation_get(const Eolian_Event *event)
 EAPI Eolian_Object_Scope
 eolian_event_scope_get(const Eolian_Event *event)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EOLIAN_SCOPE_PUBLIC);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EOLIAN_SCOPE_UNKNOWN);
    return event->scope;
 }
 

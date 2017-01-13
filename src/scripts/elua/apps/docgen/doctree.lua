@@ -12,6 +12,7 @@ local M = {}
 
 M.Node = util.Object:clone {
     scope = {
+        UNKNOWN = eolian.object_scope.UNKNOWN,
         PUBLIC = eolian.object_scope.PUBLIC,
         PRIVATE = eolian.object_scope.PRIVATE,
         PROTECTED = eolian.object_scope.PROTECTED
@@ -408,6 +409,7 @@ M.Function = Node:clone {
 }
 
 M.Parameter = Node:clone {
+    UNKNOWN = eolian.param_dir.UNKNOWN,
     IN = eolian.parameter_dir.IN,
     OUT = eolian.parameter_dir.OUT,
     INOUT = eolian.parameter_dir.INOUT,
@@ -427,7 +429,8 @@ M.Parameter = Node:clone {
             [self.OUT] = "out",
             [self.INOUT] = "inout"
         }
-        return dir_to_str[self:direction_get()]
+        return assert(dir_to_str[self:direction_get()],
+                      "unknown parameter direction")
     end,
 
     type_get = function(self)

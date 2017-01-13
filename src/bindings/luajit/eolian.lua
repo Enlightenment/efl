@@ -40,14 +40,15 @@ ffi.cdef [[
 
     typedef enum
     {
-        EOLIAN_IN_PARAM = 0,
+        EOLIAN_UNKNOWN_PARAM = 0,
+        EOLIAN_IN_PARAM,
         EOLIAN_OUT_PARAM,
         EOLIAN_INOUT_PARAM
     } Eolian_Parameter_Dir;
 
     typedef enum
     {
-       EOLIAN_CLASS_UNKNOWN_TYPE = 0,
+        EOLIAN_CLASS_UNKNOWN_TYPE = 0,
         EOLIAN_CLASS_REGULAR,
         EOLIAN_CLASS_ABSTRACT,
         EOLIAN_CLASS_MIXIN,
@@ -56,7 +57,8 @@ ffi.cdef [[
 
     typedef enum
     {
-        EOLIAN_SCOPE_PUBLIC = 0,
+        EOLIAN_SCOPE_UNKNOWN = 0,
+        EOLIAN_SCOPE_PUBLIC,
         EOLIAN_SCOPE_PRIVATE,
         EOLIAN_SCOPE_PROTECTED
     } Eolian_Object_Scope;
@@ -142,7 +144,7 @@ ffi.cdef [[
     } Eolian_Value_t;
 
     typedef enum {
-        EOLIAN_BINOP_INVALID = -1,
+        EOLIAN_BINOP_INVALID = 0,
 
         EOLIAN_BINOP_ADD, /* + int, float */
         EOLIAN_BINOP_SUB, /* - int, float */
@@ -168,7 +170,7 @@ ffi.cdef [[
     } Eolian_Binary_Operator;
 
     typedef enum {
-        EOLIAN_UNOP_INVALID = -1,
+        EOLIAN_UNOP_INVALID = 0,
 
         EOLIAN_UNOP_UNM, /* - sint */
         EOLIAN_UNOP_UNP, /* + sint */
@@ -178,7 +180,7 @@ ffi.cdef [[
     } Eolian_Unary_Operator;
 
     typedef enum {
-        EOLIAN_DECL_UNKNOWN = -1,
+        EOLIAN_DECL_UNKNOWN = 0,
         EOLIAN_DECL_CLASS,
         EOLIAN_DECL_ALIAS,
         EOLIAN_DECL_STRUCT,
@@ -187,7 +189,7 @@ ffi.cdef [[
     } Eolian_Declaration_Type;
 
     typedef enum {
-        EOLIAN_DOC_TOKEN_UNKNOWN = -1,
+        EOLIAN_DOC_TOKEN_UNKNOWN = 0,
         EOLIAN_DOC_TOKEN_TEXT,
         EOLIAN_DOC_TOKEN_REF,
         EOLIAN_DOC_TOKEN_MARK_NOTE,
@@ -433,9 +435,10 @@ end
 cutil.init_module(init, shutdown)
 
 M.object_scope = {
-    PUBLIC    = 0,
-    PRIVATE   = 1,
-    PROTECTED = 2
+    UNKNOWN   = 0,
+    PUBLIC    = 1,
+    PRIVATE   = 2,
+    PROTECTED = 3
 }
 
 M.directory_scan = function(dir)
@@ -479,12 +482,12 @@ M.database_validate = function()
 end
 
 M.declaration_type = {
-    UNKNOWN = -1,
-    CLASS   =  0,
-    ALIAS   =  1,
-    STRUCT  =  2,
-    ENUM    =  3,
-    VAR     =  4
+    UNKNOWN = 0,
+    CLASS   = 0,
+    ALIAS   = 1,
+    STRUCT  = 2,
+    ENUM    = 3,
+    VAR     = 4
 }
 
 M.type_type = {
@@ -849,9 +852,10 @@ M.Function = ffi.metatype("Eolian_Function", {
 })
 
 M.parameter_dir = {
-    IN    = 0,
-    OUT   = 1,
-    INOUT = 2
+    UNKNOWN = 0,
+    IN      = 1,
+    OUT     = 2,
+    INOUT   = 3
 }
 
 ffi.metatype("Eolian_Function_Parameter", {
@@ -1271,39 +1275,39 @@ M.Value = ffi.metatype("Eolian_Value", {
 })
 
 M.binary_operator = {
-    INVALID = -1,
+    INVALID = 0,
 
-    ADD = 0,
-    SUB = 1,
-    MUL = 2,
-    DIV = 3,
-    MOD = 4,
+    ADD = 1,
+    SUB = 2,
+    MUL = 3,
+    DIV = 4,
+    MOD = 5,
 
-    EQ = 5,
-    NQ = 6,
-    GT = 7,
-    LT = 8,
-    GE = 9,
-    LE = 10,
+    EQ = 6,
+    NQ = 7,
+    GT = 8,
+    LT = 9,
+    GE = 10,
+    LE = 11,
 
-    AND = 11,
-    OR  = 12,
+    AND = 12,
+    OR  = 13,
 
-    BAND = 13,
-    BOR  = 14,
-    BXOR = 15,
-    LSH  = 16,
-    RSH  = 17
+    BAND = 14,
+    BOR  = 15,
+    BXOR = 16,
+    LSH  = 17,
+    RSH  = 18
 }
 
 M.unary_operator = {
-    INVALID = -1,
+    INVALID = 0,
 
-    UNM = 0,
-    UNP = 1,
+    UNM = 1,
+    UNP = 2,
 
-    NOT  = 2,
-    BNOT = 3
+    NOT  = 3,
+    BNOT = 4
 }
 
 M.Expression = ffi.metatype("Eolian_Expression", {
@@ -1523,14 +1527,14 @@ M.Documentation = ffi.metatype("Eolian_Documentation", {
 })
 
 M.doc_token_type = {
-    UNKNOWN          = -1,
-    TEXT             =  0,
-    REF              =  1,
-    MARK_NOTE        =  2,
-    MARK_WARNING     =  3,
-    MARK_REMARK      =  4,
-    MARK_TODO        =  5,
-    MARKUP_MONOSPACE =  6
+    UNKNOWN          = 0,
+    TEXT             = 1,
+    REF              = 2,
+    MARK_NOTE        = 3,
+    MARK_WARNING     = 4,
+    MARK_REMARK      = 5,
+    MARK_TODO        = 6,
+    MARKUP_MONOSPACE = 7
 }
 
 M.doc_ref_type = {

@@ -226,7 +226,7 @@ struct _Eolian_Event
    Eolian_Documentation *doc;
    Eolian_Type *type;
    Eolian_Class *klass;
-   int scope;
+   Eolian_Object_Scope scope;
    Eina_Bool is_beta :1;
    Eina_Bool is_hot  :1;
    Eina_Bool is_restart :1;
