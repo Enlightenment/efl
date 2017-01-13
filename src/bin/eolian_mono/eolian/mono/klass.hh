@@ -97,6 +97,7 @@ struct klass
              "public class " << string << "Concrete : " << string << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n"
+             << scope_tab << "private readonly object eventLock = new object();\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
              << scope_tab << "}\n"
@@ -157,6 +158,7 @@ struct klass
              "public " << class_type << " " << string << "Inherit : " << string << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n"
+             << scope_tab << "private readonly object eventLock = new object();\n"
              << scope_tab << "public static System.IntPtr klass;\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
@@ -366,7 +368,10 @@ struct klass
                 scope_tab << "protected event EventHandler " << grammar::string_replace(',', '_') << ";\n"
                 << scope_tab << "protected void On_" << grammar::string_replace(',', '_') << "(EventArgs e)\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "EventHandler evt = " << grammar::string_replace(',', '_') << ";\n"
+                << scope_tab << scope_tab << "EventHandler evt;\n"
+                << scope_tab << scope_tab << "lock (eventLock) {\n"
+                << scope_tab << scope_tab << scope_tab << "evt = " << grammar::string_replace(',', '_') << ";\n"
+                << scope_tab << scope_tab << "}\n"
                 << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
                 << scope_tab << "}\n"
                 << scope_tab << "public void on_" << grammar::string_replace(',', '_') << "NativeCallback(System.IntPtr data, System.IntPtr evt)\n"
@@ -378,21 +383,24 @@ struct klass
                   .generate(sink, std::make_tuple(upper_name, e.name, upper_name, e.name, e.name, e.name, cls.cxx_name, upper_name), context))
               return false;
 
-          // FIXME Add locking
           if (!as_generator(
                       scope_tab << scope_tab << "add {\n"
-                      << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
-                      << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << grammar::string_replace(',', '_') << "_delegate))\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << grammar::string_replace(',', '_') << " += value;\n"
-                      << scope_tab << scope_tab << scope_tab << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error adding proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << grammar::string_replace(',', '_') << "_delegate))\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << grammar::string_replace(',', '_') << " += value;\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error adding proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                       << scope_tab << scope_tab << "}\n"
                       << scope_tab << scope_tab << "remove {\n"
-                      << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
-                      << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << grammar::string_replace(',', '_') << "_delegate))\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << grammar::string_replace(',', '_') << " -= value;\n"
-                      << scope_tab << scope_tab << scope_tab << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error removing proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << grammar::string_replace(',', '_') << "_delegate))\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << grammar::string_replace(',', '_') << " -= value;\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error removing proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                       << scope_tab << scope_tab << "}\n"
                       << scope_tab << "}\n")
                   .generate(sink, std::make_tuple(upper_c_name, e.name, upper_name, upper_c_name, e.name, upper_name), context))
