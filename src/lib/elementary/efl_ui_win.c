@@ -340,7 +340,7 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
 static void
 _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj);
 static Elm_Theme_Apply _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
-static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style);
+static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style);
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
 static void _elm_win_resize_objects_eval(Evas_Object *obj);
@@ -4134,7 +4134,7 @@ _efl_system_theme_path_get(void)
 }
 
 static void
-_elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
+_elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
 {
    Evas_Object *obj = sd->obj;
    int w, h, mw, mh, v;
@@ -4150,7 +4150,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *style)
    if (EINA_LIKELY(v >= FRAME_OBJ_THEME_MIN_VERSION))
      {
         if (!elm_widget_theme_object_set
-            (sd->obj, sd->frame_obj, "border", "base", style))
+            (sd->obj, sd->frame_obj, "border", element, style))
           {
              ERR("Failed to set main border theme for the window.");
              ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
@@ -5103,7 +5103,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    /* do not append to list; all windows render as black rects */
    if (type != ELM_WIN_FAKE)
      {
-        const char *style = "default";
+        const char *element = "base";
+        const char *style;
 
         _elm_win_list = eina_list_append(_elm_win_list, obj);
         _elm_win_count++;
@@ -5113,13 +5114,15 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           {
              TRAP(sd, fullscreen_set, 1);
           }
+        style = elm_widget_style_get(obj);
+        if (!style) style = "default";
         switch (type)
           {
-           case EFL_UI_WIN_DIALOG_BASIC:    style = "dialog"; break;
-           case EFL_UI_WIN_NAVIFRAME_BASIC: style = "naviframe"; break;
+           case EFL_UI_WIN_DIALOG_BASIC:    element = "dialog"; break;
+           case EFL_UI_WIN_NAVIFRAME_BASIC: element = "naviframe"; break;
            default: break;
           }
-        _elm_win_frame_add(sd, style);
+        _elm_win_frame_add(sd, element, style);
 
         if (_elm_config->focus_highlight_enable)
           elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);

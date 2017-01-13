@@ -994,8 +994,8 @@ group { name: "elm/border/base/default";
    }
 }
 
-group { name: "elm/border/base/dialog";
-   inherit: "elm/border/base/default";
+group { name: "elm/border/dialog/default";
+   inherit:   "elm/border/base/default";
    parts {
       text {  "elm.text.title";
          clip: "top_clip";
@@ -1061,11 +1061,11 @@ group { name: "elm/border/base/dialog";
    }
 }
 
-group { name: "elm/border/base/naviframe";
+group { name: "elm/border/naviframe/default";
+   inherit:   "elm/border/dialog/default";
    images.image: "sym_left_dark_normal.png" COMP;
    images.image: "sym_left_glow_normal.png" COMP;
    images.image: "sym_left_light_normal.png" COMP;
-   inherit: "elm/border/base/dialog";
    parts {
       image { "close1";
          desc { "default";
