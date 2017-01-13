@@ -235,6 +235,9 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
 
    if ((!sd->expanded) || (!sd->bx)) return;
 
+   elm_layout_signal_emit(sd->hover, "elm,state,align,default", "elm");
+   edje_object_message_signal_process(elm_layout_edje_get(sd->hover));
+
    elm_box_recalculate(sd->bx);
    efl_gfx_size_hint_combined_min_get(sd->bx, &box_w, &box_h);
 
