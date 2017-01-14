@@ -1542,7 +1542,7 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
 {
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
-   Eina_Bool shift;
+   Eina_Bool shift, adjust, backwards = EINA_FALSE;
 
    widget = (Elm_Code_Widget *)data;
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -1571,8 +1571,11 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      {
         if (shift)
           {
+             backwards = !strcmp(ev->key, "Up") || !strcmp(ev->key, "Left") ||
+                         !strcmp(ev->key, "Home") || !strcmp(ev->key, "Prior");
+
              if (!pd->selection)
-               elm_code_widget_selection_start(widget, pd->cursor_line, pd->cursor_col);
+               elm_code_widget_selection_start(widget, pd->cursor_line, pd->cursor_col - (backwards?1:0));
           }
         else
           elm_code_widget_selection_clear(widget);
@@ -1595,7 +1598,15 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
           _elm_code_widget_cursor_move_pagedown(widget);
 
         if (shift)
-          elm_code_widget_selection_end(widget, pd->cursor_line, pd->cursor_col);
+          {
+             if (pd->selection->start_line == pd->selection->end_line)
+               adjust = (pd->selection->end_col > pd->selection->start_col) ||
+                         (!backwards && (pd->selection->end_col == pd->selection->start_col));
+             else
+               adjust = (pd->selection->end_line > pd->selection->start_line);
+
+             elm_code_widget_selection_end(widget, pd->cursor_line, pd->cursor_col - (adjust?1:0));
+          }
      }
 
    else if (!strcmp(ev->key, "KP_Enter") || !strcmp(ev->key, "Return"))

@@ -36,8 +36,6 @@ _elm_code_widget_selection_limit(Evas_Object *widget EINA_UNUSED, Elm_Code_Widge
 
    if (*col > width + 1)
      *col = width + 1;
-   if (*col < 1)
-     *col = 1;
 }
 
 EAPI void
@@ -63,7 +61,6 @@ elm_code_widget_selection_start(Evas_Object *widget,
    pd->selection->start_line = line;
    pd->selection->start_col = col;
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
-   elm_obj_code_widget_cursor_position_set(widget, line, col);
 }
 
 EAPI void
