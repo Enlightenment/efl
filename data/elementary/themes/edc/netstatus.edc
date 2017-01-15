@@ -1,118 +1,84 @@
 group { name: "e/modules/netstatus/main";
-   image: "rx.png" COMP;
-   image: "tx.png" COMP;
-   image: "idle.png" COMP;
-   parts {
-      part { name: "fade_clip"; type: RECT;
-         description { state: "default" 0.0;
-            color: 255 255 255 255;
-         }
-      }
-      part { name: "rx"; type: IMAGE;
-          mouse_events: 0;
-          description { state: "default" 0.0;
-             aspect: 1.0 1.0;
-             aspect_preference: BOTH;
-             visible: 0;
-             rel1.to: "base";
-             rel2.to: "base";
-             image.normal: "rx.png";
-             color: 255 255 255 0;
-          }
-          description { state: "active" 0.0;
-             inherit: "default" 0.0;
-             visible: 1;
-             color: 255 255 255 255;
-          }
-      }
-      part { name: "tx"; type: IMAGE;
-          mouse_events: 0;
-          description { state: "default" 0.0;
-             aspect: 1.0 1.0;
-             aspect_preference: BOTH;
-             visible: 0;
-             rel1.to: "base";
-             rel2.to: "base";
-             image.normal: "tx.png";
-             color: 255 255 255 0;
-          }
-          description { state: "active" 0.0;
-             inherit: "default" 0.0;
-             visible: 1;
-             color: 255 255 255 255;
-          }
-      }
-      part { name: "base";
-         clip_to: "fade_clip";
-         description { state: "default" 0.0;
-            aspect: 1.0 1.0;
-            aspect_preference: BOTH;
-            image.normal: "idle.png";
-         }
-      }
-      part { name: "e.text.received"; type: TEXT; mouse_events: 0;
-         scale: 1;
-         effect: SHADOW BOTTOM;
-         clip_to: "fade_clip";
-         description { state: "default" 0.0;
-            color_class: "module_label";
-            color3: 255 255 255 255;
-            rel1.relative: 0.1 0.0;
-            rel2.relative: 0.9 0.5;
-            text { font: FNBOLD;
-               fit: 1 1;
-               elipsis: -1;
-               align: 0.5 0.5;
-               text_class: "module_small";
-            }
-         }
-      }
-      part { name: "e.text.transmitted"; type: TEXT; mouse_events: 0;
-         scale: 1;
-         effect: SHADOW BOTTOM;
-         clip_to: "fade_clip";
-         description { state: "default" 0.0;
-            color_class: "module_label";
-            color3: 255 255 255 255;
-            rel1.relative: 0.1 0.5;
-            rel2.relative: 0.9 1.0;
-            text { font: FNBOLD;
-               fit: 1 1;
-               elipsis: -1;
-               align: 0.5 0.5;
-               text_class: "module_small";
-            }
+   image: "netstatus_rx.png" COMP;
+   image: "netstatus_tx.png" COMP;
+   image: "netstatus_base.png" COMP;
+   image: "netstatus_over.png" COMP;
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 1)) {
+            // new rxcur = getarg(2);
+            new rxper = getarg(3);
+            // new rxmax = getarg(4);
+            // new txcur = getarg(5);
+            new txper = getarg(6);
+            // new txmax = getarg(7);
+
+            new Float:val = rxper / 100.0;
+            custom_state(PART:"rx_clip", "default", 0.0);
+            set_state_val(PART:"rx_clip", STATE_REL1, 0.0, 1.0 - val);
+            set_state(PART:"rx_clip", "custom", 0.0);
+
+            val = txper / 100.0;
+            custom_state(PART:"tx_clip", "default", 0.0);
+            set_state_val(PART:"tx_clip", STATE_REL1, 0.0, 1.0 - val);
+            set_state(PART:"tx_clip", "custom", 0.0);
          }
       }
    }
-   programs {
-      program { name: "received";
-         signal: "e,state,received,active";
-         source: "e";
-         action: STATE_SET "active" 0.0;
-         target: "rx";
-         transition: SINUSOIDAL 0.25;
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+            image.normal: "netstatus_base.png";
+         }
       }
-      program { name: "received_idle";
-         signal: "e,state,received,idle";
-         source: "e";
-         action: STATE_SET "default" 0.0;
-         target: "rx";
-         transition: SINUSOIDAL 0.25;
+      part { name: "rx_spacer"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.relative: 0.32 0.33;
+            rel2.relative: 0.98 0.78;
+         }
       }
-      program { name: "transmitted";
-         signal: "e,state,transmitted,active";
-         source: "e";
-         action: STATE_SET "active" 0.0;
-         target: "tx";
-         transition: SINUSOIDAL 0.25;
+      part { name: "rx_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "rx_spacer";
+            rel2.to: "rx_spacer";
+         }
       }
-      program { name: "transmitted_idle";
-         signal: "e,state,transmitted,idle";
-         source: "e";
-         action: STATE_SET "default" 0.0;
-         target: "tx";
-         transition: SINUSOIDAL 0.25;
+      part { name: "rx"; type: IMAGE;
+          clip_to: "rx_clip";
+          description { state: "default" 0.0;
+             rel1.to: "base";
+             rel2.to: "base";
+             image.normal: "netstatus_rx.png";
+          }
+      }
+      part { name: "tx_spacer"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.relative: 0.04 0.08;
+            rel2.relative: 0.68 0.50;
+         }
+      }
+      part { name: "tx_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "tx_spacer";
+            rel2.to: "tx_spacer";
+         }
+      }
+      part { name: "tx"; type: IMAGE;
+          clip_to: "tx_clip";
+          description { state: "default" 0.0;
+             rel1.to: "base";
+             rel2.to: "base";
+             image.normal: "netstatus_tx.png";
+          }
+      }
+      part { name: "over";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "netstatus_over.png";
+         }
       }
    }
 }
