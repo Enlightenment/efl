@@ -107,6 +107,9 @@ _elm_code_widget_cell_size_get(Elm_Code_Widget *widget, Evas_Coord *width, Evas_
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    grid = eina_list_nth(pd->grids, 0);
+   if (!grid)
+     return;
+
    evas_object_textgrid_cell_size_get(grid, &w, &h);
    if (w == 0) w = 5;
    if (h == 0) h = 10;
@@ -337,6 +340,8 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    Evas_Textgrid_Cell *cells;
    Elm_Code_Widget_Data *pd;
 
+   EINA_SAFETY_ON_NULL_RETURN(line);
+
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
    if (eina_list_count(pd->grids) < line->number)
@@ -405,7 +410,8 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, uns
      {
         line = elm_code_file_line_get(pd->code->file, y);
 
-        _elm_code_widget_fill_line(widget, line);
+        if (line)
+          _elm_code_widget_fill_line(widget, line);
      }
 }
 
