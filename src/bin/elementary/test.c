@@ -73,6 +73,7 @@ void test_entry8(void *data, Evas_Object *obj, void *event_info);
 void test_entry_regex(void *data, Evas_Object *obj, void *event_info);
 void test_entry_notepad(void *data, Evas_Object *obj, void *event_info);
 void test_multibuttonentry(void *data, Evas_Object *obj, void *event_info);
+void test_multibuttonentry2(void *data, Evas_Object *obj, void *event_info);
 void test_entry_anchor2(void *data, Evas_Object *obj, void *event_info);
 void test_entry_anchor(void *data, Evas_Object *obj, void *event_info);
 void test_entry_emoticon(void *data, Evas_Object *obj, void *event_info);
@@ -715,6 +716,7 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry Regex", test_entry_regex);
    ADD_TEST(NULL, "Entries", "Entry Notepad", test_entry_notepad);
    ADD_TEST(NULL, "Entries", "Multibuttonentry", test_multibuttonentry);
+   ADD_TEST(NULL, "Entries", "Multibuttonentry Shrink", test_multibuttonentry2);
    ADD_TEST(NULL, "Entries", "Entry Anchor", test_entry_anchor);
    ADD_TEST(NULL, "Entries", "Entry Anchor2", test_entry_anchor2);
    ADD_TEST(NULL, "Entries", "Entry Emoticon", test_entry_emoticon);

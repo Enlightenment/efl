@@ -252,3 +252,89 @@ test_multibuttonentry(void *data EINA_UNUSED,
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
+
+static Evas_Object*
+_add_multibuttonentry_shrink(Evas_Object *parent)
+{
+   Evas_Object *scr = NULL;
+   Evas_Object *mbe = NULL;
+   Evas_Object *btn = NULL;
+   void *data = NULL;
+
+   scr = elm_scroller_add(parent);
+   elm_scroller_bounce_set(scr, EINA_FALSE, EINA_TRUE);
+   elm_scroller_policy_set(scr, ELM_SCROLLER_POLICY_OFF,ELM_SCROLLER_POLICY_AUTO);
+   evas_object_show(scr);
+
+   mbe = elm_multibuttonentry_add(parent);
+   elm_object_text_set(mbe, "To: ");
+   elm_object_part_text_set(mbe, "guide", "Tap to add recipient");
+   evas_object_size_hint_weight_set(mbe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(mbe, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(scr, mbe);
+   elm_multibuttonentry_expanded_set(mbe, EINA_FALSE);
+
+   elm_multibuttonentry_item_append(mbe, "mbe1", _select_cb, NULL);
+   elm_multibuttonentry_item_append(mbe, "mbe2", _select_cb, NULL);
+   elm_multibuttonentry_item_append(mbe, "mbe3", _select_cb, NULL);
+   elm_multibuttonentry_item_append(mbe, "mbe4", _select_cb, NULL);
+   elm_multibuttonentry_item_append(mbe, "mbe5", _select_cb, NULL);
+   elm_multibuttonentry_item_append(mbe, "mbe6", _select_cb, NULL);
+   elm_multibuttonentry_item_append(mbe, "mbe7", _select_cb, NULL);
+   elm_multibuttonentry_item_append(mbe, "mbe8", _select_cb, NULL);
+   elm_multibuttonentry_item_append(mbe, "mbe9", _select_cb, NULL);
+   elm_multibuttonentry_item_append(mbe, "mbe10", _select_cb, NULL);
+
+   // Add item verify callback to Multibuttonentry
+   elm_multibuttonentry_item_filter_append(mbe, _item_filter_cb, data);
+
+   // Add "item,selected","item,added", "item,deleted", "clicked", "unfocused",
+   // "expanded", "contracted" and "contracted,state,changed" smart callback
+   evas_object_smart_callback_add(mbe, "item,selected", _item_selected_cb, NULL);
+   evas_object_smart_callback_add(mbe, "item,added", _item_added_cb, NULL);
+   evas_object_smart_callback_add(mbe, "item,deleted", _item_deleted_cb, NULL);
+   evas_object_smart_callback_add(mbe, "item,clicked", _item_clicked_cb, NULL);
+
+   evas_object_smart_callback_add(mbe, "clicked", _mbe_clicked_cb, NULL);
+   evas_object_smart_callback_add(mbe, "focused", _mbe_focused_cb, NULL);
+   evas_object_smart_callback_add(mbe, "unfocused", _mbe_unfocused_cb, NULL);
+
+   evas_object_smart_callback_add(mbe, "expanded", _expanded_cb, NULL);
+   evas_object_smart_callback_add(mbe, "contracted", _contracted_cb, NULL);
+   evas_object_smart_callback_add(mbe, "shrink,state,changed", _shrink_state_changed_cb, NULL);
+   evas_object_smart_callback_add(mbe, "item,longpressed", _longpressed_cb, NULL);
+
+   btn = _format_change_btn_add(mbe);
+   elm_object_part_content_set(parent, "box", btn);
+
+   evas_object_resize(mbe, 220, 300);
+   elm_object_focus_set(mbe, EINA_TRUE);
+
+   return scr;
+}
+
+void
+test_multibuttonentry2(void *data EINA_UNUSED,
+                      Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *sc;
+   Evas_Object *ly;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("multibuttonentry", "MultiButtonEntry");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/multibuttonentry.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "multibuttonentry_test");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, ly);
+   evas_object_show(ly);
+
+   sc = _add_multibuttonentry_shrink(ly);
+   elm_object_part_content_set(ly, "multibuttonentry", sc);
+
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
+}

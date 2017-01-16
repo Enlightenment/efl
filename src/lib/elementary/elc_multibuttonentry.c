@@ -181,10 +181,7 @@ _shrink_mode_set(Evas_Object *obj,
    else if (sd->view_state == MULTIBUTTONENTRY_VIEW_GUIDETEXT)
      evas_object_hide(sd->guide_text);
    else if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK)
-     {
-        evas_object_hide(sd->end);
-        sd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
-     }
+     evas_object_hide(sd->end);
 
    if (shrink == EINA_TRUE)
      {
@@ -266,12 +263,13 @@ _shrink_mode_set(Evas_Object *obj,
                   elm_box_pack_end(sd->box, sd->end);
                   evas_object_show(sd->end);
 
-                  sd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
-                  efl_event_callback_legacy_call
-                    (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)1);
                   break;
                }
           }
+
+        sd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
+        efl_event_callback_legacy_call
+          (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)1);
      }
    else
      {
@@ -840,9 +838,6 @@ _item_new(Elm_Multibuttonentry_Data *sd,
         item->func = func;
      }
 
-   if (!elm_object_focus_get(obj) && sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK && sd->w_box)
-     _shrink_mode_set(obj, EINA_TRUE);
-
    switch (pos)
      {
       case MULTIBUTTONENTRY_POS_START:
@@ -943,6 +938,10 @@ _item_new(Elm_Multibuttonentry_Data *sd,
         break;
      }
 
+   if (!elm_object_focus_get(obj) && sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK && sd->w_box)
+     _shrink_mode_set(obj, EINA_TRUE);
+
+
    efl_event_callback_legacy_call
      (obj, ELM_MULTIBUTTONENTRY_EVENT_ITEM_ADDED, eo_item);
 
@@ -1008,6 +1007,8 @@ _box_resize_cb(void *data,
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
    evas_object_geometry_get(sd->box, NULL, NULL, &w, &h);
+   if ((w <= elm_config_finger_size_get()) || (h <= elm_config_finger_size_get())) return;
+
    elm_box_padding_get(obj, &hpad, NULL);
 
    if (sd->h_box < h)
