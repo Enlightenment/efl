@@ -2203,6 +2203,7 @@ _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
           x += (abs(offset) < dx ? offset : -(dx + 1));
      }
 
+   if (sid->is_mirrored) x += w;
    if (sid->pagesize_h > 0)
      {
         if (x >= 0)
@@ -2212,6 +2213,7 @@ _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
         x = x / (sid->pagesize_h);
         x = x * (sid->pagesize_h);
      }
+   if (sid->is_mirrored) x -= w;
    if (!sid->loop_h)
      {
         if ((x + w) > cw) x = cw - w;
@@ -4319,6 +4321,9 @@ _elm_interface_scrollable_current_page_get(Eo *obj EINA_UNUSED, Elm_Scrollable_S
    elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
    if (pagenumber_h)
      {
+        if (sid->is_mirrored)
+          x = _elm_scroll_x_mirrored_get(sid->obj, x);
+
         if (sid->pagesize_h > 0)
           {
              double result = (double)x / (double)sid->pagesize_h;
@@ -4384,9 +4389,10 @@ _elm_interface_scrollable_page_show(Eo *obj, Elm_Scrollable_Smart_Interface_Data
    elm_interface_scrollable_content_viewport_geometry_get
          (sid->obj, NULL, NULL, &w, &h);
    x = sid->pagesize_h * pagenumber_h;
+   x = (sid->is_mirrored ? _elm_scroll_x_mirrored_get(sid->obj, x) : x);
    y = sid->pagesize_v * pagenumber_v;
 
-   sid->wx = (sid->is_mirrored ? _elm_scroll_x_mirrored_get(sid->obj, x) : x);
+   sid->wx = x;
    sid->wy = y;
    sid->ww = w;
    sid->wh = h;
@@ -4411,6 +4417,7 @@ _elm_interface_scrollable_page_bring_in(Eo *obj, Elm_Scrollable_Smart_Interface_
    elm_interface_scrollable_content_viewport_geometry_get
          (sid->obj, NULL, NULL, &w, &h);
    x = sid->pagesize_h * pagenumber_h;
+   x = (sid->is_mirrored ? _elm_scroll_x_mirrored_get(sid->obj, x) : x);
    y = sid->pagesize_v * pagenumber_v;
    if (_elm_scroll_content_region_show_internal(obj, &x, &y, w, h))
      {
