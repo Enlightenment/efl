@@ -25,7 +25,7 @@ static const Filter_Image images[] = {
    { "sky_01.jpg", "sky" },
    { "sky_04.jpg", "cloud" },
    { "wood_01.jpg", "wood" },
-   { "animated_logo.gif", "logo" },
+   { "fire.gif", "logo" },
    { NULL, NULL }
 };
 
@@ -40,7 +40,7 @@ static const Filter_Image images_cloud[] = {
 };
 
 static const Filter_Image images_anim[] = {
-   { "animated_logo.gif", "logo" },
+   { "fire.gif", "logo" },
    { NULL, NULL },
 };
 
@@ -109,13 +109,27 @@ static const Filter templates[] = {
    { "Displaced cloud",
      "cloud = buffer { src = 'cloud' }\n"
      "displace { cloud, intensity = 10, fillmode = 'stretch' }", images_cloud },
-   { "Animated ugliness",
+   { "Text on fire",
+     "-- set padding to 15 pixels max\n"
+     "padding_set { 15 }\n\n"
+     "-- our buffer: 1 source (fire gif) and 3 internal buffers\n"
      "logo = buffer { src = 'logo' }\n"
-     "blend { logo, fillmode = 'repeat' }\n"
-     "a = buffer {}\n"
+     "a = buffer { 'alpha' }\n"
+     "b = buffer { 'rgba' }\n"
+     "c = buffer { 'alpha' }\n\n"
+     "-- create a massive blur: a\n"
      "grow { 5, dst = a }\n"
-     "blur { 5, src = a, color = 'darkblue' }\n"
-     "blend { color = 'yellow' }", images_anim }
+     "blur { 20, ox = -5, oy = -3, src = a, dst = a }\n\n"
+     "-- draw fire using a as a mask\n"
+     "mask { logo, a, fillmode = 'stretch_y_repeat_x' }\n\n"
+     "-- create a displacement map: blur the fire a lot\n"
+     "blend { src = logo, dst = b, fillmode = 'stretch' }\n"
+     "blur { 30, src = logo, dst = b, src = b }\n"
+     "displace { map = b, dst = c }\n\n"
+     "-- draw the moving text\n"
+     "blur { 4, src = c, color = '#ac180280' }\n"
+     "blur { 2, src = c, color = '#dea80080' }\n"
+     "mask { a, c }", images_anim }
 };
 
 

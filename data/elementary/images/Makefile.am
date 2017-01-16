@@ -15,6 +15,7 @@ elementary_images_files = \
 	elementary/images/logo.png \
 	elementary/images/logo_small.png \
 	elementary/images/animated_logo.gif \
+	elementary/images/fire.gif \
 	elementary/images/parking.png \
 	elementary/images/icon_00.png \
 	elementary/images/icon_01.png \
