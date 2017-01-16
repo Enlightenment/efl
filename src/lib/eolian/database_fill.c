@@ -30,8 +30,7 @@ _print_linecol(const Eolian_Object *base)
 }
 
 static Eina_Bool
-_get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
-               Eolian_Function_Type ftype, Eolian_Function **foo_id)
+_get_impl_func(Eolian_Class *cl, Eolian_Implement *impl, Eolian_Function_Type ftype)
 {
    size_t imlen = strlen(impl->full_name);
    char *clbuf = alloca(imlen + 1);
@@ -118,7 +117,6 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
         return EINA_FALSE;
      }
 
-   *foo_id = (Eolian_Function *)fid;
    impl->foo_id = fid;
 
    return EINA_TRUE;
@@ -128,7 +126,6 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl,
 static Eina_Bool
 _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 {
-   Eolian_Function *foo_id;
    Eolian_Function_Type ftype = EOLIAN_METHOD;
 
    if (impl->is_prop_get && impl->is_prop_set)
@@ -138,135 +135,32 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
    else if (impl->is_prop_set)
      ftype = EOLIAN_PROP_SET;
 
-   if (!_get_impl_func(cl, impl, ftype, &foo_id))
-     return EINA_FALSE;
-
-   foo_id->get_auto = impl->get_auto;
-   foo_id->set_auto = impl->set_auto;
-   foo_id->get_empty = impl->get_empty;
-   foo_id->set_empty = impl->set_empty;
-   if (foo_id->get_auto || foo_id->get_empty)
-     {
-        if (ftype == EOLIAN_METHOD)
-          foo_id->set_impl = impl;
-        foo_id->get_impl = impl;
-     }
-   if (foo_id->set_auto || foo_id->set_empty)
-     foo_id->set_impl = impl;
-
-   return EINA_TRUE;
-}
-
-static void
-_db_build_implement(Eolian_Class *cl, Eolian_Function *foo_id)
-{
-   if (foo_id->type == EOLIAN_PROP_SET)
-     {
-        if (foo_id->set_impl) return;
-     }
-   else if (foo_id->type == EOLIAN_PROP_GET)
-     {
-        if (foo_id->get_impl) return;
-     }
-   else if (foo_id->get_impl && foo_id->set_impl) return;
-
-   Eolian_Implement *impl = calloc(1, sizeof(Eolian_Implement));
-
-   if (foo_id->type == EOLIAN_PROP_SET)
-     impl->base = foo_id->set_base;
-   else
-     impl->base = foo_id->base;
-   eina_stringshare_ref(impl->base.file);
-
-   impl->klass = cl;
-   impl->foo_id = foo_id;
-   impl->full_name = eina_stringshare_printf("%s.%s", cl->full_name,
-                                             foo_id->name);
-
-   if (foo_id->type == EOLIAN_PROPERTY)
-     {
-        if (foo_id->get_pure_virtual && !foo_id->get_impl)
-          {
-             impl->get_pure_virtual = EINA_TRUE;
-             impl->is_prop_get = EINA_TRUE;
-             foo_id->get_impl = impl;
-             cl->implements = eina_list_append(cl->implements, impl);
-             /* repeat for set */
-             _db_build_implement(cl, foo_id);
-             return;
-          }
-        else if (foo_id->set_pure_virtual && !foo_id->set_impl)
-          {
-             impl->set_pure_virtual = EINA_TRUE;
-             impl->is_prop_set = EINA_TRUE;
-             foo_id->set_impl = impl;
-             cl->implements = eina_list_append(cl->implements, impl);
-             /* repeat for get */
-             _db_build_implement(cl, foo_id);
-             return;
-          }
-        if (foo_id->get_impl)
-          {
-             impl->is_prop_set = EINA_TRUE;
-             impl->set_pure_virtual = foo_id->set_pure_virtual;
-             foo_id->set_impl = impl;
-          }
-        else if (foo_id->set_impl)
-          {
-             impl->is_prop_get = EINA_TRUE;
-             foo_id->get_impl = impl;
-          }
-        else
-          foo_id->get_impl = foo_id->set_impl = impl;
-     }
-   else if (foo_id->type == EOLIAN_PROP_SET)
-     {
-        impl->is_prop_set = EINA_TRUE;
-        impl->get_pure_virtual = foo_id->get_pure_virtual;
-        foo_id->set_impl = impl;
-     }
-   else if (foo_id->type == EOLIAN_PROP_GET)
-     {
-        impl->is_prop_get = EINA_TRUE;
-        impl->get_pure_virtual = foo_id->set_pure_virtual;
-        foo_id->get_impl = impl;
-     }
-   else
-     {
-        impl->get_pure_virtual = foo_id->get_pure_virtual;
-        foo_id->get_impl = foo_id->set_impl = impl;
-     }
-
-   cl->implements = eina_list_append(cl->implements, impl);
+   return _get_impl_func(cl, impl, ftype);
 }
 
 static Eina_Bool
 _db_fill_implements(Eolian_Class *cl)
 {
    Eolian_Implement *impl;
-   Eolian_Function *foo_id;
    Eina_List *l;
 
-   Eina_Hash *th = eina_hash_string_small_new(NULL);
+   Eina_Hash *th = eina_hash_string_small_new(NULL),
+             *pth = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(cl->implements, l, impl)
      {
-        if (eina_hash_find(th, impl->full_name))
+        Eina_Bool prop = (impl->is_prop_get || impl->is_prop_set);
+        if (eina_hash_find(prop ? pth : th, impl->full_name))
           {
              _print_linecol(&impl->base);
              fprintf(stderr, "duplicate implement '%s'\n", impl->full_name);
              return EINA_FALSE;
           }
-        if (!_db_fill_implement(cl, impl))
+        if ((impl->klass != cl) && !_db_fill_implement(cl, impl))
           return EINA_FALSE;
-        eina_hash_add(th, impl->full_name, impl->full_name);
+        eina_hash_add(prop ? pth : th, impl->full_name, impl->full_name);
      }
    eina_hash_free(th);
-
-   EINA_LIST_FOREACH(cl->properties, l, foo_id)
-     _db_build_implement(cl, foo_id);
-
-   EINA_LIST_FOREACH(cl->methods, l, foo_id)
-     _db_build_implement(cl, foo_id);
+   eina_hash_free(pth);
 
    return EINA_TRUE;
 }

@@ -123,8 +123,7 @@ struct _Eolian_Function
    Eolian_Type *set_ret_type;
    Eolian_Expression *get_ret_val;
    Eolian_Expression *set_ret_val;
-   Eolian_Implement *get_impl;
-   Eolian_Implement *set_impl;
+   Eolian_Implement *impl;
    Eina_Stringshare *get_legacy;
    Eina_Stringshare *set_legacy;
    Eolian_Documentation *common_doc;
@@ -133,12 +132,6 @@ struct _Eolian_Function
    Eolian_Documentation *get_return_doc;
    Eolian_Documentation *set_return_doc;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
-   Eina_Bool get_pure_virtual :1;
-   Eina_Bool set_pure_virtual :1;
-   Eina_Bool get_auto :1;
-   Eina_Bool set_auto :1;
-   Eina_Bool get_empty :1;
-   Eina_Bool set_empty :1;
    Eina_Bool get_return_warn_unused :1; /* also used for methods */
    Eina_Bool set_return_warn_unused :1;
    Eina_Bool get_only_legacy: 1;

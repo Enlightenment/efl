@@ -250,9 +250,7 @@ ffi.cdef [[
     const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
     const char *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     const Eolian_Documentation *eolian_function_documentation_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-    Eina_Bool eolian_function_is_pure_virtual(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-    Eina_Bool eolian_function_is_auto(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-    Eina_Bool eolian_function_is_empty(const Eolian_Function *function_id, Eolian_Function_Type f_type);
+    const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_c_only(const Eolian_Function *function_id);
@@ -783,16 +781,10 @@ M.Function = ffi.metatype("Eolian_Function", {
             return v
         end,
 
-        is_pure_virtual = function(self, ftype)
-            return eolian.eolian_function_is_pure_virtual(self, ftype) ~= 0
-        end,
-
-        is_auto = function(self, ftype)
-            return eolian.eolian_function_is_auto(self, ftype) ~= 0
-        end,
-
-        is_empty = function(self, ftype)
-            return eolian.eolian_function_is_empty(self, ftype) ~= 0
+        implement_get = function(self)
+            local v = eolian.eolian_function_implement_get(self)
+            if v == nil then return nil end
+            return v
         end,
 
         is_legacy_only = function(self, ftype)

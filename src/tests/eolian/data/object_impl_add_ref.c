@@ -7,19 +7,6 @@ typedef struct
 
 } Object_Impl_Data;
 
-EOLIAN static void
-_object_impl_base_constructor(Eo *obj, Object_Impl_Data *pd)
-{
-
-}
-
-EOLIAN static void
-_object_impl_base_destructor(Eo *obj, Object_Impl_Data *pd)
-{
-   base_destructor(efl_super(obj, OBJECT_IMPL_CLASS));
-
-}
-
 EOLIAN static Eina_Bool
 _object_impl_a_set(Eo *obj, Object_Impl_Data *pd, const char *part, const Eina_List *value)
 {
@@ -59,6 +46,19 @@ _object_impl_foo1(Eo *obj, Object_Impl_Data *pd, int a, char *b, double *c)
 EOLIAN static void
 _object_impl_foo2(const Eo *obj, Object_Impl_Data *pd, int a, const char *b)
 {
+
+}
+
+EOLIAN static void
+_object_impl_base_constructor(Eo *obj, Object_Impl_Data *pd)
+{
+
+}
+
+EOLIAN static void
+_object_impl_base_destructor(Eo *obj, Object_Impl_Data *pd)
+{
+   base_destructor(efl_super(obj, OBJECT_IMPL_CLASS));
 
 }
 

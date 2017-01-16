@@ -86,6 +86,21 @@ typedef struct _Opaque Opaque;
 EWAPI const Efl_Class *docs_class_get(void);
 
 /**
+ * @brief Method documentation.
+ *
+ * @param[in] a Param documentation.
+ * @param[out] b
+ * @param[out] c Another param documentation.
+ *
+ * @return Return documentation.
+ *
+ * @since 1.18
+ *
+ * @ingroup Docs
+ */
+EOAPI int docs_meth(Eo *obj, int a, float *b, long *c);
+
+/**
  * @brief Property common documentation.
  *
  * Set documentation.
@@ -110,21 +125,6 @@ EOAPI void docs_prop_set(Eo *obj, int val);
  * @ingroup Docs
  */
 EOAPI int docs_prop_get(const Eo *obj);
-
-/**
- * @brief Method documentation.
- *
- * @param[in] a Param documentation.
- * @param[out] b
- * @param[out] c Another param documentation.
- *
- * @return Return documentation.
- *
- * @since 1.18
- *
- * @ingroup Docs
- */
-EOAPI int docs_meth(Eo *obj, int a, float *b, long *c);
 
 EWAPI extern const Efl_Event_Description _DOCS_EVENT_CLICKED;
 

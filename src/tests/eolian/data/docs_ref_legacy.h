@@ -72,6 +72,21 @@ typedef struct _Opaque Opaque;
 #endif
 
 /**
+ * @brief Method documentation.
+ *
+ * @param[in] a Param documentation.
+ * @param[out] b
+ * @param[out] c Another param documentation.
+ *
+ * @return Return documentation.
+ *
+ * @since 1.18
+ *
+ * @ingroup Docs
+ */
+EAPI int docs_meth(Docs *obj, int a, float *b, long *c);
+
+/**
  * @brief Property common documentation.
  *
  * Set documentation.
@@ -96,20 +111,5 @@ EAPI void docs_prop_set(Docs *obj, int val);
  * @ingroup Docs
  */
 EAPI int docs_prop_get(const Docs *obj);
-
-/**
- * @brief Method documentation.
- *
- * @param[in] a Param documentation.
- * @param[out] b
- * @param[out] c Another param documentation.
- *
- * @return Return documentation.
- *
- * @since 1.18
- *
- * @ingroup Docs
- */
-EAPI int docs_meth(Docs *obj, int a, float *b, long *c);
 
 #endif

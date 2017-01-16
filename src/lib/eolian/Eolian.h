@@ -761,43 +761,14 @@ EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *functio
 EAPI const Eolian_Documentation *eolian_function_documentation_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
 
 /*
- * @brief Indicates if a function is pure virtual.
+ * @brief Returns the implement for a function.
  *
  * @param[in] function_id Id of the function
- * @param[in] f_type The function type, for property get/set distinction.
- * @return EINA_TRUE if pure virtual, EINA_FALSE othrewise.
- *
- * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ * @return the implement or NULL.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_is_pure_virtual(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-
-/*
- * @brief Indicates if a function is auto.
- *
- * @param[in] function_id Id of the function
- * @param[in] f_type The function type, for property get/set distinction.
- * @return EINA_TRUE if auto, EINA_FALSE othrewise.
- *
- * Acceptable input types are METHOD, PROP_GET and PROP_SET.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_function_is_auto(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-
-/*
- * @brief Indicates if a function is empty.
- *
- * @param[in] function_id Id of the function
- * @param[in] f_type The function type, for property get/set distinction.
- * @return EINA_TRUE if empty, EINA_FALSE othrewise.
- *
- * Acceptable input types are METHOD, PROP_GET and PROP_SET.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_function_is_empty(const Eolian_Function *function_id, Eolian_Function_Type f_type);
+EAPI const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
 
 /*
  * @brief Indicates if a function is legacy only.

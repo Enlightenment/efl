@@ -1191,8 +1191,8 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
      {
       case KW_at_pure_virtual:
         CASE_LOCK(ls, virtp, "pure_virtual qualifier");
-        if (is_get) prop->get_pure_virtual = EINA_TRUE;
-        else prop->set_pure_virtual = EINA_TRUE;
+        if (is_get) prop->impl->get_pure_virtual = EINA_TRUE;
+        else prop->impl->set_pure_virtual = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_protected:
@@ -1297,11 +1297,11 @@ _func_pure_virtual_set(Eo_Lexer *ls, Eolian_Function *foo_id, Eina_Bool virt)
      return;
 
    if (foo_id->type == EOLIAN_PROP_GET || foo_id->type == EOLIAN_METHOD)
-     foo_id->get_pure_virtual = EINA_TRUE;
+     foo_id->impl->get_pure_virtual = EINA_TRUE;
    else if (foo_id->type == EOLIAN_PROP_SET)
-     foo_id->set_pure_virtual = EINA_TRUE;
+     foo_id->impl->set_pure_virtual = EINA_TRUE;
    else if (foo_id->type == EOLIAN_PROPERTY)
-     foo_id->get_pure_virtual = foo_id->set_pure_virtual = EINA_TRUE;
+     foo_id->impl->get_pure_virtual = foo_id->impl->set_pure_virtual = EINA_TRUE;
 }
 
 static void
@@ -1309,6 +1309,7 @@ parse_property(Eo_Lexer *ls)
 {
    int line, col;
    Eolian_Function *prop = NULL;
+   Eolian_Implement *impl = NULL;
    Eina_Bool has_get       = EINA_FALSE, has_set    = EINA_FALSE,
              has_keys      = EINA_FALSE, has_values = EINA_FALSE,
              has_protected = EINA_FALSE, has_class  = EINA_FALSE,
@@ -1319,7 +1320,13 @@ parse_property(Eo_Lexer *ls)
    prop->type = EOLIAN_UNRESOLVED;
    prop->get_scope = prop->set_scope = EOLIAN_SCOPE_PUBLIC;
    FILL_BASE(prop->base, ls, ls->line_number, ls->column);
+   impl = calloc(1, sizeof(Eolian_Implement));
+   impl->klass = ls->tmp.kls;
+   impl->foo_id = prop;
+   FILL_BASE(impl->base, ls, ls->line_number, ls->column);
+   prop->impl = impl;
    ls->tmp.kls->properties = eina_list_append(ls->tmp.kls->properties, prop);
+   ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements, impl);
    check(ls, TOK_VALUE);
    if (ls->t.kw == KW_get || ls->t.kw == KW_set)
      {
@@ -1327,6 +1334,7 @@ parse_property(Eo_Lexer *ls)
         return;
      }
    prop->name = eina_stringshare_ref(ls->t.value.s);
+   impl->full_name = eina_stringshare_printf("%s.%s", ls->tmp.kls->full_name, prop->name);
    eo_lexer_get(ls);
    for (;;) switch (ls->t.kw)
      {
@@ -1366,10 +1374,12 @@ body:
      {
       case KW_get:
         CASE_LOCK(ls, get, "get definition")
+        impl->is_prop_get = EINA_TRUE;
         parse_accessor(ls, prop);
         break;
       case KW_set:
         CASE_LOCK(ls, set, "set definition")
+        impl->is_prop_set = EINA_TRUE;
         parse_accessor(ls, prop);
         break;
       case KW_keys:
@@ -1386,7 +1396,10 @@ body:
 end:
    check_match(ls, '}', '{', line, col);
    if (!has_get && !has_set)
-     prop->type = EOLIAN_PROPERTY;
+     {
+        prop->type = EOLIAN_PROPERTY;
+        impl->is_prop_get = impl->is_prop_set = EINA_TRUE;
+     }
    _func_pure_virtual_set(ls, prop, has_virtp);
 }
 
@@ -1395,6 +1408,7 @@ parse_method(Eo_Lexer *ls)
 {
    int line, col;
    Eolian_Function *meth = NULL;
+   Eolian_Implement *impl = NULL;
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
              has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
              has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
@@ -1405,7 +1419,13 @@ parse_method(Eo_Lexer *ls)
    meth->type = EOLIAN_METHOD;
    meth->get_scope = meth->set_scope = EOLIAN_SCOPE_PUBLIC;
    FILL_BASE(meth->base, ls, ls->line_number, ls->column);
+   impl = calloc(1, sizeof(Eolian_Implement));
+   impl->klass = ls->tmp.kls;
+   impl->foo_id = meth;
+   FILL_BASE(impl->base, ls, ls->line_number, ls->column);
+   meth->impl = impl;
    ls->tmp.kls->methods = eina_list_append(ls->tmp.kls->methods, meth);
+   ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements, impl);
    check(ls, TOK_VALUE);
    if (ls->t.kw == KW_get || ls->t.kw == KW_set)
      {
@@ -1413,6 +1433,7 @@ parse_method(Eo_Lexer *ls)
         return;
      }
    meth->name = eina_stringshare_ref(ls->t.value.s);
+   impl->full_name = eina_stringshare_printf("%s.%s", ls->tmp.kls->full_name, meth->name);
    eo_lexer_get(ls);
    for (;;) switch (ls->t.kw)
      {
@@ -1515,9 +1536,6 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         check_next(ls, ';');
         return;
      }
-   impl = calloc(1, sizeof(Eolian_Implement));
-   FILL_BASE(impl->base, ls, iline, icol);
-   ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements, impl);
    Eina_Bool glob_auto = EINA_FALSE, glob_empty = EINA_FALSE;
    switch (ls->t.kw)
      {
@@ -1537,11 +1555,28 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
         eo_lexer_get(ls);
         if (ls->t.token != TOK_VALUE)
           eo_lexer_syntax_error(ls, "name expected");
-        impl->full_name = eina_stringshare_printf("%s.%s",
-                                                  ls->tmp.kls->full_name,
-                                                  ls->t.value.s);
+        Eina_Stringshare *iname = eina_stringshare_printf("%s.%s",
+                                                          ls->tmp.kls->full_name,
+                                                          ls->t.value.s);
+        Eina_List *l;
+        Eolian_Implement *fimp;
+        EINA_LIST_FOREACH(ls->tmp.kls->implements, l, fimp)
+          if (iname == fimp->full_name)
+            {
+               impl = fimp;
+               break;
+            }
+        eina_stringshare_del(iname);
+        if (!impl)
+          eo_lexer_syntax_error(ls, "implement of non-existent function");
         eo_lexer_get(ls);
         goto propbeg;
+     }
+   else
+     {
+        impl = calloc(1, sizeof(Eolian_Implement));
+        FILL_BASE(impl->base, ls, iline, icol);
+        ls->tmp.kls->implements = eina_list_append(ls->tmp.kls->implements, impl);
      }
    if (ls->t.token != TOK_VALUE)
      eo_lexer_syntax_error(ls, "class name expected");
@@ -1620,13 +1655,11 @@ propend:
         check_next(ls, '}');
      }
    else
-     {
-        if (glob_auto)
-          impl->get_auto = impl->set_auto = EINA_TRUE;
-        if (glob_empty)
-          impl->get_empty = impl->set_empty = EINA_TRUE;
-        check_next(ls, ';');
-     }
+     check_next(ls, ';');
+   if (glob_auto)
+     impl->get_auto = impl->set_auto = EINA_TRUE;
+   if (glob_empty)
+     impl->get_empty = impl->set_empty = EINA_TRUE;
 end:
    if (buf)
      {

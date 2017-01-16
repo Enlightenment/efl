@@ -87,10 +87,6 @@ START_TEST(eolian_namespaces)
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
 
-   /* Virtual regression */
-   fail_if(!(fid = eolian_class_function_get_by_name(class112, "a", EOLIAN_UNRESOLVED)));
-   fail_if(!eolian_function_is_pure_virtual(fid, EOLIAN_PROP_SET));
-
    eolian_shutdown();
 }
 END_TEST
@@ -170,7 +166,6 @@ END_TEST
 START_TEST(eolian_override)
 {
    Eina_Iterator *iter;
-   const Eolian_Function *fid = NULL;
    const Eolian_Class *impl_class = NULL;
    const Eolian_Function *impl_func = NULL;
    const Eolian_Class *class, *base;
@@ -185,30 +180,9 @@ START_TEST(eolian_override)
    fail_if(!(class = eolian_class_get_by_name("Override")));
    fail_if(!(base = eolian_class_get_by_name("Base")));
 
-   /* Base ctor */
-   fail_if(!(fid = eolian_class_function_get_by_name(base, "constructor", EOLIAN_METHOD)));
-   fail_if(!eolian_function_is_pure_virtual(fid, EOLIAN_METHOD));
-
-   /* Property */
-   fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
-   fail_if(!eolian_function_is_pure_virtual(fid, EOLIAN_PROP_SET));
-   fail_if(eolian_function_is_pure_virtual(fid, EOLIAN_PROP_GET));
-
-   /* Method */
-   fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
-   fail_if(!eolian_function_is_pure_virtual(fid, EOLIAN_METHOD));
-
    /* Implements */
    fail_if(!(iter = eolian_class_implements_get(class)));
-
-   fail_if(!(eina_iterator_next(iter, (void**)&impl)));
-   fail_if(eolian_implement_is_auto(impl, EOLIAN_METHOD));
-   fail_if(eolian_implement_is_empty(impl, EOLIAN_METHOD));
-   fail_if(eolian_implement_is_pure_virtual(impl, EOLIAN_METHOD));
-   fail_if(!(impl_class = eolian_implement_class_get(impl)));
-   fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
-   fail_if(impl_class != base);
-   fail_if(strcmp(eolian_function_name_get(impl_func), "constructor"));
+   fail_if(!(eina_iterator_next(iter, (void**)&impl))); /* skip a */
 
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
    fail_if(!eolian_implement_is_auto(impl, EOLIAN_PROP_SET));
@@ -218,12 +192,9 @@ START_TEST(eolian_override)
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != class);
    fail_if(strcmp(eolian_function_name_get(impl_func), "b"));
-   fail_if(!eolian_function_is_auto(impl_func, EOLIAN_PROP_SET));
-   fail_if(eolian_function_is_auto(impl_func, EOLIAN_PROP_GET));
-   fail_if(eolian_function_is_empty(impl_func, EOLIAN_PROP_SET));
-   fail_if(eolian_function_is_empty(impl_func, EOLIAN_PROP_GET));
-   fail_if(eolian_function_is_pure_virtual(impl_func, EOLIAN_PROP_SET));
-   fail_if(eolian_function_is_pure_virtual(impl_func, EOLIAN_PROP_GET));
+
+   fail_if(!(eina_iterator_next(iter, (void**)&impl))); /* skip c */
+   fail_if(!(eina_iterator_next(iter, (void**)&impl))); /* skip foo */
 
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
    fail_if(eolian_implement_is_auto(impl, EOLIAN_METHOD));
@@ -233,9 +204,15 @@ START_TEST(eolian_override)
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != class);
    fail_if(strcmp(eolian_function_name_get(impl_func), "bar"));
-   fail_if(eolian_function_is_auto(impl_func, EOLIAN_METHOD));
-   fail_if(!eolian_function_is_empty(impl_func, EOLIAN_METHOD));
-   fail_if(eolian_function_is_pure_virtual(impl_func, EOLIAN_METHOD));
+
+   fail_if(!(eina_iterator_next(iter, (void**)&impl)));
+   fail_if(eolian_implement_is_auto(impl, EOLIAN_METHOD));
+   fail_if(eolian_implement_is_empty(impl, EOLIAN_METHOD));
+   fail_if(eolian_implement_is_pure_virtual(impl, EOLIAN_METHOD));
+   fail_if(!(impl_class = eolian_implement_class_get(impl)));
+   fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
+   fail_if(impl_class != base);
+   fail_if(strcmp(eolian_function_name_get(impl_func), "constructor"));
 
    eina_iterator_free(iter);
 
@@ -284,6 +261,8 @@ START_TEST(eolian_ctor_dtor)
 
    /* Base ctor/dtor */
    fail_if(!(iter = eolian_class_implements_get(class)));
+   fail_if(!(eina_iterator_next(iter, (void**)&impl)));
+   fail_if(!(eina_iterator_next(iter, (void**)&impl)));
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
    fail_if(!(impl_class = eolian_implement_class_get(impl)));
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
