@@ -30,8 +30,17 @@ _print_linecol(const Eolian_Object *base)
 }
 
 static Eina_Bool
-_get_impl_func(Eolian_Class *cl, Eolian_Implement *impl, Eolian_Function_Type ftype)
+_db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
 {
+   Eolian_Function_Type ftype = EOLIAN_METHOD;
+
+   if (impl->is_prop_get && impl->is_prop_set)
+     ftype = EOLIAN_PROPERTY;
+   else if (impl->is_prop_get)
+     ftype = EOLIAN_PROP_GET;
+   else if (impl->is_prop_set)
+     ftype = EOLIAN_PROP_SET;
+
    size_t imlen = strlen(impl->full_name);
    char *clbuf = alloca(imlen + 1);
    memcpy(clbuf, impl->full_name, imlen + 1);
@@ -120,22 +129,6 @@ _get_impl_func(Eolian_Class *cl, Eolian_Implement *impl, Eolian_Function_Type ft
    impl->foo_id = fid;
 
    return EINA_TRUE;
-}
-
-
-static Eina_Bool
-_db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
-{
-   Eolian_Function_Type ftype = EOLIAN_METHOD;
-
-   if (impl->is_prop_get && impl->is_prop_set)
-     ftype = EOLIAN_PROPERTY;
-   else if (impl->is_prop_get)
-     ftype = EOLIAN_PROP_GET;
-   else if (impl->is_prop_set)
-     ftype = EOLIAN_PROP_SET;
-
-   return _get_impl_func(cl, impl, ftype);
 }
 
 static Eina_Bool
