@@ -1,4 +1,4 @@
-#include "../evas_engine_filter.h"
+#include "evas_engine_filter.h"
 
 static Eina_Bool
 _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)

@@ -1,5 +1,4 @@
-#include "evas_filter_private.h"
-#include "draw.h"
+#include "evas_engine_filter.h"
 
 static Eina_Bool
 _fill_cpu(Evas_Filter_Command *cmd)
@@ -58,7 +57,7 @@ _fill_cpu(Evas_Filter_Command *cmd)
 }
 
 Evas_Filter_Apply_Func
-evas_filter_fill_cpu_func_get(Evas_Filter_Command *cmd)
+eng_filter_fill_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);

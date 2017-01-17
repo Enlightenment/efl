@@ -29,7 +29,7 @@
 
 #include "Evas_Engine_Software_Generic.h"
 #include "evas_native_common.h"
-#include "evas_engine_filter.h"
+#include "filters/evas_engine_filter.h"
 
 #ifdef EVAS_GL
 //----------------------------------//
@@ -4629,6 +4629,7 @@ _gfx_filter_func_get(Evas_Filter_Command *cmd)
      {
       case EVAS_FILTER_MODE_BLEND: func = eng_filter_blend_func_get(cmd); break;
       case EVAS_FILTER_MODE_CURVE: func = eng_filter_curve_func_get(cmd); break;
+      case EVAS_FILTER_MODE_FILL: func = eng_filter_fill_func_get(cmd); break;
       case EVAS_FILTER_MODE_MASK: func = eng_filter_mask_func_get(cmd); break;
       default: return NULL;
      }

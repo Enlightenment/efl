@@ -264,7 +264,6 @@ void                     evas_filter_context_source_set(Evas_Filter_Context *ctx
 Evas_Filter_Apply_Func   evas_filter_blur_cpu_func_get(Evas_Filter_Command *cmd);
 Evas_Filter_Apply_Func   evas_filter_bump_map_cpu_func_get(Evas_Filter_Command *cmd);
 Evas_Filter_Apply_Func   evas_filter_displace_cpu_func_get(Evas_Filter_Command *cmd);
-Evas_Filter_Apply_Func   evas_filter_fill_cpu_func_get(Evas_Filter_Command *cmd);
 Evas_Filter_Apply_Func   evas_filter_transform_cpu_func_get(Evas_Filter_Command *cmd);
 
 /* Utility functions */

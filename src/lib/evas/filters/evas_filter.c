@@ -54,6 +54,8 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, void *user_data
    Evas_Filter_Context *ctx;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(evas, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evas->engine.func->gfx_filter_supports, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evas->engine.func->gfx_filter_process, NULL);
 
    ctx = calloc(1, sizeof(Evas_Filter_Context));
    if (!ctx) return NULL;
@@ -1527,9 +1529,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
         return EINA_FALSE;
      }
 
-   if (cmd->ENFN->gfx_filter_supports)
-     support = cmd->ENFN->gfx_filter_supports(cmd->ENDT, cmd);
-
+   support = cmd->ENFN->gfx_filter_supports(cmd->ENDT, cmd);
    if (support != EVAS_FILTER_SUPPORT_NONE)
      {
         func = &_engine_gfx_filter_func;
@@ -1543,9 +1543,6 @@ _filter_command_run(Evas_Filter_Command *cmd)
              break;
            case EVAS_FILTER_MODE_DISPLACE:
              func = evas_filter_displace_cpu_func_get(cmd);
-             break;
-           case EVAS_FILTER_MODE_FILL:
-             func = evas_filter_fill_cpu_func_get(cmd);
              break;
            case EVAS_FILTER_MODE_BUMP:
              func = evas_filter_bump_map_cpu_func_get(cmd);
