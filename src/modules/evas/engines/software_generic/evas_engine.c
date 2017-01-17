@@ -4628,6 +4628,7 @@ _gfx_filter_func_get(Evas_Filter_Command *cmd)
    switch (cmd->mode)
      {
       case EVAS_FILTER_MODE_BLEND: func = eng_filter_blend_func_get(cmd); break;
+      case EVAS_FILTER_MODE_BUMP: func = eng_filter_bump_func_get(cmd); break;
       case EVAS_FILTER_MODE_CURVE: func = eng_filter_curve_func_get(cmd); break;
       case EVAS_FILTER_MODE_DISPLACE: func = eng_filter_displace_func_get(cmd); break;
       case EVAS_FILTER_MODE_FILL: func = eng_filter_fill_func_get(cmd); break;

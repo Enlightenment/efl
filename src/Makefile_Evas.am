@@ -593,7 +593,6 @@ lib_evas_libevas_la_SOURCES += \
 lib/evas/canvas/evas_filter_mixin.c \
 lib/evas/filters/evas_filter.c \
 lib/evas/filters/evas_filter_blur.c \
-lib/evas/filters/evas_filter_bump.c \
 lib/evas/filters/evas_filter_parser.c \
 lib/evas/filters/evas_filter_transform.c \
 lib/evas/filters/evas_filter_utils.c \
@@ -614,6 +613,7 @@ lib/evas/filters/blur/blur_box_rgba_neon.c
 GFX_FILTER_SW_FILES = \
 modules/evas/engines/software_generic/filters/evas_engine_filter.h \
 modules/evas/engines/software_generic/filters/evas_filter_blend.c \
+modules/evas/engines/software_generic/filters/evas_filter_bump.c \
 modules/evas/engines/software_generic/filters/evas_filter_curve.c \
 modules/evas/engines/software_generic/filters/evas_filter_displace.c \
 modules/evas/engines/software_generic/filters/evas_filter_fill.c \

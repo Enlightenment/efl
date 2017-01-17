@@ -1,8 +1,6 @@
 /* Simple bump map algorithms for the software engine */
 
-#include "evas_filter_private.h"
-#include "evas_blend_private.h"
-
+#include "evas_engine_filter.h"
 #include <math.h>
 
 #ifdef CLAMP
@@ -16,7 +14,7 @@ static Eina_Bool _bump_map_cpu_alpha_alpha(Evas_Filter_Command *cmd);
 static Eina_Bool _bump_map_cpu_alpha_rgba(Evas_Filter_Command *cmd);
 
 Evas_Filter_Apply_Func
-evas_filter_bump_map_cpu_func_get(Evas_Filter_Command *cmd)
+eng_filter_bump_func_get(Evas_Filter_Command *cmd)
 {
    int w, h;
 
