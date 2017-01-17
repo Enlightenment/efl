@@ -150,16 +150,6 @@ EAPI Eina_FreeQ_Type
 eina_freeq_type_get(Eina_FreeQ *fq);
 
 /**
- * @brief Set the main free queue driven by the EFL mainloop.
- *
- * @param fq The free queue to set as the main loop one.
- * 
- * @since 1.19
- */
-EAPI void
-eina_freeq_main_set(Eina_FreeQ *fq);
-
-/**
  * @brief Get the main loop free queue.
  *
  * @return The main loop free queue.

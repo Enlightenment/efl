@@ -138,6 +138,12 @@ void eina_cpu_count_internal(void);
 
 void eina_file_mmap_faulty(void *addr, long page_size);
 
+#ifndef EINA_FREEQ_H_
+typedef struct _Eina_FreeQ Eina_FreeQ;
+#endif
+
+void eina_freeq_main_set(Eina_FreeQ *fq);
+
 #include "eina_inline_private.h"
 
 #endif /* EINA_PRIVATE_H_ */

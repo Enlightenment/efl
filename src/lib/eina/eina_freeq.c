@@ -254,8 +254,7 @@ eina_freeq_type_get(Eina_FreeQ *fq)
    return EINA_FREEQ_DEFAULT;
 }
 
-/* FIXME This function should not exist as an EAPI */
-EAPI void
+void
 eina_freeq_main_set(Eina_FreeQ *fq)
 {
    if (!fq) return;

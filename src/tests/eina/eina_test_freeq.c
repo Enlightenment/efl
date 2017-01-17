@@ -8,23 +8,25 @@
 
 START_TEST(freeq_simple)
 {
-   Eina_FreeQ *fq, *pfq;
+   Eina_FreeQ *fq;
+   int *p;
 
    eina_init();
 
-   fail_if(eina_freeq_main_get() == NULL);
-   pfq = eina_freeq_main_get();
-   fail_if(eina_freeq_type_get(pfq) != EINA_FREEQ_DEFAULT);
+   fq = eina_freeq_main_get();
+   fail_if(fq == NULL);
+   fail_if(eina_freeq_type_get(fq) != EINA_FREEQ_DEFAULT);
+
+   p = malloc(sizeof(int));
+   *p = 42;
+   eina_freeq_ptr_main_add(p, NULL, sizeof(int));
+   eina_freeq_clear(fq);
+   fail_if(eina_freeq_ptr_pending(eina_freeq_main_get()));
 
    fq = eina_freeq_new(EINA_FREEQ_DEFAULT);
    fail_if(!fq);
 
-   eina_freeq_main_set(fq);
-   fail_if(eina_freeq_main_get() != fq);
-
    eina_freeq_free(fq);
-   fail_if(eina_freeq_main_get() != NULL);
-   eina_freeq_main_set(pfq);
 
    eina_shutdown();
 }
