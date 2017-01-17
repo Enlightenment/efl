@@ -18,7 +18,7 @@
 # include "xdg-shell-client-protocol.h"
 # define XDG_VERSION 5
 
-# include "session-recovery.h"
+# include "session-recovery-client-protocol.h"
 
 # include "zxdg-shell-client-protocol.h"
 

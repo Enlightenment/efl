@@ -1,0 +1,21 @@
+<protocol name="e_session_recovery">
+
+  <interface name="zwp_e_session_recovery" version="1">
+    <request name="get_uuid">
+      <arg name="surface" type="object" interface="wl_surface"/>
+    </request>
+    <request name="set_uuid">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uuid" type="string"/>
+    </request>
+    <request name="destroy_uuid">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uuid" type="string"/>
+    </request>
+    <event name="create_uuid">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uuid" type="string"/>
+    </event>
+  </interface>
+
+</protocol>

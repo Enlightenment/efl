@@ -77,3 +77,7 @@ Session.vim
 /src/modules/evas/engines/gl_common/shader_3d/evas_3d_shaders.x
 /src/scripts/eo/eo_debug
 /src/bin/ecore_con/efl_net_proxy_helper
+
+#Once all protocols are generated these will use wildcards
+/src/lib/ecore_wl2/session-recovery-client-protocol.h
+/src/lib/ecore_wl2/session-recovery-protocol.c
