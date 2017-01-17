@@ -194,53 +194,19 @@ _edje_edit_eet_close(Eet_File *ef)
      eet_close(ef);
 }
 
-EOLIAN static Eina_Bool
-_edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const char *group)
+static Eina_Bool
+_load_scripts(Eo *obj, Edje_Edit *eed)
 {
-   Eina_Bool ret;
    Eet_File *ef;
    char **keys, buf[64];
    int count, i;
    int len = strlen("edje/scripts/embryo/source/");
-
-   ret = EINA_FALSE;
-
-   _edje_edit_data_clean(eed);
-
-   /* TODO and maybes:
-    *  * The whole point of this thing is keep track of stuff such as
-    *    strings to free and who knows what, so we need to take care
-    *    of those if the file/group changes.
-    *  * Maybe have the possibility to open just files, not always with
-    *    a group given.
-    *  * A way to skip the cache? Could help avoid some issues when editing
-    *    a group being used by the application in some other way, or multiple
-    *    opens of the same file.
-    *  * Here we probably want to allow opening groups with broken references
-    *    (GROUP parts or BOX/TABLE items pointing to non-existent/renamed
-    *    groups).
-    */
-   Efl_Vpath_File *file_obj =
-     efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-   efl_vpath_file_do(file_obj);
-   // XXX:FIXME: allow this to be async
-   efl_vpath_file_wait(file_obj);
-   file = efl_vpath_file_result_get(file_obj);
-
-   Eina_Bool int_ret = EINA_FALSE;
-   int_ret = efl_file_set(efl_super(obj, MY_CLASS), file, group);
-   if (!int_ret)
-     {
-        efl_del(file_obj);
-        return ret;
-     }
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
    eed->program_scripts = eina_hash_int32_new((Eina_Free_Cb)_edje_edit_program_script_free);
 
    ef = _edje_edit_eet_open(ed, EET_FILE_MODE_READ);
-   efl_del(file_obj);
 
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%i",
             eed->base->collection->id);
@@ -266,9 +232,61 @@ _edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const ch
      }
    _edje_edit_eet_close(ef);
 
-   ret = EINA_TRUE;
+   return EINA_TRUE;
+}
 
-   return ret;
+EOLIAN static Eina_Bool
+_edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const char *group)
+{
+   _edje_edit_data_clean(eed);
+
+   /* TODO and maybes:
+    *  * The whole point of this thing is keep track of stuff such as
+    *    strings to free and who knows what, so we need to take care
+    *    of those if the file/group changes.
+    *  * Maybe have the possibility to open just files, not always with
+    *    a group given.
+    *  * A way to skip the cache? Could help avoid some issues when editing
+    *    a group being used by the application in some other way, or multiple
+    *    opens of the same file.
+    *  * Here we probably want to allow opening groups with broken references
+    *    (GROUP parts or BOX/TABLE items pointing to non-existent/renamed
+    *    groups).
+    *  P.S. don't forget about mmap version below
+    */
+   Efl_Vpath_File *file_obj =
+     efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
+   efl_vpath_file_do(file_obj);
+   // XXX:FIXME: allow this to be async
+   efl_vpath_file_wait(file_obj);
+   file = efl_vpath_file_result_get(file_obj);
+
+   Eina_Bool int_ret;
+   int_ret = efl_file_set(efl_super(obj, MY_CLASS), file, group);
+   efl_del(file_obj);
+   if (!int_ret)
+     return EINA_FALSE;
+
+   if (!_load_scripts(obj, eed))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_edje_edit_efl_file_mmap_set(Eo *obj, Edje_Edit *eed, const Eina_File *mmap, const char *group)
+{
+   _edje_edit_data_clean(eed);
+
+   Eina_Bool int_ret;
+   int_ret = efl_file_mmap_set(efl_super(obj, MY_CLASS), mmap, group);
+   if (!int_ret)
+     return EINA_FALSE;
+
+   if (!_load_scripts(obj, eed))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
 EAPI Evas_Object *
