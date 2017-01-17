@@ -4627,11 +4627,9 @@ _gfx_filter_func_get(Evas_Filter_Command *cmd)
 
    switch (cmd->mode)
      {
-      case EVAS_FILTER_MODE_BLEND:
-        func = eng_filter_blend_func_get(cmd);
-        break;
-      default:
-        return NULL;
+      case EVAS_FILTER_MODE_BLEND: func = eng_filter_blend_func_get(cmd); break;
+      case EVAS_FILTER_MODE_MASK: func = eng_filter_mask_func_get(cmd); break;
+      default: return NULL;
      }
 
    return func;

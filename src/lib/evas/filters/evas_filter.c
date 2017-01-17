@@ -1550,9 +1550,6 @@ _filter_command_run(Evas_Filter_Command *cmd)
            case EVAS_FILTER_MODE_FILL:
              func = evas_filter_fill_cpu_func_get(cmd);
              break;
-           case EVAS_FILTER_MODE_MASK:
-             func = evas_filter_mask_cpu_func_get(cmd);
-             break;
            case EVAS_FILTER_MODE_BUMP:
              func = evas_filter_bump_map_cpu_func_get(cmd);
              break;
@@ -1567,7 +1564,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
 
    if (!func)
      {
-        ERR("No function to process this filter!");
+        ERR("No function to process this filter (mode %d)", cmd->mode);
         return EINA_FALSE;
      }
 
