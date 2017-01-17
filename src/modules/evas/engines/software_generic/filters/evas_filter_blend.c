@@ -1,6 +1,4 @@
 #include "../evas_engine_filter.h"
-#include "ector_buffer.h"
-#include "draw.h"
 
 // FIXME: This should all be based on ector renderer
 

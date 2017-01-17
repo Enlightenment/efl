@@ -1,7 +1,6 @@
 /* Implementation of some masking functions for the software engine */
 
 #include "../evas_engine_filter.h"
-#include "draw.h"
 
 // Naming convention: _func_engine_incolor_maskcolor_outcolor()
 static Eina_Bool _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd);

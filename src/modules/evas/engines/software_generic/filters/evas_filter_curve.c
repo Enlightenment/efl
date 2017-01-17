@@ -1,6 +1,4 @@
-#include "evas_filter.h"
-#include "evas_filter_private.h"
-
+#include "../evas_engine_filter.h"
 
 static Eina_Bool
 _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
@@ -43,7 +41,7 @@ _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
 
    if (src != dst)
      memcpy(dst, src, dst_len);
-   evas_data_argb_unpremul(dst, len);
+   efl_draw_argb_unpremul(dst, len);
 
    // One channel (R, G or B)
    if (offset >= 0)
@@ -81,7 +79,7 @@ _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
      C_VAL(d) = curve[C_VAL(src)];
 
 premul:
-   evas_data_argb_premul(dst, len);
+   efl_draw_argb_premul(dst, len);
    ret = EINA_TRUE;
 
 end:
@@ -118,7 +116,7 @@ end:
 }
 
 Evas_Filter_Apply_Func
-evas_filter_curve_cpu_func_get(Evas_Filter_Command *cmd)
+eng_filter_curve_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);

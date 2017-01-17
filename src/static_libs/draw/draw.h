@@ -26,6 +26,9 @@ Draw_Func_ARGB_Mix3  efl_draw_func_argb_mix3_get    (Efl_Gfx_Render_Op op, uint3
 Draw_Func_Alpha      efl_draw_alpha_func_get        (Efl_Gfx_Render_Op op, Eina_Bool has_mask);
 Cspace_Convert_Func  efl_draw_convert_func_get      (Efl_Gfx_Colorspace origcs, Efl_Gfx_Colorspace dstcs, Eina_Bool *region_can);
 
+int efl_draw_argb_premul(uint32_t *data, unsigned int len);
+void efl_draw_argb_unpremul(uint32_t *data, unsigned int len);
+
 
 /* common sw draw helpers */
 

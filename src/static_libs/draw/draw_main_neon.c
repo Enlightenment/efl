@@ -217,6 +217,7 @@ void
 efl_draw_neon_init(void)
 {
 #ifdef BUILD_NEON
+   if (getenv("EVAS_CPU_NO_NEON")) return; // compat with evas env vars
    if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
         // update the comp_function table for solid color
