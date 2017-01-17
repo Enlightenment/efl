@@ -1541,9 +1541,6 @@ _filter_command_run(Evas_Filter_Command *cmd)
            case EVAS_FILTER_MODE_BLUR:
              func = evas_filter_blur_cpu_func_get(cmd);
              break;
-           case EVAS_FILTER_MODE_TRANSFORM:
-             func = evas_filter_transform_cpu_func_get(cmd);
-             break;
            default:
              CRI("Invalid filter mode.");
              break;

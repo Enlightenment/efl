@@ -1,6 +1,4 @@
-#include "evas_filter_private.h"
-#include "evas_blend_private.h"
-#include "draw.h"
+#include "evas_engine_filter.h"
 
 /* Apply geometrical transformations to a buffer.
  *
@@ -87,12 +85,9 @@ _vflip_cpu(Evas_Filter_Command *cmd)
      {
         /* blend onto a target (rgba -> rgba) */
         uint32_t color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
-        RGBA_Gfx_Func func;
+        RGBA_Comp_Func func;
 
-        if (color == 0xFFFFFFFF)
-          func = evas_common_gfx_func_composite_pixel_span_get(1, 0, 1, 1, _gfx_to_evas_render_op(cmd->draw.rop));
-        else
-          func = evas_common_gfx_func_composite_pixel_color_span_get(1, 0, color, 1, 1, _gfx_to_evas_render_op(cmd->draw.rop));
+        func = efl_draw_func_span_get(cmd->draw.rop, color, EINA_TRUE);
         EINA_SAFETY_ON_NULL_GOTO(func, end);
 
         for (sy = s0, dy = d0; (dy >= d1) && (sy <= s1); sy++, dy--)
@@ -100,7 +95,7 @@ _vflip_cpu(Evas_Filter_Command *cmd)
              uint32_t* src = (uint32_t *) (in + src_stride * sy);
              uint32_t* dst = (uint32_t *) (out + dst_stride * dy);
 
-             func(src, NULL, color, dst, w);
+             func(dst, src, w, color, 255);
           }
      }
 
@@ -122,7 +117,7 @@ end:
 }
 
 Evas_Filter_Apply_Func
-evas_filter_transform_cpu_func_get(Evas_Filter_Command *cmd)
+eng_filter_transform_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
 

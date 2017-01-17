@@ -263,7 +263,6 @@ void                     evas_filter_context_source_set(Evas_Filter_Context *ctx
 /* FIXME: CPU filters entry points. Move these to the Evas Engine itself. */
 Evas_Filter_Apply_Func   evas_filter_blur_cpu_func_get(Evas_Filter_Command *cmd);
 Evas_Filter_Apply_Func   evas_filter_bump_map_cpu_func_get(Evas_Filter_Command *cmd);
-Evas_Filter_Apply_Func   evas_filter_transform_cpu_func_get(Evas_Filter_Command *cmd);
 
 /* Utility functions */
 void _clip_to_target(int *sx, int *sy, int sw, int sh, int ox, int oy, int dw, int dh, int *dx, int *dy, int *rows, int *cols);
