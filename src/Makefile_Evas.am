@@ -843,6 +843,8 @@ modules/evas/engines/gl_generic/Evas_Engine_GL_Shared.h \
 modules/evas/engines/gl_generic/evas_ector_gl_buffer.c \
 modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.c \
 modules/evas/engines/gl_generic/evas_ector_gl_rgbaimage_buffer.c \
+modules/evas/engines/gl_generic/filters/gl_engine_filter.h \
+modules/evas/engines/gl_generic/filters/gl_filter_blend.c \
 $(NULL)
 
 evas_gl_generic_eolian_files = \
@@ -894,6 +896,8 @@ modules_evas_engines_gl_generic_module_la_CFLAGS = \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_builddir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
+-I$(top_srcdir)/src/lib/evas/filters \
+-I$(top_builddir)/src/lib/evas/canvas \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
 -I$(top_builddir)/src/modules/evas/engines/gl_generic \
 @evas_engine_gl_common_cflags@ \
