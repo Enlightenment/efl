@@ -1,5 +1,4 @@
-#include "evas_filter.h"
-#include "evas_filter_private.h"
+#include "evas_engine_filter.h"
 
 static void
 _filter_displace_cpu_alpha_do(int w, int h, int map_w, int map_h, int intensity,
@@ -226,7 +225,7 @@ _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
           map_h = h;
 
         BUFFERS_LOCK();
-        map_fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, map_w, map_h);
+        map_fb = cmd->ctx->buffer_scaled_get(cmd->ctx, cmd->mask, map_w, map_h);
         BUFFERS_UNLOCK();
 
         EINA_SAFETY_ON_NULL_RETURN_VAL(map_fb, EINA_FALSE);
@@ -287,7 +286,7 @@ _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
           map_h = h;
 
         BUFFERS_LOCK();
-        map_fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, map_w, map_h);
+        map_fb = cmd->ctx->buffer_scaled_get(cmd->ctx, cmd->mask, map_w, map_h);
         BUFFERS_UNLOCK();
 
         EINA_SAFETY_ON_NULL_RETURN_VAL(map_fb, EINA_FALSE);
@@ -310,7 +309,7 @@ end:
 }
 
 Evas_Filter_Apply_Func
-evas_filter_displace_cpu_func_get(Evas_Filter_Command *cmd)
+eng_filter_displace_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
