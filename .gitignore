@@ -37,6 +37,8 @@ tags
 *.eo.hh
 *.eo.impl.hh
 *.eo.js.cc
+*.eo.cs
+*.eot.cs
 *.eo.lua
 *.luac
 .dir-locals.el
