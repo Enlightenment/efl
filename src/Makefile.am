@@ -192,3 +192,39 @@ install-exec-hook:
 	   mv $$FNAMEEXT $$FNAME; \
 	done
 	$(EFL_INSTALL_EXEC_HOOK)
+
+#At the bottom because .SECONDEXPANSION is applied to all following rules.
+if HAVE_WAYLAND_SCANNER
+#Stolen from weston's Makefile.am and modified for Enlightenment
+.SECONDEXPANSION:
+
+define protostability
+$(if $(findstring unstable,$1),unstable,stable)
+endef
+
+define protoname
+$(shell echo $1 | sed 's/\([a-z\-]\+\)-[a-z]\+-v[0-9]\+/\1/')
+endef
+
+#rules for generating protocol from wayland_protocols
+%-protocol.c : $(WAYLAND_PROTOCOLS_DATADIR)/$$(call protostability,$$*)/$$(call protoname,$$*)/$$*.xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) code < $< > $@
+
+%-server-protocol.h : $(WAYLAND_PROTOCOLS_DATADIR)/$$(call protostability,$$*)/$$(call protoname,$$*)/$$*.xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) server-header < $< > $@
+
+%-client-protocol.h : $(WAYLAND_PROTOCOLS_DATADIR)/$$(call protostability,$$*)/$$(call protoname,$$*)/$$*.xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) client-header < $< > $@
+
+#rules for generating local protocols which must be in src/wayland_protocol
+%-protocol.c : $(top_srcdir)/src/wayland_protocol/$(notdir $$*).xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) code < $< > $@
+
+%-server-protocol.h : $(top_srcdir)/src/wayland_protocol/$(notdir $$*).xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) server-header < $< > $@
+
+%-client-protocol.h : $(top_srcdir)/src/wayland_protocol/$(notdir $$*).xml
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) client-header < $< > $@
+
+#End of weston stuff
+endif

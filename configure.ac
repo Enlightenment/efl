@@ -1975,7 +1975,19 @@ AC_ARG_ENABLE([wayland],
    [want_wayland="no"])
 
 if test "${want_wayland}" = "yes"; then
-   EFL_PKG_CHECK_STRICT([wayland-client >= 1.11.0])
+   EFL_PKG_CHECK_STRICT([wayland-client >= 1.11.0 wayland-scanner >= 1.11.0])
+   PKG_CHECK_MODULES([WAYLAND], [wayland-scanner >= 1.11.0],
+    [
+      AC_ARG_VAR([wayland_scanner], [The wayland-scanner executable])
+      AC_PATH_PROG([wayland_scanner], [wayland-scanner])
+      if test x$wayland_scanner = x; then
+        PKG_CHECK_MODULES(WAYLAND_SCANNER, [wayland-scanner])
+        wayland_scanner=`$PKG_CONFIG --variable=wayland_scanner wayland-scanner`
+      fi
+      AM_CONDITIONAL([HAVE_WAYLAND_SCANNER], [test x$wayland_scanner != x])
+      ac_wayland_protocols_pkgdatadir=`$PKG_CONFIG --variable=pkgdatadir wayland-protocols`
+      AC_SUBST(WAYLAND_PROTOCOLS_DATADIR, $ac_wayland_protocols_pkgdatadir)
+    ])
 fi
 
 # Wayland IVI-Shell
