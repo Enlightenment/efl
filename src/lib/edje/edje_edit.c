@@ -7857,6 +7857,29 @@ edje_edit_state_map_rotation_get(Evas_Object *obj, const char *part, const char 
 }
 
 EAPI Eina_Bool
+edje_edit_state_map_zoom_set(Evas_Object *obj, const char *part, const char *state, double value, double x, double y)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   pd->map.zoom.x = FROM_DOUBLE(x);
+   pd->map.zoom.y = FROM_DOUBLE(y);
+
+   edje_object_calc_force(obj);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_map_zoom_get(Evas_Object *obj, const char *part, const char *state, double value, double *x, double *y)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (x) *x = TO_DOUBLE(pd->map.zoom.x);
+   if (y) *y = TO_DOUBLE(pd->map.zoom.y);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_state_map_perspective_zplane_set(Evas_Object *obj, const char *part, const char *state, double value, int zplane)
 {
    GET_PD_OR_RETURN(EINA_FALSE);

@@ -5732,6 +5732,36 @@ EAPI Eina_Bool edje_edit_state_map_perspective_zplane_set(Evas_Object *obj, cons
  **/
 EAPI const char * edje_edit_state_map_rotation_center_get(Evas_Object *obj, const char *part, const char *state, double value);
 
+/** Set map.zoom (x and y) values of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param x value of x
+ * @param y value of y
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.19
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_zoom_set(Evas_Object *obj, const char *part, const char *state, double value, double x, double y);
+
+/** Get map.zoom (x and y) values of given part state.
+ *
+ * @param obj Object being edited.
+ * @param part The name of the part.
+ * @param state The name of the state (not including the state value).
+ * @param value The state value.
+ * @param x variable to store value of x
+ * @param y variable to store value of y
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.19
+ **/
+EAPI Eina_Bool
+edje_edit_state_map_zoom_get(Evas_Object *obj, const char *part, const char *state, double value, double *x, double *y);
+
 /** This sets the part that is used as the center of rotation when rotating the part with this description. If no center is given, the parts original center itself is used for the rotation center.
  *
  * @param obj Object being edited.
