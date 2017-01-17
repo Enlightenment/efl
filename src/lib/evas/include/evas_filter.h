@@ -33,7 +33,6 @@
 #endif /* ! _WIN32 */
 
 typedef struct _Evas_Filter_Context Evas_Filter_Context;
-typedef struct _Evas_Filter_Command Evas_Filter_Command;
 typedef struct _Evas_Filter_Instruction Evas_Filter_Instruction;
 typedef struct _Evas_Filter_Buffer Evas_Filter_Buffer;
 typedef struct _Evas_Filter_Proxy_Binding Evas_Filter_Proxy_Binding;

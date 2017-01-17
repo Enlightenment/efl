@@ -61,6 +61,7 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, void *user_data
    ctx->evas = evas;
    ctx->async = async;
    ctx->user_data = user_data;
+   ctx->buffer_scaled_get = &evas_filter_buffer_scaled_get;
 
    return ctx;
 }
@@ -1489,8 +1490,19 @@ _filter_name_get(int mode)
 #endif
 
 static Eina_Bool
+_engine_gfx_filter_func(Evas_Filter_Command *cmd)
+{
+   // This should be temporary porting code, when moving filter implementations
+   // from here to the engine. Ideally the filters should be in ector though.
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->ENFN->gfx_filter_process, EINA_FALSE);
+   return cmd->ENFN->gfx_filter_process(cmd->ENDT, cmd);
+}
+
+static Eina_Bool
 _filter_command_run(Evas_Filter_Command *cmd)
 {
+   Evas_Filter_Support support = EVAS_FILTER_SUPPORT_NONE;
    Evas_Filter_Apply_Func func = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, EINA_FALSE);
@@ -1515,41 +1527,43 @@ _filter_command_run(Evas_Filter_Command *cmd)
         return EINA_FALSE;
      }
 
-   //func = cmd->ENFN->filter_command_func_get(cmd);
-   // FIXME: Must call engine function, not CPU directly.
+   if (cmd->ENFN->gfx_filter_supports)
+     support = cmd->ENFN->gfx_filter_supports(cmd->ENDT, cmd);
 
-   switch (cmd->mode)
+   if (support != EVAS_FILTER_SUPPORT_NONE)
      {
-      case EVAS_FILTER_MODE_BLEND:
-        func = evas_filter_blend_cpu_func_get(cmd);
-        break;
-      case EVAS_FILTER_MODE_BLUR:
-        func = evas_filter_blur_cpu_func_get(cmd);
-        break;
-      case EVAS_FILTER_MODE_CURVE:
-        func = evas_filter_curve_cpu_func_get(cmd);
-        break;
-      case EVAS_FILTER_MODE_DISPLACE:
-        func = evas_filter_displace_cpu_func_get(cmd);
-        break;
-      case EVAS_FILTER_MODE_FILL:
-        func = evas_filter_fill_cpu_func_get(cmd);
-        break;
-      case EVAS_FILTER_MODE_MASK:
-        func = evas_filter_mask_cpu_func_get(cmd);
-        break;
-      case EVAS_FILTER_MODE_BUMP:
-        func = evas_filter_bump_map_cpu_func_get(cmd);
-        break;
-      case EVAS_FILTER_MODE_TRANSFORM:
-        func = evas_filter_transform_cpu_func_get(cmd);
-        break;
-      default:
-        CRI("Invalid filter mode.");
-        break;
+        func = &_engine_gfx_filter_func;
      }
-
-   // END OF FIXME
+   else
+     {
+        switch (cmd->mode)
+          {
+           case EVAS_FILTER_MODE_BLUR:
+             func = evas_filter_blur_cpu_func_get(cmd);
+             break;
+           case EVAS_FILTER_MODE_CURVE:
+             func = evas_filter_curve_cpu_func_get(cmd);
+             break;
+           case EVAS_FILTER_MODE_DISPLACE:
+             func = evas_filter_displace_cpu_func_get(cmd);
+             break;
+           case EVAS_FILTER_MODE_FILL:
+             func = evas_filter_fill_cpu_func_get(cmd);
+             break;
+           case EVAS_FILTER_MODE_MASK:
+             func = evas_filter_mask_cpu_func_get(cmd);
+             break;
+           case EVAS_FILTER_MODE_BUMP:
+             func = evas_filter_bump_map_cpu_func_get(cmd);
+             break;
+           case EVAS_FILTER_MODE_TRANSFORM:
+             func = evas_filter_transform_cpu_func_get(cmd);
+             break;
+           default:
+             CRI("Invalid filter mode.");
+             break;
+          }
+     }
 
    if (!func)
      {

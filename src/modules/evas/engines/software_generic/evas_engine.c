@@ -12,6 +12,7 @@
 #include "evas_ector_buffer.eo.h"
 #include "evas_ector_software_buffer.eo.h"
 #include "draw.h"
+#include "evas_filter_private.h"
 
 #if defined HAVE_DLSYM && ! defined _WIN32
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
@@ -28,6 +29,7 @@
 
 #include "Evas_Engine_Software_Generic.h"
 #include "evas_native_common.h"
+#include "evas_engine_filter.h"
 
 #ifdef EVAS_GL
 //----------------------------------//
@@ -4618,6 +4620,47 @@ eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *
 
 //------------------------------------------------//
 
+static Evas_Filter_Apply_Func
+_gfx_filter_func_get(Evas_Filter_Command *cmd)
+{
+   Evas_Filter_Apply_Func func = NULL;
+
+   switch (cmd->mode)
+     {
+      case EVAS_FILTER_MODE_BLEND:
+        func = eng_filter_blend_func_get(cmd);
+        break;
+      default:
+        return NULL;
+     }
+
+   return func;
+}
+
+static Evas_Filter_Support
+eng_gfx_filter_supports(void *data EINA_UNUSED, Evas_Filter_Command *cmd)
+{
+   if (!_gfx_filter_func_get(cmd))
+     return EVAS_FILTER_SUPPORT_NONE;
+
+   return EVAS_FILTER_SUPPORT_CPU;
+}
+
+static Eina_Bool
+eng_gfx_filter_process(void *data EINA_UNUSED, Evas_Filter_Command *cmd)
+{
+   Evas_Filter_Apply_Func func;
+
+   func = _gfx_filter_func_get(cmd);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);
+
+   return func(cmd);
+}
+
+#undef FINDSYM
+
+//------------------------------------------------//
+
 /*
  *****
  **
@@ -4818,7 +4861,9 @@ static Evas_Func func =
      eng_ector_renderer_draw,
      eng_ector_end,
      eng_ector_new,
-     eng_ector_free
+     eng_ector_free,
+     eng_gfx_filter_supports,
+     eng_gfx_filter_process
    /* FUTURE software generic calls go here */
 };
 

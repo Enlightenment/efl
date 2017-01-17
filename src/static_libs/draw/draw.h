@@ -9,11 +9,12 @@
 #include "efl/interfaces/efl_gfx_types.eot.h"
 
 /* FIXME: naming convention */
+/* FIXME: mul_col & const_alpha are redondant */
 typedef void (*RGBA_Comp_Func)       (uint32_t *dest, const uint32_t *src, int length, uint32_t mul_col, uint32_t const_alpha);
 typedef void (*RGBA_Comp_Func_Solid) (uint32_t *dest, int length, uint32_t color, uint32_t const_alpha);
-typedef void (*RGBA_Comp_Func_Mask)  (uint32_t *dest, uint8_t *mask, int length, uint32_t color);
-typedef void (*Draw_Func_ARGB_Mix3)  (uint32_t *dest, uint32_t *src, uint32_t *mul, int len, uint32_t color);
-typedef void (*Alpha_Gfx_Func)       (uint8_t *src, uint8_t *dst, int len);
+typedef void (*RGBA_Comp_Func_Mask)  (uint32_t *dest, const uint8_t *mask, int length, uint32_t color);
+typedef void (*Draw_Func_ARGB_Mix3)  (uint32_t *dest, const uint32_t *src, const uint32_t *mul, int len, uint32_t color);
+typedef void (*Draw_Func_Alpha)      (uint8_t *dest, const uint8_t *src, int len);
 typedef Eina_Bool (*Cspace_Convert_Func) (void *dst, const void *src, int w, int h, int src_stride, int dst_stride, Eina_Bool has_alpha, Efl_Gfx_Colorspace srccs, Efl_Gfx_Colorspace dstcs);
 
 int efl_draw_init(void);
@@ -22,7 +23,7 @@ RGBA_Comp_Func       efl_draw_func_span_get         (Efl_Gfx_Render_Op op, uint3
 RGBA_Comp_Func_Solid efl_draw_func_solid_span_get   (Efl_Gfx_Render_Op op, uint32_t color);
 RGBA_Comp_Func_Mask  efl_draw_func_mask_span_get    (Efl_Gfx_Render_Op op, uint32_t color);
 Draw_Func_ARGB_Mix3  efl_draw_func_argb_mix3_get    (Efl_Gfx_Render_Op op, uint32_t color);
-Alpha_Gfx_Func       efl_draw_alpha_func_get        (Efl_Gfx_Render_Op op, Eina_Bool has_mask);
+Draw_Func_Alpha      efl_draw_alpha_func_get        (Efl_Gfx_Render_Op op, Eina_Bool has_mask);
 Cspace_Convert_Func  efl_draw_convert_func_get      (Efl_Gfx_Colorspace origcs, Efl_Gfx_Colorspace dstcs, Eina_Bool *region_can);
 
 

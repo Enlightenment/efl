@@ -109,6 +109,8 @@ extern int _evas_filter_log_dom;
 
 typedef enum _Evas_Filter_Interpolation_Mode Evas_Filter_Interpolation_Mode;
 
+typedef Evas_Filter_Buffer * (*evas_filter_buffer_scaled_get_func)(Evas_Filter_Context *ctx, Evas_Filter_Buffer *src, unsigned w, unsigned h);
+
 struct _Evas_Filter_Context
 {
    Evas_Public_Data *evas;
@@ -117,6 +119,9 @@ struct _Evas_Filter_Context
    int last_buffer_id;
    int last_command_id;
    void *user_data; // used by textblock
+
+   // ugly hack (dlsym fail)
+   evas_filter_buffer_scaled_get_func buffer_scaled_get;
 
    // Variables changing at each run
    int w, h; // Dimensions of the input/output buffers
@@ -245,11 +250,17 @@ enum _Evas_Filter_Interpolation_Mode
    EVAS_FILTER_INTERPOLATION_MODE_LINEAR
 };
 
+enum _Evas_Filter_Support
+{
+   EVAS_FILTER_SUPPORT_NONE = 0,
+   EVAS_FILTER_SUPPORT_CPU,
+   EVAS_FILTER_SUPPORT_GL
+};
+
 void                     evas_filter_context_clear(Evas_Filter_Context *ctx);
 void                     evas_filter_context_source_set(Evas_Filter_Context *ctx, Evas_Object *eo_proxy, Evas_Object *eo_source, int bufid, Eina_Stringshare *name);
 
 /* FIXME: CPU filters entry points. Move these to the Evas Engine itself. */
-Evas_Filter_Apply_Func   evas_filter_blend_cpu_func_get(Evas_Filter_Command *cmd);
 Evas_Filter_Apply_Func   evas_filter_blur_cpu_func_get(Evas_Filter_Command *cmd);
 Evas_Filter_Apply_Func   evas_filter_bump_map_cpu_func_get(Evas_Filter_Command *cmd);
 Evas_Filter_Apply_Func   evas_filter_curve_cpu_func_get(Evas_Filter_Command *cmd);

@@ -67,7 +67,7 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
    unsigned int src_len = 0, src_stride, msk_len = 0, msk_stride, dst_len = 0, dst_stride;
    Efl_Gfx_Render_Op render_op = cmd->draw.rop;
    Evas_Filter_Buffer *msk_fb;
-   Alpha_Gfx_Func func;
+   Draw_Func_Alpha func;
    uint8_t *src_map = NULL, *dst, *dst_map = NULL, *msk, *msk_map = NULL;
    int w, h, mw, mh, x, y, my;
    int stepsize, stepcount, step;
@@ -134,12 +134,12 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
         dst = dst_map + (y * dst_stride);
 
         for (step = 0; step < stepcount; step++, dst += stepsize)
-          func(msk, dst, stepsize);
+          func(dst, msk, stepsize);
 
         x = stepsize * stepcount;
         if (x < w)
           {
-             func(msk, dst, w - x);
+             func(dst, msk, w - x);
           }
      }
 
@@ -274,7 +274,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    uint8_t *src, *msk, *span, *src_map = NULL, *msk_map = NULL, *dst_map = NULL;
    Evas_Filter_Buffer *msk_fb;
    RGBA_Gfx_Func func;
-   Alpha_Gfx_Func span_func;
+   Draw_Func_Alpha span_func;
    uint32_t *dst;
    uint32_t color;
    Efl_Gfx_Render_Op op = cmd->draw.rop;
@@ -335,7 +335,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
         for (step = 0; step < stepcount; step++, dst += stepsize, src += stepsize)
           {
              memcpy(span, msk, stepsize * sizeof(uint8_t));
-             span_func(src, span, stepsize);
+             span_func(span, src, stepsize);
              func(NULL, span, color, dst, stepsize);
           }
 
@@ -343,7 +343,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
         if (x < w)
           {
              memcpy(span, msk, (w - x) * sizeof(uint8_t));
-             span_func(src, span, w - x);
+             span_func(span, src, w - x);
              func(NULL, span, color, dst, w -x);
           }
      }

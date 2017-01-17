@@ -91,10 +91,13 @@ typedef struct _Evas_Smart_Data             Evas_Smart_Data;
 typedef struct _Evas_Object_Protected_State Evas_Object_Protected_State;
 typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
 
+/* gfx filters typedef only */
 typedef struct _Evas_Filter_Program         Evas_Filter_Program;
 typedef struct _Evas_Object_Filter_Data     Evas_Object_Filter_Data;
 typedef struct _Evas_Filter_Data_Binding    Evas_Filter_Data_Binding;
 typedef struct _Evas_Pointer_Data           Evas_Pointer_Data;
+typedef struct _Evas_Filter_Command         Evas_Filter_Command;
+typedef enum _Evas_Filter_Support           Evas_Filter_Support;
 
 // 3D stuff
 
@@ -1576,6 +1579,9 @@ struct _Evas_Func
    void  (*ector_end)                    (void *data, void *context, Ector_Surface *ector, void *surface, void *engine_data, Eina_Bool do_async);
    void* (*ector_new)                    (void *data, void *context, Ector_Surface *ector, void *surface);
    void  (*ector_free)                   (void *engine_data);
+
+   Evas_Filter_Support (*gfx_filter_supports) (void *data, Evas_Filter_Command *cmd);
+   Eina_Bool (*gfx_filter_process)       (void *data, Evas_Filter_Command *cmd);
 };
 
 struct _Evas_Image_Save_Func

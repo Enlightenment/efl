@@ -592,7 +592,6 @@ lib/evas/common/evas_op_sub/op_sub_pixel_mask_i386.c
 lib_evas_libevas_la_SOURCES += \
 lib/evas/canvas/evas_filter_mixin.c \
 lib/evas/filters/evas_filter.c \
-lib/evas/filters/evas_filter_blend.c \
 lib/evas/filters/evas_filter_blur.c \
 lib/evas/filters/evas_filter_bump.c \
 lib/evas/filters/evas_filter_curve.c \
@@ -616,6 +615,10 @@ lib/evas/filters/blur/blur_box_rgba_i386.c \
 lib/evas/filters/blur/blur_box_rgba_sse3.c \
 lib/evas/filters/blur/blur_box_rgba_neon.c
 
+GFX_FILTER_SW_FILES = \
+modules/evas/engines/software_generic/evas_engine_filter.h \
+modules/evas/engines/software_generic/filters/evas_filter_blend.c \
+$(NULL)
 
 ### Engine Ector stuff
 
@@ -641,9 +644,11 @@ modules/evas/engines/software_generic/Evas_Engine_Software_Shared.h \
 modules/evas/engines/software_generic/evas_native_tbm.c \
 modules/evas/engines/software_generic/evas_native_dmabuf.c \
 modules/evas/engines/software_generic/evas_ector_software_buffer.c \
-modules/evas/engines/software_generic/evas_native_common.h
+modules/evas/engines/software_generic/evas_native_common.h \
+$(GFX_FILTER_SW_FILES)
 lib_evas_libevas_la_LIBADD +=
-lib_evas_libevas_la_CPPFLAGS += -I$(top_srcdir)/src/lib/ector
+lib_evas_libevas_la_CPPFLAGS += -I$(top_srcdir)/src/lib/ector \
+-I$(top_srcdir)/src/lib/evas/filters
 else
 enginesoftwaregenericpkgdir = $(libdir)/evas/modules/engines/software_generic/$(MODULE_ARCH)
 enginesoftwaregenericpkg_LTLIBRARIES = modules/evas/engines/software_generic/module.la
@@ -660,10 +665,13 @@ modules/evas/engines/software_generic/Evas_Engine_Software_Shared.h \
 modules/evas/engines/software_generic/evas_native_tbm.c \
 modules/evas/engines/software_generic/evas_native_dmabuf.c \
 modules/evas/engines/software_generic/evas_ector_software_buffer.c \
-modules/evas/engines/software_generic/evas_native_common.h
+modules/evas/engines/software_generic/evas_native_common.h \
+$(GFX_FILTER_SW_FILES)
+
 modules_evas_engines_software_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
+-I$(top_srcdir)/src/lib/evas/filters \
 -I$(top_builddir)/src/modules/evas/engines/software_generic \
 @EVAS_CFLAGS@
 modules_evas_engines_software_generic_module_la_LIBADD = @USE_EVAS_LIBS@

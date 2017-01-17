@@ -72,7 +72,7 @@ _vflip_cpu(Evas_Filter_Command *cmd)
    else if (cspace == E_ALPHA)
      {
         /* blend onto a target (alpha -> alpha) */
-        Alpha_Gfx_Func func = efl_draw_alpha_func_get(cmd->draw.rop, EINA_FALSE);
+        Draw_Func_Alpha func = efl_draw_alpha_func_get(cmd->draw.rop, EINA_FALSE);
         EINA_SAFETY_ON_NULL_GOTO(func, end);
 
         for (sy = s0, dy = d0; (dy >= d1) && (sy <= s1); sy++, dy--)
@@ -80,7 +80,7 @@ _vflip_cpu(Evas_Filter_Command *cmd)
              uint8_t* src = in + src_stride * sy;
              uint8_t* dst = out + dst_stride * dy;
 
-             func(src, dst, w);
+             func(dst, src, w);
           }
      }
    else
