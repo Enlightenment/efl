@@ -1,4 +1,3 @@
-#include "evas_filter.h"
 #include "evas_filter_private.h"
 
 #include <math.h>
@@ -52,21 +51,21 @@ _box_blur_horiz_rgba(uint32_t *src, uint32_t *dst, int* radii, int w, int h)
    DEBUG_TIME_BEGIN();
 
 #ifdef BUILD_SSE3
-   if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
+   if (eina_cpu_features_get() & EINA_CPU_SSE3)
      {
         _box_blur_rgba_horiz_step_sse3(src, dst, radii, w, h);
         goto end;
      }
 #endif
 #ifdef BUILD_MMX
-   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+   if (eina_cpu_features_get() & EINA_CPU_MMX)
      {
         _box_blur_rgba_horiz_step_mmx(src, dst, radii, w, h);
         goto end;
      }
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
         _box_blur_rgba_horiz_step_neon(src, dst, radii, w, h);
         goto end;
@@ -84,21 +83,21 @@ _box_blur_vert_rgba(uint32_t *src, uint32_t *dst, int* radii, int w, int h)
    DEBUG_TIME_BEGIN();
 
 #ifdef BUILD_SSE3
-   if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
+   if (eina_cpu_features_get() & EINA_CPU_SSE3)
      {
         _box_blur_rgba_vert_step_sse3(src, dst, radii, h, w);
         goto end;
      }
 #endif
 #ifdef BUILD_MMX
-   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+   if (eina_cpu_features_get() & EINA_CPU_MMX)
      {
         _box_blur_rgba_vert_step_mmx(src, dst, radii, h, w);
         goto end;
      }
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
         _box_blur_rgba_vert_step_neon(src, dst, radii, h, w);
         goto end;
@@ -127,21 +126,21 @@ _box_blur_horiz_alpha(const DATA8 *src, DATA8 *dst, int* radii, int w, int h)
    DEBUG_TIME_BEGIN();
 
 #ifdef BUILD_SSE3
-   if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
+   if (eina_cpu_features_get() & EINA_CPU_SSE3)
      {
         _box_blur_alpha_horiz_step_sse3(src, dst, radii, w, h);
         goto end;
      }
 #endif
 #ifdef BUILD_MMX
-   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+   if (eina_cpu_features_get() & EINA_CPU_MMX)
      {
         _box_blur_alpha_horiz_step_mmx(src, dst, radii, w, h);
         goto end;
      }
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
         _box_blur_alpha_horiz_step_neon(src, dst, radii, w, h);
         goto end;
@@ -159,21 +158,21 @@ _box_blur_vert_alpha(const DATA8 *src, DATA8 *dst, int* radii, int w, int h)
    DEBUG_TIME_BEGIN();
 
 #ifdef BUILD_SSE3
-   if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
+   if (eina_cpu_features_get() & EINA_CPU_SSE3)
      {
         _box_blur_alpha_vert_step_sse3(src, dst, radii, h, w);
         goto end;
      }
 #endif
 #ifdef BUILD_MMX
-   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+   if (eina_cpu_features_get() & EINA_CPU_MMX)
      {
         _box_blur_alpha_vert_step_mmx(src, dst, radii, h, w);
         goto end;
      }
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
         _box_blur_alpha_vert_step_neon(src, dst, radii, h, w);
         goto end;
@@ -380,7 +379,7 @@ _gaussian_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
 /* Main entry point */
 
 Evas_Filter_Apply_Func
-evas_filter_blur_cpu_func_get(Evas_Filter_Command *cmd)
+eng_filter_blur_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);

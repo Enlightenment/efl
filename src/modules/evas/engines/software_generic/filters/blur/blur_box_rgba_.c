@@ -4,7 +4,7 @@
  * - _box_blur_vert_rgba_step
  */
 
-#include "../evas_filter_private.h"
+#include "evas_filter_private.h"
 
 static inline void
 _box_blur_rgba_horiz_step(const DATA32* restrict const srcdata,

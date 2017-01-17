@@ -4,7 +4,7 @@
  * - _gaussian_blur_vert_rgba_step
  */
 
-#include "../evas_filter_private.h"
+#include "evas_filter_private.h"
 
 #if !defined (FUNCTION_NAME) || !defined (STEP)
 # error Must define FUNCTION_NAME and STEP

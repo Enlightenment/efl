@@ -260,10 +260,6 @@ enum _Evas_Filter_Support
 void                     evas_filter_context_clear(Evas_Filter_Context *ctx);
 void                     evas_filter_context_source_set(Evas_Filter_Context *ctx, Evas_Object *eo_proxy, Evas_Object *eo_source, int bufid, Eina_Stringshare *name);
 
-/* FIXME: CPU filters entry points. Move these to the Evas Engine itself. */
-Evas_Filter_Apply_Func   evas_filter_blur_cpu_func_get(Evas_Filter_Command *cmd);
-Evas_Filter_Apply_Func   evas_filter_bump_map_cpu_func_get(Evas_Filter_Command *cmd);
-
 /* Utility functions */
 void _clip_to_target(int *sx, int *sy, int sw, int sh, int ox, int oy, int dw, int dh, int *dx, int *dy, int *rows, int *cols);
 Eina_Bool evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h);

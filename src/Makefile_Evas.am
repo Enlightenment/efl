@@ -592,26 +592,26 @@ lib/evas/common/evas_op_sub/op_sub_pixel_mask_i386.c
 lib_evas_libevas_la_SOURCES += \
 lib/evas/canvas/evas_filter_mixin.c \
 lib/evas/filters/evas_filter.c \
-lib/evas/filters/evas_filter_blur.c \
 lib/evas/filters/evas_filter_parser.c \
 lib/evas/filters/evas_filter_utils.c \
 lib/evas/filters/evas_filter_private.h
 
 EXTRA_DIST2 += \
-lib/evas/filters/blur/blur_gaussian_alpha_.c \
-lib/evas/filters/blur/blur_gaussian_rgba_.c \
-lib/evas/filters/blur/blur_box_alpha_.c \
-lib/evas/filters/blur/blur_box_alpha_i386.c \
-lib/evas/filters/blur/blur_box_alpha_sse3.c \
-lib/evas/filters/blur/blur_box_alpha_neon.c \
-lib/evas/filters/blur/blur_box_rgba_.c \
-lib/evas/filters/blur/blur_box_rgba_i386.c \
-lib/evas/filters/blur/blur_box_rgba_sse3.c \
-lib/evas/filters/blur/blur_box_rgba_neon.c
+modules/evas/engines/software_generic/filters/blur/blur_gaussian_alpha_.c \
+modules/evas/engines/software_generic/filters/blur/blur_gaussian_rgba_.c \
+modules/evas/engines/software_generic/filters/blur/blur_box_alpha_.c \
+modules/evas/engines/software_generic/filters/blur/blur_box_alpha_i386.c \
+modules/evas/engines/software_generic/filters/blur/blur_box_alpha_sse3.c \
+modules/evas/engines/software_generic/filters/blur/blur_box_alpha_neon.c \
+modules/evas/engines/software_generic/filters/blur/blur_box_rgba_.c \
+modules/evas/engines/software_generic/filters/blur/blur_box_rgba_i386.c \
+modules/evas/engines/software_generic/filters/blur/blur_box_rgba_sse3.c \
+modules/evas/engines/software_generic/filters/blur/blur_box_rgba_neon.c
 
 GFX_FILTER_SW_FILES = \
 modules/evas/engines/software_generic/filters/evas_engine_filter.h \
 modules/evas/engines/software_generic/filters/evas_filter_blend.c \
+modules/evas/engines/software_generic/filters/evas_filter_blur.c \
 modules/evas/engines/software_generic/filters/evas_filter_bump.c \
 modules/evas/engines/software_generic/filters/evas_filter_curve.c \
 modules/evas/engines/software_generic/filters/evas_filter_displace.c \

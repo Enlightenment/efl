@@ -1492,16 +1492,6 @@ _filter_name_get(int mode)
 #endif
 
 static Eina_Bool
-_engine_gfx_filter_func(Evas_Filter_Command *cmd)
-{
-   // This should be temporary porting code, when moving filter implementations
-   // from here to the engine. Ideally the filters should be in ector though.
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->ENFN->gfx_filter_process, EINA_FALSE);
-   return cmd->ENFN->gfx_filter_process(cmd->ENDT, cmd);
-}
-
-static Eina_Bool
 _filter_command_run(Evas_Filter_Command *cmd)
 {
    Evas_Filter_Support support = EVAS_FILTER_SUPPORT_NONE;
@@ -1530,30 +1520,13 @@ _filter_command_run(Evas_Filter_Command *cmd)
      }
 
    support = cmd->ENFN->gfx_filter_supports(cmd->ENDT, cmd);
-   if (support != EVAS_FILTER_SUPPORT_NONE)
-     {
-        func = &_engine_gfx_filter_func;
-     }
-   else
-     {
-        switch (cmd->mode)
-          {
-           case EVAS_FILTER_MODE_BLUR:
-             func = evas_filter_blur_cpu_func_get(cmd);
-             break;
-           default:
-             CRI("Invalid filter mode.");
-             break;
-          }
-     }
-
-   if (!func)
+   if (support == EVAS_FILTER_SUPPORT_NONE)
      {
         ERR("No function to process this filter (mode %d)", cmd->mode);
         return EINA_FALSE;
      }
 
-   return func(cmd);
+   return cmd->ENFN->gfx_filter_process(cmd->ENDT, cmd);
 }
 
 static Eina_Bool
