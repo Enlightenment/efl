@@ -4620,10 +4620,10 @@ eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *
 
 //------------------------------------------------//
 
-static Evas_Filter_Apply_Func
+static Software_Filter_Func
 _gfx_filter_func_get(Evas_Filter_Command *cmd)
 {
-   Evas_Filter_Apply_Func func = NULL;
+   Software_Filter_Func func = NULL;
 
    switch (cmd->mode)
      {
@@ -4653,7 +4653,7 @@ eng_gfx_filter_supports(void *data EINA_UNUSED, Evas_Filter_Command *cmd)
 static Eina_Bool
 eng_gfx_filter_process(void *data EINA_UNUSED, Evas_Filter_Command *cmd)
 {
-   Evas_Filter_Apply_Func func;
+   Software_Filter_Func func;
 
    func = _gfx_filter_func_get(cmd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);

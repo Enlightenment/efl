@@ -13,7 +13,7 @@
 static Eina_Bool _bump_map_cpu_alpha_alpha(Evas_Filter_Command *cmd);
 static Eina_Bool _bump_map_cpu_alpha_rgba(Evas_Filter_Command *cmd);
 
-Evas_Filter_Apply_Func
+Software_Filter_Func
 eng_filter_bump_func_get(Evas_Filter_Command *cmd)
 {
    int w, h;

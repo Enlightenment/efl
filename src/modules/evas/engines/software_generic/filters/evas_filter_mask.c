@@ -9,7 +9,7 @@ static Eina_Bool _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd);
 static Eina_Bool _mask_cpu_rgba_alpha_rgba(Evas_Filter_Command *cmd);
 static Eina_Bool _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd);
 
-Evas_Filter_Apply_Func
+Software_Filter_Func
 eng_filter_mask_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);

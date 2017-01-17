@@ -672,6 +672,7 @@ modules_evas_engines_software_generic_module_la_CPPFLAGS = -I$(top_builddir)/src
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/evas/filters \
+-I$(top_builddir)/src/lib/evas/canvas \
 -I$(top_builddir)/src/modules/evas/engines/software_generic \
 @EVAS_CFLAGS@
 modules_evas_engines_software_generic_module_la_LIBADD = @USE_EVAS_LIBS@

@@ -1,4 +1,4 @@
-#include "evas_filter_private.h"
+#include "evas_engine_filter.h"
 
 #include <math.h>
 #include <time.h>
@@ -378,7 +378,7 @@ _gaussian_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
 
 /* Main entry point */
 
-Evas_Filter_Apply_Func
+Software_Filter_Func
 eng_filter_blur_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);

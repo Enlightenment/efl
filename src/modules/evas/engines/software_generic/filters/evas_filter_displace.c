@@ -308,7 +308,7 @@ end:
    return ret;
 }
 
-Evas_Filter_Apply_Func
+Software_Filter_Func
 eng_filter_displace_func_get(Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);

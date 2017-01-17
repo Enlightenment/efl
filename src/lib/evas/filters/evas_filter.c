@@ -1495,7 +1495,6 @@ static Eina_Bool
 _filter_command_run(Evas_Filter_Command *cmd)
 {
    Evas_Filter_Support support = EVAS_FILTER_SUPPORT_NONE;
-   Evas_Filter_Apply_Func func = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, EINA_FALSE);
