@@ -14,7 +14,7 @@
 
 # include "session-recovery-client-protocol.h"
 
-# include "zxdg-shell-client-protocol.h"
+# include "xdg-shell-unstable-v6-client-protocol.h"
 
 extern int _ecore_wl2_log_dom;
 extern Eina_Bool no_session_recovery;

@@ -83,5 +83,7 @@ Session.vim
 /src/lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c
 /src/lib/ecore_wl2/xdg-shell-unstable-v5-client-protocol.h
 /src/lib/ecore_wl2/xdg-shell-unstable-v5-protocol.c
+/src/lib/ecore_wl2/xdg-shell-unstable-v6-client-protocol.h
+/src/lib/ecore_wl2/xdg-shell-unstable-v6-protocol.c
 /src/lib/ecore_wl2/session-recovery-client-protocol.h
 /src/lib/ecore_wl2/session-recovery-protocol.c
