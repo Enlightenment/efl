@@ -134,9 +134,15 @@ modules_ecore_imf_wayland_module_la_SOURCES = \
 modules/ecore_imf/wayland/wayland_module.c \
 modules/ecore_imf/wayland/wayland_imcontext.c \
 modules/ecore_imf/wayland/wayland_imcontext.h \
-modules/ecore_imf/wayland/text-client-protocol.h \
-modules/ecore_imf/wayland/text-protocol.c
+modules/ecore_imf/wayland/text-input-unstable-v1-client-protocol.h \
+modules/ecore_imf/wayland/text-input-unstable-v1-protocol.c
+
+BUILT_SOURCES += \
+modules/ecore_imf/wayland/text-input-unstable-v1-client-protocol.h \
+modules/ecore_imf/wayland/text-input-unstable-v1-protocol.c
+
 modules_ecore_imf_wayland_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/modules/ecore_imf/wayland \
 @ECORE_IMF_CFLAGS@ \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_WL2_CFLAGS@

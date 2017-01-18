@@ -30,7 +30,7 @@
 #include <stdio.h>
 
 #include "wayland_imcontext.h"
-#include "text-client-protocol.h"
+#include "text-input-unstable-v1-client-protocol.h"
 
 int _ecore_imf_wayland_log_dom = -1;
 Ecore_Wl2_Display *ewd;
@@ -85,7 +85,7 @@ static Ecore_IMF_Context_Class wayland_imf_class =
    NULL                                       /* bidi_direction_set */
 };
 
-static struct wl_text_input_manager *text_input_manager = NULL;
+static struct zwp_text_input_manager_v1 *text_input_manager = NULL;
 
 static Ecore_IMF_Context *
 im_module_exit(void)
@@ -112,11 +112,11 @@ im_module_create()
              registry = ecore_wl2_display_registry_get(ewd);
              EINA_ITERATOR_FOREACH(itr, global)
                {
-                  if (!strcmp(global->interface, "wl_text_input_manager"))
+                  if (!strcmp(global->interface, "zwp_text_input_manager_v1"))
                     {
                        text_input_manager =
                          wl_registry_bind(registry, global->id,
-                                          &wl_text_input_manager_interface, 1);
+                                          &zwp_text_input_manager_v1_interface, 1);
                        EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom,
                                          "bound wl_text_input_manager interface");
                        break;

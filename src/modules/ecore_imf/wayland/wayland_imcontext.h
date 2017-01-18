@@ -26,7 +26,7 @@
 #include <Ecore_IMF.h>
 #include <Ecore_Wl2.h>
 
-#include "text-client-protocol.h"
+#include "text-input-unstable-v1-client-protocol.h"
 
 extern Ecore_Wl2_Display *ewd;
 
@@ -87,7 +87,7 @@ void
 wayland_im_context_prediction_allow_set(Ecore_IMF_Context *ctx,
                                         Eina_Bool prediction);
 
-WaylandIMContext *wayland_im_context_new        (struct wl_text_input_manager *text_input_manager);
+WaylandIMContext *wayland_im_context_new        (struct zwp_text_input_manager_v1 *text_input_manager);
 
 extern int _ecore_imf_wayland_log_dom;
 
