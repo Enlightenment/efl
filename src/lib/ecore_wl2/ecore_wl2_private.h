@@ -9,12 +9,6 @@
 #define EFL_TEAMWORK_VERSION 2
 # include "teamwork_protocol.h"
 
-/* NB: Test if subsurface protocol is part of wayland code, if not then
- * include our own copy */
-# ifndef WL_SUBSURFACE_ERROR_ENUM
-#  include "subsurface-client-protocol.h"
-# endif
-
 # include "xdg-shell-client-protocol.h"
 # define XDG_VERSION 5
 

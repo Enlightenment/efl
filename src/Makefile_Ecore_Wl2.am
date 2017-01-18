@@ -12,8 +12,6 @@ lib/ecore_wl2/teamwork_protocol.c \
 lib/ecore_wl2/teamwork_protocol.h \
 lib/ecore_wl2/session-recovery-client-protocol.h \
 lib/ecore_wl2/session-recovery-protocol.c \
-lib/ecore_wl2/subsurface-client-protocol.h \
-lib/ecore_wl2/subsurface-protocol.c \
 lib/ecore_wl2/xdg-shell-client-protocol.h \
 lib/ecore_wl2/xdg-shell-protocol.c \
 lib/ecore_wl2/www-protocol.h \
