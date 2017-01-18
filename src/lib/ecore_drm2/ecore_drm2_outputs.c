@@ -1514,3 +1514,18 @@ ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, uint16_t *
                                red, green, blue) < 0)
      ERR("Failed to set gamma for Output %s: %m", output->name);
 }
+
+EAPI int
+ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output)
+{
+   int ret = -1;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, -1);
+
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     ret = output->plane_state->supported_rotations;
+#endif
+
+   return ret;
+}

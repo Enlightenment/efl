@@ -454,6 +454,7 @@ _drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
                {
                   int r = -1;
 
+                  DBG("\t\t\tRotation: %s", prop->enums[k].name);
                   if (!strcmp(prop->enums[k].name, "rotate-0"))
                     r = ECORE_DRM2_ROTATION_NORMAL;
                   else if (!strcmp(prop->enums[k].name, "rotate-90"))

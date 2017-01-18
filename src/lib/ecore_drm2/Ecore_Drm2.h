@@ -743,6 +743,21 @@ EAPI Eina_Bool ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, un
 EAPI void ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
 
 /**
+ * Get the supported rotations of a given output
+ *
+ * @param output
+ *
+ * @return An integer representing possible rotations, or -1 on failure
+ *
+ * @note This function will only return valid values if Atomic support
+ *       is enabled as it requires hardware plane support.
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI int ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
