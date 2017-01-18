@@ -1,0 +1,39 @@
+<protocol name="teamwork">
+
+  <interface name="zwp_teamwork" version="2">
+    <request name="preload_uri">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uri" type="string"/>
+    </request>
+    <request name="activate_uri">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uri" type="string"/>
+      <arg name="x" type="fixed" summary="surface local coords"/>
+      <arg name="y" type="fixed" summary="surface local coords"/>
+    </request>
+    <request name="deactivate_uri">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uri" type="string"/>
+    </request>
+    <request name="open_uri">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uri" type="string"/>
+    </request>
+
+    <event name="fetching_uri">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uri" type="string"/>
+    </event>
+    <event name="completed_uri">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uri" type="string"/>
+      <arg name="valid" type="int" summary="1 if uri can be displayed, else 0"/>
+    </event>
+    <event name="fetch_info">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="uri" type="string"/>
+      <arg name="progress" type="uint" summary="percentage of download"/>
+    </event>
+  </interface>
+
+</protocol>

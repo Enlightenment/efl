@@ -7,7 +7,7 @@
 # include "www-protocol.h"
 
 #define EFL_TEAMWORK_VERSION 2
-# include "teamwork_protocol.h"
+# include "teamwork-client-protocol.h"
 
 # include "xdg-shell-unstable-v5-client-protocol.h"
 # define XDG_V5_UNSTABLE_VERSION 5
