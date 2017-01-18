@@ -1593,8 +1593,8 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
              eina_strbuf_append_char(buf, '.');
              eina_strbuf_append(buf, eo_lexer_keyword_str_get(ls->t.kw));
              eo_lexer_get(ls);
-             check_next(ls, ';');
-             goto end;
+             check(ls, ';');
+             goto propbeg;
           }
         eina_strbuf_append_char(buf, '.');
         check(ls, TOK_VALUE);
@@ -1608,6 +1608,7 @@ propbeg:
      {
         Eina_Bool has_get = EINA_FALSE, has_set = EINA_FALSE;
         eo_lexer_get(ls);
+        FILL_DOC(ls, impl, common_doc);
         for (;;) switch (ls->t.kw)
           {
            case KW_get:
@@ -1627,6 +1628,7 @@ propbeg:
                   eo_lexer_get(ls);
                }
              check_next(ls, ';');
+             FILL_DOC(ls, impl, get_doc);
              break;
            case KW_set:
              CASE_LOCK(ls, set, "set specifier");
@@ -1645,6 +1647,7 @@ propbeg:
                   eo_lexer_get(ls);
                }
              check_next(ls, ';');
+             FILL_DOC(ls, impl, set_doc);
              break;
            default:
              goto propend;
@@ -1655,12 +1658,14 @@ propend:
         check_next(ls, '}');
      }
    else
-     check_next(ls, ';');
+     {
+        check_next(ls, ';');
+        FILL_DOC(ls, impl, common_doc);
+     }
    if (glob_auto)
      impl->get_auto = impl->set_auto = EINA_TRUE;
    if (glob_empty)
      impl->get_empty = impl->set_empty = EINA_TRUE;
-end:
    if (buf)
      {
         impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));

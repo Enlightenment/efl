@@ -43,10 +43,14 @@ class Override (Base) {
       }
    }
    implements {
-      Base.constructor;
+      Base.constructor; [[overridden docs for constructor]]
       @auto .b { set; }
       @empty .bar;
       @auto .c { get; }
-      @auto Base.z { get; set; }
+      @auto Base.z {
+         [[overridden general property docs]]
+         get; [[overridden get docs]]
+         set; [[overridden set docs]]
+      }
    }
 }

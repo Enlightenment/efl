@@ -194,6 +194,9 @@ struct _Eolian_Implement
    const Eolian_Class *klass;
    const Eolian_Function *foo_id;
    Eina_Stringshare *full_name;
+   Eolian_Documentation *common_doc;
+   Eolian_Documentation *get_doc;
+   Eolian_Documentation *set_doc;
    Eina_Bool is_prop_get :1;
    Eina_Bool is_prop_set :1;
    Eina_Bool get_pure_virtual :1;
