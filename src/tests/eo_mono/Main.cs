@@ -4,6 +4,15 @@ using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Linq;
 
+public class Test
+{
+    public static void Assert(bool res, String msg = "Assertion failed")
+    {
+        if (!res)
+            throw new Exception(msg);
+    }
+}
+
 public class MyBox : evas.BoxInherit
 {
     public MyBox(efl.Object parent) : base(parent) {}
@@ -28,7 +37,7 @@ public class MyBox : evas.BoxInherit
     }
 }
 
-namespace testsuite {
+namespace TestSuite {
 
 class Core
 {
@@ -36,11 +45,28 @@ class Core
     {
         test.Testing testing = new test.TestingConcrete();
         test.Testing o1 = testing.return_object();
-        System.Diagnostics.Debug.Assert(o1.raw_handle != IntPtr.Zero);
-        System.Diagnostics.Debug.Assert(o1.raw_handle == testing.raw_handle);
+        Test.Assert(o1.raw_handle != IntPtr.Zero);
+        Test.Assert(o1.raw_handle == testing.raw_handle);
         test.Testing o2 = o1.return_object();
-        System.Diagnostics.Debug.Assert(o2.raw_handle != IntPtr.Zero);
-        System.Diagnostics.Debug.Assert(o2.raw_handle == o1.raw_handle);
+        Test.Assert(o2.raw_handle != IntPtr.Zero);
+        Test.Assert(o2.raw_handle == o1.raw_handle);
+    }
+
+    public static void destructor_really_frees()
+    {
+       bool delEventCalled = false;
+       {
+           test.Testing obj = new test.TestingConcrete();
+           obj.DEL += (object sender, EventArgs e) => { delEventCalled = true; };
+       }
+
+       System.GC.WaitForPendingFinalizers();
+       System.GC.Collect();
+       System.GC.WaitForPendingFinalizers();
+       System.GC.Collect();
+       System.GC.WaitForPendingFinalizers();
+
+       Test.Assert(delEventCalled, "Destructor not called");
     }
 }
 
@@ -63,7 +89,7 @@ class Evas
         canvas.visible_set(true);
 
         efl.Object parent = canvas.parent_get();
-        System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
+        Test.Assert(parent.raw_handle != IntPtr.Zero);
 
         efl.canvas.Rectangle rect = new efl.canvas.RectangleConcrete(canvas);
         rect.color_set(255, 255, 255, 255);
@@ -101,23 +127,44 @@ class TestMain
 
     static Type[] GetTestSuites()
     {
-        return Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "testsuite", StringComparison.Ordinal)).ToArray();
+        return Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "TestSuite", StringComparison.Ordinal)).ToArray();
     }
 
-    static void Main(string[] args)
+    static int Main(string[] args)
     {
         efl_object_init();
         ecore_init();
         evas_init();
 
+        bool pass = true;
+
         var suites = GetTestSuites();
         foreach(var suite in suites)
         {
-            var testcases = suite.GetMethods(BindingFlags.Static | BindingFlags.Public);
-            foreach(var testcase in testcases)
+            var testCases = suite.GetMethods(BindingFlags.Static | BindingFlags.Public);
+            Console.WriteLine("[ START SUITE ] " + suite.Name);
+            foreach(var testCase in testCases)
             {
-                testcase.Invoke(null, null);
+                Console.WriteLine("[ RUN         ] " + suite.Name + "." + testCase.Name);
+                bool caseResult = true;
+                try
+                {
+                    testCase.Invoke(null, null);
+                }
+                catch (Exception e)
+                {
+                    pass = false;
+                    caseResult = false;
+                    Console.WriteLine("[ ERROR       ] " + e.InnerException.Message);
+                }
+                Console.WriteLine("[        " + (caseResult ? "PASS" : "FAIL") + " ] " + suite.Name + "." + testCase.Name);
             }
+            Console.WriteLine("[ END SUITE ] " + suite.Name);
         }
+
+        if (!pass)
+          return -1;
+
+        return 0;
     }
 }
