@@ -1263,6 +1263,7 @@ modules_evas_engines_wayland_shm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/ecore_wl2 \
+-I$(top_builddir)/src/lib/ecore_wl2 \
 -I$(top_srcdir)/src/static_libs/libdrm \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_common \
 @EVAS_CFLAGS@ \

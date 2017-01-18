@@ -79,5 +79,7 @@ Session.vim
 /src/bin/ecore_con/efl_net_proxy_helper
 
 #Once all protocols are generated these will use wildcards
+/src/lib/ecore_wl2/linux-dmabuf-unstable-v1-client-protocol.h
+/src/lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c
 /src/lib/ecore_wl2/session-recovery-client-protocol.h
 /src/lib/ecore_wl2/session-recovery-protocol.c
