@@ -248,6 +248,8 @@ evas_gl_common_image_new_from_rgbaimage(Evas_Engine_GL_Context *gc, RGBA_Image *
      }
     */
 
+   if (error) *error = EVAS_LOAD_ERROR_NONE;
+
    // FIXME: keep unreffed shared images around
    EINA_LIST_FOREACH(gc->shared->images, l, im)
      {
@@ -1037,6 +1039,65 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
         ERR("unhandled img format colorspace=%d", im->cs.space);
         break;
     }
+}
+
+Evas_GL_Image *
+evas_gl_common_image_surface_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
+{
+   Evas_GL_Image *glim = NULL;
+   Eina_Bool alpha;
+   int w, h;
+
+   if (!gc || !im || !im->im || !im->im->image.data)
+     goto fail;
+
+   if (im->im->cache_entry.space == EFL_GFX_COLORSPACE_ARGB8888)
+     alpha = EINA_FALSE;
+   else if (im->im->cache_entry.space == EFL_GFX_COLORSPACE_GRY8)
+     alpha = EINA_TRUE;
+   else goto fail;
+
+   w = im->im->cache_entry.w;
+   h = im->im->cache_entry.h;
+   glim = evas_gl_common_image_surface_new(gc, w, h, EINA_TRUE, EINA_FALSE);
+   if (!glim) goto fail;
+
+   if (alpha)
+     {
+        RGBA_Image *image;
+        uint32_t *rgba;
+        uint8_t *gry8;
+        int k;
+
+        image = evas_common_image_new(w, h, EINA_TRUE);
+        if (!image) goto fail;
+
+        rgba = image->image.data;
+        gry8 = im->im->image.data8;
+        for (k = 0; k < (w * h); k++)
+          {
+             const int c = *gry8++;
+             *rgba++ = ARGB_JOIN(c, c, c, c);
+          }
+
+        glim->im = image;
+     }
+   else
+     {
+        evas_cache_image_ref(&im->im->cache_entry);
+        glim->im = im->im;
+     }
+
+   glim->dirty = EINA_TRUE;
+   evas_gl_common_image_update(gc, glim);
+   evas_gl_common_image_free(im);
+
+   return glim;
+
+fail:
+   ERR("Failed to update surface pixels!");
+   if (glim) evas_gl_common_image_free(glim);
+   return NULL;
 }
 
 void

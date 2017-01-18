@@ -2,13 +2,357 @@
 # include "config.h"
 #endif
 
+#define ECTOR_GL_BUFFER_BASE_PROTECTED
+
+#include "evas_common_private.h"
+#include "evas_gl_private.h"
+
 #include <gl/Ector_GL.h>
 #include "gl/ector_gl_private.h"
 #include "evas_common_private.h"
+#include "../gl_common/evas_gl_common.h"
+#include "evas_private.h"
 #include "ector_buffer.h"
+#include "Evas_Engine_GL_Generic.h"
+
 #include "evas_ector_buffer.eo.h"
 #include "evas_ector_gl_buffer.eo.h"
 
 #define MY_CLASS EVAS_ECTOR_GL_BUFFER_CLASS
+
+typedef struct _Ector_GL_Buffer_Map Ector_GL_Buffer_Map;
+typedef struct _Evas_Ector_GL_Buffer_Data Evas_Ector_GL_Buffer_Data;
+
+struct _Ector_GL_Buffer_Map
+{
+   EINA_INLIST;
+   void *ptr;
+   unsigned int base_size; // in bytes
+   unsigned int x, y, w, h;
+   void *image_data, *base_data;
+   size_t length;
+   Efl_Gfx_Colorspace cspace;
+   Evas_GL_Image *im;
+   Eina_Bool allocated;
+   Ector_Buffer_Access_Flag mode;
+};
+
+struct _Evas_Ector_GL_Buffer_Data
+{
+   Evas_Public_Data *evas;
+   Evas_GL_Image *glim;
+   Eina_Bool alpha_only;
+   Ector_GL_Buffer_Map *maps;
+};
+
+#define ENFN pd->evas->engine.func
+#define ENDT pd->evas->engine.data.output
+
+// testing out some macros to maybe add to eina
+#define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
+#define EINA_INLIST_APPEND(l,i) do { l = (__typeof__(l)) eina_inlist_append(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
+#define EINA_INLIST_PREPEND(l,i) do { l = (__typeof__(l)) eina_inlist_prepend(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
+
+#define fail(fmt, ...) do { ERR(fmt, ##__VA_ARGS__); goto on_fail; } while (0)
+
+/* FIXME: Conversion routines don't belong here */
+static inline void
+_pixels_argb_to_gry8_convert(uint8_t *dst, const uint32_t *src, int len)
+{
+   int k;
+   for (k = 0; k < len; k++)
+     {
+        const uint32_t *s = src++;
+        *dst++ = A_VAL(s);
+     }
+}
+
+static inline void
+_pixels_gry8_to_argb_convert(uint32_t *dst, const uint8_t *src, int len)
+{
+   int k;
+   for (k = 0; k < len; k++)
+     {
+        const uint8_t s = *src++;
+        *dst++ = ARGB_JOIN(s, s, s, s);
+     }
+}
+
+static inline Eina_Bool
+_evas_gl_image_is_fbo(Evas_GL_Image *glim)
+{
+   return glim && glim->tex && glim->tex->pt && glim->tex->pt->fb;
+}
+
+EOLIAN static void
+_evas_ector_gl_buffer_gl_buffer_prepare(Eo *obj, Evas_Ector_GL_Buffer_Data *pd,
+                                        Evas_Canvas *eo_evas,
+                                        int w, int h, Efl_Gfx_Colorspace cspace,
+                                        Ector_Buffer_Flag flags EINA_UNUSED)
+{
+   Render_Engine_GL_Generic *re;
+   Evas_Engine_GL_Context *gc;
+   Evas_GL_Image *im;
+
+   // this is meant to be called only once
+   EINA_SAFETY_ON_FALSE_GOTO(!pd->evas, on_fail);
+   EINA_SAFETY_ON_FALSE_GOTO(!efl_finalized_get(obj), on_fail);
+
+   if (cspace == EFL_GFX_COLORSPACE_ARGB8888)
+     pd->alpha_only = EINA_FALSE;
+   else if (cspace == EFL_GFX_COLORSPACE_GRY8)
+     pd->alpha_only = EINA_TRUE;
+   else
+     fail("Unsupported colorspace: %u", cspace);
+
+   pd->evas = efl_data_xref(eo_evas, EVAS_CANVAS_CLASS, obj);
+   re = pd->evas->engine.data.output;
+   gc = re->window_gl_context_get(re->software.ob);
+
+   im = evas_gl_common_image_surface_new(gc, w, h, EINA_TRUE, EINA_FALSE);
+   if (!im) fail("Failed to create GL surface!");
+
+   pd->glim = im;
+   return;
+
+on_fail:
+   if (pd->glim) evas_gl_common_image_free(pd->glim);
+   pd->glim = NULL;
+}
+
+EOLIAN static void *
+_evas_ector_gl_buffer_evas_ector_buffer_drawable_image_get(Eo *obj EINA_UNUSED,
+                                                           Evas_Ector_GL_Buffer_Data *pd,
+                                                           Eina_Bool update)
+{
+   Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
+   Evas_Engine_GL_Context *gc;
+
+   if (pd->maps != NULL)
+     fail("Image is currently mapped!");
+
+   evas_gl_common_image_ref(pd->glim);
+   if (!update) return pd->glim;
+
+   gc = re->window_gl_context_get(re->software.ob);
+   evas_gl_common_image_update(gc, pd->glim);
+
+   return pd->glim;
+
+on_fail:
+   return NULL;
+}
+
+EOLIAN static void *
+_evas_ector_gl_buffer_evas_ector_buffer_render_image_get(Eo *obj EINA_UNUSED,
+                                                         Evas_Ector_GL_Buffer_Data *pd,
+                                                         Eina_Bool update)
+{
+   Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
+   Evas_Engine_GL_Context *gc;
+
+   if (pd->maps != NULL)
+     fail("Image is currently mapped!");
+
+   evas_gl_common_image_ref(pd->glim);
+   if (!update) return pd->glim;
+
+   gc = re->window_gl_context_get(re->software.ob);
+   evas_gl_common_image_update(gc, pd->glim);
+
+   return pd->glim;
+
+on_fail:
+   return NULL;
+}
+
+EOLIAN static Eina_Bool
+_evas_ector_gl_buffer_evas_ector_buffer_engine_image_release(Eo *obj EINA_UNUSED,
+                                                             Evas_Ector_GL_Buffer_Data *pd,
+                                                             void *image)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->glim == image, EINA_FALSE);
+
+   evas_gl_common_image_free(pd->glim);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_evas_ector_gl_buffer_ector_buffer_size_get(Eo *obj EINA_UNUSED,
+                                            Evas_Ector_GL_Buffer_Data *pd,
+                                            int *w, int *h)
+{
+   if (w) *w = pd->glim->w;
+   if (h) *h = pd->glim->h;
+}
+
+EOLIAN static Efl_Gfx_Colorspace
+_evas_ector_gl_buffer_ector_buffer_cspace_get(Eo *obj EINA_UNUSED,
+                                              Evas_Ector_GL_Buffer_Data *pd)
+{
+   if (pd->alpha_only)
+     return EFL_GFX_COLORSPACE_GRY8;
+   else
+     return EFL_GFX_COLORSPACE_ARGB8888;
+}
+
+EOLIAN static Ector_Buffer_Flag
+_evas_ector_gl_buffer_ector_buffer_flags_get(Eo *obj EINA_UNUSED,
+                                             Evas_Ector_GL_Buffer_Data *pd EINA_UNUSED)
+{
+   return ECTOR_BUFFER_FLAG_CPU_READABLE | ECTOR_BUFFER_FLAG_DRAWABLE |
+         ECTOR_BUFFER_FLAG_CPU_WRITABLE | ECTOR_BUFFER_FLAG_RENDERABLE;
+}
+
+EOLIAN static void *
+_evas_ector_gl_buffer_ector_buffer_map(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buffer_Data *pd,
+                                       unsigned int *length,
+                                       Ector_Buffer_Access_Flag mode,
+                                       unsigned int x, unsigned int y, unsigned int w, unsigned int h,
+                                       Efl_Gfx_Colorspace cspace, unsigned int *stride)
+{
+   Eina_Bool write = !!(mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE);
+   Ector_GL_Buffer_Map *map = NULL;
+   Eina_Bool tofree = EINA_FALSE;
+   Evas_GL_Image *im = NULL;
+   unsigned int W, H;
+   int len, err;
+   uint32_t *data;
+   int pxs;
+
+   W = pd->glim->w;
+   H = pd->glim->h;
+   if (!w) w = W - x;
+   if (!h) h = H - y;
+   if ((x + w > W) || (y + h > H)) return NULL;
+
+   if (write && _evas_gl_image_is_fbo(pd->glim))
+     {
+        // Can not open FBO data to write!
+        im = ENFN->image_data_get(ENDT, pd->glim, EINA_FALSE, &data, &err, &tofree);
+        if (!im) return NULL;
+     }
+   else
+     {
+        im = ENFN->image_data_get(ENDT, pd->glim, write, &data, &err, &tofree);
+        if (!im) return NULL;
+     }
+
+   map = calloc(1, sizeof(*map));
+   map->mode = mode;
+   map->cspace = cspace;
+   map->x = x;
+   map->y = y;
+   map->w = w;
+   map->h = h;
+   map->image_data = data;
+   map->im = tofree ? im : NULL;
+
+   len = W * H;
+   if (cspace == EFL_GFX_COLORSPACE_GRY8)
+     {
+        uint8_t *data8 = malloc(len);
+
+        if (!data8) goto on_fail;
+        _pixels_argb_to_gry8_convert(data8, data, len);
+        map->allocated = EINA_TRUE;
+        map->base_data = data8;
+        map->ptr = data8 + x + (y * W);
+        pxs = 1;
+     }
+   else
+     {
+        map->allocated = EINA_FALSE;
+        map->base_data = data;
+        map->ptr = data + x + (y * W);
+        pxs = 4;
+     }
+
+   map->base_size = len * pxs;
+   map->length = (W * h + w - W) * pxs;
+   if (stride) *stride = W * pxs;
+   if (length) *length = map->length;
+
+   EINA_INLIST_PREPEND(pd->maps, map);;
+   return map->ptr;
+
+on_fail:
+   free(map);
+   return NULL;
+}
+
+EOLIAN static void
+_evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buffer_Data *pd,
+                                         void *data, unsigned int length)
+{
+   Ector_GL_Buffer_Map *map;
+   if (!data) return;
+
+   EINA_INLIST_FOREACH(pd->maps, map)
+     {
+        if ((map->ptr == data) && (map->length == length))
+          {
+             EINA_INLIST_REMOVE(pd->maps, map);
+             if (map->mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE)
+               {
+                  Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
+                  Evas_GL_Image *old_glim = pd->glim;
+                  Evas_Engine_GL_Context *gc;
+                  int W, H;
+
+                  W = pd->glim->w;
+                  H = pd->glim->h;
+                  gc = re->window_gl_context_get(re->software.ob);
+
+                  if (map->cspace == EFL_GFX_COLORSPACE_GRY8)
+                    _pixels_gry8_to_argb_convert(map->image_data, map->base_data, W * H);
+
+                  if (map->im)
+                    {
+                       pd->glim = evas_gl_common_image_surface_update(gc, map->im);
+                       evas_gl_common_image_free(old_glim);
+                    }
+                  else
+                    {
+                       pd->glim = evas_gl_common_image_surface_update(gc, old_glim);
+                    }
+               }
+             else
+               {
+                  if (map->im)
+                    ENFN->image_free(ENDT, map->im);
+                  else
+                    ENFN->image_data_put(ENDT, pd->glim, map->image_data);
+               }
+             if (map->allocated)
+               free(map->base_data);
+             free(map);
+             return;
+          }
+     }
+
+   ERR("Tried to unmap a non-mapped region!");
+}
+
+EOLIAN static Efl_Object *
+_evas_ector_gl_buffer_efl_object_finalize(Eo *obj, Evas_Ector_GL_Buffer_Data *pd)
+{
+   if (!pd->glim)
+     {
+        ERR("Buffer was not initialized properly!");
+        return NULL;
+     }
+   return efl_finalize(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
+_evas_ector_gl_buffer_efl_object_destructor(Eo *obj, Evas_Ector_GL_Buffer_Data *pd)
+{
+   evas_gl_common_image_free(pd->glim);
+   efl_data_xunref(pd->evas->evas, pd->evas, obj);
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
 
 #include "evas_ector_gl_buffer.eo.c"

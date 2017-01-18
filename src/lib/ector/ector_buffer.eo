@@ -24,6 +24,7 @@ enum Ector.Buffer.Access_Flag {
 mixin Ector.Buffer
 {
    [[2D pixel buffer interface for Ector
+
      @since 1.17
    ]]
    eo_prefix: ector_buffer;
@@ -76,53 +77,16 @@ mixin Ector.Buffer
             @in pixels: void_ptr; [[If $null, allocates an empty buffer]]
             @in width: int; [[Buffer width]]
             @in height: int; [[Buffer height]]
-            @in stride: int; [[Can be 0]]
             @in cspace: Efl.Gfx.Colorspace; [[Buffer colorspace]]
             @in writable: bool; [[Buffer is writable]]
-            @in l: ubyte; [[Left border pixels, usually 0 or 1]]
-            @in r: ubyte; [[Right border pixels, usually 0 or 1]]
-            @in t: ubyte; [[Top border pixels, usually 0 or 1]]
-            @in b: ubyte; [[Bottom border pixels, usually 0 or 1]]
          }
          return: bool; [[True if pixels_set was successful]]
-      }
-      span_get @pure_virtual {
-         [[Get a single horizontal span of length w starting from (x,y)
-
-           Call span_free() to release it. This function will try not to
-           allocate any new buffer, whenever possible. This means the data
-           might be mapped directly from the backing memory buffer.
-         ]]
-         params {
-            @in x: int; [[Ranges from -l to w+r-1]]
-            @in y: int; [[Ranges from -t to h+b-1]]
-            @in w: uint; [[Ranges from 1 to w+l+r]]
-            @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace, may trigger conversion on the fly.]]
-            @out length: uint; [[Length in bytes of the returned buffer]]
-         }
-         return: ptr(uint8); [[A temporary memory buffer containing the pixels requested.]]
-      }
-      span_free @pure_virtual {
-         [[Must be called as soon as possible after span_get]]
-         params {
-            data: ptr(uint8); [[Data to be freed]]
-         }
       }
       @property flags {
          [[The capabilities of this buffer]]
          get {}
          values {
             flag: Ector.Buffer.Flag; [[A bitmask of capability flags]]
-         }
-      }
-      @property border {
-         [[Duplicated pixel borders of this buffer, used for GL scaling]]
-         get {}
-         values {
-            l: int; [[Left border]]
-            r: int; [[Right border]]
-            t: int; [[Top border]]
-            b: int; [[Bottom border]]
          }
       }
    }

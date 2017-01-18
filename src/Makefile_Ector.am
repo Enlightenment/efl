@@ -5,7 +5,6 @@ ector_eolian_files_generic = \
 	lib/ector/ector_buffer.eo \
 	lib/ector/ector_renderer.eo \
 	lib/ector/ector_renderer_shape.eo \
-	lib/ector/ector_renderer_buffer.eo \
 	lib/ector/ector_renderer_gradient.eo \
 	lib/ector/ector_renderer_gradient_radial.eo \
 	lib/ector/ector_renderer_gradient_linear.eo
@@ -28,7 +27,6 @@ ector_eolian_files_software = \
 	lib/ector/software/ector_software_buffer_base.eo \
 	lib/ector/software/ector_renderer_software.eo \
 	lib/ector/software/ector_renderer_software_shape.eo \
-	lib/ector/software/ector_renderer_software_buffer.eo \
 	lib/ector/software/ector_renderer_software_gradient_radial.eo \
 	lib/ector/software/ector_renderer_software_gradient_linear.eo
 ector_eolian_software_h = $(ector_eolian_files_software:%.eo=%.eo.h)
@@ -37,7 +35,6 @@ ector_eolian_software_h = $(ector_eolian_files_software:%.eo=%.eo.h)
 ector_eolian_files_gl = \
 	lib/ector/gl/ector_gl_surface.eo \
 	lib/ector/gl/ector_gl_buffer.eo \
-	lib/ector/gl/ector_gl_buffer_base.eo \
 	lib/ector/gl/ector_renderer_gl.eo \
 	lib/ector/gl/ector_renderer_gl_shape.eo \
 	lib/ector/gl/ector_renderer_gl_gradient_radial.eo \
@@ -84,7 +81,6 @@ lib/ector/ector_gl_internal.h \
 lib/ector/ector_buffer.c \
 lib/ector/ector_renderer_shape.c \
 lib/ector/ector_renderer.c \
-lib/ector/ector_renderer_buffer.c \
 lib/ector/ector_renderer_gradient.c \
 lib/ector/ector_renderer_gradient_radial.c \
 lib/ector/ector_renderer_gradient_linear.c
@@ -121,7 +117,6 @@ lib_ector_libector_la_SOURCES += \
 lib/ector/software/ector_renderer_software_gradient_linear.c \
 lib/ector/software/ector_renderer_software_gradient_radial.c \
 lib/ector/software/ector_renderer_software_shape.c \
-lib/ector/software/ector_renderer_software_buffer.c \
 lib/ector/software/ector_software_gradient.c \
 lib/ector/software/ector_software_rasterizer.c \
 lib/ector/software/ector_software_surface.c \
@@ -138,7 +133,6 @@ lib/ector/gl/ector_renderer_gl_gradient_radial.c \
 lib/ector/gl/ector_renderer_gl_shape.c \
 lib/ector/gl/ector_renderer_gl.c \
 lib/ector/gl/ector_gl_buffer.c \
-lib/ector/gl/ector_gl_buffer_base.c \
 lib/ector/gl/ector_gl_surface.c \
 lib/ector/gl/ector_gl_private.h \
 lib/ector/gl/shader/ector_gl_shaders.x \

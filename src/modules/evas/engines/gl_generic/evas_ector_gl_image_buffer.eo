@@ -1,14 +1,15 @@
-class Evas.Ector.GL.Image.Buffer (Evas.Ector.GL.Buffer, Evas.Ector.Buffer)
+class Evas.Ector.GL.Image.Buffer (Efl.Object, Evas.Ector.Buffer, Ector.GL.Buffer)
 {
    [[An Ector GL buffer wrapping an existing Evas_GL_Image.]]
    implements {
-      Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Evas.Ector.Buffer.engine_image { get; set; }
+      Evas.Ector.Buffer.engine_image_set;
+      Evas.Ector.Buffer.drawable_image_get;
+      Evas.Ector.Buffer.engine_image_release;
+      Ector.Buffer.size { get; }
+      Ector.Buffer.cspace { get; }
       Ector.Buffer.flags { get; }
-      Ector.Buffer.span_get;
-      Ector.Buffer.span_free;
       Ector.Buffer.map;
       Ector.Buffer.unmap;
    }

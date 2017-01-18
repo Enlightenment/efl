@@ -146,7 +146,6 @@ void                     evas_filter_context_post_run_callback_set(Evas_Filter_C
 Eina_Bool                evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx);
 
 int                      evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only);
-void                    *evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid);
 void                    *evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid);
 Eina_Bool                evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer);
 
@@ -171,7 +170,7 @@ void                     _evas_filter_source_hash_free_cb(void *data);
  * @return               Filter command ID or -1 in case of error
  * @internal
  */
-int                      evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int ox, int oy, Evas_Filter_Fill_Mode fillmode);
+Evas_Filter_Command     *evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int ox, int oy, Evas_Filter_Fill_Mode fillmode);
 
 /**
  * @brief Apply a blur effect on a buffer
@@ -188,7 +187,7 @@ int                      evas_filter_command_blend_add(Evas_Filter_Context *ctx,
  * @return               Filter command ID or -1 in case of error
  * @internal
  */
-int                      evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Blur_Type type, int dx, int dy, int ox, int oy, int count);
+Evas_Filter_Command     *evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Blur_Type type, int dx, int dy, int ox, int oy, int count);
 
 /**
  * @brief Fill a buffer with the current color
@@ -199,7 +198,7 @@ int                      evas_filter_command_blur_add(Evas_Filter_Context *ctx, 
  * @note The current draw context's render operation is ignored (always uses COPY mode).
  * @internal
  */
-int                      evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context, int buf);
+Evas_Filter_Command     *evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context, int buf);
 
 /**
  * @brief evas_filter_command_curve_add
@@ -212,7 +211,7 @@ int                      evas_filter_command_fill_add(Evas_Filter_Context *ctx, 
  * @return               Filter command ID or -1 in case of error
  * @internal
  */
-int                      evas_filter_command_curve_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, DATA8 *curve /* 256 elements */, Evas_Filter_Channel channel);
+Evas_Filter_Command     *evas_filter_command_curve_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, DATA8 *curve /* 256 elements */, Evas_Filter_Channel channel);
 
 /**
  * @brief Grow/Shrink an image, as defined in image processing (this is not a scale algorithm!)
@@ -225,7 +224,7 @@ int                      evas_filter_command_curve_add(Evas_Filter_Context *ctx,
  * @return               Filter command ID or -1 in case of error
  * @internal
  */
-int                      evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int radius, Eina_Bool smooth);
+Evas_Filter_Command     *evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int radius, Eina_Bool smooth);
 
 /**
  * @brief Apply a displacement map to a buffer. This will move pixels from the source to the destination based on pixel per pixel offset, as defined in the displacement map
@@ -240,7 +239,7 @@ int                      evas_filter_command_grow_add(Evas_Filter_Context *ctx, 
  * @return               Filter command ID or -1 in case of error
  * @internal
  */
-int                      evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int dispbuf, Evas_Filter_Displacement_Flags flags, int intensity, Evas_Filter_Fill_Mode fillmode);
+Evas_Filter_Command     *evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int dispbuf, Evas_Filter_Displacement_Flags flags, int intensity, Evas_Filter_Fill_Mode fillmode);
 
 /**
  * @brief Apply a texture to a buffer
@@ -254,7 +253,7 @@ int                      evas_filter_command_displacement_map_add(Evas_Filter_Co
  * @note For the moment, inbuf can only be ALPHA, and output must be RGBA if mask is RGBA as well
  * @internal
  */
-int                      evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int maskbuf, int outbuf, Evas_Filter_Fill_Mode fillmode);
+Evas_Filter_Command     *evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int maskbuf, int outbuf, Evas_Filter_Fill_Mode fillmode);
 
 /**
  * @brief Apply a relief effect based on a bump map (Z map)
@@ -275,7 +274,7 @@ int                      evas_filter_command_mask_add(Evas_Filter_Context *ctx, 
  * @return                 Filter command ID or -1 in case of error
  * @internal
  */
-int                      evas_filter_command_bump_map_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int bumpbuf, int outbuf, float azimuth, float elevation, float depth, float specular_factor, DATA32 black, DATA32 color, DATA32 white, Evas_Filter_Bump_Flags flags, Evas_Filter_Fill_Mode fillmode);
+Evas_Filter_Command     *evas_filter_command_bump_map_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int bumpbuf, int outbuf, float azimuth, float elevation, float depth, float specular_factor, DATA32 black, DATA32 color, DATA32 white, Evas_Filter_Bump_Flags flags, Evas_Filter_Fill_Mode fillmode);
 
 /**
  * @brief Apply a geometrical transformation to the buffer
@@ -289,7 +288,7 @@ int                      evas_filter_command_bump_map_add(Evas_Filter_Context *c
  * @return               Filter command ID or -1 in case of error
  * @internal
  */
-int                      evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Transform_Flags flags, int ox, int oy);
+Evas_Filter_Command     *evas_filter_command_transform_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Transform_Flags flags, int ox, int oy);
 
 /* Simple binding between a filter object and its sources */
 struct _Evas_Filter_Proxy_Binding

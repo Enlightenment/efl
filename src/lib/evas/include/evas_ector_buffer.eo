@@ -1,19 +1,42 @@
-/* Note: only for internal C API */
-
 import evas_canvas;
 
 interface Evas.Ector.Buffer
 {
-   [[Evas ector buffer interface]]
+   [[Binding layer between ector buffers and evas images.
+
+     Subclasses implement support for RGBA_Image for SW & GL,
+     and Evas_GL_Image for GL.
+
+     Note: Internal class, not API stable.
+   ]]
    methods {
-      @property engine_image {
-      	 [[Engine image property]]
-         get {}
-         set { [[This Buffer will hold a reference to the evas image struct.]] }
-         values {
-            evas: Evas.Canvas; [[The current Evas.]]
-            image: void_ptr; [[The engine-specific image struct.]]
+      engine_image_set {
+         [[Attach this ector buffer to an existing engine image.]]
+         params {
+            @in evas: Evas.Canvas; [[The current Evas.]]
+            @in image: void_ptr; [[The RGBA_Image or Evas_GL_Image.]]
          }
+      }
+      drawable_image_get {
+         [[Fetch an engine image from this ector buffer as a drawable.]]
+         params {
+            @in update: bool; [[$true to update the data to the remote image.]]
+         }
+         return: void_ptr; [[The engine image (RGBA_Image or Evas_GL_Image).]]
+      }
+      render_image_get {
+         [[Fetch an engine image from this ector buffer as a render target.]]
+         params {
+            @in update: bool; [[$true to update the data to the remote image.]]
+         }
+         return: void_ptr; [[The engine image (RGBA_Image or Evas_GL_Image).]]
+      }
+      engine_image_release {
+         [[Release an image from @.drawable_image_get or @.render_image_get.]]
+         params {
+            @in image: void_ptr; [[Return value of @.drawable_image_get or @.render_image_get.]]
+         }
+         return: bool; [[$false in case of error.]]
       }
    }
 }

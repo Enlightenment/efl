@@ -61,7 +61,6 @@ typedef enum _Span_Data_Type {
   Solid,
   LinearGradient,
   RadialGradient,
-  Image
 } Span_Data_Type;
 
 typedef struct _Span_Data
@@ -114,7 +113,6 @@ void ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Ei
 void ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a);
 void ector_software_rasterizer_linear_gradient_set(Software_Rasterizer *rasterizer, Ector_Renderer_Software_Gradient_Data *linear);
 void ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasterizer, Ector_Renderer_Software_Gradient_Data *radial);
-void ector_software_rasterizer_buffer_set(Software_Rasterizer *rasterizer, Ector_Software_Buffer *image);
 void ector_software_rasterizer_clip_rect_set(Software_Rasterizer *rasterizer, Eina_Array *clips);
 void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, Shape_Rle_Data *clip);
 

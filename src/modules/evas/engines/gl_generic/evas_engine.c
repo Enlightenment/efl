@@ -7,7 +7,6 @@
 #include "evas_ector_buffer.eo.h"
 #include "evas_ector_gl_buffer.eo.h"
 #include "evas_ector_gl_image_buffer.eo.h"
-#include "evas_ector_gl_rgbaimage_buffer.eo.h"
 #include "filters/gl_engine_filter.h"
 
 #if defined HAVE_DLSYM && ! defined _WIN32
@@ -844,11 +843,11 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (!ok)
           {
              if (err) *err = EVAS_LOAD_ERROR_GENERIC;
-             ERR("Unlock failed.");
+             ERR("ReadPixels failed.");
              return NULL;
           }
         *image_data = im_new->im->image.data;
-        if (tofree) *tofree = EINA_TRUE;
+        *tofree = EINA_TRUE;
         return im_new;
      }
 
@@ -2539,85 +2538,22 @@ eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
 }
 
 static Ector_Buffer *
-eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *evas, void *engine_image, Eina_Bool is_rgba_image)
+eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *evas, void *engine_image)
 {
-   Ector_Buffer *buf = NULL;
+   Evas_GL_Image *im = engine_image;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(engine_image, NULL);
-   if (is_rgba_image)
-     {
-        RGBA_Image *im = engine_image;
 
-        buf = efl_add(EVAS_ECTOR_GL_RGBAIMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(efl_added, evas, im));
-     }
-   else
-     {
-        Evas_GL_Image *im = engine_image;
-
-        buf = efl_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(efl_added, evas, im));
-     }
-   return buf;
+   return efl_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas,
+                  evas_ector_buffer_engine_image_set(efl_added, evas, im));
 }
 
 static Ector_Buffer *
-eng_ector_buffer_new(void *data, Evas *evas, void *pixels,
-                     int width, int height, int stride,
-                     Efl_Gfx_Colorspace cspace, Eina_Bool writeable EINA_UNUSED,
-                     int l, int r, int t, int b, Ector_Buffer_Flag flags)
+eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, int w, int h,
+                     Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags)
 {
-   Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
-   Render_Engine_GL_Generic *re = e->engine.data.output;
-   Evas_Engine_GL_Context *gc = NULL;
-   Ector_Buffer *buf = NULL;
-   int iw = width + l + r;
-   int ih = height + t + b;
-   int pxs = (cspace == EFL_GFX_COLORSPACE_ARGB8888) ? 4 : 1;
-
-   if (stride && (stride != iw * pxs))
-     WRN("stride support is not implemented for ector gl buffers at this point!");
-
-   if ((flags & ECTOR_BUFFER_FLAG_RENDERABLE) == 0)
-     {
-        // Create an RGBA Image as backing
-        Image_Entry *ie;
-
-        if (pixels)
-          {
-             // no copy
-             ie = evas_cache_image_data(evas_common_image_cache_get(), iw, ih,
-                                        pixels, EINA_TRUE, (Evas_Colorspace) cspace);
-             if (!ie) return NULL;
-          }
-        else
-          {
-             // alloc buffer
-             ie = evas_cache_image_copied_data(evas_common_image_cache_get(), iw, ih,
-                                               NULL, EINA_TRUE, (Evas_Colorspace) cspace);
-             if (!ie) return NULL;
-             pixels = ((RGBA_Image *) ie)->image.data;
-             memset(pixels, 0, iw * ih * pxs);
-          }
-        ie->borders.l = l;
-        ie->borders.r = r;
-        ie->borders.t = t;
-        ie->borders.b = b;
-
-        buf = eng_ector_buffer_wrap(data, evas, ie, EINA_TRUE);
-        evas_cache_image_drop(ie);
-     }
-   else
-     {
-        // Create only an Evas_GL_Image as backing
-        Evas_GL_Image *im;
-
-        if (l || r || t || b)
-          WRN("Borders are not supported by Evas surfaces!");
-
-        gc = re->window_gl_context_get(re->software.ob);
-        im = evas_gl_common_image_surface_new(gc, iw, ih, EINA_TRUE, EINA_FALSE);
-        buf = efl_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(efl_added, evas, im));
-        im->references--;
-     }
-   return buf;
+   return efl_add(EVAS_ECTOR_GL_BUFFER_CLASS, evas,
+                  evas_ector_gl_buffer_prepare(efl_added, evas, w, h, cspace, flags));
 }
 
 static Efl_Gfx_Render_Op
@@ -2768,7 +2704,7 @@ eng_ector_begin(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
                }
           }
         memset(buffer->software, 0, sizeof (unsigned int) * w * h);
-        ector_buffer_pixels_set(ector, buffer->software, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE, 0, 0, 0, 0);
+        ector_buffer_pixels_set(ector, buffer->software, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
      }
    else
@@ -2796,7 +2732,7 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
         w = gl_context->w; h = gl_context->h;
         mul_use = gl_context->dc->mul.use;
 
-        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, 0);
         buffer->gl = eng_image_data_put(data, buffer->gl, buffer->software);
 
         if (!mul_use)

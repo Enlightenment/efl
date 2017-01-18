@@ -20,7 +20,7 @@
 #define EVAS_FILTER_MODE_BUFFER (EVAS_FILTER_MODE_LAST+2)
 
 #define INSTR_PARAM_CHECK(a) do { if (!(a)) { \
-   ERR("Argument %s can not be nil in %s!", #a, instr->name); return -1; } \
+   ERR("Argument %s can not be nil in %s!", #a, instr->name); return NULL; } \
    } while (0)
 
 /* Note on the documentation:
@@ -913,8 +913,8 @@ _blend_padding_update(Evas_Filter_Program *pgm EINA_UNUSED,
 
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
-   INSTR_PARAM_CHECK(src);
-   INSTR_PARAM_CHECK(dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, 0);
 
    fillmode = _fill_mode_get(instr);
    if (fillmode & (EVAS_FILTER_FILL_MODE_STRETCH_X | EVAS_FILTER_FILL_MODE_REPEAT_X)) ox = 0;
@@ -1022,8 +1022,8 @@ _blur_padding_update(Evas_Filter_Program *pgm EINA_UNUSED,
 
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
-   INSTR_PARAM_CHECK(src);
-   INSTR_PARAM_CHECK(dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, 0);
 
    if (typestr && !strcasecmp(typestr, "box"))
      type = EVAS_FILTER_BLUR_BOX;
@@ -1405,8 +1405,8 @@ _displace_padding_update(Evas_Filter_Program *pgm EINA_UNUSED,
    intensity = _instruction_param_geti(instr, "intensity", NULL);
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
-   INSTR_PARAM_CHECK(src);
-   INSTR_PARAM_CHECK(dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, 0);
 
    l = intensity + src->pad.l;
    r = intensity + src->pad.r;
@@ -1552,8 +1552,8 @@ _grow_padding_update(Evas_Filter_Program *pgm EINA_UNUSED,
    radius = _instruction_param_geti(instr, "radius", NULL);
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
-   INSTR_PARAM_CHECK(src);
-   INSTR_PARAM_CHECK(dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, 0);
 
    if (radius < 0) radius = 0;
 
@@ -1684,7 +1684,7 @@ _transform_padding_update(Evas_Filter_Program *pgm EINA_UNUSED,
    ox = 0;
    oy = _instruction_param_geti(instr, "oy", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
-   INSTR_PARAM_CHECK(dst);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, 0);
 
    if (ox < 0) l = (-ox) * 2;
    else r = ox * 2;
@@ -3018,15 +3018,16 @@ _fill_mode_get(Evas_Filter_Instruction *instr)
    return EVAS_FILTER_FILL_MODE_NONE;
 }
 
-static int
+static Evas_Filter_Command *
 _instr2cmd_blend(Evas_Filter_Context *ctx,
                  Evas_Filter_Instruction *instr, void *dc)
 {
    Eina_Bool isset = EINA_FALSE;
+   Evas_Filter_Command *cmd;
    DATA32 color;
    Buffer *src, *dst;
    Evas_Filter_Fill_Mode fillmode;
-   int cmdid, ox, oy, A, R, G, B;
+   int ox, oy, A, R, G, B;
 
    ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
@@ -3038,24 +3039,23 @@ _instr2cmd_blend(Evas_Filter_Context *ctx,
    INSTR_PARAM_CHECK(dst);
 
    if (isset) SETCOLOR(color);
-   cmdid = evas_filter_command_blend_add(ctx, dc, src->cid, dst->cid, ox, oy,
-                                         fillmode);
+   cmd = evas_filter_command_blend_add(ctx, dc, src->cid, dst->cid, ox, oy, fillmode);
    if (isset) RESETCOLOR();
-   if (cmdid < 0) return cmdid;
 
-   return cmdid;
+   return cmd;
 }
 
-static int
+static Evas_Filter_Command *
 _instr2cmd_blur(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
    Eina_Bool colorset = EINA_FALSE, yset = EINA_FALSE, cntset = EINA_FALSE;
    Evas_Filter_Blur_Type type = EVAS_FILTER_BLUR_DEFAULT;
+   Evas_Filter_Command *cmd;
    const char *typestr;
    DATA32 color;
    Buffer *src, *dst;
-   int cmdid, ox, oy, rx, ry, A, R, G, B, count;
+   int ox, oy, rx, ry, A, R, G, B, count;
 
    ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
@@ -3098,14 +3098,14 @@ _instr2cmd_blur(Evas_Filter_Context *ctx,
 
    if (!yset) ry = rx;
    if (colorset) SETCOLOR(color);
-   cmdid = evas_filter_command_blur_add(ctx, dc, src->cid, dst->cid, type,
-                                        rx, ry, ox, oy, count);
+   cmd = evas_filter_command_blur_add(ctx, dc, src->cid, dst->cid, type,
+                                      rx, ry, ox, oy, count);
    if (colorset) RESETCOLOR();
 
-   return cmdid;
+   return cmd;
 }
 
-static int
+static Evas_Filter_Command *
 _instr2cmd_bump(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
@@ -3114,7 +3114,7 @@ _instr2cmd_bump(Evas_Filter_Context *ctx,
    DATA32 color, black, white;
    Buffer *src, *dst, *map;
    double azimuth, elevation, depth, specular;
-   int cmdid, compensate;
+   int compensate;
 
    color = _instruction_param_getc(instr, "color", NULL);
    white = _instruction_param_getc(instr, "white", NULL);
@@ -3134,15 +3134,13 @@ _instr2cmd_bump(Evas_Filter_Context *ctx,
    INSTR_PARAM_CHECK(dst);
    INSTR_PARAM_CHECK(map);
 
-   cmdid = evas_filter_command_bump_map_add(ctx, dc, src->cid, map->cid, dst->cid,
-                                            azimuth, elevation, depth, specular,
-                                            black, color, white, flags,
-                                            fillmode);
-
-   return cmdid;
+   return evas_filter_command_bump_map_add(ctx, dc, src->cid, map->cid, dst->cid,
+                                           azimuth, elevation, depth, specular,
+                                           black, color, white, flags,
+                                           fillmode);
 }
 
-static int
+static Evas_Filter_Command *
 _instr2cmd_displace(Evas_Filter_Context *ctx,
                     Evas_Filter_Instruction *instr, void *dc)
 {
@@ -3151,7 +3149,7 @@ _instr2cmd_displace(Evas_Filter_Context *ctx,
          EVAS_FILTER_DISPLACE_STRETCH | EVAS_FILTER_DISPLACE_LINEAR;
    const char *flagsstr;
    Buffer *src, *dst, *map;
-   int cmdid, intensity;
+   int intensity;
    Eina_Bool isset = EINA_FALSE;
 
    src = _instruction_param_getbuf(instr, "src", NULL);
@@ -3176,23 +3174,19 @@ _instr2cmd_displace(Evas_Filter_Context *ctx,
    else if (isset)
      WRN("Invalid flags '%s' in displace operation. Using default instead", flagsstr);
 
-   cmdid = evas_filter_command_displacement_map_add(ctx, dc, src->cid, dst->cid,
-                                                    map->cid, flags, intensity,
-                                                    fillmode);
-
-   return cmdid;
+   return evas_filter_command_displacement_map_add(ctx, dc, src->cid, dst->cid,
+                                                   map->cid, flags, intensity,
+                                                   fillmode);
 }
 
-static int
+static Evas_Filter_Command *
 _instr2cmd_fill(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
    Buffer *dst;
    int R, G, B, A, l, r, t, b;
    Evas_Filter_Command *cmd;
-   Eina_Inlist *il;
    DATA32 color;
-   int cmdid;
 
    dst = _instruction_param_getbuf(instr, "dst", NULL);
    color = _instruction_param_getc(instr, "color", NULL);
@@ -3203,31 +3197,27 @@ _instr2cmd_fill(Evas_Filter_Context *ctx,
    INSTR_PARAM_CHECK(dst);
 
    SETCOLOR(color);
-   cmdid = evas_filter_command_fill_add(ctx, dc, dst->cid);
+   cmd = evas_filter_command_fill_add(ctx, dc, dst->cid);
    RESETCOLOR();
+   if (!cmd) return NULL;
 
-   if (cmdid < 0) return -1;
-   il = eina_inlist_last(ctx->commands);
-   if (!il) return -1;
-
-   cmd = EINA_INLIST_CONTAINER_GET(il, Evas_Filter_Command);
    cmd->draw.clip.l = l;
    cmd->draw.clip.r = r;
    cmd->draw.clip.t = t;
    cmd->draw.clip.b = b;
    cmd->draw.clip_mode_lrtb = EINA_TRUE;
 
-   return cmdid;
+   return cmd;
 }
 
-static int
+static Evas_Filter_Command *
 _instr2cmd_grow(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Command *cmd;
    Buffer *src, *dst;
    Eina_Bool smooth;
-   int cmdid, radius;
+   int radius;
 
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
@@ -3236,23 +3226,21 @@ _instr2cmd_grow(Evas_Filter_Context *ctx,
    INSTR_PARAM_CHECK(src);
    INSTR_PARAM_CHECK(dst);
 
-   cmdid = evas_filter_command_grow_add(ctx, dc, src->cid, dst->cid,
-                                        radius, smooth);
-
-   cmd = _evas_filter_command_get(ctx, cmdid);
+   cmd = evas_filter_command_grow_add(ctx, dc, src->cid, dst->cid, radius, smooth);
    if (cmd) cmd->draw.need_temp_buffer = EINA_TRUE;
 
-   return cmdid;
+   return cmd;
 }
 
-static int
+static Evas_Filter_Command *
 _instr2cmd_mask(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Fill_Mode fillmode;
+   Evas_Filter_Command *cmd;
    Buffer *src, *dst, *mask;
    DATA32 color;
-   int R, G, B, A, cmdid;
+   int R, G, B, A;
 
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
@@ -3264,22 +3252,17 @@ _instr2cmd_mask(Evas_Filter_Context *ctx,
    INSTR_PARAM_CHECK(mask);
 
    SETCOLOR(color);
-   cmdid = evas_filter_command_mask_add(ctx, dc, src->cid, mask->cid, dst->cid, fillmode);
+   cmd = evas_filter_command_mask_add(ctx, dc, src->cid, mask->cid, dst->cid, fillmode);
    RESETCOLOR();
-   if (cmdid < 0) return cmdid;
+   if (!cmd) return NULL;
 
-   if (!src->alpha && !mask->alpha && !dst->alpha)
-     {
-        Evas_Filter_Command *cmd;
+   if (!src->alpha && !mask->alpha && !dst->alpha && !ctx->gl)
+     cmd->draw.need_temp_buffer = EINA_TRUE;
 
-        cmd = _evas_filter_command_get(ctx, cmdid);
-        cmd->draw.need_temp_buffer = EINA_TRUE;
-     }
-
-   return cmdid;
+   return cmd;
 }
 
-static int
+static Evas_Filter_Command *
 _instr2cmd_curve(Evas_Filter_Context *ctx,
                  Evas_Filter_Instruction *instr, void *dc)
 {
@@ -3289,7 +3272,6 @@ _instr2cmd_curve(Evas_Filter_Context *ctx,
    Buffer *src, *dst;
    DATA8 values[256];
    int *points;
-   int cmdid;
 
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
@@ -3328,12 +3310,10 @@ _instr2cmd_curve(Evas_Filter_Context *ctx,
           values[x] = x;
      }
 
-   cmdid = evas_filter_command_curve_add(ctx, dc, src->cid, dst->cid, values, channel);
-
-   return cmdid;
+   return evas_filter_command_curve_add(ctx, dc, src->cid, dst->cid, values, channel);
 }
 
-static int
+static Evas_Filter_Command *
 _instr2cmd_transform(Evas_Filter_Context *ctx,
                      Evas_Filter_Instruction *instr, void *dc)
 {
@@ -3355,17 +3335,18 @@ _instr2cmd_transform(Evas_Filter_Context *ctx,
    else
      {
         ERR("Invalid transform '%s'", op);
-        return -1;
+        return NULL;
      }
 
    return evas_filter_command_transform_add(ctx, dc, src->cid, dst->cid, flags, ox, oy);
 }
 
-static int
+static Eina_Bool
 _command_from_instruction(Evas_Filter_Context *ctx,
                           Evas_Filter_Instruction *instr, void *dc)
 {
-   int (* instr2cmd) (Evas_Filter_Context *, Evas_Filter_Instruction *, void *);
+   Evas_Filter_Command * (* instr2cmd) (Evas_Filter_Context *, Evas_Filter_Instruction *, void *);
+   Evas_Filter_Command *cmd;
 
    switch (instr->type)
      {
@@ -3401,10 +3382,19 @@ _command_from_instruction(Evas_Filter_Context *ctx,
         return EINA_TRUE;
       default:
         CRI("Invalid instruction type: %d", instr->type);
-        return -1;
+        return EINA_FALSE;
      }
 
-   return instr2cmd(ctx, instr, dc);
+   cmd = instr2cmd(ctx, instr, dc);
+   if (!cmd) return EINA_FALSE;
+
+   if (cmd->output && ctx->gl)
+     {
+        if (ENFN->gfx_filter_supports(ENDT, cmd) == EVAS_FILTER_SUPPORT_GL)
+          cmd->output->is_render = EINA_TRUE;
+     }
+
+   return EINA_TRUE;
 }
 
 #ifdef FILTERS_DEBUG
@@ -3477,7 +3467,6 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    Evas_Filter_Instruction *instr;
    Eina_Bool success = EINA_FALSE;
    void *dc = NULL;
-   int cmdid;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
@@ -3518,8 +3507,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    EINA_INLIST_FOREACH(pgm->instructions, instr)
      {
         _instruction_dump(instr);
-        cmdid = _command_from_instruction(ctx, instr, dc);
-        if (cmdid <= 0)
+        if (!_command_from_instruction(ctx, instr, dc))
           goto end;
      }
 

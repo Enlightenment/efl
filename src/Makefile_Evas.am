@@ -842,7 +842,6 @@ modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h \
 modules/evas/engines/gl_generic/Evas_Engine_GL_Shared.h \
 modules/evas/engines/gl_generic/evas_ector_gl_buffer.c \
 modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.c \
-modules/evas/engines/gl_generic/evas_ector_gl_rgbaimage_buffer.c \
 modules/evas/engines/gl_generic/filters/gl_engine_filter.h \
 modules/evas/engines/gl_generic/filters/gl_filter_blend.c \
 $(NULL)
@@ -850,7 +849,6 @@ $(NULL)
 evas_gl_generic_eolian_files = \
 modules/evas/engines/gl_generic/evas_ector_gl_buffer.eo \
 modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.eo \
-modules/evas/engines/gl_generic/evas_ector_gl_rgbaimage_buffer.eo \
 $(NULL)
 
 evas_gl_generic_eolian_c = $(evas_gl_generic_eolian_files:%.eo=%.eo.c)

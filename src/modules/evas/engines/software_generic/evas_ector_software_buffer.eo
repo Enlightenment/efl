@@ -5,6 +5,9 @@ class Evas.Ector.Software.Buffer (Ector.Software.Buffer, Evas.Ector.Buffer)
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Evas.Ector.Buffer.engine_image { get; set; }
+      Evas.Ector.Buffer.engine_image_set;
+      Evas.Ector.Buffer.drawable_image_get;
+      Evas.Ector.Buffer.render_image_get;
+      Evas.Ector.Buffer.engine_image_release;
    }
 }

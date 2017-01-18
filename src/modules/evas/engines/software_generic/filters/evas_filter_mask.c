@@ -16,9 +16,9 @@ eng_filter_mask_func_get(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->buffer, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->buffer, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask->buffer, NULL);
+   //EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->buffer, NULL);
+   //EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->buffer, NULL);
+   //EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask->buffer, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL((cmd->input->w > 0) && (cmd->input->h > 0), NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL((cmd->mask->w > 0) && (cmd->mask->h > 0), NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->input->w == cmd->output->w, NULL);

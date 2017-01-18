@@ -27,46 +27,44 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
    RGBA_Image *im = image;
 
    EINA_SAFETY_ON_NULL_RETURN(image);
-   if (efl_finalized_get(obj))
-     {
-        CRI("engine_image must be set at construction time only");
-        return;
-     }
-
-   if (!im->image.data)
-     {
-        CRI("image has no pixels yet");
-        return;
-     }
+   EINA_SAFETY_ON_FALSE_RETURN(!efl_finalized_get(obj));
+   EINA_SAFETY_ON_NULL_RETURN(im->image.data);
 
    pd->evas = efl_data_xref(evas, EVAS_CANVAS_CLASS, obj);
    evas_cache_image_ref(&im->cache_entry);
    pd->image = im;
 
-   ector_buffer_pixels_set(obj, im->image.data, im->cache_entry.w, im->cache_entry.h, 0, (Efl_Gfx_Colorspace) im->cache_entry.space, EINA_TRUE, 0, 0, 0, 0);
+   ector_buffer_pixels_set(obj, im->image.data, im->cache_entry.w, im->cache_entry.h, im->cache_entry.space, EINA_TRUE);
 }
 
-EOLIAN static void
-_evas_ector_software_buffer_evas_ector_buffer_engine_image_get(Eo *obj EINA_UNUSED,
-                                                               Evas_Ector_Software_Buffer_Data *pd,
-                                                               Evas **evas, void **image)
+EOLIAN static void *
+_evas_ector_software_buffer_evas_ector_buffer_drawable_image_get(Eo *obj EINA_UNUSED,
+                                                                 Evas_Ector_Software_Buffer_Data *pd,
+                                                                 Eina_Bool update EINA_UNUSED)
 {
-   if (!pd->evas)
-     {
-        INF("evas_ector_buffer_engine_image_set was not called on this image");
-        if (evas) *evas = NULL;
-        if (image) *image = NULL;
-        return;
-     }
-   if (evas) *evas = pd->evas->evas;
-   if (pd->evas->engine.func->gl_surface_read_pixels)
-     {
-        ERR("Invalid: requesting engine_image from a GL image from a simple SW buffer!");
-        if (image) *image = NULL;
-        return;
-     }
+   evas_cache_image_ref(&pd->image->cache_entry);
+   return pd->image;
+}
 
-   if (image) *image = pd->image;
+EOLIAN static void *
+_evas_ector_software_buffer_evas_ector_buffer_render_image_get(Eo *obj EINA_UNUSED,
+                                                               Evas_Ector_Software_Buffer_Data *pd,
+                                                               Eina_Bool update EINA_UNUSED)
+{
+   evas_cache_image_ref(&pd->image->cache_entry);
+   return pd->image;
+}
+
+EOLIAN static Eina_Bool
+_evas_ector_software_buffer_evas_ector_buffer_engine_image_release(Eo *obj EINA_UNUSED,
+                                                                   Evas_Ector_Software_Buffer_Data *pd,
+                                                                   void *image)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->image == image, EINA_FALSE);
+
+   evas_cache_image_drop(&pd->image->cache_entry);
+   return EINA_TRUE;
 }
 
 EOLIAN static Eo *

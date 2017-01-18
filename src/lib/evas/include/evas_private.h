@@ -1572,8 +1572,8 @@ struct _Evas_Func
 
    Ector_Surface *(*ector_create)        (void *data);
    void  (*ector_destroy)                (void *data, Ector_Surface *surface);
-   Ector_Buffer *(*ector_buffer_wrap)    (void *data, Evas *e, void *engine_image, Eina_Bool is_rgba_image);
-   Ector_Buffer *(*ector_buffer_new)     (void *data, Evas *e, void *pixels, int width, int height, int stride, Efl_Gfx_Colorspace cspace, Eina_Bool writeable, int l, int r, int t, int b, Ector_Buffer_Flag flags);
+   Ector_Buffer *(*ector_buffer_wrap)    (void *data, Evas *e, void *engine_image);
+   Ector_Buffer *(*ector_buffer_new)     (void *data, Evas *e, int width, int height, Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags);
    void  (*ector_begin)                  (void *data, void *context, Ector_Surface *ector, void *surface, void *engine_data, int x, int y, Eina_Bool do_async);
    void  (*ector_renderer_draw)          (void *data, void *context, void *surface, void *engine_data, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
    void  (*ector_end)                    (void *data, void *context, Ector_Surface *ector, void *surface, void *engine_data, Eina_Bool do_async);

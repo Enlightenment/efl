@@ -10,7 +10,7 @@ _fill_cpu(Evas_Filter_Command *cmd)
    uint32_t color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
    unsigned int stride, len;
    int w, h, k;
-   uint8_t *ptr;
+   uint8_t *map, *ptr;
 
    if (!cmd->draw.clip_mode_lrtb)
      {
@@ -31,10 +31,10 @@ _fill_cpu(Evas_Filter_Command *cmd)
         h = CLAMP(0, fb->h - y - cmd->draw.clip.b, fb->h - y);
      }
 
-   ptr = _buffer_map_all(fb->buffer, &len, E_WRITE, fb->alpha_only ? E_ALPHA : E_ARGB, &stride);
-   if (!ptr) return EINA_FALSE;
+   map = _buffer_map_all(fb->buffer, &len, E_WRITE, fb->alpha_only ? E_ALPHA : E_ARGB, &stride);
+   if (!map) return EINA_FALSE;
 
-   ptr += y * stride;
+   ptr = map + y * stride;
    if (fb->alpha_only)
      {
         for (k = 0; k < h; k++)
@@ -52,7 +52,7 @@ _fill_cpu(Evas_Filter_Command *cmd)
           }
      }
 
-   ector_buffer_unmap(fb->buffer, ptr, len);
+   ector_buffer_unmap(fb->buffer, map, len);
    return EINA_TRUE;
 }
 

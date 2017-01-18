@@ -82,6 +82,7 @@ static const struct {
   { MATCH_FALSE, MATCH_FALSE, EVAS_COLORSPACE_ARGB8888, &rgb_ifmt, &rgb_fmt },
 #endif
   { MATCH_FALSE, MATCH_ANY, EVAS_COLORSPACE_GRY8, &lum_fmt, &lum_ifmt },
+  { MATCH_TRUE, MATCH_ANY, EVAS_COLORSPACE_GRY8, &alpha_fmt, &alpha_ifmt },
   { MATCH_TRUE, MATCH_ANY, EVAS_COLORSPACE_AGRY88, &lum_alpha_fmt, &lum_alpha_ifmt },
   // ETC1/2 support
   { MATCH_FALSE, MATCH_ANY, EVAS_COLORSPACE_ETC1, &etc1_fmt, &etc1_fmt },

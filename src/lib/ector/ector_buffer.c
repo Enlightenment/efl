@@ -15,15 +15,6 @@ _ector_buffer_cspace_get(Eo *obj EINA_UNUSED, Ector_Buffer_Data *pd)
 }
 
 EOLIAN static void
-_ector_buffer_border_get(Eo *obj EINA_UNUSED, Ector_Buffer_Data *pd EINA_UNUSED, int *l, int *r, int *t, int *b)
-{
-   if (l) *l = pd->l;
-   if (r) *r = pd->r;
-   if (t) *t = pd->t;
-   if (b) *b = pd->b;
-}
-
-EOLIAN static void
 _ector_buffer_size_get(Eo *obj EINA_UNUSED, Ector_Buffer_Data *pd, int *w, int *h)
 {
    if (w) *w = pd->w;

@@ -3,7 +3,6 @@
 
 #include "ector_renderer.eo.h"
 #include "ector_renderer_shape.eo.h"
-#include "ector_renderer_buffer.eo.h"
 #include "ector_renderer_gradient.eo.h"
 #include "ector_renderer_gradient_linear.eo.h"
 #include "ector_renderer_gradient_radial.eo.h"

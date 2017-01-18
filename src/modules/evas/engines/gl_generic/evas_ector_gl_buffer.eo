@@ -1,5 +1,35 @@
-class Evas.Ector.GL.Buffer (Efl.Object, Evas.Ector.Buffer, Ector.GL.Buffer.Base)
+class Evas.Ector.GL.Buffer (Efl.Object, Evas.Ector.Buffer, Ector.GL.Buffer)
 {
-   [[Evas ector GL buffer class]]
-   data: null;
+   [[An Ector GL buffer capable of being mapped, drawn and rendered to.
+
+     Potentially very inefficient (may rely on glReadPixels).
+   ]]
+   methods {
+      gl_buffer_prepare {
+         [[Set the main properties to create a gl buffer.]]
+         params {
+            evas: Evas.Canvas; [[The current canvas]]
+            w: int; [[Width]]
+            h: int; [[Height]]
+            cspace: Efl.Gfx.Colorspace; [[Alpha or RGBA]]
+            flags: Ector.Buffer.Flag; [[Required buffer capabilities
+                                        (map/draw/render, etc...)]]
+         }
+      }
+   }
+   constructors {
+      .gl_buffer_prepare;
+   }
+   implements {
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Evas.Ector.Buffer.drawable_image_get;
+      Evas.Ector.Buffer.render_image_get;
+      Evas.Ector.Buffer.engine_image_release;
+      Ector.Buffer.size { get; }
+      Ector.Buffer.cspace { get; }
+      Ector.Buffer.flags { get; }
+      Ector.Buffer.map;
+      Ector.Buffer.unmap;
+   }
 }

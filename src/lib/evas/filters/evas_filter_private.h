@@ -8,9 +8,9 @@
 extern int _evas_filter_log_dom;
 #define EVAS_FILTER_LOG_COLOR EINA_COLOR_LIGHTBLUE
 
-#ifdef DEBUG
+//#ifdef DEBUG
 # define FILTERS_DEBUG
-#endif
+//#endif
 
 #ifdef ERR
 # undef ERR
@@ -136,7 +136,7 @@ struct _Evas_Filter_Context
 
    struct
    {
-      int bufid;
+      void *surface;
       int x, y;
       int cx, cy, cw, ch; // clip
       int r, g, b, a; // clip color
@@ -150,6 +150,7 @@ struct _Evas_Filter_Context
    Eina_Bool async : 1;
    Eina_Bool running : 1;
    Eina_Bool has_proxies : 1;
+   Eina_Bool gl : 1;
 };
 
 struct _Evas_Filter_Command
@@ -242,6 +243,7 @@ struct _Evas_Filter_Buffer
    Eina_Bool locked : 1;      // internal flag
    Eina_Bool delete_me : 1;   // request delete asap (after released by client)
    Eina_Bool dirty : 1;       // Marked as dirty as soon as a command writes to it
+   Eina_Bool is_render : 1;   // Is render target of a filter using engine functions (ie. needs FBO in GL)
 };
 
 enum _Evas_Filter_Interpolation_Mode
@@ -264,13 +266,9 @@ void                     evas_filter_context_source_set(Evas_Filter_Context *ctx
 void _clip_to_target(int *sx, int *sy, int sw, int sh, int ox, int oy, int dw, int dh, int *dx, int *dy, int *rows, int *cols);
 Eina_Bool evas_filter_buffer_alloc(Evas_Filter_Buffer *fb, int w, int h);
 Evas_Filter_Buffer *_filter_buffer_get(Evas_Filter_Context *ctx, int bufid);
-Eina_Bool           _filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data, int w, int h, Eina_Bool alpha_only);
-Evas_Filter_Buffer *_filter_buffer_data_new(Evas_Filter_Context *ctx, void *data, int w, int h, Eina_Bool alpha_only);
-#define             evas_filter_buffer_alloc_new(ctx, w, h, a) _filter_buffer_data_new(ctx, NULL, w, h, a)
 Evas_Filter_Buffer *evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only);
 Evas_Filter_Buffer *evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx, Evas_Filter_Buffer *src, unsigned w, unsigned h);
 Eina_Bool           evas_filter_interpolate(DATA8* output /* 256 values */, int *points /* 256 values */, Evas_Filter_Interpolation_Mode mode);
-Evas_Filter_Command *_evas_filter_command_get(Evas_Filter_Context *ctx, int cmdid);
 int evas_filter_smallest_pow2_larger_than(int val);
 
 void evas_filter_parser_shutdown(void);

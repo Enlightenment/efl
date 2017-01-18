@@ -12,8 +12,8 @@
 
 static Ector_Renderer *
 _ector_software_surface_ector_surface_renderer_factory_new(Eo *obj,
-                                                                   Ector_Software_Surface_Data *pd EINA_UNUSED,
-                                                                   const Efl_Class *type)
+                                                           Ector_Software_Surface_Data *pd EINA_UNUSED,
+                                                           const Efl_Class *type)
 {
    if (type == ECTOR_RENDERER_SHAPE_MIXIN)
      return efl_add(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
@@ -21,9 +21,8 @@ _ector_software_surface_ector_surface_renderer_factory_new(Eo *obj,
      return efl_add(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
    else if (type == ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN)
      return efl_add(ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
-   else if (type == ECTOR_RENDERER_BUFFER_MIXIN)
-     return efl_add(ECTOR_RENDERER_SOFTWARE_BUFFER_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
-   ERR("Couldn't find class for type: %s\n", efl_class_name_get(type));
+
+   ERR("Couldn't find class for type: %s", efl_class_name_get(type));
    return NULL;
 }
 
@@ -49,8 +48,8 @@ _ector_software_surface_efl_object_destructor(Eo *obj, Ector_Software_Surface_Da
 
 static void
 _ector_software_surface_ector_surface_reference_point_set(Eo *obj EINA_UNUSED,
-                                                                  Ector_Software_Surface_Data *pd,
-                                                                  int x, int y)
+                                                          Ector_Software_Surface_Data *pd,
+                                                          int x, int y)
 {
    pd->x = x;
    pd->y = y;

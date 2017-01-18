@@ -4333,7 +4333,7 @@ eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
 }
 
 static Ector_Buffer *
-eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image, Eina_Bool is_rgba_image EINA_UNUSED)
+eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image)
 {
    Image_Entry *ie = engine_image;
    Ector_Buffer *buf = NULL;
@@ -4342,60 +4342,41 @@ eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image, Eina_
 
    if (!efl_domain_current_push(EFL_ID_DOMAIN_SHARED))
      return NULL;
-   buf = efl_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, NULL, evas_ector_buffer_engine_image_set(efl_added, e, ie));
+   buf = efl_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, NULL,
+                 evas_ector_buffer_engine_image_set(efl_added, e, ie));
    efl_domain_current_pop();
 
    return buf;
 }
 
 static Ector_Buffer *
-eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, void *pixels,
-                     int width, int height, int stride,
-                     Efl_Gfx_Colorspace cspace, Eina_Bool writeable,
-                     int l, int r, int t, int b,
-                     Ector_Buffer_Flag flags EINA_UNUSED)
+eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, int width, int height,
+                     Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags EINA_UNUSED)
 {
-   Ector_Buffer *buf = NULL;
-   int pxs = (cspace == EFL_GFX_COLORSPACE_ARGB8888) ? 4 : 1;
-   int iw = width + l + r;
-   int ih = height + t + b;
+   Ector_Buffer *buf;
+   Image_Entry *ie;
+   void *pixels;
+   int pxs;
 
-   if ((flags & (ECTOR_BUFFER_FLAG_RENDERABLE | ECTOR_BUFFER_FLAG_DRAWABLE)) == 0)
-     {
-        if (!efl_domain_current_push(EFL_ID_DOMAIN_SHARED))
-          return NULL;
-        buf = efl_add(ECTOR_SOFTWARE_BUFFER_CLASS, NULL, ector_buffer_pixels_set(efl_added, pixels, width, height, stride, cspace, writeable, l, r, t, b));
-        efl_domain_current_pop();
-     }
+   if (cspace == EFL_GFX_COLORSPACE_ARGB8888)
+     pxs = 4;
+   else if (cspace == EFL_GFX_COLORSPACE_GRY8)
+     pxs = 1;
    else
      {
-        // Create an RGBA Image as backing
-        Image_Entry *ie;
-
-        if (pixels)
-          {
-             // no copy
-             ie = evas_cache_image_data(evas_common_image_cache_get(), iw, ih,
-                                        pixels, EINA_TRUE, (Evas_Colorspace) cspace);
-             if (!ie) return NULL;
-          }
-        else
-          {
-             // alloc buffer
-             ie = evas_cache_image_copied_data(evas_common_image_cache_get(), iw, ih,
-                                               NULL, EINA_TRUE, (Evas_Colorspace) cspace);
-             if (!ie) return NULL;
-             pixels = ((RGBA_Image *) ie)->image.data;
-             memset(pixels, 0, iw * ih * pxs);
-          }
-        ie->borders.l = l;
-        ie->borders.r = r;
-        ie->borders.t = t;
-        ie->borders.b = b;
-
-        buf = eng_ector_buffer_wrap(data, evas, ie, EINA_TRUE);
-        evas_cache_image_drop(ie);
+        ERR("Unsupported colorspace: %d", (int) cspace);
+        return NULL;
      }
+
+   // alloc buffer
+   ie = evas_cache_image_copied_data(evas_common_image_cache_get(), width, height,
+                                     NULL, EINA_TRUE, cspace);
+   if (!ie) return NULL;
+   pixels = ((RGBA_Image *) ie)->image.data;
+   memset(pixels, 0, width * height * pxs);
+
+   buf = eng_ector_buffer_wrap(data, evas, ie);
+   evas_cache_image_drop(ie);
 
    return buf;
 }
@@ -4546,7 +4527,7 @@ _draw_thread_ector_surface_set(void *data)
         y = ector_surface->y;
      }
 
-   ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE, 0, 0, 0, 0);
+   ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
    ector_surface_reference_point_set(ector_surface->ector, x, y);
 
    eina_mempool_free(_mp_command_ector_surface, ector_surface);
@@ -4591,7 +4572,7 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface
         w = sf->cache_entry.w;
         h = sf->cache_entry.h;
 
-        ector_buffer_pixels_set(ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE, 0, 0, 0, 0);
+        ector_buffer_pixels_set(ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
      }
 }
@@ -4613,7 +4594,7 @@ eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *
      }
    else
      {
-        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE, 0, 0, 0, 0);
+        ector_buffer_pixels_set(ector, NULL, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         evas_common_cpu_end_opt();
      }
 }

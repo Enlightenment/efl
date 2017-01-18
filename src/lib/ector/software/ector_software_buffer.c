@@ -16,23 +16,12 @@ typedef struct _Ector_Software_Buffer_Map
 {
    EINA_INLIST;
    uint8_t *ptr;
-   unsigned int size; // in bytes
+   unsigned int size, stride; // in bytes
    unsigned int x, y, w, h;
    Efl_Gfx_Colorspace cspace;
    Eina_Bool allocated;
    Ector_Buffer_Access_Flag mode;
 } Ector_Software_Buffer_Map;
-
-static inline int
-_min_stride_calc(int width, Efl_Gfx_Colorspace cspace)
-{
-   switch (cspace)
-     {
-      case EFL_GFX_COLORSPACE_ARGB8888: return width * 4;
-      case EFL_GFX_COLORSPACE_GRY8: return width;
-      default: return 0;
-     }
-}
 
 /* FIXME: Conversion routines don't belong here */
 static inline void
@@ -64,10 +53,7 @@ _ector_software_buffer_base_pixels_clear(Eo *obj, Ector_Software_Buffer_Base_Dat
      return;
 
    if (pd->internal.maps)
-     {
-        CRI("Can not call pixels_clear when the buffer is mapped.");
-        return;
-     }
+     fail("Can not call pixels_clear when the buffer is mapped.");
 
    efl_event_callback_call(obj, ECTOR_BUFFER_EVENT_DETACHED, pd->pixels.u8);
    if (!pd->nofree)
@@ -76,54 +62,37 @@ _ector_software_buffer_base_pixels_clear(Eo *obj, Ector_Software_Buffer_Base_Dat
      }
    pd->pixels.u8 = NULL;
    pd->nofree = EINA_FALSE;
+
+   return;
+
+on_fail:
+   return;
 }
 
 EOLIAN static Eina_Bool
 _ector_software_buffer_base_ector_buffer_pixels_set(Eo *obj, Ector_Software_Buffer_Base_Data *pd,
-                                                            void *pixels, int width, int height, int stride,
-                                                            Efl_Gfx_Colorspace cspace, Eina_Bool writable,
-                                                            unsigned char l, unsigned char r,
-                                                            unsigned char t, unsigned char b)
+                                                    void *pixels, int width, int height,
+                                                    Efl_Gfx_Colorspace cspace, Eina_Bool writable)
 {
-   unsigned px;
+   unsigned pxs, stride;
 
    if (pd->generic->immutable)
-     {
-        ERR("This buffer is immutable.");
-        return EINA_FALSE;
-     }
+     fail("This buffer is immutable.");
 
    if (pd->internal.maps)
-     {
-        ERR("Can not call pixels_set when the buffer is mapped.");
-        return EINA_FALSE;
-     }
+     fail("Can not call pixels_set when the buffer is mapped.");
 
-   // safety check
-   px = _min_stride_calc(1, cspace);
-   if (px && ((unsigned long long)(uintptr_t)pixels) & (px - 1))
-     ERR("Pixel data is not aligned to %u bytes!", px);
+   if (cspace == EFL_GFX_COLORSPACE_ARGB8888)
+     pxs = 4;
+   else if (cspace == EFL_GFX_COLORSPACE_GRY8)
+     pxs = 1;
+   else
+     fail("Unsupported colorspace: %u", cspace);
 
-   if ((cspace != EFL_GFX_COLORSPACE_ARGB8888) &&
-       (cspace != EFL_GFX_COLORSPACE_GRY8))
-     {
-        ERR("Unsupported colorspace: %u", cspace);
-        return EINA_FALSE;
-     }
+   if (((unsigned long long)(uintptr_t)pixels) & (pxs - 1))
+     fail ("Pixel data is not aligned to %u bytes!", pxs);
 
-   if (!stride)
-     stride = _min_stride_calc(width + l + r, cspace);
-   else if (stride < _min_stride_calc(width + l + r, cspace))
-     {
-        ERR("Invalid stride %u for width %u (+%u+%u) cspace %u. pixels_set failed.",
-            stride, width, l, r, cspace);
-        _ector_software_buffer_base_pixels_clear(obj, pd);
-        return EINA_FALSE;
-     }
-
-   if ((px > 1) && (stride & (px - 1)))
-     ERR("Stride (%d) is not aligned to the pixel size (%d)", stride, px);
-
+   stride = width * pxs;
    if (pd->pixels.u8 && (pd->pixels.u8 != pixels))
      _ector_software_buffer_base_pixels_clear(obj, pd);
 
@@ -135,31 +104,30 @@ _ector_software_buffer_base_ector_buffer_pixels_set(Eo *obj, Ector_Software_Buff
      }
    else
      {
-        pd->pixels.u8 = calloc(stride * (height + t + b), 1);
+        pd->pixels.u8 = calloc(stride * height, 1);
         pd->nofree = EINA_FALSE;
         pd->writable = EINA_TRUE;
      }
    pd->generic->w = width;
    pd->generic->h = height;
-   pd->generic->l = l;
-   pd->generic->r = r;
-   pd->generic->t = t;
-   pd->generic->b = b;
    pd->generic->cspace = cspace;
    pd->stride = stride;
-   pd->pixel_size = px;
+   pd->pixel_size = pxs;
    return EINA_TRUE;
+
+on_fail:
+   return EINA_FALSE;
 }
 
 EOLIAN static void *
 _ector_software_buffer_base_ector_buffer_map(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
-                                                     unsigned int *length, Ector_Buffer_Access_Flag mode,
-                                                     unsigned int x, unsigned int y, unsigned int w, unsigned int h,
-                                                     Efl_Gfx_Colorspace cspace EINA_UNUSED, unsigned int *stride)
+                                             unsigned int *length, Ector_Buffer_Access_Flag mode,
+                                             unsigned int x, unsigned int y, unsigned int w, unsigned int h,
+                                             Efl_Gfx_Colorspace cspace EINA_UNUSED, unsigned int *stride)
 {
    Ector_Software_Buffer_Map *map = NULL;
    Eina_Bool need_cow = EINA_FALSE;
-   unsigned int off, k, dst_stride;
+   unsigned int off, k, dst_stride, pxs, pxs_dest;
 
    if (!w) w = pd->generic->w;
    if (!h) h = pd->generic->h;
@@ -171,6 +139,14 @@ _ector_software_buffer_base_ector_buffer_map(Eo *obj EINA_UNUSED, Ector_Software
           x, y, w, h, pd->generic->w, pd->generic->h);
    if ((mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE) && !pd->writable)
      fail("Can not map a read-only buffer for writing");
+
+   pxs = (pd->generic->cspace == EFL_GFX_COLORSPACE_ARGB8888) ? 4 : 1;
+   if (cspace == EFL_GFX_COLORSPACE_ARGB8888)
+     pxs_dest = 4;
+   else if (cspace == EFL_GFX_COLORSPACE_GRY8)
+     pxs_dest = 1;
+   else
+     fail("Unsupported colorspace: %u", cspace);
 
    if ((mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE) &&
        (mode & ECTOR_BUFFER_ACCESS_FLAG_COW))
@@ -186,20 +162,21 @@ _ector_software_buffer_base_ector_buffer_map(Eo *obj EINA_UNUSED, Ector_Software
    map = calloc(1, sizeof(*map));
    if (!map) fail("Out of memory");
 
+   off = (pxs * x) + (pd->stride * y);
+   dst_stride = w * pxs_dest;
+
    map->mode = mode;
    map->cspace = cspace;
+   map->stride = dst_stride;
    map->x = x;
    map->y = y;
    map->w = w;
    map->h = h;
 
-   off = _min_stride_calc(x + pd->generic->l, pd->generic->cspace) + (pd->stride * (y + pd->generic->t));
-   dst_stride = _min_stride_calc(w, cspace);
-
    if (cspace != pd->generic->cspace)
      {
         // convert on the fly
-        map->size = _min_stride_calc(w, cspace) * h;
+        map->size = w * h * pxs_dest;
         map->allocated = EINA_TRUE;
         map->ptr = malloc(map->size);
         if (!map->ptr) fail("Out of memory");
@@ -218,7 +195,7 @@ _ector_software_buffer_base_ector_buffer_map(Eo *obj EINA_UNUSED, Ector_Software
    else if (need_cow)
      {
         // copy-on-write access
-        map->size = _min_stride_calc(w, cspace) * h;
+        map->size = w * h * pxs_dest;
         map->allocated = EINA_TRUE;
         map->ptr = malloc(map->size);
         if (!map->ptr) fail("Out of memory");
@@ -261,7 +238,7 @@ _ector_software_buffer_base_ector_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Softwa
                {
                   if (map->mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE)
                     {
-                       unsigned k, dst_stride;
+                       unsigned k;
 
                        if (map->cspace != pd->generic->cspace)
                          {
@@ -282,12 +259,10 @@ _ector_software_buffer_base_ector_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Softwa
                          }
                        else
                          {
-                            dst_stride = _min_stride_calc(map->w, map->cspace);
                             for (k = 0; k < map->h; k++)
                               {
                                  memcpy(pd->pixels.u8 + map->x + (k + map->y) * pd->stride,
-                                        map->ptr + k * dst_stride,
-                                        dst_stride);
+                                        map->ptr + k * map->stride, map->stride);
                               }
                          }
                     }
@@ -301,33 +276,14 @@ _ector_software_buffer_base_ector_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Softwa
    CRI("Tried to unmap a non-mapped region!");
 }
 
-EOLIAN static uint8_t *
-_ector_software_buffer_base_ector_buffer_span_get(Eo *obj, Ector_Software_Buffer_Base_Data *pd,
-                                                          int x, int y, unsigned int w, Efl_Gfx_Colorspace cspace,
-                                                          unsigned int *length)
-{
-   // ector_buffer_map
-   return _ector_software_buffer_base_ector_buffer_map
-         (obj, pd, length, ECTOR_BUFFER_ACCESS_FLAG_READ, x, y, w, 1, cspace, NULL);
-}
-
-EOLIAN static void
-_ector_software_buffer_base_ector_buffer_span_free(Eo *obj, Ector_Software_Buffer_Base_Data *pd,
-                                                           uint8_t *data)
-{
-   // ector_buffer_unmap
-   return _ector_software_buffer_base_ector_buffer_unmap
-         (obj, pd, data, (unsigned int) -1);
-}
-
 EOLIAN static Ector_Buffer_Flag
 _ector_software_buffer_base_ector_buffer_flags_get(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd)
 {
    return ECTOR_BUFFER_FLAG_CPU_READABLE |
          ECTOR_BUFFER_FLAG_DRAWABLE |
          ECTOR_BUFFER_FLAG_CPU_READABLE_FAST |
-         ECTOR_BUFFER_FLAG_RENDERABLE |
          (pd->writable ? (ECTOR_BUFFER_FLAG_CPU_WRITABLE |
+                          ECTOR_BUFFER_FLAG_RENDERABLE |
                           ECTOR_BUFFER_FLAG_CPU_WRITABLE_FAST)
                        : 0);
 }
