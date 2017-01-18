@@ -1984,11 +1984,11 @@ if test "${want_wayland}" = "yes"; then
         PKG_CHECK_MODULES(WAYLAND_SCANNER, [wayland-scanner])
         wayland_scanner=`$PKG_CONFIG --variable=wayland_scanner wayland-scanner`
       fi
-      AM_CONDITIONAL([HAVE_WAYLAND_SCANNER], [test x$wayland_scanner != x])
       ac_wayland_protocols_pkgdatadir=`$PKG_CONFIG --variable=pkgdatadir wayland-protocols`
       AC_SUBST(WAYLAND_PROTOCOLS_DATADIR, $ac_wayland_protocols_pkgdatadir)
     ])
 fi
+AM_CONDITIONAL([HAVE_WAYLAND_SCANNER], [test x$wayland_scanner != x])
 
 # Wayland IVI-Shell
 AC_ARG_ENABLE([wayland-ivi-shell],
