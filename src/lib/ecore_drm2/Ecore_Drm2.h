@@ -758,6 +758,22 @@ EAPI void ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, 
 EAPI int ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output);
 
 /**
+ * Set a rotation on a given output
+ *
+ * @param output
+ * @param rotation
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @note This function will only work if Atomic support
+ *       is enabled as it requires hardware plane support.
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers

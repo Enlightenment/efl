@@ -1529,3 +1529,52 @@ ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output)
 
    return ret;
 }
+
+EAPI Eina_Bool
+ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     {
+        Ecore_Drm2_Plane_State *pstate;
+        drmModeAtomicReq *req = NULL;
+        int res = 0;
+        uint32_t flags =
+          DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
+          DRM_MODE_ATOMIC_ALLOW_MODESET;
+
+        pstate = output->plane_state;
+        if ((pstate->supported_rotations & rotation) == 0)
+          {
+             WRN("Unsupported rotation");
+             return EINA_FALSE;
+          }
+
+        req = sym_drmModeAtomicAlloc();
+        if (!req) return EINA_FALSE;
+
+        sym_drmModeAtomicSetCursor(req, 0);
+
+        res = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                           pstate->rotation.id, rotation);
+        if (res < 0) goto err;
+
+        res = sym_drmModeAtomicCommit(output->fd, req, flags, output->user_data);
+        if (res < 0) goto err;
+        else
+          {
+             ret = EINA_TRUE;
+             pstate->rotation.value = rotation;
+          }
+
+err:
+        sym_drmModeAtomicFree(req);
+     }
+#endif
+
+   return ret;
+}
