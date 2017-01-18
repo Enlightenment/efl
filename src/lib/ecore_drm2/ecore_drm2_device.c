@@ -8,6 +8,10 @@
 # define DRM_CAP_CURSOR_HEIGHT 0x9
 #endif
 
+#ifndef DRM_CAP_DUMB_PREFER_SHADOW
+# define DRM_CAP_DUMB_PREFER_SHADOW 0x4
+#endif
+
 #ifdef HAVE_ATOMIC_DRM
 # include <sys/utsname.h>
 #endif
@@ -815,4 +819,20 @@ ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt)
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
 
    return elput_manager_vt_set(device->em, vt);
+}
+
+EAPI Eina_Bool
+ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device)
+{
+   uint64_t caps;
+   int ret;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((device->fd < 0), EINA_FALSE);
+
+   ret = sym_drmGetCap(device->fd, DRM_CAP_DUMB_PREFER_SHADOW, &caps);
+   if ((ret == 0) && (caps == 1))
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
 }

@@ -345,6 +345,18 @@ EAPI void ecore_drm2_device_calibrate(Ecore_Drm2_Device *device, int w, int h);
 EAPI Eina_Bool ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt);
 
 /**
+ * Get if a given device prefers the use of shadow buffers
+ *
+ * @param device
+ *
+ * @return EINA_TRUE if preferred, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device);
+
+/**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
  *
  * Functions that deal with setup of outputs
