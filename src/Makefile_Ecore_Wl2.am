@@ -12,8 +12,8 @@ lib/ecore_wl2/teamwork_protocol.c \
 lib/ecore_wl2/teamwork_protocol.h \
 lib/ecore_wl2/session-recovery-client-protocol.h \
 lib/ecore_wl2/session-recovery-protocol.c \
-lib/ecore_wl2/xdg-shell-client-protocol.h \
-lib/ecore_wl2/xdg-shell-protocol.c \
+lib/ecore_wl2/xdg-shell-unstable-v5-client-protocol.h \
+lib/ecore_wl2/xdg-shell-unstable-v5-protocol.c \
 lib/ecore_wl2/www-protocol.h \
 lib/ecore_wl2/www-protocol.c \
 lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c \
@@ -36,6 +36,8 @@ lib_ecore_wl2_libecore_wl2_la_DEPENDENCIES = @ECORE_WL2_INTERNAL_LIBS@
 lib_ecore_wl2_libecore_wl2_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 BUILT_SOURCES += \
+ lib/ecore_wl2/xdg-shell-unstable-v5-client-protocol.h \
+ lib/ecore_wl2/xdg-shell-unstable-v5-protocol.c \
  lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c \
  lib/ecore_wl2/linux-dmabuf-unstable-v1-client-protocol.h \
  lib/ecore_wl2/session-recovery-protocol.c \

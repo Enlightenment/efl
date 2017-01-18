@@ -168,7 +168,8 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
 
         ewd->wl.xdg_shell =
           wl_registry_bind(registry, id, &xdg_shell_interface, 1);
-        xdg_shell_use_unstable_version(ewd->wl.xdg_shell, XDG_VERSION);
+        xdg_shell_use_unstable_version(ewd->wl.xdg_shell,
+                                       XDG_V5_UNSTABLE_VERSION);
         xdg_shell_add_listener(ewd->wl.xdg_shell, &_xdg_shell_listener, NULL);
 
         EINA_INLIST_FOREACH(ewd->windows, window)
