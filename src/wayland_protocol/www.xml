@@ -1,0 +1,28 @@
+<protocol name="zwp_www">
+  <interface name="www" version="1">
+    <request name="create">
+      <description summary="Create an object for WWW notifications">
+      </description>
+      <arg name="id" type="new_id" interface="www_surface"/>
+      <arg name="surface" type="object" interface="wl_surface"/>
+    </request>
+  </interface>
+  <interface name="www_surface" version="1">
+    <event name="status">
+       <description summary="Status update on a www_surface"></description>
+       <arg name="x_rel" type="int"/>
+       <arg name="y_rel" type="int"/>
+       <arg name="timestamp" type="uint"/>
+    </event>
+    <event name="start_drag">
+       <description summary="Drag has started"></description>
+    </event>
+    <event name="end_drag">
+       <description summary="Drag has ended"></description>
+    </event>
+    <request name="destroy" type="destructor">
+      <description summary="Destroy a www_surface">
+      </description>
+    </request>
+  </interface>
+</protocol>

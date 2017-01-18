@@ -4,7 +4,7 @@
 # include <unistd.h>
 # include "Ecore_Wl2.h"
 # include "Ecore_Input.h"
-# include "www-protocol.h"
+# include "www-client-protocol.h"
 
 #define EFL_TEAMWORK_VERSION 2
 # include "teamwork-client-protocol.h"
