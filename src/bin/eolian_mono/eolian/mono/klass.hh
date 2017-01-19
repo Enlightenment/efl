@@ -305,11 +305,11 @@ struct klass
 
           for (auto&& e : klass.events)
             {
-               std::string wrapper_event_name = translate_event_name(e, klass);
+               std::string wrapper_event_name = translate_inherited_event_name(e, klass);
 
-               if (!as_generator(scope_tab << scope_tab << "evt_" << string << "_delegate = "
-                           << "new efl.Event_Cb(on_" << string << "_NativeCallback);\n")
-                       .generate(sink, std::make_tuple(wrapper_event_name, wrapper_event_name), context))
+               if (!as_generator(scope_tab << scope_tab << "evt_" << wrapper_event_name << "_delegate = "
+                           << "new efl.Event_Cb(on_" << wrapper_event_name << "_NativeCallback);\n")
+                       .generate(sink, NULL, context))
                    return false;
             }
        }
@@ -330,7 +330,7 @@ struct klass
        return s;
    }
 
-   static std::string translate_event_name(const attributes::event_def &evt, const attributes::klass_def &klass)
+   static std::string translate_inherited_event_name(const attributes::event_def &evt, const attributes::klass_def &klass)
    {
        std::stringstream s;
 
@@ -391,49 +391,52 @@ struct klass
      for (auto&& e : cls.events)
        {
            std::string upper_name = to_uppercase(e.name);
+           std::replace(upper_name.begin(), upper_name.end(), ',', '_');
            std::string upper_c_name = to_uppercase(e.c_name);
+           std::string event_name = e.name;
+           std::replace(event_name.begin(), event_name.end(), ',', '_');
 
            // Wrapper event declaration
           if(!as_generator(
-                scope_tab << "protected event EventHandler " << grammar::string_replace(',', '_') << ";\n"
-                << scope_tab << "protected void On_" << grammar::string_replace(',', '_') << "(EventArgs e)\n"
+                scope_tab << "protected event EventHandler " << upper_name << ";\n"
+                << scope_tab << "protected void On_" << event_name << "(EventArgs e)\n"
                 << scope_tab << "{\n"
                 << scope_tab << scope_tab << "EventHandler evt;\n"
                 << scope_tab << scope_tab << "lock (eventLock) {\n"
-                << scope_tab << scope_tab << scope_tab << "evt = " << grammar::string_replace(',', '_') << ";\n"
+                << scope_tab << scope_tab << scope_tab << "evt = " << upper_name << ";\n"
                 << scope_tab << scope_tab << "}\n"
                 << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
                 << scope_tab << "}\n"
-                << scope_tab << "public void on_" << grammar::string_replace(',', '_') << "_NativeCallback(System.IntPtr data, System.IntPtr evt)\n"
+                << scope_tab << "public void on_" << event_name << "_NativeCallback(System.IntPtr data, System.IntPtr evt)\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "On_" << grammar::string_replace(',', '_') << "(EventArgs.Empty);\n"
+                << scope_tab << scope_tab << "On_" << event_name << "(EventArgs.Empty);\n"
                 << scope_tab << "}\n"
-                << scope_tab << "efl.Event_Cb evt_" << grammar::string_replace(',', '_') << "_delegate;\n"
-                << scope_tab << "event EventHandler " << string << "." << grammar::string_replace(',', '_') << "{\n")
-                  .generate(sink, std::make_tuple(upper_name, e.name, upper_name, e.name, e.name, e.name, cls.cxx_name, upper_name), context))
+                << scope_tab << "efl.Event_Cb evt_" << event_name << "_delegate;\n"
+                << scope_tab << "event EventHandler " << cls.cxx_name << "." << upper_name << "{\n")
+                  .generate(sink, NULL, context))
               return false;
 
           if (!as_generator(
                       scope_tab << scope_tab << "add {\n"
                       << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << grammar::string_replace(',', '_') << "_delegate))\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << grammar::string_replace(',', '_') << " += value;\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << event_name << "_delegate))\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << upper_name << " += value;\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error adding proxy for event ${key}\");\n"
                       << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                       << scope_tab << scope_tab << "}\n"
                       << scope_tab << scope_tab << "remove {\n"
                       << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << grammar::string_replace(',', '_') << "_delegate))\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << grammar::string_replace(',', '_') << " -= value;\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << event_name << "_delegate))\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << upper_name << " -= value;\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error removing proxy for event ${key}\");\n"
                       << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                       << scope_tab << scope_tab << "}\n"
                       << scope_tab << "}\n")
-                  .generate(sink, std::make_tuple(upper_c_name, e.name, upper_name, upper_c_name, e.name, upper_name), context))
+                  .generate(sink, NULL, context))
               return false;
        }
 
@@ -446,51 +449,50 @@ struct klass
           for (auto&& e : klass.events)
             {
 
-               std::string wrapper_evt_name = translate_event_name(e, klass);
+               std::string wrapper_evt_name = translate_inherited_event_name(e, klass);
                std::string upper_name = to_uppercase(e.name);
+               std::replace(upper_name.begin(), upper_name.end(), ',', '_');
                std::string upper_c_name = to_uppercase(e.c_name);
 
                if (!as_generator(
-                     scope_tab << "protected event EventHandler " << string << ";\n"
-                     << scope_tab << "protected void On_" << string << "(EventArgs e)\n"
+                     scope_tab << "protected event EventHandler " << wrapper_evt_name << ";\n"
+                     << scope_tab << "protected void On_" << wrapper_evt_name << "(EventArgs e)\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << "EventHandler evt;\n"
                      << scope_tab << scope_tab << "lock (eventLock) {\n"
-                     << scope_tab << scope_tab << scope_tab << "evt = " << string << ";\n"
+                     << scope_tab << scope_tab << scope_tab << "evt = " << wrapper_evt_name << ";\n"
                      << scope_tab << scope_tab << "}\n"
                      << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
                      << scope_tab << "}\n"
-                     << scope_tab << "efl.Event_Cb evt_" << string << "_delegate;\n"
-                     << scope_tab << "protected void on_" << string << "_NativeCallback(System.IntPtr data, System.IntPtr evt)"
+                     << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
+                     << scope_tab << "protected void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, System.IntPtr evt)"
                      << scope_tab << "{\n"
-                     << scope_tab << scope_tab << "On_" << string << "(EventArgs.Empty);\n"
+                     << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(EventArgs.Empty);\n"
                      << scope_tab << "}\n"
-                     << scope_tab << "event EventHandler " << *(lower_case[string] << ".") << string << ".")
-                       .generate(sink, std::make_tuple(wrapper_evt_name, wrapper_evt_name, wrapper_evt_name, wrapper_evt_name, wrapper_evt_name, wrapper_evt_name,
-                                                       escape_namespace(klass.namespaces), klass.cxx_name), context))
+                     << scope_tab << "event EventHandler " << *(lower_case[string] << ".") << klass.cxx_name << ".")
+                       .generate(sink, escape_namespace(klass.namespaces), context))
                    return false;
-               if (!as_generator(grammar::string_replace(',', '_') << " {\n"
+               if (!as_generator(upper_name << " {\n"
                           << scope_tab << scope_tab << "add {\n"
                           << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << string << "_delegate))\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << string << " += value;\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " += value;\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error adding proxy for event ${key}\");\n"
                           << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                           << scope_tab << scope_tab << "}\n"
                           << scope_tab << scope_tab << "remove {\n"
                           << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << string << "\";\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << string << "_delegate))\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << string << " -= value;\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " -= value;\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error removing proxy for event ${key}\");\n"
                           << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                           << scope_tab << scope_tab << "}\n"
                      << scope_tab << "}\n")
-                 .generate(sink, std::make_tuple(upper_name, upper_c_name, wrapper_evt_name, wrapper_evt_name,
-                                                 upper_c_name, wrapper_evt_name, wrapper_evt_name), context))
+                 .generate(sink, NULL, context))
                    return false;
             }
        }
