@@ -8,6 +8,8 @@
 
 #include "ns_colourable.eo.hh"
 #include "ns_colourablesquare.eo.hh"
+#include "ns_colourable.eo.impl.hh"
+#include "ns_colourablesquare.eo.impl.hh"
 
 #include <eo_inherit.hh>
 

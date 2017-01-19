@@ -3,6 +3,7 @@
 #include "elementary_config.h"
 #endif
 
+#include <Efl.hh>
 #include <Elementary.hh>
 
 static char *

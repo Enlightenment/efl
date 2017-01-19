@@ -315,6 +315,18 @@ struct parameter_def
   std::string param_name;
   std::string c_type;
 
+  friend inline bool operator==(parameter_def const& lhs, parameter_def const& rhs)
+  {
+    return lhs.direction == rhs.direction
+      && lhs.type == rhs.type
+      && lhs.param_name == rhs.param_name
+      && lhs.c_type == rhs.c_type;
+  }
+  friend inline bool operator!=(parameter_def const& lhs, parameter_def const& rhs)
+  {
+    return !(lhs == rhs);
+  }
+  
   parameter_def(parameter_direction direction, type_def type, std::string param_name, std::string c_type)
     : direction(std::move(direction)), type(std::move(type)), param_name(std::move(param_name)), c_type(std::move(c_type)) {}
   parameter_def(Eolian_Function_Parameter const* param)
@@ -384,6 +396,20 @@ struct function_def
   bool is_beta;
   bool is_protected;
 
+  friend inline bool operator==(function_def const& lhs, function_def const& rhs)
+  {
+    return lhs.return_type == rhs.return_type
+      && lhs.name == rhs.name
+      && lhs.parameters == rhs.parameters
+      && lhs.c_name == rhs.c_name
+      && lhs.is_beta == rhs.is_beta
+      && lhs.is_protected == rhs.is_protected;
+  }
+  friend inline bool operator!=(function_def const& lhs, function_def const& rhs)
+  {
+    return !(lhs == rhs);
+  }
+  
   function_def(type_def return_type, std::string name, std::vector<parameter_def> parameters
                , std::string c_name, bool is_beta)
     : return_type(return_type), name(name), parameters(parameters), c_name(c_name), is_beta(is_beta) {}
@@ -504,6 +530,19 @@ struct event_def
   std::string name, c_name;
   bool beta, protect;
 
+  friend inline bool operator==(event_def const& lhs, event_def const& rhs)
+  {
+    return lhs.type == rhs.type
+      && lhs.name == rhs.name
+      && lhs.c_name == rhs.c_name
+      && lhs.beta == rhs.beta
+      && lhs.protect == rhs.protect;
+  }
+  friend inline bool operator!=(event_def const& lhs, event_def const& rhs)
+  {
+    return !(lhs == rhs);
+  }  
+  
   event_def(type_def type, std::string name, std::string c_name, bool beta, bool protect)
     : type(type), name(name), c_name(c_name), beta(beta), protect(protect) {}
   event_def(Eolian_Event const* event)
@@ -557,6 +596,21 @@ struct klass_def
   std::set<klass_name, compare_klass_name_by_name> inherits;
   class_type type;
   std::vector<event_def> events;
+
+  friend inline bool operator==(klass_def const& lhs, klass_def const& rhs)
+  {
+    return lhs.eolian_name == rhs.eolian_name
+      && lhs.cxx_name == rhs.cxx_name
+      && lhs.namespaces == rhs.namespaces
+      && lhs.functions == rhs.functions
+      && lhs.inherits == rhs.inherits
+      && lhs.type == rhs.type
+      && lhs.events == rhs.events;
+  }
+  friend inline bool operator!=(klass_def const& lhs, klass_def const& rhs)
+  {
+    return !(lhs == rhs);
+  }
 
   klass_def(std::string eolian_name, std::string cxx_name
             , std::vector<std::string> namespaces

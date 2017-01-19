@@ -5,7 +5,7 @@ namespace efl { namespace eolian { namespace grammar {
 
 inline std::string escape_keyword(std::string const& name)
 {
-  if(name == "delete" || name == "register")
+  if(name == "delete" || name == "register" || name == "do")
     return "cxx_" + name;
   return name;
 }

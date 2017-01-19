@@ -15,6 +15,8 @@ namespace efl { namespace eolian { namespace grammar {
 
 struct class_declaration_generator
 {
+   bool type_traits;
+  
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
@@ -30,11 +32,12 @@ struct class_declaration_generator
      auto close_namespace = *(lit("} ")) << "\n";
      if(!as_generator(close_namespace).generate(sink, cpp_namespaces, context)) return false;
 
-     if(!as_generator
-        (
-         "namespace efl { namespace eo { template<> struct is_eolian_object< "
-         "::" << *(lower_case[string] << "::") << string << "> : ::std::true_type {}; } }\n"
-        ).generate(sink, std::make_tuple(cpp_namespaces, cls.cxx_name), context)) return false;
+     if(type_traits)
+       if(!as_generator
+          (
+           "namespace efl { namespace eo { template<> struct is_eolian_object< "
+           "::" << *(lower_case[string] << "::") << string << "> : ::std::true_type {}; } }\n"
+           ).generate(sink, std::make_tuple(cpp_namespaces, cls.cxx_name), context)) return false;
 
      
      return true;
@@ -49,7 +52,8 @@ template <>
 struct attributes_needed<class_declaration_generator> : std::integral_constant<int, 1> {};
 }
       
-class_declaration_generator const class_declaration = {};
+class_declaration_generator const class_declaration = {true};
+class_declaration_generator const class_forward_declaration = {false};
       
 } } }
 

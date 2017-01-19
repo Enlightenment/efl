@@ -22,6 +22,12 @@ struct implementation_include_directive_generator
      return as_generator("#include \"" << string << ".impl.hh\"\n")
        .generate(sink, std::string(eolian_class_file_get(get_klass(get_klass_name(cls)))), add_lower_case_context(ctx));
    }
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, std::string const& cls, Context const& ctx) const
+   {
+     return as_generator("#include \"" << string << ".impl.hh\"\n")
+       .generate(sink, cls, add_lower_case_context(ctx));
+   }
 };
 
 template <>

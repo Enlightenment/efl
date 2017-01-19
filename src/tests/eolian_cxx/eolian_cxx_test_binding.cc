@@ -5,7 +5,9 @@
 #include <Ecore.h>
 
 #include <generic.eo.hh>
+#include <generic.eo.impl.hh>
 #include <name1_name2_type_generation.eo.hh>
+#include <name1_name2_type_generation.eo.impl.hh>
 
 #include "eolian_cxx_suite.h"
 

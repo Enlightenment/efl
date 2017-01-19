@@ -4,6 +4,13 @@
 
 #include <Eo.hh>
 
+extern "C" {
+typedef Eo Cyclic1;
+typedef Eo Cyclic2;
+}
+
+#include <cyclic1.eo.h>
+#include <cyclic2.eo.h>
 #include <cyclic1.eo.hh>
 #include <cyclic2.eo.hh>
 

@@ -9,6 +9,8 @@
 
 #include "colourable.eo.hh"
 #include "colourablesquare.eo.hh"
+#include "ns_colourable.eo.impl.hh"
+#include "ns_colourablesquare.eo.impl.hh"
 
 int
 main()

@@ -25,11 +25,12 @@ auto class_header =
        "#include <Eo.hh>\n"
     << *header_include_directive // sequence<string>
     << *class_declaration          // sequence<class> | class
+    << *class_forward_declaration          // sequence<class> | class
     << "\nnamespace eo_cxx {\n"
     << *base_class_definition      // sequence<class> | class
     << "}\n"
     << *class_definition           // sequence<class> | class
-    << *implementation_include_directive
+    // << *implementation_include_directive
   ]
   ;
 

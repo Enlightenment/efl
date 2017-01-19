@@ -145,8 +145,15 @@ tests/eolian_cxx/complex.eo.impl.hh \
 tests/eolian_cxx/name1_name2_type_generation.eo.hh \
 tests/eolian_cxx/name1_name2_type_generation.eo.impl.hh \
 tests/eolian_cxx/name1_name2_type_generation.eo.h \
-tests/eolian_cxx/name1_name2_type_generation.eo.c
-
+tests/eolian_cxx/name1_name2_type_generation.eo.c \
+tests/eolian_cxx/cyclic1.eo.c \
+tests/eolian_cxx/cyclic1.eo.h \
+tests/eolian_cxx/cyclic1.eo.hh \
+tests/eolian_cxx/cyclic1.eo.impl.hh \
+tests/eolian_cxx/cyclic2.eo.c \
+tests/eolian_cxx/cyclic2.eo.h \
+tests/eolian_cxx/cyclic2.eo.hh \
+tests/eolian_cxx/cyclic2.eo.impl.hh
 
 tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS = \
 -I$(top_builddir)/src/lib/efl \
@@ -181,7 +188,9 @@ tests/eolian_cxx/name_name.eo \
 tests/eolian_cxx/ns_name.eo \
 tests/eolian_cxx/ns_name_other.eo \
 tests/eolian_cxx/name1_name2_type_generation.eo \
-tests/eolian_cxx/complex.eo
+tests/eolian_cxx/complex.eo \
+tests/eolian_cxx/cyclic1.eo \
+tests/eolian_cxx/cyclic2.eo
 
 include Makefile_Eolian_Cxx_Helper.am
 

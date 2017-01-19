@@ -279,11 +279,11 @@ T convert_to_c(V&& object);
     
 namespace impl {
 
-template <typename U, typename T>
+template <typename U, typename T, typename V>
 auto convert_to_c_impl
-(T&& v, tag<U, U>, typename std::enable_if<std::is_same<typename std::remove_reference<T>::type, U>::value>::type* =0) -> decltype(std::forward<T>(v))
+(V&& v, tag<U, T>, typename std::enable_if<std::is_same<typename std::remove_reference<T>::type, U>::value>::type* =0) -> decltype(std::forward<V>(v))
 {
-  return std::forward<T>(v);
+  return std::forward<V>(v);
 }
 
 template <typename T>
