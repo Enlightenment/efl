@@ -337,6 +337,7 @@ struct parameter_def
      Eolian_Parameter_Dir direction = ::eolian_parameter_direction_get(param);
      switch(direction)
        {
+       case EOLIAN_UNKNOWN_PARAM:
        case EOLIAN_IN_PARAM:
          this->direction = parameter_direction::in;
          break;
