@@ -638,12 +638,12 @@ struct klass_def
            {
              try {
                 if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_GET)
-                   && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
+                   && ::eolian_function_scope_get(function, EOLIAN_PROP_GET) != EOLIAN_SCOPE_PRIVATE)
                   functions.push_back({function, EOLIAN_PROP_GET});
              } catch(std::exception const&) {}
              try {
                 if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_SET)
-                   && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
+                   && ::eolian_function_scope_get(function, EOLIAN_PROP_SET) != EOLIAN_SCOPE_PRIVATE)
                   functions.push_back({function, EOLIAN_PROP_SET});
              } catch(std::exception const&) {}
            }
