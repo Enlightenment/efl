@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-12-22 19:29+0900\n"
+"POT-Creation-Date: 2017-01-20 08:38+0900\n"
 "PO-Revision-Date: 2015-09-29 18:06+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: General\n"
@@ -261,28 +261,28 @@ msgstr "Hủy"
 msgid "OK"
 msgstr "Đồng Ý"
 
-#: src/lib/elementary/elc_hoversel.c:418 src/lib/elementary/elm_button.c:278
-#: src/lib/elementary/elm_check.c:212 src/lib/elementary/elm_gengrid.c:1440
-#: src/lib/elementary/elm_genlist.c:1726 src/lib/elementary/elm_list.c:2176
+#: src/lib/elementary/elc_hoversel.c:420 src/lib/elementary/elm_button.c:278
+#: src/lib/elementary/elm_check.c:212 src/lib/elementary/elm_gengrid.c:1442
+#: src/lib/elementary/elm_genlist.c:1729 src/lib/elementary/elm_list.c:2176
 #: src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:529
 #: src/lib/elementary/elm_spinner.c:1002 src/lib/elementary/elm_toolbar.c:2377
 msgid "State: Disabled"
 msgstr "Trạng Thái: Không Khả Dụng"
 
-#: src/lib/elementary/elc_hoversel.c:617
+#: src/lib/elementary/elc_hoversel.c:619
 msgid "Hoversel"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:699
+#: src/lib/elementary/elc_multibuttonentry.c:697
 msgid "multi button entry label"
 msgstr "Nhãn Của Bộ Nhập Nhiều Nút"
 
-#: src/lib/elementary/elc_multibuttonentry.c:721
+#: src/lib/elementary/elc_multibuttonentry.c:719
 msgid "multi button entry item"
 msgstr "Mục Của Bộ Nhập Nhiều Nút"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1606
+#: src/lib/elementary/elc_multibuttonentry.c:1607
 msgid "multi button entry"
 msgstr "Bộ Nhập Nhiều Nút"
 
@@ -291,11 +291,11 @@ msgid "Title"
 msgstr "Đề Mục"
 
 #: src/lib/elementary/elc_naviframe.c:993
-#: src/lib/elementary/elc_naviframe.c:1209
+#: src/lib/elementary/elc_naviframe.c:1210
 msgid "Back"
 msgstr "Quay Lại"
 
-#: src/lib/elementary/elc_naviframe.c:1307
+#: src/lib/elementary/elc_naviframe.c:1308
 msgid "Next"
 msgstr "Tiếp"
 
@@ -413,7 +413,7 @@ msgstr "Xanh Da Trời:"
 msgid "A:"
 msgstr "Độ Mờ:"
 
-#: src/lib/elementary/elm_colorselector.c:1681
+#: src/lib/elementary/elm_colorselector.c:1680
 msgid "color selector palette item"
 msgstr "Mục Của Bảng Chọn Màu"
 
@@ -449,7 +449,7 @@ msgstr "Chọn"
 msgid "Entry"
 msgstr "Bộ Nhập"
 
-#: src/lib/elementary/elm_gengrid.c:1470
+#: src/lib/elementary/elm_gengrid.c:1472
 msgid "Gengrid Item"
 msgstr "Mục Của Gengrid"
 

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2016-12-22 19:29+0900\n"
+"POT-Creation-Date: 2017-01-20 08:38+0900\n"
 "PO-Revision-Date: 2014-05-22 22:44+0200\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -264,28 +264,28 @@ msgstr "Zrušit"
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elementary/elc_hoversel.c:418 src/lib/elementary/elm_button.c:278
-#: src/lib/elementary/elm_check.c:212 src/lib/elementary/elm_gengrid.c:1440
-#: src/lib/elementary/elm_genlist.c:1726 src/lib/elementary/elm_list.c:2176
+#: src/lib/elementary/elc_hoversel.c:420 src/lib/elementary/elm_button.c:278
+#: src/lib/elementary/elm_check.c:212 src/lib/elementary/elm_gengrid.c:1442
+#: src/lib/elementary/elm_genlist.c:1729 src/lib/elementary/elm_list.c:2176
 #: src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:529
 #: src/lib/elementary/elm_spinner.c:1002 src/lib/elementary/elm_toolbar.c:2377
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
-#: src/lib/elementary/elc_hoversel.c:617
+#: src/lib/elementary/elc_hoversel.c:619
 msgid "Hoversel"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:699
+#: src/lib/elementary/elc_multibuttonentry.c:697
 msgid "multi button entry label"
 msgstr "popisek vícetlačítkového vstupu"
 
-#: src/lib/elementary/elc_multibuttonentry.c:721
+#: src/lib/elementary/elc_multibuttonentry.c:719
 msgid "multi button entry item"
 msgstr "položka vícetlačítkového vstupu"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1606
+#: src/lib/elementary/elc_multibuttonentry.c:1607
 msgid "multi button entry"
 msgstr "vícetlačítkový vstup"
 
@@ -294,11 +294,11 @@ msgid "Title"
 msgstr "Název"
 
 #: src/lib/elementary/elc_naviframe.c:993
-#: src/lib/elementary/elc_naviframe.c:1209
+#: src/lib/elementary/elc_naviframe.c:1210
 msgid "Back"
 msgstr "Zpět"
 
-#: src/lib/elementary/elc_naviframe.c:1307
+#: src/lib/elementary/elc_naviframe.c:1308
 msgid "Next"
 msgstr "Další"
 
@@ -416,7 +416,7 @@ msgstr ""
 msgid "A:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:1681
+#: src/lib/elementary/elm_colorselector.c:1680
 msgid "color selector palette item"
 msgstr "položka výběru barvy z palety"
 
@@ -452,7 +452,7 @@ msgstr "Vybrat"
 msgid "Entry"
 msgstr "Vstup"
 
-#: src/lib/elementary/elm_gengrid.c:1470
+#: src/lib/elementary/elm_gengrid.c:1472
 msgid "Gengrid Item"
 msgstr "Položka mřížky"
 
