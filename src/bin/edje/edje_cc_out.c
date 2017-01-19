@@ -3948,7 +3948,7 @@ free_group:
    if (edje_file->image_dir && !is_lua)
      {
         Edje_Image_Directory_Entry *de, *de_last, *img;
-        Edje_Image_Directory_Set *set;
+        Edje_Image_Directory_Set *set, *set_last, *set_realloc;
         Edje_Image_Directory_Set_Entry *set_e;
         Eina_List *images_unused_list = NULL;
         unsigned int i;
@@ -3996,6 +3996,19 @@ free_group:
                   free((void *)set_e->name);
                   free(set_e);
                }
+             set->entries = NULL;
+             set_last = edje_file->image_dir->sets + edje_file->image_dir->sets_count - 1;
+             iui = mem_alloc(SZ(Image_Unused_Ids));
+             iui->old_id = set_last->id;
+             images_unused_list = eina_list_append(images_unused_list, iui);
+             iui->new_id = i;
+             set_last->id = i;
+              memcpy(set, set_last, sizeof(Edje_Image_Directory_Set));
+             --i;
+             edje_file->image_dir->sets_count--;
+             set_realloc = realloc(edje_file->image_dir->sets,
+                                   sizeof(Edje_Image_Directory_Set) * edje_file->image_dir->sets_count);
+             edje_file->image_dir->sets = set_realloc;
           }
 
         /* update image id in parts */
