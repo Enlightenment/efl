@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.7)
+project(eflgeneric)
+
+ADD_DEFINITIONS("-DHAVE_CONFIG_H")
+
+add_subdirectory(src)
+
+CHECK_INCLUDE_FILE(sys/mman.h HAVE_SYS_MMAN_H)
+
+set(PROJECT_VERSION_MAJOR 1)
+set(PROJECT_VERSION_MINOR 19)
+set(PROJECT_VERSION_PATCH 99)
+set(PROJECT_VERSION_TWEAK 00)
+
+set(VMAJ ${PROJECT_VERSION_MAJOR})
+set(VMIN ${PROJECT_VERSION_MINOR})
+set(VMIC ${PROJECT_VERSION_PATCH})
+set(VREV ${PROJECT_VERSION_TWEAK})
+configure_file(config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h)

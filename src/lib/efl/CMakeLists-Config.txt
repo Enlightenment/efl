@@ -1,0 +1,9 @@
+#TODO ask for api mode
+set(EFL_NOLEGACY_API_SUPPORT 1)
+set(EFL_EO_API_SUPPORT 1)
+
+set(EFL_VERSION_MAJOR 1)
+set(EFL_VERSION_MINOR 19)
+set(EFL_BUILD_ID 120)
+
+configure_file(Efl_Config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/Efl_Config.h)
