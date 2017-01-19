@@ -227,13 +227,6 @@ _validate_function(const Eolian_Function *func)
 
 #undef EOLIAN_PARAMS_VALIDATE
 
-   /* TODO: validate docs via impls to also validate overrides */
-   if (!_validate_doc(func->impl->common_doc))
-     return EINA_FALSE;
-   if (!_validate_doc(func->impl->get_doc))
-     return EINA_FALSE;
-   if (!_validate_doc(func->impl->set_doc))
-     return EINA_FALSE;
    if (!_validate_doc(func->get_return_doc))
      return EINA_FALSE;
    if (!_validate_doc(func->set_return_doc))
@@ -255,11 +248,25 @@ _validate_event(const Eolian_Event *event)
 }
 
 static Eina_Bool
+_validate_implement(const Eolian_Implement *impl)
+{
+   if (!_validate_doc(impl->common_doc))
+     return EINA_FALSE;
+   if (!_validate_doc(impl->get_doc))
+     return EINA_FALSE;
+   if (!_validate_doc(impl->set_doc))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _validate_class(const Eolian_Class *cl)
 {
    Eina_List *l;
    const Eolian_Function *func;
    const Eolian_Event *event;
+   const Eolian_Implement *impl;
 
    EINA_LIST_FOREACH(cl->properties, l, func)
      if (!_validate_function(func))
@@ -271,6 +278,10 @@ _validate_class(const Eolian_Class *cl)
 
    EINA_LIST_FOREACH(cl->events, l, event)
      if (!_validate_event(event))
+       return EINA_FALSE;
+
+   EINA_LIST_FOREACH(cl->implements, l, impl)
+     if (!_validate_implement(impl))
        return EINA_FALSE;
 
    if (!_validate_doc(cl->doc))
