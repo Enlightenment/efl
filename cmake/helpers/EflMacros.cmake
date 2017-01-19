@@ -6,16 +6,38 @@
 # To extend the EFL_OPTIONS_SUMMARY() message, use
 # EFL_OPTION_SET_MESSAGE(Name Message)
 macro(EFL_OPTION _name _help _defval)
-  set(_type ${ARGN})
-  if(NOT _type)
+  set(_extra_args ${ARGN})
+  set(_type)
+  set(_choices)
+  list(LENGTH _extra_args _argc)
+  if(_argc LESS 1)
     set(_type BOOL)
+  else()
+    list(GET _extra_args 0 _type)
+    list(REMOVE_AT _extra_args 0)
+  endif()
+  if(${_type} STREQUAL "CHOICE")
+    set(_type STRING)
+    set(EFL_OPTION_CHOICES_${_name} ${_extra_args})
+    set(_choices " (Choices: ${_extra_args})")
   endif()
   list(APPEND EFL_ALL_OPTIONS ${_name})
   set(EFL_OPTION_DEFAULT_${_name} "${_defval}")
   set(EFL_OPTION_TYPE_${_name} "${_type}")
-  set(${_name} ${_defval} CACHE ${_type} "${_help}")
-  option(${_name} "${_help}" ${_defval})
+  set(${_name} ${_defval} CACHE ${_type} "${_help}${_choices}")
+  option(${_name} "${_help}${_choices}" ${_defval})
+
+  if(_extra_args)
+    list(FIND _extra_args ${${_name}} RET)
+    if(${RET} EQUAL -1)
+      message(FATAL_ERROR "Invalid choice ${_name}=${${_name}}${_choices}")
+    endif()
+  endif()
+
   unset(_type)
+  unset(_choices)
+  unset(_extra_args)
+  unset(_argc)
 endmacro()
 
 # EFL_OPTION_SET_MESSAGE(Name Message)
@@ -32,7 +54,6 @@ function(EFL_OPTIONS_SUMMARY)
   message(STATUS "EFL Options Summary:")
   message(STATUS "  CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
   message(STATUS "  CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
-  message(STATUS "  BUILD_PROFILE=${BUILD_PROFILE}")
   foreach(_o ${EFL_ALL_OPTIONS})
     set(_v ${${_o}})
     set(_d ${EFL_OPTION_DEFAULT_${_o}})
@@ -45,6 +66,19 @@ function(EFL_OPTIONS_SUMMARY)
       set(_m " [${EFL_OPTION_MESSAGE_${_o}}]")
     endif()
     message(STATUS "  ${_o}=${_v} (${_i})${_m}")
+  endforeach()
+  message(STATUS "EFL Libraries:")
+  foreach(_o ${EFL_ALL_LIBS})
+    message(STATUS "  ${_o}${_mods}")
+    foreach(_m ${${_o}_MODULES})
+      string(REGEX REPLACE "^${_o}-module-" "" _m ${_m})
+      message(STATUS "    dynamic: ${_m}")
+    endforeach()
+    foreach(_m ${${_o}_STATIC_MODULES})
+      string(REGEX REPLACE "^${_o}-module-" "" _m ${_m})
+      message(STATUS "    static.: ${_m}")
+    endforeach()
+    unset(_m)
   endforeach()
 endfunction()
 
@@ -158,9 +192,34 @@ macro(EFL_LIB _target)
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 
+  file(GLOB modules RELATIVE ${EFL_MODULES_SOURCE_DIR} ${EFL_MODULES_SOURCE_DIR}/*)
+  foreach(module ${modules})
+    if(IS_DIRECTORY ${EFL_MODULES_SOURCE_DIR}/${module})
+      set(EFL_MODULE_SCOPE ${module})
+
+      include(${EFL_MODULES_SOURCE_DIR}/${module}/CMakeLists.txt OPTIONAL)
+
+      file(GLOB submodules RELATIVE ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE} ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/*)
+      foreach(submodule ${submodules})
+        if(IS_DIRECTORY ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/${submodule})
+          EFL_MODULE(${submodule})
+        endif()
+        unset(submodule)
+        unset(submodules)
+      endforeach()
+    else()
+      set(EFL_MODULE_SCOPE)
+      EFL_MODULE(${module})
+    endif()
+    unset(EFL_MODULE_SCOPE)
+  endforeach()
+  unset(module)
+  unset(modules)
+
   foreach(t ${${_target}_TESTS})
     EFL_TEST(${t})
   endforeach()
+  unset(t)
   add_custom_target(${_target}-tests DEPENDS ${${_target}_TESTS})
   add_custom_target(${_target}-modules DEPENDS ${${_target}_MODULES})
   list(APPEND EFL_ALL_LIBS ${_target})
@@ -220,13 +279,15 @@ function(EFL_TEST _testname)
       list(APPEND _deps "${EFL_TESTS_BINARY_DIR}/${f}")
     endif()
   endforeach()
-  # TODO: depend on modules!
+  add_dependencies(${_testname} ${EFL_LIB_CURRENT}-modules)
   set_target_properties(${_testname} PROPERTIES OBJECT_DEPENDS "${_deps}")
-  message(STATUS "${_testname} ${_deps}")
 
-  target_include_directories(${_testname} SYSTEM PUBLIC
+  target_include_directories(${_testname} PRIVATE
     ${EFL_TESTS_SOURCE_DIR}
     ${EFL_TESTS_BINARY_DIR}
+    ${${_testname}_INCLUDE_DIRECTORIES})
+  target_include_directories(${_testname} SYSTEM PRIVATE
+    ${${_testname}_SYSTEM_INCLUDE_DIRECTORIES}
     ${CHECK_INCLUDE_DIRS})
   target_link_libraries(${_testname}
     ${EFL_LIB_CURRENT}
@@ -250,4 +311,119 @@ function(EFL_TEST _testname)
     RUNTIME_OUTPUT_DIRECTORY "${EFL_TESTS_BINARY_DIR}")
 
   add_test(NAME ${_testname} COMMAND ${_testname})
+endfunction()
+
+# EFL_MODULE(Name)
+#
+# Adds a module for ${EFL_LIB_CURRENT} using
+# ${EFL_MODULES_SOURCE_DIR} and ${EFL_MODULES_BINARY_DIR}
+# as well as ${EFL_MODULE_SCOPE} if it's contained into
+# a subdir, such as eina's "mp" or evas "engines".
+#
+# To keep it simple to use, user is only expected to define variables:
+#  - SOURCES
+#  - DEPENDENCIES
+#  - LIBRARIES
+#  - INCLUDE_DIRECTORIES
+#  - SYSTEM_INCLUDE_DIRECTORIES
+#  - DEFINITIONS
+#
+# NOTE: since the file will be included it shouldn't mess with global variables!
+function(EFL_MODULE _modname)
+  if(EFL_MODULE_SCOPE)
+    set(_modsrcdir ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/${_modname})
+  else()
+    set(_modsrcdir ${EFL_MODULES_SOURCE_DIR}/${_modname})
+  endif()
+
+  set(SOURCES)
+  set(DEPENDENCIES)
+  set(LIBRARIES)
+  set(INCLUDE_DIRECTORIES)
+  set(SYSTEM_INCLUDE_DIRECTORIES)
+  set(DEFINITIONS)
+  set(MODULE_TYPE "ON")
+
+  include(${_modsrcdir}/CMakeLists.txt)
+
+  if(NOT SOURCES)
+    message(WARNING "${_modsrcdir}/CMakeLists.txt defines no SOURCES")
+    return()
+  endif()
+
+  if(EFL_MODULE_SCOPE)
+    set(_modbindir ${EFL_MODULES_BINARY_DIR}/${EFL_MODULE_SCOPE}/${_modname})
+    set(_modtarget ${EFL_LIB_CURRENT}-module-${EFL_MODULE_SCOPE}-${_modname})
+    set(_modoutdir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+  else()
+    set(_modbindir ${EFL_MODULES_BINARY_DIR}/${_modname})
+    set(_modtarget ${EFL_LIB_CURRENT}-module-${_modname})
+    set(_modoutdir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${EFL_LIB_CURRENT}/modules/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+  endif()
+
+  if("${MODULE_TYPE}" STREQUAL "OFF")
+    message(WARNING "${_modsrcdir} disabled")
+    return()
+  elseif("${MODULE_TYPE}" STREQUAL "STATIC")
+    set(_modtype STATIC)
+  else()
+    set(_modtype MODULE)
+  endif()
+
+  set(_sources "")
+  foreach(f ${SOURCES})
+    if(EXISTS "${_modsrcdir}/${f}")
+      list(APPEND _sources "${_modsrcdir}/${f}")
+    else()
+      list(APPEND _sources "${_modbindir}/${f}")
+    endif()
+  endforeach()
+
+  set(_deps "")
+  foreach(f ${DEPENDENCIES})
+    if(EXISTS "${_modsrcdir}/${f}")
+      list(APPEND _deps "${_modsrcdir}/${f}")
+    else()
+      list(APPEND _deps "${_modbindir}/${f}")
+    endif()
+  endforeach()
+
+  add_library(${_modtarget} ${_modtype} ${_sources})
+  set_target_properties(${_modtarget} PROPERTIES
+    OBJECT_DEPENDS "${_deps}"
+    PREFIX ""
+    OUTPUT_NAME "module")
+
+  target_include_directories(${_modtarget} PRIVATE
+    ${_modsrcdir}
+    ${_modbindir}
+    ${INCLUDE_DIRECTORIES})
+  target_include_directories(${_modtarget} SYSTEM PUBLIC
+    ${SYSTEM_INCLUDE_DIRECTORIES})
+  target_link_libraries(${_modtarget} ${LIBRARIES})
+
+  target_compile_definitions(${_modtarget} PRIVATE ${DEFINITIONS})
+
+  set_target_properties(${_modtarget} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${_modoutdir}"
+    ARCHIVE_OUTPUT_DIRECTORY "${_modoutdir}"
+    RUNTIME_OUTPUT_DIRECTORY "${_modoutdir}")
+
+  if("${MODULE_TYPE}" STREQUAL "STATIC")
+    target_link_libraries(${EFL_LIB_CURRENT} ${_modtarget})
+    target_include_directories(${_modtarget} PRIVATE
+      ${EFL_LIB_SOURCE_DIR}
+      ${EFL_LIB_BINARY_DIR})
+    set_target_properties(${_modtarget} PROPERTIES
+      POSITION_INDEPENDENT_CODE TRUE)
+
+    set(_all_mods ${${EFL_LIB_CURRENT}_STATIC_MODULES})
+    list(APPEND _all_mods ${_modtarget})
+    set(${EFL_LIB_CURRENT}_STATIC_MODULES ${_all_mods} PARENT_SCOPE)
+  else()
+    set(_all_mods ${${EFL_LIB_CURRENT}_MODULES})
+    list(APPEND _all_mods ${_modtarget})
+    set(${EFL_LIB_CURRENT}_MODULES ${_all_mods} PARENT_SCOPE)
+    target_link_libraries(${_modtarget} ${EFL_LIB_CURRENT})
+  endif()
 endfunction()

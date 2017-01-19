@@ -19,6 +19,19 @@ EFL_OPTION(EINA_MAGIC_DEBUG "magic debug of eina structure" ON)
 EFL_OPTION(EINA_DEBUG_THREADS "debugging of eina threads" ${EINA_DEBUG_THREADS})
 EFL_OPTION(VALGRIND "valgrind support" ${VALGRIND})
 
+EFL_OPTION(EINA_BUILD_CHAINED "Build Eina's chained mempool" "ON" CHOICE ON;OFF;STATIC)
+EFL_OPTION(EINA_BUILD_ONE_BIG "Build Eina's one-big mempool" "ON" CHOICE ON;OFF;STATIC)
+EFL_OPTION(EINA_BUILD_PASS_THROUGH "Build Eina's pass-through mempool" "STATIC" CHOICE ON;OFF;STATIC)
+
+if(EINA_BUILD_CHAINED STREQUAL "STATIC")
+  set(EINA_STATIC_BUILD_CHAINED_POOL 1)
+endif()
+if(EINA_BUILD_ONE_BIG STREQUAL "STATIC")
+  set(EINA_STATIC_BUILD_ONE_BIG 1)
+endif()
+if(EINA_BUILD_PASS_THROUGH STREQUAL "STATIC")
+  set(EINA_STATIC_BUILD_PASS_THROUGH 1)
+endif()
 
 #check for symbols in pthread
 #TODO Make the definitions depending on the platform
