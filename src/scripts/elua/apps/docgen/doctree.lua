@@ -305,7 +305,8 @@ M.Function = Node:clone {
     end,
 
     doc_get = function(self, ft)
-        return M.Doc(self.func:documentation_get(ft))
+        -- TODO: handle overridden docs sanely
+        return M.Doc(self.func:implement_get():documentation_get(ft))
     end,
 
     fallback_doc_get = function(self, ft)

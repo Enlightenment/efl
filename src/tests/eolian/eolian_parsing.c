@@ -1300,7 +1300,8 @@ START_TEST(eolian_docs)
                   "@Docs.prop.get @Docs.prop.set @Foo.field1 @Bar.foo @Docs"));
 
    fail_if(!(fid = eolian_class_function_get_by_name(class, "meth", EOLIAN_METHOD)));
-   fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_METHOD)));
+   const Eolian_Implement *fimp = eolian_function_implement_get(fid);
+   fail_if(!(doc = eolian_implement_documentation_get(fimp, EOLIAN_METHOD)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Method documentation."));
    fail_if(eolian_documentation_description_get(doc));
@@ -1331,17 +1332,18 @@ START_TEST(eolian_docs)
    fail_if(eolian_documentation_description_get(doc));
 
    fail_if(!(fid = eolian_class_function_get_by_name(class, "prop", EOLIAN_PROPERTY)));
-   fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_PROPERTY)));
+   fimp = eolian_function_implement_get(fid);
+   fail_if(!(doc = eolian_implement_documentation_get(fimp, EOLIAN_PROPERTY)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Property common documentation."));
    fail_if(eolian_documentation_description_get(doc));
    fail_if(strcmp(eolian_documentation_since_get(doc),
                   "1.18"));
-   fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_PROP_GET)));
+   fail_if(!(doc = eolian_implement_documentation_get(fimp, EOLIAN_PROP_GET)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Get documentation."));
    fail_if(eolian_documentation_description_get(doc));
-   fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_PROP_SET)));
+   fail_if(!(doc = eolian_implement_documentation_get(fimp, EOLIAN_PROP_SET)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Set documentation."));
    fail_if(eolian_documentation_description_get(doc));

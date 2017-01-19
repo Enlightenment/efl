@@ -748,19 +748,6 @@ EAPI const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class
 EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
 
 /*
- * @brief Returns a documentation for a function.
- *
- * @param[in] function_id Id of the function
- * @param[in] f_type The function type, for property get/set distinction.
- * @return the documentation or NULL.
- *
- * Acceptable input types are METHOD, PROP_GET and PROP_SET.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Documentation *eolian_function_documentation_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-
-/*
  * @brief Returns the implement for a function.
  *
  * @param[in] function_id Id of the function
@@ -1056,6 +1043,19 @@ EAPI const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl
  * @ingroup Eolian
  */
 EAPI const Eolian_Function *eolian_implement_function_get(const Eolian_Implement *impl, Eolian_Function_Type *func_type);
+
+/*
+ * @brief Returns a documentation for an implement.
+ *
+ * @param[in] impl the handle of the implement
+ * @param[in] f_type The function type, for property get/set distinction.
+ * @return the documentation or NULL.
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Documentation *eolian_implement_documentation_get(const Eolian_Implement *impl, Eolian_Function_Type f_type);
 
 /*
  * @brief Get whether an implement is tagged with @auto.

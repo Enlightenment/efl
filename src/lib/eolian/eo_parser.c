@@ -1208,7 +1208,7 @@ parse_accessor:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
-   if ((ls->t.token == TOK_DOC) && !prop->common_doc)
+   if ((ls->t.token == TOK_DOC) && !prop->impl->common_doc)
      {
         if (getenv("EOLIAN_PROPERTY_DOC_WARN"))
           {
@@ -1220,11 +1220,11 @@ parse_accessor:
      }
    if (is_get)
      {
-        FILL_DOC(ls, prop, get_doc);
+        FILL_DOC(ls, prop->impl, get_doc);
      }
    else
      {
-        FILL_DOC(ls, prop, set_doc);
+        FILL_DOC(ls, prop->impl, set_doc);
      }
    for (;;) switch (ls->t.kw)
      {
@@ -1369,7 +1369,7 @@ body:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
-   FILL_DOC(ls, prop, common_doc);
+   FILL_DOC(ls, prop->impl, common_doc);
    for (;;) switch (ls->t.kw)
      {
       case KW_get:
@@ -1473,7 +1473,7 @@ body:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
-   FILL_DOC(ls, meth, common_doc);
+   FILL_DOC(ls, meth->impl, common_doc);
    for (;;) switch (ls->t.kw)
      {
       case KW_return:

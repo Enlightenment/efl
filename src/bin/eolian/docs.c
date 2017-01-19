@@ -417,15 +417,17 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
 
    const char *group = eolian_class_full_name_get(eolian_function_class_get(fid));
 
+   const Eolian_Implement *fimp = eolian_function_implement_get(fid);
+
    if (ftype == EOLIAN_METHOD)
      {
-        doc = eolian_function_documentation_get(fid, EOLIAN_METHOD);
+        doc = eolian_implement_documentation_get(fimp, EOLIAN_METHOD);
         pdoc = NULL;
      }
    else
      {
-        doc = eolian_function_documentation_get(fid, EOLIAN_PROPERTY);
-        pdoc = eolian_function_documentation_get(fid, ftype);
+        doc = eolian_implement_documentation_get(fimp, EOLIAN_PROPERTY);
+        pdoc = eolian_implement_documentation_get(fimp, ftype);
         if (!doc && pdoc) doc = pdoc;
         if (pdoc == doc) pdoc = NULL;
      }

@@ -249,7 +249,6 @@ ffi.cdef [[
     const char *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype, Eina_Bool use_legacy);
     const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
     const char *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-    const Eolian_Documentation *eolian_function_documentation_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
     const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
@@ -273,6 +272,7 @@ ffi.cdef [[
     const char *eolian_implement_full_name_get(const Eolian_Implement *impl);
     const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl);
     const Eolian_Function *eolian_implement_function_get(const Eolian_Implement *impl, Eolian_Function_Type *func_type);
+    const Eolian_Documentation *eolian_implement_documentation_get(const Eolian_Implement *impl, Eolian_Function_Type f_type);
     Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type ftype);
     Eina_Bool eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type ftype);
     Eina_Bool eolian_implement_is_pure_virtual(const Eolian_Implement *impl, Eolian_Function_Type ftype);
@@ -775,12 +775,6 @@ M.Function = ffi.metatype("Eolian_Function", {
             return ffi.string(v)
         end,
 
-        documentation_get = function(self, ftype)
-            local v = eolian.eolian_function_documentation_get(self, ftype)
-            if v == nil then return nil end
-            return v
-        end,
-
         implement_get = function(self)
             local v = eolian.eolian_function_implement_get(self)
             if v == nil then return nil end
@@ -913,6 +907,12 @@ ffi.metatype("Eolian_Implement", {
             local v = eolian.eolian_implement_function_get(self, tp)
             if v == nil then return nil end
             return v, tp[0]
+        end,
+
+        documentation_get = function(self, ftype)
+            local v = eolian.eolian_implement_documentation_get(self, ftype)
+            if v == nil then return nil end
+            return v
         end,
 
         is_auto = function(self, ftype)

@@ -42,9 +42,11 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
    if (!legacy && (fsc == EOLIAN_SCOPE_PROTECTED))
      eina_strbuf_append_printf(buf, "#ifdef %s_PROTECTED\n", cnameu);
 
-   Eina_Bool hasdoc = !!eolian_function_documentation_get(fid, ftype);
+   const Eolian_Implement *fimp = eolian_function_implement_get(fid);
+
+   Eina_Bool hasdoc = !!eolian_implement_documentation_get(fimp, ftype);
    if (!hasdoc && ((ftype == EOLIAN_PROP_GET) || (ftype == EOLIAN_PROP_SET)))
-     hasdoc = !!eolian_function_documentation_get(fid, EOLIAN_PROPERTY);
+     hasdoc = !!eolian_implement_documentation_get(fimp, EOLIAN_PROPERTY);
    if (hasdoc)
      {
         Eina_Strbuf *dbuf = eo_gen_docs_func_gen(fid, ftype, 0, legacy);

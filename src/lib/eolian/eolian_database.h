@@ -126,9 +126,6 @@ struct _Eolian_Function
    Eolian_Implement *impl;
    Eina_Stringshare *get_legacy;
    Eina_Stringshare *set_legacy;
-   Eolian_Documentation *common_doc;
-   Eolian_Documentation *get_doc;
-   Eolian_Documentation *set_doc;
    Eolian_Documentation *get_return_doc;
    Eolian_Documentation *set_return_doc;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */

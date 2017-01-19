@@ -43,6 +43,19 @@ eolian_implement_function_get(const Eolian_Implement *impl,
    return impl->foo_id;
 }
 
+EAPI const Eolian_Documentation *
+eolian_implement_documentation_get(const Eolian_Implement *impl,
+                                   Eolian_Function_Type ftype)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(impl, NULL);
+   switch (ftype)
+     {
+      case EOLIAN_PROP_GET: return impl->get_doc; break;
+      case EOLIAN_PROP_SET: return impl->set_doc; break;
+      default: return impl->common_doc;
+     }
+}
+
 EAPI Eina_Bool
 eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type ftype)
 {

@@ -184,18 +184,6 @@ eolian_function_legacy_get(const Eolian_Function *fid, Eolian_Function_Type ftyp
      }
 }
 
-EAPI const Eolian_Documentation *
-eolian_function_documentation_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   switch (ftype)
-     {
-      case EOLIAN_PROP_GET: return fid->get_doc; break;
-      case EOLIAN_PROP_SET: return fid->set_doc; break;
-      default: return fid->common_doc;
-     }
-}
-
 EAPI const Eolian_Implement *
 eolian_function_implement_get(const Eolian_Function *fid)
 {

@@ -227,11 +227,12 @@ _validate_function(const Eolian_Function *func)
 
 #undef EOLIAN_PARAMS_VALIDATE
 
-   if (!_validate_doc(func->common_doc))
+   /* TODO: validate docs via impls to also validate overrides */
+   if (!_validate_doc(func->impl->common_doc))
      return EINA_FALSE;
-   if (!_validate_doc(func->get_doc))
+   if (!_validate_doc(func->impl->get_doc))
      return EINA_FALSE;
-   if (!_validate_doc(func->set_doc))
+   if (!_validate_doc(func->impl->set_doc))
      return EINA_FALSE;
    if (!_validate_doc(func->get_return_doc))
      return EINA_FALSE;
