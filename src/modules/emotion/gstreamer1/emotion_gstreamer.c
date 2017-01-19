@@ -1042,7 +1042,6 @@ em_meta_artwork_get(void *video, Evas_Object *img, const char *path, Emotion_Art
              eina_file_close(f);
              evas_object_event_callback_add(img, EVAS_CALLBACK_DEL, _img_del_cb, buffer);
           } 
-        gst_buffer_unref(buffer);
         gst_sample_unref(sample);
      } 
    else 
