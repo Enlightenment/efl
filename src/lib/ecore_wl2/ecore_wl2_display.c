@@ -176,6 +176,8 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
           if ((window->type != ECORE_WL2_WINDOW_TYPE_DND) &&
               (window->type != ECORE_WL2_WINDOW_TYPE_NONE))
                 _ecore_wl2_window_shell_surface_init(window);
+          else
+            window->pending.configure = EINA_FALSE;
      }
    else if (!strcmp(interface, "zxdg_shell_v6"))
      {

@@ -512,6 +512,7 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
                                  &_xdg_surface_listener, window);
 
         window->configure_ack = xdg_surface_ack_configure;
+        window->pending.configure = EINA_FALSE;
         _ecore_wl2_window_type_set(window);
      }
    else if ((window->display->wl.wl_shell) && (!window->wl_shell_surface))
@@ -528,6 +529,7 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
         wl_shell_surface_add_listener(window->wl_shell_surface,
                                       &_wl_shell_surface_listener, window);
+        window->pending.configure = EINA_FALSE;
         _ecore_wl2_window_type_set(window);
      }
 
@@ -615,6 +617,8 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
 
    win->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
 
+   win->pending.configure = EINA_TRUE;
+
    display->windows =
      eina_inlist_append(display->windows, EINA_INLIST_GET(win));
 
@@ -668,6 +672,8 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
         _ecore_wl2_window_shell_surface_init(window);
         _ecore_wl2_window_www_surface_init(window);
      }
+   else
+     window->pending.configure = EINA_FALSE;
 }
 
 EAPI void
