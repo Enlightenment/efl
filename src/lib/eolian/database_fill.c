@@ -137,6 +137,8 @@ _db_fill_implements(Eolian_Class *cl)
    Eolian_Implement *impl;
    Eina_List *l;
 
+   Eina_Bool ret = EINA_TRUE;
+
    Eina_Hash *th = eina_hash_string_small_new(NULL),
              *pth = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(cl->implements, l, impl)
@@ -146,23 +148,31 @@ _db_fill_implements(Eolian_Class *cl)
           {
              _print_linecol(&impl->base);
              fprintf(stderr, "duplicate implement '%s'\n", impl->full_name);
-             return EINA_FALSE;
+             ret = EINA_FALSE;
+             goto end;
           }
         if (impl->klass != cl)
           {
              if (!_db_fill_implement(cl, impl))
-               return EINA_FALSE;
+               {
+                  ret = EINA_FALSE;
+                  goto end;
+               }
              if (eolian_function_is_constructor(impl->foo_id, impl->klass))
                database_function_constructor_add((Eolian_Function *)impl->foo_id, cl);
           }
         if ((impl->klass != cl) && !_db_fill_implement(cl, impl))
-          return EINA_FALSE;
+          {
+             ret = EINA_FALSE;
+             goto end;
+          }
         eina_hash_add(prop ? pth : th, impl->full_name, impl->full_name);
      }
+
+end:
    eina_hash_free(th);
    eina_hash_free(pth);
-
-   return EINA_TRUE;
+   return ret;
 }
 
 static Eina_Bool
@@ -171,6 +181,8 @@ _db_fill_ctors(Eolian_Class *cl)
    Eolian_Constructor *ctor;
    Eina_List *l;
 
+   Eina_Bool ret = EINA_TRUE;
+
    Eina_Hash *th = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(cl->constructors, l, ctor)
      {
@@ -178,11 +190,15 @@ _db_fill_ctors(Eolian_Class *cl)
           {
              _print_linecol(&ctor->base);
              fprintf(stderr, "duplicate ctor '%s'\n", ctor->full_name);
-             return EINA_FALSE;
+             ret = EINA_FALSE;
+             goto end;
           }
         const char *ldot = strrchr(ctor->full_name, '.');
         if (!ldot)
-          return EINA_FALSE;
+          {
+             ret = EINA_FALSE;
+             goto end;
+          }
         char *cnbuf = alloca(ldot - ctor->full_name + 1);
         memcpy(cnbuf, ctor->full_name, ldot - ctor->full_name);
         cnbuf[ldot - ctor->full_name] = '\0';
@@ -192,7 +208,8 @@ _db_fill_ctors(Eolian_Class *cl)
              _print_linecol(&ctor->base);
              fprintf(stderr, "class '%s' not found within the inheritance "
                              "tree of '%s'\n", cnbuf, cl->full_name);
-             return EINA_FALSE;
+             ret = EINA_FALSE;
+             goto end;
           }
         ctor->klass = tcl;
         const Eolian_Function *cfunc = eolian_constructor_function_get(ctor);
@@ -200,14 +217,16 @@ _db_fill_ctors(Eolian_Class *cl)
           {
              _print_linecol(&ctor->base);
              fprintf(stderr, "unable to find function '%s'\n", ctor->full_name);
-             return EINA_FALSE;
+             ret = EINA_FALSE;
+             goto end;
           }
         database_function_constructor_add((Eolian_Function *)cfunc, tcl);
         eina_hash_add(th, ctor->full_name, ctor->full_name);
      }
-   eina_hash_free(th);
 
-   return EINA_TRUE;
+end:
+   eina_hash_free(th);
+   return ret;
 }
 
 static Eina_Bool
