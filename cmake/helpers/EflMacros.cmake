@@ -119,20 +119,155 @@ function(EFL_FINALIZE)
   add_custom_target(all-tests DEPENDS ${EFL_ALL_TESTS})
 endfunction()
 
+# EFL_FILES_TO_ABSOLUTE(Var Source_Dir Binary_Dir [file1 ... fileN])
+#
+# Convert list of files to absolute path. If not absolute, then
+# check inside Source_Dir and if it fails assumes it's inside Binary_Dir
+function(EFL_FILES_TO_ABSOLUTE _var _srcdir _bindir)
+  set(_lst "")
+  foreach(f ${ARGN})
+    if(EXISTS "${f}")
+      list(APPEND _lst "${f}")
+    elseif(EXISTS "${_srcdir}/${f}")
+      list(APPEND _lst "${_srcdir}/${f}")
+    else()
+      list(APPEND _lst "${_bindir}/${f}")
+    endif()
+  endforeach()
+  set(${_var} "${_lst}" PARENT_SCOPE)
+endfunction()
+
+# _EFL_LIB_PROCESS_MODULES_INTERNAL()
+#
+# Internal function to process modules of current EFL_LIB()
+function(_EFL_LIB_PROCESS_MODULES_INTERNAL)
+  if(EXISTS ${EFL_MODULES_SOURCE_DIR}/CMakeLists.txt)
+    message(FATAL_ERROR "${EFL_MODULES_SOURCE_DIR}/CMakeLists.txt shouldn't exist. Modules are expected to be defined in their own directory.")
+  else()
+    file(GLOB modules RELATIVE ${EFL_MODULES_SOURCE_DIR} ${EFL_MODULES_SOURCE_DIR}/*)
+    foreach(module ${modules})
+      if(IS_DIRECTORY ${EFL_MODULES_SOURCE_DIR}/${module})
+        set(EFL_MODULE_SCOPE ${module})
+
+        include(${EFL_MODULES_SOURCE_DIR}/${module}/CMakeLists.txt OPTIONAL)
+
+        file(GLOB submodules RELATIVE ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE} ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/*)
+        foreach(submodule ${submodules})
+          if(IS_DIRECTORY ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/${submodule})
+            EFL_MODULE(${submodule})
+          endif()
+          unset(submodule)
+          unset(submodules)
+        endforeach()
+      else()
+        set(EFL_MODULE_SCOPE)
+        EFL_MODULE(${module})
+      endif()
+      unset(EFL_MODULE_SCOPE)
+    endforeach()
+  endif()
+
+  if(${EFL_LIB_CURRENT}_MODULES)
+    add_custom_target(${EFL_LIB_CURRENT}-modules DEPENDS ${${EFL_LIB_CURRENT}_MODULES})
+  endif()
+endfunction()
+
+# _EFL_LIB_PROCESS_BINS_INTERNAL()
+#
+# Internal function to process bins of current EFL_LIB()
+function(_EFL_LIB_PROCESS_BINS_INTERNAL)
+  if(EXISTS ${EFL_BIN_SOURCE_DIR}/CMakeLists.txt)
+    EFL_BIN(${EFL_LIB_CURRENT})
+  else()
+    file(GLOB bins RELATIVE ${EFL_BIN_SOURCE_DIR} ${EFL_BIN_SOURCE_DIR}/*)
+    foreach(bin ${bins})
+      if(IS_DIRECTORY ${EFL_BIN_SOURCE_DIR}/${bin})
+        EFL_BIN(${bin})
+      endif()
+    endforeach()
+  endif()
+
+  if(${EFL_LIB_CURRENT}_BINS)
+    add_custom_target(${EFL_LIB_CURRENT}-bins DEPENDS ${${EFL_LIB_CURRENT}_BINS})
+  endif()
+endfunction()
+
+# _EFL_LIB_PROCESS_TESTS_INTERNAL()
+#
+# Internal function to process tests of current EFL_LIB()
+function(_EFL_LIB_PROCESS_TESTS_INTERNAL)
+  if(EXISTS ${EFL_TESTS_SOURCE_DIR}/CMakeLists.txt)
+    EFL_TEST(${EFL_LIB_CURRENT})
+  else()
+    file(GLOB tests RELATIVE ${EFL_TESTS_SOURCE_DIR} ${EFL_TESTS_SOURCE_DIR}/*)
+    foreach(test ${tests})
+      if(IS_DIRECTORY ${EFL_TESTS_SOURCE_DIR}/${test})
+        EFL_TEST(${test})
+      endif()
+    endforeach()
+  endif()
+
+  if(${EFL_LIB_CURRENT}_TESTS)
+    add_custom_target(${EFL_LIB_CURRENT}-tests DEPENDS ${${EFL_LIB_CURRENT}_TESTS})
+    LIST_APPEND_GLOBAL(EFL_ALL_TESTS ${EFL_LIB_CURRENT}-tests)
+  endif()
+endfunction()
+
 # EFL_LIB(Name)
 #
-# adds a library ${Name} automatically setting:
-#  - target_include_directories to ${Name}_INCLUDE_DIRECTORIES
-#  - target_include_directories(SYSTEM) to ${Name}_SYSTEM_INCLUDE_DIRECTORIES
-#  - OUTPUT_NAME to ${Name}_OUTPUT_NAME
-#  - SOURCES to ${Name}_SOURCES
-#  - HEADER to ${Name}_HEADERS (to be installed)
-#  - VERSION to ${Name}_VERSION (defaults to project version)
-#  - SOVERSION to ${Name}_SOURCES (defaults to project major version)
-#  - OBJECT_DEPENDS to ${Name}_DEPENDENCIES
-#  - target_link_libraries() to ${Name}_LIBRARIES
-#  - target_compile_definitions() to ${Name}_DEFINITIONS
-#  - compile tests in ${Name}_TESTS using EFL_TEST()
+# adds a library ${Name} automatically setting object/target
+# properties based on script-modifiable variables:
+#  - INCLUDE_DIRECTORIES: results in target_include_directories
+#  - SYSTEM_INCLUDE_DIRECTORIES: results in target_include_directories(SYSTEM)
+#  - OUTPUT_NAME
+#  - SOURCES
+#  - PUBLIC_HEADERS
+#  - VERSION (defaults to project version)
+#  - SOVERSION (defaults to project major version)
+#  - LIBRARY_TYPE: SHARED or STATIC, defaults to SHARED
+#  - OBJECT_DEPENDS: say this object depends on other files (ie: includes)
+#  - DEPENDENCIES: results in add_dependencies()
+#  - LIBRARIES: results in target_link_libraries()
+#  - DEFINITIONS: target_compile_definitions()
+#
+# Defines the following variables that can be used within the included files:
+#  - EFL_LIB_CURRENT to ${Name}
+#  - EFL_LIB_SOURCE_DIR to source dir of ${Name} libraries
+#  - EFL_LIB_BINARY_DIR to binary dir of ${Name} libraries
+#  - EFL_BIN_SOURCE_DIR to source dir of ${Name} executables
+#  - EFL_BIN_BINARY_DIR to binary dir of ${Name} executables
+#  - EFL_MODULES_SOURCE_DIR to source dir of ${Name} modules
+#  - EFL_MODULES_BINARY_DIR to binary dir of ${Name} modules
+#  - EFL_TESTS_SOURCE_DIR to source dir of ${Name} tests
+#  - EFL_TESTS_BINARY_DIR to binary dir of ${Name} tests
+#
+# Modules are processed like:
+#   - loop for directories in src/modules/${EFL_LIB_CURRENT}:
+#      - if a src/modules/${EFL_LIB_CURRENT}/${Module}/CMakeLists.txt
+#        use variables as documented in EFL_MODULE()
+#      - otherwise loop for scoped-modules in
+#        src/modules/${EFL_LIB_CURRENT}/${EFL_MODULE_SCOPE}/CMakeLists.txt
+#        and use variables as documented in EFL_MODULE()
+#
+# EFL_MODULE() will handle MODULE_TYPE=ON;OFF;STATIC, handling
+# dependencies and installation in the proper path, considering
+# ${EFL_MODULE_SCOPE} whenever it's set.
+#
+# Binaries and tests are processed similarly:
+#   - if src/bin/${EFL_LIB_CURRENT}/CMakeLists.txt exist, then use
+#     variables as documented in EFL_BIN() or EFL_TEST().  The target
+#     will be called ${EFL_LIB_CURRENT}-bin or ${EFL_LIB_CURRENT}-test
+#     and the test OUTPUT_NAME defaults to ${EFL_LIB_CURRENT}_suite.
+#   - otherwise loop for directories in src/bin/${EFL_LIB_CURRENT} and
+#     for each src/bin/${EFL_LIB_CURRENT}/${Entry}/CMakeLists.txt use
+#     variables as documented in EFL_BIN() or EFL_TEST().  Binaries
+#     must provide an unique name that will be used as both target and
+#     OUTPUT_NAME. Tests will generate targets
+#     ${EFL_LIB_CURRENT}-test-${Entry}, while OUTPUT_NAME is ${Entry}.
+#
+# NOTE: src/modules/${EFL_LIB_CURRENT}/CMakeLists.txt is not
+#       allowed as it makes no sense to have a single module named
+#       after the library.
 #
 function(EFL_LIB _target)
   set(EFL_LIB_CURRENT ${_target})
@@ -145,73 +280,67 @@ function(EFL_LIB _target)
   set(EFL_TESTS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/${_target})
   set(EFL_TESTS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/tests/${_target})
 
-  set(${_target}_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
-  set(${_target}_SOVERSION ${PROJECT_VERSION_MAJOR})
-  set(${_target}_LIBRARY_TYPE SHARED)
+  set(INCLUDE_DIRECTORIES)
+  set(SYSTEM_INCLUDE_DIRECTORIES)
+  set(OUTPUT_NAME)
+  set(SOURCES)
+  set(PUBLIC_HEADERS)
+  set(VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+  set(SOVERSION ${PROJECT_VERSION_MAJOR})
+  set(LIBRARY_TYPE SHARED)
+  set(OBJECT_DEPENDS)
+  set(DEPENDENCIES)
+  set(LIBRARIES)
+  set(DEFINITIONS)
 
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config/${_target}.cmake OPTIONAL)
   include(${EFL_LIB_SOURCE_DIR}/CMakeLists.txt OPTIONAL)
-  include(${EFL_BIN_SOURCE_DIR}/CMakeLists.txt OPTIONAL)
-  include(${EFL_MODULES_SOURCE_DIR}/CMakeLists.txt OPTIONAL)
-  include(${EFL_TESTS_SOURCE_DIR}/CMakeLists.txt OPTIONAL)
+  if(LIBRARY_TYPE STREQUAL SHARED AND NOT PUBLIC_HEADERS)
+    message(FATAL_ERROR "Shared libraries must install public headers!")
+  endif()
 
-  set(_headers "")
-  foreach(f ${${_target}_HEADERS})
-    if(EXISTS "${EFL_LIB_SOURCE_DIR}/${f}")
-      list(APPEND _headers "${EFL_LIB_SOURCE_DIR}/${f}")
-    else()
-      list(APPEND _headers "${EFL_LIB_BINARY_DIR}/${f}")
-    endif()
-  endforeach()
+  EFL_FILES_TO_ABSOLUTE(_headers ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
+    ${PUBLIC_HEADERS})
+  EFL_FILES_TO_ABSOLUTE(_sources ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
+    ${SOURCES})
+  EFL_FILES_TO_ABSOLUTE(_obj_deps ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
+    ${OBJECT_DEPENDS})
 
-  set(_sources "")
-  foreach(f ${${_target}_SOURCES})
-    if(EXISTS "${EFL_LIB_SOURCE_DIR}/${f}")
-      list(APPEND _sources "${EFL_LIB_SOURCE_DIR}/${f}")
-    else()
-      list(APPEND _sources "${EFL_LIB_BINARY_DIR}/${f}")
-    endif()
-  endforeach()
-
-  set(_deps "")
-  foreach(f ${${_target}_DEPENDENCIES})
-    if(EXISTS "${EFL_LIB_SOURCE_DIR}/${f}")
-      list(APPEND _deps "${EFL_LIB_SOURCE_DIR}/${f}")
-    else()
-      list(APPEND _deps "${EFL_LIB_BINARY_DIR}/${f}")
-    endif()
-  endforeach()
-
-  add_library(${_target} ${${_target}_LIBRARY_TYPE} ${_sources} ${_headers})
+  add_library(${_target} ${LIBRARY_TYPE} ${_sources} ${_headers})
   set_target_properties(${_target} PROPERTIES
     FRAMEWORK TRUE
     PUBLIC_HEADER "${_headers}"
-    OBJECT_DEPENDS "${_deps}")
+    OBJECT_DEPENDS "${_obj_deps}")
 
-  if(${_target}_LIBRARIES)
-    target_link_libraries(${_target} ${${_target}_LIBRARIES})
+  if(DEPENDENCIES)
+    add_dependencies(${_target} ${DEPENDENCIES})
+  endif()
+
+  if(LIBRARIES)
+    target_link_libraries(${_target} ${LIBRARIES})
   endif()
 
   target_include_directories(${_target} PUBLIC
-    ${${_target}_INCLUDE_DIRECTORIES}
+    ${INCLUDE_DIRECTORIES}
     ${EFL_LIB_SOURCE_DIR}
+    ${EFL_LIB_BINARY_DIR}
     )
-  if(${_target}_SYSTEM_INCLUDE_DIRECTORIES)
-    target_include_directories(${_target} SYSTEM PUBLIC ${${_target}_SYSTEM_INCLUDE_DIRECTORIES})
+  if(SYSTEM_INCLUDE_DIRECTORIES)
+    target_include_directories(${_target} SYSTEM PUBLIC ${SYSTEM_INCLUDE_DIRECTORIES})
   endif()
 
-  if(${_target}_DEFINITIONS)
-    target_compile_definitions(${_target} PRIVATE ${${_target}_DEFINITIONS})
+  if(DEFINITIONS)
+    target_compile_definitions(${_target} PRIVATE ${DEFINITIONS})
   endif()
 
-  if(${_target}_OUTPUT_NAME)
-    set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${${_target}_OUTPUT_NAME})
+  if(OUTPUT_NAME)
+    set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
   endif()
 
-  if(${_target}_VERSION AND ${_target}_SOVERSION)
+  if(VERSION AND SOVERSION)
     set_target_properties(${_target} PROPERTIES
-      VERSION ${${_target}_VERSION}
-      SOVERSION ${${_target}_SOVERSION})
+      VERSION ${VERSION}
+      SOVERSION ${SOVERSION})
   endif()
 
   install(TARGETS ${_target}
@@ -220,40 +349,125 @@ function(EFL_LIB _target)
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
 
-  file(GLOB modules RELATIVE ${EFL_MODULES_SOURCE_DIR} ${EFL_MODULES_SOURCE_DIR}/*)
-  foreach(module ${modules})
-    if(IS_DIRECTORY ${EFL_MODULES_SOURCE_DIR}/${module})
-      set(EFL_MODULE_SCOPE ${module})
+  # do not leak those into binaries, modules or tests
+  unset(_sources)
+  unset(_headers)
+  unset(_obj_deps)
+  unset(INCLUDE_DIRECTORIES)
+  unset(SYSTEM_INCLUDE_DIRECTORIES)
+  unset(OUTPUT_NAME)
+  unset(SOURCES)
+  unset(PUBLIC_HEADERS)
+  unset(VERSION)
+  unset(SOVERSION)
+  unset(LIBRARY_TYPE)
+  unset(OBJECT_DEPENDS)
+  unset(DEPENDENCIES)
+  unset(LIBRARIES)
+  unset(DEFINITIONS)
 
-      include(${EFL_MODULES_SOURCE_DIR}/${module}/CMakeLists.txt OPTIONAL)
+  include(${EFL_BIN_SOURCE_DIR}/CMakeLists.txt OPTIONAL)
 
-      file(GLOB submodules RELATIVE ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE} ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/*)
-      foreach(submodule ${submodules})
-        if(IS_DIRECTORY ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/${submodule})
-          EFL_MODULE(${submodule})
-        endif()
-        unset(submodule)
-        unset(submodules)
-      endforeach()
-    else()
-      set(EFL_MODULE_SCOPE)
-      EFL_MODULE(${module})
-    endif()
-    unset(EFL_MODULE_SCOPE)
-  endforeach()
-  unset(module)
-  unset(modules)
+  _EFL_LIB_PROCESS_BINS_INTERNAL()
+  _EFL_LIB_PROCESS_MODULES_INTERNAL()
+  _EFL_LIB_PROCESS_TESTS_INTERNAL()
 
-  foreach(t ${${_target}_TESTS})
-    EFL_TEST(${t})
-  endforeach()
-  unset(t)
-  add_custom_target(${_target}-tests DEPENDS ${${_target}_TESTS})
-  add_custom_target(${_target}-modules DEPENDS ${${_target}_MODULES})
   LIST_APPEND_GLOBAL(EFL_ALL_LIBS ${_target})
-  LIST_APPEND_GLOBAL(EFL_ALL_TESTS ${_target}-tests)
 endfunction()
 
+# EFL_BIN(Name)
+#
+# Adds a binary (executable) for ${EFL_LIB_CURRENT} using
+# ${EFL_BIN_SOURCE_DIR} and ${EFL_BIN_BINARY_DIR}
+#
+# Settings:
+#  - INCLUDE_DIRECTORIES: results in target_include_directories
+#  - SYSTEM_INCLUDE_DIRECTORIES: results in target_include_directories(SYSTEM)
+#  - OUTPUT_NAME
+#  - SOURCES
+#  - OBJECT_DEPENDS: say this object depends on other files (ie: includes)
+#  - DEPENDENCIES: results in add_dependencies(), defaults to
+#    ${EFL_LIB_CURRENT}-modules
+#  - LIBRARIES: results in target_link_libraries()
+#  - DEFINITIONS: target_compile_definitions()
+#  - INSTALL_DIR: defaults to bin. If empty, won't install.
+#
+# NOTE: it's meant to be called by files included by EFL_LIB() or similar,
+# otherwise you need to prepare the environment yourself.
+function(EFL_BIN _binname)
+  set(INCLUDE_DIRECTORIES)
+  set(SYSTEM_INCLUDE_DIRECTORIES)
+  set(OUTPUT_NAME ${_binname})
+  set(SOURCES)
+  set(OBJECT_DEPENDS)
+  if(TARGET ${EFL_LIB_CURRENT}-modules)
+    set(DEPENDENCIES ${EFL_LIB_CURRENT}-modules)
+  else()
+    set(DEPENDENCIES)
+  endif()
+  set(LIBRARIES)
+  set(DEFINITIONS)
+  set(INSTALL ON)
+  set(INSTALL_DIR bin)
+
+  if(_binname STREQUAL ${EFL_LIB_CURRENT})
+    set(_binsrcdir "${EFL_BIN_SOURCE_DIR}")
+    set(_binbindir "${EFL_BIN_BINARY_DIR}")
+    set(_bintarget "${EFL_LIB_CURRENT}-bin") # otherwise target would exist
+  else()
+    set(_binsrcdir "${EFL_BIN_SOURCE_DIR}/${_binname}")
+    set(_binbindir "${EFL_BIN_BINARY_DIR}/${_binname}")
+    set(_bintarget "${_binname}")
+  endif()
+
+  include(${_binsrcdir}/CMakeLists.txt)
+
+  if(NOT SOURCES)
+    message(WARNING "${_binsrcdir}/CMakeLists.txt defines no SOURCES")
+    return()
+  endif()
+  if(PUBLIC_HEADERS)
+    message(WARNING "${_binsrcdir}/CMakeLists.txt should not define PUBLIC_HEADERS, it's not to be installed.")
+  endif()
+
+  EFL_FILES_TO_ABSOLUTE(_sources ${_binsrcdir} ${_binbindir} ${SOURCES})
+  EFL_FILES_TO_ABSOLUTE(_obj_deps ${_binsrcdir} ${_binbindir} ${OBJECT_DEPENDS})
+
+  add_executable(${_bintarget} ${_sources})
+
+  if(_obj_deps)
+    set_target_properties(${_bintarget} PROPERTIES
+      OBJECT_DEPENDS "${_obj_deps}")
+  endif()
+
+  if(DEPENDENCIES)
+    add_dependencies(${_bintarget} ${DEPENDENCIES})
+  endif()
+
+  target_include_directories(${_bintarget} PRIVATE
+    ${_binrcdir}
+    ${_binbindir}
+    ${INCLUDE_DIRECTORIES})
+  if(SYSTEM_INCLUDE_DIRECTORIES)
+    target_include_directories(${_bintarget} SYSTEM PRIVATE
+      ${SYSTEM_INCLUDE_DIRECTORIES})
+  endif()
+  target_link_libraries(${_bintarget}
+    ${EFL_LIB_CURRENT}
+    ${LIBRARIES})
+
+  if(DEFINITIONS)
+    target_compile_definitions(${_bintarget} PRIVATE ${DEFINITIONS})
+  endif()
+
+  if(OUTPUT_NAME)
+    set_target_properties(${_bintarget} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
+  endif()
+
+  if(INSTALL_DIR)
+    install(TARGETS ${_bintarget} RUNTIME DESTINATION ${INSTALL_DIR})
+  endif()
+endfunction()
 
 # EFL_TEST(Name)
 #
@@ -261,13 +475,15 @@ endfunction()
 # ${EFL_TESTS_SOURCE_DIR} and ${EFL_TESTS_BINARY_DIR}
 #
 # Settings:
-#  - include_directories to ${Name}_INCLUDE_DIRECTORIES
-#  - include_directories(SYSTEM) to ${Name}_SYSTEM_INCLUDE_DIRECTORIES
-#  - OUTPUT_NAME to ${Name}_OUTPUT_NAME
-#  - SOURCES to ${Name}_SOURCES
-#  - target_link_libraries() to ${Name}_LIBRARIES (${EFL_LIB_CURRENT}
-#    is automatic)
-#  - target_compile_definitions() to ${Name}_DEFINITIONS
+#  - INCLUDE_DIRECTORIES: results in target_include_directories
+#  - SYSTEM_INCLUDE_DIRECTORIES: results in target_include_directories(SYSTEM)
+#  - OUTPUT_NAME
+#  - SOURCES
+#  - OBJECT_DEPENDS: say this object depends on other files (ie: includes)
+#  - DEPENDENCIES: results in add_dependencies(), defaults to
+#    ${EFL_LIB_CURRENT}-modules
+#  - LIBRARIES: results in target_link_libraries()
+#  - DEFINITIONS: target_compile_definitions()
 #
 # NOTE: it's meant to be called by files included by EFL_LIB() or similar,
 # otherwise you need to prepare the environment yourself.
@@ -276,56 +492,85 @@ function(EFL_TEST _testname)
     message(STATUS "${EFL_LIB_CURRENT} test ${_testname} ignored since no 'check' library was found.")
     return()
   endif()
-  set(_sources "")
-  foreach(f ${${_testname}_SOURCES})
-    if(EXISTS "${EFL_TESTS_SOURCE_DIR}/${f}")
-      list(APPEND _sources "${EFL_TESTS_SOURCE_DIR}/${f}")
-    else()
-      list(APPEND _sources "${EFL_TESTS_BINARY_DIR}/${f}")
-    endif()
-  endforeach()
-  add_executable(${_testname} EXCLUDE_FROM_ALL ${_sources})
 
-  set(_deps "")
-  foreach(f ${${_testname}_DEPENDENCIES})
-    if(EXISTS "${EFL_TESTS_SOURCE_DIR}/${f}")
-      list(APPEND _deps "${EFL_TESTS_SOURCE_DIR}/${f}")
-    else()
-      list(APPEND _deps "${EFL_TESTS_BINARY_DIR}/${f}")
-    endif()
-  endforeach()
-  add_dependencies(${_testname} ${EFL_LIB_CURRENT}-modules)
-  set_target_properties(${_testname} PROPERTIES OBJECT_DEPENDS "${_deps}")
+  set(INCLUDE_DIRECTORIES)
+  set(SYSTEM_INCLUDE_DIRECTORIES)
+  set(OUTPUT_NAME ${_testname})
+  set(SOURCES)
+  set(OBJECT_DEPENDS)
+  if(TARGET ${EFL_LIB_CURRENT}-modules)
+    set(DEPENDENCIES ${EFL_LIB_CURRENT}-modules)
+  else()
+    set(DEPENDENCIES)
+  endif()
+  set(LIBRARIES)
+  set(DEFINITIONS)
 
-  target_include_directories(${_testname} PRIVATE
-    ${EFL_TESTS_SOURCE_DIR}
-    ${EFL_TESTS_BINARY_DIR}
-    ${${_testname}_INCLUDE_DIRECTORIES})
-  target_include_directories(${_testname} SYSTEM PRIVATE
-    ${${_testname}_SYSTEM_INCLUDE_DIRECTORIES}
-    ${CHECK_INCLUDE_DIRS})
-  target_link_libraries(${_testname}
-    ${EFL_LIB_CURRENT}
-    ${${_testname}_LIBRARIES}
-    ${CHECK_LIBRARIES})
-
-  target_compile_definitions(${_testname} PRIVATE
-    "-DTESTS_SRC_DIR=\"${EFL_TESTS_SOURCE_DIR}\""
-    "-DTESTS_BUILD_DIR=\"${EFL_TESTS_BINARY_DIR}\""
-    "-DTESTS_WD=\"${PROJECT_BINARY_DIR}\""
-    "-DPACKAGE_BUILD_DIR=\"1\""
-    ${${_testname}_DEFINITIONS}
-    )
-
-  if(${_testname}_OUTPUT_NAME)
-    set_target_properties(${_testname} PROPERTIES OUTPUT_NAME ${${_testname}_OUTPUT_NAME})
+  if(_testname STREQUAL ${EFL_LIB_CURRENT})
+    set(_testsrcdir "${EFL_TESTS_SOURCE_DIR}")
+    set(_testbindir "${EFL_TESTS_BINARY_DIR}")
+    set(_testtarget "${EFL_LIB_CURRENT}-test") # otherwise target would exist
+    set(OUTPUT_NAME "${EFL_LIB_CURRENT}_suite") # backward compatible
+  else()
+    set(_testsrcdir "${EFL_TESTS_SOURCE_DIR}/${_testname}")
+    set(_testbindir "${EFL_TESTS_BINARY_DIR}/${_testname}")
+    set(_testtarget "${EFL_LIB_CURRENT}-test-${_testname}")
   endif()
 
-  set_target_properties(${_testname} PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY "${EFL_TESTS_BINARY_DIR}"
-    RUNTIME_OUTPUT_DIRECTORY "${EFL_TESTS_BINARY_DIR}")
+  include(${_testsrcdir}/CMakeLists.txt)
 
-  add_test(NAME ${_testname} COMMAND ${_testname})
+  if(NOT SOURCES)
+    message(WARNING "${_testsrcdir}/CMakeLists.txt defines no SOURCES")
+    return()
+  endif()
+  if(PUBLIC_HEADERS)
+    message(WARNING "${_testsrcdir}/CMakeLists.txt should not define PUBLIC_HEADERS, it's not to be installed.")
+  endif()
+
+  EFL_FILES_TO_ABSOLUTE(_sources ${_testsrcdir} ${_testbindir} ${SOURCES})
+  EFL_FILES_TO_ABSOLUTE(_obj_deps ${_testsrcdir} ${_testbindir} ${OBJECT_DEPENDS})
+
+  add_executable(${_testtarget} EXCLUDE_FROM_ALL ${_sources})
+
+  if(_obj_deps)
+    set_target_properties(${_testtarget} PROPERTIES
+      OBJECT_DEPENDS "${_obj_deps}")
+  endif()
+
+  if(DEPENDENCIES)
+    add_dependencies(${_testtarget} ${DEPENDENCIES})
+  endif()
+
+  target_include_directories(${_testtarget} PRIVATE
+    ${_testrcdir}
+    ${_testbindir}
+    ${INCLUDE_DIRECTORIES})
+  target_include_directories(${_testtarget} SYSTEM PRIVATE
+    ${SYSTEM_INCLUDE_DIRECTORIES}
+    ${CHECK_INCLUDE_DIRS})
+  target_link_libraries(${_testtarget}
+    ${EFL_LIB_CURRENT}
+    ${LIBRARIES}
+    ${CHECK_LIBRARIES})
+
+  target_compile_definitions(${_testtarget} PRIVATE
+    "-DTESTS_SRC_DIR=\"${_testrcdir}\""
+    "-DTESTS_BUILD_DIR=\"${_testbindir}\""
+    "-DTESTS_WD=\"${PROJECT_BINARY_DIR}\""
+    "-DPACKAGE_BUILD_DIR=\"1\""
+    ${DEFINITIONS}
+    )
+
+  if(OUTPUT_NAME)
+    set_target_properties(${_testtarget} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
+  endif()
+
+  set_target_properties(${_testtarget} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${_testbindir}"
+    RUNTIME_OUTPUT_DIRECTORY "${_testbindir}")
+
+  add_test(NAME ${_testname} COMMAND ${_testtarget})
+  LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_TESTS ${_testtarget})
 endfunction()
 
 # EFL_MODULE(Name)
@@ -337,27 +582,34 @@ endfunction()
 #
 # To keep it simple to use, user is only expected to define variables:
 #  - SOURCES
-#  - DEPENDENCIES
+#  - OBJECT_DEPENDS
 #  - LIBRARIES
 #  - INCLUDE_DIRECTORIES
 #  - SYSTEM_INCLUDE_DIRECTORIES
 #  - DEFINITIONS
+#  - MODULE_TYPE: one of ON;OFF;STATIC, defaults to ON
+#  - INSTALL_DIR: defaults to
+#    lib/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${Name}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}/.
+#    If empty, won't install.
 #
 # NOTE: since the file will be included it shouldn't mess with global variables!
 function(EFL_MODULE _modname)
   if(EFL_MODULE_SCOPE)
     set(_modsrcdir ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/${_modname})
+    set(_modoutdir lib/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
   else()
     set(_modsrcdir ${EFL_MODULES_SOURCE_DIR}/${_modname})
+    set(_modoutdir lib/${EFL_LIB_CURRENT}/modules/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
   endif()
 
   set(SOURCES)
-  set(DEPENDENCIES)
+  set(OBJECT_DEPENDS)
   set(LIBRARIES)
   set(INCLUDE_DIRECTORIES)
   set(SYSTEM_INCLUDE_DIRECTORIES)
   set(DEFINITIONS)
   set(MODULE_TYPE "ON")
+  set(INSTALL_DIR ${_modoutdir})
 
   include(${_modsrcdir}/CMakeLists.txt)
 
@@ -365,19 +617,19 @@ function(EFL_MODULE _modname)
     message(WARNING "${_modsrcdir}/CMakeLists.txt defines no SOURCES")
     return()
   endif()
+  if(PUBLIC_HEADERS)
+    message(WARNING "${_modsrcdir}/CMakeLists.txt should not define PUBLIC_HEADERS, it's not to be installed.")
+  endif()
 
   if(EFL_MODULE_SCOPE)
     set(_modbindir ${EFL_MODULES_BINARY_DIR}/${EFL_MODULE_SCOPE}/${_modname})
     set(_modtarget ${EFL_LIB_CURRENT}-module-${EFL_MODULE_SCOPE}-${_modname})
-    set(_modoutdir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
   else()
     set(_modbindir ${EFL_MODULES_BINARY_DIR}/${_modname})
     set(_modtarget ${EFL_LIB_CURRENT}-module-${_modname})
-    set(_modoutdir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${EFL_LIB_CURRENT}/modules/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
   endif()
 
   if("${MODULE_TYPE}" STREQUAL "OFF")
-    message(WARNING "${_modsrcdir} disabled")
     return()
   elseif("${MODULE_TYPE}" STREQUAL "STATIC")
     set(_modtype STATIC)
@@ -385,27 +637,12 @@ function(EFL_MODULE _modname)
     set(_modtype MODULE)
   endif()
 
-  set(_sources "")
-  foreach(f ${SOURCES})
-    if(EXISTS "${_modsrcdir}/${f}")
-      list(APPEND _sources "${_modsrcdir}/${f}")
-    else()
-      list(APPEND _sources "${_modbindir}/${f}")
-    endif()
-  endforeach()
-
-  set(_deps "")
-  foreach(f ${DEPENDENCIES})
-    if(EXISTS "${_modsrcdir}/${f}")
-      list(APPEND _deps "${_modsrcdir}/${f}")
-    else()
-      list(APPEND _deps "${_modbindir}/${f}")
-    endif()
-  endforeach()
+  EFL_FILES_TO_ABSOLUTE(_sources ${_modsrcdir} ${_modbindir} ${SOURCES})
+  EFL_FILES_TO_ABSOLUTE(_obj_deps ${_modsrcdir} ${_modbindir} ${OBJECT_DEPENDS})
 
   add_library(${_modtarget} ${_modtype} ${_sources})
   set_target_properties(${_modtarget} PROPERTIES
-    OBJECT_DEPENDS "${_deps}"
+    OBJECT_DEPENDS "${_obj_deps}"
     PREFIX ""
     OUTPUT_NAME "module")
 
@@ -436,5 +673,8 @@ function(EFL_MODULE _modname)
   else()
     target_link_libraries(${_modtarget} ${EFL_LIB_CURRENT})
     LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_MODULES ${_modtarget})
+    if(INSTALL_DIR)
+      install(TARGETS ${_modtarget} LIBRARY DESTINATION "${INSTALL_DIR}")
+    endif()
   endif()
 endfunction()

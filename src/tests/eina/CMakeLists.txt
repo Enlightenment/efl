@@ -1,8 +1,6 @@
-set(eina_TESTS eina_suite)
+set(LIBRARIES m)
 
-set(eina_suite_LIBRARIES m)
-
-set(eina_suite_SOURCES
+set(SOURCES
   eina_suite.c
   eina_suite.h
   eina_suite.x
@@ -60,7 +58,7 @@ set(eina_suite_SOURCES
   eina_test_xattr.c
   )
 
-set(eina_suite_DEPENDS
+set(DEPENDS
   eina_test_stringshare.c
   eina_test_util.c
   )

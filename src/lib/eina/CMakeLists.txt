@@ -1,11 +1,12 @@
 
-set(eina_INCLUDE_DIRECTORIES ${VG_INCLUDE_DIRS})
+set(INCLUDE_DIRECTORIES
+  ${VG_INCLUDE_DIRS})
 
-set(eina_LIBRARIES
+set(LIBRARIES
   ${VG_LIBRARIES}
   pthread)
 
-set(eina_HEADERS
+set(PUBLIC_HEADERS
   Eina.h
   eina_accessor.h
   eina_alloca.h
@@ -81,7 +82,7 @@ set(eina_HEADERS
   eina_xattr.h
   )
 
-LIST(APPEND eina_SOURCES
+set(SOURCES
   eina_abi.c
   eina_accessor.c
   eina_array.c
