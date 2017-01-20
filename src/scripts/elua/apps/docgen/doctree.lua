@@ -227,6 +227,14 @@ M.Class = Node:clone {
         return ret
     end,
 
+    implements_get = function(self)
+        local ret = {}
+        for impl in self.class:implements_get() do
+            ret[#ret + 1] = M.Implement(ret)
+        end
+        return ret
+    end,
+
     c_get_function_name_get = function(self)
         return self.class:c_get_function_name_get()
     end,
@@ -307,6 +315,10 @@ M.Function = Node:clone {
     doc_get = function(self, ft)
         -- TODO: handle overridden docs sanely
         return M.Doc(self.func:implement_get():documentation_get(ft))
+    end,
+
+    implement_get = function(self)
+        return M.Implement(self.func:implement_get())
     end,
 
     fallback_doc_get = function(self, ft)
@@ -410,7 +422,7 @@ M.Function = Node:clone {
 }
 
 M.Parameter = Node:clone {
-    UNKNOWN = eolian.param_dir.UNKNOWN,
+    UNKNOWN = eolian.parameter_dir.UNKNOWN,
     IN = eolian.parameter_dir.IN,
     OUT = eolian.parameter_dir.OUT,
     INOUT = eolian.parameter_dir.INOUT,
@@ -1270,6 +1282,50 @@ M.Expression = Node:clone {
 
     serialize = function(self)
         return self.expr:serialize()
+    end
+}
+
+M.Implement = Node:clone {
+    __ctor = function(self, impl)
+        self.impl = impl
+        assert(self.impl)
+    end,
+
+    full_name_get = function(self)
+        return self.impl:full_name_get()
+    end,
+
+    class_get = function(self)
+        return M.Class(self.impl:class_get())
+    end,
+
+    function_get = function(self)
+        local func, tp = self.impl:function_get()
+        return M.Function(func), tp
+    end,
+
+    doc_get = function(self, ftype)
+        return M.Doc(self.impl:documentation_get(ftype))
+    end,
+
+    is_auto = function(self, ftype)
+        return self.impl:is_auto(ftype)
+    end,
+
+    is_empty = function(self, ftype)
+        return self.impl:is_empty(ftype)
+    end,
+
+    is_pure_virtual = function(self, ftype)
+        return self.impl:is_pure_virtual(ftype)
+    end,
+
+    is_prop_get = function(self)
+        return self.impl:is_prop_get()
+    end,
+
+    is_prop_set = function(self)
+        return self.impl:is_prop_set()
     end
 }
 
