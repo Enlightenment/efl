@@ -70,6 +70,26 @@ class Core
     }
 }
 
+class EoEvents
+{
+    public bool called = false;
+    protected void callback(object sender, EventArgs e) {
+        called = true;
+    }
+    protected void another_callback(object sender, EventArgs e) { }
+
+    public static void callback_add_event()
+    {
+        efl.Loop loop = new efl.LoopConcrete();
+        EoEvents listener = new EoEvents();
+        loop.CALLBACK_ADD += listener.callback;
+
+        Test.Assert(!listener.called);
+        loop.IDLE += listener.another_callback;
+        Test.Assert(listener.called);
+    }
+}
+
 class Evas
 {
     private static string ImagePath([CallerFilePath] string folder="")
