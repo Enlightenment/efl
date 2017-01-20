@@ -172,7 +172,11 @@ elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char
    line->length += length;
 
    file = line->file;
-   elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+   if (file->parent)
+     {
+        _elm_code_parse_line(file->parent, line);
+        elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+     }
 }
 
 EAPI void
@@ -207,7 +211,11 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
    line->length -= length;
 
    file = line->file;
-   elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+   if (file->parent)
+     {
+        _elm_code_parse_line(file->parent, line);
+        elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+     }
 }
 
 Eina_Bool

@@ -75,6 +75,7 @@ static const Efl_Test_Case etc[] = {
   { "elm_code_file_load", elm_code_file_test_load },
   { "elm_code_file_memory", elm_code_file_test_memory },
   { "elm_code_parse", elm_code_test_parse },
+  { "elm_code_syntax", elm_code_test_syntax },
   { "elm_code_text", elm_code_test_text },
   { "elm_code_indent", elm_code_test_indent },
   { "elm_code_basic", elm_code_test_basic },

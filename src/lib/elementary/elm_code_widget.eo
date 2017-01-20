@@ -140,13 +140,24 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       }
       @property show_whitespace {
          set {
-            [[Set where white space should be shown.]]
+            [[Set whether white space should be shown.]]
          }
          get {
             [[Get whether or not white space will be visible.]]
          }
          values {
             show_whitespace: bool; [[Whether or not we show whitespace characters]]
+         }
+      }
+      @property syntax_enabled {
+         set {
+            [[Set whether syntax highlighting should be use for this widget.]]
+         }
+         get {
+            [[Get this widget's enabled state for syntax highlighting.]]
+         }
+         values {
+            syntax_enabled: bool; [[Whether or not to enable syntax highlighting]]
          }
       }
       @property tab_inserts_spaces {

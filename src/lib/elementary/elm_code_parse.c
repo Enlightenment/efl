@@ -6,6 +6,7 @@
 
 #include "elm_code_private.h"
 
+EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_SYNTAX = NULL;
 EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_DIFF = NULL;
 EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO = NULL;
 
@@ -126,6 +127,34 @@ _elm_code_parser_diff_trim_leading(Elm_Code_Line *line, unsigned int count)
    line->length -= count;
 }
 
+#define _PARSE_C_SYMBOLS "{}()[]:;*&|!=<->,."
+#define _PARSE_C_KEYWORDS {"auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else", \
+  "enum", "extern", "float", "for", "goto", "if", "int", "long", "register", "return", "short", "signed", "sizeof", \
+  "static", "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while", NULL}
+
+static void
+_elm_code_parser_syntax_parse_line(Elm_Code_Line *line, void *data EINA_UNUSED)
+{
+   Elm_Code_Syntax *syntax;
+
+   syntax = elm_code_syntax_for_mime_get(line->file->mime);
+   if (syntax)
+     elm_code_syntax_parse_line(syntax, line);
+}
+
+static void
+_elm_code_parser_syntax_parse_file(Elm_Code_File *file, void *data EINA_UNUSED)
+{
+   Elm_Code_Syntax *syntax;
+   INF("Parse syntax of file with mime \"%s\"", file->mime);
+
+   syntax = elm_code_syntax_for_mime_get(file->mime);
+   if (!syntax)
+     WRN("Unsupported mime in parser");
+   else
+     elm_code_syntax_parse_file(syntax, file);
+}
+
 static void
 _elm_code_parser_diff_parse_line(Elm_Code_Line *line, void *data EINA_UNUSED)
 {
@@ -200,6 +229,8 @@ _elm_code_parser_free(Elm_Code_Parser *parser)
 void
 _elm_code_parse_setup()
 {
+   ELM_CODE_PARSER_STANDARD_SYNTAX = _elm_code_parser_new(_elm_code_parser_syntax_parse_line,
+                                                          _elm_code_parser_syntax_parse_file);
    ELM_CODE_PARSER_STANDARD_DIFF = _elm_code_parser_new(_elm_code_parser_diff_parse_line,
                                                         _elm_code_parser_diff_parse_file);
    ELM_CODE_PARSER_STANDARD_TODO = _elm_code_parser_new(_elm_code_parser_todo_parse_line, NULL);

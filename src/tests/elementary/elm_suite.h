@@ -75,6 +75,7 @@ void elm_code_file_test_memory(TCase *tc);
 void elm_code_test_basic(TCase *tc);
 void elm_code_test_line(TCase *tc);
 void elm_code_test_parse(TCase *tc);
+void elm_code_test_syntax(TCase *tc);
 void elm_code_test_text(TCase *tc);
 void elm_code_test_indent(TCase *tc);
 void elm_code_test_widget(TCase *tc);

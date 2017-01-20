@@ -109,6 +109,39 @@ _elm_code_test_editor_setup(Evas_Object *parent, Eina_Bool log)
 }
 
 static Evas_Object *
+_elm_code_test_syntax_setup(Evas_Object *parent)
+{
+   Elm_Code *code;
+   Elm_Code_Widget *widget;
+
+   code = elm_code_create();
+   widget = efl_add(ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
+   elm_obj_code_widget_font_set(widget, NULL, 14);
+   elm_obj_code_widget_editable_set(widget, EINA_TRUE);
+   elm_obj_code_widget_syntax_enabled_set(widget, EINA_TRUE);
+   elm_obj_code_widget_code_get(widget)->file->mime = "text/x-csrc";
+   elm_obj_code_widget_show_whitespace_set(widget, EINA_TRUE);
+   elm_obj_code_widget_line_numbers_set(widget, EINA_TRUE);
+
+   _append_line(code->file, "#include <stdio.h>");
+   _append_line(code->file, "int main(int argc, char **argv)");
+   _append_line(code->file, "{");
+   _append_line(code->file, "   // display a welcome greeting");
+   _append_line(code->file, "   if (argc > 0)");
+   _append_line(code->file, "     printf(\"Hello, %s!\\n\", argv[0]);");
+   _append_line(code->file, "   else");
+   _append_line(code->file, "     printf(\"Hello, World!\\n\");");
+   _append_line(code->file, "   return 0;");
+   _append_line(code->file, "}");
+
+   evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(widget);
+
+   return widget;
+}
+
+static Evas_Object *
 _elm_code_test_mirror_setup(Elm_Code *code, char *font_name, Evas_Object *parent)
 {
    Elm_Code_Widget *widget;
@@ -195,6 +228,21 @@ test_code_editor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    screen = elm_box_add(win);
    evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(screen, _elm_code_test_editor_setup(screen, EINA_FALSE));
+   elm_win_resize_object_add(win, screen);
+   evas_object_show(screen);
+
+   evas_object_show(win);
+}
+
+void
+test_code_syntax(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *screen;
+
+   win = _test_code_win_create("code-syntax", "Code Syntax");
+   screen = elm_box_add(win);
+   evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(screen, _elm_code_test_syntax_setup(screen));
    elm_win_resize_object_add(win, screen);
    evas_object_show(screen);
 

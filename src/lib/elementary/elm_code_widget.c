@@ -2076,6 +2076,30 @@ _elm_code_widget_show_whitespace_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *
 }
 
 EOLIAN static void
+_elm_code_widget_syntax_enabled_set(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED,
+                                    Eina_Bool enabled)
+{
+   Elm_Code_Widget *widget = obj;
+   Elm_Code *code;
+
+   code = elm_code_widget_code_get(widget);
+   if (enabled)
+     elm_code_parser_standard_add(code, ELM_CODE_PARSER_STANDARD_SYNTAX);
+   else
+     code->parsers = eina_list_remove(code->parsers, ELM_CODE_PARSER_STANDARD_SYNTAX);
+}
+
+EOLIAN static Eina_Bool
+_elm_code_widget_syntax_enabled_get(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED)
+{
+   Elm_Code_Widget *widget = obj;
+   Elm_Code *code;
+
+   code = elm_code_widget_code_get(widget);
+   return !!eina_list_data_find(code->parsers, ELM_CODE_PARSER_STANDARD_SYNTAX);
+}
+
+EOLIAN static void
 _elm_code_widget_tab_inserts_spaces_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
                                         Eina_Bool spaces)
 {

@@ -22,6 +22,7 @@ struct _Elm_Code_File
    Eina_List *lines;
    Eina_File *file;
    void *map;
+   const char *mime;
 
    Elm_Code_File_Line_Ending line_ending;
 };

@@ -278,7 +278,8 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_code_text.h \
 	lib/elementary/elm_code_indent.h \
 	lib/elementary/elm_code_file.h \
-	lib/elementary/elm_code_parse.h
+	lib/elementary/elm_code_parse.h \
+	lib/elementary/elm_code_syntax.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 nodist_includesunstable_HEADERS = \
@@ -557,6 +558,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_code_indent.c \
 	lib/elementary/elm_code_file.c \
 	lib/elementary/elm_code_parse.c \
+	lib/elementary/elm_code_syntax.c \
 	lib/elementary/elm_code_widget_selection.c \
 	lib/elementary/elm_code_widget.c \
 	lib/elementary/elm_code_diff_widget.c \
@@ -1321,6 +1323,7 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_code_test_basic.c \
 	tests/elementary/elm_code_test_line.c \
 	tests/elementary/elm_code_test_parse.c \
+	tests/elementary/elm_code_test_syntax.c \
 	tests/elementary/elm_code_test_text.c \
 	tests/elementary/elm_code_test_indent.c \
 	tests/elementary/elm_code_test_widget.c \

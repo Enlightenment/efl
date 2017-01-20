@@ -1,6 +1,8 @@
 #ifndef ELM_CODE_PRIVATE_H
 # define ELM_CODE_PRIVATE_H
 
+#include "elm_priv.h"
+
 Eina_Bool _elm_code_text_char_is_whitespace(char c);
 
 /* Private parser callbacks */
