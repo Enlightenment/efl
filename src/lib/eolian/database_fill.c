@@ -148,6 +148,13 @@ _db_fill_implements(Eolian_Class *cl)
              fprintf(stderr, "duplicate implement '%s'\n", impl->full_name);
              return EINA_FALSE;
           }
+        if (impl->klass != cl)
+          {
+             if (!_db_fill_implement(cl, impl))
+               return EINA_FALSE;
+             if (eolian_function_is_constructor(impl->foo_id, impl->klass))
+               database_function_constructor_add((Eolian_Function *)impl->foo_id, cl);
+          }
         if ((impl->klass != cl) && !_db_fill_implement(cl, impl))
           return EINA_FALSE;
         eina_hash_add(prop ? pth : th, impl->full_name, impl->full_name);
@@ -188,6 +195,14 @@ _db_fill_ctors(Eolian_Class *cl)
              return EINA_FALSE;
           }
         ctor->klass = tcl;
+        const Eolian_Function *cfunc = eolian_constructor_function_get(ctor);
+        if (!cfunc)
+          {
+             _print_linecol(&ctor->base);
+             fprintf(stderr, "unable to find function '%s'\n", ctor->full_name);
+             return EINA_FALSE;
+          }
+        database_function_constructor_add((Eolian_Function *)cfunc, tcl);
         eina_hash_add(th, ctor->full_name, ctor->full_name);
      }
    eina_hash_free(th);
@@ -213,18 +228,12 @@ _db_fill_class(Eolian_Class *cl)
 Eina_Bool
 eo_parser_database_fill(const char *filename, Eina_Bool eot)
 {
-   Eolian_Constructor *ctor;
-   Eolian_Implement *impl;
-   Eina_Iterator *itr;
-   Eolian_Class *cl;
-   Eo_Lexer *ls;
-
    if (eina_hash_find(_parsedeos, filename))
      return EINA_TRUE;
 
    eina_hash_set(_parsingeos, filename, (void *)EINA_TRUE);
 
-   ls = eo_lexer_new(filename);
+   Eo_Lexer *ls = eo_lexer_new(filename);
    if (!ls)
      {
         fprintf(stderr, "eolian: unable to create lexer for file '%s'\n", filename);
@@ -239,6 +248,8 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
 
    if (eot) goto done;
 
+   Eolian_Class *cl;
+
    if (!(cl = ls->tmp.kls))
      {
         fprintf(stderr, "eolian: no class for file '%s'\n", filename);
@@ -248,38 +259,6 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
 
    if (!_db_fill_class(cl))
      goto error;
-
-   itr = eolian_class_implements_get(cl);
-   EINA_ITERATOR_FOREACH(itr, impl)
-     {
-        Eolian_Function_Type impl_type = EOLIAN_UNRESOLVED;
-        const Eolian_Function *impl_func = eolian_implement_function_get(impl, &impl_type);
-        if (!impl_func)
-          {
-             fprintf(stderr, "eolian: unable to find function '%s'\n",
-                     eolian_implement_full_name_get(impl));
-             eina_iterator_free(itr);
-             goto error;
-          }
-        else if (eolian_function_is_constructor(impl->foo_id, impl->klass))
-          database_function_constructor_add((Eolian_Function*)impl->foo_id, cl);
-     }
-   eina_iterator_free(itr);
-   itr = eolian_class_constructors_get(cl);
-   EINA_ITERATOR_FOREACH(itr, ctor)
-     {
-        const Eolian_Function *ctor_func = eolian_constructor_function_get(ctor);
-        if (!ctor_func)
-          {
-             fprintf(stderr, "eolian: unable to find function '%s'\n",
-                     eolian_constructor_full_name_get(ctor));
-             eina_iterator_free(itr);
-             goto error;
-          }
-        else
-          database_function_constructor_add((Eolian_Function*)ctor_func, ctor->klass);
-     }
-   eina_iterator_free(itr);
 
 done:
    eina_hash_set(_parsedeos, filename, (void *)EINA_TRUE);
