@@ -334,18 +334,6 @@ M.Function = Node:clone {
         return nil
     end,
 
-    is_pure_virtual = function(self, ft)
-        return self.func:implement_get():is_pure_virtual(ft)
-    end,
-
-    is_auto = function(self, ft)
-        return self.func:implement_get():is_auto(ft)
-    end,
-
-    is_empty = function(self, ft)
-        return self.func:implement_get():is_empty(ft)
-    end,
-
     is_legacy_only = function(self, ft)
         return self.func:is_legacy_only(ft)
     end,
