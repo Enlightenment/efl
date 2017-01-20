@@ -41,7 +41,7 @@ lib/efl/Efl.eo.hh: $(efl_eolian_files) $(_EOLIAN_CXX_DEP)
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
 
-CLEANFILES += $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/efl/Efl.hh
+CLEANFILES += $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/efl/Efl.eo.hh
 
 ### Evas C++
 installed_evascxxmainheadersdir = $(includedir)/evas-cxx-@VMAJ@/
