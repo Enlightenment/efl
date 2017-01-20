@@ -172,6 +172,13 @@ M.Writer = util.Object:clone {
         ns[#ns] = nil
     end,
 
+    write_inherited = function(self, ns)
+        ns[#ns + 1] = true
+        self:write_include(self.INCLUDE_PAGE, ns, {
+            editbutton = false, date = false, user = false, link = false
+        })
+    end,
+
     write_fmt = function(self, fmt1, fmt2, ...)
         self:write_raw(fmt1, ...)
         self:write_raw(fmt2)

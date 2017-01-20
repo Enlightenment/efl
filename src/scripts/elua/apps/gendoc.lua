@@ -325,37 +325,6 @@ local build_reftable = function(f, title, ctitle, ctype, t, iscl)
     f:write_nl()
 end
 
-local build_functable = function(f, title, ctitle, cl, tp)
-    local t = cl:functions_get(tp)
-    if #t == 0 then
-        return
-    end
-    f:write_h(title, 2)
-    local nt = {}
-    for i, v in ipairs(t) do
-        local lbuf = writer.Buffer()
-        lbuf:write_link(v:nspaces_get(cl, true), v:name_get())
-        local pt = propt_to_type[v:type_get()]
-        if pt then
-            lbuf:write_raw(" ")
-            lbuf:write_i(pt)
-        end
-        local fimp = v:implement_get()
-        nt[#nt + 1] = {
-            lbuf:finish(),
-            fimp:doc_get(v.METHOD):brief_get(fimp:fallback_doc_get())
-        }
-        if v:type_str_get() == "property" then
-            build_property(v, cl)
-        else
-            build_method(v, cl)
-        end
-    end
-    table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
-    f:write_table({ ctitle, "Brief description" }, nt)
-    f:write_nl()
-end
-
 local build_ref = function()
     local f = writer.Writer("reference", "EFL Reference")
 
@@ -693,6 +662,59 @@ local build_igraph = function(cl)
     return graph
 end
 
+local build_functable = function(f, title, ctitle, cl, tbl, over)
+    if #tbl == 0 then
+        return
+    end
+    f:write_h(title, 2)
+    local nt = {}
+    for i, impl in ipairs(tbl) do
+        local lbuf = writer.Buffer()
+        local func = impl:function_get()
+        lbuf:write_link(func:nspaces_get(cl, true), func:name_get())
+
+        local ft = dtree.Function.METHOD
+        if impl:is_prop_get() and impl:is_prop_set() then
+            ft = dtree.Function.PROPERTY
+        elseif impl:is_prop_get() then
+            ft = dtree.Function.PROP_GET
+        elseif impl:is_prop_set() then
+            ft = dtree.Function.PROP_SET
+        end
+
+        local pt = propt_to_type[ft]
+        if pt then
+            lbuf:write_raw(" ")
+            local llbuf = writer.Buffer()
+            llbuf:write_b(pt)
+            lbuf:write_i(llbuf:finish())
+        end
+
+        if over then
+            lbuf:write_raw(" ")
+            local llbuf = writer.Buffer()
+            local icl = impl:class_get()
+            llbuf:write_raw("[from ")
+            llbuf:write_link(icl:nspaces_get(true), icl:full_name_get())
+            llbuf:write_raw("]")
+            lbuf:write_i(llbuf:finish())
+        end
+
+        nt[#nt + 1] = {
+            lbuf:finish(),
+            impl:doc_get(func.METHOD, true):brief_get(impl:fallback_doc_get(true))
+        }
+        if impl:is_prop_get() or impl:is_prop_set() then
+            build_property(impl, cl)
+        else
+            build_method(impl, cl)
+        end
+    end
+    table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
+    f:write_table({ ctitle, "Brief description" }, nt)
+    f:write_nl()
+end
+
 local build_class = function(cl)
     local cln = cl:nspaces_get()
     local f = writer.Writer(cln, cl:full_name_get())
@@ -718,9 +740,27 @@ local build_class = function(cl)
     f:write_editable(cln, "description")
     f:write_nl()
 
-    build_functable(f, "Methods", "Method name", cl, dtree.Function.METHOD)
-    build_functable(f, "Properties", "Property name",
-        cl, dtree.Function.PROPERTY)
+    local meths, props, methos, propos = {}, {}, {}, {}
+    for i, impl in ipairs(cl:implements_get()) do
+        if impl:is_prop_get() or impl:is_prop_set() then
+            if impl:is_overridden(cl) then
+                propos[#propos + 1] = impl
+            else
+                props[#props + 1] = impl
+            end
+        else
+            if impl:is_overridden(cl) then
+                methos[#methos + 1] = impl
+            else
+                meths[#meths + 1] = impl
+            end
+        end
+    end
+
+    build_functable(f, "Methods", "Method name", cl, meths, false)
+    build_functable(f, "Properties", "Property name", cl, props, false)
+    build_functable(f, "Overridden Methods", "Method name", cl, methos, true)
+    build_functable(f, "Overridden Properties", "Property name", cl, propos, true)
 
     f:write_h("Events", 2)
     local evs = cl:events_get()
@@ -931,29 +971,55 @@ local build_vallist = function(f, pg, ps, title)
     end
 end
 
-build_method = function(fn, cl)
+local find_parent_impl
+find_parent_impl = function(fulln, cl)
+    for i, inh in ipairs(cl:inherits_get()) do
+        local pcl = dtree.Class.by_name_get(inh)
+        for j, impl in ipairs(pcl:implements_get()) do
+            if impl:full_name_get() == fulln then
+                return impl, pcl
+            end
+        end
+        local pimpl, pcl = find_parent_impl(fulln, pcl)
+        if pimpl then
+            return pimpl, pcl
+        end
+    end
+    -- unreachable with a validated database
+end
+
+build_method = function(impl, cl)
+    local over = impl:is_overridden(cl)
+    local fn = impl:function_get()
     local mns = fn:nspaces_get(cl)
     local f = writer.Writer(mns, cl:full_name_get() .. "." .. fn:name_get())
     stats.check_method(fn, cl)
 
-    f:write_h("Signature", 2)
-    f:write_code(gen_method_sig(fn, cl))
-    f:write_nl()
+    local doc = impl:doc_get(fn.METHOD)
+    if over and not doc:exists() then
+        local pimpl, pcl = find_parent_impl(impl:full_name_get(), cl)
+        f:write_inherited(fn:nspaces_get(pcl))
+        f:write_nl()
+    else
+        f:write_h("Signature", 2)
+        f:write_code(gen_method_sig(fn, cl))
+        f:write_nl()
 
-    f:write_h("C signature", 2)
-    f:write_code(gen_func_csig(fn, mns), "c")
-    f:write_nl()
+        f:write_h("C signature", 2)
+        f:write_code(gen_func_csig(fn, mns), "c")
+        f:write_nl()
 
-    local pars = fn:parameters_get()
-    if #pars > 0 then
-        f:write_h("Parameters", 2)
-        build_parlist(f, pars)
+        local pars = fn:parameters_get()
+        if #pars > 0 then
+            f:write_h("Parameters", 2)
+            build_parlist(f, pars)
+            f:write_nl()
+        end
+
+        f:write_h("Description", 2)
+        f:write_raw(impl:doc_get(fn.METHOD):full_get(nil, true))
         f:write_nl()
     end
-
-    f:write_h("Description", 2)
-    f:write_raw(fn:implement_get():doc_get(fn.METHOD):full_get(nil, true))
-    f:write_nl()
 
     f:write_editable(mns, "description")
     f:write_nl()
@@ -961,7 +1027,8 @@ build_method = function(fn, cl)
     f:finish()
 end
 
-build_property = function(fn, cl)
+build_property = function(impl, cl)
+    local fn = impl:function_get()
     local pns = fn:nspaces_get(cl)
     local f = writer.Writer(pns, cl:full_name_get() .. "." .. fn:name_get())
 

@@ -230,7 +230,7 @@ M.Class = Node:clone {
     implements_get = function(self)
         local ret = {}
         for impl in self.class:implements_get() do
-            ret[#ret + 1] = M.Implement(ret)
+            ret[#ret + 1] = M.Implement(impl)
         end
         return ret
     end,
@@ -1274,16 +1274,16 @@ M.Implement = Node:clone {
         return M.Function(func), tp
     end,
 
-    doc_get = function(self, ftype)
+    doc_get = function(self, ftype, inh)
         return M.Doc(self.impl:documentation_get(ftype))
     end,
 
-    fallback_doc_get = function(self)
+    fallback_doc_get = function(self, inh)
         local ig, is = self:is_prop_get(), self:is_prop_set()
         if ig and not is then
-            return self:doc_get(M.Function.PROP_GET)
+            return self:doc_get(M.Function.PROP_GET, inh)
         elseif is and not ig then
-            return self:doc_get(M.Function.PROP_SET)
+            return self:doc_get(M.Function.PROP_SET, inh)
         end
         return nil
     end,
@@ -1306,6 +1306,10 @@ M.Implement = Node:clone {
 
     is_prop_set = function(self)
         return self.impl:is_prop_set()
+    end,
+
+    is_overridden = function(self, cl)
+        return cl.class ~= self.impl:class_get()
     end
 }
 
