@@ -1,3 +1,28 @@
+# NOTE:
+#
+# - Use function() whenever possible, macro() doesn't start a new
+#   variable scope and needs careful handling to avoid left overs.
+#
+# - To 'export' values or lists, use the macros SET_GLOBAL() and
+#   LIST_APPEND_GLOBAL().
+#
+
+# LIST_APPEND_GLOBAL(Var Element)
+#
+# Append to a list in the global variable scope (cache internal)
+function(LIST_APPEND_GLOBAL _var _element)
+  set(_local ${${_var}})
+  list(APPEND _local ${_element})
+  set(${_var} ${_local} CACHE INTERNAL "")
+endfunction()
+
+# SET_GLOBAL(Var Value [Help])
+#
+# Set a variable in the global variable scope (cache internal)
+function(SET_GLOBAL _var _value)
+  set(${_var} "${_value}" CACHE INTERNAL "${ARGN}")
+endfunction()
+
 # EFL_OPTION(Name Help Default)
 #
 # Declare an option() that will be automatically printed by
@@ -5,48 +30,47 @@
 #
 # To extend the EFL_OPTIONS_SUMMARY() message, use
 # EFL_OPTION_SET_MESSAGE(Name Message)
-macro(EFL_OPTION _name _help _defval)
-  set(_extra_args ${ARGN})
+function(EFL_OPTION _name _help _defval)
   set(_type)
+  set(_vartype)
   set(_choices)
-  list(LENGTH _extra_args _argc)
+  list(LENGTH ARGN _argc)
   if(_argc LESS 1)
     set(_type BOOL)
+    set(_vartype BOOL)
   else()
-    list(GET _extra_args 0 _type)
-    list(REMOVE_AT _extra_args 0)
+    list(GET ARGN 0 _type)
+    set(_vartype ${_type})
+    list(REMOVE_AT ARGN 0)
   endif()
-  if(${_type} STREQUAL "CHOICE")
+  if(${_vartype} STREQUAL "CHOICE")
     set(_type STRING)
-    set(EFL_OPTION_CHOICES_${_name} ${_extra_args})
-    set(_choices " (Choices: ${_extra_args})")
+    SET_GLOBAL(EFL_OPTION_CHOICES_${_name} "${ARGN}" "Possible values for ${_name}")
+    set(_choices " (Choices: ${ARGN})")
   endif()
-  list(APPEND EFL_ALL_OPTIONS ${_name})
-  set(EFL_OPTION_DEFAULT_${_name} "${_defval}")
-  set(EFL_OPTION_TYPE_${_name} "${_type}")
+
+  LIST_APPEND_GLOBAL(EFL_ALL_OPTIONS ${_name})
+
+  SET_GLOBAL(EFL_OPTION_DEFAULT_${_name} "${_defval}" "Default value for ${_name}")
+  SET_GLOBAL(EFL_OPTION_TYPE_${_name} "${_vartype}" "Type of ${_name}")
   set(${_name} ${_defval} CACHE ${_type} "${_help}${_choices}")
   option(${_name} "${_help}${_choices}" ${_defval})
 
-  if(_extra_args)
-    list(FIND _extra_args ${${_name}} RET)
-    if(${RET} EQUAL -1)
+  if(_choices)
+    list(FIND ARGN "${${_name}}" _ret)
+    if(${_ret} EQUAL -1)
       message(FATAL_ERROR "Invalid choice ${_name}=${${_name}}${_choices}")
     endif()
   endif()
-
-  unset(_type)
-  unset(_choices)
-  unset(_extra_args)
-  unset(_argc)
-endmacro()
+endfunction()
 
 # EFL_OPTION_SET_MESSAGE(Name Message)
 #
 # Extends the summary line output by EFL_OPTIONS_SUMMARY()
 # with more details.
-macro(EFL_OPTION_SET_MESSAGE _name _message)
-  set(EFL_OPTION_MESSAGE_${_name} "${_message}")
-endmacro()
+function(EFL_OPTION_SET_MESSAGE _name _message)
+  SET_GLOBAL(EFL_OPTION_MESSAGE_${_name} "${_message}")
+endfunction()
 
 # EFL_OPTIONS_SUMMARY()
 # Shows the summary of options, their values and related messages.
@@ -64,6 +88,8 @@ function(EFL_OPTIONS_SUMMARY)
     endif()
     if(EFL_OPTION_MESSAGE_${_o})
       set(_m " [${EFL_OPTION_MESSAGE_${_o}}]")
+    else()
+      set(_m)
     endif()
     message(STATUS "  ${_o}=${_v} (${_i})${_m}")
   endforeach()
@@ -85,10 +111,13 @@ endfunction()
 set(EFL_ALL_LIBS)
 set(EFL_ALL_TESTS)
 
-macro(EFL_FINALIZE)
+# EFL_FINALIZE()
+#
+# Finalize EFL processing, adding extra targets.
+function(EFL_FINALIZE)
   add_custom_target(all-libs DEPENDS ${EFL_ALL_LIBS})
   add_custom_target(all-tests DEPENDS ${EFL_ALL_TESTS})
-endmacro()
+endfunction()
 
 # EFL_LIB(Name)
 #
@@ -105,7 +134,7 @@ endmacro()
 #  - target_compile_definitions() to ${Name}_DEFINITIONS
 #  - compile tests in ${Name}_TESTS using EFL_TEST()
 #
-macro(EFL_LIB _target)
+function(EFL_LIB _target)
   string(TOLOWER ${_target} _target_lc)
   set(EFL_LIB_CURRENT ${_target})
   set(EFL_LIB_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/${_target_lc})
@@ -222,22 +251,9 @@ macro(EFL_LIB _target)
   unset(t)
   add_custom_target(${_target}-tests DEPENDS ${${_target}_TESTS})
   add_custom_target(${_target}-modules DEPENDS ${${_target}_MODULES})
-  list(APPEND EFL_ALL_LIBS ${_target})
-  list(APPEND EFL_ALL_TESTS ${_target}-tests)
-
-  unset(_sources)
-  unset(_headers)
-  unset(_deps)
-  unset(EFL_LIB_CURRENT)
-  unset(EFL_LIB_SOURCE_DIR)
-  unset(EFL_LIB_BINARY_DIR)
-  unset(EFL_BIN_SOURCE_DIR)
-  unset(EFL_BIN_BINARY_DIR)
-  unset(EFL_MODULES_SOURCE_DIR)
-  unset(EFL_MODULES_BINARY_DIR)
-  unset(EFL_TESTS_SOURCE_DIR)
-  unset(EFL_TESTS_BINARY_DIR)
-endmacro()
+  LIST_APPEND_GLOBAL(EFL_ALL_LIBS ${_target})
+  LIST_APPEND_GLOBAL(EFL_ALL_TESTS ${_target}-tests)
+endfunction()
 
 
 # EFL_TEST(Name)
@@ -417,13 +433,9 @@ function(EFL_MODULE _modname)
     set_target_properties(${_modtarget} PROPERTIES
       POSITION_INDEPENDENT_CODE TRUE)
 
-    set(_all_mods ${${EFL_LIB_CURRENT}_STATIC_MODULES})
-    list(APPEND _all_mods ${_modtarget})
-    set(${EFL_LIB_CURRENT}_STATIC_MODULES ${_all_mods} PARENT_SCOPE)
+    LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_STATIC_MODULES ${_modtarget})
   else()
-    set(_all_mods ${${EFL_LIB_CURRENT}_MODULES})
-    list(APPEND _all_mods ${_modtarget})
-    set(${EFL_LIB_CURRENT}_MODULES ${_all_mods} PARENT_SCOPE)
     target_link_libraries(${_modtarget} ${EFL_LIB_CURRENT})
+    LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_MODULES ${_modtarget})
   endif()
 endfunction()
