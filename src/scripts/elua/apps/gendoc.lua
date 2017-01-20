@@ -174,9 +174,9 @@ local gen_method_sig = function(fn, cl)
     local buf = {}
     gen_func_namesig(fn, cl, buf, false, false, false)
 
-    local pimp = fn:implement_get()
+    local fimp = fn:implement_get()
 
-    if pimp:is_pure_virtual(fn.METHOD) then
+    if fimp:is_pure_virtual(fn.METHOD) then
         buf[#buf + 1] = "@pure_virtual "
     end
     buf[#buf + 1] = "{"
@@ -340,9 +340,10 @@ local build_functable = function(f, title, ctitle, cl, tp)
             lbuf:write_raw(" ")
             lbuf:write_i(pt)
         end
+        local fimp = v:implement_get()
         nt[#nt + 1] = {
             lbuf:finish(),
-            v:doc_get(v.METHOD):brief_get(v:fallback_doc_get())
+            fimp:doc_get(v.METHOD):brief_get(fimp:fallback_doc_get())
         }
         if v:type_str_get() == "property" then
             build_property(v, cl)
@@ -951,7 +952,7 @@ build_method = function(fn, cl)
     end
 
     f:write_h("Description", 2)
-    f:write_raw(fn:doc_get(fn.METHOD):full_get(nil, true))
+    f:write_raw(fn:implement_get():doc_get(fn.METHOD):full_get(nil, true))
     f:write_nl()
 
     f:write_editable(mns, "description")
@@ -971,9 +972,11 @@ build_property = function(fn, cl)
     if isget then stats.check_property(fn, cl, fn.PROP_GET) end
     if isset then stats.check_property(fn, cl, fn.PROP_SET) end
 
-    local doc = fn:doc_get(fn.PROPERTY)
-    local gdoc = fn:doc_get(fn.PROP_GET)
-    local sdoc = fn:doc_get(fn.PROP_SET)
+    local pimp = fn:implement_get()
+
+    local doc = pimp:doc_get(fn.PROPERTY)
+    local gdoc = pimp:doc_get(fn.PROP_GET)
+    local sdoc = pimp:doc_get(fn.PROP_SET)
 
     f:write_h("Signature", 2)
     f:write_code(gen_prop_sig(fn, cl))

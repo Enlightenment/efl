@@ -145,7 +145,7 @@ M.check_method = function(fn, cl)
             stat_incr("mret", false)
         end
     end
-    if not fn:doc_get(fn.METHOD):exists() then
+    if not fn:implement_get():doc_get(fn.METHOD):exists() then
         print_missing(fulln, "method")
         stat_incr("method", true)
     else
@@ -178,7 +178,9 @@ M.check_property = function(fn, cl, ft)
         end
     end
 
-    if not fn:doc_get(fn.PROPERTY):exists() and not fn:doc_get(ft):exists() then
+    local pimp = fn:implement_get()
+
+    if not pimp:doc_get(fn.PROPERTY):exists() and not pimp:doc_get(ft):exists() then
         print_missing(fulln, pfx .. "etter")
         stat_incr(pfx .. "etter", true)
     else

@@ -312,26 +312,8 @@ M.Function = Node:clone {
         return self.func:legacy_get(ft)
     end,
 
-    doc_get = function(self, ft)
-        -- TODO: handle overridden docs sanely
-        return M.Doc(self.func:implement_get():documentation_get(ft))
-    end,
-
     implement_get = function(self)
         return M.Implement(self.func:implement_get())
-    end,
-
-    fallback_doc_get = function(self, ft)
-        if not ft then
-            local fft = self:type_get()
-            if fft == self.PROP_GET or fft == self.PROP_SET then
-                ft = fft
-            end
-        end
-        if ft then
-            return self:doc_get(ft)
-        end
-        return nil
     end,
 
     is_legacy_only = function(self, ft)
@@ -1294,6 +1276,16 @@ M.Implement = Node:clone {
 
     doc_get = function(self, ftype)
         return M.Doc(self.impl:documentation_get(ftype))
+    end,
+
+    fallback_doc_get = function(self)
+        local ig, is = self:is_prop_get(), self:is_prop_set()
+        if ig and not is then
+            return self:doc_get(M.Function.PROP_GET)
+        elseif is and not ig then
+            return self:doc_get(M.Function.PROP_SET)
+        end
+        return nil
     end,
 
     is_auto = function(self, ftype)
