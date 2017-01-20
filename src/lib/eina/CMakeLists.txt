@@ -1,14 +1,16 @@
-
-set(INCLUDE_DIRECTORIES
-  ${VG_INCLUDE_DIRS})
-
-set(LIBRARIES
-  ${VG_LIBRARIES})
+set(DESCRIPTION "A Library that implements fast data types and miscellaneous tools")
+set(PKG_CONFIG_REQUIRES_PRIVATE OPTIONAL libsystemd)
 
 set(PUBLIC_LIBRARIES
   m
   dl
   pthread)
+
+if(ENABLE_VALGRIND)
+  list(APPEND PKG_CONFIG_REQUIRES_PRIVATE valgrind)
+  list(APPEND INCLUDE_DIRECTORIES ${VG_INCLUDE_DIRS})
+  list(APPEND LIBRARIES ${VG_LIBRARIES})
+endif()
 
 set(PUBLIC_HEADERS
   Eina.h

@@ -106,6 +106,14 @@ function(EFL_OPTIONS_SUMMARY)
     endforeach()
     unset(_m)
   endforeach()
+
+  if(EFL_PKG_CONFIG_MISSING_OPTIONAL)
+    message(STATUS "The following pkg-config optional modules are missing:")
+    foreach(_m ${EFL_PKG_CONFIG_MISSING_OPTIONAL})
+      message(STATUS "  ${_m}")
+    endforeach()
+    unset(_m)
+  endif()
 endfunction()
 
 set(EFL_ALL_LIBS)
@@ -135,6 +143,115 @@ function(EFL_FILES_TO_ABSOLUTE _var _srcdir _bindir)
     endif()
   endforeach()
   set(${_var} "${_lst}" PARENT_SCOPE)
+endfunction()
+
+# EFL_PKG_CONFIG_EVAL_TO(Var Name [module1 ... moduleN])
+#
+# Evaluate the list of of pkg-config modules and assign to variable
+# Var. If it's missing, abort with a message saying ${Name} is missing
+# the list of modules.
+#
+# OPTIONAL keyword may be used to convert the remaining elements in optional
+# packages.
+function(EFL_PKG_CONFIG_EVAL_TO _var _name)
+  set(_found "")
+  set(_missing "")
+  set(_missing_optional "")
+  set(_optional OFF)
+  foreach(f ${ARGN})
+    if(${f} STREQUAL "OPTIONAL")
+      set(_optional ON)
+    else()
+      pkg_check_modules(PKG_CONFIG_DEP_${f} ${f})
+      if(PKG_CONFIG_DEP_${f}_FOUND)
+        list(APPEND _found ${f})
+      elseif(_optional)
+        list(APPEND _missing_optional ${f})
+        LIST_APPEND_GLOBAL(EFL_PKG_CONFIG_MISSING_OPTIONAL ${f})
+      else()
+        list(APPEND _missing ${f})
+      else()
+      endif()
+    endif()
+  endforeach()
+  if(NOT _missing)
+    SET_GLOBAL(${_var} "${_found}")
+    SET_GLOBAL(${_var}_MISSING "${_missing_optional}")
+  else()
+    message(FATAL_ERROR "${_name} missing required pkg-config modules: ${_missing}")
+  endif()
+endfunction()
+
+# EFL_PKG_CONFIG_EVAL(Name Private_List Public_List)
+#
+# Evaluates both lists and creates ${Name}_PKG_CONFIG_REQUIRES as well as
+# ${Name}_PKG_CONFIG_REQUIRES_PRIVATE with found elements.
+#
+# OPTIONAL keyword may be used to convert the remaining elements in optional
+# packages.
+function(EFL_PKG_CONFIG_EVAL _target _private _public)
+  EFL_PKG_CONFIG_EVAL_TO(${_target}_PKG_CONFIG_REQUIRES ${_target} ${_public})
+  EFL_PKG_CONFIG_EVAL_TO(${_target}_PKG_CONFIG_REQUIRES_PRIVATE ${_target} ${_private})
+
+  set(_lst ${${_target}_PKG_CONFIG_REQUIRES_MISSING})
+  foreach(_e ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_MISSING})
+    list(APPEND _lst ${_e})
+  endforeach()
+  if(_lst)
+    message(STATUS "${_target} missing optional pkg-config: ${_lst}")
+  endif()
+endfunction()
+
+function(EFL_PKG_CONFIG_LIB_WRITE)
+  set(_pkg_config_requires)
+  set(_pkg_config_requires_private)
+  set(_libraries)
+  set(_public_libraries)
+
+  foreach(_e ${${EFL_LIB_CURRENT}_PKG_CONFIG_REQUIRES})
+    set(_pkg_config_requires "${_pkg_config_requires} ${_e}")
+  endforeach()
+
+  foreach(_e ${${EFL_LIB_CURRENT}_PKG_CONFIG_REQUIRES_PRIVATE})
+    set(_pkg_config_requires_private "${_pkg_config_requires_private} ${_e}")
+  endforeach()
+
+  foreach(_e ${LIBRARIES})
+    set(_libraries "${_libraries} -l${_e}")
+  endforeach()
+
+  foreach(_e ${PUBLIC_LIBRARIES})
+    set(_public_libraries "${_public_libraries} -l${_e}")
+  endforeach()
+
+  if(NOT ${EFL_LIB_CURRENT} STREQUAL "efl")
+    set(_cflags " -I\${includedir}/${EFL_LIB_CURRENT}-${PROJECT_VERSION_MAJOR}")
+  endif()
+
+  # TODO: handle eolian needs
+
+  set(_contents
+"prefix=${CMAKE_INSTALL_PREFIX}
+exec_prefix=\${prefix}
+libdir=\${exec_prefix}/lib
+includedir=\${prefix}/include
+datarootdir=\${prefix}/share
+datadir=\${datarootdir}
+pkgdatadir=\${datadir}/${EFL_LIB_CURRENT}
+modules=\${libdir}/${EFL_LIB_CURRENT}/modules
+
+Name: ${EFL_LIB_CURRENT}
+Description: ${DESCRIPTION}
+Version: ${VERSION}
+Requires:${_pkg_config_requires}
+Requires.private:${_pkg_config_requires_private}
+Libs: -L\${libdir} -l${EFL_LIB_CURRENT}${_public_libraries}
+Libs.private:${_libraries}
+Cflags: -I\${includedir}/efl-${PROJECT_VERSION_MAJOR}${_cflags}
+")
+  file(WRITE "${CMAKE_BINARY_DIR}/lib/pkgconfig/${EFL_LIB_CURRENT}.pc" "${_contents}")
+  install(FILES "${CMAKE_BINARY_DIR}/lib/pkgconfig/${EFL_LIB_CURRENT}.pc"
+    DESTINATION "lib/pkgconfig")
 endfunction()
 
 # _EFL_INCLUDE_OR_DETECT(Name Source_Dir)
@@ -258,6 +375,13 @@ endfunction()
 #
 # adds a library ${Name} automatically setting object/target
 # properties based on script-modifiable variables:
+#  - DESCRIPTION: results in ${Name}_DESCRIPTION and fills pkg-config files.
+#  - PKG_CONFIG_REQUIRES: results in ${Name}_PKG_CONFIG_REQUIRES and
+#    fills pkg-config files. Elements after 'OPTIONAL' keyword are
+#    optional.
+#  - PKG_CONFIG_REQUIRES_PRIVATE: results in
+#    ${Name}_PKG_CONFIG_REQUIRES_PRIVATE and fills pkg-config
+#    files. Elements after 'OPTIONAL' keyword are optional.
 #  - INCLUDE_DIRECTORIES: results in target_include_directories
 #  - SYSTEM_INCLUDE_DIRECTORIES: results in target_include_directories(SYSTEM)
 #  - OUTPUT_NAME
@@ -322,6 +446,9 @@ function(EFL_LIB _target)
   set(EFL_TESTS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/${_target})
   set(EFL_TESTS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/tests/${_target})
 
+  set(DESCRIPTION)
+  set(PKG_CONFIG_REQUIRES)
+  set(PKG_CONFIG_REQUIRES_PRIVATE)
   set(INCLUDE_DIRECTORIES)
   set(SYSTEM_INCLUDE_DIRECTORIES)
   set(OUTPUT_NAME)
@@ -348,6 +475,8 @@ function(EFL_LIB _target)
     ${SOURCES})
   EFL_FILES_TO_ABSOLUTE(_obj_deps ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
     ${OBJECT_DEPENDS})
+
+  EFL_PKG_CONFIG_EVAL(${_target} "${PKG_CONFIG_REQUIRES_PRIVATE}" "${PKG_CONFIG_REQUIRES}")
 
   add_library(${_target} ${LIBRARY_TYPE} ${_sources} ${_headers})
   set_target_properties(${_target} PROPERTIES
@@ -389,6 +518,8 @@ function(EFL_LIB _target)
       SOVERSION ${SOVERSION})
   endif()
 
+  EFL_PKG_CONFIG_LIB_WRITE()
+
   install(TARGETS ${_target}
     PUBLIC_HEADER DESTINATION include/${_target}-${PROJECT_VERSION_MAJOR}
     RUNTIME DESTINATION bin
@@ -412,6 +543,9 @@ function(EFL_LIB _target)
   unset(LIBRARIES)
   unset(PUBLIC_LIBRARIES)
   unset(DEFINITIONS)
+  unset(DESCRIPTION)
+  unset(PKG_CONFIG_REQUIRES)
+  unset(PKG_CONFIG_REQUIRES_PRIVATE)
 
   _EFL_LIB_PROCESS_BINS_INTERNAL()
   _EFL_LIB_PROCESS_MODULES_INTERNAL()
