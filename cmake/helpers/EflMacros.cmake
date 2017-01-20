@@ -137,6 +137,49 @@ function(EFL_FILES_TO_ABSOLUTE _var _srcdir _bindir)
   set(${_var} "${_lst}" PARENT_SCOPE)
 endfunction()
 
+# _EFL_INCLUDE_OR_DETECT(Name Source_Dir)
+#
+# Internal macro that will include(${Source_Dir}/CMakeLists.txt) if
+# that exists, otherwise will check if there is a single source file,
+# in that case it will automatically define SOURCES to that (including
+# extras such as headers and .eo)
+#
+# Name is only used to print out messages when it's auto-detected.
+macro(_EFL_INCLUDE_OR_DETECT _name _srcdir)
+  if(EXISTS ${_srcdir}/CMakeLists.txt)
+    include(${_srcdir}/CMakeLists.txt)
+  else()
+    # doc says it's not recommended because it can't know if more files
+    # were added, but we're doing this explicitly to handle one file.
+    file(GLOB _autodetect_files RELATIVE ${_srcdir}
+        ${_srcdir}/*.c
+        ${_srcdir}/*.h
+        ${_srcdir}/*.hh
+        ${_srcdir}/*.cxx
+        ${_srcdir}/*.cpp
+        ${_srcdir}/*.eo
+        )
+    list(LENGTH _autodetect_files _autodetect_files_count)
+    if(_autodetect_files_count GREATER 1)
+      message(WARNING "${_name}: ${_srcdir} contains no CMakeLists.txt and contains more than one source file. Don't know what to do, then ignored.")
+    elseif(_autodetect_files_count EQUAL 1)
+      file(GLOB SOURCES RELATIVE ${_srcdir}
+        ${_srcdir}/*.c
+        ${_srcdir}/*.h
+        ${_srcdir}/*.hh
+        ${_srcdir}/*.cxx
+        ${_srcdir}/*.cpp
+        ${_srcdir}/*.eo
+        )
+      message(STATUS "${_name} auto-detected as: ${SOURCES}")
+    else()
+      message(STATUS "${_name} contains no auto-detectable sources.")
+    endif()
+    unset(_autodetect_files_count)
+    unset(_autodetect_files)
+  endif()
+endmacro()
+
 # _EFL_LIB_PROCESS_MODULES_INTERNAL()
 #
 # Internal function to process modules of current EFL_LIB()
@@ -148,8 +191,6 @@ function(_EFL_LIB_PROCESS_MODULES_INTERNAL)
     foreach(module ${modules})
       if(IS_DIRECTORY ${EFL_MODULES_SOURCE_DIR}/${module})
         set(EFL_MODULE_SCOPE ${module})
-
-        include(${EFL_MODULES_SOURCE_DIR}/${module}/CMakeLists.txt OPTIONAL)
 
         file(GLOB submodules RELATIVE ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE} ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/*)
         foreach(submodule ${submodules})
@@ -227,7 +268,8 @@ endfunction()
 #  - LIBRARY_TYPE: SHARED or STATIC, defaults to SHARED
 #  - OBJECT_DEPENDS: say this object depends on other files (ie: includes)
 #  - DEPENDENCIES: results in add_dependencies()
-#  - LIBRARIES: results in target_link_libraries()
+#  - LIBRARIES: results in target_link_libraries(LINK_PRIVATE)
+#  - PUBLIC_LIBRARIES: results in target_link_libraries(LINK_PUBLIC)
 #  - DEFINITIONS: target_compile_definitions()
 #
 # Defines the following variables that can be used within the included files:
@@ -291,6 +333,7 @@ function(EFL_LIB _target)
   set(OBJECT_DEPENDS)
   set(DEPENDENCIES)
   set(LIBRARIES)
+  set(PUBLIC_LIBRARIES)
   set(DEFINITIONS)
 
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config/${_target}.cmake OPTIONAL)
@@ -317,7 +360,10 @@ function(EFL_LIB _target)
   endif()
 
   if(LIBRARIES)
-    target_link_libraries(${_target} ${LIBRARIES})
+    target_link_libraries(${_target} LINK_PRIVATE ${LIBRARIES})
+  endif()
+  if(PUBLIC_LIBRARIES)
+    target_link_libraries(${_target} LINK_PRIVATE ${PUBLIC_LIBRARIES})
   endif()
 
   target_include_directories(${_target} PUBLIC
@@ -364,9 +410,8 @@ function(EFL_LIB _target)
   unset(OBJECT_DEPENDS)
   unset(DEPENDENCIES)
   unset(LIBRARIES)
+  unset(PUBLIC_LIBRARIES)
   unset(DEFINITIONS)
-
-  include(${EFL_BIN_SOURCE_DIR}/CMakeLists.txt OPTIONAL)
 
   _EFL_LIB_PROCESS_BINS_INTERNAL()
   _EFL_LIB_PROCESS_MODULES_INTERNAL()
@@ -420,7 +465,7 @@ function(EFL_BIN _binname)
     set(_bintarget "${_binname}")
   endif()
 
-  include(${_binsrcdir}/CMakeLists.txt)
+  _EFL_INCLUDE_OR_DETECT("Binary ${_bintarget}" ${_binsrcdir})
 
   if(NOT SOURCES)
     message(WARNING "${_binsrcdir}/CMakeLists.txt defines no SOURCES")
@@ -452,7 +497,7 @@ function(EFL_BIN _binname)
     target_include_directories(${_bintarget} SYSTEM PRIVATE
       ${SYSTEM_INCLUDE_DIRECTORIES})
   endif()
-  target_link_libraries(${_bintarget}
+  target_link_libraries(${_bintarget} LINK_PRIVATE
     ${EFL_LIB_CURRENT}
     ${LIBRARIES})
 
@@ -517,7 +562,7 @@ function(EFL_TEST _testname)
     set(_testtarget "${EFL_LIB_CURRENT}-test-${_testname}")
   endif()
 
-  include(${_testsrcdir}/CMakeLists.txt)
+  _EFL_INCLUDE_OR_DETECT("Test ${_testtarget}" ${_testsrcdir})
 
   if(NOT SOURCES)
     message(WARNING "${_testsrcdir}/CMakeLists.txt defines no SOURCES")
@@ -548,7 +593,7 @@ function(EFL_TEST _testname)
   target_include_directories(${_testtarget} SYSTEM PRIVATE
     ${SYSTEM_INCLUDE_DIRECTORIES}
     ${CHECK_INCLUDE_DIRS})
-  target_link_libraries(${_testtarget}
+  target_link_libraries(${_testtarget} LINK_PRIVATE
     ${EFL_LIB_CURRENT}
     ${LIBRARIES}
     ${CHECK_LIBRARIES})
@@ -597,9 +642,13 @@ function(EFL_MODULE _modname)
   if(EFL_MODULE_SCOPE)
     set(_modsrcdir ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/${_modname})
     set(_modoutdir lib/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+    set(_modbindir ${EFL_MODULES_BINARY_DIR}/${EFL_MODULE_SCOPE}/${_modname})
+    set(_modtarget ${EFL_LIB_CURRENT}-module-${EFL_MODULE_SCOPE}-${_modname})
   else()
     set(_modsrcdir ${EFL_MODULES_SOURCE_DIR}/${_modname})
     set(_modoutdir lib/${EFL_LIB_CURRENT}/modules/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+    set(_modbindir ${EFL_MODULES_BINARY_DIR}/${_modname})
+    set(_modtarget ${EFL_LIB_CURRENT}-module-${_modname})
   endif()
 
   set(SOURCES)
@@ -611,7 +660,7 @@ function(EFL_MODULE _modname)
   set(MODULE_TYPE "ON")
   set(INSTALL_DIR ${_modoutdir})
 
-  include(${_modsrcdir}/CMakeLists.txt)
+  _EFL_INCLUDE_OR_DETECT("Module ${_modtarget}" ${_modsrcdir})
 
   if(NOT SOURCES)
     message(WARNING "${_modsrcdir}/CMakeLists.txt defines no SOURCES")
@@ -619,14 +668,6 @@ function(EFL_MODULE _modname)
   endif()
   if(PUBLIC_HEADERS)
     message(WARNING "${_modsrcdir}/CMakeLists.txt should not define PUBLIC_HEADERS, it's not to be installed.")
-  endif()
-
-  if(EFL_MODULE_SCOPE)
-    set(_modbindir ${EFL_MODULES_BINARY_DIR}/${EFL_MODULE_SCOPE}/${_modname})
-    set(_modtarget ${EFL_LIB_CURRENT}-module-${EFL_MODULE_SCOPE}-${_modname})
-  else()
-    set(_modbindir ${EFL_MODULES_BINARY_DIR}/${_modname})
-    set(_modtarget ${EFL_LIB_CURRENT}-module-${_modname})
   endif()
 
   if("${MODULE_TYPE}" STREQUAL "OFF")
@@ -652,7 +693,7 @@ function(EFL_MODULE _modname)
     ${INCLUDE_DIRECTORIES})
   target_include_directories(${_modtarget} SYSTEM PUBLIC
     ${SYSTEM_INCLUDE_DIRECTORIES})
-  target_link_libraries(${_modtarget} ${LIBRARIES})
+  target_link_libraries(${_modtarget} LINK_PRIVATE ${LIBRARIES})
 
   target_compile_definitions(${_modtarget} PRIVATE ${DEFINITIONS})
 
@@ -662,7 +703,7 @@ function(EFL_MODULE _modname)
     RUNTIME_OUTPUT_DIRECTORY "${_modoutdir}")
 
   if("${MODULE_TYPE}" STREQUAL "STATIC")
-    target_link_libraries(${EFL_LIB_CURRENT} ${_modtarget})
+    target_link_libraries(${EFL_LIB_CURRENT} LINK_PRIVATE ${_modtarget})
     target_include_directories(${_modtarget} PRIVATE
       ${EFL_LIB_SOURCE_DIR}
       ${EFL_LIB_BINARY_DIR})
@@ -671,7 +712,7 @@ function(EFL_MODULE _modname)
 
     LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_STATIC_MODULES ${_modtarget})
   else()
-    target_link_libraries(${_modtarget} ${EFL_LIB_CURRENT})
+    target_link_libraries(${_modtarget} LINK_PRIVATE ${EFL_LIB_CURRENT})
     LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_MODULES ${_modtarget})
     if(INSTALL_DIR)
       install(TARGETS ${_modtarget} LIBRARY DESTINATION "${INSTALL_DIR}")

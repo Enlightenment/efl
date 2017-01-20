@@ -263,28 +263,28 @@ lib_eina_libeina_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Binaries
 
-bin_PROGRAMS += bin/eina/eina_btlog
+bin_PROGRAMS += bin/eina/eina_btlog/eina_btlog
 
-bin_eina_eina_btlog_SOURCES = bin/eina/eina_btlog.c
-bin_eina_eina_btlog_CPPFLAGS =  -I$(top_builddir)/src/lib/efl \
+bin_eina_eina_btlog_eina_btlog_SOURCES = bin/eina/eina_btlog/eina_btlog.c
+bin_eina_eina_btlog_eina_btlog_CPPFLAGS =  -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eina\" \
 @EINA_CFLAGS@
 
-bin_eina_eina_btlog_LDADD = @USE_EINA_LIBS@
-bin_eina_eina_btlog_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
+bin_eina_eina_btlog_eina_btlog_LDADD = @USE_EINA_LIBS@
+bin_eina_eina_btlog_eina_btlog_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
-bin_PROGRAMS += bin/eina/eina_modinfo
+bin_PROGRAMS += bin/eina/eina_modinfo/eina_modinfo
 
-bin_eina_eina_modinfo_SOURCES = bin/eina/eina_modinfo.c
-bin_eina_eina_modinfo_CPPFLAGS =  -I$(top_builddir)/src/lib/efl \
+bin_eina_eina_modinfo_eina_modinfo_SOURCES = bin/eina/eina_modinfo.c
+bin_eina_eina_modinfo_eina_modinfo_CPPFLAGS =  -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eina\" \
 @EINA_CFLAGS@
 
-bin_eina_eina_modinfo_LDADD = @USE_EINA_LIBS@
+bin_eina_eina_modinfo_eina_modinfo_LDADD = @USE_EINA_LIBS@
 
 ### Script
 
