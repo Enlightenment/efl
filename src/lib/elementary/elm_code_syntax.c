@@ -90,7 +90,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
           {
              unsigned int start = i, end;
 
-             for (i++; content[i] != '"' && i < length; i++) {}
+             for (i++; i < length && (content[i] != '"' || content[i-1] == '\\'); i++) {}
              end = i;
 
              elm_code_line_token_add(line, start, end, 1, ELM_CODE_TOKEN_TYPE_STRING);
@@ -100,7 +100,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
           {
              unsigned int start = i, end;
 
-             for (i++; content[i] != '\'' && i < length; i++) {}
+             for (i++; i < length && (content[i] != '\'' || content[i-1] == '\\'); i++) {}
              end = i;
 
              elm_code_line_token_add(line, start, end, 1, ELM_CODE_TOKEN_TYPE_STRING);
