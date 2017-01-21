@@ -16,7 +16,7 @@
 #cmakedefine EINA_STATIC_BUILD_ONE_BIG 1
 #cmakedefine EINA_STATIC_BUILD_PASS_THROUGH 1
 
-#define MODULE_ARCH "bla"
+#define MODULE_ARCH "@MODULE_ARCH@"
 #define SHARED_LIB_SUFFIX "bla"
 
 #endif
