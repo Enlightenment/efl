@@ -34,8 +34,8 @@ endif()
 
 #check for symbols in pthread
 #TODO Make the definitions depending on the platform
-SET_GLOBAL(CMAKE_REQUIRED_FLAGS "${CMAKE_THREAD_LIBS_INIT}")
-SET_GLOBAL(CMAKE_REQUIRED_DEFINITIONS "-D_GNU_SOURCE=1")
+set(CMAKE_REQUIRED_FLAGS "${CMAKE_THREAD_LIBS_INIT}")
+set(CMAKE_REQUIRED_DEFINITIONS "-D_GNU_SOURCE=1")
 CHECK_SYMBOL_EXISTS(pthread_barrier_init pthread.h EINA_HAVE_PTHREAD_BARRIER)
 CHECK_SYMBOL_EXISTS(pthread_attr_setaffinity_np pthread.h EINA_HAVE_PTHREAD_AFFINITY)
 CHECK_SYMBOL_EXISTS(pthread_setname_np pthread.h EINA_HAVE_PTHREAD_SETNAME)
