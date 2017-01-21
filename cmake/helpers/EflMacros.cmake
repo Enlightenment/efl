@@ -737,7 +737,6 @@ function(EFL_TEST _testname)
     "-DTESTS_SRC_DIR=\"${_testrcdir}\""
     "-DTESTS_BUILD_DIR=\"${_testbindir}\""
     "-DTESTS_WD=\"${PROJECT_BINARY_DIR}\""
-    "-DPACKAGE_BUILD_DIR=\"1\""
     ${DEFINITIONS}
     )
 

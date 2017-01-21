@@ -1,4 +1,6 @@
-set(LIBRARIES m)
+set(LIBRARIES
+  m
+)
 
 set(SOURCES
   eina_suite.c
