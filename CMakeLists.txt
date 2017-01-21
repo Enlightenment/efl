@@ -45,5 +45,5 @@ configure_file(
 configure_file(
   ${PROJECT_SOURCE_DIR}/src/lib/efl/Efl_Config.h.cmake
   ${PROJECT_BINARY_DIR}/src/lib/efl/Efl_Config.h)
-
+EFL_HEADER_CHECKS_FINALIZE(${PROJECT_BINARY_DIR}/src/lib/efl/config_headers.h)
 EFL_FINALIZE()
