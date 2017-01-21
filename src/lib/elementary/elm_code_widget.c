@@ -168,31 +168,24 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 {
    Eina_List *item;
    Elm_Code_Token *token;
-   unsigned int start, end, length, offset;
+   unsigned int end, length, offset;
    unsigned int token_start_col, token_end_col;
 
    offset = elm_obj_code_widget_text_left_gutter_width_get(widget);
-   start = offset;
    length = elm_code_widget_line_text_column_width_get(widget, line) + offset;
+   _elm_code_widget_fill_line_token(cells, count, offset, length, ELM_CODE_TOKEN_TYPE_DEFAULT);
 
    EINA_LIST_FOREACH(line->tokens, item, token)
      {
         token_start_col = elm_code_widget_line_text_column_width_to_position(widget, line, token->start) + offset;
         token_end_col = elm_code_widget_line_text_column_width_to_position(widget, line, token->end) + offset;
 
-        if (token_start_col > start)
-          _elm_code_widget_fill_line_token(cells, count, start, token_start_col, ELM_CODE_TOKEN_TYPE_DEFAULT);
-
         // TODO handle a token starting before the previous finishes
         end = token_end_col;
         if (token->continues)
           end = length + offset;
         _elm_code_widget_fill_line_token(cells, count, token_start_col, end, token->type);
-
-        start = end + 1;
      }
-
-   _elm_code_widget_fill_line_token(cells, count, start, length, ELM_CODE_TOKEN_TYPE_DEFAULT);
 }
 
 static void
