@@ -493,7 +493,7 @@ function(EFL_LIB _target)
     target_link_libraries(${_target} LINK_PRIVATE ${LIBRARIES})
   endif()
   if(PUBLIC_LIBRARIES)
-    target_link_libraries(${_target} LINK_PRIVATE ${PUBLIC_LIBRARIES})
+    target_link_libraries(${_target} PUBLIC ${PUBLIC_LIBRARIES})
   endif()
 
   target_include_directories(${_target} PUBLIC
