@@ -59,12 +59,9 @@ static FcConfig *fc_config = NULL;
 static void
 evas_font_init(void)
 {
-   static Eina_Bool fc_init = EINA_FALSE;
-   if (fc_init)
-      return;
-   fc_init = EINA_TRUE;
 #ifdef HAVE_FONTCONFIG
-   fc_config = FcInitLoadConfigAndFonts();
+   if (!fc_config)
+     fc_config = FcInitLoadConfigAndFonts();
 #endif
 }
 
@@ -1531,12 +1528,13 @@ evas_font_reinit(void)
    Eina_List *l;
    char *path;
 
-   if (fc_config) FcConfigDestroy(fc_config);
+   if (fc_config)
+     {
+        FcConfigDestroy(fc_config);
+        fc_config = FcInitLoadConfigAndFonts();
 
-   FcInitReinitialize();
-   fc_config = FcInitLoadConfigAndFonts();
-
-   EINA_LIST_FOREACH(global_font_path, l, path)
-      FcConfigAppFontAddDir(fc_config, (const FcChar8 *) path);
+        EINA_LIST_FOREACH(global_font_path, l, path)
+           FcConfigAppFontAddDir(fc_config, (const FcChar8 *) path);
+     }
 #endif
 }
