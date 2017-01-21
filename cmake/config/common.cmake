@@ -23,3 +23,6 @@ EFL_OPTION(EFL_EO_API_SUPPORT "Whenever to enable new Eo APIs" ON)
 if(NOT EFL_EO_API_SUPPORT)
   EFL_OPTION_SET_MESSAGE(EFL_EO_API_SUPPORT "Risky!")
 endif()
+
+#this is needed to build efl
+set(EFL_BETA_API_SUPPORT 1)
