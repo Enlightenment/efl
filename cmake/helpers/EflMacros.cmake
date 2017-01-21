@@ -482,7 +482,8 @@ function(EFL_LIB _target)
   set_target_properties(${_target} PROPERTIES
     FRAMEWORK TRUE
     PUBLIC_HEADER "${_headers}"
-    OBJECT_DEPENDS "${_obj_deps}")
+    OBJECT_DEPENDS "${_obj_deps}"
+    COMPILE_FLAGS -DPACKAGE_DATA_DIR=\\"${CMAKE_INSTALL_FULL_DATADIR}/${_target}/\\")
 
   if(DEPENDENCIES)
     add_dependencies(${_target} ${DEPENDENCIES})
