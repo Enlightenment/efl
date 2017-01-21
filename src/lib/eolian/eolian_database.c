@@ -3,7 +3,6 @@
 #endif
 
 #include <ctype.h>
-#include <libgen.h>
 #include <Eina.h>
 #include "eo_parser.h"
 #include "eolian_database.h"

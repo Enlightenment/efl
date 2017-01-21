@@ -8,7 +8,6 @@
 
 #include <setjmp.h>
 #include <assert.h>
-#include <libgen.h>
 
 #include "eo_lexer.h"
 
@@ -1005,11 +1004,11 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
 static const char *
 get_filename(Eo_Lexer *ls)
 {
-   char *dup = strdup(ls->source);
-   char *s = basename(dup);
-   const char *file = eina_stringshare_add(s);
-   free(dup);
-   return file;
+   const char *fslash = strrchr(ls->source, '/');
+   const char *bslash = strrchr(ls->source, '\\');
+   if (fslash || bslash)
+     return eina_stringshare_add((fslash > bslash) ? (fslash + 1) : (bslash + 1));
+   return eina_stringshare_ref(ls->source);
 }
 
 static void
