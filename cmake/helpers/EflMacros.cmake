@@ -854,3 +854,18 @@ function(EFL_MODULE _modname)
     endif()
   endif()
 endfunction()
+
+macro(EFL_PROJECT version)
+  if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+      project(efl VERSION ${version})
+  else ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+    execute_process(
+      COMMAND git rev-list --count HEAD
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      OUTPUT_VARIABLE GIT_VERSION
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    project(efl VERSION ${version}.${GIT_VERSION})
+  endif ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+  message("VERSION ${PROJECT_VERSION}")
+endmacro()

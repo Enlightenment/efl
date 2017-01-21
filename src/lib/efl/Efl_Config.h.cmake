@@ -15,7 +15,7 @@
    and require an explicit request to get it. */
 #endif
 
-#cmakedefine EFL_VERSION_MAJOR @EFL_VERSION_MAJOR@
-#cmakedefine EFL_VERSION_MINOR @EFL_VERSION_MINOR@
-#cmakedefine EFL_BUILD_ID "@EFL_BUILD_ID@"
+#define EFL_VERSION_MAJOR @EFL_VERSION_MAJOR@
+#define EFL_VERSION_MINOR @EFL_VERSION_MINOR@
+#define EFL_BUILD_ID "@EFL_BUILD_ID@"
 #endif

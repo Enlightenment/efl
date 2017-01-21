@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.7)
-project(efl VERSION 1.19.99.1)
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/helpers")
 
 include(GNUInstallDirs)
+include(EflMacros)
+
+EFL_PROJECT(1.19.99)
 
 if (NOT EFL_BUILD_ID)
   set(EFL_BUILD_ID 120)
@@ -21,15 +25,13 @@ add_definitions(
   "-DPACKAGE_BIN_DIR=\"${CMAKE_INSTALL_FULL_BINDIR}\""
   "-DPACKAGE_LIB_DIR=\"${CMAKE_INSTALL_FULL_LIBDIR}\""
   "-DPACKAGE_BUILD_DIR=\"${CMAKE_SOURCE_DIR}\""
+  "-DPACKAGE_VERSION=\"${PROJECT_VERSION}\""
   )
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/src/lib/efl
   ${PROJECT_BINARY_DIR}/src/lib/efl
   )
-
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/helpers")
-include(EflMacros)
 
 include(${CMAKE_SOURCE_DIR}/cmake/config/common.cmake)
 
