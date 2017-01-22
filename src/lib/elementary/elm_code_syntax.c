@@ -10,12 +10,18 @@
 typedef struct _Elm_Code_Syntax
 {
    const char *symbols;
+   const char *comment_single;
+   const char *comment_start;
+   const char *comment_end;
    const char *keywords[];
 } Elm_Code_Syntax;
 
 static Elm_Code_Syntax _elm_code_syntax_c =
 {
-   "{}()[]:;*&|!=<->,.",
+   "{}()[]:;/*+&|!=<->,.",
+   "//",
+   "/*",
+   "*/",
    {"auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else",  "enum", "extern", \
       "float", "for", "goto", "if", "int", "long", "register", "return", "short", "signed", "sizeof", "static", \
       "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while", NULL}
@@ -52,19 +58,97 @@ _elm_code_syntax_parse_token(Elm_Code_Syntax *syntax, Elm_Code_Line *line, unsig
      }
 }
 
+static Eina_Bool
+_content_starts_with(const char *content, const char *prefix, unsigned int length)
+{
+   unsigned int i;
+   unsigned int prefix_length;
+
+   prefix_length = strlen(prefix);
+   if (!content || length < prefix_length)
+     return EINA_FALSE;
+
+   for (i = 0; i < prefix_length; i++)
+     if (content[i] != prefix[i])
+       return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_starts_single_comment(Elm_Code_Syntax *syntax, const char *content, unsigned int length)
+{
+   return _content_starts_with(content, syntax->comment_single, length);
+}
+
+static Eina_Bool
+_starts_comment(Elm_Code_Syntax *syntax, const char *content, unsigned int length)
+{
+   return _content_starts_with(content, syntax->comment_start, length);
+}
+
+static Eina_Bool
+_ends_comment(Elm_Code_Syntax *syntax, const char *content, unsigned int length)
+{
+   return _content_starts_with(content, syntax->comment_end, length);
+}
+
+static Elm_Code_Token_Type
+_previous_line_continue_type(Elm_Code_Line *line)
+{
+   Elm_Code_Line *prev;
+   Elm_Code_Token *token;
+   Eina_List *item;
+
+   if (line->number < 2)
+     return ELM_CODE_TOKEN_TYPE_DEFAULT;
+
+   prev = elm_code_file_line_get(line->file, line->number - 1);
+   if (!prev || !prev->tokens)
+     return ELM_CODE_TOKEN_TYPE_DEFAULT;
+
+   EINA_LIST_FOREACH(prev->tokens, item, token)
+     if (token->continues)
+       return token->type;
+
+   return ELM_CODE_TOKEN_TYPE_DEFAULT;
+}
+
 EAPI void
 elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
 {
-   unsigned int i, count, length;
+   unsigned int i, i2, count, length;
    const char *content;
    const char *sym, *ptr;
+   Elm_Code_Token_Type previous_type;
 
    EINA_SAFETY_ON_NULL_RETURN(syntax);
 
-  content = elm_code_line_text_get(line, &length);
+   i = 0;
+   content = elm_code_line_text_get(line, &length);
+   previous_type = _previous_line_continue_type(line);
+   if (previous_type == ELM_CODE_TOKEN_TYPE_COMMENT)
+     {
+        for (i2 = i; i2 < length; i2++)
+          if (_ends_comment(syntax, content + i2, length - i2))
+             {
+                i2 += strlen(syntax->comment_end) - 1;
+                break;
+             }
+
+        elm_code_line_token_add(line, 1, i2, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+        if (i2 == length)
+          {
+             Elm_Code_Token *token = eina_list_last_data_get(line->tokens);
+             token->continues = EINA_TRUE;
+             return;
+          }
+        i = i2 + 1;
+     }
+
    ptr = content;
    count = 0;
-   for (i = 0; i < length; i++)
+   for (; i < length; i++)
      {
         if (_elm_code_text_char_is_whitespace(content[i]))
           {
@@ -81,10 +165,30 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
              elm_code_line_token_add(line, i, length - 1, 1, ELM_CODE_TOKEN_TYPE_PREPROCESSOR);
              return;
           }
-        else if (count == 1 && content[i-1] == '/' && content[i] == '/')
+        else if (_starts_single_comment(syntax, content + i, length - i))
           {
-             elm_code_line_token_add(line, i - 1, length - 1, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+             elm_code_line_token_add(line, i, length, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
              return;
+          }
+        else if (_starts_comment(syntax, content + i, length - i))
+          {
+             for (i2 = i+strlen(syntax->comment_start); i2 < length; i2++)
+               if (_ends_comment(syntax, content + i2, length - i2))
+                 {
+                    i2 += strlen(syntax->comment_end) - 1;
+                    break;
+                 }
+
+             elm_code_line_token_add(line, i, i2, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+             if (i2 == length)
+               {
+                  Elm_Code_Token *token = eina_list_last_data_get(line->tokens);
+                  token->continues = EINA_TRUE;
+                  return;
+               }
+             i = i2;
+             count = 0;
+             continue;
           }
         else if (content[i] == '"')
           {
