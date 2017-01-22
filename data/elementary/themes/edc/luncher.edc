@@ -43,13 +43,14 @@ group { name: "e/gadget/luncher/icon";
    script {
       public urgent;
       public style;
-                public Float:engage_scale(cursorpos, iconpos, size) {
-                  new Float:scale = 2.25 - (abs(cursorpos-(iconpos+size/2)) / (size*2));
-                  if (scale < 1.0) scale = 1.0;
-                  if (scale > 2.0) scale = 2.0;
+      public Float:engage_scale(cursorpos, iconpos, size) {
+         new Float:zoom = 1.5;
+         new Float:scale = (zoom+0.25) - (abs(cursorpos-(iconpos+size/2)) / (size*2));
+         if (scale < 1.0) scale = 1.0;
+         if (scale > zoom) scale = zoom;
 
-                  return scale;
-               }
+         return scale;
+      }
       public message(Msg_Type:type, id, ...) {
 
 //Style Variable - Used to Identify Style - Name Must Match an Item in the Data List of e/gadget/luncher/bar
