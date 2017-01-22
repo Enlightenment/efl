@@ -693,6 +693,15 @@ _on_content_resize(void *data,
    sd->show_region_job = ecore_job_add(_show_region_job, data);
 }
 
+static void
+_on_top_scroller_del(void *data, const Efl_Event *event)
+{
+   ELM_CONFORMANT_DATA_GET(data, sd);
+
+   if (event->object == sd->scroller)
+     sd->scroller = NULL;
+}
+
 #endif
 
 #ifdef HAVE_ELEMENTARY_X
@@ -721,13 +730,20 @@ _autoscroll_objects_update(void *data)
    if (top_scroller != sd->scroller)
      {
         if (sd->scroller)
-          evas_object_event_callback_del
-            (sd->scroller, EVAS_CALLBACK_RESIZE, _on_content_resize);
+          {
+             evas_object_event_callback_del_full
+                (sd->scroller, EVAS_CALLBACK_RESIZE, _on_content_resize, data);
+             efl_event_callback_del(sd->scroller, EFL_EVENT_DEL, _on_top_scroller_del, data);
+          }
+
         sd->scroller = top_scroller;
 
         if (sd->scroller)
-          evas_object_event_callback_add
-            (sd->scroller, EVAS_CALLBACK_RESIZE, _on_content_resize, data);
+          {
+             evas_object_event_callback_add
+                (sd->scroller, EVAS_CALLBACK_RESIZE, _on_content_resize, data);
+             efl_event_callback_add(sd->scroller, EFL_EVENT_DEL, _on_top_scroller_del, data);
+          }
      }
 }
 
