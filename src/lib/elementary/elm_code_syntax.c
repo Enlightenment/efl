@@ -144,18 +144,19 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
              return;
           }
         i = i2 + 1;
+        // TODO reset all below of here
      }
 
    ptr = content;
    count = 0;
    for (; i < length; i++)
      {
+        ptr = content + i - count;
         if (_elm_code_text_char_is_whitespace(content[i]))
           {
              if (count)
                _elm_code_syntax_parse_token(syntax, line, ptr-content, ptr, count);
 
-             ptr += count+1;
              count = 0;
              continue;
           }
@@ -184,6 +185,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
                {
                   Elm_Code_Token *token = eina_list_last_data_get(line->tokens);
                   token->continues = EINA_TRUE;
+                  // TODO reset all below of here
                   return;
                }
              i = i2;
@@ -198,6 +200,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
              end = i;
 
              elm_code_line_token_add(line, start, end, 1, ELM_CODE_TOKEN_TYPE_STRING);
+             count = 0;
              continue;
           }
         else if (content[i] == '\'')
@@ -208,6 +211,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
              end = i;
 
              elm_code_line_token_add(line, start, end, 1, ELM_CODE_TOKEN_TYPE_STRING);
+             count = 0;
              continue;
          }
 
@@ -219,7 +223,6 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
 
                elm_code_line_token_add(line, i, i, 1, ELM_CODE_TOKEN_TYPE_BRACE);
 
-               ptr = content + i+1;
                count = -1;
                break;
              }
