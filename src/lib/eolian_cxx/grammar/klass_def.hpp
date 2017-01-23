@@ -797,6 +797,27 @@ inline std::vector<std::string> cpp_namespaces(std::vector<std::string> namespac
   return namespaces;
 }
 
+inline bool has_events(klass_def const &klass)
+{
+    for (auto&& e : klass.events)
+      {
+         (void)e;
+         return true;
+      }
+
+    for (auto&& c : klass.inherits)
+      {
+         attributes::klass_def parent(get_klass(c));
+         for (auto&& e : parent.events)
+           {
+              (void)e;
+              return true;
+           }
+      }
+
+    return false;
+}
+
 }
 namespace type_traits {
 
