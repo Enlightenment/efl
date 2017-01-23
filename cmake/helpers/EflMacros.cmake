@@ -766,6 +766,9 @@ function(EFL_TEST _testname)
 
   add_test(NAME ${_testname} COMMAND ${_testtarget})
   LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_TESTS ${_testtarget})
+
+  add_test(${_testname}-build "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target ${_testtarget})
+  set_tests_properties(${_testname} PROPERTIES DEPENDS ${_testname}-build)
 endfunction()
 
 # EFL_MODULE(Name)
