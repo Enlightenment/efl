@@ -70,6 +70,26 @@ class Core
     }
 }
 
+class MyLoop : efl.LoopInherit
+{
+    public MyLoop() : base(null) { }
+}
+
+class EoInherit
+{
+    public static void instantiate_inherited()
+    {
+        efl.Loop loop = new MyLoop();
+        Test.Assert(loop.raw_handle != System.IntPtr.Zero);
+
+        // Evas
+        EcoreEvas ecore_evas = new EcoreEvas();
+        efl.canvas.Object canvas = ecore_evas.canvas;
+        evas.Box box = new MyBox(canvas);
+        Test.Assert(box.raw_handle != System.IntPtr.Zero);
+    }
+}
+
 class EoEvents
 {
     public bool called = false;
