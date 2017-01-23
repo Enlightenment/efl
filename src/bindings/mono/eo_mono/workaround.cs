@@ -35,9 +35,24 @@ public struct EolianPD
     public IntPtr pointer;
 }
 
-public struct Evas_Object_Box_Layout {};
-public struct Eina_Free_Cb {};
-public struct Evas_Object_Box_Option {};
+#pragma warning disable 0169
+public struct Evas_Object_Box_Layout
+{
+    IntPtr o;
+    IntPtr priv;
+    IntPtr user_data;
+};
+public struct Eina_Free_Cb
+{
+    IntPtr data;
+};
+public struct Evas_Object_Box_Option {
+    IntPtr obj;
+    bool max_reached;
+    bool min_reached;
+    evas.Coord alloc_size;
+};
+#pragma warning restore 0169
 
 namespace eina {
     
@@ -73,8 +88,16 @@ public struct Description {
 
 
 public delegate void Event_Cb(System.IntPtr data, System.IntPtr evt);
-public struct Callback_Array_Item {};
-public struct Dbg_Info {};
+#pragma warning disable 0169
+public struct Callback_Array_Item {
+    IntPtr desc;
+    IntPtr func;
+};
+public struct Dbg_Info {
+    IntPtr name;
+    IntPtr value;
+};
+#pragma warning restore 0169
 
 public struct Event {
 
@@ -97,7 +120,20 @@ namespace evas { namespace font {
 
 }
 
-public struct Modifier_Mask {}
+
+// C# does not allow typedefs, so we use these implicit conversions.
+public struct Modifier_Mask {
+    private ulong mask;
+
+    public static implicit operator Modifier_Mask(ulong x)
+    {
+        return new Modifier_Mask{mask=x};
+    }
+    public static implicit operator ulong(Modifier_Mask x)
+    {
+        return x.mask;
+    }
+}
 
 public struct Coord {
     int val;
