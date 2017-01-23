@@ -8,7 +8,7 @@ enum B {
 
 type C: A;
 
-var pants: B.x;
+var pants: B = B.x;
 
 class Decl {
    methods {
