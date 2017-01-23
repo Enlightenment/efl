@@ -726,6 +726,8 @@ function(EFL_LIB _target)
   _EFL_LIB_PROCESS_MODULES_INTERNAL()
   _EFL_LIB_PROCESS_TESTS_INTERNAL()
 
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/post/${_target}.cmake OPTIONAL)
+
   LIST_APPEND_GLOBAL(EFL_ALL_LIBS ${_target})
 endfunction()
 

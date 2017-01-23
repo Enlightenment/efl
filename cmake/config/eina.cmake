@@ -21,17 +21,6 @@ EFL_OPTION(ENABLE_VALGRIND "valgrind support" ${ENABLE_VALGRIND})
 
 SET_GLOBAL(EINA_MODULE_TYPE_MP_PASS_THROUGH_DEFAULT "STATIC")
 
-# TODO: change code to avoid these
-if(EINA_MODULE_TYPE_MP_PASS_THROUGH STREQUAL "STATIC")
-  SET_GLOBAL(EINA_STATIC_BUILD_CHAINED_POOL 1)
-endif()
-if(EINA_MODULE_TYPE_MP_PASS_THROUGH STREQUAL "STATIC")
-  SET_GLOBAL(EINA_STATIC_BUILD_ONE_BIG 1)
-endif()
-if(EINA_MODULE_TYPE_MP_PASS_THROUGH STREQUAL "STATIC")
-  SET_GLOBAL(EINA_STATIC_BUILD_PASS_THROUGH 1)
-endif()
-
 #check for symbols in pthread
 #TODO Make the definitions depending on the platform
 set(CMAKE_REQUIRED_FLAGS "${CMAKE_THREAD_LIBS_INIT}")
@@ -68,7 +57,3 @@ else()
 endif()
 
 #Check if there is the alloca header
-
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/eina/eina_config.h.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/src/lib/eina/eina_config.h)
