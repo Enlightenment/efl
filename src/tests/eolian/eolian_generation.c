@@ -83,21 +83,10 @@ _remove_ref(const char *base, const char *ext)
 static int
 _eolian_gen_execute(const char *eo_filename, const char *options, const char *output_filename)
 {
-   char eolian_gen_path[PATH_MAX] = "";
    char command[PATH_MAX];
-
-   if (getenv("EFL_RUN_IN_TREE"))
-     {
-        snprintf(eolian_gen_path, sizeof(eolian_gen_path),
-              "%s/src/bin/eolian/eolian_gen%s",
-              PACKAGE_BUILD_DIR, EXEEXT);
-     }
-   if (eolian_gen_path[0] == '\0')
-      return -1;
-
    snprintf(command, PATH_MAX,
-         "%s %s -I \""PACKAGE_DATA_DIR"/data\" -o %s %s",
-         eolian_gen_path, options, output_filename, eo_filename);
+         EOLIAN_GEN" %s -I \""PACKAGE_DATA_DIR"/data\" -o %s %s",
+         options, output_filename, eo_filename);
    return system(command);
 }
 

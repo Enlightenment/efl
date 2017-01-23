@@ -119,6 +119,7 @@ tests_eolian_eolian_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_build
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian\" \
 -DPACKAGE_DATA_DIR=\"$(top_srcdir)/src/tests/eolian\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DEOLIAN_GEN="\"$(EOLIAN_GEN)\"" \
 @CHECK_CFLAGS@ \
 @EOLIAN_CFLAGS@ @EO_CFLAGS@
 TESTS += tests/eolian/eolian_suite
