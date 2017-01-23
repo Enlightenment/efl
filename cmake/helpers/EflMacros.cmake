@@ -1067,48 +1067,42 @@ endmacro()
 # Will use the source of the given target to create rules for creating
 # the .eo.c and .eo.h files. The INCLUDE_DIRECTORIES of the target will be used
 function(EFL_CREATE_EO_RULES target generation_dir)
-   get_target_property(build_files ${target} SOURCES)
-   get_target_property(_link_libraries ${target} LINK_LIBRARIES)
-   #build a list of targets we use to scan for all files
-   list(APPEND _include_targets ${target})
-   foreach(lib ${_link_libraries})
-     if (TARGET ${lib})
-        list(APPEND _include_targets ${lib})
-     endif()
-   endforeach()
+   get_target_property(source_files ${target} SOURCES)
+   get_target_property(link_libraries ${target} LINK_LIBRARIES)
 
-   #build a list of include directories
-   foreach(link_target ${_include_targets})
+   set(all_libraries ${target} ${link_libraries})
+   set(include_cmd "")
+   foreach(link_target ${all_libraries})
      list(APPEND include_cmd -I${CMAKE_SOURCE_DIR}/src/lib/${link_target})
    endforeach()
 
-   foreach(file ${build_files})
+   set(all_eo_gen_files "")
+   foreach(file ${source_files})
       get_filename_component(ext ${file} EXT)
       get_filename_component(filename ${file} NAME)
 
-      if (${ext} MATCHES "^\\.eo$")
-         set(build_files ${EFL_LIB_BINARY_DIR}/${filename}.c ${EFL_LIB_BINARY_DIR}/${filename}.h)
-         set(create_rule ON)
-      elseif (${ext} MATCHES "^\\.eot$")
-         set(build_files ${EFL_LIB_BINARY_DIR}/${filename}.h)
-         set(create_rule ON)
+      if(${ext} STREQUAL ".eo")
+        set(file_eo_gen_files ${generation_dir}/${filename}.c ${generation_dir}/${filename}.h)
+      elseif(${ext} STREQUAL ".eot")
+        set(file_eo_gen_files ${generation_dir}/${filename}.h)
+      else()
+        set(file_eo_gen_files "")
       endif()
 
       #add the custom rule
-      if (create_rule)
+      if(file_eo_gen_files)
         add_custom_command(
-           OUTPUT ${build_files}
-           COMMAND ${CMAKE_COMMAND} -E env "EFL_RUN_IN_TREE=1" ${EOLIAN_BIN} ${include_cmd} -o c:${EFL_LIB_BINARY_DIR}/${filename}.c -o h:${EFL_LIB_BINARY_DIR}/${filename}.h ${file}
+           OUTPUT ${file_eo_gen_files}
+           COMMAND ${CMAKE_COMMAND} -E env "EFL_RUN_IN_TREE=1" ${EOLIAN_BIN} ${include_cmd} -o c:${generation_dir}/${filename}.c -o h:${generation_dir}/${filename}.h ${file}
            DEPENDS ${file}
         )
-        unset(create_rule)
-        list(APPEND eo_gen_files ${build_files})
+        list(APPEND all_eo_gen_files ${file_eo_gen_files})
       endif()
     endforeach()
-    if(eo_gen_files)
-      file(MAKE_DIRECTORY ${EFL_LIB_BINARY_DIR})
+    if(all_eo_gen_files)
+      file(MAKE_DIRECTORY ${generation_dir})
       add_custom_target(${target}-eo
-        DEPENDS ${eo_gen_files}
+        DEPENDS ${all_eo_gen_files}
       )
       add_dependencies(${target} ${target}-eo)
       add_dependencies(${target}-eo eolian-bin)
