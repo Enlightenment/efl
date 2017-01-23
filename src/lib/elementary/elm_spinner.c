@@ -1362,6 +1362,7 @@ _elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd, Elm_Focus_Dir
 {
    Evas_Object *ao;
    Eina_List *items = NULL;
+   int ret;
 
    ELM_SPINNER_CHECK(obj) EINA_FALSE;
 
@@ -1376,8 +1377,12 @@ _elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd, Elm_Focus_Dir
         items = eina_list_append(items, _pd->text_button);
         items = eina_list_append(items, _pd->inc_button);
      }
-   return elm_widget_focus_list_next_get
+
+   ret = elm_widget_focus_list_next_get
       (obj, items, eina_list_data_get, dir, next, next_item);
+   eina_list_free(items);
+
+   return ret;
 }
 
 EOLIAN static void
