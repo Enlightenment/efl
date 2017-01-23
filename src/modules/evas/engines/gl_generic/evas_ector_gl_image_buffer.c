@@ -82,8 +82,7 @@ _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
 
 EOLIAN static void *
 _evas_ector_gl_image_buffer_evas_ector_buffer_drawable_image_get(Eo *obj EINA_UNUSED,
-                                                                 Evas_Ector_GL_Image_Buffer_Data *pd,
-                                                                 Eina_Bool update EINA_UNUSED)
+                                                                 Evas_Ector_GL_Image_Buffer_Data *pd)
 {
    evas_gl_common_image_ref(pd->glim);
    return pd->glim;

@@ -208,7 +208,7 @@ _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_FALSE_RETURN_VAL(h == cmd->output->h, EINA_FALSE);
 
    src = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, E_ALPHA, &src_stride);
-   dst = _buffer_map_all(cmd->output->buffer, &dst_len, E_READ, E_ALPHA, &dst_stride);
+   dst = _buffer_map_all(cmd->output->buffer, &dst_len, E_READ | E_WRITE, E_ALPHA, &dst_stride);
    stretch = cmd->displacement.flags & EVAS_FILTER_DISPLACE_STRETCH;
    smooth = cmd->displacement.flags & EVAS_FILTER_DISPLACE_LINEAR;
    map_w = cmd->mask->w;

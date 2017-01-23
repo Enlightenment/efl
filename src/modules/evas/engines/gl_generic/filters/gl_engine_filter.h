@@ -6,6 +6,8 @@
 #include "evas_ector_buffer.eo.h"
 #include "../Evas_Engine_GL_Generic.h"
 
+extern int _evas_engine_GL_log_dom;
+
 typedef Eina_Bool (* GL_Filter_Apply_Func) (Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd);
 GL_Filter_Apply_Func gl_filter_blend_func_get(Evas_Filter_Command *cmd);
 //Software_Filter_Func gl_filter_blur_func_get(Evas_Filter_Command *cmd);
@@ -15,5 +17,16 @@ GL_Filter_Apply_Func gl_filter_blend_func_get(Evas_Filter_Command *cmd);
 //Software_Filter_Func gl_filter_fill_func_get(Evas_Filter_Command *cmd);
 //Software_Filter_Func gl_filter_mask_func_get(Evas_Filter_Command *cmd);
 //Software_Filter_Func gl_filter_transform_func_get(Evas_Filter_Command *cmd);
+
+#undef DBG
+#undef INF
+#undef WRN
+#undef ERR
+#undef CRI
+#define DBG(...) EINA_LOG_DOM_DBG(_evas_engine_GL_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_evas_engine_GL_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_evas_engine_GL_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_evas_engine_GL_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_log_dom, __VA_ARGS__)
 
 #endif // GL_ENGINE_FILTER_H

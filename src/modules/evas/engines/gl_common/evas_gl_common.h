@@ -689,6 +689,7 @@ void              evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_G
 void              evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int npoints, RGBA_Map_Point *p, int smooth, int level);
 void              evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
 Evas_GL_Image    *evas_gl_common_image_surface_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im);
+Evas_GL_Image    *evas_gl_common_image_surface_detach(Evas_Engine_GL_Context *gc, Evas_GL_Image *im);
 
 void             *evas_gl_font_texture_new(void *gc, RGBA_Font_Glyph *fg);
 void              evas_gl_font_texture_free(void *);

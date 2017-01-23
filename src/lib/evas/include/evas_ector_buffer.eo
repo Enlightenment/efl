@@ -19,16 +19,10 @@ interface Evas.Ector.Buffer
       }
       drawable_image_get {
          [[Fetch an engine image from this ector buffer as a drawable.]]
-         params {
-            @in update: bool; [[$true to update the data to the remote image.]]
-         }
          return: void_ptr; [[The engine image (RGBA_Image or Evas_GL_Image).]]
       }
       render_image_get {
          [[Fetch an engine image from this ector buffer as a render target.]]
-         params {
-            @in update: bool; [[$true to update the data to the remote image.]]
-         }
          return: void_ptr; [[The engine image (RGBA_Image or Evas_GL_Image).]]
       }
       engine_image_release {

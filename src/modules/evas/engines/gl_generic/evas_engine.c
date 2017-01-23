@@ -28,7 +28,7 @@
 
 #define EVAS_GL_UPDATE_TILE_SIZE 16
 
-static int _evas_engine_GL_log_dom = -1;
+int _evas_engine_GL_log_dom = -1;
 
 #undef ERR
 #undef DBG

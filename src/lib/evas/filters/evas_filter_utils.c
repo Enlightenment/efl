@@ -19,7 +19,7 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
    DEBUG_TIME_BEGIN();
 
    // Get destination buffer
-   dst = evas_filter_temporary_buffer_get(ctx, w, h, src->alpha_only);
+   dst = evas_filter_temporary_buffer_get(ctx, w, h, src->alpha_only, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, NULL);
 
    // Map input and output

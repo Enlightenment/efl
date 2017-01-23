@@ -2861,6 +2861,8 @@ _buffers_update(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
                pgm->changed = EINA_TRUE;
              buf->w = fb->w = source->cur->geometry.w;
              buf->h = fb->h = source->cur->geometry.h;
+             XDBG("Created proxy buffer %d %s '%s'", fb->id,
+                  buf->alpha ? "alpha" : "rgba", buf->name);
           }
         else
           {
@@ -2870,6 +2872,8 @@ _buffers_update(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
              fb = _filter_buffer_get(ctx, buf->cid);
              fb->w = buf->w = pgm->state.w;
              fb->h = buf->h = pgm->state.h;
+             XDBG("Created context buffer %d %s '%s'", fb->id,
+                  buf->alpha ? "alpha" : "rgba", buf->name);
           }
      }
 }

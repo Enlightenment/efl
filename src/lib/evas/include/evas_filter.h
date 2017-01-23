@@ -55,6 +55,7 @@ typedef void (* Evas_Filter_Cb) (Evas_Filter_Context *ctx, void *data, Eina_Bool
 /** @internal */
 enum _Evas_Filter_Mode
 {
+   EVAS_FILTER_MODE_SKIP,         /**< No operation */
    EVAS_FILTER_MODE_BLEND,        /**< Blend with current context render_op */
    EVAS_FILTER_MODE_BLUR,         /**< @see Evas_Filter_Blur_Type */
    EVAS_FILTER_MODE_CURVE,        /**< Apply color curve */

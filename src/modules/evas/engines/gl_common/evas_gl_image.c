@@ -1100,6 +1100,17 @@ fail:
    return NULL;
 }
 
+Evas_GL_Image *
+evas_gl_common_image_surface_detach(Evas_Engine_GL_Context *gc EINA_UNUSED, Evas_GL_Image *im)
+{
+   if (!im || !im->im) return im;
+
+   evas_cache_image_drop(&im->im->cache_entry);
+   im->im = NULL;
+
+   return im;
+}
+
 void
 evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                               int npoints, RGBA_Map_Point *p, int smooth, int level EINA_UNUSED)

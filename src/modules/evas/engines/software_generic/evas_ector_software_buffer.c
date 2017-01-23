@@ -39,8 +39,7 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
 
 EOLIAN static void *
 _evas_ector_software_buffer_evas_ector_buffer_drawable_image_get(Eo *obj EINA_UNUSED,
-                                                                 Evas_Ector_Software_Buffer_Data *pd,
-                                                                 Eina_Bool update EINA_UNUSED)
+                                                                 Evas_Ector_Software_Buffer_Data *pd)
 {
    evas_cache_image_ref(&pd->image->cache_entry);
    return pd->image;
@@ -48,8 +47,7 @@ _evas_ector_software_buffer_evas_ector_buffer_drawable_image_get(Eo *obj EINA_UN
 
 EOLIAN static void *
 _evas_ector_software_buffer_evas_ector_buffer_render_image_get(Eo *obj EINA_UNUSED,
-                                                               Evas_Ector_Software_Buffer_Data *pd,
-                                                               Eina_Bool update EINA_UNUSED)
+                                                               Evas_Ector_Software_Buffer_Data *pd)
 {
    evas_cache_image_ref(&pd->image->cache_entry);
    return pd->image;

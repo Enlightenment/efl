@@ -23,6 +23,8 @@
 typedef struct _Ector_GL_Buffer_Map Ector_GL_Buffer_Map;
 typedef struct _Evas_Ector_GL_Buffer_Data Evas_Ector_GL_Buffer_Data;
 
+static int _map_id = 0;
+
 struct _Ector_GL_Buffer_Map
 {
    EINA_INLIST;
@@ -30,6 +32,7 @@ struct _Ector_GL_Buffer_Map
    unsigned int base_size; // in bytes
    unsigned int x, y, w, h;
    void *image_data, *base_data;
+   int map_id;
    size_t length;
    Efl_Gfx_Colorspace cspace;
    Evas_GL_Image *im;
@@ -41,7 +44,7 @@ struct _Evas_Ector_GL_Buffer_Data
 {
    Evas_Public_Data *evas;
    Evas_GL_Image *glim;
-   Eina_Bool alpha_only;
+   Eina_Bool alpha_only, was_render;
    Ector_GL_Buffer_Map *maps;
 };
 
@@ -54,6 +57,20 @@ struct _Evas_Ector_GL_Buffer_Data
 #define EINA_INLIST_PREPEND(l,i) do { l = (__typeof__(l)) eina_inlist_prepend(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
 
 #define fail(fmt, ...) do { ERR(fmt, ##__VA_ARGS__); goto on_fail; } while (0)
+
+#if 0
+static inline void
+_mapped_image_dump(Eo *buf, Evas_GL_Image *im, const char *fmt, int id)
+{
+   if (!im || !im->im) return;
+   evas_common_save_image_to_file(im->im, eina_slstr_printf("/tmp/dump/%s_%02d_buf_%p_im_%p.png", fmt, id, buf, im),
+                                  NULL, 100, 9, NULL);
+}
+
+#define MAP_DUMP(_im, _fmt) _mapped_image_dump(obj, _im, _fmt, map->map_id)
+#else
+#define MAP_DUMP(...)
+#endif
 
 /* FIXME: Conversion routines don't belong here */
 static inline void
@@ -120,23 +137,14 @@ on_fail:
    pd->glim = NULL;
 }
 
-EOLIAN static void *
-_evas_ector_gl_buffer_evas_ector_buffer_drawable_image_get(Eo *obj EINA_UNUSED,
-                                                           Evas_Ector_GL_Buffer_Data *pd,
-                                                           Eina_Bool update)
+static inline void *
+_image_get(Evas_Ector_GL_Buffer_Data *pd, Eina_Bool render)
 {
-   Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
-   Evas_Engine_GL_Context *gc;
-
    if (pd->maps != NULL)
      fail("Image is currently mapped!");
 
    evas_gl_common_image_ref(pd->glim);
-   if (!update) return pd->glim;
-
-   gc = re->window_gl_context_get(re->software.ob);
-   evas_gl_common_image_update(gc, pd->glim);
-
+   if (render) pd->was_render = EINA_TRUE;
    return pd->glim;
 
 on_fail:
@@ -144,26 +152,17 @@ on_fail:
 }
 
 EOLIAN static void *
-_evas_ector_gl_buffer_evas_ector_buffer_render_image_get(Eo *obj EINA_UNUSED,
-                                                         Evas_Ector_GL_Buffer_Data *pd,
-                                                         Eina_Bool update)
+_evas_ector_gl_buffer_evas_ector_buffer_drawable_image_get(Eo *obj EINA_UNUSED,
+                                                           Evas_Ector_GL_Buffer_Data *pd)
 {
-   Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
-   Evas_Engine_GL_Context *gc;
+   return _image_get(pd, EINA_FALSE);
+}
 
-   if (pd->maps != NULL)
-     fail("Image is currently mapped!");
-
-   evas_gl_common_image_ref(pd->glim);
-   if (!update) return pd->glim;
-
-   gc = re->window_gl_context_get(re->software.ob);
-   evas_gl_common_image_update(gc, pd->glim);
-
-   return pd->glim;
-
-on_fail:
-   return NULL;
+EOLIAN static void *
+_evas_ector_gl_buffer_evas_ector_buffer_render_image_get(Eo *obj EINA_UNUSED,
+                                                         Evas_Ector_GL_Buffer_Data *pd)
+{
+   return _image_get(pd, EINA_TRUE);
 }
 
 EOLIAN static Eina_Bool
@@ -174,6 +173,14 @@ _evas_ector_gl_buffer_evas_ector_buffer_engine_image_release(Eo *obj EINA_UNUSED
    EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->glim == image, EINA_FALSE);
 
+   if (pd->was_render)
+     {
+        Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
+        Evas_Engine_GL_Context *gc;
+
+        gc = re->window_gl_context_get(re->software.ob);
+        pd->glim = evas_gl_common_image_surface_detach(gc, pd->glim);
+     }
    evas_gl_common_image_free(pd->glim);
 
    return EINA_TRUE;
@@ -270,12 +277,15 @@ _evas_ector_gl_buffer_ector_buffer_map(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buffer
         pxs = 4;
      }
 
+   map->map_id = ++_map_id;
    map->base_size = len * pxs;
    map->length = (W * h + w - W) * pxs;
    if (stride) *stride = W * pxs;
    if (length) *length = map->length;
 
-   EINA_INLIST_PREPEND(pd->maps, map);;
+   MAP_DUMP(im, "in");
+
+   EINA_INLIST_PREPEND(pd->maps, map);
    return map->ptr;
 
 on_fail:
@@ -311,20 +321,28 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
 
                   if (map->im)
                     {
+                       MAP_DUMP(map->im, "out_w_free");
                        pd->glim = evas_gl_common_image_surface_update(gc, map->im);
                        evas_gl_common_image_free(old_glim);
                     }
                   else
                     {
+                       MAP_DUMP(old_glim, "out_w_nofree");
                        pd->glim = evas_gl_common_image_surface_update(gc, old_glim);
                     }
                }
              else
                {
                   if (map->im)
-                    ENFN->image_free(ENDT, map->im);
+                    {
+                       MAP_DUMP(map->im, "out_ro_free");
+                       ENFN->image_free(ENDT, map->im);
+                    }
                   else
-                    ENFN->image_data_put(ENDT, pd->glim, map->image_data);
+                    {
+                       MAP_DUMP(pd->glim, "out_ro_nofree");
+                       ENFN->image_data_put(ENDT, pd->glim, map->image_data);
+                    }
                }
              if (map->allocated)
                free(map->base_data);
