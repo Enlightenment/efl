@@ -127,6 +127,146 @@ function(EFL_FINALIZE)
   add_custom_target(all-tests DEPENDS ${EFL_ALL_TESTS})
 endfunction()
 
+unset(HEADER_FILE_CONTENT CACHE)
+
+# HEADER_CHECK(header [NAME variable] [INCLUDE_FILES extra1.h .. extraN.h])
+#
+# Check if the header file exists, in such case define variable
+# in configuration file.
+#
+# Variable defaults to HAVE_${HEADER}, where HEADER is the uppercase
+# representation of the first parameter. It can be overridden using
+# NAME keyword.
+#
+# To include extra files, then use INCLUDE_FILES keyword.
+function(HEADER_CHECK header)
+  string(TOUPPER HAVE_${header} var)
+  string(REGEX REPLACE "[^a-zA-Z0-9]" "_" var "${var}")
+  string(REGEX REPLACE "_{2,}" "_" var "${var}")
+
+  cmake_parse_arguments(PARAMS "" "NAME" "INCLUDE_FILES" ${ARGN})
+
+  if(PARAMS_NAME)
+    set(var ${PARAMS_NAME})
+  endif()
+
+  set(CMAKE_EXTRA_INCLUDE_FILES "${PARAMS_INCLUDE_FILES}")
+
+  CHECK_INCLUDE_FILE(${header} ${var})
+
+  if(${${var}})
+    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#define ${var} 1\n")
+  else()
+    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#undef ${var}\n")
+  endif()
+endfunction()
+
+# FUNC_CHECK(func [NAME variable]
+#            [INCLUDE_FILES header1.h .. headerN.h]
+#            [LIBRARIES lib1 ... libN]
+#            [DEFINITIONS -DA=1 .. -DN=123]
+#            [FLAGS -cmdlineparam1 .. -cmdlineparamN]
+#            [CXX])
+#
+# Check if the function exists, in such case define variable in
+# configuration file.
+#
+# Variable defaults to HAVE_${FUNC}, where FUNC is the uppercase
+# representation of the first parameter. It can be overridden using
+# NAME keyword.
+#
+# To define include files use INCLUDE_FILES keyword.
+#
+# To use C++ compiler, use CXX keyword
+function(FUNC_CHECK func)
+  string(TOUPPER HAVE_${func} var)
+  string(REGEX REPLACE "_{2,}" "_" var "${var}")
+
+  cmake_parse_arguments(PARAMS "CXX" "NAME" "INCLUDE_FILES;LIBRARIES;DEFINITIONS;FLAGS" ${ARGN})
+
+  set(CMAKE_REQUIRED_LIBRARIES "${PARAMS_LIBRARIES}")
+  set(CMAKE_REQUIRED_DEFINITIONS "${PARAMS_DEFINITIONS}")
+  set(CMAKE_REQUIRED_FLAGS "${PARAMS_FLAGS}")
+
+  if(PARAMS_CXX)
+    check_cxx_symbol_exists(${func} "${PARAMS_INCLUDE_FILES}" ${var})
+  else()
+    check_symbol_exists(${func} "${PARAMS_INCLUDE_FILES}" ${var})
+  endif()
+
+  if(${${var}} )
+    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#define ${var} 1\n")
+  else()
+    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#undef ${var}\n")
+  endif()
+endfunction()
+
+# TYPE_CHECK(type [NAME variable]
+#           [INCLUDE_FILES file1.h ... fileN.h]
+#           [LIBRARIES lib1 ... libN]
+#           [DEFINITIONS -DA=1 .. -DN=123]
+#           [FLAGS -cmdlineparam1 .. -cmdlineparamN]
+#           [CXX])
+#
+# Check if the type exists and its size, in such case define variable
+# in configuration file.
+#
+# Variable defaults to HAVE_${TYPE}, where TYPE is the uppercase
+# representation of the first parameter. It can be overridden using
+# NAME keyword.
+#
+# To define include files use INCLUDE_FILES keyword.
+#
+# To use C++ compiler, use CXX keyword
+function(TYPE_CHECK type)
+  string(TOUPPER HAVE_${type} var)
+  string(REGEX REPLACE "_{2,}" "_" var "${var}")
+
+  cmake_parse_arguments(PARAMS "CXX" "NAME" "INCLUDE_FILES;LIBRARIES;DEFINITIONS;FLAGS" ${ARGN})
+
+  set(CMAKE_REQUIRED_LIBRARIES "${PARAMS_LIBRARIES}")
+  set(CMAKE_REQUIRED_DEFINITIONS "${PARAMS_DEFINITIONS}")
+  set(CMAKE_REQUIRED_FLAGS "${PARAMS_FLAGS}")
+  set(CMAKE_EXTRA_INCLUDE_FILES "${PARAMS_INCLUDE_FILES}")
+
+  if(PARAMS_CXX)
+    set(lang CXX)
+  else()
+    set(lang C)
+  endif()
+
+  CHECK_TYPE_SIZE(${type} ${var} LANGUAGE ${lang})
+
+  if(HAVE_${var})
+    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#define ${var} 1\n")
+  else()
+    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#undef ${var}\n")
+  endif()
+endfunction()
+
+# EFL_HEADER_CHECKS_FINALIZE(file)
+#
+# Write the configuration gathered with HEADER_CHECK(), TYPE_CHECK()
+# and FUNC_CHECK() to the given file.
+function(EFL_HEADER_CHECKS_FINALIZE file)
+  file(WRITE ${file}.new ${HEADER_FILE_CONTENT})
+  if (NOT EXISTS ${file})
+    file(RENAME ${file}.new ${file})
+    message(STATUS "${file} was generated.")
+  else()
+    file(MD5 ${file}.new _new_md5)
+    file(MD5 ${file} _old_md5)
+    if(_new_md5 STREQUAL _old_md5)
+      message(STATUS "${file} is unchanged.")
+    else()
+      file(REMOVE ${file})
+      file(RENAME ${file}.new ${file})
+      message(STATUS "${file} was updated.")
+    endif()
+  endif()
+  unset(HEADER_FILE_CONTENT CACHE) # allow to reuse with an empty contents
+endfunction()
+
 # EFL_FILES_TO_ABSOLUTE(Var Source_Dir Binary_Dir [file1 ... fileN])
 #
 # Convert list of files to absolute path. If not absolute, then
