@@ -385,7 +385,7 @@ endfunction()
 #  - INCLUDE_DIRECTORIES: results in target_include_directories
 #  - SYSTEM_INCLUDE_DIRECTORIES: results in target_include_directories(SYSTEM)
 #  - OUTPUT_NAME
-#  - SOURCES
+#  - SOURCES source files that are needed, eo files can also be added here to be build
 #  - PUBLIC_HEADERS
 #  - VERSION (defaults to project version)
 #  - SOVERSION (defaults to project major version)
@@ -395,6 +395,7 @@ endfunction()
 #  - LIBRARIES: results in target_link_libraries(LINK_PRIVATE)
 #  - PUBLIC_LIBRARIES: results in target_link_libraries(LINK_PUBLIC)
 #  - DEFINITIONS: target_compile_definitions()
+#  - PUBLIC_EO_FILES: the eo files will be used to build that lib, and will be installed to the filesystem
 #
 # Defines the following variables that can be used within the included files:
 #  - EFL_LIB_CURRENT to ${Name}
@@ -469,14 +470,25 @@ function(EFL_LIB _target)
     message(FATAL_ERROR "Shared libraries must install public headers!")
   endif()
 
+  #merge public eo files into sources
+  set(SOURCES ${SOURCES} ${PUBLIC_EO_FILES})
+
   EFL_FILES_TO_ABSOLUTE(_headers ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
     ${PUBLIC_HEADERS})
   EFL_FILES_TO_ABSOLUTE(_sources ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
     ${SOURCES})
   EFL_FILES_TO_ABSOLUTE(_obj_deps ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
     ${OBJECT_DEPENDS})
+  EFL_FILES_TO_ABSOLUTE(_public_eo_files ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
+    ${PUBLIC_EO_FILES})
+
+  foreach(public_eo_file ${_public_eo_files})
+    get_filename_component(filename ${public_eo_file} NAME)
+    list(APPEND _headers ${EFL_LIB_BINARY_DIR}/${filename}.h)
+  endforeach()
 
   EFL_PKG_CONFIG_EVAL(${_target} "${PKG_CONFIG_REQUIRES_PRIVATE}" "${PKG_CONFIG_REQUIRES}")
+
 
   add_library(${_target} ${LIBRARY_TYPE} ${_sources} ${_headers})
   set_target_properties(${_target} PROPERTIES
@@ -519,6 +531,8 @@ function(EFL_LIB _target)
       SOVERSION ${SOVERSION})
   endif()
 
+  EFL_CREATE_EO_RULES(${_target} ${EFL_LIB_BINARY_DIR})
+
   EFL_PKG_CONFIG_LIB_WRITE()
 
   install(TARGETS ${_target}
@@ -526,7 +540,9 @@ function(EFL_LIB _target)
     RUNTIME DESTINATION bin
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
-
+  install(FILES
+    ${_public_eo_files} DESTINATION share/eolian/include/${_target}-${PROJECT_VERSION_MAJOR}
+    )
   # do not leak those into binaries, modules or tests
   unset(_sources)
   unset(_headers)
@@ -880,3 +896,55 @@ macro(EFL_PROJECT version)
   endif ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   message("VERSION ${PROJECT_VERSION}")
 endmacro()
+
+# Will use the source of the given target to create rules for creating
+# the .eo.c and .eo.h files. The INCLUDE_DIRECTORIES of the target will be used
+function(EFL_CREATE_EO_RULES target generation_dir)
+   get_target_property(build_files ${target} SOURCES)
+   get_target_property(_link_libraries ${target} LINK_LIBRARIES)
+   #build a list of targets we use to scan for all files
+   list(APPEND _include_targets ${target})
+   foreach(lib ${_link_libraries})
+     if (TARGET ${lib})
+        list(APPEND _include_targets ${lib})
+     endif()
+   endforeach()
+
+   #build a list of include directories
+   foreach(link_target ${_include_targets})
+     list(APPEND include_cmd -I${CMAKE_SOURCE_DIR}/src/lib/${link_target})
+   endforeach()
+
+   foreach(file ${build_files})
+      get_filename_component(ext ${file} EXT)
+      get_filename_component(filename ${file} NAME)
+
+      if (${ext} MATCHES "^\\.eo$")
+         set(build_files ${EFL_LIB_BINARY_DIR}/${filename}.c ${EFL_LIB_BINARY_DIR}/${filename}.h)
+         set(create_rule ON)
+      elseif (${ext} MATCHES "^\\.eot$")
+         set(build_files ${EFL_LIB_BINARY_DIR}/${filename}.h)
+         set(create_rule ON)
+      endif()
+
+      #add the custom rule
+      if (create_rule)
+        message("CREATE CUSTOM COMMAND FOR ${build_files}")
+        add_custom_command(
+           OUTPUT ${build_files}
+           COMMAND ${CMAKE_COMMAND} -E env "EFL_RUN_IN_TREE=1" ${EOLIAN_BIN} ${include_cmd} -o c:${EFL_LIB_BINARY_DIR}/${filename}.c -o h:${EFL_LIB_BINARY_DIR}/${filename}.h ${file}
+           DEPENDS ${file}
+        )
+        unset(create_rule)
+        list(APPEND eo_gen_files ${build_files})
+      endif()
+    endforeach()
+    if(eo_gen_files)
+      file(MAKE_DIRECTORY ${EFL_LIB_BINARY_DIR})
+      add_custom_target(${target}-eo
+        DEPENDS ${eo_gen_files}
+      )
+      add_dependencies(${target} ${target}-eo)
+      add_dependencies(${target} eolian-bin)
+    endif()
+endfunction()
