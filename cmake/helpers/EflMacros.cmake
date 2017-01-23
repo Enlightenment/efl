@@ -923,11 +923,11 @@ function(EFL_TEST _testname)
     LIBRARY_OUTPUT_DIRECTORY "${_testbindir}"
     RUNTIME_OUTPUT_DIRECTORY "${_testbindir}")
 
-  add_test(NAME ${_testname} COMMAND ${_testtarget})
+  add_test(NAME ${_testtarget} COMMAND ${_testtarget})
   LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_TESTS ${_testtarget})
 
-  add_test(${_testname}-build "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target ${_testtarget})
-  set_tests_properties(${_testname} PROPERTIES DEPENDS ${_testname}-build)
+  add_test(${_testtarget}-build "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target ${_testtarget})
+  set_tests_properties(${_testtarget} PROPERTIES DEPENDS ${_testtarget}-build)
 endfunction()
 
 # EFL_MODULE(Name)
