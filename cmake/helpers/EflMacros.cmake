@@ -1098,6 +1098,6 @@ function(EFL_CREATE_EO_RULES target generation_dir)
         DEPENDS ${eo_gen_files}
       )
       add_dependencies(${target} ${target}-eo)
-      add_dependencies(${target} eolian-bin)
+      add_dependencies(${target}-eo eolian-bin)
     endif()
 endfunction()
