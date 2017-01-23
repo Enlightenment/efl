@@ -750,6 +750,7 @@ function(EFL_TEST _testname)
     ${CHECK_LIBRARIES})
 
   target_compile_definitions(${_testtarget} PRIVATE
+    "-DPACKAGE_DATA_DIR=\"${EFL_TESTS_SOURCE_DIR}\""
     "-DTESTS_SRC_DIR=\"${_testrcdir}\""
     "-DTESTS_BUILD_DIR=\"${_testbindir}\""
     "-DTESTS_WD=\"${PROJECT_BINARY_DIR}\""

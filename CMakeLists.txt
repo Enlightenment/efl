@@ -36,6 +36,7 @@ include_directories(
 include(${CMAKE_SOURCE_DIR}/cmake/config/common.cmake)
 
 EFL_LIB(eina)
+EFL_LIB(eolian)
 
 EFL_OPTIONS_SUMMARY()
 
