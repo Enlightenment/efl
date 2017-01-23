@@ -2,10 +2,14 @@ set(DESCRIPTION "A Library that implements fast data types and miscellaneous too
 set(PKG_CONFIG_REQUIRES_PRIVATE OPTIONAL libsystemd)
 
 set(PUBLIC_LIBRARIES
+  pthread
+)
+
+set(LIBRARIES
   m
   dl
   rt
-  pthread)
+)
 
 if(ENABLE_VALGRIND)
   list(APPEND PKG_CONFIG_REQUIRES_PRIVATE valgrind)
