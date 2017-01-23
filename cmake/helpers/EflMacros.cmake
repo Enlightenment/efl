@@ -554,6 +554,7 @@ endfunction()
 #  - PUBLIC_LIBRARIES: results in target_link_libraries(LINK_PUBLIC)
 #  - DEFINITIONS: target_compile_definitions()
 #  - PUBLIC_EO_FILES: the eo files will be used to build that lib, and will be installed to the filesystem
+#  - EO_FILES: the eo files will be used to build that lib but not installed.
 #
 # Defines the following variables that can be used within the included files:
 #  - EFL_LIB_CURRENT to ${Name}
@@ -622,6 +623,7 @@ function(EFL_LIB _target)
   set(PUBLIC_LIBRARIES)
   set(DEFINITIONS)
   set(PUBLIC_EO_FILES)
+  set(EO_FILES)
 
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config/${_target}.cmake OPTIONAL)
   include(${EFL_LIB_SOURCE_DIR}/CMakeLists.txt OPTIONAL)
@@ -630,7 +632,7 @@ function(EFL_LIB _target)
   endif()
 
   #merge public eo files into sources
-  set(SOURCES ${SOURCES} ${PUBLIC_EO_FILES})
+  set(SOURCES ${SOURCES} ${PUBLIC_EO_FILES} ${EO_FILES})
 
   EFL_FILES_TO_ABSOLUTE(_headers ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
     ${PUBLIC_HEADERS})
@@ -722,6 +724,7 @@ function(EFL_LIB _target)
   unset(DEFINITIONS)
   unset(DESCRIPTION)
   unset(PUBLIC_EO_FILES)
+  unset(EO_FILES)
   unset(PKG_CONFIG_REQUIRES)
   unset(PKG_CONFIG_REQUIRES_PRIVATE)
 
