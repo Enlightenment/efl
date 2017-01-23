@@ -197,11 +197,10 @@ static void
 _code_changed(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *win = data;
-   Eo *text, *code, *spinner;
+   Eo *code, *spinner;
    Eina_Strbuf *buf = NULL;
    const char *source;
 
-   text = efl_key_wref_get(win, "text");
    code = efl_key_wref_get(win, "code");
    spinner = efl_key_wref_get(win, "spinner");
 
