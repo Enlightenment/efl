@@ -122,6 +122,7 @@ struct klass
              << scope_tab << "public " << string << "Concrete(System.IntPtr raw)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "handle = raw;\n"
+             << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << "}\n"
              /* << scope_tab << "public delegate void EflEventHandler(object sender, EventArgs e);\n" */
             )
@@ -175,12 +176,16 @@ struct klass
              //<< scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(null/*new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer)*/, " << class_get_name << "());\n"             
              << scope_tab << scope_tab << "handle = efl.eo.Globals.instantiate(klass, parent);\n"
              << scope_tab << scope_tab << "efl.eo.Globals.data_set(this);\n"
+             << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << "}\n"
             )
             .generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name), context))
            return false;
 
          if (!generate_events(sink, cls, context))
+             return false;
+
+         if (!generate_events_registration(sink, cls, context))
              return false;
      
          if(!as_generator(*(function_definition(true)))
