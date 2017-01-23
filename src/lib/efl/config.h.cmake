@@ -32,4 +32,6 @@
 #cmakedefine EFL_HAVE_POSIX_THREADS_SPINLOCK 1
 #cmakedefine EFL_HAVE_THREADS 1
 
+#cmakedefine HAVE_EO_ID
+
 #endif
