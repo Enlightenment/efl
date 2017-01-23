@@ -4,6 +4,7 @@ set(PKG_CONFIG_REQUIRES_PRIVATE OPTIONAL libsystemd)
 set(PUBLIC_LIBRARIES
   m
   dl
+  rt
   pthread)
 
 if(ENABLE_VALGRIND)
