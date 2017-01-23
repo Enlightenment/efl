@@ -96,8 +96,6 @@ struct klass
             (
              "public class " << string << "Concrete : " << string << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
-             << scope_tab << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n"
-             << scope_tab << "private readonly object eventLock = new object();\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
              << scope_tab << "}\n"
@@ -158,8 +156,6 @@ struct klass
             (
              "public " << class_type << " " << string << "Inherit : " << string << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
-             << scope_tab << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n"
-             << scope_tab << "private readonly object eventLock = new object();\n"
              << scope_tab << "public static System.IntPtr klass;\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
@@ -353,6 +349,15 @@ struct klass
    template <typename OutputIterator, typename Context>
    bool generate_events(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
+
+     if (!has_events(cls))
+         return true;
+
+     if (!as_generator(scope_tab << "private readonly object eventLock = new object();\n"
+             << scope_tab << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n")
+             .generate(sink, NULL, context))
+         return false;
+
      // Callback registration functions
      if (!as_generator(
             scope_tab << "private bool add_cpp_event_handler(string key, efl.Event_Cb evt_delegate) {\n"
