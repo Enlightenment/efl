@@ -15,13 +15,6 @@ set(EFL_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(EFL_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(MODULE_ARCH "v-${VMAJ}.${VMIN}")
 
-#change when on windows
-if (WIN32)
-    set(SHARED_LIB_SUFFIX ".dll")
-else()
-    set(SHARED_LIB_SUFFIX ".so")
-endif()
-
 EFL_OPTION(BUILD_PROFILE "How to build EFL" dev CHOICE release;dev;debug)
 EFL_OPTION(EFL_NOLEGACY_API_SUPPORT "Whenever to disable non-Eo (Legacy) APIs" ON)
 EFL_OPTION(EFL_EO_API_SUPPORT "Whenever to enable new Eo APIs" ON)
