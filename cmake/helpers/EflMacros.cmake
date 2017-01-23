@@ -353,6 +353,14 @@ function(EFL_PKG_CONFIG_LIB_WRITE)
   set(_libraries)
   set(_public_libraries)
 
+  get_target_property(eo_files_public ${EFL_LIB_CURRENT} EFL_EO_PUBLIC)
+  if(eo_files_public)
+    set(_eoinfo "eoincludedir=\${datarootdir}/eolian/include
+eolian_flags=-I\${pc_sysrootdir}\${eoincludedir}/${EFL_LIB_CURRENT}-${PROJECT_VERSION_MAJOR}")
+  else()
+    set(_eoinfo "")
+  endif()
+
   foreach(_e ${${EFL_LIB_CURRENT}_PKG_CONFIG_REQUIRES})
     set(_pkg_config_requires "${_pkg_config_requires} ${_e}")
   endforeach()
@@ -392,6 +400,7 @@ datarootdir=\${prefix}/share
 datadir=\${datarootdir}
 pkgdatadir=\${datadir}/${EFL_LIB_CURRENT}
 modules=\${libdir}/${EFL_LIB_CURRENT}/modules
+${_eoinfo}
 
 Name: ${EFL_LIB_CURRENT}
 Description: ${DESCRIPTION}
@@ -529,6 +538,14 @@ function(_EFL_LIB_PROCESS_TESTS_INTERNAL)
   endif()
 endfunction()
 
+define_property(TARGET PROPERTY EFL_EO_PRIVATE
+  BRIEF_DOCS "EFL's .eo/.eot files associated with this target and not installed"
+  FULL_DOCS "The list of all .eo or .eot files this target uses but doesn't install")
+
+define_property(TARGET PROPERTY EFL_EO_PUBLIC
+  BRIEF_DOCS "EFL's .eo/.eot files associated with this target and installed"
+  FULL_DOCS "The list of all .eo or .eot files this target uses and installs")
+
 # EFL_LIB(Name)
 #
 # adds a library ${Name} automatically setting object/target
@@ -642,6 +659,8 @@ function(EFL_LIB _target)
     ${OBJECT_DEPENDS})
   EFL_FILES_TO_ABSOLUTE(_public_eo_files ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
     ${PUBLIC_EO_FILES})
+  EFL_FILES_TO_ABSOLUTE(_eo_files ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
+    ${EO_FILES})
 
   foreach(public_eo_file ${PUBLIC_EO_FILES})
     list(APPEND _headers ${EFL_LIB_BINARY_DIR}/${public_eo_file}.h)
@@ -656,6 +675,8 @@ function(EFL_LIB _target)
     FRAMEWORK TRUE
     PUBLIC_HEADER "${_headers}"
     OBJECT_DEPENDS "${_obj_deps}"
+    EFL_EO_PRIVATE "${_eo_files}"
+    EFL_EO_PUBLIC "${_public_eo_files}"
     COMPILE_FLAGS -DPACKAGE_DATA_DIR=\\"${CMAKE_INSTALL_FULL_DATADIR}/${_target}/\\")
 
   if(DEPENDENCIES)
@@ -709,6 +730,7 @@ function(EFL_LIB _target)
   unset(_headers)
   unset(_obj_deps)
   unset(_public_eo_files)
+  unset(_eo_files)
   unset(INCLUDE_DIRECTORIES)
   unset(SYSTEM_INCLUDE_DIRECTORIES)
   unset(OUTPUT_NAME)
@@ -1070,9 +1092,13 @@ endmacro()
 # Will use the source of the given target to create rules for creating
 # the .eo.c and .eo.h files. The INCLUDE_DIRECTORIES of the target will be used
 function(EFL_CREATE_EO_RULES target generation_dir)
-   get_target_property(source_files ${target} SOURCES)
-   get_target_property(link_libraries ${target} LINK_LIBRARIES)
+   get_target_property(eo_files_private ${target} EFL_EO_PRIVATE)
+   get_target_property(eo_files_public ${target} EFL_EO_PUBLIC)
+   if(NOT eo_files_private AND NOT eo_files_public)
+     return()
+   endif()
 
+   get_target_property(link_libraries ${target} LINK_LIBRARIES)
    set(all_libraries ${target} ${link_libraries})
    set(include_cmd "")
    foreach(link_target ${all_libraries})
@@ -1080,7 +1106,7 @@ function(EFL_CREATE_EO_RULES target generation_dir)
    endforeach()
 
    set(all_eo_gen_files "")
-   foreach(file ${source_files})
+   foreach(file ${eo_files_private} ${eo_files_public})
       get_filename_component(ext ${file} EXT)
       get_filename_component(filename ${file} NAME)
 
@@ -1089,7 +1115,7 @@ function(EFL_CREATE_EO_RULES target generation_dir)
       elseif(${ext} STREQUAL ".eot")
         set(file_eo_gen_files ${generation_dir}/${filename}.h)
       else()
-        set(file_eo_gen_files "")
+        message(FATAL_ERROR "Unsupported eo file type: ${file}")
       endif()
 
       #add the custom rule
