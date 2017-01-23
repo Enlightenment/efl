@@ -13026,13 +13026,13 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
 static inline Eina_Rectangle
 _filter_relative_bounding_box_get(const Text_Item_Filter *tif)
 {
-   int x_offset, y_offset, l, r, t, b;
+   int x_offset, y_offset, l, t, b;
    Eina_Rectangle rect;
 
    x_offset = tif->ti->parent.ln->x + tif->ti->parent.x;
    y_offset = tif->ti->parent.ln->par->y + tif->ti->parent.ln->y;
    l = tif->ti->parent.format->gfx_filter->pad.l;
-   r = tif->ti->parent.format->gfx_filter->pad.r;
+   /* r = tif->ti->parent.format->gfx_filter->pad.r; */
    t = tif->ti->parent.format->gfx_filter->pad.t;
    b = tif->ti->parent.format->gfx_filter->pad.b;
 
