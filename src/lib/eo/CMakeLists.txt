@@ -1,3 +1,5 @@
+set(DESCRIPTION "EFL's generic object system library.")
+
 set(PUBLIC_LIBRARIES
   eina
 )
