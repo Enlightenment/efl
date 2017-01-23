@@ -23,6 +23,11 @@ function(SET_GLOBAL _var _value)
   set(${_var} "${_value}" CACHE INTERNAL "${ARGN}")
 endfunction()
 
+unset(EFL_ALL_OPTIONS CACHE)
+unset(EFL_ALL_LIBS CACHE)
+unset(EFL_ALL_TESTS CACHE)
+unset(EFL_PKG_CONFIG_MISSING_OPTIONAL CACHE)
+
 # EFL_OPTION(Name Help Default)
 #
 # Declare an option() that will be automatically printed by
@@ -441,6 +446,9 @@ endmacro()
 #
 # Internal function to process modules of current EFL_LIB()
 function(_EFL_LIB_PROCESS_MODULES_INTERNAL)
+  unset(${EFL_LIB_CURRENT}_MODULES CACHE)
+  unset(${EFL_LIB_CURRENT}_STATIC_MODULES CACHE)
+
   if(EXISTS ${EFL_MODULES_SOURCE_DIR}/CMakeLists.txt)
     message(FATAL_ERROR "${EFL_MODULES_SOURCE_DIR}/CMakeLists.txt shouldn't exist. Modules are expected to be defined in their own directory.")
   else()
@@ -494,6 +502,8 @@ endfunction()
 #
 # Internal function to process tests of current EFL_LIB()
 function(_EFL_LIB_PROCESS_TESTS_INTERNAL)
+  unset(${EFL_LIB_CURRENT}_TESTS CACHE)
+
   if(EXISTS ${EFL_TESTS_SOURCE_DIR}/CMakeLists.txt)
     EFL_TEST(${EFL_LIB_CURRENT})
   else()
