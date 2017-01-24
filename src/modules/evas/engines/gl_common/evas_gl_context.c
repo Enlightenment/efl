@@ -1380,6 +1380,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              PIPE_FREE(gc->pipe[i].array.texsam);
              PIPE_FREE(gc->pipe[i].array.mask);
              PIPE_FREE(gc->pipe[i].array.masksam);
+             PIPE_FREE(gc->pipe[i].array.filter_data);
           }
      }
 
@@ -3117,6 +3118,309 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 }
 
+// ----------------------------------------------------------------------------
+// Gfx Filters
+
+static inline void
+_filter_data_flush(Evas_Engine_GL_Context *gc, Evas_GL_Program *prog)
+{
+   // filter_data is not using a vertex array, which means early flushes
+   // are necessary. Vertex arrays crashed for whatever reason :(
+   for (size_t k = 0; k < MAX_PIPES; k++)
+     if ((gc->pipe[k].array.filter_data || gc->pipe[k].shader.filter.map_tex)
+         && (gc->pipe[k].shader.prog == prog))
+       {
+          shader_array_flush(gc);
+          break;
+       }
+}
+
+void
+evas_gl_common_filter_displace_push(Evas_Engine_GL_Context *gc,
+                                    Evas_GL_Texture *tex, Evas_GL_Texture *map_tex,
+                                    int x, int y, int w, int h, double dx, double dy,
+                                    Eina_Bool nearest)
+{
+   double sx, sy, sw, sh, pw, ph;
+   double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4;
+   GLfloat tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4;
+   Shader_Sampling sam = SHD_SAM11;
+   GLfloat offsetx, offsety;
+   GLfloat *filter_data;
+   int r, g, b, a, nomul = 0, pn;
+   Evas_GL_Program *prog;
+   Eina_Bool blend = EINA_TRUE;
+   Eina_Bool smooth = EINA_TRUE;
+
+   r = R_VAL(&gc->dc->mul.col);
+   g = G_VAL(&gc->dc->mul.col);
+   b = B_VAL(&gc->dc->mul.col);
+   a = A_VAL(&gc->dc->mul.col);
+   if (gc->dc->render_op == EVAS_RENDER_COPY)
+     blend = EINA_FALSE;
+
+   prog = evas_gl_common_shader_program_get(gc, SHD_FILTER_DISPLACE, NULL, 0, r, g, b, a,
+                                            w, h, w, h, smooth, tex, EINA_FALSE,
+                                            NULL, EINA_FALSE, EINA_FALSE, 0, 0,
+                                            &sam, &nomul, NULL);
+   _filter_data_flush(gc, prog);
+
+   pn = _evas_gl_common_context_push(SHD_FILTER_DISPLACE, gc, tex, NULL, prog,
+                                     x, y, w, h, blend, smooth,
+                                     0, 0, 0, 0, 0, EINA_FALSE);
+
+   gc->pipe[pn].region.type = SHD_FILTER_DISPLACE;
+   gc->pipe[pn].shader.prog = prog;
+   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_texm = 0;
+   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+   gc->pipe[pn].shader.smooth = smooth;
+   gc->pipe[pn].shader.mask_smooth = 0;
+   gc->pipe[pn].shader.blend = blend;
+   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.clip = 0;
+   gc->pipe[pn].shader.cx = 0;
+   gc->pipe[pn].shader.cy = 0;
+   gc->pipe[pn].shader.cw = 0;
+   gc->pipe[pn].shader.ch = 0;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = !nomul;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texsam = (sam != SHD_SAM11);
+   gc->pipe[pn].array.use_mask = 0;
+   gc->pipe[pn].array.use_masksam = 0;
+
+   pipe_region_expand(gc, pn, x, y, w, h);
+   PIPE_GROW(gc, pn, 6);
+
+   // displace properties
+   gc->pipe[pn].shader.filter.map_tex = map_tex->pt->texture;
+   gc->pipe[pn].shader.filter.map_nearest = nearest;
+   gc->pipe[pn].array.filter_data_count = 3;
+   gc->pipe[pn].array.filter_data = malloc(6 * sizeof(GLfloat));
+
+   if (!prog->attribute.known_locations)
+     {
+        for (int k = 0; k < gc->pipe[pn].array.filter_data_count; k++)
+          {
+             char name[32];
+
+             sprintf(name, "filter_data_%d", k);
+             prog->attribute.loc_filter_data[k] = glGetAttribLocation(prog->prog, name);
+          }
+     }
+
+   sx = x;
+   sy = y;
+   sw = w;
+   sh = h;
+
+   pw = tex->pt->w;
+   ph = tex->pt->h;
+
+   ox1 = sx;
+   oy1 = sy;
+   ox2 = sx + sw;
+   oy2 = sy;
+   ox3 = sx + sw;
+   oy3 = sy + sh;
+   ox4 = sx;
+   oy4 = sy + sh;
+
+   offsetx = tex->x;
+   offsety = tex->y;
+
+   tx1 = ((double)(offsetx) + ox1) / pw;
+   ty1 = ((double)(offsety) + oy1) / ph;
+   tx2 = ((double)(offsetx) + ox2) / pw;
+   ty2 = ((double)(offsety) + oy2) / ph;
+   tx3 = ((double)(offsetx) + ox3) / pw;
+   ty3 = ((double)(offsety) + oy3) / ph;
+   tx4 = ((double)(offsetx) + ox4) / pw;
+   ty4 = ((double)(offsety) + oy4) / ph;
+
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_QUAD(pn, tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4);
+
+   if (sam)
+     {
+        double samx = (double)(sw) / (double)(tex->pt->w * w * 4);
+        double samy = (double)(sh) / (double)(tex->pt->h * h * 4);
+        PUSH_SAMPLES(pn, samx, samy);
+     }
+
+   filter_data = gc->pipe[pn].array.filter_data;
+   filter_data[0] = (dx * tex->w / pw) / w;
+   filter_data[1] = (dy * tex->h / ph) / h;
+   filter_data[2] = tex->x / pw;
+   filter_data[3] = tex->y / ph;
+   filter_data[4] = (tex->x + tex->w) / pw;
+   filter_data[5] = (tex->y + tex->h) / ph;
+
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
+}
+
+void
+evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc,
+                                 Evas_GL_Texture *tex,
+                                 int x, int y, int w, int h,
+                                 const uint8_t *points, int channel)
+{
+   double sx, sy, sw, sh, pw, ph;
+   double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4;
+   GLfloat tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4;
+   Shader_Sampling sam = SHD_SAM11;
+   GLfloat offsetx, offsety;
+   int r, g, b, a, nomul = 0, pn, k;
+   uint32_t values[256];
+   Evas_GL_Program *prog;
+   Eina_Bool blend = EINA_TRUE;
+   Eina_Bool smooth = EINA_TRUE;
+   GLuint map_tex;
+
+   r = R_VAL(&gc->dc->mul.col);
+   g = G_VAL(&gc->dc->mul.col);
+   b = B_VAL(&gc->dc->mul.col);
+   a = A_VAL(&gc->dc->mul.col);
+   if (gc->dc->render_op == EVAS_RENDER_COPY)
+     blend = EINA_FALSE;
+
+   prog = evas_gl_common_shader_program_get(gc, SHD_FILTER_CURVE, NULL, 0, r, g, b, a,
+                                            w, h, w, h, smooth, tex, EINA_FALSE,
+                                            NULL, EINA_FALSE, EINA_FALSE, 0, 0,
+                                            &sam, &nomul, NULL);
+   _filter_data_flush(gc, prog);
+
+   pn = _evas_gl_common_context_push(SHD_FILTER_CURVE, gc, tex, NULL, prog,
+                                     x, y, w, h, blend, smooth,
+                                     0, 0, 0, 0, 0, EINA_FALSE);
+
+   gc->pipe[pn].region.type = SHD_FILTER_CURVE;
+   gc->pipe[pn].shader.prog = prog;
+   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_texm = 0;
+   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+   gc->pipe[pn].shader.smooth = smooth;
+   gc->pipe[pn].shader.mask_smooth = 0;
+   gc->pipe[pn].shader.blend = blend;
+   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.clip = 0;
+   gc->pipe[pn].shader.cx = 0;
+   gc->pipe[pn].shader.cy = 0;
+   gc->pipe[pn].shader.cw = 0;
+   gc->pipe[pn].shader.ch = 0;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = !nomul;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 0;
+   gc->pipe[pn].array.use_texuv3 = 0;
+   gc->pipe[pn].array.use_texsam = (sam != SHD_SAM11);
+   gc->pipe[pn].array.use_mask = 0;
+   gc->pipe[pn].array.use_masksam = 0;
+
+   pipe_region_expand(gc, pn, x, y, w, h);
+   PIPE_GROW(gc, pn, 6);
+
+   // Build 256 colors map in RGBA
+   switch (channel)
+     {
+      case 0: // EVAS_FILTER_CHANNEL_ALPHA
+        for (k = 0; k < 256; k++)
+          values[k] = ARGB_JOIN(points[k], k, k, k);
+        break;
+      case 1:  // EVAS_FILTER_CHANNEL_RED
+        for (k = 0; k < 256; k++)
+          values[k] = ARGB_JOIN(k, points[k], k, k);
+        break;
+      case 2:  // EVAS_FILTER_CHANNEL_GREEN
+        for (k = 0; k < 256; k++)
+          values[k] = ARGB_JOIN(k, k, points[k], k);
+        break;
+      case 3:  // EVAS_FILTER_CHANNEL_BLUE
+        for (k = 0; k < 256; k++)
+          values[k] = ARGB_JOIN(k, k, k, points[k]);
+        break;
+      case 4:  // EVAS_FILTER_CHANNEL_RGB
+        for (k = 0; k < 256; k++)
+          values[k] = ARGB_JOIN(k, points[k], points[k], points[k]);
+        break;
+      case 5: // ALPHA only
+        for (k = 0; k < 256; k++)
+          values[k] = ARGB_JOIN(points[k], points[k], points[k], points[k]);
+        break;
+      default: // INVALID: no curve applied
+        for (k = 0; k < 256; k++)
+          values[k] = ARGB_JOIN(k, k, k, k);
+        break;
+     }
+
+   // Synchronous upload of 256x1 RGBA texture (FIXME: no reuse)
+   glGenTextures(1, &map_tex);
+   glBindTexture(GL_TEXTURE_2D, map_tex);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, values);
+
+   // Set curve properties (no need for filter_data)
+   gc->pipe[pn].shader.filter.map_tex = map_tex;
+   gc->pipe[pn].shader.filter.map_nearest = EINA_TRUE;
+   gc->pipe[pn].shader.filter.map_delete = EINA_TRUE;
+   gc->pipe[pn].array.filter_data_count = 0;
+
+   sx = x;
+   sy = y;
+   sw = w;
+   sh = h;
+
+   pw = tex->pt->w;
+   ph = tex->pt->h;
+
+   ox1 = sx;
+   oy1 = sy;
+   ox2 = sx + sw;
+   oy2 = sy;
+   ox3 = sx + sw;
+   oy3 = sy + sh;
+   ox4 = sx;
+   oy4 = sy + sh;
+
+   offsetx = tex->x;
+   offsety = tex->y;
+
+   tx1 = ((double)(offsetx) + ox1) / pw;
+   ty1 = ((double)(offsety) + oy1) / ph;
+   tx2 = ((double)(offsetx) + ox2) / pw;
+   ty2 = ((double)(offsety) + oy2) / ph;
+   tx3 = ((double)(offsetx) + ox3) / pw;
+   ty3 = ((double)(offsety) + oy3) / ph;
+   tx4 = ((double)(offsetx) + ox4) / pw;
+   ty4 = ((double)(offsety) + oy4) / ph;
+
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_QUAD(pn, tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4);
+
+   if (sam)
+     {
+        double samx = (double)(sw) / (double)(tex->pt->w * w * 4);
+        double samy = (double)(sh) / (double)(tex->pt->h * h * 4);
+        PUSH_SAMPLES(pn, samx, samy);
+     }
+
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
+
+   shader_array_flush(gc);
+}
+
+// ----------------------------------------------------------------------------
+
 EAPI void
 evas_gl_common_context_flush(Evas_Engine_GL_Context *gc)
 {
@@ -3454,7 +3758,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         unsigned char *texsam_ptr = NULL;
         unsigned char *mask_ptr = NULL;
         unsigned char *masksam_ptr = NULL;
-        GLint MASK_TEXTURE = GL_TEXTURE0;
+        GLint ACTIVE_TEXTURE = GL_TEXTURE0;
 
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
           {
@@ -3576,7 +3880,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                {
                   glEnableVertexAttribArray(SHAD_MASK);
                   glVertexAttribPointer(SHAD_MASK, MASK_CNT, GL_FLOAT, GL_FALSE, 0, mask_ptr);
-                  glActiveTexture(MASK_TEXTURE);
+                  glActiveTexture(ACTIVE_TEXTURE);
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
                   if (shared->info.anisotropic > 0.0)
@@ -3618,7 +3922,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glEnableVertexAttribArray(SHAD_TEXUV);
                   glVertexAttribPointer(SHAD_TEXUV, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv_ptr);
 
-                  MASK_TEXTURE += 1;
+                  ACTIVE_TEXTURE += 1;
                }
              else
                {
@@ -3650,7 +3954,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                   glActiveTexture(GL_TEXTURE0);
 
-                  MASK_TEXTURE += 1;
+                  ACTIVE_TEXTURE += 1;
                }
              else
                {
@@ -3697,7 +4001,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                   glActiveTexture(GL_TEXTURE0);
 
-                  MASK_TEXTURE += 2;
+                  ACTIVE_TEXTURE += 2;
                }
              else if (gc->pipe[i].array.use_texuv2)
                {
@@ -3728,7 +4032,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glActiveTexture(GL_TEXTURE0);
 
                   glDisableVertexAttribArray(SHAD_TEXUV3);
-                  MASK_TEXTURE += 1;
+                  ACTIVE_TEXTURE += 1;
                }
              else
                {
@@ -3741,7 +4045,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                {
                   glEnableVertexAttribArray(SHAD_MASK);
                   glVertexAttribPointer(SHAD_MASK, MASK_CNT, GL_FLOAT, GL_FALSE, 0, mask_ptr);
-                  glActiveTexture(MASK_TEXTURE);
+                  glActiveTexture(ACTIVE_TEXTURE);
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
                   if (shared->info.anisotropic > 0.0)
@@ -3767,6 +4071,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                        glVertexAttribPointer(SHAD_MASKSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, masksam_ptr);
                     }
                   else glDisableVertexAttribArray(SHAD_MASKSAM);
+                  ACTIVE_TEXTURE += 1;
                }
              else
                {
@@ -3774,10 +4079,38 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glDisableVertexAttribArray(SHAD_MASKSAM);
                }
 
+             /* Gfx filters: data */
+             if (gc->pipe[i].array.filter_data)
+               {
+                  for (int k = 0; k < gc->pipe[i].array.filter_data_count; k++)
+                    glVertexAttrib2fv(prog->attribute.loc_filter_data[k], &gc->pipe[i].array.filter_data[k * 2]);
+               }
+
+             /* Gfx filters: texture (or data array as texture) */
+             if (gc->pipe[i].shader.filter.map_tex)
+               {
+                  glActiveTexture(ACTIVE_TEXTURE);
+                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.filter.map_tex);
+                  if (gc->pipe[i].shader.filter.map_nearest)
+                    {
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                    }
+                  else
+                    {
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                    }
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  glActiveTexture(GL_TEXTURE0);
+                  ACTIVE_TEXTURE += 1;
+               }
+
              if (dbgflushnum == 1)
                {
                   const char *types[] =
-                  { "----", "RECT", "IMAG", "FONT", "YUV-", "YUY2", "NV12", "LINE", "PAIR", "EXTR", "MAP-" };
+                  { "----", "RECT", "IMAG", "FONT", "YUV-", "YUY2", "NV12", "LINE", "PAIR", "EXTR", "MAP-", "FILTER_DISPLACE" };
                   printf("  DRAW#%3i %4i -> %p[%4ix%4i] @ %4ix%4i -{ tex %4i type %s }-\n",
                          i,
                          gc->pipe[i].array.num / 6,
@@ -3818,6 +4151,13 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->state.current.clip      = gc->pipe[i].shader.clip;
         gc->state.current.anti_alias = gc->pipe[i].array.anti_alias;
 
+        if (gc->pipe[i].shader.filter.map_delete)
+          {
+             glDeleteTextures(1, &gc->pipe[i].shader.filter.map_tex);
+             gc->pipe[i].shader.filter.map_delete = EINA_FALSE;
+             gc->pipe[i].shader.filter.map_tex = 0;
+          }
+
         gc->pipe[i].array.line = 0;
         //gc->pipe[i].array.use_vertex = 0;
         gc->pipe[i].array.use_color = 0;
@@ -3829,6 +4169,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.use_mask = 0;
         gc->pipe[i].array.use_masksam = 0;
         gc->pipe[i].array.anti_alias = 0;
+        gc->pipe[i].array.filter_data_count = 0;
 
         PIPE_FREE(gc->pipe[i].array.vertex);
         PIPE_FREE(gc->pipe[i].array.color);
@@ -3839,6 +4180,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         PIPE_FREE(gc->pipe[i].array.texsam);
         PIPE_FREE(gc->pipe[i].array.mask);
         PIPE_FREE(gc->pipe[i].array.masksam);
+        PIPE_FREE(gc->pipe[i].array.filter_data);
 
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;

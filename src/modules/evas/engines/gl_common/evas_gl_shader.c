@@ -40,8 +40,10 @@ typedef enum {
    SHADER_FLAG_NOMUL             = (1 << 18),
    SHADER_FLAG_ALPHA             = (1 << 19),
    SHADER_FLAG_RGB_A_PAIR        = (1 << 20),
+   SHADER_FLAG_FILTER_DISPLACE   = (1 << 21),
+   SHADER_FLAG_FILTER_CURVE      = (1 << 22),
 } Shader_Flag;
-#define SHADER_FLAG_COUNT 21
+#define SHADER_FLAG_COUNT 23
 
 static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "TEX",
@@ -64,7 +66,9 @@ static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "AFILL",
    "NOMUL",
    "ALPHA",
-   "RGB_A_PAIR"
+   "RGB_A_PAIR",
+   "FILTER_DISPLACE",
+   "FILTER_CURVE"
 };
 
 static Eina_Bool compiler_released = EINA_FALSE;
@@ -93,6 +97,20 @@ gl_compile_link_error(GLuint target, const char *action, Eina_Bool is_shader)
              free(logtxt);
           }
      }
+}
+
+static inline void
+_attributes_bind(GLint prg)
+{
+   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
+   glBindAttribLocation(prg, SHAD_COLOR,   "color");
+   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
+   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
+   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
+   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
+   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
+   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
+   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
 }
 
 static Evas_GL_Program *
@@ -138,15 +156,7 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
 #endif
    glsym_glProgramBinary(prg, formats[0], data, length);
 
-   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
-   glBindAttribLocation(prg, SHAD_COLOR,   "color");
-   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
-   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
-   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
-   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
-   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
-   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
-   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
+   _attributes_bind(prg);
 
    glGetProgramiv(prg, GL_LINK_STATUS, &ok);
    if (!ok)
@@ -403,6 +413,7 @@ evas_gl_common_shader_glsl_get(unsigned int flags, const char *base)
    unsigned int k;
    char *str;
 
+   //eina_strbuf_append_printf(s, "#version 300 es\n");
    for (k = 0; k < SHADER_FLAG_COUNT; k++)
      {
         if (flags & (1 << k))
@@ -460,15 +471,7 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
    glAttachShader(prg, vtx);
    glAttachShader(prg, frg);
 
-   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
-   glBindAttribLocation(prg, SHAD_COLOR,   "color");
-   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
-   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
-   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
-   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
-   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
-   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
-   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
+   _attributes_bind(prg);
 
    glLinkProgram(prg);
    glGetProgramiv(prg, GL_LINK_STATUS, &ok);
@@ -776,6 +779,12 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
       case SHD_RGB_A_PAIR:
       case SHD_MAP:
         break;
+      case SHD_FILTER_DISPLACE:
+        flags |= SHADER_FLAG_FILTER_DISPLACE;
+        break;
+      case SHD_FILTER_CURVE:
+        flags |= SHADER_FLAG_FILTER_CURVE;
+        break;
       default:
         CRI("Impossible shader type.");
         return 0;
@@ -847,6 +856,7 @@ evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
       { "texu", 0 },
       { "texv", 0 },
       { "texuv", 0 },
+      { "tex_filter", 0 },
       { NULL, 0 }
    };
    Eina_Bool hastex = 0;
@@ -879,6 +889,12 @@ evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
    else if ((p->flags & SHADER_FLAG_NV12) || (p->flags & SHADER_FLAG_YUY2))
      {
         textures[5].enabled = 1;
+        hastex = 1;
+     }
+   if ((p->flags & SHADER_FLAG_FILTER_DISPLACE) ||
+       (p->flags & SHADER_FLAG_FILTER_CURVE))
+     {
+        textures[6].enabled = 1;
         hastex = 1;
      }
 

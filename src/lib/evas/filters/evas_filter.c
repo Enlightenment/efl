@@ -433,6 +433,11 @@ _command_new(Evas_Filter_Context *ctx, Evas_Filter_Mode mode,
    cmd->input = input;
    cmd->mask = mask;
    cmd->output = output;
+   cmd->draw.R = 255;
+   cmd->draw.G = 255;
+   cmd->draw.B = 255;
+   cmd->draw.A = 255;
+   cmd->draw.rop = EFL_GFX_RENDER_OP_BLEND;
    if (output) output->dirty = EINA_TRUE;
 
    ctx->commands = eina_inlist_append(ctx->commands, EINA_INLIST_GET(cmd));
@@ -1001,7 +1006,10 @@ evas_filter_command_curve_add(Evas_Filter_Context *ctx,
 
    memcpy(copy, curve, 256 * sizeof(DATA8));
    cmd->curve.data = copy;
-   cmd->curve.channel = channel;
+   if (cmd->input->alpha_only)
+     cmd->curve.channel = EVAS_FILTER_CHANNEL_ALPHA;
+   else
+     cmd->curve.channel = channel;
 
    return cmd;
 }
