@@ -3385,6 +3385,7 @@ _elm_genlist_elm_widget_focus_next(Eo *obj, Elm_Genlist_Data *sd, Elm_Focus_Dire
    Item_Block *itb;
    Eina_List *items = NULL;
    Eina_Bool done = EINA_FALSE;
+   int ret;
 
    evas_object_geometry_get(sd->obj, &sx, &sy, &sw, &sh);
 
@@ -3420,8 +3421,11 @@ _elm_genlist_elm_widget_focus_next(Eo *obj, Elm_Genlist_Data *sd, Elm_Focus_Dire
         else if (done) break;
      }
 
-   return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next, next_item);
+   ret =  elm_widget_focus_list_next_get
+      (obj, items, eina_list_data_get, dir, next, next_item);
+   eina_list_free(items);
+
+   return ret;
 }
 
 static void
