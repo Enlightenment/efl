@@ -1179,6 +1179,7 @@ _elm_index_elm_widget_focus_next(Eo *obj, Elm_Index_Data *sd, Elm_Focus_Directio
 
    int_ret = elm_widget_focus_list_next_get
             (obj, items, eina_list_data_get, dir, next, next_item);
+   eina_list_free(items);
 
    // to hide index item, if there is nothing to focus on autohide disable mode
    if ((!sd->autohide_disabled) && (!int_ret))
