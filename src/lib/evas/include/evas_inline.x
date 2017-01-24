@@ -46,7 +46,7 @@ _evas_object_callback_has_by_type(Evas_Object_Protected_Data *obj, Evas_Callback
 static inline int
 evas_object_was_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (EINA_UNLIKELY(!obj->prev)) return EINA_FALSE;
+   if (EINA_UNLIKELY(!obj->prev)) return 0;
    if ((obj->prev->visible) && (!obj->no_render) &&
        ((obj->prev->cache.clip.visible) || obj->is_smart) &&
        ((obj->prev->cache.clip.a > 0 && obj->prev->render_op == EVAS_RENDER_BLEND)
@@ -157,7 +157,7 @@ evas_object_is_source_invisible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 static inline int
 evas_object_is_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (EINA_UNLIKELY(!obj->cur)) return EINA_FALSE;
+   if (EINA_UNLIKELY(!obj->cur)) return 0;
    if ((obj->cur->visible) && (!obj->no_render) &&
        ((obj->cur->cache.clip.visible) || (obj->is_smart)) &&
        ((obj->cur->cache.clip.a > 0 && obj->cur->render_op == EVAS_RENDER_BLEND)
