@@ -844,6 +844,7 @@ modules/evas/engines/gl_generic/evas_ector_gl_buffer.c \
 modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.c \
 modules/evas/engines/gl_generic/filters/gl_engine_filter.h \
 modules/evas/engines/gl_generic/filters/gl_filter_blend.c \
+modules/evas/engines/gl_generic/filters/gl_filter_fill.c \
 modules/evas/engines/gl_generic/filters/gl_filter_mask.c \
 $(NULL)
 

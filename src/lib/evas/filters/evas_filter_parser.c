@@ -3210,6 +3210,7 @@ _instr2cmd_fill(Evas_Filter_Context *ctx,
    cmd->draw.clip.t = t;
    cmd->draw.clip.b = b;
    cmd->draw.clip_mode_lrtb = EINA_TRUE;
+   cmd->draw.rop = EFL_GFX_RENDER_OP_COPY;
 
    return cmd;
 }
