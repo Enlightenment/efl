@@ -7,10 +7,6 @@ include(EflMacros)
 
 EFL_PROJECT(1.19.99)
 
-if (NOT EFL_BUILD_ID)
-  set(EFL_BUILD_ID 120)
-endif()
-
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "In-source builds not allowed. Use: mkdir -p build && cmake -H. -Bbuild")
 endif()
@@ -41,11 +37,14 @@ EFL_LIB(eo)
 
 EFL_OPTIONS_SUMMARY()
 
-configure_file(
-  ${PROJECT_SOURCE_DIR}/src/lib/efl/config.h.cmake
-  ${PROJECT_BINARY_DIR}/src/lib/efl/config.h)
+# TODO: when autotools is gone, rename this file in repository
+# and remove this copy (using generate to skip @-subst)
+file(GENERATE
+  OUTPUT ${PROJECT_BINARY_DIR}/src/lib/efl/config.h
+  INPUT ${PROJECT_SOURCE_DIR}/src/lib/efl/config.h.cmake)
+EFL_HEADER_CHECKS_FINALIZE(${PROJECT_BINARY_DIR}/src/lib/efl/config_gen.h)
+
 configure_file(
   ${PROJECT_SOURCE_DIR}/src/lib/efl/Efl_Config.h.cmake
   ${PROJECT_BINARY_DIR}/src/lib/efl/Efl_Config.h)
-EFL_HEADER_CHECKS_FINALIZE(${PROJECT_BINARY_DIR}/src/lib/efl/config_headers.h)
 EFL_FINALIZE()

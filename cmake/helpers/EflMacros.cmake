@@ -132,7 +132,66 @@ function(EFL_FINALIZE)
   add_custom_target(all-tests DEPENDS ${EFL_ALL_TESTS})
 endfunction()
 
-unset(HEADER_FILE_CONTENT CACHE)
+set(VAR_HEADER_FILE_CONTENT HEADER_FILE_CONTENT CACHE INTERNAL "")
+unset(${VAR_HEADER_FILE_CONTENT} CACHE)
+unset(CHECK_SCOPE CACHE)
+unset(CHECK_SCOPE_UPPERCASE CACHE)
+
+# CHECK_INIT(scope)
+#
+# Initialize the scope for the following FUNC_CHECK, TYPE_CHECK,
+# HEADER_CHECK... calls.
+function(CHECK_INIT scope)
+  set(CHECK_SCOPE scope CACHE INTERNAL "Scope of current *_CHECK functions")
+  if(scope)
+    string(TOUPPER ${scope} scope_uc)
+    SET_GLOBAL(CHECK_SCOPE_UPPERCASE ${scope_uc})
+    set(_suffix "_${scope_uc}")
+  else()
+    set(_suffix "")
+  endif()
+  SET_GLOBAL(VAR_HEADER_FILE_CONTENT HEADER_FILE_CONTENT${_suffix})
+  SET_GLOBAL(${VAR_HEADER_FILE_CONTENT} "")
+endfunction()
+
+# CHECK_APPEND_DEFINE(name value)
+#
+# If value evaluates to true:
+#    #define ${name} ${value}
+# otherwise:
+#    /* #undef ${name} */
+#
+# NOTE: ${name} is not modified at all, if it must include
+# CHECK_SCOPE_UPPERCASE or CHECK_SCOPE, do it yourself.
+function(CHECK_APPEND_DEFINE name value)
+  SET_GLOBAL(${VAR_HEADER_FILE_CONTENT} "${${VAR_HEADER_FILE_CONTENT}}#ifdef ${name}\n#undef ${name}\n#endif\n")
+  if(value)
+    if(value STREQUAL ON OR value STREQUAL TRUE)
+      set(value 1)
+    endif()
+    SET_GLOBAL(${VAR_HEADER_FILE_CONTENT} "${${VAR_HEADER_FILE_CONTENT}}#define ${name} ${value}\n\n")
+  else()
+    SET_GLOBAL(${VAR_HEADER_FILE_CONTENT} "${${VAR_HEADER_FILE_CONTENT}}/* #undef ${name} */\n\n")
+  endif()
+endfunction()
+
+# CHECK_NAME_DEFAULT(name variable)
+#
+# Create the default name based on ${name}
+# and stores in ${variable}.
+#
+# This will automatically prepend ${CHECK_SCOPE_UPPERCASE} if it's
+# defined, will translate everything to uppercase and fix it to be a
+# valid C-symbol.
+function(CHECK_NAME_DEFAULT name var)
+  string(TOUPPER ${name} v)
+  string(REGEX REPLACE "[^a-zA-Z0-9]" "_" v "${v}")
+  string(REGEX REPLACE "_{2,}" "_" v "${v}")
+  if(CHECK_SCOPE_UPPERCASE)
+    set(v "${CHECK_SCOPE_UPPERCASE}_${v}")
+  endif()
+  set(${var} ${v} PARENT_SCOPE)
+endfunction()
 
 # HEADER_CHECK(header [NAME variable] [INCLUDE_FILES extra1.h .. extraN.h])
 #
@@ -145,9 +204,7 @@ unset(HEADER_FILE_CONTENT CACHE)
 #
 # To include extra files, then use INCLUDE_FILES keyword.
 function(HEADER_CHECK header)
-  string(TOUPPER HAVE_${header} var)
-  string(REGEX REPLACE "[^a-zA-Z0-9]" "_" var "${var}")
-  string(REGEX REPLACE "_{2,}" "_" var "${var}")
+  CHECK_NAME_DEFAULT(HAVE_${header} var)
 
   cmake_parse_arguments(PARAMS "" "NAME" "INCLUDE_FILES" ${ARGN})
 
@@ -158,12 +215,7 @@ function(HEADER_CHECK header)
   set(CMAKE_EXTRA_INCLUDE_FILES "${PARAMS_INCLUDE_FILES}")
 
   CHECK_INCLUDE_FILE(${header} ${var})
-
-  if(${${var}})
-    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#define ${var} 1\n")
-  else()
-    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#undef ${var}\n")
-  endif()
+  CHECK_APPEND_DEFINE(${var} "${${var}}")
 endfunction()
 
 # FUNC_CHECK(func [NAME variable]
@@ -184,8 +236,7 @@ endfunction()
 #
 # To use C++ compiler, use CXX keyword
 function(FUNC_CHECK func)
-  string(TOUPPER HAVE_${func} var)
-  string(REGEX REPLACE "_{2,}" "_" var "${var}")
+  CHECK_NAME_DEFAULT(HAVE_${func} var)
 
   cmake_parse_arguments(PARAMS "CXX" "NAME" "INCLUDE_FILES;LIBRARIES;DEFINITIONS;FLAGS" ${ARGN})
 
@@ -193,20 +244,20 @@ function(FUNC_CHECK func)
   set(CMAKE_REQUIRED_DEFINITIONS "${PARAMS_DEFINITIONS}")
   set(CMAKE_REQUIRED_FLAGS "${PARAMS_FLAGS}")
 
+  if(PARAMS_NAME)
+    set(var ${PARAMS_NAME})
+  endif()
+
   if(PARAMS_CXX)
     check_cxx_symbol_exists(${func} "${PARAMS_INCLUDE_FILES}" ${var})
   else()
     check_symbol_exists(${func} "${PARAMS_INCLUDE_FILES}" ${var})
   endif()
 
-  if(${${var}} )
-    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#define ${var} 1\n")
-  else()
-    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#undef ${var}\n")
-  endif()
+  CHECK_APPEND_DEFINE(${var} "${${var}}")
 endfunction()
 
-# TYPE_CHECK(type [NAME variable]
+# TYPE_CHECK(type [NAME variable] [SIZEOF variable]
 #           [INCLUDE_FILES file1.h ... fileN.h]
 #           [LIBRARIES lib1 ... libN]
 #           [DEFINITIONS -DA=1 .. -DN=123]
@@ -224,15 +275,23 @@ endfunction()
 #
 # To use C++ compiler, use CXX keyword
 function(TYPE_CHECK type)
-  string(TOUPPER HAVE_${type} var)
-  string(REGEX REPLACE "_{2,}" "_" var "${var}")
+  CHECK_NAME_DEFAULT(HAVE_${type} var)
+  CHECK_NAME_DEFAULT(SIZEOF_${type} sizeof)
 
-  cmake_parse_arguments(PARAMS "CXX" "NAME" "INCLUDE_FILES;LIBRARIES;DEFINITIONS;FLAGS" ${ARGN})
+  cmake_parse_arguments(PARAMS "CXX" "NAME;SIZEOF" "INCLUDE_FILES;LIBRARIES;DEFINITIONS;FLAGS" ${ARGN})
 
   set(CMAKE_REQUIRED_LIBRARIES "${PARAMS_LIBRARIES}")
   set(CMAKE_REQUIRED_DEFINITIONS "${PARAMS_DEFINITIONS}")
   set(CMAKE_REQUIRED_FLAGS "${PARAMS_FLAGS}")
   set(CMAKE_EXTRA_INCLUDE_FILES "${PARAMS_INCLUDE_FILES}")
+
+  if(PARAMS_NAME)
+    set(var ${PARAMS_NAME})
+  endif()
+
+  if(PARAMS_SIZEOF)
+    set(sizeof ${PARAMS_SIZEOF})
+  endif()
 
   if(PARAMS_CXX)
     set(lang CXX)
@@ -241,12 +300,8 @@ function(TYPE_CHECK type)
   endif()
 
   CHECK_TYPE_SIZE(${type} ${var} LANGUAGE ${lang})
-
-  if(HAVE_${var})
-    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#define ${var} 1\n")
-  else()
-    SET_GLOBAL(HEADER_FILE_CONTENT "${HEADER_FILE_CONTENT}#undef ${var}\n")
-  endif()
+  CHECK_APPEND_DEFINE(${var} "${HAVE_${var}}")
+  CHECK_APPEND_DEFINE(${sizeof} "${${var}}")
 endfunction()
 
 # EFL_HEADER_CHECKS_FINALIZE(file)
@@ -254,7 +309,11 @@ endfunction()
 # Write the configuration gathered with HEADER_CHECK(), TYPE_CHECK()
 # and FUNC_CHECK() to the given file.
 function(EFL_HEADER_CHECKS_FINALIZE file)
-  file(WRITE ${file}.new ${HEADER_FILE_CONTENT})
+  get_filename_component(filename ${file} NAME)
+  string(TOUPPER _${filename}_ file_sym)
+  string(REGEX REPLACE "[^a-zA-Z0-9]" "_" file_sym "${file_sym}")
+
+  file(WRITE ${file}.new "#ifndef ${file_sym}\n#define ${file_sym} 1\n\n${${VAR_HEADER_FILE_CONTENT}}\n#endif /* ${file_sym} */\n")
   if (NOT EXISTS ${file})
     file(RENAME ${file}.new ${file})
     message(STATUS "${file} was generated.")
@@ -269,7 +328,10 @@ function(EFL_HEADER_CHECKS_FINALIZE file)
       message(STATUS "${file} was updated.")
     endif()
   endif()
-  unset(HEADER_FILE_CONTENT CACHE) # allow to reuse with an empty contents
+  unset(${VAR_HEADER_FILE_CONTENT} CACHE) # allow to reuse with an empty contents
+  unset(CHECK_SCOPE CACHE)
+  unset(CHECK_SCOPE_UPPERCASE CACHE)
+  set(VAR_HEADER_FILE_CONTENT HEADER_FILE_CONTENT CACHE INTERNAL "")
 endfunction()
 
 # EFL_FILES_TO_ABSOLUTE(Var Source_Dir Binary_Dir [file1 ... fileN])
@@ -322,6 +384,12 @@ function(EFL_PKG_CONFIG_EVAL_TO _var _name)
   if(NOT _missing)
     SET_GLOBAL(${_var} "${_found}")
     SET_GLOBAL(${_var}_MISSING "${_missing_optional}")
+
+    if(_found)
+      pkg_check_modules(PKG_CONFIG_${_var} ${_found})
+      SET_GLOBAL(${_var}_CFLAGS "${PKG_CONFIG_${_var}_CFLAGS}")
+      SET_GLOBAL(${_var}_LDFLAGS "${PKG_CONFIG_${_var}_LDFLAGS}")
+    endif()
   else()
     message(FATAL_ERROR "${_name} missing required pkg-config modules: ${_missing}")
   endif()
@@ -669,6 +737,13 @@ function(EFL_LIB _target)
 
   EFL_PKG_CONFIG_EVAL(${_target} "${PKG_CONFIG_REQUIRES_PRIVATE}" "${PKG_CONFIG_REQUIRES}")
 
+  set(_link_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_LDFLAGS})
+  set(__compile_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_CFLAGS} -DPACKAGE_DATA_DIR=\\"${CMAKE_INSTALL_FULL_DATADIR}/${_target}/\\")
+  set(_compile_flags)
+  # CMake uses string for COMPILE_FLAGS but list for LINK_FLAGS... :-/
+  foreach(_c ${__compile_flags})
+    set(_compile_flags "${_compile_flags} ${_c}")
+  endforeach()
 
   add_library(${_target} ${LIBRARY_TYPE} ${_sources} ${_headers})
   set_target_properties(${_target} PROPERTIES
@@ -677,7 +752,8 @@ function(EFL_LIB _target)
     OBJECT_DEPENDS "${_obj_deps}"
     EFL_EO_PRIVATE "${_eo_files}"
     EFL_EO_PUBLIC "${_public_eo_files}"
-    COMPILE_FLAGS -DPACKAGE_DATA_DIR=\\"${CMAKE_INSTALL_FULL_DATADIR}/${_target}/\\")
+    LINK_FLAGS "${_link_flags}"
+    COMPILE_FLAGS "${_compile_flags}")
 
   if(DEPENDENCIES)
     add_dependencies(${_target} ${DEPENDENCIES})
@@ -793,6 +869,8 @@ function(EFL_BIN _binname)
   set(DEFINITIONS)
   set(INSTALL ON)
   set(INSTALL_DIR bin)
+  set(PKG_CONFIG_REQUIRES)
+  set(PKG_CONFIG_REQUIRES_PRIVATE)
 
   if(_binname STREQUAL ${EFL_LIB_CURRENT})
     set(_binsrcdir "${EFL_BIN_SOURCE_DIR}")
@@ -813,9 +891,14 @@ function(EFL_BIN _binname)
   if(PUBLIC_HEADERS)
     message(WARNING "${_binsrcdir}/CMakeLists.txt should not define PUBLIC_HEADERS, it's not to be installed.")
   endif()
+  if(PKG_CONFIG_REQUIRES)
+    message(WARNING "${_binsrcdir}/CMakeLists.txt should not define PKG_CONFIG_REQUIRES. Use PKG_CONFIG_REQUIRES_PRIVATE instead")
+  endif()
 
   EFL_FILES_TO_ABSOLUTE(_sources ${_binsrcdir} ${_binbindir} ${SOURCES})
   EFL_FILES_TO_ABSOLUTE(_obj_deps ${_binsrcdir} ${_binbindir} ${OBJECT_DEPENDS})
+
+  EFL_PKG_CONFIG_EVAL(${_bintarget} "${PKG_CONFIG_REQUIRES_PRIVATE}" "")
 
   add_executable(${_bintarget} ${_sources})
 
@@ -847,6 +930,16 @@ function(EFL_BIN _binname)
   if(OUTPUT_NAME)
     set_target_properties(${_bintarget} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
   endif()
+
+  # CMake uses string for COMPILE_FLAGS but list for LINK_FLAGS... :-/
+  set(_compile_flags)
+  foreach(_c ${${_bintarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS})
+    set(_compile_flags "${_compile_flags} ${_c}")
+  endforeach()
+
+  set_target_properties(${_bintarget} PROPERTIES
+    LINK_FLAGS "${${_bintarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS}"
+    COMPILE_FLAGS "${_compile_flags}")
 
   if(INSTALL_DIR)
     install(TARGETS ${_bintarget} RUNTIME DESTINATION ${INSTALL_DIR})
@@ -889,6 +982,8 @@ function(EFL_TEST _testname)
   endif()
   set(LIBRARIES)
   set(DEFINITIONS)
+  set(PKG_CONFIG_REQUIRES)
+  set(PKG_CONFIG_REQUIRES_PRIVATE)
 
   if(_testname STREQUAL ${EFL_LIB_CURRENT})
     set(_testsrcdir "${EFL_TESTS_SOURCE_DIR}")
@@ -910,9 +1005,14 @@ function(EFL_TEST _testname)
   if(PUBLIC_HEADERS)
     message(WARNING "${_testsrcdir}/CMakeLists.txt should not define PUBLIC_HEADERS, it's not to be installed.")
   endif()
+  if(PKG_CONFIG_REQUIRES)
+    message(WARNING "${_testsrcdir}/CMakeLists.txt should not define PKG_CONFIG_REQUIRES. Use PKG_CONFIG_REQUIRES_PRIVATE instead")
+  endif()
 
   EFL_FILES_TO_ABSOLUTE(_sources ${_testsrcdir} ${_testbindir} ${SOURCES})
   EFL_FILES_TO_ABSOLUTE(_obj_deps ${_testsrcdir} ${_testbindir} ${OBJECT_DEPENDS})
+
+  EFL_PKG_CONFIG_EVAL(${_testtarget} "${PKG_CONFIG_REQUIRES_PRIVATE}" "")
 
   add_executable(${_testtarget} EXCLUDE_FROM_ALL ${_sources})
 
@@ -949,7 +1049,15 @@ function(EFL_TEST _testname)
     set_target_properties(${_testtarget} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
   endif()
 
+  # CMake uses string for COMPILE_FLAGS but list for LINK_FLAGS... :-/
+  set(_compile_flags)
+  foreach(_c ${${_testtarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS})
+    set(_compile_flags "${_compile_flags} ${_c}")
+  endforeach()
+
   set_target_properties(${_testtarget} PROPERTIES
+    LINK_FLAGS "${${_testtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS}"
+    COMPILE_FLAGS "${_compile_flags}"
     LIBRARY_OUTPUT_DIRECTORY "${_testbindir}"
     RUNTIME_OUTPUT_DIRECTORY "${_testbindir}")
 
@@ -978,6 +1086,9 @@ endfunction()
 #  - INSTALL_DIR: defaults to
 #    lib/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${Name}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}/.
 #    If empty, won't install.
+#  - PKG_CONFIG_REQUIRES_PRIVATE: results in
+#    ${Name}_PKG_CONFIG_REQUIRES_PRIVATE. Elements after 'OPTIONAL'
+#    keyword are optional.
 #
 # NOTE: since the file will be included it shouldn't mess with global variables!
 function(EFL_MODULE _modname)
@@ -1011,6 +1122,8 @@ function(EFL_MODULE _modname)
   set(DEFINITIONS)
   set(MODULE_TYPE "${${_modoptionname}}")
   set(INSTALL_DIR ${_modoutdir})
+  set(PKG_CONFIG_REQUIRES)
+  set(PKG_CONFIG_REQUIRES_PRIVATE)
 
   _EFL_INCLUDE_OR_DETECT("Module ${_modtarget}" ${_modsrcdir})
 
@@ -1020,6 +1133,9 @@ function(EFL_MODULE _modname)
   endif()
   if(PUBLIC_HEADERS)
     message(WARNING "${_modsrcdir}/CMakeLists.txt should not define PUBLIC_HEADERS, it's not to be installed.")
+  endif()
+  if(PKG_CONFIG_REQUIRES)
+    message(WARNING "${_modsrcdir}/CMakeLists.txt should not define PKG_CONFIG_REQUIRES. Use PKG_CONFIG_REQUIRES_PRIVATE instead")
   endif()
 
   if("${MODULE_TYPE}" STREQUAL "OFF")
@@ -1032,6 +1148,8 @@ function(EFL_MODULE _modname)
 
   EFL_FILES_TO_ABSOLUTE(_sources ${_modsrcdir} ${_modbindir} ${SOURCES})
   EFL_FILES_TO_ABSOLUTE(_obj_deps ${_modsrcdir} ${_modbindir} ${OBJECT_DEPENDS})
+
+  EFL_PKG_CONFIG_EVAL(${_modtarget} "${PKG_CONFIG_REQUIRES_PRIVATE}" "")
 
   add_library(${_modtarget} ${_modtype} ${_sources})
   set_target_properties(${_modtarget} PROPERTIES
@@ -1049,7 +1167,15 @@ function(EFL_MODULE _modname)
 
   target_compile_definitions(${_modtarget} PRIVATE ${DEFINITIONS})
 
+  # CMake uses string for COMPILE_FLAGS but list for LINK_FLAGS... :-/
+  set(_compile_flags)
+  foreach(_c ${${_modtarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS})
+    set(_compile_flags "${_compile_flags} ${_c}")
+  endforeach()
+
   set_target_properties(${_modtarget} PROPERTIES
+    LINK_FLAGS "${${_modtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS}"
+    COMPILE_FLAGS "${_compile_flags}"
     LIBRARY_OUTPUT_DIRECTORY "${_modoutdir}"
     ARCHIVE_OUTPUT_DIRECTORY "${_modoutdir}"
     RUNTIME_OUTPUT_DIRECTORY "${_modoutdir}")

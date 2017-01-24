@@ -13,8 +13,6 @@ set(LIBRARIES
 
 if(ENABLE_VALGRIND)
   list(APPEND PKG_CONFIG_REQUIRES_PRIVATE valgrind)
-  list(APPEND INCLUDE_DIRECTORIES ${VG_INCLUDE_DIRS})
-  list(APPEND LIBRARIES ${VG_LIBRARIES})
 endif()
 
 set(PUBLIC_HEADERS
@@ -28,6 +26,7 @@ set(PUBLIC_HEADERS
   eina_binshare.h
   eina_clist.h
   eina_config.h
+  eina_config_gen.h
   eina_convert.h
   eina_counter.h
   eina_cow.h
