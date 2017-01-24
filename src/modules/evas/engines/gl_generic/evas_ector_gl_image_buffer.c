@@ -54,6 +54,8 @@ struct _Evas_Ector_GL_Image_Buffer_Data
 #define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
 #define EINA_INLIST_APPEND(l,i) do { l = (__typeof__(l)) eina_inlist_append(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
 
+#define fail(fmt, ...) do { ERR(fmt, ##__VA_ARGS__); goto on_fail; } while (0)
+
 /* FIXME: Conversion routines don't belong here */
 static inline void
 _pixels_argb_to_gry8_convert(uint8_t *dst, const uint32_t *src, int len)
@@ -68,24 +70,48 @@ _pixels_argb_to_gry8_convert(uint8_t *dst, const uint32_t *src, int len)
 
 EOLIAN static void
 _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd,
-                                                               Evas *evas, void *image)
+                                                               Evas *eo_evas, void *image)
 {
    Evas_GL_Image *im = image;
+   Evas_Public_Data *evas;
 
    EINA_SAFETY_ON_FALSE_RETURN(!pd->glim);
    EINA_SAFETY_ON_NULL_RETURN(im);
 
-   pd->evas = efl_data_xref(evas, EVAS_CANVAS_CLASS, obj);
+   evas = efl_data_xref(eo_evas, EVAS_CANVAS_CLASS, obj);
+   if (!im->tex)
+     {
+        Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
+        Evas_Engine_GL_Context *gc;
+
+        gc = re->window_gl_context_get(re->software.ob);
+        evas_gl_common_image_update(gc, im);
+
+        if (!im->tex)
+          fail("Image has no texture!");
+     }
+
+   pd->evas = evas;
    evas_gl_common_image_ref(im);
    pd->glim = im;
+
+on_fail:
+   efl_data_xunref(eo_evas, evas, obj);
+   return;
 }
 
 EOLIAN static void *
 _evas_ector_gl_image_buffer_evas_ector_buffer_drawable_image_get(Eo *obj EINA_UNUSED,
                                                                  Evas_Ector_GL_Image_Buffer_Data *pd)
 {
+   if (!pd->glim->tex)
+     fail("Image has no texture!");
+
    evas_gl_common_image_ref(pd->glim);
    return pd->glim;
+
+on_fail:
+   return NULL;
 }
 
 EOLIAN static Eina_Bool

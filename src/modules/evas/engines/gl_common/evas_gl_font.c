@@ -71,6 +71,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    int sx, sy, sw, sh;
    double mx = 0.0, my = 0.0, mw = 0.0, mh = 0.0;
    Eina_Bool mask_smooth = EINA_FALSE;
+   Eina_Bool mask_color = EINA_FALSE;
 
    if (dc != gc->dc) return;
    tex = fg->ext_dat;
@@ -94,6 +95,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
              mw = mask->w;
              mh = mask->h;
              mask_smooth = mask->scaled.smooth;
+             mask_color = gc->dc->clip.mask_color;
           }
         else mtex = NULL;
      }
@@ -117,7 +119,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
                                                    0.0, 0.0, 0.0, 0.0,
 //                                                   sx, sy, sw, sh,
                                                    x, y, tex->w, tex->h,
-                                                   mtex, mx, my, mw, mh, mask_smooth,
+                                                   mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                                    r, g, b, a);
                   return;
                }
@@ -128,7 +130,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
              evas_gl_common_context_font_push(gc, tex,
                                               ssx, ssy, ssw, ssh,
                                               nx, ny, nw, nh,
-                                              mtex, mx, my, mw, mh, mask_smooth,
+                                              mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                               r, g, b, a);
           }
         else
@@ -137,7 +139,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
                                               0.0, 0.0, 0.0, 0.0,
 //                                              sx, sy, sw, sh,
                                               x, y, tex->w, tex->h,
-                                              mtex, mx, my, mw, mh, mask_smooth,
+                                              mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                               r, g, b, a);
           }
         return;
@@ -167,7 +169,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
                                               0.0, 0.0, 0.0, 0.0,
 //                                              sx, sy, sw, sh,
                                               x, y, tex->w, tex->h,
-                                              mtex, mx, my, mw, mh, mask_smooth,
+                                              mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                               r, g, b, a);
              continue;
           }
@@ -178,7 +180,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
         evas_gl_common_context_font_push(gc, tex,
                                          ssx, ssy, ssw, ssh,
                                          nx, ny, nw, nh,
-                                         mtex, mx, my, mw, mh, mask_smooth,
+                                         mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                          r, g, b, a);
      }
    evas_common_draw_context_cutouts_free(_evas_gl_common_cutout_rects);

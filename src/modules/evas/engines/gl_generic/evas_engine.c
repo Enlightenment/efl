@@ -1284,93 +1284,20 @@ eng_image_map_clean(void *data EINA_UNUSED, RGBA_Map *m EINA_UNUSED)
 static void *
 eng_image_map_surface_new(void *data, int w, int h, int alpha)
 {
-   Evas_Engine_GL_Context *gl_context;
    Render_Engine_GL_Generic *re = data;
+   Evas_Engine_GL_Context *gl_context;
 
    re->window_use(re->software.ob);
    gl_context = re->window_gl_context_get(re->software.ob);
    return evas_gl_common_image_surface_new(gl_context, w, h, alpha, EINA_FALSE);
 }
 
-static void *
+void *
 eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
-                        int dst_w, int dst_h,
-                        Eina_Bool smooth, Eina_Bool alpha,
+                        int dst_w, int dst_h, Eina_Bool smooth,
                         Evas_Colorspace cspace EINA_UNUSED)
 {
-   Evas_GL_Image *dst = scaled, *newdst;
-   Evas_GL_Image *src = image;
-   Evas_Engine_GL_Context *gc;
-   Eina_Bool reffed = EINA_FALSE;
-
-   if (!src) return NULL;
-
-   // masking will work only with single texture images
-   switch (src->cs.space)
-     {
-      case EVAS_COLORSPACE_AGRY88:
-      case EVAS_COLORSPACE_ARGB8888:
-      case EVAS_COLORSPACE_GRY8:
-      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
-      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
-      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
-      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
-      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
-      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
-        break;
-      default:
-        DBG("cspace %d can't be used for masking's fast path", src->cs.space);
-        return NULL;
-     }
-
-   gc = src->gc;
-   if (dst && (dst->scaled.origin == src) &&
-       (dst->w == dst_w) && (dst->h == dst_h))
-     return dst;
-
-   evas_gl_common_image_update(gc, src);
-   if (!src->tex)
-     {
-        ERR("No source texture.");
-        return NULL;
-     }
-
-   newdst = calloc(1, sizeof(Evas_GL_Image));
-   if (!newdst) return NULL;
-
-   if (dst)
-     {
-        if (dst->scaled.origin == src)
-          {
-             if (dst->references == 1)
-               {
-                  dst->w = dst_w;
-                  dst->h = dst_h;
-                  dst->scaled.smooth = smooth;
-                  free(newdst);
-                  return dst;
-               }
-             src->references++;
-             reffed = EINA_TRUE;
-          }
-        evas_gl_common_image_free(dst);
-     }
-
-   newdst->references = 1;
-   newdst->gc = gc;
-   newdst->cs.space = src->cs.space;
-   newdst->alpha = alpha;
-   newdst->w = dst_w;
-   newdst->h = dst_h;
-   newdst->tex = src->tex;
-   newdst->tex->references++;
-   newdst->tex_only = 1;
-
-   if (!reffed) src->references++;
-   newdst->scaled.origin = src;
-   newdst->scaled.smooth = smooth;
-
-   return newdst;
+   return evas_gl_common_image_virtual_scaled_get(scaled, image, dst_w, dst_h, smooth);
 }
 
 static void
@@ -3107,7 +3034,7 @@ _gfx_filter_func_get(Evas_Filter_Command *cmd)
       //case EVAS_FILTER_MODE_CURVE: funcptr = gl_filter_curve_func_get(cmd); break;
       //case EVAS_FILTER_MODE_DISPLACE: funcptr = gl_filter_displace_func_get(cmd); break;
       //case EVAS_FILTER_MODE_FILL: funcptr = gl_filter_fill_func_get(cmd); break;
-      //case EVAS_FILTER_MODE_MASK: funcptr = gl_filter_mask_func_get(cmd); break;
+      case EVAS_FILTER_MODE_MASK: funcptr = gl_filter_mask_func_get(cmd); break;
       //case EVAS_FILTER_MODE_TRANSFORM: funcptr = gl_filter_transform_func_get(cmd); break;
       default: return NULL;
      }

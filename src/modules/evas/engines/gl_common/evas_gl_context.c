@@ -1889,7 +1889,8 @@ void
 evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
                                  int x1, int y1, int x2, int y2,
                                  int clip, int cx, int cy, int cw, int ch,
-                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                 Eina_Bool mask_smooth, Eina_Bool mask_color,
                                  int r, int g, int b, int a)
 {
    Eina_Bool blend = EINA_FALSE;
@@ -1907,7 +1908,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
 
    prog = evas_gl_common_shader_program_get(gc, SHD_LINE, NULL, 0, r, g, b, a,
                                             0, 0, 0, 0, EINA_FALSE, NULL, EINA_FALSE,
-                                            mtex, mask_smooth, mw, mh, NULL, NULL, &masksam);
+                                            mtex, mask_smooth, mask_color, mw, mh, NULL, NULL, &masksam);
 
    pn = _evas_gl_common_context_push(SHD_LINE,
                                      gc, NULL, mtex,
@@ -1958,7 +1959,7 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                       int r, int g, int b, int a,
                                       Evas_GL_Texture *mtex,
                                       int mx, int my, int mw, int mh,
-                                      Eina_Bool mask_smooth)
+                                      Eina_Bool mask_smooth, Eina_Bool mask_color)
 {
    Eina_Bool blend = EINA_FALSE;
    Shader_Sampling masksam = SHD_SAM11;
@@ -1971,7 +1972,7 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
 
    prog = evas_gl_common_shader_program_get(gc, SHD_RECT, NULL, 0, r, g, b, a,
                                             0, 0, 0, 0, EINA_FALSE, NULL, EINA_FALSE,
-                                            mtex, mask_smooth, mw, mh, NULL, NULL, &masksam);
+                                            mtex, mask_smooth, mask_color, mw, mh, NULL, NULL, &masksam);
 
 
    pn = _evas_gl_common_context_push(SHD_RECT,
@@ -2130,7 +2131,8 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                   Evas_GL_Texture *tex,
                                   double sx, double sy, double sw, double sh,
                                   int x, int y, int w, int h,
-                                  Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                  Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                  Eina_Bool mask_smooth, Eina_Bool mask_color,
                                   int r, int g, int b, int a,
                                   Eina_Bool smooth, Eina_Bool tex_only)
 {
@@ -2167,7 +2169,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    prog = evas_gl_common_shader_program_get(gc, shd_in, NULL, 0, r, g, b, a,
                                             sw, sh, w, h, smooth, tex, tex_only,
-                                            mtex, mask_smooth, mw, mh,
+                                            mtex, mask_smooth, mask_color, mw, mh,
                                             &sam, &nomul, &masksam);
 
    if (tex->ptt)
@@ -2378,7 +2380,8 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
                                  Evas_GL_Texture *tex,
                                  double sx, double sy, double sw, double sh,
                                  int x, int y, int w, int h,
-                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                 Eina_Bool mask_smooth, Eina_Bool mask_color,
                                  int r, int g, int b, int a)
 {
    GLfloat tx1, tx2, ty1, ty2;
@@ -2388,7 +2391,7 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
 
    prog = evas_gl_common_shader_program_get(gc, SHD_FONT, NULL, 0, r, g, b, a,
                                             sw, sh, w, h, EINA_FALSE, tex, EINA_FALSE,
-                                            mtex, mask_smooth, mw, mh,
+                                            mtex, mask_smooth, mask_color, mw, mh,
                                             NULL, NULL, &masksam);
 
    pn = _evas_gl_common_context_push(SHD_FONT,
@@ -2452,7 +2455,8 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
                                 Evas_GL_Texture *tex,
                                 double sx, double sy, double sw, double sh,
                                 int x, int y, int w, int h,
-                                Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                Eina_Bool mask_smooth, Eina_Bool mask_color,
                                 int r, int g, int b, int a,
                                 Eina_Bool smooth)
 {
@@ -2467,7 +2471,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
 
    prog = evas_gl_common_shader_program_get(gc, SHD_YUV, NULL, 0, r, g, b, a,
                                             w, h, w, h, smooth, tex, 0,
-                                            mtex, mask_smooth, mw, mh,
+                                            mtex, mask_smooth, mask_color, mw, mh,
                                             NULL, &nomul, &masksam);
 
    pn = _evas_gl_common_context_push(SHD_YUV,
@@ -2531,7 +2535,8 @@ evas_gl_common_context_yuv_709_push(Evas_Engine_GL_Context *gc,
                                     Evas_GL_Texture *tex,
                                     double sx, double sy, double sw, double sh,
                                     int x, int y, int w, int h,
-                                    Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                    Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                    Eina_Bool mask_smooth, Eina_Bool mask_color,
                                     int r, int g, int b, int a,
                                     Eina_Bool smooth)
 {
@@ -2546,7 +2551,7 @@ evas_gl_common_context_yuv_709_push(Evas_Engine_GL_Context *gc,
 
    prog = evas_gl_common_shader_program_get(gc, SHD_YUV_709, NULL, 0, r, g, b, a,
                                             w, h, w, h, smooth, tex, 0,
-                                            mtex, mask_smooth, mw, mh,
+                                            mtex, mask_smooth, mask_color, mw, mh,
                                             NULL, &nomul, &masksam);
 
    pn = _evas_gl_common_context_push(SHD_YUV_709,
@@ -2610,7 +2615,8 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
                                  Evas_GL_Texture *tex,
                                  double sx, double sy, double sw, double sh,
                                  int x, int y, int w, int h,
-                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                 Eina_Bool mask_smooth, Eina_Bool mask_color,
                                  int r, int g, int b, int a,
                                  Eina_Bool smooth)
 {
@@ -2625,7 +2631,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
 
    prog = evas_gl_common_shader_program_get(gc, SHD_YUY2, NULL, 0, r, g, b, a,
                                             sw, sh, w, h, smooth, tex, 0,
-                                            mtex, mask_smooth, mw, mh,
+                                            mtex, mask_smooth, mask_color, mw, mh,
                                             NULL, &nomul, &masksam);
 
    pn = _evas_gl_common_context_push(SHD_YUY2,
@@ -2687,7 +2693,8 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
                                  Evas_GL_Texture *tex,
                                  double sx, double sy, double sw, double sh,
                                  int x, int y, int w, int h,
-                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                 Eina_Bool mask_smooth, Eina_Bool mask_color,
                                  int r, int g, int b, int a,
                                  Eina_Bool smooth)
 {
@@ -2702,7 +2709,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
 
    prog = evas_gl_common_shader_program_get(gc, SHD_NV12, NULL, 0, r, g, b, a,
                                             sw, sh, w, h, smooth, tex, 0,
-                                            mtex, mask_smooth, mw, mh,
+                                            mtex, mask_smooth, mask_color, mw, mh,
                                             NULL, &nomul, &masksam);
 
    pn = _evas_gl_common_context_push(SHD_NV12,
@@ -2767,7 +2774,8 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
                                        double sx, double sy,
                                        double sw, double sh,
                                        int x, int y, int w, int h,
-                                       Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                       Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                       Eina_Bool mask_smooth, Eina_Bool mask_color,
                                        int r, int g, int b, int a,
                                        Eina_Bool smooth)
 
@@ -2786,7 +2794,7 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
 
    prog = evas_gl_common_shader_program_get(gc, SHD_RGB_A_PAIR, NULL, 0, r, g, b, a,
                                             sw, sh, w, h, smooth, tex, 0,
-                                            mtex, mask_smooth, mw, mh,
+                                            mtex, mask_smooth, mask_color, mw, mh,
                                             NULL, &nomul, &masksam);
 
    pn = _evas_gl_common_context_push(SHD_RGB_A_PAIR,
@@ -2851,7 +2859,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                       int npoints,
                                       RGBA_Map_Point *p,
                                       int clip, int cx, int cy, int cw, int ch,
-                                      Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                      Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                      Eina_Bool mask_smooth, Eina_Bool mask_color,
                                       int r, int g, int b, int a,
                                       Eina_Bool smooth, Eina_Bool tex_only,
                                       Evas_Colorspace cspace)
@@ -2916,7 +2925,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
    prog = evas_gl_common_shader_program_get(gc, type, p, npoints, r, g, b, a,
                                             w, h, w, h, smooth, tex, tex_only,
-                                            mtex, mask_smooth, mw, mh,
+                                            mtex, mask_smooth, mask_color, mw, mh,
                                             NULL, &nomul, &masksam);
 
    x = w = (p[0].x >> FP);

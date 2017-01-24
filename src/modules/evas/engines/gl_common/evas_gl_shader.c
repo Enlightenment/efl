@@ -28,19 +28,20 @@ typedef enum {
    SHADER_FLAG_MASKSAM12         = (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + 0)),
    SHADER_FLAG_MASKSAM21         = (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + 1)),
    SHADER_FLAG_MASKSAM22         = (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + 2)),
-   SHADER_FLAG_IMG               = (1 << 9),
-   SHADER_FLAG_BIGENDIAN         = (1 << 10),
-   SHADER_FLAG_YUV               = (1 << 11),
-   SHADER_FLAG_YUY2              = (1 << 12),
-   SHADER_FLAG_NV12              = (1 << 13),
-   SHADER_FLAG_YUV_709           = (1 << 14),
-   SHADER_FLAG_EXTERNAL          = (1 << 15),
-   SHADER_FLAG_AFILL             = (1 << 16),
-   SHADER_FLAG_NOMUL             = (1 << 17),
-   SHADER_FLAG_ALPHA             = (1 << 18),
-   SHADER_FLAG_RGB_A_PAIR        = (1 << 19),
+   SHADER_FLAG_MASK_COLOR        = (1 << 9),
+   SHADER_FLAG_IMG               = (1 << 10),
+   SHADER_FLAG_BIGENDIAN         = (1 << 11),
+   SHADER_FLAG_YUV               = (1 << 12),
+   SHADER_FLAG_YUY2              = (1 << 13),
+   SHADER_FLAG_NV12              = (1 << 14),
+   SHADER_FLAG_YUV_709           = (1 << 15),
+   SHADER_FLAG_EXTERNAL          = (1 << 16),
+   SHADER_FLAG_AFILL             = (1 << 17),
+   SHADER_FLAG_NOMUL             = (1 << 18),
+   SHADER_FLAG_ALPHA             = (1 << 19),
+   SHADER_FLAG_RGB_A_PAIR        = (1 << 20),
 } Shader_Flag;
-#define SHADER_FLAG_COUNT 20
+#define SHADER_FLAG_COUNT 21
 
 static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "TEX",
@@ -52,6 +53,7 @@ static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "MASKSAM12",
    "MASKSAM21",
    "MASKSAM22",
+   "MASK_COLOR",
    "IMG",
    "BIGENDIAN",
    "YUV",
@@ -707,7 +709,7 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
                                 int sw, int sh, int w, int h, Eina_Bool smooth,
                                 Evas_GL_Texture *tex, Eina_Bool tex_only,
                                 Evas_GL_Texture *mtex, Eina_Bool mask_smooth,
-                                int mw, int mh,
+                                Eina_Bool mask_color, int mw, int mh,
                                 Shader_Sampling *psam, int *pnomul, Shader_Sampling *pmasksam)
 {
    Shader_Sampling sam = SHD_SAM11, masksam = SHD_SAM11;
@@ -738,6 +740,12 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
           masksam = SHD_SAM12;
         if (masksam)
           flags |= (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + masksam - 1));
+     }
+
+   // mask color mode
+   if (mtex && mask_color)
+     {
+        flags |= SHADER_FLAG_MASK_COLOR;
      }
 
    switch (type)
@@ -899,7 +907,7 @@ evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
                                   int sw, int sh, int w, int h, Eina_Bool smooth,
                                   Evas_GL_Texture *tex, Eina_Bool tex_only,
                                   Evas_GL_Texture *mtex, Eina_Bool mask_smooth,
-                                  int mw, int mh,
+                                  Eina_Bool mask_color, int mw, int mh,
                                   Shader_Sampling *psam, int *pnomul,
                                   Shader_Sampling *pmasksam)
 {
@@ -908,7 +916,7 @@ evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
 
    flags = evas_gl_common_shader_flags_get(gc->shared, type, map_points, npoints, r, g, b, a,
                                            sw, sh, w, h, smooth, tex, tex_only,
-                                           mtex, mask_smooth, mw, mh,
+                                           mtex, mask_smooth, mask_color, mw, mh,
                                            psam, pnomul, pmasksam);
    p = eina_hash_find(gc->shared->shaders_hash, &flags);
    if (!p)

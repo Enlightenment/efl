@@ -143,8 +143,16 @@ _image_get(Evas_Ector_GL_Buffer_Data *pd, Eina_Bool render)
    if (pd->maps != NULL)
      fail("Image is currently mapped!");
 
+   if (!pd->glim || !pd->glim->tex || !pd->glim->tex->pt)
+     fail("Image has no texture!");
+
    evas_gl_common_image_ref(pd->glim);
-   if (render) pd->was_render = EINA_TRUE;
+   if (render)
+     {
+        if (!pd->glim->tex->pt->fb)
+          fail("Image has no FBO!");
+        pd->was_render = EINA_TRUE;
+     }
    return pd->glim;
 
 on_fail:
@@ -174,13 +182,8 @@ _evas_ector_gl_buffer_evas_ector_buffer_engine_image_release(Eo *obj EINA_UNUSED
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->glim == image, EINA_FALSE);
 
    if (pd->was_render)
-     {
-        Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
-        Evas_Engine_GL_Context *gc;
+     pd->glim = evas_gl_common_image_surface_detach(pd->glim);
 
-        gc = re->window_gl_context_get(re->software.ob);
-        pd->glim = evas_gl_common_image_surface_detach(gc, pd->glim);
-     }
    evas_gl_common_image_free(pd->glim);
 
    return EINA_TRUE;
@@ -307,14 +310,11 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
              EINA_INLIST_REMOVE(pd->maps, map);
              if (map->mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE)
                {
-                  Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
                   Evas_GL_Image *old_glim = pd->glim;
-                  Evas_Engine_GL_Context *gc;
                   int W, H;
 
                   W = pd->glim->w;
                   H = pd->glim->h;
-                  gc = re->window_gl_context_get(re->software.ob);
 
                   if (map->cspace == EFL_GFX_COLORSPACE_GRY8)
                     _pixels_gry8_to_argb_convert(map->image_data, map->base_data, W * H);
@@ -322,13 +322,13 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
                   if (map->im)
                     {
                        MAP_DUMP(map->im, "out_w_free");
-                       pd->glim = evas_gl_common_image_surface_update(gc, map->im);
+                       pd->glim = evas_gl_common_image_surface_update(map->im);
                        evas_gl_common_image_free(old_glim);
                     }
                   else
                     {
                        MAP_DUMP(old_glim, "out_w_nofree");
-                       pd->glim = evas_gl_common_image_surface_update(gc, old_glim);
+                       pd->glim = evas_gl_common_image_surface_update(old_glim);
                     }
                }
              else

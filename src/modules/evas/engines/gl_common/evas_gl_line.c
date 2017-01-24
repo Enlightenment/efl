@@ -12,6 +12,7 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
    const int OFFSET_HACK_ARM = 2;
    Evas_GL_Texture *mtex = NULL;
    Eina_Bool mask_smooth = EINA_FALSE;
+   Eina_Bool mask_color = EINA_FALSE;
    int mx = 0, my = 0, mw = 0, mh = 0;
    Evas_GL_Image *mask;
 
@@ -48,6 +49,7 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
              mw = mask->w;
              mh = mask->h;
              mask_smooth = mask->scaled.smooth;
+             mask_color = gc->dc->clip.mask_color;
           }
         else mtex = NULL;
      }
@@ -97,6 +99,6 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
 
    evas_gl_common_context_line_push(gc, x1, y1, x2, y2,
                                     c, cx, cy, cw, ch,
-                                    mtex, mx, my, mw, mh, mask_smooth,
+                                    mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                     r, g, b, a);
 }

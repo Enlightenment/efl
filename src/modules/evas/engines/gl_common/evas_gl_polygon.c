@@ -133,6 +133,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
    int x = 0, y = 0, w = 0, h = 0;
    Evas_GL_Texture *mtex = NULL;
    Eina_Bool mask_smooth = EINA_FALSE;
+   Eina_Bool mask_color = EINA_FALSE;
    int mx = 0, my = 0, mw = 0, mh = 0;
    Evas_GL_Image *mask;
 
@@ -165,6 +166,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
              mw = mask->w;
              mh = mask->h;
              mask_smooth = mask->scaled.smooth;
+             mask_color = gc->dc->clip.mask_color;
           }
         else mtex = NULL;
      }
@@ -291,7 +293,8 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
                   h = 1;
                   evas_gl_common_context_rectangle_push(gc, x, y, w, h,
                                                         cr, cg, cb, ca,
-                                                        mtex, mx, my, mw, mh, mask_smooth);
+                                                        mtex, mx, my, mw, mh,
+                                                        mask_smooth, mask_color);
                }
           }
         else
@@ -315,7 +318,8 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
                                  if ((w > 0) && (h > 0))
                                    evas_gl_common_context_rectangle_push(gc, x, y, w, h,
                                                                          cr, cg, cb, ca,
-                                                                         mtex, mx, my, mw, mh, mask_smooth);
+                                                                         mtex, mx, my, mw, mh,
+                                                                         mask_smooth, mask_color);
                               }
                          }
                     }

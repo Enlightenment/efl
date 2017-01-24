@@ -766,6 +766,7 @@ struct _RGBA_Draw_Context
       int    mask_x, mask_y;
       Eina_Bool use : 1;
       Eina_Bool async : 1;
+      Eina_Bool mask_color : 1; // true if masking with color (eg. filters)
    } clip;
    struct {
 #ifdef HAVE_PIXMAN

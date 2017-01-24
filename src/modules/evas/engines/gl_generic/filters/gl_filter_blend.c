@@ -164,26 +164,25 @@ _gl_filter_blend(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    Evas_GL_Image *image, *surface;
    RGBA_Draw_Context *dc_save;
 
+   DEBUG_TIME_BEGIN();
+
    re->window_use(re->software.ob);
    gc = re->window_gl_context_get(re->software.ob);
 
    image = evas_ector_buffer_drawable_image_get(cmd->input->buffer);
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(image->tex, EINA_FALSE);
 
    surface = evas_ector_buffer_render_image_get(cmd->output->buffer);
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(surface->tex, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(surface->tex->pt, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(surface->tex->pt->fb != 0, EINA_FALSE);
+
    evas_gl_common_context_target_surface_set(gc, surface);
 
    dc_save = gc->dc;
    gc->dc = evas_common_draw_context_new();
    evas_common_draw_context_set_multiplier(gc->dc, cmd->draw.R, cmd->draw.G, cmd->draw.B, cmd->draw.A);
    gc->dc->render_op = _gfx_to_evas_render_op(cmd->draw.rop);
+
+   // FIXME: Maybe need to clear buffer in case of COPY mode?
 
    DBG("blend %d @%p -> %d @%p", cmd->input->id, cmd->input->buffer,
        cmd->output->id, cmd->output->buffer);
@@ -195,6 +194,8 @@ _gl_filter_blend(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 
    evas_ector_buffer_engine_image_release(cmd->input->buffer, image);
    evas_ector_buffer_engine_image_release(cmd->output->buffer, surface);
+
+   DEBUG_TIME_END();
 
    return EINA_TRUE;
 }

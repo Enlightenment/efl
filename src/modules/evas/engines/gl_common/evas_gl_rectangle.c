@@ -8,6 +8,7 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
    int mx = 0, my = 0, mw = 0, mh = 0;
    Eina_Bool mask_smooth = EINA_FALSE;
    Evas_GL_Image *mask = gc->dc->clip.mask;
+   Eina_Bool mask_color = EINA_FALSE;
    Evas_GL_Texture *mtex = NULL;
 
    if ((w <= 0) || (h <= 0)) return;
@@ -42,6 +43,7 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
              mw = mask->w;
              mh = mask->h;
              mask_smooth = mask->scaled.smooth;
+             mask_color = gc->dc->clip.mask_color;
           }
         else mtex = NULL;
      }
@@ -50,7 +52,9 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
        ((gc->shared->info.tune.cutout.max > 0) &&
            (gc->dc->cutout.active > gc->shared->info.tune.cutout.max)))
      {
-        evas_gl_common_context_rectangle_push(gc, x, y, w, h, cr, cg, cb, ca, mtex, mx, my, mw, mh, mask_smooth);
+        evas_gl_common_context_rectangle_push
+              (gc, x, y, w, h, cr, cg, cb, ca,
+               mtex, mx, my, mw, mh, mask_smooth, mask_color);
      }
    else
      {
@@ -64,7 +68,9 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
                   r = _evas_gl_common_cutout_rects->rects + i;
                   if ((r->w > 0) && (r->h > 0))
                     {
-                       evas_gl_common_context_rectangle_push(gc, r->x, r->y, r->w, r->h, cr, cg, cb, ca, mtex, mx, my, mw, mh, mask_smooth);
+                       evas_gl_common_context_rectangle_push
+                             (gc, r->x, r->y, r->w, r->h, cr, cg, cb, ca,
+                              mtex, mx, my, mw, mh, mask_smooth, mask_color);
                     }
                }
              evas_common_draw_context_cutouts_free(_evas_gl_common_cutout_rects);

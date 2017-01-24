@@ -2470,7 +2470,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                Eina_Bool smooth = evas_object_image_smooth_scale_get(mask->object);
                void *original = mask->func->engine_data_get(mask->object);
                void *scaled = ENFN->image_scaled_update
-                 (ENDT, mdata->surface, original, w, h, smooth, EINA_TRUE, EVAS_COLORSPACE_GRY8);
+                 (ENDT, mdata->surface, original, w, h, smooth, EVAS_COLORSPACE_GRY8);
                if (scaled)
                  {
                     done = EINA_TRUE;

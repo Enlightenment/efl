@@ -132,19 +132,38 @@ void main()
 #endif
 
 #ifdef SHD_MASK
+# ifndef SHD_MASK_COLOR
+   // Classic mask: alpha only
    float ma;
-# if defined(SHD_MASKSAM12) || defined(SHD_MASKSAM21)
+#  if defined(SHD_MASKSAM12) || defined(SHD_MASKSAM21)
    float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;
    float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;
    ma = (ma00 + ma01) / maskdiv_s;
-# elif defined(SHD_MASKSAM22)
+#  elif defined(SHD_MASKSAM22)
    float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;
    float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;
    float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;
    float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;
    ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;
-# else
+#  else
    ma = texture2D(texm, tex_m).a;
+#  endif
+# else
+   // Full color mask
+   vec4 ma;
+#  if defined(SHD_MASKSAM12) || defined(SHD_MASKSAM21)
+   vec4 ma00 = texture2D(texm, tex_m + masktex_s[0]);
+   vec4 ma01 = texture2D(texm, tex_m + masktex_s[1]);
+   ma = (ma00 + ma01) / maskdiv_s;
+#  elif defined(SHD_MASKSAM22)
+   vec4 ma00 = texture2D(texm, tex_m + masktex_s[0]);
+   vec4 ma01 = texture2D(texm, tex_m + masktex_s[1]);
+   vec4 ma10 = texture2D(texm, tex_m + masktex_s[2]);
+   vec4 ma11 = texture2D(texm, tex_m + masktex_s[3]);
+   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;
+#  else
+   ma = texture2D(texm, tex_m);
+#  endif
 # endif
 #endif
 
