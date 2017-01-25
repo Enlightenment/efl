@@ -3272,7 +3272,8 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
    p3->type.common->spec.image.t = chosen_desc->image.border.t;
    p3->type.common->spec.image.b = chosen_desc->image.border.b;
 
-   p3->type.common->spec.image.border_scale_by = chosen_desc->image.border.scale_by;
+//  XXX: do NOT do this. you can use border scale by to animate transitions
+//   p3->type.common->spec.image.border_scale_by = chosen_desc->image.border.scale_by;
 
    if (set && set->set)
      {
