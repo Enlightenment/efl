@@ -574,11 +574,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
         em = eina_hash_find(evas_modules[type], name);
         if (em)
           {
-             if (evas_module_load(em))
-               {
-                  eina_module_free(en);
-                  return em;
-               }
+             if (evas_module_load(em)) return em;
           }
 
         eina_module_free(en);
