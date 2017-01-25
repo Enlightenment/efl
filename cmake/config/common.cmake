@@ -32,13 +32,13 @@ EFL_OPTION(ENABLE_VALGRIND "Enable valgrind support" "${SUGGEST_VALGRIND}" DEPEN
 HEADER_CHECK(asm/hwcap.h)
 HEADER_CHECK(dirent.h)
 HEADER_CHECK(execinfo.h)
-HEADER_CHECK(libunwind.h NAME HAVE_UNWIND)
 HEADER_CHECK(mcheck.h)
 HEADER_CHECK(stdlib.h)
 HEADER_CHECK(sys/auxv.h)
 HEADER_CHECK(sys/mman.h)
 HEADER_CHECK(sys/types.h)
 
+FUNC_CHECK(backtrace INCLUDE_FILES execinfo.h)
 FUNC_CHECK(clock_gettime INCLUDE_FILES time.h)
 FUNC_CHECK(dirfd INCLUDE_FILES dirent.h sys/types.h)
 FUNC_CHECK(dladdr INCLUDE_FILES dlfcn.h LIBRARIES dl DEFINITIONS "-D_GNU_SOURCE=1")
@@ -53,6 +53,8 @@ FUNC_CHECK(getuid INCLUDE_FILES unistd.h)
 FUNC_CHECK(getxattr INCLUDE_FILES sys/types.h sys/xattr.h)
 FUNC_CHECK(iconv INCLUDE_FILES iconv.h)
 FUNC_CHECK(listxattr INCLUDE_FILES sys/types.h sys/xattr.h)
+FUNC_CHECK(mallinfo INCLUDE_FILES malloc.h)
+FUNC_CHECK(malloc_info INCLUDE_FILES malloc.h)
 FUNC_CHECK(mmap INCLUDE_FILES sys/mman.h)
 FUNC_CHECK(mtrace INCLUDE_FILES mcheck.h)
 FUNC_CHECK(prctl INCLUDE_FILES sys/prctl.h)
@@ -67,6 +69,10 @@ TYPE_CHECK(siginfo_t INCLUDE_FILES signal.h)
 
 # END: HEADER, TYPE and FUNCTION CHECKS
 
+# TODO: move to a FindUnwind.cmake?
+# or is pkg-config enough these days?
+pkg_check_modules(UNWIND libunwind libunwind-generic)
+CHECK_APPEND_DEFINE(HAVE_UNWIND ${UNWIND_FOUND})
 
 CHECK_APPEND_DEFINE(EFL_BETA_API_SUPPORT 1)
 if(CMAKE_THREAD_LIBS_INIT)

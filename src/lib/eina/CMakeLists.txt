@@ -8,6 +8,10 @@ if(ENABLE_VALGRIND)
   list(APPEND PKG_CONFIG_REQUIRES_PRIVATE valgrind)
 endif()
 
+if(UNWIND_FOUND)
+  list(APPEND PKG_CONFIG_REQUIRES_PRIVATE libunwind libunwind-generic)
+endif()
+
 set(PUBLIC_LIBRARIES
   pthread
 )
