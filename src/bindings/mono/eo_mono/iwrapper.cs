@@ -11,6 +11,10 @@ public class Globals {
     [DllImport("eo")] public static extern IntPtr
         _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
     [DllImport("eo")] public static extern IntPtr
+        efl_ref(IntPtr eo);
+    [DllImport("eo")] public static extern void
+        efl_unref(IntPtr eo);
+    [DllImport("eo")] public static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr base0);
     [DllImport("eo")] public static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr base0, IntPtr base1);

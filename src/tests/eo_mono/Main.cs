@@ -66,7 +66,19 @@ class Core
        System.GC.Collect();
        System.GC.WaitForPendingFinalizers();
 
-       Test.Assert(delEventCalled, "Destructor not called");
+       Test.Assert(delEventCalled, "DEL event not called");
+    }
+
+    public static void dispose_really_frees()
+    {
+       bool delEventCalled = false;
+       {
+           test.Testing obj = new test.TestingConcrete();
+           obj.DEL += (object sender, EventArgs e) => { delEventCalled = true; };
+           ((IDisposable)obj).Dispose();
+       }
+
+       Test.Assert(delEventCalled, "DEL event not called");
     }
 }
 
@@ -199,7 +211,7 @@ class TestMain
                 }
                 Console.WriteLine("[        " + (caseResult ? "PASS" : "FAIL") + " ] " + suite.Name + "." + testCase.Name);
             }
-            Console.WriteLine("[ END SUITE ] " + suite.Name);
+            Console.WriteLine("[   END SUITE ] " + suite.Name);
         }
 
         if (!pass)

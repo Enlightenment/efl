@@ -94,7 +94,7 @@ struct klass
      //   {
          if(!as_generator
             (
-             "public class " << string << "Concrete : " << string << "\n{\n"
+             "public class " << string << "Concrete : " << string << ", IDisposable\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
@@ -122,9 +122,30 @@ struct klass
              << scope_tab << scope_tab << "handle = raw;\n"
              << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << "}\n"
+             << scope_tab << "~" << string << "Concrete()\n"
+             << scope_tab << "{\n"
+             << scope_tab << scope_tab << "Dispose(false);\n"
+             << scope_tab << "}\n"
+             << scope_tab << "protected virtual void Dispose(bool disposing)\n"
+             << scope_tab << "{\n"
+             << scope_tab << scope_tab << "if (handle != System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << scope_tab << "efl.eo.Globals.efl_unref(handle);\n"
+             << scope_tab << scope_tab << scope_tab << "handle = System.IntPtr.Zero;\n"
+             << scope_tab << scope_tab << "}\n"
+             << scope_tab << "}\n"
+             << scope_tab << "public void Dispose()\n"
+             << scope_tab << "{\n"
+             << scope_tab << scope_tab << "Dispose(true);\n"
+             << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
+             << scope_tab << "}\n"
              /* << scope_tab << "public delegate void EflEventHandler(object sender, EventArgs e);\n" */
             )
-            .generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name), context))
+            .generate(sink
+              , std::make_tuple(
+                cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
+                , cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
+                , cls.cxx_name)
+              , context))
            return false;
 
          if (!generate_events(sink, cls, context))
