@@ -548,11 +548,6 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    Eina_Bool override;
    DATA32 color;
 
-   // Note (SW engine):
-   // The basic blur operation overrides the pixels in the target buffer,
-   // only supports one direction (X or Y) and no offset. As a consequence
-   // most cases require intermediate work buffers.
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(drawctx, NULL);
 
@@ -570,8 +565,6 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    out = _filter_buffer_get(ctx, outbuf);
    EINA_SAFETY_ON_FALSE_GOTO(out, fail);
 
-   if (in == out) out->dirty = EINA_FALSE;
-
    ENFN->context_color_get(ENDT, drawctx, &R, &G, &B, &A);
    color = ARGB_JOIN(A, R, G, B);
    if (!color)
@@ -579,6 +572,29 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         DBG("Blur with transparent color. Nothing to do.");
         return _command_new(ctx, EVAS_FILTER_MODE_SKIP, NULL, NULL, NULL);
      }
+
+   if (ctx->gl)
+     {
+        // GL engine: single pass!
+        XDBG("Add GL blur %d -> %d (%dx%d px)", in->id, out->id, dx, dy);
+        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, in, NULL, out);
+        if (!cmd) goto fail;
+        cmd->blur.type = type;
+        cmd->blur.dx = dx;
+        cmd->blur.dy = dy;
+        cmd->blur.count = count;
+        cmd->draw.ox = ox;
+        cmd->draw.oy = oy;
+        DRAW_COLOR_SET(R, G, B, A);
+        return cmd;
+     }
+
+   // Note (SW engine):
+   // The basic blur operation overrides the pixels in the target buffer,
+   // only supports one direction (X or Y) and no offset. As a consequence
+   // most cases require intermediate work buffers.
+
+   if (in == out) out->dirty = EINA_FALSE;
 
    render_op = ENFN->context_render_op_get(ENDT, drawctx);
    override = (render_op == EVAS_RENDER_COPY);

@@ -6,6 +6,9 @@
 
 FRAGMENT_SHADER
 
+#define M_PI   3.141592653589793238462643383279502884
+#define M_PI_2 1.570796326794896619231321691639751442
+
 #ifndef SHD_NOMUL
 varying vec4 col;
 #endif
@@ -85,11 +88,27 @@ varying vec2 displace_max;
 uniform sampler2D tex_filter;
 #endif
 
+#ifdef SHD_FILTER_BLUR
+varying vec2 blur_radius;
+varying vec2 blur_divider;
+#endif
+
+// ----------------------------------------------------------------------------
+
+#ifndef SHD_FILTER_BLUR
 void main()
 {
 #if defined(SHD_EXTERNAL) || defined(SHD_TEX)
    vec2 coord = tex_c;
 #endif
+
+#else // SHD_FILTER_BLUR
+
+vec4 fetch_pixel(float ox, float oy)
+{
+   vec2 coord = tex_c + vec2(ox, oy);
+
+#endif // SHD_FILTER_BLUR
 
    vec4 c;
 
@@ -205,6 +224,8 @@ void main()
             new_alpha);
 #endif
 
+#ifndef SHD_FILTER_BLUR
+
    gl_FragColor =
        c
 #ifndef SHD_NOMUL
@@ -219,3 +240,51 @@ void main()
    ;
 }
 
+#else // SHD_FILTER_BLUR
+
+   return c;
+}
+
+void main()
+{
+   float x, y, div_x, div_y;
+   float rx = blur_radius.x;
+   float ry = blur_radius.y;
+   vec4 acc = vec4(0.,0.,0.,0.);
+   vec4 c;
+
+   div_x = blur_divider.x;
+   div_y = blur_divider.y;
+
+   float diam_x = rx * 2.0 + 1.0;
+   float diam_y = ry * 2.0 + 1.0;
+   float div = 0.0;
+
+   // This is completely insane... but renders properly :)
+   for (y = -ry; y <= ry; y += 1.0)
+   {
+      float wy = (y + ry) / (diam_y - 1.0) * 6.0 - 3.0;
+      wy = (sin(wy + M_PI_2) + 1.0) / 2.0;
+
+      for (x = -rx; x <= rx; x += 1.0)
+      {
+         float wx = (x + rx) / (diam_x - 1.0) * 6.0 - 3.0;
+         wx = (sin(wx + M_PI_2) + 1.0) / 2.0;
+
+         vec4 px = fetch_pixel(x / div_x, y / div_y);
+
+         acc += px * wx * wy;
+         div += wx * wy;
+      }
+   }
+
+   c = acc / div;
+
+#ifndef SHD_NOMUL
+   gl_FragColor = c * col;
+#else
+   gl_FragColor = c;
+#endif
+}
+
+#endif // SHD_FILTER_BLUR

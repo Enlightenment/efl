@@ -3029,7 +3029,7 @@ _gfx_filter_func_get(Evas_Filter_Command *cmd)
    switch (cmd->mode)
      {
       case EVAS_FILTER_MODE_BLEND: funcptr = gl_filter_blend_func_get(cmd); break;
-      //case EVAS_FILTER_MODE_BLUR: funcptr = gl_filter_blur_func_get(cmd); break;
+      case EVAS_FILTER_MODE_BLUR: funcptr = gl_filter_blur_func_get(cmd); break;
       //case EVAS_FILTER_MODE_BUMP: funcptr = gl_filter_bump_func_get(cmd); break;
       case EVAS_FILTER_MODE_CURVE: funcptr = gl_filter_curve_func_get(cmd); break;
       case EVAS_FILTER_MODE_DISPLACE: funcptr = gl_filter_displace_func_get(cmd); break;

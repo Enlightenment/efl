@@ -42,8 +42,9 @@ typedef enum {
    SHADER_FLAG_RGB_A_PAIR        = (1 << 20),
    SHADER_FLAG_FILTER_DISPLACE   = (1 << 21),
    SHADER_FLAG_FILTER_CURVE      = (1 << 22),
+   SHADER_FLAG_FILTER_BLUR       = (1 << 23),
 } Shader_Flag;
-#define SHADER_FLAG_COUNT 23
+#define SHADER_FLAG_COUNT 24
 
 static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "TEX",
@@ -68,7 +69,8 @@ static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "ALPHA",
    "RGB_A_PAIR",
    "FILTER_DISPLACE",
-   "FILTER_CURVE"
+   "FILTER_CURVE",
+   "FILTER_BLUR"
 };
 
 static Eina_Bool compiler_released = EINA_FALSE;
@@ -784,6 +786,9 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
         break;
       case SHD_FILTER_CURVE:
         flags |= SHADER_FLAG_FILTER_CURVE;
+        break;
+      case SHD_FILTER_BLUR:
+        flags |= SHADER_FLAG_FILTER_BLUR;
         break;
       default:
         CRI("Impossible shader type.");

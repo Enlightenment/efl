@@ -108,7 +108,7 @@ struct _Evas_GL_Program
       GLuint mvp, rotation_id;
    } uniform;
    struct {
-      GLuint loc_filter_data[3];
+      GLint loc_filter_data[3];
       Eina_Bool known_locations;
    } attribute;
    GLuint    prog;
@@ -245,6 +245,7 @@ enum _Shader_Type {
    SHD_MAP,
    SHD_FILTER_DISPLACE,
    SHD_FILTER_CURVE,
+   SHD_FILTER_BLUR,
    SHD_TYPE_LAST
 };
 
@@ -650,6 +651,7 @@ void              evas_gl_common_filter_displace_push(Evas_Engine_GL_Context *gc
                                                       int x, int y, int w, int h, double dx, double dy, Eina_Bool nearest);
 void              evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex,
                                                    int x, int y, int w, int h, const uint8_t *points, int channel);
+void              evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex, int x, int y, int w, int h, double dx, double dy);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Shared *shared);

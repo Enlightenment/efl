@@ -47,6 +47,8 @@ static const Filter_Image images_anim[] = {
 /* builtin filter examples */
 static const Filter templates[] = {
    { "Custom", NULL, NULL },
+   { "BLUR",
+     "blur { 15, color = 'darkblue' }", NULL },
    { "Simple blend",
      "blend { color = 'darkblue' }", NULL },
    { "Black shadow",
