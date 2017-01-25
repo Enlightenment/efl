@@ -559,7 +559,6 @@ macro(_EFL_INCLUDE_OR_DETECT _name _srcdir)
         ${_srcdir}/*.hh
         ${_srcdir}/*.cxx
         ${_srcdir}/*.cpp
-        ${_srcdir}/*.eo
         )
     list(LENGTH _autodetect_files _autodetect_files_count)
     if(_autodetect_files_count GREATER 1)
@@ -571,9 +570,15 @@ macro(_EFL_INCLUDE_OR_DETECT _name _srcdir)
         ${_srcdir}/*.hh
         ${_srcdir}/*.cxx
         ${_srcdir}/*.cpp
+        )
+      file(GLOB EO_FILES RELATIVE ${_srcdir}
         ${_srcdir}/*.eo
+        ${_srcdir}/*.eot
         )
       message(STATUS "${_name} auto-detected as: ${SOURCES}")
+      if(EO_FILES)
+        message(STATUS "${_name} EO auto-detected as: ${EO_FILES}")
+      endif()
     else()
       message(STATUS "${_name} contains no auto-detectable sources.")
     endif()
@@ -683,7 +688,8 @@ define_property(TARGET PROPERTY EFL_EO_PUBLIC
 #  - INCLUDE_DIRECTORIES: results in target_include_directories
 #  - SYSTEM_INCLUDE_DIRECTORIES: results in target_include_directories(SYSTEM)
 #  - OUTPUT_NAME
-#  - SOURCES source files that are needed, eo files can also be added here to be build
+#  - SOURCES source files that are needed. Eo files should go in
+#    PUBLIC_EO_FILES or EO_FILES.
 #  - PUBLIC_HEADERS
 #  - VERSION (defaults to project version)
 #  - SOVERSION (defaults to project major version)
@@ -849,7 +855,7 @@ function(EFL_LIB _target)
       SOVERSION ${SOVERSION})
   endif()
 
-  EFL_CREATE_EO_RULES(${_target} ${EFL_LIB_BINARY_DIR})
+  EFL_CREATE_EO_RULES(${_target} ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR})
 
   EFL_PKG_CONFIG_LIB_WRITE()
 
@@ -1289,7 +1295,7 @@ endmacro()
 
 # Will use the source of the given target to create rules for creating
 # the .eo.c and .eo.h files. The INCLUDE_DIRECTORIES of the target will be used
-function(EFL_CREATE_EO_RULES target generation_dir)
+function(EFL_CREATE_EO_RULES target source_dir generation_dir)
    get_target_property(eo_files_private ${target} EFL_EO_PRIVATE)
    get_target_property(eo_files_public ${target} EFL_EO_PUBLIC)
    if(NOT eo_files_private AND NOT eo_files_public)
@@ -1300,18 +1306,34 @@ function(EFL_CREATE_EO_RULES target generation_dir)
    set(all_libraries ${target} ${link_libraries})
    set(include_cmd "")
    foreach(link_target ${all_libraries})
-     list(APPEND include_cmd -I${CMAKE_SOURCE_DIR}/src/lib/${link_target})
+     if(TARGET ${link_target})
+       list(APPEND include_cmd -I${CMAKE_SOURCE_DIR}/src/lib/${link_target})
+     endif()
    endforeach()
 
    set(all_eo_gen_files "")
    foreach(file ${eo_files_private} ${eo_files_public})
       get_filename_component(ext ${file} EXT)
-      get_filename_component(filename ${file} NAME)
+      string(REGEX REPLACE "^${source_dir}/" "" filename "${file}")
+      string(REGEX REPLACE "^${CMAKE_SOURCE_DIR}/" "" relfile "${file}")
+
+      # if sources are located in subdiretories
+      get_filename_component(reldir "${filename}" DIRECTORY)
+      if(reldir)
+        file(MAKE_DIRECTORY "${generation_dir}/${reldir}")
+        get_filename_component(absdir "${file}" DIRECTORY)
+        set(rel_include_cmd -I${absdir})
+      else()
+        set(rel_include_cmd)
+      endif()
 
       if(${ext} STREQUAL ".eo")
-        set(file_eo_gen_files ${generation_dir}/${filename}.c ${generation_dir}/${filename}.h)
+        set(file_eo_gen_files ${generation_dir}/${filename}.c ${generation_dir}/${filename}.h) # TODO: ${generation_dir}/${filename}.legacy.h)
+        set(out_cmd -o c:${generation_dir}/${filename}.c -o h:${generation_dir}/${filename}.h) # TODO: bug in eolian_gen -o l:${generation_dir}/${filename}.legacy.h)
       elseif(${ext} STREQUAL ".eot")
         set(file_eo_gen_files ${generation_dir}/${filename}.h)
+        # TODO: looks like a bug in eolian_gen needs '-gh'
+        set(out_cmd -gh -o h:${generation_dir}/${filename}.h)
       else()
         message(FATAL_ERROR "Unsupported eo file type: ${file}")
       endif()
@@ -1320,13 +1342,26 @@ function(EFL_CREATE_EO_RULES target generation_dir)
       if(file_eo_gen_files)
         if(EOLIAN_BIN STREQUAL ON)
           set(EOLIAN_BIN ${CMAKE_BINARY_DIR}/bin/eolian_gen)
+          set(IN_TREE_EOLIAN ON)
         endif()
         add_custom_command(
            OUTPUT ${file_eo_gen_files}
-           COMMAND ${CMAKE_COMMAND} -E env "EFL_RUN_IN_TREE=1" ${EOLIAN_BIN} ${include_cmd} -o c:${generation_dir}/${filename}.c -o h:${generation_dir}/${filename}.h ${file}
+           COMMAND ${EOLIAN_BIN} ${rel_include_cmd} ${include_cmd} ${EOLIAN_EXTRA_PARAMS} ${out_cmd} ${file}
            DEPENDS ${file}
+           COMMENT "EOLIAN ${relfile}"
         )
         list(APPEND all_eo_gen_files ${file_eo_gen_files})
+        # TODO: looks like a bug in eolian_gen doesn't generate -o l:...
+        # TODO: then add an extra command
+        if(${ext} STREQUAL ".eo")
+          add_custom_command(
+            OUTPUT ${generation_dir}/${filename}.legacy.h
+            COMMAND ${EOLIAN_BIN} ${rel_include_cmd} ${include_cmd} ${EOLIAN_EXTRA_PARAMS} -gl -o l:${generation_dir}/${filename}.legacy.h ${file}
+            DEPENDS ${file}
+            COMMENT "EOLIAN LEGACY ${relfile}"
+            )
+          list(APPEND all_eo_gen_files ${generation_dir}/${filename}.legacy.h)
+        endif()
       endif()
     endforeach()
     if(all_eo_gen_files)
@@ -1335,6 +1370,8 @@ function(EFL_CREATE_EO_RULES target generation_dir)
         DEPENDS ${all_eo_gen_files}
       )
       add_dependencies(${target} ${target}-eo)
-      add_dependencies(${target}-eo eolian-bin)
+      if(IN_TREE_EOLIAN)
+        add_dependencies(${target}-eo eolian-bin)
+      endif()
     endif()
 endfunction()
