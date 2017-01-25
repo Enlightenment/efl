@@ -844,7 +844,11 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
 
    sanitized_path = eina_file_path_sanitize(path);
    DBG("ethumb=%p, path=%s, key=%s", e, sanitized_path ? sanitized_path : "", key ? key : "");
-   if (sanitized_path && access(sanitized_path, R_OK)) return EINA_FALSE;
+   if (sanitized_path && access(sanitized_path, R_OK))
+     {
+        free(sanitized_path);
+        return EINA_FALSE;
+     }
 
    eina_stringshare_replace(&e->src_hash, NULL);
    eina_stringshare_replace(&e->src_path, sanitized_path);
