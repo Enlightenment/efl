@@ -1318,6 +1318,9 @@ function(EFL_CREATE_EO_RULES target generation_dir)
 
       #add the custom rule
       if(file_eo_gen_files)
+        if(EOLIAN_BIN STREQUAL ON)
+          set(EOLIAN_BIN ${CMAKE_BINARY_DIR}/bin/eolian_gen)
+        endif()
         add_custom_command(
            OUTPUT ${file_eo_gen_files}
            COMMAND ${CMAKE_COMMAND} -E env "EFL_RUN_IN_TREE=1" ${EOLIAN_BIN} ${include_cmd} -o c:${generation_dir}/${filename}.c -o h:${generation_dir}/${filename}.h ${file}
