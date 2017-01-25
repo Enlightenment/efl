@@ -870,6 +870,10 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
+   if ((window->opaque.x == x) && (window->opaque.y == y) &&
+       (window->opaque.w == w) && (window->opaque.h == h))
+     return;
+
    window->opaque.x = x;
    window->opaque.y = y;
    window->opaque.w = w;
@@ -912,6 +916,10 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    struct wl_region *region;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if ((window->input_rect.x == x) && (window->input_rect.y == y) &&
+       (window->input_rect.w == w) && (window->input_rect.h == h))
+     return;
 
    window->input_rect.x = x;
    window->input_rect.y = y;
