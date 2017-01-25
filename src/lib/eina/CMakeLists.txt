@@ -1,5 +1,12 @@
 set(DESCRIPTION "A Library that implements fast data types and miscellaneous tools")
-set(PKG_CONFIG_REQUIRES_PRIVATE OPTIONAL libsystemd)
+
+if(ENABLE_SYSTEMD)
+  list(APPEND PKG_CONFIG_REQUIRES_PRIVATE libsystemd)
+endif()
+
+if(ENABLE_VALGRIND)
+  list(APPEND PKG_CONFIG_REQUIRES_PRIVATE valgrind)
+endif()
 
 set(PUBLIC_LIBRARIES
   pthread
@@ -10,10 +17,6 @@ set(LIBRARIES
   dl
   rt
 )
-
-if(ENABLE_VALGRIND)
-  list(APPEND PKG_CONFIG_REQUIRES_PRIVATE valgrind)
-endif()
 
 set(PUBLIC_HEADERS
   Eina.h

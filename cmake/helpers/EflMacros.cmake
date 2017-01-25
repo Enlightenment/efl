@@ -28,7 +28,9 @@ unset(EFL_ALL_LIBS CACHE)
 unset(EFL_ALL_TESTS CACHE)
 unset(EFL_PKG_CONFIG_MISSING_OPTIONAL CACHE)
 
-# EFL_OPTION(Name Help Default)
+# EFL_OPTION(Name Help Default [STRING|BOOL|FILEPATH|PATH]
+#            [CHOICE c1;...;cN]
+#            [DEPENDS "COND1; COND2; NOT COND3" FAILED_VALUE])
 #
 # Declare an option() that will be automatically printed by
 # EFL_OPTIONS_SUMMARY()
@@ -36,33 +38,84 @@ unset(EFL_PKG_CONFIG_MISSING_OPTIONAL CACHE)
 # To extend the EFL_OPTIONS_SUMMARY() message, use
 # EFL_OPTION_SET_MESSAGE(Name Message)
 function(EFL_OPTION _name _help _defval)
+
+  cmake_parse_arguments(PARAMS "" "" "CHOICE;DEPENDS" ${ARGN})
+
   set(_type)
   set(_vartype)
   set(_choices)
-  list(LENGTH ARGN _argc)
+
+  list(LENGTH PARAMS_UNPARSED_ARGUMENTS _argc)
   if(_argc LESS 1)
     set(_type BOOL)
     set(_vartype BOOL)
   else()
-    list(GET ARGN 0 _type)
+    list(GET PARAMS_UNPARSED_ARGUMENTS 0 _type)
     set(_vartype ${_type})
-    list(REMOVE_AT ARGN 0)
+    list(REMOVE_AT PARAMS_UNPARSED_ARGUMENTS 0)
   endif()
-  if(${_vartype} STREQUAL "CHOICE")
-    set(_type STRING)
-    SET_GLOBAL(EFL_OPTION_CHOICES_${_name} "${ARGN}" "Possible values for ${_name}")
-    set(_choices " (Choices: ${ARGN})")
+
+  if(PARAMS_CHOICE)
+    set(_type CHOICE)
+    set(_vartype STRING)
+    SET_GLOBAL(EFL_OPTION_CHOICES_${_name} "${PARAMS_CHOICE}" "Possible values for ${_name}")
+    set(_choices " (Choices: ${PARAMS_CHOICE})")
+  endif()
+
+  if(_type STREQUAL "BOOL")
+    # force ON/OFF representation
+    if(_defval)
+      set(_defval ON)
+    else()
+      set(_defval OFF)
+    endif()
   endif()
 
   LIST_APPEND_GLOBAL(EFL_ALL_OPTIONS ${_name})
 
   SET_GLOBAL(EFL_OPTION_DEFAULT_${_name} "${_defval}" "Default value for ${_name}")
   SET_GLOBAL(EFL_OPTION_TYPE_${_name} "${_vartype}" "Type of ${_name}")
-  set(${_name} ${_defval} CACHE ${_type} "${_help}${_choices}")
-  option(${_name} "${_help}${_choices}" ${_defval})
+
+  set(_available ON)
+  if(PARAMS_DEPENDS)
+    list(LENGTH PARAMS_DEPENDS _count)
+    list(GET PARAMS_DEPENDS 0 _deps)
+    list(GET PARAMS_DEPENDS 1 _deps_failure_value)
+    if(_deps_failure_value STREQUAL "NOTFOUND")
+      message(FATAL_ERROR "EFL_OPTION(${_name}) has DEPENDS but no value when dependencies fail")
+    endif()
+
+    set(_missing_deps "")
+    foreach(_d ${_deps})
+      if(${_d})
+      else()
+        set(_available OFF)
+        list(APPEND _missing_deps "${_d}")
+      endif()
+    endforeach()
+  endif()
+
+  if(_available)
+    if(DEFINED EFL_OPTION_ORIGINAL_VALUE_${_name})
+      set(${_name} ${EFL_OPTION_ORIGINAL_VALUE_${_name}} CACHE ${_type} "${_help}${_choices}" FORCE)
+      unset(EFL_OPTION_ORIGINAL_VALUE_${_name} CACHE)
+    else()
+      set(${_name} ${_defval} CACHE ${_type} "${_help}${_choices}")
+    endif()
+    unset(EFL_OPTION_DEPENDS_MISSING_${_name} CACHE)
+    option(${_name} "${_help}${_choices}" "${${_name}}")
+  else()
+    if(NOT DEFINED EFL_OPTION_ORIGINAL_VALUE_${_name})
+      if(DEFINED ${_name})
+        SET_GLOBAL(EFL_OPTION_ORIGINAL_VALUE_${_name} "${${_name}}")
+      endif()
+    endif()
+    SET_GLOBAL(EFL_OPTION_DEPENDS_MISSING_${_name} "${_missing_deps}")
+    set(${_name} "${_deps_failure_value}" CACHE "${_type}" "Missing dependencies (${_help}${_choices})" FORCE)
+  endif()
 
   if(_choices)
-    list(FIND ARGN "${${_name}}" _ret)
+    list(FIND PARAMS_CHOICE "${${_name}}" _ret)
     if(${_ret} EQUAL -1)
       message(FATAL_ERROR "Invalid choice ${_name}=${${_name}}${_choices}")
     endif()
@@ -86,7 +139,9 @@ function(EFL_OPTIONS_SUMMARY)
   foreach(_o ${EFL_ALL_OPTIONS})
     set(_v ${${_o}})
     set(_d ${EFL_OPTION_DEFAULT_${_o}})
-    if("${_v}" STREQUAL "${_d}")
+    if(EFL_OPTION_DEPENDS_MISSING_${_o})
+      set(_i "requires: ${EFL_OPTION_DEPENDS_MISSING_${_o}}, was: ${EFL_OPTION_ORIGINAL_VALUE_${_o}}")
+    elseif("${_v}" STREQUAL "${_d}")
       set(_i "default")
     else()
       set(_i "default: ${_d}")
@@ -737,10 +792,15 @@ function(EFL_LIB _target)
 
   EFL_PKG_CONFIG_EVAL(${_target} "${PKG_CONFIG_REQUIRES_PRIVATE}" "${PKG_CONFIG_REQUIRES}")
 
-  set(_link_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_LDFLAGS})
+  set(__link_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_LDFLAGS})
   set(__compile_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_CFLAGS} -DPACKAGE_DATA_DIR=\\"${CMAKE_INSTALL_FULL_DATADIR}/${_target}/\\")
+
+  set(_link_flags)
+  foreach(_l ${__link_flags})
+    set(_link_flags "${_link_flags} ${_l}")
+  endforeach()
+
   set(_compile_flags)
-  # CMake uses string for COMPILE_FLAGS but list for LINK_FLAGS... :-/
   foreach(_c ${__compile_flags})
     set(_compile_flags "${_compile_flags} ${_c}")
   endforeach()
@@ -931,14 +991,18 @@ function(EFL_BIN _binname)
     set_target_properties(${_bintarget} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
   endif()
 
-  # CMake uses string for COMPILE_FLAGS but list for LINK_FLAGS... :-/
+  set(_link_flags)
+  foreach(_l ${${_bintarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS})
+    set(_link_flags "${_link_flags} ${_l}")
+  endforeach()
+
   set(_compile_flags)
   foreach(_c ${${_bintarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS})
     set(_compile_flags "${_compile_flags} ${_c}")
   endforeach()
 
   set_target_properties(${_bintarget} PROPERTIES
-    LINK_FLAGS "${${_bintarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS}"
+    LINK_FLAGS "${_link_flags}"
     COMPILE_FLAGS "${_compile_flags}")
 
   if(INSTALL_DIR)
@@ -1049,14 +1113,18 @@ function(EFL_TEST _testname)
     set_target_properties(${_testtarget} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
   endif()
 
-  # CMake uses string for COMPILE_FLAGS but list for LINK_FLAGS... :-/
+  set(_link_flags)
+  foreach(_l ${${_testtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS})
+    set(_link_flags "${_link_flags} ${_l}")
+  endforeach()
+
   set(_compile_flags)
   foreach(_c ${${_testtarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS})
     set(_compile_flags "${_compile_flags} ${_c}")
   endforeach()
 
   set_target_properties(${_testtarget} PROPERTIES
-    LINK_FLAGS "${${_testtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS}"
+    LINK_FLAGS "${_link_flags}"
     COMPILE_FLAGS "${_compile_flags}"
     LIBRARY_OUTPUT_DIRECTORY "${_testbindir}"
     RUNTIME_OUTPUT_DIRECTORY "${_testbindir}")
@@ -1167,14 +1235,18 @@ function(EFL_MODULE _modname)
 
   target_compile_definitions(${_modtarget} PRIVATE ${DEFINITIONS})
 
-  # CMake uses string for COMPILE_FLAGS but list for LINK_FLAGS... :-/
+  set(_link_flags)
+  foreach(_l ${${_modtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS})
+    set(_link_flags "${_link_flags} ${_l}")
+  endforeach()
+
   set(_compile_flags)
   foreach(_c ${${_modtarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS})
     set(_compile_flags "${_compile_flags} ${_c}")
   endforeach()
 
   set_target_properties(${_modtarget} PROPERTIES
-    LINK_FLAGS "${${_modtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS}"
+    LINK_FLAGS "${_link_flags}"
     COMPILE_FLAGS "${_compile_flags}"
     LIBRARY_OUTPUT_DIRECTORY "${_modoutdir}"
     ARCHIVE_OUTPUT_DIRECTORY "${_modoutdir}"

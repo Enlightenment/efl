@@ -1,19 +1,14 @@
-pkg_check_modules(VALGRIND valgrind)
 
 # set default option values based on BUILD_PROFILE
 set(EINA_DEBUG_THREADS OFF)
-set(ENABLE_VALGRIND OFF)
 if("${BUILD_PROFILE}" STREQUAL "dev")
-  set(ENABLE_VALGRIND ${VALGRIND_FOUND})
 elseif("${BUILD_PROFILE}" STREQUAL "debug")
   set(EINA_DEBUG_THREADS ON)
-  set(ENABLE_VALGRIND ${VALGRIND_FOUND})
 elseif("${BUILD_PROFILE}" STREQUAL "release")
 endif()
 
 EFL_OPTION(EINA_MAGIC_DEBUG "magic debug of eina structure" ON)
 EFL_OPTION(EINA_DEBUG_THREADS "debugging of eina threads" ${EINA_DEBUG_THREADS})
-EFL_OPTION(ENABLE_VALGRIND "valgrind support" ${ENABLE_VALGRIND})
 
 set(EINA_MODULE_TYPE_MP_CHAINED_POOL_DEFAULT "STATIC")
 set(EINA_MODULE_TYPE_MP_ONE_BIG_DEFAULT "STATIC")
@@ -23,9 +18,6 @@ set(EINA_MODULE_TYPE_MP_PASS_THROUGH_DEFAULT "STATIC")
 # HEADER_CHECK() and TYPE_CHECK() goes to src/lib/efl/config_gen.h
 
 if(ENABLE_VALGRIND)
-  if(NOT VALGRIND_FOUND)
-    message(FATAL_ERROR "Valgrind was required but not found!")
-  endif()
   CHECK_APPEND_DEFINE(NVALGRIND "")
 else()
   CHECK_APPEND_DEFINE(NVALGRIND 1)
