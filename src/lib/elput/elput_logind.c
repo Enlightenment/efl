@@ -600,7 +600,10 @@ _logind_vt_set(Elput_Manager *em, int vt)
    if (!msg) return EINA_FALSE;
 
    if (!eldbus_message_arguments_append(msg, "u", vt))
-     return EINA_FALSE;
+     {
+        eldbus_message_unref(msg);
+        return EINA_FALSE;
+     }
 
    eldbus_connection_send(em->dbus.conn, msg, NULL, NULL, -1);
 
