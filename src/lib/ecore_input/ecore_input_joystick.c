@@ -24,6 +24,7 @@ static int _ecore_input_joystick_init_count = 0;
 
 typedef void (*Joystick_Mapper)(struct js_event *event, Ecore_Event_Joystick *e);
 static void _joystick_xiinput_mapper(struct js_event *event, Ecore_Event_Joystick *e);
+static void _joystick_ps4_mapper(struct js_event *event, Ecore_Event_Joystick *e);
 
 struct _Joystick_Info
 {
@@ -39,7 +40,10 @@ struct _Joystick_Mapping_Info
    const char *vendor;
    const char *product;
    Joystick_Mapper mapper;
-} Joystick_Mapping_Info[] = {{"045e", "028e", _joystick_xiinput_mapper}};
+} Joystick_Mapping_Info[] = {
+   {"045e", "028e", _joystick_xiinput_mapper}, /* Microsoft X-Box 360 pad */
+   {"054c", "05c4", _joystick_ps4_mapper} /* Sony Computer Entertainment Wireless Controller */
+};
 
 static const char joystickPrefix[] = "/dev/input/js";
 static Eina_List *joystick_list;
@@ -59,6 +63,109 @@ _joystick_connected_event_add(int index, Eina_Bool connected)
 
    INF("index: %d, connected: %d", index, connected);
    ecore_event_add(ECORE_EVENT_JOYSTICK, e, NULL, NULL);
+}
+
+static void
+_joystick_ps4_mapper(struct js_event *event, Ecore_Event_Joystick *e)
+{
+   if (event->type == JS_EVENT_BUTTON)
+     {
+        e->type = ECORE_EVENT_JOYSTICK_EVENT_TYPE_BUTTON;
+        e->button.value = event->value;
+        switch (event->number)
+          {
+           case 0:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_FACE_0;
+             break;
+
+           case 1:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_FACE_1;
+             break;
+
+           case 2:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_FACE_2;
+             break;
+
+           case 3:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_FACE_3;
+             break;
+
+           case 4:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_LEFT_SHOULDER;
+             break;
+
+           case 5:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_RIGHT_SHOULDER;
+             break;
+
+           case 8:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_SELECT;
+             break;
+
+           case 9:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_META;
+             break;
+
+           case 10:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_LEFT_ANALOG_STICK;
+             break;
+
+           case 11:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_RIGHT_ANALOG_STICK;
+             break;
+
+           case 12:
+             e->button.index = ECORE_EVENT_JOYSTICK_BUTTON_START;
+             break;
+
+           default:
+             ERR("Unsupported joystick event: %d", event->number);
+             break;
+          }
+     }
+   else
+     {
+        e->type = ECORE_EVENT_JOYSTICK_EVENT_TYPE_AXIS;
+        e->axis.value = event->value / 32767.0f;;
+        switch (event->number)
+          {
+           case 0:
+             e->axis.index = ECORE_EVENT_JOYSTICK_AXIS_LEFT_ANALOG_HOR;
+             break;
+
+           case 1:
+             e->axis.index = ECORE_EVENT_JOYSTICK_AXIS_LEFT_ANALOG_VER;
+             break;
+
+           case 2:
+             e->axis.index = ECORE_EVENT_JOYSTICK_AXIS_RIGHT_ANALOG_HOR;
+             break;
+
+           case 3:
+             e->axis.index = ECORE_EVENT_JOYSTICK_AXIS_LEFT_SHOULDER;
+             break;
+
+           case 4:
+             e->axis.index = ECORE_EVENT_JOYSTICK_AXIS_RIGHT_SHOULDER;
+             break;
+
+           case 5:
+             e->axis.index = ECORE_EVENT_JOYSTICK_AXIS_RIGHT_ANALOG_VER;
+             break;
+
+           case 6:
+             e->axis.index = ECORE_EVENT_JOYSTICK_AXIS_HAT_X;
+             break;
+
+           case 7:
+             e->axis.index = ECORE_EVENT_JOYSTICK_AXIS_HAT_Y;
+             break;
+
+           default:
+             ERR("Unsupported joystick event: %d", event->number);
+             break;
+          }
+     }
 }
 
 static void
