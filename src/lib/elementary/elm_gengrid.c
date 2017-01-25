@@ -1675,7 +1675,7 @@ _item_place(Elm_Gen_Item *it,
             Evas_Coord cx,
             Evas_Coord cy)
 {
-   Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh, iw, ih, ww;
+   Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh, iw, ih;
    Evas_Coord tch, tcw, alignw = 0, alignh = 0, vw, vh;
    Eina_Bool reorder_item_move_forward = EINA_FALSE;
    Eina_Bool was_realized, can_resize;
@@ -1852,11 +1852,10 @@ _item_place(Elm_Gen_Item *it,
                                                   * pan_x when in RTL
                                                   * mode */
           {
-             evas_object_geometry_get(WIDGET(it), NULL, NULL, &ww, NULL);
              if (wsd->horizontal && can_resize)
-               x = ww - x - it->item->w - wsd->pan_x - wsd->pan_x + ox + ox;
+               x = vw - x - it->item->w - wsd->pan_x - wsd->pan_x + ox + ox;
              else
-               x = ww - x - wsd->item_width - wsd->pan_x - wsd->pan_x + ox + ox;
+               x = vw - x - wsd->item_width - wsd->pan_x - wsd->pan_x + ox + ox;
           }
         iw = (wsd->horizontal && can_resize) ? it->item->w : wsd->item_width;
         ih = (!wsd->horizontal && can_resize) ? it->item->h : wsd->item_height;
