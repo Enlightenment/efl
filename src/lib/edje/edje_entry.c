@@ -2260,6 +2260,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         Eina_Bool free_string = EINA_FALSE;
         Ecore_Compose_State state;
 
+        if (control) goto end;
         if (!en->composing)
           {
              _compose_seq_reset(en);
