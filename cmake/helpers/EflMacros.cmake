@@ -1428,10 +1428,6 @@ function(EFL_CREATE_EO_RULES target source_dir generation_dir)
 
       #add the custom rule
       if(file_eo_gen_files)
-        if(EOLIAN_BIN STREQUAL ON)
-          set(EOLIAN_BIN ${CMAKE_BINARY_DIR}/bin/eolian_gen)
-          set(IN_TREE_EOLIAN ON)
-        endif()
         add_custom_command(
            OUTPUT ${file_eo_gen_files}
            COMMAND ${EOLIAN_BIN} ${rel_include_cmd} ${include_cmd} ${EOLIAN_EXTRA_PARAMS} ${out_cmd} ${file}
@@ -1458,7 +1454,7 @@ function(EFL_CREATE_EO_RULES target source_dir generation_dir)
         DEPENDS ${all_eo_gen_files}
       )
       add_dependencies(${target} ${target}-eo)
-      if(IN_TREE_EOLIAN)
+      if(${EOLIAN_BIN} STREQUAL ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/eolian_gen)
         add_dependencies(${target}-eo eolian-bin)
       endif()
     endif()
