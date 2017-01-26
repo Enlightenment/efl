@@ -1131,7 +1131,7 @@ function(EFL_BIN _binname)
 
   set_target_properties(${_bintarget} PROPERTIES
     LINK_FLAGS "${_link_flags}"
-    COMPILE_FLAGS "${_compile_flags}")
+    COMPILE_FLAGS "${_compile_flags} -DPACKAGE_DATA_DIR=\\\"${CMAKE_INSTALL_FULL_DATADIR}/${_target}/\\\" -DPACKAGE_SRC_DIR=\\\"${CMAKE_SOURCE_DIR}/\\\"")
 
   if(INSTALL_DIR)
     install(TARGETS ${_bintarget} RUNTIME DESTINATION ${INSTALL_DIR})

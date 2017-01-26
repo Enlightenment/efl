@@ -39,6 +39,7 @@ EFL_LIB(emile)
 EFL_LIB(eet)
 EFL_LIB(ecore)
 EFL_LIB(eldbus)
+EFL_LIB(embryo)
 
 EFL_OPTIONS_SUMMARY()
 
