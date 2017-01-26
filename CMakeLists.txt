@@ -36,6 +36,7 @@ EFL_LIB(eolian)
 EFL_LIB(eo)
 EFL_LIB(efl)
 EFL_LIB(emile)
+EFL_LIB(eet)
 EFL_LIB(ecore)
 
 EFL_OPTIONS_SUMMARY()
