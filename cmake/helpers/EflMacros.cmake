@@ -854,6 +854,8 @@ function(EFL_LIB _target)
   set(PUBLIC_EO_FILES)
   set(EO_FILES)
 
+  string(TOUPPER "${_target}" _target_uc)
+
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config/${_target}.cmake OPTIONAL)
   include(${EFL_LIB_SOURCE_DIR}/CMakeLists.txt OPTIONAL)
   if(LIBRARY_TYPE STREQUAL SHARED AND NOT PUBLIC_HEADERS)
@@ -897,12 +899,13 @@ function(EFL_LIB _target)
   add_library(${_target} ${LIBRARY_TYPE} ${_sources} ${_headers})
   set_target_properties(${_target} PROPERTIES
     FRAMEWORK TRUE
+    DEFINE_SYMBOL "EFL_${_target_uc}_BUILD"
     PUBLIC_HEADER "${_headers}"
     OBJECT_DEPENDS "${_obj_deps}"
     EFL_EO_PRIVATE "${_eo_files}"
     EFL_EO_PUBLIC "${_public_eo_files}"
     LINK_FLAGS "${_link_flags}"
-    COMPILE_FLAGS "${_compile_flags}")
+    COMPILE_FLAGS "${_compile_flags} -DDLL_EXPORT")
 
   if(DEPENDENCIES)
     add_dependencies(${_target} ${DEPENDENCIES})
