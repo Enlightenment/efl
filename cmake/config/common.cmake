@@ -36,6 +36,7 @@ EFL_OPTION(ENABLE_VALGRIND "Enable valgrind support" "${SUGGEST_VALGRIND}" DEPEN
 
 HEADER_CHECK(alloca.h)
 HEADER_CHECK(asm/hwcap.h)
+HEADER_CHECK(bsd/string.h)
 HEADER_CHECK(dirent.h)
 HEADER_CHECK(execinfo.h)
 HEADER_CHECK(mcheck.h)
@@ -80,7 +81,12 @@ FUNC_CHECK(shm_open INCLUDE_FILES sys/mman.h sys/stat.h fcntl.h LIBRARIES rt)
 FUNC_CHECK(siglongjmp INCLUDE_FILES setjmp.h)
 FUNC_CHECK(splice INCLUDE_FILES fcntl.h DEFINITIONS "-D_GNU_SOURCE=1")
 FUNC_CHECK(strerror_r INCLUDE_FILES string.h)
-FUNC_CHECK(strlcpy INCLUDE_FILES bsd/string.h)
+
+if(HAVE_BSD_STRING_H)
+  FUNC_CHECK(strlcpy INCLUDE_FILES bsd/string.h LIBRARIES bsd)
+else()
+  FUNC_CHECK(strlcpy INCLUDE_FILES string.h)
+endif()
 
 TYPE_CHECK(siginfo_t INCLUDE_FILES signal.h)
 

@@ -22,6 +22,10 @@ set(LIBRARIES
   rt
 )
 
+if(HAVE_BSD_STRING_H)
+  list(APPEND LIBRARIES bsd)
+endif()
+
 set(PUBLIC_HEADERS
   Eina.h
   eina_accessor.h

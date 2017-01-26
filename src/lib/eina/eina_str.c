@@ -28,6 +28,10 @@
 #include <limits.h>
 #include <ctype.h>
 
+#ifdef HAVE_BSD_STRING_H
+# include <bsd/string.h>
+#endif
+
 #ifdef HAVE_ICONV
 # include <errno.h>
 # include <iconv.h>
