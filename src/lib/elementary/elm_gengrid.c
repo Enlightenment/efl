@@ -398,7 +398,7 @@ _elm_gengrid_search_by_text_item_get(Eo *obj EINA_UNUSED,
      {
         if (!it->itc->func.text_get) continue;
         str = it->itc->func.text_get((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)),
-                                     WIDGET(it), part_name);
+                                     WIDGET(it), part_name ? part_name : "elm.text");
         if (!str) continue;
         if (!fnmatch(pattern, str, fnflags))
           {
