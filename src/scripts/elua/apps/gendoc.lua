@@ -985,7 +985,20 @@ find_parent_impl = function(fulln, cl)
             return pimpl, pcl
         end
     end
-    -- unreachable with a validated database
+    return nil, cl
+end
+
+local find_parent_doc
+find_parent_doc = function(fulln, cl, ftype)
+    local pimpl, pcl = find_parent_impl(fulln, cl)
+    if not pimpl then
+        return dtree.Doc()
+    end
+    local pdoc = pimpl:doc_get(ftype)
+    if not pdoc:exists() then
+        return find_parent_doc(fulln, pcl, ftype)
+    end
+    return pdoc
 end
 
 build_method = function(impl, cl)
@@ -997,29 +1010,27 @@ build_method = function(impl, cl)
 
     local doc = impl:doc_get(fn.METHOD)
     if over and not doc:exists() then
-        local pimpl, pcl = find_parent_impl(impl:full_name_get(), cl)
-        f:write_inherited(fn:nspaces_get(pcl))
-        f:write_nl()
-    else
-        f:write_h("Signature", 2)
-        f:write_code(gen_method_sig(fn, cl))
-        f:write_nl()
+        doc = find_parent_doc(impl:full_name_get(), cl, fn.METHOD)
+    end
 
-        f:write_h("C signature", 2)
-        f:write_code(gen_func_csig(fn, mns), "c")
-        f:write_nl()
+    f:write_h("Signature", 2)
+    f:write_code(gen_method_sig(fn, cl))
+    f:write_nl()
 
-        local pars = fn:parameters_get()
-        if #pars > 0 then
-            f:write_h("Parameters", 2)
-            build_parlist(f, pars)
-            f:write_nl()
-        end
+    f:write_h("C signature", 2)
+    f:write_code(gen_func_csig(fn, mns), "c")
+    f:write_nl()
 
-        f:write_h("Description", 2)
-        f:write_raw(impl:doc_get(fn.METHOD):full_get(nil, true))
+    local pars = fn:parameters_get()
+    if #pars > 0 then
+        f:write_h("Parameters", 2)
+        build_parlist(f, pars)
         f:write_nl()
     end
+
+    f:write_h("Description", 2)
+    f:write_raw(doc:full_get(nil, true))
+    f:write_nl()
 
     f:write_editable(mns, "description")
     f:write_nl()
@@ -1028,13 +1039,13 @@ build_method = function(impl, cl)
 end
 
 build_property = function(impl, cl)
+    local over = impl:is_overridden(cl)
     local fn = impl:function_get()
     local pns = fn:nspaces_get(cl)
     local f = writer.Writer(pns, cl:full_name_get() .. "." .. fn:name_get())
 
-    local ft = fn:type_get()
-    local isget = (ft == fn.PROP_GET or ft == fn.PROPERTY)
-    local isset = (ft == fn.PROP_SET or ft == fn.PROPERTY)
+    local isget = impl:is_prop_get()
+    local isset = impl:is_prop_set()
 
     if isget then stats.check_property(fn, cl, fn.PROP_GET) end
     if isset then stats.check_property(fn, cl, fn.PROP_SET) end
@@ -1044,6 +1055,18 @@ build_property = function(impl, cl)
     local doc = pimp:doc_get(fn.PROPERTY)
     local gdoc = pimp:doc_get(fn.PROP_GET)
     local sdoc = pimp:doc_get(fn.PROP_SET)
+
+    if over then
+        if not doc:exists() then
+            doc = find_parent_doc(impl:full_name_get(), cl, fn.PROPERTY)
+        end
+        if isget and not gdoc:exists() then
+            gdoc = find_parent_doc(impl:full_name_get(), cl, fn.PROP_GET)
+        end
+        if isset and not sdoc:exists() then
+            sdoc = find_parent_doc(impl:full_name_get(), cl, fn.PROP_SET)
+        end
+    end
 
     f:write_h("Signature", 2)
     f:write_code(gen_prop_sig(fn, cl))
