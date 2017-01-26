@@ -662,7 +662,7 @@ _edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp)
 
    if (focused_part != rp)
      {
-        if ((rp->part->allowed_seats) &&
+        if (rp && (rp->part->allowed_seats) &&
             (!_edje_part_allowed_seat_find(rp, sname)))
           goto not_allowed;
 
