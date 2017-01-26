@@ -1169,7 +1169,7 @@ function(EFL_TEST _testname)
   endif()
 
   target_include_directories(${_testtarget} PRIVATE
-    ${_testrcdir}
+    ${_testsrcdir}
     ${_testbindir}
     ${INCLUDE_DIRECTORIES})
   target_include_directories(${_testtarget} SYSTEM PRIVATE
@@ -1182,9 +1182,9 @@ function(EFL_TEST _testname)
 
   target_compile_definitions(${_testtarget} PRIVATE
     "-DPACKAGE_DATA_DIR=\"${EFL_TESTS_SOURCE_DIR}\""
-    "-DTESTS_SRC_DIR=\"${_testrcdir}\""
+    "-DTESTS_SRC_DIR=\"${_testsrcdir}\""
     "-DTESTS_BUILD_DIR=\"${_testbindir}\""
-    "-DTESTS_WD=\"${PROJECT_BINARY_DIR}\""
+    "-DTESTS_WD=\"\""
     ${DEFINITIONS}
     )
 
