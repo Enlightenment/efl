@@ -28,6 +28,59 @@ unset(EFL_ALL_LIBS CACHE)
 unset(EFL_ALL_TESTS CACHE)
 unset(EFL_PKG_CONFIG_MISSING_OPTIONAL CACHE)
 
+# EFL_OPTION_BACKEND(Name Help Backend1 ... BackendN
+#                    [DEPENDS "COND1; COND2; NOT COND3" FAILED_VALUE]
+#                    [REQUIRED])
+#
+# Wrapper around EFL_OPTION() and EFL_BACKEND_CHOICES()
+# that creates an option 'CHOICE' within possible backends
+# when these are found (${Backend}_FOUND).
+#
+# The REQUIRED keyword will force a valid backend, otherwise 'none' is
+# allowed.
+#
+# If a backend was chose, then ${Name}_CFLAGS and ${Name}_LDFLAGS are
+# set to lists based on ${Backend}_CFLAGS or
+# ${Backend}_INCLUDE_DIR/${Backend}_INCLUDE_DIRS and
+# ${Backend}_LDFLAGS or ${Backend}_LIBRARIES
+function(EFL_OPTION_BACKEND _name _help)
+  cmake_parse_arguments(PARAMS "" "" "DEPENDS" ${ARGN})
+
+  EFL_BACKEND_CHOICES(${_name} ${PARAMS_UNPARSED_ARGUMENTS})
+
+  EFL_OPTION(${_name} "${_help}" "${${_name}_DEFAULT}"
+    CHOICE ${${_name}_CHOICES}
+    DEPENDS ${PARAMS_DEPENDS})
+
+  if(NOT ${_name} STREQUAL "none")
+    string(TOUPPER "${${_name}}" _backend)
+    if(DEFINED ${_backend}_CFLAGS)
+      set(_cflags ${${_backend}_CFLAGS})
+    else()
+      set(_cflags "")
+      foreach(_d ${${_backend}_INCLUDE_DIR} ${${_backend}_INCLUDE_DIRS})
+        list(APPEND _cflags "-I${_d}")
+      endforeach()
+    endif()
+    if(DEFINED ${_backend}_LDFLAGS)
+      set(_ldflags ${${_backend}_LDFLAGS})
+    else()
+      set(_ldflags "")
+      foreach(_d ${${_backend}_LIBRARIES})
+        list(APPEND _ldflags "-l${_d}")
+      endforeach()
+    else()
+    endif()
+    SET_GLOBAL(${_name}_CFLAGS "${_cflags}")
+    SET_GLOBAL(${_name}_LDFLAGS "${_ldflags}")
+    SET_GLOBAL(${_name}_ENABLED ON)
+  else()
+    unset(${_name}_CFLAGS CACHE)
+    unset(${_name}_LDFLAGS CACHE)
+    SET_GLOBAL(${_name}_ENABLED OFF)
+  endif()
+endfunction()
+
 # EFL_OPTION(Name Help Default [STRING|BOOL|FILEPATH|PATH]
 #            [CHOICE c1;...;cN]
 #            [DEPENDS "COND1; COND2; NOT COND3" FAILED_VALUE])
@@ -441,6 +494,21 @@ function(EFL_PKG_CONFIG_EVAL_TO _var _name)
       endif()
     endif()
   endforeach()
+
+  unset(${_var}_CFLAGS CACHE)
+  unset(${_var}_LDFLAGS CACHE)
+  unset(PKG_CONFIG_${_var} CACHE)
+  unset(PKG_CONFIG_${_var}_CFLAGS CACHE)
+  unset(PKG_CONFIG_${_var}_FOUND CACHE)
+  unset(PKG_CONFIG_${_var}_INCLUDE_DIRS CACHE)
+  unset(PKG_CONFIG_${_var}_INCLUDEDIR CACHE)
+  unset(PKG_CONFIG_${_var}_LDFLAGS CACHE)
+  unset(PKG_CONFIG_${_var}_LIBDIR CACHE)
+  unset(PKG_CONFIG_${_var}_LIBRARIES CACHE)
+  unset(PKG_CONFIG_${_var}_LIBRARIES CACHE)
+  unset(PKG_CONFIG_${_var}_LIBRARIES_DIR CACHE)
+  unset(PKG_CONFIG_${_var}_LIBS CACHE)
+  unset(PKG_CONFIG_${_var}_VERSION CACHE)
   if(NOT _missing)
     SET_GLOBAL(${_var} "${_found}")
     SET_GLOBAL(${_var}_MISSING "${_missing_optional}")
@@ -1379,4 +1447,38 @@ function(EFL_CREATE_EO_RULES target source_dir generation_dir)
         add_dependencies(${target}-eo eolian-bin)
       endif()
     endif()
+endfunction()
+
+# EFL_BACKEND_CHOICES(Prefix Choice1 .. ChoiceN)
+#
+# Helper that will check ${ChoiceN}_FOUND and if so append to
+# ${_prefix}_CHOICES as well set the first found option (in order!) as
+# ${_prefix}_DEFAULT and ${_prefix}_FOUND to ON if at least one was
+# found.
+function(EFL_BACKEND_CHOICES _prefix)
+  cmake_parse_arguments(PARAMS "REQUIRED" "" "" ${ARGN})
+
+  set(_choices "")
+  set(_defval "none")
+  set(_found OFF)
+  foreach(c ${PARAMS_UNPARSED_ARGUMENTS})
+    if(${c}_FOUND)
+      string(TOLOWER "${c}" c_lc)
+      if(_defval STREQUAL "none")
+        set(_defval ${c_lc})
+      endif()
+      set(_found ON)
+      list(APPEND _choices ${c_lc})
+    endif()
+  endforeach()
+
+  if(PARAMS_REQUIRED AND NOT _found)
+    message(FATAL_ERROR "${_prefix} backend was required (one of ${PARAMS_UNPARSED_ARGUMENTS}) but none was found!")
+  elseif(NOT PARAMS_REQUIRED)
+    list(APPEND _choices "none")
+  endif()
+
+  set(${_prefix}_FOUND ${_found} PARENT_SCOPE)
+  set(${_prefix}_CHOICES ${_choices} PARENT_SCOPE)
+  set(${_prefix}_DEFAULT ${_defval} PARENT_SCOPE)
 endfunction()
