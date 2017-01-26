@@ -76,7 +76,6 @@ group { name: "e/modules/battery/main";
             rel2.to: "bg";
             rel2.relative: 0.60 0.60;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            min: 5 5;
             step: 5 5;
          }
       }
