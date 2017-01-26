@@ -48,8 +48,8 @@ public struct Eina_Free_Cb
 };
 public struct Evas_Object_Box_Option {
     IntPtr obj;
-    bool max_reached;
-    bool min_reached;
+    [MarshalAsAttribute(UnmanagedType.U1)] bool max_reached;
+    [MarshalAsAttribute(UnmanagedType.U1)] bool min_reached;
     evas.Coord alloc_size;
 };
 #pragma warning restore 0169
