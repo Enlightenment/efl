@@ -1001,12 +1001,28 @@ find_parent_doc = function(fulln, cl, ftype)
     return pdoc
 end
 
+local write_inherited_from = function(f, impl, cl, over)
+    if not over then
+        return
+    end
+    local buf = writer.Buffer()
+    buf:write_raw("Overridden from ")
+    local pimpl, pcl = find_parent_impl(impl:full_name_get(), cl)
+    buf:write_link(
+        impl:function_get():nspaces_get(pcl, true), impl:full_name_get()
+    )
+    buf:write_raw(".")
+    f:write_i(buf:finish())
+end
+
 build_method = function(impl, cl)
     local over = impl:is_overridden(cl)
     local fn = impl:function_get()
     local mns = fn:nspaces_get(cl)
     local f = writer.Writer(mns, cl:full_name_get() .. "." .. fn:name_get())
     stats.check_method(fn, cl)
+
+    write_inherited_from(f, impl, cl, over)
 
     local doc = impl:doc_get(fn.METHOD)
     if over and not doc:exists() then
@@ -1043,6 +1059,8 @@ build_property = function(impl, cl)
     local fn = impl:function_get()
     local pns = fn:nspaces_get(cl)
     local f = writer.Writer(pns, cl:full_name_get() .. "." .. fn:name_get())
+
+    write_inherited_from(f, impl, cl, over)
 
     local isget = impl:is_prop_get()
     local isset = impl:is_prop_set()
