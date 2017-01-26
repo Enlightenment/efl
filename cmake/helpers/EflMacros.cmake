@@ -700,6 +700,8 @@ endfunction()
 #
 # Internal function to process bins of current EFL_LIB()
 function(_EFL_LIB_PROCESS_BINS_INTERNAL)
+  unset(${EFL_LIB_CURRENT}_BINS CACHE)
+
   if(EXISTS ${EFL_BIN_SOURCE_DIR}/CMakeLists.txt)
     EFL_BIN(${EFL_LIB_CURRENT})
   else()
@@ -709,6 +711,10 @@ function(_EFL_LIB_PROCESS_BINS_INTERNAL)
         EFL_BIN(${bin})
       endif()
     endforeach()
+  endif()
+
+  if(NOT ${EFL_LIB_CURRENT}_BINS AND EXISTS ${EFL_BIN_SOURCE_DIR} AND NOT EXISTS ${EFL_BIN_SOURCE_DIR}/CMakeLists.txt)
+    EFL_BIN(${EFL_LIB_CURRENT})
   endif()
 
   if(${EFL_LIB_CURRENT}_BINS)
@@ -1091,6 +1097,8 @@ function(EFL_BIN _binname)
   if(INSTALL_DIR)
     install(TARGETS ${_bintarget} RUNTIME DESTINATION ${INSTALL_DIR})
   endif()
+
+  LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_BINS ${_bintarget})
 endfunction()
 
 # EFL_TEST(Name)
