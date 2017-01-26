@@ -810,6 +810,8 @@ define_property(TARGET PROPERTY EFL_EO_PUBLIC
 #  - DEFINITIONS: target_compile_definitions()
 #  - PUBLIC_EO_FILES: the eo files will be used to build that lib, and will be installed to the filesystem
 #  - EO_FILES: the eo files will be used to build that lib but not installed.
+#  - COMPILE_FLAGS: extra CFLAGS to append.
+#  - LINK_FLAGS: extra LDFLAGS to append.
 #
 # Defines the following variables that can be used within the included files:
 #  - EFL_LIB_CURRENT to ${Name}
@@ -881,6 +883,8 @@ function(EFL_LIB _target)
   set(DEFINITIONS)
   set(PUBLIC_EO_FILES)
   set(EO_FILES)
+  set(COMPILE_FLAGS)
+  set(LINK_FLAGS)
 
   string(TOUPPER "${_target}" _target_uc)
 
@@ -911,8 +915,8 @@ function(EFL_LIB _target)
 
   EFL_PKG_CONFIG_EVAL(${_target} "${PKG_CONFIG_REQUIRES_PRIVATE}" "${PKG_CONFIG_REQUIRES}")
 
-  set(__link_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_LDFLAGS})
-  set(__compile_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_CFLAGS} -DPACKAGE_DATA_DIR=\\"${CMAKE_INSTALL_FULL_DATADIR}/${_target}/\\")
+  set(__link_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_LDFLAGS} ${LINK_FLAGS})
+  set(__compile_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_CFLAGS} -DPACKAGE_DATA_DIR=\\"${CMAKE_INSTALL_FULL_DATADIR}/${_target}/\\" ${COMPILE_FLAGS})
 
   set(_link_flags)
   foreach(_l ${__link_flags})
@@ -1031,6 +1035,8 @@ endfunction()
 #  - LIBRARIES: results in target_link_libraries()
 #  - DEFINITIONS: target_compile_definitions()
 #  - INSTALL_DIR: defaults to bin. If empty, won't install.
+#  - COMPILE_FLAGS: extra CFLAGS to append.
+#  - LINK_FLAGS: extra LDFLAGS to append.
 #
 # NOTE: it's meant to be called by files included by EFL_LIB() or similar,
 # otherwise you need to prepare the environment yourself.
@@ -1051,6 +1057,8 @@ function(EFL_BIN _binname)
   set(INSTALL_DIR bin)
   set(PKG_CONFIG_REQUIRES)
   set(PKG_CONFIG_REQUIRES_PRIVATE)
+  set(COMPILE_FLAGS)
+  set(LINK_FLAGS)
 
   if(_binname STREQUAL ${EFL_LIB_CURRENT})
     set(_binsrcdir "${EFL_BIN_SOURCE_DIR}")
@@ -1112,12 +1120,12 @@ function(EFL_BIN _binname)
   endif()
 
   set(_link_flags)
-  foreach(_l ${${_bintarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS})
+  foreach(_l ${${_bintarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS} ${LINK_FLAGS})
     set(_link_flags "${_link_flags} ${_l}")
   endforeach()
 
   set(_compile_flags)
-  foreach(_c ${${_bintarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS})
+  foreach(_c ${${_bintarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS} ${COMPILE_FLAGS})
     set(_compile_flags "${_compile_flags} ${_c}")
   endforeach()
 
@@ -1147,6 +1155,8 @@ endfunction()
 #    ${EFL_LIB_CURRENT}-modules
 #  - LIBRARIES: results in target_link_libraries()
 #  - DEFINITIONS: target_compile_definitions()
+#  - COMPILE_FLAGS: extra CFLAGS to append.
+#  - LINK_FLAGS: extra LDFLAGS to append.
 #
 # NOTE: it's meant to be called by files included by EFL_LIB() or similar,
 # otherwise you need to prepare the environment yourself.
@@ -1170,6 +1180,8 @@ function(EFL_TEST _testname)
   set(DEFINITIONS)
   set(PKG_CONFIG_REQUIRES)
   set(PKG_CONFIG_REQUIRES_PRIVATE)
+  set(COMPILE_FLAGS)
+  set(LINK_FLAGS)
 
   if(_testname STREQUAL ${EFL_LIB_CURRENT})
     set(_testsrcdir "${EFL_TESTS_SOURCE_DIR}")
@@ -1236,12 +1248,12 @@ function(EFL_TEST _testname)
   endif()
 
   set(_link_flags)
-  foreach(_l ${${_testtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS})
+  foreach(_l ${${_testtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS} ${LINK_FLAGS})
     set(_link_flags "${_link_flags} ${_l}")
   endforeach()
 
   set(_compile_flags)
-  foreach(_c ${${_testtarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS})
+  foreach(_c ${${_testtarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS} ${COMPILE_FLAGS})
     set(_compile_flags "${_compile_flags} ${_c}")
   endforeach()
 
@@ -1279,6 +1291,8 @@ endfunction()
 #  - PKG_CONFIG_REQUIRES_PRIVATE: results in
 #    ${Name}_PKG_CONFIG_REQUIRES_PRIVATE. Elements after 'OPTIONAL'
 #    keyword are optional.
+#  - COMPILE_FLAGS: extra CFLAGS to append.
+#  - LINK_FLAGS: extra LDFLAGS to append.
 #
 # NOTE: since the file will be included it shouldn't mess with global variables!
 function(EFL_MODULE _modname)
@@ -1314,6 +1328,8 @@ function(EFL_MODULE _modname)
   set(INSTALL_DIR ${_modoutdir})
   set(PKG_CONFIG_REQUIRES)
   set(PKG_CONFIG_REQUIRES_PRIVATE)
+  set(COMPILE_FLAGS)
+  set(LINK_FLAGS)
 
   _EFL_INCLUDE_OR_DETECT("Module ${_modtarget}" ${_modsrcdir})
 
@@ -1358,12 +1374,12 @@ function(EFL_MODULE _modname)
   target_compile_definitions(${_modtarget} PRIVATE ${DEFINITIONS})
 
   set(_link_flags)
-  foreach(_l ${${_modtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS})
+  foreach(_l ${${_modtarget}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS} ${LINK_FLAGS})
     set(_link_flags "${_link_flags} ${_l}")
   endforeach()
 
   set(_compile_flags)
-  foreach(_c ${${_modtarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS})
+  foreach(_c ${${_modtarget}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS} ${COMPILE_FLAGS})
     set(_compile_flags "${_compile_flags} ${_c}")
   endforeach()
 

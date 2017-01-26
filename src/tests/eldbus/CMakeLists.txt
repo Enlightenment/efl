@@ -1,0 +1,20 @@
+set(SOURCES
+  eldbus_fake_server.c
+  eldbus_fake_server.h
+  eldbus_suite.c
+  eldbus_suite.h
+  eldbus_test_eldbus_init.c
+  eldbus_test_eldbus_model.c
+  eldbus_test_eldbus_model.h
+  eldbus_test_eldbus_model_connection.c
+  eldbus_test_eldbus_model_method.c
+  eldbus_test_eldbus_model_object.c
+  eldbus_test_eldbus_model_proxy.c
+  eldbus_test_eldbus_model_signal.c
+  eldbus_test_fake_server_eldbus_model_proxy.c
+)
+
+set(LIBRARIES
+  ecore
+  eina
+)
