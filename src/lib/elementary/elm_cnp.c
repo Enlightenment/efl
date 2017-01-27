@@ -5365,44 +5365,50 @@ _cont_obj_drag_start(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-void
+static void
 _anim_st_free(Item_Container_Drag_Info *st)
 {  /* Stops and free mem of ongoing animation */
    if (st)
      {
         ELM_SAFE_FREE(st->ea, ecore_animator_del);
         Anim_Icon *sti;
+        Eo *icon;
 
         EINA_LIST_FREE(st->icons, sti)
           {
              evas_object_del(sti->o);
              free(sti);
           }
-
         st->icons = NULL;
+
+        EINA_LIST_FREE(st->user_info.icons, icon)
+          {
+             evas_object_del(icon);
+          }
+        st->user_info.icons = NULL;
      }
 }
 
 static inline Eina_List *
-_anim_icons_make(Eina_List *icons)
-{  /* Make local copies of all icons, add them to list */
-   Eina_List *list = NULL, *itr;
+_anim_icons_make(Item_Container_Drag_Info *st)
+{ /* Transfer user icons to animation icons list */
+   Eina_List *list = NULL;
    Evas_Object *o;
 
-   EINA_LIST_FOREACH(icons, itr, o)
+   EINA_LIST_FREE(st->user_info.icons, o)
      {  /* Now add icons to animation window */
-        Anim_Icon *st = calloc(1, sizeof(*st));
+        Anim_Icon *ast = calloc(1, sizeof(*ast));
 
-        if (!st)
+        if (!ast)
           {
              ERR("Failed to allocate memory for icon!");
              continue;
           }
 
-        evas_object_geometry_get(o, &st->start_x, &st->start_y, &st->start_w, &st->start_h);
+        evas_object_geometry_get(o, &ast->start_x, &ast->start_y, &ast->start_w, &ast->start_h);
         evas_object_show(o);
-        st->o = o;
-        list = eina_list_append(list, st);
+        ast->o = o;
+        list = eina_list_append(list, ast);
      }
 
    return list;
@@ -5455,7 +5461,7 @@ _drag_anim_start(void *data)
 
    st->tm = NULL;
    /* Now we need to build an (Anim_Icon *) list */
-   st->icons = _anim_icons_make(st->user_info.icons);
+   st->icons = _anim_icons_make(st);
    if (st->user_info.createicon)
      {
         Evas_Object *temp_win = elm_win_add(NULL, "Temp", ELM_WIN_DND);
@@ -5495,18 +5501,20 @@ _cont_obj_anim_start(void *data)
                  it,           /* Drag started on this item */
                  &st->user_info))
           {
-             if (st->user_info.icons)
-               _drag_anim_start(st);
+             if (EINA_DBL_EQ(st->anim_tm, 0.0))
+                _cont_obj_drag_start(st);  /* Start dragging, no anim */
              else
                {
-                  if (!EINA_DBL_EQ(st->anim_tm, 0.0))
+                  if (st->user_info.icons)
+                    {
+                       _drag_anim_start(st);
+                    }
+                  else
                     {
                        // even if we don't manage the icons animation, we have
                        // to wait until it is finished before beginning drag.
                        st->tm = ecore_timer_add(st->anim_tm, _cont_obj_drag_start, st);
                     }
-                  else
-                    _cont_obj_drag_start(st);  /* Start dragging, no anim */
                }
           }
      }
@@ -5523,18 +5531,23 @@ _cont_obj_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *ev
      return;  /* We only process left-click at the moment */
 
    Item_Container_Drag_Info *st = data;
-   evas_object_event_callback_add(st->obj, EVAS_CALLBACK_MOUSE_MOVE,
-         _cont_obj_mouse_move, st);
+   st->e = e;
+   st->x_down = ev->canvas.x;
+   st->y_down = ev->canvas.y;
 
    evas_object_event_callback_add(st->obj, EVAS_CALLBACK_MOUSE_UP,
          _cont_obj_mouse_up, st);
 
    ecore_timer_del(st->tm);
 
-   st->e = e;
-   st->x_down = ev->canvas.x;
-   st->y_down = ev->canvas.y;
-   st->tm = ecore_timer_add(st->tm_to_drag, _cont_obj_anim_start, st);
+   if (st->tm_to_drag)
+     {
+        st->tm = ecore_timer_add(st->tm_to_drag, _cont_obj_anim_start, st);
+        evas_object_event_callback_add(st->obj, EVAS_CALLBACK_MOUSE_MOVE,
+              _cont_obj_mouse_move, st);
+     }
+   else
+      _cont_obj_anim_start(st);
 }
 
 static Eina_Bool elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full);
