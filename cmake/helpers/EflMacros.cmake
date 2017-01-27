@@ -575,6 +575,9 @@ function(EFL_PKG_CONFIG_LIB_WRITE)
   set(_libraries)
   set(_public_libraries)
 
+  get_target_property(_pkg_config_name ${EFL_LIB_CURRENT} PKG_CONFIG_NAME)
+  get_target_property(_version ${EFL_LIB_CURRENT} VERSION)
+
   get_target_property(eo_files_public ${EFL_LIB_CURRENT} EFL_EO_PUBLIC)
   if(eo_files_public)
     set(_eoinfo "eoincludedir=\${datarootdir}/eolian/include
@@ -593,7 +596,9 @@ eolian_flags=-I\${pc_sysrootdir}\${eoincludedir}/${EFL_LIB_CURRENT}-${PROJECT_VE
 
   foreach(_e ${LIBRARIES})
     if(TARGET ${_e})
-      set(_pkg_config_requires_private "${_pkg_config_requires_private} ${_e}>=${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+      get_target_property(_sub_pc_name ${_e} PKG_CONFIG_NAME)
+      get_target_property(_sub_version ${_e} VERSION)
+      set(_pkg_config_requires_private "${_pkg_config_requires_private} ${_sub_pc_name}>=${_sub_version}")
     else()
       set(_libraries "${_libraries} -l${_e}")
     endif()
@@ -601,7 +606,9 @@ eolian_flags=-I\${pc_sysrootdir}\${eoincludedir}/${EFL_LIB_CURRENT}-${PROJECT_VE
 
   foreach(_e ${PUBLIC_LIBRARIES})
     if(TARGET ${_e})
-      set(_pkg_config_requires "${_pkg_config_requires} ${_e}>=${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+      get_target_property(_sub_pc_name ${_e} PKG_CONFIG_NAME)
+      get_target_property(_sub_version ${_e} VERSION)
+      set(_pkg_config_requires "${_pkg_config_requires} ${_sub_pc_name}>=${_sub_version}")
     else()
       set(_public_libraries "${_public_libraries} -l${_e}")
     endif()
@@ -624,17 +631,17 @@ pkgdatadir=\${datadir}/${EFL_LIB_CURRENT}
 modules=\${libdir}/${EFL_LIB_CURRENT}/modules
 ${_eoinfo}
 
-Name: ${EFL_LIB_CURRENT}
+Name: ${_pkg_config_name}
 Description: ${DESCRIPTION}
-Version: ${VERSION}
+Version: ${_version}
 Requires:${_pkg_config_requires}
 Requires.private:${_pkg_config_requires_private}
 Libs: -L\${libdir} -l${EFL_LIB_CURRENT}${_public_libraries}
 Libs.private:${_libraries}
 Cflags: -I\${includedir}/efl-${PROJECT_VERSION_MAJOR}${_cflags}
 ")
-  file(WRITE "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/pkgconfig/${EFL_LIB_CURRENT}.pc" "${_contents}")
-  install(FILES "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/pkgconfig/${EFL_LIB_CURRENT}.pc"
+  file(WRITE "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/pkgconfig/${_pkg_config_name}.pc" "${_contents}")
+  install(FILES "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/pkgconfig/${_pkg_config_name}.pc"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 endfunction()
 
@@ -782,6 +789,10 @@ define_property(TARGET PROPERTY EFL_EO_PRIVATE
 define_property(TARGET PROPERTY EFL_EO_PUBLIC
   BRIEF_DOCS "EFL's .eo/.eot files associated with this target and installed"
   FULL_DOCS "The list of all .eo or .eot files this target uses and installs")
+
+define_property(TARGET PROPERTY PKG_CONFIG_NAME
+  BRIEF_DOCS "The name to use with pkg-config (.pc) files"
+  FULL_DOCS "This is usually the target name unless some backward compatibility or translations are needed")
 
 # EFL_SUPPORT_LIB(Name)
 #
@@ -995,6 +1006,7 @@ function(EFL_LIB _target)
   set(DESCRIPTION)
   set(PKG_CONFIG_REQUIRES)
   set(PKG_CONFIG_REQUIRES_PRIVATE)
+  set(PKG_CONFIG_NAME)
   set(INCLUDE_DIRECTORIES)
   set(SYSTEM_INCLUDE_DIRECTORIES)
   set(OUTPUT_NAME)
@@ -1019,6 +1031,10 @@ function(EFL_LIB _target)
   include(${EFL_LIB_SOURCE_DIR}/CMakeLists.txt OPTIONAL)
   if(LIBRARY_TYPE STREQUAL SHARED AND NOT PUBLIC_HEADERS)
     message(FATAL_ERROR "Shared libraries must install public headers!")
+  endif()
+
+  if(NOT PKG_CONFIG_NAME)
+    string(REPLACE "_" "-" PKG_CONFIG_NAME ${EFL_LIB_CURRENT})
   endif()
 
   #merge public eo files into sources
@@ -1063,6 +1079,7 @@ function(EFL_LIB _target)
     OBJECT_DEPENDS "${_obj_deps}"
     EFL_EO_PRIVATE "${_eo_files}"
     EFL_EO_PUBLIC "${_public_eo_files}"
+    PKG_CONFIG_NAME "${PKG_CONFIG_NAME}"
     LINK_FLAGS "${_link_flags}"
     COMPILE_FLAGS "${_compile_flags} -DDLL_EXPORT")
 
@@ -1140,6 +1157,7 @@ function(EFL_LIB _target)
   unset(EO_FILES)
   unset(PKG_CONFIG_REQUIRES)
   unset(PKG_CONFIG_REQUIRES_PRIVATE)
+  unset(PKG_CONFIG_NAME)
 
   _EFL_LIB_PROCESS_BINS_INTERNAL()
   _EFL_LIB_PROCESS_MODULES_INTERNAL()
