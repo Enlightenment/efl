@@ -1607,7 +1607,7 @@ endif
 
 if BUILD_VG_LOADER_SVG
 if EVAS_STATIC_BUILD_VG_SVG
-lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/svg/evas_vg_load_svg.c \
+lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/svg/evas_vg_load_svg.c modules/evas/vg_savers/svg/evas_vg_save_svg.c \
 static_libs/vg_common/vg_common.c \
 static_libs/vg_common/vg_common.h
 lib_evas_libevas_la_CPPFLAGS += -I$(top_srcdir)/src/static_libs/vg_common \
@@ -1636,6 +1636,29 @@ modules_evas_vg_loaders_svg_module_la_LIBADD = \
 modules_evas_vg_loaders_svg_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_vg_loaders_svg_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_vg_loaders_svg_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+vgsaversvgpkgdir = $(libdir)/evas/modules/vg_savers/svg/$(MODULE_ARCH)
+vgsaversvgpkg_LTLIBRARIES = modules/evas/vg_savers/svg/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_vgsaversvgpkgLTLIBRARIES = install-vgloadersvgpkgLTLIBRARIES
+$(install_vgsaversvgpkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_evas_vg_savers_svg_module_la_SOURCES = modules/evas/vg_savers/svg/evas_vg_save_svg.c \
+static_libs/vg_common/vg_common.c \
+static_libs/vg_common/vg_common.h
+modules_evas_vg_savers_svg_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+-I$(top_srcdir)/src/static_libs/vg_common \
+@EVAS_CFLAGS@ \
+@evas_vg_saver_svg_cflags@
+modules_evas_vg_savers_svg_module_la_LIBADD = \
+@USE_EVAS_LIBS@ \
+@evas_vg_saver_svg_libs@
+modules_evas_vg_savers_svg_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_vg_savers_svg_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_evas_vg_savers_svg_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 

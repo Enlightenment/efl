@@ -102,7 +102,8 @@ struct ext_saver_s
 static const struct ext_saver_s savers[] =
 { /* map extensions to savers to use for good first-guess tries */
    MATCHING(".eet", "eet"),
-   MATCHING(".edj", "eet")
+   MATCHING(".edj", "eet"),
+   MATCHING(".svg", "svg")
 };
 
 static Evas_Module *
