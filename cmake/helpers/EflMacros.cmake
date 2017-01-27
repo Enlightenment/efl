@@ -616,7 +616,7 @@ eolian_flags=-I\${pc_sysrootdir}\${eoincludedir}/${EFL_LIB_CURRENT}-${PROJECT_VE
   set(_contents
 "prefix=${CMAKE_INSTALL_PREFIX}
 exec_prefix=\${prefix}
-libdir=\${exec_prefix}/lib
+libdir=\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}
 includedir=\${prefix}/include
 datarootdir=\${prefix}/share
 datadir=\${datarootdir}
@@ -633,9 +633,9 @@ Libs: -L\${libdir} -l${EFL_LIB_CURRENT}${_public_libraries}
 Libs.private:${_libraries}
 Cflags: -I\${includedir}/efl-${PROJECT_VERSION_MAJOR}${_cflags}
 ")
-  file(WRITE "${CMAKE_BINARY_DIR}/lib/pkgconfig/${EFL_LIB_CURRENT}.pc" "${_contents}")
-  install(FILES "${CMAKE_BINARY_DIR}/lib/pkgconfig/${EFL_LIB_CURRENT}.pc"
-    DESTINATION "lib/pkgconfig")
+  file(WRITE "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/pkgconfig/${EFL_LIB_CURRENT}.pc" "${_contents}")
+  install(FILES "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/pkgconfig/${EFL_LIB_CURRENT}.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 endfunction()
 
 # _EFL_INCLUDE_OR_DETECT(Name Source_Dir)
@@ -791,7 +791,7 @@ define_property(TARGET PROPERTY EFL_EO_PUBLIC
 #
 # This is simiar to EFL_LIB(), however defaults to STATIC libraries
 # and if set to SHARED will install to
-# lib/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+# ${CMAKE_INSTALL_LIBDIR}/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 # and it shouldn't set any PUBLIC_HEADERS or PKG_CONFIG_REQUIRES.
 function(EFL_SUPPORT_LIB _target)
   set(EFL_LIB_CURRENT ${_target})
@@ -893,10 +893,14 @@ function(EFL_SUPPORT_LIB _target)
 
   if(LIBRARY_TYPE STREQUAL "SHARED")
     install(TARGETS support-${_target}
-      RUNTIME DESTINATION lib/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-      LIBRARY DESTINATION lib/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+      RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+    set_target_properties(support-${_target} PROPERTIES
+      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
   else()
     set_target_properties(support-${_target} PROPERTIES
+      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
       POSITION_INDEPENDENT_CODE TRUE)
   endif()
 
@@ -984,7 +988,7 @@ function(EFL_LIB _target)
   set(EFL_MODULES_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/modules/${_target})
   set(EFL_TESTS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/${_target})
   set(EFL_TESTS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/tests/${_target})
-  set(EFL_UTILS_DIR lib/${_target}/utils/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+  set(EFL_UTILS_DIR ${CMAKE_INSTALL_LIBDIR}/${_target}/utils/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
   unset(EFL_ALL_OPTIONS_${EFL_LIB_CURRENT} CACHE)
 
@@ -1103,8 +1107,8 @@ function(EFL_LIB _target)
   install(TARGETS ${_target}
     PUBLIC_HEADER DESTINATION include/${_target}-${PROJECT_VERSION_MAJOR}
     RUNTIME DESTINATION bin
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib)
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(FILES
     ${_public_eo_files} DESTINATION share/eolian/include/${_target}-${PROJECT_VERSION_MAJOR}
     )
@@ -1424,7 +1428,7 @@ endfunction()
 #  - DEFINITIONS
 #  - MODULE_TYPE: one of ON;OFF;STATIC, defaults to ON
 #  - INSTALL_DIR: defaults to
-#    lib/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${Name}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}/.
+#    ${CMAKE_INSTALL_LIBDIR}/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${Name}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}/.
 #    If empty, won't install.
 #  - PKG_CONFIG_REQUIRES_PRIVATE: results in
 #    ${Name}_PKG_CONFIG_REQUIRES_PRIVATE. Elements after 'OPTIONAL'
@@ -1436,7 +1440,7 @@ endfunction()
 function(EFL_MODULE _modname)
   if(EFL_MODULE_SCOPE)
     set(_modsrcdir ${EFL_MODULES_SOURCE_DIR}/${EFL_MODULE_SCOPE}/${_modname})
-    set(_modoutdir lib/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+    set(_modoutdir ${CMAKE_INSTALL_LIBDIR}/${EFL_LIB_CURRENT}/modules/${EFL_MODULE_SCOPE}/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
     set(_modbindir ${EFL_MODULES_BINARY_DIR}/${EFL_MODULE_SCOPE}/${_modname})
     set(_modtarget ${EFL_LIB_CURRENT}-module-${EFL_MODULE_SCOPE}-${_modname})
     string(TOUPPER "${EFL_LIB_CURRENT}_MODULE_TYPE_${EFL_MODULE_SCOPE}_${_modname}" _modoptionname)
@@ -1446,7 +1450,7 @@ function(EFL_MODULE _modname)
     EFL_OPTION(${_modoptionname} "Build ${EFL_LIB_CURRENT} module ${EFL_MODULE_SCOPE}/${_modname}" ${${_modoptionname}_DEFAULT} CHOICE ON;OFF;STATIC)
   else()
     set(_modsrcdir ${EFL_MODULES_SOURCE_DIR}/${_modname})
-    set(_modoutdir lib/${EFL_LIB_CURRENT}/modules/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+    set(_modoutdir ${CMAKE_INSTALL_LIBDIR}/${EFL_LIB_CURRENT}/modules/${_modname}/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
     set(_modbindir ${EFL_MODULES_BINARY_DIR}/${_modname})
     set(_modtarget ${EFL_LIB_CURRENT}-module-${_modname})
     string(TOUPPER "${EFL_LIB_CURRENT}_MODULE_TYPE_${_modname}" _modoptionname)
