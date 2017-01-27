@@ -1188,6 +1188,11 @@ function(EFL_TEST _testname)
     set(_testbindir "${EFL_TESTS_BINARY_DIR}")
     set(_testtarget "${EFL_LIB_CURRENT}-test") # otherwise target would exist
     set(OUTPUT_NAME "${EFL_LIB_CURRENT}_suite") # backward compatible
+  elseif(_testname STREQUAL "suite")
+    set(_testsrcdir "${EFL_TESTS_SOURCE_DIR}/${_testname}")
+    set(_testbindir "${EFL_TESTS_BINARY_DIR}/${_testname}")
+    set(_testtarget "${EFL_LIB_CURRENT}-test") # target for main test, as above
+    set(OUTPUT_NAME "${EFL_LIB_CURRENT}_suite") # backward compatible
   else()
     set(_testsrcdir "${EFL_TESTS_SOURCE_DIR}/${_testname}")
     set(_testbindir "${EFL_TESTS_BINARY_DIR}/${_testname}")
@@ -1226,6 +1231,8 @@ function(EFL_TEST _testname)
   target_include_directories(${_testtarget} PRIVATE
     ${_testsrcdir}
     ${_testbindir}
+    ${EFL_TESTS_SOURCE_DIR}
+    ${EFL_TESTS_BINARY_DIR}
     ${INCLUDE_DIRECTORIES})
   target_include_directories(${_testtarget} SYSTEM PRIVATE
     ${SYSTEM_INCLUDE_DIRECTORIES}
