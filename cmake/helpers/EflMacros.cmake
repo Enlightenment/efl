@@ -1589,8 +1589,8 @@ function(EFL_CREATE_EO_RULES target source_dir generation_dir)
       endif()
 
       if(${ext} STREQUAL ".eo")
-        set(file_eo_gen_files ${generation_dir}/${filename}.c ${generation_dir}/${filename}.h) # TODO: ${generation_dir}/${filename}.legacy.h)
-        set(out_cmd -o c:${generation_dir}/${filename}.c -o h:${generation_dir}/${filename}.h) # TODO: bug in eolian_gen -o l:${generation_dir}/${filename}.legacy.h)
+        set(file_eo_gen_files ${generation_dir}/${filename}.c ${generation_dir}/${filename}.h ${generation_dir}/${filename}.legacy.h)
+        set(out_cmd -gchl -o c:${generation_dir}/${filename}.c -o h:${generation_dir}/${filename}.h -o l:${generation_dir}/${filename}.legacy.h)
       elseif(${ext} STREQUAL ".eot")
         set(file_eo_gen_files ${generation_dir}/${filename}.h)
         # TODO: looks like a bug in eolian_gen needs '-gh'
@@ -1608,17 +1608,6 @@ function(EFL_CREATE_EO_RULES target source_dir generation_dir)
            COMMENT "EOLIAN ${relfile}"
         )
         list(APPEND all_eo_gen_files ${file_eo_gen_files})
-        # TODO: looks like a bug in eolian_gen doesn't generate -o l:...
-        # TODO: then add an extra command
-        if(${ext} STREQUAL ".eo")
-          add_custom_command(
-            OUTPUT ${generation_dir}/${filename}.legacy.h
-            COMMAND ${EOLIAN_BIN} ${rel_include_cmd} ${include_cmd} ${EOLIAN_EXTRA_PARAMS} -gl -o l:${generation_dir}/${filename}.legacy.h ${file}
-            DEPENDS ${file}
-            COMMENT "EOLIAN LEGACY ${relfile}"
-            )
-          list(APPEND all_eo_gen_files ${generation_dir}/${filename}.legacy.h)
-        endif()
       endif()
     endforeach()
     if(all_eo_gen_files)
