@@ -6,10 +6,13 @@ using System.Linq;
 
 public class Test
 {
-    public static void Assert(bool res, String msg = "Assertion failed")
+    public static void Assert(bool res, String msg = "Assertion failed",
+                              [CallerLineNumber] int line = 0,
+                              [CallerFilePath] string file = null,
+                              [CallerMemberName] string member = null)
     {
         if (!res)
-            throw new Exception(msg);
+            throw new Exception($"Assertion failed: {file}:{line} ({member}) {msg}");
     }
 }
 
