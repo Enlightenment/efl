@@ -105,8 +105,7 @@ set(SOURCES
   software/ector_software_surface.c
 )
 
-add_custom_command(
-  OUTPUT ${EFL_LIB_SOURCE_DIR}/gl/shader/ector_gl_shaders.x
+add_custom_target(ector-update-shaders
   COMMAND /bin/sh ${EFL_LIB_SOURCE_DIR}/gl/shader/gen_shaders.sh
   DEPENDS
   ${EFL_LIB_SOURCE_DIR}/gl/shader/gen_shaders.sh
@@ -114,5 +113,7 @@ add_custom_command(
   ${EFL_LIB_SOURCE_DIR}/gl/shader/vertex.glsl
   ${EFL_LIB_SOURCE_DIR}/gl/shader/include.glsl
   WORKING_DIRECTORY "${EFL_LIB_SOURCE_DIR}"
-  COMMENT "SHADERS ${EFL_LIB_SOURCE_DIR}/gl/shader/ector_gl_shaders.x"
+  COMMENT "SHADERS src/lib/ector/gl/shader/ector_gl_shaders.x (if needed)"
 )
+
+set(DEPENDENCIES ector-update-shaders)
