@@ -103,6 +103,7 @@ bin_PROGRAMS += lib/efl_mono/libefl_mono.dll
 efl_eo_mono_files = \
 	bindings/mono/eo_mono/object.cs \
 	bindings/mono/eo_mono/iwrapper.cs \
+	bindings/mono/eo_mono/eina.cs \
 	bindings/mono/eo_mono/workaround.cs
 
 efl_eina_mono_files = \
