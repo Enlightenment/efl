@@ -343,6 +343,7 @@ _efl_net_ip_address_parse(Eo *cls, void *pd EINA_UNUSED, const char *numeric_add
                   tmp[0] = '[';
                   memcpy(tmp + 1, numeric_address, len);
                   tmp[1 + len] = ']';
+                  tmp[1 + len + 1] = '\0';
                   address = tmp;
                }
           }
