@@ -417,7 +417,7 @@ struct klass
             << scope_tab << scope_tab << scope_tab << "efl.kw_event.Description desc = new efl.kw_event.Description(key);\n"
             << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evt_delegate, System.IntPtr.Zero);\n"
             << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Failed to add event proxy for event ${key}\");\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Failed to add event proxy for event ${key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
             << scope_tab << scope_tab << scope_tab << "}\n"
             << scope_tab << scope_tab << "} \n"
@@ -432,11 +432,11 @@ struct klass
             << scope_tab << scope_tab << scope_tab << "efl.kw_event.Description desc = new efl.kw_event.Description(key);\n"
             << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_del(handle, desc, evt_delegate, System.IntPtr.Zero);\n"
             << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Failed to remove event proxy for event ${key}\");\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Failed to remove event proxy for event ${key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
             << scope_tab << scope_tab << scope_tab << "}\n"
             << scope_tab << scope_tab << "} else if (event_count == 0) {\n"
-            << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Trying to remove proxy for event ${key} when there is nothing registered.\");\n"
+            << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Trying to remove proxy for event ${key} when there is nothing registered.\");\n"
             << scope_tab << scope_tab << scope_tab << "return false;\n"
             << scope_tab << scope_tab << "} \n"
             << scope_tab << scope_tab << "event_cb_count[key]--;\n"
@@ -482,7 +482,7 @@ struct klass
                       << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << event_name << "_delegate))\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << upper_name << " += value;\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error adding proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Error adding proxy for event ${key}\");\n"
                       << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                       << scope_tab << scope_tab << "}\n"
                       << scope_tab << scope_tab << "remove {\n"
@@ -491,7 +491,7 @@ struct klass
                       << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << event_name << "_delegate))\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << upper_name << " -= value;\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error removing proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Error removing proxy for event ${key}\");\n"
                       << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                       << scope_tab << scope_tab << "}\n"
                       << scope_tab << "}\n")
@@ -538,7 +538,7 @@ struct klass
                           << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " += value;\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error adding proxy for event ${key}\");\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Error adding proxy for event ${key}\");\n"
                           << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                           << scope_tab << scope_tab << "}\n"
                           << scope_tab << scope_tab << "remove {\n"
@@ -547,7 +547,7 @@ struct klass
                           << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " -= value;\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Console.WriteLine(\"Error removing proxy for event ${key}\");\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Error removing proxy for event ${key}\");\n"
                           << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                           << scope_tab << scope_tab << "}\n"
                      << scope_tab << "}\n")

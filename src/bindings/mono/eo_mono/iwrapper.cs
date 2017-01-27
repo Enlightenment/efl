@@ -74,24 +74,24 @@ public class Globals {
         IntPtr description_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(description));
         Marshal.StructureToPtr(description, description_ptr, false);
       
-        Console.WriteLine("Going to register!");
+        eina.Log.Debug("Going to register!");
         IntPtr klass = efl.eo.Globals.efl_class_new(description_ptr, base_klass, IntPtr.Zero);
         if(klass == IntPtr.Zero)
-            Console.WriteLine("klass was not registed");
-        Console.WriteLine("Registered?");
+            eina.Log.Error("klass was not registered");
+        eina.Log.Debug("Registered?");
         return klass;
     }
     public static IntPtr instantiate(IntPtr klass, efl.Object parent)
     {
-        Console.WriteLine("Instantiating");
+        eina.Log.Debug("Instantiating");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
         if(parent != null)
             parent_ptr = parent.raw_handle;
 
         System.IntPtr eo = efl.eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 0, 0);
-        Console.WriteLine("efl_add_internal_start returned");
+        eina.Log.Debug("efl_add_internal_start returned");
         eo = efl.eo.Globals._efl_add_end(eo, 0, 0);
-        Console.WriteLine("efl_add_end returned");
+        eina.Log.Debug("efl_add_end returned");
         return eo;
     }
     public static void data_set(efl.eo.IWrapper obj)
@@ -133,37 +133,37 @@ public class MarshalTest<T> : ICustomMarshaler
 {
     public static ICustomMarshaler GetInstance(string cookie)
     {
-        Console.WriteLine("MarshalTest.GetInstace cookie " + cookie);
+        eina.Log.Debug("MarshalTest.GetInstace cookie " + cookie);
         return new MarshalTest<T>();
     }
     public void CleanUpManagedData(object ManagedObj)
     {
-        Console.WriteLine("MarshalTest.CleanUpManagedData");
+        eina.Log.Warning("MarshalTest.CleanUpManagedData not implemented");
         //throw new NotImplementedException();
     }
 
     public void CleanUpNativeData(IntPtr pNativeData)
     {
-        Console.WriteLine("MarshalTest.CleanUpNativeData");
+        eina.Log.Warning("MarshalTest.CleanUpNativeData not implemented");
         //throw new NotImplementedException();
     }
 
     public int GetNativeDataSize()
     {
-        Console.WriteLine("MarshalTest.GetNativeDataSize");
+        eina.Log.Debug("MarshalTest.GetNativeDataSize");
         return 0;
         //return 8;
     }
 
     public IntPtr MarshalManagedToNative(object ManagedObj)
     {
-        Console.WriteLine("MarshalTest.MarshallManagedToNative");
+        eina.Log.Debug("MarshalTest.MarshallManagedToNative");
         return ((IWrapper)ManagedObj).raw_handle;
     }
 
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
-        Console.WriteLine("MarshalTest.MarshalNativeToManaged");
+        eina.Log.Debug("MarshalTest.MarshalNativeToManaged");
         return Activator.CreateInstance(typeof(T), new System.Object[] {pNativeData});
 //        return null;
     }
