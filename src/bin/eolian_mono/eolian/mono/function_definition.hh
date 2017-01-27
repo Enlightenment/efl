@@ -64,7 +64,7 @@ struct native_function_definition_generator
         << ")\n"
         << scope_tab << "{\n"
         /****/
-        << scope_tab << scope_tab << "System.Console.WriteLine(\"function " << string << " was called\");\n"
+        << scope_tab << scope_tab << "eina.Log.Debug(\"function " << string << " was called\");\n"
         /****/
         << scope_tab << scope_tab << "efl.eo.IWrapper wrapper = efl.eo.Globals.data_get(pd);\n"
         << scope_tab << scope_tab << "if(wrapper != null)\n"

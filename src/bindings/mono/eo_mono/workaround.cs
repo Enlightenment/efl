@@ -74,7 +74,7 @@ public struct Description {
         if (!descriptions.ContainsKey(name))
         {
             // FIXME Other libraries....
-            Console.WriteLine("Loading {name}");
+            eina.Log.Debug("Loading {name}");
             IntPtr library = efl.eo.Globals.dlopen("/opt/efl-mono/lib/libecore.so", efl.eo.Globals.RTLD_NOW);
             IntPtr data = efl.eo.Globals.dlsym(library, name);
             descriptions.Add(name, data);

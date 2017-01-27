@@ -28,7 +28,7 @@ public class MyBox : evas.BoxInherit
     {
         IntPtr evas = evas_object_evas_get(raw_handle);
         evas_event_freeze(evas);
-        Console.WriteLine("called group_calculate");
+        eina.Log.Debug("called group_calculate");
         layouting_set(true);
         evas_obj_box_layout_vertical(raw_handle, IntPtr.Zero, IntPtr.Zero);
         layouting_set(false);
@@ -179,8 +179,6 @@ class Evas
 
         EcoreEvas ecore_evas = new EcoreEvas();
 
-        System.Console.WriteLine("Hello World");
-
         efl.canvas.Object canvas = ecore_evas.canvas;
         canvas.visible_set(true);
 
@@ -228,6 +226,7 @@ class TestMain
 
     static int Main(string[] args)
     {
+        eina.Log.Init();
         efl_object_init();
         ecore_init();
         evas_init();
