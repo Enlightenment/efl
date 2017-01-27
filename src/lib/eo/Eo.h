@@ -1771,6 +1771,33 @@ efl_replace(Eo **storage, Eo *new_obj)
 #include "efl_future.h"
 
 /**
+ * @addtogroup Eo_Iterators Eo iterators
+ * @{
+ */
+
+/**
+ * @brief Get an iterator on the Eo classes
+ *
+ * You can use this function to walk over the Eo classes.
+ *
+ * @return an iterator on success, NULL otherwise
+ */
+EAPI Eina_Iterator *eo_classes_iterator_new(void);
+
+/**
+ * @brief Get an iterator on the Eo objects
+ *
+ * You can use this function to walk over the Eo objects.
+ *
+ * @return an iterator on success, NULL otherwise
+ */
+EAPI Eina_Iterator *eo_objects_iterator_new(void);
+
+/**
+ * @}
+ */
+
+/**
  * @}
  */
 

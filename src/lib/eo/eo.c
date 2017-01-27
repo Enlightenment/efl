@@ -2934,3 +2934,124 @@ _eo_log_obj_shutdown(void)
    eina_inarray_flush(&_eo_log_objs_no_debug);
 }
 #endif
+
+typedef struct
+{
+   Eina_Iterator iterator;
+   unsigned int cur_kl_id;
+} _Eo_Classes_Iterator;
+
+static Eina_Bool
+_eo_classes_iterator_next(Eina_Iterator *it, void **data)
+{
+   _Eo_Classes_Iterator *eo_it = (_Eo_Classes_Iterator *)it;
+
+   if (eo_it->cur_kl_id == _eo_classes_last_id) return EINA_FALSE;
+   *data = _eo_class_id_get(_eo_classes[eo_it->cur_kl_id]);
+   eo_it->cur_kl_id++;
+   return EINA_TRUE;
+}
+
+static void
+_eo_classes_iterator_free(Eina_Iterator *it)
+{
+   EINA_MAGIC_SET(it, EINA_MAGIC_NONE);
+   free(it);
+}
+
+EAPI Eina_Iterator *
+eo_classes_iterator_new(void)
+{
+   _Eo_Classes_Iterator *it;
+
+   it = calloc(1, sizeof (*it));
+   if (!it) return NULL;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = _eo_classes_iterator_next;
+   it->iterator.free = _eo_classes_iterator_free;
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   return (Eina_Iterator *)it;
+}
+
+typedef struct
+{
+   Eina_Iterator iterator;
+   Eo_Id_Table_Data *tdata;
+   Table_Index mid_table_id;
+   Table_Index table_id;
+   Table_Index entry_id;
+} _Eo_Objects_Iterator;
+
+static Eina_Bool
+_eo_objects_iterator_next(Eina_Iterator *it, void **data)
+{
+   Table_Index mid_table_id, table_id, entry_id;
+   Eo_Id_Table_Data *tdata;
+   _Eo_Objects_Iterator *eo_it = (_Eo_Objects_Iterator *)it;
+   if (!eo_it->tdata) return EINA_FALSE;
+
+   tdata = eo_it->tdata;
+   mid_table_id = eo_it->mid_table_id;
+   table_id = eo_it->table_id;
+   entry_id = eo_it->entry_id;
+   while (mid_table_id < MAX_MID_TABLE_ID)
+     {
+        if (tdata->eo_ids_tables[mid_table_id])
+          {
+             while (table_id < MAX_TABLE_ID)
+               {
+                  if (TABLE_FROM_IDS)
+                    {
+                       while (entry_id < MAX_ENTRY_ID)
+                         {
+                            _Eo_Id_Entry *entry = &(TABLE_FROM_IDS->entries[entry_id]);
+                            if (entry->active)
+                              {
+                                 Eo *obj = _eo_header_id_get((Eo_Header *) entry->ptr);
+                                 *data = obj;
+                                 eo_it->mid_table_id = mid_table_id;
+                                 eo_it->table_id = table_id;
+                                 eo_it->entry_id = entry_id + 1;
+                                 return EINA_TRUE;
+                              }
+                            entry_id++;
+                         }
+                       entry_id = 0;
+                    }
+                  table_id++;
+               }
+             table_id = 0;
+          }
+        mid_table_id++;
+     }
+   return EINA_FALSE;
+}
+
+static void
+_eo_objects_iterator_free(Eina_Iterator *it)
+{
+   EINA_MAGIC_SET(it, EINA_MAGIC_NONE);
+   free(it);
+}
+
+EAPI Eina_Iterator *
+eo_objects_iterator_new(void)
+{
+   _Eo_Objects_Iterator *it;
+   Eo_Id_Table_Data *tdata = _eo_table_data_table_get(_eo_table_data_get(), EFL_ID_DOMAIN_MAIN);
+
+   if (!tdata) return NULL;
+
+   it = calloc(1, sizeof (*it));
+   if (!it) return NULL;
+
+   it->tdata = tdata;
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = _eo_objects_iterator_next;
+   it->iterator.free = _eo_objects_iterator_free;
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   return (Eina_Iterator *)it;
+}
