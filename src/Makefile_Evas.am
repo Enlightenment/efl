@@ -407,6 +407,7 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/static_libs/libunibreak \
 -I$(top_srcdir)/src/static_libs/draw \
+-I$(top_builddir)/src/lib \
 -I$(top_builddir)/src/lib/evas/canvas \
 -I$(top_builddir)/src/lib/evas/include \
 -I$(top_builddir)/src/modules/evas/engines/software_generic \

@@ -12,6 +12,7 @@ set(PUBLIC_LIBRARIES
 
 set(LIBRARIES
   m
+  support-rg_etc
 )
 
 set(PUBLIC_HEADERS
@@ -29,14 +30,6 @@ set(SOURCES
   eet_node.c
   Eet_private.h
   eet_utils.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc/rg_etc1.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc/rg_etc2.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc/etc2_encoder.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc/rg_etc1.h
-)
-
-set(INCLUDE_DIRECTORIES
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc
 )
 
 if(WITH_CRYPTO STREQUAL "gnutls")

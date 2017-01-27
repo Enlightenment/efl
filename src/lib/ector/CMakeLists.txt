@@ -5,6 +5,10 @@ set(LIBRARIES
   efl
   emile
   m
+  support-draw
+  support-freetype
+  support-rg_etc
+  support-triangulator
 )
 
 set(PUBLIC_LIBRARIES
@@ -99,31 +103,6 @@ set(SOURCES
   software/ector_software_gradient.c
   software/ector_software_rasterizer.c
   software/ector_software_surface.c
-
-  ${CMAKE_SOURCE_DIR}/src/static_libs/draw/draw_main.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/draw/draw_main_neon.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/draw/draw_main_sse2.c
-
-  ${CMAKE_SOURCE_DIR}/src/static_libs/freetype/sw_ft_math.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/freetype/sw_ft_raster.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/freetype/sw_ft_stroker.c
-
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc/etc2_encoder.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc/rg_etc1.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc/rg_etc1.h
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc/rg_etc2.c
-
-  ${CMAKE_SOURCE_DIR}/src/static_libs/triangulator/triangulator_simple.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/triangulator/triangulator_simple.h
-  ${CMAKE_SOURCE_DIR}/src/static_libs/triangulator/triangulator_stroker.c
-  ${CMAKE_SOURCE_DIR}/src/static_libs/triangulator/triangulator_stroker.h
-)
-
-set(INCLUDE_DIRECTORIES
-  ${CMAKE_SOURCE_DIR}/src/static_libs/draw
-  ${CMAKE_SOURCE_DIR}/src/static_libs/freetype
-  ${CMAKE_SOURCE_DIR}/src/static_libs/rg_etc
-  ${CMAKE_SOURCE_DIR}/src/static_libs/triangulator
 )
 
 add_custom_command(

@@ -155,6 +155,7 @@ lib/ector/gl/shader/ector_gl_shaders.x: $(ECTOR_GL_SHADERS_GEN)
 	@sh $(srcdir)/lib/ector/gl/shader/gen_shaders.sh
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib \
 -I$(top_builddir)/src/lib/ector \
 -I$(top_builddir)/src/lib/ector/cairo \
 -I$(top_builddir)/src/lib/ector/software \

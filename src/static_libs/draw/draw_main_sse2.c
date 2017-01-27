@@ -2,7 +2,6 @@
 #include "config.h"
 #endif
 
-#include <Ector.h>
 #include "draw_private.h"
 
 #ifdef BUILD_SSE3

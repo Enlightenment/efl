@@ -31,6 +31,12 @@ include_directories(
 
 include(${CMAKE_SOURCE_DIR}/cmake/config/common.cmake)
 
+EFL_SUPPORT_LIB(lz4)
+EFL_SUPPORT_LIB(draw)
+EFL_SUPPORT_LIB(freetype)
+EFL_SUPPORT_LIB(rg_etc)
+EFL_SUPPORT_LIB(triangulator)
+
 EFL_LIB(eina)
 EFL_LIB(eolian)
 EFL_LIB(eo)

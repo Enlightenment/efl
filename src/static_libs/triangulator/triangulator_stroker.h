@@ -1,7 +1,9 @@
 #ifndef TRIANGULATOR_STROKER_H_
 #define TRIANGULATOR_STROKER_H_
 
-#include <Efl.h>
+#include <Eina.h>
+#include "efl/interfaces/efl_gfx_types.eot.h"
+typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 typedef struct _Triangulator_Stroker Triangulator_Stroker;
 struct _Triangulator_Stroker

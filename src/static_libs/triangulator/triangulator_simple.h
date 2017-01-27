@@ -1,7 +1,9 @@
 #ifndef TRIANGULATOR_SIMPLE_H_
 #define TRIANGULATOR_SIMPLE_H_
 
-#include <Efl.h>
+#include <Eina.h>
+#include "efl/interfaces/efl_gfx_types.eot.h"
+typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 typedef struct _Triangulator_Simple Triangulator_Simple;
 struct _Triangulator_Simple

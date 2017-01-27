@@ -5,7 +5,8 @@
 # include <config.h>
 #endif
 
-#include <Efl.h>
+#include <Eina.h>
+#include "efl/interfaces/efl_gfx_types.eot.h"
 
 /* FIXME: naming convention */
 typedef void (*RGBA_Comp_Func)       (uint32_t *dest, const uint32_t *src, int length, uint32_t mul_col, uint32_t const_alpha);

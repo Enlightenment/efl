@@ -783,6 +783,126 @@ define_property(TARGET PROPERTY EFL_EO_PUBLIC
   BRIEF_DOCS "EFL's .eo/.eot files associated with this target and installed"
   FULL_DOCS "The list of all .eo or .eot files this target uses and installs")
 
+# EFL_SUPPORT_LIB(Name)
+#
+# adds a support library as src/static_libs/${Name}, this will
+# generate a static library that can be later referred by other
+# targets using support-${Name}
+#
+# This is simiar to EFL_LIB(), however defaults to STATIC libraries
+# and if set to SHARED will install to
+# lib/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+# and it shouldn't set any PUBLIC_HEADERS or PKG_CONFIG_REQUIRES.
+function(EFL_SUPPORT_LIB _target)
+  set(EFL_LIB_CURRENT ${_target})
+  set(EFL_LIB_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/static_libs/${_target})
+  set(EFL_LIB_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/static_libs/${_target})
+
+  set(DESCRIPTION)
+  set(PKG_CONFIG_REQUIRES)
+  set(PKG_CONFIG_REQUIRES_PRIVATE)
+  set(INCLUDE_DIRECTORIES)
+  set(SYSTEM_INCLUDE_DIRECTORIES)
+  set(OUTPUT_NAME)
+  set(SOURCES)
+  set(PUBLIC_HEADERS)
+  set(VERSION)
+  set(SOVERSION)
+  set(LIBRARY_TYPE STATIC)
+  set(OBJECT_DEPENDS)
+  set(DEPENDENCIES)
+  set(LIBRARIES)
+  set(PUBLIC_LIBRARIES)
+  set(DEFINITIONS)
+  set(COMPILE_FLAGS)
+  set(LINK_FLAGS)
+
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config/${_target}.cmake OPTIONAL)
+  include(${EFL_LIB_SOURCE_DIR}/CMakeLists.txt)
+
+  if(NOT SOURCES)
+    message(WARNING "${EFL_LIB_SOURCE_DIR}/CMakeLists.txt defines no SOURCES")
+    return()
+  endif()
+  if(PUBLIC_HEADERS)
+    message(WARNING "${EFL_LIB_SOURCE_DIR}/CMakeLists.txt should not define PUBLIC_HEADERS, it's not to be installed.")
+  endif()
+  if(PKG_CONFIG_REQUIRES)
+    message(WARNING "${EFL_LIB_SOURCE_DIR}/CMakeLists.txt should not define PKG_CONFIG_REQUIRES. Use PKG_CONFIG_REQUIRES_PRIVATE instead")
+  endif()
+
+  EFL_FILES_TO_ABSOLUTE(_sources ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
+    ${SOURCES})
+  EFL_FILES_TO_ABSOLUTE(_obj_deps ${EFL_LIB_SOURCE_DIR} ${EFL_LIB_BINARY_DIR}
+    ${OBJECT_DEPENDS})
+
+  EFL_PKG_CONFIG_EVAL(${_target} "${PKG_CONFIG_REQUIRES_PRIVATE}" "${PKG_CONFIG_REQUIRES}")
+
+  set(__link_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_LDFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_LDFLAGS} ${LINK_FLAGS})
+  set(__compile_flags ${${_target}_PKG_CONFIG_REQUIRES_PRIVATE_CFLAGS} ${${_target}_PKG_CONFIG_REQUIRES_CFLAGS} ${COMPILE_FLAGS})
+
+  set(_link_flags)
+  foreach(_l ${__link_flags})
+    set(_link_flags "${_link_flags} ${_l}")
+  endforeach()
+
+  set(_compile_flags)
+  foreach(_c ${__compile_flags})
+    set(_compile_flags "${_compile_flags} ${_c}")
+  endforeach()
+
+  add_library(support-${_target} ${LIBRARY_TYPE} ${_sources} ${_headers})
+  set_target_properties(support-${_target} PROPERTIES
+    OBJECT_DEPENDS "${_obj_deps}"
+    LINK_FLAGS "${_link_flags}"
+    COMPILE_FLAGS "${_compile_flags}")
+
+  if(DEPENDENCIES)
+    add_dependencies(support-${_target} ${DEPENDENCIES})
+  endif()
+
+  if(LIBRARIES)
+    target_link_libraries(support-${_target} LINK_PRIVATE ${LIBRARIES})
+  endif()
+  if(PUBLIC_LIBRARIES)
+    target_link_libraries(support-${_target} PUBLIC ${PUBLIC_LIBRARIES})
+  endif()
+
+  target_include_directories(support-${_target} PUBLIC
+    ${INCLUDE_DIRECTORIES}
+    ${EFL_LIB_SOURCE_DIR}
+    ${EFL_LIB_BINARY_DIR}
+    )
+  if(SYSTEM_INCLUDE_DIRECTORIES)
+    target_include_directories(support-${_target} SYSTEM PUBLIC ${SYSTEM_INCLUDE_DIRECTORIES})
+  endif()
+
+  if(DEFINITIONS)
+    target_compile_definitions(support-${_target} PRIVATE ${DEFINITIONS})
+  endif()
+
+  if(OUTPUT_NAME)
+    set_target_properties(support-${_target} PROPERTIES OUTPUT_NAME ${OUTPUT_NAME})
+  endif()
+
+  if(VERSION AND SOVERSION)
+    set_target_properties(support-${_target} PROPERTIES
+      VERSION ${VERSION}
+      SOVERSION ${SOVERSION})
+  endif()
+
+  if(LIBRARY_TYPE STREQUAL "SHARED")
+    install(TARGETS support-${_target}
+      RUNTIME DESTINATION lib/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+      LIBRARY DESTINATION lib/efl/support/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+  else()
+    set_target_properties(support-${_target} PROPERTIES
+      POSITION_INDEPENDENT_CODE TRUE)
+  endif()
+
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/post/${_target}.cmake OPTIONAL)
+endfunction()
+
 # EFL_LIB(Name)
 #
 # adds a library ${Name} automatically setting object/target
