@@ -943,6 +943,8 @@ endfunction()
 #  - EFL_MODULES_BINARY_DIR to binary dir of ${Name} modules
 #  - EFL_TESTS_SOURCE_DIR to source dir of ${Name} tests
 #  - EFL_TESTS_BINARY_DIR to binary dir of ${Name} tests
+#  - EFL_UTILS_DIR to the binary dir of ${Name} utility binaries
+#    (those that should exist in runtime but not visible from $PATH)
 #
 # Modules are processed like:
 #   - loop for directories in src/modules/${EFL_LIB_CURRENT}:
@@ -982,6 +984,7 @@ function(EFL_LIB _target)
   set(EFL_MODULES_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/modules/${_target})
   set(EFL_TESTS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/${_target})
   set(EFL_TESTS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/src/tests/${_target})
+  set(EFL_UTILS_DIR lib/${_target}/utils/v-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
   unset(EFL_ALL_OPTIONS_${EFL_LIB_CURRENT} CACHE)
 
@@ -1157,6 +1160,8 @@ endfunction()
 #  - INSTALL_DIR: defaults to bin. If empty, won't install.
 #  - COMPILE_FLAGS: extra CFLAGS to append.
 #  - LINK_FLAGS: extra LDFLAGS to append.
+#  - EFL_UTILITY: if ON, will be installed to EFL_UTILS_DIR instead of
+#    bin, not being exposed to $PATH.
 #
 # NOTE: it's meant to be called by files included by EFL_LIB() or similar,
 # otherwise you need to prepare the environment yourself.
@@ -1179,6 +1184,7 @@ function(EFL_BIN _binname)
   set(PKG_CONFIG_REQUIRES_PRIVATE)
   set(COMPILE_FLAGS)
   set(LINK_FLAGS)
+  set(EFL_UTILITY OFF)
 
   if(_binname STREQUAL ${EFL_LIB_CURRENT})
     set(_binsrcdir "${EFL_BIN_SOURCE_DIR}")
@@ -1201,6 +1207,10 @@ function(EFL_BIN _binname)
   endif()
   if(PKG_CONFIG_REQUIRES)
     message(WARNING "${_binsrcdir}/CMakeLists.txt should not define PKG_CONFIG_REQUIRES. Use PKG_CONFIG_REQUIRES_PRIVATE instead")
+  endif()
+
+  if(EFL_UTILITY AND INSTALL_DIR STREQUAL "bin")
+    set(INSTALL_DIR ${EFL_UTILS_DIR})
   endif()
 
   EFL_FILES_TO_ABSOLUTE(_sources ${_binsrcdir} ${_binbindir} ${SOURCES})
@@ -1255,6 +1265,7 @@ function(EFL_BIN _binname)
 
   if(INSTALL_DIR)
     install(TARGETS ${_bintarget} RUNTIME DESTINATION ${INSTALL_DIR})
+    set_target_properties(${_bintarget} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${INSTALL_DIR})
   endif()
 
   LIST_APPEND_GLOBAL(${EFL_LIB_CURRENT}_BINS ${_bintarget})
