@@ -52,7 +52,11 @@ _print_usage(const char *progn, FILE *outf)
                  "\n"
                  "By default, the 'hc' set is used ('h' for .eot files).\n"
                  "Output filenames are determined from input .eo filename.\n"
-                 "Default filenames include input extension. (e.g. \".eo.c\")\n");
+                 "Default filenames include input extension. (e.g. \".eo.c\")\n"
+                 "Default output path is where the input file is.\n\n"
+                 "Also, specifying a type-dependent input file automatically\n"
+                 "adds it to generated files, so if you specify those, you\n"
+                 "don't need to explicitly specify -g for those types anymore.\n");
 }
 
 static void
@@ -62,25 +66,30 @@ _print_version(FILE *outf)
 }
 
 static Eina_Bool
-_try_set_out(char t, char **outs, const char *val)
+_try_set_out(char t, char **outs, const char *val, int *what)
 {
    int pos = -1;
    switch (t)
      {
       case 'h':
         pos = _get_bit_pos(GEN_H);
+        *what |= GEN_H;
         break;
       case 'l':
         pos = _get_bit_pos(GEN_H_LEGACY);
+        *what |= GEN_H_LEGACY;
         break;
       case 's':
         pos = _get_bit_pos(GEN_H_STUB);
+        *what |= GEN_H_STUB;
         break;
       case 'c':
         pos = _get_bit_pos(GEN_C);
+        *what |= GEN_C;
         break;
       case 'i':
         pos = _get_bit_pos(GEN_C_IMPL);
+        *what |= GEN_C_IMPL;
         break;
      }
    if (pos < 0)
@@ -437,7 +446,8 @@ main(int argc, char **argv)
             {
                const char *abeg = optarg;
                const char *cpos = strchr(abeg, ':');
-               if (((cpos - abeg) != 1) || !_try_set_out(*abeg, outs, cpos + 1))
+               if (((cpos - abeg) != 1) ||
+                   !_try_set_out(*abeg, outs, cpos + 1, &gen_what))
                  {
                     char *oa = strdup(abeg);
                     oa[cpos - abeg] = '\0';
