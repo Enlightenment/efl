@@ -1593,7 +1593,6 @@ function(EFL_CREATE_EO_RULES target source_dir generation_dir)
         set(out_cmd -gchl -o c:${generation_dir}/${filename}.c -o h:${generation_dir}/${filename}.h -o l:${generation_dir}/${filename}.legacy.h)
       elseif(${ext} STREQUAL ".eot")
         set(file_eo_gen_files ${generation_dir}/${filename}.h)
-        # TODO: looks like a bug in eolian_gen needs '-gh'
         set(out_cmd -gh -o h:${generation_dir}/${filename}.h)
       else()
         message(FATAL_ERROR "Unsupported eo file type: ${file}")
