@@ -1112,6 +1112,10 @@ function(EFL_LIB _target)
   install(FILES
     ${_public_eo_files} DESTINATION share/eolian/include/${_target}-${PROJECT_VERSION_MAJOR}
     )
+
+  file(WRITE ${CMAKE_BINARY_DIR}/share/${_target}/checkme "")
+  install(FILES ${CMAKE_BINARY_DIR}/share/${_target}/checkme DESTINATION share/${_target})
+
   # do not leak those into binaries, modules or tests
   unset(_sources)
   unset(_headers)
