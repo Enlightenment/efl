@@ -1841,6 +1841,9 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
    if (!pd->code)
      return;
 
+   if (!pd->code->file->lines)
+     return;
+
    evas_object_geometry_get(widget, NULL, NULL, &ww, &wh);
 
    old_width = ww;
