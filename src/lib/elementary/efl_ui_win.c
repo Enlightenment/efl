@@ -952,14 +952,11 @@ _elm_win_mouse_in(Ecore_Evas *ee)
 #ifdef HAVE_ELEMENTARY_WL2
    if ((sd->wl.win) && (sd->pointer.ee))
      {
-        _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                              "pointer", "base", "default");
-
         sd->pointer.visible = EINA_TRUE;
         ecore_evas_show(sd->pointer.ee);
         sd->pointer.surf = ecore_wl2_window_surface_get(sd->pointer.win);
-        ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
-                                     sd->pointer.hot_x, sd->pointer.hot_y);
+
+        _elm_win_wl_cursor_set(sd->obj, NULL);
      }
 #endif
 }
@@ -3947,13 +3944,7 @@ _elm_win_frame_cb_move_stop(void *data,
    ELM_WIN_DATA_GET_OR_RETURN(data, sd);
 
 #ifdef HAVE_ELEMENTARY_WL2
-   if (sd->pointer.obj)
-     _elm_theme_object_set(sd->obj, sd->pointer.obj,
-                           "pointer", "base", "default");
-
-   if ((sd->wl.win) && (sd->pointer.surf) && (sd->pointer.visible))
-     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
-                                  sd->pointer.hot_x, sd->pointer.hot_y);
+   _elm_win_wl_cursor_set(sd->obj, NULL);
 #endif
 }
 
