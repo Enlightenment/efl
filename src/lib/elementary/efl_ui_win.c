@@ -5103,36 +5103,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    _elm_win_need_frame_adjust(sd, engine);
    _elm_win_apply_alpha(obj, sd);
 
-   /* do not append to list; all windows render as black rects */
-   if (type != ELM_WIN_FAKE)
-     {
-        const char *element = "base";
-        const char *style;
-
-        _elm_win_list = eina_list_append(_elm_win_list, obj);
-        _elm_win_count++;
-
-        if ((engine) &&
-            ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))
-          {
-             TRAP(sd, fullscreen_set, 1);
-          }
-        style = elm_widget_style_get(obj);
-        if (!style) style = "default";
-        switch (type)
-          {
-           case EFL_UI_WIN_DIALOG_BASIC:    element = "dialog"; break;
-           case EFL_UI_WIN_NAVIFRAME_BASIC: element = "naviframe"; break;
-           default: break;
-          }
-        _elm_win_frame_add(sd, element, style);
-
-        if (_elm_config->focus_highlight_enable)
-          elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
-        if (_elm_config->focus_highlight_animate)
-          elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
-     }
-
 #ifdef HAVE_ELEMENTARY_WL2
    if ((type != ELM_WIN_FAKE) && (type != ELM_WIN_INLINED_IMAGE))
      {
@@ -5170,6 +5140,36 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           }
      }
 #endif
+
+   /* do not append to list; all windows render as black rects */
+   if (type != ELM_WIN_FAKE)
+     {
+        const char *element = "base";
+        const char *style;
+
+        _elm_win_list = eina_list_append(_elm_win_list, obj);
+        _elm_win_count++;
+
+        if ((engine) &&
+            ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))
+          {
+             TRAP(sd, fullscreen_set, 1);
+          }
+        style = elm_widget_style_get(obj);
+        if (!style) style = "default";
+        switch (type)
+          {
+           case EFL_UI_WIN_DIALOG_BASIC:    element = "dialog"; break;
+           case EFL_UI_WIN_NAVIFRAME_BASIC: element = "naviframe"; break;
+           default: break;
+          }
+        _elm_win_frame_add(sd, element, style);
+
+        if (_elm_config->focus_highlight_enable)
+          elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
+        if (_elm_config->focus_highlight_animate)
+          elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
+     }
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_WINDOW);
    if (_elm_config->atspi_mode)
