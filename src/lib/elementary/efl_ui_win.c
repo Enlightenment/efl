@@ -952,6 +952,9 @@ _elm_win_mouse_in(Ecore_Evas *ee)
 #ifdef HAVE_ELEMENTARY_WL2
    if ((sd->wl.win) && (sd->pointer.ee))
      {
+        _elm_theme_object_set(sd->obj, sd->pointer.obj,
+                              "pointer", "base", "default");
+
         sd->pointer.visible = EINA_TRUE;
         ecore_evas_show(sd->pointer.ee);
         sd->pointer.surf = ecore_wl2_window_surface_get(sd->pointer.win);
@@ -969,10 +972,7 @@ _elm_win_mouse_out(Ecore_Evas *ee)
 
 #ifdef HAVE_ELEMENTARY_WL2
    if ((sd->wl.win) && (sd->pointer.ee))
-     {
-        sd->pointer.visible = EINA_FALSE;
-        ecore_evas_hide(sd->pointer.ee);
-     }
+     sd->pointer.visible = EINA_FALSE;
 #endif
 }
 
