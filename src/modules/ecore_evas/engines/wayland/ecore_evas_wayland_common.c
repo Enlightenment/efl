@@ -1745,7 +1745,6 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
 {
    Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
-   int fw, fh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1758,10 +1757,12 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
         return;
      }
 
-   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
    if (wdata->win)
      {
+        int fw, fh;
+
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
         ecore_wl2_window_show(wdata->win);
         ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
 
