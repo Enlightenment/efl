@@ -3815,10 +3815,6 @@ _elm_win_frame_cb_resize_show(void *data,
         const resize_info *ri = _resize_info_get(sd->rot, mode);
         if (ri) _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", ri->cursor);
      }
-
-   if ((sd->wl.win) && (sd->pointer.surf) && (sd->pointer.visible))
-     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
-                                  sd->pointer.hot_x, sd->pointer.hot_y);
 #else
    (void)source;
 #endif
@@ -3839,10 +3835,6 @@ _elm_win_frame_cb_resize_hide(void *data,
    if (sd->pointer.obj)
      _elm_theme_object_set(sd->obj, sd->pointer.obj,
                            "pointer", "base", "default");
-
-   if ((sd->wl.win) && (sd->pointer.surf) && (sd->pointer.visible))
-     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
-                                  sd->pointer.hot_x, sd->pointer.hot_y);
 #endif
 }
 
