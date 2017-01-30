@@ -130,11 +130,12 @@ eina_evlog(const char *event, void *obj, double srctime, const char *detail)
    Eina_Evlog_Item *item;
    int size;
    char *strings;
-   double now = get_time();
+   double now;
    unsigned short detail_offset = 0;
    unsigned short event_size;
 
    if (!_evlog_go) return;
+   now = get_time();
    eina_spinlock_take(&_evlog_lock);
    size = sizeof(Eina_Evlog_Item);
    event_size = strlen(event) + 1;
