@@ -30,7 +30,6 @@ struct _Evas_Engine_Info_Wayland
    Eina_Bool indirect : 1;
 
    Eina_Bool www_avail : 1;
-   Eina_Bool just_mapped : 1;
    Eina_Rectangle window;
    int x_rel, y_rel;
    int x_cursor, y_cursor;
