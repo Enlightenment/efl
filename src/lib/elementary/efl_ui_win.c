@@ -125,6 +125,7 @@ struct _Efl_Ui_Win_Data
       Ecore_Evas  *ee;
       Evas_Object *obj, *hot_obj;
       int          hot_x, hot_y;
+      Eina_Bool    visible : 1;
    } pointer;
    struct
    {
@@ -951,6 +952,7 @@ _elm_win_mouse_in(Ecore_Evas *ee)
 #ifdef HAVE_ELEMENTARY_WL2
    if ((sd->wl.win) && (sd->pointer.ee))
      {
+        sd->pointer.visible = EINA_TRUE;
         ecore_evas_show(sd->pointer.ee);
         sd->pointer.surf = ecore_wl2_window_surface_get(sd->pointer.win);
         ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
@@ -968,6 +970,7 @@ _elm_win_mouse_out(Ecore_Evas *ee)
 #ifdef HAVE_ELEMENTARY_WL2
    if ((sd->wl.win) && (sd->pointer.ee))
      {
+        sd->pointer.visible = EINA_FALSE;
         ecore_evas_hide(sd->pointer.ee);
         ecore_wl2_window_pointer_set(sd->wl.win, NULL,
                                      sd->pointer.hot_x, sd->pointer.hot_y);
@@ -3080,7 +3083,7 @@ _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
         sd->pointer.hot_y = hy;
      }
 
-   if ((sd->wl.win) && (sd->pointer.surf))
+   if ((sd->wl.win) && (sd->pointer.surf) && (sd->pointer.visible))
      ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
                                   sd->pointer.hot_x, sd->pointer.hot_y);
 }
@@ -3817,7 +3820,7 @@ _elm_win_frame_cb_resize_show(void *data,
         if (ri) _elm_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", ri->cursor);
      }
 
-   if ((sd->wl.win) && (sd->pointer.surf))
+   if ((sd->wl.win) && (sd->pointer.surf) && (sd->pointer.visible))
      ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
                                   sd->pointer.hot_x, sd->pointer.hot_y);
 #else
@@ -3841,7 +3844,7 @@ _elm_win_frame_cb_resize_hide(void *data,
      _elm_theme_object_set(sd->obj, sd->pointer.obj,
                            "pointer", "base", "default");
 
-   if ((sd->wl.win) && (sd->pointer.surf))
+   if ((sd->wl.win) && (sd->pointer.surf) && (sd->pointer.visible))
      ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
                                   sd->pointer.hot_x, sd->pointer.hot_y);
 #endif
@@ -3960,7 +3963,7 @@ _elm_win_frame_cb_move_stop(void *data,
      _elm_theme_object_set(sd->obj, sd->pointer.obj,
                            "pointer", "base", "default");
 
-   if ((sd->wl.win) && (sd->pointer.surf))
+   if ((sd->wl.win) && (sd->pointer.surf) && (sd->pointer.visible))
      ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
                                   sd->pointer.hot_x, sd->pointer.hot_y);
 #endif
