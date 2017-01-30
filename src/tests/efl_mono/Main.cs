@@ -42,7 +42,7 @@ public class MyBox : evas.BoxInherit
 
 namespace TestSuite {
 
-class Core
+class TestCore
 {
     private class Derived : test.TestingInherit
     {
@@ -134,7 +134,7 @@ class MyLoop : efl.LoopInherit
     public MyLoop() : base(null) { }
 }
 
-class EoInherit
+class TestEoInherit
 {
     public static void instantiate_inherited()
     {
@@ -149,7 +149,7 @@ class EoInherit
     }
 }
 
-class EoEvents
+class TestEoEvents
 {
     public bool called = false;
     protected void callback(object sender, EventArgs e) {
@@ -160,7 +160,7 @@ class EoEvents
     public static void callback_add_event()
     {
         efl.Loop loop = new efl.LoopConcrete();
-        EoEvents listener = new EoEvents();
+        TestEoEvents listener = new TestEoEvents();
         loop.CALLBACK_ADD += listener.callback;
 
         Test.Assert(!listener.called);
@@ -169,7 +169,7 @@ class EoEvents
     }
 }
 
-class Evas
+class TestEvas
 {
     private static string ImagePath([CallerFilePath] string folder="")
     {
@@ -224,7 +224,8 @@ class TestMain
 
     static Type[] GetTestSuites()
     {
-        return Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "TestSuite", StringComparison.Ordinal)).ToArray();
+        return Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "TestSuite", StringComparison.Ordinal) &&
+                                                                t.Name.StartsWith("Test")).ToArray();
     }
 
     static int Main(string[] args)
