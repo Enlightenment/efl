@@ -18,13 +18,14 @@ evas_common_draw_context_cutouts_dup(Cutout_Rects *rects2, const Cutout_Rects *r
    rects2->active = rects->active;
    rects2->max = rects->active;
    rects2->last_add = rects->last_add;
-   rects2->rects = NULL;
    if (rects2->max > 0)
      {
         const size_t sz = sizeof(Cutout_Rect) * rects2->max;
         rects2->rects = malloc(sz);
         memcpy(rects2->rects, rects->rects, sz);
+        return;
      }
+   else rects2->rects = NULL;
 }
 
 EAPI void
@@ -59,12 +60,73 @@ evas_common_draw_context_cutouts_del(Cutout_Rects* rects, int idx)
 }
 
 static int _init_count = 0;
+static int _ctxt_spares_count = 0;
+static Eina_List *_ctxt_spares = NULL;
+static SLK(_ctx_spares_lock);
+
+static void
+_evas_common_draw_context_real_free(RGBA_Draw_Context *dc)
+{
+#ifdef HAVE_PIXMAN
+# if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
+   if (dc->col.pixman_color_image)
+     pixman_image_unref(dc->col.pixman_color_image);
+# endif
+#endif
+   evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
+   evas_common_draw_context_cutouts_real_free(dc->cache.rects);
+   free(dc);
+}
+
+static void
+_evas_common_draw_context_stash(RGBA_Draw_Context *dc)
+{
+   if (_ctxt_spares_count < 8)
+     {
+#ifdef HAVE_PIXMAN
+# if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
+        if (dc->col.pixman_color_image)
+          {
+             pixman_image_unref(dc->col.pixman_color_image);
+             dc->col.pixman_color_image = NULL;
+          }
+# endif
+#endif
+        evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
+        evas_common_draw_context_cutouts_real_free(dc->cache.rects);
+        SLKL(_ctx_spares_lock);
+        _ctxt_spares = eina_list_prepend(_ctxt_spares, dc);
+        _ctxt_spares_count++;
+        SLKU(_ctx_spares_lock);
+        return;
+     }
+   _evas_common_draw_context_real_free(dc);
+}
+
+static RGBA_Draw_Context *
+_evas_common_draw_context_find(void)
+{
+   RGBA_Draw_Context *dc;
+
+   if (_ctxt_spares)
+     {
+        SLKL(_ctx_spares_lock);
+        dc = _ctxt_spares->data;
+        _ctxt_spares = eina_list_remove_list(_ctxt_spares, _ctxt_spares);
+        _ctxt_spares_count--;
+        SLKU(_ctx_spares_lock);
+        return dc;
+     }
+   dc = malloc(sizeof(RGBA_Draw_Context));
+   return dc;
+}
 
 EAPI void
 evas_common_init(void)
 {
-   if (_init_count++) return ;
+   if (_init_count++) return;
 
+   SLKI(_ctx_spares_lock);
    evas_common_cpu_init();
 
    evas_common_blend_init();
@@ -83,13 +145,20 @@ evas_common_init(void)
 EAPI void
 evas_common_shutdown(void)
 {
-   if (--_init_count) return ;
+   if (--_init_count) return;
 
    evas_font_dir_cache_free();
    evas_common_font_shutdown();
    evas_common_image_shutdown();
    evas_common_image_cache_free();
    evas_common_scale_sample_shutdown();
+// just in case any thread is still doing things... don't del this here
+//   RGBA_Draw_Context *dc;
+//   SLKL(_ctx_spares_lock);
+//   EINA_LIST_FREE(_ctxt_spares, dc) _evas_common_draw_context_real_free(dc);
+//   _ctxt_spares_count = 0;
+//   SLKU(_ctx_spares_lock);
+//   SLKD(_ctx_spares_lock);
 }
 
 EAPI void
@@ -101,31 +170,27 @@ EAPI RGBA_Draw_Context *
 evas_common_draw_context_new(void)
 {
    RGBA_Draw_Context *dc;
-
-   dc = calloc(1, sizeof(RGBA_Draw_Context));
-   dc->sli.h = 1;
+   dc = _evas_common_draw_context_find();
+   if (!dc) return NULL;
+   memset(dc, 0, sizeof(RGBA_Draw_Context));
    return dc;
 }
 
 EAPI RGBA_Draw_Context *
 evas_common_draw_context_dup(RGBA_Draw_Context *dc)
 {
-   RGBA_Draw_Context *dc2;
+   RGBA_Draw_Context *dc2 = _evas_common_draw_context_find();
 
-   if (!dc) return evas_common_draw_context_new();
-   dc2 = malloc(sizeof(RGBA_Draw_Context));
+   if (!dc) return dc2;
    memcpy(dc2, dc, sizeof(RGBA_Draw_Context));
    evas_common_draw_context_cutouts_dup(&dc2->cutout, &dc->cutout);
 #ifdef HAVE_PIXMAN
-#if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
-   if (dc2->col.pixman_color_image)
-     pixman_image_ref(dc2->col.pixman_color_image);
+# if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
+   dc2->col.pixman_color_image = NULL;
+# endif
 #endif
-#endif
-
    dc2->cache.rects = NULL;
    dc2->cache.used = 0;
-
    return dc2;
 }
 
@@ -133,20 +198,7 @@ EAPI void
 evas_common_draw_context_free(RGBA_Draw_Context *dc)
 {
    if (!dc) return;
-
-#ifdef HAVE_PIXMAN
-#if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
-   if (dc->col.pixman_color_image)
-     {
-        pixman_image_unref(dc->col.pixman_color_image);
-        dc->col.pixman_color_image = NULL;
-     }
-#endif
-#endif
-
-   evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
-   evas_common_draw_context_cutouts_real_free(dc->cache.rects);
-   free(dc);
+   _evas_common_draw_context_stash(dc);
 }
 
 EAPI void
@@ -813,11 +865,4 @@ EAPI void
 evas_common_draw_context_set_render_op(RGBA_Draw_Context *dc , int op)
 {
    dc->render_op = op;
-}
-
-EAPI void
-evas_common_draw_context_set_sli(RGBA_Draw_Context *dc, int y, int h)
-{
-   dc->sli.y = y;
-   dc->sli.h = h;
 }

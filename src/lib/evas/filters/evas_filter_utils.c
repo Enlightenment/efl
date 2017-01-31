@@ -48,7 +48,6 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
 
    // Basic draw context
    memset(&dc, 0, sizeof(dc));
-   dc.sli.h = 1;
    dc.render_op = EVAS_RENDER_COPY;
 
    // Do the scale

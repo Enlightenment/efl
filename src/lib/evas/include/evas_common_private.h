@@ -744,32 +744,6 @@ struct _Evas_Common_Transform
 struct _RGBA_Draw_Context
 {
    struct {
-      Eina_Bool use : 1;
-      DATA32 col;
-   } mul;
-   struct {
-#ifdef HAVE_PIXMAN
-   pixman_image_t  *pixman_color_image;
-#endif
-      DATA32 col;
-   } col;
-   struct RGBA_Draw_Context_clip {
-      int    x, y, w, h;
-      Evas_Public_Data *evas; // for async unref
-      void  *mask; // RGBA_Image (SW) or Evas_GL_Image (GL)
-      int    mask_x, mask_y;
-      Eina_Bool use : 1;
-      Eina_Bool async : 1;
-   } clip;
-   Cutout_Rects cutout;
-   struct {
-      int x, y, w, h;
-   } cutout_target;
-   struct {
-      Cutout_Rects *rects;
-      int used;
-   } cache;
-   struct {
       struct {
          void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg);
          void  (*gl_free) (void *ext_dat);
@@ -781,13 +755,36 @@ struct _RGBA_Draw_Context
       void *data;
    } font_ext;
    struct {
-      int color_space;
-   } interpolation;
+      int x, y, w, h;
+   } cutout_target;
+   struct RGBA_Draw_Context_clip {
+      Evas_Public_Data *evas; // for async unref
+      void  *mask; // RGBA_Image (SW) or Evas_GL_Image (GL)
+      int    x, y, w, h;
+      int    mask_x, mask_y;
+      Eina_Bool use : 1;
+      Eina_Bool async : 1;
+   } clip;
    struct {
-      int y, h;
-   } sli;
-   int            render_op;
-   Eina_Bool anti_alias : 1;
+#ifdef HAVE_PIXMAN
+      pixman_image_t  *pixman_color_image;
+#endif
+      DATA32 col;
+   } col;
+   Cutout_Rects cutout;
+   struct {
+      DATA32    col;
+      Eina_Bool use : 1;
+   } mul;
+   struct {
+      Cutout_Rects *rects;
+      unsigned int  used;
+   } cache;
+   struct {
+      unsigned char color_space;
+   } interpolation;
+   unsigned char render_op;
+   unsigned char anti_alias : 1;
 };
 
 #ifdef BUILD_PIPE_RENDER

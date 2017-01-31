@@ -47,7 +47,6 @@ cserve2_rgba_image_scale_do(void *src_data, int src_full_w, int src_full_h,
    dst.flags = RGBA_IMAGE_NOTHING;
 
    memset(&ct, 0, sizeof(ct));
-   ct.sli.h = 1;
    ct.render_op = _EVAS_RENDER_COPY;
 
    if (smooth)
