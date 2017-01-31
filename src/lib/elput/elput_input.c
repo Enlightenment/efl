@@ -176,6 +176,13 @@ _device_add(Elput_Manager *em, struct libinput_device *dev)
    edev = _evdev_device_create(eseat, dev);
    if (!edev) return;
 
+   if (edev->caps & EVDEV_SEAT_KEYBOARD)
+     DBG("\tDevice added as Keyboard device");
+   if (edev->caps & EVDEV_SEAT_POINTER)
+     DBG("\tDevice added as Pointer device");
+   if (edev->caps & EVDEV_SEAT_TOUCH)
+     DBG("\tDevice added as Touch device");
+
    oname = libinput_device_get_output_name(dev);
    eina_stringshare_replace(&edev->output_name, oname);
 
