@@ -84,6 +84,13 @@ typedef enum _Elput_Device_Change_Type
    ELPUT_DEVICE_REMOVED,
 } Elput_Device_Change_Type;
 
+typedef enum _Elput_Device_Capability
+{
+   ELPUT_SEAT_POINTER = (1 << 0),
+   ELPUT_SEAT_KEYBOARD = (1 << 1),
+   ELPUT_SEAT_TOUCH = (1 << 2)
+} Elput_Device_Capability;
+
 /* structure to represent event for device being added or removed */
 typedef struct _Elput_Event_Device_Change
 {
@@ -427,6 +434,18 @@ EAPI void elput_input_keyboard_cached_keymap_set(Elput_Manager *manager, void *k
  * @since 1.18
  */
 EAPI Eina_Stringshare *elput_input_device_output_name_get(Elput_Device *device);
+
+/**
+ * Return the capabilities of a given device
+ *
+ * @param device
+ *
+ * @return integer representing device capabilities or 0 on failure
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.19
+ */
+EAPI Elput_Device_Capability elput_input_device_capabilities_get(Elput_Device *device);
 
 /**
  * Set the pointer acceleration profile

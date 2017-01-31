@@ -1264,25 +1264,25 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
        (libinput_device_keyboard_has_key(device, KEY_ENTER)))
      {
         _keyboard_init(seat, seat->manager->cached.keymap);
-        edev->caps |= EVDEV_SEAT_KEYBOARD;
+        edev->caps |= ELPUT_SEAT_KEYBOARD;
      }
  
    if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER) &&
        (libinput_device_pointer_has_button(device, BTN_LEFT))))
      {
         _pointer_init(seat);
-        edev->caps |= EVDEV_SEAT_POINTER;
+        edev->caps |= ELPUT_SEAT_POINTER;
      }
 
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TOUCH))
      {
         _touch_init(seat);
-        edev->caps |= EVDEV_SEAT_TOUCH;
+        edev->caps |= ELPUT_SEAT_TOUCH;
      }
 
-   if (!((edev->caps & EVDEV_SEAT_KEYBOARD) ||
-         (edev->caps & EVDEV_SEAT_POINTER) ||
-         (edev->caps & EVDEV_SEAT_TOUCH)))
+   if (!((edev->caps & ELPUT_SEAT_KEYBOARD) ||
+         (edev->caps & ELPUT_SEAT_POINTER) ||
+         (edev->caps & ELPUT_SEAT_TOUCH)))
      goto err;
 
    libinput_device_set_user_data(device, edev);
@@ -1313,11 +1313,11 @@ _evdev_device_destroy(Elput_Device *edev)
 {
    if (!edev) return;
 
-   if (edev->caps & EVDEV_SEAT_POINTER)
+   if (edev->caps & ELPUT_SEAT_POINTER)
      _pointer_release(edev->seat);
-   if (edev->caps & EVDEV_SEAT_KEYBOARD)
+   if (edev->caps & ELPUT_SEAT_KEYBOARD)
      _keyboard_release(edev->seat);
-   if (edev->caps & EVDEV_SEAT_TOUCH)
+   if (edev->caps & ELPUT_SEAT_TOUCH)
      _touch_release(edev->seat);
 
    libinput_device_unref(edev->device);
