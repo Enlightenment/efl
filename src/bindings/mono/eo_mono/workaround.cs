@@ -162,3 +162,37 @@ public struct Efl_Font_Size {
     }
 }
 
+namespace eina {
+
+public struct Rectangle {
+    public int x;
+    public int y;
+    public int w;
+    public int h;
+}
+
+}
+
+namespace efl {
+
+namespace loop {
+public struct Arguments {
+    public IntPtr argv; // FIXME It's an array underneath. Needs complex types support
+    [MarshalAsAttribute(UnmanagedType.U1)] public bool initialization;
+}
+}
+
+namespace model {
+public struct Property_Event {
+    public IntPtr changed_properties; // Array
+    public IntPtr invalidated_properties; // Array
+}
+}
+
+namespace kw_event {
+public struct Animator_Tick {
+    public eina.Rectangle update_area;
+}
+}
+
+}
