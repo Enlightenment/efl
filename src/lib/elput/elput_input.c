@@ -176,17 +176,18 @@ _device_add(Elput_Manager *em, struct libinput_device *dev)
    edev = _evdev_device_create(eseat, dev);
    if (!edev) return;
 
+   oname = libinput_device_get_output_name(dev);
+   eina_stringshare_replace(&edev->output_name, oname);
+
+   eseat->devices = eina_list_append(eseat->devices, edev);
+
+   DBG("Input Device Added: %s", libinput_device_get_name(dev));
    if (edev->caps & EVDEV_SEAT_KEYBOARD)
      DBG("\tDevice added as Keyboard device");
    if (edev->caps & EVDEV_SEAT_POINTER)
      DBG("\tDevice added as Pointer device");
    if (edev->caps & EVDEV_SEAT_TOUCH)
      DBG("\tDevice added as Touch device");
-
-   oname = libinput_device_get_output_name(dev);
-   eina_stringshare_replace(&edev->output_name, oname);
-
-   eseat->devices = eina_list_append(eseat->devices, edev);
 
    _device_event_send(edev, ELPUT_DEVICE_ADDED);
 }
@@ -198,6 +199,8 @@ _device_remove(Elput_Manager *em EINA_UNUSED, struct libinput_device *device)
 
    edev = libinput_device_get_user_data(device);
    if (!edev) return;
+
+   DBG("Input Device Removed: %s", libinput_device_get_name(device));
 
    _device_event_send(edev, ELPUT_DEVICE_REMOVED);
 }
@@ -217,11 +220,9 @@ _udev_process_event(struct libinput_event *event)
    switch (libinput_event_get_type(event))
      {
       case LIBINPUT_EVENT_DEVICE_ADDED:
-        DBG("Input Device Added: %s", libinput_device_get_name(dev));
         _device_add(em, dev);
         break;
       case LIBINPUT_EVENT_DEVICE_REMOVED:
-        DBG("Input Device Removed: %s", libinput_device_get_name(dev));
         _device_remove(em, dev);
         break;
       default:
