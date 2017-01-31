@@ -1239,6 +1239,7 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
 
    edev->seat = seat;
    edev->device = device;
+   edev->caps = 0;
 
    if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_KEYBOARD)) &&
        (libinput_device_keyboard_has_key(device, KEY_ENTER)))
@@ -1260,6 +1261,11 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
         edev->caps |= EVDEV_SEAT_TOUCH;
      }
 
+   if (!((edev->caps & EVDEV_SEAT_KEYBOARD) ||
+         (edev->caps & EVDEV_SEAT_POINTER) ||
+         (edev->caps & EVDEV_SEAT_TOUCH)))
+     goto err;
+
    libinput_device_set_user_data(device, edev);
    libinput_device_ref(edev->device);
 
@@ -1277,6 +1283,10 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
     * elput would handle outputs, and make calls to calibrate */
 
    return edev;
+
+err:
+   free(edev);
+   return NULL;
 }
 
 void
