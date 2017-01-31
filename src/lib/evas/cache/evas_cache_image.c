@@ -462,13 +462,6 @@ _evas_cache_image_async_cancel(void *data)
         _evas_cache_image_entry_delete(ie->cache, ie);
         return;
      }
-   if (ie->flags.loaded) _evas_cache_image_async_end(ie);
-   if (ie->references == 0)
-     {
-        _evas_cache_image_lru_add(ie);
-        cache = ie->cache;
-     }
-   if (cache) evas_cache_image_flush(cache);
    SLKL(ie->lock_task);
    if (ie->targets)
      {
@@ -483,6 +476,13 @@ _evas_cache_image_async_cancel(void *data)
                                               ie);
      }
    SLKU(ie->lock_task);
+   if (ie->references == 0)
+     {
+        _evas_cache_image_lru_add(ie);
+        cache = ie->cache;
+     }
+   if (ie->flags.loaded) _evas_cache_image_async_end(ie);
+   if (cache) evas_cache_image_flush(cache);
 }
 
 // note - preload_add assumes a target is ONLY added ONCE to the image
