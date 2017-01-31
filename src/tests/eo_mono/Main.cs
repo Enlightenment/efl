@@ -41,6 +41,13 @@ namespace TestSuite {
 
 class Core
 {
+    private class Derived : test.TestingInherit
+    {
+    }
+
+    //
+    // Test cases:
+    //
     public static void return_same_object()
     {
         test.Testing testing = new test.TestingConcrete();
@@ -74,6 +81,35 @@ class Core
        bool delEventCalled = false;
        {
            test.Testing obj = new test.TestingConcrete();
+           obj.DEL += (object sender, EventArgs e) => { delEventCalled = true; };
+           ((IDisposable)obj).Dispose();
+       }
+
+       Test.Assert(delEventCalled, "DEL event not called");
+    }
+
+    public static void derived_destructor_really_frees()
+    {
+       bool delEventCalled = false;
+       {
+           test.Testing obj = new Derived();
+           obj.DEL += (object sender, EventArgs e) => { delEventCalled = true; };
+       }
+
+       System.GC.WaitForPendingFinalizers();
+       System.GC.Collect();
+       System.GC.WaitForPendingFinalizers();
+       System.GC.Collect();
+       System.GC.WaitForPendingFinalizers();
+
+       Test.Assert(delEventCalled, "DEL event not called");
+    }
+
+    public static void derived_dispose_really_frees()
+    {
+       bool delEventCalled = false;
+       {
+           test.Testing obj = new Derived();
            obj.DEL += (object sender, EventArgs e) => { delEventCalled = true; };
            ((IDisposable)obj).Dispose();
        }

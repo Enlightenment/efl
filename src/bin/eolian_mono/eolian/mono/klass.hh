@@ -175,9 +175,10 @@ struct klass
        {
          if(!as_generator
             (
-             "public " << class_type << " " << string << "Inherit : " << string << "\n{\n"
+             "public " << class_type << " " << string << "Inherit : " << string << ", IDisposable\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
-             << scope_tab << "public static System.IntPtr klass;\n"
+             << scope_tab << "public static System.IntPtr klass = System.IntPtr.Zero;\n"
+             << scope_tab << "private static readonly object klassAllocLock = new object();\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
              << scope_tab << "}\n"
@@ -189,14 +190,41 @@ struct klass
              << scope_tab << scope_tab << class_get_name << "();\n"
              << scope_tab << "public " << string << "Inherit(efl.Object parent = null, System.Type interface1 = null)\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer), " << class_get_name << "());\n"
-             //<< scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(null/*new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer)*/, " << class_get_name << "());\n"             
+             << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer), " << class_get_name << "());\n"
+             //<< scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(null/*new efl.eo.Globals.class_initializer(" << string << "NativeInherit.class_initializer)*/, " << class_get_name << "());\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
+             << scope_tab << scope_tab << scope_tab << "}\n"
+             << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = efl.eo.Globals.instantiate(klass, parent);\n"
              << scope_tab << scope_tab << "efl.eo.Globals.data_set(this);\n"
              << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << "}\n"
+             << scope_tab << "~" << string << "Inherit()\n"
+             << scope_tab << "{\n"
+             << scope_tab << scope_tab << "Dispose(false);\n"
+             << scope_tab << "}\n"
+             << scope_tab << "protected virtual void Dispose(bool disposing)\n"
+             << scope_tab << "{\n"
+             << scope_tab << scope_tab << "if (handle != System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << scope_tab << "efl.eo.Globals.efl_unref(handle);\n"
+             << scope_tab << scope_tab << scope_tab << "handle = System.IntPtr.Zero;\n"
+             << scope_tab << scope_tab << "}\n"
+             << scope_tab << "}\n"
+             << scope_tab << "public void Dispose()\n"
+             << scope_tab << "{\n"
+             << scope_tab << scope_tab << "Dispose(true);\n"
+             << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
+             << scope_tab << "}\n"
             )
-            .generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name), context))
+            .generate(sink
+              , std::make_tuple(
+                cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
+                , cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
+                , cls.cxx_name)
+              , context))
            return false;
 
          if (!generate_events(sink, cls, context))
