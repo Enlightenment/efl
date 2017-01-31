@@ -19,11 +19,40 @@
 #include "grammar/integral.hpp"
 #include "grammar/case.hpp"
 #include "using_decl.hh"
+#include "utils.hh"
 
 #include <string>
 #include <algorithm>
 
 namespace eolian_mono {
+
+struct get_csharp_type_visitor
+{
+    typedef get_csharp_type_visitor visitor_type;
+    typedef std::string result_type;
+    std::string operator()(grammar::attributes::regular_type_def const& type) const
+    {
+        std::stringstream csharp_name;
+        for (auto&& i  : escape_namespace(type.namespaces))
+           csharp_name << utils::to_lowercase(i) << ".";
+        csharp_name << type.base_type;
+
+        return csharp_name.str();
+    }
+    std::string operator()(grammar::attributes::klass_name const& name) const
+    {
+        std::stringstream csharp_name;
+        for (auto&& i  : escape_namespace(name.namespaces))
+           csharp_name << utils::to_lowercase(i) << ".";
+        csharp_name << name.eolian_name;
+
+        return csharp_name.str();
+    }
+    std::string operator()(attributes::complex_type_def const& complex) const
+    {
+        return "UNSUPPORTED";
+    }
+};
 
 struct klass
 {
@@ -51,6 +80,24 @@ struct klass
      std::vector<std::string> namespaces = escape_namespace(cls.namespaces);
      auto open_namespace = *("namespace " << string << " { ") << "\n";
      if(!as_generator(open_namespace).generate(sink, namespaces, add_lower_case_context(context))) return false;
+
+     // FIXME Generate local event argument wrappers
+     for (auto&& e : cls.events)
+       {
+          efl::eina::optional<grammar::attributes::type_def> etype = e.type;
+          if (!etype.is_engaged())
+            continue;
+
+          std::string evt_name = utils::to_uppercase(e.name);
+          std::replace(evt_name.begin(), evt_name.end(), ',', '_');
+          std::string arg_type = (*etype).original_type.visit(get_csharp_type_visitor{});
+
+
+          if (!as_generator("public class " << evt_name << "_Args : EventArgs {\n"
+                      << scope_tab << "public " << arg_type << " arg { get; set; }\n"
+                      << "}\n").generate(sink, NULL, context))
+              return false;
+       }
 
      // Interface class
      if(!as_generator
