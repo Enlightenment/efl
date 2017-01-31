@@ -373,13 +373,6 @@ struct klass
      return true;
    }
 
-   // Helper method to avoid multipler as_generator calls when mixing case strings
-   static std::string to_uppercase(std::string s)
-   {
-       std::transform(s.begin(), s.end(), s.begin(), ::toupper);
-       return s;
-   }
-
    static std::string translate_inherited_event_name(const attributes::event_def &evt, const attributes::klass_def &klass)
    {
        std::stringstream s;
@@ -389,7 +382,7 @@ struct klass
             s << n;
             s << '_';
          }
-       std::string evt_name = to_uppercase(evt.name);
+       std::string evt_name = utils::to_uppercase(evt.name);
        std::replace(evt_name.begin(), evt_name.end(), ',', '_');
        s << klass.cxx_name << '_' << evt_name;
        return s.str();
@@ -449,9 +442,9 @@ struct klass
      // Self events
      for (auto&& e : cls.events)
        {
-           std::string upper_name = to_uppercase(e.name);
+           std::string upper_name = utils::to_uppercase(e.name);
            std::replace(upper_name.begin(), upper_name.end(), ',', '_');
-           std::string upper_c_name = to_uppercase(e.c_name);
+           std::string upper_c_name = utils::to_uppercase(e.c_name);
            std::string event_name = e.name;
            std::replace(event_name.begin(), event_name.end(), ',', '_');
 
@@ -509,9 +502,9 @@ struct klass
             {
 
                std::string wrapper_evt_name = translate_inherited_event_name(e, klass);
-               std::string upper_name = to_uppercase(e.name);
+               std::string upper_name = utils::to_uppercase(e.name);
                std::replace(upper_name.begin(), upper_name.end(), ',', '_');
-               std::string upper_c_name = to_uppercase(e.c_name);
+               std::string upper_c_name = utils::to_uppercase(e.c_name);
 
                if (!as_generator(
                      scope_tab << "protected event EventHandler " << wrapper_evt_name << ";\n"
