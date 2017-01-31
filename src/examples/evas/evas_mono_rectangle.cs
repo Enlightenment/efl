@@ -10,6 +10,7 @@ class TestMain
 
     static void Main(string[] args)
     {
+        eina.Log.Init();
         efl_object_init();
         ecore_init();
         evas_init();
