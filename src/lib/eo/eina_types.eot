@@ -59,3 +59,5 @@ struct @extern Eina.Rw_Slice {
     len: size; [[Length of the memory segment]]
     mem: void_ptr; [[Pointer to memory segment]]
 }
+
+struct @extern Eina.Value.Type;

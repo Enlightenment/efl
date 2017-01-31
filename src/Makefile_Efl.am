@@ -43,6 +43,10 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_vpath_file_core.eo \
       lib/efl/interfaces/efl_ui_spin.eo \
       lib/efl/interfaces/efl_ui_progress.eo \
+      lib/efl/interfaces/efl_ui_view.eo \
+      lib/efl/interfaces/efl_ui_model_connect.eo \
+      lib/efl/interfaces/efl_ui_factory.eo \
+      lib/efl/interfaces/efl_ui_model_factory_connect.eo \
       lib/efl/interfaces/efl_screen.eo \
       lib/efl/interfaces/efl_io_closer.eo \
       lib/efl/interfaces/efl_io_positioner.eo \
@@ -170,4 +174,34 @@ bin/efl/efl_debug_common.h
 bin_efl_efl_debug_CPPFLAGS = -I$(top_builddir)/src/bin/efl @EINA_CFLAGS@ @ECORE_CFLAGS@ @ECORE_CON_CFLAGS@
 bin_efl_efl_debug_LDADD = @EFL_LIBS@ @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
 bin_efl_efl_debug_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
+
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/efl/efl_suite
+TESTS += tests/efl/efl_suite
+
+tests_efl_efl_suite_SOURCES = \
+tests/efl/efl_suite.c \
+tests/efl/efl_test_model_container.c \
+tests/efl/efl_suite.h
+
+tests_efl_efl_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/efl\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efl\" \
+@CHECK_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@EFL_CFLAGS@
+
+
+tests_efl_efl_suite_LDADD = @CHECK_LIBS@ \
+@EFL_LIBS@ \
+@USE_EFL_LIBS@ \
+@USE_ECORE_LIBS@ -lecore
+
+tests_efl_efl_suite_DEPENDENCIES = \
+@USE_EFL_INTERNAL_LIBS@ \
+@USE_ECORE_INTERNAL_LIBS@
+
+endif
 
