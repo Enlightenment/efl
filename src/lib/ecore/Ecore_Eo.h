@@ -116,6 +116,20 @@ EAPI Efl_Future *efl_future_iterator_race(Eina_Iterator *it);
  * @}
  */
 
+/**
+ * @ingroup Ecore_Model_Group
+ *
+ * @{
+ */
+
+#include "efl_model_item.eo.h"
+#include "efl_model_container.eo.h"
+#include "efl_model_container_item.eo.h"
+
+/**
+ * @}
+ */
+
 
 #ifdef __cplusplus
 }

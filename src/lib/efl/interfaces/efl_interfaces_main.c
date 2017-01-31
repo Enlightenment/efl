@@ -55,6 +55,10 @@ EAPI const Efl_Event_Description _EFL_GFX_PATH_CHANGED =
 #include "interfaces/efl_ui_progress.eo.c"
 #include "interfaces/efl_ui_menu.eo.c"
 #include "interfaces/efl_ui_item.eo.c"
+#include "interfaces/efl_ui_view.eo.c"
+#include "interfaces/efl_ui_model_connect.eo.c"
+#include "interfaces/efl_ui_factory.eo.c"
+#include "interfaces/efl_ui_model_factory_connect.eo.c"
 
 EAPI void
 __efl_internal_init(void)

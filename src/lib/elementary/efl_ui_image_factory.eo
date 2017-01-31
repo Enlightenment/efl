@@ -1,0 +1,10 @@
+class Efl.Ui.Image.Factory (Efl.Object, Efl.Ui.Factory)
+{
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Ui.Factory.create;
+      Efl.Ui.Factory.release;
+      Efl.Ui.Model.Connect.connect;
+   }
+}

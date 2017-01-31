@@ -26,6 +26,9 @@ ecore_eolian_files_public = \
 ecore_eolian_files = \
 	$(ecore_eolian_files_public) \
 	lib/ecore/efl_promise.eo \
+	lib/ecore/efl_model_item.eo \
+	lib/ecore/efl_model_container.eo \
+	lib/ecore/efl_model_container_item.eo \
 	$(ecore_eolian_files_legacy)
 
 ecore_eolian_type_files = \
@@ -86,6 +89,10 @@ lib/ecore/efl_io_file.c \
 lib/ecore/efl_io_copier.c \
 lib/ecore/efl_io_buffered_stream.c \
 lib/ecore/efl_promise.c \
+lib/ecore/efl_model_item.c \
+lib/ecore/efl_model_container.c \
+lib/ecore/efl_model_container_item.c \
+lib/ecore/efl_model_container_private.h \
 lib/ecore/ecore_pipe.c \
 lib/ecore/ecore_poller.c \
 lib/ecore/ecore_time.c \
