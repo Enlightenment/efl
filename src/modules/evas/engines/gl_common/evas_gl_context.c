@@ -9,7 +9,6 @@
 
 #define PRG_INVALID NULL
 #define GLPIPES 1
-#define FREE(a) do { if (a) { free(a); } a = NULL; } while(0)
 
 static int tbm_sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
@@ -1097,6 +1096,233 @@ error:
    return NULL;
 }
 
+#define VERTEX_CNT 3
+#define COLOR_CNT  4
+#define TEX_CNT    2
+#define SAM_CNT    2
+#define MASK_CNT   4
+
+#define PUSH_VERTEX(n, x, y, z) do { \
+   gc->pipe[n].array.vertex[nv++] = x; \
+   gc->pipe[n].array.vertex[nv++] = y; \
+   gc->pipe[n].array.vertex[nv++] = z; } while(0)
+#define PUSH_COLOR(n, r, g, b, a) do { \
+   gc->pipe[n].array.color[nc++] = r; \
+   gc->pipe[n].array.color[nc++] = g; \
+   gc->pipe[n].array.color[nc++] = b; \
+   gc->pipe[n].array.color[nc++] = a; } while(0)
+#define PUSH_TEXUV(n, u, v) do { \
+   gc->pipe[n].array.texuv[nu++] = u; \
+   gc->pipe[n].array.texuv[nu++] = v; } while(0)
+#define PUSH_TEXUV2(n, u, v) do { \
+   gc->pipe[n].array.texuv2[nu2++] = u; \
+   gc->pipe[n].array.texuv2[nu2++] = v; } while(0)
+#define PUSH_TEXUV3(n, u, v) do { \
+   gc->pipe[n].array.texuv3[nu3++] = u; \
+   gc->pipe[n].array.texuv3[nu3++] = v; } while(0)
+#define PUSH_TEXA(n, u, v) do { \
+   gc->pipe[n].array.texa[na++] = u; \
+   gc->pipe[n].array.texa[na++] = v; } while(0)
+#define PUSH_TEXM(n, u, v, w, z) do { \
+   gc->pipe[n].array.mask[nm++] = u; \
+   gc->pipe[n].array.mask[nm++] = v; \
+   gc->pipe[n].array.mask[nm++] = w; \
+   gc->pipe[n].array.mask[nm++] = z; } while(0)
+#define PUSH_TEXSAM(n, x, y) do { \
+   gc->pipe[n].array.texsam[ns++] = x; \
+   gc->pipe[n].array.texsam[ns++] = y; } while(0)
+
+#define PUSH_6_VERTICES(pn, x, y, w, h) do { \
+   PUSH_VERTEX(pn, x    , y    , 0); PUSH_VERTEX(pn, x + w, y    , 0); \
+   PUSH_VERTEX(pn, x    , y + h, 0); PUSH_VERTEX(pn, x + w, y    , 0); \
+   PUSH_VERTEX(pn, x + w, y + h, 0); PUSH_VERTEX(pn, x    , y + h, 0); \
+   } while (0)
+#define PUSH_6_QUAD(pn, x1, y1, x2, y2, x3, y3, x4, y4)                 \
+  PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x4, y4);\
+  PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x3, y3); PUSH_TEXUV(pn, x4, y4);
+
+#define PUSH_6_TEXUV(pn, x1, y1, x2, y2)                \
+  PUSH_6_QUAD(pn, x1, y1, x2, y1, x2, y2, x1, y2);
+
+#define PUSH_6_TEXUV2(pn, x1, y1, x2, y2) do { \
+   PUSH_TEXUV2(pn, x1, y1); PUSH_TEXUV2(pn, x2, y1); PUSH_TEXUV2(pn, x1, y2); \
+   PUSH_TEXUV2(pn, x2, y1); PUSH_TEXUV2(pn, x2, y2); PUSH_TEXUV2(pn, x1, y2); \
+   } while (0)
+#define PUSH_6_TEXUV3(pn, x1, y1, x2, y2) do { \
+   PUSH_TEXUV3(pn, x1, y1); PUSH_TEXUV3(pn, x2, y1); PUSH_TEXUV3(pn, x1, y2); \
+   PUSH_TEXUV3(pn, x2, y1); PUSH_TEXUV3(pn, x2, y2); PUSH_TEXUV3(pn, x1, y2); \
+   } while (0)
+#define PUSH_6_TEXA(pn, x1, y1, x2, y2) do { \
+   PUSH_TEXA(pn, x1, y1); PUSH_TEXA(pn, x2, y1); PUSH_TEXA(pn, x1, y2); \
+   PUSH_TEXA(pn, x2, y1); PUSH_TEXA(pn, x2, y2); PUSH_TEXA(pn, x1, y2); \
+   } while (0)
+#define PUSH_SAMPLES(pn, dx, dy) do { \
+   PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); \
+   PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); \
+   } while (0)
+#define PUSH_MASKSAM(pn, x, y, cnt) do { int _i; for (_i = 0; _i < cnt; _i++) { \
+   gc->pipe[pn].array.masksam[nms++] = x; gc->pipe[pn].array.masksam[nms++] = y; \
+   } } while (0)
+#define PUSH_6_COLORS(pn, r, g, b, a) \
+   do { int i; for (i = 0; i < 6; i++) PUSH_COLOR(pn, r, g, b, a); } while(0)
+
+#define PIPE_GROW(gc, pn, inc) \
+   int nv = gc->pipe[pn].array.num * VERTEX_CNT; (void) nv; \
+   int nc = gc->pipe[pn].array.num * COLOR_CNT; (void) nc; \
+   int nu = gc->pipe[pn].array.num * TEX_CNT; (void) nu; \
+   int nu2 = gc->pipe[pn].array.num * TEX_CNT; (void) nu2; \
+   int nu3 = gc->pipe[pn].array.num * TEX_CNT; (void) nu3; \
+   int na = gc->pipe[pn].array.num * TEX_CNT; (void) na; \
+   int ns = gc->pipe[pn].array.num * SAM_CNT; (void) ns; \
+   int nm = gc->pipe[pn].array.num * MASK_CNT; (void) nm; \
+   int nms = gc->pipe[pn].array.num * SAM_CNT; (void) nms; \
+   gc->pipe[pn].array.num += inc; \
+   array_alloc(gc, pn);
+
+#define PIPE_FREE(x) \
+   do { _pipebuf_free(x); (x) = NULL; } while (0)
+
+typedef struct _Pipebuf
+{
+   int skipped, alloc;
+} Pipebuf;
+
+static int        _pipe_bufs_max = 0;
+static int        _pipe_bufs_skipped = 0;
+static Eina_List *_pipe_bufs = NULL;
+
+/*
+static int _used = 0, _alloced = 0, _realloced = 0;
+static int _searches = 0, _looks = 0;
+*/
+
+static void *
+_pipebuf_resize(void *pb, int size)
+{
+   Pipebuf *buf, *buf2;
+   Eina_List *l, *ll;
+
+   if (size > _pipe_bufs_max) _pipe_bufs_max = size;
+
+   if (!pb)
+     {
+        if (_pipe_bufs)
+          {
+//             _searches++;
+             EINA_LIST_FOREACH(_pipe_bufs, l, buf)
+               {
+//                  _looks++;
+                  if (buf->alloc >= size) break;
+                  buf->skipped++;
+                  _pipe_bufs_skipped++;
+               }
+             if (l)
+               {
+//                  _used++;
+                  _pipe_bufs = eina_list_remove_list(_pipe_bufs, l);
+                  _pipe_bufs_skipped -= buf->skipped;
+                  buf->skipped = 0;
+                  goto done;
+               }
+          }
+        buf = malloc(size + sizeof(Pipebuf));
+        if (!buf) return NULL;
+        buf->skipped = 0;
+        buf->alloc = size;
+//        _alloced++;
+        goto done;
+     }
+   buf = (Pipebuf *)(((unsigned char *)pb) - sizeof(Pipebuf));
+   if (buf->alloc < size)
+     {
+        buf2 = realloc(buf, size + sizeof(Pipebuf));
+        if (!buf2) return NULL;
+//        _realloced++;
+        buf = buf2;
+        buf->alloc = size;
+     }
+done:
+   if (_pipe_bufs_skipped > 100)
+     {
+        EINA_LIST_REVERSE_FOREACH_SAFE(_pipe_bufs, l, ll, buf2)
+          {
+             if (buf2->skipped > 5)
+               {
+                  _pipe_bufs = eina_list_remove_list(_pipe_bufs, l);
+                  _pipe_bufs_skipped -= buf2->skipped;
+                  free(buf2);
+                  if (_pipe_bufs_skipped == 0) break;
+               }
+          }
+     }
+//   if ((_used + _alloced + _realloced) % 1000 == 0)
+//     printf("MAX=%i/%i skipped=%i searching=%i/%i    -   %i | %i | %i\n",
+//            _pipe_bufs_max, eina_list_count(_pipe_bufs), _pipe_bufs_skipped,
+//            _looks, _searches,
+//            _used, _alloced, _realloced);
+   return ((unsigned char *)buf) +  sizeof(Pipebuf);
+}
+
+static void
+_pipebuf_free(void *pb)
+{
+   Pipebuf *buf;
+
+   if (!pb) return;
+   buf = (Pipebuf *)(((unsigned char *)pb) - sizeof(Pipebuf));
+   _pipe_bufs_max = (_pipe_bufs_max * 19) / 20;
+   if (buf->alloc > (_pipe_bufs_max * 4))
+     {
+        free(buf);
+        return;
+     }
+   if ((!_pipe_bufs) || (eina_list_count(_pipe_bufs) < 20))
+     {
+        _pipe_bufs = eina_list_prepend(_pipe_bufs, buf);
+        return;
+     }
+   free(buf);
+}
+
+static void
+_pipebuf_clear(void)
+{
+   Pipebuf *buf;
+
+   _pipe_bufs_max = 0;
+   EINA_LIST_FREE(_pipe_bufs, buf)
+     {
+        free(buf);
+     }
+}
+
+static void
+array_alloc(Evas_Engine_GL_Context *gc, int n)
+{
+   gc->havestuff = EINA_TRUE;
+   if (gc->pipe[n].array.num <= gc->pipe[n].array.alloc) return;
+
+   gc->pipe[n].array.alloc += 6 * 256;
+
+#define RALOC(field, type, size) \
+   if (gc->pipe[n].array.use_##field) \
+      gc->pipe[n].array.field = _pipebuf_resize(gc->pipe[n].array.field, \
+                                                gc->pipe[n].array.alloc * sizeof(type) * size)
+
+   RALOC(vertex, GLshort, VERTEX_CNT);
+   RALOC(color,  GLubyte, COLOR_CNT);
+   RALOC(texuv,  GLfloat, TEX_CNT);
+   RALOC(texa,   GLfloat, TEX_CNT);
+   RALOC(texuv2, GLfloat, TEX_CNT);
+   RALOC(texuv3, GLfloat, TEX_CNT);
+   RALOC(texsam, GLfloat, SAM_CNT);
+   RALOC(mask,   GLfloat, MASK_CNT);
+   RALOC(masksam, GLfloat, SAM_CNT);
+
+#undef ALOC
+#undef RALOC
+}
+
 EAPI void
 evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
 {
@@ -1122,15 +1348,15 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
      {
         for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
           {
-             FREE(gc->pipe[i].array.vertex);
-             FREE(gc->pipe[i].array.color);
-             FREE(gc->pipe[i].array.texuv);
-             FREE(gc->pipe[i].array.texuv2);
-             FREE(gc->pipe[i].array.texuv3);
-             FREE(gc->pipe[i].array.texa);
-             FREE(gc->pipe[i].array.texsam);
-             FREE(gc->pipe[i].array.mask);
-             FREE(gc->pipe[i].array.masksam);
+             PIPE_FREE(gc->pipe[i].array.vertex);
+             PIPE_FREE(gc->pipe[i].array.color);
+             PIPE_FREE(gc->pipe[i].array.texuv);
+             PIPE_FREE(gc->pipe[i].array.texuv2);
+             PIPE_FREE(gc->pipe[i].array.texuv3);
+             PIPE_FREE(gc->pipe[i].array.texa);
+             PIPE_FREE(gc->pipe[i].array.texsam);
+             PIPE_FREE(gc->pipe[i].array.mask);
+             PIPE_FREE(gc->pipe[i].array.masksam);
           }
      }
 
@@ -1167,7 +1393,11 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
         free(gc->shared);
         shared = NULL;
      }
-   if (gc == _evas_gl_common_context) _evas_gl_common_context = NULL;
+   if (gc == _evas_gl_common_context)
+     {
+        _pipebuf_clear();
+        _evas_gl_common_context = NULL;
+     }
    free(gc);
    if (_evas_gl_common_cutout_rects)
      {
@@ -1385,76 +1615,6 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
    _evas_gl_common_viewport_set(gc);
 }
 
-#define VERTEX_CNT 3
-#define COLOR_CNT  4
-#define TEX_CNT    2
-#define SAM_CNT    2
-#define MASK_CNT   4
-
-#define PUSH_VERTEX(n, x, y, z) do { \
-   gc->pipe[n].array.vertex[nv++] = x; \
-   gc->pipe[n].array.vertex[nv++] = y; \
-   gc->pipe[n].array.vertex[nv++] = z; } while(0)
-#define PUSH_COLOR(n, r, g, b, a) do { \
-   gc->pipe[n].array.color[nc++] = r; \
-   gc->pipe[n].array.color[nc++] = g; \
-   gc->pipe[n].array.color[nc++] = b; \
-   gc->pipe[n].array.color[nc++] = a; } while(0)
-#define PUSH_TEXUV(n, u, v) do { \
-   gc->pipe[n].array.texuv[nu++] = u; \
-   gc->pipe[n].array.texuv[nu++] = v; } while(0)
-#define PUSH_TEXUV2(n, u, v) do { \
-   gc->pipe[n].array.texuv2[nu2++] = u; \
-   gc->pipe[n].array.texuv2[nu2++] = v; } while(0)
-#define PUSH_TEXUV3(n, u, v) do { \
-   gc->pipe[n].array.texuv3[nu3++] = u; \
-   gc->pipe[n].array.texuv3[nu3++] = v; } while(0)
-#define PUSH_TEXA(n, u, v) do { \
-   gc->pipe[n].array.texa[na++] = u; \
-   gc->pipe[n].array.texa[na++] = v; } while(0)
-#define PUSH_TEXM(n, u, v, w, z) do { \
-   gc->pipe[n].array.mask[nm++] = u; \
-   gc->pipe[n].array.mask[nm++] = v; \
-   gc->pipe[n].array.mask[nm++] = w; \
-   gc->pipe[n].array.mask[nm++] = z; } while(0)
-#define PUSH_TEXSAM(n, x, y) do { \
-   gc->pipe[n].array.texsam[ns++] = x; \
-   gc->pipe[n].array.texsam[ns++] = y; } while(0)
-
-#define PUSH_6_VERTICES(pn, x, y, w, h) do { \
-   PUSH_VERTEX(pn, x    , y    , 0); PUSH_VERTEX(pn, x + w, y    , 0); \
-   PUSH_VERTEX(pn, x    , y + h, 0); PUSH_VERTEX(pn, x + w, y    , 0); \
-   PUSH_VERTEX(pn, x + w, y + h, 0); PUSH_VERTEX(pn, x    , y + h, 0); \
-   } while (0)
-#define PUSH_6_QUAD(pn, x1, y1, x2, y2, x3, y3, x4, y4)                 \
-  PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x4, y4);\
-  PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x3, y3); PUSH_TEXUV(pn, x4, y4);
-
-#define PUSH_6_TEXUV(pn, x1, y1, x2, y2)                \
-  PUSH_6_QUAD(pn, x1, y1, x2, y1, x2, y2, x1, y2);
-
-#define PUSH_6_TEXUV2(pn, x1, y1, x2, y2) do { \
-   PUSH_TEXUV2(pn, x1, y1); PUSH_TEXUV2(pn, x2, y1); PUSH_TEXUV2(pn, x1, y2); \
-   PUSH_TEXUV2(pn, x2, y1); PUSH_TEXUV2(pn, x2, y2); PUSH_TEXUV2(pn, x1, y2); \
-   } while (0)
-#define PUSH_6_TEXUV3(pn, x1, y1, x2, y2) do { \
-   PUSH_TEXUV3(pn, x1, y1); PUSH_TEXUV3(pn, x2, y1); PUSH_TEXUV3(pn, x1, y2); \
-   PUSH_TEXUV3(pn, x2, y1); PUSH_TEXUV3(pn, x2, y2); PUSH_TEXUV3(pn, x1, y2); \
-   } while (0)
-#define PUSH_6_TEXA(pn, x1, y1, x2, y2) do { \
-   PUSH_TEXA(pn, x1, y1); PUSH_TEXA(pn, x2, y1); PUSH_TEXA(pn, x1, y2); \
-   PUSH_TEXA(pn, x2, y1); PUSH_TEXA(pn, x2, y2); PUSH_TEXA(pn, x1, y2); \
-   } while (0)
-#define PUSH_SAMPLES(pn, dx, dy) do { \
-   PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); \
-   PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); \
-   } while (0)
-#define PUSH_MASKSAM(pn, x, y, cnt) do { int _i; for (_i = 0; _i < cnt; _i++) { \
-   gc->pipe[pn].array.masksam[nms++] = x; gc->pipe[pn].array.masksam[nms++] = y; \
-   } } while (0)
-#define PUSH_6_COLORS(pn, r, g, b, a) \
-   do { int i; for (i = 0; i < 6; i++) PUSH_COLOR(pn, r, g, b, a); } while(0)
-
 static inline Eina_Bool
 _push_mask(Evas_Engine_GL_Context *gc, const int pn, int nm, Evas_GL_Texture *mtex,
            int mx, int my, int mw, int mh, Shader_Sampling msam, int nms)
@@ -1514,61 +1674,6 @@ _push_mask(Evas_Engine_GL_Context *gc, const int pn, int nm, Evas_GL_Texture *mt
 #define PUSH_MASK(pn, mtex, mx, my, mw, mh, msam) if (mtex) do { \
    _push_mask(gc, pn, nm, mtex, mx, my, mw, mh, msam, nms); \
    } while(0)
-
-#define PIPE_GROW(gc, pn, inc) \
-   int nv = gc->pipe[pn].array.num * VERTEX_CNT; (void) nv; \
-   int nc = gc->pipe[pn].array.num * COLOR_CNT; (void) nc; \
-   int nu = gc->pipe[pn].array.num * TEX_CNT; (void) nu; \
-   int nu2 = gc->pipe[pn].array.num * TEX_CNT; (void) nu2; \
-   int nu3 = gc->pipe[pn].array.num * TEX_CNT; (void) nu3; \
-   int na = gc->pipe[pn].array.num * TEX_CNT; (void) na; \
-   int ns = gc->pipe[pn].array.num * SAM_CNT; (void) ns; \
-   int nm = gc->pipe[pn].array.num * MASK_CNT; (void) nm; \
-   int nms = gc->pipe[pn].array.num * SAM_CNT; (void) nms; \
-   gc->pipe[pn].array.num += inc; \
-   array_alloc(gc, pn);
-
-static inline void
-array_alloc(Evas_Engine_GL_Context *gc, int n)
-{
-   gc->havestuff = EINA_TRUE;
-   if (gc->pipe[n].array.num <= gc->pipe[n].array.alloc)
-     {
-#define ALOC(field, type, size) \
-        if ((gc->pipe[n].array.use_##field) && (!gc->pipe[n].array.field)) \
-          gc->pipe[n].array.field = malloc(gc->pipe[n].array.alloc * sizeof(type) * size)
-
-        ALOC(vertex, GLshort, VERTEX_CNT);
-        ALOC(color,  GLubyte, COLOR_CNT);
-        ALOC(texuv,  GLfloat, TEX_CNT);
-        ALOC(texa,   GLfloat, TEX_CNT);
-        ALOC(texuv2, GLfloat, TEX_CNT);
-        ALOC(texuv3, GLfloat, TEX_CNT);
-        ALOC(texsam, GLfloat, SAM_CNT);
-        ALOC(mask,   GLfloat, MASK_CNT);
-        ALOC(masksam, GLfloat, SAM_CNT);
-        return;
-     }
-   gc->pipe[n].array.alloc += 6 * 1024;
-
-#define RALOC(field, type, size) \
-   if (gc->pipe[n].array.use_##field) \
-     gc->pipe[n].array.field = realloc(gc->pipe[n].array.field, \
-                                       gc->pipe[n].array.alloc * sizeof(type) * size)
-
-   RALOC(vertex, GLshort, VERTEX_CNT);
-   RALOC(color,  GLubyte, COLOR_CNT);
-   RALOC(texuv,  GLfloat, TEX_CNT);
-   RALOC(texa,   GLfloat, TEX_CNT);
-   RALOC(texuv2, GLfloat, TEX_CNT);
-   RALOC(texuv3, GLfloat, TEX_CNT);
-   RALOC(texsam, GLfloat, SAM_CNT);
-   RALOC(mask,   GLfloat, MASK_CNT);
-   RALOC(masksam, GLfloat, SAM_CNT);
-
-#undef ALOC
-#undef RALOC
-}
 
 #ifdef GLPIPES
 static int
@@ -3689,15 +3794,15 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.use_masksam = 0;
         gc->pipe[i].array.anti_alias = 0;
 
-        FREE(gc->pipe[i].array.vertex);
-        FREE(gc->pipe[i].array.color);
-        FREE(gc->pipe[i].array.texuv);
-        FREE(gc->pipe[i].array.texuv2);
-        FREE(gc->pipe[i].array.texuv3);
-        FREE(gc->pipe[i].array.texa);
-        FREE(gc->pipe[i].array.texsam);
-        FREE(gc->pipe[i].array.mask);
-        FREE(gc->pipe[i].array.masksam);
+        PIPE_FREE(gc->pipe[i].array.vertex);
+        PIPE_FREE(gc->pipe[i].array.color);
+        PIPE_FREE(gc->pipe[i].array.texuv);
+        PIPE_FREE(gc->pipe[i].array.texuv2);
+        PIPE_FREE(gc->pipe[i].array.texuv3);
+        PIPE_FREE(gc->pipe[i].array.texa);
+        PIPE_FREE(gc->pipe[i].array.texsam);
+        PIPE_FREE(gc->pipe[i].array.mask);
+        PIPE_FREE(gc->pipe[i].array.masksam);
 
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;
