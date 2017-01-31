@@ -553,8 +553,7 @@ _ecore_evas_wl_common_device_event_add(int event_type, Ecore_Wl2_Device_Type dev
 }
 
 static EE_Wl_Device *
-_ecore_evas_wl_common_seat_add(Ecore_Evas *ee,
-                               unsigned int id)
+_ecore_evas_wl_common_seat_add(Ecore_Evas *ee, unsigned int id)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
    EE_Wl_Device *device;
