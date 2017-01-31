@@ -1206,25 +1206,6 @@ _elm_code_widget_cursor_move_pagedown(Elm_Code_Widget *widget)
    _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
 }
 
-static Eina_Bool
-_elm_code_widget_delete_selection(Elm_Code_Widget *widget)
-{
-   Elm_Code_Widget_Data *pd;
-   Elm_Code_Widget_Selection_Data *selection;
-
-   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-
-   if (!pd->selection)
-     return EINA_FALSE;
-
-   selection = elm_code_widget_selection_normalized_get(widget);
-   elm_code_widget_selection_delete(widget);
-   elm_code_widget_cursor_position_set(widget, selection->start_line, selection->start_col);
-   free(selection);
-
-   return EINA_TRUE;
-}
-
 static Elm_Code_Widget_Change_Info *
 _elm_code_widget_change_create(unsigned int start_col, unsigned int start_line,
                                unsigned int end_col, unsigned int end_line,
@@ -1256,6 +1237,32 @@ _elm_code_widget_change_free(Elm_Code_Widget_Change_Info *info)
 }
 
 void
+_elm_code_widget_change_selection_add(Evas_Object *widget)
+{
+   Elm_Code_Widget_Change_Info *change;
+   Elm_Code_Widget_Selection_Data *selection;
+   char *selection_text;
+
+   if (elm_code_widget_selection_is_empty(widget))
+     return;
+
+   selection_text = elm_code_widget_selection_text_get(widget);
+   selection = elm_code_widget_selection_normalized_get(widget);
+
+   change = _elm_code_widget_change_create(selection->start_col,
+                                           selection->start_line,
+                                           selection->end_col,
+                                           selection->end_line,
+                                           selection_text,
+                                           strlen(selection_text),
+                                           EINA_FALSE);
+   _elm_code_widget_undo_change_add(widget, change);
+   _elm_code_widget_change_free(change);
+   free(selection_text);
+   free(selection);
+}
+
+void
 _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *text, int length, Eina_Bool undo)
 {
    Elm_Code *code;
@@ -1264,7 +1271,12 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
    unsigned int row, col, position, col_width, curlen, indent;
    const char *curtext, *indent_text;
 
-   _elm_code_widget_delete_selection(widget);
+   if (undo)
+     {
+        _elm_code_widget_change_selection_add(widget);
+        elm_code_widget_selection_delete(widget);
+     }
+
    code = elm_obj_code_widget_code_get(widget);
    elm_obj_code_widget_cursor_position_get(widget, &row, &col);
    line = elm_code_file_line_get(code->file, row);
@@ -1353,7 +1365,9 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    unsigned int row, col, position, oldlen, width, indent;
    char *oldtext, *leading;
 
-   _elm_code_widget_delete_selection(widget);
+   _elm_code_widget_change_selection_add(widget);
+   elm_code_widget_selection_delete(widget);
+
    code = elm_obj_code_widget_code_get(widget);
    elm_obj_code_widget_cursor_position_get(widget, &row, &col);
    line = elm_code_file_line_get(code->file, row);
@@ -1400,18 +1414,27 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 
    if (nextline)
      {
+        elm_code_widget_selection_start(widget, row, col);
+        elm_code_widget_selection_end(widget, row + 1, 0);
+        _elm_code_widget_change_selection_add(widget);
+
         elm_code_line_merge_down(line);
      }
    else
      {
         oldline = elm_code_file_line_get(code->file, row - 1);
         elm_code_line_text_get(oldline, &oldlength);
-        elm_code_line_merge_up(line);
 
         position = elm_code_widget_line_text_column_width_to_position(widget, oldline, oldlength);
+        elm_code_widget_selection_start(widget, row - 1, position);
+        elm_code_widget_selection_end(widget, row, 0);
+        _elm_code_widget_change_selection_add(widget);
+
+        elm_code_line_merge_up(line);
 
         elm_obj_code_widget_cursor_position_set(widget, row - 1, position);
      }
+   elm_code_widget_selection_clear(widget);
 // TODO construct and pass a change object
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
@@ -1425,8 +1448,12 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    unsigned int row, col, position, start_col, end_col, char_width;
    const char *text;
 
-   if (_elm_code_widget_delete_selection(widget))
-     return; // TODO fire the change and log it
+   if (!elm_code_widget_selection_is_empty(widget))
+     {
+        _elm_code_widget_change_selection_add(widget);
+        elm_code_widget_selection_delete(widget);
+        return;
+     }
 
    code = elm_obj_code_widget_code_get(widget);
    elm_obj_code_widget_cursor_position_get(widget, &row, &col);
@@ -1468,8 +1495,12 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    unsigned int row, col, position, char_width, start_col, end_col;
    const char *text;
 
-   if (_elm_code_widget_delete_selection(widget))
-     return; // TODO fire the change and log it
+   if (!elm_code_widget_selection_is_empty(widget))
+     {
+        _elm_code_widget_change_selection_add(widget);
+        elm_code_widget_selection_delete(widget);
+        return;
+     }
 
    code = elm_obj_code_widget_code_get(widget);
    elm_obj_code_widget_cursor_position_get(widget, &row, &col);

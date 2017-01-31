@@ -459,3 +459,26 @@ elm_code_widget_selection_paste(Evas_Object *widget)
 
    elm_cnp_selection_get(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, _selection_paste_cb, widget);
 }
+
+EAPI Eina_Bool
+elm_code_widget_selection_is_empty(Evas_Object *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Widget_Selection_Data *selection;
+   Eina_Bool ret = EINA_FALSE;
+
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (!pd->selection)
+     return EINA_TRUE;
+
+   selection = elm_code_widget_selection_normalized_get(widget);
+
+   if (selection->start_col == selection->end_col &&
+       selection->start_line == selection->end_line)
+     ret = EINA_TRUE;
+
+   free(selection);
+
+   return ret;
+}
