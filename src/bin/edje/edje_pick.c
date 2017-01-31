@@ -68,6 +68,7 @@ struct _Edje_Pick_File_Params
    Eina_List *samplelist;
    Eina_List *tonelist;
    Eina_List *vibrationlist;
+   Eina_List *fontlist;
 };
 typedef struct _Edje_Pick_File_Params Edje_Pick_File_Params;
 
@@ -92,6 +93,9 @@ typedef struct _Edje_Pick_Tone Edje_Pick_Tone;
 struct _Edje_Pick_Font
 {
    Edje_Font *f;
+
+   void *data;             /* Font data as take from source edj file */
+   int size;               /* data size */
    Eina_Bool used;
 };
 typedef struct _Edje_Pick_Font Edje_Pick_Font;
@@ -100,11 +104,10 @@ struct _Edje_Pick
 {
    Eina_Bool v; /* Verbose */
    Edje_Pick_File_Params *current_file;
-   Eina_List *fontlist;
 };
 typedef struct _Edje_Pick Edje_Pick;
 
-static Edje_Pick context = { EINA_FALSE, NULL, NULL };
+static Edje_Pick context = { EINA_FALSE, NULL };
 
 #define VERBOSE(COMMAND) if (context.v) { COMMAND; }
 
@@ -256,12 +259,13 @@ _edje_pick_cleanup(Eina_List *ifs, Edje_File *out_file, Edje_Pick_Status s)
         free(p);
      }
 
-   EINA_LIST_FREE(context.fontlist, ft)
+   EINA_LIST_FREE(p->fontlist, ft)
      {
         Edje_Font *st = ft->f;
 
         eina_stringshare_del(st->name);
         eina_stringshare_del(st->file);
+        free(ft->data);
         free(st);
         free(ft);
      }
@@ -536,6 +540,7 @@ _edje_pick_output_prepare(Edje_File *o, Edje_File *edf, char *name)
         o->base_scale = edf->base_scale;
         o->collection = eina_hash_string_small_new(NULL);
         o->data = eina_hash_string_small_new(NULL);
+        o->fonts = eina_hash_string_small_new(NULL);
 
         /* Open output file */
         o->ef = eet_open(name, EET_FILE_MODE_WRITE);
@@ -1103,38 +1108,49 @@ _font_cmp(const void *d1, const void *d2)
 }
 
 static int
-_Edje_Pick_Fonts_add(Edje_File *edf)
+_Edje_Pick_Fonts_add(Edje_File *out_file, Edje_File *edf)
 {
-   Eet_Data_Descriptor *_font_list_edd = NULL;
-   Eet_Data_Descriptor *_font_edd;
-   Edje_Font_List *fl;
+   Eina_Iterator *it;
    Edje_Font *f;
-   Eina_List *l;
+   char buf[1024];
 
-   _edje_data_font_list_desc_make(&_font_list_edd, &_font_edd);
-   fl = eet_data_read(edf->ef, _font_list_edd, "edje_source_fontmap");
+   if (!edf->fonts) return -1;
 
-   EINA_LIST_FOREACH(fl->list, l, f)
+   it = eina_hash_iterator_data_new(edf->fonts);
+   if (!it) return -1;
+
+   EINA_ITERATOR_FOREACH(it, f)
      {
-        if (!eina_list_search_unsorted(context.fontlist,
-                                       _font_cmp, f))
+        if (!eina_list_search_unsorted(context.current_file->fontlist, _font_cmp, f))
+          continue;
+        /* Add only fonts that are NOT regestered in our list */
+        Edje_Pick_Font *ft =  malloc(sizeof(*ft));
+        Edje_Font *st = malloc(sizeof(*st));
+        ft->size = 0;
+
+        st->name = (char *) eina_stringshare_add(f->name);
+        st->file = (char *) eina_stringshare_add(f->file);
+
+        snprintf(buf, sizeof(buf), "edje/fonts/%s", f->name);
+        VERBOSE(EINA_LOG_INFO("Trying to read <%s>\n", f->name));
+        ft->data = eet_read(edf->ef, buf, &ft->size);
+        if (!ft->size)
           {
-             /* Add only fonts that are NOT regestered in our list */
-             Edje_Pick_Font *ft =  malloc(sizeof(*ft));
-             Edje_Font *st = malloc(sizeof(*st));
-
-             st->name = (char *) eina_stringshare_add(f->name);
-             st->file = (char *) eina_stringshare_add(f->file);
-
-             ft->f = st;
-             ft->used = EINA_TRUE;  /* TODO: Fix this later */
-             context.fontlist = eina_list_append(context.fontlist, ft);
+             eina_stringshare_del(st->name);
+             eina_stringshare_del(st->file);
+             free(st);
+             free(ft);
+             VERBOSE(EINA_LOG_INFO("Enable to read <%s>. Skip.\n", f->name));
+             continue;
           }
-     }
 
-   free(fl);
-   eet_data_descriptor_free(_font_list_edd);
-   eet_data_descriptor_free(_font_edd);
+        ft->f = st;
+        ft->used = EINA_TRUE;  /* TODO: Fix this later */
+        context.current_file->fontlist = eina_list_append(context.current_file->fontlist, ft);
+        eina_hash_direct_add(out_file->fonts, st->name, st);
+     };
+
+   eina_iterator_free(it);
 
    return EDJE_PICK_NO_ERROR;
 }
@@ -1659,10 +1675,8 @@ main(int argc, char **argv)
    Edje_Part_Collection *edc;
    Edje_Part_Collection_Directory_Entry *ce;
    Eet_File *ef;
-   Edje_Font_List *fl;
    Eina_List *f, *l;
    char buf[1024];
-   void *n;
    int k, bytes;
 
    ecore_app_no_system_modules();
@@ -1716,7 +1730,6 @@ main(int argc, char **argv)
         /* Build lists of all samples and fonts of input files    */
         _edje_pick_sounds_add(edf);  /* Add Sounds to samplelist          */
         _edje_pick_vibrations_add(edf);  /* Add Vibrations to samplelist  */
-        _Edje_Pick_Fonts_add(edf);   /* Add fonts from file to fonts list */
 
         _edje_pick_data_update(out_file, edf);
 
@@ -1771,6 +1784,7 @@ main(int argc, char **argv)
 
         _edje_pick_images_copy(edf, out_file);  /* Add Images to imagelist */
         _edje_cache_file_unref(edf);
+        _Edje_Pick_Fonts_add(out_file, edf);   /* Add fonts from file to fonts list */
 
         /* We SKIP writing source, just can't compose it */
         /* FIXME: use Edje_Edit code to generate source */
@@ -1783,6 +1797,7 @@ main(int argc, char **argv)
         /* Write Scripts from ALL files */
         Edje_Pick_Data *s;
         Edje_Pick_Tone *tn;
+        Edje_Pick_Font *fn;
         Eina_List *t;
 
         EINA_LIST_FOREACH(context.current_file->scriptlist, t, s)
@@ -1822,6 +1837,16 @@ main(int argc, char **argv)
                   snprintf(buf, sizeof(buf), "edje/vectors/%i", s->id.new_id);
                   eet_write(out_file->ef, buf, s->data, s->size, EINA_TRUE);
                   VERBOSE(EINA_LOG_INFO("Wrote <%s> vector data <%p> size <%d>\n", buf, s->data, s->size));
+               }
+          }
+
+        EINA_LIST_FOREACH(context.current_file->fontlist, t, fn)
+          {
+             if (context.current_file->append || fn->used)
+               {
+                  snprintf(buf, sizeof(buf), "edje/fonts/%s", fn->f->name);
+                  eet_write(out_file->ef, buf, fn->data, fn->size, EINA_TRUE);
+                  VERBOSE(EINA_LOG_INFO("Wrote <%s> fonts data <%p> size <%d>\n", buf, fn->data, fn->size));
                }
           }
 
@@ -1876,33 +1901,6 @@ main(int argc, char **argv)
    eina_list_free(images);
    eina_list_free(samples);
    eina_list_free(tones);
-
-   fl = calloc(1, sizeof(*fl));
-
-   EINA_LIST_FOREACH(context.fontlist, l, n)
-     {
-        /*  Create a font list from used fonts */
-        Edje_Pick_Font *fnt = n;
-        if (context.current_file->append || fnt->used)
-          fl->list = eina_list_append(fl->list, fnt->f);
-     }
-
-   if (out_file)
-     {
-        /* Write Fonts from all files */
-        Eet_Data_Descriptor *_font_list_edd = NULL;
-        Eet_Data_Descriptor *_font_edd;
-
-        _edje_data_font_list_desc_make(&_font_list_edd, &_font_edd);
-        bytes = eet_data_write(out_file->ef, _font_list_edd,
-                               "edje_source_fontmap", fl, comp_mode);
-        VERBOSE(EINA_LOG_INFO("Wrote <%d> bytes for fontmap.\n", bytes));
-
-        eet_data_descriptor_free(_font_list_edd);
-        eet_data_descriptor_free(_font_edd);
-     }
-
-   free(fl);
 
    if (output_filename)
      printf("Wrote <%s> output file.\n", output_filename);
