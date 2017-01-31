@@ -1366,11 +1366,11 @@ eina_log_domain_unregister_unlocked(int domain)
 # define DISPLAY_BACKTRACE(File, Level) \
    if (EINA_UNLIKELY(Level <= _backtrace_level)) { \
       fprintf(File, \
-              "## Backtrace --- Run   eina_btlog   then paste this, then hit   CTRL+D\n" \
-              "## Use   eina_btlog -n   to remove color. Btlog makes it human-readable.\n" \
-              "## Please provide the human readable log along with any bug reports.\n" \
-             ); \
+              "## Copy & Paste the below (until EOF) into a terminal, then hit Enter\n\n" \
+              "eina_btlog << EOF\n"); \
       EINA_BT(File); \
+      fprintf(File, \
+              "EOF\n\n"); \
    }
 #else
 # define DISPLAY_BACKTRACE(File, Level)
