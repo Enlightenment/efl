@@ -187,7 +187,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
                                    &_zxdg_shell_listener, NULL);
      }
    else if ((eina_streq(interface, "www")) &&
-            (!getenv("EFL_WAYLAND_DISABLE_WWW")))
+            (getenv("EFL_WAYLAND_ENABLE_WWW")))
      {
         Ecore_Wl2_Window *window;
 
