@@ -133,7 +133,9 @@ $(install_ecoreimfwaylandpkgLTLIBRARIES): install-libLTLIBRARIES
 modules_ecore_imf_wayland_module_la_SOURCES = \
 modules/ecore_imf/wayland/wayland_module.c \
 modules/ecore_imf/wayland/wayland_imcontext.c \
-modules/ecore_imf/wayland/wayland_imcontext.h \
+modules/ecore_imf/wayland/wayland_imcontext.h
+
+nodist_modules_ecore_imf_wayland_module_la_SOURCES = \
 modules/ecore_imf/wayland/text-input-unstable-v1-client-protocol.h \
 modules/ecore_imf/wayland/text-input-unstable-v1-protocol.c
 

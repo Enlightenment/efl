@@ -1235,7 +1235,6 @@ modules/evas/engines/wayland_shm/evas_engine.c \
 modules/evas/engines/wayland_shm/evas_engine.h \
 modules/evas/engines/wayland_shm/evas_shm.c \
 modules/evas/engines/wayland_shm/evas_dmabuf.c \
-lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c \
 modules/evas/engines/wayland_shm/evas_outbuf.c \
 static_libs/libdrm/drm_fourcc.h \
 static_libs/libdrm/drm.h \
@@ -1245,7 +1244,12 @@ static_libs/libdrm/exynos_drmif.h \
 static_libs/libdrm/i915_drm.h \
 static_libs/libdrm/intel_bufmgr.h \
 static_libs/libdrm/LICENSE
+
+NODIST_WAYLAND_SHM_SOURCES = \
+lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c
+
 if EVAS_STATIC_BUILD_WAYLAND_SHM
+nodist_lib_evas_libevas_la_SOURCES = $(NODIST_WAYLAND_SHM_SOURCES)
 lib_evas_libevas_la_SOURCES += $(WAYLAND_SHM_SOURCES)
 lib_evas_libevas_la_CPPFLAGS += @evas_engine_wayland_shm_cflags@ \
 -I$(top_srcdir)/src/static_libs/libdrm
@@ -1259,6 +1263,7 @@ enginewaylandshmpkg_LTLIBRARIES = modules/evas/engines/wayland_shm/module.la
 install_enginewaylandshmpkgLTLIBRARIES = install-enginewaylandshmpkgLTLIBRARIES
 $(install_enginewaylandshmpkgLTLIBRARIES): install-libLTLIBRARIES
 
+nodist_modules_evas_engines_wayland_shm_module_la_SOURCES = $(NODIST_WAYLAND_SHM_SOURCES)
 modules_evas_engines_wayland_shm_module_la_SOURCES = $(WAYLAND_SHM_SOURCES)
 modules_evas_engines_wayland_shm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
