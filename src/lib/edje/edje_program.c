@@ -637,7 +637,7 @@ _edje_seat_name_emit(Edje *ed, const char *name, const char *sig, const char *sr
 
    if (!name) return;
 
-   snprintf(buf, sizeof(buf), "%s,%s", sig, name);
+   snprintf(buf, sizeof(buf), "seat,%s,%s", name, sig);
    _edje_emit_full(ed, buf, src, NULL, NULL);
 }
 
@@ -1295,7 +1295,7 @@ _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *sr
    seat = efl_input_device_seat_get(dev);
    if (!seat) return;
 
-   snprintf(buf, sizeof(buf), "%s,%s", sig, _edje_seat_name_get(ed, seat));
+   snprintf(buf, sizeof(buf), "seat,%s,%s", _edje_seat_name_get(ed, seat), sig);
    _edje_emit_full(ed, buf, src, NULL, NULL);
 }
 

@@ -125,7 +125,7 @@ collections {
       programs {
          program {
             name: "button,1,over,default";
-            signal: "mouse,in,default";
+            signal: "seat,default,mouse,in";
             source: "button_bg,1";
             action: STATE_SET "over,default" 0.0;
             target: "button_bg,1";
@@ -133,7 +133,7 @@ collections {
 
          program {
             name: "button,1,over,secondary";
-            signal: "mouse,in,secondary";
+            signal: "seat,secondary,mouse,in";
             source: "button_bg,1";
             action: STATE_SET "over,secondary" 0.0;
             target: "button_bg,1";
@@ -149,7 +149,7 @@ collections {
 
          program {
             name: "button,2,over,default";
-            signal: "mouse,in,default";
+            signal: "seat,default,mouse,in";
             source: "button_bg,2";
             action: STATE_SET "over,default" 0.0;
             target: "button_bg,2";
@@ -157,7 +157,7 @@ collections {
 
          program {
             name: "button,2,over,secondary";
-            signal: "mouse,in,secondary";
+            signal: "seat,secondary,mouse,in";
             source: "button_bg,2";
             action: STATE_SET "over,secondary" 0.0;
             target: "button_bg,2";

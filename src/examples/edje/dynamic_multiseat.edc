@@ -244,7 +244,8 @@ collections {
 
                strncpy(seat_name, sig[strlen("seat,added,")],
                        strchr(sig[strlen("seat,added,")], ","));
-               snprintf(buf, 128, "seat,color,%s,r=%i,g=%i,b=%i", seat_name,
+               snprintf(buf, sizeof(buf),
+                        "seat,color,%s,r=%i,g=%i,b=%i", seat_name,
                         r, g, b);
                emit(buf, "theme");
             }
@@ -252,12 +253,12 @@ collections {
 
          program {
             name: "button,in";
-            signal: "mouse,in,*";
+            signal: "seat,*,mouse,in";
             source: "button_bg,*";
             script {
                new idx, r, g, b;
 
-               idx = atoi(sig[strlen("mouse,in,seat")]) - 1;
+               idx = atoi(sig[strlen("seat,seat")]) - 1;
                r = fetch_int(red, idx);
                g = fetch_int(green, idx);
                b = fetch_int(blue, idx);
@@ -268,7 +269,7 @@ collections {
 
          program {
             name: "button,out";
-            signal: "mouse,out,*";
+            signal: "seat,*,mouse,out";
             source: "button_bg,*";
             script {
                set_color_class(src, 200, 200, 200, 255);

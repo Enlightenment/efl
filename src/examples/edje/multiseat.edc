@@ -469,7 +469,7 @@ collections {
 
          program {
             name: "focus,t1,s1";
-            signal: "mouse,clicked,1,seat1";
+            signal: "seat,seat1,mouse,clicked,1";
             source: "example/text1";
             action: FOCUS_SET "seat1";
             target: "example/text1";
@@ -477,7 +477,7 @@ collections {
 
          program {
             name: "focus,color,t1,s1";
-            signal: "focus,part,in,seat1";
+            signal: "seat,seat1,focus,part,in";
             source: "example/text1";
             action: STATE_SET "focused,s1" 0.0;
             target: "bg_text1";
@@ -485,7 +485,7 @@ collections {
 
          program {
             name: "unfocus,color,t1,s1";
-            signal: "focus,part,out,seat1";
+            signal: "seat,seat1,focus,part,out";
             source: "example/text1";
             action: STATE_SET "default" 0.0;
             target: "bg_text1";
@@ -493,7 +493,7 @@ collections {
 
          program {
             name: "focus,t2,s1";
-            signal: "mouse,clicked,1,seat1";
+            signal: "seat,seat1,mouse,clicked,1";
             source: "example/text2";
             action: FOCUS_SET "seat1";
             target: "example/text2";
@@ -501,7 +501,7 @@ collections {
 
          program {
             name: "focus,color,t2,s1";
-            signal: "focus,part,in,seat1";
+            signal: "seat,seat1,focus,part,in";
             source: "example/text2";
             action: STATE_SET "focused,s1" 0.0;
             target: "bg_text2";
@@ -509,7 +509,7 @@ collections {
 
          program {
             name: "unfocus,color,t2,s1";
-            signal: "focus,part,out,seat1";
+            signal: "seat,seat1,focus,part,out";
             source: "example/text2";
             action: STATE_SET "default" 0.0;
             target: "bg_text2";
@@ -517,7 +517,7 @@ collections {
 
          program {
             name: "focus,t1,s2";
-            signal: "mouse,clicked,1,seat2";
+            signal: "seat,seat2,mouse,clicked,1";
             source: "example/text1";
             action: FOCUS_SET "seat2";
             target: "example/text1";
@@ -525,7 +525,7 @@ collections {
 
          program {
             name: "focus,color,t1,s2";
-            signal: "focus,part,in,seat2";
+            signal: "seat,seat2,focus,part,in";
             source: "example/text1";
             action: STATE_SET "focused,s2" 0.0;
             target: "bg_text1";
@@ -533,7 +533,7 @@ collections {
 
          program {
             name: "unfocus,color,t1,s2";
-            signal: "focus,part,out,seat2";
+            signal: "seat,seat2,focus,part,out";
             source: "example/text1";
             action: STATE_SET "default" 0.0;
             target: "bg_text1";
@@ -541,7 +541,7 @@ collections {
 
          program {
             name: "focus,t2,s2";
-            signal: "mouse,clicked,1,seat2";
+            signal: "seat,seat2,mouse,clicked,1";
             source: "example/text2";
             action: FOCUS_SET "seat2";
             target: "example/text2";
@@ -549,7 +549,7 @@ collections {
 
          program {
             name: "focus,color,t2,s2";
-            signal: "focus,part,in,seat2";
+            signal: "seat,seat2,focus,part,in";
             source: "example/text2";
             action: STATE_SET "focused,s2" 0.0;
             target: "bg_text2";
@@ -557,7 +557,7 @@ collections {
 
          program {
             name: "unfocus,color,t2,s2";
-            signal: "focus,part,out,seat2";
+            signal: "seat,seat2,focus,part,out";
             source: "example/text2";
             action: STATE_SET "default" 0.0;
             target: "bg_text2";
@@ -565,7 +565,7 @@ collections {
 
          program {
             name: "button,left,in";
-            signal: "mouse,in,seat1";
+            signal: "seat,seat1,mouse,in";
             source: "button_bg";
             action: STATE_SET "on" 0.0;
             target: "button_left_over";
@@ -573,7 +573,7 @@ collections {
 
          program {
             name: "button,left,out";
-            signal: "mouse,out,seat1";
+            signal: "seat,seat1,mouse,out";
             source: "button_bg";
             action: STATE_SET "default" 0.0;
             target: "button_left_over";
@@ -581,7 +581,7 @@ collections {
 
          program {
             name: "button,left,focus";
-            signal: "mouse,clicked,1,seat1";
+            signal: "seat,seat1,mouse,clicked,1";
             source: "button_bg";
             action: FOCUS_SET "seat1";
             target: "button_bg";
@@ -589,7 +589,7 @@ collections {
 
          program {
             name: "button,left,focused";
-            signal: "focus,part,in,seat1";
+            signal: "seat,seat1,focus,part,in";
             source: "button_bg";
             action: STATE_SET "on" 0.0;
             target: "button_left_focus";
@@ -597,7 +597,7 @@ collections {
 
          program {
             name: "button,left,unfocused";
-            signal: "focus,part,out,seat1";
+            signal: "seat,seat1,focus,part,out";
             source: "button_bg";
             action: STATE_SET "default" 0.0;
             target: "button_left_focus";
@@ -605,7 +605,7 @@ collections {
 
          program {
             name: "button,right,in";
-            signal: "mouse,in,seat2";
+            signal: "seat,seat2,mouse,in";
             source: "button_bg";
             action: STATE_SET "on" 0.0;
             target: "button_right_over";
@@ -613,7 +613,7 @@ collections {
 
          program {
             name: "button,right,out";
-            signal: "mouse,out,seat2";
+            signal: "seat,seat2,mouse,out";
             source: "button_bg";
             action: STATE_SET "default" 0.0;
             target: "button_right_over";
@@ -621,7 +621,7 @@ collections {
 
          program {
             name: "button,right,focus";
-            signal: "mouse,clicked,1,seat2";
+            signal: "seat,seat2,mouse,clicked,1";
             source: "button_bg";
             action: FOCUS_SET "seat2";
             target: "button_bg";
@@ -629,7 +629,7 @@ collections {
 
          program {
             name: "button,right,focused";
-            signal: "focus,part,in,seat2";
+            signal: "seat,seat2,focus,part,in";
             source: "button_bg";
             action: STATE_SET "on" 0.0;
             target: "button_right_focus";
@@ -637,7 +637,7 @@ collections {
 
          program {
             name: "button,right,unfocused";
-            signal: "focus,part,out,seat2";
+            signal: "seat,seat2,focus,part,out";
             source: "button_bg";
             action: STATE_SET "default" 0.0;
             target: "button_right_focus";
@@ -645,7 +645,7 @@ collections {
 
          program {
             name: "knob1,s1";
-            signal: "drag,start,seat1";
+            signal: "seat,seat1,drag,start";
             source: "example/knob1";
             action: STATE_SET "focused,s1" 0.0;
             target: "example/knob1";
@@ -653,7 +653,7 @@ collections {
 
          program {
             name: "knob1,s2";
-            signal: "drag,start,seat2";
+            signal: "seat,seat2,drag,start";
             source: "example/knob1";
             action: STATE_SET "focused,s2" 0.0;
             target: "example/knob1";
@@ -661,7 +661,7 @@ collections {
 
          program {
             name: "knob1,seat1";
-            signal: "drag,stop,*";
+            signal: "seat,*,drag,stop";
             source: "example/knob1";
             action: STATE_SET "default" 0.0;
             target: "example/knob1";
@@ -669,7 +669,7 @@ collections {
 
          program {
             name: "knob2,s1";
-            signal: "drag,start,seat1";
+            signal: "seat,seat1,drag,start";
             source: "example/knob2";
             action: STATE_SET "focused,s1" 0.0;
             target: "example/knob2";
@@ -677,7 +677,7 @@ collections {
 
          program {
             name: "knob2,s2";
-            signal: "drag,start,seat2";
+            signal: "seat,seat2,drag,start";
             source: "example/knob2";
             action: STATE_SET "focused,s2" 0.0;
             target: "example/knob2";
@@ -685,7 +685,7 @@ collections {
 
          program {
             name: "knob2,seat1";
-            signal: "drag,stop,*";
+            signal: "seat,*,drag,stop";
             source: "example/knob2";
             action: STATE_SET "default" 0.0;
             target: "example/knob2";
@@ -693,7 +693,7 @@ collections {
 
          program {
             name: "rect,focus,s1";
-            signal: "mouse,clicked,1,seat1";
+            signal: "seat,seat1,mouse,clicked,1";
             source: "example/swallow";
             action: FOCUS_OBJECT "seat1";
             target: "example/swallow";
@@ -701,14 +701,14 @@ collections {
 
          program {
             name: "rect,unfocus,s1";
-            signal: "mouse,clicked,1,seat1";
+            signal: "seat,seat1,mouse,clicked,1";
             source: "unfocus_area";
             action: FOCUS_OBJECT "seat1";
          }
 
          program {
             name: "rect,focus,s2";
-            signal: "mouse,clicked,1,seat2";
+            signal: "seat,seat2,mouse,clicked,1";
             source: "example/swallow";
             action: FOCUS_OBJECT "seat2";
             target: "example/swallow";
@@ -716,7 +716,7 @@ collections {
 
          program {
             name: "rect,unfocus,s2";
-            signal: "mouse,clicked,1,seat2";
+            signal: "seat,seat2,mouse,clicked,1";
             source: "unfocus_area";
             action: FOCUS_OBJECT "seat2";
          }

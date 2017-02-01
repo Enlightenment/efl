@@ -637,24 +637,29 @@ collections {
       programs {
          program {
             name: "clicked";
-            signal: "mouse,clicked,1,*";
+            signal: "seat,*,mouse,clicked,1";
             source: "widget,text,*";
             script {
-                new partid;
+                new seat[256];
+                new partid, idx;
+
+                idx = strchr(sig[strlen("seat,")], ",");
+                strncpy(seat, sig[strlen("seat,")], idx);
+
                 partid = get_part_id(src);
-                set_focus(partid, sig[strlen("mouse,clicked,1,")]);
+                set_focus(partid, seat);
             }
          }
 
          program {
             name: "focused";
-            signal: "focus,part,in,*";
+            signal: "seat,*,focus,part,in";
             source: "widget,text,*";
             script {
                new buf[256];
                new partid;
 
-               snprintf(buf, 128, "widget,bg_text,%s",
+               snprintf(buf, sizeof(buf), "widget,bg_text,%s",
                         src[strlen("widget,text,")]);
                partid = get_part_id(buf);
                set_state(partid, "focused", 0.0);
@@ -663,13 +668,13 @@ collections {
 
          program {
             name: "unfocused";
-            signal: "focus,part,out,*";
+            signal: "seat,*,focus,part,out";
             source: "widget,text,*";
             script {
                new buf[256];
                new partid;
 
-               snprintf(buf, 128, "widget,bg_text,%s",
+               snprintf(buf, sizeof(buf), "widget,bg_text,%s",
                         src[strlen("widget,text,")]);
                partid = get_part_id(buf);
                set_state(partid, "default", 0.0);
@@ -678,7 +683,7 @@ collections {
 
          program {
             name: "drag,start";
-            signal: "drag,start,*";
+            signal: "seat,*,drag,start";
             source: "widget,knob,*";
             script {
                 new partid;
@@ -689,7 +694,7 @@ collections {
 
          program {
             name: "drag,stop";
-            signal: "drag,stop,*";
+            signal: "seat,*,drag,stop";
             source: "widget,knob,*";
             script {
                 new partid;
@@ -732,11 +737,16 @@ collections {
 
          program {
             name: "focus_bt,clicked";
-            signal: "mouse,clicked,1,*";
+            signal: "seat,*,mouse,clicked,1";
             source: "focus_bt";
             script {
-                set_focus(PART:"widget,text,1",
-                          sig[strlen("mouse,clicked,1,")]);
+                new seat[256];
+                new idx;
+
+                idx = strchr(sig[strlen("seat,")], ",");
+                strncpy(seat, sig[strlen("seat,")], idx);
+
+                set_focus(PART:"widget,text,1", seat);
             }
          }
       }
