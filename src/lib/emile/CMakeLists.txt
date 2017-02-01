@@ -2,7 +2,8 @@ set(DESCRIPTION "Library for simplified serialization, compression and ciphering
 
 set(PKG_CONFIG_REQUIRES_PRIVATE
   zlib>=1.2.3
-  libjpeg
+  #libjpeg is hard to find. there is a cmake module that does find it. and thats checked in common.cmake
+  #libjpeg
 )
 
 set(LIBRARIES
