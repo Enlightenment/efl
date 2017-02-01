@@ -229,18 +229,34 @@ _evas_object_grid_smart_calculate(Evas_Object *o)
      {
         long long x1, y1, x2, y2;
 
-        if (!mirror)
+        if (vwl > 0)
           {
-             x1 = xl + ((wl * (long long)opt->x) / vwl);
-             x2 = xl + ((wl * (long long)(opt->x + opt->w)) / vwl);
+             if (!mirror)
+               {
+                  x1 = xl + ((wl * (long long)opt->x) / vwl);
+                  x2 = xl + ((wl * (long long)(opt->x + opt->w)) / vwl);
+               }
+             else
+               {
+                  x1 = xl + ((wl * (vwl - (long long)(opt->x + opt->w))) / vwl);
+                  x2 = xl + ((wl * (vwl - (long long)opt->x)) / vwl);
+               }
           }
         else
           {
-             x1 = xl + ((wl * (vwl - (long long)(opt->x + opt->w))) / vwl);
-             x2 = xl + ((wl * (vwl - (long long)opt->x)) / vwl);
+             x1 = xl;
+             x2 = xl;
           }
-        y1 = yl + ((hl * (long long)opt->y) / vhl);
-        y2 = yl + ((hl * (long long)(opt->y + opt->h)) / vhl);
+        if (vhl > 0)
+          {
+             y1 = yl + ((hl * (long long)opt->y) / vhl);
+             y2 = yl + ((hl * (long long)(opt->y + opt->h)) / vhl);
+          }
+        else
+          {
+             y1 = yl;
+             y2 = yl;
+          }
         evas_object_move(opt->obj, x1, y1);
         evas_object_resize(opt->obj, x2 - x1, y2 - y1);
      }
