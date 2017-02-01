@@ -1549,6 +1549,8 @@ _efl_net_dialer_http_pause_reset(Eo *o, Efl_Net_Dialer_Http_Data *pd)
         return err;
      }
 
+   _efl_net_dialer_http_curlm_check(pd->cm);
+
    return 0;
 }
 
