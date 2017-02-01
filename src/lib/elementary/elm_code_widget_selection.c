@@ -356,14 +356,17 @@ elm_code_widget_selection_cut(Evas_Object *widget)
 {
    char *text;
 
+   if (elm_code_widget_selection_is_empty(widget))
+     return;
+
    text = elm_code_widget_selection_text_get(widget);
    elm_cnp_selection_set(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, text, strlen(text));
    elm_cnp_selection_loss_callback_set(widget, ELM_SEL_TYPE_CLIPBOARD, _selection_loss_cb, widget);
    free(text);
 
+   _elm_code_widget_change_selection_add(widget);
    elm_code_widget_selection_delete(widget);
 
-   // TODO construct and pass a change object for cut and paste
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
@@ -371,6 +374,9 @@ EAPI void
 elm_code_widget_selection_copy(Evas_Object *widget)
 {
    char *text;
+
+   if (elm_code_widget_selection_is_empty(widget))
+     return;
 
    text = elm_code_widget_selection_text_get(widget);
    elm_cnp_selection_set(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, text, strlen(text));
@@ -429,8 +435,10 @@ static Eina_Bool
 _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
 {
    Elm_Code *code;
+   Elm_Code_Line *line;
    Elm_Code_Widget *widget;
-   unsigned int row, col;
+   Elm_Code_Widget_Change_Info *change;
+   unsigned int row, col, end_row, end_col, position;
 
    widget = (Elm_Code_Widget *)data;
 
@@ -447,7 +455,24 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
    else
      _selection_paste_multi(widget, code, col, row, ev->data, ev->len - 1);
 
-   // TODO construct and pass a change object for cut and paste
+   elm_obj_code_widget_cursor_position_get(widget, &end_row, &end_col);
+
+   line = elm_code_file_line_get(code->file, end_row);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, end_col);
+
+   change = calloc(1, sizeof(Elm_Code_Widget_Change_Info));
+   change->insert = EINA_TRUE;
+   change->start_col = col;
+   change->start_line = row;
+   change->end_col = position;
+   change->end_line = end_row;
+   change->content = strndup(ev->data, ev->len);
+   change->length = ev->len;
+
+   _elm_code_widget_undo_change_add(widget, change);
+   free((char *)change->content);
+   free(change);
+
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
    return EINA_TRUE;
 }
@@ -455,6 +480,7 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
 EAPI void
 elm_code_widget_selection_paste(Evas_Object *widget)
 {
+   _elm_code_widget_change_selection_add(widget);
    elm_code_widget_selection_delete(widget);
 
    elm_cnp_selection_get(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, _selection_paste_cb, widget);

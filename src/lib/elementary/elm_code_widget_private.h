@@ -68,4 +68,6 @@ EAPI Elm_Code_Widget_Selection_Data *elm_code_widget_selection_normalized_get(Ev
 
 void _elm_code_widget_undo_change_add(Evas_Object *widget, Elm_Code_Widget_Change_Info *info);
 
+void _elm_code_widget_change_selection_add(Evas_Object *widget);
+
 #endif

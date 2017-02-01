@@ -1221,9 +1221,7 @@ _elm_code_widget_change_create(unsigned int start_col, unsigned int start_line,
    info->end_col = end_col;
    info->end_line = end_line;
 
-   info->content = malloc((length + 1) * sizeof(char));
-   strncpy(info->content, text, length);
-   info->content[length] = '\0';
+   info->content = strndup(text, length);
    info->length = length;
 
    return info;
@@ -1251,7 +1249,7 @@ _elm_code_widget_change_selection_add(Evas_Object *widget)
 
    change = _elm_code_widget_change_create(selection->start_col,
                                            selection->start_line,
-                                           selection->end_col,
+                                           selection->end_col + 1,
                                            selection->end_line,
                                            selection_text,
                                            strlen(selection_text),
