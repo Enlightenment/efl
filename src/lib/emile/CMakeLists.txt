@@ -8,6 +8,7 @@ set(PKG_CONFIG_REQUIRES_PRIVATE
 
 set(LIBRARIES
   eina
+  efl
   m
   support-rg_etc
 )
