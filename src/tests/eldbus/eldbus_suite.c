@@ -14,6 +14,7 @@ static const Efl_Test_Case etc[] = {
   { "eldbus_test_fake_server_eldbus_model_proxy", eldbus_test_fake_server_eldbus_model_proxy },
   { "eldbus_model_method", eldbus_test_eldbus_model_method },
   { "eldbus_model_signal", eldbus_test_eldbus_model_signal },
+  { "eldbus_test_eldbus_object", eldbus_test_eldbus_object },
   { NULL, NULL }
 };
 

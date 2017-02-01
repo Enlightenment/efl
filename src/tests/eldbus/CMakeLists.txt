@@ -11,6 +11,7 @@ set(SOURCES
   eldbus_test_eldbus_model_object.c
   eldbus_test_eldbus_model_proxy.c
   eldbus_test_eldbus_model_signal.c
+  eldbus_test_eldbus_object.c
   eldbus_test_fake_server_eldbus_model_proxy.c
 )
 
