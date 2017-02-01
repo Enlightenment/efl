@@ -3655,7 +3655,12 @@ data_process_lookups(void)
           }
         find = eina_hash_find(edje_file->collection, pc->part);
         if (find && find->id == pc->id)
-          continue ;
+          {
+             if ( ((Edje_Part_Collection_Parser*)pc)->inherit_only)
+               eina_hash_del_by_data(edje_file->collection, find);
+             else
+               continue ;
+          }
 
         EINA_LIST_FOREACH(aliases, l3, alias)
           if (alias->id == pc->id)
