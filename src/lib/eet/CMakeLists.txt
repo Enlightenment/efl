@@ -2,7 +2,6 @@ set(DESCRIPTION "Library for speedy data storage, retrieval, and compression")
 
 set(PKG_CONFIG_REQUIRES_PRIVATE
   zlib>=1.2.3
-  #libjpeg is hard to find. there is a cmake module that does find it. and thats checked in common.cmake
 )
 
 set(PUBLIC_LIBRARIES
@@ -13,6 +12,7 @@ set(PUBLIC_LIBRARIES
 set(LIBRARIES
   m
   support-rg_etc
+  find-JPEG
 )
 
 set(PUBLIC_HEADERS
