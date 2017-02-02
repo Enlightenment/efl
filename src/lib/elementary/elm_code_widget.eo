@@ -275,6 +275,9 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       undo {
          [[Undo last action]]
       }
+      redo {
+         [[Redo last action]]
+      }
    }
    implements {
       class.constructor;

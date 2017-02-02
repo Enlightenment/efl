@@ -1249,7 +1249,7 @@ _elm_code_widget_change_selection_add(Evas_Object *widget)
 
    change = _elm_code_widget_change_create(selection->start_col,
                                            selection->start_line,
-                                           selection->end_col + 1,
+                                           selection->end_col,
                                            selection->end_line,
                                            selection_text,
                                            strlen(selection_text),
@@ -1360,8 +1360,8 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    Elm_Code *code;
    Elm_Code_Line *line;
    Elm_Code_Widget_Change_Info *change;
-   unsigned int row, col, position, oldlen, width, indent;
-   char *oldtext, *leading;
+   unsigned int row, col, position, oldlen, width, indent, textlen;
+   char *oldtext, *leading, *text;
 
    _elm_code_widget_change_selection_add(widget);
    elm_code_widget_selection_delete(widget);
@@ -1394,9 +1394,14 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
    free(leading);
 
-   change = _elm_code_widget_change_create(width + 1, row, indent - 1, row + 1, "\n", 1, EINA_TRUE);
+   textlen = strlen(leading) + 2;
+   text = malloc(sizeof(char) * textlen);
+   snprintf(text, textlen, "\n%s", leading);
+
+   change = _elm_code_widget_change_create(width + 1, row, indent - 1, row + 1, text, strlen(text), EINA_TRUE);
    _elm_code_widget_undo_change_add(widget, change);
    _elm_code_widget_change_free(change);
+   free(text);
 }
 
 static void
@@ -1479,7 +1484,7 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
 
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
-   change = _elm_code_widget_change_create(start_col, row, end_col, row, text, char_width, EINA_FALSE);
+   change = _elm_code_widget_change_create(start_col, row, end_col - 1, row, text, char_width, EINA_FALSE);
    _elm_code_widget_undo_change_add(widget, change);
    _elm_code_widget_change_free(change);
 }
@@ -1524,7 +1529,7 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    elm_obj_code_widget_cursor_position_set(widget, row, start_col);
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
-   change = _elm_code_widget_change_create(start_col, row, col, row, text, char_width, EINA_FALSE);
+   change = _elm_code_widget_change_create(start_col, row, col - 1, row, text, char_width, EINA_FALSE);
    _elm_code_widget_undo_change_add(widget, change);
    _elm_code_widget_change_free(change);
 }
@@ -1545,6 +1550,8 @@ _elm_code_widget_control_key_down_cb(Elm_Code_Widget *widget, const char *key)
      elm_code_widget_selection_paste(widget);
    else if (!strcmp("x", key))
      elm_code_widget_selection_cut(widget);
+   else if (!strcmp("y", key))
+     elm_code_widget_redo(widget);
    else if (!strcmp("z", key))
      elm_code_widget_undo(widget);
 }
