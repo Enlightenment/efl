@@ -727,6 +727,13 @@ elput_input_device_evas_device_set(Elput_Device *device, Eo *evas_device)
      device->evas_device = NULL;
 }
 
+EAPI Eo *
+elput_input_device_evas_device_get(Elput_Device *device)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
+   return device->evas_device;
+}
+
 EAPI void
 elput_input_seat_evas_device_set(Elput_Seat *seat, Eo *evas_device)
 {

@@ -470,6 +470,22 @@ EAPI Elput_Device_Capability elput_input_device_capabilities_get(Elput_Device *d
 EAPI void elput_input_device_evas_device_set(Elput_Device *device, Eo *evas_device);
 
 /**
+ * Get the Evas_Device on a given Elput_Device
+ *
+ * @param device
+ *
+ * @return The Evas_Device associated with given Elput_Device, or NULL otherwise.
+ *
+ * @note: Do not ever use this function in applications !!!
+ * This is a special-purpose API function and should not be used by
+ * application developers.
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.19
+ */
+EAPI Eo *elput_input_device_evas_device_get(Elput_Device *device);
+
+/**
  * Set the Evas_Device to use for events on a given seat
  *
  * @param seat
