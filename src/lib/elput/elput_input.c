@@ -699,3 +699,18 @@ elput_input_device_capabilities_get(Elput_Device *device)
 
    return device->caps;
 }
+
+EAPI void
+elput_input_device_evas_device_set(Elput_Device *device, Eo *evas_device)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   if (evas_device)
+     {
+        DBG("Setting Evas Device %p on %s", evas_device,
+            libinput_device_get_name(device->device));
+        device->evas_device = evas_device;
+     }
+   else
+     device->evas_device = NULL;
+}

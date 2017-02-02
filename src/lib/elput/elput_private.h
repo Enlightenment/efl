@@ -209,6 +209,7 @@ struct _Elput_Device
    const char *output_name;
    struct libinput_device *device;
 
+   Eo *evas_device;
    Elput_Device_Capability caps;
 
    Eina_Hash *key_remap_hash;

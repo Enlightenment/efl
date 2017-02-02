@@ -448,6 +448,21 @@ EAPI Eina_Stringshare *elput_input_device_output_name_get(Elput_Device *device);
 EAPI Elput_Device_Capability elput_input_device_capabilities_get(Elput_Device *device);
 
 /**
+ * Set the Evas_Device to use for events on a given device
+ *
+ * @param device
+ * @param evas_device
+ *
+ * @note: Do not ever use this function in applications !!!
+ * This is a special-purpose API function and should not be used by
+ * application developers.
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.19
+ */
+EAPI void elput_input_device_evas_device_set(Elput_Device *device, Eo *evas_device);
+
+/**
  * Set the pointer acceleration profile
  *
  * @param manager
