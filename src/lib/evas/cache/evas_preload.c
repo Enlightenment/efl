@@ -142,6 +142,13 @@ evas_preload_thread_cancelled_is(Evas_Preload_Pthread *work)
 Eina_Bool
 evas_preload_pthread_wait(Evas_Preload_Pthread *work, double wait)
 {
+   Eina_Bool r;
+
    if (!work) return EINA_TRUE;
-   return ecore_thread_wait(work->thread, wait);
+
+   ecore_thread_main_loop_begin();
+   r = ecore_thread_wait(work->thread, wait);
+   ecore_thread_main_loop_end();
+
+   return r;
 }
