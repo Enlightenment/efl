@@ -244,8 +244,6 @@ evas_async_events_process(void)
 
    while ((nr = _evas_async_events_process_single()) > 0) count += nr;
 
-   evas_cache_image_wakeup();
-
    return count;
 }
 
@@ -273,7 +271,6 @@ evas_async_events_process_blocking(void)
 
    _evas_async_events_fd_blocking_set(EINA_TRUE);
    ret = _evas_async_events_process_single();
-   evas_cache_image_wakeup(); /* FIXME: is this needed ? */
    _evas_async_events_fd_blocking_set(EINA_FALSE);
 
    return ret;
@@ -336,8 +333,6 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
           }
      }
    else ret = EINA_TRUE;
-
-   evas_cache_image_wakeup();
 
    return ret;
 }

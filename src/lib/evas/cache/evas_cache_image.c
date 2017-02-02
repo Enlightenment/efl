@@ -26,10 +26,7 @@ struct _Evas_Cache_Preload
 };
 
 static SLK(engine_lock);
-static LK(wakeup);
 static int _evas_cache_mutex_init = 0;
-
-static Eina_Condition cond_wakeup;
 
 static const Image_Entry_Task dummy_task = { NULL, NULL, NULL };
 
@@ -394,11 +391,6 @@ _evas_cache_image_async_heavy(void *data)
      }
    SLKU(current->lock_cancel);
    SLKU(current->lock);
-
-   LKL(wakeup);
-   current->flags.preload_pending = 0;
-   eina_condition_broadcast(&cond_wakeup);
-   LKU(wakeup);
 }
 
 static void
@@ -414,9 +406,7 @@ _evas_cache_image_async_end(void *data)
    ie->flags.preload_done = ie->flags.loaded;
    ie->flags.updated_data = 1;
 
-   LKL(wakeup);
    ie->flags.preload_pending = 0;
-   LKU(wakeup);
 
    evas_cache_image_ref(ie);
    while ((tmp = ie->targets))
@@ -452,9 +442,7 @@ _evas_cache_image_async_cancel(void *data)
    ie->preload = NULL;
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
 
-   LKL(wakeup);
    ie->flags.preload_pending = 0;
-   LKU(wakeup);
 
    if ((ie->flags.delete_me) || (ie->flags.dirty))
      {
@@ -467,9 +455,7 @@ _evas_cache_image_async_cancel(void *data)
      {
         ie->cache->preload = eina_list_append(ie->cache->preload, ie);
         ie->flags.pending = 0;
-        LKL(wakeup);
         ie->flags.preload_pending = 1;
-        LKU(wakeup);
         ie->preload = evas_preload_thread_run(_evas_cache_image_async_heavy,
                                               _evas_cache_image_async_end,
                                               _evas_cache_image_async_cancel,
@@ -527,9 +513,7 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target,
      {
         ie->cache->preload = eina_list_append(ie->cache->preload, ie);
         ie->flags.pending = 0;
-        LKL(wakeup);
         ie->flags.preload_pending = 1;
-        LKU(wakeup);
         ie->preload = evas_preload_thread_run(_evas_cache_image_async_heavy,
                                               _evas_cache_image_async_end,
                                               _evas_cache_image_async_cancel,
@@ -628,8 +612,6 @@ evas_cache_image_init(const Evas_Cache_Image_Func *cb)
    if (_evas_cache_mutex_init++ == 0)
      {
         SLKI(engine_lock);
-        LKI(wakeup);
-        eina_condition_new(&cond_wakeup, &wakeup);
      }
 
    cache = calloc(1, sizeof(Evas_Cache_Image));
@@ -694,14 +676,20 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
    /* Now wait for all pending image to die */
    while (cache->pending)
      {
+        im = eina_list_data_get(cache->pending);
+        evas_preload_thread_cancel(im->preload);
+
         evas_async_events_process();
-        LKL(wakeup);
-        // the lazy bum who did eain threads and converted this code
-        // didn't bother to worry about Eina_Lock being a different type
-        // to a pthread mutex.
-        if (cache->pending) eina_condition_wait(&cond_wakeup);
-        LKU(wakeup);
+        if (!evas_preload_pthread_wait(im->preload, 1.0))
+          {
+             // We have waited long enough without reaction from that said
+             // thread, remove it from pending list and silently continue
+             // in the hope of an ok shutdown (but something is wrong).
+             cache->pending = eina_list_remove_list(cache->pending, cache->pending);
+             ERR("Could not stop decoding '%s' during shutdown.\n", im->file);
+          }
      }
+
    eina_hash_free(cache->activ);
    eina_hash_free(cache->inactiv);
    eina_hash_free(cache->mmap_activ);
@@ -710,9 +698,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 
    if (--_evas_cache_mutex_init == 0)
      {
-        eina_condition_free(&cond_wakeup);
         SLKD(engine_lock);
-        LKD(wakeup);
      }
 }
 
@@ -1276,26 +1262,21 @@ evas_cache_image_load_data(Image_Entry *im)
         evas_async_events_process();
         evas_preload_pthread_wait(im->preload, 0.01);
 
-        LKL(wakeup);
         while (im->flags.preload_pending)
           {
-             eina_condition_wait(&cond_wakeup);
-             LKU(wakeup);
              evas_async_events_process();
-             evas_preload_pthread_wait(im->preload, 0.01);
-             LKL(wakeup);
+             evas_preload_pthread_wait(im->preload, 0.1);
           }
-        LKU(wakeup);
      }
 
    if ((im->flags.loaded) && (!im->animated.animated)) return error;
-   
+
    SLKL(im->lock);
    im->flags.in_progress = EINA_TRUE;
    error = im->cache->func.load(im);
    im->flags.in_progress = EINA_FALSE;
    SLKU(im->lock);
-   
+
    im->flags.loaded = 1;
    if (im->cache->func.debug) im->cache->func.debug("load", im);
    if (error != EVAS_LOAD_ERROR_NONE)
@@ -1542,15 +1523,4 @@ evas_cache_image_pixels(Image_Entry *im)
 {
    if (!im->cache) return NULL;
    return im->cache->func.surface_pixels(im);
-}
-
-EAPI void
-evas_cache_image_wakeup(void)
-{
-   if (_evas_cache_mutex_init > 0)
-     {
-        LKL(wakeup);
-        eina_condition_broadcast(&cond_wakeup);
-        LKU(wakeup);
-     }
 }
