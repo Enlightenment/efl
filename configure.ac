@@ -5622,7 +5622,7 @@ src/lib/eina/eina_config.h
 src/lib/efl/Efl_Config.h
 src/lib/elementary/Elementary_Options.h
 src/scripts/eo/eo_debug
-src/tests/eo_mono/eo_mono.exe.config
+src/tests/efl_mono/efl_mono.exe.config
 elm_intro.h
 spec/efl.spec
 pc/evil.pc

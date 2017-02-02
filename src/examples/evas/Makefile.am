@@ -379,46 +379,46 @@ EXTRA_PROGRAMS += \
 
 
 evas_mono_box_exe_SOURCES = \
-	evas_mono_box.cs ../../tests/eo_mono/EcoreEvas.cs
+	evas_mono_box.cs ../../tests/efl_mono/EcoreEvas.cs
 
-evas_mono_box.exe$(EXEEXT): $(evas_mono_box_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/eo_mono/libeo_mono.dll
+evas_mono_box.exe$(EXEEXT): $(evas_mono_box_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f evas_mono_box$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 evas_mono_image_exe_SOURCES = \
-	evas_mono_image.cs ../../tests/eo_mono/EcoreEvas.cs
+	evas_mono_image.cs ../../tests/efl_mono/EcoreEvas.cs
 
-evas_mono_image.exe$(EXEEXT): $(evas_mono_image_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/eo_mono/libeo_mono.dll
+evas_mono_image.exe$(EXEEXT): $(evas_mono_image_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f evas_mono_image$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 evas_mono_image2_exe_SOURCES = \
-	evas_mono_image2.cs ../../tests/eo_mono/EcoreEvas.cs
+	evas_mono_image2.cs ../../tests/efl_mono/EcoreEvas.cs
 
-evas_mono_image2.exe$(EXEEXT): $(evas_mono_image2_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/eo_mono/libeo_mono.dll
+evas_mono_image2.exe$(EXEEXT): $(evas_mono_image2_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f evas_mono_image2$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 evas_mono_rectangle_exe_SOURCES = \
-	evas_mono_rectangle.cs ../../tests/eo_mono/EcoreEvas.cs
+	evas_mono_rectangle.cs ../../tests/efl_mono/EcoreEvas.cs
 
-evas_mono_rectangle.exe$(EXEEXT): $(evas_mono_rectangle_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/eo_mono/libeo_mono.dll
+evas_mono_rectangle.exe$(EXEEXT): $(evas_mono_rectangle_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f evas_mono_rectangle$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 evas_mono_table_exe_SOURCES = \
-	evas_mono_table.cs ../../tests/eo_mono/EcoreEvas.cs
+	evas_mono_table.cs ../../tests/efl_mono/EcoreEvas.cs
 
-evas_mono_table.exe$(EXEEXT): $(evas_mono_table_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/eo_mono/libeo_mono.dll
+evas_mono_table.exe$(EXEEXT): $(evas_mono_table_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f evas_mono_table$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 evas_mono_text_exe_SOURCES = \
-	evas_mono_text.cs ../../tests/eo_mono/EcoreEvas.cs
+	evas_mono_text.cs ../../tests/efl_mono/EcoreEvas.cs
 
-evas_mono_text.exe$(EXEEXT): $(evas_mono_text_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/eo_mono/libeo_mono.dll
+evas_mono_text.exe$(EXEEXT): $(evas_mono_text_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
 	@rm -f evas_mono_text$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/eo_mono/libeo_mono.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 endif
 
