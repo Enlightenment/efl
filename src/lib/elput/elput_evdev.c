@@ -1,6 +1,13 @@
 #include "elput_private.h"
 
 static void
+_ecore_event_cb_free(void *data, void *event)
+{
+   if (data) efl_unref(data);
+   free(event);
+}
+
+static void
 _seat_caps_update(Elput_Seat *seat)
 {
    Elput_Event_Seat_Caps *ev;
@@ -298,10 +305,13 @@ _keyboard_key_send(Elput_Device *dev, enum libinput_key_state state, const char 
    ev->event_window = dev->seat->manager->window;
    ev->root_window = dev->seat->manager->window;
 
+   if (dev->evas_device)
+     ev->dev = efl_ref(dev->evas_device);
+
    if (state == LIBINPUT_KEY_STATE_PRESSED)
-     ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, _ecore_event_cb_free, ev->dev);
    else
-     ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_KEY_UP, ev, _ecore_event_cb_free, ev->dev);
 }
 
 static void
@@ -682,7 +692,10 @@ _pointer_motion_send(Elput_Device *edev)
    ev->multi.root.x = ev->x;
    ev->multi.root.y = ev->y;
 
-   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+   if (edev->evas_device)
+     ev->dev = efl_ref(edev->evas_device);
+
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, _ecore_event_cb_free, ev->dev);
 }
 
 static void
@@ -785,6 +798,9 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev->multi.root.x = ev->x;
    ev->multi.root.y = ev->y;
 
+   if (edev->evas_device)
+     ev->dev = efl_ref(edev->evas_device);
+
    ev->buttons = ptr->buttons;
 
    ev->double_click = ptr->mouse.double_click;
@@ -796,9 +812,11 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev->modifiers = edev->seat->modifiers;
 
    if (state)
-     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev,
+                     _ecore_event_cb_free, ev->dev);
    else
-     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev,
+                     _ecore_event_cb_free, ev->dev);
 }
 
 static Eina_Bool
@@ -899,7 +917,10 @@ _pointer_axis_send(Elput_Device *dev, int direction, int value)
 
    ev->modifiers = dev->seat->modifiers;
 
-   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+   if (dev->evas_device)
+     ev->dev = efl_ref(dev->evas_device);
+
+   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, _ecore_event_cb_free, ev->dev);
 }
 
 static double
@@ -1019,7 +1040,10 @@ _touch_event_send(Elput_Device *dev, int type)
 //   else if (btn == 2) btn = 3;
    ev->buttons = btn;
 
-   ecore_event_add(type, ev, NULL, NULL);
+   if (dev->evas_device)
+     ev->dev = efl_ref(dev->evas_device);
+
+   ecore_event_add(type, ev, _ecore_event_cb_free, ev->dev);
 }
 
 static void
@@ -1058,7 +1082,10 @@ _touch_motion_send(Elput_Device *dev)
    ev->multi.root.x = ev->x;
    ev->multi.root.y = ev->y;
 
-   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+   if (dev->evas_device)
+     ev->dev = efl_ref(dev->evas_device);
+
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, _ecore_event_cb_free, ev->dev);
 }
 
 static void
@@ -1312,6 +1339,9 @@ void
 _evdev_device_destroy(Elput_Device *edev)
 {
    if (!edev) return;
+
+   if (edev->evas_device)
+     efl_unref(edev->evas_device);
 
    if (edev->caps & ELPUT_SEAT_POINTER)
      _pointer_release(edev->seat);
