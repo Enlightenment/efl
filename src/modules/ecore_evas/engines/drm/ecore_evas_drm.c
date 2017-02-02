@@ -12,6 +12,7 @@
 #include "ecore_evas_drm.h"
 #include <Ecore_Drm2.h>
 #include <Evas_Engine_Drm.h>
+#include <Elput.h>
 
 #ifdef BUILD_ECORE_EVAS_GL_DRM
 # include <Evas_Engine_GL_Drm.h>
@@ -83,11 +84,99 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    Ecore_Fd_Handler *hdlr;
    Ecore_Drm2_Device *dev;
    Ecore_Drm2_Output *output;
+   Ecore_Event_Handler *dev_chg_hdlr;
+   Ecore_Event_Handler *seat_hdlr;
+   Eina_List *devices;
    Eina_Bool pending : 1;
    Eina_Bool ticking : 1;
 } Ecore_Evas_Engine_Drm_Data;
 
 static int _drm_init_count = 0;
+
+static Eina_Bool
+_drm_cb_seat_add(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Elput_Event_Seat_Add *ev;
+   Elput_Seat *eseat;
+   Evas_Device *dev;
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   ee = data;
+   ev = event;
+   eseat = ev->seat;
+   edata = ee->engine.data;
+
+   dev =
+     evas_device_add_full(ee->evas, "Seat", "Seat Device", NULL, NULL,
+                          EVAS_DEVICE_CLASS_SEAT, EVAS_DEVICE_SUBCLASS_NONE);
+   if (dev)
+     {
+        elput_input_seat_evas_device_set(eseat, dev);
+        edata->devices = eina_list_append(edata->devices, dev);
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_drm_cb_device_change(void *data, int type EINA_UNUSED, void *event)
+{
+   Elput_Event_Device_Change *ev;
+   Elput_Device *edev;
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Drm_Data *edata;
+   Evas_Device *dev;
+
+   ev = event;
+   edev = ev->device;
+   ee = data;
+   edata = ee->engine.data;
+
+   if (ev->type == ELPUT_DEVICE_ADDED)
+     {
+        int caps = 0, klass = 0;
+        const char *name, *desc;
+
+        caps = elput_input_device_capabilities_get(edev);
+        if (caps & ELPUT_SEAT_POINTER)
+          {
+             klass = EVAS_DEVICE_CLASS_MOUSE;
+             name = "Mouse";
+             desc = "Pointer Device";
+          }
+        else if (caps & ELPUT_SEAT_KEYBOARD)
+          {
+             klass = EVAS_DEVICE_CLASS_KEYBOARD;
+             name = "Keyboard";
+             desc = "Keyboard Device";
+          }
+        else if (caps & ELPUT_SEAT_TOUCH)
+          {
+             klass = EVAS_DEVICE_CLASS_TOUCH;
+             name = "Touch";
+             desc = "Touch Device";
+          }
+
+        dev = evas_device_add_full(ee->evas, name, desc, ev->seat_device, NULL,
+                                   klass, EVAS_DEVICE_SUBCLASS_NONE);
+        if (dev)
+          {
+             /* set Evas_Device on Elput_Device */
+             elput_input_device_evas_device_set(edev, dev);
+             edata->devices = eina_list_append(edata->devices, dev);
+          }
+     }
+   else if (ev->type == ELPUT_DEVICE_REMOVED)
+     {
+        dev = elput_input_device_evas_device_get(edev);
+        if (dev)
+          edata->devices = eina_list_remove(edata->devices, dev);
+        elput_input_device_evas_device_set(edev, NULL);
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
 
 static int
 _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const char *device)
@@ -129,6 +218,13 @@ _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const ch
    if (edata->output) ecore_drm2_output_user_data_set(edata->output, ee);
    else WRN("Could not find output at %d %d", edata->x, edata->y);
 
+   edata->dev_chg_hdlr =
+     ecore_event_handler_add(ELPUT_EVENT_DEVICE_CHANGE,
+                             _drm_cb_device_change, ee);
+   edata->seat_hdlr =
+     ecore_event_handler_add(ELPUT_EVENT_SEAT_ADD,
+                             _drm_cb_seat_add, ee);
+
    ecore_event_evas_init();
 
    return _drm_init_count;
@@ -146,7 +242,15 @@ init_err:
 static int
 _ecore_evas_drm_shutdown(Ecore_Evas_Engine_Drm_Data *edata)
 {
+   Evas_Device *dev;
+
    if (--_drm_init_count != 0) return _drm_init_count;
+
+   EINA_LIST_FREE(edata->devices, dev)
+     evas_device_del(dev);
+
+   ecore_event_handler_del(edata->dev_chg_hdlr);
+   ecore_event_handler_del(edata->seat_hdlr);
 
    ecore_drm2_outputs_destroy(edata->dev);
    ecore_drm2_device_close(edata->dev);
