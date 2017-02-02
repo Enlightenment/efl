@@ -26,7 +26,7 @@ group { name: "e/modules/cpumonitor/main";
       part { name: "bg";
          desc { "default";
             aspect: (10 / 54) (10 / 54);
-            aspect_preference: BOTH;
+            aspect_preference: VERTICAL;
             image.normal: "cpu_bar.png";
          }
          part { name: "led1";
@@ -115,7 +115,7 @@ group { name: "e/modules/cpumonitor/main_vert";
       part { name: "bg";
          desc { "default";
             aspect: (54 / 10) (54 / 10);
-            aspect_preference: BOTH;
+            aspect_preference: HORIZONTAL;
             image.normal: "cpu_bar_vert.png";
          }
          part { name: "led1";
