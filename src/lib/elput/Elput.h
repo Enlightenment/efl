@@ -94,6 +94,7 @@ typedef enum _Elput_Device_Capability
 /* structure to represent event for device being added or removed */
 typedef struct _Elput_Event_Device_Change
 {
+   Eo *seat_device;
    Elput_Device *device;
    Elput_Device_Change_Type type;
 } Elput_Event_Device_Change;

@@ -168,6 +168,7 @@ _device_event_send(Elput_Device *edev, Elput_Device_Change_Type type)
    ev = calloc(1, sizeof(Elput_Event_Device_Change));
    if (!ev) return;
 
+   ev->seat_device = edev->seat->evas_device;
    ev->device = edev;
    ev->type = type;
 

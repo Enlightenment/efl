@@ -191,6 +191,8 @@ struct _Elput_Seat
 
    unsigned int modifiers;
 
+   Eo *evas_device;
+
    Elput_Keyboard *kbd;
    Elput_Pointer *ptr;
    Elput_Touch *touch;
