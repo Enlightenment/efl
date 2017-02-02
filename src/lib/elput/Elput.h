@@ -115,7 +115,13 @@ typedef struct Elput_Event_Pointer_Motion
    double dy_unaccel;
 } Elput_Event_Pointer_Motion;
 
+/* structure to represent event for seat being added */
+typedef struct _Elput_Event_Seat_Add
+{
+   Elput_Seat *seat;
+} Elput_Event_Seat_Add;
 
+EAPI extern int ELPUT_EVENT_SEAT_ADD;
 EAPI extern int ELPUT_EVENT_SEAT_CAPS;
 EAPI extern int ELPUT_EVENT_SEAT_FRAME;
 EAPI extern int ELPUT_EVENT_KEYMAP_SEND;
@@ -461,6 +467,21 @@ EAPI Elput_Device_Capability elput_input_device_capabilities_get(Elput_Device *d
  * @since 1.19
  */
 EAPI void elput_input_device_evas_device_set(Elput_Device *device, Eo *evas_device);
+
+/**
+ * Set the Evas_Device to use for events on a given seat
+ *
+ * @param seat
+ * @param evas_device
+ *
+ * @note: Do not ever use this function in applications !!!
+ * This is a special-purpose API function and should not be used by
+ * application developers.
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.19
+ */
+EAPI void elput_input_seat_evas_device_set(Elput_Seat *seat, Eo *evas_device);
 
 /**
  * Set the pointer acceleration profile

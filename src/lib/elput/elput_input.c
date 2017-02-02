@@ -71,6 +71,7 @@ static Elput_Seat *
 _udev_seat_create(Elput_Manager *em, const char *name)
 {
    Elput_Seat *eseat;
+   Elput_Event_Seat_Add *ev;
 
    eseat = calloc(1, sizeof(Elput_Seat));
    if (!eseat) return NULL;
@@ -80,6 +81,13 @@ _udev_seat_create(Elput_Manager *em, const char *name)
    eseat->name = eina_stringshare_add(name);
    em->input.seats = eina_list_append(em->input.seats, eseat);
 
+   ev = calloc(1, sizeof(Elput_Event_Seat_Add));
+   if (!ev) goto err;
+
+   ev->seat = eseat;
+   ecore_event_add(ELPUT_EVENT_SEAT_ADD, ev, NULL, NULL);
+
+err:
    return eseat;
 }
 
@@ -87,6 +95,9 @@ static void
 _udev_seat_destroy(Elput_Seat *eseat)
 {
    Elput_Device *edev;
+
+   if (eseat->evas_device)
+     efl_unref(eseat->evas_device);
 
    EINA_LIST_FREE(eseat->devices, edev)
      _evdev_device_destroy(edev);
@@ -713,4 +724,15 @@ elput_input_device_evas_device_set(Elput_Device *device, Eo *evas_device)
      }
    else
      device->evas_device = NULL;
+}
+
+EAPI void
+elput_input_seat_evas_device_set(Elput_Seat *seat, Eo *evas_device)
+{
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+
+   if (evas_device)
+     seat->evas_device = evas_device;
+   else
+     seat->evas_device = NULL;
 }

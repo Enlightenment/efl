@@ -6,6 +6,7 @@ static int _elput_init_count = 0;
 /* external variables */
 int _elput_log_dom = -1;
 
+EAPI int ELPUT_EVENT_SEAT_ADD = -1;
 EAPI int ELPUT_EVENT_SEAT_CAPS = -1;
 EAPI int ELPUT_EVENT_SEAT_FRAME = -1;
 EAPI int ELPUT_EVENT_KEYMAP_SEND = -1;
@@ -31,6 +32,7 @@ elput_init(void)
         goto log_err;
      }
 
+   ELPUT_EVENT_SEAT_ADD = ecore_event_type_new();
    ELPUT_EVENT_SEAT_CAPS = ecore_event_type_new();
    ELPUT_EVENT_SEAT_FRAME = ecore_event_type_new();
    ELPUT_EVENT_KEYMAP_SEND = ecore_event_type_new();
@@ -59,6 +61,7 @@ elput_shutdown(void)
    if (_elput_init_count < 1) return 0;
    if (--_elput_init_count != 0) return _elput_init_count;
 
+   ELPUT_EVENT_SEAT_ADD = -1;
    ELPUT_EVENT_SEAT_CAPS = -1;
    ELPUT_EVENT_SEAT_FRAME = -1;
    ELPUT_EVENT_KEYMAP_SEND = -1;
