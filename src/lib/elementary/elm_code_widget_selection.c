@@ -500,7 +500,8 @@ elm_code_widget_selection_is_empty(Evas_Object *widget)
 
    selection = elm_code_widget_selection_normalized_get(widget);
 
-   if (selection->start_col == selection->end_col &&
+   // check there is no space between start and end
+   if (selection->start_col == selection->end_col + 1 &&
        selection->start_line == selection->end_line)
      ret = EINA_TRUE;
 
