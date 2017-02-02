@@ -128,35 +128,34 @@ EAPI void
 eina_evlog(const char *event, void *obj, double srctime, const char *detail)
 {
    Eina_Evlog_Item *item;
-   int size;
    char *strings;
    double now;
+   int size;
    unsigned short detail_offset, event_size;
 
    if (!_evlog_go) return;
-
-   now        = get_time();
-   event_size = strlen(event) + 1;
-   size       = sizeof(Eina_Evlog_Item) + event_size;
+   now                 = get_time();
+   event_size          = strlen(event) + 1;
+   size                = sizeof(Eina_Evlog_Item) + event_size;
+   detail_offset       = 0;
    if (detail)
      {
         detail_offset  = size;
         size          += strlen(detail) + 1;
      }
-   else detail_offset  = 0;
-   size = sizeof(double) * ((size + sizeof(double) - 1) / sizeof(double));
-
+   size                = sizeof(double) * ((size + sizeof(double) - 1)
+                                           / sizeof(double));
    eina_spinlock_take(&_evlog_lock);
-   strings              = push_buf(buf, size);
-   item                 = (Eina_Evlog_Item *)strings;
-   item->tim            = now;
-   item->srctim         = srctime;
-   item->thread         = (unsigned long long)pthread_self();
-   item->obj            = (unsigned long long)obj;
-   item->event_offset   = sizeof(Eina_Evlog_Item);
-   item->detail_offset  = detail_offset;
-   item->event_next     = size;
-   strcpy(strings + size, event);
+   strings             = push_buf(buf, size);
+   item                = (Eina_Evlog_Item *)strings;
+   item->tim           = now;
+   item->srctim        = srctime;
+   item->thread        = (unsigned long long)pthread_self();
+   item->obj           = (unsigned long long)obj;
+   item->event_offset  = sizeof(Eina_Evlog_Item);
+   item->detail_offset = detail_offset;
+   item->event_next    = size;
+   strcpy(strings + sizeof(Eina_Evlog_Item), event);
    if (detail_offset > 0) strcpy(strings + detail_offset, detail);
    eina_spinlock_release(&_evlog_lock);
 }
