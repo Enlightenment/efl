@@ -1010,9 +1010,12 @@ evas_output_method_set(Evas *eo_e, int render_method)
    if (e->engine.func->info) e->engine.info = e->engine.func->info(eo_e);
 
    // Wayland already handles seats.
-   if (em->definition && (eina_streq(em->definition->name, "wayland_shm") ||
-                          eina_streq(em->definition->name, "wayland_egl")))
-       return;
+   if (em->definition &&
+       (eina_streq(em->definition->name, "wayland_shm") ||
+           eina_streq(em->definition->name, "wayland_egl") ||
+           eina_streq(em->definition->name, "drm") ||
+           eina_streq(em->definition->name, "gl_drm")))
+     return;
 
    e->default_seat = evas_device_add_full(eo_e, "default", "The default seat",
                                           NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
