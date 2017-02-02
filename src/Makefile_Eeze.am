@@ -11,7 +11,7 @@ lib/eeze/Eeze.h \
 lib/eeze/Eeze_Net.h \
 lib/eeze/Eeze_Sensor.h \
 lib/eeze/Eeze_Disk.h \
-bin/eeze/eeze_scanner.h
+bin/eeze/eeze_scanner/eeze_scanner.h
 
 # libeeze.la
 lib_eeze_libeeze_la_SOURCES = \
@@ -109,53 +109,53 @@ modules_eeze_sensor_udev_module_la_LIBTOOLFLAGS = --tag=disable-static
 ### Binary
 
 noinst_PROGRAMS += \
-bin/eeze/eeze_udev_test \
-bin/eeze/eeze_sensor_test
+bin/eeze/eeze_udev_test/eeze_udev_test \
+bin/eeze/eeze_sensor_test/eeze_sensor_test
 
-bin_eeze_eeze_udev_test_SOURCES = bin/eeze/eeze_udev_test.c
-bin_eeze_eeze_udev_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
-bin_eeze_eeze_udev_test_LDADD = @USE_EEZE_LIBS@
-bin_eeze_eeze_udev_test_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
+bin_eeze_eeze_udev_test_eeze_udev_test_SOURCES = bin/eeze/eeze_udev_test/eeze_udev_test.c
+bin_eeze_eeze_udev_test_eeze_udev_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
+bin_eeze_eeze_udev_test_eeze_udev_test_LDADD = @USE_EEZE_LIBS@
+bin_eeze_eeze_udev_test_eeze_udev_test_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
-bin_eeze_eeze_sensor_test_SOURCES = bin/eeze/eeze_sensor_test.c
-bin_eeze_eeze_sensor_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
-bin_eeze_eeze_sensor_test_LDADD = @USE_EEZE_LIBS@
-bin_eeze_eeze_sensor_test_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
+bin_eeze_eeze_sensor_test_eeze_sensor_test_SOURCES = bin/eeze/eeze_sensor_test/eeze_sensor_test.c
+bin_eeze_eeze_sensor_test_eeze_sensor_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
+bin_eeze_eeze_sensor_test_eeze_sensor_test_LDADD = @USE_EEZE_LIBS@
+bin_eeze_eeze_sensor_test_eeze_sensor_test_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
 bin_PROGRAMS += \
-bin/eeze/eeze_mount \
-bin/eeze/eeze_umount \
-bin/eeze/eeze_disk_ls \
-bin/eeze/eeze_scanner \
-bin/eeze/eeze_scanner_monitor
+bin/eeze/eeze_mount/eeze_mount \
+bin/eeze/eeze_umount/eeze_umount \
+bin/eeze/eeze_disk_ls/eeze_disk_ls \
+bin/eeze/eeze_scanner/eeze_scanner \
+bin/eeze/eeze_scanner_monitor/eeze_scanner_monitor
 
-bin_eeze_eeze_mount_SOURCES = bin/eeze/eeze_mount.c
-bin_eeze_eeze_mount_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
-bin_eeze_eeze_mount_LDADD = @USE_EEZE_LIBS@
-bin_eeze_eeze_mount_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
+bin_eeze_eeze_mount_eeze_mount_SOURCES = bin/eeze/eeze_mount/eeze_mount.c
+bin_eeze_eeze_mount_eeze_mount_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
+bin_eeze_eeze_mount_eeze_mount_LDADD = @USE_EEZE_LIBS@
+bin_eeze_eeze_mount_eeze_mount_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
-bin_eeze_eeze_umount_SOURCES = bin/eeze/eeze_umount.c
-bin_eeze_eeze_umount_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
-bin_eeze_eeze_umount_LDADD = @USE_EEZE_LIBS@
-bin_eeze_eeze_umount_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
+bin_eeze_eeze_umount_eeze_umount_SOURCES = bin/eeze/eeze_umount/eeze_umount.c
+bin_eeze_eeze_umount_eeze_umount_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
+bin_eeze_eeze_umount_eeze_umount_LDADD = @USE_EEZE_LIBS@
+bin_eeze_eeze_umount_eeze_umount_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
-bin_eeze_eeze_disk_ls_SOURCES = bin/eeze/eeze_disk_ls.c
-bin_eeze_eeze_disk_ls_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
-bin_eeze_eeze_disk_ls_LDADD = @USE_EEZE_LIBS@
-bin_eeze_eeze_disk_ls_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
+bin_eeze_eeze_disk_ls_eeze_disk_ls_SOURCES = bin/eeze/eeze_disk_ls/eeze_disk_ls.c
+bin_eeze_eeze_disk_ls_eeze_disk_ls_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
+bin_eeze_eeze_disk_ls_eeze_disk_ls_LDADD = @USE_EEZE_LIBS@
+bin_eeze_eeze_disk_ls_eeze_disk_ls_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
-bin_eeze_eeze_scanner_SOURCES = \
-bin/eeze/eeze_scanner.c \
-bin/eeze/eeze_scanner.h
-bin_eeze_eeze_scanner_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
-bin_eeze_eeze_scanner_LDADD = @USE_EEZE_LIBS@
-bin_eeze_eeze_scanner_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
+bin_eeze_eeze_scanner_eeze_scanner_SOURCES = \
+bin/eeze/eeze_scanner/eeze_scanner.c \
+bin/eeze/eeze_scanner/eeze_scanner.h
+bin_eeze_eeze_scanner_eeze_scanner_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
+bin_eeze_eeze_scanner_eeze_scanner_LDADD = @USE_EEZE_LIBS@
+bin_eeze_eeze_scanner_eeze_scanner_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
-bin_eeze_eeze_scanner_monitor_SOURCES = \
-bin/eeze/eeze_scanner_monitor.c
-bin_eeze_eeze_scanner_monitor_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
-bin_eeze_eeze_scanner_monitor_LDADD = @USE_EEZE_LIBS@
-bin_eeze_eeze_scanner_monitor_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
+bin_eeze_eeze_scanner_monitor_eeze_scanner_monitor_SOURCES = \
+bin/eeze/eeze_scanner_monitor/eeze_scanner_monitor.c
+bin_eeze_eeze_scanner_monitor_eeze_scanner_monitor_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
+bin_eeze_eeze_scanner_monitor_eeze_scanner_monitor_LDADD = @USE_EEZE_LIBS@
+bin_eeze_eeze_scanner_monitor_eeze_scanner_monitor_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
 
 setuid_root_mode = a=rx,u+xs
 

@@ -7,7 +7,7 @@
 #include <Eet.h>
 #include <Ecore.h>
 #include <Ecore_Con.h>
-#include "eeze_scanner.h"
+#include "../eeze_scanner/eeze_scanner.h"
 
 static Eet_Data_Descriptor *edd;
 
