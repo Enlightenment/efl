@@ -1049,7 +1049,8 @@ START_TEST(efl_test_future_link)
 
    ecore_init();
 
-   o = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get());
+   o = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get(),
+               efl_loop_timer_interval_set(efl_added, 0.0));
    p = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
    efl_future_use(&f, efl_promise_future_get(p));
    efl_future_link(o, f);
@@ -1058,7 +1059,8 @@ START_TEST(efl_test_future_link)
    efl_del(o);
    fail_if(f);
 
-   o = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get());
+   o = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get(),
+               efl_loop_timer_interval_set(efl_added, 0.0));
    efl_future_use(&f, efl_promise_future_get(p));
    efl_future_cancel(f);
 

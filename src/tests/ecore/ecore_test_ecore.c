@@ -833,6 +833,10 @@ START_TEST(ecore_test_efl_loop_register)
    fail_if(t != NULL);
 
    n = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get());
+   fail_if(n != NULL);
+
+   n = efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get(),
+               efl_loop_timer_interval_set(efl_added, 1.0));
    efl_loop_register(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS, n);
 
    t = efl_provider_find(ecore_main_loop_get(), EFL_LOOP_TIMER_CLASS);
