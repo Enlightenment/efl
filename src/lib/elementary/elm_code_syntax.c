@@ -81,6 +81,8 @@ _content_starts_with(const char *content, const char *prefix, unsigned int lengt
    unsigned int i;
    unsigned int prefix_length;
 
+   if (!prefix)
+     return EINA_FALSE;
    prefix_length = strlen(prefix);
    if (!content || length < prefix_length)
      return EINA_FALSE;
@@ -153,7 +155,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
                 break;
              }
 
-        elm_code_line_token_add(line, 1, i2, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+        elm_code_line_token_add(line, 0, i2, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
         if (i2 == length)
           {
              Elm_Code_Token *token = eina_list_last_data_get(line->tokens);
