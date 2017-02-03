@@ -4232,16 +4232,11 @@ if test "x${want_x11_xlib}" = "xyes" ; then
    fi
    EFL_ADD_FEATURE([ECORE_X], [xinput22])
 
-   AC_DEFINE([HAVE_ECORE_X_XLIB], [1], [Defined to 1 if Xlib is enabled.])
-   HAVE_ECORE_X_BACKEND="HAVE_ECORE_X_XLIB"
-
    EFL_EVAL_PKGS([ECORE_X])
    EFL_CHECK_FUNCS([ECORE_X], [dlopen dlsym])
 fi
 
 EFL_ADD_LIBS([ECORE_X], [${ECORE_X_LIBS}])
-
-AC_SUBST([HAVE_ECORE_X_BACKEND])
 
 EFL_LIB_END_OPTIONAL([Ecore_X])
 
@@ -5614,7 +5609,6 @@ src/examples/eolian_cxx/Makefile
 src/examples/elocation/Makefile
 src/examples/elementary/Makefile
 src/lib/eina/eina_config.h
-src/lib/ecore_x/ecore_x_version.h
 src/lib/efl/Efl_Config.h
 src/lib/elementary/Elementary_Options.h
 src/scripts/eo/eo_debug

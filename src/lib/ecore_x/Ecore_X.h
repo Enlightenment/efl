@@ -42,7 +42,8 @@ typedef struct _Ecore_X_Version
 
 EAPI extern Ecore_X_Version *ecore_x_version;
 
-#include "ecore_x_version.h"
+//legacy this was earlier there to indicate if we are running under xlib or xcb
+#define HAVE_ECORE_X_XLIB 1
 
 #include <sys/types.h>
 
