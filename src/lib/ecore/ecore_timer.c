@@ -125,16 +125,20 @@ _efl_loop_timer_efl_object_constructor(Eo *obj, Efl_Loop_Timer_Data *timer)
 
    efl_wref_add(obj, &timer->object);
 
-   timer->at = ecore_time_get();
    timer->initialized = 0;
 
    return obj;
 }
 
-
 EOLIAN static Eo *
 _efl_loop_timer_efl_object_finalize(Eo *obj, Efl_Loop_Timer_Data *pd)
 {
+   if (!pd->initialized)
+     {
+        ERR("Timer has not been initialized during construction as mandated.");
+        return NULL;
+     }
+
    _efl_loop_timer_util_instanciate(pd);
 
    return efl_finalize(efl_super(obj, MY_CLASS));
@@ -259,7 +263,10 @@ _efl_loop_timer_interval_set(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer, do
    timer->in = in;
 
    if (!timer->initialized)
-     _efl_loop_timer_set(timer, timer->at + in, in);
+     {
+        timer->at = ecore_time_get();
+        _efl_loop_timer_set(timer, timer->at + in, in);
+     }
 }
 
 EOLIAN static double
@@ -362,9 +369,15 @@ _efl_loop_timer_efl_object_event_freeze(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data
    if (timer->frozen)
      return;
 
-   now = ecore_time_get();
+   if (EINA_UNLIKELY(!timer->initialized))
+     {
+        ERR("Attempt freezing an non initialized timer.");
+        return;
+     }
 
+   now = ecore_loop_time_get();
    timer->pending = timer->at - now;
+
    timer->at = 0.0;
    timer->frozen = 1;
 
@@ -442,6 +455,12 @@ _efl_loop_timer_util_instanciate(Efl_Loop_Timer_Data *timer)
         return ;
      }
 
+   if (!timer->initialized)
+     {
+        ERR("Trying to instanciate an uninitialized timer is impossible.");
+        return ;
+     }
+
    EINA_INLIST_REVERSE_FOREACH(timers, t2)
      {
         if (timer->at > t2->at)
@@ -459,6 +478,12 @@ static void
 _efl_loop_timer_util_delay(Efl_Loop_Timer_Data *timer,
                            double add)
 {
+   if (!timer->initialized)
+     {
+        ERR("Impossible to delay an uninitialized timer.");
+        return ;
+     }
+
    if (timer->frozen)
      {
         timer->pending += add;
@@ -556,6 +581,7 @@ _efl_loop_timer_after_get(Efl_Loop_Timer_Data *base)
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(base)->next, timer)
      {
+        if (EINA_UNLIKELY(!timer->initialized)) continue; // This shouldn't happen
         if (timer->at >= maxtime) break;
         if (!timer->just_added)
           valid_timer = timer;
@@ -580,6 +606,7 @@ _efl_loop_timer_next_get(void)
    now = ecore_loop_time_get();
    in = first->at - now;
    if (in < 0) in = 0;
+
    return in;
 }
 
