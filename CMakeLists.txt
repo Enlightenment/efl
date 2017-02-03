@@ -52,6 +52,7 @@ EFL_LIB(eldbus)
 EFL_LIB(embryo)
 EFL_LIB(ector)
 EFL_LIB(eeze)
+EFL_LIB(ecore_input)
 
 EFL_OPTIONS_SUMMARY()
 
