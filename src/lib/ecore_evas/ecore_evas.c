@@ -3126,7 +3126,7 @@ _ecore_evas_idle_timeout_update(Ecore_Evas *ee)
    if (ee->engine.idle_flush_timer)
      ecore_timer_del(ee->engine.idle_flush_timer);
    ee->engine.idle_flush_timer = 
-     ecore_timer_add(IDLE_FLUSH_TIME, _ecore_evas_cb_idle_flush, ee);
+     ecore_timer_loop_add(IDLE_FLUSH_TIME, _ecore_evas_cb_idle_flush, ee);
 }
 
 static void
