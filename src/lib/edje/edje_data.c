@@ -639,6 +639,9 @@ _edje_description_variant_type_set(const char *type, void *data, Eina_Bool unkno
    return EINA_FALSE;
 }
 
+size_t  _edje_data_string_mapping_size = 0;
+void   *_edje_data_string_mapping = NULL;
+
 static Eina_Hash *
 _edje_eina_hash_add_alloc(Eina_Hash *hash,
                           const char *key,
@@ -650,7 +653,13 @@ _edje_eina_hash_add_alloc(Eina_Hash *hash,
    if (!hash)
      return NULL;
 
-   eina_hash_direct_add(hash, key, data);
+   // XXX: ancient edje file workaround
+   if ((_edje_data_string_mapping) &&
+       ((key >=  (char *)_edje_data_string_mapping) &&
+        (key <  ((char *)_edje_data_string_mapping + _edje_data_string_mapping_size))))
+     eina_hash_direct_add(hash, key, data);
+   else
+     eina_hash_add(hash, key, data);
    return hash;
 }
 

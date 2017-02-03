@@ -278,6 +278,12 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    return edc;
 }
 
+// XXX: this is not pretty. some oooooold edje files do not store strings
+// in their dictionary for hashes. this works around crashes loading such
+// files
+extern size_t  _edje_data_string_mapping_size;
+extern void   *_edje_data_string_mapping;
+
 static Edje_File *
 _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll)
 {
@@ -289,6 +295,8 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
    Eina_List *l, *ll;
    Eet_File *ef;
    char *name;
+   void *mapping;
+   size_t mapping_size;
 
    ef = eet_mmap(f);
    if (!ef)
@@ -296,7 +304,21 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
         *error_ret = EDJE_LOAD_ERROR_UNKNOWN_FORMAT;
         return NULL;
      }
+   // XXX: ancient edje file workaround
+   mapping = eina_file_map_all((Eina_File *)f, EINA_FILE_SEQUENTIAL);
+   if (mapping)
+     {
+        mapping_size = eina_file_size_get(f);
+        _edje_data_string_mapping = mapping;
+        _edje_data_string_mapping_size = mapping_size;
+     }
    edf = eet_data_read(ef, _edje_edd_edje_file, "edje/file");
+   // XXX: ancient edje file workaround
+   if (mapping)
+     {
+        eina_file_map_free((Eina_File *)f, mapping);
+        _edje_data_string_mapping = NULL;
+     }
    if (!edf)
      {
         *error_ret = EDJE_LOAD_ERROR_CORRUPT_FILE;
