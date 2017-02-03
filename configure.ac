@@ -5566,6 +5566,7 @@ AC_ARG_ENABLE([cancel-ok],
               ],[])
 AC_SUBST(ELM_EDJE_DEFINES)
 
+AC_DEFINE([NEED_RUN_IN_TREE], [1], [Need EFL_RUN_IN_TREE=1 trick])
 
 ## Disable warning for OS that have a specifc configuration
 case "$host_os" in

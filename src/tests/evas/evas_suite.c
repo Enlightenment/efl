@@ -32,7 +32,9 @@ main(int argc, char **argv)
    if (!_efl_test_option_disp(argc, argv, etc))
      return 0;
 
+#ifdef NEED_RUN_IN_TREE
    putenv("EFL_RUN_IN_TREE=1");
+#endif
 
    evas_init();
 

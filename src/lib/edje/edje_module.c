@@ -24,19 +24,24 @@ _edje_module_handle_load(const char *module)
    const char *path;
    Eina_List *l;
    Eina_Module *em = NULL;
+#ifdef NEED_RUN_IN_TREE
    Eina_Bool run_in_tree;
+#endif
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(module, NULL);
 
    em = (Eina_Module *)eina_hash_find(_registered_modules, module);
    if (em) return em;
 
+#ifdef NEED_RUN_IN_TREE
    run_in_tree = !!getenv("EFL_RUN_IN_TREE");
+#endif
 
    EINA_LIST_FOREACH(_modules_paths, l, path)
      {
         char tmp[PATH_MAX] = "";
 
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
         if (getuid() == geteuid())
 #endif
@@ -50,6 +55,7 @@ _edje_module_handle_load(const char *module)
                   tmp[0] = '\0';
              }
         }
+#endif
 
         if (tmp[0] == '\0')
           snprintf(tmp, sizeof(tmp), "%s/%s/%s/%s",
@@ -79,6 +85,7 @@ _edje_module_init(void)
 
    _registered_modules = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
 
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -94,6 +101,7 @@ _edje_module_init(void)
              }
         }
    }
+#endif
 
    /* 1. libedje.so/../edje/modules/ */
    paths[0] = eina_module_symbol_path_get(_edje_module_init, "/edje/modules");

@@ -110,6 +110,7 @@ evas_module_paths_init(void)
 {
    char *libdir, *path;
 
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -125,6 +126,7 @@ evas_module_paths_init(void)
                }
           }
      }
+#endif
 
    /* 1. libevas.so/../evas/modules/ */
    libdir = (char *)_evas_module_libdir_get();
@@ -408,9 +410,11 @@ evas_module_engine_list(void)
    unsigned int i;
    const char *s, *s2;
    char buf[PATH_MAX];
+#ifdef NEED_RUN_IN_TREE
    Eina_Bool run_in_tree;
 
    run_in_tree = !!getenv("EFL_RUN_IN_TREE");
+#endif
 
    EINA_LIST_FOREACH(evas_module_paths, l, s)
      {
@@ -424,6 +428,7 @@ evas_module_engine_list(void)
                {
                   const char *fname = fi->path + fi->name_start;
 
+#ifdef NEED_RUN_IN_TREE
                   buf[0] = '\0';
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
                   if (getuid() == geteuid())
@@ -439,6 +444,7 @@ evas_module_engine_list(void)
                     }
 
                   if (buf[0] == '\0')
+#endif
                     snprintf(buf, sizeof(buf), "%s/engines/%s/%s",
                              s, fname, MODULE_ARCH);
 
@@ -513,7 +519,9 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
    Evas_Module *em;
    Eina_Module *en;
    Eina_List *l;
+#ifdef NEED_RUN_IN_TREE
    Eina_Bool run_in_tree;
+#endif
 
    if ((unsigned int)type > 5) return NULL;
 
@@ -524,7 +532,9 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
         return NULL;
      }
 
+#ifdef NEED_RUN_IN_TREE
    run_in_tree = !!getenv("EFL_RUN_IN_TREE");
+#endif
 
    EINA_LIST_FOREACH(evas_module_paths, l, path)
      {
@@ -540,6 +550,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
           }
 
         buffer[0] = '\0';
+#if NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
         if (getuid() == geteuid())
 #endif
@@ -552,6 +563,7 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
                   buffer[0] = '\0';
                }
           }
+#endif
 
         if (buffer[0] == '\0')
           snprintf(buffer, sizeof(buffer), "%s/%s/%s/%s/%s",

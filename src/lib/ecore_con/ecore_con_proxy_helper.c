@@ -57,10 +57,13 @@ _efl_net_proxy_helper_spawn(void)
    char buf[PATH_MAX];
    Eina_List *l;
    Efl_Net_Proxy_Helper_Req *req;
+#ifdef NEED_RUN_IN_TREE
    static int run_in_tree = -1;
+#endif
 
    if (!_efl_net_proxy_helper_works) return;
    if (_efl_net_proxy_helper_exe) return;
+#ifdef NEED_RUN_IN_TREE
    if (run_in_tree == -1)
      {
         run_in_tree = 0;
@@ -77,6 +80,7 @@ _efl_net_proxy_helper_spawn(void)
        (buf, sizeof(buf),
         PACKAGE_BUILD_DIR"/src/bin/ecore_con/utils/efl_net_proxy_helper"HELPER_EXT);
    else
+#endif
      snprintf
        (buf, sizeof(buf),
         "%s/ecore_con/utils/"MODULE_ARCH"/efl_net_proxy_helper"HELPER_EXT,

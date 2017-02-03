@@ -154,6 +154,7 @@ _ethumb_plugins_load(void)
    if (_plugins_loaded) return;
    _plugins_loaded = EINA_TRUE;
 
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -182,6 +183,7 @@ _ethumb_plugins_load(void)
                }
           }
      }
+#endif
 
    snprintf(buf, sizeof(buf), "%s/ethumb/modules", eina_prefix_lib_get(_pfx));
    _plugins = eina_module_arch_list_get(_plugins, buf, MODULE_ARCH);

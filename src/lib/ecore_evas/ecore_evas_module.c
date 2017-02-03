@@ -57,6 +57,7 @@ _ecore_evas_vnc_server_module_load(void)
    if (_ecore_evas_vnc)
      return _ecore_evas_vnc;
 
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -71,6 +72,7 @@ _ecore_evas_vnc_server_module_load(void)
                return _ecore_evas_vnc;
           }
      }
+#endif
 
    prefix = eina_module_symbol_path_get(_ecore_evas_vnc_server_module_load,
                                         "/ecore_evas");
@@ -93,19 +95,24 @@ _ecore_evas_engine_load(const char *engine)
    const char *path;
    Eina_List *l;
    Eina_Module *em = NULL;
+#ifdef NEED_RUN_IN_TREE
    Eina_Bool run_in_tree;
+#endif
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(engine, NULL);
 
    em =  (Eina_Module *)eina_hash_find(_registered_engines, engine);
    if (em) return em;
 
+#ifdef NEED_RUN_IN_TREE
    run_in_tree = !!getenv("EFL_RUN_IN_TREE");
+#endif
 
    EINA_LIST_FOREACH(_engines_paths, l, path)
      {
         char tmp[PATH_MAX] = "";
 
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
         if (getuid() == geteuid())
 #endif
@@ -119,6 +126,7 @@ _ecore_evas_engine_load(const char *engine)
                   tmp[0] = '\0';
                }
           }
+#endif
 
         if (tmp[0] == '\0')
           snprintf(tmp, sizeof(tmp), "%s/%s/%s/%s",
@@ -150,6 +158,7 @@ _ecore_evas_engine_init(void)
 //   _registered_engines = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
    _registered_engines = eina_hash_string_small_new(NULL);
 
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -165,6 +174,7 @@ _ecore_evas_engine_init(void)
                }
           }
      }
+#endif
 
    /* 1. libecore_evas.so/../ecore_evas/engines/ */
    paths[0] = eina_module_symbol_path_get(_ecore_evas_engine_init, "/ecore_evas/engines");

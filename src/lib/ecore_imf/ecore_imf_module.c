@@ -52,6 +52,7 @@ ecore_imf_module_init(void)
                          "ECORE_IMF", "ecore_imf", "checkme",
                          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
                          PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -88,6 +89,7 @@ ecore_imf_module_init(void)
                }
           }
      }
+#endif
 
    env = getenv("ECORE_IMF_MODULE");
 #ifdef BUILD_ECORE_IMF_WAYLAND

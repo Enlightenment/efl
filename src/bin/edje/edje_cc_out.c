@@ -2221,6 +2221,7 @@ data_write_scripts(Eet_File *ef)
 #else
 # define BIN_EXT
 #endif
+#ifdef NEED_RUN_IN_TREE
      if (getenv("EFL_RUN_IN_TREE"))
        {
           snprintf(embryo_cc_path, sizeof(embryo_cc_path),
@@ -2231,6 +2232,7 @@ data_write_scripts(Eet_File *ef)
           if (!ecore_file_exists(embryo_cc_path))
             embryo_cc_path[0] = '\0';
        }
+#endif
 
      if (embryo_cc_path[0] == '\0')
        {

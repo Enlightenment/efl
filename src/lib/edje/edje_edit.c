@@ -12469,6 +12469,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 #else
 # define BIN_EXT
 #endif
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -12484,6 +12485,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
              embryo_cc_path[0] = '\0';
         }
    }
+#endif
 
    if (embryo_cc_path[0] == '\0')
      {

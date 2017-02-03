@@ -137,6 +137,7 @@ ecore_system_modules_load(void)
 {
    char buf[PATH_MAX] = "";
 
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -173,6 +174,7 @@ ecore_system_modules_load(void)
                }
           }
      }
+#endif
 
    snprintf(buf, sizeof(buf), "%s/ecore/system",
             eina_prefix_lib_get(_ecore_pfx));

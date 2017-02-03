@@ -104,6 +104,7 @@ eeze_sensor_modules_load(void)
     * is one of these items. We do load the modules from the builddir if the
     * environment is set. Normal case is to use installed modules from system
     */
+#ifdef NEED_RUN_IN_TREE
    if (
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
        (getuid() == geteuid()) &&
@@ -122,6 +123,7 @@ eeze_sensor_modules_load(void)
           }
      }
    else
+#endif
      {
         snprintf(buf, sizeof(buf), "%s/eeze/modules/sensor",
                  eina_prefix_lib_get(pfx));

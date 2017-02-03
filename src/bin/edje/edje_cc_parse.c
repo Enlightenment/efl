@@ -1050,6 +1050,7 @@ compile(void)
          */
 
         buf2[0] = '\0';
+#ifdef NEED_RUN_IN_TREE
         if (getenv("EFL_RUN_IN_TREE"))
           {
              snprintf(buf2, sizeof(buf2),
@@ -1058,6 +1059,7 @@ compile(void)
              if (!ecore_file_exists(buf2))
                buf2[0] = '\0';
           }
+#endif
 
         if (buf2[0] == '\0')
           snprintf(buf2, sizeof(buf2),

@@ -62,6 +62,7 @@ _emotion_modules_load(void)
    if (_emotion_modules_loaded) return;
    _emotion_modules_loaded = EINA_TRUE;
 
+#ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -101,6 +102,7 @@ _emotion_modules_load(void)
                }
           }
      }
+#endif
 
    snprintf(buf, sizeof(buf), "%s/emotion/modules", eina_prefix_lib_get(_emotion_pfx));
    _emotion_modules = eina_module_arch_list_get(_emotion_modules, buf, MODULE_ARCH);

@@ -220,7 +220,9 @@ main(void)
    SRunner *sr;
    int failed_count;
 
+#ifdef NEED_RUN_IN_TREE
    putenv("EFL_RUN_IN_TREE=1");
+#endif
 
    s = elocation_suite();
    sr = srunner_create(s);

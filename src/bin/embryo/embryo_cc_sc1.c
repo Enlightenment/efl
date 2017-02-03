@@ -572,6 +572,7 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
    int i, stack_size;
    size_t len;
 
+#ifdef NEED_RUN_IN_TREE
    str[0] = '\0';
    if (getenv("EFL_RUN_IN_TREE"))
      {
@@ -582,6 +583,7 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
      }
 
    if (str[0] == '\0')
+#endif
      snprintf(str, sizeof(str), "%s/include/", e_prefix_data_get());
 
    /* use embryo include dir always */
