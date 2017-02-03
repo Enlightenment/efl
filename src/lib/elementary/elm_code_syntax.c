@@ -29,11 +29,26 @@ static Elm_Code_Syntax _elm_code_syntax_c =
       "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while", NULL}
 };
 
+static Elm_Code_Syntax _elm_code_syntax_py =
+{
+   "{}()[]:;%/*+!=<->,.",
+   NULL,
+   "#",
+   "\"\"\"",
+   "\"\"\"",
+   {"False", "None", "True", "and", "as", "assert", "break", "class", \
+    "continue", "def", "del", "elif", "else", "except", "finally", "for", \
+    "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", "not", \
+    "or", "pass", "raise", "return", "try", "while", "with", "yield"}
+};
+
 EAPI Elm_Code_Syntax *
 elm_code_syntax_for_mime_get(const char *mime)
 {
    if (!strcmp("text/x-chdr", mime) || !strcmp("text/x-csrc", mime))
      return &_elm_code_syntax_c;
+   if (!strcmp("text/x-python", mime))
+     return &_elm_code_syntax_py;
 
    return NULL;
 }
