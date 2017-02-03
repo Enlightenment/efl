@@ -10,6 +10,7 @@
 typedef struct _Elm_Code_Syntax
 {
    const char *symbols;
+   const char *preprocessor;
    const char *comment_single;
    const char *comment_start;
    const char *comment_end;
@@ -18,7 +19,8 @@ typedef struct _Elm_Code_Syntax
 
 static Elm_Code_Syntax _elm_code_syntax_c =
 {
-   "{}()[]:;/*+&|!=<->,.",
+   "{}()[]:;%^/*+&|~!=<->,.",
+   "#",
    "//",
    "/*",
    "*/",
@@ -161,7 +163,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
              continue;
           }
 
-        if (content[i] == '#')
+        if (syntax->preprocessor && _content_starts_with(content+i, syntax->preprocessor, strlen(syntax->preprocessor)))
           {
              elm_code_line_token_add(line, i, length - 1, 1, ELM_CODE_TOKEN_TYPE_PREPROCESSOR);
              return;
