@@ -98,15 +98,15 @@ _ecore_poller_next_tick_eval(void)
           timer = ecore_timer_add(interval, _ecore_poller_cb_timer, NULL);
         else
           {
-             t = ecore_time_get();
+             t = ecore_loop_time_get();
              if (!EINA_FLT_EQ(interval, poll_cur_interval))
                {
                   t -= last_tick; /* time since we last ticked */
      /* delete the timer and reset it to tick off in the new
       * time interval. at the tick this will be adjusted */
                   ecore_timer_del(timer);
-                  timer = ecore_timer_add(interval - t,
-                                          _ecore_poller_cb_timer, NULL);
+                  timer = ecore_timer_loop_add(interval - t,
+                                               _ecore_poller_cb_timer, NULL);
                }
           }
      }
@@ -121,7 +121,7 @@ _ecore_poller_cb_timer(void *data EINA_UNUSED)
    int changes = 0;
 
    at_tick++;
-   last_tick = ecore_time_get();
+   last_tick = ecore_loop_time_get();
    /* we have 16 counters - each increments every time the poller counter
     * "ticks". it increments by the minimum interval (which can be 1, 2, 4,
     * 7, 16 etc. up to 32768) */
