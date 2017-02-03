@@ -685,6 +685,23 @@ _pointer_motion_send(Elput_Device *edev)
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
 
+static void
+_pointer_motion_relative(struct libinput_event_pointer *event)
+{
+   Elput_Event_Pointer_Motion *ev;
+
+   ev = calloc(1, sizeof(Elput_Event_Pointer_Motion));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   ev->time_usec = libinput_event_pointer_get_time_usec(event);
+   ev->dx = libinput_event_pointer_get_dx(event);
+   ev->dy = libinput_event_pointer_get_dy(event);
+   ev->dx_unaccel = libinput_event_pointer_get_dx_unaccelerated(event);
+   ev->dy_unaccel = libinput_event_pointer_get_dy_unaccelerated(event);
+
+   ecore_event_add(ELPUT_EVENT_POINTER_MOTION, ev, NULL, NULL);
+}
+
 static Eina_Bool
 _pointer_motion(struct libinput_device *idev, struct libinput_event_pointer *event)
 {
@@ -702,6 +719,7 @@ _pointer_motion(struct libinput_device *idev, struct libinput_event_pointer *eve
    ptr->timestamp = libinput_event_pointer_get_time(event);
 
    _pointer_motion_send(edev);
+   _pointer_motion_relative(event);
 
    return EINA_TRUE;
 }
@@ -725,6 +743,7 @@ _pointer_motion_abs(struct libinput_device *idev, struct libinput_event_pointer 
    /* TODO: these needs to run a matrix transform based on output */
 
    _pointer_motion_send(edev);
+   _pointer_motion_relative(event);
 
    return EINA_TRUE;
 }

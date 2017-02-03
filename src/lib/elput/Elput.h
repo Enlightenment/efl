@@ -98,12 +98,26 @@ typedef struct _Elput_Event_Session_Active
    Eina_Bool active : 1;
 } Elput_Event_Session_Active;
 
+/** @since 1.19 */
+typedef struct Elput_Event_Pointer_Motion
+{
+   uint64_t time_usec;
+   double dx;
+   double dy;
+   double dx_unaccel;
+   double dy_unaccel;
+} Elput_Event_Pointer_Motion;
+
+
 EAPI extern int ELPUT_EVENT_SEAT_CAPS;
 EAPI extern int ELPUT_EVENT_SEAT_FRAME;
 EAPI extern int ELPUT_EVENT_KEYMAP_SEND;
 EAPI extern int ELPUT_EVENT_MODIFIERS_SEND;
 EAPI extern int ELPUT_EVENT_DEVICE_CHANGE;
 EAPI extern int ELPUT_EVENT_SESSION_ACTIVE;
+
+/** @since 1.19 */
+EAPI extern int ELPUT_EVENT_POINTER_MOTION;
 
 /**
  * @file
