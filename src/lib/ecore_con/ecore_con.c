@@ -703,10 +703,11 @@ efl_net_ip_resolve_async_new(const char *host, const char *port, const struct ad
 
    d->result = NULL;
 
-   return ecore_thread_run(_efl_net_ip_resolve_async_run,
-                           _efl_net_ip_resolve_async_end,
-                           _efl_net_ip_resolve_async_cancel,
-                           d);
+   return ecore_thread_feedback_run(_efl_net_ip_resolve_async_run,
+                                    NULL,
+                                    _efl_net_ip_resolve_async_end,
+                                    _efl_net_ip_resolve_async_cancel,
+                                    d, EINA_TRUE);
 
  failed_hints:
    free(d->port);

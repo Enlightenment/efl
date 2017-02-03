@@ -1407,10 +1407,11 @@ _efl_net_dialer_http_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Http_Data *pd, co
 
         ctx->o = o;
 
-        pd->libproxy_thread = ecore_thread_run(_efl_net_dialer_http_libproxy_run,
-                                               _efl_net_dialer_http_libproxy_end,
-                                               _efl_net_dialer_http_libproxy_cancel,
-                                               ctx);
+        pd->libproxy_thread = ecore_thread_feedback_run(_efl_net_dialer_http_libproxy_run,
+                                                        NULL,
+                                                        _efl_net_dialer_http_libproxy_end,
+                                                        _efl_net_dialer_http_libproxy_cancel,
+                                                        ctx, EINA_TRUE);
         return 0;
      url_error:
         free(ctx);
