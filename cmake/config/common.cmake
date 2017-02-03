@@ -101,6 +101,7 @@ TYPE_CHECK(siginfo_t INCLUDE_FILES signal.h)
 # or is pkg-config enough these days?
 pkg_check_modules(UNWIND libunwind libunwind-generic)
 
+CHECK_APPEND_DEFINE(EFL_EO_API_SUPPORT 1)
 CHECK_APPEND_DEFINE(EFL_BETA_API_SUPPORT 1)
 if(CMAKE_THREAD_LIBS_INIT)
   set(EFL_HAVE_THREADS 1)
