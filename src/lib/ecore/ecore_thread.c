@@ -799,6 +799,7 @@ struct _Ecore_Thread_Waiter
    Ecore_Thread_Cb func_cancel;
    Ecore_Thread_Cb func_end;
    const void *data;
+   Eina_Bool waiting;
 };
 
 static void
@@ -808,10 +809,11 @@ _ecore_thread_wait_reset(Ecore_Thread_Waiter *waiter,
    worker->data = waiter->data;
    worker->func_cancel = waiter->func_cancel;
    worker->func_end = waiter->func_end;
-   // The waiter will be checked by _wait, NULL meaning it is done
+
    waiter->func_end = NULL;
    waiter->func_cancel = NULL;
    waiter->data = NULL;
+   waiter->waiting = EINA_FALSE;
 }
 
 static void
@@ -845,12 +847,13 @@ ecore_thread_wait(Ecore_Thread *thread, double wait)
    waiter.data = worker->data;
    waiter.func_end = worker->func_end;
    waiter.func_cancel = worker->func_cancel;
+   waiter.waiting = EINA_TRUE;
    // Now trick the thread to call the wrapper function
    worker->data = &waiter;
    worker->func_cancel = _ecore_thread_wait_cancel;
    worker->func_end = _ecore_thread_wait_end;
 
-   while (waiter.data)
+   while (waiter.waiting == EINA_TRUE)
      {
         double start, end;
 
@@ -863,7 +866,7 @@ ecore_thread_wait(Ecore_Thread *thread, double wait)
         if (wait <= 0) break;
      }
 
-   if (!waiter.data)
+   if (waiter.waiting == EINA_FALSE)
      {
         return EINA_TRUE;
      }
