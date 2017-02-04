@@ -873,6 +873,7 @@ low_mem_current:
                     {
                        ed->pending_actions = eina_list_remove(ed->pending_actions, pp);
                        ecore_timer_del(pp->timer);
+                       pp->timer = NULL;
                        free(pp);
                        //		       goto done;
                     }

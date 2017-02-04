@@ -437,6 +437,7 @@ _edje_pending_timer_cb(void *data)
    pp = data;
    pp->edje->pending_actions = eina_list_remove(pp->edje->pending_actions, pp);
    _edje_program_run(pp->edje, pp->program, 1, "", "");
+   pp->timer = NULL;
    free(pp);
    return ECORE_CALLBACK_CANCEL;
 }

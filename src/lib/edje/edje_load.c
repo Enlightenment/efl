@@ -2051,6 +2051,7 @@ _edje_file_del(Edje *ed)
         EINA_LIST_FREE(ed->pending_actions, pp)
           {
              ecore_timer_del(pp->timer);
+             pp->timer = NULL;
              free(pp);
           }
      }
