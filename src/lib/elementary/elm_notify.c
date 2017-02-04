@@ -688,7 +688,10 @@ _elm_notify_allow_events_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool allow)
           _block_area_clicked_cb, obj);
      }
    else
-     evas_object_del(sd->block_events);
+     {
+        evas_object_del(sd->block_events);
+        sd->block_events = NULL;
+     }
 }
 
 EOLIAN static Eina_Bool
