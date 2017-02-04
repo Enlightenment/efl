@@ -123,9 +123,9 @@ _evas_render2_th_main_obj_basic_walk_process(Evas_Public_Data *e,
                              updates, offx, offy);
    if (obj->changed)
      {
-        evas_object_clip_changes_clean(eo_obj);
-        evas_object_cur_prev(eo_obj);
-        evas_object_change_reset(eo_obj);
+        evas_object_clip_changes_clean(obj);
+        evas_object_cur_prev(obj);
+        evas_object_change_reset(obj);
      }
 }
 
@@ -158,9 +158,9 @@ _evas_render2_th_main_obj_walk_process(Evas_Public_Data *e,
                                                  offx, offy, l + 1);
         if (obj->changed)
           {
-             evas_object_clip_changes_clean(eo_obj);
-             evas_object_cur_prev(eo_obj);
-             evas_object_change_reset(eo_obj);
+             evas_object_clip_changes_clean(obj);
+             evas_object_cur_prev(obj);
+             evas_object_change_reset(obj);
           }
      }
    else _evas_render2_th_main_obj_basic_walk_process(e, obj, updates,

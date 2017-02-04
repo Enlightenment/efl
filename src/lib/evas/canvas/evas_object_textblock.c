@@ -14185,7 +14185,7 @@ done:
 }
 
 static void
-evas_object_textblock_render_post(Evas_Object *eo_obj,
+evas_object_textblock_render_post(Evas_Object *eo_obj EINA_UNUSED,
                                   Evas_Object_Protected_Data *obj,
                                   void *type_private_data EINA_UNUSED)
 {
@@ -14196,9 +14196,9 @@ evas_object_textblock_render_post(Evas_Object *eo_obj,
    /* data anymore we can free it if the object deems this is a good idea */
 /*   o = (Efl_Canvas_Text_Data *)(obj->object_data); */
    /* remove those pesky changes */
-   evas_object_clip_changes_clean(eo_obj);
+   evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
-   evas_object_cur_prev(eo_obj);
+   evas_object_cur_prev(obj);
 /*   o->prev = o->cur; */
    _filter_output_cache_prune(obj, type_private_data);
 }

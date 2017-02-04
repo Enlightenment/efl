@@ -1595,16 +1595,16 @@ extern "C" {
 #endif
 
 Evas_Object *evas_object_new(Evas *e);
-void evas_object_change_reset(Evas_Object *obj);
+void evas_object_change_reset(Evas_Object_Protected_Data *obj);
 void evas_object_clip_recalc(Evas_Object_Protected_Data *obj);
-void evas_object_cur_prev(Evas_Object *obj);
+void evas_object_cur_prev(Evas_Object_Protected_Data *obj);
 void evas_object_free(Evas_Object *obj, Eina_Bool clean_layer);
 void evas_object_update_bounding_box(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Smart_Data *s);
 void evas_object_inject(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas *e);
 void evas_object_release(Evas_Object *obj, Evas_Object_Protected_Data *pd, int clean_layer);
 void evas_object_change(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_content_change(Evas_Object *obj, Evas_Object_Protected_Data *pd);
-void evas_object_clip_changes_clean(Evas_Object *obj);
+void evas_object_clip_changes_clean(Evas_Object_Protected_Data *obj);
 void evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v);
 void evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj);
 void evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj, Evas_Object_Protected_Data *pd);

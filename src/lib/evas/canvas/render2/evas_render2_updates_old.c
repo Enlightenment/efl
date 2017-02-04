@@ -19,7 +19,7 @@ _obj_basic_process(Evas_Public_Data *e,
    obj->func->render_post(eo_obj, obj, obj->private_data);
    obj->restack = EINA_FALSE;
    obj->pre_render_done = EINA_FALSE;
-   evas_object_change_reset(eo_obj);
+   evas_object_change_reset(obj);
 }
 
 static void
@@ -51,7 +51,7 @@ _obj_process(Evas_Public_Data *e,
         obj->func->render_post(eo_obj, obj, obj->private_data);
         obj->restack = EINA_FALSE;
         obj->pre_render_done = EINA_FALSE;
-        evas_object_change_reset(eo_obj);
+        evas_object_change_reset(obj);
      }
    else _obj_basic_process(e, obj, l);
 }

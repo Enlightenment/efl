@@ -1524,10 +1524,10 @@ evas_object_smart_render_pre(Evas_Object *eo_obj,
 }
 
 static void
-evas_object_smart_render_post(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, void *type_private_data)
+evas_object_smart_render_post(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, void *type_private_data)
 {
    Evas_Smart_Data *o = type_private_data;
-   evas_object_cur_prev(eo_obj);
+   evas_object_cur_prev(obj);
    o->prev = o->cur;
 }
 
