@@ -1,5 +1,5 @@
 //Compile with:
-// edje_cc edje_example.edc && gcc -o edje_example edje_example.c `pkg-config --libs --cflags ecore ecore-evas edje`
+// edje_cc edje_example.edc && gcc -o edje_example edje_example.c `pkg-config --libs --cflags eina ecore evas ecore-evas edje`
 
 #include <Eina.h>
 #include <Evas.h>
