@@ -552,7 +552,7 @@ _ecore_thread_worker_new(void)
 void
 _ecore_thread_init(void)
 {
-   _ecore_thread_count_max = eina_cpu_count();
+   _ecore_thread_count_max = eina_cpu_count() * 4;
    if (_ecore_thread_count_max <= 0)
      _ecore_thread_count_max = 1;
 
@@ -1197,7 +1197,7 @@ ecore_thread_max_set(int num)
    EINA_MAIN_LOOP_CHECK_RETURN;
    if (num < 1) return;
    /* avoid doing something hilarious by blocking dumb users */
-   if (num > (16 * eina_cpu_count())) num = 16 * eina_cpu_count();
+   if (num > (32 * eina_cpu_count())) num = 32 * eina_cpu_count();
 
    _ecore_thread_count_max = num;
 }
@@ -1206,7 +1206,7 @@ EAPI void
 ecore_thread_max_reset(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_thread_count_max = eina_cpu_count();
+   _ecore_thread_count_max = eina_cpu_count() * 4;
 }
 
 EAPI int
