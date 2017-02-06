@@ -100,12 +100,19 @@ if HAVE_MCS
 
 bin_PROGRAMS += lib/efl_mono/libefl_mono.dll
 
-lib_eo_mono_libefl_mono_dll_SOURCES = \
+efl_eo_mono_files = \
 	bindings/mono/eo_mono/object.cs \
 	bindings/mono/eo_mono/iwrapper.cs \
 	bindings/mono/eo_mono/workaround.cs
 
-lib/efl_mono/libefl_mono.dll$(EXEEXT): $(lib_eo_mono_libefl_mono_dll_SOURCES) lib/efl_mono/$(am__dirstamp) $(efl_eolian_mono_files)
+efl_eina_mono_files = \
+	bindings/mono/eina_mono/eina_stringshare.cs
+
+lib_efl_mono_libefl_mono_dll_SOURCES = \
+	$(efl_eo_mono_files) \
+	$(efl_eina_mono_files)
+
+lib/efl_mono/libefl_mono.dll$(EXEEXT): $(lib_efl_mono_libefl_mono_dll_SOURCES) lib/efl_mono/$(am__dirstamp) $(efl_eolian_mono_files)
 	@rm -f lib/efl_mono/libefl_mono.dll$(EXEEXT)
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -out:$@ -t:library $(filter %.cs, $(^))
 
