@@ -125,7 +125,7 @@ _efl_loop_timer_efl_object_constructor(Eo *obj, Efl_Loop_Timer_Data *timer)
 
    efl_wref_add(obj, &timer->object);
 
-   timer->initialized = 0;
+   timer->initialized = EINA_FALSE;
 
    return obj;
 }
@@ -133,13 +133,18 @@ _efl_loop_timer_efl_object_constructor(Eo *obj, Efl_Loop_Timer_Data *timer)
 EOLIAN static Eo *
 _efl_loop_timer_efl_object_finalize(Eo *obj, Efl_Loop_Timer_Data *pd)
 {
-   if (!pd->initialized)
+   if (pd->at < ecore_loop_time_get())
      {
-        ERR("Timer has not been initialized during construction as mandated.");
-        return NULL;
+        pd->at = ecore_time_get() + pd->in;
+     }
+   else
+     {
+        pd->at += pd->in;
      }
 
-   _efl_loop_timer_util_instanciate(pd);
+   pd->initialized = EINA_TRUE;
+
+   _efl_loop_timer_set(pd, pd->at, pd->in);
 
    return efl_finalize(efl_super(obj, MY_CLASS));
 }
@@ -261,12 +266,6 @@ _efl_loop_timer_interval_set(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer, do
    if (in < 0.0) in = 0.0;
 
    timer->in = in;
-
-   if (!timer->initialized)
-     {
-        timer->at = ecore_time_get();
-        _efl_loop_timer_set(timer, timer->at + in, in);
-     }
 }
 
 EOLIAN static double
