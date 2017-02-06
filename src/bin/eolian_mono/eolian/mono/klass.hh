@@ -48,7 +48,28 @@ struct get_csharp_type_visitor
 
         return csharp_name.str();
     }
-    std::string operator()(attributes::complex_type_def const& complex) const
+    std::string operator()(attributes::complex_type_def const&) const
+    {
+        return "UNSUPPORTED";
+    }
+};
+
+struct get_event_args_visitor
+{
+
+    std::string arg_type;
+
+    typedef get_event_args_visitor visitor_type;
+    typedef std::string result_type;
+    std::string operator()(grammar::attributes::regular_type_def const&) const
+    {
+        return "(" + arg_type + ")Marshal.PtrToStructure(evt.info, typeof(" + arg_type + "))";
+    }
+    std::string operator()(grammar::attributes::klass_name const&) const
+    {
+        return "new " + arg_type + "Concrete(evt.info)";
+    }
+    std::string operator()(attributes::complex_type_def const&) const
     {
         return "UNSUPPORTED";
     }
@@ -125,11 +146,19 @@ struct klass
      // FIXME Move the event generator into another generator like function?
      for (auto &&e : cls.events)
        {
+          std::string wrapper_args_type;
+          std::string evt_name = utils::to_uppercase(e.name);
+          std::replace(evt_name.begin(), evt_name.end(), ',', '_');
+
+          efl::eina::optional<grammar::attributes::type_def> etype = e.type;
+          if (etype.is_engaged())
+              wrapper_args_type = "<" + evt_name + "_Args>";
+
          //FIXME Add a way to generate camelcase names
          if (!as_generator(
-                     scope_tab << "event EventHandler "
-                     << grammar::string_replace(',', '_') << ";\n"
-                     ).generate(sink, e.name, add_upper_case_context(context)))
+                     scope_tab << "event EventHandler" << wrapper_args_type << " " 
+                     << evt_name << ";\n"
+                     ).generate(sink, NULL, context))
              return false;
        }
 
@@ -495,23 +524,41 @@ struct klass
            std::string event_name = e.name;
            std::replace(event_name.begin(), event_name.end(), ',', '_');
 
+           std::string wrapper_args_type = "EventArgs";
+           std::string wrapper_args_template = "";
+           std::string event_args = "EventArgs args = EventArgs.Empty;\n";
+
+           efl::eina::optional<grammar::attributes::type_def> etype = e.type;
+           if (etype.is_engaged())
+             {
+                wrapper_args_type = upper_name + "_Args";
+                wrapper_args_template = "<" + wrapper_args_type + ">";
+                std::string arg_type = wrapper_args_type + " args = new " + wrapper_args_type + "();\n"; // = (*etype).original_type.visit(get_csharp_type_visitor{});
+                std::string actual_arg_type = (*etype).original_type.visit(get_csharp_type_visitor{});
+                arg_type += "args.arg = " + (*etype).original_type.visit(get_event_args_visitor{actual_arg_type}) + ";\n";
+
+                event_args = arg_type;
+             }
+           // Marshal.PtrToStructure for value types
+
            // Wrapper event declaration
           if(!as_generator(
-                scope_tab << "protected event EventHandler " << upper_name << ";\n"
-                << scope_tab << "protected void On_" << event_name << "(EventArgs e)\n"
+                scope_tab << "protected event EventHandler" << wrapper_args_template << " " << upper_name << ";\n"
+                << scope_tab << "protected void On_" << event_name << "(" << wrapper_args_type << " e)\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "EventHandler evt;\n"
+                << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n"
                 << scope_tab << scope_tab << "lock (eventLock) {\n"
                 << scope_tab << scope_tab << scope_tab << "evt = " << upper_name << ";\n"
                 << scope_tab << scope_tab << "}\n"
                 << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
                 << scope_tab << "}\n"
-                << scope_tab << "public void on_" << event_name << "_NativeCallback(System.IntPtr data, System.IntPtr evt)\n"
+                << scope_tab << "public void on_" << event_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "On_" << event_name << "(EventArgs.Empty);\n"
+                << scope_tab << event_args
+                << scope_tab << scope_tab << "On_" << event_name << "(args);\n"
                 << scope_tab << "}\n"
                 << scope_tab << "efl.Event_Cb evt_" << event_name << "_delegate;\n"
-                << scope_tab << "event EventHandler " << cls.cxx_name << "." << upper_name << "{\n")
+                << scope_tab << "event EventHandler" << wrapper_args_template << " " << cls.cxx_name << "." << upper_name << "{\n")
                   .generate(sink, NULL, context))
               return false;
 
@@ -553,22 +600,46 @@ struct klass
                std::replace(upper_name.begin(), upper_name.end(), ',', '_');
                std::string upper_c_name = utils::to_uppercase(e.c_name);
 
+               std::stringstream wrapper_args_type;
+               std::string wrapper_args_template;
+               std::string event_args = "EventArgs args = EventArgs.Empty;\n";
+
+               efl::eina::optional<grammar::attributes::type_def> etype = e.type;
+               if (etype.is_engaged())
+                 {
+                   for (auto&& i : klass.namespaces) 
+                     {
+                         wrapper_args_type << utils::to_lowercase(i) << ".";
+                     }
+                   wrapper_args_type << upper_name << "_Args";
+                   wrapper_args_template = "<" + wrapper_args_type.str() + ">";
+                   std::string arg_type = wrapper_args_type.str() + " args = new " + wrapper_args_type.str() + "();\n"; // = (*etype).original_type.visit(get_csharp_type_visitor{});
+                   std::string actual_arg_type = (*etype).original_type.visit(get_csharp_type_visitor{});
+                arg_type += "args.arg = " + (*etype).original_type.visit(get_event_args_visitor{actual_arg_type}) + ";\n";
+                   event_args = arg_type;
+                 }
+               else
+                 {
+                   wrapper_args_type << "EventArgs";
+                 }
+
                if (!as_generator(
-                     scope_tab << "protected event EventHandler " << wrapper_evt_name << ";\n"
-                     << scope_tab << "protected void On_" << wrapper_evt_name << "(EventArgs e)\n"
+                     scope_tab << "protected event EventHandler" << wrapper_args_template << " " << wrapper_evt_name << ";\n"
+                     << scope_tab << "protected void On_" << wrapper_evt_name << "(" << wrapper_args_type.str() << " e)\n"
                      << scope_tab << "{\n"
-                     << scope_tab << scope_tab << "EventHandler evt;\n"
+                     << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n"
                      << scope_tab << scope_tab << "lock (eventLock) {\n"
                      << scope_tab << scope_tab << scope_tab << "evt = " << wrapper_evt_name << ";\n"
                      << scope_tab << scope_tab << "}\n"
                      << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
                      << scope_tab << "}\n"
                      << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
-                     << scope_tab << "protected void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, System.IntPtr evt)"
+                     << scope_tab << "protected void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)"
                      << scope_tab << "{\n"
-                     << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(EventArgs.Empty);\n"
+                     << scope_tab << event_args
+                     << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
                      << scope_tab << "}\n"
-                     << scope_tab << "event EventHandler " << *(lower_case[string] << ".") << klass.cxx_name << ".")
+                     << scope_tab << "event EventHandler" << wrapper_args_template << " " << *(lower_case[string] << ".") << klass.cxx_name << ".")
                        .generate(sink, escape_namespace(klass.namespaces), context))
                    return false;
                if (!as_generator(upper_name << " {\n"

@@ -28,6 +28,13 @@ class TestMain
         rect.size_set(640, 480);
         rect.visible_set(true);
 
+        canvas.KEY_DOWN += (object sender, efl.input.KEY_DOWN_Args e) => {
+            Console.WriteLine("Key Down");
+            Console.WriteLine("Got key obj at {0}", e.arg.raw_handle.ToString("X"));
+            Console.WriteLine("Got key_get() == [{0}]", e.arg.key_get());
+            /* Console.WriteLine("Got key code [{0}] at {1}", e.arg.key_code_get(), e.arg.raw_handle); */
+        };
+
         loop.begin();
     }
 }

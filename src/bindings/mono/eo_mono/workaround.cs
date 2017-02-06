@@ -87,7 +87,7 @@ public struct Description {
 }
 
 
-public delegate void Event_Cb(System.IntPtr data, System.IntPtr evt);
+public delegate void Event_Cb(System.IntPtr data, ref Event evt);
 #pragma warning disable 0169
 public struct Callback_Array_Item {
     IntPtr desc;
@@ -99,9 +99,11 @@ public struct Dbg_Info {
 };
 #pragma warning restore 0169
 
+[StructLayout(LayoutKind.Sequential)]
 public struct Event {
-
-
+    public IntPtr obj;
+    public IntPtr desc;
+    public IntPtr info;
 };
 
 }

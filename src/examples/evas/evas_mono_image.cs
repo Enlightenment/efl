@@ -66,7 +66,6 @@ class TestMain
 
         TestMain listener = new TestMain(image);
 
-        bg.KEY_DOWN += new EventHandler(listener.on_key_down);
         // TODO handle key events in order to alter the image like the C
         // example. Meanwhile, just set some w fill
         /* EventListener callback = new EventListener(); */
