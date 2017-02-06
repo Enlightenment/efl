@@ -67,6 +67,9 @@ START_TEST (elm_code_syntax_c)
    elm_code_widget_syntax_enabled_set(widget, EINA_TRUE);
 
    _append_line(file, "#include <stdio.h>");
+   _append_line(file, "#define MULTILINE \"Some text covering \"\\");
+   _append_line(file, "   \"multiple lines\"");
+   _append_line(file, "");
    _append_line(file, "/**");
    _append_line(file, " * The main method.");
    _append_line(file, " */");
@@ -82,28 +85,31 @@ START_TEST (elm_code_syntax_c)
    _append_line(file, "}");
 
    _assert_line_token_types(file, 1, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_PREPROCESSOR});
-   _assert_line_token_types(file, 2, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_COMMENT});
-   _assert_line_token_types(file, 3, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_COMMENT});
-   _assert_line_token_types(file, 4, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_COMMENT});
-   _assert_line_token_types(file, 5, 8, (Elm_Code_Token_Type[8]){ELM_CODE_TOKEN_TYPE_KEYWORD, ELM_CODE_TOKEN_TYPE_BRACE,
+   _assert_line_token_types(file, 2, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_PREPROCESSOR});
+   _assert_line_token_types(file, 3, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_PREPROCESSOR});
+
+   _assert_line_token_types(file, 5, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_COMMENT});
+   _assert_line_token_types(file, 6, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_COMMENT});
+   _assert_line_token_types(file, 7, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_COMMENT});
+   _assert_line_token_types(file, 8, 8, (Elm_Code_Token_Type[8]){ELM_CODE_TOKEN_TYPE_KEYWORD, ELM_CODE_TOKEN_TYPE_BRACE,
       ELM_CODE_TOKEN_TYPE_KEYWORD, ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_KEYWORD, ELM_CODE_TOKEN_TYPE_BRACE,
       ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_BRACE});
-   _assert_line_token_types(file, 6, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_BRACE});
-   _assert_line_token_types(file, 7, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_COMMENT});
-   _assert_line_token_types(file, 8, 5, (Elm_Code_Token_Type[5]){ELM_CODE_TOKEN_TYPE_KEYWORD, ELM_CODE_TOKEN_TYPE_BRACE,
+   _assert_line_token_types(file, 9, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_BRACE});
    _assert_line_token_types(file, 10, 4, (Elm_Code_Token_Type[4]){ELM_CODE_TOKEN_TYPE_KEYWORD, ELM_CODE_TOKEN_TYPE_BRACE,
       ELM_CODE_TOKEN_TYPE_STRING, ELM_CODE_TOKEN_TYPE_BRACE});
 
+   _assert_line_token_types(file, 11, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_COMMENT});
+   _assert_line_token_types(file, 12, 5, (Elm_Code_Token_Type[5]){ELM_CODE_TOKEN_TYPE_KEYWORD, ELM_CODE_TOKEN_TYPE_BRACE,
       ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_NUMBER, ELM_CODE_TOKEN_TYPE_BRACE});
-   _assert_line_token_types(file, 9, 8, (Elm_Code_Token_Type[8]){ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_STRING,
+   _assert_line_token_types(file, 13, 8, (Elm_Code_Token_Type[8]){ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_STRING,
       ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_NUMBER, ELM_CODE_TOKEN_TYPE_BRACE,
       ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_BRACE});
-   _assert_line_token_types(file, 10, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_KEYWORD});
-   _assert_line_token_types(file, 11, 4, (Elm_Code_Token_Type[4]){ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_STRING,
+   _assert_line_token_types(file, 14, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_KEYWORD});
+   _assert_line_token_types(file, 15, 4, (Elm_Code_Token_Type[4]){ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_STRING,
       ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_BRACE});
-   _assert_line_token_types(file, 12, 3, (Elm_Code_Token_Type[3]){ELM_CODE_TOKEN_TYPE_KEYWORD,
+   _assert_line_token_types(file, 16, 3, (Elm_Code_Token_Type[3]){ELM_CODE_TOKEN_TYPE_KEYWORD,
       ELM_CODE_TOKEN_TYPE_NUMBER, ELM_CODE_TOKEN_TYPE_BRACE});
-   _assert_line_token_types(file, 13, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_BRACE});
+   _assert_line_token_types(file, 17, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_BRACE});
 
    elm_code_free(code);
    elm_shutdown();

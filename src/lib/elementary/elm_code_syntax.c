@@ -163,7 +163,16 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
              return;
           }
         i = i2 + 1;
-        // TODO reset all below of here
+     }
+   else if (previous_type == ELM_CODE_TOKEN_TYPE_PREPROCESSOR)
+     {
+        elm_code_line_token_add(line, 0, length, 1, ELM_CODE_TOKEN_TYPE_PREPROCESSOR);
+        if (content[length-1] == '\\')
+          {
+             Elm_Code_Token *token = eina_list_last_data_get(line->tokens);
+             token->continues = EINA_TRUE;
+          }
+        return;
      }
 
    ptr = content;
@@ -183,6 +192,11 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
         if (syntax->preprocessor && _content_starts_with(content+i, syntax->preprocessor, strlen(syntax->preprocessor)))
           {
              elm_code_line_token_add(line, i, length - 1, 1, ELM_CODE_TOKEN_TYPE_PREPROCESSOR);
+             if (content[length-1] == '\\')
+               {
+                  Elm_Code_Token *token = eina_list_last_data_get(line->tokens);
+                  token->continues = EINA_TRUE;
+               }
              return;
           }
         else if (_starts_single_comment(syntax, content + i, length - i))
