@@ -276,7 +276,9 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
         // I don't know why this test was here in the first place. As I have
         // no issue showing up due to this, I keep it and move color out of it.
         // breaks cliping of mapped images!!!
-        if (clipper->map->cur.map_parent == obj->map->cur.map_parent)
+        if (EINA_LIKELY(!!clipper->map) &&
+            EINA_LIKELY(!!obj->map) &&
+            clipper->map->cur.map_parent == obj->map->cur.map_parent)
           {
              nx = clipper->cur->cache.clip.x;
              ny = clipper->cur->cache.clip.y;
