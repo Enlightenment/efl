@@ -231,7 +231,7 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
 
    evas_object_coords_recalc(eo_obj, obj);
 
-   if (EINA_UNLIKELY((obj->map->cur.map) && (obj->map->cur.usemap)))
+   if (EINA_UNLIKELY((!!obj->map) && (obj->map->cur.map) && (obj->map->cur.usemap)))
      {
         cx = obj->map->cur.map->normal_geometry.x;
         cy = obj->map->cur.map->normal_geometry.y;
