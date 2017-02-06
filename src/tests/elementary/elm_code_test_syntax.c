@@ -72,6 +72,7 @@ START_TEST (elm_code_syntax_c)
    _append_line(file, " */");
    _append_line(file, "int main(int argc, char **argv)");
    _append_line(file, "{");
+   _append_line(file, "   char c = '\\\\';");
    _append_line(file, "   // display a welcome greeting");
    _append_line(file, "   if (argc > 0)");
    _append_line(file, "     printf(\"Hello, %s!\\n\", argv[0]);");
@@ -90,6 +91,9 @@ START_TEST (elm_code_syntax_c)
    _assert_line_token_types(file, 6, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_BRACE});
    _assert_line_token_types(file, 7, 1, (Elm_Code_Token_Type[1]){ELM_CODE_TOKEN_TYPE_COMMENT});
    _assert_line_token_types(file, 8, 5, (Elm_Code_Token_Type[5]){ELM_CODE_TOKEN_TYPE_KEYWORD, ELM_CODE_TOKEN_TYPE_BRACE,
+   _assert_line_token_types(file, 10, 4, (Elm_Code_Token_Type[4]){ELM_CODE_TOKEN_TYPE_KEYWORD, ELM_CODE_TOKEN_TYPE_BRACE,
+      ELM_CODE_TOKEN_TYPE_STRING, ELM_CODE_TOKEN_TYPE_BRACE});
+
       ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_NUMBER, ELM_CODE_TOKEN_TYPE_BRACE});
    _assert_line_token_types(file, 9, 8, (Elm_Code_Token_Type[8]){ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_STRING,
       ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_BRACE, ELM_CODE_TOKEN_TYPE_NUMBER, ELM_CODE_TOKEN_TYPE_BRACE,
