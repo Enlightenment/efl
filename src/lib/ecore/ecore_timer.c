@@ -126,6 +126,7 @@ _efl_loop_timer_efl_object_constructor(Eo *obj, Efl_Loop_Timer_Data *timer)
    efl_wref_add(obj, &timer->object);
 
    timer->initialized = EINA_FALSE;
+   timer->in = -1.0;
 
    return obj;
 }
@@ -140,6 +141,12 @@ _efl_loop_timer_efl_object_finalize(Eo *obj, Efl_Loop_Timer_Data *pd)
    else
      {
         pd->at += pd->in;
+     }
+
+   if (pd->in < 0)
+     {
+        ERR("You need to specify the interval of a timer to create a valid timer.");
+        return NULL;
      }
 
    pd->initialized = EINA_TRUE;
