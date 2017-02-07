@@ -2028,9 +2028,13 @@ struct _Edje_Real_Part
 #endif
    char                      clicked_button; // 1
    unsigned char             type; // 1
+   Evas_Event_Flags          ignore_flags;
+   Evas_Event_Flags          mask_flags;
    unsigned char             calculated : 2; // 1
    unsigned char             calculating : 2; // 0
    Eina_Bool                 still_in   : 1; // 0
+   unsigned char             mouse_events : 1;
+   unsigned char             repeat_events : 1;
 #ifdef EDJE_CALC_CACHE
    Eina_Bool                 invalidate : 1; // 0
 #endif
@@ -3077,14 +3081,14 @@ void _animation_get(Eo *obj, void *_pd, va_list *list);
 void edje_signal_init(void);
 void edje_signal_shutdown(void);
 
-Eina_Bool _edje_part_mouse_events_get(Edje *ed, Edje_Real_Part *rp);
-void _edje_part_mouse_events_set(Edje *ed, Edje_Real_Part *rp, Eina_Bool mouse_events);
-Eina_Bool _edje_part_repeat_events_get(Edje *ed, Edje_Real_Part *rp);
-void _edje_part_repeat_events_set(Edje *ed, Edje_Real_Part *rp, Eina_Bool repeat_events);
-Evas_Event_Flags _edje_part_ignore_flags_get(Edje *ed, Edje_Real_Part *rp);
-void _edje_part_ignore_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags ignore_flags);
-Evas_Event_Flags _edje_part_mask_flags_get(Edje *ed, Edje_Real_Part *rp);
-void _edje_part_mask_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags mask_flags);
+Eina_Bool _edje_real_part_mouse_events_get(Edje *ed, Edje_Real_Part *rp);
+void _edje_real_part_mouse_events_set(Edje *ed, Edje_Real_Part *rp, Eina_Bool mouse_events);
+Eina_Bool _edje_real_part_repeat_events_get(Edje *ed, Edje_Real_Part *rp);
+void _edje_real_part_repeat_events_set(Edje *ed, Edje_Real_Part *rp, Eina_Bool repeat_events);
+Evas_Event_Flags _edje_real_part_ignore_flags_get(Edje *ed, Edje_Real_Part *rp);
+void _edje_real_part_ignore_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags ignore_flags);
+Evas_Event_Flags _edje_real_part_mask_flags_get(Edje *ed, Edje_Real_Part *rp);
+void _edje_real_part_mask_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags mask_flags);
 
 /* part containers: box */
 Eo *_edje_box_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);

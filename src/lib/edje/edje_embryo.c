@@ -3572,7 +3572,7 @@ _edje_embryo_fn_set_mouse_events(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
 
    if (rp)
-     _edje_part_mouse_events_set(ed, rp, params[2]);
+     _edje_real_part_mouse_events_set(ed, rp, params[2]);
 
    return 0;
 }
@@ -3594,7 +3594,7 @@ _edje_embryo_fn_get_mouse_events(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
 
    if (rp)
-     return (Embryo_Cell)_edje_var_int_get(ed, (int)_edje_part_mouse_events_get(ed, rp));
+     return (Embryo_Cell)_edje_var_int_get(ed, (int)_edje_real_part_mouse_events_get(ed, rp));
 
    return 0;
 
@@ -3617,7 +3617,7 @@ _edje_embryo_fn_set_repeat_events(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
 
    if (rp)
-     _edje_part_repeat_events_set(ed, rp, params[2]);
+     _edje_real_part_repeat_events_set(ed, rp, params[2]);
 
    return 0;
 }
@@ -3639,7 +3639,7 @@ _edje_embryo_fn_get_repeat_events(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
 
    if (rp)
-     return (Embryo_Cell)_edje_var_int_get(ed, (int)_edje_part_repeat_events_get(ed, rp));
+     return (Embryo_Cell)_edje_var_int_get(ed, (int)_edje_real_part_repeat_events_get(ed, rp));
 
    return 0;
 
@@ -3662,7 +3662,7 @@ _edje_embryo_fn_set_ignore_flags(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
 
    if (rp)
-     _edje_part_ignore_flags_set(ed, rp, params[2]);
+     _edje_real_part_ignore_flags_set(ed, rp, params[2]);
 
    return 0;
 }
@@ -3684,7 +3684,7 @@ _edje_embryo_fn_get_ignore_flags(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
 
    if (rp)
-     return (Embryo_Cell)_edje_var_int_get(ed, (int)_edje_part_ignore_flags_get(ed, rp));
+     return (Embryo_Cell)_edje_var_int_get(ed, (int)_edje_real_part_ignore_flags_get(ed, rp));
 
    return 0;
 
@@ -3707,7 +3707,7 @@ _edje_embryo_fn_set_mask_flags(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
 
    if (rp)
-     _edje_part_mask_flags_set(ed, rp, params[2]);
+     _edje_real_part_mask_flags_set(ed, rp, params[2]);
 
    return 0;
 }
@@ -3729,7 +3729,7 @@ _edje_embryo_fn_get_mask_flags(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
 
    if (rp)
-     return (Embryo_Cell)_edje_var_int_get(ed, (int)_edje_part_mask_flags_get(ed, rp));
+     return (Embryo_Cell)_edje_var_int_get(ed, (int)_edje_real_part_mask_flags_get(ed, rp));
 
    return 0;
 

@@ -68,10 +68,10 @@ _edje_mouse_in_signal_cb(void *data, const Efl_Event *event)
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
      {
-        if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
-            _edje_seat_emit(ed, ev->device, "mouse,in", rp->part->name);
+        if (!(ev->event_flags) || !(rp->ignore_flags & ev->event_flags))
+          _edje_seat_emit(ed, ev->device, "mouse,in", rp->part->name);
 
-        ev->event_flags |= rp->part->mask_flags;
+        ev->event_flags |= rp->mask_flags;
      }
 }
 
@@ -87,10 +87,10 @@ _edje_mouse_out_signal_cb(void *data, const Efl_Event *event)
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
      {
-        if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
+        if (!(ev->event_flags) || !(rp->ignore_flags & ev->event_flags))
           _edje_seat_emit(ed, ev->device, "mouse,out", rp->part->name);
 
-        ev->event_flags |= rp->part->mask_flags;
+        ev->event_flags |= rp->mask_flags;
      }
 }
 
@@ -108,7 +108,7 @@ _edje_mouse_down_signal_cb(void *data, const Efl_Event *event)
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
 
-   ignored = rp->part->ignore_flags & ev->event_flags;
+   ignored = rp->ignore_flags & ev->event_flags;
 
    _edje_ref(ed);
    _edje_util_freeze(ed);
@@ -160,7 +160,7 @@ _edje_mouse_down_signal_cb(void *data, const Efl_Event *event)
    _edje_util_thaw(ed);
    _edje_unref(ed);
 
-   ev->event_flags |= rp->part->mask_flags;
+   ev->event_flags |= rp->mask_flags;
 }
 
 static void
@@ -177,7 +177,7 @@ _edje_mouse_up_signal_cb(void *data, const Efl_Event *event)
    rp = evas_object_data_get(event->object, "real_part");
    if (!rp) return;
 
-   ignored = rp->part->ignore_flags & ev->event_flags;
+   ignored = rp->ignore_flags & ev->event_flags;
 
    _edje_ref(ed);
    _edje_util_freeze(ed);
@@ -234,7 +234,7 @@ _edje_mouse_up_signal_cb(void *data, const Efl_Event *event)
    _edje_util_thaw(ed);
    _edje_unref(ed);
 
-   ev->event_flags |= rp->part->mask_flags;
+   ev->event_flags |= rp->mask_flags;
 }
 
 static void
@@ -254,7 +254,7 @@ _edje_mouse_move_signal_cb(void *data, const Efl_Event *event)
         rp = ed->table_parts[rp->part->dragable.event_id % ed->table_parts_size];
      }
 
-   ignored = rp->part->ignore_flags & ev->event_flags;
+   ignored = rp->ignore_flags & ev->event_flags;
 
    _edje_ref(ed);
    if ((!ev->event_flags) || (!ignored))
@@ -344,7 +344,7 @@ _edje_mouse_move_signal_cb(void *data, const Efl_Event *event)
    _edje_unref(ed);
    _edje_util_thaw(ed);
 
-   ev->event_flags |= rp->part->mask_flags;
+   ev->event_flags |= rp->mask_flags;
 }
 
 static void
@@ -360,7 +360,7 @@ _edje_mouse_wheel_signal_cb(void *data, const Efl_Event *event)
    rp = evas_object_data_get(event->object, "real_part");
    if (rp)
      {
-        if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
+        if (!(ev->event_flags) || !(rp->ignore_flags & ev->event_flags))
           {
              snprintf(buf, sizeof(buf), "mouse,wheel,%i,%i",
                       ev->wheel.dir == EFL_ORIENT_HORIZONTAL ? 1 : 0,
@@ -368,7 +368,7 @@ _edje_mouse_wheel_signal_cb(void *data, const Efl_Event *event)
              _edje_seat_emit(ed, ev->device, buf, rp->part->name);
           }
 
-        ev->event_flags |= rp->part->mask_flags;
+        ev->event_flags |= rp->mask_flags;
      }
 }
 

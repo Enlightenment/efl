@@ -832,7 +832,7 @@ _edje_anchor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
        (en->select_allow))
      return;
 
-   ignored = rp->part->ignore_flags & ev->event_flags;
+   ignored = rp->ignore_flags & ev->event_flags;
    if ((!ev->event_flags) || (!ignored))
      {
         n = an->name;
@@ -855,7 +855,7 @@ _edje_anchor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
              evas_textblock_cursor_format_prepend(an->end, "</>");
           }
      }
-   ev->event_flags |= rp->part->mask_flags;
+   ev->event_flags |= rp->mask_flags;
 }
 
 static void
@@ -874,7 +874,7 @@ _edje_anchor_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
        (!rp->typedata.text)) return;
 
    en = rp->typedata.text->entry_data;
-   ignored = rp->part->ignore_flags & ev->event_flags;
+   ignored = rp->ignore_flags & ev->event_flags;
    n = an->name;
    if (!n) n = "";
    len = 200 + strlen(n);
@@ -914,7 +914,7 @@ _edje_anchor_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         snprintf(buf, len, "anchor,mouse,clicked,%i,%s", ev->button, n);
         _edje_emit(ed, buf, rp->part->name);
      }
-   ev->event_flags |= rp->part->mask_flags;
+   ev->event_flags |= rp->mask_flags;
 }
 
 static void
@@ -936,7 +936,7 @@ _edje_anchor_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
        (en->select_allow))
      return;
 
-   ignored = rp->part->ignore_flags & ev->event_flags;
+   ignored = rp->ignore_flags & ev->event_flags;
    if ((!ev->event_flags) || (!ignored))
      {
         n = an->name;
@@ -946,7 +946,7 @@ _edje_anchor_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
         snprintf(buf, len, "anchor,mouse,move,%s", n);
         _edje_emit(ed, buf, rp->part->name);
      }
-   ev->event_flags |= rp->part->mask_flags;
+   ev->event_flags |= rp->mask_flags;
 }
 
 static void
@@ -960,7 +960,7 @@ _edje_anchor_mouse_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    size_t len;
    int ignored;
 
-   ignored = rp->part->ignore_flags & ev->event_flags;
+   ignored = rp->ignore_flags & ev->event_flags;
    if ((!ev->event_flags) || (!ignored))
      {
         /* set to allow handling in elementary, in case we have
@@ -974,7 +974,7 @@ _edje_anchor_mouse_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         snprintf(buf, len, "anchor,mouse,in,%s", n);
         _edje_emit(ed, buf, rp->part->name);
      }
-   ev->event_flags |= rp->part->mask_flags;
+   ev->event_flags |= rp->mask_flags;
 }
 
 static void
@@ -988,7 +988,7 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    int ignored;
    Edje *ed = an->en->ed;
 
-   ignored = rp->part->ignore_flags & ev->event_flags;
+   ignored = rp->ignore_flags & ev->event_flags;
    if ((!ev->event_flags) || (!ignored))
      {
         /* set to allow handling in elementary, in case we have
@@ -1002,7 +1002,7 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         snprintf(buf, len, "anchor,mouse,out,%s", n);
         _edje_emit(ed, buf, rp->part->name);
      }
-   ev->event_flags |= rp->part->mask_flags;
+   ev->event_flags |= rp->mask_flags;
 }
 
 static void

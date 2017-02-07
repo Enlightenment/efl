@@ -6288,10 +6288,10 @@ _edje_real_part_swallow(Edje *ed,
    if (hints_update)
      _edje_real_part_swallow_hints_update(rp);
 
-   if (rp->part->mouse_events)
+   if (rp->mouse_events)
      {
         _edje_callbacks_add(obj_swallow, ed, rp);
-        evas_object_repeat_events_set(obj_swallow, rp->part->repeat_events);
+        evas_object_repeat_events_set(obj_swallow, rp->repeat_events);
         if (rp->part->pointer_mode != EVAS_OBJECT_POINTER_MODE_AUTOGRAB)
           evas_object_pointer_mode_set(obj_swallow, rp->part->pointer_mode);
         evas_object_pass_events_set(obj_swallow, 0);
@@ -6513,21 +6513,21 @@ edje_object_part_object_name_get(const Evas_Object *obj)
 }
 
 Eina_Bool
-_edje_part_mouse_events_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
+_edje_real_part_mouse_events_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
 {
    if (!rp) return EINA_FALSE;
 
-   return rp->part->mouse_events;
+   return rp->mouse_events;
 }
 
 void
-_edje_part_mouse_events_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool mouse_events)
+_edje_real_part_mouse_events_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool mouse_events)
 {
    if (!rp) return;
 
-   rp->part->mouse_events = !!mouse_events;
+   rp->mouse_events = !!mouse_events;
 
-   if (mouse_events)
+   if (rp->mouse_events)
      {
         evas_object_pass_events_set(rp->object, 0);
         _edje_callbacks_add(rp->object, ed, rp);
@@ -6540,56 +6540,56 @@ _edje_part_mouse_events_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool 
 }
 
 Eina_Bool
-_edje_part_repeat_events_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
+_edje_real_part_repeat_events_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
 {
    if (!rp) return EINA_FALSE;
 
-   return rp->part->repeat_events;
+   return rp->repeat_events;
 }
 
 void
-_edje_part_repeat_events_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool repeat_events)
+_edje_real_part_repeat_events_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool repeat_events)
 {
    if (!rp) return;
 
-   rp->part->repeat_events = !!repeat_events;
+   rp->repeat_events = !!repeat_events;
 
-   if (repeat_events)
+   if (rp->repeat_events)
      evas_object_repeat_events_set(rp->object, 1);
    else
      evas_object_repeat_events_set(rp->object, 0);
 }
 
 Evas_Event_Flags
-_edje_part_ignore_flags_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
+_edje_real_part_ignore_flags_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
 {
    if (!rp) return EVAS_EVENT_FLAG_NONE;
 
-   return rp->part->ignore_flags;
+   return rp->ignore_flags;
 }
 
 void
-_edje_part_ignore_flags_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Evas_Event_Flags ignore_flags)
+_edje_real_part_ignore_flags_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Evas_Event_Flags ignore_flags)
 {
    if (!rp) return;
 
-   rp->part->ignore_flags = ignore_flags;
+   rp->ignore_flags = ignore_flags;
 }
 
 Evas_Event_Flags
-_edje_part_mask_flags_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
+_edje_real_part_mask_flags_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
 {
    if (!rp) return EVAS_EVENT_FLAG_NONE;
 
-   return rp->part->mask_flags;
+   return rp->mask_flags;
 }
 
 void
-_edje_part_mask_flags_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Evas_Event_Flags mask_flags)
+_edje_real_part_mask_flags_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Evas_Event_Flags mask_flags)
 {
    if (!rp) return;
 
-   rp->part->mask_flags = mask_flags;
+   rp->mask_flags = mask_flags;
 }
 
 /* Legacy APIs */

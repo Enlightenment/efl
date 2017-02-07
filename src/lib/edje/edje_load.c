@@ -1192,13 +1192,16 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                          evas_object_smart_member_add(rp->object, ed->obj);
 
                        //		       evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
+                       rp->mouse_events = ep->mouse_events;
+                       rp->repeat_events = ep->repeat_events;
+
                        if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP && ep->type != EDJE_PART_TYPE_EXTERNAL)
                          {
-                            if (ep->mouse_events)
+                            if (rp->mouse_events)
                               {
                                  _edje_callbacks_add(rp->object, ed, rp);
-                                 if (ep->repeat_events)
-                                   evas_object_repeat_events_set(rp->object, 1);
+                                 if (rp->repeat_events)
+                                   evas_object_repeat_events_set(rp->object, rp->repeat_events);
 
                                  if (ep->pointer_mode != EVAS_OBJECT_POINTER_MODE_AUTOGRAB)
                                    evas_object_pointer_mode_set(rp->object, ep->pointer_mode);
