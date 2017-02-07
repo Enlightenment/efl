@@ -409,6 +409,7 @@ _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
    int x = 0, y = 0;
    Eina_Bool horizontal = EINA_FALSE;
 
+   elm_widget_tree_unfocusable_set(obj, EINA_TRUE);
    switch (sd->orient)
      {
       case ELM_PANEL_ORIENT_TOP:
