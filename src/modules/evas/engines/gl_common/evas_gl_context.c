@@ -3431,7 +3431,7 @@ void
 evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
                                 Evas_GL_Texture *tex,
                                 int x, int y, int w, int h,
-                                double dx, double dy)
+                                double radius, Eina_Bool horiz)
 {
    double sx, sy, sw, sh, pw, ph;
    double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4;
@@ -3442,6 +3442,7 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    GLfloat *filter_data;
    Eina_Bool blend = EINA_TRUE;
    Eina_Bool smooth = EINA_TRUE;
+   Shader_Type type = horiz ? SHD_FILTER_BLUR_X : SHD_FILTER_BLUR_Y;
 
    r = R_VAL(&gc->dc->mul.col);
    g = G_VAL(&gc->dc->mul.col);
@@ -3450,18 +3451,18 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    if (gc->dc->render_op == EVAS_RENDER_COPY)
      blend = EINA_FALSE;
 
-   prog = evas_gl_common_shader_program_get(gc, SHD_FILTER_BLUR, NULL, 0, r, g, b, a,
+   prog = evas_gl_common_shader_program_get(gc, type, NULL, 0, r, g, b, a,
                                             w, h, w, h, smooth, tex, EINA_FALSE,
                                             NULL, EINA_FALSE, EINA_FALSE, 0, 0,
                                             NULL, &nomul, NULL);
    _filter_data_flush(gc, prog);
    EINA_SAFETY_ON_NULL_RETURN(prog);
 
-   pn = _evas_gl_common_context_push(SHD_FILTER_BLUR, gc, tex, NULL, prog,
+   pn = _evas_gl_common_context_push(type, gc, tex, NULL, prog,
                                      x, y, w, h, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
-   gc->pipe[pn].region.type = SHD_FILTER_BLUR;
+   gc->pipe[pn].region.type = type;
    gc->pipe[pn].shader.prog = prog;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
    gc->pipe[pn].shader.cur_texm = 0;
@@ -3489,12 +3490,10 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    PIPE_GROW(gc, pn, 6);
 
    // Set blur properties... TODO
-   _filter_data_prepare(gc, pn, prog, 2);
+   _filter_data_prepare(gc, pn, prog, 1);
    filter_data = gc->pipe[pn].array.filter_data;
-   filter_data[0] = dx;
-   filter_data[1] = dy;
-   filter_data[2] = w;
-   filter_data[3] = h;
+   filter_data[0] = radius;
+   filter_data[1] = horiz ? w : h;
 
    sx = 0;
    sy = 0;
@@ -3530,8 +3529,6 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
 
    if (!nomul)
      PUSH_6_COLORS(pn, r, g, b, a);
-
-   shader_array_flush(gc);
 }
 
 // ----------------------------------------------------------------------------

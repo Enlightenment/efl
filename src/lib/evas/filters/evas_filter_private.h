@@ -223,6 +223,7 @@ struct _Evas_Filter_Command
       Eina_Bool clip_use : 1;
       Eina_Bool clip_mode_lrtb : 1;
       Eina_Bool need_temp_buffer : 1;
+      Eina_Bool output_was_dirty : 1;
    } draw;
 };
 

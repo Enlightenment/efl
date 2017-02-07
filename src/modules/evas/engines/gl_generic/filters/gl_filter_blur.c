@@ -6,6 +6,8 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image *image, *surface;
    RGBA_Draw_Context *dc_save;
+   Eina_Bool horiz;
+   double radius;
    int x, y, w, h;
 
    DEBUG_TIME_BEGIN();
@@ -35,11 +37,22 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    else
      gc->dc->render_op = _gfx_to_evas_render_op(cmd->draw.rop);
 
-   DBG("blur %d @%p -> %d @%p", cmd->input->id, cmd->input->buffer,
-       cmd->output->id, cmd->output->buffer);
+   if (cmd->blur.dx)
+     {
+        horiz = EINA_TRUE;
+        radius = cmd->blur.dx;
+     }
+   else
+     {
+        horiz = EINA_FALSE;
+        radius = cmd->blur.dy;
+     }
 
-   evas_gl_common_filter_blur_push(gc, image->tex, x, y, w, h,
-                                   cmd->blur.dx, cmd->blur.dy);
+   DBG("blur %d @%p -> %d @%p (%.0fpx %s)",
+       cmd->input->id, cmd->input->buffer, cmd->output->id, cmd->output->buffer,
+       radius, horiz ? "X" : "Y");
+
+   evas_gl_common_filter_blur_push(gc, image->tex, x, y, w, h, radius, horiz);
 
    evas_common_draw_context_free(gc->dc);
    gc->dc = dc_save;
@@ -58,6 +71,7 @@ gl_filter_blur_func_get(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((!cmd->blur.dx) ^ (!cmd->blur.dy), NULL);
 
    return _gl_filter_blur;
 }

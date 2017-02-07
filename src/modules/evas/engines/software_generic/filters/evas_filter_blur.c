@@ -421,7 +421,7 @@ eng_filter_blur_func_get(Evas_Filter_Command *cmd)
           }
         break;
       default:
-        CRI("Unsupported blur type %d", cmd->blur.type);
+        ERR("Unsupported blur type %d", cmd->blur.type);
         return NULL;
      }
 

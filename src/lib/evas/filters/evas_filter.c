@@ -315,7 +315,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
           }
 
         render |= (fb->id == EVAS_FILTER_BUFFER_INPUT_ID);
-        render |= fb->is_render;
+        render |= fb->is_render || fb->transient;
         draw |= (fb->id == EVAS_FILTER_BUFFER_OUTPUT_ID);
 
         fb->buffer = _ector_buffer_create(fb, render, draw);
@@ -438,7 +438,11 @@ _command_new(Evas_Filter_Context *ctx, Evas_Filter_Mode mode,
    cmd->draw.B = 255;
    cmd->draw.A = 255;
    cmd->draw.rop = EFL_GFX_RENDER_OP_BLEND;
-   if (output) output->dirty = EINA_TRUE;
+   if (output)
+     {
+        cmd->draw.output_was_dirty = output->dirty;
+        output->dirty = EINA_TRUE;
+     }
 
    ctx->commands = eina_inlist_append(ctx->commands, EINA_INLIST_GET(cmd));
    return cmd;
@@ -535,6 +539,84 @@ evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context,
    return cmd;
 }
 
+static Evas_Filter_Command *
+evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
+                                Evas_Filter_Buffer *in, Evas_Filter_Buffer *out,
+                                Evas_Filter_Blur_Type type,
+                                int dx, int dy, int ox, int oy, int count,
+                                int R, int G, int B, int A)
+{
+   Evas_Filter_Command *cmd;
+   Evas_Filter_Buffer *dx_out, *dy_in;
+
+   /* GL blur implementation:
+    * - Always split X and Y passes (only one pass if 1D blur)
+    * - TODO: Repeat blur for large radius
+    * - TODO: Scale down & up for cheap blur
+    * - The rest is all up to the engine!
+    */
+
+   if (dx && dy)
+     {
+        dx_out = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only, 1);
+        if (!dx_out) goto fail;
+        dy_in = dx_out;
+     }
+   else
+     {
+        dx_out = out;
+        dy_in = in;
+     }
+
+   if (dx)
+     {
+        XDBG("Add GL blur %d -> %d (%dx%d px)", in->id, dx_out->id, dx, 0);
+        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, in, NULL, dx_out);
+        if (!cmd) goto fail;
+        cmd->blur.type = type;
+        cmd->blur.dx = dx;
+        cmd->blur.count = count;
+     }
+
+   if (dy)
+     {
+        XDBG("Add GL blur %d -> %d (%dx%d px)", dy_in->id, out->id, 0, dy);
+        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, dy_in, NULL, out);
+        if (!cmd) goto fail;
+        cmd->blur.type = type;
+        cmd->blur.dy = dy;
+        cmd->blur.count = count;
+     }
+
+   cmd->draw.ox = ox;
+   cmd->draw.oy = oy;
+   DRAW_COLOR_SET(R, G, B, A);
+   cmd->draw.rop = (in == out) ? EFL_GFX_RENDER_OP_COPY : EFL_GFX_RENDER_OP_BLEND;
+
+   _filter_buffer_unlock_all(ctx);
+   return cmd;
+
+fail:
+   ERR("Failed to add blur");
+   _filter_buffer_unlock_all(ctx);
+   return NULL;
+}
+
+static Eina_Bool
+_blur_support_gl(Evas_Filter_Context *ctx, Evas_Filter_Buffer *in, Evas_Filter_Buffer *out)
+{
+   Evas_Filter_Command cmd = {};
+
+   cmd.input = in;
+   cmd.output = out;
+   cmd.mode = EVAS_FILTER_MODE_BLUR;
+   cmd.ctx = ctx;
+   cmd.blur.type = EVAS_FILTER_BLUR_GAUSSIAN;
+   cmd.blur.dx = 5;
+
+   return cmd.ENFN->gfx_filter_supports(cmd.ENDT, &cmd) == EVAS_FILTER_SUPPORT_GL;
+}
+
 Evas_Filter_Command *
 evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                              int inbuf, int outbuf, Evas_Filter_Blur_Type type,
@@ -573,21 +655,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         return _command_new(ctx, EVAS_FILTER_MODE_SKIP, NULL, NULL, NULL);
      }
 
-   if (ctx->gl)
-     {
-        // GL engine: single pass!
-        XDBG("Add GL blur %d -> %d (%dx%d px)", in->id, out->id, dx, dy);
-        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, in, NULL, out);
-        if (!cmd) goto fail;
-        cmd->blur.type = type;
-        cmd->blur.dx = dx;
-        cmd->blur.dy = dy;
-        cmd->blur.count = count;
-        cmd->draw.ox = ox;
-        cmd->draw.oy = oy;
-        DRAW_COLOR_SET(R, G, B, A);
-        return cmd;
-     }
+   if (_blur_support_gl(ctx, in, out))
+     return evas_filter_command_blur_add_gl(ctx, in, out, type, dx, dy, ox, oy, count, R, G, B, A);
 
    // Note (SW engine):
    // The basic blur operation overrides the pixels in the target buffer,

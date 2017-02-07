@@ -89,8 +89,7 @@ uniform sampler2D tex_filter;
 #endif
 
 #ifdef SHD_FILTER_BLUR
-varying vec2 blur_radius;
-varying vec2 blur_divider;
+varying vec2 blur_data;
 #endif
 
 // ----------------------------------------------------------------------------
@@ -247,43 +246,33 @@ vec4 fetch_pixel(float ox, float oy)
 
 void main()
 {
-   float x, y, div_x, div_y;
-   float rx = blur_radius.x;
-   float ry = blur_radius.y;
+   float u, u_div, radius, diam;
    vec4 acc = vec4(0.,0.,0.,0.);
-   vec4 c;
-
-   div_x = blur_divider.x;
-   div_y = blur_divider.y;
-
-   float diam_x = rx * 2.0 + 1.0;
-   float diam_y = ry * 2.0 + 1.0;
    float div = 0.0;
 
-   // This is completely insane... but renders properly :)
-   for (y = -ry; y <= ry; y += 1.0)
+   radius = blur_data.x;
+   u_div = blur_data.y;
+   diam = radius * 2.0 + 1.0;
+
+   for (u = -radius; u <= radius; u += 1.0)
    {
-      float wy = (y + ry) / (diam_y - 1.0) * 6.0 - 3.0;
-      wy = (sin(wy + M_PI_2) + 1.0) / 2.0;
+      float w = (u + radius) / (diam - 1.0) * 6.0 - 3.0;
+      w = (sin(w + M_PI_2) + 1.0) / 2.0;
 
-      for (x = -rx; x <= rx; x += 1.0)
-      {
-         float wx = (x + rx) / (diam_x - 1.0) * 6.0 - 3.0;
-         wx = (sin(wx + M_PI_2) + 1.0) / 2.0;
+#ifndef SHD_FILTER_DIR_Y
+      vec4 px = fetch_pixel(u / u_div, 0.0);
+#else
+      vec4 px = fetch_pixel(0.0, u / u_div);
+#endif
 
-         vec4 px = fetch_pixel(x / div_x, y / div_y);
-
-         acc += px * wx * wy;
-         div += wx * wy;
-      }
+      acc += px * w;
+      div += w;
    }
 
-   c = acc / div;
-
 #ifndef SHD_NOMUL
-   gl_FragColor = c * col;
+   gl_FragColor = (acc / div) * col;
 #else
-   gl_FragColor = c;
+   gl_FragColor = (acc / div);
 #endif
 }
 
