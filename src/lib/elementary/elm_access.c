@@ -1150,11 +1150,6 @@ _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj)
    evas_object_data_del(obj, "_elm_access");
    if (ac)
      {
-        /* widget could delete VIEW(it) only and register item again,
-           in this case _elm_access_widget_item_register could try to delete
-           access object again in _elm_access_widget_item_unregister */
-        if (ac->widget_item) ac->widget_item->access_obj = NULL;
-
         _elm_access_clear(ac);
         free(ac);
      }
