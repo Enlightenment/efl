@@ -116,13 +116,14 @@ typedef struct Elput_Event_Pointer_Motion
    double dy_unaccel;
 } Elput_Event_Pointer_Motion;
 
+/** @since 1.19 */
 /* structure to represent event for seat being added */
 typedef struct _Elput_Event_Seat_Add
 {
    Elput_Seat *seat;
 } Elput_Event_Seat_Add;
 
-EAPI extern int ELPUT_EVENT_SEAT_ADD;
+EAPI extern int ELPUT_EVENT_SEAT_ADD; /** @since 1.19 */
 EAPI extern int ELPUT_EVENT_SEAT_CAPS;
 EAPI extern int ELPUT_EVENT_SEAT_FRAME;
 EAPI extern int ELPUT_EVENT_KEYMAP_SEND;
