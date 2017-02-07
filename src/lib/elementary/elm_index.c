@@ -909,7 +909,7 @@ _on_mouse_move(void *data,
      (wd->resize_obj, "elm.dragable.pointer",
      (!edje_object_mirrored_get(wd->resize_obj)) ?
      x : (x - w), y);
-   if (sd->orientation == EFL_ORIENT_VERTICAL)
+   if ((sd->orientation == EFL_ORIENT_VERTICAL) && (sd->event_rect[1]))
      {
         if (adx > minw)
           {
