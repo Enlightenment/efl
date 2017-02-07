@@ -1303,6 +1303,7 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
    return edev;
 
 err:
+   eina_stringshare_del(edev->output_name);
    free(edev);
    return NULL;
 }
