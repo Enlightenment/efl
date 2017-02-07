@@ -83,4 +83,6 @@ Session.vim
 *-protocol.c
 
 /build
-
+.cproject
+.project
+/.settings/
