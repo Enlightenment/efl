@@ -389,12 +389,14 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    eina_array_flush(&e->texts_unref_queue);
    eina_hash_free(e->focused_objects);
 
+   SLKL(e->post_render.lock);
    EINA_INLIST_FREE(e->post_render.jobs, job)
      {
         e->post_render.jobs = (Evas_Post_Render_Job *)
               eina_inlist_remove(EINA_INLIST_GET(e->post_render.jobs), EINA_INLIST_GET(job));
         free(job);
      }
+   SLKU(e->post_render.lock);
 
    EINA_LIST_FREE(e->touch_points, touch_point)
      free(touch_point);
