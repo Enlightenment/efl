@@ -152,6 +152,7 @@ _ector_renderer_cairo_gradient_radial_efl_object_finalize(Eo *obj, Ector_Rendere
    USE(base, cairo_pattern_destroy, NULL);
    USE(base, cairo_pattern_set_extend, NULL);
    USE(base, cairo_pattern_create_radial, NULL);
+   USE(base, cairo_pattern_add_color_stop_rgba, NULL);
 
    return obj;
 }
