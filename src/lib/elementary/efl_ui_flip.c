@@ -1941,7 +1941,7 @@ elm_flip_perspective_set(Evas_Object *obj,
                          Evas_Coord x EINA_UNUSED,
                          Evas_Coord y EINA_UNUSED)
 {
-   ELM_FLIP_CHECK(obj);
+   EFL_UI_FLIP_CHECK(obj);
 }
 
 // FIXME: add ambient and lighting control

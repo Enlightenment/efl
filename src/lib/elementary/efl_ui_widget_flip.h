@@ -104,7 +104,7 @@ struct _Vertex3
        return val;                                   \
     }
 
-#define ELM_FLIP_CHECK(obj)                              \
+#define EFL_UI_FLIP_CHECK(obj)                           \
   if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_FLIP_CLASS))) \
     return
 
