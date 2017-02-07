@@ -1928,6 +1928,10 @@ eet_read_cipher(Eet_File   *ef,
    if (!efn)
      goto on_error;
 
+   /* Requested decryption but file not encrypted -> integrity violation */
+   if (!efn->ciphered && cipher_key)
+     goto on_error;
+
    /* Get a binbuf attached to this efn */
    in = read_binbuf_from_disk(ef, efn);
    if (!in) goto on_error;
