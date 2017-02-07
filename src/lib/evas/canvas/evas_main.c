@@ -65,6 +65,8 @@ evas_init(void)
    eet_init();
 #endif
 
+   ecore_init();
+
    evas_module_init();
    if (!evas_async_events_init())
      goto shutdown_module;
@@ -164,6 +166,8 @@ evas_shutdown(void)
    _evas_preload_thread_shutdown();
    evas_async_events_shutdown();
    evas_module_shutdown();
+
+   ecore_shutdown();
 
 #ifdef BUILD_LOADER_EET
    eet_shutdown();
