@@ -13909,6 +13909,7 @@ _efl_canvas_text_efl_gfx_filter_filter_data_set(Eo *obj, Efl_Canvas_Text_Data *p
              eina_stringshare_del(db->name);
              eina_stringshare_del(db->value);
              free(db);
+             return;
           }
      }
    else if (!value)
