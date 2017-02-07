@@ -363,7 +363,8 @@ eina_freeq_ptr_add(Eina_FreeQ *fq,
 
    if (!ptr) return;
    if (!free_func) free_func = free;
-   if (!fq->postponed && (size < _eina_freeq_fillpat_max) && (size > 0))
+   if ((((fq) && !fq->postponed) || (!fq)) &&
+       (size < _eina_freeq_fillpat_max) && (size > 0))
      _eina_freeq_fill_do(ptr, size);
 
    if (!fq || fq->bypass)
