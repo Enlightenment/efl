@@ -1252,6 +1252,7 @@ Elput_Device *
 _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
 {
    Elput_Device *edev;
+   const char *oname;
 
    edev = calloc(1, sizeof(Elput_Device));
    if (!edev) return NULL;
@@ -1259,6 +1260,9 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
    edev->seat = seat;
    edev->device = device;
    edev->caps = 0;
+
+   oname = libinput_device_get_output_name(device);
+   eina_stringshare_replace(&edev->output_name, oname);
 
    if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_KEYBOARD)) &&
        (libinput_device_keyboard_has_key(device, KEY_ENTER)))

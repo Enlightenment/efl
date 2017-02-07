@@ -168,16 +168,12 @@ _device_add(Elput_Manager *em, struct libinput_device *dev)
 {
    Elput_Seat *eseat;
    Elput_Device *edev;
-   const char *oname;
 
    eseat = _udev_seat_get(em, dev);
    if (!eseat) return;
 
    edev = _evdev_device_create(eseat, dev);
    if (!edev) return;
-
-   oname = libinput_device_get_output_name(dev);
-   eina_stringshare_replace(&edev->output_name, oname);
 
    eseat->devices = eina_list_append(eseat->devices, edev);
 
