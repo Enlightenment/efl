@@ -417,6 +417,7 @@ int main(void)
           }
 
         msg = _msg_types[i].parse_func(&size);
+        if (size <= 0) continue;
 
         if (send(s, &size, sizeof(size), MSG_NOSIGNAL) == -1)
           {
