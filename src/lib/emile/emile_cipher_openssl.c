@@ -49,10 +49,12 @@ struct _Emile_SSL
 Eina_Bool
 _emile_cipher_init(void)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
    ERR_load_crypto_strings();
    SSL_library_init();
    SSL_load_error_strings();
    OpenSSL_add_all_algorithms();
+#endif /* if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER) */
 
    return EINA_TRUE;
 }
@@ -192,8 +194,10 @@ on_error:
    memset(ik, 0, sizeof (ik));
 
    /* Openssl error */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
    if (ctx)
      EVP_CIPHER_CTX_cleanup(ctx);
+#endif /* if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER) */
 
    free(buffer);
 

@@ -103,10 +103,10 @@ emile_shutdown(void)
          */
         gnutls_global_deinit();
 #endif /* ifdef HAVE_GNUTLS */
-#ifdef HAVE_OPENSSL
+#if defined(HAVE_OPENSSL) && (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
         EVP_cleanup();
         ERR_free_strings();
-#endif /* ifdef HAVE_OPENSSL */
+#endif /* if defined(HAVE_OPENSSL) && (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)) */
      }
 
    eina_log_domain_unregister(_emile_log_dom_global);
