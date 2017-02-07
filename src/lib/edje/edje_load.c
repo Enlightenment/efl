@@ -1435,6 +1435,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        do
                          {
                             child_obj = edje_object_add(ed->base->evas);
+                            edje_object_mirrored_set(child_obj, edje_object_mirrored_get(ed->obj));
+
                             group_path = eina_list_append(group_path, group_path_entry);
                             if (rp->part->type == EDJE_PART_TYPE_GROUP)
                               {
