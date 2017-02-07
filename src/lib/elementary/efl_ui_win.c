@@ -6777,14 +6777,12 @@ elm_win_wl_window_get(const Evas_Object *obj)
         return _elm_ee_wlwin_get(ee);
      }
 
-   Ecore_Wl2_Window *ret = NULL;
-
 #if HAVE_ELEMENTARY_WL2
-   if (sd->wl.win) ret = sd->wl.win;
-   if (sd->parent) ret = elm_win_wl_window_get(sd->parent);
+   if (sd->wl.win) return sd->wl.win;
+   if (sd->parent) return elm_win_wl_window_get(sd->parent);
 #endif
 
-   return ret;
+   return NULL;
 }
 
 EAPI Ecore_Cocoa_Window *
