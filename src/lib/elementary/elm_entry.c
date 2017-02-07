@@ -3664,7 +3664,7 @@ _elm_entry_efl_canvas_group_group_add(Eo *obj, Elm_Entry_Data *priv)
    priv->context_menu = EINA_TRUE;
    priv->auto_save = EINA_TRUE;
    priv->editable = EINA_TRUE;
-   priv->sel_allow = EINA_TRUE;
+   priv->sel_allow = _elm_config->entry_select_allow;
 
    priv->drop_format = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
    elm_drop_target_add(obj, priv->drop_format,
@@ -3775,7 +3775,7 @@ _elm_entry_efl_canvas_group_group_add(Eo *obj, Elm_Entry_Data *priv)
    elm_object_sub_cursor_set
      (wd->resize_obj, obj, ELM_CURSOR_XTERM);
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   if (_elm_config->desktop_entry)
+   if (priv->sel_allow && _elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
        (priv->entry_edje, "elm.text", EINA_TRUE);
 

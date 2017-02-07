@@ -506,6 +506,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, popup_scrollable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, spinner_min_max_filter_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, icon_theme, T_STRING);
+   ELM_CONFIG_VAL(D, T, entry_select_allow, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1843,6 +1844,7 @@ _config_load(void)
    _elm_config->popup_vertical_align = 0.5;
    _elm_config->icon_theme = eina_stringshare_add(ELM_CONFIG_ICON_THEME_ELEMENTARY);
    _elm_config->popup_scrollable = EINA_FALSE;
+   _elm_config->entry_select_allow = EINA_TRUE;
 }
 
 static void
