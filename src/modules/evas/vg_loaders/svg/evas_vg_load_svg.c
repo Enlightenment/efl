@@ -1560,28 +1560,52 @@ _parse_spread_value(const char *value)
    return spread;
 }
 
+
+/**
+ * Comment SVG_GRADIENT_FX_FY_PARSED
+ *
+ * if "fx" and "fy" is not specified then they are fx==cx and fy==cx
+ * but we should also be careful when during the parsing it would be
+ * something like <radialGradient fx="0" cx="100" cy="100">
+ * so then fx is 0, but fy is 100
+ *
+ * So we need to check if focal was parsed, if not then set up same as center
+ * point.
+ *
+ * It is required to set those public variables back to zero when parsing new
+ * gradient.
+ */
+static Eina_Bool fx_parsed;
+static Eina_Bool fy_parsed;
+
 static void
 _handle_radial_cx_attr(Svg_Radial_Gradient* radial, const char *value)
 {
    radial->cx = _to_double(value);
+   if (!fx_parsed)
+     radial->fx = radial->cx;
 }
 
 static void
 _handle_radial_cy_attr(Svg_Radial_Gradient* radial, const char *value)
 {
    radial->cy = _to_double(value);
+   if (!fy_parsed)
+     radial->fy = radial->cy;
 }
 
 static void
 _handle_radial_fx_attr(Svg_Radial_Gradient* radial, const char *value)
 {
    radial->fx = _to_double(value);
+   fx_parsed = EINA_TRUE;
 }
 
 static void
 _handle_radial_fy_attr(Svg_Radial_Gradient* radial, const char *value)
 {
    radial->fy = _to_double(value);
+   fy_parsed = EINA_TRUE;
 }
 
 static void
@@ -1646,8 +1670,15 @@ _create_radialGradient(const char *buf, unsigned buflen)
 
    grad->type = SVG_RADIAL_GRADIENT;
    grad->radial = calloc(1, sizeof(Svg_Radial_Gradient));
+
+   /**
+    * Please see SVG_GRADIENT_FX_FY_PARSED comment for more info
+    */
+   fx_parsed = EINA_FALSE;
+   fy_parsed = EINA_FALSE;
    eina_simple_xml_attributes_parse(buf, buflen,
                                     _attr_parse_radial_gradient_node, grad);
+
    return grad;
 
 }
