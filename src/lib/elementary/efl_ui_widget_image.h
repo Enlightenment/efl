@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_IMAGE_H
-#define ELM_WIDGET_IMAGE_H
+#ifndef EFL_UI_WIDGET_IMAGE_H
+#define EFL_UI_WIDGET_IMAGE_H
 
 #include "Elementary.h"
 
