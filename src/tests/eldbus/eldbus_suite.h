@@ -12,5 +12,6 @@ void eldbus_test_fake_server_eldbus_model_proxy(TCase *tc);
 void eldbus_test_eldbus_model_method(TCase *tc);
 void eldbus_test_eldbus_model_signal(TCase *tc);
 void eldbus_test_eldbus_object(TCase *tc);
+void eldbus_test_eldbus_message(TCase *tc);
 
 #endif

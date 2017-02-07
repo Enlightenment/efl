@@ -15,6 +15,7 @@ static const Efl_Test_Case etc[] = {
   { "eldbus_model_method", eldbus_test_eldbus_model_method },
   { "eldbus_model_signal", eldbus_test_eldbus_model_signal },
   { "eldbus_test_eldbus_object", eldbus_test_eldbus_object },
+  { "eldbus_test_eldbus_message", eldbus_test_eldbus_message },
   { NULL, NULL }
 };
 
