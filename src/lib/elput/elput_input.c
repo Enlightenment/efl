@@ -12,6 +12,7 @@ _cb_open_restricted(const char *path, int flags, void *data)
    if (!em->input.thread)
      return em->interface->open(em, path, flags);
    if (!em->interface->open_async) return ret;
+   if (ecore_thread_check(em->input.thread)) return ret;
    ao = calloc(1, sizeof(Elput_Async_Open));
    if (!ao) return ret;
    if (pipe2(p, O_CLOEXEC) < 0)
