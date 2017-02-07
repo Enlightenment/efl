@@ -4095,7 +4095,7 @@ elm_gesture_layer_long_tap_start_timeout_set(Evas_Object *obj, double long_tap_s
 {
    ELM_GESTURE_LAYER_CHECK(obj);
    ELM_GESTURE_LAYER_DATA_GET(obj, sd);
-   sd->long_tap_start_timeout = long_tap_start_timeout;
+   sd->long_tap_start_timeout = ((long_tap_start_timeout > 0) ? long_tap_start_timeout : 0);
 }
 
 EAPI double
@@ -4127,7 +4127,7 @@ elm_gesture_layer_double_tap_timeout_set(Evas_Object *obj, double double_tap_tim
 {
    ELM_GESTURE_LAYER_CHECK(obj);
    ELM_GESTURE_LAYER_DATA_GET(obj, sd);
-   sd->double_tap_timeout = double_tap_timeout;
+   sd->double_tap_timeout = ((double_tap_timeout > 0) ? double_tap_timeout : 0);
 }
 
 EAPI double

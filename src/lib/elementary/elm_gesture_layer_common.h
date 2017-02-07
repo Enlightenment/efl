@@ -288,7 +288,8 @@ EAPI unsigned int elm_gesture_layer_flick_time_limit_ms_get(const Evas_Object *o
 /**
  * This function sets the gesture layer long tap start timeout of an object
  *
- * Recognize as a long tap when a tab occurs over @c long_tap_start_timeout.
+ * Recognize as a long tap when a tab occurs over @c long_tap_start_timeout,
+ * if set negative value, timeout will be 0.
  *
  * @param obj gesture-layer.
  * @param long_tap_start_timeout long tap start timeout
@@ -333,7 +334,7 @@ EAPI Eina_Bool elm_gesture_layer_continues_enable_get(const Evas_Object *obj);
  * This function sets the gesture layer double tap timeout of an object
  *
  * When the time diffrence between two tabs is less than the @c double_tap_timeout value,
- * it is recognized as a double tab.
+ * it is recognized as a double tab, if set negative value, timeout will be 0.
  *
  * @param obj gesture-layer.
  * @param double_tap_timeout double tap timeout
