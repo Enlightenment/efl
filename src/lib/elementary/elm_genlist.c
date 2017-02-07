@@ -833,6 +833,7 @@ _calc_job(void *data)
         if (!sd->must_recalc_idler)
           sd->must_recalc_idler = ecore_idler_add(_must_recalc_idler, data);
      }
+   if (!sd->show_item) sd->check_scroll = EINA_FALSE;
    if (sd->check_scroll)
      {
         elm_obj_pan_content_size_get(sd->pan_obj, &pan_w, &pan_h);
