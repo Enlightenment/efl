@@ -97,6 +97,7 @@ ffi.cdef [[
         Eina_File_Copy_Flags flags, Eina_File_Copy_Progress cb,
         const void *cb_data);
     Eina_File *eina_file_open(const char *name, Eina_Bool shared);
+    Eina_Bool eina_file_unlink(const char *pathname);
     Eina_File *eina_file_virtualize(const char *virtual_name,
         const void *data, unsigned long long length, Eina_Bool copy);
     Eina_Bool eina_file_virtual(Eina_File *file);
@@ -315,6 +316,11 @@ M.File = ffi.metatype("Eina_File", {
         open = function(name, shared)
             return eina.eina_file_open(name, shared)
         end,
+
+        unlink = function(self)
+            return eina.eina_file_unlink(pathname)
+        end,
+
         virtualize = function(vname, data, length, copy)
             return eina.eina_file_virtualize(vname, data, length,
                 copy or false)

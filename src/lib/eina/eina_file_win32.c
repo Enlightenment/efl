@@ -821,6 +821,30 @@ eina_file_open(const char *path, Eina_Bool shared)
    return NULL;
 }
 
+EAPI Eina_Bool
+eina_file_unlink(const char *pathname)
+{
+   char *unlink_path = eina_file_path_sanitize(pathname);
+   Eina_File *file = eina_hash_find(_eina_file_cache, unlink_path);
+
+   if (file)
+     {
+        if (file->handle != INVALID_HANDLE_VALUE)
+          {
+             CloseHandle(file->handle);
+             file->handle = INVALID_HANDLE_VALUE;
+          }
+     }
+
+   if ( unlink(unlink_path) < 0)
+     {
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+
 EAPI Eina_Iterator *eina_file_xattr_get(Eina_File *file EINA_UNUSED)
 {
    return NULL;

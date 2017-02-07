@@ -898,6 +898,16 @@ eina_file_refresh(Eina_File *file)
    return r;
 }
 
+EAPI Eina_Bool
+eina_file_unlink(const char *pathname)
+{
+   if ( unlink(pathname) < 0)
+     {
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 EAPI void *
 eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
 {
