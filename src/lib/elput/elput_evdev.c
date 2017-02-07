@@ -1327,11 +1327,6 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
         libinput_device_config_tap_set_enabled(edev->device, enable);
      }
 
-   /* FIXME: Normally we would do a device calibration set here however
-    * that requires Output support. Since this is just an input library, we
-    * may need to add external facing APIs to do calibration. Then a user of
-    * elput would handle outputs, and make calls to calibrate */
-
    return edev;
 
 err:
