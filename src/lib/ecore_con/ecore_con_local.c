@@ -29,10 +29,14 @@
 static const char *
 _ecore_con_local_path_get(void)
 {
-   const char *homedir = getenv("XDG_RUNTIME_DIR");
-   if (!homedir) homedir = eina_environment_home_get();
-   if (!homedir) homedir = eina_environment_tmp_get();
+   static char *homedir = NULL;
+   if (homedir) return homedir;
 
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid()) homedir = getenv("XDG_RUNTIME_DIR");
+#endif
+   if (!homedir) homedir = (char *)eina_environment_home_get();
+   if (!homedir) homedir = (char *)eina_environment_tmp_get();
    return homedir;
 }
 
