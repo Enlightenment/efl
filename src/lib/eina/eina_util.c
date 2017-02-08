@@ -107,8 +107,6 @@ eina_environment_tmp_get(void)
    if (!tmp) tmp = getenv("USERPROFILE");
    if (!tmp) tmp = getenv("WINDIR");
    if (!tmp) tmp = "C:\\";
-
-   return tmp;
 #else
 # if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
@@ -120,7 +118,7 @@ eina_environment_tmp_get(void)
         if (!tmp) tmp = getenv("TEMP");
      }
    if (!tmp) tmp = "/tmp";
-
-   return tmp;
 #endif
+   tmp = strdup(tmp);
+   return tmp;
 }
