@@ -381,9 +381,17 @@ end:
        em->definition->name : "<UNKNOWN>",
        file);
 
-   ie->info.module = em;
-   ie->info.loader = em->functions;
-   if (em) evas_module_ref(em);
+   if (em)
+     {
+        ie->info.module = em;
+        ie->info.loader = em->functions;
+        evas_module_ref(em);
+     }
+   else
+     {
+        ie->info.module = NULL;
+        ie->info.loader = NULL;
+     }
    return ret;
 }
 
