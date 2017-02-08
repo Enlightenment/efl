@@ -472,6 +472,9 @@ void _ecore_wl_window_semi_free(Ecore_Wl2_Window *window);
 
 void _ecore_wl2_offer_unref(Ecore_Wl2_Offer *offer);
 
+void _ecore_wl2_input_focus_in_send(Ecore_Wl2_Window *window);
+void _ecore_wl2_input_focus_out_send(Ecore_Wl2_Window *window);
+
 EAPI extern int _ecore_wl2_event_window_www;
 EAPI extern int _ecore_wl2_event_window_www_drag;
 

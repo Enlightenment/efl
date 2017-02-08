@@ -408,10 +408,14 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
                    _input_event_cb_free, ev->dev);
 }
 
-static void
-_ecore_wl2_input_focus_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
+void
+_ecore_wl2_input_focus_in_send(Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Event_Focus_In *ev;
+   Ecore_Wl2_Input *input;
+
+   input = ecore_wl2_window_input_get(window);
+   if (!input) return;
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Focus_In));
    if (!ev) return;
@@ -423,10 +427,14 @@ _ecore_wl2_input_focus_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
                    ev->dev);
 }
 
-static void
-_ecore_wl2_input_focus_out_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
+void
+_ecore_wl2_input_focus_out_send(Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Event_Focus_Out *ev;
+   Ecore_Wl2_Input *input;
+
+   input = ecore_wl2_window_input_get(window);
+   if (!input) return;
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Focus_Out));
    if (!ev) return;
@@ -846,15 +854,12 @@ _keyboard_cb_enter(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
 
    input->focus.keyboard = window;
    window->input = input;
-
-   _ecore_wl2_input_focus_in_send(input, window);
 }
 
 static void
-_keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface)
+_keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface EINA_UNUSED)
 {
    Ecore_Wl2_Input *input;
-   Ecore_Wl2_Window *window;
 
    input = data;
    if (!input) return;
@@ -866,13 +871,6 @@ _keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
    input->repeat.time = 0;
    if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
    input->repeat.timer = NULL;
-
-   /* find the window which this surface belongs to */
-   window = _ecore_wl2_display_window_surface_find(input->display, surface);
-   if (!window) return;
-
-   _ecore_wl2_input_focus_out_send(input, window);
-
    input->focus.keyboard = NULL;
 }
 
@@ -1582,7 +1580,6 @@ ecore_wl2_input_seat_get(Ecore_Wl2_Input *input)
 EAPI Ecore_Wl2_Seat_Capabilities
 ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input)
 {
-
    Ecore_Wl2_Seat_Capabilities cap = ECORE_WL2_SEAT_CAPABILITIES_NONE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, cap);

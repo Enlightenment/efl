@@ -146,6 +146,11 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
           }
      }
 
+   if (win->focused)
+     _ecore_wl2_input_focus_in_send(win);
+   else
+     _ecore_wl2_input_focus_out_send(win);
+
    win->configure_serial = serial;
    if ((win->geometry.w == w) && (win->geometry.h == h))
      w = h = 0;
@@ -237,6 +242,11 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
              break;
           }
      }
+
+   if (win->focused)
+     _ecore_wl2_input_focus_in_send(win);
+   else
+     _ecore_wl2_input_focus_out_send(win);
 
    win->configure_serial = wl_display_get_serial(win->display->wl.display);
    if ((win->geometry.w == width) && (win->geometry.h == height))
@@ -1298,11 +1308,16 @@ ecore_wl2_window_input_get(Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(window->display, NULL);
 
-   if (window->input) return window->input;
+   if (window->input)
+     return window->input;
+   else if ((window->parent) && (window->parent->input))
+     return window->parent->input;
 
    EINA_INLIST_FOREACH(window->display->inputs, input)
      {
-        if (input->focus.pointer) return input;
+        if ((input->wl.pointer) || (input->wl.keyboard) ||
+            (input->wl.touch))
+          return input;
      }
 
    return NULL;
