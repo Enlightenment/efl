@@ -127,28 +127,6 @@ _socket_path_set(char *path)
    snprintf(buf, sizeof(buf), "/tmp/.evas-cserve2-%x.socket", (int)getuid());
    /* FIXME: check we can actually create this socket */
    strcpy(path, buf);
-#if 0   
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-     {
-        env = getenv("XDG_RUNTIME_DIR");
-        if (!env || !env[0])
-          {
-             env = eina_environment_home_get();
-             if (!env || !env[0])
-               {
-                  env = eina_environment_tmp_get();
-                  if (!env || !env[0])
-                    env = "/tmp";
-               }
-          }
-
-        snprintf(buf, sizeof(buf), "%s/evas-cserve2-%x.socket", env, getuid());
-        /* FIXME: check we can actually create this socket */
-        strcpy(path, buf);
-     }
-#endif   
 }
 
 static Eina_Bool
