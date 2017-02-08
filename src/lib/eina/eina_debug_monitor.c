@@ -650,10 +650,16 @@ _eina_debug_monitor_signal_init(void)
 static const char *
 _socket_home_get(void)
 {
+   static char *dir;
+
+   if (dir) return dir;
    // get possible debug daemon socket directory base
-   const char *dir = getenv("XDG_RUNTIME_DIR");
-   if (!dir) dir = eina_environment_home_get();
-   if (!dir) dir = eina_environment_tmp_get();
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid()) dir = getenv("XDG_RUNTIME_DIR");
+#endif
+   if (!dir) dir = (char *)eina_environment_home_get();
+   if (!dir) dir = (char *)eina_environment_tmp_get();
+   dir = strdup(dir);
    return dir;
 }
 
