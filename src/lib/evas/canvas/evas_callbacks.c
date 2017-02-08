@@ -186,6 +186,7 @@ _eo_evas_object_cb(void *data, const Efl_Event *event)
 
       case EFL_EVENT_TYPE_FOCUS:
          event_info = NULL;
+        // NOTE: fallthrough here is explicitly intended!!!
       case EFL_EVENT_TYPE_NULL:
       case EFL_EVENT_TYPE_STRUCT:
       case EFL_EVENT_TYPE_OBJECT:
