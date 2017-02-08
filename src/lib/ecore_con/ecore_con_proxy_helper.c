@@ -367,6 +367,7 @@ _efl_net_proxy_helper_url_wait(int id)
    eina_spinlock_release(&_efl_net_proxy_helper_queue_lock);
 
    msg = eina_thread_queue_wait(req->thq, &ref);
+   if (!msg) return NULL;
    ret = msg->proxies;
    msg->proxies = NULL;
    eina_thread_queue_wait_done(req->thq, ref);
