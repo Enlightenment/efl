@@ -545,8 +545,6 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
                   task = eina_list_data_get(l);
                   ie->tasks = eina_list_remove_list(ie->tasks, l);
                   if (task != &dummy_task) free(task);
-                  SLKU(ie->lock_task);
-
                   free(tg);
                   break;
                }
