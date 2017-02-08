@@ -3018,8 +3018,10 @@ eng_image_data_slice_add(void *engdata, void *image,
      {
       case EFL_GFX_COLORSPACE_ARGB8888:
         bpp = 4;
+        // falltrhough is intended
       case EFL_GFX_COLORSPACE_AGRY88:
         if (!bpp) bpp = 2;
+        // falltrhough is intended
       case EFL_GFX_COLORSPACE_GRY8:
         if (!bpp) bpp = 1;
         if (plane != 0) goto fail;
