@@ -24,6 +24,10 @@
 #include <unistd.h>
 #ifdef _WIN32
 # include <string.h>
+#else
+# include <sys/types.h>
+# include <pwd.h>
+# include <string.h>
 #endif
 
 #include "eina_config.h"
@@ -51,9 +55,10 @@ static char home_storage[8];
 EAPI const char *
 eina_environment_home_get(void)
 {
-#ifdef _WIN32
-   char *home;
+   static char *home = NULL;
 
+   if (home) return home;
+#ifdef _WIN32
    home = getenv("USERPROFILE");
    if (!home) home = getenv("WINDIR");
    if (!home &&
@@ -66,17 +71,36 @@ eina_environment_home_get(void)
      }
    if (!home) home = "C:\\";
 
-   return home;
 #else
-   return getenv("HOME");
+# if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid()) home = getenv("HOME");
+# endif
+   if (!home)
+     {
+# ifdef HAVE_GETPWENT
+        struct passwd pwent, *pwent2 = NULL;
+        char pwbuf[8129];
+
+        if (!getpwuid_r(getuid(), &pwent, pwbuf, sizeof(pwbuf), &pwent2))
+          {
+             if ((pwent2) && (pwent.pw_dir))
+               home = strdup(pwent.pw_dir);
+          }
+        if (!home) home = strdup("/tmp");
+        return home;
+     }
+# endif
 #endif
+   home = strdup(home);
+   return home;
 }
 
 EAPI const char *
 eina_environment_tmp_get(void)
 {
-   char *tmp = NULL;
+   static char *tmp = NULL;
 
+   if (tmp) return tmp;
 #ifdef _WIN32
    tmp = getenv("TMP");
    if (!tmp) tmp = getenv("TEMP");
