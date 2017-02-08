@@ -324,7 +324,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    func = evas_common_gfx_func_composite_mask_color_span_get(color, 1, 1, _gfx_to_evas_render_op(op));
    span_func = efl_draw_alpha_func_get(cmd->draw.rop, EINA_TRUE);
 
-   for (y = 0, my = 0; y < h; y++, my++, msk += mw)
+   for (y = 0, my = 0; y < h; y++, my++)
      {
         if (my >= mh) my = 0;
 
