@@ -359,22 +359,6 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    INF("exhausted all means to load image '%s'", file);
    return EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 
-   if (ret != EVAS_LOAD_ERROR_NONE)
-     {
-        const char *modname = NULL;
-        int modversion = -1;
-
-        if (em && em->definition)
-          {
-             modname = em->definition->name;
-             modversion = em->definition->version;
-          }
-        WRN("loader '%s' (version %d) "
-            "handled file '%s', key '%s' with errors: %s",
-            modname ? modname : "<UNKNOWN>", modversion,
-            file, ie->key ? ie->key : "",
-            evas_load_error_str(ret));
-     }
 end:
    DBG("loader '%s' used for file %s",
        (em && em->definition && em->definition->name) ?
