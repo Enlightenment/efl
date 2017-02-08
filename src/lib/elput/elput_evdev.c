@@ -65,9 +65,9 @@ _keyboard_fd_get(off_t size)
    long flags;
    int fd = 0;
    char tmp[PATH_MAX];
+   Efl_Vpath_File *file_obj;
 
-   Efl_Vpath_File *file_obj =
-     efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:run:)");
+   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:run:)");
    efl_vpath_file_do(file_obj);
    efl_vpath_file_wait(file_obj);
    path = efl_vpath_file_result_get(file_obj);
