@@ -1648,8 +1648,6 @@ _evas_nv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
         /* jump one line */
         dp1 += sizeof (int) * w;
         dp2 += sizeof (int) * w;
-        yp1 += w;
-        yp2 += w;
      }
 }
 
