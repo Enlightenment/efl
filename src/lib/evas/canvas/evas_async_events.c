@@ -7,15 +7,29 @@
 #endif
 #include <errno.h>
 
-#ifdef _WIN32
-# include <winsock2.h>
-#endif /* ! _WIN32 */
-
-#include <fcntl.h>
-
 #include "evas_common_private.h"
 #include "evas_private.h"
-#include "Ecore.h"
+
+#ifdef _WIN32
+
+# include <winsock2.h>
+
+# define pipe_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
+# define pipe_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
+# define pipe_close(fd)               closesocket(fd)
+# define PIPE_FD_ERROR   SOCKET_ERROR
+
+#else
+
+# include <fcntl.h>
+
+# define pipe_write(fd, buffer, size) write((fd), buffer, size)
+# define pipe_read(fd, buffer, size)  read((fd), buffer, size)
+# define pipe_close(fd)               close(fd)
+# define PIPE_FD_ERROR   -1
+
+#endif /* ! _WIN32 */
+
 
 typedef struct _Evas_Event_Async	Evas_Event_Async;
 struct _Evas_Event_Async
@@ -48,8 +62,8 @@ static int _thread_id = -1;
 static int _thread_id_max = 0;
 static int _thread_id_update = 0;
 
-static Eina_Bool _write_error = EINA_TRUE;
-static Eina_Bool _read_error = EINA_TRUE;
+static int _fd_write = -1;
+static int _fd_read = -1;
 static pid_t _fd_pid = 0;
 
 static Eina_Spinlock async_lock;
@@ -57,37 +71,53 @@ static Eina_Inarray async_queue;
 static Evas_Event_Async *async_queue_cache = NULL;
 static unsigned int async_queue_cache_max = 0;
 
-static Ecore_Pipe *_async_pipe = NULL;
-
 static int _init_evas_event = 0;
-static const int wakeup = 1;
 
-static void _evas_async_events_fd_blocking_set(Eina_Bool blocking EINA_UNUSED);
-static void
-_async_events_pipe_read_cb(void *data EINA_UNUSED, void *buf, unsigned int len)
+Eina_Bool
+_evas_fd_close_on_exec(int fd)
 {
-   if (wakeup == *(int*)buf && sizeof(int) == len)
-     _evas_async_events_fd_blocking_set(EINA_FALSE);
+#ifdef HAVE_FCNTL
+   int flags;
+
+   flags = fcntl(fd, F_GETFD);
+   if (flags == -1)
+     return EINA_FALSE;
+
+   flags |= FD_CLOEXEC;
+   if (fcntl(fd, F_SETFD, flags) == -1)
+     return EINA_FALSE;
+   return EINA_TRUE;
+#else
+   (void) fd;
+   return EINA_FALSE;
+#endif
 }
 
 int
 evas_async_events_init(void)
 {
+   int filedes[2];
 
    if (_init_evas_event++)
      return _init_evas_event;
 
    _fd_pid = getpid();
 
-   _async_pipe = ecore_pipe_add(_async_events_pipe_read_cb, NULL);
-   if ( !_async_pipe )
+   if (pipe(filedes) == -1)
      {
-        _init_evas_event = 0;
-        return 0;
+	_init_evas_event = 0;
+	return 0;
      }
-   ecore_pipe_freeze(_async_pipe);
-   _read_error = EINA_FALSE;
-   _write_error = EINA_FALSE;
+
+   _evas_fd_close_on_exec(filedes[0]);
+   _evas_fd_close_on_exec(filedes[1]);
+
+   _fd_read = filedes[0];
+   _fd_write = filedes[1];
+
+#ifdef HAVE_FCNTL
+   if (fcntl(_fd_read, F_SETFL, O_NONBLOCK) < 0) ERR("Can't set NONBLOCK on async fd");
+#endif
 
    eina_spinlock_new(&async_lock);
    eina_inarray_step_set(&async_queue, sizeof (Eina_Inarray), sizeof (Evas_Event_Async), 16);
@@ -121,9 +151,10 @@ evas_async_events_shutdown(void)
    eina_spinlock_free(&async_lock);
    eina_inarray_flush(&async_queue);
 
-   ecore_pipe_del(_async_pipe);
-   _read_error = EINA_TRUE;
-   _write_error = EINA_TRUE;
+   pipe_close(_fd_read);
+   pipe_close(_fd_write);
+   _fd_read = -1;
+   _fd_write = -1;
 
    return _init_evas_event;
 }
@@ -142,46 +173,64 @@ EAPI int
 evas_async_events_fd_get(void)
 {
    _evas_async_events_fork_handle();
-   return ecore_pipe_read_fd(_async_pipe);
+   return _fd_read;
 }
 
 static int
 _evas_async_events_process_single(void)
 {
-   if (ecore_pipe_wait(_async_pipe, 1, 0.1) != 1)
-     return 0;
+   int ret, wakeup;
 
-   Evas_Event_Async *ev;
-   unsigned int len, max;
-   int nr;
+   ret = pipe_read(_fd_read, &wakeup, sizeof(int));
+   if (ret < 0)
+     {
+        switch (errno)
+          {
+           case EBADF:
+           case EINVAL:
+           case EIO:
+           case EISDIR:
+              _fd_read = -1;
+          }
 
-   eina_spinlock_take(&async_lock);
+        return ret;
+     }
 
-   ev = async_queue.members;
-   async_queue.members = async_queue_cache;
-   async_queue_cache = ev;
+   if (ret == sizeof(int))
+     {
+        Evas_Event_Async *ev;
+        unsigned int len, max;
+        int nr;
 
-   max = async_queue.max;
-   async_queue.max = async_queue_cache_max;
-   async_queue_cache_max = max;
+        eina_spinlock_take(&async_lock);
 
-   len = async_queue.len;
-   async_queue.len = 0;
+        ev = async_queue.members;
+        async_queue.members = async_queue_cache;
+        async_queue_cache = ev;
 
-   eina_spinlock_release(&async_lock);
+        max = async_queue.max;
+        async_queue.max = async_queue_cache_max;
+        async_queue_cache_max = max;
 
-   DBG("Evas async events queue length: %u", len);
-   nr = len;
+        len = async_queue.len;
+        async_queue.len = 0;
 
-   while (len > 0)
-    {
-       if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
-       ev++;
-       len--;
-    }
+        eina_spinlock_release(&async_lock);
 
-   return nr;
+        DBG("Evas async events queue length: %u", len);
+        nr = len;
 
+        while (len > 0)
+          {
+             if (ev->func) ev->func((void *)ev->target, ev->type, ev->event_info);
+             ev++;
+             len--;
+          }
+
+        return nr;
+     }
+
+   return 0;
 }
 
 EAPI int
@@ -189,7 +238,8 @@ evas_async_events_process(void)
 {
    int nr, count = 0;
 
-   if (_read_error) return -1;
+   if (_fd_read == -1) return -1;
+
    _evas_async_events_fork_handle();
 
    while ((nr = _evas_async_events_process_single()) > 0) count += nr;
@@ -201,7 +251,6 @@ static void
 _evas_async_events_fd_blocking_set(Eina_Bool blocking)
 {
 #ifdef HAVE_FCNTL
-   int _fd_read = ecore_pipe_read_fd(_async_pipe);
    long flags = fcntl(_fd_read, F_GETFL);
 
    if (blocking) flags &= ~O_NONBLOCK;
@@ -217,7 +266,6 @@ EAPI int
 evas_async_events_process_blocking(void)
 {
    int ret;
-   if (_read_error) return -1;
 
    _evas_async_events_fork_handle();
 
@@ -233,10 +281,10 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 {
    Evas_Event_Async *ev;
    unsigned int count;
-   Eina_Bool ret = EINA_TRUE;;
+   Eina_Bool ret;
 
    if (!func) return EINA_FALSE;
-   if (_write_error) return EINA_FALSE;
+   if (_fd_write == -1) return EINA_FALSE;
 
    _evas_async_events_fork_handle();
 
@@ -259,12 +307,32 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 
    if (count == 0)
      {
-        if (!ecore_pipe_write(_async_pipe, &wakeup, sizeof(int)))
+        int wakeup = 1;
+        ssize_t check;
+
+        do
+          {
+             check = pipe_write(_fd_write, &wakeup, sizeof (int));
+          }
+        while ((check != sizeof (int)) &&
+               ((errno == EINTR) || (errno == EAGAIN)));
+
+        if (check == sizeof (int)) ret = EINA_TRUE;
+        else
           {
              ret = EINA_FALSE;
-             _write_error = EINA_TRUE;
+
+             switch (errno)
+               {
+                case EBADF:
+                case EINVAL:
+                case EIO:
+                case EPIPE:
+                   _fd_write = -1;
+               }
           }
      }
+   else ret = EINA_TRUE;
 
    return ret;
 }
