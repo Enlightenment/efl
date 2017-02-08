@@ -142,6 +142,7 @@ collections {
 #include "edc/backlight.edc"
 #include "edc/mixer.edc"
 #include "edc/battery.edc"
+#include "edc/batman.edc"
 #include "edc/evrything.edc"
 #include "edc/illume.edc"
 #include "edc/bluez4.edc"

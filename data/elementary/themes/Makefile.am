@@ -22,6 +22,7 @@ elementary/themes/edc/appmenu.edc \
 elementary/themes/edc/background.edc \
 elementary/themes/edc/backlight.edc \
 elementary/themes/edc/battery.edc \
+elementary/themes/edc/batman.edc \
 elementary/themes/edc/bluez4.edc \
 elementary/themes/edc/border.edc \
 elementary/themes/edc/border-icons.edc \
