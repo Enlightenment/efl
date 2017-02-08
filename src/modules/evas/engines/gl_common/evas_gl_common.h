@@ -295,11 +295,11 @@ struct _Evas_Engine_GL_Context
          GLuint           cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          int              tex_target;
          int              cx, cy, cw, ch;
-         unsigned char    render_op;
-         Eina_Bool        smooth      : 1;
-         Eina_Bool        blend       : 1;
-         Eina_Bool        mask_smooth : 1;
-         Eina_Bool        clip        : 1;
+         char             render_op;
+         Eina_Bool        smooth      : 2;
+         Eina_Bool        blend       : 2;
+         Eina_Bool        mask_smooth : 2;
+         Eina_Bool        clip        : 2;
       } shader;
       struct {
          int            num, alloc;
