@@ -300,6 +300,9 @@ _efl_loop_timer_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
    double now, add;
    EINA_MAIN_LOOP_CHECK_RETURN;
 
+   // Do not reset the current timer while inside the callback
+   if (timer_current == timer) return ;
+
    now = ecore_time_get();
 
    if (!timer->initialized)
@@ -320,6 +323,9 @@ _efl_loop_timer_loop_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    double now, add;
    EINA_MAIN_LOOP_CHECK_RETURN;
+
+   // Do not reset the current timer while inside the callback
+   if (timer_current == timer) return ;
 
    now = ecore_loop_time_get();
 
