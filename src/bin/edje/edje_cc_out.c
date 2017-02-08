@@ -786,6 +786,7 @@ data_thread_fonts(void *data, Ecore_Thread *thread EINA_UNUSED)
    int bytes = 0;
    char buf[EINA_PATH_MAX];
    char buf2[EINA_PATH_MAX];
+   size_t size;
 
    f = eina_file_open(fc->fn->file, 0);
    if (f)
@@ -835,9 +836,10 @@ data_thread_fonts(void *data, Ecore_Thread *thread EINA_UNUSED)
         return;
      }
 
+   size = eina_file_size_get(f);
    INF("Wrote %9i bytes (%4iKb) for \"%s\" font entry \"%s\" compress: [real: %2.1f%%]",
        bytes, (bytes + 512) / 1024, buf, fc->fn->file,
-       100 - (100 * (double)bytes) / ((double)(eina_file_size_get(f)))
+       100 - (100 * (double)bytes) / ((double)((size > 0) ? size : 1))
        );
    eina_file_map_free(f, m);
    eina_file_close(f);
