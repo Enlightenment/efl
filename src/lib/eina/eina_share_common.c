@@ -766,11 +766,11 @@ eina_share_common_add_length(Eina_Share *share,
    el = _eina_share_common_head_find(ed, str, slen);
    if (el)
      {
-        EINA_MAGIC_CHECK_SHARE_COMMON_NODE(el,
-                                           share->node_magic,
-                                           eina_spinlock_release(&_mutex_big));
+        EINA_MAGIC_CHECK_SHARE_COMMON_NODE
+          (el, share->node_magic,
+           eina_spinlock_release(&_mutex_big); return NULL);
         el->references++;
-                                           eina_spinlock_release(&_mutex_big);
+        eina_spinlock_release(&_mutex_big);
         return el->str;
      }
 
