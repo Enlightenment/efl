@@ -1456,6 +1456,8 @@ _profile_fetch_from_conf(void)
           {
              p = strchr(_elm_profile, '/');
              if (p) *p = 0;
+             p = strchr(_elm_profile, '\\');
+             if (p) *p = 0;
              if (!strcmp(_elm_profile, ".."))
                {
                   free(_elm_profile);
