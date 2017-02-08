@@ -71,10 +71,17 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    s = eina_environment_tmp_get();
    efl_vpath_core_meta_set(obj, "tmp", s);
 
-#define ENV_HOME_SET(_env, _dir, _meta) \
+# if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+#  define ENV_HOME_SET(_env, _dir, _meta) \
+   if ((getuid() != geteuid()) || (!(s = getenv(_env)))) { \
+      snprintf(buf, sizeof(buf), "%s/"_dir, home); s = buf; \
+   } efl_vpath_core_meta_set(obj, _meta, s);
+#else
+#  define ENV_HOME_SET(_env, _dir, _meta) \
    if (!(s = getenv(_env))) { \
-        snprintf(buf, sizeof(buf), "%s/"_dir, home); s = buf; \
-     } efl_vpath_core_meta_set(obj, _meta, s);
+      snprintf(buf, sizeof(buf), "%s/"_dir, home); s = buf; \
+   } efl_vpath_core_meta_set(obj, _meta, s);
+#endif
    // $XDG_DATA_HOME defines the base directory relative to which user
    //   specific data files should be stored. If $XDG_DATA_HOME is either
    //   not set or empty, a default equal to $HOME/.local/share should be
@@ -96,7 +103,11 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    //   directory MUST be owned by the user, and he MUST be the only one
    //   having read and write access to it. Its Unix access mode MUST
    //   be 0700.
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (!(s = getenv("XDG_RUNTIME_DIR")))
+#else
+   if ((getuid() != geteuid()) || (!(s = getenv("XDG_RUNTIME_DIR"))))
+#endif
      {
 #ifdef HAVE_GETUID
         struct stat st;
@@ -120,9 +131,10 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
              else s = (char *)efl_vpath_core_meta_get(obj, "tmp");
           }
 #else
-	s = (char *)efl_vpath_core_meta_get(obj, "tmp");
+        s = (char *)efl_vpath_core_meta_get(obj, "tmp");
 #endif
      }
+   if (!s) s = (char *)efl_vpath_core_meta_get(obj, "tmp");
    efl_vpath_core_meta_set(obj, "run", s);
    // https://www.freedesktop.org/wiki/Software/xdg-user-dirs/
    // https://wiki.archlinux.org/index.php/Xdg_user_directories
@@ -326,7 +338,7 @@ _efl_vpath_core_efl_vpath_fetch(Eo *obj, Efl_Vpath_Core_Data *pd EINA_UNUSED, co
                 }
 #endif /* HAVE_GETPWENT */
           }
-        // (:xxx/* ... <- meta has table
+        // (:xxx:)/* ... <- meta hash table
         if ((path[0] == '(') && (path[1] == ':'))
           {
              const char *p, *meta;
