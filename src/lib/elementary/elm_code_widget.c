@@ -280,7 +280,8 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
           {
              pd->cursor_rect = elm_layout_add(widget);
 
-             elm_layout_theme_set(pd->cursor_rect, "entry", "cursor", elm_widget_style_get(widget));
+             if (!elm_layout_theme_set(pd->cursor_rect, "entry", "cursor", elm_widget_style_get(widget)))
+               CRI("Failed to set layout!");
              elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
 
              evas_object_resize(pd->cursor_rect, cw/8, ch);
