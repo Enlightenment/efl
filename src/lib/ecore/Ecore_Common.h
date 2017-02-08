@@ -7,18 +7,17 @@ extern "C" {
 #include "ecore_types.eot.h"
 
 /**
- * @defgroup Ecore_Init_Group Ecore initialization, shutdown functions and reset on fork.
  * @ingroup Ecore
- *
+ * @defgroup Ecore_Init_Group Ecore initialization, shutdown functions and reset on fork.
  * @{
  */
 
 /**
- * Set up connections, signal handlers, sockets etc.
- * @return 1 or greater on success, 0 otherwise
+ * Sets up connections, signal handlers, sockets etc.
+ * @return @c 1 or greater on success, @c 0 otherwise.
  *
  * This function sets up all singal handlers and the basic event loop. If it
- * succeeds, 1 will be returned, otherwise 0 will be returned.
+ * succeeds, @c 1 will be returned, otherwise @c 0 will be returned.
  *
  * @code
  * #include <Ecore.h>
@@ -54,9 +53,9 @@ extern "C" {
 EAPI int ecore_init(void);
 
 /**
- * Shut down connections, signal handlers sockets etc.
+ * Shuts down connections, signal handlers sockets etc.
  *
- * @return 0 if ecore shuts down, greater than 0 otherwise.
+ * @return @c 0 if ecore shuts down, greater than @c 0 otherwise.
  * This function shuts down all things set up in ecore_init() and cleans up all
  * event queues, handlers, filters, timers, idlers, idle enterers/exiters
  * etc. set up after ecore_init() was called.
@@ -82,12 +81,12 @@ EWAPI void efl_build_version_set(int vmaj, int vmin, int vmic, int revision, con
  */
 
 /**
- * @defgroup Ecore_Main_Loop_Group Ecore main loop
  * @ingroup Ecore
+ * @defgroup Ecore_Main_Loop_Group Ecore main loop
  *
  * This group discusses functions that are acting on Ecore's main loop itself or
  * on events and infrastructure directly linked to it. Most programs only need
- * to start and end the main loop, the rest of the function discussed here are
+ * to start and end the main loop, the rest of the functions discussed here are
  * meant to be used in special situations, and with great care.
  *
  * For details on the usage of ecore's main loop and how it interacts with other
@@ -138,13 +137,13 @@ EAPI extern Ecore_Version *ecore_version;
 
 /**
  * @typedef Ecore_Task_Cb Ecore_Task_Cb
- * A callback run for a task (timer, idler, poller, animator, etc)
+ * A callback run for a task (timer, idler, poller, animator, etc).
  */
 typedef Eina_Bool (*Ecore_Task_Cb)(void *data);
 
 /**
  * @typedef Ecore_Select_Function
- * A function which can be used to replace select() in the main loop
+ * A function which can be used to replace select() in the main loop.
  */
 typedef int (*Ecore_Select_Function)(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
 
@@ -154,7 +153,7 @@ typedef int (*Ecore_Select_Function)(int nfds, fd_set *readfds, fd_set *writefds
  *
  * It does everything that is already done inside an @c Ecore main loop, like
  * checking for expired timers, idlers, etc. But it will do it only once and
- * return, instead of keep watching for new events.
+ * return, instead of keeping watch for new events.
  *
  * DO NOT use this function unless you are the person God comes to ask for
  * advice when He has trouble managing the Universe.
@@ -165,7 +164,7 @@ EAPI void ecore_main_loop_iterate(void);
 
 /**
  * Runs a single iteration of the main loop to process everything on the
- * queue with block/non-blocking status.
+ * queue with blocking/non-blocking status.
  *
  * @param may_block A flag if the main loop has a possibility of blocking.
  * (@c EINA_TRUE = may block/@c EINA_FALSE = non block)
@@ -178,18 +177,18 @@ EAPI void ecore_main_loop_iterate(void);
  * DO NOT use this function unless you are the person God comes to ask for
  * advice when He has trouble managing the Universe.
  *
- * @return 1 if event exists, else 0.
+ * @return @c 1 if event exists, else @c 0.
  * @see ecore_main_loop_iterate()
  */
 EAPI int ecore_main_loop_iterate_may_block(int may_block);
 
 /**
  * Sets the function to use when monitoring multiple file descriptors,
- * and waiting until one of more of the file descriptors before ready
+ * and waiting until one of more of the file descriptors are ready
  * for some class of I/O operation.
  *
  * This function will be used instead of the system call select and
- * could possible be used to integrate the Ecore event loop with an
+ * could possibly be used to integrate the Ecore event loop with an
  * external event loop.
  *
  * @warning you don't know how to use, don't even try to use it.
@@ -206,18 +205,18 @@ EAPI void ecore_main_loop_select_func_set(Ecore_Select_Function func);
 EAPI Ecore_Select_Function ecore_main_loop_select_func_get(void);
 
 /**
- * Request ecore to integrate GLib's main loop.
+ * Requests ecore to integrate GLib's main loop.
  *
  * This will add a small overhead during every main loop interaction
- * by checking glib's default main context (used by its main loop). If
- * it have events to be checked (timers, file descriptors or idlers),
+ * by checking GLib's default main context (used by its main loop).
+ * If it have events to be checked (timers, file descriptors or idlers),
  * then these will be polled alongside with Ecore's own events, then
  * dispatched before Ecore's. This is done by calling
  * ecore_main_loop_select_func_set().
  *
  * This will cooperate with previously set
- * ecore_main_loop_select_func_set() by calling the old
- * function. Similarly, if you want to override
+ * ecore_main_loop_select_func_set() by calling the old function.
+ * Similarly, if you want to override
  * ecore_main_loop_select_func_set() after main loop is integrated,
  * call the new select function set by this call (get it by calling
  * ecore_main_loop_select_func_get() right after
@@ -248,18 +247,17 @@ EAPI Ecore_Select_Function ecore_main_loop_select_func_get(void);
  * }
  *
  * @endcode
- *
+ * @return @c EINA_TRUE on success of,
+ *         @c EINA_FALSE if it failed likely due to no GLib support in Ecore.
  * @note This is only available if Ecore was compiled with GLib support.
- * @note You don't need to call this function if Ecore was compiled with
+ * @note You don't need to call this function if Ecore was compiled with.
  * --with-glib=always.
  *
- * @return @c EINA_TRUE on success of @c EINA_FALSE if it failed,
- *         likely no GLib support in Ecore.
  */
 EAPI Eina_Bool ecore_main_loop_glib_integrate(void);
 
 /**
- * Disable always integrating glib
+ * Disables always integrating GLib.
  *
  * If ecore is compiled with --with-glib=always (to always call
  * ecore_main_loop_glib_integrate() when ecore_init() is called), then calling
@@ -303,9 +301,9 @@ EAPI void ecore_main_loop_begin(void);
 EAPI void ecore_main_loop_quit(void);
 
 /**
- * Returns if an animator has ticked off during this loop iteration
+ * Returns if an animator has ticked off during this loop iteration.
  *
- * @return EINA_TRUE if an animator has been called, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if an animator has been called, @c EINA_FALSE otherwise.
  *
  * There should be little need for anyone to use this - ever.
  *
@@ -314,10 +312,11 @@ EAPI void ecore_main_loop_quit(void);
 EAPI Eina_Bool ecore_main_loop_animator_ticked_get(void);
 
 /**
- * Returns if the ecore_main_loop is running
+ * Returns if the ecore_main_loop is running.
  *
- * @return an integer specifying if the ecore_main_loop is running,
- *         0 if not running, > 0 if running
+ * @return An integer specifying if the ecore_main_loop is running,
+ *         @c 0 if not running,
+ *         > @c 0 if running
  *
  * @since 1.13
  */
@@ -337,7 +336,7 @@ typedef void (*Ecore_Cb)(void *data);
 typedef void *(*Ecore_Data_Cb)(void *data);
 
 /**
- * Add a function to be called by ecore_fork_reset()
+ * Adds a function to be called by ecore_fork_reset().
  *
  * @param func The function to add.
  * @param data The data to pass to this function.
@@ -346,13 +345,13 @@ typedef void *(*Ecore_Data_Cb)(void *data);
  * ecore_fork_reset() is called. This allows other libraries and subsystems
  * to also reset their internal state after a fork.
  *
- * @return EINA_TRUE on success, else EINA_FALSE.
+ * @return @c EINA_TRUE on success, else @c EINA_FALSE.
  * @since 1.7
  */
 EAPI Eina_Bool ecore_fork_reset_callback_add(Ecore_Cb func, const void *data);
 
 /**
- * This removes the callback specified
+ * This removes the callback specified.
  *
  * @param func The function to delete.
  * @param data The data passed to this function.
@@ -360,13 +359,13 @@ EAPI Eina_Bool ecore_fork_reset_callback_add(Ecore_Cb func, const void *data);
  * This deletes the callback added by ecore_fork_reset_callback_add() using
  * the function and data pointer to specify which to remove.
  *
- * @return EINA_TRUE on success, else EINA_FALSE.
+ * @return @c EINA_TRUE on success, else @c EINA_FALSE.
  * @since 1.7
  */
 EAPI Eina_Bool ecore_fork_reset_callback_del(Ecore_Cb func, const void *data);
 
 /**
- * Reset the ecore internal state after a fork
+ * Resets the ecore internal state after a fork.
  *
  * Ecore maintains internal data that can be affected by the fork() system call
  * which creates a duplicate of the current process. This also duplicates
@@ -385,7 +384,7 @@ EAPI Eina_Bool ecore_fork_reset_callback_del(Ecore_Cb func, const void *data);
 EAPI void ecore_fork_reset(void);
 
 /**
- * @brief Call callback asynchronously in the main loop.
+ * @brief Calls callback asynchronously in the main loop.
  * @since 1.1.0
  *
  * @param callback The callback to call in the main loop
@@ -402,12 +401,12 @@ EAPI void ecore_fork_reset(void);
 EAPI void ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data);
 
 /**
- * @brief Call callback synchronously in the main loop.
+ * @brief Calls callback synchronously in the main loop.
  * @since 1.1.0
  *
  * @param callback The callback to call in the main loop
  * @param data The data to give to that call back
- * @return the value returned by the callback in the main loop
+ * @return The value returned by the callback in the main loop.
  *
  * For all calls that need to happen in the main loop (most EFL functions do),
  * this helper function provides the infrastructure needed to do it safely
@@ -419,10 +418,10 @@ EAPI void ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data);
 EAPI void *ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data);
 
 /**
- * @brief Wait for the next thread call in the main loop.
+ * @brief Waits for the next thread call in the main loop.
  * @since 1.13.0
  *
- * @param wait How long to wait for this callback to be called
+ * @param wait How long to wait for this callback to be called.
  *
  * Note: This function should only be called in the main loop
  * and will actually block the main loop until either a call
@@ -432,10 +431,10 @@ EAPI void *ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *d
 EAPI void ecore_main_loop_thread_safe_call_wait(double wait);
 
 /**
- * @brief This function suspend the main loop in a know state
+ * @brief This function suspends the main loop in a know state.
  * @since 1.1.0
  *
- * @result the number of time ecore_thread_main_loop_begin() has been called
+ * @result The number of time ecore_thread_main_loop_begin() has been called
  * in this thread, if the main loop was suspended correctly. If not, it return @c -1.
  *
  * This function suspend the main loop in a know state, this let you
@@ -452,10 +451,10 @@ EAPI void ecore_main_loop_thread_safe_call_wait(double wait);
 EAPI int ecore_thread_main_loop_begin(void);
 
 /**
- * @brief Unlock the main loop.
+ * @brief Unlocks the main loop.
  * @since 1.1.0
  *
- * @result the number of time ecore_thread_main_loop_end() need to be called before
+ * @result The number of time ecore_thread_main_loop_end() need to be called before
  * the main loop is unlocked again. @c -1 will be returned if you are trying to unlock
  * when there wasn't enough call to ecore_thread_main_loop_begin().
  *
@@ -469,6 +468,7 @@ EAPI int ecore_thread_main_loop_end(void);
  */
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Event_Group Ecore Event functions
  *
  * Ecore events provide two main features that are of use to those using ecore:
@@ -531,8 +531,6 @@ EAPI int ecore_thread_main_loop_end(void);
  * Examples that deals with events:
  * @li @ref ecore_event_example_01_c
  * @li @ref ecore_event_example_02_c
- *
- * @ingroup Ecore_Main_Loop_Group
  *
  * @{
  */
@@ -650,7 +648,7 @@ struct _Ecore_Event_Signal_Realtime
 };
 
 /**
- * @brief Add an event handler.
+ * @brief Adds an event handler.
  * @param type The type of the event this handler will get called for
  * @param func The function to call when the event is found in the queue
  * @param data A data pointer to pass to the called function @p func
@@ -665,17 +663,17 @@ struct _Ecore_Event_Signal_Realtime
  * structure that is specific to that event type, and a data pointer that is
  * provided in this call as the @p data parameter.
  *
- * When the callback @p func is called, it must return 1 or 0. If it returns
- * 1 (or ECORE_CALLBACK_PASS_ON), It will keep being called as per normal, for
- * each handler set up for that event type. If it returns 0 (or
- * ECORE_CALLBACK_DONE), it will cease processing handlers for that particular
+ * When the callback @p func is called, it must return @c 1 or @c 0. If it returns
+ * @c 1 (or @c ECORE_CALLBACK_PASS_ON), It will keep being called as per normal, for
+ * each handler set up for that event type. If it returns @c 0 (or
+ * @c ECORE_CALLBACK_DONE), it will cease processing handlers for that particular
  * event, so all handler set to handle that event type that have not already
  * been called, will not be.
  */
 EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data);
 
 /**
- * @brief Delete an event handler.
+ * @brief Deletes an event handler.
  * @param event_handler Event handler handle to delete
  * @return Data passed to handler
  *
@@ -687,7 +685,7 @@ EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, Ecore_Event_Handler_
 EAPI void *ecore_event_handler_del(Ecore_Event_Handler *event_handler);
 
 /**
- * @brief Add an event to the event queue.
+ * @brief Adds an event to the event queue.
  * @param type The event type to add to the end of the event queue
  * @param ev The data structure passed as @c event to event handlers
  * @param func_free The function to be called to free @a ev
@@ -704,7 +702,7 @@ EAPI void *ecore_event_handler_del(Ecore_Event_Handler *event_handler);
 EAPI Ecore_Event *ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data);
 
 /**
- * @brief Delete an event from the queue.
+ * @brief Deletes an event from the queue.
  * @param event The event handle to delete
  * @return The data pointer originally set for the event free function
  *
@@ -717,7 +715,7 @@ EAPI Ecore_Event *ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, vo
 EAPI void *ecore_event_del(Ecore_Event *event);
 
 /**
- * @brief Get the data associated with an #Ecore_Event_Handler
+ * @brief Gets the data associated with an #Ecore_Event_Handler.
  * @param eh The event handler
  * @return The data
  *
@@ -727,7 +725,7 @@ EAPI void *ecore_event_del(Ecore_Event *event);
 EAPI void *ecore_event_handler_data_get(Ecore_Event_Handler *eh);
 
 /**
- * @brief Set the data associated with an #Ecore_Event_Handler
+ * @brief Sets the data associated with an #Ecore_Event_Handler.
  * @param eh The event handler
  * @param data The data to associate
  * @return The previous data
@@ -738,7 +736,7 @@ EAPI void *ecore_event_handler_data_get(Ecore_Event_Handler *eh);
 EAPI void *ecore_event_handler_data_set(Ecore_Event_Handler *eh, const void *data);
 
 /**
- * @brief Allocate a new event type id sensibly and return the new id.
+ * @brief Allocates a new event type id sensibly and returns the new id.
  * @return A new event type id.
  *
  * This function allocates a new event type id and returns it. Once an event
@@ -750,7 +748,7 @@ EAPI void *ecore_event_handler_data_set(Ecore_Event_Handler *eh, const void *dat
 EAPI int ecore_event_type_new(void);
 
 /**
- * @brief Add a filter the current event queue.
+ * @brief Adds a filter the current event queue.
  *
  * @param func_start Function to call just before filtering and return data
  * @param func_filter Function to call on each event
@@ -772,7 +770,7 @@ EAPI int ecore_event_type_new(void);
 EAPI Ecore_Event_Filter *ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_Filter_Cb func_filter, Ecore_End_Cb func_end, const void *data);
 
 /**
- * @brief Delete an event filter.
+ * @brief Deletes an event filter.
  * @param ef The event filter handle
  * @return The data set for the filter on success, @c NULL otherwise.
  *
@@ -781,9 +779,9 @@ EAPI Ecore_Event_Filter *ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_
 EAPI void *ecore_event_filter_del(Ecore_Event_Filter *ef);
 
 /**
- * @brief Return the current event type being handled.
+ * @brief Returns the current event type being handled.
  * @return The current event type being handled if inside a handler callback,
- * ECORE_EVENT_NONE otherwise
+ * @c ECORE_EVENT_NONE otherwise.
  *
  * If the program is currently inside an Ecore event handler callback this
  * will return the type of the current event being processed.
@@ -797,7 +795,7 @@ EAPI void *ecore_event_filter_del(Ecore_Event_Filter *ef);
 EAPI int ecore_event_current_type_get(void);
 
 /**
- * @brief Return the current event type pointer handled.
+ * @brief Returns the current event type pointer handled.
  * @return The current event pointer being handled if inside a handler callback,
  * @c NULL otherwise.
  *
@@ -817,6 +815,7 @@ EAPI void *ecore_event_current_event_get(void);
  */
 
 /**
+ * @ingroup Ecore_Event_Group
  * @defgroup Ecore_System_Events System Events
  *
  * Ecore is aware of some system events that one may be interested, they are described below:
@@ -854,14 +853,12 @@ EAPI void *ecore_event_current_event_get(void);
  *     setting a new date manually. This event carries no information
  *     and the new value should be queried with ecore_time_unix_get()
  *     or platform specific such as gettimeofday()
- *
- * @ingroup Ecore_Event_Group
  * @{
  */
 
 /**
  * @enum _Ecore_Memory_State
- * In dicates current system memory state
+ * Indicates current system memory state.
  * @since 1.8
  */
 enum _Ecore_Memory_State    /* Memory state */
@@ -872,14 +869,14 @@ enum _Ecore_Memory_State    /* Memory state */
 typedef enum _Ecore_Memory_State Ecore_Memory_State;
 
 /**
- * @brief Get the current status of memory on the system.
+ * @brief Gets the current status of memory on the system.
  * @return The current memory state for the system as a whole.
  * @since 1.8
  */
 EAPI Ecore_Memory_State ecore_memory_state_get(void);
 
 /**
- * @brief Set the memory state.
+ * @brief Sets the memory state.
  * @param state The memory state to set.
  *
  * This function will store information about the current
@@ -897,7 +894,7 @@ EAPI void ecore_memory_state_set(Ecore_Memory_State state);
 
 /**
  * @enum _Ecore_Power_State
- * In dicates current system memory state
+ * Indicates current system memory state.
  * @since 1.8
  */
 enum _Ecore_Power_State    /* Power state */
@@ -911,14 +908,14 @@ enum _Ecore_Power_State    /* Power state */
 typedef enum _Ecore_Power_State Ecore_Power_State;
 
 /**
- * @brief Get the current power state.
+ * @brief Gets the current power state.
  * @return The current power state for the system.
  * @since 1.8
  */
 EAPI Ecore_Power_State ecore_power_state_get(void);
 
 /**
- * @brief Set the power state.
+ * @brief Sets the power state.
  * @param state The power state to set.
  *
  * This function will store information about the current power
@@ -940,6 +937,7 @@ EAPI void ecore_power_state_set(Ecore_Power_State state);
 
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Exe_Group Process Spawning Functions
  *
  * This module is responsible for managing portable processes using Ecore.
@@ -951,7 +949,6 @@ EAPI void ecore_power_state_set(Ecore_Power_State state);
  * Example
  * @li @ref Ecore_exe_simple_example_c
  *
- * @ingroup Ecore_Main_Loop_Group
  *
  * @{
  */
@@ -998,7 +995,7 @@ typedef struct _Ecore_Exe_Event_Del       Ecore_Exe_Event_Del; /**< Spawned Exe 
 
 /**
  * @struct _Ecore_Exe_Event_Add
- * @brief A structure that stores information of a Process add event.
+ * @brief Definition for a structure that stores information of a Process add event.
  */
 struct _Ecore_Exe_Event_Add
 {
@@ -1008,7 +1005,7 @@ struct _Ecore_Exe_Event_Add
 
 /**
  * @struct _Ecore_Exe_Event_Del
- * @brief A structure that stores information of a Process exit event.
+ * @brief Definition for a structure that stores information of a Process exit event.
  */
 struct _Ecore_Exe_Event_Del
 {
@@ -1025,7 +1022,7 @@ struct _Ecore_Exe_Event_Del
 };
 
 /**
- * Sets the priority at which to launch processes
+ * Sets the priority at which to launch processes.
  *
  * This sets the priority of processes run by ecore_exe_run() and
  * ecore_exe_pipe_run().
@@ -1037,19 +1034,20 @@ struct _Ecore_Exe_Event_Del
  * @li On other platforms, if set to @ref ECORE_EXE_PRIORITY_INHERIT child
  * processes inherits the priority of their parent. This is the default.
  *
- * @param   pri value a Ecore_Exe_Win32_Priority value on Windows, -20
- * to 19 or @ref ECORE_EXE_PRIORITY_INHERIT on other OS.
+ * @param pri Value an Ecore_Exe_Win32_Priority value on Windows, @c -20
+ * to @c 19 or @ref ECORE_EXE_PRIORITY_INHERIT on other OS.
+ *
  */
 EAPI void ecore_exe_run_priority_set(int pri);
 
 /**
- * Gets the priority at which to launch processes
+ * Gets the priority at which to launch processes.
  *
  * This gets the priority of launched processes. See
  * ecore_exe_run_priority_set() for details. This just returns the value set
  * by this call.
  *
- * @return the value set by ecore_exe_run_priority_set()
+ * @return The value set by ecore_exe_run_priority_set()
  */
 EAPI int ecore_exe_run_priority_get(void);
 
@@ -1057,14 +1055,14 @@ EAPI int ecore_exe_run_priority_get(void);
  * Spawns a child process.
  *
  * This is now just a thin wrapper around ecore_exe_pipe_run()
+ * @param   exe_cmd The command to run with @c /bin/sh.
+ * @param   data    Data to attach to the returned process handle.
+ * @return  A process handle to the spawned process.
  * @note When you use this function you will have no permissions
  * to write or read on the pipe that connects you with the spwaned process.
  * If you need to do that use ecore_exe_pipe_run() with the
  * appropriated flags.
  *
- * @param   exe_cmd The command to run with @c /bin/sh.
- * @param   data    Data to attach to the returned process handle.
- * @return  A process handle to the spawned process.
  */
 EAPI Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data);
 
@@ -1079,13 +1077,13 @@ EAPI Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data);
  *
  * This function does the same thing as ecore_exe_run(), but also makes the
  * standard in and/or out as well as stderr from the child process available
- * for reading or writing.  To write use ecore_exe_send().  To read listen to
+ * for reading or writing. To write use ecore_exe_send(). To read listen to
  * ECORE_EXE_EVENT_DATA or ECORE_EXE_EVENT_ERROR events (set up handlers).
  * Ecore may buffer read and error data until a newline character if asked
- * for with the @p flags.  All data will be included in the events (newlines
- * will be replaced with NULLS if line buffered).  ECORE_EXE_EVENT_DATA events
+ * for with the @p flags. All data will be included in the events (newlines
+ * will be replaced with NULLS if line buffered). ECORE_EXE_EVENT_DATA events
  * will only happen if the process is run with ECORE_EXE_PIPE_READ enabled
- * in the flags.  The same with the error version.  Writing will only be
+ * in the flags. The same with the error version. Writing will only be
  * allowed with ECORE_EXE_PIPE_WRITE enabled in the flags.
  *
  * @param   exe_cmd The command to run with @c /bin/sh.
@@ -1136,10 +1134,11 @@ EAPI void ecore_exe_close_stdin(Ecore_Exe *exe);
  * this function does nothing.
  *
  * @param   exe The given process handle.
- * @param   start_bytes limit of bytes at start of output to buffer.
- * @param   end_bytes limit of bytes at end of output to buffer.
- * @param   start_lines limit of lines at start of output to buffer.
- * @param   end_lines limit of lines at end of output to buffer.
+ * @param   start_bytes Limit of bytes at start of output to buffer.
+ * @param   end_bytes Limit of bytes at end of output to buffer.
+ * @param   start_lines Limit of lines at start of output to buffer.
+ * @param   end_lines Limit of lines at end of output to buffer.
+ *
  */
 EAPI void ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int start_lines, int end_lines);
 
@@ -1174,12 +1173,12 @@ EAPI void *ecore_exe_free(Ecore_Exe *exe);
 /**
  * Retrieves the process ID of the given spawned process.
  * @param   exe Handle to the given spawned process.
- * @return  The process ID on success.  @c -1 otherwise.
+ * @return  The process ID on success,  @c -1 otherwise.
  */
 EAPI pid_t ecore_exe_pid_get(const Ecore_Exe *exe);
 
 /**
- * Sets the string tag for the given process handle
+ * Sets the string tag for the given process handle.
  *
  * @param   exe The given process handle.
  * @param   tag The string tag to set on the process handle.
@@ -1219,7 +1218,7 @@ EAPI void *ecore_exe_data_get(const Ecore_Exe *exe);
 /**
  * Sets the data attached to the given process handle.
  * @param   exe The given process handle.
- * @param   data The pointer to attach
+ * @param   data The pointer to attach.
  * @return The data pointer previously attached to @p exe with
  *         ecore_exe_run(), ecore_exe_pipe_run(), or ecore_exe_data_set()
  * @since 1.1
@@ -1272,7 +1271,7 @@ EAPI void ecore_exe_kill(Ecore_Exe *exe);
 /**
  * Sends a @c SIGUSR signal to the given spawned process.
  * @param   exe Process handle to the given process.
- * @param   num The number user signal to send.  Must be either 1 or 2, or
+ * @param   num The number user signal to send.  Must be either @c 1 or @c 2, or
  *              the signal will be ignored.
  */
 EAPI void ecore_exe_signal(Ecore_Exe *exe, int num);
@@ -1288,9 +1287,10 @@ EAPI void ecore_exe_hup(Ecore_Exe *exe);
  */
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_FD_Handler_Group File Descriptor Handling Functions
  *
- * @brief Functions that deal with file descriptor handlers.
+ * @brief Definition for functions that deal with file descriptor handlers.
  *
  * File descriptor handlers facilitate reading, writing and checking for errors
  * without blocking the program or doing expensive pooling. This can be used to
@@ -1318,8 +1318,6 @@ EAPI void ecore_exe_hup(Ecore_Exe *exe);
  *
  * Example of use of a file descriptor handler:
  * @li @ref ecore_fd_handler_example_c
- *
- * @ingroup Ecore_Main_Loop_Group
  *
  * @{
  */
@@ -1373,7 +1371,7 @@ typedef Eina_Bool (*Ecore_Win32_Handle_Cb)(void *data, Ecore_Win32_Handler *wh);
  * when the file descriptor is available for reading, writing, or there has been
  * an error(depending on the given @a flags).
  *
- * When @a func returns ECORE_CALLBACK_CANCEL, it indicates that the
+ * When @a func returns @c ECORE_CALLBACK_CANCEL, it indicates that the
  * handler should be marked for deletion (identical to calling @ref
  * ecore_main_fd_handler_del).
  *
@@ -1419,7 +1417,7 @@ EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags 
 EAPI Ecore_Fd_Handler *ecore_main_fd_handler_file_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func, const void *data, Ecore_Fd_Cb buf_func, const void *buf_data);
 
 /**
- * @brief Set the prepare callback with data for a given #Ecore_Fd_Handler
+ * @brief Sets the prepare callback with data for a given #Ecore_Fd_Handler.
  *
  * @param fd_handler The fd handler
  * @param func The prep function
@@ -1465,21 +1463,21 @@ EAPI int ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
  */
 EAPI Eina_Bool ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 /**
- * @brief Set what active streams the given FD handler should be monitoring.
+ * @brief Sets what active streams the given FD handler should be monitoring.
  * @param fd_handler The given FD handler.
  * @param flags The flags to be watching.
  */
 EAPI void ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 
 /**
- * @brief Create a Ecore_Win32_Handler object and add it to the win32_handlers list.
+ * @brief Creates a Ecore_Win32_Handler object and add it to the win32_handlers list.
  * @param h    The win32 handler.
  * @param func The function to add as a callback.
  * @param data The data to pass to the callback when it is called.
  */
 EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, Ecore_Win32_Handle_Cb func, const void *data);
 /**
- * @brief Set Ecore_Win32_Handler object to delete state.
+ * @brief Sets Ecore_Win32_Handler object to delete state.
  * The handler will be deleted in the _ecore_main_win32_handlers_cleanup function.
  *
  * @param win32_handler The Ecore_Win32_Handler object.
@@ -1491,8 +1489,8 @@ EAPI void *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
  */
 
 /**
- * @defgroup Ecore_Time_Group Ecore time functions
  * @ingroup Ecore
+ * @defgroup Ecore_Time_Group Ecore time functions
  *
  * These are function to retrieve time in a given format.
  *
@@ -1508,13 +1506,13 @@ EAPI void *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
  * machine is live (even if user changes time or timezone changes,
  * however it may be reset whenever the machine is restarted).
  *
- * @see ecore_loop_time_get().
- * @see ecore_time_unix_get().
- *
  * @return The number of seconds. Start time is not defined (it may be
  *         when the machine was booted, unix time, etc), all it is
  *         defined is that it never goes backwards (unless you got big critical
  *         messages when the application started).
+ *
+ * @see ecore_loop_time_get().
+ * @see ecore_time_unix_get().
  */
 EAPI double ecore_time_get(void);
 
@@ -1552,7 +1550,7 @@ EAPI double ecore_time_unix_get(void);
 EAPI double ecore_loop_time_get(void);
 
 /**
- * Set the loop time
+ * Sets the loop time.
  * 
  * @param t The new loop time
  * 
@@ -1579,6 +1577,7 @@ EAPI void ecore_loop_time_set(double t);
  */
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Thread_Group Ecore Thread functions
  *
  * Facilities to run heavy tasks in different threads to avoid blocking
@@ -1663,8 +1662,6 @@ EAPI void ecore_loop_time_set(double t);
  *
  * See an overview example in @ref ecore_thread_example_c.
  *
- * @ingroup Ecore_Main_Loop_Group
- *
  * @{
  */
 
@@ -1684,7 +1681,7 @@ typedef void (*Ecore_Thread_Cb)(void *data, Ecore_Thread *thread);
 typedef void (*Ecore_Thread_Notify_Cb)(void *data, Ecore_Thread *thread, void *msg_data);
 
 /**
- * Schedule a task to run in a parallel thread to avoid locking the main loop
+ * Schedules a task to run in a parallel thread to avoid locking the main loop.
  *
  * @param func_blocking The function that should run in another thread.
  * @param func_end Function to call from main loop when @p func_blocking
@@ -1743,7 +1740,7 @@ typedef void (*Ecore_Thread_Notify_Cb)(void *data, Ecore_Thread *thread, void *m
 EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Cb func_blocking, Ecore_Thread_Cb func_end, Ecore_Thread_Cb func_cancel, const void *data);
 
 /**
- * Launch a thread to run a task that can talk back to the main thread
+ * Launches a thread to run a task that can talk back to the main thread.
  *
  * @param func_heavy The function that should run in another thread.
  * @param func_notify Function that receives the data sent from the thread
@@ -1787,7 +1784,7 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy, Ecore_T
                                              const void *data, Eina_Bool try_no_queue);
 
 /**
- * Cancel a running thread.
+ * Cancels a running thread.
  *
  * @param thread The thread to cancel.
  * @return Will return @c EINA_TRUE if the thread has been cancelled,
@@ -1836,7 +1833,7 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy, Ecore_T
 EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
 
 /**
- * @brief Block the main loop until the thread execution is over.
+ * @brief Blocks the main loop until the thread execution is over.
  * @since 1.13.0
  *
  * @param thread The thread to wait on.
@@ -1846,7 +1843,7 @@ EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
 EAPI Eina_Bool ecore_thread_wait(Ecore_Thread *thread, double wait);
 
 /**
- * Checks if a thread is pending cancellation
+ * Checks if a thread is pending cancellation.
  *
  * @param thread The thread to test.
  * @return @c EINA_TRUE if the thread is pending cancellation,
@@ -1867,7 +1864,7 @@ EAPI Eina_Bool ecore_thread_wait(Ecore_Thread *thread, double wait);
 EAPI Eina_Bool ecore_thread_check(Ecore_Thread *thread);
 
 /**
- * Sends data from the worker thread to the main loop
+ * Sends data from the worker thread to the main loop.
  *
  * @param thread The current ::Ecore_Thread context to send data from
  * @param msg_data Data to be transmitted to the main loop
@@ -1890,7 +1887,7 @@ EAPI Eina_Bool ecore_thread_check(Ecore_Thread *thread);
 EAPI Eina_Bool ecore_thread_feedback(Ecore_Thread *thread, const void *msg_data);
 
 /**
- * Asks for the function in the thread to be called again at a later time
+ * Asks for the function in the thread to be called again at a later time.
  *
  * @param thread The current ::Ecore_Thread context to rescheduled
  * @return @c EINA_TRUE if the task was successfully rescheduled,
@@ -1915,7 +1912,7 @@ EAPI Eina_Bool ecore_thread_feedback(Ecore_Thread *thread, const void *msg_data)
 EAPI Eina_Bool ecore_thread_reschedule(Ecore_Thread *thread);
 
 /**
- * Gets the number of active threads running jobs
+ * Gets the number of active threads running jobs.
  *
  * @return Number of active threads running jobs
  *
@@ -1930,7 +1927,7 @@ EAPI Eina_Bool ecore_thread_reschedule(Ecore_Thread *thread);
 EAPI int ecore_thread_active_get(void);
 
 /**
- * Gets the number of short jobs waiting for a thread to run
+ * Gets the number of short jobs waiting for a thread to run.
  *
  * @return Number of pending threads running "short" jobs
  *
@@ -1940,7 +1937,7 @@ EAPI int ecore_thread_active_get(void);
 EAPI int ecore_thread_pending_get(void);
 
 /**
- * Gets the number of feedback jobs waiting for a thread to run
+ * Gets the number of feedback jobs waiting for a thread to run.
  *
  * @return Number of pending threads running "feedback" jobs
  *
@@ -1950,7 +1947,7 @@ EAPI int ecore_thread_pending_get(void);
 EAPI int ecore_thread_pending_feedback_get(void);
 
 /**
- * Gets the total number of pending jobs
+ * Gets the total number of pending jobs.
  *
  * @return Number of pending threads running jobs
  *
@@ -1960,7 +1957,7 @@ EAPI int ecore_thread_pending_feedback_get(void);
 EAPI int ecore_thread_pending_total_get(void);
 
 /**
- * Gets the maximum number of threads that can run simultaneously
+ * Gets the maximum number of threads that can run simultaneously.
  *
  * @return Max possible number of Ecore_Thread's running concurrently
  *
@@ -1980,7 +1977,7 @@ EAPI int ecore_thread_pending_total_get(void);
 EAPI int ecore_thread_max_get(void);
 
 /**
- * Sets the maximum number of threads allowed to run simultaneously
+ * Sets the maximum number of threads allowed to run simultaneously.
  *
  * @param num The new maximum
  *
@@ -1994,7 +1991,7 @@ EAPI int ecore_thread_max_get(void);
 EAPI void ecore_thread_max_set(int num);
 
 /**
- * Resets the maximum number of concurrently running threads to the default
+ * Resets the maximum number of concurrently running threads to the default.
  *
  * This resets the value returned by ecore_thread_max_get() back to its
  * default.
@@ -2005,7 +2002,7 @@ EAPI void ecore_thread_max_set(int num);
 EAPI void ecore_thread_max_reset(void);
 
 /**
- * Gets the number of threads available for running tasks
+ * Gets the number of threads available for running tasks.
  *
  * @return The number of available threads
  *
@@ -2018,13 +2015,13 @@ EAPI void ecore_thread_max_reset(void);
 EAPI int ecore_thread_available_get(void);
 
 /**
- * Adds some data to a hash local to the thread
+ * Adds some data to a hash local to the thread.
  *
  * @param thread The thread context the data belongs to
  * @param key The name under which the data will be stored
  * @param value The data to add
  * @param cb Function to free the data when removed from the hash
- * @param direct If true, this will not copy the key string (like
+ * @param direct If @c true, this will not copy the key string (like
  * eina_hash_direct_add())
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  *
@@ -2105,7 +2102,7 @@ EAPI Eina_Bool ecore_thread_local_data_add(Ecore_Thread *thread, const char *key
                                            Eina_Free_Cb cb, Eina_Bool direct);
 
 /**
- * Sets some data in the hash local to the given thread
+ * Sets some data in the hash local to the given thread.
  *
  * @param thread The thread context the data belongs to
  * @param key The name under which the data will be stored
@@ -2134,7 +2131,7 @@ EAPI Eina_Bool ecore_thread_local_data_add(Ecore_Thread *thread, const char *key
 EAPI void *ecore_thread_local_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb);
 
 /**
- * Gets data stored in the hash local to the given thread
+ * Gets data stored in the hash local to the given thread.
  *
  * @param thread The thread context the data belongs to
  * @param key The name under which the data is stored
@@ -2153,7 +2150,7 @@ EAPI void *ecore_thread_local_data_set(Ecore_Thread *thread, const char *key, vo
 EAPI void *ecore_thread_local_data_find(Ecore_Thread *thread, const char *key);
 
 /**
- * Deletes from the thread's hash the data corresponding to the given key
+ * Deletes from the thread's hash the data corresponding to the given key.
  *
  * @param thread The thread context the data belongs to
  * @param key The name under which the data is stored
@@ -2179,12 +2176,12 @@ EAPI void *ecore_thread_local_data_find(Ecore_Thread *thread, const char *key);
 EAPI Eina_Bool ecore_thread_local_data_del(Ecore_Thread *thread, const char *key);
 
 /**
- * Adds some data to a hash shared by all threads
+ * Adds some data to a hash shared by all threads.
  *
  * @param key The name under which the data will be stored
  * @param value The data to add
  * @param cb Function to free the data when removed from the hash
- * @param direct If true, this will not copy the key string (like
+ * @param direct If @c true, this will not copy the key string (like
  * eina_hash_direct_add())
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  *
@@ -2219,7 +2216,7 @@ EAPI Eina_Bool ecore_thread_local_data_del(Ecore_Thread *thread, const char *key
 EAPI Eina_Bool ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
 
 /**
- * Sets some data in the hash shared by all threads
+ * Sets some data in the hash shared by all threads.
  *
  * @param key The name under which the data will be stored
  * @param value The data to add
@@ -2242,7 +2239,7 @@ EAPI Eina_Bool ecore_thread_global_data_add(const char *key, void *value, Eina_F
 EAPI void *ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb);
 
 /**
- * Gets data stored in the hash shared by all threads
+ * Gets data stored in the hash shared by all threads.
  *
  * @param key The name under which the data is stored
  * @return The value under the given key, or @c NULL on error.
@@ -2260,7 +2257,7 @@ EAPI void *ecore_thread_global_data_set(const char *key, void *value, Eina_Free_
 EAPI void *ecore_thread_global_data_find(const char *key);
 
 /**
- * Deletes from the shared hash the data corresponding to the given key
+ * Deletes from the shared hash the data corresponding to the given key.
  *
  * @param key The name under which the data is stored
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
@@ -2284,7 +2281,7 @@ EAPI void *ecore_thread_global_data_find(const char *key);
 EAPI Eina_Bool ecore_thread_global_data_del(const char *key);
 
 /**
- * Gets data stored in the shared hash, or wait for it if it doesn't exist
+ * Gets data stored in the shared hash, or wait for it if it doesn't exist.
  *
  * @param key The name under which the data is stored
  * @param seconds The amount of time in seconds to wait for the data.
@@ -2317,6 +2314,7 @@ EAPI void *ecore_thread_global_data_wait(const char *key, double seconds);
  */
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Pipe_Group Pipe wrapper
  *
  * These functions wrap the pipe / write / read functions to easily
@@ -2332,8 +2330,6 @@ EAPI void *ecore_thread_global_data_wait(const char *key, double seconds);
  * @li @ref tutorial_ecore_pipe_gstreamer_example
  * @li @ref tutorial_ecore_pipe_simple_example
  *
- * @ingroup Ecore_Main_Loop_Group
- *
  * @{
  */
 
@@ -2346,25 +2342,25 @@ typedef struct _Ecore_Pipe Ecore_Pipe; /**< A handle for pipes */
 typedef void (*Ecore_Pipe_Cb)(void *data, void *buffer, unsigned int nbyte);
 
 /**
- * Create two file descriptors (sockets on Windows). Add
+ * Creates two file descriptors (sockets on Windows). Adds
  * a callback that will be called when the file descriptor that
  * is listened receives data. An event is also put in the event
  * queue when data is received.
  *
  * @param handler The handler called when data is received.
  * @param data    Data to pass to @p handler when it is called.
- * @return        A newly created Ecore_Pipe object if successful.
+ * @return        A newly created Ecore_Pipe object if successful,
  *                @c NULL otherwise.
  */
 EAPI Ecore_Pipe *ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data);
 
 /**
- * Create a pipe with more parameters
+ * Creates a pipe with more parameters.
  * 
  * @param handler Same as ecore_pipe_add()
  * @param data Same as ecore_pipe_add()
- * @param fd_read An fd to use for reading or -1 otherwise
- * @param fd_write An fd to use for writing or -1 otherwise
+ * @param fd_read An fd to use for reading or @c -1 otherwise
+ * @param fd_write An fd to use for writing or @c -1 otherwise
  * @param read_survive_fork Should read fd survive a fork
  * @param write_survive_fork Should write fd survive a fork
  * 
@@ -2380,7 +2376,7 @@ EAPI Ecore_Pipe *ecore_pipe_full_add(Ecore_Pipe_Cb handler,
                                      Eina_Bool write_survive_fork);
 
 /**
- * Free an Ecore_Pipe object created with ecore_pipe_add().
+ * Frees an Ecore_Pipe object created with ecore_pipe_add().
  *
  * @param p The Ecore_Pipe object to be freed.
  * @return The pointer to the private data
@@ -2388,47 +2384,47 @@ EAPI Ecore_Pipe *ecore_pipe_full_add(Ecore_Pipe_Cb handler,
 EAPI void *ecore_pipe_del(Ecore_Pipe *p);
 
 /**
- * Write on the file descriptor the data passed as parameter.
+ * Writes on the file descriptor the data passed as parameter.
  *
  * @param p      The Ecore_Pipe object.
  * @param buffer The data to write into the pipe.
- * @param nbytes The size of the @p buffer in bytes
+ * @param nbytes The size of the @p buffer in bytes.
  * @return       @c EINA_TRUE on a successful write, @c EINA_FALSE on error.
  */
 EAPI Eina_Bool ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
 
 /**
- * Close the write end of an Ecore_Pipe object created with ecore_pipe_add().
+ * Closes the write end of an Ecore_Pipe object created with ecore_pipe_add().
  *
  * @param p The Ecore_Pipe object.
  */
 EAPI void ecore_pipe_write_close(Ecore_Pipe *p);
 
 /**
- * Close the read end of an Ecore_Pipe object created with ecore_pipe_add().
+ * Closes the read end of an Ecore_Pipe object created with ecore_pipe_add().
  *
  * @param p The Ecore_Pipe object.
  */
 EAPI void ecore_pipe_read_close(Ecore_Pipe *p);
 
 /**
- * Get the pipe read file descriptor
+ * Gets the pipe read file descriptor.
  *
  * @param p The Ecore_Pipe object query.
- * @return The file descriptor or -1 if none
+ * @return The file descriptor, or @c -1 if none
  */
 EAPI int ecore_pipe_read_fd(Ecore_Pipe *p);
 
 /**
- * Get the pipe write file descriptor
+ * Gets the pipe write file descriptor.
  *
  * @param p The Ecore_Pipe object query.
- * @return The file descriptor or -1 if none
+ * @return The file descriptor, or @c -1 if none
  */
 EAPI int ecore_pipe_write_fd(Ecore_Pipe *p);
 
 /**
- * Start monitoring again the pipe for reading. See ecore_pipe_freeze() for
+ * Starts monitoring again the pipe for reading. See ecore_pipe_freeze() for
  * stopping the monitoring activity. This will not work if
  * ecore_pipe_read_close() was previously called on the same pipe.
  *
@@ -2438,7 +2434,7 @@ EAPI int ecore_pipe_write_fd(Ecore_Pipe *p);
 EAPI void ecore_pipe_thaw(Ecore_Pipe *p);
 
 /**
- * Stop monitoring if necessary the pipe for reading. See ecore_pipe_thaw()
+ * Stops monitoring if necessary the pipe for reading. See ecore_pipe_thaw()
  * for monitoring it again.
  *
  * @param p The Ecore_Pipe object.
@@ -2447,7 +2443,7 @@ EAPI void ecore_pipe_thaw(Ecore_Pipe *p);
 EAPI void ecore_pipe_freeze(Ecore_Pipe *p);
 
 /**
- * @brief Wait from another thread on the read side of a pipe.
+ * @brief Waits from another thread on the read side of a pipe.
  *
  * @param p The pipe to watch on.
  * @param message_count The minimal number of message to wait before exiting.
@@ -2464,14 +2460,14 @@ EAPI int ecore_pipe_wait(Ecore_Pipe *p, int message_count, double wait);
  */
 
 /**
- * @defgroup Ecore_Application_Group Ecore Application functions
  * @ingroup Ecore
+ * @defgroup Ecore_Application_Group Ecore Application functions
  *
  * @{
  */
 
 /**
- * Set up the programs command-line arguments.
+ * Sets up the programs command-line arguments.
  * @param argc The same as passed as argc to the programs main() function
  * @param argv The same as passed as argv to the programs main() function
  *
@@ -2481,7 +2477,7 @@ EAPI int ecore_pipe_wait(Ecore_Pipe *p, int message_count, double wait);
 EAPI void ecore_app_args_set(int argc, const char **argv);
 
 /**
- * Return the programs stored command-line arguments.
+ * Returns the programs stored command-line arguments.
  * @param argc A pointer to the return value to hold argc
  * @param argv A pointer to the return value to hold argv
  *
@@ -2494,7 +2490,7 @@ EAPI void ecore_app_args_set(int argc, const char **argv);
 EAPI void ecore_app_args_get(int *argc, char ***argv);
 
 /**
- * Restart the program executable with the command-line arguments stored.
+ * Restarts the program executable with the command-line arguments stored.
  *
  * This function will restart & re-execute this program in place of itself
  * using the command-line arguments stored by ecore_app_args_set(). This is
@@ -2527,15 +2523,14 @@ EAPI void ecore_app_no_system_modules(void);
  */
 
 /**
- * @defgroup Ecore_Throttle_Group Ecore Throttle functions
- *
  * @ingroup Ecore_Main_Loop_Group
+ * @defgroup Ecore_Throttle_Group Ecore Throttle functions
  *
  * @{
  */
 
 /**
- * Increase throttle amount
+ * Increases throttle amount.
  *
  * This will increase or decrease (if @p amount is positive or negative) the
  * amount of "voluntary throttling" ecore will do to its main loop while
@@ -2584,13 +2579,13 @@ EAPI void ecore_app_no_system_modules(void);
 EAPI void ecore_throttle_adjust(double amount);
 
 /**
- * Get current throttle level
+ * Gets current throttle level.
  *
  * This gets the current throttling level, which can be adjusted by
  * ecore_throttle_adjust(). The value is in seconds. Please see
  * ecore_throttle_adjust() for more information.
  *
- * @return  The current throttle level
+ * @return  The current throttle level.
  */
 EAPI double ecore_throttle_get(void);
 
@@ -2599,6 +2594,7 @@ EAPI double ecore_throttle_get(void);
  */
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Poller_Group Ecore Poll functions
  *
  * Ecore poller provides infrastructure for the creation of pollers. Pollers
@@ -2627,8 +2623,6 @@ EAPI double ecore_throttle_get(void);
  * Example:
  * @li @ref ecore_poller_example_c
  *
- * @ingroup Ecore_Main_Loop_Group
- *
  * @{
  */
 
@@ -2637,6 +2631,7 @@ EAPI double ecore_throttle_get(void);
  */
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Animator_Group Ecore Animator functions
  *
  * @brief Ecore animators are a helper to simplify creating
@@ -2668,8 +2663,6 @@ EAPI double ecore_throttle_get(void);
  * For a more detailed example that show several animation see
  * @ref tutorial_ecore_animator.
  *
- * @ingroup Ecore_Main_Loop_Group
- *
  * @{
  */
 
@@ -2695,7 +2688,7 @@ typedef Eina_Bool (*Ecore_Timeline_Cb)(void *data, double pos);
  */
 
 /**
- * @brief Set the animator call interval in seconds.
+ * @brief Sets the animator call interval in seconds.
  *
  * @param frametime The time in seconds in between animator ticks.
  *
@@ -2710,7 +2703,7 @@ typedef Eina_Bool (*Ecore_Timeline_Cb)(void *data, double pos);
 EAPI void ecore_animator_frametime_set(double frametime);
 
 /**
- * @brief Get the animator call interval in seconds.
+ * @brief Gets the animator call interval in seconds.
  *
  * @return The time in second in between animator ticks.
  *
@@ -2847,7 +2840,7 @@ EAPI double ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, dou
 EAPI double ecore_animator_pos_map_n(double pos, Ecore_Pos_Map map, int v_size, double *v);
 
 /**
- * @brief Set the source of animator ticks for the mainloop
+ * @brief Sets the source of animator ticks for the mainloop.
  *
  * @param source The source of animator ticks to use
  *
@@ -2873,7 +2866,7 @@ EAPI double ecore_animator_pos_map_n(double pos, Ecore_Pos_Map map, int v_size, 
 EAPI void ecore_animator_source_set(Ecore_Animator_Source source);
 
 /**
- * @brief Get the animator source currently set.
+ * @brief Gets the animator source currently set.
  *
  * @return The current animator source
  *
@@ -2884,7 +2877,7 @@ EAPI void ecore_animator_source_set(Ecore_Animator_Source source);
 EAPI Ecore_Animator_Source ecore_animator_source_get(void);
 
 /**
- * @brief Set the function that begins a custom animator tick source
+ * @brief Sets the function that begins a custom animator tick source.
  *
  * @param func The function to call when ticking is to begin
  * @param data The data passed to the tick begin function as its parameter
@@ -2907,7 +2900,7 @@ EAPI Ecore_Animator_Source ecore_animator_source_get(void);
 EAPI void ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, const void *data);
 
 /**
- * @brief Set the function that ends a custom animator tick source
+ * @brief Sets the function that ends a custom animator tick source.
  *
  * @param func The function to call when ticking is to end
  * @param data The data passed to the tick end function as its parameter
@@ -2927,7 +2920,7 @@ EAPI void ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, co
 EAPI void ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func, const void *data);
 
 /**
- * @brief Trigger a custom animator tick
+ * @brief Triggers a custom animator tick.
  *
  * When animator source is set to ECORE_ANIMATOR_SOURCE_CUSTOM, then calling
  * this function triggers a run of all animators currently registered with
@@ -2948,6 +2941,7 @@ EAPI void ecore_animator_custom_tick(void);
  */
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Timer_Group Ecore Timer functions
  *
  * Ecore provides very flexible timer functionality. The basic usage of timers,
@@ -2965,8 +2959,6 @@ EAPI void ecore_animator_custom_tick(void);
  *
  * An example that shows the usage of a lot of these:
  * @li @ref ecore_timer_example_c
- *
- * @ingroup Ecore_Main_Loop_Group
  *
  * @{
  */
@@ -2988,7 +2980,7 @@ EAPI double ecore_timer_precision_get(void);
 /**
  * @brief Sets the precision to be used by timer infrastructure.
  *
- * @param precision allowed introduced timeout delay, in seconds.
+ * @param precision Allowed introduced timeout delay, in seconds.
  *
  * This sets the precision for @b all timers. The precision determines how much
  * of an difference from the requested interval is acceptable. One common reason
@@ -3015,7 +3007,7 @@ EAPI void ecore_timer_precision_set(double precision);
 /**
  * This function returns a human readable text-based log for Ecore_Timer events.
  *
- * @return a heap allocated string or NULL. It MUST be freed manually by the
+ * @return A heap allocated string, or NULL. It MUST be freed manually by the
  * caller using `free`.
  *
  * It only contains an useful implementation if EFL is built in debug build
@@ -3028,6 +3020,7 @@ EAPI char *ecore_timer_dump(void);
  */
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Idle_Group Ecore Idle functions
  *
  * The idler functionality in Ecore allows for callbacks to be called when the
@@ -3067,8 +3060,6 @@ EAPI char *ecore_timer_dump(void);
  *
  * @li @ref ecore_idler_example_c
  *
- * @ingroup Ecore_Main_Loop_Group
- *
  * @{
  */
 
@@ -3092,6 +3083,7 @@ typedef struct _Ecore_Factorized_Idle Ecore_Idle_Exiter; /**< A handle for idle 
  */
 
 /**
+ * @ingroup Ecore_Main_Loop_Group
  * @defgroup Ecore_Job_Group Ecore Job functions
  *
  * You can queue jobs that are to be done by the main loop when the
@@ -3109,8 +3101,6 @@ typedef struct _Ecore_Factorized_Idle Ecore_Idle_Exiter; /**< A handle for idle 
  *
  * Examples of using @ref Ecore_Job :
  * @li @ref ecore_job_example_c
- *
- * @ingroup Ecore_Main_Loop_Group
  *
  * @{
  */
