@@ -1349,7 +1349,7 @@ eet_data_get_value(const Eet_Dictionary *ed,
         Eina_Value **value = dst;
 
         *value = eina_value_new(eina_type);
-        eina_value_pset(*value, tmp);
+        if (!eina_value_pset(*value, tmp)) return -1;
 
         return eet_size + type_size;
      }
