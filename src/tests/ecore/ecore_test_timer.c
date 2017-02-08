@@ -191,6 +191,45 @@ START_TEST(ecore_test_timers)
 }
 END_TEST
 
+typedef struct _Test_Inside_Call
+{
+   Ecore_Timer *t;
+   double start;
+} Test_Inside_Call;
+
+static Eina_Bool
+_timeri_cb(void *data)
+{
+   static int it = 5;
+   Test_Inside_Call *c = data;
+
+   fail_if(fabs(((ecore_time_get() - c->start) / (6 - it)) - 0.011) > 0.01);
+   ecore_timer_reset(c->t);
+
+   it--;
+
+   if (it == 0) ecore_main_loop_quit();
+   return it != 0;
+}
+
+START_TEST(ecore_test_timer_inside_call)
+{
+   Test_Inside_Call c;
+
+   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
+
+   c.start = ecore_time_get();
+   c.t = ecore_timer_add(0.01, _timeri_cb, &c);
+
+   fail_if(!c.t, "Error add timer\n");
+
+   ecore_main_loop_begin();
+
+   ecore_shutdown();
+
+}
+END_TEST
+
 static void
 _ecore_promise_quit(void *data, const Efl_Event *ev)
 {
@@ -326,4 +365,5 @@ void ecore_test_timer(TCase *tc)
   tcase_add_test(tc, ecore_test_timeout);
   tcase_add_test(tc, ecore_test_timeout_cancel);
   tcase_add_test(tc, ecore_test_timer_lifecycle);
+  tcase_add_test(tc, ecore_test_timer_inside_call);
 }
