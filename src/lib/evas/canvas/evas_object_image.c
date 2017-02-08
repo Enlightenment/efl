@@ -879,7 +879,7 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
    int quality = 80, compress = 9, ok = 0;
    char *encoding = NULL;
    Image_Entry *ie;
-   Eina_Bool putback = EINA_FALSE, tofree = EINA_FALSE, tgv = EINA_FALSE, free_data = EINA_FALSE;
+   Eina_Bool putback = EINA_FALSE, tofree = EINA_FALSE, tgv = EINA_FALSE;
    Evas_Colorspace cspace = EVAS_COLORSPACE_ARGB8888;
    Evas_Colorspace want_cspace = EVAS_COLORSPACE_ARGB8888;
    int imagew, imageh;
@@ -1033,8 +1033,6 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
      ENFN->image_free(ENDT, pixels);
    else if (putback)
      o->engine_data = ENFN->image_data_put(ENDT, pixels, data);
-
-   if (free_data) free(data);
 
    free(encoding);
    return ok;
