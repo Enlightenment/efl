@@ -189,7 +189,7 @@ bin_ecore_con_efl_net_proxy_helper_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore\" \
 @EINA_CFLAGS@
 bin_ecore_con_efl_net_proxy_helper_LDADD = @USE_EINA_LIBS@
-bin_ecore_con_efl_net_proxy_helper_DEPEDNENCIES = @USE_EINA_INTERNAL_LIBS@
+bin_ecore_con_efl_net_proxy_helper_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 ### Unit tests
 
