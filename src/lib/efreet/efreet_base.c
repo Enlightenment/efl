@@ -311,8 +311,9 @@ efreet_dirs_init(void)
 #endif
 
     /* xdg_runtime_dir */
-    file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                       "(:run:)/");
+    file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:run:)/");
+    efl_vpath_file_do(file_obj);
+    efl_vpath_file_wait(file_obj);
     xdg_runtime_dir = eina_stringshare_add(efl_vpath_file_result_get(file_obj));
     efl_del(file_obj);
 

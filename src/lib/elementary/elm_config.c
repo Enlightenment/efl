@@ -615,6 +615,9 @@ _elm_config_user_dir_snprintf(char       *dst,
    va_list ap;
    Efl_Vpath_File *file_obj;
    static int use_xdg_config = -1;
+   const char elmdir[] = "elementary";
+   const char elmdotdir[] = ".elementary";
+   const char *path = NULL;
 
    if (use_xdg_config == -1)
      {
@@ -622,15 +625,26 @@ _elm_config_user_dir_snprintf(char       *dst,
         else use_xdg_config = 0;
      }
    if (use_xdg_config)
-     file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                        "(:config:)/elementary");
+     {
+        file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:config:)/");
+        efl_vpath_file_do(file_obj);
+        efl_vpath_file_wait(file_obj);
+        path = efl_vpath_file_result_get(file_obj);
+        user_dir_len = eina_str_join_len
+          (dst, size, '/', path, strlen(path) - 1, elmdir, sizeof(elmdir) - 1);
+        efl_del(file_obj);
+     }
    else
-     file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                        "(:home:)/.elementary");
-   eina_strlcpy(dst, efl_vpath_file_result_get(file_obj), size);
-   efl_del(file_obj);
+     {
+        file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:home:)/");
+        efl_vpath_file_do(file_obj);
+        efl_vpath_file_wait(file_obj);
+        path = efl_vpath_file_result_get(file_obj);
+        user_dir_len = eina_str_join_len
+          (dst, size, '/', path, strlen(path) - 1, elmdotdir, sizeof(elmdotdir) - 1);
+        efl_del(file_obj);
+     }
 
-   user_dir_len = strlen(dst);
    off = user_dir_len + 1;
    if (off >= size) return off;
    dst[user_dir_len] = '/';

@@ -82,6 +82,8 @@ static struct wl_shm_pool *
 _shm_pool_make(struct wl_shm *shm, int size, void **data)
 {
    struct wl_shm_pool *pool;
+   static const char tmp[] = "evas-wayland_shm-XXXXXX";
+   const char *path;
    char *name;
    int fd = 0;
    Eina_Tmpstr *fullname;
@@ -93,11 +95,15 @@ _shm_pool_make(struct wl_shm *shm, int size, void **data)
    if (!shm) return NULL;
 
    /* create tmp file name */
-   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                      "(:run:)/evas-wayland_shm-XXXXXX");
-   fd = eina_file_mkstemp(efl_vpath_file_result_get(file_obj), &fullname);
-   efl_del(file_obj);
+   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:run:)/");
+   efl_vpath_file_do(file_obj);
+   efl_vpath_file_wait(file_obj);
+   path = efl_vpath_file_result_get(file_obj);
+   if ((name = malloc(strlen(path) + sizeof(tmp)))) strcpy(name, path);
+   if (!name) return NULL;
+   strcat(name, tmp);
 
+   fd = eina_file_mkstemp(name, &fullname);
    if (fd < 0)
    /* try to create tmp file */
    /* if ((fd = mkstemp(name)) < 0) */
