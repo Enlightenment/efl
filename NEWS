@@ -1,6 +1,318 @@
 ==========
-EFL 1.18.0
+EFL 1.19.0
 ==========
+
+Changes since 1.18.0:
+---------------------
+
+Features:
+
+   * edje_embryo: add function to know swallow has object
+   * eina: Set EINA_ERROR_TIMEOUT to cond_timedwait (T1780)
+   * edje: Allow no_render in description
+   * Efl object: implement CoW for the function vtables
+   * evas: Support region_set for BMP image
+   * evas: Add support for region load with PNG files
+   * Efl object: Remove creation of event structure and passing it to eo.
+   * Static deps unibreak: Update to latest git version.
+   * evas events: Add new "finger,move/down/up" events for multi touch
+   * evas: Add normalized and window coordinates to axis events
+   * eina: module - Add macros for adding module informations
+   * win: Add EO API to query state of multi touch points
+   * Efl object: change the way we set class's functions. (T4227)
+   * Rename efl_self to efl_added
+   * eeze: add support of GPIO sysfs detection and watch.
+   * eina - add recursive mutex lock - apparently these are portable
+   * Eo: introducing libeo_dbg.so.
+   * Merge branch 'devs/devilhorns/atomic'
+   * elm_image: Add smart cbs for async open
+   * Merge branch 'devs/iscaro/ecore_evas_vnc_multiseat'
+   * Canvas text cursor: add simple_geometry_get method
+   * Canvas text: add annotation_positions_get method
+   * ecore-wl2: Remove all references to wl_cursor usage
+   * elementary: Provide EFL mouse pointers for Wayland Client applications
+   * ecore-wl2: Remove usage of libwayland-cursor
+   * elementary: Implement support for EFL Wayland mouse pointers
+   * elm_multibuttonentry: Apply focus UI feature for the item.
+   * ecore-animator allow for animator to skip queued animator ticks
+   * Eo: Add a method to mark objects for reuse.
+   * improve responsivness of timer sleeping threads for vsync with prctl
+   * elementary: Add internal function to set wayland cursor
+   * elementary: Make setting cursors for EFL Wayland client apps work
+   * elm_entry: Add voice input panel layout
+   * Merge branch 'devs/bdilly/ecore_evas_wayland'
+   * elput: Add API to allow setting pointer acceleration profile (T4736)
+   * remove xcb support in ecore_x and evas engines as per mailing list
+   * eina - add a free queue (eina_freeq) for deferring frees of data
+   * eina list - use free queue to defer freeing list nodes and accting
+   * eo - use free queue for at least some eo core memory and pointers
+   * Merge branch 'devs/iscaro/evas-focus-per-seat'
+   * evlog + efl dbug - add logging of cpu freq and cpu usage per thread
+   * ecore-drm2: Add structure definitions and function symlinks for libdrm
+   * ecore-drm2: Add API function for drmHandleEvent
+   * Eo gdb: add a way to resolve Eo ids from GDB without a running process
+   * win: Add background part to the win border
+   * evas: Add function on object to check is pointer is in
+   * evas/box: Add support for align with stacked boxes
+   * elm: Add Efl.Ui.Box.Stack for stack boxes (EO only)
+   * elm: Prepare new API for windows, including CSD on X11
+   * ecore-drm2: Add API function to return screen dpi
+   * Merge branch 'devs/iscaro/multi-seat-events'
+   * ecore-drm2: Add API function to allow setting gamma of a given output
+   * win: Implement max size hint support
+   * eolian: add documentation tokenizer
+   * Merge branch 'devs/iscaro/locks_and_mods'
+   * Static deps unibreak: Update to latest version.
+   * Eo gdb: Implement eo_data_get to get eo data.
+   * elc_naviframe: Delete naviframe items in LIFO manner on widget deletion.
+   * elput: Add API functions to enable/disable tap-and-drag
+   * elput: Add API functions to enable/disable drag-lock on touch devices
+   * elput: Add API functions to enable/disable dwt support on touchpads
+   * elput: Add API functions to get/set the scroll method for a touchpad device
+   * elput: Add API functions to get/set touchpad click method
+   * elput: Add API functions to get/set if tap-to-click is enabled
+   * evas: Add source_region property to proxy objects
+   * efl_ui_win - add window "view stack" api's and ability
+   * Merge branch 'devs/bdilly/edje_multiseat'
+   * Merge branch 'devs/bdilly/edje_multiseat_filter'
+   * evas: Implement GRY8/AGRY88 save support for PNG
+   * evas image async preload - add option to also make header load async
+   * ecore-wl2: Add support for xdg shell version 6 (T4998)
+   * eina: add functions for warningless exact comparisons of floats
+   * eina: add macros for determining whether floats are nonzero
+   * eina_freeq: Add mode for postponed deletion
+   * eina: Introduce Eina_Slstr for short-lived strings
+   * evas: Introduce event style_insets,changed for tb
+   * ecore-drm2: Add API to determine if a device prefers shadow buffers
+   * ecore-drm2: Add API function to return supported rotations of an output
+   * ecore-drm2: Add API function to set output rotation
+   * elput: add event for relative motion
+
+Fixes:
+
+   * elm_win: Fix ABI break with missing EAPIs (T4344)
+   * elm_image: Remove EAPI sizing_eval
+   * image: Remove all new EAPI that shouldn't exist (T4343)
+   * evas: Fix shader for text masking (T4338)
+   * elementary: fix segmentation faults when using elm_prefs
+   * evas textgrid: unset style when trying to load bold/italic (T4323)
+   * elm win - fix elm win center to actually center again
+   * evas table - handle recursive access to cols/rows where child frees
+   * evas smart obj - handle invalid object id's when scop data get is NULL
+   * elm_genlist: unhighlight item if it not selected (T3986)
+   * evas gl x11 engine - fix buffer age symbol find and use
+   * evas: Fix potential memleak in event info objects
+   * gl: Fix usage of GLX/EGL/GL extensions (T3030, T4288)
+   * glview: Mark draw_request as eo-only
+   * elm: Hide new init APIs behind BETA tag
+   * win: Mark two properties as eo-only
+   * elm: Remove _EFL_APP_VERSION_SET from ELM_MAIN
+   * evas: Support region_set for BMP image
+   * photocam: Fix region load + scale down options
+   * emile: region_set does not working in jpeg loader if scale_down has set
+   * evas: Fix region test in jpeg load with region + zoom
+   * doc: put shot.sh into dist to allow make doc run from tarball
+   * examples: evas: ensure filter example lua files land in tarball
+   * Evas Text: parse font string everytime for updating lang properly
+   * Evas text: fix RTL text ellipsis issues (T3187)
+   * efreetd - only open log file is env var is set to do so
+   * elm: Install elm test images in the right place
+   * wayland_egl: Fix EGL_KHR_Partial_Update usage
+   * FDO icon theme: correct Inherits value
+   * edje - fix missing vector field frees, copies, handling etc.
+   * edje_cc: add snapshot to the lazedc symbols
+   * ecore_evas_ews: add proper clean up when quit the func @fix
+   * efreet - fix efreet_*_dir_get() to support the xdg env vars
+   * FDO icons: correctly list the intl icons in theme description file
+   * ecore_x: Early check image bpp based on depth (T4389)
+   * Fix elementary build when xkbcommon is in a non standard location (T4413)
+   * evas: Try harder to create the render thread
+   * eina: overhaul Mac OS X semaphores (T4423)
+   * elm focus: focus_auto_hide should be done with mouse_down
+   * Edje entry: Pass correct cursor position and text to imf in case of selection
+   * Canvas text: fix ellipsis RTL handling
+   * edje_cc: add lookup for inherited after program
+   * elementary: Introduce a new edje_external param to the progressbar widget.
+   * ecore_audio: fix distribution of eolian files
+   * Edje entry: fix selection start with shift + mouse_down (T3043)
+   * evas canvas: fix a wrong condition check in smart changed.
+   * edje_cc: remove after programs lookup when removing program
+   * Ecore_con_ssl: fix return value of ecore_con_ssl_client_upgrade.
+   * embryo_cc: fix memory overflow in str
+   * evas map: fix the rendering problem.
+   * Edje_Edit: check returned value edje_edit_edje_file_save function.
+   * eio: properly track destruction of all Eet eio request. (T4550)
+   * elm_calendar: Fix header text bug.
+   * evas: Fix possible crash in evas_model_save_eet.c
+   * elm fileselector: fix test to wait for the right event (T4502)
+   * elm fileselector: fix legacy methods for Entry and Button
+   * elm: Fix edit popup menu order
+   * edje_edit: make tweens able to work with image sets
+   * ecore_file: Fix improper way of comparing in ecore_file_path_dir_exists @fix
+   * eet: set alpha_texture for ETC1+Alpha
+   * edje_cc: allow combine lazEDC keywords
+   * eio model: use empty mime type when efreet is unable to determine it (T4502)
+   * efreet - fix command generation by fixing string buffer expansion
+   * elm_toolbar: Show icons in icon only mode
+   * elementary: set the extension on the extension, not the overlay !
+   * efl - fix build to build multip.edj from the right edc source
+   * Evas_Common: Fix typo.
+   * Evas_Device: Use efl_del() in evas_device_del().
+   * edje_cc: don't warn when image attributes are missing in inherit_only group
+   * elm: nstate - cleanup edje signal cb
+   * tests: check for the presence of clock_gettime()
+   * Edje_Edit: add forgotten part_item_index API into header
+   * eio - put in fix by disabling some fallback code (T4619)
+   * epp: fix memory corruption when using #warning and #error
+   * ecore_evas x - dont set withdrawn to fals on show but wait for wm state (T4699)
+   * ecore-evas - x fix intial iconified state so terminology -I works
+   * ecore-wl2: avoid crashes when setting window attrs before surface creation
+   * ecore-wl2: apply input+opaque regions after creating window surface
+   * edje_edit: proper work with part id's on part restack and del for map fields
+   * evas: Fix missing varargs cleanup (CID1364123)
+   * ecore-wl2: Fix input and opaque region setting
+   * evas: Fix evas_object_smart_clipped_clipper_get
+   * fix edje_cc segv when compiling bling bling theme
+   * edje_cc: set correct value for attr set for MESH_NODE
+   * Eo: Fix reference leak when failing to resolve function. (T4740)
+   * eocre animator - the anim thread is polled on shutdown use volatile
+   * ecore anim - actually fix by checking fd not thread handle
+   * evas: Fix issue of wayland clients not drawing border icons
+   * elm_spinner: change the key event operation on spinner
+   * Edje_Edit: use correct description array accessing
+   * ecore-wl2: Don't call cursor_update_stop function twice.
+   * evas: Fix legacy events output vs. canvas coords
+   * ecore-wl2: Remove cursor field from window structure
+   * ecore-wl2: Ensure we remove the proper pointer frame callback
+   * evas-wayland-shm: Fix max buffer age
+   * Edje_Edit: save files name instead of full path on sound add
+   * ecore-wl2: Don't create cursor frame callback if there is no cursor surface
+   * elementary: Fix build break for non-wayland builds (T4778)
+   * ecore_cocoa: fix behaviour of option key
+   * ecore_cocoa: fix handling of some keys
+   * ecore audio - fix hang in wayland due to pulse audio connecting to x
+   * emotion gst1 module - disable subtitles by default as that should be (T4795)
+   * ecore-wl2: Unify surface creation code
+   * elm_multibuttonentry: send "clicked" signal when item got hardware enter key.
+   * elementary entry: keep style user when new theme is applied
+   * evas: Simplify GL masking and fix window rotation
+   * evas lang unicode tables - reduce memory by 24k+1324 bytes
+   * elm scrollable: return correct values from post event callbacks
+   * Evas events: fix for works with pipes on windows.
+   * elementary transit: support image fill area in zoom effect.
+   * wl_drm and eayland_egl buffer age fix for gl when age changes
+   * Eina: add NULL check to eina_module_symbol_global_set API @fix
+   * ecore-evas-wayland: Fix use after free (CID1365657)
+   * ecore_evas_wayland: Fix null pointer dereference (CID1365655)
+   * ecore-evas-wayland: Fix NULL pointer dereference (CID1365654)
+   * ecore-evas-wayland: Add warning if we fail to set engine info (CID1365651)
+   * Toolbar: fix retrieval of previous state
+   * Toolbar: fix icon switch during state change
+   * DnD: cancel drag if mouse moves too much
+   * elm_code: Fix double free on file close/free
+   * eet: add to basic eet_image EAPIs checking on NULL @fix
+   * efl: Require elput for gl-drm
+   * elmentary_test: test_entry4
+   * eet: add NULL-check to eet_connection_empty API to avoid segfault
+   * Win: fix modal feature during window closing
+   * evas surface/buffer wl support - define missing egl ifdefs if missing
+   * elm_spinner: apply value after pressing enter key
+   * ecore_wayland: fix over writing file descriptor bug for reading
+   * elm_cursor: use cursor owner object when applying theme
+   * efl_ui_image: fix removal of the internal evas image
+   * elementary entry: fix to call "cursor,changed" callback when only cursor is changed
+   * edje_edit: fix segmentation fault(Array index is out of bound)
+   * Edje: add checking on NULL 3-rd parameter in edje_object_part_external_param_type_get() @fix
+   * eo: safety in string comparison
+   * eet: add checking on null to eet_data_write_cipher and EINA_ARG_NONNULL to dump API @fix
+   * eina/log: add ARG_NONNULL to eina_log* APIs for Eina_Log_Domain * parameter @fix
+   * edje entry: fix crash issue due to improper callback handling
+   * elm_spinner: fix wrong focus logic when spinner is unfocused
+   * evas: bug fix in bmp loader
+   * Eet: add EINA_ARG_NONNULL for eet_data_text_undump* @fix
+   * evas/x11: Fix EGL engine for recent nvidia binary
+   * elm_toolbar: remove wrong focus highlight checking
+   * ecore_exe_win32: fix ecore_exe_send
+   * evas textblock: fix a rendering issue.
+   * Evas: include efl_vg_container.eo.legacy.h to avoid implicit declaration for evas_vg_container_child* @fix
+   * evas - software generic - fix crash when buffer is freed when its the same
+   * Eo: Fix efl_isa() sometimes returning wrong results with extensions
+   * theme: Fix crash at app shutdown
+   * elput: Improve checks for keyboard & pointer devices
+   * edje_pick: use correct id's for exported groups
+   * edje_pick: export aliases and entire dependency list
+   * efl_canvas_proxy: fix the parameter of EINA_COW_WRITE
+   * elm_spinner: Spinner internal focus logic fixed to following new focused UI concept.
+   * spinner: call changed callback on value set.
+   * edje_pick: fix memory leak while on group dependency build
+   * ecore-x: fix Mode_switch key mapping
+   * ecore-x - add missing atom fetches!
+   * edje_pick: copy images from image sets
+   * elm_code: Don't assume control characters make a change
+   * elput: Fix resource leak (CID1367507)
+   * elput: Fix resource leak (CID1367506)
+   * Ecore_win32: do not handle WM_SYSKEY* events.
+   * elm_scroller: focus_next needs to give itself when no focusable child
+   * evas - async preload - stop hang when missing wakeup of preload data (T5025)
+   * efreet cache - handle corner case where efreetd keeps disconnecting
+   * Fileselector: make parse path string windows platform support.
+   * eio: Correct deletion backend
+   * Edje_cc: update images.set.image names when write edj file.
+   * elm_panel: decide whether a scrollable panel is open or not only when it has a size
+   * elm_config: fix for dereferencing after comparing to NULL
+   * evas_events: add checking NULL logic to source mouse event.
+   * evas: initalize orient property in file_set()
+   * evas generic loader - expand buffers in case of weird install location
+   * evas: fix adjustment logic about image border (T5057)
+   * ecore_fb_init(): use 'name' parameter similar to ecore_evas_fb_new().
+   * [Evas GL Thread 1] evas: Fixed indentation of evas_thread_render.c
+   * openssl 1.1 build break fixes
+   * edje_edit: fix set the images set as image.normal value.
+   * evas image preload - fix race condition that stops preloads
+   * evas gl - avoid a possible crash of tex upload of invalid sized image
+   * ecore_drm2  - work with broken kernels that EBUSY on drm  page flip
+   * elm_box: allow aspects 1 <= x < 0.0
+   * ecore-wl2: make session recovery listener global
+   * elm_code: Fix selection when moving around with cursor keys
+   * elm_multibuttonentry: Fix MBE got a wrong state.
+   * edje_edit: add Efl.File.mmap.set implementation for edje_edit
+   * elput: Return touch coordinates when we have no pointer
+   * edje_cc: delete unused image sets from edj file. (T5109)
+   * elementary conformant: clear internal pointer if holded object is deleted
+   * evas grid smart - don't abort if smart data is null - return safely
+   * spinner: fix mem leak on focus next traversel
+   * index: fix mem leak on focus next
+   * genlist: fix mem leak on focus next
+   * edje - fix border scale by interpolation
+   * evas: Fix resource leak in evas_module_find_type (CID1367503)
+   * ethumb: Fix resource leak (CID1367502)
+   * elput: Fix resource leak (CID1367499)
+   * ecore-wl2: Don't set opaque or input regions if already set
+   * gengrid: fix serach items in genlist by text
+   * elementary: Don't hide pointer window on mouse out (T4987)
+   * elementary: Ensure pointer hotspot update and reduce duplicated code (T4987)
+   * edje_pick: implement fonts copy
+   * evas async preload - fix valgrind issue in accessing image after free
+   * elput: Don't add devices which we are not going to use
+   * elput: Improve debug output for added devices
+   * DnD/Container: fix drag during animation
+   * edje_cc: remove 'inherit_only' groups from result edj file
+   * evas grid smart - fix divide by 0
+   * edje - fix crash on loading ancient edje files (T5138)
+   * elm_code: fix bugs in the highlighting of full line comments
+   *  ecore thread: Fix waiting.
+   * access: fix crash while cleanup
+   * elementary: Fix return of elm_win_wl_window_get (T5142)
+   * elm gesture layer: add check for negative input tap start timeout.
+   * edje_load: fix mirroring bug with GROUP, BOX, or TABLE part
+   * elementary: set mirrored mode in a group_add()
+   * eet: read sould be failed if cipher_key exist but file not ciphered
+   * edje: fix cached edje modification issue
+   * ecore: reset during timer callback execution doesn't make sense. (T3222)
+   * ecore-wl2: Don't send focus in/out events based on keyboard enter/leave
+   * ecore-wl2: Support sending focus for wl_shell
+   * elm config - handle setuid apps correctly and dont create junk dirs in .
+   * eina utils and vpath - use euid not uid if setuid for correct user
 
 Changes since 1.17.0:
 ---------------------
