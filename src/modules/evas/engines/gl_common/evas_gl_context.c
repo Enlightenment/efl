@@ -1440,7 +1440,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
    gc->state.current.cur_texa = 0;
    gc->state.current.cur_texm = 0;
    gc->state.current.tex_target = GL_TEXTURE_2D;
-   gc->state.current.render_op = 0;
+   gc->state.current.render_op = EVAS_RENDER_COPY;
    gc->state.current.smooth = 0;
    gc->state.current.blend = 0;
    gc->state.current.clip = 0;
@@ -1456,7 +1456,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
         gc->pipe[i].region.w = 0;
         gc->pipe[i].region.h = 0;
         gc->pipe[i].region.type = 0;
-        gc->pipe[i].shader.surface = NULL;
+        //gc->pipe[i].shader.surface = NULL;
         gc->pipe[i].shader.prog = NULL;
         gc->pipe[i].shader.cur_tex = 0;
         gc->pipe[i].shader.cur_texu = 0;
@@ -1464,7 +1464,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
         gc->pipe[i].shader.cur_texa = 0;
         gc->pipe[i].shader.cur_texm = 0;
         gc->pipe[i].shader.tex_target = GL_TEXTURE_2D;
-        gc->pipe[i].shader.render_op = EVAS_RENDER_BLEND;
+        gc->pipe[i].shader.render_op = EVAS_RENDER_COPY;
         gc->pipe[i].shader.smooth = 0;
         gc->pipe[i].shader.blend = 0;
         gc->pipe[i].shader.clip = 0;
@@ -1596,6 +1596,7 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
    gc->state.current.cy = -1;
    gc->state.current.cw = -1;
    gc->state.current.ch = -1;
+   gc->state.current.anti_alias = -1;
 
    gc->pipe[0].shader.surface = surface;
    gc->change.size = 1;

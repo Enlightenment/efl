@@ -264,10 +264,10 @@ struct _Evas_Engine_GL_Context
          int             tex_target;
          int             cx, cy, cw, ch;
          unsigned char   render_op;
-         Eina_Bool       smooth     : 1;
-         Eina_Bool       blend      : 1;
-         Eina_Bool       clip       : 1;
-         Eina_Bool       anti_alias : 1;
+         Eina_Bool       smooth     : 2;
+         Eina_Bool       blend      : 2;
+         Eina_Bool       clip       : 2;
+         Eina_Bool       anti_alias : 2;
       } current;
    } state;
 
