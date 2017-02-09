@@ -611,75 +611,47 @@ _elm_config_user_dir_snprintf(char       *dst,
                               const char *fmt,
                               ...)
 {
-   const char *home = NULL;
    size_t user_dir_len = 0, off = 0;
    va_list ap;
+   Efl_Vpath_File *file_obj;
+   static int use_xdg_config = -1;
+   const char elmdir[] = "elementary";
+   const char elmdotdir[] = ".elementary";
+   const char *path = NULL;
 
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
+   if (use_xdg_config == -1)
      {
-#ifdef DOXDG
-        home = getenv("XDG_CONFIG_HOME");
-        if (home)
-          {
-             user_dir_len = eina_str_join_len
-             (dst, size, '/', home, strlen(home),
-                 "elementary", sizeof("elementary") - 1);
-          }
-        else
-#endif
-          {
-             home = eina_environment_home_get();
-             if (!home) home = "/";
-#ifdef DOXDG
-             user_dir_len = eina_str_join_len
-             (dst, size, '/', home, strlen(home),
-                 ".config", sizeof(".config") - 1,
-                 "elementary", sizeof("elementary") - 1);
-#else
-             user_dir_len = eina_str_join_len
-             (dst, size, '/', home, strlen(home),
-                 ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
-#endif
-          }
-        off = user_dir_len + 1;
-        if (off >= size) return off;
-        dst[user_dir_len] = '/';
-        va_start(ap, fmt);
-        off = off + vsnprintf(dst + off, size - off, fmt, ap);
-        va_end(ap);
-        return off;
+        if (getenv("ELM_CONFIG_DIR_XDG")) use_xdg_config = 1;
+        else use_xdg_config = 0;
      }
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (use_xdg_config)
+     {
+        file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:config:)/");
+        efl_vpath_file_do(file_obj);
+        efl_vpath_file_wait(file_obj);
+        path = efl_vpath_file_result_get(file_obj);
+        user_dir_len = eina_str_join_len
+          (dst, size, '/', path, strlen(path) - 1, elmdir, sizeof(elmdir) - 1);
+        efl_del(file_obj);
+     }
    else
-#else
      {
-# if HAVE_GETPWENT
-        struct passwd *pw = getpwent();
-
-        if ((!pw) || (!pw->pw_dir)) goto end;
-#  ifdef DOXDG
+        file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:home:)/");
+        efl_vpath_file_do(file_obj);
+        efl_vpath_file_wait(file_obj);
+        path = efl_vpath_file_result_get(file_obj);
         user_dir_len = eina_str_join_len
-          (dst, size, '/', pw->pw_dir, strlen(pw->pw_dir),
-           ".config", sizeof(".config") - 1,
-           "elementary", sizeof("elementary") - 1);
-#  else
-        user_dir_len = eina_str_join_len
-          (dst, size, '/', pw->pw_dir, strlen(pw->pw_dir),
-           ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
-#  endif
-# endif /* HAVE_GETPWENT */
-        off = user_dir_len + 1;
-        if (off >= size) return off;
-        dst[user_dir_len] = '/';
-        va_start(ap, fmt);
-        off = off + vsnprintf(dst + off, size - off, fmt, ap);
-        va_end(ap);
-        return off;
+          (dst, size, '/', path, strlen(path) - 1, elmdotdir, sizeof(elmdotdir) - 1);
+        efl_del(file_obj);
      }
-#endif
-   return 0;
+
+   off = user_dir_len + 1;
+   if (off >= size) return off;
+   dst[user_dir_len] = '/';
+   va_start(ap, fmt);
+   off = off + vsnprintf(dst + off, size - off, fmt, ap);
+   va_end(ap);
+   return off;
 }
 
 typedef struct _Elm_Config_Derived          Elm_Config_Derived;
