@@ -766,7 +766,7 @@ void
 fb_init(int vt EINA_UNUSED, int device)
 {
    char dev[PATH_MAX];
-   
+   const char *s;
 
    DBG("device=%d, $EVAS_FB_DEV=%s", device, getenv("EVAS_FB_DEV"));
    tty = -1;
@@ -774,13 +774,12 @@ fb_init(int vt EINA_UNUSED, int device)
    if (vt != 0) fb_setvt(vt);
 #endif
 
-   if (
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-       (getuid() == geteuid()) &&
-#endif
-       (getenv("EVAS_FB_DEV")))
+   if ((s = getenv("EVAS_FB_DEV")) &&
+       (((!strncmp(s, "/dev/fb", 7)) &&
+         ((s[7] >= '0' && s[7] <= '9') || (s[7] == 0))) ||
+           ((!strncmp(s, "/dev/fb/", 8)) && (s[8] != '.'))))
      {
-        eina_strlcpy(dev, getenv("EVAS_FB_DEV"), sizeof(dev));
+        eina_strlcpy(dev, s, sizeof(dev));
         fb = open(dev, O_RDWR);
      }
    else

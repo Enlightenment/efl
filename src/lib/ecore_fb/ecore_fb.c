@@ -120,16 +120,16 @@ _ecore_fb_size_get(const char *name, int *w, int *h)
 {
    struct fb_var_screeninfo fb_var;
    int fb;
+   const char *s;
 
-   if (
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-       (getuid() == geteuid()) &&
-#endif
-       (getenv("EVAS_FB_DEV")))
+   if ((s = getenv("EVAS_FB_DEV")) &&
+       (((!strncmp(s, "/dev/fb", 7)) &&
+         ((s[7] >= '0' && s[7] <= '9') || (s[7] == 0))) ||
+           ((!strncmp(s, "/dev/fb/", 8)) && (s[8] != '.'))))
      {
-        fb = open(getenv("EVAS_FB_DEV"), O_RDWR);
+        fb = open(s, O_RDWR);
         if (fb < 0)
-          fprintf(stderr, "[ecore_fb] error opening $EVAS_FB_DEV=%s: %s\n", getenv("EVAS_FB_DEV"), strerror(errno));
+          fprintf(stderr, "[ecore_fb] error opening $EVAS_FB_DEV=%s: %s\n", s, strerror(errno));
      }
    else
      {
