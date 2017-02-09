@@ -1,11 +1,12 @@
 interface Efl.Ui.View ()
 {
+   [[Efl UI view interface]]
    methods {
       @property model {
          [[Model that is/will be ]]
          get {} set {}
          values {
-            model: Efl.Model;
+            model: Efl.Model; [[Efl model]]
          }
       }
    }

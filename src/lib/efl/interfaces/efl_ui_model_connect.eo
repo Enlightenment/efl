@@ -1,10 +1,12 @@
 interface Efl.Ui.Model.Connect
 {
+   [[Efl UI model connect interface]]
    methods {
       connect {
+         [[Connect property]]
          params {
-            name: string;
-            property: string;
+            name: string; [[Model name]]
+            property: string; [[Property name]]
          }
       }
    }

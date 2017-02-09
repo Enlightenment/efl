@@ -1,18 +1,19 @@
 interface Efl.Ui.Factory (Efl.Ui.Model.Connect)
 {
+   [[Efl UI factory interface]]
    methods {
       create {
          [[Create a UI object from the necessary properties in the specified model.]]
          params {
-            model: Efl.Model;
-            parent: Efl.Canvas;
+            model: Efl.Model; [[Efl model]]
+            parent: Efl.Canvas; [[Efl canvas]]
          }
-         return: Efl.Canvas;
+         return: Efl.Canvas; [[Created UI object]]
       }
       release {
-         [[Release a UI object and disconnec from models.]]
+         [[Release a UI object and disconnect from models.]]
          params {
-            ui_view: Efl.Canvas;
+            ui_view: Efl.Canvas; [[Efl canvas]]
          }
       }
    }

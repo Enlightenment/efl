@@ -1,10 +1,12 @@
 interface Efl.Ui.Model.Factory.Connect
 {
+   [[Efl UI model factory interface]]
    methods {
       connect {
+         [[Connect factory]]
          params {
-            name: string;
-            factory: Efl.Ui.Factory;
+            name: string; [[Model name]]
+            factory: Efl.Ui.Factory; [[Efl factory]]
          }
       }
    }
