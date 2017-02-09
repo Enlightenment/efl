@@ -15,6 +15,7 @@
 #endif
 
 #include <Ecore_File.h>
+#include <Efl.h>
 
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM _efreet_base_log_dom
@@ -95,6 +96,8 @@ efreet_base_shutdown(void)
     IF_RELEASE(xdg_data_home);
     IF_RELEASE(xdg_config_home);
     IF_RELEASE(xdg_cache_home);
+
+    IF_RELEASE(xdg_runtime_dir);
 
     IF_FREE_LIST(xdg_data_dirs, eina_stringshare_del);
     IF_FREE_LIST(xdg_config_dirs, eina_stringshare_del);
@@ -278,23 +281,13 @@ efreet_dirs_reset(void)
 static void
 efreet_dirs_init(void)
 {
-    char buf[4096];
+    Efl_Vpath_File *file_obj;
+    char buf[PATH_MAX];
 
     /* efreet_home_dir */
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-    if (getuid() != geteuid())
-      {
-         struct passwd *pw = getpwent();
-
-         if ((pw) && (pw->pw_dir)) efreet_home_dir = pw->pw_dir;
-      }
-    else
-#endif
-      efreet_home_dir = eina_environment_home_get();
-
+    efreet_home_dir = eina_environment_home_get();
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
       efreet_home_dir = "/tmp";
-
     efreet_home_dir = eina_stringshare_add(efreet_home_dir);
 
     /* xdg_<dir>_home */
@@ -318,10 +311,11 @@ efreet_dirs_init(void)
 #endif
 
     /* xdg_runtime_dir */
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-     xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
+    file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:run:)/");
+    efl_vpath_file_do(file_obj);
+    efl_vpath_file_wait(file_obj);
+    xdg_runtime_dir = eina_stringshare_add(efl_vpath_file_result_get(file_obj));
+    efl_del(file_obj);
 
     /* hostname */
     if (gethostname(buf, sizeof(buf)) < 0)
