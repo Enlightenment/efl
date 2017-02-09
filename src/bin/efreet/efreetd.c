@@ -51,31 +51,18 @@ main(int argc, char *argv[])
    if (!ipc_init()) goto ipc_error;
    if (!cache_init()) goto cache_error;
 
-   s = getenv("XDG_RUNTIME_DIR");
-   if (s) log_file_dir = s;
-   else log_file_dir = eina_environment_tmp_get();
+   log_file_dir = eina_environment_tmp_get();
    if (gethostname(buf, sizeof(buf)) < 0)
      hostname_str = "";
    else
      hostname_str = buf;
-   if (getenv("EFREETD_LOG"))
+   snprintf(path, sizeof(path), "%s/efreetd_%s_XXXXXX.log",
+            log_file_dir, hostname_str);
+   fd = eina_file_mkstemp(path, NULL);
+   if (fd < 0)
      {
-        snprintf(path, sizeof(path), "%s/efreetd_%s_XXXXXX.log",
-                 log_file_dir, hostname_str);
-        fd = eina_file_mkstemp(path, NULL);
-        if (fd < 0)
-          {
-             ERR("Can't create log file '%s'\b", path);;
-             goto tmp_error;
-          }
-     }
-   else
-     {
-        fd = open("/dev/null", O_WRONLY);
-        if (fd < 0)
-          {
-             goto tmp_error;
-          }
+        ERR("Can't create log file '%s'\b", path);;
+        goto tmp_error;
      }
    log = fdopen(fd, "wb");
    if (!log) goto tmp_error;
