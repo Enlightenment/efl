@@ -285,6 +285,7 @@ bin_eina_eina_modinfo_eina_modinfo_CPPFLAGS =  -I$(top_builddir)/src/lib/efl \
 @EINA_CFLAGS@
 
 bin_eina_eina_modinfo_eina_modinfo_LDADD = @USE_EINA_LIBS@
+bin_eina_eina_modinfo_eina_modinfo_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 ### Script
 
