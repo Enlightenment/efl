@@ -1015,6 +1015,50 @@ local write_inherited_from = function(f, impl, cl, over)
     f:write_i(buf:finish())
 end
 
+local impls_of = {}
+
+local get_all_impls_of
+get_all_impls_of = function(tbl, cl, fn)
+    for i, imp in ipairs(cl:implements_get()) do
+        local ofn = imp:function_get()
+        if ofn:is_same(fn) then
+            tbl[#tbl + 1] = cl
+            break
+        end
+    end
+    for i, cln in ipairs(cl:children_get()) do
+        local icl = dtree.Class.by_name_get(cln)
+        get_all_impls_of(tbl, icl, fn)
+    end
+end
+
+local write_ilist = function(f, impl, cl)
+    local fn = impl:function_get()
+    local fnn = fn:name_get()
+    local ocl = fn:implement_get():class_get()
+    local onm = ocl:full_name_get() .. "." .. fnn
+    local imps = impls_of[onm]
+    if not imps then
+        imps = {}
+        impls_of[onm] = imps
+        get_all_impls_of(imps, ocl, fn)
+    end
+
+    f:write_h("Implemented by", 2)
+    local t = {}
+    for i, icl in ipairs(imps) do
+        local buf = writer.Buffer()
+        local cfn = icl:full_name_get() .. "." .. fnn
+        if icl:is_same(cl) then
+            buf:write_b(cfn)
+        else
+            buf:write_link(fn:nspaces_get(icl, true), cfn)
+        end
+        t[#t + 1] = buf:finish()
+    end
+    f:write_list(t)
+end
+
 build_method = function(impl, cl)
     local over = impl:is_overridden(cl)
     local fn = impl:function_get()
@@ -1049,6 +1093,9 @@ build_method = function(impl, cl)
     f:write_nl()
 
     f:write_editable(mns, "description")
+    f:write_nl()
+
+    write_ilist(f, impl, cl)
     f:write_nl()
 
     f:finish()
@@ -1155,6 +1202,9 @@ build_property = function(impl, cl)
         f:write_editable(pns, "description")
         f:write_nl()
     end
+
+    write_ilist(f, impl, cl)
+    f:write_nl()
 
     f:finish()
 end

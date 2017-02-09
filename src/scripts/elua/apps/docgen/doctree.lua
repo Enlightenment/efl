@@ -210,7 +210,7 @@ M.Class = Node:clone {
     end,
 
     children_get = function(self)
-        return revh[self:full_name_get()]
+        return revh[self:full_name_get()] or {}
     end,
 
     functions_get = function(self, ft)
@@ -247,6 +247,10 @@ M.Class = Node:clone {
 
     nspaces_get = function(self, root)
         return M.Node.nspaces_get(self, self:type_str_get(), root)
+    end,
+
+    is_same = function(self, other)
+        return self.class == other.class
     end,
 
     -- static getters
@@ -394,6 +398,10 @@ M.Function = Node:clone {
             tbl[#tbl + 1] = not not root
         end
         return tbl
+    end,
+
+    is_same = function(self, other)
+        return self.func == other.func
     end
 }
 
@@ -1413,6 +1421,9 @@ M.parse = function()
     for cl in eolian.all_classes_get() do
         local cln = cl:full_name_get()
         for icl in cl:inherits_get() do
+            if icl == "Elm.List" then
+                print("GOT ELM LIST")
+            end
             local t = revh[icl]
             if not t then
                 t = {}
