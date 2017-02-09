@@ -60,21 +60,16 @@ _keyboard_modifiers_update(Elput_Keyboard *kbd, Elput_Seat *seat)
 static int
 _keyboard_fd_get(off_t size)
 {
-   const char *path;
    Eina_Tmpstr *fullname;
    long flags;
    int fd = 0;
-   char tmp[PATH_MAX];
    Efl_Vpath_File *file_obj;
 
-   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:run:)/");
-   efl_vpath_file_do(file_obj);
-   efl_vpath_file_wait(file_obj);
-   path = efl_vpath_file_result_get(file_obj);
-   snprintf(tmp, sizeof(tmp), "%s/elput-keymap-XXXXXX", path);
+   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
+                                      "(:run:)/elput-keymap-XXXXXX");
+   fd = eina_file_mkstemp(efl_vpath_file_result_get(file_obj), &fullname);
    efl_del(file_obj);
 
-   fd = eina_file_mkstemp(tmp, &fullname);
    if (fd < 0) return -1;
 
    flags = fcntl(fd, F_GETFD);
