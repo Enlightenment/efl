@@ -82,11 +82,12 @@ static struct wl_shm_pool *
 _shm_pool_make(struct wl_shm *shm, int size, void **data)
 {
    struct wl_shm_pool *pool;
-   static const char tmp[] = "/evas-wayland_shm-XXXXXX";
+   static const char tmp[] = "evas-wayland_shm-XXXXXX";
    const char *path;
    char *name;
    int fd = 0;
    Eina_Tmpstr *fullname;
+   Efl_Vpath_File *file_obj;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -94,19 +95,12 @@ _shm_pool_make(struct wl_shm *shm, int size, void **data)
    if (!shm) return NULL;
 
    /* create tmp file name */
-   if ((path = getenv("XDG_RUNTIME_DIR")))
-     {
-        if ((name = malloc(strlen(path) + sizeof(tmp))))
-          strcpy(name, path);
-     }
-   else
-     {
-        if ((name = malloc(strlen("/tmp") + sizeof(tmp))))
-          strcpy(name, "/tmp");
-     }
-
+   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, "(:run:)/");
+   efl_vpath_file_do(file_obj);
+   efl_vpath_file_wait(file_obj);
+   path = efl_vpath_file_result_get(file_obj);
+   if ((name = malloc(strlen(path) + sizeof(tmp)))) strcpy(name, path);
    if (!name) return NULL;
-
    strcat(name, tmp);
 
    fd = eina_file_mkstemp(name, &fullname);
