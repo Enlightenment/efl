@@ -1,5 +1,6 @@
 class Efl.Ui.Image.Factory (Efl.Object, Efl.Ui.Factory)
 {
+   [[Efl UI image factory class]]
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
