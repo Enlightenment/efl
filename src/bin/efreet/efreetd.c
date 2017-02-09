@@ -33,7 +33,6 @@ main(int argc, char *argv[])
    char path[PATH_MAX], buf[PATH_MAX];
    FILE *log;
    int fd;
-   const char *s;
    const char *log_file_dir = NULL;
    const char *hostname_str = NULL;
 
