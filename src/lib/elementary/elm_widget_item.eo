@@ -307,7 +307,9 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
 
                   This function sends a signal to the edje object of the obj item. An
                   edje program can respond to a signal by specifying matching
-                  'signal' and 'source' fields.]]
+                  'signal' and 'source' fields.
+                  Don't use this unless you want to also handle resetting of part states to default on
+                  every unrealize in case of genlist/gengrid.]]
                 params {
                      emission: string; [[The signal's name.]]
                      source: string; [[The signal's source.]]
