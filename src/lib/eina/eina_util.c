@@ -81,7 +81,7 @@ eina_environment_home_get(void)
         struct passwd pwent, *pwent2 = NULL;
         char pwbuf[8129];
 
-        if (!getpwuid_r(getuid(), &pwent, pwbuf, sizeof(pwbuf), &pwent2))
+        if (!getpwuid_r(geteuid(), &pwent, pwbuf, sizeof(pwbuf), &pwent2))
           {
              if ((pwent2) && (pwent.pw_dir))
                home = strdup(pwent.pw_dir);

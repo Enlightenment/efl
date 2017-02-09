@@ -43,8 +43,8 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    if (!home)
      {
         /* Windows does not have getuid(), but home can't be NULL */
-#ifdef HAVE_GETUID
-        uid_t uid = getuid();
+#ifdef HAVE_GETEUID
+        uid_t uid = geteuid();
         struct stat st;
 
         snprintf(bufhome, sizeof(bufhome), "/tmp/%i", (int)uid);
@@ -109,7 +109,7 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    if ((getuid() != geteuid()) || (!(s = getenv("XDG_RUNTIME_DIR"))))
 #endif
      {
-#ifdef HAVE_GETUID
+#ifdef HAVE_GETEUID
         struct stat st;
 
         // fallback - make ~/.run
@@ -123,7 +123,7 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
 
              // use /tmp/.run-UID if ~/ dir cant be made
              s = (char *)efl_vpath_core_meta_get(obj, "tmp");
-             uid = getuid();
+             uid = geteuid();
              snprintf(buf, sizeof(buf), "%s/.run-%i", s, (int)uid);
              mkdir(buf,  S_IRUSR | S_IWUSR | S_IXUSR);
              // if ok - use it or fall back to /tmp
