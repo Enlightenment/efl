@@ -1018,7 +1018,12 @@ end
 local impls_of = {}
 
 local get_all_impls_of
-get_all_impls_of = function(tbl, cl, fn)
+get_all_impls_of = function(tbl, cl, fn, got)
+    local cfn = cl:full_name_get()
+    if got[cfn] then
+        return
+    end
+    got[cfn] = true
     for i, imp in ipairs(cl:implements_get()) do
         local ofn = imp:function_get()
         if ofn:is_same(fn) then
@@ -1028,7 +1033,7 @@ get_all_impls_of = function(tbl, cl, fn)
     end
     for i, cln in ipairs(cl:children_get()) do
         local icl = dtree.Class.by_name_get(cln)
-        get_all_impls_of(tbl, icl, fn)
+        get_all_impls_of(tbl, icl, fn, got)
     end
 end
 
@@ -1041,7 +1046,7 @@ local write_ilist = function(f, impl, cl)
     if not imps then
         imps = {}
         impls_of[onm] = imps
-        get_all_impls_of(imps, ocl, fn)
+        get_all_impls_of(imps, ocl, fn, {})
     end
 
     f:write_h("Implemented by", 2)
