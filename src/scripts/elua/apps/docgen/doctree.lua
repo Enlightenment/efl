@@ -144,6 +144,8 @@ M.Doc = Node:clone {
     end
 }
 
+local revh = {}
+
 M.Class = Node:clone {
     -- class types
     UNKNOWN = eolian.class_type.UNKNOWN,
@@ -205,6 +207,10 @@ M.Class = Node:clone {
 
     inherits_get = function(self)
         return self.class:inherits_get():to_array()
+    end,
+
+    children_get = function(self)
+        return revh[self:full_name_get()]
     end,
 
     functions_get = function(self, ft)
@@ -1402,6 +1408,18 @@ M.parse = function()
     end
     if not eolian.all_eo_files_parse() then
         error("failed parsing eo files")
+    end
+    -- build reverse inheritance hierarchy
+    for cl in eolian.all_classes_get() do
+        local cln = cl:full_name_get()
+        for icl in cl:inherits_get() do
+            local t = revh[icl]
+            if not t then
+                t = {}
+                revh[icl] = t
+            end
+            t[#t + 1] = cln
+        end
     end
 end
 
