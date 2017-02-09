@@ -524,7 +524,7 @@ stat_cmp(const void *a, const void *b)
 static Eina_Bool
 _check_recurse_monitor_sanity(Eina_Inarray *stack, const char *path, unsigned int stack_limit)
 {
-   const char *home = getenv("HOME");
+   const char *home = eina_environment_home_get();
 
    // protect against too deep recursion even if it's valid.
    if (eina_inarray_count(stack) >= stack_limit)
