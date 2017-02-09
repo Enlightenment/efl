@@ -1,5 +1,6 @@
 class Efl.Model.Composite.Boolean.Children (Efl.Object, Efl.Model)
 {
+   [[Efl model composite boolean children class]]
    implements {
       Efl.Object.destructor;
       Efl.Model.properties { get; }
