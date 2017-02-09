@@ -60,4 +60,4 @@ struct @extern Eina.Rw_Slice {
     mem: void_ptr; [[Pointer to memory segment]]
 }
 
-struct @extern Eina.Value.Type;
+struct @extern Eina.Value.Type; [[Eina value type]]
