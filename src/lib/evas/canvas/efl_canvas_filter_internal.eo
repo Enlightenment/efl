@@ -5,37 +5,40 @@
 
 struct Efl.Gfx.Color32
 {
-   r: uint8;
-   g: uint8;
-   b: uint8;
-   a: uint8;
+   [[32 bit color data structure]]
+   r: uint8; [[Red component of the color]]
+   g: uint8; [[Green component of the color]]
+   b: uint8; [[Blue component of the color]]
+   a: uint8; [[Translucent component of the color]]
 }
 
 struct Efl.Canvas.Filter.State_Name
 {
-   name: string;
-   value: double;
+   [[Filter state name structure]]
+   name: string; [[Filter state name]]
+   value: double; [[Filter state value]]
 }
 
 struct Efl.Canvas.Filter.State_Text
 {
-   outline: Efl.Gfx.Color32;
-   shadow: Efl.Gfx.Color32;
-   glow: Efl.Gfx.Color32;
-   glow2: Efl.Gfx.Color32;
+   [[Filter state text structure]]
+   outline: Efl.Gfx.Color32; [[Text outline color]]
+   shadow: Efl.Gfx.Color32; [[Text shadow color]]
+   glow: Efl.Gfx.Color32; [[Text glow color]]
+   glow2: Efl.Gfx.Color32; [[Text glow2 color]]
 }
 
 struct Efl.Canvas.Filter.State
 {
    [[Internal structure representing the state of a Gfx Filter]]
-   text: Efl.Canvas.Filter.State_Text;
-   color: Efl.Gfx.Color32;
-   cur: Efl.Canvas.Filter.State_Name;
-   next: Efl.Canvas.Filter.State_Name;
-   w: int;
-   h: int;
-   scale: double;
-   pos: double;
+   text: Efl.Canvas.Filter.State_Text; [[Text state]]
+   color: Efl.Gfx.Color32; [[Color]]
+   cur: Efl.Canvas.Filter.State_Name; [[Current state]]
+   next: Efl.Canvas.Filter.State_Name; [[Next state]]
+   w: int; [[Width]]
+   h: int; [[Height]]
+   scale: double; [[Scale factor]]
+   pos: double; [[Position]]
 }
 
 mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
