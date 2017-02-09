@@ -104,34 +104,69 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
    //   having read and write access to it. Its Unix access mode MUST
    //   be 0700.
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (!(s = getenv("XDG_RUNTIME_DIR")))
-#else
    if ((getuid() != geteuid()) || (!(s = getenv("XDG_RUNTIME_DIR"))))
+#else
+   if (!(s = getenv("XDG_RUNTIME_DIR")))
 #endif
      {
-#ifdef HAVE_GETEUID
         struct stat st;
+        uid_t uid;
 
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+        uid = getuid();
+        setuid(geteuid());
+#endif
         // fallback - make ~/.run
         snprintf(buf, sizeof(buf), "%s/.run", home);
-        mkdir(buf,  S_IRUSR | S_IWUSR | S_IXUSR);
-        // if mkdir worked - use, otherwse use /tmp
-        if (stat(buf, &st) == 0) s = buf;
+        if (mkdir(buf,  S_IRUSR | S_IWUSR | S_IXUSR) == 0) s = buf;
         else
           {
-             uid_t uid;
-
-             // use /tmp/.run-UID if ~/ dir cant be made
-             s = (char *)efl_vpath_core_meta_get(obj, "tmp");
-             uid = geteuid();
-             snprintf(buf, sizeof(buf), "%s/.run-%i", s, (int)uid);
-             mkdir(buf,  S_IRUSR | S_IWUSR | S_IXUSR);
-             // if ok - use it or fall back to /tmp
-             if (stat(buf, &st) == 0) s = buf;
-             else s = (char *)efl_vpath_core_meta_get(obj, "tmp");
+             if (errno == EEXIST)
+               {
+                  if (stat(buf, &st) == 0)
+                    {
+                       // some sanity checks - but not for security
+                       if (!(st.st_mode & S_IFDIR))
+                         {
+                            // fatal - exists but is not a dir
+                            fprintf(stderr,
+                                    "FATAL: run dir '%s' exists but not a dir\n",
+                                    buf);
+                            abort();
+                         }
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+                       if (st.st_uid != geteuid())
+                         {
+                            // fatal - run dir doesn't belong to user
+                            fprintf(stderr,
+                                    "FATAL: run dir '%s' not owned by uid %i\n",
+                                    buf, (int)geteuid());
+                            abort();
+                         }
+#endif
+                       // we're ok
+                       s = buf;
+                    }
+                  else
+                    {
+                       // fatal - we cant create our run dir in ~/
+                       fprintf(stderr,
+                               "FATAL: Cannot verify run dir '%s' errno=%i\n",
+                               buf, errno);
+                       abort();
+                    }
+               }
+             else
+               {
+                  // fatal - we cant create our run dir in ~/
+                  fprintf(stderr,
+                          "FATAL: Cannot create run dir '%s' - errno=%i\n",
+                          buf, errno);
+                  abort();
+               }
           }
-#else
-        s = (char *)efl_vpath_core_meta_get(obj, "tmp");
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+        setreuid(uid, geteuid());
 #endif
      }
    if (!s) s = (char *)efl_vpath_core_meta_get(obj, "tmp");
