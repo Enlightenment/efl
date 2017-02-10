@@ -344,6 +344,7 @@ _ecore_fd_close_on_exec(int fd)
 #endif
 }
 
+#ifdef EFL_EXTRA_SANITY_CHECKS
 static inline void
 _ecore_fd_valid(void)
 {
@@ -360,6 +361,7 @@ _ecore_fd_valid(void)
           }
      }
 }
+#endif
 
 static inline void
 _ecore_try_add_to_call_list(Ecore_Fd_Handler *fdh)
@@ -1997,7 +1999,9 @@ _ecore_main_fd_handlers_call(void)
                           }
                      }
                    fdh->references--;
+#ifdef EFL_EXTRA_SANITY_CHECKS
                    _ecore_fd_valid();
+#endif
 
                    fdh->read_active = EINA_FALSE;
                    fdh->write_active = EINA_FALSE;

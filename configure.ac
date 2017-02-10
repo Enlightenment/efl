@@ -86,15 +86,20 @@ esac
 
 prefer_assert="no"
 eina_log_backtrace="yes"
+efl_less_insane="no"
 case "${build_profile}" in
    dev|debug)
      prefer_assert="yes"
      eina_log_backtrace="no"
+     efl_less_insane="yes"
      ;;
 esac
 
 # Enable CRI & ERR backtrace by default for release but not for dev/debug
 AC_DEFINE_IF([EINA_LOG_BACKTRACE_ENABLE], [test "x${eina_log_backtrace}" = "xyes"], [1], [Default log level triggering backtraces])
+
+# Additional sanity checks only performed in debug builds
+AC_DEFINE_IF([EFL_EXTRA_SANITY_CHECKS], [test "x${efl_less_insane}" = "xyes"], [1], [Extra run time sanity checks])
 
 # TODO: add some build "profile" (server, full, etc...)
 
