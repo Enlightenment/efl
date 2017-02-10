@@ -447,7 +447,9 @@ eolian_doc_token_text_get(const Eolian_Doc_Token *tok)
         if (p != tok->text_end)
           eina_strbuf_append_char(buf, *p);
      }
-   return eina_strbuf_string_steal(buf);
+   char *ptr = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ptr;
 }
 
 static Eolian_Doc_Ref_Type
