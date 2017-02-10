@@ -69,6 +69,11 @@ class Elm.Genlist.Item(Elm.Widget.Item)
 
                        If filter is set on genlist, this returns the filtered
                        item placed after $item in the list.
+
+                       Also the next item means item in the same tree level.
+                       If a item has subitems, and it have expand all subitems
+                       will be ignore, and will get the next item in the same
+                       level.
                      ]]
                 }
                 values {
