@@ -209,7 +209,8 @@ _new_frame(Evas_Image_Animated *animated,
 // data pointer
 static Eina_Bool
 _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
-              int transparent, int x, int y, int w, int h, Eina_Bool fill)
+              int transparent, int fw, int fh,
+              int x, int y, int w, int h, Eina_Bool fill)
 {
    int intoffset[] = { 0, 4, 2, 1 };
    int intjump[] = { 8, 8, 4, 2 };
@@ -224,14 +225,14 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
 
    // build a blob of memory to have pointers to rows of pixels
    // AND store the decoded gif pixels (1 byte per pixel) as welll
-   rows = malloc((h * sizeof(GifRowType)) + (w * h * sizeof(GifPixelType)));
+   rows = malloc((fh * sizeof(GifRowType)) + (fw * fh * sizeof(GifPixelType)));
    if (!rows) goto on_error;
 
    // fill in the pointers at the start
-   for (yy = 0; yy < h; yy++)
+   for (yy = 0; yy < fh; yy++)
      {
-        rows[yy] = ((unsigned char *)rows) + (h * sizeof(GifRowType)) +
-          (yy * w * sizeof(GifPixelType));
+        rows[yy] = ((unsigned char *)rows) + (fh * sizeof(GifRowType)) +
+          (yy * fw * sizeof(GifPixelType));
      }
 
    // if give is interlaced, walk interlace pattern and decode into rows
@@ -239,9 +240,9 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
      {
         for (i = 0; i < 4; i++)
           {
-             for (yy = intoffset[i]; yy < h; yy += intjump[i])
+             for (yy = intoffset[i]; yy < fh; yy += intjump[i])
                {
-                  if (DGifGetLine(gif, rows[yy], w) != GIF_OK)
+                  if (DGifGetLine(gif, rows[yy], fw) != GIF_OK)
                     goto on_error;
                }
           }
@@ -249,9 +250,9 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
    // normal top to bottom - decode into rows
    else
      {
-        for (yy = 0; yy < h; yy++)
+        for (yy = 0; yy < fh; yy++)
           {
-             if (DGifGetLine(gif, rows[yy], w) != GIF_OK)
+             if (DGifGetLine(gif, rows[yy], fw) != GIF_OK)
                goto on_error;
           }
      }
@@ -745,6 +746,7 @@ open_file:
                                &x, &y, &w, &h);
                   if (!_decode_image(gif, thisframe->data, prop->w,
                                      xin, yin, finfo->transparent,
+                                     finfo->w, finfo->h,
                                      x, y, w, h, first))
                     LOADERR(EVAS_LOAD_ERROR_CORRUPT_FILE);
                   // mark as loaded and done
@@ -772,6 +774,7 @@ open_file:
                        // and decode the gif with overwriting
                        if (!_decode_image(gif, pixels, prop->w,
                                           xin, yin, finfo->transparent,
+                                          finfo->w, finfo->h,
                                           x, y, w, h, EINA_TRUE))
                          LOADERR(EVAS_LOAD_ERROR_CORRUPT_FILE);
                        // mark as loaded and done
