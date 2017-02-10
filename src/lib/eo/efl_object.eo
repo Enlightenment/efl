@@ -322,6 +322,8 @@ abstract Efl.Object ()
 
            callbacks of the same priority are called in reverse order of
            creation.
+
+           A callback is only executed on events emitted after this call finished.
          ]]
          return: bool; [[Return $true when the callback has been successfully added.]]
          params {
@@ -332,7 +334,10 @@ abstract Efl.Object ()
          }
       }
       event_callback_del {
-         [[Delete a callback with a specific data associated to it for an event.]]
+         [[Delete a callback with a specific data associated to it for an event.
+
+           The callback will never be emitted again after this call, even if a event emission is going on.
+         ]]
          return: bool; [[Return $true when the callback has been successfully removed.]]
          params {
             @in desc: ptr(const(Efl.Event.Description)); [[The description of the event to listen to]]
@@ -347,6 +352,8 @@ abstract Efl.Object ()
 
            callbacks of the same priority are called in reverse order of
            creation.
+
+           A callback from the array is only executed on events emitted  after this call finished.
          ]]
          return: bool; [[Return $true when the callback has been successfully added.]]
          params {
@@ -358,6 +365,7 @@ abstract Efl.Object ()
       event_callback_array_del {
          [[Del a callback array with a specific data associated to it for an
            event.
+           The callbacks from the array will never be emitted again after this call, even if a event emission is going on.
          ]]
          return: bool; [[Return $true when the callback has been successfully removed.]]
          params {
