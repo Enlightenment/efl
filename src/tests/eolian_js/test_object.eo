@@ -57,42 +57,42 @@ class Test.Object (Efl.Object) {
        method_uppercase_check {
            [[ tests string ]]
            params {
-               @inout str: char*;
+               @inout str: ptr(char);
            }
        }
        method_in_null_check {
            [[ tests null input ]]
            params {
-               a: char*;
+               a: ptr(char);
            }
            return: bool;
        }
        method_out_null_check {
            [[ tests null output ]]
            params {
-               @out a: char*;
+               @out a: ptr(char);
            }
            return: bool;
        }
        method_inout_null_check {
            [[ tests null output ]]
            params {
-               @inout a: char*;
+               @inout a: ptr(char);
            }
            return: bool;
        }
        method_return_null_check {
            [[ tests null return ]]
-           return: char*;
+           return: ptr(char);
        }
        method_null_check {
            [[ tests null values ]]
            params {
-               in: char*;
-               @out out: char*;
-               @inout inout: char*;
+               in: ptr(char);
+               @out out: ptr(char);
+               @inout inout: ptr(char);
            }
-           return: char*;
+           return: ptr(char);
        }
        method_array_at_check {
            [[ tests array ]]
@@ -317,15 +317,15 @@ class Test.Object (Efl.Object) {
            return: list<array<int> >;
        }
        method_list_with_opaque_elements_check {
-           return: const(list<Elm.Calendar.Mark*>);
+           return: const(list<ptr(Elm.Calendar.Mark)>);
        }
        method_in_enum_return_enum_check {
            params { e: Test.Enum_Ex; }
            return: Test.Enum_Ex;
        }
        method_in_struct_return_struct_check {
-           params { e: Test.Struct_Ex *; }
-           return: Test.Struct_Ex *;
+           params { e: ptr(Test.Struct_Ex); }
+           return: ptr(Test.Struct_Ex);
        }
        event_emit {
        }
