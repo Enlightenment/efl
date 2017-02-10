@@ -3567,9 +3567,9 @@ _evas_object_image_video_overlay_do(Evas_Object *eo_obj)
 }
 
 void *
-_evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj)
+_evas_object_image_surface_get(Evas_Object_Protected_Data *obj, Eina_Bool create)
 {
-   Evas_Image_Data *pd = efl_data_scope_get(eo, MY_CLASS);
+   Evas_Image_Data *pd = obj->private_data;
 
    if (pd->engine_data &&
        (pd->cur->image.w == obj->cur->geometry.w) &&
@@ -3577,7 +3577,12 @@ _evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj)
      return pd->engine_data;
 
    if (pd->engine_data)
-     ENFN->image_free(ENDT, pd->engine_data);
+     {
+        ENFN->image_free(ENDT, pd->engine_data);
+        pd->engine_data = NULL;
+     }
+
+   if (!create) return pd->engine_data;
 
    // FIXME: alpha forced to 1 for now, need to figure out Evas alpha here
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)

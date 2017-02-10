@@ -2033,7 +2033,7 @@ void *efl_input_hold_legacy_info_fill(Efl_Input_Hold *evt, Evas_Event_Flags **pf
 
 Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *key EINA_UNUSED);
 
-void *_evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj);
+void *_evas_object_image_surface_get(Evas_Object_Protected_Data *obj, Eina_Bool create);
 Eina_Bool _evas_image_proxy_source_clip_get(const Eo *eo_obj);
 
 void _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj,

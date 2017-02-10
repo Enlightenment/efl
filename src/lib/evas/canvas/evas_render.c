@@ -2738,6 +2738,31 @@ _is_obj_in_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
 #endif
 
 static Eina_Bool
+_snapshot_needs_redraw(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap)
+{
+   const int x = snap->cur->geometry.x;
+   const int y = snap->cur->geometry.y;
+   const int w = snap->cur->geometry.w;
+   const int h = snap->cur->geometry.h;
+   Evas_Object_Protected_Data *obj;
+   Evas_Active_Entry *ent;
+   void *surface;
+
+   surface = _evas_object_image_surface_get(snap, EINA_FALSE);
+   if (!surface) return EINA_TRUE;
+
+   EINA_INARRAY_FOREACH(&evas->active_objects, ent)
+     {
+        obj = ent->obj;
+        if (obj == snap) break;
+        if (!obj->is_smart && obj->changed &&
+            evas_object_is_in_output_rect(obj->object, obj, x, y, w, h))
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                                   void *surface, void *context,
                                   Evas_Object_Protected_Data *top,
@@ -3089,7 +3114,7 @@ evas_render_updates_internal(Evas *eo_e,
      {
         for (i = 0; i < e->snapshot_objects.count; i++)
           {
-             obj = (Evas_Object_Protected_Data *)eina_array_data_get(&e->snapshot_objects, i);
+             obj = eina_array_data_get(&e->snapshot_objects, i);
 
              if (evas_object_is_visible(obj->object, obj))
                ENFN->output_redraws_rect_add(ENDT,
@@ -3173,7 +3198,7 @@ evas_render_updates_internal(Evas *eo_e,
                {
                   Eina_Rectangle output, cr, ur;
 
-                  obj = (Evas_Object_Protected_Data *)eina_array_data_get(&e->snapshot_objects, j);
+                  obj = eina_array_data_get(&e->snapshot_objects, j);
 
                   EINA_RECTANGLE_SET(&output,
                                      obj->cur->geometry.x,
@@ -3182,7 +3207,8 @@ evas_render_updates_internal(Evas *eo_e,
                                      obj->cur->geometry.h);
                   EINA_RECTANGLE_SET(&ur, ux, uy, uw, uh);
 
-                  if (eina_rectangle_intersection(&ur, &output))
+                  if (eina_rectangle_intersection(&ur, &output) &&
+                      _snapshot_needs_redraw(evas, obj))
                     {
                        void *pseudo_canvas;
                        unsigned int restore_offset = offset;
@@ -3191,7 +3217,7 @@ evas_render_updates_internal(Evas *eo_e,
                                           ur.x - output.x, ur.y - output.y,
                                           ur.w, ur.h);
 
-                       pseudo_canvas = _evas_object_image_surface_get(obj->object, obj);
+                       pseudo_canvas = _evas_object_image_surface_get(obj, EINA_TRUE);
 
                        RD(0, "  SNAPSHOT %s [sfc:%p ur:%d,%d %dx%d]\n", RDNAME(obj), pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
                        ctx = ENFN->context_new(ENDT);
@@ -3209,6 +3235,11 @@ evas_render_updates_internal(Evas *eo_e,
                        obj->changed = EINA_TRUE;
 
                        offset = restore_offset;
+
+                       // FIXME: For some reason the arrays are not cleaned and
+                       // snapshot objects keep being added to it... only when
+                       // I break in GDB. Normal render flow is fine. Odd.
+                       clean_them = EINA_TRUE;
                     }
                }
              eina_evlog("-render_snapshots", eo_e, 0.0, NULL);
