@@ -167,7 +167,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
    else if (previous_type == ELM_CODE_TOKEN_TYPE_PREPROCESSOR)
      {
         elm_code_line_token_add(line, 0, length, 1, ELM_CODE_TOKEN_TYPE_PREPROCESSOR);
-        if (content[length-1] == '\\')
+        if (length >= 1 && content[length-1] == '\\')
           {
              Elm_Code_Token *token = eina_list_last_data_get(line->tokens);
              token->continues = EINA_TRUE;
