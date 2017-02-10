@@ -60,8 +60,8 @@ evas_common_draw_context_cutouts_del(Cutout_Rects* rects, int idx)
 }
 
 static int _init_count = 0;
+static Eina_Trash *_ctxt_spares = NULL;
 static int _ctxt_spares_count = 0;
-static Eina_List *_ctxt_spares = NULL;
 static SLK(_ctx_spares_lock);
 
 static void
@@ -81,26 +81,27 @@ _evas_common_draw_context_real_free(RGBA_Draw_Context *dc)
 static void
 _evas_common_draw_context_stash(RGBA_Draw_Context *dc)
 {
-   if (_ctxt_spares_count < 8)
+   if (_ctxt_spares_count >= 8)
      {
+        _evas_common_draw_context_real_free(dc);
+        return ;
+     }
+
 #ifdef HAVE_PIXMAN
 # if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
-        if (dc->col.pixman_color_image)
-          {
-             pixman_image_unref(dc->col.pixman_color_image);
-             dc->col.pixman_color_image = NULL;
-          }
+   if (dc->col.pixman_color_image)
+     {
+        pixman_image_unref(dc->col.pixman_color_image);
+        dc->col.pixman_color_image = NULL;
+     }
 # endif
 #endif
-        evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
-        evas_common_draw_context_cutouts_real_free(dc->cache.rects);
-        SLKL(_ctx_spares_lock);
-        _ctxt_spares = eina_list_prepend(_ctxt_spares, dc);
-        _ctxt_spares_count++;
-        SLKU(_ctx_spares_lock);
-        return;
-     }
-   _evas_common_draw_context_real_free(dc);
+   evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
+   evas_common_draw_context_cutouts_real_free(dc->cache.rects);
+   SLKL(_ctx_spares_lock);
+   eina_trash_push(&_ctxt_spares, dc);
+   _ctxt_spares_count++;
+   SLKU(_ctx_spares_lock);
 }
 
 static RGBA_Draw_Context *
@@ -108,16 +109,18 @@ _evas_common_draw_context_find(void)
 {
    RGBA_Draw_Context *dc;
 
-   if (_ctxt_spares)
+   if (!_ctxt_spares)
+     {
+        dc = malloc(sizeof(RGBA_Draw_Context));
+     }
+   else
      {
         SLKL(_ctx_spares_lock);
-        dc = _ctxt_spares->data;
-        _ctxt_spares = eina_list_remove_list(_ctxt_spares, _ctxt_spares);
+        dc = eina_trash_pop(&_ctxt_spares);
         _ctxt_spares_count--;
         SLKU(_ctx_spares_lock);
-        return dc;
      }
-   dc = malloc(sizeof(RGBA_Draw_Context));
+
    return dc;
 }
 
