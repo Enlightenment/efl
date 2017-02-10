@@ -1568,7 +1568,10 @@ parse_implement(Eo_Lexer *ls, Eina_Bool iface)
             }
         eina_stringshare_del(iname);
         if (!impl)
-          eo_lexer_syntax_error(ls, "implement of non-existent function");
+          {
+             eo_lexer_syntax_error(ls, "implement of non-existent function");
+             return;
+          }
         eo_lexer_get(ls);
         goto propbeg;
      }
