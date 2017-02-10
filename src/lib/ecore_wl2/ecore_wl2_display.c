@@ -756,6 +756,7 @@ ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
    _ecore_wl2_display_cleanup(display);
    if (display->refs == 0)
      {
+        wl_display_roundtrip(display->wl.display);
         wl_display_disconnect(display->wl.display);
 
         /* remove this client display from hash */
