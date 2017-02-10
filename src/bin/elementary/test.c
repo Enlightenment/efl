@@ -307,6 +307,7 @@ void test_efl_ui_text(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_label(void *data, Evas_Object *obj, void *event_info);
 void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
 void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
+void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
@@ -1022,6 +1023,7 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Evas", "Masking", test_evas_mask);
    ADD_TEST(NULL, "Evas", "Gfx Filters", test_gfx_filters);
+   ADD_TEST(NULL, "Evas", "Snapshot", test_evas_snapshot);
 
    //------------------------------//
    ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);
