@@ -1,4 +1,5 @@
 group { name: "e/modules/batman/main";
+   alias: "e/modules/batman/main_vert";
    images.image: "bat_shadow.png" COMP;
    images.image: "bat_base.png" COMP;
    images.image: "bat_shine.png" COMP;
