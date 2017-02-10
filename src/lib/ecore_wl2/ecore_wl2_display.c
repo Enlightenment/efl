@@ -125,14 +125,10 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
 
    if (!strcmp(interface, "wl_compositor"))
      {
-        unsigned int request_version = 3;
-#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
-        request_version = 4;
-#endif
+        ewd->wl.compositor_version = MIN(version, 4);
         ewd->wl.compositor =
           wl_registry_bind(registry, id, &wl_compositor_interface,
-                           MIN(version, request_version));
-        ewd->wl.compositor_version = MIN(version, request_version);
+                           ewd->wl.compositor_version);
      }
    else if (!strcmp(interface, "wl_subcompositor"))
      {
