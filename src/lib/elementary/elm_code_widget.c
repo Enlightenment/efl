@@ -551,7 +551,7 @@ _elm_code_widget_update_focus_directions(Elm_Code_Widget *obj)
 static void
 _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
 {
-   Evas_Coord viewx, viewy, vieww, viewh, cellw, cellh;
+   Evas_Coord viewx, viewy, vieww, viewh, cellw = 0, cellh = 0;
    Evas_Coord curx, cury, oy, rowy;
    Evas_Object *grid;
    Elm_Code_Widget_Data *pd;
@@ -618,9 +618,9 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
    Elm_Code_Widget *widget;
    Eina_List *item;
    Elm_Code_Line *line;
-   Evas_Coord ox, oy, sx, sy, rowy;
+   Evas_Coord ox = 0, oy = 0, sx = 0, sy = 0, rowy = 0;
    Evas_Object *grid;
-   int cw, ch, gutter;
+   int cw = 0, ch = 0, gutter;
    unsigned int guess, number;
 
    widget = (Elm_Code_Widget *)obj;
@@ -663,8 +663,8 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
 {
    Elm_Code_Line *line;
    Evas_Object *grid;
-   Evas_Coord cellw;
-   unsigned int length;
+   Evas_Coord cellw = 0;
+   unsigned int length = 0;
    int gutter;
 
    line = elm_code_file_line_get(pd->code->file, row);
@@ -1868,7 +1868,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
    Eina_List *item;
    Evas_Object *grid;
    Evas_Coord ww, wh, old_width, old_height;
-   int w, h, cw, ch, gutter;
+   int w, h, cw = 0, ch = 0, gutter;
    unsigned int line_width;
    Elm_Code_Widget_Data *pd;
 
@@ -1943,7 +1943,7 @@ _elm_code_widget_line_refresh(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED, Elm
 EOAPI Eina_Bool
 _elm_code_widget_line_visible_get(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code_Line *line)
 {
-   Evas_Coord cellh, viewy, viewh;
+   Evas_Coord cellh = 0, viewy = 0, viewh = 0;
 
    elm_scroller_region_get(pd->scroller, NULL, &viewy, NULL, &viewh);
    _elm_code_widget_cell_size_get(obj, NULL, &cellh);
@@ -1957,7 +1957,7 @@ _elm_code_widget_line_visible_get(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code_Li
 EOAPI unsigned int
 _elm_code_widget_lines_visible_get(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   Evas_Coord cellh, viewh;
+   Evas_Coord cellh = 0, viewh = 0;
 
    elm_scroller_region_get(pd->scroller, NULL, NULL, NULL, &viewh);
    _elm_code_widget_cell_size_get(obj, NULL, &cellh);
