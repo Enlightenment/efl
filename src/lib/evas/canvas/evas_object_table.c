@@ -942,6 +942,16 @@ _evas_table_efl_gfx_size_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Evas_Coo
 }
 
 EOLIAN static void
+_evas_table_efl_gfx_position_set(Eo *obj, Evas_Table_Data *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+     return;
+
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   evas_object_smart_changed(obj);
+}
+
+EOLIAN static void
 _evas_table_efl_canvas_group_group_calculate(Eo *o, Evas_Table_Data *priv)
 {
    Evas *e;

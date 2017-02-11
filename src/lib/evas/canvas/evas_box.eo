@@ -659,6 +659,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       class.constructor;
       Efl.Object.constructor;
       Efl.Gfx.size { set; }
+      Efl.Gfx.position { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
