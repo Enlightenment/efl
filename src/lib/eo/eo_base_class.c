@@ -1150,7 +1150,8 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
    // Update possible event emissions
    for (frame = pd->event_frame; frame; frame = frame->next)
      {
-        if (itr-pd->callbacks < frame->idx) frame->inserted_before++;
+        if ((itr - pd->callbacks) < (ptrdiff_t)frame->idx)
+          frame->inserted_before++;
      }
 }
 
