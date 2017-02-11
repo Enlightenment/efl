@@ -54,7 +54,7 @@ _ecore_buffer_shm_buffer_alloc(Ecore_Buffer_Module_Data bmdata, int width, int h
 {
    Ecore_Buffer_Shm_Data* b;
    char *name;
-   int fd, size, page_size;
+   int fd, page_size;
    Efl_Vpath_File *file_obj;
 
    page_size = eina_cpu_page_size();
