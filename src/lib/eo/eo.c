@@ -2510,12 +2510,12 @@ _eo_log_obj_entry_show(const Eo_Log_Obj_Entry *entry, int log_level, const char 
              if (info.dli_sname)
                {
                   eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
-                                 "   %#016" PRIx64 ": %s+%#" PRIx64 " (in %s %#" PRIx64 ")",
-                                 (uint64_t)entry->bt[i],
+                                 "   0x%016llx: %s+%llu (in %s 0x%llx)",
+                                 (unsigned long long)(uintptr_t)entry->bt[i],
                                  info.dli_sname,
-                                 (char *)entry->bt[i] - (char *)info.dli_saddr,
+                                 (unsigned long long)(uintptr_t)((char *)entry->bt[i] - (char *)info.dli_saddr),
                                  info.dli_fname ? info.dli_fname : "??",
-                                 (uint64_t)info.dli_fbase);
+                                 (unsigned long long)(uintptr_t)info.dli_fbase);
                   continue;
                }
              else if (info.dli_fname)
@@ -2531,19 +2531,19 @@ _eo_log_obj_entry_show(const Eo_Log_Obj_Entry *entry, int log_level, const char 
                   else fname++;
 
                   eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
-                                 "   %#016" PRIx64 ": %s+%#" PRIx64 " (in %s %#" PRIx64 ")",
-                                 (uint64_t)entry->bt[i],
+                                 "   0x%016llx: %s+%llu (in %s 0x%llx)",
+                                 (unsigned long long)(uintptr_t)entry->bt[i],
                                  fname,
-                                 (char *)entry->bt[i] - (char *)info.dli_fbase,
+                                 (unsigned long long)(uintptr_t)((char *)entry->bt[i] - (char *)info.dli_fbase),
                                  info.dli_fname,
-                                 (uint64_t)info.dli_fbase);
+                                 (unsigned long long)(uintptr_t)info.dli_fbase);
                   continue;
                }
           }
 #endif
 
         eina_log_print(_eo_log_objs_dom, log_level, func_name, file, line,
-                       "   %#016" PRIx64, (uint64_t)entry->bt[i]);
+                       "   0x%016llx", (unsigned long long)(uintptr_t)entry->bt[i]);
      }
 }
 #endif
