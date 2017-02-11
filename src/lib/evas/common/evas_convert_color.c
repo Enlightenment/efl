@@ -71,7 +71,7 @@ evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
 
         while (data <= de - 8)
           {
-             uint8x8x4_t rgba = vld4_u8(data);
+             uint8x8x4_t rgba = vld4_u8((uint8_t *)data);
 
              cmp = vand_u8(vorr_u8(vceq_u8(rgba.val[3], mask_0xff),
                                    vceq_u8(rgba.val[3], mask_0x00)),
@@ -91,7 +91,7 @@ evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
                                                  lrgba.val[3]), 8);
              rgba.val[2] = vshrn_n_u16(vmlaq_u16(lrgba.val[2], lrgba.val[2],
                                                  lrgba.val[3]), 8);
-             vst4_u8(data, rgba);
+             vst4_u8((uint8_t *)data, rgba);
              data += 8;
           }
      }
