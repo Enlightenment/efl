@@ -12,7 +12,7 @@ _op_copy_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA32
                      });
 #else
 #define AP "COPY_C_DP_"
-   uint32_t *e = d + l,*tmp;
+   uint32_t *e = d + l, *tmp;
    asm volatile (
       ".fpu neon					\n\t"
 
@@ -84,10 +84,10 @@ _op_copy_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA32
 		"vst1.32	d0[0], [%[d]]		\n\t"
 
 	AP "done:\n\t"
-
-		: // No output regs
+		// Output
+		: [tmp] "=r" (tmp)
 		// Input
-		: [c] "r" (c), [e] "r" (e), [d] "r" (d),[tmp] "r" (tmp)
+		: [c] "r" (c), [e] "r" (e), [d] "r" (d)
 		// Clobbered
 		: "q0","q1","memory"
 
