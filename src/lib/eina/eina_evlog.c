@@ -150,8 +150,8 @@ eina_evlog(const char *event, void *obj, double srctime, const char *detail)
    item                = (Eina_Evlog_Item *)strings;
    item->tim           = now;
    item->srctim        = srctime;
-   item->thread        = (unsigned long long)pthread_self();
-   item->obj           = (unsigned long long)obj;
+   item->thread        = (unsigned long long)(uintptr_t)pthread_self();
+   item->obj           = (unsigned long long)(uintptr_t)obj;
    item->event_offset  = sizeof(Eina_Evlog_Item);
    item->detail_offset = detail_offset;
    item->event_next    = size;

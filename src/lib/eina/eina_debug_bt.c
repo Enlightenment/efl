@@ -36,8 +36,8 @@ _eina_debug_dump_fhandle_bt(FILE *f, void **bt, int btlen)
         // anything here
         if ((dladdr(bt[i], &info)) && (info.dli_fname[0]))
           {
-             offset = (unsigned long long)bt[i];
-             base = (unsigned long long)info.dli_fbase;
+             offset = (unsigned long long)(uintptr_t)bt[i];
+             base = (unsigned long long)(uintptr_t)info.dli_fbase;
              file = _eina_debug_file_get(info.dli_fname);
           }
         // rely on normal libc buffering for file ops to avoid syscalls.
