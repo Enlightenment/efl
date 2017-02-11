@@ -530,7 +530,7 @@ _efl_io_buffered_stream_pending_read_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stre
 EOLIAN static void
 _efl_io_buffered_stream_progress_get(Eo *o EINA_UNUSED, Efl_Io_Buffered_Stream_Data *pd, size_t *pr, size_t *pw)
 {
-   size_t r = 0, w = 0;
+   uint64_t r = 0, w = 0;
 
    if (pd->sender) efl_io_copier_progress_get(pd->sender, NULL, &w, NULL);
    if (pd->receiver) efl_io_copier_progress_get(pd->receiver, &r, NULL, NULL);
