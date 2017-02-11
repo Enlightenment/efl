@@ -341,12 +341,12 @@
                   p0 = p1 = p2 = p3 = *p;
                   if ((sx + 1) < srw)
                     p1 = *(p + 1);
-                    if ((sy + 1) < srh)
-                      {
-                        p2 = *q;  p3 = p2;
-                        if ((sx + 1) < srw)
-                          p3 = *(q + 1);
-                      }
+                  if ((sy + 1) < srh)
+                    {
+                       p2 = *q;  p3 = p2;
+                       if ((sx + 1) < srw)
+                         p3 = *(q + 1);
+                    }
                   if (p0 | p1)
                     p0 = INTERP_256(ax, p1, p0);
                   if (p2 | p3)
