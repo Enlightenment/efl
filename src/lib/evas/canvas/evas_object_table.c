@@ -1143,6 +1143,11 @@ _evas_table_pack(Eo *o, Evas_Table_Data *priv, Evas_Object *child, unsigned shor
           }
         optalloc = EINA_TRUE;
      }
+   else
+     {
+        ERR("%p is already added to a table", child);
+        return EINA_FALSE;
+     }
 
    opt->obj = child;
    opt->col = col;
