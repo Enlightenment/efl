@@ -633,7 +633,7 @@ _ecore_pipe_read(void             *data,
 
         /* catch the non error case first */
         /* if we read enough data to finish the message/buffer */
-        if (ret == (p->len - p->already_read))
+        if (ret == (ssize_t)(p->len - p->already_read))
           _ecore_pipe_handler_call(p, p->passed_data, p->len);
         else if (ret > 0)
           {
