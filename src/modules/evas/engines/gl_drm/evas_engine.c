@@ -72,7 +72,7 @@ EGLImageKHR (*glsym_evas_gl_common_eglCreateImage) (EGLDisplay a, EGLContext b, 
 void (*glsym_eglDestroyImage)(EGLDisplay a, void *b) = NULL;
 void (*glsym_glEGLImageTargetTexture2DOES)(int a, void *b) = NULL;
 unsigned int (*glsym_eglSwapBuffersWithDamage)(EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
-unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, struct wl_resource *b, EGLint c, EGLint *d) = NULL;
+unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, void *b, EGLint c, EGLint *d) = NULL;
 unsigned int (*glsym_eglSetDamageRegionKHR)(EGLDisplay a, EGLSurface b, EGLint *c, EGLint d) = NULL;
 
 /* local function prototypes */
