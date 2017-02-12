@@ -415,7 +415,7 @@ struct _Eina_Inlist
 #define EINA_INLIST_GET(Inlist)         (& ((Inlist)->__in_list))
 /** Utility macro to get the container object of an inlist */
 #define EINA_INLIST_CONTAINER_GET(ptr,                          \
-                                  type) ((type *)((char *)ptr - \
+                                  type) ((type *)(void *)((char *)ptr - \
                                                   offsetof(type, __in_list)))
 
 
