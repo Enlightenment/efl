@@ -1340,9 +1340,12 @@ _surface_buffers_allocate(void *eng_data EINA_UNUSED, EVGL_Surface *sfc, int w, 
           }
         else
 #endif
-          _renderbuffer_allocate(sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
-                                 w, h, sfc->msaa_samples);
-          sfc->buffer_mem[3] = w * h * 4;
+          {
+             _renderbuffer_allocate(sfc->depth_stencil_buf,
+                                    sfc->depth_stencil_fmt, w, h,
+                                    sfc->msaa_samples);
+             sfc->buffer_mem[3] = w * h * 4;
+          }
      }
    else
      {
