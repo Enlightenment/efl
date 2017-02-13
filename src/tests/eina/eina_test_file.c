@@ -844,7 +844,6 @@ int  create_file_not_empty(const char *file_name, Eina_Tmpstr **test_file_path, 
 START_TEST(eina_test_file_unlink)
 {
    int fd;
-   Eina_File *file;
    Eina_Tmpstr *test_file_path;
    const char *tmpfile = "eina_file_test_XXXXXX";
 
