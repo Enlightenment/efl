@@ -439,7 +439,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
                {
                   repeat = EINA_TRUE;
                   if (count == 0)
-                    ERR("Pageflip fail - EBUSY from drmModePageFlip...");
+                    WRN("Pageflip fail - EBUSY from drmModePageFlip...");
                   count++;
                   if (count > 500)
                     {
@@ -450,12 +450,13 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
                }
           }
         while (repeat);
+
         if ((ret == 0) && (count > 0))
-          ERR("Pageflip finally succeeded after %i tries due to EBUSY", count);
+          DBG("Pageflip finally succeeded after %i tries due to EBUSY", count);
 
         if ((ret < 0) && (errno != EBUSY))
           {
-             DBG("Pageflip Failed for Crtc %u on Connector %u: %m",
+             ERR("Pageflip Failed for Crtc %u on Connector %u: %m",
                  output->crtc_id, output->conn_id);
              return ret;
           }
