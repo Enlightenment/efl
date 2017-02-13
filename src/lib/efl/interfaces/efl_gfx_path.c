@@ -223,7 +223,7 @@ _efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED,
    maxx = pd->points[0];
    maxy = pd->points[1];
 
-   for (i = 1; i < pd->points_count; i += 2)
+   for (i = 2; i < pd->points_count; i += 2)
      {
         minx = minx < pd->points[i] ? minx : pd->points[i];
         miny = miny < pd->points[i + 1] ? miny : pd->points[i + 1];
