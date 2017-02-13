@@ -313,6 +313,9 @@ Fixes:
    * ecore-wl2: Support sending focus for wl_shell
    * elm config - handle setuid apps correctly and dont create junk dirs in .
    * eina utils and vpath - use euid not uid if setuid for correct user
+   * elm_code: Fix syntax crash on trailing newline in multiline macro
+   * ecore-wl2: roundtrip during client disconnect
+   * evas: fix bugs in gif image loader
 
 Changes since 1.17.0:
 ---------------------
