@@ -266,23 +266,25 @@ _texture_destroy(GLuint *tex)
 static void
 _texture_attach_2d(GLuint tex, GLenum attach, GLenum attach2, int samples, Evas_GL_Context_Version version)
 {
-   if (samples)
+   if (samples && (version == EVAS_GL_GLES_2_X))
      {
 #ifdef GL_GLES
-        //<<< TODO : CHECK EXTENSION SUPPORT>>>
-        EXT_FUNC(glFramebufferTexture2DMultisample)(GL_FRAMEBUFFER,
-                                                    attach,
-                                                    GL_TEXTURE_2D, tex,
-                                                    0, samples);
+        if (EXT_FUNC(glFramebufferTexture2DMultisample))
+          {
+             EXT_FUNC(glFramebufferTexture2DMultisample)(GL_FRAMEBUFFER,
+                                                         attach,
+                                                         GL_TEXTURE_2D, tex,
+                                                         0, samples);
 
-        if (attach2)
-           EXT_FUNC(glFramebufferTexture2DMultisample)(GL_FRAMEBUFFER,
-                                                       attach2,
-                                                       GL_TEXTURE_2D, tex,
-                                                       0, samples);
-#else
-        ERR("MSAA not supported.  Should not have come in here...!");
+             if (attach2)
+               EXT_FUNC(glFramebufferTexture2DMultisample)(GL_FRAMEBUFFER,
+                                                           attach2,
+                                                           GL_TEXTURE_2D, tex,
+                                                           0, samples);
+          }
+        else
 #endif
+        ERR("MSAA not supported.  Should not have come in here...!");
      }
    else if (version == EVAS_GL_GLES_1_X)
      {
@@ -435,17 +437,22 @@ _renderbuffer_allocate(GLuint buf, GLenum fmt, int w, int h, int samples)
 {
    glBindRenderbuffer(GL_RENDERBUFFER, buf);
    if (samples)
+     {
+        if (glsym_glRenderbufferStorageMultisample)
+          glsym_glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, fmt, w, h);
+        else
+          {
 #ifdef GL_GLES
-      EXT_FUNC(glRenderbufferStorageMultisample)(GL_RENDERBUFFER, samples, fmt, w, h);
-#else
-      ERR("MSAA not supported.  Should not have come in here...!");
+             if (EXT_FUNC(glRenderbufferStorageMultisample))
+               EXT_FUNC(glRenderbufferStorageMultisample)(GL_RENDERBUFFER, samples, fmt, w, h);
+             else
 #endif
+               ERR("MSAA not supported.  Should not have come in here...!");
+          }
+     }
    else
-      glRenderbufferStorage(GL_RENDERBUFFER, fmt, w, h);
+     glRenderbufferStorage(GL_RENDERBUFFER, fmt, w, h);
    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-   return;
-   samples = 0;
 }
 
 static void
@@ -487,17 +494,21 @@ _fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt,
    int depth_stencil = 0;
    int fb_status = 0;
    int w = 2, h = 2;   // Test it with a simple (2,2) surface.  Should I test it with NPOT?
+   Evas_GL_Context_Version ver = evas_gl_common_version_check();
 
    // Gen FBO
    glGenFramebuffers(1, &fbo);
    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+   // FIXME: GLES 3 support for MSAA is NOT IMPLEMENTED!
+   // Needs to use RenderbufferStorageMultisample + FramebufferRenderbuffer
 
    // Color Buffer Texture
    if ((color_ifmt) && (color_fmt))
      {
         _texture_create(&color_buf);
         _texture_allocate_2d(color_buf, color_ifmt, color_fmt, GL_UNSIGNED_BYTE, w, h);
-        _texture_attach_2d(color_buf, GL_COLOR_ATTACHMENT0, 0, mult_samples, EVAS_GL_GLES_2_X);
+        _texture_attach_2d(color_buf, GL_COLOR_ATTACHMENT0, 0, mult_samples, ver);
      }
 
       // Check Depth_Stencil Format First
@@ -882,8 +893,10 @@ error:
 static int
 _surface_cap_init(void *eng_data)
 {
+   int gles_version;
    int ret = 0;
    int max_size = 0;
+   int max_samples = 0;
 
    // Do internal make current
    if (!_internal_resource_make_current(eng_data, NULL, NULL))
@@ -899,11 +912,17 @@ _surface_cap_init(void *eng_data)
    evgl_engine->caps.max_h = max_size;
    DBG("Max Surface Width: %d   Height: %d", evgl_engine->caps.max_w, evgl_engine->caps.max_h);
 
-   // Check for MSAA support
-#ifdef GL_GLES
-   int max_samples = 0;
+   gles_version = evas_gl_common_version_check();
 
-   if (EXTENSION_SUPPORT(IMG_multisampled_render_to_texture))
+   // Check for MSAA support
+   if (gles_version == 3)
+     {
+        glGetIntegerv(GL_MAX_SAMPLES, &max_samples);
+        INF("MSAA support for GLES 3 is not implemented yet!");
+        max_samples = 0;
+     }
+#ifdef GL_GLES
+   else if (EXTENSION_SUPPORT(IMG_multisampled_render_to_texture))
      {
         glGetIntegerv(GL_MAX_SAMPLES_IMG, &max_samples);
      }
@@ -911,6 +930,16 @@ _surface_cap_init(void *eng_data)
      {
         glGetIntegerv(GL_MAX_SAMPLES_EXT, &max_samples);
      }
+   else
+     {
+        const char *exts = (const char *) glGetString(GL_EXTENSIONS);
+
+        if (exts && strstr(exts, "EXT_multisampled_render_to_texture"))
+          glGetIntegerv(GL_MAX_SAMPLES_EXT, &max_samples);
+        else if (exts && strstr(exts, "IMG_multisampled_render_to_texture"))
+          glGetIntegerv(GL_MAX_SAMPLES_IMG, &max_samples);
+     }
+#endif
 
    if (max_samples >= 2)
      {
@@ -919,7 +948,6 @@ _surface_cap_init(void *eng_data)
         evgl_engine->caps.msaa_samples[2] = max_samples;
         evgl_engine->caps.msaa_supported  = 1;
      }
-#endif
 
    // Load Surface Cap
    if (!_surface_cap_cache_load())
@@ -1493,7 +1521,8 @@ try_again:
 
    if (cfg_index < 0)
      {
-        ERR("Unable to find a matching config format.");
+        ERR("Unable to find a matching config format (depth:%d, stencil:%d, msaa:%d)",
+            depth_size, stencil_bit, msaa_samples);
         if ((stencil_bit > 8) || (depth_size > 24))
           {
              INF("Please note that Evas GL might not support 32-bit depth or "
@@ -1506,6 +1535,13 @@ try_again:
                }
              if (stencil_bit > 8) stencil_bit = 8; // see STENCIL_BIT_8
              DBG("Fallback to depth:%d, stencil:%d", depth_size, stencil_bit);
+             goto try_again;
+          }
+        else if (msaa_samples > 0)
+          {
+             msaa_samples /= 2;
+             if (msaa_samples == 1) msaa_samples = 0;
+             DBG("Fallback to msaa:%d", msaa_samples);
              goto try_again;
           }
         return 0;

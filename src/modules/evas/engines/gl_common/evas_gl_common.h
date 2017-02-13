@@ -543,6 +543,7 @@ typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym));
 
 EAPI void __evas_gl_err(int err, const char *file, const char *func, int line, const char *op);
 
+int               evas_gl_common_version_check(void);
 void              evas_gl_common_tiling_start(Evas_Engine_GL_Context *gc,
                                               int rot, int gw, int gh,
                                               int cx, int cy, int cw, int ch,
@@ -709,6 +710,7 @@ extern void       (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d);
 extern void       (*glsym_glReleaseShaderCompiler)(void);
 extern void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b);
 extern GLboolean  (*glsym_glUnmapBuffer)          (GLenum a);
+extern void       (*glsym_glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
 
 #ifdef GL_GLES
 EAPI void *           evas_gl_common_eglCreateImage          (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list);

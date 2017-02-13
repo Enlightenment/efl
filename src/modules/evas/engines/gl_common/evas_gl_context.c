@@ -31,6 +31,7 @@ void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b) = NULL;
 GLboolean  (*glsym_glUnmapBuffer)          (GLenum a) = NULL;
 void       (*glsym_glStartTiling)          (GLuint a, GLuint b, GLuint c, GLuint d, GLuint e) = NULL;
 void       (*glsym_glEndTiling)            (GLuint a) = NULL;
+void       (*glsym_glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) = NULL;
 
 const char *(*glsym_glGetStringi) (GLenum name, GLuint index) = NULL;
 
@@ -289,6 +290,8 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferEXT", NULL, glsym_func_boolean);
      }
 
+   FINDSYM(glsym_glRenderbufferStorageMultisample, "glRenderbufferStorageMultisample", NULL, glsym_func_void);
+
 #ifdef GL_GLES
 // yes - gl core looking for egl stuff. i know it's odd. a reverse-layer thing
 // but it will work as the egl/glx layer calls gl core common stuff and thus
@@ -489,15 +492,14 @@ matrix_ortho(GLfloat *m,
    m[15] = (m[3] * tx) + (m[7] * ty) + orth;
 }
 
-static int
-_evas_gl_common_version_check(int *gles_ver)
+int
+evas_gl_common_version_check(void)
 {
    char *version;
    char *tmp;
    char *tmp2;
    int major = 0;
    int minor = 0;
-   *gles_ver = 0;
 
   /*
    * glGetString returns a string describing the current GL connection.
@@ -539,8 +541,7 @@ _evas_gl_common_version_check(int *gles_ver)
    if (strstr(version, "OpenGL ES 3"))
      {
         /* Supported */
-        *gles_ver = 3;
-        return 1;
+        return 3;
      }
 
    /* OpenGL ES 2.* ? */
@@ -548,8 +549,7 @@ _evas_gl_common_version_check(int *gles_ver)
    if (strstr(version, "OpenGL ES "))
      {
         /* Supported */
-        *gles_ver = 2;
-        return 1;
+        return 2;
      }
 
   /*
@@ -594,19 +594,16 @@ _evas_gl_common_version_check(int *gles_ver)
      {
         /* Map GL to GLES version: Refer http://en.wikipedia.org/wiki/OpenGL_ES */
         if ((major >= 4) && (minor >= 3))
-          *gles_ver = 3;
+          return 3;
         else if ((major > 3) || ((major == 3) && (minor >= 3))) /* >= 3.3 */
           {
              const char *exts = NULL;
              int num = 0;
+
              if (_has_ext("GL_ARB_ES3_compatibility", &exts, &num))
-               *gles_ver = 3;
-             else
-               *gles_ver = 2;
+               return 3;
           }
-        else
-          *gles_ver = 2; /* emulated support */
-        return 1;
+        return 2; /* emulated support */
      }
 
    return 0;
@@ -790,8 +787,9 @@ evas_gl_common_context_new(void)
    if (!glsym_glGetStringi)
      glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
 
-   if (!_evas_gl_common_version_check(&gles_version))
-     return NULL;
+   gles_version = evas_gl_common_version_check();
+   if (!gles_version) return NULL;
+
    gc = calloc(1, sizeof(Evas_Engine_GL_Context));
    if (!gc) return NULL;
 
