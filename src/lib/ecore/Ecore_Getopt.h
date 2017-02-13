@@ -31,8 +31,8 @@
 #endif /* ! _WIN32 */
 
 /**
- * @defgroup Ecore_Getopt_Group Ecore Getopt
  * @ingroup Ecore
+ * @defgroup Ecore_Getopt_Group Ecore Getopt
  *
  * This group contains powerful getopt replacement.
  *
@@ -58,7 +58,7 @@ extern "C" {
 
 /**
  * @typedef Ecore_Getopt_Action
- * @brief Enumeration that defines the actions to do when parsing command line
+ * @brief Enumeration for defining the actions to do when parsing command line
  * parameters.
  */
 typedef enum {
@@ -80,7 +80,7 @@ typedef enum {
 
 /**
  * @typedef Ecore_Getopt_Type
- * @brief Enumeration that defines the type of the values to store when using
+ * @brief Enumeration for defining the type of the values to store when using
  * append action.
  */
 typedef enum {
@@ -97,7 +97,7 @@ typedef enum {
 
 /**
  * @typedef Ecore_Getopt_Desc_Arg_Requirement
- * @brief Enumeration that defines if the command line options require an
+ * @brief Enumeration for defining if the command line options require an
  * argument.
  */
 typedef enum {
@@ -222,14 +222,14 @@ struct _Ecore_Getopt
 };
 
 /**
- * @brief Macro that helps to fill the Ecore_Getopt_Desc table.
+ * @brief Definition for macro that helps to fill the Ecore_Getopt_Desc table.
  */
 #define ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar, type, arg_requirement, default_value) \
   {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_STORE,                                         \
    {.store = {type, arg_requirement, default_value}}}
 
 /**
- * @brief Macro that fills an option in Ecore_Getopt_Desc table.
+ * @brief Definition for macro that fills an option in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -240,7 +240,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_FULL(shortname, longname, help, NULL, type, \
                           ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES, {})
 /**
- * @brief Macro that fill Ecore_Getopt_Desc table with an option of type string.
+ * @brief Definition for macro that fill Ecore_Getopt_Desc table with an option of type string.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -250,7 +250,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_STR)
 
 /**
- * @brief Macro that fill Ecore_Getopt_Desc table with an option of type boolean.
+ * @brief Definition for macro that fill Ecore_Getopt_Desc table with an option of type boolean.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -260,7 +260,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_BOOL)
 
 /**
- * @brief Macro that fill Ecore_Getopt_Desc table with an option of type short.
+ * @brief Definition for macro that fill Ecore_Getopt_Desc table with an option of type short.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -270,7 +270,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_SHORT)
 
 /**
- * @brief Macro that fill Ecore_Getopt_Desc table with an option of type int.
+ * @brief Definition for macro that fill Ecore_Getopt_Desc table with an option of type int.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -280,7 +280,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_INT)
 
 /**
- * @brief Macro that fill Ecore_Getopt_Desc table with an option of type long.
+ * @brief Definition for macro that fill Ecore_Getopt_Desc table with an option of type long.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -290,7 +290,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_LONG)
 
 /**
- * @brief Macro that fill Ecore_Getopt_Desc table with an option of type ushort.
+ * @brief Definition for macro that fill Ecore_Getopt_Desc table with an option of type ushort.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -300,7 +300,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_USHORT)
 
 /**
- * @brief Macro that fill Ecore_Getopt_Desc table with an option of type uint.
+ * @brief Definition for macro that fill Ecore_Getopt_Desc table with an option of type uint.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -310,7 +310,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_UINT)
 
 /**
- * @brief Macro that fill Ecore_Getopt_Desc table with an option of type ulong.
+ * @brief Definition for macro that fill Ecore_Getopt_Desc table with an option of type ulong.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -320,7 +320,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_ULONG)
 
 /**
- * @brief Macro that fill Ecore_Getopt_Desc table with an option of type double.
+ * @brief Definition for macro that fill Ecore_Getopt_Desc table with an option of type double.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -330,7 +330,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_DOUBLE)
 
 /**
- * Macro that helps to fill the Ecore_Getopt_Desc table with a metavar after
+ * Definition for macro that helps to fill the Ecore_Getopt_Desc table with a metavar after
  * the description of the option.
  */
 #define ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, type) \
@@ -338,7 +338,7 @@ struct _Ecore_Getopt
                           ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES, {})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type string and metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type string and metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -349,7 +349,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_STR)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type boolean and metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type boolean and metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -360,7 +360,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_BOOL)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type short and metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type short and metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -371,7 +371,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_SHORT)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type int and metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type int and metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -382,7 +382,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_INT)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type long and metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type long and metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -393,7 +393,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_LONG)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type unsigned short and metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type unsigned short and metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -404,7 +404,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_USHORT)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type unsigned int and metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type unsigned int and metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -415,7 +415,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_UINT)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type unsigned long and metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type unsigned long and metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -426,7 +426,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_ULONG)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type double and metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type double and metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -437,7 +437,7 @@ struct _Ecore_Getopt
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_DOUBLE)
 
 /**
- * Macro that helps to fill the Ecore_Getopt_Desc table with a default value.
+ * Definition for macro that helps to fill the Ecore_Getopt_Desc table with a default value.
  */
 #define ECORE_GETOPT_STORE_DEF(shortname, longname, help, type, default_value) \
   ECORE_GETOPT_STORE_FULL(shortname, longname, help, NULL, type,               \
@@ -445,7 +445,7 @@ struct _Ecore_Getopt
                           default_value)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type string and default value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type string and default value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -458,7 +458,7 @@ struct _Ecore_Getopt
                          {.strv = default_value})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type boolean and default value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type boolean and default value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -471,7 +471,7 @@ struct _Ecore_Getopt
                          {.boolv = default_value})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type short and default value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type short and default value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -484,7 +484,7 @@ struct _Ecore_Getopt
                          {.shortv = default_value})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type int and default value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type int and default value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -497,7 +497,7 @@ struct _Ecore_Getopt
                          {.intv = default_value})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type long and default value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type long and default value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -510,7 +510,7 @@ struct _Ecore_Getopt
                          {.longv = default_value})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type unsigned short and default value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type unsigned short and default value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -523,7 +523,7 @@ struct _Ecore_Getopt
                          {.ushortv = default_value})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type unsigned int and default value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type unsigned int and default value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -536,7 +536,7 @@ struct _Ecore_Getopt
                          {.uintv = default_value})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type unsigned long and default value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type unsigned long and default value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -549,7 +549,7 @@ struct _Ecore_Getopt
                          {.ulongv = default_value})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an option of type double and default value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an option of type double and default value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -562,7 +562,7 @@ struct _Ecore_Getopt
                          {.doublev = default_value})
 
 /**
- * @brief Fill full string type option description in Ecore_Getopt_Desc table.
+ * @brief Definition for filling full string type option description in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -578,7 +578,7 @@ struct _Ecore_Getopt
                           {.strv = default_value})
 
 /**
- * @brief Fill full boolean type option description in Ecore_Getopt_Desc table.
+ * @brief Definition for filling full boolean type option description in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -594,7 +594,7 @@ struct _Ecore_Getopt
                           {.boolv = default_value})
 
 /**
- * @brief Fill full short type option description in Ecore_Getopt_Desc table.
+ * @brief Definition for filling full short type option description in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -610,7 +610,7 @@ struct _Ecore_Getopt
                           {.shortv = default_value})
 
 /**
- * @brief Fill full int type option description in Ecore_Getopt_Desc table.
+ * @brief Definition for filling full int type option description in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -626,7 +626,7 @@ struct _Ecore_Getopt
                           {.intv = default_value})
 
 /**
- * @brief Fill full long type option description in Ecore_Getopt_Desc table.
+ * @brief Definition for filling full long type option description in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -642,7 +642,7 @@ struct _Ecore_Getopt
                           {.longv = default_value})
 
 /**
- * @brief Fill full unsigned short type option description in Ecore_Getopt_Desc table.
+ * @brief Definition for filling full unsigned short type option description in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -658,7 +658,7 @@ struct _Ecore_Getopt
                           {.ushortv = default_value})
 
 /**
- * @brief Fill full unsigned int type option description in Ecore_Getopt_Desc table.
+ * @brief Definition for filling full unsigned int type option description in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -674,7 +674,7 @@ struct _Ecore_Getopt
                           {.uintv = default_value})
 
 /**
- * @brief Fill full unsigned long type option description in Ecore_Getopt_Desc table.
+ * @brief Definition for filling full unsigned long type option description in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -690,7 +690,7 @@ struct _Ecore_Getopt
                           {.ulongv = default_value})
 
 /**
- * @brief Fill full double type option description in Ecore_Getopt_Desc table.
+ * @brief Definition for filling full double type option description in Ecore_Getopt_Desc table.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -706,7 +706,7 @@ struct _Ecore_Getopt
                           {.doublev = default_value})
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a constant value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a constant value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -718,7 +718,7 @@ struct _Ecore_Getopt
    {.store_const = value}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a true boolean value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a true boolean value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -729,7 +729,7 @@ struct _Ecore_Getopt
    {.dummy = NULL}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a false boolean value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a false boolean value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -740,7 +740,7 @@ struct _Ecore_Getopt
    {.dummy = NULL}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a true boolean value.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a true boolean value.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -752,7 +752,7 @@ struct _Ecore_Getopt
    {.choices = choices_array}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a choice.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a choice.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -765,7 +765,7 @@ struct _Ecore_Getopt
    {.choices = choices_array}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an append action.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an append action.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -777,7 +777,7 @@ struct _Ecore_Getopt
    {.append_type = sub_type}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an append action and a metavar.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an append action and a metavar.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -790,7 +790,7 @@ struct _Ecore_Getopt
    {.append_type = type}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an count action.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an count action.
  *
  * This will store the number of time the option has been passed to the command
  * line.
@@ -803,7 +803,7 @@ struct _Ecore_Getopt
    {.dummy = NULL}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an callback action and argument requirements.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an callback action and argument requirements.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -811,7 +811,7 @@ struct _Ecore_Getopt
  * @param metavar The metavar message concerning the parameter of the option.
  * @param callback_func The callback function to call.
  * @param callback_data The data to pass to the callback.
- * @param argument_requirement the required arguments to this option.
+ * @param argument_requirement The required arguments to this option.
  * @param default_value The default values for these arguments.
  */
 #define ECORE_GETOPT_CALLBACK_FULL(shortname, longname, help, metavar, callback_func, callback_data, argument_requirement, default_value) \
@@ -820,7 +820,7 @@ struct _Ecore_Getopt
                  argument_requirement, default_value}}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an callback action and no arguments.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an callback action and no arguments.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -835,7 +835,7 @@ struct _Ecore_Getopt
                              NULL)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with an callback action.
+ * @brief Definition for filling Ecore_Getopt_Desc table with an callback action.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -851,7 +851,7 @@ struct _Ecore_Getopt
                              NULL)
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a help action.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a help action.
  *
  * @param shortname The help option short name.
  * @param longname The help option long name.
@@ -862,7 +862,7 @@ struct _Ecore_Getopt
    {.dummy = NULL}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a version action.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a version action.
  *
  * @param shortname The version option short name.
  * @param longname The version option long name.
@@ -873,7 +873,7 @@ struct _Ecore_Getopt
    {.dummy = NULL}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a copyright action.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a copyright action.
  *
  * @param shortname The copyright option short name.
  * @param longname The copyright option long name.
@@ -884,7 +884,7 @@ struct _Ecore_Getopt
    {.dummy = NULL}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a license action.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a license action.
  *
  * @param shortname The license option short name.
  * @param longname The license option long name.
@@ -895,7 +895,7 @@ struct _Ecore_Getopt
    {.dummy = NULL}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a break action.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a break action.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -906,7 +906,7 @@ struct _Ecore_Getopt
    {.dummy = NULL}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a break action with help message.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a break action with help message.
  *
  * @param shortname The option short name.
  * @param longname The option long name.
@@ -921,104 +921,104 @@ struct _Ecore_Getopt
   {0, name, help, NULL, ECORE_GETOPT_ACTION_CATEGORY, {.dummy = NULL}}
 
 /**
- * @brief Fill Ecore_Getopt_Desc table with a sentinel to indicate the end of descriptions.
+ * @brief Definition for filling Ecore_Getopt_Desc table with a sentinel to indicate the end of descriptions.
  *
  */
 #define ECORE_GETOPT_SENTINEL {0, NULL, NULL, NULL, 0, {.dummy = NULL}}
 
 /**
- * @brief options that store a single value in a variable of type string.
+ * @brief Definition for options that store a single value in a variable of type string.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_STR(val)      {.strp = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type boolean.
+ * @brief Definition for options that store a single value in a variable of type boolean.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_BOOL(val)     {.boolp = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type short.
+ * @brief Definition for options that store a single value in a variable of type short.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_SHORT(val)    {.shortp = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type int.
+ * @brief Definition for options that store a single value in a variable of type int.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_INT(val)      {.intp = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type long.
+ * @brief Definition for options that store a single value in a variable of type long.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_LONG(val)     {.longp = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type unsigned short.
+ * @brief Definition for options that store a single value in a variable of type unsigned short.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_USHORT(val)   {.ushortp = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type unsigned int.
+ * @brief Definition for options that store a single value in a variable of type unsigned int.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_UINT(val)     {.uintp = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type unsigned long.
+ * @brief Definition for options that store a single value in a variable of type unsigned long.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_ULONG(val)    {.ulongp = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type double.
+ * @brief Definition for options that store a single value in a variable of type double.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_DOUBLE(val)   {.doublep = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type pointer.
+ * @brief Definition for options that store a single value in a variable of type pointer.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_PTR(val)      {.ptrp = &(val)}
 
 /**
- * @brief options that store a single value in a variable of type pointer casted.
+ * @brief Definition for options that store a single value in a variable of type pointer casted.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_PTR_CAST(val) {.ptrp = (void **)&(val)}
 
 /**
- * @brief options that store a single value in a variable of type list.
+ * @brief Definition for options that store a single value in a variable of type list.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_LIST(val)     {.listp = &(val)}
 
 /**
- * @brief options that store a NULL value.
+ * @brief Definition for options that store a NULL value.
  *
  * @param val The value to store.
  */
 #define ECORE_GETOPT_VALUE_NONE {.ptrp = NULL}
 
 /**
- * Show nicely formatted help message for the given parser.
+ * Shows nicely formatted help message for the given parser.
  *
  * @param fp The file the message will be printed on.
  * @param info The structure containing information about command line options.
@@ -1028,7 +1028,7 @@ struct _Ecore_Getopt
 EAPI void       ecore_getopt_help(FILE *fp, const Ecore_Getopt *info);
 
 /**
- * Show help for a single category (along with program usage and description).
+ * Shows help for a single category (along with program usage and description).
  *
  * @param fp The file the message will be printed on.
  * @param info The structure containing information about command line options.
@@ -1041,7 +1041,7 @@ EAPI void       ecore_getopt_help(FILE *fp, const Ecore_Getopt *info);
 EAPI Eina_Bool  ecore_getopt_help_category(FILE *fp, const Ecore_Getopt *info, const char *category);
 
 /**
- * Check parser for duplicate entries, print them out.
+ * Checks parser for duplicate entries, print them out.
  *
  * @return @c EINA_TRUE if there are duplicates, @c EINA_FALSE otherwise.
  * @param parser The parser to be checked.
@@ -1049,7 +1049,7 @@ EAPI Eina_Bool  ecore_getopt_help_category(FILE *fp, const Ecore_Getopt *info, c
 EAPI Eina_Bool  ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser);
 
 /**
- * Parse command line parameters.
+ * Parses command line parameters.
  *
  * Walks the command line parameters and parse them based on @a parser
  * description, doing actions based on @c parser->descs->action, like
@@ -1098,22 +1098,22 @@ EAPI Eina_Bool  ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser);
  * help, license, copyright, version and eventually others you may
  * define.
  *
- * @param parser description of how to work.
- * @param values where to store values, it is assumed that this is a vector
+ * @param parser Description of how to work.
+ * @param values Where to store values, it is assumed that this is a vector
  *        of the same size as @c parser->descs. Values should be previously
  *        initialized.
- * @param argc how many elements in @a argv. If not provided it will be
+ * @param argc How many elements in @a argv. If not provided it will be
  *        retrieved with ecore_app_args_get().
- * @param argv command line parameters.
+ * @param argv Command line parameters.
  *
- * @return index of first non-option parameter or -1 on error.
+ * @return Index of first non-option parameter or @c -1 on error.
  *
  * @see ecore_getopt_parse_positional()
  */
 EAPI int        ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv);
 
 /**
- * Parse command line positional parameters.
+ * Parses command line positional parameters.
  *
  * Walks the command line positional parameters (those that do not
  * start with "-" or "--") and parse them based on @a parser
@@ -1148,18 +1148,18 @@ EAPI int        ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Valu
  * standard/global gettext() call will be applied on them if ecore was
  * compiled with such support.
  *
- * @param parser description of how to work.
- * @param values where to store values, it is assumed that this is a vector
+ * @param parser Description of how to work.
+ * @param values Where to store values, it is assumed that this is a vector
  *        of the same size as @c parser->descs. Values should be previously
  *        initialized.
- * @param argc how many elements in @a argv. If not provided it will be
+ * @param argc How many elements in @a argv. If not provided it will be
  *        retrieved with ecore_app_args_get().
- * @param argv command line parameters.
- * @param start the initial position argument to look at, usually the
+ * @param argv Command line parameters.
+ * @param start The initial position argument to look at, usually the
  *        return of ecore_getopt_parse(). If less than 1, will try to
  *        find it automatically.
  *
- * @return index of first non-option parameter or -1 on error. If the
+ * @return Index of first non-option parameter or @c -1 on error. If the
  *         last positional argument is of action @c
  *         ECORE_GETOPT_ACTION_APPEND then it will be the same as @a argc.
  */
@@ -1167,9 +1167,9 @@ EAPI int        ecore_getopt_parse_positional(const Ecore_Getopt *parser, Ecore_
 
 
 /**
- * Utility to free list and nodes allocated by @a ECORE_GETOPT_ACTION_APPEND.
+ * Utilities to free list and nodes allocated by @a ECORE_GETOPT_ACTION_APPEND.
  *
- * @param list pointer to list to be freed.
+ * @param list Pointer to list to be freed.
  * @return always @c NULL, so you can easily make your list head @c NULL.
  */
 EAPI Eina_List *ecore_getopt_list_free(Eina_List *list);
@@ -1181,11 +1181,11 @@ EAPI Eina_List *ecore_getopt_list_free(Eina_List *list);
  * @param desc This parameter isn't in use.
  * @param str Geometry value
  * @param data This parameter isn't in use.
- * @param storage must be a pointer to @c Eina_Rectangle and will be used to
+ * @param storage Must be a pointer to @c Eina_Rectangle and will be used to
  * store the four values passed in the given string.
  * @return @c EINA_TRUE on success, @c EINA_FALSE on incorrect geometry value.
  *
- * This is a helper functions to be used with ECORE_GETOPT_CALLBACK_*().
+ * This is a helper function to be used with ECORE_GETOPT_CALLBACK_*().
  * 
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
@@ -1198,7 +1198,7 @@ EAPI Eina_Bool  ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser,
  * @param desc This parameter isn't in use.
  * @param str size value
  * @param data This parameter isn't in use.
- * @param storage must be a pointer to @c Eina_Rectangle and will be used to
+ * @param storage Must be a pointer to @c Eina_Rectangle and will be used to
  * store the two values passed in the given string and @c 0 in the x and y
  * fields.
  * @return @c EINA_TRUE on success, @c EINA_FALSE on incorrect size value.

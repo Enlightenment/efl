@@ -30,21 +30,21 @@ extern "C" {
  * closest power of 2 greater than @a interval will be used.
  *
  * When the poller @p func is called, it must return a value of either
- * ECORE_CALLBACK_RENEW(or 1) or ECORE_CALLBACK_CANCEL(or 0). If it
- * returns 1, it will be called again at the next tick, or if it returns
- * 0 it will be deleted automatically making any references/handles for it
+ * @c ECORE_CALLBACK_RENEW(or @c 1) or @c ECORE_CALLBACK_CANCEL(or @c 0). If it
+ * returns @c 1, it will be called again at the next tick, or if it returns
+ * @c 0 it will be deleted automatically making any references/handles for it
  * invalid.
  */
 EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_Task_Cb func, const void *data);
 
 /**
- * @brief Delete the specified poller from the timer list.
+ * @brief Deletes the specified poller from the timer list.
  * @param poller The poller to delete.
  * @return The data pointer set for the timer when @ref ecore_poller_add was
  * called on success, @c NULL otherwise.
  *
  * @note @a poller must be a valid handle. If the poller function has already
- * returned 0, the handle is no longer valid (and does not need to be deleted).
+ * returned @c 0, the handle is no longer valid (and does not need to be deleted).
  */
 EAPI void *ecore_poller_del(Ecore_Poller *poller);
 
@@ -80,7 +80,7 @@ EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
 typedef struct _Ecore_Animator Ecore_Animator;
 
 /**
- * @brief Add an animator to call @p func at every animation tick during main
+ * @brief Adds an animator to call @p func at every animation tick during main
  * loop execution.
  *
  * @param func The function to call when it ticks off
@@ -93,19 +93,19 @@ typedef struct _Ecore_Animator Ecore_Animator;
  * function will be passed the @p data pointer as its parameter.
  *
  * When the animator @p func is called, it must return a boolean value.
- * If it returns EINA_TRUE (or ECORE_CALLBACK_RENEW), it will be called again at
- * the next tick, or if it returns EINA_FALSE (or ECORE_CALLBACK_CANCEL) it will be
+ * If it returns @c EINA_TRUE (or @c ECORE_CALLBACK_RENEW), it will be called again at
+ * the next tick, or if it returns @c EINA_FALSE (or @c ECORE_CALLBACK_CANCEL) it will be
  * deleted automatically making any references/handles for it invalid.
+ * @see ecore_animator_timeline_add()
+ * @see ecore_animator_frametime_set()
  *
  * @note The default @p frametime value is 1/30th of a second.
  *
- * @see ecore_animator_timeline_add()
- * @see ecore_animator_frametime_set()
  */
 EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
 
 /**
- * @brief Add an animator that runs for a limited time
+ * @brief Adds an animator that runs for a limited time.
  *
  * @param runtime The time to run in seconds
  * @param func The function to call when it ticks off
@@ -115,8 +115,8 @@ EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
  * This function is just like ecore_animator_add() except the animator only
  * runs for a limited time specified in seconds by @p runtime. Once the
  * runtime the animator has elapsed (animator finished) it will automatically
- * be deleted. The callback function @p func can return ECORE_CALLBACK_RENEW
- * to keep the animator running or ECORE_CALLBACK_CANCEL ro stop it and have
+ * be deleted. The callback function @p func can return @c ECORE_CALLBACK_RENEW
+ * to keep the animator running or @c ECORE_CALLBACK_CANCEL ro stop it and have
  * it be deleted automatically at any time.
  *
  * The @p func will ALSO be passed a position parameter that will be in value
@@ -124,22 +124,22 @@ EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
  * the animator run is at. If the callback wishes not to have a linear
  * transition it can "map" this value to one of several curves and mappings
  * via ecore_animator_pos_map().
+ * @see ecore_animator_add()
+ * @see ecore_animator_pos_map()
  *
  * @note The default @p frametime value is 1/30th of a second.
  *
- * @see ecore_animator_add()
- * @see ecore_animator_pos_map()
  * @since 1.1.0
  */
 EAPI Ecore_Animator *ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *data);
 
 /**
- * @brief Delete the specified animator from the animator list.
+ * @brief Deletes the specified animator from the animator list.
  *
  * @param animator The animator to delete
  * @return The data pointer set for the animator on add
  *
- * Delete the specified @p animator from the set of animators that are
+ * Deletes the specified @p animator from the set of animators that are
  * executed during main loop execution. This function returns the data
  * parameter that was being passed to the callback on success, or @c NULL on
  * failure. After this call returns the specified animator object @p animator
@@ -149,7 +149,7 @@ EAPI Ecore_Animator *ecore_animator_timeline_add(double runtime, Ecore_Timeline_
 EAPI void *ecore_animator_del(Ecore_Animator *animator);
 
 /**
- * @brief Suspend the specified animator.
+ * @brief Suspends the specified animator.
  *
  * @param animator The animator to delete
  *
@@ -165,7 +165,7 @@ EAPI void *ecore_animator_del(Ecore_Animator *animator);
 EAPI void ecore_animator_freeze(Ecore_Animator *animator);
 
 /**
- * @brief Restore execution of the specified animator.
+ * @brief Restores execution of the specified animator.
  *
  * @param animator The animator to delete
  *
@@ -187,19 +187,19 @@ EAPI void ecore_animator_thaw(Ecore_Animator *animator);
 /**
  * Creates a timer to call the given function in the given period of time.
  * @param   in   The interval in seconds.
- * @param   func The given function.  If @p func returns 1, the timer is
+ * @param   func The given function.  If @p func returns @c 1, the timer is
  *               rescheduled for the next interval @p in.
  * @param   data Data to pass to @p func when it is called.
- * @return  A timer object on success.  @c NULL on failure.
+ * @return  A timer object on success,  @c NULL on failure.
  *
- * This function adds a timer and returns its handle on success and NULL on
+ * This function adds a timer and returns its handle on success and @c NULL on
  * failure. The function @p func will be called every @p in seconds. The
  * function will be passed the @p data pointer as its parameter.
  *
- * When the timer @p func is called, it must return a value of either 1
- * (or ECORE_CALLBACK_RENEW) or 0 (or ECORE_CALLBACK_CANCEL).
- * If it returns 1, it will be called again at the next tick, or if it returns
- * 0 it will be deleted automatically making any references/handles for it
+ * When the timer @p func is called, it must return a value of either @c 1
+ * (or @c ECORE_CALLBACK_RENEW) or @c 0 (or @c ECORE_CALLBACK_CANCEL).
+ * If it returns @c 1, it will be called again at the next tick, or if it returns
+ * @c 0 it will be deleted automatically making any references/handles for it
  * invalid.
  */
 EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *data);
@@ -210,7 +210,7 @@ EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *dat
  * @param   func The given function.  If @p func returns 1, the timer is
  *               rescheduled for the next interval @p in.
  * @param   data Data to pass to @p func when it is called.
- * @return  A timer object on success.  @c NULL on failure.
+ * @return  A timer object on success,  @c NULL on failure.
  *
  * This is the same as ecore_timer_add(), but "now" is the time from
  * ecore_loop_time_get() not ecore_time_get() as ecore_timer_add() uses. See
@@ -219,13 +219,13 @@ EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *dat
 EAPI Ecore_Timer *ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data);
 
 /**
- * Delete the specified timer from the timer list.
+ * Deletes the specified timer from the timer list.
  * @param   timer The timer to delete.
  * @return  The data pointer set for the timer when @ref ecore_timer_add was
  *          called.  @c NULL is returned if the function is unsuccessful.
  *
  * Note: @p timer must be a valid handle. If the timer function has already
- * returned 0, the handle is no longer valid (and does not need to be delete).
+ * returned @c 0, the handle is no longer valid (and does not need to be delete).
  */
 EAPI void *ecore_timer_del(Ecore_Timer *timer);
 
@@ -248,7 +248,7 @@ EAPI void ecore_timer_thaw(Ecore_Timer *timer);
  */
 
 /**
- * Add an idler handler.
+ * Adds an idler handler.
  * @param  func The function to call when idling.
  * @param  data The data to be passed to this @p func call.
  * @return A idler handle if successfully added, @c NULL otherwise.
@@ -256,15 +256,15 @@ EAPI void ecore_timer_thaw(Ecore_Timer *timer);
  * Add an idler handle to the event loop, returning a handle on
  * success and @c NULL otherwise. The function @p func will be called
  * repeatedly while no other events are ready to be processed, as
- * long as it returns @c 1 (or ECORE_CALLBACK_RENEW). A return of @c 0
- * (or ECORE_CALLBACK_CANCEL) deletes the idler.
+ * long as it returns @c 1 (or @c ECORE_CALLBACK_RENEW). A return of @c 0
+ * (or @c ECORE_CALLBACK_CANCEL) deletes the idler.
  *
  * Idlers are useful for progressively processing data without blocking.
  */
 EAPI Ecore_Idler *ecore_idler_add(Ecore_Task_Cb func, const void *data);
 
 /**
- * Delete an idler callback from the list to be executed.
+ * Deletes an idler callback from the list to be executed.
  * @param  idler The handle of the idler callback to delete
  * @return The data pointer passed to the idler callback on success, @c NULL
  *         otherwise.
@@ -272,53 +272,53 @@ EAPI Ecore_Idler *ecore_idler_add(Ecore_Task_Cb func, const void *data);
 EAPI void *ecore_idler_del(Ecore_Idler *idler);
 
 /**
- * Add an idle enterer handler.
+ * Adds an idle enterer handler.
  * @param   func The function to call when entering an idle state.
  * @param   data The data to be passed to the @p func call
  * @return  A handle to the idle enterer callback if successful.  Otherwise,
- *          NULL is returned.
+ *          @c NULL is returned.
  * @note The function func will be called every time the main loop is entering
- * idle state, as long as it returns 1 (or ECORE_CALLBACK_RENEW). A return of 0
- * (or ECORE_CALLBACK_CANCEL) deletes the idle enterer.
+ * idle state, as long as it returns @c 1 (or @c ECORE_CALLBACK_RENEW). A return of @c 0
+ * (or @c ECORE_CALLBACK_CANCEL) deletes the idle enterer.
  */
 EAPI Ecore_Idle_Enterer *ecore_idle_enterer_add(Ecore_Task_Cb func, const void *data);
 
 /**
- * Add an idle enterer handler at the start of the list so it gets called earlier than others.
+ * Adds an idle enterer handler at the start of the list so it gets called earlier than others.
  * @param   func The function to call when entering an idle state.
  * @param   data The data to be passed to the @p func call
  * @return  A handle to the idle enterer callback if successful.  Otherwise,
- *          NULL is returned.
+ *          @c NULL is returned.
  * @note The function func will be called every time the main loop is entering
- * idle state, as long as it returns 1 (or ECORE_CALLBACK_RENEW). A return of 0
- * (or ECORE_CALLBACK_CANCEL) deletes the idle enterer.
+ * idle state, as long as it returns @c 1 (or @c ECORE_CALLBACK_RENEW). A return of @c 0
+ * (or @c ECORE_CALLBACK_CANCEL) deletes the idle enterer.
  */
 EAPI Ecore_Idle_Enterer *ecore_idle_enterer_before_add(Ecore_Task_Cb func, const void *data);
 
 /**
- * Delete an idle enterer callback.
+ * Deletes an idle enterer callback.
  * @param   idle_enterer The idle enterer to delete
  * @return  The data pointer passed to the idler enterer callback on success.
- *          NULL otherwise.
+ *          @c NULL otherwise.
  */
 EAPI void *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
 /**
- * Add an idle exiter handler.
+ * Adds an idle exiter handler.
  * @param func The function to call when exiting an idle state.
- * @param data The data to be passed to the @p func call
- * @return A handle to the idle exiter callback on success.  NULL otherwise.
+ * @param data The data to be passed to the @p func call.
+ * @return A handle to the idle exiter callback on success.  @c NULL otherwise.
  * @note The function func will be called every time the main loop is exiting
- * idle state, as long as it returns 1 (or ECORE_CALLBACK_RENEW). A return of 0
- * (or ECORE_CALLBACK_CANCEL) deletes the idle exiter.
+ * idle state, as long as it returns @c 1 (or @c ECORE_CALLBACK_RENEW). A return of @c 0
+ * (or @c ECORE_CALLBACK_CANCEL) deletes the idle exiter.
  */
 EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(Ecore_Task_Cb func, const void *data);
 
 /**
- * Delete an idle exiter handler from the list to be run on exiting idle state.
+ * Deletes an idle exiter handler from the list to be run on exiting idle state.
  * @param idle_exiter The idle exiter to delete
  * @return The data pointer that was being being passed to the handler if
- *         successful.  NULL otherwise.
+ *         successful. @c NULL otherwise.
  */
 EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
 
@@ -344,7 +344,7 @@ EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
  * @{
  */
 /**
- * Add a job to the event queue.
+ * Adds a job to the event queue.
  * @param   func The function to call when the job gets handled.
  * @param   data Data pointer to be passed to the job function when the job is
  *               handled.
@@ -355,7 +355,7 @@ EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
 EAPI Ecore_Job *ecore_job_add(Ecore_Cb func, const void *data);
 
 /**
- * Delete a queued job that has not yet been executed.
+ * Deletes a queued job that has not yet been executed.
  * @param   obj  Handle of the job to delete.
  * @return  The data pointer that was to be passed to the job.
  */
