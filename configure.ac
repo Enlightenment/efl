@@ -1468,6 +1468,7 @@ EFL_ADD_FEATURE([EOLIAN], [cxx], [${have_cxx11}])
 ### Checks for programs
 
 ## Compatibility layers
+EFL_PLATFORM_DEPEND([EOLIAN], [evil])
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EOLIAN], [eina])
