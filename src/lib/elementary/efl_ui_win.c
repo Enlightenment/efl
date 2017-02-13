@@ -4452,34 +4452,28 @@ _elm_win_cb_show(void *data EINA_UNUSED,
    _elm_win_state_eval_queue();
 }
 
-static Eina_Bool
-_accel_is_gl(const char *accel)
+static inline const char *
+_efl_ui_win_accel(Efl_Ui_Win_Data *sd)
 {
-   const char *env = NULL;
-   const char *str = NULL;
+   const char *str = sd->accel_pref;
+   const char *env;
 
    /* current elm config */
-   if (_elm_config->accel) str = _elm_config->accel;
-   if (_elm_accel_preference) str = _elm_accel_preference;
-
-   /* constructor function */
-   if (accel) str = accel;
+   if (!str)
+     {
+        if (_elm_config->accel) str = _elm_config->accel;
+        if (_elm_accel_preference) str = _elm_accel_preference;
+     }
 
    /* global overrides */
    if ((_elm_config->accel_override) && (_elm_config->accel))
      str = _elm_config->accel;
+
+   /* env var wins */
    env = getenv("ELM_ACCEL");
    if (env) str = env;
-   if ((str) &&
-       ((!strcasecmp(str, "gl")) ||
-        (!strcasecmp(str, "opengl")) ||
-        (!strcasecmp(str, "3d")) ||
-        (!strcasecmp(str, "hw")) ||
-        (!strcasecmp(str, "accel")) ||
-        (!strcasecmp(str, "hardware"))
-       ))
-     return EINA_TRUE;
-   return EINA_FALSE;
+
+   return str;
 }
 
 static inline void
@@ -4515,6 +4509,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    int gl_stencil = _elm_config->gl_stencil;
    int gl_msaa = _elm_config->gl_msaa;
    Eina_Stringshare *accel = NULL;
+   Eina_Bool is_gl_accel;
    int i, p = 0;
 
    Efl_Ui_Win_Data tmp_sd;
@@ -4524,11 +4519,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Efl_Ui_Win_Data));
 
-   if (sd->accel_pref)
-     {
-        _elm_config_accel_preference_parse(sd->accel_pref, &accel, &gl_depth,
-                                           &gl_stencil, &gl_msaa);
-     }
+   is_gl_accel = _elm_config_accel_preference_parse
+         (_efl_ui_win_accel(sd), &accel, &gl_depth, &gl_stencil, &gl_msaa);
 
    switch (type)
      {
@@ -4580,7 +4572,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #ifdef HAVE_ELEMENTARY_X
         else if ((disp) && (!strcmp(disp, "x11")))
           {
-             if (_accel_is_gl(accel))
+             if (is_gl_accel)
                {
                   enginelist[p++] = ELM_OPENGL_X11;
                   enginelist[p++] = ELM_SOFTWARE_X11;
@@ -4596,7 +4588,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #ifdef HAVE_ELEMENTARY_WL2
         else if ((disp) && (!strcmp(disp, "wl")))
           {
-             if (_accel_is_gl(accel))
+             if (is_gl_accel)
                {
                   enginelist[p++] = ELM_WAYLAND_EGL;
                   enginelist[p++] = ELM_WAYLAND_SHM;
@@ -4620,7 +4612,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #ifdef HAVE_ELEMENTARY_SDL
         else if ((disp) && (!strcmp(disp, "sdl")))
           {
-             if (_accel_is_gl(accel))
+             if (is_hw_accel)
                {
                   enginelist[p++] = ELM_OPENGL_SDL;
                   enginelist[p++] = ELM_SOFTWARE_SDL;
@@ -4662,7 +4654,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         else if (!_elm_preferred_engine &&
                  getenv("DISPLAY") && !getenv("ELM_ENGINE"))
           {
-             if (_accel_is_gl(accel))
+             if (is_gl_accel)
                {
                   enginelist[p++] = ELM_OPENGL_X11;
                   enginelist[p++] = ELM_SOFTWARE_X11;
@@ -4678,7 +4670,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         else if (!_elm_preferred_engine &&
                  getenv("WAYLAND_DISPLAY") && !getenv("ELM_ENGINE"))
           {
-             if (_accel_is_gl(accel))
+             if (is_gl_accel)
                {
                   enginelist[p++] = ELM_WAYLAND_EGL;
                   enginelist[p++] = ELM_WAYLAND_SHM;
@@ -4692,7 +4684,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #endif
         else
           {
-             if (_accel_is_gl(accel))
+             if (is_gl_accel)
                {
 // add all engines with selected engine first - if any
                   if (ENGINE_GET())
