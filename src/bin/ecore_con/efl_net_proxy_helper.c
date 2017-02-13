@@ -257,7 +257,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         // Failed to init libproxy so report this before exit
         fprintf(stdout, "F\n");
         fflush(stdout);
-        pause();
+        for (;;) sleep(60 * 60 * 24);
      }
    eina_shutdown();
    return 0;
