@@ -1312,6 +1312,8 @@ _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Imag
      {
         const char *file2 = o->cur->u.file;
 
+        if (o->file_obj) efl_del(o->file_obj);
+        o->file_obj = NULL;
         if (file2)
           {
              o->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file2);
@@ -1321,6 +1323,11 @@ _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Imag
              file2 = efl_vpath_file_result_get(o->file_obj);
           }
         o->engine_data = ENFN->image_load(ENDT, file2, o->cur->key, &o->load_error, &lo);
+        if ((o->file_obj) && (!efl_vpath_file_keep_get(o->file_obj)))
+          {
+             efl_del(o->file_obj);
+             o->file_obj = NULL;
+          }
      }
 
    if (o->engine_data)

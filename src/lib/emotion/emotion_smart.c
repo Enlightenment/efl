@@ -68,6 +68,8 @@ struct _Efl_Canvas_Video_Data
 
    Ecore_Job     *job;
 
+   Efl_Vpath_File *file_obj;
+
    const char *title;
 
 #ifdef HAVE_EIO
@@ -169,6 +171,11 @@ _smart_data_free(Efl_Canvas_Video_Data *sd)
    sd->save_xattr = NULL;
 #endif
 
+   if (sd->file_obj)
+     {
+        efl_del(sd->file_obj);
+        sd->file_obj = NULL;
+     }
    if (sd->engine_instance)
      {
         emotion_engine_instance_file_close(sd->engine_instance);
@@ -374,7 +381,7 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
    sd->video.h = 0;
    if ((file) && (file[0] != 0))
      {
-        const char *file2;
+        const char *file2 = NULL;
 
         eina_stringshare_replace(&sd->file, file);
         emotion_engine_instance_file_close(sd->engine_instance);
@@ -383,19 +390,35 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
         _emotion_image_data_zero(sd->obj);
         sd->open = 0;
 
-        Efl_Vpath_File *file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-        efl_vpath_file_do(file_obj);
-        // XXX:FIXME: allow this to be async
-        efl_vpath_file_wait(file_obj);
-        file2 = efl_vpath_file_result_get(file_obj);
+        if (sd->file_obj)
+          {
+             efl_del(sd->file_obj);
+             sd->file_obj = NULL;
+          }
+        if (file)
+          {
+             sd->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
+             efl_vpath_file_do(sd->file_obj);
+             // XXX:FIXME: allow this to be async
+             efl_vpath_file_wait(sd->file_obj);
+             file2 = efl_vpath_file_result_get(sd->file_obj);
+          }
 
         if (!emotion_engine_instance_file_open(sd->engine_instance, file2))
           {
              WRN("Couldn't open file=%s", sd->file);
-             efl_del(file_obj);
+             if (sd->file_obj)
+               {
+                  efl_del(sd->file_obj);
+                  sd->file_obj = NULL;
+               }
              return EINA_FALSE;
           }
-        efl_del(file_obj);
+        if ((sd->file_obj) && (!efl_vpath_file_keep_get(sd->file_obj)))
+          {
+             efl_del(sd->file_obj);
+             sd->file_obj = NULL;
+          }
         DBG("successfully opened file=%s", sd->file);
         sd->pos = 0.0;
         if (sd->play) emotion_engine_instance_play(sd->engine_instance, 0.0);

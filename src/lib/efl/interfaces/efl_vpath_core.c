@@ -404,6 +404,11 @@ _efl_vpath_core_efl_vpath_fetch(Eo *obj, Efl_Vpath_Core_Data *pd EINA_UNUSED, co
                     }
                }
           }
+        // XXX: handle file:// urls locally...
+        // XXX: if its a remote url or zip file etc. where we need to
+        // keep tmp file around then we need to set keep to true
+        // efl_vpath_file_keept_set(file, EINA_TRUE);
+
         // file:/// <- local file path uri
         // file://localhost/ <- local file path uri
         // file://hostname/ <- remove file path uri

@@ -10,6 +10,7 @@ struct _Efl_Vpath_File_Data
    const char *path;
    const char *result;
    Eina_Bool called : 1;
+   Eina_Bool keep : 1;
 };
 
 EOLIAN static void
@@ -34,6 +35,18 @@ EOLIAN static const char *
 _efl_vpath_file_result_get(Eo *obj EINA_UNUSED, Efl_Vpath_File_Data *pd)
 {
    return pd->result;
+}
+
+EOLIAN static void
+_efl_vpath_file_keep_set(Eo *obj EINA_UNUSED, Efl_Vpath_File_Data *pd, Eina_Bool keep)
+{
+   pd->keep = keep;
+}
+
+EOLIAN static Eina_Bool
+_efl_vpath_file_keep_get(Eo *obj EINA_UNUSED, Efl_Vpath_File_Data *pd)
+{
+   return pd->keep;
 }
 
 EOLIAN static Eina_Bool

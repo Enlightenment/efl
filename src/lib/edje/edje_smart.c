@@ -395,6 +395,11 @@ _edje_object_efl_file_file_set(Eo *obj, Edje *ed, const char *file, const char *
         file2 = efl_vpath_file_result_get(ed->file_obj);
 
         f = eina_file_open(file2, EINA_FALSE);
+        if ((ed->file_obj) && (!efl_vpath_file_keep_get(ed->file_obj)))
+          {
+             efl_del(ed->file_obj);
+             ed->file_obj = NULL;
+          }
         if (!f)
           {
              efl_del(ed->file_obj);

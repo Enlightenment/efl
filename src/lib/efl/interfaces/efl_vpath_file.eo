@@ -32,6 +32,14 @@ class Efl.Vpath.File (Efl.Object)
              path: string; [[ The resulting destination file ]]
          }
       }
+      @property keep {
+         [[ If this object has to be kept for the usage of the result ]]
+         set {}
+         get {}
+         values {
+             keep: bool; [[ If the object neerds tobe kept around ]]
+         }
+      }
       do {
         [[ Actually begin the resolving here - emit event now or do later ]]
         return: bool; [[ Result callback already called ]]

@@ -70,6 +70,8 @@ _evas_image_file_set(Eo *eo_obj, const char *file, const char *key)
 
    evas_object_async_block(obj);
    _evas_image_init_set(NULL, file, key, eo_obj, obj, o, &lo);
+   if (o->file_obj) efl_del(o->file_obj);
+   o->file_obj = NULL;
    file2 = o->cur->u.file;
    if (file2)
      {
@@ -82,7 +84,11 @@ _evas_image_file_set(Eo *eo_obj, const char *file, const char *key)
    o->engine_data = ENFN->image_load(ENDT, file2, o->cur->key, &o->load_error, &lo);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);
-
+   if ((o->file_obj) && (!efl_vpath_file_keep_get(o->file_obj)))
+     {
+        efl_del(o->file_obj);
+        o->file_obj = NULL;
+     }
    return EINA_TRUE;
 }
 
