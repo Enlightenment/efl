@@ -20,7 +20,7 @@
 
 /**
  * @file ecore_audio_obj_in_tone.h
- * @brief Ecore_Audio tone input
+ * @brief Ecore_Audio tone input.
  */
 
 #ifdef __cplusplus
@@ -35,7 +35,7 @@ extern "C"
  */
 
 /**
- * @brief The frequency of the tone in Hz
+ * @brief The frequency of the tone in Hz.
  *
  * Set with @ref efl_key_data_set()
  */

@@ -20,7 +20,7 @@
 
 /**
  * @file ecore_audio_obj_out_pulse.h
- * @brief Ecore_Audio pulseaudio output
+ * @brief Ecore_Audio pulseaudio output.
  */
 
 #ifdef __cplusplus

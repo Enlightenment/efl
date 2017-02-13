@@ -20,7 +20,7 @@
 
 /**
  * @file Ecore_Audio.h
- * @brief Audio utility functions
+ * @brief Audio utility functions.
  */
 
 #ifdef __cplusplus
@@ -69,7 +69,7 @@ typedef struct _Ecore_Audio_Object Ecore_Audio_Object;  /**< The audio object */
  */
 struct _Ecore_Audio_Vio {
     /**
-     * @brief Get the length of the file
+     * @brief Gets the length of the file.
      *
      * @param data User data from the ecore_audio_obj_set_vio call
      * @param eo_obj The Ecore_Audio object this operates on
@@ -81,7 +81,7 @@ struct _Ecore_Audio_Vio {
     int (*get_length)(void *data, Eo *eo_obj);
 
     /**
-     * @brief Seek to a position within the file
+     * @brief Seeks to a position within the file.
      *
      * @param data User data from the ecore_audio_obj_set_vio call
      * @param eo_obj The Ecore_Audio object this operates on
@@ -99,7 +99,7 @@ struct _Ecore_Audio_Vio {
     int (*seek)(void *data, Eo *eo_obj, int offset, int whence);
 
     /**
-     * @brief Get the current position within the file
+     * @brief Gets the current position within the file.
      *
      * @param data User data from the ecore_audio_obj_set_vio call
      * @param eo_obj The Ecore_Audio object this operates on
@@ -113,7 +113,7 @@ struct _Ecore_Audio_Vio {
     int (*tell)(void *data, Eo *eo_obj);
 
     /**
-     * @brief Read some data from the file
+     * @brief Reads some data from the file.
      *
      * @param data User data from the ecore_audio_obj_set_vio call
      * @param eo_obj The Ecore_Audio object this operates on
@@ -127,7 +127,7 @@ struct _Ecore_Audio_Vio {
     int (*read)(void *data, Eo *eo_obj, void *buffer, int length);
 
     /**
-     * @brief Write some data to the file
+     * @brief Writes some data to the file.
      *
      * @param data User data from the ecore_audio_obj_set_vio call
      * @param eo_obj The Ecore_Audio object this operates on
@@ -142,7 +142,7 @@ struct _Ecore_Audio_Vio {
 };
 
 /**
- * @brief Holds the callback functions to implement virtual file IO
+ * @brief Holds the callback functions to implement virtual file IO.
  * @since 1.8
  */
 typedef struct _Ecore_Audio_Vio Ecore_Audio_Vio;
@@ -150,9 +150,9 @@ typedef struct _Ecore_Audio_Vio Ecore_Audio_Vio;
 /* Audio operations */
 
 /**
- * @brief Initialize the Ecore_Audio library.
+ * @brief Initializes the Ecore_Audio library.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return @c 1 or greater on success, @c 0 on error.
  *
  * @since 1.8
  *
@@ -166,9 +166,9 @@ typedef struct _Ecore_Audio_Vio Ecore_Audio_Vio;
 EAPI int                 ecore_audio_init(void);
 
 /**
- * @brief Shut down the Ecore_Audio library.
+ * @brief Shuts down the Ecore_Audio library.
  *
- * @return 0 when the library is completely shut down, 1 or
+ * @return @c 0 when the library is completely shut down, @c 1 or
  * greater otherwise.
  *
  * @since 1.8

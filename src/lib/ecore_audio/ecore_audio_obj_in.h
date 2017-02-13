@@ -20,7 +20,7 @@
 
 /**
  * @file ecore_audio_obj_in.h
- * @brief Ecore_Audio Input Object
+ * @brief Ecore_Audio Input Object.
  */
 
 #ifdef __cplusplus

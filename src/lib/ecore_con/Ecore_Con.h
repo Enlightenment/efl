@@ -56,7 +56,7 @@
  * To create a listening server call @c ecore_con_server_add(), optionally using
  * an ECORE_CON_USE_* encryption type OR'ed with the type for encryption.
  *
- * To connect to a server, call @c ecore_con_server_connect().  Data can
+ * To connect to a server, call @c ecore_con_server_connect(). Data can
  * then be sent to the server using the @c ecore_con_server_send().
  *
  * Functions are described in the following groupings:
@@ -81,15 +81,15 @@
  * retrieval of the client's ip with @ref ecore_con_client_ip_get and
  * associating data with the client using ecore_con_client_data_set.
  * @li ECORE_CON_EVENT_CLIENT_DEL: Whenever a client connection to an
- * @c Ecore_Con_Server is destroyed, an event of this type is emitted.  The contents of
+ * @c Ecore_Con_Server is destroyed, an event of this type is emitted. The contents of
  * the data with this event are variable, but if the client object in the data
  * is non-null, it must be freed with @ref ecore_con_client_del.
  * @li ECORE_CON_EVENT_CLIENT_DATA: Whenever a server object receives
  * data, then an event of this type is emitted. The data will contain
- * the size and contents of the message sent by the client.  It should be noted that
+ * the size and contents of the message sent by the client. It should be noted that
  * data within this object is transient, so it must be duplicated in order to be
- * retained.  This event will continue to occur until the client has stopped sending its
- * message, so a good option for storing this data is an Eina_Strbuf.  Once the message has
+ * retained. This event will continue to occur until the client has stopped sending its
+ * message, so a good option for storing this data is an Eina_Strbuf. Once the message has
  * been received in full, the client object must be freed with ecore_con_client_free.
  *
  * Client side events:
@@ -100,15 +100,15 @@
  * occurred.
  * @li ECORE_CON_EVENT_SERVER_DEL: Whenever a server object is destroyed,
  * usually by the server connection being refused or dropped, an event of this
- * type is emitted.  The contents of the data with this event are variable,
+ * type is emitted. The contents of the data with this event are variable,
  * but if the server object in the data is non-null, it must be freed
  * with @ref ecore_con_server_del.
  * @li ECORE_CON_EVENT_SERVER_DATA: Whenever client object receives
  * data from the server, an event of this type is emitted. The data will contain both
- * the size and contents of the message sent by the server.  It should be noted that
+ * the size and contents of the message sent by the server. It should be noted that
  * data within this object is transient, so it must be duplicated in order to be
- * retained.  This event will continue to occur until the server has stopped sending its
- * message, so a good option for storing this data is an Eina_Strbuf.  Once the message has
+ * retained. This event will continue to occur until the server has stopped sending its
+ * message, so a good option for storing this data is an Eina_Strbuf. Once the message has
  * been received in full, the server object must be freed with ecore_con_server_free.
  *
  */
@@ -354,113 +354,113 @@ typedef struct _Ecore_Con_Url Ecore_Con_Url;
 
 /**
  * @typedef Ecore_Con_Event_Client_Add
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  */
 typedef struct _Ecore_Con_Event_Client_Add Ecore_Con_Event_Client_Add;
 
 /**
  * @typedef Ecore_Con_Event_Client_Upgrade
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Client_Upgrade Ecore_Con_Event_Client_Upgrade;
 
 /**
  * @typedef Ecore_Con_Event_Client_Del
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  */
 typedef struct _Ecore_Con_Event_Client_Del Ecore_Con_Event_Client_Del;
 
 /**
  * @typedef Ecore_Con_Event_Client_Error
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Client_Error Ecore_Con_Event_Client_Error;
 
 /**
  * @typedef Ecore_Con_Event_Server_Add
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  */
 typedef struct _Ecore_Con_Event_Server_Add Ecore_Con_Event_Server_Add;
 
 /**
  * @typedef Ecore_Con_Event_Server_Upgrade
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Server_Upgrade Ecore_Con_Event_Server_Upgrade;
 
 /**
  * @typedef Ecore_Con_Event_Server_Del
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  */
 typedef struct _Ecore_Con_Event_Server_Del Ecore_Con_Event_Server_Del;
 
 /**
  * @typedef Ecore_Con_Event_Server_Error
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Server_Error Ecore_Con_Event_Server_Error;
 
 /**
  * @typedef Ecore_Con_Event_Client_Data
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  */
 typedef struct _Ecore_Con_Event_Client_Data Ecore_Con_Event_Client_Data;
 
 /**
  * @typedef Ecore_Con_Event_Server_Data
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  */
 typedef struct _Ecore_Con_Event_Server_Data Ecore_Con_Event_Server_Data;
 
 /**
  * @typedef Ecore_Con_Event_Client_Write
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Client_Write Ecore_Con_Event_Client_Write;
 
 /**
  * @typedef Ecore_Con_Event_Server_Write
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Server_Write Ecore_Con_Event_Server_Write;
 
 /**
  * @typedef Ecore_Con_Event_Proxy_Bind
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @since 1.2
  */
 typedef struct _Ecore_Con_Event_Proxy_Bind Ecore_Con_Event_Proxy_Bind;
 
 /**
  * @typedef Ecore_Con_Event_Url_Data
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @ingroup Ecore_Con_Url_Group
  */
 typedef struct _Ecore_Con_Event_Url_Data Ecore_Con_Event_Url_Data;
 
 /**
  * @typedef Ecore_Con_Event_Url_Complete
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @ingroup Ecore_Con_Url_Group
  */
 typedef struct _Ecore_Con_Event_Url_Complete Ecore_Con_Event_Url_Complete;
 
 /**
  * @typedef Ecore_Con_Event_Url_Progress
- * Used as the @p data param for the corresponding event
+ * Used as the @p data param for the corresponding event.
  * @ingroup Ecore_Con_Url_Group
  */
 typedef struct _Ecore_Con_Event_Url_Progress Ecore_Con_Event_Url_Progress;
 
 /**
  * @struct _Ecore_Con_Event_Client_Add
- * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_ADD event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_ADD event.
  */
 struct _Ecore_Con_Event_Client_Add
 {
@@ -469,7 +469,7 @@ struct _Ecore_Con_Event_Client_Add
 
 /**
  * @struct _Ecore_Con_Event_Client_Upgrade
- * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_UPGRADE event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_UPGRADE event.
  * @since 1.1
  */
 struct _Ecore_Con_Event_Client_Upgrade
@@ -479,7 +479,7 @@ struct _Ecore_Con_Event_Client_Upgrade
 
 /**
  * @struct _Ecore_Con_Event_Client_Del
- * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_DEL event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_DEL event.
  */
 struct _Ecore_Con_Event_Client_Del
 {
@@ -488,7 +488,7 @@ struct _Ecore_Con_Event_Client_Del
 
 /**
  * @struct _Ecore_Con_Event_Client_Error
- * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_ERROR event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_ERROR event.
  */
 struct _Ecore_Con_Event_Client_Error
 {
@@ -498,7 +498,7 @@ struct _Ecore_Con_Event_Client_Error
 
 /**
  * @struct _Ecore_Con_Event_Server_Add
- * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_ADD event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_ADD event.
  */
 struct _Ecore_Con_Event_Server_Add
 {
@@ -507,7 +507,7 @@ struct _Ecore_Con_Event_Server_Add
 
 /**
  * @struct _Ecore_Con_Event_Server_Upgrade
- * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_UPGRADE event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_UPGRADE event.
  * @since 1.1
  */
 struct _Ecore_Con_Event_Server_Upgrade
@@ -517,7 +517,7 @@ struct _Ecore_Con_Event_Server_Upgrade
 
 /**
  * @struct _Ecore_Con_Event_Server_Del
- * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_DEL event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_DEL event.
  */
 struct _Ecore_Con_Event_Server_Del
 {
@@ -526,7 +526,7 @@ struct _Ecore_Con_Event_Server_Del
 
 /**
  * @struct _Ecore_Con_Event_Server_Error
- * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_ERROR event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_SERVER_ERROR event.
  */
 struct _Ecore_Con_Event_Server_Error
 {
@@ -536,7 +536,7 @@ struct _Ecore_Con_Event_Server_Error
 
 /**
  * @struct _Ecore_Con_Event_Client_Data
- * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_DATA event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_DATA event.
  */
 struct _Ecore_Con_Event_Client_Data
 {
@@ -558,7 +558,7 @@ struct _Ecore_Con_Event_Server_Data
 
 /**
  * @struct _Ecore_Con_Event_Client_Write
- * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_WRITE event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_CLIENT_WRITE event.
  */
 struct _Ecore_Con_Event_Client_Write
 {
@@ -578,7 +578,7 @@ struct _Ecore_Con_Event_Server_Write
 
 /**
  * @struct _Ecore_Con_Event_Proxy_Bind
- * Used as the @p data param for the @ref ECORE_CON_EVENT_PROXY_BIND event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_PROXY_BIND event.
  * @ingroup Ecore_Con_Socks_Group
  * @since 1.2
  */
@@ -591,7 +591,7 @@ struct _Ecore_Con_Event_Proxy_Bind
 
 /**
  * @struct _Ecore_Con_Event_Url_Data
- * Used as the @p data param for the @ref ECORE_CON_EVENT_URL_DATA event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_URL_DATA event.
  * @ingroup Ecore_Con_Url_Group
  */
 struct _Ecore_Con_Event_Url_Data
@@ -603,7 +603,7 @@ struct _Ecore_Con_Event_Url_Data
 
 /**
  * @struct _Ecore_Con_Event_Url_Complete
- * Used as the @p data param for the @ref ECORE_CON_EVENT_URL_COMPLETE event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_URL_COMPLETE event.
  * @ingroup Ecore_Con_Url_Group
  */
 struct _Ecore_Con_Event_Url_Complete
@@ -614,7 +614,7 @@ struct _Ecore_Con_Event_Url_Complete
 
 /**
  * @struct _Ecore_Con_Event_Url_Progress
- * Used as the @p data param for the @ref ECORE_CON_EVENT_URL_PROGRESS event
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_URL_PROGRESS event.
  * @ingroup Ecore_Con_Url_Group
  */
 struct _Ecore_Con_Event_Url_Progress
@@ -632,51 +632,51 @@ struct _Ecore_Con_Event_Url_Progress
    } up; /**< upload info */
 };
 
-/** A client has connected to the server */
+/** A client has connected to the server. */
 EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
-/** A client has disconnected from the server */
+/** A client has disconnected from the server. */
 EAPI extern int ECORE_CON_EVENT_CLIENT_DEL;
-/** A client experienced an error
+/** A client experienced an error.
  * @since 1.1
  */
 EAPI extern int ECORE_CON_EVENT_CLIENT_ERROR;
-/** A client connection has been upgraded to SSL
+/** A client connection has been upgraded to SSL.
  * @since 1.1
  */
 EAPI extern int ECORE_CON_EVENT_CLIENT_UPGRADE;
-/** A server was created */
+/** A server was created. */
 EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
-/** A server connection was lost */
+/** A server connection was lost. */
 EAPI extern int ECORE_CON_EVENT_SERVER_DEL;
-/** A server experienced an error
+/** A server experienced an error.
  * @since 1.1
  */
 EAPI extern int ECORE_CON_EVENT_SERVER_ERROR;
-/** A server connection has been upgraded to SSL
+/** A server connection has been upgraded to SSL.
  * @since 1.1
  */
 EAPI extern int ECORE_CON_EVENT_SERVER_UPGRADE;
-/** A server connection has sent data to its client
+/** A server connection has sent data to its client.
  * @since 1.1
  */
 EAPI extern int ECORE_CON_EVENT_CLIENT_WRITE;
-/** A server connection object has sent data
+/** A server connection object has sent data.
  * @since 1.1
  */
 EAPI extern int ECORE_CON_EVENT_SERVER_WRITE;
-/** A client connected to the server has sent data */
+/** A client connected to the server has sent data. */
 EAPI extern int ECORE_CON_EVENT_CLIENT_DATA;
-/** A server connection object has data */
+/** A server connection object has data.*/
 EAPI extern int ECORE_CON_EVENT_SERVER_DATA;
-/** A server connection has successfully negotiated an ip:port binding
+/** A server connection has successfully negotiated an ip:port binding.
  * @since 1.2
  */
 EAPI extern int ECORE_CON_EVENT_PROXY_BIND;
-/** A URL object has data */
+/** A URL object has data. */
 EAPI extern int ECORE_CON_EVENT_URL_DATA;
-/** A URL object has completed its transfer to and from the server and can be reused */
+/** A URL object has completed its transfer to and from the server and can be reused. */
 EAPI extern int ECORE_CON_EVENT_URL_COMPLETE;
-/** A URL object has made progress in its transfer */
+/** A URL object has made progress in its transfer. */
 EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
 
 /**
@@ -691,7 +691,7 @@ EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
  */
 
 /**
- * @brief Initialise the Ecore_Con library.
+ * @brief Initializes the Ecore_Con library.
  * @return  Number of times the library has been initialised without being
  *          shut down.
  *
@@ -701,7 +701,7 @@ EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
 EAPI int               ecore_con_init(void);
 
 /**
- * @brief Shut down the Ecore_Con library.
+ * @brief Shuts down the Ecore_Con library.
  * @return  Number of times the library has been initialised without being
  *          shut down.
  * @note This function already calls ecore_shutdown() internally, so you don't
@@ -743,15 +743,15 @@ EAPI Eina_Bool ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, cons
  */
 
 /**
- * @brief Return if SSL support is available
- * @return 1 if SSL is available and provided by gnutls,
- *         2 if SSL is available and provided by openssl,
- *         0 if it is not available.
+ * @brief Returns if SSL support is available.
+ * @return @c 1 if SSL is available and provided by gnutls,
+ *         @c 2 if SSL is available and provided by openssl,
+ *         @c 0 if it is not available.
  */
 EAPI int               ecore_con_ssl_available_get(void);
 
 /**
- * @brief Add an ssl certificate for use in ecore_con functions.
+ * @brief Adds an SSL certificate for use in ecore_con functions.
  *
  * Use this function to add a SSL PEM certificate.
  * Simply specify the cert here to use it in the server object for connecting or listening.
@@ -763,44 +763,44 @@ EAPI int               ecore_con_ssl_available_get(void);
 EAPI Eina_Bool         ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr, const char *cert);
 
 /**
- * @brief Add an ssl private key for use in ecore_con functions.
+ * @brief Adds an SSL private key for use in ecore_con functions.
  *
- * Use this function to add a SSL PEM private key
+ * Use this function to add a SSL PEM private key.
  * Simply specify the key file here to use it in the server object for connecting or listening.
  * If there is an error loading the key, an error will automatically be logged.
- * @param svr The server object
+ * @param svr The server object.
  * @param key_file The path to the key file.
  * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
  */
 EAPI Eina_Bool         ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr, const char *key_file);
 
 /**
- * @brief Add an ssl CRL for use in ecore_con functions.
+ * @brief Adds an SSL CRL for use in ecore_con functions.
  *
- * Use this function to add a SSL PEM CRL file
+ * Use this function to add a SSL PEM CRL file.
  * Simply specify the CRL file here to use it in the server object for connecting or listening.
  * If there is an error loading the CRL, an error will automatically be logged.
- * @param svr The server object
+ * @param svr The server object.
  * @param crl_file The path to the CRL file.
  * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
  */
 EAPI Eina_Bool         ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr, const char *crl_file);
 
 /**
- * @brief Add an ssl CA file for use in ecore_con functions.
+ * @brief Adds an SSL CA file for use in ecore_con functions.
  *
  * Use this function to add a SSL PEM CA file.
  * Simply specify the file here to use it in the server object for connecting or listening.
  * If there is an error loading the CAs, an error will automatically be logged.
- * @param svr The server object
+ * @param svr The server object.
  * @param ca_file The path to the CA file.
  * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
- * @note since 1.2, this function can load directores
+ * @note since 1.2, this function can load directories.
  */
 EAPI Eina_Bool         ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr, const char *ca_file);
 
 /**
- * @brief Enable certificate verification on a server object
+ * @brief Enables certificate verification on a server object.
  *
  * Call this function on a server object before main loop has started
  * to enable verification of certificates against loaded certificates.
@@ -809,19 +809,19 @@ EAPI Eina_Bool         ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr, co
 EAPI void              ecore_con_ssl_server_verify(Ecore_Con_Server *svr);
 
 /**
- * @brief Enable hostname-based certificate verification on a server object
+ * @brief Enables hostname-based certificate verification on a server object.
  *
  * Call this function on a server object before main loop has started
  * to enable verification of certificates using ONLY their hostnames.
- * @param svr The server object
+ * @param svr The server object.
  * @note This function has no effect when used on a listening server created by
- * ecore_con_server_add
+ * ecore_con_server_add.
  * @since 1.1
  */
 EAPI void              ecore_con_ssl_server_verify_basic(Ecore_Con_Server *svr);
 
 /**
- * @brief Set the hostname to verify against in certificate verification
+ * @brief Sets the hostname to verify against in certificate verification.
  *
  * Sometimes the certificate hostname will not match the hostname that you are
  * connecting to, and will instead match a different name. An example of this is
@@ -829,46 +829,46 @@ EAPI void              ecore_con_ssl_server_verify_basic(Ecore_Con_Server *svr);
  * certificate for gmail.com. This certificate should be trusted, and so you must call
  * this function with "gmail.com" as @p name.
  * See RFC2818 for more details.
- * @param svr The server object
+ * @param svr The server object.
  * @param name The hostname to verify against
  * @since 1.2
  */
 EAPI void              ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *svr, const char *name);
 
 /**
- * @brief Get the hostname to verify against in certificate verification
+ * @brief Gets the hostname to verify against in certificate verification.
  *
  * This function returns the name which will be used to validate the SSL certificate
  * common name (CN) or alt name (subjectAltName). It will default to the @p name
  * param in ecore_con_server_connect(), but can be changed with ecore_con_ssl_server_verify_name_set().
- * @param svr The server object
+ * @param svr The server object.
  * @return The hostname which will be used
  * @since 1.2
  */
 EAPI const char       *ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *svr);
 
 /**
- * @brief Upgrade a connection to a specified level of encryption
+ * @brief Upgrades a connection to a specified level of encryption.
  *
  * Use this function to begin an SSL handshake on a connection (STARTTLS or similar).
  * Once the upgrade has been completed, an ECORE_CON_EVENT_SERVER_UPGRADE event will be emitted.
  * The connection should be treated as disconnected until the next event.
- * @param svr The server object
+ * @param svr The server object.
  * @param ssl_type The SSL connection type (ONLY).
  * @return @c EINA_FALSE if the connection cannot be upgraded, otherwise @c EINA_TRUE.
- * @note This function is NEVER to be used on a server object created with ecore_con_server_add
+ * @note This function is NEVER to be used on a server object created with ecore_con_server_add.
  * @warning Setting a wrong value for @p compl_type WILL mess up your program.
  * @since 1.1
  */
 EAPI Eina_Bool         ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type compl_type);
 
 /**
- * @brief Upgrade a connection to a specified level of encryption
+ * @brief Upgrades a connection to a specified level of encryption.
  *
  * Use this function to begin an SSL handshake on a connection (STARTTLS or similar).
  * Once the upgrade has been completed, an ECORE_CON_EVENT_CLIENT_UPGRADE event will be emitted.
  * The connection should be treated as disconnected until the next event.
- * @param cl The client object
+ * @param cl The client object.
  * @param ssl_type The SSL connection type (ONLY).
  * @return @c EINA_FALSE if the connection cannot be upgraded, otherwise @c EINA_TRUE.
  * @warning Setting a wrong value for @p compl_type WILL mess up your program.
@@ -887,28 +887,28 @@ EAPI Eina_Bool         ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_
  */
 
 /**
- * @brief Add a SOCKS v4 proxy to the proxy list
+ * @brief Adds a SOCKS v4 proxy to the proxy list.
  *
  * Use this to create (or return, if previously added) a SOCKS proxy
  * object which can be used by any ecore_con servers.
- * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
- * @param port The port to connect to on the proxy
- * @param username The username to use for the proxy (OPTIONAL)
- * @return An allocated proxy object, or NULL on failure
+ * @param ip The ip address of the proxy. (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param port The port to connect to on the proxy.
+ * @param username The username to use for the proxy. (OPTIONAL)
+ * @return An allocated proxy object, or @c NULL on failure.
  * @note This object NEVER needs to be explicitly freed.
  * @since 1.2
  */
 EAPI Ecore_Con_Socks *ecore_con_socks4_remote_add(const char *ip, int port, const char *username);
 
 /**
- * @brief Find a SOCKS v4 proxy in the proxy list
+ * @brief Finds a SOCKS v4 proxy in the proxy list.
  *
  * Use this to determine if a SOCKS proxy was previously added by checking
  * the proxy list against the parameters given.
- * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param ip The ip address of the proxy. (NOT DOMAIN NAME. IP ADDRESS.)
  * @param port The port to connect to on the proxy, or -1 to match the first proxy with @p ip
- * @param username The username used for the proxy (OPTIONAL)
- * @return true only if a proxy exists matching the given params
+ * @param username The username used for the proxy. (OPTIONAL)
+ * @return True only if a proxy exists matching the given params.
  * @note This function matches slightly more loosely than ecore_con_socks4_remote_add(), and
  * ecore_con_socks4_remote_add() should be used to return the actual object.
  * @since 1.2
@@ -916,13 +916,13 @@ EAPI Ecore_Con_Socks *ecore_con_socks4_remote_add(const char *ip, int port, cons
 EAPI Eina_Bool        ecore_con_socks4_remote_exists(const char *ip, int port, const char *username);
 
 /**
- * @brief Remove a SOCKS v4 proxy from the proxy list and delete it
+ * @brief Removes a SOCKS v4 proxy from the proxy list and delete it.
  *
  * Use this to remove a SOCKS proxy from the proxy list by checking
  * the list against the parameters given. The proxy will then be deleted.
- * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param ip The ip address of the proxy. (NOT DOMAIN NAME. IP ADDRESS.)
  * @param port The port to connect to on the proxy, or -1 to match the first proxy with @p ip
- * @param username The username used for the proxy (OPTIONAL)
+ * @param username The username used for the proxy. (OPTIONAL)
  * @note This function matches in the same way as ecore_con_socks4_remote_exists().
  * @warning Be aware that deleting a proxy which is being used WILL ruin your life.
  * @since 1.2
@@ -930,30 +930,30 @@ EAPI Eina_Bool        ecore_con_socks4_remote_exists(const char *ip, int port, c
 EAPI void             ecore_con_socks4_remote_del(const char *ip, int port, const char *username);
 
 /**
- * @brief Add a SOCKS v5 proxy to the proxy list
+ * @brief Adds a SOCKS v5 proxy to the proxy list.
  *
  * Use this to create (or return, if previously added) a SOCKS proxy
  * object which can be used by any ecore_con servers.
- * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
- * @param port The port to connect to on the proxy
- * @param username The username to use for the proxy (OPTIONAL)
- * @param password The password to use for the proxy (OPTIONAL)
- * @return An allocated proxy object, or NULL on failure
+ * @param ip The ip address of the proxy. (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param port The port to connect to on the proxy.
+ * @param username The username to use for the proxy. (OPTIONAL)
+ * @param password The password to use for the proxy. (OPTIONAL)
+ * @return An allocated proxy object, or @c NULL on failure.
  * @note This object NEVER needs to be explicitly freed.
  * @since 1.2
  */
 EAPI Ecore_Con_Socks *ecore_con_socks5_remote_add(const char *ip, int port, const char *username, const char *password);
 
 /**
- * @brief Find a SOCKS v5 proxy in the proxy list
+ * @brief Finds a SOCKS v5 proxy in the proxy list.
  *
  * Use this to determine if a SOCKS proxy was previously added by checking
  * the proxy list against the parameters given.
- * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param ip The ip address of the proxy. (NOT DOMAIN NAME. IP ADDRESS.)
  * @param port The port to connect to on the proxy, or -1 to match the first proxy with @p ip
- * @param username The username used for the proxy (OPTIONAL)
- * @param password The password used for the proxy (OPTIONAL)
- * @return true only if a proxy exists matching the given params
+ * @param username The username used for the proxy. (OPTIONAL)
+ * @param password The password used for the proxy. (OPTIONAL)
+ * @return True only if a proxy exists matching the given params.
  * @note This function matches slightly more loosely than ecore_con_socks5_remote_add(), and
  * ecore_con_socks5_remote_add() should be used to return the actual object.
  * @since 1.2
@@ -961,14 +961,14 @@ EAPI Ecore_Con_Socks *ecore_con_socks5_remote_add(const char *ip, int port, cons
 EAPI Eina_Bool        ecore_con_socks5_remote_exists(const char *ip, int port, const char *username, const char *password);
 
 /**
- * @brief Remove a SOCKS v5 proxy from the proxy list and delete it
+ * @brief Removes a SOCKS v5 proxy from the proxy list and delete it.
  *
  * Use this to remove a SOCKS proxy from the proxy list by checking
  * the list against the parameters given. The proxy will then be deleted.
- * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param ip The ip address of the proxy. (NOT DOMAIN NAME. IP ADDRESS.)
  * @param port The port to connect to on the proxy, or -1 to match the first proxy with @p ip
- * @param username The username used for the proxy (OPTIONAL)
- * @param password The password used for the proxy (OPTIONAL)
+ * @param username The username used for the proxy. (OPTIONAL)
+ * @param password The password used for the proxy. (OPTIONAL)
  * @note This function matches in the same way as ecore_con_socks4_remote_exists().
  * @warning Be aware that deleting a proxy which is being used WILL ruin your life.
  * @since 1.2
@@ -976,69 +976,69 @@ EAPI Eina_Bool        ecore_con_socks5_remote_exists(const char *ip, int port, c
 EAPI void             ecore_con_socks5_remote_del(const char *ip, int port, const char *username, const char *password);
 
 /**
- * @brief Set DNS lookup mode on an existing SOCKS proxy
+ * @brief Sets DNS lookup mode on an existing SOCKS proxy.
  *
  * According to RFC, SOCKS v4 does not require that a proxy perform
  * its own DNS lookups for addresses. SOCKS v4a specifies the protocol
  * for this. SOCKS v5 allows DNS lookups.
  * If you want to enable remote DNS lookup and are sure that your
  * proxy supports it, use this function.
- * @param ecs The proxy object
- * @param enable If true, the proxy will perform the dns lookup
+ * @param ecs The proxy object.
+ * @param enable If true, the proxy will perform the dns lookup.
  * @note By default, this setting is DISABLED.
  * @since 1.2
  */
 EAPI void             ecore_con_socks_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable);
 
 /**
- * @brief Get DNS lookup mode on an existing SOCKS proxy
+ * @brief Gets DNS lookup mode on an existing SOCKS proxy.
  *
  * According to RFC, SOCKS v4 does not require that a proxy perform
  * its own DNS lookups for addresses. SOCKS v4a specifies the protocol
  * for this. SOCKS v5 allows DNS lookups.
  * This function returns whether lookups are enabled on a proxy object.
- * @param ecs The proxy object
- * @return If true, the proxy will perform the dns lookup
+ * @param ecs The proxy object.
+ * @return If true, the proxy will perform the dns lookup.
  * @note By default, this setting is DISABLED.
  * @since 1.2
  */
 EAPI Eina_Bool        ecore_con_socks_lookup_get(Ecore_Con_Socks *ecs);
 
 /**
- * @brief Enable bind mode on a SOCKS proxy
+ * @brief Enables bind mode on a SOCKS proxy.
  *
  * Use this function to enable binding a remote port for use with a remote server.
  * For more information, see http://ufasoft.com/doc/socks4_protocol.htm
- * @param ecs The proxy object
- * @param is_bind If true, the connection established will be a port binding
+ * @param ecs The proxy object.
+ * @param is_bind If true, the connection established will be a port binding.
  * @warning Be aware that changing the operation mode of an active proxy may result in undefined behavior
  * @since 1.2
  */
 EAPI void             ecore_con_socks_bind_set(Ecore_Con_Socks *ecs, Eina_Bool is_bind);
 
 /**
- * @brief Return bind mode of a SOCKS proxy
+ * @brief Returns bind mode of a SOCKS proxy.
  *
  * Use this function to return bind mode of a proxy (binding a remote port for use with a remote server).
  * For more information, see http://ufasoft.com/doc/socks4_protocol.htm
- * @param ecs The proxy object
- * @return If true, the connection established will be a port binding
+ * @param ecs The proxy object.
+ * @return If true, the connection established will be a port binding.
  * @since 1.2
  */
 EAPI Eina_Bool        ecore_con_socks_bind_get(Ecore_Con_Socks *ecs);
 
 /**
- * @brief Return SOCKS version of a SOCKS proxy
+ * @brief Returns SOCKS version of a SOCKS proxy.
  *
- * Use this function to return the SOCKS protocol version of a proxy
- * @param ecs The proxy object
- * @return 0 on error, else 4/5
+ * Use this function to return the SOCKS protocol version of a proxy.
+ * @param ecs The proxy object.
+ * @return @c 0 on error, else @c 4/5
  * @since 1.2
  */
 EAPI unsigned int     ecore_con_socks_version_get(Ecore_Con_Socks *ecs);
 
 /**
- * @brief Remove a SOCKS v4 proxy from the proxy list and delete it
+ * @brief Removes a SOCKS v4 proxy from the proxy list and delete it.
  *
  * Use this to remove a SOCKS proxy from the proxy list by directly deleting the object given.
  * @param ecs The proxy object to delete
@@ -1048,7 +1048,7 @@ EAPI unsigned int     ecore_con_socks_version_get(Ecore_Con_Socks *ecs);
 EAPI void             ecore_con_socks_remote_del(Ecore_Con_Socks *ecs);
 
 /**
- * @brief Set a proxy object to be used with the next server created with ecore_con_server_connect()
+ * @brief Sets a proxy object to be used with the next server created with ecore_con_server_connect().
  *
  * This function sets a proxy for the next ecore_con connection. After the next server is created,
  * the proxy will NEVER be applied again unless explicitly enabled.
@@ -1059,19 +1059,19 @@ EAPI void             ecore_con_socks_remote_del(Ecore_Con_Socks *ecs);
 EAPI void             ecore_con_socks_apply_once(Ecore_Con_Socks *ecs);
 
 /**
- * @brief Set a proxy object to be used with all servers created with ecore_con_server_connect()
+ * @brief Sets a proxy object to be used with all servers created with ecore_con_server_connect().
  *
  * This function sets a proxy for all ecore_con connections. It will always be used.
- * @param ecs The proxy object
- * @see ecore_con_socks_apply_once()
+ * @param ecs The proxy object.
+ * @see ecore_con_socks_apply_once().
  * @since 1.2
  * @note ecore-con supports setting this through environment variables like so:
  *   ECORE_CON_SOCKS_V4=[user@]server-port:lookup
  *   ECORE_CON_SOCKS_V5=[user@]server-port:lookup
- * user is the OPTIONAL string that would be passed to the proxy as the username
- * server is the IP_ADDRESS of the proxy server
- * port is the port to connect to on the proxy server
- * lookup is 1 if the proxy should perform all DNS lookups, otherwise 0 or omitted
+ * user is the OPTIONAL string that would be passed to the proxy as the username.
+ * server is the IP_ADDRESS of the proxy server.
+ * port is the port to connect to on the proxy server.
+ * lookup is 1 if the proxy should perform all DNS lookups, otherwise 0 or omitted.
  */
 EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
 
@@ -1149,7 +1149,7 @@ EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
  */
 
 /**
- * @brief Create a local path to connect the socket.
+ * @brief Creates a local path to connect the socket.
  *
  * In the old API, ecore_con_server_add() and
  * ecore_con_server_connect() calculated a local path for connections
@@ -1185,15 +1185,15 @@ EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
 EAPI char *ecore_con_local_path_new(Eina_Bool is_system, const char *name, int port) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(2);
 
 /**
- * @brief Create a server to listen for connections.
+ * @brief Creates a server to listen for connections.
  *
  * @param  type The connection type.
- * @param  name       Name to associate with the socket.  It is used when
+ * @param  name       Name to associate with the socket. It is used when
  *                    generating the socket name of a Unix socket, or for
  *                    determining what host to listen on for TCP sockets.
  *                    @c NULL will not be accepted.
- * @param  port       Number to identify socket.  When a Unix socket is used,
- *                    it becomes part of the socket name.  When a TCP socket
+ * @param  port       Number to identify socket. When a Unix socket is used,
+ *                    it becomes part of the socket name. When a TCP socket
  *                    is used, it is used as the TCP port.
  * @param  data       Data to associate with the created Ecore_Con_Server
  *                    object.
@@ -1231,14 +1231,14 @@ EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
                                             const void *data);
 
 /**
- * @brief Create a connection to the specified server and return an associated object.
+ * @brief Creates a connection to the specified server and return an associated object.
  *
  * @param  type The connection type.
  * @param  name       Name used when determining what socket to connect to.
  *                    It is used to generate the socket name when the socket
- *                    is a Unix socket.  It is used as the hostname when
+ *                    is a Unix socket. It is used as the hostname when
  *                    connecting with a TCP socket.
- * @param  port       Number to identify the socket to connect to.  Used when
+ * @param  port       Number to identify the socket to connect to. Used when
  *                    generating the socket name for a Unix socket, or as the
  *                    TCP port when connecting to a TCP socket.
  * @param  data       Data to associate with the created Ecore_Con_Server
@@ -1251,9 +1251,9 @@ EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
  *     if that is not set, then from HOME, even if this is not set, then from
  *     TMPDIR. If none is set, then path would be /tmp. From this path the
  *     function would connect to socket at "[path]/.ecore/[name]/[port]". If
- *     port is negetive, then to socket at "[path]/.ecore/[name]".
+ *     port is negative, then to socket at "[path]/.ecore/[name]".
  * @li If @a type is @c ECORE_CON_LOCAL_SYSTEM, the server will connect to
- *     Unix socket at "/tmp/.ecore_service|[name]|[port]". If port is negetive,
+ *     Unix socket at "/tmp/.ecore_service|[name]|[port]". If port is negative,
  *     then to Unix socket at "/tmp/.ecore_service|[name]".
  * @li If @a type is @c ECORE_CON_LOCAL_ABSTRACT, then port number is not
  *     considered while connecting to socket.
@@ -1286,7 +1286,7 @@ EAPI Ecore_Con_Server *ecore_con_server_connect(Ecore_Con_Type type,
                                                 const char *name, int port,
                                                 const void *data);
 /**
- * @brief Close the connection and free the given server.
+ * @brief Closes the connection and free the given server.
  *
  * @param   svr The given server.
  * @return  Data associated with the server when it was created.
@@ -1310,7 +1310,7 @@ EAPI void *            ecore_con_server_del(Ecore_Con_Server *svr);
 EAPI const char *ecore_con_server_name_get(const Ecore_Con_Server *svr);
 
 /**
- * @brief Retrieve the data associated with the given server.
+ * @brief Retrieves the data associated with the given server.
  *
  * @param   svr The given server.
  * @return  The associated data.
@@ -1319,10 +1319,10 @@ EAPI const char *ecore_con_server_name_get(const Ecore_Con_Server *svr);
  */
 EAPI void *            ecore_con_server_data_get(Ecore_Con_Server *svr);
 /**
- * @brief Set the data associated with the given server.
+ * @brief Sets the data associated with the given server.
  *
  * @param svr The given server.
- * @param data The data to associate with @p svr
+ * @param data The data to associate with @p svr.
  * @return  The previously associated data, if any.
  *
  * @see ecore_con_server_data_get()
@@ -1330,7 +1330,7 @@ EAPI void *            ecore_con_server_data_get(Ecore_Con_Server *svr);
 EAPI void *            ecore_con_server_data_set(Ecore_Con_Server *svr,
                                                  void *data);
 /**
- * @brief Retrieve whether the given server is currently connected.
+ * @brief Retrieves whether the given server is currently connected.
  *
  * @param   svr The given server.
  * @return @c EINA_TRUE if the server is connected, @c EINA_FALSE otherwise.
@@ -1338,7 +1338,7 @@ EAPI void *            ecore_con_server_data_set(Ecore_Con_Server *svr,
 EAPI Eina_Bool         ecore_con_server_connected_get(const Ecore_Con_Server *svr);
 
 /**
- * @brief Retrieve the server port in use.
+ * @brief Retrieves the server port in use.
  *
  * @param   svr The given server.
  * @return  The server port in use.
@@ -1347,18 +1347,18 @@ EAPI Eina_Bool         ecore_con_server_connected_get(const Ecore_Con_Server *sv
  */
 EAPI int               ecore_con_server_port_get(const Ecore_Con_Server *svr);
 /**
- * @brief Check how long a server has been connected
+ * @brief Checks how long a server has been connected.
  *
  * @param svr The server to check
  * @return The total time, in seconds, that the server has been
- * connected/running
+ * connected/running.
  *
  * This function is used to find out the time that has been elapsed since
  * ecore_con_server_add() succeeded.
  */
 EAPI double            ecore_con_server_uptime_get(const Ecore_Con_Server *svr);
 /**
- * @brief Send the given data to the given server.
+ * @brief Sends the given data to the given server.
  *
  * @param   svr  The given server.
  * @param   data The given data.
@@ -1378,7 +1378,7 @@ EAPI int               ecore_con_server_send(Ecore_Con_Server *svr,
                                              const void *data,
                                              int size);
 /**
- * @brief Set a limit on the number of clients that can be handled concurrently
+ * @brief Sets a limit on the number of clients that can be handled concurrently
  * by the given server, and a policy on what to do if excess clients try to
  * connect.
  *
@@ -1388,7 +1388,7 @@ EAPI int               ecore_con_server_send(Ecore_Con_Server *svr,
  *                        effectively disables the server.
  * @param   reject_excess_clients  Set to 1 to automatically disconnect
  *                        excess clients as soon as they connect if you are
- *                        already handling client_limit clients.  Set to 0
+ *                        already handling client_limit clients. Set to 0
  *                        (default) to just hold off on the "accept()"
  *                        system call until the number of active clients
  *                        drops. This causes the kernel to queue up to 4096
@@ -1419,7 +1419,7 @@ EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
 EAPI const Eina_List *ecore_con_server_clients_get(const Ecore_Con_Server *svr);
 
 /**
- * @brief Get the IP address of a server that has been connected to.
+ * @brief Gets the IP address of a server that has been connected to.
  *
  * @param   svr           The given server.
  * @return  A pointer to an internal string that contains the IP address of
@@ -1430,7 +1430,7 @@ EAPI const Eina_List *ecore_con_server_clients_get(const Ecore_Con_Server *svr);
  */
 EAPI const char *      ecore_con_server_ip_get(const Ecore_Con_Server *svr);
 /**
- * @brief Flush all pending data to the given server.
+ * @brief Flushes all pending data to the given server.
  *
  * @param   svr           The given server.
  *
@@ -1441,10 +1441,10 @@ EAPI const char *      ecore_con_server_ip_get(const Ecore_Con_Server *svr);
  */
 EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
 /**
- * @brief Set the default time after which an inactive client will be disconnected
+ * @brief Sets the default time after which an inactive client will be disconnected.
  *
- * @param svr The server object
- * @param timeout The timeout, in seconds, to disconnect after
+ * @param svr The server object.
+ * @param timeout The timeout, in seconds, to disconnect after.
  *
  * This function is used by the server to set the default idle timeout on
  * clients. If the any of the clients becomes idle for a time higher than this
@@ -1460,10 +1460,10 @@ EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
  */
 EAPI void              ecore_con_server_timeout_set(Ecore_Con_Server *svr, double timeout);
 /**
- * @brief Get the default time after which an inactive client will be disconnected
+ * @brief Gets the default time after which an inactive client will be disconnected.
  *
- * @param svr The server object
- * @return The timeout, in seconds, to disconnect after
+ * @param svr The server object.
+ * @return The timeout, in seconds, to disconnect after.
  *
  * This function is used to get the idle timeout for clients.  A value of < 1
  * means the idle timeout is disabled.
@@ -1474,24 +1474,24 @@ EAPI void              ecore_con_server_timeout_set(Ecore_Con_Server *svr, doubl
 EAPI double            ecore_con_server_timeout_get(const Ecore_Con_Server *svr);
 
 /**
- * @brief Get the fd that the server is connected to
+ * @brief Gets the fd that the server is connected to.
  *
  * @param svr The server object
- * @return The fd, or -1 on failure
+ * @return The fd, or @c -1 on failure
  *
  * This function returns the fd which is used by the underlying server connection.
  * It should not be tampered with unless you REALLY know what you are doing.
- * @note This function is only valid for servers created with ecore_con_server_connect()
+ * @note This function is only valid for servers created with ecore_con_server_connect().
  * @warning Seriously. Don't use this unless you know what you are doing.
  * @since 1.1
  */
 EAPI int               ecore_con_server_fd_get(const Ecore_Con_Server *svr);
 
 /**
- * @brief Get the fd that the client is connected to
+ * @brief Gets the fd that the client is connected to.
  *
  * @param cl The client object
- * @return The fd, or -1 on failure
+ * @return The fd, or @c -1 on failure
  *
  * This function returns the fd which is used by the underlying client connection.
  * It should not be tampered with unless you REALLY know what you are doing.
@@ -1523,7 +1523,7 @@ EAPI int               ecore_con_client_fd_get(const Ecore_Con_Client *cl);
  */
 
 /**
- * @brief Send the given data to the given client.
+ * @brief Sends the given data to the given client.
  *
  * @param   cl   The given client.
  * @param   data The given data.
@@ -1543,14 +1543,14 @@ EAPI int               ecore_con_client_send(Ecore_Con_Client *cl,
                                              const void *data,
                                              int size);
 /**
- * @brief Close the connection and free memory allocated to the given client.
+ * @brief Closes the connection and free memory allocated to the given client.
  *
  * @param   cl The given client.
  * @return  Data associated with the client.
  */
 EAPI void *            ecore_con_client_del(Ecore_Con_Client *cl);
 /**
- * @brief Set the data associated with the given client to @p data.
+ * @brief Sets the data associated with the given client to @p data.
  *
  * @param   cl   The given client.
  * @param   data What to set the data to.
@@ -1558,7 +1558,7 @@ EAPI void *            ecore_con_client_del(Ecore_Con_Client *cl);
 EAPI void              ecore_con_client_data_set(Ecore_Con_Client *cl,
                                                  const void       *data);
 /**
- * @brief Retrieve the data associated with the given client.
+ * @brief Retrieves the data associated with the given client.
  *
  * @param   cl The given client.
  * @return  The data associated with @p cl.
@@ -1566,7 +1566,7 @@ EAPI void              ecore_con_client_data_set(Ecore_Con_Client *cl,
 EAPI void *            ecore_con_client_data_get(Ecore_Con_Client *cl);
 
 /**
- * @brief Get the IP address of a client that has connected.
+ * @brief Gets the IP address of a client that has connected.
  *
  * @param   cl            The given client.
  * @return  A pointer to an internal string that contains the IP address of
@@ -1577,7 +1577,7 @@ EAPI void *            ecore_con_client_data_get(Ecore_Con_Client *cl);
  */
 EAPI const char *      ecore_con_client_ip_get(const Ecore_Con_Client *cl);
 /**
- * @brief Flush all pending data to the given client.
+ * @brief Flushes all pending data to the given client.
  *
  * @param   cl            The given client.
  *
@@ -1588,7 +1588,7 @@ EAPI const char *      ecore_con_client_ip_get(const Ecore_Con_Client *cl);
  */
 EAPI void              ecore_con_client_flush(Ecore_Con_Client *cl);
 /**
- * @brief Check how long a client has been connected
+ * @brief Checks how long a client has been connected.
  *
  * @param cl The client to check
  * @return The total time, in seconds, that the client has been connected to
@@ -1598,11 +1598,11 @@ EAPI void              ecore_con_client_flush(Ecore_Con_Client *cl);
  */
 EAPI double            ecore_con_client_uptime_get(const Ecore_Con_Client *cl);
 /**
- * @brief Get the default time after which the client will be disconnected when
- * inactive
+ * @brief Gets the default time after which the client will be disconnected when
+ * inactive.
  *
- * @param cl The client object
- * @return The timeout, in seconds, to disconnect after
+ * @param cl The client object.
+ * @return The timeout, in seconds, to disconnect after.
  *
  * This function is used to get the idle timeout for a client.  A value of < 1
  * means the idle timeout is disabled.
@@ -1611,7 +1611,7 @@ EAPI double            ecore_con_client_uptime_get(const Ecore_Con_Client *cl);
  */
 EAPI double            ecore_con_client_timeout_get(const Ecore_Con_Client *cl);
 /**
- * @brief Set the time after which the client will be disconnected when inactive
+ * @brief Sets the time after which the client will be disconnected when inactive.
  *
  * @param cl The client object
  * @param timeout The timeout, in seconds, to disconnect after
@@ -1631,17 +1631,17 @@ EAPI double            ecore_con_client_timeout_get(const Ecore_Con_Client *cl);
  */
 EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout);
 /**
- * @brief Return whether the client is still connected
+ * @brief Returns whether the client is still connected.
  *
  * @param   cl The given client.
  * @return @c EINA_TRUE if connected, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool         ecore_con_client_connected_get(const Ecore_Con_Client *cl);
 /**
- * @brief Return the port that the client has connected to
+ * @brief Returns the port that the client has connected to.
  *
  * @param cl The client
- * @return The port that @p cl has connected to, or -1 on error
+ * @return The port that @p cl has connected to, or @c -1 on error
  * Use this function to return the port on which a given client has connected.
  */
 EAPI int               ecore_con_client_port_get(const Ecore_Con_Client *cl);
@@ -1770,9 +1770,9 @@ typedef enum _Ecore_Con_Url_Http_Version
 } Ecore_Con_Url_Http_Version;
 
 /**
- * @brief Change the HTTP version used for the request
+ * @brief Changes the HTTP version used for the request.
  * @param url_con Connection object through which the request will be sent.
- * @param version The version to be used
+ * @param version The version to be used.
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure to change version.
  * @since 1.2
  * @see ecore_con_url_pipeline_get()
@@ -1780,7 +1780,7 @@ typedef enum _Ecore_Con_Url_Http_Version
 EAPI Eina_Bool         ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ecore_Con_Url_Http_Version version);
    
 /**
- * @brief Initialise the Ecore_Con_Url library.
+ * @brief Initializes the Ecore_Con_Url library.
  * @return Number of times the library has been initialised without being
  *          shut down.
  *
@@ -1790,7 +1790,7 @@ EAPI Eina_Bool         ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ec
 EAPI int               ecore_con_url_init(void);
 
 /**
- * @brief Shut down the Ecore_Con_Url library.
+ * @brief Shuts down the Ecore_Con_Url library.
  * @return  Number of calls that still uses Ecore_Con_Url
  *
  * @note This function doesn't call ecore_con_shutdown(). You still need to call
@@ -1799,7 +1799,7 @@ EAPI int               ecore_con_url_init(void);
 EAPI int               ecore_con_url_shutdown(void);
 
 /**
- * @brief Enable or disable HTTP 1.1 pipelining.
+ * @brief Enables or disable HTTP 1.1 pipelining.
  * @param enable @c EINA_TRUE will turn it on, @c EINA_FALSE will disable it.
  *
  * Pipelining allows to send one request after another one, without having to
@@ -1823,7 +1823,7 @@ EAPI void              ecore_con_url_pipeline_set(Eina_Bool enable);
 EAPI Eina_Bool         ecore_con_url_pipeline_get(void);
 
 /**
- * @brief Create and initialize a new Ecore_Con_Url connection object.
+ * @brief Creates and initializes a new Ecore_Con_Url connection object.
  *
  * @param url URL that will receive requests. Can be changed using
  *            ecore_con_url_url_set.
@@ -1858,7 +1858,7 @@ EAPI Eina_Bool ecore_con_url_url_set(Ecore_Con_Url *url_con,
 EAPI const char *ecore_con_url_url_get(Ecore_Con_Url *url_con);
 
 /**
- * @brief Create a custom connection object.
+ * @brief Creates a custom connection object.
  *
  * @param url URL that will receive requests
  * @param custom_request Custom request (e.g. GET, POST, HEAD, PUT, etc)
@@ -1875,7 +1875,7 @@ EAPI const char *ecore_con_url_url_get(Ecore_Con_Url *url_con);
 EAPI Ecore_Con_Url *   ecore_con_url_custom_new(const char *url,
                                                 const char *custom_request);
 /**
- * @brief Destroy a Ecore_Con_Url connection object.
+ * @brief Destroys an Ecore_Con_Url connection object.
  *
  * @param url_con Connection object to free.
  *
@@ -1884,7 +1884,7 @@ EAPI Ecore_Con_Url *   ecore_con_url_custom_new(const char *url,
 EAPI void              ecore_con_url_free(Ecore_Con_Url *url_con);
 
 /**
- * @brief Associate data with a connection object.
+ * @brief Associates data with a connection object.
  *
  * @param url_con Connection object to associate data.
  * @param data Data to be set.
@@ -1897,7 +1897,7 @@ EAPI void              ecore_con_url_free(Ecore_Con_Url *url_con);
 EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con,
                                               void *data);
 /**
- * @brief Retrieve data associated with a Ecore_Con_Url connection object.
+ * @brief Retrieves data associated with a Ecore_Con_Url connection object.
  *
  * @param url_con Connection object to retrieve data from.
  *
@@ -1910,7 +1910,7 @@ EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con,
  */
 EAPI void *            ecore_con_url_data_get(Ecore_Con_Url *url_con);
 /**
- * @brief Add an additional header to the request connection object.
+ * @brief Adds an additional header to the request connection object.
  *
  * @param url_con Connection object
  * @param key Header key
@@ -1930,7 +1930,7 @@ EAPI void              ecore_con_url_additional_header_add(Ecore_Con_Url *url_co
                                                            const char *key,
                                                            const char *value);
 /**
- * @brief Clean additional headers.
+ * @brief Cleans additional headers.
  *
  * @param url_con Connection object to clean additional headers.
  *
@@ -1943,7 +1943,7 @@ EAPI void              ecore_con_url_additional_header_add(Ecore_Con_Url *url_co
  */
 EAPI void              ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con);
 /**
- * @brief Retrieve headers from last request sent.
+ * @brief Retrieves headers from last request sent.
  *
  * @param url_con Connection object to retrieve response headers from.
  *
@@ -1955,7 +1955,7 @@ EAPI void              ecore_con_url_additional_headers_clear(Ecore_Con_Url *url
  */
 EAPI const Eina_List * ecore_con_url_response_headers_get(Ecore_Con_Url *url_con);
 /**
- * @brief Set up a file for receiving response data.
+ * @brief Sets up a file for receiving response data.
  *
  * @param url_con Connection object to set file
  * @param fd File descriptor associated with the file. A negative value will
@@ -1970,7 +1970,7 @@ EAPI const Eina_List * ecore_con_url_response_headers_get(Ecore_Con_Url *url_con
  */
 EAPI void              ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
 /**
- * @brief Retrieve the number of bytes received.
+ * @brief Retrieves the number of bytes received.
  *
  * Retrieve the number of bytes received on the last request of the given
  * connection object.
@@ -1984,7 +1984,7 @@ EAPI void              ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
  */
 EAPI int               ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con);
 /**
- * @brief Set url_con to use http auth, with given username and password, "safely" or not.
+ * @brief Sets url_con to use http auth, with given username and password, "safely" or not.
  *
  * @param url_con Connection object to perform a request on, previously created
  *    with ecore_con_url_new() or ecore_con_url_custom_new().
@@ -2002,7 +2002,7 @@ EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
                                                   const char *password,
                                                   Eina_Bool safe);
 /**
- * @brief Send a get request.
+ * @brief Sends a get request.
  *
  * @param url_con Connection object to perform a request on, previously created
  *
@@ -2023,7 +2023,7 @@ EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
  */
 EAPI Eina_Bool         ecore_con_url_get(Ecore_Con_Url *url_con);
 /**
- * @brief Send a HEAD request.
+ * @brief Sends a HEAD request.
  *
  * @param url_con Connection object to perform a request on, previously created
  *
@@ -2043,7 +2043,7 @@ EAPI Eina_Bool         ecore_con_url_get(Ecore_Con_Url *url_con);
  */
 EAPI Eina_Bool         ecore_con_url_head(Ecore_Con_Url *url_con);
 /**
- * @brief Send a post request.
+ * @brief Sends a post request.
  *
  * @param url_con Connection object to perform a request on, previously created
  *                with ecore_con_url_new() or ecore_con_url_custom_new().
@@ -2074,7 +2074,7 @@ EAPI Eina_Bool         ecore_con_url_post(Ecore_Con_Url *url_con,
                                           const void *data, long length,
                                           const char *content_type);
 /**
- * @brief Set whether HTTP requests should be conditional, dependent on
+ * @brief Sets whether HTTP requests should be conditional, dependent on
  * modification time.
  *
  * @param url_con   Ecore_Con_Url to act upon.
@@ -2093,7 +2093,7 @@ EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con,
                                           double timestamp);
 
 /**
- * @brief Upload a file to an ftp site.
+ * @brief Uploads a file to an ftp site.
  *
  * @param url_con The Ecore_Con_Url object to send with
  * @param filename The path to the file to send
@@ -2111,7 +2111,7 @@ EAPI Eina_Bool         ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
                                                 const char *pass,
                                                 const char *upload_dir);
 /**
- * @brief Toggle libcurl's verbose output.
+ * @brief Toggles libcurl's verbose output.
  *
  * @param url_con Ecore_Con_Url instance which will be acted upon.
  * @param verbose Whether or not to enable libcurl's verbose output.
@@ -2123,7 +2123,7 @@ EAPI Eina_Bool         ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
 EAPI void              ecore_con_url_verbose_set(Ecore_Con_Url *url_con,
                                                  Eina_Bool verbose);
 /**
- * @brief Enable or disable EPSV extension
+ * @brief Enables or disables EPSV extension.
  * @param url_con  The Ecore_Con_Url instance which will be acted upon.
  * @param use_epsv Boolean to enable/disable the EPSV extension.
  */
@@ -2131,7 +2131,7 @@ EAPI void              ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
                                                       Eina_Bool use_epsv);
 
 /**
- * @brief Enable the cookie engine for subsequent HTTP requests.
+ * @brief Enables the cookie engine for subsequent HTTP requests.
  *
  * @param url_con Ecore_Con_Url instance which will be acted upon.
  *
@@ -2144,7 +2144,7 @@ EAPI void              ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
  */
 EAPI void              ecore_con_url_cookies_init(Ecore_Con_Url *url_con);
 /**
- * @brief Control whether session cookies from previous sessions shall be loaded.
+ * @brief Controls whether session cookies from previous sessions shall be loaded.
  *
  * @param url_con Ecore_Con_Url instance which will be acted upon.
  * @param ignore  If @c EINA_TRUE, ignore session cookies when loading cookies
@@ -2166,7 +2166,7 @@ EAPI void              ecore_con_url_cookies_init(Ecore_Con_Url *url_con);
 EAPI void              ecore_con_url_cookies_ignore_old_session_set(Ecore_Con_Url *url_con,
                                                                     Eina_Bool ignore);
 /**
- * @brief Clear currently loaded cookies.
+ * @brief Clears currently loaded cookies.
  * @param url_con      Ecore_Con_Url instance which will be acted upon.
  *
  * The cleared cookies are removed and will not be sent in subsequent HTTP
@@ -2189,7 +2189,7 @@ EAPI void              ecore_con_url_cookies_ignore_old_session_set(Ecore_Con_Ur
  */
 EAPI void              ecore_con_url_cookies_clear(Ecore_Con_Url *url_con);
 /**
- * @brief Clear currently loaded session cookies.
+ * @brief Clears currently loaded session cookies.
  *
  * @param url_con      Ecore_Con_Url instance which will be acted upon.
  *
@@ -2218,7 +2218,7 @@ EAPI void              ecore_con_url_cookies_clear(Ecore_Con_Url *url_con);
  */
 EAPI void              ecore_con_url_cookies_session_clear(Ecore_Con_Url *url_con);
 /**
- * @brief Add a file to the list of files from which to load cookies.
+ * @brief Adds a file to the list of files from which to load cookies.
  *
  * @param url_con   Ecore_Con_Url instance which will be acted upon.
  * @param file_name Name of the file that will be added to the list.
@@ -2246,7 +2246,7 @@ EAPI void              ecore_con_url_cookies_session_clear(Ecore_Con_Url *url_co
 EAPI void              ecore_con_url_cookies_file_add(Ecore_Con_Url *url_con,
                                                       const char * const file_name);
 /**
- * @brief Set the name of the file to which all current cookies will be written when
+ * @brief Sets the name of the file to which all current cookies will be written when
  * either cookies are flushed or Ecore_Con is shut down.
  *
  * @param url_con        Ecore_Con_Url instance which will be acted upon.
@@ -2269,7 +2269,7 @@ EAPI void              ecore_con_url_cookies_file_add(Ecore_Con_Url *url_con,
 EAPI Eina_Bool         ecore_con_url_cookies_jar_file_set(Ecore_Con_Url *url_con,
                                                           const char * const cookiejar_file);
 /**
- * @brief Write all current cookies to the cookie jar immediately.
+ * @brief Writes all current cookies to the cookie jar immediately.
  *
  * @param url_con Ecore_Con_Url instance which will be acted upon.
  *
@@ -2289,7 +2289,7 @@ EAPI int               ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
                                                 const char *ca_path);
 
 /**
- * @brief Set HTTP proxy to use.
+ * @brief Sets HTTP proxy to use.
  *
  * The parameter should be a char * to a zero terminated string holding
  * the host name or dotted IP address. To specify port number in this string,
@@ -2308,7 +2308,7 @@ EAPI int               ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
 EAPI Eina_Bool ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy);
 
 /**
- * @brief Set zero terminated username to use for proxy.
+ * @brief Sets zero terminated username to use for proxy.
  *
  * If socks protocol is used for proxy, protocol should be socks5 and above.
  *
@@ -2324,7 +2324,7 @@ EAPI Eina_Bool ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy
 EAPI Eina_Bool ecore_con_url_proxy_username_set(Ecore_Con_Url *url_con, const char *username);
 
 /**
- * @brief Set zero terminated password to use for proxy.
+ * @brief Sets zero terminated password to use for proxy.
  *
  * If socks protocol is used for proxy, protocol should be socks5 and above.
  *
@@ -2340,7 +2340,7 @@ EAPI Eina_Bool ecore_con_url_proxy_username_set(Ecore_Con_Url *url_con, const ch
 EAPI Eina_Bool ecore_con_url_proxy_password_set(Ecore_Con_Url *url_con, const char *password);
 
 /**
- * @brief Set timeout in seconds.
+ * @brief Sets timeout in seconds.
  *
  * The maximum time in seconds that you allow the ecore con url transfer
  * operation to take. Normally, name lookups can take a considerable time
@@ -2357,7 +2357,7 @@ EAPI Eina_Bool ecore_con_url_proxy_password_set(Ecore_Con_Url *url_con, const ch
 EAPI void ecore_con_url_timeout_set(Ecore_Con_Url *url_con, double timeout);
 
 /**
- * @brief Get the returned HTTP STATUS code
+ * @brief Gets the returned HTTP STATUS code.
  *
  * This is used to, at any time, try to return the status code for a transmission.
  * @param url_con Connection object

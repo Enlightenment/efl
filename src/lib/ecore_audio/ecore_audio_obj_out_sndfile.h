@@ -20,7 +20,7 @@
 
 /**
  * @file ecore_audio_obj_out_sndfile.h
- * @brief Ecore_Audio sndfile output
+ * @brief Ecore_Audio sndfile output.
  */
 
 #ifdef __cplusplus
