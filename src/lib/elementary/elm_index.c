@@ -231,6 +231,8 @@ _index_box_auto_fill(Evas_Object *obj,
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_geometry_get(wd->resize_obj, NULL, NULL, &iw, &ih);
 
+   if ((sd->omit_enabled) && (ih <= 0)) return;
+
    rtl = elm_widget_mirrored_get(obj);
 
    EINA_LIST_FREE(sd->omit, om)
