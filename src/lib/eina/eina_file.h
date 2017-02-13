@@ -757,6 +757,20 @@ static inline size_t eina_file_path_join(char *dst,
                                          const char *a,
                                          const char *b);
 
+
+/**
+ * @brief Unlink file
+ *
+ * @param pathname File name to unlink.
+ * @return #EINA_TRUE if the unlink was successfull, #EINA_FALSE otherwise..
+ *
+ * This function is a wrapper around the unlink() system call. It removes a link to
+ * a file.
+ *
+ * @since 1.19
+ */
+EAPI Eina_Bool eina_file_unlink(const char *pathname);
+
 #include "eina_inline_file.x"
 
 /**
