@@ -355,6 +355,16 @@ _function_is_generatable(const Eolian_Function *function, Eolian_Function_Type f
    return rtp ? _type_is_generatable(rtp, false) : true;
 }
 
+bool
+_function_is_public(const Eolian_Function *function, Eolian_Function_Type t)
+{
+    if (t == EOLIAN_PROPERTY)
+        return _function_is_public(function, EOLIAN_PROP_GET) || _function_is_public(function, EOLIAN_PROP_SET);
+    else
+        return eolian_function_scope_get(function, t) == EOLIAN_SCOPE_PUBLIC;
+}
+
+
 void separate_functions(Eolian_Class const* klass, Eolian_Function_Type t, bool ignore_constructors,
                         std::vector<Eolian_Function const*>& constructor_functions,
                         std::vector<Eolian_Function const*>& normal_functions)
@@ -364,7 +374,7 @@ void separate_functions(Eolian_Class const* klass, Eolian_Function_Type t, bool 
    for(; first != last; ++first)
      {
         Eolian_Function const* function = &*first;
-        if(eolian_function_scope_get(function, t) == EOLIAN_SCOPE_PUBLIC)
+        if (_function_is_public(function, t))
           {
              EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << ::eolian_function_full_c_name_get(function, t, EINA_FALSE);
              if(strcmp("elm_obj_entry_input_panel_imdata_get", ::eolian_function_full_c_name_get(function, t, EINA_FALSE)) != 0 &&
