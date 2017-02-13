@@ -169,6 +169,20 @@ _drm_free(Ecore_Evas *ee)
    free(edata);
 }
 
+static void
+_drm_rotation_do(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
+{
+   Evas_Engine_Info_Drm *einfo;
+
+   if (ee->rotation == rotation) return;
+   ee->rotation = rotation;
+   einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas);
+   if (!einfo) return;
+   einfo->info.rotation = rotation;
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+     ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
+}
+
 static int
 _drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 {
@@ -200,6 +214,13 @@ _drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
    if (!ee) return;
 
    ee->in_async_render = EINA_FALSE;
+
+   if (ee->delayed.rotation_changed)
+     {
+        _drm_rotation_do(ee, ee->delayed.rotation, ee->delayed.rotation_resize);
+        ee->delayed.rotation_changed = EINA_FALSE;
+     }
+
    _drm_render_updates_process(ee, ev->updated_area);
 }
 
@@ -362,16 +383,18 @@ _drm_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 }
 
 static void
-_drm_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
+_drm_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
-   Evas_Engine_Info_Drm *einfo;
-
    if (ee->rotation == rotation) return;
-   einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas);
-   if (!einfo) return;
-   einfo->info.rotation = rotation;
-   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-     ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
+
+   if (ee->in_async_render)
+     {
+        ee->delayed.rotation = rotation;
+        ee->delayed.rotation_resize = resize;
+        ee->delayed.rotation_changed = EINA_TRUE;
+     }
+   else
+     _drm_rotation_do(ee, rotation, resize);
 }
 
 static void
