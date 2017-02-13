@@ -500,26 +500,32 @@ _fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt,
         _texture_attach_2d(color_buf, GL_COLOR_ATTACHMENT0, 0, mult_samples, EVAS_GL_GLES_2_X);
      }
 
-   // Check Depth_Stencil Format First
+      // Check Depth_Stencil Format First
 #ifdef GL_GLES
-   if (depth_fmt == GL_DEPTH_STENCIL_OES)
+   if ((depth_fmt == GL_DEPTH_STENCIL_OES) && (!mult_samples))
      {
         _texture_create(&depth_stencil_buf);
         _texture_allocate_2d(depth_stencil_buf, depth_fmt,
                            depth_fmt, GL_UNSIGNED_INT_24_8_OES, w, h);
         _texture_attach_2d(depth_stencil_buf, GL_DEPTH_ATTACHMENT,
-                           GL_STENCIL_ATTACHMENT, mult_samples, EVAS_GL_GLES_2_X);
+                           GL_STENCIL_ATTACHMENT, mult_samples, EINA_FALSE);
         depth_stencil = 1;
      }
+   else if ((depth_fmt == GL_DEPTH24_STENCIL8_OES) && (mult_samples))
 #else
    if (depth_fmt == GL_DEPTH24_STENCIL8)
+#endif
      {
         _renderbuffer_create(&depth_stencil_buf);
         _renderbuffer_allocate(depth_stencil_buf, depth_fmt, w, h, mult_samples);
+#ifdef GL_GLES
+        _renderbuffer_attach(depth_stencil_buf, GL_DEPTH_ATTACHMENT, EINA_FALSE);
+        _renderbuffer_attach(depth_stencil_buf, GL_STENCIL_ATTACHMENT, EINA_FALSE);
+#else
         _renderbuffer_attach(depth_stencil_buf, GL_DEPTH_STENCIL_ATTACHMENT, EINA_FALSE);
+#endif
         depth_stencil = 1;
      }
-#endif
 
    // Depth Attachment
    if ((!depth_stencil) && (depth_fmt))
@@ -627,6 +633,7 @@ _surface_cap_check()
    GL_Format depth[]   = {
                            { DEPTH_NONE,   0 },
                            { DEPTH_STENCIL, GL_DEPTH_STENCIL_OES },
+                           { DEPTH_STENCIL, GL_DEPTH24_STENCIL8_OES },
                            { DEPTH_BIT_8,   GL_DEPTH_COMPONENT },
                            { DEPTH_BIT_16,  GL_DEPTH_COMPONENT16 },
                            { DEPTH_BIT_24,  GL_DEPTH_COMPONENT24_OES },
@@ -1010,6 +1017,8 @@ _glenum_string_get(GLenum e)
          return "GL_DEPTH_COMPONENT16";
       case GL_DEPTH_COMPONENT24_OES:
          return "GL_DEPTH_COMPONENT24_OES";
+      case GL_DEPTH_COMPONENT32_OES:
+       return "GL_DEPTH_COMPONENT32_OES";
 
          // Stencil
       case GL_STENCIL_INDEX1_OES:
@@ -1022,6 +1031,8 @@ _glenum_string_get(GLenum e)
          // Depth_Stencil
       case GL_DEPTH_STENCIL_OES:
          return "GL_DEPTH_STENCIL_OES";
+      case GL_DEPTH24_STENCIL8_OES:
+         return "GL_DEPTH24_STENCIL8_OES";
 #else
          // Depth
       case GL_DEPTH_COMPONENT:
@@ -1193,10 +1204,16 @@ _surface_buffers_fbo_set(EVGL_Surface *sfc, GLuint fbo, Evas_GL_Context_Version 
    if (sfc->depth_stencil_buf)
      {
 #ifdef GL_GLES
-        _texture_attach_2d(sfc->depth_stencil_buf, GL_DEPTH_ATTACHMENT,
-                           GL_STENCIL_ATTACHMENT, sfc->msaa_samples, version);
+        if (sfc->depth_stencil_fmt == GL_DEPTH_STENCIL_OES)
+          _texture_attach_2d(sfc->depth_stencil_buf, GL_DEPTH_ATTACHMENT,
+                             GL_STENCIL_ATTACHMENT, sfc->msaa_samples, version);
+        else
+          {
+             _renderbuffer_attach(sfc->depth_stencil_buf, GL_DEPTH_ATTACHMENT, version);
+             _renderbuffer_attach(sfc->depth_stencil_buf, GL_STENCIL_ATTACHMENT, version);
+          }
 #else
-        _renderbuffer_attach(sfc->depth_stencil_buf, GL_DEPTH_STENCIL_ATTACHMENT, version);
+       _renderbuffer_attach(sfc->depth_stencil_buf, GL_DEPTH_STENCIL_ATTACHMENT, version);
 #endif
      }
 
@@ -1233,10 +1250,11 @@ _surface_buffers_create(EVGL_Surface *sfc)
    if (sfc->depth_stencil_fmt)
      {
 #ifdef GL_GLES
-        _texture_create(&sfc->depth_stencil_buf);
-#else
-        _renderbuffer_create(&sfc->depth_stencil_buf);
+        if (sfc->depth_stencil_fmt == GL_DEPTH_STENCIL_OES)
+          _texture_create(&sfc->depth_stencil_buf);
+        else
 #endif
+          _renderbuffer_create(&sfc->depth_stencil_buf);
      }
    else
      {
@@ -1277,24 +1295,26 @@ _surface_buffers_allocate(void *eng_data EINA_UNUSED, EVGL_Surface *sfc, int w, 
    if (sfc->depth_stencil_fmt)
      {
 #ifdef GL_GLES
-        if (version == EVAS_GL_GLES_3_X)
+        if (sfc->depth_stencil_fmt == GL_DEPTH_STENCIL_OES)
           {
-             _texture_allocate_2d(sfc->depth_stencil_buf, GL_DEPTH24_STENCIL8_OES,
-                sfc->depth_stencil_fmt, GL_UNSIGNED_INT_24_8_OES,
-                w, h);
+             if (version == EVAS_GL_GLES_3_X)
+               {
+                  _texture_allocate_2d(sfc->depth_stencil_buf, GL_DEPTH24_STENCIL8_OES,
+                     sfc->depth_stencil_fmt, GL_UNSIGNED_INT_24_8_OES,
+                     w, h);
+               }
+             else
+               {
+                  _texture_allocate_2d(sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
+                     sfc->depth_stencil_fmt, GL_UNSIGNED_INT_24_8_OES,
+                     w, h);
+               }
           }
         else
-          {
-             _texture_allocate_2d(sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
-                sfc->depth_stencil_fmt, GL_UNSIGNED_INT_24_8_OES,
-                w, h);
-          }
-#else
-        (void) version;
-        _renderbuffer_allocate(sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
-                               w, h, sfc->msaa_samples);
 #endif
-        sfc->buffer_mem[3] = w * h * 4;
+          _renderbuffer_allocate(sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
+                                 w, h, sfc->msaa_samples);
+          sfc->buffer_mem[3] = w * h * 4;
      }
    else
      {
@@ -1332,10 +1352,11 @@ _surface_buffers_destroy(EVGL_Surface *sfc)
    if (sfc->depth_stencil_buf)
      {
 #ifdef GL_GLES
-        _texture_destroy(&sfc->depth_stencil_buf);
-#else
-        _renderbuffer_destroy(&sfc->depth_stencil_buf);
+        if (sfc->depth_stencil_fmt == GL_DEPTH_STENCIL_OES)
+          _texture_destroy(&sfc->depth_stencil_buf);
+        else
 #endif
+          _renderbuffer_destroy(&sfc->depth_stencil_buf);
      }
 
    return 1;
