@@ -851,10 +851,12 @@ START_TEST(eina_test_file_unlink)
 
    /*If file was not opened as 'eina'*/
    fd = create_file_not_empty(tmpfile, &test_file_path, EINA_TRUE);
+   fail_if(fd != 0);
    fail_if(!eina_file_unlink(test_file_path));
 
    /*If file was opened as 'eina'*/
    fd = create_file_not_empty(tmpfile, &test_file_path, EINA_TRUE);
+   fail_if(fd != 0);
    fail_if(!eina_file_open(test_file_path, EINA_FALSE));
    fail_if(!eina_file_unlink(test_file_path));
 
