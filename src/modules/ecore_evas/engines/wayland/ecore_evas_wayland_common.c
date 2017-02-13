@@ -346,10 +346,19 @@ _mouse_move_dispatch(Ecore_Evas *ee)
 static void
 _rotation_do(Ecore_Evas *ee, int rotation, int resize)
 {
+   Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    int rot_dif;
 
    wdata = ee->engine.data;
+
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+   if (einfo)
+     {
+        einfo->info.rotation = rotation;
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+     }
 
    /* calculate difference in rotation */
    rot_dif = ee->rotation - rotation;
@@ -1914,8 +1923,6 @@ _ecore_evas_wl_common_transparent_set(Ecore_Evas *ee, int transparent)
 void
 _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
-   Evas_Engine_Info_Wayland *einfo;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (ee->rotation == rotation) return;
@@ -1928,14 +1935,6 @@ _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
      }
    else
      _rotation_do(ee, rotation, resize);
-
-   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
-   if (!einfo) return;
-
-   einfo->info.rotation = rotation;
-
-   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-     ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
 }
 
 static void
