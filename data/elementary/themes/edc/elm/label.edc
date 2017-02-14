@@ -25,9 +25,26 @@ group { name: "elm/label/base/default";
             rel2.relative: 1.0 1.0;
             text {
                style: "label_style";
-               min: 0 1;
+               min: 1 1;
             }
          }
+         description { state: "horizontal_fixed" 0.0;
+            inherit: "default" 0.0;
+            fixed: 1 0;
+            text.min: 0 1;
+         }
+      }
+   }
+   programs {
+      program { name: "horizontal_expandable";
+         signal: "elm,state,horizontal,expandable"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+      }
+      program { name: "horizontal_fixed";
+         signal: "elm,state,horizontal,fixed"; source: "elm";
+         action: STATE_SET "horizontal_fixed" 0.0;
+         target: "elm.text";
       }
    }
 }
