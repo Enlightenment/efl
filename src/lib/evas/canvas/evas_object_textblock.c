@@ -5415,16 +5415,8 @@ _layout_par(Ctxt *c)
 
              /* After this par we are no longer at the beginning, as there
               * must be some text in the par. */
-             if (!EINA_INLIST_GET(c->par)->next)
-               {
-                  c->position = (c->position == TEXTBLOCK_POSITION_START) ?
-                     TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
-               }
-             else
-               {
-                  if (c->position == TEXTBLOCK_POSITION_START)
-                     c->position = TEXTBLOCK_POSITION_ELSE;
-               }
+             if (c->position == TEXTBLOCK_POSITION_START)
+                c->position = TEXTBLOCK_POSITION_ELSE;
 
              return 0;
           }
@@ -5494,12 +5486,6 @@ _layout_par(Ctxt *c)
 
    Eina_Bool item_preadv = EINA_FALSE;
    Evas_Textblock_Obstacle *obs = NULL;
-
-   /* Initialize wmax by 0.
-      It means the width calculation will be processed.
-      So, it does not need to use previous calculated width. */
-   if (c->wmax == -1) c->wmax = 0;
-
    for (i = c->par->logical_items ; i ; )
      {
         Evas_Coord prevdescent = 0, prevascent = 0;
@@ -6258,7 +6244,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    c->x = c->y = 0;
    c->w = w;
    c->h = h;
-   c->wmax = c->hmax = -1;
+   c->wmax = c->hmax = 0;
    c->ascent = c->descent = 0;
    c->maxascent = c->maxdescent = 0;
    c->marginl = c->marginr = 0;
@@ -6440,14 +6426,8 @@ _relayout(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   Evas_Coord fw, fh;
-
-   _layout(eo_obj, obj->cur->geometry.w, obj->cur->geometry.h, &fw, &fh);
-
-   /* If formatted width/height from _layout() is -1,
-      It means the size calculation was skipped. */
-   if (fw >= 0) o->formatted.w = fw;
-   if (fh >= 0) o->formatted.h = fh;
+   _layout(eo_obj, obj->cur->geometry.w, obj->cur->geometry.h,
+         &o->formatted.w, &o->formatted.h);
    o->formatted.valid = 1;
    o->formatted.oneline_h = 0;
    o->last_w = obj->cur->geometry.w;
