@@ -1,0 +1,4 @@
+EXTRA_DIST2 += \
+wayland_protocol/session-recovery.xml \
+wayland_protocol/teamwork.xml \
+wayland_protocol/www.xml

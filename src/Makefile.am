@@ -79,6 +79,8 @@ include Makefile_Eolian_Cxx.am
 
 include Makefile_Elua.am
 
+include Makefile_Wayland_Protocols.am
+
 if HAVE_JS
 AM_V_CP = $(am__v_CP_@AM_V@)
 am__v_CP_ = $(am__v_CP_@AM_DEFAULT_V@)
@@ -174,6 +176,7 @@ dist-hook:
 	@mkdir -p $(distdir)/lib/evas/common/evas_op_mask $(distdir)/lib/evas/common/evas_op_mul
 	@mkdir -p $(distdir)/lib/evas/common/evas_op_sub $(distdir)/lib/evas/filters/blur
 	@mkdir -p $(distdir)/static_libs/http-parser/contrib $(distdir)/bindings/luajit/eina
+	@mkdir -p $(distdir)/wayland_protocol
 	for F in $(EXTRA_DIST2); do cp -f $(srcdir)/$$F $(distdir)/$$F; done
 
 clean-local:
