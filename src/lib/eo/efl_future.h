@@ -14,13 +14,13 @@ typedef Eo Efl_Promise;
 #define _EFL_PROMISE_EO_CLASS_TYPE
 
 #define EFL_FUTURE_CLASS efl_future_class_get()
-EWAPI const Efl_Class *efl_future_class_get(void);
+EWAPI const Efl_Class *efl_future_class_get(void); /**< @since 1.19 */
 
 /**
  * @var EINA_ERROR_FUTURE_CANCEL
  * @brief The error identifier corresponding to a future being canceled.
  */
-EAPI extern Eina_Error EINA_ERROR_FUTURE_CANCEL;
+EAPI extern Eina_Error EINA_ERROR_FUTURE_CANCEL; /**< @since 1.19 */
 
 /** Parameter passed in event callbacks in case of future failure to proceed.
  *
@@ -106,6 +106,8 @@ EOAPI Efl_Future *efl_future_then(Eo *obj, Efl_Event_Cb success, Efl_Event_Cb fa
  * @see efl_future_use
  *
  * @ingroup Efl_Future
+ *
+ * @since 1.19
  */
 EOAPI void efl_future_cancel(Eo *obj);
 
