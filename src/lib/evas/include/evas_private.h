@@ -785,7 +785,6 @@ struct _Evas_Lock
 
 struct _Evas_Post_Callback
 {
-   Evas_Object               *obj;
    Evas_Object_Event_Post_Cb  func;
    const void                *data;
    unsigned char              delete_me : 1;

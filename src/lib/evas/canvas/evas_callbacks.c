@@ -225,6 +225,7 @@ void
 _evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e)
 {
    Evas_Post_Callback *pc;
+   Eina_List *l, *l_next;
    int skip = 0;
    static int first_run = 1; // FIXME: This is a workaround to prevent this
                              // function from being called recursively.
@@ -232,8 +233,9 @@ _evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e)
    if (e->delete_me || (!first_run)) return;
    _evas_walk(e);
    first_run = 0;
-   EINA_LIST_FREE(e->post_events, pc)
+   EINA_LIST_FOREACH_SAFE(e->post_events, l, l_next, pc)
      {
+        e->post_events = eina_list_remove_list(e->post_events, l);
         if ((!skip) && (!e->delete_me) && (!pc->delete_me))
           {
              if (!pc->func((void*)pc->data, eo_e)) skip = 1;
@@ -577,12 +579,11 @@ evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const 
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Post_Callback *pc;
 
-   if (!e) return;
+   if (!e || e->delete_me) return;
    EVAS_MEMPOOL_INIT(_mp_pc, "evas_post_callback", Evas_Post_Callback, 64, );
    pc = EVAS_MEMPOOL_ALLOC(_mp_pc, Evas_Post_Callback);
    if (!pc) return;
    EVAS_MEMPOOL_PREP(_mp_pc, pc, Evas_Post_Callback);
-   if (e->delete_me) return;
 
    pc->func = func;
    pc->data = data;
