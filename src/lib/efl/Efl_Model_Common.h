@@ -10,7 +10,7 @@ EAPI extern Eina_Error EFL_MODEL_ERROR_READ_ONLY;
 EAPI extern Eina_Error EFL_MODEL_ERROR_INIT_FAILED;
 EAPI extern Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE;
 EAPI extern Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED;
-EAPI extern Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT;
+EAPI extern Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT; /**< @since 1.19 */
 
 /**
  * @struct _Efl_Model_Children_Event
