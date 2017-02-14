@@ -28,6 +28,14 @@ struct _Evas_SVG_Loader
    Eina_Bool result:1;
 };
 
+/* Global struct for working global cases during the parse */
+typedef struct {
+   struct {
+      int x, y, width, height;
+   } global;
+} Evas_SVG_Parsing;
+static Evas_SVG_Parsing svg_parse;
+
 char *
 _skip_space(const char *str, const char *end)
 {
@@ -661,9 +669,19 @@ _attr_parse_svg_node(void *data, const char *key, const char *value)
    else if (!strcmp(key, "viewBox"))
      {
         if (_parse_number(&value, &doc->vx))
-          if (_parse_number(&value, &doc->vy))
-            if (_parse_number(&value, &doc->vw))
-              _parse_number(&value, &doc->vh);
+          {
+             if (_parse_number(&value, &doc->vy))
+               {
+                  if (_parse_number(&value, &doc->vw))
+                    {
+                       _parse_number(&value, &doc->vh);
+                       svg_parse.global.height = doc->vh;
+                    }
+                  svg_parse.global.width = doc->vw;
+               }
+             svg_parse.global.y = doc->vy;
+          }
+        svg_parse.global.x = doc->vx;
      }
    else if (!strcmp(key, "preserveAspectRatio"))
      {
