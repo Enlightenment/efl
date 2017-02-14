@@ -62,6 +62,7 @@ EAPI Eina_Bool
 evas_seat_key_modifier_is_set(const Evas_Modifier *m, const char *keyname,
                               const Evas_Device *seat)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
    if (!seat)
      seat = m->e->default_seat;
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, 0);
@@ -73,12 +74,14 @@ evas_seat_key_modifier_is_set(const Evas_Modifier *m, const char *keyname,
 EAPI Eina_Bool
 evas_key_modifier_is_set(const Evas_Modifier *m, const char *keyname)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
    return evas_seat_key_modifier_is_set(m, keyname, NULL);
 }
 
 EAPI Eina_Bool
 evas_key_lock_is_set(const Evas_Lock *l, const char *keyname)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(l, EINA_FALSE);
    return evas_seat_key_lock_is_set(l, keyname, NULL);
 }
 
@@ -86,6 +89,7 @@ EAPI Eina_Bool
 evas_seat_key_lock_is_set(const Evas_Lock *l, const char *keyname,
                           const Evas_Device *seat)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(l, EINA_FALSE);
    if (!seat)
      seat = l->e->default_seat;
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, 0);
