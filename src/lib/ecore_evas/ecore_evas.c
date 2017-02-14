@@ -317,7 +317,7 @@ _ecore_evas_cursors_init(Ecore_Evas *ee)
    const Eina_List *devs, *l;
    Efl_Input_Device *dev;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+   if (!ee) return EINA_FALSE;
    ee->prop.cursors = eina_hash_pointer_new(EINA_FREE_CB(_ecore_evas_cursor_element_del));
    EINA_SAFETY_ON_NULL_RETURN_VAL(ee->prop.cursors, EINA_FALSE);
 
