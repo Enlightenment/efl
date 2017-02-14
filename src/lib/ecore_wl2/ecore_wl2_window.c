@@ -880,18 +880,46 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if ((window->opaque.x == x) && (window->opaque.y == y) &&
-       (window->opaque.w == w) && (window->opaque.h == h))
-     return;
+   if ((x == 0) && (y == 0) && (w == 0) && (h == 0))
+     {
+        if (window->surface)
+          wl_surface_set_opaque_region(window->surface, NULL);
+        return;
+     }
 
-   window->opaque.x = x;
-   window->opaque.y = y;
-   window->opaque.w = w;
-   window->opaque.h = h;
-   window->opaque_set = 1;
+   switch (window->rotation)
+     {
+      case 0:
+        window->opaque.x = x;
+        window->opaque.y = y;
+        window->opaque.w = w;
+        window->opaque.h = h;
+        break;
+      case 90:
+        window->opaque.x = y;
+        window->opaque.y = x;
+        window->opaque.w = h;
+        window->opaque.h = w;
+        break;
+      case 180:
+        window->opaque.x = x;
+        window->opaque.y = x + y;
+        window->opaque.w = w;
+        window->opaque.h = h;
+        break;
+      case 270:
+        window->opaque.x = x + y;
+        window->opaque.y = x;
+        window->opaque.w = h;
+        window->opaque.h = w;
+        break;
+      default:
+        break;
+     }
 
-   if ((window->transparent) || (window->alpha)) return;
-   if (!window->surface) return; //surface not created yet
+   window->opaque_set = EINA_TRUE;
+
+   if (!window->surface) return;
 
    region = wl_compositor_create_region(window->display->wl.compositor);
    if (!region)
@@ -900,22 +928,8 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
         return;
      }
 
-   switch (window->rotation)
-     {
-      case 0:
-        wl_region_add(region, x, y, w, h);
-        break;
-      case 180:
-        wl_region_add(region, x, x + y, w, h);
-        break;
-      case 90:
-        wl_region_add(region, y, x, h, w);
-        break;
-      case 270:
-        wl_region_add(region, x + y, x, h, w);
-        break;
-     }
-
+   wl_region_add(region, window->opaque.x, window->opaque.y,
+                 window->opaque.w, window->opaque.h);
    wl_surface_set_opaque_region(window->surface, region);
    wl_region_destroy(region);
 }
