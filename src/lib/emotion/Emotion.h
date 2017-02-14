@@ -1353,8 +1353,10 @@ EAPI const char      *emotion_webcam_device_get(const Emotion_Webcam *ew);
  * @param obj The evas object we are working with.
  * @param path The local path for the file.
  * @param type The metadata location type (GST_IMAGE_PREVIEW_IMAGE or GST_PREVIEW).
- * 
+ *
  * @ingroup Emotion_Artwork
+ *
+ * @since 1.19
  */
 
 EAPI Evas_Object     *emotion_file_meta_artwork_get(const Evas_Object *obj, const char *path, Emotion_Artwork_Info type);
