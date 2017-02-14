@@ -182,6 +182,7 @@ struct _Svg_Style_Gradient
    Eina_Stringshare  *id;
    Eina_Stringshare  *ref;
    Efl_Gfx_Gradient_Spread spread;
+   Eina_Bool user_space;
    Eina_List   *stops; // Efl_Gfx_Gradient_Stop
    Svg_Radial_Gradient *radial;
    Svg_Linear_Gradient *linear;

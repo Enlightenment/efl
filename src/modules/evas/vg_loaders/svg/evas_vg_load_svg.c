@@ -1374,6 +1374,7 @@ _clone_gradient(Svg_Style_Gradient *from)
    grad->id = _copy_id(from->id);
    grad->ref = _copy_id(from->ref);
    grad->spread = from->spread;
+   grad->user_space = from->user_space;
    grad->stops = _clone_grad_stops(from->stops);
    if (grad->type == SVG_LINEAR_GRADIENT)
      {
@@ -1659,6 +1660,10 @@ _attr_parse_radial_gradient_node(void *data, const char *key, const char *value)
      {
         grad->ref = _id_from_href(value);
      }
+   else if (!strcmp(key, "gradientUnits") && !strcmp(value, "userSpaceOnUse"))
+     {
+        grad->user_space = EINA_TRUE;
+     }
 
    return EINA_TRUE;
 }
@@ -1776,6 +1781,10 @@ _attr_parse_linear_gradient_node(void *data, const char *key, const char *value)
    else if (!strcmp(key, "xlink:href"))
      {
         grad->ref = _id_from_href(value);
+     }
+   else if (!strcmp(key, "gradientUnits") && !strcmp(value, "userSpaceOnUse"))
+     {
+        grad->user_space = EINA_TRUE;
      }
 
    return EINA_TRUE;

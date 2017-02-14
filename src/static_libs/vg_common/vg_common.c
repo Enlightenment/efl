@@ -554,6 +554,11 @@ _apply_gradient_property(Svg_Style_Gradient *g)
    int stop_count = 0, i = 0;
    Eina_List *l;
 
+   /*
+   if (!g->user_space)
+      //get bounding box
+   */
+
    if (g->type == SVG_LINEAR_GRADIENT)
      {
         grad_obj = evas_vg_gradient_linear_add(NULL);
