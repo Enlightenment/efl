@@ -312,8 +312,8 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE;
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY;
 
 /* for window stacks */
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_STACK_TYPE;
-EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_STACK_POSITION;
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_STACK_TYPE; /**< @since 1.19 */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_STACK_POSITION; /**< @since 1.19 */
 
 /* for SDB(Samsung Debug Bridge) */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_SDB_SERVER_CONNECT;

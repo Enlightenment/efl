@@ -2757,10 +2757,10 @@ EAPI Eina_Bool                             ecore_x_window_keygrab_unset(Ecore_X_
 EAPI void                                  ecore_x_e_keyrouter_set(Ecore_X_Window root, Eina_Bool on); /**< @since 1.15 */ //Key router set keyrouter flag using this
 EAPI Eina_Bool                             ecore_x_e_keyrouter_get(Ecore_X_Window root); /**< @since 1.15 */ //Client check the existance of keyrouter using this
 
-EAPI void                                  ecore_x_e_stack_type_set(Ecore_X_Window win, Ecore_X_Stack_Type stack_type);
-EAPI Ecore_X_Stack_Type                    ecore_x_e_stack_type_get(Ecore_X_Window win);
-EAPI void                                  ecore_x_e_stack_position_set(Ecore_X_Window win, Ecore_X_Stack_Position stack_position);
-EAPI Ecore_X_Stack_Position                ecore_x_e_stack_position_get(Ecore_X_Window win);
+EAPI void                                  ecore_x_e_stack_type_set(Ecore_X_Window win, Ecore_X_Stack_Type stack_type); /**< @since 1.19 */
+EAPI Ecore_X_Stack_Type                    ecore_x_e_stack_type_get(Ecore_X_Window win); /**< @since 1.19 */
+EAPI void                                  ecore_x_e_stack_position_set(Ecore_X_Window win, Ecore_X_Stack_Position stack_position); /**< @since 1.19 */
+EAPI Ecore_X_Stack_Position                ecore_x_e_stack_position_get(Ecore_X_Window win); /**< @since 1.19 */
 
 #include <Ecore_X_Atoms.h>
 #include <Ecore_X_Cursor.h>
