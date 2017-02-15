@@ -2879,8 +2879,8 @@ _eo_log_obj_shutdown(void)
 
         for (; itr < itr_end; itr++)
           {
-             const Eo_Log_Obj_Entry *entry = *itr;
              void * const *cur;
+             entry = *itr;
              if (entry->is_free) continue;
              for (cur = itr + 1; cur < itr_end; cur++)
                {
