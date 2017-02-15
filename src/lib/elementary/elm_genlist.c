@@ -3451,7 +3451,6 @@ _elm_genlist_elm_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));
-   _item_cache_zero(sd);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
    eina_hash_free_buckets(sd->size_caches);
