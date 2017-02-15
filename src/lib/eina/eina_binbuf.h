@@ -211,6 +211,8 @@ EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *
  *
  * This function appends @p slice to @p buf. If @p buf can't append
  * it, #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ *
+ * @since 1.19
  */
 EAPI Eina_Bool eina_binbuf_append_slice(Eina_Binbuf *buf, const Eina_Slice slice) EINA_ARG_NONNULL(1);
 
@@ -279,6 +281,8 @@ EAPI Eina_Bool eina_binbuf_insert_length(Eina_Binbuf *buf, const unsigned char *
  * This function inserts @p slice to @p buf at position @p pos. If @p
  * buf can't insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE
  * is returned.
+ *
+ * @since 1.19.0
  */
 EAPI Eina_Bool eina_binbuf_insert_slice(Eina_Binbuf *buf, const Eina_Slice slice, size_t pos) EINA_ARG_NONNULL(1);
 
