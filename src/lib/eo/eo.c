@@ -1964,24 +1964,22 @@ efl_data_scope_get(const Eo *obj_id, const Efl_Class *klass_id)
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
    EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
 
-#ifdef EO_DEBUG
+#ifndef EO_DEBUG
+   ret = _efl_data_scope_safe_get(obj, klass);
+#else
    if (_eo_class_mro_has(obj->klass, klass))
+     {
+        ret = _efl_data_scope_safe_get(obj, klass);
+        if (!ret && (klass->desc->data_size == 0))
+          ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
+     }
+   else
+     {
+        ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.",
+            klass->desc->name, obj->klass->desc->name);
+     }
 #endif
-     ret = _efl_data_scope_safe_get(obj, klass);
-#ifdef EO_DEBUG
-   // rare to make it a goto to clear out instruction cache of rare code
-   else goto err_mro;
-   // rare to make it a goto to clear out instruction cache of rare code
-   if (!ret && (klass->desc->data_size == 0)) goto err_ret;
-   EO_OBJ_DONE(obj_id);
-   return ret;
 
-err_ret:
-   ERR("Tried getting data of class '%s', but it has none.", klass->desc->name);
-   goto err_klass;
-err_mro:
-   ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
-#endif
 err_klass:
    EO_OBJ_DONE(obj_id);
    return ret;
