@@ -77,7 +77,7 @@ _eo_evas_smart_cb(void *data, const Efl_Event *event)
 }
 
 /* private methods for smart objects */
-static void evas_object_smart_init(Evas_Object *eo_obj);
+static inline void evas_object_smart_init(Evas_Object *eo_obj);
 static void evas_object_smart_render(Evas_Object *eo_obj,
 				     Evas_Object_Protected_Data *obj,
 				     void *type_private_data,
@@ -130,9 +130,7 @@ EAPI void
 evas_object_smart_data_set(Evas_Object *eo_obj, void *data)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
-   if (o->data) efl_data_unref(eo_obj, o->data);
    o->data = data;
-   efl_data_ref(eo_obj, NULL);
 }
 
 EAPI void *
@@ -268,7 +266,6 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    obj->smart.parent_data = o;
    obj->smart.parent_object_data = smart;
    o->contained = eina_inlist_append(o->contained, EINA_INLIST_GET(obj));
-   efl_data_ref(eo_obj, NULL);
    evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_TRUE,
                                              EINA_TRUE);
    obj->restack = 1;
@@ -323,7 +320,6 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
 
    Evas_Smart_Data *o = efl_data_scope_get(smart_obj, MY_CLASS);
    o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(obj));
-   efl_data_unref(eo_obj, obj);
    o->member_count--;
    obj->smart.parent = NULL;
    evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_TRUE, EINA_TRUE);
@@ -1493,7 +1489,7 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
 }
 
 /* all nice and private */
-static void
+static inline void
 evas_object_smart_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);

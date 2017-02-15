@@ -4,7 +4,7 @@
    do                                  \
    {                                   \
       eina_array_push(array, obj);     \
-      efl_data_ref(obj->object, NULL);  \
+      efl_data_ref(obj->object, EFL_CANVAS_OBJECT_CLASS);  \
    } while (0)
 
 #define OBJS_ARRAY_CLEAN(array)                          \

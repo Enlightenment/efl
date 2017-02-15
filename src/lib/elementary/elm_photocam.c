@@ -1420,7 +1420,7 @@ _elm_photocam_efl_canvas_group_group_add(Eo *obj, Elm_Photocam_Data *priv)
 
    priv->pan_obj = efl_add(MY_PAN_CLASS, evas_object_evas_get(obj));
    pan_data = efl_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
-   efl_data_ref(obj, NULL);
+   efl_data_ref(obj, MY_CLASS);
    pan_data->wobj = obj;
    pan_data->wsd = priv;
 

@@ -22,7 +22,7 @@ evas_object_inject(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas *e
         lay->layer = obj->cur->layer;
         evas_layer_add(lay);
      }
-   efl_data_ref(eo_obj, NULL);
+   efl_data_ref(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    lay->objects = (Evas_Object_Protected_Data *)eina_inlist_append(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(obj));
    lay->usage++;
    obj->layer = lay;

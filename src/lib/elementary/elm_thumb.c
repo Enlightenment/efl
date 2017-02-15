@@ -229,7 +229,7 @@ _thumb_finish(Elm_Thumb_Data *sd,
              sd->thumb.retry = EINA_TRUE;
 
              retry = eina_list_append(retry, sd);
-             efl_data_ref(sd->obj, NULL);
+             efl_data_ref(sd->obj, MY_CLASS);
              return;
           }
      }
@@ -259,7 +259,7 @@ _thumb_finish(Elm_Thumb_Data *sd,
              sd->thumb.retry = EINA_TRUE;
 
              retry = eina_list_append(retry, sd);
-             efl_data_ref(sd->obj, NULL);
+             efl_data_ref(sd->obj, MY_CLASS);
              return;
           }
 
