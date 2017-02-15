@@ -1872,6 +1872,7 @@ _efl_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Efl_
    (obj->datarefcount)++;
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
    xref->ref_obj = _eo_obj_id_get(ref_obj);
+   xref->data_klass = klass ? klass->desc->name : NULL;
    xref->file = file;
    xref->line = line;
 

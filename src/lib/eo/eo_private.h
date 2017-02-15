@@ -192,6 +192,7 @@ typedef struct
 {
    EINA_INLIST;
    const Eo *ref_obj;
+   const char *data_klass;
    const char *file;
    int line;
 } Eo_Xref_Node;
@@ -334,7 +335,17 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
           {
              Eina_Inlist *nitr = obj->data_xrefs->next;
              Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
-             ERR("in %s:%d: func '%s' Data of object 0x%lx is still referenced by object %p", file, line, func_name, (unsigned long) _eo_obj_id_get(obj), xref->ref_obj);
+             Eo *obj_id = _eo_obj_id_get(obj);
+             if (obj_id == xref->ref_obj)
+               {
+                  WRN("in %s:%d: func '%s' Object %p still has a reference to its own data (subclass: %s). Origin: %s:%d",
+                      file, line, func_name, obj_id, xref->data_klass, xref->file, xref->line);
+               }
+             else
+               {
+                  ERR("in %s:%d: func '%s' Data of object %p (subclass: %s) is still referenced by object %p. Origin: %s:%d",
+                      file, line, func_name, obj_id, xref->data_klass, xref->ref_obj, xref->file, xref->line);
+               }
 
              eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
              obj->data_xrefs = nitr;
