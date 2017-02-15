@@ -27,8 +27,10 @@
   Elm_Widget_Smart_Data *wd = efl_data_scope_get(o, MY_CLASS)
 
 #define API_ENTRY                                    \
-  ELM_WIDGET_DATA_GET(obj, sd);                      \
-  if ((!sd) || (!_elm_widget_is(obj)))
+  Elm_Widget_Smart_Data *sd = NULL;                  \
+  if (!_elm_widget_is(obj) ||                        \
+      (!(sd = efl_data_scope_get(obj, MY_CLASS))))
+
 #define INTERNAL_ENTRY                               \
   ELM_WIDGET_DATA_GET(obj, sd);                      \
   if (!sd) return
@@ -3141,15 +3143,16 @@ _elm_widget_disabled_eval(const Evas_Object *obj, Eina_Bool disabled)
    else
      {
         EINA_LIST_FOREACH(sd->subobjs, l, child)
-          {
-             ELM_WIDGET_DATA_GET(child, sdc);
-             if (elm_widget_is(child) && !sdc->disabled)
-               {
-                  elm_widget_focus_disabled_handle(child);
-                  elm_obj_widget_disable(child);
-                  _elm_widget_disabled_eval(child, EINA_FALSE);
-               }
-          }
+          if (elm_widget_is(child))
+            {
+               ELM_WIDGET_DATA_GET(child, sdc);
+               if (!sdc->disabled)
+                 {
+                    elm_widget_focus_disabled_handle(child);
+                    elm_obj_widget_disable(child);
+                    _elm_widget_disabled_eval(child, EINA_FALSE);
+                 }
+            }
      }
 }
 
