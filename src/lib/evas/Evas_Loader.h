@@ -209,7 +209,7 @@ struct _Evas_Image_Load_Func
 EAPI Eina_Bool    evas_module_register   (const Evas_Module_Api *module, Evas_Module_Type type);
 EAPI Eina_Bool    evas_module_unregister (const Evas_Module_Api *module, Evas_Module_Type type);
 
-EAPI Eina_Bool    evas_module_task_cancelled (void);
+EAPI Eina_Bool    evas_module_task_cancelled (void); /**< @since 1.19 */
 
 #define EVAS_MODULE_TASK_CHECK(Count, Mask, Error, Error_Handler)       \
   do {                                                                  \
