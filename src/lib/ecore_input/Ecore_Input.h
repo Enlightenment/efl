@@ -457,6 +457,27 @@ extern "C" {
     */
    EAPI Ecore_Compose_State  ecore_compose_get(const Eina_List *seq, char **seqstr_ret);
 
+   /**
+    * Set deadzone of joystick event for an axis.
+    *
+    * The axis type joystick event occurs without user's control if joystick is
+    * too sensitive. The deadzone prevents unnecessary events.
+    * The default value is 200. The event value for an axis is a signed integer
+    * between -32767 and +32767.
+    *
+    * @param event_axis_deadzone The joystick event axis deadzone.
+    * @since 1.19
+    */
+   EAPI void ecore_input_joystick_event_axis_deadzone_set(int event_axis_deadzone);
+
+   /**
+    * Get deadzone of joystick event for an axis.
+    *
+    * @return deadzone of joystick event for an axis.
+    * @since 1.19
+    */
+   EAPI int ecore_input_joystick_event_axis_deadzone_get(void);
+
 #ifdef __cplusplus
 }
 #endif

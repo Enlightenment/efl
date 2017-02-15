@@ -19,6 +19,7 @@
 #include "ecore_input_private.h"
 
 static int _ecore_input_joystick_init_count = 0;
+static int _event_axis_deadzone = 200;
 
 #ifdef HAVE_EEZE
 
@@ -382,8 +383,14 @@ _joystick_event_add(struct js_event *event, Joystick_Info *ji)
    Ecore_Event_Joystick *e;
 
    if ((event->type != JS_EVENT_BUTTON) && (event->type != JS_EVENT_AXIS)) return;
+   if ((event->type == JS_EVENT_AXIS) &&
+       ((event->value != 0) && (abs(event->value) < _event_axis_deadzone)))
+     {
+        INF("axis event value(%d) is less than deadzone(%d)\n",
+            event->value,_event_axis_deadzone);
+        return;
+     }
    if (!(e = calloc(1, sizeof(Ecore_Event_Joystick)))) return;
-
    e->index = ji->index;
    e->timestamp = event->time;
 
@@ -598,4 +605,19 @@ ecore_input_joystick_shutdown(void)
 #endif
 
    return _ecore_input_joystick_init_count;
+}
+
+EAPI void
+ecore_input_joystick_event_axis_deadzone_set(int event_axis_deadzone)
+{
+   event_axis_deadzone = abs(event_axis_deadzone);
+   if (event_axis_deadzone > 32767) event_axis_deadzone = 32767;
+
+   _event_axis_deadzone = event_axis_deadzone;
+}
+
+EAPI int
+ecore_input_joystick_event_axis_deadzone_get(void)
+{
+   return _event_axis_deadzone;
 }
