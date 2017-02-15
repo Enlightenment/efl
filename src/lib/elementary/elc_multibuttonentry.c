@@ -990,6 +990,10 @@ _mouse_clicked_signal_cb(void *data EINA_UNUSED,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
+
+   if (sd->editable) elm_entry_input_panel_show(sd->entry);
+
    efl_event_callback_legacy_call(obj, EFL_UI_EVENT_CLICKED, NULL);
 }
 
