@@ -210,6 +210,8 @@ static inline Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
  *          lock state, thread number and a backtrace.
  *
  * @note If @c EINA_HAVE_DEBUG_THREADS is not defined, this function does nothing.
+ *
+ * @since 1.19
  */
 EAPI void eina_lock_debug(const Eina_Lock *mutex);
 
