@@ -2029,11 +2029,8 @@ _elm_fileselector_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Data *sd)
 
    sd->multi_selection = eina_list_free(sd->multi_selection);
    sd->multi_selection_tmp = eina_list_free(sd->multi_selection_tmp);
-
    sd->files_view = NULL;
-
-   /* this one matching EINA_REFCOUNT_INIT() */
-   EINA_REFCOUNT_UNREF(sd) _elm_fileselector_smart_del_do(obj, sd);
+   _elm_fileselector_smart_del_do(obj, sd);
 }
 
 EAPI Evas_Object *

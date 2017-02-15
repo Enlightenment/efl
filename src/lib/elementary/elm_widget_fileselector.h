@@ -30,8 +30,6 @@ typedef struct _Elm_Fileselector_Item_Data Elm_Fileselector_Item_Data;
 typedef struct _Elm_Fileselector_Data Elm_Fileselector_Data;
 struct _Elm_Fileselector_Data
 {
-   EINA_REFCOUNT;
-
    Evas_Object             *obj;
    Evas_Object             *path_entry;
    Evas_Object             *name_entry;
