@@ -186,6 +186,8 @@ EAPI Eina_Bool eina_ustrbuf_append_length(Eina_UStrbuf *buf, const Eina_Unicode 
  *
  * This function appends @p slice to @p buf. If @p buf can't append
  * it, #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ *
+ * @since 1.19.0
  */
 EAPI Eina_Bool eina_ustrbuf_append_slice(Eina_UStrbuf *buf, const Eina_Slice slice) EINA_ARG_NONNULL(1);
 
@@ -286,6 +288,8 @@ EAPI Eina_Bool eina_ustrbuf_insert_length(Eina_UStrbuf *buf, const Eina_Unicode 
  * This function inserts @p slice to @p buf at position @p pos. If @p
  * buf can't insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE
  * is returned.
+ *
+ * @since 1.19.0
  */
 EAPI Eina_Bool eina_ustrbuf_insert_slice(Eina_UStrbuf *buf, const Eina_Slice slice, size_t pos) EINA_ARG_NONNULL(1);
 
@@ -465,6 +469,8 @@ EAPI Eina_Slice eina_ustrbuf_slice_get(const Eina_UStrbuf *buf) EINA_WARN_UNUSED
  * @return a read-write slice for the current contents. It may become
  *         invalid as soon as the @a buf is changed with calls such as
  *         eina_ustrbuf_append(), eina_ustrbuf_remove()
+ *
+ * @since 1.19.0
  */
 EAPI Eina_Rw_Slice eina_ustrbuf_rw_slice_get(const Eina_UStrbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
