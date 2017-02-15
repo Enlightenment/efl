@@ -274,7 +274,7 @@ _obj_is_override(_Eo_Object *obj)
    return (obj->vtable != &obj->klass->vtable);
 }
 
-void _eo_free(_Eo_Object *obj);
+void _eo_free(_Eo_Object *obj, Eina_Bool manual_free);
 
 static inline _Eo_Object *
 _efl_ref(_Eo_Object *obj)
@@ -322,38 +322,43 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
         obj->del_triggered = EINA_TRUE;
 
         _efl_del_internal(obj, func_name, file, line);
-#ifdef EO_DEBUG
-        /* If for some reason it's not empty, clear it. */
-        while (obj->xrefs)
-          {
-             ERR("in %s:%d: func '%s' obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.", file, line, func_name);
-             Eina_Inlist *nitr = obj->xrefs->next;
-             eina_freeq_ptr_main_add(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node), free, 0);
-             obj->xrefs = nitr;
-          }
-        while (obj->data_xrefs)
-          {
-             Eina_Inlist *nitr = obj->data_xrefs->next;
-             Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
-             Eo *obj_id = _eo_obj_id_get(obj);
-             if (obj_id == xref->ref_obj)
-               {
-                  WRN("in %s:%d: func '%s' Object %p still has a reference to its own data (subclass: %s). Origin: %s:%d",
-                      file, line, func_name, obj_id, xref->data_klass, xref->file, xref->line);
-               }
-             else
-               {
-                  ERR("in %s:%d: func '%s' Data of object %p (subclass: %s) is still referenced by object %p. Origin: %s:%d",
-                      file, line, func_name, obj_id, xref->data_klass, xref->ref_obj, xref->file, xref->line);
-               }
 
-             eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
-             obj->data_xrefs = nitr;
-          }
+        if (EINA_LIKELY(!obj->manual_free))
+          {
+#ifdef EO_DEBUG
+             /* If for some reason it's not empty, clear it. */
+             Eo *obj_id = _eo_obj_id_get(obj);
+             while (obj->xrefs)
+               {
+                  Eina_Inlist *nitr = obj->xrefs->next;
+                  Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
+                  ERR("in %s:%d: func '%s' Object %p is still referenced by object %p. Origin: %s:%d",
+                      file, line, func_name, obj_id, xref->ref_obj, xref->file, xref->line);
+                  eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
+                  obj->xrefs = nitr;
+               }
+             while (obj->data_xrefs)
+               {
+                  Eina_Inlist *nitr = obj->data_xrefs->next;
+                  Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
+                  if (obj_id == xref->ref_obj)
+                    {
+                       WRN("in %s:%d: func '%s' Object %p still has a reference to its own data (subclass: %s). Origin: %s:%d",
+                           file, line, func_name, obj_id, xref->data_klass, xref->file, xref->line);
+                    }
+                  else
+                    {
+                       ERR("in %s:%d: func '%s' Data of object %p (subclass: %s) is still referenced by object %p. Origin: %s:%d",
+                           file, line, func_name, obj_id, xref->data_klass, xref->ref_obj, xref->file, xref->line);
+                    }
+
+                  eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
+                  obj->data_xrefs = nitr;
+               }
 #endif
 
-        if (!obj->manual_free)
-          _eo_free(obj);
+             _eo_free(obj, EINA_FALSE);
+          }
         else
           _efl_ref(obj); /* If we manual free, we keep a phantom ref. */
      }

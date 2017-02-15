@@ -965,16 +965,47 @@ efl_reuse(const Eo *_obj)
 
 
 void
-_eo_free(_Eo_Object *obj)
+_eo_free(_Eo_Object *obj, Eina_Bool manual_free EINA_UNUSED)
 {
    _Efl_Class *klass = (_Efl_Class*) obj->klass;
 
    _eo_log_obj_free(obj);
 
 #ifdef EO_DEBUG
-   if (obj->datarefcount)
+   if (manual_free)
      {
-        ERR("Object %p data still referenced %d time(s).", obj, obj->datarefcount);
+        Eo *obj_id = _eo_obj_id_get(obj);
+        if (obj->datarefcount)
+          {
+             ERR("Object %p data still referenced %d time(s).", obj_id, obj->datarefcount);
+          }
+        while (obj->xrefs)
+          {
+             Eina_Inlist *nitr = obj->xrefs->next;
+             Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
+             ERR("Object %p is still referenced by object %p. Origin: %s:%d",
+                 obj_id, xref->ref_obj, xref->file, xref->line);
+             eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
+             obj->xrefs = nitr;
+          }
+        while (obj->data_xrefs)
+          {
+             Eina_Inlist *nitr = obj->data_xrefs->next;
+             Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
+             if (obj_id == xref->ref_obj)
+               {
+                  WRN("Object %p still has a reference to its own data (subclass: %s). Origin: %s:%d",
+                      obj_id, xref->data_klass, xref->file, xref->line);
+               }
+             else
+               {
+                  ERR("Data of object %p (subclass: %s) is still referenced by object %p. Origin: %s:%d",
+                      obj_id, xref->data_klass, xref->ref_obj, xref->file, xref->line);
+               }
+
+             eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
+             obj->data_xrefs = nitr;
+          }
      }
 #endif
    if (_obj_is_override(obj))
@@ -2362,7 +2393,7 @@ efl_manual_free(Eo *obj_id)
    if (obj->manual_free == EINA_FALSE) goto err_manual_free;
    // rare to use goto to keep instruction cache cleaner
    if (!obj->destructed) goto err_not_destructed;
-   _eo_free(obj);
+   _eo_free(obj, EINA_TRUE);
    EO_OBJ_DONE(obj_id);
    return EINA_TRUE;
 
