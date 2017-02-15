@@ -424,6 +424,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 
         do
           {
+             static Eina_Bool bugged_about_bug = EINA_FALSE;
              repeat = EINA_FALSE;
              ret = sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
                                        DRM_MODE_PAGE_FLIP_EVENT,
@@ -434,12 +435,18 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
               * until we can flip or we give up (100 tries with a yield
               * between each try). We can't expect everyone to run the
               * latest bleeding edge kernel IF a workaround is possible
-              * in userspace, so do this. */
+              * in userspace, so do this.
+              * We only report this as an ERR once since if it will
+              * generate a huge amount of spam otherwise. */
              if ((ret < 0) && (errno == EBUSY))
                {
                   repeat = EINA_TRUE;
-                  if (count == 0)
-                    WRN("Pageflip fail - EBUSY from drmModePageFlip...");
+                  if (count == 0 && !bugged_about_bug)
+                    {
+                       ERR("Pageflip fail - EBUSY from drmModePageFlip - "
+                           "This is either a kernel bug or an EFL one.");
+                       bugged_about_bug = EINA_TRUE;
+                    }
                   count++;
                   if (count > 500)
                     {
