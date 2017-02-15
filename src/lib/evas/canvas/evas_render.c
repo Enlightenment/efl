@@ -1308,7 +1308,6 @@ pending_change(void *data, void *gdata EINA_UNUSED)
      {
         evas_object_change_reset(obj);
      }
-   if (!obj->changed) efl_data_unref(eo_obj, obj);
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
 
