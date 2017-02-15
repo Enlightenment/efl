@@ -159,6 +159,7 @@ _edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
    _edje_clean_objects(ed);
    _edje_unref(ed);
    _edje_lib_unref();
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

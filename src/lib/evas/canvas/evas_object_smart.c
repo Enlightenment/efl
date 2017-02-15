@@ -49,6 +49,7 @@ struct _Evas_Smart_Data
    Eina_Bool         deletions_waiting : 1;
    Eina_Bool         need_recalculate : 1;
    Eina_Bool         update_boundingbox_needed : 1;
+   Eina_Bool         group_del_called : 1;
 };
 
 typedef struct
@@ -526,6 +527,7 @@ _efl_canvas_group_group_members_all_del(Evas_Object *eo_obj)
      {
         evas_object_del((Evas_Object *)((Evas_Object_Protected_Data *)memobj->object));
      }
+   o->group_del_called = EINA_TRUE;
 }
 
 static void
@@ -627,6 +629,17 @@ _efl_canvas_group_efl_object_constructor(Eo *eo_obj, Evas_Smart_Data *class_data
    return eo_obj;
 }
 
+EOLIAN static void
+_efl_canvas_group_efl_object_destructor(Eo *eo_obj, Evas_Smart_Data *o)
+{
+   efl_destructor(efl_super(eo_obj, MY_CLASS));
+   if (!o->group_del_called)
+     {
+        ERR("efl_canvas_group_del() was not called on this object: %p (%s)",
+            eo_obj, efl_class_name_get(eo_obj));
+     }
+}
+
 EAPI void
 evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Coord dx, Evas_Coord dy)
 {
@@ -662,6 +675,7 @@ _efl_canvas_group_group_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 EOLIAN static void
 _efl_canvas_group_group_del(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o EINA_UNUSED)
 {
+   o->group_del_called = EINA_TRUE;
 }
 
 EOLIAN static void

@@ -486,6 +486,7 @@ _elm_widget_efl_canvas_group_group_del(Eo *obj, Elm_Widget_Smart_Data *sd)
    eina_stringshare_del(sd->access_info);
    eina_stringshare_del(sd->accessible_name);
    evas_object_smart_data_set(obj, NULL);
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 static void

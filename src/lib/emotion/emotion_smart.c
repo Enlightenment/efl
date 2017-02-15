@@ -1967,7 +1967,6 @@ _efl_canvas_video_efl_canvas_group_group_add(Evas_Object *obj, Efl_Canvas_Video_
 EOLIAN static void
 _efl_canvas_video_efl_canvas_group_group_del(Evas_Object *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
-   if (!sd) return;
    if (sd->engine_instance)
      {
         emotion_engine_instance_file_close(sd->engine_instance);
@@ -1993,6 +1992,7 @@ _efl_canvas_video_efl_canvas_group_group_del(Evas_Object *obj EINA_UNUSED, Efl_C
    if (sd->smartobj) evas_object_smart_data_set(sd->smartobj, NULL);
    sd->smartobj = NULL;
    EINA_REFCOUNT_UNREF(sd) _smart_data_free(sd);
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

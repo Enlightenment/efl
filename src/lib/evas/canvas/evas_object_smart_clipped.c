@@ -79,6 +79,7 @@ EOLIAN static void
 _efl_canvas_group_clipped_efl_canvas_group_group_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_del(eo_obj);
+   // group_del_called was already set to true, no need to call super here.
 }
 
 static void
