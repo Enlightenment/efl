@@ -187,6 +187,7 @@ _edje_shutdown_core(void)
    _edje_message_shutdown();
    _edje_module_shutdown();
    _edje_external_shutdown();
+   _edje_internal_proxy_shutdown();
    _edje_box_shutdown();
    _edje_text_class_hash_free();
    _edje_size_class_hash_free();

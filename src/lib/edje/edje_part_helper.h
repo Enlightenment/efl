@@ -59,6 +59,7 @@ type ## _del_cb(Eo *proxy) \
         efl_ref(proxy); \
         efl_parent_set(proxy, NULL); \
      } \
+   efl_reuse(proxy); \
    _ ## type ## _proxy = proxy; \
 } \
 \
