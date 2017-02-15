@@ -6229,7 +6229,7 @@ static void
 _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Efl_Canvas_Text_Data *o = efl_data_ref(eo_obj, MY_CLASS);
+   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    Ctxt ctxt, *c;
    int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
 
