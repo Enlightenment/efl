@@ -1917,36 +1917,32 @@ _efl_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Efl_
 }
 
 static inline void
-_efl_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj)
+_efl_data_xunref_internal(_Eo_Object *obj EINA_UNUSED, void *data EINA_UNUSED, const _Eo_Object *ref_obj EINA_UNUSED)
 {
 #ifdef EO_DEBUG
    const _Efl_Class *klass = obj->klass;
+   Eo_Xref_Node *xref = NULL;
    Eina_Bool in_range = (((char *)data >= (((char *) obj) + _eo_sz)) &&
                          ((char *)data < (((char *) obj) + klass->obj_size)));
    if (!in_range)
      {
-        ERR("Data %p is not in the data range of the object %p (%s).", data, (Eo *)obj->header.id, obj->klass->desc->name);
+        ERR("Data %p is not in the data range of the object %p (%s).",
+            data, _eo_obj_id_get(obj), obj->klass->desc->name);
      }
-#else
-   (void) obj;
-   (void) data;
-#endif
-#ifdef EO_DEBUG
    if (obj->datarefcount == 0)
      {
-        ERR("Data for object %zx (%s) is already not referenced.", (size_t)_eo_obj_id_get(obj), obj->klass->desc->name);
+        ERR("Data for object %p (%s) is already not referenced.",
+            _eo_obj_id_get(obj), obj->klass->desc->name);
      }
    else
      {
         (obj->datarefcount)--;
      }
-   Eo_Xref_Node *xref = NULL;
    EINA_INLIST_FOREACH(obj->data_xrefs, xref)
      {
         if (xref->ref_obj == _eo_obj_id_get(ref_obj))
           break;
      }
-
    if (xref)
      {
         obj->data_xrefs = eina_inlist_remove(obj->data_xrefs, EINA_INLIST_GET(xref));
@@ -1954,10 +1950,10 @@ _efl_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj
      }
    else
      {
-        ERR("ref_obj (0x%zx) does not reference data (%p) of obj (0x%zx).", (size_t)_eo_obj_id_get(ref_obj), data, (size_t)_eo_obj_id_get(obj));
+        ERR("ref_obj %p (%s) does not reference data %p of obj %p (%s).",
+            _eo_obj_id_get(ref_obj), ref_obj->klass->desc->name, data,
+            _eo_obj_id_get(obj), obj->klass->desc->name);
      }
-#else
-   (void) ref_obj;
 #endif
 }
 
