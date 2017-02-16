@@ -107,6 +107,12 @@ test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
+   /* Set window icon too */
+   ic = evas_object_image_filled_add(evas_object_evas_get(win));
+   evas_object_image_file_set(ic, buf, NULL);
+   elm_win_icon_object_set(win, ic);
+   evas_object_show(ic);
+
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }

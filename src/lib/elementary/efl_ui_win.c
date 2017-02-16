@@ -3185,46 +3185,71 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
    // set window icon
    if (sd->icon)
      {
-        void *data;
+        Eo *image = NULL;
 
         if (efl_isa(sd->icon, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
+          image = sd->icon;
+
+        if (image)
           {
-             data = evas_object_image_data_get(sd->icon, EINA_FALSE);
-             if (data)
+             int w = 0, h = 0, stride, x, y;
+             Eina_Bool unmap = EINA_FALSE;
+             Eina_Rw_Slice sl = {};
+
+             if (efl_isa(image, EFL_CANVAS_IMAGE_CLASS))
+               {
+                  unmap = EINA_TRUE;
+                  efl_gfx_buffer_size_get(image, &w, &h);
+                  efl_gfx_buffer_map(image, &sl, EFL_GFX_BUFFER_ACCESS_MODE_READ,
+                                     0, 0, w, h, EFL_GFX_COLORSPACE_ARGB8888, 0,
+                                     &stride);
+               }
+             else
+               {
+                  evas_object_image_size_get(image, &w, &h);
+                  stride = evas_object_image_stride_get(image);
+                  sl.mem = evas_object_image_data_get(image, EINA_FALSE);
+               }
+
+             if (sl.mem)
                {
                   Ecore_X_Icon ic;
-                  int w = 0, h = 0, stride, x, y;
-                  unsigned char *p;
-                  unsigned int *p2;
 
-                  evas_object_image_size_get(sd->icon, &w, &h);
-                  stride = evas_object_image_stride_get(sd->icon);
+                  ic.width = w;
+                  ic.height = h;
                   if ((w > 0) && (h > 0) &&
                       (stride >= (int)(w * sizeof(unsigned int))))
                     {
-                       ic.width = w;
-                       ic.height = h;
-                       ic.data = malloc(w * h * sizeof(unsigned int));
-
-                       if (ic.data)
+                       if (stride == (int)(w * sizeof(unsigned int)))
                          {
-                            p = (unsigned char *)data;
-                            p2 = (unsigned int *)ic.data;
-                            for (y = 0; y < h; y++)
-                              {
-                                 for (x = 0; x < w; x++)
-                                   {
-                                      *p2 = *((unsigned int *)p);
-                                      p += sizeof(unsigned int);
-                                      p2++;
-                                   }
-                                 p += (stride - (w * sizeof(unsigned int)));
-                              }
+                            ic.data = sl.mem;
                             ecore_x_netwm_icons_set(sd->x.xwin, &ic, 1);
-                            free(ic.data);
+                         }
+                       else
+                         {
+                            ic.data = malloc(w * h * sizeof(unsigned int));
+                            if (ic.data)
+                              {
+                                 unsigned char *p = sl.mem;
+                                 unsigned int *p2 = ic.data;
+
+                                 for (y = 0; y < h; y++)
+                                   {
+                                      for (x = 0; x < w; x++)
+                                        {
+                                           *p2 = *((unsigned int *)p);
+                                           p += sizeof(unsigned int);
+                                           p2++;
+                                        }
+                                      p += (stride - (w * sizeof(unsigned int)));
+                                   }
+                                 ecore_x_netwm_icons_set(sd->x.xwin, &ic, 1);
+                                 free(ic.data);
+                              }
                          }
                     }
-                  evas_object_image_data_set(sd->icon, data);
+                  if (unmap) efl_gfx_buffer_unmap(image, &sl);
+                  else evas_object_image_data_set(image, sl.mem);
                }
           }
      }
