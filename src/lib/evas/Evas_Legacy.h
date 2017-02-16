@@ -218,6 +218,14 @@ EAPI void *evas_event_callback_del_full(Evas *e, Evas_Callback_Type type, Evas_E
  * callback prepares information ready for taking action, but the post callback
  * actually does the action).
  *
+ * This function should only be called from inside an evas input event
+ * callback. The event_info data may be kept up until @p func is called, in
+ * order to check the state of the "on-hold" flag for instance. Do not modify
+ * the canvas or otherwise trigger or feed a events to the canvas from inside
+ * @p func. Use jobs to safely modify the canvas.
+ *
+ * @warning Only use this function if you know exactly what you are doing!
+ *
  */
 EAPI void  evas_post_event_callback_push(Evas *e, Evas_Object_Event_Post_Cb func, const void *data);
 
