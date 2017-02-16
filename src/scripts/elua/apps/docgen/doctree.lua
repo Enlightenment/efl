@@ -10,6 +10,16 @@ local writer
 
 local M = {}
 
+local get_cache = function(o, nm)
+    local ret = o[nm]
+    if not ret then
+        ret = {}
+        o[nm] = ret
+        return ret, false
+    end
+    return ret, true
+end
+
 M.Node = util.Object:clone {
     scope = {
         UNKNOWN = eolian.object_scope.UNKNOWN,
@@ -256,25 +266,41 @@ M.Class = Node:clone {
     -- static getters
 
     by_name_get = function(name)
+        local stor = get_cache(M.Class, "_cache_bn")
+        local ret = stor[name]
+        if ret then
+            return ret
+        end
         local v = eolian.class_get_by_name(name)
         if not v then
             return nil
         end
-        return M.Class(v)
+        ret = M.Class(v)
+        stor[name] = ret
+        return ret
     end,
 
     by_file_get = function(name)
+        local stor = get_cache(M.Class, "_cache_bf")
+        local ret = stor[name]
+        if ret then
+            return ret
+        end
         local v = eolian.class_get_by_file(name)
         if not v then
             return nil
         end
-        return M.Class(v)
+        ret = M.Class(v)
+        stor[name] = ret
+        return ret
     end,
 
     all_get = function()
-        local ret = {}
-        for cl in eolian.all_classes_get() do
-            ret[#ret + 1] = M.Class(cl)
+        local ret, had = get_cache(M.Class, "_cache_all")
+        if not had then
+            for cl in eolian.all_classes_get() do
+                ret[#ret + 1] = M.Class(cl)
+            end
         end
         return ret
     end
