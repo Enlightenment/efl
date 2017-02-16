@@ -227,12 +227,12 @@ _evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e)
    Evas_Post_Callback *pc;
    Eina_List *l, *l_next;
    int skip = 0;
-   static int first_run = 1; // FIXME: This is a workaround to prevent this
-                             // function from being called recursively.
 
-   if (e->delete_me || (!first_run)) return;
+   if (e->delete_me || e->running_post_events) return;
+   if (!e->post_events) return;
+
    _evas_walk(e);
-   first_run = 0;
+   e->running_post_events = EINA_TRUE;
    EINA_LIST_FOREACH_SAFE(e->post_events, l, l_next, pc)
      {
         e->post_events = eina_list_remove_list(e->post_events, l);
@@ -242,7 +242,7 @@ _evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e)
           }
         EVAS_MEMPOOL_FREE(_mp_pc, pc);
      }
-   first_run = 1;
+   e->running_post_events = EINA_FALSE;
    _evas_unwalk(e);
 }
 

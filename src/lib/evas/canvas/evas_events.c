@@ -30,6 +30,17 @@ static void
 _canvas_event_feed_mouse_move_legacy(Evas *eo_e, Evas_Public_Data *e, int x, int y,
                                      unsigned int timestamp, const void *data);
 
+static inline Eina_Bool
+_evas_event_feed_allow(Evas_Public_Data *e)
+{
+   if (EINA_LIKELY(!e->running_post_events)) return EINA_TRUE;
+   ERR("Can not feed input events while running post-event callbacks!");
+   return EINA_FALSE;
+}
+
+#define EVAS_EVENT_FEED_SAFETY_CHECK(evas, ...) do { \
+   if (!_evas_event_feed_allow(evas)) return __VA_ARGS__; } while (0)
+
 static void
 _evas_event_havemap_adjust_f(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Vector2 *point, Eina_Bool mouse_grabbed)
 {
@@ -1390,6 +1401,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
          _efl_input_value_mask(EFL_INPUT_VALUE_BUTTON);
 
    if (!e || !ev) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
@@ -1509,12 +1521,12 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
    Evas_Object_Pointer_Data *obj_pdata;
    int event_id;
 
-   event_id = _evas_object_event_new();
-
    /* Duplicating UP event */
    evt = efl_input_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return 0;
+
+   event_id = _evas_object_event_new();
 
    /* Actually we want an OUT */
    ev->action = EFL_POINTER_ACTION_OUT;
@@ -1633,6 +1645,7 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
          _efl_input_value_mask(EFL_INPUT_VALUE_BUTTON);
 
    if (!e || !ev) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
@@ -1736,6 +1749,7 @@ _canvas_event_feed_mouse_updown(Eo *eo_e, int b, Evas_Button_Flags flags,
 
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (!e) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
@@ -1803,6 +1817,7 @@ _canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Input_Pointer_
 
    if (!e || !ev) return;
    if (e->is_frozen) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
@@ -1851,6 +1866,7 @@ evas_event_feed_mouse_cancel(Eo *eo_e, unsigned int timestamp, const void *data)
 
    evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    ev->timestamp = timestamp;
    ev->data = (void *) data;
@@ -1880,6 +1896,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
          _efl_input_value_mask(EFL_INPUT_VALUE_WHEEL_DIRECTION);
 
    if (e->is_frozen) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, pe->device);
    if (!pdata) return;
@@ -1981,6 +1998,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
 
    if (!e || !ev) return;
    if (e->is_frozen) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
@@ -2257,7 +2275,6 @@ nogrep:
 
         // NOTE: was foreach + append without free (smelled bad)
         newin = eina_list_merge(newin, ins);
-
         EINA_LIST_FOREACH(lst, l, eo_obj)
           {
              obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -2412,6 +2429,7 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
          _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
 
    if (!e || !ev) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
@@ -2492,6 +2510,7 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
          _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
 
    if (!e || !ev) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
    pdata->inside = 0;
@@ -2608,6 +2627,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
          _efl_input_value_mask(EFL_INPUT_VALUE_BUTTON);
 
    if (!e || !ev) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
@@ -2699,6 +2719,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
          _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
 
    if (!e || !ev) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
@@ -2776,6 +2797,7 @@ _canvas_event_feed_multi_internal(Evas *eo_e, Evas_Public_Data *e,
 
    evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!e || !ev) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    if (EINA_DBL_EQ(fx, 0.0)) fx = x;
    if (EINA_DBL_EQ(fy, 0.0)) fy = y;
@@ -2874,6 +2896,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
          _efl_input_value_mask(EFL_INPUT_VALUE_TOOL);
 
    if (!e || !ev) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
@@ -3069,6 +3092,7 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev
 
    if (!e || !ev) return;
    if (e->is_frozen) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
    e->last_timestamp = ev->timestamp;
    _evas_walk(e);
 
@@ -3155,6 +3179,7 @@ _canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
 
    if (!e || !ev) return;
    if (e->is_frozen) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
    e->last_timestamp = ev->timestamp;
    _evas_walk(e);
 
@@ -3314,6 +3339,7 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
    Evas_Pointer_Data *pdata;
 
    if (e->is_frozen) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
    e->last_timestamp = timestamp;
 
    event_id = _evas_object_event_new();
@@ -3368,6 +3394,7 @@ _canvas_event_feed_axis_update_internal(Evas_Public_Data *e, Efl_Input_Pointer_D
 
    if (!e || !ev) return;
    if (e->is_frozen) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
    if (!pdata) return;
@@ -3412,6 +3439,9 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
    Efl_Input_Pointer *evt;
    double x = 0, y = 0;
    int n;
+
+   if (!e) return;
+   EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
    evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
    if (!ev) return;
