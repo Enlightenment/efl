@@ -2696,6 +2696,7 @@ _elm_win_on_img_obj_del(void *data,
 static void
 _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj)
 {
+   if (!imgobj) return;
    evas_object_event_callback_del_full
      (imgobj, EVAS_CALLBACK_DEL, _elm_win_on_img_obj_del, obj);
    evas_object_event_callback_del_full
@@ -2771,7 +2772,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    sd->pointer.surf = NULL;
 #endif
 
-   if (sd->img_obj)
+   if (sd->type == ELM_WIN_INLINED_IMAGE)
      {
         _elm_win_img_callbacks_del(obj, sd->img_obj);
         sd->img_obj = NULL;
