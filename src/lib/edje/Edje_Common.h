@@ -2,11 +2,11 @@
 
 /**
  * @internal
+ * @ingroup Edje_General_Group
  *
  * @typedef Edje_Version
  * Type for edje version
  *
- * @ingroup Edje_General_Group
  */
 typedef struct _Edje_Version
 {
@@ -75,6 +75,7 @@ struct _Edje_Size_Class
 
 /**
  * @defgroup Edje_Object_Communication_Interface_Signal Edje Communication Interface: Signal
+ * @ingroup Edje_Object_Group
  *
  * @brief Functions that deal with signals.
  *
@@ -85,17 +86,15 @@ struct _Edje_Size_Class
  * emit a signal from @b code to a @b theme or create handles for
  * the ones emitted from @b themes. Signals are identified by strings.
  *
- * @ingroup Edje_Object_Group
- *
  * @{
  */
 
 typedef void         (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Edje signal callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the signal comes from. @c emission will identify the exact signal's emission string and @c source the exact signal's source one. */
 
 /**
- * @brief Get extra data passed to callbacks.
+ * @brief Gets extra data passed to callbacks.
  *
- * @return the extra data for that callback.
+ * @return The extra data for that callback.
  *
  * Some callbacks pass extra information. This function gives access to that
  * extra information. It's somehow like event_info in smart callbacks.
@@ -123,7 +122,7 @@ EAPI void *       edje_object_signal_callback_extra_data_get(void);
  */
 
 /**
- * @brief Initialize the Edje library.
+ * @brief Initializes the Edje library.
  *
  * @return The new init count. The initial value is zero.
  *
@@ -144,7 +143,7 @@ EAPI void *       edje_object_signal_callback_extra_data_get(void);
 EAPI int          edje_init                       (void);
 
 /**
- * @brief Shutdown the Edje library.
+ * @brief Shuts down the Edje library.
  *
  * @return The number of times the library has been initialized
  *         without being shutdown.
@@ -165,7 +164,7 @@ EAPI int          edje_init                       (void);
 EAPI int		edje_shutdown			(void);
 
 /**
- * @brief Set the edje append fontset.
+ * @brief Sets the edje append fontset.
  *
  * @param fonts The fontset to append.
  *
@@ -175,10 +174,10 @@ EAPI int		edje_shutdown			(void);
 EAPI void		edje_fontset_append_set		(const char *fonts);
 
 /**
- * Get data from the file level data block of an edje mapped file
+ * @brief Gets data from the file level data block of an edje mapped file.
  * @param f The mapped edje file
  * @param key The data key
- * @return The string value of the data or NULL if no key is found.
+ * @return The string value of the data, or @c NULL if no key is found.
  * Must be freed by the user when no longer needed.
  *
  * If an edje file test.edj is built from the following edc:
@@ -194,10 +193,10 @@ EAPI void		edje_fontset_append_set		(const char *fonts);
 EAPI char             *edje_mmap_data_get(const Eina_File *f, const char *key);
 
 /**
- * Get data from the file level data block of an edje file
+ * @brief Gets data from the file level data block of an edje file.
  * @param file The path to the .edj file
  * @param key The data key
- * @return The string value of the data or NULL if no key is found.
+ * @return The string value of the data, or @c NULL if no key is found.
  * Must be freed by the user when no longer needed.
  *
  * If an edje file test.edj is built from the following edc:
@@ -215,9 +214,9 @@ EAPI char             *edje_mmap_data_get(const Eina_File *f, const char *key);
 EAPI char        *edje_file_data_get              (const char *file, const char *key);
 
 /**
- * @brief Load a new module in Edje.
+ * @brief Loads a new module in Edje.
  * @param module The name of the module that will be added to Edje.
- * @return EINA_TRUE if the module was successfully loaded. Otherwise, EINA_FALSE.
+ * @return @c EINA_TRUE if the module was successfully loaded. Otherwise, @c EINA_FALSE.
  *
  * Modules are used to add functionality to Edje.
  * So, when a module is loaded, its functionality should be available for use.
@@ -237,7 +236,7 @@ EAPI Eina_Bool               edje_module_load                (const char *module
 EAPI const Eina_List        *edje_available_modules_get      (void);
 
 /**
- * @brief Get the edje append fontset.
+ * @brief Gets the edje append fontset.
  *
  * @return The edje append fontset.
  *
@@ -250,7 +249,7 @@ EAPI const Eina_List        *edje_available_modules_get      (void);
 EAPI const char		*edje_fontset_append_get	(void);
 
 /**
- * @brief Set the file cache size.
+ * @brief Sets the file cache size.
  *
  * @param count The file cache size in edje file units. Default is 16.
  *
@@ -265,7 +264,7 @@ EAPI const char		*edje_fontset_append_get	(void);
 EAPI void         edje_file_cache_set             (int count);
 
 /**
- * @brief Return the file cache size.
+ * @brief Returns the file cache size.
  *
  * @return The file cache size in edje file units. Default is 16.
  *
@@ -279,7 +278,7 @@ EAPI void         edje_file_cache_set             (int count);
 EAPI int          edje_file_cache_get             (void);
 
 /**
- * @brief Clean the file cache.
+ * @brief Cleans the file cache.
  *
  * This function cleans the file cache entries, but keeps this cache's
  * size to the last value set.
@@ -291,7 +290,7 @@ EAPI int          edje_file_cache_get             (void);
 EAPI void         edje_file_cache_flush           (void);
 
 /**
- * @brief Set the collection cache size.
+ * @brief Sets the collection cache size.
  *
  * @param count The collection cache size, in edje object units. Default is 16.
  *
@@ -307,7 +306,7 @@ EAPI void         edje_file_cache_flush           (void);
 EAPI void         edje_collection_cache_set       (int count);
 
 /**
- * @brief Return the collection cache size.
+ * @brief Returns the collection cache size.
  *
  * @return The collection cache size, in edje object units. Default is 16.
  *
@@ -321,7 +320,7 @@ EAPI void         edje_collection_cache_set       (int count);
 EAPI int          edje_collection_cache_get       (void);
 
 /**
- * @brief Clean the collection cache.
+ * @brief Cleans the collection cache.
  *
  * This function cleans the collection cache, but keeps this cache's
  * size to the last value set.
@@ -592,28 +591,28 @@ typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
 
 /**
  * @defgroup Edje_External_Plugin_Development_Group Edje Development of External Plugins
+ * @ingroup Edje_External_Group
  *
  * @brief Functions to register, unregister EXTERNAL types and develop the plugins.
  *
- * This group dicusses functions useful for the development of new plugins.
+ * This group discusses functions useful for the development of new plugins.
  * These functions deal with the newly EXTERNAL types by registering, unregistering and manipulating them.
  *
- * @ingroup Edje_External_Group
  *
  * @{
  */
 
 /**
- * Register a type to be used by EXTERNAL parts.
+ * @brief Registers a type to be used by EXTERNAL parts.
  *
  * Parts of type EXTERNAL will call user defined functions
  * to create and manipulate the object that's allocated in that part. This is
  * done by expecifying in the @c source property of the part the name of the
  * external to use, which must be one registered with this function.
  *
- * @param type_name name to register and be known by edje's "source:"
+ * @param type_name Name to register and be known by edje's "source:"
  *        parameter of "type: EXTERNAL" parts.
- * @param type_info meta-information describing how to interact with it.
+ * @param type_info Meta-information describing how to interact with it.
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (like
  *         type already registered).
@@ -623,7 +622,7 @@ typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
 EAPI Eina_Bool    edje_external_type_register             (const char *type_name, const Edje_External_Type *type_info);
 
 /**
- * Unregister a previously registered EXTERNAL type.
+ * @brief Unregisters a previously registered EXTERNAL type.
  *
  * @param type_name name to unregister. It should have been registered with
  *        edje_external_type_register() before.
@@ -636,7 +635,7 @@ EAPI Eina_Bool    edje_external_type_register             (const char *type_name
 EAPI Eina_Bool    edje_external_type_unregister           (const char *type_name);
 
 /**
- * Register a batch of types and their information.
+ * @brief Registers a batch of types and their information.
  *
  * When several types will be registered it is recommended to use this
  * function instead of several calls to edje_external_type_register(), as it
@@ -661,7 +660,7 @@ EAPI Eina_Bool    edje_external_type_unregister           (const char *type_name
 EAPI void         edje_external_type_array_register       (const Edje_External_Type_Info *array);
 
 /**
- * Unregister a batch of given external type previously registered.
+ * @brief Unregisters a batch of given external type previously registered.
  *
  * @param array @c NULL terminated array, should be the same as the
  *        one used to register with edje_external_type_array_register()
@@ -671,7 +670,7 @@ EAPI void         edje_external_type_array_register       (const Edje_External_T
 EAPI void         edje_external_type_array_unregister     (const Edje_External_Type_Info *array);
 
 /**
- * Return the current ABI version for Edje_External_Type structure.
+ * @brief Returns the current ABI version for Edje_External_Type structure.
  *
  * Always check this number before accessing Edje_External_Type in
  * your own software. If the number is not the same, your software may
@@ -693,7 +692,7 @@ EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
 
 /**
  *
- * @return an iterator of all the registered EXTERNAL types.
+ * @return An iterator of all the registered EXTERNAL types.
  *
  * Each item in the iterator is an @c Eina_Hash_Tuple which has the type
  * of the external in the @c key and #Edje_External_Type as @c data.
@@ -737,7 +736,7 @@ EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
 EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
 
 /**
- * Conevenience function to find a specific parameter in a list of them.
+ * @brief Convenience function to find a specific parameter in a list of them.
  *
  * @param params The list of parameters for the external
  * @param key The parameter to look for
@@ -747,7 +746,7 @@ EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
 EAPI Edje_External_Param            *edje_external_param_find       (const Eina_List *params, const char *key);
 
 /**
- * Get the value of the given parameter of integer type.
+ * @brief Gets the value of the given parameter of integer type.
  *
  * Look for the @p key parameter in the @p params list and return its value in
  * @p ret. If the parameter is found and is of type
@@ -759,13 +758,13 @@ EAPI Edje_External_Param            *edje_external_param_find       (const Eina_
  * @param key Name of the parameter to fetch
  * @param ret Int pointer where to store the value, must not be NULL.
  *
- * @return EINA_TRUE if the parameter was found and is of integer type,
- * EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the parameter was found and is of integer type,
+ * @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                       edje_external_param_int_get    (const Eina_List *params, const char *key, int *ret);
 
 /**
- * Get the value of the given parameter of double type.
+ * @brief Gets the value of the given parameter of double type.
  *
  * Look for the @p key parameter in the @p params list and return its value in
  * @p ret. If the parameter is found and is of type
@@ -777,13 +776,13 @@ EAPI Eina_Bool                       edje_external_param_int_get    (const Eina_
  * @param key Name of the parameter to fetch
  * @param ret Double pointer where to store the value, must not be NULL.
  *
- * @return EINA_TRUE if the parameter was found and is of double type,
- * EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the parameter was found and is of double type,
+ * @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                       edje_external_param_double_get (const Eina_List *params, const char *key, double *ret);
 
 /**
- * Get the value of the given parameter of string type.
+ * @brief Gets the value of the given parameter of string type.
  *
  * Look for the @p key parameter in the @p params list and return its value in
  * @p ret. If the parameter is found and is of type
@@ -797,13 +796,13 @@ EAPI Eina_Bool                       edje_external_param_double_get (const Eina_
  * @param key Name of the parameter to fetch
  * @param ret String pointer where to store the value, must not be NULL.
  *
- * @return EINA_TRUE if the parameter was found and is of string type,
- * EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the parameter was found and is of string type,
+ * @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                       edje_external_param_string_get (const Eina_List *params, const char *key, const char **ret);
 
 /**
- * Get the value of the given parameter of boolean type.
+ * @brief Gets the value of the given parameter of boolean type.
  *
  * Look for the @p key parameter in the @p params list and return its value in
  * @p ret. If the parameter is found and is of type
@@ -815,13 +814,13 @@ EAPI Eina_Bool                       edje_external_param_string_get (const Eina_
  * @param key Name of the parameter to fetch
  * @param ret Eina_Bool pointer where to store the value, must not be NULL.
  *
- * @return EINA_TRUE if the parameter was found and is of boolean type,
- * EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the parameter was found and is of boolean type,
+ * @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                       edje_external_param_bool_get   (const Eina_List *params, const char *key, Eina_Bool *ret);
 
 /**
- * Get the value of the given parameter of choice type.
+ * @brief Gets the value of the given parameter of choice type.
  *
  * Look for the @p key parameter in the @p params list and return its value in
  * @p ret. If the parameter is found and is of type
@@ -841,7 +840,7 @@ EAPI Eina_Bool                       edje_external_param_bool_get   (const Eina_
 EAPI Eina_Bool                       edje_external_param_choice_get (const Eina_List *params, const char *key, const char **ret);
 
 /**
- * Get the array of parameters information about a type given its name.
+ * @brief Gets the array of parameters information about a type given its name.
  *
  * @note the type names and other strings are static, that means they are
  *       @b NOT translated. One must use
@@ -857,7 +856,7 @@ EAPI Eina_Bool                       edje_external_param_choice_get (const Eina_
 EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char *type_name);
 
 /**
- * Get the #Edje_External_Type that defines an EXTERNAL type registered with
+ * @brief Gets the #Edje_External_Type that defines an EXTERNAL type registered with
  * the name @p type_name.
  */
 EAPI const Edje_External_Type       *edje_external_type_get         (const char *type_name);
@@ -889,6 +888,7 @@ EAPI const Edje_External_Type       *edje_external_type_get         (const char 
 
 /**
  * @defgroup Edje_Object_Scale Edje Scale
+ * @ingroup Edje_Object_Group
  *
  * @brief Functions that deal with scaling objects
  *
@@ -899,13 +899,12 @@ EAPI const Edje_External_Type       *edje_external_type_get         (const char 
  * Scaling affects the values of minimum/maximum @b part sizes, which
  * are @b multiplied by it. Font sizes are scaled, too.
  *
- * @ingroup Edje_Object_Group
  *
  * @{
  */
 
 /**
- * @brief Set Edje's global scaling factor.
+ * @brief Sets Edje's global scaling factor.
  *
  * @param scale The global scaling factor (the default value is @c 1.0)
  *
@@ -924,9 +923,9 @@ EAPI const Edje_External_Type       *edje_external_type_get         (const char 
 EAPI void         edje_scale_set                  (double scale);
 
 /**
- * @brief Retrieve Edje's global scaling factor.
+ * @brief Retrieves Edje's global scaling factor.
  *
- * @return The global scaling factor
+ * @return The global scaling factor.
  *
  * This function returns Edje's global scaling factor.
  *
@@ -941,6 +940,7 @@ EAPI double       edje_scale_get                  (void);
 
 /**
  * @defgroup Edje_Text_Entry Edje Text Entry
+ * @ingroup Edje_Part_Text
  *
  * @brief Functions that deal with text entries
  *
@@ -953,7 +953,6 @@ EAPI double       edje_scale_get                  (void);
  *
  * Use the functions of this section to handle the user input of text.
  *
- * @ingroup Edje_Part_Text
  *
  * @{
  */
@@ -1039,12 +1038,12 @@ typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, c
  * @param obj The Evas_Object to filter.
  * @param part Edje part name
  * @param item Item of container
- * @return must be an Evas_Object.
+ * @return Must be an Evas_Object.
  */
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
 /**
- * @brief Show last character in password mode.
+ * @brief Shows last character in password mode.
  *
  * @param password_show_last If TRUE enable last character show in password mode.
  *
@@ -1058,7 +1057,7 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
 EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
 
 /**
- * @brief Set the timeout value in last show password mode.
+ * @brief Sets the timeout value in last show password mode.
  *
  * @param password_show_last_timeout The timeout value.
  *
@@ -1078,6 +1077,7 @@ EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout)
 
 /**
  * @defgroup Edje_Object_Color_Class Edje Class: Color
+ * @ingroup Edje_Object_Group
  *
  * @brief Functions that deal with Color Classes
  *
@@ -1090,13 +1090,11 @@ EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout)
  * will affect all parts with that color class, while at a object level will
  * affect only the parts inside an specified object.
  *
- * @ingroup Edje_Object_Group
- *
  * @{
  */
 
 /**
- * @brief Set Edje color class.
+ * @brief Sets Edje color class.
  *
  * @param color_class
  * @param r Object Red value
@@ -1128,15 +1126,15 @@ EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout)
  *
  * @see edje_color_class_set().
  *
- * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
+ * @note Unlike Evas, Edje colors are @b not pre-multiplied. That is,
  *       half-transparent white is 255 255 255 128.
  *
- * @return Eina_Bool, EINA_TRUE on success and EINA_FALSE on failure.
+ * @return Eina_Bool, @c EINA_TRUE on success and @c EINA_FALSE on failure.
  */
 EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
 
 /**
- * @brief Get Edje color class.
+ * @brief Gets Edje color class.
  *
  * @param color_class
  * @param r Object Red value
@@ -1152,7 +1150,7 @@ EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int 
  * @param b3 Shadow Blue value
  * @param a3 Shadow Alpha value
  *
- * @return EINA_TRUE if found or EINA_FALSE if not found and all
+ * @return @c EINA_TRUE if found or @c EINA_FALSE if not found and all
  *         values are zeroed.
  *
  * This function gets the color values for a process level color
@@ -1166,13 +1164,13 @@ EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int 
  *
  * @see edje_color_class_set().
  *
- * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
+ * @note Unlike Evas, Edje colors are @b not pre-multiplied. That is,
  *       half-transparent white is 255 255 255 128.
  */
 EAPI Eina_Bool    edje_color_class_get            (const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
 
 /**
- * @brief Delete edje color class.
+ * @brief Deletes edje color class.
  *
  * @param color_class
  *
@@ -1199,7 +1197,7 @@ EAPI void         edje_color_class_del            (const char *color_class);
 EAPI Eina_List   *edje_color_class_list           (void);
 
 /**
- * @brief Iterate over all the active class of an application.
+ * @brief Iterates over all the active class of an application.
  *
  * @return an iterator of Edje_Color_Class of the currently active color class
  *
@@ -1211,7 +1209,7 @@ EAPI Eina_List   *edje_color_class_list           (void);
 EAPI Eina_Iterator *edje_color_class_active_iterator_new(void);
 
 /**
- * @brief Iterate over all the color class provided by an Edje file.
+ * @brief Iterates over all the color class provided by an Edje file.
  *
  * @return an iterator of Edje_Color_Class provided by the Edje file.
  *
@@ -1226,6 +1224,7 @@ EAPI Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f);
 
 /**
  * @defgroup Edje_Object_Part Edje Part
+ * @ingroup Edje_Object_Group
  *
  * @brief Functions that deal with layout components
  *
@@ -1239,15 +1238,13 @@ EAPI Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f);
  * This section has some functions specific for some types and others that
  * could be applied to any type.
  *
- * @ingroup Edje_Object_Group
- *
  * @{
  */
 
 /**
  * @typedef Edje_Part_Type
  *
- * All possible "part" types in Edje
+ * All possible "part" types in Edje.
  */
 typedef enum _Edje_Part_Type
 {
@@ -1277,6 +1274,7 @@ typedef enum _Edje_Part_Type
 
 /**
  * @defgroup Edje_Part_Text Edje Text Part
+ * @ingroup Edje_Object_Part
  *
  * @brief Functions that deal with parts of type text
  *
@@ -1285,8 +1283,6 @@ typedef enum _Edje_Part_Type
  * with texts, like string selection, setting the cursor and include
  * a input panel, where one can set a virtual keyboard to handle
  * keyboard entry easily.
- *
- * @ingroup Edje_Object_Part
  *
  * @{
  */
@@ -1302,7 +1298,7 @@ typedef enum _Edje_Part_Type
 /**
  * @typedef Edje_Text_Effect
  *
- * All possible text effects in Edje
+ * All possible text effects in Edje.
  */
 typedef enum _Edje_Text_Effect
 {
@@ -1333,10 +1329,10 @@ typedef enum _Edje_Text_Effect
 /**
  * @typedef (*Edje_Text_Change_Cb)
  *
- * Callback prototype for Edje_Text_Change
- * @param data user provided data to pass to the callback
- * @param obj the Evas_Object
- * @param The edje part
+ * Callback prototype for Edje_Text_Change.
+ * @param data User provided data to pass to the callback
+ * @param obj The Evas_Object
+ * @param part The edje part
  */
 typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
 /**
@@ -1345,16 +1341,15 @@ typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, c
 
 /**
  * @defgroup Edje_Text_Selection Edje Text Selection
+ * @ingroup Edje_Part_Text
  *
- * @brief Functions that deal with selection in text parts
+ * @brief Functions that deal with selection in text parts.
  *
  * Selection is a known functionality for texts in the whole computational
  * world. It is a block of text marked for further manipulation.
  *
  * Edje is responsible for handling this functionality through the
  * following functions.
- *
- * @ingroup Edje_Part_Text
  *
  * @{
  */
@@ -1364,8 +1359,9 @@ typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, c
 
 /**
  * @defgroup Edje_Text_Cursor Edje Text Cursor
+ * @ingroup Edje_Part_Text
  *
- * @brief Functions that deal with cursor in text parts
+ * @brief Functions that deal with cursor in text parts.
  *
  * Cursor is a known functionality for texts in the whole computational
  * world. It marks a position in the text from where one may want
@@ -1373,8 +1369,6 @@ typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, c
  *
  * Edje is responsible for handling this functionality through the
  * following functions.
- *
- * @ingroup Edje_Part_Text
  *
  * @{
  */
@@ -1385,6 +1379,7 @@ typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, c
 
 /**
  * @defgroup Edje_Part_Swallow Edje Swallow Part
+ * @ingroup Edje_Object_Part
  *
  * @brief Functions that deal with parts of type swallow and swallowed objects.
  *
@@ -1397,7 +1392,6 @@ typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, c
  * objects that are not native of Edje. In this last case, Edje will
  * only treat the Evas_Object properties of the swallowed objects.
  *
- * @ingroup Edje_Object_Part
  *
  * @{
  */
@@ -1405,7 +1399,7 @@ typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, c
 /**
  * @typedef Edje_Aspect_Control
  *
- * All Edje aspect control values
+ * All Edje aspect control values.
  *
  */
 typedef enum _Edje_Aspect_Control
@@ -1423,6 +1417,7 @@ typedef enum _Edje_Aspect_Control
 
 /**
  * @defgroup Edje_Object_Geometry_Group Edje Object Geometry
+ * @ingroup Edje_Object_Group
  *
  * @brief Functions that deal with object's geometry.
  *
@@ -1434,8 +1429,6 @@ typedef enum _Edje_Aspect_Control
  * the appearance in the screen of the parts inside. Most times
  * that is what you want.
  *
- * @ingroup Edje_Object_Group
- *
  * @{
  */
 /**
@@ -1444,6 +1437,7 @@ typedef enum _Edje_Aspect_Control
 
 /**
  * @defgroup Edje_Part_Drag Edje Drag
+ * @ingroup Edje_Object_Part
  *
  * @brief Functions that deal with dragable parts.
  *
@@ -1456,7 +1450,6 @@ typedef enum _Edje_Aspect_Control
  *
  * @see @ref tutorial_edje_drag
  *
- * @ingroup Edje_Object_Part
  *
  * @{
  */
@@ -1467,13 +1460,12 @@ typedef enum _Edje_Aspect_Control
 
 /**
  * @defgroup Edje_Part_Box Edje Box Part
+ * @ingroup Edje_Object_Part
  *
  * @brief Functions that deal with parts of type box.
  *
  * Box is a container type for parts, that means it can contain
  * other parts.
- *
- * @ingroup Edje_Object_Part
  *
  * @{
  */
@@ -1508,13 +1500,12 @@ EAPI void         edje_box_layout_register        (const char *name, Evas_Object
 
 /**
  * @defgroup Edje_Part_Table Edje Table Part
+ * @ingroup Edje_Object_Part
  *
  * @brief Functions that deal with parts of type table.
  *
  * Table is a container type for parts, that means it can contain
  * other parts.
- *
- * @ingroup Edje_Object_Part
  *
  * @{
  */
@@ -1522,7 +1513,7 @@ EAPI void         edje_box_layout_register        (const char *name, Evas_Object
 /**
  * @typedef Edje_Object_Table_Homogeneous_Mode
  *
- * Table homogeneous modes
+ * Table homogeneous modes.
  *
  */
 typedef enum _Edje_Object_Table_Homogeneous_Mode
@@ -1538,8 +1529,8 @@ typedef enum _Edje_Object_Table_Homogeneous_Mode
 
 /**
  * @defgroup Edje_Object_Text_Class Edje Class: Text
- *
- * @brief Functions that deal with Text Classes
+ * @ingroup Edje_Object_Group
+ * @brief Functions that deal with Text Classes.
  *
  * Sometimes we want to change the text of two or more parts equally and
  * that's when we use text classes.
@@ -1550,19 +1541,17 @@ typedef enum _Edje_Object_Table_Homogeneous_Mode
  * all parts with that text class, while at object level will affect only
  * the parts inside an specified object.
  *
- * @ingroup Edje_Object_Group
- *
  * @{
  */
 
 /**
- * @brief Set the Edje text class.
+ * @brief Sets the Edje text class.
  *
  * @param text_class The text class name
  * @param font The font name
  * @param size The font size
  *
- * @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE on error
  *
  * This function updates all Edje members at the process level which
  * belong to this text class with the new font attributes.
@@ -1578,13 +1567,13 @@ typedef enum _Edje_Object_Table_Homogeneous_Mode
 EAPI Eina_Bool    edje_text_class_set             (const char *text_class, const char *font, Evas_Font_Size size);
 
 /**
- * @brief Get the font and the font size from Edje text class.
+ * @brief Gets the font and the font size from Edje text class.
  *
  * @param text_class The text class name
  * @param font The font name
  * @param size The font size
  *
- * @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE on error
  *
  * This function gets the font and the font name from the specified Edje
  * text class. The font string will only be valid until the text class is
@@ -1596,7 +1585,7 @@ EAPI Eina_Bool    edje_text_class_set             (const char *text_class, const
 EAPI Eina_Bool    edje_text_class_get             (const char *text_class, const char **font, Evas_Font_Size *size);
 
 /**
- * @brief Delete the text class.
+ * @brief Deletes the text class.
  *
  * @param text_class The text class name string
  *
@@ -1607,7 +1596,7 @@ EAPI Eina_Bool    edje_text_class_get             (const char *text_class, const
 EAPI void         edje_text_class_del             (const char *text_class);
 
 /**
- * @brief List text classes.
+ * @brief Lists text classes.
  *
  * @return A list of text class names (strings). These strings are
  * stringshares and the list must be free()'d by the caller.
@@ -1647,6 +1636,7 @@ EAPI Eina_Iterator *edje_mmap_text_class_iterator_new(Eina_File *f);
 
 /**
  * @defgroup Edje_Object_Size_Class Edje Class: Size
+ * @ingroup Edje_Object_Group
  *
  * @brief Functions that deal with Size Classes
  *
@@ -1659,13 +1649,11 @@ EAPI Eina_Iterator *edje_mmap_text_class_iterator_new(Eina_File *f);
  * all parts with that size class, while at object level will affect only
  * the parts inside an specified object.
  *
- * @ingroup Edje_Object_Group
- *
  * @{
  */
 
 /**
- * @brief Set the Edje size class.
+ * @brief Sets the Edje size class.
  *
  * @param size_class The size class name
  * @param minw The min width
@@ -1673,7 +1661,7 @@ EAPI Eina_Iterator *edje_mmap_text_class_iterator_new(Eina_File *f);
  * @param maxw The max width
  * @param maxh The max height
  *
- * @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE on error
  *
  * This function updates all Edje members at the process level which
  * belong to this size class with the new min and max attributes.
@@ -1685,7 +1673,7 @@ EAPI Eina_Iterator *edje_mmap_text_class_iterator_new(Eina_File *f);
 EAPI Eina_Bool    edje_size_class_set             (const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh);
 
 /**
- * @brief Get the Edje size class.
+ * @brief Gets the Edje size class.
  *
  * @param size_class The size class name
  * @param minw The min width
@@ -1693,7 +1681,7 @@ EAPI Eina_Bool    edje_size_class_set             (const char *size_class, Evas_
  * @param maxw The max width
  * @param maxh The max height
  *
- * @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE on error
  *
  * This function gets the min and max size from the specified Edje
  * size class.
@@ -1703,7 +1691,7 @@ EAPI Eina_Bool    edje_size_class_set             (const char *size_class, Evas_
 EAPI Eina_Bool    edje_size_class_get             (const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh);
 
 /**
- * @brief Delete the size class.
+ * @brief Deletes the size class.
  *
  * @param size_class The size class name
  *
@@ -1715,7 +1703,7 @@ EAPI Eina_Bool    edje_size_class_get             (const char *size_class, Evas_
 EAPI void         edje_size_class_del             (const char *size_class);
 
 /**
- * @brief List size classes.
+ * @brief Lists size classes.
  *
  * @return A list of size class names (strings). These strings are
  * stringshares and the list must be eina_stringshare_del()'ed by the caller.
@@ -1728,9 +1716,9 @@ EAPI void         edje_size_class_del             (const char *size_class);
 EAPI Eina_List   *edje_size_class_list            (void);
 
 /**
- * @brief Iterate over all active classes of an application.
+ * @brief Iterates over all active classes of an application.
  *
- * @return an iterator of Edje_Size_Class of the currently active size class
+ * @return An iterator of Edje_Size_Class of the currently active size class
  *
  * This function only iterates over the Edje_Size_Class in use by
  * an application.
@@ -1740,7 +1728,7 @@ EAPI Eina_List   *edje_size_class_list            (void);
 EAPI Eina_Iterator *edje_size_class_active_iterator_new(void);
 
 /**
- * @brief Iterate over all size classes provided by an Edje file.
+ * @brief Iterates over all size classes provided by an Edje file.
  *
  * @return an iterator of Edje_Size_Class provided by the Edje file.
  *
@@ -1754,6 +1742,7 @@ EAPI Eina_Iterator *edje_mmap_size_class_iterator_new(Eina_File *f);
 
 /**
  * @defgroup Edje_Object_File Edje Object File
+ * @ingroup Edje_Object_Group
  *
  * @brief Functions to deals with EDJ files.
  *
@@ -1767,13 +1756,11 @@ EAPI Eina_Iterator *edje_mmap_size_class_iterator_new(Eina_File *f);
  * either by loading them or retrieving information of the EDC
  * file about objects.
  *
- * @ingroup Edje_Object_Group
- *
  * @{
  */
 
 /**
- * Get a list of groups in an edje mapped file
+ * @brief Gets a list of groups in an edje mapped file.
  * @param f The mapped file
  *
  * @return The Eina_List of group names (char *)
@@ -1784,7 +1771,7 @@ EAPI Eina_Iterator *edje_mmap_size_class_iterator_new(Eina_File *f);
 EAPI Eina_List        *edje_mmap_collection_list(Eina_File *f);
 
 /**
- * Free file collection list
+ * @brief Frees file collection list.
  * @param lst The Eina_List of groups
  *
  * Frees the list returned by edje_mmap_collection_list().
@@ -1792,27 +1779,27 @@ EAPI Eina_List        *edje_mmap_collection_list(Eina_File *f);
 EAPI void              edje_mmap_collection_list_free(Eina_List *lst);
 
 /**
- * Determine whether a group matching glob exists in an edje mapped file.
+ * @brief Determines whether a group matching glob exists in an edje mapped file.
  * @param f The mapped file
  * @param glob A glob to match on
  *
- * @return 1 if a match is found, 0 otherwise
+ * @return @c 1 if a match is found, @c 0 otherwise
  */
 EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
 
 /**
- * Determine whether a group have 3D Scene.
+ * @brief Determines whether a group have 3D Scene.
  * @param f The mapped file
  * @param glob The group name
  *
- * @return 1 if a Scene is found is found, 0 otherwise
+ * @return @c 1 if a Scene is found is found, @c 0 otherwise
  *
  * @since 1.18
  */
 EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);
 
 /**
- * @brief Iterate over all the opened Edje file.
+ * @brief Iterates over all the opened Edje file.
  *
  * @return an iterator of Eina_File currently opened Edje file.
  *
@@ -1821,7 +1808,7 @@ EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);
 EAPI Eina_Iterator *edje_file_iterator_new(void);
 
 /**
- * Get a list of groups in an edje file
+ * @brief Gets a list of groups in an edje file.
  * @param file The path to the edje file
  *
  * @return The Eina_List of group names (char *)
@@ -1835,7 +1822,7 @@ EAPI Eina_Iterator *edje_file_iterator_new(void);
 EAPI Eina_List        *edje_file_collection_list  (const char *file);
 
 /**
- * Free file collection list
+ * @brief Frees file collection list.
  * @param lst The Eina_List of groups
  *
  * Frees the list returned by edje_file_collection_list().
@@ -1843,16 +1830,16 @@ EAPI Eina_List        *edje_file_collection_list  (const char *file);
 EAPI void             edje_file_collection_list_free (Eina_List *lst);
 
 /**
- * Determine whether a group matching glob exists in an edje file.
+ * @brief Determines whether a group matching glob exists in an edje file.
  * @param file The file path
  * @param glob A glob to match on
  *
- * @return 1 if a match is found, 0 otherwise
+ * @return @c 1 if a match is found, @c 0 otherwise
  */
 EAPI Eina_Bool        edje_file_group_exists      (const char *file, const char *glob);
 
 /**
- * Converts the given Edje file load error code into a string
+ * @brief Converts the given Edje file load error code into a string
  * describing it in English.
  *
  * @param error the error code, a value in ::Edje_Load_Error.
@@ -1873,13 +1860,11 @@ EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
 
 /**
  * @defgroup Edje_Object_Animation Edje Object Animation
- *
+ * @ingroup Edje_Object_Group
  * @brief Functions that deal with animations.
  *
  * Edje has the ability to animate objects. One can start, stop, play,
- * pause, freeze and thaw edje animations using the functions of this section.
- *
- * @ingroup Edje_Object_Group
+ * pause, freeze, and thaw edje animations using the functions of this section.
  *
  * @{
  */
@@ -1887,7 +1872,7 @@ EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
 /**
  * @typedef Edje_Tween_Mode
  *
- * Available tween mode for edje animations
+ * Available tween mode for edje animations.
  */
 typedef enum _Edje_Tween_Mode
 {
@@ -1946,7 +1931,7 @@ typedef enum _Edje_Action_Type
 } Edje_Action_Type;
 
 /**
- * @brief Set edje trasitions' frame time.
+ * @brief Sets edje transitions' frame time.
  *
  * @param t The frame time, in seconds. Default value is 1/30.
  *
@@ -1961,7 +1946,7 @@ typedef enum _Edje_Action_Type
 EAPI void         edje_frametime_set              (double t);
 
 /**
- * @brief Get edje trasitions' frame time.
+ * @brief Gets edje transitions' frame time.
  *
  * @return The frame time, in seconds.
  *
@@ -1974,7 +1959,7 @@ EAPI void         edje_frametime_set              (double t);
 EAPI double       edje_frametime_get              (void);
 
 /**
- * @brief Freeze Edje objects.
+ * @brief Freezes Edje objects.
  *
  * This function freezes all Edje animations in the current process.
  *
@@ -1986,7 +1971,7 @@ EAPI double       edje_frametime_get              (void);
 EAPI void         edje_freeze                     (void);
 
 /**
- * @brief Thaw Edje objects.
+ * @brief Thaws Edje objects.
  *
  * This function thaws all Edje animations in the current process.
  *
@@ -1998,7 +1983,7 @@ EAPI void         edje_freeze                     (void);
 EAPI void         edje_thaw                       (void);
 
 /**
- * @brief Set's Edje language.
+ * @brief Sets Edje language.
  *
  * This function sets the given language.
  *
@@ -2009,9 +1994,9 @@ EAPI void         edje_thaw                       (void);
 EAPI void         edje_language_set               (const char *locale);
 
 /**
- * @brief Set edje transition duration factor.
+ * @brief Sets edje transition duration factor.
  *
- * @param scale The edje trasition's duration factor (the default value is @c 1.0)
+ * @param scale The edje transition's duration factor (the default value is @c 1.0)
  *
  * This function sets the edje transition duration factor
  * It will affect the speed of transitions
@@ -2032,7 +2017,7 @@ EAPI void         edje_language_set               (const char *locale);
 EAPI void         edje_transition_duration_factor_set        (double scale);
 
 /**
- * @brief Retrieve transitions duration factor.
+ * @brief Retrieves transitions duration factor.
  *
  * @return The edje transition duration factor
  *
@@ -2051,6 +2036,7 @@ EAPI double       edje_transition_duration_factor_get                  (void);
 
 /**
  * @defgroup Edje_Object_Communication_Interface_Message Edje Communication Interface: Message
+ * @ingroup Edje_Object_Group
  *
  * @brief Functions that deal with messages.
  *
@@ -2064,8 +2050,6 @@ EAPI double       edje_transition_duration_factor_get                  (void);
  * numbers. See #Edje_Message_Type for the full list of message types.
  *
  * @note Messages must be handled by scripts.
- *
- * @ingroup Edje_Object_Group
  *
  * @{
  */
@@ -2143,7 +2127,7 @@ struct _Edje_Message_String_Float_Set
 typedef void         (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg); /**< Edje message handler callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the message comes from. @c type will identify the type of the given message and @c msg will be a pointer the message's contents, de facto, which depend on @c type. */
 
 /**
- * @brief Process all queued up edje messages.
+ * @brief Processes all queued up edje messages.
  *
  * This function triggers the processing of messages addressed to any
  * (alive) edje objects.
@@ -2157,6 +2141,7 @@ EAPI void         edje_message_signal_process             (void);
 
 /**
  * @defgroup Edje_Perspective Edje Perspective
+ * @ingroup Edje_Object_Group
  *
  * @brief Functions that deal with 3D projection of an 2D object.
  *
@@ -2169,13 +2154,11 @@ EAPI void         edje_message_signal_process             (void);
  * affecting all the objects inside that have no particular perspective
  * set already.
  *
- * @ingroup Edje_Object_Group
- *
  * @{
  */
 
 /**
- * Creates a new perspective in the given canvas.
+ * @brief Creates a new perspective in the given canvas.
  *
  * @param e The given canvas (Evas).
  * @return An @ref Edje_Perspective object for this canvas, or @c NULL on errors.
@@ -2188,7 +2171,7 @@ EAPI void         edje_message_signal_process             (void);
  */
 EAPI Edje_Perspective       *edje_perspective_new            (Evas *e);
 /**
- * Delete the given perspective object.
+ * @brief Deletes the given perspective object.
  *
  * @param ps A valid perspective object, or @c NULL.
  *
@@ -2200,7 +2183,7 @@ EAPI Edje_Perspective       *edje_perspective_new            (Evas *e);
  */
 EAPI void                    edje_perspective_free           (Edje_Perspective *ps);
 /**
- * Setup the transform for this perspective object.
+ * @brief Sets up the transform for this perspective object.
  *
  * This sets the parameters of the perspective transformation. X, Y and Z
  * values are used. The px and py points specify the "infinite distance" point
@@ -2223,7 +2206,7 @@ EAPI void                    edje_perspective_free           (Edje_Perspective *
  */
 EAPI void                    edje_perspective_set            (Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc);
 /**
- * Make this perspective object be global for its canvas.
+ * @brief Makes this perspective object be global for its canvas.
  *
  * @param ps The given perspective object
  * @param global @c EINA_TRUE if the perspective should be global, @c
@@ -2247,7 +2230,7 @@ EAPI void                    edje_perspective_set            (Edje_Perspective *
  */
 EAPI void                    edje_perspective_global_set     (Edje_Perspective *ps, Eina_Bool global);
 /**
- * Get whether the given perspective object is global or not.
+ * @brief Gets whether the given perspective object is global or not.
  *
  * @param ps The given perspective object.
  * @return @c EINA_TRUE if this perspective object is global, @c EINA_FALSE
@@ -2257,7 +2240,7 @@ EAPI void                    edje_perspective_global_set     (Edje_Perspective *
  */
 EAPI Eina_Bool               edje_perspective_global_get     (const Edje_Perspective *ps);
 /**
- * Get the global perspective object set for this canvas.
+ * @brief Gets the global perspective object set for this canvas.
  *
  * @param e The given canvas (Evas).
  * @return The perspective object set as global for this canvas. Or @c NULL
@@ -2276,6 +2259,7 @@ EAPI const Edje_Perspective *edje_evas_global_perspective_get(const Evas *e);
 
 /**
  * @defgroup Edje_Audio Edje Audio
+ * @ingroup Edje_Audio
  *
  * @brief Functions to manipulate audio abilities in edje.
  *
@@ -2287,8 +2271,6 @@ EAPI const Edje_Perspective *edje_evas_global_perspective_get(const Evas *e);
  * a perspective object that must set to a edje object or a canvas,
  * affecting all the objects inside that have no particular perspective
  * set already.
- *
- * @ingroup Edje_Audio
  *
  * @{
  */
@@ -2315,7 +2297,7 @@ typedef enum _Edje_Channel
 } Edje_Channel;
 
 /**
- * Set the mute state of audio for the process as a whole
+ * @brief Sets the mute state of audio for the process as a whole.
  *
  * @param channel The channel to set the mute state of
  * @param mute The mute state
@@ -2329,7 +2311,7 @@ typedef enum _Edje_Channel
 EAPI void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
 
 /**
- * Get the mute state of the given channel
+ * @brief Gets the mute state of the given channel.
  *
  * @param channel The channel to get the mute state of
  * @return The mute state of the channel
@@ -2341,7 +2323,7 @@ EAPI void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
 EAPI Eina_Bool edje_audio_channel_mute_get(Edje_Channel channel);
 
 /**
- * Get the part name of an edje part object
+ * @brief Gets the part name of an edje part object.
  * @param obj An edje part object
  * @return The name of the part, if the object is an edje part, or @c NULL
  * @note If this function returns @c NULL, @p obj was not an Edje part object
@@ -2353,7 +2335,7 @@ EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
 #ifdef EFL_BETA_API_SUPPORT
 
 /**
- * Create scene and root node which contains all 3D parts of edje object
+ * @brief Creates scene and root node which contains all 3D parts of edje object.
  * @param obj An edje part object
  * @param root node to collect all 3D parts
  * @param scene

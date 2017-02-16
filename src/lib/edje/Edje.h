@@ -197,7 +197,7 @@ param in edje programs
 
 /**
  * @file Edje.h
- * @brief Edje Graphical Design Library
+ * @brief Edje Graphical Design Library.
  *
  * These routines are used for Edje.
  */
