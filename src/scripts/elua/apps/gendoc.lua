@@ -8,6 +8,8 @@ local writer = require("docgen.writer")
 local keyref = require("docgen.keyref")
 local dtree = require("docgen.doctree")
 
+local printgen = function() end
+
 local propt_to_type = {
     [dtree.Function.PROPERTY] = "(get, set)",
     [dtree.Function.PROP_GET] = "(get)",
@@ -327,6 +329,7 @@ end
 
 local build_ref = function()
     local f = writer.Writer("reference", "EFL Reference")
+    printgen("Generating reference...")
 
     f:write_editable({ "reference" }, "general")
     f:write_nl()
@@ -717,7 +720,9 @@ end
 
 local build_class = function(cl)
     local cln = cl:nspaces_get()
-    local f = writer.Writer(cln, cl:full_name_get())
+    local fulln = cl:full_name_get()
+    local f = writer.Writer(cln, fulln)
+    printgen("Generating class: " .. fulln)
     stats.check_class(cl)
 
     keyref.add(cl:full_name_get():gsub("%.", "_"), cln, "c")
@@ -804,7 +809,9 @@ end
 
 local build_alias = function(tp)
     local ns = dtree.Node.nspaces_get(tp, "alias")
-    local f = writer.Writer(ns, tp:full_name_get())
+    local fulln = tp:full_name_get()
+    local f = writer.Writer(ns, fulln)
+    printgen("Generating alias: " .. fulln)
     stats.check_alias(tp)
 
     write_tsigs(f, tp, ns)
@@ -821,7 +828,9 @@ end
 
 local build_struct = function(tp)
     local ns = dtree.Node.nspaces_get(tp, "struct")
-    local f = writer.Writer(ns, tp:full_name_get())
+    local fulln = tp:full_name_get()
+    local f = writer.Writer(ns, fulln)
+    printgen("Generating struct: " .. fulln)
     stats.check_struct(tp)
 
     write_tsigs(f, tp, ns)
@@ -853,7 +862,9 @@ end
 
 local build_enum = function(tp)
     local ns = dtree.Node.nspaces_get(tp, "enum")
-    local f = writer.Writer(ns, tp:full_name_get())
+    local fulln = tp:full_name_get()
+    local f = writer.Writer(ns, fulln)
+    printgen("Generating enum: " .. fulln)
     stats.check_enum(tp)
 
     write_tsigs(f, tp, ns)
@@ -885,7 +896,9 @@ end
 
 local build_variable = function(v, constant)
     local ns = v:nspaces_get()
-    local f = writer.Writer(ns, v:full_name_get())
+    local fulln = v:full_name_get()
+    local f = writer.Writer(ns, fulln)
+    printgen("Generating variable: " .. fulln)
     if constant then
         stats.check_constant(v)
     else
@@ -1068,7 +1081,9 @@ build_method = function(impl, cl)
     local over = impl:is_overridden(cl)
     local fn = impl:function_get()
     local mns = fn:nspaces_get(cl)
-    local f = writer.Writer(mns, cl:full_name_get() .. "." .. fn:name_get())
+    local methn = cl:full_name_get() .. "." .. fn:name_get()
+    local f = writer.Writer(mns, methn)
+    printgen("Generating method: " .. methn)
     stats.check_method(fn, cl)
 
     write_inherited_from(f, impl, cl, over)
@@ -1110,7 +1125,9 @@ build_property = function(impl, cl)
     local over = impl:is_overridden(cl)
     local fn = impl:function_get()
     local pns = fn:nspaces_get(cl)
-    local f = writer.Writer(pns, cl:full_name_get() .. "." .. fn:name_get())
+    local propn = cl:full_name_get() .. "." .. fn:name_get()
+    local f = writer.Writer(pns, propn)
+    printgen("Generating property: " .. propn)
 
     write_inherited_from(f, impl, cl, over)
 
@@ -1216,7 +1233,9 @@ end
 
 build_event = function(ev, cl)
     local evn = ev:nspaces_get(cl)
-    local f = writer.Writer(evn, cl:full_name_get() .. ": " .. ev:name_get())
+    local evnm = cl:full_name_get() .. ": " .. ev:name_get()
+    local f = writer.Writer(evn, evnm)
+    printgen("Generating event: " .. evnm)
 
     f:write_h("Signature", 2)
     local buf = { ev:name_get() }
@@ -1271,6 +1290,7 @@ getopt.parse {
             callback = getopt.help_cb(io.stdout)
         },
         { "v", "verbose", false, help = "Be verbose." },
+        { "p", "print-gen", false, help = "Print what is being generated." },
 
         { category = "Generator" },
         { "r", "root", true, help = "Root path of the docs." },
@@ -1289,6 +1309,9 @@ getopt.parse {
     done_cb = function(parser, opts, args)
         if opts["h"] then
             return
+        end
+        if opts["p"] then
+            printgen = function(...) print(...) end
         end
         if opts["graph-theme-dark"] then
             current_theme = default_theme_light
@@ -1329,6 +1352,8 @@ getopt.parse {
         build_typedecls()
         build_variables()
         keyref.build()
+        -- newline if printing what's being generated
+        printgen()
         stats.print()
     end
 }
