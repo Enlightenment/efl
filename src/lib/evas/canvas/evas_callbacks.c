@@ -246,9 +246,10 @@ _evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e, int min_event_id
    e->running_post_events--;
    _evas_unwalk(e);
 
-   if (!e->running_post_events && e->post_events)
+   if (!e->running_post_events && e->post_events
+       && (e->current_event == EVAS_CALLBACK_LAST))
      {
-        WRN("Not all post-event callbacks hve been processed!");
+        WRN("Not all post-event callbacks have been processed!");
         _evas_post_event_callback_call(eo_e, e, 0);
      }
 }
