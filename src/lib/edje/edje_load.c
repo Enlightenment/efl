@@ -1943,6 +1943,12 @@ _edje_file_del(Edje *ed)
                   free(rp->typedata.text);
                   rp->typedata.text = NULL;
                }
+             else if ((rp->type == EDJE_PART_TYPE_VECTOR) &&
+                      (rp->typedata.vector))
+               {
+                  free(rp->typedata.vector);
+                  rp->typedata.vector = NULL;
+               }
              else if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
                       (rp->typedata.swallow))
                {

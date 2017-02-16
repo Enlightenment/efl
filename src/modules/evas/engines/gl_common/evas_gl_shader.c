@@ -675,6 +675,7 @@ evas_gl_common_shaders_flush(Evas_GL_Shared *shared)
                to_delete = eina_list_append(to_delete, p);
           }
 
+        eina_iterator_free(it);
         EINA_LIST_FREE(to_delete, p)
           eina_hash_del(shared->shaders_hash, &p->flags, p);
      }
