@@ -1062,20 +1062,42 @@ _eo_callbacks_clear(Efl_Object_Data *pd)
 {
    Eo_Callback_Description **itr;
    unsigned int i = 0;
+   Eina_Bool remove_callbacks;
+   unsigned int generation_clamp;
 
    /* If there are no deletions waiting. */
    if (!pd->need_cleaning) return;
-   /* Abort if we are currently walking the list. */
-   if (pd->event_frame) return;
 
-   pd->need_cleaning = EINA_FALSE;
+
+   if (pd->event_frame)
+     {
+        /* there is still a event emission going on ... do not delete anything! */
+        remove_callbacks = EINA_FALSE;
+        /* if we are in event subscription we need to clamp the generations at the current frame otherwise we are possiblity not executing that later */
+        generation_clamp = pd->event_frame->generation;
+     }
+   else
+     {
+        /* no event emission running */
+        /* remove deleted callbacks */
+        remove_callbacks = EINA_TRUE;
+        /* clap to 0 generation */
+        generation_clamp = 0;
+        /* we dont need to clean later */
+        pd->need_cleaning = EINA_FALSE;
+     }
+
    while (i < pd->callbacks_count)
      {
         itr = pd->callbacks + i;
-        if ((*itr)->delete_me) _eo_callback_remove(pd, itr);
+        if (remove_callbacks && (*itr)->delete_me)
+          {
+             _eo_callback_remove(pd, itr);
+          }
         else
           {
-             (*itr)->generation = 0;
+             if ((*itr)->generation > generation_clamp)
+               (*itr)->generation = generation_clamp;
              i++;
           }
      }
