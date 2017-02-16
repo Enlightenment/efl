@@ -106,7 +106,7 @@ struct constructor_caller
           {
             Eo* parent = eina::js::get_value_from_javascript
               (args[0], args.GetIsolate(), "", eina::js::value_tag<Eo*>());
-            Eo* eo = efl_add
+            Eo* eo = efl_add_ref
               (klass
                , parent
                , eina::_mpl::for_each(constructors, call{efl_added, &current_index, &args})
