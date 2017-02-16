@@ -224,7 +224,12 @@ M.Class = Node:clone {
     end,
 
     functions_get = function(self, ft)
-        local ret = {}
+        local ret = self._cache_funcs
+        if ret then
+            return ret
+        end
+        ret = {}
+        self._cache_funcs = ret
         for fn in self.class:functions_get(ft) do
             ret[#ret + 1] = M.Function(fn)
         end
@@ -232,7 +237,13 @@ M.Class = Node:clone {
     end,
 
     function_get_by_name = function(self, fn, ft)
-        return M.Function(self.class:function_get_by_name(fn, ft))
+        local fun = self._cache_func
+        if fun then
+            return fun
+        end
+        fun = M.Function(self.class:function_get_by_name(fn, ft))
+        self._cache_func = fun
+        return fun
     end,
 
     events_get = function(self)
@@ -306,6 +317,13 @@ M.Class = Node:clone {
     end
 }
 
+local func_type_str = {
+    [eolian.function_type.PROPERTY] = "property",
+    [eolian.function_type.PROP_GET] = "property",
+    [eolian.function_type.PROP_SET] = "property",
+    [eolian.function_type.METHOD] = "method"
+}
+
 M.Function = Node:clone {
     -- function types
     UNRESOLVED = eolian.function_type.UNRESOLVED,
@@ -328,12 +346,7 @@ M.Function = Node:clone {
     end,
 
     type_str_get = function(self)
-        return ({
-            [eolian.function_type.PROPERTY] = "property",
-            [eolian.function_type.PROP_GET] = "property",
-            [eolian.function_type.PROP_SET] = "property",
-            [eolian.function_type.METHOD] = "method"
-        })[self:type_get()]
+        return func_type_str[self:type_get()]
     end,
 
     scope_get = function(self, ft)
@@ -1310,8 +1323,14 @@ M.Implement = Node:clone {
     end,
 
     function_get = function(self)
-        local func, tp = self.impl:function_get()
-        return M.Function(func), tp
+        local func, tp = self._cache_func, self._cache_tp
+        if func then
+            return func, tp
+        end
+        func, tp = self.impl:function_get()
+        func = M.Function(func)
+        self._cache_func, self._cache_tp = func, tp
+        return func, tp
     end,
 
     doc_get = function(self, ftype, inh)
@@ -1410,9 +1429,8 @@ M.DocTokenizer = Node:clone {
             ret[#ret + 1] = tok:lower()
         end
         if tp == reft.FUNC then
-            local fid = M.Function(d2)
-            ret[#ret + 1] = fid:type_str_get()
-            ret[#ret + 1] = fid:name_get():lower()
+            ret[#ret + 1] = func_type_str[d2:type_get()]
+            ret[#ret + 1] = d2:name_get():lower()
         elseif tp == reft.EVENT then
             ret[#ret + 1] = "event"
             ret[#ret + 1] = d2:name_get():lower()
