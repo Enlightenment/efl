@@ -70,6 +70,7 @@ EAPI void register_container(v8::Handle<v8::Object> global, v8::Isolate* isolate
 EAPI void register_control(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_file(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_image(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_loop(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_orientation(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_player(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_text(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -274,6 +275,7 @@ EAPI void init(v8::Handle<v8::Object> exports)
         efl::register_file(exports, v8::Isolate::GetCurrent());
         efl::register_image(exports, v8::Isolate::GetCurrent());
         efl::register_orientation(exports, v8::Isolate::GetCurrent());
+        efl::register_loop(exports, v8::Isolate::GetCurrent());
         efl::register_player(exports, v8::Isolate::GetCurrent());
         efl::register_text(exports, v8::Isolate::GetCurrent());
         // efl::register_text_properties(exports, v8::Isolate::GetCurrent());
