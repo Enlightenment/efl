@@ -787,6 +787,8 @@ struct _Evas_Post_Callback
 {
    Evas_Object_Event_Post_Cb  func;
    const void                *data;
+   int                        event_id;
+   Evas_Callback_Type         type;
    unsigned char              delete_me : 1;
 };
 
@@ -930,6 +932,7 @@ struct _Evas_Public_Data
    int            nochange;
    Evas_Font_Hinting_Flags hinting;
    Evas_Callback_Type current_event;
+   int            running_post_events;
 
    Eina_List     *touch_points;
    Eina_List     *devices;
@@ -949,7 +952,6 @@ struct _Evas_Public_Data
    Eina_Bool      rendering : 1;
    Eina_Bool      render2 : 1;
    Eina_Bool      common_init : 1;
-   Eina_Bool      running_post_events : 1;
 };
 
 struct _Evas_Layer
@@ -1684,7 +1686,7 @@ void evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj, Evas_Smart_
 Eina_Bool evas_object_smart_changed_get(Evas_Object *eo_obj);
 void evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s);
 void *evas_mem_calloc(int size);
-void _evas_post_event_callback_call(Evas *e, Evas_Public_Data* e_pd);
+void _evas_post_event_callback_call(Evas *e, Evas_Public_Data* e_pd, int min_event_id);
 void _evas_post_event_callback_free(Evas *e);
 void evas_event_callback_list_post_free(Eina_Inlist **list);
 void evas_object_event_callback_all_del(Evas_Object *obj);

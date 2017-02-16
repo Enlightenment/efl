@@ -222,19 +222,20 @@ _eo_evas_cb(void *data, const Efl_Event *event)
 }
 
 void
-_evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e)
+_evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e, int min_event_id)
 {
    Evas_Post_Callback *pc;
    Eina_List *l, *l_next;
    int skip = 0;
 
-   if (e->delete_me || e->running_post_events) return;
+   if (e->delete_me) return;
    if (!e->post_events) return;
 
    _evas_walk(e);
-   e->running_post_events = EINA_TRUE;
+   e->running_post_events++;
    EINA_LIST_FOREACH_SAFE(e->post_events, l, l_next, pc)
      {
+        if ((unsigned int) pc->event_id < (unsigned int) min_event_id) break;
         e->post_events = eina_list_remove_list(e->post_events, l);
         if ((!skip) && (!e->delete_me) && (!pc->delete_me))
           {
@@ -242,8 +243,14 @@ _evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e)
           }
         EVAS_MEMPOOL_FREE(_mp_pc, pc);
      }
-   e->running_post_events = EINA_FALSE;
+   e->running_post_events--;
    _evas_unwalk(e);
+
+   if (!e->running_post_events && e->post_events)
+     {
+        WRN("Not all post-event callbacks hve been processed!");
+        _evas_post_event_callback_call(eo_e, e, 0);
+     }
 }
 
 void
@@ -609,6 +616,8 @@ evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const 
 
    pc->func = func;
    pc->data = data;
+   pc->type = e->current_event;
+   pc->event_id = _evas_event_counter;
    e->post_events = eina_list_prepend(e->post_events, pc);
 }
 

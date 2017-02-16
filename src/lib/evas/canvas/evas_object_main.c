@@ -1027,23 +1027,26 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
    Efl_Input_Device *dev;
    Evas_Public_Data *edata;
    Evas_Object_Pointer_Data *pdata;
+   int event_id;
 
    edata = efl_data_scope_get(evas_object_evas_get(eo_obj), EVAS_CANVAS_CLASS);
    evas_object_hide(eo_obj);
    EINA_LIST_FREE (obj->focused_by_seats, dev)
      {
+        event_id = _evas_event_counter;
         efl_event_callback_del(dev, EFL_EVENT_DEL,
                                _evas_focus_device_del_cb, obj);
         eina_hash_del_by_key(edata->focused_objects, &dev);
         _evas_focus_dispatch_event(obj, dev, EINA_FALSE);
         if ((obj->layer) && (obj->layer->evas))
-          _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
+          _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
      }
    EINA_INLIST_FREE(obj->pointer_grabs, pdata)
      _evas_object_pointer_grab_del(obj, pdata);
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, _evas_object_event_new(), NULL);
+   event_id = _evas_object_event_new();
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_DEL, NULL, event_id, NULL);
    if ((obj->layer) && (obj->layer->evas))
-     _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
+     _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
    EINA_LIST_FREE(obj->events_whitelist, dev)
      efl_event_callback_del(dev, EFL_EVENT_DEL, _whitelist_events_device_remove_cb, obj);
    if (obj->name) evas_object_name_set(eo_obj, NULL);
@@ -1095,9 +1098,10 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
 
    evas_object_map_set(eo_obj, NULL);
    if (obj->is_smart) evas_object_smart_del(eo_obj);
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FREE, NULL, _evas_object_event_new(), NULL);
+   event_id = _evas_object_event_new();
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_FREE, NULL, event_id, NULL);
    if ((obj->layer) && (obj->layer->evas))
-     _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
+     _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
    evas_object_smart_cleanup(eo_obj);
    obj->delete_me = 1;
    evas_object_change(eo_obj, obj);
@@ -1788,8 +1792,9 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
                        ev.locks = &(obj->layer->evas->locks);
                        ev.timestamp = obj->layer->evas->last_timestamp;
                        ev.event_flags = EVAS_EVENT_FLAG_NONE;
+                       event_id = _evas_object_event_new();
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
-                       _evas_post_event_callback_call(obj->layer->evas, obj->layer->evas);
+                       _evas_post_event_callback_call(obj->layer->evas, obj->layer->evas, event_id);
                     }
  */
                }

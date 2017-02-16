@@ -102,12 +102,12 @@ _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *se
 static void
 _evas_object_unfocus(Evas_Object_Protected_Data *obj, Efl_Input_Device *seat)
 {
+   int event_id = _evas_event_counter;
+
    obj->focused_by_seats = eina_list_remove(obj->focused_by_seats, seat);
    _evas_focus_set(obj->object, seat, EINA_FALSE);
-
    _evas_focus_dispatch_event(obj, seat, EINA_FALSE);
-   _evas_post_event_callback_call(obj->layer->evas->evas,
-                                  obj->layer->evas);
+   _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
 void
@@ -156,11 +156,13 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
                                   Efl_Input_Device *seat)
 {
    Eo *current_focus;
+   int event_id;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
+   event_id = _evas_event_counter;
    if (!seat) seat = _default_seat_get(eo_obj);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, EINA_FALSE);
@@ -193,7 +195,7 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
 
    _evas_focus_dispatch_event(obj, seat, EINA_TRUE);
  end:
-   _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas);
+   _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
    return EINA_TRUE;
 }
 

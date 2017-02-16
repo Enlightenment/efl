@@ -30,16 +30,14 @@ static void
 _canvas_event_feed_mouse_move_legacy(Evas *eo_e, Evas_Public_Data *e, int x, int y,
                                      unsigned int timestamp, const void *data);
 
-static inline Eina_Bool
-_evas_event_feed_allow(Evas_Public_Data *e)
+static inline void
+_evas_event_feed_check(Evas_Public_Data *e)
 {
-   if (EINA_LIKELY(!e->running_post_events)) return EINA_TRUE;
-   ERR("Can not feed input events while running post-event callbacks!");
-   return EINA_FALSE;
+   if (EINA_LIKELY(!e->running_post_events)) return;
+   DBG("Feeding new input events from a post-event callback is risky!");
 }
 
-#define EVAS_EVENT_FEED_SAFETY_CHECK(evas, ...) do { \
-   if (!_evas_event_feed_allow(evas)) return __VA_ARGS__; } while (0)
+#define EVAS_EVENT_FEED_SAFETY_CHECK(evas) _evas_event_feed_check(evas)
 
 static void
 _evas_event_havemap_adjust_f(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Vector2 *point, Eina_Bool mouse_grabbed)
@@ -1500,7 +1498,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
      }
    if (copy) eina_list_free(copy);
    e->last_mouse_down_counter++;
-   _evas_post_event_callback_call(eo_e, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
    /* update touch point's state to EVAS_TOUCH_POINT_STILL */
    _evas_touch_point_update(eo_e, 0, pdata->x, pdata->y, EVAS_TOUCH_POINT_STILL);
    _evas_unwalk(e);
@@ -1508,7 +1506,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    if (ev->device) efl_unref(ev->device);
 }
 
-static int
+static void
 _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
                 Evas_Pointer_Data *pdata)
 {
@@ -1517,14 +1515,13 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
    Efl_Input_Pointer *evt;
    Evas_Object *eo_obj;
    Evas *eo_e = e->evas;
-   int post_called = 0;
    Evas_Object_Pointer_Data *obj_pdata;
    int event_id;
 
    /* Duplicating UP event */
    evt = efl_input_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
-   if (!ev) return 0;
+   if (!ev) return;
 
    event_id = _evas_object_event_new();
 
@@ -1562,7 +1559,7 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
                }
           }
      }
-   _evas_post_event_callback_call(eo_e, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
 
    eina_list_free(copy);
 
@@ -1599,8 +1596,7 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
                   if (e->delete_me) break;
                }
           }
-        post_called = 1;
-        _evas_post_event_callback_call(eo_e, e);
+        _evas_post_event_callback_call(eo_e, e, event_id);
      }
    else
      {
@@ -1623,8 +1619,6 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
      _evas_canvas_event_pointer_move_event_dispatch(e, pdata, ev->data);
 
    efl_del(evt);
-
-   return post_called;
 }
 
 static void
@@ -1721,7 +1715,7 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
      }
    eina_list_free(copy);
    e->last_mouse_up_counter++;
-   _evas_post_event_callback_call(eo_e, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
 
    if (pdata->mouse_grabbed == 0)
      _post_up_handle(e, evt, pdata);
@@ -1944,7 +1938,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
           }
      }
    eina_list_free(copy);
-   _evas_post_event_callback_call(eo_e, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
 
    efl_del(evt);
    _evas_unwalk(e);
@@ -2086,7 +2080,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              if (e->delete_me) break;
           }
         eina_list_free(copy);
-        _evas_post_event_callback_call(eo_e, e);
+        _evas_post_event_callback_call(eo_e, e, event_id);
 
 
         /* Send mouse out events */
@@ -2118,7 +2112,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                     _evas_event_source_mouse_out_events(eo_obj, eo_e, evt, event_id);
                }
           }
-        _evas_post_event_callback_call(eo_e, e);
+        _evas_post_event_callback_call(eo_e, e, event_id);
      }
    else
      {
@@ -2186,7 +2180,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                }
           }
         eina_list_free(copy);
-        _evas_post_event_callback_call(eo_e, e);
+        _evas_post_event_callback_call(eo_e, e, event_id);
 
         /* new event id for mouse in */
         event_id = _evas_object_event_new();
@@ -2233,7 +2227,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              /* free our cur ins */
              eina_list_free(ins);
           }
-        _evas_post_event_callback_call(eo_e, e);
+        _evas_post_event_callback_call(eo_e, e, event_id);
      }
 
 nogrep:
@@ -2330,7 +2324,7 @@ nogrep:
              if (e->delete_me) break;
           }
         eina_list_free(copy);
-        _evas_post_event_callback_call(eo_e, e);
+        _evas_post_event_callback_call(eo_e, e, event_id);
 
         event_id = _evas_object_event_new();
 
@@ -2366,7 +2360,7 @@ nogrep:
         /* and set up the new one */
         pdata->object.in = newin;
 
-        _evas_post_event_callback_call(eo_e, e);
+        _evas_post_event_callback_call(eo_e, e, event_id);
      }
 
    _evas_unwalk(e);
@@ -2485,7 +2479,7 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
    pdata->object.in = eina_list_free(pdata->object.in);
    /* and set up the new one */
    pdata->object.in = ins;
-   _evas_post_event_callback_call(eo_e, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
    _canvas_event_feed_mouse_move_internal(e, ev);
    _evas_unwalk(e);
 
@@ -2564,7 +2558,7 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
    /* free our old list of ins */
    pdata->object.in =  eina_list_free(pdata->object.in);
    pdata->mouse_grabbed = 0;
-   _evas_post_event_callback_call(eo_e, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
    _evas_unwalk(e);
 
    if (ev->device) efl_unref(ev->device);
@@ -2693,7 +2687,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
      }
    eina_list_free(copy);
 
-   _evas_post_event_callback_call(eo_e, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
    /* update touch point's state to EVAS_TOUCH_POINT_STILL */
    _evas_touch_point_update(eo_e, ev->tool, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_STILL);
    _evas_unwalk(e);
@@ -2773,8 +2767,12 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
         if (e->delete_me || e->is_frozen) break;
      }
    eina_list_free(copy);
-   if ((pdata->mouse_grabbed == 0) && !_post_up_handle(e, evt, pdata))
-      _evas_post_event_callback_call(eo_e, e);
+   if (pdata->mouse_grabbed == 0)
+     {
+        _post_up_handle(e, evt, pdata);
+        _evas_post_event_callback_call(eo_e, e, event_id);
+     }
+
    /* remove released touch point from the touch point list */
    _evas_touch_point_remove(eo_e, ev->tool);
    _evas_unwalk(e);
@@ -2955,7 +2953,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                }
           }
         eina_list_free(copy);
-        _evas_post_event_callback_call(eo_e, e);
+        _evas_post_event_callback_call(eo_e, e, event_id);
      }
    else
      {
@@ -3013,7 +3011,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              /* free our cur ins */
              eina_list_free(ins);
           }
-        _evas_post_event_callback_call(eo_e, e);
+        _evas_post_event_callback_call(eo_e, e, event_id);
      }
    _evas_unwalk(e);
 
@@ -3089,10 +3087,13 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev
    Eina_Bool exclusive = EINA_FALSE;
    Efl_Input_Pointer *evt;
    int event_id = 0;
+   Eo *eo_e;
 
    if (!e || !ev) return;
    if (e->is_frozen) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
+
+   eo_e = e->evas;
    e->last_timestamp = ev->timestamp;
    _evas_walk(e);
 
@@ -3164,7 +3165,7 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev
    if (!exclusive)
      _key_event_dispatch(e, evt, ev->device, EFL_EVENT_KEY_DOWN,
                          EVAS_CALLBACK_KEY_DOWN, event_id);
-   _evas_post_event_callback_call(e->evas, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
    _evas_unwalk(e);
 
    if (ev->device) efl_unref(ev->device);
@@ -3176,10 +3177,13 @@ _canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
    Eina_Bool exclusive = EINA_FALSE;
    Efl_Input_Pointer *evt;
    int event_id = 0;
+   Eo *eo_e;
 
    if (!e || !ev) return;
    if (e->is_frozen) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
+
+   eo_e = e->evas;
    e->last_timestamp = ev->timestamp;
    _evas_walk(e);
 
@@ -3252,7 +3256,7 @@ _canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
    if (!exclusive)
      _key_event_dispatch(e, evt, ev->device, EFL_EVENT_KEY_UP,
                          EVAS_CALLBACK_KEY_UP, event_id);
-   _evas_post_event_callback_call(e->evas, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
    _evas_unwalk(e);
 
    if (ev->device) efl_unref(ev->device);
@@ -3372,7 +3376,7 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
         if (e->delete_me || e->is_frozen) break;
      }
    eina_list_free(copy);
-   _evas_post_event_callback_call(eo_e, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
    _evas_unwalk(e);
    _evas_object_event_new();
 
@@ -3423,7 +3427,7 @@ _canvas_event_feed_axis_update_internal(Evas_Public_Data *e, Efl_Input_Pointer_D
           }
      }
    eina_list_free(copy);
-   _evas_post_event_callback_call(eo_e, e);
+   _evas_post_event_callback_call(eo_e, e, event_id);
 
    _evas_unwalk(e);
    if (ev->device) efl_unref(ev->device);
