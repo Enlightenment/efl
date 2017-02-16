@@ -43,6 +43,7 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
    Evas_Device *dev, *def, *old_parent;
    Evas_Device_Class old_class;
 
+   if (e->cleanup) return NULL;
    old_class = efl_input_device_type_get(old_dev);
    old_parent = efl_input_device_parent_get(old_dev);
    def = NULL;
