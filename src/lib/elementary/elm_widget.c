@@ -222,7 +222,7 @@ _elm_widget_mirrored_reload(Evas_Object *obj)
 EOLIAN static Eina_Bool
 _elm_widget_on_focus_region(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Coord *x EINA_UNUSED, Evas_Coord *y EINA_UNUSED, Evas_Coord *w EINA_UNUSED, Evas_Coord *h EINA_UNUSED)
 {
-   WRN("The %s widget does not implement the \"on_focus_region\" function.",
+   DBG("The %s widget does not implement the \"on_focus_region\" function.",
        efl_class_name_get(efl_class_get(obj)));
 
    return EINA_FALSE;
