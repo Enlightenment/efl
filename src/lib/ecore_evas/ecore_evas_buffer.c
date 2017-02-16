@@ -725,6 +725,7 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
      {
         ERR("Could not init the Ecore Evas cursors");
         ecore_evas_free(ee);
+        return NULL;
      }
    evas_event_feed_mouse_in(ee->evas, 0, NULL);
 
@@ -916,6 +917,12 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
+   if (!_ecore_evas_cursors_init(ee))
+     {
+        ERR("Could not init the Ecore Evas cursors");
+        ecore_evas_free(ee);
+        return NULL;
+     }
    _ecore_evas_register_animators(ee);
 
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
