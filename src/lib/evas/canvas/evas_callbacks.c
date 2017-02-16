@@ -252,6 +252,8 @@ _evas_post_event_callback_free(Evas *eo_e)
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Post_Callback *pc;
 
+   if (EINA_LIKELY(!e->post_events)) return;
+
    EINA_LIST_FREE(e->post_events, pc)
      {
         EVAS_MEMPOOL_FREE(_mp_pc, pc);
@@ -323,6 +325,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    /* MEM OK */
    const Evas_Button_Flags CLICK_MASK = EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
+   Evas_Callback_Type prev_type;
    Evas_Public_Data *e;
 
    if (!obj) return;
@@ -364,26 +367,40 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         efl_event_desc = _legacy_evas_callback_table(type);
      }
 
+   prev_type = e->current_event;
+   e->current_event = type;
+
    efl_event_callback_legacy_call(eo_obj, efl_event_desc, event_info);
 
    /* multi events with finger 0 - only for eo callbacks */
    if (type == EVAS_CALLBACK_MOUSE_DOWN)
      {
         if (_evas_object_callback_has_by_type(obj, EVAS_CALLBACK_MULTI_DOWN))
-          efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_DOWN, event_info);
+          {
+             e->current_event = EVAS_CALLBACK_MULTI_DOWN;
+             efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_DOWN, event_info);
+          }
         efl_input_pointer_button_flags_set(event_info, flags);
      }
    else if (type == EVAS_CALLBACK_MOUSE_UP)
      {
         if (_evas_object_callback_has_by_type(obj, EVAS_CALLBACK_MULTI_UP))
-          efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_UP, event_info);
+          {
+             e->current_event = EVAS_CALLBACK_MULTI_UP;
+             efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_UP, event_info);
+          }
         efl_input_pointer_button_flags_set(event_info, flags);
      }
    else if (type == EVAS_CALLBACK_MOUSE_MOVE)
      {
         if (_evas_object_callback_has_by_type(obj, EVAS_CALLBACK_MULTI_MOVE))
-          efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_MOVE, event_info);
+          {
+             e->current_event = EVAS_CALLBACK_MULTI_MOVE;
+             efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_MOVE, event_info);
+          }
      }
+
+   e->current_event = prev_type;
 
 nothing_here:
    if (!obj->no_propagate)
@@ -580,6 +597,11 @@ evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const 
    Evas_Post_Callback *pc;
 
    if (!e || e->delete_me) return;
+   if (e->current_event == EVAS_CALLBACK_LAST)
+     {
+        ERR("%s() can only be called from an input event callback!", __FUNCTION__);
+        return;
+     }
    EVAS_MEMPOOL_INIT(_mp_pc, "evas_post_callback", Evas_Post_Callback, 64, );
    pc = EVAS_MEMPOOL_ALLOC(_mp_pc, Evas_Post_Callback);
    if (!pc) return;

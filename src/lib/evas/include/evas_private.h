@@ -929,6 +929,7 @@ struct _Evas_Public_Data
    int            last_mouse_up_counter;
    int            nochange;
    Evas_Font_Hinting_Flags hinting;
+   Evas_Callback_Type current_event;
 
    Eina_List     *touch_points;
    Eina_List     *devices;
