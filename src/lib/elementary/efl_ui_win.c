@@ -3187,7 +3187,7 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
      {
         void *data;
 
-        if (efl_isa(sd->icon, EFL_CANVAS_IMAGE_CLASS))
+        if (efl_isa(sd->icon, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
           {
              data = evas_object_image_data_get(sd->icon, EINA_FALSE);
              if (data)
