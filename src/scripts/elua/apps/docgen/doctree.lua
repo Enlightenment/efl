@@ -156,6 +156,13 @@ M.Doc = Node:clone {
 
 local revh = {}
 
+local class_type_str = {
+    [eolian.class_type.REGULAR] = "class",
+    [eolian.class_type.ABSTRACT] = "class",
+    [eolian.class_type.MIXIN] = "mixin",
+    [eolian.class_type.INTERFACE] = "interface"
+}
+
 M.Class = Node:clone {
     -- class types
     UNKNOWN = eolian.class_type.UNKNOWN,
@@ -186,12 +193,7 @@ M.Class = Node:clone {
     end,
 
     type_str_get = function(self)
-        return ({
-            [eolian.class_type.REGULAR] = "class",
-            [eolian.class_type.ABSTRACT] = "class",
-            [eolian.class_type.MIXIN] = "mixin",
-            [eolian.class_type.INTERFACE] = "interface"
-        })[self:type_get()]
+        return class_type_str[self:type_get()]
     end,
 
     theme_str_get = function(self)
@@ -1319,7 +1321,14 @@ M.Implement = Node:clone {
     end,
 
     class_get = function(self)
-        return M.Class(self.impl:class_get())
+        local ccl = self._cache_cl
+        if ccl then
+            return ccl
+        end
+        -- so that we don't re-instantiate, it gets cached over there too
+        ccl = M.Class.by_name_get(self.impl:class_get():full_name_get())
+        self._cache_cl = ccl
+        return ccl
     end,
 
     function_get = function(self)
@@ -1407,7 +1416,7 @@ M.DocTokenizer = Node:clone {
         local reft = eolian.doc_ref_type
         local ret
         if tp == reft.CLASS or tp == reft.FUNC or tp == reft.EVENT then
-            ret = { M.Class(d1):type_str_get() }
+            ret = { class_type_str[d1:type_get()] }
             if not ret[1] then
                 error("unknown class type for class '"
                       .. d1:full_name_get() .. "'")
