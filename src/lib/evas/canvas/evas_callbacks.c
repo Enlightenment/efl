@@ -222,14 +222,13 @@ _eo_evas_cb(void *data, const Efl_Event *event)
 }
 
 void
-_evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e, int min_event_id)
+_evas_post_event_callback_call_real(Evas *eo_e, Evas_Public_Data *e, int min_event_id)
 {
    Evas_Post_Callback *pc;
    Eina_List *l, *l_next;
    int skip = 0;
 
    if (e->delete_me) return;
-   if (!e->post_events) return;
 
    _evas_walk(e);
    e->running_post_events++;
@@ -250,7 +249,7 @@ _evas_post_event_callback_call(Evas *eo_e, Evas_Public_Data *e, int min_event_id
        && (e->current_event == EVAS_CALLBACK_LAST))
      {
         WRN("Not all post-event callbacks have been processed!");
-        _evas_post_event_callback_call(eo_e, e, 0);
+        _evas_post_event_callback_call_real(eo_e, e, 0);
      }
 }
 

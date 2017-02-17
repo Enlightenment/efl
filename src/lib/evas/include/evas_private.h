@@ -1686,7 +1686,9 @@ void evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj, Evas_Smart_
 Eina_Bool evas_object_smart_changed_get(Evas_Object *eo_obj);
 void evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s);
 void *evas_mem_calloc(int size);
-void _evas_post_event_callback_call(Evas *e, Evas_Public_Data* e_pd, int min_event_id);
+void _evas_post_event_callback_call_real(Evas *e, Evas_Public_Data* e_pd, int min_event_id);
+#define _evas_post_event_callback_call(e, pd, id) do { \
+   if (!pd->delete_me && pd->post_events) _evas_post_event_callback_call_real(e, pd, id); } while (0)
 void _evas_post_event_callback_free(Evas *e);
 void evas_event_callback_list_post_free(Eina_Inlist **list);
 void evas_object_event_callback_all_del(Evas_Object *obj);
