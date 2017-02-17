@@ -203,14 +203,3 @@ err:
    return (_Eo_Object *) obj_id;
 #endif
 }
-
-void
-_eo_obj_pointer_done(const Eo_Id obj_id)
-{
-#ifdef HAVE_EO_ID
-   Efl_Id_Domain domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
-   if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return;
-   eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
-#endif
-   (void)obj_id;
-}
