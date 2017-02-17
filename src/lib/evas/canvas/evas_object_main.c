@@ -1143,7 +1143,6 @@ _efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *
    Eina_Bool source_invisible = EINA_FALSE;
    Eina_List *was = NULL;
 
-   evas_object_async_block(obj);
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 1, x, y))
      return;
 
@@ -1851,7 +1850,6 @@ _efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
    if (EVAS_COLOR_SANITIZE(r, g, b, a))
      ERR("Evas only handles premultiplied colors (0 <= R,G,B <= A <= 255)");
 
-   evas_object_async_block(obj);
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 1, r, g, b, a)) return;
    if ((obj->cur->color.r == r) &&
        (obj->cur->color.g == g) &&
