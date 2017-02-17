@@ -216,15 +216,13 @@ evas_object_layer_set(Evas_Object *obj, short l)
 }
 
 EOLIAN void
-_efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj,
-                                     Evas_Object_Protected_Data *obj,
-                                     short l)
+_efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, short l)
 {
    Evas *eo_e;
 
    if (obj->delete_me) return;
    evas_object_async_block(obj);
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_LAYER_SET, 1, l)) return;
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_LAYER_SET, 1, l)) return;
    if (obj->smart.parent) return;
    if (obj->cur->layer == l)
      {

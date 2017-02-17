@@ -134,9 +134,8 @@ _efl_canvas_object_seat_focus_del(Eo *eo_obj,
      {
         if (dev != seat)
           continue;
-        if (_evas_object_intercept_call(eo_obj,
-                                        EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
-                                        1, EINA_FALSE))
+        if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
+                                             1, EINA_FALSE))
           {
              return EINA_FALSE;
           }
@@ -175,8 +174,8 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    if (_already_focused(obj->focused_by_seats, seat))
      goto end;
 
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
-                                   1, EINA_TRUE))
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
+                                        1, EINA_TRUE))
      {
         return EINA_FALSE;
      }

@@ -46,8 +46,8 @@ evas_object_raise(Evas_Object *obj)
 EOLIAN void
 _efl_canvas_object_efl_gfx_stack_raise(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   evas_object_async_block(obj);
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_RAISE, 1)) return;
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_RAISE, 1))
+     return;
 
    if (!((EINA_INLIST_GET(obj))->next))
      {
@@ -95,8 +95,8 @@ evas_object_lower(Evas_Object *obj)
 EOLIAN void
 _efl_canvas_object_efl_gfx_stack_lower(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   evas_object_async_block(obj);
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_LOWER, 1)) return;
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_LOWER, 1))
+     return;
 
    if (!((EINA_INLIST_GET(obj))->prev))
      {
@@ -145,14 +145,13 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 EOLIAN void
 _efl_canvas_object_efl_gfx_stack_stack_above(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Stack *eo_above)
 {
-   evas_object_async_block(obj);
    if (!eo_above)
      {
         evas_object_raise(eo_obj);
         return;
      }
    if (eo_obj == eo_above) return;
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_STACK_ABOVE, 1, eo_above)) return;
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_STACK_ABOVE, 1, eo_above)) return;
    Evas_Object_Protected_Data *above = efl_data_scope_get(eo_above, EFL_CANVAS_OBJECT_CLASS);
    if ((EINA_INLIST_GET(obj))->prev == EINA_INLIST_GET(above))
      {
@@ -223,14 +222,13 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 EOLIAN void
 _efl_canvas_object_efl_gfx_stack_stack_below(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Stack *eo_below)
 {
-   evas_object_async_block(obj);
    if (!eo_below)
      {
         evas_object_lower(eo_obj);
         return;
      }
    if (eo_obj == eo_below) return;
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_STACK_BELOW, 1, eo_below)) return;
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_STACK_BELOW, 1, eo_below)) return;
    Evas_Object_Protected_Data *below = efl_data_scope_get(eo_below, EFL_CANVAS_OBJECT_CLASS);
    if ((EINA_INLIST_GET(obj))->next == EINA_INLIST_GET(below))
      {

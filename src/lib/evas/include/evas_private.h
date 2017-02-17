@@ -1729,6 +1729,8 @@ void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t,
 void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
 
+Eina_Bool _evas_object_intercept_call_evas(Evas_Object_Protected_Data *obj, Evas_Object_Intercept_Cb_Type cb_type, int internal, ...);
+
 void evas_unref_queue_image_put(Evas_Public_Data *pd, void *image);
 void evas_unref_queue_glyph_put(Evas_Public_Data *pd, void *glyph);
 void evas_unref_queue_texts_put(Evas_Public_Data *pd, void *glyph);

@@ -1143,7 +1143,7 @@ _efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *
    Eina_Bool source_invisible = EINA_FALSE;
    Eina_List *was = NULL;
 
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 1, x, y))
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 1, x, y))
      return;
 
    Evas_Map *map;
@@ -1230,7 +1230,7 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    if (w < 0) w = 0;
    if (h < 0) h = 0;
 
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 1, w, h))
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 1, w, h))
      return;
 
    if (!(obj->layer->evas->is_frozen))
@@ -1818,7 +1818,7 @@ EOLIAN static void
 _efl_canvas_object_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                        Eina_Bool vis)
 {
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 1, vis))
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 1, vis))
      return;
 
    if (vis) _show(eo_obj, obj);
@@ -1850,7 +1850,7 @@ _efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
    if (EVAS_COLOR_SANITIZE(r, g, b, a))
      ERR("Evas only handles premultiplied colors (0 <= R,G,B <= A <= 255)");
 
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 1, r, g, b, a)) return;
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 1, r, g, b, a)) return;
    if ((obj->cur->color.r == r) &&
        (obj->cur->color.g == g) &&
        (obj->cur->color.b == b) &&

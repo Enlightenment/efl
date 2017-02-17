@@ -82,31 +82,24 @@ EVAS_OBJECT_INTERCEPT_CALL(focus_set,   (COMMON_ARGS, int focus), UNPACK_ARG1(fo
 EVAS_OBJECT_INTERCEPT_CALL(color_set,   (COMMON_ARGS, int r, int g, int b, int a), UNPACK_ARG4(r, g, b, a))
 EVAS_OBJECT_INTERCEPT_CALL(clip_set,    (COMMON_ARGS, Evas_Object *clip), UNPACK_ARG1(clip))
 
-
-/* This is a legacy-only compatibility function.
- * Made public for other parts of EFL (elm, ecore_evas).
- */
-EWAPI Eina_Bool
-_evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type cb_type,
-                            int internal, ...)
+static Eina_Bool
+_evas_object_intercept_call_internal(Evas_Object *eo_obj,
+                                     Evas_Object_Protected_Data *obj,
+                                     Evas_Object_Intercept_Cb_Type cb_type,
+                                     int internal, va_list args)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Bool blocked = 0;
    Evas_Object *eo_other;
    int r, g, b, a, i, j;
-   va_list args;
 
-   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, 1);
    evas_object_async_block(obj);
-
-   va_start(args, internal);
 
    switch (cb_type)
      {
       case EVAS_OBJECT_INTERCEPT_CB_VISIBLE:
         i = !!va_arg(args, int);
-        if (i == obj->cur->visible) goto end_block;
-        if (!obj->interceptors) goto end_noblock;
+        if (i == obj->cur->visible) return 1;
+        if (!obj->interceptors) return 0;
         if (i) blocked = evas_object_intercept_call_show(eo_obj, obj);
         else blocked = evas_object_intercept_call_hide(eo_obj, obj);
         break;
@@ -116,7 +109,7 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
           {
              WRN("evas_object_move() called on object %p (%s) in the middle "
                  "of moving the same object", eo_obj, efl_class_name_get(eo_obj));
-             goto end_block;
+             return 1;
           }
         i = va_arg(args, int);
         j = va_arg(args, int);
@@ -133,47 +126,47 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
         i = va_arg(args, int);
         j = va_arg(args, int);
         if (_efl_canvas_object_efl_gfx_size_set_block(eo_obj, obj, i, j, internal))
-          goto end_block;
-        if (!obj->interceptors) goto end_noblock;
+          return 1;
+        if (!obj->interceptors) return 0;
         blocked = evas_object_intercept_call_resize(eo_obj, obj, i, j);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_RAISE:
-        if (!obj->interceptors) goto end_noblock;
+        if (!obj->interceptors) return 0;
         blocked = evas_object_intercept_call_raise(eo_obj, obj);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_LOWER:
-        if (!obj->interceptors) goto end_noblock;
+        if (!obj->interceptors) return 0;
         blocked = evas_object_intercept_call_lower(eo_obj, obj);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_STACK_ABOVE:
-        if (!obj->interceptors) goto end_noblock;
+        if (!obj->interceptors) return 0;
         eo_other = va_arg(args, Evas_Object *);
         blocked = evas_object_intercept_call_stack_above(eo_obj, obj, eo_other);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_STACK_BELOW:
-        if (!obj->interceptors) goto end_noblock;
+        if (!obj->interceptors) return 0;
         eo_other = va_arg(args, Evas_Object *);
         blocked = evas_object_intercept_call_stack_below(eo_obj, obj, eo_other);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_LAYER_SET:
-        if (!obj->interceptors) goto end_noblock;
+        if (!obj->interceptors) return 0;
         i = va_arg(args, int);
         blocked = evas_object_intercept_call_layer_set(eo_obj, obj, i);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET:
-        if (!obj->interceptors) goto end_noblock;
+        if (!obj->interceptors) return 0;
         i = va_arg(args, int);
         blocked = evas_object_intercept_call_focus_set(eo_obj, obj, !!i);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_COLOR_SET:
-        if (!obj->interceptors) goto end_noblock;
+        if (!obj->interceptors) return 0;
         r = va_arg(args, int);
         g = va_arg(args, int);
         b = va_arg(args, int);
@@ -188,9 +181,9 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
              if (!internal)
                {
                   if (_efl_canvas_object_clip_set_block(eo_obj, obj, eo_other, NULL))
-                    goto end_block;
+                    return 1;
                }
-             if (!obj->interceptors) goto end_noblock;
+             if (!obj->interceptors) return 0;
              blocked = evas_object_intercept_call_clip_set(eo_obj, obj, eo_other);
           }
         else
@@ -198,24 +191,52 @@ _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type c
              if (!internal)
                {
                   if (_efl_canvas_object_clip_unset_block(eo_obj, obj))
-                    goto end_block;
+                    return 1;
                }
-             if (!obj->interceptors) goto end_noblock;
+             if (!obj->interceptors) return 0;
              blocked = evas_object_intercept_call_clip_unset(eo_obj, obj);
           }
         break;
      }
 
-   va_end(args);
    return blocked;
+}
 
-end_block:
-   va_end(args);
-   return 1;
+/* This is a legacy-only compatibility function.
+ * Made public for other parts of EFL (elm, ecore_evas).
+ */
+EWAPI Eina_Bool
+_evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type cb_type,
+                            int internal, ...)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Eina_Bool ret;
+   va_list args;
 
-end_noblock:
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, 1);
+
+   va_start(args, internal);
+   ret = _evas_object_intercept_call_internal(eo_obj, obj, cb_type, internal, args);
    va_end(args);
-   return 0;
+
+   return ret;
+}
+
+Eina_Bool
+_evas_object_intercept_call_evas(Evas_Object_Protected_Data *obj,
+                                 Evas_Object_Intercept_Cb_Type cb_type,
+                                 int internal, ...)
+{
+   Eina_Bool ret;
+   va_list args;
+
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, 1);
+
+   va_start(args, internal);
+   ret = _evas_object_intercept_call_internal(obj->object, obj, cb_type, internal, args);
+   va_end(args);
+
+   return ret;
 }
 
 /* public calls */
