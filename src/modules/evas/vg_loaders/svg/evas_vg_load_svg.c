@@ -42,6 +42,7 @@ typedef struct {
       int x, y, width, height;
    } global;
    struct {
+      Eina_Bool x1_percent, x2_percent, y1_percent, y2_percent;
       Eina_Bool fx_parsed;
       Eina_Bool fy_parsed;
    } gradient;
@@ -122,6 +123,48 @@ _to_double(const char *str, SVG_Parser_Length_Type type)
      }
 
    //TODO: implement 'em', 'ex' attributes
+
+   return parsed_value;
+}
+
+/**
+ * Turn gradient variables into percentages
+ */
+static inline double
+_gradient_to_double(const char *str, SVG_Parser_Length_Type type)
+{
+   char *end = NULL;
+
+   double parsed_value = strtod(str, &end);
+   double max = 1;
+
+   /* unique case, if that is percentage, just return it */
+   if (strstr(str, "%"))
+     {
+        parsed_value = parsed_value / 100.0;
+        return parsed_value;
+     }
+
+   if (type == SVG_PARSER_LENGTH_VERTICAL)
+     max = svg_parse.global.height;
+   else if (type == SVG_PARSER_LENGTH_HORIZONTAL)
+     max = svg_parse.global.width;
+   //TODO: what about radial?
+
+   if (strstr(str, "cm"))
+     parsed_value = parsed_value * 35.43307;
+   else if (strstr(str, "mm"))
+     parsed_value = parsed_value * 3.543307;
+   else if (strstr(str, "pt"))
+     parsed_value = parsed_value * 1.25;
+   else if (strstr(str, "pc"))
+     parsed_value = parsed_value * 15;
+   else if (strstr(str, "in"))
+     parsed_value = parsed_value * 90;
+   //TODO: implement 'em', 'ex' attributes
+
+   /* Transform into global percentage */
+   parsed_value = parsed_value / max;
 
    return parsed_value;
 }
@@ -1046,7 +1089,7 @@ _create_path_node(Svg_Node *parent, const char *buf, unsigned buflen)
 }
 
 #define CIRCLE_DEF(Name, Field, Type)       \
-  { #Name, sizeof (#Name), offsetof(Svg_Circle_Node, Field)}
+  { #Name, Type, sizeof (#Name), offsetof(Svg_Circle_Node, Field)}
 
 static const struct {
    const char *tag;
@@ -1105,7 +1148,7 @@ _create_circle_node(Svg_Node *parent, const char *buf, unsigned buflen)
 }
 
 #define ELLIPSE_DEF(Name, Field, Type)       \
-  { #Name, Type, sizeof (#Name), offsetof(Svg_Ellipse_Node, Field)}
+  { #Name, Type, sizeof (#Name) + sizeof (Type), offsetof(Svg_Ellipse_Node, Field)}
 
 static const struct {
    const char *tag;
@@ -1259,7 +1302,7 @@ _create_polyline_node(Svg_Node *parent, const char *buf, unsigned buflen)
 }
 
 #define RECT_DEF(Name, Field, Type)       \
-  { #Name, Type, sizeof (#Name), offsetof(Svg_Rect_Node, Field)}
+  { #Name, Type, sizeof (#Name) + sizeof(Type), offsetof(Svg_Rect_Node, Field)}
 
 static const struct {
    const char *tag;
@@ -1325,7 +1368,7 @@ _create_rect_node(Svg_Node *parent, const char *buf, unsigned buflen)
 }
 
 #define LINE_DEF(Name, Field, Type)       \
-  { #Name, Type, sizeof (#Name), offsetof(Svg_Line_Node, Field)}
+  { #Name, Type, sizeof (#Name) + sizeof (Type), offsetof(Svg_Line_Node, Field)}
 
 static const struct {
    const char *tag;
@@ -1779,37 +1822,96 @@ _attr_parse_stops(void *data, const char *key, const char *value)
 static void
 _handle_linear_x1_attr(Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->x1 = _to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
+   linear->x1 = _gradient_to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
+   if (strstr(value, "%"))
+     svg_parse.gradient.x1_percent = EINA_TRUE;
 }
 
 static void
 _handle_linear_y1_attr(Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->y1 = _to_double(value, SVG_PARSER_LENGTH_VERTICAL);
+   linear->y1 = _gradient_to_double(value, SVG_PARSER_LENGTH_VERTICAL);
+   if (strstr(value, "%"))
+     svg_parse.gradient.y1_percent = EINA_TRUE;
 }
 
 static void
 _handle_linear_x2_attr(Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->x2 = _to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
+   linear->x2 = _gradient_to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
+   /* checking if there are no percentage because x2 have default value
+    * already set in percentages (100%) */
+   if (!strstr(value, "%"))
+     svg_parse.gradient.x2_percent = EINA_FALSE;
 }
 
 static void
 _handle_linear_y2_attr(Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->y2 = _to_double(value, SVG_PARSER_LENGTH_VERTICAL);
+   linear->y2 = _gradient_to_double(value, SVG_PARSER_LENGTH_VERTICAL);
+   if (strstr(value, "%"))
+     svg_parse.gradient.y2_percent = EINA_TRUE;
 }
 
+static void
+_recalc_linear_x1_attr(Svg_Linear_Gradient* linear, Eina_Bool user_space)
+{
+   if (!svg_parse.gradient.x1_percent && !user_space)
+     {
+        /* Since previous percentage is not required (it was already percent)
+         * so oops and make it all back */
+        linear->x1 = linear->x1 * svg_parse.global.width;
+     }
+   svg_parse.gradient.x1_percent = EINA_FALSE;
+}
+
+static void
+_recalc_linear_y1_attr(Svg_Linear_Gradient* linear, Eina_Bool user_space)
+{
+   if (!svg_parse.gradient.y1_percent && !user_space)
+     {
+        /* Since previous percentage is not required (it was already percent)
+         * so oops and make it all back */
+        linear->y1 = linear->y1 * svg_parse.global.height;
+     }
+   svg_parse.gradient.y1_percent = EINA_FALSE;
+}
+
+static void
+_recalc_linear_x2_attr(Svg_Linear_Gradient* linear, Eina_Bool user_space)
+{
+   if (!svg_parse.gradient.x2_percent && !user_space)
+     {
+        /* Since previous percentage is not required (it was already percent)
+         * so oops and make it all back */
+        linear->x2 = linear->x2 * svg_parse.global.width;
+     }
+   svg_parse.gradient.x2_percent = EINA_FALSE;
+}
+
+static void
+_recalc_linear_y2_attr(Svg_Linear_Gradient* linear, Eina_Bool user_space)
+{
+   if (!svg_parse.gradient.y2_percent && !user_space)
+     {
+        /* Since previous percentage is not required (it was already percent)
+         * so oops and make it all back */
+        linear->y2 = linear->y2 * svg_parse.global.height;
+     }
+   svg_parse.gradient.y2_percent = EINA_FALSE;
+}
 
 typedef void (*Linear_Method)(Svg_Linear_Gradient *linear, const char *value);
+typedef void (*Linear_Method_Recalc)(Svg_Linear_Gradient *linear, Eina_Bool user_space);
 
 #define LINEAR_DEF(Name)       \
-  { #Name, sizeof (#Name), _handle_linear_##Name##_attr}
+  { #Name, sizeof (#Name), _handle_linear_##Name##_attr, _recalc_linear_##Name##_attr}
 
 static const struct {
    const char *tag;
    int sz;
    Linear_Method tag_handler;;
+   Linear_Method_Recalc tag_recalc;;
 } linear_tags[] = {
   LINEAR_DEF(x1),
   LINEAR_DEF(y1),
@@ -1856,18 +1958,33 @@ static Svg_Style_Gradient *
 _create_linearGradient(const char *buf, unsigned buflen)
 {
    Svg_Style_Gradient *grad = calloc(1, sizeof(Svg_Style_Gradient));
+   unsigned int i;
 
    grad->type = SVG_LINEAR_GRADIENT;
    grad->linear = calloc(1, sizeof(Svg_Linear_Gradient));
+   /**
+    * Default value of x2 is 100%
+    */
+   grad->linear->x2 = 1;
+   svg_parse.gradient.x2_percent = EINA_TRUE;
    eina_simple_xml_attributes_parse(buf, buflen,
                                     _attr_parse_linear_gradient_node, grad);
-   return grad;
 
+   for (i = 0; i < sizeof (linear_tags) / sizeof(linear_tags[0]); i++)
+     linear_tags[i].tag_recalc(grad->linear, grad->user_space);
+
+   return grad;
 }
 
 #define GRADIENT_DEF(Name)                                   \
   { #Name, sizeof (#Name), _create_##Name }
 
+/**
+ * For all Gradients lengths would be calculated into percentages related to
+ * canvas width and height.
+ *
+ * if user then recalculate actual pixels into percentages
+ */
 static const struct {
    const char *tag;
    int sz;

@@ -176,6 +176,25 @@ struct _Svg_Radial_Gradient
    double r;
 };
 
+/**
+ * IMPORTANT!
+ * Talking about parsing gradient variables
+ *
+ * All variables (like x1,x2,y1,y2,fx,fy,rx,ry,r, etc) would be percentages
+ * and then all recalculations would be done after that if userSpaceOnUse
+ * is set or not (recalculation depends on that).
+ *
+ * If gradientUnits="userSpaceOnUse" (grad->user_space is set to true)
+ * > Gradient variables (x1,x2,r,fx etc) contains percentages of entire cavas
+ * > size.
+ *
+ * If gradientUnits="objectBoundingBox" (grad->user_space is set to false)
+ * > Gradient variables (x1,x2,r,fx etc) contain percentages of 'whatever'
+ * > figure.
+ *
+ * So later on, while using gradient, please be careful and
+ * check user_space to use and transform sizes correctly.
+ */
 struct _Svg_Style_Gradient
 {
    Svg_Gradient_Type type;
