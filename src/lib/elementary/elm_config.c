@@ -2165,6 +2165,10 @@ _config_update(void)
    IFCFG(0x000b)
    eina_stringshare_refplace(&_elm_config->modules, tcfg->modules);
    IFCFGEND
+
+   IFCFG(0x000e)
+   _elm_config->entry_select_allow = EINA_TRUE;
+   IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
