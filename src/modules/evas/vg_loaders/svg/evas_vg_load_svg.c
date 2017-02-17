@@ -28,11 +28,23 @@ struct _Evas_SVG_Loader
    Eina_Bool result:1;
 };
 
+/* length type to recalculate %, pt, pc, mm, cm etc*/
+typedef enum {
+   SVG_PARSER_LENGTH_VERTICAL,
+   SVG_PARSER_LENGTH_HORIZONTAL,
+   /* in case of, for example, radius of radial gradient */
+   SVG_PARSER_LENGTH_OTHER
+} SVG_Parser_Length_Type;
+
 /* Global struct for working global cases during the parse */
 typedef struct {
    struct {
       int x, y, width, height;
    } global;
+   struct {
+      Eina_Bool fx_parsed;
+      Eina_Bool fy_parsed;
+   } gradient;
 } Evas_SVG_Parsing;
 static Evas_SVG_Parsing svg_parse;
 
@@ -73,10 +85,58 @@ _parse_number(const char **content, double *number)
    return EINA_TRUE;
 }
 
+/**
+ * According to https://www.w3.org/TR/SVG/coords.html#Units
+ *
+ * TODO
+ * Since this documentation is not obvious, more clean recalculation with dpi
+ * is required, but for now default w3 constants would be used
+ */
 static inline double
-_to_double(const char *str)
+_to_double(const char *str, SVG_Parser_Length_Type type)
 {
-   return strtod(str, NULL);
+   double parsed_value = strtod(str, NULL);
+
+   if (strstr(str, "cm"))
+     parsed_value = parsed_value * 35.43307;
+   else if (strstr(str, "mm"))
+     parsed_value = parsed_value * 3.543307;
+   else if (strstr(str, "pt"))
+     parsed_value = parsed_value * 1.25;
+   else if (strstr(str, "pc"))
+     parsed_value = parsed_value * 15;
+   else if (strstr(str, "in"))
+     parsed_value = parsed_value * 90;
+   else if (strstr(str, "%"))
+     {
+        if (type == SVG_PARSER_LENGTH_VERTICAL)
+          parsed_value = (parsed_value / 100.0) * svg_parse.global.height;
+        else if (type == SVG_PARSER_LENGTH_HORIZONTAL)
+          parsed_value = (parsed_value / 100.0) * svg_parse.global.width;
+        else // if other then it's radius
+          {
+             double max = svg_parse.global.width;
+             if (max < svg_parse.global.height) max = svg_parse.global.height;
+             parsed_value = (parsed_value / 100.0) * max;
+          }
+     }
+
+   //TODO: implement 'em', 'ex' attributes
+
+   return parsed_value;
+}
+
+static inline int
+_to_offset(const char *str)
+{
+   char *end = NULL;
+
+   double parsed_value = strtod(str, &end);
+
+   if (strstr(str, "%"))
+     parsed_value = parsed_value / 100.0;
+
+   return parsed_value;
 }
 
 static inline int
@@ -752,7 +812,7 @@ static void
 _handle_stroke_width_attr(Svg_Node* node, const char *value)
 {
    node->style->stroke.flags |= SVG_STROKE_FLAGS_WIDTH;
-   node->style->stroke.width = _to_double(value);
+   node->style->stroke.width = _to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
 }
 
 static void
@@ -985,17 +1045,18 @@ _create_path_node(Svg_Node *parent, const char *buf, unsigned buflen)
    return node;
 }
 
-#define CIRCLE_DEF(Name, Field)       \
+#define CIRCLE_DEF(Name, Field, Type)       \
   { #Name, sizeof (#Name), offsetof(Svg_Circle_Node, Field)}
 
 static const struct {
    const char *tag;
+   SVG_Parser_Length_Type type;
    int sz;
    size_t offset;
 } circle_tags[] = {
-  CIRCLE_DEF(cx, cx),
-  CIRCLE_DEF(cy, cy),
-  CIRCLE_DEF(r, r)
+  CIRCLE_DEF(cx, cx, SVG_PARSER_LENGTH_HORIZONTAL),
+  CIRCLE_DEF(cy, cy, SVG_PARSER_LENGTH_VERTICAL),
+  CIRCLE_DEF(r, r, SVG_PARSER_LENGTH_OTHER)
 };
 
 /* parse the attributes for a circle element.
@@ -1014,7 +1075,7 @@ _attr_parse_circle_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (circle_tags) / sizeof(circle_tags[0]); i++)
      if (circle_tags[i].sz - 1 == sz && !strncmp(circle_tags[i].tag, key, sz))
        {
-          *((double*) (array + circle_tags[i].offset)) = _to_double(value);
+          *((double*) (array + circle_tags[i].offset)) = _to_double(value, circle_tags[i].type);
           return EINA_TRUE;
        }
 
@@ -1043,18 +1104,19 @@ _create_circle_node(Svg_Node *parent, const char *buf, unsigned buflen)
    return node;
 }
 
-#define ELLIPSE_DEF(Name, Field)       \
-  { #Name, sizeof (#Name), offsetof(Svg_Ellipse_Node, Field)}
+#define ELLIPSE_DEF(Name, Field, Type)       \
+  { #Name, Type, sizeof (#Name), offsetof(Svg_Ellipse_Node, Field)}
 
 static const struct {
    const char *tag;
+   SVG_Parser_Length_Type type;
    int sz;
    size_t offset;
 } ellipse_tags[] = {
-  ELLIPSE_DEF(cx,cx),
-  ELLIPSE_DEF(cy,cy),
-  ELLIPSE_DEF(rx,rx),
-  ELLIPSE_DEF(ry,ry)
+  ELLIPSE_DEF(cx,cx, SVG_PARSER_LENGTH_HORIZONTAL),
+  ELLIPSE_DEF(cy,cy, SVG_PARSER_LENGTH_VERTICAL),
+  ELLIPSE_DEF(rx,rx, SVG_PARSER_LENGTH_HORIZONTAL),
+  ELLIPSE_DEF(ry,ry, SVG_PARSER_LENGTH_VERTICAL)
 };
 
 /* parse the attributes for an ellipse element.
@@ -1073,7 +1135,7 @@ _attr_parse_ellipse_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (ellipse_tags) / sizeof(ellipse_tags[0]); i++)
      if (ellipse_tags[i].sz - 1 == sz && !strncmp(ellipse_tags[i].tag, key, sz))
        {
-          *((double*) (array + ellipse_tags[i].offset)) = _to_double(value);
+          *((double*) (array + ellipse_tags[i].offset)) = _to_double(value, ellipse_tags[i].type);
           return EINA_TRUE;
        }
 
@@ -1196,20 +1258,21 @@ _create_polyline_node(Svg_Node *parent, const char *buf, unsigned buflen)
    return node;
 }
 
-#define RECT_DEF(Name, Field)       \
-  { #Name, sizeof (#Name), offsetof(Svg_Rect_Node, Field)}
+#define RECT_DEF(Name, Field, Type)       \
+  { #Name, Type, sizeof (#Name), offsetof(Svg_Rect_Node, Field)}
 
 static const struct {
    const char *tag;
+   SVG_Parser_Length_Type type;
    int sz;
    size_t offset;
 } rect_tags[] = {
-  RECT_DEF(x,x),
-  RECT_DEF(y, y),
-  RECT_DEF(width, w),
-  RECT_DEF(height, h),
-  RECT_DEF(rx, rx),
-  RECT_DEF(ry, ry)
+  RECT_DEF(x,x, SVG_PARSER_LENGTH_HORIZONTAL),
+  RECT_DEF(y, y, SVG_PARSER_LENGTH_VERTICAL),
+  RECT_DEF(width, w, SVG_PARSER_LENGTH_HORIZONTAL),
+  RECT_DEF(height, h, SVG_PARSER_LENGTH_VERTICAL),
+  RECT_DEF(rx, rx, SVG_PARSER_LENGTH_HORIZONTAL),
+  RECT_DEF(ry, ry, SVG_PARSER_LENGTH_VERTICAL)
 };
 
 /* parse the attributes for a rect element.
@@ -1228,7 +1291,7 @@ _attr_parse_rect_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (rect_tags) / sizeof(rect_tags[0]); i++)
      if (rect_tags[i].sz - 1 == sz && !strncmp(rect_tags[i].tag, key, sz))
        {
-          *((double*) (array + rect_tags[i].offset)) = _to_double(value);
+          *((double*) (array + rect_tags[i].offset)) = _to_double(value, rect_tags[i].type);
           return EINA_TRUE;
        }
 
@@ -1261,18 +1324,19 @@ _create_rect_node(Svg_Node *parent, const char *buf, unsigned buflen)
    return node;
 }
 
-#define LINE_DEF(Name, Field)       \
-  { #Name, sizeof (#Name), offsetof(Svg_Line_Node, Field)}
+#define LINE_DEF(Name, Field, Type)       \
+  { #Name, Type, sizeof (#Name), offsetof(Svg_Line_Node, Field)}
 
 static const struct {
    const char *tag;
+   SVG_Parser_Length_Type type;
    int sz;
    size_t offset;
 } line_tags[] = {
-  LINE_DEF(x1, x1),
-  LINE_DEF(y1, y1),
-  LINE_DEF(x2, x2),
-  LINE_DEF(y2, y2)
+  LINE_DEF(x1, x1, SVG_PARSER_LENGTH_HORIZONTAL),
+  LINE_DEF(y1, y1, SVG_PARSER_LENGTH_VERTICAL),
+  LINE_DEF(x2, x2, SVG_PARSER_LENGTH_HORIZONTAL),
+  LINE_DEF(y2, y2, SVG_PARSER_LENGTH_VERTICAL)
 };
 
 /* parse the attributes for a rect element.
@@ -1291,7 +1355,7 @@ _attr_parse_line_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (line_tags) / sizeof(line_tags[0]); i++)
      if (line_tags[i].sz - 1 == sz && !strncmp(line_tags[i].tag, key, sz))
        {
-          *((double*) (array + line_tags[i].offset)) = _to_double(value);
+          *((double*) (array + line_tags[i].offset)) = _to_double(value, line_tags[i].type);
           return EINA_TRUE;
        }
 
@@ -1518,6 +1582,7 @@ _create_use_node(Svg_Node *parent, const char *buf, unsigned buflen)
 #define TAG_DEF(Name)                                   \
   { #Name, sizeof (#Name), _create_##Name##_node }
 
+//TODO: implement 'text' primitive
 static const struct {
    const char *tag;
    int sz;
@@ -1579,58 +1644,40 @@ _parse_spread_value(const char *value)
    return spread;
 }
 
-
-/**
- * Comment SVG_GRADIENT_FX_FY_PARSED
- *
- * if "fx" and "fy" is not specified then they are fx==cx and fy==cx
- * but we should also be careful when during the parsing it would be
- * something like <radialGradient fx="0" cx="100" cy="100">
- * so then fx is 0, but fy is 100
- *
- * So we need to check if focal was parsed, if not then set up same as center
- * point.
- *
- * It is required to set those public variables back to zero when parsing new
- * gradient.
- */
-static Eina_Bool fx_parsed;
-static Eina_Bool fy_parsed;
-
 static void
 _handle_radial_cx_attr(Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->cx = _to_double(value);
-   if (!fx_parsed)
+   radial->cx = _to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
+   if (!svg_parse.gradient.fx_parsed)
      radial->fx = radial->cx;
 }
 
 static void
 _handle_radial_cy_attr(Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->cy = _to_double(value);
-   if (!fy_parsed)
+   radial->cy = _to_double(value, SVG_PARSER_LENGTH_VERTICAL);
+   if (!svg_parse.gradient.fy_parsed)
      radial->fy = radial->cy;
 }
 
 static void
 _handle_radial_fx_attr(Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->fx = _to_double(value);
-   fx_parsed = EINA_TRUE;
+   radial->fx = _to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
+   svg_parse.gradient.fx_parsed = EINA_TRUE;
 }
 
 static void
 _handle_radial_fy_attr(Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->fy = _to_double(value);
-   fy_parsed = EINA_TRUE;
+   radial->fy = _to_double(value, SVG_PARSER_LENGTH_VERTICAL);
+   svg_parse.gradient.fy_parsed = EINA_TRUE;
 }
 
 static void
 _handle_radial_r_attr(Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->r = _to_double(value);
+   radial->r = _to_double(value, SVG_PARSER_LENGTH_OTHER);
 }
 
 
@@ -1694,11 +1741,8 @@ _create_radialGradient(const char *buf, unsigned buflen)
    grad->type = SVG_RADIAL_GRADIENT;
    grad->radial = calloc(1, sizeof(Svg_Radial_Gradient));
 
-   /**
-    * Please see SVG_GRADIENT_FX_FY_PARSED comment for more info
-    */
-   fx_parsed = EINA_FALSE;
-   fy_parsed = EINA_FALSE;
+   svg_parse.gradient.fx_parsed = EINA_FALSE;
+   svg_parse.gradient.fy_parsed = EINA_FALSE;
    eina_simple_xml_attributes_parse(buf, buflen,
                                     _attr_parse_radial_gradient_node, grad);
 
@@ -1713,7 +1757,7 @@ _attr_parse_stops(void *data, const char *key, const char *value)
 
    if (!strcmp(key, "offset"))
      {
-        stop->offset = _to_double(value);
+        stop->offset = _to_offset(value);
      }
    else if (!strcmp(key, "stop-opacity"))
      {
@@ -1735,25 +1779,25 @@ _attr_parse_stops(void *data, const char *key, const char *value)
 static void
 _handle_linear_x1_attr(Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->x1 = _to_double(value);
+   linear->x1 = _to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
 }
 
 static void
 _handle_linear_y1_attr(Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->y1 = _to_double(value);
+   linear->y1 = _to_double(value, SVG_PARSER_LENGTH_VERTICAL);
 }
 
 static void
 _handle_linear_x2_attr(Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->x2 = _to_double(value);
+   linear->x2 = _to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
 }
 
 static void
 _handle_linear_y2_attr(Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->y2 = _to_double(value);
+   linear->y2 = _to_double(value, SVG_PARSER_LENGTH_VERTICAL);
 }
 
 
