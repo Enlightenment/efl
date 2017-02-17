@@ -1,6 +1,6 @@
 group "Elm_Config" struct {
   value "config_version" int: 131086;
-  value "config_version" uchar: 1;
+  value "entry_select_allow" uchar: 1;
   value "engine" string: "";
   value "vsync" uchar: 0;
   value "thumbscroll_enable" uchar: 0;
