@@ -462,11 +462,99 @@ _click_through(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    printf("click went through on %p\n", obj);
 }
 
+typedef struct
+{
+   Evas_Object *scroller;
+   Evas_Object *it1, *it2;
+   Ecore_Timer *timer;
+   int autobounce;
+   int frames;
+   int bounce_max;
+   int y1, y2;
+   int state;
+} Bounce;
+
+#ifdef CLOCK_PROCESS_CPUTIME_ID
+static void
+_bounce_cb_frame(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Bounce *bounce = data;
+   bounce->frames++;
+}
+#endif
+
+static Eina_Bool
+_bounce_cb(void *data)
+{
+   Bounce *bounce = data;
+
+   if (!bounce->y1)
+     {
+        elm_interface_scrollable_bounce_allow_set(bounce->scroller, 0, 1);
+        efl_gfx_position_get(bounce->it1, NULL, &bounce->y1);
+        efl_gfx_position_get(bounce->it2, NULL, &bounce->y2);
+     }
+
+   bounce->state++;
+   if (bounce->state & 0x1)
+     elm_interface_scrollable_region_bring_in(bounce->scroller, 0, bounce->y2, 1, 1);
+   else
+     elm_interface_scrollable_region_bring_in(bounce->scroller, 0, bounce->y1, 1, 1);
+
+#ifdef CLOCK_PROCESS_CPUTIME_ID
+   static struct timespec t0;
+   if (bounce->state == 2)
+     {
+        evas_event_callback_add(evas_object_evas_get(bounce->scroller),
+                                EVAS_CALLBACK_RENDER_FLUSH_POST,
+                                _bounce_cb_frame, bounce);
+        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t0);
+     }
+#endif
+
+   if (bounce->state > bounce->bounce_max)
+     {
+#ifdef CLOCK_PROCESS_CPUTIME_ID
+        struct timespec t;
+        unsigned long long tll, t0ll, tdll, frames;
+
+        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
+        t0ll = (t0.tv_sec * 1000000000) + t0.tv_nsec;
+        tll = (t.tv_sec * 1000000000) + t.tv_nsec;
+        tdll = tll - t0ll;
+        frames = bounce->frames ?: 1;
+        printf("NS since frame 2 = %llu , %llu frames = %llu / frame\n",
+               tdll, frames, tdll / frames);
+#endif
+        if (bounce->autobounce) elm_exit();
+     }
+   return EINA_TRUE;
+}
+
+static void
+_scroll2_del_cb(void *data, Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Bounce *bounce = data;
+
+#ifdef CLOCK_PROCESS_CPUTIME_ID
+   evas_event_callback_del_full(evas_object_evas_get(bounce->scroller),
+                                EVAS_CALLBACK_RENDER_FLUSH_POST,
+                                _bounce_cb_frame, bounce);
+#endif
+
+   ecore_timer_del(bounce->timer);
+   free(bounce);
+}
+
 void
 test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bx, *bx2, *sc, *tb, *tb2, *rc;
+   Bounce *bounce;
    int i, j;
+
+   bounce = calloc(1, sizeof(Bounce));
 
    win = elm_win_util_standard_add("scroller2", "Scroller 2");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -485,6 +573,8 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
         elm_box_pack_end(bx, bt);
         evas_object_show(bt);
+
+        if (i == 0) bounce->it1 = bt;
      }
    /* } */
 
@@ -570,6 +660,8 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
         elm_box_pack_end(bx, bt);
         evas_object_show(bt);
+
+        if (i == 23) bounce->it2 = bt;
      }
 
    sc = elm_scroller_add(win);
@@ -580,8 +672,20 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(bx);
    evas_object_show(sc);
 
+   bounce->scroller = sc;
+
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
+
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _scroll2_del_cb, bounce);
+
+   if (getenv("ELM_TEST_AUTOBOUNCE"))
+     {
+        bounce->autobounce = 1;
+        bounce->bounce_max = atoi(getenv("ELM_TEST_AUTOBOUNCE"));
+        bounce->timer = ecore_timer_add(0.5, _bounce_cb, bounce);
+        _bounce_cb(bounce);
+     }
 }
 
 static Ecore_Timer *_timer = NULL;
