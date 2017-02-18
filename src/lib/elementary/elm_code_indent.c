@@ -12,26 +12,29 @@ elm_code_line_indent_startswith_keyword(Elm_Code_Line *line)
 {
    regex_t regex;
    char *text;
-   Eina_Bool ret;
+   int ret;
    unsigned int textlen;
 
    text = (char *)elm_code_line_text_get(line, &textlen);
    text = strndup(text, textlen);
 
-   regcomp(&regex, "^\\s*("
-                   "((if|else\\s*if|while|for|switch)\\s*\\(.*\\)\\s*\\{?)|"
-                   "((else|do)\\s*\\{?)|"
-                   "(case\\s+.+:)|"
-                   "(default:)"
-                   ")\\s*$", REG_EXTENDED | REG_NOSUB);
+   ret = regcomp(&regex, "^\\s*("
+                         "((if|else\\s*if|while|for|switch)\\s*\\(.*\\)\\s*\\{?)|"
+                         "((else|do)\\s*\\{?)|"
+                         "(case\\s+.+:)|"
+                         "(default:)"
+                         ")\\s*$", REG_EXTENDED | REG_NOSUB);
+   if (ret)
+     {
+        regfree(&regex);
+        return EINA_FALSE;
+     }
 
    ret = regexec(&regex, text, 0, NULL, 0);
+   regfree(&regex);
    free(text);
 
-   if (ret == 0)
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
+   return ret == 0;
 }
 
 EAPI char *

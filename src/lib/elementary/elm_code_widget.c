@@ -621,7 +621,7 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
    Evas_Coord ox = 0, oy = 0, sx = 0, sy = 0, rowy = 0;
    Evas_Object *grid;
    int cw = 0, ch = 0, gutter;
-   unsigned int guess, number;
+   unsigned int guess = 0, number;
 
    widget = (Elm_Code_Widget *)obj;
    evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
@@ -632,7 +632,8 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
    _elm_code_widget_cell_size_get(widget, &cw, &ch);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
 
-   guess = ((double) y / ch) + 1;
+   if (ch > 0)
+     guess = ((double) y / ch) + 1;
    number = guess;
 
    // unfortunately EINA_LIST_REVERSE_FOREACH skips to the end of the list...
@@ -649,7 +650,12 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
      }
 
    if (col)
-     *col = ((double) x / cw) - gutter + 1;
+     {
+        if (cw == 0)
+          *col = 0;
+        else
+          *col = ((double) x / cw) - gutter + 1;
+     }
    if (row)
      *row = number;
 
@@ -1633,7 +1639,7 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
         else if (!strcmp(ev->key, "Next"))
           _elm_code_widget_cursor_move_pagedown(widget);
 
-        if (shift)
+        if (shift && pd->selection)
           {
              if (pd->selection->start_line == pd->selection->end_line)
                adjust = (pd->selection->end_col > pd->selection->start_col) ||
@@ -1918,7 +1924,8 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
      ww = w*cw;
    if (h*ch > wh)
      wh = h*ch;
-   pd->col_count = ww/cw + 1;
+   if (cw > 0)
+     pd->col_count = ww/cw + 1;
 
    EINA_LIST_FOREACH(pd->grids, item, grid)
      {
@@ -1962,6 +1969,8 @@ _elm_code_widget_lines_visible_get(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_scroller_region_get(pd->scroller, NULL, NULL, NULL, &viewh);
    _elm_code_widget_cell_size_get(obj, NULL, &cellh);
 
+   if (cellh == 0)
+     return 0;
    return viewh / cellh + 1;
 }
 
