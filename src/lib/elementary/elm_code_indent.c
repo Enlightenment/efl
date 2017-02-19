@@ -24,13 +24,9 @@ elm_code_line_indent_startswith_keyword(Elm_Code_Line *line)
                          "(case\\s+.+:)|"
                          "(default:)"
                          ")\\s*$", REG_EXTENDED | REG_NOSUB);
-   if (ret)
-     {
-        regfree(&regex);
-        return EINA_FALSE;
-     }
+   if (ret == 0)
+     ret = regexec(&regex, text, 0, NULL, 0);
 
-   ret = regexec(&regex, text, 0, NULL, 0);
    regfree(&regex);
    free(text);
 
