@@ -6928,6 +6928,7 @@ _efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o, const char *key,
         else
           {
              o->styles = eina_list_remove(o->styles, ts);
+             ts->objects = eina_list_remove(ts->objects, eo_obj);
              evas_textblock_style_free(ts);
           }
 
