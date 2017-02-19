@@ -192,9 +192,9 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
           elm_code_line_text_trailing_whitespace_strip(line_item);
         content = elm_code_line_text_get(line_item, &length);
 
-        if (fwrite(content, sizeof(char), length, out) != length)
+        if (fwrite(content, sizeof(char), length, out) != (size_t)length)
           break;
-        if (fwrite(crchars, sizeof(char), crlength, out) != crlength)
+        if (fwrite(crchars, sizeof(char), crlength, out) != (size_t)crlength)
           break;
      }
    fclose(out);
