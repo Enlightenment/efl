@@ -492,7 +492,6 @@ Required by default:
 Recommended requirements (highly recommended):
 
   * harfbuzz
-  * systemd
   * libwebp
   * liblz4
   * vlc (libvlc)
@@ -500,7 +499,6 @@ Recommended requirements (highly recommended):
 Enable these with configure options:
 
     --enable-xinput22 \
-    --enable-systemd \
     --enable-image-loader-webp \
     --enable-harfbuzz \
     --enable-multisense \
