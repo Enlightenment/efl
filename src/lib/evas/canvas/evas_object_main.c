@@ -1142,12 +1142,12 @@ _efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
    Eina_List *was = NULL;
+   Evas_Map *map;
 
    if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 1, x, y))
      return;
 
-   Evas_Map *map;
-   map = (Evas_Map *) evas_object_map_get(eo_obj);
+   map = obj->map->cur.map;
    if (map && map->move_sync.enabled)
      {
         Evas_Coord diff_x = x - obj->cur->geometry.x;
