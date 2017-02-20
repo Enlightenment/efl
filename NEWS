@@ -316,6 +316,16 @@ Fixes:
    * elm_code: Fix syntax crash on trailing newline in multiline macro
    * ecore-wl2: roundtrip during client disconnect
    * evas: fix bugs in gif image loader
+   * ecore-evas-wayland: Fix setting rotation during async render
+   * ecore-evas-drm: Fix setting rotation during async render
+   * evas textblock: keep previous size when the calculation is skipped
+   * Edje calc: Fix textblock size calculation logic
+   * ecore-wl2: Fix setting opaque region on a window
+   * ecore-wl2: Fix setting input region on a window
+   * elm_code: Fix Coverity issues. (CID1356612, CID1368489, CID1371128, CID1371123, CID1368335, CID1371124, CID1371126)
+   * elm_code: Another Coverity fix, better this time. (CID1371322)
+   * Canvas text: fix clearing existing style (T5187)
+   * eina utils: fix build without getpwent.
 
 Changes since 1.17.0:
 ---------------------
