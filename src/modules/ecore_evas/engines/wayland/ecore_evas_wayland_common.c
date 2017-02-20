@@ -925,6 +925,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    Ecore_Evas_Engine_Wl_Data *wdata;
    int orig_w, orig_h;
    int ow, oh;
+   int diff = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1068,7 +1069,13 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
      }
 
    evas_output_size_get(ee->evas, &ow, &oh);
-   if ((ow != w) || (oh != h))
+
+   if (ECORE_EVAS_PORTRAIT(ee) && ((ow != w) || (oh != h)))
+     diff = 1;
+   if (!ECORE_EVAS_PORTRAIT(ee) && ((ow != h) || (oh != w)))
+     diff = 1;
+
+   if (diff)
      {
         ee->w = orig_w;
         ee->h = orig_h;
