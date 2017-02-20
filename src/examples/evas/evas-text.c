@@ -156,7 +156,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        printf("%s", commands);
         return;
      }
 
@@ -168,7 +168,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_text_style_set(d.text, type);
 
-        fprintf(stdout, "Changing text's style to \'%s\'\n",
+        printf("Changing text's style to \'%s\'\n",
                 _text_style_type_to_str(type));
 
         return;
@@ -186,7 +186,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_text_font_set(d.text, *d.t_data.font_ptr, sz);
 
-        fprintf(stdout, "Changing text's font to %s\n", *d.t_data.font_ptr);
+        printf("Changing text's font to %s\n", *d.t_data.font_ptr);
 
         return;
      }
@@ -201,7 +201,7 @@ _on_keydown(void        *data EINA_UNUSED,
           d.text, d.t_data.text_ptr->r, d.t_data.text_ptr->g,
           d.t_data.text_ptr->b, d.t_data.text_ptr->a);
 
-        fprintf(stdout, "Changing base color for text to (%d, %d, %d, %d)\n",
+        printf("Changing base color for text to (%d, %d, %d, %d)\n",
                 d.t_data.text_ptr->r, d.t_data.text_ptr->g,
                 d.t_data.text_ptr->b, d.t_data.text_ptr->a);
 
@@ -218,7 +218,7 @@ _on_keydown(void        *data EINA_UNUSED,
           d.text, d.t_data.glow2_ptr->r, d.t_data.glow2_ptr->g,
           d.t_data.glow2_ptr->b, d.t_data.glow2_ptr->a);
 
-        fprintf(stdout, "Changing glow 2 color for text to (%d, %d, %d, %d)\n",
+        printf("Changing glow 2 color for text to (%d, %d, %d, %d)\n",
                 d.t_data.glow2_ptr->r, d.t_data.glow2_ptr->g,
                 d.t_data.glow2_ptr->b, d.t_data.glow2_ptr->a);
 
@@ -235,7 +235,7 @@ _on_keydown(void        *data EINA_UNUSED,
           d.text, d.t_data.glow_ptr->r, d.t_data.glow_ptr->g,
           d.t_data.glow_ptr->b, d.t_data.glow_ptr->a);
 
-        fprintf(stdout, "Changing glow color for text to (%d, %d, %d, %d)\n",
+        printf("Changing glow color for text to (%d, %d, %d, %d)\n",
                 d.t_data.glow_ptr->r, d.t_data.glow_ptr->g,
                 d.t_data.glow_ptr->b, d.t_data.glow_ptr->a);
 
@@ -252,7 +252,7 @@ _on_keydown(void        *data EINA_UNUSED,
           d.text, d.t_data.outline_ptr->r, d.t_data.outline_ptr->g,
           d.t_data.outline_ptr->b, d.t_data.outline_ptr->a);
 
-        fprintf(stdout, "Changing outline color for text to (%d, %d, %d, %d)\n",
+        printf("Changing outline color for text to (%d, %d, %d, %d)\n",
                 d.t_data.outline_ptr->r, d.t_data.outline_ptr->g,
                 d.t_data.outline_ptr->b, d.t_data.outline_ptr->a);
 
@@ -269,7 +269,7 @@ _on_keydown(void        *data EINA_UNUSED,
           d.text, d.t_data.shadow_ptr->r, d.t_data.shadow_ptr->g,
           d.t_data.shadow_ptr->b, d.t_data.shadow_ptr->a);
 
-        fprintf(stdout, "Changing shadow color for text to (%d, %d, %d, %d)\n",
+        printf("Changing shadow color for text to (%d, %d, %d, %d)\n",
                 d.t_data.shadow_ptr->r, d.t_data.shadow_ptr->g,
                 d.t_data.shadow_ptr->b, d.t_data.shadow_ptr->a);
 
@@ -288,7 +288,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_text_font_set(d.text, font, size);
 
-        fprintf(stdout, "Changing text's font size to %d\n", size);
+        printf("Changing text's font size to %d\n", size);
 
         return;
      }
@@ -378,7 +378,7 @@ main(void)
    evas_object_show(d.text);
 
    evas_object_text_font_get(d.text, &font, &size);
-   fprintf(stdout, "Adding text object with font %s, size %d\n", font, size);
+   printf("Adding text object with font %s, size %d\n", font, size);
 
    /* this is a border around the text object above, here just to
     * emphasize its geometry */
@@ -391,7 +391,7 @@ main(void)
    evas_object_move(d.border, (WIDTH / 8) - 3, ((3 * HEIGHT) / 8) - 3);
    evas_object_show(d.border);
 
-   fprintf(stdout, commands);
+   printf("%s", commands);
    ecore_main_loop_begin();
 
    ecore_evas_free(d.ee);
