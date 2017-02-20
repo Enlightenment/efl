@@ -1079,9 +1079,15 @@ evas_object_smart_del(Evas_Object *eo_obj)
    unsigned int i;
 
    if (obj->delete_me) return;
+
+   sobj = efl_data_scope_get(eo_obj, MY_CLASS);
    s = obj->smart.smart;
    if (s && s->smart_class->del)
-      s->smart_class->del(eo_obj);
+     {
+        s->smart_class->del(eo_obj);
+        //this is legacy, this will never be called..., smart things dont have inheitence
+        sobj->group_del_called = EINA_TRUE;
+     }
    else
       efl_canvas_group_del(eo_obj);
    if (obj->smart.parent) evas_object_smart_member_del(eo_obj);
@@ -1097,7 +1103,6 @@ evas_object_smart_del(Evas_Object *eo_obj)
           }
      }
 
-   sobj = efl_data_scope_get(eo_obj, MY_CLASS);
    free(sobj->interface_privates);
    sobj->interface_privates = NULL;
 
