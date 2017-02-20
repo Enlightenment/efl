@@ -42,5 +42,15 @@ Efl_Object *_test_testing_return_object(Eo *obj, Test_Testing_Data *pd)
   return obj;
 }
 
+const char *_test_testing_return_string(Eo *obj, Test_Testing_Data *pd)
+{
+  return "string";
+}
+
+const char *_test_testing_call_return_string(Eo *obj, Test_Testing_Data *pd)
+{
+  return test_testing_return_string(obj);
+}
+
 #include "test_testing.eo.c"
 

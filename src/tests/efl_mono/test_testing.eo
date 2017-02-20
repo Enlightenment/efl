@@ -3,5 +3,13 @@ class Test.Testing (Efl.Object) {
       return_object {
          return: Test.Testing;
       }
+
+      return_string {
+         return: string;
+      }
+
+      call_return_string {
+         return: string;
+      }
    }
 }

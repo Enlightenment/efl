@@ -119,6 +119,29 @@ class TestCore
 
        Test.Assert(delEventCalled, "DEL event not called");
     }
+
+    public static void return_string_directly()
+    {
+        test.Testing obj = new test.TestingConcrete();
+        Test.Assert(obj.return_string().Equals("string"));
+    }
+
+    private class TestingImplementer : test.TestingInherit
+    {
+        public TestingImplementer() : base(null) {
+        }
+        public override String return_string()
+        {
+            return "inherited";
+        }
+    }
+
+    public static void return_string_to_c()
+    {
+        test.Testing obj = new TestingImplementer();
+        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        Test.Assert(obj.call_return_string().Equals("inherited"));
+    }
 }
 
 class Eina
