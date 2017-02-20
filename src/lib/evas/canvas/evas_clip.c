@@ -324,6 +324,9 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
 
    EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
 
+   if ((!obj->cur->clipper && !eo_clip) ||
+       (obj->cur->clipper && obj->cur->clipper->object == eo_clip)) return;
+
    clip = EVAS_OBJECT_DATA_SAFE_GET(eo_clip);
    if (!EVAS_OBJECT_DATA_ALIVE(clip))
      {
