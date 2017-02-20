@@ -76,7 +76,7 @@ typedef int32_t Eina_F16p16;
 typedef int32_t Eina_F8p24;
 
 /**
- * @brief Create a new Eina_F32p32 floating point number from standard 32-bit
+ * @brief Creates a new Eina_F32p32 floating point number from standard 32-bit
  * integer
  *
  * @param v 32-bit integer value to convert
@@ -85,7 +85,7 @@ typedef int32_t Eina_F8p24;
 static inline Eina_F32p32  eina_f32p32_int_from(int32_t v);
 
 /**
- * @brief Create a new standard 32-bit integer from Eina_F32p32 floating point
+ * @brief Creates a new standard 32-bit integer from Eina_F32p32 floating point
  * number
  *
  * @param v Eina_F32p32 value to convert
@@ -94,15 +94,15 @@ static inline Eina_F32p32  eina_f32p32_int_from(int32_t v);
 static inline int32_t      eina_f32p32_int_to(Eina_F32p32 v);
 
 /**
- * @brief Create a new Eina_F32p32 floating point number from standard double
+ * @brief Creates a new Eina_F32p32 floating point number from standard double
  *
- * @param v double value to convert
+ * @param v Double value to convert
  * @return The value converted into Eina_F32p32 format
  */
 static inline Eina_F32p32  eina_f32p32_double_from(double v);
 
 /**
- * @brief Create a new standard double from Eina_F32p32 floating point
+ * @brief Creates a new standard double from Eina_F32p32 floating point
  * number
  *
  * @param v Eina_F32p32 value to convert
@@ -120,11 +120,11 @@ static inline double       eina_f32p32_double_to(Eina_F32p32 v);
 static inline Eina_F32p32  eina_f32p32_add(Eina_F32p32 a, Eina_F32p32 b);
 
 /**
- * @brief Calculates the substraction of two Eina_F32p32 floating point numbers
+ * @brief Calculates the subtraction of two Eina_F32p32 floating point numbers
  *
  * @param a The first number
- * @param b The substracted number
- * @return The substaction result of the two numbers @p a - @p b
+ * @param b The subtracted number
+ * @return The subtraction result of the two numbers @p a - @p b
  */
 static inline Eina_F32p32  eina_f32p32_sub(Eina_F32p32 a, Eina_F32p32 b);
 
@@ -133,7 +133,7 @@ static inline Eina_F32p32  eina_f32p32_sub(Eina_F32p32 a, Eina_F32p32 b);
  *
  * @param a The first number
  * @param b The second number
- * @return The mutliplication result of the two numbers @p a * @p b
+ * @return The multiplication result of the two numbers @p a * @p b
  *
  * To prevent overflow during multiplication we need to reduce the precision of
  * the fraction part Shift both values to only contain 16 bit of the fraction
@@ -148,7 +148,7 @@ static inline Eina_F32p32  eina_f32p32_mul(Eina_F32p32 a, Eina_F32p32 b);
  *
  * @param a The Eina_F32p32 number
  * @param b The integer value
- * @return The mutliplication result of the two numbers @p a * @p b
+ * @return The multiplication result of the two numbers @p a * @p b
  */
 static inline Eina_F32p32  eina_f32p32_scale(Eina_F32p32 a, int b);
 
@@ -170,7 +170,7 @@ static inline Eina_F32p32  eina_f32p32_div(Eina_F32p32 a, Eina_F32p32 b);
 static inline Eina_F32p32  eina_f32p32_sqrt(Eina_F32p32 a);
 
 /**
- * @brief Get the absolute value of the integer part of and Eina_F32p32 floating
+ * @brief Gets the absolute value of the integer part of and Eina_F32p32 floating
  * point number
  *
  * @param v The floating point number
@@ -179,7 +179,7 @@ static inline Eina_F32p32  eina_f32p32_sqrt(Eina_F32p32 a);
 static inline unsigned int eina_f32p32_fracc_get(Eina_F32p32 v);
 
 /**
- * @brief Get the absolute value of an Eina_F32p32 floating point number
+ * @brief Gets the absolute value of an Eina_F32p32 floating point number
  *
  * @param a The floating point number
  * @return The absolute value for the number @p a
@@ -220,7 +220,7 @@ EAPI Eina_F32p32           eina_f32p32_sin(Eina_F32p32 a);
 #define EINA_F16P16_HALF (1 << 15)
 
 /**
- * @brief Create a new Eina_F16p316 floating point number from standard 32-bit
+ * @brief Creates a new Eina_F16p316 floating point number from standard 32-bit
  * integer
  *
  * @param v 32-bit integer value to convert
@@ -229,7 +229,7 @@ EAPI Eina_F32p32           eina_f32p32_sin(Eina_F32p32 a);
 static inline Eina_F16p16  eina_f16p16_int_from(int32_t v);
 
 /**
- * @brief Create a new standard 32-bit integer from Eina_F16p16 floating point
+ * @brief Creates a new standard 32-bit integer from Eina_F16p16 floating point
  * number 
  *
  * @param v Eina_F16p16 value to convert
@@ -238,15 +238,15 @@ static inline Eina_F16p16  eina_f16p16_int_from(int32_t v);
 static inline int32_t      eina_f16p16_int_to(Eina_F16p16 v);
 
 /**
- * @brief Create a new Eina_F16p16 floating point number from standard double
+ * @brief Creates a new Eina_F16p16 floating point number from standard double
  *
- * @param v double value to convert
+ * @param v Double value to convert
  * @return The value converted into Eina_F16p16 format
  */
 static inline Eina_F16p16  eina_f16p16_double_from(double v);
 
 /**
- * @brief Create a new standard double from Eina_F16p16 floating point
+ * @brief Creates a new standard double from Eina_F16p16 floating point
  * number 
  *
  * @param v Eina_F16p16 value to convert
@@ -255,15 +255,15 @@ static inline Eina_F16p16  eina_f16p16_double_from(double v);
 static inline double       eina_f16p16_double_to(Eina_F16p16 v);
 
 /**
- * @brief Create a new Eina_F16p16 floating point number from standard float
+ * @brief Creates a new Eina_F16p16 floating point number from standard float
  *
- * @param v float value to convert
+ * @param v Float value to convert
  * @return The value converted into Eina_F16p16 format
  */
 static inline Eina_F16p16  eina_f16p16_float_from(float v);
 
 /**
- * @brief Create a new standard float from Eina_F16p16 floating point
+ * @brief Creates a new standard float from Eina_F16p16 floating point
  * number
  *
  * @param v Eina_F16p16 value to convert
@@ -281,11 +281,11 @@ static inline float        eina_f16p16_float_to(Eina_F16p16 v);
 static inline Eina_F16p16  eina_f16p16_add(Eina_F16p16 a, Eina_F16p16 b);
 
 /**
- * @brief Calculates the substraction of two Eina_F16p16 floating point numbers
+ * @brief Calculates the subtraction of two Eina_F16p16 floating point numbers
  *
  * @param a The first number
- * @param b The substracted number
- * @return The substaction result of the two numbers @p a - @p b
+ * @param b The subtracted number
+ * @return The subtraction result of the two numbers @p a - @p b
  */
 static inline Eina_F16p16  eina_f16p16_sub(Eina_F16p16 a, Eina_F16p16 b);
 
@@ -294,7 +294,7 @@ static inline Eina_F16p16  eina_f16p16_sub(Eina_F16p16 a, Eina_F16p16 b);
  *
  * @param a The first number
  * @param b The second number
- * @return The mutliplication result of the two numbers @p a * @p b
+ * @return The multiplication result of the two numbers @p a * @p b
  */
 static inline Eina_F16p16  eina_f16p16_mul(Eina_F16p16 a, Eina_F16p16 b);
 
@@ -304,7 +304,7 @@ static inline Eina_F16p16  eina_f16p16_mul(Eina_F16p16 a, Eina_F16p16 b);
  *
  * @param a The Eina_F16p16 number
  * @param b The integer value
- * @return The mutliplication result of the two numbers @p a * @p b
+ * @return The multiplication result of the two numbers @p a * @p b
  */
 static inline Eina_F16p16  eina_f16p16_scale(Eina_F16p16 a, int b);
 
@@ -326,7 +326,7 @@ static inline Eina_F16p16  eina_f16p16_div(Eina_F16p16 a, Eina_F16p16 b);
 static inline Eina_F16p16  eina_f16p16_sqrt(Eina_F16p16 a);
 
 /**
- * @brief Get the absolute value of the integer part of and Eina_F16p16 floating
+ * @brief Gets the absolute value of the integer part of and Eina_F16p16 floating
  * point number
  *
  * @param v The floating point number
@@ -336,7 +336,7 @@ static inline unsigned int eina_f16p16_fracc_get(Eina_F16p16 v);
 
 
 /**
- * @brief Create a new Eina_F16p316 floating point number from standard 32-bit
+ * @brief Creates a new Eina_F16p316 floating point number from standard 32-bit
  * integer
  *
  * @param v 32-bit integer value to convert
@@ -345,7 +345,7 @@ static inline unsigned int eina_f16p16_fracc_get(Eina_F16p16 v);
 static inline Eina_F8p24   eina_f8p24_int_from(int32_t v);
 
 /**
- * @brief Create a new standard 32-bit integer from Eina_F8p24 floating point
+ * @brief Creates a new standard 32-bit integer from Eina_F8p24 floating point
  * number
  *
  * @param v Eina_F8p24 value to convert
@@ -354,9 +354,9 @@ static inline Eina_F8p24   eina_f8p24_int_from(int32_t v);
 static inline int32_t      eina_f8p24_int_to(Eina_F8p24 v);
 
 /**
- * @brief Create a new Eina_F8p24 floating point number from standard float
+ * @brief Creates a new Eina_F8p24 floating point number from standard float
  *
- * @param v float value to convert
+ * @param v Float value to convert
  * @return The value converted into Eina_F8p24 format
  */
 static inline Eina_F8p24   eina_f8p24_float_from(float v);
@@ -379,11 +379,11 @@ static inline float        eina_f8p24_float_to(Eina_F8p24 v);
 static inline Eina_F8p24   eina_f8p24_add(Eina_F8p24 a, Eina_F8p24 b);
 
 /**
- * @brief Calculates the substraction of two Eina_F8p24 floating point numbers
+ * @brief Calculates the subtraction of two Eina_F8p24 floating point numbers
  *
  * @param a The first number
- * @param b The substracted number
- * @return The substaction result of the two numbers @p a - @p b
+ * @param b The subtracted number
+ * @return The subtraction result of the two numbers @p a - @p b
  */
 static inline Eina_F8p24   eina_f8p24_sub(Eina_F8p24 a, Eina_F8p24 b);
 
@@ -392,7 +392,7 @@ static inline Eina_F8p24   eina_f8p24_sub(Eina_F8p24 a, Eina_F8p24 b);
  *
  * @param a The first number
  * @param b The second number
- * @return The mutliplication result of the two numbers @p a * @p b
+ * @return The multiplication result of the two numbers @p a * @p b
  */
 static inline Eina_F8p24   eina_f8p24_mul(Eina_F8p24 a, Eina_F8p24 b);
 
@@ -402,7 +402,7 @@ static inline Eina_F8p24   eina_f8p24_mul(Eina_F8p24 a, Eina_F8p24 b);
  *
  * @param a The Eina_F16p16 number
  * @param b The integer value
- * @return The mutliplication result of the two numbers @p a * @p b
+ * @return The multiplication result of the two numbers @p a * @p b
  */
 static inline Eina_F8p24   eina_f8p24_scale(Eina_F8p24 a, int b);
 
@@ -424,7 +424,7 @@ static inline Eina_F8p24   eina_f8p24_div(Eina_F8p24 a, Eina_F8p24 b);
 static inline Eina_F8p24   eina_f8p24_sqrt(Eina_F8p24 a);
 
 /**
- * @brief Get the absolute value of the integer part of and Eina_F8p24 floating
+ * @brief Gets the absolute value of the integer part of and Eina_F8p24 floating
  * point number
  *
  * @param v The floating point number

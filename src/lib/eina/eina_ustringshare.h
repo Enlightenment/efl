@@ -29,9 +29,9 @@
  *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies of the Software and its Copyright notices. In addition publicly
- *  documented acknowledgment must be given that this software has been used if no
+ *  documented acknowledgement must be given that this software has been used if no
  *  source code of this software is made available publicly. This includes
- *  acknowledgments in either Copyright notices, Manuals, Publicity and Marketing
+ *  acknowledgements in either Copyright notices, Manuals, Publicity and Marketing
  *  documents or any documentation provided with any product containing this
  *  software. This License does not apply to any software that links to the
  *  libraries provided by this software (statically or dynamically), but only to
@@ -90,11 +90,11 @@
 
 
 /**
- * @brief Retrieve an instance of a string for use in a program.
+ * @brief Retrieves an instance of a string for use in a program.
  *
  * @param   str The string to retrieve an instance of.
  * @param   slen The string size (<= strlen(str)).
- * @return  A pointer to an instance of the string on success.
+ * @return  A pointer to an instance of the string on success,
  *          @c NULL on failure.
  *
  * This function retrieves an instance of @p str. If @p str is
@@ -112,10 +112,10 @@
 EAPI const Eina_Unicode *eina_ustringshare_add_length(const Eina_Unicode *str, unsigned int slen) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Retrieve an instance of a string for use in a program.
+ * @brief Retrieves an instance of a string for use in a program.
  *
  * @param   str The NULL-terminated string to retrieve an instance of.
- * @return  A pointer to an instance of the string on success.
+ * @return  A pointer to an instance of the string on success,
  *          @c NULL on failure.
  *
  * This function retrieves an instance of @p str. If @p str is
@@ -133,10 +133,10 @@ EAPI const Eina_Unicode *eina_ustringshare_add_length(const Eina_Unicode *str, u
 EAPI const Eina_Unicode *eina_ustringshare_add(const Eina_Unicode *str) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Increment references of the given shared string.
+ * @brief Increments references of the given shared string.
  *
  * @param str The shared string.
- * @return    A pointer to an instance of the string on success.
+ * @return    A pointer to an instance of the string on success,
  *            @c NULL on failure.
  *
  * This is similar to eina_share_common_add(), but it's faster since it will
@@ -149,9 +149,9 @@ EAPI const Eina_Unicode *eina_ustringshare_add(const Eina_Unicode *str) EINA_WAR
 EAPI const Eina_Unicode *eina_ustringshare_ref(const Eina_Unicode *str);
 
 /**
- * @brief Note that the given string has lost an instance.
+ * @brief Notes that the given string has lost an instance.
  *
- * @param str string The given string.
+ * @param str String The given string.
  *
  * This function decreases the reference counter associated to @p str
  * if it exists. If that counter reaches 0, the memory associated to
@@ -164,9 +164,9 @@ EAPI const Eina_Unicode *eina_ustringshare_ref(const Eina_Unicode *str);
 EAPI void                eina_ustringshare_del(const Eina_Unicode *str);
 
 /**
- * @brief Note that the given string @b must be shared.
+ * @brief Notes that the given string @b must be shared.
  *
- * @param str the shared string to know the length. It is safe to
+ * @param str The shared string to know the length. It is safe to
  *        give @c NULL, in that case @c -1 is returned.
  *
  * This function is a cheap way to known the length of a shared
@@ -178,7 +178,7 @@ EAPI void                eina_ustringshare_del(const Eina_Unicode *str);
 EAPI int                 eina_ustringshare_strlen(const Eina_Unicode *str) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Dump the contents of the share_common.
+ * @brief Dumps the contents of the share_common.
  *
  * This function dumps all strings in the share_common to stdout with a
  * DDD: prefix per line and a memory usage summary.

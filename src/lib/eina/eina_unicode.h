@@ -127,6 +127,7 @@ EAPI Eina_Unicode *eina_unicode_escape(const Eina_Unicode *str) EINA_ARG_NONNULL
 static inline Eina_Unicode eina_unicode_utf8_next_get(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @deprecated use eina_unicode_utf8_next_get
  * Reads UTF8 bytes from @p buf, starting at @p iindex and returns
  * the decoded code point at @p iindex offset, and advances @p iindex
  * to the next code point after this. @p iindex is always advanced,
@@ -138,7 +139,6 @@ static inline Eina_Unicode eina_unicode_utf8_next_get(const char *buf, int *iind
  * @param iindex the index to look at and return by.
  * @return the codepoint found, 0 if @p buf or @p iindex are NULL
  * @since 1.1.0
- * @deprecated use eina_unicode_utf8_next_get
  */
 EAPI Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2) EINA_DEPRECATED;
 

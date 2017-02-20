@@ -12,7 +12,7 @@
 #include "eina_magic.h"
 
 /**
- * @brief Generate a crc checksum for the given data using crc-32 algorithm.
+ * @brief Generates a crc checksum for the given data using crc-32 algorithm.
  *
  * @param key The data for which crc checksum has to be generated.
  * @param len The length of the data.

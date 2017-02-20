@@ -59,31 +59,31 @@ typedef enum _Eina_Cpu_Features
 } Eina_Cpu_Features;
 
 /**
- * @brief Global hardware architecture handler
+ * @brief Global hardware architecture handler.
  *
  * @return the current cpu features
  */
 EAPI extern Eina_Cpu_Features eina_cpu_features;
 
 /**
- * @brief Cpu features accessor
+ * @brief Cpu features accessor.
  *
  * @return the current cpu features
  */
 EAPI Eina_Cpu_Features eina_cpu_features_get(void);
 
 /**
- * @brief Get the current number of processors
+ * @brief Gets the current number of processors.
  *
- * @return the number of processors that are online, that
+ * @return The number of processors that are online, that
  * is available when the function is called.
  */
 EAPI int               eina_cpu_count(void);
 
 /**
- * @brief Get the current virtual page size
+ * @brief Gets the current virtual page size.
  *
- * @return the fixed length that represents the smallest unit of data for memory
+ * @return The fixed length that represents the smallest unit of data for memory
  * allocation performed by the operating system on behalf of the program, and
  * for transfers between the main memory and any other auxiliary store.
  */
@@ -93,7 +93,7 @@ EAPI int               eina_cpu_page_size(void);
  * @brief Reverses the byte order of a 16-bit (destination) register.
  *
  * @param x The binary word to swap
- * @return a byte order swapped 16-bit integer.  
+ * @return A byte order swapped 16-bit integer.  
  *
  * On big endian systems, the number is converted to little endian byte order.
  * On little endian systems, the number is converted to big endian byte order.
@@ -104,7 +104,7 @@ static inline unsigned short eina_swap16(unsigned short x);
  * @brief Reverses the byte order of a 32-bit (destination) register.
  *
  * @param x The binary word to swap
- * @return a byte order swapped 32-bit integer.  
+ * @return A byte order swapped 32-bit integer.  
  *
  * On big endian systems, the number is converted to little endian byte order.
  * On little endian systems, the number is converted to big endian byte order.
@@ -115,7 +115,7 @@ static inline unsigned int eina_swap32(unsigned int x);
  * @brief Reverses the byte order of a 64-bit (destination) register.
  *
  * @param x The binary word to swap
- * @return a byte order swapped 64-bit integer.  
+ * @return A byte order swapped 64-bit integer.  
  *
  * On big endian systems, the number is converted to little endian byte order.
  * On little endian systems, the number is converted to big endian byte order.

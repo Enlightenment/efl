@@ -29,7 +29,7 @@
 
 /**
  * @typedef Eina_Trash
- * @brief The type for strcuture #_Eina_Trash.
+ * @brief The type for structure #_Eina_Trash.
  */
 typedef struct _Eina_Trash Eina_Trash;
 
@@ -44,11 +44,10 @@ struct _Eina_Trash
 
 /**
  * @brief Initializes a trash before using it.
- *
- * @param[in] trash The trash
- *
  * @details This function just set to zero the trash to correctly
  *          initialize it.
+ *
+ * @param[in] trash The trash
  *
  * @note You can just set *trash to @c NULL and you will have
  *       the same result.
@@ -57,13 +56,12 @@ static inline void  eina_trash_init(Eina_Trash **trash) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Pushes an unused pointer in the trash instead of freeing it.
- *
- * @param[in] trash A pointer to an Eina_Trash
- * @param data An unused pointer big enougth to put a (void*)
- *
  * @details Instead of freeing a pointer and put pressure on malloc/free
  *          you can push it in a trash for a later use. This function just
  *          provide a fast way to push a now unused pointer into a trash.
+ *
+ * @param[in] trash A pointer to an Eina_Trash
+ * @param data An unused pointer big enough to put a (void*)
  *
  * @note Do not use the pointer after insertion or bad things will
  *       happens.
@@ -75,11 +73,10 @@ static inline void  eina_trash_push(Eina_Trash **trash, void *data) EINA_ARG_NON
 
 /**
  * @brief Pops an available pointer from the trash if possible.
- *
- * @param[in] trash A #Eina_Trash handle
- *
  * @details Instead of calling malloc, and putting pressure on malloc/free
  *          you can recycle the content of the trash, if it's not empty.
+ *
+ * @param[in] trash A #Eina_Trash handle
  *
  * @note This trash will not resize, nor do anything with the size of
  *       the region pointed by pointer inside the trash, so it's your duty
@@ -89,13 +86,12 @@ static inline void *eina_trash_pop(Eina_Trash **trash) EINA_ARG_NONNULL(1) EINA_
 
 /**
  * @def EINA_TRASH_CLEAN
- * @brief Definition of a macro to remove all the pointers from the trash.
+ * @brief Definition for a macro to remove all the pointers from the trash.
+ * @details This macro allows the cleaning of @a trash in an easy way. It
+ *          removes all the pointers from @a trash until it's empty.
  *
  * @param trash The trash to clean
  * @param data The pointer extracted from the trash
- *
- * @details This macro allows the cleaning of @a trash in an easy way. It
- *          removes all the pointers from @a trash until it's empty.
  *
  * @note This macro can be used for freeing the data in the trash, like in
  *       the following example:

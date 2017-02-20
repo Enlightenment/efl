@@ -44,7 +44,7 @@ extern "C"
 #   endif
 /**
  * Allocates memory in the stack frame of the caller, so it's automatically
- * freed when the caller returns.  See alloca(3) for detials.
+ * freed when the caller returns. See alloca(3) for details.
  */
 void *alloca(size_t size);
 #  endif

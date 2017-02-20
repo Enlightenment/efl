@@ -55,7 +55,7 @@
 /**
  * @addtogroup Eina_String_Group String
  *
- * @brief Provide useful functions for C string manipulation.
+ * @brief Provides useful functions for C string manipulation.
  *
  * This group of functions allow you to more easily manipulate strings, they
  * provide functionality not available through string.h.
@@ -83,7 +83,7 @@
 /* strlcpy implementation for libc's lacking it */
 
 /**
- * @brief Copy a c-string to another.
+ * @brief Copies a c-string to another.
  *
  * @param dst The destination string.
  * @param src The source string.
@@ -103,7 +103,7 @@
 EAPI size_t          eina_strlcpy(char *dst, const char *src, size_t siz) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append a c-string.
+ * @brief Appends a c-string.
  *
  * @param dst The destination string.
  * @param src The source string.
@@ -121,7 +121,7 @@ EAPI size_t          eina_strlcat(char *dst, const char *src, size_t siz) EINA_A
 
 
 /**
- * @brief Check if the given string has the given prefix.
+ * @brief Checks if the given string has the given prefix.
  *
  * @param str The string to work with.
  * @param prefix The prefix to check for.
@@ -134,7 +134,7 @@ EAPI size_t          eina_strlcat(char *dst, const char *src, size_t siz) EINA_A
 EAPI Eina_Bool       eina_str_has_prefix(const char *str, const char *prefix) EINA_PURE EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Check if the given string has the given suffix.
+ * @brief Checks if the given string has the given suffix.
  *
  * @param str The string to work with.
  * @param suffix The suffix to check for.
@@ -147,7 +147,7 @@ EAPI Eina_Bool       eina_str_has_prefix(const char *str, const char *prefix) EI
 EAPI Eina_Bool       eina_str_has_suffix(const char *str, const char *suffix) EINA_PURE EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Check if the given string has the given extension.
+ * @brief Checks if the given string has the given extension.
  *
  * @param str The string to work with.
  * @param ext The  extension to check for.
@@ -159,7 +159,7 @@ EAPI Eina_Bool       eina_str_has_suffix(const char *str, const char *suffix) EI
 EAPI Eina_Bool       eina_str_has_extension(const char *str, const char *ext) EINA_PURE EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Split a string using a delimiter.
+ * @brief Splits a string using a delimiter.
  *
  * @param string The string to split.
  * @param delimiter The string which specifies the places at which to split the string.
@@ -185,7 +185,7 @@ EAPI Eina_Bool       eina_str_has_extension(const char *str, const char *ext) EI
 EAPI char          **eina_str_split(const char *string, const char *delimiter, int max_tokens) EINA_ARG_NONNULL(1, 2) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Split a string using a delimiter and returns number of elements.
+ * @brief Splits a string using a delimiter and returns number of elements.
  *
  * @param string The string to split.
  * @param delimiter The string which specifies the places at which to split the string.
@@ -219,15 +219,15 @@ EAPI char          **eina_str_split_full(const char *string, const char *delimit
 
 
 /**
- * @brief Join two strings of known length.
+ * @brief Joins two strings of known length.
  *
  * @param dst The buffer to store the result.
  * @param size Size (in byte) of the buffer.
  * @param sep The separator character to use.
  * @param a First string to use, before @p sep.
- * @param a_len length of @p a.
+ * @param a_len Length of @p a.
  * @param b Second string to use, after @p sep.
- * @param b_len length of @p b.
+ * @param b_len Length of @p b.
  * @return The number of characters printed.
  *
  * This function joins the strings @p a and @p b (in that order) and
@@ -248,7 +248,7 @@ EAPI size_t          eina_str_join_len(char *dst, size_t size, char sep, const c
 
 
 /**
- * @brief Use Iconv to convert a text string from one encoding to another.
+ * @brief Uses Iconv to convert a text string from one encoding to another.
  *
  * @param enc_from Encoding to convert from.
  * @param enc_to Encoding to convert to.
@@ -267,7 +267,7 @@ EAPI size_t          eina_str_join_len(char *dst, size_t size, char sep, const c
 EAPI char           *eina_str_convert(const char *enc_from, const char *enc_to, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1, 2, 3);
 
 /**
- * @brief Use Iconv to convert a text string from one encoding to another.
+ * @brief Uses Iconv to convert a text string from one encoding to another.
  *
  * @param enc_from Encoding to convert from.
  * @param enc_to Encoding to convert to.
@@ -288,7 +288,7 @@ EAPI char           *eina_str_convert_len(const char *enc_from, const char *enc_
 
 
 /**
- * @brief Escape slashes, spaces and apostrophes in strings.
+ * @brief Escapes slashes, spaces and apostrophes in strings.
  *
  * @param str The string to escape.
  * @return The escaped string.
@@ -303,7 +303,7 @@ EAPI char           *eina_str_escape(const char *str) EINA_WARN_UNUSED_RESULT EI
 
 
 /**
- * @brief Lowercase all the characters in range [A-Z] in the given string.
+ * @brief Lowercases all the characters in range [A-Z] in the given string.
  *
  * @param str The string to lowercase.
  *
@@ -314,7 +314,7 @@ EAPI char           *eina_str_escape(const char *str) EINA_WARN_UNUSED_RESULT EI
 EAPI void            eina_str_tolower(char **str);
 
 /**
- * @brief Uppercase all the characters in range [a-z] in the given string.
+ * @brief Uppercases all the characters in range [a-z] in the given string.
  *
  * @param str The string to uppercase.
  *
@@ -328,7 +328,7 @@ static inline size_t eina_str_join(char *dst, size_t size, char sep, const char 
 
 /**
  * @def eina_str_join_static(dst, sep, a, b)
- * @brief Join two static strings and store the result in a static buffer.
+ * @brief Joins two static strings and store the result in a static buffer.
  *
  * @param dst The buffer to store the result.
  * @param sep The separator character to use.
@@ -347,17 +347,17 @@ static inline size_t eina_str_join(char *dst, size_t size, char sep, const char 
 static inline size_t eina_strlen_bounded(const char *str, size_t maxlen) EINA_PURE EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief memory duplication function with optional termination for strings
+ * @brief Memory duplication function with optional termination for strings
  * @param mem The memory to copy
  * @param size The size of @p mem
  * @param terminate If true, the returned memory will be nul terminated with '\0'
- * @return the copied memory, must be freed
+ * @return The copied memory, must be freed
  * @since 1.13
  */
 EAPI unsigned char *eina_memdup(unsigned char *mem, size_t size, Eina_Bool terminate);
 
 /**
- * @brief Create and update the buffer based on strftime output.
+ * @brief Creates and update the buffer based on strftime output.
  *
  * @param tm Pointer to a tm structure needed by strftime.
  * @param format String containing format specifiers needed by strftime.

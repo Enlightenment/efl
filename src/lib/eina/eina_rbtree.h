@@ -149,9 +149,9 @@ typedef void (*Eina_Rbtree_Free_Cb)(Eina_Rbtree *node, void *data);
 
 
 /**
- * @brief Insert a new node inside an existing red black tree.
+ * @brief Inserts a new node inside an existing red black tree.
  *
- * @param root The root of an exisiting valid red black tree.
+ * @param root The root of an existing valid red black tree.
  * @param node The new node to insert.
  * @param cmp The callback that is able to compare two nodes.
  * @param data Private data to help the compare function.
@@ -164,7 +164,7 @@ typedef void (*Eina_Rbtree_Free_Cb)(Eina_Rbtree *node, void *data);
 EAPI Eina_Rbtree          *eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Remove a node from an existing red black tree.
+ * @brief Removes a node from an existing red black tree.
  *
  * @param root The root of a valid red black tree.
  * @param node The node to remove from the tree.
@@ -179,7 +179,7 @@ EAPI Eina_Rbtree          *eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbt
 EAPI Eina_Rbtree          *eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Delete all nodes from a valid red black tree.
+ * @brief Deletes all nodes from a valid red black tree.
  *
  * @param root The root of a valid red black tree.
  * @param func The callback that will free each node.
@@ -192,7 +192,7 @@ static inline Eina_Rbtree *eina_rbtree_inline_lookup(const Eina_Rbtree *root, co
 
 
 /**
- * @brief Returned a new prefix iterator associated to a rbtree.
+ * @brief Returns a new prefix iterator associated to a rbtree.
  *
  * @param root The root of rbtree.
  * @return A new iterator.
@@ -212,7 +212,7 @@ static inline Eina_Rbtree *eina_rbtree_inline_lookup(const Eina_Rbtree *root, co
 EAPI Eina_Iterator        *eina_rbtree_iterator_prefix(const Eina_Rbtree *root) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Returned a new prefix iterator associated to a rbtree.
+ * @brief Returns a new prefix iterator associated to a rbtree.
  *
  * @param root The root of rbtree.
  * @return A new iterator.
@@ -232,7 +232,7 @@ EAPI Eina_Iterator        *eina_rbtree_iterator_prefix(const Eina_Rbtree *root) 
 EAPI Eina_Iterator        *eina_rbtree_iterator_infix(const Eina_Rbtree *root) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Returned a new prefix iterator associated to a rbtree.
+ * @brief Returns a new prefix iterator associated to a rbtree.
  *
  * @param root The root of rbtree.
  * @return A new iterator.

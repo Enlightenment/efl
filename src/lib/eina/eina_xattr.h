@@ -49,7 +49,7 @@ struct _Eina_Xattr
 };
 
 /**
- * @brief Get an iterator that list all extended attribute of a file.
+ * @brief Gets an iterator that list all extended attribute of a file.
  *
  * @param file The filename to retrieve the extended attribute list from.
  * @return an iterator.
@@ -62,10 +62,10 @@ struct _Eina_Xattr
 EAPI Eina_Iterator *eina_xattr_ls(const char *file) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get an iterator that list all extended attribute value related to a fd.
+ * @brief Gets an iterator that list all extended attribute value related to a fd.
  *
  * @param file The filename to retrieve the extended attribute list from.
- * @return an iterator.
+ * @return An iterator.
  *
  * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
  * if you need. The iterator will provide an Eina_Xattr structure.
@@ -75,7 +75,7 @@ EAPI Eina_Iterator *eina_xattr_ls(const char *file) EINA_ARG_NONNULL(1) EINA_WAR
 EAPI Eina_Iterator *eina_xattr_value_ls(const char *file) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get an iterator that list all extended attribute related to a fd.
+ * @brief Gets an iterator that list all extended attribute related to a fd.
  *
  * @param fd The file descriptor to retrieve the extended attribute list from.
  * @return an iterator.
@@ -88,10 +88,10 @@ EAPI Eina_Iterator *eina_xattr_value_ls(const char *file) EINA_ARG_NONNULL(1) EI
 EAPI Eina_Iterator *eina_xattr_fd_ls(int fd) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get an iterator that list all extended attribute value related to a fd.
+ * @brief Gets an iterator that list all extended attribute value related to a fd.
  *
  * @param fd The file descriptor to retrieve the extended attribute list from.
- * @return an iterator.
+ * @return An iterator.
  *
  * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
  * if you need. The iterator will provide an Eina_Xattr structure.
@@ -101,7 +101,7 @@ EAPI Eina_Iterator *eina_xattr_fd_ls(int fd) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Iterator *eina_xattr_value_fd_ls(int fd) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Copy the extended attribute from one file to another.
+ * @brief Copies the extended attribute from one file to another.
  * @param src source file to use as input.
  * @param dst destination file to use as output.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
@@ -111,7 +111,7 @@ EAPI Eina_Iterator *eina_xattr_value_fd_ls(int fd) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Bool eina_xattr_copy(const char *src, const char *dst) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Copy the extended attribute from one file descriptor to another.
+ * @brief Copies the extended attribute from one file descriptor to another.
  * @param src source file descriptor to use as input.
  * @param dst destination file descriptor to use as output.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
@@ -121,7 +121,7 @@ EAPI Eina_Bool eina_xattr_copy(const char *src, const char *dst) EINA_ARG_NONNUL
 EAPI Eina_Bool eina_xattr_fd_copy(int src, int dst);
 
 /**
- * @brief Retrieve an extended attribute from a file.
+ * @brief Retrieves an extended attribute from a file.
  *
  * @param file The file to retrieve the extended attribute from.
  * @param attribute The extended attribute name to retrieve.
@@ -135,7 +135,7 @@ EAPI Eina_Bool eina_xattr_fd_copy(int src, int dst);
 EAPI void *eina_xattr_get(const char *file, const char *attribute, ssize_t *size) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Retrieve an extended attribute from a file descriptor.
+ * @brief Retrieves an extended attribute from a file descriptor.
  *
  * @param fd The file descriptor to retrieve the extended attribute from.
  * @param attribute The extended attribute name to retrieve.
@@ -149,7 +149,7 @@ EAPI void *eina_xattr_get(const char *file, const char *attribute, ssize_t *size
 EAPI void *eina_xattr_fd_get(int fd, const char *attribute, ssize_t *size) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Set an extended attribute on a file.
+ * @brief Sets an extended attribute on a file.
  *
  * @param file The file to set the extended attribute to.
  * @param attribute The attribute to set.
@@ -163,7 +163,7 @@ EAPI void *eina_xattr_fd_get(int fd, const char *attribute, ssize_t *size) EINA_
 EAPI Eina_Bool eina_xattr_set(const char *file, const char *attribute, const void *data, ssize_t length, Eina_Xattr_Flags flags) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
- * @brief Set an extended attribute on a file descriptor.
+ * @brief Sets an extended attribute on a file descriptor.
  *
  * @param fd The file descriptor to set the extended attribute to.
  * @param attribute The attribute to set.
@@ -178,7 +178,7 @@ EAPI Eina_Bool eina_xattr_fd_set(int fd, const char *attribute, const void *data
 
 
 /**
- * @brief Delete (remove) an extended attribute from a file.
+ * @brief Deletes (removes) an extended attribute from a file.
  *
  * @param file The file to del the extended attribute from.
  * @param attribute The attribute to del.
@@ -189,7 +189,7 @@ EAPI Eina_Bool eina_xattr_fd_set(int fd, const char *attribute, const void *data
 EAPI Eina_Bool eina_xattr_del(const char *file, const char *attribute) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Delete (remove) an extended attribute from a file descriptor.
+ * @brief Deletes (removes) an extended attribute from a file descriptor.
  *
  * @param fd The file descriptor to del the extended attribute from.
  * @param attribute The attribute to del.
@@ -200,7 +200,7 @@ EAPI Eina_Bool eina_xattr_del(const char *file, const char *attribute) EINA_ARG_
 EAPI Eina_Bool eina_xattr_fd_del(int fd, const char *attribute) EINA_ARG_NONNULL(2);
 
 /**
- * @brief Set a string as a extended attribute properties.
+ * @brief Sets a string as a extended attribute properties.
  *
  * @param file The file to set the string to.
  * @param attribute The attribute to set.
@@ -213,7 +213,7 @@ EAPI Eina_Bool eina_xattr_fd_del(int fd, const char *attribute) EINA_ARG_NONNULL
 EAPI Eina_Bool eina_xattr_string_set(const char *file, const char *attribute, const char *data, Eina_Xattr_Flags flags);
 
 /**
- * @brief Get a string from an extended attribute properties.
+ * @brief Gets a string from an extended attribute properties.
  *
  * @param file The file to get the string from.
  * @param attribute The attribute to get.
@@ -226,7 +226,7 @@ EAPI Eina_Bool eina_xattr_string_set(const char *file, const char *attribute, co
 EAPI char *eina_xattr_string_get(const char *file, const char *attribute);
 
 /**
- * @brief Set a double as a extended attribute properties.
+ * @brief Sets a double as a extended attribute properties.
  *
  * @param file The file to set the double to.
  * @param attribute The attribute to set.
@@ -239,7 +239,7 @@ EAPI char *eina_xattr_string_get(const char *file, const char *attribute);
 EAPI Eina_Bool eina_xattr_double_set(const char *file, const char *attribute, double value, Eina_Xattr_Flags flags);
 
 /**
- * @brief Get a double from an extended attribute properties.
+ * @brief Gets a double from an extended attribute properties.
  *
  * @param file The file to get the string from.
  * @param attribute The attribute to get.
@@ -253,7 +253,7 @@ EAPI Eina_Bool eina_xattr_double_set(const char *file, const char *attribute, do
 EAPI Eina_Bool eina_xattr_double_get(const char *file, const char *attribute, double *value);
 
 /**
- * @brief Set an int as a extended attribute properties.
+ * @brief Sets an int as a extended attribute properties.
  *
  * @param file The file to set the int to.
  * @param attribute The attribute to set.
@@ -266,7 +266,7 @@ EAPI Eina_Bool eina_xattr_double_get(const char *file, const char *attribute, do
 EAPI Eina_Bool eina_xattr_int_set(const char *file, const char *attribute, int value, Eina_Xattr_Flags flags);
 
 /**
- * @brief Get a int from an extended attribute properties.
+ * @brief Gets a int from an extended attribute properties.
  *
  * @param file The file to get the string from.
  * @param attribute The attribute to get.

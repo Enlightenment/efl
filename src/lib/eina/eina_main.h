@@ -44,13 +44,13 @@
 
 /**
  * @def EINA_VERSION_MAJOR
- * @brief Major version of Eina
+ * @brief Definition for the major version of Eina.
  */
 #define EINA_VERSION_MAJOR EFL_VERSION_MAJOR
 
 /**
  * @def EINA_VERSION_MINOR
- * @brief Minor version of Eina
+ * @brief Definition for the minor version of Eina.
  */
 #define EINA_VERSION_MINOR EFL_VERSION_MINOR
 
@@ -69,9 +69,9 @@ typedef struct _Eina_Version
 EAPI extern Eina_Version *eina_version;
 
 /**
- * @brief Initialize the Eina library.
+ * @brief Initializes the Eina library.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return @c 1 or greater on success, @c 0 on error.
  *
  * This function sets up all the eina modules. It returns 0 on
  * failure (that is, when one of the module fails to initialize),
@@ -176,9 +176,9 @@ EAPI extern Eina_Version *eina_version;
 EAPI int eina_init(void);
 
 /**
- * @brief Shut down the Eina library.
+ * @brief Shuts down the Eina library.
  *
- * @return 0 when all the modules are completely shut down, 1 or
+ * @return @c 0 when all the modules are completely shut down, @c 1 or
  * greater otherwise.
  *
  * This function shuts down the Eina library. It returns 0 when it has
@@ -192,9 +192,9 @@ EAPI int eina_init(void);
 EAPI int eina_shutdown(void);
 
 /**
- * @brief Initialize the mutexes of the Eina library.
+ * @brief Initializes the mutexes of the Eina library.
  *
- * @return 1 or greater on success, 0 on error.
+ * @return @c 1 or greater on success, @c 0 on error.
  *
  * This function sets up all the mutexes in all eina modules. It returns 0 on
  * failure (that is, when one of the module fails to initialize),
@@ -209,9 +209,9 @@ EAPI int eina_shutdown(void);
 EAPI int eina_threads_init(void);
 
 /**
- * @brief Shut down mutexes in the Eina library.
+ * @brief Shuts down mutexes in the Eina library.
  *
- * @return 0 when all mutexes are completely shut down, 1 or
+ * @return @c 0 when all mutexes are completely shut down, @c 1 or
  * greater otherwise.
  *
  * This function shuts down the mutexes in the Eina library. It returns 0 when it has
@@ -227,7 +227,7 @@ EAPI int eina_threads_init(void);
 EAPI int eina_threads_shutdown(void);
 
 /**
- * @brief Check if you are calling this function from the same thread Eina was initialized or not
+ * @brief Checks if you are calling this function from the same thread Eina was initialized or not.
  *
  * @return #EINA_TRUE is the calling function is the same thread, #EINA_FALSE otherwise.
  *
@@ -240,7 +240,7 @@ EAPI int eina_threads_shutdown(void);
 EAPI Eina_Bool eina_main_loop_is(void);
 
 /**
- * @brief You should never use that function excpet if you really really know what your are doing.
+ * @brief You should never use that function except if you really really know what your are doing.
  * @since 1.1.0
  *
  * If you are reading this documentation, that certainly means you don't know what is the purpose of

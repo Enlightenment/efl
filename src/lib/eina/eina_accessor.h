@@ -138,7 +138,7 @@ typedef Eina_Bool (*Eina_Accessor_Lock_Callback)(Eina_Accessor *it);
 
 /**
  * @typedef Eina_Accessor_Clone_Callback
- * @brief Type for a callback to return a clone for the accessor
+ * @brief Type for a callback to return a clone for the accessor.
  * @since 1.10
  */
 typedef Eina_Accessor* (*Eina_Accessor_Clone_Callback)(Eina_Accessor *it);
@@ -169,31 +169,31 @@ struct _Eina_Accessor
 
 /**
  * @def FUNC_ACCESSOR_GET_AT(Function)
- * @brief Helper macro to cast @a Function to a Eina_Accessor_Get_At_Callback.
+ * @brief Definition for helper macro to cast @a Function to a Eina_Accessor_Get_At_Callback.
  */
 #define FUNC_ACCESSOR_GET_AT(Function)        ((Eina_Accessor_Get_At_Callback)Function)
 
 /**
  * @def FUNC_ACCESSOR_GET_CONTAINER(Function)
- * @brief Helper macro to cast @a Function to a Eina_Accessor_Get_Container_Callback.
+ * @brief Definition for helper macro to cast @a Function to a Eina_Accessor_Get_Container_Callback.
  */
 #define FUNC_ACCESSOR_GET_CONTAINER(Function) ((Eina_Accessor_Get_Container_Callback)Function)
 
 /**
  * @def FUNC_ACCESSOR_FREE(Function)
- * @brief Helper macro to cast @a Function to a Eina_Accessor_Free_Callback.
+ * @brief Definition for helper macro to cast @a Function to a Eina_Accessor_Free_Callback.
  */
 #define FUNC_ACCESSOR_FREE(Function)          ((Eina_Accessor_Free_Callback)Function)
 
 /**
  * @def FUNC_ACCESSOR_LOCK(Function)
- * @brief Helper macro to cast @a Function to a Eina_Iterator_Lock_Callback.
+ * @brief Definition for helper macro to cast @a Function to a Eina_Iterator_Lock_Callback.
  */
 #define FUNC_ACCESSOR_LOCK(Function)          ((Eina_Accessor_Lock_Callback)Function)
 
 /**
  * @def FUNC_ACCESSOR_CLONE(Function)
- * @brief Helper macro to cast @p Function to a Eina_Iterator_Clone_Callback.
+ * @brief Definition for helper macro to cast @p Function to a Eina_Iterator_Clone_Callback.
  * @since 1.10
  */
 #define FUNC_ACCESSOR_CLONE(Function)          ((Eina_Accessor_Clone_Callback)Function)
@@ -201,25 +201,22 @@ struct _Eina_Accessor
 
 /**
  * @brief Frees an accessor.
- *
+ * @details This function frees @a accessor if it is not @c NULL.
  * @param[in] accessor The accessor to free
  *
- * @details This function frees @a accessor if it is not @c NULL.
  */
 EAPI void      eina_accessor_free(Eina_Accessor *accessor);
 
 /**
  * @brief Gets the data of an accessor at the given position.
- *
+ * @details This function retrieves the data of the element pointed by
+ *          @p accessor at the position @p position, and stores it in
+ *          @p data. If @p accessor is @c NULL or if an error occurs, @c EINA_FALSE
+ *          is returned, otherwise @c EINA_TRUE is returned.
  * @param[in] accessor The accessor
  * @param[in] position The position of the element
  * @param[in] data The pointer that stores the data to retrieve
  * @return #EINA_TRUE on success, otherwise #EINA_FALSE
- *
- * @details This function retrieves the data of the element pointed by
- *          @p accessor at the position @p position, and stores it in
- *          @p data. If @p accessor is @c NULL or if an error occurs, #EINA_FALSE
- *          is returned, otherwise #EINA_TRUE is returned.
  *
  */
 EAPI Eina_Bool eina_accessor_data_get(Eina_Accessor *accessor,
@@ -228,17 +225,22 @@ EAPI Eina_Bool eina_accessor_data_get(Eina_Accessor *accessor,
 
 /**
  * @brief Gets the container of an accessor.
- *
+ * @details This function returns the container that created @p accessor. If
+ *          @p accessor is @c NULL, this function returns @c NULL.
  * @param[in] accessor The accessor
  * @return The container that created the accessor
  *
- * @details This function returns the container that created @p accessor. If
- *          @p accessor is @c NULL, this function returns @c NULL.
  */
 EAPI void *eina_accessor_container_get(Eina_Accessor *accessor) EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Iterates over the container and executes a callback on the chosen elements.
+ * @details This function iterates over the elements pointed by @p accessor,
+ *          starting from the element at position @p start and ending at the
+ *          element at position @p end. For each element, the callback
+ *          @p cb is called with the data @p fdata. If @p accessor is @c NULL
+ *          or if @p start is greater than or equal to @p end, the function returns
+ *          immediately.
  *
  * @param[in] accessor The accessor
  * @param[in] cb The callback called on the chosen elements
@@ -246,12 +248,6 @@ EAPI void *eina_accessor_container_get(Eina_Accessor *accessor) EINA_ARG_NONNULL
  * @param[in] end The position of the last element
  * @param[in] fdata The data passed to the callback
  *
- * @details This function iterates over the elements pointed by @p accessor,
- *          starting from the element at position @p start and ending at the
- *          element at position @p end. For each element, the callback
- *          @p cb is called with the data @p fdata. If @p accessor is @c NULL
- *          or if @p start is greater than or equal to @p end, the function returns
- *          immediately.
  */
 EAPI void  eina_accessor_over(Eina_Accessor *accessor,
                               Eina_Each_Cb   cb,
@@ -285,7 +281,7 @@ EAPI Eina_Bool eina_accessor_lock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
 EAPI Eina_Accessor* eina_accessor_clone(Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Unlock the container of the accessor.
+ * @brief Unlocks the container of the accessor.
  *
  * @param[in] accessor The accessor
  * @return #EINA_TRUE on success, otherwise #EINA_FALSE
@@ -301,7 +297,9 @@ EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1)
 
 /**
  * @def EINA_ACCESSOR_FOREACH
- * @brief Helper macro to iterate over all the elements easily.
+ * @brief Definition for helper macro to iterate over all the elements easily.
+ * @details This macro allows a convenient way to loop over all elements in an
+ *          accessor, very similar to EINA_LIST_FOREACH().
  *
  * @param accessor The accessor to use
  * @param counter A counter used by eina_accessor_data_get() when
@@ -309,9 +307,6 @@ EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1)
  * @param data A pointer to store the data \n
  *             It must be a pointer to support getting
  *             its address since eina_accessor_data_get() requires a pointer.
- *
- * @details This macro allows a convenient way to loop over all elements in an
- *          accessor, very similar to EINA_LIST_FOREACH().
  *
  * This macro can be used for freeing the data of a list, like in the
  * following example. It has the same goal as the one documented in

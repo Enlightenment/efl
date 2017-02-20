@@ -293,7 +293,7 @@
  *
  * @param ... Oridnals of the parameters to check for nullity (1..n)
  *
- * @returns Nothing, but Doxygen will complain if it's not documented :-P
+ * @return Nothing, but Doxygen will complain if it's not documented :-P
  *
  */
 # define EINA_ARG_NONNULL(...)
@@ -454,7 +454,7 @@ typedef int (*Eina_Compare_Cb)(const void *data1, const void *data2);
 
 /**
  * @typedef Eina_Random_Cb
- * Function used in shuffling functions. An integer betwen min and max
+ * Function used in shuffling functions. An integer between min and max
  * inclusive must be returned.
  *
  * @since 1.8

@@ -56,7 +56,7 @@ struct _Eina_Evlog_Buf
 };
 
 /**
- * @brief Log an event in our event log for profiling data
+ * @brief Logs an event in our event log for profiling data.
  *
  * Log some interesting event inside of EFL, eg a wakeup (and why etc.).
  * The @p event string must alwasy be provided and be of the form:
@@ -117,7 +117,7 @@ EAPI void
 eina_evlog(const char *event, void *obj, double srctime, const char *detail);
 
 /**
- * @brief Steal an event log buffer from the evlog core
+ * @brief Steals an event log buffer from the evlog core.
  *
  * Only one buffer can be stolen at any time. If you steal a new buffer, the
  * old stolen buffer is "released" back to the evlog core.
@@ -130,7 +130,7 @@ EAPI Eina_Evlog_Buf *
 eina_evlog_steal(void);
 
 /**
- * @brief Begin logging - until now eina_evlog is a NOOP
+ * @brief Begins logging - until now eina_evlog is a NOOP.
  *
  * @since 1.15
  */
@@ -138,7 +138,7 @@ EAPI void
 eina_evlog_start(void);
 
 /**
- * @brief Stop logging
+ * @brief Stops logging.
  *
  * You must not be using any evlog buffers stolen by eina_evlog_steal() by
  * the time you call this function.

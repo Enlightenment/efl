@@ -116,7 +116,7 @@
  * The first column (specimen) is the integer passed to the work1()
  * function when the test is run. The second column (experiment time)
  * is the time, in nanosecond, that work1() takes. The third and
- * fourth columnd are self-explicit.
+ * fourth column are self-explicit.
  *
  * You can see that the integer passed work1() starts from 200 and
  * finishes at 290, with a step of 10. These values are computed withe
@@ -129,7 +129,7 @@
  * gnuplot bench_test_run.gnuplot
  * @endcode
  *
- * to create the graphic of the comparison curves. The image file is
+ * To create the graphic of the comparison curves. The image file is
  * named output_test_run.png.
  *
  * @section tutorial_benchmark_advanced_usage More Advanced Usage
@@ -345,7 +345,7 @@ typedef void (*Eina_Benchmark_Specimens)(int request);
 
 /**
  * @def EINA_BENCHMARK
- * @brief cast to an #Eina_Benchmark_Specimens.
+ * @brief Definition for the cast to an #Eina_Benchmark_Specimens.
  *
  * @param function The function to cast.
  *
@@ -355,7 +355,7 @@ typedef void (*Eina_Benchmark_Specimens)(int request);
 
 
 /**
- * @brief Create a new array.
+ * @brief Creates a new array.
  *
  * @param name The name of the benchmark.
  * @param run The name of the run.
@@ -374,7 +374,7 @@ EAPI Eina_Benchmark *eina_benchmark_new(const char *name,
                                         const char *run);
 
 /**
- * @brief Free a benchmark object.
+ * @brief Frees a benchmark object.
  *
  * @param bench The benchmark to free.
  *
@@ -385,7 +385,7 @@ EAPI Eina_Benchmark *eina_benchmark_new(const char *name,
 EAPI void            eina_benchmark_free(Eina_Benchmark *bench);
 
 /**
- * @brief Add a test to a benchmark.
+ * @brief Adds a test to a benchmark.
  *
  * @param bench The benchmark.
  * @param name The name of the test.
@@ -413,7 +413,7 @@ EAPI Eina_Bool       eina_benchmark_register(Eina_Benchmark          *bench,
                                              int                      count_step);
 
 /**
- * @brief Run the benchmark tests that have been registered.
+ * @brief Runs the benchmark tests that have been registered.
  *
  * @param bench The benchmark.
  * @return The list of names of the test files.
@@ -426,7 +426,7 @@ EAPI Eina_Bool       eina_benchmark_register(Eina_Benchmark          *bench,
  * bench_[name]_[run]%s.gnuplot
  * @endcode
  *
- * where [name] and [run] are the values passed to
+ * Where [name] and [run] are the values passed to
  * eina_benchmark_new().
  *
  * Each registered test is executed and timed. The time is written to

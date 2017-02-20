@@ -129,13 +129,11 @@ EAPI void        eina_binshare_del(const void *obj);
 
 /**
  * @brief Notes that the given object @b must be shared.
- *
+ * @details This function is a cheap way to know the length of a shared
+ *          object.
  * @param[in] obj The shared object to know the length \n
  *            It is safe to give @c NULL, in which case @c -1 is returned
  * @return    The length of the shared object
- *
- * @details This function is a cheap way to know the length of a shared
- *          object.
  *
  * @warning If the given pointer is not shared, bad things happen, mostly a
  *          segmentation fault. If in doubt, try strlen().
@@ -152,16 +150,14 @@ EAPI void        eina_binshare_dump(void);
 
 /**
  * @brief Retrieves an instance of a blob for use in a program.
- *
- * @param   ptr The binary blob to retrieve an instance of
- * @return  A pointer to an instance of the string on success,
- *          otherwise @c NULL on failure
- *
  * @details This macro retrieves an instance of @p obj. If @p obj is
  *          @c NULL, then @c NULL is returned. If @p obj is already stored, it
  *          is just returned and its reference counter is increased. Otherwise
  *          it is added to the blobs to be searched and a duplicated blob
  *          of @p obj is returned.
+ * @param   ptr The binary blob to retrieve an instance of
+ * @return  A pointer to an instance of the string on success,
+ *          otherwise @c NULL on failure
  *
  * @note This macro essentially calls eina_binshare_add_length with ptr and sizeof(*ptr)
  *       as the parameters. It's useful for pointers to structures.

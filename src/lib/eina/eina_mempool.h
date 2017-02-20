@@ -125,7 +125,7 @@ static inline void *eina_mempool_realloc(Eina_Mempool *mp, void *element, unsign
 static inline void *eina_mempool_malloc(Eina_Mempool *mp, unsigned int size) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Allocate and zero memory using the given mempool.
+ * @brief Allocates and zeros memory using the given mempool.
  *
  * @param[in] mp The mempool
  * @param[in] size The size in bytes to allocate
@@ -142,7 +142,7 @@ static inline void *eina_mempool_malloc(Eina_Mempool *mp, unsigned int size) EIN
 static inline void *eina_mempool_calloc(Eina_Mempool *mp, unsigned int size) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Free resources previously allocated by the given mempool.
+ * @brief Frees resources previously allocated by the given mempool.
  *
  * @param[in] mp The mempool
  * @param[in] element The data to free
@@ -172,14 +172,14 @@ static inline void  eina_mempool_free(Eina_Mempool *mp, void *element) EINA_ARG_
 EAPI void	        eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Run a garbage collection cycle.
+ * @brief Runs a garbage collection cycle.
  *
  * @param[in] mp The mempool
  */
 EAPI void           eina_mempool_gc(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Have the backend update its internal statistics.
+ * @brief Has the backend update its internal statistics.
  *
  * @param[in] mp The mempool
  *
@@ -203,7 +203,7 @@ EAPI Eina_Bool      eina_mempool_register(Eina_Mempool_Backend *be) EINA_ARG_NON
 EAPI void           eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Computers the alignment that would be used when allocating a object of size @p size.
+ * @brief Computes the alignment that would be used when allocating a object of size @p size.
  *
  * @param[in] size
  * @return The alignment for an allocation of size @p size.

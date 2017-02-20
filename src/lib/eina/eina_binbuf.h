@@ -34,7 +34,7 @@
 typedef struct _Eina_Strbuf Eina_Binbuf;
 
 /**
- * @brief Create a new string buffer.
+ * @brief Creates a new string buffer.
  *
  * @return Newly allocated string buffer instance.
  *
@@ -48,12 +48,12 @@ typedef struct _Eina_Strbuf Eina_Binbuf;
 EAPI Eina_Binbuf *eina_binbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Create a new string buffer using the passed string. The passed
+ * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
  * @ref eina_binbuf_string_steal . The passed string must be malloced.
  *
- * @param str the string to manage
- * @param length the length of the string.
+ * @param str The string to manage.
+ * @param length The length of the string.
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
@@ -65,13 +65,13 @@ EAPI Eina_Binbuf *eina_binbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Binbuf *eina_binbuf_manage_new_length(unsigned char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_DEPRECATED;
 
 /**
- * @brief Create a new string buffer using the passed string. The passed
+ * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
  * @ref eina_binbuf_string_steal .
  *
- * @param str the string to start from
- * @param length the length of the string.
- * @param ro the passed string will not be touched if set to EINA_TRUE.
+ * @param str The string to start from.
+ * @param length The length of the string.
+ * @param ro The passed string will not be touched if set to EINA_TRUE.
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
@@ -90,12 +90,12 @@ EAPI Eina_Binbuf *eina_binbuf_manage_new_length(unsigned char *str, size_t lengt
 EAPI Eina_Binbuf *eina_binbuf_manage_new(const unsigned char *str, size_t length, Eina_Bool ro) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Create a new string buffer using the passed string. The passed
+ * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
  * @ref eina_binbuf_string_steal . The passed string will not be touched.
  *
- * @param str the string to start from
- * @param length the length of the string.
+ * @param str The string to start from.
+ * @param length The length of the string.
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
@@ -110,7 +110,7 @@ EAPI Eina_Binbuf *eina_binbuf_manage_new(const unsigned char *str, size_t length
 EAPI Eina_Binbuf *eina_binbuf_manage_read_only_new_length(const unsigned char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_DEPRECATED;
 
 /**
- * @brief Free a string buffer.
+ * @brief Frees a string buffer.
  *
  * @param buf The string buffer to free.
  *
@@ -120,7 +120,7 @@ EAPI Eina_Binbuf *eina_binbuf_manage_read_only_new_length(const unsigned char *s
 EAPI void eina_binbuf_free(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Reset a string buffer.
+ * @brief Resets a string buffer.
  *
  * @param buf The string buffer to reset.
  *
@@ -130,7 +130,7 @@ EAPI void eina_binbuf_free(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 EAPI void eina_binbuf_reset(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Expand a buffer, making room for at least @a minimum_unused_space.
+ * @brief Expands a buffer, making room for at least @a minimum_unused_space.
  *
  * One of the properties of the buffer is that it may overallocate
  * space, thus it may have more than eina_binbuf_length_get() bytes
@@ -161,7 +161,7 @@ EAPI void eina_binbuf_reset(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 EAPI Eina_Rw_Slice eina_binbuf_expand(Eina_Binbuf *buf, size_t minimum_unused_space) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Mark more bytes as used.
+ * @brief Marks more bytes as used.
  *
  * This function should be used after eina_binbuf_expand(), marking
  * the extra bytes returned there as used, then they will be
@@ -182,7 +182,7 @@ EAPI Eina_Rw_Slice eina_binbuf_expand(Eina_Binbuf *buf, size_t minimum_unused_sp
 EAPI Eina_Bool eina_binbuf_use(Eina_Binbuf *buf, size_t extra_bytes) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Append a string of exact length to a buffer, reallocating as necessary.
+ * @brief Appends a string of exact length to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param str The string to append.
@@ -203,7 +203,7 @@ EAPI Eina_Bool eina_binbuf_use(Eina_Binbuf *buf, size_t extra_bytes) EINA_ARG_NO
 EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *str, size_t length) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append a slice to a buffer, reallocating as necessary.
+ * @brief Appends a slice to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param slice The slice to append.
@@ -217,7 +217,7 @@ EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *
 EAPI Eina_Bool eina_binbuf_append_slice(Eina_Binbuf *buf, const Eina_Slice slice) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Append an Eina_Binbuf to a buffer, reallocating as necessary.
+ * @brief Appends an Eina_Binbuf to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param data The string buffer to append.
@@ -236,7 +236,7 @@ EAPI Eina_Bool eina_binbuf_append_slice(Eina_Binbuf *buf, const Eina_Slice slice
 EAPI Eina_Bool eina_binbuf_append_buffer(Eina_Binbuf *buf, const Eina_Binbuf *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append a character to a string buffer, reallocating as
+ * @brief Appends a character to a string buffer, reallocating as
  * necessary.
  *
  * @param buf The string buffer to append to.
@@ -249,7 +249,7 @@ EAPI Eina_Bool eina_binbuf_append_buffer(Eina_Binbuf *buf, const Eina_Binbuf *da
 EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, unsigned char c) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Insert a string of exact length to a buffer, reallocating as necessary.
+ * @brief Inserts a string of exact length to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert to.
  * @param str The string to insert.
@@ -271,7 +271,7 @@ EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, unsigned char c) EINA_A
 EAPI Eina_Bool eina_binbuf_insert_length(Eina_Binbuf *buf, const unsigned char *str, size_t length, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert a slice to a buffer, reallocating as necessary.
+ * @brief Inserts a slice to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert to.
  * @param slice The slice to insert.
@@ -287,7 +287,7 @@ EAPI Eina_Bool eina_binbuf_insert_length(Eina_Binbuf *buf, const unsigned char *
 EAPI Eina_Bool eina_binbuf_insert_slice(Eina_Binbuf *buf, const Eina_Slice slice, size_t pos) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Insert a character to a string buffer, reallocating as
+ * @brief Inserts a character to a string buffer, reallocating as
  * necessary.
  *
  * @param buf The string buffer to insert to.
@@ -302,7 +302,7 @@ EAPI Eina_Bool eina_binbuf_insert_slice(Eina_Binbuf *buf, const Eina_Slice slice
 EAPI Eina_Bool eina_binbuf_insert_char(Eina_Binbuf *buf, unsigned char c, size_t pos) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Remove a slice of the given string buffer.
+ * @brief Removes a slice of the given string buffer.
  *
  * @param buf The string buffer to remove a slice.
  * @param start The initial (inclusive) slice position to start
@@ -319,7 +319,7 @@ EAPI Eina_Bool eina_binbuf_insert_char(Eina_Binbuf *buf, unsigned char c, size_t
 EAPI Eina_Bool eina_binbuf_remove(Eina_Binbuf *buf, size_t start, size_t end) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieve a pointer to the contents of a string buffer
+ * @brief Retrieves a pointer to the contents of a string buffer.
  *
  * @param buf The string buffer.
  * @return The current string in the string buffer.
@@ -334,7 +334,7 @@ EAPI Eina_Bool eina_binbuf_remove(Eina_Binbuf *buf, size_t start, size_t end) EI
 EAPI const unsigned char *eina_binbuf_string_get(const Eina_Binbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Steal the contents of a string buffer.
+ * @brief Steals the contents of a string buffer.
  *
  * @param buf The string buffer to steal.
  * @return The current string in the string buffer.
@@ -349,7 +349,7 @@ EAPI const unsigned char *eina_binbuf_string_get(const Eina_Binbuf *buf) EINA_AR
 EAPI unsigned char *eina_binbuf_string_steal(Eina_Binbuf *buf) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Free the contents of a string buffer but not the buffer.
+ * @brief Frees the contents of a string buffer but not the buffer.
  *
  * @param buf The string buffer to free the string of.
  *
@@ -359,7 +359,7 @@ EAPI unsigned char *eina_binbuf_string_steal(Eina_Binbuf *buf) EINA_MALLOC EINA_
 EAPI void eina_binbuf_string_free(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieve the length of the string buffer content.
+ * @brief Retrieves the length of the string buffer content.
  *
  * @param buf The string buffer.
  * @return The current length of the string, in bytes.
@@ -369,7 +369,7 @@ EAPI void eina_binbuf_string_free(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 EAPI size_t    eina_binbuf_length_get(const Eina_Binbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get a read-only slice representing the current binbuf contents.
+ * @brief Gets a read-only slice representing the current binbuf contents.
  *
  * @param buf the src buffer.
  * @return a read-only slice for the current contents. It may become
@@ -380,7 +380,7 @@ EAPI size_t    eina_binbuf_length_get(const Eina_Binbuf *buf) EINA_ARG_NONNULL(1
 EAPI Eina_Slice eina_binbuf_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Get a read-write slice representing the current binbuf contents.
+ * @brief Gets a read-write slice representing the current binbuf contents.
  *
  * @param buf the src buffer.
  * @return a read-write slice for the current contents. It may become
@@ -393,7 +393,7 @@ EAPI Eina_Slice eina_binbuf_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_R
  */
 EAPI Eina_Rw_Slice eina_binbuf_rw_slice_get(const Eina_Binbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 /**
- * @brief Get the content of the buffer and free the buffer
+ * @brief Gets the content of the buffer and free the buffer.
  *
  * @param buf the buffer to get the content from and which will be freed
  *

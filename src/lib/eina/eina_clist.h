@@ -169,13 +169,12 @@ static inline void eina_clist_add_tail(Eina_Clist *list, Eina_Clist *elem);
 
 /**
  * @brief Inits an (unlinked) element.
+ * @details This function is called on elements that have not been added to the list
+ *          so that eina_clist_element_init() works correctly.
  *
  * @param[in] elem An element
  * @pre The element is not in any list.
  * @post The element is marked as not being in any list.
- *
- * @details This function is called on elements that have not been added to the list
- *          so that eina_clist_element_init() works correctly.
  *
  * @note It is not necessary to call this before adding an element to this list.
  *
@@ -324,7 +323,7 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @brief Iterates through the list, with safety against removal.
  *
  * @param cursor The pointer to be used during the interaction
- * @param cursor2 The auxiliar pointer to be used during the interaction
+ * @param cursor2 The auxiliary pointer to be used during the interaction
  * @param list The list to be interacted with
  */
 #define EINA_CLIST_FOR_EACH_SAFE(cursor, cursor2, list) \
@@ -351,7 +350,7 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @brief Iterates through the list using a list entry, with safety against removal.
  *
  * @param cursor The pointer to be used during the interaction
- * @param cursor2 The auxiliar pointer to be used during the interaction
+ * @param cursor2 The auxiliary pointer to be used during the interaction
  * @param list The list to be interacted with
  * @param type The type of the list
  * @param field The field of the element
@@ -378,7 +377,7 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  * @brief Iterates through the list in the reverse order, with safety against removal.
  *
  * @param cursor The pointer to be used during the interaction
- * @param cursor2 The auxiliar pointer to be used during the interaction
+ * @param cursor2 The auxiliary pointer to be used during the interaction
  * @param list The list to be interacted with
  */
 #define EINA_CLIST_FOR_EACH_SAFE_REV(cursor, cursor2, list) \
@@ -406,7 +405,7 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
  *        removal.
  *
  * @param cursor The pointer to be used during the interaction
- * @param cursor2 The auxiliar pointer to be used during the interaction
+ * @param cursor2 The auxiliary pointer to be used during the interaction
  * @param list The list to be interacted with
  * @param type The type of the list
  * @param field The field of the element

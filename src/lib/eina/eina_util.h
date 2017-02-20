@@ -29,7 +29,7 @@
  */
 
 /**
- * @brief Return the content of the environment refered by HOME on this system.
+ * @brief Returns the content of the environment referred by HOME on this system.
  * @return A temporary string to the content refered by HOME on this system.
  *
  * @note The result of this call is highly system dependent and you better use
@@ -40,7 +40,7 @@
 EAPI const char *eina_environment_home_get(void);
 
 /**
- * @brief Return the content of the environment refered as TMPDIR on this system.
+ * @brief Returns the content of the environment referred as TMPDIR on this system.
  * @return A temporary string to the content refered by TMPDIR on this system.
  *
  * @note The result of this call is highly system dependent and you better use
@@ -81,7 +81,7 @@ static inline Eina_Bool eina_flt_exact(float a, float b);
 #define EINA_FLT_EQ(a, b) (!!(fabsf((float)a - (float)b) <= FLT_EPSILON))
 
 /**
- * @brief Determine if a float is not zero
+ * @brief Determines if a float is not zero
  * @param a The float
  *
  * @return @c true if float is not zero
@@ -100,7 +100,7 @@ static inline Eina_Bool eina_flt_exact(float a, float b);
 #define EINA_DBL_EQ(a, b) (!!(fabs((double)a - (double)b) <= DBL_EPSILON))
 
 /**
- * @brief Determine if a double is not zero
+ * @brief Determines if a double is not zero
  * @param a The double
  *
  * @return @c true if double is not zero

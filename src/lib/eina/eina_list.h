@@ -342,7 +342,7 @@ struct _Eina_List_Accounting
 
 
 /**
- * @brief Append the given data to the given linked list.
+ * @brief Appends the given data to the given linked list.
  *
  * @param list The given list.
  * @param data The data to append.
@@ -397,7 +397,7 @@ EAPI Eina_List            *eina_list_prepend(Eina_List *list, const void *data) 
 
 
 /**
- * @brief Insert the given data into the given linked list after the specified data.
+ * @brief Inserts the given data into the given linked list after the specified data.
  *
  * @param list The given linked list.
  * @param data The data to insert.
@@ -430,7 +430,7 @@ EAPI Eina_List            *eina_list_append_relative(Eina_List *list, const void
 
 
 /**
- * @brief Append a list node to a linked list after the specified member
+ * @brief Appends a list node to a linked list after the specified member.
  *
  * @param list The given linked list.
  * @param data The data to insert.
@@ -452,7 +452,7 @@ EAPI Eina_List            *eina_list_append_relative_list(Eina_List *list, const
 
 
 /**
- * @brief Prepend a data pointer to a linked list before the specified member
+ * @brief Prepends a data pointer to a linked list before the specified member.
  *
  * @param list The given linked list.
  * @param data The data to insert.
@@ -485,7 +485,7 @@ EAPI Eina_List            *eina_list_prepend_relative(Eina_List *list, const voi
 
 
 /**
- * @brief Prepend a list node to a linked list before the specified member
+ * @brief Prepends a list node to a linked list before the specified member.
  *
  * @param list The given linked list.
  * @param data The data to insert.
@@ -507,7 +507,7 @@ EAPI Eina_List            *eina_list_prepend_relative_list(Eina_List *list, cons
 
 
 /**
- * @brief Insert a new node into a sorted list.
+ * @brief Inserts a new node into a sorted list.
  *
  * @param list The given linked list, @b must be sorted.
  * @param func The function called for the sort.
@@ -533,7 +533,7 @@ EAPI Eina_List            *eina_list_sorted_insert(Eina_List *list, Eina_Compare
 
 
 /**
- * @brief Remove the first instance of the specified data from the given list.
+ * @brief Removes the first instance of the specified data from the given list.
  *
  * @param list The given list.
  * @param data The specified data.
@@ -552,7 +552,7 @@ EAPI Eina_List            *eina_list_remove(Eina_List *list, const void *data) E
 
 
 /**
- * @brief Remove the specified list node.
+ * @brief Removes the specified list node.
  *
  * @param list The given linked list.
  * @param remove_list The list node which is to be removed.
@@ -590,7 +590,7 @@ EAPI Eina_List            *eina_list_remove_list(Eina_List *list, Eina_List *rem
 
 
 /**
- * @brief Move the specified data to the head of the list.
+ * @brief Moves the specified data to the head of the list.
  *
  * @param list The list handle to move the data.
  * @param move_list The list node to move.
@@ -624,7 +624,7 @@ EAPI Eina_List            *eina_list_promote_list(Eina_List *list, Eina_List *mo
 
 
 /**
- * @brief Move the specified data to the tail of the list.
+ * @brief Moves the specified data to the tail of the list.
  *
  * @param list The list handle to move the data.
  * @param move_list The list node to move.
@@ -658,7 +658,7 @@ EAPI Eina_List            *eina_list_demote_list(Eina_List *list, Eina_List *mov
 
 
 /**
- * @brief Find a member of a list and return the member.
+ * @brief Finds a member of a list and return the member.
  *
  * @param list The list to search for a data.
  * @param data The data pointer to find in the list.
@@ -684,7 +684,7 @@ EAPI Eina_List            *eina_list_demote_list(Eina_List *list, Eina_List *mov
 EAPI void                 *eina_list_data_find(const Eina_List *list, const void *data) EINA_PURE EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Find a member of a list and return the list node containing that member.
+ * @brief Finds a member of a list and return the list node containing that member.
  *
  * @param list The list to search for data.
  * @param data The data pointer to find in the list.
@@ -701,7 +701,7 @@ EAPI Eina_List            *eina_list_data_find_list(const Eina_List *list, const
 
 
 /**
- * @brief Move a data pointer from one list to another
+ * @brief Moves a data pointer from one list to another.
  *
  * @param to The list to move the data to
  * @param from The list to move from
@@ -717,7 +717,7 @@ EAPI Eina_List            *eina_list_data_find_list(const Eina_List *list, const
 EAPI Eina_Bool             eina_list_move(Eina_List **to, Eina_List **from, void *data);
 
 /**
- * @brief Move a list node from one list to another
+ * @brief Moves a list node from one list to another.
  *
  * @param to The list to move the data to
  * @param from The list to move from
@@ -734,7 +734,7 @@ EAPI Eina_Bool             eina_list_move_list(Eina_List **to, Eina_List **from,
 
 
 /**
- * @brief Free an entire list and all the nodes, ignoring the data contained.
+ * @brief Frees an entire list and all the nodes, ignoring the data contained.
 
  * @param list The list to free
  * @return A @c NULL pointer
@@ -746,7 +746,7 @@ EAPI Eina_List            *eina_list_free(Eina_List *list);
 
 
 /**
- * @brief Get the nth member's data pointer in a list.
+ * @brief Gets the nth member's data pointer in a list.
  *
  * @param list The list to get the specified member number from.
  * @param n The number of the element (0 being the first).
@@ -765,9 +765,9 @@ EAPI void                 *eina_list_nth(const Eina_List *list, unsigned int n) 
 
 
 /**
- * @brief Get the nth member's list node in a list.
+ * @brief Gets the nth member's list node in a list.
  *
- * @param list The list to get the specfied member number from.
+ * @param list The list to get the specified member number from.
  * @param n The number of the element (0 being the first).
  * @return The list node stored in the numbered element.
  *
@@ -786,14 +786,14 @@ EAPI Eina_List            *eina_list_nth_list(const Eina_List *list, unsigned in
 
 
 /**
- * @brief Reverse all the elements in the list.
+ * @brief Reverses all the elements in the list.
  *
  * @param list The list to reverse.
  * @return The list head after it has been reversed.
  *
  * This function reverses the order of all elements in @p list, so the
  * last member is now first, and so on. If @p list is @c NULL, this
- * functon returns @c NULL.
+ * function returns @c NULL.
  *
  * @note @b in-place: this will change the given list, so you should
  * now point to the new list head that is returned by this function.
@@ -807,14 +807,14 @@ EAPI Eina_List            *eina_list_reverse(Eina_List *list) EINA_WARN_UNUSED_R
 
 
 /**
- * @brief Clone (copy) all the elements in the list in reverse order.
+ * @brief Clones (copies) all the elements in the list in reverse order.
  *
  * @param list The list to reverse.
  * @return The new list that has been reversed.
  *
  * This function reverses the order of all elements in @p list, so the
  * last member is now first, and so on. If @p list is @c NULL, this
- * functon returns @c NULL. This returns a copy of the given list.
+ * function returns @c NULL. This returns a copy of the given list.
  *
  * @note @b copy: this will copy the list and you should then
  * eina_list_free() when it is not required anymore.
@@ -828,7 +828,7 @@ EAPI Eina_List            *eina_list_reverse_clone(const Eina_List *list) EINA_W
 
 
 /**
- * @brief Clone (copy) all the elements in the list in exactly same order.
+ * @brief Clones (copies) all the elements in the list in exactly same order.
  *
  * @param list The list to clone.
  * @return The new list that has been cloned.
@@ -848,13 +848,13 @@ EAPI Eina_List            *eina_list_clone(const Eina_List *list) EINA_WARN_UNUS
 
 
 /**
- * @brief Sort a list according to the ordering func will return.
+ * @brief Sorts a list according to the ordering func will return.
  *
  * @param list The list handle to sort.
  * @param limit The maximum number of list elements to sort.
  * @param func A function pointer that can handle comparing the list data
  * nodes.
- * @return the new head of list.
+ * @return The new head of list.
  *
  * This function sorts @p list. If @p limit is 0 or greater than the number of
  * elements in @p list, all the elements are sorted. @p func is used to
@@ -891,17 +891,17 @@ EAPI Eina_List            *eina_list_sort(Eina_List *list, unsigned int limit, E
 
 
 /**
- * @brief Shuffle list.
+ * @brief Shuffles list.
  *
  * @param list The list handle to shuffle.
  * @param func A function pointer that can return an int between 2 inclusive values
- * @return the new head of list.
+ * @return The new head of list.
  *
  * This function shuffles @p list.
  * @p func is used to generate random list indexes within the range of
  * unshuffled list items. If @p func is @c NULL, rand is used.
  *
- * @note @b in-place: this will change the given list, so you should
+ * @note @b in-place: This will change the given list, so you should
  * now point to the new list head that is returned by this function.
  *
  * @since 1.8
@@ -912,7 +912,7 @@ EAPI Eina_List            *eina_list_shuffle(Eina_List *list, Eina_Random_Cb fun
 
 
 /**
- * @brief Merge two list.
+ * @brief Merges two list.
  *
  * @param left Head list to merge.
  * @param right Tail list to merge.
@@ -922,7 +922,7 @@ EAPI Eina_List            *eina_list_shuffle(Eina_List *list, Eina_Random_Cb fun
  *
  * Both left and right do not exist anymore after the merge.
  *
- * @note merge cost is O(n), being @b n the size of the smallest
+ * @note Merge cost is O(n), being @b n the size of the smallest
  * list. This is due the need to fix accounting of that segment,
  * making count and last access O(1).
  *
@@ -932,7 +932,7 @@ EAPI Eina_List            *eina_list_merge(Eina_List *left, Eina_List *right) EI
 
 
 /**
- * @brief Merge two sorted list according to the ordering func will return.
+ * @brief Merges two sorted list according to the ordering func will return.
  *
  * @param left First list to merge.
  * @param right Second list to merge.
@@ -972,7 +972,7 @@ EAPI Eina_List            *eina_list_sorted_merge(Eina_List *left, Eina_List *ri
 
 
 /**
- * @brief Split a list into 2 lists.
+ * @brief Splits a list into 2 lists.
  *
  * @param list List to split.
  * @param relative The list will be split after @p relative.
@@ -997,12 +997,12 @@ EAPI Eina_List            *eina_list_split_list(Eina_List *list, Eina_List *rela
  * @param list The list to search for data, @b must be sorted.
  * @param func A function pointer that can handle comparing the list data nodes.
  * @param data reference value to search.
- * @param result_cmp if provided returns the result of
+ * @param result_cmp If provided returns the result of
  * func(node->data, data) node being the last (returned) node. If node
  * was found (exact match), then it is 0. If returned node is smaller
  * than requested data, it is less than 0 and if it's bigger it's
  * greater than 0. It is the last value returned by func().
- * @return the nearest node, @c NULL if not found.
+ * @return The nearest node, @c NULL if not found.
  *
  * This function searches for a node containing @p data as its data in @p list,
  * if such a node exists it will be returned and @p result_cmp will be @p 0. If
@@ -1059,7 +1059,7 @@ EAPI Eina_List            *eina_list_search_sorted_near_list(const Eina_List *li
  * @param list The list to search for data, @b must be sorted.
  * @param func A function pointer that can handle comparing the list data nodes.
  * @param data reference value to search.
- * @return the node if func(node->data, data) == 0, @c NULL if not found.
+ * @return The node if func(node->data, data) == 0, @c NULL if not found.
  *
  * This can be used to check if some value is inside the list and get
  * the container node in this case. It should be used when list is
@@ -1095,8 +1095,8 @@ EAPI Eina_List            *eina_list_search_sorted_list(const Eina_List *list, E
  * @param list The list to search for data, @b must be sorted.
  * @param func A function pointer that can handle comparing the list data nodes.
  * @param data reference value to search.
- * @return the node value (@c node->data) if func(node->data, data) == 0,
- * NULL if not found.
+ * @return The node value (@c node->data) if func(node->data, data) == 0,
+ * @c NULL if not found.
  *
  * This can be used to check if some value is inside the list and get
  * the existing instance in this case. It should be used when list is
@@ -1131,7 +1131,7 @@ EAPI void                 *eina_list_search_sorted(const Eina_List *list, Eina_C
  * @param list The list to search for data, may be unsorted.
  * @param func A function pointer that can handle comparing the list data nodes.
  * @param data reference value to search.
- * @return the node if func(node->data, data) == 0, @c NULL if not found.
+ * @return The node if func(node->data, data) == 0, @c NULL if not found.
  *
  * This can be used to check if some value is inside the list and get
  * the container node in this case.
@@ -1157,7 +1157,7 @@ EAPI Eina_List            *eina_list_search_unsorted_list(const Eina_List *list,
  * @param list The list to search for data, may be unsorted.
  * @param func A function pointer that can handle comparing the list data nodes.
  * @param data reference value to search.
- * @return the node value (@c node->data) if func(node->data, data) == 0,
+ * @return The node value (@c node->data) if func(node->data, data) == 0,
  * @c NULL if not found.
  *
  * This can be used to check if some value is inside the list and get
@@ -1178,7 +1178,7 @@ EAPI Eina_List            *eina_list_search_unsorted_list(const Eina_List *list,
 EAPI void                 *eina_list_search_unsorted(const Eina_List *list, Eina_Compare_Cb func, const void *data);
 
 /**
- * @brief Get the last list node in the list.
+ * @brief Gets the last list node in the list.
  *
  * @param list The list to get the last list node from.
  * @return The last list node in the list.
@@ -1194,7 +1194,7 @@ EAPI void                 *eina_list_search_unsorted(const Eina_List *list, Eina
 static inline Eina_List   *eina_list_last(const Eina_List *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get the next list node after the specified list node.
+ * @brief Gets the next list node after the specified list node.
  *
  * @param list The list node to get the next list node from
  * @return The next list node on success, @c NULL otherwise.
@@ -1208,10 +1208,10 @@ static inline Eina_List   *eina_list_last(const Eina_List *list) EINA_PURE EINA_
 static inline Eina_List   *eina_list_next(const Eina_List *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get the previous list node before the specified list node.
+ * @brief Gets the previous list node before the specified list node.
  *
  * @param list The list node to get the previous list node from.
- * @return The previous list node o success, @c NULL otherwise.
+ * @return The previous list node on success, @c NULL otherwise.
  * if no previous list node exists
  *
  * This function returns the previous list node before the current one
@@ -1223,7 +1223,7 @@ static inline Eina_List   *eina_list_next(const Eina_List *list) EINA_PURE EINA_
 static inline Eina_List   *eina_list_prev(const Eina_List *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get the list node data member.
+ * @brief Gets the list node data member.
  *
  * @param list The list node to get the data member of.
  * @return The data member from the list node.
@@ -1237,7 +1237,7 @@ static inline Eina_List   *eina_list_prev(const Eina_List *list) EINA_PURE EINA_
 static inline void        *eina_list_data_get(const Eina_List *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Set the list node data member.
+ * @brief Sets the list node data member.
  *
  * @param list The list node to get the data member of.
  * @param data The data member to the list node.
@@ -1252,7 +1252,7 @@ static inline void        *eina_list_data_get(const Eina_List *list) EINA_PURE E
 static inline void        *eina_list_data_set(Eina_List *list, const void *data);
 
 /**
- * @brief Get the count of the number of items in a list.
+ * @brief Gets the count of the number of items in a list.
  *
  * @param list The list whose count to return.
  * @return The number of members in the list.
@@ -1268,7 +1268,7 @@ static inline void        *eina_list_data_set(Eina_List *list, const void *data)
 static inline unsigned int eina_list_count(const Eina_List *list) EINA_PURE;
 
 /**
- * @brief Returns the last list node's data
+ * @brief Returns the last list node's data.
  *
  * @param list The list
  * @return The node's data, or @c NULL on being passed a @c NULL pointer
@@ -1279,7 +1279,7 @@ static inline unsigned int eina_list_count(const Eina_List *list) EINA_PURE;
 static inline void        *eina_list_last_data_get(const Eina_List *list);
 
 /**
- * @brief Returned a new iterator associated to a list.
+ * @brief Returns a new iterator associated to a list.
  *
  * @param list The list.
  * @return A new iterator.
@@ -1303,7 +1303,7 @@ EAPI Eina_Iterator        *eina_list_iterator_new(const Eina_List *list) EINA_MA
 
 
 /**
- * @brief Returned a new reversed iterator associated to a list.
+ * @brief Returns a new reversed iterator associated to a list.
  *
  * @param list The list.
  * @return A new iterator.
@@ -1329,7 +1329,7 @@ EAPI Eina_Iterator        *eina_list_iterator_reversed_new(const Eina_List *list
 
 
 /**
- * @brief Returned a new accessor associated to a list.
+ * @brief Returns a new accessor associated to a list.
  *
  * @param list The list.
  * @return A new accessor.
@@ -1345,7 +1345,7 @@ EAPI Eina_Iterator        *eina_list_iterator_reversed_new(const Eina_List *list
 EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Find the member of the list and return the index.
+ * @brief Finds the member of the list and return the index.
  *
  * @param list The list.
  * @param data The data member.
@@ -1363,7 +1363,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
 
 /**
  * @def EINA_LIST_FOREACH
- * @brief Macro to iterate over a list.
+ * @brief Definition for the macro to iterate over a list.
  *
  * @param list The list to iterate over.
  * @param l A list that is used as an iterator and points to the current node.
@@ -1424,7 +1424,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH
- * @brief Macro to iterate over a list in the reverse order.
+ * @brief Definition for the macro to iterate over a list in the reverse order.
  *
  * @param list The list to iterate over.
  * @param l A list that is used as an iterator and points to the current node.
@@ -1484,7 +1484,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
 
 /**
  * @def EINA_LIST_FOREACH_SAFE
- * @brief Macro to iterate over a list with support for node deletion.
+ * @brief Definition for the macro to iterate over a list with support for node deletion.
  *
  * @param list The list to iterate over.
  * @param l A list that is used as an iterator and points to the current node.
@@ -1543,7 +1543,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
 
 /**
  * @def EINA_LIST_REVERSE_FOREACH_SAFE
- * @brief Macro to iterate over a list in the reverse order with support
+ * @brief Definition for the macro to iterate over a list in the reverse order with support
  *        for deletion.
  *
  * @param list The list to iterate over.
@@ -1604,7 +1604,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
 
 /**
  * @def EINA_LIST_FREE
- * @brief Macro to remove each list node while having access to each node's data.
+ * @brief Definition for the macro to remove each list node while having access to each node's data.
  *
  * @param list The list that will be cleared.
  * @param data Current node's data.

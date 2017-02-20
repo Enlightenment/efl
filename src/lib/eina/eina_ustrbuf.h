@@ -34,7 +34,7 @@
 typedef struct _Eina_Strbuf Eina_UStrbuf;
 
 /**
- * @brief Create a new string buffer.
+ * @brief Creates a new string buffer.
  *
  * @return Newly allocated string buffer instance.
  *
@@ -48,12 +48,12 @@ typedef struct _Eina_Strbuf Eina_UStrbuf;
 EAPI Eina_UStrbuf *eina_ustrbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Create a new string buffer using the passed string. The passed
+ * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
  * @ref eina_ustrbuf_string_steal . The passed string must be malloced.
  *
- * @param str the string to manage
- * @return Newly allocated string buffer instance.
+ * @param str The string to manage
+ * @return Newly allocated string buffer instance
  *
  * This function creates a new string buffer. On error, @c NULL is
  * returned. To free the resources, use eina_strbuf_free().
@@ -66,12 +66,12 @@ EAPI Eina_UStrbuf *eina_ustrbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI Eina_UStrbuf *eina_ustrbuf_manage_new(Eina_Unicode *str) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Create a new string buffer using the passed string. The passed
+ * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
  * @ref eina_ustrbuf_string_steal . The passed string must be malloced.
  *
- * @param str the string to manage
- * @param length the length of the string.
+ * @param str The string to manage
+ * @param length The length of the string.
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
@@ -83,7 +83,7 @@ EAPI Eina_UStrbuf *eina_ustrbuf_manage_new(Eina_Unicode *str) EINA_MALLOC EINA_W
 EAPI Eina_UStrbuf *eina_ustrbuf_manage_new_length(Eina_Unicode *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Free a string buffer.
+ * @brief Frees a string buffer.
  *
  * @param buf The string buffer to free.
  *
@@ -93,7 +93,7 @@ EAPI Eina_UStrbuf *eina_ustrbuf_manage_new_length(Eina_Unicode *str, size_t leng
 EAPI void eina_ustrbuf_free(Eina_UStrbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Reset a string buffer.
+ * @brief Resets a string buffer.
  *
  * @param buf The string buffer to reset.
  *
@@ -103,7 +103,7 @@ EAPI void eina_ustrbuf_free(Eina_UStrbuf *buf) EINA_ARG_NONNULL(1);
 EAPI void eina_ustrbuf_reset(Eina_UStrbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Append a string to a buffer, reallocating as necessary.
+ * @brief Appends a string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param str The string to append.
@@ -121,7 +121,7 @@ EAPI void eina_ustrbuf_reset(Eina_UStrbuf *buf) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_ustrbuf_append(Eina_UStrbuf *buf, const Eina_Unicode *str) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append an escaped string to a buffer, reallocating as necessary.
+ * @brief Appends an escaped string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param str The string to append.
@@ -134,7 +134,7 @@ EAPI Eina_Bool eina_ustrbuf_append(Eina_UStrbuf *buf, const Eina_Unicode *str) E
 EAPI Eina_Bool eina_ustrbuf_append_escaped(Eina_UStrbuf *buf, const Eina_Unicode *str) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append a string to a buffer, reallocating as necessary,
+ * @brief Appends a string to a buffer, reallocating as necessary,
  * limited by the given length.
  *
  * @param buf The string buffer to append to.
@@ -157,7 +157,7 @@ EAPI Eina_Bool eina_ustrbuf_append_escaped(Eina_UStrbuf *buf, const Eina_Unicode
 EAPI Eina_Bool eina_ustrbuf_append_n(Eina_UStrbuf *buf, const Eina_Unicode *str, size_t maxlen) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append a string of exact length to a buffer, reallocating as necessary.
+ * @brief Appends a string of exact length to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param str The string to append.
@@ -178,7 +178,7 @@ EAPI Eina_Bool eina_ustrbuf_append_n(Eina_UStrbuf *buf, const Eina_Unicode *str,
 EAPI Eina_Bool eina_ustrbuf_append_length(Eina_UStrbuf *buf, const Eina_Unicode *str, size_t length) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append a slice to a buffer, reallocating as necessary.
+ * @brief Appends a slice to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param slice The slice to append.
@@ -192,7 +192,7 @@ EAPI Eina_Bool eina_ustrbuf_append_length(Eina_UStrbuf *buf, const Eina_Unicode 
 EAPI Eina_Bool eina_ustrbuf_append_slice(Eina_UStrbuf *buf, const Eina_Slice slice) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Append a character to a string buffer, reallocating as
+ * @brief Appends a character to a string buffer, reallocating as
  * necessary.
  *
  * @param buf The string buffer to append to.
@@ -205,7 +205,7 @@ EAPI Eina_Bool eina_ustrbuf_append_slice(Eina_UStrbuf *buf, const Eina_Slice sli
 EAPI Eina_Bool eina_ustrbuf_append_char(Eina_UStrbuf *buf, Eina_Unicode c) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Insert a string to a buffer, reallocating as necessary.
+ * @brief Inserts a string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert.
  * @param str The string to insert.
@@ -221,7 +221,7 @@ EAPI Eina_Bool eina_ustrbuf_append_char(Eina_UStrbuf *buf, Eina_Unicode c) EINA_
 EAPI Eina_Bool eina_ustrbuf_insert(Eina_UStrbuf *buf, const Eina_Unicode *str, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert an escaped string to a buffer, reallocating as
+ * @brief Inserts an escaped string to a buffer, reallocating as
  * necessary.
  *
  * @param buf The string buffer to insert to.
@@ -236,7 +236,7 @@ EAPI Eina_Bool eina_ustrbuf_insert(Eina_UStrbuf *buf, const Eina_Unicode *str, s
 EAPI Eina_Bool eina_ustrbuf_insert_escaped(Eina_UStrbuf *buf, const Eina_Unicode *str, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert a string to a buffer, reallocating as necessary. Limited by maxlen.
+ * @brief Inserts a string to a buffer, reallocating as necessary. Limited by maxlen.
  *
  * @param buf The string buffer to insert to.
  * @param str The string to insert.
@@ -256,7 +256,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_escaped(Eina_UStrbuf *buf, const Eina_Unicode
 EAPI Eina_Bool eina_ustrbuf_insert_n(Eina_UStrbuf *buf, const Eina_Unicode *str, size_t maxlen, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert a string of exact length to a buffer, reallocating as necessary.
+ * @brief Inserts a string of exact length to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert to.
  * @param str The string to insert.
@@ -278,7 +278,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_n(Eina_UStrbuf *buf, const Eina_Unicode *str,
 EAPI Eina_Bool eina_ustrbuf_insert_length(Eina_UStrbuf *buf, const Eina_Unicode *str, size_t length, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert a slice to a buffer, reallocating as necessary.
+ * @brief Inserts a slice to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert to.
  * @param slice The slice to insert.
@@ -294,7 +294,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_length(Eina_UStrbuf *buf, const Eina_Unicode 
 EAPI Eina_Bool eina_ustrbuf_insert_slice(Eina_UStrbuf *buf, const Eina_Slice slice, size_t pos) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Insert a character to a string buffer, reallocating as
+ * @brief Inserts a character to a string buffer, reallocating as
  * necessary.
  *
  * @param buf The string buffer to insert to.
@@ -310,7 +310,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
 
 /**
  * @def eina_ustrbuf_prepend(buf, str)
- * @brief Prepend the given string to the given buffer
+ * @brief Prepends the given string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param str The string to prepend.
@@ -324,7 +324,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
 
 /**
  * @def eina_ustrbuf_prepend_escaped(buf, str)
- * @brief Prepend the given escaped string to the given buffer
+ * @brief Prepends the given escaped string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param str The string to prepend.
@@ -338,7 +338,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
 
 /**
  * @def eina_ustrbuf_prepend_n(buf, str)
- * @brief Prepend the given escaped string to the given buffer
+ * @brief Prepends the given escaped string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param str The string to prepend.
@@ -353,7 +353,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
 
 /**
  * @def eina_ustrbuf_prepend_length(buf, str)
- * @brief Prepend the given escaped string to the given buffer
+ * @brief Prepends the given escaped string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param str The string to prepend.
@@ -368,7 +368,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
 
 /**
  * @def eina_ustrbuf_prepend_char(buf, c)
- * @brief Prepend the given unicode character to the given buffer
+ * @brief Prepends the given unicode character to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param c The Eina_Unicode character to prepend.
@@ -381,7 +381,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
 #define eina_ustrbuf_prepend_char(buf, c) eina_ustrbuf_insert_char(buf, c, 0)
 
 /**
- * @brief Remove a slice of the given string buffer.
+ * @brief Removes a slice of the given string buffer.
  *
  * @param buf The string buffer to remove a slice.
  * @param start The initial (inclusive) slice position to start
@@ -398,7 +398,7 @@ EAPI Eina_Bool
 eina_ustrbuf_remove(Eina_UStrbuf *buf, size_t start, size_t end) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieve a pointer to the contents of a string buffer
+ * @brief Retrieves a pointer to the contents of a string buffer.
  *
  * @param buf The string buffer.
  * @return The current string in the string buffer.
@@ -414,7 +414,7 @@ EAPI const Eina_Unicode *
 eina_ustrbuf_string_get(const Eina_UStrbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Steal the contents of a string buffer.
+ * @brief Steals the contents of a string buffer.
  *
  * @param buf The string buffer to steal.
  * @return The current string in the string buffer.
@@ -430,7 +430,7 @@ EAPI Eina_Unicode *
 eina_ustrbuf_string_steal(Eina_UStrbuf *buf) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Free the contents of a string buffer but not the buffer.
+ * @brief Frees the contents of a string buffer but not the buffer.
  *
  * @param buf The string buffer to free the string of.
  *
@@ -441,7 +441,7 @@ EAPI void
 eina_ustrbuf_string_free(Eina_UStrbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieve the length of the string buffer content.
+ * @brief Retrieves the length of the string buffer content.
  *
  * @param buf The string buffer.
  * @return The current length of the string, in bytes.
@@ -452,10 +452,10 @@ EAPI size_t
 eina_ustrbuf_length_get(const Eina_UStrbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get a read-only slice representing the current ustrbuf contents.
+ * @brief Gets a read-only slice representing the current ustrbuf contents.
  *
- * @param buf the source string.
- * @return a read-only slice for the current contents. It may become
+ * @param buf The source string.
+ * @return A read-only slice for the current contents. It may become
  *         invalid as soon as the @a buf is changed.
  *
  * @since 1.19
@@ -463,10 +463,10 @@ eina_ustrbuf_length_get(const Eina_UStrbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_U
 EAPI Eina_Slice eina_ustrbuf_slice_get(const Eina_UStrbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Get a read-write slice representing the current ustrbuf contents.
+ * @brief Gets a read-write slice representing the current ustrbuf contents.
  *
- * @param buf the source string.
- * @return a read-write slice for the current contents. It may become
+ * @param buf The source string.
+ * @return A read-write slice for the current contents. It may become
  *         invalid as soon as the @a buf is changed with calls such as
  *         eina_ustrbuf_append(), eina_ustrbuf_remove()
  *
@@ -475,9 +475,9 @@ EAPI Eina_Slice eina_ustrbuf_slice_get(const Eina_UStrbuf *buf) EINA_WARN_UNUSED
 EAPI Eina_Rw_Slice eina_ustrbuf_rw_slice_get(const Eina_UStrbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Get the string of the buffer and free the buffer
+ * @brief Gets the string of the buffer and free the buffer
  *
- * @param buf the buffer to get the string from and which will be freed
+ * @param buf The buffer to get the string from and which will be freed
  *
  * @return The string contained by buf. The caller must release the memory of the returned string by calling
  * free().

@@ -420,9 +420,9 @@ struct _Eina_Inlist
 
 
 /**
- * Add a new node to end of a list.
+ * @brief Adds a new node to end of a list.
  *
- * @note this code is meant to be fast: appends are O(1) and do not
+ * @note This code is meant to be fast: appends are O(1) and do not
  *       walk @a in_list.
  *
  * @note @a in_item is considered to be in no list. If it was in another
@@ -430,18 +430,18 @@ struct _Eina_Inlist
  *       check of @a new_l prev and next pointers is done, so it's safe
  *       to have them uninitialized.
  *
- * @param in_list existing list head or @c NULL to create a new list.
- * @param in_item new list node, must not be @c NULL.
+ * @param in_list Existing list head or @c NULL to create a new list.
+ * @param in_item New list node, must not be @c NULL.
  *
- * @return the new list head. Use it and not @a in_list anymore.
+ * @return The new list head. Use it and not @a in_list anymore.
  */
 EAPI Eina_Inlist *eina_inlist_append(Eina_Inlist *in_list,
                                      Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Add a new node to beginning of list.
+ * @brief Adds a new node to beginning of list.
  *
- * @note this code is meant to be fast: appends are O(1) and do not
+ * @note This code is meant to be fast: appends are O(1) and do not
  *       walk @a in_list.
  *
  * @note @a new_l is considered to be in no list. If it was in another
@@ -449,18 +449,18 @@ EAPI Eina_Inlist *eina_inlist_append(Eina_Inlist *in_list,
  *       check of @a new_l prev and next pointers is done, so it's safe
  *       to have them uninitialized.
  *
- * @param in_list existing list head or @c NULL to create a new list.
- * @param in_item new list node, must not be @c NULL.
+ * @param in_list Existing list head or @c NULL to create a new list.
+ * @param in_item New list node, must not be @c NULL.
  *
- * @return the new list head. Use it and not @a in_list anymore.
+ * @return The new list head. Use it and not @a in_list anymore.
  */
 EAPI Eina_Inlist *eina_inlist_prepend(Eina_Inlist *in_list,
                                       Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Add a new node after the given relative item in list.
+ * @brief Adds a new node after the given relative item in list.
  *
- * @note this code is meant to be fast: appends are O(1) and do not
+ * @note This code is meant to be fast: appends are O(1) and do not
  *       walk @a in_list.
  *
  * @note @a in_item_l is considered to be in no list. If it was in another
@@ -473,20 +473,20 @@ EAPI Eina_Inlist *eina_inlist_prepend(Eina_Inlist *in_list,
  *       will lead to problems. Giving NULL @a in_relative is the same as
  *       eina_list_append().
  *
- * @param in_list existing list head or @c NULL to create a new list.
- * @param in_item new list node, must not be @c NULL.
- * @param in_relative reference node, @a in_item will be added after it.
+ * @param in_list Existing list head or @c NULL to create a new list.
+ * @param in_item New list node, must not be @c NULL.
+ * @param in_relative Reference node, @a in_item will be added after it.
  *
- * @return the new list head. Use it and not @a list anymore.
+ * @return The new list head. Use it and not @a list anymore.
  */
 EAPI Eina_Inlist *eina_inlist_append_relative(Eina_Inlist *in_list,
                                               Eina_Inlist *in_item,
                                               Eina_Inlist *in_relative) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Add a new node before the given relative item in list.
+ * @brief Adds a new node before the given relative item in list.
  *
- * @note this code is meant to be fast: appends are O(1) and do not
+ * @note This code is meant to be fast: appends are O(1) and do not
  *       walk @a in_list.
  *
  * @note @a in_item is considered to be in no list. If it was in another
@@ -499,20 +499,20 @@ EAPI Eina_Inlist *eina_inlist_append_relative(Eina_Inlist *in_list,
  *       will lead to problems. Giving NULL @a in_relative is the same as
  *       eina_list_prepend().
  *
- * @param in_list existing list head or @c NULL to create a new list.
- * @param in_item new list node, must not be @c NULL.
- * @param in_relative reference node, @a in_item will be added before it.
+ * @param in_list Existing list head or @c NULL to create a new list.
+ * @param in_item New list node, must not be @c NULL.
+ * @param in_relative Reference node, @a in_item will be added before it.
  *
- * @return the new list head. Use it and not @a in_list anymore.
+ * @return The new list head. Use it and not @a in_list anymore.
  */
 EAPI Eina_Inlist *eina_inlist_prepend_relative(Eina_Inlist *in_list,
                                                Eina_Inlist *in_item,
                                                Eina_Inlist *in_relative) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Remove node from list.
+ * @brief Removes node from list.
  *
- * @note this code is meant to be fast: appends are O(1) and do not
+ * @note This code is meant to be fast: appends are O(1) and do not
  *       walk @a list.
  *
  * @note @a in_item is considered to be inside @a in_list, no checks are
@@ -521,22 +521,22 @@ EAPI Eina_Inlist *eina_inlist_prepend_relative(Eina_Inlist *in_list,
  *       it will be different from @a list and the wrong new head will
  *       be returned.
  *
- * @param in_list existing list head, must not be @c NULL.
- * @param in_item existing list node, must not be @c NULL.
+ * @param in_list Existing list head, must not be @c NULL.
+ * @param in_item Existing list node, must not be @c NULL.
  *
- * @return the new list head. Use it and not @a list anymore.
+ * @return The new list head. Use it and not @a list anymore.
  */
 EAPI Eina_Inlist   *eina_inlist_remove(Eina_Inlist *in_list,
                                        Eina_Inlist *in_item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Find given node in list, returns itself if found, NULL if not.
+ * @brief Finds given node in list, returns itself if found, NULL if not.
  *
- * @warning this is an expensive call and has O(n) cost, possibly
+ * @warning This is an expensive call and has O(n) cost, possibly
  *    walking the whole list.
  *
- * @param in_list existing list to search @a in_item in, must not be @c NULL.
- * @param in_item what to search for, must not be @c NULL.
+ * @param in_list Existing list to search @a in_item in, must not be @c NULL.
+ * @param in_item What to search for, must not be @c NULL.
  *
  * @return @a in_item if found, @c NULL if not.
  */
@@ -544,43 +544,43 @@ EAPI Eina_Inlist   *eina_inlist_find(Eina_Inlist *in_list,
                                      Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Move existing node to beginning of list.
+ * @brief Moves existing node to beginning of list.
  *
- * @note this code is meant to be fast: appends are O(1) and do not
+ * @note This code is meant to be fast: appends are O(1) and do not
  *       walk @a list.
  *
  * @note @a item is considered to be inside @a list. No checks are
  *       done to confirm this, and giving nodes from different lists
  *       will lead to problems.
  *
- * @param list existing list head or @c NULL to create a new list.
- * @param item list node to move to beginning (head), must not be @c NULL.
+ * @param list Existing list head or @c NULL to create a new list.
+ * @param item List node to move to beginning (head), must not be @c NULL.
  *
- * @return the new list head. Use it and not @a list anymore.
+ * @return The new list head. Use it and not @a list anymore.
  */
 EAPI Eina_Inlist   *eina_inlist_promote(Eina_Inlist *list,
                                         Eina_Inlist *item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * Move existing node to end of list.
+ * @brief Moves existing node to end of list.
  *
- * @note this code is meant to be fast: appends are O(1) and do not
+ * @note This code is meant to be fast: appends are O(1) and do not
  *       walk @a list.
  *
  * @note @a item is considered to be inside @a list. No checks are
  *       done to confirm this, and giving nodes from different lists
  *       will lead to problems.
  *
- * @param list existing list head or @c NULL to create a new list.
- * @param item list node to move to end (tail), must not be @c NULL.
+ * @param list Existing list head or @c NULL to create a new list.
+ * @param item List node to move to end (tail), must not be @c NULL.
  *
- * @return the new list head. Use it and not @a list anymore.
+ * @return The new list head. Use it and not @a list anymore.
  */
 EAPI Eina_Inlist   *eina_inlist_demote(Eina_Inlist *list,
                                        Eina_Inlist *item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get the first list node in the list.
+ * @brief Gets the first list node in the list.
  *
  * @param list The list to get the first list node from.
  * @return The first list node in the list.
@@ -596,7 +596,7 @@ EAPI Eina_Inlist   *eina_inlist_demote(Eina_Inlist *list,
 static inline Eina_Inlist *eina_inlist_first(const Eina_Inlist *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get the last list node in the list.
+ * @brief Gets the last list node in the list.
  *
  * @param list The list to get the last list node from.
  * @return The last list node in the list.
@@ -612,7 +612,7 @@ static inline Eina_Inlist *eina_inlist_first(const Eina_Inlist *list) EINA_PURE 
 static inline Eina_Inlist *eina_inlist_last(const Eina_Inlist *list) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get the count of the number of items in a list.
+ * @brief Gets the count of the number of items in a list.
  *
  * @param list The list whose count to return.
  * @return The number of members in the list.
@@ -663,10 +663,10 @@ EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MA
 EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Insert a new node into a sorted list.
+ * @brief Inserts a new node into a sorted list.
  *
  * @param list The given linked list, @b must be sorted.
- * @param item list node to insert, must not be @c NULL.
+ * @param item List node to insert, must not be @c NULL.
  * @param func The function called for the sort.
  * @return A list pointer.
  * @since 1.1.0
@@ -686,7 +686,7 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
 EAPI Eina_Inlist *eina_inlist_sorted_insert(Eina_Inlist *list, Eina_Inlist *item, Eina_Compare_Cb func) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Create state with valid data in it.
+ * @brief Creates state with valid data in it.
  *
  * @return A valid Eina_Inlist_Sorted_State.
  * @since 1.1.0
@@ -696,7 +696,7 @@ EAPI Eina_Inlist *eina_inlist_sorted_insert(Eina_Inlist *list, Eina_Inlist *item
 EAPI Eina_Inlist_Sorted_State *eina_inlist_sorted_state_new(void);
 
 /**
- * @brief Force an Eina_Inlist_Sorted_State to match the content of a list.
+ * @brief Forces an Eina_Inlist_Sorted_State to match the content of a list.
  *
  * @param state The state to update
  * @param list The list to match
@@ -710,7 +710,7 @@ EAPI Eina_Inlist_Sorted_State *eina_inlist_sorted_state_new(void);
 EAPI int eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list);
 
 /**
- * @brief Free an Eina_Inlist_Sorted_State.
+ * @brief Frees an Eina_Inlist_Sorted_State.
  *
  * @param state The state to destroy
  * @since 1.1.0
@@ -720,7 +720,7 @@ EAPI int eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inl
 EAPI void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
 
 /**
- * @brief Insert a new node into a sorted list.
+ * @brief Inserts a new node into a sorted list.
  *
  * @param list The given linked list, @b must be sorted.
  * @param item list node to insert, must not be @c NULL.
@@ -752,7 +752,7 @@ EAPI Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
 						  Eina_Compare_Cb func,
 						  Eina_Inlist_Sorted_State *state);
 /**
- * @brief Sort a list according to the ordering func will return.
+ * @brief Sorts a list according to the ordering func will return.
  *
  * @param head The list handle to sort.
  * @param func A function pointer that can handle comparing the list data

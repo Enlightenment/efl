@@ -15,7 +15,7 @@
 
 /**
  * @typedef Eina_Prefix
- * @brief An opaque type for prefix handle
+ * @brief An opaque type for prefix handle.
  * @details This is a prefix object that is returned by eina_prefix_new() when trying
  *          to determine the runtime location of the software in question so that other
  *          data files such as images, sound files, other executable utilities,

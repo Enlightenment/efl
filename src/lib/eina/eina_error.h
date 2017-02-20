@@ -107,15 +107,14 @@ EAPI extern Eina_Error EINA_ERROR_OUT_OF_MEMORY EINA_DEPRECATED; /* use ENOMEM *
 
 /**
  * @brief Registers a new error type.
- *
- * @param[in] msg The description of the error \n
- *                It is duplicated using eina_stringshare_add().
- * @return The unique number identifier for this error
- *
  * @details This function stores the error message described by
  *          @p msg in a list. The returned value is a unique identifier greater than or equal
  *          to @c 1. The description can be retrieved later by passing
  *          the returned value to eina_error_msg_get().
+ *
+ * @param[in] msg The description of the error \n
+ *                It is duplicated using eina_stringshare_add().
+ * @return The unique number identifier for this error
  *
  * @note There is no need to register messages that exist in libC's @c
  *       errno.h, such as @c ENOMEM or @c EBADF.
@@ -126,16 +125,15 @@ EAPI Eina_Error  eina_error_msg_register(const char *msg) EINA_ARG_NONNULL(1) EI
 
 /**
  * @brief Registers a new error type, statically allocated message.
+ * @details This function stores the error message described by
+ *          @p msg in a list. The returned value is a unique identifier greater than or equal
+ *          to @c 1. The description can be retrieved later by passing
+ *          the returned value to eina_error_msg_get().
  *
  * @param[in] msg The description of the error \n
  *            This string is not duplicated and thus
  *            the given pointer should live during the usage of eina_error.
  * @return The unique number identifier for this error
- *
- * @details This function stores the error message described by
- *          @p msg in a list. The returned value is a unique identifier greater than or equal
- *          to @c 1. The description can be retrieved later by passing
- *          the returned value to eina_error_msg_get().
  *
  * @note There is no need to register messages that exist in libC's @c
  *       errno.h, such as @c ENOMEM or @c EBADF.
@@ -146,17 +144,16 @@ EAPI Eina_Error  eina_error_msg_static_register(const char *msg) EINA_ARG_NONNUL
 
 /**
  * @brief Changes the message of an already registered message.
+ * @details This function modifies the message associated with @p error and changes
+ *          it to @p msg. If the error is previously registered by @ref eina_error_msg_static_register
+ *          then the string is not duplicated, otherwise the previous message
+ *          is unrefed and @p msg is copied.
  *
  * @param[in] error The Eina_Error to change the message of
  * @param[in] msg The description of the error \n
  *            This string is duplicated only if the error is registered with @ref eina_error_msg_register,
  *            otherwise it must remain intact for the duration.
  * @return #EINA_TRUE if successful, otherwise #EINA_FALSE on error
- *
- * @details This function modifies the message associated with @p error and changes
- *          it to @p msg. If the error is previously registered by @ref eina_error_msg_static_register
- *          then the string is not duplicated, otherwise the previous message
- *          is unrefed and @p msg is copied.
  *
  * @note It is not possible to modify messages that exist in libC's @c
  *       errno.h, such as @c ENOMEM or @c EBADF.
@@ -169,11 +166,10 @@ EAPI Eina_Bool   eina_error_msg_modify(Eina_Error  error,
 
 /**
  * @brief Returns the last set error.
- *
- * @return The last error or 0 (#EINA_ERROR_NO_ERROR).
- *
  * @details This function returns the last error set by eina_error_set(). The
  *          description of the message is returned by eina_error_msg_get().
+ *
+ * @return The last error or 0 (#EINA_ERROR_NO_ERROR).
  *
  * @note This function is thread safe @since 1.10, but slower to use.
  */
@@ -181,11 +177,10 @@ EAPI Eina_Error  eina_error_get(void);
 
 /**
  * @brief Sets the last error.
- *
- * @param[in] err The error identifier
- *
  * @details This function sets the last error identifier. The last error can be
  *          retrieved by eina_error_get().
+ *
+ * @param[in] err The error identifier
  *
  * @note This is also used to clear previous errors, in which case @p err should
  *        be @c 0 (#EINA_ERROR_NO_ERROR).
@@ -196,24 +191,22 @@ EAPI void        eina_error_set(Eina_Error err);
 
 /**
  * @brief Returns the description of the given error number.
- *
- * @param[in] error The error number
- * @return The description of the error
- *
  * @details This function returns the description of an error that has been
  *          registered by eina_error_msg_register(). If an incorrect error is
  *          given, then @c NULL is returned.
+ * @param[in] error The error number
+ * @return The description of the error
+ *
  */
 EAPI const char *eina_error_msg_get(Eina_Error error) EINA_PURE;
 
 /**
  * @brief Finds the #Eina_Error corresponding to a message string.
+ * @details This function attempts to match @p msg with its corresponding #Eina_Error value.
+ *          If no such value is found, @c 0 is returned.
  *
  * @param[in] msg The error message string to match (NOT @c NULL)
  * @return The #Eina_Error matching @p msg, otherwise @c 0 on failure
- *
- * @details This function attempts to match @p msg with its corresponding #Eina_Error value.
- *          If no such value is found, @c 0 is returned.
  *
  * @note this function only works for explicitly registered errors
  *       such as the messages given to eina_error_msg_register(),

@@ -197,9 +197,9 @@
  * should return properly populated @ref _Eina_Iterator and @ref _Eina_Accessor.
  *
  * @defgroup Eina_Tools_Group Tools
+ * @ingroup Eina
  * @brief Eina tools aims to help application development, providing ways to
  *        make it safer, log errors, manage memory more efficiently and more.
- * @ingroup Eina
  */
 
 #ifdef _WIN32

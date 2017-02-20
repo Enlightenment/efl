@@ -65,12 +65,12 @@ typedef void      (*Eina_Lalloc_Free)(void *user_data);
 typedef struct _Eina_Lalloc Eina_Lalloc;
 
 /**
- * @brief Create a new lazy allocator.
+ * @brief Creates a new lazy allocator.
  *
  * @param data The data for which memory will be allocated.
  * @param alloc_cb The callback to allocate memory for @p data items.
  * @param free_cb The callback to free memory for @p data items.
- * @param num_init The number of @p data items to initally allocate space for.
+ * @param num_init The number of @p data items to initially allocate space for.
  *
  * @return A new lazy allocator.
  *
@@ -81,7 +81,7 @@ EAPI Eina_Lalloc *eina_lalloc_new(void             *data,
                                   int               num_init) EINA_ARG_NONNULL(2, 3);
 
 /**
- * @brief Free the resources for a lazy allocator.
+ * @brief Frees the resources for a lazy allocator.
  *
  * @param a The lazy allocator to free.
  *
@@ -89,23 +89,23 @@ EAPI Eina_Lalloc *eina_lalloc_new(void             *data,
 EAPI void      eina_lalloc_free(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Add several elements to a lazy allocator.
+ * @brief Adds several elements to a lazy allocator.
  *
  * @param a The lazy allocater to add items to.
  * @param num The number of elements to add.
  *
- * @return EINA_TRUE on success, else EINA_FALSE.
+ * @return #EINA_TRUE on success, else #EINA_FALSE.
  *
  */
 EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a,
                                         int          num) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Allocate one more of whatever the lazy allocator is allocating.
+ * @brief Allocates one more of whatever the lazy allocator is allocating.
  *
  * @param a The lazy allocator to add an item to.
  *
- * @return EINA_TRUE on success, else EINA_FALSE.
+ * @return #EINA_TRUE on success, else #EINA_FALSE.
  *
  */
 EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a) EINA_ARG_NONNULL(1);

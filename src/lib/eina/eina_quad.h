@@ -34,7 +34,7 @@
 /**
  * @defgroup Eina_Quad_Group Quadrangles
  *
- * @brief Quadrangles operations
+ * @brief Quadrangles operations.
  *
  * @{
  */

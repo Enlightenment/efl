@@ -207,7 +207,7 @@ EAPI void               eina_tiler_free(Eina_Tiler *t);
 EAPI void               eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h);
 
 /**
- * @brief Change the size of the area covered by the tiler.
+ * @brief Changes the size of the area covered by the tiler.
  *
  * @param t The tiler whose area size will be set.
  * @param w Width of the area.
@@ -220,7 +220,7 @@ EAPI void               eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h);
 EAPI void               eina_tiler_area_size_set(Eina_Tiler *t, int w, int h);
 
 /**
- * @brief Get the size of the area covered by the tiler.
+ * @brief Gets the size of the area covered by the tiler.
  *
  * @param t The tiler whose area size will be fetched.
  * @param w Width of the area.
@@ -231,19 +231,19 @@ EAPI void               eina_tiler_area_size_set(Eina_Tiler *t, int w, int h);
 EAPI void               eina_tiler_area_size_get(const Eina_Tiler *t, int *w, int *h);
 
 /**
- * @brief Define if we need to follow a strict grid of tile or a loosy one
+ * @brief Defines if we need to follow a strict grid of tile or a loose one.
  *
  * @param t The tiler to apply the strict rules to.
- * @param strict Define if it will be strict or loosy
+ * @param strict Define if it will be strict or loose
  *
- * By default it will be loosy.
+ * By default it will be loose.
  *
  * @since 1.8
  */
 EAPI void               eina_tiler_strict_set(Eina_Tiler *t, Eina_Bool strict);
 
 /**
- * @brief Tell if a tiler is empty or not
+ * @brief Tells if a tiler is empty or not.
  *
  * @param t The tiler to apply the strict rules to.
  * @return EINA_TRUE when empty, EINA_FALSE when not.
@@ -281,7 +281,7 @@ EAPI void               eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle 
  */
 EAPI void               eina_tiler_clear(Eina_Tiler *t);
 /**
- * @brief Create a iterator to access the tilers calculated rectangles.
+ * @brief Creates a iterator to access the tilers calculated rectangles.
  *
  * @param t The tiler to iterate over.
  * @return A iterator containing Eina_Rectangle.
@@ -293,10 +293,10 @@ EAPI Eina_Iterator     *eina_tiler_iterator_new(const Eina_Tiler *t);
  *
  * @param   x X axis coordinate.
  * @param   y Y axis coordinate.
- * @param   w width.
- * @param   h height.
- * @param   tile_w tile width.
- * @param   tile_h tile height.
+ * @param   w Width.
+ * @param   h Height.
+ * @param   tile_w Tile width.
+ * @param   tile_h Tile height.
  * @return  A pointer to the Eina_Iterator. @c NULL on failure.
  *
  * The region defined by @a x, @a y, @a w, @a h will be divided in to a grid of
@@ -305,7 +305,7 @@ EAPI Eina_Iterator     *eina_tiler_iterator_new(const Eina_Tiler *t);
  *
  * @note This is a convenience function, iterating over the returned iterator is
  * equivalent to calling eina_tile_grid_slicer_setup() and calling
- * eina_tile_grid_slicer_next() untill it returns #EINA_FALSE.
+ * eina_tile_grid_slicer_next() until it returns #EINA_FALSE.
  */
 EAPI Eina_Iterator     *eina_tile_grid_slicer_iterator_new(int x, int y, int w, int h, int tile_w, int tile_h);
 
@@ -377,16 +377,16 @@ EAPI Eina_Bool           eina_tiler_equal(Eina_Tiler *t1, Eina_Tiler *t2);
  */
 static inline Eina_Bool eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, const Eina_Tile_Grid_Info **rect);
 /**
- * @brief Setup an Eina_Tile_Grid_Slicer struct.
+ * @brief Sets up an Eina_Tile_Grid_Slicer struct.
  *
  * @param   slc Pointer to an Eina_Tile_Grid_Slicer struct.
  * @param   x X axis coordinate.
  * @param   y Y axis coordinate.
- * @param   w width.
- * @param   h height.
- * @param   tile_w tile width.
- * @param   tile_h tile height.
- * @return  A pointer to the Eina_Iterator. @c NULL on failure.
+ * @param   w Width.
+ * @param   h Height.
+ * @param   tile_w Tile width.
+ * @param   tile_h Tile height.
+ * @return  A pointer to the Eina_Iterator, @c NULL on failure.
  *
  * The region defined by @a x, @a y, @a w, @a h will be divided in to a grid of
  * tiles of width @a tile_w and height @p tile_h, @p slc can then be used with

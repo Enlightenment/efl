@@ -134,13 +134,12 @@ typedef unsigned int Eina_Magic;
 
 /**
  * @brief Gets the string associated to the given magic identifier.
- *
- * @param[in] magic The magic identifier
- * @return The string associated to the identifier
- *
  * @details This function returns the string associated to @p magic. Even if none are
  *          found this function still returns non @c NULL, in this case an identifier
  *          such as "(none)", "(undefined)", or "(unknown)".
+ *
+ * @param[in] magic The magic identifier
+ * @return The string associated to the identifier
  *
  * @note The following identifiers may be returned whenever magic is
  *       invalid, with their meanings:
@@ -154,16 +153,15 @@ typedef unsigned int Eina_Magic;
 EAPI const char *eina_magic_string_get(Eina_Magic magic) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Sets the string associated to the given magic identifier.
+ * @details This function sets the string @p magic_name to @p magic. It is not
+ *          checked if number or string are already set, in which case you end with
+ *          duplicates. Internally, eina makes a copy of @p magic_name.
  *
  * @param[in] magic The magic identifier
  * @param[in] magic_name The string associated to the identifier, must not
  *                       be @c NULL
  *
  * @return #EINA_TRUE on success, otherwise #EINA_FALSE on failure
- *
- * @details This function sets the string @p magic_name to @p magic. It is not
- *          checked if number or string are already set, in which case you end with
- *          duplicates. Internally, eina makes a copy of @p magic_name.
  *
  * @see eina_magic_string_static_set()
  */
@@ -172,17 +170,16 @@ EAPI Eina_Bool   eina_magic_string_set(Eina_Magic  magic,
 
 /**
  * @brief Sets the string associated to the given magic identifier.
+ * @details This function sets the string @p magic_name to @p magic. It is not checked if
+ *          number or string are already set, in which case you might end with
+ *          duplicates. Eina does @b not make a copy of @p magic_name, this means that
+ *          @p magic_name has to be a valid pointer for as long as @p magic is used.
  *
  * @param[in] magic The magic identifier
  * @param[in] magic_name The string associated to the identifier, must not be
  *                       @c NULL
  *
  * @return #EINA_TRUE on success, otherwise #EINA_FALSE on failure
- *
- * @details This function sets the string @p magic_name to @p magic. It is not checked if
- *          number or string are already set, in which case you might end with
- *          duplicates. Eina does @b not make a copy of @p magic_name, this means that
- *          @p magic_name has to be a valid pointer for as long as @p magic is used.
  *
  * @see eina_magic_string_set()
  */
@@ -269,6 +266,14 @@ EAPI extern Eina_Error EINA_ERROR_MAGIC_FAILED;
 
 /**
  * @brief Displays a message or aborts if a magic check failed.
+ * @details This function displays an error message if a magic check has
+ *          failed, using the following logic in the following order:
+ * @li If @p d is @c NULL, a message warns about a @c NULL pointer.
+ * @li Otherwise, if @p m is equal to #EINA_MAGIC_NONE, a message
+ * warns about a handle that is already freed.
+ * @li Otherwise, if @p m is equal to @p req_m, a message warns about
+ * a handle that is of the wrong type.
+ * @li Otherwise, a message warns you about abusing that function...
  *
  * @param[in] d The checked data pointer
  * @param[in] m The magic identifier to check
@@ -279,15 +284,6 @@ EAPI extern Eina_Error EINA_ERROR_MAGIC_FAILED;
  *
  * @warning You should @b strongly consider using @ref EINA_MAGIC_FAIL(d, m)
  *          instead.
- *
- * @details This function displays an error message if a magic check has
- *          failed, using the following logic in the following order:
- * @li If @p d is @c NULL, a message warns about a @c NULL pointer.
- * @li Otherwise, if @p m is equal to #EINA_MAGIC_NONE, a message
- * warns about a handle that is already freed.
- * @li Otherwise, if @p m is equal to @p req_m, a message warns about
- * a handle that is of the wrong type.
- * @li Otherwise, a message warns you about abusing that function...
  *
  * @note If the environment variable EINA_LOG_ABORT is set, abort() is
  *       called and the program stops. It is useful for debugging programs

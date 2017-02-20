@@ -48,7 +48,7 @@ struct _Eina_Bezier
 };
 
 /**
- * @brief Set the values of the points of the given floating
+ * @brief Sets the values of the points of the given floating
  * point cubic bezier curve.
  *
  * @param b The floating point bezier.
@@ -67,7 +67,7 @@ struct _Eina_Bezier
 EAPI void eina_bezier_values_set(Eina_Bezier *b, double start_x, double start_y, double ctrl_start_x, double ctrl_start_y, double ctrl_end_x, double ctrl_end_y, double end_x, double end_y) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Get the values of the points of the given floating
+ * @brief Gets the values of the points of the given floating
  * point cubic bezier curve.
  *
  * @param b The floating point bezier.
@@ -133,7 +133,7 @@ EAPI void eina_bezier_point_at(const Eina_Bezier *b, double t, double *px, doubl
 EAPI double eina_bezier_angle_at(const Eina_Bezier *b, double t) EINA_ARG_NONNULL(1);
 
 /**
- * @brief split the bezier at given length.
+ * @brief Splits the bezier at given length.
  *
  * @param b The floating point bezier.
  * @param len The given length.
@@ -144,7 +144,7 @@ EAPI double eina_bezier_angle_at(const Eina_Bezier *b, double t) EINA_ARG_NONNUL
 EAPI void eina_bezier_split_at_length(const Eina_Bezier *b, double len, Eina_Bezier *left, Eina_Bezier *right) EINA_ARG_NONNULL(1);
 
 /**
- * @brief get the bound of the the bezier.
+ * @brief Gets the bound of the the bezier.
  *
  * @param b The floating point bezier.
  * @param x x coordinate of bounding box.
@@ -158,7 +158,7 @@ EAPI void eina_bezier_split_at_length(const Eina_Bezier *b, double len, Eina_Bez
 EAPI void eina_bezier_bounds_get(const Eina_Bezier *b, double *x, double *y, double *w, double *h) EINA_ARG_NONNULL(1);
 
 /**
- * @brief find the bezier at given interval.
+ * @brief Finds the bezier at given interval.
  *
  * @param b The floating point bezier.
  * @param t0 The start interval.

@@ -66,7 +66,7 @@
 typedef struct _Eina_Strbuf Eina_Strbuf;
 
 /**
- * @brief Create a new string buffer.
+ * @brief Creates a new string buffer.
  *
  * @return Newly allocated string buffer instance.
  *
@@ -80,11 +80,11 @@ typedef struct _Eina_Strbuf Eina_Strbuf;
 EAPI Eina_Strbuf *eina_strbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Create a new string buffer using the passed string. The passed
+ * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
  * @ref eina_strbuf_string_steal . The passed string must be malloced.
  *
- * @param str the string to manage
+ * @param str The string to manage
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
@@ -98,12 +98,12 @@ EAPI Eina_Strbuf *eina_strbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Strbuf *eina_strbuf_manage_new(char *str) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Create a new string buffer using the passed string. The passed
+ * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
  * @ref eina_strbuf_string_steal . The passed string must be malloced.
  *
- * @param str the string to manage
- * @param length the length of the string.
+ * @param str The string to manage
+ * @param length The length of the string.
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
@@ -115,12 +115,12 @@ EAPI Eina_Strbuf *eina_strbuf_manage_new(char *str) EINA_MALLOC EINA_WARN_UNUSED
 EAPI Eina_Strbuf *eina_strbuf_manage_new_length(char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Create a new string buffer using the passed string. The passed
+ * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
  * @ref eina_strbuf_string_steal . The passed string must be malloced.
  *
- * @param str the string to manage
- * @param length the length of the string.
+ * @param str The string to manage
+ * @param length The length of the string.
  * @return Newly allocated string buffer instance.
  *
  * This function creates a new string buffer. On error, @c NULL is
@@ -132,7 +132,7 @@ EAPI Eina_Strbuf *eina_strbuf_manage_new_length(char *str, size_t length) EINA_M
 EAPI Eina_Strbuf *eina_strbuf_manage_read_only_new_length(const char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Free a string buffer.
+ * @brief Frees a string buffer.
  *
  * @param buf The string buffer to free.
  *
@@ -142,7 +142,7 @@ EAPI Eina_Strbuf *eina_strbuf_manage_read_only_new_length(const char *str, size_
 EAPI void eina_strbuf_free(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Reset a string buffer.
+ * @brief Resets a string buffer.
  *
  * @param buf The string buffer to reset.
  *
@@ -152,7 +152,7 @@ EAPI void eina_strbuf_free(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI void eina_strbuf_reset(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Append a string to a buffer, reallocating as necessary.
+ * @brief Appends a string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param str The string to append.
@@ -170,7 +170,7 @@ EAPI void eina_strbuf_reset(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_strbuf_append(Eina_Strbuf *buf, const char *str) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append an escaped string to a buffer, reallocating as necessary.
+ * @brief Appends an escaped string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param str The string to append.
@@ -183,7 +183,7 @@ EAPI Eina_Bool eina_strbuf_append(Eina_Strbuf *buf, const char *str) EINA_ARG_NO
 EAPI Eina_Bool eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append a string to a buffer, reallocating as necessary,
+ * @brief Appends a string to a buffer, reallocating as necessary,
  * limited by the given length.
  *
  * @param buf The string buffer to append to.
@@ -206,7 +206,7 @@ EAPI Eina_Bool eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str) EIN
 EAPI Eina_Bool eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, size_t maxlen) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append a string of exact length to a buffer, reallocating as necessary.
+ * @brief Appends a string of exact length to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param str The string to append.
@@ -241,7 +241,7 @@ EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size
 EAPI Eina_Bool eina_strbuf_append_slice(Eina_Strbuf *buf, const Eina_Slice slice) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Append an Eina_Strbuf to a buffer, reallocating as necessary.
+ * @brief Appends an Eina_Strbuf to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param data The string buffer to append.
@@ -260,7 +260,7 @@ EAPI Eina_Bool eina_strbuf_append_slice(Eina_Strbuf *buf, const Eina_Slice slice
 EAPI Eina_Bool eina_strbuf_append_buffer(Eina_Strbuf *buf, const Eina_Strbuf *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Append a character to a string buffer, reallocating as
+ * @brief Appends a character to a string buffer, reallocating as
  * necessary.
  *
  * @param buf The string buffer to append to.
@@ -273,7 +273,7 @@ EAPI Eina_Bool eina_strbuf_append_buffer(Eina_Strbuf *buf, const Eina_Strbuf *da
 EAPI Eina_Bool eina_strbuf_append_char(Eina_Strbuf *buf, char c) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Append a string to a buffer, reallocating as necessary.
+ * @brief Appends a string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param fmt The string to append.
@@ -288,7 +288,7 @@ EAPI Eina_Bool eina_strbuf_append_char(Eina_Strbuf *buf, char c) EINA_ARG_NONNUL
 EAPI Eina_Bool eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...) EINA_ARG_NONNULL(1, 2) EINA_PRINTF(2, 3);
 
 /**
- * @brief Append a string to a buffer, reallocating as necessary.
+ * @brief Appends a string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to append to.
  * @param fmt The string to append.
@@ -300,7 +300,7 @@ EAPI Eina_Bool eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...)
 EAPI Eina_Bool eina_strbuf_append_vprintf(Eina_Strbuf *buf, const char *fmt, va_list args) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert a string to a buffer, reallocating as necessary.
+ * @brief Inserts a string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert.
  * @param str The string to insert.
@@ -316,7 +316,7 @@ EAPI Eina_Bool eina_strbuf_append_vprintf(Eina_Strbuf *buf, const char *fmt, va_
 EAPI Eina_Bool eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert an escaped string to a buffer, reallocating as
+ * @brief Inserts an escaped string to a buffer, reallocating as
  * necessary.
  *
  * @param buf The string buffer to insert to.
@@ -331,7 +331,7 @@ EAPI Eina_Bool eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos)
 EAPI Eina_Bool eina_strbuf_insert_escaped(Eina_Strbuf *buf, const char *str, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert a string to a buffer, reallocating as necessary. Limited by maxlen.
+ * @brief Inserts a string to a buffer, reallocating as necessary. Limited by maxlen.
  *
  * @param buf The string buffer to insert to.
  * @param str The string to insert.
@@ -351,7 +351,7 @@ EAPI Eina_Bool eina_strbuf_insert_escaped(Eina_Strbuf *buf, const char *str, siz
 EAPI Eina_Bool eina_strbuf_insert_n(Eina_Strbuf *buf, const char *str, size_t maxlen, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert a string of exact length to a buffer, reallocating as necessary.
+ * @brief Inserts a string of exact length to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert to.
  * @param str The string to insert.
@@ -389,7 +389,7 @@ EAPI Eina_Bool eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size
 EAPI Eina_Bool eina_strbuf_insert_slice(Eina_Strbuf *buf, const Eina_Slice slice, size_t pos) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Insert a character to a string buffer, reallocating as
+ * @brief Inserts a character to a string buffer, reallocating as
  * necessary.
  *
  * @param buf The string buffer to insert to.
@@ -404,7 +404,7 @@ EAPI Eina_Bool eina_strbuf_insert_slice(Eina_Strbuf *buf, const Eina_Slice slice
 EAPI Eina_Bool eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Insert a string to a buffer, reallocating as necessary.
+ * @brief Inserts a string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert.
  * @param fmt The string to insert.
@@ -419,7 +419,7 @@ EAPI Eina_Bool eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos) EIN
 EAPI Eina_Bool eina_strbuf_insert_printf(Eina_Strbuf *buf, const char *fmt, size_t pos, ...) EINA_ARG_NONNULL(1, 2) EINA_PRINTF(2, 4);
 
 /**
- * @brief Insert a string to a buffer, reallocating as necessary.
+ * @brief Inserts a string to a buffer, reallocating as necessary.
  *
  * @param buf The string buffer to insert.
  * @param fmt The string to insert.
@@ -433,7 +433,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 
 /**
  * @def eina_strbuf_prepend(buf, str)
- * @brief Prepend the given string to the given buffer
+ * @brief Prepends the given string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param str The string to prepend.
@@ -447,7 +447,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 
 /**
  * @def eina_strbuf_prepend_escaped(buf, str)
- * @brief Prepend the given escaped string to the given buffer
+ * @brief Prepends the given escaped string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param str The string to prepend.
@@ -461,7 +461,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 
 /**
  * @def eina_strbuf_prepend_n(buf, str)
- * @brief Prepend the given escaped string to the given buffer
+ * @brief Prepends the given escaped string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param str The string to prepend.
@@ -476,7 +476,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 
 /**
  * @def eina_strbuf_prepend_length(buf, str)
- * @brief Prepend the given escaped string to the given buffer
+ * @brief Prepends the given escaped string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param str The string to prepend.
@@ -491,7 +491,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 
 /**
  * @def eina_strbuf_prepend_char(buf, str)
- * @brief Prepend the given character to the given buffer
+ * @brief Prepends the given character to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param c The character to prepend.
@@ -505,7 +505,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 
 /**
  * @def eina_strbuf_prepend_printf(buf, fmt, ...)
- * @brief Prepend the given string to the given buffer
+ * @brief Prepends the given string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param fmt The string to prepend.
@@ -519,7 +519,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 
 /**
  * @def eina_strbuf_prepend_vprintf(buf, fmt, args)
- * @brief Prepend the given string to the given buffer
+ * @brief Prepends the given string to the given buffer.
  *
  * @param buf The string buffer to prepend to.
  * @param fmt The string to prepend.
@@ -533,7 +533,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 #define eina_strbuf_prepend_vprintf(buf, fmt, args)  eina_strbuf_insert_vprintf(buf, fmt, 0, args)
 
 /**
- * @brief Remove a slice of the given string buffer.
+ * @brief Removes a slice of the given string buffer.
  *
  * @param buf The string buffer to remove a slice.
  * @param start The initial (inclusive) slice position to start
@@ -550,7 +550,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 EAPI Eina_Bool eina_strbuf_remove(Eina_Strbuf *buf, size_t start, size_t end) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieve a pointer to the contents of a string buffer
+ * @brief Retrieves a pointer to the contents of a string buffer.
  *
  * @param buf The string buffer.
  * @return The current string in the string buffer.
@@ -566,7 +566,7 @@ EAPI Eina_Bool eina_strbuf_remove(Eina_Strbuf *buf, size_t start, size_t end) EI
 EAPI const char *eina_strbuf_string_get(const Eina_Strbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Steal the contents of a string buffer.
+ * @brief Steals the contents of a string buffer.
  *
  * @param buf The string buffer to steal.
  * @return The current string in the string buffer.
@@ -581,7 +581,7 @@ EAPI const char *eina_strbuf_string_get(const Eina_Strbuf *buf) EINA_ARG_NONNULL
 EAPI char *eina_strbuf_string_steal(Eina_Strbuf *buf) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Free the contents of a string buffer but not the buffer.
+ * @brief Frees the contents of a string buffer but not the buffer.
  *
  * @param buf The string buffer to free the string of.
  *
@@ -591,7 +591,7 @@ EAPI char *eina_strbuf_string_steal(Eina_Strbuf *buf) EINA_MALLOC EINA_WARN_UNUS
 EAPI void eina_strbuf_string_free(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieve the length of the string buffer content.
+ * @brief Retrieves the length of the string buffer content.
  *
  * @param buf The string buffer.
  * @return The current length of the string, in bytes.
@@ -602,11 +602,11 @@ EAPI size_t    eina_strbuf_length_get(const Eina_Strbuf *buf) EINA_ARG_NONNULL(1
 
 
 /**
- * @brief Replace the n-th string with an other string.
+ * @brief Replaces the n-th string with an other string.
  *
  * @param buf The string buffer to work with.
  * @param str The string to replace.
- * @param with The replaceing string.
+ * @param with The replacing string.
  * @param n The number of the fitting string.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
@@ -617,7 +617,7 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
 
 /**
  * @def eina_strbuf_replace_first(buf, str, with)
- * @brief Prepend the given character to the given buffer
+ * @brief Prepends the given character to the given buffer.
  *
  * @param buf The string buffer to work with.
  * @param str The string to replace.
@@ -632,11 +632,11 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
 
 
 /**
- * @brief Replace all strings with an other string.
+ * @brief Replaces all strings with an other string.
 
- * @param buf the string buffer to work with.
+ * @param buf The string buffer to work with.
  * @param str The string to replace.
- * @param with The replaceing string.
+ * @param with The replacing string.
  * @return How often the string was replaced.
  *
  * This function replaces all the occurrences of @p str in @p buf with
@@ -646,36 +646,36 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
 EAPI int eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
- * @brief Trim the string buffer
+ * @brief Trims the string buffer.
 
- * @param buf the string buffer to work with.
+ * @param buf The string buffer to work with.
  *
  * This function skips whitespaces in the beginning and the end of the buffer.
  */
 EAPI void eina_strbuf_trim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Left trim the string buffer
+ * @brief Left trims the string buffer.
 
- * @param buf the string buffer to work with.
+ * @param buf The string buffer to work with.
  *
  * This function skips whitespaces in the beginning of the buffer.
  */
 EAPI void eina_strbuf_ltrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Right trim the string buffer
+ * @brief Right trims the string buffer.
 
- * @param buf the string buffer to work with.
+ * @param buf The string buffer to work with.
  *
  * This function skips whitespaces in the end of the buffer.
  */
 EAPI void eina_strbuf_rtrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Convert the string to lower case.
+ * @brief Converts the string to lower case.
  *
- * @param buf the string buffer to work with.
+ * @param buf The string buffer to work with.
  *
  * This function converts all the characters in the strbuf to lower case.
  *
@@ -684,13 +684,13 @@ EAPI void eina_strbuf_rtrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI void eina_strbuf_tolower(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Obtain substring from the src.
+ * @brief Obtains substring from the src.
  *
- * @param buf the src string.
- * @param pos the position in the source string from which the substring
+ * @param buf The src string.
+ * @param pos The position in the source string from which the substring
  *            should be created. The first character is denoted by a
  *            value of 0 (not 1).
- * @param len the length from pos that should be copied to substring.
+ * @param len The length from pos that should be copied to substring.
  *
  * This function creates a Eina_Strbuf which is a substring of buf which
  * is passed from pos position with len length.
@@ -702,10 +702,10 @@ EAPI void eina_strbuf_tolower(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI Eina_Strbuf * eina_strbuf_substr_get(Eina_Strbuf *buf, size_t pos, size_t len) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Get a read-only slice representing the current strbuf contents.
+ * @brief Gets a read-only slice representing the current strbuf contents.
  *
- * @param buf the source string.
- * @return a read-only slice for the current contents. It may become
+ * @param buf The source string.
+ * @return A read-only slice for the current contents. It may become
  *         invalid as soon as the @a buf is changed.
  *
  * @since 1.19
@@ -713,10 +713,10 @@ EAPI Eina_Strbuf * eina_strbuf_substr_get(Eina_Strbuf *buf, size_t pos, size_t l
 EAPI Eina_Slice eina_strbuf_slice_get(const Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Get a read-write slice representing the current strbuf contents.
+ * @brief Gets a read-write slice representing the current strbuf contents.
  *
- * @param buf the source string.
- * @return a read-write slice for the current contents. It may become
+ * @param buf The source string.
+ * @return A read-write slice for the current contents. It may become
  *         invalid as soon as the @a buf is changed with calls such as
  *         eina_strbuf_append(), eina_strbuf_remove()
  *
@@ -726,9 +726,9 @@ EAPI Eina_Rw_Slice eina_strbuf_rw_slice_get(const Eina_Strbuf *buf) EINA_WARN_UN
 
 
 /**
- * @brief Get the string of the buffer and free the buffer
+ * @brief Gets the string of the buffer and free the buffer
  *
- * @param buf the buffer to get the string from and which will be freed
+ * @param buf The buffer to get the string from and which will be freed
  *
  * @return The string contained by bug. The caller must release the memory of the returned string by calling
  * free().

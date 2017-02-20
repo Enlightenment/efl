@@ -39,7 +39,7 @@
 
 
 /**
- * @brief Get the hamster count.
+ * @brief Gets the hamster count.
  *
  * @return The number of available hamsters.
  *

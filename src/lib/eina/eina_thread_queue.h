@@ -48,7 +48,7 @@ typedef struct _Eina_Thread_Queue_Msg Eina_Thread_Queue_Msg;
  * queues. This is the only Message type for a parent message queue and
  * it indicates which child queue was woken up with a new message to read.
  * When this message is retrieved, the caller should then also fetch the
- * message from the inidcated child queue too.
+ * message from the indicated child queue too.
  *
  * @since 1.11
  */
@@ -66,7 +66,7 @@ struct _Eina_Thread_Queue_Msg_Sub
 };
 
 /**
- * @brief Create a new thread queue
+ * @brief Creates a new thread queue.
  *
  * @return A valid new thread queue, or NULL on failure
  *
@@ -76,7 +76,7 @@ EAPI Eina_Thread_Queue *
 eina_thread_queue_new(void);
 
 /**
- * @brief Free a thread queue
+ * @brief Frees a thread queue.
  *
  * This frees a thread queue. It must no longer be in use by anything waiting
  * on messages or sending them. Any pending messages will be freed without
@@ -90,7 +90,7 @@ EAPI void
 eina_thread_queue_free(Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Allocate a message to send down a thread queue
+ * @brief Allocates a message to send down a thread queue.
  *
  * @param thq The thread queue to allocate the message on
  * @param size The size, in bytes, of the message, including standard header
@@ -109,7 +109,7 @@ EAPI void *
 eina_thread_queue_send(Eina_Thread_Queue *thq, int size, void **allocref) EINA_ARG_NONNULL(1, 3);
 
 /**
- * @brief Finish sending the allocated message
+ * @brief Finishes sending the allocated message.
  *
  * @param thq The thread queue the message was placed on
  * @param allocref The allocref returned by eina_thread_queue_send()
@@ -123,7 +123,7 @@ EAPI void
 eina_thread_queue_send_done(Eina_Thread_Queue *thq, void *allocref) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Fetch a message from a thread queue
+ * @brief Fetches a message from a thread queue.
  *
  * @param thq The thread queue to fetch the message from
  * @param allocref A pointer to store a general reference handle for the message
@@ -143,7 +143,7 @@ EAPI void *
 eina_thread_queue_wait(Eina_Thread_Queue *thq, void **allocref) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Finish fetching a message from a thread queue
+ * @brief Finishes fetching a message from a thread queue.
  *
  * @param thq The thread queue the message was fetched from
  * @param allocref The allocref returned by eina_thread_queue_wait()
@@ -157,7 +157,7 @@ EAPI void
 eina_thread_queue_wait_done(Eina_Thread_Queue *thq, void *allocref) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Fetch a message from a thread queue, but return immediately if there is none with NULL
+ * @brief Fetches a message from a thread queue, but return immediately if there is none with NULL.
  *
  * @param thq The thread queue to fetch the message from
  * @param allocref A pointer to store a general reference handle for the message
@@ -175,7 +175,7 @@ EAPI void *
 eina_thread_queue_poll(Eina_Thread_Queue *thq, void **allocref) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Get the number of messages on a queue as yet unfetched
+ * @brief Gets the number of messages on a queue as yet unfetched.
  *
  * @param thq The thread queue to query for pending count
  * @return The number of messages waiting to be fetched
@@ -189,7 +189,7 @@ EAPI int
 eina_thread_queue_pending_get(const Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Set the parent of a thread queue (make this one a child)
+ * @brief Sets the parent of a thread queue (make this one a child).
  *
  * @param thq The thread queue to alter the parent of
  * @param thq_parent The new parent to set
@@ -206,12 +206,12 @@ EAPI void
 eina_thread_queue_parent_set(Eina_Thread_Queue *thq, Eina_Thread_Queue *thq_parent) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Get the parent of a thread queue
+ * @brief Gets the parent of a thread queue.
  *
  * @param thq The thread queue to get the parent of
  * @return The parent thread queue
  *
- * This gets the paren set by eina_thread_queue_parent_get(). If no parent
+ * This gets the parent set by eina_thread_queue_parent_get(). If no parent
  * is set, NULL is returned.
  *
  * @see eina_thread_queue_parent_set()
@@ -222,14 +222,14 @@ EAPI Eina_Thread_Queue *
 eina_thread_queue_parent_get(const Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Set a file descriptor to write a byte to on a message send
+ * @brief Sets a file descriptor to write a byte to on a message send.
  *
  * @param thq The thread queue to set the file descriptor of
  * @param fd The fd to set, or -1 to unset it
  *
  * This sets a file descriptor to write to when a message is written to the
  * thread queue. This can be used to glue a thread queue to something like
- * an Ecore_Pipe that can wake up the mainloop and call a callbck whenever
+ * an Ecore_Pipe that can wake up the mainloop and call a callback whenever
  * data is available on the pipe. The number of bytes available will be
  * the number of messages to fetch from the associated thread queue.
  *
@@ -242,7 +242,7 @@ EAPI void
 eina_thread_queue_fd_set(Eina_Thread_Queue *thq, int fd) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Get the file descriptor written to on message sends
+ * @brief Gets the file descriptor written to on message sends.
  *
  * @param thq The thread queue to get the file descriptor of
  * @return The file descriptor set (or -1 if none is set).

@@ -5,7 +5,7 @@
  * @addtogroup Eina_Mmap_Group Mmap Group
  * @ingroup Eina
  *
- * @brief These functions provide helpers for safe mmap handling
+ * @brief These functions provide helpers for safe mmap handling.
  *
  * @{
  *
@@ -13,7 +13,7 @@
  */
 
 /**
- * @brief Enable or disable safe mmaped IO handling
+ * @brief Enables or disables safe mmaped IO handling.
  *
  * @param enabled The enabled state (to enable, pass #EINA_TRUE)
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
@@ -43,7 +43,7 @@ EAPI Eina_Bool
 eina_mmap_safety_enabled_set(Eina_Bool enabled);
 
 /**
- * @brief Get the enabled state of mmap safety.
+ * @brief Gets the enabled state of mmap safety.
  *
  * @return The safety state (#EINA_TRUE if enabled)
  *
