@@ -472,7 +472,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
 
              RD(0, "      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",
                 obj->smart.smart,
-                evas_object_smart_members_get_direct(eo_obj),
+                obj->is_smart ? evas_object_smart_members_get_direct(eo_obj) : NULL,
                 obj->map->cur.map, obj->map->cur.usemap,
                 obj->map->prev.map, obj->map->prev.usemap,
                 _evas_render_has_map(obj),

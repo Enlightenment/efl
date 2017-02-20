@@ -252,7 +252,7 @@ _efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj, Evas_Object_Protected_Dat
                                                            1, 1, EINA_TRUE,
                                                            NULL);
      }
-   else
+   else if (obj->is_smart)
      {
         Eina_Inlist *contained;
         Evas_Object_Protected_Data *member;

@@ -508,10 +508,6 @@ evas_object_smart_render_cache_set(Evas_Object *eo_obj, void *data)
 const Eina_Inlist *
 evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   if (!efl_isa(eo_obj, MY_CLASS)) return NULL;
    Evas_Smart_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    if (!o) return NULL;
    return o->contained;
@@ -1040,7 +1036,6 @@ Eina_Bool
 evas_object_smart_changed_get(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Object_Protected_Data *o2;
    Eina_Bool has_map = EINA_FALSE;
 
    /* If object is invisible, it's meaningless to figure out changed state
@@ -1072,8 +1067,13 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
           }
      }
 
-   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
-      if (evas_object_smart_changed_get(o2->object)) return EINA_TRUE;
+   if (obj->is_smart)
+     {
+        Evas_Object_Protected_Data *o2;
+
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
+          if (evas_object_smart_changed_get(o2->object)) return EINA_TRUE;
+     }
 
    return EINA_FALSE;
 }

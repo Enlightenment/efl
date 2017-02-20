@@ -230,14 +230,12 @@ _evas_render2_object_render(Evas_Public_Data *e, Evas_Object_Protected_Data *obj
 {
    Evas_Object_Protected_Data *obj2;
    Evas_Object *eo_obj = obj->object;
-   const Eina_Inlist *il;
 
    if ((!evas_object_is_visible(eo_obj, obj)) ||
        (obj->clip.clipees) || (obj->cur->have_clipees)) return;
-   il = evas_object_smart_members_get_direct(eo_obj);
-   if (il)
+   if (obj->is_smart)
      {
-        EINA_INLIST_FOREACH(il, obj2)
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj2)
           _evas_render2_object_render(e, obj2, uinf, l + 1);
      }
    else

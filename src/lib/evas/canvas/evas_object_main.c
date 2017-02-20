@@ -2402,6 +2402,7 @@ _is_frame_flag_set(Evas_Object_Protected_Data *obj, Eina_Bool is_frame)
 
    obj->is_frame = is_frame;
 
+   if (!obj->is_smart) return;
    l = evas_object_smart_members_get_direct(obj->object);
 
    EINA_INLIST_FOREACH(l, child)

@@ -32,7 +32,7 @@ _obj_process(Evas_Public_Data *e,
    const Eina_Inlist *il;
 
    if (!obj->changed) return;
-   il = evas_object_smart_members_get_direct(eo_obj);
+   il = obj->is_smart ? evas_object_smart_members_get_direct(eo_obj) : NULL;
    if (il)
      {
         obj->rect_del = EINA_FALSE;

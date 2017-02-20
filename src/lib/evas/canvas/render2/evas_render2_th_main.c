@@ -142,7 +142,7 @@ _evas_render2_th_main_obj_walk_process(Evas_Public_Data *e,
    Evas_Object *eo_obj = obj->object;
    const Eina_Inlist *il;
 
-   il = evas_object_smart_members_get_direct(eo_obj);
+   il = obj->is_smart ? evas_object_smart_members_get_direct(eo_obj) : NULL;
    if (il)
      {
         if (!_evas_render2_th_main_obj_del_handle(e, obj)) return;
