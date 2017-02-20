@@ -49,6 +49,17 @@ struct native_function_definition_generator
     std::string return_type;
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
       return false;
+
+    bool is_string_return = return_type == " System.String";
+    std::string function_result = return_type == "void" ? "" : "return ";
+    std::string function_post_action = "";
+
+    if (is_string_return)
+      {
+         function_result = " System.String str = ";
+         function_post_action = "return Marshal.StringToHGlobalAuto(str);";
+      }
+
     
     if(!as_generator
        (scope_tab
@@ -67,12 +78,14 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << "eina.Log.Debug(\"function " << string << " was called\");\n"
         /****/
         << scope_tab << scope_tab << "efl.eo.IWrapper wrapper = efl.eo.Globals.data_get(pd);\n"
-        << scope_tab << scope_tab << "if(wrapper != null)\n"
-        << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << "((" << string << "Inherit)wrapper)." << string
+        << scope_tab << scope_tab << "if(wrapper != null) {\n"
+        << scope_tab << scope_tab << scope_tab << function_result << "((" << string << "Inherit)wrapper)." << string
         << "(" << (argument % ", ") << ");\n"
-        << scope_tab << scope_tab << "else\n"
+        << function_post_action
+        << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string << "Inherit." << string
         << "(efl.eo.Globals.efl_super(obj, " << string << "Inherit.klass)" << *(", " << argument) << ");\n"
+        << scope_tab << scope_tab << "}\n"
         << scope_tab << "}\n"
        )
        .generate(sink, std::make_tuple(f.return_type, f.return_type, escape_keyword(f.name), f.parameters
@@ -127,15 +140,26 @@ struct function_definition_generator
     std::string return_type;
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
       return false;
-    
+
+    bool is_string_return = return_type == " System.String";
+    std::string function_result = return_type == "void" ? "" : "return ";
+    std::string function_post_action = "";
+
+    if (is_string_return)
+      {
+         function_result = " System.IntPtr ptr = ";
+         function_post_action  = "return Marshal.PtrToStringAuto(ptr);";
+      }
+
     if(!as_generator
        (scope_tab << (do_super ? "virtual " : "") << "public " << return_type << " " << string << "(" << (parameter % ", ")
         << ") { "
-        << (return_type == "void" ? "":"return ") << string << "("
+        << function_result << string << "("
         << (do_super ? "efl.eo.Globals.efl_super(" : "")
         << "this.raw_handle"
         << (do_super ? ", this.raw_klass)" : "")
         << *(", " << argument) << ");"
+        << function_post_action
         << " }\n")
        .generate(sink, std::make_tuple(escape_keyword(f.name), f.parameters, f.c_name, f.parameters), context))
       return false;

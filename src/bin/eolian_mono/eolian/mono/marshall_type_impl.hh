@@ -42,20 +42,29 @@ struct marshall_type_visitor_generate
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 // if(is_out || is_return)
-                  return replace_base_type(r, " System.String");
+                if (is_return)
+                   return replace_base_type(r, " System.IntPtr");
+                else
+                   return replace_base_type(r, " System.String");
                 // else return replace_base_type(r, " ::efl::eina::string_view");
               }}
            , {"string", false, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                if (is_return)
+                   return replace_base_type(r, " System.IntPtr");
+                else
+                   return replace_base_type(r, " System.String");
               }}
            , {"stringshare", nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                if (is_return)
+                   return replace_base_type(r, " System.IntPtr");
+                else
+                   return replace_base_type(r, " System.String");
               }}
            // , {"generic_value", true, [&]
            //    { return regular_type_def{" int", regular.base_qualifier, {}};
