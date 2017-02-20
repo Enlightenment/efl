@@ -1844,6 +1844,7 @@ static void
 _elm_scroll_wanted_region_set(Evas_Object *obj)
 {
    Evas_Coord ww, wh, wx;
+   Evas_Coord mx = 0, my = 0;
 
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
@@ -1872,11 +1873,13 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
         wh = sid->wh;
      }
 
-   wx += (sid->content_info.w - sid->prev_cw) * sid->gravity_x;
-   sid->wy += (sid->content_info.h - sid->prev_ch) * sid->gravity_y;
+   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
 
-   sid->prev_cw = sid->content_info.w;
-   sid->prev_ch = sid->content_info.h;
+   wx += (mx - sid->prev_cw) * sid->gravity_x;
+   sid->wy += (my - sid->prev_ch) * sid->gravity_y;
+
+   sid->prev_cw = mx;
+   sid->prev_ch = my;
 
    elm_interface_scrollable_content_region_set(obj, wx, sid->wy, ww, wh);
 }
@@ -4441,8 +4444,7 @@ _elm_interface_scrollable_gravity_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_
 {
    sid->gravity_x = x;
    sid->gravity_y = y;
-   sid->prev_cw = sid->content_info.w;
-   sid->prev_ch = sid->content_info.h;
+   elm_obj_pan_pos_max_get(sid->pan_obj, &sid->prev_cw, &sid->prev_ch);
 }
 
 EOLIAN static void
