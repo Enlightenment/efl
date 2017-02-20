@@ -84,12 +84,14 @@ eina_environment_home_get(void)
         if (!getpwuid_r(geteuid(), &pwent, pwbuf, sizeof(pwbuf), &pwent2))
           {
              if ((pwent2) && (pwent.pw_dir))
-               home = strdup(pwent.pw_dir);
+               {
+                  home = strdup(pwent.pw_dir);
+                  return home;
+               }
           }
-        if (!home) home = strdup("/tmp");
-        return home;
-     }
 # endif
+        home = "/tmp";
+     }
 #endif
    home = strdup(home);
    return home;
