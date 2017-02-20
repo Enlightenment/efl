@@ -210,26 +210,13 @@ typedef struct _Map_Same
 } Map_Same;
 
 void
-evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
+evas_object_clip_recalc_do(Evas_Object_Protected_Data *obj, Evas_Object_Protected_Data *clipper)
 {
-   Evas_Object_Protected_Data *clipper = NULL;
    int cx, cy, cw, ch, cr, cg, cb, ca;
    int nx, ny, nw, nh, nr, ng, nb, na;
    Eina_Bool cvis, nvis;
-   Evas_Object *eo_obj;
 
-   EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
-
-   clipper = obj->cur->clipper;
-
-   if (EINA_LIKELY(((!obj->cur->cache.clip.dirty) &&
-                    !(!clipper || clipper->cur->cache.clip.dirty)))) return;
-
-   if (EINA_UNLIKELY(obj->layer->evas->is_frozen)) return;
-
-   eo_obj = obj->object;
-
-   evas_object_coords_recalc(eo_obj, obj);
+   evas_object_coords_recalc(obj->object, obj);
 
    if (EINA_UNLIKELY((!!obj->map) && (obj->map->cur.map) && (obj->map->cur.usemap)))
      {

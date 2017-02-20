@@ -272,6 +272,23 @@ evas_object_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static inline void
+evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
+{
+   Evas_Object_Protected_Data *clipper = NULL;
+
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
+
+   clipper = obj->cur->clipper;
+
+   if (EINA_LIKELY(((!obj->cur->cache.clip.dirty) &&
+                    !(!clipper || clipper->cur->cache.clip.dirty)))) return;
+
+   if (EINA_UNLIKELY(obj->layer->evas->is_frozen)) return;
+
+   evas_object_clip_recalc_do(obj, clipper);
+}
+
+static inline void
 evas_object_async_block(Evas_Object_Protected_Data *obj)
 {
    if (EVAS_OBJECT_DATA_VALID(obj))
