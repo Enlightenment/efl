@@ -289,6 +289,13 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
 }
 
 static inline void
+evas_object_clip_dirty(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   if (obj->cur->cache.clip.dirty) return;
+   evas_object_clip_dirty_do(obj);
+}
+
+static inline void
 evas_object_async_block(Evas_Object_Protected_Data *obj)
 {
    if (EVAS_OBJECT_DATA_VALID(obj))

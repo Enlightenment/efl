@@ -4,12 +4,10 @@
 static void _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj);
 
 void
-evas_object_clip_dirty(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+evas_object_clip_dirty_do(Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Protected_Data *clipee;
    Eina_List *l;
-
-   if (obj->cur->cache.clip.dirty) return;
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
