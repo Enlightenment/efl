@@ -1118,7 +1118,7 @@ evas_object_smart_del(Evas_Object *eo_obj)
 }
 
 void
-evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Smart_Data *s)
+evas_object_update_bounding_box(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Smart_Data *s)
 {
    Eina_Bool propagate = EINA_FALSE;
    Eina_Bool computeminmax = EINA_FALSE;
@@ -1135,7 +1135,7 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
    if (obj->is_smart)
      {
-        s = s == NULL ? efl_data_scope_get(eo_obj, MY_CLASS) : s;
+        if (!s) s = obj->private_data;
 
         x = s->cur.bounding_box.x;
         y = s->cur.bounding_box.y;
@@ -1226,8 +1226,7 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
         if (computeminmax)
           {
-             evas_object_smart_need_bounding_box_update(obj->smart.parent,
-                                                        obj->smart.parent_data,
+             evas_object_smart_need_bounding_box_update(obj->smart.parent_data,
                                                         obj->smart.parent_object_data);
           }
      }
@@ -1253,11 +1252,11 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 }
 
 void
-evas_object_smart_bounding_box_get(Evas_Object *eo_obj,
+evas_object_smart_bounding_box_get(Evas_Object_Protected_Data *obj,
                                    Evas_Coord_Rectangle *cur_bounding_box,
                                    Evas_Coord_Rectangle *prev_bounding_box)
 {
-   Evas_Smart_Data *s = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Smart_Data *s = obj->private_data;
 
    if (cur_bounding_box) memcpy(cur_bounding_box,
                                 &s->cur.bounding_box,
@@ -1416,29 +1415,24 @@ evas_object_smart_member_stack_below(Evas_Object *eo_member, Evas_Object *eo_oth
 }
 
 void
-evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj, Evas_Smart_Data *o, Evas_Object_Protected_Data *obj)
+evas_object_smart_need_bounding_box_update(Evas_Smart_Data *o, Evas_Object_Protected_Data *obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-
-   evas_object_async_block(obj);
    if (o->update_boundingbox_needed) return;
    o->update_boundingbox_needed = EINA_TRUE;
-   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+   if (!obj->cur->cache.clip.dirty)
      {
-        state_write->cache.clip.dirty = EINA_TRUE;
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          state_write->cache.clip.dirty = EINA_TRUE;
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
      }
-   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
    if (obj->smart.parent)
-     evas_object_smart_need_bounding_box_update(obj->smart.parent,
-                                                obj->smart.parent_data,
+     evas_object_smart_need_bounding_box_update(obj->smart.parent_data,
                                                 obj->smart.parent_object_data);
 }
 
 void
-evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_smart_bounding_box_update(Evas_Object_Protected_Data *obj)
 {
    Evas_Smart_Data *os;
    Eina_Inlist *list;
@@ -1450,12 +1444,7 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
    Evas_Coord tx1, ty1, tx2, ty2;
    Eina_Bool none = EINA_TRUE;
 
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-
-   evas_object_async_block(obj);
-   os = efl_data_scope_get(eo_obj, MY_CLASS);
+   os = obj->private_data;
 
    if (!os->update_boundingbox_needed) return;
    os->update_boundingbox_needed = EINA_FALSE;
@@ -1471,9 +1460,9 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
 
         if (o->is_smart)
           {
-             Evas_Smart_Data *s = efl_data_scope_get(o->object, MY_CLASS);
+             Evas_Smart_Data *s = o->private_data;
 
-             evas_object_smart_bounding_box_update(o->object, o);
+             evas_object_smart_bounding_box_update(o);
 
              tx1 = s->cur.bounding_box.x;
              ty1 = s->cur.bounding_box.y;

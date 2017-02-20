@@ -244,8 +244,8 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
           {
              Evas_Coord_Rectangle bounding_box;
 
-             evas_object_smart_bounding_box_update(eo_obj, obj);
-             evas_object_smart_bounding_box_get(eo_obj, &bounding_box, NULL);
+             evas_object_smart_bounding_box_update(obj);
+             evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
              cx = bounding_box.x;
              cy = bounding_box.y;
              cw = bounding_box.w;

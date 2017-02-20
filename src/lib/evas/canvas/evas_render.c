@@ -1073,7 +1073,7 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
 
 #ifdef INLINE_ACTIVE_GEOM
         if (obj->is_smart)
-          evas_object_smart_bounding_box_get(eo_obj, &(ent.rect), NULL);
+          evas_object_smart_bounding_box_get(obj, &(ent.rect), NULL);
         else
           {
              ent.rect.x = obj->cur->cache.clip.x;
@@ -2716,7 +2716,7 @@ _is_obj_in_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
      {
         Evas_Coord_Rectangle rect;
 
-        evas_object_smart_bounding_box_get(eo_obj, &rect, NULL);
+        evas_object_smart_bounding_box_get(obj, &rect, NULL);
         if (RECTS_INTERSECT(x, y, w, h, rect.x, rect.y, rect.w, rect.h))
           return EINA_TRUE;
      }

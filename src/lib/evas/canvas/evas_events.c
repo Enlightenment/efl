@@ -146,8 +146,8 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
           {
              Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
 
-             evas_object_smart_bounding_box_update(eo_obj, obj);
-             evas_object_smart_bounding_box_get(obj->object, &bounding_box, NULL);
+             evas_object_smart_bounding_box_update(obj);
+             evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
              c = bounding_box;
           }
         else
@@ -164,7 +164,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                {
                   Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
 
-                  evas_object_smart_bounding_box_get(obj->object, &bounding_box, NULL);
+                  evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
                   DDD("___  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] b[%6i %6i %6ix%6i] %s\n",
                       obj->object,
                       obj->cur->geometry.x, obj->cur->geometry.y,
@@ -200,7 +200,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                {
                   Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
 
-                  evas_object_smart_bounding_box_get(obj->object, &bounding_box, NULL);
+                  evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
                   DDD("OBJ  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] b[%6i %6i %6ix%6i] %s\n",
                       obj->object,
                       obj->cur->geometry.x, obj->cur->geometry.y,
@@ -277,9 +277,9 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                        Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
 
                        if (!obj->child_has_map)
-                         evas_object_smart_bounding_box_update(eo_obj, obj);
+                         evas_object_smart_bounding_box_update(obj);
 
-                       evas_object_smart_bounding_box_get(eo_obj, &bounding_box, NULL);
+                       evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
 
                        if (obj->child_has_map ||
                            (bounding_box.x <= x &&

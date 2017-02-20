@@ -1664,7 +1664,7 @@ void _evas_object_image_video_overlay_show(Evas_Object *obj);
 void _evas_object_image_video_overlay_hide(Evas_Object *obj);
 void _evas_object_image_video_overlay_do(Evas_Object *obj);
 void _evas_object_image_free(Evas_Object *obj);
-void evas_object_smart_bounding_box_get(Evas_Object *eo_obj,
+void evas_object_smart_bounding_box_get(Evas_Object_Protected_Data *obj,
                                         Evas_Coord_Rectangle *cur_bounding_box,
                                         Evas_Coord_Rectangle *prev_bounding_box);
 void evas_object_smart_del(Evas_Object *obj);
@@ -1681,8 +1681,8 @@ const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void _efl_canvas_group_group_members_all_del(Evas_Object *eo_obj);
 void _evas_object_smart_clipped_smart_move_internal(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y);
 void evas_call_smarts_calculate(Evas *e);
-void evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
-void evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj, Evas_Smart_Data *o, Evas_Object_Protected_Data *obj);
+void evas_object_smart_bounding_box_update(Evas_Object_Protected_Data *obj);
+void evas_object_smart_need_bounding_box_update(Evas_Smart_Data *o, Evas_Object_Protected_Data *obj);
 Eina_Bool evas_object_smart_changed_get(Evas_Object *eo_obj);
 void evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s);
 void *evas_mem_calloc(int size);
