@@ -640,17 +640,12 @@ _efl_canvas_group_efl_object_destructor(Eo *eo_obj, Evas_Smart_Data *o)
      }
 }
 
-EAPI void
-evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Coord dx, Evas_Coord dy)
+static inline void
+_evas_object_smart_move_relative_internal(Evas_Smart_Data *o, Evas_Coord dx, Evas_Coord dy)
 {
    Evas_Object_Protected_Data *child;
-   const Eina_Inlist *lst;
 
-   if ((dx == 0) && (dy == 0)) return;
-   if (!efl_isa(eo_obj, MY_CLASS)) return;
-
-   lst = evas_object_smart_members_get_direct(eo_obj);
-   EINA_INLIST_FOREACH(lst, child)
+   EINA_INLIST_FOREACH(o->contained, child)
      {
         Evas_Coord orig_x, orig_y;
 
@@ -660,6 +655,30 @@ evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Coord dx, Evas_Coord d
         orig_y = child->cur->geometry.y;
         evas_object_move(child->object, orig_x + dx, orig_y + dy);
      }
+}
+
+EAPI void
+evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Coord dx, Evas_Coord dy)
+{
+   Evas_Smart_Data *o;
+
+   if ((dx == 0) && (dy == 0)) return;
+   if (!efl_isa(eo_obj, MY_CLASS)) return;
+   o = efl_data_scope_get(eo_obj, MY_CLASS);
+   _evas_object_smart_move_relative_internal(o, dx, dy);
+}
+
+void
+_evas_object_smart_clipped_smart_move_internal(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y)
+{
+   Evas_Smart_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLASS);
+   Evas_Coord orig_x, orig_y;
+
+   orig_x = o->x;
+   orig_y = o->y;
+   o->x = x;
+   o->y = y;
+   _evas_object_smart_move_relative_internal(o, x - orig_x, y - orig_y);
 }
 
 EOLIAN static void
@@ -955,17 +974,6 @@ EOLIAN int
 _evas_canvas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return e->smart_calc_count;
-}
-
-void
-_evas_object_smart_xy_update(Eo *eo_obj, Evas_Coord *px, Evas_Coord *py,
-                             Evas_Coord x, Evas_Coord y)
-{
-   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
-   *px = o->x;
-   *py = o->y;
-   o->x = x;
-   o->y = y;
 }
 
 /**
