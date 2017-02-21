@@ -225,11 +225,8 @@ _elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item
    int day;
    char buf[1024];
    Elm_Dayselector_Item_Data *it = NULL;
-   const char *type = elm_object_widget_type_get(content);
 
-   if (type && strcmp(type, "Elm_Check"))
-     return EINA_FALSE;
-
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(content, EFL_UI_NSTATE_CLASS), EINA_FALSE);
    if (!item) return EINA_FALSE;
 
    day = atoi(item + (strlen(item) - 1));
