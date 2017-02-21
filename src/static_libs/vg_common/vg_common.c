@@ -547,23 +547,29 @@ vg_common_svg_node_free(Svg_Node *node)
 }
 
 static Efl_VG *
-_apply_gradient_property(Svg_Style_Gradient *g)
+_apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Vg_File_Data *vg_data)
 {
    Efl_VG *grad_obj = NULL;
    Efl_Gfx_Gradient_Stop *stops, *stop;
    int stop_count = 0, i = 0;
    Eina_List *l;
+   Eina_Rect r = { 0, 0, 1, 1 };
 
-   /*
+   //TODO: apply actual sizes (imporve bounds_get function?)...
+   //for example with figures and paths
    if (!g->user_space)
-      //get bounding box
-   */
+     evas_vg_node_bounds_get(vg, &r);
+   else
+     {
+        r.w = vg_data->view_box.w;
+        r.h = vg_data->view_box.h;
+     }
 
    if (g->type == SVG_LINEAR_GRADIENT)
      {
         grad_obj = evas_vg_gradient_linear_add(NULL);
-        evas_vg_gradient_linear_start_set(grad_obj, g->linear->x1, g->linear->y1);
-        evas_vg_gradient_linear_end_set(grad_obj, g->linear->x2, g->linear->y2);
+        evas_vg_gradient_linear_start_set(grad_obj, g->linear->x1 * r.w + r.x, g->linear->y1 * r.h + r.y);
+        evas_vg_gradient_linear_end_set(grad_obj, g->linear->x2 * r.w + r.x, g->linear->y2 * r.h + r.y);
      }
    else if (g->type == SVG_RADIAL_GRADIENT)
      {
@@ -590,7 +596,7 @@ _apply_gradient_property(Svg_Style_Gradient *g)
              stops[i].r = stop->r;
              stops[i].g = stop->g;
              stops[i].b = stop->b;
-             stops[i].a = stop->a;
+             stops[i].a = 255;
              stops[i].offset = stop->offset;
              i++;
           }
@@ -602,7 +608,7 @@ _apply_gradient_property(Svg_Style_Gradient *g)
 
 // vg tree creation
 static void
-_apply_vg_property(Svg_Node *node, Efl_VG *vg)
+_apply_vg_property(Svg_Node *node, Efl_VG *vg, Vg_File_Data *vg_data)
 {
    Svg_Style_Property *style = node->style;
 
@@ -626,7 +632,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg)
    else if (style->fill.paint.gradient)
      {
         // if the fill has gradient then apply.
-        evas_vg_shape_fill_set(vg, _apply_gradient_property(style->fill.paint.gradient));
+        evas_vg_shape_fill_set(vg, _apply_gradient_property(style->fill.paint.gradient, vg, vg_data));
      }
    else if (style->fill.paint.cur_color)
      {
@@ -653,7 +659,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg)
    else if (style->stroke.paint.gradient)
      {
         // if the fill has gradient then apply.
-        evas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(style->stroke.paint.gradient));
+        evas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(style->stroke.paint.gradient, vg, vg_data));
      }
    else if (style->stroke.paint.url)
      {
@@ -690,7 +696,7 @@ _add_polyline(Efl_VG *vg, double *array, int size, Eina_Bool polygon)
 }
 
 static Efl_VG *
-vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent)
+vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent, Vg_File_Data *vg_data)
 {
    Efl_VG *vg = NULL;
    Svg_Node *child;
@@ -702,10 +708,10 @@ vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent)
         case SVG_NODE_G:
            {
               vg = evas_vg_container_add(parent);
-              _apply_vg_property(node, vg);
+              _apply_vg_property(node, vg, vg_data);
               EINA_LIST_FOREACH(node->child, l, child)
                 {
-                   vg_common_create_vg_node_helper(child, vg);
+                   vg_common_create_vg_node_helper(child, vg, vg_data);
                 }
               return vg;
            }
@@ -751,7 +757,7 @@ vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent)
            break;
      }
    if (vg)
-   _apply_vg_property(node, vg);
+   _apply_vg_property(node, vg, vg_data);
    return vg;
 }
 
@@ -768,7 +774,7 @@ vg_common_create_vg_node(Svg_Node *node)
    vg_data->view_box.w = node->node.doc.vw;
    vg_data->view_box.h = node->node.doc.vh;
    vg_data->preserve_aspect = node->node.doc.preserve_aspect;
-   vg_data->root = vg_common_create_vg_node_helper(node, NULL);
+   vg_data->root = vg_common_create_vg_node_helper(node, NULL, vg_data);
 
    return vg_data;
 }
