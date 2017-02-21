@@ -12210,7 +12210,7 @@ __part_replace(Edje_Edit *eed, char *pcode, char *name)
 {
    int id;
 
-   id = _edje_part_id_find((Edje *)eed, name);
+   id = _edje_part_id_find(eed->base, name);
    if (id < 0)
      return 0;
    return eina_convert_itoa(id, pcode);
@@ -12632,7 +12632,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
    embryo_program_free(edc->script);
    edc->script = embryo_program_new(eed->bytecode, eed->bytecode_size);
    _edje_embryo_script_init(edc);
-   _edje_var_init((Edje *)eed);
+   _edje_var_init(eed->base);
 
 the_way_out:
    fclose(f);
