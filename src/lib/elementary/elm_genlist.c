@@ -6419,9 +6419,11 @@ _elm_genlist_item_insert_before(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
 EOLIAN static Elm_Object_Item*
 _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *eo_parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data)
 {
+   Elm_Object_Item *eo_rel = NULL;
    Elm_Gen_Item *rel = NULL;
    Elm_Gen_Item *it;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(comp, NULL);
    if (eo_parent)
      {
         ELM_GENLIST_ITEM_DATA_GET(eo_parent, parent);
@@ -6438,8 +6440,7 @@ _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
 
    if (it->parent)
      {
-        Elm_Object_Item *eo_rel = NULL;
-        Eina_List *l, *last;
+        Eina_List *l;
         int cmp_result;
 
         l = eina_list_search_sorted_near_list
@@ -6465,8 +6466,7 @@ _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
                       (it->parent->item->items, eo_it, l);
                   if (rel->item->items && rel->item->expanded)
                     {
-                       last = eina_list_last(rel->item->items);
-                       eo_rel = eina_list_data_get(last);
+                       eo_rel = eina_list_last_data_get(rel->item->items);
                        rel = efl_data_scope_get(eo_rel, ELM_GENLIST_ITEM_CLASS);
                     }
                   sd->items = eina_inlist_append_relative
@@ -6478,17 +6478,20 @@ _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
           {
              rel = it->parent;
 
-             // ignoring the comparison
-             it->parent->item->items = eina_list_prepend_relative_list
-                 (it->parent->item->items, eo_it, l);
-             sd->items = eina_inlist_prepend_relative
-                 (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
+             it->parent->item->items = eina_list_prepend
+                   (it->parent->item->items, eo_it);
+             sd->items = eina_inlist_append_relative
+                   (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
              it->item->before = EINA_FALSE;
+             it->parent->item->expanded = EINA_TRUE;
           }
+
+        sd->has_tree_items = EINA_TRUE;
+        ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
      }
    else
      {
-        if (!sd->state)
+        if (!sd->state && !sd->has_tree_items)
           {
              sd->state = eina_inlist_sorted_state_new();
              eina_inlist_sorted_state_init(sd->state, sd->items);
@@ -6498,19 +6501,63 @@ _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
         if (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP)
           sd->group_items = eina_list_append(sd->group_items, it);
 
-        sd->items = eina_inlist_sorted_state_insert
-            (sd->items, EINA_INLIST_GET(it), _elm_genlist_item_compare,
-            sd->state);
+        if (!sd->items) sd->has_tree_items = EINA_FALSE;
+        if (!sd->has_tree_items)
+          {
+             sd->items = eina_inlist_sorted_state_insert
+                   (sd->items, EINA_INLIST_GET(it), _elm_genlist_item_compare,
+                    sd->state);
 
-        if (EINA_INLIST_GET(it)->next)
-          {
-             rel = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-             it->item->before = EINA_TRUE;
+             if (EINA_INLIST_GET(it)->next)
+               {
+                  rel = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+                  it->item->before = EINA_TRUE;
+               }
+             else if (EINA_INLIST_GET(it)->prev)
+               {
+                  rel = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+                  it->item->before = EINA_FALSE;
+               }
           }
-        else if (EINA_INLIST_GET(it)->prev)
+        else
           {
-             rel = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-             it->item->before = EINA_FALSE;
+             // Inlist is not sorted!
+             Elm_Gen_Item *prev_rel = NULL;
+             int cmp;
+
+             EINA_INLIST_FOREACH(sd->items, rel)
+               {
+                  cmp = comp(EO_OBJ(it), EO_OBJ(rel));
+                  if (cmp < 0) break;
+                  prev_rel = rel;
+                  if (rel->item->items && rel->item->expanded)
+                    {
+                       eo_rel = eina_list_last_data_get(rel->item->items);
+                       rel = efl_data_scope_get(eo_rel, ELM_GENLIST_ITEM_CLASS);
+                    }
+                  if (!EINA_INLIST_GET(rel)->next)
+                    {
+                       cmp = 1;
+                       break;
+                    }
+               }
+
+             if (!rel)
+               {
+                  sd->items = eina_inlist_prepend_relative(sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(prev_rel));
+                  it->item->before = EINA_TRUE;
+                  rel = prev_rel;
+               }
+             else if (cmp >= 0)
+               {
+                  sd->items = eina_inlist_append_relative(sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
+                  it->item->before = EINA_FALSE;
+               }
+             else
+               {
+                  sd->items = eina_inlist_prepend_relative(sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(rel));
+                  it->item->before = EINA_TRUE;
+               }
           }
      }
 

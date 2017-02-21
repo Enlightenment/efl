@@ -200,6 +200,7 @@ struct _Elm_Genlist_Data
    Eina_Bool                             item_looping_on : 1;
 
    Eina_Bool                             tree_effect_animator : 1;
+   Eina_Bool                             has_tree_items : 1; // FIXME: count up & down
 };
 
 typedef struct _Item_Block Item_Block;
