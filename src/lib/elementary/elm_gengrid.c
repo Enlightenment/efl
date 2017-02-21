@@ -2770,25 +2770,22 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
             ((sd->horizontal) && (dir == ELM_FOCUS_LEFT)))
      {
         Evas_Coord col, row, cvw, cvh;
-        int x;
 
         evas_object_geometry_get(sd->pan_obj, NULL, NULL, &cvw, &cvh);
         if (sd->horizontal && sd->item_height > 0)
           {
              row = cvh / sd->item_height;
              if (row <= 0) row = 1;
-             col = tmp->position / row;
-             x = tmp->position % row;
-             if (col == 0 || (col == 1 && x == 0))
+             col = (tmp->position - 1) / row;
+             if (col == 0)
                return EINA_TRUE;
           }
         else if (sd->item_width > 0)
           {
              col = cvw / sd->item_width;
              if (col <= 0) col = 1;
-             row = tmp->position / col;
-             x = tmp->position % col;
-             if (row == 0 || (row == 1 && x == 0))
+             row = (tmp->position - 1) / col;
+             if (row == 0)
                return EINA_TRUE;
           }
      }
@@ -3025,7 +3022,7 @@ _anim_end(Elm_Gengrid_Data *sd)
                                                      EINA_INLIST_GET(sd->reorder.it2));
           }
      }
-   _item_position_update(sd->items, 0);
+   _item_position_update(sd->items, 1);
 
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, sd->obj);
