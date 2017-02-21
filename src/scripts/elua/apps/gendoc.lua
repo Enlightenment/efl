@@ -665,6 +665,37 @@ local build_igraph = function(cl)
     return graph
 end
 
+local find_parent_impl
+find_parent_impl = function(fulln, cl)
+    for i, inh in ipairs(cl:inherits_get()) do
+        local pcl = dtree.Class.by_name_get(inh)
+        for j, impl in ipairs(pcl:implements_get()) do
+            if impl:full_name_get() == fulln then
+                return impl, pcl
+            end
+        end
+        local pimpl, pcl = find_parent_impl(fulln, pcl)
+        if pimpl then
+            return pimpl, pcl
+        end
+    end
+    return nil, cl
+end
+
+local find_parent_briefdoc
+find_parent_briefdoc = function(fulln, cl)
+    local pimpl, pcl = find_parent_impl(fulln, cl)
+    if not pimpl then
+        return dtree.Doc():brief_get()
+    end
+    local pdoc = pimpl:doc_get(dtree.Function.METHOD, true)
+    local pdocf = pimpl:fallback_doc_get(true)
+    if not pdoc:exists() and (not pdocf or not pdocf:exists()) then
+        return find_parent_briefdoc(fulln, pcl)
+    end
+    return pdoc:brief_get(pdocf)
+end
+
 local build_functable = function(f, title, ctitle, cl, tbl, over)
     if #tbl == 0 then
         return
@@ -703,10 +734,15 @@ local build_functable = function(f, title, ctitle, cl, tbl, over)
             lbuf:write_i(llbuf:finish())
         end
 
-        nt[#nt + 1] = {
-            lbuf:finish(),
-            impl:doc_get(func.METHOD, true):brief_get(impl:fallback_doc_get(true))
-        }
+        local doc = impl:doc_get(func.METHOD, true)
+        local docf = impl:fallback_doc_get(true)
+        local bdoc
+        if over and (not doc:exists() and (not docf or not docf:exists())) then
+            bdoc = find_parent_briefdoc(impl:full_name_get(), cl)
+        else
+            bdoc = doc:brief_get(docf)
+        end
+        nt[#nt + 1] = { lbuf:finish(), bdoc }
         if impl:is_prop_get() or impl:is_prop_set() then
             build_property(impl, cl)
         else
@@ -982,23 +1018,6 @@ local build_vallist = function(f, pg, ps, title)
             build_parlist(f, ps, true)
         end
     end
-end
-
-local find_parent_impl
-find_parent_impl = function(fulln, cl)
-    for i, inh in ipairs(cl:inherits_get()) do
-        local pcl = dtree.Class.by_name_get(inh)
-        for j, impl in ipairs(pcl:implements_get()) do
-            if impl:full_name_get() == fulln then
-                return impl, pcl
-            end
-        end
-        local pimpl, pcl = find_parent_impl(fulln, pcl)
-        if pimpl then
-            return pimpl, pcl
-        end
-    end
-    return nil, cl
 end
 
 local find_parent_doc
