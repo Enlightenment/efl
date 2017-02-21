@@ -11,7 +11,7 @@
 
 #define EFL_GFX_FILTER_BETA
 
-#include <Evas.h>
+#include "../../lib/evas/include/evas_common_private.h"
 #include "../../lib/evas/include/evas_filter.h"
 #include <Ecore_Evas.h>
 

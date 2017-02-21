@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include <Evas.h>
 #include "../../lib/evas/include/evas_common_private.h"
 #include "../../lib/evas/include/evas_private.h"
 
