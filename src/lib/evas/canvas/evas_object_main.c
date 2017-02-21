@@ -497,7 +497,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
    if (obj->changed) return;
 
-   evas_render_object_recalc(eo_obj);
+   evas_render_object_recalc(obj);
    /* set changed flag on all objects this one clips too */
    if (!((movch) && (obj->is_static_clip)))
      {

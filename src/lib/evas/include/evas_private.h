@@ -2000,7 +2000,7 @@ Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
                              Evas_Proxy_Render_Data *proxy_render_data,
                              int level, Eina_Bool do_async);
 void evas_render_invalidate(Evas *e);
-void evas_render_object_recalc(Evas_Object *obj);
+void evas_render_object_recalc(Evas_Object_Protected_Data *obj);
 void evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy, Evas_Object_Protected_Data *proxy_obj, Eina_Bool source_clip, Eina_Bool do_async);
 void evas_render_mask_subrender(Evas_Public_Data *e, Evas_Object_Protected_Data *mask, Evas_Object_Protected_Data *prev_mask, int level, Eina_Bool do_async);
 

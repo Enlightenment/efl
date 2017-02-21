@@ -3839,15 +3839,8 @@ evas_render_invalidate(Evas *eo_e)
 }
 
 void
-evas_render_object_recalc(Evas_Object *eo_obj)
+evas_render_object_recalc(Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Protected_Data *obj;
-
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-
-   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if ((!obj->changed) && (obj->delete_me < 2))
      {
        Evas_Public_Data *e;
