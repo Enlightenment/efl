@@ -4244,10 +4244,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         return;
      }
 
-   if ((ep->calculated & FLAG_XY) == FLAG_XY && !state)
+   EINA_SAFETY_ON_FALSE_RETURN(flags != FLAG_NONE);
+   if (!state)
      {
-        return;
+        if ((ep->calculated & FLAG_XY) == FLAG_XY) return;
+        if ((ep->calculated & flags) == flags) return;
      }
+
    if (ep->calculating & flags)
      {
 #if 1
