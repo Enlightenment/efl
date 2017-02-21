@@ -2542,7 +2542,7 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
           {
              row = cvh / sd->item_height;
              if (row <= 0) row = 1;
-             col = tmp->position / row;
+             col = (tmp->position - 1) / row;
              if (col == 0)
                return EINA_TRUE;
           }
@@ -2550,7 +2550,7 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
           {
              col = cvw / sd->item_width;
              if (col <= 0) col = 1;
-             row = tmp->position / col;
+             row = (tmp->position - 1) / col;
              if (row == 0)
                return EINA_TRUE;
           }
@@ -2788,7 +2788,7 @@ _anim_end(Elm_Gengrid_Data *sd)
                                                      EINA_INLIST_GET(sd->reorder.it2));
           }
      }
-   _item_position_update(sd->items, 0);
+   _item_position_update(sd->items, 1);
 
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, sd->obj);
