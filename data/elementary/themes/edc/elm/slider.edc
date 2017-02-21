@@ -1070,6 +1070,12 @@ group { name: "elm/slider/vertical/default";
             rel1.offset: 2 -3;
             rel2.offset: -3 -3;
          }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 2 -3;
+            rel2.offset: -3 -3;
+            color: 255 255 255 64;
+         }
       }
       part { name: "elm.units"; type: TEXT; mouse_events: 0;
          effect: SHADOW BOTTOM;
