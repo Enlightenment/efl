@@ -476,7 +476,7 @@ evas_object_free(Evas_Object *eo_obj, Eina_Bool clean_layer)
 }
 
 void
-evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_change(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    Eina_List *l;
    Evas_Object_Protected_Data *obj2;
