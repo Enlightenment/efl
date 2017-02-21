@@ -347,6 +347,8 @@ static const struct {
   { NULL, NULL }
 };
 
+static void _evas_module_hash_free_cb(void *data);
+
 /* this will alloc an Evas_Module struct for each module
  * it finds on the paths */
 void
@@ -356,12 +358,12 @@ evas_module_init(void)
 
    evas_module_paths_init();
 
-   evas_modules[EVAS_MODULE_TYPE_ENGINE] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
-   evas_modules[EVAS_MODULE_TYPE_IMAGE_LOADER] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
-   evas_modules[EVAS_MODULE_TYPE_IMAGE_SAVER] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
-   evas_modules[EVAS_MODULE_TYPE_OBJECT] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
-   evas_modules[EVAS_MODULE_TYPE_VG_LOADER] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
-   evas_modules[EVAS_MODULE_TYPE_VG_SAVER] = eina_hash_string_small_new(/* FIXME: Add a function to cleanup stuff. */ NULL);
+   evas_modules[EVAS_MODULE_TYPE_ENGINE] = eina_hash_string_small_new(_evas_module_hash_free_cb);
+   evas_modules[EVAS_MODULE_TYPE_IMAGE_LOADER] = eina_hash_string_small_new(_evas_module_hash_free_cb);
+   evas_modules[EVAS_MODULE_TYPE_IMAGE_SAVER] = eina_hash_string_small_new(_evas_module_hash_free_cb);
+   evas_modules[EVAS_MODULE_TYPE_OBJECT] = eina_hash_string_small_new(_evas_module_hash_free_cb);
+   evas_modules[EVAS_MODULE_TYPE_VG_LOADER] = eina_hash_string_small_new(_evas_module_hash_free_cb);
+   evas_modules[EVAS_MODULE_TYPE_VG_SAVER] = eina_hash_string_small_new(_evas_module_hash_free_cb);
 
    evas_engines = eina_array_new(4);
 
@@ -488,11 +490,22 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
    em = eina_hash_find(evas_modules[type], module->name);
    if (!em || em->definition != module) return EINA_FALSE;
 
-   if (type == EVAS_MODULE_TYPE_ENGINE)
-     eina_array_data_set(evas_engines, em->id_engine - 1, NULL);
-
    eina_hash_del(evas_modules[type], module->name, em);
 
+   return EINA_TRUE;
+}
+
+static void
+_evas_module_hash_free_cb(void *data)
+{
+   Evas_Module *em = data;
+
+   // Note: This free callback leaks the Eina_Module, and does not call
+   // dlclose(). This is by choice as dlclose() leads to other issues.
+
+   if (!em) return;
+   if (em->id_engine > 0)
+     eina_array_data_set(evas_engines, em->id_engine - 1, NULL);
    if (em->loaded)
      {
         em->definition->func.close(em);
@@ -501,8 +514,6 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
 
    LKD(em->lock);
    free(em);
-
-   return EINA_TRUE;
 }
 
 #if defined(_WIN32) || defined(__CYGWIN__)
@@ -712,18 +723,6 @@ evas_module_clean(void)
 
 static Eina_Prefix *pfx = NULL;
 
-static Eina_Bool
-_cb_mod_close(const Eina_Hash *hash EINA_UNUSED,
-              const void *key EINA_UNUSED,
-              void *data, void *fdata EINA_UNUSED)
-{
-   Evas_Module *em = data;
-
-   em->definition->func.close(em);
-   em->loaded = 0;
-   return EINA_TRUE;
-}
-
 /* will dlclose all the modules loaded and free all the structs */
 void
 evas_module_shutdown(void)
@@ -733,13 +732,6 @@ evas_module_shutdown(void)
 
    for (i = 0; evas_static_module[i].shutdown; ++i)
      evas_static_module[i].shutdown();
-
-   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_ENGINE], _cb_mod_close, NULL);
-   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_IMAGE_LOADER], _cb_mod_close, NULL);
-   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_IMAGE_SAVER], _cb_mod_close, NULL);
-   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_OBJECT], _cb_mod_close, NULL);
-   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_VG_LOADER], _cb_mod_close, NULL);
-   eina_hash_foreach(evas_modules[EVAS_MODULE_TYPE_VG_SAVER], _cb_mod_close, NULL);
 
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_ENGINE]);
    evas_modules[EVAS_MODULE_TYPE_ENGINE] = NULL;
