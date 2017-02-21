@@ -6356,6 +6356,12 @@ _elm_genlist_item_insert_after(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const 
         it->parent->item->items =
           eina_list_append_relative(it->parent->item->items, EO_OBJ(it), eo_after);
      }
+
+   if (after->item->items && after->item->expanded)
+     {
+        eo_after = eina_list_last_data_get(after->item->items);
+        after = efl_data_scope_get(eo_after, ELM_GENLIST_ITEM_CLASS);
+     }
    sd->items = eina_inlist_append_relative
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(after));
 
