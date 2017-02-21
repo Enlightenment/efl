@@ -81,9 +81,23 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Clock_Mod_Api *
 _dt_mod_init()
 {
+   static int tried_fallback = 0;
    Elm_Module *mod = NULL;
 
-   if (!(mod = _elm_module_find_as("clock/api"))) return NULL;
+   if (!(mod = _elm_module_find_as("clock/api")))
+     {
+        if (!tried_fallback &&
+            (!_elm_config->modules || !strstr(_elm_config->modules, "clock/api")))
+          {
+             // See also _config_update(): we hardcode here the default module
+             ERR("Elementary config does not contain the required module "
+                 "name for the clock widget! Verify your installation.");
+             _elm_module_add("clock_input_ctxpopup", "clock/api");
+             mod = _elm_module_find_as("clock/api");
+             tried_fallback = EINA_TRUE;
+          }
+        if (!mod) return NULL;
+     }
 
    mod->api = malloc(sizeof(Clock_Mod_Api));
    if (!mod->api) return NULL;
@@ -896,6 +910,7 @@ _efl_ui_clock_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Clock_Data *priv)
                }
           }
      }
+   else WRN("Failed to load clock module, clock widget may not show properly!");
 
    priv->freeze_sizing = EINA_TRUE;
    if (!elm_layout_theme_set(obj, "uiclock", "base",
