@@ -400,8 +400,9 @@ EOLIAN static void
 _evas_text_efl_text_properties_font_source_set(Eo *eo_obj, Evas_Text_Data *o, const char *font_source)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   if ((o->cur.source) && (font_source) &&
-       (!strcmp(o->cur.source, font_source)))
+   if (((o->cur.source) && (font_source) &&
+        (!strcmp(o->cur.source, font_source))) ||
+       (!o->cur.source && !font_source))
      return;
    evas_object_async_block(obj);
    /*
@@ -427,10 +428,12 @@ _evas_text_efl_text_properties_font_set(Eo *eo_obj, Evas_Text_Data *o, const cha
    Evas_Font_Description *fdesc;
    Eina_List *was = NULL;
 
-
    if ((!font) || (size <= 0)) return;
 
    evas_object_async_block(obj);
+   if ((size == o->cur.size) &&
+       ((!font && !o->cur.font) ||
+        (font && o->cur.font && !strcmp(font, o->cur.font)))) return;
 
    /* We can't assume the given font is same with current fdesc by comparing string.
       Since Evas starts to supporting "auto" for language,
@@ -1002,7 +1005,9 @@ _evas_text_efl_gfx_size_set(Eo *eo_obj, Evas_Text_Data *o, int w, int h)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   evas_object_async_block(obj);
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+     return;
+
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
         state_write->geometry.w = w;
