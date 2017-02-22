@@ -1,6 +1,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace efl { namespace eo {
 
@@ -114,6 +115,26 @@ public class Globals {
         }
         else
             return null;
+    }
+
+    public static IntPtr cached_string_to_intptr(Dictionary<String, IntPtr> dict, String str)
+    {
+        IntPtr ptr = IntPtr.Zero;
+        if (!dict.TryGetValue(str, out ptr))
+        {
+            ptr = Marshal.StringToHGlobalAuto(str);
+            dict[str] = ptr;
+        }
+
+        return ptr;
+    }
+
+    public static void free_dict_values(Dictionary<String, IntPtr> dict)
+    {
+        foreach(IntPtr ptr in dict.Values)
+        {
+            Marshal.FreeHGlobal(ptr);
+        }
     }
 }        
         

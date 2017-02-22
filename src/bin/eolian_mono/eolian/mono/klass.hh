@@ -249,12 +249,15 @@ struct klass
      // Inherit class
      if(class_type == "class")
        {
+        bool cls_has_string_return = has_string_return(cls);
+
          if(!as_generator
             (
              "public " << class_type << " " << string << "Inherit : " << string << ", IDisposable\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "public static System.IntPtr klass = System.IntPtr.Zero;\n"
              << scope_tab << "private static readonly object klassAllocLock = new object();\n"
+             << scope_tab << (cls_has_string_return ? ("public Dictionary<String, IntPtr> cached_strings = new Dictionary<String, IntPtr>();") : "") << "\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
              << scope_tab << "}\n"
@@ -291,6 +294,7 @@ struct klass
              << scope_tab << "}\n"
              << scope_tab << "public void Dispose()\n"
              << scope_tab << "{\n"
+             << scope_tab << (cls_has_string_return ? "efl.eo.Globals.free_dict_values(cached_strings);" : "") << "\n"
              << scope_tab << scope_tab << "Dispose(true);\n"
              << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
              << scope_tab << "}\n"
