@@ -573,10 +573,16 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Vg_File_Data *vg_dat
      }
    else if (g->type == SVG_RADIAL_GRADIENT)
      {
+        /**
+         * That is according to Units in here
+         *
+         * https://www.w3.org/TR/2015/WD-SVG2-20150915/coords.html
+         */
+        int radius = sqrt(pow(r.h, 2) + pow(r.w, 2)) / sqrt(2.0);
         grad_obj = evas_vg_gradient_radial_add(NULL);
-        evas_vg_gradient_radial_center_set(grad_obj, g->radial->cx, g->radial->cy);
-        evas_vg_gradient_radial_radius_set(grad_obj, g->radial->r);
-        evas_vg_gradient_radial_focal_set(grad_obj, g->radial->fx, g->radial->fy);
+        evas_vg_gradient_radial_center_set(grad_obj, g->radial->cx * r.w + r.x, g->radial->cy * r.h + r.y);
+        evas_vg_gradient_radial_radius_set(grad_obj, g->radial->r * radius);
+        evas_vg_gradient_radial_focal_set(grad_obj, g->radial->fx * r.w + r.x, g->radial->fy * r.h + r.y);
      }
    else
      {
