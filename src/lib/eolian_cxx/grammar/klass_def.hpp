@@ -818,6 +818,36 @@ inline bool has_events(klass_def const &klass)
     return false;
 }
 
+struct string_return_visitor
+{
+    typedef string_return_visitor visitor_type;
+    typedef bool result_type;
+    template <typename T>
+    bool operator()(T const&) const { return false; }
+    bool operator()(regular_type_def const& regular) const
+    {
+        return regular.base_type == "string";
+    }
+};
+
+inline bool has_string_return(klass_def const &klass)
+{
+    for (auto&& f : klass.functions)
+      {
+         if (f.return_type.original_type.visit(string_return_visitor{}))
+           return true;
+      }
+
+    for (auto&& c : klass.inherits)
+      {
+         attributes::klass_def parent(get_klass(c));
+         if (has_string_return(parent))
+           return true;
+      }
+
+    return false;
+}
+
 }
 namespace type_traits {
 
