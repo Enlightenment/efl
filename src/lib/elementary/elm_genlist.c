@@ -4625,16 +4625,14 @@ _item_process(Elm_Genlist_Data *sd,
 }
 
 static void
-_item_process_post(Elm_Genlist_Data *sd,
-                   Elm_Gen_Item *it,
-                   Eina_Bool qadd)
+_item_process_post(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
 {
    Eina_Bool show_me = EINA_FALSE;
 
    if (it->item->block->changed)
      {
         show_me = _item_block_recalc
-            (it->item->block, it->item->block->num, qadd);
+            (it->item->block, it->item->block->num, EINA_TRUE);
         it->item->block->changed = 0;
         if (sd->pan_changed)
           {
@@ -4686,7 +4684,7 @@ _queue_process(Elm_Genlist_Data *sd)
         it->item->queued = EINA_FALSE;
         if (!_item_process(sd, it)) continue;
         t = ecore_time_get();
-        _item_process_post(sd, it, EINA_TRUE);
+        _item_process_post(sd, it);
         /* same as eina_inlist_count > 1 */
         if (sd->blocks && sd->blocks->next)
           {
@@ -7706,7 +7704,7 @@ _item_filtered_get(Elm_Gen_Item *it)
              sd->queue = eina_list_remove_list(sd->queue, l);
              it->item->queued = EINA_FALSE;
              _item_process(sd, it);
-             _item_process_post(sd, it, EINA_TRUE);
+             _item_process_post(sd, it);
           }
 
         _filter_item_internal(it);
