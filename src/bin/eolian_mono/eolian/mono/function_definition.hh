@@ -57,7 +57,7 @@ struct native_function_definition_generator
     if (is_string_return)
       {
          function_result = " System.String str = ";
-         function_post_action = "return Marshal.StringToHGlobalAuto(str);";
+         function_post_action = "return efl.eo.Globals.cached_string_to_intptr(((" + klass->cxx_name + "Inherit)wrapper).cached_strings, str);";
       }
 
     
