@@ -326,6 +326,8 @@ local func_type_str = {
     [eolian.function_type.METHOD] = "method"
 }
 
+local ffi = require("ffi")
+
 M.Function = Node:clone {
     -- function types
     UNRESOLVED = eolian.function_type.UNRESOLVED,
@@ -443,6 +445,10 @@ M.Function = Node:clone {
 
     is_same = function(self, other)
         return self.func == other.func
+    end,
+
+    id_get = function(self)
+        return tonumber(ffi.cast("uintptr_t", self.func))
     end
 }
 
