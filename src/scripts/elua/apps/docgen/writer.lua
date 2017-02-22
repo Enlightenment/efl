@@ -340,7 +340,9 @@ M.Writer = util.Object:clone {
     end,
 
     write_table = function(self, titles, tbl)
-        self:write_raw("^ ", table.concat(titles, " ^ "), " ^\n")
+        if titles then
+            self:write_raw("^ ", table.concat(titles, " ^ "), " ^\n")
+        end
         for i, v in ipairs(tbl) do
             self:write_raw("| ", table.concat(v,  " | "), " |\n")
         end

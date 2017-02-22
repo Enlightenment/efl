@@ -33,12 +33,14 @@ local get_func_csig_part = function(cn, tp)
     return dtree.type_cstr_get(tp, cn)
 end
 
-local gen_func_csig = function(f, ns, ftype)
+local gen_func_csig = function(f, ftype, ns)
     ftype = ftype or f.METHOD
     assert(ftype ~= f.PROPERTY)
 
     local cn = f:full_c_name_get(ftype)
-    keyref.add(cn, ns, "c")
+    if ns then
+        keyref.add(cn, ns, "c")
+    end
     local rtype = f:return_type_get(ftype)
 
     local fparam = "Eo *obj"
@@ -696,7 +698,7 @@ find_parent_briefdoc = function(fulln, cl)
     return pdoc:brief_get(pdocf)
 end
 
-local build_functable = function(f, title, ctitle, cl, tbl, over)
+local build_functable = function(f, title, cl, tbl, over)
     if #tbl == 0 then
         return
     end
@@ -705,7 +707,9 @@ local build_functable = function(f, title, ctitle, cl, tbl, over)
     for i, impl in ipairs(tbl) do
         local lbuf = writer.Buffer()
         local func = impl:function_get()
-        lbuf:write_link(func:nspaces_get(cl, true), func:name_get())
+        local llbuf = writer.Buffer()
+        llbuf:write_link(func:nspaces_get(cl, true), func:name_get())
+        lbuf:write_b(llbuf:finish())
 
         local ft = dtree.Function.METHOD
         if impl:is_prop_get() and impl:is_prop_set() then
@@ -742,7 +746,25 @@ local build_functable = function(f, title, ctitle, cl, tbl, over)
         else
             bdoc = doc:brief_get(docf)
         end
-        nt[#nt + 1] = { lbuf:finish(), bdoc }
+
+        lbuf:write_nl()
+        local codes = {}
+        if ft ~= dtree.Function.PROPERTY then
+            codes[#codes + 1] = gen_func_csig(func, ft)
+        else
+            codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_GET)
+            codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_SET)
+        end
+        lbuf:write_code(table.concat(codes, "\n"), "c")
+
+        if bdoc ~= "No description supplied." then
+            lbuf:write_nl()
+            lbuf:write_raw(bdoc)
+            lbuf:write_br()
+        end
+
+        nt[#nt + 1] = { lbuf:finish() }
+
         if impl:is_prop_get() or impl:is_prop_set() then
             build_property(impl, cl)
         else
@@ -750,7 +772,12 @@ local build_functable = function(f, title, ctitle, cl, tbl, over)
         end
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
-    f:write_table({ ctitle, "Brief description" }, nt)
+    for i, item in ipairs(nt) do
+        f:write_raw(item[1])
+        f:write_nl()
+        f:write_br()
+        f:write_nl()
+    end
     f:write_nl()
 end
 
@@ -798,10 +825,10 @@ local build_class = function(cl)
         end
     end
 
-    build_functable(f, "Methods", "Method name", cl, meths, false)
-    build_functable(f, "Properties", "Property name", cl, props, false)
-    build_functable(f, "Overridden Methods", "Method name", cl, methos, true)
-    build_functable(f, "Overridden Properties", "Property name", cl, propos, true)
+    build_functable(f, "Methods", cl, meths, false)
+    build_functable(f, "Properties", cl, props, false)
+    build_functable(f, "Overridden Methods", cl, methos, true)
+    build_functable(f, "Overridden Properties", cl, propos, true)
 
     f:write_h("Events", 2)
     local evs = cl:events_get()
@@ -1117,7 +1144,7 @@ build_method = function(impl, cl)
     f:write_nl()
 
     f:write_h("C signature", 2)
-    f:write_code(gen_func_csig(fn, mns), "c")
+    f:write_code(gen_func_csig(fn, nil, mns), "c")
     f:write_nl()
 
     local pars = fn:parameters_get()
@@ -1181,10 +1208,10 @@ build_property = function(impl, cl)
     f:write_h("C signature", 2)
     local codes = {}
     if isget then
-        codes[#codes + 1] = gen_func_csig(fn, pns, fn.PROP_GET)
+        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_GET, pns)
     end
     if isset then
-        codes[#codes + 1] = gen_func_csig(fn, pns, fn.PROP_SET)
+        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_SET, pns)
     end
     f:write_code(table.concat(codes, "\n"), "c")
     f:write_nl()
