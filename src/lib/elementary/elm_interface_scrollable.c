@@ -4554,5 +4554,13 @@ _elm_interface_scrollable_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_SCROLLABLE_INTERFACE_NAME_LEGACY, klass);
 }
 
+/* Legacy ABI compatibility - APIs never worked and were hidden behind
+ * EFL_EO_API_SUPPORT (from elm_interface.h) or inside internal headers.
+ * Removed between 1.18 and 1.19. The symbols are kept purely for ABI
+ * compatibility reasons.
+ */
+EAPI void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, double y EINA_UNUSED) {}
+EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
+
 #include "elm_interface_scrollable.eo.c"
 #include "elm_pan.eo.c"

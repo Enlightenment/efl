@@ -248,6 +248,11 @@ struct _Elm_Scrollable_Smart_Interface_Data
        return __VA_ARGS__;                                                   \
     }
 
+#if defined(EFL_EO_API_SUPPORT) && defined(EFL_BETA_API_SUPPORT)
+EAPI void elm_pan_gravity_set(Elm_Pan *, double x, double) EINA_DEPRECATED;
+EAPI void elm_pan_gravity_get(const Elm_Pan *, double *, double *) EINA_DEPRECATED;
+#endif
+
 /**
  * @}
  */
