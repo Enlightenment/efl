@@ -808,27 +808,17 @@ local build_class = function(cl)
     f:write_editable(cln, "description")
     f:write_nl()
 
-    local meths, props, methos, propos = {}, {}, {}, {}
+    local meths, methos = {}, {}
     for i, impl in ipairs(cl:implements_get()) do
-        if impl:is_prop_get() or impl:is_prop_set() then
-            if impl:is_overridden(cl) then
-                propos[#propos + 1] = impl
-            else
-                props[#props + 1] = impl
-            end
+        if impl:is_overridden(cl) then
+            methos[#methos + 1] = impl
         else
-            if impl:is_overridden(cl) then
-                methos[#methos + 1] = impl
-            else
-                meths[#meths + 1] = impl
-            end
+            meths[#meths + 1] = impl
         end
     end
 
-    build_functable(f, "Methods", cl, meths, false)
-    build_functable(f, "Properties", cl, props, false)
-    build_functable(f, "Overridden Methods", cl, methos, true)
-    build_functable(f, "Overridden Properties", cl, propos, true)
+    build_functable(f, "Members", cl, meths, false)
+    build_functable(f, "Overrides", cl, methos, true)
 
     f:write_h("Events", 2)
     local evs = cl:events_get()
