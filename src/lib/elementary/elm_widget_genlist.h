@@ -320,13 +320,11 @@ struct _Elm_Genlist_Filter
  * @}
  */
 
-#define GL_IT(_it) (_it->item)
-
 #define ELM_GENLIST_DATA_GET(o, sd) \
   Elm_Genlist_Data * sd = efl_data_scope_get(o, ELM_GENLIST_CLASS)
 
 #define ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd) \
-  Elm_Genlist_Data * sd = GL_IT(it)->wsd
+  Elm_Genlist_Data * sd = it->item->wsd
 
 #define ELM_GENLIST_PAN_DATA_GET(o, sd) \
   Elm_Genlist_Pan_Data * sd = efl_data_scope_get(o, ELM_GENLIST_PAN_CLASS)
