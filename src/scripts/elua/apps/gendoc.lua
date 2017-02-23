@@ -795,7 +795,7 @@ end
 -- finds all stuff that is callable on a class, respecting
 -- overrides and not duplicating, does a depth-first search
 local find_callables
-find_callables = function(cl, omeths, written)
+find_callables = function(cl, omeths, events, written)
     for i, inh in ipairs(cl:inherits_get()) do
         local pcl = dtree.Class.by_name_get(inh)
         for j, impl in ipairs(pcl:implements_get()) do
@@ -806,8 +806,38 @@ find_callables = function(cl, omeths, written)
                 written[fid] = true
             end
         end
-        find_callables(pcl, omeths, written)
+        for i, ev in ipairs(pcl:events_get()) do
+            events[#events + 1] = { pcl, ev }
+        end
+        find_callables(pcl, omeths, events, written)
     end
+end
+
+local build_evtable = function(f, title, cl, tbl)
+    if #tbl == 0 then
+        return
+    end
+    f:write_h(title, 2)
+    local nt = {}
+    local oclass = not cl
+    for i, ev in ipairs(tbl) do
+        local lbuf = writer.Buffer()
+        local evn
+        if oclass then
+            cl = ev[1]
+            ev = ev[2]
+            evn = cl:full_name_get() .. "." .. ev:name_get()
+        else
+            evn = ev:name_get()
+        end
+        lbuf:write_link(ev:nspaces_get(cl, true), evn)
+        nt[#nt + 1] = {
+            lbuf:finish(), ev:doc_get():brief_get()
+        }
+        build_event(ev, cl)
+    end
+    table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
+    f:write_table({ "Event name", "Brief description" }, nt)
 end
 
 local build_class = function(cl)
@@ -838,6 +868,7 @@ local build_class = function(cl)
     f:write_nl()
 
     local written = {}
+    local ievs = {}
     local meths, methos, omeths = {}, {}, {}
     for i, impl in ipairs(cl:implements_get()) do
         local func = impl:function_get()
@@ -848,29 +879,14 @@ local build_class = function(cl)
             meths[#meths + 1] = impl
         end
     end
-    find_callables(cl, omeths, written)
+    find_callables(cl, omeths, ievs, written)
 
     build_functable(f, "Members", cl, meths)
     build_functable(f, "Overrides", cl, methos)
     build_functable(f, "Others", nil, omeths)
 
-    f:write_h("Events", 2)
-    local evs = cl:events_get()
-    if #evs == 0 then
-        f:write_raw("This class does not define any events.\n")
-    else
-        local nt = {}
-        for i, ev in ipairs(evs) do
-            local lbuf = writer.Buffer()
-            lbuf:write_link(ev:nspaces_get(cl, true), ev:name_get())
-            nt[#nt + 1] = {
-                lbuf:finish(), ev:doc_get():brief_get()
-            }
-            build_event(ev, cl)
-        end
-        table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
-        f:write_table({ "Event name", "Brief description" }, nt)
-    end
+    build_evtable(f, "Events", cl, cl:events_get())
+    build_evtable(f, "Inherited Events", nil, ievs)
 
     f:finish()
 end
