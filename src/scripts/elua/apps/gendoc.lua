@@ -1060,7 +1060,7 @@ find_parent_doc = function(fulln, cl, ftype)
     return pdoc
 end
 
-local write_inherited_from = function(f, impl, cl, over)
+local write_inherited_from = function(f, impl, cl, over, prop)
     if not over then
         return
     end
@@ -1070,6 +1070,22 @@ local write_inherited_from = function(f, impl, cl, over)
     buf:write_link(
         impl:function_get():nspaces_get(pcl, true), impl:full_name_get()
     )
+    if prop then
+        buf:write_raw(" ")
+        local lbuf = writer.Buffer()
+        lbuf:write_raw("(")
+        if impl:is_prop_get() then
+            lbuf:write_raw("get")
+            if impl:is_prop_set() then
+                lbuf:write_raw(", ")
+            end
+        end
+        if impl:is_prop_set() then
+            lbuf:write_raw("set")
+        end
+        lbuf:write_raw(")")
+        buf:write_b(lbuf:finish())
+    end
     buf:write_raw(".")
     f:write_i(buf:finish())
 end
@@ -1132,7 +1148,7 @@ build_method = function(impl, cl)
     printgen("Generating method: " .. methn)
     stats.check_method(fn, cl)
 
-    write_inherited_from(f, impl, cl, over)
+    write_inherited_from(f, impl, cl, over, false)
 
     local doc = impl:doc_get(fn.METHOD)
     if over and not doc:exists() then
@@ -1175,19 +1191,19 @@ build_property = function(impl, cl)
     local f = writer.Writer(pns, propn)
     printgen("Generating property: " .. propn)
 
-    write_inherited_from(f, impl, cl, over)
+    write_inherited_from(f, impl, cl, over, true)
 
-    local isget = impl:is_prop_get()
-    local isset = impl:is_prop_set()
+    local pimp = fn:implement_get()
+
+    local isget = pimp:is_prop_get()
+    local isset = pimp:is_prop_set()
 
     if isget then stats.check_property(fn, cl, fn.PROP_GET) end
     if isset then stats.check_property(fn, cl, fn.PROP_SET) end
 
-    local pimp = fn:implement_get()
-
-    local doc = pimp:doc_get(fn.PROPERTY)
-    local gdoc = pimp:doc_get(fn.PROP_GET)
-    local sdoc = pimp:doc_get(fn.PROP_SET)
+    local doc = impl:doc_get(fn.PROPERTY)
+    local gdoc = impl:doc_get(fn.PROP_GET)
+    local sdoc = impl:doc_get(fn.PROP_SET)
 
     if over then
         if not doc:exists() then
