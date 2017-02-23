@@ -698,15 +698,26 @@ find_parent_briefdoc = function(fulln, cl)
     return pdoc:brief_get(pdocf)
 end
 
-local build_functable = function(f, title, cl, tbl, over)
+local build_functable = function(f, title, cl, tbl)
     if #tbl == 0 then
         return
     end
     f:write_h(title, 2)
     local nt = {}
+    local oclass = not cl
     for i, impl in ipairs(tbl) do
         local lbuf = writer.Buffer()
+
+        if oclass then
+            local impt = impl
+            cl, impl = impt[1], impt[2]
+            lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
+            lbuf:write_raw(".")
+        end
+
         local func = impl:function_get()
+        local over = impl:is_overridden(cl)
+
         local llbuf = writer.Buffer()
         llbuf:write_link(func:nspaces_get(cl, true), func:name_get())
         lbuf:write_b(llbuf:finish())
@@ -781,6 +792,24 @@ local build_functable = function(f, title, cl, tbl, over)
     f:write_nl()
 end
 
+-- finds all stuff that is callable on a class, respecting
+-- overrides and not duplicating, does a depth-first search
+local find_callables
+find_callables = function(cl, omeths, written)
+    for i, inh in ipairs(cl:inherits_get()) do
+        local pcl = dtree.Class.by_name_get(inh)
+        for j, impl in ipairs(pcl:implements_get()) do
+            local func = impl:function_get()
+            local fid = func:id_get()
+            if not written[fid] then
+                omeths[#omeths + 1] = { pcl, impl }
+                written[fid] = true
+            end
+        end
+        find_callables(pcl, omeths, written)
+    end
+end
+
 local build_class = function(cl)
     local cln = cl:nspaces_get()
     local fulln = cl:full_name_get()
@@ -808,17 +837,22 @@ local build_class = function(cl)
     f:write_editable(cln, "description")
     f:write_nl()
 
-    local meths, methos = {}, {}
+    local written = {}
+    local meths, methos, omeths = {}, {}, {}
     for i, impl in ipairs(cl:implements_get()) do
+        local func = impl:function_get()
+        written[func:id_get()] = true
         if impl:is_overridden(cl) then
             methos[#methos + 1] = impl
         else
             meths[#meths + 1] = impl
         end
     end
+    find_callables(cl, omeths, written)
 
-    build_functable(f, "Members", cl, meths, false)
-    build_functable(f, "Overrides", cl, methos, true)
+    build_functable(f, "Members", cl, meths)
+    build_functable(f, "Overrides", cl, methos)
+    build_functable(f, "Others", nil, omeths)
 
     f:write_h("Events", 2)
     local evs = cl:events_get()
