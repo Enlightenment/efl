@@ -4638,7 +4638,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #ifdef HAVE_ELEMENTARY_SDL
         else if ((disp) && (!strcmp(disp, "sdl")))
           {
-             if (is_hw_accel)
+             if (is_gl_accel)
                {
                   enginelist[p++] = ELM_OPENGL_SDL;
                   enginelist[p++] = ELM_SOFTWARE_SDL;
