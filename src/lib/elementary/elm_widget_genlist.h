@@ -228,7 +228,7 @@ struct Elm_Gen_Item_Type
    Eina_List              *rel_revs; // FIXME: find better way not to use this
    Evas_Object            *deco_it_view;
    int                     expanded_depth;
-   int                     order_num_in;
+   int                     order_num_in; // Written by _item_order_update()
 
    Eina_Bool               decorate_all_item_realized : 1;
    Eina_Bool               tree_effect_finished : 1; /* tree effect */
@@ -255,6 +255,7 @@ struct _Item_Block
    EINA_INLIST;
 
    int                     count;
+   int                     vis_count;
    int                     num;
    int                     reorder_offset;
    Elm_Genlist_Data       *sd;

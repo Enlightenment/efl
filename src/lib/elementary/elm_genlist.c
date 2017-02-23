@@ -781,7 +781,7 @@ _calc_job(void *data)
         itb->w = minw;
         itb->h = itb->minh;
         y += itb->h;
-        in += itb->count;
+        in += itb->vis_count;
         if ((show_me) && (sd->show_item) && (!sd->show_item->item->queued))
           sd->check_scroll = EINA_TRUE;
      }
@@ -1277,32 +1277,24 @@ _elm_genlist_item_position_state_update(Elm_Gen_Item *it)
 }
 
 static void
-_item_order_update(const Eina_Inlist *l,
-                   int start)
+_item_order_update(Elm_Gen_Item *it_base, const int start)
 {
-   Elm_Gen_Item *it, *it2;
+   Elm_Gen_Item *it;
+   Item_Block *itb_base;
+   int index = start;
 
-   /*
-    * always update position state of previous item, it may have been
-    * marked as "single" if it was the only element at the time, or
-    * "middle", "first" or "last" in the case of insert into different
-    * positions.
-    */
-   if ((l->prev) && (start > 0))
+   itb_base = it_base->item->block;
+   EINA_INLIST_FOREACH(EINA_INLIST_GET(it_base), it)
      {
-        it = ELM_GEN_ITEM_FROM_INLIST(l->prev);
-        it->item->order_num_in = start - 1;
+        if (it->hide) continue;
+        if (it->item->block != itb_base)
+          {
+             if (it->item->block && (it->item->block->num != index))
+               it->item->block->changed = EINA_TRUE;
+             break;
+          }
+        it->item->order_num_in = index++;
         _elm_genlist_item_position_state_update(it);
-     }
-
-   for (it = ELM_GEN_ITEM_FROM_INLIST(l); l; l = l->next,
-        it = ELM_GEN_ITEM_FROM_INLIST(l))
-     {
-        it->item->order_num_in = start++;
-        _elm_genlist_item_position_state_update(it);
-        it2 = ELM_GEN_ITEM_FROM_INLIST(l->next);
-        if (it2 && (it->item->order_num_in != it2->item->order_num_in))
-          return;
      }
 }
 
@@ -1792,26 +1784,23 @@ _elm_genlist_item_focus_update(Elm_Gen_Item *it)
 }
 
 static void
-_item_realize(Elm_Gen_Item *it,
-              int in,
-              Eina_Bool calc)
+_item_realize(Elm_Gen_Item *it, const int index, Eina_Bool calc)
 {
    const char *treesize;
    Item_Size *size = NULL;
    int tsize = 20;
+   int in = index;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (it->realized)
      {
         if (it->item->order_num_in != in)
           {
-             _item_order_update(EINA_INLIST_GET(it), in);
-             _elm_genlist_item_state_update(it);
+             _item_order_update(it, in);
              _elm_genlist_item_index_update(it);
           }
         return;
      }
-   it->item->order_num_in = in;
 
    if (sd->tree_effect_enabled ||
        (!_item_cache_find(it)))
@@ -1824,7 +1813,7 @@ _item_realize(Elm_Gen_Item *it,
    /* access */
    if (_elm_config->access_mode) _access_widget_item_register(it);
 
-   _item_order_update(EINA_INLIST_GET(it), in);
+   _item_order_update(it, in);
 
    if (sd->reorder_mode)
      edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_MODE_SET, "elm");
@@ -2201,7 +2190,7 @@ _group_items_recalc(void *data)
      {
         if (git->item->want_realize)
           {
-             if (!git->realized) _item_realize(git, 0, EINA_FALSE);
+             if (!git->realized) _item_realize(git, git->item->order_num_in, EINA_FALSE);
              evas_object_resize(VIEW(git), sd->minw, git->item->h);
              evas_object_move(VIEW(git), git->item->scrl_x, git->item->scrl_y);
              evas_object_stack_above(VIEW(git), sd->stack[1]);
@@ -2421,13 +2410,13 @@ _item_block_position(Item_Block *itb,
                          _elm_genlist_item_unrealize(it, EINA_FALSE);
                     }
                }
-             in++;
           }
         else
           {
              if (vis) it->item->want_realize = EINA_TRUE;
           }
         y += it->item->h;
+        in++;
      }
    evas_event_thaw(evas_object_evas_get((itb->sd)->obj));
    evas_event_thaw_eval(evas_object_evas_get((itb->sd)->obj));
@@ -2516,7 +2505,7 @@ _elm_genlist_pan_efl_canvas_group_group_calculate(Eo *obj, Elm_Genlist_Pan_Data 
           {
              if (itb->realized) _item_block_unrealize(itb);
           }
-        in += itb->count;
+        in += itb->vis_count;
      }
    if ((!sd->reorder_it) || (sd->reorder_pan_move))
      _group_items_recalc(sd);
@@ -5195,6 +5184,7 @@ _item_block_recalc(Item_Block *itb,
    Eina_Bool show_me = EINA_FALSE, changed = EINA_FALSE;
    Evas_Coord y = 0;
    Item_Size *size = NULL;
+   int vis_count = 0;
 
    itb->num = in;
    EINA_LIST_FOREACH(itb->items, l, it)
@@ -5207,6 +5197,7 @@ _item_block_recalc(Item_Block *itb,
              if (it->realized) evas_object_hide(VIEW(it));
              continue;
           }
+        vis_count++;
         if (!itb->realized)
           {
              if (itb->sd->homogeneous &&
@@ -5264,6 +5255,7 @@ _item_block_recalc(Item_Block *itb,
    itb->minh = minh;
    itb->changed = EINA_FALSE;
    itb->position_update = EINA_FALSE;
+   itb->vis_count = vis_count;
 
    return show_me;
 }
