@@ -162,6 +162,17 @@ const ColorSpace_Format_Convertion colorspace_format_convertion[] = {
      EVAS_COLORSPACE_YCBCR422601_PL, _evas_video_yuy2, EINA_FALSE },
   { "NV12", GST_VIDEO_FORMAT_NV12, GST_VIDEO_COLOR_MATRIX_BT601,
      EVAS_COLORSPACE_YCBCR420NV12601_PL, _evas_video_nv12, EINA_TRUE },
+   // XXX:
+   // XXX: need to add nv12 709 colorspace support to evas itself.
+   // XXX: this makes gst streams work when they are nv12 709 but maybe
+   // XXX: will display in slightly off color.. but in the end this needs
+   // XXX: fixing to display correctly.
+   // XXX:
+  { "NV12-709", GST_VIDEO_FORMAT_NV12, GST_VIDEO_COLOR_MATRIX_BT709,
+     EVAS_COLORSPACE_YCBCR420NV12601_PL, _evas_video_nv12, EINA_TRUE },
+   // XXX:
+   // XXX:
+   // XXX:
 
   { "BGR", GST_VIDEO_FORMAT_BGR, GST_VIDEO_COLOR_MATRIX_UNKNOWN,
      EVAS_COLORSPACE_ARGB8888, _evas_video_bgr, EINA_FALSE },
