@@ -94,7 +94,7 @@ _tick_send(signed char val)
 }
 
 static void
-_timer_send_time(double t)
+_timer_send_time(double t, Ecore_Thread *thread)
 {
    double *tim = malloc(sizeof(*tim));
    if (tim)
@@ -104,7 +104,7 @@ _timer_send_time(double t)
         eina_spinlock_take(&tick_queue_lock);
         tick_queue_count++;
         eina_spinlock_release(&tick_queue_lock);
-        ecore_thread_feedback(timer_thread, tim);
+        ecore_thread_feedback(thread, tim);
      }
 }
 
@@ -246,7 +246,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                }
              else if (data_timeout)
                {
-                  if (tick) _timer_send_time(t0 - d + ft);
+                  if (tick) _timer_send_time(t0 - d + ft, thread);
                }
           }
      }
@@ -295,7 +295,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                }
              else if (data_timeout)
                {
-                  if (tick) _timer_send_time(t0 - d + ft);
+                  if (tick) _timer_send_time(t0 - d + ft, thread);
                }
           }
      }
