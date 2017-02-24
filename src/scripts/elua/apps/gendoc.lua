@@ -693,7 +693,7 @@ local build_functable = function(f, title, tcl, tbl, newm)
     if #tbl == 0 then
         return
     end
-    f:write_h(title, 2)
+    f:write_h(title, newm and 2 or 3)
     local nt = {}
     for i, implt in ipairs(tbl) do
         local lbuf = writer.Buffer()
@@ -814,31 +814,62 @@ find_callables = function(cl, omeths, events, written)
     end
 end
 
-local build_evtable = function(f, title, cl, tbl)
+local build_evtable = function(f, title, tcl, tbl, newm)
     if #tbl == 0 then
         return
     end
-    f:write_h(title, 2)
+    f:write_h(title, newm and 2 or 3)
     local nt = {}
-    local oclass = not cl
-    for i, ev in ipairs(tbl) do
+    for i, evt in ipairs(tbl) do
         local lbuf = writer.Buffer()
         local evn
-        if oclass then
-            cl = ev[1]
-            ev = ev[2]
-            evn = cl:full_name_get() .. "." .. ev:name_get()
+        local cl, ev
+        if not newm then
+            cl, ev = evt[1], evt[2]
         else
-            evn = ev:name_get()
+            cl, ev = tcl, evt
         end
-        lbuf:write_link(ev:nspaces_get(cl, true), evn)
-        nt[#nt + 1] = {
-            lbuf:finish(), ev:doc_get():brief_get()
-        }
+
+        if not newm then
+            lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
+            lbuf:write_raw(".")
+        end
+
+        local llbuf = writer.Buffer()
+        llbuf:write_link(ev:nspaces_get(cl, true), ev:name_get())
+        lbuf:write_b(llbuf:finish())
+
+        local wt = {}
+        -- name info
+        wt[#wt + 1] = lbuf:finish()
+
+        lbuf:write_nl()
+        lbuf:write_code(dtree.type_cstr_get(ev:type_get(), ev:c_name_get())
+            .. ";", "c")
+
+        local bdoc = ev:doc_get():brief_get()
+        if bdoc ~= "No description supplied." then
+            lbuf:write_nl()
+            lbuf:write_raw(bdoc)
+            lbuf:write_br()
+        end
+
+        -- description
+        wt[#wt + 1] = lbuf:finish()
+        nt[#nt + 1] = wt
+
         build_event(ev, cl)
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
-    f:write_table({ "Event name", "Brief description" }, nt)
+    for i, item in ipairs(nt) do
+        -- name
+        f:write_raw(item[1])
+        -- desc
+        f:write_raw(item[2])
+        f:write_nl()
+        f:write_br()
+        f:write_nl()
+    end
 end
 
 local build_class = function(cl)
@@ -885,8 +916,8 @@ local build_class = function(cl)
     build_functable(f, "Members", cl, meths, true)
     build_functable(f, "Inherited", cl, omeths, false)
 
-    build_evtable(f, "Events", cl, cl:events_get())
-    build_evtable(f, "Inherited Events", nil, ievs)
+    build_evtable(f, "Events", cl, cl:events_get(), true)
+    build_evtable(f, "Inherited", cl, ievs, false)
 
     f:finish()
 end
