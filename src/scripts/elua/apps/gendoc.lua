@@ -712,16 +712,7 @@ local build_functable = function(f, title, tcl, tbl, newm)
         llbuf:write_link(func:nspaces_get(cl, true), func:name_get())
         lbuf:write_b(llbuf:finish())
 
-        local ft = dtree.Function.METHOD
-        if impl:is_prop_get() and impl:is_prop_set() then
-            ft = dtree.Function.PROPERTY
-        elseif impl:is_prop_get() then
-            ft = dtree.Function.PROP_GET
-        elseif impl:is_prop_set() then
-            ft = dtree.Function.PROP_SET
-        end
-
-        local pt = propt_to_type[ft]
+        local pt = propt_to_type[func:type_get()]
         if pt then
             lbuf:write_raw(" ")
             local llbuf = writer.Buffer()
@@ -734,6 +725,9 @@ local build_functable = function(f, title, tcl, tbl, newm)
         wt[#wt + 1] = lbuf:finish()
 
         if over then
+            -- TODO: possibly also mention which part of a property was
+            -- overridden and where, get/set override point might differ!
+            -- but we get latest doc every time so it's ok for now
             lbuf:write_raw(" ")
             local llbuf = writer.Buffer()
             llbuf:write_raw("[Overridden")
