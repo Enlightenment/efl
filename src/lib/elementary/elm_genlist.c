@@ -4663,7 +4663,7 @@ _item_process_post(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
     * item this prevents the selected item being scrolled off the
     * viewport
     */
-   if (sd->selected && it->item->before)
+   if (sd->selected && it->item->before && !it->hide)
      {
         int y = 0, h;
         Elm_Object_Item *eo_it2;
@@ -4671,6 +4671,7 @@ _item_process_post(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
         eo_it2 = sd->selected->data;
         ELM_GENLIST_ITEM_DATA_GET(eo_it2, it2);
         if (!it2->item->block) return;
+        if (it2->item->order_num_in < it->item->order_num_in) return;
         elm_interface_scrollable_content_pos_get(sd->obj, NULL, &y);
         evas_object_geometry_get(sd->pan_obj, NULL, NULL, NULL, &h);
         if ((it->y + it->item->block->y > y + h) ||
