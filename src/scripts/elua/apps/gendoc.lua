@@ -631,7 +631,7 @@ build_igraph_r = function(cl, nbuf, ibuf)
     local sn = cl:full_name_get():lower():gsub("%.", "_")
     for i, acl in ipairs(cl:inherits_get()) do
         nbuf[#nbuf + 1] = class_to_node(acl)
-        ibuf[#ibuf + 1] = { sn, (cl:full_name_get():lower():gsub("%.", "_")) }
+        ibuf[#ibuf + 1] = { sn, (acl:full_name_get():lower():gsub("%.", "_")) }
         build_igraph_r(acl, nbuf, ibuf)
     end
 end
