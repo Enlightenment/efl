@@ -698,20 +698,19 @@ find_parent_briefdoc = function(fulln, cl)
     return pdoc:brief_get(pdocf)
 end
 
-local build_functable = function(f, title, cl, tbl)
+local build_functable = function(f, title, tcl, tbl, newm)
     if #tbl == 0 then
         return
     end
     f:write_h(title, 2)
     local nt = {}
-    local oclass = not cl
-    for i, impl in ipairs(tbl) do
+    for i, implt in ipairs(tbl) do
         local lbuf = writer.Buffer()
 
-        if oclass then
-            local impt = impl
-            cl, impl = impt[1], impt[2]
-            lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
+        local cl, impl = unpack(implt)
+        local ocl = impl:class_get()
+        if not newm then
+            lbuf:write_link(ocl:nspaces_get(true), ocl:full_name_get())
             lbuf:write_raw(".")
         end
 
@@ -742,9 +741,13 @@ local build_functable = function(f, title, cl, tbl)
         if over then
             lbuf:write_raw(" ")
             local llbuf = writer.Buffer()
-            local icl = impl:class_get()
-            llbuf:write_raw("[from ")
-            llbuf:write_link(icl:nspaces_get(true), icl:full_name_get())
+            llbuf:write_raw("[Overridden")
+            if cl ~= tcl then
+                llbuf:write_raw(" in ")
+                llbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
+            else
+                llbuf:write_raw(" here")
+            end
             llbuf:write_raw("]")
             lbuf:write_i(llbuf:finish())
         end
@@ -869,21 +872,20 @@ local build_class = function(cl)
 
     local written = {}
     local ievs = {}
-    local meths, methos, omeths = {}, {}, {}
+    local meths, omeths = {}, {}
     for i, impl in ipairs(cl:implements_get()) do
         local func = impl:function_get()
         written[func:id_get()] = true
         if impl:is_overridden(cl) then
-            methos[#methos + 1] = impl
+            omeths[#omeths + 1] = { cl, impl }
         else
-            meths[#meths + 1] = impl
+            meths[#meths + 1] = { cl, impl }
         end
     end
     find_callables(cl, omeths, ievs, written)
 
-    build_functable(f, "Members", cl, meths)
-    build_functable(f, "Overrides", cl, methos)
-    build_functable(f, "Others", nil, omeths)
+    build_functable(f, "Members", cl, meths, true)
+    build_functable(f, "Inherited", cl, omeths, false)
 
     build_evtable(f, "Events", cl, cl:events_get())
     build_evtable(f, "Inherited Events", nil, ievs)
