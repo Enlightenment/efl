@@ -538,6 +538,13 @@ _ecore_evas_buffer_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coor
    evas_pointer_canvas_xy_get(ee->evas, x, y);
 }
 
+static Eina_Bool
+_ecore_evas_buffer_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
+{
+   _ecore_evas_mouse_move_process((Ecore_Evas*)ee, x, y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
+   return EINA_TRUE;
+}
+
 static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 {
    _ecore_evas_buffer_free,
@@ -604,7 +611,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      _ecore_evas_buffer_msg_send,
 
      _ecore_evas_buffer_pointer_xy_get, // pointer_xy_get
-     NULL, // pointer_warp
+     _ecore_evas_buffer_pointer_warp, // pointer_warp
 
      NULL, // wm_rot_preferred_rotation_set
      NULL, // wm_rot_available_rotations_set
