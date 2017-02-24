@@ -532,6 +532,12 @@ _ecore_evas_buffer_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int
    if (h) *h = ee->h;
 }
 
+static void
+_ecore_evas_buffer_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
+{
+   evas_pointer_canvas_xy_get(ee->evas, x, y);
+}
+
 static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 {
    _ecore_evas_buffer_free,
@@ -597,7 +603,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      _ecore_evas_buffer_msg_parent_send,
      _ecore_evas_buffer_msg_send,
 
-     NULL, // pointer_xy_get
+     _ecore_evas_buffer_pointer_xy_get, // pointer_xy_get
      NULL, // pointer_warp
 
      NULL, // wm_rot_preferred_rotation_set
