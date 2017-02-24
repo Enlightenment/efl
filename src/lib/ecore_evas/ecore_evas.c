@@ -3419,7 +3419,7 @@ ecore_evas_sub_ecore_evas_list_get(const Ecore_Evas *ee)
 EAPI void
 ecore_evas_input_event_register(Ecore_Evas *ee)
 {
-   ecore_event_window_register((Ecore_Window)ee, ee, ee->evas,
+   ecore_event_window_register(ee->prop.window, ee, ee->evas,
                                (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
@@ -3430,7 +3430,7 @@ ecore_evas_input_event_register(Ecore_Evas *ee)
 EAPI void
 ecore_evas_input_event_unregister(Ecore_Evas *ee)
 {
-   ecore_event_window_unregister((Ecore_Window)ee);
+   ecore_event_window_unregister(ee->prop.window);
 }
 
 EAPI Eina_Strbuf *
