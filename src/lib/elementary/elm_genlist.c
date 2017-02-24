@@ -4361,6 +4361,8 @@ _item_block_add(Elm_Genlist_Data *sd,
 newblock:
         if (it->item->rel)
           {
+             // FIXME: Why is this case here??? This doesn't make sense at all!
+             // There shouldn't be a goto in the first place!
              itb = calloc(1, sizeof(Item_Block));
              if (!itb) return EINA_FALSE;
              itb->sd = sd;
@@ -4536,6 +4538,12 @@ newblock:
                        itbp->items = eina_list_append(itbp->items, it2);
                        it2->item->block = itbp;
                        itbp->count++;
+                       if (!it2->hide)
+                         {
+                            itb->vis_count--;
+                            itbp->num--;
+                            itbp->vis_count++;
+                         }
 
                        if (it2->realized) itbp->realized = EINA_TRUE;
                     }
@@ -4563,6 +4571,13 @@ newblock:
                        itbn->items = eina_list_prepend(itbn->items, it2);
                        it2->item->block = itbn;
                        itbn->count++;
+                       if (!it2->hide)
+                         {
+                            itb->h -= it->item->h;
+                            itb->vis_count--;
+                            itbn->h += it->item->h;
+                            itbn->vis_count++;
+                         }
 
                        if (it2->realized) itbn->realized = EINA_TRUE;
                     }
@@ -4593,9 +4608,21 @@ newblock:
                   itb2->items = eina_list_prepend(itb2->items, it2);
                   it2->item->block = itb2;
                   itb2->count++;
+                  if (!it2->hide)
+                    {
+                       itb->vis_count--;
+                       itb->h -= it2->item->h;
+                       itb2->vis_count++;
+                       itb2->h += it2->item->h;
+                    }
 
                   if (it2->realized) itb2->realized = EINA_TRUE;
                }
+
+             itb2->num = itb->num + itb->vis_count;
+             itb2->x = itb->x;
+             itb2->w = itb->w;
+             itb2->y = itb->y + itb->h;
           }
      }
 
