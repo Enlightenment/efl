@@ -523,6 +523,15 @@ _ecore_evas_buffer_msg_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *da
      }
 }
 
+static void
+_ecore_evas_buffer_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
+{
+   if (x) *x = ee->x;
+   if (y) *y = ee->y;
+   if (w) *w = ee->w;
+   if (h) *h = ee->h;
+}
+
 static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 {
    _ecore_evas_buffer_free,
@@ -583,7 +592,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
 
      _ecore_evas_buffer_render,
-     NULL, // screen_geometry_get
+     _ecore_evas_buffer_screen_geometry_get,
      NULL,  // screen_dpi_get
      _ecore_evas_buffer_msg_parent_send,
      _ecore_evas_buffer_msg_send,
