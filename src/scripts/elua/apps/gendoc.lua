@@ -387,11 +387,7 @@ build_inherits = function(cl, t, lvl)
         lbuf:write_b(lbuf:finish())
     end
     t[#t + 1] = { lvl, lbuf:finish() }
-    for i, cln in ipairs(cl:inherits_get()) do
-        local acl = dtree.Class.by_name_get(cln)
-        if not acl then
-            error("error retrieving inherited class " .. cln)
-        end
+    for i, acl in ipairs(cl:inherits_get()) do
         build_inherits(acl, t, lvl + 1)
     end
     return t
@@ -633,13 +629,9 @@ end
 local build_igraph_r
 build_igraph_r = function(cl, nbuf, ibuf)
     local sn = cl:full_name_get():lower():gsub("%.", "_")
-    for i, cln in ipairs(cl:inherits_get()) do
-        local acl = dtree.Class.by_name_get(cln)
-        if not acl then
-            error("error retrieving inherited class " .. cln)
-        end
+    for i, acl in ipairs(cl:inherits_get()) do
         nbuf[#nbuf + 1] = class_to_node(acl)
-        ibuf[#ibuf + 1] = { sn, (cln:lower():gsub("%.", "_")) }
+        ibuf[#ibuf + 1] = { sn, (cl:full_name_get():lower():gsub("%.", "_")) }
         build_igraph_r(acl, nbuf, ibuf)
     end
 end
@@ -669,8 +661,7 @@ end
 
 local find_parent_impl
 find_parent_impl = function(fulln, cl)
-    for i, inh in ipairs(cl:inherits_get()) do
-        local pcl = dtree.Class.by_name_get(inh)
+    for i, pcl in ipairs(cl:inherits_get()) do
         for j, impl in ipairs(pcl:implements_get()) do
             if impl:full_name_get() == fulln then
                 return impl, pcl
@@ -738,6 +729,10 @@ local build_functable = function(f, title, tcl, tbl, newm)
             lbuf:write_i(llbuf:finish())
         end
 
+        local wt = {}
+        -- name info
+        wt[#wt + 1] = lbuf:finish()
+
         if over then
             lbuf:write_raw(" ")
             local llbuf = writer.Buffer()
@@ -751,6 +746,9 @@ local build_functable = function(f, title, tcl, tbl, newm)
             llbuf:write_raw("]")
             lbuf:write_i(llbuf:finish())
         end
+
+        -- overridde info (or empty)
+        wt[#wt + 1] = lbuf:finish()
 
         local doc = impl:doc_get(func.METHOD, true)
         local docf = impl:fallback_doc_get(true)
@@ -777,7 +775,9 @@ local build_functable = function(f, title, tcl, tbl, newm)
             lbuf:write_br()
         end
 
-        nt[#nt + 1] = { lbuf:finish() }
+        -- sigs and description
+        wt[#wt + 1] = lbuf:finish()
+        nt[#nt + 1] = wt
 
         if impl:is_prop_get() or impl:is_prop_set() then
             build_property(impl, cl)
@@ -787,7 +787,12 @@ local build_functable = function(f, title, tcl, tbl, newm)
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
     for i, item in ipairs(nt) do
+        -- name
         f:write_raw(item[1])
+        -- override
+        f:write_raw(item[2])
+        -- desc
+        f:write_raw(item[3])
         f:write_nl()
         f:write_br()
         f:write_nl()
@@ -799,8 +804,7 @@ end
 -- overrides and not duplicating, does a depth-first search
 local find_callables
 find_callables = function(cl, omeths, events, written)
-    for i, inh in ipairs(cl:inherits_get()) do
-        local pcl = dtree.Class.by_name_get(inh)
+    for i, pcl in ipairs(cl:inherits_get()) do
         for j, impl in ipairs(pcl:implements_get()) do
             local func = impl:function_get()
             local fid = func:id_get()
@@ -1148,8 +1152,7 @@ get_all_impls_of = function(tbl, cl, fn, got)
             break
         end
     end
-    for i, cln in ipairs(cl:children_get()) do
-        local icl = dtree.Class.by_name_get(cln)
+    for i, icl in ipairs(cl:children_get()) do
         get_all_impls_of(tbl, icl, fn, got)
     end
 end

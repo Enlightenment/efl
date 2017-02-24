@@ -218,7 +218,18 @@ M.Class = Node:clone {
     end,
 
     inherits_get = function(self)
-        return self.class:inherits_get():to_array()
+        local ret = self._cache_inhc
+        if ret then
+            return ret
+        end
+        ret = {}
+        for cln in self.class:inherits_get() do
+            local cl = self.by_name_get(cln)
+            assert(cl)
+            ret[#ret + 1] = cl
+        end
+        self._cache_inhc = ret
+        return ret
     end,
 
     children_get = function(self)
@@ -1480,15 +1491,12 @@ M.parse = function()
     for cl in eolian.all_classes_get() do
         local cln = cl:full_name_get()
         for icl in cl:inherits_get() do
-            if icl == "Elm.List" then
-                print("GOT ELM LIST")
-            end
             local t = revh[icl]
             if not t then
                 t = {}
                 revh[icl] = t
             end
-            t[#t + 1] = cln
+            t[#t + 1] = M.Class.by_name_get(cl:full_name_get())
         end
     end
 end
