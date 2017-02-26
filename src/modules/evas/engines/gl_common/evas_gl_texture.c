@@ -2203,7 +2203,7 @@ evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
           return;
         _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
         glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + 1] - rows[h]);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, (rows[h + 1] - rows[h]) / 2);
         if (!_tex_2d(tex->gc, tex->ptuv->intformat, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat))
           return;
         _tex_sub_2d(tex->gc, 0, 0, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat, rows[h]);
