@@ -80,7 +80,7 @@ class Ecore.Audio (Efl.Object)
       @property format @pure_virtual {
          [[Format of the object.]]
          set {
-            [[Set the format of the object
+            [[Sets the format of the object
 
               What formats are supported depends on the actual object. Default
               is ECORE_AUDIO_FORMAT_AUTO
@@ -90,7 +90,7 @@ class Ecore.Audio (Efl.Object)
             return: bool; [[$true if the format was supported, $false otherwise]]
          }
          get {
-            [[Get the format of the object
+            [[Gets the format of the object
 
               After setting the source if the format was ECORE_AUDIO_FORMAT_AUTO
               this function will now return the actual format.
@@ -103,7 +103,7 @@ class Ecore.Audio (Efl.Object)
          }
       }
       vio_set @pure_virtual {
-         [[Set the virtual IO functions
+         [[Sets the virtual IO functions
 
            @since 1.8
          ]]

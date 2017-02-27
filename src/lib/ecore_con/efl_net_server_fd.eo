@@ -49,7 +49,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
             params {
                 address: string; [[The address to validate the next available socket. It doesn't serve as search, only as validation!]]
             }
-            return: Eina.Error; [[0 on success, ENOENT if no socket is available or EALREADY if already have a socket]]
+            return: Eina.Error; [[$0 on success, ENOENT if no socket is available or EALREADY if already have a socket]]
         }
 
         @property family {
@@ -122,7 +122,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
         }
 
         client_add @protected @pure_virtual {
-            [[Accept a new client, should emit "client,add".
+            [[Accepts a new client, should emit "client,add".
 
               Remember to create the client object with a callback to
               EFL_IO_CLOSER_EVENT_CLOSED during the construction and
@@ -141,7 +141,7 @@ class Efl.Net.Server.Fd (Efl.Loop.Fd, Efl.Net.Server) {
         }
 
         client_reject @protected @pure_virtual {
-            [[Reject a new client, should emit "client,rejected".
+            [[Rejects a new client, should emit "client,rejected".
 
               Must always close the client socket when it's done.
             ]]

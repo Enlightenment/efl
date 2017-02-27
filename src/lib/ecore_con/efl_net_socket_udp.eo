@@ -15,7 +15,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
 
     methods {
         next_datagram_size_query {
-            [[Query the next datagram size.
+            [[Queries the next datagram size.
 
               This will use system calls to determine the next
               datagram size, in bytes.
@@ -35,7 +35,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
         }
 
         @property dont_route {
-            [[Avoid sent UDP packets being routed by a gateway, limiting them to the local network.
+            [[Avoids sent UDP packets being routed by a gateway, limiting them to the local network.
 
               This will use SO_DONTROUTE option to avoid gateways
               routing sent packets to outside of local network. It's
@@ -74,7 +74,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
         }
 
         multicast_join {
-            [[Join a multicast group.
+            [[Joins a multicast group.
 
               The multicast address should be in the format:
 
@@ -91,22 +91,22 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
             params {
                 address: string @nonull; [[Multicast address to join]]
             }
-            return: Eina.Error; [[0 on success, error code otherwise]]
+            return: Eina.Error; [[$0 on success, error code otherwise]]
         }
 
         multicast_leave {
-            [[Leave a multicast group.
+            [[Leaves a multicast group.
 
               This reverses the effect of @.multicast_join.
             ]]
             params {
                 address: string @nonull; [[Multicast address to leave]]
             }
-            return: Eina.Error; [[0 on success, error code otherwise]]
+            return: Eina.Error; [[$0 on success, error code otherwise]]
         }
 
         multicast_groups_get {
-            [[Return the multicast groups this server has joined.
+            [[Returns the multicast groups this server has joined.
 
               The iterator is only valid until a new group is joined
               or left using @.multicast_join or @.multicast_leave.
@@ -121,7 +121,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
             ]]
             get { }
             set {
-                return: Eina.Error; [[0 on success, error code otherwise]]
+                return: Eina.Error; [[$0 on success, error code otherwise]]
             }
             values {
                 ttl: uint8; [[Time to live]]
@@ -136,7 +136,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
             ]]
             get { }
             set {
-                return: Eina.Error; [[0 on success, error code otherwise]]
+                return: Eina.Error; [[$0 on success, error code otherwise]]
             }
             values {
                 loopback: bool; [[$true multicast packets are loopbacked, $false otherwise]]
@@ -144,7 +144,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
         }
 
         @property bind {
-            [[Force binding to a specific address.
+            [[Forces binding to a specific address.
 
               Some servers may request packets being sent from a
               specific address, then one should bind to that address
@@ -158,7 +158,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
             ]]
             get { }
             set {
-                return: Eina.Error; [[0 on success, error code otherwise]]
+                return: Eina.Error; [[$0 on success, error code otherwise]]
             }
             values {
                 address: string @nonull; [[Address to bind to]]
@@ -166,7 +166,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
         }
 
         init @protected {
-            [[Initialize the socket to communicate with given IP address]]
+            [[Initializes the socket to communicate with given IP address]]
             params {
                 remote_address: Efl.Net.Ip.Address; [[The remote address this socket will communicate with]]
             }

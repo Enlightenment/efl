@@ -100,7 +100,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
         }
 
         @property hostname_verify {
-            [[Define if hostname should be verified.
+            [[Defines if hostname should be verified.
 
               This will check the socket hostname (without the port in
               case of an IP) or the overriden value from

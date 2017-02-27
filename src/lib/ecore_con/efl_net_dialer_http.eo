@@ -71,20 +71,20 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
 
               This property will change the behavior of @Efl.Io.Sizer:
 
-               - if @Efl.Net.Dialer.Http.Primary_Mode.auto, then
+               - If @Efl.Net.Dialer.Http.Primary_Mode.auto, then
                  @Efl.Net.Dialer.Http.Primary_Mode.download or
                  @Efl.Net.Dialer.Http.Primary_Mode.upload will be
                  choosen based on the @.method: if "PUT", then it's
                  upload, otherwise it's download.
 
-               - if @Efl.Net.Dialer.Http.Primary_Mode.upload, applying
+               - If @Efl.Net.Dialer.Http.Primary_Mode.upload, applying
                  a new size with @Efl.Io.Sizer.resize or
                  @Efl.Io.Sizer.size.set will specify the
                  "Content-Length" to upload. If no size is previously
                  set, then the upload will happen in
                  "Transfer-encoding: chunked".
 
-               - if @Efl.Net.Dialer.Http.Primary_Mode.download, then
+               - If @Efl.Net.Dialer.Http.Primary_Mode.download, then
                  @Efl.Io.Sizer.size.get will report the
                  "Content-Length" provided by the server, if any.
 

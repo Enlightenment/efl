@@ -6,7 +6,7 @@ class Ecore.Audio.Out (Ecore.Audio)
    data: Ecore_Audio_Output;
    methods {
       input_attach {
-         [[Attach an input to an output
+         [[Attaches an input to an output
 
            @since 1.8
          ]]
@@ -16,7 +16,7 @@ class Ecore.Audio.Out (Ecore.Audio)
          }
       }
       input_detach {
-         [[Detach an input from an output
+         [[Detaches an input from an output
 
            @since 1.8
          ]]

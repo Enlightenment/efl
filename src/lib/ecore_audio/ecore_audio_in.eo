@@ -92,7 +92,7 @@ class Ecore.Audio.In (Ecore.Audio)
       }
       @property output {
          get {
-            [[Get the output that this input is attached to
+            [[Gets the output that this input is attached to
 
               @since 1.8
             ]]
@@ -103,7 +103,7 @@ class Ecore.Audio.In (Ecore.Audio)
       }
       @property remaining {
          get {
-            [[Get the remaining time of the input
+            [[Gets the remaining time of the input
 
               @since 1.8
             ]]
@@ -113,7 +113,7 @@ class Ecore.Audio.In (Ecore.Audio)
          }
       }
       read {
-         [[Read from the input
+         [[Reads from the input
 
            @since 1.8
          ]]
@@ -135,7 +135,7 @@ class Ecore.Audio.In (Ecore.Audio)
          }
       }
       seek @pure_virtual {
-         [[Seek within the input
+         [[Seeks within the input
 
            @since 1.8
          ]]

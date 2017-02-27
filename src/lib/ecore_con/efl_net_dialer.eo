@@ -37,7 +37,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
         }
 
         @property address_dial {
-            [[Return the address given to @.dial.
+            [[Returns the address given to @.dial.
 
               If the resolved address is desired, then listen to
               "resolved" event and use the
@@ -64,7 +64,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
         }
 
         @property proxy {
-            [[Controls/retrieve if the dialer should use a proxy.
+            [[Controls/retrieves if the dialer should use a proxy.
 
               The proxy is an URL in the form:
 

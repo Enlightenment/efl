@@ -92,7 +92,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
 
     methods {
         connect {
-            [[Connect to this access point.
+            [[Connects to this access point.
 
               This connection will happen asynchronously in the
               background, with results being delivered by events in
@@ -112,7 +112,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
         }
 
         disconnect {
-            [[Disconnect from this access point.
+            [[Disconnects from this access point.
 
               When disconnected a previously connected access point it
               won't be forgotten. The configuration and other details
@@ -124,7 +124,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
         }
 
         forget {
-            [[Disconnect and forget about this access point.
+            [[Disconnects and forgets about this access point.
 
               Successful @.connect will always remember the access
               point for future re-connections. This method reverts
@@ -285,7 +285,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
         }
 
         @property domains {
-            [[Search domains in use for this access point.
+            [[Searches domains in use for this access point.
 
               These are the actual values in use, configure them using
               @.configuration_domains, which may generate change
@@ -383,7 +383,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
         }
 
         @property configuration_domains {
-            [[Search domains configured by user for this access point.
+            [[Searches domains configured by user for this access point.
 
               These are the user configured values, that will be
               applied by the backend system and in turn may result in

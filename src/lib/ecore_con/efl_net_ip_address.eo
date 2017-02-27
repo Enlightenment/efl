@@ -42,7 +42,7 @@ class Efl.Net.Ip.Address (Efl.Object) {
 
     methods {
         create @class {
-            [[Create an object given family, port and address.
+            [[Creates an object given family, port and address.
 
               This is a convenience to create an object in a single
               call. To create based on 'struct sockaddr', see
@@ -52,11 +52,11 @@ class Efl.Net.Ip.Address (Efl.Object) {
                 port: uint16; [[Port number in Host/Native endianess]]
                 address: const(Eina.Slice); [[Address bytes. If 4 bytes, AF_INET will be used. If 16 bytes, AF_INET6 will be used. All other sizes will result in failure.]]
             }
-            return: own(Efl.Net.Ip.Address); [[newly created object or $NULL if parameters were invalid.]]
+            return: own(Efl.Net.Ip.Address); [[Newly created object or $NULL if parameters were invalid.]]
         }
 
         create_sockaddr @class {
-            [[Create an object given sockaddr
+            [[Creates an object given sockaddr
 
               This is a convenience to create an object in a single call.
               To create based on native port and address bytes,
@@ -65,11 +65,11 @@ class Efl.Net.Ip.Address (Efl.Object) {
             params {
                 sockaddr: const(void_ptr) @nonull; [[The pointer to struct sockaddr-compatible handle as per <netinet/in.h>.]]
             }
-            return: own(Efl.Net.Ip.Address); [[newly created object or $NULL if parameter was invalid.]]
+            return: own(Efl.Net.Ip.Address); [[Newly created object or $NULL if parameter was invalid.]]
         }
 
         parse @class {
-            [[Parse a numeric address and return an object representing it.
+            [[Parses a numeric address and return an object representing it.
 
               This parses a numeric IPv4 or IPv6 address and optional
               port, returning an object representing it on success or
@@ -93,7 +93,7 @@ class Efl.Net.Ip.Address (Efl.Object) {
         }
 
         resolve @class {
-            [[Asynchronously resolve host and port names.
+            [[Asynchronously resolves host and port names.
 
               This will resolve the host and port names, returning the
               results asynchronously in a Future.
@@ -177,27 +177,27 @@ class Efl.Net.Ip.Address (Efl.Object) {
         }
 
         ipv4_class_a_check @const {
-            [[Check if IPv4 and is CLASS-A]]
+            [[Checks if IPv4 and is CLASS-A]]
             return: bool(false); [[$true if is a CLASS-A IPv4 address]]
         }
 
         ipv4_class_b_check @const {
-            [[Check if IPv4 and is CLASS-B]]
+            [[Checks if IPv4 and is CLASS-B]]
             return: bool(false); [[$true if is a CLASS-B IPv4 address]]
         }
 
         ipv4_class_c_check @const {
-            [[Check if IPv4 and is CLASS-C]]
+            [[Checks if IPv4 and is CLASS-C]]
             return: bool(false); [[$true if is a CLASS-C IPv4 address]]
         }
 
         ipv4_class_d_check @const {
-            [[Check if IPv4 and is CLASS-D]]
+            [[Checks if IPv4 and is CLASS-D]]
             return: bool(false); [[$true if is a CLASS-D IPv4 address]]
         }
 
         ipv6_v4mapped_check @const {
-            [[Check if IPv6 is mapping an IPv4.
+            [[Checks if IPv6 is mapping an IPv4.
 
               If the IPv6 server is not IPv6-only, then it will take
               IPv4 addresses and map them inside IPv6. This checks if
@@ -207,7 +207,7 @@ class Efl.Net.Ip.Address (Efl.Object) {
         }
 
         ipv6_v4compat_check @const {
-            [[Check if IPv6 is compatible with IPv4.
+            [[Checks if IPv6 is compatible with IPv4.
 
               This happens if the first 12 bytes of IPv6 are 0.
             ]]
@@ -215,27 +215,27 @@ class Efl.Net.Ip.Address (Efl.Object) {
         }
 
         ipv6_local_link_check @const {
-            [[Check if IPv6 is link-local.]]
+            [[Checks if IPv6 is link-local.]]
             return: bool(false); [[$true if is a IPv6 address is link-local]]
         }
 
         ipv6_local_site_check @const {
-            [[Check if IPv6 is site-local.]]
+            [[Checks if IPv6 is site-local.]]
             return: bool(false); [[$true if is a IPv6 address is site-local]]
         }
 
         multicast_check @const {
-            [[Check if multicast]]
+            [[Checks if multicast]]
             return: bool(false); [[$true if is a multicast address]]
         }
 
         loopback_check @const {
-            [[Check if loopback "127.0.0.1" (IPv4) or "::1" (IPv6)]]
+            [[Checks if loopback "127.0.0.1" (IPv4) or "::1" (IPv6)]]
             return: bool(false); [[$true if is a multicast address]]
         }
 
         any_check @const {
-            [[Check if "0.0.0.0" (IPv4) or "::" (IPv6)]]
+            [[Checks if "0.0.0.0" (IPv4) or "::" (IPv6)]]
             return: bool(false); [[$true if address means "any"]]
         }
     }

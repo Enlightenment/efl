@@ -80,7 +80,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
 
     methods {
         ping {
-            [[Send a PING (opcode=0x9) to the server.
+            [[Sends a PING (opcode=0x9) to the server.
 
               The server should reply with a PONG, that will be
               emitted as "pong" event.
@@ -92,7 +92,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         }
 
         text_send {
-            [[Send an UTF-8 TEXT (opcode=0x1) to the server.
+            [[Sends an UTF-8 TEXT (opcode=0x1) to the server.
 
               The text goes in a message will be delivered as a single
               entity to the remote peer.
@@ -106,7 +106,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         }
 
         binary_send {
-            [[Send a binary blob (opcode=0x2) to the server.
+            [[Sends a binary blob (opcode=0x2) to the server.
 
               The slice describing the blob goes in a message will be
               delivered as a single entity to the remote peer.
@@ -120,7 +120,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         }
 
         close_request {
-            [[Request (opcode=0x8) the server to terminate the connection.
+            [[Requests (opcode=0x8) the server to terminate the connection.
 
               Unlike @Efl.Io.Closer.close, this won't abruptly close
               the connection, rather will queue a message requesting
@@ -141,7 +141,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         }
 
         request_protocol_add {
-            [[Add a new WebSocket protocol to the request.
+            [[Adds a new WebSocket protocol to the request.
 
               This should be set before dialing.
             ]]
@@ -151,21 +151,21 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         }
 
         request_protocols_get {
-            [[Return an iterator to the requested WebSocket protocols]]
+            [[Returns an iterator to the requested WebSocket protocols]]
             return: free(own(iterator<string>), eina_iterator_free) @warn_unused; [[Iterator to protocols]]
         }
 
         request_protocols_clear {
-            [[Clear all request protocols]]
+            [[Clears all request protocols]]
         }
 
         response_protocols_get {
-            [[Return an iterator to the server-replied (response) WebSocket protocols it supports]]
+            [[Returns an iterator to the server-replied (response) WebSocket protocols it supports]]
             return: free(own(iterator<string>), eina_iterator_free) @warn_unused; [[Iterator to server protocols]]
         }
 
         @property streaming_mode {
-            [[Configure how to map streaming APIs to WebSocket.
+            [[Configures how to map streaming APIs to WebSocket.
 
               WebSocket is a message-based protocol with these send
               via @.text_send and @.binary_send and delivered via
@@ -221,7 +221,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         }
 
         @property allow_redirects {
-            [[Allow HTTP redirects to be followed.
+            [[Allows HTTP redirects to be followed.
 
               This should be set before dialing.
             ]]
@@ -233,7 +233,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         }
 
         request_header_add {
-            [[Add a HTTP request header 'key: value'.
+            [[Adds a HTTP request header 'key: value'.
 
               See @.request_headers_clear
 
@@ -258,7 +258,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         }
 
         request_headers_clear {
-            [[Clear all request headers.
+            [[Clears all request headers.
 
               See @.request_header_add
 
@@ -267,7 +267,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
         }
 
         request_headers_get {
-            [[Return an iterator to the key-value pairs for request headers]]
+            [[Returns an iterator to the key-value pairs for request headers]]
             return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused; [[Iterator to key value pairs]]
         }
 

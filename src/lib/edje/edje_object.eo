@@ -27,12 +27,12 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property mirrored {
          set {
-            [[Set the RTL orientation for this object.
+            [[Sets the RTL orientation for this object.
 
               @since 1.1.0]]
          }
          get {
-            [[Get the RTL orientation for this object.
+            [[Gets the RTL orientation for this object.
 
               You can RTL orientation explicitly with edje_object_mirrored_set.
 
@@ -44,12 +44,12 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property language {
          set {
-            [[Set the language for this object.
+            [[Sets the language for this object.
 
               @since 1.1.0]]
          }
          get {
-            [[Get the language for this object.
+            [[Gets the language for this object.
 
               @since 1.1.0]]
          }
@@ -59,7 +59,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property animation {
          set {
-            [[Set the object's animation state.
+            [[Sets the object's animation state.
 
               This function starts or stops an Edje object's animation. The
               information if it's stopped can be retrieved by
@@ -68,7 +68,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               See also @.animation.get()]]
          }
          get {
-            [[Get the Edje object's animation state.
+            [[Gets the Edje object's animation state.
 
               This function returns if the animation is stopped or not. The
               animation state is set by edje_object_animation_set().
@@ -82,7 +82,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property play {
          set {
-            [[Set the Edje object to playing or paused states.
+            [[Sets the Edje object to playing or paused states.
 
               This function sets the Edje object  obj to playing or paused
               states, depending on the parameter  play. This has no effect if
@@ -91,7 +91,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               See also @.play.get().]]
          }
          get {
-            [[Get the Edje object's state.
+            [[Gets the Edje object's state.
 
               This function tells if an Edje object is playing or not. This state
               is set by edje_object_play_set().
@@ -105,7 +105,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property perspective {
          set {
-            [[Set the given perspective object on this Edje object.
+            [[Sets the given perspective object on this Edje object.
 
               Make the given perspective object be the default perspective for this Edje
               object.
@@ -125,7 +125,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             }
          }
          get {
-            [[Get the current perspective used on this Edje object.
+            [[Gets the current perspective used on this Edje object.
 
               See also @.perspective.set()]]
             values {
@@ -135,14 +135,14 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property transition_duration_factor {
          set {
-              [[Set transition duration factor.
+              [[Sets transition duration factor.
 
                 This define the transition duration factor on this
                 specific object. By default all animation are run at a speed
                 factor of 1.0.]]
          }
          get {
-              [[Get transition duration factor.
+              [[Gets transition duration factor.
 
                 This define the transition duration factor on this
                 specific object. By default all animation are run at a speed
@@ -154,7 +154,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property scale {
          set {
-            [[Set the scaling factor for a given Edje object.
+            [[Sets the scaling factor for a given Edje object.
 
               This function sets an  individual scaling factor on the  obj
               Edje object. This property (or Edje's global scaling factor, when
@@ -172,7 +172,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Get a given Edje object's scaling factor.
+            [[Gets a given Edje object's scaling factor.
 
               This function returns the individual scaling factor set on the
                obj Edje object.
@@ -186,7 +186,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property base_scale {
          get {
-            [[Get a given Edje object's base_scale factor.
+            [[Gets a given Edje object's base_scale factor.
 
               This function returns the base_scale factor set on the
                obj Edje object.
@@ -200,7 +200,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property size_min {
          get {
-            [[Get the minimum size specified -- as an EDC property -- for a
+            [[Gets the minimum size specified -- as an EDC property -- for a
               given Edje object
 
               This function retrieves the obj object's minimum size values,
@@ -240,7 +240,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property size_max {
          get {
-            [[Get the maximum size specified -- as an EDC property -- for a
+            [[Gets the maximum size specified -- as an EDC property -- for a
               given Edje object
 
               This function retrieves the obj object's maximum size values,
@@ -280,7 +280,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       preload {
-         [[Preload the images on the Edje Object in the background.
+         [[Preloads the images on the Edje Object in the background.
 
            This function requests the preload of all data images (on the given
            object) in the background. The work is queued before being processed
@@ -322,7 +322,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       size_min_calc {
-         [[Calculate the minimum required size for a given Edje object.
+         [[Calculates the minimum required size for a given Edje object.
 
            This call works exactly as edje_object_size_min_restricted_calc(),
            with the last two arguments set to 0. Please refer to its
@@ -336,7 +336,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       size_min_restricted_calc {
-         [[Calculate the minimum required size for a given Edje object.
+         [[Calculates the minimum required size for a given Edje object.
 
            This call will trigger an internal recalculation of all parts of
            the obj object, in order to return its minimum required
@@ -364,7 +364,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       parts_extends_calc {
-         [[Calculate the geometry of the region, relative to a given Edje
+         [[Calculates the geometry of the region, relative to a given Edje
            object's area, occupied by all parts in the object.
 
            This function gets the geometry of the rectangle equal to the area
@@ -393,7 +393,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       calc_force {
-         [[Force a Size/Geometry calculation.
+         [[Forces a Size/Geometry calculation.
 
            Forces the object obj to recalculation layout regardless of
            freeze/thaw.]]
@@ -419,11 +419,11 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
            See also @.freeze()]]
 
-         return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
+         return: int; [[The frozen state or $0 if the object is not frozen or on error.]]
       }
       @property data {
          get {
-            [[Retrive an EDC data field's value from a given Edje object's group.
+            [[Retrives an EDC data field's value from a given Edje object's group.
 
               This function fetches an EDC data field's value, which is declared
               on the objects building EDC file, under its group. EDC data blocks
@@ -463,7 +463,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property message_handler {
          set {
-            [[Set an Edje message handler function for a given Edje object.
+            [[Sets an Edje message handler function for a given Edje object.
 
               For scriptable programs on an Edje object's defining EDC file which
               send messages with the send_message() primitive, one can attach
@@ -481,7 +481,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       message_send {
-         [[Send an (Edje) message to a given Edje object
+         [[Sends an (Edje) message to a given Edje object
 
            This function sends an Edje message to obj and to all of its
            child objects, if it has any (swallowed objects are one kind of
@@ -504,7 +504,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       signal_callback_add {
-         [[Add a callback for an arriving Edje signal, emitted by
+         [[Adds a callback for an arriving Edje signal, emitted by
            a given Edje object.
 
            Edje signals are one of the communication interfaces between
@@ -565,7 +565,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       signal_callback_del {
-         [[Remove a signal-triggered callback from an object.
+         [[Removes a signal-triggered callback from an object.
 
            This function removes a callback, previously attached to the
            emission of a signal, from the object  obj. The parameters
@@ -586,7 +586,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       signal_emit {
-         [[Send/emit an Edje signal to a given Edje object
+         [[Sends/emits an Edje signal to a given Edje object
 
            This function sends a signal to the object  obj. An Edje program,
            at obj's EDC specification level, can respond to a signal by
@@ -611,7 +611,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       message_signal_process {
-         [[Process an object's message queue.
+         [[Processes an object's message queue.
 
            This function goes through the object message queue processing the
            pending messages for  this specific Edje object. Normally they'd
@@ -620,7 +620,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property global_color_class @class {
          set {
-            [[Set Edje color class.
+            [[Sets Edje color class.
 
               This function sets the color values for a process level color
               class.  This will cause all edje parts in the current process that
@@ -638,7 +638,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Get Edje color class.
+            [[Gets Edje color class.
 
               This function gets the color values for a process level color
               class. This value is the globally set and not per-object, that is,
@@ -725,13 +725,13 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       color_class_clear @const {
-         [[Clear object color classes.
+         [[Clears object color classes.
 
            @since 1.17.0]]
-         return: bool; [[$true, on success or $false, on error]]
+         return: bool; [[$true on success, or $false on error]]
       }
       color_class_del {
-         [[Delete the object color class.
+         [[Deletes the object color class.
 
            This function deletes any values at the object level for the
            specified object and color class.
@@ -751,7 +751,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             [[Sets Edje text class.
 
               This function sets the text class for the Edje.]]
-            return: bool; [[$true, on success or $false, on error]]
+            return: bool; [[$true on success, or $false on error]]
          }
          get {
             [[Gets font and font size from edje text class.
@@ -759,7 +759,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               This function gets the font and the font size from the object
               text class. The font string will only be valid until the text
               class is changed or the edje object is deleted.]]
-            return: bool; [[$true, on success or $false, on error]]
+            return: bool; [[$true on success, or $false on error]]
          }
          keys {
             text_class: string; [[The text class name]]
@@ -770,7 +770,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       text_class_del {
-         [[Delete the object text class.
+         [[Deletes the object text class.
 
            This function deletes any values at the object level for the
            specified object and text class.
@@ -793,7 +793,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               have the specified size class update their min and max size with given values.
 
               @since 1.17]]
-            return: bool; [[$true, on success or $false, on error]]
+            return: bool; [[$true on success, or $false on error]]
          }
          get {
             [[Gets the object size class.
@@ -803,7 +803,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               or the edje object is deleted.
 
               @since 1.17]]
-            return: bool; [[$true, on success or $false, on error]]
+            return: bool; [[$true on success, or $false on error]]
          }
          keys {
             size_class: string; [[The size class name]]
@@ -816,7 +816,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       size_class_del {
-         [[Delete the object size class.
+         [[Deletes the object size class.
 
            This function deletes any values at the object level for the
            specified object and size class.
@@ -831,12 +831,12 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       access_part_iterate {
-         [[Iterate over all accessibility-enabled part names.]]
+         [[Iterates over all accessibility-enabled part names.]]
          legacy: null;
          return: free(own(iterator<string>), eina_iterator_free); [[Part name iterator]]
       }
       part_exists @const {
-         [[Check if an Edje part exists in a given Edje object's group
+         [[Checks if an Edje part exists in a given Edje object's group
            definition.
 
            This function returns if a given part exists in the Edje group
@@ -844,8 +844,8 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
            This call is useful, for example, when one could expect or not a
            given GUI element, depending on the  theme applied to obj.]]
-         return: bool; [[$true, if the Edje part exists in obj's group or
-                         $false, otherwise (and on errors)]]
+         return: bool; [[$true if the Edje part exists in obj's group, or
+                         $false otherwise (and on errors)]]
          params {
             @in part: string; [[The part's name to check for existence in obj's
                                       group]]
@@ -853,7 +853,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_object {
          get {
-            [[Get a handle to the Evas object implementing a given Edje
+            [[Gets a handle to the Evas object implementing a given Edje
               part, in an Edje object.
 
               This function gets a pointer of the Evas object corresponding to a
@@ -892,7 +892,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_geometry {
          get {
-            [[Retrieve the geometry of a given Edje part, in a given Edje
+            [[Retrieves the geometry of a given Edje part, in a given Edje
               object's group definition, relative to the object's area.
 
               This function gets the geometry of an Edje part within its
@@ -920,7 +920,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_drag_value {
          set {
-            [[Set the dragable object location.
+            [[Sets the dragable object location.
 
               Places the dragable object at the given location.
 
@@ -938,7 +938,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Get the dragable object location.
+            [[Gets the dragable object location.
 
               Values for dx and dy are real numbers that range from 0 to 1,
               representing the relative position to the dragable area on that axis.
@@ -958,7 +958,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_drag_size {
          set {
-            [[Set the dragable object size.
+            [[Sets the dragable object size.
 
               Values for dw and dh are real numbers that range from 0 to 1,
               representing the relative size of the dragable area on that axis.
@@ -969,7 +969,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Get the dragable object size.
+            [[Gets the dragable object size.
 
               Gets the dragable object size.
 
@@ -986,7 +986,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_drag_dir {
          get {
-            [[Determine dragable directions.
+            [[Determines dragable directions.
 
               The dragable directions are defined in the EDC file, inside the \@ref dragable
               section, by the attributes $x and $y. See the \@ref edcref for more
@@ -1109,7 +1109,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_external_object {
          get {
-            [[Get the object created by this external part.
+            [[Gets the object created by this external part.
 
               Parts of type external creates the part object using information
               provided by external plugins. It's somehow like "swallow"
@@ -1130,7 +1130,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_external_content {
          get {
-            [[Get an object contained in an part of type EXTERNAL
+            [[Gets an object contained in an part of type EXTERNAL
 
               The content string must not be $null. Its actual value depends on the
               code providing the EXTERNAL.]]
@@ -1143,7 +1143,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_external_param {
          set {
-            [[Set the parameter for the external part.
+            [[Sets the parameter for the external part.
 
               Parts of type external may carry extra properties that have
               meanings defined by the external plugin. For instance, it may be a
@@ -1172,7 +1172,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             }
          }
          get {
-            [[Get the parameter for the external part.
+            [[Gets the parameter for the external part.
 
               Parts of type external may carry extra properties that have
               meanings defined by the external plugin. For instance, it may be a
@@ -1203,7 +1203,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property text_change_cb {
          set {
-            [[Set the object text callback.
+            [[Sets the object text callback.
 
               This function sets the callback to be called when the text changes.]]
          }
@@ -1218,7 +1218,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Return the text of the object part.
+            [[Returns the text of the object part.
 
               This function returns the text associated to the object part.
 
@@ -1278,7 +1278,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_append {
-         [[Insert text for an object part.
+         [[Inserts text for an object part.
 
            This function inserts the text for an object part at the end; It does not
            move the cursor.
@@ -1291,7 +1291,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_insert {
-         [[Insert text for an object part.
+         [[Inserts text for an object part.
 
            This function inserts the text for an object part just before the
            cursor position.]]
@@ -1315,7 +1315,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_autocapital_type {
          set {
-            [[Set the autocapitalization type on the immodule.
+            [[Sets the autocapitalization type on the immodule.
 
               @since 1.1.0]]
          }
@@ -1333,12 +1333,12 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_prediction_allow {
          set {
-            [[Set whether the prediction is allowed or not.
+            [[Sets whether the prediction is allowed or not.
 
               @since 1.2.0]]
          }
          get {
-            [[Get whether the prediction is allowed or not.
+            [[Gets whether the prediction is allowed or not.
 
               @since 1.2.0]]
          }
@@ -1350,7 +1350,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_hide_visible_password {
-         [[Hide visible last character for password mode.
+         [[Hides visible last character for password mode.
 
            @since 1.18.0]]
          params {
@@ -1380,7 +1380,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_cursor_line_begin {
          set {
-            [[Move the cursor to the beginning of the line.
+            [[Moves the cursor to the beginning of the line.
               \@ref evas_textblock_cursor_line_char_first]]
          }
          values {
@@ -1390,7 +1390,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_cursor_line_end {
          set {
-            [[Move the cursor to the end of the line.
+            [[Moves the cursor to the end of the line.
               \@ref evas_textblock_cursor_line_char_last]]
          }
          values {
@@ -1419,7 +1419,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_cursor_up {
-         [[Move the cursor to the char above the current cursor position.]]
+         [[Moves the cursor to the char above the current cursor position.]]
 
          return: bool; [[$true on success, $false otherwise]]
          params {
@@ -1486,7 +1486,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_cursor_copy {
-         [[Copy the cursor to another cursor.]]
+         [[Copies the cursor to another cursor.]]
 
          params {
             @in part: string; [[The part name]]
@@ -1520,7 +1520,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_cursor_is_visible_format {
          get {
-            [[Return $true if the cursor points to a visible format
+            [[Returns $true if the cursor points to a visible format
               For example \\t, \\n, item and etc.
               \@ref evas_textblock_cursor_format_is_visible_get]]
             return: bool; [[$true if the cursor points to a visible format, $false otherwise.]]
@@ -1532,7 +1532,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property item_provider {
          set {
-            [[Set the function that provides item objects for named items in an edje entry text
+            [[Sets the function that provides item objects for named items in an edje entry text
 
               Item objects may be deleted any time by Edje, and will be deleted when the
               Edje object is deleted (or file is set to a new file).]]
@@ -1578,7 +1578,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_select_all @const {
-         [[Set the selection to be everything.
+         [[Sets the selection to be everything.
 
            This function selects all text of the object of the part.]]
          params {
@@ -1586,7 +1586,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_select_none @const {
-         [[Set the selection to be none.
+         [[Sets the selection to be none.
 
            This function sets the selection text to be none.]]
          params {
@@ -1595,7 +1595,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_selection {
          get {
-            [[Return the selection text of the object part.
+            [[Returns the selection text of the object part.
 
               This function returns selection text of the object part.
 
@@ -1608,7 +1608,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_imf_context {
          get {
-            [[Get the input method context in entry.
+            [[Gets the input method context in entry.
 
               If ecore_imf was not available when edje was compiled, this function returns $null
               otherwise, the returned pointer is an Ecore_IMF
@@ -1621,7 +1621,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_imf_context_reset @const {
-         [[Reset the input method context if needed.
+         [[Resets the input method context if needed.
 
            This can be necessary in the case where modifying the buffer would confuse on-going input method behavior
 
@@ -1631,7 +1631,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_style_user_peek @const {
-         [[Return the text of the object part.
+         [[Returns the text of the object part.
 
            This function returns the style associated with the textblock part.
 
@@ -1642,7 +1642,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_style_user_push {
-         [[Set the style of the
+         [[Sets the style of the
 
            This function sets the style associated with the textblock part.
 
@@ -1654,7 +1654,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_style_user_pop {
-         [[Delete the top style form the user style stack.
+         [[Deletes the top style form the user style stack.
 
            @since 1.2.0]]
 
@@ -1681,7 +1681,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_input_panel_show @const {
-         [[Show the input panel (virtual keyboard) based on the input panel property such as layout, autocapital types, and so on.
+         [[Shows the input panel (virtual keyboard) based on the input panel property such as layout, autocapital types, and so on.
 
            Note that input panel is shown or hidden automatically according to the focus state.
            This API can be used in the case of manually controlling by using edje_object_part_text_input_panel_enabled_set.
@@ -1692,7 +1692,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_text_input_panel_hide @const {
-         [[Hide the input panel (virtual keyboard).
+         [[Hides the input panel (virtual keyboard).
            See also @.part_text_input_panel_show
 
            Note that input panel is shown or hidden automatically according to the focus state.
@@ -1705,7 +1705,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_input_panel_imdata {
          set {
-            [[Set the input panel-specific data to deliver to the input panel.
+            [[Sets the input panel-specific data to deliver to the input panel.
 
               This API is used by applications to deliver specific data to the input panel.
               The data format MUST be negotiated by both application and the input panel.
@@ -1718,7 +1718,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             }
          }
          get {
-            [[Get the specific data of the current active input panel.
+            [[Gets the specific data of the current active input panel.
 
               @since 1.2.0]]
             return: void; [[FIXME: void needed here?]]
@@ -1733,7 +1733,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_input_panel_layout {
          set {
-            [[Set the layout of the input panel.
+            [[Sets the layout of the input panel.
 
               The layout of the input panel or virtual keyboard can make it easier or
               harder to enter content. This allows you to hint what kind of input you
@@ -1743,7 +1743,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               @since 1.1]]
          }
          get {
-            [[Get the layout of the input panel.
+            [[Gets the layout of the input panel.
 
               See also @.part_text_input_panel_layout.set
 
@@ -1758,14 +1758,14 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_input_panel_language {
          set {
-            [[Set the language mode of the input panel.
+            [[Sets the language mode of the input panel.
 
               This API can be used if you want to show the Alphabet keyboard.
 
               @since 1.2.0]]
          }
          get {
-            [[Get the language mode of the input panel.
+            [[Gets the language mode of the input panel.
 
               See also @.part_text_input_panel_language.set for more details.
 
@@ -1780,7 +1780,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_input_panel_layout_variation {
          set {
-            [[Set the layout variation of the input panel.
+            [[Sets the layout variation of the input panel.
 
               The layout variation of the input panel or virtual keyboard can make it easier or
               harder to enter content. This allows you to hint what kind of input you
@@ -1790,7 +1790,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               @since 1.8]]
          }
          get {
-            [[Get the layout variation of the input panel.
+            [[Gets the layout variation of the input panel.
 
               See also @.part_text_input_panel_layout_variation.set
 
@@ -1810,7 +1810,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               @since 1.1.0]]
          }
          get {
-            [[Retrieve the attribute to show the input panel automatically.
+            [[Retrieves the attribute to show the input panel automatically.
               See also @.part_text_input_panel_enabled.set
 
               @since 1.1.0]]
@@ -1824,12 +1824,12 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_input_panel_return_key_disabled {
          set {
-            [[Set the return key on the input panel to be disabled.
+            [[Sets the return key on the input panel to be disabled.
 
               @since 1.2.0]]
          }
          get {
-            [[Get whether the return key on the input panel should be disabled or not.
+            [[Gets whether the return key on the input panel should be disabled or not.
 
               @since 1.2.0]]
          }
@@ -1842,14 +1842,14 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_input_panel_return_key_type {
          set {
-            [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+            [[Sets the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
 
               An input panel displays the string or icon associated with this type
 
               @since 1.2.0]]
          }
          get {
-            [[Get the "return" key type.
+            [[Gets the "return" key type.
 
               See also @.part_text_input_panel_return_key_type.set() for more details
 
@@ -1864,13 +1864,13 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_input_panel_show_on_demand {
          set {
-            [[Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+            [[Sets the attribute to show the input panel in case of only an user's explicit Mouse Up event.
               It doesn't request to show the input panel even though it has focus.
 
               @since 1.9.0]]
          }
          get {
-            [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+            [[Gets the attribute to show the input panel in case of only an user's explicit Mouse Up event.
 
               @since 1.9.0]]
          }
@@ -1883,7 +1883,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_anchor_geometry {
          get {
-            [[Return a list of Evas_Textblock_Rectangle anchor rectangles.
+            [[Returns a list of Evas_Textblock_Rectangle anchor rectangles.
 
               This function return a list of Evas_Textblock_Rectangle anchor
               rectangles.]]
@@ -1897,7 +1897,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_anchor_list {
          get {
-            [[Return a list of char anchor names.
+            [[Returns a list of char anchor names.
 
               This function returns a list of char anchor names.]]
             return: const(list<string>); [[The list of anchors (const char *), do not modify!]]
@@ -1907,7 +1907,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       text_insert_filter_callback_add {
-         [[Add a filter function for newly inserted text.
+         [[Adds a filter function for newly inserted text.
 
            Whenever text is inserted (not the same as set) into the given part,
            the list of filter functions will be called to decide if and how the new
@@ -1943,7 +1943,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       text_insert_filter_callback_del {
-         [[Delete a function from the filter list.
+         [[Deletes a function from the filter list.
 
            Delete the given func filter from the list in part. Returns
            the user data pointer given when added.
@@ -1957,7 +1957,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       text_insert_filter_callback_del_full {
-         [[Delete a function and matching user data from the filter list.
+         [[Deletes a function and matching user data from the filter list.
 
            Delete the given func filter and data user data from the list
            in part.
@@ -1973,7 +1973,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       text_markup_filter_callback_add {
-         [[Add a markup filter function for newly inserted text.
+         [[Adds a markup filter function for newly inserted text.
 
            Whenever text is inserted (not the same as set) into the given part,
            the list of markup filter functions will be called to decide if and how
@@ -2005,7 +2005,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       text_markup_filter_callback_del {
-         [[Delete a function from the markup filter list.
+         [[Deletes a function from the markup filter list.
 
            Delete the given func filter from the list in part. Returns
            the user data pointer given when added.
@@ -2021,7 +2021,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       text_markup_filter_callback_del_full {
-         [[Delete a function and matching user data from the markup filter list.
+         [[Deletes a function and matching user data from the markup filter list.
 
            Delete the given func filter and data user data from the list
            in part.
@@ -2040,11 +2040,11 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_item_geometry {
          get {
-            [[Return item geometry.
+            [[Returns item geometry.
 
               This function return a list of Evas_Textblock_Rectangle item
               rectangles.]]
-            return: bool; [[1 if item exists, 0 if not]]
+            return: bool; [[$1 if item exists, $0 if not]]
          }
          keys {
             part: string; [[The part name]]
@@ -2059,7 +2059,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property part_text_item_list {
          get {
-            [[Return a list of char item names.
+            [[Returns a list of char item names.
 
               This function returns a list of char item names.]]
             return: const(list<string>); [[The list of items (const char *), do not modify!]]
@@ -2070,7 +2070,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property seat {
          get {
-            [[Return the seat device given its Edje's name.
+            [[Returns the seat device given its Edje's name.
 
               Edje references seats by a name that differs from Evas.
               Edje naming follows a incrementional convention: first
@@ -2087,7 +2087,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       }
       @property seat_name {
          get {
-            [[Get the name given to a set by Edje.
+            [[Gets the name given to a set by Edje.
 
               Edje references seats by a name that differs from Evas.
               Edje naming follows a incrementional convention: first
