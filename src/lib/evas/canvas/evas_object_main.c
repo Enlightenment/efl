@@ -397,6 +397,7 @@ evas_object_free(Evas_Object *eo_obj, Eina_Bool clean_layer)
 
    int was_smart_child = 0;
 
+   evas_object_callback_shutdown(eo_obj, obj);
    if (efl_isa(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
      _evas_object_image_free(eo_obj);
    evas_object_map_set(eo_obj, NULL);

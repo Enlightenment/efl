@@ -724,3 +724,9 @@ evas_object_callback_init(Efl_Canvas_Object *eo_obj, Evas_Object_Protected_Data 
 {
    efl_event_callback_array_add(eo_obj, event_catcher_watch(), obj);
 }
+
+void
+evas_object_callback_shutdown(Efl_Canvas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   efl_event_callback_array_del(eo_obj, event_catcher_watch(), obj);
+}
