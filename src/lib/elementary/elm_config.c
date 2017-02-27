@@ -3927,7 +3927,7 @@ _elm_config_sub_init(void)
 
    if (ev) /* If ELM_DISPLAY is specified */
      {
-        if (!strcmp(ev, "wl")) /* and it is X11 */
+        if (!strcmp(ev, "wl")) /* and it is WL */
           {
              /* always try to connect to wl when it is enforced */
              init_wl = EINA_TRUE;
@@ -3937,7 +3937,8 @@ _elm_config_sub_init(void)
      }
    else /* ELM_DISPLAY not specified */
      {
-        if (have_wl_display) /* If there is a $WAYLAND_DISPLAY */
+        /* If there is a $WAYLAND_DISPLAY */
+        if ((have_wl_display) && (!getenv("DISPLAY")))
           init_wl = EINA_TRUE;
         else /* No $WAYLAND_DISPLAY */
           init_wl = EINA_FALSE;
