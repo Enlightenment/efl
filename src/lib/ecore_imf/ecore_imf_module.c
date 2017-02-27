@@ -132,14 +132,31 @@ ecore_imf_module_init(void)
      }
    else
      {
-        snprintf(buf, sizeof(buf), "%s/ecore_imf/modules", eina_prefix_lib_get(pfx));
-        module_list = eina_module_arch_list_get(module_list, buf, MODULE_ARCH);
+        Eina_Module *m;
+        const char **itr;
+
+        for (itr = built_modules; *itr != NULL; itr++)
+          {
+             snprintf(buf, sizeof(buf),
+                      "%s/ecore_imf/modules/%s/%s/module" SHARED_LIB_SUFFIX,
+                      eina_prefix_lib_get(pfx), *itr, MODULE_ARCH);
+
+             m = eina_module_new(buf);
+             if (m)
+               {
+                  module_list = eina_array_new(1);
+                  if (module_list)
+                    {
+                       eina_array_push(module_list, m);
+                       break;
+                    }
+                  else
+                    eina_module_free(m);
+               }
+          }
      }
 
-   // XXX: MODFIX: do not list ALL modules and load them ALL! this is
-   // is wrong - we end up loading BOTH xim ANd scim (and maybe uim too)
-   // etc. etc. when we need only 1!
-   eina_module_list_load(module_list);
+   if (module_list) eina_module_list_load(module_list);
 }
 
 void
