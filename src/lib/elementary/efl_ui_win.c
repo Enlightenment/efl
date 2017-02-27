@@ -4558,9 +4558,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
       case ELM_WIN_INLINED_IMAGE:
         if (!parent) break;
           {
-             e = evas_object_evas_get(parent);
              Ecore_Evas *ee;
 
+             e = evas_object_evas_get(parent);
              if (!e) break;
 
              ee = ecore_evas_ecore_evas_get(e);
