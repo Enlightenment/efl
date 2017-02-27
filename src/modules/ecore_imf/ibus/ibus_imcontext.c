@@ -371,6 +371,8 @@ ecore_imf_context_ibus_del(Ecore_IMF_Context *ctx)
 
    if (_focus_im_context == ctx)
      _focus_im_context = NULL;
+
+   free(ibusimcontext);
 }
 
 Eina_Bool
