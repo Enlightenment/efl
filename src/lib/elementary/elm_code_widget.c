@@ -285,10 +285,10 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
              elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
 
              evas_object_resize(pd->cursor_rect, cw/8, ch);
-             evas_object_show(pd->cursor_rect);
           }
 
         evas_object_move(pd->cursor_rect, cx, cy);
+        evas_object_show(pd->cursor_rect);
      }
 }
 
@@ -399,6 +399,9 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, uns
    // if called from new line cb, no need to update whole range unless visible
    if (newline && !elm_obj_code_widget_line_visible_get(widget, newline))
      return;
+
+   // cursor will be shown if it should be visible
+   evas_object_hide(pd->cursor_rect);
 
    for (y = first_row; y <= last_row; y++)
      {
