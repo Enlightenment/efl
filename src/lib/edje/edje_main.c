@@ -208,10 +208,10 @@ _edje_shutdown_core(void)
 #endif
 
    efreet_shutdown();
+   ecore_shutdown();
    evas_shutdown();
    eet_shutdown();
    embryo_shutdown();
-   ecore_shutdown();
    eina_log_domain_unregister(_edje_default_log_dom);
    _edje_default_log_dom = -1;
    eina_shutdown();
