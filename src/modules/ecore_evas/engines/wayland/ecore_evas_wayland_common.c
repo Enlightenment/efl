@@ -1776,6 +1776,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
      {
         int fw, fh;
 
+        _ecore_evas_register(ee);
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         ecore_wl2_window_show(wdata->win);
@@ -2007,6 +2008,8 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
         int fw, fh;
 
         wdata->defer_show = EINA_FALSE;
+
+        _ecore_evas_register(ee);
 
         ecore_wl2_window_show(wdata->win);
         ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
@@ -2260,7 +2263,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
    ee->engine.func->fn_render = _ecore_evas_wl_common_render;
 
-   _ecore_evas_register(ee);
    ecore_evas_input_event_register(ee);
 
    ecore_event_window_register(ee->prop.window, ee, ee->evas,
