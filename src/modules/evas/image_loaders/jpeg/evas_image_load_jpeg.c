@@ -103,9 +103,9 @@ evas_image_load_file_data_jpeg(void *loader_data,
    Emile_Image_Load_Error image_error;
    Eina_Bool ret;
 
-   emile_image_register(loader->image,
-                        _evas_image_load_jpeg_cancelled,
-                        EMILE_ACTION_CANCELLED, NULL);
+   emile_image_callback_set(loader->image,
+                            _evas_image_load_jpeg_cancelled,
+                            EMILE_ACTION_CANCELLED, NULL);
    ret = emile_image_data(loader->image,
                           prop, sizeof (*prop),
                           pixels,

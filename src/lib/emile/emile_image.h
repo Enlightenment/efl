@@ -313,7 +313,7 @@ EAPI Eina_Bool emile_image_data(Emile_Image * image, Emile_Image_Property * prop
  * @param action The action this callback is triggered on.
  * @since 1.19
  */
-EAPI void emile_image_register(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data);
+EAPI void emile_image_callback_set(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data);
 
 /**
  * Close an opened image handler.

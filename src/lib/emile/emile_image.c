@@ -2460,7 +2460,7 @@ emile_image_jpeg_file_open(Eina_File *source,
 }
 
 EAPI void
-emile_image_register(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data)
+emile_image_callback_set(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data)
 {
    if (!image) return ;
    // We only handle one type of callback for now
