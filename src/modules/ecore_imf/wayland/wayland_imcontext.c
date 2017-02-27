@@ -761,6 +761,8 @@ wayland_im_context_del(Ecore_IMF_Context *ctx)
      zwp_text_input_v1_destroy(imcontext->text_input);
 
    clear_preedit(imcontext);
+
+   free(imcontext);
 }
 
 void
