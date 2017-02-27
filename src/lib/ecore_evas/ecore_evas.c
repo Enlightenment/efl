@@ -2846,7 +2846,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_t
    ecore_loop_time_set(loop_time);
 
    ee->animator_ran = EINA_TRUE;
-   efl_event_callback_legacy_call(ee->evas, EFL_EVENT_ANIMATOR_TICK, &a);
+   efl_event_callback_call(ee->evas, EFL_EVENT_ANIMATOR_TICK, &a);
 
    // FIXME: We do not support partial animator in the subcanvas
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
