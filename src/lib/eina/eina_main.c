@@ -258,6 +258,11 @@ eina_init(void)
         mtrace();
      }
 #endif
+
+#ifdef EFL_HAVE_THREADS
+   _eina_main_loop = pthread_self();
+#endif
+
    eina_freeq_main_set(eina_freeq_new(EINA_FREEQ_DEFAULT));
 
    if (!eina_log_init())
@@ -273,10 +278,6 @@ eina_init(void)
         eina_log_shutdown();
         return 0;
      }
-
-#ifdef EFL_HAVE_THREADS
-   _eina_main_loop = pthread_self();
-#endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    pthread_mutex_init(&_eina_tracking_lock, NULL);
