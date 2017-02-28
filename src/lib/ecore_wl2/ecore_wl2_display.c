@@ -152,36 +152,6 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         ewd->wl.data_device_manager =
           wl_registry_bind(registry, id, &wl_data_device_manager_interface, ewd->wl.data_device_manager_version);
      }
-   else if (!strcmp(interface, "wl_shell"))
-     {
-        ewd->wl.wl_shell =
-          wl_registry_bind(registry, id, &wl_shell_interface, 1);
-     }
-   else if ((!strcmp(interface, "xdg_shell")) &&
-            (!getenv("EFL_WAYLAND_DONT_USE_XDG_SHELL")))
-     {
-        Ecore_Wl2_Window *window;
-
-        ewd->wl.xdg_shell =
-          wl_registry_bind(registry, id, &xdg_shell_interface, 1);
-        xdg_shell_use_unstable_version(ewd->wl.xdg_shell,
-                                       XDG_V5_UNSTABLE_VERSION);
-        xdg_shell_add_listener(ewd->wl.xdg_shell, &_xdg_shell_listener, NULL);
-
-        EINA_INLIST_FOREACH(ewd->windows, window)
-          if ((window->type != ECORE_WL2_WINDOW_TYPE_DND) &&
-              (window->type != ECORE_WL2_WINDOW_TYPE_NONE))
-                _ecore_wl2_window_shell_surface_init(window);
-          else
-            window->pending.configure = EINA_FALSE;
-     }
-   else if (!strcmp(interface, "zxdg_shell_v6"))
-     {
-        ewd->wl.zxdg_shell =
-          wl_registry_bind(registry, id, &zxdg_shell_v6_interface, 1);
-        zxdg_shell_v6_add_listener(ewd->wl.zxdg_shell,
-                                   &_zxdg_shell_listener, NULL);
-     }
    else if ((eina_streq(interface, "www")) &&
             (getenv("EFL_WAYLAND_ENABLE_WWW")))
      {
@@ -431,6 +401,96 @@ err:
    return ECORE_CALLBACK_RENEW;
 }
 
+static Ecore_Wl2_Global *
+_ecore_wl2_global_find(Ecore_Wl2_Display *ewd, const char *interface)
+{
+   Eina_Iterator *itr;
+   Ecore_Wl2_Global *global = NULL;
+   void *data;
+
+   itr = eina_hash_iterator_data_new(ewd->globals);
+   if (!itr) return NULL;
+
+   while (eina_iterator_next(itr, &data))
+     {
+        Ecore_Wl2_Global *g = NULL;
+
+        g = (Ecore_Wl2_Global *)data;
+        if (!g) continue;
+
+        if (!strcmp(g->interface, interface))
+          {
+             global = data;
+             break;
+          }
+     }
+
+   eina_iterator_free(itr);
+   return global;
+}
+
+static void
+_ecore_wl2_shell_bind(Ecore_Wl2_Display *ewd)
+{
+   Ecore_Wl2_Global *global = NULL;
+   const char **itr;
+   const char *shells[] =
+     {
+        "zxdg_shell_v6",
+        "xdg_shell",
+        "wl_shell",
+        NULL
+     };
+
+   if (ewd->shell_done) return;
+
+   for (itr = shells; *itr != NULL; itr++)
+     {
+        global = _ecore_wl2_global_find(ewd, *itr);
+        if (!global) continue;
+        break;
+     }
+
+   if (!global) return;
+
+   else if (!strcmp(global->interface, "wl_shell"))
+     {
+        ewd->wl.wl_shell =
+          wl_registry_bind(ewd->wl.registry, global->id,
+                           &wl_shell_interface, 1);
+        ewd->shell_done = EINA_TRUE;
+     }
+   else if ((!strcmp(global->interface, "xdg_shell")) &&
+            (!getenv("EFL_WAYLAND_DONT_USE_XDG_SHELL")))
+     {
+        Ecore_Wl2_Window *window;
+
+        ewd->wl.xdg_shell =
+          wl_registry_bind(ewd->wl.registry, global->id,
+                           &xdg_shell_interface, 1);
+        xdg_shell_use_unstable_version(ewd->wl.xdg_shell,
+                                       XDG_V5_UNSTABLE_VERSION);
+        xdg_shell_add_listener(ewd->wl.xdg_shell, &_xdg_shell_listener, NULL);
+        ewd->shell_done = EINA_TRUE;
+
+        EINA_INLIST_FOREACH(ewd->windows, window)
+          if ((window->type != ECORE_WL2_WINDOW_TYPE_DND) &&
+              (window->type != ECORE_WL2_WINDOW_TYPE_NONE))
+                _ecore_wl2_window_shell_surface_init(window);
+          else
+            window->pending.configure = EINA_FALSE;
+     }
+   else if (!strcmp(global->interface, "zxdg_shell_v6"))
+     {
+        ewd->wl.zxdg_shell =
+          wl_registry_bind(ewd->wl.registry, global->id,
+                           &zxdg_shell_v6_interface, 1);
+        zxdg_shell_v6_add_listener(ewd->wl.zxdg_shell,
+                                   &_zxdg_shell_listener, NULL);
+        ewd->shell_done = EINA_TRUE;
+     }
+}
+
 static void
 _cb_sync_done(void *data, struct wl_callback *cb, uint32_t serial EINA_UNUSED)
 {
@@ -439,6 +499,8 @@ _cb_sync_done(void *data, struct wl_callback *cb, uint32_t serial EINA_UNUSED)
 
    ewd = data;
    ewd->sync_done = EINA_TRUE;
+
+   _ecore_wl2_shell_bind(ewd);
 
    wl_callback_destroy(cb);
 

@@ -113,6 +113,7 @@ struct _Ecore_Wl2_Display
    Eina_Inlist *seats;
 
    Eina_Bool sync_done : 1;
+   Eina_Bool shell_done : 1;
 };
 
 struct _Ecore_Wl2_Subsurface
