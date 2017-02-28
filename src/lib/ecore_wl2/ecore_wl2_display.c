@@ -405,22 +405,16 @@ static Ecore_Wl2_Global *
 _ecore_wl2_global_find(Ecore_Wl2_Display *ewd, const char *interface)
 {
    Eina_Iterator *itr;
-   Ecore_Wl2_Global *global = NULL;
-   void *data;
+   Ecore_Wl2_Global *global = NULL, *g = NULL;
 
    itr = eina_hash_iterator_data_new(ewd->globals);
    if (!itr) return NULL;
 
-   EINA_ITERATOR_FOREACH(itr, data)
+   EINA_ITERATOR_FOREACH(itr, g)
      {
-        Ecore_Wl2_Global *g = NULL;
-
-        g = (Ecore_Wl2_Global *)data;
-        if (!g) continue;
-
         if (!strcmp(g->interface, interface))
           {
-             global = data;
+             global = g;
              break;
           }
      }
