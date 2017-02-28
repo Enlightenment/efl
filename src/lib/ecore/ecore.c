@@ -234,6 +234,7 @@ ecore_init(void)
         EINA_LOG_ERR("Ecore was unable to create a log domain.");
         goto shutdown_log_dom;
      }
+   _ecore_animator_init();
 
    _ecore_pfx = eina_prefix_new(NULL, ecore_init,
                                 "ECORE", "ecore", "checkme",

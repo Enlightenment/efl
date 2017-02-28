@@ -59,6 +59,33 @@ struct _Ecore_Animator
    Eina_Bool         just_added : 1;
 };
 
+static int _ecore_anim_log_dom = -1;
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_ecore_anim_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_ecore_anim_log_dom, __VA_ARGS__)
+
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_ecore_anim_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_ecore_anim_log_dom, __VA_ARGS__)
+
+#ifdef CRI
+# undef CRI
+#endif
+#define CRI(...) EINA_LOG_DOM_CRIT(_ecore_anim_log_dom, __VA_ARGS__)
+
 static Eina_Bool _do_tick(void);
 static Eina_Bool _ecore_animator_run(void *data);
 
@@ -427,10 +454,12 @@ _begin_tick(void)
    switch (src)
      {
       case ECORE_ANIMATOR_SOURCE_TIMER:
+        DBG("General animator registered with timer source.");
         _timer_tick_begin();
         break;
 
       case ECORE_ANIMATOR_SOURCE_CUSTOM:
+        DBG("General animator registered with custom source.");
         if (begin_tick_cb) begin_tick_cb((void *)begin_tick_data);
         break;
 
@@ -446,6 +475,8 @@ _end_tick(void)
    eina_evlog("<animator", NULL, 0.0, NULL);
    ticking = 0;
 
+   DBG("General animator unregistered.");
+
    _timer_tick_end();
 
    if ((src == ECORE_ANIMATOR_SOURCE_CUSTOM) && end_tick_cb)
@@ -458,6 +489,7 @@ _do_tick(void)
    Ecore_Animator *animator;
    Eina_Inlist *tmp;
 
+   DBG("General animator tick.");
    EINA_INLIST_FOREACH(animators, animator)
      {
         animator->just_added = EINA_FALSE;
@@ -865,6 +897,10 @@ ecore_animator_source_set(Ecore_Animator_Source source)
    EINA_MAIN_LOOP_CHECK_RETURN;
    _end_tick();
    src = source;
+   DBG("New source set to %s.",
+       source == ECORE_ANIMATOR_SOURCE_TIMER ? "TIMER" :
+       source == ECORE_ANIMATOR_SOURCE_CUSTOM ? "CUSTOM" :
+       "UNKNOW");
    if (_have_animators()) _begin_tick();
 }
 
@@ -921,6 +957,9 @@ _ecore_animator_shutdown(void)
               (EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
         free(animator);
      }
+
+   eina_log_domain_unregister(_ecore_anim_log_dom);
+   _ecore_anim_log_dom = -1;
 }
 
 void
@@ -987,4 +1026,14 @@ _ecore_animator_flush(void)
         return EINA_FALSE;
      }
    return EINA_TRUE;
+}
+
+void
+_ecore_animator_init(void)
+{
+   _ecore_anim_log_dom = eina_log_domain_register("ecore animator", ECORE_DEFAULT_LOG_COLOR);
+   if (_ecore_anim_log_dom < 0)
+     {
+        EINA_LOG_ERR("Ecore was unable to create a log domain.");
+     }
 }

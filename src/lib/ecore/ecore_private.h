@@ -245,6 +245,7 @@ void       _ecore_exe_event_del_free(void *data,
                                      void *ev);
 #endif
 
+void _ecore_animator_init(void);
 void _ecore_animator_shutdown(void);
 void _ecore_animator_run_reset(void);
 Eina_Bool _ecore_animator_run_get(void);
@@ -274,7 +275,6 @@ void _ecore_coroutine_shutdown(void);
 void _ecore_throttle(void);
 
 void _ecore_main_call_flush(void);
-
 
 static inline Eina_Bool
 _ecore_call_task_cb(Ecore_Task_Cb func,
