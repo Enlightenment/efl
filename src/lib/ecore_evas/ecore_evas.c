@@ -2866,19 +2866,52 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_t
 }
 
 static void
+_ecore_evas_custom_tick_begin(void *data)
+{
+   Ecore_Evas *ee = data;
+
+   if (ee->anim_count++ > 0) return;
+
+   ee->engine.func->fn_animator_register(ee);
+}
+
+static void
+_ecore_evas_custom_tick_end(void *data)
+{
+   Ecore_Evas *ee = data;
+
+   if ((--ee->anim_count) > 0) return;
+
+   ee->engine.func->fn_animator_unregister(ee);
+}
+
+static void
 _ecore_evas_tick_source_find(void)
 {
    Ecore_Evas *ee;
+   Ecore_Evas *standby = NULL;
 
    _general_tick = NULL;
    EINA_INLIST_FOREACH(ecore_evases, ee)
-     if (ee->anim_count &&
-                ee->engine.func->fn_animator_register &&
+     if (ee->engine.func->fn_animator_register &&
          ee->engine.func->fn_animator_unregister)
        {
-          _general_tick = ee;
-          break;
+          if (ee->anim_count)
+            {
+               _general_tick = ee;
+               break;
+            }
+          else
+            {
+               standby = ee;
+            }
        }
+
+   // If no general source is already ticking pick one.
+   if (!_general_tick && standby)
+     {
+        _general_tick = standby;
+     }
 
    if (!_general_tick)
      {
@@ -2886,7 +2919,11 @@ _ecore_evas_tick_source_find(void)
      }
    else
      {
+        // Source set will trigger the previous tick end registered and then the new begin.
+        // As we don't what was in behind, better first begin and end after source is set.
+        ecore_animator_custom_source_tick_begin_callback_set(_ecore_evas_custom_tick_begin, _general_tick);
         ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
+        ecore_animator_custom_source_tick_end_callback_set(_ecore_evas_custom_tick_end, _general_tick);
      }
 }
 
