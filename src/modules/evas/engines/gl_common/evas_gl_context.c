@@ -1585,7 +1585,7 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
    gc->state.current.cur_texv = 0;
    gc->state.current.cur_texa = 0;
    gc->state.current.cur_texm = 0;
-   gc->state.current.tex_target = -1;
+   gc->state.current.tex_target = GL_TEXTURE_2D;
    gc->state.current.render_op = -1;
    gc->state.current.smooth = -1;
    gc->state.current.blend = -1;
