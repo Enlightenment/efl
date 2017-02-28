@@ -1000,6 +1000,7 @@ _ecore_imf_context_ibus_destroy_cb(IBusInputContext *ibuscontext EINA_UNUSED,
    EINA_LOG_DBG("%s", __FUNCTION__);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
+   g_object_unref(ibusimcontext->ibuscontext);
    ibusimcontext->ibuscontext = NULL;
 
    /* clear preedit */
