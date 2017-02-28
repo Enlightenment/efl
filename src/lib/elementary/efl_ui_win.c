@@ -1371,6 +1371,8 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    if (!sd->wl.win) return;
+   if (!sd->shown) return;
+
    wdata = sd->ee->engine.data;
    alpha = ecore_evas_alpha_get(sd->ee) || force_alpha;
    if (sd->fullscreen || !sd->frame_obj)
