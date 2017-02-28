@@ -80,7 +80,7 @@ static const uint64_t eina_value_uint64_max = 18446744073709551615ULL;
 static const int64_t eina_value_int64_max =  9223372036854775807LL;
 static const int64_t eina_value_int64_min = -9223372036854775807LL - 1LL;
 
-#if __WORDSIZE == 64
+#if !defined (_WIN32) && (__WORDSIZE == 64)
 static const unsigned long eina_value_ulong_max = 18446744073709551615ULL;
 static const long eina_value_long_max =  9223372036854775807LL;
 static const long eina_value_long_min = -9223372036854775807LL - 1LL;
