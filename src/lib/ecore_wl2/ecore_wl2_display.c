@@ -8,7 +8,6 @@
 
 static Eina_Hash *_server_displays = NULL;
 static Eina_Hash *_client_displays = NULL;
-static Eina_Bool _shell_bound = EINA_FALSE;
 
 static Eina_Bool _cb_connect_idle(void *data);
 static Eina_Bool _cb_connect_data(void *data, Ecore_Fd_Handler *hdl);
@@ -153,13 +152,12 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         ewd->wl.data_device_manager =
           wl_registry_bind(registry, id, &wl_data_device_manager_interface, ewd->wl.data_device_manager_version);
      }
-   else if ((!strcmp(interface, "wl_shell")) && (!_shell_bound))
+   else if (!strcmp(interface, "wl_shell"))
      {
         ewd->wl.wl_shell =
           wl_registry_bind(registry, id, &wl_shell_interface, 1);
-        _shell_bound = EINA_TRUE;
      }
-   else if (((!strcmp(interface, "xdg_shell")) && (!_shell_bound)) &&
+   else if ((!strcmp(interface, "xdg_shell")) &&
             (!getenv("EFL_WAYLAND_DONT_USE_XDG_SHELL")))
      {
         Ecore_Wl2_Window *window;
@@ -170,8 +168,6 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
                                        XDG_V5_UNSTABLE_VERSION);
         xdg_shell_add_listener(ewd->wl.xdg_shell, &_xdg_shell_listener, NULL);
 
-        _shell_bound = EINA_TRUE;
-
         EINA_INLIST_FOREACH(ewd->windows, window)
           if ((window->type != ECORE_WL2_WINDOW_TYPE_DND) &&
               (window->type != ECORE_WL2_WINDOW_TYPE_NONE))
@@ -179,13 +175,12 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
           else
             window->pending.configure = EINA_FALSE;
      }
-   else if ((!strcmp(interface, "zxdg_shell_v6")) && (!_shell_bound))
+   else if (!strcmp(interface, "zxdg_shell_v6"))
      {
         ewd->wl.zxdg_shell =
           wl_registry_bind(registry, id, &zxdg_shell_v6_interface, 1);
         zxdg_shell_v6_add_listener(ewd->wl.zxdg_shell,
                                    &_zxdg_shell_listener, NULL);
-        _shell_bound = EINA_TRUE;
      }
    else if ((eina_streq(interface, "www")) &&
             (getenv("EFL_WAYLAND_ENABLE_WWW")))
