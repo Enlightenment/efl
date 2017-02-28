@@ -877,6 +877,7 @@ EAPI void
 ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h)
 {
    struct wl_region *region;
+   int nx = 0, ny = 0, nw = 0, nh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
@@ -890,32 +891,36 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
    switch (window->rotation)
      {
       case 0:
-        window->opaque.x = x;
-        window->opaque.y = y;
-        window->opaque.w = w;
-        window->opaque.h = h;
+        nx = x;
+        ny = y;
+        nw = w;
+        nh = h;
         break;
       case 90:
-        window->opaque.x = y;
-        window->opaque.y = x;
-        window->opaque.w = h;
-        window->opaque.h = w;
+        nx = y;
+        ny = x;
+        nw = h;
+        nh = w;
         break;
       case 180:
-        window->opaque.x = x;
-        window->opaque.y = x + y;
-        window->opaque.w = w;
-        window->opaque.h = h;
+        nx = x;
+        ny = x + y;
+        nw = w;
+        nh = h;
         break;
       case 270:
-        window->opaque.x = x + y;
-        window->opaque.y = x;
-        window->opaque.w = h;
-        window->opaque.h = w;
+        nx = x + y;
+        ny = x;
+        nw = h;
+        nh = w;
         break;
       default:
         break;
      }
+
+   if ((window->opaque.x == nx) && (window->opaque.y == ny) &&
+       (window->opaque.w == nw) && (window->opaque.h == nh))
+     return;
 
    window->opaque_set = EINA_TRUE;
 
@@ -938,6 +943,7 @@ EAPI void
 ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h)
 {
    struct wl_region *region;
+   int nx = 0, ny = 0, nw = 0, nh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
@@ -951,32 +957,36 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    switch (window->rotation)
      {
       case 0:
-        window->input_rect.x = x;
-        window->input_rect.y = y;
-        window->input_rect.w = w;
-        window->input_rect.h = h;
+        nx = x;
+        ny = y;
+        nw = w;
+        nh = h;
         break;
       case 90:
-        window->input_rect.x = y;
-        window->input_rect.y = x;
-        window->input_rect.w = h;
-        window->input_rect.h = w;
+        nx = y;
+        ny = x;
+        nw = h;
+        nh = w;
         break;
       case 180:
-        window->input_rect.x = x;
-        window->input_rect.y = x + y;
-        window->input_rect.w = w;
-        window->input_rect.h = h;
+        nx = x;
+        ny = x + y;
+        nw = w;
+        nh = h;
         break;
       case 270:
-        window->input_rect.x = x + y;
-        window->input_rect.y = x;
-        window->input_rect.w = h;
-        window->input_rect.h = w;
+        nx = x + y;
+        ny = x;
+        nw = h;
+        nh = w;
         break;
       default:
         break;
      }
+
+   if ((window->input_rect.x == nx) && (window->input_rect.y == ny) &&
+       (window->input_rect.w == nw) && (window->input_rect.h == nh))
+     return;
 
    window->input_set = EINA_TRUE;
 
