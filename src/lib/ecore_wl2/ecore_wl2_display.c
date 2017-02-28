@@ -411,7 +411,7 @@ _ecore_wl2_global_find(Ecore_Wl2_Display *ewd, const char *interface)
    itr = eina_hash_iterator_data_new(ewd->globals);
    if (!itr) return NULL;
 
-   while (eina_iterator_next(itr, &data))
+   EINA_ITERATOR_FOREACH(itr, data)
      {
         Ecore_Wl2_Global *g = NULL;
 
