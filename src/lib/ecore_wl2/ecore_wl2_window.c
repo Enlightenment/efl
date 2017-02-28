@@ -881,6 +881,8 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
+   fprintf(stderr, "Set Opaque Region: %d %d %d %d\n", x, y, w, h);
+
    if ((x == 0) && (y == 0) && (w == 0) && (h == 0))
      {
         if (window->surface)
@@ -922,6 +924,10 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
        (window->opaque.w == nw) && (window->opaque.h == nh))
      return;
 
+   window->opaque.x = nx;
+   window->opaque.y = ny;
+   window->opaque.w = nw;
+   window->opaque.h = nh;
    window->opaque_set = EINA_TRUE;
 
    if (!window->surface) return;
@@ -946,6 +952,8 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    int nx = 0, ny = 0, nw = 0, nh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
+
+   fprintf(stderr, "Set Input Region: %d %d %d %d\n", x, y, w, h);
 
    if ((x == 0) && (y == 0) && (w == 0) && (h == 0))
      {
@@ -988,6 +996,10 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
        (window->input_rect.w == nw) && (window->input_rect.h == nh))
      return;
 
+   window->input_rect.x = nx;
+   window->input_rect.y = ny;
+   window->input_rect.w = nw;
+   window->input_rect.h = nh;
    window->input_set = EINA_TRUE;
 
    if (!window->surface) return;
