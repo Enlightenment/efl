@@ -2484,6 +2484,7 @@ _wl_targets_converter(char *target, Wl_Cnp_Selection *sel EINA_UNUSED, void *dat
                len += strlen(_atoms[i].name) + strlen(sep);
           }
      }
+   len++;  //terminating null byte
    aret = calloc(1, len * sizeof(char));
    if (!aret) return EINA_FALSE;
    for (i = 0; i < CNP_N_ATOMS; i++)
