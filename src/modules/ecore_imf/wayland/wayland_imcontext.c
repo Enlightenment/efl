@@ -72,6 +72,7 @@ struct _WaylandIMContext
         int y;
         int width;
         int height;
+        Eina_Bool do_set : 1;
      } cursor_location;
 
    xkb_mod_mask_t control_mask;
@@ -106,6 +107,7 @@ update_state(WaylandIMContext *imcontext)
    int cursor_pos;
    Ecore_Evas *ee;
    int canvas_x = 0, canvas_y = 0;
+   Eina_Bool changed = EINA_FALSE;
 
    if (!imcontext->ctx)
      return;
@@ -114,8 +116,12 @@ update_state(WaylandIMContext *imcontext)
    if (ecore_imf_context_surrounding_get(imcontext->ctx, &surrounding, &cursor_pos))
      {
         if (imcontext->text_input)
-          zwp_text_input_v1_set_surrounding_text(imcontext->text_input, surrounding, 
-                                             cursor_pos, cursor_pos);
+          {
+             zwp_text_input_v1_set_surrounding_text(imcontext->text_input,
+                                                    surrounding,
+                                                    cursor_pos, cursor_pos);
+             changed = EINA_TRUE;
+          }
 
         if (surrounding)
           free(surrounding);
@@ -133,14 +139,20 @@ update_state(WaylandIMContext *imcontext)
 
    if (imcontext->text_input)
      {
-        zwp_text_input_v1_set_cursor_rectangle(imcontext->text_input,
-                                           imcontext->cursor_location.x + canvas_x,
-                                           imcontext->cursor_location.y + canvas_y,
-                                           imcontext->cursor_location.width,
-                                           imcontext->cursor_location.height);
-
-        zwp_text_input_v1_commit_state(imcontext->text_input, ++imcontext->serial);
+        if (imcontext->cursor_location.do_set)
+          {
+             zwp_text_input_v1_set_cursor_rectangle(imcontext->text_input,
+                                                    imcontext->cursor_location.x + canvas_x,
+                                                    imcontext->cursor_location.y + canvas_y,
+                                                    imcontext->cursor_location.width,
+                                                    imcontext->cursor_location.height);
+             imcontext->cursor_location.do_set = EINA_FALSE;
+             changed = EINA_TRUE;
+          }
      }
+
+   if (changed)
+     zwp_text_input_v1_commit_state(imcontext->text_input, ++imcontext->serial);
 
    _clear_hide_timer();
 }
@@ -949,6 +961,7 @@ wayland_im_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int
         imcontext->cursor_location.y = y;
         imcontext->cursor_location.width = width;
         imcontext->cursor_location.height = height;
+        imcontext->cursor_location.do_set = EINA_TRUE;
 
         update_state(imcontext);
      }
