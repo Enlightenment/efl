@@ -27,13 +27,12 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Input.h>
-#include <Ecore_Wl2.h>
 
 #include "wayland_imcontext.h"
 
 #define HIDE_TIMER_INTERVAL     0.05
 
-static Eina_Bool _clear_hide_timer();
+static Eina_Bool _clear_hide_timer(void);
 static Ecore_Timer *_hide_timer  = NULL;
 
 struct _WaylandIMContext
