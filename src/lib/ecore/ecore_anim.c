@@ -1031,7 +1031,7 @@ _ecore_animator_flush(void)
 void
 _ecore_animator_init(void)
 {
-   _ecore_anim_log_dom = eina_log_domain_register("ecore animator", ECORE_DEFAULT_LOG_COLOR);
+   _ecore_anim_log_dom = eina_log_domain_register("ecore_animator", ECORE_DEFAULT_LOG_COLOR);
    if (_ecore_anim_log_dom < 0)
      {
         EINA_LOG_ERR("Ecore was unable to create a log domain.");
