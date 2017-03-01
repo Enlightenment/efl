@@ -245,6 +245,7 @@ _ecore_evas_wl_common_cb_disconnect(void *data EINA_UNUSED, int type EINA_UNUSED
         wdata->anim_callback = NULL;
         wdata->sync_done = EINA_FALSE;
         wdata->defer_show = EINA_TRUE;
+        ee->visible = EINA_FALSE;
         wdata->reset_pending = 1;
         ecore_evas_manual_render_set(ee, 1);
         if (wdata->display_unset)
