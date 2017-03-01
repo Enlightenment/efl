@@ -185,9 +185,11 @@ _zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface, uin
    Ecore_Wl2_Window *window;
    Ecore_Wl2_Event_Window_Configure_Complete *ev;
 
-   zxdg_surface_v6_ack_configure(zxdg_surface, serial);
-
    window = data;
+
+   zxdg_surface_v6_ack_configure(zxdg_surface, serial);
+   wl_surface_commit(window->surface);
+
    if (!window->pending.configure) return;
    window->pending.configure = EINA_FALSE;
 
