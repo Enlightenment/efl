@@ -1784,7 +1784,6 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
      {
         int fw, fh;
 
-        _ecore_evas_register(ee);
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         ecore_wl2_window_show(wdata->win);
@@ -2246,6 +2245,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
    ee->engine.func->fn_render = _ecore_evas_wl_common_render;
 
+   _ecore_evas_register(ee);
    ecore_evas_input_event_register(ee);
 
    ecore_event_window_register(ee->prop.window, ee, ee->evas,
