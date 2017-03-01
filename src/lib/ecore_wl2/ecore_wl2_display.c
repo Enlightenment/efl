@@ -811,12 +811,13 @@ ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
    if (display->refs == 0)
      {
         wl_display_roundtrip(display->wl.display);
+
+        _ecore_wl2_display_cleanup(display);
+
         wl_display_disconnect(display->wl.display);
 
         /* remove this client display from hash */
         eina_hash_del_by_key(_client_displays, display->name);
-
-        _ecore_wl2_display_cleanup(display);
 
         free(display->name);
         free(display);
