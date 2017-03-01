@@ -564,8 +564,6 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    Ecore_Wl2_Input *input;
    Eina_Inlist *tmp;
 
-   if (--ewd->refs) return;
-
    if (ewd->xkb_context) xkb_context_unref(ewd->xkb_context);
 
    /* free each input */
@@ -809,7 +807,7 @@ ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN(display);
 
-   _ecore_wl2_display_cleanup(display);
+   --display->refs;
    if (display->refs == 0)
      {
         wl_display_roundtrip(display->wl.display);
@@ -817,6 +815,8 @@ ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
 
         /* remove this client display from hash */
         eina_hash_del_by_key(_client_displays, display->name);
+
+        _ecore_wl2_display_cleanup(display);
 
         free(display->name);
         free(display);
@@ -828,9 +828,13 @@ ecore_wl2_display_destroy(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN(display);
 
-   _ecore_wl2_display_cleanup(display);
+   --display->refs;
    if (display->refs == 0)
      {
+        /* this ensures that things like wl_registry are destroyed
+         * before we destroy the actual wl_display */
+        _ecore_wl2_display_cleanup(display);
+
         wl_display_destroy(display->wl.display);
 
         /* remove this client display from hash */
