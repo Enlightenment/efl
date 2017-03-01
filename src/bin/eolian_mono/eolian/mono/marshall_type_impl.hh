@@ -57,12 +57,25 @@ struct marshall_type_visitor_generate
                 else
                    return replace_base_type(r, " System.String");
               }}
-           , {"stringshare", nullptr, [&]
+           , {"stringshare", true, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 if (is_return)
                    return replace_base_type(r, " System.IntPtr");
+                else if (r.base_qualifier.qualifier & qualifier_info::is_own)
+                  return replace_base_type(r, " System.IntPtr");
+                else
+                   return replace_base_type(r, " System.String");
+              }}
+           , {"stringshare", false, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (is_return)
+                   return replace_base_type(r, " System.IntPtr");
+                else if (r.base_qualifier.qualifier & qualifier_info::is_own)
+                  return replace_base_type(r, " System.IntPtr");
                 else
                    return replace_base_type(r, " System.String");
               }}

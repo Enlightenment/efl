@@ -3,6 +3,32 @@ class Test.Testing (Efl.Object) {
       return_object {
          return: Test.Testing;
       }
+      stringshare_in {
+         params {
+            @in v: stringshare;
+         }
+      }
+      stringshare_in_own {
+         params {
+            @in v: own(stringshare);
+         }
+      }
+      stringshare_out {
+         params {
+            @out v: stringshare;
+         }
+      }
+      stringshare_out_own {
+         params {
+            @out v: own(stringshare);
+         }
+      }
+      stringshare_ret {
+         return: stringshare;
+      }
+      stringshare_ret_own {
+         return: own(stringshare);
+      }
 
       in_string {
          params {
