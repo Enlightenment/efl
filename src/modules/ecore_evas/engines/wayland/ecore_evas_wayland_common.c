@@ -2020,46 +2020,8 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 
    if (wdata->defer_show)
      {
-        int fw, fh;
-
         wdata->defer_show = EINA_FALSE;
-
-        _ecore_evas_register(ee);
-
-        ecore_wl2_window_show(wdata->win);
-        ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
-        ecore_wl2_window_transparent_set(wdata->win, ee->transparent);
-
-        if (wdata->defer_fullscreen)
-          {
-             wdata->defer_fullscreen = EINA_FALSE;
-             ecore_wl2_window_fullscreen_set(wdata->win, ee->prop.fullscreen);
-          }
-
-        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
-        if (wdata->win)
-          {
-
-             einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
-             if (einfo)
-               {
-                  evas_damage_rectangle_add(ee->evas, 0, 0,
-                                            ee->w + fw, ee->h + fh);
-                  einfo->www_avail = !!wdata->win->www_surface;
-               }
-          }
-
-        ee->prop.withdrawn = EINA_FALSE;
-        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-
-        if (!ee->visible)
-          {
-             ee->visible = 1;
-             ee->should_be_visible = 1;
-             ee->draw_ok = EINA_TRUE;
-             if (ee->func.fn_show) ee->func.fn_show(ee);
-          }
+        _ecore_evas_wl_common_show(ee);
      }
 
    return ECORE_CALLBACK_PASS_ON;
