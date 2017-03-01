@@ -279,6 +279,8 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
    ecore_main_fd_handler_del(ewd->fd_hdl);
    ewd->fd_hdl = NULL;
 
+   ewd->shell_done = EINA_FALSE;
+
    if (ewd->wl.session_recovery)
      zwp_e_session_recovery_destroy(ewd->wl.session_recovery);
    if (ewd->wl.www) www_destroy(ewd->wl.www);
