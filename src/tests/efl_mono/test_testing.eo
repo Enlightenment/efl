@@ -8,6 +8,22 @@ class Test.Testing (Efl.Object) {
          return: string;
       }
 
+      return_own_string {
+         return: own(string);
+      }
+
+      out_string {
+         params {
+            @out str: string;
+         }
+      }
+
+      out_own_string {
+         params {
+            @out str: own(string);
+         }
+      }
+
       call_return_string {
          return: string;
       }
