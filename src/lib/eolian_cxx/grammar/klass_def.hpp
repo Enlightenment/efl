@@ -203,10 +203,11 @@ struct type_def
    typedef eina::variant<klass_name, regular_type_def, complex_type_def> variant_type;
    variant_type original_type;
    std::string c_type;
+   bool has_own;
 
    type_def() {}
-   type_def(variant_type original_type, std::string c_type)
-     : original_type(original_type), c_type(c_type) {}
+   type_def(variant_type original_type, std::string c_type, bool has_own)
+     : original_type(original_type), c_type(c_type), has_own(has_own) {}
 
    type_def(Eolian_Type const* eolian_type)
    {
@@ -239,12 +240,13 @@ inline bool operator!=(type_def const& lhs, type_def const& rhs)
   return !(lhs == rhs);
 }
         
-type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void"};
+type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void", false};
         
 inline void type_def::set(Eolian_Type const* eolian_type)
 {
    c_type = ::eolian_type_c_type_get(eolian_type);
    // ::eina_stringshare_del(stringshare); // this crashes
+   has_own = !!::eolian_type_is_own(eolian_type);
    switch( ::eolian_type_type_get(eolian_type))
      {
      case EOLIAN_TYPE_VOID:
