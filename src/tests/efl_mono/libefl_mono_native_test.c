@@ -37,17 +37,36 @@ typedef struct Test_Testing_Data
 
 #include "test_testing.eo.h"
 
-Efl_Object *_test_testing_return_object(Eo *obj, Test_Testing_Data *pd)
+Efl_Object *_test_testing_return_object(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
   return obj;
 }
 
-const char *_test_testing_return_string(Eo *obj, Test_Testing_Data *pd)
+const char *_test_testing_return_string(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
   return "string";
 }
 
-const char *_test_testing_call_return_string(Eo *obj, Test_Testing_Data *pd)
+const char *_test_testing_return_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  static const char* reference = "own_string";
+  const char *ret = malloc(sizeof(char)*(strlen(reference) + 1));
+  return strcpy((char*)ret, reference);
+}
+
+void _test_testing_out_string(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const char**str)
+{
+  *str = "out_string";
+}
+
+void _test_testing_out_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const char**str)
+{
+  static const char* reference = "out_own_string";
+  *str = malloc(sizeof(char)*(strlen(reference) + 1));
+  strcpy((char*)str, reference);
+}
+
+const char *_test_testing_call_return_string(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
   return test_testing_return_string(obj);
 }
