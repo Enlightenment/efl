@@ -14,6 +14,18 @@ public class Test
         if (!res)
             throw new Exception($"Assertion failed: {file}:{line} ({member}) {msg}");
     }
+
+    public static void AssertEquals<T>(T expected, T actual, String msg = "",
+                              [CallerLineNumber] int line = 0,
+                              [CallerFilePath] string file = null,
+                              [CallerMemberName] string member = null) where T : System.IComparable<T>
+    {
+        if (expected.CompareTo(actual) != 0) {
+            if (msg == "")
+                msg = $"Expected \"{expected}\", actual \"{actual}\"";
+            throw new Exception($"{file}:{line} ({member}) {msg}");
+        }
+    }
 }
 
 class TestMain
