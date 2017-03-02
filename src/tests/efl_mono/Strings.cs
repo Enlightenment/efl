@@ -4,11 +4,33 @@ namespace TestSuite {
 
 class TestStrings
 {
+    public static void in_string()
+    {
+        {
+            test.Testing obj = new test.TestingConcrete();
+            String sent = "in_string";
+            String returned = obj.in_string(sent);
+            Test.AssertEquals(sent, returned);
+        }
+        System.GC.Collect();
+    }
+
+    public static void in_own_string()
+    {
+        {
+            test.Testing obj = new test.TestingConcrete();
+            String sent = "in_own_string";
+            String returned = obj.in_own_string(sent);
+            Test.AssertEquals(sent, returned);
+        }
+        System.GC.Collect();
+    }
+
     public static void return_string()
     {
         {
             test.Testing obj = new test.TestingConcrete();
-            Test.Assert(obj.return_string().Equals("string"));
+            Test.AssertEquals("string", obj.return_string());
         }
         System.GC.Collect();
     }
@@ -17,7 +39,7 @@ class TestStrings
     {
         {
             test.Testing obj = new test.TestingConcrete();
-            Test.Assert(obj.return_own_string().Equals("own_string"));
+            Test.AssertEquals("own_string", obj.return_own_string());
         }
         System.GC.Collect();
     }
@@ -28,7 +50,7 @@ class TestStrings
             String str = String.Empty;
             test.Testing obj = new test.TestingConcrete();
             obj.out_string(out str);
-            Test.Assert(str.Equals("out_string"));
+            Test.AssertEquals("out_string", str);
         }
         System.GC.Collect();
     }
@@ -38,28 +60,98 @@ class TestStrings
         {
             String str = String.Empty;
             test.Testing obj = new test.TestingConcrete();
-            obj.out_string(out str);
-            Test.Assert(str.Equals("out_own_string"));
+            obj.out_own_string(out str);
+            Test.AssertEquals(str.ToString(), "out_own_string");
         }
         System.GC.Collect();
     }
 
     private class StringReturner : test.TestingInherit
     {
+        public String received_in;
+        public String received_in_own;
         public StringReturner() : base(null) {
+            received_in = String.Empty;
+            received_in_own = String.Empty;
         }
+
+        public override String in_string(String str)
+        {
+            received_in = str;
+            return String.Empty;
+        }
+
+        public override String in_own_string(String str)
+        {
+            received_in_own = str;
+            return String.Empty;
+        }
+
         public override String return_string()
         {
             return "inherited";
         }
+
+        public override String return_own_string()
+        {
+            return "own_inherited";
+        }
+
+        public override void out_string(out String str)
+        {
+            str = "out_inherited";
+        }
+
+        public override void out_own_string(out System.String str)
+        {
+            str = "out_own_inherited";
+        }
     }
 
-    public static void return_string_to_c()
+    public static void in_string_from_virtual()
+    {
+        StringReturner obj = new StringReturner();
+        String sent = "in_inherited";
+        obj.call_in_string(sent);
+        Test.AssertEquals(sent, obj.received_in);
+    }
+
+    public static void in_own_string_from_virtual()
+    {
+        StringReturner obj = new StringReturner();
+        String sent = "in_own_inherited";
+        obj.call_in_own_string(sent);
+        Test.AssertEquals(sent, obj.received_in_own);
+    }
+
+    public static void return_string_from_virtual()
     {
         test.Testing obj = new StringReturner();
         // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
-        Test.Assert(obj.call_return_string().Equals("inherited"));
+        Test.AssertEquals("inherited", obj.call_return_string());
     }
+
+    public static void return_own_string_from_virtual()
+    {
+        test.Testing obj = new StringReturner();
+        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        Test.AssertEquals("own_inherited", obj.call_return_own_string());
+    }
+
+    public static void out_string_from_virtual()
+    {
+        test.Testing obj = new StringReturner();
+        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        Test.AssertEquals("out_inherited", obj.call_out_string());
+    }
+
+    public static void out_own_string_from_virtual()
+    {
+        test.Testing obj = new StringReturner();
+        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        Test.AssertEquals("out_own_inherited", obj.call_out_own_string());
+    }
+
 }
 
 }

@@ -4,6 +4,20 @@ class Test.Testing (Efl.Object) {
          return: Test.Testing;
       }
 
+      in_string {
+         params {
+            @in str: string;
+         }
+         return: own(string);
+      }
+
+      in_own_string {
+         params {
+            @in str: string;
+         }
+         return: string;
+      }
+
       return_string {
          return: string;
       }
@@ -24,8 +38,34 @@ class Test.Testing (Efl.Object) {
          }
       }
 
+      call_in_string {
+        params {
+            @in str: string;
+        }
+        return: string;
+      }
+
+      call_in_own_string {
+        params {
+            @in str: string;
+        }
+        return: own(string);
+      }
+
       call_return_string {
          return: string;
+      }
+
+      call_return_own_string {
+         return: own(string);
+      }
+
+      call_out_string {
+         return: string;
+      }
+
+      call_out_own_string {
+         return: own(string);
       }
    }
 }
