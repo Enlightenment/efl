@@ -49,6 +49,14 @@
 typedef struct _Ecore_Pthread_Worker Ecore_Pthread_Worker;
 typedef struct _Ecore_Pthread        Ecore_Pthread;
 typedef struct _Ecore_Thread_Data    Ecore_Thread_Data;
+typedef struct _Ecore_Thread_Waiter Ecore_Thread_Waiter;
+
+struct _Ecore_Thread_Waiter
+{
+   Ecore_Thread_Cb func_cancel;
+   Ecore_Thread_Cb func_end;
+   Eina_Bool waiting;
+};
 
 struct _Ecore_Thread_Data
 {
@@ -87,6 +95,7 @@ struct _Ecore_Pthread_Worker
       } message_run;
    } u;
 
+   Ecore_Thread_Waiter *waiter;
    Ecore_Thread_Cb func_cancel;
    Ecore_Thread_Cb func_end;
                    PH(self);
@@ -352,13 +361,13 @@ _ecore_short_job(PH(thread))
    int cancel;
 
    SLKL(_ecore_pending_job_threads_mutex);
-   
+
    if (!_ecore_pending_job_threads)
      {
         SLKU(_ecore_pending_job_threads_mutex);
         return;
      }
-   
+
    work = eina_list_data_get(_ecore_pending_job_threads);
    _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads,
                                                       _ecore_pending_job_threads);
@@ -793,46 +802,37 @@ ecore_thread_cancel(Ecore_Thread *thread)
    return EINA_FALSE;
 }
 
-typedef struct _Ecore_Thread_Waiter Ecore_Thread_Waiter;
-struct _Ecore_Thread_Waiter
-{
-   Ecore_Thread_Cb func_cancel;
-   Ecore_Thread_Cb func_end;
-   const void *data;
-   Eina_Bool waiting;
-};
 
 static void
 _ecore_thread_wait_reset(Ecore_Thread_Waiter *waiter,
                          Ecore_Pthread_Worker *worker)
 {
-   worker->data = waiter->data;
    worker->func_cancel = waiter->func_cancel;
    worker->func_end = waiter->func_end;
+   worker->waiter = NULL;
 
    waiter->func_end = NULL;
    waiter->func_cancel = NULL;
-   waiter->data = NULL;
    waiter->waiting = EINA_FALSE;
 }
 
 static void
-_ecore_thread_wait_cancel(void *data, Ecore_Thread *thread)
+_ecore_thread_wait_cancel(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
-   Ecore_Thread_Waiter *waiter = data;
+   Ecore_Thread_Waiter *waiter = worker->waiter;
 
-   if (waiter->func_cancel) waiter->func_cancel((void*) waiter->data, thread);
+   if (waiter->func_cancel) waiter->func_cancel(data, thread);
    _ecore_thread_wait_reset(waiter, worker);
 }
 
 static void
-_ecore_thread_wait_end(void *data, Ecore_Thread *thread)
+_ecore_thread_wait_end(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
-   Ecore_Thread_Waiter *waiter = data;
+   Ecore_Thread_Waiter *waiter = worker->waiter;
 
-   if (waiter->func_end) waiter->func_end((void*) waiter->data, thread);
+   if (waiter->func_end) waiter->func_end(data, thread);
    _ecore_thread_wait_reset(waiter, worker);
 }
 
@@ -844,12 +844,12 @@ ecore_thread_wait(Ecore_Thread *thread, double wait)
 
    if (!thread) return EINA_TRUE;
 
-   waiter.data = worker->data;
    waiter.func_end = worker->func_end;
    waiter.func_cancel = worker->func_cancel;
    waiter.waiting = EINA_TRUE;
+
    // Now trick the thread to call the wrapper function
-   worker->data = &waiter;
+   worker->waiter = &waiter;
    worker->func_cancel = _ecore_thread_wait_cancel;
    worker->func_end = _ecore_thread_wait_end;
 
