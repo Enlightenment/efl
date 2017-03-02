@@ -721,8 +721,9 @@ local build_functable = function(f, title, tcl, tbl, newm)
         end
 
         local wt = {}
+        wt[0] = func
         -- name info
-        wt[#wt + 1] = lbuf:finish()
+        wt[1] = lbuf:finish()
 
         if over then
             -- TODO: possibly also mention which part of a property was
@@ -755,8 +756,8 @@ local build_functable = function(f, title, tcl, tbl, newm)
 
         lbuf:write_nl()
         local codes = {}
-        if ft ~= dtree.Function.PROPERTY then
-            codes[#codes + 1] = gen_func_csig(func, ft)
+        if func:type_get() ~= dtree.Function.PROPERTY then
+            codes[#codes + 1] = gen_func_csig(func, func:type_get())
         else
             codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_GET)
             codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_SET)
@@ -779,12 +780,75 @@ local build_functable = function(f, title, tcl, tbl, newm)
             build_method(impl, cl)
         end
     end
-    table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
+    local get_best_scope = function(f)
+        local ft = f:type_get()
+        if ft == f.PROPERTY then
+            local fs1, fs2 = f:scope_get(f.PROP_GET), f:scope_get(f.PROP_SET)
+            if fs1 == f.scope.PUBLIC or fs2 == f.scope.PUBLIC then
+                return f.scope.PUBLIC
+            elseif fs1 == f.scope.PROTECTED or fs2 == f.scope.PROTECTED then
+                return f.scope.PROTECTED
+            else
+                return f.scope.PRIVATE
+            end
+        else
+            return f:scope_get(ft)
+        end
+    end
+    table.sort(nt, function(v1, v2)
+        local f1, f2 = v1[0], v2[0]
+        local f1s, f2s = get_best_scope(f1), get_best_scope(f2)
+        if f1s ~= f2s then
+            if f1s ~= f1.scope.PROTECED then
+                -- public funcs go first, private funcs go last
+                return f1s == f1.scope.PUBLIC
+            else
+                -- protected funcs go second
+                return f2s == f2.scope.PRIVATE
+            end
+        end
+        return v1[1] < v2[1]
+    end)
     for i, item in ipairs(nt) do
+        -- scope
+        local func = item[0]
+        local ftt = {
+            [func.scope.PROTECTED] = "protected",
+            [func.scope.PRIVATE] = "private"
+        }
+        if fs then
+            f:write_b(fs)
+            f:write_raw(" ")
+        end
         -- name
         f:write_raw(item[1])
         -- override
         f:write_raw(item[2])
+        -- scope
+        if func:type_get() == func.PROPERTY then
+            local ft1, ft2 = ftt[func:scope_get(func.PROP_GET)],
+                             ftt[func:scope_get(func.PROP_SET)]
+            if ft1 and ft1 == ft2 then
+                f:write_raw(" ")
+                f:write_m(ft1)
+            elseif ft1 or ft2 then
+                local s = ""
+                if ft1 then
+                    s = s .. ft1 .. " get" .. (ft2 and ", " or "")
+                end
+                if ft2 then
+                    s = s .. ft2 .. " set"
+                end
+                f:write_raw(" ")
+                f:write_m(s)
+            end
+        else
+            local ft = ftt[func:scope_get(func:type_get())]
+            if ft then
+                f:write_raw(" ")
+                f:write_m(ft)
+            end
+        end
         -- desc
         f:write_raw(item[3])
         f:write_nl()
