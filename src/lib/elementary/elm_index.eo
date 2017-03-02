@@ -233,6 +233,15 @@ class Elm.Index (Elm.Layout, Efl.Orientation,
             @in item: Elm.Widget.Item; [[The item.]]
          }
       }
+      letter_item_find @const {
+         [[Returns the item who correspond to the letter given as arguments.]]
+
+         return: Elm.Widget.Item; [[The item on $obj who correspond to the letter given(or $NULL, on errors).]]
+         params {
+            @in letter: string; [[$0 or $1, the letter item to return.]]
+         }
+      }
+
    }
    implements {
       class.constructor;
