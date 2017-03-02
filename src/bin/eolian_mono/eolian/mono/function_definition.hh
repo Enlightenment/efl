@@ -11,6 +11,7 @@
 #include "grammar/alternative.hpp"
 #include "grammar/attribute_reorder.hpp"
 #include "type.hh"
+#include "function_helpers.hh"
 #include "marshall_type.hh"
 #include "parameter.hh"
 #include "keyword.hh"
@@ -50,17 +51,6 @@ struct native_function_definition_generator
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
       return false;
 
-    bool is_string_return = return_type == " System.String";
-    std::string function_result = return_type == "void" ? "" : "return ";
-    std::string function_post_action = "";
-
-    if (is_string_return)
-      {
-         function_result = " System.String str = ";
-         function_post_action = "return efl.eo.Globals.cached_string_to_intptr(((" + klass->cxx_name + "Inherit)wrapper).cached_strings, str);";
-      }
-
-    
     if(!as_generator
        (scope_tab
         << eolian_mono::marshall_annotation(true)
@@ -79,9 +69,10 @@ struct native_function_definition_generator
         /****/
         << scope_tab << scope_tab << "efl.eo.IWrapper wrapper = efl.eo.Globals.data_get(pd);\n"
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
-        << scope_tab << scope_tab << scope_tab << function_result << "((" << string << "Inherit)wrapper)." << string
+        << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
+        << "((" << string << "Inherit)wrapper)." << string
         << "(" << (argument % ", ") << ");\n"
-        << function_post_action
+        << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string << "Inherit." << string
         << "(efl.eo.Globals.efl_super(obj, " << string << "Inherit.klass)" << *(", " << argument) << ");\n"
@@ -90,8 +81,10 @@ struct native_function_definition_generator
        )
        .generate(sink, std::make_tuple(f.return_type, f.return_type, escape_keyword(f.name), f.parameters
                                        , /***/f.c_name/***/
+                                       , f
                                        , klass->cxx_name, escape_keyword(f.name)
                                        , f.parameters
+                                       , f
                                        , klass->cxx_name, f.c_name, klass->cxx_name, f.parameters), context))
       return false;
 
@@ -141,27 +134,17 @@ struct function_definition_generator
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
       return false;
 
-    bool is_string_return = return_type == " System.String";
-    std::string function_result = return_type == "void" ? "" : "return ";
-    std::string function_post_action = "";
-
-    if (is_string_return)
-      {
-         function_result = " System.IntPtr ptr = ";
-         function_post_action  = "return Marshal.PtrToStringAuto(ptr);";
-      }
-
     if(!as_generator
        (scope_tab << (do_super ? "virtual " : "") << "public " << return_type << " " << string << "(" << (parameter % ", ")
         << ") { "
-        << function_result << string << "("
+        << eolian_mono::function_definition_preamble() << string << "("
         << (do_super ? "efl.eo.Globals.efl_super(" : "")
         << "this.raw_handle"
         << (do_super ? ", this.raw_klass)" : "")
         << *(", " << argument) << ");"
-        << function_post_action
+        << eolian_mono::function_definition_epilogue()
         << " }\n")
-       .generate(sink, std::make_tuple(escape_keyword(f.name), f.parameters, f.c_name, f.parameters), context))
+       .generate(sink, std::make_tuple(escape_keyword(f.name), f.parameters, f, f.c_name, f.parameters, f), context))
       return false;
 
     return true;
