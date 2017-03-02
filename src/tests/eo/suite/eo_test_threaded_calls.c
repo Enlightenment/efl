@@ -122,8 +122,8 @@ START_TEST(eo_threaded_calls_test)
    fail_if(!eina_barrier_new(&barrier, 2));
    fail_if(!eina_barrier_new(&barrier0, 2));
 
-   fail_if(!eina_thread_create(&threads[0], EINA_THREAD_NORMAL, 0, _thread_job, (void *) (uintptr_t)0));
-   fail_if(!eina_thread_create(&threads[1], EINA_THREAD_NORMAL, 0, _thread_job, (void *) (uintptr_t)1));
+   fail_if(!eina_thread_create(&threads[0], EINA_THREAD_NORMAL, -1, _thread_job, (void *) (uintptr_t)0));
+   fail_if(!eina_thread_create(&threads[1], EINA_THREAD_NORMAL, -1, _thread_job, (void *) (uintptr_t)1));
 
    fail_if(0 != (int)(uintptr_t)eina_thread_join(threads[0]));
    fail_if(1 != (int)(uintptr_t)eina_thread_join(threads[1]));

@@ -353,7 +353,7 @@ evas_gl_preload_init(void)
    eina_lock_new(&async_loader_lock);
    eina_condition_new(&async_loader_cond, &async_loader_lock);
 
-   if (!eina_thread_create(&async_loader_thread, EINA_THREAD_BACKGROUND, 0, _evas_gl_preload_tile_async, NULL))
+   if (!eina_thread_create(&async_loader_thread, EINA_THREAD_BACKGROUND, -1, _evas_gl_preload_tile_async, NULL))
      {
         // FIXME: handle error case
      }

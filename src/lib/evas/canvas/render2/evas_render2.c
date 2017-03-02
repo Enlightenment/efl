@@ -53,7 +53,7 @@ _evas_render2_th_init(void)
    if (initted) return;
    initted = EINA_TRUE;
    _th_main_queue = eina_thread_queue_new();
-   if (!eina_thread_create(&_th_main, EINA_THREAD_URGENT, 0,
+   if (!eina_thread_create(&_th_main, EINA_THREAD_URGENT, -1,
                            _evas_render2_th_main, NULL))
      ERR("Cannot create render2 thread");
 }

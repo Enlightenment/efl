@@ -123,8 +123,8 @@ START_TEST(eina_test_threading)
    fail_if(!eina_barrier_new(&b, 2));
 
    // Spawn them
-   fail_if(!eina_thread_create(&t1, 0, 0, _thread1, NULL));
-   fail_if(!eina_thread_create(&t2, 0, 0, _thread2, NULL));
+   fail_if(!eina_thread_create(&t1, EINA_THREAD_NORMAL, -1, _thread1, NULL));
+   fail_if(!eina_thread_create(&t2, EINA_THREAD_NORMAL, -1, _thread2, NULL));
 
    // And wait for the outcome !
    eina_thread_join(t1);

@@ -74,19 +74,19 @@ START_TEST(eina_barrier_test_simple)
     r = eina_barrier_new(&barrier, 6);
     fail_unless(r);
 
-    r = eina_thread_create(&wk1, EINA_THREAD_NORMAL, 0, wk_func, NULL);
+    r = eina_thread_create(&wk1, EINA_THREAD_NORMAL, -1, wk_func, NULL);
     fail_unless(r);
 
-    r = eina_thread_create(&wk2, EINA_THREAD_NORMAL, 0, wk_func, NULL);
+    r = eina_thread_create(&wk2, EINA_THREAD_NORMAL, -1, wk_func, NULL);
     fail_unless(r);
 
-    r = eina_thread_create(&wk3, EINA_THREAD_NORMAL, 0, wk1_func, NULL);
+    r = eina_thread_create(&wk3, EINA_THREAD_NORMAL, -1, wk1_func, NULL);
     fail_unless(r);
 
-    r = eina_thread_create(&wk4, EINA_THREAD_NORMAL, 0, wk2_func, NULL);
+    r = eina_thread_create(&wk4, EINA_THREAD_NORMAL, -1, wk2_func, NULL);
     fail_unless(r);
 
-    r = eina_thread_create(&wk5, EINA_THREAD_NORMAL, 0, wk3_func, NULL);
+    r = eina_thread_create(&wk5, EINA_THREAD_NORMAL, -1, wk3_func, NULL);
     fail_unless(r);
 
     eina_barrier_wait(&barrier);

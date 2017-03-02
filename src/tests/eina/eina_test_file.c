@@ -512,7 +512,7 @@ START_TEST(eina_test_file_thread)
    fail_if(!eina_init());
 
    for (i = 0; i < 4; i++)
-     fail_if(!(eina_thread_create(&th[i], EINA_THREAD_NORMAL, 0, _eina_test_file_thread, NULL)));
+     fail_if(!(eina_thread_create(&th[i], EINA_THREAD_NORMAL, -1, _eina_test_file_thread, NULL)));
 
    for (i = 0; i < 4; i++)
      fail_if(eina_thread_join(th[i]) != NULL);

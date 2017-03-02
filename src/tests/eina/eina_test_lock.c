@@ -90,7 +90,7 @@ START_TEST(eina_test_spinlock)
    counter = 0;
    fail_if(!eina_spinlock_new(&spin));
 
-   fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, 0, _eina_test_lock_thread, "test"));
+   fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, _eina_test_lock_thread, "test"));
 
    for (i = 0; i < 10000; i++)
      {
@@ -156,7 +156,7 @@ START_TEST(eina_test_tls)
 
    fail_if(!eina_tls_set(key, _eina_test_tls_alloc(42)));
 
-   fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, 0, _eina_test_tls_thread, NULL));
+   fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, _eina_test_tls_thread, NULL));
 
    eina_thread_join(thread);
    fail_if(_eina_tls_free_count != 1);
@@ -216,7 +216,7 @@ START_TEST(eina_test_rwlock)
    fail_if(eina_rwlock_take_read(&mutex) != EINA_LOCK_SUCCEED);
    fail_if(eina_lock_take(&mtcond) != EINA_LOCK_SUCCEED);
 
-   fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, 0, _eina_test_rwlock_thread, NULL));
+   fail_if(!eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, _eina_test_rwlock_thread, NULL));
 
    fail_if(!eina_barrier_wait(&barrier));
    fail_if(!eina_condition_wait(&cond));
