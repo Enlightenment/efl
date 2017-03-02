@@ -900,7 +900,7 @@ ecore_animator_source_set(Ecore_Animator_Source source)
    DBG("New source set to %s.",
        source == ECORE_ANIMATOR_SOURCE_TIMER ? "TIMER" :
        source == ECORE_ANIMATOR_SOURCE_CUSTOM ? "CUSTOM" :
-       "UNKNOW");
+       "UNKNOWN");
    if (_have_animators()) _begin_tick();
 }
 
