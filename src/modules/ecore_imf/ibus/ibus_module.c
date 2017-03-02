@@ -81,6 +81,7 @@ im_module_init(void)
 
 static void im_module_shutdown(void)
 {
+   ecore_imf_context_ibus_shutdown();
 }
 
 static Ecore_IMF_Context *
