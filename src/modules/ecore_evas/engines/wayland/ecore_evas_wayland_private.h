@@ -36,7 +36,6 @@ typedef struct _Ecore_Evas_Engine_Wl_Data Ecore_Evas_Engine_Wl_Data;
 struct _Ecore_Evas_Engine_Wl_Data 
 {
    Ecore_Wl2_Display *display;
-   void (*display_unset)(Ecore_Evas*);
    Eina_List *regen_objs;
    Ecore_Wl2_Window *parent, *win;
    Ecore_Event_Handler *sync_handler;

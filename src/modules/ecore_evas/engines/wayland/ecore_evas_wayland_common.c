@@ -229,6 +229,26 @@ _ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void
+_ee_display_unset(Ecore_Evas *ee)
+{
+   Evas_Engine_Info_Wayland *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+   if (!einfo) return;
+
+   einfo->info.wl_display = NULL;
+   einfo->info.wl_surface = NULL;
+
+   wdata = ee->engine.data;
+   if (!strcmp(ee->driver, "wayland_egl"))
+     wdata->regen_objs = _evas_canvas_image_data_unset(ecore_evas_get(ee));
+
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+     WRN("Failed to set Evas Engine Info for '%s'", ee->driver);
+}
+
 static Eina_Bool
 _ecore_evas_wl_common_cb_disconnect(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -248,8 +268,7 @@ _ecore_evas_wl_common_cb_disconnect(void *data EINA_UNUSED, int type EINA_UNUSED
         ee->visible = EINA_FALSE;
         wdata->reset_pending = 1;
         ecore_evas_manual_render_set(ee, 1);
-        if (wdata->display_unset)
-          wdata->display_unset(ee);
+        _ee_display_unset(ee);
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -1958,22 +1977,6 @@ _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
      _rotation_do(ee, rotation, resize);
 }
 
-static void
-_ee_egl_display_unset(Ecore_Evas *ee)
-{
-   Evas_Engine_Info_Wayland *einfo;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
-   if (!einfo) return;
-
-   einfo->info.wl_display = NULL;
-   wdata = ee->engine.data;
-   wdata->regen_objs = _evas_canvas_image_data_unset(ecore_evas_get(ee));
-   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-     WRN("Failed to set Evas Engine Info for '%s'", ee->driver);
-}
-
 static Eina_Bool
 _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -2188,8 +2191,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    wdata->sync_done = EINA_FALSE;
    wdata->parent = p;
    wdata->display = ewd;
-   if (!strcmp(engine_name, "wayland_egl"))
-     wdata->display_unset = _ee_egl_display_unset;
 
    wdata->win = ecore_wl2_window_new(ewd, p, x, y, w + fw, h + fh);
    ee->prop.window = ecore_wl2_window_id_get(wdata->win);
