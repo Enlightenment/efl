@@ -1954,7 +1954,7 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
    tex->ptv2 = ptv;
 
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
-   if (tex->gc->shared->info.unpack_row_length)
+   if ((tex->gc->shared->info.unpack_row_length) && (rows[0] && rows[h]))
      {
         glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -1973,7 +1973,7 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
           return;
         _tex_sub_2d(tex->gc, 0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
      }
-   else
+   else if (rows[0] && rows[h])
      {
         unsigned int y;
         
