@@ -7094,6 +7094,17 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
 
    Eina_Bool deferred_show = EINA_FALSE;
 
+   switch (type)
+     {
+      case ELM_GENLIST_ITEM_SCROLLTO_IN:
+      case ELM_GENLIST_ITEM_SCROLLTO_TOP:
+      case ELM_GENLIST_ITEM_SCROLLTO_MIDDLE:
+      case ELM_GENLIST_ITEM_SCROLLTO_BOTTOM:
+         break;
+      default: /* Filters unsupported type */
+         return EINA_FALSE;
+     }
+
    //Can't goto the item right now. Reserve it instead.
    if (sd->queue || !(sd->homogeneous && (sd->mode == ELM_LIST_COMPRESS)))
      {

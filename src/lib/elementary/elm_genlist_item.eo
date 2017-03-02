@@ -29,7 +29,7 @@ enum Elm.Genlist.Item.Scrollto_Type
 {
    [[Defines where to position the item in the genlist.]]
    legacy: elm_genlist_item_scrollto;
-   none = 0,   [[No scrollto.]]
+   none = 0,   [[Nothing will happen, Don't use this value.]]
    in = (1 << 0),   [[To the nearest viewport.]]
    top = (1 << 1),   [[To the top of viewport.]]
    middle = (1 << 2),   [[To the middle of viewport.]]
@@ -50,7 +50,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
 
                        This returns the item placed before the $item, on
                        the container genlist.
-                       
+
                        If filter is set on genlist, this returns the filtered
                        item placed before $item in the list.
                      ]]
