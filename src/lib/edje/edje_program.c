@@ -1062,7 +1062,7 @@ low_mem_current:
                             (rp->typedata.swallow)) &&
                            (rp->typedata.swallow->swallowed_object == focused))
                          {
-                            evas_object_seat_focus_del(focused, seat);
+                            efl_canvas_object_seat_focus_del(focused, seat);
                             break;
                          }
                     }
@@ -1079,7 +1079,7 @@ low_mem_current:
                            ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
                             (rp->typedata.swallow)) &&
                            (rp->typedata.swallow->swallowed_object))
-                         evas_object_seat_focus_add(
+                         efl_canvas_object_seat_focus_add(
                             rp->typedata.swallow->swallowed_object, seat);
                     }
                }

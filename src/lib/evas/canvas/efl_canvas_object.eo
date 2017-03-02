@@ -32,6 +32,12 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          values {
              pointer_mode: Efl.Input.Object_Pointer_Mode; [[The pointer mode]]
          }
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
       }
       @property pointer_mode {
          [[Low-level pointer behaviour.
@@ -65,7 +71,9 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
 
            @since 1.19
          ]]
-         get{}
+         get {
+            legacy: null;
+         }
          values {
             in: bool; [[If $true the main pointer has entered this object.]]
          }
@@ -79,7 +87,9 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
 
            @since 1.19
          ]]
-         get {}
+         get {
+            legacy: null;
+         }
          keys {
             pointer: Efl.Input.Device; [[The pointer. Use $null for the defaul pointer]]
          }
@@ -274,6 +284,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             @since 1.19
          ]]
          get {
+            legacy: null;
          }
          values {
             focus: bool; [[$true if focused by at least one seat or $false otherwise.]]
@@ -284,6 +295,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          params {
             @in seat: Efl.Input.Device; [[The seat to check if the object is focused. Use $null for the default seat.]]
          }
+         legacy: null;
          return: bool; [[$true if focused or $false otherwise.]]
       }
       seat_focus_add {
@@ -303,6 +315,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          params {
             @in seat: Efl.Input.Device; [[The seat that should be added to the focus list. Use $null for the default seat.]]
          }
+         legacy: null;
          return: bool; [[$true if the focus has been set or $false otherwise.]]
       }
       seat_focus_del {
@@ -315,6 +328,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          params {
             @in seat: Efl.Input.Device; [[The seat that should be removed from the focus list. Use $null for the default seat.]]
          }
+         legacy: null;
          return: bool; [[$true if the seat was removed from the focus list or $false otherwise.]]
       }
       @property is_frame_object {

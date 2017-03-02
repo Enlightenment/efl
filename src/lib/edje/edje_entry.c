@@ -135,7 +135,7 @@ _edje_entry_focus_in_cb(void *data, Evas_Object *o, const char *emission, const 
    seat_name = emission + sizeof("focus,part,in,") - 1;
    seat = _edje_seat_get(ed, seat_name);
 
-   if (evas_object_seat_focus_check(ed->obj, seat))
+   if (efl_canvas_object_seat_focus_check(ed->obj, seat))
      {
         ecore_imf_context_focus_in(en->imf_context);
         _edje_entry_imf_cursor_info_set(en);
