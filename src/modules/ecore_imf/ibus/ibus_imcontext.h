@@ -37,4 +37,5 @@ void ecore_imf_context_ibus_client_canvas_set(Ecore_IMF_Context *context, void *
 Eina_Bool ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
 
 IBusIMContext *ecore_imf_context_ibus_new(void);
+void ecore_imf_context_ibus_shutdown(void);
 #endif

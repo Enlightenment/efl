@@ -304,6 +304,16 @@ ecore_imf_context_ibus_new(void)
 }
 
 void
+ecore_imf_context_ibus_shutdown(void)
+{
+   if (_bus)
+     {
+        g_object_unref(_bus);
+        _bus = NULL;
+     }
+}
+
+void
 ecore_imf_context_ibus_add(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DBG("%s", __FUNCTION__);
