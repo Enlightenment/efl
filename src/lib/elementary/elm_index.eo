@@ -217,6 +217,22 @@ class Elm.Index (Elm.Layout, Efl.Orientation,
                                                             duplicated, if $cmp_func returns $0.]]
          }
       }
+      item_next @const {
+         [[Returns the next item, for a given item.]]
+
+         return: Elm.Widget.Item; [[The next item on $obj (or $NULL, on errors).]]
+         params {
+            @in item: Elm.Widget.Item; [[The item.]]
+         }
+      }
+      item_prev @const {
+         [[Returns the next item, for a given item.]]
+
+         return: Elm.Widget.Item; [[The next item on $obj (or $NULL, on errors).]]
+         params {
+            @in item: Elm.Widget.Item; [[The item.]]
+         }
+      }
    }
    implements {
       class.constructor;

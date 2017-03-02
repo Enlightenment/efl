@@ -1557,6 +1557,57 @@ _elm_index_item_find(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED, const void *data)
    return EO_OBJ(it);
 }
 
+EOLIAN static Elm_Object_Item*
+_elm_index_item_next(const Eo *obj, Elm_Index_Data *pd EINA_UNUSED, Elm_Object_Item *it)
+{
+   Eina_List *l;
+   Elm_Object_Item *eo_item;
+
+   ELM_INDEX_DATA_GET(obj, sd);
+
+   EINA_LIST_FOREACH(sd->items, l, eo_item)
+     {
+        ELM_INDEX_ITEM_DATA_GET(eo_item, it_l);
+        if (it == EO_OBJ(it_l))
+          {
+             l = eina_list_next(l);
+             break;
+          }
+     }
+   if (l)
+     {
+        ELM_INDEX_ITEM_DATA_GET(eo_item, it_l);
+        return EO_OBJ(it_l);
+     }
+   return NULL;
+}
+
+EOLIAN static Elm_Object_Item*
+_elm_index_item_prev(const Eo *obj, Elm_Index_Data *pd EINA_UNUSED, Elm_Object_Item *it)
+{
+   Eina_List *l;
+   Elm_Object_Item *eo_item;
+
+   ELM_INDEX_DATA_GET(obj, sd);
+
+   EINA_LIST_FOREACH(sd->items, l, eo_item)
+     {
+        ELM_INDEX_ITEM_DATA_GET(eo_item, it_l);
+        if (it == EO_OBJ(it_l))
+          {
+             l = eina_list_prev(l);
+             break;
+          }
+     }
+   if (l)
+     {
+        ELM_INDEX_ITEM_DATA_GET(eo_item, it_l);
+        return EO_OBJ(it_l);
+     }
+   return NULL;
+}
+
+
 EOLIAN static void
 _elm_index_item_clear(Eo *obj, Elm_Index_Data *sd)
 {
