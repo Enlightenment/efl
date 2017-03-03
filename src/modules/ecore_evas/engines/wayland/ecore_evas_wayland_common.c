@@ -1476,10 +1476,13 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
    struct wl_surface *surf;
    int fx, fy;
 
-   wdata = ee->engine.data;
-   surf = ecore_wl2_window_surface_get(wdata->win);
+   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(evas);
+   if (!einfo) return;
+
+   surf = einfo->info.wl_surface;
    if (!surf) return;
 
+   wdata = ee->engine.data;
    if (wdata->win->pending.configure) return;
 
    wdata->anim_callback = wl_surface_frame(surf);
@@ -1499,10 +1502,6 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
    /* Surviving bits of WWW - track interesting state we might want
     * to pass to clients to do client side effects
     */
-   einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(evas);
-   if (!einfo) return;
-
-   wdata = ee->engine.data;
    einfo->window.x = wdata->win->geometry.x;
    einfo->window.y = wdata->win->geometry.y;
    einfo->window.w = wdata->win->geometry.w;
