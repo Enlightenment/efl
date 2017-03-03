@@ -33,14 +33,11 @@ local get_func_csig_part = function(cn, tp)
     return dtree.type_cstr_get(tp, cn)
 end
 
-local gen_func_csig = function(f, ftype, ns)
+local gen_func_csig = function(f, ftype)
     ftype = ftype or f.METHOD
     assert(ftype ~= f.PROPERTY)
 
     local cn = f:full_c_name_get(ftype)
-    if ns then
-        keyref.add(cn, ns, "c")
-    end
     local rtype = f:return_type_get(ftype)
 
     local fparam = "Eo *obj"
@@ -348,8 +345,6 @@ local build_ref = function()
             mixins[#mixins + 1] = cl
         elseif tp == dtree.Class.INTERFACE then
             ifaces[#ifaces + 1] = cl
-        else
-            error("unknown class: " .. cl:full_name_get())
         end
     end
 
@@ -941,9 +936,6 @@ local build_class = function(cl)
     local fulln = cl:full_name_get()
     local f = writer.Writer(cln, fulln)
     printgen("Generating class: " .. fulln)
-    stats.check_class(cl)
-
-    keyref.add(cl:full_name_get():gsub("%.", "_"), cln, "c")
 
     f:write_folded("Inheritance graph", function()
         f:write_graph(build_igraph(cl))
@@ -988,9 +980,6 @@ end
 
 local build_classes = function()
     for i, cl in ipairs(dtree.Class.all_get()) do
-        if not cl:type_str_get() then
-            error("unknown class: " .. cl:full_name_get())
-        end
         build_class(cl)
     end
 end
@@ -1010,7 +999,6 @@ local build_alias = function(tp)
     local fulln = tp:full_name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating alias: " .. fulln)
-    stats.check_alias(tp)
 
     write_tsigs(f, tp, ns)
 
@@ -1029,7 +1017,6 @@ local build_struct = function(tp)
     local fulln = tp:full_name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating struct: " .. fulln)
-    stats.check_struct(tp)
 
     write_tsigs(f, tp, ns)
 
@@ -1063,7 +1050,6 @@ local build_enum = function(tp)
     local fulln = tp:full_name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating enum: " .. fulln)
-    stats.check_enum(tp)
 
     write_tsigs(f, tp, ns)
 
@@ -1097,11 +1083,6 @@ local build_variable = function(v, constant)
     local fulln = v:full_name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating variable: " .. fulln)
-    if constant then
-        stats.check_constant(v)
-    else
-        stats.check_global(v)
-    end
 
     write_tsigs(f, v, ns)
 
@@ -1280,7 +1261,6 @@ build_method = function(impl, cl)
     local methn = cl:full_name_get() .. "." .. fn:name_get()
     local f = writer.Writer(mns, methn)
     printgen("Generating method: " .. methn)
-    stats.check_method(fn, cl)
 
     write_inherited_from(f, impl, cl, over, false)
 
@@ -1294,7 +1274,7 @@ build_method = function(impl, cl)
     f:write_nl()
 
     f:write_h("C signature", 2)
-    f:write_code(gen_func_csig(fn, nil, mns), "c")
+    f:write_code(gen_func_csig(fn, nil), "c")
     f:write_nl()
 
     local pars = fn:parameters_get()
@@ -1332,9 +1312,6 @@ build_property = function(impl, cl)
     local isget = pimp:is_prop_get()
     local isset = pimp:is_prop_set()
 
-    if isget then stats.check_property(fn, cl, fn.PROP_GET) end
-    if isset then stats.check_property(fn, cl, fn.PROP_SET) end
-
     local doc = impl:doc_get(fn.PROPERTY)
     local gdoc = impl:doc_get(fn.PROP_GET)
     local sdoc = impl:doc_get(fn.PROP_SET)
@@ -1358,10 +1335,10 @@ build_property = function(impl, cl)
     f:write_h("C signature", 2)
     local codes = {}
     if isget then
-        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_GET, pns)
+        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_GET)
     end
     if isset then
-        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_SET, pns)
+        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_SET)
     end
     f:write_code(table.concat(codes, "\n"), "c")
     f:write_nl()
@@ -1463,9 +1440,7 @@ build_event = function(ev, cl)
     f:write_nl()
 
     f:write_h("C signature", 2)
-    local cn = ev:c_name_get()
-    keyref.add(cn, evn, "c")
-    f:write_code(dtree.type_cstr_get(etp, cn) .. ";", "c")
+    f:write_code(dtree.type_cstr_get(etp, ev:c_name_get()) .. ";", "c")
     f:write_nl()
 
     f:write_h("Description", 2)
@@ -1476,6 +1451,51 @@ build_event = function(ev, cl)
     f:write_nl()
 
     f:finish()
+end
+
+local build_stats_keyref = function()
+    for i, cl in ipairs(dtree.Class.all_get()) do
+        stats.check_class(cl)
+        keyref.add(cl:full_name_get():gsub("%.", "_"), cl:nspaces_get(), "c")
+        for i, imp in ipairs(cl:implements_get()) do
+            -- TODO: handle doc overrides in stats system
+            if not imp:is_overridden(cl) then
+                local func = imp:function_get()
+                local fns = func:nspaces_get(cl)
+                if imp:is_prop_get() or imp:is_prop_set() then
+                    if imp:is_prop_get() then
+                        stats.check_property(func, cl, func.PROP_GET)
+                        keyref.add(func:full_c_name_get(func.PROP_GET), fns, "c")
+                    end
+                    if imp:is_prop_set() then
+                        stats.check_property(func, cl, func.PROP_SET)
+                        keyref.add(func:full_c_name_get(func.PROP_SET), fns, "c")
+                    end
+                else
+                    stats.check_method(func, cl)
+                    keyref.add(func:full_c_name_get(func.METHOD), fns, "c")
+                end
+            end
+        end
+        for i, ev in ipairs(cl:events_get()) do
+            keyref.add(ev:c_name_get(), ev:nspaces_get(cl), "c")
+        end
+    end
+    for i, tp in ipairs(dtree.Typedecl.all_aliases_get()) do
+        stats.check_alias(tp)
+    end
+    for i, tp in ipairs(dtree.Typedecl.all_structs_get()) do
+        stats.check_struct(tp)
+    end
+    for i, tp in ipairs(dtree.Typedecl.all_enums_get()) do
+        stats.check_enum(tp)
+    end
+    for i, v in ipairs(dtree.Variable.all_constants_get()) do
+        stats.check_constant(v)
+    end
+    for i, v in ipairs(dtree.Variable.all_globals_get()) do
+        stats.check_global(v)
+    end
 end
 
 getopt.parse {
@@ -1547,6 +1567,8 @@ getopt.parse {
         build_classes()
         build_typedecls()
         build_variables()
+
+        build_stats_keyref()
         keyref.build()
         -- newline if printing what's being generated
         printgen()
