@@ -355,13 +355,6 @@ ecore_shutdown(void)
           ERR("Init count not greater than 0 in shutdown.");
           return 0;
        }
-
-     // We need to flush all pending event as this is
-     // the only way to properly avoid use after free
-     // during shutdown of component that may have
-     // emitted and still pending event.
-     _ecore_event_call();
-
      if (_ecore_init_count-- != _ecore_init_count_threshold)
        goto end;
 

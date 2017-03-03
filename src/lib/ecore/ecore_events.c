@@ -605,3 +605,4 @@ _ecore_event_signal_realtime_new(void)
 {
    return calloc(1, sizeof(Ecore_Event_Signal_Realtime));
 }
+
