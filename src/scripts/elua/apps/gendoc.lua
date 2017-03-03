@@ -1558,6 +1558,14 @@ getopt.parse {
         local st = opts["pass"]
 
         dtree.parse()
+
+        if st == "clist" then
+            for i, cl in ipairs(dtree.Class.all_get()) do
+                print(cl:full_name_get())
+            end
+            return
+        end
+
         local wfeatures = {
             notes = not opts["disable-notes"],
             folds = not opts["disable-folded"],
