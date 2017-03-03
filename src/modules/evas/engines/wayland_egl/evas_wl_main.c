@@ -549,6 +549,8 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_
 Evas_Engine_GL_Context *
 eng_outbuf_gl_context_get(Outbuf *ob)
 {
+   if (!ob) return NULL;
+
    return ob->gl_context;
 }
 
