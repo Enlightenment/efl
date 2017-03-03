@@ -1399,6 +1399,7 @@ eng_image_cache_flush(void *data)
 
    re->window_use(re->software.ob);
    gl_context = re->window_gl_context_get(re->software.ob);
+   if (!gl_context) return;
 
    tmp_size = evas_common_image_get_cache();
    evas_common_image_set_cache(0);
@@ -1418,7 +1419,7 @@ eng_image_cache_set(void *data, int bytes)
 
    evas_common_image_set_cache(bytes);
    evas_common_rgba_image_scalecache_size_set(bytes);
-   evas_gl_common_image_cache_flush(gl_context);
+   if (gl_context) evas_gl_common_image_cache_flush(gl_context);
 }
 
 static int
