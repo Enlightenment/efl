@@ -672,6 +672,9 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
         eglMakeCurrent(ob->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE,
                        EGL_NO_CONTEXT);
         ob->egl_surface = EGL_NO_SURFACE;
+        ob->surface = NULL;
+        evas_render_engine_software_generic_update(&re->generic.software,
+                                                   NULL, w, h);
         return 1;
      }
 
