@@ -1480,12 +1480,18 @@ M.scan_directory = function(dir)
     end
 end
 
-M.parse = function()
+M.parse = function(st)
     if not eolian.all_eot_files_parse() then
         error("failed parsing eo type files")
     end
-    if not eolian.all_eo_files_parse() then
-        error("failed parsing eo files")
+    if st and st:match("%.") then
+        if not eolian.file_parse(st:gsub("%.", "_"):lower() .. ".eo") then
+            error("failed parsing eo file")
+        end
+    else
+        if not eolian.all_eo_files_parse() then
+            error("failed parsing eo files")
+        end
     end
     -- build reverse inheritance hierarchy
     for cl in eolian.all_classes_get() do

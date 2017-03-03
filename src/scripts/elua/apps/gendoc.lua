@@ -1561,7 +1561,7 @@ getopt.parse {
 
         local st = opts["pass"]
 
-        dtree.parse()
+        dtree.parse(st)
 
         if st == "clist" then
             for i, cl in ipairs(dtree.Class.all_get()) do
