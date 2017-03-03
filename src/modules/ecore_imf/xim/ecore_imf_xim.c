@@ -1383,6 +1383,9 @@ _ecore_imf_xim_info_im_shutdown(Ecore_X_Display *display EINA_UNUSED,
 
    free(info->locale);
 
+   if (info->xim_styles)
+     XFree(info->xim_styles);
+
    if (info->im)
      XCloseIM(info->im);
 
