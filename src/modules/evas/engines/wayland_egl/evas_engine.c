@@ -665,6 +665,19 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
    Outbuf *ob;
 
    ob = eng_get_ob(re);
+   if (!ob)
+     {
+        Render_Engine_Swap_Mode swap_mode = MODE_AUTO;
+
+        swap_mode = _eng_swap_mode_get();
+        ob = eng_window_new(inf, w, h, swap_mode);
+        if (!ob) return 0;
+        eng_window_use(ob);
+        evas_render_engine_software_generic_update(&re->generic.software,
+                                                   ob, w, h);
+        gl_wins++;
+        return 1;
+     }
 
    if (!inf->info.wl_surface && (ob->egl_surface != EGL_NO_SURFACE))
      {
