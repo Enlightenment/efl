@@ -1583,6 +1583,12 @@ getopt.parse {
         if not st or st == "classes" then
             build_classes()
         end
+        if st and st:match("%.") then
+            local cl = dtree.Class.by_name_get(st)
+            if cl then
+                build_class(cl)
+            end
+        end
         if not st or st == "types" then
             build_typedecls()
         end
