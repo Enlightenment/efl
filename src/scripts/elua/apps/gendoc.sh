@@ -25,13 +25,10 @@ for cl in $(gendoc clist $@); do
     fi
 done
 
-# wait for all remaining stuff to finish
-wait
-
 gendoc types $@ &
 gendoc vars $@ &
 
-# types and vars run in parallel
+# wait for all remaining stuff to finish
 wait
 
 # final results
