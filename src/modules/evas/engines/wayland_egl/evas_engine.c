@@ -777,13 +777,15 @@ eng_output_free(void *data)
 static void
 eng_output_dump(void *data)
 {
+   Outbuf *ob;
    Render_Engine *re;
 
    if (!(re = (Render_Engine *)data)) return;
 
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
-   glsym_evas_gl_common_image_all_unload(eng_get_ob(re)->gl_context);
+   ob = eng_get_ob(re);
+   if (ob) glsym_evas_gl_common_image_all_unload(ob->gl_context);
    _re_winfree(re);
 }
 
