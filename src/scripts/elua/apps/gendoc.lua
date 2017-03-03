@@ -1516,7 +1516,9 @@ getopt.parse {
         { nil, "disable-graphviz", false, help = "Disable graphviz usage." },
         { nil, "disable-notes", false, help = "Disable notes plugin usage." },
         { nil, "disable-folded", false, help = "Disable folded plugin usage." },
-        { nil, "disable-title", false, help = "Disable title plugin usage." }
+        { nil, "disable-title", false, help = "Disable title plugin usage." },
+        { nil, "pass", true, help = "The pass to run (optional) "
+            .. "(rm, ref, clist, classes, types, vars, stats or class name)." }
     },
     error_cb = function(parser, msg)
         io.stderr:write(msg, "\n")
@@ -1552,8 +1554,10 @@ getopt.parse {
                 dtree.scan_directory(p)
             end
         end
+
+        local st = opts["pass"]
+
         dtree.parse()
-        stats.init(not not opts["v"])
         local wfeatures = {
             notes = not opts["disable-notes"],
             folds = not opts["disable-folded"],
@@ -1561,18 +1565,31 @@ getopt.parse {
             title = not opts["disable-title"]
         }
         writer.init(rootns, wfeatures)
-        dutil.rm_root()
-        dutil.mkdir_r(nil)
-        build_ref()
-        build_classes()
-        build_typedecls()
-        build_variables()
+        if not st or st == "rm" then
+            dutil.rm_root()
+            dutil.mkdir_r(nil)
+        end
+        if not st or st == "ref" then
+            build_ref()
+        end
+        if not st or st == "classes" then
+            build_classes()
+        end
+        if not st or st == "types" then
+            build_typedecls()
+        end
+        if not st or st == "vars" then
+            build_variables()
+        end
 
-        build_stats_keyref()
-        keyref.build()
-        -- newline if printing what's being generated
-        printgen()
-        stats.print()
+        if not st or st == "stats" then
+            stats.init(not not opts["v"])
+            build_stats_keyref()
+            keyref.build()
+            -- newline if printing what's being generated
+            printgen()
+            stats.print()
+        end
     end
 }
 
