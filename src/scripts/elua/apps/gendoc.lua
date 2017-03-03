@@ -769,10 +769,12 @@ local build_functable = function(f, title, tcl, tbl, newm)
         wt[#wt + 1] = lbuf:finish()
         nt[#nt + 1] = wt
 
-        if impl:is_prop_get() or impl:is_prop_set() then
-            build_property(impl, cl)
-        else
-            build_method(impl, cl)
+        if cl == tcl then
+            if impl:is_prop_get() or impl:is_prop_set() then
+                build_property(impl, cl)
+            else
+                build_method(impl, cl)
+            end
         end
     end
     local get_best_scope = function(f)
@@ -917,7 +919,9 @@ local build_evtable = function(f, title, tcl, tbl, newm)
         wt[#wt + 1] = lbuf:finish()
         nt[#nt + 1] = wt
 
-        build_event(ev, cl)
+        if cl == tcl then
+            build_event(ev, cl)
+        end
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
     for i, item in ipairs(nt) do
