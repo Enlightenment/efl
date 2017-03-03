@@ -946,9 +946,6 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    ee->w = w;
    ee->h = h;
 
-   orig_w = w;
-   orig_h = h;
-
    if (!ee->prop.fullscreen)
      {
         int fw = 0, fh = 0;
