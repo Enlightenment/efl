@@ -40,7 +40,7 @@ struct native_function_definition_preamble_generator
       std::string function_preamble;
 
       if (return_type == " System.String") // FIXME type generator: Why to we have this space here?
-          function_preamble= "System.String str = ";
+          function_preamble= "System.String _return_string = ";
       else if (return_type != "void")
           function_preamble = "return ";
 
@@ -65,7 +65,7 @@ struct function_definition_preamble_generator
       std::string function_preamble;
 
       if (return_type == " System.String") // FIXME type generator: Why to we have this space here?
-          function_preamble = "System.IntPtr ptr = ";
+          function_preamble = "System.IntPtr _returned_ptr = ";
       else if (return_type != "void")
           function_preamble = "return ";
 
@@ -92,7 +92,7 @@ struct native_function_definition_epilogue_generator
       std::string function_epilogue;
 
       if (return_type == " System.String") // FIXME type generator: Why to we have this space here?
-         function_epilogue = "return efl.eo.Globals.cached_string_to_intptr(((" + klass->cxx_name + "Inherit)wrapper).cached_strings, str);";
+         function_epilogue = "return efl.eo.Globals.cached_string_to_intptr(((" + klass->cxx_name + "Inherit)wrapper).cached_strings, _return_string);";
 
       if (!as_generator(string).generate(sink, function_epilogue, context))
           return false;
@@ -115,7 +115,7 @@ struct function_definition_epilogue_generator
       std::string function_epilogue;
 
       if (return_type == " System.String") // FIXME type generator: Why to we have this space here?
-          function_epilogue = "return Marshal.PtrToStringAuto(ptr);";
+          function_epilogue = "return Marshal.PtrToStringAuto(_returned_ptr);";
 
       if (!as_generator(string).generate(sink, function_epilogue, context))
           return false;
