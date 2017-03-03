@@ -59,6 +59,7 @@ eluaappsdir = $(datadir)/elua/apps
 eluaapps_DATA = \
 	scripts/elua/apps/lualian.lua \
 	scripts/elua/apps/gendoc.lua \
+	scripts/elua/apps/gendoc.sh \
 	scripts/elua/apps/README-docgen.md
 
 EXTRA_DIST2 += $(eluaapps_DATA)
