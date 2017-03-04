@@ -42,13 +42,38 @@ static Elm_Code_Syntax _elm_code_syntax_py =
     "or", "pass", "raise", "return", "try", "while", "with", "yield"}
 };
 
+static Elm_Code_Syntax _elm_code_syntax_eo =
+{
+   "{}():;*,.",
+   NULL,
+   "//",
+   "[[",
+   "]]",
+   {"byte", "ubyte", "char", "short", "ushort", "int", "uint", "long", "ulong", \
+    "llong", "ullong", "int8", "uint8", "int16", "uint16", "int32", "uint32", \
+    "int64", "uint64", "int128", "uint128", "size", "ssize", "intptr", "uintptr", \
+    "ptrdiff", "time", "float", "double", "bool", "void", "void_ptr", \
+    "string", "stringshare", "generic_value", \
+    "abstract", "class", "data", "mixin", "import", "interface", "type", "const", "var", \
+    "own", "free", "struct", "enum", "@extern", "@free", "@auto", "@empty", \
+    "@private", "@protected", "@beta", "@hot", "@const", "@class", "@virtual_pure", \
+    "@property", "@nonull", "@nullable", "@optional", "@in", "@out", "@inout", "@warn_unused", \
+    "eo_prefix", "legacy_prefix", "methods", "events", "params", "return", "legacy", \
+    "implements", "constructors", "get", "set", "keys", "values", "true", "false", "null"}
+};
+
+
 EAPI Elm_Code_Syntax *
 elm_code_syntax_for_mime_get(const char *mime)
 {
+   if (!mime) return NULL;
+
    if (!strcmp("text/x-chdr", mime) || !strcmp("text/x-csrc", mime))
      return &_elm_code_syntax_c;
    if (!strcmp("text/x-python", mime))
      return &_elm_code_syntax_py;
+   if (!strcmp("text/x-eolian", mime))
+     return &_elm_code_syntax_eo;
 
    return NULL;
 }

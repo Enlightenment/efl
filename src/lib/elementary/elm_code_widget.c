@@ -2132,6 +2132,9 @@ _elm_code_widget_syntax_enabled_set(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSE
      elm_code_parser_standard_add(code, ELM_CODE_PARSER_STANDARD_SYNTAX);
    else
      code->parsers = eina_list_remove(code->parsers, ELM_CODE_PARSER_STANDARD_SYNTAX);
+
+   _elm_code_parse_reset_file(code, code->file);
+   _elm_code_widget_fill(obj);
 }
 
 EOLIAN static Eina_Bool
