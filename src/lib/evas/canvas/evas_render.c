@@ -1251,7 +1251,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
                         (_evas_render_can_render(eo_obj, obj) ||
                          (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees))))
                       {
-                         if (!(obj->render_pre || obj->rect_del))
+                         if (!obj->render_pre && !obj->rect_del && !obj->delete_me)
                            ok = EINA_TRUE;
                       }
                     else
