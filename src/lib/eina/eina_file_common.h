@@ -94,7 +94,6 @@ struct _Eina_File
    int fd; /**< The file descriptor. */
 #else
    HANDLE handle;  /**< A Win32 file handle for this file. */
-   HANDLE fm;      /**< A Win32 file handle to a file mapping object for this file.  */
 #endif
 
    Eina_List *dead_map;          /**< Tracks regions that get a failure from mmap(2). */

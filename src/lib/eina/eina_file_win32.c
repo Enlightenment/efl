@@ -386,8 +386,8 @@ eina_file_real_close(Eina_File *file)
    if (file->global_map != MAP_FAILED && file->handle != NULL)
      UnmapViewOfFile(file->global_map);
 
-   if (file->fm) CloseHandle(file->fm);
-   if (file->handle) CloseHandle(file->handle);
+   if (file->handle != INVALID_HANDLE_VALUE)
+     CloseHandle(file->handle);
 }
 
 static void
@@ -871,29 +871,26 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule EINA_UNUSED)
    eina_lock_take(&file->lock);
    if (file->global_map == MAP_FAILED)
      {
-        void  *data;
         DWORD max_size_high;
         DWORD max_size_low;
+        HANDLE fm;
 
-        if (file->fm)
-          CloseHandle(file->fm);
 
         max_size_high = (DWORD)((file->length & 0xffffffff00000000ULL) >> 32);
         max_size_low = (DWORD)(file->length & 0x00000000ffffffffULL);
-        file->fm = CreateFileMapping(file->handle, NULL, PAGE_READONLY,
+        fm = CreateFileMapping(file->handle, NULL, PAGE_READONLY,
                                      max_size_high, max_size_low, NULL);
-        if (!file->fm)
+        if (!fm)
           {
              eina_lock_release(&file->lock);
              return NULL;
           }
 
-        data = MapViewOfFile(file->fm, FILE_MAP_READ,
+        file->global_map = MapViewOfFile(fm, FILE_MAP_READ,
                              0, 0, file->length);
-        if (!data)
+        CloseHandle(fm);
+        if (!file->global_map)
           file->global_map = MAP_FAILED;
-        else
-          file->global_map = data;
      }
 
    if (file->global_map != MAP_FAILED)
@@ -935,8 +932,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
    map = eina_hash_find(file->map, &key);
    if (!map)
      {
-        void  *data;
-
+        HANDLE fm;
         map = malloc(sizeof (Eina_File_Map));
         if (!map)
           {
@@ -944,24 +940,20 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
              return NULL;
           }
 
-        if (file->fm)
-          CloseHandle(file->fm);
-
         /* the length parameter is unsigned long, that is a DWORD */
         /* so the max size high parameter of CreateFileMapping is 0 */
-        file->fm = CreateFileMapping(file->handle, NULL, PAGE_READONLY,
+        fm = CreateFileMapping(file->handle, NULL, PAGE_READONLY,
                                      0, (DWORD)length, NULL);
-        if (!file->fm)
+        if (!fm)
           return NULL;
 
-        data = MapViewOfFile(file->fm, FILE_MAP_READ,
+        map->map = MapViewOfFile(fm, FILE_MAP_READ,
                              offset & 0xffff0000,
                              offset & 0x0000ffff,
                              length);
-        if (!data)
+        CloseHandle(fm);
+        if (!map->map)
           map->map = MAP_FAILED;
-        else
-          map->map = data;
 
         map->offset = offset;
         map->length = length;

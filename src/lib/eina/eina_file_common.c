@@ -436,8 +436,7 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
 #ifndef _WIN32
    file->fd = -1;
 #else
-   file->handle = NULL;
-   file->fm = NULL;
+   file->handle = INVALID_HANDLE_VALUE;
 #endif
    file->virtual = EINA_TRUE;
    file->map = eina_hash_new(EINA_KEY_LENGTH(eina_file_map_key_length),
