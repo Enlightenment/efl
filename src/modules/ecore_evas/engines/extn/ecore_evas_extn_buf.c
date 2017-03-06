@@ -123,7 +123,13 @@ _extnbuf_lock(Extnbuf *b, int *w, int *h, int *stride)
      {
         if (b->lockfd >= 0)
           {
-             if (lockf(b->lockfd, F_LOCK, 0) < 0)
+             struct flock filelock;
+
+             filelock.l_type = b->am_owner ? F_WRLCK : F_RDLCK;
+             filelock.l_whence = SEEK_SET;
+             filelock.l_start = 0;
+             filelock.l_len = 0;
+             if (fcntl(b->lockfd, F_SETLKW, &filelock) == -1)
                {
                   ERR("lock take fail");
                   return NULL;
@@ -140,7 +146,13 @@ _extnbuf_unlock(Extnbuf *b)
    if (!b || !b->have_lock) return;
    if (b->lockfd >= 0)
      {
-        if (lockf(b->lockfd, F_ULOCK, 0) < 0)
+        struct flock filelock;
+
+        filelock.l_type = F_UNLCK;
+        filelock.l_whence = SEEK_SET;
+        filelock.l_start = 0;
+        filelock.l_len = 0;
+        if (fcntl(b->lockfd, F_SETLKW, &filelock) == -1)
           {
              ERR("lock release fail");
              return;
