@@ -338,7 +338,7 @@ eet_flush2(Eet_File *ef)
         int fd;
 
         /* opening for write - delete old copy of file right away */
-        unlink(ef->path);
+        eina_file_unlink(ef->path);
         fd = open(ef->path, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
         if (fd < 0)
           {
