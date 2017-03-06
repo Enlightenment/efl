@@ -1,8 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-static void _evas_layer_free(Evas_Layer *lay);
-
 void
 evas_object_inject(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas *e)
 {
@@ -44,7 +42,6 @@ evas_object_release(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, int cl
              if (obj->layer->usage <= 0)
                {
                   evas_layer_del(obj->layer);
-                  _evas_layer_free(obj->layer);
                }
           }
         obj->layer = NULL;
@@ -66,12 +63,6 @@ evas_layer_new(Evas *eo_e)
    return lay;
 }
 
-static void
-_evas_layer_free(Evas_Layer *lay)
-{
-   free(lay);
-}
-
 void
 _evas_layer_flush_removes(Evas_Layer *lay)
 {
@@ -90,7 +81,6 @@ _evas_layer_flush_removes(Evas_Layer *lay)
    if (lay->usage <= 0)
      {
         evas_layer_del(lay);
-        _evas_layer_free(lay);
      }
 }
 
@@ -130,7 +120,6 @@ evas_layer_clean(Evas *eo_e)
      {
         tmp = e->layers;
         evas_layer_del(tmp);
-        _evas_layer_free(tmp);
      }
 }
 
@@ -172,20 +161,26 @@ evas_layer_del(Evas_Layer *lay)
 
    e = lay->evas;
    e->layers = (Evas_Layer *)eina_inlist_remove(EINA_INLIST_GET(e->layers), EINA_INLIST_GET(lay));
-
    efl_data_unref(e->evas, e);
-   lay->evas = NULL;
+   eina_freeq_ptr_main_add(lay, free, sizeof(*lay));
 }
 
 static void
-_evas_object_layer_set_child(Evas_Object *eo_obj, Evas_Object *par, short l)
+_evas_object_layer_set_child(Evas_Object_Protected_Data *obj, Evas_Object_Protected_Data *par_obj, short l)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Object_Protected_Data *par_obj = efl_data_scope_get(par, EFL_CANVAS_OBJECT_CLASS);
-
    if (obj->delete_me) return;
    if (obj->cur->layer == l) return;
-   evas_object_release(eo_obj, obj, 1);
+   if (EINA_UNLIKELY(obj->in_layer))
+     {
+        ERR("Invalid internal state of object %p (child marked as being a "
+            "top-level object)!", obj->object);
+        evas_object_release(obj->object, obj, 1);
+     }
+   else if ((--obj->layer->usage) == 0)
+     {
+        evas_layer_del(obj->layer);
+     }
+
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
        state_write->layer = l;
@@ -199,10 +194,10 @@ _evas_object_layer_set_child(Evas_Object *eo_obj, Evas_Object *par, short l)
         Eina_Inlist *contained;
         Evas_Object_Protected_Data *member;
 
-        contained = (Eina_Inlist *)evas_object_smart_members_get_direct(eo_obj);
+        contained = (Eina_Inlist *)evas_object_smart_members_get_direct(obj->object);
         EINA_INLIST_FOREACH(contained, member)
           {
-             _evas_object_layer_set_child(member->object, eo_obj, l);
+             _evas_object_layer_set_child(member, obj, l);
           }
      }
 }
@@ -260,7 +255,7 @@ _efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj, Evas_Object_Protected_Dat
         contained = (Eina_Inlist *)evas_object_smart_members_get_direct(eo_obj);
         EINA_INLIST_FOREACH(contained, member)
           {
-            _evas_object_layer_set_child(member->object, eo_obj, l);
+            _evas_object_layer_set_child(member, obj, l);
           }
      }
    evas_object_inform_call_restack(eo_obj);

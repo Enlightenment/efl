@@ -253,16 +253,27 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    evas_object_async_block(obj);
    if (obj->smart.parent) evas_object_smart_member_del(eo_obj);
 
-   o->member_count++;
-   evas_object_release(eo_obj, obj, 1);
-   obj->layer = smart->layer;
-   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+   if (obj->layer != smart->layer)
      {
-       state_write->layer = obj->layer->layer;
+        if (obj->in_layer)
+          evas_object_release(eo_obj, obj, 1);
+        else if ((--obj->layer->usage) == 0)
+          evas_layer_del(obj->layer);
      }
-   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
-
+   else if (obj->in_layer)
+     {
+        evas_object_release(eo_obj, obj, 1);
+     }
+   obj->layer = smart->layer;
    obj->layer->usage++;
+   if (obj->layer->layer != obj->cur->layer)
+     {
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          state_write->layer = obj->layer->layer;
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+     }
+
+   o->member_count++;
    obj->smart.parent = smart_obj;
    obj->smart.parent_data = o;
    obj->smart.parent_object_data = smart;
@@ -324,13 +335,13 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
    o->member_count--;
    obj->smart.parent = NULL;
    evas_object_smart_member_cache_invalidate(eo_obj, EINA_TRUE, EINA_TRUE, EINA_TRUE);
-   obj->layer->usage--;
 
-   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+   if (obj->layer->layer != obj->cur->layer)
      {
-       state_write->layer = obj->layer->layer;
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          state_write->layer = obj->layer->layer;
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
      }
-   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
    if (obj->is_smart)
      {
@@ -344,6 +355,17 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
           }
      }
 
+   if (EINA_UNLIKELY(obj->in_layer))
+     {
+        ERR("Invalid internal state of object %p (child marked as being a"
+            "top-level object)!", obj->object);
+        evas_object_release(obj->object, obj, 1);
+     }
+   else
+     {
+        // Layer usage shouldn't reach 0 here (as parent is still in layer)
+        obj->layer->usage--;
+     }
    evas_object_inject(eo_obj, obj, obj->layer->evas->evas);
    obj->restack = 1;
    evas_object_change(eo_obj, obj);
