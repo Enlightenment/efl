@@ -71,10 +71,7 @@ _ecore_factorized_idle_add(const Efl_Callback_Array_Item *desc,
 {
    Ecore_Factorized_Idle *ret;
 
-   if (EINA_UNLIKELY(!eina_main_loop_is()))
-     {
-        EINA_MAIN_LOOP_CHECK_RETURN;
-     }
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    if (!func)
      {
