@@ -107,6 +107,7 @@ efl_eo_mono_files = \
 	bindings/mono/eo_mono/workaround.cs
 
 efl_eina_mono_files = \
+	bindings/mono/eina_mono/eina_binbuf.cs \
 	bindings/mono/eina_mono/eina_stringshare.cs
 
 lib_efl_mono_libefl_mono_dll_SOURCES = \
