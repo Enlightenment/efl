@@ -215,15 +215,9 @@ eina_debug_disable()
 EAPI void
 eina_debug_session_terminate(Eina_Debug_Session *session)
 {
-   /* FIXME: Maybe just close fd here so the thread terminates its own session by itself */
+   /* Close fd here so the thread terminates its own session by itself */
    if (!session) return;
-
-   _opcode_reply_info *info = NULL;
-
-   EINA_LIST_FREE(session->opcode_reply_infos, info) free(info);
-
-   free(session->cbs);
-   free(session);
+   close(session->fd_in);
 }
 
 EAPI void
