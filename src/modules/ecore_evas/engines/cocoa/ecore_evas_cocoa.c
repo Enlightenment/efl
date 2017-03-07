@@ -603,7 +603,7 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL,
     NULL,
 
-    NULL, // render
+    _ecore_evas_cocoa_render,
     _ecore_evas_screen_geometry_get,
     NULL, // screen_dpi_get
     NULL,
@@ -719,7 +719,6 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    iface->window_get = _ecore_evas_cocoa_window_get;
    ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
 
-   ee->engine.func->fn_render = _ecore_evas_cocoa_render;
    _ecore_evas_register(ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas,
                                (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
