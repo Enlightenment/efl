@@ -468,12 +468,17 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj,
                               int layer EINA_UNUSED, int hot_x EINA_UNUSED,
                               int hot_y EINA_UNUSED)
 {
-   Ecore_Cocoa_Window *win = (Ecore_Cocoa_Window *)(ee->prop.window);
+   Ecore_Cocoa_Window *const win = (Ecore_Cocoa_Window *)(ee->prop.window);
 
-   if (!obj)
-     ecore_cocoa_window_cursor_show(win, EINA_TRUE);
-   else if (obj != _ecore_evas_default_cursor_image_get(ee))
+   if (obj != _ecore_evas_default_cursor_image_get(ee))
      ecore_cocoa_window_cursor_show(win, EINA_FALSE);
+}
+
+static void
+_ecore_evas_object_cursor_unset(Ecore_Evas *ee)
+{
+   Ecore_Cocoa_Window *const win = (Ecore_Cocoa_Window *)(ee->prop.window);
+   ecore_cocoa_window_cursor_show(win, EINA_TRUE);
 }
 
 static void
@@ -574,7 +579,7 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL,
     _ecore_evas_size_step_set,
     _ecore_evas_object_cursor_set,
-    NULL,
+    _ecore_evas_object_cursor_unset,
     NULL,
     NULL,
     _ecore_evas_iconified_set,
