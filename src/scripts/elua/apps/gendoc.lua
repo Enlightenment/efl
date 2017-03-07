@@ -875,6 +875,22 @@ find_callables = function(cl, omeths, events, written)
     end
 end
 
+local build_evcsig = function(ev)
+    local csbuf = { ev:c_name_get(), "(" }
+    csbuf[#csbuf + 1] = dtree.type_cstr_get(ev:type_get())
+    if ev:is_beta() then
+        csbuf[#csbuf + 1] = ", @beta"
+    end
+    if ev:is_hot() then
+        csbuf[#csbuf + 1] = ", @hot"
+    end
+    if ev:is_restart() then
+        csbuf[#csbuf + 1] = ", @restart"
+    end
+    csbuf[#csbuf + 1] = ")";
+    return table.concat(csbuf)
+end
+
 local build_evtable = function(f, title, tcl, tbl, newm)
     if #tbl == 0 then
         return
@@ -901,12 +917,12 @@ local build_evtable = function(f, title, tcl, tbl, newm)
         lbuf:write_b(llbuf:finish())
 
         local wt = {}
+        wt[0] = ev
         -- name info
-        wt[#wt + 1] = lbuf:finish()
+        wt[1] = lbuf:finish()
 
         lbuf:write_nl()
-        lbuf:write_code(dtree.type_cstr_get(ev:type_get(), ev:c_name_get())
-            .. ";", "c")
+        lbuf:write_code(build_evcsig(ev), "c");
 
         local bdoc = ev:doc_get():brief_get()
         if bdoc ~= "No description supplied." then
@@ -927,6 +943,17 @@ local build_evtable = function(f, title, tcl, tbl, newm)
     for i, item in ipairs(nt) do
         -- name
         f:write_raw(item[1])
+        -- scope
+        local ev = item[0]
+        local ett = {
+            [ev.scope.PROTECTED] = "protected",
+            [ev.scope.PRIVATE] = "private"
+        }
+        local ets = ett[ev:scope_get()]
+        if ets then
+            f:write_raw(" ")
+            f:write_m(ets)
+        end
         -- desc
         f:write_raw(item[2])
         f:write_nl()
@@ -1443,8 +1470,8 @@ build_event = function(ev, cl)
     f:write_code(table.concat(buf))
     f:write_nl()
 
-    f:write_h("C signature", 2)
-    f:write_code(dtree.type_cstr_get(etp, ev:c_name_get()) .. ";", "c")
+    f:write_h("C information", 2)
+    f:write_code(build_evcsig(ev), "c")
     f:write_nl()
 
     f:write_h("Description", 2)
