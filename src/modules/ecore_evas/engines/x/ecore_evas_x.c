@@ -3175,7 +3175,7 @@ _ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj,
 }
 
 static void
-_ecore_evas_x_object_cursor_unset(Ecore_Evas *ee EINA_UNUSED)
+_ecore_evas_x_object_cursor_unset(Ecore_Evas *ee)
 {
    ecore_x_window_cursor_show(ee->prop.window, 1);
 }
