@@ -427,12 +427,7 @@ _timer_tick_quit(void)
 
    if (timer_fd_read < 0) return;
    _tick_send(-1);
-   // SHOULd use this, but broken if thread shutting down already:
-   // ecore_thread_wait(timer_thread, 0.5);
-   for (i = 0; (i < 500) && (timer_fd_write >= 0); i++)
-     {
-        usleep(1000);
-     }
+   if (timer_thread) ecore_thread_wait(timer_thread, 0.5);
 }
 
 static Eina_Bool
