@@ -1435,6 +1435,32 @@ build_property = function(impl, cl)
     f:finish()
 end
 
+local build_event_example = function(ev)
+    local evcn = ev:c_name_get()
+    local evcnl = evcn:lower()
+
+    local dtype = "Data *"
+
+    local tbl = { "static void\n" }
+    tbl[#tbl + 1] = "on_"
+    tbl[#tbl + 1] = evcnl
+    tbl[#tbl + 1] = "(void *data, const Efl_Event *event)\n{\n    "
+    tbl[#tbl + 1] = dtree.type_cstr_get(ev:type_get(), "info = event->info;\n")
+    tbl[#tbl + 1] = "    Eo *obj = event->object;\n    "
+    tbl[#tbl + 1] = dtree.type_cstr_get(dtype, "d = data;\n\n")
+    tbl[#tbl + 1] = "    /* event hander code */\n}\n\n"
+    tbl[#tbl + 1] = "static void\nsetup_event_handler(Eo *obj, "
+    tbl[#tbl + 1] = dtree.type_cstr_get(dtype, "d")
+    tbl[#tbl + 1] = ")\n{\n"
+    tbl[#tbl + 1] = "    efl_event_callback_add(obj, "
+    tbl[#tbl + 1] = evcn
+    tbl[#tbl + 1] = ", on_"
+    tbl[#tbl + 1] = evcnl
+    tbl[#tbl + 1] = ", d);\n}\n"
+
+    return table.concat(tbl)
+end
+
 build_event = function(ev, cl)
     local evn = ev:nspaces_get(cl)
     local evnm = cl:full_name_get() .. ": " .. ev:name_get()
@@ -1472,6 +1498,10 @@ build_event = function(ev, cl)
 
     f:write_h("C information", 2)
     f:write_code(build_evcsig(ev), "c")
+    f:write_nl()
+
+    f:write_h("C usage", 2)
+    f:write_code(build_event_example(ev), "c")
     f:write_nl()
 
     f:write_h("Description", 2)
