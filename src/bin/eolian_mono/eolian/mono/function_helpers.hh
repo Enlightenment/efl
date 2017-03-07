@@ -12,7 +12,7 @@
 #include "grammar/attribute_reorder.hpp"
 /* #include "type.hh" */
 /* #include "marshall_type.hh" */
-/* #include "parameter.hh" */
+#include "parameter.hh"
 /* #include "keyword.hh" */
 /* #include "using_decl.hh" */
 /* #include "library_context.hh" */
@@ -37,14 +37,9 @@ struct native_function_definition_preamble_generator
       if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
           return false;
 
-      std::string function_preamble;
-
-      if (return_type == " System.String") // FIXME type generator: Why to we have this space here?
-          function_preamble= "System.String _return_string = ";
-      else if (return_type != "void")
-          function_preamble = "return ";
-
-      if (!as_generator(string).generate(sink, function_preamble, context))
+      if (!as_generator(
+                scope_tab << native_convert_return_variable
+                ).generate(sink, f.return_type, context))
           return false;
 
       return true;
@@ -62,14 +57,11 @@ struct function_definition_preamble_generator
       if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
           return false;
 
-      std::string function_preamble;
-
-      if (return_type == " System.String") // FIXME type generator: Why to we have this space here?
-          function_preamble = "System.IntPtr _returned_ptr = ";
-      else if (return_type != "void")
-          function_preamble = "return ";
-
-      if (!as_generator(string).generate(sink, function_preamble, context))
+      if (!as_generator(
+                  /* scope_tab << *(convert_out_variable) */
+                  /* << */ scope_tab << convert_return_variable
+                  /* ).generate(sink, std::make_tuple(f.parameters, f.return_type), context)) */
+                  ).generate(sink, f.return_type, context))
           return false;
 
       return true;
@@ -89,12 +81,8 @@ struct native_function_definition_epilogue_generator
       if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
           return false;
 
-      std::string function_epilogue;
-
-      if (return_type == " System.String") // FIXME type generator: Why to we have this space here?
-         function_epilogue = "return efl.eo.Globals.cached_string_to_intptr(((" + klass->cxx_name + "Inherit)wrapper).cached_strings, _return_string);";
-
-      if (!as_generator(string).generate(sink, function_epilogue, context))
+      if (!as_generator(
+                  scope_tab << native_convert_return(*klass)).generate(sink, f.return_type, context))
           return false;
 
       return true;
@@ -107,17 +95,7 @@ struct function_definition_epilogue_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   { 
-      std::string return_type;
-
-      if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
-          return false;
-
-      std::string function_epilogue;
-
-      if (return_type == " System.String") // FIXME type generator: Why to we have this space here?
-          function_epilogue = "return Marshal.PtrToStringAuto(_returned_ptr);";
-
-      if (!as_generator(string).generate(sink, function_epilogue, context))
+      if (!as_generator(scope_tab << convert_return).generate(sink, f.return_type, context))
           return false;
 
       return true;
