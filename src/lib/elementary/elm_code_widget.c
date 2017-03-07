@@ -472,8 +472,16 @@ static void
 _elm_code_widget_selection_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
+   Elm_Code_Widget_Selection_Data *selection;
 
    widget = (Elm_Code_Widget *)data;
+
+   if (!elm_code_widget_selection_is_empty(widget))
+     {
+        selection = elm_code_widget_selection_normalized_get(widget);
+        elm_code_widget_cursor_position_set(widget, selection->start_line, selection->start_col);
+        free(selection);
+     }
 
    _elm_code_widget_refresh(widget, NULL);
 }
