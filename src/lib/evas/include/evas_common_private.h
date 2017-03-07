@@ -631,7 +631,7 @@ struct _Image_Entry
 
    Evas_Cache_Target     *targets;
    Evas_Preload_Pthread  *preload;
-   Eina_List             *tasks;
+   Eina_List             *tasks; // FIXME: Tasks are not used: always NULL func
 
    Image_Timestamp        tstamp;
 

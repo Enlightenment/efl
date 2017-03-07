@@ -341,6 +341,8 @@ _evas_cache_image_async_heavy(void *data)
    int error;
    int pchannel;
 
+   eina_thread_name_set(eina_thread_self(), "Evas-preload");
+
    current = data;
 
    SLKL(current->lock);
