@@ -10,10 +10,6 @@
 #include <sys/resource.h>
 #endif
 
-#ifdef _WIN32
-# include <winsock2.h>
-#endif
-
 #include <libgen.h>
 
 #include <Eina.h>
