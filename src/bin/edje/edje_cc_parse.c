@@ -1071,7 +1071,7 @@ compile(void)
 
              inc = ecore_file_dir_get(file_in);
              if (depfile)
-               snprintf(buf, sizeof(buf), "%s -MMD \"%s\" -MT \"%s\" \"%s\""
+               snprintf(buf, sizeof(buf), "\"%s\" -MMD \"%s\" -MT \"%s\" \"%s\""
                         " -I\"%s\" %s -o \"%s\""
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
@@ -1079,7 +1079,7 @@ compile(void)
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else if (annotate)
-               snprintf(buf, sizeof(buf), "%s -annotate -a \"%s\" \"%s\""
+               snprintf(buf, sizeof(buf), "\"%s\" -annotate -a \"%s\" \"%s\""
                         " -I\"%s\" %s -o \"%s\""
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
@@ -1087,14 +1087,28 @@ compile(void)
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else
-               snprintf(buf, sizeof(buf), "%s -a \"%s\" \"%s\" -I\"%s\" %s"
+               snprintf(buf, sizeof(buf), "\"%s\" -a \"%s\" \"%s\" -I\"%s\" %s"
                         " -o \"%s\""
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
                         EDJE_CC_EFL_VERSION_SUPPORTED,
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
+#ifdef _WIN32
+             /* On Windows, if command begins with double quotation marks,
+              * then the first and the last double quotation marks may be
+              * either deleted or not. (See "help cmd" on Windows.)
+              *
+              * Therefore, to preserve the string between the first and the last
+              * double quotation marks, "cmd /S /C" and additional outer double
+              * quotation marks are added.
+              */
+             char win_buf[4096];
+             snprintf(win_buf, sizeof(win_buf), "cmd /S /C \"%s\"", buf);
+             ret = system(win_buf);
+#else
              ret = system(buf);
+#endif
              if (inc)
                free(inc);
           }
