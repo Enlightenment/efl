@@ -150,9 +150,13 @@ _elm_code_parser_syntax_parse_file(Elm_Code_File *file, void *data EINA_UNUSED)
 
    syntax = elm_code_syntax_for_mime_get(file->mime);
    if (!syntax)
-     WRN("Unsupported mime in parser");
+     {
+        WRN("Unsupported mime in parser");
+     }
    else
-     elm_code_syntax_parse_file(syntax, file);
+     {
+        elm_code_syntax_parse_file(syntax, file);
+     }
 }
 
 static void
