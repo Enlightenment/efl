@@ -3183,28 +3183,30 @@ _ecore_evas_mouse_move_process_internal(Ecore_Evas *ee,
    if (!pointer)
      pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
-   EINA_SAFETY_ON_NULL_RETURN(cursor);
-   cursor->pos_x = x;
-   cursor->pos_y = y;
-   if (cursor->object)
+   if (cursor)
      {
-        evas_object_show(cursor->object);
-        if (ee->rotation == 0)
-          evas_object_move(cursor->object,
-                           x - fx - cursor->hot.x,
-                           y - fy - cursor->hot.y);
-        else if (ee->rotation == 90)
-          evas_object_move(cursor->object,
-                           ee->h + fw - y - fx - 1 - cursor->hot.x,
-                           x - fy - cursor->hot.y);
-        else if (ee->rotation == 180)
-          evas_object_move(cursor->object,
-                           ee->w + fw - x - fx - 1 - cursor->hot.x,
-                           ee->h + fh - y - fy - 1 - cursor->hot.y);
-        else if (ee->rotation == 270)
-          evas_object_move(cursor->object,
-                           y - fx - cursor->hot.x,
-                           ee->w + fh - x - fy - 1 - cursor->hot.y);
+        cursor->pos_x = x;
+        cursor->pos_y = y;
+        if (cursor->object)
+          {
+             evas_object_show(cursor->object);
+             if (ee->rotation == 0)
+               evas_object_move(cursor->object,
+                                x - fx - cursor->hot.x,
+                                y - fy - cursor->hot.y);
+             else if (ee->rotation == 90)
+               evas_object_move(cursor->object,
+                                ee->h + fw - y - fx - 1 - cursor->hot.x,
+                                x - fy - cursor->hot.y);
+             else if (ee->rotation == 180)
+               evas_object_move(cursor->object,
+                                ee->w + fw - x - fx - 1 - cursor->hot.x,
+                                ee->h + fh - y - fy - 1 - cursor->hot.y);
+             else if (ee->rotation == 270)
+               evas_object_move(cursor->object,
+                                y - fx - cursor->hot.x,
+                                ee->w + fh - x - fy - 1 - cursor->hot.y);
+          }
      }
 
    if (!feed) return;
