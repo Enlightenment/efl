@@ -881,8 +881,6 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   fprintf(stderr, "Set Opaque Region: %d %d %d %d\n", x, y, w, h);
-
    if ((x == 0) && (y == 0) && (w == 0) && (h == 0))
      {
         if (window->surface)
@@ -952,8 +950,6 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    int nx = 0, ny = 0, nw = 0, nh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
-
-   fprintf(stderr, "Set Input Region: %d %d %d %d\n", x, y, w, h);
 
    if ((x == 0) && (y == 0) && (w == 0) && (h == 0))
      {
