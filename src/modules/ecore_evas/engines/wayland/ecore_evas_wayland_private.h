@@ -50,7 +50,6 @@ struct _Ecore_Evas_Engine_Wl_Data
    Eina_Bool sync_done : 1;
    Eina_Bool defer_show : 1;
    Eina_Bool reset_pending : 1;
-   Eina_Bool defer_fullscreen : 1;
 };
 
 Ecore_Evas_Interface_Wayland *_ecore_evas_wl_interface_new(void);

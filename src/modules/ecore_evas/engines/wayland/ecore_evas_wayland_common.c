@@ -1419,14 +1419,6 @@ _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
    if (ee->prop.fullscreen == on) return;
 
    wdata = ee->engine.data;
-
-   ee->prop.fullscreen = on;
-   if ((!wdata->sync_done) || (!ee->visible))
-     {
-        wdata->defer_fullscreen = EINA_TRUE;
-        return;
-     }
-
    ecore_wl2_window_fullscreen_set(wdata->win, on);
 }
 
@@ -1806,13 +1798,6 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
 
         ecore_wl2_window_show(wdata->win);
         ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
-        ecore_wl2_window_transparent_set(wdata->win, ee->transparent);
-
-        if (wdata->defer_fullscreen)
-          {
-             wdata->defer_fullscreen = EINA_FALSE;
-             ecore_wl2_window_fullscreen_set(wdata->win, ee->prop.fullscreen);
-          }
 
         einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
         if (einfo)
