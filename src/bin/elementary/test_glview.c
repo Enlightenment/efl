@@ -350,6 +350,7 @@ _print_gl_log(Evas_GL_API *gl, GLuint id)
      gl->glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_len);
    else if (gl->glIsProgram(id))
      gl->glGetProgramiv(id, GL_INFO_LOG_LENGTH, &log_len);
+   if (!log_len) return;
 
    log_info = malloc(log_len * sizeof(char));
 
@@ -439,7 +440,8 @@ _del_gl(Evas_Object *obj)
    GLData *gld = evas_object_data_get(obj, "gld");
    if (!gld)
      {
-        printf("Unable to get GLData. \n");
+        printf("Unable to get GLData.\n");
+        fflush(stdout);
         return;
      }
    Evas_GL_API *gl = gld->glapi;
