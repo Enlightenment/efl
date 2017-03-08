@@ -42,29 +42,12 @@ _render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 {
    int rend = 0;
 
-   if (ee->prop.avoid_damage)
+   if (((ee->visible) && (ee->draw_ok)) ||
+       ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
+       ((ee->should_be_visible) && (ee->prop.override)))
      {
         if (updates)
           {
-             _ecore_evas_idle_timeout_update(ee);
-             rend = 1;
-          }
-
-     }
-   else if (((ee->visible) && (ee->draw_ok)) ||
-            ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-            ((ee->should_be_visible) && (ee->prop.override)))
-     {
-        if (updates)
-          {
-             if (ee->shaped)
-               {
-                  //TODO
-               }
-             if (ee->alpha)
-               {
-                  //TODO
-               }
              _ecore_evas_idle_timeout_update(ee);
              rend = 1;
           }
@@ -99,9 +82,8 @@ static int
 _ecore_evas_cocoa_render(Ecore_Evas *ee)
 {
    int rend = 0;
-   Eina_List *ll;
+   Eina_List *ll, *updates;
    Ecore_Evas *ee2;
-   static int render2 = -1;
 
    if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync))
      return 0;
@@ -121,42 +103,11 @@ _ecore_evas_cocoa_render(Ecore_Evas *ee)
      }
 
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-   if (render2 == -1)
-     {
-        if (getenv("RENDER2")) render2 = 1;
-        else render2 = 0;
-     }
-   if (render2)
-     {
-        if (!ee->can_async_render)
-          {
-             Eina_List *updates = evas_render2_updates(ee->evas);
-             rend = _render_updates_process(ee, updates);
-             evas_render_updates_free(updates);
-          }
-        else
-          {
-             ee->in_async_render = EINA_TRUE;
-             if (evas_render2(ee->evas)) rend = 1;
-             else ee->in_async_render = EINA_FALSE;
-          }
-     }
-   else
-     {
-        if (!ee->can_async_render)
-          {
-             Eina_List *updates = evas_render_updates(ee->evas);
-             rend = _render_updates_process(ee, updates);
-             evas_render_updates_free(updates);
-          }
-        else if (evas_render_async(ee->evas))
-          {
-             DBG("ee=%p started asynchronous render.", ee);
-             ee->in_async_render = EINA_TRUE;
-             rend = 1;
-          }
-        else if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-     }
+
+   updates = evas_render_updates(ee->evas);
+   rend = _render_updates_process(ee, updates);
+   evas_render_updates_free(updates);
+
    return rend;
 }
 
@@ -219,7 +170,7 @@ _ecore_evas_resize_common(Ecore_Evas *ee,
      {
         ee->w = w;
         ee->h = h;
-        if (ee->prop.window && resize_cocoa)
+        if (resize_cocoa)
           ecore_cocoa_window_resize((Ecore_Cocoa_Window *)ee->prop.window, w, h);
 
         if (ECORE_EVAS_PORTRAIT(ee))
@@ -339,6 +290,12 @@ _ecore_evas_cocoa_free(Ecore_Evas *ee)
 }
 
 static void
+_ecore_evas_callback_resize_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
+{
+   if (ee) ee->func.fn_resize = func;
+}
+
+static void
 _ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
 {
    ecore_cocoa_window_size_min_set((Ecore_Cocoa_Window *)ee->prop.window, w, h);
@@ -400,12 +357,21 @@ static void
 _ecore_evas_show(Ecore_Evas *ee)
 {
    DBG("");
+
+   if (ee->visible) return;
+   ee->visible = 1;
    ee->should_be_visible = 1;
-   if (ee->prop.avoid_damage)
-     _ecore_evas_cocoa_render(ee);
+   ee->draw_ok = EINA_TRUE;
 
    ecore_cocoa_window_show((Ecore_Cocoa_Window *)ee->prop.window);
    evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+
+   _ecore_evas_cocoa_render(ee);
+
+   ee->prop.withdrawn = EINA_FALSE;
+   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+
+   if (ee->func.fn_show) ee->func.fn_show(ee);
 }
 
 
@@ -415,7 +381,19 @@ _ecore_evas_hide(Ecore_Evas *ee)
    DBG("");
 
    ecore_cocoa_window_hide((Ecore_Cocoa_Window *)ee->prop.window);
+
+   if (ee->prop.override)
+     {
+        ee->prop.withdrawn = EINA_TRUE;
+        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+     }
+
+   if (!ee->visible) return;
+   ee->visible = 0;
    ee->should_be_visible = 0;
+   ee->draw_ok = EINA_FALSE;
+
+   if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
 static void
@@ -547,7 +525,7 @@ _ecore_evas_callback_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func
 static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
   {
     _ecore_evas_cocoa_free,
-    NULL,
+    _ecore_evas_callback_resize_set,
     NULL,
     NULL,
     NULL,
@@ -657,11 +635,11 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
 
    _ecore_evas_cocoa_init();
 
-   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_cocoa_engine_func;
+   ee->engine.func = &_ecore_cocoa_engine_func;
 
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   ee->visible = 1;
+   ee->visible = 0;
    ee->x = x;
    ee->y = y;
    ee->w = w;
@@ -671,14 +649,11 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    ee->req.w = ee->w - ee->y;
    ee->req.h = ee->h;
 
-   ee->semi_sync = 1;
-
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
    ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = EINA_FALSE;
-   ee->prop.window = 0;
    ee->prop.withdrawn = EINA_TRUE;
 
    ee->evas = evas_new();
