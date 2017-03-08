@@ -206,6 +206,7 @@ void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_label_slide(void *data, Evas_Object *obj, void *event_info);
 void test_label_wrap(void *data, Evas_Object *obj, void *event_info);
 void test_label_ellipsis(void *data, Evas_Object *obj, void *event_info);
+void test_label_emoji(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_conformant2(void *data, Evas_Object *obj, void *event_info);
 void test_conformant_indicator(void *data, Evas_Object *obj, void *event_info);
@@ -954,6 +955,7 @@ add_tests:
    ADD_TEST(NULL, "Text", "Label Slide", test_label_slide);
    ADD_TEST(NULL, "Text", "Label Wrap", test_label_wrap);
    ADD_TEST(NULL, "Text", "Label Ellipsis", test_label_ellipsis);
+   ADD_TEST(NULL, "Text", "Label Emoji", test_label_emoji);
 
    //------------------------------//
    ADD_TEST(NULL, "Stored Surface Buffer", "Launcher", test_launcher);

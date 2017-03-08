@@ -374,3 +374,126 @@ test_label_ellipsis(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_resize(win, 300, 100);
    evas_object_show(win);
 }
+
+
+/*** Label Emoji *************************************************************/
+static char *
+_fontlist_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   return strdup(data);
+}
+
+static void
+_font_set(Evas_Object *label, const char *font)
+{
+   // Note: u1F420 doesn't work but U0001F420 does.
+   const char *emojis = u8""
+                        "<font='%s',Sans font_size=16 align=left>"
+                        "Grinning Face: \U0001f600<br/>"
+                        "Face with Tears of Joy: \xf0\x9f\x98\x82<br/>"
+                        "Panda Face: \xf0\x9f\x90\xbc<br/>"
+                        "Ghost: \xf0\x9f\x91\xbb<br/>"
+                        "Tropical Fish: \U0001F420<br/>"
+                        "Mosque: \U0001f54c<br/>"
+                        "Pencil: \u270f<br/>"
+                        "Person With Ball: \u26f9<br/>"
+                        "Birthday Cake: \U0001F382<br/>"
+                        "Dog Face: \U0001F436<br/>"
+                        "Music: \U0001F3B5 \U0001F3B6 \U0001F3BC<br/>"
+                        "Person Shrugging: \U0001F937<br/>"
+                        "</>";
+
+   elm_object_text_set(label, eina_slstr_printf(emojis, font));
+}
+
+static void
+_font_item_sel_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Elm_Object_Item *item = event_info;
+   Evas_Object *lb = data;
+   const char *font;
+
+   font = elm_object_item_text_get(item);
+   elm_object_text_set(obj, font);
+   elm_combobox_hover_end(obj);
+   _font_set(lb, font);
+}
+
+static void
+_font_item_del_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   free(data);
+}
+
+void
+test_label_emoji(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *txt, *cmb;
+   Elm_Genlist_Item_Class *itc;
+   Eina_List *list, *l;
+   const char *font;
+   Evas *evas;
+
+   const char *font_patterns[] = { "emoji", "symbola" };
+
+   win = elm_win_util_standard_add("label-emoji", "Label Emoji");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   elm_box_padding_set(bx, 0, ELM_SCALE_SIZE(10));
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   txt = elm_entry_add(win);
+   elm_entry_editable_set(txt, EINA_TRUE);
+   elm_entry_scrollable_set(txt, EINA_TRUE);
+   evas_object_size_hint_weight_set(txt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(txt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, txt);
+   evas_object_show(txt);
+
+   cmb = elm_combobox_add(win);
+   elm_entry_editable_set(cmb, EINA_FALSE);
+   evas_object_size_hint_weight_set(cmb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(cmb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, cmb);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _fontlist_text_get;
+
+   evas = evas_object_evas_get(win);
+   list = evas_font_available_list(evas);
+   EINA_LIST_FOREACH(list, l, font)
+     {
+        size_t k;
+
+        if (!font) continue;
+        for (k = 0; k < EINA_C_ARRAY_LENGTH(font_patterns); k++)
+          {
+             if (strcasestr(font, font_patterns[k]))
+               {
+                  Elm_Object_Item *it;
+
+                  it = elm_genlist_item_append(cmb, itc, strdup(font), NULL,
+                                               ELM_GENLIST_ITEM_NONE,
+                                               NULL, NULL);
+                  elm_object_item_del_cb_set(it, _font_item_del_cb);
+               }
+          }
+     }
+   evas_font_available_list_free(evas, list);
+
+   evas_object_smart_callback_add(cmb, "item,pressed", _font_item_sel_cb, txt);
+
+   elm_genlist_item_class_free(itc);
+
+   elm_object_text_set(cmb, "Sans");
+   _font_set(txt, "Sans");
+   evas_object_show(cmb);
+
+   evas_object_resize(win, 300, 400);
+   evas_object_show(win);
+}
