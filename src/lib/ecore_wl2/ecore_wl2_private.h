@@ -88,7 +88,6 @@ struct _Ecore_Wl2_Display
         int data_device_manager_version;
         struct wl_shm *shm;
         struct zwp_linux_dmabuf_v1 *dmabuf;
-        struct wl_shell *wl_shell;
         struct xdg_shell *xdg_shell;
         struct zxdg_shell_v6 *zxdg_shell;
         struct www *www;
@@ -147,7 +146,6 @@ struct _Ecore_Wl2_Window
    const char *class;
 
    struct wl_surface *surface;
-   struct wl_shell_surface *wl_shell_surface;
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
    struct www_surface *www_surface;

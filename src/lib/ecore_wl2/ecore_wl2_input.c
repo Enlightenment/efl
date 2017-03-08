@@ -854,16 +854,12 @@ _keyboard_cb_enter(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
 
    input->focus.keyboard = window;
    window->input = input;
-
-   if (window->wl_shell_surface)
-     _ecore_wl2_input_focus_in_send(window);
 }
 
 static void
-_keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface)
+_keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface EINA_UNUSED)
 {
    Ecore_Wl2_Input *input;
-   Ecore_Wl2_Window *window;
 
    input = data;
    if (!input) return;
@@ -876,11 +872,6 @@ _keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
    if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
    input->repeat.timer = NULL;
    input->focus.keyboard = NULL;
-
-   /* find the window which this surface belongs to */
-   window = _ecore_wl2_display_window_surface_find(input->display, surface);
-   if ((window) && (window->wl_shell_surface))
-     _ecore_wl2_input_focus_out_send(window);
 }
 
 static Eina_Bool

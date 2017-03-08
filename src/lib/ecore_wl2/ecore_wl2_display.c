@@ -286,7 +286,6 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
    if (ewd->wl.www) www_destroy(ewd->wl.www);
    if (ewd->wl.zxdg_shell) zxdg_shell_v6_destroy(ewd->wl.zxdg_shell);
    if (ewd->wl.xdg_shell) xdg_shell_destroy(ewd->wl.xdg_shell);
-   if (ewd->wl.wl_shell) wl_shell_destroy(ewd->wl.wl_shell);
    if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
    if (ewd->wl.data_device_manager)
      wl_data_device_manager_destroy(ewd->wl.data_device_manager);
@@ -434,7 +433,6 @@ _ecore_wl2_shell_bind(Ecore_Wl2_Display *ewd)
      {
         "zxdg_shell_v6",
         "xdg_shell",
-        "wl_shell",
         NULL
      };
 
@@ -449,14 +447,7 @@ _ecore_wl2_shell_bind(Ecore_Wl2_Display *ewd)
 
    if (!global) return;
 
-   if (!strcmp(global->interface, "wl_shell"))
-     {
-        ewd->wl.wl_shell =
-          wl_registry_bind(ewd->wl.registry, global->id,
-                           &wl_shell_interface, 1);
-        ewd->shell_done = EINA_TRUE;
-     }
-   else if ((!strcmp(global->interface, "xdg_shell")) &&
+   if ((!strcmp(global->interface, "xdg_shell")) &&
             (!getenv("EFL_WAYLAND_DONT_USE_XDG_SHELL")))
      {
         Ecore_Wl2_Window *window;
@@ -587,7 +578,6 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.www) www_destroy(ewd->wl.www);
    if (ewd->wl.zxdg_shell) zxdg_shell_v6_destroy(ewd->wl.zxdg_shell);
    if (ewd->wl.xdg_shell) xdg_shell_destroy(ewd->wl.xdg_shell);
-   if (ewd->wl.wl_shell) wl_shell_destroy(ewd->wl.wl_shell);
    if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
    if (ewd->wl.data_device_manager)
      wl_data_device_manager_destroy(ewd->wl.data_device_manager);
