@@ -30,7 +30,7 @@ static int _win_count = 0;
 {
    const NSOpenGLPixelFormatAttribute attributes[] = {
       NSOpenGLPFAAccelerated,
-      NSOpenGLPFADoubleBuffer,
+      NSOpenGLPFATripleBuffer,
       0 /* Terminator */
    };
    return [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
@@ -117,7 +117,7 @@ evas_outbuf_new(Evas_Engine_Info_GL_Cocoa *info,
    ob->info = info;
    ob->ns_window = info->window;
    ob->rot = 0;
-   ob->swap_mode = MODE_DOUBLE;
+   ob->swap_mode = MODE_TRIPLE;
 
    glview = [[EvasGLView alloc] initWithFrame: NSMakeRect(0, 0, w, h)];
    if (EINA_UNLIKELY(!glview))
