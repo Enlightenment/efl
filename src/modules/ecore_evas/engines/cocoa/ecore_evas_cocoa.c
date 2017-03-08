@@ -584,7 +584,7 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    ee->h = h;
    ee->req.x = ee->x;
    ee->req.y = ee->y;
-   ee->req.w = ee->w - ee->y;
+   ee->req.w = ee->w;
    ee->req.h = ee->h;
 
    ee->prop.max.w = 32767;
