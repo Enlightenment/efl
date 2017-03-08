@@ -449,7 +449,7 @@ _ecore_wl2_shell_bind(Ecore_Wl2_Display *ewd)
 
    if (!global) return;
 
-   else if (!strcmp(global->interface, "wl_shell"))
+   if (!strcmp(global->interface, "wl_shell"))
      {
         ewd->wl.wl_shell =
           wl_registry_bind(ewd->wl.registry, global->id,
