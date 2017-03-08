@@ -455,6 +455,12 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
         window->pending.configure = EINA_TRUE;
 
+        if (window->maximized)
+          zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
+
+        if (window->fullscreen)
+          zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
+
         wl_surface_commit(window->surface);
      }
    else if ((window->display->wl.xdg_shell) && (!window->xdg_surface))
@@ -475,6 +481,11 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
         window->configure_ack = xdg_surface_ack_configure;
         window->pending.configure = EINA_FALSE;
+        if (window->maximized)
+          xdg_surface_set_maximized(window->xdg_surface);
+        if (window->fullscreen)
+          xdg_surface_set_fullscreen(window->xdg_surface, NULL);
+
         _ecore_wl2_window_type_set(window);
      }
 
@@ -960,6 +971,9 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
    maximized = !!maximized;
    if (prev == maximized) return;
 
+   if (!ecore_wl2_window_shell_surface_exists(window))
+     window->maximized = maximized;
+
    if (maximized)
      {
         window->saved = window->geometry;
@@ -996,6 +1010,9 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
    prev = window->fullscreen;
    fullscreen = !!fullscreen;
    if (prev == fullscreen) return;
+
+   if (!ecore_wl2_window_shell_surface_exists(window))
+     window->fullscreen = fullscreen;
 
    if (fullscreen)
      {
