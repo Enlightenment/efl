@@ -38,61 +38,11 @@ static const char *_iface_name = "opengl_cocoa";
 static const int _iface_version = 1;
 
 static int
-_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
-{
-   int rend = 0;
-
-   if (((ee->visible) && (ee->draw_ok)) ||
-       ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-       ((ee->should_be_visible) && (ee->prop.override)))
-     {
-        if (updates)
-          {
-             _ecore_evas_idle_timeout_update(ee);
-             rend = 1;
-          }
-     }
-   else
-     evas_norender(ee->evas);
-
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-
-
-   if (rend)
-     {
-        static int frames = 0;
-        static double t0 = 0.0;
-        double t, td;
-
-        t = ecore_time_get();
-        frames++;
-        if ((t - t0) > 1.0)
-          {
-             td = t - t0;
-             DBG("FPS: %3.3f", (double)frames / td);
-             frames = 0;
-             t0 = t;
-          }
-     }
-
-   return rend;
-}
-
-static int
 _ecore_evas_cocoa_render(Ecore_Evas *ee)
 {
    int rend = 0;
-   Eina_List *ll, *updates;
+   Eina_List *ll, *updates = NULL;
    Ecore_Evas *ee2;
-
-   if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync))
-     return 0;
-
-   if (ee->in_async_render)
-     {
-        DBG("ee=%p is rendering asynchronously, skip.", ee);
-        return 0;
-     }
 
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
@@ -104,11 +54,19 @@ _ecore_evas_cocoa_render(Ecore_Evas *ee)
 
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 
-   updates = evas_render_updates(ee->evas);
-   rend = _render_updates_process(ee, updates);
-   evas_render_updates_free(updates);
+   if (((ee->visible) && (ee->draw_ok)) ||
+       ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
+       ((ee->should_be_visible) && (ee->prop.override)))
+     {
+        updates = evas_render_updates(ee->evas);
+        if (updates) evas_render_updates_free(updates);
+     }
+   else
+     evas_norender(ee->evas);
 
-   return rend;
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+
+   return (updates) ? 1 : rend;
 }
 
 
@@ -358,19 +316,16 @@ _ecore_evas_show(Ecore_Evas *ee)
 {
    DBG("");
 
-   if (ee->visible) return;
-   ee->visible = 1;
-   ee->should_be_visible = 1;
-   ee->draw_ok = EINA_TRUE;
-
    ecore_cocoa_window_show((Ecore_Cocoa_Window *)ee->prop.window);
    evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-
-   _ecore_evas_cocoa_render(ee);
 
    ee->prop.withdrawn = EINA_FALSE;
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
 
+   if (ee->visible) return;
+   ee->visible = 1;
+   ee->should_be_visible = 1;
+   ee->draw_ok = EINA_TRUE;
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
 
