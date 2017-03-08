@@ -68,13 +68,13 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    event->w = size.width;
    event->h = size.height -
       (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
-   event->cocoa_window = self;
+   event->cocoa_window = self.ecore_window_data;
    ecore_event_add(ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST, event, NULL, NULL);
 
    return YES;
 }
 
-- (void)windowWillClose:(NSNotification *) notification
+- (void)windowWillClose:(NSNotification *) EINA_UNUSED notif
 {
    Ecore_Cocoa_Event_Window_Destroy *event;
 
@@ -84,7 +84,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
         CRI("Failed to allocate Ecore_Cocoa_Event_Window");
         return;
      }
-   event->cocoa_window = [notification object];
+   event->cocoa_window = self.ecore_window_data;
    ecore_event_add(ECORE_COCOA_EVENT_WINDOW_DESTROY, event, NULL, NULL);
 }
 
@@ -122,7 +122,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
      }
 }
 
-- (void)windowDidBecomeKey:(NSNotification *)notification
+- (void)windowDidBecomeKey:(NSNotification *) EINA_UNUSED notif
 {
    Ecore_Cocoa_Event_Window_Focused *e;
 
@@ -132,7 +132,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
         CRI("Failed to allocate Ecore_Cocoa_Event_Window");
         return;
      }
-   e->cocoa_window = [notification object];
+   e->cocoa_window = self.ecore_window_data;
    ecore_event_add(ECORE_COCOA_EVENT_WINDOW_FOCUSED, e, NULL, NULL);
 }
 
@@ -150,7 +150,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    [NSApp resumeNSRunLoopMonitoring];
 }
 
-- (void)windowDidResignKey:(NSNotification *)notification
+- (void)windowDidResignKey:(NSNotification *) EINA_UNUSED notif
 {
    Ecore_Cocoa_Event_Window_Unfocused *e;
 
@@ -160,7 +160,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
         CRI("Failed to allocate Ecore_Cocoa_Event_Window");
         return;
      }
-   e->cocoa_window = [notification object];
+   e->cocoa_window = self.ecore_window_data;
    ecore_event_add(ECORE_COCOA_EVENT_WINDOW_UNFOCUSED, e, NULL, NULL);
 }
 
