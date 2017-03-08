@@ -34,7 +34,7 @@ static inline void
 _evas_event_feed_check(Evas_Public_Data *e)
 {
    if (EINA_LIKELY(!e->running_post_events)) return;
-   DBG("Feeding new input events from a post-event callback is risky!");
+   CRI("Feeding new input events from a post-event callback is risky!");
 }
 
 #define EVAS_EVENT_FEED_SAFETY_CHECK(evas) _evas_event_feed_check(evas)
