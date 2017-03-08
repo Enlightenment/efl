@@ -494,7 +494,7 @@ _fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt,
    int depth_stencil = 0;
    int fb_status = 0;
    int w = 2, h = 2;   // Test it with a simple (2,2) surface.  Should I test it with NPOT?
-   Evas_GL_Context_Version ver = evas_gl_common_version_check();
+   Evas_GL_Context_Version ver = evas_gl_common_version_check(NULL);
 
    // Gen FBO
    glGenFramebuffers(1, &fbo);
@@ -912,7 +912,7 @@ _surface_cap_init(void *eng_data)
    evgl_engine->caps.max_h = max_size;
    DBG("Max Surface Width: %d   Height: %d", evgl_engine->caps.max_w, evgl_engine->caps.max_h);
 
-   gles_version = evas_gl_common_version_check();
+   gles_version = evas_gl_common_version_check(NULL);
 
    // Check for MSAA support
    if (gles_version == 3)
@@ -1018,6 +1018,20 @@ _context_ext_check(EVGL_Context *ctx)
           ctx->pixmap_image_supported = 1;
      }
 #endif
+
+   if (ctx->version == EVAS_GL_GLES_3_X)
+     {
+        /* HACK, as of 2017/03/08:
+         * Some NVIDIA drivers pretend to support GLES 3.1 with EGL but in
+         * fact none of the new functions are available, neither through
+         * dlsym() nor eglGetProcAddress(). GLX/OpenGL should work though.
+         * This is a fixup for glGetString(GL_VERSION).
+         */
+        if (!gles3_funcs->glVertexBindingDivisor)
+          ctx->version_minor = 0;
+        else
+          ctx->version_minor = 1;
+     }
 
    ctx->extension_checked = 1;
 
@@ -2315,6 +2329,7 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx,
 
    // Set default values
    ctx->version = version;
+   ctx->version_minor = 0;
    ctx->scissor_coord[0] = 0;
    ctx->scissor_coord[1] = 0;
    ctx->scissor_coord[2] = evgl_engine->caps.max_w;
@@ -3116,6 +3131,7 @@ Evas_GL_API *
 evgl_api_get(void *eng_data, Evas_GL_Context_Version version, Eina_Bool alloc_only)
 {
    Evas_GL_API *api = NULL;
+   int minor_version = 0;
 
    if (version == EVAS_GL_GLES_2_X)
      {
@@ -3129,10 +3145,15 @@ evgl_api_get(void *eng_data, Evas_GL_Context_Version version, Eina_Bool alloc_on
      }
    else if (version == EVAS_GL_GLES_3_X)
      {
+        if (evas_gl_common_version_check(&minor_version) < 3)
+          {
+             ERR("OpenGL ES 3.x is not supported.");
+             return NULL;
+          }
         if (!gles3_funcs) gles3_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
         api = gles3_funcs;
      }
-   else return NULL;
+   if (!api) return NULL;
    if (alloc_only && (api->version == EVAS_GL_API_VERSION))
      return api;
 
@@ -3154,7 +3175,14 @@ evgl_api_get(void *eng_data, Evas_GL_Context_Version version, Eina_Bool alloc_on
      }
    else if (version == EVAS_GL_GLES_3_X)
      {
-        _evgl_api_gles3_get(api, evgl_engine->api_debug_mode);
+        void *(*get_proc_address)(const char *) = NULL;
+        const char *egl_exts;
+
+        egl_exts = evgl_engine->funcs->ext_string_get(eng_data);
+        if (egl_exts && strstr(egl_exts, "EGL_KHR_get_all_proc_addresses"))
+          get_proc_address = evgl_engine->funcs->proc_address_get;
+
+        _evgl_api_gles3_get(api, get_proc_address, evgl_engine->api_debug_mode, minor_version);
         evgl_api_gles3_ext_get(api, evgl_engine->funcs->proc_address_get, evgl_engine->funcs->ext_string_get(eng_data));
      }
 

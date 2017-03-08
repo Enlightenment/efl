@@ -493,7 +493,7 @@ matrix_ortho(GLfloat *m,
 }
 
 int
-evas_gl_common_version_check(void)
+evas_gl_common_version_check(int *minor_version)
 {
    char *version;
    char *tmp;
@@ -505,6 +505,8 @@ evas_gl_common_version_check(void)
    * glGetString returns a string describing the current GL connection.
    * GL_VERSION is used to get the version of the connection
    */
+
+   if (minor_version) *minor_version = 0;
 
    version = (char *)glGetString(GL_VERSION);
    if (!version)
@@ -541,6 +543,12 @@ evas_gl_common_version_check(void)
    if (strstr(version, "OpenGL ES 3"))
      {
         /* Supported */
+        if (minor_version)
+          {
+             if ((version[11] == '.') && isdigit(version[12]))
+               *minor_version = atoi(&version[12]);
+             else *minor_version = 0;
+          }
         return 3;
      }
 
@@ -549,6 +557,13 @@ evas_gl_common_version_check(void)
    if (strstr(version, "OpenGL ES "))
      {
         /* Supported */
+        if (minor_version)
+          {
+             if ((version[10] == '2') &&
+                 (version[11] == '.') && isdigit(version[12]))
+               *minor_version = atoi(&version[12]);
+             else *minor_version = 0;
+          }
         return 2;
      }
 
@@ -590,21 +605,31 @@ evas_gl_common_version_check(void)
  fail:
    free(version);
 
-   if (((major == 1) && (minor >= 4)) || (major >= 2))
+   // OpenGL 4.5 is supposed to be a superset of GLES 3.1
+   if ((major == 4) && (minor >= 5))
      {
-        /* Map GL to GLES version: Refer http://en.wikipedia.org/wiki/OpenGL_ES */
-        if ((major >= 4) && (minor >= 3))
-          return 3;
-        else if ((major > 3) || ((major == 3) && (minor >= 3))) /* >= 3.3 */
-          {
-             const char *exts = NULL;
-             int num = 0;
-
-             if (_has_ext("GL_ARB_ES3_compatibility", &exts, &num))
-               return 3;
-          }
-        return 2; /* emulated support */
+        if (minor_version) *minor_version = 1;
+        return 3;
      }
+
+   // OpenGL 4.3 is supposed to be a superset of GLES 3.0
+   if ((major == 4) && (minor >= 3))
+     return 3;
+
+   // Extension GL_ARB_ES3_compatibility means OpenGL is a superset of GLES 3.0
+   if ((major > 3) || ((major == 3) && (minor >= 3)))
+     {
+        const char *exts = NULL;
+        int num = 0;
+
+        if (_has_ext("GL_ARB_ES3_compatibility", &exts, &num))
+          return 3;
+     }
+
+   // OpenGL >= 1.4 is a superset of the features of GLES 2 (albeit not an
+   // exact function match)
+   if (((major == 1) && (minor >= 4)) || (major >= 2))
+     return 2; /* emulated support */
 
    return 0;
 }
@@ -787,7 +812,7 @@ evas_gl_common_context_new(void)
    if (!glsym_glGetStringi)
      glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
 
-   gles_version = evas_gl_common_version_check();
+   gles_version = evas_gl_common_version_check(NULL);
    if (!gles_version) return NULL;
 
    gc = calloc(1, sizeof(Evas_Engine_GL_Context));

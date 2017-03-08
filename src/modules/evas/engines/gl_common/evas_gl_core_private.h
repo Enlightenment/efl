@@ -163,6 +163,7 @@ struct _EVGL_Context
    EVGLNative_Context context;
 
    Evas_GL_Context_Version version;
+   int                     version_minor;
 
    // Context FBO
    GLuint       surface_fbo;
@@ -352,7 +353,7 @@ extern EVGL_Engine   *evgl_engine;
 // Internally used functions
 extern void           _evgl_api_gles2_get(Evas_GL_API *api, Eina_Bool debug);
 extern void           _evgl_api_gles1_get(Evas_GL_API *api, Eina_Bool debug);
-extern void           _evgl_api_gles3_get(Evas_GL_API *api, Eina_Bool debug);
+extern void           _evgl_api_gles3_get(Evas_GL_API *funcs, void *(*get_proc_address)(const char *), Eina_Bool debug, int minor_version);
 extern EVGL_Resource *_evgl_tls_resource_get(void);
 extern EVGL_Resource *_evgl_tls_resource_create(void *data);
 extern void           _evgl_tls_resource_destroy(void *data);

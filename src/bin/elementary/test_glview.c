@@ -427,6 +427,9 @@ _init_gl(Evas_Object *obj)
 {
    GLData *gld = evas_object_data_get(obj, "gld");
 
+   printf("GL_VERSION: %s\n", gld->glapi->glGetString(GL_VERSION));
+   fflush(stdout);
+
    gears_init(gld);
 }
 
@@ -611,8 +614,8 @@ _mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
    gld->mouse_down = 0;
 }
 
-void
-test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void
+_test_glview_do(Evas_GL_Context_Version version)
 {
    Evas_Object *win, *bx, *bt, *gl, *lb;
    Ecore_Animator *ani;
@@ -649,7 +652,7 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(bx);
 
    // Add a GLView
-   gl = elm_glview_add(win);
+   gl = elm_glview_version_add(win, version);
    if (gl)
      {
         evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -722,4 +725,16 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
+}
+
+void
+test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _test_glview_do(EVAS_GL_GLES_2_X);
+}
+
+void
+test_glview_gles3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _test_glview_do(EVAS_GL_GLES_3_X);
 }

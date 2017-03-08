@@ -253,6 +253,7 @@ void test_grid_static(void *data, Evas_Object *obj, void *event_info);
 void test_glview_simple(void *data, Evas_Object *obj, void *event_info);
 void test_glview(void *data, Evas_Object *obj, void *event_info);
 void test_glview_manygears(void *data, Evas_Object *obj, void *event_info);
+void test_glview_gles3(void *data, Evas_Object *obj, void *event_info);
 void test_3d(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe2(void *data, Evas_Object *obj, void *event_info);
@@ -859,6 +860,7 @@ add_tests:
    ADD_TEST(NULL, "3D", "GLViewSimple", test_glview_simple);
    ADD_TEST(NULL, "3D", "GLView Gears", test_glview);
    ADD_TEST(NULL, "3D", "GLView Many Gears", test_glview_manygears);
+   ADD_TEST(NULL, "3D", "GLView GL ES 3.x", test_glview_gles3);
 
    //------------------------------//
    ADD_TEST(NULL, "Web", "Web", test_web);

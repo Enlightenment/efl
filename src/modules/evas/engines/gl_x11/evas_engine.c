@@ -494,6 +494,15 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
    EGLContext context = EGL_NO_CONTEXT;
    int context_attrs[3];
 
+   /* Upgrade GLES 2 to GLES 3.
+    *
+    * FIXME: Maybe we don't want to do this, unless we have no choice.
+    * An alternative would be to use eglCreateImage() to share the indirect
+    * rendering FBO between two contexts of incompatible version. For now,
+    * we always upgrade the real context version to GLES 3 when it's available.
+    * But this leads to some issues, namely that the list of extensions is
+    * different, and MSAA surfaces also work differently.
+    */
    if (eng_get_ob(re)->gles3 && (version >= EVAS_GL_GLES_2_X))
      version = 3;
 

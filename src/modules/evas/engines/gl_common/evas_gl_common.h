@@ -543,7 +543,7 @@ typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym));
 
 EAPI void __evas_gl_err(int err, const char *file, const char *func, int line, const char *op);
 
-int               evas_gl_common_version_check(void);
+int               evas_gl_common_version_check(int *minor_version);
 void              evas_gl_common_tiling_start(Evas_Engine_GL_Context *gc,
                                               int rot, int gw, int gh,
                                               int cx, int cy, int cw, int ch,

@@ -1324,12 +1324,13 @@ _evgl_glGetString(GLenum name)
 {
    static char _version[128] = {0};
    static char _glsl[128] = {0};
+   const char *ret, *version_extra;
    EVGL_Resource *rsc;
-   const char *ret;
+   EVGL_Context *ctx;
 
    /* We wrap two values here:
     *
-    * VERSION: Since OpenGL ES 3 is not supported yet, we return OpenGL ES 2.0
+    * VERSION: Since OpenGL ES 3 is not supported yet*, we return OpenGL ES 2.0
     *   The string is not modified on desktop GL (eg. 4.4.0 NVIDIA 343.22)
     *   GLES 3 support is not exposed because apps can't use GLES 3 core
     *   functions yet.
@@ -1337,6 +1338,8 @@ _evgl_glGetString(GLenum name)
     * EXTENSIONS: This should return only the list of GL extensions supported
     *   by Evas GL. This means as many extensions as possible should be
     *   added to the whitelist.
+    *
+    * *: GLES 3.0/3.1 is not fully supported... we also have buggy drivers!
     */
 
    /*
@@ -1353,11 +1356,12 @@ _evgl_glGetString(GLenum name)
    if ((!(rsc = _evgl_tls_resource_get())) || !rsc->current_ctx)
      {
         ERR("Current context is NULL, not calling glGetString");
-        // This sets evas_gl_error_get instead of glGetError...
+        // This sets evas_gl_error_get instead of eglGetError...
         evas_gl_common_error_set(NULL, EVAS_GL_BAD_CONTEXT);
         return NULL;
      }
 
+   ctx = rsc->current_ctx;
    switch (name)
      {
       case GL_VENDOR:
@@ -1369,6 +1373,7 @@ _evgl_glGetString(GLenum name)
         ret = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
         if (!ret) return NULL;
 #ifdef GL_GLES
+        // FIXME: We probably shouldn't wrap anything for EGL
         if (ret[18] != '1')
           {
              // We try not to remove the vendor fluff
@@ -1388,20 +1393,14 @@ _evgl_glGetString(GLenum name)
         ret = (const char *) glGetString(GL_VERSION);
         if (!ret) return NULL;
 #ifdef GL_GLES
-        if ((ret[10] != '2') && (ret[10] != '3'))
-          {
-             // We try not to remove the vendor fluff
-             snprintf(_version, sizeof(_version), "OpenGL ES 2.0 Evas GL (%s)", ret + 10);
-             _version[sizeof(_version) - 1] = '\0';
-             return (const GLubyte *) _version;
-          }
-        return (const GLubyte *) ret;
+        version_extra = ret + 10;
 #else
-        // Desktop GL, we still keep the official name
-        snprintf(_version, sizeof(_version), "OpenGL ES 2.0 Evas GL (%s)", (char *) ret);
+        version_extra = ret;
+#endif
+        snprintf(_version, sizeof(_version), "OpenGL ES %d.%d Evas GL (%s)",
+                 (int) ctx->version, ctx->version_minor, version_extra);
         _version[sizeof(_version) - 1] = '\0';
         return (const GLubyte *) _version;
-#endif
 
       case GL_EXTENSIONS:
         // Passing the version -  GLESv2/GLESv3.
@@ -3242,17 +3241,19 @@ _debug_gles3_api_get(Evas_GL_API *funcs, int minor_version)
 
 
 static Eina_Bool
-_evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version)
+_evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version,
+                      void *(*get_proc_address)(const char *))
 {
    if (!dl_handle) return EINA_FALSE;
+   Eina_Bool ret_value = EINA_FALSE;
 
-#define ORD(name) \
+#define ORD(name) do { \
    funcs->name = dlsym(dl_handle, #name); \
-   if (!funcs->name) \
-     { \
+   if (!funcs->name && get_proc_address) get_proc_address(#name); \
+   if (!funcs->name) { \
         WRN("%s symbol not found", #name); \
-        return EINA_FALSE; \
-     }
+        return ret_value; \
+     } } while (0)
 
    // Used to update extensions
    ORD(glGetString);
@@ -3366,6 +3367,7 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version)
    if (minor_version > 0)
      {
         //GLES 3.1
+        ret_value = EINA_TRUE;
         ORD(glDispatchCompute);
         ORD(glDispatchComputeIndirect);
         ORD(glDrawArraysIndirect);
@@ -3435,15 +3437,15 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version)
         ORD(glVertexAttribBinding);
         ORD(glVertexBindingDivisor);
      }
-
 #undef ORD
+
    return EINA_TRUE;
 }
 
 
 
 static Eina_Bool
-_evgl_gles3_api_init(int minor_version)
+_evgl_gles3_api_init(int minor_version, void *(*get_proc_address)(const char *))
 {
    static Eina_Bool _initialized = EINA_FALSE;
    if (_initialized) return EINA_TRUE;
@@ -3475,7 +3477,7 @@ _evgl_gles3_api_init(int minor_version)
         return EINA_FALSE;
      }
 
-   if (!_evgl_load_gles3_apis(_gles3_handle, &_gles3_api, minor_version))
+   if (!_evgl_load_gles3_apis(_gles3_handle, &_gles3_api, minor_version, get_proc_address))
      {
         return EINA_FALSE;
      }
@@ -3484,26 +3486,23 @@ _evgl_gles3_api_init(int minor_version)
    return EINA_TRUE;
 }
 
-
 void
-_evgl_api_gles3_get(Evas_GL_API *funcs, Eina_Bool debug)
+_evgl_api_gles3_get(Evas_GL_API *funcs, void *(*get_proc_address)(const char *),
+                    Eina_Bool debug, int minor_version)
 {
-   const char *ret = (const char *) glGetString(GL_VERSION);
-   int minor_version =  ret[12] - '0';
+   int effective_minor = minor_version;
 
-   if (minor_version > 9 || minor_version < 0)
-     {
-        ERR("OpenGL ES version is invalid.");
-        return;
-     }
-
-   if (!_evgl_gles3_api_init(minor_version))
+   if (!_evgl_gles3_api_init(minor_version, get_proc_address))
       return;
 
+   // Hack for NVIDIA. See also evas_gl_core.c:_context_ext_check()
+   if (!_gles3_api.glVertexBindingDivisor)
+     effective_minor = 0;
+
    if (debug)
-     _debug_gles3_api_get(funcs, minor_version);
+     _debug_gles3_api_get(funcs, effective_minor);
    else
-     _normal_gles3_api_get(funcs, minor_version);
+     _normal_gles3_api_get(funcs, effective_minor);
 
    if (evgl_engine->direct_scissor_off)
      _direct_scissor_off_api_get(funcs);
