@@ -331,6 +331,7 @@ struct _Evas_Engine_GL_Context
    } pipe[MAX_PIPES];
 
    Eina_List     *font_glyph_textures;
+   Eina_List     *font_glyph_images;
    Evas_GL_Image *def_surface;
    RGBA_Image    *font_surface;
 
@@ -414,6 +415,7 @@ struct _Evas_GL_Image
    RGBA_Image             *im;
    Evas_GL_Texture        *tex;
    Evas_Image_Load_Opts    load_opts;
+   RGBA_Font_Glyph        *fglyph;
    int                     references;
    // if im->im == NULL, it's a render-surface so these here are used
    int                     w, h;
@@ -690,9 +692,9 @@ void              evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_
 void             *evas_gl_font_texture_new(void *gc, RGBA_Font_Glyph *fg);
 void              evas_gl_font_texture_free(void *);
 void              evas_gl_font_texture_draw(void *gc, void *surface, void *dc, RGBA_Font_Glyph *fg, int x, int y);
-void             *evas_gl_image_new_from_data(void *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace);
-void              evas_gl_image_free(void *im);
-void              evas_gl_image_draw(void *gc, void *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
+void             *evas_gl_font_image_new(void *gc, RGBA_Font_Glyph *fg, int alpha, Evas_Colorspace cspace);
+void              evas_gl_font_image_free(void *im);
+void              evas_gl_font_image_draw(void *gc, void *im, int dx, int dy, int dw, int dh, int smooth);
 
 Evas_GL_Polygon  *evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y);
 Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);

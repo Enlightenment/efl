@@ -185,3 +185,44 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    /* restore clip info */
    gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
 }
+
+void *
+evas_gl_font_image_new(void *gc, RGBA_Font_Glyph *fg, int alpha, Evas_Colorspace cspace)
+{
+   Evas_Engine_GL_Context *context = (Evas_Engine_GL_Context *)gc;
+   Evas_GL_Image *im = evas_gl_common_image_new_from_data(context,
+                                                          (unsigned int)fg->glyph_out->bitmap.width,
+                                                          (unsigned int)fg->glyph_out->bitmap.rows,
+                                                          (DATA32 *)fg->glyph_out->bitmap.buffer,
+                                                          alpha,
+                                                          cspace);
+
+   if (im)
+     {
+        im->fglyph = fg;
+        context->font_glyph_images = eina_list_append(context->font_glyph_images, im);
+     }
+
+   return (void *)im;
+}
+
+void
+evas_gl_font_image_free(void *im)
+{
+   evas_gl_common_image_free((Evas_GL_Image *)im);
+}
+
+void
+evas_gl_font_image_draw(void *gc, void *gl_image, int dx, int dy, int dw, int dh, int smooth)
+{
+   Evas_GL_Image *im = (Evas_GL_Image *)gl_image;
+
+   if (!im || !im->fglyph) return;
+
+   evas_gl_common_image_draw((Evas_Engine_GL_Context *)gc,
+                             im, 0, 0,
+                             (unsigned int)im->fglyph->glyph_out->bitmap.width,
+                             (unsigned int)im->fglyph->glyph_out->bitmap.rows,
+                             dx, dy, dw, dh,
+                             smooth);
+}

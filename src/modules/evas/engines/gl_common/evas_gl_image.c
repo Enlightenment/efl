@@ -766,6 +766,14 @@ evas_gl_common_image_free(Evas_GL_Image *im)
 {
    im->references--;
    if (im->references > 0) return;
+
+   if (im->fglyph)
+     {
+        im->gc->font_glyph_images = eina_list_remove(im->gc->font_glyph_images, im);
+        im->fglyph->ext_dat = NULL;
+        im->fglyph->ext_dat_free = NULL;
+     }
+
    evas_gl_common_context_flush(im->gc);
 
    evas_gl_common_image_preload_unwatch(im);
@@ -1354,30 +1362,4 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
    evas_common_draw_context_cutouts_free(_evas_gl_common_cutout_rects);
    /* restore clip info */
    gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
-}
-
-void *
-evas_gl_image_new_from_data(void *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace)
-{
-   return (void *)evas_gl_common_image_new_from_data((Evas_Engine_GL_Context *)gc,
-                                                     w, h,
-                                                     data,
-                                                     alpha,
-                                                     cspace);
-}
-
-void
-evas_gl_image_free(void *im)
-{
-   evas_gl_common_image_free((Evas_GL_Image *)im);
-}
-
-void
-evas_gl_image_draw(void *gc, void *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth)
-{
-   evas_gl_common_image_draw((Evas_Engine_GL_Context *)gc,
-                             (Evas_GL_Image *)im,
-                             sx, sy, sw, sh,
-                             dx, dy, dw, dh,
-                             smooth);
 }

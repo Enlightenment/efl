@@ -123,13 +123,11 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
 
         if ((!fg->ext_dat) && FT_HAS_COLOR(fg->fi->src->ft.face))
           {
-             if (dc->font_ext.func.gl_image_new_from_data)
+             if (dc->font_ext.func.gl_image_new)
                {
                   /* extension calls */
-                  fg->ext_dat = dc->font_ext.func.gl_image_new_from_data
-                    (dc->font_ext.data, (unsigned int)w, (unsigned int)h,
-                     (DATA32 *)fg->glyph_out->bitmap.buffer, EINA_TRUE,
-                     EVAS_COLORSPACE_ARGB8888);
+                  fg->ext_dat = dc->font_ext.func.gl_image_new
+                    (dc->font_ext.data, fg, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
                   fg->ext_dat_free = dc->font_ext.func.gl_image_free;
                }
              else
@@ -163,7 +161,7 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                     {
                        if (dc->font_ext.func.gl_image_draw)
                          dc->font_ext.func.gl_image_draw
-                           (dc->font_ext.data, fg->ext_dat, 0, 0, w, h,
+                           (dc->font_ext.data, fg->ext_dat,
                             chr_x, y - (chr_y - y), w, h, EINA_TRUE);
                        else
                          _evas_font_image_draw

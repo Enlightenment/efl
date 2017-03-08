@@ -1386,6 +1386,9 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
    while (gc->font_glyph_textures)
      evas_gl_common_texture_free(gc->font_glyph_textures->data, EINA_TRUE);
 
+   while (gc->font_glyph_images)
+     evas_gl_common_image_free(gc->font_glyph_images->data);
+
    if ((gc->shared) && (gc->shared->references == 0))
      {
         Evas_GL_Texture_Pool *pt;
