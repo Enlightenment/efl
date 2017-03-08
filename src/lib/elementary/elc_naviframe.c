@@ -1166,6 +1166,7 @@ _on_item_show_finished(void *data,
 
    elm_object_signal_emit(VIEW(it), "elm,state,visible", "elm");
 
+   elm_widget_tree_unfocusable_set(VIEW(it), EINA_FALSE);
    _prev_page_focus_recover(it);
 
    if (sd->freeze_events)
@@ -1589,7 +1590,7 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
      {
         Elm_Naviframe_Op *nfo = calloc(1, sizeof (Elm_Naviframe_Op));
 
-        elm_widget_tree_unfocusable_set(VIEW(item), EINA_FALSE);
+        elm_widget_tree_unfocusable_set(VIEW(item), EINA_TRUE);
         elm_widget_tree_unfocusable_set(VIEW(top_item), EINA_TRUE);
 
         if (sd->freeze_events)
@@ -1806,7 +1807,6 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
         Elm_Naviframe_Op *nfo = calloc(1, sizeof (Elm_Naviframe_Op));
 
         elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
-        elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_FALSE);
 
         if (sd->freeze_events)
           {
