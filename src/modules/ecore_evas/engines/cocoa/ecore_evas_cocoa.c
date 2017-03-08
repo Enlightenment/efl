@@ -29,9 +29,6 @@
 #endif
 
 static int                      _ecore_evas_init_count = 0;
-// FIXME: In case we have a lot of windows per app, we should probably use another container
-// like a rbtree or a dictionnary-based container
-static Eina_List                *ecore_evases = NULL;
 static Ecore_Event_Handler      *ecore_evas_event_handlers[4];
 
 static const char *_iface_name = "opengl_cocoa";
@@ -69,22 +66,11 @@ _ecore_evas_cocoa_render(Ecore_Evas *ee)
    return (updates) ? 1 : rend;
 }
 
-
-static Ecore_Evas *
+static inline Ecore_Evas *
 _ecore_evas_cocoa_match(Ecore_Cocoa_Object *cocoa_win)
 {
-   Eina_List *it;
-   Ecore_Evas *ee;
-
-   DBG("");
-   EINA_LIST_FOREACH(ecore_evases, it, ee)
-     {
-        if (ecore_cocoa_window_get((Ecore_Cocoa_Window *)ee->prop.window) == cocoa_win)
-          return ee;
-     }
-   return NULL;
+   return ecore_event_window_match((Ecore_Window)cocoa_win);
 }
-
 
 static Eina_Bool
 _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
@@ -219,15 +205,11 @@ _ecore_evas_cocoa_init(void)
 static int
 _ecore_evas_cocoa_shutdown(void)
 {
-   Ecore_Evas *ee;
    DBG("");
    _ecore_evas_init_count--;
    if (_ecore_evas_init_count == 0)
      {
         unsigned int i;
-
-        EINA_LIST_FREE(ecore_evases, ee)
-          _ecore_evas_free(ee);
 
         for (i = 0; i < EINA_C_ARRAY_LENGTH(ecore_evas_event_handlers); i++)
           ecore_event_handler_del(ecore_evas_event_handlers[i]);
@@ -241,7 +223,8 @@ static void
 _ecore_evas_cocoa_free(Ecore_Evas *ee)
 {
    DBG("");
-   ecore_evases = eina_list_remove(ecore_evases, ee);
+
+   ecore_cocoa_window_free((Ecore_Cocoa_Window *)ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
    _ecore_evas_cocoa_shutdown();
    ecore_cocoa_shutdown();
@@ -658,7 +641,6 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
 
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-   ecore_evases = eina_list_append(ecore_evases, ee);
 
    return ee;
 
