@@ -5,9 +5,6 @@
 #define EINA_SLSTR_INTERNAL
 
 #ifdef _WIN32
-# define WIN32_LEAN_AND_MEAN
-# include <winsock2.h>
-# undef WIN32_LEAN_AND_MEAN
 # ifndef USER_TIMER_MINIMUM
 #  define USER_TIMER_MINIMUM 0x0a
 # endif

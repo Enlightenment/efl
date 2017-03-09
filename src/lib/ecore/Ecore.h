@@ -307,7 +307,9 @@
 #endif /* ! _WIN32 */
 
 #ifdef _WIN32
+# define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
+# undef WIN32_LEAN_AND_MEAN
 #elif defined (__FreeBSD__) || defined (__OpenBSD__)
 # include <sys/select.h>
 # include <signal.h>
