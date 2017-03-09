@@ -257,7 +257,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
      {
         if (obj->in_layer)
           evas_object_release(eo_obj, obj, 1);
-        else if ((--obj->layer->usage) == 0)
+        else if (obj->layer && ((--obj->layer->usage) == 0))
           evas_layer_del(obj->layer);
      }
    else if (obj->in_layer)
