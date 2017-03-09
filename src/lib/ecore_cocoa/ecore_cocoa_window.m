@@ -464,13 +464,14 @@ ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    NSRect win_frame;
+   EcoreCocoaWindow *const win = window->window;
 
-   win_frame = [window->window frame];
+   win_frame = [win frame];
    win_frame.size.height = h +
-      (([window->window isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
+      (([win isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
    win_frame.size.width = w;
 
-   [window->window setFrame:win_frame display:YES];
+   [win setFrame:win_frame display:YES];
 }
 
 EAPI void
