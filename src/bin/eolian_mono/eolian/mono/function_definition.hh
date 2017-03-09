@@ -71,7 +71,7 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
         << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
         << "((" << string << "Inherit)wrapper)." << string
-        << "(" << (argument % ", ") << ");\n"
+        << "(" << (argument_invocation % ", ") << ");\n"
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string << "Inherit." << string
@@ -141,7 +141,7 @@ struct function_definition_generator
         << (do_super ? "efl.eo.Globals.efl_super(" : "")
         << "this.raw_handle"
         << (do_super ? ", this.raw_klass)" : "")
-        << *(", " << argument) << ");"
+        << *(", " << argument_invocation ) << ");"
         << eolian_mono::function_definition_epilogue()
         << " }\n")
        .generate(sink, std::make_tuple(escape_keyword(f.name), f.parameters, f, f.c_name, f.parameters, f), context))

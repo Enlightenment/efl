@@ -13,12 +13,40 @@ namespace eolian_mono {
 
 namespace attributes = efl::eolian::grammar::attributes;
 
+inline bool param_should_use_out_var(attributes::parameter_def const& param)
+{
+   if (!param.type.has_own
+           && param.type.c_type == "const char *"
+           && param.direction != attributes::parameter_direction::in)
+     return true;
+
+   return false;
+}
+
+// Helper function to query parameter attributes
+const static bool WANT_OWN = true;
+const static bool WANT_OUT = true;
+inline bool param_is_acceptable(attributes::parameter_def const &param, std::string c_type, bool want_own, bool want_out)
+{
+   return (param.type.c_type == c_type)
+          && ((param.direction != attributes::parameter_direction::in) == want_out)
+          && (param.type.has_own == want_own);
+}
+
+inline std::string out_variable_name(std::string const& param_name)
+{
+   return "_out_" + escape_keyword(param_name);
+}
+
 struct parameter_generator
 {
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     return as_generator(type << " " << string).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
+     bool is_out = param.direction != attributes::parameter_direction::in;
+     return as_generator(
+             (is_out ? " out ": " ") << type << " " << string
+        ).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
    }
 } const parameter {};
 
@@ -27,15 +55,13 @@ struct marshall_parameter_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     return as_generator(marshall_type << " " << string).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
+      bool is_out = param.direction != attributes::parameter_direction::in;
+      return as_generator(
+              (is_out ? " out " : " ") << marshall_type << " " << string
+         ).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
    }
 } const marshall_parameter {};
   
-inline std::string out_variable_name(std::string const& param_name)
-{
-   return "_out_" + escape_keyword(param_name);
-}
-
 inline std::string argument_forward(attributes::parameter_def const& param)
 {
    if (param.type.has_own && param.c_type == "Eina_Stringshare *")
@@ -52,34 +78,91 @@ struct argument_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     return as_generator((param.direction != attributes::parameter_direction::in ? " out " : "")
-       << argument_forward(param)).generate(sink, attributes::unused, context);
+     std::string direction =  param.direction != attributes::parameter_direction::in ? " out " : "";
+     return as_generator(
+             direction << argument_forward(param)
+        ).generate(sink, attributes::unused, context);
    }
 
 } const argument {};
+
+// Generates the correct parameter name when invoking a function
+struct argument_invocation_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+     std::string arg;
+
+     if (param.direction != attributes::parameter_direction::in)
+       arg = " out ";
+
+     if (param_should_use_out_var(param))
+       arg += out_variable_name(param.param_name);
+     else
+       arg += escape_keyword(param.param_name);
+
+     return as_generator(arg).generate(sink, attributes::unused, context);
+   }
+} const argument_invocation {};
   
 struct convert_out_variable_generator
 {
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     if (param.type.has_own && param.type.c_type == "Eina_Stringshare *" && param.direction != attributes::parameter_direction::in)
-       return as_generator(marshall_type << " " << string << " = default(" << marshall_type << "); ")
-         .generate(sink, std::make_tuple(param.type, out_variable_name(param.param_name), param.type), context);
-     return true;
+      if (param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT))
+        {
+           return as_generator(
+               marshall_type << " " << string << " = default(" << marshall_type << ");\n"
+             ).generate(sink, std::make_tuple(param.type, out_variable_name(param.param_name), param.type), context);
+        }
+      else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
+        {
+           return as_generator(
+               marshall_type << " " << string << " = default(" << marshall_type << ");\n"
+            ).generate(sink, std::make_tuple(param, out_variable_name(param.param_name), param), context);
+        }
+      return true;
    }
 
 } const convert_out_variable {};
+
+struct native_convert_out_variable_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+      if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
+        {
+           return as_generator(
+                  type << " " << string << " = default(" << type << ");\n"
+             ).generate(sink, std::make_tuple(param, out_variable_name(param.param_name), param), context);
+        }
+      return true;
+   }
+
+} const native_convert_out_variable {};
 
 struct convert_out_assign_generator
 {
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     if (param.type.has_own && param.type.c_type == "Eina_Stringshare *" && param.direction != attributes::parameter_direction::in)
-       return as_generator(escape_keyword(param.param_name) << " = Marshal.PtrToStringAnsi(" << out_variable_name(param.param_name) << "); ")
-         .generate(sink, attributes::unused, context);
-     return true;
+      if (param_is_acceptable(param, "Eina_StringShare *", WANT_OWN, WANT_OUT))
+        {
+           return as_generator(
+                escape_keyword(param.param_name) << " = Marshal.PtrToStringAnsi(" << out_variable_name(param.param_name) << "); "
+             ).generate(sink, attributes::unused, context);
+
+        }
+      else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
+        {
+            return as_generator(
+                 string << " = Marshal.PtrToStringAuto(" << out_variable_name(param.param_name) << ");\n"
+               ).generate(sink, escape_keyword(param.param_name), context);
+        }
+      return true;
    }
 
 } const convert_out_assign {};
@@ -103,30 +186,62 @@ struct convert_return_generator
    bool generate(OutputIterator sink, attributes::type_def const& ret_type, Context const& context) const
    {
      if (ret_type.has_own && ret_type.c_type == "Eina_Stringshare *")
-       return as_generator("string _mng_str = Marshal.PtrToStringAnsi(_ret_var); eina.Stringshare.eina_stringshare_del(_ret_var); return _mng_str; ")
-         .generate(sink, attributes::unused, context);
-     else if (ret_type.c_type == "const char *") { // Correct check for string?
+       {
+          return as_generator(
+                scope_tab << "string _mng_str = Marshal.PtrToStringAnsi(_ret_var);"
+                << scope_tab <<  " eina.Stringshare.eina_stringshare_del(_ret_var);"
+                << scope_tab << "return _mng_str; "
+             ).generate(sink, attributes::unused, context);
+       }
+     else if (ret_type.c_type == "const char *")
+       {
          if (!as_generator("string _mng_str = Marshal.PtrToStringAuto(_ret_var);\n")
              .generate(sink, attributes::unused, context))
              return false;
 
-         if (ret_type.has_own) {
-             if (!as_generator("Marshal.FreeHGlobal(_ret_var);\n")
-                     .generate(sink, attributes::unused, context))
+         if (ret_type.has_own)
+           {
+             if (!as_generator("Marshal.FreeHGlobal(_ret_var);\n").generate(sink, attributes::unused, context))
                  return false;
-         }
+           }
 
          if (!as_generator("return _mng_str;").generate(sink, attributes::unused, context))
              return false;
-     }
+       }
      else if (ret_type.c_type != "void")
-       return as_generator("return _ret_var; ").generate(sink, ret_type, context);
+       {
+         return as_generator("return _ret_var; ").generate(sink, ret_type, context);
+       }
      return true;
    }
 
 } const convert_return {};
 
 // Native (virtual wrappers) generators
+struct native_convert_out_assign_generator
+{
+   attributes::klass_def const* klass;
+
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+      if (param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT))
+        {
+           return as_generator(
+                escape_keyword(param.param_name) << " = Marshal.PtrToStringAnsi(" << out_variable_name(param.param_name) << "); "
+              ).generate(sink, attributes::unused, context);
+        }
+      else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
+        {
+           return as_generator(
+                string << "= efl.eo.Globals.cached_string_to_intptr(((" << string << "Inherit)wrapper).cached_strings, " << string << ");\n"
+              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), klass->cxx_name, out_variable_name(param.param_name)), context);
+        }
+      return true;
+   }
+
+};
+
 struct native_convert_return_variable_generator
 {
    template <typename OutputIterator, typename Context>
@@ -163,6 +278,14 @@ struct native_convert_return_generator
    }
 
 };
+
+struct native_convert_out_assign_parameterized
+{
+    native_convert_out_assign_generator const operator()(attributes::klass_def const &klass) const
+    {
+        return {&klass};
+    }
+} const native_convert_out_assign;
 
 struct native_convert_return_parameterized
 {
@@ -207,6 +330,16 @@ struct attributes_needed< ::eolian_mono::argument_generator> : std::integral_con
 }
       
 template <>
+struct is_eager_generator< ::eolian_mono::argument_invocation_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::argument_invocation_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::argument_invocation_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
 struct is_eager_generator< ::eolian_mono::convert_out_variable_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::convert_out_variable_generator> : std::true_type {};
@@ -214,6 +347,16 @@ struct is_generator< ::eolian_mono::convert_out_variable_generator> : std::true_
 namespace type_traits {
 template <>
 struct attributes_needed< ::eolian_mono::convert_out_variable_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_out_variable_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_out_variable_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_out_variable_generator> : std::integral_constant<int, 1> {};
 }
 
 template <>
@@ -244,6 +387,18 @@ struct is_generator< ::eolian_mono::convert_return_generator> : std::true_type {
 namespace type_traits {
 template <>
 struct attributes_needed< ::eolian_mono::convert_return_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_out_assign_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_out_assign_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_out_assign_parameterized> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_out_assign_generator> : std::integral_constant<int, 1> {};
 }
 
 template <>
