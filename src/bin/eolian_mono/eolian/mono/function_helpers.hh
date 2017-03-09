@@ -20,10 +20,11 @@
 namespace eolian_mono {
 
 /*
- * Generators for things that must happen inside the function definition *before*
- * the actual invocation of the underlying C function.
+ * Generators for things that must happen inside the function definition *before* and
+ * *after* the actual invocation of the underlying C function.
  *
- * For example, declaration of intermediate variables for out/ return strings.
+ * For example, declaration and assignment of intermediate variables for out/ return types
+ * that require some kind of manual work (e.g. string and Stringshare).
  */
 
 struct native_function_definition_preamble_generator
@@ -38,8 +39,9 @@ struct native_function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                scope_tab << native_convert_return_variable
-                ).generate(sink, f.return_type, context))
+                scope_tab << *(native_convert_out_variable)
+                << scope_tab << native_convert_return_variable
+                ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -58,10 +60,9 @@ struct function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                  /* scope_tab << *(convert_out_variable) */
-                  /* << */ scope_tab << convert_return_variable
-                  /* ).generate(sink, std::make_tuple(f.parameters, f.return_type), context)) */
-                  ).generate(sink, f.return_type, context))
+                  scope_tab << *(convert_out_variable)
+                  << scope_tab << convert_return_variable
+                  ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -82,7 +83,9 @@ struct native_function_definition_epilogue_generator
           return false;
 
       if (!as_generator(
-                  scope_tab << native_convert_return(*klass)).generate(sink, f.return_type, context))
+                  scope_tab << *(native_convert_out_assign(*klass))
+                  << scope_tab << native_convert_return(*klass)
+                  ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -95,7 +98,10 @@ struct function_definition_epilogue_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   { 
-      if (!as_generator(scope_tab << convert_return).generate(sink, f.return_type, context))
+      if (!as_generator(
+                  scope_tab << *(convert_out_assign)
+                  << scope_tab << convert_return
+                  ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
           return false;
 
       return true;

@@ -52,7 +52,7 @@ struct marshall_type_visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                if (is_return)
+                if (is_return || is_out)
                    return replace_base_type(r, " System.IntPtr");
                 else
                    return replace_base_type(r, " System.String");
