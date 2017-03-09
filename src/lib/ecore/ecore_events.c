@@ -606,3 +606,57 @@ _ecore_event_signal_realtime_new(void)
    return calloc(1, sizeof(Ecore_Event_Signal_Realtime));
 }
 
+EAPI void
+ecore_event_type_flush_internal(int type, ...)
+{
+   Eina_Inarray types;
+   Ecore_Event *event;
+   Eina_Inlist *l;
+   int *itr;
+   va_list args;
+   Eina_Bool wrong_type = EINA_FALSE;
+
+   eina_inarray_step_set(&types, sizeof (Eina_Inarray), sizeof (int), 4);
+
+   eina_inarray_push(&types, &type);
+
+   // In case of an empty list of event
+   if (type != ECORE_EVENT_NONE) return ;
+
+   va_start(args, type);
+   do
+     {
+        type = va_arg(args, int);
+        if (type == ECORE_EVENT_NONE) break ;
+        eina_inarray_push(&types, &type);
+     }
+   while (1);
+   va_end(args);
+
+   EINA_INARRAY_FOREACH(&types, itr)
+     {
+        if (*itr >= 0 && *itr < event_id_max) continue;
+
+        ERR("Invalide event flush requested %i\n", *itr);
+        wrong_type = EINA_TRUE;
+     }
+
+   if (wrong_type) return ;
+
+   EINA_INLIST_FOREACH_SAFE((Eina_Inlist *) events, l, event)
+     {
+        Eina_Bool found = EINA_FALSE;
+
+        EINA_INARRAY_FOREACH(&types, itr)
+          if (event->type == *itr)
+            found = EINA_TRUE;
+        if (!found) continue ;
+
+        if (event->delete_me) continue ;
+        event->delete_me = 1;
+     }
+
+   _ecore_event_purge_deleted();
+
+   eina_inarray_flush(&types);
+}

@@ -748,6 +748,26 @@ EAPI void *ecore_event_handler_data_set(Ecore_Event_Handler *eh, const void *dat
 EAPI int ecore_event_type_new(void);
 
 /**
+ * @brief Forcefully flush all pending type without processing them
+ * @param Serie of Ecore_Event finished by ECORE_EVENT_NONE.
+ *
+ * This function is to be called before calling ecore_shutdown() if any event
+ * has still a chance to be in the ecore event queue.
+ */
+EAPI void ecore_event_type_flush_internal(int type, ...);
+
+/**
+ * @brief Forcefully flush all pending type without processing them
+ * @param Serie of Ecore_Event.
+ *
+ * This function is to be called before calling ecore_shutdown() if any event
+ * has still a chance to be in the ecore event queue.
+ */
+#define ecore_event_type_flush(...)                                     \
+  ecore_event_type_flush_internal(__VA_ARGS__, ECORE_EVENT_NONE);
+
+
+/**
  * @brief Adds a filter the current event queue.
  *
  * @param func_start Function to call just before filtering and return data
