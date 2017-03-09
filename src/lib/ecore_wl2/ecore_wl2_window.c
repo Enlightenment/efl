@@ -143,14 +143,13 @@ static const struct xdg_surface_listener _xdg_surface_listener =
 };
 
 static void
-_zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface, uint32_t serial)
+_zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA_UNUSED, uint32_t serial)
 {
    Ecore_Wl2_Window *window;
    Ecore_Wl2_Event_Window_Configure_Complete *ev;
 
-   zxdg_surface_v6_ack_configure(zxdg_surface, serial);
-
    window = data;
+   window->configure_serial = serial;
    if (!window->pending.configure) return;
    window->pending.configure = EINA_FALSE;
 
@@ -211,7 +210,6 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
    else
      _ecore_wl2_input_focus_out_send(win);
 
-   win->configure_serial = wl_display_get_serial(win->display->wl.display);
    if ((win->geometry.w == width) && (win->geometry.h == height))
      width = height = 0;
    else if ((!width) && (!height) && (!win->fullscreen) && (!win->maximized) &&
