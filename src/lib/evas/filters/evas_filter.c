@@ -1286,6 +1286,7 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
    if (ctx->target.r == 255 && ctx->target.g == 255 &&
        ctx->target.b == 255 && ctx->target.a == 255)
      ctx->target.color_use = EINA_FALSE;
+   ctx->target.rop = ENFN->context_render_op_get(ENDT, draw_context);
 
    ENFN->context_clip_image_get
       (ENDT, draw_context, &mask, &ctx->target.mask_x, &ctx->target.mask_y);
@@ -1337,6 +1338,7 @@ _filter_target_render(Evas_Filter_Context *ctx)
                                      ctx->evas, EINA_FALSE);
      }
 
+   ENFN->context_render_op_set(ENDT, drawctx, ctx->target.rop);
    ENFN->image_draw(ENDT, drawctx, surface, image,
                     0, 0, src->w, src->h,
                     ctx->target.x, ctx->target.y, src->w, src->h,
