@@ -43,6 +43,7 @@ group { name: "e/gadget/luncher/icon";
    script {
       public urgent;
       public style;
+      public current_size;
       public Float:engage_scale(cursorpos, iconpos, size) {
          new Float:zoom = 1.5;
          new Float:scale = (zoom+0.25) - (abs(cursorpos-(iconpos+size/2)) / (size*2));
@@ -92,6 +93,7 @@ group { name: "e/gadget/luncher/icon";
                }
             }
             else if (!strcmp(s, "engage")) {
+               set_state_anim(PART:"sizer", "default", 0.0, LINEAR, 1.0);
                if (pos == 0 && (xpos >= x) && (xpos <= (x+w))) {
                   new Float:scale = engage_scale(ypos, y, h);
                   new Float:halfscale = scale/2;
@@ -100,6 +102,7 @@ group { name: "e/gadget/luncher/icon";
                   set_state_val(PART:"sizer", STATE_REL1, 0.0, 0.5-halfscale);
                   set_state_val(PART:"sizer", STATE_REL2, scale, 0.5+halfscale);
                   set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
+                  send_message(MSG_STRING_FLOAT_SET, 1, "Scale", scale);
                }
                else if (pos == 1 && (ypos >= y) && (ypos <= (y+h))) {
                   new Float:scale = engage_scale(xpos, x, w);
@@ -109,6 +112,7 @@ group { name: "e/gadget/luncher/icon";
                   set_state_val(PART:"sizer", STATE_REL1, 0.5-halfscale, 0.0);
                   set_state_val(PART:"sizer", STATE_REL2, 0.5+halfscale, scale);
                   set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
+                  send_message(MSG_STRING_FLOAT_SET, 1, "Scale", scale);
                }
                else if (pos == 2 && (xpos >= x) && (xpos <= (x+w))) {
                   new Float:scale = engage_scale(ypos, y, h);
@@ -118,6 +122,7 @@ group { name: "e/gadget/luncher/icon";
                   set_state_val(PART:"sizer", STATE_REL1, 1.0-scale, 0.5-halfscale);
                   set_state_val(PART:"sizer", STATE_REL2, 1.0, 0.5+halfscale);
                   set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
+                  send_message(MSG_STRING_FLOAT_SET, 1, "Scale", scale);
                }
                else if (pos == 3 && (ypos >= y) && (ypos <= (y+h))) {
                   new Float:scale = engage_scale(xpos, x, w);
@@ -127,12 +132,13 @@ group { name: "e/gadget/luncher/icon";
                   set_state_val(PART:"sizer", STATE_REL1, 0.5-halfscale, 1.0-scale);
                   set_state_val(PART:"sizer", STATE_REL2, 0.5+halfscale, 1.0);
                   set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
+                  send_message(MSG_STRING_FLOAT_SET, 1, "Scale", scale);
                }
                else {
                   set_state_anim(PART:"sizer", "default", 0.0, LINEAR, 1.0);
                }
+               emit("e,state,resized", "e");
             }
-            emit("e,state,resized", "e");
          }
       }
    }
