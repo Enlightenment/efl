@@ -539,6 +539,7 @@ ecore_cocoa_window_show(Ecore_Cocoa_Window *window)
 
    if (![window->window isVisible])
      [window->window makeKeyAndOrderFront:NSApp];
+   [window->window display];
 }
 
 EAPI void
