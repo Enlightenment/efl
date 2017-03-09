@@ -31,7 +31,7 @@ _type_offset(unsigned base, unsigned size)
    unsigned padding;
    if (!(base % size))
      return base;
-   padding = abs(base - size);
+   padding = base - size;
    return base + padding;
 }
 
