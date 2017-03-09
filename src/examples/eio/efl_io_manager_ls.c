@@ -2,7 +2,7 @@
 #include <config.h>
 #endif
 
-
+#include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -20,7 +20,7 @@ void done_cb(void *data, const Efl_Event *ev)
    Efl_Future_Event_Success *success = ev->info;
    uint64_t *count = success->value;
 
-   printf("%s done listing files %i.\n", __FUNCTION__, *count);
+   printf("%s done listing files %"PRIu64".\n", __FUNCTION__, *count);
 
    leave(data);
 }
