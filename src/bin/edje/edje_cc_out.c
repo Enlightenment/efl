@@ -1752,7 +1752,7 @@ data_write_mo(Eet_File *ef, int *mo_num)
                               }
                          }
                        else
-                         error_and_abort(mw->ef, "Invalid .po file.");
+                         error_and_abort(mw->ef, "Invalid .po file \"%s\".", po_path);
                     }
                   free(mw);
                }
