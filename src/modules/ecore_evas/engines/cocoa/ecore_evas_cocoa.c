@@ -104,8 +104,8 @@ _ecore_evas_resize_common(Ecore_Evas *ee,
                           int         h,
                           Eina_Bool   resize_cocoa)
 {
-   DBG("Ecore_Evas Resize %i %i, was %i %i (resize_cocoa: %s)",
-       w, h, ee->w, ee->h, resize_cocoa ? "yes" : "no");
+   DBG("%p (old: %i %i, new: %i %i, resize_cocoa: %s)",
+       ee, ee->w, ee->h, w, h, resize_cocoa ? "yes" : "no");
 
    ee->req.w = w;
    ee->req.h = h;
@@ -138,14 +138,13 @@ _ecore_evas_cocoa_event_window_resize(void *data EINA_UNUSED, int type EINA_UNUS
    Ecore_Cocoa_Event_Window_Resize_Request *e = event;
    Ecore_Evas                   *ee;
 
-   DBG("");
-
    ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if (EINA_UNLIKELY(!ee))
      {
         ERR("Unregistered Ecore_Evas for Cocoa window %p", e->cocoa_window);
         return ECORE_CALLBACK_PASS_ON;
      }
+   DBG("%p", ee);
 
    /* Do the resize */
    _ecore_evas_resize_common(ee, e->w, e->h, EINA_FALSE);
@@ -159,17 +158,13 @@ _ecore_evas_cocoa_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNU
    Ecore_Cocoa_Event_Window_Destroy *e = event;
    Ecore_Evas                       *ee;
 
-   DBG("");
-
-   if (!e->cocoa_window)
-     return ECORE_CALLBACK_PASS_ON;
-
    ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if (!ee)
      {
         ERR("Unregistered Ecore_Evas for Cocoa window %p", e->cocoa_window);
         return ECORE_CALLBACK_PASS_ON;
      }
+   DBG("%p", ee);
 
    if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
 
@@ -179,7 +174,8 @@ _ecore_evas_cocoa_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNU
 static int
 _ecore_evas_cocoa_init(void)
 {
-   DBG("");
+   DBG("%i", _ecore_evas_init_count);
+
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1)
      return _ecore_evas_init_count;
@@ -205,7 +201,7 @@ _ecore_evas_cocoa_init(void)
 static int
 _ecore_evas_cocoa_shutdown(void)
 {
-   DBG("");
+   DBG("%i", _ecore_evas_init_count);
    _ecore_evas_init_count--;
    if (_ecore_evas_init_count == 0)
      {
@@ -222,7 +218,7 @@ _ecore_evas_cocoa_shutdown(void)
 static void
 _ecore_evas_cocoa_free(Ecore_Evas *ee)
 {
-   DBG("");
+   DBG("%p", ee);
 
    ecore_cocoa_window_free((Ecore_Cocoa_Window *)ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
@@ -257,21 +253,21 @@ _ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
 static void
 _ecore_evas_move(Ecore_Evas *ee, int x, int y)
 {
-   DBG("");
+   DBG("%p", ee);
    ecore_cocoa_window_move((Ecore_Cocoa_Window *)ee->prop.window, x, y);
 }
 
 static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
-   DBG("");
+   DBG("%p", ee);
    _ecore_evas_resize_common(ee, w, h, EINA_TRUE);
 }
 
 static void
 _ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
-   DBG("");
+   DBG("%p", ee);
    if ((ee->w == w) && (ee->h == h) && (x == ee->x) && (y == ee->y))
      return;
 
@@ -297,7 +293,7 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 static void
 _ecore_evas_show(Ecore_Evas *ee)
 {
-   DBG("");
+   DBG("%p", ee);
 
    ecore_cocoa_window_show((Ecore_Cocoa_Window *)ee->prop.window);
    evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -316,7 +312,7 @@ _ecore_evas_show(Ecore_Evas *ee)
 static void
 _ecore_evas_hide(Ecore_Evas *ee)
 {
-   DBG("");
+   DBG("%p", ee);
 
    ecore_cocoa_window_hide((Ecore_Cocoa_Window *)ee->prop.window);
 
@@ -337,7 +333,7 @@ _ecore_evas_hide(Ecore_Evas *ee)
 static void
 _ecore_evas_raise(Ecore_Evas *ee)
 {
-   DBG("");
+   DBG("%p", ee);
 
    ecore_cocoa_window_raise((Ecore_Cocoa_Window *)ee->prop.window);
 }
@@ -345,7 +341,7 @@ _ecore_evas_raise(Ecore_Evas *ee)
 static void
 _ecore_evas_lower(Ecore_Evas *ee)
 {
-   DBG("");
+   DBG("%p", ee);
 
    ecore_cocoa_window_lower((Ecore_Cocoa_Window *)ee->prop.window);
 }
@@ -353,7 +349,7 @@ _ecore_evas_lower(Ecore_Evas *ee)
 static void
 _ecore_evas_activate(Ecore_Evas *ee)
 {
-   DBG("");
+   DBG("%p", ee);
 
    ecore_cocoa_window_activate((Ecore_Cocoa_Window *)ee->prop.window);
 }
@@ -361,7 +357,7 @@ _ecore_evas_activate(Ecore_Evas *ee)
 static void
 _ecore_evas_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   DBG("");
+   DBG("%p", ee);
 
    ecore_cocoa_window_iconified_set((Ecore_Cocoa_Window *)ee->prop.window, on);
 }
@@ -369,7 +365,7 @@ _ecore_evas_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 static void
 _ecore_evas_title_set(Ecore_Evas *ee, const char *title)
 {
-   INF("ecore evas title set");
+   DBG("%p: %s", ee, title);
 
    if (eina_streq(ee->prop.title, title)) return;
    if (ee->prop.title) free(ee->prop.title);
@@ -413,7 +409,7 @@ _ecore_evas_engine_cocoa_init(Ecore_Evas *ee)
    const char                *driver;
    int                        rmethod;
 
-   DBG("");
+   DBG("%p", ee);
 
    driver = "gl_cocoa";
 
@@ -563,8 +559,8 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    if (!ecore_cocoa_init())
      return NULL;
 
-   DBG("");
-   
+   INF("x,y,w,h = %i,%i,%i,%i", x, y, w, h);
+
    ee = calloc(1, sizeof(Ecore_Evas));
    if (!ee)
      goto shutdown_ecore_cocoa;
@@ -595,6 +591,7 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    ee->prop.withdrawn = EINA_TRUE;
 
    ee->evas = evas_new();
+   INF("ecore_evas: %p, evas: %p", ee, ee->evas);
 
    if (!ee->evas)
      goto free_name;
