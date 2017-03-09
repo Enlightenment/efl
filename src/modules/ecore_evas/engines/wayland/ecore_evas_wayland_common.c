@@ -1500,7 +1500,7 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
    wl_callback_add_listener(wdata->anim_callback, &_anim_listener, ee);
    ecore_evas_manual_render_set(ee, 1);
 
-   if (!ecore_wl2_window_has_shell_surface(wdata->win)) return;
+   if (!ecore_wl2_window_shell_surface_exists(wdata->win)) return;
 
    if (wdata->win->zxdg_configure_ack && wdata->win->configure_serial)
      wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,

@@ -1271,7 +1271,7 @@ ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display)
 }
 
 EAPI Eina_Bool
-ecore_wl2_window_has_shell_surface(Ecore_Wl2_Window *window)
+ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 

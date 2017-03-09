@@ -1332,7 +1332,7 @@ EAPI void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
  * @return Returns true if the window has an associated shell surface.
  * @since 1.19
  */
-EAPI Eina_Bool ecore_wl2_window_has_shell_surface(Ecore_Wl2_Window *win);
+EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
 
 /**
  * Disable session recovery for any further connections.  Must be called
