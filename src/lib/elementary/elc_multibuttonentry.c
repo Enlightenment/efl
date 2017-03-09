@@ -891,7 +891,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
         else
           {
              if (efl_reference)
-               elm_box_pack_before(sd->box, VIEW(item), reference->button);
+               elm_box_pack_before(sd->box, VIEW(item), VIEW(reference));
              else
                {
                   if (sd->view_state == MULTIBUTTONENTRY_VIEW_GUIDETEXT)
@@ -919,7 +919,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
         else
           {
              if (efl_reference)
-               elm_box_pack_after(sd->box, VIEW(item), reference->button);
+               elm_box_pack_after(sd->box, VIEW(item), VIEW(reference));
              else
                {
                   if (sd->view_state == MULTIBUTTONENTRY_VIEW_GUIDETEXT)

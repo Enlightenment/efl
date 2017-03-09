@@ -59,7 +59,6 @@ struct _Multibuttonentry_Item
 {
    Elm_Widget_Item_Data *base;
 
-   Evas_Object  *button;
    Evas_Coord    vw, rw; // vw: visual width, real width
    Eina_Bool     visible : 1;
    Evas_Smart_Cb func;

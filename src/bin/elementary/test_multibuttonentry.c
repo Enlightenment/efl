@@ -184,6 +184,7 @@ _add_multibuttonentry(Evas_Object *parent)
    Evas_Object *scr = NULL;
    Evas_Object *mbe = NULL;
    Evas_Object *btn = NULL;
+   Elm_Object_Item *item = NULL;
    void *data = NULL;
 
    scr = elm_scroller_add(parent);
@@ -197,7 +198,10 @@ _add_multibuttonentry(Evas_Object *parent)
    evas_object_size_hint_weight_set(mbe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(mbe, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(scr, mbe);
-   elm_multibuttonentry_item_append(mbe, "mbe", _select_cb, NULL);
+   item = elm_multibuttonentry_item_append(mbe, "mbe3", _select_cb, NULL);
+   elm_multibuttonentry_item_prepend(mbe, "mbe1", _select_cb, NULL);
+   elm_multibuttonentry_item_insert_before(mbe, item, "mbe2", _select_cb, NULL);
+   elm_multibuttonentry_item_insert_after(mbe, item, "mbe4", _select_cb, NULL);
 
    // Add item verify callback to Multibuttonentry
    elm_multibuttonentry_item_filter_append(mbe, _item_filter_cb, data);
