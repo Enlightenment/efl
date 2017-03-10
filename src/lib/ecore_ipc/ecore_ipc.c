@@ -378,6 +378,13 @@ ecore_ipc_shutdown(void)
    EINA_LIST_FOREACH_SAFE(servers, l, l2, svr)
      ecore_ipc_server_del(svr);
 
+   ecore_event_type_flush(ECORE_IPC_EVENT_CLIENT_ADD,
+                          ECORE_IPC_EVENT_CLIENT_DEL,
+                          ECORE_IPC_EVENT_SERVER_ADD,
+                          ECORE_IPC_EVENT_SERVER_DEL,
+                          ECORE_IPC_EVENT_CLIENT_DATA,
+                          ECORE_IPC_EVENT_SERVER_DATA);
+
 #ifndef EFL_NET_SERVER_UNIX_CLASS
    for (i = 0; i < 6; i++)
      ecore_event_handler_del(handler[i]);
