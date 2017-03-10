@@ -86,15 +86,17 @@ EDJE_CC_FLAGS += -beta
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $(MO_DIR) $< $(builddir)/$(@F)
 
 text.edj: text.edc
-	@rm -rf $(top_builddir)/src/examples/edje/en_IN/
-	@rm -rf $(top_builddir)/src/examples/edje/hi_IN/
-	@rm -rf $(top_builddir)/src/examples/edje/ta_IN/
-	@cp -a $(top_srcdir)/src/examples/edje/en_IN/ $(top_builddir)/src/examples/edje/en_IN/
-	@cp -a $(top_srcdir)/src/examples/edje/hi_IN/ $(top_builddir)/src/examples/edje/hi_IN/
-	@cp -a $(top_srcdir)/src/examples/edje/ta_IN/ $(top_builddir)/src/examples/edje/ta_IN/
-	@chmod -R +w $(top_builddir)/src/examples/edje/en_IN/
-	@chmod -R +w $(top_builddir)/src/examples/edje/hi_IN/
-	@chmod -R +w $(top_builddir)/src/examples/edje/ta_IN/
+	@if [ "x$(top_builddir)" != "x$(top_srcdir)" ]; then \
+	  rm -rf $(top_builddir)/src/examples/edje/en_IN/; \
+	  rm -rf $(top_builddir)/src/examples/edje/hi_IN/; \
+	  rm -rf $(top_builddir)/src/examples/edje/ta_IN/; \
+	  cp -a $(top_srcdir)/src/examples/edje/en_IN/ $(top_builddir)/src/examples/edje/en_IN/; \
+	  cp -a $(top_srcdir)/src/examples/edje/hi_IN/ $(top_builddir)/src/examples/edje/hi_IN/; \
+	  cp -a $(top_srcdir)/src/examples/edje/ta_IN/ $(top_builddir)/src/examples/edje/ta_IN/; \
+	  chmod -R +w $(top_builddir)/src/examples/edje/en_IN/; \
+	  chmod -R +w $(top_builddir)/src/examples/edje/hi_IN/; \
+	  chmod -R +w $(top_builddir)/src/examples/edje/ta_IN/; \
+        fi
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $(MO_DIR) $(top_srcdir)/src/examples/edje/text.edc $(top_builddir)/src/examples/edje/text.edj
 
 EDJS = $(EDCS:%.edc=%.edj)
