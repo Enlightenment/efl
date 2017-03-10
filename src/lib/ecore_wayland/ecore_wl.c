@@ -491,6 +491,23 @@ _ecore_wl_shutdown(Eina_Bool close)
    if (--_ecore_wl_init_count != 0) return _ecore_wl_init_count;
    if (!_ecore_wl_disp) return _ecore_wl_init_count;
 
+   ecore_event_type_flush(ECORE_WL_EVENT_MOUSE_IN,
+                          ECORE_WL_EVENT_MOUSE_OUT,
+                          ECORE_WL_EVENT_FOCUS_IN,
+                          ECORE_WL_EVENT_FOCUS_OUT,
+                          ECORE_WL_EVENT_WINDOW_CONFIGURE,
+                          ECORE_WL_EVENT_DND_ENTER,
+                          ECORE_WL_EVENT_DND_POSITION,
+                          ECORE_WL_EVENT_DND_LEAVE,
+                          ECORE_WL_EVENT_DND_DROP,
+                          ECORE_WL_EVENT_DND_OFFER,
+                          ECORE_WL_EVENT_DND_END,
+                          ECORE_WL_EVENT_DATA_SOURCE_TARGET,
+                          ECORE_WL_EVENT_DATA_SOURCE_SEND,
+                          ECORE_WL_EVENT_SELECTION_DATA_READY,
+                          ECORE_WL_EVENT_DATA_SOURCE_CANCELLED,
+                          ECORE_WL_EVENT_INTERFACES_BOUND);
+
    _ecore_wl_events_shutdown();
    _ecore_wl_window_shutdown();
 
