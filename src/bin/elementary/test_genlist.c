@@ -5501,29 +5501,28 @@ static Evas_Object *
 gl_re2_content_get(void *data, Evas_Object *obj, const char *part)
 {
    int num = (int)(uintptr_t)data;
-   Evas_Object *lb = NULL;
+   Evas_Object *content = NULL;
    char buf[64];
 
    if (!strcmp(part, "elm.swallow.icon"))
      {
         printf("Creating NEW content (icon) for item # %d\n", num);
-        lb = elm_label_add(obj);
-        evas_object_color_set(lb, 255, 0, 0, 255); // NOTE: never do this in real app
+        content = elm_label_add(obj);
+        evas_object_color_set(content, 255, 0, 0, 255); // NOTE: never do this in real app
         snprintf(buf, sizeof(buf), "Content for item # %d", num);
-        elm_object_text_set(lb, buf);
-        return lb;
+        elm_object_text_set(content, buf);
      }
    if (!strcmp(part, "elm.swallow.end"))
      {
         printf("Creating NEW content (end) for item # %d\n", num);
-        lb = elm_label_add(obj);
-        evas_object_color_set(lb, 0, 255, 0, 255); // NOTE: never do this in real app
+        content = elm_button_add(obj);
+        evas_object_color_set(content, 0, 255, 0, 255); // NOTE: never do this in real app
         snprintf(buf, sizeof(buf), "Content for item # %d", num);
-        elm_object_text_set(lb, buf);
-        return lb;
+        elm_object_text_set(content, buf);
+        if ((num % 5) == 0) elm_object_disabled_set(content, EINA_TRUE);
      }
 
-   return NULL;
+   return content;
 }
 
 static Evas_Object *
@@ -5550,6 +5549,7 @@ gl_re2_reusable_content_get(void *data, Evas_Object *obj,
         printf("REUSING content (end) for item # %d\n", num);
         snprintf(buf, sizeof(buf), "Content for item # %d", num);
         elm_object_text_set(old, buf);
+        if ((num % 5) == 0) elm_object_disabled_set(old, EINA_TRUE);
         return old;
      }
 
