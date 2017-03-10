@@ -573,8 +573,12 @@ ecore_evas_shutdown(void)
      return _ecore_evas_init_count;
 
    eina_log_timing(_ecore_evas_log_dom,
-		   EINA_LOG_STATE_START,
-		   EINA_LOG_STATE_SHUTDOWN);
+                   EINA_LOG_STATE_START,
+                   EINA_LOG_STATE_SHUTDOWN);
+
+#ifdef BUILD_ECORE_EVAS_EWS
+   _ecore_evas_ews_events_flush();
+#endif
 
    while (ecore_evases) _ecore_evas_free(ecore_evases);
 
@@ -590,7 +594,7 @@ ecore_evas_shutdown(void)
    _ecore_evas_engine_shutdown();
    if (_ecore_evas_async_events_fd)
      ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
-   
+
    ecore_fork_reset_callback_del(_ecore_evas_fork_cb, NULL);
 
    eina_log_domain_unregister(_ecore_evas_log_dom);

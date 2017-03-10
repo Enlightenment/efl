@@ -11,6 +11,7 @@ EAPI int ECORE_EVAS_EXTN_CLIENT_DEL = 0;
 void
 _ecore_evas_extn_init(void)
 {
+   if (ECORE_EVAS_EXTN_CLIENT_ADD != 0) return ;
    ECORE_EVAS_EXTN_CLIENT_ADD = ecore_event_type_new();
    ECORE_EVAS_EXTN_CLIENT_DEL = ecore_event_type_new();
 }
@@ -18,6 +19,6 @@ _ecore_evas_extn_init(void)
 void
 _ecore_evas_extn_shutdown(void)
 {
-   ECORE_EVAS_EXTN_CLIENT_ADD = 0;
-   ECORE_EVAS_EXTN_CLIENT_DEL = 0;
+   ecore_event_type_flush(ECORE_EVAS_EXTN_CLIENT_ADD,
+                          ECORE_EVAS_EXTN_CLIENT_DEL);
 }

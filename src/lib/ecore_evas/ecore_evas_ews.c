@@ -705,6 +705,28 @@ _ecore_evas_ews_events_init(void)
    ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE = ecore_event_type_new();
 }
 
+void
+_ecore_evas_ews_events_flush(void)
+{
+   ecore_event_type_flush(ECORE_EVAS_EWS_EVENT_MANAGER_CHANGE,
+                          ECORE_EVAS_EWS_EVENT_ADD,
+                          ECORE_EVAS_EWS_EVENT_DEL,
+                          ECORE_EVAS_EWS_EVENT_RESIZE,
+                          ECORE_EVAS_EWS_EVENT_MOVE,
+                          ECORE_EVAS_EWS_EVENT_SHOW,
+                          ECORE_EVAS_EWS_EVENT_HIDE,
+                          ECORE_EVAS_EWS_EVENT_FOCUS,
+                          ECORE_EVAS_EWS_EVENT_UNFOCUS,
+                          ECORE_EVAS_EWS_EVENT_RAISE,
+                          ECORE_EVAS_EWS_EVENT_LOWER,
+                          ECORE_EVAS_EWS_EVENT_ACTIVATE,
+                          ECORE_EVAS_EWS_EVENT_ICONIFIED_CHANGE,
+                          ECORE_EVAS_EWS_EVENT_MAXIMIZED_CHANGE,
+                          ECORE_EVAS_EWS_EVENT_LAYER_CHANGE,
+                          ECORE_EVAS_EWS_EVENT_FULLSCREEN_CHANGE,
+                          ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE);
+}
+
 static int
 _ecore_evas_ews_init(void)
 {

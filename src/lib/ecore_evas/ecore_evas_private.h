@@ -443,6 +443,7 @@ EAPI void _ecore_evas_window_available_profiles_free(Ecore_Evas *ee);
 
 #ifdef BUILD_ECORE_EVAS_EWS
 void _ecore_evas_ews_events_init(void);
+void _ecore_evas_ews_events_flush(void);
 int _ecore_evas_ews_shutdown(void);
 #endif
 
