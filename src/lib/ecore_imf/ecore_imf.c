@@ -47,6 +47,13 @@ EAPI int
 ecore_imf_shutdown(void)
 {
    if (--_ecore_imf_init_count != 0) return _ecore_imf_init_count;
+
+   ecore_event_type_flush(ECORE_IMF_EVENT_PREEDIT_START,
+                          ECORE_IMF_EVENT_PREEDIT_END,
+                          ECORE_IMF_EVENT_PREEDIT_CHANGED,
+                          ECORE_IMF_EVENT_COMMIT,
+                          ECORE_IMF_EVENT_DELETE_SURROUNDING);
+
    ecore_imf_module_shutdown();
    eina_log_domain_unregister(_ecore_imf_log_dom);
    _ecore_imf_log_dom = -1;
