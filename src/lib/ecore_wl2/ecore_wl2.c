@@ -131,30 +131,30 @@ ecore_wl2_shutdown(void)
    if (--_ecore_wl2_init_count != 0) return _ecore_wl2_init_count;
 
    /* reset events */
-   ECORE_WL2_EVENT_CONNECT = 0;
-   ECORE_WL2_EVENT_DISCONNECT = 0;
-   ECORE_WL2_EVENT_GLOBAL_ADDED = 0;
-   ECORE_WL2_EVENT_GLOBAL_REMOVED = 0;
-   ECORE_WL2_EVENT_FOCUS_IN = 0;
-   ECORE_WL2_EVENT_FOCUS_OUT = 0;
-   ECORE_WL2_EVENT_DND_ENTER = 0;
-   ECORE_WL2_EVENT_DND_LEAVE = 0;
-   ECORE_WL2_EVENT_DND_MOTION = 0;
-   ECORE_WL2_EVENT_DND_DROP = 0;
-   ECORE_WL2_EVENT_DND_END = 0;
-   ECORE_WL2_EVENT_DATA_SOURCE_END = 0;
-   ECORE_WL2_EVENT_DATA_SOURCE_DROP = 0;
-   ECORE_WL2_EVENT_DATA_SOURCE_ACTION = 0;
-   ECORE_WL2_EVENT_DATA_SOURCE_TARGET = 0;
-   ECORE_WL2_EVENT_DATA_SOURCE_SEND = 0;
-   ECORE_WL2_EVENT_WINDOW_CONFIGURE = 0;
-   ECORE_WL2_EVENT_SYNC_DONE = 0;
-   ECORE_WL2_EVENT_OFFER_DATA_READY = 0;
-   ECORE_WL2_EVENT_SEAT_NAME_CHANGED = 0;
-   ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED = 0;
-   ECORE_WL2_EVENT_DEVICE_ADDED = 0;
-   ECORE_WL2_EVENT_DEVICE_REMOVED = 0;
-   ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE = 0;
+   ecore_event_type_flush(ECORE_WL2_EVENT_CONNECT,
+                          ECORE_WL2_EVENT_DISCONNECT,
+                          ECORE_WL2_EVENT_GLOBAL_ADDED,
+                          ECORE_WL2_EVENT_GLOBAL_REMOVED,
+                          ECORE_WL2_EVENT_FOCUS_IN,
+                          ECORE_WL2_EVENT_FOCUS_OUT,
+                          ECORE_WL2_EVENT_DND_ENTER,
+                          ECORE_WL2_EVENT_DND_LEAVE,
+                          ECORE_WL2_EVENT_DND_MOTION,
+                          ECORE_WL2_EVENT_DND_DROP,
+                          ECORE_WL2_EVENT_DND_END,
+                          ECORE_WL2_EVENT_DATA_SOURCE_END,
+                          ECORE_WL2_EVENT_DATA_SOURCE_DROP,
+                          ECORE_WL2_EVENT_DATA_SOURCE_ACTION,
+                          ECORE_WL2_EVENT_DATA_SOURCE_TARGET,
+                          ECORE_WL2_EVENT_DATA_SOURCE_SEND,
+                          ECORE_WL2_EVENT_WINDOW_CONFIGURE,
+                          ECORE_WL2_EVENT_SYNC_DONE,
+                          ECORE_WL2_EVENT_OFFER_DATA_READY,
+                          ECORE_WL2_EVENT_SEAT_NAME_CHANGED,
+                          ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED,
+                          ECORE_WL2_EVENT_DEVICE_ADDED,
+                          ECORE_WL2_EVENT_DEVICE_REMOVED,
+                          ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE);
 
    /* shutdown Ecore_Event */
    ecore_event_shutdown();
