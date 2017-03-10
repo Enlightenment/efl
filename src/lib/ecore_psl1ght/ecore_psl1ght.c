@@ -147,11 +147,14 @@ ecore_psl1ght_init(const char *name EINA_UNUSED)
 
    sysUtilRegisterCallback (SYSUTIL_EVENT_SLOT0, xmb_event_handler, NULL);
 
-   ECORE_PSL1GHT_EVENT_GOT_FOCUS = ecore_event_type_new();
-   ECORE_PSL1GHT_EVENT_LOST_FOCUS = ecore_event_type_new();
-   ECORE_PSL1GHT_EVENT_EXPOSE = ecore_event_type_new();
-   ECORE_PSL1GHT_EVENT_KEY_MODIFIERS = ecore_event_type_new();
-   ECORE_PSL1GHT_EVENT_QUIT = ecore_event_type_new();
+   if (ECORE_PSL1GHT_EVENT_GOT_FOCUS == 0)
+     {
+        ECORE_PSL1GHT_EVENT_GOT_FOCUS = ecore_event_type_new();
+        ECORE_PSL1GHT_EVENT_LOST_FOCUS = ecore_event_type_new();
+        ECORE_PSL1GHT_EVENT_EXPOSE = ecore_event_type_new();
+        ECORE_PSL1GHT_EVENT_KEY_MODIFIERS = ecore_event_type_new();
+        ECORE_PSL1GHT_EVENT_QUIT = ecore_event_type_new();
+     }
 
    mouse_x = 0;
    mouse_y = 0;
@@ -175,11 +178,11 @@ ecore_psl1ght_shutdown(void)
    eina_log_domain_unregister(_ecore_psl1ght_log_dom);
    _ecore_psl1ght_log_dom = -1;
 
-   ECORE_PSL1GHT_EVENT_GOT_FOCUS = 0;
-   ECORE_PSL1GHT_EVENT_LOST_FOCUS = 0;
-   ECORE_PSL1GHT_EVENT_EXPOSE = 0;
-   ECORE_PSL1GHT_EVENT_KEY_MODIFIERS = 0;
-   ECORE_PSL1GHT_EVENT_QUIT = 0;
+   ecore_event_type_flush(ECORE_PSL1GHT_EVENT_GOT_FOCUS,
+                          ECORE_PSL1GHT_EVENT_LOST_FOCUS,
+                          ECORE_PSL1GHT_EVENT_EXPOSE,
+                          ECORE_PSL1GHT_EVENT_KEY_MODIFIERS,
+                          ECORE_PSL1GHT_EVENT_QUIT);
 
    ioPadEnd();
    ioMouseEnd();
