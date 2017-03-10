@@ -84,6 +84,11 @@ ecore_cocoa_shutdown(void)
 
    DBG("Ecore Cocoa shutdown");
 
+   ecore_event_type_flush(ECORE_COCOA_EVENT_WINDOW_UNFOCUSED,
+                          ECORE_COCOA_EVENT_WINDOW_FOCUSED,
+                          ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST,
+                          ECORE_COCOA_EVENT_WINDOW_DESTROY);
+
    eina_log_domain_unregister(_ecore_cocoa_log_domain);
    ecore_event_shutdown();
 
