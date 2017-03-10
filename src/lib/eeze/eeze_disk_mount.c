@@ -186,6 +186,10 @@ eeze_mount_init(void)
 void
 eeze_mount_shutdown(void)
 {
+   ecore_event_type_flush(EEZE_EVENT_DISK_MOUNT,
+                          EEZE_EVENT_DISK_UNMOUNT,
+                          EEZE_EVENT_DISK_EJECT,
+                          EEZE_EVENT_DISK_ERROR);
    eeze_libmount_shutdown();
    ecore_event_handler_del(_mount_handler);
    _mount_handler = NULL;

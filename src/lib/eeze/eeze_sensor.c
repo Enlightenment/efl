@@ -335,6 +335,27 @@ eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data)
 void
 eeze_sensor_shutdown(void)
 {
+   ecore_event_type_flush(EEZE_SENSOR_EVENT_ACCELEROMETER,
+                          EEZE_SENSOR_EVENT_GRAVITY,
+                          EEZE_SENSOR_EVENT_LINEAR_ACCELERATION,
+                          EEZE_SENSOR_EVENT_DEVICE_ORIENTATION,
+                          EEZE_SENSOR_EVENT_MAGNETIC,
+                          EEZE_SENSOR_EVENT_ORIENTATION,
+                          EEZE_SENSOR_EVENT_GYROSCOPE,
+                          EEZE_SENSOR_EVENT_LIGHT,
+                          EEZE_SENSOR_EVENT_PROXIMITY,
+                          EEZE_SENSOR_EVENT_SNAP,
+                          EEZE_SENSOR_EVENT_SHAKE,
+                          EEZE_SENSOR_EVENT_DOUBLETAP,
+                          EEZE_SENSOR_EVENT_PANNING,
+                          EEZE_SENSOR_EVENT_PANNING_BROWSE,
+                          EEZE_SENSOR_EVENT_TILT,
+                          EEZE_SENSOR_EVENT_FACEDOWN,
+                          EEZE_SENSOR_EVENT_DIRECT_CALL,
+                          EEZE_SENSOR_EVENT_SMART_ALERT,
+                          EEZE_SENSOR_EVENT_NO_MOVE,
+                          EEZE_SENSOR_EVENT_BAROMETER,
+                          EEZE_SENSOR_EVENT_TEMPERATURE);
    eeze_sensor_modules_unload();
    eina_hash_free(g_handle->modules);
    g_handle->modules = NULL;
@@ -365,67 +386,29 @@ eeze_sensor_init(void)
 
    /* Make sure we create new ecore event types before using them */
    if (EEZE_SENSOR_EVENT_ACCELEROMETER == 0)
-      EEZE_SENSOR_EVENT_ACCELEROMETER = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_GRAVITY == 0)
-      EEZE_SENSOR_EVENT_GRAVITY = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_LINEAR_ACCELERATION == 0)
-      EEZE_SENSOR_EVENT_LINEAR_ACCELERATION = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_DEVICE_ORIENTATION == 0)
-      EEZE_SENSOR_EVENT_DEVICE_ORIENTATION = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_MAGNETIC == 0)
-      EEZE_SENSOR_EVENT_MAGNETIC = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_ORIENTATION == 0)
-      EEZE_SENSOR_EVENT_ORIENTATION = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_GYROSCOPE == 0)
-      EEZE_SENSOR_EVENT_GYROSCOPE = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_LIGHT == 0)
-      EEZE_SENSOR_EVENT_LIGHT = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_PROXIMITY == 0)
-      EEZE_SENSOR_EVENT_PROXIMITY = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_SNAP == 0)
-      EEZE_SENSOR_EVENT_SNAP = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_SHAKE == 0)
-      EEZE_SENSOR_EVENT_SHAKE = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_DOUBLETAP == 0)
-      EEZE_SENSOR_EVENT_DOUBLETAP = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_PANNING == 0)
-      EEZE_SENSOR_EVENT_PANNING = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_PANNING_BROWSE == 0)
-      EEZE_SENSOR_EVENT_PANNING_BROWSE = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_TILT == 0)
-      EEZE_SENSOR_EVENT_TILT = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_FACEDOWN == 0)
-      EEZE_SENSOR_EVENT_FACEDOWN = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_DIRECT_CALL == 0)
-      EEZE_SENSOR_EVENT_DIRECT_CALL = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_SMART_ALERT == 0)
-      EEZE_SENSOR_EVENT_SMART_ALERT = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_NO_MOVE == 0)
-      EEZE_SENSOR_EVENT_NO_MOVE = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_BAROMETER == 0)
-      EEZE_SENSOR_EVENT_BAROMETER = ecore_event_type_new();
-
-   if (EEZE_SENSOR_EVENT_TEMPERATURE == 0)
-      EEZE_SENSOR_EVENT_TEMPERATURE = ecore_event_type_new();
+     {
+        EEZE_SENSOR_EVENT_ACCELEROMETER = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_GRAVITY = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_LINEAR_ACCELERATION = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_DEVICE_ORIENTATION = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_MAGNETIC = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_ORIENTATION = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_GYROSCOPE = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_LIGHT = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_PROXIMITY = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_SNAP = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_SHAKE = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_DOUBLETAP = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_PANNING = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_PANNING_BROWSE = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_TILT = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_FACEDOWN = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_DIRECT_CALL = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_SMART_ALERT = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_NO_MOVE = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_BAROMETER = ecore_event_type_new();
+        EEZE_SENSOR_EVENT_TEMPERATURE = ecore_event_type_new();
+     }
 
    /* Core is ready so we can load the modules from disk now */
    eeze_sensor_modules_load();
