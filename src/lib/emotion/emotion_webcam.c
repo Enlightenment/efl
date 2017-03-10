@@ -273,9 +273,12 @@ _emotion_enumerate_all_webcams(void)
 
 Eina_Bool emotion_webcam_init(void)
 {
-   EMOTION_WEBCAM_UPDATE = ecore_event_type_new();
-   EMOTION_WEBCAM_ADD = ecore_event_type_new();
-   EMOTION_WEBCAM_DEL = ecore_event_type_new();
+   if (EMOTION_WEBCAM_UPDATE == 0)
+     {
+        EMOTION_WEBCAM_UPDATE = ecore_event_type_new();
+        EMOTION_WEBCAM_ADD = ecore_event_type_new();
+        EMOTION_WEBCAM_DEL = ecore_event_type_new();
+     }
 
    eet_init();
    _emotion_webcams_edds_new();
@@ -303,10 +306,14 @@ emotion_webcam_shutdown(void)
    Emotion_Webcam *ew;
    const char *syspath;
 
+   ecore_event_type_flush(EMOTION_WEBCAM_UPDATE,
+                          EMOTION_WEBCAM_ADD,
+                          EMOTION_WEBCAM_DEL);
+
    if (_emotion_webcams->idler)
      {
-	ecore_idler_del(_emotion_webcams->idler);
-	_emotion_webcams->idler = NULL;
+        ecore_idler_del(_emotion_webcams->idler);
+        _emotion_webcams->idler = NULL;
      }
 
    EINA_LIST_FREE(_emotion_webcams->check_list, syspath)
