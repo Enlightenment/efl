@@ -412,17 +412,16 @@ _item_content_realize(Elm_Gen_Item *it,
              // FIXME: cause elm_layout sizing eval is delayed by smart calc,
              // genlist cannot get actual min size of edje.
              // This is workaround code to set min size directly.
-             Evas_Object *resize_obj = NULL;
-             if (efl_isa(content, ELM_WIDGET_CLASS))
+             if (efl_class_get(content) == ELM_LAYOUT_CLASS)
                {
-                  ELM_WIDGET_DATA_GET_OR_RETURN(content, wd);
-                  resize_obj = wd->resize_obj;
-               }
-             else if (efl_isa(content, EFL_CANVAS_GROUP_CLASS))
-               resize_obj = content;
+                  Evas_Coord old_w, old_h, minw = 0, minh = 0;
+                  efl_gfx_size_hint_combined_min_get(content, &old_w, &old_h);
+                  edje_object_size_min_calc(elm_layout_edje_get(content), &minw, &minh);
 
-             if (resize_obj && efl_canvas_group_need_recalculate_get(resize_obj))
-               efl_canvas_group_calculate(content);
+                  if (old_w > minw) minw = old_w;
+                  if (old_h > minh) minw = old_h;
+                  evas_object_size_hint_min_set(content, minw, minh);
+               }
 
              if (!edje_object_part_swallow(target, key, content))
                {
