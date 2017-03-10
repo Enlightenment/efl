@@ -100,6 +100,11 @@ ecore_sdl_shutdown(void)
 
    SDL_Quit();
 
+   ecore_event_type_flush(ECORE_SDL_EVENT_GOT_FOCUS,
+                          ECORE_SDL_EVENT_LOST_FOCUS,
+                          ECORE_SDL_EVENT_RESIZE,
+                          ECORE_SDL_EVENT_EXPOSE);
+
    ecore_event_shutdown();
    eina_log_domain_unregister(_ecore_sdl_log_dom);
    _ecore_sdl_log_dom = -1;
