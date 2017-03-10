@@ -56,12 +56,15 @@ _ecore_x_dnd_init(void)
         _target->source = None;
         _target->state = ECORE_X_DND_TARGET_IDLE;
 
-        ECORE_X_EVENT_XDND_ENTER = ecore_event_type_new();
-        ECORE_X_EVENT_XDND_POSITION = ecore_event_type_new();
-        ECORE_X_EVENT_XDND_STATUS = ecore_event_type_new();
-        ECORE_X_EVENT_XDND_LEAVE = ecore_event_type_new();
-        ECORE_X_EVENT_XDND_DROP = ecore_event_type_new();
-        ECORE_X_EVENT_XDND_FINISHED = ecore_event_type_new();
+        if (ECORE_X_EVENT_XDND_ENTER == 0)
+          {
+             ECORE_X_EVENT_XDND_ENTER = ecore_event_type_new();
+             ECORE_X_EVENT_XDND_POSITION = ecore_event_type_new();
+             ECORE_X_EVENT_XDND_STATUS = ecore_event_type_new();
+             ECORE_X_EVENT_XDND_LEAVE = ecore_event_type_new();
+             ECORE_X_EVENT_XDND_DROP = ecore_event_type_new();
+             ECORE_X_EVENT_XDND_FINISHED = ecore_event_type_new();
+          }
      }
 
    _ecore_x_dnd_init_count++;
@@ -73,6 +76,13 @@ _ecore_x_dnd_shutdown(void)
    _ecore_x_dnd_init_count--;
    if (_ecore_x_dnd_init_count > 0)
      return;
+
+   ecore_event_type_flush(ECORE_X_EVENT_XDND_ENTER,
+                          ECORE_X_EVENT_XDND_POSITION,
+                          ECORE_X_EVENT_XDND_STATUS,
+                          ECORE_X_EVENT_XDND_LEAVE,
+                          ECORE_X_EVENT_XDND_DROP,
+                          ECORE_X_EVENT_XDND_FINISHED);
 
    if (_source)
      free(_source);

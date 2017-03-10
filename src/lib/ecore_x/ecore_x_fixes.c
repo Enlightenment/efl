@@ -27,7 +27,8 @@ _ecore_x_fixes_init(void)
      {
         _fixes_available = 1;
 
-        ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = ecore_event_type_new();
+        if (ECORE_X_EVENT_FIXES_SELECTION_NOTIFY == 0)
+          ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = ecore_event_type_new();
      }
    else
      _fixes_available = 0;
