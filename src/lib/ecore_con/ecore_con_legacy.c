@@ -218,6 +218,20 @@ ecore_con_legacy_shutdown(void)
    EINA_LIST_FREE(_ecore_con_lookups, lookup_ctx)
      ecore_thread_cancel(lookup_ctx->thread);
 
+   ecore_event_type_flush(ECORE_CON_EVENT_CLIENT_ADD,
+                          ECORE_CON_EVENT_CLIENT_DEL,
+                          ECORE_CON_EVENT_SERVER_ADD,
+                          ECORE_CON_EVENT_SERVER_DEL,
+                          ECORE_CON_EVENT_CLIENT_DATA,
+                          ECORE_CON_EVENT_SERVER_DATA,
+                          ECORE_CON_EVENT_CLIENT_WRITE,
+                          ECORE_CON_EVENT_SERVER_WRITE,
+                          ECORE_CON_EVENT_CLIENT_ERROR,
+                          ECORE_CON_EVENT_SERVER_ERROR,
+                          ECORE_CON_EVENT_PROXY_BIND,
+                          ECORE_CON_EVENT_SERVER_UPGRADE,
+                          ECORE_CON_EVENT_CLIENT_UPGRADE);
+
    ecore_con_socks_shutdown();
    if (!_ecore_con_event_count) ecore_con_mempool_shutdown();
    else WRN("%d events still exist, leaking ecore_con mempools", _ecore_con_event_count);

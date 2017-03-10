@@ -73,6 +73,11 @@ ecore_con_url_shutdown(void)
    if (_init_count) return _init_count;
    EINA_LIST_FREE(_url_con_url_list, url_con_url)
      ecore_con_url_free(url_con_url);
+
+   ecore_event_type_flush(ECORE_CON_EVENT_URL_DATA,
+                          ECORE_CON_EVENT_URL_COMPLETE,
+                          ECORE_CON_EVENT_URL_PROGRESS);
+
    _c_shutdown();
    emile_shutdown(); /* no emile_cipher_shutdown(), handled here */
    ecore_con_shutdown();
