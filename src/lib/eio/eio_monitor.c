@@ -140,17 +140,20 @@ _eio_monitor_error_cb(void *data, Eio_File *handler EINA_UNUSED, int error)
 void
 eio_monitor_init(void)
 {
-   EIO_MONITOR_ERROR = ecore_event_type_new();
-   EIO_MONITOR_SELF_RENAME = ecore_event_type_new();
-   EIO_MONITOR_SELF_DELETED = ecore_event_type_new();
-   EIO_MONITOR_FILE_CREATED = ecore_event_type_new();
-   EIO_MONITOR_FILE_DELETED = ecore_event_type_new();
-   EIO_MONITOR_FILE_MODIFIED = ecore_event_type_new();
-   EIO_MONITOR_FILE_CLOSED = ecore_event_type_new();
-   EIO_MONITOR_DIRECTORY_CREATED = ecore_event_type_new();
-   EIO_MONITOR_DIRECTORY_DELETED = ecore_event_type_new();
-   EIO_MONITOR_DIRECTORY_MODIFIED = ecore_event_type_new();
-   EIO_MONITOR_DIRECTORY_CLOSED = ecore_event_type_new();
+   if (EIO_MONITOR_ERROR == 0)
+     {
+        EIO_MONITOR_ERROR = ecore_event_type_new();
+        EIO_MONITOR_SELF_RENAME = ecore_event_type_new();
+        EIO_MONITOR_SELF_DELETED = ecore_event_type_new();
+        EIO_MONITOR_FILE_CREATED = ecore_event_type_new();
+        EIO_MONITOR_FILE_DELETED = ecore_event_type_new();
+        EIO_MONITOR_FILE_MODIFIED = ecore_event_type_new();
+        EIO_MONITOR_FILE_CLOSED = ecore_event_type_new();
+        EIO_MONITOR_DIRECTORY_CREATED = ecore_event_type_new();
+        EIO_MONITOR_DIRECTORY_DELETED = ecore_event_type_new();
+        EIO_MONITOR_DIRECTORY_MODIFIED = ecore_event_type_new();
+        EIO_MONITOR_DIRECTORY_CLOSED = ecore_event_type_new();
+     }
 
    eio_monitor_backend_init();
    eio_monitor_fallback_init();
@@ -167,6 +170,18 @@ eio_monitor_shutdown(void)
 {
    Eina_Iterator *it;
    Eio_Monitor *monitor;
+
+   ecore_event_type_flush(EIO_MONITOR_ERROR,
+                          EIO_MONITOR_SELF_RENAME,
+                          EIO_MONITOR_SELF_DELETED,
+                          EIO_MONITOR_FILE_CREATED,
+                          EIO_MONITOR_FILE_DELETED,
+                          EIO_MONITOR_FILE_MODIFIED,
+                          EIO_MONITOR_FILE_CLOSED,
+                          EIO_MONITOR_DIRECTORY_CREATED,
+                          EIO_MONITOR_DIRECTORY_DELETED,
+                          EIO_MONITOR_DIRECTORY_MODIFIED,
+                          EIO_MONITOR_DIRECTORY_CLOSED);
 
    it = eina_hash_iterator_data_new(_eio_monitors);
    EINA_ITERATOR_FOREACH(it, monitor)
