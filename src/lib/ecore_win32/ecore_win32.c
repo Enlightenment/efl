@@ -614,6 +614,21 @@ ecore_win32_shutdown()
 
    ecore_win32_dnd_shutdown();
 
+   ecore_event_type_flush(ECORE_WIN32_EVENT_MOUSE_IN,
+                          ECORE_WIN32_EVENT_MOUSE_OUT,
+                          ECORE_WIN32_EVENT_WINDOW_FOCUS_IN,
+                          ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT,
+                          ECORE_WIN32_EVENT_WINDOW_DAMAGE,
+                          ECORE_WIN32_EVENT_WINDOW_CREATE,
+                          ECORE_WIN32_EVENT_WINDOW_DESTROY,
+                          ECORE_WIN32_EVENT_WINDOW_SHOW,
+                          ECORE_WIN32_EVENT_WINDOW_HIDE,
+                          ECORE_WIN32_EVENT_WINDOW_CONFIGURE,
+                          ECORE_WIN32_EVENT_WINDOW_RESIZE,
+                          ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST,
+                          ECORE_WIN32_EVENT_SELECTION_CLEAR,
+                          ECORE_WIN32_EVENT_SELECTION_NOTIFY);
+
    if (!UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance))
      INF("UnregisterClass() failed");
 
