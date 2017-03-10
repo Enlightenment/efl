@@ -150,6 +150,10 @@ ecore_drm_shutdown(void)
    /* if we are still in use, decrement init count and get out */
    if (--_ecore_drm_init_count != 0) return _ecore_drm_init_count;
 
+   ecore_event_type_flush(ECORE_DRM_EVENT_ACTIVATE,
+                          ECORE_DRM_EVENT_OUTPUT,
+                          ECORE_DRM_EVENT_SEAT_ADD);
+
    /* free the list of devices */
    lists = eina_list_clone(ecore_drm_devices_get());
    EINA_LIST_FREE(lists, dev)
