@@ -316,9 +316,18 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
    if ((!nw) && (!nh))
      {
-        /* this assumes ecore-wl2 continues to immediately ack every configure */
-        if (wdata->win->surface && ((!state_change) || ((pfw == fw) && (pfh == fh))))
-          wl_surface_commit(wdata->win->surface);
+        if (wdata->win->configure_serial && wdata->win->surface &&
+            ((!state_change) || ((pfw == fw) && (pfh == fh))))
+          {
+             if (wdata->win->zxdg_configure_ack)
+               wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
+                                              wdata->win->configure_serial);
+             else if (wdata->win->configure_ack)
+               wdata->win->configure_ack(wdata->win->xdg_surface,
+                                         wdata->win->configure_serial);
+             wdata->win->configure_serial = 0;
+             wl_surface_commit(wdata->win->surface);
+          }
         return ECORE_CALLBACK_RENEW;
      }
 
