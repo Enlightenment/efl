@@ -403,6 +403,11 @@ _ecore_exe_shutdown(void)
    Eina_List *l1, *l2;
    EINA_LIST_FOREACH_SAFE(_ecore_exe_exes, l1, l2, exe)
       ecore_exe_free(exe);
+
+   ecore_event_type_flush(ECORE_EXE_EVENT_ADD,
+                          ECORE_EXE_EVENT_DEL,
+                          ECORE_EXE_EVENT_DATA,
+                          ECORE_EXE_EVENT_ERROR);
 }
 
 Ecore_Exe *
