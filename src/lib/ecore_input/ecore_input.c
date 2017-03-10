@@ -70,17 +70,17 @@ ecore_event_shutdown(void)
    if (--_ecore_event_init_count != 0)
      return _ecore_event_init_count;
 
-   ECORE_EVENT_KEY_DOWN = 0;
-   ECORE_EVENT_KEY_UP = 0;
-   ECORE_EVENT_MOUSE_BUTTON_DOWN = 0;
-   ECORE_EVENT_MOUSE_BUTTON_UP = 0;
-   ECORE_EVENT_MOUSE_MOVE = 0;
-   ECORE_EVENT_MOUSE_WHEEL = 0;
-   ECORE_EVENT_MOUSE_IN = 0;
-   ECORE_EVENT_MOUSE_OUT = 0;
-   ECORE_EVENT_AXIS_UPDATE = 0;
-   ECORE_EVENT_MOUSE_BUTTON_CANCEL = 0;
-   ECORE_EVENT_JOYSTICK = 0;
+   ecore_event_type_flush(ECORE_EVENT_KEY_DOWN,
+                          ECORE_EVENT_KEY_UP,
+                          ECORE_EVENT_MOUSE_BUTTON_DOWN,
+                          ECORE_EVENT_MOUSE_BUTTON_UP,
+                          ECORE_EVENT_MOUSE_MOVE,
+                          ECORE_EVENT_MOUSE_WHEEL,
+                          ECORE_EVENT_MOUSE_IN,
+                          ECORE_EVENT_MOUSE_OUT,
+                          ECORE_EVENT_AXIS_UPDATE,
+                          ECORE_EVENT_MOUSE_BUTTON_CANCEL,
+                          ECORE_EVENT_JOYSTICK);
    ecore_input_joystick_shutdown();
    eina_log_domain_unregister(_ecore_input_log_dom);
    _ecore_input_log_dom = -1;
