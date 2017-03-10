@@ -208,8 +208,11 @@ _elm_sys_notify_singleton_get(Eo   *obj EINA_UNUSED,
 EOLIAN static void
 _elm_sys_notify_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
-   ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = ecore_event_type_new();
-   ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED = ecore_event_type_new();
+   if (ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED == 0)
+     {
+        ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = ecore_event_type_new();
+        ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED = ecore_event_type_new();
+     }
 }
 
 /*============================================================================*

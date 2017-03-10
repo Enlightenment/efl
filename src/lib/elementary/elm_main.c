@@ -672,11 +672,11 @@ elm_quicklaunch_init(int    argc,
 
    memset(_elm_policies, 0, sizeof(_elm_policies));
    if (!ELM_EVENT_POLICY_CHANGED)
-     ELM_EVENT_POLICY_CHANGED = ecore_event_type_new();
-   if (!ELM_EVENT_PROCESS_BACKGROUND)
-     ELM_EVENT_PROCESS_BACKGROUND = ecore_event_type_new();
-   if (!ELM_EVENT_PROCESS_FOREGROUND)
-     ELM_EVENT_PROCESS_FOREGROUND = ecore_event_type_new();
+     {
+        ELM_EVENT_POLICY_CHANGED = ecore_event_type_new();
+        ELM_EVENT_PROCESS_BACKGROUND = ecore_event_type_new();
+        ELM_EVENT_PROCESS_FOREGROUND = ecore_event_type_new();
+     }
 
    if (!ecore_file_init())
      ERR("Elementary cannot init ecore_file");
@@ -779,6 +779,10 @@ elm_quicklaunch_shutdown(void)
    if (_elm_ql_init_count > 0) return _elm_ql_init_count;
 
    eina_log_timing(_elm_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_SHUTDOWN);
+
+   ecore_event_type_flush(ELM_EVENT_POLICY_CHANGED,
+                          ELM_EVENT_PROCESS_BACKGROUND,
+                          ELM_EVENT_PROCESS_FOREGROUND);
 
    if (pfx) eina_prefix_free(pfx);
    pfx = NULL;

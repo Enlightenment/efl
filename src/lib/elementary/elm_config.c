@@ -3785,6 +3785,8 @@ _elm_config_init(void)
 void
 _elm_config_sub_shutdown(void)
 {
+   ecore_event_type_flush(ELM_EVENT_CONFIG_ALL_CHANGED);
+
 #ifdef HAVE_ELEMENTARY_X
    if (ecore_x_display_get()) ecore_x_shutdown();
 #endif

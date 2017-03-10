@@ -491,6 +491,8 @@ _elm_unneed_systray(void)
 {
    if (!_elm_need_systray) return;
 
+   ecore_event_type_flush(ELM_EVENT_SYSTRAY_READY);
+
    _elm_need_systray = EINA_FALSE;
 
    eldbus_service_interface_unregister(_iface);

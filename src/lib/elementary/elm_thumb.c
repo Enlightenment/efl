@@ -500,7 +500,8 @@ _elm_unneed_ethumb(void)
         _elm_ethumb_client = NULL;
      }
    ethumb_client_shutdown();
-   ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
+
+   ecore_event_type_flush(ELM_ECORE_EVENT_ETHUMB_CONNECT);
 }
 
 static Eina_Bool
@@ -519,7 +520,8 @@ elm_need_ethumb(void)
    if (_elm_need_ethumb) return EINA_TRUE;
    _elm_need_ethumb = EINA_TRUE;
 
-   ELM_ECORE_EVENT_ETHUMB_CONNECT = ecore_event_type_new();
+   if (ELM_ECORE_EVENT_ETHUMB_CONNECT == 0)
+     ELM_ECORE_EVENT_ETHUMB_CONNECT = ecore_event_type_new();
    ethumb_client_init();
 
    return EINA_TRUE;
