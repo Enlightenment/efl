@@ -223,7 +223,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              d = fmod(t0, ft);
              if (tick)
                {
-                  if (!EINA_FLT_EQ(pframetime, ft))
+                  if (!EINA_DBL_EQ(pframetime, ft))
                     {
                        t = (ft - d) * 1000000000.0;
                        t_ft = ft * 1000000000.0;
@@ -686,7 +686,7 @@ _cubic_bezier_t_get(double a,
     for (int i = 0; i < LIMIT; i++)
       {
          current_slope = _cubic_bezier_slope_get(guess_t, x1, x2);
-         if (EINA_FLT_EQ(current_slope, 0.0)) return guess_t;
+         if (EINA_DBL_EQ(current_slope, 0.0)) return guess_t;
          current_x = _cubic_bezier_calc(guess_t, x1, x2) - a;
          change = current_x / current_slope;
          guess_t -= change;
@@ -702,8 +702,8 @@ _pos_map_cubic_bezier(double pos,
                       double x2,
                       double y2)
 {
-   if (EINA_FLT_EQ(x1, y1) &&
-       EINA_FLT_EQ(x2, y2))
+   if (EINA_DBL_EQ(x1, y1) &&
+       EINA_DBL_EQ(x2, y2))
      return pos;
    return _cubic_bezier_calc(_cubic_bezier_t_get(pos, x1, x2), y1, y2);
 }
@@ -844,7 +844,7 @@ ecore_animator_frametime_set(double frametime)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    if (frametime < 0.0) frametime = 0.0;
-   if (EINA_FLT_EQ(animators_frametime, frametime)) return ;
+   if (EINA_DBL_EQ(animators_frametime, frametime)) return ;
    animators_frametime = frametime;
    _end_tick();
    if (_have_animators()) _begin_tick();
