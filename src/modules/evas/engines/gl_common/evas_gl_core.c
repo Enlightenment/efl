@@ -1315,7 +1315,7 @@ _surface_buffers_create(EVGL_Surface *sfc)
 
 
 static int
-_surface_buffers_allocate(void *eng_data EINA_UNUSED, EVGL_Surface *sfc, int w, int h, Evas_GL_Context_Version version)
+_surface_buffers_allocate(void *eng_data EINA_UNUSED, EVGL_Surface *sfc, int w, int h, Evas_GL_Context_Version version EINA_UNUSED/* unused ecept gles */)
 {
    // Create buffers
    if (sfc->color_fmt)
