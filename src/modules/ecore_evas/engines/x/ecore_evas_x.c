@@ -3330,6 +3330,7 @@ _ecore_evas_x_maximized_set(Ecore_Evas *ee, Eina_Bool on)
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
    if (ee->prop.maximized == on) return;
+   ee->prop.maximized = 1;
    edata->state.maximized_h = 1;
    edata->state.maximized_v = 1;
 //   ee->prop.maximized = on;
