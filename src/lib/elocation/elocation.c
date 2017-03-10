@@ -40,20 +40,20 @@ static char nmea_sentence[256];
 int _elocation_log_dom = -1;
 
 /* Elocation ecore event types we provide to the application. */
-EAPI int ELOCATION_EVENT_STATUS;
-EAPI int ELOCATION_EVENT_POSITION;
-EAPI int ELOCATION_EVENT_ADDRESS;
-EAPI int ELOCATION_EVENT_VELOCITY;
-EAPI int ELOCATION_EVENT_GEOCODE;
-EAPI int ELOCATION_EVENT_REVERSEGEOCODE;
-EAPI int ELOCATION_EVENT_NMEA;
-EAPI int ELOCATION_EVENT_SATELLITE;
-EAPI int ELOCATION_EVENT_POI;
-EAPI int ELOCATION_EVENT_META_READY;
+EAPI int ELOCATION_EVENT_STATUS = 0;
+EAPI int ELOCATION_EVENT_POSITION = 0;
+EAPI int ELOCATION_EVENT_ADDRESS = 0;
+EAPI int ELOCATION_EVENT_VELOCITY = 0;
+EAPI int ELOCATION_EVENT_GEOCODE = 0;
+EAPI int ELOCATION_EVENT_REVERSEGEOCODE = 0;
+EAPI int ELOCATION_EVENT_NMEA = 0;
+EAPI int ELOCATION_EVENT_SATELLITE = 0;
+EAPI int ELOCATION_EVENT_POI = 0;
+EAPI int ELOCATION_EVENT_META_READY = 0;
 
 /* Internal events */
-int ELOCATION_EVENT_IN;
-int ELOCATION_EVENT_OUT;
+int ELOCATION_EVENT_IN = 0;
+int ELOCATION_EVENT_OUT = 0;
 
 static void
 _dummy_free(void *user_data EINA_UNUSED, void *func_data EINA_UNUSED)
@@ -1254,40 +1254,20 @@ elocation_init(void)
 
    /* Create all ecore event types we send out to interested applications */
    if (ELOCATION_EVENT_IN == 0)
-      ELOCATION_EVENT_IN = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_OUT == 0)
-      ELOCATION_EVENT_OUT = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_STATUS == 0)
-      ELOCATION_EVENT_STATUS = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_POSITION == 0)
-      ELOCATION_EVENT_POSITION = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_ADDRESS == 0)
-      ELOCATION_EVENT_ADDRESS = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_VELOCITY == 0)
-      ELOCATION_EVENT_VELOCITY = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_GEOCODE == 0)
-      ELOCATION_EVENT_GEOCODE = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_REVERSEGEOCODE == 0)
-      ELOCATION_EVENT_REVERSEGEOCODE = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_NMEA == 0)
-      ELOCATION_EVENT_NMEA = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_SATELLITE == 0)
-      ELOCATION_EVENT_SATELLITE = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_POI == 0)
-      ELOCATION_EVENT_POI = ecore_event_type_new();
-
-   if (ELOCATION_EVENT_META_READY == 0)
-      ELOCATION_EVENT_META_READY = ecore_event_type_new();
+     {
+        ELOCATION_EVENT_IN = ecore_event_type_new();
+        ELOCATION_EVENT_OUT = ecore_event_type_new();
+        ELOCATION_EVENT_STATUS = ecore_event_type_new();
+        ELOCATION_EVENT_POSITION = ecore_event_type_new();
+        ELOCATION_EVENT_ADDRESS = ecore_event_type_new();
+        ELOCATION_EVENT_VELOCITY = ecore_event_type_new();
+        ELOCATION_EVENT_GEOCODE = ecore_event_type_new();
+        ELOCATION_EVENT_REVERSEGEOCODE = ecore_event_type_new();
+        ELOCATION_EVENT_NMEA = ecore_event_type_new();
+        ELOCATION_EVENT_SATELLITE = ecore_event_type_new();
+        ELOCATION_EVENT_POI = ecore_event_type_new();
+        ELOCATION_EVENT_META_READY = ecore_event_type_new();
+     }
 
    obj_master= eldbus_object_get(conn, GEOCLUE_DBUS_NAME, GEOCLUE_OBJECT_PATH);
    if (!obj_master)
@@ -1369,6 +1349,19 @@ elocation_shutdown(void)
             ERR("Error: could not call RemoveReference");
           }
      }
+
+   ecore_event_type_flush(ELOCATION_EVENT_IN,
+                          ELOCATION_EVENT_OUT,
+                          ELOCATION_EVENT_STATUS,
+                          ELOCATION_EVENT_POSITION,
+                          ELOCATION_EVENT_ADDRESS,
+                          ELOCATION_EVENT_VELOCITY,
+                          ELOCATION_EVENT_GEOCODE,
+                          ELOCATION_EVENT_REVERSEGEOCODE,
+                          ELOCATION_EVENT_NMEA,
+                          ELOCATION_EVENT_SATELLITE,
+                          ELOCATION_EVENT_POI,
+                          ELOCATION_EVENT_META_READY);
 
    /* Quite a bit of allocated string and generic memory cleanup. This should be
     *less when we went away from all this global var business.
