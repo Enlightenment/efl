@@ -3084,7 +3084,7 @@ _item_move_cb(void *data, double pos)
 
    evas_object_move(VIEW(sd->reorder.it1), xx1, yy1);
 
-   if (pos == 1.0)
+   if (EINA_DBL_EQ(pos, 1.0))
      {
         _anim_end(sd);
         if (sd->reorder.type == ELM_GENGRID_REORDER_TYPE_NORMAL)
