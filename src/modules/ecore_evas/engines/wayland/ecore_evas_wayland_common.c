@@ -279,8 +279,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl2_Event_Window_Configure *ev;
-   int nw = 0, nh = 0, fw, fh;
-   Eina_Bool prev_max, prev_full;
+   int nw = 0, nh = 0, fw, fh, pfw, pfh;
+   Eina_Bool prev_max, prev_full, state_change = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -302,18 +302,25 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    nw = ev->w;
    nh = ev->h;
 
-   fw = wdata->win->geometry.w - wdata->content.w;
-   fh = wdata->win->geometry.h - wdata->content.h;
+   pfw = fw = wdata->win->geometry.w - wdata->content.w;
+   pfh = fh = wdata->win->geometry.h - wdata->content.h;
 
    if ((prev_max != ee->prop.maximized) ||
        (prev_full != ee->prop.fullscreen))
      {
+        state_change = EINA_TRUE;
         _ecore_evas_wl_common_state_update(ee);
         fw = wdata->win->geometry.w - wdata->content.w;
         fh = wdata->win->geometry.h - wdata->content.h;
      }
 
-   if ((!nw) && (!nh)) return ECORE_CALLBACK_RENEW;
+   if ((!nw) && (!nh))
+     {
+        /* this assumes ecore-wl2 continues to immediately ack every configure */
+        if (wdata->win->surface && ((!state_change) || ((pfw == fw) && (pfh == fh))))
+          wl_surface_commit(wdata->win->surface);
+        return ECORE_CALLBACK_RENEW;
+     }
 
    nw -= fw;
    nh -= fh;
