@@ -45,8 +45,8 @@ group { name: "e/gadget/luncher/icon";
       public style;
       public current_size;
       public Float:engage_scale(cursorpos, iconpos, size) {
-         new Float:zoom = 1.5;
-         new Float:scale = (zoom+0.25) - (abs(cursorpos-(iconpos+size/3)) / (size*3));
+         new Float:zoom = 1.75;
+         new Float:scale = zoom - (abs(cursorpos-(iconpos+size/2)) / (size*4));
          if (scale < 1.0) scale = 1.0;
          if (scale > zoom) scale = zoom;
 
@@ -96,7 +96,7 @@ group { name: "e/gadget/luncher/icon";
                new Float:scale = 1.0;
                if (pos == 0 && (xpos >= x) && (xpos <= (x+w))) {
                   scale = engage_scale(ypos, y, h);
-                  new Float:halfscale = scale/2;
+                  new Float:halfscale = scale/2.0;
 
                   custom_state(PART:"sizer", "default", 0.0);
                   set_state_val(PART:"sizer", STATE_REL1, 0.0, 0.5-halfscale);
@@ -105,7 +105,7 @@ group { name: "e/gadget/luncher/icon";
                }
                else if (pos == 1 && (ypos >= y) && (ypos <= (y+h))) {
                   scale = engage_scale(xpos, x, w);
-                  new Float:halfscale = scale/2;
+                  new Float:halfscale = scale/2.0;
 
                   custom_state(PART:"sizer", "default", 0.0);
                   set_state_val(PART:"sizer", STATE_REL1, 0.5-halfscale, 0.0);
@@ -114,7 +114,7 @@ group { name: "e/gadget/luncher/icon";
                }
                else if (pos == 2 && (xpos >= x) && (xpos <= (x+w))) {
                   scale = engage_scale(ypos, y, h);
-                  new Float:halfscale = scale/2;
+                  new Float:halfscale = scale/2.0;
 
                   custom_state(PART:"sizer", "default", 0.0);
                   set_state_val(PART:"sizer", STATE_REL1, 1.0-scale, 0.5-halfscale);
@@ -123,7 +123,7 @@ group { name: "e/gadget/luncher/icon";
                }
                else if (pos == 3 && (ypos >= y) && (ypos <= (y+h))) {
                   scale = engage_scale(xpos, x, w);
-                  new Float:halfscale = scale/2;
+                  new Float:halfscale = scale/2.0;
 
                   custom_state(PART:"sizer", "default", 0.0);
                   set_state_val(PART:"sizer", STATE_REL1, 0.5-halfscale, 1.0-scale);
@@ -157,7 +157,7 @@ group { name: "e/gadget/luncher/icon";
          clip_to: "item_clip";
          mouse_events: 0;
          description {
-            align: 0 0;
+            align: 0.5 0.5;
             state: "default" 0.0;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
@@ -252,14 +252,14 @@ group { name: "e/gadget/luncher/icon";
          description { state: "on_right" 0.0;
             inherit: "default" 0.0;
             align: 0.0 0.5;
-            rel2.relative: 0.965 1.0;
+            rel2.relative: 0.945 1.0;
             rel1.offset: 2 1;
             rel2.offset: -1 -1;
          }
          description { state: "on_bottom" 0.0;
             inherit: "default" 0.0;
             align: 0.5 0.0;
-            rel2.relative: 1.0 0.965;
+            rel2.relative: 1.0 0.945;
             rel1.offset: 1 2;
             rel2.offset: -1 -1;
          }
