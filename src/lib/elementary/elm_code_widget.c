@@ -1849,7 +1849,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
         for (i = existing - rows; i > 0; i--)
           {
              grid = eina_list_data_get(eina_list_last(pd->grids));
-             evas_object_hide(grid);
+             evas_object_del(grid);
              elm_box_unpack(pd->gridbox, grid);
              pd->grids = eina_list_remove_list(pd->grids, eina_list_last(pd->grids));
           }
