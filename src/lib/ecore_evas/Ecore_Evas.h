@@ -2547,6 +2547,8 @@ EAPI void           ecore_evas_x11_shape_input_empty(Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_shape_input_reset(Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
 
+#ifdef EFL_BETA_API_SUPPORT
+
 /**
  * @brief A callback used to accept a new client.
  * @param data The callback data
@@ -2594,6 +2596,8 @@ EAPI Eina_Bool      ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int p
  * @since 1.19
  */
 EAPI Eina_Bool      ecore_evas_vnc_stop(Ecore_Evas *ee);
+
+#endif
 
 /**
  * @defgroup Ecore_Evas_Ews Ecore_Evas Single Process Windowing System.
