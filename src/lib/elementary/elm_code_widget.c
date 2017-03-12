@@ -386,15 +386,12 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 }
 
 static void
-_elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, unsigned int last_row,
+_elm_code_widget_fill_range(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
+                            unsigned int first_row, unsigned int last_row,
                             Elm_Code_Line *newline)
 {
    Elm_Code_Line *line;
    unsigned int y;
-   Elm_Code_Widget_Data *pd;
-
-   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   _elm_code_widget_resize(widget, newline);
 
    // if called from new line cb, no need to update whole range unless visible
    if (newline && !elm_obj_code_widget_line_visible_get(widget, newline))
@@ -411,29 +408,52 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, uns
           _elm_code_widget_fill_line(widget, line);
      }
 }
+static void
+_elm_code_widget_fill_update(Elm_Code_Widget *widget, unsigned int first_row, unsigned int last_row,
+                             Elm_Code_Line *newline)
+{
+   Elm_Code_Widget_Data *pd;
+
+   _elm_code_widget_resize(widget, newline);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   _elm_code_widget_fill_range(widget, pd, first_row, last_row, newline);
+}
+
+static Eina_Bool
+_elm_code_widget_viewport_get(Elm_Code_Widget *widget,
+                              Elm_Code_Widget_Data *pd,
+                              unsigned int *first_row,
+                              unsigned int *last_row)
+{
+   Evas_Coord scroll_y, scroll_h, oy;
+
+   evas_object_geometry_get(widget, NULL, &oy, NULL, NULL);
+   elm_scroller_region_get(pd->scroller, NULL, &scroll_y, NULL, &scroll_h);
+   if (scroll_h == 0)
+     return EINA_FALSE;
+
+   elm_code_widget_position_at_coordinates_get(widget, 0, oy, first_row, NULL);
+   elm_code_widget_position_at_coordinates_get(widget, 0, oy + scroll_h, last_row, NULL);
+
+   if (last_row && *last_row > elm_code_file_lines_get(pd->code->file))
+     *last_row = elm_code_file_lines_get(pd->code->file);
+
+   return EINA_TRUE;
+}
 
 static void
 _elm_code_widget_refresh(Elm_Code_Widget *widget, Elm_Code_Line *line)
 {
-   Evas_Coord scroll_y, scroll_h, oy;
    unsigned int first_row, last_row;
 
    Elm_Code_Widget_Data *pd;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   if (!_elm_code_widget_viewport_get(widget, pd, &first_row, &last_row))
+     return ;
 
-   evas_object_geometry_get(widget, NULL, &oy, NULL, NULL);
-   elm_scroller_region_get(pd->scroller, NULL, &scroll_y, NULL, &scroll_h);
-   if (scroll_h == 0)
-     return;
-
-   elm_code_widget_position_at_coordinates_get(widget, 0, oy, &first_row, NULL);
-   elm_code_widget_position_at_coordinates_get(widget, 0, oy + scroll_h, &last_row, NULL);
-
-   if (last_row > elm_code_file_lines_get(pd->code->file))
-     last_row = elm_code_file_lines_get(pd->code->file);
-
-   _elm_code_widget_fill_range(widget, first_row, last_row, line);
+   _elm_code_widget_fill_update(widget, first_row, last_row, line);
 }
 
 static void
@@ -443,7 +463,7 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   _elm_code_widget_fill_range(widget, 1, elm_code_file_lines_get(pd->code->file), NULL);
+   _elm_code_widget_fill_update(widget, 1, elm_code_file_lines_get(pd->code->file), NULL);
 }
 
 static void
@@ -1946,28 +1966,12 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
 
    if (!newline)
      {
-        Evas_Coord scroll_y, scroll_h, oy;
         unsigned int first_row, last_row;
-        unsigned int y;
 
-        evas_object_geometry_get(widget, NULL, &oy, NULL, NULL);
-        elm_scroller_region_get(pd->scroller, NULL, &scroll_y, NULL, &scroll_h);
-        if (scroll_h == 0)
-          return;
+        if (!_elm_code_widget_viewport_get(widget, pd, &first_row, &last_row))
+          return ;
 
-        elm_code_widget_position_at_coordinates_get(widget, 0, oy, &first_row, NULL);
-        elm_code_widget_position_at_coordinates_get(widget, 0, oy + scroll_h, &last_row, NULL);
-        if (last_row > elm_code_file_lines_get(pd->code->file))
-          last_row = elm_code_file_lines_get(pd->code->file);
-
-        // cursor will be shown if it should be visible
-        evas_object_hide(pd->cursor_rect);
-        for (y = first_row; y <= last_row; y++)
-          {
-             line = elm_code_file_line_get(pd->code->file, y);
-             if (line)
-               _elm_code_widget_fill_line(widget, line);
-          }
+        _elm_code_widget_fill_range(widget, pd, first_row, last_row, NULL);
 
         return;
      }
