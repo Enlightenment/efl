@@ -1944,7 +1944,34 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
         evas_object_size_hint_min_set(grid, w*cw, ch);
      }
 
-   if (!newline) return;
+   if (!newline)
+     {
+        Evas_Coord scroll_y, scroll_h, oy;
+        unsigned int first_row, last_row;
+        unsigned int y;
+
+        evas_object_geometry_get(widget, NULL, &oy, NULL, NULL);
+        elm_scroller_region_get(pd->scroller, NULL, &scroll_y, NULL, &scroll_h);
+        if (scroll_h == 0)
+          return;
+
+        elm_code_widget_position_at_coordinates_get(widget, 0, oy, &first_row, NULL);
+        elm_code_widget_position_at_coordinates_get(widget, 0, oy + scroll_h, &last_row, NULL);
+        if (last_row > elm_code_file_lines_get(pd->code->file))
+          last_row = elm_code_file_lines_get(pd->code->file);
+
+        // cursor will be shown if it should be visible
+        evas_object_hide(pd->cursor_rect);
+        for (y = first_row; y <= last_row; y++)
+          {
+             line = elm_code_file_line_get(pd->code->file, y);
+             if (line)
+               _elm_code_widget_fill_line(widget, line);
+          }
+
+        return;
+     }
+   _elm_code_widget_fill_line(widget, line);
 
    if (pd->gravity_x == 1.0 || pd->gravity_y == 1.0)
      _elm_code_widget_scroll_by(widget,
