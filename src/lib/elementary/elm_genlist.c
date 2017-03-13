@@ -1182,6 +1182,26 @@ _item_tree_effect_finish(Elm_Genlist_Data *sd)
 }
 
 static void
+_item_restack(Elm_Gen_Item *it)
+{
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
+   if (it->item->nostacking) return;
+   if ((it->item->order_num_in & 0x1) ^ it->item->stacking_even)
+     {
+        if (it->deco_all_view) evas_object_stack_below(it->deco_all_view, sd->stack[0]);
+        else if (it->item->deco_it_view) evas_object_stack_below(it->item->deco_it_view, sd->stack[0]);
+        else evas_object_stack_below(VIEW(it), sd->stack[0]);
+     }
+   else
+     {
+        if (it->deco_all_view) evas_object_stack_above(it->deco_all_view, sd->stack[0]);
+        else if (it->item->deco_it_view) evas_object_stack_above(it->item->deco_it_view, sd->stack[0]);
+        else evas_object_stack_above(VIEW(it), sd->stack[0]);
+     }
+}
+
+static void
 _elm_genlist_item_position_state_update(Elm_Gen_Item *it)
 {
    unsigned idx = it->item->order_num_in;
@@ -1189,19 +1209,7 @@ _elm_genlist_item_position_state_update(Elm_Gen_Item *it)
    if (!VIEW(it) && !it->deco_all_view) return;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if (!it->item->nostacking)
-     {
-        if ((idx & 0x1) ^ it->item->stacking_even)
-          {
-             if (it->deco_all_view) evas_object_stack_below(it->deco_all_view, sd->stack[0]);
-             else evas_object_stack_below(VIEW(it), sd->stack[0]);
-          }
-        else
-          {
-             if (it->deco_all_view) evas_object_stack_above(it->deco_all_view, sd->stack[0]);
-             else evas_object_stack_above(VIEW(it), sd->stack[0]);
-          }
-     }
+   _item_restack(it);
 
    if (idx & 0x1)
      {
@@ -3504,29 +3512,13 @@ _item_highlight(Elm_Gen_Item *it)
 static void
 _item_unhighlight(Elm_Gen_Item *it)
 {
-   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
-
    if (!it->highlighted) return;
 
    edje_object_signal_emit(VIEW(it), SIGNAL_UNSELECTED, "elm");
    efl_event_callback_legacy_call(WIDGET(it), ELM_GENLIST_EVENT_UNHIGHLIGHTED, EO_OBJ(it));
    if (it->deco_all_view)
-     edje_object_signal_emit
-       (it->deco_all_view, SIGNAL_UNSELECTED, "elm");
-
-   if (!it->item->nostacking)
-     {
-        if ((it->item->order_num_in & 0x1) ^ it->item->stacking_even)
-          {
-             if (it->deco_all_view) evas_object_stack_below(it->deco_all_view, sd->stack[0]);
-             else evas_object_stack_below(VIEW(it), sd->stack[0]);
-          }
-        else
-          {
-             if (it->deco_all_view) evas_object_stack_above(it->deco_all_view, sd->stack[0]);
-             else evas_object_stack_above(VIEW(it), sd->stack[0]);
-          }
-     }
+     edje_object_signal_emit(it->deco_all_view, SIGNAL_UNSELECTED, "elm");
+   _item_restack(it);
    it->highlighted = EINA_FALSE;
 }
 
