@@ -142,6 +142,8 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
    efl_gfx_stack_above((Evas_Object *)obj, above);
 }
 
+#define SERR(x, ...) EINA_SAFETY_ERROR(eina_slstr_printf(x, __VA_ARGS__))
+
 EOLIAN void
 _efl_canvas_object_efl_gfx_stack_stack_above(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Stack *eo_above)
 {
@@ -162,7 +164,11 @@ _efl_canvas_object_efl_gfx_stack_stack_above(Eo *eo_obj, Evas_Object_Protected_D
      {
         if (obj->smart.parent != above->smart.parent)
           {
-             ERR("COMPLAIN! evas_object_stack_above(), %p not inside same smart as %p!", eo_obj, eo_above);
+             SERR("Invalid operation: object '%s' %p (parent: '%s' %p) not "
+                  "inside same smart parent as above '%s' %p (parent '%s' %p)!",
+                  efl_class_name_get(eo_obj), eo_obj, efl_class_name_get(obj->smart.parent),
+                  obj->smart.parent, efl_class_name_get(eo_above), eo_above,
+                  efl_class_name_get(above->smart.parent), above->smart.parent);
              return;
           }
         evas_object_smart_member_stack_above(eo_obj, eo_above);
@@ -171,12 +177,21 @@ _efl_canvas_object_efl_gfx_stack_stack_above(Eo *eo_obj, Evas_Object_Protected_D
      {
         if (above->smart.parent)
           {
-             ERR("COMPLAIN! evas_object_stack_above(), %p stack above %p, but above has smart parent, obj does not", eo_obj, eo_above);
+             SERR("Invalid operation: '%s' %p has no parent but "
+                  "above '%s' %p has parent '%s' %p!",
+                  efl_class_name_get(eo_obj), eo_obj,
+                  efl_class_name_get(eo_above), eo_above,
+                  efl_class_name_get(above->smart.parent), above->smart.parent);
              return;
           }
         if (obj->layer != above->layer)
           {
-             ERR("COMPLAIN! evas_object_stack_above(), %p stack above %p, not matching layers", eo_obj, eo_above);
+             SERR("Invalid operation: '%s' %p is on layer %d but "
+                  "above '%s' %p is on mismatching layer %d!",
+                  efl_class_name_get(eo_obj), eo_obj,
+                  obj->layer ? (int) obj->layer->layer : -99999,
+                  efl_class_name_get(eo_above), eo_above,
+                  above->layer ? (int) above->layer->layer : -99999);
              return;
           }
         if (obj->in_layer)
@@ -239,7 +254,11 @@ _efl_canvas_object_efl_gfx_stack_stack_below(Eo *eo_obj, Evas_Object_Protected_D
      {
         if (obj->smart.parent != below->smart.parent)
           {
-             ERR("COMPLAIN! evas_object_stack_below(), %p not inside same smart as %p!", eo_obj, eo_below);
+             SERR("Invalid operation: object '%s' %p (parent: '%s' %p) not "
+                  "inside same smart parent as below '%s' %p (parent '%s' %p)!",
+                  efl_class_name_get(eo_obj), eo_obj, efl_class_name_get(obj->smart.parent),
+                  obj->smart.parent, efl_class_name_get(eo_below), eo_below,
+                  efl_class_name_get(below->smart.parent), below->smart.parent);
              return;
           }
         evas_object_smart_member_stack_below(eo_obj, eo_below);
@@ -248,12 +267,21 @@ _efl_canvas_object_efl_gfx_stack_stack_below(Eo *eo_obj, Evas_Object_Protected_D
      {
         if (below->smart.parent)
           {
-             ERR("COMPLAIN! evas_object_stack_below(), %p stack below %p, but below has smart parent, obj does not", eo_obj, eo_below);
+             SERR("Invalid operation: object '%s' %p has no parent but "
+                  "below '%s' %p has different parent '%s' %p!",
+                  efl_class_name_get(eo_obj), eo_obj,
+                  efl_class_name_get(eo_below), eo_below,
+                  efl_class_name_get(below->smart.parent), below->smart.parent);
              return;
           }
         if (obj->layer != below->layer)
           {
-             ERR("COMPLAIN! evas_object_stack_below(), %p stack below %p, not matching layers", eo_obj, eo_below);
+             SERR("Invalid operation: object '%s' %p is on layer %d but "
+                  "below '%s' %p is on mismatching layer %d!",
+                  efl_class_name_get(eo_obj), eo_obj,
+                  obj->layer ? (int) obj->layer->layer : -99999,
+                  efl_class_name_get(eo_below), eo_below,
+                  below->layer ? (int) below->layer->layer : -99999);
              return;
           }
         if (obj->in_layer)
