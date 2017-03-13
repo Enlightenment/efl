@@ -8006,9 +8006,8 @@ _elm_genlist_item_decorate_mode_set(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it,
           elm_genlist_item_selected_set(eo_it2, EINA_FALSE);
      }
 
-   if (((sd->decorate_it_type)
-        && (strcmp(decorate_it_type, sd->decorate_it_type))) ||
-       (decorate_it_set) || ((it == sd->mode_item) && (!decorate_it_set)))
+   if (!eina_streq(sd->decorate_it_type, decorate_it_type) ||
+       decorate_it_set || (it == sd->mode_item))
      _decorate_item_unset(sd);
 
    eina_stringshare_replace(&sd->decorate_it_type, decorate_it_type);
