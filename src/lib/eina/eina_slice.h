@@ -256,7 +256,7 @@ static inline const void *eina_slice_find(const Eina_Slice slice, const Eina_Sli
  * @brief Checks if the slice starts with a prefix.
  *
  * @param slice the reference memory.
- * @param prefix the slice to check if @a slice ends with.
+ * @param prefix the slice to check if @a slice starts with.
  * @return #EINA_TRUE if @a slice starts with @a prefix, #EINA_FALSE otherwise.
  *
  * @since 1.19
@@ -300,7 +300,7 @@ static inline void *eina_rw_slice_find(const Eina_Rw_Slice rw_slice, const Eina_
  * @brief Checks if the slice starts with a prefix.
  *
  * @param slice the reference memory.
- * @param prefix the slice to check if @a slice ends with.
+ * @param prefix the slice to check if @a slice starts with.
  * @return #EINA_TRUE if @a slice starts with @a prefix, #EINA_FALSE otherwise.
  *
  * @since 1.19
