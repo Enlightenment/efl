@@ -6279,6 +6279,15 @@ _edje_real_part_swallow_clear(Edje *ed, Edje_Real_Part *rp)
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
        (!rp->typedata.swallow)) return;
    if (!rp->typedata.swallow->swallowed_object) return;
+   if (rp->chosen_description->map.on ||
+       (rp->invalidate
+#ifdef HAVE_EPHYSICS
+        && rp->prev_description && rp->prev_description->map.on
+#endif
+        ))
+     {
+        evas_object_map_enable_set(rp->typedata.swallow->swallowed_object, EINA_FALSE);
+     }
    _eo_unparent_helper(rp->typedata.swallow->swallowed_object, ed->obj);
    evas_object_smart_member_del(rp->typedata.swallow->swallowed_object);
    evas_object_event_callback_del_full(rp->typedata.swallow->swallowed_object,
