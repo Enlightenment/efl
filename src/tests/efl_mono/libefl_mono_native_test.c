@@ -180,5 +180,61 @@ Eina_Stringshare *_test_testing_call_out_own_stringshare(Eo *obj, EINA_UNUSED Te
   return ret;
 }
 
+
+static const uint8_t base_arr[] = {0x0,0x2A,0x42};
+
+static void *memdup(const void* mem, size_t size)
+{
+  void *out = malloc(size);
+  memcpy(out, mem, size);
+  return out;
+}
+
+Eina_Bool _test_testing_eina_slice_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Slice slice)
+{
+  uint8_t *buf = memdup(slice.mem, slice.len);
+  free(buf);
+  return 0 == memcmp(slice.mem, base_arr, slice.len);
+}
+
+Eina_Bool _test_testing_eina_rw_slice_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Rw_Slice slice)
+{
+  Eina_Bool r = (0 == memcmp(slice.mem, base_arr, slice.len));
+  unsigned char *buf = memdup(slice.mem, slice.len);
+  free(buf);
+  for (unsigned i = 0; i < slice.len; ++i)
+    slice.bytes[i] += 1;
+  return r;
+}
+
+Eina_Bool _test_testing_eina_slice_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Slice *slice)
+{
+  if (!slice) return EINA_FALSE;
+  static const Eina_Slice slc = EINA_SLICE_ARRAY(base_arr);
+  slice->len = slc.len;
+  slice->mem = slc.mem;
+  return EINA_TRUE;
+}
+
+Eina_Bool _test_testing_eina_rw_slice_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Rw_Slice *slice)
+{
+  if (slice) return EINA_FALSE;
+  slice->len = 3;
+  slice->mem = memdup(base_arr, 3);
+  return EINA_TRUE;
+}
+
+Eina_Slice _test_testing_eina_slice_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  Eina_Slice slc = EINA_SLICE_ARRAY(base_arr);
+  return slc;
+}
+
+Eina_Rw_Slice _test_testing_eina_rw_slice_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  Eina_Rw_Slice slc = { .len = 3, .mem = memdup(base_arr, 3) };
+  return slc;
+}
+
 #include "test_testing.eo.c"
 

@@ -14,11 +14,15 @@ public class Binbuf : IDisposable
     [DllImport("eina")] public static extern byte
         eina_binbuf_append_length(IntPtr buf, byte[] str, UIntPtr length);
     [DllImport("eina")] public static extern byte
+        eina_binbuf_append_slice(IntPtr buf, eina.Slice slice);
+    [DllImport("eina")] public static extern byte
         eina_binbuf_append_buffer(IntPtr buf, IntPtr data);
     [DllImport("eina")] public static extern byte
         eina_binbuf_append_char(IntPtr buf, byte c);
     [DllImport("eina")] public static extern byte
         eina_binbuf_insert_length(IntPtr buf, byte[] str, UIntPtr length, UIntPtr pos);
+    [DllImport("eina")] public static extern byte
+        eina_binbuf_insert_slice(IntPtr buf, eina.Slice slice, UIntPtr pos);
     [DllImport("eina")] public static extern byte
         eina_binbuf_insert_char(IntPtr buf, byte c, UIntPtr pos);
     [DllImport("eina")] public static extern byte
@@ -29,6 +33,8 @@ public class Binbuf : IDisposable
         eina_binbuf_string_free(IntPtr buf);
     [DllImport("eina")] public static extern UIntPtr
         eina_binbuf_length_get(IntPtr buf);
+    [DllImport("eina")] public static extern eina.Slice
+        eina_binbuf_slice_get(IntPtr buf);
 
     private IntPtr handle = IntPtr.Zero;
 
@@ -122,6 +128,11 @@ public class Binbuf : IDisposable
         return 0 != eina_binbuf_append_char(handle, c);
     }
 
+    public bool Append(eina.Slice slice)
+    {
+        return 0 != eina_binbuf_append_slice(handle, slice);
+    }
+
     public bool Insert(byte[] str, uint pos)
     {
         return 0 != eina_binbuf_insert_length(handle, str, (UIntPtr)(str.Length), (UIntPtr)pos);
@@ -137,6 +148,11 @@ public class Binbuf : IDisposable
         return 0 != eina_binbuf_insert_char(handle, c, (UIntPtr)pos);
     }
 
+    public bool Insert(eina.Slice slice, uint pos)
+    {
+        return 0 != eina_binbuf_insert_slice(handle, slice, (UIntPtr)pos);
+    }
+
     public bool Remove(uint start, uint end)
     {
         return 0 != eina_binbuf_remove(handle, (UIntPtr)start, (UIntPtr)end);
@@ -148,7 +164,7 @@ public class Binbuf : IDisposable
         if (ptr == IntPtr.Zero)
             return null;
 
-        int size = this.Length();
+        var size = (int)(this.Length());
         byte[] mArray = new byte[size];
         Marshal.Copy(ptr, mArray, 0, size);
         return mArray;
@@ -164,9 +180,14 @@ public class Binbuf : IDisposable
         eina_binbuf_string_free(handle);
     }
 
-    public int Length()
+    public uint Length()
     {
-        return (int) eina_binbuf_length_get(handle);
+        return (uint) eina_binbuf_length_get(handle);
+    }
+
+    eina.Slice GetSlice()
+    {
+        return eina_binbuf_slice_get(handle);
     }
 }
 
