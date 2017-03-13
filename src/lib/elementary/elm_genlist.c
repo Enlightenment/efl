@@ -5515,6 +5515,7 @@ _decorate_item_unset(Elm_Genlist_Data *sd)
 
    it = sd->mode_item;
    it->item->nocache_once = EINA_TRUE;
+   it->decorate_it_set = EINA_FALSE;
 
    snprintf(buf, sizeof(buf), "elm,state,%s,passive", sd->decorate_it_type);
    snprintf(buf2, sizeof(buf2), "elm,state,%s,passive,finished",
