@@ -3194,7 +3194,7 @@ _elm_genlist_elm_layout_sub_object_add_enable(Eo *obj EINA_UNUSED, Elm_Genlist_D
 EOLIAN static Eina_Bool
 _elm_genlist_elm_widget_sub_object_add(Eo *obj, Elm_Genlist_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   // FIXME: THIS COMMENT IS INVALID! WE ARE NOT SKIPPING ELM_LAYOUT!
 
    /* skipping layout's code, which registers size hint changing
     * callback on sub objects. this is here because items'
@@ -3202,10 +3202,7 @@ _elm_genlist_elm_widget_sub_object_add(Eo *obj, Elm_Genlist_Data *_pd EINA_UNUSE
     * creation, thus issuing TOO MANY sizing_eval()'s here. they are
     * not needed at here anyway, so let's skip listening to those
     * hints changes */
-   int_ret = elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
-   if (!int_ret) return EINA_FALSE;
-
-   return EINA_TRUE;
+   return elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
 }
 
 EOLIAN static Eina_Bool
@@ -3213,6 +3210,7 @@ _elm_genlist_elm_widget_sub_object_del(Eo *obj, Elm_Genlist_Data *sd, Evas_Objec
 {
    Eina_Bool int_ret = EINA_FALSE;
 
+   // FIXME: THIS COMMENT IS INVALID! WE ARE NOT SKIPPING ELM_LAYOUT!
 
    /* XXX: hack -- also skipping sizing recalculation on
     * sub-object-del. genlist's crazy code paths (like groups and
@@ -5100,7 +5098,7 @@ _scroll_hold_timer_cb(void *data)
 }
 
 static void
-_decorate_item_unrealize(Elm_Gen_Item *it)
+_decorate_item_unrealize(Elm_Gen_Item *it, Eina_Bool state_update)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Evas_Object *obj = sd->obj;
@@ -5113,11 +5111,18 @@ _decorate_item_unrealize(Elm_Gen_Item *it)
                &(it->item->deco_it_contents));
 
    edje_object_part_unswallow(it->item->deco_it_view, VIEW(it));
-   evas_object_smart_member_add(VIEW(it), sd->pan_obj);
    ELM_SAFE_FREE(it->item->deco_it_view, evas_object_del);
+   evas_object_smart_member_add(VIEW(it), sd->pan_obj);
+   evas_object_clip_set(VIEW(it), evas_object_clip_get(sd->pan_obj));
+   if (state_update)
+     {
+        _elm_genlist_item_state_update(it);
+        _item_order_update(it, it->item->order_num_in, EINA_TRUE);
+     }
 
-   if (sd->mode_item == it)
-     sd->mode_item = NULL;
+   if (sd->mode_item != it)
+     it->decorate_it_set = EINA_FALSE;
+
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 }
@@ -5145,7 +5150,7 @@ _decorate_item_finished_signal_cb(void *data,
    edje_object_signal_callback_del_full
      (it->item->deco_it_view, buf, "elm", _decorate_item_finished_signal_cb, it);
    it->item->nocache_once = EINA_FALSE;
-   _decorate_item_unrealize(it);
+   _decorate_item_unrealize(it, EINA_TRUE);
    if (it->item->group_item)
      evas_object_stack_above(it->item->VIEW(group_item), sd->stack[1]);
 
@@ -5167,7 +5172,7 @@ _item_unrealize(Elm_Gen_Item *it)
      _elm_access_widget_item_unregister(it->base);
 
    // unswallow VIEW(it) first then manipulate VIEW(it)
-   _decorate_item_unrealize(it);
+   _decorate_item_unrealize(it, EINA_FALSE);
    if (it->item->wsd->decorate_all_mode) _decorate_all_item_unrealize(it);
 
    if (!_item_cache_add(it, _content_cache_add(it, &cache)))
