@@ -54,13 +54,6 @@ public struct Evas_Object_Box_Option {
 };
 #pragma warning restore 0169
 
-namespace eina {
-    
-public struct Rw_Slice {}
-public struct Slice {}
-
-}
-
 namespace efl { namespace kw_event {
 
 [StructLayout(LayoutKind.Sequential)]

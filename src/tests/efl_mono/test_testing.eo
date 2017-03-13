@@ -1,3 +1,5 @@
+import eina_types;
+
 class Test.Testing (Efl.Object) {
    methods {
       return_object {
@@ -129,5 +131,43 @@ class Test.Testing (Efl.Object) {
       call_out_own_stringshare {
          return: own(stringshare);
       }
+
+      eina_slice_in {
+         params {
+            @in slice: Eina.Slice;
+         }
+         return: bool;
+      }
+
+      eina_rw_slice_in {
+         params {
+            @in slice: Eina.Rw_Slice;
+         }
+         return: bool;
+      }
+
+      eina_slice_out {
+         params {
+            @out slice: Eina.Slice;
+         }
+         return: bool;
+      }
+
+      eina_rw_slice_out {
+         params {
+            @out slice: Eina.Rw_Slice;
+         }
+         return: bool;
+      }
+
+      /*
+      eina_slice_return {
+         return: Eina.Slice;
+      }
+
+      eina_rw_slice_return {
+         return: Eina.Rw_Slice;
+      }
+      */
    }
 }
