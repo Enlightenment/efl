@@ -15,17 +15,28 @@
 
 int _ecore_input_evas_log_dom = -1;
 
-typedef struct _Ecore_Input_Window Ecore_Input_Window;
+typedef struct _Ecore_Input_Window       Ecore_Input_Window;
+typedef struct _Ecore_Input_Seat_State   Ecore_Input_Seat_State;
+
 struct _Ecore_Input_Window
 {
-   Evas *evas;
-   void *window;
-   Ecore_Event_Mouse_Move_Cb move_mouse;
-   Ecore_Event_Multi_Move_Cb move_multi;
-   Ecore_Event_Multi_Down_Cb down_multi;
-   Ecore_Event_Multi_Up_Cb up_multi;
-   Ecore_Event_Direct_Input_Cb direct;
-   int ignore_event;
+   Evas                        *evas;
+   void                        *window;
+   Ecore_Input_Seat_State      *device_states;
+   Ecore_Event_Mouse_Move_Cb    move_mouse;
+   Ecore_Event_Multi_Move_Cb    move_multi;
+   Ecore_Event_Multi_Down_Cb    down_multi;
+   Ecore_Event_Multi_Up_Cb      up_multi;
+   Ecore_Event_Direct_Input_Cb  direct;
+   int                          device_states_num;
+   int                          ignore_event;
+};
+
+struct _Ecore_Input_Seat_State
+{
+   Evas_Device  *seat;
+   unsigned int  modifiers;
+   unsigned int  invalid;
 };
 
 typedef enum _Ecore_Input_State {
@@ -278,9 +289,9 @@ _ecore_event_evas_push_mouse_move(Ecore_Event_Mouse_Move *e)
        }
 }
 
-EAPI void
-ecore_event_evas_seat_modifier_lock_update(Evas *e, unsigned int modifiers,
-                                           Evas_Device *seat)
+static void
+_ecore_event_evas_seat_modifier_lock_update(Evas *e, unsigned int modifiers,
+                                            Evas_Device *seat)
 {
    if (modifiers & ECORE_EVENT_MODIFIER_SHIFT)
      evas_seat_key_modifier_on(e, "Shift", seat);
@@ -326,10 +337,102 @@ ecore_event_evas_seat_modifier_lock_update(Evas *e, unsigned int modifiers,
    else evas_seat_key_lock_off(e, "Shift_Lock", seat);
 }
 
+static void
+_ecore_event_evas_modifier_lock_invalidate(Ecore_Input_Window *w)
+{
+   int i;
+
+   if (!w) return;
+   for (i = 0; i < w->device_states_num; i++) w->device_states[i].invalid = 1;
+}
+
+typedef struct
+{
+   const Evas         *evas;
+   Ecore_Input_Window *w;
+} Find_Foreach_Data;
+
+static Eina_Bool
+_ecore_event_evas_window_evas_find_foreach_cb(const Eina_Hash *hash EINA_UNUSED,
+                                              const void *key EINA_UNUSED,
+                                              void *data, void *fdata)
+{
+   Ecore_Input_Window *w            = data;
+   Find_Foreach_Data  *foreach_data = fdata;
+
+   if (foreach_data->evas == w->evas)
+     {
+        foreach_data->w = w;
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Ecore_Input_Window *
+_ecore_event_evas_window_evas_find(const Evas *evas)
+{
+   Find_Foreach_Data fdata;
+
+   fdata.evas = evas;
+   fdata.w = NULL;
+   eina_hash_foreach(_window_hash,
+                     _ecore_event_evas_window_evas_find_foreach_cb,
+                     &fdata);
+   return fdata.w;
+}
+
+EAPI void
+ecore_event_evas_seat_modifier_lock_update(Evas *e, unsigned int modifiers,
+                                           Evas_Device *seat)
+{
+   _ecore_event_evas_modifier_lock_invalidate
+     (_ecore_event_evas_window_evas_find(e));
+   _ecore_event_evas_seat_modifier_lock_update(e, modifiers, seat);
+}
+
 EAPI void
 ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
 {
-   ecore_event_evas_seat_modifier_lock_update(e, modifiers, NULL);
+   _ecore_event_evas_modifier_lock_invalidate
+     (_ecore_event_evas_window_evas_find(e));
+   _ecore_event_evas_seat_modifier_lock_update(e, modifiers, NULL);
+}
+
+static void
+_ecore_event_evas_modifier_lock_update(Ecore_Input_Window *w,
+                                       unsigned int modifiers,
+                                       Evas_Device *seat)
+{
+   Ecore_Input_Seat_State *states;
+   int i;
+
+   for (i = 0; i < w->device_states_num; i++)
+     {
+        if (w->device_states[i].seat == seat)
+          {
+             if ((w->device_states[i].invalid) ||
+                 (modifiers != w->device_states[i].modifiers))
+               {
+                  w->device_states[i].invalid = 0;
+                  w->device_states[i].modifiers = modifiers;
+                  ecore_event_evas_seat_modifier_lock_update
+                    (w->evas, modifiers, seat);
+               }
+             return;
+          }
+     }
+   w->device_states_num++;
+   states = realloc(w->device_states, w->device_states_num);
+   if (!states)
+     {
+        w->device_states_num--;
+        return;
+     }
+   states[w->device_states_num - 1].seat      = seat;
+   states[w->device_states_num - 1].modifiers = modifiers;
+   states[w->device_states_num - 1].invalid   = 0;
+   w->device_states = states;
+   _ecore_event_evas_seat_modifier_lock_update(w->evas, modifiers, seat);
 }
 
 EAPI void
@@ -364,6 +467,14 @@ ecore_event_window_register(Ecore_Window id, void *window, Evas *evas,
    evas_key_lock_add(evas, "Caps_Lock");
    evas_key_lock_add(evas, "Num_Lock");
    evas_key_lock_add(evas, "Scroll_Lock");
+}
+
+static void
+_ecore_evas_input_win_free(void *data)
+{
+   Ecore_Input_Window *w = data;
+   free(w->device_states);
+   free(w);
 }
 
 EAPI void
@@ -420,9 +531,8 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
 
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   ecore_event_evas_seat_modifier_lock_update(lookup->evas,
-                                              e->modifiers,
-                                              efl_input_device_seat_get(e->dev));
+   _ecore_event_evas_modifier_lock_update
+     (lookup, e->modifiers, efl_input_device_seat_get(e->dev));
    if (press == ECORE_DOWN)
      {
         if (!lookup->direct ||
@@ -531,9 +641,8 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
 
    if (e->multi.device == 0)
      {
-        ecore_event_evas_seat_modifier_lock_update(lookup->evas,
-                                                   e->modifiers,
-                                                   efl_input_device_seat_get(e->dev));
+        _ecore_event_evas_modifier_lock_update
+          (lookup, e->modifiers, efl_input_device_seat_get(e->dev));
         if (press == ECORE_DOWN)
           {
              if (!lookup->direct ||
@@ -613,9 +722,8 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
    if (e->multi.device == 0)
      {
         _ecore_event_evas_push_mouse_move(e);
-        ecore_event_evas_seat_modifier_lock_update(lookup->evas,
-                                                   e->modifiers,
-                                                   efl_input_device_seat_get(e->dev));
+        _ecore_event_evas_modifier_lock_update
+          (lookup, e->modifiers, efl_input_device_seat_get(e->dev));
         if (!lookup->direct ||
             !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_MOVE, e))
           {
@@ -674,9 +782,8 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
 
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   ecore_event_evas_seat_modifier_lock_update(lookup->evas,
-                                              e->modifiers,
-                                              efl_input_device_seat_get(e->dev));
+   _ecore_event_evas_modifier_lock_update
+     (lookup, e->modifiers, efl_input_device_seat_get(e->dev));
    switch (io)
      {
       case ECORE_IN:
@@ -722,8 +829,8 @@ ecore_event_evas_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    e = event;
    lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
-   ecore_event_evas_seat_modifier_lock_update(lookup->evas, e->modifiers,
-                                              efl_input_device_seat_get(e->dev));
+   _ecore_event_evas_modifier_lock_update
+     (lookup, e->modifiers, efl_input_device_seat_get(e->dev));
    if (!lookup->direct ||
        !lookup->direct(lookup->window, ECORE_EVENT_MOUSE_WHEEL, e))
      {
@@ -820,7 +927,7 @@ ecore_event_evas_init(void)
                                                           ecore_event_evas_mouse_button_cancel,
                                                           NULL);
 
-   _window_hash = eina_hash_pointer_new(free);
+   _window_hash = eina_hash_pointer_new(_ecore_evas_input_win_free);
 
    if (getenv("ECORE_INPUT_FIX"))
      {
