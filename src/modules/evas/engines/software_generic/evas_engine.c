@@ -4872,14 +4872,20 @@ glue_sym_init(void)
    return 1;
 }
 
-static int
+static Eina_Bool
 gl_sym_init(void)
 {
+   Eina_Bool ok = EINA_TRUE;
+
    //------------------------------------------------//
-#define FINDSYM(dst, sym, typ) \
+#define FINDSYM(dst, sym, typ) do { \
    if (!dst) dst = (typeof(dst))dlsym(gl_lib_handle, sym); \
-   if (!dst) DBG("Symbol not found: %s", sym);
-#define FALLBAK(dst, typ) if (!dst) dst = (typeof(dst))sym_missing;
+   if (!dst && _sym_OSMesaGetProcAddress) dst = (typeof(dst))_sym_OSMesaGetProcAddress(sym); \
+   if (!dst) DBG("Symbol not found: %s", sym); \
+   } while (0)
+#define FALLBAK(dst, typ) do { \
+   if (!dst) { dst = (typeof(dst))sym_missing; ok = EINA_FALSE; } \
+   } while (0)
 
    //------------------------------------------------------//
    // GLES 2.0 APIs...
@@ -5326,7 +5332,10 @@ gl_sym_init(void)
         gl_lib_is_gles = 1;
      }
 
-   return 1;
+   if (!ok)
+     ERR("Evas failed to initialize OSMesa for OpenGL with the software engine!");
+
+   return ok;
 }
 
 //--------------------------------------------------------------//
