@@ -5689,6 +5689,7 @@ _elm_genlist_efl_canvas_group_group_del(Eo *obj, Elm_Genlist_Data *sd)
    ecore_idler_del(sd->must_recalc_idler);
    ecore_timer_del(sd->multi_timer);
    eina_stringshare_del(sd->decorate_it_type);
+   eina_hash_free(sd->size_caches);
 
    _elm_genlist_tree_effect_stop(sd);
 
