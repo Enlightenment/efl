@@ -25,6 +25,7 @@
       }
 
 static void *_gles3_handle = NULL;
+static void *_gles3_handle_fallback = NULL;
 static Evas_GL_API _gles3_api;
 //---------------------------------------//
 // API Debug Error Checking Code
@@ -3366,8 +3367,49 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version,
 
    if (minor_version > 0)
      {
-        //GLES 3.1
+        // OpenGL ES 3.1
         ret_value = EINA_TRUE;
+
+        /* HACK for libglvnd (The GL Vendor-Neutral Dispatch library)
+         *
+         * For NVIDIA driver using libglvnd, GLES 3.0 symbols are exposed in
+         * libGLESv2.so and properly forwarded to libGLESv2_nvidia.so.
+         *
+         * But for GLES 3.1+ the symbols are not present in libGLESv2.so so
+         * the following dlsym() would invariably fail. eglGetProcAddress also
+         * fails to find the symbols. I believe this is a bug in libglvnd's
+         * libEGL.so, as it should be finding the symbol in nvidia's library.
+         *
+         * So we try here to link directly to the vendor library. This is ugly,
+         * but this makes GLES 3.1 work.
+         *
+         * FIXME: This hack should be removed when libglvnd fixes support
+         * for GLES 3.1+ properly.
+         */
+
+        funcs->glDispatchCompute = dlsym(dl_handle, "glDispatchCompute");
+        if (!funcs->glDispatchCompute && get_proc_address)
+          get_proc_address("glDispatchCompute");
+#ifdef GL_GLES
+        if (!funcs->glDispatchCompute)
+          {
+             const char *vendor;
+
+             vendor = (const char *) funcs->glGetString(GL_VENDOR);
+             if (!vendor) return ret_value;
+
+             // FIXME: Add other support for other vendors
+             if (!strcmp(vendor, "NVIDIA Corporation"))
+               _gles3_handle_fallback = dlopen("libGLESv2_nvidia.so", RTLD_NOW);
+
+             if (!_gles3_handle_fallback) return ret_value;
+             dl_handle = _gles3_handle_fallback;
+             get_proc_address = NULL;
+          }
+#else
+        if (!funcs->glDispatchCompute) return ret_value;
+#endif
+
         ORD(glDispatchCompute);
         ORD(glDispatchComputeIndirect);
         ORD(glDrawArraysIndirect);
