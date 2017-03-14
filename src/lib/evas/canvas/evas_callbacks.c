@@ -100,19 +100,14 @@ typedef enum {
 typedef struct
 {
    EINA_INLIST;
-   Evas_Object_Event_Cb func;
-   void *data;
-   Evas_Callback_Type type;
-   Efl_Event_Info_Type efl_event_type;
-} _eo_evas_object_cb_info;
-
-typedef struct
-{
-   EINA_INLIST;
-   Evas_Event_Cb func;
-   void *data;
-   Evas_Callback_Type type;
-} _eo_evas_cb_info;
+   union {
+      Evas_Event_Cb         evas_cb;
+      Evas_Object_Event_Cb  object_cb;
+   } func;
+   void                    *data;
+   Evas_Callback_Type       type;
+   Efl_Event_Info_Type      efl_event_type;
+} Evas_Event_Cb_Wrapper_Info;
 
 static int
 _evas_event_efl_event_info_type(Evas_Callback_Type type)
@@ -162,11 +157,11 @@ _eo_evas_object_cb(void *data, const Efl_Event *event)
 {
    Evas_Event_Flags *event_flags = NULL, evflags = EVAS_EVENT_FLAG_NONE;
    Efl_Input_Event *efl_event_info = event->info;
-   _eo_evas_object_cb_info *info = data;
+   Evas_Event_Cb_Wrapper_Info *info = data;
    void *event_info;
    Evas *evas;
 
-   if (!info->func) return;
+   if (!info->func.object_cb) return;
    evas = evas_object_evas_get(event->object);
 
    event_info = event->info;
@@ -185,19 +180,21 @@ _eo_evas_object_cb(void *data, const Efl_Event *event)
         break;
 
       case EFL_EVENT_TYPE_FOCUS:
-         event_info = NULL;
-        // NOTE: fallthrough here is explicitly intended!!!
       case EFL_EVENT_TYPE_NULL:
+         info->func.object_cb(info->data, evas, event->object, NULL);
+         return;
+
       case EFL_EVENT_TYPE_STRUCT:
       case EFL_EVENT_TYPE_OBJECT:
-        info->func(info->data, evas, event->object, event_info);
+        info->func.object_cb(info->data, evas, event->object, event_info);
         return;
+
       default: return;
      }
 
    if (!event_info) return;
    if (event_flags) evflags = *event_flags;
-   info->func(info->data, evas, event->object, event_info);
+   info->func.object_cb(info->data, evas, event->object, event_info);
    if (event_flags && (evflags != *event_flags))
      efl_input_event_flags_set(efl_event_info, *event_flags);
 }
@@ -205,20 +202,47 @@ _eo_evas_object_cb(void *data, const Efl_Event *event)
 static void
 _eo_evas_cb(void *data, const Efl_Event *event)
 {
+   Evas_Event_Cb_Wrapper_Info *info = data;
+   Efl_Input_Event *efl_event_info = event->info;
+   Evas *evas = event->object;
    void *event_info;
-   _eo_evas_cb_info *info = data;
 
-   //Keep the legacy behaviour for focus events.
-   if (event->desc == EFL_CANVAS_EVENT_FOCUS_IN ||
-       event->desc == EFL_CANVAS_EVENT_FOCUS_OUT)
-     event_info = NULL;
-   else if (event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_IN ||
-            event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT)
-     event_info = efl_input_focus_object_get(event->info);
-   else
-     event_info = event->info;
+   if (!info->func.evas_cb) return;
 
-   if (info->func) info->func(info->data, event->object, event_info);
+   if (event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_IN ||
+       event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT)
+     {
+        event_info = efl_input_focus_object_get(efl_event_info);
+        goto emit;
+     }
+
+   event_info = event->info;
+   switch (info->efl_event_type)
+     {
+      case EFL_EVENT_TYPE_POINTER:
+        event_info = efl_input_pointer_legacy_info_fill(evas, efl_event_info, info->type, NULL);
+        break;
+
+      case EFL_EVENT_TYPE_KEY:
+        event_info = efl_input_key_legacy_info_fill(efl_event_info, NULL);
+        break;
+
+      case EFL_EVENT_TYPE_HOLD:
+        event_info = efl_input_hold_legacy_info_fill(efl_event_info, NULL);
+        break;
+
+      case EFL_EVENT_TYPE_FOCUS:
+      case EFL_EVENT_TYPE_NULL:
+        event_info = NULL;
+        break;
+
+      case EFL_EVENT_TYPE_STRUCT:
+      case EFL_EVENT_TYPE_OBJECT:
+        break;
+     }
+
+emit:
+   info->func.evas_cb(info->data, event->object, event_info);
 }
 
 void
@@ -270,7 +294,7 @@ _evas_post_event_callback_free(Evas *eo_e)
 void
 evas_object_event_callback_all_del(Evas_Object *eo_obj)
 {
-   _eo_evas_object_cb_info *info;
+   Evas_Event_Cb_Wrapper_Info *info;
    Eina_Inlist *itr;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
@@ -295,7 +319,7 @@ evas_object_event_callback_cleanup(Evas_Object *eo_obj)
 void
 evas_event_callback_all_del(Evas *eo_e)
 {
-   _eo_evas_object_cb_info *info;
+   Evas_Event_Cb_Wrapper_Info *info;
    Eina_Inlist *itr;
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -435,17 +459,19 @@ evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type 
    if(!eo_obj) return;
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS));
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Event_Cb_Wrapper_Info *cb_info;
+   const Efl_Event_Description *desc;
 
    if (!obj) return;
    if (!func) return;
 
-   _eo_evas_object_cb_info *cb_info = calloc(1, sizeof(*cb_info));
-   cb_info->func = func;
+   cb_info = calloc(1, sizeof(*cb_info));
+   cb_info->func.object_cb = func;
    cb_info->data = (void *)data;
    cb_info->type = type;
    cb_info->efl_event_type = _evas_event_efl_event_info_type(type);
 
-   const Efl_Event_Description *desc = _legacy_evas_callback_table(type);
+   desc = _legacy_evas_callback_table(type);
    efl_event_callback_priority_add(eo_obj, desc, priority, _eo_evas_object_cb, cb_info);
 
    obj->callbacks =
@@ -458,7 +484,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
    if(!eo_obj) return NULL;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS), NULL);
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   _eo_evas_object_cb_info *info;
+   Evas_Event_Cb_Wrapper_Info *info;
 
    if (!obj) return NULL;
    if (!func) return NULL;
@@ -467,7 +493,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 
    EINA_INLIST_REVERSE_FOREACH(obj->callbacks, info)
      {
-        if ((info->func == func) && (info->type == type))
+        if ((info->func.object_cb == func) && (info->type == type))
           {
              void *tmp = info->data;
              efl_event_callback_del(eo_obj, _legacy_evas_callback_table(type), _eo_evas_object_cb, info);
@@ -487,7 +513,7 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
    if(!eo_obj) return NULL;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS), NULL);
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   _eo_evas_object_cb_info *info;
+   Evas_Event_Cb_Wrapper_Info *info;
 
    if (!obj) return NULL;
    if (!func) return NULL;
@@ -496,7 +522,7 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
 
    EINA_INLIST_FOREACH(obj->callbacks, info)
      {
-        if ((info->func == func) && (info->type == type) && info->data == data)
+        if ((info->func.object_cb == func) && (info->type == type) && info->data == data)
           {
              void *tmp = info->data;
              efl_event_callback_del(eo_obj, _legacy_evas_callback_table(type), _eo_evas_object_cb, info);
@@ -523,15 +549,18 @@ evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callb
    if(!eo_e) return;
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Event_Cb_Wrapper_Info *cb_info;
+   const Efl_Event_Description *desc;
 
    if (!func) return;
 
-   _eo_evas_cb_info *cb_info = calloc(1, sizeof(*cb_info));
-   cb_info->func = func;
+   cb_info = calloc(1, sizeof(*cb_info));
+   cb_info->func.evas_cb = func;
    cb_info->data = (void *)data;
    cb_info->type = type;
+   cb_info->efl_event_type = _evas_event_efl_event_info_type(type);
 
-   const Efl_Event_Description *desc = _legacy_evas_callback_table(type);
+   desc = _legacy_evas_callback_table(type);
    efl_event_callback_priority_add(eo_e, desc, priority, _eo_evas_cb, cb_info);
 
    e->callbacks = eina_inlist_append(e->callbacks, EINA_INLIST_GET(cb_info));
@@ -543,7 +572,7 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
    if(!eo_e) return NULL;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   _eo_evas_cb_info *info;
+   Evas_Event_Cb_Wrapper_Info *info;
 
    if (!e) return NULL;
    if (!func) return NULL;
@@ -552,7 +581,7 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 
    EINA_INLIST_REVERSE_FOREACH(e->callbacks, info)
      {
-        if ((info->func == func) && (info->type == type))
+        if ((info->func.evas_cb == func) && (info->type == type))
           {
              void *tmp = info->data;
              efl_event_callback_del(eo_e, _legacy_evas_callback_table(type), _eo_evas_cb, info);
@@ -572,7 +601,7 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
    if(!eo_e) return NULL;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   _eo_evas_cb_info *info;
+   Evas_Event_Cb_Wrapper_Info *info;
 
    if (!e) return NULL;
    if (!func) return NULL;
@@ -581,7 +610,7 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
 
    EINA_INLIST_FOREACH(e->callbacks, info)
      {
-        if ((info->func == func) && (info->type == type) && (info->data == data))
+        if ((info->func.evas_cb == func) && (info->type == type) && (info->data == data))
           {
              void *tmp = info->data;
              efl_event_callback_del(eo_e, _legacy_evas_callback_table(type), _eo_evas_cb, info);
