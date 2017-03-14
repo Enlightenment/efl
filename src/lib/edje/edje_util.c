@@ -6280,11 +6280,7 @@ _edje_real_part_swallow_clear(Edje *ed, Edje_Real_Part *rp)
        (!rp->typedata.swallow)) return;
    if (!rp->typedata.swallow->swallowed_object) return;
    if (rp->chosen_description->map.on ||
-       (rp->invalidate
-#ifdef HAVE_EPHYSICS
-        && rp->prev_description && rp->prev_description->map.on
-#endif
-        ))
+       (rp->invalidate && rp->prev_description && rp->prev_description->map.on))
      {
         evas_object_map_enable_set(rp->typedata.swallow->swallowed_object, EINA_FALSE);
      }

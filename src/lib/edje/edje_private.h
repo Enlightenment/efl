@@ -2009,8 +2009,8 @@ struct _Edje_Real_Part
    // WITH EDJE_CALC_CACHE: 307
    Edje_Running_Program     *program; // 4
    Edje_Calc_Params         *current; // 4
-#ifdef HAVE_EPHYSICS
    Edje_Part_Description_Common *prev_description; // 4
+#ifdef HAVE_EPHYSICS
    EPhysics_Body            *body; // 4
    Eina_List                *body_faces; // 4
 #endif
