@@ -47,11 +47,17 @@ _elm_theme_item_finalize(Elm_Theme_Files *files,
         char *version;
         int v;
 
-        if (!(version = edje_mmap_data_get(f, "version"))) return;
+        if (!(version = edje_mmap_data_get(f, "version")))
+          {
+             WRN("Selected %s theme have no version, abort.",
+                 eina_file_filename_get(f));
+             return;
+          }
         v = atoi(version);
         if (v < 110) // bump this version number when we need to
           {
-             WRN("Selected theme is too old (version = %d, needs >= 110)", v);
+             WRN("Selected %s theme is too old (version = %d, needs >= 110)",
+                 v, eina_file_filename_get(f));
           }
         free(version);
      }
