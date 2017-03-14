@@ -532,7 +532,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             [[Set the noblank property of a window.
 
               The "noblank" property is a way to request the display on
-              which the windowis shown does not blank, screensave or
+              which the window is shown does not blank, screensave or
               otherwise hide or obscure the window. It is intended for
               uses such as media playback on a television where a user
               may not want to be interrupted by an idle screen. The
