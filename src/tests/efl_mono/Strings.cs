@@ -154,4 +154,155 @@ class TestStrings
 
 }
 
+class TestStringshare
+{
+    /* public static void in_stringshare() */
+    /* { */
+    /*     { */
+    /*         test.Testing obj = new test.TestingConcrete(); */
+    /*         String sent = "in_stringshare"; */
+    /*         String returned = obj.in_stringshare(sent); */
+    /*         Test.AssertEquals(sent, returned); */
+    /*     } */
+    /*     System.GC.Collect(); */
+    /* } */
+
+    /* public static void in_own_stringshare() */
+    /* { */
+    /*     { */
+    /*         test.Testing obj = new test.TestingConcrete(); */
+    /*         String sent = "in_own_stringshare"; */
+    /*         String returned = obj.in_own_stringshare(sent); */
+    /*         Test.AssertEquals(sent, returned); */
+    /*     } */
+    /*     System.GC.Collect(); */
+    /* } */
+
+    public static void return_stringshare()
+    {
+        {
+            test.Testing obj = new test.TestingConcrete();
+            Test.AssertEquals("stringshare", obj.return_stringshare());
+        }
+        System.GC.Collect();
+    }
+
+    public static void return_own_stringshare()
+    {
+        {
+            test.Testing obj = new test.TestingConcrete();
+            Test.AssertEquals("own_stringshare", obj.return_own_stringshare());
+        }
+        System.GC.Collect();
+    }
+
+    /* public static void out_stringshare() */
+    /* { */
+    /*     { */
+    /*         String str = String.Empty; */
+    /*         test.Testing obj = new test.TestingConcrete(); */
+    /*         obj.out_stringshare(out str); */
+    /*         Test.AssertEquals("out_stringshare", str); */
+    /*     } */
+    /*     System.GC.Collect(); */
+    /* } */
+
+    /* public static void out_own_stringshare() */
+    /* { */
+    /*     { */
+    /*         String str = String.Empty; */
+    /*         test.Testing obj = new test.TestingConcrete(); */
+    /*         obj.out_own_stringshare(out str); */
+    /*         Test.AssertEquals(str.ToString(), "out_own_stringshare"); */
+    /*     } */
+    /*     System.GC.Collect(); */
+    /* } */
+
+    private class StringshareReturner : test.TestingInherit
+    {
+        public String received_in;
+        public String received_in_own;
+        public StringshareReturner() : base(null) {
+            received_in = String.Empty;
+            received_in_own = String.Empty;
+        }
+
+        /* public override String in_stringshare(String str) */
+        /* { */
+        /*     received_in = str; */
+        /*     return String.Empty; */
+        /* } */
+
+        /* public override String in_own_stringshare(String str) */
+        /* { */
+        /*     received_in_own = str; */
+        /*     return String.Empty; */
+        /* } */
+
+        public override String return_stringshare()
+        {
+            return "inherited";
+        }
+
+        public override String return_own_stringshare()
+        {
+            return "own_inherited";
+        }
+
+        /* public override void out_stringshare(out String str) */
+        /* { */
+        /*     str = "out_inherited"; */
+        /* } */
+
+        /* public override void out_own_stringshare(out System.String str) */
+        /* { */
+        /*     str = "out_own_inherited"; */
+        /* } */
+    }
+
+    /* public static void in_stringshare_from_virtual() */
+    /* { */
+    /*     StringshareReturner obj = new StringshareReturner(); */
+    /*     String sent = "in_inherited"; */
+    /*     obj.call_in_stringshare(sent); */
+    /*     Test.AssertEquals(sent, obj.received_in); */
+    /* } */
+
+    /* public static void in_own_stringshare_from_virtual() */
+    /* { */
+    /*     StringshareReturner obj = new StringshareReturner(); */
+    /*     String sent = "in_own_inherited"; */
+    /*     obj.call_in_own_stringshare(sent); */
+    /*     Test.AssertEquals(sent, obj.received_in_own); */
+    /* } */
+
+    public static void return_stringshare_from_virtual()
+    {
+        test.Testing obj = new StringshareReturner();
+        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        Test.AssertEquals("inherited", obj.call_return_stringshare());
+    }
+
+    public static void return_own_stringshare_from_virtual()
+    {
+        test.Testing obj = new StringshareReturner();
+        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        Test.AssertEquals("own_inherited", obj.call_return_own_stringshare());
+    }
+
+    /* public static void out_stringshare_from_virtual() */
+    /* { */
+    /*     test.Testing obj = new StringshareReturner(); */
+    /*     // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks. */
+    /*     Test.AssertEquals("out_inherited", obj.call_out_stringshare()); */
+    /* } */
+
+    /* public static void out_own_stringshare_from_virtual() */
+    /* { */
+    /*     test.Testing obj = new StringshareReturner(); */
+    /*     // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks. */
+    /*     Test.AssertEquals("out_own_inherited", obj.call_out_own_stringshare()); */
+    /* } */
+}
+
 }
