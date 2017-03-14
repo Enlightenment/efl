@@ -129,11 +129,31 @@ public class Globals {
         return ptr;
     }
 
+    public static IntPtr cached_stringshare_to_intptr(Dictionary<String, IntPtr> dict, String str)
+    {
+        IntPtr ptr = IntPtr.Zero;
+        if (!dict.TryGetValue(str, out ptr))
+        {
+            ptr = eina.Stringshare.eina_stringshare_add(str);
+            dict[str] = ptr;
+        }
+
+        return ptr;
+    }
+
     public static void free_dict_values(Dictionary<String, IntPtr> dict)
     {
         foreach(IntPtr ptr in dict.Values)
         {
             Marshal.FreeHGlobal(ptr);
+        }
+    }
+
+    public static void free_stringshare_values(Dictionary<String, IntPtr> dict)
+    {
+        foreach(IntPtr ptr in dict.Values)
+        {
+            eina.Stringshare.eina_stringshare_del(ptr);
         }
     }
 }        

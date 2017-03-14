@@ -3,30 +3,30 @@ class Test.Testing (Efl.Object) {
       return_object {
          return: Test.Testing;
       }
-      stringshare_in {
-         params {
-            @in v: stringshare;
-         }
-      }
-      stringshare_in_own {
-         params {
-            @in v: own(stringshare);
-         }
-      }
-      stringshare_out {
-         params {
-            @out v: stringshare;
-         }
-      }
-      stringshare_out_own {
-         params {
-            @out v: own(stringshare);
-         }
-      }
-      stringshare_ret {
+      /* stringshare_in { */
+      /*    params { */
+      /*       @in v: stringshare; */
+      /*    } */
+      /* } */
+      /* stringshare_in_own { */
+      /*    params { */
+      /*       @in v: own(stringshare); */
+      /*    } */
+      /* } */
+      /* stringshare_out { */
+      /*    params { */
+      /*       @out v: stringshare; */
+      /*    } */
+      /* } */
+      /* stringshare_out_own { */
+      /*    params { */
+      /*       @out v: own(stringshare); */
+      /*    } */
+      /* } */
+      return_stringshare {
          return: stringshare;
       }
-      stringshare_ret_own {
+      return_own_stringshare {
          return: own(stringshare);
       }
 
@@ -93,5 +93,36 @@ class Test.Testing (Efl.Object) {
       call_out_own_string {
          return: own(string);
       }
+
+      // Stringshare virtual helpers
+      /* call_in_stringshare { */
+      /*   params { */
+      /*       @in str: stringshare; */
+      /*   } */
+      /*   return: stringshare; */
+      /* } */
+
+      /* call_in_own_stringshare { */
+      /*   params { */
+      /*       @in str: stringshare; */
+      /*   } */
+      /*   return: own(stringshare); */
+      /* } */
+
+      call_return_stringshare {
+         return: stringshare;
+      }
+
+      call_return_own_stringshare {
+         return: own(stringshare);
+      }
+
+      /* call_out_stringshare { */
+      /*    return: stringshare; */
+      /* } */
+
+      /* call_out_own_stringshare { */
+      /*    return: own(stringshare); */
+      /* } */
    }
 }

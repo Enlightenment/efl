@@ -54,6 +54,18 @@ const char *_test_testing_in_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Te
   return strcpy((char*)ret, str);
 }
 
+Eina_Stringshare *_test_testing_return_stringshare(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  Eina_Stringshare *str = eina_stringshare_add("stringshare");
+  return str;
+}
+
+Eina_Stringshare *_test_testing_return_own_stringshare(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  Eina_Stringshare *str = eina_stringshare_add("own_stringshare");
+  return str;
+}
+
 const char *_test_testing_return_string(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
   return "string";
@@ -111,6 +123,41 @@ const char *_test_testing_call_out_own_string(Eo *obj, EINA_UNUSED Test_Testing_
   test_testing_out_own_string(obj, &ret);
   return ret;
 }
+
+// Stringshare virtual test helpers
+/* Eina_Stringshare *_test_testing_call_in_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Stringshare *str) */
+/* { */
+/*   return test_testing_in_stringshare(obj, str); */
+/* } */
+
+/* Eina_Stringshare *_test_testing_call_in_own_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Stringshare *str) */
+/* { */
+/*   return test_testing_in_own_stringshare(obj, str); */
+/* } */
+
+Eina_Stringshare *_test_testing_call_return_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  return test_testing_return_stringshare(obj);
+}
+
+Eina_Stringshare *_test_testing_call_return_own_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  return test_testing_return_own_stringshare(obj);
+}
+
+/* Eina_Stringshare *_test_testing_call_out_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd) */
+/* { */
+/*   Eina_Stringshare *ret = NULL; */
+/*   test_testing_out_stringshare(obj, &ret); */
+/*   return ret; */
+/* } */
+
+/* Eina_Stringshare *_test_testing_call_out_own_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd) */
+/* { */
+/*   Eina_Stringshare *ret = NULL; */
+/*   test_testing_out_own_stringshare(obj, &ret); */
+/*   return ret; */
+/* } */
 
 #include "test_testing.eo.c"
 
