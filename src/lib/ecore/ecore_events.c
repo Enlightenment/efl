@@ -621,7 +621,7 @@ ecore_event_type_flush_internal(int type, ...)
    eina_inarray_push(&types, &type);
 
    // In case of an empty list of event
-   if (type != ECORE_EVENT_NONE) return ;
+   if (type == ECORE_EVENT_NONE) return;
 
    va_start(args, type);
    do
@@ -637,7 +637,7 @@ ecore_event_type_flush_internal(int type, ...)
      {
         if (*itr >= 0 && *itr < event_id_max) continue;
 
-        ERR("Invalide event flush requested %i\n", *itr);
+        ERR("Invalid event flush requested: %i", *itr);
         wrong_type = EINA_TRUE;
      }
 
