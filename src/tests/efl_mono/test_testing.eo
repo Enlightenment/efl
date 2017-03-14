@@ -13,16 +13,18 @@ class Test.Testing (Efl.Object) {
       /*       @in v: own(stringshare); */
       /*    } */
       /* } */
-      /* stringshare_out { */
-      /*    params { */
-      /*       @out v: stringshare; */
-      /*    } */
-      /* } */
-      /* stringshare_out_own { */
-      /*    params { */
-      /*       @out v: own(stringshare); */
-      /*    } */
-      /* } */
+
+      out_stringshare {
+         params {
+            @out v: stringshare;
+         }
+      }
+      out_own_stringshare {
+         params {
+            @out v: own(stringshare);
+         }
+      }
+
       return_stringshare {
          return: stringshare;
       }
@@ -117,12 +119,12 @@ class Test.Testing (Efl.Object) {
          return: own(stringshare);
       }
 
-      /* call_out_stringshare { */
-      /*    return: stringshare; */
-      /* } */
+      call_out_stringshare {
+         return: stringshare;
+      }
 
-      /* call_out_own_stringshare { */
-      /*    return: own(stringshare); */
-      /* } */
+      call_out_own_stringshare {
+         return: own(stringshare);
+      }
    }
 }

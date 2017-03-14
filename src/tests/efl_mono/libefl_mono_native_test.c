@@ -135,6 +135,17 @@ const char *_test_testing_call_out_own_string(Eo *obj, EINA_UNUSED Test_Testing_
 /*   return test_testing_in_own_stringshare(obj, str); */
 /* } */
 
+void _test_testing_out_stringshare(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const char**str)
+{
+  // Returning simple string but the binding shouldn't del it as it is not owned by the caller
+  *str = "out_stringshare";
+}
+
+void _test_testing_out_own_stringshare(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const char**str)
+{
+  *str = eina_stringshare_add("out_own_stringshare");
+}
+
 Eina_Stringshare *_test_testing_call_return_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
   return test_testing_return_stringshare(obj);
@@ -145,19 +156,19 @@ Eina_Stringshare *_test_testing_call_return_own_stringshare(Eo *obj, EINA_UNUSED
   return test_testing_return_own_stringshare(obj);
 }
 
-/* Eina_Stringshare *_test_testing_call_out_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd) */
-/* { */
-/*   Eina_Stringshare *ret = NULL; */
-/*   test_testing_out_stringshare(obj, &ret); */
-/*   return ret; */
-/* } */
+Eina_Stringshare *_test_testing_call_out_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  Eina_Stringshare *ret = NULL;
+  test_testing_out_stringshare(obj, &ret);
+  return ret;
+}
 
-/* Eina_Stringshare *_test_testing_call_out_own_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd) */
-/* { */
-/*   Eina_Stringshare *ret = NULL; */
-/*   test_testing_out_own_stringshare(obj, &ret); */
-/*   return ret; */
-/* } */
+Eina_Stringshare *_test_testing_call_out_own_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  Eina_Stringshare *ret = NULL;
+  test_testing_out_own_stringshare(obj, &ret);
+  return ret;
+}
 
 #include "test_testing.eo.c"
 

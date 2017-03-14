@@ -13,16 +13,6 @@ namespace eolian_mono {
 
 namespace attributes = efl::eolian::grammar::attributes;
 
-inline bool param_should_use_out_var(attributes::parameter_def const& param)
-{
-   if (!param.type.has_own
-           && param.type.c_type == "const char *"
-           && param.direction != attributes::parameter_direction::in)
-     return true;
-
-   return false;
-}
-
 // Helper function to query parameter attributes
 const static bool WANT_OWN = true;
 const static bool WANT_OUT = true;
@@ -31,6 +21,16 @@ inline bool param_is_acceptable(attributes::parameter_def const &param, std::str
    return (param.type.c_type == c_type)
           && ((param.direction != attributes::parameter_direction::in) == want_out)
           && (param.type.has_own == want_own);
+}
+
+inline bool param_should_use_out_var(attributes::parameter_def const& param)
+{
+   if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
+     return true;
+
+   return false;
 }
 
 inline std::string out_variable_name(std::string const& param_name)
@@ -64,12 +64,7 @@ struct marshall_parameter_generator
   
 inline std::string argument_forward(attributes::parameter_def const& param)
 {
-   if (param.type.has_own && param.c_type == "Eina_Stringshare *")
-     if (param.direction == attributes::parameter_direction::in)
-       return "eina.Stringshare.eina_stringshare_add(" + escape_keyword(param.param_name) + ")";
-     else
-       return out_variable_name(param.param_name);
-   else
+    //FIXME Support correct ownership
      return escape_keyword(param.param_name);
 }
 
@@ -111,11 +106,12 @@ struct convert_out_variable_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      if (param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT))
+      if (param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT)
+          || param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
         {
            return as_generator(
                marshall_type << " " << string << " = default(" << marshall_type << ");\n"
-             ).generate(sink, std::make_tuple(param.type, out_variable_name(param.param_name), param.type), context);
+             ).generate(sink, std::make_tuple(param, out_variable_name(param.param_name), param), context);
         }
       else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
         {
@@ -133,7 +129,9 @@ struct native_convert_out_variable_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
+      if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT)
+          || param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT)
+          || param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT))
         {
            return as_generator(
                   type << " " << string << " = default(" << type << ");\n"
@@ -149,11 +147,21 @@ struct convert_out_assign_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      if (param_is_acceptable(param, "Eina_StringShare *", WANT_OWN, WANT_OUT))
+      if (param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT)
+          || param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT))
         {
-           return as_generator(
+           if (!as_generator(
                 escape_keyword(param.param_name) << " = Marshal.PtrToStringAnsi(" << out_variable_name(param.param_name) << "); "
-             ).generate(sink, attributes::unused, context);
+             ).generate(sink, attributes::unused, context))
+               return true;
+
+           if (param.type.has_own)
+             {
+                if (!as_generator(
+                    "eina.Stringshare.eina_stringshare_del(" << out_variable_name(param.param_name) << ");"
+                  ).generate(sink, attributes::unused, context))
+                    return false;
+             }
 
         }
       else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
@@ -225,11 +233,12 @@ struct native_convert_out_assign_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      if (param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT))
+      if (param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT)
+          || param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
         {
            return as_generator(
-                escape_keyword(param.param_name) << " = Marshal.PtrToStringAnsi(" << out_variable_name(param.param_name) << "); "
-              ).generate(sink, attributes::unused, context);
+                string << "= efl.eo.Globals.cached_stringshare_to_intptr(((" << string << "Inherit)wrapper).cached_stringshares, " << string << ");\n"
+              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), klass->cxx_name, out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
         {
