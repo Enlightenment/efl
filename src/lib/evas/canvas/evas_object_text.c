@@ -432,8 +432,7 @@ _evas_text_efl_text_properties_font_set(Eo *eo_obj, Evas_Text_Data *o, const cha
 
    evas_object_async_block(obj);
    if ((size == o->cur.size) &&
-       ((!font && !o->cur.font) ||
-        (font && o->cur.font && !strcmp(font, o->cur.font)))) return;
+       (o->cur.font && !strcmp(font, o->cur.font))) return;
 
    /* We can't assume the given font is same with current fdesc by comparing string.
       Since Evas starts to supporting "auto" for language,
