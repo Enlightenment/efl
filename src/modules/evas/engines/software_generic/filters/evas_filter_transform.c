@@ -34,8 +34,8 @@ _vflip_cpu(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_FALSE_GOTO(in != out, end);
 
    oy = cmd->draw.oy;
-   t = cmd->ctx->padt;
-   b = cmd->ctx->padb;
+   t = cmd->ctx->pad.final.t;
+   b = cmd->ctx->pad.final.b;
    objh = h - t - b;
    center = t + objh / 2 + oy;
 

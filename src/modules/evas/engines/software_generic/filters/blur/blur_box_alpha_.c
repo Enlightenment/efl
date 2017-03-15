@@ -7,12 +7,14 @@
 #include "evas_filter_private.h"
 
 static inline void
-_box_blur_alpha_horiz_step(const DATA8* restrict const srcdata,
-                           DATA8* restrict const dstdata,
+_box_blur_alpha_horiz_step(const uint8_t* restrict srcdata, int src_stride EINA_UNUSED,
+                           uint8_t* restrict dstdata, int dst_stride EINA_UNUSED,
                            const int* restrict const radii,
-                           const int len,
-                           const int loops)
+                           Eina_Rectangle region)
 {
+   const int len = region.w;
+   const int loops = region.h;
+
    const DATA8* restrict src;
    DATA8* restrict dst;
    DATA8* restrict span1;
@@ -126,15 +128,17 @@ _box_blur_alpha_horiz_step(const DATA8* restrict const srcdata,
 // ATTENTION: Make sure the below code's inner loop is the SAME as above.
 
 static inline void
-_box_blur_alpha_vert_step(const DATA8* restrict const srcdata,
-                          DATA8* restrict const dstdata,
+_box_blur_alpha_vert_step(const uint8_t* restrict srcdata, int src_stride  EINA_UNUSED,
+                          uint8_t* restrict dstdata, int dst_stride EINA_UNUSED,
                           const int* restrict const radii,
-                          const int len,
-                          const int loops)
+                          Eina_Rectangle region)
 {
    /* Note: This function tries to optimize cache hits by working on
     * contiguous horizontal spans.
     */
+
+   const int len = region.h;
+   const int loops = region.w;
 
    const int step = loops;
    DATA8* restrict src;

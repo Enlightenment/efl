@@ -1,25 +1,23 @@
 #ifdef BUILD_NEON
 
 static inline void
-_box_blur_rgba_horiz_step_neon(const DATA32* restrict const srcdata,
-                               DATA32* restrict const dstdata,
+_box_blur_rgba_horiz_step_neon(const uint32_t* restrict src, int src_stride,
+                               uint32_t* restrict dst, int dst_stride,
                                const int* restrict const radii,
-                               const int len,
-                               const int loops)
+                               Eina_Rectangle region)
 {
    // TODO: implement optimized code here and remove the following line:
-   _box_blur_rgba_horiz_step(srcdata, dstdata, radii, len, loops);
+   _box_blur_rgba_horiz_step(src, src_stride, dst, dst_stride, radii, region);
 }
 
 static inline void
-_box_blur_rgba_vert_step_neon(const DATA32* restrict const srcdata,
-                              DATA32* restrict const dstdata,
+_box_blur_rgba_vert_step_neon(const uint32_t* restrict src, int src_stride,
+                              uint32_t* restrict dst, int dst_stride,
                               const int* restrict const radii,
-                              const int len,
-                              const int loops)
+                              Eina_Rectangle region)
 {
    // TODO: implement optimized code here and remove the following line:
-   _box_blur_rgba_vert_step(srcdata, dstdata, radii, len, loops);
+   _box_blur_rgba_vert_step(src, src_stride, dst, dst_stride, radii, region);
 }
 
 #endif

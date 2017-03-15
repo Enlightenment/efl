@@ -7,12 +7,14 @@
 #include "evas_filter_private.h"
 
 static inline void
-_box_blur_rgba_horiz_step(const DATA32* restrict const srcdata,
-                          DATA32* restrict const dstdata,
+_box_blur_rgba_horiz_step(const uint32_t* restrict srcdata, int src_stride,
+                          uint32_t* restrict dstdata, int dst_stride,
                           const int* restrict const radii,
-                          const int len,
-                          const int loops)
+                          Eina_Rectangle region)
 {
+   const int len = region.w;
+   const int loops = region.h;
+
    const DATA32* restrict src;
    DATA32* restrict dst;
    DATA32* restrict span1;
@@ -29,6 +31,9 @@ _box_blur_rgba_horiz_step(const DATA32* restrict const srcdata,
      }
 #endif
 
+   srcdata += region.x + src_stride * region.y;
+   dstdata += region.x + dst_stride * region.y;
+
    span1 = alloca(len * sizeof(DATA32));
    span2 = alloca(len * sizeof(DATA32));
    memset(span1, 0, len * sizeof(DATA32));
@@ -40,9 +45,9 @@ _box_blur_rgba_horiz_step(const DATA32* restrict const srcdata,
         int run;
 
         // New line: reset source & destination pointers
-        src = srcdata + len * l;
+        src = srcdata + src_stride * l;
         if (!radii[1]) // Only one run
-          dst = dstdata + len * l;
+          dst = dstdata + dst_stride * l;
         else
           dst = span1;
 
@@ -140,7 +145,7 @@ _box_blur_rgba_horiz_step(const DATA32* restrict const srcdata,
                   else
                     {
                        // Last run: write directly to dstdata
-                       dst = dstdata + len * l;
+                       dst = dstdata + dst_stride * l;
                     }
                }
           }
@@ -148,17 +153,18 @@ _box_blur_rgba_horiz_step(const DATA32* restrict const srcdata,
 }
 
 static inline void
-_box_blur_rgba_vert_step(const DATA32* restrict const srcdata,
-                         DATA32* restrict const dstdata,
+_box_blur_rgba_vert_step(const uint32_t* restrict srcdata, int src_stride,
+                         uint32_t* restrict dstdata, int dst_stride,
                          const int* restrict const radii,
-                         const int len,
-                         const int loops)
+                         Eina_Rectangle region)
 {
    /* Note: This function tries to optimize cache hits by working on
     * contiguous horizontal spans.
     */
 
-   const int step = loops;
+   const int len = region.h;
+   const int loops = region.w;
+
    DATA32* restrict src;
    DATA32* restrict dst;
    DATA32* restrict span1;
@@ -174,6 +180,9 @@ _box_blur_rgba_vert_step(const DATA32* restrict const srcdata,
         numerators[run] = (1 << pow2_shifts[run]) / (div);
      }
 #endif
+
+   srcdata += region.x + src_stride * region.y;
+   dstdata += region.x + dst_stride * region.y;
 
    span1 = alloca(len * sizeof(DATA32));
    span2 = alloca(len * sizeof(DATA32));
@@ -191,7 +200,7 @@ _box_blur_rgba_vert_step(const DATA32* restrict const srcdata,
         for (int k = len; k; --k)
           {
              *s++ = *srcptr;
-             srcptr += step;
+             srcptr += src_stride;
           }
 
         src = span1;
@@ -290,7 +299,7 @@ _box_blur_rgba_vert_step(const DATA32* restrict const srcdata,
         for (int k = len; k; --k)
           {
              *dstptr = *dst++;
-             dstptr += step;
+             dstptr += dst_stride;
           }
      }
 }

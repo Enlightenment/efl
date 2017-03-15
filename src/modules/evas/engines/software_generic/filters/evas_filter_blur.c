@@ -46,64 +46,68 @@ _box_blur_auto_radius(int *radii, int r)
 #endif
 
 static void
-_box_blur_horiz_rgba(uint32_t *src, uint32_t *dst, int* radii, int w, int h)
+_box_blur_horiz_rgba(const uint32_t *src, int src_stride,
+                     uint32_t *dst, int dst_stride,
+                     int* radii, Eina_Rectangle region)
 {
    DEBUG_TIME_BEGIN();
 
 #ifdef BUILD_SSE3
    if (eina_cpu_features_get() & EINA_CPU_SSE3)
      {
-        _box_blur_rgba_horiz_step_sse3(src, dst, radii, w, h);
+        _box_blur_rgba_horiz_step_sse3(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
 #ifdef BUILD_MMX
    if (eina_cpu_features_get() & EINA_CPU_MMX)
      {
-        _box_blur_rgba_horiz_step_mmx(src, dst, radii, w, h);
+        _box_blur_rgba_horiz_step_mmx(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
 #ifdef BUILD_NEON
    if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
-        _box_blur_rgba_horiz_step_neon(src, dst, radii, w, h);
+        _box_blur_rgba_horiz_step_neon(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
-   _box_blur_rgba_horiz_step(src, dst, radii, w, h);
+   _box_blur_rgba_horiz_step(src, src_stride, dst, dst_stride, radii, region);
 
 end:
    DEBUG_TIME_END();
 }
 
 static void
-_box_blur_vert_rgba(uint32_t *src, uint32_t *dst, int* radii, int w, int h)
+_box_blur_vert_rgba(const uint32_t *src, int src_stride,
+                    uint32_t *dst, int dst_stride,
+                    int* radii, Eina_Rectangle region)
 {
    DEBUG_TIME_BEGIN();
 
 #ifdef BUILD_SSE3
    if (eina_cpu_features_get() & EINA_CPU_SSE3)
      {
-        _box_blur_rgba_vert_step_sse3(src, dst, radii, h, w);
+        _box_blur_rgba_vert_step_sse3(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
 #ifdef BUILD_MMX
    if (eina_cpu_features_get() & EINA_CPU_MMX)
      {
-        _box_blur_rgba_vert_step_mmx(src, dst, radii, h, w);
+        _box_blur_rgba_vert_step_mmx(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
 #ifdef BUILD_NEON
    if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
-        _box_blur_rgba_vert_step_neon(src, dst, radii, h, w);
+        _box_blur_rgba_vert_step_neon(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
-   _box_blur_rgba_vert_step(src, dst, radii, h, w);
+   _box_blur_rgba_vert_step(src, src_stride, dst, dst_stride, radii, region);
 
 end:
    DEBUG_TIME_END();
@@ -121,106 +125,172 @@ end:
 #endif
 
 static void
-_box_blur_horiz_alpha(const DATA8 *src, DATA8 *dst, int* radii, int w, int h)
+_box_blur_horiz_alpha(const uint8_t *src, int src_stride,
+                      uint8_t *dst, int dst_stride,
+                      int* radii, Eina_Rectangle region)
 {
    DEBUG_TIME_BEGIN();
 
 #ifdef BUILD_SSE3
    if (eina_cpu_features_get() & EINA_CPU_SSE3)
      {
-        _box_blur_alpha_horiz_step_sse3(src, dst, radii, w, h);
+        _box_blur_alpha_horiz_step_sse3(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
 #ifdef BUILD_MMX
    if (eina_cpu_features_get() & EINA_CPU_MMX)
      {
-        _box_blur_alpha_horiz_step_mmx(src, dst, radii, w, h);
+        _box_blur_alpha_horiz_step_mmx(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
 #ifdef BUILD_NEON
    if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
-        _box_blur_alpha_horiz_step_neon(src, dst, radii, w, h);
+        _box_blur_alpha_horiz_step_neon(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
-   _box_blur_alpha_horiz_step(src, dst, radii, w, h);
+   _box_blur_alpha_horiz_step(src, src_stride, dst, dst_stride, radii, region);
 
 end:
    DEBUG_TIME_END();
 }
 
 static void
-_box_blur_vert_alpha(const DATA8 *src, DATA8 *dst, int* radii, int w, int h)
+_box_blur_vert_alpha(const uint8_t *src, int src_stride,
+                     uint8_t *dst, int dst_stride,
+                     int* radii, Eina_Rectangle region)
 {
    DEBUG_TIME_BEGIN();
 
 #ifdef BUILD_SSE3
    if (eina_cpu_features_get() & EINA_CPU_SSE3)
      {
-        _box_blur_alpha_vert_step_sse3(src, dst, radii, h, w);
+        _box_blur_alpha_vert_step_sse3(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
 #ifdef BUILD_MMX
    if (eina_cpu_features_get() & EINA_CPU_MMX)
      {
-        _box_blur_alpha_vert_step_mmx(src, dst, radii, h, w);
+        _box_blur_alpha_vert_step_mmx(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
 #ifdef BUILD_NEON
    if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
-        _box_blur_alpha_vert_step_neon(src, dst, radii, h, w);
+        _box_blur_alpha_vert_step_neon(src, src_stride, dst, dst_stride, radii, region);
         goto end;
      }
 #endif
-   _box_blur_alpha_vert_step(src, dst, radii, h, w);
+   _box_blur_alpha_vert_step(src, src_stride, dst, dst_stride, radii, region);
 
 end:
    DEBUG_TIME_END();
 }
 
+static inline Eina_Rectangle
+_rect(int x, int y, int w, int h, int maxw, int maxh)
+{
+   Eina_Rectangle rect;
+
+   if (x < 0)
+     {
+        w -= (-x);
+        x = 0;
+     }
+   if (y < 0)
+     {
+        h -= (-y);
+        y = 0;
+     }
+   if ((x + w) > maxw) w = maxw - x;
+   if ((y + h) > maxh) h = maxh - y;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+
+   rect.x = x;
+   rect.y = y;
+   rect.w = w;
+   rect.h = h;
+   return rect;
+}
+
+#define RECT(_x, _y, _w, _h) _rect(_x, _y, _w, _h, w, h)
+
 static Eina_Bool
 _box_blur_apply(Evas_Filter_Command *cmd, Eina_Bool vert, Eina_Bool rgba)
 {
    unsigned int src_len, src_stride, dst_len, dst_stride;
-   Eina_Bool ret = EINA_TRUE;
+   Eina_Bool ret = EINA_FALSE;
+   Eina_Rectangle o, region[4];
    int radii[7] = {0};
-   unsigned int r;
+   int radius, regions, w, h;
    void *src, *dst;
 
-   r = abs(vert ? cmd->blur.dy : cmd->blur.dx);
+   radius = abs(vert ? cmd->blur.dy : cmd->blur.dx);
    src = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, rgba ? E_ARGB : E_ALPHA, &src_stride);
    dst = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, rgba ? E_ARGB : E_ALPHA, &dst_stride);
+   if (!src || !dst) goto unmap;
 
    if (cmd->blur.auto_count)
-     _box_blur_auto_radius(radii, r);
+     _box_blur_auto_radius(radii, radius);
    else for (int k = 0; k < cmd->blur.count; k++)
-     radii[k] = r;
+     radii[k] = radius;
 
-   if (src && dst)
+   w = cmd->input->w;
+   h = cmd->input->h;
+   o = cmd->ctx->obscured.effective;
+   if (!o.w || !o.h)
      {
+        region[0] = RECT(0, 0, w, h);
+        regions = 1;
+     }
+   else if (!vert)
+     {
+        // top (full), left, right, bottom (full)
+        region[0] = RECT(0, 0, w, o.y);
+        region[1] = RECT(0, o.y, o.x, o.h);
+        region[2] = RECT(o.x + o.w, o.y, w - o.x - o.w, o.h);
+        region[3] = RECT(0, o.y + o.h, w, h - o.y - o.h);
+        regions = 4;
+     }
+   else
+     {
+        // left (full), top, bottom, right (full)
+        region[0] = RECT(0, 0, o.x, h);
+        region[1] = RECT(o.x, 0, o.w, o.y);
+        region[2] = RECT(o.x, o.y + o.h, o.w, h - o.y - o.h);
+        region[3] = RECT(o.x + o.w, 0, w - o.x - o.w, h);
+        regions = 4;
+     }
+
+   XDBG("Box blur on image %dx%d obscured by %d,%d %dx%d", w, h, o.x, o.y, o.w, o.h);
+   for (int k = 0; k < regions; k++)
+     {
+        XDBG("Box blur in region %d,%d %dx%d", region[k].x, region[k].y, region[k].w, region[k].h);
         if (rgba)
           {
              if (!vert)
-               _box_blur_horiz_rgba(src, dst, radii, cmd->input->w, cmd->input->h);
+               _box_blur_horiz_rgba(src, src_stride / 4, dst, dst_stride / 4, radii, region[k]);
              else
-                _box_blur_vert_rgba(src, dst, radii, cmd->input->w, cmd->input->h);
+               _box_blur_vert_rgba(src, src_stride / 4, dst, dst_stride / 4, radii, region[k]);
           }
         else
           {
              if (!vert)
-               _box_blur_horiz_alpha(src, dst, radii, cmd->input->w, cmd->input->h);
+               _box_blur_horiz_alpha(src, src_stride, dst, dst_stride, radii, region[k]);
              else
-                _box_blur_vert_alpha(src, dst, radii, cmd->input->w, cmd->input->h);
+               _box_blur_vert_alpha(src, src_stride, dst, dst_stride, radii, region[k]);
           }
      }
-   else ret = EINA_FALSE;
 
+   ret = EINA_TRUE;
+
+unmap:
    ector_buffer_unmap(cmd->input->buffer, src, src_len);
    ector_buffer_unmap(cmd->output->buffer, dst, dst_len);
 
