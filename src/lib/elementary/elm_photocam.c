@@ -1758,6 +1758,7 @@ _elm_photocam_is_remote(const char *file)
    return EINA_FALSE;
 }
 
+
 static Evas_Load_Error
 _elm_photocam_file_set_internal(Eo *obj, Elm_Photocam_Data *sd, const char *file)
 {
@@ -1793,6 +1794,87 @@ _elm_photocam_file_set_internal(Eo *obj, Elm_Photocam_Data *sd, const char *file
 
    return ret;
 }
+
+static void
+_internal_data_set(Eo *obj, Elm_Photocam_Data *sd, void *data, int w, int h, Evas_Load_Error *ret)
+{
+   double tz;
+
+   evas_object_hide(sd->img);
+   evas_object_image_data_copy_set (sd->img, data);
+   evas_object_image_size_set(sd->img, w, h);
+
+   sd->do_region = EINA_FALSE;
+
+   sd->size.imw = w;
+   sd->size.imh = h;
+   sd->size.w = w / sd->zoom;
+   sd->size.h = h / sd->zoom;
+   evas_object_raise(sd->img);
+   evas_object_show(sd->img);
+
+   sd->no_smooth--;
+   if (sd->no_smooth == 0)
+     _smooth_update(obj);
+
+   evas_object_raise (sd->img);
+   evas_object_show (sd->img);
+   sd->main_load_pending = EINA_TRUE;
+
+   if (sd->calc_job) ecore_job_del(sd->calc_job);
+   sd->calc_job = ecore_job_add(_calc_job_cb, sd);
+   evas_object_smart_callback_call(obj, SIG_LOAD, NULL);
+
+   evas_object_show (sd->img);
+   tz = sd->zoom;
+   sd->zoom = 0.0;
+   elm_photocam_zoom_set(obj, tz);
+
+   evas_object_hide(sd->img);
+
+   evas_object_image_data_copy_set (sd->img, data);
+   sd->main_load_pending = EINA_TRUE;
+
+   evas_object_smart_callback_call(obj, SIG_LOAD, NULL);
+
+   evas_object_show (sd->img);
+
+   tz = sd->zoom;
+   sd->zoom = 0.0;
+   elm_photocam_zoom_set(obj, tz);
+
+   if (ret) *ret = evas_object_image_load_error_get(sd->img);
+}
+static Evas_Load_Error
+_elm_photocam_image_data_set_internal(Eo *obj, Elm_Photocam_Data *sd, void *data, int w, int h)
+{
+   Evas_Load_Error ret = EVAS_LOAD_ERROR_NONE;
+
+   _grid_clear_all(obj);
+   _elm_photocam_zoom_reset(obj, sd);
+   _elm_photocam_bounce_reset(obj, sd);
+   sd->no_smooth--;
+   if (sd->no_smooth == 0) _smooth_update(obj);
+
+   ecore_job_del(sd->calc_job);
+   evas_object_hide(sd->img);
+
+   _internal_data_set(obj, sd, data, w, h, &ret);
+
+   return ret;
+}
+
+EOLIAN static Eina_Bool
+_elm_photocam_image_data_set(Eo *obj, Elm_Photocam_Data *sd, void *data, int w, int h)
+{
+   ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_NONE;
+   if ((!data) || (w < 1) || (h < 1)) return EVAS_LOAD_ERROR_NONE;
+   return (EVAS_LOAD_ERROR_NONE ==_elm_photocam_image_data_set_internal(obj, sd, data, w, h));
+}
+
+
+
+
 
 EOLIAN static Eina_Bool
 _elm_photocam_efl_file_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, const char *key EINA_UNUSED)
@@ -1832,7 +1914,6 @@ elm_photocam_file_set(Elm_Photocam *obj, const char *file)
             EVAS_LOAD_ERROR_UNKNOWN_FORMAT :
           EVAS_LOAD_ERROR_GENERIC;
 }
-
 EOLIAN static void
 _elm_photocam_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd, const char **file, const char **key)
 {

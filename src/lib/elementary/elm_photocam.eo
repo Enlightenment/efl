@@ -186,6 +186,18 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
             @in h: int; [[Height of region in image original pixels]]
          }
       }
+      image_data_set {
+         [[Set the viewed region of the image
+
+           This shows the region of the image without using animation.
+         ]]
+         params {
+            @in data: void_ptr; [[X-coordinate of region in image original pixels]]
+            @in w: int; [[Width of region in image original pixels]]
+            @in h: int; [[Height of region in image original pixels]]
+         }
+         return: bool;
+      }
    }
    implements {
       class.constructor;
