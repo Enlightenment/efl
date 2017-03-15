@@ -151,14 +151,14 @@ struct convert_out_assign_generator
           || param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, WANT_OUT))
         {
            if (!as_generator(
-                escape_keyword(param.param_name) << " = Marshal.PtrToStringAnsi(" << out_variable_name(param.param_name) << "); "
+                escape_keyword(param.param_name) << " = Marshal.PtrToStringAnsi(" << out_variable_name(param.param_name) << ");\n"
              ).generate(sink, attributes::unused, context))
                return true;
 
            if (param.type.has_own)
              {
                 if (!as_generator(
-                    "eina.Stringshare.eina_stringshare_del(" << out_variable_name(param.param_name) << ");"
+                    "eina.Stringshare.eina_stringshare_del(" << out_variable_name(param.param_name) << ");\n"
                   ).generate(sink, attributes::unused, context))
                     return false;
              }
@@ -213,12 +213,12 @@ struct convert_return_generator
                  }
            }
 
-         if (!as_generator("return _mng_str;").generate(sink, attributes::unused, context))
+         if (!as_generator("return _mng_str;\n").generate(sink, attributes::unused, context))
              return false;
        }
      else if (ret_type.c_type != "void")
        {
-         return as_generator("return _ret_var; ").generate(sink, ret_type, context);
+         return as_generator("return _ret_var;\n").generate(sink, ret_type, context);
        }
      return true;
    }
@@ -276,13 +276,13 @@ struct native_convert_return_generator
                if (ret_type.c_type == "const char *")
                  {
                     return as_generator(
-                         "return efl.eo.Globals.cached_string_to_intptr(((" << string << "Inherit)wrapper).cached_strings, _ret_var);"
+                         "return efl.eo.Globals.cached_string_to_intptr(((" << string << "Inherit)wrapper).cached_strings, _ret_var);\n"
                       ).generate(sink, klass->cxx_name, context);
                  }
                else if (ret_type.c_type == "Eina_Stringshare *")
                  {
                     return as_generator(
-                         "return efl.eo.Globals.cached_stringshare_to_intptr(((" << string << "Inherit)wrapper).cached_stringshares, _ret_var);"
+                         "return efl.eo.Globals.cached_stringshare_to_intptr(((" << string << "Inherit)wrapper).cached_stringshares, _ret_var);\n"
                       ).generate(sink, klass->cxx_name, context);
                  }
            }
@@ -290,18 +290,18 @@ struct native_convert_return_generator
            {
                if (ret_type.c_type == "const char *")
                  {
-                     return as_generator("return Marshal.StringToHGlobalAuto(_ret_var);")
+                     return as_generator("return Marshal.StringToHGlobalAuto(_ret_var);\n")
                          .generate(sink, attributes::unused, context);
                  }
                else if (ret_type.c_type == "Eina_Stringshare *")
                  {
-                     return as_generator("return eina.Stringshare.eina_stringshare_add(_ret_var);")
+                     return as_generator("return eina.Stringshare.eina_stringshare_add(_ret_var);\n")
                          .generate(sink, attributes::unused, context);
                  }
            }
      }
      else if (ret_type.c_type != "void")
-       return as_generator("return _ret_var; ").generate(sink, ret_type, context);
+       return as_generator("return _ret_var;\n").generate(sink, ret_type, context);
      return true;
    }
 
