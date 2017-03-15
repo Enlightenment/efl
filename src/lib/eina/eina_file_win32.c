@@ -383,7 +383,7 @@ eina_file_real_close(Eina_File *file)
         free(map);
      }
 
-   if (file->global_map != MAP_FAILED && file->handle != NULL)
+   if (file->global_map != MAP_FAILED)
      UnmapViewOfFile(file->global_map);
 
    if (file->handle != INVALID_HANDLE_VALUE)
@@ -730,7 +730,7 @@ eina_file_open(const char *path, Eina_Bool shared)
    else
 #endif
      handle = CreateFile(filename,
-                         GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                         GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
                          NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
                          NULL);
 
@@ -832,7 +832,21 @@ eina_file_unlink(const char *pathname)
         if (file->handle != INVALID_HANDLE_VALUE)
           {
              CloseHandle(file->handle);
-             file->handle = INVALID_HANDLE_VALUE;
+
+             file->handle = CreateFile(unlink_path,
+                                       GENERIC_READ,
+                                       FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                       NULL,
+                                       OPEN_EXISTING,
+                                       FILE_ATTRIBUTE_NORMAL | FILE_FLAG_DELETE_ON_CLOSE,
+                                       NULL);
+
+            if (file->handle != INVALID_HANDLE_VALUE)
+              {
+                 CloseHandle(file->handle);
+                 file->handle = INVALID_HANDLE_VALUE;
+                 return EINA_TRUE;
+              }
           }
      }
 
