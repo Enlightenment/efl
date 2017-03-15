@@ -157,6 +157,24 @@ _evas_filter_state_set_internal(Evas_Filter_Program *pgm, Evas_Filter_Data *pd)
    return evas_filter_program_state_set(pgm, &state);
 }
 
+static inline Eina_Bool
+_evas_filter_obscured_region_changed(Evas_Filter_Data *pd)
+{
+   Eina_Rectangle inter;
+
+   inter = pd->data->prev_obscured;
+   if (eina_rectangle_is_empty(&pd->data->obscured) &&
+       eina_rectangle_is_empty(&inter))
+     return EINA_FALSE;
+   if (!eina_rectangle_intersection(&inter, &pd->data->obscured))
+     return EINA_TRUE;
+   if ((inter.w != pd->data->prev_obscured.w) ||
+       (inter.h != pd->data->prev_obscured.h))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
 Eina_Bool
 evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                           void *output, void *context, void *surface,
@@ -166,12 +184,13 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
    if (!pd->data->invalid && (pd->data->chain || pd->data->code))
      {
-        int X, Y, W, H, l = 0, r = 0, t = 0, b = 0;
+        int X, Y, W, H;
         Evas_Filter_Context *filter;
         void *drawctx;
         Eina_Bool ok;
         void *previous = pd->data->output;
         Evas_Object_Filter_Data *fcow;
+        Evas_Filter_Padding pad;
 
         /* NOTE: Filter rendering is now done ENTIRELY on CPU.
          * So we rely on cache/cache2 to allocate a real image buffer,
@@ -229,17 +248,15 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
           }
         else if (previous && !pd->data->changed)
           {
-             Eina_Bool redraw;
+             Eina_Bool redraw = EINA_TRUE;
 
-             redraw = _evas_filter_state_set_internal(pd->data->chain, pd);
-             if (redraw)
+             if (_evas_filter_state_set_internal(pd->data->chain, pd))
                DBG("Filter redraw by state change!");
              else if (obj->changed)
-               {
-                  // FIXME: Check that something else than X,Y changed!
-                  redraw = EINA_TRUE;
-                  DBG("Filter redraw by object content change!");
-               }
+               DBG("Filter redraw by object content change!");
+             else if (_evas_filter_obscured_region_changed(pd))
+               DBG("Filter redraw by obscure regions change!");
+             else redraw = EINA_FALSE;
 
              // Scan proxies to find if any changed
              if (!redraw && pd->data->sources)
@@ -303,13 +320,16 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         drawctx = ENFN->context_new(ENDT);
         ENFN->context_color_set(ENDT, drawctx, 255, 255, 255, 255);
 
+        // Set obscured region
+        evas_filter_context_obscured_region_set(filter, pd->data->obscured);
+
         // Allocate all buffers now
         evas_filter_context_buffers_allocate_all(filter);
         evas_filter_target_set(filter, context, surface, X + x, Y + y);
 
         // Request rendering from the object itself (child class)
-        evas_filter_program_padding_get(pd->data->chain, &l, &r, &t, &b);
-        ok = evas_filter_input_render(eo_obj, filter, drawctx, NULL, l, r, t, b, 0, 0, do_async);
+        evas_filter_program_padding_get(pd->data->chain, &pad, NULL);
+        ok = evas_filter_input_render(eo_obj, filter, drawctx, NULL, pad.l, pad.r, pad.t, pad.b, 0, 0, do_async);
         if (!ok) ERR("Filter input render failed.");
 
         ENFN->context_free(ENDT, drawctx);
@@ -321,7 +341,8 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         fcow = FCOW_BEGIN(pd);
         fcow->changed = EINA_FALSE;
         fcow->async = do_async;
-        if (!ok) fcow->invalid = EINA_TRUE;
+        fcow->prev_obscured = fcow->obscured;
+        fcow->invalid = !ok;
         FCOW_END(fcow, pd);
 
         if (ok)
@@ -534,15 +555,15 @@ EOLIAN static void
 _efl_canvas_filter_internal_efl_gfx_filter_filter_padding_get(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd,
                                                               int *l, int *r, int *t, int *b)
 {
-   if (!pd->data->chain)
-     {
-        if (l) *l = 0;
-        if (r) *r = 0;
-        if (t) *t = 0;
-        if (b) *b = 0;
-        return;
-     }
-   evas_filter_program_padding_get(pd->data->chain, l, r, t, b);
+   Evas_Filter_Padding pad = { 0, 0, 0, 0 };
+
+   if (pd->data->chain)
+     evas_filter_program_padding_get(pd->data->chain, &pad, NULL);
+
+   if (l) *l = pad.l;
+   if (r) *r = pad.r;
+   if (t) *t = pad.t;
+   if (b) *b = pad.b;
 }
 
 EOLIAN static void
@@ -695,6 +716,29 @@ EOLIAN static void *
 _efl_canvas_filter_internal_filter_output_buffer_get(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd)
 {
    return pd->data->output;
+}
+
+void
+_evas_filter_obscured_region_set(Evas_Object_Protected_Data *obj,
+                                 const Eina_Rectangle rect)
+{
+   Evas_Filter_Data *pd;
+   Evas_Object_Filter_Data *fcow;
+
+   pd = efl_data_scope_get(obj->object, MY_CLASS);
+   if (!pd->data) return;
+
+   fcow = FCOW_BEGIN(pd);
+   if ((rect.w <= 0) || (rect.h <= 0))
+     memset(&fcow->obscured, 0, sizeof(fcow->obscured));
+   else
+     {
+        fcow->obscured.x = rect.x - obj->cur->geometry.x;
+        fcow->obscured.y = rect.y - obj->cur->geometry.y;
+        fcow->obscured.w = rect.w;
+        fcow->obscured.h = rect.h;
+     }
+   FCOW_END(fcow, pd);
 }
 
 #include "canvas/efl_canvas_filter_internal.eo.c"

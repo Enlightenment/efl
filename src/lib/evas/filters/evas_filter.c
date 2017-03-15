@@ -1281,6 +1281,12 @@ evas_filter_command_transform_add(Evas_Filter_Context *ctx,
    return cmd;
 }
 
+void
+evas_filter_context_obscured_region_set(Evas_Filter_Context *ctx, Eina_Rectangle rect)
+{
+   ctx->obscured.real = rect;
+}
+
 /* Final target */
 Eina_Bool
 evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
@@ -1601,6 +1607,55 @@ _filter_thread_run_cb(void *data)
      ctx->post_run.cb(ctx, ctx->post_run.data, success);
 }
 
+static void
+_filter_obscured_region_calc(Evas_Filter_Context *ctx)
+{
+   Eina_Rectangle rect = ctx->obscured.real;
+
+   // left
+   if (rect.x > 0)
+     {
+        rect.x += ctx->pad.calculated.l;
+        rect.w -= ctx->pad.calculated.l;
+     }
+   else
+     {
+        rect.w -= (-rect.x);
+        rect.x = 0;
+     }
+   if (rect.w < 0) rect.w = 0;
+
+   // right
+   if ((rect.x + rect.w) <= ctx->w)
+     rect.w -= ctx->pad.calculated.r;
+   else
+     rect.w = ctx->w - rect.x;
+
+   // top
+   if (rect.y > 0)
+     {
+        rect.y += ctx->pad.calculated.t;
+        rect.h -= ctx->pad.calculated.t;
+     }
+   else
+     {
+        rect.h -= (-rect.y);
+        rect.y = 0;
+     }
+   if (rect.h < 0) rect.h = 0;
+
+   // bottom
+   if ((rect.y + rect.h) <= ctx->h)
+     rect.h -= ctx->pad.calculated.b;
+   else
+     rect.h = ctx->h - rect.y;
+
+   if ((rect.w <= 0) || (rect.h <= 0))
+     memset(&rect, 0, sizeof(rect));
+
+   ctx->obscured.effective = rect;
+}
+
 Eina_Bool
 evas_filter_run(Evas_Filter_Context *ctx)
 {
@@ -1610,6 +1665,8 @@ evas_filter_run(Evas_Filter_Context *ctx)
 
    if (!ctx->commands)
      return EINA_TRUE;
+
+   _filter_obscured_region_calc(ctx);
 
    if (ctx->async)
      {

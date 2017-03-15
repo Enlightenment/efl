@@ -324,7 +324,7 @@ struct _Evas_Filter_Program
    Eina_Inlist /* Buffer */ *buffers;
    struct {
       // Note: padding can't be in the state as it's calculated after running Lua
-      int l, r, t, b;
+      Evas_Filter_Padding calculated, final;
    } pad;
    Efl_Canvas_Filter_State state;
    Eina_Inlist *data; // Evas_Filter_Data_Binding
@@ -2882,21 +2882,22 @@ _buffers_update(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
 
 EAPI Eina_Bool
 evas_filter_program_padding_get(Evas_Filter_Program *pgm,
-                                int *l, int *r, int *t, int *b)
+                                Evas_Filter_Padding *out_final,
+                                Evas_Filter_Padding *out_calculated)
 {
    Evas_Filter_Instruction *instr;
    int pl = 0, pr = 0, pt = 0, pb = 0;
    int maxl = 0, maxr = 0, maxt = 0, maxb = 0;
+   int setl = 0, setr = 0, sett = 0, setb = 0;
+   Eina_Bool was_set = EINA_FALSE;
    Buffer *buf;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
 
-   if (pgm->padding_calc || pgm->padding_set)
+   if (pgm->padding_calc)
      {
-        if (l) *l = pgm->pad.l;
-        if (r) *r = pgm->pad.r;
-        if (t) *t = pgm->pad.t;
-        if (b) *b = pgm->pad.b;
+        if (out_final) *out_final = pgm->pad.final;
+        if (out_calculated) *out_calculated = pgm->pad.calculated;
         return EINA_TRUE;
      }
 
@@ -2909,8 +2910,8 @@ evas_filter_program_padding_get(Evas_Filter_Program *pgm,
      {
         if (instr->type == EVAS_FILTER_MODE_PADDING_SET)
           {
-             instr->pad.update(pgm, instr, &maxl, &maxr, &maxt, &maxb);
-             break;
+             instr->pad.update(pgm, instr, &setl, &setr, &sett, &setb);
+             was_set = EINA_TRUE;
           }
         else if (instr->pad.update)
           {
@@ -2922,16 +2923,23 @@ evas_filter_program_padding_get(Evas_Filter_Program *pgm,
           }
      }
 
-   pgm->pad.l = maxl;
-   pgm->pad.r = maxr;
-   pgm->pad.t = maxt;
-   pgm->pad.b = maxb;
+   pgm->pad.calculated.l = maxl;
+   pgm->pad.calculated.r = maxr;
+   pgm->pad.calculated.t = maxt;
+   pgm->pad.calculated.b = maxb;
+   if (!was_set)
+     pgm->pad.final = pgm->pad.calculated;
+   else
+     {
+        pgm->pad.final.l = setl;
+        pgm->pad.final.r = setr;
+        pgm->pad.final.t = sett;
+        pgm->pad.final.b = setb;
+     }
    pgm->padding_calc = EINA_TRUE;
 
-   if (l) *l = maxl;
-   if (r) *r = maxr;
-   if (t) *t = maxt;
-   if (b) *b = maxb;
+   if (out_final) *out_final = pgm->pad.final;
+   if (out_calculated) *out_calculated = pgm->pad.calculated;
 
    return EINA_TRUE;
 }
@@ -3503,7 +3511,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    _buffers_update(ctx, pgm);
 
    // Compute and save padding info
-   evas_filter_program_padding_get(pgm, &ctx->padl, &ctx->padr, &ctx->padt, &ctx->padb);
+   evas_filter_program_padding_get(pgm, &ctx->pad.final, &ctx->pad.calculated);
 
    dc = ENFN->context_new(ENDT);
    ENFN->context_color_set(ENDT, dc, 255, 255, 255, 255);

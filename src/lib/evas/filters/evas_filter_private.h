@@ -111,6 +111,7 @@ typedef enum _Evas_Filter_Interpolation_Mode Evas_Filter_Interpolation_Mode;
 
 typedef Evas_Filter_Buffer * (*evas_filter_buffer_scaled_get_func)(Evas_Filter_Context *ctx, Evas_Filter_Buffer *src, unsigned w, unsigned h);
 
+
 struct _Evas_Filter_Context
 {
    Evas_Public_Data *evas;
@@ -125,7 +126,16 @@ struct _Evas_Filter_Context
 
    // Variables changing at each run
    int w, h; // Dimensions of the input/output buffers
-   int padl, padt, padr, padb; // Padding in the current input/output buffers
+
+   struct {
+      // Padding in the current input/output buffers
+      Evas_Filter_Padding calculated, final;
+   } pad;
+
+   struct {
+      // Useless region: obscured by other objects
+      Eina_Rectangle real, effective;
+   } obscured;
 
    struct
    {

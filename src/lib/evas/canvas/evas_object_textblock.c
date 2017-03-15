@@ -478,9 +478,7 @@ struct _Efl_Canvas_Text_Filter
    Evas_Object          *eo_obj;
    Evas_Public_Data     *evas;
    void                 *dc; /* draw context - no clip, white, no colmul... */
-   struct {
-      int                l, r, t, b;
-   } pad;
+   Evas_Filter_Padding   pad;
    Eina_Bool             invalid;
    Eina_Bool             redraw;
 };
@@ -4051,15 +4049,15 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
 
    if (EINA_UNLIKELY(ti->parent.format->gfx_filter != NULL))
      {
-        int l = 0, r = 0, t = 0, b = 0;
+        Evas_Filter_Padding pad = { 0, 0, 0, 0 };
         Evas_Filter_Program *pgm;
 
         pgm = _format_filter_program_get(c->o, ti->parent.format);
         if (pgm)
           {
-             evas_filter_program_padding_get(pgm, &l, &r, &t, &b);
+             evas_filter_program_padding_get(pgm, &pad, NULL);
 
-             ti->x_adjustment = r + l;
+             ti->x_adjustment = pad.r + pad.l;
              ti->parent.w = tw + ti->x_adjustment; // FIXME: why add l+r here,
              ti->parent.h = th;                    // but not t+b here?
              ti->parent.adv = advw;
@@ -4647,21 +4645,21 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
      }
 
      {
-        Evas_Coord pad_l = 0, pad_r = 0, pad_t = 0, pad_b = 0;
+        Evas_Filter_Padding pad = { 0, 0, 0, 0 };
         Evas_Filter_Program *pgm = NULL;
 
         if (EINA_UNLIKELY(fmt->gfx_filter != NULL))
           pgm = _format_filter_program_get(efl_data_scope_get(obj, MY_CLASS), fmt);
 
         if (EINA_UNLIKELY(pgm != NULL))
-          evas_filter_program_padding_get(pgm, &pad_l, &pad_r, &pad_t, &pad_b);
+          evas_filter_program_padding_get(pgm, &pad, NULL);
         else
-          evas_text_style_pad_get(fmt->style, &pad_l, &pad_r, &pad_t, &pad_b);
+          evas_text_style_pad_get(fmt->style, &pad.l, &pad.r, &pad.t, &pad.b);
 
-        if (pad_l > *style_pad_l) *style_pad_l = pad_l;
-        if (pad_r > *style_pad_r) *style_pad_r = pad_r;
-        if (pad_t > *style_pad_t) *style_pad_t = pad_t;
-        if (pad_b > *style_pad_b) *style_pad_b = pad_b;
+        if (pad.l > *style_pad_l) *style_pad_l = pad.l;
+        if (pad.r > *style_pad_r) *style_pad_r = pad.r;
+        if (pad.t > *style_pad_t) *style_pad_t = pad.t;
+        if (pad.b > *style_pad_b) *style_pad_b = pad.b;
      }
 
    if (fmt->underline2)
@@ -13487,9 +13485,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
           }
 
         // target position
-        evas_filter_program_padding_get(pgm,
-                                        &filter->pad.l, &filter->pad.r,
-                                        &filter->pad.t, &filter->pad.b);
+        evas_filter_program_padding_get(pgm, &filter->pad, NULL);
         target = _filter_target_position_calc(obj, ti, x, y);
         ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
         ENFN->context_multiplier_set(ENDT, context,
@@ -13828,7 +13824,7 @@ _efl_canvas_text_efl_canvas_filter_internal_filter_state_prepare(
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_TEXT_CLASS);
    Evas_Object_Textblock_Text_Item *ti = data;
    Efl_Canvas_Text_Filter_Program *program;
-   int l = 0, r = 0, t = 0, b = 0;
+   Evas_Filter_Padding pad = {};
 
 #define STATE_COLOR(dst, src) dst.r = src.r; dst.g = src.g; dst.b = src.b; dst.a = src.a
    STATE_COLOR(state->color, ti->parent.format->color.normal);
@@ -13839,9 +13835,9 @@ _efl_canvas_text_efl_canvas_filter_internal_filter_state_prepare(
 #undef STATE_COLOR
 
    program = _filter_program_find(o, ti->parent.format->gfx_filter->name);
-   if (program) evas_filter_program_padding_get(program->pgm, &l, &r, &t, &b);
+   if (program) evas_filter_program_padding_get(program->pgm, &pad, NULL);
    state->w = ti->parent.w; // + l + r; (already included)
-   state->h = ti->parent.h + t + b;
+   state->h = ti->parent.h + pad.t + pad.b;
    state->scale = obj->cur->scale;
 }
 

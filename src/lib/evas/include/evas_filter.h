@@ -36,6 +36,7 @@ typedef struct _Evas_Filter_Context Evas_Filter_Context;
 typedef struct _Evas_Filter_Instruction Evas_Filter_Instruction;
 typedef struct _Evas_Filter_Buffer Evas_Filter_Buffer;
 typedef struct _Evas_Filter_Proxy_Binding Evas_Filter_Proxy_Binding;
+typedef struct _Evas_Filter_Padding Evas_Filter_Padding;
 typedef enum _Evas_Filter_Mode Evas_Filter_Mode;
 typedef enum _Evas_Filter_Blur_Type Evas_Filter_Blur_Type;
 typedef enum _Evas_Filter_Channel Evas_Filter_Channel;
@@ -124,6 +125,12 @@ enum _Evas_Filter_Transform_Flags
    EVAS_FILTER_TRANSFORM_VFLIP = 1
 };
 
+/** @internal */
+struct _Evas_Filter_Padding
+{
+   int l, r, t, b;
+};
+
 #define EFL_CANVAS_FILTER_STATE_DEFAULT { {}, { 255, 255, 255, 255 }, { "default", 0.0 }, {}, 0, 0, 1.0, 0.0 }
 
 /* Parser stuff (high level API) */
@@ -131,7 +138,7 @@ EAPI Evas_Filter_Program *evas_filter_program_new(const char *name, Eina_Bool in
 EAPI Eina_Bool           evas_filter_program_state_set(Evas_Filter_Program *pgm, const Efl_Canvas_Filter_State *state);
 EAPI Eina_Bool           evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
 EAPI void                evas_filter_program_del(Evas_Filter_Program *pgm);
-EAPI Eina_Bool           evas_filter_program_padding_get(Evas_Filter_Program *pgm, int *l, int *r, int *t, int *b);
+EAPI Eina_Bool           evas_filter_program_padding_get(Evas_Filter_Program *pgm, Evas_Filter_Padding *final, Evas_Filter_Padding *calc);
 EAPI void                evas_filter_program_source_set_all(Evas_Filter_Program *pgm, Eina_Hash *sources);
 void                     evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Inlist *data);
 
@@ -145,6 +152,7 @@ void                     evas_filter_context_proxy_render_all(Evas_Filter_Contex
 void                     evas_filter_context_post_run_callback_set(Evas_Filter_Context *ctx, Evas_Filter_Cb cb, void *data);
 #define                  evas_filter_context_autodestroy(ctx) evas_filter_context_post_run_callback_set(ctx, ((Evas_Filter_Cb) evas_filter_context_destroy), ctx)
 Eina_Bool                evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx);
+void                     evas_filter_context_obscured_region_set(Evas_Filter_Context *ctx, Eina_Rectangle rect);
 
 int                      evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only);
 void                    *evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid);
