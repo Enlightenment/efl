@@ -136,12 +136,12 @@ struct function_definition_generator
 
     if(!as_generator
        (scope_tab << (do_super ? "virtual " : "") << "public " << return_type << " " << string << "(" << (parameter % ", ")
-        << ") { "
+        << ") {\n "
         << eolian_mono::function_definition_preamble() << string << "("
         << (do_super ? "efl.eo.Globals.efl_super(" : "")
         << "this.raw_handle"
         << (do_super ? ", this.raw_klass)" : "")
-        << *(", " << argument_invocation ) << ");"
+        << *(", " << argument_invocation ) << ");\n"
         << eolian_mono::function_definition_epilogue()
         << " }\n")
        .generate(sink, std::make_tuple(escape_keyword(f.name), f.parameters, f, f.c_name, f.parameters, f), context))
