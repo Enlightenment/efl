@@ -47,7 +47,7 @@ _anim_toggle(void *data, const Efl_Event *ev EINA_UNUSED)
    it = efl_content_iterate(grid);
    EINA_ITERATOR_FOREACH(it, o)
      {
-        if (efl_player_playable_get(o))
+        if (efl_isa(o, EFL_PLAYER_INTERFACE) && efl_player_playable_get(o))
           efl_player_play_set(o, !efl_player_play_get(o));
      }
    eina_iterator_free(it);
@@ -87,9 +87,8 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
           path = eina_slstr_printf("%s/images/%s", elm_app_data_dir_get(), images[id]);
           o = _image_create(win, path);
           efl_pack_grid(grid, o, r, c, 1, 1);
-          if (efl_player_playable_get(o))
-            efl_player_play_set(o, 1);
        }
+   _anim_toggle(win, NULL);
 
    // Snapshot
    snap = efl_add(EFL_CANVAS_SNAPSHOT_CLASS, win,
@@ -101,6 +100,14 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
 
    // Objects above snapshot
+   // 1. Opaque rect, not changing
+   o = evas_object_rectangle_add(win);
+   evas_object_color_set(o, 32, 32, 96, 255);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_pack_grid(grid, o, 2, GRID_SIZE / 2, GRID_SIZE - 4, GRID_SIZE / 2 - 2);
+   evas_object_show(o);
+
+   // 2. Non-opaque animated object
    o = elm_progressbar_add(win);
    elm_object_style_set(o, "wheel");
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
