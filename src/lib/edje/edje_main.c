@@ -1,4 +1,5 @@
 #include "edje_private.h"
+#include <Efl.h>
 
 static Edje_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Edje_Version * edje_version = &_version;
@@ -25,6 +26,13 @@ static const Edje_Calc_Params_Physics default_calc_physics = {
 static void _edje_ephysics_clear(void);
 #endif
 
+const char *
+_edje_cache_dir_get(void)
+{
+   Efl_Vpath_Core *core = efl_vpath_core_get(EFL_VPATH_CORE_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(core, NULL);
+   return efl_vpath_core_meta_get(core, "cache");
+}
 
 /*============================================================================*
 *                                   API                                      *
@@ -74,12 +82,6 @@ edje_init(void)
         goto shutdown_eet;
      }
 
-   if (!efreet_init())
-     {
-        ERR("Efreet init failed");
-        goto shutdown_evas;
-     }
-
    _edje_scale = FROM_DOUBLE(1.0);
 
    _edje_edd_init();
@@ -116,7 +118,7 @@ edje_init(void)
    _edje_language = eina_stringshare_add(getenv("LANGUAGE"));
 
    str = eina_strbuf_new();
-   eina_strbuf_append_printf(str, "%s/edje", efreet_cache_home_get());
+   eina_strbuf_append_printf(str, "%s/edje", _edje_cache_dir_get());
    _edje_cache_path = eina_stringshare_add(eina_strbuf_string_get(str));
    eina_strbuf_free(str);
 
@@ -140,8 +142,6 @@ shutdown_all:
    _edje_text_class_hash_free();
    _edje_size_class_hash_free();
    _edje_edd_shutdown();
-   efreet_shutdown();
-shutdown_evas:
    evas_shutdown();
 shutdown_eet:
    eet_shutdown();
@@ -207,7 +207,6 @@ _edje_shutdown_core(void)
    _edje_ephysics_clear();
 #endif
 
-   efreet_shutdown();
    ecore_shutdown();
    evas_shutdown();
    eet_shutdown();

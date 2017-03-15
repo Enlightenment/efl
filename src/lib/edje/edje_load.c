@@ -66,7 +66,7 @@ _edje_extract_mo_files(Edje *ed)
    unsigned int i;
    int len;
 
-   cache_path = efreet_cache_home_get();
+   cache_path = _edje_cache_dir_get();
 
    t = eina_file_mtime_get(ed->file->f);
    sz = eina_file_size_get(ed->file->f);

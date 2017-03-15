@@ -4769,7 +4769,6 @@ EFL_INTERNAL_DEPEND_PKG([EDJE], [ecore-imf])
 EFL_INTERNAL_DEPEND_PKG([EDJE], [ecore-imf-evas])
 EFL_INTERNAL_DEPEND_PKG([EDJE], [embryo])
 EFL_INTERNAL_DEPEND_PKG([EDJE], [emile])
-EFL_INTERNAL_DEPEND_PKG([EDJE], [efreet])
 
 if test "x${want_physics}" = "xyes" ; then
   AC_DEFINE([HAVE_EPHYSICS], [1], [EPhysics Support])

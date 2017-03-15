@@ -54,7 +54,6 @@
 # include <Ecore_IMF_Evas.h>
 #endif
 #include <Embryo.h>
-#include <Efreet.h>
 
 #ifdef HAVE_EPHYSICS
 # include <EPhysics.h>
@@ -2663,6 +2662,8 @@ void _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc);
 EAPI void edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce);
 EAPI void edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce);
 EAPI void _edje_cache_file_unref(Edje_File *edf);
+
+const char *_edje_cache_dir_get(void);
 
 void _edje_embryo_globals_init(Edje *ed);
 
