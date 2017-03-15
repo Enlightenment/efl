@@ -610,6 +610,9 @@ _monitor(void *_data)
                                  // something we don't understand
                                  e_debug("EINA DEBUG ERROR: Unknown command");
                               }
+                            /* Free the buffer only if the default dispatcher is used */
+                            if (_session->dispatch_cb == eina_debug_dispatch)
+                               free(buffer);
                          }
                        else if (size == 0)
                          {
@@ -725,12 +728,7 @@ eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
 {
    Eina_Debug_Packet_Header *hdr = buffer;
    Eina_Debug_Error ret = EINA_DEBUG_OK;
-   if (hdr->thread_id == 0)
-     {
-        ret = _self_dispatch(session, buffer);
-        free(buffer);
-        return ret;
-     }
+   if (hdr->thread_id == 0) return _self_dispatch(session, buffer);
    else
      {
         int i, nb_calls = 0;
@@ -786,7 +784,6 @@ eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
                }
              eina_spinlock_release(&_eina_debug_thread_lock);
           }
-        free(buffer);
      }
    return ret;
 }
