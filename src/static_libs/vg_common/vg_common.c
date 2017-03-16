@@ -651,7 +651,7 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Vg_File_Data *vg_dat
              stops[i].r = stop->r;
              stops[i].g = stop->g;
              stops[i].b = stop->b;
-             stops[i].a = 255;
+             stops[i].a = stop->a;
              stops[i].offset = stop->offset;
              i++;
           }

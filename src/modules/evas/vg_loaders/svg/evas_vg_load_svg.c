@@ -2098,6 +2098,8 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
    else if (!strcmp(tag_name, "stop"))
      {
         Efl_Gfx_Gradient_Stop *stop = calloc(1, sizeof(Efl_Gfx_Gradient_Stop));
+        /* default value for opacity */
+        stop->a = 255;
         eina_simple_xml_attributes_parse(attrs, attrs_length,
                                     _attr_parse_stops, stop);
         if (loader->gradient)
