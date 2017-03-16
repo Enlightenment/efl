@@ -48,7 +48,6 @@ group { name: "e/gadget/luncher/icon";
          new Float:zoom = 1.75;
          new Float:scale = zoom - (abs(cursorpos-(iconpos+size/2)) / (size*4));
          if (scale < 1.0) scale = 1.0;
-         if (scale > zoom) scale = zoom;
 
          return scale;
       }
