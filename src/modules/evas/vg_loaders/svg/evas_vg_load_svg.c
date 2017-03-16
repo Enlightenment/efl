@@ -1790,6 +1790,14 @@ _create_radialGradient(const char *buf, unsigned buflen)
    grad->type = SVG_RADIAL_GRADIENT;
    grad->user_space = EINA_TRUE;
    grad->radial = calloc(1, sizeof(Svg_Radial_Gradient));
+   /**
+    * Default values of gradient
+    */
+   grad->radial->cx = 0.5;
+   grad->radial->cy = 0.5;
+   grad->radial->fx = 0.5;
+   grad->radial->fy = 0.5;
+   grad->radial->r = 0.5;
 
    svg_parse.gradient.fx_parsed = EINA_FALSE;
    svg_parse.gradient.fy_parsed = EINA_FALSE;

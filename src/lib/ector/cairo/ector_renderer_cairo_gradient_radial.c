@@ -22,6 +22,11 @@ static void (*cairo_arc)(cairo_t *cr,
 static void (*cairo_pattern_destroy)(cairo_pattern_t *pattern) = NULL;
 
 static void (*cairo_pattern_set_extend)(cairo_pattern_t *pattern, cairo_extend_t extend) = NULL;
+static void (*cairo_pattern_set_matrix)(cairo_t *cr, cairo_matrix_t *matrix) = NULL;
+static void (*cairo_matrix_init)(cairo_matrix_t *matrix,
+                                 double xx, double yx,
+                                 double xy, double yy,
+                                 double x0, double y0) = NULL;
 
 // FIXME: as long as it is not possible to directly access the parent structure
 //  this will be duplicated from the linear gradient renderer
@@ -48,12 +53,14 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_prepare(Eo *obj, Ector_Rend
 }
 
 static cairo_pattern_t *
-_ector_renderer_cairo_gradient_radial_prepare(Eo *obj EINA_UNUSED,
+_ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
                                               Ector_Renderer_Gradient_Radial_Data *grd,
                                               Ector_Renderer_Gradient_Data *gd,
                                               unsigned int mul_col)
 {
+   Ector_Renderer_Data *pd = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
    cairo_pattern_t *pat;
+   cairo_matrix_t *pd_m;
 
    pat = cairo_pattern_create_radial(grd->focal.x, grd->focal.y, 0,
                                      grd->radial.x, grd->radial.y, grd->radius);
@@ -62,6 +69,16 @@ _ector_renderer_cairo_gradient_radial_prepare(Eo *obj EINA_UNUSED,
    _ector_renderer_cairo_gradient_prepare(pat, gd, mul_col);
 
    cairo_pattern_set_extend(pat, _ector_cairo_extent_get(gd->s));
+
+   pd_m = malloc(sizeof (cairo_matrix_t));
+   if (pd->m)
+     {
+        cairo_matrix_init(pd_m,
+                          pd->m->xx, pd->m->yx,
+                          pd->m->xy, pd->m->yy,
+                          pd->m->xz, pd->m->yz);
+        cairo_pattern_set_matrix(pat, pd_m);
+     }
 
    return pat;
 }
@@ -148,9 +165,11 @@ _ector_renderer_cairo_gradient_radial_efl_object_finalize(Eo *obj, Ector_Rendere
    USE(base, cairo_pattern_destroy, NULL);
    USE(base, cairo_arc, NULL);
    USE(base, cairo_fill, NULL);
+   USE(base, cairo_matrix_init, NULL);
    USE(base, cairo_set_source, NULL);
    USE(base, cairo_pattern_destroy, NULL);
    USE(base, cairo_pattern_set_extend, NULL);
+   USE(base, cairo_pattern_set_matrix, NULL);
    USE(base, cairo_pattern_create_radial, NULL);
    USE(base, cairo_pattern_add_color_stop_rgba, NULL);
 

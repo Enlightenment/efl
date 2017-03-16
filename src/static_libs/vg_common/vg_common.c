@@ -553,7 +553,10 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Vg_File_Data *vg_dat
    Efl_Gfx_Gradient_Stop *stops, *stop;
    int stop_count = 0, i = 0;
    Eina_List *l;
-   Eina_Rect r = { 0, 0, 1, 1 };
+   Eina_Matrix3 m; //for bbox translation
+   Eina_Rect r = EINA_RECT( 0, 0, 1, 1 );
+   Eina_Rect grad_geom = EINA_RECT(0, 0, 0, 0);
+   int radius;
 
    //TODO: apply actual sizes (imporve bounds_get function?)...
    //for example with figures and paths
@@ -573,16 +576,62 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Vg_File_Data *vg_dat
      }
    else if (g->type == SVG_RADIAL_GRADIENT)
      {
-        /**
-         * That is according to Units in here
-         *
-         * https://www.w3.org/TR/2015/WD-SVG2-20150915/coords.html
-         */
-        int radius = sqrt(pow(r.h, 2) + pow(r.w, 2)) / sqrt(2.0);
+        radius = sqrt(pow(r.w, 2) + pow(r.h, 2)) / sqrt(2.0);
+        if (!g->user_space)
+          {
+             /**
+              * That is according to Units in here
+              *
+              * https://www.w3.org/TR/2015/WD-SVG2-20150915/coords.html
+              */
+             int min = (r.h > r.w) ? r.w : r.h;
+             radius = sqrt(pow(min, 2) + pow(min, 2)) / sqrt(2.0);
+          }
         grad_obj = evas_vg_gradient_radial_add(NULL);
         evas_vg_gradient_radial_center_set(grad_obj, g->radial->cx * r.w + r.x, g->radial->cy * r.h + r.y);
         evas_vg_gradient_radial_radius_set(grad_obj, g->radial->r * radius);
         evas_vg_gradient_radial_focal_set(grad_obj, g->radial->fx * r.w + r.x, g->radial->fy * r.h + r.y);
+
+        /* in case of objectBoundingBox it need proper scaling */
+        if (!g->user_space)
+          {
+             double scale_X = 1.0, scale_reversed_X = 1.0;
+             double scale_Y = 1.0, scale_reversed_Y = 1.0;
+
+             /* check the smallest size, find the scale value */
+             if (r.h > r.w)
+               {
+                  scale_Y = ((double) r.w) / r.h;
+                  scale_reversed_Y = ((double) r.h) / r.w;
+               }
+             else
+               {
+                  scale_X = ((double) r.h) / r.w;
+                  scale_reversed_X = ((double) r.w) / r.h;
+               }
+
+             evas_vg_node_bounds_get(grad_obj, &grad_geom);
+
+             double cy = grad_geom.h / 2 + grad_geom.y;
+             double cy_scaled = (grad_geom.h / 2) * scale_reversed_Y;
+             double cx = grad_geom.w / 2 + grad_geom.x;
+             double cx_scaled = (grad_geom.w / 2) * scale_reversed_X;
+
+             /* matrix tranformation of gradient figure:
+              * 0. we remember size of gradient and it's center point
+              * 1. move all gradients to point {0;0}
+              *    (so scale wont increase starting point)
+              * 2. scale properly only according to the bigger size of entity
+              * 3. move back so new center point would stay on position
+              *    it had previously
+              */
+             eina_matrix3_identity(&m);
+             eina_matrix3_translate(&m, grad_geom.x, grad_geom.y);
+             eina_matrix3_scale(&m, scale_X, scale_Y);
+             eina_matrix3_translate(&m, cx_scaled - cx, cy_scaled - cy);
+
+             efl_vg_transformation_set(grad_obj, &m);
+          }
      }
    else
      {
