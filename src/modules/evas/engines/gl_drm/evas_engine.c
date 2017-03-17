@@ -230,10 +230,7 @@ gl_extn_veto(Render_Engine *re)
              glsym_eglSetDamageRegionKHR = NULL;
           }
         if (!strstr(str, "EGL_EXT_buffer_age"))
-          {
-             if (!strstr(str, "EGL_KHR_partial_update"))
-               _extn_have_buffer_age = 0;
-          }
+          _extn_have_buffer_age = 0;
 
         if (!strstr(str, "EGL_KHR_partial_update"))
           glsym_eglSetDamageRegionKHR = NULL;
