@@ -556,9 +556,10 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 Render_Engine_Swap_Mode
 evas_outbuf_buffer_state_get(Outbuf *ob)
 {
-   ecore_drm2_fb_release(ob->priv.output, EINA_FALSE);
    /* check for valid output buffer */
    if (!ob) return MODE_FULL;
+
+   ecore_drm2_fb_release(ob->priv.output, EINA_FALSE);
 
    if (ob->swap_mode == MODE_AUTO && _extn_have_buffer_age)
      {
