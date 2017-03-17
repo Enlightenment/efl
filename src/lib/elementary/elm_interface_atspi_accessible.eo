@@ -242,43 +242,43 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
    data: Elm_Interface_Atspi_Accessible_Data;
    methods {
       @property localized_role_name @protected {
-         [[Gets an localized string describing AT-SPI widget role name.]]
+         [[Gets an localized string describing accessible object role name.]]
          get {
          }
          values {
-            localized_name: string; [[Localized widget role name]]
+            localized_name: string; [[Localized accessible object role name]]
          }
       }
       @property name {
-         [[String describing AT-SPI widget role name. Should be free by a user.]]
+         [[Accessible name of the object.]]
          get {
          }
          set {
          }
          values {
-            name: string; [[Object name]]
+            name: string; [[Accessible name]]
          }
       }
       @property relation_set @protected {
-         [[Gets an string describing AT-SPI widget role name. Lists and elements Should be free by a user.]]
+         [[Gets an all relations between accessible object and other accessible objects.]]
          get {
          }
          values {
-            relations: Elm.Atspi.Relation_Set; [[Widget relation set]]
+            relations: Elm.Atspi.Relation_Set; [[Accessible relation set]]
          }
       }
       @property role {
-         [[The role of the widget in AT-SPI Accessibility domain.]]
+         [[The role of the object in accessibility domain.]]
          get {
          }
          set {
          }
          values {
-            role: Elm.Atspi.Role; [[Widget role]]
+            role: Elm.Atspi.Role; [[Accessible role]]
          }
       }
       @property children @protected {
-         [[Gets widget's accessible children.]]
+         [[Gets object's accessible children.]]
          get {
          }
          values {
@@ -286,19 +286,19 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          }
       }
       @property role_name @protected {
-         [[Gets human-readable string indentifying widget accessibility role.]]
+         [[Gets human-readable string indentifying object accessibility role.]]
          get {
          }
          values {
-            role_name: string; [[Widget role name]]
+            role_name: string; [[Accessible role name]]
          }
       }
       @property attributes @protected {
-         [[Gets key-value pairs indentifying widget extra attributes. Must be free by a user.]]
+         [[Gets key-value pairs indentifying object extra attributes. Must be free by a user.]]
          get {
          }
          values {
-            attributes: free(own(list<own(ptr(Elm.Atspi.Attribute))>), elm_atspi_attributes_list_free); [[List of widget attributes]]
+            attributes: free(own(list<own(ptr(Elm.Atspi.Attribute))>), elm_atspi_attributes_list_free); [[List of object attributes]]
          }
       }
       @property index_in_parent @protected {
@@ -310,31 +310,31 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          }
       }
       @property description {
-         [[Widget contextual information.]]
+         [[Contextual information about object.]]
          get {
          }
          set {
          }
          values {
-            description: string; [[Widget contextual information]]
+            description: string; [[Accessible contextual information]]
          }
       }
       @property parent {
-         [[Widget accessible parent.]]
+         [[Object's accessible parent.]]
          get {
          }
          set {
          }
          values {
-            parent: Elm.Interface.Atspi_Accessible; [[Widget parent]]
+            parent: Elm.Interface.Atspi_Accessible; [[Accessible parent]]
          }
       }
       @property state_set @protected {
-         [[Gets set describing widget accessible states.]]
+         [[Gets set describing object accessible states.]]
          get {
          }
          values {
-            states: Elm.Atspi.State_Set; [[Widget states]]
+            states: Elm.Atspi.State_Set; [[Accessible state set]]
          }
       }
       event_handler_add @class @protected {
@@ -360,7 +360,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          }
       }
       @property translation_domain {
-         [[Sets the translation domain of "name" and "description"
+         [[The translation domain of "name" and "description"
            properties.
 
            Translation domain should be set if application wants to support i18n
