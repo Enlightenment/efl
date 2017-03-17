@@ -129,6 +129,7 @@ void evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y
 void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
 void evas_outbuf_release_fb(void *, void *);
+void evas_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage);
 
 Evas_Engine_GL_Context* evas_outbuf_gl_context_get(Outbuf *ob);
 void *evas_outbuf_egl_display_get(Outbuf *ob);

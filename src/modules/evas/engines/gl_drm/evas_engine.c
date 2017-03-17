@@ -855,7 +855,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
                                            evas_outbuf_rot_get,
                                            evas_outbuf_reconfigure,
                                            evas_outbuf_update_region_first_rect,
-                                           NULL,
+                                           evas_outbuf_damage_region_set,
                                            evas_outbuf_update_region_new,
                                            evas_outbuf_update_region_push,
                                            evas_outbuf_update_region_free,
