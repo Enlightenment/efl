@@ -722,14 +722,15 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
    return !!line && col <= (int) length;
 }
 
-static void
-_elm_code_widget_status_toggle(Elm_Code_Widget *widget, Elm_Code_Line *line)
+EOLIAN static void
+_elm_code_widget_line_status_toggle(Elm_Code_Widget *widget EINA_UNUSED, Elm_Code_Widget_Data *pd,
+                               Elm_Code_Line *line)
 {
    Evas_Object *status, *grid;
-   Elm_Code_Widget_Data *pd;
+   const char *template = "<color=#8B8B8B>%s</color>";
+   char *text;
 
    // add a status below the line if needed (and remove those no longer needed)
-   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    grid = eina_list_nth(pd->grids, line->number - 1);
    status = evas_object_data_get(grid, "status");
 
@@ -748,7 +749,11 @@ _elm_code_widget_status_toggle(Elm_Code_Widget *widget, Elm_Code_Line *line)
 
         elm_box_pack_after(pd->gridbox, status, grid);
         evas_object_data_set(grid, "status", status);
-        elm_object_text_set(status, line->status_text);
+
+        text = malloc((strlen(template) + strlen(line->status_text) + 1) * sizeof(char));
+        sprintf(text, template, line->status_text);
+        elm_object_text_set(status, text);
+        free(text);
      }
 }
 
@@ -903,7 +908,7 @@ _elm_code_widget_clicked_gutter_cb(Elm_Code_Widget *widget, unsigned int row)
 
    if (line->status_text)
      {
-       _elm_code_widget_status_toggle(widget, line);
+       elm_code_widget_line_status_toggle(widget, line);
        return;
      }
 

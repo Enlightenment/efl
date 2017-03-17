@@ -42,8 +42,11 @@ _elm_code_test_line_done_cb(void *data EINA_UNUSED, const Efl_Event *event)
 
    if (line->number == 1)
      elm_code_line_token_add(line, 17, 24, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
-   else if (line->number == 4)
-     line->status = ELM_CODE_STATUS_TYPE_ERROR;
+   else if (line->number == 2)
+     {
+        line->status = ELM_CODE_STATUS_TYPE_ERROR;
+        line->status_text = "  -> This warning is important!";
+     }
 
    efl_event_callback_stop(event->object);
 }
@@ -52,6 +55,7 @@ static Evas_Object *
 _elm_code_test_welcome_setup(Evas_Object *parent)
 {
    Elm_Code *code;
+   Elm_Code_Line *line;
    Elm_Code_Widget *widget;
 
    code = elm_code_create();
@@ -61,9 +65,9 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    efl_event_callback_add(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code);
 
    _append_line(code->file, "❤ Hello World, Elm Code! ❤");
+   _append_line(code->file, "*** Currently experimental ***");
    _append_line(code->file, "");
    _append_line(code->file, "This is a demo of elm_code's capabilities.");
-   _append_line(code->file, "⚑ *** Currently experimental ***");
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -71,6 +75,9 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
 
    elm_code_widget_selection_start(widget, 1, 3);
    elm_code_widget_selection_end(widget, 1, 13);
+
+   line = elm_code_file_line_get(code->file, 2);
+   elm_code_widget_line_status_toggle(widget, line);
 
    return widget;
 }

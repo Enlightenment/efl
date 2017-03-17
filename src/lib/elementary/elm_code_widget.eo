@@ -227,10 +227,6 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       	 [[Get the column width of the gutter]]
          return: int; [[The current column width of the gutter for the widget.]]
       }
-      text_line_number_width_get {
-      	 [[Get the required column width]]
-         return: int; [[The column width required to represent the number of lines in the widget.]]
-      }
       text_between_positions_get {
       	 [[Get text between given positions]]
          params {
@@ -272,6 +268,13 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
          }
          return: uint; [[Tabwidth]]
       }
+      line_status_toggle {
+         [[Toggle the display of the line status widget]]
+         params {
+            line: ptr(Elm_Code_Line); [[Code line]]
+         }
+      }
+
       undo {
          [[Undo last action]]
       }
