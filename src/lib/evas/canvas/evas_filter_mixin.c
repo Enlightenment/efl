@@ -741,4 +741,22 @@ _evas_filter_obscured_region_set(Evas_Object_Protected_Data *obj,
    FCOW_END(fcow, pd);
 }
 
+void
+_evas_filter_radius_get(Evas_Object_Protected_Data *obj, int *l, int *r, int *t, int *b)
+{
+   Evas_Filter_Padding pad = {};
+   Evas_Filter_Data *pd;
+
+   pd = efl_data_scope_get(obj->object, MY_CLASS);
+   if (!pd->data || !pd->data->chain) goto end;
+
+   evas_filter_program_padding_get(pd->data->chain, NULL, &pad);
+
+end:
+   if (l) *l = pad.l;
+   if (r) *r = pad.r;
+   if (t) *t = pad.t;
+   if (b) *b = pad.b;
+}
+
 #include "canvas/efl_canvas_filter_internal.eo.c"

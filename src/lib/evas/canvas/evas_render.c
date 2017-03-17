@@ -88,6 +88,7 @@ rend_dbg(const char *txt)
 #else
 #define RD(xxx, args...)
 #define IFRD(ifcase, xxx, args...)
+#define RDNAME(xxx) ""
 #endif
 
 #define OBJ_ARRAY_PUSH(array, obj) eina_array_push(array, obj)
@@ -2612,13 +2613,15 @@ end:
 }
 
 static void
-_evas_render_cutout_add(Evas_Public_Data *evas, void *context, Evas_Object_Protected_Data *obj, int off_x, int off_y)
+_evas_render_cutout_add(Evas_Public_Data *evas, void *context,
+                        Evas_Object_Protected_Data *obj, int off_x, int off_y,
+                        int cutout_margin)
 {
+   Evas_Coord cox = 0, coy = 0, cow = 0, coh = 0;
+
    if (evas_object_is_source_invisible(obj->object, obj)) return;
    if (evas_object_is_opaque(obj->object, obj))
      {
-        Evas_Coord cox, coy, cow, coh;
-
         cox = obj->cur->cache.clip.x;
         coy = obj->cur->cache.clip.y;
         cow = obj->cur->cache.clip.w;
@@ -2642,28 +2645,22 @@ _evas_render_cutout_add(Evas_Public_Data *evas, void *context, Evas_Object_Prote
                   oo = oo->cur->clipper;
                }
           }
-        ENFN->context_cutout_add(ENDT, context, cox + off_x, coy + off_y, cow, coh);
      }
-   else
+   else if (obj->func->get_opaque_rect)
      {
-        if (obj->func->get_opaque_rect)
-          {
-             Evas_Coord obx, oby, obw, obh;
-
-             obj->func->get_opaque_rect(obj->object, obj, obj->private_data, &obx, &oby, &obw, &obh);
-             if ((obw > 0) && (obh > 0))
-               {
-                  obx += off_x;
-                  oby += off_y;
-                  RECTS_CLIP_TO_RECT(obx, oby, obw, obh,
-                                     obj->cur->cache.clip.x + off_x,
-                                     obj->cur->cache.clip.y + off_y,
-                                     obj->cur->cache.clip.w,
-                                     obj->cur->cache.clip.h);
-                  ENFN->context_cutout_add(ENDT, context, obx, oby, obw, obh);
-               }
-          }
+        obj->func->get_opaque_rect(obj->object, obj, obj->private_data, &cox, &coy, &cow, &coh);
+        if ((cow <= 0) || (coh <= 0)) return;
+        RECTS_CLIP_TO_RECT(cox, coy, cow, coh,
+                           obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                           obj->cur->cache.clip.w, obj->cur->cache.clip.h);
      }
+   else return;
+   cox += cutout_margin + off_x;
+   coy += cutout_margin + off_y;
+   cow -= 2 * cutout_margin;
+   coh -= 2 * cutout_margin;
+   if ((cow <= 0) || (coh <= 0)) return;
+   ENFN->context_cutout_add(ENDT, context, cox, coy, cow, coh);
 }
 
 void
@@ -2821,7 +2818,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                                   Evas_Object_Protected_Data *top,
                                   int ux, int uy, int uw, int uh,
                                   int cx, int cy, int cw, int ch,
-                                  int fx, int fy,
+                                  int fx, int fy, int cutout_margin,
                                   Eina_Bool alpha,
                                   Eina_Bool do_async,
                                   unsigned int *offset, int level)
@@ -2854,7 +2851,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
 
              /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
              if (alpha)
-               _evas_render_cutout_add(evas, context, obj, off_x + fx, off_y + fy);
+               _evas_render_cutout_add(evas, context, obj, off_x + fx, off_y + fy, cutout_margin);
           }
      }
    if (alpha)
@@ -2966,7 +2963,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                             ux, uy, uw, uh)
                           )
 #endif
-                         _evas_render_cutout_add(evas, context, obj2, off_x + fx, off_y + fy);
+                         _evas_render_cutout_add(evas, context, obj2, off_x + fx, off_y + fy, cutout_margin);
                     }
 #endif
                   ENFN->context_cutout_target(ENDT, context,
@@ -3263,8 +3260,9 @@ evas_render_updates_internal(Evas *eo_e,
                   if (eina_rectangle_intersection(&ur, &output) &&
                       _snapshot_needs_redraw(evas, obj, &opaque))
                     {
-                       void *pseudo_canvas;
+                       int cutout_margin, fpl = 0, fpr = 0, fpt = 0, fpb = 0;
                        unsigned int restore_offset = offset;
+                       void *pseudo_canvas;
 
                        EINA_RECTANGLE_SET(&cr,
                                           ur.x - output.x, ur.y - output.y,
@@ -3273,6 +3271,10 @@ evas_render_updates_internal(Evas *eo_e,
                        pseudo_canvas = _evas_object_image_surface_get(obj, EINA_TRUE);
 
                        // TODO: List of canvas regions that need redraw
+                       // Get required margin for filters (eg. blur radius)
+                       _evas_filter_radius_get(obj, &fpl, &fpr, &fpt, &fpb);
+                       cutout_margin = MAX(MAX(MAX(fpl, fpr), fpt), fpb);
+
                        // Add obscure region (make it a list?)
                        _evas_filter_obscured_region_set(obj, opaque);
 
@@ -3282,7 +3284,7 @@ evas_render_updates_internal(Evas *eo_e,
                                                                        obj,
                                                                        ur.x, ur.y, ur.w, ur.h,
                                                                        cr.x, cr.y, cr.w, cr.h,
-                                                                       fx, fy, alpha,
+                                                                       fx, fy, cutout_margin, alpha,
                                                                        do_async,
                                                                        &offset, 1);
                        ENFN->context_free(ENDT, ctx);
@@ -3319,7 +3321,7 @@ evas_render_updates_internal(Evas *eo_e,
                                                              ctx, NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
-                                                             fx, fy, alpha,
+                                                             fx, fy, 0, alpha,
                                                              do_async,
                                                              &offset, 0);
              ENFN->context_free(ENDT, ctx);

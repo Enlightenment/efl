@@ -20,7 +20,7 @@ static const int rnd[] = {
 
 static const char *filter =
       "padding_set {0}"
-      "fill { color = '#0123' }"
+      "fill { color = 'red' }"
       "blur { 5 }"
       "print ('Evaluating filter: ' .. input.width .. 'x' .. input.height)"
       ;
