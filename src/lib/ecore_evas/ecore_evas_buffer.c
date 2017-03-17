@@ -111,6 +111,33 @@ _ecore_evas_show(Ecore_Evas *ee)
    _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
 }
 
+static void
+_ecore_evas_buffer_title_set(Ecore_Evas *ee, const char *t)
+{
+   if (eina_streq(ee->prop.title, t)) return;
+   if (ee->prop.title) free(ee->prop.title);
+   ee->prop.title = NULL;
+   if (!t) return;
+   ee->prop.title = strdup(t);
+}
+
+static void
+_ecore_evas_buffer_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
+{
+   if (!eina_streq(n, ee->prop.name))
+     {
+       	free(ee->prop.name);
+       	ee->prop.name = NULL;
+       	if (n) ee->prop.name = strdup(n);
+     }
+   if (!eina_streq(c, ee->prop.clas))
+     {
+       	free(ee->prop.clas);
+       	ee->prop.clas = NULL;
+       	if (c) ee->prop.clas = strdup(c);
+     }
+}
+
 static int
 _ecore_evas_buffer_render(Ecore_Evas *ee)
 {
@@ -573,8 +600,8 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL,
-     NULL,
-     NULL,
+     _ecore_evas_buffer_title_set,
+     _ecore_evas_buffer_name_class_set,
      NULL,
      NULL,
      NULL,
