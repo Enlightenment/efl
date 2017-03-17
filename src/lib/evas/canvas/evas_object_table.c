@@ -1133,7 +1133,15 @@ _evas_table_pack(Eo *o, Evas_Table_Data *priv, Evas_Object *child, unsigned shor
      }
    
    opt = _evas_object_table_option_get(child);
-   if (!opt)
+   if (opt)
+     {
+        if (evas_object_smart_parent_get(child) != o)
+          {
+             CRI("cannot pack child of one table into another table!");
+             return EINA_FALSE;
+          }
+     }
+   else
      {
         opt = malloc(sizeof(*opt));
         if (!opt)
@@ -1152,7 +1160,7 @@ _evas_table_pack(Eo *o, Evas_Table_Data *priv, Evas_Object *child, unsigned shor
    opt->end_col = col + colspan;
    opt->end_row = row + rowspan;
 
-   if (evas_object_smart_parent_get(child) == o)
+   if (!optalloc)
      {
         Eina_Bool need_shrink = EINA_FALSE;
 
