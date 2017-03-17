@@ -441,10 +441,7 @@ group { name: "e/widgets/border/default/border";
          }
       }
       part { name: "e.event.titlebar"; type: RECT;
-         description { state: "default" 0.0;
-            rel2.to_y: "e.swallow.client";
-            rel2.relative: 1 0;
-            rel2.offset: 0 1;
+         description { rel.to: "top";
             color: 0 0 0 0;
          }
       }
@@ -590,10 +587,9 @@ group { name: "e/widgets/border/default/border";
       }
       part { name: "e.event.resize.b"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: 1.0 1.0;
+            rel1.relative: 1.0 0.0;
             rel1.to_x: "e.event.resize.tl";
-            rel1.to_y: "e.swallow.client";
-            rel1.offset: 0 -1;
+            rel1.to_y: "bottom";
             rel2.relative: 0.0 1.0;
             rel2.to_x: "e.event.resize.tr";
             min: 0 5;
