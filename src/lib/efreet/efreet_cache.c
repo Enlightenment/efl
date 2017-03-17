@@ -133,12 +133,14 @@ _cb_server_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 static Ecore_Timer *reconnect_timer = NULL;
+static unsigned int reconnect_count = 0;
 
 static Eina_Bool
 _cb_server_reconnect(void *data EINA_UNUSED)
 {
    if (reconnect_timer) ecore_timer_del(reconnect_timer);
    reconnect_timer = NULL;
+   reconnect_count++;
    _ipc_launch();
    if (ipc)
      {
@@ -160,6 +162,13 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    double t;
    IPC_HEAD(Del);
    ipc = NULL;
+   if (reconnect_count > 10)
+     {
+        reconnect_timer = NULL;
+        CRI("efreetd connection failed 10 times! check for stale socket files in %s/.ecore/efreetd",
+          efreet_runtime_dir_get());
+        return EINA_FALSE;
+     }
    t = ecore_time_get();
    if ((t - last_del) < 0.5)
      {
