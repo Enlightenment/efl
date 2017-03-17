@@ -4405,7 +4405,6 @@ _item_select(Elm_Gen_Item *it)
    it->walking++;
    sd->walking++;
 
-   elm_object_item_focus_set(eo_it, EINA_TRUE);
    sd->last_selected_item = eo_it;
 
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
