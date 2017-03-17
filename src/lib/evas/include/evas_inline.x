@@ -94,6 +94,8 @@ static inline int
 evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (obj->is_smart || obj->no_render) return 0;
+   if (obj->cur->render_op == EVAS_RENDER_COPY)
+     return 1;
    /* If clipped: Assume alpha */
    if (obj->cur->cache.clip.a == 255)
      {
@@ -105,8 +107,6 @@ evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
           return obj->func->is_opaque(eo_obj, obj, obj->private_data);
         return 1;
      }
-   if (obj->cur->render_op == EVAS_RENDER_COPY)
-     return 1;
    return 0;
 }
 
