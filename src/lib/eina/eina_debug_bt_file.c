@@ -104,7 +104,11 @@ _eina_debug_file_get(const char *fname)
         const char *p;
         const char *pathstr = getenv("PATH");
 
-        if (!pathstr) return NULL;
+        if (!pathstr)
+          {
+             eina_spinlock_release(&_eina_debug_lock);
+             return NULL;
+          }
         // dup the entire env as we will rpelace : with 0 bytes to break str
         pathstrs = _eina_debug_chunk_strdup(pathstr);
         for (n = 0, p = pathstr; *p;)
