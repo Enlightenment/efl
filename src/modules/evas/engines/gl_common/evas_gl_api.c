@@ -25,7 +25,9 @@
       }
 
 static void *_gles3_handle = NULL;
+#ifdef GL_GLES
 static void *_gles3_handle_fallback = NULL;
+#endif
 static Evas_GL_API _gles3_api;
 //---------------------------------------//
 // API Debug Error Checking Code
