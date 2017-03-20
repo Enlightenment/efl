@@ -33,9 +33,22 @@ inline bool param_should_use_out_var(attributes::parameter_def const& param)
    return false;
 }
 
+inline bool param_should_use_in_var(attributes::parameter_def const& param)
+{
+    if (param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, !WANT_OUT))
+        return true;
+
+    return false;
+}
+
 inline std::string out_variable_name(std::string const& param_name)
 {
    return "_out_" + escape_keyword(param_name);
+}
+
+inline std::string in_variable_name(std::string const& param_name)
+{
+   return "_in_" + escape_keyword(param_name);
 }
 
 struct parameter_generator
@@ -94,12 +107,48 @@ struct argument_invocation_generator
 
      if (param_should_use_out_var(param))
        arg += out_variable_name(param.param_name);
+     else if (param_should_use_in_var(param))
+       arg += in_variable_name(param.param_name);
      else
        arg += escape_keyword(param.param_name);
 
      return as_generator(arg).generate(sink, attributes::unused, context);
    }
 } const argument_invocation {};
+
+struct native_convert_in_variable_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+      if (param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, !WANT_OUT))
+        {
+           auto var_name = in_variable_name(param.param_name);
+           return as_generator(
+                type << " " << string << " = Marshal.PtrToStringAuto(" << string << ");\n"
+             ).generate(sink, std::make_tuple(param, var_name, param.param_name), context);
+        }
+      return true;
+   }
+
+} const native_convert_in_variable {};
+
+struct convert_in_variable_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+      if (param_is_acceptable(param, "Eina_Stringshare *", WANT_OWN, !WANT_OUT))
+        {
+           auto var_name = in_variable_name(param.param_name);
+           return as_generator(
+               marshall_type << " " << string << " = eina.Stringshare.eina_stringshare_add(" << string << ");\n"
+             ).generate(sink, std::make_tuple(param, var_name, param.param_name), context);
+        }
+      return true;
+   }
+
+} const convert_in_variable {};
   
 struct convert_out_variable_generator
 {
@@ -213,7 +262,7 @@ struct convert_return_generator
                  }
            }
 
-         if (!as_generator("return _mng_str;\n").generate(sink, attributes::unused, context))
+         if (!as_generator(scope_tab << scope_tab << "return _mng_str;\n").generate(sink, attributes::unused, context))
              return false;
        }
      else if (ret_type.c_type != "void")
@@ -365,6 +414,26 @@ struct is_generator< ::eolian_mono::argument_invocation_generator> : std::true_t
 namespace type_traits {
 template <>
 struct attributes_needed< ::eolian_mono::argument_invocation_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_in_variable_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_in_variable_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_in_variable_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::convert_in_variable_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::convert_in_variable_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::convert_in_variable_generator> : std::integral_constant<int, 1> {};
 }
 
 template <>

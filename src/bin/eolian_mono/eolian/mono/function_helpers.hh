@@ -39,9 +39,10 @@ struct native_function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                scope_tab << *(native_convert_out_variable)
-                << scope_tab << native_convert_return_variable
-                ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
+                *(scope_tab << scope_tab << native_convert_in_variable << "\n")
+                << *(scope_tab << scope_tab << native_convert_out_variable << "\n")
+                << scope_tab << scope_tab << native_convert_return_variable
+                ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -60,9 +61,10 @@ struct function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                  scope_tab << *(convert_out_variable)
-                  << scope_tab << convert_return_variable
-                  ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
+                  *(scope_tab << scope_tab << convert_in_variable << "\n")
+                  << *(scope_tab << scope_tab << convert_out_variable << "\n")
+                  << scope_tab << scope_tab << convert_return_variable
+                  ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -83,8 +85,8 @@ struct native_function_definition_epilogue_generator
           return false;
 
       if (!as_generator(
-                  scope_tab << *(native_convert_out_assign(*klass))
-                  << scope_tab << native_convert_return(*klass)
+                  *(scope_tab << scope_tab << native_convert_out_assign(*klass) << "\n")
+                  << scope_tab << scope_tab << native_convert_return(*klass)
                   ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
           return false;
 
@@ -99,8 +101,8 @@ struct function_definition_epilogue_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   { 
       if (!as_generator(
-                  scope_tab << *(convert_out_assign)
-                  << scope_tab << convert_return
+                  *(scope_tab << scope_tab << convert_out_assign << "\n")
+                  << scope_tab << scope_tab << convert_return
                   ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
           return false;
 
