@@ -6500,9 +6500,10 @@ _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
                {
                   it->parent->item->items = eina_list_append_relative_list
                       (it->parent->item->items, eo_it, l);
-                  if (rel->item->items && rel->item->expanded)
+                  if (rel->item->items)
                     {
-                       eo_rel = eina_list_last_data_get(rel->item->items);
+                       Eina_List *ll = _list_last_recursive(rel->item->items);
+                       eo_rel = ll->data;
                        rel = efl_data_scope_get(eo_rel, ELM_GENLIST_ITEM_CLASS);
                     }
                   sd->items = eina_inlist_append_relative
