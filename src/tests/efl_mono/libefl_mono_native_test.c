@@ -125,15 +125,25 @@ const char *_test_testing_call_out_own_string(Eo *obj, EINA_UNUSED Test_Testing_
 }
 
 // Stringshare virtual test helpers
-/* Eina_Stringshare *_test_testing_call_in_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Stringshare *str) */
-/* { */
-/*   return test_testing_in_stringshare(obj, str); */
-/* } */
+Eina_Stringshare *_test_testing_call_in_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Stringshare *str)
+{
+  return test_testing_in_stringshare(obj, str);
+}
 
-/* Eina_Stringshare *_test_testing_call_in_own_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Stringshare *str) */
-/* { */
-/*   return test_testing_in_own_stringshare(obj, str); */
-/* } */
+Eina_Stringshare *_test_testing_call_in_own_stringshare(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Stringshare *str)
+{
+  return test_testing_in_own_stringshare(obj, str);
+}
+
+Eina_Stringshare *_test_testing_in_stringshare(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Stringshare *str)
+{
+    return eina_stringshare_add(str);
+}
+
+Eina_Stringshare *_test_testing_in_own_stringshare(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Stringshare *str)
+{
+    return str;
+}
 
 void _test_testing_out_stringshare(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, const char**str)
 {

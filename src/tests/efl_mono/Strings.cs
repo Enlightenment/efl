@@ -156,27 +156,27 @@ class TestStrings
 
 class TestStringshare
 {
-    /* public static void in_stringshare() */
-    /* { */
-    /*     { */
-    /*         test.Testing obj = new test.TestingConcrete(); */
-    /*         String sent = "in_stringshare"; */
-    /*         String returned = obj.in_stringshare(sent); */
-    /*         Test.AssertEquals(sent, returned); */
-    /*     } */
-    /*     System.GC.Collect(); */
-    /* } */
+    public static void in_stringshare()
+    {
+        {
+            test.Testing obj = new test.TestingConcrete();
+            String sent = "in_stringshare";
+            String returned = obj.in_stringshare(sent);
+            Test.AssertEquals(sent, returned);
+        }
+        System.GC.Collect();
+    }
 
-    /* public static void in_own_stringshare() */
-    /* { */
-    /*     { */
-    /*         test.Testing obj = new test.TestingConcrete(); */
-    /*         String sent = "in_own_stringshare"; */
-    /*         String returned = obj.in_own_stringshare(sent); */
-    /*         Test.AssertEquals(sent, returned); */
-    /*     } */
-    /*     System.GC.Collect(); */
-    /* } */
+    public static void in_own_stringshare()
+    {
+        {
+            test.Testing obj = new test.TestingConcrete();
+            String sent = "in_own_stringshare";
+            String returned = obj.in_own_stringshare(sent);
+            Test.AssertEquals(sent, returned);
+        }
+        System.GC.Collect();
+    }
 
     public static void return_stringshare()
     {
@@ -227,17 +227,17 @@ class TestStringshare
             received_in_own = String.Empty;
         }
 
-        /* public override String in_stringshare(String str) */
-        /* { */
-        /*     received_in = str; */
-        /*     return String.Empty; */
-        /* } */
+        public override String in_stringshare(String str)
+        {
+            received_in = str;
+            return String.Empty;
+        }
 
-        /* public override String in_own_stringshare(String str) */
-        /* { */
-        /*     received_in_own = str; */
-        /*     return String.Empty; */
-        /* } */
+        public override String in_own_stringshare(String str)
+        {
+            received_in_own = str;
+            return String.Empty;
+        }
 
         public override String return_stringshare()
         {
@@ -260,21 +260,21 @@ class TestStringshare
         }
     }
 
-    /* public static void in_stringshare_from_virtual() */
-    /* { */
-    /*     StringshareReturner obj = new StringshareReturner(); */
-    /*     String sent = "in_inherited"; */
-    /*     obj.call_in_stringshare(sent); */
-    /*     Test.AssertEquals(sent, obj.received_in); */
-    /* } */
+    public static void in_stringshare_from_virtual()
+    {
+        StringshareReturner obj = new StringshareReturner();
+        String sent = "in_inherited";
+        obj.call_in_stringshare(sent);
+        Test.AssertEquals(sent, obj.received_in);
+    }
 
-    /* public static void in_own_stringshare_from_virtual() */
-    /* { */
-    /*     StringshareReturner obj = new StringshareReturner(); */
-    /*     String sent = "in_own_inherited"; */
-    /*     obj.call_in_own_stringshare(sent); */
-    /*     Test.AssertEquals(sent, obj.received_in_own); */
-    /* } */
+    public static void in_own_stringshare_from_virtual()
+    {
+        StringshareReturner obj = new StringshareReturner();
+        String sent = "in_own_inherited";
+        obj.call_in_own_stringshare(sent);
+        Test.AssertEquals(sent, obj.received_in_own);
+    }
 
     public static void return_stringshare_from_virtual()
     {

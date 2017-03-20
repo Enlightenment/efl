@@ -3,16 +3,19 @@ class Test.Testing (Efl.Object) {
       return_object {
          return: Test.Testing;
       }
-      /* stringshare_in { */
-      /*    params { */
-      /*       @in v: stringshare; */
-      /*    } */
-      /* } */
-      /* stringshare_in_own { */
-      /*    params { */
-      /*       @in v: own(stringshare); */
-      /*    } */
-      /* } */
+
+      in_stringshare {
+         params {
+            @in v: stringshare;
+         }
+         return: own(stringshare);
+      }
+      in_own_stringshare {
+         params {
+            @in v: own(stringshare);
+         }
+         return: own(stringshare);
+      }
 
       out_stringshare {
          params {
@@ -34,7 +37,7 @@ class Test.Testing (Efl.Object) {
 
       in_string {
          params {
-            @in str: string;
+            @in str: own(string);
          }
          return: own(string);
       }
@@ -97,19 +100,19 @@ class Test.Testing (Efl.Object) {
       }
 
       // Stringshare virtual helpers
-      /* call_in_stringshare { */
-      /*   params { */
-      /*       @in str: stringshare; */
-      /*   } */
-      /*   return: stringshare; */
-      /* } */
+      call_in_stringshare {
+        params {
+            @in str: stringshare;
+        }
+        return: stringshare;
+      }
 
-      /* call_in_own_stringshare { */
-      /*   params { */
-      /*       @in str: stringshare; */
-      /*   } */
-      /*   return: own(stringshare); */
-      /* } */
+      call_in_own_stringshare {
+        params {
+            @in str: stringshare;
+        }
+        return: own(stringshare);
+      }
 
       call_return_stringshare {
          return: stringshare;
