@@ -21,7 +21,7 @@ static const int rnd[] = {
 static const char *filter =
       "padding_set {0}"
       "fill { color = 'red' }"
-      "blur { 5 }"
+      "blur { radius }"
       "print ('Evaluating filter: ' .. input.width .. 'x' .. input.height)"
       ;
 
@@ -51,6 +51,18 @@ _anim_toggle(void *data, const Efl_Event *ev EINA_UNUSED)
           efl_player_play_set(o, !efl_player_play_get(o));
      }
    eina_iterator_free(it);
+}
+
+static void
+_radius_set(void *data, const Efl_Event *ev)
+{
+   char buf[128];
+   Eo *win = data;
+   Eo *snap;
+
+   snap = efl_key_wref_get(win, "snap");
+   sprintf(buf, "tonumber(%d)", (int) elm_slider_value_get(ev->object));
+   efl_gfx_filter_data_set(snap, "radius", buf, EINA_TRUE);
 }
 
 static void
@@ -93,6 +105,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    // Snapshot
    snap = efl_add(EFL_CANVAS_SNAPSHOT_CLASS, win,
                   efl_gfx_filter_program_set(efl_added, filter, "filter"),
+                  efl_gfx_filter_data_set(efl_added, "radius", "tonumber(5)", EINA_TRUE),
                   efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
                   efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
                   efl_pack_grid(grid, efl_added, 1, 1, GRID_SIZE - 2, GRID_SIZE - 2),
@@ -118,11 +131,22 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    efl_pack_grid(grid, o, 0, 0, GRID_SIZE, GRID_SIZE);
 
    // Controls
+   efl_add(ELM_SLIDER_CLASS, win,
+           elm_object_text_set(efl_added, "Blur radius: "),
+           elm_slider_min_max_set(efl_added, 0, 64),
+           elm_slider_value_set(efl_added, 5),
+           elm_slider_unit_format_set(efl_added, "%.0f px"),
+           efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+           efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+           efl_pack_grid(grid, efl_added, 0, GRID_SIZE, GRID_SIZE, 1),
+           efl_event_callback_add(efl_added, ELM_SLIDER_EVENT_CHANGED, _radius_set, win),
+           efl_gfx_visible_set(efl_added, 1));
+
    efl_add(ELM_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle animation"),
            efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-           efl_pack_grid(grid, efl_added, 0, GRID_SIZE, (GRID_SIZE + 1) / 2, 1),
+           efl_pack_grid(grid, efl_added, 0, GRID_SIZE + 1, (GRID_SIZE + 1) / 2, 1),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _anim_toggle, win),
            efl_gfx_visible_set(efl_added, 1));
 
@@ -130,7 +154,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_text_set(efl_added, "Close"),
            efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-           efl_pack_grid(grid, efl_added, (GRID_SIZE + 1) / 2, GRID_SIZE, (GRID_SIZE + 1) / 2, 1),
+           efl_pack_grid(grid, efl_added, (GRID_SIZE + 1) / 2, GRID_SIZE + 1, (GRID_SIZE + 1) / 2, 1),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _close, win),
            efl_gfx_visible_set(efl_added, 1));
 
