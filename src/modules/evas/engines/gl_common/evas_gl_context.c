@@ -3430,11 +3430,11 @@ evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc,
 void
 evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
                                 Evas_GL_Texture *tex,
-                                int x, int y, int w, int h,
+                                double sx, double sy, double sw, double sh,
+                                double dx, double dy, double dw, double dh,
                                 double radius, Eina_Bool horiz)
 {
-   double sx, sy, sw, sh, pw, ph;
-   double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4;
+   double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4, pw, ph;
    GLfloat tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4;
    GLfloat offsetx, offsety;
    int r, g, b, a, nomul = 0, pn;
@@ -3452,14 +3452,14 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
      blend = EINA_FALSE;
 
    prog = evas_gl_common_shader_program_get(gc, type, NULL, 0, r, g, b, a,
-                                            w, h, w, h, smooth, tex, EINA_FALSE,
+                                            sw, sh, dw, dh, smooth, tex, EINA_FALSE,
                                             NULL, EINA_FALSE, EINA_FALSE, 0, 0,
                                             NULL, &nomul, NULL);
    _filter_data_flush(gc, prog);
    EINA_SAFETY_ON_NULL_RETURN(prog);
 
    pn = _evas_gl_common_context_push(type, gc, tex, NULL, prog,
-                                     x, y, w, h, blend, smooth,
+                                     sx, sy, dw, dh, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
    gc->pipe[pn].region.type = type;
@@ -3486,19 +3486,14 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_mask = 0;
    gc->pipe[pn].array.use_masksam = 0;
 
-   pipe_region_expand(gc, pn, x, y, w, h);
+   pipe_region_expand(gc, pn, dx, dy, dw, dh);
    PIPE_GROW(gc, pn, 6);
 
    // Set blur properties... TODO
    _filter_data_prepare(gc, pn, prog, 1);
    filter_data = gc->pipe[pn].array.filter_data;
    filter_data[0] = radius;
-   filter_data[1] = horiz ? w : h;
-
-   sx = 0;
-   sy = 0;
-   sw = w;
-   sh = h;
+   filter_data[1] = horiz ? sw : sh;
 
    pw = tex->pt->w;
    ph = tex->pt->h;
@@ -3524,7 +3519,7 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    tx4 = ((double)(offsetx) + ox4) / pw;
    ty4 = ((double)(offsety) + oy4) / ph;
 
-   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_VERTICES(pn, dx, dy, dw, dh);
    PUSH_6_QUAD(pn, tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4);
 
    if (!nomul)

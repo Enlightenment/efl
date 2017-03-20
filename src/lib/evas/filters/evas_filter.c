@@ -543,24 +543,53 @@ static Evas_Filter_Command *
 evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
                                 Evas_Filter_Buffer *in, Evas_Filter_Buffer *out,
                                 Evas_Filter_Blur_Type type,
-                                int dx, int dy, int ox, int oy, int count,
+                                int rx, int ry, int ox, int oy, int count,
                                 int R, int G, int B, int A)
 {
    Evas_Filter_Command *cmd;
-   Evas_Filter_Buffer *dx_out, *dy_in;
+   Evas_Filter_Buffer *dx_in, *dx_out, *dy_in, *tmp = NULL;
+   int down_x, down_y, dx, dy;
 
    /* GL blur implementation:
-    * - Always split X and Y passes (only one pass if 1D blur)
-    * - TODO: Repeat blur for large radius
-    * - TODO: Scale down & up for cheap blur
-    * - The rest is all up to the engine!
+    * - Create intermediate buffer T (variable size)
+    * - Downscale to buffer T
+    * - Apply X blur kernel
+    * - Apply Y blur kernel while scaling up
+    *
+    * - TODO: Fix distortion X vs. Y
+    * - TODO: Calculate best scaline and blur radius
+    * - TODO: Add post-processing? (2D single-pass)
     */
+
+   dx = rx;
+   dy = ry;
+   dx_in = in;
+
+   if (type == EVAS_FILTER_BLUR_DEFAULT)
+     {
+        down_x = MAX((1 << evas_filter_smallest_pow2_larger_than(dx / 2) / 2), 1);
+        down_y = MAX((1 << evas_filter_smallest_pow2_larger_than(dy / 2) / 2), 1);
+
+        tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
+                                               in->alpha_only, EINA_TRUE);
+        if (!tmp) goto fail;
+
+        // FIXME: Fix logic here. This is where the smarts are! Now it's dumb.
+        dx = rx / down_x;
+        dy = ry / down_y;
+
+        XDBG("Add GL downscale %d (%dx%d) -> %d (%dx%d)", in->id, in->w, in->h, tmp->id, tmp->w, tmp->h);
+        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLEND, in, NULL, tmp);
+        if (!cmd) goto fail;
+        cmd->draw.fillmode = EVAS_FILTER_FILL_MODE_STRETCH_XY;
+        dx_in = tmp;
+     }
 
    if (dx && dy)
      {
-        dx_out = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only, 1);
-        if (!dx_out) goto fail;
-        dy_in = dx_out;
+        tmp = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only, 1);
+        if (!tmp) goto fail;
+        dy_in = dx_out = tmp;
      }
    else
      {
@@ -570,8 +599,8 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
 
    if (dx)
      {
-        XDBG("Add GL blur %d -> %d (%dx%d px)", in->id, dx_out->id, dx, 0);
-        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, in, NULL, dx_out);
+        XDBG("Add GL blur %d -> %d (%dx%d px)", dx_in->id, dx_out->id, dx, 0);
+        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, dx_in, NULL, dx_out);
         if (!cmd) goto fail;
         cmd->blur.type = type;
         cmd->blur.dx = dx;

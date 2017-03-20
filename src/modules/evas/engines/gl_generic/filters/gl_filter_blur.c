@@ -7,15 +7,10 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    Evas_GL_Image *image, *surface;
    RGBA_Draw_Context *dc_save;
    Eina_Bool horiz;
-   double radius;
-   int x, y, w, h;
+   double sx, sy, sw, sh, ssx, ssy, ssw, ssh, dx, dy, dw, dh, radius;
+   int nx, ny, nw, nh;
 
    DEBUG_TIME_BEGIN();
-
-   x = cmd->draw.ox;
-   y = cmd->draw.oy;
-   w = cmd->input->w;
-   h = cmd->input->h;
 
    re->window_use(re->software.ob);
    gc = re->window_gl_context_get(re->software.ob);
@@ -52,7 +47,23 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
        cmd->input->id, cmd->input->buffer, cmd->output->id, cmd->output->buffer,
        radius, horiz ? "X" : "Y");
 
-   evas_gl_common_filter_blur_push(gc, image->tex, x, y, w, h, radius, horiz);
+   sx = 0;
+   sy = 0;
+   sw = cmd->input->w;
+   sh = cmd->input->h;
+   dx = cmd->draw.ox;
+   dy = cmd->draw.oy;
+   dw = cmd->output->w;
+   dh = cmd->output->h;
+
+   nx = dx; ny = dy; nw = dw; nh = dh;
+   RECTS_CLIP_TO_RECT(nx, ny, nw, nh, 0, 0, cmd->output->w, cmd->output->h);
+   ssx = (double)sx + ((double)(sw * (nx - dx)) / (double)(dw));
+   ssy = (double)sy + ((double)(sh * (ny - dy)) / (double)(dh));
+   ssw = ((double)sw * (double)(nw)) / (double)(dw);
+   ssh = ((double)sh * (double)(nh)) / (double)(dh);
+
+   evas_gl_common_filter_blur_push(gc, image->tex, ssx, ssy, ssw, ssh, dx, dy, dw, dh, radius, horiz);
 
    evas_common_draw_context_free(gc->dc);
    gc->dc = dc_save;
