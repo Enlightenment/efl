@@ -679,8 +679,12 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_data_set(Eo *eo_obj, Evas_Filt
            db->execute = execute;
            fcow->data = eina_inlist_append(fcow->data, EINA_INLIST_GET(db));
         }
-      evas_filter_program_data_set_all(fcow->chain, fcow->data);
-      evas_filter_program_parse(fcow->chain, fcow->code);
+      fcow->invalid = EINA_FALSE;
+      if (fcow->chain)
+        {
+           evas_filter_program_data_set_all(fcow->chain, fcow->data);
+           evas_filter_program_parse(fcow->chain, fcow->code);
+        }
       fcow->changed = 1;
    }
    FCOW_END(fcow, pd);
