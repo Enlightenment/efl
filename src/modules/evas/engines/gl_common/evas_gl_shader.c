@@ -903,7 +903,8 @@ evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
         hastex = 1;
      }
    if ((p->flags & SHADER_FLAG_FILTER_DISPLACE) ||
-       (p->flags & SHADER_FLAG_FILTER_CURVE))
+       (p->flags & SHADER_FLAG_FILTER_CURVE) ||
+       (p->flags & SHADER_FLAG_FILTER_BLUR))
      {
         textures[6].enabled = 1;
         hastex = 1;

@@ -89,7 +89,8 @@ uniform sampler2D tex_filter;
 #endif
 
 #ifdef SHD_FILTER_BLUR
-varying vec2 blur_data;
+uniform sampler2D tex_filter;
+varying vec3 blur_data;
 #endif
 
 // ----------------------------------------------------------------------------
@@ -244,30 +245,46 @@ vec4 fetch_pixel(float ox, float oy)
    return c;
 }
 
+#ifndef SHD_FILTER_DIR_Y
+# define FETCH_PIXEL(x) fetch_pixel((x), 0.0)
+#else
+# define FETCH_PIXEL(x) fetch_pixel(0.0, (x))
+#endif
+
 void main()
 {
-   float u, u_div, radius, diam;
-   vec4 acc = vec4(0.,0.,0.,0.);
-   float div = 0.0;
+   float u, u_div, count, div, w;
+   vec4 acc, px;
 
-   radius = blur_data.x;
+   count = blur_data.x;
    u_div = blur_data.y;
-   diam = radius * 2.0 + 1.0;
+   //div = blur_data.z;
 
-   for (u = -radius; u <= radius; u += 1.0)
+   // Center pixel
+   w = texture2D(tex_filter, vec2(0.0, 0.0)).r;
+   px = FETCH_PIXEL(u / u_div);
+   acc = px * w;
+   div = w;
+
+   // Left & right
+   for (u = 1; u <= count; u += 1.0)
+
+#if 0
+   div = 0.0;
+   for (u = -count; u <= count; u += 1.0)
    {
-      float w = (u + radius) / (diam - 1.0) * 6.0 - 3.0;
-      w = (sin(w + M_PI_2) + 1.0) / 2.0;
+      w = texture2D(tex_filter, vec2(abs(u) / count, 0.0)).r;
 
 #ifndef SHD_FILTER_DIR_Y
-      vec4 px = fetch_pixel(u / u_div, 0.0);
+      px = fetch_pixel(u / u_div, 0.0);
 #else
-      vec4 px = fetch_pixel(0.0, u / u_div);
+      px = fetch_pixel(0.0, u / u_div);
 #endif
 
       acc += px * w;
       div += w;
    }
+#endif
 
 #ifndef SHD_NOMUL
    gl_FragColor = (acc / div) * col;

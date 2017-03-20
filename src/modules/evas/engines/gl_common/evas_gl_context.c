@@ -3432,7 +3432,8 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
                                 Evas_GL_Texture *tex,
                                 double sx, double sy, double sw, double sh,
                                 double dx, double dy, double dw, double dh,
-                                double radius, Eina_Bool horiz)
+                                GLfloat *values, GLfloat *offsets, int count,
+                                Eina_Bool horiz)
 {
    double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4, pw, ph;
    GLfloat tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4;
@@ -3443,6 +3444,8 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    Eina_Bool blend = EINA_TRUE;
    Eina_Bool smooth = EINA_TRUE;
    Shader_Type type = horiz ? SHD_FILTER_BLUR_X : SHD_FILTER_BLUR_Y;
+   GLuint map_tex;
+   double sum;
 
    r = R_VAL(&gc->dc->mul.col);
    g = G_VAL(&gc->dc->mul.col);
@@ -3489,11 +3492,34 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    pipe_region_expand(gc, pn, dx, dy, dw, dh);
    PIPE_GROW(gc, pn, 6);
 
-   // Set blur properties... TODO
-   _filter_data_prepare(gc, pn, prog, 1);
+   sum = values[0];
+   for (int k = 1; k < count; k++)
+     sum += 2.0 * values[k];
+
+   // Synchronous upload of Nx1 RGBA texture (FIXME: no reuse)
+   glGenTextures(1, &map_tex);
+   glBindTexture(GL_TEXTURE_2D, map_tex);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   // FIXME: GLES2 requires extensions here!!!
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, count, 1, 0, GL_RED, GL_FLOAT, values);
+   // FIXME: double values don't work??
+   //glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, count, 1, 0, GL_RED, GL_DOUBLE, values);
+
+   // Set curve properties (no need for filter_data)
+   gc->pipe[pn].shader.filter.map_tex = map_tex;
+   gc->pipe[pn].shader.filter.map_nearest = EINA_TRUE;
+   gc->pipe[pn].shader.filter.map_delete = EINA_TRUE;
+
+   // Set blur properties... WIP
+   _filter_data_prepare(gc, pn, prog, 2);
    filter_data = gc->pipe[pn].array.filter_data;
-   filter_data[0] = radius;
+   filter_data[0] = count;
    filter_data[1] = horiz ? sw : sh;
+   filter_data[2] = sum;
+   filter_data[3] = 0.0; // unused
 
    pw = tex->pt->w;
    ph = tex->pt->h;

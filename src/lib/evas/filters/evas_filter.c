@@ -548,7 +548,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *dx_in, *dx_out, *dy_in, *tmp = NULL;
-   int down_x, down_y, dx, dy;
+   int dx, dy;
 
    /* GL blur implementation:
     * - Create intermediate buffer T (variable size)
@@ -567,8 +567,13 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
 
    if (type == EVAS_FILTER_BLUR_DEFAULT)
      {
+        int down_x = 1, down_y = 1;
+
+        /* For now, disable scaling - testing perfect gaussian blur until it's
+         * ready:
         down_x = MAX((1 << evas_filter_smallest_pow2_larger_than(dx / 2) / 2), 1);
         down_y = MAX((1 << evas_filter_smallest_pow2_larger_than(dy / 2) / 2), 1);
+        */
 
         tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
                                                in->alpha_only, EINA_TRUE);

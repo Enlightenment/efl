@@ -201,7 +201,7 @@ _gl_filter_blend(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 }
 
 GL_Filter_Apply_Func
-gl_filter_blend_func_get(Evas_Filter_Command *cmd)
+gl_filter_blend_func_get(Render_Engine_GL_Generic *re EINA_UNUSED, Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);

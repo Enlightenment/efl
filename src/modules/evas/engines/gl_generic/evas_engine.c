@@ -3022,20 +3022,20 @@ eng_image_surface_noscale_region_get(void *engdata EINA_UNUSED, void *image, int
 //------------------------------------------------//
 
 static GL_Filter_Apply_Func
-_gfx_filter_func_get(Evas_Filter_Command *cmd)
+_gfx_filter_func_get(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 {
    GL_Filter_Apply_Func funcptr = NULL;
 
    switch (cmd->mode)
      {
-      case EVAS_FILTER_MODE_BLEND: funcptr = gl_filter_blend_func_get(cmd); break;
-      case EVAS_FILTER_MODE_BLUR: funcptr = gl_filter_blur_func_get(cmd); break;
-      //case EVAS_FILTER_MODE_BUMP: funcptr = gl_filter_bump_func_get(cmd); break;
-      case EVAS_FILTER_MODE_CURVE: funcptr = gl_filter_curve_func_get(cmd); break;
-      case EVAS_FILTER_MODE_DISPLACE: funcptr = gl_filter_displace_func_get(cmd); break;
-      case EVAS_FILTER_MODE_FILL: funcptr = gl_filter_fill_func_get(cmd); break;
-      case EVAS_FILTER_MODE_MASK: funcptr = gl_filter_mask_func_get(cmd); break;
-      //case EVAS_FILTER_MODE_TRANSFORM: funcptr = gl_filter_transform_func_get(cmd); break;
+      case EVAS_FILTER_MODE_BLEND: funcptr = gl_filter_blend_func_get(re, cmd); break;
+      case EVAS_FILTER_MODE_BLUR: funcptr = gl_filter_blur_func_get(re, cmd); break;
+      //case EVAS_FILTER_MODE_BUMP: funcptr = gl_filter_bump_func_get(re, cmd); break;
+      case EVAS_FILTER_MODE_CURVE: funcptr = gl_filter_curve_func_get(re, cmd); break;
+      case EVAS_FILTER_MODE_DISPLACE: funcptr = gl_filter_displace_func_get(re, cmd); break;
+      case EVAS_FILTER_MODE_FILL: funcptr = gl_filter_fill_func_get(re, cmd); break;
+      case EVAS_FILTER_MODE_MASK: funcptr = gl_filter_mask_func_get(re, cmd); break;
+      //case EVAS_FILTER_MODE_TRANSFORM: funcptr = gl_filter_transform_func_get(re, cmd); break;
       default: return NULL;
      }
 
@@ -3047,7 +3047,7 @@ eng_gfx_filter_supports(void *data, Evas_Filter_Command *cmd)
 {
    Render_Engine_GL_Generic *re = data;
 
-   if (!_gfx_filter_func_get(cmd))
+   if (!_gfx_filter_func_get(re, cmd))
      return pfunc.gfx_filter_supports(&re->software, cmd);
 
    return EVAS_FILTER_SUPPORT_GL;
@@ -3059,7 +3059,7 @@ eng_gfx_filter_process(void *data, Evas_Filter_Command *cmd)
    Render_Engine_GL_Generic *re = data;
    GL_Filter_Apply_Func funcptr;
 
-   funcptr = _gfx_filter_func_get(cmd);
+   funcptr = _gfx_filter_func_get(re, cmd);
    if (funcptr)
      return funcptr(re, cmd);
    else

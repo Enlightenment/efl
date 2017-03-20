@@ -81,7 +81,8 @@ varying vec2 displace_max;
 /* Gfx Filters: blur */
 #ifdef SHD_FILTER_BLUR
 attribute vec2 filter_data_0;
-varying vec2 blur_data;
+attribute vec2 filter_data_1;
+varying vec3 blur_data;
 #endif
 
 
@@ -165,6 +166,6 @@ void main()
 #endif
 
 #ifdef SHD_FILTER_BLUR
-   blur_data = filter_data_0;
+   blur_data = vec3(filter_data_0.xy, filter_data_1.x);
 #endif
 }
