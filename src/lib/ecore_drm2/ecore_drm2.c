@@ -46,6 +46,7 @@ int (*sym_drmModeRmFB)(int fd, uint32_t bufferId) = NULL;
 int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data) = NULL;
 int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips) = NULL;
 int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t *red, uint16_t *green, uint16_t *blue) = NULL;
+int (*sym_drmPrimeFDToHandle)(int fd, int prime_fd, uint32_t *handle) = NULL;
 
 EAPI int ECORE_DRM2_EVENT_OUTPUT_CHANGED = -1;
 EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
@@ -123,6 +124,7 @@ _ecore_drm2_link(void)
         SYM(drm_lib, drmModePageFlip);
         SYM(drm_lib, drmModeDirtyFB);
         SYM(drm_lib, drmModeCrtcSetGamma);
+        SYM(drm_lib, drmPrimeFDToHandle);
 
         if (fail)
           {
