@@ -95,6 +95,18 @@ _toggle_map(void *data, const Efl_Event *ev EINA_UNUSED)
      }
 }
 
+static void
+_rotate_win(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   //Efl_Orient orient;
+   Eo *win = data;
+
+   // FIXME: This is not implemented???
+   //orient = efl_orientation_get(win);
+   //efl_orientation_set(win, (orient + 90) % 360);
+   elm_win_rotation_set(win, (elm_win_rotation_get(win) + 90) % 360);
+}
+
 void
 test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -167,6 +179,12 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    efl_add(ELM_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle map"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_map, ly),
+           efl_pack(box2, efl_added),
+           efl_gfx_visible_set(efl_added, 1));
+
+   efl_add(ELM_BUTTON_CLASS, win,
+           efl_text_set(efl_added, "Rotate Window"),
+           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _rotate_win, win),
            efl_pack(box2, efl_added),
            efl_gfx_visible_set(efl_added, 1));
 

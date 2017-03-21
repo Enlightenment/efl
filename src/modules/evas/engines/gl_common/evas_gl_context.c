@@ -3202,7 +3202,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              glUseProgram(prog->prog);
              if (prog->reset)
                {
-                  glUniform1i(prog->uniform.rotation_id, gc->rot / 90);
+                  glUniform1i(prog->uniform.rotation_id, fbo ? 0 : gc->rot / 90);
                   glUniformMatrix4fv(prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
                   prog->reset = EINA_FALSE;
                }
