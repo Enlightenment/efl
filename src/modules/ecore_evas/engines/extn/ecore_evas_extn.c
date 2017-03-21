@@ -1021,6 +1021,17 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
            {
               Ipc_Data_Update *ipc;
               int n = e->response;
+              /* b->lockfd is not enough to ensure the size is same 
+               * between what server knows, and client knows.
+               * So should check file lock also. */
+              if (extn->b[n].buf && (!_extnbuf_lock_file_get(extn->b[n].buf)))
+                {  
+                   EINA_LIST_FREE(extn->file.updates, ipc)
+                     {
+                        free(ipc);
+                     }
+                   break;
+                }
 
               EINA_LIST_FREE(extn->file.updates, ipc)
                 {
