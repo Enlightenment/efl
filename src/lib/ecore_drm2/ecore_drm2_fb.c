@@ -3,15 +3,11 @@
 static Eina_Bool
 _fb2_create(Ecore_Drm2_Fb *fb)
 {
-   uint32_t hdls[4] = { 0 }, pitches[4] = { 0 }, offsets[4] = { 0 };
+   uint32_t offsets[4] = { 0 };
    int r;
 
-   hdls[0] = fb->hdl;
-   pitches[0] = fb->stride;
-   offsets[0] = 0;
-
-   r = sym_drmModeAddFB2(fb->fd, fb->w, fb->h, fb->format, hdls,
-                         pitches, offsets, &fb->id, 0);
+   r = sym_drmModeAddFB2(fb->fd, fb->w, fb->h, fb->format, fb->handles,
+                         fb->strides, offsets, &fb->id, 0);
 
    if (r)
      return EINA_FALSE;
@@ -121,15 +117,15 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
    if (ret) goto err;
 
-   fb->hdl = carg.handle;
-   fb->size = carg.size;
-   fb->stride = carg.pitch;
+   fb->handles[0] = carg.handle;
+   fb->sizes[0] = carg.size;
+   fb->strides[0] = carg.pitch;
 
    if (!_fb2_create(fb))
      {
         ret =
           sym_drmModeAddFB(fd, width, height, depth, bpp,
-                           fb->stride, fb->hdl, &fb->id);
+                           fb->strides[0], fb->handles[0], &fb->id);
         if (ret)
           {
              ERR("Could not add framebuffer: %m");
@@ -138,7 +134,7 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
      }
 
    memset(&marg, 0, sizeof(drm_mode_map_dumb));
-   marg.handle = fb->hdl;
+   marg.handle = fb->handles[0];
    ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
    if (ret)
      {
@@ -146,7 +142,7 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
         goto map_err;
      }
 
-   fb->mmap = mmap(NULL, fb->size, PROT_WRITE, MAP_SHARED, fd, marg.offset);
+   fb->mmap = mmap(NULL, fb->sizes[0], PROT_WRITE, MAP_SHARED, fd, marg.offset);
    if (fb->mmap == MAP_FAILED)
      {
         ERR("Could not mmap framebuffer memory: %m");
@@ -159,7 +155,7 @@ map_err:
    sym_drmModeRmFB(fd, fb->id);
 add_err:
    memset(&darg, 0, sizeof(drm_mode_destroy_dumb));
-   darg.handle = fb->hdl;
+   darg.handle = fb->handles[0];
    sym_drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
 err:
    free(fb);
@@ -187,14 +183,14 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
    fb->bpp = bpp;
    fb->depth = depth;
    fb->format = format;
-   fb->stride = stride;
-   fb->size = fb->stride * fb->h;
-   fb->hdl = handle;
+   fb->strides[0] = stride;
+   fb->sizes[0] = fb->strides[0] * fb->h;
+   fb->handles[0] = handle;
 
    if (!_fb2_create(fb))
      {
         if (sym_drmModeAddFB(fd, width, height, depth, bpp,
-                             fb->stride, fb->hdl, &fb->id))
+                             fb->strides[0], fb->handles[0], &fb->id))
           {
              ERR("Could not add framebuffer: %m");
              goto err;
@@ -203,11 +199,11 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
 
    /* mmap it if we can so screenshots are easy */
    memset(&marg, 0, sizeof(drm_mode_map_dumb));
-   marg.handle = fb->hdl;
+   marg.handle = fb->handles[0];
    ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
    if (!ret)
      {
-        fb->mmap = mmap(NULL, fb->size, PROT_WRITE, MAP_SHARED, fd, marg.offset);
+        fb->mmap = mmap(NULL, fb->sizes[0], PROT_WRITE, MAP_SHARED, fd, marg.offset);
         if (fb->mmap == MAP_FAILED) fb->mmap = NULL;
      }
    return fb;
@@ -222,7 +218,7 @@ ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN(fb);
 
-   if (fb->mmap) munmap(fb->mmap, fb->size);
+   if (fb->mmap) munmap(fb->mmap, fb->sizes[0]);
 
    if (fb->id) sym_drmModeRmFB(fb->fd, fb->id);
 
@@ -231,7 +227,7 @@ ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
         drm_mode_destroy_dumb darg;
 
         memset(&darg, 0, sizeof(drm_mode_destroy_dumb));
-        darg.handle = fb->hdl;
+        darg.handle = fb->handles[0];
         sym_drmIoctl(fb->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
      }
 
@@ -249,14 +245,14 @@ EAPI unsigned int
 ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
-   return fb->size;
+   return fb->sizes[0];
 }
 
 EAPI unsigned int
 ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
-   return fb->stride;
+   return fb->strides[0];
 }
 
 EAPI void
@@ -385,7 +381,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
         int count = 0;
 
         if ((!output->current) ||
-            (output->current->stride != fb->stride))
+            (output->current->strides[0] != fb->strides[0]))
           {
              ret =
                sym_drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,

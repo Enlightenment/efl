@@ -682,8 +682,8 @@ struct _Ecore_Drm2_Fb
    int fd;
    int w, h;
    int depth, bpp;
-   uint32_t id, hdl;
-   uint32_t stride, size;
+   uint32_t id, handles[4];
+   uint32_t strides[4], sizes[4];
    uint32_t format;
 
    void *gbm_bo;
