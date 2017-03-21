@@ -5082,7 +5082,6 @@ elm_map_overlay_icon_set(Elm_Map_Overlay *overlay,
                          Evas_Object *icon)
 {
    EINA_SAFETY_ON_NULL_RETURN(overlay);
-   EINA_SAFETY_ON_NULL_RETURN(icon);
    EINA_SAFETY_ON_NULL_RETURN(overlay->wsd);
    ELM_MAP_CHECK((overlay->wsd)->obj);
 
