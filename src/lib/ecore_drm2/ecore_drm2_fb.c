@@ -522,3 +522,29 @@ ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb)
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, NULL);
    return fb->gbm_bo;
 }
+
+EAPI Ecore_Drm2_Fb *
+ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count)
+{
+   int i;
+   Ecore_Drm2_Fb *fb;
+
+   fb = calloc(1, sizeof(Ecore_Drm2_Fb));
+   if (!fb) return NULL;
+
+   for (i = 0; i < dmabuf_fd_count; i++)
+     if (sym_drmPrimeFDToHandle(fd, dmabuf_fd[i], &fb->handles[i])) goto fail;
+
+   fb->fd = fd;
+   fb->w = width;
+   fb->h = height;
+   fb->bpp = bpp;
+   fb->depth = depth;
+   fb->format = format;
+   memcpy(&fb->strides, strides, sizeof(fb->strides));
+   if (_fb2_create(fb)) return fb;
+
+fail:
+   free(fb);
+   return NULL;
+}

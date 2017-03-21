@@ -964,6 +964,27 @@ EAPI void ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *output, Ecore
  */
 EAPI void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
 
+/**
+ * Import a dmabuf object as a Framebuffer
+ *
+ * @param fd
+ * @param width
+ * @param height
+ * @param depth
+ * @param bpp
+ * @param format
+ * @param stride
+ * @param dmabuf_fd
+ * @param dmabuf_fd_count
+ *
+ * @return A newly created framebuffer object, or NULL on failure
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.20
+ *
+ */
+EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count);
+
 # endif
 
 #endif
