@@ -169,5 +169,50 @@ class Test.Testing (Efl.Object) {
          return: Eina.Rw_Slice;
       }
       */
+
+      eina_binbuf_in {
+         params {
+            @in binbuf: ptr(Eina.Binbuf);
+         }
+         return: bool;
+      }
+
+      eina_binbuf_in_own {
+         params {
+            @in binbuf: own(ptr(Eina.Binbuf));
+         }
+         return: bool;
+      }
+      check_binbuf_in_own {
+         return: bool;
+      }
+
+      eina_binbuf_out {
+         params {
+            @out binbuf: ptr(Eina.Binbuf);
+         }
+         return: bool;
+      }
+      check_binbuf_out {
+         return: bool;
+      }
+
+      eina_binbuf_out_own {
+         params {
+            @out binbuf: own(ptr(Eina.Binbuf));
+         }
+         return: bool;
+      }
+
+      eina_binbuf_return {
+         return: ptr(Eina.Binbuf);
+      }
+      check_binbuf_return {
+         return: bool;
+      }
+
+      eina_binbuf_return_own {
+         return: own(ptr(Eina.Binbuf));
+      }
    }
 }

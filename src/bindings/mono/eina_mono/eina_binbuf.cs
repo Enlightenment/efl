@@ -36,17 +36,19 @@ public class Binbuf : IDisposable
     [DllImport("eina")] public static extern eina.Slice
         eina_binbuf_slice_get(IntPtr buf);
 
-    private IntPtr handle = IntPtr.Zero;
+    public IntPtr Handle {get;set;} = IntPtr.Zero;
+    public bool Own {get;set;}
 
-    public IntPtr Handle()
+    public int Length
     {
-        return handle;
+        get { return (int) GetLength(); }
     }
 
     private void InitNew()
     {
-        handle = eina_binbuf_new();
-        if (handle == IntPtr.Zero)
+        Handle = eina_binbuf_new();
+        Own = true;
+        if (Handle == IntPtr.Zero)
             throw new SEHException("Could not alloc binbuf");
     }
 
@@ -63,7 +65,7 @@ public class Binbuf : IDisposable
         {
             if (!Append(str, (length != null ? length.Value : (uint)(str.Length))))
             {
-                Free();
+                Dispose();
                 throw new SEHException("Could not append on binbuf");
             }
         }
@@ -79,6 +81,12 @@ public class Binbuf : IDisposable
         }
     }
 
+    public Binbuf(IntPtr handle, bool own)
+    {
+        Handle = handle;
+        Own = own;
+    }
+
     ~Binbuf()
     {
         Dispose(false);
@@ -86,8 +94,10 @@ public class Binbuf : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (handle != IntPtr.Zero) {
-            Free();
+        IntPtr h = Handle;
+        Handle = IntPtr.Zero;
+        if (Own && h != IntPtr.Zero) {
+            eina_binbuf_free(Handle);
         }
     }
 
@@ -99,95 +109,94 @@ public class Binbuf : IDisposable
 
     public void Free()
     {
-        eina_binbuf_free(handle);
-        handle = IntPtr.Zero;
+        Dispose();
     }
 
     public void Reset()
     {
-        eina_binbuf_reset(handle);
+        eina_binbuf_reset(Handle);
     }
 
     public bool Append(byte[] str)
     {
-        return 0 != eina_binbuf_append_length(handle, str, (UIntPtr)(str.Length));
+        return 0 != eina_binbuf_append_length(Handle, str, (UIntPtr)(str.Length));
     }
 
     public bool Append(byte[] str, uint length)
     {
-        return 0 != eina_binbuf_append_length(handle, str, (UIntPtr)length);
+        return 0 != eina_binbuf_append_length(Handle, str, (UIntPtr)length);
     }
 
     public bool Append(Binbuf bb)
     {
-        return 0 != eina_binbuf_append_buffer(handle, bb.Handle());
+        return 0 != eina_binbuf_append_buffer(Handle, bb.Handle);
     }
 
     public bool Append(byte c)
     {
-        return 0 != eina_binbuf_append_char(handle, c);
+        return 0 != eina_binbuf_append_char(Handle, c);
     }
 
     public bool Append(eina.Slice slice)
     {
-        return 0 != eina_binbuf_append_slice(handle, slice);
+        return 0 != eina_binbuf_append_slice(Handle, slice);
     }
 
     public bool Insert(byte[] str, uint pos)
     {
-        return 0 != eina_binbuf_insert_length(handle, str, (UIntPtr)(str.Length), (UIntPtr)pos);
+        return 0 != eina_binbuf_insert_length(Handle, str, (UIntPtr)(str.Length), (UIntPtr)pos);
     }
 
     public bool Insert(byte[] str, uint length, uint pos)
     {
-        return 0 != eina_binbuf_insert_length(handle, str, (UIntPtr)length, (UIntPtr)pos);
+        return 0 != eina_binbuf_insert_length(Handle, str, (UIntPtr)length, (UIntPtr)pos);
     }
 
     public bool Insert(byte c, uint pos)
     {
-        return 0 != eina_binbuf_insert_char(handle, c, (UIntPtr)pos);
+        return 0 != eina_binbuf_insert_char(Handle, c, (UIntPtr)pos);
     }
 
     public bool Insert(eina.Slice slice, uint pos)
     {
-        return 0 != eina_binbuf_insert_slice(handle, slice, (UIntPtr)pos);
+        return 0 != eina_binbuf_insert_slice(Handle, slice, (UIntPtr)pos);
     }
 
     public bool Remove(uint start, uint end)
     {
-        return 0 != eina_binbuf_remove(handle, (UIntPtr)start, (UIntPtr)end);
+        return 0 != eina_binbuf_remove(Handle, (UIntPtr)start, (UIntPtr)end);
     }
 
-    public byte[] GetString()
+    public byte[] GetBytes()
     {
-        var ptr = eina_binbuf_string_get(handle);
+        var ptr = eina_binbuf_string_get(Handle);
         if (ptr == IntPtr.Zero)
             return null;
 
-        var size = (int)(this.Length());
+        var size = (int)(this.GetLength());
         byte[] mArray = new byte[size];
         Marshal.Copy(ptr, mArray, 0, size);
         return mArray;
     }
 
-    public IntPtr GetStringUnsafe()
+    public IntPtr GetStringNative()
     {
-        return eina_binbuf_string_get(handle);
+        return eina_binbuf_string_get(Handle);
     }
 
     public void FreeString()
     {
-        eina_binbuf_string_free(handle);
+        eina_binbuf_string_free(Handle);
     }
 
-    public uint Length()
+    public UIntPtr GetLength()
     {
-        return (uint) eina_binbuf_length_get(handle);
+        return eina_binbuf_length_get(Handle);
     }
 
     eina.Slice GetSlice()
     {
-        return eina_binbuf_slice_get(handle);
+        return eina_binbuf_slice_get(Handle);
     }
 }
 

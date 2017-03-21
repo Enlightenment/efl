@@ -7,6 +7,8 @@ public interface ISliceBase
 {
     UIntPtr Len {get;set;}
     IntPtr Mem {get;set;}
+
+    int Length {get;set;}
 };
 
 [StructLayout(LayoutKind.Sequential)]
@@ -15,22 +17,23 @@ public struct Slice : ISliceBase
     public UIntPtr Len {get;set;}
     public IntPtr Mem {get;set;}
 
-    public Slice(IntPtr mem, uint len)
+    public int Length
     {
-        Mem = mem;
-        Len = (UIntPtr)len;
+        get { return (int) Len; }
+        set { Len = (UIntPtr) value; }
     }
 
-    public Slice PinnedDataSet(IntPtr mem, uint len)
+    public Slice(IntPtr mem, UIntPtr len)
     {
         Mem = mem;
-        Len = (UIntPtr)len;
+        Len = len;
+    }
+
+    public Slice PinnedDataSet(IntPtr mem, UIntPtr len)
+    {
+        Mem = mem;
+        Len = len;
         return this;
-    }
-
-    Rw_Slice ToRW()
-    {
-        return new Rw_Slice(Mem, (uint)Len);
     }
 }
 
@@ -40,17 +43,31 @@ public struct Rw_Slice : ISliceBase
     public UIntPtr Len {get;set;}
     public IntPtr Mem {get;set;}
 
-    public Rw_Slice(IntPtr mem, uint len)
+    public int Length
     {
-        Mem = mem;
-        Len = (UIntPtr)len;
+        get { return (int) Len; }
+        set { Len = (UIntPtr) value; }
     }
 
-    public Rw_Slice PinnedDataSet(IntPtr mem, uint len)
+    public Rw_Slice(IntPtr mem, UIntPtr len)
     {
         Mem = mem;
-        Len = (UIntPtr)len;
+        Len = len;
+    }
+
+    public Rw_Slice PinnedDataSet(IntPtr mem, UIntPtr len)
+    {
+        Mem = mem;
+        Len = len;
         return this;
+    }
+
+    Slice ToSlice()
+    {
+        var r = new Slice();
+        r.Mem = Mem;
+        r.Len = Len;
+        return r;
     }
 }
 
