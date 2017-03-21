@@ -251,40 +251,47 @@ vec4 fetch_pixel(float ox, float oy)
 # define FETCH_PIXEL(x) fetch_pixel(0.0, (x))
 #endif
 
+float weight_get(float u, float count, float index)
+{
+   vec4 val = texture2D(tex_filter, vec2(u / count, index)).bgra;
+   return val.a*255.0 + (val.r*255.0/256.0) + (val.g*255.0/256.0/256.0) + (val.b*255.0/256.0/256.0/256.0);
+}
+
+float offset_get(float u, float count, float index)
+{
+   // val.a is always 0 here ~ discard
+   vec4 val = texture2D(tex_filter, vec2(u / count, index)).bgra;
+   return (val.r*255.0/256.0) + (val.g*255.0/256.0/256.0) + (val.b*255.0/256.0/256.0/256.0);
+}
+
 void main()
 {
-   float u, u_div, count, div, w;
+   float u, texlen, count, div;
+   float weight, offset;
    vec4 acc, px;
 
    count = blur_data.x;
-   u_div = blur_data.y;
-   //div = blur_data.z;
+   texlen = blur_data.y;
+   div = blur_data.z;
 
-   // Center pixel
-   w = texture2D(tex_filter, vec2(0.0, 0.0)).r;
-   px = FETCH_PIXEL(u / u_div);
-   acc = px * w;
-   div = w;
+   // Center pixel, offset is 0.0
+   weight = weight_get(0.0, count, 0.0);
+   px = FETCH_PIXEL(0.0);
+   acc = px * weight;
 
-   // Left & right
-   for (u = 1; u <= count; u += 1.0)
-
-#if 0
-   div = 0.0;
-   for (u = -count; u <= count; u += 1.0)
+   for (u = 1.0; u <= count; u += 1.0)
    {
-      w = texture2D(tex_filter, vec2(abs(u) / count, 0.0)).r;
+      weight = weight_get(u, count, 0.0);
+      offset = offset_get(u, count, 1.0);
 
-#ifndef SHD_FILTER_DIR_Y
-      px = fetch_pixel(u / u_div, 0.0);
-#else
-      px = fetch_pixel(0.0, u / u_div);
-#endif
+      // Left
+      vec4 px1 = FETCH_PIXEL(-((offset + (2.0 * u) - 1.0)) / texlen);
 
-      acc += px * w;
-      div += w;
+      // Right
+      vec4 px2 = FETCH_PIXEL((offset + (2.0 * u) - 1.0) / texlen);
+
+      acc += (px1 + px2) * weight;
    }
-#endif
 
 #ifndef SHD_NOMUL
    gl_FragColor = (acc / div) * col;

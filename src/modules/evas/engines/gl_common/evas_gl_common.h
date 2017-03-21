@@ -652,7 +652,7 @@ void              evas_gl_common_filter_displace_push(Evas_Engine_GL_Context *gc
 void              evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex,
                                                    int x, int y, int w, int h, const uint8_t *points, int channel);
 void              evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex, double sx, double sy, double sw, double sh,
-                                                  double dx, double dy, double dw, double dh, GLfloat *values, GLfloat *offsets, int count,
+                                                  double dx, double dy, double dw, double dh, const double * const values, const double * const offsets, int count,
                                                   Eina_Bool horiz);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);

@@ -6,26 +6,28 @@
 static inline double
 _radius_to_sigma(double radius)
 {
-   // FIXME: This was supposed to be sqrt(r/3) ~ or something close
+   // In theory, sqrt(radius / 3.0) but that means the outer pixel at radius
+   // pixels away from the center have ~0.001 weight.
+
+   // This is an experimental value - to be adjusted!
    return /*sqrt*/ (radius / 3.0);
 }
 
 static inline double
-_gaussian_val(double a, double b, double x)
+_gaussian_val(double a EINA_UNUSED, double b, double x)
 {
-   return a * exp(-(x*x/b));
+   return /*a * */ exp(-(x*x/b));
 }
 
 static void
-_gaussian_calc(double *values, int count, double radius)
+_gaussian_calc(double *values, int max_index, double radius)
 {
-   // f(x) = a * exp(-(x^2 / b))
+   // Gaussian: f(x) = a * exp(-(x^2 / b))
    // sigma is such that variance v = sigma^2
    // v is such that after 3 v the value is almost 0 (ressembles a radius)
    // a = 1 / (sigma * sqrt (2 * pi))
    // b = 2 * sigma^2
-
-   // FIXME: Some of this math doesn't fit right (values too small too fast)
+   // The constant a is not required since we always calculate the dividor
 
    double a, b, sigma;
    int k;
@@ -34,37 +36,37 @@ _gaussian_calc(double *values, int count, double radius)
    a = 1.0 / (sigma * SQRT_2_PI);
    b = 2.0 * sigma * sigma;
 
-   for (k = 0; k <= count; k++)
+   for (k = 0; k <= max_index; k++)
      {
         values[k] = _gaussian_val(a, b, k);
-        ERR("Gauss %d: %f", k, values[k]);
+        XDBG("Gauss %d: %f", k, values[k]);
      }
 }
 
 static int
-_gaussian_interpolate(GLfloat **weights, GLfloat **offsets, double radius)
+_gaussian_interpolate(double **weights, double **offsets, double radius)
 {
-   int k, num, count;
-   GLfloat *w, *o;
+   int k, count, max_index;
+   double *w, *o;
    double *values;
 
-   count = (int) ceil(radius);
-   if (count & 0x1) count++;
-   values = alloca((count + 1) * sizeof(*values));
-    _gaussian_calc(values, count, radius);
+   max_index = (int) ceil(radius);
+   if (max_index & 0x1) max_index++;
+   values = alloca((max_index + 1) * sizeof(*values));
+    _gaussian_calc(values, max_index, radius);
 
-   num = (count / 2) + 1;
-   *offsets = o = calloc(1, num * sizeof(*o));
-   *weights = w = calloc(1, num * sizeof(*w));
+   count = (max_index / 2) + 1;
+   *offsets = o = calloc(1, count * sizeof(*o));
+   *weights = w = calloc(1, count * sizeof(*w));
 
    // Center pixel's weight
    k = 0;
    o[k] = 0.0;
    w[k] = values[0];
-   ERR("Interpolating weights %d: w %f o %f", k, w[k], o[k]);
+   XDBG("Interpolating weights %d: w %f o %f", k, w[k], o[k]);
 
    // Left & right pixels' interpolated weights
-   for (k = 1; k < num; k++)
+   for (k = 1; k < count; k++)
      {
         double w1, w2;
 
@@ -72,11 +74,11 @@ _gaussian_interpolate(GLfloat **weights, GLfloat **offsets, double radius)
         w2 = values[(k - 1) * 2 + 2];
         w[k] = w1 + w2;
         if (EINA_DBL_EQ(w[k], 0.0)) continue;
-        o[k] = (w2 / w[k]) + (k - 1.0) * 2.0;
-        ERR("Interpolating weights %d: %f %f -> w %f o %f", k, w1, w2, w[k], o[k]);
+        o[k] = w2 / w[k];
+        XDBG("Interpolating weights %d: %f %f -> w %f o %f", k, w1, w2, w[k], o[k]);
      }
 
-   return num;
+   return count;
 }
 
 static Eina_Bool
@@ -88,7 +90,7 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    Eina_Bool horiz;
    double sx, sy, sw, sh, ssx, ssy, ssw, ssh, dx, dy, dw, dh, radius;
    int nx, ny, nw, nh, count = 0;
-   GLfloat *weights, *offsets;
+   double *weights, *offsets;
 
    DEBUG_TIME_BEGIN();
 

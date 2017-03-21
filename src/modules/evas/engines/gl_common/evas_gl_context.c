@@ -3432,7 +3432,8 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
                                 Evas_GL_Texture *tex,
                                 double sx, double sy, double sw, double sh,
                                 double dx, double dy, double dw, double dh,
-                                GLfloat *values, GLfloat *offsets, int count,
+                                const double * const weights,
+                                const double * const offsets, int count,
                                 Eina_Bool horiz)
 {
    double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4, pw, ph;
@@ -3444,6 +3445,7 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    Eina_Bool blend = EINA_TRUE;
    Eina_Bool smooth = EINA_TRUE;
    Shader_Type type = horiz ? SHD_FILTER_BLUR_X : SHD_FILTER_BLUR_Y;
+   GLuint *map_tex_data;
    GLuint map_tex;
    double sum;
 
@@ -3492,21 +3494,44 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    pipe_region_expand(gc, pn, dx, dy, dw, dh);
    PIPE_GROW(gc, pn, 6);
 
-   sum = values[0];
-   for (int k = 1; k < count; k++)
-     sum += 2.0 * values[k];
+   /* Convert double data to RGBA pixel data.
+    *
+    * We are not using GL_FLOAT or GL_DOUBLE because:
+    * - It's not as portable (needs extensions),
+    * - GL_DOUBLE didn't work during my tests (dunno why),
+    * - GL_FLOAT didn't seem to carry the proper precision all the way to
+    *   the fragment shader,
+    * - Real data buffers are not available in GLES 2.0,
+    * - GL_RGBA is 100% portable.
+    */
+   map_tex_data = alloca(2 * count * sizeof(*map_tex_data));
+   for (int k = 0; k < count; k++)
+     {
+        GLuint val;
 
-   // Synchronous upload of Nx1 RGBA texture (FIXME: no reuse)
+        if (k == 0) sum = weights[k];
+        else sum += 2.0 * weights[k];
+
+        // Weight is always > 0.0 and < 255.0 by maths
+        val = (GLuint) (weights[k] * 256.0 * 256.0 * 256.0);
+        map_tex_data[k] = val;
+
+        // Offset is always in [0.0 , 1.0] by definition
+        val = (GLuint) (offsets[k] * 256.0 * 256.0 * 256.0);
+        map_tex_data[k + count] = val;
+     }
+
+   // Synchronous upload of Nx2 RGBA texture (FIXME: no reuse)
    glGenTextures(1, &map_tex);
    glBindTexture(GL_TEXTURE_2D, map_tex);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   // FIXME: GLES2 requires extensions here!!!
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, count, 1, 0, GL_RED, GL_FLOAT, values);
-   // FIXME: double values don't work??
-   //glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, count, 1, 0, GL_RED, GL_DOUBLE, values);
+   if (tex->gc->shared->info.unpack_row_length)
+     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, sizeof(*map_tex_data));
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, count, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, map_tex_data);
 
    // Set curve properties (no need for filter_data)
    gc->pipe[pn].shader.filter.map_tex = map_tex;
@@ -3516,7 +3541,7 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    // Set blur properties... WIP
    _filter_data_prepare(gc, pn, prog, 2);
    filter_data = gc->pipe[pn].array.filter_data;
-   filter_data[0] = count;
+   filter_data[0] = count - 1.0;
    filter_data[1] = horiz ? sw : sh;
    filter_data[2] = sum;
    filter_data[3] = 0.0; // unused
