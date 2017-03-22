@@ -1220,6 +1220,7 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   no_render : 1; // since 1.15
    Eina_Bool                   legacy : 1; // used legacy constructor
    Eina_Bool                   clean_layer : 1; // destructor option
+   Eina_Bool                   snapshot_needs_redraw : 1;
 
    struct  {
       Eina_Bool                pass_events : 1;

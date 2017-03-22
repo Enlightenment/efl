@@ -100,10 +100,17 @@ rend_dbg(const char *txt)
 #define ENDT evas->engine.data.output
 
 typedef struct _Render_Updates Render_Updates;
+typedef struct _Cutout_Margin  Cutout_Margin;
+
 struct _Render_Updates
 {
    void *surface;
    Eina_Rectangle *area;
+};
+
+struct _Cutout_Margin
+{
+   int l, r, t, b;
 };
 
 static Eina_Bool
@@ -2615,7 +2622,7 @@ end:
 static void
 _evas_render_cutout_add(Evas_Public_Data *evas, void *context,
                         Evas_Object_Protected_Data *obj, int off_x, int off_y,
-                        int cutout_margin)
+                        Cutout_Margin *cutout_margin)
 {
    Evas_Coord cox = 0, coy = 0, cow = 0, coh = 0;
 
@@ -2630,8 +2637,7 @@ _evas_render_cutout_add(Evas_Public_Data *evas, void *context,
           {
              Evas_Object_Protected_Data *oo;
 
-             oo = obj;
-             while (oo->cur->clipper)
+             for (oo = obj; oo->cur->clipper; oo = oo->cur->clipper)
                {
                   if ((oo->cur->clipper->map->cur.map_parent
                        != oo->map->cur.map_parent) &&
@@ -2642,7 +2648,7 @@ _evas_render_cutout_add(Evas_Public_Data *evas, void *context,
                                      oo->cur->geometry.y,
                                      oo->cur->geometry.w,
                                      oo->cur->geometry.h);
-                  oo = oo->cur->clipper;
+                  if ((cow <= 0) || (coh <= 0)) return;
                }
           }
      }
@@ -2655,12 +2661,15 @@ _evas_render_cutout_add(Evas_Public_Data *evas, void *context,
                            obj->cur->cache.clip.w, obj->cur->cache.clip.h);
      }
    else return;
-   cox += cutout_margin + off_x;
-   coy += cutout_margin + off_y;
-   cow -= 2 * cutout_margin;
-   coh -= 2 * cutout_margin;
+   if (cutout_margin)
+     {
+        cox += cutout_margin->l;
+        coy += cutout_margin->t;
+        cow -= cutout_margin->l + cutout_margin->r;
+        coh -= cutout_margin->t + cutout_margin->b;
+     }
    if ((cow <= 0) || (coh <= 0)) return;
-   ENFN->context_cutout_add(ENDT, context, cox, coy, cow, coh);
+   ENFN->context_cutout_add(ENDT, context, cox + off_x, coy + off_y, cow, coh);
 }
 
 void
@@ -2750,11 +2759,10 @@ _rectangle_inside(Eina_Rectangle *big, Eina_Rectangle *small)
    return EINA_FALSE;
 }
 
-static Eina_Bool
-_snapshot_needs_redraw(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap,
-                       Eina_Rectangle *opaque)
+static void
+_snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap)
 {
-   Eina_Bool above = EINA_FALSE, ret = EINA_FALSE;
+   Eina_Bool above = EINA_FALSE, add_rect = EINA_FALSE, need_redraw = EINA_FALSE;
    const int x = snap->cur->geometry.x;
    const int y = snap->cur->geometry.y;
    const int w = snap->cur->geometry.w;
@@ -2762,27 +2770,35 @@ _snapshot_needs_redraw(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap,
    Evas_Object_Protected_Data *obj;
    Evas_Active_Entry *ent;
    Eina_Rectangle snap_rect = { x, y, w, h };
+   Eina_Rectangle opaque = {};
    void *surface;
 
-   surface = _evas_object_image_surface_get(snap, EINA_FALSE);
-   if (!surface) ret = EINA_TRUE;
+   // FIXME: Use evas' standard rectangle logic instead of this bad algo
+   // TODO: Improve opaque region support, maybe have more than one
+   // TODO: Also list redraw regions (partial updates)
 
-   memset(opaque, 0, sizeof(*opaque));
+   if (!evas_object_is_visible(snap->object, snap)) return;
+
+   surface = _evas_object_image_surface_get(snap, EINA_FALSE);
+   if (!surface) need_redraw = EINA_TRUE;
+   if (snap->changed) add_rect = EINA_TRUE;
+
    EINA_INARRAY_FOREACH(&evas->active_objects, ent)
      {
         obj = ent->obj;
         if (obj == snap)
           {
+             if (!need_redraw) break;
              above = EINA_TRUE;
              continue;
           }
 
         if (!above)
           {
-             if (ret) continue;
+             if (add_rect) continue;
              if (!obj->is_smart && obj->changed &&
                  evas_object_is_in_output_rect(obj->object, obj, x, y, w, h))
-               ret = EINA_TRUE;
+               need_redraw = EINA_TRUE;
           }
         else
           {
@@ -2794,22 +2810,37 @@ _snapshot_needs_redraw(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap,
                      obj->cur->geometry.w, obj->cur->geometry.h
                   };
 
+                  if ((opaque.w * opaque.h) < (cur.w * cur.h))
+                    {
+                       opaque = cur;
+                       continue;
+                    }
+
                   if (!eina_rectangles_intersect(&snap_rect, &cur))
                     continue;
 
-                  if (!opaque->w || !opaque->h)
-                    *opaque = cur;
-                  else if (_rectangle_inside(&cur, opaque))
-                    *opaque = cur;
-                  else if (!_rectangle_inside(opaque, &cur))
-                    {
-                       *opaque = (Eina_Rectangle) { 0, 0, 0, 0 };
-                       break;
-                    }
+                  if (!opaque.w || !opaque.h)
+                    opaque = cur;
+                  else if (_rectangle_inside(&cur, &opaque))
+                    opaque = cur;
+                  //else if (!_rectangle_inside(&opaque, &cur))
                }
           }
      }
-   return ret;
+
+   _evas_filter_obscured_region_set(snap, opaque);
+   snap->snapshot_needs_redraw |= need_redraw;
+
+   if (add_rect || need_redraw)
+     {
+        // FIXME: Only add necessary rects
+        // Note that with filters this is extremely tricky: a simple color
+        // change would mean redraw all. Also blurs, displace, etc... need
+        // to expand by the cutout_margin (filter padding).
+        ENFN->output_redraws_rect_add(ENDT,
+                                      snap->cur->geometry.x, snap->cur->geometry.y,
+                                      snap->cur->geometry.w, snap->cur->geometry.h);
+     }
 }
 
 static Eina_Bool
@@ -2818,9 +2849,9 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                                   Evas_Object_Protected_Data *top,
                                   int ux, int uy, int uw, int uh,
                                   int cx, int cy, int cw, int ch,
-                                  int fx, int fy, int cutout_margin,
-                                  Eina_Bool alpha,
-                                  Eina_Bool do_async,
+                                  int fx, int fy,
+                                  Cutout_Margin *cutout_margin,
+                                  Eina_Bool alpha, Eina_Bool do_async,
                                   unsigned int *offset, int level)
 {
    Evas_Object *eo_obj;
@@ -3165,11 +3196,7 @@ evas_render_updates_internal(Evas *eo_e,
         for (i = 0; i < e->snapshot_objects.count; i++)
           {
              obj = eina_array_data_get(&e->snapshot_objects, i);
-
-             if (evas_object_is_visible(obj->object, obj))
-               ENFN->output_redraws_rect_add(ENDT,
-                                             obj->cur->geometry.x, obj->cur->geometry.y,
-                                             obj->cur->geometry.w, obj->cur->geometry.h);
+             _snapshot_redraw_update(evas, obj);
           }
      }
    eina_evlog("-render_phase4", eo_e, 0.0, NULL);
@@ -3246,21 +3273,22 @@ evas_render_updates_internal(Evas *eo_e,
              eina_evlog("+render_snapshots", eo_e, 0.0, NULL);
              for (j = e->snapshot_objects.count - 1; j >= 0; j--)
                {
-                  Eina_Rectangle output, cr, ur, opaque;
+                  Evas_Object_Protected_Data *snap;
+                  Eina_Rectangle output, cr, ur;
 
-                  obj = eina_array_data_get(&e->snapshot_objects, j);
+                  snap = eina_array_data_get(&e->snapshot_objects, j);
 
                   EINA_RECTANGLE_SET(&output,
-                                     obj->cur->geometry.x,
-                                     obj->cur->geometry.y,
-                                     obj->cur->geometry.w,
-                                     obj->cur->geometry.h);
+                                     snap->cur->geometry.x,
+                                     snap->cur->geometry.y,
+                                     snap->cur->geometry.w,
+                                     snap->cur->geometry.h);
                   EINA_RECTANGLE_SET(&ur, ux, uy, uw, uh);
 
-                  if (eina_rectangle_intersection(&ur, &output) &&
-                      _snapshot_needs_redraw(evas, obj, &opaque))
+                  if (snap->snapshot_needs_redraw &&
+                      eina_rectangle_intersection(&ur, &output))
                     {
-                       int cutout_margin, fpl = 0, fpr = 0, fpt = 0, fpb = 0;
+                       Cutout_Margin cm = {};
                        unsigned int restore_offset = offset;
                        void *pseudo_canvas;
 
@@ -3268,30 +3296,21 @@ evas_render_updates_internal(Evas *eo_e,
                                           ur.x - output.x, ur.y - output.y,
                                           ur.w, ur.h);
 
-                       pseudo_canvas = _evas_object_image_surface_get(obj, EINA_TRUE);
+                       pseudo_canvas = _evas_object_image_surface_get(snap, EINA_TRUE);
 
-                       // TODO: List of canvas regions that need redraw
                        // Get required margin for filters (eg. blur radius)
-                       _evas_filter_radius_get(obj, &fpl, &fpr, &fpt, &fpb);
-                       cutout_margin = MAX(MAX(MAX(fpl, fpr), fpt), fpb);
+                       _evas_filter_radius_get(snap, &cm.l, &cm.r, &cm.t, &cm.b);
 
-                       // Add obscure region (make it a list?)
-                       _evas_filter_obscured_region_set(obj, opaque);
-
-                       RD(0, "  SNAPSHOT %s [sfc:%p ur:%d,%d %dx%d]\n", RDNAME(obj), pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
+                       RD(0, "  SNAPSHOT %s [sfc:%p ur:%d,%d %dx%d]\n", RDNAME(snap), pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
                        ctx = ENFN->context_new(ENDT);
                        clean_them |= evas_render_updates_internal_loop(eo_e, e, pseudo_canvas, ctx,
-                                                                       obj,
+                                                                       snap,
                                                                        ur.x, ur.y, ur.w, ur.h,
                                                                        cr.x, cr.y, cr.w, cr.h,
-                                                                       fx, fy, cutout_margin, alpha,
-                                                                       do_async,
+                                                                       fx, fy, &cm,
+                                                                       alpha, do_async,
                                                                        &offset, 1);
                        ENFN->context_free(ENDT, ctx);
-
-                       // Force the object has changed for filter to take it into
-                       // account. It won't be in the pending object array.
-                       obj->changed = EINA_TRUE;
 
                        offset = restore_offset;
 
@@ -3321,8 +3340,8 @@ evas_render_updates_internal(Evas *eo_e,
                                                              ctx, NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
-                                                             fx, fy, 0, alpha,
-                                                             do_async,
+                                                             fx, fy, NULL,
+                                                             alpha, do_async,
                                                              &offset, 0);
              ENFN->context_free(ENDT, ctx);
 
@@ -3398,6 +3417,13 @@ evas_render_updates_internal(Evas *eo_e,
            }
            else if (obj->delete_me != 0) obj->delete_me++;
          */
+     }
+   for (i = 0; i < e->snapshot_objects.count; i++)
+     {
+        Evas_Object_Protected_Data *snap;
+
+        snap = eina_array_data_get(&e->snapshot_objects, i);
+        snap->snapshot_needs_redraw = EINA_FALSE;
      }
    eina_evlog("-render_post", eo_e, 0.0, NULL);
    IFRD(e->active_objects.len, 0, "  ---]\n");

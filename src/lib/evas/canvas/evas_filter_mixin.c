@@ -263,12 +263,15 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
           }
         else if (previous && !pd->data->changed)
           {
-             Eina_Bool redraw = EINA_TRUE;
+             Eina_Bool redraw;
 
-             if (_evas_filter_state_set_internal(pd->data->chain, pd))
+             redraw = _evas_filter_state_set_internal(pd->data->chain, pd);
+             if (redraw)
                DBG("Filter redraw by state change!");
              else if (obj->changed)
                DBG("Filter redraw by object content change!");
+             else if (obj->snapshot_needs_redraw)
+               DBG("Filter redraw by snapshot change!");
              else if (_evas_filter_obscured_region_changed(pd))
                DBG("Filter redraw by obscure regions change!");
              else redraw = EINA_FALSE;
