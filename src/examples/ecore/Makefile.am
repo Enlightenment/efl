@@ -353,7 +353,11 @@ efl_net_dialer_udp_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 efl_net_dialer_simple_example_SOURCES = efl_net_dialer_simple_example.c
 efl_net_dialer_simple_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
-if ! HAVE_WINDOWS
+if HAVE_WINDOWS
+EXTRA_PROGRAMS += efl_net_dialer_windows_example
+efl_net_dialer_windows_example_SOURCES = efl_net_dialer_windows_example.c
+efl_net_dialer_windows_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+else
 EXTRA_PROGRAMS += efl_net_dialer_unix_example
 efl_net_dialer_unix_example_SOURCES = efl_net_dialer_unix_example.c
 efl_net_dialer_unix_example_LDADD = $(ECORE_CON_COMMON_LDADD)

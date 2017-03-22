@@ -1,0 +1,20 @@
+class Efl.Net.Dialer.Windows (Efl.Net.Socket.Windows, Efl.Net.Dialer) {
+    [[Connects to a Windows NamedPipe server.
+
+      The dial address will have "\\.pipe\" prepended as required by
+      Windows CreateNamedPipe().
+
+      \@note Proxies are meaningless, thus are not implemented.
+
+      @since 1.19
+    ]]
+
+    implements {
+        Efl.Object.destructor;
+        Efl.Net.Dialer.dial; [[address parameter will have "\\.pipe\" prepended]]
+        Efl.Net.Dialer.address_dial { get; set; }
+        Efl.Net.Dialer.connected { get; set; }
+        Efl.Net.Dialer.timeout_dial { get; set; }
+        Efl.Io.Closer.close;
+    }
+}

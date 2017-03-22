@@ -33,6 +33,10 @@ ecore_con_eolian_files = \
 	lib/ecore_con/ecore_con_eet_client_obj.eo
 
 if HAVE_WINDOWS
+ecore_con_eolian_files += \
+        lib/ecore_con/efl_net_socket_windows.eo \
+        lib/ecore_con/efl_net_dialer_windows.eo \
+        lib/ecore_con/efl_net_server_windows.eo
 else
 ecore_con_eolian_files += \
         lib/ecore_con/efl_net_socket_unix.eo \
@@ -145,7 +149,10 @@ lib/ecore_con/efl_net_ssl_ctx-gnutls.c \
 lib/ecore_con/efl_net_ssl_ctx-none.c
 
 if HAVE_WINDOWS
-#lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_local_win32.c
+lib_ecore_con_libecore_con_la_SOURCES += \
+lib/ecore_con/efl_net_socket_windows.c \
+lib/ecore_con/efl_net_dialer_windows.c \
+lib/ecore_con/efl_net_server_windows.c
 else
 lib_ecore_con_libecore_con_la_SOURCES += \
 lib/ecore_con/efl_net_socket_unix.c \

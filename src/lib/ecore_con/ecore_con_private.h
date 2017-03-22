@@ -170,7 +170,27 @@ void _ecore_con_local_mkpath(const char *path, mode_t mode);
 void _efl_net_server_udp_client_init(Eo *client, SOCKET fd, const struct sockaddr *addr, socklen_t addrlen, const char *str);
 void _efl_net_server_udp_client_feed(Eo *client, Eina_Rw_Slice slice);
 
-#ifndef _WIN32
+#ifdef EFL_NET_SOCKET_WINDOWS_CLASS
+Eina_Error _efl_net_socket_windows_init(Eo *o, HANDLE h);
+Eina_Error _efl_net_socket_windows_io_start(Eo *o);
+HANDLE _efl_net_socket_windows_handle_get(const Eo *o);
+
+typedef struct _Efl_Net_Socket_Windows_Operation Efl_Net_Socket_Windows_Operation;
+typedef void (*Efl_Net_Socket_Windows_Operation_Success_Cb)(void *data, Eo *sock, Eina_Rw_Slice slice);
+typedef void (*Efl_Net_Socket_Windows_Operation_Failure_Cb)(void *data, Eo *sock, Eina_Error err);
+
+Efl_Net_Socket_Windows_Operation *_efl_net_socket_windows_operation_new(Eo *sock, Efl_Net_Socket_Windows_Operation_Success_Cb success_cb, Efl_Net_Socket_Windows_Operation_Failure_Cb failure_cb, const void *data);
+void _efl_net_socket_windows_operation_failed(Efl_Net_Socket_Windows_Operation *op, Eina_Error err);
+void _efl_net_socket_windows_operation_succeeded(Efl_Net_Socket_Windows_Operation *op, Eina_Rw_Slice slice);
+
+static inline OVERLAPPED *
+_efl_net_socket_windows_operation_overlapped_get(Efl_Net_Socket_Windows_Operation *op)
+{
+   return (OVERLAPPED *)op;
+}
+#endif
+
+#ifdef EFL_NET_SOCKET_UNIX_CLASS
 Eina_Bool efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *addr, socklen_t addrlen);
 #endif
 Eina_Bool efl_net_ip_port_parse(const char *address, struct sockaddr_storage *storage);
