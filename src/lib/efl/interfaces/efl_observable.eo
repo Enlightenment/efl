@@ -58,7 +58,6 @@ class Efl.Observable (Efl.Object) {
       }
    }
    implements {
-      Efl.Object.constructor;
       Efl.Object.destructor;
    }
 }
