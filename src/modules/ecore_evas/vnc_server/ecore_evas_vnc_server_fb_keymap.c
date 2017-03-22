@@ -360,4 +360,3 @@ ecore_evas_vnc_server_keysym_to_fb_translate(rfbKeySym key,
    *compose = _ecore_fb_li_kbd_syms[(id* 7) + 3 + offset];
    return EINA_TRUE;
 }
-

@@ -79,7 +79,9 @@ typedef struct _Ecore_Evas_Vnc_Server {
    Ecore_Evas_Vnc_Client_Accept_Cb accept_cb;
    Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb;
    void *cb_data;
+   Evas_Object *snapshot;
    Ecore_Evas *ee;
+   Eina_Tiler *t;
    Ecore_Evas_Vnc_Key_Info_Get key_info_get_func;
    double double_click_time;
    int last_w;
@@ -321,29 +323,6 @@ _ecore_evas_vnc_server_ecore_event_generic_free(void *user_data,
    free(func_data);
 }
 
-#ifdef BUILD_ENGINE_SOFTWARE_X11
-static Eina_Bool
-_ecore_evas_vnc_server_x11_key_info_get(rfbKeySym key,
-                                        const char **key_name,
-                                        const char **key_str,
-                                        const char **compose,
-                                        int *keycode)
-{
-   *key_str = *key_name = ecore_x_keysym_string_get(key);
-
-   if (!*key_str)
-     {
-        *keycode = 0;
-        return EINA_FALSE;
-     }
-
-   *compose = NULL;
-   *keycode = ecore_x_keysym_keycode_get(*key_str);
-   return EINA_TRUE;
-}
-#endif
-
-#ifdef BUILD_ENGINE_FB
 static Eina_Bool
 _ecore_evas_vnc_server_fb_key_info_get(rfbKeySym key,
                                        const char **key_name,
@@ -355,7 +334,6 @@ _ecore_evas_vnc_server_fb_key_info_get(rfbKeySym key,
                                                        key_name, key_str,
                                                        compose);
 }
-#endif
 
 static void
 _ecore_evas_vnc_server_client_keyboard_event(rfbBool down,
@@ -630,152 +608,161 @@ _ecore_evas_vnc_server_shutdown(void)
    eina_shutdown();
 }
 
-static void
-_ecore_evas_vnc_server_draw(Evas *evas, int x, int y,
-                            int w, int h, const void *pixels)
+static inline int
+align4(int v)
 {
+   return ((v / 4) + (v % 4 ? 1 : 0)) * 4;
+}
+
+static void
+_ecore_evas_vnc_server_draw(void *data, Evas *e EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Render_Post *post = event_info;
+   Evas_Object *snapshot = data;
    Ecore_Evas_Vnc_Server *server;
-   Ecore_Evas *ee;
-   size_t size, src_stride;
-   int dy;
+   const void *pixels;
+   Eina_List *l;
+   Eina_Rectangle *r;
+   size_t size;
    Eina_Bool new_buf = EINA_FALSE;
+   Eina_Rectangle snapshot_pos;
 
-   ee = evas_data_attach_get(evas);
-   server = ee->vnc_server;
+   // Nothing was updated, so let's not bother sending nothingness
+   if (!post->updated_area) return ;
 
-   if (!server) return;
+   server = evas_object_data_get(snapshot, "_ecore_evas.vnc");
+   EINA_SAFETY_ON_NULL_RETURN(server);
 
-   if (!server->frame_buffer || server->last_w != ee->w || server->last_h != ee->h)
+   pixels = evas_object_image_data_get(snapshot, EINA_FALSE);
+   evas_object_geometry_get(snapshot,
+                            &snapshot_pos.x,
+                            &snapshot_pos.y,
+                            &snapshot_pos.w,
+                            &snapshot_pos.h);
+
+   // Align size on 4 pixels for vnc library stability
+   snapshot_pos.w = align4(snapshot_pos.w);
+   snapshot_pos.h = align4(snapshot_pos.h);
+
+   DBG("Preparing sending of buffer {%i, %i} with %i updates.", snapshot_pos.w, snapshot_pos.h, eina_list_count(post->updated_area));
+
+   if (!server->frame_buffer ||
+       server->last_w != snapshot_pos.w ||
+       server->last_h != snapshot_pos.h)
      {
+        Eina_Rectangle tmp = { 0, 0, snapshot_pos.w, snapshot_pos.h };
         char *new_fb;
 
-        size = ee->w * ee->h * VNC_BYTES_PER_PIXEL;
+        size = snapshot_pos.w * snapshot_pos.h * VNC_BYTES_PER_PIXEL;
         new_fb = malloc(size);
         EINA_SAFETY_ON_NULL_RETURN(new_fb);
         free(server->frame_buffer);
         server->frame_buffer = new_fb;
-        server->last_w = ee->w;
-        server->last_h = ee->h;
+        server->last_w = snapshot_pos.w;
+        server->last_h = snapshot_pos.h;
         new_buf = EINA_TRUE;
+        eina_tiler_area_size_set(server->t, snapshot_pos.w, snapshot_pos.h);
+        eina_tiler_rect_add(server->t, &tmp);
 
-        rfbNewFramebuffer(server->vnc_screen, server->frame_buffer, ee->w,
-                          ee->h, VNC_BITS_PER_SAMPLE, VNC_SAMPLES_PER_PIXEL,
-                          VNC_BYTES_PER_PIXEL);
+        rfbNewFramebuffer(server->vnc_screen, server->frame_buffer,
+                          snapshot_pos.w, snapshot_pos.h,
+                          VNC_BITS_PER_SAMPLE, VNC_SAMPLES_PER_PIXEL, VNC_BYTES_PER_PIXEL);
         _ecore_evas_vnc_server_format_setup(server->vnc_screen);
      }
 
-   if (y > server->last_h || x > server->last_w)
-     return;
-
-   //Do not paint outside the VNC canvas
-   if (y + h > server->last_h)
-     h = server->last_h - y;
-
-   //Do not paint outside the VNC canvas
-   if (x + w > server->last_w)
-     w = server->last_w - x;
-
-   src_stride = w * VNC_BYTES_PER_PIXEL;
-
-   for (dy = 0; dy < h; dy++)
+   EINA_LIST_FOREACH(post->updated_area, l, r)
      {
-        memcpy(server->frame_buffer + (x * VNC_BYTES_PER_PIXEL)
-               + ((dy + y) * (server->last_w * VNC_BYTES_PER_PIXEL)),
-               (char *)pixels + (dy * src_stride), src_stride);
+        Eina_Rectangle tmp = *r;
+        size_t src_stride;
+        int dy;
+
+        if (tmp.x > snapshot_pos.w ||
+            tmp.y > snapshot_pos.h)
+          continue ;
+
+        if (!eina_rectangle_intersection(&tmp, &snapshot_pos))
+          continue ;
+
+        src_stride = tmp.w * VNC_BYTES_PER_PIXEL;
+
+        for (dy = 0; dy < tmp.h; dy++)
+          {
+             memcpy(server->frame_buffer + (tmp.x * VNC_BYTES_PER_PIXEL)
+                    + ((dy + tmp.y) * (snapshot_pos.w * VNC_BYTES_PER_PIXEL)),
+                    (char *)pixels + (dy * src_stride), src_stride);
+          }
+
+        rfbMarkRectAsModified(server->vnc_screen,
+                              tmp.x, tmp.y, tmp.x + tmp.w, tmp.y + tmp.h);
+
+        if (new_buf) eina_tiler_rect_del(server->t, &tmp);
      }
 
    //We did not receive the whole buffer yet, zero the missing bytes for now.
    if (new_buf)
      {
-        //Missing width
-        if (server->last_w != w || x != 0)
-          {
-             for (dy = 0; dy < h; dy++)
-               {
-                  if (x)
-                    {
-                       memset(server->frame_buffer
-                              + ((dy + y) * (server->last_w * VNC_BYTES_PER_PIXEL)),
-                              0, x * VNC_BYTES_PER_PIXEL);
-                    }
+        Eina_Iterator *it;
 
-                  memset(server->frame_buffer +
-                         ((dy + y) * (server->last_w * VNC_BYTES_PER_PIXEL))
-                         + ((x + w) * VNC_BYTES_PER_PIXEL),
-                         0, (server->last_w - (w + x)) * VNC_BYTES_PER_PIXEL);
+        it = eina_tiler_iterator_new(server->t);
+        EINA_ITERATOR_FOREACH(it, r)
+          {
+             Eina_Rectangle tmp = *r;
+             size_t src_stride;
+             int dy;
+
+             src_stride = tmp.w * VNC_BYTES_PER_PIXEL;
+
+             for (dy = 0; dy < tmp.h; dy++)
+               {
+                  memset(server->frame_buffer + (tmp.x * VNC_BYTES_PER_PIXEL)
+                         + ((dy + tmp.y) * (snapshot_pos.w * VNC_BYTES_PER_PIXEL)),
+                         0, src_stride);
                }
           }
-
-        //Missing height
-        if (server->last_h != h || y != 0)
-          {
-             src_stride = server->last_w * VNC_BYTES_PER_PIXEL;
-             for (dy = 0; dy < y; dy++)
-               memset(server->frame_buffer + (dy * src_stride), 0, src_stride);
-
-             for (dy = y + h; dy < server->last_h; dy++)
-               memset(server->frame_buffer + (dy * src_stride), 0, src_stride);
-          }
+        eina_iterator_free(it);
+        eina_tiler_clear(server->t);
      }
 
-   rfbMarkRectAsModified(server->vnc_screen, x, y, x+w, y+h);
    _ecore_evas_vnc_server_update_clients(server->vnc_screen);
 }
 
-EAPI Ecore_Evas_Vnc_Server *
+static void
+_ecore_evas_vnc_server_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Ecore_Evas_Vnc_Server *server = data;
+
+   ecore_main_fd_handler_del(server->vnc_listen6_handler);
+   ecore_main_fd_handler_del(server->vnc_listen_handler);
+   evas_object_del(server->snapshot);
+   rfbShutdownServer(server->vnc_screen, TRUE);
+   free(server->frame_buffer);
+   rfbScreenCleanup(server->vnc_screen);
+   free(server);
+}
+
+EAPI Evas_Object *
 ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
                           Ecore_Evas_Vnc_Client_Accept_Cb accept_cb,
                           Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb,
                           void *data)
 {
    Ecore_Evas_Vnc_Server *server;
+   Evas_Object *snapshot;
    Eina_Bool can_listen = EINA_FALSE;
-   Evas_Engine_Info *engine;
-   Eina_Bool err, engine_set = EINA_FALSE;
-   Ecore_Evas_Vnc_Key_Info_Get key_info_get_func;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
 
-   engine = evas_engine_info_get(ee->evas);
-
-#ifdef BUILD_ENGINE_SOFTWARE_X11
-   if (!strcmp(ee->driver, "software_x11"))
-     {
-        Evas_Engine_Info_Software_X11 *x11_engine;
-
-        x11_engine = (Evas_Engine_Info_Software_X11 *)engine;
-        x11_engine->func.region_push_hook = _ecore_evas_vnc_server_draw;
-        x11_engine->push_to = ee->evas;
-        engine_set = EINA_TRUE;
-        key_info_get_func = _ecore_evas_vnc_server_x11_key_info_get;
-     }
-#endif
-
-#ifdef BUILD_ENGINE_FB
-   if (!engine_set && !strcmp(ee->driver, "fb"))
-     {
-        Evas_Engine_Info_FB *fb_engine;
-
-        fb_engine = (Evas_Engine_Info_FB *)engine;
-        fb_engine->func.region_push_hook = _ecore_evas_vnc_server_draw;
-        fb_engine->push_to = ee->evas;
-        engine_set = EINA_TRUE;
-        key_info_get_func = _ecore_evas_vnc_server_fb_key_info_get;
-     }
-#endif
-
-   if (!engine_set)
-     {
-        WRN("The engine '%s' is not supported. Only Software X11"
-            " and FB are supported.", ee->driver);
-        return NULL;
-     }
-
    server = calloc(1, sizeof(Ecore_Evas_Vnc_Server));
    EINA_SAFETY_ON_NULL_RETURN_VAL(server, NULL);
-   server->key_info_get_func = key_info_get_func;
 
-   server->vnc_screen = rfbGetScreen(0, NULL, ee->w, ee->h, VNC_BITS_PER_SAMPLE,
+   snapshot = evas_object_image_filled_add(ee->evas);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(snapshot, NULL);
+   evas_object_image_snapshot_set(snapshot, EINA_TRUE);
+   efl_event_callback_del(snapshot, EFL_EVENT_DEL, _ecore_evas_vnc_server_del, server);
+
+   server->key_info_get_func = _ecore_evas_vnc_server_fb_key_info_get;
+
+   server->vnc_screen = rfbGetScreen(0, NULL, 4, 4, VNC_BITS_PER_SAMPLE,
                                      VNC_SAMPLES_PER_PIXEL, VNC_BYTES_PER_PIXEL);
    EINA_SAFETY_ON_NULL_GOTO(server->vnc_screen, err_screen);
 
@@ -825,18 +812,22 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
      }
 
    //rfbInitServer() failed and could not setup the sockets.
-   EINA_SAFETY_ON_FALSE_GOTO(can_listen, err_listen);
+   EINA_SAFETY_ON_FALSE_GOTO(can_listen, err_engine);
 
-   err = evas_engine_info_set(ee->evas, (Evas_Engine_Info *)engine);
-   EINA_SAFETY_ON_FALSE_GOTO(err, err_engine);
-
+   server->ee = ee;
    server->vnc_screen->screenData = server;
    server->cb_data = data;
    server->accept_cb = accept_cb;
    server->disc_cb = disc_cb;
-   server->ee = ee;
+   server->snapshot = snapshot;
+   server->t = eina_tiler_new(1, 1);
+   eina_tiler_tile_size_set(server->t, 1, 1);
+   eina_tiler_strict_set(server->t, EINA_TRUE);
 
-   return server;
+   evas_object_data_set(snapshot, "_ecore_evas.vnc", server);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _ecore_evas_vnc_server_draw, snapshot);
+
+   return snapshot;
 
  err_engine:
    ecore_main_fd_handler_del(server->vnc_listen6_handler);
@@ -851,62 +842,22 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
    return NULL;
 }
 
-EAPI void
-ecore_evas_vnc_server_del(Ecore_Evas_Vnc_Server *server)
-{
-   Evas_Engine_Info *engine;
-   Eina_Bool err;
-
-   EINA_SAFETY_ON_NULL_RETURN(server);
-
-   engine = evas_engine_info_get(server->ee->evas);
-
-#ifdef BUILD_ENGINE_SOFTWARE_X11
-   if (!strcmp(server->ee->driver, "software_x11"))
-     {
-        Evas_Engine_Info_Software_X11 *x11_engine;
-
-        x11_engine = (Evas_Engine_Info_Software_X11 *)engine;
-        x11_engine->func.region_push_hook = NULL;
-        x11_engine->push_to = NULL;
-     }
-#endif
-#ifdef BUILD_ENGINE_FB
-   if (!strcmp(server->ee->driver, "fb"))
-     {
-        Evas_Engine_Info_FB *fb_engine;
-
-        fb_engine = (Evas_Engine_Info_FB *)engine;
-        fb_engine->func.region_push_hook = NULL;
-        fb_engine->push_to = NULL;
-     }
-#endif
-
-   err = evas_engine_info_set(server->ee->evas, engine);
-   if (!err)
-     WRN("Could not unset the region push hook callback");
-   ecore_main_fd_handler_del(server->vnc_listen6_handler);
-   ecore_main_fd_handler_del(server->vnc_listen_handler);
-   rfbShutdownServer(server->vnc_screen, TRUE);
-   free(server->frame_buffer);
-   rfbScreenCleanup(server->vnc_screen);
-   free(server);
-}
-
-EAPI void
-ecore_evas_vnc_server_pointer_xy_get(const Ecore_Evas_Vnc_Server *server,
+EAPI Eina_Bool
+ecore_evas_vnc_server_pointer_xy_get(const Evas_Object *snapshot,
                                      const Evas_Device *pointer,
                                      Evas_Coord *x, Evas_Coord *y)
 {
-   Evas_Coord sx, sy;
-   rfbClientIteratorPtr itr;
+   Ecore_Evas_Vnc_Server *server;
    rfbClientRec *client;
    Ecore_Evas_Vnc_Server_Client_Data *cdata;
+   rfbClientIteratorPtr itr;
 
-   EINA_SAFETY_ON_NULL_RETURN(server);
-   EINA_SAFETY_ON_NULL_RETURN(pointer);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(snapshot, EINA_FALSE);
+   server = evas_object_data_get(snapshot, "_ecore_evas.vnc");
 
-   sx = sy = 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(server, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pointer, EINA_FALSE);
+
    itr = rfbGetClientIterator(server->vnc_screen);
 
    while ((client = rfbClientIteratorNext(itr)))
@@ -915,15 +866,14 @@ ecore_evas_vnc_server_pointer_xy_get(const Ecore_Evas_Vnc_Server *server,
 
         if (cdata->mouse == pointer)
           {
-             sx = client->lastPtrX;
-             sy = client->lastPtrY;
-             break;
+             if (x) *x = client->lastPtrX;
+             if (y) *y = client->lastPtrY;
+             return EINA_TRUE;
           }
      }
 
    rfbReleaseClientIterator(itr);
-   if (x) *x = sx;
-   if (y) *y = sy;
+   return EINA_FALSE;
 }
 
 EINA_MODULE_INIT(_ecore_evas_vnc_server_init);

@@ -2579,23 +2579,15 @@ typedef void (*Ecore_Evas_Vnc_Client_Disconnected_Cb)(void *data, Ecore_Evas *ee
  * @param accept_cb A callback used to accept a new client. If @c NULL all clients will be accepted.
  * @param disc_cb A callback used to inform that a client has disconnected. It may be @c NULL.
  * @param data Data to @a cb
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return an Evas_Object that take everything under it to represent the view of the client.
  * @see ecore_evas_vnc_stop()
  * @see Ecore_Evas_Vnc_Client_Accept_Cb()
  * @since 1.19
  */
-EAPI Eina_Bool      ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port, Ecore_Evas_Vnc_Client_Accept_Cb accept_cb,
-                                         Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb, void *data);
-
-/**
- * @brief Stops a running VNC server
- *
- * @param ee Ecore_Evas to stop the VNC server
- * @return @c EINA_TRUE if the VNC server was stopped, @c EINA_FALSE otherwise.
- * @see ecore_evas_vnc_start()
- * @since 1.19
- */
-EAPI Eina_Bool      ecore_evas_vnc_stop(Ecore_Evas *ee);
+EAPI Evas_Object *ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port,
+                                       Ecore_Evas_Vnc_Client_Accept_Cb accept_cb,
+                                       Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb,
+                                       void *data);
 
 #endif
 

@@ -218,7 +218,7 @@ struct _Ecore_Evas
    Eina_Hash  *data;
    Eina_List  *mice_in;
 
-   void *vnc_server; /* @since 1.19 */
+   Eina_List  *vnc_server; /* @since 1.19 */
 
    struct {
       int      x, y, w, h;

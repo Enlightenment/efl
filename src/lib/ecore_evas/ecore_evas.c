@@ -2613,31 +2613,31 @@ ecore_evas_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
 
 EAPI void
 ecore_evas_pointer_device_xy_get(const Ecore_Evas *ee,
-                                 const Efl_Input_Device *pointer, Evas_Coord *x,
-                                 Evas_Coord *y)
+                                 const Efl_Input_Device *pointer,
+                                 Evas_Coord *x, Evas_Coord *y)
 {
+   ECORE_EVAS_CHECK(ee);
+
    if ((!pointer) ||
        (pointer == evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE)))
      ecore_evas_pointer_xy_get(ee, x, y);
    else
      {
-        if (x) *x = 0;
-        if (y) *y = 0;
-        ECORE_EVAS_CHECK(ee);
-        if (ee->vnc_server)
-          {
-             Eina_Module *mod;
-             void (*pointer_xy_get)(const void *, const Efl_Input_Device *, Evas_Coord *, Evas_Coord *y);
+        static Eina_Bool (*pointer_xy_get)(const Evas_Object *, const Efl_Input_Device *, Evas_Coord *, Evas_Coord *y) = NULL;
+        Eina_Module *mod;
 
+        if (!pointer_xy_get && ee->vnc_server)
+          {
              mod = _ecore_evas_vnc_server_module_load();
              EINA_SAFETY_ON_NULL_RETURN(mod);
 
              pointer_xy_get = eina_module_symbol_get(mod, "ecore_evas_vnc_server_pointer_xy_get");
              EINA_SAFETY_ON_NULL_RETURN(pointer_xy_get);
-             pointer_xy_get(ee->vnc_server, pointer, x, y);
           }
-        else if (ee->engine.func->fn_pointer_device_xy_get)
-          ee->engine.func->fn_pointer_device_xy_get(ee, pointer, x, y);
+
+        // FIXME: Handle matching of the efl_input_device with proper evas_object
+
+        ecore_evas_pointer_xy_get(ee, x, y);
      }
 }
 
@@ -3050,17 +3050,12 @@ _ecore_evas_unref(Ecore_Evas *ee)
 static Eina_Bool
 _ecore_evas_vnc_stop(Ecore_Evas *ee)
 {
-   Eina_Module *mod;
-   void (*vnc_del)(void *);
+   Evas_Object *obj;
+   Eina_List *l;
 
-   mod = _ecore_evas_vnc_server_module_load();
-   EINA_SAFETY_ON_NULL_RETURN_VAL(mod, EINA_FALSE);
+   EINA_LIST_FOREACH(ee->vnc_server, l, obj)
+     evas_object_del(obj);
 
-   vnc_del = eina_module_symbol_get(mod, "ecore_evas_vnc_server_del");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(vnc_del, EINA_FALSE);
-
-   vnc_del(ee->vnc_server);
-   ee->vnc_server = NULL;
    return EINA_TRUE;
 }
 
@@ -3849,41 +3844,36 @@ ecore_evas_x11_shape_input_apply(Ecore_Evas *ee)
    iface->shape_input_apply(ee);
 }
 
-EAPI Eina_Bool
+EAPI Evas_Object *
 ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int port,
                      Ecore_Evas_Vnc_Client_Accept_Cb accept_cb,
                      Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb,
                      void *data)
 {
-   Eina_Module *mod;
-   void *(*vnc_new)(Ecore_Evas *, int, const char *,
-                    Ecore_Evas_Vnc_Client_Accept_Cb,
-                    Ecore_Evas_Vnc_Client_Disconnected_Cb,
-                    void *);
+   static Evas_Object *(*vnc_new)(Ecore_Evas *, int, const char *,
+                                  Ecore_Evas_Vnc_Client_Accept_Cb,
+                                  Ecore_Evas_Vnc_Client_Disconnected_Cb,
+                                  void *) = NULL;
+   Evas_Object *r;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
 
-   if (ee->vnc_server)
-     return EINA_FALSE;
+   if (!vnc_new)
+     {
+        Eina_Module *mod;
 
-   mod = _ecore_evas_vnc_server_module_load();
-   EINA_SAFETY_ON_NULL_RETURN_VAL(mod, EINA_FALSE);
+        mod = _ecore_evas_vnc_server_module_load();
+        EINA_SAFETY_ON_NULL_RETURN_VAL(mod, NULL);
 
-   vnc_new = eina_module_symbol_get(mod, "ecore_evas_vnc_server_new");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(vnc_new, EINA_FALSE);
+        vnc_new = eina_module_symbol_get(mod, "ecore_evas_vnc_server_new");
+        EINA_SAFETY_ON_NULL_RETURN_VAL(vnc_new, NULL);
+     }
 
-   ee->vnc_server = vnc_new(ee, port, addr, accept_cb, disc_cb, data);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ee->vnc_server, EINA_FALSE);
-   return EINA_TRUE;
-}
+   r = vnc_new(ee, port, addr, accept_cb, disc_cb, data);
+   if (!r) return NULL;
 
-EAPI Eina_Bool
-ecore_evas_vnc_stop(Ecore_Evas *ee)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ee->vnc_server, EINA_FALSE);
-
-   return _ecore_evas_vnc_stop(ee);
+   ee->vnc_server = eina_list_append(ee->vnc_server, r);
+   return r;
 }
 
 EAPI Ecore_Evas *
