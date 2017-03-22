@@ -137,7 +137,7 @@ _bump_map_cpu_alpha_alpha(Evas_Filter_Command *cmd)
    lxy = sin(fabs(zangle * M_PI / 180.));
    lx = (int) (40.f * (lxy + 1.0) * cos(xyangle * M_PI / 180.));
    ly = (int) (40.f * (lxy + 1.0) * sin(xyangle * M_PI / 180.));
-   INF("Using light vector (%d,%d)", lx, ly);
+   XDBG("Using light vector (%d,%d)", lx, ly);
 
    // Generate light table
    phong = malloc(256 * 256 * sizeof(*phong));
