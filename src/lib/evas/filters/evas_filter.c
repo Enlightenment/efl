@@ -41,7 +41,6 @@ Evas_Filter_Context *
 evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, void *user_data)
 {
    Evas_Filter_Context *ctx;
-   static int warned = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(evas, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(evas->engine.func->gfx_filter_supports, NULL);
@@ -54,16 +53,7 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, void *user_data
    ctx->async = async;
    ctx->user_data = user_data;
    ctx->buffer_scaled_get = &evas_filter_buffer_scaled_get;
-
-   if (ENFN->gl_surface_read_pixels)
-     {
-        ctx->gl = EINA_TRUE;
-        if (!warned)
-          {
-             WRN("OpenGL support through SW functions, expect low performance!");
-             warned = 1;
-          }
-     }
+   ctx->gl = (ENFN->gl_surface_read_pixels != NULL);
 
    return ctx;
 }
