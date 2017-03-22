@@ -155,13 +155,12 @@ Eina_Bool                evas_filter_context_buffers_allocate_all(Evas_Filter_Co
 void                     evas_filter_context_obscured_region_set(Evas_Filter_Context *ctx, Eina_Rectangle rect);
 
 int                      evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only);
-void                    *evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid);
+void                    *evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid, Eina_Bool render);
 Eina_Bool                evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer);
 
 Eina_Bool                evas_filter_run(Evas_Filter_Context *ctx);
 
 Eina_Bool                evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid, Evas_Font_Set *font, int x, int y, Evas_Text_Props *text_props, Eina_Bool do_async);
-Eina_Bool                evas_filter_image_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid, void *image, Eina_Bool do_async);
 Eina_Bool                evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context, void *surface, int x, int y);
 
 // utility function

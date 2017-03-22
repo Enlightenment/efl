@@ -252,7 +252,6 @@ struct _Evas_Filter_Buffer
    Eina_Bool alpha_only : 1;  // 1 channel (A) instead of 4 (RGBA)
    Eina_Bool transient : 1;   // temporary buffer (automatic allocation)
    Eina_Bool locked : 1;      // internal flag
-   Eina_Bool delete_me : 1;   // request delete asap (after released by client)
    Eina_Bool dirty : 1;       // Marked as dirty as soon as a command writes to it
    Eina_Bool is_render : 1;   // Is render target of a filter using engine functions (ie. needs FBO in GL)
 };

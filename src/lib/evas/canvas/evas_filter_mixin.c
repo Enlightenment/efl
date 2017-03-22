@@ -54,7 +54,7 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
    else
      {
         Evas_Object_Filter_Data *fcow;
-        void *output = evas_filter_buffer_backing_steal(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
+        void *output = evas_filter_buffer_backing_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID, EINA_FALSE);
 
         fcow = FCOW_BEGIN(pd);
         fcow->output = output;

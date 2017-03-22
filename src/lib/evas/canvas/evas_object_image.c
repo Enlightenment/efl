@@ -1754,30 +1754,22 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_state_prepare(
 
 EOLIAN static Eina_Bool
 _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
-      Eo *eo_obj, Evas_Image_Data *o, void *_filter, void *context,
+      Eo *eo_obj, Evas_Image_Data *o, void *_filter, void *context EINA_UNUSED,
       void *data EINA_UNUSED, int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
       int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Context *filter = _filter;
-   void *surface, *output;
-   Eina_Bool input_stolen;
+   void *surface, *output, *ctx;
    int W, H;
 
    W = obj->cur->geometry.w;
    H = obj->cur->geometry.h;
    output = ENDT;
 
-   if (ENFN->gl_surface_read_pixels)
-     {
-        surface = ENFN->image_map_surface_new(output, W, H, EINA_TRUE);
-        input_stolen = EINA_FALSE;
-     }
-   else
-     {
-        surface = evas_filter_buffer_backing_steal(filter, EVAS_FILTER_BUFFER_INPUT_ID);
-        input_stolen = EINA_TRUE;
-     }
+   surface = evas_filter_buffer_backing_get(filter, EVAS_FILTER_BUFFER_INPUT_ID, EINA_TRUE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
+
    if (!o->filled)
      {
         l = 0;
@@ -1786,30 +1778,25 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
         b = 0;
      }
 
-   if (!surface)
+   ctx = ENFN->context_new(output);
+
+   if (o->cur->has_alpha && !obj->cur->snapshot)
      {
-        ERR("Failed to allocate surface for filter input!");
-        return EINA_FALSE;
+        ENFN->context_color_set(output, ctx, 0, 0, 0, 0);
+        ENFN->context_render_op_set(output, ctx, EVAS_RENDER_COPY);
+        ENFN->rectangle_draw(output, ctx, surface, 0, 0, W, H, do_async);
+        ENFN->context_color_set(output, ctx, 255, 255, 255, 255);
+        ENFN->context_render_op_set(output, ctx, EVAS_RENDER_BLEND);
      }
 
-   ENFN->context_color_set(output, context, 0, 0, 0, 0);
-   ENFN->context_render_op_set(output, context, EVAS_RENDER_COPY);
-   ENFN->rectangle_draw(output, context, surface, 0, 0, W, H, EINA_FALSE);
-   ENFN->context_color_set(output, context, 255, 255, 255, 255);
-   ENFN->context_render_op_set(output, context, EVAS_RENDER_BLEND);
-
-   _evas_image_render(eo_obj, obj, output, context, surface,
+   _evas_image_render(eo_obj, obj, output, ctx, surface,
                       x + l - obj->cur->geometry.x,
                       y + t - obj->cur->geometry.y,
                       l, t, r, b, do_async);
 
-   if (!input_stolen)
-     {
-        evas_filter_image_draw(filter, context, EVAS_FILTER_BUFFER_INPUT_ID, surface, do_async);
-        ENFN->image_free(output, surface);
-     }
-   else
-     evas_filter_buffer_backing_release(filter, surface);
+   ENFN->context_free(output, ctx);
+
+   evas_filter_buffer_backing_release(filter, surface);
 
    return EINA_TRUE;
 }

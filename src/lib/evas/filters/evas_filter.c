@@ -395,14 +395,17 @@ _filter_buffer_get(Evas_Filter_Context *ctx, int bufid)
 }
 
 void *
-evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid)
+evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid, Eina_Bool render)
 {
    Evas_Filter_Buffer *fb;
 
    fb = _filter_buffer_get(ctx, bufid);
    if (!fb) return NULL;
 
-   return evas_ector_buffer_drawable_image_get(fb->buffer);
+   if (render)
+     return evas_ector_buffer_render_image_get(fb->buffer); // ref++
+   else
+     return evas_ector_buffer_drawable_image_get(fb->buffer); // ref++
 }
 
 Eina_Bool
@@ -413,7 +416,7 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx,
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_main_loop_is(), EINA_FALSE);
 
-   ENFN->image_free(ENDT, stolen_buffer);
+   ENFN->image_free(ENDT, stolen_buffer); // ref--
    return EINA_TRUE;
 }
 
@@ -1444,44 +1447,6 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
    evas_ector_buffer_engine_image_release(fb->buffer, surface);
    return EINA_TRUE;
 }
-
-
-/* Image draw: scale and draw an original image into a RW surface */
-Eina_Bool
-evas_filter_image_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
-                       void *image, Eina_Bool do_async)
-{
-   int dw = 0, dh = 0, w = 0, h = 0;
-   Eina_Bool async_unref;
-   Evas_Filter_Buffer *fb;
-   void *surface;
-
-   ENFN->image_size_get(ENDT, image, &w, &h);
-   if (!w || !h) return EINA_FALSE;
-
-   fb = _filter_buffer_get(ctx, bufid);
-   if (!fb) return EINA_FALSE;
-
-   surface = evas_ector_buffer_render_image_get(fb->buffer);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
-
-   ENFN->image_size_get(ENDT, image, &dw, &dh);
-   if (!dw || !dh) return EINA_FALSE;
-
-   async_unref = ENFN->image_draw(ENDT, draw_context, surface, image,
-                                  0, 0, w, h,
-                                  0, 0, dw, dh,
-                                  EINA_TRUE, do_async);
-   if (do_async && async_unref)
-     {
-        ENFN->image_ref(ENDT, image);
-        evas_unref_queue_image_put(ctx->evas, image);
-     }
-
-   evas_ector_buffer_engine_image_release(fb->buffer, surface);
-   return EINA_TRUE;
-}
-
 
 /* Clip full input rect (0, 0, sw, sh) to target (dx, dy, dw, dh)
  * and get source's clipped sx, sy as well as destination x, y, cols and rows */
