@@ -1662,6 +1662,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
       case ECORE_CON_LOCAL_ABSTRACT:
 #ifdef EFL_NET_SERVER_UNIX_CLASS
          cls = EFL_NET_SERVER_UNIX_CLASS;
+#elif defined(EFL_NET_SERVER_WINDOWS_CLASS)
+         cls = EFL_NET_SERVER_WINDOWS_CLASS;
 #else
          ERR("Your platform doesn't support Efl_Net_Server-compatible local communication");
          // TODO: maybe write to a file and use TCP
@@ -1845,7 +1847,9 @@ _ecore_con_server_dialer_set(Ecore_Con_Server *svr, Eo *dialer)
             (type == ECORE_CON_LOCAL_SYSTEM))
      {
         char *path = ecore_con_local_path_new(type == ECORE_CON_LOCAL_SYSTEM, svr->name, svr->port);
+#ifdef EFL_NET_DIALER_UNIX_CLASS
         struct stat st;
+#endif
 
         if (!path)
           {
@@ -1858,6 +1862,7 @@ _ecore_con_server_dialer_set(Ecore_Con_Server *svr, Eo *dialer)
              free(path);
           }
 
+#ifdef EFL_NET_DIALER_UNIX_CLASS
         if ((stat(address, &st) != 0)
 #ifdef S_ISSOCK
             || (!S_ISSOCK(st.st_mode))
@@ -1867,6 +1872,7 @@ _ecore_con_server_dialer_set(Ecore_Con_Server *svr, Eo *dialer)
              DBG("%s is not a socket", address);
              return EINA_FALSE;
           }
+#endif
      }
 
    if ((svr->type & ECORE_CON_NO_PROXY) == ECORE_CON_NO_PROXY)
@@ -2095,6 +2101,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
       case ECORE_CON_LOCAL_ABSTRACT:
 #ifdef EFL_NET_DIALER_UNIX_CLASS
          cls = EFL_NET_DIALER_UNIX_CLASS;
+#elif defined(EFL_NET_DIALER_WINDOWS_CLASS)
+         cls = EFL_NET_DIALER_WINDOWS_CLASS;
 #else
          ERR("Your platform doesn't support Efl_Net_Dialer-compatible local communication");
          // TODO: maybe write to a file and use TCP
