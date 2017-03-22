@@ -43,6 +43,8 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
                  Evas_Filter_Data *pd, Eina_Bool success)
 {
    void *previous = pd->data->output;
+   Eina_Bool destroy = !pd->data->reuse;
+   Evas_Object_Filter_Data *fcow;
    Eo *eo_obj = obj->object;
 
    if (!success)
@@ -50,10 +52,10 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
         ERR("Filter failed at runtime!");
         evas_filter_invalid_set(eo_obj, EINA_TRUE);
         evas_filter_dirty(eo_obj);
+        destroy = EINA_TRUE;
      }
    else
      {
-        Evas_Object_Filter_Data *fcow;
         void *output = evas_filter_buffer_backing_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID, EINA_FALSE);
 
         fcow = FCOW_BEGIN(pd);
@@ -61,9 +63,29 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
         FCOW_END(fcow, pd);
      }
 
-   // Destroy context as we won't reuse it.
-   evas_filter_buffer_backing_release(ctx, previous);
-   evas_filter_context_destroy(ctx);
+   if (EINA_UNLIKELY(ctx != pd->data->context))
+     {
+        ERR("Filter context has changed! Destroying it now...");
+        fcow = FCOW_BEGIN(pd);
+        evas_filter_context_destroy(fcow->context);
+        fcow->context = NULL;
+        FCOW_END(fcow, pd);
+        destroy = EINA_TRUE;
+     }
+
+   if (destroy)
+     {
+        evas_filter_buffer_backing_release(ctx, previous);
+        evas_filter_context_destroy(ctx);
+        ctx = NULL;
+     }
+
+   if (pd->data->context != ctx)
+     {
+        fcow = FCOW_BEGIN(pd);
+        fcow->context = ctx;
+        FCOW_END(fcow, pd);
+     }
 }
 
 static void
@@ -192,13 +214,6 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         Evas_Object_Filter_Data *fcow;
         Evas_Filter_Padding pad;
 
-        /* NOTE: Filter rendering is now done ENTIRELY on CPU.
-         * So we rely on cache/cache2 to allocate a real image buffer,
-         * that we can draw to. The OpenGL texture will be created only
-         * after the rendering has been done, as we simply push the output
-         * image to GL.
-         */
-
         W = obj->cur->geometry.w;
         H = obj->cur->geometry.h;
         X = obj->cur->geometry.x;
@@ -217,7 +232,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                        obj->cur->clipper->cur->cache.clip.b,
                                        obj->cur->clipper->cur->cache.clip.a);
         else
-           ENFN->context_multiplier_unset(output, context);
+          ENFN->context_multiplier_unset(output, context);
 
         if (!pd->data->chain)
           {
@@ -295,22 +310,57 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
              _evas_filter_state_set_internal(pd->data->chain, pd);
           }
 
-        filter = evas_filter_context_new(obj->layer->evas, do_async, 0);
-
-        // Run script
-        ok = evas_filter_context_program_use(filter, pd->data->chain);
-        if (!filter || !ok)
+        filter = pd->data->context;
+        if (filter)
           {
-             ERR("Parsing failed?");
-             evas_filter_context_destroy(filter);
+             int prev_w, prev_h;
+             Eina_Bool was_async;
 
-             if (!pd->data->invalid)
+             was_async = evas_filter_context_async_get(filter);
+             evas_filter_context_size_get(filter, &prev_w, &prev_h);
+             if ((!pd->data->reuse) || (was_async != do_async) ||
+                 (prev_w != W) || (prev_h != H))
                {
                   fcow = FCOW_BEGIN(pd);
-                  fcow->invalid = EINA_TRUE;
+                  fcow->context = NULL;
                   FCOW_END(fcow, pd);
+                  evas_filter_context_destroy(filter);
+                  filter = NULL;
                }
-             return EINA_FALSE;
+          }
+
+        if (filter)
+          {
+             ok = evas_filter_context_program_reuse(filter, pd->data->chain);
+             if (!ok)
+               {
+                  fcow = FCOW_BEGIN(pd);
+                  fcow->context = NULL;
+                  FCOW_END(fcow, pd);
+                  evas_filter_context_destroy(filter);
+                  filter = NULL;
+               }
+          }
+
+        if (!filter)
+          {
+             filter = evas_filter_context_new(obj->layer->evas, do_async, 0);
+
+             // Run script
+             ok = evas_filter_context_program_use(filter, pd->data->chain, EINA_FALSE);
+             if (!filter || !ok)
+               {
+                  ERR("Parsing failed?");
+                  evas_filter_context_destroy(filter);
+
+                  if (!pd->data->invalid)
+                    {
+                       fcow = FCOW_BEGIN(pd);
+                       fcow->invalid = EINA_TRUE;
+                       FCOW_END(fcow, pd);
+                    }
+                  return EINA_FALSE;
+               }
           }
 
         // Proxies
@@ -336,14 +386,16 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         // Add post-run callback and run filter
         evas_filter_context_post_run_callback_set(filter, _filter_cb, pd);
-        ok = evas_filter_run(filter);
 
         fcow = FCOW_BEGIN(pd);
+        fcow->context = filter;
         fcow->changed = EINA_FALSE;
         fcow->async = do_async;
         fcow->prev_obscured = fcow->obscured;
-        fcow->invalid = !ok;
+        fcow->invalid = EINA_FALSE;
         FCOW_END(fcow, pd);
+
+        ok = evas_filter_context_run(filter);
 
         if (ok)
           {
@@ -352,6 +404,9 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
           }
         else
           {
+             fcow = FCOW_BEGIN(pd);
+             fcow->invalid = EINA_TRUE;
+             FCOW_END(fcow, pd);
              ERR("Rendering failed.");
              return EINA_FALSE;
           }
@@ -376,6 +431,9 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_F
    fcow = FCOW_BEGIN(pd);
    {
       fcow->obj = obj;
+
+      if (fcow->context)
+        evas_filter_context_destroy(fcow->context);
 
       // Parse filter program
       evas_filter_program_del(fcow->chain);
@@ -612,6 +670,9 @@ _efl_canvas_filter_internal_efl_object_destructor(Eo *eo_obj, Evas_Filter_Data *
 
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    e = obj->layer->evas;
+
+   if (pd->data->context)
+     evas_filter_context_destroy(pd->data->context);
 
    if (pd->data->output)
      {

@@ -13476,7 +13476,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         ctx = evas_filter_context_new(obj->layer->evas, do_async, ti->gfx_filter);
         evas_filter_state_prepare(eo_obj, &state, ti);
         evas_filter_program_state_set(pgm, &state);
-        ok = evas_filter_context_program_use(ctx, pgm);
+        ok = evas_filter_context_program_use(ctx, pgm, EINA_FALSE);
         if (!ok)
           {
              evas_filter_context_destroy(ctx);
@@ -13790,7 +13790,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                   else if (ctx)
                     {
                        evas_filter_context_post_run_callback_set(ctx, _filter_cb, obj->layer->evas);
-                       evas_filter_run(ctx);
+                       evas_filter_context_run(ctx);
                     }
                }
           }

@@ -157,10 +157,13 @@ struct _Evas_Filter_Context
       Eina_Bool color_use : 1;
    } target;
 
+   volatile int running;
+   int          run_count;
+
    Eina_Bool async : 1;
-   Eina_Bool running : 1;
    Eina_Bool has_proxies : 1;
    Eina_Bool gl : 1;
+
 };
 
 struct _Evas_Filter_Command
@@ -249,6 +252,7 @@ struct _Evas_Filter_Buffer
    Ector_Buffer *buffer;
    int w, h;
 
+   Eina_Bool used : 1;        // This buffer is in use (useful for reuse of context)
    Eina_Bool alpha_only : 1;  // 1 channel (A) instead of 4 (RGBA)
    Eina_Bool transient : 1;   // temporary buffer (automatic allocation)
    Eina_Bool locked : 1;      // internal flag
@@ -269,7 +273,7 @@ enum _Evas_Filter_Support
    EVAS_FILTER_SUPPORT_GL
 };
 
-void                     evas_filter_context_clear(Evas_Filter_Context *ctx);
+void                     evas_filter_context_clear(Evas_Filter_Context *ctx, Eina_Bool keep_buffers);
 void                     evas_filter_context_source_set(Evas_Filter_Context *ctx, Evas_Object *eo_proxy, Evas_Object *eo_source, int bufid, Eina_Stringshare *name);
 
 /* Utility functions */

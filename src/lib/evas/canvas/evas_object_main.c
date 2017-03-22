@@ -33,7 +33,7 @@ static const Evas_Object_Protected_State default_state = {
   1.0, 0, EVAS_RENDER_BLEND, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
 };
 static const Evas_Object_Filter_Data default_filter = {
-  NULL, NULL, NULL, NULL, NULL, NULL, {}, {}, NULL, {}, EINA_FALSE, EINA_FALSE, EINA_TRUE
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, {}, {}, NULL, {}, EINA_FALSE, EINA_FALSE, EINA_TRUE, EINA_TRUE
 };
 const void * const evas_object_filter_cow_default = &default_filter;
 static const Evas_Object_Mask_Data default_mask = {

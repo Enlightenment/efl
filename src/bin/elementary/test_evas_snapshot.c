@@ -111,7 +111,6 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                   efl_pack_grid(grid, efl_added, 1, 1, GRID_SIZE - 2, GRID_SIZE - 2),
                   efl_gfx_visible_set(efl_added, 1));
 
-
    // Objects above snapshot
    // 1. Opaque rect, not changing
    o = evas_object_rectangle_add(win);

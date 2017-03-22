@@ -2834,48 +2834,49 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 
 /** Run a program, must be already loaded */
 
-static void
+static Eina_Bool
 _buffers_update(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
 {
-   Evas_Object_Protected_Data *source;
    Evas_Filter_Proxy_Binding *pb;
-   Evas_Filter_Buffer *fb;
    Buffer *buf;
+   int w, h, id;
 
    EINA_INLIST_FOREACH(pgm->buffers, buf)
      {
         if (buf->proxy)
           {
              pb = eina_hash_find(pgm->proxies, buf->proxy);
-             if (!pb) continue;
+             if (!pb) return EINA_FALSE;
 
-             buf->cid = evas_filter_buffer_empty_new(ctx, buf->alpha);
-             fb = _filter_buffer_get(ctx, buf->cid);
-             fb->source = pb->eo_source;
-             fb->source_name = eina_stringshare_ref(pb->name);
-             fb->ctx->has_proxies = EINA_TRUE;
+             ctx->has_proxies = EINA_TRUE;
+             id = evas_filter_buffer_proxy_new(ctx, pb, &w, &h);
+             if (id < 0) return EINA_FALSE;
 
-             source = efl_data_scope_get(fb->source, EFL_CANVAS_OBJECT_CLASS);
-             if ((source->cur->geometry.w != buf->w) ||
-                 (source->cur->geometry.h != buf->h))
-               pgm->changed = EINA_TRUE;
-             buf->w = fb->w = source->cur->geometry.w;
-             buf->h = fb->h = source->cur->geometry.h;
-             XDBG("Created proxy buffer %d %s '%s'", fb->id,
-                  buf->alpha ? "alpha" : "rgba", buf->name);
+             buf->cid = id;
+             buf->w = w;
+             buf->h = h;
+
+             XDBG("Created proxy buffer #%d %dx%d %s '%s'", buf->cid,
+                  w, h, buf->alpha ? "alpha" : "rgba", buf->name);
           }
         else
           {
-             if ((buf->w != pgm->state.w) || (buf->h != pgm->state.h))
-               pgm->changed = EINA_TRUE;
-             buf->cid = evas_filter_buffer_empty_new(ctx, buf->alpha);
-             fb = _filter_buffer_get(ctx, buf->cid);
-             fb->w = buf->w = pgm->state.w;
-             fb->h = buf->h = pgm->state.h;
-             XDBG("Created context buffer %d %s '%s'", fb->id,
-                  buf->alpha ? "alpha" : "rgba", buf->name);
+             w = pgm->state.w;
+             h = pgm->state.h;
+
+             id = evas_filter_buffer_empty_new(ctx, w, h, buf->alpha);
+             if (id < 0) return EINA_FALSE;
+
+             buf->cid = id;
+             buf->w = w;
+             buf->h = h;
+
+             XDBG("Created context buffer #%d %dx%d %s '%s'", buf->cid,
+                  w, h, buf->alpha ? "alpha" : "rgba", buf->name);
           }
      }
+
+   return EINA_TRUE;
 }
 
 /** Evaluate required padding to correctly apply an effect */
@@ -3401,11 +3402,8 @@ _command_from_instruction(Evas_Filter_Context *ctx,
    cmd = instr2cmd(ctx, instr, dc);
    if (!cmd) return EINA_FALSE;
 
-   if (cmd->output && ctx->gl)
-     {
-        if (ENFN->gfx_filter_supports(ENDT, cmd) == EVAS_FILTER_SUPPORT_GL)
-          cmd->output->is_render = EINA_TRUE;
-     }
+   if (cmd->output)
+     cmd->output->is_render = EINA_TRUE;
 
    return EINA_TRUE;
 }
@@ -3475,7 +3473,8 @@ _instruction_dump(Evas_Filter_Instruction *instr)
 
 Eina_Bool
 evas_filter_context_program_use(Evas_Filter_Context *ctx,
-                                Evas_Filter_Program *pgm)
+                                Evas_Filter_Program *pgm,
+                                Eina_Bool reuse)
 {
    Evas_Filter_Instruction *instr;
    Eina_Bool success = EINA_FALSE;
@@ -3492,7 +3491,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    ctx->h = pgm->state.h;
 
    // Create empty context with all required buffers
-   evas_filter_context_clear(ctx);
+   evas_filter_context_clear(ctx, reuse);
 
    if (pgm->changed)
      {
@@ -3508,7 +3507,9 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
              goto end;
           }
      }
-   _buffers_update(ctx, pgm);
+
+   // Create or update all buffers
+   if (!_buffers_update(ctx, pgm)) goto end;
 
    // Compute and save padding info
    evas_filter_program_padding_get(pgm, &ctx->pad.final, &ctx->pad.calculated);
@@ -3528,7 +3529,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    pgm->changed = EINA_FALSE;
 
 end:
-   if (!success) evas_filter_context_clear(ctx);
+   if (!success) evas_filter_context_clear(ctx, EINA_FALSE);
    if (dc) ENFN->context_free(ENDT, dc);
    return success;
 }

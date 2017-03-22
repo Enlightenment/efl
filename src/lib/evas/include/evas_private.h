@@ -93,6 +93,7 @@ typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
 
 /* gfx filters typedef only */
 typedef struct _Evas_Filter_Program         Evas_Filter_Program;
+typedef struct _Evas_Filter_Context         Evas_Filter_Context;
 typedef struct _Evas_Object_Filter_Data     Evas_Object_Filter_Data;
 typedef struct _Evas_Filter_Data_Binding    Evas_Filter_Data_Binding;
 typedef struct _Evas_Pointer_Data           Evas_Pointer_Data;
@@ -1288,6 +1289,7 @@ struct _Evas_Object_Filter_Data
    Eina_Stringshare    *name;
    Eina_Stringshare    *code;
    Evas_Filter_Program *chain;
+   Evas_Filter_Context *context;
    Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
    Eina_Inlist         *data; // Evas_Filter_Data_Binding
    Eina_Rectangle       prev_obscured, obscured;
@@ -1306,6 +1308,7 @@ struct _Evas_Object_Filter_Data
    Eina_Bool            changed : 1;
    Eina_Bool            invalid : 1; // Code parse failed
    Eina_Bool            async : 1;
+   Eina_Bool            reuse : 1;
 };
 
 struct _Evas_Object_Func
