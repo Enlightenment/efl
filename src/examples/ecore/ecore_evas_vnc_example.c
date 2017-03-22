@@ -12,6 +12,19 @@
 
 static int width = 800;
 
+static void
+_resize_cb(Ecore_Evas *ee)
+{
+   Evas_Object *vnc;
+   int w = 0, h = 0;
+
+   ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+
+   fprintf(stderr, "resizing [%i, %i]\n", w, h);
+   vnc = ecore_evas_data_get(ee, "vnc");
+   evas_object_resize(vnc, w, h);
+}
+
 static Eina_Bool
 _anim(void *data)
 {
@@ -165,7 +178,7 @@ main(int argc, char *argv[])
    Evas *evas;
    Evas_Object *bg, *rect;
    Ecore_Animator *animator;
-   Eina_Bool r;
+   Evas_Object *vnc;
    Ecore_Event_Handler *keydown_handler, *keyup_handler, *mouse_move,
      *mouse_down, *mouse_up, *mouse_wheel;
    char *engine = "software_x11";
@@ -239,9 +252,13 @@ main(int argc, char *argv[])
 
    ecore_evas_show(ee);
 
-   r = ecore_evas_vnc_start(ee, "localhost", -1, _accept_cb, _disc_cb, NULL);
+   vnc = ecore_evas_vnc_start(ee, "localhost", -1, _accept_cb, _disc_cb, NULL);
+   ecore_evas_data_set(ee, "vnc", vnc);
+   ecore_evas_callback_resize_set(ee, _resize_cb);
+   evas_object_resize(vnc, width, height);
+   evas_object_show(vnc);
 
-   if (!r)
+   if (!vnc)
      {
         fprintf(stderr, "Could not enable the VNC support!\n");
         goto exit;
