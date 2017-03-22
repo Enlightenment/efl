@@ -51,14 +51,25 @@ inline std::string in_variable_name(std::string const& param_name)
    return "_in_" + escape_keyword(param_name);
 }
 
+inline std::string direction_modifier(attributes::parameter_def const& param)
+{
+   if (param.direction != attributes::parameter_direction::in)
+     {
+        if (param.type.c_type == "Eina_Slice" || param.type.c_type == "Eina_Rw_Slice")
+           return " ref ";
+        else
+           return " out ";
+     }
+   return " ";
+}
+
 struct parameter_generator
 {
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     bool is_out = param.direction != attributes::parameter_direction::in;
      return as_generator(
-             (is_out ? " out ": " ") << type << " " << string
+             direction_modifier(param) << type << " " << string
         ).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
    }
 } const parameter {};
@@ -68,9 +79,8 @@ struct marshall_parameter_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      bool is_out = param.direction != attributes::parameter_direction::in;
       return as_generator(
-              (is_out ? " out " : " ") << marshall_type << " " << string
+              direction_modifier(param) << marshall_type << " " << string
          ).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
    }
 } const marshall_parameter {};
@@ -86,7 +96,7 @@ struct argument_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     std::string direction =  param.direction != attributes::parameter_direction::in ? " out " : "";
+     std::string direction = direction_modifier(param);
      return as_generator(
              direction << argument_forward(param)
         ).generate(sink, attributes::unused, context);
@@ -100,10 +110,7 @@ struct argument_invocation_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     std::string arg;
-
-     if (param.direction != attributes::parameter_direction::in)
-       arg = " out ";
+     std::string arg = direction_modifier(param);
 
      if (param_should_use_out_var(param))
        arg += out_variable_name(param.param_name);
