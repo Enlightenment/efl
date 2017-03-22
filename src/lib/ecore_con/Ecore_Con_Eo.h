@@ -18,6 +18,9 @@
 #include "efl_net_server_tcp.eo.h"
 
 #ifdef _WIN32
+#include "efl_net_socket_windows.eo.h"
+#include "efl_net_dialer_windows.eo.h"
+#include "efl_net_server_windows.eo.h"
 #else
 #include "efl_net_socket_unix.eo.h"
 #include "efl_net_dialer_unix.eo.h"

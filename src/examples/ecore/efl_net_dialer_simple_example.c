@@ -346,8 +346,11 @@ main(int argc, char **argv)
    if (strcmp(protocol, "tcp") == 0) cls = EFL_NET_DIALER_TCP_CLASS;
    else if (strcmp(protocol, "udp") == 0) cls = EFL_NET_DIALER_UDP_CLASS;
    else if (strcmp(protocol, "ssl") == 0) cls = EFL_NET_DIALER_SSL_CLASS;
-#ifndef _WIN32
+#ifdef EFL_NET_DIALER_UNIX_CLASS
    else if (strcmp(protocol, "unix") == 0) cls = EFL_NET_DIALER_UNIX_CLASS;
+#endif
+#ifdef EFL_NET_DIALER_WINDOWS_CLASS
+   else if (strcmp(protocol, "windows") == 0) cls = EFL_NET_DIALER_WINDOWS_CLASS;
 #endif
    else
      {

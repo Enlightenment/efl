@@ -330,7 +330,10 @@ static const Ecore_Getopt options = {
                                    "http://address to do a GET request\n"
                                    "ws://address or wss:// to do WebSocket request (must send some data once connected)\n"
                                    "udp://IP:PORT to bind using UDP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
-#ifndef _WIN32
+#ifdef EFL_NET_DIALER_WINDOWS_CLASS
+                                   "windows://path to connect to an Windows NamedPipe server. It will have '\\\\.pipe\\' prepended.\n"
+#endif
+#ifdef EFL_NET_DIALER_UNIX_CLASS
                                    "unix://path to connect to an AF_UNIX server. For Linux one can create abstract sockets with unix://abstract:name.\n"
 #endif
                                    "ssl://IP:PORT to connect using TCP+SSL and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
@@ -346,7 +349,10 @@ static const Ecore_Getopt options = {
                                    "http://address to do a PUT request\n"
                                    "ws://address or wss:// to do WebSocket request\n"
                                    "udp://IP:PORT to connect using UDP and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
-#ifndef _WIN32
+#ifdef EFL_NET_DIALER_WINDOWS_CLASS
+                                   "windows://path to connect to an Windows NamedPipe server. It will have '\\\\.pipe\\' prepended.\n"
+#endif
+#ifdef EFL_NET_SERVER_UNIX_CLASS
                                    "unix://path to connect to an AF_UNIX server. For Linux one can create abstract sockets with unix://abstract:name.\n"
 #endif
                                    "ssl://IP:PORT to connect using TCP+SSL and an IPv4 (A.B.C.D:PORT) or IPv6 ([A:B:C:D::E]:PORT).\n"
@@ -542,7 +548,7 @@ main(int argc, char **argv)
              goto end_input;
           }
      }
-#ifndef _WIN32
+#ifdef EFL_NET_DIALER_UNIX_CLASS
    else if (strncmp(input_fname, "unix://", strlen("unix://")) == 0)
      {
         /*
@@ -566,6 +572,35 @@ main(int argc, char **argv)
         if (err)
           {
              fprintf(stderr, "ERROR: could not AF_UNIX dial %s: %s\n",
+                     address, eina_error_msg_get(err));
+             goto end_input;
+          }
+     }
+#endif
+#ifdef EFL_NET_DIALER_WINDOWS_CLASS
+   else if (strncmp(input_fname, "windows://", strlen("windows://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *address = input_fname + strlen("windows://");
+        Eina_Error err;
+        input = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, ecore_main_loop_get(),
+                        efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
+                        efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
+                        );
+        if (!input)
+          {
+             fprintf(stderr, "ERROR: could not create Windows NamedPipe Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end;
+          }
+
+        err = efl_net_dialer_dial(input, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not Windows NamedPipe dial %s: %s\n",
                      address, eina_error_msg_get(err));
              goto end_input;
           }
@@ -787,7 +822,7 @@ main(int argc, char **argv)
              goto end_output;
           }
      }
-#ifndef _WIN32
+#ifdef EFL_NET_DIALER_UNIX_CLASS
    else if (strncmp(output_fname, "unix://", strlen("unix://")) == 0)
      {
         /*
@@ -811,6 +846,35 @@ main(int argc, char **argv)
         if (err)
           {
              fprintf(stderr, "ERROR: could not AF_UNIX dial %s: %s\n",
+                     address, eina_error_msg_get(err));
+             goto end_output;
+          }
+     }
+#endif
+#ifdef EFL_NET_DIALER_WINDOWS_CLASS
+   else if (strncmp(output_fname, "windows://", strlen("windows://")) == 0)
+     {
+        /*
+         * Since Efl.Net.Socket implements the required interfaces,
+         * they can be used here as well.
+         */
+        const char *address = output_fname + strlen("windows://");
+        Eina_Error err;
+        output = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, ecore_main_loop_get(),
+                         efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
+                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
+                         );
+        if (!output)
+          {
+             fprintf(stderr, "ERROR: could not create Windows NamedPipe Dialer.\n");
+             retval = EXIT_FAILURE;
+             goto end_input;
+          }
+
+        err = efl_net_dialer_dial(output, address);
+        if (err)
+          {
+             fprintf(stderr, "ERROR: could not Windows NamedPipe dial %s: %s\n",
                      address, eina_error_msg_get(err));
              goto end_output;
           }

@@ -461,7 +461,10 @@ static const char * protocols[] = {
   "tcp",
   "udp",
   "ssl",
-#ifndef _WIN32
+#ifdef EFL_NET_SERVER_WINDOWS_CLASS
+  "windows",
+#endif
+#ifdef EFL_NET_SERVER_UNIX_CLASS
   "unix",
 #endif
   NULL
@@ -622,7 +625,10 @@ main(int argc, char **argv)
    if (strcmp(protocol, "tcp") == 0) cls = EFL_NET_SERVER_TCP_CLASS;
    else if (strcmp(protocol, "udp") == 0) cls = EFL_NET_SERVER_UDP_CLASS;
    else if (strcmp(protocol, "ssl") == 0) cls = EFL_NET_SERVER_SSL_CLASS;
-#ifndef _WIN32
+#ifdef EFL_NET_SERVER_WINDOWS_CLASS
+   else if (strcmp(protocol, "windows") == 0) cls = EFL_NET_SERVER_WINDOWS_CLASS;
+#endif
+#ifdef EFL_NET_SERVER_UNIX_CLASS
    else if (strcmp(protocol, "unix") == 0) cls = EFL_NET_SERVER_UNIX_CLASS;
 #endif
    else
@@ -703,7 +709,7 @@ main(int argc, char **argv)
         efl_net_server_ssl_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
         if (socket_activated) efl_net_server_ssl_socket_activate(server, address);
      }
-#ifndef _WIN32
+#ifdef EFL_NET_SERVER_UNIX_CLASS
    else if (cls == EFL_NET_SERVER_UNIX_CLASS)
      {
         efl_net_server_unix_unlink_before_bind_set(server, EINA_TRUE); /* makes testing easier */
