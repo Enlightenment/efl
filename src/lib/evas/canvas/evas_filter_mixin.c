@@ -27,6 +27,7 @@ struct _Evas_Object_Filter_Data
    Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
    Eina_Inlist         *data; // Evas_Filter_Data_Binding
    Eina_Rectangle       prev_obscured, obscured;
+   Evas_Filter_Padding  prev_padding, padding;
    void                *output;
    struct {
       struct {
@@ -283,36 +284,31 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if (!pd->data->chain)
           {
              Evas_Filter_Program *pgm;
+             Eina_Bool invalid;
 
              pgm = evas_filter_program_new(pd->data->name, alpha);
              evas_filter_program_source_set_all(pgm, pd->data->sources);
              evas_filter_program_data_set_all(pgm, pd->data->data);
              _evas_filter_state_set_internal(pgm, pd);
-             if (!evas_filter_program_parse(pgm, pd->data->code))
+             invalid = !evas_filter_program_parse(pgm, pd->data->code);
+             if (invalid)
                {
                   ERR("Filter program parsing failed");
                   evas_filter_program_del(pgm);
-
-                  if (!pd->data->invalid)
-                    {
-                       fcow = FCOW_BEGIN(pd);
-                       fcow->invalid = EINA_TRUE;
-                       FCOW_END(fcow, pd);
-                    }
-
-                  return EINA_FALSE;
+                  pgm = NULL;
                }
              fcow = FCOW_BEGIN(pd);
+             if (!invalid) evas_filter_program_padding_get(pgm, NULL, &fcow->padding);
              fcow->chain = pgm;
-             fcow->invalid = EINA_FALSE;
+             fcow->invalid = invalid;
              FCOW_END(fcow, pd);
+             if (invalid) return EINA_FALSE;
           }
         else if (previous && !pd->data->changed)
           {
-             Eina_Bool redraw;
+             Eina_Bool redraw = EINA_TRUE;
 
-             redraw = _evas_filter_state_set_internal(pd->data->chain, pd);
-             if (redraw)
+             if (_evas_filter_state_set_internal(pd->data->chain, pd))
                DBG("Filter redraw by state change!");
              else if (obj->changed)
                DBG("Filter redraw by object content change!");
@@ -441,6 +437,8 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         fcow->changed = EINA_FALSE;
         fcow->async = do_async;
         fcow->prev_obscured = fcow->obscured;
+        fcow->prev_padding = fcow->padding;
+        fcow->padding = pad;
         fcow->invalid = EINA_FALSE;
         FCOW_END(fcow, pd);
 
@@ -470,6 +468,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_F
    Evas_Object_Protected_Data *obj;
    Evas_Filter_Program *pgm = NULL;
    Evas_Object_Filter_Data *fcow;
+   Eina_Bool invalid = pd->data->invalid;
    Eina_Bool alpha;
 
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -494,16 +493,21 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_F
            evas_filter_program_source_set_all(pgm, fcow->sources);
            evas_filter_program_data_set_all(pgm, fcow->data);
            _evas_filter_state_set_internal(pgm, pd);
-           if (!evas_filter_program_parse(pgm, code))
+           invalid = !evas_filter_program_parse(pgm, code);
+           if (invalid)
              {
                 ERR("Parsing failed!");
                 evas_filter_program_del(pgm);
                 pgm = NULL;
              }
+           else
+             {
+                evas_filter_program_padding_get(pgm, NULL, &fcow->padding);
+             }
         }
       fcow->chain = pgm;
       fcow->changed = EINA_TRUE;
-      fcow->invalid = (pgm == NULL);
+      fcow->invalid = invalid;
       eina_stringshare_replace(&fcow->code, code);
    }
    FCOW_END(fcow, pd);
@@ -526,6 +530,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_source_set(Eo *eo_obj, Evas_Fi
    Evas_Filter_Proxy_Binding *pb, *pb_old = NULL;
    Evas_Object_Protected_Data *source = NULL;
    Evas_Object_Filter_Data *fcow = NULL;
+   Eina_Bool invalid = pd->data->invalid;
 
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (eo_source)
@@ -589,14 +594,15 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_source_set(Eo *eo_obj, Evas_Fi
    eina_hash_add(fcow->sources, pb->name, pb);
    evas_filter_program_source_set_all(fcow->chain, fcow->sources);
    evas_filter_program_data_set_all(fcow->chain, fcow->data);
-   evas_filter_program_parse(fcow->chain, fcow->code);
+   invalid = !evas_filter_program_parse(fcow->chain, fcow->code);
+   if (!invalid) evas_filter_program_padding_get(fcow->chain, NULL, &fcow->padding);
 
    // Update object
 update:
    if (fcow)
      {
         fcow->changed = EINA_TRUE;
-        fcow->invalid = EINA_FALSE;
+        fcow->invalid = invalid;
         FCOW_END(fcow, pd);
      }
 
@@ -755,6 +761,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_data_set(Eo *eo_obj, Evas_Filt
 {
    Evas_Filter_Data_Binding *db, *found = NULL;
    Evas_Object_Filter_Data *fcow;
+   Eina_Bool invalid = pd->data->invalid;
 
    EINA_SAFETY_ON_NULL_RETURN(pd->data);
    EINA_SAFETY_ON_NULL_RETURN(name);
@@ -789,12 +796,13 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_data_set(Eo *eo_obj, Evas_Filt
            db->execute = execute;
            fcow->data = eina_inlist_append(fcow->data, EINA_INLIST_GET(db));
         }
-      fcow->invalid = EINA_FALSE;
       if (fcow->chain)
         {
            evas_filter_program_data_set_all(fcow->chain, fcow->data);
-           evas_filter_program_parse(fcow->chain, fcow->code);
+           invalid = !evas_filter_program_parse(fcow->chain, fcow->code);
+           if (!invalid) evas_filter_program_padding_get(fcow->chain, NULL, &fcow->padding);
         }
+      fcow->invalid = invalid;
       fcow->changed = 1;
    }
    FCOW_END(fcow, pd);
@@ -832,15 +840,18 @@ _efl_canvas_filter_internal_filter_output_buffer_get(Eo *obj EINA_UNUSED, Evas_F
    return pd->data->output;
 }
 
-void
+Eina_Bool
 _evas_filter_obscured_region_set(Evas_Object_Protected_Data *obj,
                                  const Eina_Rectangle rect)
 {
-   Evas_Filter_Data *pd;
    Evas_Object_Filter_Data *fcow;
+   Evas_Filter_Data *pd;
+   Eina_Rectangle prev;
 
    pd = efl_data_scope_get(obj->object, MY_CLASS);
-   if (!pd->data) return;
+   if (!pd->data) return EINA_FALSE;
+
+   prev = pd->data->prev_obscured;
 
    fcow = FCOW_BEGIN(pd);
    if ((rect.w <= 0) || (rect.h <= 0))
@@ -853,6 +864,19 @@ _evas_filter_obscured_region_set(Evas_Object_Protected_Data *obj,
         fcow->obscured.h = rect.h;
      }
    FCOW_END(fcow, pd);
+
+   // Snapshot objects need to be redrawn if the padding has increased
+   if ((pd->data->prev_padding.l < pd->data->padding.l) ||
+       (pd->data->prev_padding.r < pd->data->padding.r) ||
+       (pd->data->prev_padding.t < pd->data->padding.t) ||
+       (pd->data->prev_padding.b < pd->data->padding.b))
+     return EINA_TRUE;
+
+   // Snapshot objects need to be redrawn if the obscured region has shrank
+   if (!_evas_eina_rectangle_inside(&prev, &pd->data->obscured))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 void

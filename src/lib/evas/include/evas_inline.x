@@ -327,6 +327,18 @@ evas_common_draw_context_cache_update(RGBA_Draw_Context *dc)
      }
 }
 
+static inline Eina_Bool
+_evas_eina_rectangle_inside(const Eina_Rectangle *big, const Eina_Rectangle *small)
+{
+   Eina_Rectangle inter = *big;
+
+   if (!eina_rectangle_intersection(&inter, small))
+     return EINA_FALSE;
+   if ((inter.w == small->w) && (inter.h == small->h))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 #define _EVAS_COLOR_CLAMP(x, y) do { \
    if (x > y) { x = y; bad = 1; } \
    if (x < 0) { x = 0; bad = 1; } } while (0)

@@ -2747,18 +2747,6 @@ _is_obj_in_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
 }
 #endif
 
-static inline Eina_Bool
-_rectangle_inside(Eina_Rectangle *big, Eina_Rectangle *small)
-{
-   Eina_Rectangle inter = *big;
-
-   if (!eina_rectangle_intersection(&inter, small))
-     return EINA_FALSE;
-   if ((inter.w == small->w) && (inter.h == small->h))
-     return EINA_TRUE;
-   return EINA_FALSE;
-}
-
 static void
 _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap)
 {
@@ -2769,15 +2757,22 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
    const int h = snap->cur->geometry.h;
    Evas_Object_Protected_Data *obj;
    Evas_Active_Entry *ent;
-   Eina_Rectangle snap_rect = { x, y, w, h };
+   Eina_Rectangle snap_clip, snap_rect = { x, y, w, h };
    Eina_Rectangle opaque = {};
    void *surface;
 
    // FIXME: Use evas' standard rectangle logic instead of this bad algo
+   // FIXME: This walks ALL the objects in the canvas to find the opaque region
    // TODO: Improve opaque region support, maybe have more than one
    // TODO: Also list redraw regions (partial updates)
 
    if (!evas_object_is_visible(snap->object, snap)) return;
+
+   evas_object_clip_recalc(snap);
+   snap_clip.x = snap->cur->cache.clip.x;
+   snap_clip.y = snap->cur->cache.clip.y;
+   snap_clip.w = snap->cur->cache.clip.w;
+   snap_clip.h = snap->cur->cache.clip.h;
 
    surface = _evas_object_image_surface_get(snap, EINA_FALSE);
    if (!surface) need_redraw = EINA_TRUE;
@@ -2788,7 +2783,6 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
         obj = ent->obj;
         if (obj == snap)
           {
-             if (!need_redraw) break;
              above = EINA_TRUE;
              continue;
           }
@@ -2811,35 +2805,28 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
                   };
 
                   if ((opaque.w * opaque.h) < (cur.w * cur.h))
-                    {
-                       opaque = cur;
-                       continue;
-                    }
-
-                  if (!eina_rectangles_intersect(&snap_rect, &cur))
+                    opaque = cur;
+                  else if (!eina_rectangles_intersect(&snap_rect, &cur))
                     continue;
+                  else if (!opaque.w || !opaque.h)
+                    opaque = cur;
+                  else if (_evas_eina_rectangle_inside(&cur, &opaque))
+                    opaque = cur;
+                  //else if (!_evas_eina_rectangle_inside(&opaque, &cur))
 
-                  if (!opaque.w || !opaque.h)
-                    opaque = cur;
-                  else if (_rectangle_inside(&cur, &opaque))
-                    opaque = cur;
-                  //else if (!_rectangle_inside(&opaque, &cur))
+                  if (_evas_eina_rectangle_inside(&opaque, &snap_clip))
+                    return;
                }
           }
      }
 
-   _evas_filter_obscured_region_set(snap, opaque);
+   need_redraw |= _evas_filter_obscured_region_set(snap, opaque);
    snap->snapshot_needs_redraw |= need_redraw;
 
    if (add_rect || need_redraw)
      {
-        // FIXME: Only add necessary rects
-        // Note that with filters this is extremely tricky: a simple color
-        // change would mean redraw all. Also blurs, displace, etc... need
-        // to expand by the cutout_margin (filter padding).
-        ENFN->output_redraws_rect_add(ENDT,
-                                      snap->cur->geometry.x, snap->cur->geometry.y,
-                                      snap->cur->geometry.w, snap->cur->geometry.h);
+        // FIXME: Only add necessary rects (if object itself hasn't changed)
+        ENFN->output_redraws_rect_add(ENDT, x, y, w, h);
      }
 }
 
