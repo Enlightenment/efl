@@ -253,6 +253,7 @@ Eina_Bool _test_testing_eina_binbuf_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test
   eina_binbuf_insert_char(binbuf, 42, 0);
   eina_binbuf_insert_char(binbuf, 43, 0);
   eina_binbuf_append_char(binbuf, 33);
+  _binbuf_in_own_to_check = binbuf;
   return r;
 }
 
