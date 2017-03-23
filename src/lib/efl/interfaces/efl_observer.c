@@ -49,6 +49,23 @@ _free_cb(void *data)
    free(observers);
 }
 
+static void
+_observer_del(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, Efl_Observer_List *observers, Eina_List *target)
+{
+   if (!target) return;
+
+   Efl_Observer_Refcount *or;
+
+   or = eina_list_data_get(target);
+   EINA_REFCOUNT_UNREF(or)
+     {
+        observers->list = eina_list_remove_list(observers->list, target);
+
+        if (!observers->list)
+          eina_hash_del(pd->observers, observers->key, observers);
+     }
+}
+
 EOLIAN static void
 _efl_observable_efl_object_destructor(Eo *obj, Efl_Observable_Data *pd)
 {
@@ -97,25 +114,13 @@ EOLIAN static void
 _efl_observable_observer_del(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, const char *key, Efl_Observer *obs)
 {
    Efl_Observer_List *observers;
-   Efl_Observer_Refcount *or;
-   Eina_List *list;
 
    if (!key || !pd->observers) return;
 
    observers = eina_hash_find(pd->observers, key);
    if (!observers) return;
 
-   list = eina_list_search_sorted_list(observers->list, _search_cb, obs);
-   if (!list) return;
-
-   or = eina_list_data_get(list);
-   EINA_REFCOUNT_UNREF(or)
-     {
-        observers->list = eina_list_remove_list(observers->list, list);
-
-        if (observers->list == NULL)
-          eina_hash_del(pd->observers, key, observers);
-     }
+   _observer_del(obj, pd, observers, eina_list_search_sorted_list(observers->list, _search_cb, obs));
 }
 
 EOLIAN static void
@@ -129,17 +134,7 @@ _efl_observable_observer_clean(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, Efl
    it = eina_hash_iterator_data_new(pd->observers);
    EINA_ITERATOR_FOREACH(it, observers)
      {
-        Efl_Observer_Refcount *or;
-        Eina_List *list;
-
-        list = eina_list_search_sorted_list(observers->list, _search_cb, obs);
-        if (!list) continue;
-
-        or = eina_list_data_get(list);
-        EINA_REFCOUNT_UNREF(or)
-          {
-             observers->list = eina_list_remove_list(observers->list, list);
-          }
+        _observer_del(obj, pd, observers, eina_list_search_sorted_list(observers->list, _search_cb, obs));
      }
    eina_iterator_free(it);
 }
