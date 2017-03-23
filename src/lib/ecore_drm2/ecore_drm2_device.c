@@ -16,7 +16,7 @@
 # include <sys/utsname.h>
 #endif
 
-Eina_Bool _ecore_drm2_use_atomic = EINA_FALSE;
+Eina_Bool _ecore_drm2_use_atomic = EINA_TRUE;
 
 static Eina_Bool
 _cb_session_active(void *data, int type EINA_UNUSED, void *event)
@@ -154,6 +154,8 @@ out:
 }
 
 #ifdef HAVE_ATOMIC_DRM
+
+# if 0
 static Eina_Bool
 _drm2_atomic_usable(int fd)
 {
@@ -195,6 +197,7 @@ _drm2_atomic_usable(int fd)
 
    return ret;
 }
+# endif
 
 static void
 _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
@@ -615,9 +618,11 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    DBG("Device Fd: %d", device->fd);
 
 #ifdef HAVE_ATOMIC_DRM
+# if 0
    /* check that this system can do atomic */
    _ecore_drm2_use_atomic = _drm2_atomic_usable(device->fd);
    if (_ecore_drm2_use_atomic)
+# endif
      {
         if (sym_drmSetClientCap(device->fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
           {
@@ -628,7 +633,10 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
           {
              if (sym_drmSetClientCap(device->fd,
                                      DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
-               WRN("Could not enable Universal Plane support");
+               {
+                  WRN("Could not enable Universal Plane support");
+                  _ecore_drm2_use_atomic = EINA_FALSE;
+               }
              else
                {
                   /* atomic & planes are usable */
