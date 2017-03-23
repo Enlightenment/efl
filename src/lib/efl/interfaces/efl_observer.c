@@ -9,9 +9,43 @@ typedef struct
 typedef struct
 {
    EINA_REFCOUNT;
-
    Efl_Observer *o;
 } Efl_Observer_Refcount;
+
+typedef struct
+{
+   Eina_List *list;
+} Efl_Observer_List;
+
+static int
+_search_cb(const void *data1, const void *data2)
+{
+   const Efl_Observer_Refcount *or = data1;
+   const Efl_Observer *obs = data2;
+
+   if (or->o > obs) return 1;
+   else if (or->o < obs) return -1;
+   else return 0;
+}
+
+static int
+_insert_cb(const void *data1, const void *data2)
+{
+   const Efl_Observer_Refcount *or1 = data1;
+   const Efl_Observer_Refcount *or2 = data2;
+
+   if (or1->o > or2->o) return 1;
+   else if (or1->o < or2->o) return -1;
+   else return 0;
+}
+
+static void
+_free_cb(void *data)
+{
+   Efl_Observer_List *observers = data;
+   eina_list_free(observers->list);
+   free(observers);
+}
 
 EOLIAN static void
 _efl_observable_efl_object_destructor(Eo *obj, Efl_Observable_Data *pd)
@@ -25,7 +59,7 @@ _efl_observable_efl_object_destructor(Eo *obj, Efl_Observable_Data *pd)
 EOLIAN static void
 _efl_observable_observer_add(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, const char *key, Efl_Observer *obs)
 {
-   Eina_Hash *observers = NULL;
+   Efl_Observer_List *observers = NULL;
    Efl_Observer_Refcount *or;
 
    if (!key) return;
@@ -33,22 +67,22 @@ _efl_observable_observer_add(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, const
    if (pd->observers)
      observers = eina_hash_find(pd->observers, key);
    else
-     pd->observers = eina_hash_string_superfast_new(NULL);
+     pd->observers = eina_hash_string_superfast_new(_free_cb);
 
    if (!observers)
      {
-        observers = eina_hash_pointer_new(free);
+        observers = calloc(1, sizeof(Efl_Observer_List));
         eina_hash_add(pd->observers, key, observers);
      }
 
-   or = eina_hash_find(observers, &obs);
+   or = eina_list_search_sorted(observers->list, _search_cb, obs);
    if (!or)
      {
         or = calloc(1, sizeof(Efl_Observer_Refcount));
         or->o = obs;
         EINA_REFCOUNT_INIT(or);
 
-        eina_hash_direct_add(observers, &or->o, or);
+        observers->list = eina_list_sorted_insert(observers->list, _insert_cb, or);
      }
    else
      {
@@ -59,25 +93,25 @@ _efl_observable_observer_add(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, const
 EOLIAN static void
 _efl_observable_observer_del(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, const char *key, Efl_Observer *obs)
 {
-   Eina_Hash *observers;
+   Efl_Observer_List *observers;
    Efl_Observer_Refcount *or;
+   Eina_List *list;
 
    if (!key || !pd->observers) return;
 
    observers = eina_hash_find(pd->observers, key);
    if (!observers) return;
 
-   or = eina_hash_find(observers, &obs);
-   if (!or) return;
+   list = eina_list_search_sorted_list(observers->list, _search_cb, obs);
+   if (!list) return;
 
+   or = eina_list_data_get(list);
    EINA_REFCOUNT_UNREF(or)
      {
-        eina_hash_del(observers, &or->o, or);
+        observers->list = eina_list_remove_list(observers->list, list);
 
-        if (eina_hash_population(observers) == 0)
-          {
-             eina_hash_del(pd->observers, key, observers);
-          }
+        if (observers->list == NULL)
+          eina_hash_del(pd->observers, key, observers);
      }
 }
 
@@ -85,7 +119,7 @@ EOLIAN static void
 _efl_observable_observer_clean(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, Efl_Observer *obs)
 {
    Eina_Iterator *it;
-   Eina_Hash *observers;
+   Efl_Observer_List *observers;
 
    if (!pd->observers) return;
 
@@ -93,13 +127,15 @@ _efl_observable_observer_clean(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, Efl
    EINA_ITERATOR_FOREACH(it, observers)
      {
         Efl_Observer_Refcount *or;
+        Eina_List *list;
 
-        or = eina_hash_find(observers, &obs);
-        if (!or) continue;
+        list = eina_list_search_sorted_list(observers->list, _search_cb, obs);
+        if (!list) continue;
 
+        or = eina_list_data_get(list);
         EINA_REFCOUNT_UNREF(or)
           {
-             eina_hash_del(observers, &obs, or);
+             observers->list = eina_list_remove_list(observers->list, list);
           }
      }
    eina_iterator_free(it);
@@ -144,7 +180,7 @@ _efl_observable_observers_iterator_free(Eina_Iterator *it)
 EOLIAN static Eina_Iterator *
 _efl_observable_observers_iterator_new(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, const char *key)
 {
-   Eina_Hash *observers;
+   Efl_Observer_List *observers;
    Efl_Observer_Iterator *it;
 
    if (!pd->observers) return NULL;
@@ -156,7 +192,7 @@ _efl_observable_observers_iterator_new(Eo *obj EINA_UNUSED, Efl_Observable_Data 
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-   it->classes = eina_hash_iterator_data_new(observers);
+   it->classes = eina_list_iterator_new(observers->list);
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = _efl_observable_observers_iterator_next;
