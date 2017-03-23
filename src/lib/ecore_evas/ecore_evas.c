@@ -585,6 +585,8 @@ ecore_evas_shutdown(void)
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
    ecore_idle_enterer_del(ecore_evas_idle_enterer);
    ecore_evas_idle_enterer = NULL;
+   ecore_idle_exiter_del(ecore_evas_idle_exiter);
+   ecore_evas_idle_exiter = NULL;
 
    _ecore_evas_extn_shutdown();
 
