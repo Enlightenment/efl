@@ -3110,9 +3110,12 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev
         Eina_List *l;
         Evas_Key_Grab *g;
         Evas_Modifier_Mask *seat_mask, modifier_mask;
+        Efl_Input_Device *seat = NULL;
 
         e->walking_grabs++;
-        seat_mask = eina_hash_find(e->modifiers.masks, &ev->device);
+        if (ev->device)
+          seat = efl_input_device_seat_get(ev->device);
+        seat_mask = eina_hash_find(e->modifiers.masks, &seat);
         modifier_mask = seat_mask ? *seat_mask : 0;
         EINA_LIST_FOREACH(e->grabs, l, g)
           {
@@ -3200,9 +3203,12 @@ _canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
         Eina_List *l;
         Evas_Key_Grab *g;
         Evas_Modifier_Mask *seat_mask, modifier_mask;
+        Efl_Input_Device *seat = NULL;
 
         e->walking_grabs++;
-        seat_mask = eina_hash_find(e->modifiers.masks, &ev->device);
+        if (ev->device)
+          seat = efl_input_device_seat_get(ev->device);
+        seat_mask = eina_hash_find(e->modifiers.masks, &seat);
         modifier_mask = seat_mask ? *seat_mask : 0;
         EINA_LIST_FOREACH(e->grabs, l, g)
           {
