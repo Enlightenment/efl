@@ -273,6 +273,9 @@ enum _Evas_Filter_Support
    EVAS_FILTER_SUPPORT_GL
 };
 
+void                     evas_filter_mixin_init(void);
+void                     evas_filter_mixin_shutdown(void);
+
 void                     evas_filter_context_clear(Evas_Filter_Context *ctx, Eina_Bool keep_buffers);
 void                     evas_filter_context_source_set(Evas_Filter_Context *ctx, Evas_Object *eo_proxy, Evas_Object *eo_source, int bufid, Eina_Stringshare *name);
 

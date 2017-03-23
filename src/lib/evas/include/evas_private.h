@@ -1284,34 +1284,6 @@ struct _Evas_Font_Description
    Eina_Bool is_new : 1;
 };
 
-struct _Evas_Object_Filter_Data
-{
-   Evas_Object_Protected_Data *obj;
-   Eina_Stringshare    *name;
-   Eina_Stringshare    *code;
-   Evas_Filter_Program *chain;
-   Evas_Filter_Context *context;
-   Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
-   Eina_Inlist         *data; // Evas_Filter_Data_Binding
-   Eina_Rectangle       prev_obscured, obscured;
-   void                *output;
-   struct {
-      struct {
-         Eina_Stringshare *name;
-         double            value;
-      } cur;
-      struct {
-         Eina_Stringshare *name;
-         double            value;
-      } next;
-      double               pos;
-   } state;
-   Eina_Bool            changed : 1;
-   Eina_Bool            invalid : 1; // Code parse failed
-   Eina_Bool            async : 1;
-   Eina_Bool            reuse : 1;
-};
-
 struct _Evas_Object_Func
 {
    void (*free) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
@@ -2062,10 +2034,6 @@ extern Eina_Cow *evas_object_3d_cow;
 extern Eina_Cow *evas_object_image_pixels_cow;
 extern Eina_Cow *evas_object_image_load_opts_cow;
 extern Eina_Cow *evas_object_image_state_cow;
-
-extern Eina_Cow *evas_object_filter_cow;
-// This should be replaced by something like "eina_cow_default_get()" maybe
-extern const void * const evas_object_filter_cow_default;
 extern Eina_Cow *evas_object_mask_cow;
 
 # define EINA_COW_STATE_WRITE_BEGIN(Obj, Write, State)          \

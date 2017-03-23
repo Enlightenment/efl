@@ -17,6 +17,34 @@
 typedef struct _Evas_Filter_Data Evas_Filter_Data;
 typedef struct _Evas_Filter_Post_Render_Data Evas_Filter_Post_Render_Data;
 
+struct _Evas_Object_Filter_Data
+{
+   Evas_Object_Protected_Data *obj;
+   Eina_Stringshare    *name;
+   Eina_Stringshare    *code;
+   Evas_Filter_Program *chain;
+   Evas_Filter_Context *context;
+   Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
+   Eina_Inlist         *data; // Evas_Filter_Data_Binding
+   Eina_Rectangle       prev_obscured, obscured;
+   void                *output;
+   struct {
+      struct {
+         Eina_Stringshare *name;
+         double            value;
+      } cur;
+      struct {
+         Eina_Stringshare *name;
+         double            value;
+      } next;
+      double               pos;
+   } state;
+   Eina_Bool            changed : 1;
+   Eina_Bool            invalid : 1; // Code parse failed
+   Eina_Bool            async : 1;
+   Eina_Bool            reuse : 1;
+};
+
 struct _Evas_Filter_Data
 {
    const Evas_Object_Filter_Data *data;
@@ -28,6 +56,24 @@ struct _Evas_Filter_Post_Render_Data
    Evas_Filter_Context *ctx;
    Eina_Bool success;
 };
+
+static const Evas_Object_Filter_Data evas_filter_data_cow_default = {};
+Eina_Cow *evas_object_filter_cow = NULL;
+
+void
+evas_filter_mixin_init(void)
+{
+   evas_object_filter_cow = eina_cow_add
+         ("Evas Filter Data", sizeof(Evas_Object_Filter_Data), 8,
+          &evas_filter_data_cow_default, EINA_TRUE);
+}
+
+void
+evas_filter_mixin_shutdown(void)
+{
+   eina_cow_del(evas_object_filter_cow);
+   evas_object_filter_cow = NULL;
+}
 
 static inline void
 _state_check(Evas_Object_Filter_Data *fcow)
@@ -630,7 +676,7 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_padding_get(Eo *eo_obj EINA_UN
 EOLIAN static void
 _efl_canvas_filter_internal_filter_changed_set(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd, Eina_Bool val)
 {
-   if ((evas_object_filter_cow_default != pd->data) && (pd->data->changed != val))
+   if ((&evas_filter_data_cow_default != pd->data) && (pd->data->changed != val))
      {
         Evas_Object_Filter_Data *fcow = FCOW_BEGIN(pd);
         fcow->changed = val;
@@ -668,7 +714,7 @@ _efl_canvas_filter_internal_efl_object_destructor(Eo *eo_obj, Evas_Filter_Data *
    Evas_Public_Data *e;
    Eina_Inlist *il;
 
-   if (!pd->data || (evas_object_filter_cow_default == pd->data))
+   if (!pd->data || (&evas_filter_data_cow_default == pd->data))
      goto finish;
 
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);

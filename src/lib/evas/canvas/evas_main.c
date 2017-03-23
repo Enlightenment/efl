@@ -157,9 +157,7 @@ evas_shutdown(void)
    evas_object_image_state_cow = NULL;
 
    evas_filter_shutdown();
-   eina_cow_del(evas_object_filter_cow);
    eina_cow_del(evas_object_mask_cow);
-   evas_object_filter_cow = NULL;
    evas_object_mask_cow = NULL;
 
    evas_thread_shutdown();
