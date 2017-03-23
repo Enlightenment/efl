@@ -79,6 +79,20 @@ struct marshall_type_visitor_generate
                 else
                    return replace_base_type(r, " System.String");
               }}
+           , {"Binbuf", true, [&]
+              {
+                regular_type_def r = regular;
+                r.base_type = " System.IntPtr";
+                r.namespaces.clear();
+                return r;
+              }}
+           , {"Binbuf", false, [&]
+              {
+                regular_type_def r = regular;
+                r.base_type = " System.IntPtr";
+                r.namespaces.clear();
+                return r;
+              }}
            // , {"generic_value", true, [&]
            //    { return regular_type_def{" int", regular.base_qualifier, {}};
            //    }}

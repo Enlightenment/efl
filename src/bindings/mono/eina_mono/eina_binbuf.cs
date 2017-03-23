@@ -112,6 +112,13 @@ public class Binbuf : IDisposable
         Dispose();
     }
 
+    public IntPtr Release()
+    {
+        IntPtr h = Handle;
+        Handle = IntPtr.Zero;
+        return h;
+    }
+
     public void Reset()
     {
         eina_binbuf_reset(Handle);
