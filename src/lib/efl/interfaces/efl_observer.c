@@ -15,6 +15,7 @@ typedef struct
 typedef struct
 {
    Eina_List *list;
+   Eina_Stringshare *key;
 } Efl_Observer_List;
 
 static int
@@ -44,6 +45,7 @@ _free_cb(void *data)
 {
    Efl_Observer_List *observers = data;
    eina_list_free(observers->list);
+   eina_stringshare_del(observers->key);
    free(observers);
 }
 
@@ -72,7 +74,8 @@ _efl_observable_observer_add(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, const
    if (!observers)
      {
         observers = calloc(1, sizeof(Efl_Observer_List));
-        eina_hash_add(pd->observers, key, observers);
+        observers->key = eina_stringshare_add(key);
+        eina_hash_direct_add(pd->observers, observers->key, observers);
      }
 
    or = eina_list_search_sorted(observers->list, _search_cb, obs);
