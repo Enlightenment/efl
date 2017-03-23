@@ -80,7 +80,7 @@ _eina_xattr_value_ls_fd_iterator_next(Eina_Xattr_Iterator *it, void **data)
    it->offset += strlen(it->attr->name) + 1;
 
    it->attr->length = fgetxattr(it->fd, it->attr->name, NULL, 0);
-   if (it->attr->length)
+   if (it->attr->length > 0)
      {
         tmp = realloc((void*) it->attr->value, it->attr->length + 1);
         if (!tmp)
@@ -115,9 +115,9 @@ _eina_xattr_value_ls_iterator_next(Eina_Xattr_Iterator *it, void **data)
    it->offset += strlen(it->attr->name) + 1;
 
    it->attr->length = getxattr(it->file, it->attr->name, NULL, 0);
-   if (it->attr->length)
+   if (it->attr->length > 0)
      {
-        tmp = realloc((void*) it->attr->value, it->attr->length);
+        tmp = realloc((void*) it->attr->value, it->attr->length + 1);
         if (!tmp)
           {
              free((void*) it->attr->value);
