@@ -568,7 +568,55 @@ _ecore_evas_buffer_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coor
 static Eina_Bool
 _ecore_evas_buffer_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
 {
-   _ecore_evas_mouse_move_process((Ecore_Evas*)ee, x, y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+
+   if (bdata->image)
+     _ecore_evas_mouse_move_process((Ecore_Evas*)ee, x, y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
+   else
+     {
+        Ecore_Event_Mouse_Move *ev;
+
+        ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
+        EINA_SAFETY_ON_NULL_RETURN_VAL(ev, EINA_FALSE);
+
+        ev->window = ee->prop.window;
+        ev->event_window = ee->prop.window;
+        ev->root_window = ee->prop.window;
+        ev->timestamp = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
+        ev->same_screen = 1;
+
+        ev->x = x;
+        ev->y = y;
+        ev->root.x = x;
+        ev->root.y = y;
+
+        {
+           const char *mods[] = 
+             { "Shift", "Control", "Alt", "Super", NULL };
+           int modifiers[] =
+             { ECORE_EVENT_MODIFIER_SHIFT, ECORE_EVENT_MODIFIER_CTRL, ECORE_EVENT_MODIFIER_ALT,
+               ECORE_EVENT_MODIFIER_WIN, 0 };
+           int i;
+           
+           for (i = 0; mods[i]; i++)
+             if (evas_key_modifier_is_set(evas_key_modifier_get(ee->evas), mods[i]))
+               ev->modifiers |= modifiers[i];
+        }
+
+        //FIXME ev->multi.device = ???
+
+        ev->multi.radius = 1;
+        ev->multi.radius_x = 1;
+        ev->multi.radius_y = 1;
+        ev->multi.pressure = 1.0;
+        ev->multi.angle = 0.0;
+        ev->multi.x = ev->x;
+        ev->multi.y = ev->y;
+        ev->multi.root.x = ev->x;
+        ev->multi.root.y = ev->y;
+
+        ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+     }
    return EINA_TRUE;
 }
 
