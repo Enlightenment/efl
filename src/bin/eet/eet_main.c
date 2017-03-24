@@ -394,11 +394,18 @@ do_eet_check(const char *file)
 
    der = eet_identity_x509(ef, &der_length);
 
-   fprintf(stdout, "Certificate length %i.\n", der_length);
-   eet_identity_certificate_print(der, der_length, stdout);
+   if (!der)
+     {
+        fprintf(stdout, "No Certificate.\n");
+     }
+   else
+     {
+        fprintf(stdout, "Certificate length %i.\n", der_length);
+        eet_identity_certificate_print(der, der_length, stdout);
 
-   eet_identity_signature(ef, &sign_length);
-   fprintf(stdout, "Signature length %i.\n", sign_length);
+        eet_identity_signature(ef, &sign_length);
+        fprintf(stdout, "Signature length %i.\n", sign_length);
+     }
 
    eet_close(ef);
 } /* do_eet_check */
