@@ -4,6 +4,8 @@
 typedef struct
 {
    Eina_Hash *observers;
+   int walking;
+   Eina_List *pending_deletion;
 } Efl_Observable_Data;
 
 typedef struct
@@ -62,8 +64,24 @@ _observer_del(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, Efl_Observer_List *o
         observers->list = eina_list_remove_list(observers->list, target);
 
         if (!observers->list)
-          eina_hash_del(pd->observers, observers->key, observers);
+          {
+             if (!pd->walking)
+               eina_hash_del(pd->observers, observers->key, observers);
+             else
+               pd->pending_deletion = eina_list_append(pd->pending_deletion, observers);
+          }
      }
+}
+
+static void
+_process_deletion(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd)
+{
+   if (!pd || pd->walking) return;
+
+   Efl_Observer_List *observers;
+
+   EINA_LIST_FREE(pd->pending_deletion, observers)
+     eina_hash_del(pd->observers, observers->key, observers);
 }
 
 EOLIAN static void
@@ -94,6 +112,8 @@ _efl_observable_observer_add(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, const
         observers->key = eina_stringshare_add(key);
         eina_hash_direct_add(pd->observers, observers->key, observers);
      }
+   else if (!observers->list)
+     pd->pending_deletion = eina_list_remove(pd->pending_deletion, observers);
 
    or = eina_list_search_sorted(observers->list, _search_cb, obs);
    if (!or)
@@ -105,9 +125,7 @@ _efl_observable_observer_add(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, const
         observers->list = eina_list_sorted_insert(observers->list, _insert_cb, or);
      }
    else
-     {
-        EINA_REFCOUNT_REF(or);
-     }
+     EINA_REFCOUNT_REF(or);
 }
 
 EOLIAN static void
@@ -133,16 +151,15 @@ _efl_observable_observer_clean(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, Efl
 
    it = eina_hash_iterator_data_new(pd->observers);
    EINA_ITERATOR_FOREACH(it, observers)
-     {
-        _observer_del(obj, pd, observers, eina_list_search_sorted_list(observers->list, _search_cb, obs));
-     }
+     _observer_del(obj, pd, observers, eina_list_search_sorted_list(observers->list, _search_cb, obs));
    eina_iterator_free(it);
 }
 
 typedef struct
 {
    Eina_Iterator iterator;
-   Eina_Iterator *classes;
+   Eina_List *current;
+   Eina_List *next;
 } Efl_Observer_Iterator;
 
 static Eina_Bool
@@ -151,8 +168,13 @@ _efl_observable_observers_iterator_next(Eina_Iterator *it, void **data)
    Efl_Observer_Iterator *et = (void *)it;
    Efl_Observer_Refcount *or = NULL;
 
-   if (!eina_iterator_next(et->classes, (void **)&or)) return EINA_FALSE;
+   if (!et->current) return EINA_FALSE;
+
+   or = eina_list_data_get(et->current);
    if (!or) return EINA_FALSE;
+
+   et->current = et->next;
+   et->next = eina_list_next(et->current);
 
    *data = or->o;
 
@@ -170,7 +192,6 @@ _efl_observable_observers_iterator_free(Eina_Iterator *it)
 {
    Efl_Observer_Iterator *et = (void *)it;
 
-   eina_iterator_free(et->classes);
    EINA_MAGIC_SET(&et->iterator, 0);
    free(et);
 }
@@ -190,7 +211,8 @@ _efl_observable_observers_iterator_new(Eo *obj EINA_UNUSED, Efl_Observable_Data 
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-   it->classes = eina_list_iterator_new(observers->list);
+   it->current = observers->list;
+   it->next = eina_list_next(observers->list);
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = _efl_observable_observers_iterator_next;
@@ -212,9 +234,7 @@ _efl_observable_observers_update(Eo *obj, Efl_Observable_Data *pd, const char *k
    if (!it) return;
 
    EINA_ITERATOR_FOREACH(it, o)
-     {
-        efl_observer_update(o, obj, key, data);
-     }
+     efl_observer_update(o, obj, key, data);
 }
 
 typedef struct
@@ -266,6 +286,14 @@ _efl_observable_iterator_tuple_free(Eina_Iterator *it)
           eina_iterator_free(tuple->data);
         free(tuple);
      }
+
+   Efl_Observable_Data *pd = efl_data_scope_get(et->obs, EFL_OBSERVABLE_CLASS);
+   if (pd)
+     {
+        pd->walking--;
+        _process_deletion(et->obs, pd);
+     }
+
    EINA_MAGIC_SET(&et->iterator, 0);
    free(et);
 }
@@ -283,6 +311,7 @@ _efl_observable_iterator_tuple_new(Eo *obj, Efl_Observable_Data *pd)
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
    it->classes = eina_hash_iterator_key_new(pd->observers);
    it->obs = obj;
+   pd->walking++;
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = _efl_observable_iterator_tuple_next;
