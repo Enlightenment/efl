@@ -694,6 +694,16 @@ struct _Ecore_Drm2_Fb
    void *mmap;
 };
 
+struct _Ecore_Drm2_Plane
+{
+   int type;
+   Ecore_Drm2_Fb *fb; // current fbo
+   Ecore_Drm2_Fb *qfb; // queued fbo
+# ifdef HAVE_ATOMIC_DRM
+   Ecore_Drm2_Plane_State *plane_state;
+# endif
+};
+
 struct _Ecore_Drm2_Output_Mode
 {
    uint32_t id;
