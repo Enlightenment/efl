@@ -82,11 +82,14 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
 
   bread = ecore_audio_obj_in_read(in, buf, wlen);
 
-  EPA_CALL(pa_stream_write)(stream, buf, bread, NULL, 0, PA_SEEK_RELATIVE);
-  if (bread < (int)len)
+  if ((bread < (int)len) && bread)
     {
+      memset((char *)buf + bread, 0, wlen - bread);
+      EPA_CALL(pa_stream_write)(stream, buf, wlen, NULL, 0, PA_SEEK_RELATIVE);
       EPA_CALL(pa_operation_unref)(EPA_CALL(pa_stream_trigger)(stream, NULL, NULL));
     }
+  else
+    EPA_CALL(pa_stream_write)(stream, buf, bread, NULL, 0, PA_SEEK_RELATIVE);
 }
 
 static void _update_samplerate_cb(void *data EINA_UNUSED, const Efl_Event *event)
