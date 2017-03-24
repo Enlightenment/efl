@@ -279,7 +279,12 @@ efreet_util_desktop_exec_find(const char *exec)
             ret = efreet_desktop_get(array->array[j]);
             if (ret)
             {
-               if (!bestret) bestret = ret;
+               if (!bestret)
+               {
+                  bestret = ret;
+                  if (bestret->exec && !strcmp(bestret->exec, exec))
+                    goto done;
+               }
                else
                {
                   if (ret->exec)
