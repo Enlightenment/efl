@@ -49,6 +49,9 @@ typedef struct _Ecore_Drm2_Output Ecore_Drm2_Output;
 /* opaque structure to represent an output mode */
 typedef struct _Ecore_Drm2_Output_Mode Ecore_Drm2_Output_Mode;
 
+/* opaque structure to represent a hardware plane */
+typedef struct _Ecore_Drm2_Plane Ecore_Drm2_Plane;
+
 /* structure to represent event for output changes */
 typedef struct _Ecore_Drm2_Event_Output_Changed
 {
