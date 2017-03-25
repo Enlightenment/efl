@@ -1655,13 +1655,13 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
              if (!pd->selection)
                elm_code_widget_selection_start(widget, pd->cursor_line, pd->cursor_col - (backwards?1:0));
 
-             if (pd->selection->start_line == pd->selection->end_line)
+             if (pd->selection && pd->selection->start_line == pd->selection->end_line)
                {
                   if ((pd->selection->end_col == pd->selection->start_col && !backwards) ||
                       (pd->selection->end_col > pd->selection->start_col))
                     elm_code_widget_cursor_position_set(widget, pd->selection->end_line, pd->selection->end_col+1);
                }
-             else if (pd->selection->end_line > pd->selection->start_line)
+             else if (pd->selection && pd->selection->end_line > pd->selection->start_line)
                {
                     elm_code_widget_cursor_position_set(widget, pd->selection->end_line, pd->selection->end_col+1);
                }
