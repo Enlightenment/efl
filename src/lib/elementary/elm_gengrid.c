@@ -2699,6 +2699,7 @@ static Eina_Bool
 _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
                              Elm_Focus_Direction dir)
 {
+   if (!eo_it) return EINA_FALSE;
    ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    ELM_GENGRID_DATA_GET(WIDGET(it), sd);
