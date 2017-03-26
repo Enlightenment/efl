@@ -315,6 +315,8 @@
 # include <signal.h>
 #elif defined (__ANDROID__)
 # include <sys/select.h>
+#elif defined (__sun__)
+# include <sys/siginfo.h>
 #else
 # include <sys/time.h>
 # if !defined (EXOTIC_NO_SIGNAL)
