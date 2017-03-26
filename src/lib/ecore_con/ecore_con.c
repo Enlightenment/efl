@@ -30,6 +30,10 @@
 # include <sys/ioctl.h>
 #endif
 
+#ifdef HAVE_SYS_FILIO_H
+# include <sys/filio.h>
+#endif
+
 #ifdef HAVE_SYSTEMD
 # include <systemd/sd-daemon.h>
 #endif

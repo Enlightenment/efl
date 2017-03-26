@@ -3115,7 +3115,7 @@ EFL_EVAL_PKGS([ECORE_CON])
 
 ### Checks for header files
 
-AC_CHECK_HEADERS([ws2tcpip.h netdb.h])
+AC_CHECK_HEADERS([ws2tcpip.h netdb.h sys/filio.h])
 
 if test "x${ac_cv_header_netdb_h}" = "xno" && test "x${have_windows}" = "xno"; then
    AC_MSG_ERROR([netdb.h is requested to have Ecore_Con. Exiting...])
