@@ -1008,6 +1008,20 @@ EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(int fd, int width, int height, i
  */
 EAPI Ecore_Drm2_Plane *ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb);
 
+/**
+ * Set plane destination values
+ *
+ * @param plane
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ *
+ * @ingroup Ecore_Drm2_Plane_Group
+ * @since 1.20
+ */
+EAPI void ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, int h);
+
 # endif
 
 #endif

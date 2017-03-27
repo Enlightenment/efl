@@ -111,3 +111,14 @@ out:
    return NULL;
 #endif
 }
+
+EAPI void
+ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, int h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(plane);
+
+   plane->state->cx.value = x;
+   plane->state->cy.value = y;
+   plane->state->cw.value = w;
+   plane->state->ch.value = h;
+}
