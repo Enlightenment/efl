@@ -91,6 +91,14 @@ out:
    plane = calloc(1, sizeof(Ecore_Drm2_Plane));
    if (!plane) return NULL;
 
+   pstate->cid.value = output->crtc_id;
+   pstate->fid.value = fb->id;
+
+   pstate->sx.value = 0;
+   pstate->sy.value = 0;
+   pstate->sw.value = fb->w << 16;
+   pstate->sh.value = fb->h << 16;
+
    plane->type = pstate->type.value;
    plane->qfb = fb;
    plane->state = pstate;
