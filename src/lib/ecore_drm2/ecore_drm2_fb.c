@@ -15,79 +15,6 @@ _fb2_create(Ecore_Drm2_Fb *fb)
    return EINA_TRUE;
 }
 
-#ifdef HAVE_ATOMIC_DRM
-static int
-_fb_atomic_flip(Ecore_Drm2_Output *output, Ecore_Drm2_Plane_State *pstate, uint32_t flags)
-{
-   int ret = 0;
-   drmModeAtomicReq *req = NULL;
-   Ecore_Drm2_Crtc_State *cstate;
-
-   req = sym_drmModeAtomicAlloc();
-   if (!req) return -1;
-
-   sym_drmModeAtomicSetCursor(req, 0);
-
-   cstate = output->crtc_state;
-
-   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
-                                      cstate->mode.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
-                                      cstate->active.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->cid.id, pstate->cid.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->fid.id, pstate->fid.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->sx.id, pstate->sx.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->sy.id, pstate->sy.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->sw.id, pstate->sw.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->sh.id, pstate->sh.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->cx.id, pstate->cx.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->cy.id, pstate->cy.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->cw.id, pstate->cw.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                      pstate->ch.id, pstate->ch.value);
-   if (ret < 0) goto err;
-
-   ret = sym_drmModeAtomicCommit(output->fd, req, flags, output->user_data);
-   if (ret < 0) ERR("Failed to commit Atomic FB Flip: %m");
-   else ret = 0;
-
-err:
-   sym_drmModeAtomicFree(req);
-   return ret;
-}
-#endif
-
 EAPI Ecore_Drm2_Fb *
 ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned int format)
 {
@@ -304,6 +231,8 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 EAPI int
 ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 {
+   Eina_Bool repeat;
+   int count = 0;
    int ret = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, -1);
@@ -332,136 +261,87 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    /* If we don't have an fb to set by now, BAIL! */
    if (!fb) return -1;
 
-#ifdef HAVE_ATOMIC_DRM
-   if (_ecore_drm2_use_atomic)
+   if ((!output->current) ||
+       (output->current->strides[0] != fb->strides[0]))
      {
-        Ecore_Drm2_Plane_State *pstate;
-        uint32_t flags =
-          DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
-          DRM_MODE_ATOMIC_ALLOW_MODESET;
-
-        pstate = output->plane_state;
-
-        pstate->cid.value = output->crtc_id;
-        pstate->fid.value = fb->id;
-
-        pstate->sx.value = 0;
-        pstate->sy.value = 0;
-        pstate->sw.value = fb->w << 16;
-        pstate->sh.value = fb->h << 16;
-        pstate->cx.value = output->x;
-        pstate->cy.value = output->y;
-        pstate->cw.value = output->current_mode->width;
-        pstate->ch.value = output->current_mode->height;
-
-        ret = _fb_atomic_flip(output, pstate, flags);
-        if ((ret < 0) && (errno != EBUSY))
+        ret =
+          sym_drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,
+                             output->x, output->y, &output->conn_id, 1,
+                             &output->current_mode->info);
+        if (ret)
           {
-             ERR("Atomic Pageflip Failed for Crtc %u on Connector %u: %m",
-                 output->crtc_id, output->conn_id);
+             ERR("Failed to set Mode %dx%d for Output %s: %m",
+                 output->current_mode->width, output->current_mode->height,
+                 output->name);
              return ret;
           }
-        else if (ret < 0)
-          {
-             output->next = fb;
-             if (output->next) output->next->busy = EINA_TRUE;
 
-             return 0;
-          }
-
-        output->pending = fb;
-        output->pending->busy = EINA_TRUE;
-
-        return 0;
+        if (output->current) _release_buffer(output, output->current);
+        output->current = fb;
+        output->current->busy = EINA_TRUE;
+        output->next = NULL;
+        /* We used to return here, but now that the ticker is fixed this
+         * can leave us hanging waiting for a tick to happen forever.
+         * Instead, we now fall through the the flip path to make sure
+         * even this first set can cause a flip callback.
+         */
      }
-   else
-#endif
+
+   do
      {
-        Eina_Bool repeat;
-        int count = 0;
-
-        if ((!output->current) ||
-            (output->current->strides[0] != fb->strides[0]))
+        static Eina_Bool bugged_about_bug = EINA_FALSE;
+        repeat = EINA_FALSE;
+        ret = sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
+                                  DRM_MODE_PAGE_FLIP_EVENT,
+                                  output->user_data);
+        /* Some drivers (RPI - looking at you) are broken and produce
+         * flip events before they are ready for another flip, so be
+         * a little robust in the face of badness and try a few times
+         * until we can flip or we give up (100 tries with a yield
+         * between each try). We can't expect everyone to run the
+         * latest bleeding edge kernel IF a workaround is possible
+         * in userspace, so do this.
+         * We only report this as an ERR once since if it will
+         * generate a huge amount of spam otherwise. */
+        if ((ret < 0) && (errno == EBUSY))
           {
-             ret =
-               sym_drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,
-                                  output->x, output->y, &output->conn_id, 1,
-                                  &output->current_mode->info);
-             if (ret)
+             repeat = EINA_TRUE;
+             if (count == 0 && !bugged_about_bug)
                {
-                  ERR("Failed to set Mode %dx%d for Output %s: %m",
-                      output->current_mode->width, output->current_mode->height,
-                      output->name);
-                  return ret;
+                  ERR("Pageflip fail - EBUSY from drmModePageFlip - "
+                      "This is either a kernel bug or an EFL one.");
+                  bugged_about_bug = EINA_TRUE;
                }
-
-             if (output->current) _release_buffer(output, output->current);
-             output->current = fb;
-             output->current->busy = EINA_TRUE;
-             output->next = NULL;
-             /* We used to return here, but now that the ticker is fixed this
-              * can leave us hanging waiting for a tick to happen forever.
-              * Instead, we now fall through the the flip path to make sure
-              * even this first set can cause a flip callback.
-              */
-          }
-
-        do
-          {
-             static Eina_Bool bugged_about_bug = EINA_FALSE;
-             repeat = EINA_FALSE;
-             ret = sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
-                                       DRM_MODE_PAGE_FLIP_EVENT,
-                                       output->user_data);
-             /* Some drivers (RPI - looking at you) are broken and produce
-              * flip events before they are ready for another flip, so be
-              * a little robust in the face of badness and try a few times
-              * until we can flip or we give up (100 tries with a yield
-              * between each try). We can't expect everyone to run the
-              * latest bleeding edge kernel IF a workaround is possible
-              * in userspace, so do this.
-              * We only report this as an ERR once since if it will
-              * generate a huge amount of spam otherwise. */
-             if ((ret < 0) && (errno == EBUSY))
+             count++;
+             if (count > 500)
                {
-                  repeat = EINA_TRUE;
-                  if (count == 0 && !bugged_about_bug)
-                    {
-                       ERR("Pageflip fail - EBUSY from drmModePageFlip - "
-                           "This is either a kernel bug or an EFL one.");
-                       bugged_about_bug = EINA_TRUE;
-                    }
-                  count++;
-                  if (count > 500)
-                    {
-                       ERR("Pageflip EBUSY for %i tries - give up", count);
-                       break;
-                    }
-                  usleep(100);
+                  ERR("Pageflip EBUSY for %i tries - give up", count);
+                  break;
                }
+             usleep(100);
           }
-        while (repeat);
+     }
+   while (repeat);
 
-        if ((ret == 0) && (count > 0))
-          DBG("Pageflip finally succeeded after %i tries due to EBUSY", count);
+   if ((ret == 0) && (count > 0))
+     DBG("Pageflip finally succeeded after %i tries due to EBUSY", count);
 
-        if ((ret < 0) && (errno != EBUSY))
-          {
-             ERR("Pageflip Failed for Crtc %u on Connector %u: %m",
-                 output->crtc_id, output->conn_id);
-             return ret;
-          }
-        else if (ret < 0)
-          {
-             output->next = fb;
-             output->next->busy = EINA_TRUE;
-             return 0;
-          }
-
-        output->pending = fb;
-        output->pending->busy = EINA_TRUE;
+   if ((ret < 0) && (errno != EBUSY))
+     {
+        ERR("Pageflip Failed for Crtc %u on Connector %u: %m",
+            output->crtc_id, output->conn_id);
+        return ret;
+     }
+   else if (ret < 0)
+     {
+        output->next = fb;
+        output->next->busy = EINA_TRUE;
         return 0;
      }
+
+   output->pending = fb;
+   output->pending->busy = EINA_TRUE;
+   return 0;
 }
 
 EAPI Eina_Bool
