@@ -99,6 +99,7 @@ typedef void (*Ecore_Drm2_Release_Handler)(void *data, Ecore_Drm2_Fb *b);
  * @li @ref Ecore_Drm2_Device_Group
  * @li @ref Ecore_Drm2_Output_Group
  * @li @ref Ecore_Drm2_Fb_Group
+ * @li @ref Ecore_Drm2_Plane_Group
  */
 
 /**
@@ -987,6 +988,25 @@ EAPI void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
  *
  */
 EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count);
+
+/**
+ * @defgroup Ecore_Drm2_Plane_Group Functions that deal with hardware planes
+ *
+ * Functions that deal with hardware plane manipulation
+ */
+
+/**
+ * Find a hardware plane where a given Ecore_Drm2_Fb can go based on format and size
+ *
+ * @param output
+ * @param fb
+ *
+ * @return A newly allocated plane object, or NULL otherwise
+ *
+ * @ingroup Ecore_Drm2_Plane_Group
+ * @since 1.20
+ */
+EAPI Ecore_Drm2_Plane *ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb);
 
 # endif
 
