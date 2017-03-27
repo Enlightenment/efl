@@ -722,13 +722,21 @@ ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *device, int *width, int *he
      {
         *width = 64;
         ret = sym_drmGetCap(device->fd, DRM_CAP_CURSOR_WIDTH, &caps);
-        if (ret == 0) *width = caps;
+        if (ret == 0)
+          {
+             device->cursor.width = caps;
+             *width = caps;
+          }
      }
    if (height)
      {
         *height = 64;
         ret = sym_drmGetCap(device->fd, DRM_CAP_CURSOR_HEIGHT, &caps);
-        if (ret == 0) *height = caps;
+        if (ret == 0)
+          {
+             device->cursor.height = caps;
+             *height = caps;
+          }
      }
 }
 

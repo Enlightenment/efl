@@ -795,6 +795,11 @@ struct _Ecore_Drm2_Device
         uint32_t width, height;
      } min, max;
 
+   struct
+     {
+        int width, height;
+     } cursor;
+
    Eeze_Udev_Watch *watch;
    Ecore_Event_Handler *active_hdlr;
    Ecore_Event_Handler *device_change_hdlr;
