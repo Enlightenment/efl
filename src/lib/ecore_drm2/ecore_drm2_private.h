@@ -766,7 +766,7 @@ struct _Ecore_Drm2_Output
 # ifdef HAVE_ATOMIC_DRM
    Ecore_Drm2_Crtc_State *crtc_state;
    Ecore_Drm2_Connector_State *conn_state;
-   Ecore_Drm2_Plane_State *plane_state;
+   Eina_List *plane_states;
 # endif
 
    Eina_Bool connected : 1;

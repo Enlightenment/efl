@@ -24,6 +24,7 @@ _output_debug(Ecore_Drm2_Output *output, const drmModeConnector *conn)
 {
    Eina_List *l;
    Ecore_Drm2_Output_Mode *omode;
+   Ecore_Drm2_Plane_State *pstate;
 
    DBG("Created New Output At %d,%d", output->x, output->y);
    DBG("\tCrtc Pos: %d %d", output->ocrtc->x, output->ocrtc->y);
@@ -55,6 +56,14 @@ _output_debug(Ecore_Drm2_Output *output, const drmModeConnector *conn)
           }
         DBG("\t\tPath: %s", output->backlight.path);
      }
+
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     {
+        EINA_LIST_FOREACH(output->plane_states, l, pstate)
+          DBG("\tPossible Plane: %d", pstate->obj_id);
+     }
+#endif
 
    EINA_LIST_FOREACH(output->modes, l, omode)
      {
@@ -655,23 +664,30 @@ _atomic_state_plane_duplicate(Ecore_Drm2_Plane_State *state)
    return pstate;
 }
 
-/* NB: For now, this function will only return primary planes.
- * We may need to adjust this later to pass in a desired plane type */
-static Ecore_Drm2_Plane_State *
-_output_plane_state_get(Ecore_Drm2_Atomic_State *state, unsigned int id)
+static Eina_List *
+_output_plane_states_get(Ecore_Drm2_Atomic_State *state, unsigned int crtc_id, int index)
 {
+   Eina_List *states = NULL;
    Ecore_Drm2_Plane_State *pstate;
+
    int i = 0;
 
    for (; i < state->planes; i++)
      {
         pstate = &state->plane_states[i];
-        if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
-        if (pstate->cid.value != id) continue;
-        return _atomic_state_plane_duplicate(pstate);
+        if (pstate->cid.value == crtc_id)
+          {
+             states =
+               eina_list_append(states, _atomic_state_plane_duplicate(pstate));
+          }
+        else if (pstate->mask & (1 << index))
+          {
+             states =
+               eina_list_append(states, _atomic_state_plane_duplicate(pstate));
+          }
      }
 
-   return NULL;
+   return states;
 }
 #endif
 
@@ -745,8 +761,8 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
           _output_crtc_state_get(dev->state, output->crtc_id);
         output->conn_state =
           _output_conn_state_get(dev->state, output->conn_id);
-        output->plane_state =
-          _output_plane_state_get(dev->state, output->crtc_id);
+        output->plane_states =
+          _output_plane_states_get(dev->state, output->crtc_id, output->pipe);
      }
    else
 #endif
@@ -886,6 +902,19 @@ static void
 _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
 {
    Ecore_Drm2_Output_Mode *mode;
+
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     {
+        Ecore_Drm2_Plane_State *pstate;
+
+        EINA_LIST_FREE(output->plane_states, pstate)
+          free(pstate);
+
+        free(output->conn_state);
+        free(output->crtc_state);
+     }
+#endif
 
    EINA_LIST_FREE(output->modes, mode)
      {
@@ -1524,7 +1553,17 @@ ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output)
 
 #ifdef HAVE_ATOMIC_DRM
    if (_ecore_drm2_use_atomic)
-     ret = output->plane_state->supported_rotations;
+     {
+        Eina_List *l;
+        Ecore_Drm2_Plane_State *pstate;
+
+        EINA_LIST_FOREACH(output->plane_states, l, pstate)
+          {
+             if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
+             ret = pstate->supported_rotations;
+             break;
+          }
+     }
 #endif
 
    return ret;
@@ -1540,35 +1579,42 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
 #ifdef HAVE_ATOMIC_DRM
    if (_ecore_drm2_use_atomic)
      {
-        Ecore_Drm2_Plane_State *pstate;
+        Eina_List *l;
+        Ecore_Drm2_Plane_State *pstate = NULL;
         drmModeAtomicReq *req = NULL;
         int res = 0;
         uint32_t flags =
           DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
           DRM_MODE_ATOMIC_ALLOW_MODESET;
 
-        pstate = output->plane_state;
-        if ((pstate->supported_rotations & rotation) == 0)
+        EINA_LIST_FOREACH(output->plane_states, l, pstate)
           {
-             WRN("Unsupported rotation");
-             return EINA_FALSE;
-          }
+             if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
 
-        req = sym_drmModeAtomicAlloc();
-        if (!req) return EINA_FALSE;
+             if ((pstate->supported_rotations & rotation) == 0)
+               {
+                  WRN("Unsupported rotation");
+                  return EINA_FALSE;
+               }
 
-        sym_drmModeAtomicSetCursor(req, 0);
+             req = sym_drmModeAtomicAlloc();
+             if (!req) return EINA_FALSE;
 
-        res = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
-                                           pstate->rotation.id, rotation);
-        if (res < 0) goto err;
+             sym_drmModeAtomicSetCursor(req, 0);
 
-        res = sym_drmModeAtomicCommit(output->fd, req, flags, output->user_data);
-        if (res < 0) goto err;
-        else
-          {
-             ret = EINA_TRUE;
-             pstate->rotation.value = rotation;
+             res = sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                                pstate->rotation.id, rotation);
+             if (res < 0) goto err;
+
+             res = sym_drmModeAtomicCommit(output->fd, req, flags,
+                                           output->user_data);
+             if (res < 0)
+               goto err;
+             else
+               {
+                  ret = EINA_TRUE;
+                  pstate->rotation.value = rotation;
+               }
           }
 
 err:
