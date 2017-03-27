@@ -315,7 +315,7 @@
 # include <signal.h>
 #elif defined (__ANDROID__)
 # include <sys/select.h>
-#elif defined (__sun__)
+#elif defined (__sun)
 # include <sys/siginfo.h>
 #else
 # include <sys/time.h>
