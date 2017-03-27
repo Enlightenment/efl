@@ -155,11 +155,14 @@ main(int argc, char **argv)
 #ifdef EFL_NET_DIALER_UNIX_CLASS
    dialer = efl_add(EFL_NET_DIALER_SIMPLE_CLASS, loop,
                     efl_net_dialer_simple_inner_class_set(efl_added, EFL_NET_DIALER_UNIX_CLASS));
+#elif defined(EFL_NET_DIALER_WINDOWS_CLASS)
+   dialer = efl_add(EFL_NET_DIALER_SIMPLE_CLASS, loop,
+                    efl_net_dialer_simple_inner_class_set(efl_added, EFL_NET_DIALER_WINDOWS_CLASS));
 #else
    /* TODO: maybe start a TCP using locahost:12345?
     * Right now eina_debug_monitor is only for AF_UNIX, so not an issue.
     */
-   fprintf(stderr, "ERROR: your platform doesn't support Efl.Net.Dialer.Unix\n");
+   fprintf(stderr, "ERROR: your platform doesn't support Efl.Net.Dialer.*\n");
 #endif
    if (!dialer)
      {

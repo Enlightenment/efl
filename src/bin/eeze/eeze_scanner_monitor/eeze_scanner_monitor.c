@@ -156,8 +156,11 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 #ifdef EFL_NET_DIALER_UNIX_CLASS
    dialer = efl_add(EFL_NET_DIALER_SIMPLE_CLASS, loop,
                     efl_net_dialer_simple_inner_class_set(efl_added, EFL_NET_DIALER_UNIX_CLASS));
+#elif defined(EFL_NET_DIALER_WINDOWS_CLASS)
+   dialer = efl_add(EFL_NET_DIALER_SIMPLE_CLASS, loop,
+                    efl_net_dialer_simple_inner_class_set(efl_added, EFL_NET_DIALER_WINDOWS_CLASS));
 #else
-   fprintf(stderr, "ERROR: your platform doesn't support Efl.Net.Dialer.Unix\n");
+   fprintf(stderr, "ERROR: your platform doesn't support Efl.Net.Dialer.*\n");
 #endif
    if (!dialer)
      {
