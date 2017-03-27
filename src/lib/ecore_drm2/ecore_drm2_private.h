@@ -711,7 +711,7 @@ struct _Ecore_Drm2_Plane
    Ecore_Drm2_Fb *fb; // current fbo
    Ecore_Drm2_Fb *qfb; // queued fbo
 # ifdef HAVE_ATOMIC_DRM
-   Ecore_Drm2_Plane_State *plane_state;
+   Ecore_Drm2_Plane_State *state;
 # endif
 };
 
@@ -775,6 +775,7 @@ struct _Ecore_Drm2_Output
    Ecore_Drm2_Crtc_State *crtc_state;
    Ecore_Drm2_Connector_State *conn_state;
    Eina_List *plane_states;
+   Eina_List *planes;
 # endif
 
    Eina_Bool connected : 1;
