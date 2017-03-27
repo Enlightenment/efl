@@ -223,6 +223,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_object.h>
 
 #include <elm_panel.h>
+#include <efl_ui_panel.h>
 #include <elm_panes.h>
 #include <elm_photocam.h>
 #include <elm_photo.h>

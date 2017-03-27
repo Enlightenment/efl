@@ -51,6 +51,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_nstate.eo \
 	lib/elementary/elm_pan.eo \
 	lib/elementary/elm_panel.eo \
+	lib/elementary/efl_ui_panel.eo \
 	lib/elementary/elm_panes.eo \
 	lib/elementary/elm_photocam.eo \
 	lib/elementary/elm_photocam_pan.eo \
@@ -248,6 +249,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_naviframe.h \
 	lib/elementary/elm_widget_notify.h \
 	lib/elementary/elm_widget_panel.h \
+	lib/elementary/efl_ui_widget_panel.h \
 	lib/elementary/elm_widget_panes.h \
 	lib/elementary/elm_widget_photo.h \
 	lib/elementary/elm_widget_photocam.h \
@@ -445,6 +447,8 @@ includesub_HEADERS = \
 	lib/elementary/elm_panel_common.h \
 	lib/elementary/elm_panel_eo.h \
 	lib/elementary/elm_panel_legacy.h \
+	lib/elementary/efl_ui_panel.h \
+	lib/elementary/efl_ui_panel_eo.h \
 	lib/elementary/elm_panes.h \
 	lib/elementary/elm_panes_eo.h \
 	lib/elementary/elm_panes_legacy.h \
@@ -617,6 +621,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_notify.c \
 	lib/elementary/efl_ui_nstate.c \
 	lib/elementary/elm_panel.c \
+	lib/elementary/efl_ui_panel.c \
 	lib/elementary/elm_panes.c \
 	lib/elementary/elm_photo.c \
 	lib/elementary/elm_photocam.c \

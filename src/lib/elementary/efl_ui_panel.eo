@@ -1,0 +1,26 @@
+enum Efl.Ui.Panel.State
+{
+   open, [[]]
+   closed [[]]
+}
+
+class Efl.Ui.Panel (Elm.Widget, Efl.Container, Efl.Orientation)
+{
+   [[Elementary panel class]]
+   eo_prefix: efl_ui_panel;
+   event_prefix: efl_ui_panel;
+   methods {
+      toggle {
+         [[toggle panel]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Canvas.Group.group_add;
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
+      Efl.Gfx.visible { set; }
+      Efl.Container.content { set; }
+      Efl.Orientation.orientation { set; }
+   }
+}
