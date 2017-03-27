@@ -58,8 +58,20 @@ static Eina_Bool
 _on_stdin(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh EINA_UNUSED)
 {
    char *line = NULL;
+#ifdef _WIN32
+   char lbuf[4096] = "";
+   ssize_t r;
+   if (fgets(lbuf, sizeof(lbuf), stdin) == NULL)
+     r = -1;
+   else
+     {
+        line = strdup(lbuf);
+        r = strlen(line);
+     }
+#else
    size_t len = 0;
    ssize_t r = getline(&line, &len, stdin);
+#endif
 
    if (r < 0)
      {
@@ -151,13 +163,13 @@ _data(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Data 
           "%.*s\n"
           ">>>>>\n",
           ev->size,
-          ev->size, ev->data);
+          ev->size, (const char *)ev->data);
 
    return ECORE_CALLBACK_RENEW;
 }
 
 Eina_Bool
-_write(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Write *ev)
+_write_(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server_Write *ev)
 {
    printf("Sent %d bytes to server\n", ev->size);
    return ECORE_CALLBACK_RENEW;
@@ -323,7 +335,7 @@ main(int argc, char *argv[])
 /* set event handler for receiving server data */
    ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA, (Ecore_Event_Handler_Cb)_data, NULL);
 /* set event handler that notifies of sent data */
-   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_WRITE, (Ecore_Event_Handler_Cb)_write, NULL);
+   ecore_event_handler_add(ECORE_CON_EVENT_SERVER_WRITE, (Ecore_Event_Handler_Cb)_write_, NULL);
 /* set event handler that notifies of errors */
    ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR, (Ecore_Event_Handler_Cb)_error, NULL);
 /* set event handler that notifies of upgrades */
