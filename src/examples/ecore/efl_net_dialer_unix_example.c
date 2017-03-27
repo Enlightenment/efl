@@ -33,7 +33,6 @@ static void
 _can_read(void *data EINA_UNUSED, const Efl_Event *event)
 {
    char buf[4];
-   Eina_Rw_Slice rw_slice = EINA_SLICE_ARRAY(buf);
    Eina_Error err;
    Eina_Bool can_read = efl_io_reader_can_read_get(event->object);
 
@@ -45,16 +44,23 @@ _can_read(void *data EINA_UNUSED, const Efl_Event *event)
    if (!can_read) return;
    if (!do_read) return;
 
-   err = efl_io_reader_read(event->object, &rw_slice);
-   if (err)
+   do
      {
-        fprintf(stderr, "ERROR: could not read: %s\n", eina_error_msg_get(err));
-        retval = EXIT_FAILURE;
-        ecore_main_loop_quit();
-        return;
-     }
+        Eina_Rw_Slice rw_slice = EINA_SLICE_ARRAY(buf);
 
-   fprintf(stderr, "INFO: read '" EINA_SLICE_STR_FMT "'\n", EINA_SLICE_STR_PRINT(rw_slice));
+        err = efl_io_reader_read(event->object, &rw_slice);
+        if (err)
+          {
+             if (err == EAGAIN) return;
+             fprintf(stderr, "ERROR: could not read: %s\n", eina_error_msg_get(err));
+             retval = EXIT_FAILURE;
+             ecore_main_loop_quit();
+             return;
+          }
+
+        fprintf(stderr, "INFO: read '" EINA_SLICE_STR_FMT "'\n", EINA_SLICE_STR_PRINT(rw_slice));
+     }
+   while (efl_io_reader_can_read_get(event->object));
 }
 
 static void
