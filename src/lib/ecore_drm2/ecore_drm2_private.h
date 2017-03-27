@@ -661,6 +661,14 @@ struct _Ecore_Drm2_Atomic_State
 };
 # endif
 
+# ifndef DRM_CAP_CURSOR_WIDTH
+#  define DRM_CAP_CURSOR_WIDTH 0x8
+# endif
+
+# ifndef DRM_CAP_CURSOR_HEIGHT
+#  define DRM_CAP_CURSOR_HEIGHT 0x9
+# endif
+
 typedef enum _Ecore_Drm2_Backlight_Type
 {
    ECORE_DRM2_BACKLIGHT_RAW,

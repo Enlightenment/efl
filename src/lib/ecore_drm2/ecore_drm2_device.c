@@ -1,13 +1,5 @@
 #include "ecore_drm2_private.h"
 
-#ifndef DRM_CAP_CURSOR_WIDTH
-# define DRM_CAP_CURSOR_WIDTH 0x8
-#endif
-
-#ifndef DRM_CAP_CURSOR_HEIGHT
-# define DRM_CAP_CURSOR_HEIGHT 0x9
-#endif
-
 #ifndef DRM_CAP_DUMB_PREFER_SHADOW
 # define DRM_CAP_DUMB_PREFER_SHADOW 0x4
 #endif
