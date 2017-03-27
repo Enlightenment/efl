@@ -94,7 +94,7 @@ _data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
 
 Eina_Bool
-_write(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_write_(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Con_Event_Client_Write *ev = event;
    printf("Sent %d bytes to client %s\n", ev->size, ecore_con_client_ip_get(ev->client));
@@ -290,7 +290,7 @@ main(int argc, char **argv)
 /* set event handler for receiving client data */
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA, (Ecore_Event_Handler_Cb)_data, NULL);
 /* set event handler that notifies of sent data */
-   ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_WRITE, (Ecore_Event_Handler_Cb)_write, NULL);
+   ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_WRITE, (Ecore_Event_Handler_Cb)_write_, NULL);
 /* set event handler that notifies of errors */
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ERROR, (Ecore_Event_Handler_Cb)_error, NULL);
 /* set event handler that notifies of upgrades */
