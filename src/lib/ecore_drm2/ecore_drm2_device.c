@@ -676,7 +676,11 @@ ecore_drm2_device_free(Ecore_Drm2_Device *device)
 
 #ifdef HAVE_ATOMIC_DRM
    if (_ecore_drm2_use_atomic)
-     _drm2_atomic_state_free(device->state);
+     {
+        _drm2_atomic_state_free(device->state);
+        if (device->atomic_req)
+          sym_drmModeAtomicFree(device->atomic_req);
+     }
 #endif
 
    ecore_event_handler_del(device->active_hdlr);
@@ -847,4 +851,156 @@ ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device)
      return EINA_TRUE;
    else
      return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ecore_drm2_atomic_commit_test(Ecore_Drm2_Device *device)
+{
+   Eina_Bool res = EINA_FALSE;
+#ifdef HAVE_ATOMIC_DRM
+   int ret = 0;
+   Eina_List *l, *ll;
+   Ecore_Drm2_Output *output;
+   Ecore_Drm2_Plane *plane;
+   Ecore_Drm2_Plane_State *pstate;
+   Ecore_Drm2_Crtc_State *cstate;
+   drmModeAtomicReq *req = NULL;
+   uint32_t flags = DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_ATOMIC_ALLOW_MODESET |
+     DRM_MODE_ATOMIC_TEST_ONLY;
+#endif
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((device->fd < 0), EINA_FALSE);
+
+#ifdef HAVE_ATOMIC_DRM
+   req = sym_drmModeAtomicAlloc();
+   if (!req) return EINA_FALSE;
+
+   sym_drmModeAtomicSetCursor(req, 0);
+
+   EINA_LIST_FOREACH(device->outputs, l, output)
+     {
+        cstate = output->crtc_state;
+
+        ret =
+          sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
+                                       cstate->mode.value);
+        if (ret < 0) goto err;
+
+        ret =
+          sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
+                                       cstate->active.value);
+        if (ret < 0) goto err;
+
+        EINA_LIST_FOREACH(output->planes, ll, plane)
+          {
+             pstate = plane->state;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->cid.id, pstate->cid.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->fid.id, pstate->fid.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->sx.id, pstate->sx.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->sy.id, pstate->sy.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->sw.id, pstate->sw.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->sh.id, pstate->sh.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->cx.id, pstate->cx.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->cy.id, pstate->cy.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->cw.id, pstate->cw.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->ch.id, pstate->ch.value);
+             if (ret < 0) goto err;
+          }
+     }
+
+   ret =
+     sym_drmModeAtomicCommit(device->fd, req, flags, NULL);
+   if (ret < 0) ERR("Failed Atomic Commit Test: %m");
+   else res = EINA_TRUE;
+
+   if (res)
+     {
+        if (device->atomic_req)
+          {
+             /* merge this test commit with previous */
+             ret = sym_drmModeAtomicMerge(device->atomic_req, req);
+             if (ret < 0)
+               {
+                  /* we failed to merge for some reason. just use this req */
+                  device->atomic_req = req;
+               }
+          }
+        else
+          device->atomic_req = req;
+     }
+
+   return res;
+
+err:
+   sym_drmModeAtomicFree(req);
+#endif
+
+   return res;
+}
+
+EAPI Eina_Bool
+ecore_drm2_atomic_commit(Ecore_Drm2_Device *device)
+{
+#ifdef HAVE_ATOMIC_DRM
+   int res = 0;
+   uint32_t flags =
+     DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
+     DRM_MODE_ATOMIC_ALLOW_MODESET;
+#endif
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((device->fd < 0), EINA_FALSE);
+
+#ifdef HAVE_ATOMIC_DRM
+   if (!device->atomic_req) return EINA_FALSE;
+
+   res =
+     sym_drmModeAtomicCommit(device->fd, device->atomic_req, flags, NULL);
+   if (res < 0)
+     ERR("Failed Atomic Commit Test: %m");
+   else
+     return EINA_TRUE;
+#endif
+
+   return EINA_FALSE;
 }
