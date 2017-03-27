@@ -57,8 +57,20 @@ static Eina_Bool
 _on_stdin(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh EINA_UNUSED)
 {
    char *line = NULL;
+#ifdef _WIN32
+   char lbuf[4096] = "";
+   ssize_t r;
+   if (fgets(lbuf, sizeof(lbuf), stdin) == NULL)
+     r = -1;
+   else
+     {
+        line = strdup(lbuf);
+        r = strlen(line);
+     }
+#else
    size_t len = 0;
    ssize_t r = getline(&line, &len, stdin);
+#endif
 
    if (r < 0)
      {
