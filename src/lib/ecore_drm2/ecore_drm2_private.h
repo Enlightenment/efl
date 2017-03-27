@@ -647,6 +647,9 @@ typedef struct _Ecore_Drm2_Plane_State
     * so that we do not have to refetch properties when iterating planes */
    uint32_t rotation_map[6];
    uint32_t supported_rotations;
+
+   uint32_t num_formats;
+   uint32_t formats[];
 } Ecore_Drm2_Plane_State;
 
 struct _Ecore_Drm2_Atomic_State
