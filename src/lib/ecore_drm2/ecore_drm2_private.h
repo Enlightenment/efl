@@ -815,6 +815,7 @@ struct _Ecore_Drm2_Device
 
 # ifdef HAVE_ATOMIC_DRM
    Ecore_Drm2_Atomic_State *state;
+   drmModeAtomicReq *atomic_req;
 # endif
 
    Eina_List *outputs;
@@ -840,6 +841,7 @@ extern void (*sym_drmModeAtomicFree)(drmModeAtomicReqPtr req);
 extern int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id, uint32_t property_id, uint64_t value);
 extern int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data);
 extern void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor);
+extern int (*sym_drmModeAtomicMerge)(drmModeAtomicReqPtr base, drmModeAtomicReqPtr augment);
 # endif
 extern void *(*sym_drmModeGetEncoder)(int fd, uint32_t encoder_id);
 extern void (*sym_drmModeFreeEncoder)(drmModeEncoderPtr ptr);
