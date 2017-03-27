@@ -26,6 +26,7 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
+#ifndef _WIN32
 static const char *
 _ecore_con_local_path_get(void)
 {
@@ -39,10 +40,42 @@ _ecore_con_local_path_get(void)
    if (!homedir) homedir = (char *)eina_environment_tmp_get();
    return homedir;
 }
+#endif
 
 EAPI char *
 ecore_con_local_path_new(Eina_Bool is_system, const char *name, int port)
 {
+#if _WIN32
+   char buf[256 - sizeof(PIPE_NS)] = "";
+
+   /* note: using '!' instead of '|' since at least on wine '|' causes
+    * ERROR_INVALID_NAME
+    */
+
+   if (!is_system)
+     {
+        TCHAR user[sizeof(buf) - sizeof("ecore!u!n!1")] = "unknown";
+        DWORD userlen = sizeof(user);
+        if (!GetUserName(user, &userlen))
+          {
+             char *msg = _efl_net_windows_error_msg_get(GetLastError());
+             ERR("GetUserName(%p, %lu): %s", user, userlen, msg);
+             free(msg);
+          }
+        if (port < 0)
+          snprintf(buf, sizeof(buf), "ecore!%s!%s", user, name);
+        else
+          snprintf(buf, sizeof(buf), "ecore!%s!%s!%d", user, name, port);
+     }
+   else
+     {
+        if (port < 0)
+          snprintf(buf, sizeof(buf), "ecore_service!%s", name);
+        else
+          snprintf(buf, sizeof(buf), "ecore_service!%s!%d", name, port);
+     }
+   return strdup(buf);
+#else
    char buf[4096];
    const char *homedir;
 
@@ -99,6 +132,7 @@ ecore_con_local_path_new(Eina_Bool is_system, const char *name, int port)
              return strdup(buf);
           }
      }
+#endif
 }
 
 void
