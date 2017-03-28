@@ -99,9 +99,9 @@ out:
    pstate->sw.value = fb->w << 16;
    pstate->sh.value = fb->h << 16;
 
-   plane->type = pstate->type.value;
-   plane->qfb = fb;
    plane->state = pstate;
+   plane->type = pstate->type.value;
+   plane->current = fb;
 
    DBG("FB %d assigned to Plane %d", fb->id, pstate->obj_id);
    output->planes = eina_list_append(output->planes, plane);
