@@ -13,11 +13,210 @@ class TestEinaStringshare
     }
 }
 
+class BaseArray
+{
+    public static byte[] Values()
+    {
+        return new byte[3]{0x0,0x2A,0x42};
+    }
+}
+
+class NativeInheritImpl : test.TestingInherit
+{
+    public NativeInheritImpl(efl.Object parent = null) : base(parent) {}
+
+    public bool slice_in_flag = false;
+    public bool rw_slice_in_flag = false;
+    public bool slice_out_flag = false;
+    public bool rw_slice_out_flag = false;
+    public bool binbuf_in_flag = false;
+    public bool binbuf_in_own_flag = false;
+    public bool binbuf_out_flag = false;
+    public bool binbuf_out_own_flag = false;
+    public bool binbuf_return_flag = false;
+    public bool binbuf_return_own_flag = false;
+
+    override public bool eina_slice_in(eina.Slice slice)
+    {
+        slice_in_flag = true;
+        return slice.GetBytes().SequenceEqual(BaseArray.Values());
+    }
+
+    override public bool eina_rw_slice_in(eina.Rw_Slice slice)
+    {
+        rw_slice_in_flag = true;
+        return slice.GetBytes().SequenceEqual(BaseArray.Values());
+    }
+
+    private byte[] slice_out_arr = null;
+    private GCHandle slice_out_pinned;
+    override public bool eina_slice_out(ref eina.Slice slice)
+    {
+        slice_out_flag = true;
+
+        slice_out_arr = (byte[]) BaseArray.Values();
+        slice_out_pinned = GCHandle.Alloc(slice_out_arr, GCHandleType.Pinned);
+        IntPtr ptr = slice_out_pinned.AddrOfPinnedObject();
+
+        slice.Mem = ptr;
+        slice.Len = (UIntPtr) slice_out_arr.Length;
+
+        return true;
+    }
+
+    private byte[] rw_slice_out_arr = null;
+    private GCHandle rw_slice_out_pinned;
+    override public bool eina_rw_slice_out(ref eina.Rw_Slice slice)
+    {
+        rw_slice_out_flag = true;
+
+        rw_slice_out_arr = (byte[]) BaseArray.Values();
+        rw_slice_out_pinned = GCHandle.Alloc(rw_slice_out_arr, GCHandleType.Pinned);
+        IntPtr ptr = rw_slice_out_pinned.AddrOfPinnedObject();
+
+        slice.Mem = ptr;
+        slice.Len = (UIntPtr) rw_slice_out_arr.Length;
+
+        return true;
+    }
+
+    // //
+    //
+    override public bool eina_binbuf_in(eina.Binbuf binbuf)
+    {
+        binbuf_in_flag = true;
+
+        bool r = binbuf.GetBytes().SequenceEqual(BaseArray.Values());
+        r = r && !binbuf.Own;
+
+        binbuf.Insert(42, 0);
+        binbuf.Insert(43, 0);
+        binbuf.Append(33);
+
+        binbuf.Dispose();
+
+        return r;
+    }
+
+    private eina.Binbuf binbuf_in_own_binbuf = null;
+    override public bool eina_binbuf_in_own(eina.Binbuf binbuf)
+    {
+        binbuf_in_own_flag = true;
+
+        bool r = binbuf.GetBytes().SequenceEqual(BaseArray.Values());
+        r = r && binbuf.Own;
+
+        binbuf.Insert(42, 0);
+        binbuf.Insert(43, 0);
+        binbuf.Append(33);
+
+        binbuf_in_own_binbuf = binbuf;
+
+        return r;
+    }
+    public bool binbuf_in_own_still_usable()
+    {
+        bool r = binbuf_in_own_binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33});
+        r = r && binbuf_in_own_binbuf.Own;
+
+        binbuf_in_own_binbuf.Dispose();
+        binbuf_in_own_binbuf = null;
+
+        return r;
+    }
+
+    private eina.Binbuf binbuf_out_binbuf = null;
+    override public bool eina_binbuf_out(out eina.Binbuf binbuf)
+    {
+        binbuf_out_flag = true;
+
+        binbuf = new eina.Binbuf();
+        binbuf.Append(33);
+
+        binbuf_out_binbuf = binbuf;
+
+        return true;
+    }
+    public bool binbuf_out_still_usable()
+    {
+        bool r = binbuf_out_binbuf.GetBytes().SequenceEqual(BaseArray.Values());
+        r = r && binbuf_out_binbuf.Own;
+
+        binbuf_out_binbuf.Dispose();
+        binbuf_out_binbuf = null;
+
+        return r;
+    }
+
+    private eina.Binbuf binbuf_out_own_binbuf = null;
+    override public bool eina_binbuf_out_own(out eina.Binbuf binbuf)
+    {
+        binbuf_out_own_flag = true;
+
+        binbuf = new eina.Binbuf();
+        binbuf.Append(33);
+
+        binbuf_out_own_binbuf = binbuf;
+
+        return true;
+    }
+    public bool binbuf_out_own_no_longer_own()
+    {
+        bool r = !binbuf_out_own_binbuf.Own;
+        binbuf_out_own_binbuf.Dispose();
+        binbuf_out_own_binbuf = null;
+        return r;
+    }
+
+    private eina.Binbuf binbuf_return_binbuf = null;
+    override public eina.Binbuf eina_binbuf_return()
+    {
+        binbuf_return_flag = true;
+
+        var binbuf = new eina.Binbuf();
+        binbuf.Append(33);
+
+        binbuf_return_binbuf = binbuf;
+
+        return binbuf;
+    }
+    public bool binbuf_return_still_usable()
+    {
+        bool r = binbuf_return_binbuf.GetBytes().SequenceEqual(BaseArray.Values());
+        r = r && binbuf_return_binbuf.Own;
+
+        binbuf_return_binbuf.Dispose();
+        binbuf_return_binbuf = null;
+
+        return r;
+    }
+
+    private eina.Binbuf binbuf_return_own_binbuf = null;
+    override public eina.Binbuf eina_binbuf_return_own()
+    {
+        binbuf_return_own_flag = true;
+
+        var binbuf = new eina.Binbuf();
+        binbuf.Append(33);
+
+        binbuf_return_own_binbuf = binbuf;
+
+        return binbuf;
+    }
+    public bool binbuf_return_own_no_longer_own()
+    {
+        bool r = !binbuf_return_own_binbuf.Own;
+        binbuf_return_own_binbuf.Dispose();
+        binbuf_return_own_binbuf = null;
+        return r;
+    }
+}
+
 class TestEinaBinbuf
 {
     private static readonly byte[] test_string = System.Text.Encoding.UTF8.GetBytes("0123456789ABCDEF");
 
-    private static readonly byte[] base_arr = new byte[3]{0x0,0x2A,0x42};
+    private static readonly byte[] base_arr = BaseArray.Values();
 
     public static void eina_binbuf_default()
     {
@@ -159,6 +358,7 @@ class TestEinaBinbuf
         test.Testing t = new test.TestingConcrete();
         var binbuf = new eina.Binbuf(base_arr, (uint)base_arr.Length);
         Test.Assert(t.eina_binbuf_in(binbuf));
+        Test.Assert(binbuf.Own);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
@@ -169,6 +369,7 @@ class TestEinaBinbuf
         test.Testing t = new test.TestingConcrete();
         var binbuf = new eina.Binbuf(base_arr, (uint)base_arr.Length);
         Test.Assert(t.eina_binbuf_in_own(binbuf));
+        Test.Assert(!binbuf.Own);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
@@ -180,6 +381,7 @@ class TestEinaBinbuf
         test.Testing t = new test.TestingConcrete();
         eina.Binbuf binbuf;
         Test.Assert(t.eina_binbuf_out(out binbuf));
+        Test.Assert(!binbuf.Own);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
         binbuf.Reset();
         Test.Assert(binbuf.Append(base_arr));
@@ -193,6 +395,7 @@ class TestEinaBinbuf
         test.Testing t = new test.TestingConcrete();
         eina.Binbuf binbuf;
         Test.Assert(t.eina_binbuf_out_own(out binbuf));
+        Test.Assert(binbuf.Own);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
         binbuf.Reset();
         Test.Assert(binbuf.Append(base_arr));
@@ -204,6 +407,7 @@ class TestEinaBinbuf
     {
         test.Testing t = new test.TestingConcrete();
         var binbuf = t.eina_binbuf_return();
+        Test.Assert(!binbuf.Own);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
         binbuf.Reset();
         Test.Assert(binbuf.Append(base_arr));
@@ -216,17 +420,108 @@ class TestEinaBinbuf
     {
         test.Testing t = new test.TestingConcrete();
         var binbuf = t.eina_binbuf_return_own();
+        Test.Assert(binbuf.Own);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
         binbuf.Reset();
         Test.Assert(binbuf.Append(base_arr));
         binbuf.Dispose();
         Test.Assert(binbuf.Handle == IntPtr.Zero);
     }
+
+    // //
+    // Inherit
+    //
+    public static void test_inherit_eina_binbuf_in()
+    {
+        var t = new NativeInheritImpl();
+        var binbuf = new eina.Binbuf(base_arr, (uint)base_arr.Length);
+        Test.Assert(NativeInheritImpl.test_testing_eina_binbuf_in(t.raw_handle, binbuf.Handle));
+        Test.Assert(t.binbuf_in_flag);
+        Test.Assert(binbuf.Own);
+        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
+        binbuf.Dispose();
+        Test.Assert(binbuf.Handle == IntPtr.Zero);
+    }
+
+    public static void test_inherit_eina_binbuf_in_own()
+    {
+        var t = new NativeInheritImpl();
+        var binbuf = new eina.Binbuf(base_arr, (uint)base_arr.Length);
+        binbuf.Own = false;
+        Test.Assert(NativeInheritImpl.test_testing_eina_binbuf_in_own(t.raw_handle, binbuf.Handle));
+        Test.Assert(t.binbuf_in_own_flag);
+        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
+        binbuf.Dispose();
+        Test.Assert(binbuf.Handle == IntPtr.Zero);
+        Test.Assert(t.binbuf_in_own_still_usable());
+    }
+
+    public static void test_inherit_eina_binbuf_out()
+    {
+        var t = new NativeInheritImpl();
+        IntPtr bb_hdl;
+        Test.Assert(NativeInheritImpl.test_testing_eina_binbuf_out(t.raw_handle, out bb_hdl));
+        Test.Assert(t.binbuf_out_flag);
+        Test.Assert(bb_hdl != IntPtr.Zero);
+        var binbuf = new eina.Binbuf(bb_hdl, false);
+        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
+        binbuf.Reset();
+        Test.Assert(binbuf.Append(base_arr));
+        binbuf.Dispose();
+        Test.Assert(binbuf.Handle == IntPtr.Zero);
+        Test.Assert(t.binbuf_out_still_usable());
+    }
+
+    public static void test_inherit_eina_binbuf_out_own()
+    {
+        var t = new NativeInheritImpl();
+        IntPtr bb_hdl;
+        Test.Assert(NativeInheritImpl.test_testing_eina_binbuf_out_own(t.raw_handle, out bb_hdl));
+        Test.Assert(t.binbuf_out_own_flag);
+        Test.Assert(bb_hdl != IntPtr.Zero);
+        var binbuf = new eina.Binbuf(bb_hdl, true);
+        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
+        binbuf.Reset();
+        Test.Assert(binbuf.Append(base_arr));
+        binbuf.Dispose();
+        Test.Assert(binbuf.Handle == IntPtr.Zero);
+        Test.Assert(t.binbuf_out_own_no_longer_own());
+    }
+
+    public static void test_inherit_eina_binbuf_return()
+    {
+        var t = new NativeInheritImpl();
+        IntPtr bb_hdl = NativeInheritImpl.test_testing_eina_binbuf_return(t.raw_handle);
+        Test.Assert(t.binbuf_return_flag);
+        Test.Assert(bb_hdl != IntPtr.Zero);
+        var binbuf = new eina.Binbuf(bb_hdl, false);
+        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
+        binbuf.Reset();
+        Test.Assert(binbuf.Append(base_arr));
+        binbuf.Dispose();
+        Test.Assert(binbuf.Handle == IntPtr.Zero);
+        Test.Assert(t.binbuf_return_still_usable());
+    }
+
+    public static void test_inherit_eina_binbuf_return_own()
+    {
+        var t = new NativeInheritImpl();
+        IntPtr bb_hdl = NativeInheritImpl.test_testing_eina_binbuf_return_own(t.raw_handle);
+        Test.Assert(t.binbuf_return_own_flag);
+        Test.Assert(bb_hdl != IntPtr.Zero);
+        var binbuf = new eina.Binbuf(bb_hdl, true);
+        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
+        binbuf.Reset();
+        Test.Assert(binbuf.Append(base_arr));
+        binbuf.Dispose();
+        Test.Assert(binbuf.Handle == IntPtr.Zero);
+        Test.Assert(t.binbuf_return_own_no_longer_own());
+    }
 }
 
 class TestEinaSlice
 {
-    private static readonly byte[] base_arr = new byte[3]{0x0,0x2A,0x42};
+    private static readonly byte[] base_arr = BaseArray.Values();
     private static readonly GCHandle pinnedData = GCHandle.Alloc(base_arr, GCHandleType.Pinned);
     private static readonly IntPtr pinnedPtr = pinnedData.AddrOfPinnedObject();
 
@@ -306,6 +601,53 @@ class TestEinaSlice
     {
     }
     */
+
+    public static void test_inherit_eina_slice_in()
+    {
+        var t = new NativeInheritImpl();
+        var slc = new eina.Slice(pinnedPtr, (UIntPtr)3);
+        Test.Assert(NativeInheritImpl.test_testing_eina_slice_in(t.raw_handle, slc));
+        Test.Assert(t.slice_in_flag);
+    }
+
+    public static void test_inherit_eina_rw_slice_in()
+    {
+        var rw_arr = base_arr.Clone();
+        GCHandle pinnedRWData = GCHandle.Alloc(rw_arr, GCHandleType.Pinned);
+        IntPtr ptr = pinnedRWData.AddrOfPinnedObject();
+
+        var slc = new eina.Rw_Slice(ptr, (UIntPtr)3);
+
+        var t = new NativeInheritImpl();
+        Test.Assert(NativeInheritImpl.test_testing_eina_rw_slice_in(t.raw_handle, slc));
+
+        Test.Assert(t.rw_slice_in_flag);
+        Test.Assert(slc.GetBytes().SequenceEqual(base_arr));
+
+        pinnedRWData.Free();
+    }
+
+    public static void test_inherit_eina_slice_out()
+    {
+        var t = new NativeInheritImpl();
+        var slc = new eina.Slice();
+        Test.Assert(NativeInheritImpl.test_testing_eina_slice_out(t.raw_handle, ref slc));
+        Test.Assert(t.slice_out_flag);
+        Test.Assert(slc.Mem != IntPtr.Zero);
+        Test.Assert(slc.Length == base_arr.Length);
+        Test.Assert(slc.GetBytes().SequenceEqual(base_arr));
+    }
+
+    public static void test_inherit_eina_rw_slice_out()
+    {
+        var t = new NativeInheritImpl();
+        var slc = new eina.Rw_Slice();
+        Test.Assert(NativeInheritImpl.test_testing_eina_rw_slice_out(t.raw_handle, ref slc));
+        Test.Assert(t.rw_slice_out_flag);
+        Test.Assert(slc.Mem != IntPtr.Zero);
+        Test.Assert(slc.Length == base_arr.Length);
+        Test.Assert(slc.GetBytes().SequenceEqual(base_arr));
+    }
 }
 
 }
