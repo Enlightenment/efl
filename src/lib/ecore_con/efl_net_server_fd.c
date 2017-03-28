@@ -60,6 +60,8 @@ efl_net_accept4(SOCKET fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool 
              return INVALID_SOCKET;
           }
      }
+#else
+   (void)close_on_exec;
 #endif
 
    return client;
@@ -295,6 +297,10 @@ _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
         pd->close_on_exec = old;
         return EINA_FALSE;
      }
+#else
+   DBG("close on exec is not supported on your platform");
+   (void)close_on_exec;
+   (void)o;
 #endif
 
    return EINA_TRUE;
@@ -321,6 +327,8 @@ _efl_net_server_fd_close_on_exec_get(Eo *o, Efl_Net_Server_Fd_Data *pd)
      }
 
    pd->close_on_exec = !!(flags & FD_CLOEXEC); /* sync */
+#else
+   (void)o;
 #endif
    return pd->close_on_exec;
 }
