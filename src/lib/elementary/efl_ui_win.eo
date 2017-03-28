@@ -748,7 +748,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
               a series of dialogs or questions one after the other and
               that you may go back through history.
 
-              @since 1.19]]
+              WARNING: This API is not stable - do not use yet]]
          }
          values {
             id: string; [[An opaque string that has no specific format,
@@ -765,7 +765,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
               before the first time the window is shown and should never
               be changed after that point in time ever again.
 
-              @since 1.19]]
+              WARNING: This API is not stable - do not use yet]]
          }
          get {
             [[Get the stack master Id that has been set.]]
@@ -787,8 +787,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
            This state should be set before a window is shown for the
            first time and never changed again after that.
 
-           @since 1.19
-         ]]
+           WARNING: This API is not stable - do not use yet]]
 
          set {}
          get {}
@@ -803,7 +802,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
            This will try and delete all the windows in the stack that
            are above the window.
 
-           @since 1.19]]
+           WARNING: This API is not stable - do not use yet]]
       }
       socket_listen {
          [[Create a socket to provide the service for Plug widget.]]
