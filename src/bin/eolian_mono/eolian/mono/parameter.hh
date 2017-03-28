@@ -381,9 +381,14 @@ struct native_convert_out_assign_generator
                || param_is_acceptable(param, "const Eina_Binbuf *", !WANT_OWN, WANT_OUT)
               )
         {
-           return as_generator(
-                string << " = " << string << (param.type.has_own ? ".Release()" : ".Handle") << ";\n"
-              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
+           if (!as_generator(
+                string << " = " << string << ".Handle;\n"
+              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context))
+             return false;
+           if (param.type.has_own)
+             return as_generator(
+                 string << ".Own = false;\n"
+               ).generate(sink, out_variable_name(param.param_name), context);
         }
       return true;
    }
@@ -441,8 +446,12 @@ struct native_convert_return_generator
      }
      else if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")
        {
-          return as_generator("return _ret_var" << string << ";\n")
-            .generate(sink, std::string{ret_type.has_own ? ".Release()" : ".Handle"}, context);
+          if (ret_type.has_own && !as_generator("_ret_var.Own = false; ")
+              .generate(sink, attributes::unused, context))
+            return false;
+
+          return as_generator("return _ret_var.Handle;\n")
+            .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type != "void")
        return as_generator("return _ret_var;\n").generate(sink, ret_type, context);
