@@ -3143,16 +3143,19 @@ _filter_data_prepare(Evas_Engine_GL_Context *gc, int pn,
                      Evas_GL_Program *prog, int count)
 {
    gc->pipe[pn].array.filter_data_count = count;
-   gc->pipe[pn].array.filter_data = malloc(count * 2 * sizeof(GLfloat));
+   if (count) gc->pipe[pn].array.filter_data = malloc(count * 2 * sizeof(GLfloat));
+   else gc->pipe[pn].array.filter_data = NULL;
 
-   if (!prog->attribute.known_locations)
+   if (!prog->filter) prog->filter = calloc(1, sizeof(*prog->filter));
+   if (!prog->filter->attribute.known_locations)
      {
+        prog->filter->attribute.known_locations = EINA_TRUE;
         for (int k = 0; k < count; k++)
           {
              char name[32];
 
              sprintf(name, "filter_data_%d", k);
-             prog->attribute.loc_filter_data[k] = glGetAttribLocation(prog->prog, name);
+             prog->filter->attribute.loc[k] = glGetAttribLocation(prog->prog, name);
           }
      }
 }
@@ -3434,20 +3437,20 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
                                 double dx, double dy, double dw, double dh,
                                 const double * const weights,
                                 const double * const offsets, int count,
-                                Eina_Bool horiz)
+                                double radius, Eina_Bool horiz)
 {
    double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4, pw, ph;
    GLfloat tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4;
    GLfloat offsetx, offsety;
    int r, g, b, a, nomul = 0, pn;
    Evas_GL_Program *prog;
-   GLfloat *filter_data;
    Eina_Bool blend = EINA_TRUE;
    Eina_Bool smooth = EINA_TRUE;
    Shader_Type type = horiz ? SHD_FILTER_BLUR_X : SHD_FILTER_BLUR_Y;
    GLuint *map_tex_data;
-   GLuint map_tex;
    double sum;
+
+   //shader_array_flush(gc);
 
    r = R_VAL(&gc->dc->mul.col);
    g = G_VAL(&gc->dc->mul.col);
@@ -3521,30 +3524,50 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
         map_tex_data[k + count] = val;
      }
 
-   // Synchronous upload of Nx2 RGBA texture (FIXME: no reuse)
-   glGenTextures(1, &map_tex);
-   glBindTexture(GL_TEXTURE_2D, map_tex);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   if (tex->gc->shared->info.unpack_row_length)
-     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-   glPixelStorei(GL_UNPACK_ALIGNMENT, sizeof(*map_tex_data));
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, count, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, map_tex_data);
+   // Prepare attributes & uniforms
+   _filter_data_prepare(gc, pn, prog, 0);
+   if (!prog->filter->uniform.known_locations)
+     {
+        prog->filter->uniform.known_locations = EINA_TRUE;
+        prog->filter->uniform.blur_count_loc = glGetUniformLocation(prog->prog, "blur_count");
+        prog->filter->uniform.blur_texlen_loc = glGetUniformLocation(prog->prog, "blur_texlen");
+        prog->filter->uniform.blur_div_loc = glGetUniformLocation(prog->prog, "blur_div");
+     }
 
-   // Set curve properties (no need for filter_data)
-   gc->pipe[pn].shader.filter.map_tex = map_tex;
+   // Synchronous upload of Nx2 RGBA texture
+   if (!EINA_DBL_EQ(prog->filter->blur_radius, radius))
+     {
+        prog->filter->blur_radius = radius;
+
+        if (!prog->filter->texture.tex_ids[0])
+          glGenTextures(1, prog->filter->texture.tex_ids);
+
+        glBindTexture(GL_TEXTURE_2D, prog->filter->texture.tex_ids[0]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        if (tex->gc->shared->info.unpack_row_length)
+          glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, sizeof(*map_tex_data));
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, count, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, map_tex_data);
+     }
+
+   //if (update_uniforms)
+     {
+        prog->filter->uniform.blur_count_value = count - 1;
+        prog->filter->uniform.blur_texlen_value = horiz ? sw : sh;
+        prog->filter->uniform.blur_div_value = sum;
+        glUseProgram(prog->prog);
+        glUniform1i(prog->filter->uniform.blur_count_loc, prog->filter->uniform.blur_count_value);
+        glUniform1f(prog->filter->uniform.blur_texlen_loc, prog->filter->uniform.blur_texlen_value);
+        glUniform1f(prog->filter->uniform.blur_div_loc, prog->filter->uniform.blur_div_value);
+     }
+
+   // Set shader properties
+   gc->pipe[pn].shader.filter.map_tex = prog->filter->texture.tex_ids[0];
    gc->pipe[pn].shader.filter.map_nearest = EINA_TRUE;
-   gc->pipe[pn].shader.filter.map_delete = EINA_TRUE;
-
-   // Set blur properties... WIP
-   _filter_data_prepare(gc, pn, prog, 2);
-   filter_data = gc->pipe[pn].array.filter_data;
-   filter_data[0] = count - 1.0;
-   filter_data[1] = horiz ? sw : sh;
-   filter_data[2] = sum;
-   filter_data[3] = 0.0; // unused
+   gc->pipe[pn].shader.filter.map_delete = EINA_FALSE;
 
    pw = tex->pt->w;
    ph = tex->pt->h;
@@ -4241,7 +4264,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              if (gc->pipe[i].array.filter_data)
                {
                   for (int k = 0; k < gc->pipe[i].array.filter_data_count; k++)
-                    glVertexAttrib2fv(prog->attribute.loc_filter_data[k], &gc->pipe[i].array.filter_data[k * 2]);
+                    glVertexAttrib2fv(prog->filter->attribute.loc[k], &gc->pipe[i].array.filter_data[k * 2]);
                }
 
              /* Gfx filters: texture (or data array as texture) */

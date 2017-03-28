@@ -660,8 +660,8 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
                                 int R, int G, int B, int A)
 {
    Evas_Filter_Command *cmd;
-   Evas_Filter_Buffer *dx_in, *dx_out, *dy_in, *tmp = NULL;
-   int dx, dy;
+   Evas_Filter_Buffer *dx_in, *dx_out, *dy_in, *dy_out, *tmp = NULL;
+   double dx, dy;
 
    /* GL blur implementation:
     * - Create intermediate buffer T (variable size)
@@ -677,16 +677,18 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
    dx = rx;
    dy = ry;
    dx_in = in;
+   dy_out = out;
 
+#if 0
    if (type == EVAS_FILTER_BLUR_DEFAULT)
      {
         int down_x = 1, down_y = 1;
 
         /* For now, disable scaling - testing perfect gaussian blur until it's
-         * ready:
+         * ready: */
         down_x = MAX((1 << evas_filter_smallest_pow2_larger_than(dx / 2) / 2), 1);
         down_y = MAX((1 << evas_filter_smallest_pow2_larger_than(dy / 2) / 2), 1);
-        */
+
 
         tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
                                                in->alpha_only, EINA_TRUE);
@@ -701,11 +703,17 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
         if (!cmd) goto fail;
         cmd->draw.fillmode = EVAS_FILTER_FILL_MODE_STRETCH_XY;
         dx_in = tmp;
+
+        tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
+                                               in->alpha_only, EINA_TRUE);
+        if (!tmp) goto fail;
+        dy_out = tmp;
      }
+#endif
 
    if (dx && dy)
      {
-        tmp = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only, 1);
+        tmp = evas_filter_temporary_buffer_get(ctx, dx_in->w, dx_in->h, in->alpha_only, 1);
         if (!tmp) goto fail;
         dy_in = dx_out = tmp;
      }
@@ -717,7 +725,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
 
    if (dx)
      {
-        XDBG("Add GL blur %d -> %d (%dx%d px)", dx_in->id, dx_out->id, dx, 0);
+        XDBG("Add GL blur %d -> %d (%.2fx%.2f px)", dx_in->id, dx_out->id, dx, 0.0);
         cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, dx_in, NULL, dx_out);
         if (!cmd) goto fail;
         cmd->blur.type = type;
@@ -727,12 +735,21 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
 
    if (dy)
      {
-        XDBG("Add GL blur %d -> %d (%dx%d px)", dy_in->id, out->id, 0, dy);
-        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, dy_in, NULL, out);
+        XDBG("Add GL blur %d -> %d (%.2fx%.2f px)", dy_in->id, dy_out->id, 0.0, dy);
+        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, dy_in, NULL, dy_out);
         if (!cmd) goto fail;
         cmd->blur.type = type;
         cmd->blur.dy = dy;
         cmd->blur.count = count;
+     }
+
+   if (cmd->output != out)
+     {
+        XDBG("Add GL upscale %d (%dx%d) -> %d (%dx%d)",
+             cmd->output->id, cmd->output->w, cmd->output->h, out->id, out->w, out->h);
+        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLEND, cmd->output, NULL, out);
+        if (!cmd) goto fail;
+        cmd->draw.fillmode = EVAS_FILTER_FILL_MODE_STRETCH_XY;
      }
 
    cmd->draw.ox = ox;

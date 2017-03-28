@@ -149,7 +149,7 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 
    count = _gaussian_interpolate(&weights, &offsets, radius);
    evas_gl_common_filter_blur_push(gc, image->tex, ssx, ssy, ssw, ssh, dx, dy, dw, dh,
-                                   weights, offsets, count, horiz);
+                                   weights, offsets, count, radius, horiz);
    free(weights);
    free(offsets);
 

@@ -400,6 +400,12 @@ save:
 static inline void
 _program_del(Evas_GL_Program *p)
 {
+   if (p->filter)
+     {
+        if (p->filter->texture.tex_ids[0])
+          glDeleteTextures(1, p->filter->texture.tex_ids);
+        free(p->filter);
+     }
    if (p->prog) glDeleteProgram(p->prog);
    free(p);
 }

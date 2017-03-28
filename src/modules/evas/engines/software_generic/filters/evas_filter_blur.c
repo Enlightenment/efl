@@ -231,7 +231,7 @@ _box_blur_apply(Evas_Filter_Command *cmd, Eina_Bool vert, Eina_Bool rgba)
    int radius, regions, w, h;
    void *src, *dst;
 
-   radius = abs(vert ? cmd->blur.dy : cmd->blur.dx);
+   radius = abs(vert ? (int) cmd->blur.dy : (int) cmd->blur.dx);
    src = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, rgba ? E_ARGB : E_ALPHA, &src_stride);
    dst = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, rgba ? E_ARGB : E_ALPHA, &dst_stride);
    if (!src || !dst) goto unmap;
@@ -386,7 +386,7 @@ _gaussian_blur_apply(Evas_Filter_Command *cmd, Eina_Bool vert, Eina_Bool rgba)
    void *src, *dst;
    int *weights;
 
-   radius = abs(vert ? cmd->blur.dy : cmd->blur.dx);
+   radius = abs(vert ? (int) cmd->blur.dy : (int) cmd->blur.dx);
    src = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, rgba ? E_ARGB : E_ALPHA, &src_stride);
    dst = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, rgba ? E_ARGB : E_ALPHA, &dst_stride);
    w = cmd->input->w;

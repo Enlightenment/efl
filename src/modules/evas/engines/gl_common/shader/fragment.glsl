@@ -90,7 +90,9 @@ uniform sampler2D tex_filter;
 
 #ifdef SHD_FILTER_BLUR
 uniform sampler2D tex_filter;
-varying vec3 blur_data;
+uniform int blur_count;
+uniform float blur_texlen;
+uniform float blur_div;
 #endif
 
 // ----------------------------------------------------------------------------
@@ -254,49 +256,51 @@ vec4 fetch_pixel(float ox, float oy)
 float weight_get(float u, float count, float index)
 {
    vec4 val = texture2D(tex_filter, vec2(u / count, index)).bgra;
-   return val.a*255.0 + (val.r*255.0/256.0) + (val.g*255.0/256.0/256.0) + (val.b*255.0/256.0/256.0/256.0);
+   return val.a * 255.0 + val.r + val.g / 256.0 + val.b / 65536.0;
 }
 
 float offset_get(float u, float count, float index)
 {
    // val.a is always 0 here ~ discard
    vec4 val = texture2D(tex_filter, vec2(u / count, index)).bgra;
-   return (val.r*255.0/256.0) + (val.g*255.0/256.0/256.0) + (val.b*255.0/256.0/256.0/256.0);
+   return val.r + val.g / 256.0 + val.b / 65536.0;
 }
 
 void main()
 {
-   float u, texlen, count, div;
-   float weight, offset;
+   float weight, offset, count;
    vec4 acc, px;
+   int k;
 
-   count = blur_data.x;
-   texlen = blur_data.y;
-   div = blur_data.z;
+   count = float(blur_count);
+
 
    // Center pixel, offset is 0.0
    weight = weight_get(0.0, count, 0.0);
    px = FETCH_PIXEL(0.0);
    acc = px * weight;
 
-   for (u = 1.0; u <= count; u += 1.0)
+   // Left & right pixels
+   for (k = 1; k <= blur_count; k++)
    {
+      float u = float(k);
+
       weight = weight_get(u, count, 0.0);
       offset = offset_get(u, count, 1.0);
 
       // Left
-      vec4 px1 = FETCH_PIXEL(-((offset + (2.0 * u) - 1.0)) / texlen);
+      vec4 px1 = FETCH_PIXEL(-((offset + (2.0 * u) - 1.0)) / blur_texlen);
 
       // Right
-      vec4 px2 = FETCH_PIXEL((offset + (2.0 * u) - 1.0) / texlen);
+      vec4 px2 = FETCH_PIXEL((offset + (2.0 * u) - 1.0) / blur_texlen);
 
       acc += (px1 + px2) * weight;
    }
 
 #ifndef SHD_NOMUL
-   gl_FragColor = (acc / div) * col;
+   gl_FragColor = (acc / blur_div) * col;
 #else
-   gl_FragColor = (acc / div);
+   gl_FragColor = (acc / blur_div);
 #endif
 }
 

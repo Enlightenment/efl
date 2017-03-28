@@ -70,6 +70,7 @@ typedef struct _Evas_GL_Polygon               Evas_GL_Polygon;
 typedef struct _Evas_GL_Polygon_Point         Evas_GL_Polygon_Point;
 typedef struct _Evas_GL_Texture_Async_Preload Evas_GL_Texture_Async_Preload;
 typedef struct _Evas_GL_Image_Data_Map        Evas_GL_Image_Data_Map;
+typedef struct _Evas_GL_Filter                Evas_GL_Filter;
 
 typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 
@@ -101,16 +102,34 @@ typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 
 #define PROGRAM_HITCOUNT_MAX 0x1000000
 
+struct _Evas_GL_Filter
+{
+   struct {
+      GLint loc[3];
+      Eina_Bool known_locations;
+   } attribute;
+   struct {
+      GLint blur_count_loc;
+      GLint blur_count_value;
+      GLint blur_texlen_loc;
+      GLfloat blur_texlen_value;
+      GLint blur_div_loc;
+      GLfloat blur_div_value;
+      Eina_Bool known_locations;
+   } uniform;
+   struct {
+      GLuint tex_ids[1];
+   } texture;
+   double blur_radius;
+};
+
 struct _Evas_GL_Program
 {
    unsigned int flags, hitcount, tex_count;
    struct {
       GLuint mvp, rotation_id;
    } uniform;
-   struct {
-      GLint loc_filter_data[3];
-      Eina_Bool known_locations;
-   } attribute;
+   Evas_GL_Filter *filter;
    GLuint    prog;
 
    Eina_Bool reset     : 1;
@@ -652,7 +671,7 @@ void              evas_gl_common_filter_displace_push(Evas_Engine_GL_Context *gc
 void              evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex,
                                                    int x, int y, int w, int h, const uint8_t *points, int channel);
 void              evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex, double sx, double sy, double sw, double sh,
-                                                  double dx, double dy, double dw, double dh, const double * const values, const double * const offsets, int count,
+                                                  double dx, double dy, double dw, double dh, const double * const values, const double * const offsets, int count, double radius,
                                                   Eina_Bool horiz);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
