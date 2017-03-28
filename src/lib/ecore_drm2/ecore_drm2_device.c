@@ -961,7 +961,12 @@ ecore_drm2_atomic_commit_test(Ecore_Drm2_Device *device)
              ret = sym_drmModeAtomicMerge(device->atomic_req, req);
              if (ret < 0)
                {
-                  /* we failed to merge for some reason. just use this req */
+                  /* we failed to merge for some reason. */
+
+                  /* clear any previous request */
+                  sym_drmModeAtomicFree(device->atomic_req);
+
+                  /* just use the new request */
                   device->atomic_req = req;
                }
           }
