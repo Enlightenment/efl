@@ -598,6 +598,9 @@ efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec)
           }
      }
    EINA_THREAD_CLEANUP_POP(EINA_FALSE); /* we need fd on success */
+#else
+   DBG("close on exec is not supported on your platform");
+   (void)close_on_exec;
 #endif
 
    return fd;
