@@ -2688,46 +2688,73 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
 }
 
 static Eina_Bool
-eng_image_data_map(void *engdata EINA_UNUSED, void **image, Eina_Rw_Slice *slice,
+eng_image_data_map(void *engdata, void **image, Eina_Rw_Slice *slice,
                    int *stride, int x, int y, int w, int h,
                    Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode,
                    int plane)
 {
+   Render_Engine_GL_Generic *re = engdata;
    Evas_GL_Image_Data_Map *map = NULL;
-   Evas_GL_Image *im;
-   Eina_Bool ok;
+   Evas_GL_Image *glim, *glim2 = NULL;
+   Eina_Bool ok = EINA_FALSE;
+   RGBA_Image *im = NULL;
+   int strid;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(image && *image && slice, EINA_FALSE);
-   im = *image;
 
-   if (im->im)
+   glim = *image;
+   slice->mem = NULL;
+   slice->len = 0;
+
+   if (glim->im && (glim->orient == EVAS_IMAGE_ORIENT_NONE))
      {
-        int strid = 0;
-
-        // Call sw generic implementation. Should work for simple cases.
-        ok = pfunc.image_data_map(NULL, (void **) &im->im, slice, &strid,
-                                  x, y, w, h, cspace, mode, plane);
-        if (ok)
-          {
-             map = calloc(1, sizeof(*map));
-             map->cspace = cspace;
-             map->rx = x;
-             map->ry = y;
-             map->rw = w;
-             map->rh = h;
-             map->mode = mode;
-             map->slice = *slice;
-             map->stride = strid;
-             map->im = im->im; // ref?
-             im->maps = eina_inlist_prepend(im->maps, EINA_INLIST_GET(map));
-          }
-        if (stride) *stride = strid;
-        return ok;
+        evas_gl_common_image_ref(glim);
+        glim2 = glim;
+     }
+   else
+     {
+        glim2 = _rotate_image_data(re, glim);
      }
 
-   // TODO: glReadPixels from FBO if possible
+   if (!glim2) return EINA_FALSE;
+   im = glim2->im;
+   if (im)
+     {
+        // Call sw generic implementation.
+        ok = pfunc.image_data_map(NULL, (void **) &im, slice, &strid,
+                                  x, y, w, h, cspace, mode, plane);
+     }
 
-   return EINA_FALSE;
+   if (!ok)
+     {
+        eng_image_free(re, glim2);
+        return EINA_FALSE;
+     }
+
+   evas_cache_image_ref(&im->cache_entry);
+
+   map = calloc(1, sizeof(*map));
+   map->cspace = cspace;
+   map->rx = x;
+   map->ry = y;
+   map->rw = w;
+   map->rh = h;
+   map->mode = mode;
+   map->slice = *slice;
+   map->stride = strid;
+   map->im = im;
+   map->glim = glim2;
+   glim->maps = eina_inlist_prepend(glim->maps, EINA_INLIST_GET(map));
+   if (stride) *stride = strid;
+
+   if (mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE)
+     {
+        evas_gl_common_image_ref(glim2);
+        evas_gl_common_image_free(glim);
+        *image = glim2;
+     }
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -2746,13 +2773,17 @@ eng_image_data_unmap(void *engdata EINA_UNUSED, void *image, const Eina_Rw_Slice
           {
              found = EINA_TRUE;
              if (map->im)
-               found = pfunc.image_data_unmap(NULL, map->im, slice);
+               {
+                  found = pfunc.image_data_unmap(NULL, map->im, slice);
+                  evas_cache_image_drop(&map->im->cache_entry);
+               }
              if (found)
                {
                   if (im->im && im->tex &&
                       (map->mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE))
                     evas_gl_common_texture_update(im->tex, im->im);
                   im->maps = eina_inlist_remove(im->maps, EINA_INLIST_GET(map));
+                  if (map->glim) evas_gl_common_image_free(map->glim);
                   free(map);
                }
              return found;

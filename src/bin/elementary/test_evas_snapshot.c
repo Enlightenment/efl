@@ -54,6 +54,35 @@ _anim_toggle(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
+_render_post(void *data, const Efl_Event *ev)
+{
+   Eo *snap = data;
+
+   efl_event_callback_del(ev->object, EFL_CANVAS_EVENT_RENDER_POST, _render_post, data);
+   efl_file_save(snap, eina_slstr_printf("%s/snap-efl.png", eina_environment_tmp_get()), NULL, NULL);
+}
+
+static void
+_save_image(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *snap;
+   int w, h;
+
+   // Save is available only during render_post
+   snap = efl_key_wref_get(win, "snap");
+   efl_event_callback_add(win, EFL_CANVAS_EVENT_RENDER_POST, _render_post, snap);
+
+   // Force a render in order to ensure post_render is called. EO API provides
+   // no way to do manual render, so we add a damage to the snapshot object.
+   // This is a special case handled by snapshot for the purpose of taking
+   // screenshots like this. This is useful only if the button click has no
+   // animation on screen and there is no spinning wheel either.
+   efl_gfx_size_get(snap, &w, &h);
+   efl_gfx_buffer_update_add(snap, 0, 0, w, h);
+}
+
+static void
 _radius_set(void *data, const Efl_Event *ev)
 {
    char buf[128];
@@ -76,7 +105,7 @@ _close(void *data, const Efl_Event *ev EINA_UNUSED)
 void
 test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *grid, *o, *snap;
+   Eo *win, *grid, *o, *snap, *box;
    const char *path;
 
    win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
@@ -141,19 +170,32 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_event_callback_add(efl_added, ELM_SLIDER_EVENT_CHANGED, _radius_set, win),
            efl_gfx_visible_set(efl_added, 1));
 
+   box = efl_add(EFL_UI_BOX_CLASS, win,
+                 efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+                 efl_pack_grid(grid, efl_added, 0, GRID_SIZE + 1, GRID_SIZE, 1),
+                 efl_gfx_visible_set(efl_added, 1));
+
    efl_add(ELM_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle animation"),
            efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-           efl_pack_grid(grid, efl_added, 0, GRID_SIZE + 1, (GRID_SIZE + 1) / 2, 1),
+           efl_pack(box, efl_added),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _anim_toggle, win),
+           efl_gfx_visible_set(efl_added, 1));
+
+   efl_add(ELM_BUTTON_CLASS, win,
+           efl_text_set(efl_added, "Save to file"),
+           efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+           efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+           efl_pack(box, efl_added),
+           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _save_image, win),
            efl_gfx_visible_set(efl_added, 1));
 
    efl_add(ELM_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Close"),
            efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-           efl_pack_grid(grid, efl_added, (GRID_SIZE + 1) / 2, GRID_SIZE + 1, (GRID_SIZE + 1) / 2, 1),
+           efl_pack(box, efl_added),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _close, win),
            efl_gfx_visible_set(efl_added, 1));
 

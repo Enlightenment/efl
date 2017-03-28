@@ -753,6 +753,8 @@ _efl_canvas_image_internal_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Ima
 
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, o->cur->image.w, o->cur->image.h);
    if ((w <= 0)  || (h <= 0)) return;
+   if (obj->cur->snapshot)
+     evas_object_change(eo_obj, obj);
    if (!o->written) return;
    evas_object_async_block(obj);
    cnt = eina_list_count(o->pixels->pixel_updates);
@@ -875,69 +877,33 @@ _efl_canvas_image_internal_efl_image_ratio_get(Eo *eo_obj EINA_UNUSED, Evas_Imag
 EOLIAN static Eina_Bool
 _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
 {
-   DATA32 *data = NULL;
    int quality = 80, compress = 9, ok = 0;
    char *encoding = NULL;
    Image_Entry *ie;
-   Eina_Bool putback = EINA_FALSE, tofree = EINA_FALSE, tgv = EINA_FALSE;
    Evas_Colorspace cspace = EVAS_COLORSPACE_ARGB8888;
    Evas_Colorspace want_cspace = EVAS_COLORSPACE_ARGB8888;
-   int imagew, imageh;
-   void *pixels;
+   Evas_Object_Protected_Data *obj;
+   Eina_Bool unmap_it = EINA_FALSE;
+   int imagew, imageh, uvw, uvh;
+   Eina_Rw_Slice slice = {};
+   DATA32 *data = NULL;
+   void *pixels = NULL;
 
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Object_Protected_Data *source = (o->cur->source ? efl_data_scope_get(o->cur->source, EFL_CANVAS_OBJECT_CLASS) : NULL);
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   // FIXME: Use _evas_image_pixels_get()
-
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    evas_object_async_block(obj);
 
-   if (o->cur->scene)
-     {
-        _evas_image_3d_render(obj->layer->evas->evas, (Eo *) eo_obj, obj, o, o->cur->scene);
-        pixels = obj->data_3d->surface;
-        imagew = obj->data_3d->w;
-        imageh = obj->data_3d->h;
-     }
-   else if (!o->cur->source)
-     {
-        // pixels = evas_process_dirty_pixels(eo_obj, obj, o, output, surface, o->engine_data);
-        pixels = o->engine_data;
-        imagew = o->cur->image.w;
-        imageh = o->cur->image.h;
-        putback = EINA_TRUE;
-     }
-   else if (source->proxy->surface && !source->proxy->redraw)
-     {
-        pixels = source->proxy->surface;
-        imagew = source->proxy->w;
-        imageh = source->proxy->h;
-     }
-   else if (source->type == o_type &&
-            ((Evas_Image_Data *)efl_data_scope_get(o->cur->source, MY_CLASS))->engine_data)
-     {
-        Evas_Image_Data *oi;
-        oi = efl_data_scope_get(o->cur->source, MY_CLASS);
-        pixels = oi->engine_data;
-        imagew = oi->cur->image.w;
-        imageh = oi->cur->image.h;
-     }
-   else
-     {
-        o->proxyrendering = EINA_TRUE;
-        evas_render_proxy_subrender(obj->layer->evas->evas, o->cur->source,
-                                    (Eo *) eo_obj, obj, o->proxy_src_clip, EINA_FALSE);
-        pixels = source->proxy->surface;
-        imagew = source->proxy->w;
-        imageh = source->proxy->h;
-        o->proxyrendering = EINA_FALSE;
-     }
+   pixels = _evas_image_pixels_get((Eo *) eo_obj, obj, ENDT, NULL, NULL, 0, 0,
+                                   &imagew, &imageh, &uvw, &uvh, EINA_TRUE, EINA_TRUE);
+   if (!pixels) goto no_pixels;
 
    cspace = ENFN->image_file_colorspace_get(ENDT, pixels);
    want_cspace = cspace;
 
    if (flags)
      {
+        const char *ext;
         char *p, *pp;
         char *tflags;
 
@@ -955,69 +921,61 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
              else break;
           }
 
-        if (file)
+        if (encoding)
           {
-             const char *ext = strrchr(file, '.');
+             ext = strrchr(file, '.');
              if (ext && !strcasecmp(ext, ".tgv"))
-               tgv = EINA_TRUE;
-          }
-
-        if (encoding && tgv)
-          {
-             if (!strcmp(encoding, "auto"))
-               want_cspace = cspace;
-             else if (!strcmp(encoding, "etc1"))
-               want_cspace = EVAS_COLORSPACE_ETC1;
-             else if (!strcmp(encoding, "etc2"))
                {
-                  if (!ENFN->image_alpha_get(ENDT, pixels))
-                    want_cspace = EVAS_COLORSPACE_RGB8_ETC2;
-                  else
-                    want_cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
+                  if (!strcmp(encoding, "auto"))
+                    want_cspace = cspace;
+                  else if (!strcmp(encoding, "etc1"))
+                    want_cspace = EVAS_COLORSPACE_ETC1;
+                  else if (!strcmp(encoding, "etc2"))
+                    {
+                       if (!ENFN->image_alpha_get(ENDT, pixels))
+                         want_cspace = EVAS_COLORSPACE_RGB8_ETC2;
+                       else
+                         want_cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
+                    }
+                  else if (!strcmp(encoding, "etc1+alpha"))
+                    want_cspace = EVAS_COLORSPACE_ETC1_ALPHA;
                }
-             else if (!strcmp(encoding, "etc1+alpha"))
-               want_cspace = EVAS_COLORSPACE_ETC1_ALPHA;
-          }
-        else
-          {
-             free(encoding);
-             encoding = NULL;
           }
      }
 
    if (ENFN->image_data_direct_get && (o->cur->orient == EVAS_IMAGE_ORIENT_NONE))
      {
         Evas_Colorspace cs;
-        Eina_Slice slice;
+        Eina_Slice sl;
 
-        ENFN->image_colorspace_set(ENDT, pixels, want_cspace);
-        ok = ENFN->image_data_direct_get(ENDT, pixels, 0, &slice, &cs, EINA_TRUE);
-        if (ok && (want_cspace == cs))
-          {
-             data = (DATA32 *) slice.mem;
-             putback = EINA_FALSE;
-          }
-        else ENFN->image_colorspace_set(ENDT, pixels, cspace);
+        ok = ENFN->image_data_direct_get(ENDT, pixels, 0, &sl, &cs, EINA_TRUE);
+        if (ok && (cs == want_cspace))
+          data = (DATA32 *) sl.mem;
+     }
+
+   if ((o->cur->orient == EVAS_IMAGE_ORIENT_90) ||
+       (o->cur->orient == EVAS_IMAGE_ORIENT_270) ||
+       (o->cur->orient == EVAS_IMAGE_FLIP_TRANSPOSE) ||
+       (o->cur->orient == EVAS_IMAGE_FLIP_TRANSVERSE))
+     {
+        int tmp = imagew;
+        imagew = imageh;
+        imageh = tmp;
      }
 
    if (!data)
      {
+        int stride;
+
         cspace = EVAS_COLORSPACE_ARGB8888;
-        ENFN->image_colorspace_set(ENDT, pixels, cspace);
-        pixels = ENFN->image_data_get(ENDT, pixels, 0, &data, &o->load_error, &tofree);
-     }
+        ok = ENFN->image_data_map(ENDT, &pixels, &slice, &stride, 0, 0, imagew, imageh,
+                                  cspace, EFL_GFX_BUFFER_ACCESS_MODE_READ, 0);
+        if (!ok || !slice.mem) goto no_pixels;
+        unmap_it = EINA_TRUE;
+        data = slice.mem;
 
-   if (EINA_UNLIKELY(cspace != o->cur->cspace))
-     {
-        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-          state_write->cspace = cspace;
-        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write)
-     }
-
-   if (!pixels || !data)
-     {
-        WRN("Could not get image pixels.");
-        return EINA_FALSE;
+        if (stride != (imagew * 4))
+          WRN("Invalid stride: saved image may look wrong!");
      }
 
    ie = evas_cache_image_data(evas_common_image_cache_get(),
@@ -1031,13 +989,16 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
      }
    else ok = EINA_FALSE;
 
-   if (tofree)
-     ENFN->image_free(ENDT, pixels);
-   else if (putback)
-     o->engine_data = ENFN->image_data_put(ENDT, pixels, data);
+   if (unmap_it)
+     ENFN->image_data_unmap(ENDT, pixels, &slice);
 
    free(encoding);
+   if (!ok) ERR("Image save failed.");
    return ok;
+
+no_pixels:
+   ERR("Could not get image pixels for saving.");
+   return EINA_FALSE;
 }
 
 EOLIAN static Efl_Gfx_Colorspace
@@ -1890,20 +1851,32 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
 void *
 _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                        void *output, void *context, void *surface, int x, int y,
-                       int *imagew, int *imageh, int *uvw, int *uvh)
+                       int *imagew, int *imageh, int *uvw, int *uvh,
+                       Eina_Bool filtered, Eina_Bool needs_post_render)
 {
    Evas_Image_Data *o = obj->private_data, *oi = NULL;
    Evas_Object_Protected_Data *source = NULL;
-   void *pixels;
+   void *pixels = NULL;
 
-   if (o->cur->source)
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, NULL);
+
+   if (filtered && o->has_filter)
+     pixels = evas_filter_output_buffer_get(eo_obj);
+
+   if (!pixels && o->cur->source)
      {
         source = efl_data_scope_get(o->cur->source, EFL_CANVAS_OBJECT_CLASS);
         if (source && (source->type == o_type))
           oi = efl_data_scope_get(o->cur->source, MY_CLASS);
      }
 
-   if (o->cur->scene)
+   if (pixels)
+     {
+        ENFN->image_size_get(ENDT, pixels, imagew, imageh);
+        *uvw = *imagew;
+        *uvh = *imageh;
+     }
+   else if (o->cur->scene)
      {
         _evas_image_3d_render(obj->layer->evas->evas, eo_obj, obj, o, o->cur->scene);
         pixels = obj->data_3d->surface;
@@ -1922,6 +1895,8 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
      }
    else if (!o->cur->source || !source)
      {
+        // normal image (from file or user pixel set)
+        needs_post_render = EINA_FALSE;
         if (output && surface)
           pixels = evas_process_dirty_pixels(eo_obj, obj, o, output, surface, o->engine_data);
         else
@@ -1941,14 +1916,10 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
      }
    else if (oi && oi->engine_data)
      {
-        pixels = oi->engine_data;
         if (oi->has_filter)
-          {
-             void *output_buffer = NULL;
-             output_buffer = evas_filter_output_buffer_get(source->object);
-             if (output_buffer)
-               pixels = output_buffer;
-          }
+          pixels = evas_filter_output_buffer_get(source->object);
+        if (!pixels)
+          pixels = oi->engine_data;
         *imagew = oi->cur->image.w;
         *imageh = oi->cur->image.h;
         *uvw = source->cur->geometry.w;
@@ -1976,6 +1947,14 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         o->proxyrendering = EINA_FALSE;
      }
 
+   if (needs_post_render && !obj->layer->evas->inside_post_render)
+     {
+        ERR("Can not save or map this image now! Proxies, snapshots and "
+            "filtered images support those operations only from inside a "
+            "post-render event.");
+        return NULL;
+     }
+
    return pixels;
 }
 
@@ -1991,7 +1970,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    void *pixels;
 
    pixels = _evas_image_pixels_get(eo_obj, obj, output, context, surface, x, y,
-                                   &imagew, &imageh, &uvw, &uvh);
+                                   &imagew, &imageh, &uvw, &uvh, EINA_FALSE, EINA_FALSE);
 
    if (!pixels) return;
    if (ENFN->context_clip_get(ENDT, context, NULL, NULL, &cw, &ch) && (!cw || !ch))
@@ -2965,8 +2944,7 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
     * draw, just get the pixels so we can check the transparency.
     */
    pixels = _evas_image_pixels_get(eo_obj, obj, ENDT, NULL, NULL, 0, 0,
-                                   &imagew, &imageh, &uvw, &uvh);
-
+                                   &imagew, &imageh, &uvw, &uvh, EINA_TRUE, EINA_FALSE);
    if (!pixels) return is_inside;
 
    /* TODO: not handling o->dirty_pixels && o->pixels->func.get_pixels,

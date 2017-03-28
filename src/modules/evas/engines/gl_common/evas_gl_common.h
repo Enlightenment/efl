@@ -527,6 +527,7 @@ struct _Evas_GL_Image_Data_Map
    EINA_INLIST;
    Evas_GL_Texture *tex; // one or the other
    RGBA_Image      *im; // one or the other
+   Evas_GL_Image   *glim;
    Eina_Rw_Slice    slice;
    int              stride; // in bytes
    int              rx, ry, rw, rh; // actual map region

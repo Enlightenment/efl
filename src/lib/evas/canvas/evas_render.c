@@ -3513,7 +3513,9 @@ evas_render_updates_internal(Evas *eo_e,
              ru->surface = NULL;
           }
         eina_spinlock_take(&(e->render.lock));
+        e->inside_post_render = EINA_TRUE;
         _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
+        e->inside_post_render = EINA_FALSE;
         eina_spinlock_release(&(e->render.lock));
         if (post.updated_area) eina_list_free(post.updated_area);
      }
@@ -3600,6 +3602,8 @@ evas_render_wakeup(Evas *eo_e)
    jobs_il = EINA_INLIST_GET(evas->post_render.jobs);
    evas->post_render.jobs = NULL;
    SLKU(evas->post_render.lock);
+
+   evas->inside_post_render = EINA_TRUE;
    EINA_INLIST_FREE(jobs_il, job)
      {
         jobs_il = eina_inlist_remove(jobs_il, EINA_INLIST_GET(job));
@@ -3614,6 +3618,7 @@ evas_render_wakeup(Evas *eo_e)
 
    post.updated_area = ret_updates;
    _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
+   evas->inside_post_render = EINA_FALSE;
 
    evas_render_updates_free(ret_updates);
 
