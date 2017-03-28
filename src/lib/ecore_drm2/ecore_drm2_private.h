@@ -708,8 +708,7 @@ struct _Ecore_Drm2_Fb
 struct _Ecore_Drm2_Plane
 {
    int type;
-   Ecore_Drm2_Fb *fb; // current fbo
-   Ecore_Drm2_Fb *qfb; // queued fbo
+   Ecore_Drm2_Fb *current, *next, *pending;
 # ifdef HAVE_ATOMIC_DRM
    Ecore_Drm2_Plane_State *state;
 # endif
