@@ -116,8 +116,10 @@ EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
  * runs for a limited time specified in seconds by @p runtime. Once the
  * runtime the animator has elapsed (animator finished) it will automatically
  * be deleted. The callback function @p func can return @c ECORE_CALLBACK_RENEW
- * to keep the animator running or @c ECORE_CALLBACK_CANCEL ro stop it and have
- * it be deleted automatically at any time.
+ * to keep the animator running or @c ECORE_CALLBACK_CANCEL or stop it and have
+ * it be deleted automatically at any time. Just like timers, the start of
+ * The animation is "now" (when the loop woke up - gettable with
+ * ecore_loop_time_get()).
  *
  * The @p func will ALSO be passed a position parameter that will be in value
  * from 0.0 to 1.0 to indicate where along the timeline (0.0 start, 1.0 end)
