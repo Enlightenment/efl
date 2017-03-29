@@ -733,7 +733,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                            $false otherwise.]]
          }
       }
-      @property stack_id {
+      @property stack_id @beta {
          get {
             [[Get the stack ID string of the window as an opaque string.
 
@@ -746,9 +746,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
               use by other windows to make this window part of a stack
               of windows to be placed on top of eachother as if they are
               a series of dialogs or questions one after the other and
-              that you may go back through history.
-
-              WARNING: This API is not stable - do not use yet]]
+              that you may go back through history.]]
          }
          values {
             id: string; [[An opaque string that has no specific format,
@@ -756,16 +754,14 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                           display.]]
          }
       }
-      @property stack_master_id {
+      @property stack_master_id @beta {
          set {
             [[Set the window stack ID to use as the master top-level.
 
               This sets the ID string to be used as the master top-level
               window as the base of a stack of windows. This must be set
               before the first time the window is shown and should never
-              be changed after that point in time ever again.
-
-              WARNING: This API is not stable - do not use yet]]
+              be changed after that point in time ever again.]]
          }
          get {
             [[Get the stack master Id that has been set.]]
@@ -776,7 +772,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                           display.]]
          }
       }
-      @property stack_base {
+      @property stack_base @beta {
          [[The stack base state of this window
 
            This is a boolean flag that determines if this window will
@@ -785,9 +781,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
            correctly.
 
            This state should be set before a window is shown for the
-           first time and never changed again after that.
-
-           WARNING: This API is not stable - do not use yet]]
+           first time and never changed again after that.]]
 
          set {}
          get {}
@@ -796,13 +790,11 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
                           otherwise.]]
          }
       }
-      stack_pop_to {
+      stack_pop_to @beta {
          [[Pop (delete) all windows in the stack above this window.
 
            This will try and delete all the windows in the stack that
-           are above the window.
-
-           WARNING: This API is not stable - do not use yet]]
+           are above the window.]]
       }
       socket_listen {
          [[Create a socket to provide the service for Plug widget.]]

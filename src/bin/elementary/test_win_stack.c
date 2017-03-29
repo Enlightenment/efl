@@ -1,6 +1,9 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
+// Stack API is still beta (and EO only)
+#define EFL_UI_WIN_BETA
 #include <Elementary.h>
 
 static int level = 0;
@@ -72,7 +75,7 @@ _win_new(Evas_Object *stack_top, const char *title)
 static void
 _bt_popto(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   elm_win_stack_pop_to(popto_win);
+   efl_ui_win_stack_pop_to(popto_win);
 }
 
 static void
@@ -84,7 +87,7 @@ _bt_pressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    level++;
    snprintf(buf, sizeof(buf), "Level %i", level);
    win = _win_new(data, buf);
-   elm_win_stack_master_id_set(win, elm_win_stack_id_get(data));
+   efl_ui_win_stack_master_id_set(win, efl_ui_win_stack_id_get(data));
    evas_object_show(win);
 }
 
@@ -94,7 +97,7 @@ test_win_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Evas_Object *bg, *bx, *bt, *lb, *win;
 
    win = elm_win_add(NULL, "window-stack", ELM_WIN_BASIC);
-   elm_win_stack_base_set(win, EINA_TRUE);
+   efl_ui_win_stack_base_set(win, EINA_TRUE);
    elm_win_title_set(win, "Window Stack");
    elm_win_autodel_set(win, EINA_TRUE);
 

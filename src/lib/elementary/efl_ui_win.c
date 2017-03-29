@@ -6,6 +6,7 @@
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
 #define EFL_GFX_SIZE_HINT_PROTECTED
+#define EFL_UI_WIN_BETA
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
