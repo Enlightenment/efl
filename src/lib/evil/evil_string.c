@@ -18,10 +18,9 @@
 char *
 strndup(const char *str, size_t n)
 {
-   size_t slen = strlen(str);
+   size_t slen = strnlen(str, n);
    char *ret;
 
-   if (slen > n) slen = n;
    ret = malloc (slen + 1);
    if (!ret) return NULL;
 
