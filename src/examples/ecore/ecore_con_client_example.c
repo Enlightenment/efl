@@ -293,7 +293,7 @@ main(int argc, char *argv[])
      }
    else if (strcmp(type_choice, "local-user") == 0)
      type = ECORE_CON_LOCAL_USER;
-   else if (strcmp(type_choice, "system") == 0)
+   else if (strcmp(type_choice, "local-system") == 0)
      type = ECORE_CON_LOCAL_SYSTEM;
    else
      {
