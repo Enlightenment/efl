@@ -1221,7 +1221,9 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   no_render : 1; // since 1.15
    Eina_Bool                   legacy : 1; // used legacy constructor
    Eina_Bool                   clean_layer : 1; // destructor option
+
    Eina_Bool                   snapshot_needs_redraw : 1;
+   Eina_Bool                   snapshot_no_obscure : 1;
 
    struct  {
       Eina_Bool                pass_events : 1;
@@ -2013,7 +2015,7 @@ Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *ke
 
 void *_evas_object_image_surface_get(Evas_Object_Protected_Data *obj, Eina_Bool create);
 void _evas_filter_radius_get(Evas_Object_Protected_Data *obj, int *l, int *r, int *t, int *b);
-Eina_Bool _evas_filter_obscured_region_set(Evas_Object_Protected_Data *obj, const Eina_Rectangle rect);
+Eina_Bool _evas_filter_obscured_regions_set(Evas_Object_Protected_Data *obj, const Eina_Tiler *tiler);
 Eina_Bool _evas_image_proxy_source_clip_get(const Eo *eo_obj);
 
 void _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj,

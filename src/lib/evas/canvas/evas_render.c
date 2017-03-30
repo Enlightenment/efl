@@ -1099,7 +1099,14 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
      }
    if (is_active && obj->cur->snapshot && !obj->delete_me &&
        evas_object_is_visible(eo_obj, obj))
-     OBJ_ARRAY_PUSH(p1ctx->snapshot_objects, obj);
+     {
+        // FIXME: Array should be clean (no need to check if already in there)
+        int found = 0;
+        for (unsigned i = 0; !found && (i < p1ctx->snapshot_objects->count); i++)
+          if (obj == eina_array_data_get(p1ctx->snapshot_objects, i))
+            found = 1;
+        if (!found) OBJ_ARRAY_PUSH(p1ctx->snapshot_objects, obj);
+     }
 
 #ifdef REND_DBG
    if (!is_active)
@@ -2757,20 +2764,18 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
    const int h = snap->cur->geometry.h;
    Evas_Object_Protected_Data *obj;
    Evas_Active_Entry *ent;
-   Eina_Rectangle snap_clip, snap_rect = { x, y, w, h };
-   Eina_Rectangle opaque = {};
+   Eina_Rectangle snap_clip;
+   Eina_Tiler *tiler = NULL;
    void *surface;
 
-   // FIXME: Use evas' standard rectangle logic instead of this bad algo
-   // FIXME: This walks ALL the objects in the canvas to find the opaque region
-   // TODO: Improve opaque region support, maybe have more than one
+   // FIXME: Tiler should be inside snapshot data
    // TODO: Also list redraw regions (partial updates)
 
    if (!evas_object_is_visible(snap->object, snap)) return;
 
    evas_object_clip_recalc(snap);
-   snap_clip.x = snap->cur->cache.clip.x;
-   snap_clip.y = snap->cur->cache.clip.y;
+   snap_clip.x = snap->cur->cache.clip.x - x;
+   snap_clip.y = snap->cur->cache.clip.y - y;
    snap_clip.w = snap->cur->cache.clip.w;
    snap_clip.h = snap->cur->cache.clip.h;
 
@@ -2778,49 +2783,54 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
    if (!surface) need_redraw = EINA_TRUE;
    if (snap->changed) add_rect = EINA_TRUE;
 
-   EINA_INARRAY_FOREACH(&evas->active_objects, ent)
+   if (!add_rect && !need_redraw)
      {
-        obj = ent->obj;
-        if (obj == snap)
+        // Objects below snapshot
+        EINA_INARRAY_FOREACH(&evas->active_objects, ent)
           {
-             above = EINA_TRUE;
-             continue;
-          }
+             obj = ent->obj;
+             if (obj == snap) break;
 
-        if (!above)
-          {
-             if (add_rect) continue;
              if (!obj->is_smart && obj->changed &&
                  evas_object_is_in_output_rect(obj->object, obj, x, y, w, h))
                need_redraw = EINA_TRUE;
           }
-        else
+     }
+
+   if (snap->snapshot_no_obscure)
+     goto skip_obscures;
+
+   tiler = eina_tiler_new(w, h);
+   eina_tiler_tile_size_set(tiler, 1, 1);
+   eina_tiler_strict_set(tiler, EINA_TRUE);
+
+   // Opaque objects above snapshot
+   for (unsigned i = 0; i < evas->obscuring_objects.count; i++)
+     {
+        obj = eina_array_data_get(&evas->obscuring_objects, i);
+        if (!above)
           {
-             if (!obj->is_smart && !obj->clip.clipees &&
-                 evas_object_is_opaque(obj->object, obj))
-               {
-                  Eina_Rectangle cur = {
-                     obj->cur->geometry.x, obj->cur->geometry.y,
-                     obj->cur->geometry.w, obj->cur->geometry.h
-                  };
+             if (obj == snap) above = EINA_TRUE;
+             continue;
+          }
+        if (!obj->cur->snapshot || evas_object_is_opaque(obj->object, obj))
+          {
+             const Eina_Rectangle cur = {
+                obj->cur->cache.clip.x - x, obj->cur->cache.clip.y - y,
+                obj->cur->cache.clip.w, obj->cur->cache.clip.h
+             };
 
-                  if ((opaque.w * opaque.h) < (cur.w * cur.h))
-                    opaque = cur;
-                  else if (!eina_rectangles_intersect(&snap_rect, &cur))
-                    continue;
-                  else if (!opaque.w || !opaque.h)
-                    opaque = cur;
-                  else if (_evas_eina_rectangle_inside(&cur, &opaque))
-                    opaque = cur;
-                  //else if (!_evas_eina_rectangle_inside(&opaque, &cur))
+             if (_evas_eina_rectangle_inside(&cur, &snap_clip))
+               goto end; // Totally hidden
 
-                  if (_evas_eina_rectangle_inside(&opaque, &snap_clip))
-                    return;
-               }
+             eina_tiler_rect_add(tiler, &cur);
           }
      }
 
-   need_redraw |= _evas_filter_obscured_region_set(snap, opaque);
+skip_obscures:
+   need_redraw |= _evas_filter_obscured_regions_set(snap, tiler);
+   if (memcmp(&snap->cur->geometry, &snap->prev->geometry, sizeof(snap->cur->geometry)))
+     need_redraw = EINA_TRUE;
    snap->snapshot_needs_redraw |= need_redraw;
 
    if (add_rect || need_redraw)
@@ -2828,6 +2838,9 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
         // FIXME: Only add necessary rects (if object itself hasn't changed)
         ENFN->output_redraws_rect_add(ENDT, x, y, w, h);
      }
+
+end:
+   eina_tiler_free(tiler);
 }
 
 static Eina_Bool
@@ -2837,7 +2850,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                                   int ux, int uy, int uw, int uh,
                                   int cx, int cy, int cw, int ch,
                                   int fx, int fy,
-                                  Cutout_Margin *cutout_margin,
+                                  Eina_Bool skip_cutouts, Cutout_Margin *cutout_margin,
                                   Eina_Bool alpha, Eina_Bool do_async,
                                   unsigned int *offset, int level)
 {
@@ -2846,6 +2859,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
    int off_x, off_y;
    unsigned int i, j;
    Eina_Bool clean_them = EINA_FALSE;
+   Eina_Bool above_top = EINA_FALSE;
 
    eina_evlog("+render_setup", eo_e, 0.0, NULL);
    RD(level, "  [--- UPDATE %i %i %ix%i\n", ux, uy, uw, uh);
@@ -2859,16 +2873,17 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
      }
    for (i = 0; i < evas->obscuring_objects.count; ++i)
      {
-        obj = (Evas_Object_Protected_Data *)eina_array_data_get
-          (&evas->obscuring_objects, i);
+        obj = eina_array_data_get(&evas->obscuring_objects, i);
+        if (obj == top) above_top = EINA_TRUE;
+
         if (evas_object_is_in_output_rect(obj->object, obj, ux - fx, uy - fy, uw, uh))
           {
              OBJ_ARRAY_PUSH(&evas->temporary_objects, obj);
 
-             if (obj == top) break;
+             if (above_top) continue;
 
              /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
-             if (alpha)
+             if (alpha && !skip_cutouts)
                _evas_render_cutout_add(evas, context, obj, off_x + fx, off_y + fy, cutout_margin);
           }
      }
@@ -2960,28 +2975,32 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                     }
 
                   eina_evlog("+cutouts_add", obj->object, 0.0, NULL);
+                  above_top = EINA_FALSE;
 #if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
-                  for (j = *offset; j < evas->temporary_objects.count; ++j)
+                  if (!skip_cutouts)
                     {
-                       Evas_Object_Protected_Data *obj2;
+                       for (j = *offset; j < evas->temporary_objects.count; ++j)
+                         {
+                            Evas_Object_Protected_Data *obj2;
 
-                       obj2 = (Evas_Object_Protected_Data *)eina_array_data_get
-                         (&evas->temporary_objects, j);
-                       if (obj2 == top) break;
+                            obj2 = eina_array_data_get(&evas->temporary_objects, j);
+                            if (obj2 == top) above_top = EINA_TRUE;
+                            if (above_top && obj2->cur->snapshot) continue;
 #if 1
-                       if (
-                           RECTS_INTERSECT
-                           (obj->cur->cache.clip.x, obj->cur->cache.clip.y,
-                            obj->cur->cache.clip.w, obj->cur->cache.clip.h,
-                            obj2->cur->cache.clip.x, obj2->cur->cache.clip.y,
-                            obj2->cur->cache.clip.w, obj2->cur->cache.clip.h) &&
-                           RECTS_INTERSECT
-                           (obj2->cur->cache.clip.x, obj2->cur->cache.clip.y,
-                            obj2->cur->cache.clip.w, obj2->cur->cache.clip.h,
-                            ux, uy, uw, uh)
-                          )
+                            if (
+                                RECTS_INTERSECT
+                                (obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                                 obj->cur->cache.clip.w, obj->cur->cache.clip.h,
+                                 obj2->cur->cache.clip.x, obj2->cur->cache.clip.y,
+                                 obj2->cur->cache.clip.w, obj2->cur->cache.clip.h) &&
+                                RECTS_INTERSECT
+                                (obj2->cur->cache.clip.x, obj2->cur->cache.clip.y,
+                                 obj2->cur->cache.clip.w, obj2->cur->cache.clip.h,
+                                 ux, uy, uw, uh)
+                                )
 #endif
-                         _evas_render_cutout_add(evas, context, obj2, off_x + fx, off_y + fy, cutout_margin);
+                              _evas_render_cutout_add(evas, context, obj2, off_x + fx, off_y + fy, cutout_margin);
+                         }
                     }
 #endif
                   ENFN->context_cutout_target(ENDT, context,
@@ -3170,22 +3189,6 @@ evas_render_updates_internal(Evas *eo_e,
      {
         ENFN->output_redraws_rect_add(ENDT, 0, 0, e->output.w, e->output.h);
      }
-
-   // Add redraw for all snapshot object due to potential use of pixels outside
-   // of the update area by filters.
-   // The side effect is that it also fix rendering of partial update of filter...
-   // As they are never partially updated anymore !
-
-   // FIXME: don't add redraw rect for snapshot with no filter applied on
-   // Also damage the filter object that use a snapshot.
-   if (!redraw_all)
-     {
-        for (i = 0; i < e->snapshot_objects.count; i++)
-          {
-             obj = eina_array_data_get(&e->snapshot_objects, i);
-             _snapshot_redraw_update(evas, obj);
-          }
-     }
    eina_evlog("-render_phase4", eo_e, 0.0, NULL);
 
    /* phase 5. add obscures */
@@ -3211,7 +3214,7 @@ evas_render_updates_internal(Evas *eo_e,
         if (UNLIKELY(
                      (!obj->is_smart) &&
                      (!obj->clip.clipees) &&
-                     (evas_object_is_opaque(eo_obj, obj) ||
+                     (evas_object_is_opaque(eo_obj, obj) || obj->cur->snapshot ||
                       ((obj->func->has_opaque_rect) &&
                        (obj->func->has_opaque_rect(eo_obj, obj, obj->private_data)))) &&
                      evas_object_is_visible(eo_obj, obj) &&
@@ -3222,6 +3225,14 @@ evas_render_updates_internal(Evas *eo_e,
           {
              if (obj->func->render_prepare)
                obj->func->render_prepare(eo_obj, obj, do_async);
+          }
+     }
+   if (!redraw_all)
+     {
+        for (i = 0; i < e->snapshot_objects.count; i++)
+          {
+             obj = eina_array_data_get(&e->snapshot_objects, i);
+             _snapshot_redraw_update(evas, obj);
           }
      }
    eina_evlog("-render_phase5", eo_e, 0.0, NULL);
@@ -3272,11 +3283,14 @@ evas_render_updates_internal(Evas *eo_e,
                                      snap->cur->geometry.h);
                   EINA_RECTANGLE_SET(&ur, ux, uy, uw, uh);
 
+                  // FIXME: We should render snapshots only once per frame,
+                  // not once per update region!
                   if (snap->snapshot_needs_redraw &&
                       eina_rectangle_intersection(&ur, &output))
                     {
                        Cutout_Margin cm = {};
                        unsigned int restore_offset = offset;
+                       Eina_Bool skip_cutouts = EINA_FALSE;
                        void *pseudo_canvas;
 
                        EINA_RECTANGLE_SET(&cr,
@@ -3288,23 +3302,24 @@ evas_render_updates_internal(Evas *eo_e,
                        // Get required margin for filters (eg. blur radius)
                        _evas_filter_radius_get(snap, &cm.l, &cm.r, &cm.t, &cm.b);
 
+                       if (snap->map->cur.usemap || snap->proxy->proxies ||
+                           snap->snapshot_no_obscure ||
+                           ((cm.l + cm.r) >= output.w) ||
+                           ((cm.t + cm.b) >= output.h))
+                         skip_cutouts = EINA_TRUE;
+
                        RD(0, "  SNAPSHOT %s [sfc:%p ur:%d,%d %dx%d]\n", RDNAME(snap), pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
                        ctx = ENFN->context_new(ENDT);
                        clean_them |= evas_render_updates_internal_loop(eo_e, e, pseudo_canvas, ctx,
                                                                        snap,
                                                                        ur.x, ur.y, ur.w, ur.h,
                                                                        cr.x, cr.y, cr.w, cr.h,
-                                                                       fx, fy, &cm,
+                                                                       fx, fy, skip_cutouts, &cm,
                                                                        alpha, do_async,
                                                                        &offset, 1);
                        ENFN->context_free(ENDT, ctx);
 
                        offset = restore_offset;
-
-                       // FIXME: For some reason the arrays are not cleaned and
-                       // snapshot objects keep being added to it... only when
-                       // I break in GDB. Normal render flow is fine. Odd.
-                       clean_them = EINA_TRUE;
                     }
                }
              eina_evlog("-render_snapshots", eo_e, 0.0, NULL);
@@ -3327,7 +3342,8 @@ evas_render_updates_internal(Evas *eo_e,
                                                              ctx, NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
-                                                             fx, fy, NULL,
+                                                             fx, fy,
+                                                             EINA_FALSE, NULL,
                                                              alpha, do_async,
                                                              &offset, 0);
              ENFN->context_free(ENDT, ctx);
@@ -3411,6 +3427,7 @@ evas_render_updates_internal(Evas *eo_e,
 
         snap = eina_array_data_get(&e->snapshot_objects, i);
         snap->snapshot_needs_redraw = EINA_FALSE;
+        snap->snapshot_no_obscure = EINA_FALSE;
      }
    eina_evlog("-render_post", eo_e, 0.0, NULL);
    IFRD(e->active_objects.len, 0, "  ---]\n");

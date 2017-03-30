@@ -754,7 +754,11 @@ _efl_canvas_image_internal_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Ima
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, o->cur->image.w, o->cur->image.h);
    if ((w <= 0)  || (h <= 0)) return;
    if (obj->cur->snapshot)
-     evas_object_change(eo_obj, obj);
+     {
+        obj->snapshot_no_obscure = EINA_TRUE;
+        evas_object_change(eo_obj, obj);
+        return;
+     }
    if (!o->written) return;
    evas_object_async_block(obj);
    cnt = eina_list_count(o->pixels->pixel_updates);

@@ -841,29 +841,43 @@ _efl_canvas_filter_internal_filter_output_buffer_get(Eo *obj EINA_UNUSED, Evas_F
 }
 
 Eina_Bool
-_evas_filter_obscured_region_set(Evas_Object_Protected_Data *obj,
-                                 const Eina_Rectangle rect)
+_evas_filter_obscured_regions_set(Evas_Object_Protected_Data *obj, const Eina_Tiler *tiler)
 {
    Evas_Object_Filter_Data *fcow;
+   Eina_Rectangle prev, rect = {}, empty = {};
+   Eina_Rectangle *r;
    Evas_Filter_Data *pd;
-   Eina_Rectangle prev;
+   Eina_Iterator *it;
+   Eina_Bool was_empty;
+   int area = 0;
+
+   // TODO: Can we handle more than one opaque region?
 
    pd = efl_data_scope_get(obj->object, MY_CLASS);
    if (!pd->data) return EINA_FALSE;
 
-   prev = pd->data->prev_obscured;
-
-   fcow = FCOW_BEGIN(pd);
-   if ((rect.w <= 0) || (rect.h <= 0))
-     memset(&fcow->obscured, 0, sizeof(fcow->obscured));
-   else
+   // Find largest opaque rect
+   it = eina_tiler_iterator_new(tiler);
+   EINA_ITERATOR_FOREACH(it, r)
      {
-        fcow->obscured.x = rect.x - obj->cur->geometry.x;
-        fcow->obscured.y = rect.y - obj->cur->geometry.y;
-        fcow->obscured.w = rect.w;
-        fcow->obscured.h = rect.h;
+        int wh = r->w * r->h;
+        if (wh > area)
+          {
+             area = wh;
+             rect = *r;
+          }
      }
-   FCOW_END(fcow, pd);
+   eina_iterator_free(it);
+
+   prev = pd->data->prev_obscured;
+   if (!pd->data->changed && !memcmp(&prev, &empty, sizeof(prev)))
+     was_empty = EINA_TRUE;
+   else if (memcmp(&rect, &prev, sizeof(rect)))
+     {
+        fcow = FCOW_BEGIN(pd);
+        fcow->obscured = rect;
+        FCOW_END(fcow, pd);
+     }
 
    // Snapshot objects need to be redrawn if the padding has increased
    if ((pd->data->prev_padding.l < pd->data->padding.l) ||
@@ -873,7 +887,7 @@ _evas_filter_obscured_region_set(Evas_Object_Protected_Data *obj,
      return EINA_TRUE;
 
    // Snapshot objects need to be redrawn if the obscured region has shrank
-   if (!_evas_eina_rectangle_inside(&prev, &pd->data->obscured))
+   if (!was_empty && !_evas_eina_rectangle_inside(&prev, &pd->data->obscured))
      return EINA_TRUE;
 
    return EINA_FALSE;

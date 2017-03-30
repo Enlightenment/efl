@@ -9,6 +9,5 @@ class Efl.Canvas.Snapshot (Efl.Canvas.Image.Internal)
    data: null;
    implements {
       Efl.Object.constructor;
-      Efl.Gfx.Buffer.buffer_update_add;
    }
 }
