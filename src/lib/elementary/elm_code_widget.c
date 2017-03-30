@@ -613,7 +613,8 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
 {
    Elm_Code *code;
    Elm_Code_Line *line_obj;
-   unsigned int oldrow, position;
+   unsigned int oldrow, position, length;
+   const char *text;
 
    oldrow = pd->cursor_line;
    pd->cursor_col = col;
@@ -622,7 +623,8 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    code = pd->code;
    line_obj = elm_code_file_line_get(code->file, line);
    position = elm_code_widget_line_text_position_for_column_get(widget, line_obj, col);
-   if (elm_code_line_text_get(line_obj, NULL)[position] == '\t')
+   text = elm_code_line_text_get(line_obj, &length);
+   if (position < length && text[position] == '\t')
      pd->cursor_col = elm_code_widget_line_text_column_width_to_position(widget, line_obj, position);
 
    if (!was_key)
