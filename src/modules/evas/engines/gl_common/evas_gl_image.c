@@ -769,6 +769,9 @@ evas_gl_common_image_free(Evas_GL_Image *im)
    im->references--;
    if (im->references > 0) return;
 
+   if (im->gc && (im->gc->pipe[0].shader.surface == im))
+     evas_gl_common_context_target_surface_set(im->gc, im->gc->def_surface);
+
    if (im->fglyph)
      {
         im->gc->font_glyph_images = eina_list_remove(im->gc->font_glyph_images, im);
