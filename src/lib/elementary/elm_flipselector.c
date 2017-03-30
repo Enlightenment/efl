@@ -253,47 +253,64 @@ _send_msg(Elm_Flipselector_Data *sd,
    _on_item_changed(sd);
 }
 
+static void
+_view_update(void *data)
+{
+   Evas_Object *obj = data;
+   ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   Elm_Object_Item *eo_item;
+
+   sd->view_update = NULL;
+   sd->need_update = EINA_FALSE;
+
+   if (sd->current)
+     {
+        eo_item = sd->current->data;
+        ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item, item);
+        _send_msg(sd, MSG_FLIP_DOWN, (char *)item->label);
+     }
+   else
+     {
+        _send_msg(sd, MSG_FLIP_DOWN, "");
+        elm_layout_signal_emit(obj, "elm,state,button,hidden", "elm");
+     }
+}
+
 EOLIAN static void
 _elm_flipselector_item_efl_object_destructor(Eo *eo_item, Elm_Flipselector_Item_Data *item)
 {
-   Elm_Object_Item *eo_item2;
    Eina_List *l;
-
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
 
-   EINA_LIST_FOREACH(sd->items, l, eo_item2)
+   if (sd->deleting)
      {
-        if (eo_item2 == eo_item)
-          {
-             if (sd->current == l)
-               {
-                  sd->current = l->prev;
-                  if (!sd->current) sd->current = l->next;
-                  if (sd->current)
-                    {
-                       eo_item2 = sd->current->data;
-                       ELM_FLIPSELECTOR_ITEM_DATA_GET(eo_item2, item2);
-                       _send_msg(sd, MSG_FLIP_DOWN, (char *)item2->label);
-                    }
-                  else _send_msg(sd, MSG_FLIP_DOWN, "");
-               }
-             sd->items = eina_list_remove_list(sd->items, l);
-             break;
-          }
+        eina_stringshare_del(item->label);
+        sd->items = eina_list_remove(sd->items, eo_item);
+        efl_destructor(efl_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
+
+        return;
      }
 
-   if (eina_list_count(sd->items) <= 1)
-      elm_layout_signal_emit
-         (sd->obj, "elm,state,button,hidden", "elm");
-   else
-      elm_layout_signal_emit
-         (sd->obj, "elm,state,button,visible", "elm");
+   if ((sd->current) && (sd->current->data == eo_item))
+     {
+        sd->need_update = EINA_TRUE;
+        l = sd->current->prev;
+        if (!l) l = sd->current->next;
+        if (!l) sd->current = NULL;
+        else sd->current = l;
+     }
 
    eina_stringshare_del(item->label);
-   _sentinel_eval(sd);
-   _update_view(sd->obj);
-
+   sd->items = eina_list_remove(sd->items, eo_item);
    efl_destructor(efl_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
+
+   _sentinel_eval(sd);
+
+   if (sd->need_update)
+     {
+        if (sd->view_update) ecore_job_del(sd->view_update);
+        sd->view_update = ecore_job_add(_view_update, WIDGET(item));
+     }
 }
 
 EOLIAN static Eo *

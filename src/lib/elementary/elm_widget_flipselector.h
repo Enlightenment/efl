@@ -32,6 +32,7 @@ struct _Elm_Flipselector_Data
    Eina_List            *sentinel; /* item containing the largest
                                     * label string */
    Ecore_Timer          *spin;
+   Ecore_Job            *view_update;
 
    unsigned int          max_len;
    double                interval, first_interval;
@@ -41,6 +42,7 @@ struct _Elm_Flipselector_Data
    int                   walking;
    Eina_Bool             evaluating : 1;
    Eina_Bool             deleting : 1;
+   Eina_Bool             need_update : 1;
 };
 
 typedef struct _Elm_Flipselector_Item_Data       Elm_Flipselector_Item_Data;
