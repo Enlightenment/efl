@@ -3139,13 +3139,17 @@ _filter_data_flush(Evas_Engine_GL_Context *gc, Evas_GL_Program *prog)
 }
 
 static inline void
-_filter_data_prepare(Evas_Engine_GL_Context *gc, int pn,
-                     Evas_GL_Program *prog, int count)
+_filter_data_alloc(Evas_Engine_GL_Context *gc, int pn, int count)
 {
    gc->pipe[pn].array.filter_data_count = count;
    if (count) gc->pipe[pn].array.filter_data = malloc(count * 2 * sizeof(GLfloat));
    else gc->pipe[pn].array.filter_data = NULL;
+}
 
+static inline void
+_filter_data_prepare(Evas_Engine_GL_Context *gc EINA_UNUSED,
+                     Evas_GL_Program *prog, int count)
+{
    if (!prog->filter) prog->filter = calloc(1, sizeof(*prog->filter));
    if (!prog->filter->attribute.known_locations)
      {
@@ -3224,7 +3228,8 @@ evas_gl_common_filter_displace_push(Evas_Engine_GL_Context *gc,
    // displace properties
    gc->pipe[pn].shader.filter.map_tex = map_tex->pt->texture;
    gc->pipe[pn].shader.filter.map_nearest = nearest;
-   _filter_data_prepare(gc, pn, prog, 3);
+   _filter_data_prepare(gc, prog, 3);
+   _filter_data_alloc(gc, pn, 3);
 
    sx = x;
    sy = y;
@@ -3439,7 +3444,7 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
                                 const double * const offsets, int count,
                                 double radius, Eina_Bool horiz)
 {
-   double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4, pw, ph;
+   double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4, pw, ph, texlen;
    GLfloat tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4;
    GLfloat offsetx, offsety;
    int r, g, b, a, nomul = 0, pn;
@@ -3447,10 +3452,9 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    Eina_Bool blend = EINA_TRUE;
    Eina_Bool smooth = EINA_TRUE;
    Shader_Type type = horiz ? SHD_FILTER_BLUR_X : SHD_FILTER_BLUR_Y;
+   Eina_Bool update_uniforms = EINA_FALSE;
    GLuint *map_tex_data;
    double sum;
-
-   //shader_array_flush(gc);
 
    r = R_VAL(&gc->dc->mul.col);
    g = G_VAL(&gc->dc->mul.col);
@@ -3463,8 +3467,58 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
                                             sw, sh, dw, dh, smooth, tex, EINA_FALSE,
                                             NULL, EINA_FALSE, EINA_FALSE, 0, 0,
                                             NULL, &nomul, NULL);
+
    _filter_data_flush(gc, prog);
    EINA_SAFETY_ON_NULL_RETURN(prog);
+
+   pw = tex->pt->w;
+   ph = tex->pt->h;
+   texlen = horiz ? pw : ph;
+
+   /* Convert double data to RGBA pixel data.
+    *
+    * We are not using GL_FLOAT or GL_DOUBLE because:
+    * - It's not as portable (needs extensions),
+    * - GL_DOUBLE didn't work during my tests (dunno why),
+    * - GL_FLOAT didn't seem to carry the proper precision all the way to
+    *   the fragment shader,
+    * - Real data buffers are not available in GLES 2.0,
+    * - GL_RGBA is 100% portable.
+    */
+   map_tex_data = alloca(2 * count * sizeof(*map_tex_data));
+   for (int k = 0; k < count; k++)
+     {
+        GLuint val;
+
+        if (k == 0) sum = weights[k];
+        else sum += 2.0 * weights[k];
+
+        // Weight is always > 0.0 and < 255.0 by maths
+        val = (GLuint) (weights[k] * 256.0 * 256.0 * 256.0);
+        map_tex_data[k] = val;
+
+        // Offset is always in [0.0 , 1.0] by definition
+        val = (GLuint) (offsets[k] * 256.0 * 256.0 * 256.0);
+        map_tex_data[k + count] = val;
+     }
+
+   // Prepare attributes & uniforms
+   _filter_data_prepare(gc, prog, 0);
+   if (!prog->filter->uniform.known_locations)
+     {
+        prog->filter->uniform.known_locations = EINA_TRUE;
+        prog->filter->uniform.blur_count_loc = glGetUniformLocation(prog->prog, "blur_count");
+        prog->filter->uniform.blur_texlen_loc = glGetUniformLocation(prog->prog, "blur_texlen");
+        prog->filter->uniform.blur_div_loc = glGetUniformLocation(prog->prog, "blur_div");
+     }
+
+   if ((prog->filter->uniform.blur_count_value != count - 1) ||
+       (!EINA_FLT_EQ(prog->filter->uniform.blur_texlen_value, texlen)) ||
+       (!EINA_FLT_EQ(prog->filter->uniform.blur_div_value, sum)))
+     {
+        update_uniforms = EINA_TRUE;
+        shader_array_flush(gc);
+     }
 
    pn = _evas_gl_common_context_push(type, gc, tex, NULL, prog,
                                      sx, sy, dw, dh, blend, smooth,
@@ -3497,42 +3551,7 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    pipe_region_expand(gc, pn, dx, dy, dw, dh);
    PIPE_GROW(gc, pn, 6);
 
-   /* Convert double data to RGBA pixel data.
-    *
-    * We are not using GL_FLOAT or GL_DOUBLE because:
-    * - It's not as portable (needs extensions),
-    * - GL_DOUBLE didn't work during my tests (dunno why),
-    * - GL_FLOAT didn't seem to carry the proper precision all the way to
-    *   the fragment shader,
-    * - Real data buffers are not available in GLES 2.0,
-    * - GL_RGBA is 100% portable.
-    */
-   map_tex_data = alloca(2 * count * sizeof(*map_tex_data));
-   for (int k = 0; k < count; k++)
-     {
-        GLuint val;
-
-        if (k == 0) sum = weights[k];
-        else sum += 2.0 * weights[k];
-
-        // Weight is always > 0.0 and < 255.0 by maths
-        val = (GLuint) (weights[k] * 256.0 * 256.0 * 256.0);
-        map_tex_data[k] = val;
-
-        // Offset is always in [0.0 , 1.0] by definition
-        val = (GLuint) (offsets[k] * 256.0 * 256.0 * 256.0);
-        map_tex_data[k + count] = val;
-     }
-
-   // Prepare attributes & uniforms
-   _filter_data_prepare(gc, pn, prog, 0);
-   if (!prog->filter->uniform.known_locations)
-     {
-        prog->filter->uniform.known_locations = EINA_TRUE;
-        prog->filter->uniform.blur_count_loc = glGetUniformLocation(prog->prog, "blur_count");
-        prog->filter->uniform.blur_texlen_loc = glGetUniformLocation(prog->prog, "blur_texlen");
-        prog->filter->uniform.blur_div_loc = glGetUniformLocation(prog->prog, "blur_div");
-     }
+   _filter_data_alloc(gc, pn, 0);
 
    // Synchronous upload of Nx2 RGBA texture
    if (!EINA_DBL_EQ(prog->filter->blur_radius, radius))
@@ -3553,10 +3572,10 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, count, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, map_tex_data);
      }
 
-   //if (update_uniforms)
+   if (update_uniforms)
      {
         prog->filter->uniform.blur_count_value = count - 1;
-        prog->filter->uniform.blur_texlen_value = horiz ? sw : sh;
+        prog->filter->uniform.blur_texlen_value = texlen;
         prog->filter->uniform.blur_div_value = sum;
         glUseProgram(prog->prog);
         glUniform1i(prog->filter->uniform.blur_count_loc, prog->filter->uniform.blur_count_value);
@@ -3568,9 +3587,6 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.filter.map_tex = prog->filter->texture.tex_ids[0];
    gc->pipe[pn].shader.filter.map_nearest = EINA_TRUE;
    gc->pipe[pn].shader.filter.map_delete = EINA_FALSE;
-
-   pw = tex->pt->w;
-   ph = tex->pt->h;
 
    ox1 = sx;
    oy1 = sy;

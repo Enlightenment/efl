@@ -81,6 +81,36 @@ _gaussian_interpolate(double **weights, double **offsets, double radius)
    return count;
 }
 
+static inline Eina_Rectangle
+_rect(int x, int y, int w, int h, int maxw, int maxh)
+{
+   Eina_Rectangle rect;
+
+   if (x < 0)
+     {
+        w -= (-x);
+        x = 0;
+     }
+   if (y < 0)
+     {
+        h -= (-y);
+        y = 0;
+     }
+   if ((x + w) > maxw) w = maxw - x;
+   if ((y + h) > maxh) h = maxh - y;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+
+   rect.x = x;
+   rect.y = y;
+   rect.w = w;
+   rect.h = h;
+   return rect;
+}
+
+#define S_RECT(_x, _y, _w, _h) _rect(_x, _y, _w, _h, s_w, s_h)
+#define D_RECT(_x, _y, _w, _h) _rect(_x, _y, _w, _h, d_w, d_h)
+
 static Eina_Bool
 _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 {
@@ -89,10 +119,18 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    RGBA_Draw_Context *dc_save;
    Eina_Bool horiz;
    double sx, sy, sw, sh, ssx, ssy, ssw, ssh, dx, dy, dw, dh, radius;
-   int nx, ny, nw, nh, count = 0;
+   double s_w, s_h, d_w, d_h;
+   Eina_Rectangle s_ob, d_ob, s_region[4], d_region[4];
+   int nx, ny, nw, nh, regions, count = 0;
    double *weights, *offsets;
 
    DEBUG_TIME_BEGIN();
+
+   s_w = cmd->input->w;
+   s_h = cmd->input->h;
+   d_w = cmd->output->w;
+   d_h = cmd->output->h;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(s_w && s_h && d_w && d_h, EINA_FALSE);
 
    re->window_use(re->software.ob);
    gc = re->window_gl_context_get(re->software.ob);
@@ -121,22 +159,6 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
        cmd->output->id, cmd->output->buffer,
        radius, horiz ? "X" : "Y");
 
-   sx = 0;
-   sy = 0;
-   sw = cmd->input->w;
-   sh = cmd->input->h;
-   dx = cmd->draw.ox;
-   dy = cmd->draw.oy;
-   dw = cmd->output->w;
-   dh = cmd->output->h;
-
-   nx = dx; ny = dy; nw = dw; nh = dh;
-   RECTS_CLIP_TO_RECT(nx, ny, nw, nh, 0, 0, cmd->output->w, cmd->output->h);
-   ssx = (double)sx + ((double)(sw * (nx - dx)) / (double)(dw));
-   ssy = (double)sy + ((double)(sh * (ny - dy)) / (double)(dh));
-   ssw = ((double)sw * (double)(nw)) / (double)(dw);
-   ssh = ((double)sh * (double)(nh)) / (double)(dh);
-
    dc_save = gc->dc;
    gc->dc = evas_common_draw_context_new();
    evas_common_draw_context_set_multiplier(gc->dc, cmd->draw.R, cmd->draw.G, cmd->draw.B, cmd->draw.A);
@@ -148,8 +170,68 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
      gc->dc->render_op = _gfx_to_evas_render_op(cmd->draw.rop);
 
    count = _gaussian_interpolate(&weights, &offsets, radius);
-   evas_gl_common_filter_blur_push(gc, image->tex, ssx, ssy, ssw, ssh, dx, dy, dw, dh,
-                                   weights, offsets, count, radius, horiz);
+
+   d_ob = cmd->ctx->obscured.effective;
+   s_ob.x = d_ob.x * s_w / d_w;
+   s_ob.y = d_ob.y * s_h / d_h;
+   s_ob.w = d_ob.w * s_w / d_w;
+   s_ob.h = d_ob.h * s_h / d_h;
+   if (!d_ob.w || !d_ob.h)
+     {
+        s_region[0] = S_RECT(0, 0, s_w, s_h);
+        d_region[0] = D_RECT(0, 0, d_w, d_h);
+        regions = 1;
+     }
+   else if (horiz)
+     {
+        // top (full), left, right, bottom (full)
+        s_region[0] = S_RECT(0, 0, s_w, s_ob.y);
+        d_region[0] = D_RECT(0, 0, d_w, d_ob.y);
+        s_region[1] = S_RECT(0, s_ob.y, s_ob.x, s_ob.h);
+        d_region[1] = D_RECT(0, d_ob.y, d_ob.x, d_ob.h);
+        s_region[2] = S_RECT(s_ob.x + s_ob.w, s_ob.y, s_w - s_ob.x - s_ob.w, s_ob.h);
+        d_region[2] = D_RECT(d_ob.x + d_ob.w, d_ob.y, d_w - d_ob.x - d_ob.w, d_ob.h);
+        s_region[3] = S_RECT(0, s_ob.y + s_ob.h, s_w, s_h - s_ob.y - s_ob.h);
+        d_region[3] = D_RECT(0, d_ob.y + d_ob.h, d_w, d_h - d_ob.y - d_ob.h);
+        regions = 4;
+     }
+   else
+     {
+        // left (full), top, bottom, right (full)
+        s_region[0] = S_RECT(0, 0, s_ob.x, s_h);
+        d_region[0] = D_RECT(0, 0, d_ob.x, d_h);
+        s_region[1] = S_RECT(s_ob.x, 0, s_ob.w, s_ob.y);
+        d_region[1] = D_RECT(d_ob.x, 0, d_ob.w, d_ob.y);
+        s_region[2] = S_RECT(s_ob.x, s_ob.y + s_ob.h, s_ob.w, s_h - s_ob.y - s_ob.h);
+        d_region[2] = D_RECT(d_ob.x, d_ob.y + d_ob.h, d_ob.w, d_h - d_ob.y - d_ob.h);
+        s_region[3] = S_RECT(s_ob.x + s_ob.w, 0, s_w - s_ob.x - s_ob.w, s_h);
+        d_region[3] = D_RECT(d_ob.x + d_ob.w, 0, d_w - d_ob.x - d_ob.w, d_h);
+        regions = 4;
+     }
+
+   for (int k = 0; k < regions; k++)
+     {
+        sx = s_region[k].x;
+        sy = s_region[k].y;
+        sw = s_region[k].w;
+        sh = s_region[k].h;
+
+        dx = d_region[k].x + cmd->draw.ox;
+        dy = d_region[k].y + cmd->draw.oy;
+        dw = d_region[k].w;
+        dh = d_region[k].h;
+
+        nx = dx; ny = dy; nw = dw; nh = dh;
+        RECTS_CLIP_TO_RECT(nx, ny, nw, nh, 0, 0, d_w, d_h);
+        ssx = (double)sx + ((double)(sw * (nx - dx)) / (double)(dw));
+        ssy = (double)sy + ((double)(sh * (ny - dy)) / (double)(dh));
+        ssw = ((double)sw * (double)(nw)) / (double)(dw);
+        ssh = ((double)sh * (double)(nh)) / (double)(dh);
+
+        evas_gl_common_filter_blur_push(gc, image->tex, ssx, ssy, ssw, ssh, dx, dy, dw, dh,
+                                        weights, offsets, count, radius, horiz);
+     }
+
    free(weights);
    free(offsets);
 
