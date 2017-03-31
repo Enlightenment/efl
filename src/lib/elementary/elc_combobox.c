@@ -333,7 +333,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_GLASS_PANE);
 
    //hover-parent
-   sd->hover_parent = elm_object_parent_widget_get(obj);
+   sd->hover_parent = elm_object_top_widget_get(obj);
 
    //hover
    sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent);
