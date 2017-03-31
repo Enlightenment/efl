@@ -1037,9 +1037,7 @@ em_meta_artwork_get(void *video, Evas_Object *img, const char *path, Emotion_Art
 
         if (gst_buffer_map(gst_buffer_ref(buffer), &map, GST_MAP_READ))
           {
-             Eina_File *f = eina_file_virtualize(path, map.data, map.size, EINA_FALSE);
-             evas_object_image_mmap_set(img, f, NULL);
-             eina_file_close(f);
+             evas_object_image_memfile_set(img, map.data, map.size, NULL, NULL);
              evas_object_event_callback_add(img, EVAS_CALLBACK_DEL, _img_del_cb, buffer);
           } 
         gst_sample_unref(sample);
