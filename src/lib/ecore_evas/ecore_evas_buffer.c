@@ -147,6 +147,7 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
    int rend = 0;
 
    bdata = ee->engine.data;
+   if (bdata->in_render) return 0;
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
@@ -166,7 +167,9 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    if (bdata->pixels)
      {
+        bdata->in_render = 1;
         updates = evas_render_updates(ee->evas);
+        bdata->in_render = 0;
      }
    if (bdata->image)
      {
