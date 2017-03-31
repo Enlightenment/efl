@@ -158,6 +158,10 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
    if (flagbuf)
      eina_strbuf_append_char(flagbuf, ')');
 
+   /* zero-arg funcs in C need void for arguments */
+   if (eina_strbuf_string_get(buf)[eina_strbuf_length_get(buf) - 1] == '(')
+     eina_strbuf_append(buf, "void");
+
    eina_strbuf_append(buf, ")");
    if (eolian_function_return_is_warn_unused(fid, ftype))
      {
