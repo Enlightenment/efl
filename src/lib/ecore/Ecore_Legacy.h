@@ -130,6 +130,7 @@ EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
  * @see ecore_animator_pos_map()
  *
  * @note The default @p frametime value is 1/30th of a second.
+ * @note The first position parameter passed to the callback will never be 0.
  *
  * @since 1.1.0
  */
