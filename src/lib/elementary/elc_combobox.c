@@ -33,6 +33,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static void _table_resize(void *data);
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 
@@ -141,6 +142,12 @@ count_items_genlist(void *data)
 }
 
 static void
+_item_realized(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _table_resize(data);
+}
+
+static void
 _table_resize(void *data)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
@@ -148,11 +155,24 @@ _table_resize(void *data)
      {
         int hover_parent_w, hover_parent_h, obj_h, obj_w, obj_y, win_y_offset;
         int current_height, h;
+        Eina_List *realized;
+
         sd->item = elm_genlist_first_item_get(sd->genlist);
-        //FIXME:- the height of item is zero, sometimes.
-        evas_object_geometry_get(elm_object_item_track(sd->item), NULL, NULL,
-                                 NULL, &h);
-        if (h) sd->item_height = h;
+
+        if (!(realized = elm_genlist_realized_items_get(sd->genlist)))
+          {
+             //nothing realized and wait until at least one item is realized
+             h = 1;
+             evas_object_smart_callback_add(sd->genlist, "realized", _item_realized, data);
+          }
+        else
+          {
+             // take the first, and update according to that
+             evas_object_geometry_get(elm_object_item_track(eina_list_data_get(realized)), NULL, NULL,
+                                      NULL, &h);
+          }
+
+        sd->item_height = h;
         evas_object_geometry_get(sd->entry, NULL, NULL, &obj_w, NULL);
         evas_object_geometry_get(data, NULL, &obj_y, NULL, &obj_h);
         evas_object_geometry_get(sd->hover_parent, NULL, NULL, &hover_parent_w,
