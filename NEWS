@@ -377,6 +377,23 @@ Fixes:
    * edje: Fix rare issue with map (T1551)
    * evas gl: Fix usage of OSMesa
    * ecore_animator: improve comparision check for stopping animator.
+   * elementary: Fix minor typo in efl_ui_win.eo
+   * evas: drop redundant pointer check (CID1371525)
+   * gengrid: avoid call select callback twice in mode ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL
+   * evas table: CRI when attempting to pack a table child into another table
+   * theme: remove event gaps in enlightenment window frames
+   * genlist: Fix another issue with insert sorted (T5274)
+   * elm_map: Fix work of elm_map_overlay_icon_set if icon is NULL.
+   * elm_code: fix keyboard selection forward
+   * evas: Fix a rare issue with GL and map and mask
+   * Eina_Xattr: fix memory corruption
+   * ecore audio: Fix loss of last stream (T5281)
+   * ecore-drm2: Remove unused field in Output structure
+   * evas_events: look for seats on hash instead of input devices (T5146)
+   * elm_code: fix CID 1368489
+   * Gengrid: Bring the item into view scope before swapping.
+   * gengrid: fix the crash in _elm_gengrid_item_edge_check
+   * elm_code: Fix newline crash on BSD
 
 Changes since 1.17.0:
 ---------------------
