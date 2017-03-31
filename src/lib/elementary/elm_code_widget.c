@@ -1408,8 +1408,11 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    unsigned int row, col, position, oldlen, width, indent, textlen;
    char *oldtext, *leading, *text;
 
-   _elm_code_widget_change_selection_add(widget);
-   elm_code_widget_selection_delete(widget);
+   if (!elm_code_widget_selection_is_empty(widget))
+     {
+        _elm_code_widget_change_selection_add(widget);
+        elm_code_widget_selection_delete(widget);
+     }
 
    code = elm_obj_code_widget_code_get(widget);
    elm_obj_code_widget_cursor_position_get(widget, &row, &col);
