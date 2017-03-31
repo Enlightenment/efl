@@ -39,7 +39,7 @@ struct native_function_definition_generator
         << " "
         << string
         << "_delegate(System.IntPtr obj, System.IntPtr pd"
-        << *grammar::attribute_reorder<1, -1>
+        << *grammar::attribute_reorder<-1, -1>
         (
          (", " << marshall_annotation << " " << marshall_parameter)
         )
@@ -58,7 +58,7 @@ struct native_function_definition_generator
         << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
-        << *grammar::attribute_reorder<1, -1>
+        << *grammar::attribute_reorder<-1, -1>
         (
          (", " << marshall_annotation << " " << marshall_parameter)
         )
@@ -122,7 +122,7 @@ struct function_definition_generator
         << eolian_mono::marshall_type(true)
         << " " << string
         << "(System.IntPtr obj"
-        << *grammar::attribute_reorder<1, -1>
+        << *grammar::attribute_reorder<-1, -1>
         (
          (", " << marshall_annotation << " " << marshall_parameter)
         )
