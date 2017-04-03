@@ -158,6 +158,7 @@ void                     evas_filter_context_obscured_region_set(Evas_Filter_Con
 int                      evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only);
 int                      evas_filter_buffer_proxy_new(Evas_Filter_Context *ctx, Evas_Filter_Proxy_Binding *pb, int *w, int *h);
 void                    *evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid, Eina_Bool render);
+Eina_Bool                evas_filter_buffer_backing_set(Evas_Filter_Context *ctx, int bufid, void *engine_buffer);
 Eina_Bool                evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer);
 
 Eina_Bool                evas_filter_context_run(Evas_Filter_Context *ctx);

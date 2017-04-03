@@ -365,8 +365,11 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
              continue;
           }
 
-        render |= (fb->id == EVAS_FILTER_BUFFER_INPUT_ID);
-        render |= fb->is_render || fb->transient;
+        // Skip input buffer, allocate it in input render phase
+        if (fb->id == EVAS_FILTER_BUFFER_INPUT_ID)
+          continue;
+
+        render = fb->is_render || fb->transient;
         draw |= (fb->id == EVAS_FILTER_BUFFER_OUTPUT_ID);
 
         fb->buffer = _ector_buffer_create(fb, render, draw);
@@ -510,10 +513,39 @@ evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid, Eina_Bool re
    fb = _filter_buffer_get(ctx, bufid);
    if (!fb) return NULL;
 
+   if (!fb->buffer)
+     evas_filter_buffer_backing_set(ctx, bufid, NULL);
+
    if (render)
      return evas_ector_buffer_render_image_get(fb->buffer); // ref++
    else
      return evas_ector_buffer_drawable_image_get(fb->buffer); // ref++
+}
+
+Eina_Bool
+evas_filter_buffer_backing_set(Evas_Filter_Context *ctx, int bufid,
+                               void *engine_buffer)
+{
+   Evas_Filter_Buffer *fb;
+
+   fb = _filter_buffer_get(ctx, bufid);
+   if (!fb) return EINA_FALSE;
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!fb->buffer, EINA_FALSE);
+
+   if (!engine_buffer)
+     {
+        fb->buffer = _ector_buffer_create(fb, fb->is_render, EINA_FALSE);
+        XDBG("Allocated buffer #%d of size %ux%u %s: %p",
+             fb->id, fb->w, fb->h, fb->alpha_only ? "alpha" : "rgba", fb->buffer);
+        return fb->buffer ? EINA_TRUE : EINA_FALSE;
+     }
+
+   if (fb->buffer) return EINA_FALSE;
+   if (fb->is_render) return EINA_FALSE;
+
+   fb->buffer = ENFN->ector_buffer_wrap(ENDT, ctx->evas->evas, engine_buffer);
+   return EINA_TRUE;
 }
 
 Eina_Bool
@@ -1558,7 +1590,7 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
    fb = _filter_buffer_get(ctx, bufid);
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
 
-   surface = evas_ector_buffer_render_image_get(fb->buffer);
+   surface = evas_filter_buffer_backing_get(ctx, bufid, EINA_TRUE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
 
    // Copied from evas_font_draw_async_check

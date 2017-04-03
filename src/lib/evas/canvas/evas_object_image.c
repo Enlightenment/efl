@@ -1719,6 +1719,35 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_state_prepare(
    state->scale = obj->cur->scale;
 }
 
+static inline Eina_Bool
+_image_has_border(Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_Image_Data *o)
+{
+   return o->cur->border.l || o->cur->border.r || o->cur->border.t ||
+         o->cur->border.b || (o->cur->border.fill == 0);
+}
+
+static inline Eina_Bool
+_image_has_map(Evas_Object_Protected_Data *obj, Evas_Image_Data *o EINA_UNUSED)
+{
+   return ((obj->map->cur.map) && (obj->map->cur.map->count > 3) && (obj->map->cur.usemap));
+}
+
+static inline Eina_Bool
+_image_is_filled(Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
+{
+   if (o->filled) return EINA_TRUE;
+   return !o->cur->fill.x && !o->cur->fill.y &&
+         (o->cur->fill.w == obj->cur->geometry.w) &&
+         (o->cur->fill.h == obj->cur->geometry.h);
+}
+
+static inline Eina_Bool
+_image_is_scaled(Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
+{
+   return ((obj->cur->geometry.w != o->cur->image.w) ||
+           (obj->cur->geometry.h != o->cur->image.h));
+}
+
 EOLIAN static Eina_Bool
 _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
       Eo *eo_obj, Evas_Image_Data *o, void *_filter, void *context EINA_UNUSED,
@@ -1728,11 +1757,25 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Context *filter = _filter;
    void *surface, *output, *ctx;
+   Eina_Bool ok;
    int W, H;
 
    W = obj->cur->geometry.w;
    H = obj->cur->geometry.h;
    output = ENDT;
+
+   // FIXME: In GL we could use the image even if scaled
+   if (!_image_has_border(obj, o) && !_image_has_map(obj, o) && _image_is_filled(obj, o)
+       && !_image_is_scaled(obj, o))
+     {
+        int imagew, imageh, uvw, uvh;
+
+        surface = _evas_image_pixels_get(eo_obj, obj, output, NULL, NULL, x, y,
+                                         &imagew, &imageh, &uvw, &uvh, EINA_FALSE, EINA_FALSE);
+
+        ok = evas_filter_buffer_backing_set(filter, EVAS_FILTER_BUFFER_INPUT_ID, surface);
+        if (ok) return EINA_TRUE;
+     }
 
    surface = evas_filter_buffer_backing_get(filter, EVAS_FILTER_BUFFER_INPUT_ID, EINA_TRUE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
