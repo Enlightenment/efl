@@ -11,6 +11,21 @@
 #include "evil_macro.h"
 #include "evil_fcntl.h"
 
+/* SOCKET is defined as a uintptr_t, so passing a fd (int) is not a problem */
+static int
+_is_socket(SOCKET s)
+{
+   fd_set rfds;
+   struct timeval tv;
+
+   tv.tv_sec = 0.00000001;
+   tv.tv_usec = 0;
+   FD_ZERO(&rfds);
+   FD_SET(s, &rfds);
+
+   return select(1, &rfds, NULL, NULL, &tv) != SOCKET_ERROR;
+}
+
 
 /*
  * port of fcntl function
@@ -29,17 +44,19 @@ int fcntl(int fd, int cmd, ...)
         HANDLE  h;
         DWORD flag;
 
-        h = (HANDLE)_get_osfhandle(fd);
+        h = _is_socket(fd) ? (HANDLE)fd : (HANDLE)_get_osfhandle(fd);
         if (h == INVALID_HANDLE_VALUE)
           return -1;
 
-	if (!GetHandleInformation(h, &flag))
+	if (GetHandleInformation(h, &flag))
           {
-             /* FIXME: should we close h ? MSDN seems to say that */
-             return -1;
+             if (flag == HANDLE_FLAG_INHERIT)
+               return FD_CLOEXEC;
+
+             return 0;
           }
 
-	res = 0;
+	return -1;
      }
 
    if (cmd == F_SETFD)
@@ -47,7 +64,7 @@ int fcntl(int fd, int cmd, ...)
         HANDLE  h;
         long flag;
 
-        h = (HANDLE)_get_osfhandle(fd);
+        h = _is_socket(fd) ? (HANDLE)fd : (HANDLE)_get_osfhandle(fd);
         if (h == INVALID_HANDLE_VALUE)
           return -1;
 
@@ -55,7 +72,7 @@ int fcntl(int fd, int cmd, ...)
         if (flag == FD_CLOEXEC)
           {
              if (SetHandleInformation(h, HANDLE_FLAG_INHERIT, 0))
-               res = 0;
+               return 0;
           }
      }
    else if (cmd == F_GETFL)
