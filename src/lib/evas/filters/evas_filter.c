@@ -711,35 +711,38 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
    dx_in = in;
    dy_out = out;
 
-#if 0
+#if 1
    if (type == EVAS_FILTER_BLUR_DEFAULT)
      {
         int down_x = 1, down_y = 1;
 
         /* For now, disable scaling - testing perfect gaussian blur until it's
          * ready: */
-        down_x = MAX((1 << evas_filter_smallest_pow2_larger_than(dx / 2) / 2), 1);
-        down_y = MAX((1 << evas_filter_smallest_pow2_larger_than(dy / 2) / 2), 1);
+        down_x = 1 << evas_filter_smallest_pow2_larger_than(dx / 2) / 2;
+        down_y = 1 << evas_filter_smallest_pow2_larger_than(dy / 2) / 2;
+        if (down_x > 4) down_x = 4;
+        if (down_y > 4) down_y = 4;
 
+        if (down_x > 1 && down_y > 1)
+          {
+             tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
+                                                    in->alpha_only, EINA_TRUE);
+             if (!tmp) goto fail;
 
-        tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
-                                               in->alpha_only, EINA_TRUE);
-        if (!tmp) goto fail;
+             dx = rx / down_x;
+             dy = ry / down_y;
 
-        // FIXME: Fix logic here. This is where the smarts are! Now it's dumb.
-        dx = rx / down_x;
-        dy = ry / down_y;
+             XDBG("Add GL downscale %d (%dx%d) -> %d (%dx%d)", in->id, in->w, in->h, tmp->id, tmp->w, tmp->h);
+             cmd = _command_new(ctx, EVAS_FILTER_MODE_BLEND, in, NULL, tmp);
+             if (!cmd) goto fail;
+             cmd->draw.fillmode = EVAS_FILTER_FILL_MODE_STRETCH_XY;
+             dx_in = tmp;
 
-        XDBG("Add GL downscale %d (%dx%d) -> %d (%dx%d)", in->id, in->w, in->h, tmp->id, tmp->w, tmp->h);
-        cmd = _command_new(ctx, EVAS_FILTER_MODE_BLEND, in, NULL, tmp);
-        if (!cmd) goto fail;
-        cmd->draw.fillmode = EVAS_FILTER_FILL_MODE_STRETCH_XY;
-        dx_in = tmp;
-
-        tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
-                                               in->alpha_only, EINA_TRUE);
-        if (!tmp) goto fail;
-        dy_out = tmp;
+             tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
+                                                    in->alpha_only, EINA_TRUE);
+             if (!tmp) goto fail;
+             dy_out = tmp;
+          }
      }
 #endif
 

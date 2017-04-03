@@ -111,6 +111,21 @@ _rect(int x, int y, int w, int h, int maxw, int maxh)
 #define S_RECT(_x, _y, _w, _h) _rect(_x, _y, _w, _h, s_w, s_h)
 #define D_RECT(_x, _y, _w, _h) _rect(_x, _y, _w, _h, d_w, d_h)
 
+static inline void
+_output_scale_get(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd,
+                  double *scale_x, double *scale_y)
+{
+   Evas_Filter_Buffer *fb;
+   Eina_List *li;
+
+   EINA_LIST_FOREACH(ctx->buffers, li, fb)
+     if (fb->id == EVAS_FILTER_BUFFER_OUTPUT_ID)
+       {
+          *scale_x = (double) cmd->output->w / (double) fb->w;
+          *scale_y = (double) cmd->output->h / (double) fb->h;
+       }
+}
+
 static Eina_Bool
 _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 {
@@ -119,7 +134,7 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    RGBA_Draw_Context *dc_save;
    Eina_Bool horiz;
    double sx, sy, sw, sh, ssx, ssy, ssw, ssh, dx, dy, dw, dh, radius;
-   double s_w, s_h, d_w, d_h;
+   double s_w, s_h, d_w, d_h, scale_x, scale_y;
    Eina_Rectangle s_ob, d_ob, s_region[4], d_region[4];
    int nx, ny, nw, nh, regions, count = 0;
    double *weights, *offsets;
@@ -171,7 +186,12 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 
    count = _gaussian_interpolate(&weights, &offsets, radius);
 
+   _output_scale_get(cmd->ctx, cmd, &scale_x, &scale_y);
    d_ob = cmd->ctx->obscured.effective;
+   d_ob.x *= scale_x;
+   d_ob.y *= scale_y;
+   d_ob.w *= scale_x;
+   d_ob.h *= scale_y;
    s_ob.x = d_ob.x * s_w / d_w;
    s_ob.y = d_ob.y * s_h / d_h;
    s_ob.w = d_ob.w * s_w / d_w;
