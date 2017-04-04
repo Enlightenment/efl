@@ -797,9 +797,9 @@ EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA
  *
  * This function is similar to @ref evas_gl_api_get but takes an extra Evas GL
  * context argument as it is used to get the real API used by special contexts,
- * that have been instanciated with @ref evas_gl_context_version_create().
+ * that have been instantiated with @ref evas_gl_context_version_create().
  *
- * This function can be used to get the GL API for a OpenGL-ES 1.1 context. When
+ * This function can be used to get the GL API for an OpenGL-ES 1.1 context. When
  * using OpenGL-ES 1.1, applications should always use @ref evas_gl_context_api_get
  * and never call @ref evas_gl_api_get (this will always return a OpenGL-ES 2+ API).
  *
