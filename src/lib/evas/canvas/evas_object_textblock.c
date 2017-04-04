@@ -13206,10 +13206,14 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                             Evas_Object_Textblock_Text_Item *titr = \
                               (Evas_Object_Textblock_Text_Item *)itr; \
                             int ascent = 0; \
+                            int descent = 0; \
                             if (titr->text_props.font_instance) \
-                              ascent = evas_common_font_instance_max_ascent_get(titr->text_props.font_instance); \
+                              { \
+                                 ascent = evas_common_font_instance_ascent_get(titr->text_props.font_instance); \
+                                 descent = evas_common_font_instance_descent_get(titr->text_props.font_instance); \
+                              } \
                             yoff = ascent + \
-                              (itr->format->valign * (ln->h - itr->h)); \
+                              (itr->format->valign * (ln->h - (ascent + descent))); \
                          } \
                        else yoff = itr->format->valign * (ln->h - itr->h); \
                     } \
