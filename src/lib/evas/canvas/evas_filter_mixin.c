@@ -13,6 +13,12 @@
 
 #define FCOW_BEGIN(_pd) ({ Evas_Object_Filter_Data *_fcow = eina_cow_write(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data)); _state_check(_fcow); _fcow; })
 #define FCOW_END(_fcow, _pd) eina_cow_done(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data), _fcow, EINA_TRUE)
+#define FCOW_WRITE(pd, name, value) do { \
+   if (pd->data->name != (value)) { \
+     fcow = FCOW_BEGIN(pd); \
+     fcow->name = (value); \
+     FCOW_END(fcow, pd); \
+   }} while (0)
 
 typedef struct _Evas_Filter_Data Evas_Filter_Data;
 typedef struct _Evas_Filter_Post_Render_Data Evas_Filter_Post_Render_Data;
@@ -40,6 +46,7 @@ struct _Evas_Object_Filter_Data
       } next;
       double               pos;
    } state;
+   int                  obscured_changes;
    Eina_Bool            changed : 1;
    Eina_Bool            invalid : 1; // Code parse failed
    Eina_Bool            async : 1;
@@ -844,11 +851,12 @@ Eina_Bool
 _evas_filter_obscured_regions_set(Evas_Object_Protected_Data *obj, const Eina_Tiler *tiler)
 {
    Evas_Object_Filter_Data *fcow;
-   Eina_Rectangle prev, rect = {}, empty = {};
+   Eina_Rectangle prev, rect = {};
    Eina_Rectangle *r;
    Evas_Filter_Data *pd;
    Eina_Iterator *it;
-   Eina_Bool was_empty;
+   Eina_Bool was_empty, redraw = EINA_FALSE;
+   int obscured_changes = 0;
    int area = 0;
 
    // TODO: Can we handle more than one opaque region?
@@ -870,14 +878,28 @@ _evas_filter_obscured_regions_set(Evas_Object_Protected_Data *obj, const Eina_Ti
    eina_iterator_free(it);
 
    prev = pd->data->prev_obscured;
-   if (!pd->data->changed && !memcmp(&prev, &empty, sizeof(prev)))
-     was_empty = EINA_TRUE;
+   if (!pd->data->changed && (!prev.w || !prev.h))
+     {
+        was_empty = EINA_TRUE;
+        obscured_changes = 0;
+     }
    else if (memcmp(&rect, &prev, sizeof(rect)))
      {
         fcow = FCOW_BEGIN(pd);
         fcow->obscured = rect;
+        obscured_changes = fcow->obscured_changes + 1;
+        if (obscured_changes > 2)
+          {
+             // Reset obscure as it changes too much
+             memset(&fcow->obscured, 0, sizeof(fcow->obscured));
+             obscured_changes = 0;
+             redraw = EINA_TRUE;
+          }
         FCOW_END(fcow, pd);
      }
+
+   FCOW_WRITE(pd, obscured_changes, obscured_changes);
+   if (redraw) return EINA_TRUE;
 
    // Snapshot objects need to be redrawn if the padding has increased
    if ((pd->data->prev_padding.l < pd->data->padding.l) ||
@@ -887,7 +909,7 @@ _evas_filter_obscured_regions_set(Evas_Object_Protected_Data *obj, const Eina_Ti
      return EINA_TRUE;
 
    // Snapshot objects need to be redrawn if the obscured region has shrank
-   if (!was_empty && !_evas_eina_rectangle_inside(&prev, &pd->data->obscured))
+   if (!was_empty && !_evas_eina_rectangle_inside(&pd->data->obscured, &prev))
      return EINA_TRUE;
 
    return EINA_FALSE;
