@@ -87,28 +87,28 @@
  * @section evas_canvas3d_intro Introduction
  *
  * Evas 3D is an extension to support 3D scene graph rendering into 2D Evas
- * canvas supporting typicall tree-based scene graph manipulation and other 3D
+ * canvas supporting typical tree-based scene graph manipulation and other 3D
  * graphics rendering techniques.
  *
  * Evas 3D provides 3D objects which are used for describing 3D scene and APIs
  * to connect the scene with an evas image object so that the scene is rendered
  * on that image object.
  *
- * Construction of a 3D scene is process of locating desired cameras, lights and
+ * Construction of a 3D scene is a process of locating desired cameras, lights and
  * meshes in the scene. Typically the scene is structured with some hierarchical
  * data structure. Evas 3D support n-ary tree structure for describing the
  * scene. Node is used to build the tree representation of the scene. Other
  * objects, like camera, light and mesh can be located in the scene by being
  * contained in a node.
  *
- * Like other 3D graphics engine, Evas 3D support standard 3D rendering method
+ * Like other 3D graphics engines, Evas 3D support standard 3D rendering method
  * like flat shading, phong shading and normal map and other features like
  * texture mapping, triangle meshes.
  *
- * Besides all the traditional 3D rendering things, one of the key feature of
+ * Besides all the traditional 3D rendering things, one of the key features of
  * the Evas 3D is that it is able to use existing evas objects as textures
  * inside of the 3D scene. "Existing evas objects" means all the EFL widgets
- * and applications. By supporting this, it is easy to make 3D version of an
+ * and applications. By supporting this, it is easy to make a 3D version of an
  * application without modifying the original source that much.
  *
  * Also, 3D scene can be located on the canvas naturally stacked with existing
@@ -124,7 +124,7 @@
  * @defgroup Evas_Canvas3D_Types Types & Enums
  * @ingroup Evas_3D
  *
- * Primitive type definitions and enumations.
+ * Primitive type definitions and enumerations.
  */
 
 /**
