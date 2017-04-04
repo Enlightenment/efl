@@ -725,7 +725,9 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
 
         if (down_x > 1 && down_y > 1)
           {
-             tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
+             tmp = evas_filter_temporary_buffer_get(ctx,
+                                                    ceil(ctx->w / down_x),
+                                                    ceil(ctx->h / down_y),
                                                     in->alpha_only, EINA_TRUE);
              if (!tmp) goto fail;
 

@@ -163,6 +163,7 @@ _gl_filter_blend(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image *image, *surface;
    RGBA_Draw_Context *dc_save;
+   int src_w, src_h, dst_w, dst_h;
 
    DEBUG_TIME_BEGIN();
 
@@ -182,12 +183,45 @@ _gl_filter_blend(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    evas_common_draw_context_set_multiplier(gc->dc, cmd->draw.R, cmd->draw.G, cmd->draw.B, cmd->draw.A);
    gc->dc->render_op = _gfx_to_evas_render_op(cmd->draw.rop);
 
-   // FIXME: Maybe need to clear buffer in case of COPY mode?
+   // FIXME: Maybe need to clear buffer in case of COPY mode with an offset?
+
+   if ((cmd->draw.fillmode == EVAS_FILTER_FILL_MODE_STRETCH_XY) &&
+       ((image->w != surface->w) || (image->h != surface->h)))
+     {
+        int scale_w, scale_h;
+
+        if ((image->w >= surface->w) ||
+            (image->h >= surface->h))
+          {
+             scale_w = image->w / surface->w;
+             scale_h = image->h / surface->h;
+             src_w = ((image->w + (scale_w - 1)) / scale_w) * scale_w;
+             src_h = ((image->h + (scale_h - 1)) / scale_h) * scale_h;
+             dst_w = surface->w;
+             dst_h = surface->h;
+          }
+        else
+          {
+             scale_w = surface->w / image->w;
+             scale_h = surface->h / image->h;
+             src_w = image->w;
+             src_h = image->h;
+             dst_w = ((surface->w + (scale_w - 1)) / scale_w) * scale_w;
+             dst_h = ((surface->h + (scale_h - 1)) / scale_h) * scale_h;
+          }
+     }
+   else
+     {
+        src_w = image->w;
+        src_h = image->h;
+        dst_w = surface->w;
+        dst_h = surface->h;
+     }
 
    DBG("blend %d @%p -> %d @%p", cmd->input->id, cmd->input->buffer,
        cmd->output->id, cmd->output->buffer);
-   _mapped_blend(gc, image, cmd->draw.fillmode, 0, 0, image->w, image->h,
-                 cmd->draw.ox, cmd->draw.oy, cmd->output->w, cmd->output->h);
+   _mapped_blend(gc, image, cmd->draw.fillmode, 0, 0, src_w, src_h,
+                 cmd->draw.ox, cmd->draw.oy, dst_w, dst_h);
 
    evas_common_draw_context_free(gc->dc);
    gc->dc = dc_save;
