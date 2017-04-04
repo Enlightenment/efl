@@ -34,7 +34,7 @@
  * @file Ecore_Evas.h
  * @brief Evas wrapper functions.
  *
- * The following is a list of example that partially exemplify Ecore_Evas's API:
+ * The following is a list of examples that partially exemplify Ecore_Evas's API:
  * @li @ref ecore_evas_callbacks_example_c
  * @li @ref ecore_evas_object_example_c
  * @li @ref ecore_evas_basics_example_c
@@ -63,7 +63,7 @@ extern "C" {
  * @defgroup Ecore_Evas_Group Ecore_Evas wrapper/helper set of functions
  * @ingroup Ecore
  *
- * Ecore evas is a set of functions that makes it easy to tie together ecore's
+ * Ecore evas is a set of functions that make it easy to tie together ecore's
  * main loop and input handling to evas. As such it's a natural base for EFL
  * applications. While this combination makes it easy to create the basic
  * aspects all applications need, for normal applications(ones with buttons,
@@ -178,9 +178,9 @@ EAPI void        ecore_evas_app_comp_sync_set(Eina_Bool do_sync);
 EAPI Eina_Bool   ecore_evas_app_comp_sync_get(void);
 
 /**
- * @brief Returns a list of supported engines names.
+ * @brief Returns a list of supported engine names.
  *
- * @return Newly allocated list with engines names. Engines names
+ * @return Newly allocated list with engine names. Engine names
  * strings are internal and should be considered constants, do not
  * free or modify them, to free the list use ecore_evas_engines_free().
  */
@@ -188,7 +188,7 @@ EAPI Eina_List  *ecore_evas_engines_get(void);
 /**
  * @brief Free list returned by ecore_evas_engines_get()
  *
- * @param engines List with engines names
+ * @param engines List with engine names
  */
 EAPI void        ecore_evas_engines_free(Eina_List *engines);
 /**
@@ -274,8 +274,8 @@ EAPI Eina_Bool   ecore_evas_transparent_get(const Ecore_Evas *ee);
  * @param h A pointer to an int to place the h size in
  *
  * This function takes four pointers to (already allocated) ints, and places
- * the geometry of @p ee in them. If any of the parameters is not desired you
- * may pass @c NULL on them.
+ * the geometry of @p ee in them. If any of the parameters are not desired you
+ * may pass @c NULL for them.
  *
  * @code
  * int x, y, w, h;
@@ -299,7 +299,7 @@ EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, i
  *
  * This function takes four pointers to (already allocated) ints, and places
  * the geometry which @p ee was latest recently requested . If any of the
- * parameters is not desired you may pass @c NULL on them.
+ * parameters are not desired you may pass @c NULL for them.
  * This function can represent recently requested geometry.
  * ecore_evas_geometry_get function returns the value is updated after engine
  * finished request. By comparison, ecore_evas_request_geometry_get returns
@@ -807,22 +807,22 @@ EAPI void        ecore_evas_wm_rotation_manual_rotation_done(Ecore_Evas *ee);
  * @warning Support for this depends on the underlying windowing system.
  *
  * The window auxiliary hint is the value which is used to decide which actions should
- * be made available to the user by the window manager. If you want to set specific hint
+ * be made available to the user by the window manager. If you want to set a specific hint
  * to your window, then you should check whether it exists in the supported auxiliary
  * hints that are registered in the root window by the window manager. Once you've added
  * an auxiliary hint, you can get a new ID which is used to change value and delete hint.
  * The window manager sends the response message to the application on receiving auxiliary
- * hint change event. A list of auxiliary hint within the Ecore_Evas has this format:
+ * hint change event. A list of auxiliary hints within the Ecore_Evas has this format:
  * ID:HINT:VALUE,ID:HINT:VALUE,...
  *
  * @since 1.10.0
  */
 EAPI const Eina_List *ecore_evas_aux_hints_supported_get(const Ecore_Evas *ee);
 /**
- * @brief Gets the list of allowed auxiliary hint ID.
+ * @brief Gets the list of allowed auxiliary hint IDs.
  *
  * @param ee The Ecore_Evas
- * @return List of allowed auxiliary hint ID.
+ * @return List of allowed auxiliary hint IDs.
  * @note This function is low level. Instead of using it directly, consider
  * using the callback mechanism in Elementary such as "aux,hint,allowed".
  * @warning Support for this depends on the underlying windowing system.
@@ -1026,8 +1026,8 @@ EAPI void        ecore_evas_rotation_set(Ecore_Evas *ee, int rot);
  * @param ee The Ecore_Evas
  * @param rot The angle (in degrees) of rotation.
  *
- * Like ecore_evas_rotation_set(), but it also resizes the window's contents so
- * that they fit inside the current window geometry.
+ * Like ecore_evas_rotation_set(), but it also resizes the window's content so
+ * that it fits inside the current window geometry.
  *
  * @warning Support for this depends on the underlying windowing system.
  *
@@ -1169,7 +1169,7 @@ EAPI void            ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, E
 EAPI Eina_Bool       ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee);
 
 /**
- * @brief Adds extra window on Ecore_Evas using software x11.
+ * @brief Adds an extra window on Ecore_Evas using software x11.
  * @note If ecore is not compiled with support to x11 then nothing is done.
  * @param ee The Ecore_Evas on which to add the window.
  * @param win The window to be added at the Ecore_Evas.
@@ -1438,7 +1438,7 @@ EAPI const void     *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
  *
  * A use case for the function is to determine if the buffer is used inside
  * X11 or Wayland. Since the buffer engine doesn't give any indication on
- * it, we need to retrieve information from the Ecore_Evas parents.
+ * it, we need to retrieve information from the Ecore_Evas parent.
  *
  * @since 1.13
  */
@@ -1543,7 +1543,7 @@ EAPI void ecore_evas_ews_delete_request(Ecore_Evas *ee);
 EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);
 
 /**
- * @brief Retrieves the internal @c Ecore_Evas handle of an image
+ * @brief Retrieve the internal @c Ecore_Evas handle of an image
  * object created via ecore_evas_object_image_new().
  *
  * @param obj A handle to an image object created via
@@ -2733,7 +2733,7 @@ EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window prope
  *
  * These functions allow 1 process to create a "socket" was pluged into which another
  * process can create a "plug" remotely to plug into.
- * Socket can provides content for several plugs.
+ * Socket can provide content for several plugs.
  * This is best for small sized objects (about the size range
  * of a small icon up to a few large icons). Sine the plug is actually an
  * image object, you can fetch the pixel data
@@ -2895,7 +2895,7 @@ EAPI Eina_Bool ecore_evas_extn_socket_events_block_get(Ecore_Evas *ee);
  * ecore_evas_extn_plug_object_data_unlock(). Keeping a lock over more than
  * 1 iteration of the main ecore loop will be problematic, so avoid it. Also
  * forgetting to unlock may cause the socket process to freeze and thus create
- * odd behavior.
+ * odd behaviors.
  *
  * @see ecore_evas_extn_plug_new()
  * @see ecore_evas_extn_plug_object_data_unlock()
