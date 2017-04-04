@@ -26,11 +26,11 @@
  */
 /**
  * What does it means for you ?
- *    Evas Loader are dynamically linked to Evas at run time. You can use anything
- * you want here as long as the license of the module you add to your system match
- * the application you are using it in. Be aware that if you make a module that use
+ *    Evas Loader is dynamically linked to Evas at run time. You can use anything
+ * you want here as long as the license of the module you add to your system matches
+ * the application you are using it in. Be aware that if you make a module that uses
  * a GPL library, it may turn the license of your binary to GPL. Evas doesn't ship
- * with any GPL module.
+ * with any GPL modules.
  */
 
 #ifndef _EVAS_LOADER_H
@@ -108,7 +108,7 @@ struct _Evas_Module
 {
    const Evas_Module_Api *definition;
 
-   void		*functions;	/* this are the functions exported by the module */
+   void		*functions;	/* these are the functions exported by the module */
    int           id_engine;	/* some internal data for the module i.e the id for engines */
 
    int           ref; /* how many refs */
