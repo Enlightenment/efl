@@ -19,7 +19,7 @@ static void evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_
 				     int x, int y, Eina_Bool do_async);
 static void _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                void *output, void *context, void *surface,
-                               int x, int y, int l, int t, int r, int b, Eina_Bool do_async);
+                               int x, int y, int l, int t, int r, int b, Eina_Bool skip_map, Eina_Bool do_async);
 static void evas_object_image_free(Evas_Object *eo_obj,
 				   Evas_Object_Protected_Data *obj);
 static void evas_object_image_render_pre(Evas_Object *eo_obj,
@@ -1727,12 +1727,6 @@ _image_has_border(Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_Image_Data *
 }
 
 static inline Eina_Bool
-_image_has_map(Evas_Object_Protected_Data *obj, Evas_Image_Data *o EINA_UNUSED)
-{
-   return ((obj->map->cur.map) && (obj->map->cur.map->count > 3) && (obj->map->cur.usemap));
-}
-
-static inline Eina_Bool
 _image_is_filled(Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
 {
    if (o->filled) return EINA_TRUE;
@@ -1765,8 +1759,7 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
    output = ENDT;
 
    // FIXME: In GL we could use the image even if scaled
-   if (!_image_has_border(obj, o) && !_image_has_map(obj, o) && _image_is_filled(obj, o)
-       && !_image_is_scaled(obj, o))
+   if (!_image_has_border(obj, o) && _image_is_filled(obj, o) && !_image_is_scaled(obj, o))
      {
         int imagew, imageh, uvw, uvh;
 
@@ -1802,7 +1795,7 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
    _evas_image_render(eo_obj, obj, output, ctx, surface,
                       x + l - obj->cur->geometry.x,
                       y + t - obj->cur->geometry.y,
-                      l, t, r, b, do_async);
+                      l, t, r, b, EINA_TRUE, do_async);
 
    ENFN->context_free(output, ctx);
 
@@ -1892,7 +1885,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
           return;
      }
 
-   _evas_image_render(eo_obj, obj, output, context, surface, x, y, 0, 0, 0, 0, do_async);
+   _evas_image_render(eo_obj, obj, output, context, surface, x, y, 0, 0, 0, 0, EINA_FALSE, do_async);
 }
 
 void *
@@ -2008,7 +2001,7 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 static void
 _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                    void *output, void *context, void *surface, int x, int y,
-                   int l, int t, int r, int b, Eina_Bool do_async)
+                   int l, int t, int r, int b, Eina_Bool skip_map, Eina_Bool do_async)
 {
    Evas_Image_Data *o = obj->private_data;
    int imagew, imageh, uvw, uvh, cw, ch;
@@ -2023,7 +2016,8 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    if (ENFN->context_clip_get(ENDT, context, NULL, NULL, &cw, &ch) && (!cw || !ch))
      return;
 
-   if ((obj->map->cur.map) && (obj->map->cur.map->count > 3) && (obj->map->cur.usemap))
+   if (!skip_map && (obj->map->cur.map) && (obj->map->cur.map->count > 3)
+       && (obj->map->cur.usemap))
      {
         evas_object_map_update(eo_obj, x, y, imagew, imageh, uvw, uvh);
 

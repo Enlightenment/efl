@@ -266,6 +266,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         Eina_Bool ok;
         void *previous = pd->data->output;
         Evas_Object_Filter_Data *fcow;
+        Eina_Bool use_map = EINA_FALSE;
         Evas_Filter_Padding pad;
 
         W = obj->cur->geometry.w;
@@ -287,6 +288,15 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                        obj->cur->clipper->cur->cache.clip.a);
         else
           ENFN->context_multiplier_unset(output, context);
+
+        if (obj->map->cur.usemap && obj->map->cur.map && (obj->map->cur.map->count >= 4))
+          {
+             int iw, ih;
+
+             use_map = EINA_TRUE;
+             ENFN->image_size_get(ENDT, previous, &iw, &ih);
+             evas_object_map_update(eo_obj, x, y, iw, ih, iw, ih);
+          }
 
         if (!pd->data->chain)
           {
@@ -348,12 +358,20 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
              if (!redraw)
                {
                   // Render this image only
-                  ENFN->image_draw(ENDT, context,
-                                   surface, previous,
-                                   0, 0, W, H,         // src
-                                   X + x, Y + y, W, H, // dst
-                                   EINA_FALSE,         // smooth
-                                   do_async);
+                  if (use_map)
+                    {
+                       ENFN->image_map_draw(ENDT, context, surface, previous,
+                                            obj->map->spans, EINA_TRUE, 0, do_async);
+                    }
+                  else
+                    {
+                       ENFN->image_draw(ENDT, context,
+                                        surface, previous,
+                                        0, 0, W, H,         // src
+                                        X + x, Y + y, W, H, // dst
+                                        EINA_FALSE,         // smooth
+                                        do_async);
+                    }
                   return EINA_TRUE;
                }
           }
@@ -427,7 +445,8 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         // Allocate all buffers now
         evas_filter_context_buffers_allocate_all(filter);
-        evas_filter_target_set(filter, context, surface, X + x, Y + y);
+        evas_filter_target_set(filter, context, surface, X + x, Y + y,
+                               use_map ? obj->map->spans : NULL);
 
         // Request rendering from the object itself (child class)
         evas_filter_program_padding_get(pd->data->chain, &pad, NULL);

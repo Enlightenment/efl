@@ -2797,7 +2797,7 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
           }
      }
 
-   if (snap->snapshot_no_obscure)
+   if (snap->snapshot_no_obscure || _evas_render_has_map(snap))
      goto skip_obscures;
 
    tiler = eina_tiler_new(w, h);
@@ -2881,6 +2881,8 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
              OBJ_ARRAY_PUSH(&evas->temporary_objects, obj);
 
              if (above_top) continue;
+             if (obj->cur->snapshot && !evas_object_is_opaque(obj->object, obj))
+               continue;
 
              /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
              if (alpha && !skip_cutouts)
@@ -2985,7 +2987,11 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
 
                             obj2 = eina_array_data_get(&evas->temporary_objects, j);
                             if (obj2 == top) above_top = EINA_TRUE;
-                            if (above_top && obj2->cur->snapshot) continue;
+                            if (obj2->cur->snapshot)
+                              {
+                                 if (above_top) continue;
+                                 if (!evas_object_is_opaque(obj2->object, obj2)) continue;
+                              }
 #if 1
                             if (
                                 RECTS_INTERSECT

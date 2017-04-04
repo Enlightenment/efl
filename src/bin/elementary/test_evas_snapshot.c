@@ -25,6 +25,24 @@ static const char *filter =
       "print ('Evaluating filter: ' .. input.width .. 'x' .. input.height)"
       ;
 
+static inline void
+_efl_key_int_set(Eo *obj, const char *key, int val)
+{
+   Eina_Value *v = eina_value_new(EINA_VALUE_TYPE_INT);
+   eina_value_set(v, val);
+   efl_key_value_set(obj, key, v);
+}
+
+static inline int
+_efl_key_int_get(Eo *obj, const char *key)
+{
+   Eina_Value *v = efl_key_value_get(obj, key);
+   int val;
+
+   if (!eina_value_get(v, &val)) return 0;
+   return val;
+}
+
 static inline Eo *
 _image_create(Eo *win, const char *path)
 {
@@ -100,6 +118,49 @@ _close(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *win = data;
 
    efl_del(win);
+}
+
+static void
+_map_do(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *snap = data;
+   int x, y, w, h;
+
+   // Prevent recursive infinite loop :(
+   static int here = 0;
+   if (here) return;
+   here = 1;
+
+   efl_gfx_map_populate(snap, 0);
+   efl_gfx_geometry_get(snap, &x, &y, &w, &h);
+   efl_gfx_map_zoom(snap, 0.8, 0.8, x + w/2., y + h/2.);
+   efl_gfx_map_rotate(snap, 45., x + w/2., y + h/2.);
+   efl_gfx_map_enable_set(snap, EINA_TRUE);
+
+   here = 0;
+}
+
+static void
+_toggle_map(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *snap;
+
+   snap = efl_key_wref_get(win, "snap");
+   if (!_efl_key_int_get(snap, "map"))
+     {
+        _efl_key_int_set(snap, "map", 1);
+        _map_do(snap, NULL);
+        efl_event_callback_add(snap, EFL_GFX_EVENT_RESIZE, _map_do, snap);
+        efl_event_callback_add(snap, EFL_GFX_EVENT_MOVE, _map_do, snap);
+     }
+   else
+     {
+        _efl_key_int_set(snap, "map", 0);
+        efl_event_callback_del(snap, EFL_GFX_EVENT_RESIZE, _map_do, snap);
+        efl_event_callback_del(snap, EFL_GFX_EVENT_MOVE, _map_do, snap);
+        efl_gfx_map_enable_set(snap, EINA_FALSE);
+     }
 }
 
 void
@@ -189,6 +250,14 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _save_image, win),
+           efl_gfx_visible_set(efl_added, 1));
+
+   efl_add(ELM_BUTTON_CLASS, win,
+           efl_text_set(efl_added, "Map"),
+           efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+           efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+           efl_pack(box, efl_added),
+           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_map, win),
            efl_gfx_visible_set(efl_added, 1));
 
    efl_add(ELM_BUTTON_CLASS, win,

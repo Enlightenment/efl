@@ -1489,7 +1489,7 @@ evas_filter_context_obscured_region_set(Evas_Filter_Context *ctx, Eina_Rectangle
 /* Final target */
 Eina_Bool
 evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
-                       void *surface, int x, int y)
+                       void *surface, int x, int y, const RGBA_Map *map)
 {
    void *mask = NULL;
 
@@ -1509,11 +1509,20 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
      ctx->target.color_use = EINA_FALSE;
    ctx->target.rop = ENFN->context_render_op_get(ENDT, draw_context);
 
+   free(ctx->target.map);
+   if (!map) ctx->target.map = NULL;
+   else
+     {
+        size_t len = sizeof(RGBA_Map) + sizeof(RGBA_Map_Point) * (map->count - 1);
+        ctx->target.map = malloc(len);
+        memcpy(ctx->target.map, map, len);
+     }
+
    ENFN->context_clip_image_get
       (ENDT, draw_context, &mask, &ctx->target.mask_x, &ctx->target.mask_y);
    if (ctx->target.mask)
      ctx->evas->engine.func->image_free(ctx->evas->engine.data.output, ctx->target.mask);
-   ctx->target.mask = mask;
+   ctx->target.mask = mask; // FIXME: why no ref???
 
    return EINA_TRUE;
 }
@@ -1558,10 +1567,18 @@ _filter_target_render(Evas_Filter_Context *ctx)
      }
 
    ENFN->context_render_op_set(ENDT, drawctx, ctx->target.rop);
-   ENFN->image_draw(ENDT, drawctx, surface, image,
-                    0, 0, src->w, src->h,
-                    ctx->target.x, ctx->target.y, src->w, src->h,
-                    EINA_TRUE, EINA_FALSE);
+   if (ctx->target.map)
+     {
+        ENFN->image_map_draw(ENDT, drawctx, surface, image,
+                             ctx->target.map, EINA_TRUE, 0, EINA_FALSE);
+     }
+   else
+     {
+        ENFN->image_draw(ENDT, drawctx, surface, image,
+                         0, 0, src->w, src->h,
+                         ctx->target.x, ctx->target.y, src->w, src->h,
+                         EINA_TRUE, EINA_FALSE);
+     }
 
    ENFN->context_free(ENDT, drawctx);
    evas_ector_buffer_engine_image_release(src->buffer, image);

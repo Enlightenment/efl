@@ -153,6 +153,7 @@ struct _Evas_Filter_Context
       void *mask; // mask
       int mask_x, mask_y; // mask offset
       Evas_Render_Op rop;
+      RGBA_Map *map;
       Eina_Bool clip_use : 1;
       Eina_Bool color_use : 1;
    } target;
