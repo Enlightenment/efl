@@ -315,7 +315,7 @@ struct convert_return_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::type_def const& ret_type, Context const& context) const
    {
-     if (ret_type.c_type == "const char *" || ret_type.c_type == "Eina_Stringshare *")
+     if (ret_type.c_type == "Eina_Stringshare *")
        {
          if (!as_generator("string _mng_str = Marshal.PtrToStringAuto(_ret_var);\n")
              .generate(sink, attributes::unused, context))
@@ -323,20 +323,23 @@ struct convert_return_generator
 
          if (ret_type.has_own)
            {
-               if (ret_type.c_type == "const char *")
-                 {
-                     if (!as_generator("Marshal.FreeHGlobal(_ret_var);\n").generate(sink, attributes::unused, context))
-                         return false;
-                 }
-               else if (ret_type.c_type == "Eina_Stringshare *")
-                 {
-                     if (!as_generator("eina.Stringshare.eina_stringshare_del(_ret_var);\n").generate(sink, attributes::unused, context))
-                         return false;
-                 }
+             if (!as_generator("eina.Stringshare.eina_stringshare_del(_ret_var);\n").generate(sink, attributes::unused, context))
+                 return false;
            }
 
          if (!as_generator(scope_tab << scope_tab << "return _mng_str;\n").generate(sink, attributes::unused, context))
              return false;
+       }
+     else if (ret_type.c_type == "const char *" && !ret_type.has_own)
+       {
+
+         if (!as_generator("string _mng_str = Marshal.PtrToStringAuto(_ret_var);\n")
+             .generate(sink, attributes::unused, context))
+             return false;
+
+         if (!as_generator(scope_tab << scope_tab << "return _mng_str;\n").generate(sink, attributes::unused, context))
+             return false;
+
        }
      else if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")
        {
@@ -414,34 +417,31 @@ struct native_convert_return_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::type_def const& ret_type, Context const& context) const
    {
-     if (ret_type.c_type == "const char *" || ret_type.c_type == "Eina_Stringshare *") { // Correct check for string?
+     if (ret_type.c_type == "const char *")
+       {
+          if(!ret_type.has_own)
+            {
+               return as_generator(
+                    "return efl.eo.Globals.cached_string_to_intptr(((" << string << "Inherit)wrapper).cached_strings, _ret_var);\n"
+                 ).generate(sink, klass->cxx_name, context);
+            }
+          else
+            {
+                return as_generator("return _ret_var;\n"
+                    ).generate(sink, attributes::unused, context);
+            }
+       }
+     else if (ret_type.c_type == "Eina_Stringshare *") { // Correct check for string?
          if (!ret_type.has_own)
            {
-               if (ret_type.c_type == "const char *")
-                 {
-                    return as_generator(
-                         "return efl.eo.Globals.cached_string_to_intptr(((" << string << "Inherit)wrapper).cached_strings, _ret_var);\n"
-                      ).generate(sink, klass->cxx_name, context);
-                 }
-               else if (ret_type.c_type == "Eina_Stringshare *")
-                 {
-                    return as_generator(
-                         "return efl.eo.Globals.cached_stringshare_to_intptr(((" << string << "Inherit)wrapper).cached_stringshares, _ret_var);\n"
-                      ).generate(sink, klass->cxx_name, context);
-                 }
+              return as_generator(
+                   "return efl.eo.Globals.cached_stringshare_to_intptr(((" << string << "Inherit)wrapper).cached_stringshares, _ret_var);\n"
+                ).generate(sink, klass->cxx_name, context);
            }
          else
            {
-               if (ret_type.c_type == "const char *")
-                 {
-                     return as_generator("return Marshal.StringToHGlobalAuto(_ret_var);\n")
-                         .generate(sink, attributes::unused, context);
-                 }
-               else if (ret_type.c_type == "Eina_Stringshare *")
-                 {
-                     return as_generator("return eina.Stringshare.eina_stringshare_add(_ret_var);\n")
-                         .generate(sink, attributes::unused, context);
-                 }
+              return as_generator("return eina.Stringshare.eina_stringshare_add(_ret_var);\n")
+                 .generate(sink, attributes::unused, context);
            }
      }
      else if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")

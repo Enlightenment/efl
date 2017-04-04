@@ -210,4 +210,76 @@ public class MarshalTest<T> : ICustomMarshaler
     }
 }
 
+/* StringSurrenderMarshaler is a Custom Marshaler that both releases
+ * string ownership to C when providing @in arguments and not
+ * taking ownership from C when receiving strings in @out and return
+ * parameters.
+ *
+ * It is needed as by default the CLI/CLR will take ownership of any string
+ * passed to and received from the native interface.
+ */
+public class StringSurrenderMarshaler : ICustomMarshaler {
+    public object MarshalNativeToManaged(IntPtr pNativeData) {
+        return Marshal.PtrToStringAnsi(pNativeData);
+    }
+
+    public IntPtr MarshalManagedToNative(object managedObj) {
+        return Marshal.StringToHGlobalAnsi((string)managedObj);
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData) {
+        // No need to cleanup. C will take care of it.
+    }
+
+    public void CleanUpManagedData(object managedObj) {
+    }
+
+    public int GetNativeDataSize() {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie) {
+        if (marshaler == null) {
+            marshaler = new StringSurrenderMarshaler();
+        }
+        return marshaler;
+    }
+    static private StringSurrenderMarshaler marshaler;
+}
+
+/* StringOwnNativeMarshaler is a Custom Marshaler that releases the
+ * native IntPtr upon converting to managed data.
+ */
+public class StringOwnNativeMarshaler: ICustomMarshaler {
+    public object MarshalNativeToManaged(IntPtr pNativeData) {
+        var ret = Marshal.PtrToStringAnsi(pNativeData);
+        Marshal.FreeHGlobal(pNativeData);
+        return ret;
+    }
+
+    public IntPtr MarshalManagedToNative(object managedObj) {
+        return Marshal.StringToHGlobalAnsi((string)managedObj);
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData) {
+    }
+
+    public void CleanUpManagedData(object managedObj) {
+    }
+
+    public int GetNativeDataSize() {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie) {
+        if (marshaler == null) {
+            marshaler = new StringOwnNativeMarshaler();
+        }
+        return marshaler;
+    }
+    static private StringOwnNativeMarshaler marshaler;
+}
+
+
+
 } }
