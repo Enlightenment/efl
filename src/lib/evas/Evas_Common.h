@@ -1363,7 +1363,7 @@ EAPI void evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas);
  * @param dev The devise to query
  * @return The device class to set
  *
- * This sets the device class set by evas_device_class_set().
+ * This gets the device class set by evas_device_class_set().
  *
  * @since 1.8
  */
@@ -1400,7 +1400,7 @@ EAPI Evas_Device_Subclass evas_device_subclass_get(const Evas_Device *dev);
  *
  * Devices may not be real, but may be emulated by listening to input on other
  * devices and modifying or interpeting it to generate output on an emulated
- * device (example a fingeron a touchscreen will often emulate a mouse when
+ * device (example a finger on a touchscreen will often emulate a mouse when
  * it presses). This allows you to set which device primarily emulates @p dev
  * so the user can choose to ignore events from emulated devices if they also
  * pay attention to source device events for example.
@@ -1459,11 +1459,11 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  *   - textgrid and
  *   - image.
  *
- * These functions apply to @b any Evas object, whichever type that
+ * These functions apply to @b any Evas object, whichever type they
  * may have.
  *
  * @note The built-in types which are most used are rectangles, text
- * and images. In fact, with these ones one can create 2D interfaces
+ * and images. In fact, with these one can create 2D interfaces
  * of arbitrary complexity and EFL makes it easy.
  */
 
@@ -1481,7 +1481,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * @li Clipping
  * @li Reference counting
  *
- * All of this issues are handled through the functions here grouped. Examples
+ * All of these issues are handled through the functions grouped here. Examples
  * of these function can be seen in @ref Example_Evas_Object_Manipulation(which
  * deals with the most common ones) and in @ref Example_Evas_Stacking(which
  * deals with stacking functions).
@@ -1544,7 +1544,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * Miscellaneous functions that also apply to any object, but are less
  * used or not implemented by all objects.
  *
- * Examples on this group of functions can be found @ref
+ * Examples of this group of functions can be found @ref
  * Example_Evas_Stacking "here" and @ref Example_Evas_Events "here".
  *
  * @ingroup Evas_Object_Group
@@ -1650,7 +1650,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  *
  * In the @ref clipping section we used a solid white clipper, which produced no
  * change in the color of the clipped object, it just hid what was outside the
- * clippers area. It is however sometimes desirable to change the of color an
+ * clippers area. It is however sometimes desirable to change the color of an
  * object, this can be accomplished using a clipper that has a non-white color.
  * Clippers with color work by multiplying the colors of clipped object. The
  * following code will show how to remove all the red from an object:
@@ -1695,7 +1695,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * evas_object_image_fill_set(img, 0, 0, w, h);
  * @endcode
  * The first function, naturally, is creating the image object. Then,
- * one must set an source file on it, so that it knows where to fetch
+ * one must set a source file on it, so that it knows where to fetch
  * image data from. Next, one must set <b>how to fill the image
  * object's area</b> with that given pixel data. One could use just a
  * sub-region of the original image or even have it tiled repeatedly
@@ -1899,13 +1899,13 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  *   R = (r * a) / 32; G = (g * a) / 32; B = (b * a) / 32;
  * .
  * - #EVAS_COLORSPACE_GRY8:
- *   The image is just a alpha mask (8 bit's per pixel). This is used
+ *   The image is just an alpha mask (8 bit's per pixel). This is used
  *   for alpha masking.
  *
- * @warning We don't guarantee any proper results if you create a Image object
+ * @warning We don't guarantee any proper results if you create an Image object
  * without setting the evas engine.
  *
- * Some examples on this group of functions can be found @ref
+ * Some examples of this group of functions can be found @ref
  * Example_Evas_Images "here".
  *
  * @ingroup Evas_Object_Specific
@@ -1930,7 +1930,7 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb)(void *data, Evas_Object *o);
  * unlikely.
  * @since 1.1
  *
- * If file is a Eina_Stringshare, use directly @ref evas_object_image_extension_can_load_fast_get.
+ * If file is an Eina_Stringshare, use directly @ref evas_object_image_extension_can_load_fast_get.
  *
  * This functions is threadsafe.
  */
@@ -2596,7 +2596,7 @@ EAPI const Evas_Smart_Cb_Description  *evas_smart_callback_description_find(cons
 EAPI Eina_Bool                         evas_smart_class_inherit_full(Evas_Smart_Class *sc, const Evas_Smart_Class *parent_sc, unsigned int parent_sc_size) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Get the number of users of the smart instance
+ * Get the number of uses of the smart instance
  *
  * @param s The Evas_Smart to get the usage count of
  * @return The number of uses of the smart instance
@@ -2706,7 +2706,7 @@ EAPI void evas_smart_legacy_type_register(const char *type, const Efl_Class *kla
  * to all children objects. This clipper will control the visibility,
  * clipping and color of sibling objects (remember that the clipping
  * is recursive, and clipper color modulates the color of its
- * clippees). By default, this base will also move children relatively
+ * clippees). By default, this base will also move children relative
  * to the parent, and delete them when parent is deleted. In other
  * words, it is the base for simple object grouping.
  *
