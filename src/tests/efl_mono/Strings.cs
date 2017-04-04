@@ -4,6 +4,7 @@ namespace TestSuite {
 
 class TestStrings
 {
+    /* The managed call is still owner of the sent string */
     public static void in_string()
     {
         {
@@ -15,6 +16,8 @@ class TestStrings
         System.GC.Collect();
     }
 
+    /* The managed call must not keep ownership of the C string after the
+     * call */
     public static void in_own_string()
     {
         {
@@ -26,6 +29,7 @@ class TestStrings
         System.GC.Collect();
     }
 
+    /* The managed call must not take ownership of the returned string */
     public static void return_string()
     {
         {
@@ -35,6 +39,7 @@ class TestStrings
         System.GC.Collect();
     }
 
+    /* The managed call is free to own the returned string */
     public static void return_own_string()
     {
         {
@@ -44,6 +49,7 @@ class TestStrings
         System.GC.Collect();
     }
 
+    /* The managed call is *not* the owner of the string put in the out argument */
     public static void out_string()
     {
         {
@@ -55,6 +61,7 @@ class TestStrings
         System.GC.Collect();
     }
 
+    /* The managed call is the owner of the string in the out parameter */
     public static void out_own_string()
     {
         {
@@ -83,6 +90,7 @@ class TestStrings
 
         public override String in_own_string(String str)
         {
+            /* Console.WriteLine("Called my own virtual"); */
             received_in_own = str;
             return String.Empty;
         }
@@ -108,48 +116,66 @@ class TestStrings
         }
     }
 
+    /* The managed wrapper must not take ownership of the in parameter */
     public static void in_string_from_virtual()
     {
         StringReturner obj = new StringReturner();
-        String sent = "in_inherited";
-        obj.call_in_string(sent);
-        Test.AssertEquals(sent, obj.received_in);
+        /* for (int i = 0; i < 10000; i++) { */
+            String sent = "in_inherited";
+            obj.call_in_string(sent);
+            Test.AssertEquals(sent, obj.received_in);
+        /* } */
+        System.GC.Collect();
     }
 
+    /* The managed wrapper should take ownership of the in parameter */
     public static void in_own_string_from_virtual()
     {
         StringReturner obj = new StringReturner();
-        String sent = "in_own_inherited";
-        obj.call_in_own_string(sent);
-        Test.AssertEquals(sent, obj.received_in_own);
+        /* for (int i = 0; i < 10000; i++) { */
+            String sent = "in_own_inherited";
+            obj.call_in_own_string(sent);
+            Test.AssertEquals(sent, obj.received_in_own);
+        /* } */
+        System.GC.Collect();
     }
 
+    /* The managed wrapper still owns the returned C string. We need to cache it until
+     * some time in the future */
     public static void return_string_from_virtual()
     {
         test.Testing obj = new StringReturner();
-        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        /* for (int i = 0; i < 10000; i ++) // Uncomment this to check for memory leaks. */
         Test.AssertEquals("inherited", obj.call_return_string());
+        System.GC.Collect();
     }
 
+    /* The managed wrapper must surrender the ownership to the C after the virtual call. */
     public static void return_own_string_from_virtual()
     {
         test.Testing obj = new StringReturner();
-        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        /* for (int i = 0; i < 10000; i ++) // Uncomment this to check for memory leaks. */
         Test.AssertEquals("own_inherited", obj.call_return_own_string());
+        System.GC.Collect();
     }
 
+    /* The managed wrapper still owns the C string after the call. Like return without own, we may
+     * need to cache it until some time in the future. */
     public static void out_string_from_virtual()
     {
         test.Testing obj = new StringReturner();
-        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        /* for (int i = 0; i < 10000; i ++) // Uncomment this to check for memory leaks. */
         Test.AssertEquals("out_inherited", obj.call_out_string());
+        System.GC.Collect();
     }
 
+    /* The managed wrapper gives C the ownership of the filled out parameter */
     public static void out_own_string_from_virtual()
     {
         test.Testing obj = new StringReturner();
-        // for (int i = 0; i < 1000000; i ++) // Uncomment this to check for memory leaks.
+        /* for (int i = 0; i < 10000; i ++) // Uncomment this to check for memory leaks. */
         Test.AssertEquals("out_own_inherited", obj.call_out_own_string());
+        System.GC.Collect();
     }
 
 }

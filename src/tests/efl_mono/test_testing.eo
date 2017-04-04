@@ -39,16 +39,16 @@ class Test.Testing (Efl.Object) {
 
       in_string {
          params {
-            @in str: own(string);
+            @in str: string;
          }
          return: own(string);
       }
 
       in_own_string {
          params {
-            @in str: string;
+            @in str: own(string);
          }
-         return: string;
+         return: own(string);
       }
 
       return_string {
@@ -75,14 +75,12 @@ class Test.Testing (Efl.Object) {
         params {
             @in str: string;
         }
-        return: string;
       }
 
       call_in_own_string {
         params {
-            @in str: string;
+            @in str: own(string);
         }
-        return: own(string);
       }
 
       call_return_string {

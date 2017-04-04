@@ -41,7 +41,7 @@ struct native_function_definition_generator
         << "_delegate(System.IntPtr obj, System.IntPtr pd"
         << *grammar::attribute_reorder<-1, -1>
         (
-         (", " << marshall_annotation << " " << marshall_parameter)
+         (", " << marshall_native_annotation << " " << marshall_parameter)
         )
         << ");\n")
        .generate(sink, std::make_tuple(f.return_type, f.return_type, escape_keyword(f.name), f.parameters), context))
@@ -58,10 +58,7 @@ struct native_function_definition_generator
         << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
-        << *grammar::attribute_reorder<-1, -1>
-        (
-         (", " << marshall_annotation << " " << marshall_parameter)
-        )
+        << *(", " << marshall_parameter)
         << ")\n"
         << scope_tab << "{\n"
         /****/
