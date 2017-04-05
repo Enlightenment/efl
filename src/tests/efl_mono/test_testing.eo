@@ -104,14 +104,12 @@ class Test.Testing (Efl.Object) {
         params {
             @in str: stringshare;
         }
-        return: stringshare;
       }
 
       call_in_own_stringshare {
         params {
-            @in str: stringshare;
+            @in str: own(stringshare);
         }
-        return: own(stringshare);
       }
 
       call_return_stringshare {

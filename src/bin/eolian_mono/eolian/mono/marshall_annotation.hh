@@ -59,7 +59,16 @@ struct marshall_annotation_visitor_generate
           }},
           {"string", false, [&] {
                 return "";
-          }}
+          }},
+          {"stringshare", true, [&] {
+                if (!is_out)
+                    return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringshareSurrenderMarshaler))]";
+                else
+                    return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringshareOwnOutMarshaler))]";
+          }},
+          {"stringshare", false, [&] {
+                return "";
+          }},
         };
       match const return_match_table[] =
         {
@@ -70,7 +79,13 @@ struct marshall_annotation_visitor_generate
                 if (!is_return)
                     return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringSurrenderMarshaler))]";
                 else
-                    return ""; }}
+                    return ""; }},
+          {"stringshare", true, [&] {
+                return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringshareOwnOutMarshaler))]";
+          }},
+          {"stringshare", false, [&] {
+                return "";
+          }}
         };
 
         if(eina::optional<bool> b = call_annotation_match
@@ -143,7 +158,16 @@ struct marshall_native_annotation_visitor_generate
           }},
           {"string", false, [&] {
                 return "";
-          }}
+          }},
+          {"stringshare", true, [&] {
+                if (!is_out)
+                    return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringshareOwnOutMarshaler))]";
+                else
+                    return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringshareSurrenderMarshaler))]";
+          }},
+          {"stringshare", false, [&] {
+                return "";
+          }},
         };
       match const return_match_table[] =
         {
@@ -151,6 +175,12 @@ struct marshall_native_annotation_visitor_generate
           {"bool", nullptr, [&] { return " [return: MarshalAs(UnmanagedType.I1)]"; }},
           {"string", true, [&] { return ""; }},
           {"string", false, [&] {  return ""; }},
+          {"stringshare", true, [&] {
+                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringshareSurrenderMarshaler))]";
+          }},
+          {"stringshare", false, [&] {
+                return "";
+          }},
         };
 
         if(eina::optional<bool> b = call_annotation_match
