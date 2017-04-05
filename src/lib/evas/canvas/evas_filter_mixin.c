@@ -65,7 +65,12 @@ struct _Evas_Filter_Post_Render_Data
    Eina_Bool success;
 };
 
-static const Evas_Object_Filter_Data evas_filter_data_cow_default = {};
+// FIXME: This should be enabled (with proper heuristics)
+#define FILTER_CONTEXT_REUSE EINA_FALSE
+
+static const Evas_Object_Filter_Data evas_filter_data_cow_default = {
+   .reuse = FILTER_CONTEXT_REUSE
+};
 Eina_Cow *evas_object_filter_cow = NULL;
 
 void
@@ -100,6 +105,7 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
    Eina_Bool destroy = !pd->data->reuse;
    Evas_Object_Filter_Data *fcow;
    Eo *eo_obj = obj->object;
+   void *output = NULL;
 
    if (!success)
      {
@@ -110,36 +116,25 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
      }
    else
      {
-        void *output = evas_filter_buffer_backing_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID, EINA_FALSE);
-
-        fcow = FCOW_BEGIN(pd);
-        fcow->output = output;
-        FCOW_END(fcow, pd);
+        output = evas_filter_buffer_backing_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID, EINA_FALSE);
+        FCOW_WRITE(pd, output, output);
      }
 
    if (EINA_UNLIKELY(ctx != pd->data->context))
      {
         ERR("Filter context has changed! Destroying it now...");
-        fcow = FCOW_BEGIN(pd);
-        evas_filter_context_destroy(fcow->context);
-        fcow->context = NULL;
-        FCOW_END(fcow, pd);
+        evas_filter_context_destroy(pd->data->context);
         destroy = EINA_TRUE;
      }
 
+   evas_filter_buffer_backing_release(ctx, previous);
    if (destroy)
      {
-        evas_filter_buffer_backing_release(ctx, previous);
         evas_filter_context_destroy(ctx);
         ctx = NULL;
      }
 
-   if (pd->data->context != ctx)
-     {
-        fcow = FCOW_BEGIN(pd);
-        fcow->context = ctx;
-        FCOW_END(fcow, pd);
-     }
+   FCOW_WRITE(pd, context, ctx);
 }
 
 static void
@@ -401,7 +396,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         if (filter)
           {
-             ok = evas_filter_context_program_reuse(filter, pd->data->chain, X, Y);
+             ok = evas_filter_context_program_use(filter, pd->data->chain, EINA_TRUE, X, Y);
              if (!ok)
                {
                   fcow = FCOW_BEGIN(pd);

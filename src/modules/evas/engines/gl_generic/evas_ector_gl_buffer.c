@@ -5,7 +5,6 @@
 #define ECTOR_GL_BUFFER_BASE_PROTECTED
 
 #include "evas_common_private.h"
-#include "evas_gl_private.h"
 
 #include <gl/Ector_GL.h>
 #include "gl/ector_gl_private.h"
@@ -17,6 +16,7 @@
 
 #include "evas_ector_buffer.eo.h"
 #include "evas_ector_gl_buffer.eo.h"
+#include "evas_gl_private.h"
 
 #define MY_CLASS EVAS_ECTOR_GL_BUFFER_CLASS
 

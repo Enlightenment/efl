@@ -13002,6 +13002,7 @@ _filter_sync_end(Evas_Filter_Context *ctx, Eina_Bool success)
 
    if (filter->ti)
      {
+        // FIXME: LEAK HERE!
         filter->output = evas_filter_buffer_backing_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID, EINA_FALSE);
         if (filter->ti->parent.format->gfx_filter)
           filter->ti->parent.format->gfx_filter->invalid = !success;

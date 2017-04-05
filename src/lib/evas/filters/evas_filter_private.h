@@ -265,6 +265,7 @@ struct _Evas_Filter_Buffer
    Eina_Bool locked : 1;      // internal flag
    Eina_Bool dirty : 1;       // Marked as dirty as soon as a command writes to it
    Eina_Bool is_render : 1;   // Is render target of a filter using engine functions (ie. needs FBO in GL)
+   Eina_Bool cleanup : 1;     // Needs cleaning up if not allocated
 };
 
 enum _Evas_Filter_Interpolation_Mode
@@ -295,6 +296,7 @@ Evas_Filter_Buffer *evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx, Evas
 Eina_Bool           evas_filter_interpolate(DATA8* output /* 256 values */, int *points /* 256 values */, Evas_Filter_Interpolation_Mode mode);
 int evas_filter_smallest_pow2_larger_than(int val);
 
+void _evas_filter_context_program_reuse(Evas_Filter_Context *ctx);
 void evas_filter_parser_shutdown(void);
 
 #define E_READ  ECTOR_BUFFER_ACCESS_FLAG_READ

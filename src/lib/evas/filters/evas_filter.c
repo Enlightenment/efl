@@ -155,8 +155,12 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
                void *old_surface;
 
                old_surface = evas_ector_buffer_drawable_image_get(fb->buffer);
-               if (old_surface && (old_surface != proxy_surface))
-                 _filter_buffer_backing_free(fb);
+               if (old_surface)
+                 {
+                    evas_ector_buffer_engine_image_release(fb->buffer, old_surface);
+                    if (old_surface && (old_surface != proxy_surface))
+                      _filter_buffer_backing_free(fb);
+                 }
             }
           XDBG("Source #%d '%s' has dimensions %dx%d", fb->id, fb->source_name, fb->w, fb->h);
           if (!fb->buffer) fb->buffer = ENFN->ector_buffer_wrap(ENDT, obj->layer->evas->evas, source->proxy->surface);
@@ -164,14 +168,11 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
        }
 }
 
-Eina_Bool
-evas_filter_context_program_reuse(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm, int x, int y)
+void
+_evas_filter_context_program_reuse(Evas_Filter_Context *ctx)
 {
    Evas_Filter_Buffer *fb;
    Eina_List *li;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
 
    _filter_buffer_unlock_all(ctx);
 
@@ -194,9 +195,9 @@ evas_filter_context_program_reuse(Evas_Filter_Context *ctx, Evas_Filter_Program 
         ENFN->rectangle_draw(ENDT, dc, surface, 0, 0, fb->w, fb->h, ctx->async);
         ENFN->context_free(ENDT, dc);
         fb->dirty = EINA_FALSE;
-     }
 
-   return evas_filter_context_program_use(ctx, pgm, EINA_TRUE, x, y);
+        evas_ector_buffer_engine_image_release(fb->buffer, surface);
+     }
 }
 
 static void
@@ -268,10 +269,8 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *fb;
-   Eina_List *li;
+   Eina_List *li, *li2;
    unsigned w, h;
-
-   if (ctx->run_count > 0) return EINA_TRUE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
    w = ctx->w;
@@ -279,17 +278,24 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
 
    XDBG("Allocating all buffers based on output size %ux%u", w, h);
 
+   EINA_LIST_FOREACH(ctx->buffers, li, fb)
+     fb->cleanup = EINA_TRUE;
+
    EINA_INLIST_FOREACH(ctx->commands, cmd)
      {
         Evas_Filter_Fill_Mode fillmode = cmd->draw.fillmode;
         Evas_Filter_Buffer *in, *out;
 
         in = cmd->input;
+        in->cleanup = EINA_FALSE;
         if (!in->w && !in->h)
           {
              in->w = w;
              in->h = h;
           }
+
+        if (cmd->mask)
+          cmd->mask->cleanup = EINA_FALSE;
 
         // FIXME: No need for stretch buffers with GL!
         if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY)
@@ -326,6 +332,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
                        fb ? fb->id : -1, sw, sh, in->alpha_only ? "alpha" : "rgba");
                   if (!fb) goto alloc_fail;
                   fb->transient = EINA_TRUE;
+                  fb->cleanup = EINA_FALSE;
                }
           }
 
@@ -342,9 +349,11 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
                   fb ? fb->id : -1, sw, sh, in->alpha_only ? "alpha" : "rgba");
              if (!fb) goto alloc_fail;
              fb->transient = EINA_TRUE;
+             fb->cleanup = EINA_FALSE;
           }
 
         out = cmd->output;
+        out->cleanup = EINA_FALSE;
         if (!out->w && !out->h)
           {
              out->w = w;
@@ -356,7 +365,12 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
      {
         Eina_Bool render = EINA_FALSE, draw = EINA_FALSE;
 
-        if (fb->buffer || fb->source)
+        if (fb->source)
+          {
+             fb->cleanup = EINA_FALSE;
+             continue;
+          }
+        if (fb->buffer || fb->cleanup)
           continue;
 
         if (!fb->w && !fb->h)
@@ -376,6 +390,16 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
         XDBG("Allocated buffer #%d of size %ux%u %s: %p",
              fb->id, fb->w, fb->h, fb->alpha_only ? "alpha" : "rgba", fb->buffer);
         if (!fb->buffer) goto alloc_fail;
+     }
+
+   EINA_LIST_FOREACH_SAFE(ctx->buffers, li, li2, fb)
+     {
+        if (fb->cleanup)
+          {
+             XDBG("Cleanup buffer #%d %dx%d %s", fb->id, fb->w, fb->h, fb->alpha_only ? "alpha" : "rgba");
+             ctx->buffers = eina_list_remove_list(ctx->buffers, li);
+             _buffer_free(fb);
+          }
      }
 
    return EINA_TRUE;
@@ -527,25 +551,30 @@ evas_filter_buffer_backing_set(Evas_Filter_Context *ctx, int bufid,
                                void *engine_buffer)
 {
    Evas_Filter_Buffer *fb;
+   Eina_Bool ret = EINA_FALSE;
+   Eo *buffer = NULL;
 
    fb = _filter_buffer_get(ctx, bufid);
    if (!fb) return EINA_FALSE;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!fb->buffer, EINA_FALSE);
-
    if (!engine_buffer)
      {
-        fb->buffer = _ector_buffer_create(fb, fb->is_render, EINA_FALSE);
+        buffer = _ector_buffer_create(fb, fb->is_render, EINA_FALSE);
         XDBG("Allocated buffer #%d of size %ux%u %s: %p",
              fb->id, fb->w, fb->h, fb->alpha_only ? "alpha" : "rgba", fb->buffer);
-        return fb->buffer ? EINA_TRUE : EINA_FALSE;
+        ret = buffer ? EINA_TRUE : EINA_FALSE;
+        goto end;
      }
 
-   if (fb->buffer) return EINA_FALSE;
-   if (fb->is_render) return EINA_FALSE;
+   if (fb->is_render) goto end;
 
-   fb->buffer = ENFN->ector_buffer_wrap(ENDT, ctx->evas->evas, engine_buffer);
-   return EINA_TRUE;
+   buffer = ENFN->ector_buffer_wrap(ENDT, ctx->evas->evas, engine_buffer);
+   ret = EINA_TRUE;
+
+end:
+   if (fb->buffer != buffer) efl_unref(fb->buffer);
+   fb->buffer = buffer;
+   return ret;
 }
 
 Eina_Bool

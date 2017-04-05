@@ -3486,6 +3486,8 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
 
    XDBG("Using program '%s' for context %p", pgm->name, ctx);
 
+   if (reuse) _evas_filter_context_program_reuse(ctx);
+
    // Copy current state (size, edje state val, color class, etc...)
    ctx->w = pgm->state.w;
    ctx->h = pgm->state.h;
