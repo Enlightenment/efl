@@ -496,7 +496,7 @@ _menu_item_activate_cb(void *data,
              if (eo_item2 != EO_OBJ(item))
                elm_menu_item_selected_set(eo_item2, 0);
           }
-        elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, EO_OBJ(item->parent), ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, NULL);
+        efl_event_callback_call(EO_OBJ(item->parent), ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, NULL);
      }
    else
      {
@@ -511,7 +511,7 @@ _menu_item_activate_cb(void *data,
                   elm_menu_item_selected_set(eo_item2, 0);
                }
           }
-        elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, WIDGET(item), ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, NULL);
+        efl_event_callback_call(WIDGET(item), ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, NULL);
         if (sd->menu_bar && was_open)
           _menu_item_select_cb(item, NULL, NULL, NULL);
      }

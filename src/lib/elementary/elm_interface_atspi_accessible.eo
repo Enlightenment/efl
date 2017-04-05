@@ -329,28 +329,6 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
             states: Elm.Atspi.State_Set; [[Accessible state set]]
          }
       }
-      event_handler_add @class @protected {
-         [[Register accessibility event listener]]
-         params {
-              @in cb: Efl_Event_Cb; [[Callback]]
-              @in data: void_ptr; [[Data]]
-         }
-         return: ptr(Elm.Atspi.Event.Handler); [[Event handler]]
-      }
-      event_handler_del @class @protected {
-         [[Deregister accessibility event listener]]
-         params {
-              @in handler: ptr(Elm.Atspi.Event.Handler); [[Event handler]]
-         }
-      }
-      event_emit @class @protected {
-      	 [[Emit event]]
-         params {
-            @in accessible: Elm.Interface.Atspi_Accessible; [[Accessibility object.]]
-            @in event: ptr(const(Efl.Event.Description)); [[Accessibility event type.]]
-            @in event_info: void_ptr; [[Accessibility event details.]]
-         }
-      }
       @property translation_domain {
          [[The translation domain of "name" and "description"
            properties.
@@ -426,7 +404,5 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
       bounds,changed: Elm.Atspi.Event.Geometry_Changed.Data; [[Called when bounds have changed]]
       visible,data,changed; [[Called when visibility has changed]]
       active,descendant,changed; [[Called when active state of descendant has changed]]
-      added; [[Called when item was added]]
-      removed; [[Called when item was removed]]
    }
 }

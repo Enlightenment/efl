@@ -115,12 +115,6 @@ const char* Atspi_Name[] = {
     "last defined"
 };
 
-struct _Elm_Atspi_Event_Handler
-{
-   Efl_Event_Cb cb;
-   void *data;
-};
-
 struct _Elm_Interface_Atspi_Accessible_Data
 {
    EINA_INLIST;
@@ -137,7 +131,6 @@ struct _Elm_Interface_Atspi_Accessible_Data
 typedef struct _Elm_Interface_Atspi_Accessible_Data Elm_Interface_Atspi_Accessible_Data;
 
 
-static Eina_List *global_callbacks;
 static Eo *root;
 
 EOLIAN static int
@@ -314,62 +307,6 @@ EAPI void elm_atspi_attributes_list_free(Eina_List *list)
         eina_stringshare_del(attr->key);
         eina_stringshare_del(attr->value);
         free(attr);
-     }
-}
-
-EOLIAN void
-_elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *accessible, const Efl_Event_Description *event, void *event_info)
-{
-   Eina_List *l;
-   Elm_Atspi_Event_Handler *hdl;
-
-   if (!accessible || !event || !efl_isa(accessible, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-     {
-        CRI("Invalid parameters, event: %s, obj: %s", event ? event->name : "NULL", accessible ? efl_class_name_get(accessible) : "NULL");
-        return;
-     }
-
-   if ((elm_interface_atspi_accessible_parent_get(accessible) == NULL)
-       && !efl_isa(accessible, ELM_ATSPI_APP_OBJECT_CLASS))
-     return;
-
-   Efl_Event ev;
-   ev.object = accessible;
-   ev.desc = event;
-   ev.info = event_info;
-   EINA_LIST_FOREACH(global_callbacks, l, hdl)
-     {
-        if (hdl->cb)
-          hdl->cb(hdl->data, &ev);
-     }
-}
-
-EOLIAN Elm_Atspi_Event_Handler *
-_elm_interface_atspi_accessible_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Event_Cb cb, void *data)
-{
-   Elm_Atspi_Event_Handler *ret = calloc(1, sizeof(Elm_Atspi_Event_Handler));
-
-   ret->cb = cb;
-   ret->data = data;
-
-   global_callbacks = eina_list_append(global_callbacks, ret);
-
-   return ret;
-}
-
-EOLIAN void 
-_elm_interface_atspi_accessible_event_handler_del(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Elm_Atspi_Event_Handler *handler)
-{
-   Eina_List *l, *l2;
-   Elm_Atspi_Event_Handler *hdl;
-   EINA_LIST_FOREACH_SAFE(global_callbacks, l, l2, hdl)
-     {
-        if (hdl == handler)
-          {
-             global_callbacks = eina_list_remove_list(global_callbacks, l);
-             free(hdl);
-             break;
-          }
      }
 }
 
@@ -577,7 +514,6 @@ _elm_interface_atspi_accessible_efl_object_destructor(Eo *obj, Elm_Interface_Ats
    EINA_INLIST_FOREACH(pd->children, child_data)
       child_data->parent = NULL;
 
-   elm_interface_atspi_accessible_removed(obj);
    eina_stringshare_del(pd->name);
    eina_stringshare_del(pd->description);
    eina_stringshare_del(pd->translation_domain);
