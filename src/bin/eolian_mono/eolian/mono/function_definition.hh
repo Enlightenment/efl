@@ -53,7 +53,6 @@ struct native_function_definition_generator
 
     if(!as_generator
        (scope_tab
-        << eolian_mono::marshall_annotation(true)
         << " public static "
         << eolian_mono::marshall_type(true) << " "
         << string
@@ -76,7 +75,7 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << "}\n"
         << scope_tab << "}\n"
        )
-       .generate(sink, std::make_tuple(f.return_type, f.return_type, escape_keyword(f.name), f.parameters
+       .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters
                                        , /***/f.c_name/***/
                                        , f
                                        , klass->cxx_name, escape_keyword(f.name)

@@ -280,6 +280,73 @@ public class StringOwnNativeMarshaler: ICustomMarshaler {
     static private StringOwnNativeMarshaler marshaler;
 }
 
+/*
+ * Custom marshaler for giving stringshare ownership to C.
+ * This happens in @in own() direct calls and @out @own virtual
+ * calls.
+ */
+public class StringshareSurrenderMarshaler : ICustomMarshaler {
+    public object MarshalNativeToManaged(IntPtr pNativeData) {
+        return new object();
+    }
 
+    public IntPtr MarshalManagedToNative(object managedObj) {
+        return eina.Stringshare.eina_stringshare_add((string)managedObj);
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData) {
+        // No need to free as it's for own() parameters.
+    }
+
+    public void CleanUpManagedData(object managedObj) {
+    }
+
+    public int GetNativeDataSize() {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie) {
+        if (marshaler == null) {
+            marshaler = new StringshareSurrenderMarshaler();
+        }
+        return marshaler;
+    }
+    static private StringshareSurrenderMarshaler marshaler;
+}
+
+/*
+ * Custom marshaler for receiving stringshare ownership in arguments,
+ * like @out own() in direct calls and @in own() when called from C.
+ */
+public class StringshareOwnOutMarshaler : ICustomMarshaler {
+    public object MarshalNativeToManaged(IntPtr pNativeData) {
+        String str = Marshal.PtrToStringAnsi(pNativeData);
+        eina.Stringshare.eina_stringshare_del(pNativeData);
+        return str;
+    }
+
+    public IntPtr MarshalManagedToNative(object managedObj) {
+        return eina.Stringshare.eina_stringshare_add((string)managedObj);
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData) {
+        // No need to free as it's for own() parameters.
+    }
+
+    public void CleanUpManagedData(object managedObj) {
+    }
+
+    public int GetNativeDataSize() {
+        return -1;
+    }
+
+    public static ICustomMarshaler GetInstance(string cookie) {
+        if (marshaler == null) {
+            marshaler = new StringshareOwnOutMarshaler();
+        }
+        return marshaler;
+    }
+    static private StringshareOwnOutMarshaler marshaler;
+}
 
 } }
