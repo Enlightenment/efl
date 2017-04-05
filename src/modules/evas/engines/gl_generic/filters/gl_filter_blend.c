@@ -12,8 +12,6 @@ _mapped_blend(Evas_Engine_GL_Context *gc,
    int row, col, rows, cols;
    Eina_Bool ret = EINA_TRUE;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((sx == 0) && (sy == 0), EINA_FALSE);
-
    if (fillmode == EVAS_FILTER_FILL_MODE_NONE)
      {
         DBG("blend: %d,%d,%d,%d --> %d,%d,%d,%d", sx, sy, sw, sh, dx, dy, sw, sh);
@@ -35,7 +33,6 @@ _mapped_blend(Evas_Engine_GL_Context *gc,
    else if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
      {
         cols = 0;
-        dx = 0;
      }
    else
      {
@@ -58,7 +55,6 @@ _mapped_blend(Evas_Engine_GL_Context *gc,
    else if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
      {
         rows = 0;
-        dy = 0;
      }
    else
      {
@@ -95,9 +91,10 @@ _mapped_blend(Evas_Engine_GL_Context *gc,
              src_y = 0;
              if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
                {
+                  src_y = sy;
                   src_h = sh;
+                  dst_y = dy;
                   dst_h = dh;
-                  dst_y = 0;
                }
              else
                {
@@ -133,9 +130,10 @@ _mapped_blend(Evas_Engine_GL_Context *gc,
                   src_x = 0;
                   if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
                     {
+                       src_x = sx;
                        src_w = sw;
+                       dst_x = dx;
                        dst_w = dw;
-                       dst_x = 0;
                     }
                   else
                     {
@@ -163,7 +161,7 @@ _gl_filter_blend(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image *image, *surface;
    RGBA_Draw_Context *dc_save;
-   int src_w, src_h, dst_w, dst_h;
+   int src_w, src_h, dst_w, dst_h, src_x, src_y, dst_x, dst_y;
 
    DEBUG_TIME_BEGIN();
 
@@ -188,40 +186,54 @@ _gl_filter_blend(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    if ((cmd->draw.fillmode == EVAS_FILTER_FILL_MODE_STRETCH_XY) &&
        ((image->w != surface->w) || (image->h != surface->h)))
      {
-        int scale_w, scale_h;
+        double scale_w, scale_h;
+        int pad_x, pad_y;
 
-        if ((image->w >= surface->w) ||
-            (image->h >= surface->h))
+        pad_x = cmd->draw.scale.pad_x;
+        pad_y = cmd->draw.scale.pad_y;
+        scale_w = MAX(cmd->draw.scale.factor_x, 1);
+        scale_h = MAX(cmd->draw.scale.factor_y, 1);
+
+        if (cmd->draw.scale.down)
           {
-             scale_w = image->w / surface->w;
-             scale_h = image->h / surface->h;
-             src_w = ((image->w + (scale_w - 1)) / scale_w) * scale_w;
-             src_h = ((image->h + (scale_h - 1)) / scale_h) * scale_h;
-             dst_w = surface->w;
-             dst_h = surface->h;
+             src_x = -pad_x;
+             src_y = -pad_y;
+             src_w = (ceil(image->w / scale_w) + 1) * scale_w;
+             src_h = (ceil(image->h / scale_h) + 1) * scale_h;
+             dst_x = 0;
+             dst_y = 0;
+             dst_w = src_w / scale_w;
+             dst_h = src_h / scale_h;
           }
         else
           {
-             scale_w = surface->w / image->w;
-             scale_h = surface->h / image->h;
+             src_x = 0;
+             src_y = 0;
              src_w = image->w;
              src_h = image->h;
-             dst_w = ((surface->w + (scale_w - 1)) / scale_w) * scale_w;
-             dst_h = ((surface->h + (scale_h - 1)) / scale_h) * scale_h;
+             dst_x = cmd->draw.ox - pad_x;
+             dst_y = cmd->draw.oy - pad_y;
+             dst_w = (ceil(surface->w / scale_w) + 1) * scale_w;
+             dst_h = (ceil(surface->h / scale_h) + 1) * scale_h;
           }
      }
    else
      {
+        src_x = 0;
+        src_y = 0;
         src_w = image->w;
         src_h = image->h;
+        dst_x = cmd->draw.ox;
+        dst_y = cmd->draw.oy;
         dst_w = surface->w;
         dst_h = surface->h;
      }
 
    DBG("blend %d @%p -> %d @%p", cmd->input->id, cmd->input->buffer,
        cmd->output->id, cmd->output->buffer);
-   _mapped_blend(gc, image, cmd->draw.fillmode, 0, 0, src_w, src_h,
-                 cmd->draw.ox, cmd->draw.oy, dst_w, dst_h);
+   _mapped_blend(gc, image, cmd->draw.fillmode,
+                 src_x, src_y, src_w, src_h,
+                 dst_x, dst_y, dst_w, dst_h);
 
    evas_common_draw_context_free(gc->dc);
    gc->dc = dc_save;

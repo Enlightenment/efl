@@ -125,6 +125,7 @@ struct _Evas_Filter_Context
    evas_filter_buffer_scaled_get_func buffer_scaled_get;
 
    // Variables changing at each run
+   int x, y; // Position of the object (for GL downscaling of snapshots)
    int w, h; // Dimensions of the input/output buffers
 
    struct {
@@ -233,6 +234,11 @@ struct _Evas_Filter_Command
             int l, r, t, b;
          };
       } clip;
+      struct {
+         int factor_x, factor_y;
+         int pad_x, pad_y;
+         Eina_Bool down;
+      } scale;
       Evas_Filter_Fill_Mode fillmode;
       Eina_Bool clip_use : 1;
       Eina_Bool clip_mode_lrtb : 1;

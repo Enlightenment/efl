@@ -13476,7 +13476,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         ctx = evas_filter_context_new(obj->layer->evas, do_async, ti->gfx_filter);
         evas_filter_state_prepare(eo_obj, &state, ti);
         evas_filter_program_state_set(pgm, &state);
-        ok = evas_filter_context_program_use(ctx, pgm, EINA_FALSE);
+        ok = evas_filter_context_program_use(ctx, pgm, EINA_FALSE, 0, 0);
         if (!ok)
           {
              evas_filter_context_destroy(ctx);

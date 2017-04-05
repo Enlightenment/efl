@@ -401,7 +401,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         if (filter)
           {
-             ok = evas_filter_context_program_reuse(filter, pd->data->chain);
+             ok = evas_filter_context_program_reuse(filter, pd->data->chain, X, Y);
              if (!ok)
                {
                   fcow = FCOW_BEGIN(pd);
@@ -417,7 +417,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
              filter = evas_filter_context_new(obj->layer->evas, do_async, 0);
 
              // Run script
-             ok = evas_filter_context_program_use(filter, pd->data->chain, EINA_FALSE);
+             ok = evas_filter_context_program_use(filter, pd->data->chain, EINA_FALSE, X, Y);
              if (!filter || !ok)
                {
                   ERR("Parsing failed?");

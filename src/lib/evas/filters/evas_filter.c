@@ -165,7 +165,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
 }
 
 Eina_Bool
-evas_filter_context_program_reuse(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
+evas_filter_context_program_reuse(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm, int x, int y)
 {
    Evas_Filter_Buffer *fb;
    Eina_List *li;
@@ -196,7 +196,7 @@ evas_filter_context_program_reuse(Evas_Filter_Context *ctx, Evas_Filter_Program 
         fb->dirty = EINA_FALSE;
      }
 
-   return evas_filter_context_program_use(ctx, pgm, EINA_TRUE);
+   return evas_filter_context_program_use(ctx, pgm, EINA_TRUE, x, y);
 }
 
 static void
@@ -691,19 +691,24 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
                                 int rx, int ry, int ox, int oy, int count,
                                 int R, int G, int B, int A)
 {
-   Evas_Filter_Command *cmd;
+   Evas_Filter_Command *cmd = NULL;
    Evas_Filter_Buffer *dx_in, *dx_out, *dy_in, *dy_out, *tmp = NULL;
+   int down_x = 1, down_y = 1;
+   int pad_x = 0, pad_y = 0;
    double dx, dy;
 
    /* GL blur implementation:
-    * - Create intermediate buffer T (variable size)
-    * - Downscale to buffer T
-    * - Apply X blur kernel
-    * - Apply Y blur kernel while scaling up
     *
-    * - TODO: Fix distortion X vs. Y
-    * - TODO: Calculate best scaline and blur radius
-    * - TODO: Add post-processing? (2D single-pass)
+    * - Create intermediate buffer T1, T2
+    * - Downscale input to buffer T1
+    * - Apply X blur kernel from T1 to T2
+    * - Apply Y blur kernel from T2 back to output
+    *
+    * In order to avoid sampling artifacts when moving or resizing a filtered
+    * snapshot, we make sure that we always sample and scale based on the same
+    * original pixels positions:
+    * - Input pixels must be aligned to down_x,down_y boundaries
+    * - T1/T2 buffer size is up to 1px larger than [input / scale_x,y]
     */
 
    dx = rx;
@@ -714,34 +719,43 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
 #if 1
    if (type == EVAS_FILTER_BLUR_DEFAULT)
      {
-        int down_x = 1, down_y = 1;
-
-        /* For now, disable scaling - testing perfect gaussian blur until it's
-         * ready: */
+        // Apply downscaling for large enough radii only.
         down_x = 1 << evas_filter_smallest_pow2_larger_than(dx / 2) / 2;
         down_y = 1 << evas_filter_smallest_pow2_larger_than(dy / 2) / 2;
+
+        // Downscaling to max 4 times for perfect picture quality (with
+        // the standard scaling fragment shader and SHD_SAM22).
         if (down_x > 4) down_x = 4;
         if (down_y > 4) down_y = 4;
 
         if (down_x > 1 && down_y > 1)
           {
-             tmp = evas_filter_temporary_buffer_get(ctx,
-                                                    ceil(ctx->w / down_x),
-                                                    ceil(ctx->h / down_y),
-                                                    in->alpha_only, EINA_TRUE);
+             int ww, hh;
+
+             pad_x = ctx->x % down_x;
+             pad_y = ctx->y % down_y;
+
+             ww = ceil((double) ctx->w / down_x) + 1;
+             hh = ceil((double) ctx->h / down_y) + 1;
+
+             tmp = evas_filter_temporary_buffer_get(ctx, ww, hh, in->alpha_only, EINA_TRUE);
              if (!tmp) goto fail;
 
-             dx = rx / down_x;
-             dy = ry / down_y;
+             dx /= (double) down_x;
+             dy /= (double) down_y;
 
              XDBG("Add GL downscale %d (%dx%d) -> %d (%dx%d)", in->id, in->w, in->h, tmp->id, tmp->w, tmp->h);
              cmd = _command_new(ctx, EVAS_FILTER_MODE_BLEND, in, NULL, tmp);
              if (!cmd) goto fail;
              cmd->draw.fillmode = EVAS_FILTER_FILL_MODE_STRETCH_XY;
+             cmd->draw.scale.down = EINA_TRUE;
+             cmd->draw.scale.pad_x = pad_x;
+             cmd->draw.scale.pad_y = pad_y;
+             cmd->draw.scale.factor_x = down_x;
+             cmd->draw.scale.factor_y = down_y;
              dx_in = tmp;
 
-             tmp = evas_filter_temporary_buffer_get(ctx, ctx->w / down_x, ctx->h / down_y,
-                                                    in->alpha_only, EINA_TRUE);
+             tmp = evas_filter_temporary_buffer_get(ctx, ww, hh, in->alpha_only, EINA_TRUE);
              if (!tmp) goto fail;
              dy_out = tmp;
           }
@@ -780,6 +794,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
         cmd->blur.count = count;
      }
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
    if (cmd->output != out)
      {
         XDBG("Add GL upscale %d (%dx%d) -> %d (%dx%d)",
@@ -787,6 +802,11 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
         cmd = _command_new(ctx, EVAS_FILTER_MODE_BLEND, cmd->output, NULL, out);
         if (!cmd) goto fail;
         cmd->draw.fillmode = EVAS_FILTER_FILL_MODE_STRETCH_XY;
+        cmd->draw.scale.down = EINA_FALSE;
+        cmd->draw.scale.pad_x = pad_x;
+        cmd->draw.scale.pad_y = pad_y;
+        cmd->draw.scale.factor_x = down_x;
+        cmd->draw.scale.factor_y = down_y;
      }
 
    cmd->draw.ox = ox;

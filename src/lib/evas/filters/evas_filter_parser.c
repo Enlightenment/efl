@@ -3474,7 +3474,7 @@ _instruction_dump(Evas_Filter_Instruction *instr)
 Eina_Bool
 evas_filter_context_program_use(Evas_Filter_Context *ctx,
                                 Evas_Filter_Program *pgm,
-                                Eina_Bool reuse)
+                                Eina_Bool reuse, int object_x, int object_y)
 {
    Evas_Filter_Instruction *instr;
    Eina_Bool success = EINA_FALSE;
@@ -3489,6 +3489,8 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    // Copy current state (size, edje state val, color class, etc...)
    ctx->w = pgm->state.w;
    ctx->h = pgm->state.h;
+   ctx->x = object_x;
+   ctx->y = object_y;
 
    // Create empty context with all required buffers
    evas_filter_context_clear(ctx, reuse);
