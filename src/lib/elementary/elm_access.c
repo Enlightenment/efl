@@ -36,6 +36,13 @@ static Evas_Object * _elm_access_add(Evas_Object *parent);
 
 static void _access_object_unregister(Evas_Object *obj);
 
+static const char SIG_ACTIVATED[] = "access,activated";
+static const Evas_Smart_Cb_Description _smart_callbacks[] =
+{
+   {SIG_ACTIVATED, ""},
+   {NULL, NULL}
+};
+
 EOLIAN static void
 _elm_access_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
 {
@@ -1248,6 +1255,7 @@ _elm_access_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    return obj;
 }
@@ -1469,7 +1477,10 @@ _access_atspi_action_do(Evas_Object *obj, const char *params)
    else if (!strcmp(params, "highlight,prev"))
       ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_HIGHLIGHT_PREV, NULL);
    else if (!strcmp(params, "activate"))
-      ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_ACTIVATE, NULL);
+     {
+        efl_event_callback_legacy_call(obj, SIG_ACTIVATED, NULL);
+        ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_ACTIVATE, NULL);
+     }
    else if (!strcmp(params, "value,up"))
       ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_UP, NULL);
    else if (!strcmp(params, "value,down"))
