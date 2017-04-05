@@ -96,8 +96,10 @@ _elm_code_line_merge_into(Elm_Code_Line *line1, Elm_Code_Line *line2)
    text2 = elm_code_line_text_get(line2, &length2);
 
    newtext = malloc(sizeof(char) * (length1 + length2 + 1));
-   snprintf(newtext, length1 + 1, "%s", text1);
-   snprintf(newtext + length1, length2 + 1, "%s", text2);
+   if (length1 > 0)
+     snprintf(newtext, length1 + 1, "%s", text1);
+   if (length2 > 0)
+     snprintf(newtext + length1, length2 + 1, "%s", text2);
 
    tokens1 = line1->tokens;
    line1->tokens = NULL;

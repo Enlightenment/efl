@@ -74,8 +74,8 @@ _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *p
    for (row = start_line + 1; row < end_line; row++)
      {
         line = elm_code_file_line_get(pd->code->file, row);
-        snprintf(ptr, line->length + 1, "%s",
-                 elm_code_line_text_get(line, NULL));
+        if (line->length > 0)
+          snprintf(ptr, line->length + 1, "%s", elm_code_line_text_get(line, NULL));
 
         snprintf(ptr + line->length, newline_len + 1, "%s", newline);
         ptr += line->length + newline_len;
