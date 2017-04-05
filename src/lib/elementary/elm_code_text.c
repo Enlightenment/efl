@@ -10,7 +10,11 @@ EAPI const char *
 elm_code_line_text_get(Elm_Code_Line *line, unsigned int *length)
 {
    if (!line)
-     return NULL;
+     {
+        if (length)
+          *length = 0;
+        return NULL;
+     }
 
    if (length)
      *length = line->length;

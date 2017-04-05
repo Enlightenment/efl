@@ -653,8 +653,8 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
    Elm_Code_Line *line;
    Evas_Coord ox = 0, oy = 0, sx = 0, sy = 0, rowy = 0;
    Evas_Object *grid;
-   int cw = 0, ch = 0, gutter;
-   unsigned int guess = 0, number;
+   int cw = 0, ch = 0, gutter, retcol;
+   unsigned int guess = 1, number;
 
    widget = (Elm_Code_Widget *)obj;
    evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
@@ -665,7 +665,7 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
    _elm_code_widget_cell_size_get(widget, &cw, &ch);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
 
-   if (ch > 0)
+   if (y >= 0 && ch > 0)
      guess = ((double) y / ch) + 1;
    number = guess;
 
@@ -684,10 +684,11 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
 
    if (col)
      {
-        if (cw == 0)
-          *col = 0;
+        retcol = ((double) x / cw) - gutter + 1;
+        if (retcol <= 0 || cw == 0)
+          *col = 1;
         else
-          *col = ((double) x / cw) - gutter + 1;
+          *col = retcol;
      }
    if (row)
      *row = number;
