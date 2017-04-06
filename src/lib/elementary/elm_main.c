@@ -1499,7 +1499,8 @@ elm_cache_all_flush(void)
         Evas *e = evas_object_evas_get(obj);
         evas_image_cache_flush(e);
         evas_font_cache_flush(e);
-        evas_render_dump(e);
+// this is up for debate if we should dump as well
+//        evas_render_dump(e);
      }
 }
 
