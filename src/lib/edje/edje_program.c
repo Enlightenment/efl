@@ -239,6 +239,7 @@ edje_object_propagate_callback_add(Evas_Object *obj, void (*func)(void *data, Ev
 
    if (!ed->callbacks)
      ed->callbacks = _edje_signal_callback_alloc();
+   if (!ed->callbacks) return;
 
    sig = eina_stringshare_add("*");
    src = eina_stringshare_add("*");
@@ -266,6 +267,7 @@ _edje_object_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emis
 
    if (!ed->callbacks)
      ed->callbacks = _edje_signal_callback_alloc();
+   if (!ed->callbacks) return;
 
    _edje_signal_callback_push(ed->callbacks,
                               emission, source,
