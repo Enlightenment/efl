@@ -2056,6 +2056,9 @@ _elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
    if (!face)
      face = "Mono";
 
+   if (size == pd->font_size && !strcmp(face, pd->font_name))
+     return;
+
    EINA_LIST_FOREACH(pd->grids, item, grid)
      {
         evas_object_textgrid_font_set(grid, face, size * elm_config_scale_get());
