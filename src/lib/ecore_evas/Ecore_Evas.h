@@ -2290,7 +2290,7 @@ EAPI Eina_Bool   ecore_evas_override_get(const Ecore_Evas *ee);
  *
  * @li @ref ECORE_EVAS_AVOID_DAMAGE_EXPOSE - there's a pixmap where everything
  * is rendered into, and then copied to the window. On expose events, there's
- * no need to render things again, just to copy the exposed region to the
+ * no need to render things again, just copy the exposed region to the
  * window;
  *
  * @li @ref ECORE_EVAS_AVOID_DAMAGE_BUILT_IN - there's the same pixmap as the
@@ -2554,7 +2554,7 @@ EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
  * @param data The callback data
  * @param ee The Ecore_Evas
  * @param client_host The address of the new client.
- * @return @c EINA_TRUE to accep the client, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE to accept the client, @c EINA_FALSE otherwise.
  * @see ecore_evas_vnc_start()
  * @since 1.19
  */
@@ -2564,7 +2564,7 @@ typedef Eina_Bool (*Ecore_Evas_Vnc_Client_Accept_Cb)(void *data, Ecore_Evas *ee,
  * @brief A callback used to inform that a client has disconnected.
  * @param data The callback data
  * @param ee The Ecore_Evas
- * @param client_host The adrress of the client
+ * @param client_host The address of the client
  * @see ecore_evas_vnc_start()
  * @since 1.19
  */
@@ -2577,7 +2577,7 @@ typedef void (*Ecore_Evas_Vnc_Client_Disconnected_Cb)(void *data, Ecore_Evas *ee
  * @param addr The address that will be used to bind the VNC server. Use @c NULL to bind to any interface.
  * @param port The port number to start the VNC server. Use @c -1 to set the default VNC port (5900)
  * @param accept_cb A callback used to accept a new client. If @c NULL all clients will be accepted.
- * @param disc_cb A callback user to inform that a client has disconnected. It may be @c NULL.
+ * @param disc_cb A callback used to inform that a client has disconnected. It may be @c NULL.
  * @param data Data to @a cb
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  * @see ecore_evas_vnc_stop()
@@ -2636,7 +2636,7 @@ EAPI Eina_Bool ecore_evas_ews_setup(int x, int y, int w, int h);
  * @brief Returns the internal backing store in use.
  *
  * @return The internal backing store in use.
- * @note this will forced it to be created, making future calls to
+ * @note this will force it to be created, making future calls to
  * ecore_evas_ews_engine_set() void.
  *
  * @see ecore_evas_ews_evas_get()
@@ -2648,7 +2648,7 @@ EAPI Ecore_Evas *ecore_evas_ews_ecore_evas_get(void);
  * @brief Returns the internal backing store in use.
  *
  * @return The internal backing store in use.
- * @note this will forced it to be created, making future calls to
+ * @note this will force it to be created, making future calls to
  * ecore_evas_ews_engine_set() void.
  *
  * @see ecore_evas_ews_ecore_evas_get()
@@ -2735,7 +2735,7 @@ EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window prope
  * process can create a "plug" remotely to plug into.
  * Socket can provide content for several plugs.
  * This is best for small sized objects (about the size range
- * of a small icon up to a few large icons). Sine the plug is actually an
+ * of a small icon up to a few large icons). Since the plug is actually an
  * image object, you can fetch the pixel data
  *
  * @since 1.2
@@ -2815,7 +2815,7 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a p
  *
  * Note that events come in later after the event happened. You may want to be
  * careful as data structures you had associated with the image object
- * may have been freed after deleting, but the object may still be around
+ * may have been freed after deletion, but the object may still be around
  * awaiting cleanup and thus still be valid.You can change the size with something like:
  *
  * @see ecore_evas_extn_socket_listen()
