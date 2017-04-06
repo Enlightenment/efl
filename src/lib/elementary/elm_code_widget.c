@@ -672,13 +672,13 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
         number = guess;
 
         // unfortunately EINA_LIST_REVERSE_FOREACH skips to the end of the list...
-        for (item = eina_list_nth_list(pd->grids, number), grid = eina_list_data_get(item);
+        for (item = eina_list_nth_list(pd->grids, number - 1), grid = eina_list_data_get(item);
              number > 1 && item;
              item = eina_list_prev(item), grid = eina_list_data_get(item))
           {
              evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
 
-             if (rowy + sy - oy - 1<= y)
+             if (rowy + sy - oy - 1 <= y)
                break;
 
              number--;
