@@ -6307,31 +6307,36 @@ _edje_edit_state_alloc(int type, Edje *ed)
      {
       case EDJE_PART_TYPE_RECTANGLE:
         pd = eina_mempool_malloc(ce->mp->mp.RECTANGLE, sizeof (Edje_Part_Description_Common));
+        if (!pd) return NULL;
         ce->count.RECTANGLE++;
         break;
 
       case EDJE_PART_TYPE_SPACER:
         pd = eina_mempool_malloc(ce->mp->mp.SPACER, sizeof (Edje_Part_Description_Common));
+        if (!pd) return NULL;
         ce->count.SPACER++;
         break;
 
       case EDJE_PART_TYPE_SWALLOW:
         pd = eina_mempool_malloc(ce->mp->mp.SWALLOW, sizeof (Edje_Part_Description_Common));
+        if (!pd) return NULL;
         ce->count.SWALLOW++;
         break;
 
       case EDJE_PART_TYPE_GROUP:
         pd = eina_mempool_malloc(ce->mp->mp.GROUP, sizeof (Edje_Part_Description_Common));
+        if (!pd) return NULL;
         ce->count.GROUP++;
         break;
 
 #define EDIT_ALLOC_POOL(Short, Type, Name)                            \
 case EDJE_PART_TYPE_##Short:                                          \
 {                                                                     \
-   Edje_Part_Description_##Type * Name;                               \
+   Edje_Part_Description_##Type *Name = NULL;                         \
                                                                       \
    Name = eina_mempool_malloc(ce->mp->mp.Short,                       \
                               sizeof (Edje_Part_Description_##Type)); \
+   if (!Name) return NULL;                                            \
    memset(Name, 0, sizeof(Edje_Part_Description_##Type));             \
    pd = &Name->common;                                                \
    ce->count.Short++;                                                 \
