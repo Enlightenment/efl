@@ -320,13 +320,21 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
           {
              if ((obj_x + obj_w - x) > ((x + w) - obj_x))
                {
-                  elm_layout_signal_emit(sd->hover, "elm,state,align,right", "elm");
+                  if (elm_obj_widget_mirrored_get(obj))
+                    elm_obj_layout_signal_emit(sd->hover, "elm,state,align,right", "elm");
+                  else
+                    elm_obj_layout_signal_emit(sd->hover, "elm,state,align,default", "elm");
+
                   if ((obj_x + obj_w - ww) < x)
                     ww = obj_x + obj_w - x;
                }
              else
                {
-                  elm_layout_signal_emit(sd->hover, "elm,state,align,default", "elm");
+                  if (elm_obj_widget_mirrored_get(obj))
+                    elm_obj_layout_signal_emit(sd->hover, "elm,state,align,default", "elm");
+                  else
+                    elm_obj_layout_signal_emit(sd->hover, "elm,state,align,right", "elm");
+
                   ww = (x + w) - xx;
                }
           }
