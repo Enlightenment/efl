@@ -1478,7 +1478,7 @@ _access_atspi_action_do(Evas_Object *obj, const char *params)
       ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_HIGHLIGHT_PREV, NULL);
    else if (!strcmp(params, "activate"))
      {
-        efl_event_callback_legacy_call(obj, SIG_ACTIVATED, NULL);
+        evas_object_smart_callback_call(obj, SIG_ACTIVATED, NULL);
         ret = _access_action_callback_call(obj, ELM_ACCESS_ACTION_ACTIVATE, NULL);
      }
    else if (!strcmp(params, "value,up"))
