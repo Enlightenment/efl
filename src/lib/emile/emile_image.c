@@ -933,6 +933,10 @@ _get_orientation_app1(const unsigned char *map,
      {
         // get 4byte by little endian
         ifd_offset += (*(buf + 14) << 24) + (*(buf + 15) << 16) + (*(buf + 16) << 8) + (*(buf + 17));
+
+        if (ifd_offset > fsize)
+          return EINA_FALSE;
+
         byte_align = EXIF_BYTE_ALIGN_MM;
         num_directory = ((*(buf + ifd_offset) << 8) + *(buf + ifd_offset + 1));
         orientation[0] = 0x01;
@@ -942,6 +946,10 @@ _get_orientation_app1(const unsigned char *map,
      {
         // get 4byte by big endian
         ifd_offset += (*(buf + 14))  + (*(buf + 15) << 8) + (*(buf + 16) << 16) + (*(buf + 17) << 24);
+
+        if (ifd_offset > fsize)
+          return EINA_FALSE;
+
         byte_align = EXIF_BYTE_ALIGN_II;
         num_directory = ((*(buf + ifd_offset + 1) << 8) + *(buf + ifd_offset));
         orientation[0] = 0x12;
