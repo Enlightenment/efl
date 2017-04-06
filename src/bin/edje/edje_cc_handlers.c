@@ -4149,8 +4149,8 @@ _link_combine(void)
                   if (fabs(ell->ed->state.value - el->ed->state.value) > DBL_EPSILON) continue;
                   if ((!!ell->ed->state.name) != (!!el->ed->state.name))
                     {
-                      if (((!!ell->ed->state.name) && strcmp(el->ed->state.name, "default")) ||
-                         ((!!el->ed->state.name) && strcmp(ell->ed->state.name, "default")))
+                      if (((!!ell->ed->state.name) && strcmp(ell->ed->state.name, "default")) ||
+                         ((!!el->ed->state.name) && strcmp(el->ed->state.name, "default")))
                            continue;
                     }
                   else if (ell->ed->state.name && strcmp(ell->ed->state.name, el->ed->state.name))
