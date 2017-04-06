@@ -654,7 +654,7 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
    Evas_Coord ox = 0, oy = 0, sx = 0, sy = 0, rowy = 0;
    Evas_Object *grid;
    int cw = 0, ch = 0, gutter, retcol;
-   unsigned int guess = 1, number;
+   unsigned int guess = 1, number = 1;
 
    widget = (Elm_Code_Widget *)obj;
    evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
@@ -667,19 +667,22 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
 
    if (y >= 0 && ch > 0)
      guess = ((double) y / ch) + 1;
-   number = guess;
-
-   // unfortunately EINA_LIST_REVERSE_FOREACH skips to the end of the list...
-   for (item = eina_list_nth_list(pd->grids, guess - 1), grid = eina_list_data_get(item);
-        item;
-        item = eina_list_prev(item), grid = eina_list_data_get(item))
+   if (guess > 1)
      {
-        evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
+        number = guess;
 
-        if (rowy + sy - oy - 1<= y)
-          break;
+        // unfortunately EINA_LIST_REVERSE_FOREACH skips to the end of the list...
+        for (item = eina_list_nth_list(pd->grids, number), grid = eina_list_data_get(item);
+             number > 1 && item;
+             item = eina_list_prev(item), grid = eina_list_data_get(item))
+          {
+             evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
 
-        number--;
+             if (rowy + sy - oy - 1<= y)
+               break;
+
+             number--;
+          }
      }
 
    if (col)
