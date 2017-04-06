@@ -2189,7 +2189,7 @@ struct _Evas_Smart_Cb_Description
 
 /**
  * @def EVAS_SMART_CLASS_INIT_NULL
- * Initializer to zero a whole Evas_Smart_Class structure.
+ * Initialize to zero a whole Evas_Smart_Class structure.
  *
  * @see EVAS_SMART_CLASS_INIT_VERSION
  * @see EVAS_SMART_CLASS_INIT_NAME_VERSION
@@ -2201,7 +2201,7 @@ struct _Evas_Smart_Cb_Description
 
 /**
  * @def EVAS_SMART_CLASS_INIT_VERSION
- * Initializer to zero a whole Evas_Smart_Class structure and set version.
+ * Initialize to zero a whole Evas_Smart_Class structure and set version.
  *
  * Similar to EVAS_SMART_CLASS_INIT_NULL, but will set version field to
  * latest EVAS_SMART_CLASS_VERSION.
@@ -2216,7 +2216,7 @@ struct _Evas_Smart_Cb_Description
 
 /**
  * @def EVAS_SMART_CLASS_INIT_NAME_VERSION
- * Initializer to zero a whole Evas_Smart_Class structure and set name
+ * Initialize to zero a whole Evas_Smart_Class structure and set name
  * and version.
  *
  * Similar to EVAS_SMART_CLASS_INIT_NULL, but will set version field to
@@ -2236,7 +2236,7 @@ struct _Evas_Smart_Cb_Description
 
 /**
  * @def EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT
- * Initializer to zero a whole Evas_Smart_Class structure and set name,
+ * Initialize to zero a whole Evas_Smart_Class structure and set name,
  * version and parent class.
  *
  * Similar to EVAS_SMART_CLASS_INIT_NULL, but will set version field to
@@ -2257,7 +2257,7 @@ struct _Evas_Smart_Cb_Description
 
 /**
  * @def EVAS_SMART_CLASS_INIT_NAME_VERSION_PARENT_CALLBACKS
- * Initializer to zero a whole Evas_Smart_Class structure and set name,
+ * Initialize to zero a whole Evas_Smart_Class structure and set name,
  * version, parent class and callbacks definition.
  *
  * Similar to EVAS_SMART_CLASS_INIT_NULL, but will set version field to
@@ -2936,7 +2936,7 @@ struct _Evas_Object_Box_Api
 /**
  * @def EVAS_OBJECT_BOX_API_INIT_NULL
  *
- * Initializer to zero out a whole #Evas_Object_Box_Api structure.
+ * Initialize to zero out a whole #Evas_Object_Box_Api structure.
  *
  * @see EVAS_OBJECT_BOX_API_INIT_VERSION
  * @see EVAS_OBJECT_BOX_API_INIT_NAME_VERSION
@@ -2948,7 +2948,7 @@ struct _Evas_Object_Box_Api
 /**
  * @def EVAS_OBJECT_BOX_API_INIT_VERSION
  *
- * Initializer to zero out a whole #Evas_Object_Box_Api structure and
+ * Initialize to zero out a whole #Evas_Object_Box_Api structure and
  * set a specific version on it.
  *
  * This is similar to #EVAS_OBJECT_BOX_API_INIT_NULL, but it will set
@@ -2965,7 +2965,7 @@ struct _Evas_Object_Box_Api
 /**
  * @def EVAS_OBJECT_BOX_API_INIT_NAME_VERSION
  *
- * Initializer to zero out a whole #Evas_Object_Box_Api structure and
+ * Initialize to zero out a whole #Evas_Object_Box_Api structure and
  * set its name and version.
  *
  * This is similar to #EVAS_OBJECT_BOX_API_INIT_NULL, but it will also
