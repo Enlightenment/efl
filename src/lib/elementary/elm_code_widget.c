@@ -687,11 +687,15 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
 
    if (col)
      {
-        retcol = ((double) x / cw) - gutter + 1;
-        if (retcol <= 0 || cw == 0)
-          *col = 1;
+        if (cw == 0)
+           retcol = 1;
         else
-          *col = retcol;
+           retcol = ((double) x / cw) - gutter + 1;
+
+        if (retcol <= 0)
+           *col = 1;
+        else
+           *col = retcol;
      }
    if (row)
      *row = number;
