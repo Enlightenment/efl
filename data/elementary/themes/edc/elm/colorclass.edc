@@ -346,6 +346,7 @@ group { "colorclass/color1"; nomouse; nobroadcast;
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -1;
             rel2.relative: 0 1;
+            fixed: 1 1;
             color: FN_COL_DEFAULT_BASIC;
             text { font: FN; size: 10;
               min: 1 1;
