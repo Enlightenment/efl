@@ -3410,7 +3410,7 @@ evas_render_updates_internal(Evas *eo_e,
              ru->surface = NULL;
           }
         eina_spinlock_take(&(e->render.lock));
-        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, post.updated_area ? &post : NULL);
+        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
         eina_spinlock_release(&(e->render.lock));
         if (post.updated_area) eina_list_free(post.updated_area);
      }
