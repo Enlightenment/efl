@@ -1,0 +1,25 @@
+import function_types;
+
+class Function_As_Argument {
+  methods {
+    set_cb {
+      params {
+        cb: SimpleFunc;
+      }
+    }
+
+    set_nonull_cb {
+      params {
+        cb: VoidFunc @nonull;
+      }
+    }
+
+    call_cb {
+      params {
+        a: int;
+        b: double;
+      }
+      return: own(string);
+    }
+  }
+}

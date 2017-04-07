@@ -133,6 +133,51 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
            free(fn);
            break;
         }
+      case EOLIAN_TYPEDECL_FUNCTION_POINTER:
+        {
+           const Eolian_Function *fid = eolian_typedecl_function_pointer_get(tp);
+
+           eina_strbuf_append(buf, "typedef ");
+
+           /* Return type */
+           const Eolian_Type *rtp = eolian_function_return_type_get(fid, EOLIAN_FUNCTION_POINTER);
+           if (!rtp)
+             eina_strbuf_append(buf, "void ");
+           else
+             {
+                Eina_Stringshare *ct = eolian_type_c_type_get(rtp);
+                eina_strbuf_append_printf(buf, "%s ", ct);
+             }
+
+           /* Function name */
+           char *fn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tp));
+           eina_strbuf_append_printf(buf, "(*%s)", fn);
+           free(fn);
+
+           /* Parameters */
+           eina_strbuf_append(buf, "(void *data");
+           Eina_Iterator *params = eolian_function_parameters_get(fid);
+           const Eolian_Function_Parameter *param = NULL;
+           EINA_ITERATOR_FOREACH(params, param)
+             {
+                const Eolian_Typedecl *ptd = eolian_type_typedecl_get(eolian_parameter_type_get(param));
+                Eina_Stringshare *pn = eolian_parameter_name_get(param);
+                Eina_Stringshare *pt = eolian_type_c_type_get(eolian_parameter_type_get(param));
+
+                if (!pn)
+                  pn = ""; // FIXME add some kind of param1/param2 control for null?
+
+                if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
+                  eina_strbuf_append_printf(buf, ", void *%s_data, %s %s, Eina_Free_Cb %s_free_cb",
+                                            pn, pt, pn, pn);
+                else
+                  eina_strbuf_append_printf(buf, ", %s %s", pt, pn);
+
+             }
+           eina_strbuf_append(buf, ")");
+
+           break;
+        }
       default:
         eina_strbuf_reset(buf);
         break;

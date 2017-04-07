@@ -179,6 +179,7 @@ struct _Eolian_Typedecl
    Eina_List        *namespaces;
    Eina_Hash        *fields;
    Eina_List        *field_list;
+   Eolian_Function *function_pointer;
    Eolian_Documentation *doc;
    Eina_Stringshare *legacy;
    Eina_Stringshare *freefunc;

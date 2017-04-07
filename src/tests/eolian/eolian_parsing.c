@@ -1387,6 +1387,172 @@ START_TEST(eolian_docs)
 }
 END_TEST
 
+START_TEST(eolian_function_types)
+{
+   const Eolian_Typedecl *decl = NULL;
+   const Eolian_Typedecl *arg_decl = NULL;
+   const Eolian_Type *type = NULL;
+   const Eolian_Function *fid = NULL;
+   const Eolian_Function_Parameter *param = NULL;
+   const Eolian_Unit *unit = NULL;
+   Eina_Iterator *iter = NULL;
+   const char* type_name = NULL;
+   void *dummy;
+
+   eolian_init();
+
+   fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
+
+   /* Parsing */
+   fail_if(!(unit = eolian_file_parse(PACKAGE_DATA_DIR"/data/function_types.eot")));
+
+   /* void func(void); */
+   fail_if(!(decl = eolian_typedecl_alias_get_by_name(unit, "VoidFunc")));
+   fail_if(eolian_typedecl_type_get(decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
+
+   fail_if(!(fid = eolian_typedecl_function_pointer_get(decl)));
+   fail_if(eolian_function_type_get(fid) != EOLIAN_FUNCTION_POINTER);
+
+   fail_if((eolian_function_return_type_get(fid, EOLIAN_FUNCTION_POINTER))); // void is null_return_type?
+   fail_if((eolian_function_parameters_get(fid)));
+
+   /* Function pointer with return and parameters */
+   fail_if(!(decl = eolian_typedecl_alias_get_by_name(unit, "SimpleFunc")));
+   fail_if(eolian_typedecl_type_get(decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
+
+   fail_if(!(fid = eolian_typedecl_function_pointer_get(decl)));
+   fail_if(eolian_function_type_get(fid) != EOLIAN_FUNCTION_POINTER);
+   fail_if(strcmp(eolian_function_name_get(fid), "SimpleFunc"));
+
+   fail_if(!(type = eolian_function_return_type_get(fid, EOLIAN_FUNCTION_POINTER))); // void is null_return_type?
+   fail_if(!(type_name = eolian_type_c_type_get(type)));
+   fail_if(strcmp(type_name, "const char *"));
+   fail_if(!(iter = (eolian_function_parameters_get(fid))));
+
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "a"));
+   fail_if(!(type = eolian_parameter_type_get(param)));
+   fail_if(!(type_name = eolian_type_c_type_get(type)));
+   fail_if(strcmp(type_name, "int"));
+
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "b"));
+   fail_if(!(type = eolian_parameter_type_get(param)));
+   fail_if(!(type_name = eolian_type_c_type_get(type)));
+   fail_if(strcmp(type_name, "double"));
+
+   fail_if(eina_iterator_next(iter, &dummy));
+
+   /* Function pointer with parameter attributes (in/out) */
+   fail_if(!(decl = eolian_typedecl_alias_get_by_name(unit, "ComplexFunc")));
+   fail_if(eolian_typedecl_type_get(decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
+
+   fail_if(!(fid = eolian_typedecl_function_pointer_get(decl)));
+   fail_if(eolian_function_type_get(fid) != EOLIAN_FUNCTION_POINTER);
+
+   fail_if(!(type = eolian_function_return_type_get(fid, EOLIAN_FUNCTION_POINTER)));
+   fail_if(!(type_name = eolian_type_c_type_get(type)));
+   fail_if(strcmp(type_name, "double"));
+   fail_if(!(iter = (eolian_function_parameters_get(fid))));
+
+   /* in string */
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "c"));
+   fail_if(!(type = eolian_parameter_type_get(param)));
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
+   fail_if(eolian_type_is_own(type));
+   fail_if(!(type_name = eolian_type_c_type_get(type)));
+   fail_if(strcmp(type_name, "const char *"));
+
+   /*out own string */
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "d"));
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_OUT_PARAM);
+   fail_if(!(type = eolian_parameter_type_get(param)));
+   fail_if(!eolian_type_is_own(type));
+   fail_if(!(type_name = eolian_type_c_type_get(type)));
+   fail_if(strcmp(type_name, "const char *"));
+
+   fail_if(eina_iterator_next(iter, &dummy));
+
+   /* Function pointer receiving another function pointer */
+   fail_if(!(decl = eolian_typedecl_alias_get_by_name(unit, "FuncAsArgFunc")));
+   fail_if(eolian_typedecl_type_get(decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
+
+   fail_if(!(fid = eolian_typedecl_function_pointer_get(decl)));
+   fail_if(eolian_function_type_get(fid) != EOLIAN_FUNCTION_POINTER);
+
+   fail_if(eolian_function_return_type_get(fid, EOLIAN_FUNCTION_POINTER));
+
+   fail_if(!(iter = (eolian_function_parameters_get(fid))));
+
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "cb"));
+   fail_if(!(type = eolian_parameter_type_get(param)));
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
+   fail_if(eolian_type_is_own(type));
+   fail_if(!(type_name = eolian_type_name_get(type)));
+   fail_if(strcmp(type_name, "VoidFunc"));
+   fail_if(!(arg_decl = eolian_type_typedecl_get(type)));
+   fail_if(eolian_typedecl_type_get(arg_decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
+
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "another_cb"));
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
+   fail_if(!(type = eolian_parameter_type_get(param)));
+   fail_if(eolian_type_is_own(type));
+   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_REGULAR);
+   fail_if(!(type_name = eolian_type_name_get(type)));
+   fail_if(strcmp(type_name, "SimpleFunc"));
+   fail_if(!(arg_decl = eolian_type_typedecl_get(type)));
+   fail_if(eolian_typedecl_type_get(arg_decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
+
+   fail_if(eina_iterator_next(iter, &dummy));
+
+   eolian_shutdown();
+}
+END_TEST
+
+START_TEST(eolian_function_as_arguments)
+{
+   const Eolian_Class *cls = NULL;
+   const Eolian_Function *fid = NULL;
+   const Eolian_Type *type = NULL;
+   const Eolian_Typedecl *arg_decl = NULL;
+   const Eolian_Function_Parameter *param = NULL;
+   const Eolian_Unit *unit = NULL;
+   Eina_Iterator *iter = NULL;
+   const char *type_name = NULL;
+   void *dummy;
+
+   eolian_init();
+
+   fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
+
+   fail_if(!(unit = eolian_file_parse(PACKAGE_DATA_DIR"/data/function_as_argument.eo")));
+
+   fail_if(!(cls = eolian_class_get_by_name(unit, "Function_As_Argument")));
+
+   fail_if(!(fid = eolian_class_function_get_by_name(cls, "set_cb", EOLIAN_METHOD)));
+
+   fail_if(!(iter = (eolian_function_parameters_get(fid))));
+
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "cb"));
+   fail_if(!(type = eolian_parameter_type_get(param)));
+   fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
+   fail_if(eolian_type_is_own(type));
+   fail_if(!(type_name = eolian_type_name_get(type)));
+   fail_if(strcmp(type_name, "SimpleFunc"));
+   fail_if(!(arg_decl = eolian_type_typedecl_get(type)));
+   fail_if(eolian_typedecl_type_get(arg_decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
+
+   fail_if(eina_iterator_next(iter, &dummy));
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -1408,4 +1574,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_import);
    tcase_add_test(tc, eolian_decl);
    tcase_add_test(tc, eolian_docs);
+   tcase_add_test(tc, eolian_function_types);
+   tcase_add_test(tc, eolian_function_as_arguments);
 }

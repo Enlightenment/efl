@@ -102,6 +102,7 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id,
       case EOLIAN_METHOD:
       case EOLIAN_PROPERTY:
       case EOLIAN_PROP_GET:
+      case EOLIAN_FUNCTION_POINTER:
         if (foo_id->get_legacy && use_legacy)
           {
              if (!strcmp(foo_id->get_legacy, "null"))
@@ -120,7 +121,7 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id,
      }
 
    char tbuf[512];
-   const char *prefix = _get_eo_prefix(foo_id, tbuf, use_legacy);
+   const char *prefix = (ftype != EOLIAN_FUNCTION_POINTER) ? _get_eo_prefix(foo_id, tbuf, use_legacy): tbuf;
 
    if (!prefix)
      return NULL;
@@ -278,7 +279,7 @@ EAPI Eina_Iterator *
 eolian_function_parameters_get(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   if (fid->type != EOLIAN_METHOD)
+   if (fid->type != EOLIAN_METHOD && fid->type != EOLIAN_FUNCTION_POINTER)
      return NULL;
    return (fid->params ? eina_list_iterator_new(fid->params) : NULL);
 }
@@ -303,6 +304,8 @@ eolian_function_return_type_get(const Eolian_Function *fid, Eolian_Function_Type
         if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
           return NULL;
         return fid->set_ret_type;
+      case EOLIAN_FUNCTION_POINTER:
+        return (fid->type != EOLIAN_FUNCTION_POINTER) ? NULL : fid->get_ret_type;
       default:
         return NULL;
      }

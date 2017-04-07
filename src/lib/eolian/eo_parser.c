@@ -1406,6 +1406,108 @@ end:
    _func_pure_virtual_set(ls, prop, has_virtp);
 }
 
+static Eolian_Typedecl*
+parse_function_pointer(Eo_Lexer *ls)
+{
+   int line, col;
+   Eolian_Typedecl *def = push_typedecl(ls);
+   Eina_Strbuf *buf = push_strbuf(ls);
+   Eolian_Function *meth = NULL;
+
+   Eina_Bool has_const       = EINA_FALSE,
+             has_params      = EINA_FALSE,
+             has_return      = EINA_FALSE,
+             has_c_only      = EINA_FALSE,
+             has_beta        = EINA_FALSE;
+
+   eo_lexer_get(ls);
+   parse_name(ls, buf);
+
+   def->type = EOLIAN_TYPEDECL_FUNCTION_POINTER;
+   def->is_extern = EINA_FALSE;
+
+   FILL_BASE(def->base, ls, ls->line_number, ls->column);
+
+   _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
+           &def->full_name, &def->name, &def->namespaces);
+
+   pop_strbuf(ls);
+
+   meth = calloc(1, sizeof(Eolian_Function));
+   meth->klass = NULL;
+   meth->type = EOLIAN_FUNCTION_POINTER;
+   meth->get_scope = meth->set_scope = EOLIAN_SCOPE_PUBLIC;
+   meth->name = eina_stringshare_ref(def->name);
+   FILL_BASE(meth->base, ls, ls->line_number, ls->column);
+
+   def->function_pointer = meth;
+
+   for (;;) switch (ls->t.kw)
+     {
+      case KW_at_protected:
+        eo_lexer_syntax_error(ls, "protected invalid for function pointer");
+        return NULL;
+      case KW_at_const:
+        CASE_LOCK(ls, const, "const qualifier");
+        meth->obj_is_const = EINA_TRUE;
+        break;
+      case KW_at_class:
+        eo_lexer_syntax_error(ls, "class invalid for function pointer");
+        return NULL;
+      case KW_at_c_only:
+        CASE_LOCK(ls, c_only, "c_only qualifier");
+        meth->is_c_only = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_beta:
+        CASE_LOCK(ls, beta, "beta qualifier");
+        meth->is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      default:
+        goto body;
+     }
+body:
+   line = ls->line_number;
+   col = ls->column;
+   check_next(ls, '{');
+   for (;;) switch (ls->t.kw)
+     {
+      case KW_return:
+        CASE_LOCK(ls, return, "return");
+        Eo_Ret_Def ret;
+        parse_return(ls, &ret, EINA_FALSE);
+        pop_type(ls);
+        if (ret.default_ret_val)
+          {
+           eo_lexer_syntax_error(ls, "default return value invalid for function pointer");
+           return NULL;
+          }
+        meth->get_ret_type = ret.type;
+        meth->get_return_doc = ret.doc;
+        meth->get_ret_val = NULL;
+        meth->get_return_warn_unused = EINA_FALSE;
+        break;
+      case KW_legacy: // FIXME Do legacy and eo make sense for these new function pointer stuff?
+        eo_lexer_syntax_error(ls, "legacy invalid for function pointer");
+        return NULL;
+      case KW_eo:
+        eo_lexer_syntax_error(ls, "eo name invalid for function pointer");
+        return NULL;
+      case KW_params:
+        CASE_LOCK(ls, params, "params definition");
+        parse_params(ls, &meth->params, EINA_TRUE, EINA_FALSE);
+        break;
+      default:
+        goto end;
+     }
+end:
+   check_match(ls, '}', '{', line, col);
+   check_next(ls, ';');
+   FILL_DOC(ls, def, doc);
+   return def;
+}
+
 static void
 parse_method(Eo_Lexer *ls)
 {
@@ -2151,6 +2253,12 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
       case KW_type:
         {
            database_type_add(parse_typedef(ls));
+           pop_typedecl(ls);
+           break;
+        }
+      case KW_function:
+        {
+           database_type_add(parse_function_pointer(ls));
            pop_typedecl(ls);
            break;
         }

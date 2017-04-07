@@ -118,6 +118,9 @@ _validate_typedecl(const Eolian_Typedecl *tp)
            eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_ef_map_cb, &succ);
            return succ;
         }
+      case EOLIAN_TYPEDECL_FUNCTION_POINTER:
+        // FIXME validate functions here
+        return EINA_TRUE;
       default:
         return EINA_FALSE;
      }

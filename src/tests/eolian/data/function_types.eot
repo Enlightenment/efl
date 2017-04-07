@@ -1,0 +1,30 @@
+
+// typedef void (*VoidFunc)(void *data);
+function VoidFunc {
+};
+
+// typedef const char *(*SimpleFunc)(void *data, int a, double b);
+function SimpleFunc {
+  params {
+    a: int;
+    b: double;
+  }
+  return: string;
+};
+
+// typedef double (*ComplexFunc)(void *data, const char *a, const char **b);
+function ComplexFunc {
+  params {
+    @in c: string;
+    @out d: own(string);
+  }
+  return: double;
+};
+
+// typedef void (*FuncAsArgFunc)(void *data, VoidFunc cb, SimpleFunc another_cb);
+function FuncAsArgFunc {
+  params {
+    cb: VoidFunc;
+    another_cb: SimpleFunc;
+  }
+};

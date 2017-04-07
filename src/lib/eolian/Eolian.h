@@ -183,7 +183,8 @@ typedef enum
    EOLIAN_PROPERTY,
    EOLIAN_PROP_SET,
    EOLIAN_PROP_GET,
-   EOLIAN_METHOD
+   EOLIAN_METHOD,
+   EOLIAN_FUNCTION_POINTER
 } Eolian_Function_Type;
 
 typedef enum
@@ -217,7 +218,8 @@ typedef enum
    EOLIAN_TYPEDECL_STRUCT,
    EOLIAN_TYPEDECL_STRUCT_OPAQUE,
    EOLIAN_TYPEDECL_ENUM,
-   EOLIAN_TYPEDECL_ALIAS
+   EOLIAN_TYPEDECL_ALIAS,
+   EOLIAN_TYPEDECL_FUNCTION_POINTER
 } Eolian_Typedecl_Type;
 
 typedef enum
@@ -819,6 +821,16 @@ EAPI Eina_Bool eolian_function_is_beta(const Eolian_Function *function_id);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_is_constructor(const Eolian_Function *function_id, const Eolian_Class *klass);
+
+/*
+ * @brief Get whether a function is a function pointer.
+ *
+ * @param[in] function_id Id of the function
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_is_function_pointer(const Eolian_Function *function_id);
 
 /*
  * @brief Returns an iterator to the parameter handles for a method/ctor/dtor.
@@ -1729,6 +1741,16 @@ EAPI Eina_Iterator *eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
+
+/*
+ * @breif Get the function object for this function pointer type.
+ *
+ * @param[in] tp the type.
+ * @return the function or NULL;
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Function *eolian_typedecl_function_pointer_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the type of a type.

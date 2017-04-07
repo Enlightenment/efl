@@ -128,8 +128,29 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
         EINA_ITERATOR_FOREACH(itr, pr)
           {
              const Eolian_Type *prt = eolian_parameter_type_get(pr);
+             const Eolian_Typedecl *ptd = eolian_type_typedecl_get(prt);
              const char *prn = eolian_parameter_name_get(pr);
              Eina_Stringshare *prtn = eolian_type_c_type_get(prt);
+
+             if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
+               {
+                  nidx += 3;
+                  if (!first)
+                    eina_strbuf_append(buf, ", ");
+                  eina_strbuf_append_printf(buf, "void *%s_data, %s %s, Eina_Free_Cb %s_free_cb",
+                                            prn, prtn, prn, prn);
+                  eina_stringshare_del(prtn);
+                  if (!eolian_parameter_is_nonull(pr))
+                    continue;
+                  if (!flagbuf)
+                    {
+                       flagbuf = eina_strbuf_new();
+                       eina_strbuf_append_printf(flagbuf, " EINA_ARG_NONNULL(%d", nidx - 1);
+                    }
+                  else
+                    eina_strbuf_append_printf(flagbuf, ", %d", nidx - 1);
+                  continue;
+               }
 
              ++nidx;
              if (!first)

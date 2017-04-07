@@ -437,3 +437,12 @@ eolian_typedecl_free_func_get(const Eolian_Typedecl *tp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    return tp->freefunc;
 }
+
+EAPI const Eolian_Function *
+eolian_typedecl_function_pointer_get(EINA_UNUSED const Eolian_Typedecl *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   if (eolian_typedecl_type_get(tp) != EOLIAN_TYPEDECL_FUNCTION_POINTER)
+     return NULL;
+   return tp->function_pointer;
+}

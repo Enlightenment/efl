@@ -69,6 +69,40 @@ _type_exists(const char *tname, Eina_Strbuf *buf)
 }
 
 static void
+_gen_func_pointer_param(const char *name, Eina_Stringshare *c_type,
+                        const Eolian_Typedecl *typedecl EINA_UNUSED,
+                        Eina_Strbuf *params, Eina_Strbuf *params_full,
+                        Eina_Strbuf *params_full_imp,
+                        Eina_Bool is_empty EINA_UNUSED)
+{
+   Eina_Strbuf *dataname = eina_strbuf_new();
+   Eina_Strbuf *freename = eina_strbuf_new();
+
+   eina_strbuf_append_printf(dataname, "%s_data", name);
+   eina_strbuf_append_printf(freename, "%s_free_cb", name);
+
+   if (eina_strbuf_length_get(params))
+     eina_strbuf_append(params, ", ");
+
+   eina_strbuf_append_printf(params, "%s, %s, %s",
+                             eina_strbuf_string_get(dataname),
+                             name,
+                             eina_strbuf_string_get(freename));
+
+   eina_strbuf_append_printf(params_full_imp, ", void *%s, %s %s, Eina_Free_Cb %s",
+                             eina_strbuf_string_get(dataname),
+                             c_type, name,
+                             eina_strbuf_string_get(freename));
+   eina_strbuf_append_printf(params_full, ", void *%s, %s %s, Eina_Free_Cb %s",
+                             eina_strbuf_string_get(dataname),
+                             c_type, name,
+                             eina_strbuf_string_get(freename));
+
+   eina_strbuf_free(dataname);
+   eina_strbuf_free(freename);
+}
+
+static void
 _append_defval(const Eolian_Unit *src, Eina_Strbuf *buf,
                const Eolian_Expression *exp, const Eolian_Type *tp)
 {
@@ -212,9 +246,17 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
              const char *prn = eolian_parameter_name_get(pr);
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
              Eina_Stringshare *ptn = eolian_type_c_type_get(pt);
+             const Eolian_Typedecl *ptd = eolian_type_typedecl_get(pt);
 
              Eina_Bool had_star = ptn[strlen(ptn) - 1] == '*';
              const char *add_star = _get_add_star(ftype, pd);
+
+             if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
+               {
+                  _gen_func_pointer_param(prn, ptn, ptd, params, params_full, params_full_imp, is_empty);
+                  eina_stringshare_del(ptn);
+                  continue;
+               }
 
              if (eina_strbuf_length_get(params))
                eina_strbuf_append(params, ", ");
@@ -828,7 +870,17 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
              Eolian_Parameter_Dir pd = eolian_parameter_direction_get(pr);
              const char *prn = eolian_parameter_name_get(pr);
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
+             const Eolian_Typedecl *ptd = eolian_type_typedecl_get(pt);
              Eina_Stringshare *ptn = eolian_type_c_type_get(pt);
+
+             if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
+               {
+                  eina_strbuf_append_printf(params, ", %s_data, %s, %s_free_cb", prn, prn, prn);
+                  eina_strbuf_append_printf(params_full, ", void *%s_data, %s %s, Eina_Free_Cb %s_free_cb", prn, ptn, prn, prn);
+
+                  eina_stringshare_del(ptn);
+                  continue;
+               }
 
              Eina_Bool had_star = ptn[strlen(ptn) - 1] == '*';
              const char *add_star = _get_add_star(ftype, pd);

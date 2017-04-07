@@ -186,6 +186,37 @@ START_TEST(eolian_docs)
 }
 END_TEST
 
+START_TEST(eolian_function_pointers)
+{
+
+   // .eot
+   char output_filepath[PATH_MAX] = "";
+   snprintf(output_filepath, PATH_MAX, "%s/eolian_function_pointers",
+            eina_environment_tmp_get());
+   _remove_ref(output_filepath, "h");
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_types.eot", "-gh", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_types_ref.h", output_filepath, "h"));
+
+   // .eo.h
+   _remove_ref(output_filepath, "h");
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_as_argument.eo", "-gh", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_as_argument_ref.h", output_filepath, "h"));
+
+   // .eo.c
+   _remove_ref(output_filepath, "c");
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_as_argument.eo", "-gc", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_as_argument_ref.c", output_filepath, "c"));
+
+   // .eo.imp.c
+   _remove_ref(output_filepath, "c");
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_as_argument.eo", "-gi", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_as_argument_impl_ref.c", output_filepath, "c"));
+   /* Check that nothing is added */
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_as_argument.eo", "-gi", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_as_argument_impl_ref.c", output_filepath, "c"));
+}
+END_TEST
+
 void eolian_generation_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_types_generation);
@@ -195,4 +226,5 @@ void eolian_generation_test(TCase *tc)
    tcase_add_test(tc, eolian_functions_descriptions);
    tcase_add_test(tc, eolian_import);
    tcase_add_test(tc, eolian_docs);
+   tcase_add_test(tc, eolian_function_pointers);
 }
