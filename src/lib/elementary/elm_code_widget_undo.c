@@ -109,6 +109,12 @@ _elm_code_widget_undo_change(Evas_Object *widget,
      }
 }
 
+static Eina_Bool
+_elm_code_widget_can_undo_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   return !!pd->undo_stack_ptr;
+}
+
 static void
 _elm_code_widget_undo(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
@@ -121,6 +127,15 @@ _elm_code_widget_undo(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
    _elm_code_widget_undo_change(obj, info);
 
    pd->undo_stack_ptr = eina_list_next(pd->undo_stack_ptr);
+}
+
+static Eina_Bool
+_elm_code_widget_can_redo_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   if (pd->undo_stack_ptr)
+     return !!eina_list_prev(pd->undo_stack_ptr);
+
+   return !!eina_list_last(pd->undo_stack);
 }
 
 static void
