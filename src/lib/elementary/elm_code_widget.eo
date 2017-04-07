@@ -278,8 +278,16 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       undo {
          [[Undo last action]]
       }
+      can_undo_get {
+         [[Determine if there are any available undo operations]]
+         return: bool; [[$true if there are undo operations]]
+      }
       redo {
          [[Redo last action]]
+      }
+      can_redo_get {
+         [[Determine if there are any available redo operations]]
+         return: bool; [[$true if there are redo operations]]
       }
    }
    implements {
