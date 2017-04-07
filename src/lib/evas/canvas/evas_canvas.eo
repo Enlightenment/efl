@@ -88,37 +88,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             ]]
          }
       }
-      @property engine_info {
-         set {
-            [[Applies the engine settings for the given evas from the
-              given $Evas_Engine_Info structure.
-
-              To get the Evas_Engine_Info structure to use, call
-              @.engine_info.get. Do not try to obtain a pointer to an
-              $Evas_Engine_Info structure in any other way.
-
-              You will need to call this function at least once before you
-              can create objects on an evas or render that evas. Some
-              engines allow their settings to be changed more than once.
-
-              Once called, the $info pointer should be considered invalid.
-            ]]
-            return: bool; [[$true if no error occurred, $false otherwise.]]
-         }
-         get {
-            [[Retrieves the current render engine info struct from the given
-              evas.
-
-              The returned structure is publicly modifiable.  The contents
-              are valid until either @.engine_info.set or @.render are called.
-
-              This structure does not need to be freed by the caller.
-            ]]
-         }
-         values {
-            info: ptr(Evas.Engine_Info); [[The pointer to the engine info to use.]]
-         }
-      }
       @property focus {
          get {
             [[Retrieve the object focused by the default seat.

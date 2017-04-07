@@ -44,6 +44,42 @@ EAPI Evas             *evas_new(void) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
  */
 EAPI void              evas_free(Evas *e)  EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Applies the engine settings for the given evas from the given
+ * @c Evas_Engine_Info structure.
+ *
+ * To get the Evas_Engine_Info structure to use, call
+ * @ref evas_engine_info_get. Do not try to obtain a pointer to an
+ * @c Evas_Engine_Info structure in any other way.
+ *
+ * You will need to call this function at least once before you can create
+ * objects on an evas or render that evas. Some engines allow their settings to
+ * be changed more than once.
+ *
+ * Once called, the @c info pointer should be considered invalid.
+ *
+ * @param[in] info The pointer to the engine info to use.
+ *
+ * @return @c true if no error occurred, @c false otherwise.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Eina_Bool evas_engine_info_set(Evas *obj, Evas_Engine_Info *info);
+
+/**
+ * @brief Retrieves the current render engine info struct from the given evas.
+ *
+ * The returned structure is publicly modifiable.  The contents are valid until
+ * either @ref evas_engine_info_set or @ref evas_render are called.
+ *
+ * This structure does not need to be freed by the caller.
+ *
+ * @return The pointer to the engine info to use.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Evas_Engine_Info *evas_engine_info_get(const Evas *obj);
+
 #include "canvas/evas_canvas.eo.legacy.h"
 
 /**

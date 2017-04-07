@@ -421,9 +421,10 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    efl_destructor(efl_super(eo_e, MY_CLASS));
 }
 
-EOLIAN static Evas_Engine_Info*
-_evas_canvas_engine_info_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+EAPI Evas_Engine_Info *
+evas_engine_info_get(const Evas *obj)
 {
+   const Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
    Evas_Engine_Info *info;
 
    if (!e->engine.info) return NULL;
@@ -434,9 +435,11 @@ _evas_canvas_engine_info_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
    return info;
 }
 
-EOLIAN static Eina_Bool
-_evas_canvas_engine_info_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Engine_Info *info)
+EAPI Eina_Bool
+evas_engine_info_set(Evas *obj, Evas_Engine_Info *info)
 {
+   Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
+
    if (!info) return EINA_FALSE;
    if (info != e->engine.info) return EINA_FALSE;
    if (info->magic != e->engine.info_magic) return EINA_FALSE;
