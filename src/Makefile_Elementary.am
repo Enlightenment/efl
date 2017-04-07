@@ -4,6 +4,7 @@
 elm_public_eolian_files = \
 	lib/elementary/elm_atspi_bridge.eo \
 	lib/elementary/elm_atspi_app_object.eo \
+	lib/elementary/elm_atspi_proxy.eo \
 	lib/elementary/elm_bg.eo \
 	lib/elementary/efl_ui_button.eo \
 	lib/elementary/elm_calendar.eo \
@@ -204,6 +205,7 @@ includesdir = $(includedir)/elementary-@VMAJ@
 includesunstable_HEADERS = \
 	lib/elementary/elm_gen_common.h \
 	lib/elementary/elm_atspi_bridge.h \
+	lib/elementary/elm_atspi_proxy.h \
 	lib/elementary/elm_interface_atspi_accessible.h \
 	lib/elementary/elm_interface_atspi_text.h \
 	lib/elementary/elm_interface_atspi_widget_action.h \
@@ -551,6 +553,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_actionslider.c \
 	lib/elementary/elm_atspi_app_object.c \
 	lib/elementary/elm_atspi_bridge.c \
+	lib/elementary/elm_atspi_proxy.c \
 	lib/elementary/elm_bg.c \
 	lib/elementary/elm_box.c \
 	lib/elementary/elm_bubble.c \
