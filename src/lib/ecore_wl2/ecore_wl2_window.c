@@ -550,6 +550,7 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    static int _win_id = 1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   if (display->pid) CRI("CANNOT CREATE WINDOW WITH SERVER DISPLAY");
 
    /* try to allocate space for window structure */
    win = calloc(1, sizeof(Ecore_Wl2_Window));
