@@ -80,6 +80,7 @@ static const char * const ctypes[] =
    "void *",
 
    "Eina_Free_Cb",
+   "function",
 };
 
 #undef KW
