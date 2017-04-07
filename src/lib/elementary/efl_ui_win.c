@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
 #define EFL_GFX_SIZE_HINT_PROTECTED
@@ -6438,6 +6439,24 @@ _efl_ui_win_elm_interface_atspi_accessible_name_get(Eo *obj, Efl_Ui_Win_Data *sd
    if (ret) return ret;
    const char *name = elm_win_title_get(obj);
    return name;
+}
+
+EOLIAN static void
+_efl_ui_win_elm_interface_atspi_component_extents_get(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
+{
+   int ee_x, ee_y;
+
+   *x = 0;
+   *y = 0;
+   evas_object_geometry_get(obj, NULL, NULL, w, h);
+   if (screen_coords)
+     {
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        if (!ee) return;
+        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+        if (x) *x += ee_x;
+        if (y) *y += ee_y;
+     }
 }
 
 EOLIAN static Eina_Bool
