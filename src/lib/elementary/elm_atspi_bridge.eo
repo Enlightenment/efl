@@ -25,3 +25,4 @@ class Elm.Atspi.Bridge (Efl.Object, Elm.Interface.Accessible_Observer)
       disconnected; [[Disconnected from AT-SPI2 bus]]
    }
 }
+

@@ -113,6 +113,11 @@ struct collection_match_rule {
      Eina_Bool reverse : 1;
 };
 
+struct dbus_address {
+     char bus[256];
+     char path[256];
+};
+
 static Eo *_instance;
 
 // Object Event handlers
@@ -134,7 +139,7 @@ static void _object_del_event_handle(Elm_Atspi_Bridge *data, const Elm_Accessibl
 // bridge private methods
 static void _bridge_object_register(Eo *bridge, Eo *obj);
 static void _bridge_object_unregister(Eo *bridge, Eo *obj);
-static const char * _bridge_path_from_object(Elm_Atspi_Bridge *bridge, const Eo *eo);
+static void _bridge_address_from_object(Eo *bridge, const Eo *eo, struct dbus_address *address);
 static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *ifc, const Eldbus_Signal *signal, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...);
 static Eo * _bridge_object_from_path(Eo *bridge, const char *path);
 static void _bridge_iter_object_reference_append(Eo *bridge, Eldbus_Message_Iter *iter, const Eo *obj);
@@ -151,6 +156,7 @@ static void _bridge_pending_cancel_all(Elm_Atspi_Bridge *bridge);
 static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
 static Eina_Bool _elm_atspi_bridge_key_filter(void *data, void *loop, int type, void *event);
 static void _object_desktop_reference_append(Eldbus_Message_Iter *iter);
+static Eina_Bool _id_parse(const char *id, struct dbus_address *addr);
 
 enum _Atspi_Object_Child_Event_Type
 {
@@ -2009,20 +2015,35 @@ _bridge_object_from_path(Eo *bridge, const char *path)
    return ret;
 }
 
-static const char *
-_bridge_path_from_object(Elm_Atspi_Bridge *bridge, const Eo *eo)
+static void
+_bridge_address_from_object(Eo *bridge, const Eo *eo, struct dbus_address *addr)
 {
-   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, NULL);
-   static char path[64];
+   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
    if (!eo)
-     return ATSPI_DBUS_PATH_NULL;
-
-   if (eo == pd->root)
-     snprintf(path, sizeof(path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
+     {
+        snprintf(addr->bus, sizeof(addr->bus), "%s", eldbus_connection_unique_name_get(pd->a11y_bus));
+        snprintf(addr->path, sizeof(addr->path), "%s", ATSPI_DBUS_PATH_NULL);
+     }
+   else if (eo == pd->root)
+     {
+        snprintf(addr->bus, sizeof(addr->bus), "%s", eldbus_connection_unique_name_get(pd->a11y_bus));
+        snprintf(addr->path, sizeof(addr->path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
+     }
+   else if (efl_isa(eo, ELM_ATSPI_PROXY_CLASS))
+     {
+        if (!_id_parse(elm_atspi_proxy_id_get(eo), addr))
+          {
+             ERR("Unable to parse id: %s", elm_atspi_proxy_id_get(eo));
+             snprintf(addr->bus, sizeof(addr->bus), "%s", eldbus_connection_unique_name_get(pd->a11y_bus));
+             snprintf(addr->path, sizeof(addr->path), "%s", ATSPI_DBUS_PATH_NULL);
+          }
+     }
    else
-     snprintf(path, sizeof(path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (unsigned long long)(uintptr_t)eo);
-   return path;
+     {
+        snprintf(addr->bus, sizeof(addr->bus), "%s", eldbus_connection_unique_name_get(pd->a11y_bus));
+        snprintf(addr->path, sizeof(addr->path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (unsigned long long)(uintptr_t)eo);
+     }
 }
 
 static Eina_Bool
@@ -3050,12 +3071,15 @@ static const Eldbus_Service_Interface_Desc collection_iface_desc = {
 static void
 _bridge_iter_object_reference_append(Eo *bridge, Eldbus_Message_Iter *iter, const Eo *obj)
 {
+   struct dbus_address addr;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
    Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
    EINA_SAFETY_ON_NULL_RETURN(iter);
-   const char *path = _bridge_path_from_object(bridge, obj);
-   eldbus_message_iter_basic_append(iter_struct, 's', eldbus_connection_unique_name_get(pd->a11y_bus));
-   eldbus_message_iter_basic_append(iter_struct, 'o', path);
+
+   _bridge_address_from_object(bridge, obj, &addr);
+
+   eldbus_message_iter_basic_append(iter_struct, 's', addr.bus);
+   eldbus_message_iter_basic_append(iter_struct, 'o', addr.path);
    eldbus_message_iter_container_close(iter, iter_struct);
 }
 
@@ -3565,9 +3589,11 @@ static const Eldbus_Service_Interface_Desc component_iface_desc = {
 };
 
 static void
-_on_bridge_app_register(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_on_bridge_app_register(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg;
+
+   _bridge_pending_del(data, pending);
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
@@ -3592,7 +3618,7 @@ _bridge_app_register(Eo *bridge)
    root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
    _bridge_iter_object_reference_append(bridge, iter, root);
    _bridge_object_register(bridge, root);
-   eldbus_connection_send(pd->a11y_bus, message, _on_bridge_app_register, NULL, -1);
+   eldbus_connection_send(pd->a11y_bus, message, _on_bridge_app_register, bridge, -1);
 }
 
 EAPI void
@@ -3971,7 +3997,7 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
    Eldbus_Message_Iter *iter , *iter_stack[64], *iter_struct;
    va_list va;
    Eo *atspi_obj;
-   const char *path;
+   struct dbus_address addr;
    int top = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(infc);
@@ -3980,9 +4006,9 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
    EINA_SAFETY_ON_NULL_RETURN(obj);
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
-   path = _bridge_path_from_object(bridge, obj);
+   _bridge_address_from_object(bridge, obj, &addr);
 
-   msg = eldbus_message_signal_new(path, infc, signal->name);
+   msg = eldbus_message_signal_new(addr.path, infc, signal->name);
    if (!msg) return;
 
    va_start(va, variant_sig);
@@ -4011,8 +4037,8 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
                    break;
                 case 'o':
                    atspi_obj = va_arg(va, Eo*);
-                   path = _bridge_path_from_object(bridge, atspi_obj);
-                   eldbus_message_iter_basic_append(iter_stack[top], 'o', path);
+                   _bridge_address_from_object(bridge, atspi_obj, &addr);;
+                   eldbus_message_iter_basic_append(iter_stack[top], 'o', addr.path);
                    break;
                 case ')':
                    eldbus_message_iter_container_close(iter_stack[top - 1], iter_stack[top]);
@@ -4038,9 +4064,9 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
    eldbus_message_iter_container_close(iter, iter_stack[0]);
 
    iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
-   path = _bridge_path_from_object(bridge, pd->root);
-   eldbus_message_iter_basic_append(iter_struct, 's', eldbus_connection_unique_name_get(pd->a11y_bus));
-   eldbus_message_iter_basic_append(iter_struct, 'o', path);
+   _bridge_address_from_object(bridge, pd->root, &addr);
+   eldbus_message_iter_basic_append(iter_struct, 's', addr.bus);
+   eldbus_message_iter_basic_append(iter_struct, 'o', addr.path);
    eldbus_message_iter_container_close(iter, iter_struct);
 
    eldbus_connection_send(pd->a11y_bus, msg, NULL, NULL, -1);
@@ -4244,7 +4270,7 @@ _bridge_interfaces_register(Eo *bridge)
 EOLIAN static void
 _elm_atspi_bridge_elm_interface_accessible_observer_on_event(Elm_Atspi_Bridge *bridge, Elm_Atspi_Bridge_Data *pd, const Elm_Accessible_Event *event)
 {
-   if (!pd->cache || !eina_hash_find(pd->cache, &event->object))
+   if (!pd->connected || !eina_hash_find(pd->cache, &event->object))
        return;
 
    if (event->desc == ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED)
@@ -4830,6 +4856,45 @@ _elm_atspi_bridge_elm_interface_accessible_observer_on_root_changed(Elm_Atspi_Br
 
    if (was_connected)
       _bridge_connect(bridge);
+}
+
+static Eina_Bool
+_id_parse(const char *id, struct dbus_address *addr)
+{
+   size_t source_len;
+   char *split;
+   int to_write;
+
+   if (!addr || !id)
+     return EINA_FALSE;
+
+   split = strrchr(id, ':');
+   if (!split)
+     return EINA_FALSE;
+
+   to_write = split - id + 1;
+   if (to_write > (int)sizeof(addr->bus))
+     return EINA_FALSE;
+
+   eina_strlcpy(addr->bus, id, to_write);
+
+   source_len = eina_strlcpy(addr->path, split + 1, sizeof(addr->path));
+   if (source_len >= (int)sizeof(addr->path))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static char*
+_id_make(const struct dbus_address *address)
+{
+   char buf[512];
+
+   int written = snprintf(buf, sizeof(buf), "%s:%s", address->bus, address->path);
+   if ((written < 0) || (written >= (int)sizeof(buf)))
+     return NULL;
+
+   return strdup(buf);
 }
 
 #include "elm_atspi_bridge.eo.c"
