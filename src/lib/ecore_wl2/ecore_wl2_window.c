@@ -570,8 +570,6 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    win->opaque.w = w;
    win->opaque.h = h;
 
-   win->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
-
    win->pending.configure = EINA_TRUE;
 
    display->windows =
