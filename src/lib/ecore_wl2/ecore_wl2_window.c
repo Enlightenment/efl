@@ -571,6 +571,7 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    win->opaque.h = h;
 
    win->pending.configure = EINA_TRUE;
+   _ecore_wl2_window_surface_create(win);
 
    display->windows =
      eina_inlist_append(display->windows, EINA_INLIST_GET(win));
