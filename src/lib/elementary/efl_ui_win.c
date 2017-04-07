@@ -4937,9 +4937,35 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #ifdef HAVE_ELEMENTARY_WL2
    _elm_win_wlwindow_get(sd);
    if (eina_streq(engine, ELM_WAYLAND_SHM) || eina_streq(engine, ELM_WAYLAND_EGL))
-     sd->wl.configure_handler =
-       ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE,
-         _elm_win_wl_configure, obj);
+     {
+        Ecore_Wl2_Window_Type wtype;
+        sd->wl.configure_handler =
+          ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE, _elm_win_wl_configure, obj);
+        switch (sd->type)
+          {
+           case ELM_WIN_BASIC:
+           case ELM_WIN_DIALOG_BASIC:
+           case ELM_WIN_SPLASH:
+           case ELM_WIN_TOOLBAR:
+           case ELM_WIN_UTILITY:
+           case ELM_WIN_DOCK:
+           case ELM_WIN_DESKTOP:
+             wtype = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
+             break;
+           case ELM_WIN_TOOLTIP:
+           case ELM_WIN_COMBO:
+           case ELM_WIN_MENU:
+           case ELM_WIN_POPUP_MENU:
+             wtype = ECORE_WL2_WINDOW_TYPE_MENU;
+             break;
+           case ELM_WIN_DND:
+             wtype = ECORE_WL2_WINDOW_TYPE_DND;
+             break;
+           default:
+             wtype = ECORE_WL2_WINDOW_TYPE_NONE;
+          }
+        ecore_wl2_window_type_set(sd->wl.win, wtype);
+     }
 #endif
 
 #ifdef HAVE_ELEMENTARY_COCOA
