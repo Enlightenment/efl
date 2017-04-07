@@ -107,6 +107,8 @@ _elm_code_widget_undo_change(Evas_Object *widget,
         elm_code_widget_cursor_position_set(widget, info->end_line,
                                             info->end_col + 1);
      }
+
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
 static Eina_Bool
