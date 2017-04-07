@@ -59,6 +59,7 @@ enum Tokens
     KW(void_ptr), \
     KW(__builtin_event_cb), \
     KW(__builtin_free_cb), \
+    KW(function), \
     KW(__undefined_type), \
     \
     KW(true), KW(false), KW(null)
