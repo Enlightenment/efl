@@ -318,9 +318,9 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
 }
 
 static void
-_begin_recovery_maybe(Ecore_Wl2_Display *ewd)
+_begin_recovery_maybe(Ecore_Wl2_Display *ewd, int code)
 {
-   if (ewd->wl.session_recovery)// && (errno == EPIPE))
+   if ((_server_displays || (code != EPROTO)) && ewd->wl.session_recovery)// && (errno == EPIPE))
      _recovery_timer_add(ewd);
    else
      {
@@ -333,28 +333,30 @@ static Eina_Bool
 _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
 {
    Ecore_Wl2_Display *ewd = data;
-   int ret = 0;
+   int ret = 0, code;
 
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ))
      {
         ret = wl_display_dispatch(ewd->wl.display);
-        if ((ret < 0) && (errno != EAGAIN)) goto err;
+        code = errno;
+        if ((ret < 0) && (code != EAGAIN)) goto err;
      }
 
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
      {
         ret = wl_display_flush(ewd->wl.display);
+        code = errno;
         if (ret == 0)
           ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
 
-        if ((ret < 0) && (errno != EAGAIN)) goto err;
+        if ((ret < 0) && (code != EAGAIN)) goto err;
      }
 
    return ECORE_CALLBACK_RENEW;
 
 err:
    ewd->fd_hdl = NULL;
-   _begin_recovery_maybe(ewd);
+   _begin_recovery_maybe(ewd, code);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -375,26 +377,29 @@ static Eina_Bool
 _cb_connect_idle(void *data)
 {
    Ecore_Wl2_Display *ewd = data;
-   int ret = 0;
+   int ret = 0, code;
 
    ret = wl_display_get_error(ewd->wl.display);
+   code = errno;
    if (ret < 0) goto err;
 
    ret = wl_display_dispatch_pending(ewd->wl.display);
+   code = errno;
    if (ret < 0) goto err;
 
    ret = wl_display_flush(ewd->wl.display);
-   if ((ret < 0) && (errno == EAGAIN))
+   code = errno;
+   if ((ret < 0) && (code == EAGAIN))
      ecore_main_fd_handler_active_set(ewd->fd_hdl,
                                       (ECORE_FD_READ | ECORE_FD_WRITE));
 
    return ECORE_CALLBACK_RENEW;
 
 err:
-   if ((ret < 0) && (errno != EAGAIN))
+   if ((ret < 0) && (code != EAGAIN))
      {
         ewd->idle_enterer = NULL;
-        _begin_recovery_maybe(ewd);
+        _begin_recovery_maybe(ewd, code);
 
         return ECORE_CALLBACK_CANCEL;
      }
