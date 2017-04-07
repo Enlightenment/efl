@@ -6446,8 +6446,8 @@ _efl_ui_win_elm_interface_atspi_component_extents_get(Eo *obj, Efl_Ui_Win_Data *
 {
    int ee_x, ee_y;
 
-   *x = 0;
-   *y = 0;
+   if (x) *x = 0;
+   if (y) *y = 0;
    evas_object_geometry_get(obj, NULL, NULL, w, h);
    if (screen_coords)
      {
