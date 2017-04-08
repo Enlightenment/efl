@@ -218,6 +218,17 @@ EFL_CALLBACKS_ARRAY_DEFINE(efl_net_socket_ssl_sock_cbs,
                            {EFL_EVENT_DEL, efl_net_socket_ssl_sock_del});
 
 static void
+efl_net_socket_ssl_sock_resolved(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eo *o = data;
+   Efl_Net_Socket_Ssl_Data *pd = efl_data_scope_get(o, MY_CLASS);
+
+   if (pd->torndown) return;
+
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+}
+
+static void
 efl_net_socket_ssl_sock_connected(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *o = data;
@@ -238,6 +249,10 @@ efl_net_socket_ssl_sock_connected(void *data, const Efl_Event *event EINA_UNUSED
 
    efl_unref(o);
 }
+
+EFL_CALLBACKS_ARRAY_DEFINE(efl_net_socket_ssl_sock_dialer_cbs,
+                           {EFL_NET_DIALER_EVENT_RESOLVED, efl_net_socket_ssl_sock_resolved},
+                           {EFL_NET_DIALER_EVENT_CONNECTED, efl_net_socket_ssl_sock_connected});
 
 static void
 _efl_net_socket_ssl_context_del(void *data, const Efl_Event *event EINA_UNUSED)
@@ -305,7 +320,7 @@ _efl_net_socket_ssl_adopt(Eo *o, Efl_Net_Socket_Ssl_Data *pd, Efl_Net_Socket *so
    efl_event_callback_array_add(sock, efl_net_socket_ssl_sock_cbs(), o);
 
    if (efl_isa(sock, EFL_NET_DIALER_INTERFACE))
-     efl_event_callback_add(sock, EFL_NET_DIALER_EVENT_CONNECTED, efl_net_socket_ssl_sock_connected, o);
+     efl_event_callback_array_add(sock, efl_net_socket_ssl_sock_dialer_cbs(), o);
 
    efl_net_socket_ssl_sock_can_read_changed(o, NULL);
    efl_net_socket_ssl_sock_can_write_changed(o, NULL);
@@ -448,9 +463,7 @@ _efl_net_socket_ssl_efl_object_destructor(Eo *o, Efl_Net_Socket_Ssl_Data *pd)
      {
         efl_event_callback_array_del(pd->sock, efl_net_socket_ssl_sock_cbs(), o);
         if (efl_isa(pd->sock, EFL_NET_DIALER_INTERFACE))
-          {
-             efl_event_callback_del(pd->sock, EFL_NET_DIALER_EVENT_CONNECTED, efl_net_socket_ssl_sock_connected, o);
-          }
+          efl_event_callback_array_del(pd->sock, efl_net_socket_ssl_sock_dialer_cbs(), o);
         efl_unref(pd->sock);
         pd->sock = NULL;
      }
