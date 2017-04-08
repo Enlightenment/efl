@@ -32,6 +32,9 @@ struct _Ecore_Con_Server
    Eo *server;
    struct {
       Efl_Future *job;
+      Eina_Binbuf *pending_send; /* until job is fulfilled, no dialer exists,
+                                  * this binbuf allows immediate
+                                  * ecore_con_server_send() in that situation */
       Eo *clients_ctx;
       Eina_List *certs;
       Eina_List *privkeys;
@@ -980,6 +983,12 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 
    if (svr->ssl.job) efl_future_cancel(svr->ssl.job);
 
+   if (svr->ssl.pending_send)
+     {
+        eina_binbuf_free(svr->ssl.pending_send);
+        svr->ssl.pending_send = NULL;
+     }
+
    if (svr->event_count) return;
 
    EINA_LIST_FREE(svr->ssl.certs, str) eina_stringshare_del(str);
@@ -1339,6 +1348,13 @@ _ecore_con_server_dialer_connected(void *data, const Efl_Event *event EINA_UNUSE
         svr->ssl.upgrading = EINA_FALSE;
         INF("svr=%p upgraded to SSL at %s (%s)", svr, efl_net_dialer_address_dial_get(svr->dialer), efl_net_socket_address_remote_get(svr->dialer));
         _ecore_con_post_event_server_upgrade(svr);
+        if (svr->ssl.pending_send)
+          {
+             Eina_Slice slice = eina_binbuf_slice_get(svr->ssl.pending_send);
+             ecore_con_server_send(svr, slice.mem, slice.len);
+             eina_binbuf_free(svr->ssl.pending_send);
+             svr->ssl.pending_send = NULL;
+          }
         return;
      }
 
@@ -1968,6 +1984,18 @@ _ecore_con_server_dialer_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
        efl_io_buffered_stream_inner_io_get(svr->dialer),
        efl_net_dialer_ssl_context_get(efl_io_buffered_stream_inner_io_get(svr->dialer)));
 
+   if (svr->ssl.pending_send)
+     {
+        /* if ecore_con_server_send() was called before the job completed
+         * then we queued data there, flush to dialer.
+         * See https://phab.enlightenment.org/T5339
+         */
+        Eina_Slice slice = eina_binbuf_slice_get(svr->ssl.pending_send);
+        ecore_con_server_send(svr, slice.mem, slice.len);
+        eina_binbuf_free(svr->ssl.pending_send);
+        svr->ssl.pending_send = NULL;
+     }
+
    return;
 
  error_dial:
@@ -2271,9 +2299,29 @@ ecore_con_server_send(Ecore_Con_Server *svr, const void *data, int size)
    ECORE_CON_SERVER_CHECK_RETURN(svr, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(size < 1, 0);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(svr->ssl.upgrading, 0);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(svr->dialer, 0);
+   /* while upgrading or no dialer (due SSL dialer being created on
+    * the next mainloop iteration from a job as described from
+    * ecore_con_server_connect()), queue pending data and send as soon
+    * as the dialer is assigned.
+    *
+    * This allows immediate usage of ecore_con_server_send() after
+    * ecore_con_server_connect() as the old API did and needed by
+    * https://phab.enlightenment.org/T5339
+    */
+   if ((svr->ssl.upgrading) || (!svr->dialer))
+     {
+        Eina_Bool r;
+        if (!svr->ssl.pending_send)
+          {
+             svr->ssl.pending_send = eina_binbuf_new();
+             EINA_SAFETY_ON_NULL_RETURN_VAL(svr->ssl.pending_send, 0);
+          }
+        r = eina_binbuf_append_length(svr->ssl.pending_send, data, size);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(r, 0);
+        return size;
+     }
+
    err = efl_io_writer_write(svr->dialer, &slice, NULL);
    if (err)
      {
