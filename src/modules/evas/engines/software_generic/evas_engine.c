@@ -3316,9 +3316,9 @@ eng_font_char_at_coords_get(void *data EINA_UNUSED, Evas_Font_Set *font, const E
 }
 
 static int
-eng_font_last_up_to_pos(void *data EINA_UNUSED, Evas_Font_Set *font, const Evas_Text_Props *text_props, int x, int y)
+eng_font_last_up_to_pos(void *data EINA_UNUSED, Evas_Font_Set *font, const Evas_Text_Props *text_props, int x, int y, int width_offset)
 {
-   return evas_common_font_query_last_up_to_pos((RGBA_Font *) font, text_props, x, y);
+   return evas_common_font_query_last_up_to_pos((RGBA_Font *) font, text_props, x, y, width_offset);
 }
 
 static int
