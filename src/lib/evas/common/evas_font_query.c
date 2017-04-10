@@ -813,7 +813,7 @@ end:
  * @return the position found, -1 on failure.
  */
 EAPI int
-evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text_props, int x, int y)
+evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text_props, int x, int y, int width_offset)
 {
    int asc, desc;
    int ret=-1;
@@ -845,6 +845,14 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
                   pen_x = full_adv - (gli->pen_after - start_pen);
                   /* If invisible, skip */
                   if (gli->index == 0) continue;
+
+                  /* FIXME: Should we care glyph's width for RTL?
+                     I think if width+x_bear/advance stacked from left side,
+                     we don't need to care glyph's width to find linebreak position
+                     or ellipsis position.
+                     Even if (x < (pen_x + gli->x_bear + gli->width)))) is removed,
+                     the whole test suite is passed.
+                   */
                   if ((x >= pen_x) &&
                         (((i == 0) && (x <= full_adv)) ||
                          (x < (full_adv - (gli[-1].pen_after - start_pen)) ||
@@ -875,7 +883,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
 
              if ((x >= EVAS_FONT_WALK_PEN_X) &&
                    ((x < (EVAS_FONT_WALK_PEN_X_AFTER)) ||
-                    (x < (EVAS_FONT_WALK_PEN_X +
+                    (x + width_offset < (EVAS_FONT_WALK_PEN_X +
                           _glyph_itr->x_bear + _glyph_itr->width))) &&
                    (y >= -asc) && (y <= desc))
                {

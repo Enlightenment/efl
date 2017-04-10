@@ -3922,7 +3922,7 @@ _layout_text_item_new(Ctxt *c EINA_UNUSED, Evas_Object_Textblock_Format *fmt)
  */
 static int
 _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti)
+      const Evas_Object_Textblock_Text_Item *ti, int width_offset)
 {
    if (fmt->font.font)
      {
@@ -3933,7 +3933,7 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
           x = 0;
         Evas_Object_Protected_Data *obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
         return ENFN->font_last_up_to_pos(ENDT, fmt->font.font,
-              &ti->text_props, x, 0);
+              &ti->text_props, x, 0, width_offset);
      }
    return -1;
 }
@@ -4706,7 +4706,7 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
            wrap = 0;
         else
-           wrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it));
+           wrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), 0);
 
         if (wrap < 0)
            return -1;
@@ -4767,13 +4767,13 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              Evas_Coord cw;
 
              /* Get cutoff */
-             swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it));
+             swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), 0);
 
              /* Get cutoff considering an additional hyphen item */
              cw = c->w;
              c->hyphen_ti = _layout_hyphen_item_new(c, _ITEM_TEXT(it));
              c->w -= c->hyphen_ti->parent.w;
-             hyphen_swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it));
+             hyphen_swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), c->hyphen_ti->parent.w);
              c->w = cw;
 
              /* Stronger condition than '< 0' for hyphenations */
@@ -4924,7 +4924,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
            swrap = 0;
         else
-           swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it));
+           swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), 0);
         /* Avoiding too small textblocks to even contain one char.
          * FIXME: This can cause breaking inside ligatures. */
 
@@ -5098,7 +5098,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
    // XXX: with RTL considerations in mind, we need to take max(adv, w) as the
    // line may be reordered in a way that the item placement will cause the
    // formatted width to exceed the width constraints.
-   if (ellip_ti->parent.adv > ellip_ti->parent.w)
+   if (c->par->is_bidi && ellip_ti->parent.adv > ellip_ti->parent.w)
      {
         ellip_w = ellip_ti->parent.adv;
      }
@@ -5124,7 +5124,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
           {
              ti = _ITEM_TEXT(last_it);
 
-             wrap = _layout_text_cutoff_get(c, last_it->format, ti);
+             wrap = _layout_text_cutoff_get(c, last_it->format, ti, ellip_ti->parent.w);
 
              if ((wrap > 0) && !IS_AT_END(ti, (size_t) wrap))
                {
@@ -5246,7 +5246,7 @@ _calc_items_width(Ctxt *c)
 }
 
 static inline int
-_item_get_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, Evas_Coord x)
+_item_get_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, Evas_Coord x, Evas_Coord width_offset)
 {
    int pos = -1;
    Evas_Object_Textblock_Text_Item *ti;
@@ -5256,7 +5256,7 @@ _item_get_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, Evas_Coord x)
    if (ti && ti->parent.format->font.font)
      {
         pos = ENFN->font_last_up_to_pos(ENDT, ti->parent.format->font.font,
-              &ti->text_props, x, 0);
+              &ti->text_props, x, 0, width_offset);
      }
    return pos;
 }
@@ -5319,7 +5319,7 @@ _layout_par_ellipsis_items(Ctxt *c, double ellip)
 
 
    pos = (it && it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
-      (_item_get_cutoff(c, it, l - off)) : -1;
+      (_item_get_cutoff(c, it, l - off, ellip_ti->parent.w)) : -1;
    if (pos >= 0)
      {
         _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), i, pos);
@@ -5340,7 +5340,7 @@ _layout_par_ellipsis_items(Ctxt *c, double ellip)
      }
 
    pos = (it && it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
-      (_item_get_cutoff(c, it, h - off)) : -1;
+      (_item_get_cutoff(c, it, h - off, 0)) : -1;
    if (pos >= 0)
       _layout_item_text_split_strip_white(c, _ITEM_TEXT(it), j, pos + 1);
    if (it)
