@@ -1248,7 +1248,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                          }
 
                        if (rp->param1.description && (rp->param1.description->clip_to_id >= 0))
-                         clip_to = ed->table_parts[rp->param1.description->clip_to_id % ed->table_parts_size];
+                         {
+                            clip_to = ed->table_parts[rp->param1.description->clip_to_id % ed->table_parts_size];
+                            ed->has_state_clip = EINA_TRUE;
+                         }
                        else if (rp->part->clip_to_id >= 0)
                          clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
                        if (clip_to && clip_to->object && rp->object)
