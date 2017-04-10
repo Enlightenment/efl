@@ -1671,6 +1671,7 @@ _config_load(void)
           {
              if (_elm_config->config_version < ELM_CONFIG_VERSION)
                _config_update();
+             _env_get();
              return;
           }
      }
@@ -1679,7 +1680,11 @@ _config_load(void)
     * this one, if it's not the right one, someone screwed up at the time
     * of installing it */
    _elm_config = _config_system_load();
-   if (_elm_config) return;
+   if (_elm_config)
+     {
+        _env_get();
+        return;
+     }
    /* FIXME: config load could have failed because of a non-existent
     * profile. Fallback to default before moving on */
 
@@ -1810,6 +1815,7 @@ _config_load(void)
    _elm_config->icon_theme = eina_stringshare_add(ELM_CONFIG_ICON_THEME_ELEMENTARY);
    _elm_config->popup_scrollable = EINA_FALSE;
    _elm_config->entry_select_allow = EINA_TRUE;
+   _env_get();
 }
 
 static void
