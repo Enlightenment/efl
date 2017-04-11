@@ -98,6 +98,22 @@ am__v_EOLMONO_0 = @echo "  EOLMONO  " $@;
 
 if HAVE_MCS
 
+efl_custom_exports_mono_files = \
+	lib/efl_mono/efl_custom_exports_mono.c
+
+lib_LTLIBRARIES += \
+lib/efl_mono/libeflcustomexportsmono.la
+
+lib_efl_mono_libeflcustomexportsmono_la_SOURCES = \
+	$(efl_custom_exports_mono_files)
+
+lib_efl_mono_libeflcustomexportsmono_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+@EINA_CFLAGS@
+
+lib_efl_mono_libeflcustomexportsmono_la_LIBADD = @USE_EINA_LIBS@
+lib_efl_mono_libeflcustomexportsmono_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
+
 bin_PROGRAMS += lib/efl_mono/libefl_mono.dll
 
 efl_eo_mono_files = \
@@ -107,6 +123,7 @@ efl_eo_mono_files = \
 	bindings/mono/eo_mono/workaround.cs
 
 efl_eina_mono_files = \
+	bindings/mono/eina_mono/eina_array.cs \
 	bindings/mono/eina_mono/eina_binbuf.cs \
 	bindings/mono/eina_mono/eina_slice.cs \
 	bindings/mono/eina_mono/eina_stringshare.cs
