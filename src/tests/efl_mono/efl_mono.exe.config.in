@@ -6,4 +6,5 @@
   <dllmap target="@abs_top_builddir@/src/lib/evas/.libs/libevas.so" dll="evas" />
   <dllmap target="@abs_top_builddir@/src/lib/ecore_evas/.libs/libecore_evas.so" dll="ecore_evas" />
   <dllmap target="@abs_top_builddir@/src/lib/eina/.libs/libeina.so" dll="eina" />
+  <dllmap target="@abs_top_builddir@/src/lib/efl_mono/.libs/eflcustomexportsmono.so" dll="eflcustomexportsmono" />
 </configuration>

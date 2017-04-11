@@ -650,4 +650,29 @@ class TestEinaSlice
     }
 }
 
+class TestEinaArray
+{
+    public static void eina_array_default()
+    {
+        var a = new eina.Array<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+    }
+
+    public static void push_int()
+    {
+        var a = new eina.Array<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(88));
+        Test.Assert(a[0] == 88);
+    }
+
+    public static void push_string()
+    {
+        var a = new eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("asdfghjkl"));
+        Test.Assert(a.DataGet(0) == "asdfghjkl");
+    }
+}
+
 }

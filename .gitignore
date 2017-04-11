@@ -74,7 +74,7 @@ tags
 /config.rpath
 /coverage
 /src/lib/ecore_x/ecore_x_vsync
-/src/lib/efl_mono
+/src/lib/efl_mono/libefl_mono.dll
 Session.vim
 /elm_intro.h
 /src/modules/evas/engines/gl_common/shader_3d/evas_3d_shaders.x
