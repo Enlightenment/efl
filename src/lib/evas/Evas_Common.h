@@ -1426,7 +1426,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
 /**
  * @defgroup Evas_Image_Group Image Functions
  *
- * Functions that deals with images at canvas level.
+ * Functions that deal with images at canvas level.
  *
  * @ingroup Evas_Canvas
  */
@@ -1434,7 +1434,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
 /**
  * @defgroup Evas_Font_Group Font Functions
  *
- * Functions that deals with fonts.
+ * Functions that deal with fonts.
  *
  * @ingroup Evas_Canvas
  */
@@ -1595,7 +1595,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * evas_object_show(bg);
  * @endcode
  *
- * This however will have issues if the @c evas_canvas is resized, however most
+ * This will have issues if the @c evas_canvas is resized, however most
  * windows are created using ecore evas and that has a solution to using the
  * rectangle as a background:
  * @code
@@ -1735,9 +1735,9 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * In image viewer applications, for example, the user will be looking
  * at a given image, at full size, and will desire that the navigation
  * to the adjacent images on his/her album be fluid and fast. Thus,
- * while displaying a given image, the program can be on the
+ * while displaying a given image, the program can be in the
  * background loading the next and previous images already, so that
- * displaying them on the sequence is just a matter of repainting the
+ * displaying them in sequence is just a matter of repainting the
  * screen (and not decoding image data).
  *
  * Evas addresses this issue with <b>image pre-loading</b>. The code
@@ -2294,7 +2294,7 @@ struct _Evas_Smart_Cb_Description
  * @param cb_desc Array of callback descriptions for this smart class.
  *
  * This macro saves some typing when writing a smart class derived
- * from another one. In order to work, the user @b must provide some
+ * from another one. In order for this to work, the user @b must provide some
  * functions adhering to the following guidelines:
  *  - @<prefix@>_smart_set_user(): the @b internal @c _smart_set
  *    function (defined by this macro) will call this one, provided by
@@ -2377,7 +2377,7 @@ struct _Evas_Smart_Cb_Description
  *               class.
  *
  * This macro saves some typing when writing a smart class derived
- * from another one. In order to work, the user @b must provide some
+ * from another one. In order for this to work, the user @b must provide some
  * functions adhering to the following guidelines:
  *  - @<prefix@>_smart_set_user(): the @b internal @c _smart_set
  *    function (defined by this macro) will call this one, provided by
