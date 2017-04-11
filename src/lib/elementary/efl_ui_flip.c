@@ -304,7 +304,7 @@ _slice_3d(Efl_Ui_Flip_Data *sd EINA_UNUSED,
           Evas_Coord w,
           Evas_Coord h)
 {
-   Evas_Map *m = (Evas_Map *)evas_object_map_get(sl->obj);
+   Evas_Map *m = evas_map_dup(evas_object_map_get(sl->obj));
    int i;
 
    if (!m) return;
@@ -322,6 +322,7 @@ _slice_3d(Efl_Ui_Flip_Data *sd EINA_UNUSED,
    else evas_object_hide(sl->obj);
 
    evas_object_map_set(sl->obj, m);
+   evas_map_free(m);
 }
 
 static void
