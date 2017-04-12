@@ -394,6 +394,27 @@ Fixes:
    * Gengrid: Bring the item into view scope before swapping.
    * gengrid: fix the crash in _elm_gengrid_item_edge_check
    * elm_code: Fix newline crash on BSD
+   * ecore-evas: add flag for buffer canvas to prevent deadlock in pixels_get
+   * evas textblock: fix top/bottom valign tag reversed issue
+   * elm_code: better safety around widget edge cases
+   * elm_code: Fix crashes with backspace on OpenBSD
+   * elm - cache dump - disable this to fix jp's issues of proxies etc.
+   * evas: always send a proper event to simplify callee logic.
+   * elm_code: Fix bug when deleting slection beyond start of document.
+   * elm_code: Fix coverity issue divide by zero
+   * edje: fix name check matching correctly
+   * ecore-wl2: stop setting all windows as toplevels on creation
+   * elm_win: set wl window type during finalize
+   * ecore-wl2: do not reconnect on protocol error for non-server processes
+   * elm_code: trigger user change event on applying an undo/redo
+   * evas - async preload cancel fix - don't double delete/free (T5374)
+   * elm config - reload at runtime - fix env var overrides being lost
+   * evas: give width offset when Evas tries to find ellipsis position
+   * edje: Add workaround for misuses of clip_set
+   * evas filters: Fix a rare crash in text render (SW)
+   * elementary - efl ui flip - fix map apply for page flip
+   * scroller: Fix wheel scroll with imbricated H+V scrollers
+   * scroller: Fix issues with looping and paging
 
 Changes since 1.17.0:
 ---------------------
