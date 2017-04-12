@@ -4,7 +4,8 @@
 
 #define EFL_INPUT_EVENT_PROTECTED
 
-#include <Evas.h>
+#include "evas_common_private.h"
+#include "evas_private.h"
 
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
@@ -593,6 +594,13 @@ _efl_input_pointer_value_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Ef
       default:
         return 0;
      }
+}
+
+EOLIAN static void *
+_efl_input_pointer_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Pointer_Data *pd)
+{
+   if (pd->legacy) return pd->legacy;
+   return efl_input_pointer_legacy_info_fill(NULL, obj, EVAS_CALLBACK_LAST, NULL);
 }
 
 #include "efl_input_pointer.eo.c"

@@ -4,7 +4,8 @@
 
 #define EFL_INPUT_EVENT_PROTECTED
 
-#include <Evas.h>
+#include "evas_common_private.h"
+#include "evas_private.h"
 
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
@@ -264,6 +265,13 @@ EOLIAN static Eina_Bool
 _efl_input_key_efl_input_event_fake_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->fake;
+}
+
+EOLIAN static void *
+_efl_input_key_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Key_Data *pd)
+{
+   if (pd->legacy) return pd->legacy;
+   return efl_input_key_legacy_info_fill(obj, NULL);
 }
 
 #include "efl_input_key.eo.c"
