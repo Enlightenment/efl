@@ -1088,7 +1088,7 @@ _elm_scroll_edje_drag_v_stop_cb(void *data,
 
    _elm_scroll_scroll_bar_read_and_update(sid);
    _elm_scroll_drag_stop(sid);
-   sid->freeze = EINA_FALSE;
+   sid->freeze = sid->freeze_want;
 }
 
 static void
@@ -1163,7 +1163,7 @@ _elm_scroll_edje_drag_h_stop_cb(void *data,
 
    _elm_scroll_scroll_bar_read_and_update(sid);
    _elm_scroll_drag_stop(sid);
-   sid->freeze = EINA_FALSE;
+   sid->freeze = sid->freeze_want;
 }
 
 static void
@@ -4259,6 +4259,7 @@ EOLIAN static void
 _elm_interface_scrollable_freeze_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool freeze)
 {
    sid->freeze = freeze;
+   sid->freeze_want = freeze;
    if (sid->freeze)
      {
         if (sid->down.onhold_animator)
