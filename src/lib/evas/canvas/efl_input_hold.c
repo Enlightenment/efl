@@ -4,7 +4,8 @@
 
 #define EFL_INPUT_EVENT_PROTECTED
 
-#include <Evas.h>
+#include "evas_common_private.h"
+#include "evas_private.h"
 
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
@@ -114,6 +115,13 @@ _efl_input_hold_efl_input_event_dup(Eo *obj, Efl_Input_Hold_Data *pd)
    ev->device = efl_ref(pd->device);
 
    return evt;
+}
+
+EOLIAN static void *
+_efl_input_hold_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Hold_Data *pd)
+{
+   if (pd->legacy) return pd->legacy;
+   return efl_input_hold_legacy_info_fill(obj, NULL);
 }
 
 #include "efl_input_hold.eo.c"

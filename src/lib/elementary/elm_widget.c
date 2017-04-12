@@ -7,6 +7,7 @@
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_CANVAS_OBJECT_BETA
+#define EFL_INPUT_EVENT_PROTECTED
 
 #include <Elementary.h>
 
@@ -741,86 +742,46 @@ _propagate_event(void *data EINA_UNUSED, const Efl_Event *event)
    Eo *obj = event->object;
    INTERNAL_ENTRY;
    Evas_Callback_Type type;
-   Evas_Event_Flags *event_flags;
+   Evas_Event_Flags *event_flags, prev_flags;
    union {
-      Evas_Event_Key_Down down;
-      Evas_Event_Key_Up up;
-      Evas_Event_Mouse_Wheel wheel;
-   } event_info = {};
-   Eina_Bool was_hold;
+      Evas_Event_Key_Down    *down;
+      Evas_Event_Key_Up      *up;
+      Evas_Event_Mouse_Wheel *wheel;
+      void                   *any;
+   } event_info;
 
    if ((evas_focus_get(evas_object_evas_get(obj)) != elm_widget_top_get(obj)) &&
        efl_isa(obj, EFL_UI_WIN_CLASS))
      return;
 
-   /* FIXME: Avoid this translation to evas struct and use pointer/key events
-    * in all of elementary widgets
-    * See also: efl_input_key_legacy_info_fill().
-    */
    if (event->desc == EFL_EVENT_KEY_DOWN)
      {
-        Efl_Input_Key_Data *ev = efl_data_scope_get(event->info, EFL_INPUT_KEY_CLASS);
-        if (!ev) return;
-        event_info.down.timestamp = ev->timestamp;
-        event_info.down.keyname = (char*) ev->keyname;
-        event_info.down.key = ev->key;
-        event_info.down.string = ev->string;
-        event_info.down.compose = ev->compose;
-        event_info.down.keycode = ev->keycode;
-        event_info.down.data = ev->data;
-        event_info.down.modifiers = ev->modifiers;
-        event_info.down.locks = ev->locks;
-        event_info.down.event_flags = ev->event_flags;
-        event_info.down.dev = ev->device;
+        event_info.down = efl_input_legacy_info_get(event->info);
+        EINA_SAFETY_ON_NULL_RETURN(event_info.down);
         type = EVAS_CALLBACK_KEY_DOWN;
-        event_flags = &event_info.down.event_flags;
-        was_hold = (*event_flags & EVAS_EVENT_FLAG_ON_HOLD) != 0;
+        event_flags = &event_info.down->event_flags;
      }
    else if (event->desc == EFL_EVENT_KEY_UP)
      {
-        Efl_Input_Key_Data *ev = efl_data_scope_get(event->info, EFL_INPUT_KEY_CLASS);
-        if (!ev) return;
-        event_info.up.timestamp = ev->timestamp;
-        event_info.up.keyname = (char*) ev->keyname;
-        event_info.up.key = ev->key;
-        event_info.up.string = ev->string;
-        event_info.up.compose = ev->compose;
-        event_info.up.keycode = ev->keycode;
-        event_info.up.data = ev->data;
-        event_info.up.modifiers = ev->modifiers;
-        event_info.up.locks = ev->locks;
-        event_info.up.event_flags = ev->event_flags;
-        event_info.up.dev = ev->device;
+        event_info.up = efl_input_legacy_info_get(event->info);
+        EINA_SAFETY_ON_NULL_RETURN(event_info.up);
         type = EVAS_CALLBACK_KEY_UP;
-        event_flags = &event_info.up.event_flags;
-        was_hold = (*event_flags & EVAS_EVENT_FLAG_ON_HOLD) != 0;
+        event_flags = &event_info.up->event_flags;
      }
    else if (event->desc == EFL_EVENT_POINTER_WHEEL)
      {
-        Efl_Input_Pointer_Data *ev = efl_data_scope_get(event->info, EFL_INPUT_POINTER_CLASS);
-        if (!ev) return;
-        event_info.wheel.direction = (ev->wheel.dir != EFL_ORIENT_HORIZONTAL) ? 1 : 0;
-        event_info.wheel.z = ev->wheel.z;
-        event_info.wheel.output.x = ev->cur.x;
-        event_info.wheel.output.y = ev->cur.y;
-        event_info.wheel.canvas.x = ev->cur.x;
-        event_info.wheel.canvas.y = ev->cur.y;
-        event_info.wheel.data = ev->data;
-        event_info.wheel.modifiers = ev->modifiers;
-        event_info.wheel.locks = ev->locks;
-        event_info.wheel.timestamp = ev->timestamp;
-        event_info.wheel.event_flags = ev->event_flags;
-        event_info.wheel.dev = ev->device;
+        event_info.wheel = efl_input_legacy_info_get(event->info);
+        EINA_SAFETY_ON_NULL_RETURN(event_info.wheel);
         type = EVAS_CALLBACK_MOUSE_WHEEL;
-        event_flags = &event_info.wheel.event_flags;
-        was_hold = (*event_flags & EVAS_EVENT_FLAG_ON_HOLD) != 0;
+        event_flags = &event_info.wheel->event_flags;
      }
    else
      return;
 
-   elm_widget_event_propagate(obj, type, &event_info, event_flags);
-   if (!was_hold && (*event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-     efl_input_processed_set(event->info, EINA_TRUE);
+   prev_flags = *event_flags;
+   elm_widget_event_propagate(obj, type, event_info.any, event_flags);
+   if (prev_flags != *event_flags)
+     efl_input_event_flags_set(event->info, *event_flags);
 }
 
 /**
