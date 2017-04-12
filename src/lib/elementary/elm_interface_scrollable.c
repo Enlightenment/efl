@@ -1884,6 +1884,30 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
    elm_interface_scrollable_content_region_set(obj, wx, sid->wy, ww, wh);
 }
 
+static void
+_scroll_wheel_post_event_job(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+
+   elm_interface_scrollable_content_pos_set(sid->obj, sid->wx, sid->wy, EINA_TRUE);
+}
+
+static inline void
+_scroll_wheel_post_event_go(Elm_Scrollable_Smart_Interface_Data *sid, int x, int y)
+{
+   if (sid->hold || sid->freeze) return;
+   _elm_scroll_wanted_coordinates_update(sid, x, y);
+   if (_elm_config->scroll_animation_disable)
+     {
+        efl_future_then(efl_loop_job(efl_loop_get(sid->obj), NULL),
+                        _scroll_wheel_post_event_job, NULL, NULL, sid);
+     }
+   else
+     {
+        _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
+        _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
+     }
+}
 
 static Eina_Bool
 _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
@@ -1961,9 +1985,11 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
         d *= mul;
         sid->last_wheel = ev->timestamp;
         sid->last_wheel_mul = mul;
+
         if (!direction)
           {
-             if ((ch > vh) || (cw <= vw)) y += d * sid->step.y;
+             if ((ch > vh) || (cw <= vw))
+               y += d * sid->step.y;
              else
                {
                   x += d * sid->step.x;
@@ -1972,50 +1998,40 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
           }
         else
           {
-             if ((cw > vw) || (ch <= vh)) x += d * sid->step.x;
+             if ((cw > vw) || (ch <= vh))
+               x += d * sid->step.x;
              else
                {
                   y += d * sid->step.y;
                   direction = 0;
                }
           }
-
-        if ((!sid->hold) && (!sid->freeze))
-          {
-             _elm_scroll_wanted_coordinates_update(sid, x, y);
-             if (_elm_config->scroll_animation_disable)
-               elm_interface_scrollable_content_pos_set(sid->obj, x, y, EINA_TRUE);
-             else
-               {
-                  _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
-                  _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
-               }
-          }
+        _scroll_wheel_post_event_go(sid, x, y);
      }
    else
      {
         elm_interface_scrollable_current_page_get(sid->obj, &pagenumber_h, &pagenumber_v);
         if (!direction)
           {
-             if (ch > vh || cw <= vw)
+             if ((ch > vh) || (cw <= vw))
                y = (pagenumber_v + (1 * ev->z)) * sid->pagesize_v;
              else
-               x = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
+               {
+                  x = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
+                  direction = 1;
+               }
           }
         else
           {
-             if (cw > vw || ch <= vh)
+             if ((cw > vw) || (ch <= vh))
                x = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
              else
-               y = (pagenumber_v + (1 * ev->z)) * sid->pagesize_v;
+               {
+                  y = (pagenumber_v + (1 * ev->z)) * sid->pagesize_v;
+                  direction = 0;
+               }
           }
-
-        if ((!sid->hold) && (!sid->freeze))
-          {
-             _elm_scroll_wanted_coordinates_update(sid, x, y);
-             _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
-             _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
-          }
+        _scroll_wheel_post_event_go(sid, x, y);
      }
 
    if (direction)

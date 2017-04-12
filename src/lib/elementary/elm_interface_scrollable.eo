@@ -597,7 +597,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group)
          params {
             @in x: Evas.Coord; [[X coordinate]]
             @in y: Evas.Coord; [[Y coordinate]]
-            @in sig: bool; [[FIXME: what does sig stand for here?]]
+            @in sig: bool; [[Send signals to the theme corresponding to the
+                             scroll direction, or if an edge was reached.]]
          }
       }
       content_pos_get {
