@@ -270,6 +270,7 @@ _timer_cb(void *data)
    if (!evas_object_visible_get(obj)) goto end;
 
    evas_object_hide(obj);
+   sd->in_timeout = EINA_TRUE;
    efl_event_callback_legacy_call(obj, ELM_NOTIFY_EVENT_TIMEOUT, NULL);
 
 end:
@@ -312,7 +313,10 @@ _elm_notify_hide(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
    if (eina_streq(hide_signal, "on"))
      {
         if (!sd->in_timeout)
-          edje_object_signal_emit(sd->notify, "elm,state,hide", "elm");
+          {
+             elm_layout_signal_emit(sd->block_events, "elm,state,hide", "elm");
+             edje_object_signal_emit(sd->notify, "elm,state,hide", "elm");
+          }
      }
    else //for backport supporting: edc without emitting hide finished signal
      {

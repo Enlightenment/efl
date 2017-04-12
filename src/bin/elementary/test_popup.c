@@ -134,7 +134,7 @@ _popup_center_text_cb(void *data, Evas_Object *obj EINA_UNUSED,
    elm_object_text_set(popup, "This Popup has content area and "
                        "timeout value is 3 seconds");
    elm_popup_timeout_set(popup, 3.0);
-   evas_object_smart_callback_add(popup, "timeout", _response_cb, popup);
+   evas_object_smart_callback_add(popup, "dismissed", _response_cb, popup);
    evas_object_event_callback_add(popup, EVAS_CALLBACK_KEY_DOWN,
                                   _popup_key_down_cb, NULL);
 
