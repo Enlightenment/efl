@@ -1,6 +1,6 @@
 import efl_input_types;
 
-mixin Efl.Input.Event
+mixin Efl.Input.Event (Efl.Interface, Efl.Object)
 {
    [[Represents a generic event data.
 
@@ -82,5 +82,8 @@ mixin Efl.Input.Event
          }
          return: own(Efl.Input.Event); [[Instance of this input event]]
       }
+   }
+   implements {
+      Efl.Object.provider_find;
    }
 }
