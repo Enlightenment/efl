@@ -71,7 +71,9 @@ _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *se
    Evas_Callback_Type cb_evas, cb_obj_evas;
    const Efl_Event_Description *efl_object_focus_event;
 
-   evt = efl_input_instance_get(EFL_INPUT_FOCUS_CLASS, NULL, (void **) &ev_data);
+   evt = efl_input_instance_get(EFL_INPUT_FOCUS_CLASS,
+                                efl_provider_find(obj->object, EVAS_CANVAS_CLASS),
+                                (void **) &ev_data);
    if (!evt) return;
 
    ev_data->device = efl_ref(seat);

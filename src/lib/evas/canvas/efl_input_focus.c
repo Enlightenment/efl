@@ -109,14 +109,12 @@ _efl_input_focus_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Input_Focus *
-_efl_input_focus_efl_input_event_dup(Eo *obj EINA_UNUSED,
-                                     Efl_Input_Focus_Data *pd)
+_efl_input_focus_efl_input_event_dup(Eo *obj, Efl_Input_Focus_Data *pd)
 {
    Efl_Input_Focus_Data *ev;
    Efl_Input_Focus *evt;
 
-   // no parent
-   evt = efl_input_instance_get(MY_CLASS, NULL, (void **) &ev);
+   evt = efl_input_instance_get(MY_CLASS, efl_parent_get(obj), (void **) &ev);
    if (!evt || !ev) return NULL;
 
    ev->eo        = evt;

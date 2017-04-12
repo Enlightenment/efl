@@ -116,13 +116,12 @@ _efl_input_pointer_efl_input_event_reset(Eo *obj, Efl_Input_Pointer_Data *pd)
 }
 
 EOLIAN static Efl_Input_Event *
-_efl_input_pointer_efl_input_event_dup(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_efl_input_event_dup(Eo *obj, Efl_Input_Pointer_Data *pd)
 {
    Efl_Input_Pointer_Data *ev;
    Efl_Input_Pointer *evt;
 
-   // no parent
-   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, NULL, (void **) &ev);
+   evt = efl_input_instance_get(MY_CLASS, efl_parent_get(obj), (void **) &ev);
    if (!evt) return NULL;
 
    memcpy(ev, pd, sizeof(*ev));
