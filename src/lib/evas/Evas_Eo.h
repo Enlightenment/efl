@@ -87,7 +87,7 @@
  * @section evas_canvas3d_intro Introduction
  *
  * Evas 3D is an extension to support 3D scene graph rendering into 2D Evas
- * canvas supporting typical tree-based scene graph manipulation and other 3D
+ * canvases, supporting typical tree-based scene graph manipulation and other 3D
  * graphics rendering techniques.
  *
  * Evas 3D provides 3D objects which are used for describing 3D scene and APIs
@@ -96,14 +96,14 @@
  *
  * Construction of a 3D scene is a process of locating desired cameras, lights and
  * meshes in the scene. Typically the scene is structured with some hierarchical
- * data structure. Evas 3D support n-ary tree structure for describing the
+ * data structure. Evas 3D supports n-ary tree structures for describing the
  * scene. Node is used to build the tree representation of the scene. Other
  * objects, like camera, light and mesh can be located in the scene by being
  * contained in a node.
  *
- * Like other 3D graphics engines, Evas 3D support standard 3D rendering method
+ * Like other 3D graphics engines, Evas 3D supports standard 3D rendering methods
  * like flat shading, phong shading and normal map and other features like
- * texture mapping, triangle meshes.
+ * texture mapping and triangle meshes.
  *
  * Besides all the traditional 3D rendering things, one of the key features of
  * the Evas 3D is that it is able to use existing evas objects as textures
@@ -112,7 +112,7 @@
  * application without modifying the original source that much.
  *
  * Also, 3D scene can be located on the canvas naturally stacked with existing
- * evas objects. This can make it possible putting 3D things into existing 2D
+ * evas objects. This can make it possible to put 3D things into existing 2D
  * application layouts.
  *
  * @section evas_canvas3d_example Introductory Example
@@ -131,14 +131,14 @@
  * @defgroup Evas_Canvas3D_Object Generic 3D Object Descriptions
  * @ingroup Evas_3D
  *
- * Evas 3D object is a generic type of all evas 3D objects like scene, node,
- * camera, light, mesh, texture and material. Evas 3D object is basically
- * reference counted. Any successful function call on an object which make a
- * reference to an another object will increase the reference count. When the
+ * Evas 3D object is a generic type of all evas 3D objects like scenes, nodes,
+ * cameras, lights, meshes, textures and materials. Evas 3D object is basically
+ * reference counted. Any successful function call on an object which makes a
+ * reference to another object will increase the reference count. When the
  * reference count gets to 0, the object will be actually deleted.
  *
  * Any modifications are automatically propagated to other objects referencing
- * the modified objects. As a result, if the scene object is set to modified
+ * the modified objects. As a result, if the scene object is set to a modified
  * state, all image objects having the scene as a rendering source are marked
  * as dirty, so that rendering will be updated at next frame. But all these
  * things are done internally, so feel free to forget about calling some kind
@@ -159,9 +159,9 @@
  * @ingroup Evas_3D
  *
  * A node is used for hierarchical construction of a scene graph. Evas 3D
- * provides n-ary tree structure for the scene graph construction. A node has
- * its position, orientation and scale. Other objects, like camera, light and
- * mesh can be contained in a node to be located in a 3D space.
+ * provides n-ary tree structures for the scene graph construction. A node has
+ * its position, orientation and scale. Other objects, like cameras, lights and
+ * meshes can be contained in a node to be located in a 3D space.
  */
 
 /**
@@ -187,7 +187,7 @@
  *
  * A light object represents a set of properties of a light source. Evas 3D
  * provides standard reflection model that of ambient, diffuse and specular
- * reflection model. Also, Evas 3D support 3 types of light model, directional,
+ * reflection model. Also, Evas 3D support 3 types of light models: directional,
  * point and spot light. Light position and direction is determined by the node
  * containing the light.
  */
@@ -197,14 +197,14 @@
  * @ingroup Evas_3D
  *
  * A mesh object is a set of information on a visible geometrical object like
- * character model, terrain or other structures and entities. Evas 3D support
+ * character models, terrains or other structures and entities. Evas 3D supports
  * key-frame-based mesh animation, so a mesh can have multiple frames and each
  * frame has its own material and geometric data. Like other data objects, a
  * mesh can be located on a scene by being contained in a node. The mesh is
  * transformed from its modeling coordinate space into the node's coordinate
  * space. Also, the frame number is saved in the containing node. So, one can
- * locate multiple nodes having same mesh object with different animation frame
- * and transform. Unlike camera and light object, multiple meshes can be
+ * locate multiple nodes having same mesh object with different animation frames
+ * and transforms. Unlike camera and light objects, multiple meshes can be
  * contained in a single node.
  */
 
@@ -233,7 +233,7 @@
  *
  * A material object represents properties of surfaces. Evas 3D defines the
  * properties with 5 material attributes, ambient, diffuse, specular emission
- * and normal. Each attribute have its color value and texture map. Materials
+ * and normal. Each attribute has its own color value and texture map. Materials
  * are used to determine the color of mesh surfaces.
  */
 
