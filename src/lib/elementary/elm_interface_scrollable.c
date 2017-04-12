@@ -1894,16 +1894,20 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
    Evas_Coord x = 0, y = 0, vw = 0, vh = 0, cw = 0, ch = 0;
    int pagenumber_h = 0, pagenumber_v = 0;
    int mx = 0, my = 0, minx = 0, miny = 0;
+   Eina_Bool hold = EINA_FALSE;
    Evas_Coord pwx, pwy;
    double t;
    int direction;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ev, EINA_TRUE);
+
+   sid->event_info = NULL;
    direction = ev->direction;
 
    pwx = sid->wx;
    pwy = sid->wy;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_TRUE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
      direction = !direction;
 
@@ -1960,12 +1964,20 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
         if (!direction)
           {
              if ((ch > vh) || (cw <= vw)) y += d * sid->step.y;
-             else x += d * sid->step.x;
+             else
+               {
+                  x += d * sid->step.x;
+                  direction = 1;
+               }
           }
-        else if (direction == 1)
+        else
           {
              if ((cw > vw) || (ch <= vh)) x += d * sid->step.x;
-             else y += d * sid->step.y;
+             else
+               {
+                  y += d * sid->step.y;
+                  direction = 0;
+               }
           }
 
         if ((!sid->hold) && (!sid->freeze))
@@ -1990,7 +2002,7 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
              else
                x = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
           }
-        else if (direction == 1)
+        else
           {
              if (cw > vw || ch <= vh)
                x = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
@@ -2012,8 +2024,8 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
             (((t - sid->down.last_time_x_wheel) < 0.5) &&
              (sid->down.last_hold_x_wheel)))
           {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              sid->down.last_hold_x_wheel = EINA_TRUE;
+             hold = EINA_TRUE;
           }
         else sid->down.last_hold_x_wheel = EINA_FALSE;
         sid->down.last_time_x_wheel = t;
@@ -2024,14 +2036,14 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
             (((t - sid->down.last_time_y_wheel) < 0.5) &&
              (sid->down.last_hold_y_wheel)))
           {
-             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              sid->down.last_hold_y_wheel = EINA_TRUE;
+             hold = EINA_TRUE;
           }
         else sid->down.last_hold_y_wheel = EINA_FALSE;
         sid->down.last_time_y_wheel = t;
      }
 
-   return EINA_FALSE;
+   return !hold;
 }
 
 static void
