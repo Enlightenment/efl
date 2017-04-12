@@ -1347,7 +1347,6 @@ _ecore_con_server_dialer_connected(void *data, const Efl_Event *event EINA_UNUSE
      {
         svr->ssl.upgrading = EINA_FALSE;
         INF("svr=%p upgraded to SSL at %s (%s)", svr, efl_net_dialer_address_dial_get(svr->dialer), efl_net_socket_address_remote_get(svr->dialer));
-        _ecore_con_post_event_server_upgrade(svr);
         if (svr->ssl.pending_send)
           {
              Eina_Slice slice = eina_binbuf_slice_get(svr->ssl.pending_send);
@@ -1355,6 +1354,7 @@ _ecore_con_server_dialer_connected(void *data, const Efl_Event *event EINA_UNUSE
              eina_binbuf_free(svr->ssl.pending_send);
              svr->ssl.pending_send = NULL;
           }
+        _ecore_con_post_event_server_upgrade(svr);
         return;
      }
 
