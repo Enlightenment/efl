@@ -1260,7 +1260,7 @@ _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
    else if (sid->is_mirrored)
      sid->wx = _elm_scroll_x_mirrored_get(sid->obj, x);
    else if (!sid->loop_h && (x > mx)) sid->wx = mx;
-   else if (sid->loop_h && x >= (sid->ww + mx)) sid->wx = 0;
+   else if (sid->loop_h && x >= (sid->ww + mx)) sid->wx = minx;
    else sid->wx = x;
 
    if (y < miny)
@@ -1269,7 +1269,7 @@ _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
         else sid->wy = my;
      }
    else if (!sid->loop_v && (y > my)) sid->wy = my;
-   else if (sid->loop_v && y >= (sid->wh + my)) sid->wy = 0;
+   else if (sid->loop_v && y >= (sid->wh + my)) sid->wy = miny;
    else sid->wy = y;
 }
 
@@ -1507,7 +1507,7 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
 
    if (_paging_is_enabled(sid))
      {
-        if (sid->page_snap_horiz)
+        if (sid->page_snap_horiz && !sid->loop_h)
           {
              //we passed one page to the right
              if (x > sid->current_page.x + sid->pagesize_h)
@@ -1516,7 +1516,7 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
              if (x < sid->current_page.x - sid->pagesize_h)
                x = sid->current_page.x - sid->pagesize_h;
           }
-        if (sid->page_snap_vert)
+        if (sid->page_snap_vert && !sid->loop_v)
           {
              //we passed one page to the bottom
              if (y > sid->current_page.y + sid->pagesize_v)
@@ -1889,7 +1889,13 @@ _scroll_wheel_post_event_job(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
+   // Animations are disabled if we are here
    elm_interface_scrollable_content_pos_set(sid->obj, sid->wx, sid->wy, EINA_TRUE);
+   if (_paging_is_enabled(sid))
+     {
+        sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
+        sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
+     }
 }
 
 static inline void
@@ -2010,28 +2016,62 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
      }
    else
      {
+        int wx = x, wy = y;
+
         elm_interface_scrollable_current_page_get(sid->obj, &pagenumber_h, &pagenumber_v);
         if (!direction)
           {
              if ((ch > vh) || (cw <= vw))
-               y = (pagenumber_v + (1 * ev->z)) * sid->pagesize_v;
+               wy = (pagenumber_v + (1 * ev->z)) * sid->pagesize_v;
              else
                {
-                  x = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
+                  wx = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
                   direction = 1;
                }
           }
         else
           {
              if ((cw > vw) || (ch <= vh))
-               x = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
+               wx = (pagenumber_h + (1 * ev->z)) * sid->pagesize_h;
              else
                {
-                  y = (pagenumber_v + (1 * ev->z)) * sid->pagesize_v;
+                  wy = (pagenumber_v + (1 * ev->z)) * sid->pagesize_v;
                   direction = 0;
                }
           }
-        _scroll_wheel_post_event_go(sid, x, y);
+
+        // Snap to first or last page before looping if not smooth
+        if (_elm_config->scroll_animation_disable)
+          {
+             if (direction && sid->loop_h)
+               {
+                  if (sid->page_snap_horiz)
+                    {
+                       if ((x == mx) && (wx > mx)) wx = minx;
+                       else if ((x == minx) && (wx < minx)) wx = mx;
+                    }
+                  else
+                    {
+                       if ((x < mx) && (wx > mx)) wx = mx;
+                       else if ((x > minx) && (wx < minx)) wx = minx;
+                    }
+               }
+             if (!direction && sid->loop_v)
+               {
+                  if (sid->page_snap_vert)
+                    {
+                       if ((y == my) && (wy > my)) wy = miny;
+                       else if ((y == miny) && (wy < miny)) wy = my;
+                    }
+                  else
+                    {
+                       if ((y < my) && (wy > my)) wy = my;
+                       else if ((y > miny) && (wy < miny)) wy = miny;
+                    }
+               }
+          }
+
+        _scroll_wheel_post_event_go(sid, wx, wy);
      }
 
    if (direction)
