@@ -198,6 +198,11 @@ case "$host_os" in
       MODULE_ARCH="v-v_maj.v_min"
       MODULE_EXT=".dll"
    ;;
+   *solaris*)
+      have_solaris="yes"
+      MODULE_ARCH="v-v_maj.v_min"
+      MODULE_EXT=".so"
+   ;;
    *)
       MODULE_ARCH="v-v_maj.v_min"
       MODULE_EXT=".so"
@@ -461,7 +466,6 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS([ \
 execinfo.h \
 mcheck.h \
-sys/epoll.h \
 sys/inotify.h \
 sys/signalfd.h \
 sys/types.h \
@@ -471,6 +475,10 @@ netinet/in.h \
 sys/auxv.h \
 asm/hwcap.h \
 ])
+
+if test "x${have_solaris}" != "xyes" ; then
+    AC_CHECK_HEADERS([sys/epoll.h])
+fi
 
 EFL_CHECK_PATH_MAX
 
