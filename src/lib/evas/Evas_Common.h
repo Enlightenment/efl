@@ -3569,10 +3569,6 @@ EAPI Eina_Bool            evas_seat_key_lock_is_set(const Evas_Lock *l, const ch
  * @ingroup Evas_Canvas
  */
 
-typedef Eo Evas_Out;
-
-#define _EVAS_OUT_EO_CLASS_TYPE
-
 /**
  * @ingroup Evas_Font_Group
  *

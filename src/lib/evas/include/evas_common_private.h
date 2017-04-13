@@ -61,6 +61,8 @@
 
 #include "Evas.h"
 
+#include "Evas_Internal.h"
+
 #ifdef EAPI
 # undef EAPI
 #endif

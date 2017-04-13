@@ -50,7 +50,6 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_input_hold.eo \
 	lib/evas/canvas/efl_input_focus.eo \
 	lib/evas/canvas/efl_gfx_map.eo \
-	lib/evas/canvas/efl_canvas_output.eo \
 	$(NULL)
 
 evas_eolian_legacy_files = \
@@ -114,6 +113,7 @@ dist_installed_evascanvasheaders_DATA = lib/evas/canvas/evas_textblock_legacy.h
 noinst_DATA += $(evas_eolian_priv_h)
 
 noinst_HEADERS += \
+lib/evas/Evas_Internal.h \
 lib/evas/include/evas_inline.x \
 lib/evas/include/evas_private.h \
 lib/evas/include/evas_options.h \

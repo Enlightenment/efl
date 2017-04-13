@@ -274,7 +274,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    Evas_Coord_Touch_Point *touch_point;
    Evas_Post_Render_Job *job;
    Evas_Layer *lay;
-   Evas_Out *evo;
+   Efl_Canvas_Output *evo;
    int i;
    Eina_Bool del;
    Evas_Pointer_Data *pdata;
@@ -350,7 +350,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    evas_event_callback_all_del(eo_e);
    evas_event_callback_cleanup(eo_e);
 
-   EINA_LIST_FREE(e->outputs, evo) efl_del(evo);
+   EINA_LIST_FREE(e->outputs, evo) efl_canvas_output_del(evo);
 
    if (e->engine.func)
      {
