@@ -13,6 +13,16 @@ class Elm.Atspi.Bridge (Efl.Object)
             }
          }
       }
+      @property root {
+         [[Root object of accessible hierarchy exposed by bridge. ]]
+         get {
+         }
+         set {
+         }
+         values {
+            ret: Efl.Object; [[Root accessible object, or null if not set ]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;

@@ -386,7 +386,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
       }
       @property root @class {
          get {
-            [[Get root object of accessible object hierarchy]]
+            [[Get's default root object of accessible object hierarchy]]
             values {
                ret: Efl.Object; [[Root object]]
             }
