@@ -114,7 +114,13 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
 
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
         uid = getuid();
-        setuid(geteuid());
+        if (setuid(geteuid()) != 0)
+           {
+              fprintf(stderr,
+                      "FATAL: Cannot setuid - errno=%i\n",
+                      errno);
+              abort();
+           }
 #endif
         // fallback - make ~/.run
         snprintf(buf, sizeof(buf), "%s/.run", home);
@@ -166,7 +172,13 @@ _efl_vpath_core_efl_object_constructor(Eo *obj, Efl_Vpath_Core_Data *pd)
                }
           }
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-        setreuid(uid, geteuid());
+        if (setreuid(uid, geteuid()) != 0)
+           {
+              fprintf(stderr,
+                      "FATAL: Cannot setreuid - errno=%i\n",
+                      errno);
+              abort();
+           };
 #endif
      }
    if (!s) s = (char *)efl_vpath_core_meta_get(obj, "tmp");
