@@ -64,6 +64,7 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
    // Destroy context as we won't reuse it.
    evas_filter_buffer_backing_release(ctx, previous);
    evas_filter_context_destroy(ctx);
+   efl_unref(eo_obj);
 }
 
 static void
@@ -87,18 +88,18 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
    Evas_Object_Protected_Data *obj;
    Evas_Filter_Data *pd = data;
 
-#ifdef DEBUG
-   EINA_SAFETY_ON_FALSE_RETURN(!eina_main_loop_is());
-#endif
-
    obj = pd->data->obj;
-   EINA_SAFETY_ON_FALSE_RETURN(obj && obj->layer && obj->layer->evas);
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
 
    if (!pd->data->async)
      {
         _filter_end_sync(ctx, pd->data->obj, pd, success);
         return;
      }
+
+#ifdef DEBUG
+   EINA_SAFETY_ON_FALSE_RETURN(!eina_main_loop_is());
+#endif
 
    post_data = calloc(1, sizeof(*post_data));
    post_data->success = success;
@@ -315,6 +316,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         ENFN->context_free(ENDT, drawctx);
 
         // Add post-run callback and run filter
+        efl_ref(eo_obj);
         evas_filter_context_post_run_callback_set(filter, _filter_cb, pd);
         ok = evas_filter_run(filter);
 
@@ -332,6 +334,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         else
           {
              ERR("Rendering failed.");
+             efl_unref(eo_obj);
              return EINA_FALSE;
           }
      }

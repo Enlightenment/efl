@@ -1609,7 +1609,7 @@ evas_filter_run(Evas_Filter_Context *ctx)
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
 
    if (!ctx->commands)
-     return EINA_TRUE;
+     return EINA_FALSE;
 
    if (ENFN->gl_surface_read_pixels && !warned)
      {
@@ -1627,7 +1627,8 @@ evas_filter_run(Evas_Filter_Context *ctx)
 
    if (ctx->post_run.cb)
      ctx->post_run.cb(ctx, ctx->post_run.data, ret);
-   return ret;
+
+   return EINA_TRUE;
 }
 
 
