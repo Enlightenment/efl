@@ -5892,34 +5892,6 @@ EAPI Evas_Object   *evas_object_grid_add(Evas *evas) EINA_WARN_UNUSED_RESULT EIN
  */
 
 /**
- *
- * Adds an output to the canvas
- *
- * @parem e The canvas to add the output to
- * @return The output
- *
- * @see evas_out_engine_info_set
- * @see evas_output_viewport_set
- * @see evas_output_size_set
- *
- * @since 1.8
- */
-EAPI Evas_Out *evas_out_add(Evas *e);
-
-/**
- *
- * Deletes an output
- *
- * @parem evo The output object
- *
- * @see evas_out_add
- *
- * @since 1.8
- *
- */
-EAPI void evas_output_del(Evas_Out *evo);
-
-/**
  * @brief Sets the output framespace size of the render engine of the given
  * evas.
  *
