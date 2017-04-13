@@ -532,12 +532,13 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
      }
    eina_iterator_free(itr);
 
-   char *cnamel = NULL;
-   eo_gen_class_names_get(cl, NULL, NULL, &cnamel);
+   char *cnamel = NULL, *cnameu = NULL;
+   eo_gen_class_names_get(cl, NULL, &cnameu, &cnamel);
 
    eina_strbuf_append(buf, "\nstatic Eina_Bool\n_");
    eina_strbuf_append(buf, cnamel);
    eina_strbuf_append(buf, "_class_initializer(Efl_Class *klass)\n{\n");
+   eina_strbuf_append(buf, "   const Efl_Object_Ops *opsp = NULL, *copsp = NULL;\n\n");
 
    Eina_Strbuf *ops = eina_strbuf_new(), *cops = eina_strbuf_new();
 
@@ -584,37 +585,51 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
      }
    eina_iterator_free(itr);
 
-   /* strip the final comma before appending */
    if (eina_strbuf_length_get(ops))
      {
-        eina_strbuf_remove(ops, eina_strbuf_length_get(ops) - 2,
-                           eina_strbuf_length_get(ops));
-        eina_strbuf_append(ops, "\n   );\n");
+        /* make sure the extras are defined */
+        eina_strbuf_append_printf(buf, "#ifndef %s_EXTRA_OPS\n", cnameu);
+        eina_strbuf_append_printf(buf, "#define %s_EXTRA_OPS\n", cnameu);
+        eina_strbuf_append(buf, "#endif\n\n");
+
+        eina_strbuf_append_printf(ops, "      %s_EXTRA_OPS\n   );\n", cnameu);
         eina_strbuf_append(buf, eina_strbuf_string_get(ops));
+        eina_strbuf_append(buf, "   opsp = &ops;\n\n");
+     }
+   else
+     {
+        /* no predefined, but if custom ones are required define it anyway */
+        eina_strbuf_append_printf(buf, "#ifdef %s_EXTRA_OPS\n", cnameu);
+        eina_strbuf_append_printf(buf, "   EFL_OPS_DEFINE(ops, %s_EXTRA_OPS);\n", cnameu);
+        eina_strbuf_append(buf, "   opsp = &ops;\n");
+        eina_strbuf_append(buf, "#endif\n\n");
      }
    if (eina_strbuf_length_get(cops))
      {
-        eina_strbuf_remove(cops, eina_strbuf_length_get(cops) - 2,
-                           eina_strbuf_length_get(cops));
-        eina_strbuf_append(cops, "\n   );\n");
+        eina_strbuf_append_printf(buf, "#ifndef %s_EXTRA_CLASS_OPS\n", cnameu);
+        eina_strbuf_append_printf(buf, "#define %s_EXTRA_CLASS_OPS\n", cnameu);
+        eina_strbuf_append(buf, "#endif\n\n");
+
+        eina_strbuf_append_printf(cops, "      %s_EXTRA_CLASS_OPS\n   );\n", cnameu);
         eina_strbuf_append(buf, eina_strbuf_string_get(cops));
+        eina_strbuf_append(buf, "   copsp = &cops;\n\n");
+     }
+   else
+     {
+        eina_strbuf_append_printf(buf, "#ifdef %s_EXTRA_CLASS_OPS\n", cnameu);
+        eina_strbuf_append_printf(buf, "   EFL_OPS_DEFINE(cops, %s_EXTRA_CLASS_OPS);\n", cnameu);
+        eina_strbuf_append(buf, "   copsp = &cops;\n");
+        eina_strbuf_append(buf, "#endif\n\n");
      }
 
-   eina_strbuf_append(buf, "   return efl_class_functions_set(klass, ");
-   if (eina_strbuf_length_get(ops))
-     eina_strbuf_append(buf, "&ops, ");
-   else
-     eina_strbuf_append(buf, "NULL, ");
-   if (eina_strbuf_length_get(cops))
-     eina_strbuf_append(buf, "&cops);\n");
-   else
-     eina_strbuf_append(buf, "NULL);\n");
+   eina_strbuf_append(buf, "   return efl_class_functions_set(klass, opsp, copsp);\n");
 
    eina_strbuf_free(ops);
    eina_strbuf_free(cops);
 
    eina_strbuf_append(buf, "}\n\n");
 
+   free(cnameu);
    free(cnamel);
 
    return EINA_TRUE;

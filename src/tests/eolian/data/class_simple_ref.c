@@ -29,14 +29,28 @@ EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_bar, int *, NULL, EFL_FUNC_CALL(x)
 static Eina_Bool
 _class_simple_class_initializer(Efl_Class *klass)
 {
+   const Efl_Object_Ops *opsp = NULL, *copsp = NULL;
+
+#ifndef CLASS_SIMPLE_EXTRA_OPS
+#define CLASS_SIMPLE_EXTRA_OPS
+#endif
+
    EFL_OPS_DEFINE(ops,
       EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_a_set, _class_simple_a_set),
       EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_a_get, _class_simple_a_get),
       EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_b_set, _class_simple_b_set),
       EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_foo, __eolian_class_simple_foo),
-      EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_bar, _class_simple_bar)
+      EFL_OBJECT_OP_FUNC(efl_canvas_object_simple_bar, _class_simple_bar),
+      CLASS_SIMPLE_EXTRA_OPS
    );
-   return efl_class_functions_set(klass, &ops, NULL);
+   opsp = &ops;
+
+#ifdef CLASS_SIMPLE_EXTRA_CLASS_OPS
+   EFL_OPS_DEFINE(cops, CLASS_SIMPLE_EXTRA_CLASS_OPS);
+   copsp = &cops;
+#endif
+
+   return efl_class_functions_set(klass, opsp, copsp);
 }
 
 static const Efl_Class_Description _class_simple_class_desc = {
