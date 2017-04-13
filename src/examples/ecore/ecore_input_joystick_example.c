@@ -32,6 +32,10 @@ _joystick_event_handler_cb(void *data, int type EINA_UNUSED, void *event)
         break;
      }
 
+   const char *joystick_name;
+   joystick_name = ecore_input_joystick_name_get(ev->index);
+   printf("joystick name is: %s (index: %d)\n", joystick_name, ev->index);
+
    if (ev->type == ECORE_EVENT_JOYSTICK_EVENT_TYPE_BUTTON &&
        ev->button.index == ECORE_EVENT_JOYSTICK_BUTTON_START)
      ecore_main_loop_quit();

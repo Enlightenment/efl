@@ -478,6 +478,17 @@ extern "C" {
     */
    EAPI int ecore_input_joystick_event_axis_deadzone_get(void);
 
+   /**
+    * Get name of joystick
+    *
+    * This function returns the name string of the joysitck. If @p index
+    * does not exist, or on error, this function returns NULL.
+    *
+    * @param index The index of joystick.
+    * @return name of joystick.
+    * @since 1.20
+    */
+   EAPI Eina_Slstr *ecore_input_joystick_name_get(int index);
 #ifdef __cplusplus
 }
 #endif

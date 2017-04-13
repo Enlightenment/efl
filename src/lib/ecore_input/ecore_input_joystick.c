@@ -621,3 +621,28 @@ ecore_input_joystick_event_axis_deadzone_get(void)
 {
    return _event_axis_deadzone;
 }
+
+EAPI Eina_Slstr *
+ecore_input_joystick_name_get(int index)
+{
+#ifdef JSIOCGNAME
+   int fd;
+   char name[128];
+   Eina_List *l;
+   Joystick_Info *ji;
+
+   EINA_LIST_FOREACH(joystick_list, l, ji)
+     {
+        if (index == ji->index)
+          {
+             fd = ecore_main_fd_handler_fd_get(ji->fd_handler);
+             if (fd < 0) return NULL;
+
+             if (ioctl(fd, JSIOCGNAME(sizeof(name)), name) < 0)
+                strncpy(name, "Unknown", sizeof(name));
+             return eina_slstr_copy_new(name);
+          }
+     }
+#endif
+   return NULL;
+}
