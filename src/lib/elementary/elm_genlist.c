@@ -2320,7 +2320,8 @@ _item_block_position(Item_Block *itb, const int blk_idx)
         sd = it->item->wsd;
         if (sd->reorder_it == it) continue;
 
-        if (!it->filtered) _item_filtered_get(it);
+        if (!it->filtered && sd->filter_data && it->itc->func.filter_get)
+          _item_filtered_get(it);
         if (it->hide)
           {
              if (it->realized) evas_object_hide(VIEW(it));
