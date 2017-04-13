@@ -212,7 +212,15 @@ _context_destroy(void *data)
 void
 evas_filter_context_destroy(Evas_Filter_Context *ctx)
 {
-   // FIXME: This is not locked...
+   if (!ctx) return;
+
+#ifdef FILTERS_DEBUG
+   EINA_SAFETY_ON_FALSE_RETURN(eina_main_loop_is());
+#endif
+
+   if (ctx->delete_me) return;
+   ctx->delete_me = EINA_TRUE;
+
    if (ctx->running)
      evas_post_render_job_add(ctx->evas, _context_destroy, ctx);
    else
@@ -575,18 +583,6 @@ end:
    if (fb->buffer != buffer) efl_unref(fb->buffer);
    fb->buffer = buffer;
    return ret;
-}
-
-Eina_Bool
-evas_filter_buffer_backing_release(Evas_Filter_Context *ctx,
-                                   void *stolen_buffer)
-{
-   if (!stolen_buffer) return EINA_FALSE;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_main_loop_is(), EINA_FALSE);
-
-   ENFN->image_free(ENDT, stolen_buffer); // ref--
-   return EINA_TRUE;
 }
 
 static Evas_Filter_Command *
@@ -1820,19 +1816,16 @@ end:
    ctx->running = EINA_FALSE;
    DEBUG_TIME_END();
 
+   if (ctx->post_run.cb)
+     ctx->post_run.cb(ctx, ctx->post_run.data, ok);
+
    return ok;
 }
 
 static void
 _filter_thread_run_cb(void *data)
 {
-   Evas_Filter_Context *ctx = data;
-   Eina_Bool success;
-
-   success = _filter_chain_run(ctx);
-
-   if (ctx->post_run.cb)
-     ctx->post_run.cb(ctx, ctx->post_run.data, success);
+   _filter_chain_run(data);
 }
 
 static void
@@ -1887,15 +1880,11 @@ _filter_obscured_region_calc(Evas_Filter_Context *ctx)
 Eina_Bool
 evas_filter_context_run(Evas_Filter_Context *ctx)
 {
-   Eina_Bool ret;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
-
-   if (!ctx->commands)
-     return EINA_TRUE;
 
    _filter_obscured_region_calc(ctx);
 
+   ctx->run_count++;
    ctx->running = EINA_TRUE;
    if (ctx->async)
      {
@@ -1903,12 +1892,7 @@ evas_filter_context_run(Evas_Filter_Context *ctx)
         return EINA_TRUE;
      }
 
-   ctx->run_count++;
-   ret = _filter_chain_run(ctx);
-
-   if (ctx->post_run.cb)
-     ctx->post_run.cb(ctx, ctx->post_run.data, ret);
-   return ret;
+   return _filter_chain_run(ctx);
 }
 
 

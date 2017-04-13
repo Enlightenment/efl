@@ -8,10 +8,6 @@
 extern int _evas_filter_log_dom;
 #define EVAS_FILTER_LOG_COLOR EINA_COLOR_LIGHTBLUE
 
-//#ifdef DEBUG
-# define FILTERS_DEBUG
-//#endif
-
 #ifdef ERR
 # undef ERR
 #endif
@@ -159,9 +155,10 @@ struct _Evas_Filter_Context
       Eina_Bool color_use : 1;
    } target;
 
-   volatile int running;
    int          run_count;
 
+   Eina_Bool running : 1;
+   Eina_Bool delete_me : 1;
    Eina_Bool async : 1;
    Eina_Bool has_proxies : 1;
    Eina_Bool gl : 1;

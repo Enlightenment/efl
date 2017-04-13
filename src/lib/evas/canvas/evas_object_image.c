@@ -1798,8 +1798,7 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
                       l, t, r, b, EINA_TRUE, do_async);
 
    ENFN->context_free(output, ctx);
-
-   evas_filter_buffer_backing_release(filter, surface);
+   ENFN->image_free(output, surface);
 
    return EINA_TRUE;
 }

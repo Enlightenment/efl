@@ -32,6 +32,10 @@
 # endif
 #endif /* ! _WIN32 */
 
+//#ifdef DEBUG
+# define FILTERS_DEBUG
+//#endif
+
 typedef struct _Evas_Filter_Instruction Evas_Filter_Instruction;
 typedef struct _Evas_Filter_Buffer Evas_Filter_Buffer;
 typedef struct _Evas_Filter_Proxy_Binding Evas_Filter_Proxy_Binding;
@@ -158,7 +162,6 @@ int                      evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, 
 int                      evas_filter_buffer_proxy_new(Evas_Filter_Context *ctx, Evas_Filter_Proxy_Binding *pb, int *w, int *h);
 void                    *evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid, Eina_Bool render);
 Eina_Bool                evas_filter_buffer_backing_set(Evas_Filter_Context *ctx, int bufid, void *engine_buffer);
-Eina_Bool                evas_filter_buffer_backing_release(Evas_Filter_Context *ctx, void *stolen_buffer);
 
 Eina_Bool                evas_filter_context_run(Evas_Filter_Context *ctx);
 
