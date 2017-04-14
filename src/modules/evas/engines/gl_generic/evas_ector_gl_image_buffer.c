@@ -7,17 +7,13 @@
 #define ECTOR_GL_BUFFER_BASE_PROTECTED
 
 #include "evas_common_private.h"
+#include "evas_gl_private.h"
 
+#include <software/Ector_Software.h>
 #include <gl/Ector_GL.h>
-#include "gl/ector_gl_private.h"
-#include "evas_common_private.h"
-#include "../gl_common/evas_gl_common.h"
-#include "evas_private.h"
-#include "ector_buffer.h"
 #include "Evas_Engine_GL_Generic.h"
 
 #include "evas_ector_buffer.eo.h"
-#include "evas_ector_gl_buffer.eo.h"
 #include "evas_ector_gl_image_buffer.eo.h"
 #include "evas_gl_private.h"
 
