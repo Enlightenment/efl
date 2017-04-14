@@ -799,7 +799,7 @@ _find_ellipse_coords(double x, double y, double w, double h, double angle,
    double angles[2] = { angle, angle + length };
    Point *points[2];
 
-   if (!EINA_FLT_EQ(w, 0.0) || !EINA_FLT_EQ(h, 0.0))
+   if (EINA_FLT_EQ(w, 0.0) || EINA_FLT_EQ(h, 0.0))
      {
         if (start_point)
           {
