@@ -227,6 +227,8 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
    elm_widget_style_set(sd->home_button, buf);
    elm_widget_style_set(sd->spinner, "wheel");
 
+   elm_widget_style_set(sd->files_view, buf);
+
    elm_widget_style_set(sd->path_entry, buf);
    elm_widget_style_set(sd->name_entry, buf);
    elm_widget_style_set(sd->search_entry, buf);
@@ -2388,6 +2390,7 @@ _elm_fileselector_elm_interface_fileselector_mode_set(Eo *obj, Elm_Fileselector_
 
    sd->mode = mode;
 
+   elm_obj_widget_theme_apply(obj);
    if (sd->model)
      {
         _schedule_populate(obj, sd, sd->model, NULL);
