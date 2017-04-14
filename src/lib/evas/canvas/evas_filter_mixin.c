@@ -130,6 +130,7 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
      }
 
    FCOW_WRITE(pd, context, ctx);
+   efl_unref(eo_obj);
 }
 
 static void
@@ -449,16 +450,9 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    FCOW_END(fcow, pd);
 
    // Run the filter now (maybe async)
+   efl_ref(eo_obj);
    ok = evas_filter_context_run(filter);
-   if (!ok)
-     {
-        ERR("Filter program failed to run!");
-        evas_filter_context_destroy(filter);
-        fcow = FCOW_BEGIN(pd);
-        fcow->context = NULL;
-        fcow->invalid = EINA_TRUE;
-        FCOW_END(fcow, pd);
-     }
+   if (!ok) ERR("Filter program failed to run!");
 
    return ok;
 }

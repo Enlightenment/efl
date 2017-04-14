@@ -1880,8 +1880,6 @@ _filter_obscured_region_calc(Evas_Filter_Context *ctx)
 Eina_Bool
 evas_filter_context_run(Evas_Filter_Context *ctx)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
-
    _filter_obscured_region_calc(ctx);
 
    ctx->run_count++;
