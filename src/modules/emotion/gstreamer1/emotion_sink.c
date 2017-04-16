@@ -366,6 +366,7 @@ emotion_video_sink_main_render(void *data)
    GstMapInfo map;
    unsigned char *evas_data;
    double ratio;
+   Emotion_Convert_Info info;
 
    send = data;
 
@@ -401,7 +402,10 @@ emotion_video_sink_main_render(void *data)
    buffer = gst_buffer_ref(send->frame);
 
    if (!gst_buffer_map(buffer, &map, GST_MAP_READ))
-     goto exit_point;
+     {
+        ERR("Cannot map video buffer for read.\n");
+        goto exit_point;
+     }
 
    INF("sink main render [%i, %i] (source height: %i)", send->info.width, send->eheight, send->info.height);
 
@@ -409,12 +413,38 @@ emotion_video_sink_main_render(void *data)
    evas_object_image_colorspace_set(priv->evas_object, send->eformat);
    evas_object_image_size_set(priv->evas_object, send->info.width, send->eheight);
 
-   // XXX: need to handle GstVideoCropMeta to get video cropping right
-
    evas_data = evas_object_image_data_get(priv->evas_object, 1);
 
+// XXX: need to handle GstVideoCropMeta to get video cropping right
+// XXX: can't get crop meta from buffer (always null)
+//   GstVideoCropMeta *meta;
+//   meta = gst_buffer_get_video_crop_meta(buffer);
+//   printf("META: %p\n", meta);
+
+/* this just is a demo of broken vaapi back-end values for stride and
+ * plane offset - the below is what i needed to fix them up for a few videos
+ */
+/*
+   info.stride[0] = 64 * ((send->info.stride[0] + 63) / 64);
+   info.stride[1] = 64 * ((send->info.stride[1] + 63) / 64);
+   info.stride[2] = 64 * ((send->info.stride[2] + 63) / 64);
+   info.stride[3] = 64 * ((send->info.stride[3] + 63) / 64);
+   info.plane_offset[0] = send->info.offset[0];
+   info.plane_offset[1] = (((send->info.height + 15) / 16) * 16) * info.stride[1];
+   info.plane_offset[2] = send->info.offset[2];
+   info.plane_offset[3] = send->info.offset[3];
+ */
+   info.stride[0] = send->info.stride[0];
+   info.stride[1] = send->info.stride[1];
+   info.stride[2] = send->info.stride[2];
+   info.stride[3] = send->info.stride[3];
+   info.plane_offset[0] = send->info.offset[0];
+   info.plane_offset[1] = send->info.offset[1];
+   info.plane_offset[2] = send->info.offset[2];
+   info.plane_offset[3] = send->info.offset[3];
+
    if (send->func)
-     send->func(evas_data, map.data, send->info.width, send->info.height, send->eheight);
+     send->func(evas_data, map.data, send->info.width, send->info.height, send->eheight, &info);
    else
      WRN("No way to decode %x colorspace !", send->eformat);
 

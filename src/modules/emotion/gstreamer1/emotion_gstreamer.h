@@ -20,11 +20,14 @@
 
 #include "emotion_modules.h"
 
+typedef struct _Emotion_Convert_Info Emotion_Convert_Info;
+
 typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
                                       const unsigned char *gst_data,
                                       unsigned int w,
                                       unsigned int h,
-                                      unsigned int output_height);
+                                      unsigned int output_height,
+                                      Emotion_Convert_Info *info);
 
 typedef struct _EmotionVideoSinkPrivate EmotionVideoSinkPrivate;
 typedef struct _EmotionVideoSink        EmotionVideoSink;
@@ -33,6 +36,12 @@ typedef struct _Emotion_Gstreamer Emotion_Gstreamer;
 typedef struct _Emotion_Gstreamer_Metadata Emotion_Gstreamer_Metadata;
 typedef struct _Emotion_Gstreamer_Buffer Emotion_Gstreamer_Buffer;
 typedef struct _Emotion_Gstreamer_Message Emotion_Gstreamer_Message;
+
+struct _Emotion_Convert_Info
+{
+   unsigned int stride[4];
+   unsigned int plane_offset[4];
+};
 
 struct _Emotion_Gstreamer_Metadata
 {

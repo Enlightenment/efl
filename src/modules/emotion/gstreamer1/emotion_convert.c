@@ -8,8 +8,7 @@ static inline void
 _evas_video_bgrx_step(unsigned char *evas_data, const unsigned char *gst_data,
                       unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height, unsigned int step)
 {
-   unsigned int x;
-   unsigned int y;
+   unsigned int x, y;
 
    for (y = 0; y < output_height; ++y)
      {
@@ -26,23 +25,28 @@ _evas_video_bgrx_step(unsigned char *evas_data, const unsigned char *gst_data,
 }
 
 static void
-_evas_video_bgr(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height)
+_evas_video_bgr(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
 {
+   // XXX: need to check offset and stride that gst provide and what they
+   // mean with a non-planar format like bgra
    _evas_video_bgrx_step(evas_data, gst_data, w, h, output_height, 3);
 }
 
 static void
-_evas_video_bgrx(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height)
+_evas_video_bgrx(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
 {
+   // XXX: need to check offset and stride that gst provide and what they
+   // mean with a non-planar format like bgra
    _evas_video_bgrx_step(evas_data, gst_data, w, h, output_height, 4);
 }
 
 static void
-_evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height)
+_evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
 {
-   unsigned int x;
-   unsigned int y;
+   unsigned int x, y;
 
+   // XXX: need to check offset and stride that gst provide and what they
+   // mean with a non-planar format like bgra
    for (y = 0; y < output_height; ++y)
      {
         unsigned char alpha;
@@ -61,90 +65,80 @@ _evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height)
+_evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
 {
-   const unsigned char **rows;
-   unsigned int i, j;
-   unsigned int rh;
-   unsigned int stride_y, stride_uv;
+   const unsigned char **rows, *ptr;
+   unsigned int i, j, jump, rh;
 
    rh = output_height;
-
    rows = (const unsigned char **)evas_data;
 
-   stride_y = GST_ROUND_UP_4(w);
-   stride_uv = GST_ROUND_UP_8(w) / 2;
+   ptr = gst_data + info->plane_offset[0];
+   jump = info->stride[0];
+   for (i = 0; i < rh; i++, ptr += jump) rows[i] = ptr;
 
-   for (i = 0; i < rh; i++)
-     rows[i] = &gst_data[i * stride_y];
+   ptr = gst_data + info->plane_offset[1];
+   jump = info->stride[1];
+   for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 
-   for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * stride_y + j * stride_uv];
-
-   for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * stride_y +
-			 (rh / 2) * stride_uv +
-			 j * stride_uv];
+   ptr = gst_data + info->plane_offset[2];
+   jump = info->stride[2];
+   for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 }
 
 static void
-_evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height)
+_evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
 {
-   const unsigned char **rows;
-   unsigned int i, j;
-   unsigned int rh;
-   unsigned int stride_y, stride_uv;
+   const unsigned char **rows, *ptr;
+   unsigned int i, j, jump, rh;
 
    rh = output_height;
-
    rows = (const unsigned char **)evas_data;
 
-   stride_y = GST_ROUND_UP_4(w);
-   stride_uv = GST_ROUND_UP_8(w) / 2;
+   ptr = gst_data + info->plane_offset[0];
+   jump = info->stride[0];
+   for (i = 0; i < rh; i++, ptr += jump) rows[i] = ptr;
 
-   for (i = 0; i < rh; i++)
-     rows[i] = &gst_data[i * stride_y];
+   ptr = gst_data + info->plane_offset[2];
+   jump = info->stride[1];
+   for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 
-   for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * stride_y +
-			 (rh / 2) * stride_uv +
-			 j * stride_uv];
-
-   for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * stride_y + j * stride_uv];
+   ptr = gst_data + info->plane_offset[1];
+   jump = info->stride[2];
+   for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 }
 
 static void
-_evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height)
+_evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
 {
    const unsigned char **rows;
-   unsigned int i;
-   unsigned int stride;
+   unsigned int i, stride;
 
+   // XXX: need to check offset and stride that gst provide and what they
+   // mean with a non-planar format like yuy2
    rows = (const unsigned char **)evas_data;
 
    stride = GST_ROUND_UP_4(w * 2);
 
-   for (i = 0; i < output_height; i++)
-     rows[i] = &gst_data[i * stride];
+   for (i = 0; i < output_height; i++) rows[i] = &gst_data[i * stride];
 }
 
 static void
-_evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height)
+_evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info)
 {
-   const unsigned char **rows;
-   unsigned int i, j;
-   unsigned int rh;
+   const unsigned char **rows, *ptr;
+   unsigned int i, j, jump, rh;
 
    rh = output_height;
-
    rows = (const unsigned char **)evas_data;
 
-   for (i = 0; i < rh; i++)
-     rows[i] = &gst_data[i * w];
+   ptr = gst_data + info->plane_offset[0];
+   jump = info->stride[0];
+   for (i = 0; i < rh; i++, ptr += jump) rows[i] = ptr;
 
-   for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[rh * w + j * w];
+   ptr = gst_data + info->plane_offset[1];
+   jump = info->stride[1];
+   for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 }
 
 const ColorSpace_Format_Convertion colorspace_format_convertion[] = {
