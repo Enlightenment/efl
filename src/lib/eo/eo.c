@@ -232,7 +232,10 @@ _vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass, Efl_Object_Op op, E
 {
    op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
-   Dich_Chain1 *chain1 = &vtable->chain[idx1];
+   Dich_Chain1 *chain1;
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(idx1 < vtable->size, EINA_FALSE);
+   chain1 = &vtable->chain[idx1];
    _vtable_chain_write_prepare(chain1);
    fsrc = &chain1->chain2->funcs[DICH_CHAIN_LAST(op)];
    if (!allow_same_override && (fsrc->src == klass))
