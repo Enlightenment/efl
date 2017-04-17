@@ -370,11 +370,11 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
    p->timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
    _ecore_fd_close_on_exec(p->pollfd);
 
-   pollev.data.ptr = p->fd_read;
+   pollev.data.ptr = (void *)(uintptr_t)(p->fd_read);
    pollev.events = EPOLLIN;
    epoll_ctl(p->pollfd, EPOLL_CTL_ADD, p->fd_read, &pollev);
 
-   pollev.data.ptr = p->timerfd;
+   pollev.data.ptr = (void *)(uintptr_t)(p->timerfd);
    pollev.events = EPOLLIN;
    epoll_ctl(p->pollfd, EPOLL_CTL_ADD, p->timerfd, &pollev);
 #endif
