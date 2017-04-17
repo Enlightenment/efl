@@ -122,7 +122,7 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                     efl_gfx_size_hint_weight_set(efl_added, 1, 1),
                     efl_pack_layout_engine_set(efl_added, EFL_UI_GRID_STATIC_CLASS, NULL));
      }
-   efl_pack(win, gd);
+   efl_content_set(win, gd);
    api->data.grid = gd;
    efl_gfx_visible_set(gd, 1);
 
