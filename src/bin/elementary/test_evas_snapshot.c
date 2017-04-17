@@ -113,7 +113,7 @@ _radius_set(void *data, const Efl_Event *ev)
 }
 
 static void
-_close(void *data, const Efl_Event *ev EINA_UNUSED)
+_close_do(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *win = data;
 
@@ -265,7 +265,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _close, win),
+           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _close_do, win),
            efl_gfx_visible_set(efl_added, 1));
 
    efl_key_wref_set(win, "snap", snap);
