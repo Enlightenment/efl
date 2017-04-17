@@ -21,9 +21,6 @@ typedef struct _Box_Item_Iterator Box_Item_Iterator;
 
 struct _Efl_Ui_Box_Data
 {
-   const Efl_Class *layout_engine;
-   const void *layout_data;
-
    Efl_Orient orient;
    Eina_Bool homogeneous : 1;
    Eina_Bool delete_me : 1;

@@ -29,9 +29,6 @@ struct _Grid_Item
 
 struct _Efl_Ui_Grid_Data
 {
-   const Efl_Class *layout_engine;
-   const void     *layout_data;
-
    Grid_Item *items;
    int count;
 

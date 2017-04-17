@@ -5,6 +5,8 @@
 #define EFL_PACK_LAYOUT_PROTECTED
 #include <Elementary.h>
 
+static void _custom_layout_update(Eo *pack, void *_pd EINA_UNUSED);
+
 static Evas_Object *objects[7] = {};
 
 typedef enum {
@@ -16,36 +18,17 @@ typedef enum {
    CUSTOM
 } Weight_Mode;
 
-static void _custom_engine_layout_do(Eo *obj, void *pd, Efl_Pack *pack, const void *data);
-
-/* Common Efl Class boilerplate. */
-static Eina_Bool
-_custom_engine_class_initializer(Efl_Class *klass)
-{
-   EFL_OPS_DEFINE(class_ops,
-         EFL_OBJECT_OP_FUNC(efl_pack_layout_do, _custom_engine_layout_do),
-   );
-
-   return efl_class_functions_set(klass, NULL, &class_ops);
-}
-
-static const Efl_Class_Description custom_engine_class_desc = {
-   EO_VERSION, "Custom Layout Engine", EFL_CLASS_TYPE_INTERFACE,
-   0, _custom_engine_class_initializer, NULL, NULL
-};
-
-EFL_DEFINE_CLASS(_test_ui_grid_custom_engine_class_get, &custom_engine_class_desc, EFL_PACK_LAYOUT_INTERFACE, NULL)
-
-#define CUSTOM_ENGINE_CLASS _test_ui_grid_custom_engine_class_get()
-
 static void
 weights_cb(void *data, const Efl_Event *event)
 {
+   EFL_OPS_DEFINE(custom_layout_ops,
+                  EFL_OBJECT_OP_FUNC(efl_pack_layout_update, _custom_layout_update));
+
    Weight_Mode mode = elm_radio_state_value_get(event->object);
    Eo *grid = data;
 
    if (mode != CUSTOM)
-     efl_pack_layout_engine_set(grid, NULL, NULL);
+     efl_object_override(grid, NULL);
 
    switch (mode)
      {
@@ -78,9 +61,7 @@ weights_cb(void *data, const Efl_Event *event)
         efl_gfx_size_hint_weight_set(objects[6], 1, 1);
         break;
       case CUSTOM:
-        // See also test_ui_box.c for another solution for custom layouts
-        // using efl_object_override.
-        efl_pack_layout_engine_set(grid, CUSTOM_ENGINE_CLASS, NULL);
+        efl_object_override(grid, &custom_layout_ops);
         break;
      }
 }
@@ -145,8 +126,7 @@ child_evt_cb(void *data, const Efl_Event *event)
 }
 
 static void
-_custom_engine_layout_do(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
-                         Efl_Pack *pack, const void *data EINA_UNUSED)
+_custom_layout_update(Eo *pack, void *_pd EINA_UNUSED)
 {
    /* Example custom layout for grid:
     * divide space into regions of same size, place objects in center of their

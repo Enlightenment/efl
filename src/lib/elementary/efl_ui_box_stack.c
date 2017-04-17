@@ -4,18 +4,8 @@
 
 #define MY_CLASS EFL_UI_BOX_STACK_CLASS
 
-EOLIAN static Eo *
-_efl_ui_box_stack_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
-{
-   efl_constructor(efl_super(obj, MY_CLASS));
-   efl_pack_layout_engine_set(obj, MY_CLASS, NULL);
-   return obj;
-}
-
 EOLIAN static void
-_efl_ui_box_stack_efl_pack_layout_layout_do(Efl_Class *klass EINA_UNUSED,
-                                            void *_pd EINA_UNUSED, Eo *obj,
-                                            const void *data EINA_UNUSED)
+_efl_ui_box_stack_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object_Box_Option *opt;
    Evas_Object_Box_Data *bd;

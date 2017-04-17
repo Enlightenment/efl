@@ -31,7 +31,5 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout,
       Efl.Pack.Linear.pack_end;
       Efl.Pack.Layout.layout_update;
       Efl.Pack.Layout.layout_request;
-      Efl.Pack.Layout.layout_engine { get; set; }
-      Efl.Pack.Layout.layout_do;
    }
 }

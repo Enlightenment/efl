@@ -6,22 +6,12 @@ interface Efl.Pack.Layout ()
    ]]
    eo_prefix: efl_pack;
    methods {
-      @property layout_engine {
-         [[Implementation of this container's layout algorithm.
-
-           The default value is the same as the widget class.
-         ]]
-         set {}
-         get {}
-         values {
-            /* FIXME: engine is an Efl.Class */
-            engine: const(Efl.Object); [[Must be an $Efl.Pack.Layout subclass.]]
-            data: const(void_ptr);     [[Any data to pass along to $Efl.Pack.Layout.layout_do.
-                                      Owned by the caller. Depends on the layout engine.]]
-         }
-      }
+      // Note: Do we need a layout_force or a sync flag in layout_request?
       layout_request {
-         [[Requests EFL to call the @.layout_update method on this object.]]
+         [[Requests EFL to call the @.layout_update method on this object.
+
+           This @.layout_update may be called asynchronously.
+         ]]
       }
       layout_update @protected {
          [[Implementation of this container's layout algorithm.
@@ -29,16 +19,8 @@ interface Efl.Pack.Layout ()
            EFL will call this function whenever the contents of this
            container need to be re-layed out on the canvas.
 
-           This can be overriden to implement highly specific layout
-           behaviours.
+           This can be overriden to implement custom layout behaviours.
          ]]
-      }
-      layout_do @class @protected {
-         [[Lay out (resize and move) children objects of $pack.]]
-         params {
-            pack: Efl.Gfx; [[The container to lay out.]]
-            data: const(void_ptr) @optional; [[Extra data passed by the caller.]]
-         }
       }
    }
 }

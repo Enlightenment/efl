@@ -30,7 +30,5 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout,
       Efl.Pack.Linear.pack_index_get;
       Efl.Pack.Layout.layout_update;
       Efl.Pack.Layout.layout_request;
-      Efl.Pack.Layout.layout_engine { get; set; }
-      Efl.Pack.Layout.layout_do;
    }
 }

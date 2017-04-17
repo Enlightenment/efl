@@ -4,6 +4,6 @@ class Efl.Ui.Grid.Static (Efl.Ui.Grid)
    data: null;
    implements {
       Efl.Object.constructor;
-      Efl.Pack.Layout.layout_do;
+      Efl.Pack.Layout.layout_update;
    }
 }

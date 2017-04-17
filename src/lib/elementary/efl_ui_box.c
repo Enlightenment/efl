@@ -148,40 +148,14 @@ _evas_box_custom_layout(Evas_Object *evas_box EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Data *pd)
-{
-   efl_pack_layout_do(pd->layout_engine, obj, pd->layout_data);
-   efl_event_callback_legacy_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
-}
-
-EOLIAN static void
-_efl_ui_box_efl_pack_layout_layout_do(Eo *klass EINA_UNUSED,
-                                      void *_pd EINA_UNUSED,
-                                      Eo *obj, const void *data EINA_UNUSED)
+_efl_ui_box_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Object_Box_Data *bd;
 
    bd = evas_object_smart_data_get(wd->resize_obj);
    _efl_ui_box_custom_layout(obj, bd);
-}
-
-EOLIAN static void
-_efl_ui_box_efl_pack_layout_layout_engine_set(Eo *obj, Efl_Ui_Box_Data *pd,
-                                              const Efl_Class *klass, const void *data)
-{
-   pd->layout_engine = klass ? klass : efl_class_get(obj);
-   pd->layout_data = data;
-   efl_pack_layout_request(obj);
-   _sizing_eval(obj, pd);
-}
-
-EOLIAN static void
-_efl_ui_box_efl_pack_layout_layout_engine_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd,
-                                              const Efl_Class **klass, const void **data)
-{
-   if (klass) *klass = pd->layout_engine;
-   if (data) *data = pd->layout_data;
+   efl_event_callback_legacy_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
 }
 
 EOLIAN static void
@@ -259,7 +233,6 @@ _efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    pd->orient = EFL_ORIENT_RIGHT;
-   pd->layout_engine = efl_class_get(obj);
    pd->align.h = 0.5;
    pd->align.v = 0.5;
 

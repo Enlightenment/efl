@@ -1,9 +1,3 @@
-struct Efl.Ui.Box.Flow_Params {
-   [[Extra parameters for Box_Flow layout. Can be omitted.]]
-   homogenous: bool; [[$true if the box flow layout is homogenous, $false otherwise]]
-   max_size: bool; [[$true if the box flow layout has the maximal size, $false otherwise]]
-}
-
 class Efl.Ui.Box.Flow (Efl.Ui.Box, Efl.Pack.Layout)
 {
    [[A custom layout engine for @Efl.Ui.Box.]]
@@ -26,7 +20,6 @@ class Efl.Ui.Box.Flow (Efl.Ui.Box, Efl.Pack.Layout)
       }
    }
    implements {
-      Efl.Object.constructor;
-      Efl.Pack.Layout.layout_do;
+      Efl.Pack.Layout.layout_update;
    }
 }

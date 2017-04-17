@@ -6,7 +6,6 @@ class Efl.Ui.Box.Stack (Efl.Ui.Box, Efl.Pack.Layout)
    ]]
    data: null;
    implements {
-      Efl.Object.constructor;
-      Efl.Pack.Layout.layout_do;
+      Efl.Pack.Layout.layout_update;
    }
 }

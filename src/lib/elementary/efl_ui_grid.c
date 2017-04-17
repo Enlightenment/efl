@@ -138,10 +138,8 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_gfx_size_hint_combined_min_get
-         (wd->resize_obj, &minw, &minh);
-   evas_object_size_hint_max_get
-         (wd->resize_obj, &maxw, &maxh);
+   efl_gfx_size_hint_combined_min_get(wd->resize_obj, &minw, &minh);
+   evas_object_size_hint_max_get(wd->resize_obj, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
@@ -199,34 +197,11 @@ _custom_table_calc(Eo *obj, Custom_Table_Data *pd)
 /* End of custom table class */
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_layout_layout_engine_set(Eo *obj, Efl_Ui_Grid_Data *pd, const Efl_Class *engine, const void *data)
-{
-   pd->layout_engine = engine ? engine : efl_class_get(obj);
-   pd->layout_data = data;
-   efl_pack_layout_request(obj);
-}
-
-EOLIAN static void
-_efl_ui_grid_efl_pack_layout_layout_engine_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, const Efl_Class **engine, const void **data)
-{
-   if (engine) *engine = pd->layout_engine;
-   if (data) *data = pd->layout_data;
-}
-
-EOLIAN static void
 _efl_ui_grid_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Grid_Data *pd)
-{
-   _sizing_eval(obj, pd);
-   efl_pack_layout_do(pd->layout_engine, obj, pd->layout_data);
-}
-
-EOLIAN static void
-_efl_ui_grid_efl_pack_layout_layout_do(Eo *klass EINA_UNUSED,
-                                       void *_pd EINA_UNUSED,
-                                       Eo *obj, const void *data EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   _sizing_eval(obj, pd);
    efl_canvas_group_calculate(efl_super(wd->resize_obj, CUSTOM_TABLE_CLASS));
 }
 
@@ -243,8 +218,6 @@ _efl_ui_grid_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
    Custom_Table_Data *custom;
    Evas_Object *table;
-
-   pd->layout_engine = MY_CLASS;
 
    elm_widget_sub_object_parent_add(obj);
 
