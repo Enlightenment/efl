@@ -3427,7 +3427,7 @@ _evas_object_image_preloading_check(Evas_Object *eo_obj)
 }
 
 Evas_Object *
-_evas_object_image_videfl_parent_get(Evas_Object *eo_obj)
+_evas_object_image_video_parent_get(Evas_Object *eo_obj)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    return o->video_surface ? o->pixels->video.parent : NULL;

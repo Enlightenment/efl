@@ -1349,7 +1349,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    Eina_Bool surface_below, stacking_check, object_above = EINA_FALSE;
    Eina_Bool ignore_window;
 
-   video_parent = _evas_object_image_videfl_parent_get(eo_obj);
+   video_parent = _evas_object_image_video_parent_get(eo_obj);
 
    /* Check if any one is the stack make this object mapped */
    eo_tmp = eo_obj;

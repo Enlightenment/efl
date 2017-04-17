@@ -437,7 +437,7 @@ _play_finished(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_on_videfl_del(Elm_Player_Data *sd)
+_on_video_del(Elm_Player_Data *sd)
 {
    elm_object_disabled_set(sd->forward, EINA_TRUE);
    elm_object_disabled_set(sd->info, EINA_TRUE);
@@ -458,12 +458,12 @@ _on_videfl_del(Elm_Player_Data *sd)
 }
 
 static void
-_videfl_del(void *data,
+_video_del(void *data,
            Evas *e EINA_UNUSED,
            Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
-   _on_videfl_del(data);
+   _on_video_del(data);
 }
 
 static Evas_Object *
@@ -574,7 +574,7 @@ _elm_player_content_set(Eo *obj, Elm_Player_Data *sd, const char *part, Evas_Obj
    sd->emotion = elm_video_emotion_get(sd->video);
    emotion_object_priority_set(sd->emotion, EINA_TRUE);
    evas_object_event_callback_add
-     (sd->video, EVAS_CALLBACK_DEL, _videfl_del, sd);
+     (sd->video, EVAS_CALLBACK_DEL, _video_del, sd);
 
    seekable = elm_video_is_seekable_get(sd->video);
    length = elm_video_play_length_get(sd->video);

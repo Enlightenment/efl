@@ -1646,7 +1646,7 @@ Evas_Object *_evas_object_image_source_get(Evas_Object *obj);
 Eina_Bool _evas_object_image_preloading_get(const Evas_Object *obj);
 void _evas_object_image_preloading_set(Evas_Object *obj, Eina_Bool preloading);
 void _evas_object_image_preloading_check(Evas_Object *obj);
-Evas_Object *_evas_object_image_videfl_parent_get(Evas_Object *obj);
+Evas_Object *_evas_object_image_video_parent_get(Evas_Object *obj);
 void _evas_object_image_video_overlay_show(Evas_Object *obj);
 void _evas_object_image_video_overlay_hide(Evas_Object *obj);
 void _evas_object_image_video_overlay_do(Evas_Object *obj);

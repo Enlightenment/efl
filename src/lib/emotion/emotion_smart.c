@@ -1878,7 +1878,7 @@ _pixels_get(void *data, Evas_Object *obj)
 
    sd = data;
    if (!sd->engine_instance) return;
-   emotion_engine_instance_videfl_data_size_get(sd->engine_instance, &w, &h);
+   emotion_engine_instance_video_data_size_get(sd->engine_instance, &w, &h);
    w = (w >> 1) << 1;
    h = (h >> 1) << 1;
 
