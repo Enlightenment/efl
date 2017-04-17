@@ -66,6 +66,8 @@
 
 #else
 
+# include <sys/epoll.h>
+# include <sys/timerfd.h>
 # include <unistd.h>
 # include <fcntl.h>
 
@@ -95,6 +97,10 @@ struct _Ecore_Pipe
    unsigned int      already_read;
    void             *passed_data;
    int               message;
+#ifndef _WIN32
+   int               pollfd;
+   int               timerfd;
+#endif
    Eina_Bool         delete_me : 1;
 };
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Pipe);
@@ -354,6 +360,21 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
    if (!write_survive_fork)
      _ecore_fd_close_on_exec(fd_write);
 
+#ifndef _WIN32
+   struct epoll_event pollev = { 0 };
+   p->pollfd = epoll_create(1);
+   p->timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
+   _ecore_fd_close_on_exec(p->timerfd);
+
+   pollev.data.ptr = p->fd_read;
+   pollev.events = EPOLLIN;
+   epoll_ctl(p->pollfd, EPOLL_CTL_ADD, p->fd_read, &pollev);
+
+   pollev.data.ptr = p->timerfd;
+   pollev.events = EPOLLIN;
+   epoll_ctl(p->pollfd, EPOLL_CTL_ADD, p->timerfd, &pollev);
+#endif
+
    if (fcntl(p->fd_read, F_SETFL, O_NONBLOCK) < 0) ERR("can't set pipe to NONBLOCK");
    p->fd_handler = ecore_main_fd_handler_add(p->fd_read,
                                              ECORE_FD_READ,
@@ -384,6 +405,12 @@ _ecore_pipe_del(Ecore_Pipe *p)
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_del");
         return NULL;
      }
+#ifndef _WIN32
+   epoll_ctl(p->pollfd, EPOLL_CTL_DEL, p->fd_read, NULL);
+   epoll_ctl(p->pollfd, EPOLL_CTL_DEL, p->timerfd, NULL);
+   if (p->timerfd >= 0) close(p->timerfd);
+   if (p->pollfd >= 0) close(p->pollfd);
+#endif
    p->delete_me = EINA_TRUE;
    if (p->handling > 0) return (void *)p->data;
    if (p->fd_handler) _ecore_main_fd_handler_del(p->fd_handler);
@@ -397,6 +424,7 @@ _ecore_pipe_del(Ecore_Pipe *p)
    return data;
 }
 
+#ifdef _WIN32
 int
 _ecore_pipe_wait(Ecore_Pipe *p,
                  int         message_count,
@@ -437,12 +465,9 @@ _ecore_pipe_wait(Ecore_Pipe *p,
                   int sec, usec;
 #ifdef FIX_HZ
                   timeout += (0.5 / HZ);
-                  sec = (int)timeout;
-                  usec = (int)((timeout - (double)sec) * 1000000);
-#else
-                  sec = (int)timeout;
-                  usec = (int)((timeout - (double)sec) * 1000000);
 #endif
+                  sec = (int)timeout;
+                  usec = (int)((timeout - (double)sec) * 1000000);
                   tv.tv_sec = sec;
                   tv.tv_usec = usec;
                }
@@ -483,6 +508,112 @@ _ecore_pipe_wait(Ecore_Pipe *p,
    return total;
 }
 
+#else
+int
+_ecore_pipe_wait(Ecore_Pipe *p,
+                 int         message_count,
+                 double      wait)
+{
+   int64_t timerfdbuf;
+   struct epoll_event pollincoming[2];
+   double end = 0.0;
+   double timeout;
+   int ret;
+   int total = 0;
+   int time_exit=-1;
+   struct itimerspec tspec_new;
+   struct itimerspec tspec_old;
+
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(-1);
+   if (p->fd_read == PIPE_FD_INVALID)
+     return -1;
+
+   if (wait >= 0.0)
+     end = ecore_time_get() + wait;
+   timeout = wait;
+
+   while (message_count > 0 && (timeout > 0.0 || wait <= 0.0))
+     {
+        time_exit = -1;
+        if (wait >= 0.0)
+          {
+             /* finite() tests for NaN, too big, too small, and infinity.  */
+             if ((!ECORE_FINITE(timeout)) || (EINA_DBL_EQ(timeout, 0.0)))
+               {
+                  tspec_new.it_value.tv_sec = 0;
+                  tspec_new.it_value.tv_nsec = 0;
+                  tspec_new.it_interval.tv_sec = 0;
+                  tspec_new.it_interval.tv_nsec = 0;
+                  time_exit = 0;
+               }
+             else if (timeout > 0.0)
+               {
+                  int sec, usec;
+#ifdef FIX_HZ
+                  timeout += (0.5 / HZ);
+#endif
+                  sec = (int)timeout;
+                  usec = (int)((timeout - (double)sec) * 1000000000);
+                  tspec_new.it_value.tv_sec = sec;
+                  tspec_new.it_value.tv_nsec = (int)(usec) % 1000000000;
+                  tspec_new.it_interval.tv_sec = 0;
+                  tspec_new.it_interval.tv_nsec = 0;
+
+               }
+             timerfd_settime(p->timerfd, 0, &tspec_new, &tspec_old);
+          }
+
+        ret = epoll_wait(p->pollfd, pollincoming, 2, time_exit);
+
+        if (ret > 0)
+          {
+             Eina_Bool fd_read_found  = EINA_FALSE;
+             Eina_Bool fd_timer_found = EINA_FALSE;
+
+             for(int i = 0; i < ret;i++)
+             {
+                if ((&p->fd_read == pollincoming[i].data.ptr))
+                  fd_read_found  = EINA_TRUE;
+
+                if ((&p->timerfd == pollincoming[i].data.ptr))
+                  fd_timer_found = EINA_TRUE;
+             }
+
+             if (fd_read_found)
+               {
+                  _ecore_pipe_read(p, NULL);
+                  message_count -= p->message;
+                  total += p->message;
+                  p->message = 0;
+               }
+
+             if (fd_timer_found)
+               {
+                  pipe_read(p->timerfd, &timerfdbuf, sizeof(timerfdbuf));
+                  break;
+               }
+          }
+        else if (ret == 0)
+          {
+             break;
+          }
+        else if (errno != EINTR)
+          {
+             if (p->fd_read != PIPE_FD_INVALID)
+               {
+                  close(p->fd_read);
+                  p->fd_read = PIPE_FD_INVALID;
+               }
+             break;
+          }
+
+        if (wait >= 0.0)
+          timeout = end - ecore_time_get();
+     }
+   return total;
+}
+
+#endif
 static void
 _ecore_pipe_unhandle(Ecore_Pipe *p)
 {
