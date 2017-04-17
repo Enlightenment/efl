@@ -364,7 +364,7 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
    struct epoll_event pollev = { 0 };
    p->pollfd = epoll_create(1);
    p->timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
-   _ecore_fd_close_on_exec(p->timerfd);
+   _ecore_fd_close_on_exec(p->pollfd);
 
    pollev.data.ptr = p->fd_read;
    pollev.events = EPOLLIN;
