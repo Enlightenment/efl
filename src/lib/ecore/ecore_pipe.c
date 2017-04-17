@@ -66,8 +66,12 @@
 
 #else
 
-# include <sys/epoll.h>
-# include <sys/timerfd.h>
+# ifdef HAVE_SYS_EPOLL_H
+#  include <sys/epoll.h>
+# endif /* HAVE_SYS_EPOLL_H */
+# ifdef HAVE_SYS_TIMERFD_H
+#  include <sys/timerfd.h>
+# endif
 # include <unistd.h>
 # include <fcntl.h>
 
@@ -360,7 +364,7 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
    if (!write_survive_fork)
      _ecore_fd_close_on_exec(fd_write);
 
-#ifndef _WIN32
+#if defined(HAVE_SYS_EPOLL_H) && defined(HAVE_SYS_TIMERFD_H)
    struct epoll_event pollev = { 0 };
    p->pollfd = epoll_create(1);
    p->timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
@@ -405,7 +409,7 @@ _ecore_pipe_del(Ecore_Pipe *p)
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_del");
         return NULL;
      }
-#ifndef _WIN32
+#if defined(HAVE_SYS_EPOLL_H) && defined(HAVE_SYS_TIMERFD_H)
    epoll_ctl(p->pollfd, EPOLL_CTL_DEL, p->fd_read, NULL);
    epoll_ctl(p->pollfd, EPOLL_CTL_DEL, p->timerfd, NULL);
    if (p->timerfd >= 0) close(p->timerfd);
@@ -424,7 +428,7 @@ _ecore_pipe_del(Ecore_Pipe *p)
    return data;
 }
 
-#ifdef _WIN32
+#if ! defined(HAVE_SYS_EPOLL_H) || ! defined(HAVE_SYS_TIMERFD_H)
 int
 _ecore_pipe_wait(Ecore_Pipe *p,
                  int         message_count,
