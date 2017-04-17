@@ -1391,3 +1391,19 @@ ecore_imf_context_bidi_direction_get(Ecore_IMF_Context *ctx)
    return ctx->bidi_direction;
 }
 
+EAPI Ecore_IMF_Input_Panel_Keyboard_Mode
+ecore_imf_context_keyboard_mode_get(Ecore_IMF_Context *ctx)
+{
+   Ecore_IMF_Input_Panel_Keyboard_Mode mode = ECORE_IMF_INPUT_PANEL_SW_KEYBOARD_MODE;
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_keyboard_mode_get");
+        return ECORE_IMF_INPUT_PANEL_SW_KEYBOARD_MODE;
+     }
+
+   if (ctx->klass->keyboard_mode_get)
+     mode = ctx->klass->keyboard_mode_get(ctx);
+
+   return mode;
+}
