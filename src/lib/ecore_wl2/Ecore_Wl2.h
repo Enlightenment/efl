@@ -1214,27 +1214,6 @@ EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
 EAPI int ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *disp);
 
 /** @since 1.17 */
-EAPI Ecore_Wl2_Seat *ecore_wl2_seat_create(Ecore_Wl2_Display *display, const char *name, const struct wl_seat_interface *implementation, int version, Ecore_Wl2_Bind_Cb bind_cb, Ecore_Wl2_Unbind_Cb unbind_cb);
-/** @since 1.17 */
-EAPI void ecore_wl2_seat_destroy(Ecore_Wl2_Seat *seat);
-/** @since 1.17 */
-EAPI void ecore_wl2_seat_capabilities_send(Ecore_Wl2_Seat *seat, enum wl_seat_capability caps);
-/** @since 1.17 */
-EAPI void ecore_wl2_seat_pointer_release(Ecore_Wl2_Seat *seat);
-
-/** @since 1.17 */
-EAPI Ecore_Wl2_Pointer *ecore_wl2_pointer_get(Ecore_Wl2_Seat *seat);
-/** @since 1.17 */
-EAPI Eina_Bool ecore_wl2_pointer_resource_create(Ecore_Wl2_Pointer *ptr, struct wl_client *client, const struct wl_pointer_interface *implementation, int version, uint32_t id);
-
-/** @since 1.17 */
-EAPI Ecore_Wl2_Keyboard *ecore_wl2_keyboard_get(Ecore_Wl2_Seat *seat);
-/** @since 1.17 */
-EAPI Eina_Bool ecore_wl2_keyboard_resource_create(Ecore_Wl2_Keyboard *kbd, struct wl_client *client, const struct wl_keyboard_interface *implementation, int version, uint32_t id);
-/** @since 1.17 */
-EAPI void ecore_wl2_keyboard_repeat_info_set(Ecore_Wl2_Keyboard *kbd, double rate, double delay);
-
-/** @since 1.17 */
 EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
 
 /* # ifdef __cplusplus */
