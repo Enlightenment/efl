@@ -25,7 +25,7 @@
 #define MY_CLASS_NAME_LEGACY "elm_fileselector"
 
 /* FIXME: need a way to find a gap between the size of item and thumbnail */
-#define GENGRID_PADDING 16
+#define ITEM_SIZE_DEFAULT 16
 
 typedef struct _Legacy_Event_Path_Then_Data
 {
@@ -1636,7 +1636,7 @@ _files_grid_add(Evas_Object *obj)
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   elm_gengrid_item_size_set(grid, sd->thumbnail_size.w + GENGRID_PADDING, sd->thumbnail_size.h + GENGRID_PADDING);
+   elm_gengrid_item_size_set(grid, sd->thumbnail_size.w, sd->thumbnail_size.h);
 
    elm_gengrid_align_set(grid, 0.0, 0.0);
 
@@ -1952,9 +1952,8 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    elm_object_style_set(priv->spinner, "wheel");
    elm_object_part_content_set(obj, "elm.swallow.spinner", priv->spinner);
 
-   // XXX: will fail for dynamic finger size changing
-   priv->thumbnail_size.w = elm_config_finger_size_get() * 2 - GENGRID_PADDING;
-   priv->thumbnail_size.h = priv->thumbnail_size.w;
+   priv->thumbnail_size.w = ITEM_SIZE_DEFAULT;
+   priv->thumbnail_size.h = ITEM_SIZE_DEFAULT;
 
    priv->sort_type = ELM_FILESELECTOR_SORT_BY_FILENAME_ASC;
    priv->sort_method = _filename_cmp;
@@ -2968,13 +2967,13 @@ _elm_fileselector_elm_interface_fileselector_thumbnail_size_set(Eo *obj EINA_UNU
    if (sd->thumbnail_size.w == w && sd->thumbnail_size.h == h) return;
 
    if (!w || !h)
-     w = h = elm_config_finger_size_get() * 2 - GENGRID_PADDING;
+     w = h = ITEM_SIZE_DEFAULT;
 
    sd->thumbnail_size.w = w;
    sd->thumbnail_size.h = h;
 
    if (sd->mode == ELM_FILESELECTOR_GRID)
-     elm_gengrid_item_size_set(sd->files_view, w + GENGRID_PADDING, h + GENGRID_PADDING);
+     elm_gengrid_item_size_set(sd->files_view, w, h);
 
    if (sd->model)
      {
