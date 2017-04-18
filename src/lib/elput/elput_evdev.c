@@ -72,14 +72,7 @@ _keyboard_fd_get(off_t size)
 
    if (fd < 0) return -1;
 
-   flags = fcntl(fd, F_GETFD);
-   if (flags < 0)
-     {
-        close(fd);
-        return -1;
-     }
-
-   if (fcntl(fd, F_SETFD, (flags | FD_CLOEXEC)) == -1)
+   if (!eina_file_close_on_exec(fd, EINA_TRUE))
      {
         close(fd);
         return -1;
