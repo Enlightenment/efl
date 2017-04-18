@@ -606,7 +606,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
                   p->message = 0;
                }
 
-             if (fd_timer_found)
+             if ((fd_timer_found) && (p->timerfd != PIPE_FD_INVALID))
                {
                   pipe_read(p->timerfd, &timerfdbuf, sizeof(timerfdbuf));
                   _ecore_pipe_unhandle(p);
