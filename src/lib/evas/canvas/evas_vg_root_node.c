@@ -89,7 +89,7 @@ _efl_vg_root_node_efl_object_constructor(Eo *obj,
    nd->render_pre = _evas_vg_root_node_render_pre;
    nd->data = cd;
 
-   efl_event_callback_add(obj, EFL_GFX_CHANGED, _evas_vg_root_node_changed, pd);
+   efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGED, _evas_vg_root_node_changed, pd);
 
    return obj;
 }

@@ -53,9 +53,6 @@ typedef struct tm Efl_Time;
 
 #ifdef EFL_BETA_API_SUPPORT
 
-#include "interfaces/efl_observer.eo.h"
-#include "interfaces/efl_observable.eo.h"
-
 #include "interfaces/efl_types.eot.h"
 
 #include <Efl_Model_Common.h>
@@ -99,12 +96,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 /* Core interface */
 #include "interfaces/efl_animator.eo.h"
 
-EAPI extern const Efl_Event_Description _EFL_GFX_CHANGED;
-EAPI extern const Efl_Event_Description _EFL_GFX_PATH_CHANGED;
-
-#define EFL_GFX_CHANGED (&(_EFL_GFX_CHANGED))
-#define EFL_GFX_PATH_CHANGED (&(_EFL_GFX_PATH_CHANGED))
-
+/* Graphics */
 #include "interfaces/efl_gfx.eo.h"
 #include "interfaces/efl_gfx_buffer.eo.h"
 #include "interfaces/efl_gfx_stack.eo.h"
@@ -118,12 +110,16 @@ EAPI extern const Efl_Event_Description _EFL_GFX_PATH_CHANGED;
 #include "interfaces/efl_gfx_filter.eo.h"
 #include "interfaces/efl_gfx_size_hint.eo.h"
 
+/* Canvas & UI */
 #include "interfaces/efl_canvas.eo.h"
-
 #include "interfaces/efl_ui_view.eo.h"
 #include "interfaces/efl_ui_model_connect.eo.h"
 #include "interfaces/efl_ui_factory.eo.h"
 #include "interfaces/efl_ui_model_factory_connect.eo.h"
+
+/* Observable interface */
+#include "interfaces/efl_observer.eo.h"
+#include "interfaces/efl_observable.eo.h"
 
 /* Packing & containers */
 #include "interfaces/efl_container.eo.h"

@@ -281,7 +281,7 @@ _efl_vg_efl_object_constructor(Eo *obj,
         return NULL;
    }
 
-   efl_event_callback_add(obj, EFL_GFX_CHANGED, _efl_vg_property_changed, pd);
+   efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGED, _efl_vg_property_changed, pd);
    pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
    pd->changed = EINA_TRUE;
 

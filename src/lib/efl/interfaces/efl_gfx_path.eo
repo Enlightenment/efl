@@ -272,4 +272,7 @@ mixin Efl.Gfx.Path
         }
       }
    }
+   events {
+      changed; [[Graphics path was changed.]]
+   }
 }

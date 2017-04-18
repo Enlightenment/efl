@@ -256,7 +256,7 @@ _ector_renderer_cairo_shape_efl_object_constructor(Eo *obj, Ector_Renderer_Cairo
    pd->shape = efl_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
 
-   efl_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_cairo_shape_path_changed, pd);
+   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _ector_renderer_cairo_shape_path_changed, pd);
 
     return obj;
 }

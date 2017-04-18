@@ -185,8 +185,8 @@ _efl_gfx_path_path_set(Eo *obj, Efl_Gfx_Path_Data *pd,
                                 &pd->current.x, &pd->current.y,
                                 &pd->current_ctrl.x, &pd->current_ctrl.y);
  end:
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -347,8 +347,8 @@ _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
    pd->current_ctrl.y = interpolate(from_pd->current_ctrl.y,
                                     to_pd->current_ctrl.y, pos_map);
 
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -383,8 +383,8 @@ _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd)
    pd->current_ctrl.y = 0;
    pd->convex = EINA_FALSE;
 
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -402,8 +402,8 @@ _efl_gfx_path_append_move_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    pd->current.x = x;
    pd->current.y = y;
 
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -421,8 +421,8 @@ _efl_gfx_path_append_line_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    pd->current.x = x;
    pd->current.y = y;
 
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -449,8 +449,8 @@ _efl_gfx_path_append_cubic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    pd->current_ctrl.x = ctrl_x1;
    pd->current_ctrl.y = ctrl_y1;
 
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -1040,8 +1040,8 @@ _efl_gfx_path_append_close(Eo *obj, Efl_Gfx_Path_Data *pd)
 
    efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_CLOSE, pd, &offset_point);
 
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -1596,8 +1596,8 @@ _efl_gfx_path_dup(Eo *obj, Efl_Gfx_Path_Data *pd, const Eo *dup_from)
 
    _efl_gfx_path_path_set(obj, pd, from->commands, from->points);
 
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, EFL_GFX_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
 #include "interfaces/efl_gfx_path.eo.c"
