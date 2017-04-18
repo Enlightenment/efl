@@ -210,7 +210,7 @@ main(int argc, char **argv)
                  buf, strerror(errno));
         exit(-1);
      }
-   if (fcntl(sock, F_SETFD, FD_CLOEXEC) < 0)
+   if (!eina_file_close_on_exec(sock, EINA_TRUE))
      {
         CRI("cannot set close on exec socket for '%s' (fd=%d): %s",
                  buf, sock, strerror(errno));
