@@ -196,11 +196,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
              /* if we don;'t have one - fail to set up mmap safety */
              if (_eina_mmap_zero_fd < 0) return EINA_FALSE;
 
-#ifdef HAVE_FCNTL
-             flags = fcntl(_eina_mmap_zero_fd, F_GETFD);
-             flags |= FD_CLOEXEC;
-             fcntl(_eina_mmap_zero_fd, F_SETFD, flags); /* If this fail, it will just leak a fd to zero ... */
-#endif
+             eina_file_close_on_exec(_eina_mmap_zero_fd, EINA_TRUE);
           }
         /* set up signal handler for SIGBUS */
         sa.sa_sigaction = _eina_mmap_safe_sigbus;

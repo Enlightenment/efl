@@ -763,9 +763,6 @@ eina_file_open(const char *path, Eina_Bool shared)
    char *filename;
    struct stat file_stat;
    int fd = -1;
-#ifdef HAVE_FCNTL
-   int flags;
-#endif
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
@@ -783,15 +780,8 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    if (fd < 0) goto on_error;
 
-#ifdef HAVE_FCNTL
-   flags = fcntl(fd, F_GETFD);
-   if (flags == -1)
+   if (!eina_file_close_on_exec(fd, EINA_TRUE))
      goto on_error;
-
-   flags |= FD_CLOEXEC;
-   if (fcntl(fd, F_SETFD, flags) == -1)
-     goto on_error;
-#endif
 
    if (fstat(fd, &file_stat))
      goto on_error;

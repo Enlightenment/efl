@@ -682,7 +682,7 @@ _eina_debug_monitor_service_connect(void)
    fd = socket(AF_UNIX, SOCK_STREAM, 0);
    if (fd < 0) goto err;
    // set the socket to close when we exec things so they don't inherit it
-   if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0) goto err;
+   if (!eina_file_close_on_exec(fd, EINA_TRUE)) goto err;
    // set up some socket options on addr re-use
    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate,
                   sizeof(curstate)) < 0)
