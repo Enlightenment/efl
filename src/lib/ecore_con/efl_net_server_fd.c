@@ -51,7 +51,7 @@ efl_net_accept4(SOCKET fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool 
 #ifdef FD_CLOEXEC
    if (close_on_exec)
      {
-        if (fcntl(client, F_SETFD, FD_CLOEXEC) < 0)
+        if (!eina_file_close_on_exec(client, EINA_TRUE))
           {
              int errno_bkp = errno;
              ERR("fcntl(" SOCKET_FMT ", F_SETFD, FD_CLOEXEC): %s", client, strerror(errno));
@@ -280,18 +280,7 @@ _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
    fd = efl_loop_fd_get(o);
    if (fd == INVALID_SOCKET) return EINA_TRUE; /* postpone until fd_set() */
 
-   flags = fcntl(fd, F_GETFD);
-   if (flags < 0)
-     {
-        ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", fd, strerror(errno));
-        pd->close_on_exec = old;
-        return EINA_FALSE;
-     }
-   if (close_on_exec)
-     flags |= FD_CLOEXEC;
-   else
-     flags &= (~FD_CLOEXEC);
-   if (fcntl(fd, F_SETFD, flags) < 0)
+   if (!eina_file_close_on_exec(fd, close_on_exec))
      {
         ERR("fcntl(" SOCKET_FMT ", F_SETFD, %#x): %s", fd, flags, strerror(errno));
         pd->close_on_exec = old;

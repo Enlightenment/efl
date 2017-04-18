@@ -587,10 +587,9 @@ efl_net_socket4(int domain, int type, int protocol, Eina_Bool close_on_exec)
      {
         if (close_on_exec)
           {
-             if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0)
+             if (!eina_file_close_on_exec(fd, EINA_TRUE))
                {
                   int errno_bkp = errno;
-                  ERR("fcntl(" SOCKET_FMT ", F_SETFD, FD_CLOEXEC): %s", fd, strerror(errno));
                   closesocket(fd);
                   fd = INVALID_SOCKET;
                   errno = errno_bkp;
@@ -815,24 +814,11 @@ _efl_net_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    /* if it wasn't a close on exec, release the socket to be passed to child */
    if ((!d->close_on_exec) && (d->sockfd != INVALID_SOCKET))
      {
-        int flags = fcntl(d->sockfd, F_GETFD);
-        if (flags < 0)
+        if (!eina_file_close_on_exec(d->sockfd, EINA_FALSE))
           {
              d->error = errno;
-             ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", d->sockfd, eina_error_msg_get(d->error));
              closesocket(d->sockfd);
              d->sockfd = INVALID_SOCKET;
-          }
-        else
-          {
-             flags &= (~FD_CLOEXEC);
-             if (fcntl(d->sockfd, F_SETFD, flags) < 0)
-               {
-                  d->error = errno;
-                  ERR("fcntl(" SOCKET_FMT ", F_SETFD, %#x): %s", d->sockfd, flags, eina_error_msg_get(d->error));
-                  closesocket(d->sockfd);
-                  d->sockfd = INVALID_SOCKET;
-               }
           }
      }
 #endif
@@ -2222,24 +2208,11 @@ _efl_net_ip_connect_async_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    /* if it wasn't a close on exec, release the socket to be passed to child */
    if ((!d->close_on_exec) && (d->sockfd != INVALID_SOCKET))
      {
-        int flags = fcntl(d->sockfd, F_GETFD);
-        if (flags < 0)
+        if (!eina_file_close_on_exec(d->sockfd, EINA_FALSE))
           {
              d->error = errno;
-             ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", d->sockfd, strerror(errno));
              closesocket(d->sockfd);
              d->sockfd = INVALID_SOCKET;
-          }
-        else
-          {
-             flags &= (~FD_CLOEXEC);
-             if (fcntl(d->sockfd, F_SETFD, flags) < 0)
-               {
-                  d->error = errno;
-                  ERR("fcntl(" SOCKET_FMT ", F_SETFD, %#x): %s", d->sockfd, flags, strerror(errno));
-                  closesocket(d->sockfd);
-                  d->sockfd = INVALID_SOCKET;
-               }
           }
      }
 #endif
