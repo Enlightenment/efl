@@ -220,6 +220,7 @@ find_off(const char *str, Eina_List *strlist, Eina_List *offlist)
      }
    return (void *)-1;
 }
+
 static void
 store_cache(const char *out)
 {
@@ -241,7 +242,8 @@ store_cache(const char *out)
    f = fopen(buf, "wb");
    if (!f) return;
    // write file magic - first 16 bytes
-   fwrite("EfrEeT-MiMeS-001", 16, 1, f);
+   if (fwrite("EfrEeT-MiMeS-001", 16, 1, f) != 1)
+     goto write_error;
    // note: all offsets are in bytes from start of file
    // 
    // "EfrEeT-MiMeS-001" <- magic 16 byte header
@@ -290,54 +292,81 @@ store_cache(const char *out)
    (eina_list_count(glob_mimes_sorted) * sizeof(int) * 2);
 
    val = eina_list_count(mimes_sorted);
-   fwrite(&val, sizeof(val), 1, f);
+   if (fwrite(&val, sizeof(val), 1, f) != 1)
+     goto write_error;
    EINA_LIST_FOREACH(mimes_str_offsets, l, ptr)
      {
         val = (int)((long)ptr) + str_start;
-        fwrite(&val, sizeof(val), 1, f);
+        if (fwrite(&val, sizeof(val), 1, f) != 1)
+          goto write_error;
      }
 
    val = eina_list_count(extn_mimes_sorted);
-   fwrite(&val, sizeof(val), 1, f);
+   if (fwrite(&val, sizeof(val), 1, f) != 1)
+     goto write_error;
    ll = extn_mimes_sorted;
    EINA_LIST_FOREACH(extn_mimes_str_offsets, l, ptr)
      {
         val = (int)((long)ptr) + str_start + mimes_str_len;
-        fwrite(&val, sizeof(val), 1, f);
+        if (fwrite(&val, sizeof(val), 1, f) != 1)
+          goto write_error;
         s = eina_hash_find(extn_mimes, ll->data);
         ptr = find_off(s, mimes_sorted, mimes_str_offsets);
         val = (int)((long)ptr) + str_start;
-        fwrite(&val, sizeof(val), 1, f);
+        if (fwrite(&val, sizeof(val), 1, f) != 1)
+          goto write_error;
         ll = ll->next;
      }
 
    val = eina_list_count(glob_mimes_sorted);
-   fwrite(&val, sizeof(val), 1, f);
+   if (fwrite(&val, sizeof(val), 1, f) != 1)
+     goto write_error;
    ll = glob_mimes_sorted;
    EINA_LIST_FOREACH(glob_mimes_str_offsets, l, ptr)
      {
         val = (int)((long)ptr) + str_start + mimes_str_len + extn_mimes_str_len;
-        fwrite(&val, sizeof(val), 1, f);
+        if (fwrite(&val, sizeof(val), 1, f) != 1)
+          goto write_error;
         s = eina_hash_find(glob_mimes, ll->data);
         ptr = find_off(s, mimes_sorted, mimes_str_offsets);
         val = (int)((long)ptr) + str_start;
-        fwrite(&val, sizeof(val), 1, f);
+        if (fwrite(&val, sizeof(val), 1, f) != 1)
+          goto write_error;
         ll = ll->next;
      }
    EINA_LIST_FOREACH(mimes_sorted, l, s)
      {
-        fwrite(s, strlen(s) + 1, 1, f);
+        if (fwrite(s, strlen(s) + 1, 1, f) != 1)
+          goto write_error;
      }
    EINA_LIST_FOREACH(extn_mimes_sorted, l, s)
      {
-        fwrite(s, strlen(s) + 1, 1, f);
+        if (fwrite(s, strlen(s) + 1, 1, f) != 1)
+          goto write_error;
      }
    EINA_LIST_FOREACH(glob_mimes_sorted, l, s)
      {
-        fwrite(s, strlen(s) + 1, 1, f);
+        if (fwrite(s, strlen(s) + 1, 1, f) != 1)
+          goto write_error;
      }
-   fclose(f);
-   rename(buf, out);
+   if (fclose(f) != 0)
+     {
+        ERR("Cannot close file %s", buf);
+        f = NULL;
+        goto error;
+     }
+   if (rename(buf, out) != 0)
+     {
+        ERR("Cannot rename %s to %s", buf, out);
+        f = NULL;
+        goto error;
+     }
+   return;
+write_error:
+   ERR("Cannot write to %s", buf);
+error:
+   if (f) fclose(f);
+   if (unlink(buf) != 0) WRN("Cannot delete tmp file %s", buf);
 }
 
 int
