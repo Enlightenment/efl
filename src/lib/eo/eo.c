@@ -372,35 +372,44 @@ _eo_kls_itr_next(const _Efl_Class *orig_kls, const _Efl_Class *cur_klass, Efl_Ob
 
 /************************************ EO ************************************/
 
-static const _Efl_Class *_super_class = NULL;
-static Eina_Spinlock _super_class_lock;
+static EFL_FUNC_TLS _Efl_Class *_super_klass = NULL;
 
 EAPI Eo *
-efl_super(const Eo *obj, const Efl_Class *cur_klass)
+efl_super(const Eo *eo_id, const Efl_Class *cur_klass)
 {
-   EO_CLASS_POINTER_GOTO(cur_klass, klass, err);
+   EO_CLASS_POINTER_GOTO(cur_klass, super_klass, err);
 
 #ifdef EO_DEBUG
-   if (EINA_UNLIKELY(!_eo_is_a_obj(obj) && !_eo_is_a_class(obj))) goto err_obj;
-   if (EINA_UNLIKELY(!efl_isa(obj, cur_klass))) goto err_obj_hierarchy;
+   if (EINA_UNLIKELY(!_eo_is_a_obj(eo_id) && !_eo_is_a_class(eo_id))) goto err_obj;
+   if (EINA_UNLIKELY(!efl_isa(eo_id, cur_klass))) goto err_obj_hierarchy;
 #endif
 
-   /* FIXME: Switch to atomic operations intead of lock. */
-   eina_spinlock_take(&_super_class_lock);
-   _super_class = klass;
+   if (EINA_UNLIKELY(!_eo_is_a_obj(eo_id)))
+     goto do_klass;
 
-   return (Eo *) ((Eo_Id) obj | MASK_SUPER_TAG);
+   EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
+   obj->cur_klass = super_klass;
+   obj->super = EINA_TRUE;
+   EO_OBJ_DONE(eo_id);
+
+   return (Eo *) eo_id;
+
+do_klass:
+   // efl_super(Class) is extremely rarely used, so TLS write is fine
+   _super_klass = super_klass;
+   return (Eo *) eo_id;
+
 err:
    _EO_POINTER_ERR(cur_klass, "Class (%p) is an invalid ref.", cur_klass);
    return NULL;
 #ifdef EO_DEBUG
 err_obj:
-   _EO_POINTER_ERR(obj, "Object (%p) is an invalid ref, class=%p (%s).", obj, cur_klass, efl_class_name_get(cur_klass));
+   _EO_POINTER_ERR(eo_id, "Object (%p) is an invalid ref, class=%p (%s).", eo_id, cur_klass, efl_class_name_get(cur_klass));
    return NULL;
 err_obj_hierarchy:
-   _EO_POINTER_ERR(obj, "Object (%p) class=%p (%s) is not an instance of class=%p (%s).", obj, efl_class_get(obj), efl_class_name_get(obj), cur_klass, efl_class_name_get(cur_klass));
-#endif
+   _EO_POINTER_ERR(eo_id, "Object (%p) class=%p (%s) is not an instance of class=%p (%s).", eo_id, efl_class_get(eo_id), efl_class_name_get(eo_id), cur_klass, efl_class_name_get(cur_klass));
    return NULL;
+#endif
 }
 
 EAPI Eina_Bool
@@ -413,15 +422,6 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
    const op_type_funcs *func;
    Eina_Bool is_obj;
    Eina_Bool is_override = EINA_FALSE;
-
-   if (((Eo_Id) eo_id) & MASK_SUPER_TAG)
-     {
-        cur_klass = _super_class;
-        _super_class = NULL;
-        eina_spinlock_release(&_super_class_lock);
-
-        eo_id = (Eo *) ((Eo_Id) eo_id & ~MASK_SUPER_TAG);
-     }
 
    if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
 
@@ -436,6 +436,11 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
         obj = _obj;
         klass = _obj->klass;
         vtable = EO_VTABLE(obj);
+        if (_obj->cur_klass)
+          {
+             cur_klass = _obj->cur_klass;
+             _obj->cur_klass = NULL;
+          }
 
         if (_obj_is_override(obj) && cur_klass &&
             (_eo_class_id_get(cur_klass) == EFL_OBJECT_OVERRIDE_CLASS))
@@ -608,6 +613,8 @@ ok_klass:
         EO_CLASS_POINTER_GOTO_PROXY(eo_id, _klass, err_klass);
         klass = _klass;
         vtable = &klass->vtable;
+        cur_klass = _super_klass;
+        if (cur_klass) _super_klass = NULL;
         call->obj = NULL;
         call->data = NULL;
      }
@@ -2101,12 +2108,6 @@ efl_object_init(void)
         return EINA_FALSE;
      }
 
-   if (!eina_spinlock_new(&_super_class_lock))
-     {
-        ERR("Could not init lock.");
-        return EINA_FALSE;
-     }
-
    _eo_log_obj_init();
 
    eina_magic_string_static_set(EO_EINA_MAGIC, EO_EINA_MAGIC_STR);
@@ -2198,7 +2199,6 @@ efl_object_shutdown(void)
 
    eina_hash_free(_ops_storage);
 
-   eina_spinlock_free(&_super_class_lock);
    eina_spinlock_free(&_ops_storage_lock);
    eina_lock_free(&_efl_class_creation_lock);
 

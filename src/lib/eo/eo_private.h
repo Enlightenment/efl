@@ -107,6 +107,7 @@ struct _Eo_Object
 #endif
 
      const Efl_Object_Optional *opt; // eina cow
+     _Efl_Class *cur_klass;
 
      short refcount;
      short user_refcount;
@@ -116,6 +117,7 @@ struct _Eo_Object
 
      Eina_Bool condtor_done:1;
      Eina_Bool finalized:1;
+     Eina_Bool super:1;
 
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
