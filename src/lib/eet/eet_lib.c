@@ -353,7 +353,7 @@ eet_flush2(Eet_File *ef)
              return EET_ERROR_NOT_WRITABLE;
           }
 
-        if (fcntl(fd, F_SETFD, FD_CLOEXEC)) ERR("can't set CLOEXEC on write fd");
+        if (!eina_file_close_on_exec(fd, EINA_TRUE)) ERR("can't set CLOEXEC on write fd");
      }
    else
      {
