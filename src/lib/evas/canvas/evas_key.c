@@ -92,7 +92,6 @@ evas_seat_key_lock_is_set(const Evas_Lock *l, const char *keyname,
    if (!seat)
      seat = l->e->default_seat;
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, 0);
-   if (!l) return 0;
    if (!keyname) return 0;
    return _key_is_set(evas_key_lock_number(l, keyname), l->masks, seat);
 }
