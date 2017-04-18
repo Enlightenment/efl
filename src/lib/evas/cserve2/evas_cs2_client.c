@@ -134,9 +134,6 @@ _server_connect(void)
 {
    int s, len;
    struct sockaddr_un remote;
-#ifdef HAVE_FCNTL
-   int flags;
-#endif
 
    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
      {
@@ -144,11 +141,7 @@ _server_connect(void)
         return EINA_FALSE;
      }
 
-#ifdef HAVE_FCNTL
-   flags = fcntl(s, F_GETFD);
-   flags |= FD_CLOEXEC;
-   if (fcntl(s, F_SETFD, flags) < 0) ERR("can't set CLOEXEC on fd");
-#endif
+   if (!eina_file_close_on_exec(s, EINA_TRUE)) ERR("can't set CLOEXEC on fd");
 
    remote.sun_family = AF_UNIX;
    _socket_path_set(remote.sun_path);
