@@ -415,6 +415,8 @@ _ecore_pipe_del(Ecore_Pipe *p)
    epoll_ctl(p->pollfd, EPOLL_CTL_DEL, p->timerfd, NULL);
    if (p->timerfd >= 0) close(p->timerfd);
    if (p->pollfd >= 0) close(p->pollfd);
+   p->timerfd = PIPE_FD_INVALID;
+   p->pollfd = PIPE_FD_INVALID;
 #endif
    p->delete_me = EINA_TRUE;
    if (p->handling > 0) return (void *)p->data;
@@ -427,6 +429,16 @@ _ecore_pipe_del(Ecore_Pipe *p)
    data = (void *)p->data;
    ecore_pipe_mp_free(p);
    return data;
+}
+
+static void
+_ecore_pipe_unhandle(Ecore_Pipe *p)
+{
+   p->handling--;
+   if (p->delete_me)
+     {
+        _ecore_pipe_del(p);
+     }
 }
 
 #if ! defined(HAVE_SYS_EPOLL_H) || ! defined(HAVE_SYS_TIMERFD_H)
@@ -487,10 +499,12 @@ _ecore_pipe_wait(Ecore_Pipe *p,
 
         if (ret > 0)
           {
+             p->handling++;
              _ecore_pipe_read(p, NULL);
              message_count -= p->message;
              total += p->message;
              p->message = 0;
+             _ecore_pipe_unhandle(p);
           }
         else if (ret == 0)
           {
@@ -583,6 +597,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
                     fd_timer_found = EINA_TRUE;
                }
 
+             p->handling++;
              if (fd_read_found)
                {
                   _ecore_pipe_read(p, NULL);
@@ -594,8 +609,10 @@ _ecore_pipe_wait(Ecore_Pipe *p,
              if (fd_timer_found)
                {
                   pipe_read(p->timerfd, &timerfdbuf, sizeof(timerfdbuf));
+                  _ecore_pipe_unhandle(p);
                   break;
                }
+             _ecore_pipe_unhandle(p);
           }
         else if (ret == 0)
           {
@@ -618,16 +635,6 @@ _ecore_pipe_wait(Ecore_Pipe *p,
 }
 
 #endif
-static void
-_ecore_pipe_unhandle(Ecore_Pipe *p)
-{
-   p->handling--;
-   if (p->delete_me)
-     {
-        _ecore_pipe_del(p);
-     }
-}
-
 static void
 _ecore_pipe_handler_call(Ecore_Pipe *p,
                          unsigned char *buf,
