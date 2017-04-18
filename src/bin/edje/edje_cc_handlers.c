@@ -1078,6 +1078,9 @@ New_Statement_Handler statement_handlers[] =
              pointer -> pointer_mode
              alt_font -> use_alternate_font_metrics
              clip -> clip_to
+             desc {
+                clip -> clip_to
+             }
           }
        }
     }
@@ -1102,6 +1105,7 @@ New_Statement_Handler statement_handlers_short[] =
      {"collections.group.parts.part.pointer", st_collections_group_parts_part_pointer_mode},
      {"collections.group.parts.part.alt_font", st_collections_group_parts_part_use_alternate_font_metrics},
      {"collections.group.parts.part.clip", st_collections_group_parts_part_clip_to_id},
+     {"collections.group.parts.part.description.clip", st_collections_group_parts_part_description_clip_to_id},
 };
 
 /** @edcsubsection{lazedc_shorthand,
