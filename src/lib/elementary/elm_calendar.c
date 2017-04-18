@@ -709,40 +709,35 @@ _set_headers(Evas_Object *obj)
 {
    static char part[] = "ch_0.text";
    int i;
+   struct tm *t;
+   time_t temp;
    ELM_CALENDAR_DATA_GET(obj, sd);
-   time_t weekday = 259200; /* Just the first sunday since epoch */
 
    elm_layout_freeze(obj);
 
    sd->filling = EINA_TRUE;
 
-   if (!sd->weekdays_set)
+   t = gmtime(&temp);
+   if (t && !sd->weekdays_set)
      {
+        t->tm_wday = 0;
         for (i = 0; i < ELM_DAY_LAST; i++)
           {
-             struct tm *info;
-
-             /* I don't know of a better way of doing it */
-             info = gmtime(&weekday);
-             if (info)
+             char *buf;
+             buf = eina_strftime("%a", t);
+             if (buf)
                {
-                  char *buf;
-                  buf = eina_strftime("%a", info);
-                  if (buf)
-                    {
-                       sd->weekdays[i] = eina_stringshare_add(buf);
-                       free(buf);
-                    }
-                  else
-                    {
-                       /* If we failed getting day, get a default value */
-                       sd->weekdays[i] = _days_abbrev[i];
-                       WRN("Failed getting weekday name for '%s' from locale.",
-                           _days_abbrev[i]);
-                    }
+                  sd->weekdays[i] = eina_stringshare_add(buf);
+                  free(buf);
                }
-
-             weekday += 86400; /* Advance by a day */
+             else
+               {
+                  /* If we failed getting day, get a default value */
+                  sd->weekdays[i] = _days_abbrev[i];
+                  WRN("Failed getting weekday name for '%s' from locale.",
+                      _days_abbrev[i]);
+               }
+             t->tm_wday++;
           }
      }
 
