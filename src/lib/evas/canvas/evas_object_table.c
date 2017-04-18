@@ -1187,7 +1187,6 @@ _evas_table_pack(Eo *o, Evas_Table_Data *priv, Evas_Object *child, unsigned shor
              priv->size.cols = max_col;
              priv->size.rows = max_row;
           }
-        if (optalloc) free(opt);
      }
    else
      {
