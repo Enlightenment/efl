@@ -1175,40 +1175,38 @@ eina_log_domain_parse_pending_globs(void)
    while (1)
      {
         Eina_Log_Domain_Level_Pending *p;
-        char *end = NULL;
-        char *tmp = NULL;
+        char *end = NULL, *tmp = NULL;
+        ptrdiff_t diff;
         long int level;
 
         end = strchr(start, ':');
-        if (!end)
-           break;
+        if (!end) break;
 
         // Parse level, keep going if failed
         level = strtol((char *)(end + 1), &tmp, 10);
-        if (tmp == (end + 1))
-           goto parse_end;
+        if (tmp == (end + 1)) goto parse_end;
+
+        if (start > end) break;
+        diff = end - start;
         // If the name of the log is more than 64k it's silly so give up
         // as it's pointless and in theory could overflow pointer
-        if ((end - start) > 0xffff)
-           break;
-        // Parse name
-        p = malloc(sizeof(Eina_Log_Domain_Level_Pending) + (end - start) + 1);
-        if (!p)
-           break;
+        if (diff > (ptrdiff_t)0xffff) break;
 
-        p->namelen = 0; /* not that useful */
-        memcpy((char *)p->name, start, end - start);
-        ((char *)p->name)[end - start] = '\0';
+        // Parse name
+        p = malloc(sizeof(Eina_Log_Domain_Level_Pending) + diff + 1);
+        if (!p) break;
+
+        p->namelen = diff;
+        memcpy((char *)p->name, start, diff);
+        ((char *)p->name)[diff] = '\0';
         p->level = level;
 
         _glob_list = eina_inlist_append(_glob_list, EINA_INLIST_GET(p));
 
 parse_end:
         start = strchr(tmp, ',');
-        if (start)
-           start++;
-        else
-           break;
+        if (start) start++;
+        else break;
      }
 }
 
