@@ -3098,19 +3098,19 @@ _ecore_evas_free(Ecore_Evas *ee)
      }
    if (ee->data) eina_hash_free(ee->data);
    ee->data = NULL;
-   if (ee->name) free(ee->name);
+   free(ee->name);
    ee->name = NULL;
-   if (ee->prop.title) free(ee->prop.title);
+   free(ee->prop.title);
    ee->prop.title = NULL;
-   if (ee->prop.name) free(ee->prop.name);
+   free(ee->prop.name);
    ee->prop.name = NULL;
-   if (ee->prop.clas) free(ee->prop.clas);
+   free(ee->prop.clas);
    ee->prop.clas = NULL;
    _ecore_evas_window_profile_free(ee);
    ee->prop.profile.name = NULL;
    _ecore_evas_window_available_profiles_free(ee);
    ee->prop.profile.available_list = NULL;
-   if (ee->prop.wm_rot.available_rots) free(ee->prop.wm_rot.available_rots);
+   free(ee->prop.wm_rot.available_rots);
    ee->prop.wm_rot.available_rots = NULL;
    if (ee->prop.wm_rot.manual_mode.timer)
      ecore_timer_del(ee->prop.wm_rot.manual_mode.timer);
@@ -3119,7 +3119,7 @@ _ecore_evas_free(Ecore_Evas *ee)
    efl_event_callback_array_del(ee->evas, _ecore_evas_device_cbs(), ee);
    eina_hash_free(ee->prop.cursors);
    ee->prop.cursors = NULL;
-   if (ee->evas) evas_free(ee->evas);
+   evas_free(ee->evas);
    ee->evas = NULL;
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
    ee->driver = NULL;
