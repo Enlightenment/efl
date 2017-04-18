@@ -94,7 +94,7 @@ tcp_connect(void)
    /* sets some fd options such as nonblock */
    sd = socket(AF_INET, SOCK_STREAM, 0);
    fcntl(sd, F_SETFL, O_NONBLOCK);
-   fcntl(sd, F_SETFD, FD_CLOEXEC);
+   eina_file_close_on_exec(sd, EINA_TRUE);
    setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate, sizeof(curstate));
 
    setsockopt(sd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
