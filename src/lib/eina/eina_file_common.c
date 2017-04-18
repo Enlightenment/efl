@@ -1095,3 +1095,41 @@ eina_file_shutdown(void)
    _eina_file_log_dom = -1;
    return EINA_TRUE;
 }
+
+EAPI Eina_Bool
+eina_file_close_on_exec(int fd, Eina_Bool on)
+{
+#ifdef HAVE_FCNTL
+   int flags;
+
+   flags = fcntl(fd, F_GETFD);
+   if (flags < 0)
+     {
+        int errno_backup = errno;
+        ERR("%#x = fcntl(%d, F_GETFD): %s", flags, fd, strerror(errno));
+        errno = errno_backup;
+        return EINA_FALSE;
+     }
+
+   if (on)
+     flags |= FD_CLOEXEC;
+   else
+     flags &= (~flags);
+
+   if (fcntl(fd, F_SETFD, flags) == -1)
+     {
+        int errno_backup = errno;
+        ERR("fcntl(%d, F_SETFD, %#x): %s", fd, flags, strerror(errno));
+        errno = errno_backup;
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+#else
+   static Eina_Bool statement = EINA_FALSE;
+
+   if (!statement)
+     ERR("fcntl is not available on your platform. fd may leak when using exec.");
+   statement = EINA_TRUE;
+   return EINA_TRUE;
+#endif
+}

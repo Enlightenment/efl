@@ -753,6 +753,19 @@ static inline size_t eina_file_path_join(char *dst,
  */
 EAPI Eina_Bool eina_file_unlink(const char *pathname);
 
+/**
+ * @brief Make sure a file descriptor will be closed on exec.
+ * @details This function is a wrapper around the fnctl() system call. It makes sure
+ *          that the fd will be closed whenever exec is called.
+ *
+ * @param fd File descriptor to enforce close on exec on.
+ * @param on #EINA_TRUE will turn close on exec on, #EINA_FALSE will turn it off.
+ * @return #EINA_TRUE if it will be closed on exec, #EINA_FALSE otherwise..
+ *
+ * @since 1.20
+ */
+EAPI Eina_Bool eina_file_close_on_exec(int fd, Eina_Bool on);
+
 #include "eina_inline_file.x"
 
 /**
