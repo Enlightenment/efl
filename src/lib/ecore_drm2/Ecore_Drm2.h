@@ -49,6 +49,9 @@ typedef struct _Ecore_Drm2_Output Ecore_Drm2_Output;
 /* opaque structure to represent an output mode */
 typedef struct _Ecore_Drm2_Output_Mode Ecore_Drm2_Output_Mode;
 
+/* opaque structure to represent a hardware plane */
+typedef struct _Ecore_Drm2_Plane Ecore_Drm2_Plane;
+
 /* structure to represent event for output changes */
 typedef struct _Ecore_Drm2_Event_Output_Changed
 {
@@ -96,6 +99,7 @@ typedef void (*Ecore_Drm2_Release_Handler)(void *data, Ecore_Drm2_Fb *b);
  * @li @ref Ecore_Drm2_Device_Group
  * @li @ref Ecore_Drm2_Output_Group
  * @li @ref Ecore_Drm2_Fb_Group
+ * @li @ref Ecore_Drm2_Plane_Group
  */
 
 /**
@@ -365,6 +369,12 @@ EAPI Eina_Bool ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt);
  * @since 1.19
  */
 EAPI Eina_Bool ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device);
+
+/* TODO: doxy */
+EAPI Eina_Bool ecore_drm2_atomic_commit_test(Ecore_Drm2_Device *device);
+
+/* TODO: doxy */
+EAPI Eina_Bool ecore_drm2_atomic_commit(Ecore_Drm2_Device *device);
 
 /**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
@@ -963,6 +973,60 @@ EAPI void ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *output, Ecore
  * @since 1.19
  */
 EAPI void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
+
+/**
+ * Import a dmabuf object as a Framebuffer
+ *
+ * @param fd
+ * @param width
+ * @param height
+ * @param depth
+ * @param bpp
+ * @param format
+ * @param stride
+ * @param dmabuf_fd
+ * @param dmabuf_fd_count
+ *
+ * @return A newly created framebuffer object, or NULL on failure
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.20
+ *
+ */
+EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count);
+
+/**
+ * @defgroup Ecore_Drm2_Plane_Group Functions that deal with hardware planes
+ *
+ * Functions that deal with hardware plane manipulation
+ */
+
+/**
+ * Find a hardware plane where a given Ecore_Drm2_Fb can go based on format and size
+ *
+ * @param output
+ * @param fb
+ *
+ * @return A newly allocated plane object, or NULL otherwise
+ *
+ * @ingroup Ecore_Drm2_Plane_Group
+ * @since 1.20
+ */
+EAPI Ecore_Drm2_Plane *ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb);
+
+/**
+ * Set plane destination values
+ *
+ * @param plane
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ *
+ * @ingroup Ecore_Drm2_Plane_Group
+ * @since 1.20
+ */
+EAPI void ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, int h);
 
 # endif
 

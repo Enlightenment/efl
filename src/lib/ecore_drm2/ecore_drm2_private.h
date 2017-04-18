@@ -647,6 +647,9 @@ typedef struct _Ecore_Drm2_Plane_State
     * so that we do not have to refetch properties when iterating planes */
    uint32_t rotation_map[6];
    uint32_t supported_rotations;
+
+   uint32_t num_formats;
+   uint32_t formats[];
 } Ecore_Drm2_Plane_State;
 
 struct _Ecore_Drm2_Atomic_State
@@ -656,6 +659,14 @@ struct _Ecore_Drm2_Atomic_State
    Ecore_Drm2_Connector_State *conn_states;
    Ecore_Drm2_Plane_State *plane_states;
 };
+# endif
+
+# ifndef DRM_CAP_CURSOR_WIDTH
+#  define DRM_CAP_CURSOR_WIDTH 0x8
+# endif
+
+# ifndef DRM_CAP_CURSOR_HEIGHT
+#  define DRM_CAP_CURSOR_HEIGHT 0x9
 # endif
 
 typedef enum _Ecore_Drm2_Backlight_Type
@@ -682,8 +693,8 @@ struct _Ecore_Drm2_Fb
    int fd;
    int w, h;
    int depth, bpp;
-   uint32_t id, hdl;
-   uint32_t stride, size;
+   uint32_t id, handles[4];
+   uint32_t strides[4], sizes[4];
    uint32_t format;
 
    void *gbm_bo;
@@ -692,6 +703,15 @@ struct _Ecore_Drm2_Fb
    Eina_Bool busy : 1;
 
    void *mmap;
+};
+
+struct _Ecore_Drm2_Plane
+{
+   int type;
+   Ecore_Drm2_Fb *current, *next, *pending;
+# ifdef HAVE_ATOMIC_DRM
+   Ecore_Drm2_Plane_State *state;
+# endif
 };
 
 struct _Ecore_Drm2_Output_Mode
@@ -753,7 +773,8 @@ struct _Ecore_Drm2_Output
 # ifdef HAVE_ATOMIC_DRM
    Ecore_Drm2_Crtc_State *crtc_state;
    Ecore_Drm2_Connector_State *conn_state;
-   Ecore_Drm2_Plane_State *plane_state;
+   Eina_List *plane_states;
+   Eina_List *planes;
 # endif
 
    Eina_Bool connected : 1;
@@ -782,12 +803,18 @@ struct _Ecore_Drm2_Device
         uint32_t width, height;
      } min, max;
 
+   struct
+     {
+        int width, height;
+     } cursor;
+
    Eeze_Udev_Watch *watch;
    Ecore_Event_Handler *active_hdlr;
    Ecore_Event_Handler *device_change_hdlr;
 
 # ifdef HAVE_ATOMIC_DRM
    Ecore_Drm2_Atomic_State *state;
+   drmModeAtomicReq *atomic_req;
 # endif
 
    Eina_List *outputs;
@@ -813,6 +840,7 @@ extern void (*sym_drmModeAtomicFree)(drmModeAtomicReqPtr req);
 extern int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id, uint32_t property_id, uint64_t value);
 extern int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data);
 extern void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor);
+extern int (*sym_drmModeAtomicMerge)(drmModeAtomicReqPtr base, drmModeAtomicReqPtr augment);
 # endif
 extern void *(*sym_drmModeGetEncoder)(int fd, uint32_t encoder_id);
 extern void (*sym_drmModeFreeEncoder)(drmModeEncoderPtr ptr);
@@ -831,9 +859,11 @@ extern void (*sym_drmModeFreePlaneResources)(drmModePlaneResPtr ptr);
 extern void *(*sym_drmModeGetPlane)(int fd, uint32_t plane_id);
 extern void (*sym_drmModeFreePlane)(drmModePlanePtr ptr);
 extern int (*sym_drmModeAddFB)(int fd, uint32_t width, uint32_t height, uint8_t depth, uint8_t bpp, uint32_t pitch, uint32_t bo_handle, uint32_t *buf_id);
+extern int (*sym_drmModeAddFB2)(int fd, uint32_t width, uint32_t height, uint32_t pixel_format, uint32_t bo_handles[4], uint32_t pitches[4], uint32_t offsets[4], uint32_t *buf_id, uint32_t flags);
 extern int (*sym_drmModeRmFB)(int fd, uint32_t bufferId);
 extern int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data);
 extern int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips);
 extern int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
+extern int (*sym_drmPrimeFDToHandle)(int fd, int prime_fd, uint32_t *handle);
 
 #endif

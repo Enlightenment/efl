@@ -1,13 +1,5 @@
 #include "ecore_drm2_private.h"
 
-#ifndef DRM_CAP_CURSOR_WIDTH
-# define DRM_CAP_CURSOR_WIDTH 0x8
-#endif
-
-#ifndef DRM_CAP_CURSOR_HEIGHT
-# define DRM_CAP_CURSOR_HEIGHT 0x9
-#endif
-
 #ifndef DRM_CAP_DUMB_PREFER_SHADOW
 # define DRM_CAP_DUMB_PREFER_SHADOW 0x4
 #endif
@@ -16,7 +8,7 @@
 # include <sys/utsname.h>
 #endif
 
-Eina_Bool _ecore_drm2_use_atomic = EINA_FALSE;
+Eina_Bool _ecore_drm2_use_atomic = EINA_TRUE;
 
 static Eina_Bool
 _cb_session_active(void *data, int type EINA_UNUSED, void *event)
@@ -154,6 +146,8 @@ out:
 }
 
 #ifdef HAVE_ATOMIC_DRM
+
+# if 0
 static Eina_Bool
 _drm2_atomic_usable(int fd)
 {
@@ -195,6 +189,7 @@ _drm2_atomic_usable(int fd)
 
    return ret;
 }
+# endif
 
 static void
 _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
@@ -543,6 +538,9 @@ _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
              pstate = &state->plane_states[i];
              pstate->obj_id = pres->planes[i];
              pstate->mask = plane->possible_crtcs;
+             pstate->num_formats = plane->count_formats;
+             memcpy(pstate->formats, plane->formats,
+                    plane->count_formats * sizeof(plane->formats[0]));
 
              sym_drmModeFreePlane(plane);
 
@@ -615,9 +613,11 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    DBG("Device Fd: %d", device->fd);
 
 #ifdef HAVE_ATOMIC_DRM
+# if 0
    /* check that this system can do atomic */
    _ecore_drm2_use_atomic = _drm2_atomic_usable(device->fd);
    if (_ecore_drm2_use_atomic)
+# endif
      {
         if (sym_drmSetClientCap(device->fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
           {
@@ -628,7 +628,10 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
           {
              if (sym_drmSetClientCap(device->fd,
                                      DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
-               WRN("Could not enable Universal Plane support");
+               {
+                  WRN("Could not enable Universal Plane support");
+                  _ecore_drm2_use_atomic = EINA_FALSE;
+               }
              else
                {
                   /* atomic & planes are usable */
@@ -673,7 +676,11 @@ ecore_drm2_device_free(Ecore_Drm2_Device *device)
 
 #ifdef HAVE_ATOMIC_DRM
    if (_ecore_drm2_use_atomic)
-     _drm2_atomic_state_free(device->state);
+     {
+        _drm2_atomic_state_free(device->state);
+        if (device->atomic_req)
+          sym_drmModeAtomicFree(device->atomic_req);
+     }
 #endif
 
    ecore_event_handler_del(device->active_hdlr);
@@ -711,13 +718,21 @@ ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *device, int *width, int *he
      {
         *width = 64;
         ret = sym_drmGetCap(device->fd, DRM_CAP_CURSOR_WIDTH, &caps);
-        if (ret == 0) *width = caps;
+        if (ret == 0)
+          {
+             device->cursor.width = caps;
+             *width = caps;
+          }
      }
    if (height)
      {
         *height = 64;
         ret = sym_drmGetCap(device->fd, DRM_CAP_CURSOR_HEIGHT, &caps);
-        if (ret == 0) *height = caps;
+        if (ret == 0)
+          {
+             device->cursor.height = caps;
+             *height = caps;
+          }
      }
 }
 
@@ -836,4 +851,161 @@ ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device)
      return EINA_TRUE;
    else
      return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ecore_drm2_atomic_commit_test(Ecore_Drm2_Device *device)
+{
+   Eina_Bool res = EINA_FALSE;
+#ifdef HAVE_ATOMIC_DRM
+   int ret = 0;
+   Eina_List *l, *ll;
+   Ecore_Drm2_Output *output;
+   Ecore_Drm2_Plane *plane;
+   Ecore_Drm2_Plane_State *pstate;
+   Ecore_Drm2_Crtc_State *cstate;
+   drmModeAtomicReq *req = NULL;
+   uint32_t flags = DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_ATOMIC_ALLOW_MODESET |
+     DRM_MODE_ATOMIC_TEST_ONLY;
+#endif
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((device->fd < 0), EINA_FALSE);
+
+#ifdef HAVE_ATOMIC_DRM
+   req = sym_drmModeAtomicAlloc();
+   if (!req) return EINA_FALSE;
+
+   sym_drmModeAtomicSetCursor(req, 0);
+
+   EINA_LIST_FOREACH(device->outputs, l, output)
+     {
+        cstate = output->crtc_state;
+
+        ret =
+          sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
+                                       cstate->mode.value);
+        if (ret < 0) goto err;
+
+        ret =
+          sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
+                                       cstate->active.value);
+        if (ret < 0) goto err;
+
+        EINA_LIST_FOREACH(output->planes, ll, plane)
+          {
+             pstate = plane->state;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->cid.id, pstate->cid.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->fid.id, pstate->fid.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->sx.id, pstate->sx.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->sy.id, pstate->sy.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->sw.id, pstate->sw.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->sh.id, pstate->sh.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->cx.id, pstate->cx.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->cy.id, pstate->cy.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->cw.id, pstate->cw.value);
+             if (ret < 0) goto err;
+
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->ch.id, pstate->ch.value);
+             if (ret < 0) goto err;
+          }
+     }
+
+   ret =
+     sym_drmModeAtomicCommit(device->fd, req, flags, NULL);
+   if (ret < 0) ERR("Failed Atomic Commit Test: %m");
+   else res = EINA_TRUE;
+
+   if (res)
+     {
+        if (device->atomic_req)
+          {
+             /* merge this test commit with previous */
+             ret = sym_drmModeAtomicMerge(device->atomic_req, req);
+             if (ret < 0)
+               {
+                  /* we failed to merge for some reason. */
+
+                  /* clear any previous request */
+                  sym_drmModeAtomicFree(device->atomic_req);
+
+                  /* just use the new request */
+                  device->atomic_req = req;
+               }
+          }
+        else
+          device->atomic_req = req;
+     }
+
+   return res;
+
+err:
+   sym_drmModeAtomicFree(req);
+#endif
+
+   return res;
+}
+
+EAPI Eina_Bool
+ecore_drm2_atomic_commit(Ecore_Drm2_Device *device)
+{
+#ifdef HAVE_ATOMIC_DRM
+   int res = 0;
+   uint32_t flags =
+     DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
+     DRM_MODE_ATOMIC_ALLOW_MODESET;
+#endif
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((device->fd < 0), EINA_FALSE);
+
+#ifdef HAVE_ATOMIC_DRM
+   if (!device->atomic_req) return EINA_FALSE;
+
+   res =
+     sym_drmModeAtomicCommit(device->fd, device->atomic_req, flags, NULL);
+   if (res < 0)
+     ERR("Failed Atomic Commit Test: %m");
+   else
+     return EINA_TRUE;
+#endif
+
+   return EINA_FALSE;
 }

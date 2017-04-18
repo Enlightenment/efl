@@ -23,6 +23,7 @@ void (*sym_drmModeAtomicFree)(drmModeAtomicReqPtr req) = NULL;
 int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id, uint32_t property_id, uint64_t value) = NULL;
 int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data) = NULL;
 void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor) = NULL;
+int (*sym_drmModeAtomicMerge)(drmModeAtomicReqPtr base, drmModeAtomicReqPtr augment);
 # endif
 void *(*sym_drmModeGetEncoder)(int fd, uint32_t encoder_id) = NULL;
 void (*sym_drmModeFreeEncoder)(drmModeEncoderPtr ptr) = NULL;
@@ -41,10 +42,12 @@ void (*sym_drmModeFreePlaneResources)(drmModePlaneResPtr ptr) = NULL;
 void *(*sym_drmModeGetPlane)(int fd, uint32_t plane_id) = NULL;
 void (*sym_drmModeFreePlane)(drmModePlanePtr ptr) = NULL;
 int (*sym_drmModeAddFB)(int fd, uint32_t width, uint32_t height, uint8_t depth, uint8_t bpp, uint32_t pitch, uint32_t bo_handle, uint32_t *buf_id) = NULL;
+int (*sym_drmModeAddFB2)(int fd, uint32_t width, uint32_t height, uint32_t pixel_format, uint32_t bo_handles[4], uint32_t pitches[4], uint32_t offsets[4], uint32_t *buf_id, uint32_t flags) = NULL;
 int (*sym_drmModeRmFB)(int fd, uint32_t bufferId) = NULL;
 int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data) = NULL;
 int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips) = NULL;
 int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t *red, uint16_t *green, uint16_t *blue) = NULL;
+int (*sym_drmPrimeFDToHandle)(int fd, int prime_fd, uint32_t *handle) = NULL;
 
 EAPI int ECORE_DRM2_EVENT_OUTPUT_CHANGED = -1;
 EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
@@ -99,6 +102,7 @@ _ecore_drm2_link(void)
         SYM(drm_lib, drmModeAtomicAddProperty);
         SYM(drm_lib, drmModeAtomicCommit);
         SYM(drm_lib, drmModeAtomicSetCursor);
+        SYM(drm_lib, drmModeAtomicMerge);
 #endif
         SYM(drm_lib, drmModeGetEncoder);
         SYM(drm_lib, drmModeFreeEncoder);
@@ -117,10 +121,12 @@ _ecore_drm2_link(void)
         SYM(drm_lib, drmModeGetPlane);
         SYM(drm_lib, drmModeFreePlane);
         SYM(drm_lib, drmModeAddFB);
+        SYM(drm_lib, drmModeAddFB2);
         SYM(drm_lib, drmModeRmFB);
         SYM(drm_lib, drmModePageFlip);
         SYM(drm_lib, drmModeDirtyFB);
         SYM(drm_lib, drmModeCrtcSetGamma);
+        SYM(drm_lib, drmPrimeFDToHandle);
 
         if (fail)
           {
