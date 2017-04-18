@@ -213,8 +213,6 @@ Ecore_Fd_Handler *
                                       Eina_Bool is_file);
 void      *_ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
 
-void       _ecore_fd_close_on_exec(int fd);
-
 void       _ecore_main_shutdown(void);
 
 #if defined (_WIN32) || defined (__lv2ppu__) || defined (HAVE_EXOTIC)

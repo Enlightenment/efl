@@ -69,18 +69,7 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_set(Eo *o, Efl_Io_Closer_Fd_Data *
                                   * already set!
                                   */
 
-   flags = fcntl(fd, F_GETFD);
-   if (flags < 0)
-     {
-        ERR("fcntl(%d, F_GETFD): %s", fd, strerror(errno));
-        pd->close_on_exec = old;
-        return EINA_FALSE;
-     }
-   if (close_on_exec)
-     flags |= FD_CLOEXEC;
-   else
-     flags &= (~FD_CLOEXEC);
-   if (fcntl(fd, F_SETFD, flags) < 0)
+   if (!eina_file_close_on_exec(fd, close_on_exec))
      {
         ERR("fcntl(%d, F_SETFD, %#x): %s", fd, flags, strerror(errno));
         pd->close_on_exec = old;

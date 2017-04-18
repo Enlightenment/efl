@@ -326,21 +326,6 @@ static gboolean _ecore_glib_idle_enterer_called;
 static gboolean ecore_fds_ready;
 #endif
 
-void
-_ecore_fd_close_on_exec(int fd)
-{
-#ifdef HAVE_FCNTL
-   int flags;
-
-   flags = fcntl(fd, F_GETFD);
-   if (flags == -1) return;
-   flags |= FD_CLOEXEC;
-   if (fcntl(fd, F_SETFD, flags) == -1)  return;
-#else
-   (void) fd;
-#endif
-}
-
 #ifdef EFL_EXTRA_SANITY_CHECKS
 static inline void
 _ecore_fd_valid(void)
@@ -1042,7 +1027,7 @@ _ecore_main_loop_init(void)
    if ((epoll_fd < 0) && HAVE_EPOLL)
      WRN("Failed to create epoll fd!");
    epoll_pid = getpid();
-   _ecore_fd_close_on_exec(epoll_fd);
+   eina_file_close_on_exec(epoll_fd, EINA_TRUE);
 
    /* add polls on all our file descriptors */
    Ecore_Fd_Handler *fdh;
@@ -1148,7 +1133,7 @@ _ecore_main_loop_init(void)
           WRN("failed to create timer fd!");
         else
           {
-             _ecore_fd_close_on_exec(timer_fd);
+             eina_file_close_on_exec(timer_fd, EINA_TRUE);
              ecore_timer_fd.fd = timer_fd;
              ecore_timer_fd.events = G_IO_IN;
              ecore_timer_fd.revents = 0;

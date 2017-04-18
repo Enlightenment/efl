@@ -339,7 +339,7 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
          {
             /* Setup the status pipe. */
              E_NO_ERRNO(result, close(statusPipe[0]), ok);
-             E_IF_NO_ERRNO(result, fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC), ok) /* close on exec shows success */
+             E_IF_NO_ERRNO(result, eina_file_close_on_exec(statusPipe[1], EINA_TRUE), ok) /* close on exec shows success */
              {
                 /* Run the actual command. */
                  _ecore_exe_exec_it(exe_cmd, flags); /* no return */
@@ -422,12 +422,12 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
                                     O_NONBLOCK), ok) {
                 }
                 E_IF_NO_ERRNO(result,
-                              fcntl(exe->child_fd_error, F_SETFD,
-                                    FD_CLOEXEC), ok) {
+                              eina_file_close_on_exec(exe->child_fd_error, EINA_TRUE),
+                              ok) {
                 }
                 E_IF_NO_ERRNO(result,
-                              fcntl(exe->child_fd_error_x, F_SETFD,
-                                    FD_CLOEXEC), ok) {
+                              eina_file_close_on_exec(exe->child_fd_error_x, EINA_TRUE),
+                              ok) {
                 }
                 {
                    exe->error_fd_handler =
@@ -446,12 +446,12 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
                                     O_NONBLOCK), ok) {
                 }
                 E_IF_NO_ERRNO(result,
-                              fcntl(exe->child_fd_read, F_SETFD,
-                                    FD_CLOEXEC), ok) {
+                              eina_file_close_on_exec(exe->child_fd_read, EINA_TRUE),
+                              ok) {
                 }
                 E_IF_NO_ERRNO(result,
-                              fcntl(exe->child_fd_read_x, F_SETFD,
-                                    FD_CLOEXEC), ok) {
+                              eina_file_close_on_exec(exe->child_fd_read_x, EINA_TRUE),
+                              ok) {
                 }
                 {
                    exe->read_fd_handler =
@@ -470,12 +470,12 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
                                     O_NONBLOCK), ok) {
                 }
                 E_IF_NO_ERRNO(result,
-                              fcntl(exe->child_fd_write, F_SETFD,
-                                    FD_CLOEXEC), ok) {
+                              eina_file_close_on_exec(exe->child_fd_write, EINA_TRUE),
+                              ok) {
                 }
                 E_IF_NO_ERRNO(result,
-                              fcntl(exe->child_fd_write_x, F_SETFD,
-                                    FD_CLOEXEC), ok) {
+                              eina_file_close_on_exec(exe->child_fd_write_x, EINA_TRUE),
+                              ok) {
                 }
                 {
                    exe->write_fd_handler =

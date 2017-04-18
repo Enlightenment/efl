@@ -165,7 +165,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 
 #ifdef HAVE_EPOLL
    pollfd = epoll_create(1);
-   if (pollfd >= 0) _ecore_fd_close_on_exec(pollfd);
+   if (pollfd >= 0) eina_file_close_on_exec(pollfd, EINA_TRUE);
 
 #if defined(TFD_NONBLOCK) && defined(TFD_CLOEXEC)
    timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
@@ -173,7 +173,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    if (timerfd < 0)
      {
         timerfd = timerfd_create(CLOCK_MONOTONIC, 0);
-        if (timerfd >= 0) _ecore_fd_close_on_exec(timerfd);
+        if (timerfd >= 0) eina_file_close_on_exec(timerfd, EINA_TRUE);
      }
    if (timerfd < 0)
      {

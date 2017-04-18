@@ -360,15 +360,15 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
    p->data = data;
 
    if (!read_survive_fork)
-     _ecore_fd_close_on_exec(fd_read);
+     eina_file_close_on_exec(fd_read, EINA_TRUE);
    if (!write_survive_fork)
-     _ecore_fd_close_on_exec(fd_write);
+     eina_file_close_on_exec(fd_write, EINA_TRUE);
 
 #if defined(HAVE_SYS_EPOLL_H) && defined(HAVE_SYS_TIMERFD_H)
    struct epoll_event pollev = { 0 };
    p->pollfd = epoll_create(1);
    p->timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
-   _ecore_fd_close_on_exec(p->pollfd);
+   eina_file_close_on_exec(p->pollfd, EINA_TRUE);
 
    pollev.data.ptr = (void *)(uintptr_t)(p->fd_read);
    pollev.events = EPOLLIN;
