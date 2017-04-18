@@ -60,6 +60,7 @@ extern int _eo_log_dom;
 typedef uintptr_t Eo_Id;
 typedef struct _Efl_Class _Efl_Class;
 typedef struct _Eo_Header Eo_Header;
+typedef struct _Efl_Object_Optional Efl_Object_Optional;
 
 /* Allocates an entry for the given object */
 static inline Eo_Id _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id);
@@ -88,6 +89,13 @@ struct _Eo_Header
      Eo_Id id;
 };
 
+struct _Efl_Object_Optional
+{
+   Eo_Vtable          *vtable;
+   Eina_List          *composite_objects;
+   Efl_Del_Intercept   del_intercept;
+};
+
 struct _Eo_Object
 {
      Eo_Header header;
@@ -98,10 +106,7 @@ struct _Eo_Object
      Eina_Inlist *data_xrefs;
 #endif
 
-     Eo_Vtable *vtable;
-
-     Eina_List *composite_objects;
-     Efl_Del_Intercept del_intercept;
+     const Efl_Object_Optional *opt; // eina cow
 
      short refcount;
      short user_refcount;
@@ -122,6 +127,18 @@ struct _Eo_Object
 #define DICH_CHAIN_LAST_SIZE (1 << DICH_CHAIN_LAST_BITS)
 #define DICH_CHAIN1(x) ((x) >> DICH_CHAIN_LAST_BITS)
 #define DICH_CHAIN_LAST(x) ((x) & ((1 << DICH_CHAIN_LAST_BITS) - 1))
+
+extern Eina_Cow *efl_object_optional_cow;
+#define EO_OPTIONAL_COW_WRITE(_obj) ({ Efl_Object_Optional *_cow = eina_cow_write(efl_object_optional_cow, (const Eina_Cow_Data**)&(_obj->opt)); _cow; })
+#define EO_OPTIONAL_COW_END(_cow, _obj) eina_cow_done(efl_object_optional_cow, (const Eina_Cow_Data**)&(_obj->opt), _cow, EINA_TRUE)
+#define EO_OPTIONAL_COW_SET(_obj, _field, _value) do { \
+   typeof (_value) _val = _value; \
+   if (_obj->opt->_field != _val) {\
+      Efl_Object_Optional *_obj##_cow = EO_OPTIONAL_COW_WRITE(_obj); \
+      _obj##_cow->_field = _val; \
+      EO_OPTIONAL_COW_END(_obj##_cow, _obj); \
+   }} while (0)
+#define EO_VTABLE(_obj) ((_obj)->opt->vtable ?: &((_obj)->klass->vtable))
 
 typedef void (*Eo_Op_Func_Type)(Eo *, void *class_data);
 
@@ -257,7 +274,7 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
      {
         Eina_List *itr, *itr_n;
         Eo *emb_obj;
-        EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
+        EINA_LIST_FOREACH_SAFE(obj->opt->composite_objects, itr, itr_n, emb_obj)
           {
              efl_composite_detach(_eo_obj_id_get(obj), emb_obj);
           }
@@ -270,7 +287,7 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
 static inline Eina_Bool
 _obj_is_override(_Eo_Object *obj)
 {
-   return (obj->vtable != &obj->klass->vtable);
+   return obj->opt->vtable != NULL;
 }
 
 void _eo_free(_Eo_Object *obj, Eina_Bool manual_free);
@@ -310,11 +327,11 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
              return;
           }
 
-        if (obj->del_intercept)
+        if (obj->opt->del_intercept)
           {
              Eo *obj_id = _eo_obj_id_get(obj);
              efl_ref(obj_id);
-             obj->del_intercept(obj_id);
+             obj->opt->del_intercept(obj_id);
              return;
           }
 

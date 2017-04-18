@@ -71,6 +71,9 @@ static Efl_Object_Op _eo_ops_last_id = 0;
 static Eina_Hash *_ops_storage = NULL;
 static Eina_Spinlock _ops_storage_lock;
 
+static const Efl_Object_Optional efl_object_optional_cow_default = {};
+Eina_Cow *efl_object_optional_cow = NULL;
+
 static size_t _eo_sz = 0;
 static size_t _eo_class_sz = 0;
 
@@ -432,7 +435,7 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
 
         obj = _obj;
         klass = _obj->klass;
-        vtable = obj->vtable;
+        vtable = EO_VTABLE(obj);
 
         if (_obj_is_override(obj) && cur_klass &&
             (_eo_class_id_get(cur_klass) == EFL_OBJECT_OVERRIDE_CLASS))
@@ -536,12 +539,12 @@ end:
      {
         Eina_List *itr;
         Eo *emb_obj_id;
-        EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj_id)
+        EINA_LIST_FOREACH(obj->opt->composite_objects, itr, emb_obj_id)
           {
              EO_OBJ_POINTER_PROXY(emb_obj_id, emb_obj);
              if (EINA_UNLIKELY(!emb_obj)) continue;
 
-             func = _vtable_func_get(emb_obj->vtable, cache->op);
+             func = _vtable_func_get(EO_VTABLE(emb_obj), cache->op);
              if (func == NULL) goto composite_continue;
 
              if (EINA_LIKELY(func->func && func->src))
@@ -833,9 +836,9 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
      }
    eina_spinlock_release(&klass->objects.trash_lock);
 
+   obj->opt = eina_cow_alloc(efl_object_optional_cow);
    obj->refcount++;
    obj->klass = klass;
-   obj->vtable = &klass->vtable;
 
 #ifndef HAVE_EO_ID
    EINA_MAGIC_SET((Eo_Header *) obj, EO_EINA_MAGIC);
@@ -966,7 +969,6 @@ efl_reuse(const Eo *_obj)
    _efl_object_parent_sink_set(obj, EINA_FALSE);
 }
 
-
 void
 _eo_free(_Eo_Object *obj, Eina_Bool manual_free EINA_UNUSED)
 {
@@ -1013,12 +1015,13 @@ _eo_free(_Eo_Object *obj, Eina_Bool manual_free EINA_UNUSED)
 #endif
    if (_obj_is_override(obj))
      {
-        _vtable_func_clean_all(obj->vtable);
-        eina_freeq_ptr_main_add(obj->vtable, free, 0);
-        obj->vtable = &klass->vtable;
+        _vtable_func_clean_all(obj->opt->vtable);
+        eina_freeq_ptr_main_add(obj->opt->vtable, free, 0);
+        EO_OPTIONAL_COW_SET(obj, vtable, NULL);
      }
 
    _eo_id_release((Eo_Id) _eo_obj_id_get(obj));
+   eina_cow_free(efl_object_optional_cow, (Eina_Cow_Data *) &obj->opt);
 
    eina_spinlock_take(&klass->objects.trash_lock);
    if ((klass->objects.trash_count <= 8) && (EINA_LIKELY(!_eo_trash_bypass)))
@@ -1576,44 +1579,45 @@ EAPI Eina_Bool
 efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
 {
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
-   EO_CLASS_POINTER_GOTO(EFL_OBJECT_OVERRIDE_CLASS, klass, err_done);
-   Eo_Vtable *previous = obj->vtable;
+   EO_CLASS_POINTER_GOTO(EFL_OBJECT_OVERRIDE_CLASS, klass, err);
 
    if (ops)
      {
-        if (obj->vtable == &obj->klass->vtable)
+        Eo_Vtable *vtable;
+
+        if (EINA_UNLIKELY(obj->opt->vtable != NULL))
           {
-             obj->vtable = calloc(1, sizeof(*obj->vtable));
-             _vtable_init(obj->vtable, previous->size);
-             _vtable_copy_all(obj->vtable, previous);
-             // rare so move error handling to end to save l1 instruction cache
-             if (!_eo_class_funcs_set(obj->vtable, ops, obj->klass,
-                                      klass, 0, EINA_TRUE))
-               goto err;
-             goto done;
+             ERR("Function table already overridden, not allowed to override again. "
+                 "Call with NULL to reset the function table first.");
+             goto err;
           }
-        // rare so move error handling to end to save l1 instruction cache
-        else goto err_already;
+
+        vtable = calloc(1, sizeof(*vtable));
+        _vtable_init(vtable, obj->klass->vtable.size);
+        _vtable_copy_all(vtable, &obj->klass->vtable);
+        if (!_eo_class_funcs_set(vtable, ops, obj->klass, klass, 0, EINA_TRUE))
+          {
+             // FIXME: Maybe leaking some chain stuff from copy above?
+             ERR("Failed to override functions for %p", eo_id);
+             free(vtable);
+             goto err;
+          }
+
+        EO_OPTIONAL_COW_SET(obj, vtable, vtable);
      }
    else
      {
-        if (obj->vtable != &obj->klass->vtable)
+        if (obj->opt->vtable)
           {
-             eina_freeq_ptr_main_add(obj->vtable, free, 0);
-             obj->vtable = (Eo_Vtable *) &obj->klass->vtable;
+             eina_freeq_ptr_main_add(obj->opt->vtable, free, 0);
+             EO_OPTIONAL_COW_SET(obj, vtable, NULL);
           }
      }
-done:
+
    EO_OBJ_DONE(eo_id);
    return EINA_TRUE;
 
-err_already:
-   ERR("Function table already overridden, not allowed to override again. "
-       "Call with NULL to reset the function table first.");
-   goto err_done;
 err:
-   ERR("Failed to override functions for %p", eo_id);
-err_done:
    EO_OBJ_DONE(eo_id);
    return EINA_FALSE;
 }
@@ -1644,7 +1648,7 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         EO_OBJ_POINTER_GOTO(eo_id, obj, err_obj);
         EO_CLASS_POINTER_GOTO(klass_id, klass, err_class);
         const op_type_funcs *func = _vtable_func_get
-          (obj->vtable, klass->base_id + klass->ops_count);
+          (EO_VTABLE(obj), klass->base_id + klass->ops_count);
 
         // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
         tdata->cache.isa_id = eo_id;
@@ -1672,7 +1676,7 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         EO_OBJ_POINTER_GOTO(eo_id, obj, err_shared_obj);
         EO_CLASS_POINTER_GOTO(klass_id, klass, err_shared_class);
         const op_type_funcs *func = _vtable_func_get
-          (obj->vtable, klass->base_id + klass->ops_count);
+          (EO_VTABLE(obj), klass->base_id + klass->ops_count);
 
         // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
         tdata->cache.isa_id = eo_id;
@@ -1826,16 +1830,17 @@ EAPI void
 efl_del_intercept_set(Eo *obj_id, Efl_Del_Intercept del_intercept_func)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
-   obj->del_intercept = del_intercept_func;
+   EO_OPTIONAL_COW_SET(obj, del_intercept, del_intercept_func);
    EO_OBJ_DONE(obj_id);
 }
 
 EAPI Efl_Del_Intercept
 efl_del_intercept_get(const Eo *obj_id)
 {
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
    Efl_Del_Intercept func;
-   func = obj->del_intercept;
+
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+   func = obj->opt->del_intercept;
    EO_OBJ_DONE(obj_id);
    return func;
 }
@@ -2148,6 +2153,10 @@ efl_object_init(void)
    _eo_class_isa_func(NULL, NULL);
 #endif
 
+   efl_object_optional_cow =
+         eina_cow_add("Efl Object Optional Data", sizeof(Efl_Object_Optional),
+                      64, &efl_object_optional_cow_default, EINA_TRUE);
+
    _efl_add_fallback_init();
 
    eina_log_timing(_eo_log_dom,
@@ -2201,6 +2210,9 @@ efl_object_shutdown(void)
         _eo_table_data_shared = NULL;
         _eo_table_data_shared_data = NULL;
      }
+
+   eina_cow_del(efl_object_optional_cow);
+   efl_object_optional_cow = NULL;
 
    _eo_log_obj_shutdown();
 

@@ -1610,6 +1610,7 @@ _efl_object_event_global_freeze_count_get(Eo *klass EINA_UNUSED, void *pd EINA_U
 EOLIAN static Eina_Bool
 _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo *comp_obj_id)
 {
+   Efl_Object_Optional *opt;
    Eo *emb_obj_id = NULL;
 
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
@@ -1620,7 +1621,7 @@ _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
    /* Don't composite if we already have a composite object of this type */
      {
         Eina_List *itr;
-        EINA_LIST_FOREACH(parent->composite_objects, itr, emb_obj_id)
+        EINA_LIST_FOREACH(parent->opt->composite_objects, itr, emb_obj_id)
           {
              EO_OBJ_POINTER_GOTO(emb_obj_id, emb_obj, err_klass);
              if (EINA_UNLIKELY(emb_obj->klass == comp_obj->klass)) goto err_klass;
@@ -1637,7 +1638,9 @@ _efl_object_composite_attach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
    _efl_object_extension_need(comp_pd);
    comp_pd->ext->composite_parent = parent_id;
 
-   parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
+   opt = EO_OPTIONAL_COW_WRITE(parent);
+   opt->composite_objects = eina_list_prepend(opt->composite_objects, comp_obj_id);
+   EO_OPTIONAL_COW_END(opt, parent);
 
    if (emb_obj_id) EO_OBJ_DONE(emb_obj_id);
    EO_OBJ_DONE(parent_id);
@@ -1655,13 +1658,18 @@ err_parent:
 EOLIAN static Eina_Bool
 _efl_object_composite_detach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo *comp_obj_id)
 {
+   Efl_Object_Optional *opt;
+
    EO_OBJ_POINTER_RETURN_VAL(comp_obj_id, comp_obj, EINA_FALSE);
    EO_OBJ_POINTER_GOTO(parent_id, parent, err_parent);
 
    // unlikely so improve l1 instr cache by using goto
    if (!efl_composite_part_is(comp_obj_id)) goto err_part;
 
-   parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
+   opt = EO_OPTIONAL_COW_WRITE(parent);
+   opt->composite_objects = eina_list_remove(opt->composite_objects, comp_obj_id);
+   EO_OPTIONAL_COW_END(opt, parent);
+
    /* Clear the comp parent on the child. */
      {
         Efl_Object_Data *comp_pd = efl_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
@@ -1819,7 +1827,7 @@ children_back:
      {
         EO_OBJ_POINTER_RETURN(obj, obj_data);
         obj_data2 = obj_data;
-        if (obj_data->composite_objects) goto composite_obj;
+        if (obj_data->opt->composite_objects) goto composite_obj;
 composite_obj_back:
         EO_OBJ_DONE(obj);
      }
@@ -1867,7 +1875,8 @@ composite_obj:
      {
         Eina_List *itr, *next;
         Eo *emb_obj_id;
-        EINA_LIST_FOREACH_SAFE(obj_data2->composite_objects, itr, next, emb_obj_id)
+
+        EINA_LIST_FOREACH_SAFE(obj_data2->opt->composite_objects, itr, next, emb_obj_id)
           {
              efl_composite_detach(obj, emb_obj_id);
           }
