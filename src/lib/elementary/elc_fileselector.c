@@ -312,12 +312,9 @@ _itc_icon_folder_get(void *data EINA_UNUSED,
                      Evas_Object *obj,
                      const char *source)
 {
-   Evas_Object *ic, *grid, *f;
+   Evas_Object *ic, *grid;
 
    if (strcmp(source, "elm.swallow.icon")) return NULL;
-
-   f = evas_object_data_get(obj, "parent");
-   ELM_FILESELECTOR_DATA_GET(f, sd);
 
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "folder");
@@ -327,7 +324,6 @@ _itc_icon_folder_get(void *data EINA_UNUSED,
    grid = elm_grid_add(obj);
    elm_grid_size_set(grid, 1, 1);
    elm_grid_pack(grid, ic, 0, 0, 1, 1);
-   evas_object_size_hint_min_set(grid, sd->thumbnail_size.w, sd->thumbnail_size.h);
    evas_object_show(grid);
 
    return grid;
@@ -339,12 +335,9 @@ _itc_icon_image_get(void *data,
                     const char *source)
 {
    Elm_Fileselector_Item_Data *it_data = data;
-   Evas_Object *ic, *grid, *f;
+   Evas_Object *ic, *grid;
 
    if (strcmp(source, "elm.swallow.icon")) return NULL;
-
-   f = evas_object_data_get(obj, "parent");
-   ELM_FILESELECTOR_DATA_GET(f, sd);
 
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "image");
@@ -356,7 +349,6 @@ _itc_icon_image_get(void *data,
    grid = elm_grid_add(obj);
    elm_grid_size_set(grid, 1, 1);
    elm_grid_pack(grid, ic, 0, 0, 1, 1);
-   evas_object_size_hint_min_set(grid, sd->thumbnail_size.w, sd->thumbnail_size.h);
    evas_object_show(grid);
 
    return grid;
@@ -367,12 +359,9 @@ _itc_icon_file_get(void *data EINA_UNUSED,
                    Evas_Object *obj,
                    const char *source)
 {
-   Evas_Object *ic, *grid, *f;
+   Evas_Object *ic, *grid;
 
    if (strcmp(source, "elm.swallow.icon")) return NULL;
-
-   f = evas_object_data_get(obj, "parent");
-   ELM_FILESELECTOR_DATA_GET(f, sd);
 
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "file");
@@ -382,7 +371,6 @@ _itc_icon_file_get(void *data EINA_UNUSED,
    grid = elm_grid_add(obj);
    elm_grid_size_set(grid, 1, 1);
    elm_grid_pack(grid, ic, 0, 0, 1, 1);
-   evas_object_size_hint_min_set(grid, sd->thumbnail_size.w, sd->thumbnail_size.h);
    evas_object_show(grid);
 
    return grid;
