@@ -474,6 +474,7 @@ ecore_file_mv(const char *src, const char *dst)
              if (is_reg)
                {
                   char *dir;
+                  Eina_Tmpstr *tmpstr = NULL;
 
                   dir = ecore_file_dir_get(dst);
                   // Since we can't directly rename, try to
@@ -482,29 +483,40 @@ ecore_file_mv(const char *src, const char *dst)
                   snprintf(buf, sizeof(buf), "%s/.%s.tmp.XXXXXX",
                            dir, ecore_file_file_get(dst));
                   free(dir);
-                  fd = mkstemp(buf);
+                  fd = eina_file_mkstemp(buf, &tmpstr);
                   if (fd < 0) goto FAIL;
                   close(fd);
 
                   // Copy to temp file
-                  if (!ecore_file_cp(src, buf))
-                    goto FAIL;
+                  if (!ecore_file_cp(src, tmpstr))
+                    {
+                       eina_tmpstr_del(tmpstr);
+                       goto FAIL;
+                    }
 
                   // Set file permissions of temp file to match src
-                  if (chmod(buf, mode) == -1) goto FAIL;
+                  if (chmod(buf, mode) == -1)
+                    {
+                       eina_tmpstr_del(tmpstr);
+                       goto FAIL;
+                    }
 
                   // Try to atomically move temp file to dst
-                  if (rename(buf, dst))
+                  if (rename(tmpstr, dst))
                     {
                        // If we still cannot atomically move
                        // do a normal copy and hope for the best.
-                       if (!ecore_file_cp(buf, dst))
-                         goto FAIL;
+                       if (!ecore_file_cp(tmpstr, dst))
+                         {
+                            eina_tmpstr_del(tmpstr);
+                            goto FAIL;
+                         }
                     }
 
                   // Delete temporary file and src
-                  ecore_file_unlink(buf);
+                  ecore_file_unlink(tmpstr);
                   ecore_file_unlink(src);
+                  eina_tmpstr_del(tmpstr);
                   goto PASS;
                }
           }
