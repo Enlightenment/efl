@@ -1584,6 +1584,102 @@ START_TEST(eo_domain)
 }
 END_TEST
 
+
+static int
+_inherit_value_1(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   return 1;
+}
+
+static int
+_inherit_value_2(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   return 2;
+}
+
+EFL_FUNC_BODY(inherit_value, int, 0);
+
+static Eina_Bool
+_cast_inherit_class_initializer_1(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC(inherit_value, _inherit_value_1), );
+   return efl_class_functions_set(klass, &ops, NULL);
+}
+
+static Eina_Bool
+_cast_inherit_class_initializer_2(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC(inherit_value, _inherit_value_2), );
+   return efl_class_functions_set(klass, &ops, NULL);
+}
+
+START_TEST(efl_cast_test)
+{
+   efl_object_init();
+
+   static const Efl_Class_Description class_desc_1 = {
+        EO_VERSION,
+        "FirstInherit",
+        EFL_CLASS_TYPE_REGULAR,
+        0,
+        _cast_inherit_class_initializer_1,
+        NULL,
+        NULL
+   };
+
+   static const Efl_Class_Description class_desc_2 = {
+        EO_VERSION,
+        "SecondInherit",
+        EFL_CLASS_TYPE_REGULAR,
+        0,
+        _cast_inherit_class_initializer_2,
+        NULL,
+        NULL
+   };
+
+   const Efl_Class *klass1 = efl_class_new(&class_desc_1, SIMPLE_CLASS, NULL);
+   fail_if(!klass1);
+
+   const Efl_Class *klass2 = efl_class_new(&class_desc_2, klass1, NULL);
+   fail_if(!klass2);
+
+   Eo *obj;
+
+   // Testing normal calls
+   obj = efl_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+   ck_assert_int_eq(inherit_value(obj), 0);
+   efl_unref(obj);
+
+   obj = efl_add(klass1, NULL);
+   fail_if(!obj);
+   ck_assert_int_eq(inherit_value(obj), 1);
+   efl_unref(obj);
+
+   obj = efl_add(klass2, NULL);
+   fail_if(!obj);
+   ck_assert_int_eq(inherit_value(obj), 2);
+   efl_unref(obj);
+
+   // Testing efl_super
+   obj = efl_add(klass2, NULL);
+   fail_if(!obj);
+   ck_assert_int_eq(inherit_value(efl_super(obj, klass2)), 1);
+   ck_assert_int_eq(inherit_value(efl_super(obj, klass1)), 0);
+   efl_unref(obj);
+
+   // Testing efl_cast
+   obj = efl_add(klass2, NULL);
+   fail_if(!obj);
+   ck_assert_int_eq(inherit_value(efl_cast(obj, klass2)), 2);
+   ck_assert_int_eq(inherit_value(efl_cast(obj, klass1)), 1);
+   ck_assert_int_eq(inherit_value(efl_cast(obj, SIMPLE_CLASS)), 0);
+   efl_unref(obj);
+
+   efl_object_shutdown();
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -1607,4 +1703,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_comment);
    tcase_add_test(tc, eo_rec_interface);
    tcase_add_test(tc, eo_domain);
+   tcase_add_test(tc, efl_cast_test);
 }

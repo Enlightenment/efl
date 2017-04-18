@@ -343,7 +343,8 @@ _eo_op_desc_name_get(const Efl_Op_Description *desc)
 }
 
 static inline const op_type_funcs *
-_eo_kls_itr_next(const _Efl_Class *orig_kls, const _Efl_Class *cur_klass, Efl_Object_Op op)
+_eo_kls_itr_next(const _Efl_Class *orig_kls, const _Efl_Class *cur_klass,
+                 Efl_Object_Op op, Eina_Bool super)
 {
    const _Efl_Class **kls_itr = NULL;
 
@@ -354,7 +355,7 @@ _eo_kls_itr_next(const _Efl_Class *orig_kls, const _Efl_Class *cur_klass, Efl_Ob
 
    if (*kls_itr)
      {
-        kls_itr++;
+        if (super) kls_itr++;
         while (*kls_itr)
           {
              const op_type_funcs *fsrc = _vtable_func_get(&(*kls_itr)->vtable, op);
@@ -374,8 +375,8 @@ _eo_kls_itr_next(const _Efl_Class *orig_kls, const _Efl_Class *cur_klass, Efl_Ob
 
 static EFL_FUNC_TLS _Efl_Class *_super_klass = NULL;
 
-EAPI Eo *
-efl_super(const Eo *eo_id, const Efl_Class *cur_klass)
+static Eo *
+_efl_super_cast(const Eo *eo_id, const Efl_Class *cur_klass, Eina_Bool super)
 {
    EO_CLASS_POINTER_GOTO(cur_klass, super_klass, err);
 
@@ -389,13 +390,14 @@ efl_super(const Eo *eo_id, const Efl_Class *cur_klass)
 
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
    obj->cur_klass = super_klass;
-   obj->super = EINA_TRUE;
+   obj->super = super;
    EO_OBJ_DONE(eo_id);
 
    return (Eo *) eo_id;
 
 do_klass:
    // efl_super(Class) is extremely rarely used, so TLS write is fine
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(super, NULL);
    _super_klass = super_klass;
    return (Eo *) eo_id;
 
@@ -412,6 +414,18 @@ err_obj_hierarchy:
 #endif
 }
 
+EAPI Eo *
+efl_super(const Eo *eo_id, const Efl_Class *cur_klass)
+{
+   return _efl_super_cast(eo_id, cur_klass, EINA_TRUE);
+}
+
+EAPI Eo *
+efl_cast(const Eo *eo_id, const Efl_Class *cur_klass)
+{
+   return _efl_super_cast(eo_id, cur_klass, EINA_FALSE);
+}
+
 EAPI Eina_Bool
 _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Data *call, Efl_Object_Call_Cache *cache, const char *file, int line)
 {
@@ -422,6 +436,7 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
    const op_type_funcs *func;
    Eina_Bool is_obj;
    Eina_Bool is_override = EINA_FALSE;
+   Eina_Bool super = EINA_TRUE;
 
    if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
 
@@ -439,10 +454,11 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
         if (_obj->cur_klass)
           {
              cur_klass = _obj->cur_klass;
+             super = _obj->super;
              _obj->cur_klass = NULL;
           }
 
-        if (_obj_is_override(obj) && cur_klass &&
+        if (_obj_is_override(obj) && cur_klass && super &&
             (_eo_class_id_get(cur_klass) == EFL_OBJECT_OVERRIDE_CLASS))
           {
              /* Doing a efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS) should result in calling
@@ -603,7 +619,7 @@ err:
    // yes - special "move out of hot path" code blobs with goto's for
    // speed reasons to have intr prefetches work better and miss less
 ok_cur_klass:
-   func = _eo_kls_itr_next(klass, cur_klass, cache->op);
+   func = _eo_kls_itr_next(klass, cur_klass, cache->op, super);
    if (!func) goto end;
    klass = func->src;
    goto ok_cur_klass_back;

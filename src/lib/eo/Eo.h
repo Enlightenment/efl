@@ -927,6 +927,7 @@ EAPI void _efl_object_call_end(Efl_Object_Op_Call_Data *call);
 EAPI Eo * _efl_add_end(Eo *obj, Eina_Bool is_ref, Eina_Bool is_fallback);
 
 EAPI Eo *efl_super(const Eo *obj, const Efl_Class *cur_klass);
+EAPI Eo *efl_cast(const Eo *obj, const Efl_Class *cur_klass);
 
 /*****************************************************************************/
 
