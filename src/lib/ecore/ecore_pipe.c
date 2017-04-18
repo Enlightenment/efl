@@ -379,7 +379,8 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
    epoll_ctl(p->pollfd, EPOLL_CTL_ADD, p->timerfd, &pollev);
 #endif
 
-   if (fcntl(p->fd_read, F_SETFL, O_NONBLOCK) < 0) ERR("can't set pipe to NONBLOCK");
+   if (fcntl(p->fd_read, F_SETFL, O_NONBLOCK) < 0)
+     ERR("can't set pipe to NONBLOCK");
    p->fd_handler = ecore_main_fd_handler_add(p->fd_read,
                                              ECORE_FD_READ,
                                              _ecore_pipe_read,
@@ -574,14 +575,13 @@ _ecore_pipe_wait(Ecore_Pipe *p,
              Eina_Bool fd_read_found  = EINA_FALSE;
              Eina_Bool fd_timer_found = EINA_FALSE;
 
-             for(int i = 0; i < ret;i++)
-             {
-                if ((&p->fd_read == pollincoming[i].data.ptr))
-                  fd_read_found  = EINA_TRUE;
-
-                if ((&p->timerfd == pollincoming[i].data.ptr))
-                  fd_timer_found = EINA_TRUE;
-             }
+             for (int i = 0; i < ret;i++)
+               {
+                  if ((&p->fd_read == pollincoming[i].data.ptr))
+                    fd_read_found  = EINA_TRUE;
+                  if ((&p->timerfd == pollincoming[i].data.ptr))
+                    fd_timer_found = EINA_TRUE;
+               }
 
              if (fd_read_found)
                {
@@ -670,13 +670,13 @@ _ecore_pipe_read(void             *data,
              /* read the len of the passed data */
               ret = pipe_read(p->fd_read, &p->len, sizeof(p->len));
 
-     /* catch the non error case first */
+             /* catch the non error case first */
               /* read amount ok - nothing more to do */
               if (ret == sizeof(p->len))
                 ;
               else if (ret > 0)
                 {
-     /* we got more data than we asked for - definite error */
+                   /* we got more data than we asked for - definite error */
                     ERR("Only read %i bytes from the pipe, although"
                         " we need to read %i bytes.",
                         (int)ret, (int)sizeof(p->len));
@@ -685,10 +685,10 @@ _ecore_pipe_read(void             *data,
                 }
               else if (ret == 0)
                 {
-     /* we got no data */
+                   /* we got no data */
                     if (i == 0)
                       {
-     /* no data on first try through means an error */
+                         /* no data on first try through means an error */
                           _ecore_pipe_handler_call(p, NULL, 0);
                           pipe_close(p->fd_read);
                           p->fd_read = PIPE_FD_INVALID;
@@ -698,7 +698,7 @@ _ecore_pipe_read(void             *data,
                       }
                     else
                       {
-     /* no data after first loop try is ok */
+                         /* no data after first loop try is ok */
                           _ecore_pipe_unhandle(p);
                           return ECORE_CALLBACK_RENEW;
                       }
@@ -752,7 +752,7 @@ _ecore_pipe_read(void             *data,
              if (!p->passed_data)
                {
                   _ecore_pipe_handler_call(p, NULL, 0);
-     /* close the pipe */
+                  /* close the pipe */
                   pipe_close(p->fd_read);
                   p->fd_read = PIPE_FD_INVALID;
                   p->fd_handler = NULL;
