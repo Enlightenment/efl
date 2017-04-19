@@ -451,24 +451,16 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
         obj = _obj;
         klass = _obj->klass;
         vtable = EO_VTABLE(obj);
-        if (_obj->cur_klass)
+        is_override = _obj_is_override(obj);
+        if (EINA_UNLIKELY(_obj->cur_klass != NULL))
           {
-             cur_klass = _obj->cur_klass;
-             super = _obj->super;
-             _obj->cur_klass = NULL;
+             // YES this is a goto with a label to return. this is a
+             // micro-optimization to move infrequent code out of the
+             // hot path of the function
+             goto obj_super;
           }
 
-        if (_obj_is_override(obj) && cur_klass && super &&
-            (_eo_class_id_get(cur_klass) == EFL_OBJECT_OVERRIDE_CLASS))
-          {
-             /* Doing a efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS) should result in calling
-              * as if it's a normal class. */
-             vtable = &klass->vtable;
-             cur_klass = NULL;
-          }
-
-        is_override = _obj_is_override(obj) && (cur_klass == NULL);
-
+obj_super_back:
         call->obj = obj;
         _efl_ref(_obj);
      }
@@ -635,6 +627,25 @@ ok_klass:
         call->data = NULL;
      }
    goto ok_klass_back;
+
+obj_super:
+   {
+      cur_klass = obj->cur_klass;
+      super = obj->super;
+      obj->cur_klass = NULL;
+
+      if (_obj_is_override(obj) && cur_klass && super &&
+          (_eo_class_id_get(cur_klass) == EFL_OBJECT_OVERRIDE_CLASS))
+        {
+           /* Doing a efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS) should
+            * result in calling as if it's a normal class. */
+           vtable = &klass->vtable;
+           cur_klass = NULL;
+        }
+
+      is_override = _obj_is_override(obj) && (cur_klass == NULL);
+   }
+   goto obj_super_back;
 
 err_klass:
    _EO_POINTER_ERR(eo_id, "in %s:%d: func '%s': obj_id=%p is an invalid ref.", file, line, func_name, eo_id);
