@@ -652,6 +652,10 @@ class TestEinaSlice
 
 class TestEinaArray
 {
+    private static readonly string test_string = "abcdefghij";
+    // private static readonly int[] base_arr_int = {0x0,0x2A,0x42};
+
+
     public static void eina_array_default()
     {
         var a = new eina.Array<int>();
@@ -663,16 +667,212 @@ class TestEinaArray
         var a = new eina.Array<int>();
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push(88));
-        Test.Assert(a[0] == 88);
+        Test.Assert(a.DataGet(0) == 88);
     }
 
     public static void push_string()
     {
         var a = new eina.Array<string>();
         Test.Assert(a.Handle != IntPtr.Zero);
-        Test.Assert(a.Push("asdfghjkl"));
-        Test.Assert(a.DataGet(0) == "asdfghjkl");
+        Test.Assert(a.Push(test_string));
+        Test.Assert(a.DataGet(0) == test_string);
     }
+
+    public static void pop_int()
+    {
+        var a = new eina.Array<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(88));
+        Test.Assert(a.Pop() == 88);
+        Test.Assert(a.Count() == 0);
+    }
+
+    public static void pop_string()
+    {
+        var a = new eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(test_string));
+        Test.Assert(a.Pop() == test_string);
+        Test.Assert(a.Count() == 0);
+    }
+
+    public static void data_set_int()
+    {
+        var a = new eina.Array<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(88));
+        Test.Assert(a.DataGet(0) == 88);
+        a.DataSet(0, 44);
+        Test.Assert(a.DataGet(0) == 44);
+    }
+
+    public static void data_set_string()
+    {
+        var a = new eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(test_string));
+        Test.Assert(a.DataGet(0) == test_string);
+        a.DataSet(0, "other string");
+        Test.Assert(a.DataGet(0) == "other string");
+    }
+
+    public static void count_int()
+    {
+        var a = new eina.Array<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Count() == 0);
+        Test.Assert(a.Push(88));
+        Test.Assert(a.DataGet(0) == 88);
+        Test.Assert(a.Count() == 1);
+        Test.Assert(a.Push(44));
+        Test.Assert(a.DataGet(1) == 44);
+        Test.Assert(a.Count() == 2);
+        Test.Assert(a.Push(22));
+        Test.Assert(a.DataGet(2) == 22);
+        Test.Assert(a.Count() == 3);
+    }
+
+    public static void count_string()
+    {
+        var a = new eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Count() == 0);
+        Test.Assert(a.Push("a"));
+        Test.Assert(a.DataGet(0) == "a");
+        Test.Assert(a.Count() == 1);
+        Test.Assert(a.Push("b"));
+        Test.Assert(a.DataGet(1) == "b");
+        Test.Assert(a.Count() == 2);
+        Test.Assert(a.Push("c"));
+        Test.Assert(a.DataGet(2) == "c");
+        Test.Assert(a.Count() == 3);
+    }
+
+    public static void length_int()
+    {
+        var a = new eina.Array<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Length == 0);
+        Test.Assert(a.Push(88));
+        Test.Assert(a.DataGet(0) == 88);
+        Test.Assert(a.Length == 1);
+        Test.Assert(a.Push(44));
+        Test.Assert(a.DataGet(1) == 44);
+        Test.Assert(a.Length == 2);
+        Test.Assert(a.Push(22));
+        Test.Assert(a.DataGet(2) == 22);
+        Test.Assert(a.Length == 3);
+    }
+
+    public static void length_string()
+    {
+        var a = new eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Length == 0);
+        Test.Assert(a.Push("a"));
+        Test.Assert(a.DataGet(0) == "a");
+        Test.Assert(a.Length == 1);
+        Test.Assert(a.Push("b"));
+        Test.Assert(a.DataGet(1) == "b");
+        Test.Assert(a.Length == 2);
+        Test.Assert(a.Push("c"));
+        Test.Assert(a.DataGet(2) == "c");
+        Test.Assert(a.Length == 3);
+    }
+
+    public static void to_array_int()
+    {
+        // TODO
+    }
+
+    public static void to_array_string()
+    {
+        // TODO
+    }
+
+    // //
+    // Generation
+    //
+/*
+    public static void test_eina_array_int_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<int>(base_arr_int);
+        Test.Assert(t.eina_array_int_in(arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(new int[]{0x0,0x2A,0x42,42,43,33}));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_array_int_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<int>(base_arr_int);
+        Test.Assert(t.eina_array_int_in_own(arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(new int[]{0x0,0x2A,0x42,42,43,33}));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_array_int_in_own());
+    }
+
+    public static void test_eina_array_int_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Array<int> arr;
+        Test.Assert(t.eina_array_int_out(out arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(new int[]{33}));
+        arr.Clean();
+        Test.Assert(arr.Append(base_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_array_int_out());
+    }
+
+    public static void test_eina_array_int_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Array<int> arr;
+        Test.Assert(t.eina_array_int_out_own(out arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(new int[]{33}));
+        arr.Clean();
+        Test.Assert(arr.Append(base_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_array_int_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_array_int_return();
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(new int[]{33}));
+        arr.Clean();
+        Test.Assert(arr.Append(base_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_array_int_return());
+    }
+
+    public static void test_eina_array_int_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_array_int_return_own();
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(new int[]{33}));
+        arr.Clean();
+        Test.Assert(arr.Append(base_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+*/
+
+    // //
+    // Inherit
+    //
 }
 
 }

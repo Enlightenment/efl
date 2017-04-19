@@ -210,5 +210,42 @@ class Test.Testing (Efl.Object) {
       eina_binbuf_return_own {
          return: own(ptr(Eina.Binbuf));
       }
+
+      /* Eina Array */
+      eina_array_int_in {
+         params {
+            @in arr: array<int>;
+         }
+         return: bool;
+      }
+
+      eina_array_int_in_own {
+         params {
+            @in arr: own(array<int>);
+         }
+         return: bool;
+      }
+
+      eina_array_int_out {
+         params {
+            @out arr: array<int>;
+         }
+         return: bool;
+      }
+
+      eina_array_int_out_own {
+         params {
+            @out arr: own(array<int>);
+         }
+         return: bool;
+      }
+
+      eina_array_int_return {
+         return: array<int>;
+      }
+
+      eina_array_int_return_own {
+         return: own(array<int>);
+      }
    }
 }
