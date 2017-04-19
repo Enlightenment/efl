@@ -1,15 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 
+using static eina.ElementConvert;
 using static eina.ArrayNativeFunctions;
 
 namespace eina {
-
-[StructLayout(LayoutKind.Sequential)]
-public struct ValueConvertWrapper<T>
-{
-    public T Val {get;set;}
-}
 
 // public class TypeConvertions
 // {
@@ -31,7 +26,7 @@ public struct ValueConvertWrapper<T>
 //     }
 // }
 
-public class ArrayNativeFunctions
+public static class ArrayNativeFunctions
 {
     [DllImport("eina")] public static extern IntPtr
         eina_array_new(uint step);
@@ -59,11 +54,6 @@ public class ArrayNativeFunctions
 
     [DllImport("eflcustomexportsmono")] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_array_foreach_custom_export_mono(IntPtr array, IntPtr cb, IntPtr fdata);
-
-    [DllImport("eflcustomexportsmono")] public static extern IntPtr
-        efl_mono_native_alloc_copy(IntPtr val, uint size);
-    [DllImport("eflcustomexportsmono")] public static extern IntPtr
-        efl_mono_native_strdup(string val);
 }
 
 public class Array<T> : IDisposable
@@ -72,6 +62,12 @@ public class Array<T> : IDisposable
 
     public IntPtr Handle {get;set;} = IntPtr.Zero;
     public bool Own {get;set;}
+    public bool OwnContent {get;set;}
+
+    public int Length
+    {
+        get { return Count(); }
+    }
 
 //     public int Length
 //     {
@@ -82,6 +78,7 @@ public class Array<T> : IDisposable
     {
         Handle = eina_array_new(step);
         Own = true;
+        OwnContent = true;
         if (Handle == IntPtr.Zero)
             throw new SEHException("Could not alloc array");
     }
@@ -89,6 +86,21 @@ public class Array<T> : IDisposable
     internal bool InternalPush(IntPtr ele)
     {
         return eina_array_push_custom_export_mono(Handle, ele);
+    }
+
+    internal IntPtr InternalPop()
+    {
+        return eina_array_pop_custom_export_mono(Handle);
+    }
+
+    internal IntPtr InternalDataGet(int idx)
+    {
+        return eina_array_data_get_custom_export_mono(Handle, (uint)idx); // TODO: Check bounds ???
+    }
+
+    internal void InternalDataSet(int idx, IntPtr ele)
+    {
+        eina_array_data_set_custom_export_mono(Handle, (uint)idx, ele); // TODO: Check bounds ???
     }
 
     public Array()
@@ -101,8 +113,8 @@ public class Array<T> : IDisposable
         InitNew(step);
     }
 
-    public Array(Array arr)
-    {
+//     public Array(Array arr)
+//     {
 //         if (arr == null)
 //         {
 //             InitNew(DefaultStep);
@@ -111,14 +123,15 @@ public class Array<T> : IDisposable
 //
 //         InitNew(arr.Step);
 //         Append(arr);
+//
+//         throw new SEHException("Not implemented");
+//     }
 
-        throw new SEHException("Not implemented");
-    }
-
-    public Array(IntPtr handle, bool own)
+    public Array(IntPtr handle, bool own, bool ownContent)
     {
         Handle = handle;
         Own = own;
+        OwnContent = ownContent;
     }
 
     ~Array()
@@ -163,22 +176,24 @@ public class Array<T> : IDisposable
         eina_array_flush(Handle);
     }
 
+    public int Count()
+    {
+        return (int) eina_array_count_custom_export_mono(Handle);
+    }
+
 //     public void Add(int val)
 //     {
 //         Push(val);
 //     }
 
-    public T this[int i]
-    {
-        get
-        {
-            return this.DataGet(i);
-        }
-//         set
+//     public T this[int i]
+//     {
+//         get
 //         {
-//             arr[i] = value;
+//             return this.DataGet(i);
 //         }
-    }
+//     }
+
 }
 
 }
@@ -187,32 +202,61 @@ public static class EinaArraySpecialMethods
 {
     public static bool Push<T>(this eina.Array<T> arr, T val)
     {
-        GCHandle pinnedData = GCHandle.Alloc(val, GCHandleType.Pinned);
-        IntPtr ptr = pinnedData.AddrOfPinnedObject();
-        IntPtr ele = efl_mono_native_alloc_copy(ptr, (uint)(Marshal.SizeOf<T>()));
-        pinnedData.Free();
-
+        IntPtr ele = ManagedToNativeAlloc(val);
         return arr.InternalPush(ele); // TODO: free if false ?
     }
 
     public static bool Push(this eina.Array<string> arr, string val)
     {
-        IntPtr ele = efl_mono_native_strdup(val);
+        IntPtr ele = ManagedToNativeAlloc(val);
         return arr.InternalPush(ele); // TODO: free if false ?
+    }
+
+    public static T Pop<T>(this eina.Array<T> arr)
+    {
+        IntPtr ele = arr.InternalPop();
+        var r = NativeToManaged(ele, new eina.TypeTag<T>());
+        if (arr.OwnContent && ele != IntPtr.Zero)
+            NativeFree<T>(ele);
+        return r;
+    }
+
+    public static string Pop(this eina.Array<string> arr)
+    {
+        IntPtr ele = arr.InternalPop();
+        var r = NativeToManaged(ele, new eina.TypeTag<string>());
+        if (arr.OwnContent && ele != IntPtr.Zero)
+            NativeFree<string>(ele);
+        return r;
     }
 
     public static T DataGet<T>(this eina.Array<T> arr, int idx)
     {
-        IntPtr ele = eina_array_data_get_custom_export_mono(arr.Handle, (uint)idx);
-        var w = Marshal.PtrToStructure<eina.ValueConvertWrapper<T> >(ele);
-        return w.Val;
+        IntPtr ele = arr.InternalDataGet(idx);
+        return NativeToManaged(ele, new eina.TypeTag<T>());
     }
 
     public static string DataGet(this eina.Array<string> arr, int idx)
     {
-        IntPtr ele = eina_array_data_get_custom_export_mono(arr.Handle, (uint)idx);
-        if (ele == IntPtr.Zero)
-            return null;
-        return Marshal.PtrToStringAuto(ele);
+        IntPtr ele = arr.InternalDataGet(idx);
+        return NativeToManaged(ele, new eina.TypeTag<string>());
+    }
+
+    public static void DataSet<T>(this eina.Array<T> arr, int idx, T val)
+    {
+        IntPtr ele = arr.InternalDataGet(idx);
+        if (arr.OwnContent && ele != IntPtr.Zero)
+            NativeFree<T>(ele);
+        ele = ManagedToNativeAlloc(val);
+        arr.InternalDataSet(idx, ele);
+    }
+
+    public static void DataSet(this eina.Array<string> arr, int idx, string val)
+    {
+        IntPtr ele = arr.InternalDataGet(idx);
+        if (arr.OwnContent && ele != IntPtr.Zero)
+            NativeFree<string>(ele);
+        ele = ManagedToNativeAlloc(val);
+        arr.InternalDataSet(idx, ele);
     }
 }
