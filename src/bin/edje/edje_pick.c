@@ -897,7 +897,7 @@ _edje_pick_images_copy(Edje_File *edf, Edje_File *o)
 
                        old_id = _edje_pick_image_old_id_get(
                          context.current_file->imagelist, o->image_dir->entries_count - 1);
-                       /* Concatinate current file entries to re-allocaed array */
+                       /* Concatenate current file entries to re-allocated array */
                        memcpy(&o->image_dir->entries[o->image_dir->entries_count - 1],
                               &edf->image_dir->entries[old_id],
                               sizeof(Edje_Image_Directory_Entry));
@@ -930,7 +930,7 @@ _edje_pick_images_copy(Edje_File *edf, Edje_File *o)
 
                        old_id = _edje_pick_image_old_id_get(
                          context.current_file->imagesetlist, o->image_dir->sets_count - 1);
-                       /* Concatinate current file sets to re-allocaed array */
+                       /* Concatenate current file sets to re-allocated array */
                        memcpy(&o->image_dir->sets[o->image_dir->sets_count - 1],
                               &edf->image_dir->sets[old_id],
                               sizeof(Edje_Image_Directory_Set));
@@ -967,7 +967,7 @@ _edje_pick_images_copy(Edje_File *edf, Edje_File *o)
 
                        old_id = _edje_pick_image_old_id_get(
                          context.current_file->vectorlist, o->image_dir->vectors_count - 1);
-                       /* Concatinate current file vectors to re-allocaed array */
+                       /* Concatenate current file vectors to re-allocated array */
                        memcpy(&o->image_dir->vectors[o->image_dir->vectors_count - 1],
                               &edf->image_dir->vectors[old_id],
                               sizeof(Edje_Vector_Directory_Entry));
