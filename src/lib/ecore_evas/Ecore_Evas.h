@@ -1510,14 +1510,14 @@ EAPI void ecore_evas_ews_delete_request(Ecore_Evas *ee);
  * @b buffer @c Ecore_Evas canvas. The user of this function is, then,
  * supposed to grab that @c Ecore_Evas handle, with
  * ecore_evas_object_ecore_evas_get(), and use its canvas to render
- * whichever contents he/she wants, @b independently of the contents
+ * whatever contents he/she wants, @b independently of the contents
  * of the canvas owned by @p ee_target. Those contents will reflect on
  * the canvas of @p ee, though, being exactly the image data of the
  * object returned by this function.
  *
  * This is a helper function for the scenario of one wanting to grab a
  * buffer canvas' contents (with ecore_evas_buffer_pixels_get()) to be
- * used on another canvas, for whichever reason. The most common goal
+ * used on another canvas, for whatever reason. The most common goal
  * of this setup is to @b save an image file with a whole canvas as
  * contents, which could not be achieved by using an image file within
  * the target canvas.
@@ -1906,7 +1906,7 @@ EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Eve
  */
 EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * @brief Sets a callback for Ecore_Evas pre render events.
+ * @brief Sets a callback for Ecore_Evas pre-render events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1918,7 +1918,7 @@ EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Ev
  */
 EAPI void        ecore_evas_callback_pre_render_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * @brief Sets a callback for Ecore_Evas mouse post render events.
+ * @brief Sets a callback for Ecore_Evas mouse post-render events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -2752,7 +2752,7 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a p
  * if the plug object is shown, or already visible on connect, or if it is
  * hidden later, focused or unfocused.
  *
- * This function has to be flowed by ecore_evas_extn_socket_listen(),
+ * This function has to be followed by ecore_evas_extn_socket_listen(),
  * for starting ecore ipc service.
  *
  * @code
