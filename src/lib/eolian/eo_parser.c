@@ -1662,13 +1662,13 @@ propend:
      }
    else
      {
+        if (glob_auto)
+          impl->get_auto = impl->set_auto = EINA_TRUE;
+        if (glob_empty)
+          impl->get_empty = impl->set_empty = EINA_TRUE;
         check_next(ls, ';');
         FILL_DOC(ls, impl, common_doc);
      }
-   if (glob_auto)
-     impl->get_auto = impl->set_auto = EINA_TRUE;
-   if (glob_empty)
-     impl->get_empty = impl->set_empty = EINA_TRUE;
    if (buf)
      {
         impl->full_name = eina_stringshare_add(eina_strbuf_string_get(buf));
