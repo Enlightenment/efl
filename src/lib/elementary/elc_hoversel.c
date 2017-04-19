@@ -151,6 +151,17 @@ _auto_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
         if(item->label)
           elm_object_text_set(obj2, item->label);
+
+        Eina_List *l;
+        Elm_Object_Item *eo_item;
+
+        EINA_LIST_FOREACH(sd->items, l, eo_item)
+          {
+             if (eo_item == EO_OBJ(item))
+               elm_wdg_item_signal_emit(eo_item, "elm,state,selected", "elm");
+             else
+               elm_wdg_item_signal_emit(eo_item, "elm,state,unselected", "elm");
+          }
      }
 }
 
