@@ -527,6 +527,8 @@ _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
    state->plane_states = calloc(state->planes, sizeof(Ecore_Drm2_Plane_State));
    if (state->plane_states)
      {
+        unsigned int f = 0;
+
         for (i = 0; i < state->planes; i++)
           {
              drmModePlanePtr plane;
@@ -539,8 +541,11 @@ _drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd)
              pstate->obj_id = pres->planes[i];
              pstate->mask = plane->possible_crtcs;
              pstate->num_formats = plane->count_formats;
-             memcpy(pstate->formats, plane->formats,
-                    plane->count_formats * sizeof(plane->formats[0]));
+
+             pstate->formats = calloc(plane->count_formats, sizeof(uint32_t));
+
+             for (f = 0; f < plane->count_formats; f++)
+               pstate->formats[f] = plane->formats[f];
 
              sym_drmModeFreePlane(plane);
 

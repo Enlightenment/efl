@@ -649,7 +649,7 @@ typedef struct _Ecore_Drm2_Plane_State
    uint32_t supported_rotations;
 
    uint32_t num_formats;
-   uint32_t formats[];
+   uint32_t *formats;
 } Ecore_Drm2_Plane_State;
 
 struct _Ecore_Drm2_Atomic_State
