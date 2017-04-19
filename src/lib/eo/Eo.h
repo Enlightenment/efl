@@ -926,7 +926,77 @@ EAPI void _efl_object_call_end(Efl_Object_Op_Call_Data *call);
 // end of the efl_add. Calls finalize among others
 EAPI Eo * _efl_add_end(Eo *obj, Eina_Bool is_ref, Eina_Bool is_fallback);
 
+/*****************************************************************************/
+
+/**
+ * @brief Prepare a call to the parent class implementation of a function
+ *
+ * @param obj        The object to call (can be a class)
+ * @param cur_klass  The current class
+ * @return An EO handle that must be used as part of an EO function call.
+ *
+ * @warning The returned value must always be used as the first argument (the
+ * object) of a method or property function call, and should never be handled
+ * in any other way. Do not call any function from this file on the returned
+ * value (eg. efl_ref, etc...).
+ *
+ * Usage:
+ * @code
+ * // Inside the implementation code for MY_CLASS
+ * my_property_set(efl_super(obj, MY_CLASS), value);
+ * @endcode
+ *
+ * A common usage pattern is to forward function calls to the parent function:
+ * @code
+ * EOLIAN static void
+ * _my_class_my_property_set(Eo *obj, My_Class_Data *pd, int value)
+ * {
+ *   // Do some processing on this class data, or on the value
+ *   if (value < 0) value = 0;
+ *   pd->last_value = value;
+ *   // Pass the call to the parent class
+ *   my_property_set(efl_super(obj, MY_CLASS), value);
+ *   // Do some more processing
+ * }
+ * @endcode
+ *
+ * @p cur_klass must be a valid class in the inheritance hierarchy of @p obj's
+ * class. Invalid values will lead to undefined behaviour.
+ *
+ * @see efl_cast
+ */
 EAPI Eo *efl_super(const Eo *obj, const Efl_Class *cur_klass);
+
+/**
+ * @brief Prepare a call to cast to a parent class implementation of a function
+ *
+ * @param obj        The object to call (can be a class)
+ * @param cur_klass  The class to cast into
+ * @return An EO handle that must be used as part of an EO function call.
+ *
+ * @warning The returned value must always be used as the first argument (the
+ * object) of a method or property function call, and should never be handled
+ * in any other way. Do not call any function from this file on the returned
+ * value (eg. efl_ref, etc...).
+ *
+ * Usage:
+ * @code
+ * // Inside the implementation code for MY_CLASS
+ * my_property_set(efl_cast(obj, SOME_OTHER_CLASS), value);
+ * @endcode
+ *
+ * In the above example, @p obj is assumed to inherit from @c SOME_OTHER_CLASS
+ * as either a mixin or direct class inheritance. If @c SOME_OTHER_CLASS
+ * implements @c my_property.set then that implementation shall be called,
+ * otherwise the call will be propagated to the parent implementation (if any).
+ *
+ * @p cur_klass must be a valid class in the inheritance hierarchy of @p obj's
+ * class. Invalid values will lead to undefined behaviour.
+ *
+ * @see efl_cast
+ *
+ * @since 1.20
+ */
 EAPI Eo *efl_cast(const Eo *obj, const Efl_Class *cur_klass);
 
 /*****************************************************************************/
