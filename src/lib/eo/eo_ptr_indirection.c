@@ -48,7 +48,7 @@ _eo_obj_pointer_invalid(const Eo_Id obj_id,
        file, func_name, line,
        "EOID %p is not a valid %s. "
        "EOID domain=%i, current_domain=%i, local_domain=%i. "
-       "EOID generation=%lx, id=%lx, ref=%i, super=%i. "
+       "EOID generation=%lx, id=%lx, ref=%i. "
        "Thread self=%s. "
        "Available domains [%s %s %s %s]. "
        "Maybe it has been deleted or does not belong to your thread?",
@@ -60,7 +60,6 @@ _eo_obj_pointer_invalid(const Eo_Id obj_id,
        (unsigned long)(obj_id & MASK_GENERATIONS),
        (unsigned long)(obj_id >> SHIFT_ENTRY_ID) & (MAX_ENTRY_ID | MAX_TABLE_ID | MAX_MID_TABLE_ID),
        (int)(obj_id >> REF_TAG_SHIFT) & 0x1,
-       (int)(obj_id >> SUPER_TAG_SHIFT) & 0x1,
        tself,
        (data->tables[0]) ? "0" : " ",
        (data->tables[1]) ? "1" : " ",
