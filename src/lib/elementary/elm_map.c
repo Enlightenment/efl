@@ -5202,14 +5202,21 @@ elm_map_overlay_color_get(const Elm_Map_Overlay *overlay,
    EINA_SAFETY_ON_NULL_RETURN(overlay->wsd);
    ELM_MAP_CHECK((overlay->wsd)->obj);
 
-   if (overlay->type == ELM_MAP_OVERLAY_TYPE_ROUTE)
+   switch (overlay->type)
      {
-        if (r) *r = overlay->c.r;
-        if (g) *g = overlay->c.g;
-        if (b) *b = overlay->c.b;
-        if (a) *a = overlay->c.a;
+        case ELM_MAP_OVERLAY_TYPE_ROUTE:
+        case ELM_MAP_OVERLAY_TYPE_DEFAULT:
+        case ELM_MAP_OVERLAY_TYPE_CLASS:
+           if (r) *r = overlay->c.r;
+           if (g) *g = overlay->c.g;
+           if (b) *b = overlay->c.b;
+           if (a) *a = overlay->c.a;
+           break;
+
+        default:
+           ERR("Not supported overlay type: %d", overlay->type);
+           break;
      }
-   else ERR("Not supported overlay type: %d", overlay->type);
 }
 
 EAPI void
