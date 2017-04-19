@@ -212,8 +212,9 @@
  * @defgroup Evas_Canvas3D_Primitive Primitive Object
  * @ingroup Evas_3D
  *
- * A primitive object is an object with necessary data for creating meshes with ptimitive shapes.
- * Data from a primitive can be set to Evas_Canvas3D_Mesh by using evas_canvas3d_mesh_from_primitive_set()
+ * A primitive object is an object with necessary data for creating
+ * meshes with primitive shapes.  Data from a primitive can be set to
+ * Evas_Canvas3D_Mesh by using evas_canvas3d_mesh_from_primitive_set()
  * function.
  */
 
