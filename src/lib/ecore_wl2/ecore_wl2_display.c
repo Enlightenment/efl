@@ -265,6 +265,23 @@ _recovery_timer(Ecore_Wl2_Display *ewd)
 }
 
 static void
+_ecore_wl2_display_globals_cleanup(Ecore_Wl2_Display *ewd)
+{
+   if (ewd->wl.session_recovery)
+     zwp_e_session_recovery_destroy(ewd->wl.session_recovery);
+   if (ewd->wl.www) www_destroy(ewd->wl.www);
+   if (ewd->wl.zxdg_shell) zxdg_shell_v6_destroy(ewd->wl.zxdg_shell);
+   if (ewd->wl.xdg_shell) xdg_shell_destroy(ewd->wl.xdg_shell);
+   if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
+   if (ewd->wl.data_device_manager)
+     wl_data_device_manager_destroy(ewd->wl.data_device_manager);
+   if (ewd->wl.compositor) wl_compositor_destroy(ewd->wl.compositor);
+   if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
+
+   if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
+}
+
+static void
 _recovery_timer_add(Ecore_Wl2_Display *ewd)
 {
    Eina_Inlist *tmp, *tmp2;
@@ -281,18 +298,7 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
 
    ewd->shell_done = EINA_FALSE;
 
-   if (ewd->wl.session_recovery)
-     zwp_e_session_recovery_destroy(ewd->wl.session_recovery);
-   if (ewd->wl.www) www_destroy(ewd->wl.www);
-   if (ewd->wl.zxdg_shell) zxdg_shell_v6_destroy(ewd->wl.zxdg_shell);
-   if (ewd->wl.xdg_shell) xdg_shell_destroy(ewd->wl.xdg_shell);
-   if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
-   if (ewd->wl.data_device_manager)
-     wl_data_device_manager_destroy(ewd->wl.data_device_manager);
-   if (ewd->wl.compositor) wl_compositor_destroy(ewd->wl.compositor);
-   if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
-
-   if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
+   _ecore_wl2_display_globals_cleanup(ewd);
 
    memset(&ewd->wl, 0, sizeof(ewd->wl));
    EINA_INLIST_FOREACH_SAFE(ewd->inputs, tmp, input)
@@ -578,18 +584,7 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 
    eina_hash_free(ewd->globals);
 
-   if (ewd->wl.session_recovery)
-     zwp_e_session_recovery_destroy(ewd->wl.session_recovery);
-   if (ewd->wl.www) www_destroy(ewd->wl.www);
-   if (ewd->wl.zxdg_shell) zxdg_shell_v6_destroy(ewd->wl.zxdg_shell);
-   if (ewd->wl.xdg_shell) xdg_shell_destroy(ewd->wl.xdg_shell);
-   if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
-   if (ewd->wl.data_device_manager)
-     wl_data_device_manager_destroy(ewd->wl.data_device_manager);
-   if (ewd->wl.compositor) wl_compositor_destroy(ewd->wl.compositor);
-   if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
-
-   if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
+   _ecore_wl2_display_globals_cleanup(ewd);
 }
 
 Ecore_Wl2_Window *
