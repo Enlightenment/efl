@@ -270,7 +270,6 @@ _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
 {
 #ifdef FD_CLOEXEC
    SOCKET fd;
-   int flags;
    Eina_Bool old = pd->close_on_exec;
 #endif
 
@@ -282,7 +281,7 @@ _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
 
    if (!eina_file_close_on_exec(fd, close_on_exec))
      {
-        ERR("fcntl(" SOCKET_FMT ", F_SETFD, %#x): %s", fd, flags, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_SETFD,): %s", fd, strerror(errno));
         pd->close_on_exec = old;
         return EINA_FALSE;
      }
