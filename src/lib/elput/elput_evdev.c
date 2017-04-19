@@ -908,7 +908,6 @@ _pointer_axis_value(struct libinput_event_pointer *event, enum libinput_pointer_
       case LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS:
         val = libinput_event_pointer_get_axis_value(event, axis);
         break;
-      case LIBINPUT_POINTER_AXIS_SOURCE_WHEEL_TILT:
       default:
         break;
      }
