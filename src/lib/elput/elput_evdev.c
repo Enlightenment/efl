@@ -61,7 +61,6 @@ static int
 _keyboard_fd_get(off_t size)
 {
    Eina_Tmpstr *fullname;
-   long flags;
    int fd = 0;
    Efl_Vpath_File *file_obj;
 
