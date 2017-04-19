@@ -370,11 +370,11 @@ ecore_pipe_full_add(Ecore_Pipe_Cb handler,
    p->timerfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
    eina_file_close_on_exec(p->pollfd, EINA_TRUE);
 
-   pollev.data.ptr = (void *)(uintptr_t)(p->fd_read);
+   pollev.data.ptr = &(p->fd_read);
    pollev.events = EPOLLIN;
    epoll_ctl(p->pollfd, EPOLL_CTL_ADD, p->fd_read, &pollev);
 
-   pollev.data.ptr = (void *)(uintptr_t)(p->timerfd);
+   pollev.data.ptr = &(p->timerfd);
    pollev.events = EPOLLIN;
    epoll_ctl(p->pollfd, EPOLL_CTL_ADD, p->timerfd, &pollev);
 #endif
@@ -535,104 +535,95 @@ _ecore_pipe_wait(Ecore_Pipe *p,
 {
    int64_t timerfdbuf;
    struct epoll_event pollincoming[2];
-   double end = 0.0;
    double timeout;
    int ret;
    int total = 0;
    int time_exit=-1;
+   Eina_Bool fd_read_found;
+   Eina_Bool fd_timer_found;
    struct itimerspec tspec_new;
-   struct itimerspec tspec_old;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(-1);
    if (p->fd_read == PIPE_FD_INVALID)
      return -1;
 
-   if (wait >= 0.0)
-     end = ecore_time_get() + wait;
    timeout = wait;
-
-   while (message_count > 0 && (timeout > 0.0 || wait <= 0.0))
+   int sec, usec;
+   if ( wait >= 0.0)
      {
-        time_exit = -1;
-        if (wait >= 0.0)
+        if ((!ECORE_FINITE(timeout)) || (EINA_DBL_EQ(timeout, 0.0)))
           {
-             /* finite() tests for NaN, too big, too small, and infinity.  */
-             if ((!ECORE_FINITE(timeout)) || (EINA_DBL_EQ(timeout, 0.0)))
-               {
-                  tspec_new.it_value.tv_sec = 0;
-                  tspec_new.it_value.tv_nsec = 0;
-                  tspec_new.it_interval.tv_sec = 0;
-                  tspec_new.it_interval.tv_nsec = 0;
-                  time_exit = 0;
-               }
-             else if (timeout > 0.0)
-               {
-                  int sec, usec;
+             tspec_new.it_value.tv_sec = 0;
+             tspec_new.it_value.tv_nsec = 0;
+             tspec_new.it_interval.tv_sec = 0;
+             tspec_new.it_interval.tv_nsec = 0;
+             time_exit = 0;
+          }
+        else
+          {
 #ifdef FIX_HZ
-                  timeout += (0.5 / HZ);
+             timeout += (0.5 / HZ);
 #endif
-                  sec = (int)timeout;
-                  usec = (int)((timeout - (double)sec) * 1000000000);
-                  tspec_new.it_value.tv_sec = sec;
-                  tspec_new.it_value.tv_nsec = (int)(usec) % 1000000000;
-                  tspec_new.it_interval.tv_sec = 0;
-                  tspec_new.it_interval.tv_nsec = 0;
-
-               }
-             timerfd_settime(p->timerfd, 0, &tspec_new, &tspec_old);
-          }
-
-        ret = epoll_wait(p->pollfd, pollincoming, 2, time_exit);
-
-        if (ret > 0)
-          {
-             Eina_Bool fd_read_found  = EINA_FALSE;
-             Eina_Bool fd_timer_found = EINA_FALSE;
-
-             for (int i = 0; i < ret;i++)
-               {
-                  if ((&p->fd_read == pollincoming[i].data.ptr))
-                    fd_read_found  = EINA_TRUE;
-                  if ((&p->timerfd == pollincoming[i].data.ptr))
-                    fd_timer_found = EINA_TRUE;
-               }
-
-             p->handling++;
-             if (fd_read_found)
-               {
-                  _ecore_pipe_read(p, NULL);
-                  message_count -= p->message;
-                  total += p->message;
-                  p->message = 0;
-               }
-
-             if ((fd_timer_found) && (p->timerfd != PIPE_FD_INVALID))
-               {
-                  if (pipe_read(p->timerfd, &timerfdbuf, sizeof(timerfdbuf))
-                      < sizeof(timerfdbuf))
-                    WRN("Could not read timerfd data");
-                  _ecore_pipe_unhandle(p);
-                  break;
-               }
-             _ecore_pipe_unhandle(p);
-          }
-        else if (ret == 0)
-          {
-             break;
-          }
-        else if (errno != EINTR)
-          {
-             if (p->fd_read != PIPE_FD_INVALID)
-               {
-                  close(p->fd_read);
-                  p->fd_read = PIPE_FD_INVALID;
-               }
-             break;
-          }
-
-        if (wait >= 0.0)
-          timeout = end - ecore_time_get();
+             sec = (int)timeout;
+             usec = (int)((timeout - (double)sec) * 1000000000);
+             tspec_new.it_value.tv_sec = sec;
+             tspec_new.it_value.tv_nsec = (int)(usec) % 1000000000;
+             tspec_new.it_interval.tv_sec = 0;
+             tspec_new.it_interval.tv_nsec = 0;
+             timerfd_settime(p->timerfd, 0, &tspec_new, NULL);
+           }
      }
+
+   while ((ret = epoll_wait(p->pollfd, pollincoming, 2, time_exit)) > 0)
+     {
+         fd_read_found  = EINA_FALSE;
+         fd_timer_found = EINA_FALSE;
+
+         for (int i = 0; i < ret;i++)
+         {
+            if ((&p->fd_read == pollincoming[i].data.ptr))
+              fd_read_found  = EINA_TRUE;
+            if ((&p->timerfd == pollincoming[i].data.ptr))
+              fd_timer_found = EINA_TRUE;
+         }
+
+         p->handling++;
+         if (fd_read_found)
+         {
+            _ecore_pipe_read(p, NULL);
+            message_count -= p->message;
+            total += p->message;
+            p->message = 0;
+            if (message_count <= 0)
+             {
+                _ecore_pipe_unhandle(p);
+                break;
+             }
+         }
+
+         if ((fd_timer_found) && (p->timerfd != PIPE_FD_INVALID))
+         {
+            if (pipe_read(p->timerfd, &timerfdbuf, sizeof(timerfdbuf))
+                < sizeof(int64_t))
+              WRN("Could not read timerfd data");
+            _ecore_pipe_unhandle(p);
+            break;
+         }
+         _ecore_pipe_unhandle(p);
+     }
+   if (ret < 0)
+     {
+        if (errno != EBADF)
+          WRN("epoll file descriptor is not a valid");
+        else if (errno != EINVAL)
+          WRN("epoll file descriptor is not an epoll file descriptor, or maxevents is less than or equal to zero.");
+        else if (errno != EFAULT)
+          WRN("The memory area pointed to by epoll_event is not accessible with write permissions.");
+        else if (errno != EINTR)
+          WRN("The call was interrupted by a signal handler before any of the requested epoll_event "
+              "occurred or the timeout expired; see signal(7).");
+     }
+
    return total;
 }
 
