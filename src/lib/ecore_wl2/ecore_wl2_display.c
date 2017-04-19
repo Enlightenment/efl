@@ -277,6 +277,7 @@ _ecore_wl2_display_globals_cleanup(Ecore_Wl2_Display *ewd)
      wl_data_device_manager_destroy(ewd->wl.data_device_manager);
    if (ewd->wl.compositor) wl_compositor_destroy(ewd->wl.compositor);
    if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
+   if (ewd->wl.dmabuf) zwp_linux_dmabuf_v1_destroy(ewd->wl.dmabuf);
 
    if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
 }
