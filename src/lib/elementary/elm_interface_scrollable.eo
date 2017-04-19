@@ -683,6 +683,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Ui.Focus.Manager.border_elements { get; }
+      Efl.Ui.Focus.Manager.focus;
    }
    events {
       changed; [[Called when content changed]]
