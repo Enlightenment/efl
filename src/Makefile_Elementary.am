@@ -1344,7 +1344,7 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_focus.c \
 	tests/elementary/elm_test_focus_sub.c
 
-tests/elementary/tests_elementary_elm_suite-elm_test_focus.$(OBJEXT): tests/elementary/focus_test.eo.c tests/elementary/focus_test.eo.h
+tests/elementary/tests_elementary_elm_suite-elm_test_focus_common.$(OBJEXT): tests/elementary/focus_test.eo.c tests/elementary/focus_test.eo.h
 
 tests/elementary/tests_elementary_elm_suite-elm_test_focus_sub.$(OBJEXT): tests/elementary/focus_test_sub_main.eo.c tests/elementary/focus_test_sub_main.eo.h
 
