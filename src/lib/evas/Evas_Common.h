@@ -730,7 +730,7 @@ EAPI int               evas_shutdown(void);
  * Return if any allocation errors have occurred during the prior function
  * @return The allocation error flag
  *
- * This function will return if any memory allocation errors occurred during,
+ * This function will return if any memory allocation errors occurred,
  * and what kind they were. The return value will be one of
  * EVAS_ALLOC_ERROR_NONE, EVAS_ALLOC_ERROR_FATAL or EVAS_ALLOC_ERROR_RECOVERED
  * with each meaning something different.
@@ -741,11 +741,11 @@ EAPI int               evas_shutdown(void);
  * EVAS_ALLOC_ERROR_FATAL means the function was completely unable to perform
  * its job and will  have  exited as cleanly as possible. The programmer
  * should consider this as a sign of very low memory and should try and safely
- * recover from the prior functions failure (or try free up memory elsewhere
+ * recover from the prior function's failure (or try free up memory elsewhere
  * and try again after more memory is freed).
  *
  * EVAS_ALLOC_ERROR_RECOVERED means that an allocation error occurred, but was
- * recovered from by evas finding memory of its own it has allocated and
+ * recovered from by evas finding memory of its own that it had allocated, and
  * freeing what it sees as not really usefully allocated memory. What is freed
  * may vary. Evas may reduce the resolution of images, free cached images or
  * fonts, throw out pre-rendered data, reduce the complexity of change lists
@@ -1459,7 +1459,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  *   - textgrid and
  *   - image.
  *
- * These functions apply to @b any Evas object, whichever type they
+ * These functions apply to @b any Evas object, whatever type they
  * may have.
  *
  * @note The built-in types which are most used are rectangles, text
