@@ -1287,6 +1287,14 @@ struct _Evas_Font_Description
    Eina_Bool is_new : 1;
 };
 
+struct _Efl_Canvas_Output
+{
+   Eo *canvas;
+
+   void *info, *output;
+   Evas_Coord x, y, w, h;
+};
+
 struct _Evas_Object_Func
 {
    void (*free) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);

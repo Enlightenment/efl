@@ -5,15 +5,6 @@
 #include "evas_cs2_private.h"
 #endif
 
-typedef struct _Efl_Canvas_Output Efl_Canvas_Output;
-struct _Efl_Canvas_Output
-{
-   Eo *canvas;
-
-   void *info;/*, *context, *output;*/
-   Evas_Coord x, y, w, h;
-};
-
 static Evas_Public_Data *
 _efl_canvas_output_async_block(Efl_Canvas_Output *output)
 {
