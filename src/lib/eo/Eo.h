@@ -216,10 +216,22 @@ typedef void (*Efl_Del_Intercept) (Eo *obj_id);
  */
 typedef Eo Efl_Future;
 
+/**
+ * @typedef Efl_Event
+ * A parameter passed in event callbacks holding extra event parameters.
+ */
+typedef struct _Efl_Event Efl_Event;
+
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
 #include "efl_interface.eo.h"
 #define EO_CLASS EFL_OBJECT_CLASS
+
+struct _Efl_Event {
+   Efl_Object *object; /**< The object the event was called on. */
+   const Efl_Event_Description *desc; /**< The event description. */
+   void *info; /**< Extra event information passed by the event caller. */
+};
 
 /**
  * @addtogroup Eo_Debug_Information Eo's Debug information helper.
