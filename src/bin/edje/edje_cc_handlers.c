@@ -4914,9 +4914,22 @@ st_collections_group_inherit(void)
    cd = eina_list_data_get(eina_list_last(codes));
 
    cd->is_lua = cd2->is_lua;
-   cd->shared = STRDUP(cd2->shared);
-   cd->original = STRDUP(cd2->original);
-   script_override = EINA_TRUE;
+   if (cd2->shared)
+     {
+        if (cd->shared)
+          {
+             WRN("%s:%i. script block in group \"%s\" will be overwritten by inheriting "
+                 "from group \"%s\".", file_in, line - 1, pc->part, pc2->part);
+             free(cd->shared);
+          }
+        if (cd->original)
+          free(cd->original);
+
+        cd->shared = STRDUP(cd2->shared);
+        cd->original = STRDUP(cd2->original);
+
+        script_override = EINA_TRUE;
+     }
 
    EINA_LIST_FOREACH(cd2->programs, l, cp2)
      {
@@ -5267,8 +5280,10 @@ st_collections_group_program_source(void)
 static void
 ob_collections_group_script(void)
 {
+   Edje_Part_Collection *pc;
    Code *cd;
 
+   pc = eina_list_last_data_get(edje_collections);
    cd = eina_list_data_get(eina_list_last(codes));
 
    if (!is_verbatim()) track_verbatim(1);
@@ -5288,6 +5303,9 @@ ob_collections_group_script(void)
                        free(cd->shared);
                        free(cd->original);
                        script_override = EINA_FALSE;
+
+                       WRN("%s:%i. Inherited script block in group \"%s\" is redefined. "
+                           "This can break inherited edje programs.", file_in, line - 1, pc->part);
                     }
                   else
                     {
