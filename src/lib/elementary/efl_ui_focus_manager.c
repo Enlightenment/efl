@@ -916,6 +916,16 @@ _no_history_element(Eina_Hash *node_hash)
    return upper;
 }
 
+static void
+_get_middle(Evas_Object *obj, Eina_Vector2 *elem)
+{
+   Eina_Rectangle geom;
+
+   evas_object_geometry_get(obj, &geom.x, &geom.y, &geom.w, &geom.h);
+   elem->x = geom.x + geom.w/2;
+   elem->y = geom.y + geom.h/2;
+}
+
 static Node*
 _coords_movement(Efl_Ui_Focus_Manager_Data *pd, Node *upper, Efl_Ui_Focus_Direction direction)
 {
@@ -932,9 +942,30 @@ _coords_movement(Efl_Ui_Focus_Manager_Data *pd, Node *upper, Efl_Ui_Focus_Direct
           }
      }
 
-   //if we havent found anything in the history, just use the first partner ... we have to start somewhere
-   //FIXME maybe decide coordinate wise?
-   return eina_list_data_get(G(upper).directions[direction].partners);
+   //if we havent found anything in the history, use the widget with the smallest distance
+   {
+      Eina_List *lst = G(upper).directions[direction].partners;
+      Eina_List *n;
+      Node *node, *min = NULL;
+      Eina_Vector2 elem, other;
+      float min_distance = 0.0;
+
+
+      _get_middle(upper->focusable, &elem);
+
+      EINA_LIST_FOREACH(lst, n, node)
+        {
+           _get_middle(node->focusable, &other);
+           float tmp = eina_vector2_distance_get(&other, &elem);
+           if (!min || tmp < min_distance)
+             {
+                min = node;
+                min_distance = tmp;
+             }
+        }
+      candidate = min;
+   }
+   return candidate;
 }
 
 
