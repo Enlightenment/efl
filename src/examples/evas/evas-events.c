@@ -66,13 +66,13 @@ _object_focus_in_cb(void *data EINA_UNUSED,
                     Evas *e,
                     void *event_info)
 {
-   fprintf(stdout, "An object got focused: %s\n",
+   printf("An object got focused: %s\n",
            evas_object_name_get(event_info));
 
-   fprintf(stdout, "Let's recheck it: %s\n",
+   printf("Let's recheck it: %s\n",
            evas_object_name_get(evas_focus_get(e)));
 
-   fprintf(stdout, "And again: %s\n", evas_object_focus_get(event_info) ?
+   printf("And again: %s\n", evas_object_focus_get(event_info) ?
            "OK!" : "Oops, something is bad.");
 }
 
@@ -82,7 +82,7 @@ _render_flush_cb(void *data EINA_UNUSED,
                  Evas *e EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
-   fprintf(stdout, "Canvas is about to flush its rendering pipeline!\n");
+   printf("Canvas is about to flush its rendering pipeline!\n");
 }
 
 /* put some action in the canvas */
@@ -106,7 +106,7 @@ _resize_cb(void *data EINA_UNUSED)
 static Eina_Bool
 _thaw_cb(void *data EINA_UNUSED)
 {
-   fprintf(stdout, "Canvas was frozen %d times, now thawing.\n",
+   printf("Canvas was frozen %d times, now thawing.\n",
            evas_event_freeze_get(d.canvas));
    evas_event_thaw(d.canvas);
    return EINA_FALSE; /* do not re-issue the timer */
@@ -119,7 +119,7 @@ _on_mouse_in(void        *data EINA_UNUSED,
              Evas_Object *o EINA_UNUSED,
              void        *einfo EINA_UNUSED)
 {
-   fprintf(stdout, "Enlightenment logo has had the mouse in.\n");
+   printf("Enlightenment logo has had the mouse in.\n");
 }
 
 static void
@@ -128,7 +128,7 @@ _on_mouse_out(void        *data EINA_UNUSED,
               Evas_Object *o EINA_UNUSED,
               void        *einfo EINA_UNUSED)
 {
-   fprintf(stdout, "Enlightenment logo has had the mouse out.\n");
+   printf("Enlightenment logo has had the mouse out.\n");
 } /* mouse exits the object's area */
 
 /* examine the keys pressed */
@@ -141,8 +141,8 @@ _on_keydown(void        *data EINA_UNUSED,
    const Evas_Modifier *mods;
    Evas_Event_Key_Down *ev = einfo;
 
-   fprintf(stdout, "We've got key input: %s\n", ev->key);
-   fprintf(stdout, "It actually came from %s\n", d.focus ?
+   printf("We've got key input: %s\n", ev->key);
+   printf("It actually came from %s\n", d.focus ?
            "focus" : "key grab");
 
    if (strcmp(ev->key, "h") == 0) /* print help */
@@ -155,13 +155,13 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         if (d.resize_timer != NULL)
           {
-             fprintf(stdout, "Stopping animation timer\n");
+             printf("Stopping animation timer\n");
              ecore_timer_del(d.resize_timer);
              d.resize_timer = NULL;
           }
         else
           {
-             fprintf(stdout, "Re-issuing animation timer\n");
+             printf("Re-issuing animation timer\n");
              d.resize_timer = ecore_timer_add(2, _resize_cb, NULL);
           }
         return;
@@ -174,56 +174,56 @@ _on_keydown(void        *data EINA_UNUSED,
         Evas_Modifier_Mask mask =
           evas_key_modifier_mask_get(d.canvas, "Control");
 
-        fprintf(stdout, "Switching to %s for key input\n", d.focus ?
+        printf("Switching to %s for key input\n", d.focus ?
                 "key grabs" : "focus");
 
         if (d.focus)
           {
              evas_object_focus_set(d.bg, EINA_FALSE);
-             fprintf(stdout, "Focused object is now %s\n",
+             printf("Focused object is now %s\n",
                      evas_focus_get(d.canvas) ?
                      "still valid! Something went wrong." : "none.");
 
              ret = evas_object_key_grab(d.bg, "a", 0, 0, EINA_TRUE);
              if (!ret)
                {
-                  fprintf(stdout, "Something went wrong with key grabs.\n");
+                  printf("Something went wrong with key grabs.\n");
                   goto c_end;
                }
              ret = evas_object_key_grab(d.bg, "c", 0, 0, EINA_TRUE);
              if (!ret)
                {
-                  fprintf(stdout, "Something went wrong with key grabs.\n");
+                  printf("Something went wrong with key grabs.\n");
                   goto c_end;
                }
              ret = evas_object_key_grab(d.bg, "d", 0, 0, EINA_TRUE);
              if (!ret)
                {
-                  fprintf(stdout, "Something went wrong with key grabs.\n");
+                  printf("Something went wrong with key grabs.\n");
                   goto c_end;
                }
              ret = evas_object_key_grab(d.bg, "f", 0, 0, EINA_TRUE);
              if (!ret)
                {
-                  fprintf(stdout, "Something went wrong with key grabs.\n");
+                  printf("Something went wrong with key grabs.\n");
                   goto c_end;
                }
              ret = evas_object_key_grab(d.bg, "p", 0, 0, EINA_TRUE);
              if (!ret)
                {
-                  fprintf(stdout, "Something went wrong with key grabs.\n");
+                  printf("Something went wrong with key grabs.\n");
                   goto c_end;
                }
              ret = evas_object_key_grab(d.bg, "o", mask, 0, EINA_TRUE);
              if (!ret)
                {
-                  fprintf(stdout, "Something went wrong with key grabs.\n");
+                  printf("Something went wrong with key grabs.\n");
                   goto c_end;
                }
              ret = evas_object_key_grab(d.bg, "h", 0, 0, EINA_TRUE);
              if (!ret)
                {
-                  fprintf(stdout, "Something went wrong with key grabs.\n");
+                  printf("Something went wrong with key grabs.\n");
                   goto c_end;
                }
           }
@@ -248,7 +248,7 @@ c_end:
 
    if (strcmp(ev->key, "d") == 0) /* delete canvas' callbacks */
      {
-        fprintf(stdout, "Deleting canvas event callbacks\n");
+        printf("Deleting canvas event callbacks\n");
         evas_event_callback_del_full(evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                                      _render_flush_cb, NULL);
         evas_event_callback_del_full(
@@ -259,7 +259,7 @@ c_end:
 
    if (strcmp(ev->key, "f") == 0) /* freeze input for 3 seconds */
      {
-        fprintf(stdout, "Freezing input for 3 seconds\n");
+        printf("Freezing input for 3 seconds\n");
         evas_event_freeze(evas);
         d.freeze_timer = ecore_timer_add(3, _thaw_cb, NULL);
         return;
@@ -270,7 +270,7 @@ c_end:
      {
         Eina_Bool precise = evas_object_precise_is_inside_get(d.img);
 
-        fprintf(stdout, "Toggling precise point collision detection %s on"
+        printf("Toggling precise point collision detection %s on"
                         " Enlightenment logo\n", precise ? "off" : "on");
         evas_object_precise_is_inside_set(d.img, !precise);
 
@@ -283,7 +283,7 @@ c_end:
                                         * rectangle to the middle
                                         * of the canvas */
      {
-        fprintf(stdout, "Toggling obscured rectangle on canvas\n");
+        printf("Toggling obscured rectangle on canvas\n");
         if (!d.obscured)
           {
              int w, h;
@@ -309,7 +309,7 @@ c_end:
 
              EINA_LIST_FOREACH(updates, l, rect)
                {
-                  fprintf(stdout, "Rectangle (%d, %d, %d, %d) on canvas got a"
+                  printf("Rectangle (%d, %d, %d, %d) on canvas got a"
                                   " rendering update.\n", rect->x, rect->y,
                           rect->w,
                           rect->h);

@@ -58,7 +58,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, "commands are:\n"
+        printf("commands are:\n"
                         "\to - change clipper's opacity\n"
                         "\tr - toggle clipper's color between red and white\n"
                         "\tc - toggle clipper's clipping function\n"
@@ -80,7 +80,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_color_argb_premul(alpha, &r, &g, &b);
         evas_object_color_set(d.clipper, r, g, b, alpha);
 
-        fprintf(stdout, "Changing clipper's opacity: %d%%\n",
+        printf("Changing clipper's opacity: %d%%\n",
                 (int)((alpha / 255.0) * 100));
         return;
      }
@@ -90,19 +90,19 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         int alpha, r, g, b;
 
-        fprintf(stdout, "Changing clipper's color to");
+        printf("Changing clipper's color to");
 
         evas_object_color_get(d.clipper, &r, &g, &b, &alpha);
         evas_color_argb_unpremul(alpha, &r, &g, &b);
 
         if (g > 0)
           {
-             fprintf(stdout, "red\n");
+             printf("red\n");
              g = b = 0;
           }
         else
           {
-             fprintf(stdout, "white\n");
+             printf("white\n");
              g = b = 255;
           }
 
@@ -113,34 +113,34 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "c") == 0) /* toggle clipper's clipping function */
      {
-        fprintf(stdout, "Toggling clipping ");
+        printf("Toggling clipping ");
 
         if (evas_object_clip_get(d.img) == d.clipper)
           {
              evas_object_clip_unset(d.img);
-             fprintf(stdout, "off\n");
+             printf("off\n");
           }
         else
           {
              evas_object_clip_set(d.img, d.clipper);
-             fprintf(stdout, "on\n");
+             printf("on\n");
           }
         return;
      }
 
    if (strcmp(ev->key, "v") == 0) /* toggle clipper's visibility */
      {
-        fprintf(stdout, "Clipper is now ");
+        printf("Clipper is now ");
 
         if (evas_object_visible_get(d.clipper))
           {
              evas_object_hide(d.clipper);
-             fprintf(stdout, "hidden\n");
+             printf("hidden\n");
           }
         else
           {
              evas_object_show(d.clipper);
-             fprintf(stdout, "visible\n");
+             printf("visible\n");
           }
         return;
      }
@@ -190,7 +190,7 @@ main(void)
         evas_object_resize(d.img, WIDTH, HEIGHT);
         evas_object_show(d.img);
 
-        fprintf(stdout, "Image object added, type is: %s\n",
+        printf("Image object added, type is: %s\n",
                 evas_object_type_get(d.img));
      }
 

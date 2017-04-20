@@ -133,7 +133,7 @@ _on_preloaded(void        *data EINA_UNUSED,
               Evas_Object *obj EINA_UNUSED,
               void        *event_info EINA_UNUSED)
 {
-    fprintf(stdout, "Image has been pre-loaded!\n");
+    printf("Image has been pre-loaded!\n");
 }
 
 static void
@@ -171,7 +171,7 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         int stride = evas_object_image_stride_get(d.noise_img);
 
-        fprintf(stdout, "Image has row stride value of %d, which accounts"
+        printf("Image has row stride value of %d, which accounts"
                         " for %d pixels\n", stride, stride / 4);
 
         return;
@@ -187,7 +187,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_image_source_set(d.proxy_img, source);
 
-        fprintf(stdout, "Proxy image's source changed\n");
+        printf("Proxy image's source changed\n");
 
         return;
      }
@@ -198,7 +198,7 @@ _on_keydown(void        *data EINA_UNUSED,
           fprintf(stderr, "Cannot save image to '%s' (flags '%s')\n",
                   file_path, quality_str);
         else
-          fprintf(stdout, "Image saved to '%s' (flags '%s'), check it out with "
+          printf("Image saved to '%s' (flags '%s'), check it out with "
                           "an image viewer\n", file_path, quality_str);
 
         return;
@@ -286,7 +286,7 @@ main(void)
    evas_object_move(d.noise_img, (WIDTH * 5) / 8, HEIGHT / 8);
    evas_object_resize(d.noise_img, WIDTH / 4, HEIGHT / 4);
    evas_object_show(d.noise_img);
-   fprintf(stdout, "Creating noise image with size %d, %d\n",
+   printf("Creating noise image with size %d, %d\n",
            WIDTH / 4, HEIGHT / 4);
 
    d.text_obj = evas_object_textblock_add(d.evas);

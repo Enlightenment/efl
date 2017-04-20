@@ -130,17 +130,17 @@ _cb_collision(void *data EINA_UNUSED, const Efl_Event *event)
 static void
 _show_help()
 {
-   fprintf(stdout, "Press 'w'/'s' key to move up/down object\n");
-   fprintf(stdout, "Press 'a'/'d' key to move left/right object\n");
-   fprintf(stdout, "Press 'q'/'e' key to move near/far object\n");
-   fprintf(stdout, "Cude and model can be moved.\n");
-   fprintf(stdout, "Cube detects intersection with model, sphere, cone\n");
-   fprintf(stdout, "Model detects intersection with sphere\n");
-   fprintf(stdout, "Press '1'/'2' key to change kind of node - billboard/normal model\n");
-   fprintf(stdout, "Press '3'/'4' key to enable/disable post render with anti-aliasing\n");
-   fprintf(stdout, "Press '5'/'6' key to enable/disable shadow effect\n");
-   fprintf(stdout, "Press Up/Down key to change position of camera\n");
-   fprintf(stdout, "Press 'i' key to return initial view of scene\n");
+   printf("Press 'w'/'s' key to move up/down object\n");
+   printf("Press 'a'/'d' key to move left/right object\n");
+   printf("Press 'q'/'e' key to move near/far object\n");
+   printf("Cude and model can be moved.\n");
+   printf("Cube detects intersection with model, sphere, cone\n");
+   printf("Model detects intersection with sphere\n");
+   printf("Press '1'/'2' key to change kind of node - billboard/normal model\n");
+   printf("Press '3'/'4' key to enable/disable post render with anti-aliasing\n");
+   printf("Press '5'/'6' key to enable/disable shadow effect\n");
+   printf("Press Up/Down key to change position of camera\n");
+   printf("Press 'i' key to return initial view of scene\n");
 }
 
 static Eina_Bool

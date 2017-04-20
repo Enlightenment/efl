@@ -65,12 +65,12 @@ Evas_Canvas3D_Frustum_Mode key = EVAS_CANVAS3D_FRUSTUM_MODE_AABB;
 static void
 _show_help()
 {
-   fprintf(stdout, "Press 'w'/'s' key to move far frustum plane from/to the camera\n");
-   fprintf(stdout, "Press 't'/'g' key to move near frustum plane from/to the camera\n");
-   fprintf(stdout, "Press '1'/'2' key to set camera to the first/second position\n");
-   fprintf(stdout, "Press '3'/'4'/'5' key to set bounding sphere/aabb/central point mode\n");
-   fprintf(stdout, "Press 'i', 'k', 'j', 'l', 'u' and 'o' keys to move mesh node in 3D\n");
-   fprintf(stdout, "Press 'z', 'x', 'c', 'Z', 'X' and 'C' keys to change scaling constants of mesh\n");
+   printf("Press 'w'/'s' key to move far frustum plane from/to the camera\n");
+   printf("Press 't'/'g' key to move near frustum plane from/to the camera\n");
+   printf("Press '1'/'2' key to set camera to the first/second position\n");
+   printf("Press '3'/'4'/'5' key to set bounding sphere/aabb/central point mode\n");
+   printf("Press 'i', 'k', 'j', 'l', 'u' and 'o' keys to move mesh node in 3D\n");
+   printf("Press 'z', 'x', 'c', 'Z', 'X' and 'C' keys to change scaling constants of mesh\n");
 }
 
 static void
@@ -246,13 +246,13 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void 
      {
         evas_canvas3d_node_position_set(scene->camera_node, 0.0, 0.0, 300.0);
         evas_canvas3d_node_look_at_set(scene->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
-        fprintf(stdout, "Changed position and view of camera\n");
+        printf("Changed position and view of camera\n");
      }
    else if (!strcmp("2", ev->key))
      {
         evas_canvas3d_node_position_set(scene->camera_node, 300.0, 300.0, 300.0);
         evas_canvas3d_node_look_at_set(scene->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
-        fprintf(stdout, "Changed position and view of camera\n");
+        printf("Changed position and view of camera\n");
      }
    else if (!strcmp("3", ev->key))
      {
@@ -273,7 +273,7 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void 
 
    _redraw_bounding_object(data);
    frustum = evas_canvas3d_camera_node_visible_get(scene->camera, scene->camera_node, scene->mesh_node_model, key);
-   fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+   printf("far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
 }
 
 static void

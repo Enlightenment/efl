@@ -193,7 +193,7 @@ _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
         _recalculate_position();
      }
    else
-     fprintf(stdout, "Down, Up for position of camera; Left, Right for scale of each node");
+     printf("Down, Up for position of camera; Left, Right for scale of each node");
 }
 static void
 _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info)
@@ -215,7 +215,7 @@ _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA
         diff_sec = ((float)time) / CLOCKS_PER_SEC / 10;
         if (flag)
           {
-             fprintf(stdout, "Boom! Time expended for color pick: %2.7f .\n", diff_sec);
+             printf("Boom! Time expended for color pick: %2.7f .\n", diff_sec);
              evas_canvas3d_node_scale_set(n, VEC_3(SMALL_SCALE));
           }
      }
@@ -227,7 +227,7 @@ _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA
         diff_sec = ((float)time) / CLOCKS_PER_SEC / 10;
         if (flag)
           {
-             fprintf(stdout, "Boom! Time expended for geometry pick: %2.7f .\n", diff_sec);
+             printf("Boom! Time expended for geometry pick: %2.7f .\n", diff_sec);
              evas_canvas3d_node_scale_set(n, VEC_3(BIG_SCALE));
           }
       }
@@ -356,7 +356,7 @@ int main(int argc, char **argv)
    if (!precision) precision = 30;
    if (!texture) texture = (char *)image_path;
 
-   fprintf(stdout, "row - %d, col - %d, precision of spheres - %d, texture - %s\n",
+   printf("row - %d, col - %d, precision of spheres - %d, texture - %s\n",
            row, col, precision, texture);
 
    ecore_evas = ecore_evas_new("opengl_x11", 10, 10, WIDTH, HEIGHT, NULL);

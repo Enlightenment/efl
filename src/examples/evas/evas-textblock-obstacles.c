@@ -125,7 +125,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
 
@@ -134,7 +134,7 @@ _on_keydown(void        *data EINA_UNUSED,
         (d.t_data.obs_ptr)++;
         POINTER_CYCLE(d.t_data.obs_ptr, d.t_data.obs);
 
-        fprintf(stdout, "Now controlling obstacle: %p\n", *d.t_data.obs_ptr);
+        printf("Now controlling obstacle: %p\n", *d.t_data.obs_ptr);
 
         return;
      }
@@ -146,7 +146,7 @@ _on_keydown(void        *data EINA_UNUSED,
            evas_object_hide(obj);
         else
            evas_object_show(obj);
-        fprintf(stdout, "Show/hide toggle for obstacle %p\n",
+        printf("Show/hide toggle for obstacle %p\n",
               *d.t_data.obs_ptr);
         evas_object_textblock_obstacles_update(d.text);
 
@@ -164,7 +164,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_textblock_obstacles_update(d.text);
 
-        fprintf(stdout, "Changing obstacle size to: %d,%d\n", *d.t_data.obs_size_ptr, *d.t_data.obs_size_ptr);
+        printf("Changing obstacle size to: %d,%d\n", *d.t_data.obs_size_ptr, *d.t_data.obs_size_ptr);
 
         return;
      }
@@ -177,12 +177,12 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_move(*d.t_data.obs_ptr, x, y);
         evas_object_textblock_obstacles_update(d.text);
 
-        fprintf(stdout, "Changing obstacles position\n");
+        printf("Changing obstacles position\n");
         evas_object_move(*d.t_data.obs_ptr, x, y);
         evas_object_geometry_get(d.t_data.obs[0], &rx, &ry, NULL, NULL);
         evas_object_geometry_get(d.t_data.obs[1], &gx, &gy, NULL, NULL);
-        fprintf(stdout, "Obstacle #1 (red)  : [%d,%d]\n", rx, ry);
-        fprintf(stdout, "Obstacle #2 (green): [%d,%d]\n", gx, gy);
+        printf("Obstacle #1 (red)  : [%d,%d]\n", rx, ry);
+        printf("Obstacle #2 (green): [%d,%d]\n", gx, gy);
 
         return;
      }
@@ -190,7 +190,7 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         (d.t_data.wrap_ptr)++;
         POINTER_CYCLE(d.t_data.wrap_ptr, d.t_data.wrap);
-        fprintf(stdout, "Changing wrap mode to: %s\n", *d.t_data.wrap_ptr);
+        printf("Changing wrap mode to: %s\n", *d.t_data.wrap_ptr);
         _style_set(*d.t_data.wrap_ptr);
         evas_object_textblock_obstacles_update(d.text);
 
@@ -293,7 +293,7 @@ main(void)
    evas_object_show(d.t_data.obs[0]);
    evas_object_show(d.t_data.obs[1]);
 
-   fprintf(stdout, commands);
+   printf(commands);
    ecore_main_loop_begin();
 
    evas_textblock_style_free(d.st);

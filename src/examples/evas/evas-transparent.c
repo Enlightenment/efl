@@ -47,7 +47,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, "%s",  commands);
+        printf("%s",  commands);
         return;
      }
 
@@ -55,7 +55,7 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         ecore_evas_alpha_set(d.ee, EINA_TRUE);
 
-        fprintf(stdout, "turn on alpha\n");
+        printf("turn on alpha\n");
         return;
      }
 
@@ -63,7 +63,7 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         ecore_evas_alpha_set(d.ee, EINA_FALSE);
 
-        fprintf(stdout, "turn off alpha\n");
+        printf("turn off alpha\n");
         return;
      }
 }

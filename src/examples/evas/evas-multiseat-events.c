@@ -36,7 +36,7 @@ _canvas_focus_in_cb(void *data EINA_UNUSED, const Efl_Event *event)
    seat = efl_input_device_get(ev);
    focused = efl_input_focus_object_get(ev);
 
-   fprintf(stdout, "Object %s was focused by seat %s\n",
+   printf("Object %s was focused by seat %s\n",
            evas_object_name_get(focused),
            efl_input_device_name_get(seat));
 }
@@ -50,7 +50,7 @@ _hold_cb(void *data EINA_UNUSED, const Efl_Event *event)
    ev = event->info;
    seat = efl_input_device_seat_get(efl_input_device_get(ev));
 
-   fprintf(stdout, "Hold %s at object %s from seat %s\n",
+   printf("Hold %s at object %s from seat %s\n",
            efl_input_hold_get(ev) ? "on" : "off",
            evas_object_name_get(event->object),
            efl_input_device_name_get(seat));
@@ -65,7 +65,7 @@ _focus_cb(void *data EINA_UNUSED, const Efl_Event *event)
    ev = event->info;
    seat = efl_input_device_get(ev);
 
-   fprintf(stdout, "Focus %s at object %s from seat %s\n",
+   printf("Focus %s at object %s from seat %s\n",
            event->desc == EFL_EVENT_FOCUS_IN ? "in" : "out",
            evas_object_name_get(event->object),
            efl_input_device_name_get(seat));
@@ -80,7 +80,7 @@ _pointer_in_out_cb(void *data EINA_UNUSED, const Efl_Event *event)
    ev = event->info;
    seat = efl_input_device_seat_get(efl_input_device_get(ev));
 
-   fprintf(stdout, "Pointer %s at object %s from seat %s\n",
+   printf("Pointer %s at object %s from seat %s\n",
            event->desc == EFL_EVENT_POINTER_IN ? "in" : "out",
            evas_object_name_get(event->object),
            efl_input_device_name_get(seat));
@@ -111,7 +111,7 @@ _pointer_down_cb(void *data EINA_UNUSED, const Efl_Event *event)
         efl_canvas_object_seat_focus_add(event->object, seat);
      }
 
-   fprintf(stdout, "%s at object %s from seat %s\n", buf,
+   printf("%s at object %s from seat %s\n", buf,
            evas_object_name_get(event->object),
            efl_input_device_name_get(seat));
 }
@@ -125,7 +125,7 @@ _pointer_up_cb(void *data EINA_UNUSED, const Efl_Event *event)
    ev = event->info;
    seat = efl_input_device_seat_get(efl_input_device_get(ev));
 
-   fprintf(stdout, "Pointer button %i up at object %s from seat %s\n",
+   printf("Pointer button %i up at object %s from seat %s\n",
            efl_input_pointer_button_get(ev),
            evas_object_name_get(event->object),
            efl_input_device_name_get(seat));
@@ -140,7 +140,7 @@ _pointer_move_cb(void *data EINA_UNUSED, const Efl_Event *event)
    ev = event->info;
    seat = efl_input_device_seat_get(efl_input_device_get(ev));
 
-   fprintf(stdout, "Pointer moved to %1.f,%1.f at object %s from seat %s\n",
+   printf("Pointer moved to %1.f,%1.f at object %s from seat %s\n",
            efl_input_pointer_value_get(ev, EFL_INPUT_VALUE_X),
            efl_input_pointer_value_get(ev, EFL_INPUT_VALUE_Y),
            evas_object_name_get(event->object),
@@ -156,7 +156,7 @@ _pointer_wheel_cb(void *data EINA_UNUSED, const Efl_Event *event)
    ev = event->info;
    seat = efl_input_device_seat_get(efl_input_device_get(ev));
 
-   fprintf(stdout, "Wheel: '%i,%i' on object %s from seat %s\n",
+   printf("Wheel: '%i,%i' on object %s from seat %s\n",
            efl_input_pointer_wheel_direction_get(ev),
            efl_input_pointer_wheel_delta_get(ev),
            evas_object_name_get(event->object),
@@ -174,13 +174,13 @@ _key_down_cb(void *data EINA_UNUSED, const Efl_Event *event)
    mods = evas_key_modifier_get(evas_object_evas_get(event->object));
    seat = efl_input_device_seat_get(efl_input_device_get(ev));
 
-   fprintf(stdout, "Key down: '%s' on object %s from seat %s\n",
+   printf("Key down: '%s' on object %s from seat %s\n",
            efl_input_key_name_get(ev),
            evas_object_name_get(event->object),
            efl_input_device_name_get(seat));
 
    if (evas_seat_key_modifier_is_set(mods, "Control", seat))
-     fprintf(stdout, "Ctrl is pressed by seat %s\n",
+     printf("Ctrl is pressed by seat %s\n",
              efl_input_device_name_get(seat));
 }
 
@@ -193,7 +193,7 @@ _key_up_cb(void *data EINA_UNUSED, const Efl_Event *event)
    ev = event->info;
    seat = efl_input_device_seat_get(efl_input_device_get(ev));
 
-   fprintf(stdout, "Key up: '%s' on object %s from seat %s\n",
+   printf("Key up: '%s' on object %s from seat %s\n",
            efl_input_key_name_get(ev),
            evas_object_name_get(event->object),
            efl_input_device_name_get(seat));
@@ -207,7 +207,7 @@ _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
    if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
      return;
 
-   fprintf(stdout, "The seat '%s' - description: '%s' was '%s'\n",
+   printf("The seat '%s' - description: '%s' was '%s'\n",
            efl_input_device_name_get(dev),
            efl_input_device_description_get(dev),
            event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED ? "added" : "removed");
@@ -280,7 +280,7 @@ main(void)
    EINA_LIST_FOREACH(devices, l, dev)
      {
         if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
-          fprintf(stdout, "The seat '%s' - description: '%s' was 'added'\n",
+          printf("The seat '%s' - description: '%s' was 'added'\n",
                   efl_input_device_name_get(dev),
                   efl_input_device_description_get(dev));
      }

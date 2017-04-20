@@ -92,7 +92,7 @@ _on_keydown(void        *data EINA_UNUSED,
    if (evas_key_modifier_is_set(mods, "Shift") &&
        strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, "commands are:\n"
+        printf("commands are:\n"
                         "\tc - cycle aspect control on object\n"
                         "\th - change horizontal aspect component\n"
                         "\tv - change vertical aspect component\n"
@@ -108,7 +108,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_size_hint_aspect_get(d.rect, &aspect, &w, &h);
 
-        fprintf(stdout, "Object has aspect %s, with horizontal compontent %d"
+        printf("Object has aspect %s, with horizontal compontent %d"
                         " and vertical compontent %d\n",
                 _get_aspect_name(aspect), w, h);
 
@@ -126,7 +126,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_size_hint_aspect_set(d.rect, aspect, w, h);
 
-        fprintf(stdout, "Changing aspect control to %s\n",
+        printf("Changing aspect control to %s\n",
                 _get_aspect_name(aspect));
 
         return;
@@ -143,7 +143,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_size_hint_aspect_set(d.rect, aspect, w, h);
 
-        fprintf(stdout, "Changing horizontal aspect component to %d\n", w);
+        printf("Changing horizontal aspect component to %d\n", w);
 
         return;
      }
@@ -159,7 +159,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_size_hint_aspect_set(d.rect, aspect, w, h);
 
-        fprintf(stdout, "Changing vertical aspect component to %d\n", h);
+        printf("Changing vertical aspect component to %d\n", h);
 
         return;
      }

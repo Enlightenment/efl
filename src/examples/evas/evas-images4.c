@@ -89,7 +89,7 @@ _on_keydown(void        *data EINA_UNUSED,
           fprintf(stderr, "Cannot save image to '%s' (flags '%s')\n",
                   file_path, quality_str);
         else
-          fprintf(stdout, "Image saved to '%s' (flags '%s'), check it out with "
+          printf("Image saved to '%s' (flags '%s'), check it out with "
                           "an image viewer\n", file_path, quality_str);
 
         return;
@@ -100,7 +100,7 @@ _on_keydown(void        *data EINA_UNUSED,
         Evas_Coord w, h;
 
         evas_object_image_size_get(d.img, &w, &h);
-        fprintf(stdout, "Image has size set to: w=%d, h=%d\n", w, h);
+        printf("Image has size set to: w=%d, h=%d\n", w, h);
         return;
      }
 
@@ -108,7 +108,7 @@ _on_keydown(void        *data EINA_UNUSED,
    if (key_val >= 0 && key_val <= 7)
      {
         evas_object_image_orient_set(d.img, key_val);
-        fprintf(stdout, "Set %i and got %i\n", key_val,
+        printf("Set %i and got %i\n", key_val,
                 evas_object_image_orient_get(d.img));
 
         return;
@@ -152,7 +152,7 @@ main(void)
      }
    else
      {
-        fprintf(stdout, 
+        printf(
                 "loaded image '%s' with succes! error string is \"%s\"\n",
                 img_path, evas_load_error_str(err));
 

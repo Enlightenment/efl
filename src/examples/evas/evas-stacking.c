@@ -66,7 +66,7 @@ _on_mouse_down(void        *data EINA_UNUSED,
                Evas_Object *o,
                void        *einfo EINA_UNUSED)
 {
-   fprintf(stdout, "Mouse down on rectangle %s!\n", _name_get(o));
+   printf("Mouse down on rectangle %s!\n", _name_get(o));
 }
 
 /* here just to keep our example's window size and background image's
@@ -93,7 +93,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0)  /* print help */
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
 
@@ -103,24 +103,24 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         Evas_Object *rect;
 
-        fprintf(stdout, "Order of stacking, from top to bottom, is: ");
+        printf("Order of stacking, from top to bottom, is: ");
 
         rect = evas_object_top_get(evas);
-        fprintf(stdout, "%s", _name_get(rect));
+        printf("%s", _name_get(rect));
 
         rect = evas_object_below_get(rect);
         while (rect)
           {
-             fprintf(stdout, ", %s", _name_get(rect));
+             printf(", %s", _name_get(rect));
              rect = evas_object_below_get(rect);
           }
 
-        fprintf(stdout, ".\n");
+        printf(".\n");
 
-        fprintf(stdout, "Current target rectangle is %s\n",
+        printf("Current target rectangle is %s\n",
                 _name_get(d.rects[d.cur_rect]));
 
-        fprintf(stdout, "Background rectangle's layer is %d\n",
+        printf("Background rectangle's layer is %d\n",
                 evas_object_layer_get(d.bg));
 
         return;
@@ -131,7 +131,7 @@ _on_keydown(void        *data EINA_UNUSED,
         d.cur_layer = (d.cur_layer + 1) % 3;
         evas_object_layer_set(d.bg, d.layers[d.cur_layer]);
 
-        fprintf(stdout, "Changing background rectangle's layer to %d\n",
+        printf("Changing background rectangle's layer to %d\n",
                 d.layers[d.cur_layer]);
         return;
      }
@@ -140,7 +140,7 @@ _on_keydown(void        *data EINA_UNUSED,
      {
         d.cur_rect = (d.cur_rect + 1) % 3;
 
-        fprintf(stdout, "Changing target rectangle to the %s one\n",
+        printf("Changing target rectangle to the %s one\n",
                 _name_get(d.rects[d.cur_rect]));
         return;
      }
@@ -151,11 +151,11 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_raise(d.rects[d.cur_rect]);
 
-        fprintf(stdout, "%s rectangle was re-stacked to the top if its layer\n",
+        printf("%s rectangle was re-stacked to the top if its layer\n",
                 name);
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
-        fprintf(stdout, "Below of %s rect is %s\n", name,
+        printf("Below of %s rect is %s\n", name,
                 neighbour ? _name_get(neighbour) : "no object");
         return;
      }
@@ -166,12 +166,12 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_lower(d.rects[d.cur_rect]);
 
-        fprintf(stdout,
+        printf(
                 "%s rectangle was re-stacked to the bottom if its layer\n",
                 name);
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
-        fprintf(stdout, "Below of %s rect is %s\n", name,
+        printf("Below of %s rect is %s\n", name,
                 neighbour ? _name_get(neighbour) : "no object");
         return;
      }
@@ -182,7 +182,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_pass_events_set(d.rects[d.cur_rect], !pass);
 
-        fprintf(stdout, "%s rectangle is now set to%s pass (ignore) events\n",
+        printf("%s rectangle is now set to%s pass (ignore) events\n",
                 name, pass ? " NOT" : "");
 
         return;
@@ -194,7 +194,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_repeat_events_set(d.rects[d.cur_rect], !repeat);
 
-        fprintf(stdout, "%s rectangle is now set to%s repeat events\n",
+        printf("%s rectangle is now set to%s repeat events\n",
                 name, repeat ? " NOT" : "");
 
         return;
@@ -210,14 +210,14 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_stack_above(d.rects[d.cur_rect], neighbour);
 
-        fprintf(stdout, "%s rectangle was re-stacked one level above\n", name);
+        printf("%s rectangle was re-stacked one level above\n", name);
 
         neighbour = evas_object_above_get(d.rects[d.cur_rect]);
-        fprintf(stdout, "Above of %s rect is %s\n", name,
+        printf("Above of %s rect is %s\n", name,
                 neighbour ? _name_get(neighbour) : "no object");
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
-        fprintf(stdout, "Below of %s rect is %s\n", name,
+        printf("Below of %s rect is %s\n", name,
                 neighbour ? _name_get(neighbour) : "no object");
         return;
      }
@@ -232,15 +232,15 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_stack_below(d.rects[d.cur_rect], neighbour);
 
-        fprintf(stdout, "%s rectangle was re-stacked one level below\n", name);
+        printf("%s rectangle was re-stacked one level below\n", name);
 
         neighbour = evas_object_above_get(d.rects[d.cur_rect]);
-        fprintf(stdout, "Above of %s rect is %s\n", name,
+        printf("Above of %s rect is %s\n", name,
                 neighbour ? _name_get(neighbour) : "no object");
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
 
-        fprintf(stdout, "Below of %s rect is %s\n", name,
+        printf("Below of %s rect is %s\n", name,
                 neighbour ? _name_get(neighbour) : "no object");
         return;
      }
@@ -322,7 +322,7 @@ main(void)
    evas_object_event_callback_add(
      d.rects[0], EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, NULL);
 
-   fprintf(stdout, commands);
+   printf(commands);
    ecore_main_loop_begin();
 
    ecore_evas_shutdown();
