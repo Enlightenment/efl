@@ -2565,4 +2565,8 @@ evas_object_size_hint_display_mode_get(const Evas_Object *obj)
    return efl_gfx_size_hint_display_mode_get(obj);
 }
 
+#define EFL_CANVAS_OBJECT_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_canvas_object_efl_object_event_callback_legacy_call), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_call, _efl_canvas_object_efl_object_event_callback_call)
+
 #include "canvas/efl_canvas_object.eo.c"

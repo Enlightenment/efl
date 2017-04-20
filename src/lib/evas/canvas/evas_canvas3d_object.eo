@@ -67,8 +67,6 @@ class Evas.Canvas3D.Object (Efl.Object)
 
    implements {
       Efl.Object.constructor;
-      Efl.Object.event_callback_priority_add;
-      Efl.Object.event_callback_del;
       Efl.Object.provider_find;
    }
    events {

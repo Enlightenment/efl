@@ -94,4 +94,8 @@ _evas_canvas3d_object_efl_object_event_callback_del(Eo *obj, Evas_Canvas3D_Objec
    return r;
 }
 
+#define EVAS_CANVAS3D_OBJECT_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _evas_canvas3d_object_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_del, _evas_canvas3d_object_efl_object_event_callback_del)
+
 #include "canvas/evas_canvas3d_object.eo.c"

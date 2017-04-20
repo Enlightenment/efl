@@ -234,6 +234,92 @@ struct _Efl_Event {
 };
 
 /**
+ * @brief Add a callback for an event with a specific priority.
+ *
+ * callbacks of the same priority are called in reverse order of creation.
+ *
+ * A callback is only executed on events emitted after this call finished.
+ *
+ * @param[in] desc The description of the event to listen to
+ * @param[in] priority The priority of the callback
+ * @param[in] cb the callback to call
+ * @param[in] data additional data to pass to the callback
+ *
+ * @return Return @c true when the callback has been successfully added.
+ */
+EOAPI Eina_Bool efl_event_callback_priority_add(Eo *obj, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb cb, const void *data);
+
+/**
+ * @brief Delete a callback with a specific data associated to it for an event.
+ *
+ * The callback will never be emitted again after this call, even if a event
+ * emission is going on.
+ *
+ * @param[in] desc The description of the event to listen to
+ * @param[in] func The callback to delete
+ * @param[in] user_data The data to compare
+ *
+ * @return Return @c true when the callback has been successfully removed.
+ */
+EOAPI Eina_Bool efl_event_callback_del(Eo *obj, const Efl_Event_Description *desc, Efl_Event_Cb func, const void *user_data);
+
+/**
+ * @brief Add an array of callbacks created by @ref EFL_CALLBACKS_ARRAY_DEFINE
+ * for an event with a specific priority. The array need to be sorted with @ref
+ * efl_callbacks_cmp if you are not using the @ref EFL_CALLBACKS_ARRAY_DEFINE
+ * macro.
+ *
+ * callbacks of the same priority are called in reverse order of creation.
+ *
+ * A callback from the array is only executed on events emitted  after this
+ * call finished.
+ *
+ * @param[in] array An #Efl_Callback_Array_Item of events to listen to
+ * @param[in] priority The priority of the callback
+ * @param[in] data Additional data to pass to the callback
+ *
+ * @return Return @c true when the callback has been successfully added.
+ */
+EOAPI Eina_Bool efl_event_callback_array_priority_add(Eo *obj, const Efl_Callback_Array_Item *array, Efl_Callback_Priority priority, const void *data);
+
+/**
+ * @brief Del a callback array with a specific data associated to it for an
+ * event. The callbacks from the array will never be emitted again after this
+ * call, even if a event emission is going on.
+ *
+ * @param[in] array An #Efl_Callback_Array_Item of events to listen to
+ * @param[in] user_data The data to compare
+ *
+ * @return Return @c true when the callback has been successfully removed.
+ */
+EOAPI Eina_Bool efl_event_callback_array_del(Eo *obj, const Efl_Callback_Array_Item *array, const void *user_data);
+
+/**
+ * @brief Call the callbacks for an event of an object.
+ *
+ * @param[in] desc The description of the event to call
+ * @param[in] event_info Extra event info to pass to the callbacks
+ *
+ * @return @c false if one of the callbacks aborted the call, @c true otherwise
+ */
+EOAPI Eina_Bool efl_event_callback_call(Eo *obj, const Efl_Event_Description *desc, void *event_info);
+
+/**
+ * @brief Call the callbacks for an event of an object.
+ *
+ * Like @ref efl_event_callback_call, but also call legacy smart callbacks that
+ * have the same name of the given event.
+ *
+ * @param[in] desc The description of the event to call
+ * @param[in] event_info Extra event info to pass to the callbacks
+ *
+ * @return @c false if one of the callbacks aborted the call, @c true otherwise
+ *
+ * @since 1.19
+ */
+EOAPI Eina_Bool efl_event_callback_legacy_call(Eo *obj, const Efl_Event_Description *desc, void *event_info);
+
+/**
  * @addtogroup Eo_Debug_Information Eo's Debug information helper.
  * @{
  */

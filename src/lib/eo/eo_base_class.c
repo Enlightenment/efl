@@ -1219,6 +1219,12 @@ err:
    return EINA_FALSE;
 }
 
+EOAPI EFL_FUNC_BODYV(efl_event_callback_priority_add,
+                     Eina_Bool, 0, EFL_FUNC_CALL(desc, priority, cb, data),
+                     const Efl_Event_Description *desc,
+                     Efl_Callback_Priority priority,
+                     Efl_Event_Cb cb, const void *data);
+
 static void
 _efl_object_event_callback_clean(Eo *obj, Efl_Object_Data *pd,
                                  const Efl_Callback_Array_Item *array,
@@ -1261,6 +1267,11 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
    DBG("Callback of object %p with function %p and data %p not found.", obj, func, user_data);
    return EINA_FALSE;
 }
+
+EOAPI EFL_FUNC_BODYV(efl_event_callback_del,
+                     Eina_Bool, 0, EFL_FUNC_CALL(desc, func, user_data),
+                     const Efl_Event_Description *desc,
+                     Efl_Event_Cb func, const void *user_data);
 
 EOLIAN static Eina_Bool
 _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
@@ -1314,6 +1325,11 @@ err:
    return EINA_FALSE;
 }
 
+EOAPI EFL_FUNC_BODYV(efl_event_callback_array_priority_add,
+                     Eina_Bool, 0, EFL_FUNC_CALL(array, priority, data),
+                     const Efl_Callback_Array_Item *array,
+                     Efl_Callback_Priority priority, const void *data);
+
 EOLIAN static Eina_Bool
 _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
                                      const Efl_Callback_Array_Item *array,
@@ -1338,6 +1354,11 @@ _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
    DBG("Callback of object %p with function array %p and data %p not found.", obj, array, user_data);
    return EINA_FALSE;
 }
+
+EOAPI EFL_FUNC_BODYV(efl_event_callback_array_del,
+                     Eina_Bool, 0, EFL_FUNC_CALL(array, user_data),
+                     const Efl_Callback_Array_Item *array,
+                     const void *user_data);
 
 static Eina_Bool
 _cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b, Eina_Bool legacy_compare)
@@ -1506,6 +1527,10 @@ _efl_object_event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    return _event_callback_call(obj_id, pd, desc, event_info, EINA_FALSE);
 }
 
+EOAPI EFL_FUNC_BODYV(efl_event_callback_call,
+                     Eina_Bool, 0, EFL_FUNC_CALL(desc, event_info),
+                     const Efl_Event_Description *desc, void *event_info);
+
 EOLIAN static Eina_Bool
 _efl_object_event_callback_legacy_call(Eo *obj_id, Efl_Object_Data *pd,
             const Efl_Event_Description *desc,
@@ -1513,6 +1538,10 @@ _efl_object_event_callback_legacy_call(Eo *obj_id, Efl_Object_Data *pd,
 {
    return _event_callback_call(obj_id, pd, desc, event_info, EINA_TRUE);
 }
+
+EOAPI EFL_FUNC_BODYV(efl_event_callback_legacy_call,
+                     Eina_Bool, 0, EFL_FUNC_CALL(desc, event_info),
+                     const Efl_Event_Description *desc, void *event_info);
 
 EOLIAN static void
 _efl_object_event_callback_stop(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
@@ -1932,5 +1961,13 @@ _efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *li
    ext->futures = eina_list_append(ext->futures, link);
    return !!efl_future_then(link, _efl_object_future_link_tracking_end, _efl_object_future_link_tracking_end, NULL, obj);
 }
+
+#define EFL_OBJECT_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_del, _efl_object_event_callback_del), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _efl_object_event_callback_array_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_del, _efl_object_event_callback_array_del), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_call, _efl_object_event_callback_call), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_object_event_callback_legacy_call)
 
 #include "efl_object.eo.c"
