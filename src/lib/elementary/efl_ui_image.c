@@ -382,7 +382,10 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread)
                   if (ok)
                     {
                        if (sd->edje)
-                         ok = edje_object_mmap_set(sd->img, f, key);
+                         {
+                            _prev_img_del(sd);
+                            ok = edje_object_mmap_set(sd->img, f, key);
+                         }
                        else
                          ok = _efl_ui_image_smart_internal_file_set
                            (sd->self, sd, file, f, key);
@@ -904,7 +907,9 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
         return EINA_FALSE;
      }
 
-   if (sd->preload_status != EFL_UI_IMAGE_PRELOAD_DISABLED)
+   if (sd->preload_status == EFL_UI_IMAGE_PRELOAD_DISABLED)
+     _prev_img_del(sd);
+   else
      {
         evas_object_hide(sd->img);
         sd->preload_status = EFL_UI_IMAGE_PRELOADING;
@@ -1989,8 +1994,13 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
    evas_object_image_memfile_set
      (sd->img, (void *)img, size, (char *)format, (char *)key);
 
-   sd->preload_status = EFL_UI_IMAGE_PRELOADING;
-   evas_object_image_preload(sd->img, EINA_FALSE);
+   if (sd->preload_status == EFL_UI_IMAGE_PRELOAD_DISABLED)
+     _prev_img_del(sd);
+   else
+     {
+        sd->preload_status = EFL_UI_IMAGE_PRELOADING;
+        evas_object_image_preload(sd->img, EINA_FALSE);
+     }
 
    err = evas_object_image_load_error_get(sd->img);
    if (err != EVAS_LOAD_ERROR_NONE)

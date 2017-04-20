@@ -347,7 +347,7 @@ _img_load_cancel_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 }
 
 static void
-_create_image(Evas_Object *data, Eina_Bool async, Eina_Bool preload)
+_create_image(Evas_Object *data, Eina_Bool async, Eina_Bool preload, Eina_Bool logo)
 {
    Evas_Object *win = data;
    Evas_Object *im, *status_text;
@@ -381,12 +381,15 @@ _create_image(Evas_Object *data, Eina_Bool async, Eina_Bool preload)
    evas_object_smart_callback_add(im, "load,cancel", _img_load_cancel_cb, status_text);
 
    STATUS_SET(status_text, "Loading image...");
-   snprintf(buf, sizeof(buf) - 1, "%s/images/insanely_huge_test_image.jpg", elm_app_data_dir_get());
+   if (!logo)
+     snprintf(buf, sizeof(buf) - 1, "%s/images/insanely_huge_test_image.jpg", elm_app_data_dir_get());
+   else
+     snprintf(buf, sizeof(buf) - 1, "%s/images/logo.png", elm_app_data_dir_get());
    elm_image_file_set(im, buf, NULL);
 }
 
 static void
-_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_reload_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    Evas_Object *im = evas_object_data_get(win, "im");
@@ -394,9 +397,44 @@ _bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    Evas_Object *chk2 = evas_object_data_get(win, "chk2");
    Eina_Bool async = elm_check_state_get(chk1);
    Eina_Bool preload = elm_check_state_get(chk2);
+   Eina_Bool logo = EINA_FALSE;
+   const char *file = NULL;
+
+   elm_image_file_get(im, &file, NULL);
+   logo = (file && strstr(file, "logo"));
 
    evas_object_del(im);
-   _create_image(win, async, preload);
+   _create_image(win, async, preload, logo);
+}
+
+static void
+_switch_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+   Evas_Object *im = evas_object_data_get(win, "im");
+   Evas_Object *chk1 = evas_object_data_get(win, "chk1");
+   Evas_Object *chk2 = evas_object_data_get(win, "chk2");
+   Eina_Bool async = elm_check_state_get(chk1);
+   Eina_Bool preload = elm_check_state_get(chk2);
+   char buf[PATH_MAX] = {0};
+   Eina_Bool logo = EINA_FALSE;
+   const char *file = NULL;
+
+   elm_image_file_get(im, &file, NULL);
+   logo = (file && strstr(file, "logo"));
+
+   if (logo)
+     {
+        snprintf(buf, sizeof(buf) - 1, "%s/images/insanely_huge_test_image.jpg", elm_app_data_dir_get());
+     }
+   else
+     {
+        snprintf(buf, sizeof(buf) - 1, "%s/images/logo.png", elm_app_data_dir_get());
+     }
+
+   elm_image_async_open_set(im, async);
+   elm_image_preload_disabled_set(im, preload);
+   elm_image_file_set(im, buf, NULL);
 }
 
 void
@@ -414,7 +452,7 @@ test_load_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *eve
    evas_object_show(box);
    evas_object_data_set(win, "box", box);
 
-   _create_image(win, EINA_FALSE, EINA_FALSE);
+   _create_image(win, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 
    hbox = elm_box_add(win);
    elm_box_horizontal_set(hbox, EINA_TRUE);
@@ -448,12 +486,26 @@ test_load_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *eve
    evas_object_show(hbox);
    elm_box_pack_end(box, hbox);
 
-   bt = elm_button_add(win);
-   evas_object_size_hint_align_set(bt, 0.5, 0.0);
-   elm_object_text_set(bt, "Image Reload");
-   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, win);
-   elm_box_pack_end(box, bt);
-   evas_object_show(bt);
+   hbox = elm_box_add(win);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   elm_box_align_set(hbox, 0.5, 0.5);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, 0.0);
+   {
+      bt = elm_button_add(win);
+      elm_object_text_set(bt, "Image Reload");
+      evas_object_smart_callback_add(bt, "clicked", _reload_clicked, win);
+      elm_box_pack_end(hbox, bt);
+      evas_object_show(bt);
+
+      bt = elm_button_add(win);
+      elm_object_text_set(bt, "Image Switch");
+      evas_object_smart_callback_add(bt, "clicked", _switch_clicked, win);
+      elm_box_pack_end(hbox, bt);
+      evas_object_show(bt);
+   }
+   evas_object_show(hbox);
+   elm_box_pack_end(box, hbox);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
