@@ -643,6 +643,8 @@ ecore_input_joystick_name_get(int index)
              return eina_slstr_copy_new(name);
           }
      }
+#else
+   (void) index;
 #endif
    return NULL;
 }
