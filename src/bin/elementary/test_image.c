@@ -412,6 +412,10 @@ _switch_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 {
    Evas_Object *win = data;
    Evas_Object *im = evas_object_data_get(win, "im");
+   Evas_Object *chk1 = evas_object_data_get(win, "chk1");
+   Evas_Object *chk2 = evas_object_data_get(win, "chk2");
+   Eina_Bool async = elm_check_state_get(chk1);
+   Eina_Bool preload = elm_check_state_get(chk2);
    char buf[PATH_MAX] = {0};
    Eina_Bool logo = EINA_FALSE;
    const char *file = NULL;
@@ -427,6 +431,9 @@ _switch_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
      {
         snprintf(buf, sizeof(buf) - 1, "%s/images/logo.png", elm_app_data_dir_get());
      }
+
+   elm_image_async_open_set(im, async);
+   elm_image_preload_disabled_set(im, preload);
    elm_image_file_set(im, buf, NULL);
 }
 
