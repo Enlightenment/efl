@@ -4,19 +4,19 @@
 #include <Elementary.h>
 
 static void
-_show_hover(void *data, Evas_Object *obj, void *event_info)
+_show_hover(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_show(data);
 }
 
 static void
-_hide_hover(void *data, Evas_Object *obj, void *event_info)
+_hide_hover(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_hide(data);
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2, *rect, *rect2, *rect3, *hover;
 

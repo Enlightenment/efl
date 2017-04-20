@@ -8,7 +8,7 @@ static void _colorpalette_clicked_cb(void *data, Evas_Object *obj, void *event_i
 static void _colorpalette_longpressed_cb(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *cs, *rect, *bx, *fr;
 
@@ -62,7 +62,7 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_change_color(void *data, Evas_Object *obj, void *event_info)
+_change_color(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int r, g, b, a;
    elm_colorselector_color_get(obj, &r, &g, &b, &a);
@@ -72,7 +72,8 @@ _change_color(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_colorpalette_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_colorpalette_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                         void *event_info)
 {
    int r = 0, g = 0, b = 0 ,a = 0;
    Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;
@@ -83,7 +84,8 @@ _colorpalette_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_colorpalette_longpressed_cb(void *data, Evas_Object *obj, void *event_info)
+_colorpalette_longpressed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                             void *event_info)
 {
    int r = 0,g = 0,b = 0 ,a = 0;
    Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;

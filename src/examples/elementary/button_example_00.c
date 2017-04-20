@@ -4,13 +4,14 @@
 #include <Elementary.h>
 
 static void
-on_click(void *data, Evas_Object *obj, void *event_info)
+on_click(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+         void *event_info EINA_UNUSED)
 {
    elm_exit();
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win = NULL;
    Evas_Object *btn = NULL;

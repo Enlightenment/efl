@@ -8,14 +8,14 @@ static void _free(void *data, Evas_Object *obj, void *event_info);
 static void _add_item(void *data, Evas_Object *obj, void *event_info);
 
 static void
-_clear_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_clear_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (!data) return;
    elm_hoversel_clear((Evas_Object *)data);
 }
 
 static void
-_reverse_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_reverse_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (!data) return;
    elm_object_mirrored_set(data, !elm_object_mirrored_get (data));
@@ -25,7 +25,7 @@ _reverse_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 
 Eina_Bool is_eng = EINA_TRUE;
 static void
-_arabic_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_arabic_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (!data) return;
    is_eng = !is_eng;
@@ -35,7 +35,7 @@ _arabic_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *rect, *hoversel, *btn = NULL;
 
@@ -94,7 +94,7 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_print_items(void *data, Evas_Object *obj, void *event_info)
+_print_items(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    const Eina_List *items = elm_hoversel_items_get(obj);
    const Eina_List *l;
@@ -105,7 +105,7 @@ _print_items(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_add_item(void *data, Evas_Object *obj, void *event_info)
+_add_item(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    static int num = 0;
    char *str = malloc(sizeof(char) * 11);
@@ -122,7 +122,7 @@ _add_item(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_free(void *data, Evas_Object *obj, void *event_info)
+_free(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    free(data);
 }

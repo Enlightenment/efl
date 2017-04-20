@@ -25,7 +25,7 @@ struct _ColourableSquare_Data
 typedef struct _ColourableSquare_Data  ColourableSquare_Data;
 
 static void
-_ns_colourablesquare_size_constructor(Eo *obj, ColourableSquare_Data *self, int size)
+_ns_colourablesquare_size_constructor(Eo *obj EINA_UNUSED, ColourableSquare_Data *self, int size)
 {
    if(!_ns_colourablesquare_impl_logdomain)
      {

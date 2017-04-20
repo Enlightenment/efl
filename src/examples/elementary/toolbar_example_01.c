@@ -12,21 +12,21 @@
 #include <Elementary.h>
 
 static void
-_item_1_pressed(void *data, Evas_Object *obj, void *event_info)
+_item_1_pressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt = data;
    elm_object_text_set(bt, "Print Document");
 }
 
 static void
-_item_2_pressed(void *data, Evas_Object *obj, void *event_info)
+_item_2_pressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt = data;
    elm_object_text_set(bt, "Create new folder");
 }
 
 static void
-_item_3_pressed(void *data, Evas_Object *obj, void *event_info)
+_item_3_pressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    /* This function won't be called because we disabled item that call it */
    Evas_Object *bt = data;
@@ -34,7 +34,7 @@ _item_3_pressed(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *bt;
    Elm_Object_Item *tb_it;

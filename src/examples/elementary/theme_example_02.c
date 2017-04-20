@@ -6,7 +6,7 @@
 char edj_path[PATH_MAX];
 
 static void
-_btn_clicked_cb(void *data, Evas_Object *obj, void *ev)
+_btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    static int loaded = 1;
    if (loaded)
@@ -17,7 +17,7 @@ _btn_clicked_cb(void *data, Evas_Object *obj, void *ev)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char *argv[])
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *box, *btn;
 

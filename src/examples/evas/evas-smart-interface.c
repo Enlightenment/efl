@@ -499,7 +499,7 @@ _on_keydown(void *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        printf(commands);
+        printf("%s\n", commands);
         return;
      }
 
@@ -771,7 +771,7 @@ main(void)
         iface->example_func(d.smt);
      }
 
-   printf(commands);
+   printf("%s\n", commands);
    ecore_main_loop_begin();
 
    ecore_evas_free(d.ee);

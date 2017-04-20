@@ -28,7 +28,7 @@
 static Eina_Bool _btn_large = EINA_FALSE;
 
 static void
-_swallow_btn_cb(void *data, Evas_Object *btn, void *event_info)
+_swallow_btn_cb(void *data, Evas_Object *btn, void *event_info EINA_UNUSED)
 {
    Evas_Object *layout = data;
 
@@ -49,7 +49,8 @@ _swallow_btn_cb(void *data, Evas_Object *btn, void *event_info)
 }
 
 static void
-_size_changed_cb(void *data, Evas_Object *layout, const char *emission, const char *source)
+_size_changed_cb(void *data EINA_UNUSED, Evas_Object *layout,
+                 const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Evas_Object *edje;
    Evas_Coord w, h;
@@ -75,7 +76,7 @@ _button_create(Evas_Object *parent, const char *label)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *btn, *layout, *tbl_items[6];
    const char *labels[] = {"One", "Two", "Three", "Four", "Five", "Six"};

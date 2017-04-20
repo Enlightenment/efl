@@ -3,7 +3,7 @@
 #include <sstream>
 
 EAPI_MAIN int
-elm_main (int argc, char *argv[])
+elm_main (int argc EINA_UNUSED, char **args EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 

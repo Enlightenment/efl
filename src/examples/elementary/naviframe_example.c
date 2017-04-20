@@ -4,7 +4,7 @@
 #include <Elementary.h>
 
 void
-_btn_cb(void *data, Evas_Object *obj, void *event_info)
+_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *nf = data, *btn;
    if (!nf) return;
@@ -17,7 +17,7 @@ _btn_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *nf, *btn;
 

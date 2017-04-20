@@ -10,67 +10,67 @@
 static Evas_Object *win2;
 
 static void
-_btn_activate_cb(void *data, Evas_Object *obj, void *event)
+_btn_activate_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    elm_win_activate(data);
 }
 
 static void
-_btn_lower_cb(void *data, Evas_Object *obj, void *event)
+_btn_lower_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    elm_win_lower(data);
 }
 
 static void
-_btn_raise_cb(void *data, Evas_Object *obj, void *event)
+_btn_raise_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    elm_win_raise(data);
 }
 
 static void
-_btn_borderless_cb(void *data, Evas_Object *obj, void *event)
+_btn_borderless_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_Bool flag = elm_win_borderless_get(data);
    elm_win_borderless_set(data, !flag);
 }
 
 static void
-_btn_shaped_cb(void *data, Evas_Object *obj, void *event)
+_btn_shaped_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_Bool flag = elm_win_shaped_get(data);
    elm_win_shaped_set(data, !flag);
 }
 
 static void
-_btn_alpha_cb(void *data, Evas_Object *obj, void *event)
+_btn_alpha_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_Bool flag = elm_win_alpha_get(data);
    elm_win_alpha_set(data, !flag);
 }
 
 static void
-_btn_fullscreen_cb(void *data, Evas_Object *obj, void *event)
+_btn_fullscreen_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_Bool flag = elm_win_fullscreen_get(data);
    elm_win_fullscreen_set(data, !flag);
 }
 
 static void
-_btn_maximized_cb(void *data, Evas_Object *obj, void *event)
+_btn_maximized_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_Bool flag = elm_win_maximized_get(data);
    elm_win_maximized_set(data, !flag);
 }
 
 static void
-_btn_iconified_cb(void *data, Evas_Object *obj, void *event)
+_btn_iconified_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_Bool flag = elm_win_iconified_get(data);
    elm_win_iconified_set(data, !flag);
 }
 
 static void
-_btn_rotation_cb(void *data, Evas_Object *obj, void *event)
+_btn_rotation_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    int angle = elm_win_rotation_get(data);
    angle = (angle + 90) % 360;
@@ -78,7 +78,7 @@ _btn_rotation_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_btn_rotation_resize_cb(void *data, Evas_Object *obj, void *event)
+_btn_rotation_resize_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    int angle = elm_win_rotation_get(data);
    angle = (angle + 90) % 360;
@@ -86,26 +86,26 @@ _btn_rotation_resize_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_btn_sticky_cb(void *data, Evas_Object *obj, void *event)
+_btn_sticky_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Eina_Bool flag = elm_win_sticky_get(data);
    elm_win_sticky_set(data, !flag);
 }
 
 static void
-_yes_quit_cb(void *data, Evas_Object *obj, void *event)
+_yes_quit_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    elm_exit();
 }
 
 static void
-_no_quit_cb(void *data, Evas_Object *obj, void *event)
+_no_quit_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    evas_object_del(data);
 }
 
 static void
-_main_win_del_cb(void *data, Evas_Object *obj, void *event)
+_main_win_del_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *msg, *box, *box2, *btn, *lbl, *sep;
 
@@ -155,7 +155,7 @@ _main_win_del_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_force_focus_cb(void *data, Evas_Object *obj, void *event)
+_force_focus_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window xwin = elm_win_xwindow_get(data);
@@ -164,7 +164,7 @@ _force_focus_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_win_focused_cb(void *data, Evas_Object *obj, void *event)
+_win_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    const char *name = data;
    printf("Window focused: %s\n", name);
@@ -179,7 +179,7 @@ key_down()
 }
 
 EAPI_MAIN int
-elm_main(int argc, char *argv[])
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bigbox, *box, *btn, *o;
    char buf[256];

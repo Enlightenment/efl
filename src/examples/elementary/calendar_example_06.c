@@ -13,7 +13,7 @@
 #define SECS_DAY 86400
 
 static void
-_btn_clear_cb(void *data, Evas_Object *btn, void *ev)
+_btn_clear_cb(void *data, Evas_Object *btn EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Evas_Object *cal = data;
    elm_calendar_marks_clear(cal);
@@ -21,7 +21,7 @@ _btn_clear_cb(void *data, Evas_Object *btn, void *ev)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bx, *cal;
    Elm_Calendar_Mark *mark;

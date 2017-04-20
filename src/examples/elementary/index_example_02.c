@@ -24,8 +24,8 @@ static const char *items[] =
 };
 
 static void
-_index_changed(void        *data,
-               Evas_Object *obj,
+_index_changed(void        *data EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
                void        *event_info)
 {
    Elm_Object_Item *item = elm_object_item_data_get(event_info);
@@ -34,15 +34,15 @@ _index_changed(void        *data,
 
 static char *
 _grid_label_get(void        *data,
-                Evas_Object *obj,
-                const char  *part)
+                Evas_Object *obj EINA_UNUSED,
+                const char  *part EINA_UNUSED)
 {
    int idx = (int)(uintptr_t)data;
    return strdup(items[idx]);
 }
 
 Evas_Object *
-_grid_content_get(void        *data,
+_grid_content_get(void        *data EINA_UNUSED,
                   Evas_Object *obj,
                   const char  *part)
 {
@@ -80,8 +80,8 @@ _index_icmp(const void *data1,
 }
 
 EAPI_MAIN int
-elm_main(int    argc,
-         char **argv)
+elm_main(int    argc EINA_UNUSED,
+         char **argv EINA_UNUSED)
 {
    Evas_Object *win, *grid, *idx;
    Elm_Object_Item *gg_it;

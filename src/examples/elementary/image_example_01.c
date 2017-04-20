@@ -4,7 +4,7 @@
 #include <Elementary.h>
 
 int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *image;
    char buf[PATH_MAX];

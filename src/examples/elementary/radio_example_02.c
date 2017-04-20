@@ -10,7 +10,7 @@ static void _cb2(void *data, Evas_Object *obj, void *event_info);
 static void _cb3(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bx, *radio, *group, *ic;
 
@@ -75,19 +75,19 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_cb1(void *data, Evas_Object *obj, void *event_info)
+_cb1(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("Radio 1 Clicked: val is now: %d\n", val);
 }
 
 static void
-_cb2(void *data, Evas_Object *obj, void *event_info)
+_cb2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("Radio 2 Clicked: val is now: %d\n", val);
 }
 
 static void
-_cb3(void *data, Evas_Object *obj, void *event_info)
+_cb3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("Radio 3 Clicked: val is now: %d\n", val);
 }

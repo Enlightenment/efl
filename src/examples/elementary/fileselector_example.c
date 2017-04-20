@@ -13,8 +13,8 @@
 
 /* 'done' cb */
 static void
-_fs_done(void        *data,
-         Evas_Object *obj,
+_fs_done(void        *data EINA_UNUSED,
+         Evas_Object *obj EINA_UNUSED,
          void        *event_info)
 {
    const char *selected = event_info;
@@ -29,8 +29,8 @@ _fs_done(void        *data,
 
 /* 'selected' cb */
 static void
-_fs_selected(void        *data,
-             Evas_Object *obj,
+_fs_selected(void        *data EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void        *event_info)
 {
    const char *selected = event_info;
@@ -41,8 +41,8 @@ _fs_selected(void        *data,
 
 static void
 _is_save_clicked(void        *data,
-                 Evas_Object *obj,
-                 void        *event_info)
+                 Evas_Object *obj EINA_UNUSED,
+                 void        *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    Eina_Bool old_val = elm_fileselector_is_save_get(fs);
@@ -55,8 +55,8 @@ _is_save_clicked(void        *data,
 
 static void
 _folder_only_clicked(void        *data,
-                     Evas_Object *obj,
-                     void        *event_info)
+                     Evas_Object *obj EINA_UNUSED,
+                     void        *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    Eina_Bool old_val = elm_fileselector_folder_only_get(fs);
@@ -69,8 +69,8 @@ _folder_only_clicked(void        *data,
 
 static void
 _expandable_clicked(void        *data,
-                    Evas_Object *obj,
-                    void        *event_info)
+                    Evas_Object *obj EINA_UNUSED,
+                    void        *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    Eina_Bool old_val = elm_fileselector_expandable_get(fs);
@@ -83,8 +83,8 @@ _expandable_clicked(void        *data,
 
 static void
 _sel_get_clicked(void        *data,
-                 Evas_Object *obj,
-                 void        *event_info)
+                 Evas_Object *obj EINA_UNUSED,
+                 void        *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    printf("Current selection is: %s\n", elm_fileselector_selected_get(fs));
@@ -92,8 +92,8 @@ _sel_get_clicked(void        *data,
 
 static void
 _path_get_clicked(void        *data,
-                  Evas_Object *obj,
-                  void        *event_info)
+                  Evas_Object *obj EINA_UNUSED,
+                  void        *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    printf("Current selection's directory path is: %s\n",
@@ -101,8 +101,8 @@ _path_get_clicked(void        *data,
 }
 
 EAPI_MAIN int
-elm_main(int    argc,
-         char **argv)
+elm_main(int    argc EINA_UNUSED,
+         char **argv EINA_UNUSED)
 {
    Evas_Object *win, *fs, *vbox, *buttons_bx, *bt, *sep, *bx;
 

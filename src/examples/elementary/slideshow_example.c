@@ -17,59 +17,59 @@ static Evas_Object *slideshow, *bt_start, *bt_stop;
 static Elm_Slideshow_Item_Class itc;
 
 static void
-_notify_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_notify_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_show(data);
 }
 
 /* jump to next item, cyclically */
 static void
-_next(void  *data, Evas_Object *obj, void *event_info)
+_next(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_next(data);
 }
 
 static void
-_previous(void *data, Evas_Object *obj, void *event_info)
+_previous(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_previous(data);
 }
 
 static void
-_first(void *data, Evas_Object *obj, void *event_info)
+_first(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_item_show(data);
 }
 
 static void
-_last(void *data, Evas_Object *obj, void *event_info)
+_last(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_item_show(data);
 }
 
 static void
-_mouse_in_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_mouse_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_notify_timeout_set(data, 0.0);
    evas_object_show(data);
 }
 
 static void
-_mouse_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_mouse_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_notify_timeout_set(data, 3.0);
 }
 
 /* transition changed */
 static void
-_transition_select(void *data, Evas_Object *obj, void *event_info)
+_transition_select(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_slideshow_transition_set(slideshow, data);
    elm_object_text_set(obj, data);
 }
 
 static void
-_layout_select(void *data, Evas_Object *obj, void *event_info)
+_layout_select(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_slideshow_layout_set(slideshow, data);
    elm_object_text_set(obj, data);
@@ -77,7 +77,7 @@ _layout_select(void *data, Evas_Object *obj, void *event_info)
 
 /* start the show! */
 static void
-_start(void *data, Evas_Object *obj, void *event_info)
+_start(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_timeout_set(slideshow, elm_spinner_value_get(data));
 
@@ -86,7 +86,7 @@ _start(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_stop(void *data, Evas_Object *obj, void *event_info)
+_stop(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_slideshow_timeout_set(slideshow, 0.0);
    elm_object_disabled_set(bt_start, EINA_FALSE);
@@ -95,7 +95,7 @@ _stop(void *data, Evas_Object *obj, void *event_info)
 
 /* slideshow transition time has changed */
 static void
-_spin(void *data, Evas_Object *obj, void *event_info)
+_spin(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (elm_slideshow_timeout_get(slideshow) > 0)
      elm_slideshow_timeout_set(slideshow, elm_spinner_value_get(data));
@@ -129,7 +129,7 @@ _cmp_func(const void *data1, const void *data2)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *notify, *bx, *bt, *hv, *spin;
    Elm_Object_Item *slide_first = NULL, *slide_last = NULL, *slide_it = NULL;

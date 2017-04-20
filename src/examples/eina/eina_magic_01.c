@@ -103,7 +103,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    print_person(base);
    print_person((person *)sub);
 
-   print_pilot(base); //BAD
+   print_pilot((pilot *)base); //BAD: fails (C cast prevents GCC warning)
    print_pilot(sub);
 
    eina_shutdown();

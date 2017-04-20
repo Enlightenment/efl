@@ -13,8 +13,8 @@
 
 /* hook on the file,chosen smart callback */
 static void
-_file_chosen(void        *data,
-             Evas_Object *obj,
+_file_chosen(void        *data EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
              void        *event_info)
 {
    const char *file = event_info;
@@ -28,8 +28,8 @@ _file_chosen(void        *data,
 /* toggle inwin mode */
 static void
 _inwin_mode_toggle(void        *data,
-                   Evas_Object *obj,
-                   void        *event_info)
+                   Evas_Object *obj EINA_UNUSED,
+                   void        *event_info EINA_UNUSED)
 {
    Evas_Object *fs_entry = data;
    Eina_Bool old_val = elm_fileselector_entry_inwin_mode_get(fs_entry);
@@ -40,8 +40,8 @@ _inwin_mode_toggle(void        *data,
 
 static void
 _current_sel_toggle(void        *data,
-                    Evas_Object *obj,
-                    void        *event_info)
+                    Evas_Object *obj EINA_UNUSED,
+                    void        *event_info EINA_UNUSED)
 {
    Evas_Object *fs_entry = data;
    Eina_Bool old_val = elm_fileselector_is_save_get(fs_entry);
@@ -53,8 +53,8 @@ _current_sel_toggle(void        *data,
 
 static void
 _folder_only_toggle(void        *data,
-                    Evas_Object *obj,
-                    void        *event_info)
+                    Evas_Object *obj EINA_UNUSED,
+                    void        *event_info EINA_UNUSED)
 {
    Evas_Object *fs_entry = data;
    Eina_Bool old_val = elm_fileselector_folder_only_get(fs_entry);
@@ -65,8 +65,8 @@ _folder_only_toggle(void        *data,
 
 static void
 _expandable_toggle(void        *data,
-                   Evas_Object *obj,
-                   void        *event_info)
+                   Evas_Object *obj EINA_UNUSED,
+                   void        *event_info EINA_UNUSED)
 {
    Evas_Object *fs_entry = data;
    Eina_Bool old_val = elm_fileselector_expandable_get(fs_entry);
@@ -76,8 +76,8 @@ _expandable_toggle(void        *data,
 }
 
 EAPI_MAIN int
-elm_main(int    argc,
-         char **argv)
+elm_main(int    argc EINA_UNUSED,
+         char **argv EINA_UNUSED)
 {
    Evas_Object *win, *vbox, *hbox, *ic, *ck, *fs_entry, *sep;
 

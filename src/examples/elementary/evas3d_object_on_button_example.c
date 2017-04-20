@@ -244,7 +244,7 @@ _scene_setup(Scene_Data *data)
 }
 
 int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Scene_Data data;
 

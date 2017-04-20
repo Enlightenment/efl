@@ -11,28 +11,28 @@
 #include <Elementary.h>
 
 static void
-_enabled_cb(void *data, Evas_Object *obj, void *event_info)
+_enabled_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *mb = data;
    elm_mapbuf_enabled_set(mb, elm_check_state_get(obj));
 }
 
 static void
-_alpha_cb(void *data, Evas_Object *obj, void *event_info)
+_alpha_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *mb = data;
    elm_mapbuf_alpha_set(mb, elm_check_state_get(obj));
 }
 
 static void
-_smooth_cb(void *data, Evas_Object *obj, void *event_info)
+_smooth_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *mb = data;
    elm_mapbuf_smooth_set(mb, elm_check_state_get(obj));
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bx, *hbx, *tg, *ck, *mb, *tb, *ic;
    unsigned int i, j;

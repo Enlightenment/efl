@@ -6,7 +6,7 @@
 #include <Elementary.hh>
 
 EAPI_MAIN int
-elm_main (int argc, char *argv[])
+elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Efl_Time min, max;
 

@@ -11,7 +11,7 @@ static pthread_t thread_id;
 // BEGIN - code running in my custom pthread instance
 //
 static void *
-my_thread_run(void *arg)
+my_thread_run(void *arg EINA_UNUSED)
 {
    double t = 0.0;
 
@@ -47,13 +47,13 @@ my_thread_new(void)
 
 // on window delete - cancel thread then delete window and exit mainloop
 static void
-del(void *data, Evas_Object *obj, void *event_info)
+del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    exit(0);
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *o;
 

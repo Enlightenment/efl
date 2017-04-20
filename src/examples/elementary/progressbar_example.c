@@ -31,7 +31,7 @@ typedef struct Progressbar_Example
 static Progressbar_Example example_data;
 
 static Eina_Bool
-_progressbar_example_value_set(void *data)
+_progressbar_example_value_set(void *data EINA_UNUSED)
 {
    double progress;
 
@@ -53,9 +53,9 @@ _progressbar_example_value_set(void *data)
 }
 
 static void
-_progressbar_example_start(void        *data,
-                           Evas_Object *obj,
-                           void        *event_info)
+_progressbar_example_start(void        *data EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
+                           void        *event_info EINA_UNUSED)
 {
    elm_progressbar_pulse(example_data.pb2, EINA_TRUE);
    elm_progressbar_pulse(example_data.pb6, EINA_TRUE);
@@ -71,9 +71,9 @@ _progressbar_example_start(void        *data,
 
 /* end of show */
 static void
-_progressbar_example_stop(void        *data,
-                          Evas_Object *obj,
-                          void        *event_info)
+_progressbar_example_stop(void        *data EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void        *event_info EINA_UNUSED)
 {
    elm_progressbar_pulse(example_data.pb2, EINA_FALSE);
    elm_progressbar_pulse(example_data.pb6, EINA_FALSE);
@@ -107,7 +107,7 @@ _progress_format_free(char *str)
 static void
 _on_changed(void        *data,
             Evas_Object *obj,
-            void        *event_info)
+            void        *event_info EINA_UNUSED)
 {
    static char buf[30];
    static time_t tstart = 0;
@@ -138,17 +138,17 @@ _on_changed(void        *data,
 }
 
 static void
-_on_done(void        *data,
-         Evas_Object *obj,
-         void        *event_info)
+_on_done(void        *data EINA_UNUSED,
+         Evas_Object *obj EINA_UNUSED,
+         void        *event_info EINA_UNUSED)
 {
    _progressbar_example_stop(NULL, NULL, NULL);
    elm_exit();
 }
 
 EAPI_MAIN int
-elm_main(int    argc,
-         char **argv)
+elm_main(int    argc EINA_UNUSED,
+         char **argv EINA_UNUSED)
 {
    Evas_Object *win, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2, *label;
    char buf[PATH_MAX];

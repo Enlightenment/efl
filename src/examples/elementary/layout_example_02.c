@@ -15,7 +15,7 @@ struct _App {
 };
 
 static void
-_signal_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+_signal_cb(void *data, Evas_Object *o, const char *emission, const char *source EINA_UNUSED)
 {
    struct _App *app = data;
    Evas_Object *icon = elm_object_part_content_get(o, "elm.swallow.content");
@@ -36,7 +36,7 @@ _signal_cb(void *data, Evas_Object *o, const char *emission, const char *source)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *layout, *icon;
    struct _App app;

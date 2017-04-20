@@ -40,7 +40,7 @@ _elm_prefs_items_change(void *data)
 }
 
 static void
-_action_cb(void *data, Evas_Object *obj, void *event_info)
+_action_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *notify = data;
    Elm_Prefs_Data *prefs_data;
@@ -57,7 +57,7 @@ _action_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *prefs, *notify, *label;
    Elm_Prefs_Data *prefs_data;

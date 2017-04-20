@@ -9,7 +9,7 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-void error_cb(void *data, const Efl_Event *ev)
+void error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Efl_Future_Event_Failure *failure = ev->info;
    const char *msg = eina_error_msg_get(failure->error);

@@ -17,7 +17,8 @@ typedef struct
 } App_Data;
 
 static void
-_btn_cursors_release_cb(void *data, Evas_Object *btn, void *ev)
+_btn_cursors_release_cb(void *data, Evas_Object *btn EINA_UNUSED,
+                        void *ev EINA_UNUSED)
 {
    App_Data *app = data;
    elm_object_part_content_set(app->mid, "icon", app->icon_still);
@@ -25,7 +26,7 @@ _btn_cursors_release_cb(void *data, Evas_Object *btn, void *ev)
 }
 
 static void
-_btn_cursors_move_cb(void *data, Evas_Object *btn, void *ev)
+_btn_cursors_move_cb(void *data, Evas_Object *btn, void *ev EINA_UNUSED)
 {
    App_Data *app = data;
    double ax, ay;
@@ -69,7 +70,7 @@ _btn_cursors_move_cb(void *data, Evas_Object *btn, void *ev)
 }
 
 static void
-_btn_options_cb(void *data, Evas_Object *btn, void *ev)
+_btn_options_cb(void *data, Evas_Object *btn, void *ev EINA_UNUSED)
 {
    char *ptr;
    double t;
@@ -97,7 +98,7 @@ _btn_options_cb(void *data, Evas_Object *btn, void *ev)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char *argv[])
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *box, *box2, *btn, *icon;
    static App_Data data;

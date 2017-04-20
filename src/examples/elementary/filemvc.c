@@ -72,8 +72,9 @@ _promise_then(void *data, const Efl_Event *event)
 }
 
 static void
-_promise_error(void *data, const Efl_Event* err)
+_promise_error(void *data EINA_UNUSED, const Efl_Event* err EINA_UNUSED)
 {
+   printf("Promise error!\n");
 }
 
 static void
@@ -125,7 +126,7 @@ _thumb_error_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UN
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Efl_Model_Test_Filemvc_Data priv;
    Evas_Object *win, *panes, *bxr, *genlist, *vpanes;

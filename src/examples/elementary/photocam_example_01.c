@@ -19,7 +19,7 @@ struct _Orient_Data
 };
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *obj, *photocam, *menu;
    Orient_Data *orient_data;
@@ -111,7 +111,7 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_bring_in(void *data, Evas_Object *obj, void *event_info)
+_bring_in(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int w, h;
    elm_photocam_image_size_get(obj, &w, &h);
@@ -119,7 +119,7 @@ _bring_in(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_fit(void *data, Evas_Object *obj, void *event_info)
+_fit(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    int x, y, w, h;
    elm_photocam_image_region_get(data, &x, &y, &w, &h);
@@ -128,20 +128,20 @@ _fit(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_unfit(void *data, Evas_Object *obj, void *event_info)
+_unfit(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
 }
 
 static void
-_zoom(void *data, Evas_Object *obj, void *event_info)
+_zoom(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    double z = elm_slider_value_get(obj) * 8;
    elm_photocam_zoom_set(data, z);
 }
 
 static void
-_orient(void *data, Evas_Object *obj, void *event_info)
+_orient(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *mn = data;
    if (!mn) return;
@@ -150,7 +150,7 @@ _orient(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_orient_do(void *data, Evas_Object *obj, void *event_info)
+_orient_do(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Orient_Data *orient_data = data;
    if (!orient_data) return;

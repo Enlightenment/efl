@@ -125,7 +125,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        printf(commands);
+        printf("%s\n", commands);
         return;
      }
 
@@ -293,7 +293,7 @@ main(void)
    evas_object_show(d.t_data.obs[0]);
    evas_object_show(d.t_data.obs[1]);
 
-   printf(commands);
+   printf("%s\n", commands);
    ecore_main_loop_begin();
 
    evas_textblock_style_free(d.st);

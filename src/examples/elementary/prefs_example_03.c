@@ -44,7 +44,7 @@ _update(Evas_Object *prefs, Evas_Object *layout)
 }
 
 static void
-_page_loaded_cb(void *data, Evas_Object *obj, void *event_info)
+_page_loaded_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *layout = data;
 
@@ -64,7 +64,7 @@ _item_changed_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *prefs, *layout;
    Elm_Prefs_Data *prefs_data;

@@ -22,7 +22,7 @@ _format_month_year(struct tm *format_time)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *cal;
    const char *weekdays[] =

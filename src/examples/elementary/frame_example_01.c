@@ -4,7 +4,7 @@
 #include <Elementary.h>
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win;
    Evas_Object *f1, *r1, *f2, *r2, *f3, *r3, *f4, *r4;

@@ -87,16 +87,16 @@ _xml_tag_cb(void *data, Eina_Simple_XML_Type type, const char *content,
      {
         if (tag_login == EINA_TRUE)
           {
-             snprintf(buffer, sizeof(buffer), content);
-             strncat(str, "<", 1);
-             strncat(str, buffer, sizeof(buffer));
-             strncat(str, "> ", 2);
+             eina_strlcpy(buffer, content, sizeof(buffer));
+             eina_strlcat(str, "<", 1);
+             eina_strlcat(str, buffer, sizeof(str));
+             eina_strlcat(str, "> ", 2);
              tag_login = EINA_FALSE;
           }
         else if (tag_message == EINA_TRUE)
           {
-             snprintf(buffer, sizeof(buffer), content);
-             strncat(str, buffer, sizeof(buffer));
+             eina_strlcpy(buffer, content, sizeof(buffer));
+             eina_strlcat(str, buffer, sizeof(str));
              tag_message = EINA_FALSE;
              eina_array_push(array, strdup(str));
           }

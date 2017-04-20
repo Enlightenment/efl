@@ -15,7 +15,7 @@ struct info
 // BEGIN - code running in my custom thread instance
 //
 static void
-th_do(void *data, Ecore_Thread *th)
+th_do(void *data EINA_UNUSED, Ecore_Thread *th)
 {
    double t = 0.0;
 
@@ -44,7 +44,7 @@ th_do(void *data, Ecore_Thread *th)
 // END - code running in my custom thread instance
 
 static void // when mainloop gets feedback from worker
-th_feedback(void *data, Ecore_Thread *th, void *msg)
+th_feedback(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED, void *msg)
 {
    struct info *inf = msg;
    evas_object_move(rect, inf->x - 50, inf->y - 50);
@@ -52,13 +52,13 @@ th_feedback(void *data, Ecore_Thread *th, void *msg)
 }
 
 // BONUS (optional): called after th_do returns and has NOT been cancelled
-static void th_end(void *data, Ecore_Thread *th) { printf("thread ended\n"); }
+static void th_end(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED) { printf("thread ended\n"); }
 // BONUS (optional): called in mainloop AFTER thread has finished cancelling
-static void th_cancel(void *data, Ecore_Thread *th) { printf("thread cancelled\n"); }
+static void th_cancel(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED) { printf("thread cancelled\n"); }
 
 // just test cancelling the thread worker
 static void
-down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (thr) ecore_thread_cancel(thr);
    thr = NULL;
@@ -66,7 +66,7 @@ down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
 // on window delete - cancel thread then delete window and exit mainloop
 static void
-del(void *data, Evas_Object *obj, void *event_info)
+del(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (thr) ecore_thread_cancel(thr);
    thr = NULL;
@@ -75,7 +75,7 @@ del(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *o;
 

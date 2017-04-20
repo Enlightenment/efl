@@ -10,7 +10,7 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-void leave(Efl_Io_Manager *job)
+void leave(Efl_Io_Manager *job EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }

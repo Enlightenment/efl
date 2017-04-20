@@ -22,8 +22,8 @@ static const char *commands = \
 
 void /* unselect the item shown in the flip selector */
 _unsel_cb(void        *data,
-          Evas_Object *obj,
-          void        *event_info)
+          Evas_Object *obj EINA_UNUSED,
+          void        *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it;
    Evas_Object *fp = data;
@@ -34,8 +34,8 @@ _unsel_cb(void        *data,
 
 void /* delete the item shown in the flip selector */
 _del_cb(void        *data,
-        Evas_Object *obj,
-        void        *event_info)
+        Evas_Object *obj EINA_UNUSED,
+        void        *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it;
    Evas_Object *fp = data;
@@ -45,25 +45,25 @@ _del_cb(void        *data,
 }
 
 void /* underflow callback */
-_underflow_cb(void        *data,
-              Evas_Object *obj,
-              void        *event_info)
+_underflow_cb(void        *data EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void        *event_info EINA_UNUSED)
 {
    fprintf(stdout, "Underflow!\n");
 }
 
 void /* overflow callback */
-_overflow_cb(void        *data,
-             Evas_Object *obj,
-             void        *event_info)
+_overflow_cb(void        *data EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
+             void        *event_info EINA_UNUSED)
 {
    fprintf(stdout, "Overflow!\n");
 }
 
 static Eina_Bool
 _on_keydown(void              *data,
-            Evas_Object       *object,
-            Evas_Object       *src,
+            Evas_Object       *object EINA_UNUSED,
+            Evas_Object       *src EINA_UNUSED,
             Evas_Callback_Type type,
             void              *event_info)
 {
@@ -123,7 +123,7 @@ _on_keydown(void              *data,
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    unsigned int i;
    Evas_Object *win, *bx, *fp, *bt;

@@ -36,18 +36,6 @@ _phone_entry_free_cb(void *data)
    free(data);
 }
 
-static Eina_Bool
-_phone_book_foreach_cb(const Eina_Hash *phone_book EINA_UNUSED, const void *key,
-		       void *data, void *fdata EINA_UNUSED)
-{
-   const char *name = key;
-   const char *number = data;
-   printf("%s: %s\n", name, number);
-
-   // Return EINA_FALSE to stop this callback from being called
-   return EINA_TRUE;
-}
-
 int
 main(int argc EINA_UNUSED, const char *argv[] EINA_UNUSED)
 {

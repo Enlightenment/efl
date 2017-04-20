@@ -11,7 +11,7 @@
 static int _box_buttons = 0;
 
 static void
-_tbl_btn_cb(void *data, Evas_Object *btn, void *event_info)
+_tbl_btn_cb(void *data, Evas_Object *btn, void *event_info EINA_UNUSED)
 {
    Evas_Object *layout = data;
 
@@ -20,7 +20,7 @@ _tbl_btn_cb(void *data, Evas_Object *btn, void *event_info)
 }
 
 static void
-_box_btn_cb(void *data, Evas_Object *btn, void *event_info)
+_box_btn_cb(void *data, Evas_Object *btn, void *event_info EINA_UNUSED)
 {
    Evas_Object *layout = data;
    Evas_Object *item;
@@ -38,7 +38,7 @@ _box_btn_cb(void *data, Evas_Object *btn, void *event_info)
 }
 
 static void
-_swallow_btn_cb(void *data, Evas_Object *btn, void *event_info)
+_swallow_btn_cb(void *data, Evas_Object *btn EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *layout = data;
    Evas_Object *item;
@@ -50,7 +50,7 @@ _swallow_btn_cb(void *data, Evas_Object *btn, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *icon, *icon2, *bt, *bt2, *layout;
    Evas_Object *clk;

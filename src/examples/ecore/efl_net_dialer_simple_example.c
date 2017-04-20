@@ -404,8 +404,8 @@ main(int argc, char **argv)
 
              if (line_delm_slice.len)
                {
-                  Eina_Slice s = line_delm_slice;
-                  efl_io_writer_write(dialer, &s, NULL);
+                  Eina_Slice sw = line_delm_slice;
+                  efl_io_writer_write(dialer, &sw, NULL);
                }
           }
         else
@@ -426,8 +426,8 @@ main(int argc, char **argv)
 
              if (line_delm_slice.len)
                {
-                  Eina_Slice s = line_delm_slice;
-                  efl_io_writer_write(dialer, &s, NULL);
+                  Eina_Slice sw = line_delm_slice;
+                  efl_io_writer_write(dialer, &sw, NULL);
                }
           }
      }

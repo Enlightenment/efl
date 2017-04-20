@@ -74,7 +74,7 @@ gl_filter_get(void *data, Evas_Object *obj EINA_UNUSED, void *key)
 }
 
 EAPI_MAIN int
-elm_main(int argc EINA_UNUSED, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bg;
 

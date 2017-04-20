@@ -89,7 +89,7 @@ th_end(void *data, Ecore_Thread *th)
 }
 
 static void // if the thread is cancelled - free pix, keep obj tho
-th_cancel(void *data, Ecore_Thread *th)
+th_cancel(void *data, Ecore_Thread *th EINA_UNUSED)
 {
    struct info *inf = data;
 
@@ -122,7 +122,7 @@ anim(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *o;
    Ecore_Thread *th;

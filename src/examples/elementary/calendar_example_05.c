@@ -12,7 +12,8 @@
 #include <Elementary.h>
 
 static void
-_print_cal_info_cb(void *data, Evas_Object *obj, void *event_info)
+_print_cal_info_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                   void *event_info EINA_UNUSED)
 {
    int year_min, year_max;
    Eina_Bool sel_enabled;
@@ -37,7 +38,7 @@ _print_cal_info_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *cal;
 

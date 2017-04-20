@@ -4,13 +4,13 @@
 #include <Elementary.h>
 
 static void
-_print(void *data, Evas_Object *obj, void *event_info)
+_print(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("check %smarked\n", *((Eina_Bool*)data) ? "" : "un");
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *cb, *cb2, *icon;
    Eina_Bool value;

@@ -92,7 +92,7 @@ _checkbox_transition_add(Evas_Object *box, const char *label, Eina_Bool *checked
 }
 
 static void
-_transit_start(void *data, Evas_Object *o, void *event_info)
+_transit_start(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans = NULL;
    int i;
@@ -130,14 +130,14 @@ _transit_start(void *data, Evas_Object *o, void *event_info)
 /* callback useful just to know whether we can receive events from the
  * object or not */
 static void
-_object_clicked(void *data, Evas_Object *o, void *event_info)
+_object_clicked(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("object clicked!\n");
 }
 
 /* update our context with the given value for repeat count */
 static void
-_cb_repeat_changed(void *data, Evas_Object *obj, void *event)
+_cb_repeat_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    int *repeat_cnt = data;
 
@@ -146,7 +146,7 @@ _cb_repeat_changed(void *data, Evas_Object *obj, void *event)
 
 /* update our context with the given tween mode for the transition */
 static void
-_cb_tween_changed(void *data, Evas_Object *obj, void *event)
+_cb_tween_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Elm_Transit_Tween_Mode *mode = data;
    double val = 0.0;
@@ -163,7 +163,7 @@ _cb_tween_changed(void *data, Evas_Object *obj, void *event)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *obj, *icon, *box, *vbox, *vbox2, *hbox, *btn;
    Evas_Object *cbox, *dummy, *spinner;

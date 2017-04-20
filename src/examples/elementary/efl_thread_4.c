@@ -20,7 +20,7 @@ static int th_exit = 0;
 // BEGIN - code running in my custom pthread instance
 //
 static void *
-my_thread_run(void *arg)
+my_thread_run(void *arg EINA_UNUSED)
 {
    double t = 0.0;
 
@@ -76,7 +76,7 @@ my_thread_mainloop_code(void *data)
 
 // just test cancelling the thread
 static void
-down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    pthread_mutex_lock(&th_lock);
    th_exit = 1;
@@ -85,7 +85,7 @@ down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
 // on window delete - cancel thread then delete window and exit mainloop
 static void
-del(void *data, Evas_Object *obj, void *event_info)
+del(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    pthread_mutex_lock(&th_lock);
    th_exit = 1;
@@ -95,7 +95,7 @@ del(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *o;
 

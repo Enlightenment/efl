@@ -48,7 +48,7 @@ _list_selected_cb(void *data EINA_UNUSED, const Efl_Event *event)
 
 
 static void
-_update_cb(void *data, Evas_Object *obj, void *ev)
+_update_cb(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Layout_Model_Data *priv = data;
 
@@ -80,16 +80,16 @@ _label_init(Evas_Object *win, Evas_Object *box, const char *text)
 
 
 static void
-_signal_cb(void *data,
-                      Evas_Object *obj EINA_UNUSED,
-                      const char *emission,
-                      const char *source)
+_signal_cb(void *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           const char *emission,
+           const char *source)
 {
-        printf(">> Signal callback emission='%s' source='%s'\n", emission, source);
+   printf(">> Signal callback emission='%s' source='%s'\n", emission, source);
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Layout_Model_Data *priv;
    Evas_Object *win, *panes, *bxr, *genlist;

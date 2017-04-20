@@ -54,7 +54,7 @@ _checkbox_transition_add(Evas_Object *box, const char *label, Eina_Bool *checked
 }
 
 static void
-_transit_start(void *data, Evas_Object *o, void *event_info)
+_transit_start(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans = NULL;
    Eina_List *objs = data, *l;
@@ -79,7 +79,7 @@ _transit_start(void *data, Evas_Object *o, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *icon, *box, *hbox, *btn, *rect;
    Eina_List *objs = NULL;

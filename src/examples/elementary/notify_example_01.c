@@ -6,7 +6,7 @@
 static void _hide(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bx, *notify, *content;
 
@@ -65,7 +65,7 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_hide(void *data, Evas_Object *obj, void *event_info)
+_hide(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    evas_object_hide(obj);
 }

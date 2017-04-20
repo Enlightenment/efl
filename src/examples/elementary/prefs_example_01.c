@@ -32,7 +32,7 @@ _elm_prefs_data_change(void *data)
 }
 
 static void
-_page_saved_cb(void *data, Evas_Object *obj, void *event_info)
+_page_saved_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    const char *page = event_info;
 
@@ -40,7 +40,7 @@ _page_saved_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_page_loaded_cb(void *data, Evas_Object *obj, void *event_info)
+_page_loaded_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    const char *page = event_info;
 
@@ -48,7 +48,7 @@ _page_loaded_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_item_changed_cb(void *data, Evas_Object *obj, void *event_info)
+_item_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    const char *item = event_info;
 
@@ -56,7 +56,7 @@ _item_changed_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *prefs, *notify, *label;
    Elm_Prefs_Data *prefs_data;

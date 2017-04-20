@@ -11,7 +11,7 @@ typedef struct
 } Transitions_Data;
 
 static void
-_add_cb(void *data, Evas_Object *obj, void *ev)
+_add_cb(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Evas_Object *btn;
    Eina_List *children;
@@ -31,14 +31,14 @@ _add_cb(void *data, Evas_Object *obj, void *ev)
 }
 
 static void
-_clear_cb(void *data, Evas_Object *obj, void *ev)
+_clear_cb(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Transitions_Data *tdata = data;
    elm_box_clear(tdata->box);
 }
 
 static void
-_unpack_cb(void *data, Evas_Object *obj, void *ev)
+_unpack_cb(void *data, Evas_Object *obj, void *ev EINA_UNUSED)
 {
    Transitions_Data *tdata = data;
    elm_box_unpack(tdata->box, obj);
@@ -67,7 +67,7 @@ _test_box_transition_change(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char *argv[])
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bigbox, *bx, *bt;
    static Transitions_Data tdata = {

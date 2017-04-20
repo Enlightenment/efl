@@ -6,7 +6,7 @@
 char edj_path[PATH_MAX];
 
 static void
-btn_extension_click_cb(void *data, Evas_Object *btn, void *ev)
+btn_extension_click_cb(void *data EINA_UNUSED, Evas_Object *btn, void *ev EINA_UNUSED)
 {
    const char *lbl = elm_object_text_get(btn);
 
@@ -23,7 +23,7 @@ btn_extension_click_cb(void *data, Evas_Object *btn, void *ev)
 }
 
 static void
-btn_style_click_cb(void *data, Evas_Object *btn, void *ev)
+btn_style_click_cb(void *data EINA_UNUSED, Evas_Object *btn, void *ev EINA_UNUSED)
 {
    const char *styles[] = {
         "chucknorris",
@@ -37,7 +37,7 @@ btn_style_click_cb(void *data, Evas_Object *btn, void *ev)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char *argv[])
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *box, *btn;
 

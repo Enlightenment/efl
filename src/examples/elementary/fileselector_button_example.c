@@ -12,9 +12,7 @@
 #include <Elementary.h>
 
 static void /* hook on the sole smart callback */
-_file_chosen(void            *data,
-             Evas_Object *obj,
-             void            *event_info)
+_file_chosen(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Object *entry = data;
    const char *file = event_info;
@@ -29,9 +27,8 @@ _file_chosen(void            *data,
 
 /* toggle inwin mode */
 static void
-_inwin_mode_toggle(void            *data,
-                   Evas_Object *obj,
-                   void *event_info)
+_inwin_mode_toggle(void *data, Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Evas_Object *fs_bt = data;
    Eina_Bool old_val = elm_fileselector_button_inwin_mode_get(fs_bt);
@@ -41,9 +38,8 @@ _inwin_mode_toggle(void            *data,
 }
 
 static void
-_current_sel_toggle(void            *data,
-                    Evas_Object *obj,
-                    void *event_info)
+_current_sel_toggle(void *data, Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Evas_Object *fs_bt = data;
    Eina_Bool old_val = elm_fileselector_is_save_get(fs_bt);
@@ -54,9 +50,9 @@ _current_sel_toggle(void            *data,
 }
 
 static void
-_folder_only_toggle(void            *data,
-                    Evas_Object *obj,
-                    void *event_info)
+_folder_only_toggle(void *data,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Evas_Object *fs_bt = data;
    Eina_Bool old_val = elm_fileselector_folder_only_get(fs_bt);
@@ -66,9 +62,8 @@ _folder_only_toggle(void            *data,
 }
 
 static void
-_expandable_toggle(void            *data,
-                   Evas_Object *obj,
-                   void *event_info)
+_expandable_toggle(void *data, Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Evas_Object *fs_bt = data;
    Eina_Bool old_val = elm_fileselector_expandable_get(fs_bt);
@@ -78,8 +73,7 @@ _expandable_toggle(void            *data,
 }
 
 EAPI_MAIN int
-elm_main(int    argc,
-         char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *vbox, *hbox, *ic, *ck, *fs_bt, *en, *lb, *sep;
 

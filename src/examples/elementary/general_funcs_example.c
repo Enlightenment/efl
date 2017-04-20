@@ -21,51 +21,51 @@ struct test_data
 struct test_data d = {NULL, EINA_TRUE, EINA_TRUE};
 
 static void
-_btn_enabled_cb(void        *data,
-                Evas_Object *obj,
-                void        *event)
+_btn_enabled_cb(void        *data EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void        *event EINA_UNUSED)
 {
    elm_object_disabled_set(d.btn, !d.btn_enabled);
 }
 
 static void
 /* focus callback */
-_btn_focus_cb(void        *data,
-              Evas_Object *obj,
-              void        *event)
+_btn_focus_cb(void        *data EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void        *event EINA_UNUSED)
 {
    elm_object_focus_set(d.btn, EINA_TRUE);
 }
 
 static void
 /* unfocus callback */
-_btn_unfocus_cb(void        *data,
-                Evas_Object *obj,
-                void        *event)
+_btn_unfocus_cb(void        *data EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void        *event EINA_UNUSED)
 {
    elm_object_focus_set(d.btn, EINA_FALSE);
 }
 
 static void
 /* focus allow callback */
-_btn_focus_allow_cb(void        *data,
-                    Evas_Object *obj,
-                    void        *event)
+_btn_focus_allow_cb(void        *data EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
+                    void        *event EINA_UNUSED)
 {
    elm_object_focus_allow_set(d.btn, d.btn_gets_focus);
 }
 
 static void /* scaling callback */
-_btn_scale_cb(void        *data,
+_btn_scale_cb(void        *data EINA_UNUSED,
               Evas_Object *obj,
-              void        *event)
+              void        *event EINA_UNUSED)
 {
    elm_object_scale_set(d.btn, elm_slider_value_get(obj));
 }
 
 EAPI_MAIN int
-elm_main(int    argc,
-         char **argv)
+elm_main(int    argc EINA_UNUSED,
+         char **argv EINA_UNUSED)
 {
    Evas_Object *win, *box, *frame, *check, *b, *slider;
 

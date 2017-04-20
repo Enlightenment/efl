@@ -41,7 +41,7 @@ _position_changed(void *data, int ev_type, void *event)
 #endif
 
 EAPI_MAIN int
-elm_main(int argc, char *argv[])
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
 #ifdef ELM_ELOCATION
    Elocation_Address *address;

@@ -33,7 +33,7 @@ _edit_buffer_insert(Evas_Object *e, const char *text)
 }
 
 static void
-_it_sel_cb(void *data, Evas_Object *obj, void *event)
+_it_sel_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    App_Inwin_Data *aid = data;
    Elm_Object_Item *gg_it = event;
@@ -44,7 +44,8 @@ _it_sel_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static char *
-_emo_label_get(void *data, Evas_Object *obj, const char *part)
+_emo_label_get(void *data, Evas_Object *obj EINA_UNUSED,
+               const char *part EINA_UNUSED)
 {
    return strdup(data);
 }
@@ -66,7 +67,7 @@ _emo_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void
-_emo_del(void *data, Evas_Object *obj)
+_emo_del(void *data, Evas_Object *obj EINA_UNUSED)
 {
    free(data);
 }
@@ -111,7 +112,7 @@ _page_grid_add(Evas_Object *parent, App_Inwin_Data *aid)
 }
 
 static void
-_btn_insert_cb(void *data, Evas_Object *obj, void *event)
+_btn_insert_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    App_Inwin_Data *aid = data;
    const char *size[] = {
@@ -134,7 +135,7 @@ _btn_insert_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_width_changed_cb(void *data, Evas_Object *obj, void *event)
+_width_changed_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    App_Inwin_Data *aid = data;
 
@@ -142,7 +143,7 @@ _width_changed_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_height_changed_cb(void *data, Evas_Object *obj, void *event)
+_height_changed_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    App_Inwin_Data *aid = data;
 
@@ -292,7 +293,8 @@ _page_settings_add(Evas_Object *parent, App_Inwin_Data *aid)
 }
 
 static void
-_insert_cancel_cb(void *data, Evas_Object *obj, void *event)
+_insert_cancel_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                  void *event EINA_UNUSED)
 {
    App_Inwin_Data *aid = data;
 
@@ -300,13 +302,15 @@ _insert_cancel_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_inwin_del_cb(void *data, Evas *e, Evas_Object *obj, void *event)
+_inwin_del_cb(void *data, Evas *e EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    free(data);
 }
 
 static void
-_image_insert_cb(void *data, Evas_Object *obj, void *event)
+_image_insert_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event EINA_UNUSED)
 {
    App_Data *ad = data;
    App_Inwin_Data *aid;
@@ -372,7 +376,7 @@ _image_insert_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_format_change_cb(void *data, Evas_Object *obj, void *event)
+_format_change_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    App_Data *ad = data;
    char fmt_open[5], fmt_close[6];
@@ -433,7 +437,7 @@ all_done:
 }
 
 static void
-_autosave_change_cb(void *data, Evas_Object *obj, void *event)
+_autosave_change_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    App_Data *ad = data;
    Eina_Bool state = elm_check_state_get(obj);
@@ -443,7 +447,8 @@ _autosave_change_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_edit_dblclick_cb(void *data, Evas_Object *obj, void *event)
+_edit_dblclick_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                  void *event EINA_UNUSED)
 {
    int current_cursor;
 
@@ -478,7 +483,8 @@ _edit_dblclick_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_edit_tplclick_cb(void *data, Evas_Object *obj, void *event)
+_edit_tplclick_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                  void *event EINA_UNUSED)
 {
    elm_entry_cursor_line_begin_set(obj);
    elm_entry_cursor_selection_begin(obj);
@@ -487,7 +493,7 @@ _edit_tplclick_cb(void *data, Evas_Object *obj, void *event)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char *argv[])
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *box, *tb, *en, *o, *icon;
    App_Data app;

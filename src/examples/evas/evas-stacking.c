@@ -93,7 +93,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0)  /* print help */
      {
-        printf(commands);
+        printf("%s\n", commands);
         return;
      }
 
@@ -322,7 +322,7 @@ main(void)
    evas_object_event_callback_add(
      d.rects[0], EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, NULL);
 
-   printf(commands);
+   printf("%s\n", commands);
    ecore_main_loop_begin();
 
    ecore_evas_shutdown();

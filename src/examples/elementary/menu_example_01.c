@@ -4,7 +4,7 @@
 #include <Elementary.h>
 
 static void
-_del_it(void *data, Evas_Object *obj, void *event_info)
+_del_it(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const Eina_List *l;
    Elm_Object_Item *menu_it = elm_menu_first_item_get(data);
@@ -14,7 +14,7 @@ _del_it(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    elm_menu_move(data, ev->canvas.x, ev->canvas.y);
@@ -22,7 +22,7 @@ _show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *menu, *button, *rect;
    Elm_Object_Item *menu_it, *menu_it1;

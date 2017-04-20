@@ -7,7 +7,7 @@ static void _item_selected_cb(void *data, Evas_Object *obj, void *event_info);
 static void _response_cb(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *popup, *btn1, *btn2, *icon1;
    Elm_Object_Item *popup_it1;
@@ -79,15 +79,15 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_item_selected_cb(void *data, Evas_Object *obj,
+_item_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    printf("popup item selected: %s\n", elm_object_item_text_get(event_info));
 }
 
 static void
-_response_cb(void *data, Evas_Object *obj,
-             void *event_info)
+_response_cb(void *data, Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    evas_object_hide(data);
 }

@@ -8,7 +8,7 @@
 static Elm_Genlist_Item_Class *_itc = NULL;
 
 static char *
-_item_label_get(void *data, Evas_Object *obj, const char *part)
+_item_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    time_t t = (time_t)ecore_time_unix_get();
    char buf[256];
@@ -28,7 +28,7 @@ _item_label_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static Evas_Object *
-_item_content_get(void *data, Evas_Object *obj, const char *part)
+_item_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -72,7 +72,7 @@ _genlist_fill(Evas_Object *list)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *box;
    Evas_Object *list;

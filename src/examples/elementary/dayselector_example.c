@@ -12,7 +12,8 @@
 #include <Elementary.h>
 
 /* Callback function when a day is clicked. */
-static void _changed_cb(void* data, Evas_Object* obj, void* event_info)
+static void _changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                        void *event_info)
 {
    char buf[256];
    Elm_Dayselector_Day day;
@@ -38,7 +39,7 @@ static void _changed_cb(void* data, Evas_Object* obj, void* event_info)
 /* End of clicked callback */
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bx, *dayselector;
 

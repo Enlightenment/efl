@@ -4,25 +4,28 @@
 #include <Elementary.h>
 
 static void
-_generation_started_cb(void *data, Evas_Object *o, void *event_info)
+_generation_started_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    printf("thumbnail generation started.\n");
 }
 
 static void
-_generation_finished_cb(void *data, Evas_Object *o, void *event_info)
+_generation_finished_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
    printf("thumbnail generation finished.\n");
 }
 
 static void
-_generation_error_cb(void *data, Evas_Object *o, void *event_info)
+_generation_error_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    printf("thumbnail generation error.\n");
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win;
    Evas_Object *thumb;

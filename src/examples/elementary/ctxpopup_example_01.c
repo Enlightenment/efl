@@ -6,13 +6,15 @@
 static int list_mouse_down = 0;
 
 static void
-_dismissed_cb(void *data, Evas_Object *obj, void *event_info)
+_dismissed_cb(void *data EINA_UNUSED, Evas_Object *obj,
+              void *event_info EINA_UNUSED)
 {
    evas_object_del(obj);
 }
 
 static void
-_ctxpopup_item_cb(void *data, Evas_Object *obj, void *event_info)
+_ctxpopup_item_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                  void *event_info)
 {
    printf("ctxpopup item selected: %s\n", elm_object_item_text_get(event_info));
 }
@@ -26,7 +28,7 @@ Elm_Object_Item *item_new(Evas_Object *ctxpopup, const char * label, const char 
 }
 
 static void
-_list_item_cb(void *data, Evas_Object *obj, void *event_info)
+_list_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Object *ctxpopup;
    Elm_Object_Item *it;
@@ -54,7 +56,7 @@ _list_item_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_list_item_cb2(void *data, Evas_Object *obj, void *event_info)
+_list_item_cb2(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Object *ctxpopup;
    Elm_Object_Item *it;
@@ -100,7 +102,7 @@ _win_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *list;
 

@@ -12,25 +12,25 @@
 #include <Elementary.h>
 
 static void
-_press(void *data, Evas_Object *obj, void *event_info)
+_press(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("Pressed\n");
 }
 
 static void
-_unpress(void *data, Evas_Object *obj, void *event_info)
+_unpress(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("Unpressed, size : %f\n", elm_panes_content_left_size_get(obj));
 }
 
 static void
-_clicked(void *data, Evas_Object *obj, void *event_info)
+_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("Clicked\n");
 }
 
 static void
-_clicked_double(void *data, Evas_Object *obj, void *event_info)
+_clicked_double(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    static double size = 0.0;
    double tmp_size = 0.0;
@@ -50,7 +50,7 @@ _clicked_double(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *panes, *panes_h, *bt;
 

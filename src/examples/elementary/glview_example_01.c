@@ -224,21 +224,21 @@ _anim(void *data)
 }
 
 static void
-_on_done(void *data, Evas_Object *obj, void *event_info)
+_on_done(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_del((Evas_Object*)data);
    elm_exit();
 }
 
 static void
-_del(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_del(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Ecore_Animator *ani = evas_object_data_get(obj, "ani");
    ecore_animator_del(ani);
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bt, *gl;
    Ecore_Animator *ani;

@@ -5,7 +5,7 @@
 #include <Elementary.h>
 
 static void
-_cb_radio_changed(void *data, Evas_Object *obj, void *event)
+_cb_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *o_bg = data;
 
@@ -13,7 +13,7 @@ _cb_radio_changed(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_overlay_changed(void *data, Evas_Object *obj, void *event)
+_cb_overlay_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *o_bg = data;
 
@@ -33,7 +33,7 @@ _cb_overlay_changed(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_color_changed(void *data, Evas_Object *obj, void *event)
+_cb_color_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *o_bg = data;
    double val = 0.0;
@@ -50,7 +50,7 @@ _cb_color_changed(void *data, Evas_Object *obj, void *event)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win;
    Evas_Object *box, *hbox, *o_bg;

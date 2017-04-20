@@ -12,19 +12,19 @@
 #include <Elementary.h>
 
 static void
-_changed_cb(void *data, Evas_Object *obj, void *event_info)
+_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("Value changed to %0.f\n", elm_spinner_value_get(obj));
 }
 
 static void
-_delay_changed_cb(void *data, Evas_Object *obj, void *event_info)
+_delay_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    printf("Value delay changed to %0.f\n", elm_spinner_value_get(obj));
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bx, *sp;
 

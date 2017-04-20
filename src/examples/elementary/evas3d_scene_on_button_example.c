@@ -231,8 +231,8 @@ _play_scene(void *data,
    evas_canvas3d_node_scale_set(d->mesh_node, 1.0, 1.0, 1.0);
 }
 
-int
-elm_main(int argc, char **argv)
+EAPI_MAIN int
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Scene_Data data;
 

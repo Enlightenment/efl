@@ -6,7 +6,7 @@
 static void _response_cb(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *popup, *btn1, *btn2, *btn3, *icon1;
    char buf[256];
@@ -70,8 +70,8 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_response_cb(void *data, Evas_Object *obj,
-             void *event_info)
+_response_cb(void *data, Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    evas_object_del(data);
 }

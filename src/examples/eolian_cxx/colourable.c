@@ -51,7 +51,7 @@ _ns_colourable_efl_object_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
 }
 
 void
-_ns_colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb)
+_ns_colourable_rgb_24bits_constructor(Eo *obj EINA_UNUSED, Colourable_Data *self, int rgb)
 {
    if(!_ns_colourable_impl_logdomain)
      {

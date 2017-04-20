@@ -23,7 +23,7 @@ typedef struct _Example_Data
 static Example_Data example_data;
 
 static void
-_route_loaded(void *data, Evas_Object *obj, void *ev)
+_route_loaded(void *data, Evas_Object *obj, void *ev EINA_UNUSED)
 {
    Example_Data *exam_data = data;
 
@@ -32,7 +32,7 @@ _route_loaded(void *data, Evas_Object *obj, void *ev)
 }
 
 static void
-_name_loaded(void *data, Evas_Object *obj, void *ev)
+_name_loaded(void *data, Evas_Object *obj, void *ev EINA_UNUSED)
 {
    Example_Data *exam_data = data;
    Evas_Object *map = obj;
@@ -51,7 +51,7 @@ _name_loaded(void *data, Evas_Object *obj, void *ev)
 }
 
 static void
-_bt_route(void *data, Evas_Object *obj, void *ev)
+_bt_route(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Example_Data *exam_data = data;
    Evas_Object *map;
@@ -67,7 +67,7 @@ _bt_route(void *data, Evas_Object *obj, void *ev)
 }
 
 static void
-_bt_zoom_in(void *data, Evas_Object *obj, void *ev)
+_bt_zoom_in(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    int zoom;
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
@@ -76,7 +76,7 @@ _bt_zoom_in(void *data, Evas_Object *obj, void *ev)
 }
 
 static void
-_bt_zoom_out(void *data, Evas_Object *obj, void *ev)
+_bt_zoom_out(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    int zoom;
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
@@ -85,13 +85,13 @@ _bt_zoom_out(void *data, Evas_Object *obj, void *ev)
 }
 
 static void
-_bt_zoom_fit(void *data, Evas_Object *obj, void *event_info)
+_bt_zoom_fit(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_AUTO_FIT);
 }
 
 static void
-_bt_zoom_fill(void *data, Evas_Object *obj, void *event_info)
+_bt_zoom_fill(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_AUTO_FILL);
 }
@@ -110,7 +110,7 @@ _nasty_hack(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *map, *box, *bt, *entry;
 

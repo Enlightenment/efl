@@ -12,7 +12,7 @@
 #include <Elementary.h>
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bx, *tb, *bt, *menu;
    Elm_Object_Item *tb_it;

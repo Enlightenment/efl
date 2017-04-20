@@ -8,7 +8,7 @@
 #define SECS_DAY 86400
 
 EAPI_MAIN int
-elm_main (int argc, char *argv[])
+elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    struct tm selected_time;
    time_t current_time;

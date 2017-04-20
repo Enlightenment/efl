@@ -483,25 +483,25 @@ zoom_factor_set(double new_zoom_factor)
 }
 
 static void
-zoom_in_cb(void *data,
-           Evas_Object *obj,
-           void *event_info)
+zoom_in_cb(void *data EINA_UNUSED,
+           Evas_Object *obj EINA_UNUSED,
+           void *event_info EINA_UNUSED)
 {
    zoom_factor_set(zoom_factor + 1);
 }
 
 static void
-zoom_out_cb(void *data,
-            Evas_Object *obj,
-            void *event_info)
+zoom_out_cb(void *data EINA_UNUSED,
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    zoom_factor_set(zoom_factor - 1);
 }
 
 static void
-zoom_to_2d_map_cb(void *data,
-                  Evas_Object *obj,
-                  void *event_info)
+zoom_to_2d_map_cb(void *data EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    double        s, t;
    double        lon, lat;
@@ -524,9 +524,9 @@ zoom_to_2d_map_cb(void *data,
 }
 
 static void
-zoom_to_3d_map_cb(void *data,
-                  Evas_Object *obj,
-                  void *event_info)
+zoom_to_3d_map_cb(void *data EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    if (map_dimension_state == MAP_DIMENSION_STATE_3D) return;
 
@@ -578,9 +578,9 @@ submenu_info_add(Elm_Object_Item *parent)
 }
 
 static void
-map_zoom_change_cb(void *data,
-                   Evas_Object *obj,
-                   void *event_info)
+map_zoom_change_cb(void *data EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    int cur_zoom_factor;
 
@@ -595,8 +595,8 @@ map_zoom_change_cb(void *data,
 }
 
 static void
-map_mouse_down_cb(void *data,
-                  Evas *e,
+map_mouse_down_cb(void *data EINA_UNUSED,
+                  Evas *e EINA_UNUSED,
                   Evas_Object *o,
                   void *event_info)
 {
@@ -658,8 +658,8 @@ map_mouse_down_cb(void *data,
 }
 
 static void
-mouse_down_cb(void *data,
-              Evas *e,
+mouse_down_cb(void *data EINA_UNUSED,
+              Evas *e EINA_UNUSED,
               Evas_Object *o,
               void *event_info)
 {
@@ -730,9 +730,9 @@ mouse_down_cb(void *data,
 }
 
 static void
-mouse_move_cb(void *data,
-              Evas *e,
-              Evas_Object *o,
+mouse_move_cb(void *data EINA_UNUSED,
+              Evas *e EINA_UNUSED,
+              Evas_Object *o EINA_UNUSED,
               void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
@@ -771,8 +771,8 @@ mouse_move_cb(void *data,
 }
 
 static void
-mouse_up_cb(void *data,
-            Evas *e,
+mouse_up_cb(void *data EINA_UNUSED,
+            Evas *e EINA_UNUSED,
             Evas_Object *o,
             void *event_info)
 {
@@ -822,9 +822,9 @@ mouse_up_cb(void *data,
 }
 
 static void
-mouse_wheel_cb(void *data,
-               Evas *e,
-               Evas_Object *o,
+mouse_wheel_cb(void *data EINA_UNUSED,
+               Evas *e EINA_UNUSED,
+               Evas_Object *o EINA_UNUSED,
                void *event_info)
 {
    Evas_Event_Mouse_Wheel *ev = event_info;
@@ -1009,8 +1009,8 @@ mesh_setup(void)
 
 static void
 hoversel_cb(void *data,
-            Evas_Object *obj,
-            void *event_info)
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
 {
    elm_map_source_set(map, ELM_MAP_SOURCE_TYPE_TILE, (char *)data);
    zoom_factor_set(zoom_factor);
@@ -1032,9 +1032,9 @@ hoversel_setup(Evas_Object *parent)
 }
 
 static void
-rotation_toggle_changed_cb(void *data,
+rotation_toggle_changed_cb(void *data EINA_UNUSED,
                            Evas_Object *obj,
-                           void *event_info)
+                           void *event_info EINA_UNUSED)
 {
    /* Stop rotating earth. */
    if (animator)
@@ -1067,9 +1067,9 @@ rotation_toggle_setup(Evas_Object *parent)
 }
 
 static void
-light_toggle_changed_cb(void *data,
+light_toggle_changed_cb(void *data EINA_UNUSED,
                         Evas_Object *obj,
-                        void *event_info)
+                        void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
      {
@@ -1104,9 +1104,9 @@ light_toggle_setup(Evas_Object *parent)
 
 
 static void
-slider_changed_cb(void *data,
+slider_changed_cb(void *data EINA_UNUSED,
                   Evas_Object *obj,
-                  void *event_info)
+                  void *event_info EINA_UNUSED)
 {
    double new_zoom_factor = ROUND(elm_slider_value_get(obj));
 
@@ -1133,7 +1133,7 @@ zoom_slider_setup(Evas_Object *parent)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    char buf[PATH_MAX];
 

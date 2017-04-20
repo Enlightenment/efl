@@ -18,7 +18,7 @@ static Elm_Genlist_Item_Class *_itfav = NULL;
 static int nitems = 0;
 
 static char *
-_item_label_get(void *data, Evas_Object *obj, const char *part)
+_item_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    char buf[256] = {0};
    Node_Data *d = data;
@@ -30,7 +30,7 @@ _item_label_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static Evas_Object *
-_item_content_get(void *data, Evas_Object *obj, const char *part)
+_item_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -49,7 +49,7 @@ _item_sel_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static char *
-_parent_label_get(void *data, Evas_Object *obj, const char *part)
+_parent_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
    Node_Data *d = data;
@@ -61,7 +61,7 @@ _parent_label_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static Evas_Object *
-_parent_content_get(void *data, Evas_Object *obj, const char *part)
+_parent_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -73,7 +73,7 @@ _parent_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static char *
-_favorite_label_get(void *data, Evas_Object *obj, const char *part)
+_favorite_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 {
    char buf[256] = {0};
    Node_Data *d = data;
@@ -85,7 +85,7 @@ _favorite_label_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static Evas_Object *
-_favorite_content_get(void *data, Evas_Object *obj, const char *part)
+_favorite_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -97,7 +97,7 @@ _favorite_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void
-_append_cb(void *data, Evas_Object *o, void *event_info)
+_append_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit, *parent = NULL;
@@ -127,7 +127,7 @@ _append_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_favorite_cb(void *data, Evas_Object *o, void *event_info)
+_favorite_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -150,7 +150,7 @@ _favorite_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_add_child_cb(void *data, Evas_Object *o, void *event_info)
+_add_child_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -210,7 +210,7 @@ _clear_list(Node_Data *d)
 }
 
 static void
-_del_item_cb(void *data, Evas_Object *o, void *event_info)
+_del_item_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -235,7 +235,7 @@ _del_item_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_expand_request_cb(void *data, Evas_Object *o, void *event_info)
+_expand_request_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    printf("expand request on item: %p\n", event_info);
@@ -243,7 +243,7 @@ _expand_request_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_contract_request_cb(void *data, Evas_Object *o, void *event_info)
+_contract_request_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    printf("contract request on item: %p\n", event_info);
@@ -251,7 +251,7 @@ _contract_request_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_expanded_cb(void *data, Evas_Object *o, void *event_info)
+_expanded_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Eina_List *l;
    Elm_Object_Item *glit = event_info;
@@ -282,7 +282,7 @@ _expanded_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_contracted_cb(void *data, Evas_Object *o, void *event_info)
+_contracted_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    elm_genlist_item_subitems_clear(glit);
@@ -305,7 +305,7 @@ _button_add(Evas_Object *list, Evas_Object *box, const char *label, Evas_Smart_C
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *box, *fbox;
    Evas_Object *list;

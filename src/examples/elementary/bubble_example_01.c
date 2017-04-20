@@ -4,7 +4,7 @@
 #include <Elementary.h>
 
 void
-_bla(void *data, Evas_Object *obj, void *event_info)
+_bla(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    static unsigned char corner = 0;
    ++corner;
@@ -16,7 +16,7 @@ _bla(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *bubble, *label, *icon;
 

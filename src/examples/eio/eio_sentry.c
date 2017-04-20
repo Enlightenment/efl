@@ -45,7 +45,7 @@ main(int argc, char const *argv[])
     if (argc > 1)
         path = argv[1];
 
-    Ecore_Job *job = ecore_job_add(&monitor_stuff, path);
+    ecore_job_add(&monitor_stuff, path);
 
     ecore_main_loop_begin();
 

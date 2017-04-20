@@ -12,7 +12,7 @@ static const char *styles[] = {
 static int current_style = 0;
 
 static void
-_inwin_hide(void *data, Evas_Object *obj, void *event)
+_inwin_hide(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    if (inwin)
      {
@@ -24,7 +24,7 @@ _inwin_hide(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_inwin_destroy(void *data, Evas_Object *obj, void *event)
+_inwin_destroy(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    if (inwin)
      {
@@ -37,7 +37,7 @@ _inwin_destroy(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_btn_click_cb(void *data, Evas_Object *obj, void *event)
+_btn_click_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *o, *parent;
 
@@ -85,7 +85,7 @@ _btn_click_cb(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_win_del_cb(void *data, Evas_Object *obj, void *event)
+_win_del_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    if (inwin)
      {
@@ -109,7 +109,7 @@ _screenshot_hack_cb(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char *argv[])
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *box, *o;
 
