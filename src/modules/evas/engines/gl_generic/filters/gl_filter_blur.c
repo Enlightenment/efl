@@ -134,7 +134,7 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
    RGBA_Draw_Context *dc_save;
    Eina_Bool horiz;
    double sx, sy, sw, sh, ssx, ssy, ssw, ssh, dx, dy, dw, dh, radius;
-   double s_w, s_h, d_w, d_h, scale_x, scale_y;
+   double s_w, s_h, d_w, d_h, scale_x = 1.0, scale_y = 1.0;
    Eina_Rectangle s_ob, d_ob, s_region[4], d_region[4];
    int nx, ny, nw, nh, regions, count = 0;
    double *weights, *offsets;
