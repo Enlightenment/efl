@@ -58,7 +58,7 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_set(Eo *o, Efl_Io_Closer_Fd_Data *
    return EINA_FALSE;
    (void)o;
 #else
-   int flags, fd;
+   int fd;
    Eina_Bool old = pd->close_on_exec;
 
    pd->close_on_exec = close_on_exec;
@@ -71,7 +71,7 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_set(Eo *o, Efl_Io_Closer_Fd_Data *
 
    if (!eina_file_close_on_exec(fd, close_on_exec))
      {
-        ERR("fcntl(%d, F_SETFD, %#x): %s", fd, flags, strerror(errno));
+        ERR("eina_file_close_on_exec(%d) failed", fd);
         pd->close_on_exec = old;
         return EINA_FALSE;
      }
