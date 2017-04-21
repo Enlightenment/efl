@@ -200,13 +200,6 @@ _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 
    if (tp->base_type->type == EOLIAN_TYPE_REGULAR)
      {
-        if (!strcmp(tp->base_type->name, "__builtin_event_cb"))
-          {
-             eina_strbuf_append(buf, "void (*");
-             _append_name(tp, buf);
-             eina_strbuf_append(buf, ")(void *data, const Efl_Event *event)");
-             return;
-          }
         if (!strcmp(tp->base_type->name, "__builtin_free_cb"))
           {
              eina_strbuf_append(buf, "void (*");

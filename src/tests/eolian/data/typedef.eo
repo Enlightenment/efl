@@ -8,8 +8,6 @@ type @extern Evas.Pants: float; /* not generated */
 
 type Undef: __undefined_type; /* not generated */
 
-type Event: __builtin_event_cb; /* specially generated */
-
 type Free: __builtin_free_cb; /* specially generated */
 
 enum Enum.Bar

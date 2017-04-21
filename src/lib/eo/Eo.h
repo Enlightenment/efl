@@ -216,22 +216,44 @@ typedef void (*Efl_Del_Intercept) (Eo *obj_id);
  */
 typedef Eo Efl_Future;
 
-/**
- * @typedef Efl_Event
- * A parameter passed in event callbacks holding extra event parameters.
- */
-typedef struct _Efl_Event Efl_Event;
-
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
 #include "efl_interface.eo.h"
 #define EO_CLASS EFL_OBJECT_CLASS
 
-struct _Efl_Event {
+/**
+ * @struct _Efl_Event
+ * A parameter passed in event callbacks holding extra event parameters.
+ */
+typedef struct _Efl_Event {
    Efl_Object *object; /**< The object the event was called on. */
    const Efl_Event_Description *desc; /**< The event description. */
    void *info; /**< Extra event information passed by the event caller. */
-};
+} Efl_Event;
+
+/** An event callback prototype. */
+typedef void (*Efl_Event_Cb)(void *data, const Efl_Event *event);
+
+/**
+ * @brief Callback priority value. Range is -32k - 32k. The lower the number,
+ * the higher the priority.
+ *
+ * See @ref EFL_CALLBACK_PRIORITY_AFTER, @ref EFL_CALLBACK_PRIORITY_BEFORE @ref
+ * EFL_CALLBACK_PRIORITY_DEFAULT
+ */
+typedef short Efl_Callback_Priority;
+
+/**
+ * @struct _Efl_Callback_Array_Item
+ * @brief An item in an array of callback desc/func.
+ *
+ * See also efl_event_callback_array_add().
+ */
+typedef struct _Efl_Callback_Array_Item
+{
+  const Efl_Event_Description *desc; /**< The event description. */
+  Efl_Event_Cb func; /**< The callback function. */
+} Efl_Callback_Array_Item;
 
 /**
  * @brief Add a callback for an event with a specific priority.

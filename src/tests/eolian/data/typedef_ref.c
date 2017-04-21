@@ -19,8 +19,6 @@ typedef Evas_Coord Evas_Coord2;
 
 typedef Evas_Coord2 Evas_Coord3;
 
-typedef void (*Event)(void *data, const Efl_Event *event);
-
 typedef void (*Free)(void *data);
 
 typedef enum

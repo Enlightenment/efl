@@ -8,31 +8,11 @@ struct Efl.Event.Description {
     restart: bool; [[$true if when the event is triggered again from a callback, it should start from where it was]]
 }
 
-type Efl.Event_Cb: __builtin_event_cb; [[An event callback prototype.]]
-
-struct Efl.Callback_Array_Item {
-    [[An item in an array of callback desc/func.
-
-      See also \@ref efl_event_callback_array_add.
-    ]]
-    desc: ptr(const(Efl.Event.Description)); [[The event description.]]
-    func: Efl.Event_Cb; [[The callback function.]]
-}
-
 struct Efl.Dbg_Info {
      [[The structure for the debug info used by Eo.]]
      name: stringshare; [[The name of the part (stringshare).]]
      value: generic_value; [[The value.]]
 }
-
-
-type Efl.Callback_Priority: short; [[Callback priority value. Range is -32k - 32k.
-                                    The lower the number, the higher the priority.
-
-                                    See \@ref EFL_CALLBACK_PRIORITY_AFTER,
-                                    \@ref EFL_CALLBACK_PRIORITY_BEFORE
-                                    \@ref EFL_CALLBACK_PRIORITY_DEFAULT
-                                  ]]
 
 abstract Efl.Object ()
 {
