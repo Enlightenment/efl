@@ -307,6 +307,7 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       line,gutter,clicked; [[Called when gutter was clicked]]
       cursor,changed; [[Called when cursor changed]]
       changed,user; [[Called when object changed due to user interaction]]
+      selection,start; [[Called when a selection is started]]
       selection,changed; [[Called when selection changed]]
       selection,cleared; [[Called when selection was cleared]]
    }
