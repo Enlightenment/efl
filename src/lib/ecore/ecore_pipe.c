@@ -604,7 +604,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
          if ((fd_timer_found) && (p->timerfd != PIPE_FD_INVALID))
          {
             if (pipe_read(p->timerfd, &timerfdbuf, sizeof(timerfdbuf))
-                < sizeof(int64_t))
+                < (int)sizeof(int64_t))
               WRN("Could not read timerfd data");
             _ecore_pipe_unhandle(p);
             break;
