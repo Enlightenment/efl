@@ -3924,13 +3924,6 @@ _win_move_resize_start(Efl_Ui_Win_Data *sd, Efl_Ui_Win_Move_Resize_Mode mode)
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    const resize_info *ri;
 
-   // 1. move_resize can only be started after mouse down event
-   if (evas_event_down_count_get(sd->evas) <= 0)
-     {
-        ERR("move_resize_start can only be called when a pointer is pressed.");
-        return EINA_FALSE;
-     }
-
    // 2. check move_resize already started
    if (sd->resizing)
      {
@@ -6819,6 +6812,12 @@ ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Pa
 EOLIAN static Eina_Bool
 _efl_ui_win_move_resize_start(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Move_Resize_Mode mode)
 {
+   // 1. move_resize can only be started after mouse down event
+   if (evas_event_down_count_get(sd->evas) <= 0)
+     {
+        ERR("move_resize_start can only be called when a pointer is pressed.");
+        return EINA_FALSE;
+     }
    return _win_move_resize_start(sd, mode);
 }
 
