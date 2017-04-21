@@ -930,10 +930,10 @@ static Node*
 _coords_movement(Efl_Ui_Focus_Manager_Data *pd, Node *upper, Efl_Ui_Focus_Direction direction)
 {
    Node *candidate;
-   Eina_List *node;
+   Eina_List *node_list;
 
    //we are searcing which of the partners is lower to the history
-   EINA_LIST_REVERSE_FOREACH(pd->focus_stack, node, candidate)
+   EINA_LIST_REVERSE_FOREACH(pd->focus_stack, node_list, candidate)
      {
         if (eina_list_data_find(G(upper).directions[direction].partners, candidate))
           {
