@@ -377,7 +377,7 @@ ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
    EINA_SAFETY_ON_NULL_RETURN(input->display);
 
    manager = input->display->wl.data_device_manager;
-   if (!manager) return EINA_FALSE;
+   if (!manager) return;
 
    if (input->data.types.data)
      {
