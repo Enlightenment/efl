@@ -546,4 +546,7 @@ _edje_object_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object *obs,
      }
 }
 
+#define EDJE_OBJECT_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _edje_object_efl_object_dbg_info_get)
+
 #include "edje_object.eo.c"

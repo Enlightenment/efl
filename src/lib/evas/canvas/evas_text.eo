@@ -261,7 +261,6 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Object.dbg_info_get;
       Efl.Gfx.size { set; }
       Efl.Text.text { get; set; }
       Efl.Text.Properties.font { get; set; }

@@ -347,6 +347,23 @@ EOAPI Eina_Bool efl_event_callback_legacy_call(Eo *obj, const Efl_Event_Descript
  */
 
 /**
+ * @struct _Efl_Dbg_Info
+ * The structure for the debug info used by Eo.
+ */
+typedef struct _Efl_Dbg_Info
+{
+  Eina_Stringshare *name; /**< The name of the part (stringshare). */
+  Eina_Value value; /**< The value. */
+} Efl_Dbg_Info;
+
+/**
+ * @brief Get debug information from the object.
+ *
+ * @param[in] root_node Node of the tree
+ */
+EOAPI void efl_dbg_info_get(Eo *obj, Efl_Dbg_Info *root_node);
+
+/**
  * @var EFL_DBG_INFO_TYPE
  * The Eina_Value_Type for the debug info.
  */

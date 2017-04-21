@@ -757,6 +757,8 @@ _efl_object_dbg_info_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED, E
    return;
 }
 
+EOAPI EFL_VOID_FUNC_BODYV(efl_dbg_info_get, EFL_FUNC_CALL(root_node), Efl_Dbg_Info *root_node);
+
 /* Weak reference. */
 
 static inline size_t
@@ -1968,6 +1970,7 @@ _efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *li
    EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _efl_object_event_callback_array_priority_add), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_array_del, _efl_object_event_callback_array_del), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_call, _efl_object_event_callback_call), \
-   EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_object_event_callback_legacy_call)
+   EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_object_event_callback_legacy_call), \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_object_dbg_info_get)
 
 #include "efl_object.eo.c"

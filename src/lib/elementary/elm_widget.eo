@@ -838,7 +838,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Efl.Object.dbg_info_get;
       Efl.Object.provider_find;
       Efl.Gfx.color { set; }
       Efl.Gfx.visible { set; }

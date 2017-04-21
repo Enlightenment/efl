@@ -2566,6 +2566,7 @@ evas_object_size_hint_display_mode_get(const Evas_Object *obj)
 }
 
 #define EFL_CANVAS_OBJECT_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_object_efl_object_dbg_info_get), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_canvas_object_efl_object_event_callback_legacy_call), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_call, _efl_canvas_object_efl_object_event_callback_call)
 

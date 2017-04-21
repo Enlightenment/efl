@@ -199,7 +199,6 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Object.dbg_info_get;
       Efl.Text.Properties.font { get; set; }
       Efl.Text.Properties.font_source { get; set; }
    }

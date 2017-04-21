@@ -2442,4 +2442,7 @@ _evas_text_efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED,
    return o->paragraph_direction;
 }
 
+#define EVAS_TEXT_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _evas_text_efl_object_dbg_info_get)
+
 #include "canvas/evas_text.eo.c"

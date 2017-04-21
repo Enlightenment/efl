@@ -861,5 +861,7 @@ _efl_canvas_image_efl_object_dbg_info_get(Eo *obj, void *pd EINA_UNUSED, Efl_Dbg
      }
 }
 
+#define EFL_CANVAS_IMAGE_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_image_efl_object_dbg_info_get)
 
 #include "efl_canvas_image.eo.c"

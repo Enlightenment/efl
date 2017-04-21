@@ -1508,4 +1508,7 @@ evas_object_textgrid_font_get(const Eo *obj, const char **font_name, Evas_Font_S
    efl_text_properties_font_get((Eo *) obj, font_name, font_size);
 }
 
+#define EVAS_TEXTGRID_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _evas_textgrid_efl_object_dbg_info_get)
+
 #include "canvas/evas_textgrid.eo.c"

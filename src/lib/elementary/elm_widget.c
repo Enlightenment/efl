@@ -6496,6 +6496,8 @@ _elm_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Ei
    efl_ui_focus_object_focus_set(efl_super(obj, MY_CLASS), focus);
 }
 
+#define ELM_WIDGET_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_widget_efl_object_dbg_info_get)
 
 #include "elm_widget_item.eo.c"
 #include "elm_widget.eo.c"

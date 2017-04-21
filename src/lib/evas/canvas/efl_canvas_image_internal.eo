@@ -9,7 +9,6 @@ abstract Efl.Canvas.Image.Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Interna
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Object.dbg_info_get;
       Efl.Object.finalize;
       Efl.File.save;
       Efl.Orientation.orientation { get; set; }

@@ -8,12 +8,6 @@ struct Efl.Event.Description {
     restart: bool; [[$true if when the event is triggered again from a callback, it should start from where it was]]
 }
 
-struct Efl.Dbg_Info {
-     [[The structure for the debug info used by Eo.]]
-     name: stringshare; [[The name of the part (stringshare).]]
-     value: generic_value; [[The value.]]
-}
-
 abstract Efl.Object ()
 {
    [[Abstract Efl object class]]
@@ -310,12 +304,6 @@ abstract Efl.Object ()
          params {
             @in desc: ptr(const(Efl.Event.Description)); [[The description of the event to listen to]]
             @in new_obj: Efl.Object; [[The object to emit events from]]
-         }
-      }
-      dbg_info_get {
-         [[Get debug information from the object.]]
-         params {
-            @in root_node: ptr(Efl.Dbg_Info); [[Node of the tree]]
          }
       }
       children_iterator_new {

@@ -364,7 +364,6 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Canvas.Filter.Internal)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Object.dbg_info_get;
       Efl.Canvas.Object.paragraph_direction { get; set; }
       Efl.Text.text { get; set; }
       Efl.Gfx.Filter.filter_program { get; set; }

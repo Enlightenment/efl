@@ -3551,6 +3551,9 @@ _evas_object_image_surface_get(Evas_Object_Protected_Data *obj, Eina_Bool create
    return pd->engine_data;
 }
 
+#define EFL_CANVAS_IMAGE_INTERNAL_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_image_internal_efl_object_dbg_info_get)
+
 #include "canvas/efl_canvas_image_internal.eo.c"
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

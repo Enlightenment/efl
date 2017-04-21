@@ -14952,5 +14952,8 @@ ppar(Evas_Object_Textblock_Paragraph *par)
 
 #endif
 
+#define EFL_CANVAS_TEXT_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_text_efl_object_dbg_info_get)
+
 #include "canvas/efl_canvas_text_cursor.eo.c"
 #include "canvas/efl_canvas_text.eo.c"
