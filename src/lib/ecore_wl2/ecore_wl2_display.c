@@ -938,3 +938,10 @@ ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *display)
 
    return display->wl.compositor_version;
 }
+
+EAPI Eina_Iterator *
+ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   return eina_inlist_iterator_new(display->inputs);
+}
