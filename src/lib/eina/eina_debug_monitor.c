@@ -21,6 +21,7 @@
 #include "eina_evlog.h"
 #include "eina_util.h"
 #include "eina_thread.h"
+#include "eina_file.h"
 #include <signal.h>
 
 #ifdef EINA_HAVE_DEBUG
