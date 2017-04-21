@@ -1,27 +1,30 @@
 interface Efl.Ui.Focus.User {
-    [[Interface which is used to handle the manager of a user]]
+    [[Interface which is used to handle the manager of a user.
+
+      @since 1.20
+    ]]
     methods {
         @property manager {
-            [[describes which manager is used to register or should be used to register this user]]
-            get {
-
-            }
+            [[Describes which manager is used to register or should be used
+              to register this user.
+            ]]
+            get {}
             values {
                 manager : Efl.Ui.Focus.Manager; [[The manager object]]
             }
         }
         @property parent {
-            [[Describes which logical parent is used by this object]]
-            get {
-
-            }
+            [[Describes which logical parent is used by this object.]]
+            get {}
             values {
-                logical_parent : Efl.Ui.Focus.Object;
+                logical_parent : Efl.Ui.Focus.Object; [[The focus parent.]]
             }
         }
     }
     events {
-        manager,changed : Efl.Ui.Focus.Manager; [[emitted if a new manager is the parent for this one]]
-        logical,changed : Efl.Ui.Focus.Object; [[emitted if a new logical_parent should be used]]
+        manager,changed: Efl.Ui.Focus.Manager; [[Emitted when a new manager is
+                                                 the parent for this object.]]
+        logical,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical
+                                                parent should be used.]]
     }
 }

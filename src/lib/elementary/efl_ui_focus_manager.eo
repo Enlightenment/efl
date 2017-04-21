@@ -1,15 +1,23 @@
 enum Efl.Ui.Focus.Direction {
-    [[Those values are desribing a direction from the position of view from one item]]
-    right = 0, [[Coorinate-wise the next element on the right hand side ]]
-    left = 1, [[Coorinate-wise the next element on the left hand side ]]
-    down = 2, [[Coorinate-wise the next element on the down hand side ]]
-    up = 3, [[Coorinate-wise the next element on the up hand side ]]
+    [[Those values are describing a direction from the position of view from
+      one item.
+
+      @since 1.20
+    ]]
+    right = 0, [[Coordinate-wise the next element on the right-hand side]]
+    left = 1, [[Coordinate-wise the next element on the left-hand side]]
+    down = 2, [[Coordinate-wise the next element downward]]
+    up = 3, [[Coorinate-wise the next element upwards]]
     next = 4, [[Logically-wise the next item in the logical tree]]
     prev = 5, [[Logically-wise the prev item in the logical tree]]
-    last = 6
+    last = 6 [[Last value for this enum, do not use]]
 }
 
-struct Efl.Ui.Focus.Relations{
+struct Efl.Ui.Focus.Relations {
+    [[Structure holding the graph of relations between focussable objects.
+
+      @since 1.20
+    ]]
     right : list<Efl.Ui.Focus.Object>;
     left : list<Efl.Ui.Focus.Object>;
     top : list<Efl.Ui.Focus.Object>;
@@ -24,11 +32,15 @@ struct Efl.Ui.Focus.Relations{
 class Efl.Ui.Focus.Manager (Efl.Object) {
     [[Calculates the directions of Efl.Ui.Focus.Direction
 
-      Each registered item will get a other registered object into each direction, you can get those items for the currently focused item if you call request move
+      Each registered item will get a other registered object into each
+      direction, you can get those items for the currently focused item if
+      you call request move.
+
+      @since 1.20
     ]]
     methods {
         move {
-            [[Move the focus into the given direction
+            [[Move the focus into the given direction.
 
               This call flushes all changes.
               This means all changes between the last flush and now are computed
@@ -39,7 +51,9 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
             return : Efl.Ui.Focus.Object; [[The element which is now focused]]
         }
         request_move {
-            [[Returns the object which would be the next object to focus in the given direction]]
+            [[Returns the object which would be the next object to focus in the
+              given direction.
+            ]]
             params {
                 direction : Efl.Ui.Focus.Direction;
             }
@@ -48,102 +62,117 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
         register {
             [[Register a new item in the graph.
 
-              The parent has to be none null, it will be used as the parent in the logical tree.
-              The redirect argument will be set as redirect property on that manager, once child gets focused.
+              $parent can not be $null, it will be used as the parent in the
+              logical tree.
+              $redirect will be set as redirect property on that manager, once
+              $child gets focused.
             ]]
             params {
                 child : Efl.Ui.Focus.Object @nonull; [[The object to register]]
-                parent : Efl.Ui.Focus.Object @nonull; [[The parent to use in the logical tree]]
-                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set once this child is focused can be NULL for no redirect]]
+                parent : Efl.Ui.Focus.Object @nonull; [[The parent to use in
+                                                        the logical tree]]
+                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set
+                    once this child is focused can be NULL for no redirect]]
             }
-            return : bool; [[$true if it was successfull $false if not]]
+            return : bool; [[$true if successful, $false otherwise]]
         }
         register_logical {
             [[Register a new item just for the logical parent.
 
-              The item can never get focus, it just help to build a tree out of the items who are getting focus.
+              The item can never get focus, it just helps to build a tree out
+              of the items that are getting focus.
             ]]
             params {
-                child : Efl.Ui.Focus.Object @nonull;
-                parent : Efl.Ui.Focus.Object @nonull;
-                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set once this child is focused can be NULL for no redirect]]
+                child : Efl.Ui.Focus.Object @nonull; [[The object to register]]
+                parent : Efl.Ui.Focus.Object @nonull; [[The parent to use in
+                                                        the logical tree]]
+                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set
+                    once this child is focused can be $null for no redirect]]
             }
-            return : bool; [[$true if it was successfull $false if not]]
+            return : bool; [[$true if successful, $false otherwise]]
         }
-
         update_redirect {
-            [[Set a new redirect object for the given child
+            [[Set a new redirect object for the given child.
 
-            Once the child is focused the redirect manager will be set in the redirect property.
-            Set to $null if nothing should happen
+              Once $child is focused the redirect manager will be set
+              in the redirect property. Set to $null if nothing should happen.
             ]]
-            params {
-                child : Efl.Ui.Focus.Object @nonull;
-                redirect : Efl.Ui.Focus.Manager; [[Once $child got focused this element will be set as redirect]]
-            }
-            return : bool;
-        }
-        update_parent {
-            [[Set a new logical parent for the given child]]
             params {
                 child : Efl.Ui.Focus.Object @nonull; [[The child to update]]
-                parent : Efl.Ui.Focus.Object @nonull; [[The parent which now will be the logical parent of child]]
+                redirect : Efl.Ui.Focus.Manager; [[Once $child got focused this
+                    element will be set as redirect]]
             }
-            return : bool;
+            return : bool; [[$true if successful, $false otherwise]]
+        }
+        update_parent {
+            [[Set a new logical parent for the given child.]]
+            params {
+                child : Efl.Ui.Focus.Object @nonull; [[The child to update]]
+                parent : Efl.Ui.Focus.Object @nonull; [[The parent which now
+                    will be the logical parent of child]]
+            }
+            return : bool; [[$true if successful, $false otherwise]]
         }
         update_children {
-            [[Give the list of children a different order]]
+            [[Give the list of children a different order.]]
             params {
                 parent : Efl.Ui.Focus.Object @nonull; [[the parent to update]]
                 children : list<Efl.Ui.Focus.Object>; [[the list with the new order]]
             }
-            return : bool;
+            return : bool; [[$true if successful, $false otherwise]]
         }
         update_order {
-            [[Give the given order to the parent's child. Children from the list which are no real children are ignored]]
+            [[Give the given order to the parent's child.
+
+              Children from the list which are no real children are ignored.
+            ]]
             params {
                 parent : Efl.Ui.Focus.Object @nonull; [[the parent to update]]
                 children : list<Efl.Ui.Focus.Object>; [[the order of items]]
             }
         }
         unregister {
-            [[unregister the given item from the graph]]
+            [[Unregister the given item from the focus graph.]]
             params {
-                child : Efl.Ui.Focus.Object;
+                child : Efl.Ui.Focus.Object; [[The child to unregister.]]
             }
         }
         focus {
             [[Make the given object the currently focused object in this manager.
 
               The object has to be part of this manager object.
-              If you want to focus something in the redirect manager, just call the function on the redirect manager]]
-              params {
-                  focus : Efl.Ui.Focus.Object @nonull;
-              }
+              If you want to focus something in the redirect manager, just call
+              the function on the redirect manager.
+            ]]
+            params {
+                focus : Efl.Ui.Focus.Object @nonull; [[The object to be focused.]]
+            }
         }
         focused {
-            [[Return the current focused element of this manager]]
-            return : Efl.Ui.Focus.Object;
+            [[Return the currently focused element of this manager.]]
+            return : Efl.Ui.Focus.Object; [[The object that has focus.]]
         }
         @property redirect {
             [[Add a another manager to serve the move requests.
 
-              If this value is set all move requests are redirected to this manager object.
-              Set it to $null once nothing should be redirected anymore.]]
+              If this value is set, all move requests are redirected to this
+              manager object. Set it to $null once nothing should be redirected
+              anymore.
+            ]]
             values {
-                redirect : Efl.Ui.Focus.Manager;
+                redirect : Efl.Ui.Focus.Manager; [[The redirect manager.]]
             }
         }
         @property border_elements {
-            [[The list of elements which are at the border of the graph
-              This means one of the relations right,left or down,up are not set.
+            [[The list of elements which are at the border of the graph.
 
-              This call flushes all changes. see @Efl.Ui.Focus.Manager.move
+              This means one of the relations right,left or down,up are not set.
+              This call flushes all changes. See @Efl.Ui.Focus.Manager.move
             ]]
-            get {
-            }
+            get {}
             values {
-                border_elements : iterator<Efl.Ui.Focus.Object>;
+                border_elements : iterator<Efl.Ui.Focus.Object>; [[An iterator
+                   over the border objects.]]
             }
         }
         @property root {
@@ -152,19 +181,20 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
               This property can only be set once.
             ]]
             values {
-                root : Efl.Ui.Focus.Object @nonull; [[Will be registered into this manager object]]
+                root : Efl.Ui.Focus.Object @nonull; [[Will be registered into
+                    this manager object.]]
             }
         }
         fetch {
-            [[This will fetch the data from a registered node
+            [[This will fetch the data from a registered node.
 
               Be aware this function will trigger all dirty nodes to be computed
             ]]
             params {
-                child : Efl.Ui.Focus.Object;
+                child : Efl.Ui.Focus.Object; [[The child object to inspect.]]
             }
-
-            return : own(ptr(Efl.Ui.Focus.Relations));
+            return : own(ptr(Efl.Ui.Focus.Relations)); [[The list of relations
+                starting from $child.]]
         }
         logical_end {
             return : Efl.Ui.Focus.Object;
@@ -179,9 +209,12 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
         Efl.Object.destructor;
     }
     events {
-        redirect,changed : Efl.Ui.Focus.Manager; [[Emitted when the redirect object has changed, the old manager is passed as event info]]
+        redirect,changed : Efl.Ui.Focus.Manager; [[Emitted when the redirect
+            object has changed, the old manager is passed as event info]]
         pre,flush; [[Emitted once the graph calculationg will be performed]]
-        coords,dirty; [[Emitted once the graph is dirty, this means there are potential changes in border_elements you want to know about]]
-        focused : Efl.Ui.Focus.Object; [[Emitted if the manager has focused a object]]
+        coords,dirty; [[Emitted once the graph is dirty, this means there are
+            potential changes in border_elements you want to know about]]
+        focused : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
+            object]]
     }
 }
