@@ -64,9 +64,7 @@ static void
 user_min_slider_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
-   Eo *win = data, *box;
 
-   box = efl_key_wref_get(win, "box");
    efl_gfx_size_hint_min_set(objects[3], val, val);
 }
 
