@@ -54,6 +54,7 @@
 #include "eina_log.h"
 #include "eina_mmap.h"
 #include "eina_cpu.h"
+#include "eina_file.h"
 
 /*============================================================================*
  *                                 Local                                      *
@@ -188,14 +189,9 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
         /* no zero page device - open it */
         if (_eina_mmap_zero_fd < 0)
           {
-#ifdef HAVE_FCNTL
-             int flags;
-#endif
-
              _eina_mmap_zero_fd = open("/dev/zero", O_RDWR);
              /* if we don;'t have one - fail to set up mmap safety */
              if (_eina_mmap_zero_fd < 0) return EINA_FALSE;
-
              eina_file_close_on_exec(_eina_mmap_zero_fd, EINA_TRUE);
           }
         /* set up signal handler for SIGBUS */
