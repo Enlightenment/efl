@@ -194,10 +194,10 @@
 #  define EINA_LIKELY(exp)      __builtin_expect((exp), 1)
 #  define EINA_SENTINEL __attribute__((__sentinel__))
 #  ifndef __clang__
-#   define EINA_PREFETCH(arg) __builtin_prefetch(arg)
-#   define EINA_PREFETCH_WRITE(arg) __builtin_prefetch(arg, 1)
-#   define EINA_PREFETCH_NOCACHE(arg) __builtin_prefetch(arg, 0, 0)
-#   define EINA_PREFETCH_NOCACHE_WRITE(arg) __builtin_prefetch(arg, 1, 0)
+#   define EINA_PREFETCH(arg) (arg ? __builtin_prefetch(arg) : (void) arg)
+#   define EINA_PREFETCH_WRITE(arg) (arg ? __builtin_prefetch(arg, 1) : (void) arg)
+#   define EINA_PREFETCH_NOCACHE(arg) (arg ? __builtin_prefetch(arg, 0, 0) : (void) arg)
+#   define EINA_PREFETCH_NOCACHE_WRITE(arg) (arg ? __builtin_prefetch(arg, 1, 0) : (void) arg)
 #  else
 /* LLVM Clang workaround (crash on compilation) */
 #   define EINA_PREFETCH(arg) ((void) (arg))
