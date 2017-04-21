@@ -352,6 +352,8 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
                }
              logical_wd->logical.child_count --;
              old = pd->logical.parent;
+             if (pd->logical.parent)
+               efl_weak_unref(&pd->logical.parent);
              pd->logical.parent = NULL;
           }
         if (parent)
@@ -6203,6 +6205,11 @@ _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED
    sd->manager.provider = NULL;
 
    elm_interface_atspi_accessible_removed(obj);
+   if (sd->logical.parent)
+     {
+        efl_weak_unref(&sd->logical.parent);
+        sd->logical.parent = NULL;
+     }
 }
 
 EOLIAN static Eina_Bool
