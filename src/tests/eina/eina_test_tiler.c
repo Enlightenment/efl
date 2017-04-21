@@ -350,6 +350,36 @@ START_TEST(eina_test_tiler_calculation)
 }
 END_TEST
 
+START_TEST(eina_test_tiler_size)
+{
+   Eina_Rectangle *r;
+   Eina_Iterator *it;
+   Eina_Tiler *t;
+   Eina_Bool rects = EINA_FALSE;
+
+   eina_init();
+   t = eina_tiler_new(131070, 131070);
+   fail_if(!t);
+
+   eina_tiler_tile_size_set(t, 1, 1);
+   fail_if(!eina_tiler_rect_add(t, &(Eina_Rectangle){0, 0, 131070, 131070}));
+   it = eina_tiler_iterator_new(t);
+   fail_if(!it);
+   EINA_ITERATOR_FOREACH(it, r)
+     {
+        rects = EINA_TRUE;
+        fail_if(r->x);
+        fail_if(r->y);
+        fail_if(r->w != 131070);
+        fail_if(r->h != 131070);
+     }
+   fail_if(!rects);
+   eina_iterator_free(it);
+   eina_tiler_free(t);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_tiler(TCase *tc)
 {
@@ -357,4 +387,5 @@ eina_test_tiler(TCase *tc)
    tcase_add_test(tc, eina_test_tiler_all);
    tcase_add_test(tc, eina_test_tiler_stable);
    tcase_add_test(tc, eina_test_tiler_calculation);
+   tcase_add_test(tc, eina_test_tiler_size);
 }
