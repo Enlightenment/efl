@@ -58,12 +58,12 @@ struct list
 
 struct rect
 {
-   short right;
-   short bottom;
-   short left;
-   short top;
-   short width;
-   short height;
+   int right;
+   int bottom;
+   int left;
+   int top;
+   int width;
+   int height;
    int area;
 };
 
