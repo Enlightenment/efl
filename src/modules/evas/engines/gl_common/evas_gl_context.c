@@ -3454,7 +3454,7 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
    Shader_Type type = horiz ? SHD_FILTER_BLUR_X : SHD_FILTER_BLUR_Y;
    Eina_Bool update_uniforms = EINA_FALSE;
    GLuint *map_tex_data;
-   double sum;
+   double sum = 0.0;
 
    r = R_VAL(&gc->dc->mul.col);
    g = G_VAL(&gc->dc->mul.col);

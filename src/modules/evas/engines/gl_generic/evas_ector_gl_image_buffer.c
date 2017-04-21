@@ -165,7 +165,7 @@ _evas_ector_gl_image_buffer_ector_buffer_map(Eo *obj EINA_UNUSED, Evas_Ector_GL_
         return NULL;
      }
 
-   if (mode == EFL_GFX_BUFFER_ACCESS_MODE_NONE)
+   if (!mode)
      {
         ERR("Invalid access mode for map (none)");
         return NULL;
