@@ -311,9 +311,11 @@ static double t1 = 0.0;
 static double t2 = 0.0;
 #endif
 
-static int timer_fd = -1;
+#ifdef HAVE_EPOLL
 static int epoll_fd = -1;
 static pid_t epoll_pid;
+#endif
+static int timer_fd = -1;
 
 #ifdef USE_G_MAIN_LOOP
 static GPollFD ecore_epoll_fd;
@@ -330,7 +332,8 @@ static gboolean ecore_fds_ready;
 static inline void
 _ecore_fd_valid(void)
 {
-   if (HAVE_EPOLL && epoll_fd >= 0)
+#ifdef HAVE_EPOLL
+   if (epoll_fd >= 0)
      {
         if (fcntl(epoll_fd, F_GETFD) < 0)
           {
@@ -342,6 +345,7 @@ _ecore_fd_valid(void)
 #endif
           }
      }
+#endif
 }
 #endif
 
@@ -367,15 +371,16 @@ _ecore_try_add_to_call_list(Ecore_Fd_Handler *fdh)
      }
 }
 
+#ifdef HAVE_EPOLL
 static inline int
 _ecore_get_epoll_fd(void)
 {
-   if (epoll_pid && epoll_pid != getpid())
+   if (epoll_pid && (epoll_pid != getpid()))
      {
         /* forked! */
         _ecore_main_loop_shutdown();
      }
-   if (epoll_pid == 0 && epoll_fd < 0)
+   if ((epoll_pid == 0) && (epoll_fd < 0))
      {
         _ecore_main_loop_init();
      }
@@ -388,7 +393,6 @@ _ecore_epoll_add(int   efd,
                  int   events,
                  void *ptr)
 {
-   
    struct epoll_event ev;
 
    memset(&ev, 0, sizeof (ev));
@@ -407,6 +411,7 @@ _ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh)
    if (fdh->flags & ECORE_FD_ERROR) events |= EPOLLERR | EPOLLPRI;
    return events;
 }
+#endif
 
 #ifdef USE_G_MAIN_LOOP
 static inline int
@@ -470,11 +475,12 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
    DBG("_ecore_main_fdh_poll_add");
    int r = 0;
 
+#ifdef HAVE_EPOLL
 #ifdef HAVE_LIBUV
    if(!_dl_uv_run)
 #endif
      {
-       if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
+        if ((!fdh->file) && (epoll_fd >= 0))
          {
            r = _ecore_epoll_add(_ecore_get_epoll_fd(), fdh->fd,
                                 _ecore_poll_events_from_fdh(fdh), fdh);
@@ -482,6 +488,7 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
      }
 #ifdef HAVE_LIBUV
    else
+#endif
 #endif
      {
 #ifdef HAVE_LIBUV
@@ -521,11 +528,12 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
 static inline void
 _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
 {
+#ifdef HAVE_EPOLL
 #ifdef HAVE_LIBUV
    if(!_dl_uv_run)
 #endif
      {
-       if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
+       if ((!fdh->file) && (epoll_fd >= 0))
          {
            struct epoll_event ev;
            int efd = _ecore_get_epoll_fd();
@@ -552,6 +560,7 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
 #ifdef HAVE_LIBUV
    else
 #endif
+#endif
      {
 #ifdef HAVE_LIBUV
        DBG("_ecore_main_fdh_poll_del libuv %p", fdh);
@@ -573,11 +582,12 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
 {
    DBG("_ecore_main_fdh_poll_modify %p", fdh);
    int r = 0;
+#ifdef HAVE_EPOLL
 #ifdef HAVE_LIBUV
    if(!_dl_uv_run)
 #endif
      {
-       if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
+       if ((!fdh->file) && (epoll_fd >= 0))
          {
            struct epoll_event ev;
            int efd = _ecore_get_epoll_fd();
@@ -591,6 +601,7 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
      }
 #ifdef HAVE_LIBUV
    else
+#endif
 #endif
      {
 #ifdef HAVE_LIBUV
@@ -606,6 +617,7 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
    return r;
 }
 
+#ifdef HAVE_EPOLL
 static inline int
 _ecore_main_fdh_epoll_mark_active(void)
 {
@@ -652,6 +664,7 @@ _ecore_main_fdh_epoll_mark_active(void)
 
    return ret;
 }
+#endif
 
 #ifdef USE_G_MAIN_LOOP
 
@@ -716,7 +729,8 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
                 {
                    int r = -1;
                    double t = _efl_loop_timer_next_get();
-                   if (timer_fd >= 0 && t > 0.0)
+
+                   if ((timer_fd >= 0) && (t > 0.0))
                      {
                         struct itimerspec ts;
 
@@ -785,13 +799,13 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
           {
              uint64_t count = 0;
              int r = read(timer_fd, &count, sizeof count);
-             if (r == -1 && errno == EAGAIN)
+             if ((r == -1) && (errno == EAGAIN))
                ;
              else if (r == sizeof count)
                ret = TRUE;
              else
                {
-     /* unexpected things happened... fail back to old way */
+                  /* unexpected things happened... fail back to old way */
                    ERR("timer read returned %d (errno=%d)", r, errno);
                    close(timer_fd);
                    timer_fd = -1;
@@ -802,9 +816,11 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
      ret = TRUE;
 
    /* check if fds are ready */
-   if (HAVE_EPOLL && epoll_fd >= 0)
+#ifdef HAVE_EPOLL
+   if (epoll_fd >= 0)
      ecore_fds_ready = (_ecore_main_fdh_epoll_mark_active() > 0);
    else
+#endif
      ecore_fds_ready = (_ecore_main_fdh_glib_mark_active() > 0);
    _ecore_main_fd_handlers_cleanup();
    if (ecore_fds_ready)
@@ -1023,22 +1039,28 @@ _ecore_main_loop_init(void)
    // Please note that this function is being also called in case of a bad fd to reset the main loop.
 
    DBG("_ecore_main_loop_init");
+#ifdef HAVE_EPOLL
    epoll_fd = epoll_create(1);
-   if ((epoll_fd < 0) && HAVE_EPOLL)
+   if (epoll_fd < 0)
      WRN("Failed to create epoll fd!");
-   epoll_pid = getpid();
-   eina_file_close_on_exec(epoll_fd, EINA_TRUE);
-
-   /* add polls on all our file descriptors */
-   Ecore_Fd_Handler *fdh;
-   EINA_INLIST_FOREACH(fd_handlers, fdh)
+   else
      {
-        if (fdh->delete_me)
-          continue;
-        _ecore_epoll_add(epoll_fd, fdh->fd,
-                         _ecore_poll_events_from_fdh(fdh), fdh);
-        _ecore_main_fdh_poll_add(fdh);
+        eina_file_close_on_exec(epoll_fd, EINA_TRUE);
+
+        epoll_pid = getpid();
+
+        /* add polls on all our file descriptors */
+        Ecore_Fd_Handler *fdh;
+        EINA_INLIST_FOREACH(fd_handlers, fdh)
+          {
+             if (fdh->delete_me) continue;
+             _ecore_epoll_add(epoll_fd, fdh->fd,
+                              _ecore_poll_events_from_fdh(fdh), fdh);
+             _ecore_main_fdh_poll_add(fdh);
+          }
      }
+#endif
+
 #ifdef HAVE_LIBUV
    {
      DBG("loading lib uv");
@@ -1118,7 +1140,8 @@ _ecore_main_loop_init(void)
    else
      {
         g_source_set_priority(ecore_glib_source, G_PRIORITY_HIGH_IDLE + 20);
-        if (HAVE_EPOLL && epoll_fd >= 0)
+#ifdef HAVE_EPOLL
+        if (epoll_fd >= 0)
           {
              /* epoll multiplexes fds into the g_main_loop */
               ecore_epoll_fd.fd = epoll_fd;
@@ -1126,7 +1149,7 @@ _ecore_main_loop_init(void)
               ecore_epoll_fd.revents = 0;
               g_source_add_poll(ecore_glib_source, &ecore_epoll_fd);
           }
-
+#endif
         /* timerfd gives us better than millisecond accuracy in g_main_loop */
         timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
         if (timer_fd < 0)
@@ -1164,12 +1187,14 @@ _ecore_main_loop_shutdown(void)
 
    detect_time_changes_stop();
 
+#ifdef HAVE_EPOLL
    if (epoll_fd >= 0)
      {
         close(epoll_fd);
         epoll_fd = -1;
      }
    epoll_pid = 0;
+#endif
 
    if (timer_fd >= 0)
      {
@@ -1711,8 +1736,10 @@ _ecore_main_select(double timeout)
    if (fd_handlers_with_prep)
      _ecore_main_prepare_handlers();
 
-   if (!HAVE_EPOLL || epoll_fd < 0)
+#ifdef HAVE_EPOLL
+   if (epoll_fd < 0)
      {
+#endif
         EINA_INLIST_FOREACH(fd_handlers, fdh)
           {
              if (!fdh->delete_me)
@@ -1735,12 +1762,14 @@ _ecore_main_select(double timeout)
                }
           }
      }
+#ifdef HAVE_EPOLL
    else
      {
         /* polling on the epoll fd will wake when an fd in the epoll set is active */
          max_fd = _ecore_get_epoll_fd();
          FD_SET(max_fd, &rfds);
      }
+#endif
    EINA_LIST_FOREACH(file_fd_handlers, l, fdh)
      if (!fdh->delete_me)
        {
@@ -1781,9 +1810,11 @@ _ecore_main_select(double timeout)
      }
    if (ret > 0)
      {
-        if (HAVE_EPOLL && epoll_fd >= 0)
+#ifdef HAVE_EPOLL
+        if (epoll_fd >= 0)
           _ecore_main_fdh_epoll_mark_active();
         else
+#endif
           {
              EINA_INLIST_FOREACH(fd_handlers, fdh)
                {
