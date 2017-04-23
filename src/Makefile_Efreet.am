@@ -83,9 +83,16 @@ bin/efreet/efreetd_ipc.c \
 bin/efreet/efreetd_cache.h \
 bin/efreet/efreetd_cache.c
 
-bin_efreet_efreetd_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
-bin_efreet_efreetd_LDADD = $(USE_EFREET_BIN_LIBS)
-bin_efreet_efreetd_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+bin_efreet_efreetd_CPPFLAGS = \
+  -I$(top_builddir)/src/lib/efl \
+  $(EFREET_COMMON_CPPFLAGS) \
+  @EIO_CFLAGS@
+bin_efreet_efreetd_LDADD = $(USE_EFREET_BIN_LIBS) @USE_EIO_LIBS@
+bin_efreet_efreetd_DEPENDENCIES = \
+  @USE_EFREET_INTERNAL_LIBS@ \
+  lib/eio/libeio.la \
+  lib/efreet/libefreet_mime.la \
+  lib/efreet/libefreet_trash.la
 
 efreetinternal_bindir=$(libdir)/efreet/$(MODULE_ARCH)
 efreetinternal_bin_PROGRAMS = \
