@@ -168,7 +168,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                 }
            }
            @property disabled {
-                [[Control the disabled state of an widget item.
+                [[Control the disabled state of a widget item.
 
                   Elementary object item can be disabled, in which state they won't
                   receive input and, in general, will be themed differently from

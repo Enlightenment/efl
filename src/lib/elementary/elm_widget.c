@@ -4465,7 +4465,7 @@ _elm_widget_newest_focus_order_get(const Eo *obj, Elm_Widget_Smart_Data *sd, uns
 /*
  * @internal
  *
- * Get the focus highlight geometry of an widget.
+ * Get the focus highlight geometry of a widget.
  *
  * @param obj Widget object for the focus highlight
  * @param x Focus highlight x coordinate
