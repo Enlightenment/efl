@@ -165,7 +165,7 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (reconnect_count > 10)
      {
         reconnect_timer = NULL;
-        CRI("efreetd connection failed 10 times! check for stale socket files in %s/.ecore/efreetd",
+        ERR("efreetd connection failed 10 times! check for stale socket files in %s/.ecore/efreetd",
           efreet_runtime_dir_get());
         return EINA_FALSE;
      }
