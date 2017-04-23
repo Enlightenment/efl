@@ -321,8 +321,8 @@ evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
         gl_itr->index = infos->codepoint;
         adv = positions->x_advance;
 
-        pen_x += adv;
-        gl_itr->pen_after = EVAS_FONT_ROUND_26_6_TO_INT(pen_x);
+        pen_x += EVAS_FONT_ROUND_26_6_TO_INT(adv);
+        gl_itr->pen_after = pen_x;
 
         ot_itr++;
         gl_itr++;
