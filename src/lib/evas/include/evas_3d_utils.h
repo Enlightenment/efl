@@ -945,7 +945,7 @@ convex_hull_vertex_set(Evas_Triangle3 *el, unsigned short int *vertex_count, flo
    (*vertex)[10 * (*vertex_count) - 10] = vect.x;
    (*vertex)[10 * (*vertex_count) - 9] = vect.y;
    (*vertex)[10 * (*vertex_count) - 8] = vect.z;
-   /* set alpha canal */
+   /* set alpha channel */
    (*vertex)[10 * (*vertex_count) - 1] = 1.0;
    /* set color */
    for (color_coords = 2; color_coords < 5; color_coords++)
