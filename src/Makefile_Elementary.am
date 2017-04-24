@@ -112,7 +112,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_popup_internal_part.eo \
 	lib/elementary/elm_scroller_internal_part.eo \
 	lib/elementary/elm_code_widget.eo \
-    lib/elementary/efl_ui_text_interactive.eo \
+	lib/elementary/efl_ui_text_interactive.eo \
 	lib/elementary/efl_ui_text.eo \
 	lib/elementary/efl_ui_text_editable.eo \
 	lib/elementary/efl_config_global.eo \
@@ -128,6 +128,8 @@ elm_public_eolian_files = \
 elm_private_eolian_files = \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
 	lib/elementary/efl_ui_win_internal_part.eo \
+	tests/elementary/focus_test.eo \
+	tests/elementary/focus_test_sub_main.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -1344,10 +1346,6 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_focus.c \
 	tests/elementary/elm_test_focus_sub.c
 
-tests/elementary/tests_elementary_elm_suite-elm_test_focus_common.$(OBJEXT): tests/elementary/focus_test.eo.c tests/elementary/focus_test.eo.h
-
-tests/elementary/tests_elementary_elm_suite-elm_test_focus_sub.$(OBJEXT): tests/elementary/focus_test_sub_main.eo.c tests/elementary/focus_test_sub_main.eo.h
-
 tests_elementary_elm_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
 	-DTESTS_SRC_DIR=\"${top_srcdir}/src/tests/elementary\" \
@@ -1356,6 +1354,7 @@ tests_elementary_elm_suite_CPPFLAGS = \
 	-DPACKAGE_DATA_DIR=\"${abs_top_builddir}/data/elementary\" \
 	-I$(top_srcdir)/src/lib/elementary \
 	-I$(top_builddir)/src/lib/elementary \
+	-I$(top_builddir)/src/tests/elementary \
 	@CHECK_CFLAGS@ \
 	@ELEMENTARY_CFLAGS@
 
