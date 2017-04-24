@@ -46,6 +46,11 @@
 # endif
 #endif /* ! _WIN32 */
 
+/* save typing */
+#define ENFN obj->layer->evas->engine.func
+#define ENDT _evas_default_output_get(obj->layer->evas)
+#define ENC  _evas_engine_context(obj->layer->evas)
+
 #include "canvas/evas_text.eo.h"
 #include "canvas/evas_textgrid.eo.h"
 #include "canvas/evas_line.eo.h"
@@ -873,13 +878,6 @@ struct _Evas_Public_Data
    struct {
       Evas_Module *module;
       Evas_Func *func;
-      Ector_Surface *ector;
-      struct {
-         void *output;
-      } data;
-
-      void *info;
-      int   info_magic;
    } engine;
 
    struct {
@@ -1291,8 +1289,12 @@ struct _Efl_Canvas_Output
 {
    Eo *canvas;
 
+   Ector_Surface *ector;
+
    void *info, *output;
    Evas_Coord x, y, w, h;
+
+   int info_magic;
 };
 
 struct _Evas_Object_Func
@@ -1558,7 +1560,7 @@ struct _Evas_Func
    void  (*texture_image_set)            (void *data, void *texture, void *image);
    void *(*texture_image_get)            (void *data, void *texture);
 
-   Ector_Surface *(*ector_create)        (void *data);
+   Ector_Surface *(*ector_create)        (void *engine, void *output);
    void  (*ector_destroy)                (void *data, Ector_Surface *surface);
    Ector_Buffer *(*ector_buffer_wrap)    (void *data, Evas *e, void *engine_image);
    Ector_Buffer *(*ector_buffer_new)     (void *data, Evas *e, int width, int height, Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags);
@@ -1890,7 +1892,7 @@ void evas_filter_init(void);
 void evas_filter_shutdown(void);
 
 /* Ector */
-Ector_Surface *evas_ector_get(Evas_Public_Data *evas);
+Ector_Surface *evas_ector_get(Evas_Public_Data *evas, void *output);
 
 /* Temporary save/load functions */
 void evas_common_load_model_from_file(Evas_Canvas3D_Mesh *model, const char *file);

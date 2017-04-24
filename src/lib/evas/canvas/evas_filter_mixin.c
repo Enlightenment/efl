@@ -8,9 +8,6 @@
 
 #define MY_CLASS EFL_CANVAS_FILTER_INTERNAL_MIXIN
 
-#define ENFN obj->layer->evas->engine.func
-#define ENDT obj->layer->evas->engine.data.output
-
 #define FCOW_BEGIN(_pd) ({ Evas_Object_Filter_Data *_fcow = eina_cow_write(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data)); _state_check(_fcow); _fcow; })
 #define FCOW_END(_fcow, _pd) eina_cow_done(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data), _fcow, EINA_TRUE)
 #define FCOW_WRITE(pd, name, value) do { \
@@ -121,7 +118,7 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
      }
 
    if (previous)
-     ENFN->image_free(ENDT, previous);
+     ENFN->image_free(ENC, previous);
 
    if (destroy)
      {
@@ -285,7 +282,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         int iw, ih;
 
         use_map = EINA_TRUE;
-        ENFN->image_size_get(ENDT, previous, &iw, &ih);
+        ENFN->image_size_get(ENC, previous, &iw, &ih);
         evas_object_map_update(eo_obj, x, y, iw, ih, iw, ih);
      }
 
@@ -728,7 +725,7 @@ _efl_canvas_filter_internal_efl_object_destructor(Eo *eo_obj, Evas_Filter_Data *
    if (pd->data->output)
      {
         if (!pd->data->async)
-          ENFN->image_free(ENDT, pd->data->output);
+          ENFN->image_free(ENC, pd->data->output);
         else
           evas_unref_queue_image_put(e, pd->data->output);
      }

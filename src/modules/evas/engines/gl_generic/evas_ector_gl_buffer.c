@@ -45,8 +45,12 @@ struct _Evas_Ector_GL_Buffer_Data
    Ector_GL_Buffer_Map *maps;
 };
 
+#undef ENFN
+#undef ENDT
+#undef ENC
+
 #define ENFN pd->evas->engine.func
-#define ENDT pd->evas->engine.data.output
+#define ENC _evas_engine_context(pd->evas)
 
 // testing out some macros to maybe add to eina
 #define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
@@ -119,8 +123,9 @@ _evas_ector_gl_buffer_gl_buffer_prepare(Eo *obj, Evas_Ector_GL_Buffer_Data *pd,
    else
      fail("Unsupported colorspace: %u", cspace);
 
+   // FIXME: we should not rely on evas canvas in the module (just evas engine)
    pd->evas = efl_data_xref(eo_evas, EVAS_CANVAS_CLASS, obj);
-   re = pd->evas->engine.data.output;
+   re = ENC;
    gc = re->window_gl_context_get(re->software.ob);
 
    im = evas_gl_common_image_surface_new(gc, w, h, EINA_TRUE, EINA_FALSE);
@@ -238,12 +243,12 @@ _evas_ector_gl_buffer_ector_buffer_map(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buffer
    if (write && _evas_gl_image_is_fbo(pd->glim))
      {
         // Can not open FBO data to write!
-        im = ENFN->image_data_get(ENDT, pd->glim, EINA_FALSE, &data, &err, &tofree);
+        im = ENFN->image_data_get(ENC, pd->glim, EINA_FALSE, &data, &err, &tofree);
         if (!im) return NULL;
      }
    else
      {
-        im = ENFN->image_data_get(ENDT, pd->glim, write, &data, &err, &tofree);
+        im = ENFN->image_data_get(ENC, pd->glim, write, &data, &err, &tofree);
         if (!im) return NULL;
      }
 
@@ -333,12 +338,12 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
                   if (map->im)
                     {
                        MAP_DUMP(map->im, "out_ro_free");
-                       ENFN->image_free(ENDT, map->im);
+                       ENFN->image_free(ENC, map->im);
                     }
                   else
                     {
                        MAP_DUMP(pd->glim, "out_ro_nofree");
-                       ENFN->image_data_put(ENDT, pd->glim, map->image_data);
+                       ENFN->image_data_put(ENC, pd->glim, map->image_data);
                     }
                }
              if (map->allocated)

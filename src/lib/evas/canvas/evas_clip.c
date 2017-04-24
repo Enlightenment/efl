@@ -203,7 +203,7 @@ _efl_canvas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
      mask->is_alpha = EINA_FALSE;
      if (mask->surface)
        {
-          obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output, mask->surface);
+          obj->layer->evas->engine.func->image_free(ENC, mask->surface);
           mask->surface = NULL;
        }
      mask->w = 0;

@@ -89,8 +89,8 @@ evas_filter_context_clear(Evas_Filter_Context *ctx, Eina_Bool keep_buffers)
 
    if (!ctx) return;
 
-   if (ctx->target.surface) ENFN->image_free(ENDT, ctx->target.surface);
-   if (ctx->target.mask) ENFN->image_free(ENDT, ctx->target.mask);
+   if (ctx->target.surface) ENFN->image_free(ENC, ctx->target.surface);
+   if (ctx->target.mask) ENFN->image_free(ENC, ctx->target.mask);
    ctx->target.surface = NULL;
    ctx->target.mask = NULL;
 
@@ -163,7 +163,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
                  }
             }
           XDBG("Source #%d '%s' has dimensions %dx%d", fb->id, fb->source_name, fb->w, fb->h);
-          if (!fb->buffer) fb->buffer = ENFN->ector_buffer_wrap(ENDT, obj->layer->evas->evas, source->proxy->surface);
+          if (!fb->buffer) fb->buffer = ENFN->ector_buffer_wrap(ENC, obj->layer->evas->evas, source->proxy->surface);
           fb->alpha_only = EINA_FALSE;
        }
 }
@@ -268,7 +268,7 @@ _ector_buffer_create(Evas_Filter_Buffer const *fb, Eina_Bool render, Eina_Bool d
    if (draw) flags |= ECTOR_BUFFER_FLAG_DRAWABLE;
    if (fb->alpha_only) cspace = EFL_GFX_COLORSPACE_GRY8;
 
-   return fb->ENFN->ector_buffer_new(fb->ENDT, fb->ctx->evas->evas,
+   return fb->ENFN->ector_buffer_new(FB_ENC, fb->ctx->evas->evas,
                                      fb->w, fb->h, cspace, flags);
 }
 
@@ -576,7 +576,7 @@ evas_filter_buffer_backing_set(Evas_Filter_Context *ctx, int bufid,
 
    if (fb->is_render) goto end;
 
-   buffer = ENFN->ector_buffer_wrap(ENDT, ctx->evas->evas, engine_buffer);
+   buffer = ENFN->ector_buffer_wrap(ENC, ctx->evas->evas, engine_buffer);
    ret = EINA_TRUE;
 
 end:
@@ -860,7 +860,7 @@ _blur_support_gl(Evas_Filter_Context *ctx, Evas_Filter_Buffer *in, Evas_Filter_B
    cmd.blur.type = EVAS_FILTER_BLUR_GAUSSIAN;
    cmd.blur.dx = 5;
 
-   return cmd.ENFN->gfx_filter_supports(cmd.ENDT, &cmd) == EVAS_FILTER_SUPPORT_GL;
+   return cmd.ENFN->gfx_filter_supports(_evas_engine_context(cmd.ctx->evas), &cmd) == EVAS_FILTER_SUPPORT_GL;
 }
 
 Evas_Filter_Command *
@@ -1542,7 +1542,7 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
 
-   ctx->target.surface = ENFN->image_ref(ENDT, surface);
+   ctx->target.surface = ENFN->image_ref(ENC, surface);
    ctx->target.x = x;
    ctx->target.y = y;
    ctx->target.clip_use = ENFN->context_clip_get
@@ -1568,7 +1568,7 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
    ENFN->context_clip_image_get
       (ENDT, draw_context, &mask, &ctx->target.mask_x, &ctx->target.mask_y);
    if (ctx->target.mask)
-     ctx->evas->engine.func->image_free(ctx->evas->engine.data.output, ctx->target.mask);
+     ctx->evas->engine.func->image_free(_evas_engine_context(ctx->evas), ctx->target.mask);
    ctx->target.mask = mask; // FIXME: why no ref???
 
    return EINA_TRUE;
@@ -1630,13 +1630,13 @@ _filter_target_render(Evas_Filter_Context *ctx)
    ENFN->context_free(ENDT, drawctx);
    evas_ector_buffer_engine_image_release(src->buffer, image);
 
-   ENFN->image_free(ENDT, surface);
+   ENFN->image_free(ENC, surface);
    ctx->target.surface = NULL;
 
    return EINA_TRUE;
 
 fail:
-   ENFN->image_free(ENDT, surface);
+   ENFN->image_free(ENC, surface);
    ctx->target.surface = NULL;
 
    ERR("Failed to render filter to target canvas!");
@@ -1661,7 +1661,7 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
 
    // Copied from evas_font_draw_async_check
-   async_unref = ENFN->font_draw(ENDT, draw_context, surface,
+   async_unref = ENFN->font_draw(ENC, draw_context, surface,
                                  font, x, y, fb->w, fb->h, fb->w, fb->h,
                                  text_props, do_async);
    if (do_async && async_unref)
@@ -1782,14 +1782,14 @@ _filter_command_run(Evas_Filter_Command *cmd)
         return EINA_FALSE;
      }
 
-   support = cmd->ENFN->gfx_filter_supports(cmd->ENDT, cmd);
+   support = cmd->ENFN->gfx_filter_supports(CMD_ENC, cmd);
    if (support == EVAS_FILTER_SUPPORT_NONE)
      {
         ERR("No function to process this filter (mode %d)", cmd->mode);
         return EINA_FALSE;
      }
 
-   return cmd->ENFN->gfx_filter_process(cmd->ENDT, cmd);
+   return cmd->ENFN->gfx_filter_process(CMD_ENC, cmd);
 }
 
 static Eina_Bool

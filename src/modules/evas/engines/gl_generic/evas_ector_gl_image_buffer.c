@@ -43,8 +43,13 @@ struct _Evas_Ector_GL_Image_Buffer_Data
    Ector_GL_Buffer_Map *maps;
 };
 
+#undef ENFN
+#undef ENDT
+#undef ENC
+
+// FIXME: It should not use evas canvas, just the engine
 #define ENFN pd->evas->engine.func
-#define ENDT pd->evas->engine.data.output
+#define ENC  _evas_engine_context(pd->evas)
 
 // testing out some macros to maybe add to eina
 #define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
@@ -77,7 +82,7 @@ _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
    evas = efl_data_xref(eo_evas, EVAS_CANVAS_CLASS, obj);
    if (!im->tex)
      {
-        Render_Engine_GL_Generic *re = pd->evas->engine.data.output;
+        Render_Engine_GL_Generic *re = ENC;
         Evas_Engine_GL_Context *gc;
 
         gc = re->window_gl_context_get(re->software.ob);
@@ -183,7 +188,7 @@ _evas_ector_gl_image_buffer_ector_buffer_map(Eo *obj EINA_UNUSED, Evas_Ector_GL_
    if (!h) h = H - y;
    if ((x + w > W) || (y + h > H)) return NULL;
 
-   im = ENFN->image_data_get(ENDT, pd->glim, EINA_FALSE, &data, &err, &tofree);
+   im = ENFN->image_data_get(ENC, pd->glim, EINA_FALSE, &data, &err, &tofree);
    if (!im) return NULL;
 
    map = calloc(1, sizeof(*map));
@@ -247,9 +252,9 @@ _evas_ector_gl_image_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED,
           {
              EINA_INLIST_REMOVE(pd->maps, map);
              if (map->free_image)
-               ENFN->image_free(ENDT, map->im);
+               ENFN->image_free(ENC, map->im);
              else
-               ENFN->image_data_put(ENDT, map->im, map->image_data);
+               ENFN->image_data_put(ENC, map->im, map->image_data);
              if (map->allocated)
                free(map->base_data);
              free(map);

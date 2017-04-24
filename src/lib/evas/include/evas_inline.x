@@ -339,6 +339,28 @@ _evas_eina_rectangle_inside(const Eina_Rectangle *big, const Eina_Rectangle *sma
    return EINA_FALSE;
 }
 
+// Temporary until we have multi output support
+static inline void *
+_evas_default_output_get(Evas_Public_Data *e)
+{
+   Efl_Canvas_Output *output;
+
+   output = eina_list_data_get(e->outputs);
+   return output->output;
+}
+
+static inline void *
+_evas_engine_context(Evas_Public_Data *e)
+{
+   // Need to split between engine context
+   // and output context, use one for now.
+   Efl_Canvas_Output *output;
+
+   if (!e->outputs) return NULL;
+   output = eina_list_data_get(e->outputs);
+   return output->output;
+}
+
 #define _EVAS_COLOR_CLAMP(x, y) do { \
    if (x > y) { x = y; bad = 1; } \
    if (x < 0) { x = 0; bad = 1; } } while (0)

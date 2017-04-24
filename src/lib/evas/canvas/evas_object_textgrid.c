@@ -5,10 +5,6 @@
 
 #define MY_CLASS_NAME "Evas_Textgrid"
 
-/* save typing */
-#define ENFN obj->layer->evas->engine.func
-#define ENDT obj->layer->evas->engine.data.output
-
 /* private magic number for text objects */
 static const char o_type[] = "textgrid";
 
@@ -1021,17 +1017,17 @@ _alternate_font_weight_slant(Evas_Object_Protected_Data *obj,
         int advance, vadvance, ascent;
 
         script = evas_common_language_script_type_get(W, 1);
-        ENFN->font_run_end_get(ENDT, font, &script_fi, &cur_fi,
+        ENFN->font_run_end_get(ENC, font, &script_fi, &cur_fi,
                                script, W, 1);
         memset(&text_props, 0, sizeof(Evas_Text_Props));
         evas_common_text_props_script_set(&text_props, script);
-        ENFN->font_text_props_info_create(ENDT, script_fi, W, &text_props,
+        ENFN->font_text_props_info_create(ENC, script_fi, W, &text_props,
                                           NULL, 0, 1,
                                           EVAS_TEXT_PROPS_MODE_NONE,
                                           fdesc->lang);
-        advance = ENFN->font_h_advance_get(ENDT, font, &text_props);
-        vadvance = ENFN->font_v_advance_get(ENDT, font, &text_props);
-        ascent = ENFN->font_ascent_get(ENDT, font);
+        advance = ENFN->font_h_advance_get(ENC, font, &text_props);
+        vadvance = ENFN->font_v_advance_get(ENC, font, &text_props);
+        ascent = ENFN->font_ascent_get(ENC, font);
         DBG("on font '%s', with alternate weight/slant %s, "
             "width: %d vs %d, height: %d vs %d, ascent: %d vs %d",
              fdesc->name, kind,
@@ -1127,19 +1123,19 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
         int advance, vadvance;
 
         script = evas_common_language_script_type_get(W, 1);
-        ENFN->font_run_end_get(ENDT, o->font_normal, &script_fi, &cur_fi,
+        ENFN->font_run_end_get(ENC, o->font_normal, &script_fi, &cur_fi,
                                script, W, 1);
         memset(&text_props, 0, sizeof(Evas_Text_Props));
         evas_common_text_props_script_set(&text_props, script);
-        ENFN->font_text_props_info_create(ENDT, script_fi, W, &text_props,
+        ENFN->font_text_props_info_create(ENC, script_fi, W, &text_props,
                                           NULL, 0, 1,
                                           EVAS_TEXT_PROPS_MODE_NONE,
                                           fdesc->lang);
-        advance = ENFN->font_h_advance_get(ENDT, o->font_normal, &text_props);
-        vadvance = ENFN->font_v_advance_get(ENDT, o->font_normal, &text_props);
+        advance = ENFN->font_h_advance_get(ENC, o->font_normal, &text_props);
+        vadvance = ENFN->font_v_advance_get(ENC, o->font_normal, &text_props);
         o->cur.char_width = advance;
         o->cur.char_height = vadvance;
-        o->ascent = ENFN->font_ascent_get(ENDT, o->font_normal);
+        o->ascent = ENFN->font_ascent_get(ENC, o->font_normal);
         evas_common_text_props_content_unref(&text_props);
      }
    else

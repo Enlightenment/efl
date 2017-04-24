@@ -205,7 +205,7 @@ _evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
         Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
         if ((obj) && (obj->map->spans))
           {
-             obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->map->spans);
+             obj->layer->evas->engine.func->image_map_clean(ENC, obj->map->spans);
              EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                {
                   free(map_write->spans);
@@ -490,9 +490,7 @@ _map_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
           {
              EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                {
-                  obj->layer->evas->engine.func->image_free
-                    (obj->layer->evas->engine.data.output,
-                     map_write->surface);
+                  obj->layer->evas->engine.func->image_free(ENC, map_write->surface);
                   map_write->surface = NULL;
                }
              EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
@@ -581,9 +579,7 @@ evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
           {
              EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                {
-                  obj->layer->evas->engine.func->image_free
-                    (obj->layer->evas->engine.data.output,
-                     map_write->surface);
+                  obj->layer->evas->engine.func->image_free(ENC, map_write->surface);
                   map_write->surface = NULL;
                }
              EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);

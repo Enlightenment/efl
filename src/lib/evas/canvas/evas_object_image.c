@@ -1123,8 +1123,8 @@ _evas_canvas_image_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
-   if (e->engine.data.output)
-     e->engine.func->image_cache_flush(e->engine.data.output);
+   if (_evas_engine_context(e))
+     e->engine.func->image_cache_flush(_evas_engine_context(e));
 }
 
 EOLIAN void
@@ -1178,15 +1178,15 @@ _evas_canvas_image_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size
    if (size < 0) size = 0;
    evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
-   if (e->engine.data.output)
-     e->engine.func->image_cache_set(e->engine.data.output, size);
+   if (_evas_engine_context(e))
+     e->engine.func->image_cache_set(_evas_engine_context(e), size);
 }
 
 EOLIAN int
 _evas_canvas_image_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
-   if (e->engine.data.output)
-     return e->engine.func->image_cache_get(e->engine.data.output);
+   if (_evas_engine_context(e))
+     return e->engine.func->image_cache_get(_evas_engine_context(e));
    return -1;
 }
 
@@ -1198,7 +1198,7 @@ _evas_canvas_image_max_size_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int *
    if (maxw) *maxw = 0xffff;
    if (maxh) *maxh = 0xffff;
    if (!e->engine.func->image_max_size_get) return EINA_FALSE;
-   e->engine.func->image_max_size_get(e->engine.data.output, &w, &h);
+   e->engine.func->image_max_size_get(_evas_engine_context(e), &w, &h);
    if (maxw) *maxw = w;
    if (maxh) *maxh = h;
    return EINA_TRUE;
@@ -2493,7 +2493,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                          {
                             Evas_Coord idw, idh, idx, idy;
                             int x, y, w, h;
-                            e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, rr->x, rr->y, rr->w, rr->h);
+                            e->engine.func->image_dirty_region(ENDT, o->engine_data, rr->x, rr->y, rr->w, rr->h);
 
                             idx = evas_object_image_figure_x_fill(eo_obj, obj, o->cur->fill.x, o->cur->fill.w, &idw);
                             idy = evas_object_image_figure_y_fill(eo_obj, obj, o->cur->fill.y, o->cur->fill.h, &idh);
@@ -2613,7 +2613,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                               {
                                  Eina_Rectangle r;
 
-                                 e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, rr->x, rr->y, rr->w, rr->h);
+                                 e->engine.func->image_dirty_region(ENDT, o->engine_data, rr->x, rr->y, rr->w, rr->h);
                                  r.x = rr->x;
                                  r.y = rr->y;
                                  r.w = rr->w;
@@ -2639,7 +2639,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                               eina_rectangle_free(r);
                          }
                        EINA_COW_PIXEL_WRITE_END(o, pixi_write);
-                       e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
+                       e->engine.func->image_dirty_region(ENDT, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
 
                        evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj,
                                                            obj);

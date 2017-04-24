@@ -75,8 +75,16 @@ extern int _evas_filter_log_dom;
 #endif
 
 // Helpers
+#undef ENFN
+#undef ENDT
+#undef ENC
 #define ENFN ctx->evas->engine.func
-#define ENDT ctx->evas->engine.data.output
+#define ENDT _evas_default_output_get(ctx->evas)
+#define ENC _evas_engine_context(ctx->evas)
+
+#define CMD_ENDT _evas_default_output_get(cmd->ctx->evas)
+#define CMD_ENC _evas_engine_context(cmd->ctx->evas)
+#define FB_ENC _evas_engine_context(fb->ctx->evas)
 
 #define BUFFERS_LOCK() do { if (cmd->input) cmd->input->locked = 1; if (cmd->output) cmd->output->locked = 1; if (cmd->mask) cmd->mask->locked = 1; } while (0)
 #define BUFFERS_UNLOCK() do { if (cmd->input) cmd->input->locked = 0; if (cmd->output) cmd->output->locked = 0; if (cmd->mask) cmd->mask->locked = 0; } while (0)

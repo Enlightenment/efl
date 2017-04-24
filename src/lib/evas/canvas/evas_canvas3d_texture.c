@@ -31,7 +31,7 @@ _texture_proxy_unset(Evas_Canvas3D_Texture_Data *texture)
             proxy_src->surface != NULL)
           {
              Evas_Public_Data *e = src->layer->evas;
-             e->engine.func->image_free(e->engine.data.output, proxy_src->surface);
+             e->engine.func->image_free(_evas_engine_context(e), proxy_src->surface);
              proxy_src->surface = NULL;
           }
 
@@ -78,7 +78,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
         if (is_image)
           {
              void *image = source->func->engine_data_get(pd->source);
-             e->engine.func->image_size_get(e->engine.data.output, image, &w, &h);
+             e->engine.func->image_size_get(_evas_engine_context(e), image, &w, &h);
           }
         else
           {
@@ -90,7 +90,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
         if ((proxy_write->surface) &&
             ((proxy_write->w != w) || (proxy_write->h != h)))
           {
-             e->engine.func->image_free(e->engine.data.output, proxy_write->surface);
+             e->engine.func->image_free(_evas_engine_context(e), proxy_write->surface);
              proxy_write->surface = NULL;
           }
 
@@ -99,23 +99,23 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
         if (!proxy_write->surface)
           {
              proxy_write->surface = e->engine.func->image_map_surface_new
-               (e->engine.data.output, w, h, 1);
+               (_evas_engine_context(e), w, h, 1);
              if (!proxy_write->surface) goto end;
              proxy_write->w = w;
              proxy_write->h = h;
           }
 
-        ctx = e->engine.func->context_new(e->engine.data.output);
-        e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0,
+        ctx = e->engine.func->context_new(_evas_default_output_get(e));
+        e->engine.func->context_color_set(_evas_default_output_get(e), ctx, 0, 0,
                                           0, 0);
-        e->engine.func->context_render_op_set(e->engine.data.output, ctx,
+        e->engine.func->context_render_op_set(_evas_default_output_get(e), ctx,
                                               EVAS_RENDER_COPY);
-        e->engine.func->rectangle_draw(e->engine.data.output, ctx,
+        e->engine.func->rectangle_draw(_evas_default_output_get(e), ctx,
                                        proxy_write->surface, 0, 0, w, h,
                                        EINA_FALSE);
-        e->engine.func->context_free(e->engine.data.output, ctx);
+        e->engine.func->context_free(_evas_default_output_get(e), ctx);
 
-        ctx = e->engine.func->context_new(e->engine.data.output);
+        ctx = e->engine.func->context_new(_evas_default_output_get(e));
 
         if (is_image)
           {
@@ -124,9 +124,9 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
              if (image)
                {
                   int imagew, imageh;
-                  e->engine.func->image_size_get(e->engine.data.output, image,
+                  e->engine.func->image_size_get(_evas_engine_context(e), image,
                                                  &imagew, &imageh);
-                  e->engine.func->image_draw(e->engine.data.output, ctx,
+                  e->engine.func->image_draw(_evas_default_output_get(e), ctx,
                                              proxy_write->surface, image,
                                              0, 0, imagew, imageh, 0, 0, w, h, 0, EINA_FALSE);
                }
@@ -148,9 +148,9 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
                                 &proxy_render_data, 1, EINA_FALSE);
           }
 
-        e->engine.func->context_free(e->engine.data.output, ctx);
+        e->engine.func->context_free(_evas_default_output_get(e), ctx);
         proxy_write->surface = e->engine.func->image_dirty_region
-           (e->engine.data.output, proxy_write->surface, 0, 0, w, h);
+          (_evas_default_output_get(e), proxy_write->surface, 0, 0, w, h);
      }
  end:
    EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_write);
@@ -172,7 +172,7 @@ _texture_fini(Evas_Canvas3D_Texture *obj)
      {
         Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
         if (e->engine.func->texture_free)
-          e->engine.func->texture_free(e->engine.data.output, pd->engine_data);
+          e->engine.func->texture_free(_evas_engine_context(e), pd->engine_data);
         pd->engine_data = NULL;
      }
 
@@ -233,7 +233,7 @@ _evas_canvas3d_texture_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D
              if (e->engine.func->texture_new)
                {
                   pd->engine_data =
-                     e->engine.func->texture_new(e->engine.data.output, pd->atlas_enable);
+                    e->engine.func->texture_new(_evas_engine_context(e), pd->atlas_enable);
                }
 
              if (pd->engine_data == NULL)
@@ -247,7 +247,7 @@ _evas_canvas3d_texture_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D
           {
              if (e->engine.func->texture_image_set)
                {
-                  e->engine.func->texture_image_set(e->engine.data.output,
+                  e->engine.func->texture_image_set(_evas_engine_context(e),
                                                     pd->engine_data,
                                                     src->proxy->surface);
                }
@@ -259,7 +259,7 @@ _evas_canvas3d_texture_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D
         _texture_proxy_subrender(obj);
 
         if (e->engine.func->texture_image_set)
-          e->engine.func->texture_image_set(e->engine.data.output,
+          e->engine.func->texture_image_set(_evas_engine_context(e),
                                             pd->engine_data,
                                             src->proxy->surface);
         pd->proxy_rendering = EINA_FALSE;
@@ -347,14 +347,14 @@ _evas_canvas3d_texture_data_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd,
    Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    if (!pd->engine_data && e->engine.func->texture_new)
-     pd->engine_data = e->engine.func->texture_new(e->engine.data.output, pd->atlas_enable);
+     pd->engine_data = e->engine.func->texture_new(_evas_engine_context(e), pd->atlas_enable);
    if (!data)
      {
         ERR("Failure, image data is empty");
         return;
      }
 
-   image = e->engine.func->image_new_from_data(e->engine.data.output, w, h, (DATA32 *)data, EINA_TRUE, color_format);
+   image = e->engine.func->image_new_from_data(_evas_engine_context(e), w, h, (DATA32 *)data, EINA_TRUE, color_format);
    if (!image)
      {
         ERR("Can't load image from data");
@@ -362,10 +362,10 @@ _evas_canvas3d_texture_data_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd,
      }
 
    if (e->engine.func->texture_image_set)
-     e->engine.func->texture_image_set(e->engine.data.output,
+     e->engine.func->texture_image_set(_evas_engine_context(e),
                                        pd->engine_data,
                                        image);
-   e->engine.func->image_free(e->engine.data.output, image);
+   e->engine.func->image_free(_evas_engine_context(e), image);
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL);
 }
 
@@ -382,10 +382,10 @@ _evas_canvas3d_texture_file_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, const c
    Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    if (!pd->engine_data && e->engine.func->texture_new)
-     pd->engine_data = e->engine.func->texture_new(e->engine.data.output, pd->atlas_enable);
+     pd->engine_data = e->engine.func->texture_new(_evas_engine_context(e), pd->atlas_enable);
 
    memset(&lo, 0x0, sizeof(Evas_Image_Load_Opts));
-   image = e->engine.func->image_load(e->engine.data.output,
+   image = e->engine.func->image_load(_evas_engine_context(e),
                                       file, key, &load_error, &lo);
    if (!image)
      {
@@ -394,11 +394,11 @@ _evas_canvas3d_texture_file_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, const c
      }
 
    if (e->engine.func->texture_image_set)
-     e->engine.func->texture_image_set(e->engine.data.output,
+     e->engine.func->texture_image_set(_evas_engine_context(e),
                                        pd->engine_data,
                                        image);
 
-   e->engine.func->image_free(e->engine.data.output, image);
+   e->engine.func->image_free(_evas_engine_context(e), image);
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL);
 }
 
@@ -438,7 +438,7 @@ _evas_canvas3d_texture_source_set(Eo *obj , Evas_Canvas3D_Texture_Data *pd, Evas
         return;
      }
    if (!pd->engine_data && e->engine.func->texture_new)
-     pd->engine_data = e->engine.func->texture_new(e->engine.data.output, pd->atlas_enable);
+     pd->engine_data = e->engine.func->texture_new(_evas_engine_context(e), pd->atlas_enable);
 
    _texture_proxy_set(obj, source, src);
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL);
@@ -491,8 +491,8 @@ _evas_canvas3d_texture_color_format_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D
      {
         void *image;
 
-        image = e->engine.func->texture_image_get(e->engine.data.output, pd->engine_data);
-        format = e->engine.func->image_colorspace_get(e->engine.data.output, image);
+        image = e->engine.func->texture_image_get(_evas_engine_context(e), pd->engine_data);
+        format = e->engine.func->image_colorspace_get(_evas_engine_context(e), image);
      }
 
    return format;
@@ -506,7 +506,7 @@ _evas_canvas3d_texture_size_get(const Eo *obj, Evas_Canvas3D_Texture_Data *pd, i
    Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_size_get)
      {
-        e->engine.func->texture_size_get(e->engine.data.output,
+        e->engine.func->texture_size_get(_evas_engine_context(e),
                                          pd->engine_data, w, h);
      }
 }
@@ -519,7 +519,7 @@ _evas_canvas3d_texture_wrap_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, Evas_Ca
    Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_wrap_set)
      {
-        e->engine.func->texture_wrap_set(e->engine.data.output,
+        e->engine.func->texture_wrap_set(_evas_engine_context(e),
                                          pd->engine_data, s, t);
      }
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_TEXTURE_WRAP, NULL);
@@ -533,7 +533,7 @@ _evas_canvas3d_texture_wrap_get(Eo *obj, Evas_Canvas3D_Texture_Data *pd, Evas_Ca
    Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_wrap_set)
      {
-        e->engine.func->texture_wrap_get(e->engine.data.output,
+        e->engine.func->texture_wrap_get(_evas_engine_context(e),
                                          pd->engine_data, s, t);
      }
 }
@@ -546,7 +546,7 @@ _evas_canvas3d_texture_filter_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, Evas_
    Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_filter_set)
      {
-        e->engine.func->texture_filter_set(e->engine.data.output,
+        e->engine.func->texture_filter_set(_evas_engine_context(e),
                                            pd->engine_data, min, mag);
      }
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_TEXTURE_FILTER, NULL);
@@ -560,7 +560,7 @@ _evas_canvas3d_texture_filter_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Textu
    Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (e->engine.func->texture_filter_get)
      {
-        e->engine.func->texture_filter_get(e->engine.data.output,
+        e->engine.func->texture_filter_get(_evas_engine_context(e),
                                            pd->engine_data, min, mag);
      }
 }

@@ -402,9 +402,7 @@ evas_object_free(Evas_Object *eo_obj, Eina_Bool clean_layer)
      {
         if (obj->layer)
           {
-             obj->layer->evas->engine.func->image_free
-               (obj->layer->evas->engine.data.output,
-                   obj->map->surface);
+             obj->layer->evas->engine.func->image_free(ENC, obj->map->surface);
           }
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           map_write->surface = NULL;
@@ -421,8 +419,7 @@ evas_object_free(Evas_Object *eo_obj, Eina_Bool clean_layer)
             {
                if (obj->layer)
                  {
-                    obj->layer->evas->engine.func->image_free
-                      (obj->layer->evas->engine.data.output, mask->surface);
+                    obj->layer->evas->engine.func->image_free(ENC, mask->surface);
                     mask->surface = NULL;
                  }
             }
@@ -533,8 +530,7 @@ evas_object_content_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         EINA_COW_WRITE_BEGIN(evas_object_map_cow,
                              obj->map, Evas_Object_Map_Data, map_write)
           {
-             obj->layer->evas->engine.func->image_free
-               (obj->layer->evas->engine.data.output, map_write->surface);
+             obj->layer->evas->engine.func->image_free(ENC, map_write->surface);
              map_write->surface = NULL;
           }
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
@@ -699,7 +695,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                 obj->cur->cache.clip.w,
                                 obj->cur->cache.clip.h);
              if ((w > 0) && (h > 0))
-               obj->layer->evas->engine.func->output_redraws_rect_add(e->engine.data.output,
+               obj->layer->evas->engine.func->output_redraws_rect_add(ENDT,
                                                                       x + e->framespace.x,
                                                                       y + e->framespace.y,
                                                                       w, h);
@@ -714,7 +710,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                 obj->prev->cache.clip.w,
                                 obj->prev->cache.clip.h);
              if ((w > 0) && (h > 0))
-               obj->layer->evas->engine.func->output_redraws_rect_add(e->engine.data.output,
+               obj->layer->evas->engine.func->output_redraws_rect_add(ENDT,
                                                                       x + e->framespace.x,
                                                                       y + e->framespace.y,
                                                                       w, h);
@@ -737,7 +733,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                           obj->cur->cache.clip.w,
                                           obj->cur->cache.clip.h);
                        if ((w > 0) && (h > 0))
-                         obj->layer->evas->engine.func->output_redraws_rect_add(e->engine.data.output,
+                         obj->layer->evas->engine.func->output_redraws_rect_add(ENDT,
                                                                                 x + e->framespace.x,
                                                                                 y + e->framespace.y,
                                                                                 w, h);
@@ -749,7 +745,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                           obj->prev->cache.clip.w,
                                           obj->prev->cache.clip.h);
                        if ((w > 0) && (h > 0))
-                         obj->layer->evas->engine.func->output_redraws_rect_add(e->engine.data.output,
+                         obj->layer->evas->engine.func->output_redraws_rect_add(ENDT,
                                                                                 x + e->framespace.x,
                                                                                 y + e->framespace.y,
                                                                                 w, h);
@@ -1711,8 +1707,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
                mask->w = mask->h = 0;
                if (mask->surface)
                  {
-                    obj->layer->evas->engine.func->image_free
-                          (obj->layer->evas->engine.data.output, mask->surface);
+                    obj->layer->evas->engine.func->image_free(ENC, mask->surface);
                     mask->surface = NULL;
                  }
              EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mask);

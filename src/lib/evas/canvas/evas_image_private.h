@@ -213,10 +213,6 @@ void *_evas_image_data_convert_internal(Evas_Image_Data *o, void *data, Evas_Col
 void _evas_image_unload(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool dirty);
 void _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
 
-/* save typing */
-#define ENFN obj->layer->evas->engine.func
-#define ENDT obj->layer->evas->engine.data.output
-
 # define EINA_COW_IMAGE_STATE_WRITE_BEGIN(Obj, Write) \
   EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, Obj->cur, Evas_Object_Image_State, Write)
 

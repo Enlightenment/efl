@@ -350,13 +350,6 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 
    EINA_LIST_FREE(e->outputs, evo) efl_canvas_output_del(evo);
 
-   if (e->engine.func)
-     {
-        e->engine.func->ector_destroy(e->engine.data.output,
-                                      e->engine.ector);
-        e->engine.func->output_free(e->engine.data.output);
-        e->engine.func->info_free(eo_e, e->engine.info);
-     }
    if (e->common_init)
      {
         e->common_init = 0;
@@ -419,58 +412,35 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    efl_destructor(efl_super(eo_e, MY_CLASS));
 }
 
+// It is now expected that the first output in the list is the default one
+// manipulated by this set of legacy API
+
 EAPI Evas_Engine_Info *
 evas_engine_info_get(const Evas *obj)
 {
    const Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
-   Evas_Engine_Info *info;
+   Efl_Canvas_Output *output;
 
-   if (!e->engine.info) return NULL;
+   output = eina_list_data_get(e->outputs);
+   if (!output)
+     {
+        output = efl_canvas_output_add((Evas*) obj);
+     }
+   if (!output) return NULL;
 
-   info = e->engine.info;
-   ((Evas_Public_Data *)e)->engine.info_magic = info->magic;
-
-   return info;
+   return efl_canvas_output_engine_info_get(output);
 }
 
 EAPI Eina_Bool
 evas_engine_info_set(Evas *obj, Evas_Engine_Info *info)
 {
    Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
+   Efl_Canvas_Output *output;
 
+   output = eina_list_data_get(e->outputs);
+   if (!output) return EINA_FALSE;
    if (!info) return EINA_FALSE;
-   if (info != e->engine.info) return EINA_FALSE;
-   if (info->magic != e->engine.info_magic) return EINA_FALSE;
-
-   evas_canvas_async_block(e);
-
-   if (e->engine.data.output)
-     {
-        if (e->engine.func->update)
-          {
-             e->engine.func->update(e->engine.data.output, info, e->output.w, e->output.h);
-          }
-        else
-          {
-             // For engine who do not provide an update function
-             e->engine.func->output_free(e->engine.data.output);
-
-             goto setup;
-          }
-     }
-   else
-     {
-        if (!e->common_init)
-          {
-             e->common_init = 1;
-             evas_common_init();
-          }
-
-     setup:
-        e->engine.data.output = e->engine.func->setup(info, e->output.w, e->output.h);
-     }
-
-   return !!e->engine.data.output;
+   return efl_canvas_output_engine_info_set(output, info);
 }
 
 EOLIAN static Evas_Coord
@@ -831,11 +801,19 @@ _evas_canvas_efl_loop_user_loop_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e EI
 }
 
 Ector_Surface *
-evas_ector_get(Evas_Public_Data *e)
+evas_ector_get(Evas_Public_Data *e, void *output)
 {
-   if (!e->engine.ector)
-     e->engine.ector = e->engine.func->ector_create(e->engine.data.output);
-   return e->engine.ector;
+   Efl_Canvas_Output *r;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(e->outputs, l, r)
+     if (r->output == output)
+       {
+          if (!r->ector)
+            r->ector = e->engine.func->ector_create(_evas_engine_context(e), output);
+          return r->ector;
+       }
+   return NULL;
 }
 
 EAPI void
@@ -868,11 +846,11 @@ _image_data_unset(Evas_Object_Protected_Data *obj, Eina_List **list)
         obj->layer->evas->engine.func->ector_free(data->engine_data))
    else CHECK(EFL_CANVAS_POLYGON_CLASS, Efl_Canvas_Polygon_Data,
         data->engine_data =
-          obj->layer->evas->engine.func->polygon_points_clear(obj->layer->evas->engine.data.output,
+          obj->layer->evas->engine.func->polygon_points_clear(ENC,
                                                               data->engine_data))
    else CHECK(EVAS_CANVAS3D_TEXTURE_CLASS, Evas_Canvas3D_Texture_Data,
         if (obj->layer->evas->engine.func->texture_free)
-          obj->layer->evas->engine.func->texture_free(obj->layer->evas->engine.data.output, data->engine_data))
+          obj->layer->evas->engine.func->texture_free(ENC, data->engine_data))
    else return;
 #undef CHECK
    evas_object_ref(obj->object);
@@ -1015,7 +993,14 @@ evas_output_method_set(Evas *eo_e, int render_method)
    e->engine.module = em;
    evas_module_ref(em);
    /* get the engine info struct */
-   if (e->engine.func->info) e->engine.info = e->engine.func->info(eo_e);
+   if (e->engine.func->info)
+     {
+        Efl_Canvas_Output *output;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(e->outputs, l, output)
+          output->info = e->engine.func->info(eo_e);
+     }
 
    // Wayland already handles seats.
    if (em->definition && (eina_streq(em->definition->name, "wayland_shm") ||

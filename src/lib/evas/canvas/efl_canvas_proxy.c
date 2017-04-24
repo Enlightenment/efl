@@ -173,7 +173,7 @@ _evas_image_proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *cur_prox
        if (eina_list_count(proxy_source_write->proxies) == 0)
           {
              if (proxy_source_write->surface)
-               cur_proxy->layer->evas->engine.func->image_free(cur_proxy->layer->evas->engine.data.output,
+               cur_proxy->layer->evas->engine.func->image_free(_evas_engine_context(cur_proxy->layer->evas),
                                                                proxy_source_write->surface);
              proxy_source_write->surface = NULL;
              proxy_source_write->redraw = EINA_FALSE;

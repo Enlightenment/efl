@@ -81,10 +81,6 @@
 #include "evas_filter.h"
 #include "efl_canvas_filter_internal.eo.h"
 
-/* save typing */
-#define ENFN obj->layer->evas->engine.func
-#define ENDT obj->layer->evas->engine.data.output
-
 /* private magic number for textblock objects */
 static const char o_type[] = "textblock";
 
@@ -974,7 +970,7 @@ _image_safe_unref(Evas_Public_Data *e, void *image, Eina_Bool async)
    if (async)
      evas_unref_queue_image_put(e, image);
    else
-     e->engine.func->image_free(e->engine.data.output, image);
+     e->engine.func->image_free(_evas_engine_context(e), image);
 }
 
 /**

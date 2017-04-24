@@ -4306,7 +4306,7 @@ eng_output_idle_flush(void *data)
 static Eina_Bool use_cairo;
 
 static Ector_Surface *
-eng_ector_create(void *data EINA_UNUSED)
+eng_ector_create(void *engine EINA_UNUSED, void *output EINA_UNUSED)
 {
    Ector_Surface *ector;
    const char *ector_backend;

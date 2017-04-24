@@ -96,8 +96,12 @@ rend_dbg(const char *txt)
 #define OBJS_ARRAY_FLUSH(array) eina_array_flush(array)
 
 /* save typing */
+#undef ENFN
+#undef ENDT
+#undef ENC
 #define ENFN evas->engine.func
-#define ENDT evas->engine.data.output
+#define ENDT _evas_default_output_get(evas)
+#define ENC _evas_engine_context(evas)
 
 typedef struct _Render_Updates Render_Updates;
 typedef struct _Cutout_Margin  Cutout_Margin;
@@ -1876,7 +1880,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   RD(level, "  new surf: %ix%i\n", sw, sh);
                   EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                     {
-                       ENFN->image_free(ENDT, map_write->surface);
+                       ENFN->image_free(ENC, map_write->surface);
                        map_write->surface = NULL;
                     }
                   EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
@@ -1890,7 +1894,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   map_write->surface_h = sh;
 
                   map_write->surface = ENFN->image_map_surface_new
-                        (ENDT, map_write->surface_w,
+                        (ENC, map_write->surface_w,
                          map_write->surface_h,
                          map_write->cur.map->alpha);
                }
@@ -2328,7 +2332,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
             ((proxy_write->w != w) || (proxy_write->h != h)))
           {
              RD(level, "  free surface: %p\n", proxy_write->surface);
-             ENFN->image_free(ENDT, proxy_write->surface);
+             ENFN->image_free(ENC, proxy_write->surface);
              proxy_write->surface = NULL;
           }
 
@@ -2337,7 +2341,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         if (!proxy_write->surface)
           {
              if ((w < 1) || (h < 1)) goto end;
-             proxy_write->surface = ENFN->image_map_surface_new(ENDT, w, h, 1);
+             proxy_write->surface = ENFN->image_map_surface_new(ENC, w, h, 1);
              RD(level, "  created surface: %p %dx%d\n", proxy_write->surface, w, h);
              if (!proxy_write->surface) goto end;
              proxy_write->w = w;
@@ -2509,7 +2513,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
            * (we don't know how to render objects to alpha) */
           if (mdata->surface && ((w != mdata->w) || (h != mdata->h) || mdata->is_alpha || mdata->is_scaled))
             {
-               ENFN->image_free(ENDT, mdata->surface);
+               ENFN->image_free(ENC, mdata->surface);
                mdata->surface = NULL;
             }
 
@@ -2517,7 +2521,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           if (!mdata->surface)
             {
                eina_evlog("+mask_surface_new", mask->object, 0.0, NULL);
-               mdata->surface = ENFN->image_map_surface_new(ENDT, w, h, EINA_TRUE);
+               mdata->surface = ENFN->image_map_surface_new(ENC, w, h, EINA_TRUE);
                eina_evlog("-mask_surface_new", mask->object, 0.0, NULL);
                if (!mdata->surface) goto end;
                mdata->is_alpha = EINA_FALSE;
@@ -2582,7 +2586,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
 
                eina_evlog("+mask_new_cpy_data", mask->object, 0.0, NULL);
                alpha_surface = ENFN->image_new_from_copied_data
-                     (ENDT, w, h, NULL, EINA_TRUE, EVAS_COLORSPACE_GRY8);
+                     (ENC, w, h, NULL, EINA_TRUE, EVAS_COLORSPACE_GRY8);
                eina_evlog("-mask_new_cpy_data", mask->object, 0.0, NULL);
                if (!alpha_surface) goto end;
 
@@ -2596,7 +2600,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                eina_evlog("-mask_cpy_data", mask->object, 0.0, NULL);
 
                /* Now we can drop the original surface */
-               ENFN->image_free(ENDT, mdata->surface);
+               ENFN->image_free(ENC, mdata->surface);
                mdata->surface = alpha_surface;
                mdata->is_alpha = EINA_TRUE;
             }
@@ -3828,8 +3832,14 @@ _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *evas)
 
         evas_fonts_zero_pressure(eo_e);
 
-        if (ENFN && ENFN->output_idle_flush && ENDT)
-          ENFN->output_idle_flush(ENDT);
+        if (ENFN && ENFN->output_idle_flush)
+          {
+             Efl_Canvas_Output *output;
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(evas->outputs, l, output)
+               ENFN->output_idle_flush(output->output);
+          }
 
         eina_inarray_flush(&evas->active_objects);
         OBJS_ARRAY_FLUSH(&evas->render_objects);
@@ -3865,7 +3875,7 @@ _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
    if ((obj->map->cur.map) && obj->map->surface)
      {
         Evas_Public_Data *evas = obj->layer->evas;
-        ENFN->image_free(ENDT, obj->map->surface);
+        ENFN->image_free(ENC, obj->map->surface);
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           map_write->surface = NULL;
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
@@ -3904,7 +3914,7 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
                          {
-                            ENFN->image_free(ENDT, proxy_write->surface);
+                            ENFN->image_free(ENC, proxy_write->surface);
                             proxy_write->surface = NULL;
                          }
                        EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
@@ -3913,7 +3923,7 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask, Evas_Object_Mask_Data, mdata)
                          {
-                            ENFN->image_free(ENDT, mdata->surface);
+                            ENFN->image_free(ENC, mdata->surface);
                             mdata->surface = NULL;
                          }
                        EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mdata);
@@ -3925,8 +3935,14 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
              lay->walking_objects--;
              _evas_layer_flush_removes(lay);
           }
-        if (ENFN && ENFN->output_dump && ENDT)
-          ENFN->output_dump(ENDT);
+        if (ENFN && ENFN->output_dump)
+          {
+             Efl_Canvas_Output *output;
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(evas->outputs, l, output)
+               ENFN->output_dump(output);
+          }
 
 #define GC_ALL(Cow) \
   if (Cow) while (eina_cow_gc(Cow))
@@ -3938,8 +3954,14 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
 
         evas_fonts_zero_pressure(eo_e);
 
-        if (ENFN && ENFN->output_idle_flush && ENDT)
-          ENFN->output_idle_flush(ENDT);
+        if (ENFN && ENFN->output_idle_flush)
+          {
+             Efl_Canvas_Output *output;
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(evas->outputs, l, output)
+               ENFN->output_idle_flush(output);
+          }
 
         eina_inarray_flush(&evas->active_objects);
         OBJS_ARRAY_FLUSH(&evas->render_objects);

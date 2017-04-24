@@ -16,8 +16,6 @@
 #endif
 
 /* save typing */
-#define ENFN obj->layer->evas->engine.func
-#define ENDT obj->layer->evas->engine.data.output
 #define COL_OBJECT(obj, sub) ARGB_JOIN(obj->sub->color.a, obj->sub->color.r, obj->sub->color.g, obj->sub->color.b)
 #define COL_JOIN(o, sub, color) ARGB_JOIN(o->sub.color.a, o->sub.color.r, o->sub.color.g, o->sub.color.b)
 

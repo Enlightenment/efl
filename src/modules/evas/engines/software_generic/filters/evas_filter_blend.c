@@ -222,7 +222,7 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd, draw_func image_draw)
    dc.rop = cmd->draw.rop;
    dc.color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
 
-   ret = _mapped_blend(cmd->ENDT, &dc, src, src_stride, dst, dst_stride, cmd->draw.fillmode,
+   ret = _mapped_blend(CMD_ENDT, &dc, src, src_stride, dst, dst_stride, cmd->draw.fillmode,
                         sx, sy, sw, sh, dx, dy, dw, dh, image_draw);
 
 end:

@@ -669,7 +669,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
 
         if (e->engine.func->drawable_scene_render_to_texture)
           {
-             if (e->engine.func->drawable_scene_render_to_texture(e->engine.data.output,
+             if (e->engine.func->drawable_scene_render_to_texture(_evas_engine_context(e),
                                                          pd->surface, &scene_data))
                {
                   if (e->engine.func->drawable_texture_color_pick_id_get)
