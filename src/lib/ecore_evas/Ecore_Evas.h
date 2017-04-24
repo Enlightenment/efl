@@ -196,7 +196,7 @@ EAPI void        ecore_evas_engines_free(Eina_List *engines);
  *
  * @param engine_name Engine name as returned by
  *        ecore_evas_engines_get() or @c NULL to use environment variable
- *        ECORE_EVAS_ENGINE, that can be undefined and in this case
+ *        ECORE_EVAS_ENGINE, which can be undefined and in this case
  *        this call will try to find the first working engine.
  * @param x Horizontal position of window (not supported in all engines)
  * @param y Vertical position of window (not supported in all engines)
@@ -204,7 +204,7 @@ EAPI void        ecore_evas_engines_free(Eina_List *engines);
  * @param h Height of window
  * @param extra_options String with extra parameter, dependent on engines
  *        or @ NULL. String is usually in the form: 'key1=value1;key2=value2'.
- *        Pay attention that when getting that from shell commands, most
+ *        Pay attention that when getting this from shell commands, most
  *        consider ';' as the command terminator, so you need to escape
  *        it or use quotes.
  *
@@ -808,7 +808,7 @@ EAPI void        ecore_evas_wm_rotation_manual_rotation_done(Ecore_Evas *ee);
  *
  * The window auxiliary hint is the value which is used to decide which actions should
  * be made available to the user by the window manager. If you want to set a specific hint
- * to your window, then you should check whether it exists in the supported auxiliary
+ * on your window, then you should check whether it exists in the supported auxiliary
  * hints that are registered in the root window by the window manager. Once you've added
  * an auxiliary hint, you can get a new ID which is used to change value and delete hint.
  * The window manager sends the response message to the application on receiving auxiliary
@@ -1131,7 +1131,7 @@ EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 
 /**
  * @brief Creates Ecore_Evas using software x11.
- * @note If ecore is not compiled with support to x11 then nothing is done and NULL is returned.
+ * @note If ecore is not compiled with support for x11 then nothing is done and NULL is returned.
  * @param disp_name The name of the Ecore_Evas to be created.
  * @param parent The parent of the Ecore_Evas to be created.
  * @param x The X coordinate to be used.
@@ -1154,7 +1154,7 @@ EAPI Ecore_X_Window  ecore_evas_software_x11_window_get(const Ecore_Evas *ee);
 
 /**
  * @brief Sets the direct_resize of Ecore_Evas using software x11.
- * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @note If ecore is not compiled with support for x11 then nothing is done.
  * @param ee The Ecore_Evas in which to set direct resize.
  * @param on Enables the resize of Ecore_Evas if equals @c EINA_TRUE, disables if equals @c EINA_FALSE.
  */
@@ -1162,7 +1162,7 @@ EAPI void            ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, E
 
 /**
  * @brief Gets if the Ecore_Evas is being directly resized using software x11.
- * @note If ecore is not compiled with support to x11 then nothing is done and EINA_FALSE is returned.
+ * @note If ecore is not compiled with support for x11 then nothing is done and EINA_FALSE is returned.
  * @param ee The Ecore_Evas from which to get direct resize.
  * @return @c EINA_TRUE if the resize was managed directly, otherwise return @c EINA_FALSE.
  */
@@ -1170,9 +1170,9 @@ EAPI Eina_Bool       ecore_evas_software_x11_direct_resize_get(const Ecore_Evas 
 
 /**
  * @brief Adds an extra window on Ecore_Evas using software x11.
- * @note If ecore is not compiled with support to x11 then nothing is done.
- * @param ee The Ecore_Evas on which to add the window.
- * @param win The window to be added at the Ecore_Evas.
+ * @note If ecore is not compiled with support for x11 then nothing is done.
+ * @param ee The Ecore_Evas for which to add the window.
+ * @param win The window to be added to the Ecore_Evas.
  */
 EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
 
@@ -1221,7 +1221,7 @@ EAPI Ecore_X_Pixmap ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee);
 
 /**
  * @brief Creates Ecore_Evas using opengl x11.
- * @note If ecore is not compiled with support to x11 then nothing is done and NULL is returned.
+ * @note If ecore is not compiled with support for x11 then nothing is done and NULL is returned.
  * @param disp_name The name of the display of the Ecore_Evas to be created.
  * @param parent The parent of the Ecore_Evas to be created.
  * @param x The X coordinate to be used.
@@ -1245,7 +1245,7 @@ EAPI Ecore_X_Window  ecore_evas_gl_x11_window_get(const Ecore_Evas *ee);
 
 /**
  * @brief Sets direct_resize for Ecore_Evas using opengl x11.
- * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @note If ecore is not compiled with support for x11 then nothing is done.
  * @param ee The Ecore_Evas in which to set direct resize.
  * @param on Enables the resize of Ecore_Evas if equals @c EINA_TRUE, disables if equals @c EINA_FALSE.
  */
@@ -1253,7 +1253,7 @@ EAPI void            ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bo
 
 /**
  * @brief Gets if the Ecore_Evas is being directly resized using opengl x11.
- * @note If ecore is not compiled with support to x11 then nothing is done and EINA_FALSE is returned.
+ * @note If ecore is not compiled with support for x11 then nothing is done and EINA_FALSE is returned.
  * @param ee The Ecore_Evas from which to get direct resize.
  * @return @c EINA_TRUE if the resize was managed directly, otherwise return @c EINA_FALSE.
  */
@@ -1261,15 +1261,15 @@ EAPI Eina_Bool       ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee);
 
 /**
  * @brief Adds extra window on Ecore_Evas using opengl x11.
- * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @note If ecore is not compiled with support for x11 then nothing is done.
  * @param ee The Ecore_Evas for which to add the window.
- * @param win The window to be added at the Ecore_Evas.
+ * @param win The window to be added to the Ecore_Evas.
  */
 EAPI void            ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
 
 /**
  * @brief Sets the functions to be used before and after the swap callback.
- * @note If ecore is not compiled with support to x11 then nothing is done and the function is returned.
+ * @note If ecore is not compiled with support for x11 then nothing is done and the function is returned.
  * @param ee The Ecore_Evas for which to set the swap callback.
  * @param data The data for which to set the swap callback.
  * @param pre_cb The function to be called before the callback.
@@ -1519,7 +1519,7 @@ EAPI void ecore_evas_ews_delete_request(Ecore_Evas *ee);
  * buffer canvas' contents (with ecore_evas_buffer_pixels_get()) to be
  * used on another canvas, for whatever reason. The most common goal
  * of this setup is to @b save an image file with a whole canvas as
- * contents, which could not be achieved by using an image file within
+ * contents, that cannot be achieved by using an image file within
  * the target canvas.
  *
  * @warning Always resize the returned image and its underlying
@@ -2578,7 +2578,7 @@ typedef void (*Ecore_Evas_Vnc_Client_Disconnected_Cb)(void *data, Ecore_Evas *ee
  * @param port The port number to start the VNC server. Use @c -1 to set the default VNC port (5900)
  * @param accept_cb A callback used to accept a new client. If @c NULL all clients will be accepted.
  * @param disc_cb A callback used to inform that a client has disconnected. It may be @c NULL.
- * @param data Data to @a cb
+ * @param data Data to pass to @a accept_cb and @disc_cb
  * @return an Evas_Object that take everything under it to represent the view of the client.
  * @see ecore_evas_vnc_stop()
  * @see Ecore_Evas_Vnc_Client_Accept_Cb()
@@ -2654,7 +2654,7 @@ EAPI Evas *ecore_evas_ews_evas_get(void);
 EAPI Evas_Object *ecore_evas_ews_background_get(void);
 
 /**
- * @brief Sets the current background, must be created at evas ecore_evas_ews_evas_get().
+ * @brief Sets the current background, must be created by evas ecore_evas_ews_evas_get().
  *
  * It will be kept at lowest layer (EVAS_LAYER_MIN) and below
  * everything else. You can set any object, default is a black
@@ -2720,7 +2720,7 @@ EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window prope
  */
 
 /**
- * @defgroup Ecore_Evas_Extn External plug/socket infrastructure to remote canvases
+ * @defgroup Ecore_Evas_Extn External plug/socket infrastructure for remote canvases
  * @ingroup Ecore_Evas_Group
  *
  * These functions allow 1 process to create a "socket" was pluged into which another
