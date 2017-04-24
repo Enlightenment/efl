@@ -411,7 +411,7 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
    unsigned int      timestamp;
    Evas_Event_Flags  event_flags;
    Evas_Device      *dev;
-   Evas_Object      *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
+   Evas_Object      *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_Up /** Mouse button release event */
@@ -429,7 +429,7 @@ struct _Evas_Event_Mouse_Up /** Mouse button release event */
    unsigned int      timestamp;
    Evas_Event_Flags  event_flags;
    Evas_Device      *dev;
-   Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
+   Evas_Object     *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_In /** Mouse enter event */
@@ -445,7 +445,7 @@ struct _Evas_Event_Mouse_In /** Mouse enter event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
-   Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
+   Evas_Object     *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_Out /** Mouse leave event */
@@ -461,7 +461,7 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
-   Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
+   Evas_Object     *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_Move /** Mouse move event */
@@ -477,7 +477,7 @@ struct _Evas_Event_Mouse_Move /** Mouse move event */
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
    Evas_Device     *dev;
-   Evas_Object     *event_src; /**< The Evas Object which actually triggered the event, used in cases of proxy event propagation */
+   Evas_Object     *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
 };
 
 struct _Evas_Event_Mouse_Wheel /** Wheel event */
@@ -786,7 +786,7 @@ EAPI Evas_Alloc_Error  evas_alloc_error(void);
  *
  * Evas' asynchronous events are meant to be dealt with internally,
  * i. e., when building stuff to be glued together into the EFL
- * infrastructure -- a module, for example. The context which demands
+ * infrastructure -- a module, for example. The context that demands
  * its use is when calculations need to be done out of the main
  * thread, asynchronously, and some action must be performed after
  * that.
@@ -1033,8 +1033,8 @@ EAPI void              evas_render_method_list_free(Eina_List *list);
 /**
  * @defgroup Evas_Canvas_Events Canvas Events
  *
- * Functions relating to canvas events, which are mainly reports on
- * its internal states changing (an object got focused, the rendering
+ * Functions relating to canvas events that report on changes of
+ * its internal states (an object got focused, the rendering
  * is updated, etc).
  *
  * Some of the functions in this group are exemplified @ref
@@ -1076,7 +1076,7 @@ EAPI void              evas_render_updates_free(Eina_List *updates);
  * Most of the time use of freezing events is done like this:
  * @code
  * evas_event_freeze(my_evas_canvas);
- * function_that_does_work_which_cant_be_interrupted_by_events();
+ * function_that_does_work_that_cant_be_interrupted_by_events();
  * evas_event_thaw(my_evas_canvas);
  * @endcode
  *
@@ -1375,7 +1375,7 @@ EAPI Evas_Device_Class evas_device_class_get(const Evas_Device *dev);
  * @param dev The device to modify
  * @param clas The sub-class to set
  *
- * This sets the sub-class of a device which gives much more detailed usage
+ * This sets the sub-class of a device, giving much more detailed usage
  * within a broader category.
  *
  * @since 1.8
@@ -1447,7 +1447,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  *
  * All Evas displaying units are Evas objects. One handles them all by
  * means of the handle ::Evas_Object. Besides Evas treats their
- * objects equally, they have @b types, which define their specific
+ * objects equally, they have @b types that define their specific
  * behavior (and individual API).
  *
  * Evas comes with a set of built-in object types:
@@ -1462,7 +1462,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * These functions apply to @b any Evas object, whatever type they
  * may have.
  *
- * @note The built-in types which are most used are rectangles, text
+ * @note The built-in types that are most used are rectangles, text
  * and images. In fact, with these one can create 2D interfaces
  * of arbitrary complexity and EFL makes it easy.
  */
@@ -1648,7 +1648,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  *
  * @subsection color Layer of color
  *
- * In the @ref clipping section we used a solid white clipper, which produced no
+ * In the @ref clipping section we used a solid white clipper that produced no
  * change in the color of the clipped object, it just hid what was outside the
  * clippers area. It is however sometimes desirable to change the color of an
  * object, this can be accomplished using a clipper that has a non-white color.
@@ -1680,7 +1680,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * complex imagery on a GUI that could not be achieved by the other
  * Evas' primitive object types, or to make image manipulations.
  *
- * Evas will support whichever image file types it was compiled with
+ * Evas will support whatever image file types it was compiled with
  * support to (its image loaders) -- check your software packager for
  * that information and see
  * evas_object_image_extension_can_load_get().
@@ -1719,7 +1719,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * going to use them at pre-determined sizes and wants to save
  * computations.
  *
- * Evas has even a scale cache, which will take care of caching scaled
+ * Evas has even a scale cache that will take care of caching scaled
  * versions of images with more often usage/hits. Finally, one can
  * have images being rescaled @b smoothly by Evas (more
  * computationally expensive) or not.
@@ -1752,7 +1752,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * evas_object_image_preload(next, EINA_TRUE);
  * @endcode
  *
- * If you're loading images which are too big, consider setting
+ * If you're loading images that are too big, consider setting
  * previously it's loading size to something smaller, in case you
  * won't expose them in real size. It may speed up the loading
  * considerably:
@@ -1766,7 +1766,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * evas_object_image_load_region_set(img, x, y, w, h);
  * @endcode
  * Refer to Elementary's Photocam widget for a high level (smart)
- * object which does lots of loading speed-ups for you.
+ * object that does lots of loading speed-ups for you.
  *
  * @subsection Evas_Object_Image_Animation Animation hints
  *
@@ -2655,7 +2655,7 @@ EAPI int                               evas_smart_usage_get(const Evas_Smart *s)
  * Smart objects can elect events (smart events, from now on) occurring
  * inside of them to be reported back to their users via callback
  * functions (smart callbacks). This way, you can extend Evas' own
- * object events. They are defined by an <b>event string</b>, which
+ * object events. They are defined by an <b>event string</b> that
  * identifies them uniquely. There's also a function prototype
  * definition for the callback functions: #Evas_Smart_Cb.
  *
@@ -2877,7 +2877,7 @@ typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *pri
 /**
  * @def EVAS_OBJECT_BOX_API_VERSION
  *
- * Current version for Evas box object smart class, a value which goes
+ * Current version for Evas box object smart class, a value that goes
  * to _Evas_Object_Box_Api::version.
  *
  * @ingroup Evas_Object_Box
@@ -2888,7 +2888,7 @@ typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *pri
  * @struct _Evas_Object_Box_Api
  *
  * This structure should be used by any smart class inheriting from
- * the box's one, to provide custom box behavior which could not be
+ * the box's one, to provide custom box behavior that could not be
  * achieved only by providing a layout function, with
  * evas_object_box_layout_set().
  *
@@ -3078,7 +3078,7 @@ EAPI const Evas_Object_Box_Api *evas_object_box_smart_class_get(void) EINA_CONST
  * @defgroup Evas_Cserve Shared Image Cache Server
  * @ingroup Evas
  *
- * Evas has an (optional) module which provides client-server
+ * Evas has an (optional) module that provides client-server
  * infrastructure to <b>share bitmaps across multiple processes</b>,
  * saving data and processing power.
  *
@@ -3255,7 +3255,7 @@ EAPI void        evas_cserve_disconnect(void);
  * @until ecore_main_loop_begin(
  *
  * Here, being @c valid_path the path to a valid image and @c
- * bogus_path a path to a file which does not exist, the two outputs
+ * bogus_path a path to a file that does not exist, the two outputs
  * of evas_load_error_str() would be (if no other errors occur):
  * <code>"No error on load"</code> and <code>"File (or file path) does
  * not exist"</code>, respectively. See the full @ref
@@ -3428,7 +3428,7 @@ EAPI void                    evas_language_reinit(void);
 /**
  * @defgroup Evas_Keys Key Input Functions
  *
- * Functions which feed key events to the canvas.
+ * Functions that feed key events to the canvas.
  *
  * As explained in @ref intro_not_evas, Evas is @b not aware of input
  * systems at all. Then, the user, if using it crudely (evas_new()),
