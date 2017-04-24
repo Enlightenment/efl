@@ -36,6 +36,13 @@ efl_canvas_output_add(Evas *canvas)
    // Track this output in Evas
    e->outputs = eina_list_append(e->outputs, r);
 
+   // The engine is already initialized, use it
+   // right away to setup the info structure
+   if (e->engine.func->info)
+     {
+        r->info = e->engine.func->info(canvas);
+     }
+
    return r;
 }
 
@@ -49,10 +56,13 @@ efl_canvas_output_del(Efl_Canvas_Output *output)
         e = _efl_canvas_output_async_block(output);
         if (!e) goto on_error;
 
-        // XXX: need to free output and context one they get allocated one day
-        // e->engine.func->context_free(eo_dat->output, eo_dat->context);
-        // e->engine.func->output_free(eo_dat->output);
-        e->engine.func->info_free(output->canvas, output->info);
+        if (e->engine.func)
+          {
+             e->engine.func->ector_destroy(output->output,
+                                           output->ector);
+             e->engine.func->output_free(output->output);
+             e->engine.func->info_free(output->canvas, output->info);
+          }
         e->outputs = eina_list_remove(e->outputs, output);
 
         efl_wref_del(output->canvas, &output->canvas);
@@ -98,15 +108,45 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
    e = _efl_canvas_output_async_block(output);
    if (!e) return EINA_FALSE;
    if (output->info != info) return EINA_FALSE;
+   if (info->magic != output->info_magic) return EINA_FALSE;
 
-   // XXX: handle setting of engine info here
+   if (output->output)
+     {
+        if (e->engine.func->update)
+          {
+             e->engine.func->update(output->output, info, e->output.w, e->output.h);
+          }
+        else
+          {
+             // For engine who do not provide an update function
+             e->engine.func->output_free(output->output);
 
-   return EINA_TRUE;
+             goto setup;
+          }
+     }
+   else
+     {
+        if (!e->common_init)
+          {
+             e->common_init = 1;
+             evas_common_init();
+          }
+
+     setup:
+        output->output = e->engine.func->setup(info, e->output.w, e->output.h);
+     }
+
+   return !!output->output;
 }
 
 EAPI Evas_Engine_Info*
 efl_canvas_output_engine_info_get(Efl_Canvas_Output *output)
 {
+   Evas_Engine_Info *info = output->info;
+
+   if (!info) return NULL;
+
+   output->info_magic = info->magic;
    return output->info;
 }
 
