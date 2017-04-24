@@ -90,7 +90,7 @@
  * canvases, supporting typical tree-based scene graph manipulation and other 3D
  * graphics rendering techniques.
  *
- * Evas 3D provides 3D objects which are used for describing 3D scene and APIs
+ * Evas 3D provides 3D objects that are used for describing 3D scene and APIs
  * to connect the scene with an evas image object so that the scene is rendered
  * on that image object.
  *
@@ -133,7 +133,7 @@
  *
  * Evas 3D object is a generic type of all evas 3D objects like scenes, nodes,
  * cameras, lights, meshes, textures and materials. Evas 3D object is basically
- * reference counted. Any successful function call on an object which makes a
+ * reference counted. Any successful function call on an object that makes a
  * reference to another object will increase the reference count. When the
  * reference count gets to 0, the object will be actually deleted.
  *
