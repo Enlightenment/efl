@@ -90,40 +90,26 @@ class Elm.Mapbuf (Elm.Widget, Efl.Container, Efl.Part)
             enabled: bool; [[The enabled state.]]
          }
       }
-      point_color_set {
-         [[Set the color of a vertex in the mapbuf
+      @property point_color {
+         [[The color of a point (vertex) in the mapbuf.
 
-           This sets the color of the vertex in the mapbuf. Colors will be
-           linearly interpolated between vertex points through the mapbuf.
+           This represents the color of the vertex in the mapbuf. Colors will
+           be linearly interpolated between vertex points through the mapbuf.
            Color will multiply the "texture" pixels (like GL_MODULATE in
            OpenGL). The default color of a vertex in a mapbuf is white
-           solid (255, 255, 255, 255) which means it will have no affect
-           on modifying the texture pixels.
+           solid (255, 255, 255, 255) which means it will have no effect on
+           modifying the texture pixels.
 
            @since 1.9
          ]]
-         params {
-            @in idx: int; [[Index of point to change. Must be smaller than mapbuf size.]]
-            @in r: int; [[Red (0 - 255)]]
-            @in g: int; [[Green (0 - 255)]]
-            @in b: int; [[Blue (0 - 255)]]
-            @in a: int; [[Alpha (0 - 255)]]
+         keys {
+            idx: int; [[Index of point to change, from 0 to 3.]]
          }
-      }
-      point_color_get {
-         [[Get the color set on a vertex in the mapbuf
-
-           This gets the color set by @.point_color_set on the given vertex
-           of the mapbuf.
-
-           @since 1.9
-         ]]
-         params {
-            @in idx: int; [[Index of point get. Must be smaller than map size.]]
-            @out r: int; [[Pointer to red return.]]
-            @out g: int; [[Pointer to green return.]]
-            @out b: int; [[Pointer to blue return.]]
-            @out a: int; [[Pointer to alpha return.]]
+         values {
+            r: int; [[Red (0 - 255)]]
+            g: int; [[Green (0 - 255)]]
+            b: int; [[Blue (0 - 255)]]
+            a: int; [[Alpha (0 - 255)]]
          }
       }
    }
