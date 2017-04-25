@@ -1175,6 +1175,7 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
 {
    Node *node;
    Node *old_focus;
+   Efl_Ui_Focus_Manager *redirect_manager;
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
 
@@ -1207,8 +1208,11 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
         efl_ui_focus_manager_redirect_set(obj, NULL);
      }
 
+   redirect_manager = node->redirect_manager;
+
    if (node->type == NODE_TYPE_NORMAL)
      {
+        Eo *focusable;
         //check if this is already the focused object
         old_focus = eina_list_last_data_get(pd->focus_stack);
 
@@ -1219,10 +1223,14 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
         pd->focus_stack = eina_list_remove(pd->focus_stack, node);
         pd->focus_stack = eina_list_append(pd->focus_stack, node);
 
+        //safe fields we later need
+        focusable = node->focusable;
+
         //populate the new change
         if (old_focus) efl_ui_focus_object_focus_set(old_focus->focusable, EINA_FALSE);
         efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
-        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, node->focusable);
+        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, focusable);
+        node = NULL;
      }
    else if (node->redirect_manager)
      {
@@ -1233,13 +1241,9 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
      }
 
    //now check if this is also a listener object
-   if (node->redirect_manager)
+   if (redirect_manager)
      {
-        Efl_Ui_Focus_Manager *redirect;
-
-        redirect = node->redirect_manager;
-
-        efl_ui_focus_manager_redirect_set(obj, redirect);
+        efl_ui_focus_manager_redirect_set(obj, redirect_manager);
      }
 }
 
