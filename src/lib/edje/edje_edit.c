@@ -15578,7 +15578,6 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
    char *data;
    Eina_Bool ret = EINA_TRUE;
    const char *api_name, *api_description;
-   unsigned int i = 0;
    Edje_Pack_Element *item;
 
    GET_RP_OR_RETURN(EINA_FALSE);
@@ -15693,6 +15692,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
      {
         if (ep->items_count != 0)
           {
+             unsigned int i;
+
              if (edje_edit_part_type_get(obj, part) == EDJE_PART_TYPE_BOX)
                BUF_APPEND(I4 "box {\n");
              else
