@@ -413,7 +413,8 @@ ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, u
    if (!fb) return NULL;
 
    for (i = 0; i < dmabuf_fd_count; i++)
-     if (sym_drmPrimeFDToHandle(fd, dmabuf_fd[i], &fb->handles[i])) goto fail;
+     if (sym_drmPrimeFDToHandle(fd, dmabuf_fd[i], &fb->handles[i]))
+       goto fail;
 
    fb->fd = fd;
    fb->w = width;
