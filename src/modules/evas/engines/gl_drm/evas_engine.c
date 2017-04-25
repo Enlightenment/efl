@@ -589,7 +589,7 @@ _re_winfree(Render_Engine *re)
 
 /* Code from weston's gl-renderer... */
 static EGLImageKHR
-import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes)
+gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes)
 {
    EGLAttrib attribs[30];
    int atti = 0;
@@ -666,7 +666,7 @@ _native_cb_bind(void *image)
         /* Must re-import every time for coherency. */
         if (n->ns_data.wl_surface_dmabuf.image)
           glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
-        v = import_simple_dmabuf(img->native.disp, &n->ns_data.wl_surface_dmabuf.attr);
+        v = gl_import_simple_dmabuf(img->native.disp, &n->ns_data.wl_surface_dmabuf.attr);
         if (!v) return;
         glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, v);
         n->ns_data.wl_surface_dmabuf.image = v;
@@ -1087,7 +1087,7 @@ eng_image_native_set(void *data, void *image, void *native)
                   void *v;
 
                   attr = ns->data.wl_dmabuf.attr;
-                  v = import_simple_dmabuf(ob->egl.disp, attr);
+                  v = gl_import_simple_dmabuf(ob->egl.disp, attr);
                   if (!v) {
                        ns->data.wl_dmabuf.attr = NULL;
                        return NULL;
