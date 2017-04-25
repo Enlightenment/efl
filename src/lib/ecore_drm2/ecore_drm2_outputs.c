@@ -1587,8 +1587,7 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
         Ecore_Drm2_Plane_State *pstate = NULL;
         drmModeAtomicReq *req = NULL;
         int res = 0;
-        uint32_t flags =
-          DRM_MODE_ATOMIC_NONBLOCK |
+        uint32_t flags = DRM_MODE_ATOMIC_NONBLOCK |
           DRM_MODE_ATOMIC_ALLOW_MODESET;
 
         EINA_LIST_FOREACH(output->plane_states, l, pstate)
