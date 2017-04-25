@@ -55,9 +55,9 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
               given direction.
             ]]
             params {
-                direction : Efl.Ui.Focus.Direction;
+                direction : Efl.Ui.Focus.Direction; [[Direction to move focus]]
             }
-            return : Efl.Ui.Focus.Object;
+            return : Efl.Ui.Focus.Object; [[Next object to focus]]
         }
         register {
             [[Register a new item in the graph.
@@ -197,7 +197,8 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
                 starting from $child.]]
         }
         logical_end {
-            return : Efl.Ui.Focus.Object;
+            [[Return the last logical object]]
+            return : Efl.Ui.Focus.Object; [[Last object]]
         }
     }
     implements {
