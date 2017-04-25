@@ -349,7 +349,7 @@ main(void)
    d.text = evas_object_text_add(d.evas);
    evas_object_text_style_set(d.text, EVAS_TEXT_STYLE_PLAIN);
 
-   /* let the pre-set thingies be enforced */
+   /* let the pre-set things be enforced */
    evas_object_color_set(
      d.text, d.t_data.text_ptr->r, d.t_data.text_ptr->g,
      d.t_data.text_ptr->b, d.t_data.text_ptr->a);

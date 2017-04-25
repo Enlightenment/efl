@@ -1,7 +1,7 @@
 /**
  * This example is a testing example, first model (from the right side) is
- * original model, the second one is convex hull maden in evas-3d,
- * the third one is convex hull maden in blender.
+ * original model, the second one is convex hull made in evas-3d,
+ * the third one is convex hull made in blender.
  *
  * Press "Right" or "Left" to switch models, the result of test (vertex count)
  * will be printed in console window.
@@ -410,7 +410,7 @@ main(void)
    Ecore_Animator *anim;
    Scene_Data data;
 
-   //Unless Evas 3D supports Software renderer, we set gl backened forcely.
+   // Unless Evas 3D supports Software renderer, we set gl backend forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
 
    if (!ecore_evas_init()) return 0;
@@ -428,7 +428,7 @@ main(void)
 
    _scene_setup(&data);
 
-   /* Add a background rectangle objects. */
+   /* Add a background rectangle object. */
    background = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);

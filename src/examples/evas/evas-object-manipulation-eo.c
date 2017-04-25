@@ -173,7 +173,7 @@ main(void)
    d.canvas = ecore_evas_get(d.ee);
 
    /* Creating object with Eo.
-    * Object must be deleted explixitly at the end of program.*/
+    * Object must be deleted explicitly at the end of program.*/
    d.bg = efl_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
 
    /* Eo-styled way to perform actions on an object*/

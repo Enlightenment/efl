@@ -2,7 +2,7 @@
  * Simple Evas example illustrating import/export of .ply format.
  *
  * Read meshes from "tested_man_all_with_mods.ply", "tested_man_only_geometry.ply" and "tested_man_without_UVs.ply".
- * After that cheange some properties of material.
+ * After that change some properties of material.
  * After that save material to "saved_man.mtl"
  * and geometry to "saved_man_all_with_mods.ply", "saved_man_only_geometry.ply" and "saved_man_without_UVs.ply".
  *
@@ -114,7 +114,7 @@ main(void)
         mesh[i] = NULL;
      }
 
-   //Unless Evas 3D supports Software renderer, we set gl backened forcely.
+   // Unless Evas 3D supports Software renderer, we set gl backend forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
 
    if (!ecore_evas_init()) return 0;
@@ -207,7 +207,7 @@ main(void)
    evas_canvas3d_scene_camera_node_set(scene, camera_node);
    evas_canvas3d_scene_size_set(scene, WIDTH, HEIGHT);
 
-   /* Add a background rectangle objects. */
+   /* Add a background rectangle object. */
    background = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 100, 100, 100, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);

@@ -2,7 +2,7 @@
  * This example shows how to get and draw axis-aligned bounding box.
  *
  * @see _redraw_aabb();
- * Rotate axises (keys 1-4) for model and bounding box view from another angle.
+ * Rotate axes (keys 1-4) for model and bounding box view from another angle.
  *
  * @verbatim
  * gcc -o evas-3d-aabb evas-3d-aabb.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm

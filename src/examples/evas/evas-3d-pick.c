@@ -101,7 +101,7 @@ _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 int
 main(void)
 {
-   //Unless Evas 3D supports Software renderer, we set gl backened forcely.
+   // Unless Evas 3D supports Software renderer, we set gl backend forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
 
    if (!ecore_evas_init()) return 0;

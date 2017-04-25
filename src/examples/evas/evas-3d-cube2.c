@@ -214,7 +214,7 @@ _scene_setup(Scene_Data *data)
 int
 main(void)
 {
-   //Unless Evas 3D supports Software renderer, we set gl backened forcely.
+   // Unless Evas 3D supports Software renderer, we set gl backend forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
 
    Scene_Data data;
@@ -233,7 +233,7 @@ main(void)
 
    _scene_setup(&data);
 
-   /* Add a background rectangle objects. */
+   /* Add a background rectangle object. */
    background = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);

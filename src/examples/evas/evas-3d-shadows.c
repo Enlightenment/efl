@@ -1,5 +1,5 @@
 /**
- * This example illustrating use of shadows, callbacks(clicked, collision),
+ * This example illustrates use of shadows, callbacks(clicked, collision),
  * technic of the billboard and post proccesing render with anti-aliasing.
  * Model and cube are clickable. Model detects collision with sphere.
  * Cube detects collision with sphere, model and cone. Model and cude are moveable.
@@ -619,7 +619,7 @@ main(void)
    Scene_Data data;
    Ecore_Animator *anim;
    Eina_List *nodes1 = NULL, *nodes2 = NULL;
-   //Unless Evas 3D supports Software renderer, we set gl backened forcely.
+   // Unless Evas 3D supports Software renderer, we set gl backend forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
    if (!ecore_evas_init()) return 0;
 
@@ -634,7 +634,7 @@ main(void)
 
    _scene_setup(&data);
 
-   /* Add a background rectangle objects. */
+   /* Add a background rectangle object. */
    background = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);

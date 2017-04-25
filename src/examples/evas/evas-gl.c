@@ -428,7 +428,7 @@ evas_gl_exam(Evas_Object *win)
    evas_object_event_callback_add(gldata.img, EVAS_CALLBACK_DEL, img_del_cb, &gldata);
 
    //Set up an actual pixel size for the buffer data. It may be different to the
-   //output size. Any windowing sysmtem has something like this, just evas has 2
+   //output size. Any windowing system has something like this, just evas has 2
    //sizes, a pixel size and the output object size.
    evas_object_image_size_set(gldata.img, w, h);
 

@@ -1,9 +1,9 @@
 /**
  * Simple Evas example illustrating import/export of .obj format.
- * Example demonstrate possibility to load and save mesh without tex_coords or/and normals.
+ * Example demonstrates possibility to load and save mesh without tex_coords or/and normals.
  *
  * Read mesh from "sweet_home(parameters).obj".
- * After that cheange some properties of material.
+ * After that change some properties of material.
  * After that save material to "saved_files/saved_home(parameters).mtl"
  * and geometry to "saved_files/saved_home(parameters).obj".
  * If material was not set it will be not saved.
@@ -141,7 +141,7 @@ main(void)
 {
    int i;
    char buffer[PATH_MAX], full_file_path[PATH_MAX];
-   //Unless Evas 3D supports Software renderer, we set gl backened forcely.
+   // Unless Evas 3D supports Software renderer, we set gl backend forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
 
    if (!ecore_evas_init()) return 0;

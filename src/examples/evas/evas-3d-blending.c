@@ -1,7 +1,7 @@
 /**
  * Example illustrating usage of blending modes. Press "Up" or "Down" key for change source blending factor.
  * Press "Left" or "Right" for change destination blending factors.
- * For more detailes see https://www.opengl.org/sdk/docs/man2/xhtml/glBlendFunc.xml
+ * For more details see https://www.opengl.org/sdk/docs/man2/xhtml/glBlendFunc.xml
  *
  * @verbatim
  * gcc -o evas-3d-blending evas-3d-blending.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`-lm
@@ -280,7 +280,7 @@ main(void)
 
    _scene_setup(&data);
 
-   /* Add a background rectangle objects. */
+   /* Add a background rectangle object. */
    background = evas_object_rectangle_add(evas);
    evas_object_color_set(background, 0, 0, 0, 255);
    evas_object_move(background, 0, 0);

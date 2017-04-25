@@ -153,7 +153,7 @@ main(void)
    else
      {
         printf(
-                "loaded image '%s' with succes! error string is \"%s\"\n",
+                "loaded image '%s' with success! error string is \"%s\"\n",
                 img_path, evas_load_error_str(err));
 
         evas_object_move(d.img, WIDTH / 2, HEIGHT / 2);

@@ -109,7 +109,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_size_hint_aspect_get(d.rect, &aspect, &w, &h);
 
         printf("Object has aspect %s, with horizontal compontent %d"
-                        " and vertical compontent %d\n",
+                        " and vertical component %d\n",
                 _get_aspect_name(aspect), w, h);
 
         return;

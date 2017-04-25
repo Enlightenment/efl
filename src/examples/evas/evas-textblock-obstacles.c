@@ -212,7 +212,7 @@ _text_init()
    _style_set("word");
 
    evas_object_textblock_text_markup_set(d.text,
-         "This is an example text to demonstrate the textblock object"
+         "This example text demonstrates the textblock object"
          " with obstacle objects support."
          " Any evas object <item size=72x16></item>can register itself as an obstacle to the textblock"
          " object. Upon reg<color=#0ff>stering, it aff</color>ects the layout of the text in"

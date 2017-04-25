@@ -1,7 +1,7 @@
 /**
  * This example shows how the work of events with callback of the mouse could be useful in node rotation.
  *
- * After clicking the mouse on cube callbacks began to emit autmatically,
+ * After clicking the mouse on cube callbacks began to emit automatically,
  * depending on mouse's position change the cube rotates with a certain
  * speed while mouse is still on the cube, also rotation slows down when
  * leaving the boundaries of the cube, all this goes on while the mouse
@@ -251,7 +251,7 @@ main(void)
    memset(&data, 0, sizeof(Scene_Data));
    _scene_setup(&data);
 
-   /* Add a background rectangle objects. */
+   /* Add a background rectangle object. */
    background = evas_object_rectangle_add(evas);
    evas_object_color_set(background, 0, 0, 0, 255);
    evas_object_move(background, 0, 0);

@@ -5,7 +5,7 @@
  * in terminal time response of the found node.
  * Use key UP/DOWN for changing z coordinate of camera
  * Use key LEFT/RIGHT for scale each node
- * Use shortcut parameters of commanline: r - rows of objects, c - columns of objects,
+ * Use shortcut parameters of commandline: r - rows of objects, c - columns of objects,
  * p - precision of the spheres, t - path for a texture.
  *
  * @verbatim

@@ -1,7 +1,7 @@
 /**
- * This example illustrating using static LOD technic.
+ * This example illustrates using static LOD technic.
  * Main idea using several meshes with different quantity of polygons,
- * render mesh depend on distance to the camera node.
+ * render mesh depends on distance to the camera node.
  * Use key up/down to change animtion style:
  *   Up (default) object motion
  *   Down camera motion
@@ -172,7 +172,7 @@ _mesh_setup(Scene_Data *data)
                 evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
    evas_canvas3d_node_scale_set(data->complex_node, 30.0, 30.0, 30.0);
 
-   /* Setup mesh. One model, two meshes object with dufferent lod distances.*/
+   /* Setup mesh. One model, two meshes object with different lod distances.*/
    for (i = 0; i <= NUMBER_MESHS; i++)
      {
         Eo *mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
@@ -232,7 +232,7 @@ _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA_U
 int
 main(void)
 {
-   //Unless Evas 3D supports Software renderer, we set gl backened forcely.
+   // Unless Evas 3D supports Software renderer, we set gl backend forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
 
    Scene_Data data;
@@ -250,7 +250,7 @@ main(void)
 
    _scene_setup(&data);
 
-   /* Add a background rectangle objects. */
+   /* Add a background rectangle object. */
    background = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
    efl_gfx_color_set(background, 0, 0, 0, 255);
    efl_gfx_size_set(background, WIDTH, HEIGHT);
