@@ -41,7 +41,6 @@ _plane_cursor_size_get(int fd, int *width, int *height)
 EAPI Ecore_Drm2_Plane *
 ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
 {
-#ifdef HAVE_ATOMIC_DRM
    Eina_List *l;
    Ecore_Drm2_Plane *plane;
    Ecore_Drm2_Plane_State *pstate;
@@ -107,9 +106,6 @@ out:
    output->planes = eina_list_append(output->planes, plane);
 
    return plane;
-#else
-   return NULL;
-#endif
 }
 
 EAPI void
