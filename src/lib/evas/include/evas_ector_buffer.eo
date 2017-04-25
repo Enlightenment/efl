@@ -13,7 +13,7 @@ interface Evas.Ector.Buffer
       engine_image_set {
          [[Attach this ector buffer to an existing engine image.]]
          params {
-            @in evas: Evas.Canvas; [[The current Evas.]]
+            @in engine: void_ptr; [[The current Evas.]]
             @in image: void_ptr; [[The RGBA_Image or Evas_GL_Image.]]
          }
       }

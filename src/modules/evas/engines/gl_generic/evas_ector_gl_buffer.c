@@ -39,18 +39,21 @@ struct _Ector_GL_Buffer_Map
 
 struct _Evas_Ector_GL_Buffer_Data
 {
-   Evas_Public_Data *evas;
+   Render_Engine_GL_Generic *re;
    Evas_GL_Image *glim;
    Eina_Bool alpha_only, was_render;
    Ector_GL_Buffer_Map *maps;
 };
 
+void *eng_image_data_put(void *data, void *image, DATA32 *image_data);
+void *eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree);
+void eng_image_free(void *data, void *image);
+
 #undef ENFN
 #undef ENDT
 #undef ENC
 
-#define ENFN pd->evas->engine.func
-#define ENC _evas_engine_context(pd->evas)
+#define ENC pd->re
 
 // testing out some macros to maybe add to eina
 #define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
@@ -104,16 +107,16 @@ _evas_gl_image_is_fbo(Evas_GL_Image *glim)
 
 EOLIAN static void
 _evas_ector_gl_buffer_gl_buffer_prepare(Eo *obj, Evas_Ector_GL_Buffer_Data *pd,
-                                        Evas_Canvas *eo_evas,
+                                        void *engine,
                                         int w, int h, Efl_Gfx_Colorspace cspace,
                                         Ector_Buffer_Flag flags EINA_UNUSED)
 {
-   Render_Engine_GL_Generic *re;
+   Render_Engine_GL_Generic *re = engine;
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image *im;
 
    // this is meant to be called only once
-   EINA_SAFETY_ON_FALSE_GOTO(!pd->evas, on_fail);
+   EINA_SAFETY_ON_FALSE_GOTO(!pd->re, on_fail);
    EINA_SAFETY_ON_FALSE_GOTO(!efl_finalized_get(obj), on_fail);
 
    if (cspace == EFL_GFX_COLORSPACE_ARGB8888)
@@ -123,9 +126,7 @@ _evas_ector_gl_buffer_gl_buffer_prepare(Eo *obj, Evas_Ector_GL_Buffer_Data *pd,
    else
      fail("Unsupported colorspace: %u", cspace);
 
-   // FIXME: we should not rely on evas canvas in the module (just evas engine)
-   pd->evas = efl_data_xref(eo_evas, EVAS_CANVAS_CLASS, obj);
-   re = ENC;
+   pd->re = re;
    gc = re->window_gl_context_get(re->software.ob);
 
    im = evas_gl_common_image_surface_new(gc, w, h, EINA_TRUE, EINA_FALSE);
@@ -243,12 +244,12 @@ _evas_ector_gl_buffer_ector_buffer_map(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buffer
    if (write && _evas_gl_image_is_fbo(pd->glim))
      {
         // Can not open FBO data to write!
-        im = ENFN->image_data_get(ENC, pd->glim, EINA_FALSE, &data, &err, &tofree);
+        im = eng_image_data_get(ENC, pd->glim, EINA_FALSE, &data, &err, &tofree);
         if (!im) return NULL;
      }
    else
      {
-        im = ENFN->image_data_get(ENC, pd->glim, write, &data, &err, &tofree);
+        im = eng_image_data_get(ENC, pd->glim, write, &data, &err, &tofree);
         if (!im) return NULL;
      }
 
@@ -338,12 +339,12 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
                   if (map->im)
                     {
                        MAP_DUMP(map->im, "out_ro_free");
-                       ENFN->image_free(ENC, map->im);
+                       eng_image_free(ENC, map->im);
                     }
                   else
                     {
                        MAP_DUMP(pd->glim, "out_ro_nofree");
-                       ENFN->image_data_put(ENC, pd->glim, map->image_data);
+                       eng_image_data_put(ENC, pd->glim, map->image_data);
                     }
                }
              if (map->allocated)
@@ -371,7 +372,6 @@ EOLIAN static void
 _evas_ector_gl_buffer_efl_object_destructor(Eo *obj, Evas_Ector_GL_Buffer_Data *pd)
 {
    evas_gl_common_image_free(pd->glim);
-   efl_data_xunref(pd->evas->evas, pd->evas, obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 

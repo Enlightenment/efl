@@ -38,7 +38,7 @@ struct _Ector_GL_Buffer_Map
 
 struct _Evas_Ector_GL_Image_Buffer_Data
 {
-   Evas_Public_Data *evas;
+   Render_Engine_GL_Generic *re;
    Evas_GL_Image *glim;
    Ector_GL_Buffer_Map *maps;
 };
@@ -47,9 +47,11 @@ struct _Evas_Ector_GL_Image_Buffer_Data
 #undef ENDT
 #undef ENC
 
-// FIXME: It should not use evas canvas, just the engine
-#define ENFN pd->evas->engine.func
-#define ENC  _evas_engine_context(pd->evas)
+#define ENC  pd->re
+
+void *eng_image_data_put(void *data, void *image, DATA32 *image_data);
+void *eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree);
+void eng_image_free(void *data, void *image);
 
 // testing out some macros to maybe add to eina
 #define EINA_INLIST_REMOVE(l,i) do { l = (__typeof__(l)) eina_inlist_remove(EINA_INLIST_GET(l), EINA_INLIST_GET(i)); } while (0)
@@ -70,19 +72,18 @@ _pixels_argb_to_gry8_convert(uint8_t *dst, const uint32_t *src, int len)
 }
 
 EOLIAN static void
-_evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd,
-                                                               Evas *eo_evas, void *image)
+_evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj EINA_UNUSED,
+                                                               Evas_Ector_GL_Image_Buffer_Data *pd,
+                                                               void *engine, void *image)
 {
+   Render_Engine_GL_Generic *re = engine;
    Evas_GL_Image *im = image;
-   Evas_Public_Data *evas;
 
    EINA_SAFETY_ON_FALSE_RETURN(!pd->glim);
    EINA_SAFETY_ON_NULL_RETURN(im);
 
-   evas = efl_data_xref(eo_evas, EVAS_CANVAS_CLASS, obj);
    if (!im->tex)
      {
-        Render_Engine_GL_Generic *re = ENC;
         Evas_Engine_GL_Context *gc;
 
         gc = re->window_gl_context_get(re->software.ob);
@@ -92,12 +93,11 @@ _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
           fail("Image has no texture!");
      }
 
-   pd->evas = evas;
+   pd->re = re;
    evas_gl_common_image_ref(im);
    pd->glim = im;
 
-on_fail:
-   efl_data_xunref(eo_evas, evas, obj);
+ on_fail:
    return;
 }
 
@@ -188,7 +188,7 @@ _evas_ector_gl_image_buffer_ector_buffer_map(Eo *obj EINA_UNUSED, Evas_Ector_GL_
    if (!h) h = H - y;
    if ((x + w > W) || (y + h > H)) return NULL;
 
-   im = ENFN->image_data_get(ENC, pd->glim, EINA_FALSE, &data, &err, &tofree);
+   im = eng_image_data_get(ENC, pd->glim, EINA_FALSE, &data, &err, &tofree);
    if (!im) return NULL;
 
    map = calloc(1, sizeof(*map));
@@ -252,9 +252,9 @@ _evas_ector_gl_image_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED,
           {
              EINA_INLIST_REMOVE(pd->maps, map);
              if (map->free_image)
-               ENFN->image_free(ENC, map->im);
+               eng_image_free(ENC, map->im);
              else
-               ENFN->image_data_put(ENC, map->im, map->image_data);
+               eng_image_data_put(ENC, map->im, map->image_data);
              if (map->allocated)
                free(map->base_data);
              free(map);
@@ -280,7 +280,6 @@ EOLIAN static void
 _evas_ector_gl_image_buffer_efl_object_destructor(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd)
 {
    evas_gl_common_image_free(pd->glim);
-   efl_data_xunref(pd->evas->evas, pd->evas, obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 

@@ -13,7 +13,6 @@
 
 typedef struct {
    Ector_Software_Buffer_Base_Data *base;
-   Evas_Public_Data *evas;
    RGBA_Image *image;
 } Evas_Ector_Software_Buffer_Data;
 
@@ -21,8 +20,10 @@ typedef struct {
 // eg. in the filters.
 
 EOLIAN static void
-_evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ector_Software_Buffer_Data *pd,
-                                                               Evas *evas, void *image)
+_evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj,
+                                                               Evas_Ector_Software_Buffer_Data *pd,
+                                                               void *engine EINA_UNUSED,
+                                                               void *image)
 {
    RGBA_Image *im = image;
 
@@ -30,7 +31,6 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
    EINA_SAFETY_ON_FALSE_RETURN(!efl_finalized_get(obj));
    EINA_SAFETY_ON_NULL_RETURN(im->image.data);
 
-   pd->evas = efl_data_xref(evas, EVAS_CANVAS_CLASS, obj);
    evas_cache_image_ref(&im->cache_entry);
    pd->image = im;
 
@@ -87,8 +87,6 @@ _evas_ector_software_buffer_efl_object_destructor(Eo *obj, Evas_Ector_Software_B
 {
    efl_data_xunref(obj, pd->base, obj);
    evas_cache_image_drop(&pd->image->cache_entry);
-   if (pd->evas)
-     efl_data_xunref(pd->evas->evas, pd->evas, obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 

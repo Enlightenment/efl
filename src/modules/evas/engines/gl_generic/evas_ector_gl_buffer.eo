@@ -8,7 +8,7 @@ class Evas.Ector.GL.Buffer (Efl.Object, Evas.Ector.Buffer, Ector.GL.Buffer)
       gl_buffer_prepare {
          [[Set the main properties to create a gl buffer.]]
          params {
-            evas: Evas.Canvas; [[The current canvas]]
+            engine: void_ptr; [[The current canvas engine]]
             w: int; [[Width]]
             h: int; [[Height]]
             cspace: Efl.Gfx.Colorspace; [[Alpha or RGBA]]

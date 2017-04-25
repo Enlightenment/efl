@@ -4333,7 +4333,7 @@ eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
 }
 
 static Ector_Buffer *
-eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image)
+eng_ector_buffer_wrap(void *data, Evas *e EINA_UNUSED, void *engine_image)
 {
    Image_Entry *ie = engine_image;
    Ector_Buffer *buf = NULL;
@@ -4343,7 +4343,7 @@ eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image)
    if (!efl_domain_current_push(EFL_ID_DOMAIN_SHARED))
      return NULL;
    buf = efl_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, NULL,
-                 evas_ector_buffer_engine_image_set(efl_added, e, ie));
+                 evas_ector_buffer_engine_image_set(efl_added, data, ie));
    efl_domain_current_pop();
 
    return buf;

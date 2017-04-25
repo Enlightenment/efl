@@ -547,7 +547,7 @@ eng_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data, int
    return evas_gl_common_image_new_from_copied_data(gl_context, w, h, image_data, alpha, cspace);
 }
 
-static void
+void
 eng_image_free(void *data, void *image)
 {
    Render_Engine_GL_Generic *re = data;
@@ -717,7 +717,7 @@ _rotate_image_data(Render_Engine_GL_Generic *re, Evas_GL_Image *im1)
    return im2;
 }
 
-static void *
+void *
 eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree)
 {
    Render_Engine_GL_Generic *re = data;
@@ -943,7 +943,7 @@ rotate_image:
    return im_new;
 }
 
-static void *
+void *
 eng_image_data_put(void *data, void *image, DATA32 *image_data)
 {
    Render_Engine_GL_Generic *re = data;
@@ -2476,11 +2476,11 @@ eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *evas, void *engine_image)
 }
 
 static Ector_Buffer *
-eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, int w, int h,
+eng_ector_buffer_new(void *data, Evas *evas, int w, int h,
                      Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags)
 {
    return efl_add(EVAS_ECTOR_GL_BUFFER_CLASS, evas,
-                  evas_ector_gl_buffer_prepare(efl_added, evas, w, h, cspace, flags));
+                  evas_ector_gl_buffer_prepare(efl_added, data, w, h, cspace, flags));
 }
 
 static Efl_Gfx_Render_Op
