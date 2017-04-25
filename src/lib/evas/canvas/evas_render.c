@@ -2720,7 +2720,7 @@ static inline Eina_Bool
 _is_obj_in_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                 int x, int y, int w, int h)
 {
-   if (obj->is_smart)
+   if (obj->is_smart && !_evas_render_has_map(obj))
      {
         Evas_Coord_Rectangle rect;
 
