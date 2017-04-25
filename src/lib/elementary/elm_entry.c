@@ -961,6 +961,8 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
         _elm_theme_object_set(obj, sd->end_handler,
                                     "entry", "handler/end", style);
      }
+   elm_entry_icon_visible_set(obj, EINA_TRUE);
+   elm_entry_end_visible_set(obj, EINA_TRUE);
 
    if (sd->scroll)
      edje_obj_signal_emit(sd->entry_edje, "elm,scroll,enable", "elm");
