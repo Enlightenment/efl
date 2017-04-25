@@ -601,6 +601,7 @@ typedef struct _drmModeAtomicReq
 } drmModeAtomicReq, *drmModeAtomicReqPtr;
 
 /* end xf86drmMode.h */
+#endif
 
 typedef struct _Ecore_Drm2_Atomic_State Ecore_Drm2_Atomic_State;
 
@@ -659,7 +660,6 @@ struct _Ecore_Drm2_Atomic_State
    Ecore_Drm2_Connector_State *conn_states;
    Ecore_Drm2_Plane_State *plane_states;
 };
-# endif
 
 # ifndef DRM_CAP_CURSOR_WIDTH
 #  define DRM_CAP_CURSOR_WIDTH 0x8
@@ -709,9 +709,7 @@ struct _Ecore_Drm2_Plane
 {
    int type;
    Ecore_Drm2_Fb *current, *next, *pending;
-# ifdef HAVE_ATOMIC_DRM
    Ecore_Drm2_Plane_State *state;
-# endif
 };
 
 struct _Ecore_Drm2_Output_Mode
@@ -770,12 +768,11 @@ struct _Ecore_Drm2_Output
    Ecore_Drm2_Release_Handler release_cb;
    void *release_data;
 
-# ifdef HAVE_ATOMIC_DRM
    Ecore_Drm2_Crtc_State *crtc_state;
    Ecore_Drm2_Connector_State *conn_state;
+
    Eina_List *plane_states;
    Eina_List *planes;
-# endif
 
    Eina_Bool connected : 1;
    Eina_Bool primary : 1;
@@ -812,8 +809,8 @@ struct _Ecore_Drm2_Device
    Ecore_Event_Handler *active_hdlr;
    Ecore_Event_Handler *device_change_hdlr;
 
-# ifdef HAVE_ATOMIC_DRM
    Ecore_Drm2_Atomic_State *state;
+# ifdef HAVE_ATOMIC_DRM
    drmModeAtomicReq *atomic_req;
 # endif
 
