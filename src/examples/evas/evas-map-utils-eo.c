@@ -142,8 +142,8 @@ _anim_cb(void *data)
    efl_gfx_map_enable_set(o, EINA_TRUE);
 
    o = evas_object_name_find(ad->canvas, "obj4");
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   evas_object_image_size_get(evas_object_image_source_get(o), &img_w, &img_h);
+   efl_gfx_geometry_get(o, &x, &y, &w, &h);
+   efl_gfx_view_size_get(o, &img_w, &img_h);
 
    efl_gfx_map_dup(o, ref);
    efl_gfx_map_point_coord_set(o, 0, x, y + h, 0);

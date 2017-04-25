@@ -141,7 +141,7 @@ _anim_cb(void *data)
 
    o = evas_object_name_find(ad->canvas, "obj4");
    evas_object_geometry_get(o, &x, &y, &w, &h);
-   evas_object_image_size_get(evas_object_image_source_get(o), &img_w, &img_h);
+   evas_object_image_size_get(o, &img_w, &img_h);
 
    m = evas_map_new(4);
    evas_map_point_coord_set(m, 0, x, y + h, 0);
