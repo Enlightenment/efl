@@ -1356,35 +1356,6 @@ _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore)
    /* NB: Hmmm, may need to pass this to ecore_wl_window in the future */
 }
 
-int
-_ecore_evas_wl_common_pre_render(Ecore_Evas *ee)
-{
-   int rend = 0;
-   Eina_List *ll = NULL;
-   Ecore_Evas *ee2 = NULL;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return 0;
-   if (ee->in_async_render)
-     {
-        /* EDBG("ee=%p is rendering asynchronously, skip", ee); */
-        return 0;
-     }
-
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        if (ee2->engine.func->fn_render)
-          rend |= ee2->engine.func->fn_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
-
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-
-   return rend;
-}
-
 static void
 _anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
 {
@@ -1551,15 +1522,6 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
      }
 
    _ecore_evas_wl_common_render_updates_process(ee, ev->updated_area);
-}
-
-void
-_ecore_evas_wl_common_post_render(Ecore_Evas *ee)
-{
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   _ecore_evas_idle_timeout_update(ee);
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 }
 
 int
