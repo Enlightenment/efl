@@ -146,7 +146,6 @@ out:
 }
 
 #ifdef HAVE_ATOMIC_DRM
-
 # if 0
 static Eina_Bool
 _drm2_atomic_usable(int fd)
@@ -190,6 +189,7 @@ _drm2_atomic_usable(int fd)
    return ret;
 }
 # endif
+#endif
 
 static void
 _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
@@ -567,7 +567,6 @@ _drm2_atomic_state_free(Ecore_Drm2_Atomic_State *state)
    free(state->crtc_states);
    free(state);
 }
-#endif
 
 EAPI Ecore_Drm2_Device *
 ecore_drm2_device_find(const char *seat, unsigned int tty)
@@ -623,30 +622,27 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    _ecore_drm2_use_atomic = _drm2_atomic_usable(device->fd);
    if (_ecore_drm2_use_atomic)
 # endif
+#endif
      {
-        if (sym_drmSetClientCap(device->fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
+        if (sym_drmSetClientCap(device->fd,
+                                DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
           {
-             WRN("Could not enable Atomic Modesetting support");
+             WRN("Could not enable Universal Plane support");
              _ecore_drm2_use_atomic = EINA_FALSE;
           }
         else
           {
-             if (sym_drmSetClientCap(device->fd,
-                                     DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
+             if (sym_drmSetClientCap(device->fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
                {
-                  WRN("Could not enable Universal Plane support");
+                  WRN("Could not enable Atomic Modesetting support");
                   _ecore_drm2_use_atomic = EINA_FALSE;
-               }
-             else
-               {
-                  /* atomic & planes are usable */
-                  device->state = calloc(1, sizeof(Ecore_Drm2_Atomic_State));
-                  if (device->state)
-                    _drm2_atomic_state_fill(device->state, device->fd);
                }
           }
      }
-#endif
+
+   device->state = calloc(1, sizeof(Ecore_Drm2_Atomic_State));
+   if (device->state)
+     _drm2_atomic_state_fill(device->state, device->fd);
 
    device->active_hdlr =
      ecore_event_handler_add(ELPUT_EVENT_SESSION_ACTIVE,
@@ -679,10 +675,11 @@ ecore_drm2_device_free(Ecore_Drm2_Device *device)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
 
+   _drm2_atomic_state_free(device->state);
+
 #ifdef HAVE_ATOMIC_DRM
    if (_ecore_drm2_use_atomic)
      {
-        _drm2_atomic_state_free(device->state);
         if (device->atomic_req)
           sym_drmModeAtomicFree(device->atomic_req);
      }
