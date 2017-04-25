@@ -2117,7 +2117,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;
-      Efl.Container.content_part_name { get; }
       Efl.Part.part;
       Efl.Observer.update;
    }

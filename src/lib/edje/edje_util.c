@@ -3704,18 +3704,6 @@ _edje_efl_container_content_get(Edje *ed, const char *part)
    return rp->typedata.swallow->swallowed_object;
 }
 
-/* new in eo */
-EOLIAN const char *
-_edje_object_efl_container_content_part_name_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED, Efl_Gfx *content)
-{
-   Edje_Real_Part *rp;
-
-   rp = _swallow_real_part_get(content);
-   if (!rp) return NULL;
-
-   return rp->part->name;
-}
-
 EOLIAN Eo *
 _edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
 {

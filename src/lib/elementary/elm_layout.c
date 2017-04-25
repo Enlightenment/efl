@@ -1267,24 +1267,6 @@ _elm_layout_efl_container_content_iterate(Eo *eo_obj EINA_UNUSED, Elm_Layout_Sma
    return _sub_iterator_create(eo_obj, sd);
 }
 
-EOLIAN static const char *
-_elm_layout_efl_container_content_part_name_get(Eo *eo_obj EINA_UNUSED,
-                                                Elm_Layout_Smart_Data *sd,
-                                                Efl_Gfx *content)
-{
-   Elm_Layout_Sub_Object_Data *sub;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(sd->subs, l, sub)
-     if (sub->type == SWALLOW)
-       {
-          if (sub->obj == content)
-            return sub->part;
-       }
-
-   return NULL;
-}
-
 EOLIAN static int
 _elm_layout_efl_container_content_count(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
 {

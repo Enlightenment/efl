@@ -4,16 +4,6 @@ interface Efl.Container (Efl.Gfx)
    eo_prefix: efl_content;
    event_prefix: efl_container;
    methods {
-      @property content_part_name {
-         [[The name of the part under which an object is swallowed.]]
-         get {}
-         keys {
-            content: Efl.Gfx; [[Swallowed object]]
-         }
-         values {
-            name: string; [[Part name]]
-         }
-      }
       @property content {
          [[Swallowed sub-object contained in this object.]]
          set {
