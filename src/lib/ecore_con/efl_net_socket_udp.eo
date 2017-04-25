@@ -168,7 +168,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
         init @protected {
             [[Initializes the socket to communicate with given IP address]]
             params {
-                remote_address: Efl.Net.Ip.Address; [[The remote address this socket will communicate with]]
+                remote_address: Efl.Net.Ip_Address; [[The remote address this socket will communicate with]]
             }
         }
     }
