@@ -9568,6 +9568,7 @@ parse_anchor_line(Edje_Part_Anchor *anchor, Edje_Part_Anchor_Line undefined)
                                     "RIGHT", EDJE_PART_ANCHOR_LINE_RIGHT,
                                     "VERTICAL_CENTER", EDJE_PART_ANCHOR_LINE_VERTICAL_CENTER,
                                     "HORIZONTAL_CENTER", EDJE_PART_ANCHOR_LINE_HORIZONTAL_CENTER,
+                                    "*", EDJE_PART_ANCHOR_LINE_RELATIVE,
                                     NULL);
    else if (strcmp(name, "GROUP") || param_had_quote(0))
      anchor->base.line = undefined;
@@ -9666,6 +9667,12 @@ anchor_adjust_relative(const Edje_Part_Anchor_Line *lines, FLOAT_T *rel, FLOAT_T
         *rel = FROM_DOUBLE(0.5);
         if (!counterpart_is_set)
           *relc = FROM_DOUBLE(0.5);
+     }
+   else if (line == EDJE_PART_ANCHOR_LINE_RELATIVE)
+     {
+        *rel = FROM_DOUBLE(parse_float(1));
+        if (!counterpart_is_set)
+          *relc = FROM_DOUBLE(parse_float(1));
      }
    else
      {

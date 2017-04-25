@@ -1263,7 +1263,7 @@ _parse_enum(char *str, va_list va)
           }
 
         v = va_arg(va, int);
-        if (!strcmp(s, str))
+        if (!strcmp(s, str) || !strcmp(s, "*"))
           {
              va_end(va2);
              va_end(va);

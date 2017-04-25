@@ -166,6 +166,7 @@ struct _Edje_Part_Collection_Parser
 
 typedef enum
 {
+   EDJE_PART_ANCHOR_LINE_RELATIVE = -1,
    EDJE_PART_ANCHOR_LINE_NONE,
    EDJE_PART_ANCHOR_LINE_TOP,
    EDJE_PART_ANCHOR_LINE_BOTTOM,
