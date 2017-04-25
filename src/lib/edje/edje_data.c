@@ -1217,7 +1217,8 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.x", map.zoom.x, EDJE_T_FLOAT);                            \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.y", map.zoom.y, EDJE_T_FLOAT);                            \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", persp.zplane, EET_T_INT);                           \
-  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", persp.focal, EET_T_INT);
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", persp.focal, EET_T_INT);                             \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "offset_is_scaled", offset_is_scaled, EET_T_UCHAR);
 
 #ifdef HAVE_EPHYSICS
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(Edd, Type)                                                          \
@@ -1311,6 +1312,7 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.y", Dec.map.zoom.y, EDJE_T_FLOAT);                            \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", Dec.persp.zplane, EET_T_INT);                           \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", Dec.persp.focal, EET_T_INT);                             \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "offset_is_scaled", Dec.offset_is_scaled, EET_T_UCHAR);
 
 #ifdef HAVE_EPHYSICS
 #define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(Edd, Type, Dec)                                                     \

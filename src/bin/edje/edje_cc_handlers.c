@@ -167,6 +167,8 @@ Eina_Bool script_override = EINA_FALSE;
 static Edje_Program *sequencing = NULL;
 static Eina_List *sequencing_lookups = NULL;
 static int *anonymous_delete = NULL;
+static Edje_Part_Description_Anchors *current_anchors = NULL;
+static Eina_Bool has_relatives = EINA_FALSE;
 
 Eina_List *po_files;
 
@@ -194,6 +196,8 @@ static void edje_cc_handlers_hierarchy_pop(void);
 static void _program_target_add(char *name);
 static void _program_after(const char *name);
 static void _program_free(Edje_Program *pr);
+
+static void check_has_anchors(void);
 
 static void st_externals_external(void);
 
@@ -367,6 +371,14 @@ static void st_collections_group_parts_part_description_rel2_to_set(const char *
 static void st_collections_group_parts_part_description_rel2_to(void);
 static void st_collections_group_parts_part_description_rel2_to_x(void);
 static void st_collections_group_parts_part_description_rel2_to_y(void);
+static void st_collections_group_parts_part_description_anchors_top(void);
+static void st_collections_group_parts_part_description_anchors_bottom(void);
+static void st_collections_group_parts_part_description_anchors_left(void);
+static void st_collections_group_parts_part_description_anchors_right(void);
+static void st_collections_group_parts_part_description_anchors_vertical_center(void);
+static void st_collections_group_parts_part_description_anchors_horizontal_center(void);
+static void st_collections_group_parts_part_description_anchors_fill(void);
+static void st_collections_group_parts_part_description_anchors_margin(void);
 static void st_collections_group_parts_part_description_clip_to_id(void);
 static void st_collections_group_parts_part_description_size_class(void);
 static void st_collections_group_parts_part_description_image_normal(void);
@@ -858,6 +870,14 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.rel2.to", st_collections_group_parts_part_description_rel2_to},
      {"collections.group.parts.part.description.rel2.to_x", st_collections_group_parts_part_description_rel2_to_x},
      {"collections.group.parts.part.description.rel2.to_y", st_collections_group_parts_part_description_rel2_to_y},
+     {"collections.group.parts.part.description.anchors.top", st_collections_group_parts_part_description_anchors_top},
+     {"collections.group.parts.part.description.anchors.bottom", st_collections_group_parts_part_description_anchors_bottom},
+     {"collections.group.parts.part.description.anchors.left", st_collections_group_parts_part_description_anchors_left},
+     {"collections.group.parts.part.description.anchors.right", st_collections_group_parts_part_description_anchors_right},
+     {"collections.group.parts.part.description.anchors.vertical_center", st_collections_group_parts_part_description_anchors_vertical_center},
+     {"collections.group.parts.part.description.anchors.horizontal_center", st_collections_group_parts_part_description_anchors_horizontal_center},
+     {"collections.group.parts.part.description.anchors.fill", st_collections_group_parts_part_description_anchors_fill},
+     {"collections.group.parts.part.description.anchors.margin", st_collections_group_parts_part_description_anchors_margin},
      {"collections.group.parts.part.description.clip_to", st_collections_group_parts_part_description_clip_to_id},
      {"collections.group.parts.part.description.size_class", st_collections_group_parts_part_description_size_class},
      {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
@@ -1470,6 +1490,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.link", ob_collections_group_parts_part_description_link},
      {"collections.group.parts.part.description.rel1", NULL},
      {"collections.group.parts.part.description.rel2", NULL},
+     {"collections.group.parts.part.description.anchors", NULL},
      {"collections.group.parts.part.description.image", NULL}, /* dup */
      {"collections.group.parts.part.description.image.set", ob_images_set}, /* dup */
      {"collections.group.parts.part.description.image.set.image", ob_images_set_image}, /* dup */
@@ -8754,6 +8775,8 @@ st_collections_group_parts_part_description_limit(void)
 static void
 st_collections_group_parts_part_description_align(void)
 {
+   check_has_anchors();
+
    if (get_arg_count() == 2)
      {
         current_desc->align.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1.0));
@@ -8784,6 +8807,7 @@ st_collections_group_parts_part_description_align(void)
 static void
 st_collections_group_parts_part_description_fixed(void)
 {
+   check_has_anchors();
    check_arg_count(2);
 
    current_desc->fixed.w = parse_float_range(0, 0, 1);
@@ -9162,6 +9186,7 @@ st_collections_group_parts_part_description_clip_to_id(void)
 static void
 st_collections_group_parts_part_description_rel1_relative(void)
 {
+   check_has_anchors();
    check_arg_count(2);
 
    current_desc->rel1.relative_x = FROM_DOUBLE(parse_float(0));
@@ -9181,6 +9206,7 @@ st_collections_group_parts_part_description_rel1_relative(void)
 static void
 st_collections_group_parts_part_description_rel1_offset(void)
 {
+   check_has_anchors();
    check_arg_count(2);
 
    current_desc->rel1.offset_x = parse_int(0);
@@ -9211,6 +9237,7 @@ st_collections_group_parts_part_description_rel1_to_set(const char *name)
 static void
 st_collections_group_parts_part_description_rel_to(void)
 {
+   check_has_anchors();
    check_arg_count(1);
 
    {
@@ -9225,6 +9252,7 @@ st_collections_group_parts_part_description_rel_to(void)
 static void
 st_collections_group_parts_part_description_rel1_to(void)
 {
+   check_has_anchors();
    check_arg_count(1);
 
    {
@@ -9252,6 +9280,7 @@ st_collections_group_parts_part_description_rel_to_x(void)
 {
    Edje_Part_Collection *pc;
 
+   check_has_anchors();
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
@@ -9271,6 +9300,7 @@ st_collections_group_parts_part_description_rel1_to_x(void)
 {
    Edje_Part_Collection *pc;
 
+   check_has_anchors();
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
@@ -9301,6 +9331,7 @@ st_collections_group_parts_part_description_rel_to_y(void)
 {
    Edje_Part_Collection *pc;
 
+   check_has_anchors();
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
@@ -9320,6 +9351,7 @@ st_collections_group_parts_part_description_rel1_to_y(void)
 {
    Edje_Part_Collection *pc;
 
+   check_has_anchors();
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
@@ -9336,6 +9368,7 @@ st_collections_group_parts_part_description_rel1_to_y(void)
 static void
 st_collections_group_parts_part_description_rel2_relative(void)
 {
+   check_has_anchors();
    check_arg_count(2);
 
    current_desc->rel2.relative_x = FROM_DOUBLE(parse_float(0));
@@ -9345,6 +9378,7 @@ st_collections_group_parts_part_description_rel2_relative(void)
 static void
 st_collections_group_parts_part_description_rel2_offset(void)
 {
+   check_has_anchors();
    check_arg_count(2);
 
    current_desc->rel2.offset_x = parse_int(0);
@@ -9363,6 +9397,7 @@ st_collections_group_parts_part_description_rel2_to_set(const char *name)
 static void
 st_collections_group_parts_part_description_rel2_to(void)
 {
+   check_has_anchors();
    check_arg_count(1);
 
    {
@@ -9378,6 +9413,7 @@ st_collections_group_parts_part_description_rel2_to_x(void)
 {
    Edje_Part_Collection *pc;
 
+   check_has_anchors();
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
@@ -9396,6 +9432,7 @@ st_collections_group_parts_part_description_rel2_to_y(void)
 {
    Edje_Part_Collection *pc;
 
+   check_has_anchors();
    check_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
@@ -9407,6 +9444,568 @@ st_collections_group_parts_part_description_rel2_to_y(void)
       data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
       free(name);
    }
+}
+
+/** @edcsubsection{collections_group_parts_description_anchors,
+ *                 Group.Parts.Part.Description.Anchors} */
+
+/**
+    @page edcref
+    @block
+        anchors
+    @context
+        // This part will be expanded from the top-left corner of edje group
+        part { name : "part1";
+            description { state: "default" 0.0;
+                anchors {
+                    top: GROUP TOP;
+                    left: GROUP; // This means 'left: GROUP LEFT;'
+                }
+                min: 50 50;
+            }
+        }
+        // This part will be expanded from the bottom-right corner of "part1"
+        // to the bottom-right
+        part { name: "part2";
+            description { state: "default" 0.0;
+                anchors {
+                    top: "part1" BOTTOM;
+                    left: "part1"; // This means 'left: "part1" RIGHT;'
+                }
+                min: 50 50;
+            }
+        }
+        // This part will be expanded from the right edje of "part2" to the right
+        part { name: "part3";
+            description { state: "default" 0.0;
+                anchors {
+                    left: "part2";
+                    fill: "part2" VERTICAL;
+                }
+                min: 100 0; // The height will be determined by the height of "part2"
+            }
+        }
+        // This part will be expanded from the center of right edge of "part3"
+        // to the bottom-right corner of edje group
+        part { name: "part4";
+            description { state: "default" 0.0;
+                anchors {
+                    top: "part3" VERTICAL_CENTER;
+                    left: "part3";
+                    right: GROUP;
+                    bottom: GROUP;
+                }
+            }
+        }
+    @description
+        The anchors blocks are used to define the position of each edge of
+        the part's container. Anchors will change relative, align and fixed
+        attributes internally, so setting both of them is not allowed.
+        When the second parameter of position enumeration is omitted, anchoring
+        a part to the other part will put the part adjacent to the given part.
+        However, if the part is anchored to edje group, the part will be contained
+        inside the group.
+    @endblock
+
+    @property
+        anchors
+    @parameters
+        [partname] [the edge of other part]
+    @effect
+        Moves an edge of the part to the position of the edge of given part or
+        whole edje group. (GROUP means edje group that the part belong to)
+    @endproperty
+*/
+
+static void
+check_has_anchors(void)
+{
+   if (current_anchors)
+     {
+        ERR("parse error %s:%i. Anchors and Relatives(rel/align/fixed) cannot be used at the same time.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   has_relatives = EINA_TRUE;
+}
+
+static void
+check_has_relatives(void)
+{
+   if (has_relatives)
+     {
+        ERR("parse error %s:%i. Anchors and Relatives(rel/align/fixed) cannot be used at the same time.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   current_desc->offset_is_scaled = EINA_TRUE;
+}
+
+static void
+parse_anchor_line(Edje_Part_Anchor *anchor, Edje_Part_Anchor_Line undefined)
+{
+   int nargs;
+   char *name;
+
+   nargs = get_arg_count();
+   if (!nargs || (nargs > 2))
+     {
+        ERR("parse error %s:%i. Anchors should have a name of part and base line.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   name = parse_str(0);
+   anchor->set = EINA_TRUE;
+
+   if (nargs == 2)
+     anchor->base.line = parse_enum(1,
+                                    "TOP", EDJE_PART_ANCHOR_LINE_TOP,
+                                    "BOTTOM", EDJE_PART_ANCHOR_LINE_BOTTOM,
+                                    "LEFT", EDJE_PART_ANCHOR_LINE_LEFT,
+                                    "RIGHT", EDJE_PART_ANCHOR_LINE_RIGHT,
+                                    "VERTICAL_CENTER", EDJE_PART_ANCHOR_LINE_VERTICAL_CENTER,
+                                    "HORIZONTAL_CENTER", EDJE_PART_ANCHOR_LINE_HORIZONTAL_CENTER,
+                                    NULL);
+   else if (strcmp(name, "GROUP"))
+     anchor->base.line = undefined;
+}
+
+static void
+parse_anchor_fill(Edje_Part_Anchor *anchor)
+{
+   int nargs;
+
+   nargs = get_arg_count();
+   if (!nargs || (nargs > 2))
+     {
+        ERR("parse error %s:%i. Anchors should have a name of part and base line.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   anchor->set = EINA_TRUE;
+
+   if (nargs == 2)
+     anchor->base.fill = parse_enum(1,
+                                    "BOTH", EDJE_PART_ANCHOR_FILL_BOTH,
+                                    "HORIZONTAL", EDJE_PART_ANCHOR_FILL_HORIZONTAL,
+                                    "VERTICAL", EDJE_PART_ANCHOR_FILL_VERTICAL,
+                                    NULL);
+   else
+     anchor->base.fill = EDJE_PART_ANCHOR_FILL_BOTH;
+}
+
+static void
+anchor_queue_part_lookup(int *part, int *counterpart, Eina_Bool counterpart_is_set)
+{
+   Edje_Part_Collection *pc;
+   char *name;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   name = parse_str(0);
+   if (!strcmp(name, "GROUP")) return;
+
+   data_queue_part_lookup(pc, name, part);
+
+   if (!counterpart_is_set)
+     data_queue_part_lookup(pc, name, counterpart);
+
+   free(name);
+}
+
+static void
+anchor_dequeue_part_lookup(int *part, Eina_Bool counterpart_is_set)
+{
+   Edje_Part_Collection *pc;
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   if (counterpart_is_set && part)
+     part_lookup_del(pc, part);
+}
+
+static void
+anchor_adjust_align(FLOAT_T *align, FLOAT_T val, unsigned char *fixed, Eina_Bool counterpart_is_set)
+{
+   if (counterpart_is_set)
+     {
+        *align = 0.5;
+        *fixed = 0;
+     }
+   else
+     {
+        *align = val;
+        *fixed = 1;
+     }
+}
+
+static void
+anchor_adjust_relative(Edje_Part_Anchor_Line *lines, FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
+{
+   if (line == EDJE_PART_ANCHOR_LINE_NONE)
+     line = base;
+
+   if (line == lines[0])
+     {
+        *rel = FROM_DOUBLE(0.0);
+        if (!counterpart_is_set)
+          *relc = FROM_DOUBLE(0.0);
+     }
+   else if (line == lines[1])
+     {
+        *rel = FROM_DOUBLE(1.0);
+        if (!counterpart_is_set)
+          *relc = FROM_DOUBLE(1.0);
+     }
+   else if (line == lines[2])
+     {
+        *rel = FROM_DOUBLE(0.5);
+        if (!counterpart_is_set)
+          *relc = FROM_DOUBLE(0.5);
+     }
+   else
+     {
+        ERR("parse error %s:%i. Edje part is anchored to wrong position.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+static void
+anchor_adjust_relative_vertical(FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
+{
+   static const Edje_Part_Anchor_Line lines[] = {
+      EDJE_PART_ANCHOR_LINE_TOP,
+      EDJE_PART_ANCHOR_LINE_BOTTOM,
+      EDJE_PART_ANCHOR_LINE_VERTICAL_CENTER
+   };
+
+   anchor_adjust_relative(lines, rel, relc, line, base, counterpart_is_set);
+}
+
+static void
+anchor_adjust_relative_horizontal(FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
+{
+   static const Edje_Part_Anchor_Line lines[] = {
+      EDJE_PART_ANCHOR_LINE_LEFT,
+      EDJE_PART_ANCHOR_LINE_RIGHT,
+      EDJE_PART_ANCHOR_LINE_HORIZONTAL_CENTER
+   };
+
+   anchor_adjust_relative(lines, rel, relc, line, base, counterpart_is_set);
+}
+
+/**
+    @page edcref
+    @property
+        top
+    @parameters
+        [partname] [TOP/BOTTOM/VERTICAL_CENTER]
+    @effect
+        Causes top edge to be positioned to the edge of another part's container.
+        Setting to GROUP will indicate edje group instead of another part.
+        If bottom anchor is not set, edje part will be expanded to the bottom.
+        The second parameter of position enumeration can be omitted. (Default
+        value is BOTTOM, but TOP when the part is anchored to edje group)
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_anchors_top(void)
+{
+   Eina_Bool counterpart_is_set;
+
+   check_has_relatives();
+
+   if (!current_anchors)
+     current_anchors = mem_alloc(SZ(Edje_Part_Description_Anchors));
+
+   counterpart_is_set = current_anchors->bottom.set;
+
+   parse_anchor_line(&(current_anchors->top), EDJE_PART_ANCHOR_LINE_BOTTOM);
+
+   anchor_dequeue_part_lookup(&(current_desc->rel1.id_y), counterpart_is_set);
+   anchor_queue_part_lookup(&(current_desc->rel1.id_y), &(current_desc->rel2.id_y), counterpart_is_set);
+
+   anchor_adjust_align(&(current_desc->align.y), 0.0, &(current_desc->fixed.h), counterpart_is_set);
+   anchor_adjust_relative_vertical(&(current_desc->rel1.relative_y), &(current_desc->rel2.relative_y), current_anchors->top.base.line, EDJE_PART_ANCHOR_LINE_TOP, counterpart_is_set);
+}
+
+/**
+    @page edcref
+    @property
+        bottom
+    @parameters
+        [partname] [TOP/BOTTOM/VERTICAL_CENTER]
+    @effect
+        Causes bottom edge to be positioned to the edge of another part's container.
+        Setting to GROUP will indicate edje group instead of another part.
+        If top anchor is not set, edje part will be expanded to the top.
+        The second parameter of position enumeration can be omitted. (Default
+        value is TOP, but BOTTOM when the part is anchored to edje group)
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_anchors_bottom(void)
+{
+   Eina_Bool counterpart_is_set;
+
+   check_has_relatives();
+
+   if (!current_anchors)
+     current_anchors = mem_alloc(SZ(Edje_Part_Description_Anchors));
+
+   counterpart_is_set = current_anchors->top.set;
+
+   parse_anchor_line(&(current_anchors->bottom), EDJE_PART_ANCHOR_LINE_TOP);
+
+   anchor_dequeue_part_lookup(&(current_desc->rel2.id_y), counterpart_is_set);
+   anchor_queue_part_lookup(&(current_desc->rel2.id_y), &(current_desc->rel1.id_y), counterpart_is_set);
+
+   anchor_adjust_align(&(current_desc->align.y), 1.0, &(current_desc->fixed.h), counterpart_is_set);
+   anchor_adjust_relative_vertical(&(current_desc->rel2.relative_y), &(current_desc->rel1.relative_y), current_anchors->bottom.base.line, EDJE_PART_ANCHOR_LINE_BOTTOM, counterpart_is_set);
+}
+
+/**
+    @page edcref
+    @property
+        left
+    @parameters
+        [partname] [LEFT/RIGHT/HORIZONTAL_CENTER]
+    @effect
+        Causes left edge to be positioned to the edge of another part's container.
+        Setting to GROUP will indicate edje group instead of another part.
+        If right anchor is not set, edje part will be expanded to the right.
+        The second parameter of position enumeration can be omitted. (Default
+        value is RIGHT, but LEFT when the part is anchored to edje group)
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_anchors_left(void)
+{
+   Eina_Bool counterpart_is_set;
+
+   check_has_relatives();
+
+   if (!current_anchors)
+     current_anchors = mem_alloc(SZ(Edje_Part_Description_Anchors));
+
+   counterpart_is_set = current_anchors->right.set;
+
+   parse_anchor_line(&(current_anchors->left), EDJE_PART_ANCHOR_LINE_RIGHT);
+
+   anchor_dequeue_part_lookup(&(current_desc->rel1.id_x), counterpart_is_set);
+   anchor_queue_part_lookup(&(current_desc->rel1.id_x), &(current_desc->rel2.id_x), counterpart_is_set);
+
+   anchor_adjust_align(&(current_desc->align.x), 0.0, &(current_desc->fixed.w), counterpart_is_set);
+   anchor_adjust_relative_horizontal(&(current_desc->rel1.relative_x), &(current_desc->rel2.relative_x), current_anchors->left.base.line, EDJE_PART_ANCHOR_LINE_LEFT, counterpart_is_set);
+}
+
+/**
+    @page edcref
+    @property
+        right
+    @parameters
+        [partname] [LEFT/RIGHT/HORIZONTAL_CENTER]
+    @effect
+        Causes right edge to be positioned to the edge of another part's container.
+        Setting to GROUP will indicate edje group instead of another part.
+        If left anchor is not set, edje part will be expanded to the left.
+        The second parameter of position enumeration can be omitted. (Default
+        value is LEFT, but RIGHT when the part is anchored to edje group)
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_anchors_right(void)
+{
+   Eina_Bool counterpart_is_set;
+
+   check_has_relatives();
+
+   if (!current_anchors)
+     current_anchors = mem_alloc(SZ(Edje_Part_Description_Anchors));
+
+   counterpart_is_set = current_anchors->left.set;
+
+   parse_anchor_line(&(current_anchors->right), EDJE_PART_ANCHOR_LINE_LEFT);
+
+   anchor_dequeue_part_lookup(&(current_desc->rel2.id_x), counterpart_is_set);
+   anchor_queue_part_lookup(&(current_desc->rel2.id_x), &(current_desc->rel1.id_x), counterpart_is_set);
+
+   anchor_adjust_align(&(current_desc->align.x), 1.0, &(current_desc->fixed.w), counterpart_is_set);
+   anchor_adjust_relative_horizontal(&(current_desc->rel2.relative_x), &(current_desc->rel1.relative_x), current_anchors->right.base.line, EDJE_PART_ANCHOR_LINE_RIGHT, counterpart_is_set);
+}
+
+/**
+    @page edcref
+    @property
+        vertical_center
+    @parameters
+        [partname] [TOP/BOTTOM/VERTICAL_CENTER]
+    @effect
+        Causes (virtual) vertical center line to be positioned to the edge of
+        another part's container. Setting to GROUP will indicate edje group instead
+        of another part.
+        This part will be expanded vertically in both directions, so do not
+        set top or bottom anchor with vertical_center anchor.
+        The second parameter of position enumeration can be omitted. (Default
+        value is VERTICAL_CENTER)
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_anchors_vertical_center(void)
+{
+   check_has_relatives();
+
+   if (!current_anchors)
+     current_anchors = mem_alloc(SZ(Edje_Part_Description_Anchors));
+
+   parse_anchor_line(&(current_anchors->vertical_center), EDJE_PART_ANCHOR_LINE_VERTICAL_CENTER);
+
+   anchor_queue_part_lookup(&(current_desc->rel1.id_y), &(current_desc->rel2.id_y), EINA_FALSE);
+
+   anchor_adjust_align(&(current_desc->align.y), 0.5, &(current_desc->fixed.h), EINA_FALSE);
+   anchor_adjust_relative_vertical(&(current_desc->rel1.relative_y), &(current_desc->rel2.relative_y), current_anchors->vertical_center.base.line, EDJE_PART_ANCHOR_LINE_VERTICAL_CENTER, EINA_FALSE);
+}
+
+/**
+    @page edcref
+    @property
+        horizontal_center
+    @parameters
+        [partname] [LEFT/RIGHT/HORIZONTAL_CENTER]
+    @effect
+        Causes (virtual) horizontal center line to be positioned to the edge of
+        another part's container. Setting to GROUP will indicate edje group instead
+        of another part.
+        This part will be expanded horizontally in both directions, so do not
+        set left or right anchor with vertical_center anchor.
+        The second parameter of position enumeration can be omitted. (Default
+        value is HORIZONTAL_CENTER)
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_anchors_horizontal_center(void)
+{
+   check_has_relatives();
+
+   if (!current_anchors)
+     current_anchors = mem_alloc(SZ(Edje_Part_Description_Anchors));
+
+   parse_anchor_line(&(current_anchors->horizontal_center), EDJE_PART_ANCHOR_LINE_HORIZONTAL_CENTER);
+
+   anchor_queue_part_lookup(&(current_desc->rel1.id_x), &(current_desc->rel2.id_x), EINA_FALSE);
+
+   anchor_adjust_align(&(current_desc->align.x), 0.5, &(current_desc->fixed.w), EINA_FALSE);
+   anchor_adjust_relative_horizontal(&(current_desc->rel1.relative_x), &(current_desc->rel2.relative_x), current_anchors->horizontal_center.base.line, EDJE_PART_ANCHOR_LINE_HORIZONTAL_CENTER, EINA_FALSE);
+}
+
+/**
+    @page edcref
+    @property
+        fill
+    @parameters
+        [partname] [BOTH/HORIZONTAL/VERTICAL]
+    @effect
+        Causes the part's container to expand to the width or height of another
+        part's container. Setting to GROUP will indicate edje group instead of another part.
+        Setting horizontal fill has same effect to setting top and bottom anchors
+        to the same part.
+        (setting vertical fill means left and right anchors to the same part)
+        The second parameter of direction enumeration can be omitted. (Default
+        value is BOTH)
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_anchors_fill(void)
+{
+   Edje_Part_Collection *pc;
+   char *name;
+
+   pc = eina_list_last_data_get(edje_collections);
+
+   check_has_relatives();
+
+   if (!current_anchors)
+     current_anchors = mem_alloc(SZ(Edje_Part_Description_Anchors));
+
+   parse_anchor_fill(&(current_anchors->fill));
+
+   name = parse_str(0);
+
+   switch (current_anchors->fill.base.fill)
+     {
+      case EDJE_PART_ANCHOR_FILL_BOTH:
+         if (strcmp("GROUP", name))
+           {
+              data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
+              data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
+              data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
+              data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
+           }
+         current_desc->align.x = 0.5;
+         current_desc->align.y = 0.5;
+         current_desc->fixed.w = 0;
+         current_desc->fixed.h = 0;
+         break;
+      case EDJE_PART_ANCHOR_FILL_HORIZONTAL:
+         if (strcmp("GROUP", name))
+           {
+              data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
+              data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
+           }
+         current_desc->align.x = 0.5;
+         current_desc->fixed.w = 0;
+         break;
+      case EDJE_PART_ANCHOR_FILL_VERTICAL:
+         if (strcmp("GROUP", name))
+           {
+              data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
+              data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
+           }
+         current_desc->align.y = 0.5;
+         current_desc->fixed.h = 0;
+         break;
+     }
+
+   free(name);
+}
+
+/**
+    @page edcref
+    @property
+        margin
+    @parameters
+        [left] [right] [top] [bottom]
+    @effect
+        Affects the edge position a fixed number of pixels along each direction.
+        Margins will scale its size with an edje scaling factor.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_anchors_margin(void)
+{
+   check_has_relatives();
+   check_arg_count(4);
+
+   current_desc->rel1.offset_x = parse_int(0);
+   current_desc->rel2.offset_x = -parse_int(1) - 1;
+   current_desc->rel1.offset_y = parse_int(2);
+   current_desc->rel2.offset_y = -parse_int(3) - 1;
+}
+
+static void
+free_anchors(void)
+{
+   has_relatives = EINA_FALSE;
+
+   if (!current_anchors) return;
+
+   free(current_anchors);
+   current_anchors = NULL;
 }
 
 /** @edcsubsection{collections_group_parts_description_image,
@@ -15154,6 +15753,8 @@ edje_cc_handlers_pop_notify(const char *token)
      current_program = NULL;
    else if (current_de && (!strcmp(token, "group")))
      _link_combine();
+   else if (current_desc && (!strcmp(token, "description")))
+     free_anchors();
 }
 
 static void

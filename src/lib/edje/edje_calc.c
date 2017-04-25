@@ -1114,42 +1114,71 @@ _edje_part_recalc_single_rel(Edje *ed,
 {
    FLOAT_T x, w;
    FLOAT_T y, h;
+   FLOAT_T offset, sc;
+   Eina_Bool offset_is_scaled = (desc->offset_is_scaled) && (ep->part->scale);
+
+   if (offset_is_scaled)
+     {
+        sc = DIV(ed->scale, ed->file->base_scale);
+        if (EQ(sc, ZERO)) sc = DIV(_edje_scale, ed->file->base_scale);
+     }
+
+   if (offset_is_scaled)
+     offset = SCALE(sc, desc->rel1.offset_x);
+   else
+     offset = FROM_INT(desc->rel1.offset_x);
 
    if (rel1_to_x)
-     x = ADD(FROM_INT(desc->rel1.offset_x + rel1_to_x->x),
+     x = ADD(ADD(offset, FROM_INT(rel1_to_x->x)),
              SCALE(desc->rel1.relative_x, rel1_to_x->w));
    else
-     x = ADD(FROM_INT(desc->rel1.offset_x),
+     x = ADD(offset,
              SCALE(desc->rel1.relative_x, ed->w));
    params->eval.x = x;
 
+   if (offset_is_scaled)
+     offset = SUB(SCALE(sc, desc->rel2.offset_x + 1), FROM_INT(1));
+   else
+     offset = FROM_INT(desc->rel2.offset_x);
+
    if (rel2_to_x)
-     w = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_x + rel2_to_x->x),
+     w = ADD(SUB(ADD(ADD(offset, FROM_INT(rel2_to_x->x)),
                      SCALE(desc->rel2.relative_x, rel2_to_x->w)),
                  x),
              FROM_INT(1));
    else
-     w = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_x),
+     w = ADD(SUB(ADD(offset,
                      SCALE(desc->rel2.relative_x, ed->w)),
                  x),
              FROM_INT(1));
    params->eval.w = w;
 
+
+   if (offset_is_scaled)
+     offset = SCALE(sc, desc->rel1.offset_y);
+   else
+     offset = FROM_INT(desc->rel1.offset_y);
+
    if (rel1_to_y)
-     y = ADD(FROM_INT(desc->rel1.offset_y + rel1_to_y->y),
+     y = ADD(ADD(offset, FROM_INT(rel1_to_y->y)),
              SCALE(desc->rel1.relative_y, rel1_to_y->h));
    else
-     y = ADD(FROM_INT(desc->rel1.offset_y),
+     y = ADD(offset,
              SCALE(desc->rel1.relative_y, ed->h));
    params->eval.y = y;
 
+   if (offset_is_scaled)
+     offset = SUB(SCALE(sc, desc->rel2.offset_y + 1), FROM_INT(1));
+   else
+     offset = FROM_INT(desc->rel2.offset_y);
+
    if (rel2_to_y)
-     h = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_y + rel2_to_y->y),
+     h = ADD(SUB(ADD(ADD(offset, FROM_INT(rel2_to_y->y)),
                      SCALE(desc->rel2.relative_y, rel2_to_y->h)),
                  y),
              FROM_INT(1));
    else
-     h = ADD(SUB(ADD(FROM_INT(desc->rel2.offset_y),
+     h = ADD(SUB(ADD(offset,
                      SCALE(desc->rel2.relative_y, ed->h)),
                  y),
              FROM_INT(1));
@@ -4577,6 +4606,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                     rp1[Rel2X], rp1[Rel2Y], clip1, confine_to,
                                     threshold, p1, mmw, mmh,
                                     pos);
+
 #ifdef EDJE_CALC_CACHE
            if (flags == FLAG_XY) ep->param1.state = ed->state;
 #endif
@@ -4622,6 +4652,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                     rp2[Rel2X], rp2[Rel2Y], clip2, confine_to,
                                     threshold, p2, mmw, mmh,
                                     pos);
+
 #ifdef EDJE_CALC_CACHE
            if (flags == FLAG_XY) ep->param2->state = ed->state;
 #endif
@@ -4705,7 +4736,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         p3->smooth = (beginning_pos) ? p1->smooth : p2->smooth;
 
         /* FIXME: do x and y separately base on flag */
-
         p3->final.x = INTP(p1->final.x, p2->final.x, pos);
         p3->final.y = INTP(p1->final.y, p2->final.y, pos);
         p3->final.w = INTP(p1->final.w, p2->final.w, pos);

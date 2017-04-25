@@ -164,6 +164,44 @@ struct _Edje_Part_Collection_Parser
    Eina_Bool inherit_only;
 };
 
+typedef enum
+{
+   EDJE_PART_ANCHOR_LINE_NONE,
+   EDJE_PART_ANCHOR_LINE_TOP,
+   EDJE_PART_ANCHOR_LINE_BOTTOM,
+   EDJE_PART_ANCHOR_LINE_LEFT,
+   EDJE_PART_ANCHOR_LINE_RIGHT,
+   EDJE_PART_ANCHOR_LINE_VERTICAL_CENTER,
+   EDJE_PART_ANCHOR_LINE_HORIZONTAL_CENTER
+} Edje_Part_Anchor_Line;
+
+typedef enum
+{
+   EDJE_PART_ANCHOR_FILL_BOTH,
+   EDJE_PART_ANCHOR_FILL_HORIZONTAL,
+   EDJE_PART_ANCHOR_FILL_VERTICAL
+} Edje_Part_Anchor_Fill;
+
+typedef struct
+{
+   union {
+      Edje_Part_Anchor_Line line;
+      Edje_Part_Anchor_Fill fill;
+   } base;
+   Eina_Bool set : 1;
+} Edje_Part_Anchor;
+
+typedef struct
+{
+   Edje_Part_Anchor top;
+   Edje_Part_Anchor bottom;
+   Edje_Part_Anchor left;
+   Edje_Part_Anchor right;
+   Edje_Part_Anchor vertical_center;
+   Edje_Part_Anchor horizontal_center;
+   Edje_Part_Anchor fill;
+} Edje_Part_Description_Anchors;
+
 /* global fn calls */
 void    data_setup(void);
 void    data_write(void);

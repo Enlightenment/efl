@@ -1330,9 +1330,11 @@ struct _Edje_Part_Description_Common
 #endif
 
    Edje_3D_Vec       align_3d;
+
    unsigned char     visible; /* is it shown */
    unsigned char     limit; /* 0 == no, 1 = width, 2 = height, 3 = both */
    unsigned char     no_render; /* no_render override @since 1.19 */
+   unsigned char     offset_is_scaled;
 };
 
 struct _Edje_Part_Description_Spec_Fill
