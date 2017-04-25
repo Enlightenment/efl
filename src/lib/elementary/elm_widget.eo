@@ -825,6 +825,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          [[@since 1.18]]
       }
       focus_register {
+         [[Register focus with focus manager]]
          params {
             manager : Efl.Ui.Focus.Manager; [[The manager to register against]]
             logical : Efl.Ui.Focus.Object; [[The logical parent to use]]
