@@ -1284,6 +1284,7 @@ st_collections_group_parts_part_description_params_smart(void)
         if (!strcmp(param->name, name))
           {
              found = 1;
+             free(name);
              break;
           }
      }
@@ -1327,8 +1328,8 @@ st_collections_group_parts_part_description_params_smart(void)
 
    if (!found)
      ed->external_params = eina_list_append(ed->external_params, param);
+
    free(token);
-   free(name);
 }
 
 #define PROGRAM_OBJECTS(PREFIX) \
