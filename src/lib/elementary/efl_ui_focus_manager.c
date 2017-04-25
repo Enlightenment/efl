@@ -136,6 +136,11 @@ node_new(Efl_Ui_Focus_Object *focusable, Efl_Ui_Focus_Manager *manager)
     return node;
 }
 
+/**
+ * Looks up given focus object from the focus manager.
+ *
+ * @returns node found, or NULL if focusable was not found in the manager.
+ */
 static Node*
 node_get(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *focusable)
 {
@@ -473,6 +478,8 @@ _node_new_geometery_cb(void *data, const Efl_Event *event)
    FOCUS_DATA(data)
 
    node = node_get(data, pd, event->object);
+   if (!node)
+      return;
 
    dirty_add(data, pd, node);
 
@@ -675,7 +682,6 @@ _efl_ui_focus_manager_update_order(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_U
    F_DBG("Manager_update_order on %p %p", obj, parent);
 
    pnode = node_get(obj, pd, parent);
-
    if (!pnode)
      return;
 
@@ -715,7 +721,6 @@ _efl_ui_focus_manager_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
    Eina_List *node_order = NULL;
 
    pnode = node_get(obj, pd, parent);
-
    if (!pnode)
      return EINA_FALSE;
 
@@ -1381,8 +1386,8 @@ _efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
    Node *n, *tmp;
 
    n = node_get(obj, pd, child);
-
-   if (!n) return NULL;
+   if (!n)
+      return NULL;
 
    res = calloc(1, sizeof(Efl_Ui_Focus_Relations));
 
