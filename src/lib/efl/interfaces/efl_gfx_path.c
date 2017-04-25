@@ -274,12 +274,6 @@ interpolate(double from, double to, double pos_map)
    return (from * (1.0 - pos_map)) + (to * pos_map);
 }
 
-static inline int
-interpolatei(int from, int to, double pos_map)
-{
-   return (from * (1.0 - pos_map)) + (to * pos_map);
-}
-
 static Eina_Bool
 _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
                            const Eo *from, const Eo *to, double pos_map)
