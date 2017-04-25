@@ -181,7 +181,7 @@ _ecore_evas_wl_common_cb_disconnect(void *data EINA_UNUSED, int type EINA_UNUSED
    return ECORE_CALLBACK_RENEW;
 }
 
-void
+static void
 _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -941,7 +941,7 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
    return ECORE_CALLBACK_PASS_ON;
 }
 
-int
+static int
 _ecore_evas_wl_common_init(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -996,7 +996,7 @@ _ecore_evas_wl_common_init(void)
    return _ecore_evas_wl_init_count;
 }
 
-int
+static int
 _ecore_evas_wl_common_shutdown(void)
 {
    unsigned int i = 0;
@@ -1017,7 +1017,7 @@ _ecore_evas_wl_common_shutdown(void)
    return _ecore_evas_wl_init_count;
 }
 
-void
+static void
 _ecore_evas_wl_common_free(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1049,7 +1049,7 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    ecore_wl2_shutdown();
 }
 
-void
+static void
 _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1067,7 +1067,7 @@ _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
      }
 }
 
-void
+static void
 _ecore_evas_wl_common_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1079,56 +1079,56 @@ _ecore_evas_wl_common_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
      _ecore_evas_wl_common_resize(ee, w, h);
 }
 
-void
+static void
 _ecore_evas_wl_common_callback_resize_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee))
 {
    if (!ee) return;
    ee->func.fn_resize = func;
 }
 
-void
+static void
 _ecore_evas_wl_common_callback_move_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee))
 {
    if (!ee) return;
    ee->func.fn_move = func;
 }
 
-void
+static void
 _ecore_evas_wl_common_callback_delete_request_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee))
 {
    if (!ee) return;
    ee->func.fn_delete_request = func;
 }
 
-void
+static void
 _ecore_evas_wl_common_callback_focus_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee))
 {
    if (!ee) return;
    ee->func.fn_focus_in = func;
 }
 
-void
+static void
 _ecore_evas_wl_common_callback_focus_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee))
 {
    if (!ee) return;
    ee->func.fn_focus_out = func;
 }
 
-void
+static void
 _ecore_evas_wl_common_callback_mouse_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee))
 {
    if (!ee) return;
    ee->func.fn_mouse_in = func;
 }
 
-void
+static void
 _ecore_evas_wl_common_callback_mouse_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee))
 {
    if (!ee) return;
    ee->func.fn_mouse_out = func;
 }
 
-void 
+static void
 _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1139,7 +1139,7 @@ _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_C
    ecore_wl2_window_pointer_xy_get(wdata->win, x, y);
 }
 
-void
+static void
 _ecore_evas_wl_common_pointer_device_xy_get(const Ecore_Evas *ee, const Efl_Input_Device *pointer, Evas_Coord *x, Evas_Coord *y)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1150,7 +1150,7 @@ _ecore_evas_wl_common_pointer_device_xy_get(const Ecore_Evas *ee, const Efl_Inpu
    ecore_wl2_window_pointer_device_xy_get(wdata->win, pointer, x, y);
 }
 
-void
+static void
 _ecore_evas_wl_common_raise(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1162,7 +1162,7 @@ _ecore_evas_wl_common_raise(Ecore_Evas *ee)
    ecore_wl2_window_raise(wdata->win);
 }
 
-void
+static void
 _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1181,7 +1181,7 @@ _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
      }
 }
 
-void
+static void
 _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1207,7 +1207,7 @@ _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *
      ecore_wl2_window_class_set(wdata->win, ee->prop.clas);
 }
 
-void
+static void
 _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1220,7 +1220,7 @@ _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
    ee->prop.min.h = h;
 }
 
-void
+static void
 _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1233,7 +1233,7 @@ _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
    ee->prop.max.h = h;
 }
 
-void
+static void
 _ecore_evas_wl_common_size_base_set(Ecore_Evas *ee, int w, int h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1246,7 +1246,7 @@ _ecore_evas_wl_common_size_base_set(Ecore_Evas *ee, int w, int h)
    ee->prop.base.h = h;
 }
 
-void
+static void
 _ecore_evas_wl_common_size_step_set(Ecore_Evas *ee, int w, int h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1259,7 +1259,7 @@ _ecore_evas_wl_common_size_step_set(Ecore_Evas *ee, int w, int h)
    ee->prop.step.h = h;
 }
 
-void 
+static void
 _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1269,7 +1269,7 @@ _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect)
    ee->prop.aspect = aspect;
 }
 
-void
+static void
 _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer EINA_UNUSED, int hot_x EINA_UNUSED, int hot_y EINA_UNUSED)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1279,7 +1279,7 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
      ecore_wl2_window_pointer_set(wdata->win, NULL, 0, 0);
 }
 
-void
+static void
 _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1292,7 +1292,7 @@ _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer)
    _ecore_evas_wl_common_state_update(ee);
 }
 
-void
+static void
 _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1306,7 +1306,7 @@ _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, Eina_Bool on)
    ecore_wl2_window_iconified_set(wdata->win, on);
 }
 
-void
+static void
 _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, Eina_Bool on)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1318,7 +1318,7 @@ _ecore_evas_wl_common_borderless_set(Ecore_Evas *ee, Eina_Bool on)
    _ecore_evas_wl_common_state_update(ee);
 }
 
-void
+static void
 _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1332,7 +1332,7 @@ _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, Eina_Bool on)
    ecore_wl2_window_maximized_set(wdata->win, on);
 }
 
-void
+static void
 _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1346,7 +1346,7 @@ _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
    ecore_wl2_window_fullscreen_set(wdata->win, on);
 }
 
-void
+static void
 _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1373,7 +1373,7 @@ static const struct wl_callback_listener _anim_listener =
    _anim_cb_animate
 };
 
-void
+static void
 _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
@@ -1495,7 +1495,7 @@ _ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent)
      }
 }
 
-void
+static void
 _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
 {
    Evas_Event_Render_Post *ev = event;
@@ -1524,7 +1524,7 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
    _ecore_evas_wl_common_render_updates_process(ee, ev->updated_area);
 }
 
-int
+static int
 _ecore_evas_wl_common_render(Ecore_Evas *ee)
 {
    int rend = 0;
@@ -1576,7 +1576,7 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
    return rend;
 }
 
-void
+static void
 _ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1593,7 +1593,7 @@ _ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
    _ecore_evas_wl_common_state_update(ee);
 }
 
-void
+static void
 _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1607,7 +1607,7 @@ _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, 
    ecore_wl2_display_screen_size_get(wdata->display, w, h);
 }
 
-void
+static void
 _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee EINA_UNUSED, int *xdpi, int *ydpi)
 {
    int dpi = 0;
@@ -1697,7 +1697,7 @@ _ecore_evas_wayland_window_get(const Ecore_Evas *ee)
 
 /* } */
 
-Ecore_Evas_Interface_Wayland *
+static Ecore_Evas_Interface_Wayland *
 _ecore_evas_wl_interface_new(void)
 {
    Ecore_Evas_Interface_Wayland *iface;
@@ -1717,7 +1717,7 @@ _ecore_evas_wl_interface_new(void)
    return iface;
 }
 
-void
+static void
 _ecore_evas_wl_common_show(Ecore_Evas *ee)
 {
    Evas_Engine_Info_Wayland *einfo;
@@ -1765,7 +1765,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
 
-void
+static void
 _ecore_evas_wl_common_hide(Ecore_Evas *ee)
 {
    Evas_Engine_Info_Wayland *einfo;
@@ -1805,7 +1805,7 @@ _ecore_evas_wl_common_hide(Ecore_Evas *ee)
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
-void
+static void
 _ecore_evas_wl_common_alpha_set(Ecore_Evas *ee, int alpha)
 {
    if (ee->in_async_render)
@@ -1818,7 +1818,7 @@ _ecore_evas_wl_common_alpha_set(Ecore_Evas *ee, int alpha)
    _ecore_evas_wayland_alpha_do(ee, alpha);
 }
 
-void
+static void
 _ecore_evas_wl_common_transparent_set(Ecore_Evas *ee, int transparent)
 {
    if (ee->in_async_render)
@@ -1831,7 +1831,7 @@ _ecore_evas_wl_common_transparent_set(Ecore_Evas *ee, int transparent)
    _ecore_evas_wayland_transparent_do(ee, transparent);
 }
 
-void
+static void
 _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
