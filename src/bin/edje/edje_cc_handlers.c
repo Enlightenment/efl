@@ -9644,7 +9644,7 @@ anchor_adjust_align(FLOAT_T *align, FLOAT_T val, unsigned char *fixed, Eina_Bool
 }
 
 static void
-anchor_adjust_relative(Edje_Part_Anchor_Line *lines, FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
+anchor_adjust_relative(const Edje_Part_Anchor_Line *lines, FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
 {
    if (line == EDJE_PART_ANCHOR_LINE_NONE)
      line = base;
