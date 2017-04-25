@@ -32,13 +32,6 @@ static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[13];
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
-/* local function prototypes */
-static int _ecore_evas_wl_common_render_updates_process(Ecore_Evas *ee, Eina_List *updates);
-void _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event);
-static void _rotation_do(Ecore_Evas *ee, int rotation, int resize);
-static void _ecore_evas_wayland_alpha_do(Ecore_Evas *ee, int alpha);
-static void _ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent);
-
 /* local functions */
 static void 
 _ecore_evas_wl_common_state_update(Ecore_Evas *ee)
