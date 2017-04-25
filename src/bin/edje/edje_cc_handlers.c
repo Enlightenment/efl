@@ -9569,7 +9569,7 @@ parse_anchor_line(Edje_Part_Anchor *anchor, Edje_Part_Anchor_Line undefined)
                                     "VERTICAL_CENTER", EDJE_PART_ANCHOR_LINE_VERTICAL_CENTER,
                                     "HORIZONTAL_CENTER", EDJE_PART_ANCHOR_LINE_HORIZONTAL_CENTER,
                                     NULL);
-   else if (strcmp(name, "GROUP"))
+   else if (strcmp(name, "GROUP") || param_had_quote(0))
      anchor->base.line = undefined;
 }
 
@@ -9607,7 +9607,7 @@ anchor_queue_part_lookup(int *part, int *counterpart, Eina_Bool counterpart_is_s
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
    name = parse_str(0);
-   if (!strcmp(name, "GROUP")) return;
+   if (!strcmp(name, "GROUP") && !param_had_quote(0)) return;
 
    data_queue_part_lookup(pc, name, part);
 
@@ -9939,7 +9939,7 @@ st_collections_group_parts_part_description_anchors_fill(void)
    switch (current_anchors->fill.base.fill)
      {
       case EDJE_PART_ANCHOR_FILL_BOTH:
-         if (strcmp("GROUP", name))
+         if (strcmp("GROUP", name) || param_had_quote(0))
            {
               data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
               data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
@@ -9952,7 +9952,7 @@ st_collections_group_parts_part_description_anchors_fill(void)
          current_desc->fixed.h = 0;
          break;
       case EDJE_PART_ANCHOR_FILL_HORIZONTAL:
-         if (strcmp("GROUP", name))
+         if (strcmp("GROUP", name) || param_had_quote(0))
            {
               data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
               data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
@@ -9961,7 +9961,7 @@ st_collections_group_parts_part_description_anchors_fill(void)
          current_desc->fixed.w = 0;
          break;
       case EDJE_PART_ANCHOR_FILL_VERTICAL:
-         if (strcmp("GROUP", name))
+         if (strcmp("GROUP", name) || param_had_quote(0))
            {
               data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
               data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
