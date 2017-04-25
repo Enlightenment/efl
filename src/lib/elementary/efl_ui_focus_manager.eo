@@ -18,15 +18,15 @@ struct Efl.Ui.Focus.Relations {
 
       @since 1.20
     ]]
-    right : list<Efl.Ui.Focus.Object>;
-    left : list<Efl.Ui.Focus.Object>;
-    top : list<Efl.Ui.Focus.Object>;
-    down : list<Efl.Ui.Focus.Object>;
-    next : Efl.Ui.Focus.Object;
-    prev : Efl.Ui.Focus.Object;
-    type : string;
-    parent : Efl.Ui.Focus.Object;
-    redirect : Efl.Ui.Focus.Manager;
+    right : list<Efl.Ui.Focus.Object>; [[List of objects on the right side]]
+    left : list<Efl.Ui.Focus.Object>; [[[List of objects on the left side]]
+    top : list<Efl.Ui.Focus.Object>; [[[List of objects above]]
+    down : list<Efl.Ui.Focus.Object>; [[[List of objects below]]
+    next : Efl.Ui.Focus.Object; [[[Next object]]
+    prev : Efl.Ui.Focus.Object; [[Previous object]]
+    type : string; [[Object type]]
+    parent : Efl.Ui.Focus.Object; [[Parent object]]
+    redirect : Efl.Ui.Focus.Manager; [[Redirect manager]]
 }
 
 class Efl.Ui.Focus.Manager (Efl.Object) {
