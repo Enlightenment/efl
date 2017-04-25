@@ -417,4 +417,16 @@ _elm_table_efl_canvas_group_group_calculate(Eo *obj, void *pd EINA_UNUSED)
    evas_object_smart_calculate(wd->resize_obj);
 }
 
+EOLIAN Eina_Bool
+_elm_table_elm_widget_focus_register(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Object *logical, Eina_Bool full)
+{
+   Eina_Bool result = elm_obj_widget_focus_register(efl_super(obj, MY_CLASS), manager, logical, full);
+
+   //later registering children are automatically set into the order of the internal table
+   _focus_order_flush(obj);
+
+   return result;
+}
+
+
 #include "elm_table.eo.c"

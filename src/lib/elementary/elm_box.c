@@ -715,5 +715,15 @@ _elm_box_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+EOLIAN Eina_Bool
+_elm_box_elm_widget_focus_register(Eo *obj, Elm_Box_Data *pd, Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Object *logical, Eina_Bool full)
+{
+   Eina_Bool result = elm_obj_widget_focus_register(efl_super(obj, MY_CLASS), manager, logical, full);
+
+   //later registering children are automatically set into the order of the internal table
+   _focus_order_flush(obj, pd);
+
+   return result;
+}
 
 #include "elm_box.eo.c"

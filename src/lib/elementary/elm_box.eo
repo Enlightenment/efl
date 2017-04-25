@@ -295,6 +295,7 @@ class Elm.Box (Elm.Widget)
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
+      Elm.Widget.focus_register;
    }
    events {
       child,added; [[Called when child was added]]
