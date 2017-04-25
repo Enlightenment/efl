@@ -85,19 +85,19 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
 
    efl_object_override(manager, &manager_tracker);
 
-   Focus_Test_Sub_Main *main = efl_add(FOCUS_TEST_SUB_MAIN_CLASS, NULL);
+   Focus_Test_Sub_Main *focus_main = efl_add(FOCUS_TEST_SUB_MAIN_CLASS, NULL);
 
-   efl_key_data_set(main, "__user_manager", manager);
-   efl_key_data_set(main, "__user_parent", root_manager);
+   efl_key_data_set(focus_main, "__user_manager", manager);
+   efl_key_data_set(focus_main, "__user_parent", root_manager);
 
-   Efl_Ui_Focus_Manager_Sub *subm = efl_add(EFL_UI_FOCUS_MANAGER_SUB_CLASS, main,
+   Efl_Ui_Focus_Manager_Sub *subm = efl_add(EFL_UI_FOCUS_MANAGER_SUB_CLASS, focus_main,
     efl_ui_focus_manager_root_set(efl_added, root)
    );
 
-   efl_composite_attach(main, subm);
-   efl_ui_focus_manager_register_logical(manager, main, root_manager, subm);
+   efl_composite_attach(focus_main, subm);
+   efl_ui_focus_manager_register_logical(manager, focus_main, root_manager, subm);
 
-   *sub = main;
+   *sub = focus_main;
    *m = manager;
    *r = root;
 }
