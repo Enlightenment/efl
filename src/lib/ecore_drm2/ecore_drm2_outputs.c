@@ -57,13 +57,8 @@ _output_debug(Ecore_Drm2_Output *output, const drmModeConnector *conn)
         DBG("\t\tPath: %s", output->backlight.path);
      }
 
-#ifdef HAVE_ATOMIC_DRM
-   if (_ecore_drm2_use_atomic)
-     {
-        EINA_LIST_FOREACH(output->plane_states, l, pstate)
-          DBG("\tPossible Plane: %d", pstate->obj_id);
-     }
-#endif
+   EINA_LIST_FOREACH(output->plane_states, l, pstate)
+     DBG("\tPossible Plane: %d", pstate->obj_id);
 
    EINA_LIST_FOREACH(output->modes, l, omode)
      {
@@ -198,7 +193,7 @@ _output_edid_parse(Ecore_Drm2_Output *output, const uint8_t *data, size_t len)
    return 0;
 }
 
-#ifdef HAVE_ATOMIC_DRM
+//#ifdef HAVE_ATOMIC_DRM
 static void
 _output_edid_atomic_find(Ecore_Drm2_Output *output)
 {
@@ -218,7 +213,7 @@ _output_edid_atomic_find(Ecore_Drm2_Output *output)
           eina_stringshare_replace(&output->serial, output->edid.serial);
      }
 }
-#endif
+//#endif
 
 static void
 _output_edid_find(Ecore_Drm2_Output *output, const drmModeConnector *conn)
@@ -592,7 +587,7 @@ _output_matrix_update(Ecore_Drm2_Output *output)
    eina_matrix4_inverse(&output->inverse, &output->matrix);
 }
 
-#ifdef HAVE_ATOMIC_DRM
+//#ifdef HAVE_ATOMIC_DRM
 static Ecore_Drm2_Crtc_State *
 _atomic_state_crtc_duplicate(Ecore_Drm2_Crtc_State *state)
 {
@@ -689,7 +684,7 @@ _output_plane_states_get(Ecore_Drm2_Atomic_State *state, unsigned int crtc_id, i
 
    return states;
 }
-#endif
+//#endif
 
 static Eina_Bool
 _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConnector *conn, int x, int y, int *w, Eina_Bool cloned)
@@ -754,19 +749,14 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    output->ocrtc = sym_drmModeGetCrtc(dev->fd, output->crtc_id);
 
-#ifdef HAVE_ATOMIC_DRM
-   if (_ecore_drm2_use_atomic)
-     {
-        output->crtc_state =
-          _output_crtc_state_get(dev->state, output->crtc_id);
-        output->conn_state =
-          _output_conn_state_get(dev->state, output->conn_id);
-        output->plane_states =
-          _output_plane_states_get(dev->state, output->crtc_id, output->pipe);
-     }
-   else
-#endif
-     output->dpms = _output_dpms_property_get(dev->fd, conn);
+   output->crtc_state =
+     _output_crtc_state_get(dev->state, output->crtc_id);
+   output->conn_state =
+     _output_conn_state_get(dev->state, output->conn_id);
+   output->plane_states =
+     _output_plane_states_get(dev->state, output->crtc_id, output->pipe);
+
+   output->dpms = _output_dpms_property_get(dev->fd, conn);
 
    _output_backlight_init(output, conn->connector_type);
 
@@ -902,23 +892,17 @@ static void
 _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
 {
    Ecore_Drm2_Output_Mode *mode;
+   Ecore_Drm2_Plane *plane;
+   Ecore_Drm2_Plane_State *pstate;
 
-#ifdef HAVE_ATOMIC_DRM
-   if (_ecore_drm2_use_atomic)
-     {
-        Ecore_Drm2_Plane *plane;
-        Ecore_Drm2_Plane_State *pstate;
+   EINA_LIST_FREE(output->plane_states, pstate)
+     free(pstate);
 
-        EINA_LIST_FREE(output->plane_states, pstate)
-          free(pstate);
+   EINA_LIST_FREE(output->planes, plane)
+     free(plane);
 
-        EINA_LIST_FREE(output->planes, plane)
-          free(plane);
-
-        free(output->conn_state);
-        free(output->crtc_state);
-     }
-#endif
+   free(output->conn_state);
+   free(output->crtc_state);
 
    EINA_LIST_FREE(output->modes, mode)
      {
@@ -989,8 +973,7 @@ next:
              EEZE_UDEV_EVENT_CHANGE);
 
    device->watch =
-     eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events,
-                         _cb_output_event, device);
+     eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events, _cb_output_event, device);
 
    return EINA_TRUE;
 
@@ -1227,22 +1210,19 @@ ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
 
    if (output->enabled)
      {
-#ifdef HAVE_ATOMIC_DRM
         if (_ecore_drm2_use_atomic)
           output->crtc_state->active.value = 1;
-#endif
+
         ecore_drm2_fb_flip(NULL, output);
         ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_ON);
      }
    else
      {
-#ifdef HAVE_ATOMIC_DRM
         if (_ecore_drm2_use_atomic)
           {
              output->crtc_state->active.value = 0;
              ecore_drm2_fb_flip(NULL, output);
           }
-#endif
 
         ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_OFF);
         output->current = NULL;
@@ -1552,23 +1532,17 @@ EAPI int
 ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output)
 {
    int ret = -1;
+   Eina_List *l;
+   Ecore_Drm2_Plane_State *pstate;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, -1);
 
-#ifdef HAVE_ATOMIC_DRM
-   if (_ecore_drm2_use_atomic)
+   EINA_LIST_FOREACH(output->plane_states, l, pstate)
      {
-        Eina_List *l;
-        Ecore_Drm2_Plane_State *pstate;
-
-        EINA_LIST_FOREACH(output->plane_states, l, pstate)
-          {
-             if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
-             ret = pstate->supported_rotations;
-             break;
-          }
+        if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
+        ret = pstate->supported_rotations;
+        break;
      }
-#endif
 
    return ret;
 }
