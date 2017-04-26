@@ -591,6 +591,7 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
    cur->eventarea = eventarea;
    cur->theme_search = !_elm_config->cursor_engine_only;
    cur->visible = EINA_FALSE;
+   cur->style = eina_stringshare_add("default");
 
    cur->cursor_name = eina_stringshare_add(cursor);
    if (!cur->cursor_name)
