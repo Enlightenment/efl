@@ -1361,6 +1361,7 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
    INF("setting fullscreen: %s", on ? "yes" : "no");
 
    window->fullscreen = !!on;
+   window->state.fullscreen = !!on;
 
    if (on)
      {
