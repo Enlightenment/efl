@@ -88,6 +88,8 @@ evas_init(void)
    if (!evas_thread_init())
      goto shutdown_filter;
 
+   _efl_gfx_map_init();
+
    eina_log_timing(_evas_log_dom_global,
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
@@ -140,6 +142,8 @@ evas_shutdown(void)
    if (evas_cserve2_use_get())
      evas_cserve2_shutdown();
 #endif
+
+   _efl_gfx_map_shutdown();
 
    evas_font_path_global_clear();
    eina_cow_del(evas_object_proxy_cow);

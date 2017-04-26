@@ -11,9 +11,12 @@ Evas_Map *_evas_map_new(int count, Eina_Bool sync);
 void _evas_map_calc_map_geometry(Evas_Object *eo_obj);
 void _map_util_rotate(Evas_Map *m, double degrees, double cx, double cy);
 void _map_util_zoom(Evas_Map *m, double zoomx, double zoomy, double cx, double cy);
+void _map_util_translate(Evas_Map *m, double dx, double dy, double dz);
 void _map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz, double cx, double cy, double cz);
 void _map_util_3d_lighting(Evas_Map *m, double lx, double ly, double lz, int lr, int lg, int lb, int ar, int ag, int ab);
 void _map_util_3d_perspective(Evas_Map *m, double px, double py, double z0, double foc);
+void _map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz, double qw, double cx, double cy, double cz);
+void _evas_object_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool enabled);
 
 static inline void
 _evas_map_util_points_populate(Evas_Map *m, const double x, const double y,
@@ -84,6 +87,16 @@ error:
    if (y) *y = 0;
    if (z) *z = 0;
 }
+
+#define MAP_OBJ_CHANGE() do { \
+   _evas_map_calc_map_geometry(eo_obj); \
+   evas_object_change(eo_obj, obj); \
+   obj->changed_map = EINA_TRUE; \
+   } while (0)
+
+#define MAP_POPULATE_DEFAULT(m, z) \
+   _evas_map_util_points_populate(m, obj->cur->geometry.x, obj->cur->geometry.y, \
+                                  obj->cur->geometry.w, obj->cur->geometry.h, z)
 
 #endif // EVAS_MAP_H
 

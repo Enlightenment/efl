@@ -6908,6 +6908,17 @@ EAPI const Evas_Map *evas_object_map_get(const Evas_Object *obj);
  */
 EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
 
+/**
+ * @brief Whether the map is enabled or not
+ *
+ * @param[in] obj The evas object
+ *
+ * @return The value of @c enabled as passed to evas_object_map_enable_set().
+ *
+ * @see evas_object_map_enable_set
+ */
+EAPI Eina_Bool evas_object_map_enable_get(const Evas_Object *obj);
+
 #include "canvas/efl_gfx_map.eo.legacy.h"
 
 /**

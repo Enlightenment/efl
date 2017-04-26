@@ -486,6 +486,8 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                     _evas_mask_redraw_set(e, obj);
                }
 
+             _evas_object_gfx_map_update(obj);
+
              RD(0, "      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",
                 obj->smart.smart,
                 obj->is_smart ? evas_object_smart_members_get_direct(eo_obj) : NULL,
@@ -1121,6 +1123,7 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
      }
 #endif
 
+   _evas_object_gfx_map_update(obj);
    map = _evas_render_has_map(obj);
    hmap = _evas_render_had_map(obj);
    can_map = _evas_render_can_map(obj);
@@ -1243,6 +1246,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
 
         if (!obj->layer) goto clean_stuff;
 
+        _evas_object_gfx_map_update(obj);
         EINA_PREFETCH(&(obj->cur->clipper));
         EINA_PREFETCH(&(obj->cur->cache.clip));
         //If the children are in active objects, They should be cleaned up.
@@ -1358,10 +1362,12 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    /* Check if any one is the stack make this object mapped */
    eo_tmp = eo_obj;
    tmp = efl_data_scope_get(eo_tmp, EFL_CANVAS_OBJECT_CLASS);
+   _evas_object_gfx_map_update(tmp);
    while (tmp && !(_evas_render_has_map(tmp) && !_evas_render_can_map(tmp)))
      {
         eo_tmp = tmp->smart.parent;
         tmp = efl_data_scope_get(eo_tmp, EFL_CANVAS_OBJECT_CLASS);
+        if (tmp) _evas_object_gfx_map_update(tmp);
      }
 
    if (tmp && _evas_render_has_map(tmp) && !_evas_render_can_map(tmp))
@@ -1725,6 +1731,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
      proxy_src_clip = proxy_render_data->source_clip;
 
    evas_object_clip_recalc(obj);
+   _evas_object_gfx_map_update(obj);
 
    /* leave early if clipper is not visible */
    if ((obj->cur->clipper) && (!obj->cur->clipper->cur->visible))

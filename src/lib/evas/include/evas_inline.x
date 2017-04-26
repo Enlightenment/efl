@@ -31,6 +31,13 @@ _evas_render_can_map(Evas_Object_Protected_Data *obj)
    return obj->func->can_map(obj->object);
 }
 
+static inline void
+_evas_object_gfx_map_update(Evas_Object_Protected_Data *obj)
+{
+   if (!obj->gfx_map_has) return;
+   _efl_gfx_map_update(obj->object);
+}
+
 static inline int
 _evas_object_event_new(void)
 {

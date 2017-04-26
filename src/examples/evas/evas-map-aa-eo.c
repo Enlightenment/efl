@@ -58,30 +58,17 @@ static struct exemple_data d =
   EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE };
 
 static void
-update()
+update(void)
 {
-   efl_gfx_map_populate(d.target1, 0);
+   efl_gfx_map_raw_coord_set(d.target1, 0, d.px1, d.py1, 0);
+   efl_gfx_map_raw_coord_set(d.target1, 1, d.px2, d.py2, 0);
+   efl_gfx_map_raw_coord_set(d.target1, 2, d.px3, d.py3, 0);
+   efl_gfx_map_raw_coord_set(d.target1, 3, d.px4, d.py4, 0);
 
-   efl_gfx_map_point_coord_set(d.target1, 0, d.px1, d.py1, 0);
-   efl_gfx_map_point_coord_set(d.target1, 1, d.px2, d.py2, 0);
-   efl_gfx_map_point_coord_set(d.target1, 2, d.px3, d.py3, 0);
-   efl_gfx_map_point_coord_set(d.target1, 3, d.px4, d.py4, 0);
-
-   efl_gfx_map_point_image_uv_set(d.target1, 0, 0, 0);
-   efl_gfx_map_point_image_uv_set(d.target1, 1, IMAGE_SIZE_W, 0);
-   efl_gfx_map_point_image_uv_set(d.target1, 2, IMAGE_SIZE_W, IMAGE_SIZE_H);
-   efl_gfx_map_point_image_uv_set(d.target1, 3, 0, IMAGE_SIZE_H);
-
-   efl_gfx_map_enable_set(d.target1, EINA_TRUE);
-
-   efl_gfx_map_dup(d.target2, d.target1);
-
-   efl_gfx_map_point_coord_set(d.target2, 0, d.px1 + 400, d.py1, 0);
-   efl_gfx_map_point_coord_set(d.target2, 1, d.px2 + 400, d.py2, 0);
-   efl_gfx_map_point_coord_set(d.target2, 2, d.px3 + 400, d.py3, 0);
-   efl_gfx_map_point_coord_set(d.target2, 3, d.px4 + 400, d.py4, 0);
-
-   efl_gfx_map_enable_set(d.target2, EINA_TRUE);
+   efl_gfx_map_raw_coord_set(d.target2, 0, d.px1 + 400, d.py1, 0);
+   efl_gfx_map_raw_coord_set(d.target2, 1, d.px2 + 400, d.py2, 0);
+   efl_gfx_map_raw_coord_set(d.target2, 2, d.px3 + 400, d.py3, 0);
+   efl_gfx_map_raw_coord_set(d.target2, 3, d.px4 + 400, d.py4, 0);
 }
 
 static void

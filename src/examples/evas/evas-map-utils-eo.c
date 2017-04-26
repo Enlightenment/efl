@@ -69,96 +69,81 @@ static Eina_Bool
 _anim_cb(void *data)
 {
    App_Data *ad = data;
-   Evas_Object *o, *ref;
-   int r, g, b, a;
-   int win_w, win_h, img_w, img_h;
-   Evas_Coord x, y, w, h;
+   Evas_Object *o;
+   int r, g, b, a, x, y, w, h, f;
+   int win_w, win_h, mx, my;
 
-   evas_output_size_get(ad->canvas, &win_w, &win_h);
-
+   f = ad->frame;
    r = ad->colors[ad->colors_index].r;
    g = ad->colors[ad->colors_index].g;
    b = ad->colors[ad->colors_index].b;
    a = ad->colors[ad->colors_index].a;
+   evas_output_size_get(ad->canvas, &win_w, &win_h);
 
    o = evas_object_name_find(ad->canvas, "obj1");
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-
-   efl_gfx_map_populate(o, 0);
-   efl_gfx_map_rotate(o, 3 * ad->frame, x + (w / 2), y + (h / 2));
+   efl_gfx_map_reset(o);
+   efl_gfx_map_rotate(o, 3 * f, NULL, 0.5, 0.5);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);
    efl_gfx_map_color_set(o, -1, r, g, b, a);
-   efl_gfx_map_enable_set(o, EINA_TRUE);
-   ref = o;
+
 
    o = evas_object_name_find(ad->canvas, "obj2");
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   evas_object_image_size_get(o, &img_w, &img_h);
-
-   efl_gfx_map_dup(o, ref);
-   efl_gfx_map_populate(o, 100);
-   efl_gfx_map_point_image_uv_set(o, 0, 0, 0);
-   efl_gfx_map_point_image_uv_set(o, 1, img_w, 0);
-   efl_gfx_map_point_image_uv_set(o, 2, img_w, img_h);
-   efl_gfx_map_point_image_uv_set(o, 3, 0, img_h);
-   efl_gfx_map_rotate_3d(o, ad->frame * 6, ad->frame * 6, ad->frame * 6,
-                         x + (w / 3), y + 10, 0);
+   efl_gfx_size_get(o, NULL, &h);
+   efl_gfx_map_reset(o);
+   efl_gfx_map_smooth_set(o, ad->smooth);
+   efl_gfx_map_alpha_set(o, ad->alpha);
+   efl_gfx_map_color_set(o, -1, r, g, b, a);
+   efl_gfx_map_translate(o, 0, 0, 100);
+   efl_gfx_map_rotate_3d(o, f * 6, f * 6, f * 6, NULL, 1./3., 10. / h, 0);
    if (ad->apply_lighting)
-     efl_gfx_map_lightning_3d(o, win_w / 2, win_h / 2, -100,
-                              255, 255, 255, 0, 0, 0);
-   efl_gfx_map_enable_set(o, EINA_TRUE);
+     {
+        efl_gfx_map_lightning_3d(o, ad->canvas, 0.5, 0.5, -100.,
+                                 255, 255, 255, 0, 0, 0);
+     }
+
 
    o = evas_object_name_find(ad->canvas, "obj3");
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   evas_object_image_size_get(o, &img_w, &img_h);
-
-   efl_gfx_map_dup(o, ref);
-   efl_gfx_map_populate_manual(o, x, y + (h / 2), w, h, -20);
-   efl_gfx_map_point_image_uv_set(o, 0, 0, 0);
-   efl_gfx_map_point_image_uv_set(o, 1, img_w, 0);
-   efl_gfx_map_point_image_uv_set(o, 2, img_w, img_h);
-   efl_gfx_map_point_image_uv_set(o, 3, 0, img_h);
-   efl_gfx_map_rotate_3d(o, 20, ad->frame * 6, 0,
-                         x + (w / 2), y + (w / 2), w / 2);
-
+   efl_gfx_size_get(o, &w, &h);
+   efl_gfx_map_reset(o);
+   efl_gfx_map_smooth_set(o, ad->smooth);
+   efl_gfx_map_alpha_set(o, ad->alpha);
+   efl_gfx_map_color_set(o, -1, r, g, b, a);
+   efl_gfx_map_translate(o, 0, h/2, -20);
+   efl_gfx_map_rotate_3d(o, 20, f * 6, 0, NULL, 0.5, 0.5, w / 2);
    if (ad->apply_perspective)
-     efl_gfx_map_perspective_3d(o, x + (w / 2), y + (h / 2), 0, 256);
+     efl_gfx_map_perspective_3d(o, NULL, 0.5, 0.5, 0, 256);
    if (ad->apply_lighting)
      {
-        Evas_Coord mx, my;
         evas_pointer_canvas_xy_get(ad->canvas, &mx, &my);
-        efl_gfx_map_lightning_3d(o, mx, my, -256, 255, 255, 255, 0, 0, 0);
+        efl_gfx_map_lightning_3d(o, ad->canvas,
+                                 (double) mx / win_w, (double) my / win_h,
+                                 -256, 255, 255, 255, 0, 0, 0);
      }
    if (ad->backface_culling)
-     {
-        if (efl_gfx_map_clockwise_get(o))
-          evas_object_show(o);
-        else
-          evas_object_hide(o);
-     }
+     efl_gfx_visible_set(o, efl_gfx_map_clockwise_get(o));
    else
-     evas_object_show(o);
-   efl_gfx_map_enable_set(o, EINA_TRUE);
+     efl_gfx_visible_set(o, 1);
+
 
    o = evas_object_name_find(ad->canvas, "obj4");
    efl_gfx_geometry_get(o, &x, &y, &w, &h);
-   efl_gfx_view_size_get(o, &img_w, &img_h);
-
-   efl_gfx_map_dup(o, ref);
-   efl_gfx_map_point_coord_set(o, 0, x, y + h, 0);
-   efl_gfx_map_point_coord_set(o, 1, x + w, y + h, 0);
-   efl_gfx_map_point_coord_set(o, 2, win_w - 10, win_h - 30, 0);
-   efl_gfx_map_point_coord_set(o, 3, (win_w / 2) + 10, win_h - 30, 0);
-   efl_gfx_map_point_image_uv_set(o, 0, 0, img_h);
-   efl_gfx_map_point_image_uv_set(o, 1, img_w, img_h);
-   efl_gfx_map_point_image_uv_set(o, 2, img_w, 2 * (img_h / 3));
-   efl_gfx_map_point_image_uv_set(o, 3, 0, 2 * (img_h / 3));
+   efl_gfx_map_reset(o);
+   efl_gfx_map_smooth_set(o, ad->smooth);
+   efl_gfx_map_alpha_set(o, ad->alpha);
+   efl_gfx_map_raw_coord_set(o, 0, x, y + h, 0);
+   efl_gfx_map_raw_coord_set(o, 1, x + w, y + h, 0);
+   efl_gfx_map_raw_coord_set(o, 2, win_w - 10, win_h - 30, 0);
+   efl_gfx_map_raw_coord_set(o, 3, (win_w / 2) + 10, win_h - 30, 0);
+   efl_gfx_map_uv_set(o, 0, 0, 1);
+   efl_gfx_map_uv_set(o, 1, 1, 1);
+   efl_gfx_map_uv_set(o, 2, 1, 2. / 3.);
+   efl_gfx_map_uv_set(o, 3, 0, 2. / 3.);
    efl_gfx_map_color_set(o, 0, 200, 200, 200, 150);
    efl_gfx_map_color_set(o, 1, 200, 200, 200, 150);
    efl_gfx_map_color_set(o, 2, 0, 0, 0, 0);
    efl_gfx_map_color_set(o, 3, 0, 0, 0, 0);
-   efl_gfx_map_enable_set(o, EINA_TRUE);
+
 
    ad->frame = (ad->frame + 1) % 60;
 

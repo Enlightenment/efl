@@ -137,16 +137,15 @@ evas_object_map_move_sync(Evas_Object *eo_obj)
 Evas_Map *
 _evas_map_new(int count, Eina_Bool sync)
 {
-   int i;
-   int alloc;
    Evas_Map *m;
+   int alloc;
 
    /* Adjust allocation such that: at least 4 points, and always an even
     * number: this allows the software engine to work efficiently */
    alloc = (count < 4) ? 4 : count;
    if (alloc & 0x1) alloc ++;
 
-   m = calloc(1, sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
+   m = malloc(sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
    if (!m) return NULL;
    m->move_sync.enabled = sync;
    m->count = count;
@@ -154,7 +153,7 @@ _evas_map_new(int count, Eina_Bool sync)
    m->alpha = 1;
    m->smooth = 1;
    m->magic = MAGIC_MAP;
-   for (i = 0; i < count; i++)
+   for (int i = 0; i < count; i++)
      {
         m->points[i].r = 255;
         m->points[i].g = 255;
@@ -416,9 +415,9 @@ _evas_object_map_parent_check(Evas_Object *eo_parent)
 }
 #endif
 
-static void
-_map_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
-                    Eina_Bool enabled, Eina_Bool default_move_sync)
+void
+_evas_object_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+                            Eina_Bool enabled)
 {
    Eina_Bool pchange = EINA_FALSE;
 
@@ -436,7 +435,7 @@ _map_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if (!obj->map->cur.map)
           {
              EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
-               map_write->cur.map = _evas_map_new(4, default_move_sync);
+               map_write->cur.map = _evas_map_new(4, EINA_FALSE);
              EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
           }
         evas_object_mapped_clip_across_mark(eo_obj, obj);
@@ -484,26 +483,19 @@ _map_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
      }
 }
 
-EOLIAN void
-_efl_canvas_object_efl_gfx_map_map_enable_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool enabled)
-{
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-
-   _map_map_enable_set(eo_obj, obj, enabled, EINA_TRUE);
-}
-
 EAPI void
-evas_object_map_enable_set(Efl_Gfx_Map *eo_obj, Eina_Bool enabled)
+evas_object_map_enable_set(Eo *eo_obj, Eina_Bool enabled)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
 
-   _map_map_enable_set(eo_obj, obj, enabled, EINA_FALSE);
+   _evas_object_map_enable_set(eo_obj, obj, enabled);
 }
 
-EOLIAN Eina_Bool
-_efl_canvas_object_efl_gfx_map_map_enable_get(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED)
+EAPI Eina_Bool
+evas_object_map_enable_get(const Eo *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+
    return obj->map->cur.usemap;
 }
 
@@ -985,6 +977,22 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
 }
 
 void
+_map_util_translate(Evas_Map *m, double dx, double dy, double dz)
+{
+   Evas_Map_Point *p, *p_end;
+
+   p = m->points;
+   p_end = p + m->count;
+
+   for (; p < p_end; p++)
+     {
+        p->px = (p->x += dx);
+        p->py = (p->y += dy);
+        p->z += dz;
+     }
+}
+
+void
 _map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
                     double cx, double cy, double cz)
 {
@@ -1045,9 +1053,9 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
    _map_util_3d_rotate(m, dx, dy, dz, (double) cx, (double) cy, (double) cz);
 }
 
-EAPI void
-evas_map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz,
-                          double qw, double cx, double cy, double cz)
+void
+_map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz,
+                      double qw, double cx, double cy, double cz)
 {
    Eina_Quaternion q;
    Eina_Point_3D c;
@@ -1084,6 +1092,17 @@ evas_map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz,
         p->py = p->y = current.y;
         p->z = current.z;
      }
+}
+
+EAPI void
+evas_map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz,
+                          double qw, double cx, double cy, double cz)
+{
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
+   _map_util_quat_rotate(m, qx, qy, qz, qw, cx, cy, cz);
 }
 
 void

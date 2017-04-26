@@ -667,7 +667,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Gfx.Size.Hint.hint_margin { get; set; }
       Efl.Gfx.Size.Hint.hint_request { get; set; }
       Efl.Gfx.Size.Hint.hint_weight { get; set; }
-      Efl.Gfx.Map.map_enable { get; set; }
       Efl.Input.Interface.seat_event_filter { get; set; }
       Efl.Loop_User.loop { get; }
    }

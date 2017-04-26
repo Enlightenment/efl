@@ -81,18 +81,12 @@ _toggle_map(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *ly = data;
 
-   if (!efl_gfx_map_enable_get(ly))
+   if (!efl_gfx_map_has(ly))
      {
-        int x, y, w, h;
-        efl_gfx_map_reset(ly);
-        efl_gfx_geometry_get(ly, &x, &y, &w, &h);
-        efl_gfx_map_zoom(ly, 0.8, 0.8, x + w / 2, y + h / 2);
-        efl_gfx_map_enable_set(ly, 1);
+        efl_gfx_map_zoom(ly, 0.8, 0.8, NULL, 0.5, 0.5);
+        efl_gfx_map_rotate(ly, 45, NULL, 0.5, 0.5);
      }
-   else
-     {
-        efl_gfx_map_enable_set(ly, 0);
-     }
+   else efl_gfx_map_reset(ly);
 }
 
 static void
