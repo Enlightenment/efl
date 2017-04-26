@@ -195,6 +195,7 @@ lib/evas/canvas/evas_async_events.c \
 lib/evas/canvas/evas_stats.c \
 lib/evas/canvas/evas_touch_point.c \
 lib/evas/canvas/evas_map.c \
+lib/evas/canvas/evas_map.h \
 lib/evas/canvas/evas_gl.c \
 lib/evas/canvas/evas_out.c \
 lib/evas/canvas/efl_canvas_image.c \
@@ -205,6 +206,7 @@ lib/evas/canvas/efl_canvas_surface.c \
 lib/evas/canvas/efl_canvas_surface_tbm.c \
 lib/evas/canvas/efl_canvas_surface_x11.c \
 lib/evas/canvas/efl_canvas_surface_wayland.c \
+lib/evas/canvas/efl_gfx_map.c \
 lib/evas/canvas/efl_input_event.c \
 lib/evas/canvas/efl_input_key.c \
 lib/evas/canvas/efl_input_pointer.c \
