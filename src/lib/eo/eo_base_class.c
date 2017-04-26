@@ -798,6 +798,8 @@ _efl_object_wref_add(Eo *obj, Efl_Object_Data *pd, Eo **wref)
      }
 }
 
+EOAPI EFL_VOID_FUNC_BODYV(efl_wref_add, EFL_FUNC_CALL(wref), Efl_Object **wref);
+
 EOLIAN static void
 _efl_object_wref_del(Eo *obj, Efl_Object_Data *pd, Eo **wref)
 {
@@ -861,6 +863,8 @@ err_wref_not_obj:
        *wref, obj);
    return;
 }
+
+EOAPI EFL_VOID_FUNC_BODYV(efl_wref_del, EFL_FUNC_CALL(wref), Efl_Object **wref);
 
 static inline void
 _wref_destruct(Efl_Object_Data *pd)
@@ -1974,6 +1978,8 @@ _efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *li
    EFL_OBJECT_OP_FUNC(efl_event_callback_call, _efl_object_event_callback_call), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_object_event_callback_legacy_call), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_object_dbg_info_get), \
-   EFL_OBJECT_OP_FUNC(efl_future_link, _efl_object_future_link)
+   EFL_OBJECT_OP_FUNC(efl_future_link, _efl_object_future_link), \
+   EFL_OBJECT_OP_FUNC(efl_wref_add, _efl_object_wref_add), \
+   EFL_OBJECT_OP_FUNC(efl_wref_del, _efl_object_wref_del)
 
 #include "efl_object.eo.c"

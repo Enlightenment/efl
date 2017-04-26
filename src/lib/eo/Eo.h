@@ -1423,6 +1423,25 @@ EAPI Eo *efl_xref_internal(const char *file, int line, Eo *obj, const Eo *ref_ob
 EAPI void efl_xunref(Eo *obj, const Eo *ref_obj);
 
 /**
+ * @brief Add a new weak reference to obj.
+ *
+ * This function registers the object handle pointed by wref to obj so when obj
+ * is deleted it'll be updated to NULL. This functions should be used when you
+ * want to keep track of an object in a safe way, but you don't want to prevent
+ * it from being freed.
+ *
+ * @param[in] wref The weak ref
+ */
+EOAPI void efl_wref_add(Eo *obj, Efl_Object **wref);
+
+/**
+ * @brief Delete the weak reference passed.
+ *
+ * @param[in] wref The weak ref
+ */
+EOAPI void efl_wref_del(Eo *obj, Efl_Object **wref);
+
+/**
  * @brief Enable or disable the manual free feature.
  * @param obj the object to work on.
  * @param manual_free indicates if the free is manual (EINA_TRUE) or automatic (EINA_FALSE).
