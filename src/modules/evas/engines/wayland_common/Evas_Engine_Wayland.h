@@ -25,7 +25,6 @@ struct _Evas_Engine_Info_Wayland
 
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
-   Evas *evas;
 
    Eina_Bool indirect : 1;
 
