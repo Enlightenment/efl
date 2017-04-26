@@ -131,7 +131,7 @@ _map_do(void *data, const Efl_Event *ev EINA_UNUSED)
    if (here) return;
    here = 1;
 
-   efl_gfx_map_populate(snap, 0);
+   efl_gfx_map_reset(snap);
    efl_gfx_geometry_get(snap, &x, &y, &w, &h);
    efl_gfx_map_zoom(snap, 0.8, 0.8, x + w/2., y + h/2.);
    efl_gfx_map_rotate(snap, 45., x + w/2., y + h/2.);

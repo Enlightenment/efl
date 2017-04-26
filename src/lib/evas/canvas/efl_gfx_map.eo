@@ -14,17 +14,9 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
      3D effects.
 
      At the moment of writing, maps can only have 4 points (no more, no less).
-     Usually, it will be necessary to update the map points (start afresh with
-     @.map_populate) whenever the object geometry changes.
 
      Note: For now this mixin is only compatible with $Efl.Canvas.Object and
      shouldn't be used anywhere else.
-
-     Note: There are a few differences with legacy $Evas_Map:
-      - A map is now a property of an object, rather than a separate entity.
-      - @.map_move_sync is enabled by default
-      - @.map_populate will be called automatically if another map function
-        is called while the object has no map info.
    ]]
    data: null;
    methods {
@@ -48,6 +40,16 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
          values {
             enabled: bool; [[Enabled state.]]
          }
+      }
+      map_reset {
+         [[Resets the map transformation to its default state.
+
+           This will reset all transformations to identity, meaning the points'
+           colors, positions and UV coordinates will be reset to their default
+           values. This does not reset the @.map_enable flag.
+
+           @since 1.20
+         ]]
       }
       @property map_clockwise {
          [[Clockwise state of a map (read-only).
@@ -162,46 +164,6 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
          values {
             enable: bool; [[$true by default.]]
          }
-      }
-      @property map_point_z {
-         [[Value of Z coordinate of point $idx.
-
-           Useful to call @.map_populate without changing Z.
-         ]]
-         get {}
-         keys {
-            idx: int; [[Point]]
-         }
-         values {
-            z: double; [[Z coordinate for point]]
-         }
-      }
-      map_populate {
-         [[Populate source and destination map points to match this object.
-         ]]
-         params {
-            z: double @optional; [[Point Z coordinate (pre-pesrpective transform),
-                                   used for all 4 points. 0 by default.]]
-         }
-         return: bool; [[$false in case of error.]]
-      }
-      map_populate_manual {
-         [[Populate source and destination map points to match given geometry.
-
-           Similar to @.map_populate, this call takes raw values instead of
-           querying this object's unmapped geometry. The given size will be
-           used to calculate destination points (@.map_point_coord) and set the
-           image uv (@.map_point_image_uv).
-         ]]
-         params {
-            x: double; [[X coordinate]]
-            y: double; [[Y coordinate]]
-            w: double; [[Width]]
-            h: double; [[Height]]
-            z: double @optional; [[Point Z coordinate (pre-perspective transform),
-                                   used for all 4 points. 0 by default.]]
-         }
-         return: bool; [[$false in case of error.]]
       }
       map_rotate {
          [[Change the map to apply the given rotation.

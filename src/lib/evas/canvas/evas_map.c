@@ -1251,7 +1251,6 @@ evas_map_util_clockwise_get(Evas_Map *m)
    return EINA_FALSE;
 }
 
-
 /****************************************************************************/
 /* If the return value is true, the map surface should be redrawn.          */
 /****************************************************************************/

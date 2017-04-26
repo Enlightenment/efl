@@ -84,8 +84,8 @@ _toggle_map(void *data, const Efl_Event *ev EINA_UNUSED)
    if (!efl_gfx_map_enable_get(ly))
      {
         int x, y, w, h;
+        efl_gfx_map_reset(ly);
         efl_gfx_geometry_get(ly, &x, &y, &w, &h);
-        efl_gfx_map_populate(ly, 0.0);
         efl_gfx_map_zoom(ly, 0.8, 0.8, x + w / 2, y + h / 2);
         efl_gfx_map_enable_set(ly, 1);
      }
