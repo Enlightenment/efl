@@ -61,6 +61,7 @@ _gl_filter_displace(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
                                               x, y, sw, sh, dx, dy, nearest);
        }
 
+   evas_gl_common_image_free(use_map);
    evas_common_draw_context_free(gc->dc);
    gc->dc = dc_save;
 
