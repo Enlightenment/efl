@@ -413,7 +413,6 @@ static const struct wl_buffer_listener buffer_listener =
 static void
 _fallback(Dmabuf_Surface *s, int w, int h)
 {
-   Evas_Public_Data *epd;
    Dmabuf_Buffer *b;
    Surface *surf;
    Eina_Bool recovered;
@@ -446,8 +445,7 @@ _fallback(Dmabuf_Surface *s, int w, int h)
 
    if (!b->mapping) goto out;
 
-   epd = efl_data_scope_get(surf->info->evas, EVAS_CANVAS_CLASS);
-   while (epd && epd->rendering) evas_async_events_process_blocking();
+   evas_thread_queue_wait();
 
    old_data = b->mapping;
    surf->funcs.assign(surf);
