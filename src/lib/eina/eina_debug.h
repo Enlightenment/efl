@@ -114,7 +114,7 @@ typedef Eina_Bool (*Eina_Debug_Timer_Cb)(void *);
  */
 typedef struct
 {
-   int size; /**< Packet size after this element */
+   int size; /**< Packet size including this element */
    /**<
     * During sending, it corresponds to the id of the destination. During reception, it is the id of the source
     * The daemon is in charge of swapping the id before forwarding the packet to the destination.
