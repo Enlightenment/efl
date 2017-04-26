@@ -1129,6 +1129,7 @@ group { name: "elm/progressbar/vertical/default";
 
 group { name: "elm/progressbar/horizontal/wheel";
    alias: "elm/progressbar/vertical/wheel";
+   alias: "elm/progressbar/horizontal/fileselector/default";
    images.image: "knob_round_busy.png" COMP;
    images.image: "glow_round_corners.png" COMP;
    parts {

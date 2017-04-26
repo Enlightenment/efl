@@ -225,7 +225,7 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 
    elm_widget_style_set(sd->up_button, buf);
    elm_widget_style_set(sd->home_button, buf);
-   elm_widget_style_set(sd->spinner, "wheel");
+   elm_widget_style_set(sd->spinner, buf);
 
    elm_widget_style_set(sd->files_view, buf);
 
