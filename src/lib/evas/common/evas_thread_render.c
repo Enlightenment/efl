@@ -72,6 +72,47 @@ evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data)
    evas_thread_queue_append(cb, data, EINA_TRUE);
 }
 
+struct fence_stuff {
+   Eina_Lock lock;
+   Eina_Condition cond;
+};
+
+static void
+_evas_thread_queue_fence(void *data)
+{
+   struct fence_stuff *f;
+
+   f = data;
+
+   eina_lock_take(&f->lock);
+   eina_condition_signal(&f->cond);
+   eina_lock_release(&f->lock);
+}
+
+EAPI void
+evas_thread_queue_wait(void)
+{
+   struct fence_stuff f;
+
+   /* No shortcuts here - if the thread queue looks empty it could just mean
+    * it's being processed.  Need a round trip.
+    */
+   if (!eina_lock_new(&f.lock)) return;
+   if (!eina_condition_new(&f.cond, &f.lock))
+     {
+        eina_lock_free(&f.lock);
+        return;
+     }
+
+   eina_lock_take(&f.lock);
+   evas_thread_queue_flush(_evas_thread_queue_fence, &f);
+   eina_condition_wait(&f.cond);
+   eina_lock_release(&f.lock);
+
+   eina_lock_free(&f.lock);
+   eina_condition_free(&f.cond);
+}
+
 static void*
 evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
