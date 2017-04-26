@@ -122,4 +122,8 @@ _ecore_audio_in_tone_efl_object_constructor(Eo *eo_obj, Ecore_Audio_In_Tone_Data
   return eo_obj;
 }
 
+#define ECORE_AUDIO_IN_TONE_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_key_data_set, _ecore_audio_in_tone_efl_object_key_data_set), \
+   EFL_OBJECT_OP_FUNC(efl_key_data_get, _ecore_audio_in_tone_efl_object_key_data_get)
+
 #include "ecore_audio_in_tone.eo.c"

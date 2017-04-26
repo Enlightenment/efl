@@ -1441,6 +1441,117 @@ EOAPI void efl_wref_add(Eo *obj, Efl_Object **wref);
  */
 EOAPI void efl_wref_del(Eo *obj, Efl_Object **wref);
 
+
+/**
+ * @brief Generic data with string key on an object.
+ *
+ * The user is in charge of freeing the data.
+ *
+ * @param[in] key The key associated with the data
+ * @param[in] data The data to set
+ */
+EOAPI void efl_key_data_set(Eo *obj, const char * key, const void *data);
+
+/**
+ * @brief Generic data with string key on an object.
+ *
+ * The user is in charge of freeing the data.
+ *
+ * @param[in] key The key associated with the data
+ *
+ * @return The data to set
+ */
+EOAPI void *efl_key_data_get(const Eo *obj, const char * key);
+
+/**
+ * @brief Generic object reference with string key to object.
+ *
+ * The object will be automatically ref'd when set and unref'd when replaced or
+ * deleted or referring object is deleted. If the referenced object is deleted
+ * then the key is deleted automatically.
+ *
+ * This is the same key store used by key_data and key_value so keys are shared
+ * and can store only one thing
+ *
+ * @param[in] key The key associated with the object ref
+ * @param[in] objdata The object to set
+ */
+EOAPI void efl_key_ref_set(Eo *obj, const char * key, const Efl_Object *objdata);
+
+/**
+ * @brief Generic object reference with string key to object.
+ *
+ * The object will be automatically ref'd when set and unref'd when replaced or
+ * deleted or referring object is deleted. If the referenced object is deleted
+ * then the key is deleted automatically.
+ *
+ * This is the same key store used by key_data and key_value so keys are shared
+ * and can store only one thing
+ *
+ * @param[in] key The key associated with the object ref
+ *
+ * @return The object to set
+ */
+EOAPI Efl_Object *efl_key_ref_get(const Eo *obj, const char * key);
+
+/**
+ * @brief Generic weak object reference with string key to object.
+ *
+ * The object key will be removed if the object is removed, but will not take
+ * or removed references like key_obj.
+ *
+ * This is the same key store used by key_data and key_value so keys are shared
+ * and can store only one thing
+ *
+ * @param[in] key The key associated with the object ref
+ * @param[in] objdata The object to set
+ */
+EOAPI void efl_key_wref_set(Eo *obj, const char * key, const Efl_Object *objdata);
+
+/**
+ * @brief Generic weak object reference with string key to object.
+ *
+ * The object key will be removed if the object is removed, but will not take
+ * or removed references like key_obj.
+ *
+ * This is the same key store used by key_data and key_value so keys are shared
+ * and can store only one thing
+ *
+ * @param[in] key The key associated with the object ref
+ *
+ * @return The object to set
+ */
+EOAPI Efl_Object *efl_key_wref_get(const Eo *obj, const char * key);
+
+/**
+ * @brief Value on with string key on the object.
+ *
+ * This stores the value with the given string key on the object and it will be
+ * freed when replaced or deleted or the referring object is deleted.
+ *
+ * This is the same key store used by key_data and key_obj so keys are shared
+ * and can store only one thing
+ *
+ * @param[in] key The key associated with the value
+ * @param[in] value The value to set
+ */
+EOAPI void efl_key_value_set(Eo *obj, const char * key, Eina_Value *value);
+
+/**
+ * @brief Value on with string key on the object.
+ *
+ * This stores the value with the given string key on the object and it will be
+ * freed when replaced or deleted or the referring object is deleted.
+ *
+ * This is the same key store used by key_data and key_obj so keys are shared
+ * and can store only one thing
+ *
+ * @param[in] key The key associated with the value
+ *
+ * @return The value to set
+ */
+EOAPI Eina_Value *efl_key_value_get(const Eo *obj, const char * key);
+
 /**
  * @brief Enable or disable the manual free feature.
  * @param obj the object to work on.

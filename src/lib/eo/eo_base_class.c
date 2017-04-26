@@ -283,11 +283,17 @@ _efl_object_key_data_set(Eo *obj, Efl_Object_Data *pd, const char *key, const vo
    _key_generic_set(obj, pd, key, data, DATA_PTR, EINA_TRUE);
 }
 
+EOAPI EFL_VOID_FUNC_BODYV(efl_key_data_set, EFL_FUNC_CALL(key, data),
+                          const char *key, const void *data);
+
 EOLIAN static void *
 _efl_object_key_data_get(Eo *obj, Efl_Object_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_PTR);
 }
+
+EOAPI EFL_FUNC_BODYV_CONST(efl_key_data_get, void *, NULL, EFL_FUNC_CALL(key),
+                           const char *key);
 
 EOLIAN static void
 _efl_object_key_ref_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *key, const Eo *objdata)
@@ -303,11 +309,17 @@ _efl_object_key_ref_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *ke
      }
 }
 
+EOAPI EFL_VOID_FUNC_BODYV(efl_key_ref_set, EFL_FUNC_CALL(key, objdata),
+                          const char *key, const Efl_Object *objdata);
+
 EOLIAN static Eo *
 _efl_object_key_ref_get(Eo *obj, Efl_Object_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_OBJ);
 }
+
+EOAPI EFL_FUNC_BODYV_CONST(efl_key_ref_get, Efl_Object *, NULL,
+                           EFL_FUNC_CALL(key), const char *key);
 
 EOLIAN static void
 _efl_object_key_wref_set(Eo *obj, Efl_Object_Data *pd, const char * key, const Efl_Object *objdata)
@@ -322,11 +334,17 @@ _efl_object_key_wref_set(Eo *obj, Efl_Object_Data *pd, const char * key, const E
      }
 }
 
+EOAPI EFL_VOID_FUNC_BODYV(efl_key_wref_set, EFL_FUNC_CALL(key, objdata),
+                          const char *key, const Efl_Object *objdata);
+
 EOLIAN static Eo *
 _efl_object_key_wref_get(Eo *obj, Efl_Object_Data *pd, const char * key)
 {
    return _key_generic_get(obj, pd, key, DATA_OBJ_WEAK);
 }
+
+EOAPI EFL_FUNC_BODYV_CONST(efl_key_wref_get, Efl_Object *, NULL,
+                           EFL_FUNC_CALL(key), const char *key);
 
 EOLIAN static void
 _efl_object_key_value_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *key, Eina_Value *value)
@@ -334,11 +352,17 @@ _efl_object_key_value_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *
    _key_generic_set(obj, pd, key, value, DATA_VAL, EINA_TRUE);
 }
 
+EOAPI EFL_VOID_FUNC_BODYV(efl_key_value_set, EFL_FUNC_CALL(key, value),
+                          const char *key, Eina_Value *value);
+
 EOLIAN static Eina_Value *
 _efl_object_key_value_get(Eo *obj, Efl_Object_Data *pd, const char *key)
 {
    return _key_generic_get(obj, pd, key, DATA_VAL);
 }
+
+EOAPI EFL_FUNC_BODYV_CONST(efl_key_value_get, Eina_Value *, NULL,
+                           EFL_FUNC_CALL(key), const char *key);
 
 EOLIAN static void
 _efl_object_name_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *name)
@@ -1980,6 +2004,14 @@ _efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *li
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_object_dbg_info_get), \
    EFL_OBJECT_OP_FUNC(efl_future_link, _efl_object_future_link), \
    EFL_OBJECT_OP_FUNC(efl_wref_add, _efl_object_wref_add), \
-   EFL_OBJECT_OP_FUNC(efl_wref_del, _efl_object_wref_del)
+   EFL_OBJECT_OP_FUNC(efl_wref_del, _efl_object_wref_del), \
+   EFL_OBJECT_OP_FUNC(efl_key_data_set, _efl_object_key_data_set), \
+   EFL_OBJECT_OP_FUNC(efl_key_data_get, _efl_object_key_data_get), \
+   EFL_OBJECT_OP_FUNC(efl_key_ref_set, _efl_object_key_ref_set), \
+   EFL_OBJECT_OP_FUNC(efl_key_ref_get, _efl_object_key_ref_get), \
+   EFL_OBJECT_OP_FUNC(efl_key_wref_set, _efl_object_key_wref_set), \
+   EFL_OBJECT_OP_FUNC(efl_key_wref_get, _efl_object_key_wref_get), \
+   EFL_OBJECT_OP_FUNC(efl_key_value_set, _efl_object_key_value_set), \
+   EFL_OBJECT_OP_FUNC(efl_key_value_get, _efl_object_key_value_get) \
 
 #include "efl_object.eo.c"
