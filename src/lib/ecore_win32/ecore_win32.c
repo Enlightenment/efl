@@ -418,6 +418,7 @@ int ECORE_WIN32_EVENT_WINDOW_SHOW           = 0;
 int ECORE_WIN32_EVENT_WINDOW_HIDE           = 0;
 int ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = 0;
 int ECORE_WIN32_EVENT_WINDOW_RESIZE         = 0;
+int ECORE_WIN32_EVENT_WINDOW_PROPERTY       = 0;
 int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = 0;
 int ECORE_WIN32_EVENT_SELECTION_CLEAR       = 0;
 int ECORE_WIN32_EVENT_SELECTION_NOTIFY      = 0;
@@ -567,6 +568,7 @@ ecore_win32_init()
         ECORE_WIN32_EVENT_WINDOW_HIDE           = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_PROPERTY       = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
         ECORE_WIN32_EVENT_SELECTION_CLEAR       = ecore_event_type_new();
         ECORE_WIN32_EVENT_SELECTION_NOTIFY      = ecore_event_type_new();
@@ -625,6 +627,7 @@ ecore_win32_shutdown()
                           ECORE_WIN32_EVENT_WINDOW_HIDE,
                           ECORE_WIN32_EVENT_WINDOW_CONFIGURE,
                           ECORE_WIN32_EVENT_WINDOW_RESIZE,
+                          ECORE_WIN32_EVENT_WINDOW_PROPERTY,
                           ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST,
                           ECORE_WIN32_EVENT_SELECTION_CLEAR,
                           ECORE_WIN32_EVENT_SELECTION_NOTIFY);

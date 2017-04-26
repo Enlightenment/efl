@@ -308,6 +308,13 @@ typedef struct _Ecore_Win32_Event_Window_Configure      Ecore_Win32_Event_Window
 typedef struct _Ecore_Win32_Event_Window_Resize         Ecore_Win32_Event_Window_Resize;
 
 /**
+ * @typedef Ecore_Win32_Event_Window_Property
+ * Event sent when the window properties are changed.
+ * @since 1.20
+ */
+typedef struct _Ecore_Win32_Event_Window_Property         Ecore_Win32_Event_Window_Property;
+
+/**
  * @typedef Ecore_Win32_Event_Window_Delete_Request
  * Event sent when the window is deleted.
  */
@@ -457,6 +464,17 @@ struct _Ecore_Win32_Event_Window_Resize
 };
 
 /**
+ * @struct _Ecore_Win32_Event_Window_Property
+ * Event sent when the window properties are changed.
+ * @since 1.20
+ */
+struct _Ecore_Win32_Event_Window_Property
+{
+   Ecore_Win32_Window *window; /**< The window that received the event */
+   unsigned long       timestamp; /**< The time the event occurred */
+};
+
+/**
  * @struct _Ecore_Win32_Event_Window_Delete_Request
  * Event sent when the window is deleted.
  */
@@ -510,6 +528,7 @@ EAPI extern int ECORE_WIN32_EVENT_WINDOW_HIDE; /**< Ecore_Event for the Ecore_Wi
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_SHOW; /**< Ecore_Event for the Ecore_Win32_Event_Show event */
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_CONFIGURE; /**< Ecore_Event for the Ecore_Win32_Event_Configure event */
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_RESIZE; /**< Ecore_Event for the Ecore_Win32_Event_Resize event */
+EAPI extern int ECORE_WIN32_EVENT_WINDOW_PROPERTY; /**< Ecore_Event for the Ecore_Win32_Event_Property event @since 1.20 */
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST; /**< Ecore_Event for the #Ecore_Win32_Event_Window_Delete_Request event */
 EAPI extern int ECORE_WIN32_EVENT_SELECTION_CLEAR; /**< Ecore_Event for the #Ecore_Win32_Event_Selection_Clear event @since 1.16 */
 EAPI extern int ECORE_WIN32_EVENT_SELECTION_NOTIFY; /**< Ecore_Event for the #Ecore_Win32_Event_Selection_Notify event @since 1.16 */
