@@ -1951,6 +1951,8 @@ _efl_object_future_link_tracking_end(void *data, const Efl_Event *ev)
    _efl_object_extension_noneed(pd);
 }
 
+EOAPI EFL_FUNC_BODYV(efl_future_link, Eina_Bool, 0, EFL_FUNC_CALL(link), Efl_Future *link);
+
 EOLIAN static Eina_Bool
 _efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *link)
 {
@@ -1971,6 +1973,7 @@ _efl_object_future_link(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, Efl_Future *li
    EFL_OBJECT_OP_FUNC(efl_event_callback_array_del, _efl_object_event_callback_array_del), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_call, _efl_object_event_callback_call), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_object_event_callback_legacy_call), \
-   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_object_dbg_info_get)
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_object_dbg_info_get), \
+   EFL_OBJECT_OP_FUNC(efl_future_link, _efl_object_future_link)
 
 #include "efl_object.eo.c"

@@ -342,6 +342,15 @@ EOAPI Eina_Bool efl_event_callback_call(Eo *obj, const Efl_Event_Description *de
 EOAPI Eina_Bool efl_event_callback_legacy_call(Eo *obj, const Efl_Event_Description *desc, void *event_info);
 
 /**
+ * @brief Track a future life cycle and cancel it if the object dies.
+ *
+ * @param[in] link The future to link with the object
+ *
+ * @return @c true if it succeeded on setting up the tracking.
+ */
+EOAPI Eina_Bool efl_future_link(Eo *obj, Efl_Future *link);
+
+/**
  * @addtogroup Eo_Debug_Information Eo's Debug information helper.
  * @{
  */
