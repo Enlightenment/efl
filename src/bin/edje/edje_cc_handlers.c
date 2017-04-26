@@ -9533,6 +9533,9 @@ check_has_anchors(void)
 static void
 check_has_relatives(void)
 {
+   if (!beta)
+     error_and_abort(NULL, "Anchors are currently a beta feature, please enable them by running edje_cc with -beta.");
+
    if (has_relatives)
      {
         ERR("parse error %s:%i. Anchors and Relatives(rel/align/fixed) cannot be used at the same time.",
