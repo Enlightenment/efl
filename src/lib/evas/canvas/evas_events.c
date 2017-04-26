@@ -142,18 +142,25 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
         // for plan b and doing this on the fly. it's only for event or
         // callback handling so its a small percentage of the time, but
         // it's better that we get this right
-        if (obj->is_smart)
-          {
-             Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
 
-             evas_object_smart_bounding_box_update(obj);
-             evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
-             c = bounding_box;
-          }
+        if (EINA_UNLIKELY((!!obj->map) && (obj->map->cur.map)
+                          && (obj->map->cur.usemap)))
+          c = obj->map->cur.map->normal_geometry;
         else
           {
-             if (obj->clip.clipees) continue;
-             c = obj->cur->geometry;
+             if (obj->is_smart)
+               {
+                  Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+
+                  evas_object_smart_bounding_box_update(obj);
+                  evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
+                  c = bounding_box;
+               }
+             else
+               {
+                  if (obj->clip.clipees) continue;
+                  c = obj->cur->geometry;
+               }
           }
         clip_calc(obj->cur->clipper, &c);
         // only worry about objects that intersect INCLUDING clippint
