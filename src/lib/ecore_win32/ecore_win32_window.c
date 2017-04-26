@@ -1479,7 +1479,7 @@ ecore_win32_window_state_set(Ecore_Win32_Window       *window,
    if (!window || !state || (num <= 0))
      return;
 
-   INF("setting cursor state");
+   INF("setting window state");
 
    for (i = 0; i < num; i++)
      {
