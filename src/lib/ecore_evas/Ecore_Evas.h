@@ -1221,16 +1221,46 @@ EAPI Ecore_X_Pixmap ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee);
 
 /**
  * @brief Creates Ecore_Evas using opengl x11.
+ *
  * @note If ecore is not compiled with support for x11 then nothing is done and NULL is returned.
+ *
  * @param disp_name The name of the display of the Ecore_Evas to be created.
  * @param parent The parent of the Ecore_Evas to be created.
  * @param x The X coordinate to be used.
  * @param y The Y coordinate to be used.
  * @param w The width of the Ecore_Evas to be created.
  * @param h The height of the Ecore_Evas to be created.
+ *
  * @return The new Ecore_Evas.
  */
 EAPI Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
+
+/**
+ * @brief Create Ecore_Evas using OpenGL X11, with options
+ *
+ * Allows creation of an Ecore_Evas, similar to ecore_evas_gl_x11_new,
+ * except it permits passing in @p opt, a NULL-terminated C array of
+ * key/value pairs for various settings, as follows:
+ *
+ *   ECORE_EVAS_GL_X11_OPT_INDIRECT:  Use indirect rendering [0,1]
+ *   ECORE_EVAS_GL_X11_OPT_VSYNC: Use vsync [0,1]
+ *   ECORE_EVAS_GL_X11_OPT_SWAP_MODE: Swap mode to assume (see Evas_Engine_Info_Gl_Swap_Mode)
+ *   ECORE_EVAS_GL_X11_OPT_GL_DEPTH: depth_bits
+ *   ECORE_EVAS_GL_X11_OPT_GL_STENCIL: stencil_bits
+ *   ECORE_EVAS_GL_X11_OPT_GL_MSAA: msaa_bits
+ *
+ * @note If ecore is not compiled with support for x11 then nothing is done and NULL is returned.
+ *
+ * @param disp_name The name of the display of the Ecore_Evas to be created.
+ * @param parent The parent of the Ecore_Evas to be created.
+ * @param x The X coordinate to be used.
+ * @param y The Y coordinate to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @param opt The options array (see above)
+ *
+ * @return The new Ecore_Evas.
+ */
 EAPI Ecore_Evas     *ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h, const int *opt);
 
 /**
