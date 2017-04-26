@@ -361,8 +361,8 @@ _ecore_evas_win32_event_window_hide(void *data EINA_UNUSED, int type EINA_UNUSED
    if ((Ecore_Window)e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    ee->prop.withdrawn = EINA_TRUE;
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-   if (!ee->visible) return ECORE_CALLBACK_PASS_ON;
-   /* if (!ee->visible) return ECORE_CALLBACK_PASS_DONE; /\* dont pass it on *\/ */
+   if (ee->visible) return ECORE_CALLBACK_PASS_ON;
+   /* if (ee->visible) return ECORE_CALLBACK_PASS_DONE; /\* dont pass it on *\/ */
    ee->visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 
