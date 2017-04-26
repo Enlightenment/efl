@@ -819,7 +819,8 @@ _eldbus_message_iter_arguments_vget(Eldbus_Message_Iter *iter, const char *signa
           }
 
         dbus_message_iter_next(&iter->dbus_iterator);
-        dbus_signature_iter_next(&sig_iter);
+        if (!dbus_signature_iter_next(&sig_iter))
+          break;
         iter_type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
      }
 
