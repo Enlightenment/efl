@@ -1530,6 +1530,97 @@ ecore_win32_window_state_set(Ecore_Win32_Window       *window,
      }
 }
 
+ /**
+ * @brief Get the states of the given window.
+ *
+ * @param window The window to retrieve the state from.
+ * @param state A pointer to an array of the states.
+ * @param num A pointer to the number of states in the array.
+ *
+ * This function gets the states of @p window. @p state is a pointer to an array
+ * of states of size @p num. If @p window is @c NULL, @p state and @p num must
+ * not be @c NULL and point to respectively @c NULL and 0.
+ *
+ * @since 1.20
+ */
+EAPI void
+ecore_win32_window_state_get(Ecore_Win32_Window        *window,
+                             Ecore_Win32_Window_State **state,
+                             unsigned int              *num)
+{
+   Ecore_Win32_Window_State *st;
+   unsigned int i;
+
+   *state = NULL;
+   *num = 0;
+
+   if (!window)
+     return;
+
+   INF("getting window state");
+
+   i = 0;
+   /* we get the number of states which are set */
+   if (window->state.iconified)
+     i++;
+   if (window->state.modal)
+     i++;
+   if (window->state.sticky)
+     i++;
+   if (window->state.maximized_vert)
+     i++;
+   if (window->state.maximized_horz)
+     i++;
+   if (window->state.maximized)
+     i++;
+   if (window->state.shaded)
+     i++;
+   if (window->state.hidden)
+     i++;
+   if (window->state.fullscreen)
+     i++;
+   if (window->state.above)
+     i++;
+   if (window->state.below)
+     i++;
+   if (window->state.demands_attention)
+     i++;
+
+   st = (Ecore_Win32_Window_State *)malloc(i * sizeof(Ecore_Win32_Window_State));
+   if (!st)
+     return;
+
+   *num = i;
+   *state = st;
+
+   i = 0;
+
+   if (window->state.iconified)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_ICONIFIED;
+   if (window->state.modal)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_MODAL;
+   if (window->state.sticky)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_STICKY;
+   if (window->state.maximized_vert)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_MAXIMIZED_VERT;
+   if (window->state.maximized_horz)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_MAXIMIZED_HORZ;
+   if (window->state.maximized)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_MAXIMIZED;
+   if (window->state.shaded)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_SHADED;
+   if (window->state.hidden)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_HIDDEN;
+   if (window->state.fullscreen)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_FULLSCREEN;
+   if (window->state.above)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_ABOVE;
+   if (window->state.below)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_BELOW;
+   if (window->state.demands_attention)
+     st[i++] = ECORE_WIN32_WINDOW_STATE_DEMANDS_ATTENTION;
+}
+
 /**
  * @brief Apply the modification of the state to the given window.
  *

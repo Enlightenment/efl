@@ -628,6 +628,10 @@ EAPI void ecore_win32_window_state_set(Ecore_Win32_Window       *window,
                                        Ecore_Win32_Window_State *state,
                                        unsigned int              num);
 
+EAPI void ecore_win32_window_state_get(Ecore_Win32_Window        *window,
+                                       Ecore_Win32_Window_State **state,
+                                       unsigned int              *num);
+
 EAPI void ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                                                 Ecore_Win32_Window_State state,
                                                 unsigned int             set);
