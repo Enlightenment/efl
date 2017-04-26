@@ -841,7 +841,7 @@ _evas_filter_obscured_regions_set(Evas_Object_Protected_Data *obj, const Eina_Ti
    Eina_Rectangle *r;
    Evas_Filter_Data *pd;
    Eina_Iterator *it;
-   Eina_Bool was_empty, redraw = EINA_FALSE;
+   Eina_Bool was_empty = EINA_FALSE, redraw = EINA_FALSE;
    int obscured_changes = 0;
    int area = 0;
 
