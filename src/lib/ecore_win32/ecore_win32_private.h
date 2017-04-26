@@ -84,6 +84,7 @@ struct _Ecore_Win32_Window
       unsigned int sticky            : 1;
       unsigned int maximized_vert    : 1;
       unsigned int maximized_horz    : 1;
+      unsigned int maximized         : 1;
       unsigned int shaded            : 1;
       unsigned int hidden            : 1;
       unsigned int fullscreen        : 1;

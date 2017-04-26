@@ -62,6 +62,7 @@ extern "C" {
  */
 typedef enum
 {
+   ECORE_WIN32_WINDOW_STATE_UNKNOWN, /**< Unknown state */
    ECORE_WIN32_WINDOW_STATE_ICONIFIED, /**< iconified window */
    ECORE_WIN32_WINDOW_STATE_MODAL, /**< modal dialog box */
    ECORE_WIN32_WINDOW_STATE_STICKY, /**< sticky window */
@@ -73,8 +74,7 @@ typedef enum
    ECORE_WIN32_WINDOW_STATE_FULLSCREEN, /**< fullscreen window */
    ECORE_WIN32_WINDOW_STATE_ABOVE, /**< above window */
    ECORE_WIN32_WINDOW_STATE_BELOW, /**< below window */
-   ECORE_WIN32_WINDOW_STATE_DEMANDS_ATTENTION, /**< To document */
-   ECORE_WIN32_WINDOW_STATE_UNKNOWN /**< Unknown state */
+   ECORE_WIN32_WINDOW_STATE_DEMANDS_ATTENTION /**< To document */
 } Ecore_Win32_Window_State;
 
 /**
