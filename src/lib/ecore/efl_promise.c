@@ -936,7 +936,7 @@ _efl_race_future_none(void *data, const Efl_Event *ev EINA_UNUSED)
    // Trigger cancel on all future
    EINA_ARRAY_ITER_NEXT(&all->members, i, f, iterator)
      {
-        if (!f) efl_future_cancel(f);
+        efl_future_cancel(f);
      }
 
    // No one is listening to this promise anyway
