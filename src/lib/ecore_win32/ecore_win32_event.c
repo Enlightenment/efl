@@ -1894,6 +1894,22 @@ _ecore_win32_event_handle_resize(Ecore_Win32_Callback_Data *msg)
 }
 
 void
+_ecore_win32_event_handle_property_notify(Ecore_Win32_Callback_Data *msg)
+{
+   Ecore_Win32_Event_Window_Property *e;
+
+   INF("window property");
+
+   e = calloc(1, sizeof(Ecore_Win32_Event_Window_Property));
+   if (!e) return;
+
+   e->window = (void *)GetWindowLongPtr(msg->window, GWLP_USERDATA);
+   e->timestamp = _ecore_win32_event_last_time;
+
+   ecore_event_add(ECORE_WIN32_EVENT_WINDOW_PROPERTY, e, NULL, NULL);
+}
+
+void
 _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Delete_Request *e;

@@ -51,7 +51,7 @@
 
 #ifdef BUILD_ECORE_EVAS_WIN32
 
-#define ECORE_EVAS_EVENT_COUNT 10
+#define ECORE_EVAS_EVENT_COUNT 11
 
 static int _ecore_evas_init_count = 0;
 
@@ -90,6 +90,8 @@ static Eina_Bool _ecore_evas_win32_event_window_hide(void *data EINA_UNUSED, int
 static Eina_Bool _ecore_evas_win32_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
 static Eina_Bool _ecore_evas_win32_event_window_delete_request(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+
+static Eina_Bool _ecore_evas_win32_event_window_property_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
 /* Private functions */
 
@@ -154,6 +156,7 @@ _ecore_evas_win32_init(void)
    ecore_evas_event_handlers[7]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_HIDE, _ecore_evas_win32_event_window_hide, NULL);
    ecore_evas_event_handlers[8]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_CONFIGURE, _ecore_evas_win32_event_window_configure, NULL);
    ecore_evas_event_handlers[9]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST, _ecore_evas_win32_event_window_delete_request, NULL);
+   ecore_evas_event_handlers[10]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_PROPERTY, _ecore_evas_win32_event_window_property_change, NULL);
 
    ecore_event_evas_init();
    return _ecore_evas_init_count;
@@ -458,6 +461,104 @@ _ecore_evas_win32_event_window_delete_request(void *data EINA_UNUSED, int type E
 
    INF(" * ee event delete\n");
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_win32_event_window_property_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   struct {
+      struct {
+         unsigned char fullscreen : 1;
+      } win32;
+      struct {
+         Eina_Bool fullscreen : 1;
+      } prop;
+   } prev;
+   Ecore_Evas *ee;
+   Ecore_Win32_Event_Window_Property *e;
+   Ecore_Evas_Engine_Data_Win32 *wdata;
+   Ecore_Win32_Window_State *state;
+   unsigned int num;
+   unsigned int i;
+
+   INF("window property");
+
+   e = event;
+   ee = ecore_event_window_match((Ecore_Window)e->window);
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if ((Ecore_Window)e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   wdata = ee->engine.data;
+
+   prev.win32.fullscreen = wdata->state.fullscreen;
+
+   prev.prop.fullscreen = ee->prop.fullscreen;
+
+   wdata->state.fullscreen = 0;
+
+   ee->prop.fullscreen = EINA_FALSE;
+
+   /* we get the states status */
+   ecore_win32_window_state_get(e->window, &state, &num);
+   if (state)
+     {
+        for (i = 0; i < num; i++)
+          {
+             switch (state[i])
+               {
+                case ECORE_WIN32_WINDOW_STATE_FULLSCREEN:
+                   ee->prop.fullscreen = 1;
+                   wdata->state.fullscreen = 1;
+                   break;
+                default:
+                   break;
+               }
+          }
+     }
+
+   if ((prev.win32.fullscreen != wdata->state.fullscreen) ||
+       (prev.prop.fullscreen != ee->prop.fullscreen))
+     {
+        if (ee->func.fn_state_change)
+          ee->func.fn_state_change(ee);
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+/* FIXME, should be in idler */
+static void
+_ecore_evas_win32_state_update(Ecore_Evas *ee)
+{
+   Ecore_Win32_Window_State state[10];
+   Ecore_Evas_Engine_Data_Win32 *edata = ee->engine.data;
+   int num = 0;
+
+   if (ee->prop.modal)
+     state[num++] = ECORE_WIN32_WINDOW_STATE_MODAL;
+   if (ee->prop.sticky)
+     state[num++] = ECORE_WIN32_WINDOW_STATE_STICKY;
+   if (ee->prop.maximized)
+     state[num++] = ECORE_WIN32_WINDOW_STATE_MAXIMIZED_VERT;
+   if (ee->prop.maximized)
+     state[num++] = ECORE_WIN32_WINDOW_STATE_MAXIMIZED_HORZ;
+//   if (bd->client.netwm.state.shaded)
+//     state[num++] = ECORE_WIN32_WINDOW_STATE_SHADED;
+   /* if (ee->prop.focus_skip) */
+   /*   state[num++] = ECORE_WIN32_WINDOW_STATE_SKIP_TASKBAR; */
+   /* if (ee->prop.focus_skip) */
+   /*   state[num++] = ECORE_WIN32_WINDOW_STATE_SKIP_PAGER; */
+//   if (bd->client.netwm.state.hidden)
+//     state[num++] = ECORE_WIN32_WINDOW_STATE_HIDDEN;
+   if (edata->state.fullscreen)
+     state[num++] = ECORE_WIN32_WINDOW_STATE_FULLSCREEN;
+   /* if (edata->state.above) */
+   /*   state[num++] = ECORE_WIN32_WINDOW_STATE_ABOVE; */
+   /* if (edata->state.below) */
+   /*   state[num++] = ECORE_WIN32_WINDOW_STATE_BELOW; */
+   /* if (ee->prop.demand_attention) */
+   /*   state[num++] = ECORE_WIN32_WINDOW_STATE_DEMANDS_ATTENTION; */
+
+   ecore_win32_window_state_set((Ecore_Win32_Window *)ee->prop.window, state, num);
 }
 
 
@@ -911,26 +1012,22 @@ _ecore_evas_win32_override_set(Ecore_Evas *ee, Eina_Bool on)
 static void
 _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
-   Ecore_Win32_Window *window;
    Ecore_Evas_Engine_Data_Win32 *wdata = ee->engine.data;
 
    INF("ecore evas fullscreen set");
 
    if (ee->prop.fullscreen == !!on) return;
 
-   wdata->state.fullscreen = on;
-   ee->prop.fullscreen = on;
+   wdata->state.fullscreen = !!on;
+   if (ee->should_be_visible)
+     {
+        struct _Ecore_Win32_Window *window;
 
-   window = (Ecore_Win32_Window *)ee->prop.window;
-
-   if (on != 0)
-   {
-      ecore_win32_window_fullscreen_set(window, on);
-   }
+        window = (Ecore_Win32_Window *)ee->prop.window;
+        ecore_win32_window_fullscreen_set(window, on);
+     }
    else
-   {
-      ecore_win32_window_fullscreen_set(window, on);
-   }
+     _ecore_evas_win32_state_update(ee);
 
    /* Nothing to be done for the GDI backend at the evas level */
 
