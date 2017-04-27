@@ -321,16 +321,16 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
 
    if (res)
      {
-        if (output->atomic_req)
+        if (output->prep.atomic_req)
           {
              /* clear any previous request */
-             sym_drmModeAtomicFree(output->atomic_req);
+             sym_drmModeAtomicFree(output->prep.atomic_req);
 
              /* just use the new request */
-             output->atomic_req = req;
+             output->prep.atomic_req = req;
           }
         else
-          output->atomic_req = req;
+          output->prep.atomic_req = req;
      }
 
    return res;
@@ -351,10 +351,11 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
      DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
      DRM_MODE_ATOMIC_ALLOW_MODESET;
 
-   if (!output->atomic_req) return -1;
+   if (!output->prep.atomic_req) return -1;
 
    res =
-     sym_drmModeAtomicCommit(output->fd, output->atomic_req, flags, NULL);
+     sym_drmModeAtomicCommit(output->fd,
+                             output->prep.atomic_req, flags, NULL);
    if (res < 0)
      {
         ERR("Failed Atomic Commit: %m");

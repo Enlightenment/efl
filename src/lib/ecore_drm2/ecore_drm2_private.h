@@ -723,6 +723,19 @@ struct _Ecore_Drm2_Output_Mode
    drmModeModeInfo info;
 };
 
+/* A half step - we still keep an fb for the canvas
+ * and an atomic_req for all atomic state (including
+ * the canvas fb).
+ * The non atomic code only uses the canvas fb.
+ */
+typedef struct _Ecore_Drm2_Output_State
+{
+   Ecore_Drm2_Fb *fb;
+# ifdef HAVE_ATOMIC_DRM
+   drmModeAtomicReq *atomic_req;
+# endif
+} Ecore_Drm2_Output_State;
+
 struct _Ecore_Drm2_Output
 {
    Eina_Stringshare *name;
@@ -755,6 +768,10 @@ struct _Ecore_Drm2_Output
 
    drmModeCrtcPtr ocrtc;
 
+   /* prep is for state we're preparing and have never
+    * attempted to commit */
+   Ecore_Drm2_Output_State prep;
+
    Ecore_Drm2_Fb *current, *next, *pending;
 
    Eina_Matrix4 matrix, inverse;
@@ -776,9 +793,6 @@ struct _Ecore_Drm2_Output
    Eina_List *plane_states;
    Eina_List *planes;
 
-# ifdef HAVE_ATOMIC_DRM
-   drmModeAtomicReq *atomic_req;
-# endif
 
    Eina_Bool connected : 1;
    Eina_Bool primary : 1;

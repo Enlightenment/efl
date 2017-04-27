@@ -898,8 +898,8 @@ _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
 #ifdef HAVE_ATOMIC_DRM
    if (_ecore_drm2_use_atomic)
      {
-        if (output->atomic_req)
-          sym_drmModeAtomicFree(output->atomic_req);
+        if (output->prep.atomic_req)
+          sym_drmModeAtomicFree(output->prep.atomic_req);
      }
 #endif
 
