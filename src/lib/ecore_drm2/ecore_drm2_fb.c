@@ -369,11 +369,14 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
 }
 
 static int
-_fb_flip(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
+_fb_flip(Ecore_Drm2_Output *output)
 {
+   Ecore_Drm2_Fb *fb;
    Eina_Bool repeat;
    int count = 0;
    int ret = 0;
+
+   fb = output->prep.fb;
 
    if (output->pending.fb)
      {
@@ -490,10 +493,12 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 
    if (!output->enabled) return -1;
 
+   output->prep.fb = fb;
+
    if (_ecore_drm2_use_atomic)
           ret = _fb_atomic_flip(output);
    else
-     ret = _fb_flip(output, fb);
+     ret = _fb_flip(output);
 
    return ret;
 }
