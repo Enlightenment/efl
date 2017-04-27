@@ -9575,6 +9575,8 @@ parse_anchor_line(Edje_Part_Anchor *anchor, Edje_Part_Anchor_Line undefined)
                                     NULL);
    else if (strcmp(name, "GROUP") || param_had_quote(0))
      anchor->base.line = undefined;
+
+   free(name);
 }
 
 static void
