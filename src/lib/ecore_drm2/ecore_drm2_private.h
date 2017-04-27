@@ -710,7 +710,6 @@ struct _Ecore_Drm2_Fb
 struct _Ecore_Drm2_Plane
 {
    int type;
-   Ecore_Drm2_Fb *current, *next, *pending;
    Ecore_Drm2_Plane_State *state;
 };
 
