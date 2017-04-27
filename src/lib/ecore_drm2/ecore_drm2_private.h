@@ -774,6 +774,10 @@ struct _Ecore_Drm2_Output
    Eina_List *plane_states;
    Eina_List *planes;
 
+# ifdef HAVE_ATOMIC_DRM
+   drmModeAtomicReq *atomic_req;
+# endif
+
    Eina_Bool connected : 1;
    Eina_Bool primary : 1;
    Eina_Bool cloned : 1;
@@ -810,9 +814,6 @@ struct _Ecore_Drm2_Device
    Ecore_Event_Handler *device_change_hdlr;
 
    Ecore_Drm2_Atomic_State *state;
-# ifdef HAVE_ATOMIC_DRM
-   drmModeAtomicReq *atomic_req;
-# endif
 
    Eina_List *outputs;
 };

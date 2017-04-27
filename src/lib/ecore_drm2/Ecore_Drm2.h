@@ -370,12 +370,6 @@ EAPI Eina_Bool ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt);
  */
 EAPI Eina_Bool ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device);
 
-/* TODO: doxy */
-EAPI Eina_Bool ecore_drm2_atomic_commit_test(Ecore_Drm2_Device *device);
-
-/* TODO: doxy */
-EAPI Eina_Bool ecore_drm2_atomic_commit(Ecore_Drm2_Device *device);
-
 /**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
  *
