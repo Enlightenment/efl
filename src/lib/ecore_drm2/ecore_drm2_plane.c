@@ -109,6 +109,14 @@ out:
    DBG("FB %d assigned to Plane %d", fb->id, pstate->obj_id);
    output->planes = eina_list_append(output->planes, plane);
 
+   if (!_fb_atomic_flip_test(output))
+     {
+        output->planes = eina_list_remove(output->planes, plane);
+        plane->state->in_use = EINA_FALSE;
+        free(plane);
+
+        return NULL;
+     }
    return plane;
 }
 
