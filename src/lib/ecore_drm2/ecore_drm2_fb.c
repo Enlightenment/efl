@@ -323,18 +323,11 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
      {
         if (output->atomic_req)
           {
-             /* merge this test commit with previous */
-             ret = sym_drmModeAtomicMerge(output->atomic_req, req);
-             if (ret < 0)
-               {
-                  /* we failed to merge for some reason. */
+             /* clear any previous request */
+             sym_drmModeAtomicFree(output->atomic_req);
 
-                  /* clear any previous request */
-                  sym_drmModeAtomicFree(output->atomic_req);
-
-                  /* just use the new request */
-                  output->atomic_req = req;
-               }
+             /* just use the new request */
+             output->atomic_req = req;
           }
         else
           output->atomic_req = req;
