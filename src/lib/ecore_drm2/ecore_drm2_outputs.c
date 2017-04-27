@@ -895,6 +895,14 @@ _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
    Ecore_Drm2_Plane *plane;
    Ecore_Drm2_Plane_State *pstate;
 
+#ifdef HAVE_ATOMIC_DRM
+   if (_ecore_drm2_use_atomic)
+     {
+        if (output->atomic_req)
+          sym_drmModeAtomicFree(output->atomic_req);
+     }
+#endif
+
    EINA_LIST_FREE(output->plane_states, pstate)
      free(pstate);
 
