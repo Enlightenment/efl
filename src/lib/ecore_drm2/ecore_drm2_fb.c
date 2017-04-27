@@ -357,9 +357,7 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
    uint32_t flags =
      DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
      DRM_MODE_ATOMIC_ALLOW_MODESET;
-#endif
 
-#ifdef HAVE_ATOMIC_DRM
    if (!output->atomic_req) return -1;
 
    res =
