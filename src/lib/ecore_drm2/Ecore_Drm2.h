@@ -1009,6 +1009,16 @@ EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(int fd, int width, int height, i
 EAPI Ecore_Drm2_Plane *ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb);
 
 /**
+ * Remove a hardware plane from display
+ *
+ * @param plane
+ *
+ * @ingroup Ecore_Drm2_Plane_Group
+ * @since 1.20
+ */
+EAPI void ecore_drm2_plane_release(Ecore_Drm2_Plane *plane);
+
+/**
  * Set plane destination values
  *
  * @param plane

@@ -113,6 +113,16 @@ out:
 }
 
 EAPI void
+ecore_drm2_plane_release(Ecore_Drm2_Plane *plane)
+{
+   EINA_SAFETY_ON_NULL_RETURN(plane);
+
+   plane->state->in_use = EINA_FALSE;
+   plane->output->planes = eina_list_remove(plane->output->planes, plane);
+   free(plane);
+}
+
+EAPI void
 ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, int h)
 {
    EINA_SAFETY_ON_NULL_RETURN(plane);
