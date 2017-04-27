@@ -620,8 +620,10 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
 # if 0
    /* check that this system can do atomic */
    _ecore_drm2_use_atomic = _drm2_atomic_usable(device->fd);
-   if (_ecore_drm2_use_atomic)
 # endif
+   if (getenv("ECORE_DRM2_ATOMIC_DISABLE"))
+     _ecore_drm2_use_atomic = EINA_FALSE;
+   if (_ecore_drm2_use_atomic)
 #endif
      {
         if (sym_drmSetClientCap(device->fd,
