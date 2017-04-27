@@ -220,12 +220,12 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
-   if (output->current && (output->current != output->pending))
-     _release_buffer(output, output->current);
-   output->current = output->pending;
-   output->pending = NULL;
+   if (output->current.fb && (output->current.fb != output->pending.fb))
+     _release_buffer(output, output->current.fb);
+   output->current.fb = output->pending.fb;
+   output->pending.fb = NULL;
 
-   return !!output->next;
+   return !!output->next.fb;
 }
 
 Eina_Bool
@@ -375,29 +375,29 @@ _fb_flip(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
    int count = 0;
    int ret = 0;
 
-   if (output->pending)
+   if (output->pending.fb)
      {
-        if (output->next) _release_buffer(output, output->next);
-        output->next = fb;
-        if (output->next) output->next->busy = EINA_TRUE;
+        if (output->next.fb) _release_buffer(output, output->next.fb);
+        output->next.fb = fb;
+        if (output->next.fb) output->next.fb->busy = EINA_TRUE;
         return 0;
      }
-   if (!fb) fb = output->next;
+   if (!fb) fb = output->next.fb;
 
    /* So we can generate a tick by flipping to the current fb */
-   if (!fb) fb = output->current;
+   if (!fb) fb = output->current.fb;
 
-   if (output->next)
+   if (output->next.fb)
      {
-        output->next->busy = EINA_FALSE;
-        output->next = NULL;
+        output->next.fb->busy = EINA_FALSE;
+        output->next.fb = NULL;
      }
 
    /* If we don't have an fb to set by now, BAIL! */
    if (!fb) return -1;
 
-   if ((!output->current) ||
-       (output->current->strides[0] != fb->strides[0]))
+   if ((!output->current.fb) ||
+       (output->current.fb->strides[0] != fb->strides[0]))
      {
         ret =
           sym_drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,
@@ -411,10 +411,10 @@ _fb_flip(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
              return ret;
           }
 
-        if (output->current) _release_buffer(output, output->current);
-        output->current = fb;
-        output->current->busy = EINA_TRUE;
-        output->next = NULL;
+        if (output->current.fb) _release_buffer(output, output->current.fb);
+        output->current.fb = fb;
+        output->current.fb->busy = EINA_TRUE;
+        output->next.fb = NULL;
         /* We used to return here, but now that the ticker is fixed this
          * can leave us hanging waiting for a tick to happen forever.
          * Instead, we now fall through the the flip path to make sure
@@ -469,13 +469,13 @@ _fb_flip(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
      }
    else if (ret < 0)
      {
-        output->next = fb;
-        output->next->busy = EINA_TRUE;
+        output->next.fb = fb;
+        output->next.fb->busy = EINA_TRUE;
         return 0;
      }
 
-   output->pending = fb;
-   output->pending->busy = EINA_TRUE;
+   output->pending.fb = fb;
+   output->pending.fb->busy = EINA_TRUE;
 
    return 0;
 }
@@ -517,10 +517,10 @@ ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(o, EINA_FALSE);
 
-   if (o->next)
+   if (o->next.fb)
      {
-        _release_buffer(o, o->next);
-        o->next = NULL;
+        _release_buffer(o, o->next.fb);
+        o->next.fb = NULL;
         return EINA_TRUE;
      }
    if (!panic) return EINA_FALSE;
@@ -533,17 +533,17 @@ ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic)
    /* If we have to release these we're going to see tearing.
     * Try to reclaim in decreasing order of visual awfulness
     */
-   if (o->current)
+   if (o->current.fb)
      {
-        _release_buffer(o, o->current);
-        o->current = NULL;
+        _release_buffer(o, o->current.fb);
+        o->current.fb = NULL;
         return EINA_TRUE;
      }
 
-   if (o->pending)
+   if (o->pending.fb)
      {
-        _release_buffer(o, o->pending);
-        o->pending = NULL;
+        _release_buffer(o, o->pending.fb);
+        o->pending.fb = NULL;
         return EINA_TRUE;
      }
 

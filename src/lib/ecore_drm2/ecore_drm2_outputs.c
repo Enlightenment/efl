@@ -1162,9 +1162,9 @@ EAPI Ecore_Drm2_Fb *
 ecore_drm2_output_latest_fb_get(Ecore_Drm2_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
-   if (output->pending) return output->pending;
-   if (output->current) return output->current;
-   return output->next;
+   if (output->pending.fb) return output->pending.fb;
+   if (output->current.fb) return output->current.fb;
+   return output->next.fb;
 }
 
 EAPI void
@@ -1233,8 +1233,8 @@ ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
           }
 
         ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_OFF);
-        output->current = NULL;
-        /* output->next = NULL; */
+        output->current.fb = NULL;
+        /* output->next.fb = NULL; */
      }
 
    _output_event_send(output);
@@ -1370,10 +1370,10 @@ ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mo
           {
              unsigned int buffer = 0;
 
-             if (output->current)
-               buffer = output->current->id;
-             else if (output->next)
-               buffer = output->next->id;
+             if (output->current.fb)
+               buffer = output->current.fb->id;
+             else if (output->next.fb)
+               buffer = output->next.fb->id;
              else
                buffer = output->ocrtc->buffer_id;
 

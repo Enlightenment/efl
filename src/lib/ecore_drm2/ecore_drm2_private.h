@@ -772,7 +772,7 @@ struct _Ecore_Drm2_Output
     * attempted to commit */
    Ecore_Drm2_Output_State prep;
 
-   Ecore_Drm2_Fb *current, *next, *pending;
+   Ecore_Drm2_Output_State current, next, pending;
 
    Eina_Matrix4 matrix, inverse;
    Ecore_Drm2_Transform transform;
