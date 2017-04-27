@@ -50,6 +50,9 @@ ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
    /* use algo based on format, size, etc to find a plane this FB can go in */
    EINA_LIST_FOREACH(output->plane_states, l, pstate)
      {
+        if (pstate->in_use)
+          continue;
+
         /* test if this plane supports the given format */
         if (!_plane_format_supported(pstate, fb->format))
           continue;
@@ -90,6 +93,7 @@ out:
    plane = calloc(1, sizeof(Ecore_Drm2_Plane));
    if (!plane) return NULL;
 
+   pstate->in_use = EINA_TRUE;
    pstate->cid.value = output->crtc_id;
    pstate->fid.value = fb->id;
 
