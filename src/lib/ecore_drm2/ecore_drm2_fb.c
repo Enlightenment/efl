@@ -366,7 +366,7 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
      sym_drmModeAtomicCommit(output->fd, output->atomic_req, flags, NULL);
    if (res < 0)
      {
-        ERR("Failed Atomic Commit Test: %m");
+        ERR("Failed Atomic Commit: %m");
         return -1;
      }
 
