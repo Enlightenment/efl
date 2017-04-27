@@ -9611,13 +9611,15 @@ anchor_queue_part_lookup(int *part, int *counterpart, Eina_Bool counterpart_is_s
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
    name = parse_str(0);
-   if (!strcmp(name, "GROUP") && !param_had_quote(0)) return;
+   if (!strcmp(name, "GROUP") && !param_had_quote(0))
+     goto end;
 
    data_queue_part_lookup(pc, name, part);
 
    if (!counterpart_is_set)
      data_queue_part_lookup(pc, name, counterpart);
 
+end:
    free(name);
 }
 
