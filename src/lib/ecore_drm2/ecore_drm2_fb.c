@@ -228,7 +228,7 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
    return !!output->next;
 }
 
-static Eina_Bool
+Eina_Bool
 _fb_atomic_flip_test(Ecore_Drm2_Output *output)
 {
    Eina_Bool res = EINA_FALSE;

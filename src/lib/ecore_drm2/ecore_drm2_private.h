@@ -820,6 +820,8 @@ struct _Ecore_Drm2_Device
    Eina_List *outputs;
 };
 
+Eina_Bool _fb_atomic_flip_test(Ecore_Drm2_Output *output);
+
 /* extern int (*sym_drmClose)(int fd); */
 /* extern int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl); */
 extern int (*sym_drmHandleEvent)(int fd, drmEventContext *evctx);
