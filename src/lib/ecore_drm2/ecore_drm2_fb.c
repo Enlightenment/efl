@@ -490,10 +490,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    if (!output->enabled) return -1;
 
    if (_ecore_drm2_use_atomic)
-     {
-        if (_fb_atomic_flip_test(output))
           ret = _fb_atomic_flip(output);
-     }
    else
      ret = _fb_flip(output, fb);
 
