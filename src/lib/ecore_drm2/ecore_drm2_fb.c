@@ -505,6 +505,11 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    if (!fb) return -1;
 
    output->prep.fb = fb;
+#ifdef HAVE_ATOMIC_DRM
+   /* If we have no req yet, we're flipping to current state.
+    * rebuild the current state in the prep state */
+   if (!output->prep.atomic_req) _fb_atomic_flip_test(output);
+#endif
 
    if (_ecore_drm2_use_atomic)
           ret = _fb_atomic_flip(output);
