@@ -14,6 +14,8 @@
 #include "ecore_evas_buffer.h"
 #include "ecore_evas_private.h"
 
+static void _evas_evas_buffer_rendered(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED);
+
 static void
 _ecore_evas_buffer_free(Ecore_Evas *ee)
 {
@@ -141,7 +143,7 @@ _ecore_evas_buffer_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
 static int
 _ecore_evas_buffer_render(Ecore_Evas *ee)
 {
-   Eina_List *updates = NULL, *ll;
+   Eina_List *ll;
    Ecore_Evas_Engine_Buffer_Data *bdata;
    Ecore_Evas *ee2;
    int rend = 0;
@@ -172,17 +174,25 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
    if (bdata->pixels)
      {
         bdata->in_render = 1;
-        updates = evas_render_updates(ee->evas);
-        bdata->in_render = 0;
-     }
-   if (updates)
-     {
-        evas_render_updates_free(updates);
+        if (ee->can_async_render && !ee->manual_render)
+          {
+             rend |= !!evas_render_async(ee->evas);
+          }
+        else
+          {
+             Eina_List *updates;
+
+             updates = evas_render_updates(ee->evas);
+             rend |= !!updates;
+             evas_render_updates_free(updates);
+
+             // When there is no update, there is no RENDER_POST event
+             // Should we fix that here or in evas_render ?
+             if (!updates) _evas_evas_buffer_rendered(ee, NULL, NULL);
+          }
      }
 
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-
-   return updates ? 1 : rend;
+   return rend;
 }
 
 static void
@@ -203,14 +213,29 @@ _ecore_evas_buffer_update_image(void *data, Evas *e EINA_UNUSED, void *event_inf
 static void
 _evas_evas_buffer_rendered(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+
    _ecore_evas_idle_timeout_update(ee);
+
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+   bdata->in_render = 0;
 }
 
 EAPI int
 ecore_evas_buffer_render(Ecore_Evas *ee)
 {
+   Ecore_Evas_Engine_Buffer_Data *bdata;
+   Eina_Bool async;
+   int r;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ee, 0);
-   return _ecore_evas_buffer_render(ee);
+
+   bdata = ee->engine.data;
+   async = ee->can_async_render;
+   if (bdata->in_render) evas_sync(ee->evas);
+   r = _ecore_evas_buffer_render(ee);
+   ee->can_async_render = async;
+   return r;
 }
 
 // NOTE: if you fix this, consider fixing ecore_evas_ews.c as it is similar!
@@ -784,6 +809,11 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    ee->req.h = ee->h;
    ee->profile_supported = 1;
 
+   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
+     ee->can_async_render = 0;
+   else
+     ee->can_async_render = 1;
+
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
@@ -930,6 +960,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    ee->req.w = ee->w;
    ee->req.h = ee->h;
    ee->profile_supported = 1;
+   ee->can_async_render = 0;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
