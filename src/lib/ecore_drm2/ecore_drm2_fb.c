@@ -351,7 +351,7 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
      DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
      DRM_MODE_ATOMIC_ALLOW_MODESET;
 
-   if (!output->prep.atomic_req) return -1;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->prep.atomic_req, -1);
 
    res =
      sym_drmModeAtomicCommit(output->fd,
