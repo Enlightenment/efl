@@ -30,14 +30,19 @@ evas_common_font_init(void)
 {
    int error;
    const char *s;
-   FT_UInt interpreter_version = TT_INTERPRETER_VERSION_35;
+   FT_UInt interpreter_version =
+#ifndef TT_INTERPRETER_VERSION_35
+   TT_INTERPRETER_VERSION_35;
+#else
+   35;
+#endif
 
    initialised++;
    if (initialised != 1) return;
    error = FT_Init_FreeType(&evas_ft_lib);
    if (error) return;
-   FT_Property_Set(evas_ft_lib,
-         "truetype", "interpreter-version", &interpreter_version);
+   FT_Property_Set(evas_ft_lib, "truetype", "interpreter-version",
+                   &interpreter_version);
    evas_common_font_load_init();
    evas_common_font_draw_init();
    s = getenv("EVAS_FONT_DPI");
