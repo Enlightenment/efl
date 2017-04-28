@@ -2473,8 +2473,8 @@ EFL_INTERNAL_DEPEND_PKG([EVAS], [ecore])
 
 EFL_ADD_LIBS([EVAS], [-lm])
 
-# Freetype
-EFL_DEPEND_PKG([EVAS], [FREETYPE], [freetype2 >= 9.3.0])
+# Freetype (the version 16.2.10 equals the freetype 2.5.0.1 release)
+EFL_DEPEND_PKG([EVAS], [FREETYPE], [freetype2 >= 16.2.10])
 
 ## optional dependencies
 
