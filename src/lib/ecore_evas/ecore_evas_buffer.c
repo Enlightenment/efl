@@ -147,7 +147,11 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
    int rend = 0;
 
    bdata = ee->engine.data;
-   if (bdata->in_render) return 0;
+   if (bdata->in_render)
+     {
+        DBG("ee=%p is rendering, skip.", ee);
+        return 0;
+     }
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
