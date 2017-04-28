@@ -214,6 +214,11 @@ _release_buffer(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State *s)
    s->fb->busy = EINA_FALSE;
    if (output->release_cb) output->release_cb(output->release_data, s->fb);
    s->fb = NULL;
+#ifdef HAVE_ATOMIC_DRM
+   if (s->atomic_req)
+     sym_drmModeAtomicFree(s->atomic_req);
+   s->atomic_req = NULL;
+#endif
 }
 
 EAPI Eina_Bool
