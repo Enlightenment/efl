@@ -102,6 +102,9 @@ _evas_outbuf_buffer_swap(Outbuf *ob)
 
    if (fb)
      {
+        if (!ob->priv.plane)
+          ob->priv.plane = ecore_drm2_plane_assign(ob->priv.output, fb);
+        else ecore_drm2_plane_fb_set(ob->priv.plane, fb);
         ecore_drm2_fb_flip(fb, ob->priv.output);
 
         /* Ecore_Drm2_Plane *plane; */

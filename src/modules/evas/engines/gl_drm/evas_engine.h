@@ -103,6 +103,7 @@ struct _Outbuf
    struct 
      {
         Ecore_Drm2_Output *output;
+        Ecore_Drm2_Plane *plane;
      } priv;
 
    Eina_Bool destination_alpha : 1;
