@@ -711,6 +711,7 @@ struct _Ecore_Drm2_Plane
 {
    int type;
    Ecore_Drm2_Plane_State *state;
+   Ecore_Drm2_Output *output;
 };
 
 struct _Ecore_Drm2_Output_Mode
