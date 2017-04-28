@@ -3838,7 +3838,8 @@ _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *evas)
              Eina_List *l;
 
              EINA_LIST_FOREACH(evas->outputs, l, output)
-               ENFN->output_idle_flush(output->output);
+               if (output->output)
+                 ENFN->output_idle_flush(output->output);
           }
 
         eina_inarray_flush(&evas->active_objects);
@@ -3941,7 +3942,8 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
              Eina_List *l;
 
              EINA_LIST_FOREACH(evas->outputs, l, output)
-               ENFN->output_dump(output->output);
+               if (output->output)
+                 ENFN->output_dump(output->output);
           }
 
 #define GC_ALL(Cow) \
@@ -3960,7 +3962,8 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
              Eina_List *l;
 
              EINA_LIST_FOREACH(evas->outputs, l, output)
-               ENFN->output_idle_flush(output->output);
+               if (output->output)
+                 ENFN->output_idle_flush(output->output);
           }
 
         eina_inarray_flush(&evas->active_objects);
