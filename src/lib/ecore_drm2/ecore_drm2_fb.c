@@ -378,27 +378,6 @@ _fb_flip(Ecore_Drm2_Output *output)
 
    fb = output->prep.fb;
 
-   if (output->pending.fb)
-     {
-        if (output->next.fb) _release_buffer(output, output->next.fb);
-        output->next.fb = fb;
-        if (output->next.fb) output->next.fb->busy = EINA_TRUE;
-        return 0;
-     }
-   if (!fb) fb = output->next.fb;
-
-   /* So we can generate a tick by flipping to the current fb */
-   if (!fb) fb = output->current.fb;
-
-   if (output->next.fb)
-     {
-        output->next.fb->busy = EINA_FALSE;
-        output->next.fb = NULL;
-     }
-
-   /* If we don't have an fb to set by now, BAIL! */
-   if (!fb) return -1;
-
    if ((!output->current.fb) ||
        (output->current.fb->strides[0] != fb->strides[0]))
      {
@@ -477,9 +456,6 @@ _fb_flip(Ecore_Drm2_Output *output)
         return 0;
      }
 
-   output->pending.fb = fb;
-   output->pending.fb->busy = EINA_TRUE;
-
    return 0;
 }
 
@@ -493,12 +469,37 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 
    if (!output->enabled) return -1;
 
+   if (output->pending.fb)
+     {
+        if (output->next.fb) _release_buffer(output, output->next.fb);
+        output->next.fb = fb;
+        if (output->next.fb) output->next.fb->busy = EINA_TRUE;
+        return 0;
+     }
+   if (!fb) fb = output->next.fb;
+
+   /* So we can generate a tick by flipping to the current fb */
+   if (!fb) fb = output->current.fb;
+
+   if (output->next.fb)
+     {
+        output->next.fb->busy = EINA_FALSE;
+        output->next.fb = NULL;
+     }
+
+   /* If we don't have an fb to set by now, BAIL! */
+   if (!fb) return -1;
+
    output->prep.fb = fb;
 
    if (_ecore_drm2_use_atomic)
           ret = _fb_atomic_flip(output);
    else
      ret = _fb_flip(output);
+
+   output->pending.fb = fb;
+   output->pending.fb->busy = EINA_TRUE;
+   output->prep.fb = NULL;
 
    return ret;
 }
