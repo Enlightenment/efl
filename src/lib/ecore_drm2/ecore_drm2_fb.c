@@ -231,6 +231,10 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
    output->current.fb = output->pending.fb;
    output->pending.fb = NULL;
 
+#ifdef HAVE_ATOMIC_DRM
+   output->current.atomic_req = output->pending.atomic_req;
+   output->pending.atomic_req = NULL;
+#endif
    return !!output->next.fb;
 }
 
@@ -491,6 +495,9 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
      {
         output->next.fb->busy = EINA_FALSE;
         output->next.fb = NULL;
+#ifdef HAVE_ATOMIC_DRM
+        output->next.atomic_req = NULL;
+#endif
      }
 
    /* If we don't have an fb to set by now, BAIL! */
@@ -503,10 +510,13 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    else
      ret = _fb_flip(output);
 
-   output->pending.fb = fb;
+   output->pending.fb = output->prep.fb;
    output->pending.fb->busy = EINA_TRUE;
    output->prep.fb = NULL;
-
+#ifdef HAVE_ATOMIC_DRM
+   output->pending.atomic_req = output->prep.atomic_req;
+   output->prep.atomic_req = NULL;
+#endif
    return ret;
 }
 
