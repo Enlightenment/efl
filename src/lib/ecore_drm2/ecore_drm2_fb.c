@@ -420,7 +420,7 @@ _fb_flip(Ecore_Drm2_Output *output)
         output->next.fb = NULL;
         /* We used to return here, but now that the ticker is fixed this
          * can leave us hanging waiting for a tick to happen forever.
-         * Instead, we now fall through the the flip path to make sure
+         * Instead, we now fall through to the flip path to make sure
          * even this first set can cause a flip callback.
          */
      }
