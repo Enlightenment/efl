@@ -494,7 +494,6 @@ Recommended requirements (highly recommended):
   * harfbuzz
   * libwebp
   * liblz4
-  * vlc (libvlc)
 
 Enable these with configure options:
 
