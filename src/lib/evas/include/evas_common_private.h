@@ -1320,6 +1320,8 @@ Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 
 void              evas_font_dir_cache_free(void);
 
+EAPI void         evas_thread_queue_wait(void);
+
 EAPI int          evas_async_events_process_blocking(void);
 void	          evas_render_rendering_wait(Evas_Public_Data *evas);
 void              evas_all_sync(void);
@@ -1328,7 +1330,6 @@ int               evas_thread_init(void);
 int               evas_thread_shutdown(void);
 EAPI void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data);
 EAPI void         evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data);
-EAPI void         evas_thread_queue_wait(void);
 
 typedef enum _Evas_Render_Mode
 {
