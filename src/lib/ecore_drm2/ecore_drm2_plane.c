@@ -139,4 +139,6 @@ ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, i
    plane->state->cy.value = y;
    plane->state->cw.value = w;
    plane->state->ch.value = h;
+
+   _fb_atomic_flip_test(plane->output);
 }
