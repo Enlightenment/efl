@@ -9652,30 +9652,30 @@ anchor_adjust_align(FLOAT_T *align, FLOAT_T val, unsigned char *fixed, Eina_Bool
 }
 
 static void
-anchor_adjust_relative(const Edje_Part_Anchor_Line *lines, FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
+anchor_adjust_relative(const Edje_Part_Anchor_Line *anchor_lines, FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line anchor_line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
 {
-   if (line == EDJE_PART_ANCHOR_LINE_NONE)
-     line = base;
+   if (anchor_line == EDJE_PART_ANCHOR_LINE_NONE)
+     anchor_line = base;
 
-   if (line == lines[0])
+   if (anchor_line == anchor_lines[0])
      {
         *rel = FROM_DOUBLE(0.0);
         if (!counterpart_is_set)
           *relc = FROM_DOUBLE(0.0);
      }
-   else if (line == lines[1])
+   else if (anchor_line == anchor_lines[1])
      {
         *rel = FROM_DOUBLE(1.0);
         if (!counterpart_is_set)
           *relc = FROM_DOUBLE(1.0);
      }
-   else if (line == lines[2])
+   else if (anchor_line == anchor_lines[2])
      {
         *rel = FROM_DOUBLE(0.5);
         if (!counterpart_is_set)
           *relc = FROM_DOUBLE(0.5);
      }
-   else if (line == EDJE_PART_ANCHOR_LINE_RELATIVE)
+   else if (anchor_line == EDJE_PART_ANCHOR_LINE_RELATIVE)
      {
         *rel = FROM_DOUBLE(parse_float(1));
         if (!counterpart_is_set)
@@ -9690,27 +9690,27 @@ anchor_adjust_relative(const Edje_Part_Anchor_Line *lines, FLOAT_T *rel, FLOAT_T
 }
 
 static void
-anchor_adjust_relative_vertical(FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
+anchor_adjust_relative_vertical(FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line anchor_line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
 {
-   static const Edje_Part_Anchor_Line lines[] = {
+   static const Edje_Part_Anchor_Line anchor_lines[] = {
       EDJE_PART_ANCHOR_LINE_TOP,
       EDJE_PART_ANCHOR_LINE_BOTTOM,
       EDJE_PART_ANCHOR_LINE_VERTICAL_CENTER
    };
 
-   anchor_adjust_relative(lines, rel, relc, line, base, counterpart_is_set);
+   anchor_adjust_relative(anchor_lines, rel, relc, anchor_line, base, counterpart_is_set);
 }
 
 static void
-anchor_adjust_relative_horizontal(FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
+anchor_adjust_relative_horizontal(FLOAT_T *rel, FLOAT_T *relc, Edje_Part_Anchor_Line anchor_line, Edje_Part_Anchor_Line base, Eina_Bool counterpart_is_set)
 {
-   static const Edje_Part_Anchor_Line lines[] = {
+   static const Edje_Part_Anchor_Line anchor_lines[] = {
       EDJE_PART_ANCHOR_LINE_LEFT,
       EDJE_PART_ANCHOR_LINE_RIGHT,
       EDJE_PART_ANCHOR_LINE_HORIZONTAL_CENTER
    };
 
-   anchor_adjust_relative(lines, rel, relc, line, base, counterpart_is_set);
+   anchor_adjust_relative(anchor_lines, rel, relc, anchor_line, base, counterpart_is_set);
 }
 
 /**
