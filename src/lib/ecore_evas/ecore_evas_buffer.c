@@ -178,7 +178,6 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
    if (updates)
      {
         evas_render_updates_free(updates);
-        _ecore_evas_idle_timeout_update(ee);
      }
 
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
@@ -190,7 +189,8 @@ static void
 _ecore_evas_buffer_update_image(void *data, Evas *e EINA_UNUSED, void *event_info)
 {
    Evas_Event_Render_Post *post = event_info;
-   Ecore_Evas_Engine_Buffer_Data *bdata = data;
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
    Eina_Rectangle *r;
    Eina_List *l;
 
@@ -198,6 +198,12 @@ _ecore_evas_buffer_update_image(void *data, Evas *e EINA_UNUSED, void *event_inf
    EINA_LIST_FOREACH(post->updated_area, l, r)
      evas_object_image_data_update_add(bdata->image,
                                        r->x, r->y, r->w, r->h);
+}
+
+static void
+_evas_evas_buffer_rendered(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _ecore_evas_idle_timeout_update(ee);
 }
 
 EAPI int
@@ -843,6 +849,8 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
 
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
+
    return ee;
 }
 
@@ -939,7 +947,8 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _ecore_evas_buffer_update_image, bdata);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _ecore_evas_buffer_update_image, ee);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
 
    bdata->image = o;
    evas_object_data_set(bdata->image, "Ecore_Evas", ee);
