@@ -493,6 +493,7 @@ Recommended requirements (highly recommended):
 
   * harfbuzz
   * libwebp
+  * libunwind (where available)
 
 Enable these with configure options:
 
