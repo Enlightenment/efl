@@ -142,3 +142,19 @@ ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, i
 
    _fb_atomic_flip_test(plane->output);
 }
+
+EAPI Eina_Bool
+ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb)
+{
+   uint32_t fallback_id;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(plane, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+
+   fallback_id = plane->state->fid.value;
+   plane->state->fid.value = fb->id;
+   if (_fb_atomic_flip_test(plane->output)) return EINA_TRUE;
+
+   plane->state->fid.value = fallback_id;
+   return EINA_FALSE;
+}

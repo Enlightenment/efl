@@ -1032,6 +1032,20 @@ EAPI void ecore_drm2_plane_release(Ecore_Drm2_Plane *plane);
  */
 EAPI void ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, int h);
 
+/**
+ * Set plane frame buffer
+ *
+ * @param plane
+ * @param fb
+ *
+ * @return whether the plane state has been successfully changed or not
+ *
+ * @ingroup Ecore_Drm2_Plane_Group
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb);
+
+
 # endif
 
 #endif
