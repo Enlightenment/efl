@@ -493,15 +493,13 @@ Recommended requirements (highly recommended):
 
   * harfbuzz
   * libwebp
-  * liblz4
 
 Enable these with configure options:
 
     --enable-xinput22 \
     --enable-image-loader-webp \
     --enable-harfbuzz \
-    --enable-multisense \
-    --enable-liblz4
+    --enable-multisense
 
 COMPILER FLAGS
 --------------
@@ -512,7 +510,7 @@ that to ensure ABI stability you should use the exact same CFLAGS /
 CXXFLAGS for all the build of EFL and any applications/libraries that
 depend on them.
 
-Other recommendations:
+Other possible recommendations:
 
   * scim
 
