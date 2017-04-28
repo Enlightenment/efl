@@ -141,7 +141,7 @@ _ecore_evas_buffer_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
 static int
 _ecore_evas_buffer_render(Ecore_Evas *ee)
 {
-   Eina_List *updates = NULL, *l, *ll;
+   Eina_List *updates = NULL, *ll;
    Ecore_Evas_Engine_Buffer_Data *bdata;
    Ecore_Evas *ee2;
    int rend = 0;
@@ -171,15 +171,6 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
         updates = evas_render_updates(ee->evas);
         bdata->in_render = 0;
      }
-   if (bdata->image)
-     {
-        Eina_Rectangle *r;
-
-        evas_object_image_data_set(bdata->image, bdata->pixels);
-        EINA_LIST_FOREACH(updates, l, r)
-           evas_object_image_data_update_add(bdata->image,
-                                             r->x, r->y, r->w, r->h);
-     }
    if (updates)
      {
         evas_render_updates_free(updates);
@@ -189,6 +180,20 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 
    return updates ? 1 : rend;
+}
+
+static void
+_ecore_evas_buffer_update_image(void *data, Evas *e EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Render_Post *post = event_info;
+   Ecore_Evas_Engine_Buffer_Data *bdata = data;
+   Eina_Rectangle *r;
+   Eina_List *l;
+
+   evas_object_image_data_set(bdata->image, bdata->pixels);
+   EINA_LIST_FOREACH(post->updated_area, l, r)
+     evas_object_image_data_update_add(bdata->image,
+                                       r->x, r->y, r->w, r->h);
 }
 
 EAPI int
@@ -930,6 +935,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _ecore_evas_buffer_update_image, bdata);
 
    bdata->image = o;
    evas_object_data_set(bdata->image, "Ecore_Evas", ee);
