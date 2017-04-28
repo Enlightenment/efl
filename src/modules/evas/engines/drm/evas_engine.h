@@ -60,6 +60,7 @@ struct _Outbuf
         int num;
         Outbuf_Fb ofb[4], *draw;
         Ecore_Drm2_Output *output;
+        Ecore_Drm2_Plane *plane;
         Eina_List *pending;
         Eina_Rectangle *rects;
         unsigned int rect_count;

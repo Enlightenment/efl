@@ -18,6 +18,11 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    if (!ofb) return;
 
    ecore_drm2_fb_dirty(ofb->fb, rects, count);
+
+   if (!ob->priv.plane)
+     ob->priv.plane = ecore_drm2_plane_assign(ob->priv.output, ofb->fb);
+   else ecore_drm2_plane_fb_set(ob->priv.plane, ofb->fb);
+
    ecore_drm2_fb_flip(ofb->fb, ob->priv.output);
    ofb->drawn = EINA_TRUE;
    ofb->age = 0;
