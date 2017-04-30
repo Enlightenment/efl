@@ -20,7 +20,4 @@ _efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Focus_Object_Data *pd, Eina_Bool 
 
 
 #include "efl_ui_focus_object.eo.c"
-typedef struct {
-
-} Efl_Ui_Focus_User_Data;
 #include "efl_ui_focus_user.eo.c"
