@@ -1314,7 +1314,7 @@ _efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, E
    return candidate;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_focus_manager_root_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *root)
 {
    Node *node;
@@ -1322,13 +1322,15 @@ _efl_ui_focus_manager_root_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *p
    if (pd->root)
      {
         ERR("Root element can only be set once!");
-        return;
+        return EINA_FALSE;
      }
 
    node = _register(obj, pd, root, NULL);
    node->type = NODE_TYPE_ONLY_LOGICAL;
 
    pd->root = node;
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Efl_Ui_Focus_Object*

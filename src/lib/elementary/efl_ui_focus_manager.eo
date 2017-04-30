@@ -180,6 +180,14 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
 
               This property can only be set once.
             ]]
+            set {
+                return : bool;
+            }
+
+            get {
+
+            }
+
             values {
                 root : Efl.Ui.Focus.Object @nonull; [[Will be registered into
                     this manager object.]]
