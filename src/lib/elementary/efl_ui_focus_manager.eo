@@ -95,7 +95,7 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
             [[Set a new redirect object for the given child.
 
               Once $child is focused the redirect manager will be set
-              in the redirect property. Set to $null if nothing should happen.
+              in the redirect property. Set redirect to $null if nothing should happen.
             ]]
             params {
                 child : Efl.Ui.Focus.Object @nonull; [[The child to update]]
