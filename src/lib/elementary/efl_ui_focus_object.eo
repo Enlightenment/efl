@@ -7,10 +7,13 @@ mixin Efl.Ui.Focus.Object
       @since 1.20
     ]]
     methods {
-        geometry_get {
+        @property focus_geometry {
             [[The geometry to use to calculate the relations to other objects.]]
-            params {
-                @out rect : Eina.Rectangle; [[The geometry to use.]]
+            get {
+
+            }
+            values {
+                rect : Eina.Rectangle; [[The geometry to use.]]
             }
         }
         @property focus {
@@ -29,7 +32,7 @@ mixin Efl.Ui.Focus.Object
         }
     }
     implements {
-        @empty .geometry_get;
+        @empty .focus_geometry;
         @empty .focus { get; }
     }
     events {

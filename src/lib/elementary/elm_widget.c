@@ -6479,12 +6479,14 @@ _elm_widget_efl_ui_focus_user_manager_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_
    return pd->manager.manager;
 }
 
-EOLIAN static void
-_elm_widget_efl_ui_focus_object_geometry_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED, Eina_Rectangle *rect)
+EOLIAN static Eina_Rectangle
+_elm_widget_efl_ui_focus_object_focus_geometry_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   if (!rect) return;
+   Eina_Rectangle rect;
 
-   return efl_gfx_geometry_get(obj, &rect->x , &rect->y, &rect->w, &rect->h);
+   efl_gfx_geometry_get(obj, &rect.x , &rect.y, &rect.w, &rect.h);
+
+   return rect;
 }
 
 EOLIAN static void

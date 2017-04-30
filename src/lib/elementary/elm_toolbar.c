@@ -2423,10 +2423,14 @@ _access_widget_item_register(Elm_Toolbar_Item_Data *it)
    _elm_access_activate_callback_set(ai, _access_activate_cb, NULL);
 }
 
-EOLIAN static void
-_elm_toolbar_item_efl_ui_focus_object_geometry_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Item_Data *pd, Eina_Rectangle *rect)
+EOLIAN static Eina_Rectangle
+_elm_toolbar_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Item_Data *pd)
 {
-   evas_object_geometry_get(VIEW(pd), &rect->x, &rect->y, &rect->w, &rect->h);
+   Eina_Rectangle rect;
+
+   evas_object_geometry_get(VIEW(pd), &rect.x, &rect.y, &rect.w, &rect.h);
+
+   return rect;
 }
 
 EOLIAN static Eo *

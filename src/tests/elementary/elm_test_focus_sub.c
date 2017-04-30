@@ -6,10 +6,13 @@ typedef struct {
 } Focus_Test_Sub_Main_Data;
 
 
-EOLIAN static void
-_focus_test_sub_main_efl_ui_focus_object_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Sub_Main_Data *pd EINA_UNUSED, Eina_Rectangle *rect)
+EOLIAN static Eina_Rectangle
+_focus_test_sub_main_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
-   EINA_RECTANGLE_SET(rect, 0, 0, 20, 20);
+   Eina_Rectangle result;
+   EINA_RECTANGLE_SET(&result, 0, 0, 20, 20);
+
+   return result;
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*

@@ -79,12 +79,10 @@ _focus_test_efl_ui_focus_object_focus_set(Eo *obj, Focus_Test_Data *pd, Eina_Boo
    printf("Object %p now focused\n", obj);
 }
 
-EOLIAN static void
-_focus_test_efl_ui_focus_object_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Eina_Rectangle *rect)
+EOLIAN static Eina_Rectangle
+_focus_test_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
-   if (!rect) return;
-
-   *rect = pd->rect;
+   return pd->rect;
 }
 
 EOLIAN static void

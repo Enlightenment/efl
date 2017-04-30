@@ -240,7 +240,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
    Node *n;
 
    nodes = eina_hash_iterator_data_new(pd->node_hash);
-   efl_ui_focus_object_geometry_get(node, &rect);
+   rect = efl_ui_focus_object_focus_geometry_get(node);
 
    *pos = NULL;
    *neg = NULL;
@@ -266,7 +266,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
 
         if (n->type == NODE_TYPE_ONLY_LOGICAL) continue;
 
-        efl_ui_focus_object_geometry_get(op, &op_rect);
+        op_rect = efl_ui_focus_object_focus_geometry_get(op);
 
         if (dim == DIMENSION_X)
           {

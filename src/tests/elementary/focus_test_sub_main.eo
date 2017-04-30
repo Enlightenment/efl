@@ -2,6 +2,6 @@ class Focus.Test.Sub.Main(Efl.Object, Efl.Ui.Focus.User, Efl.Ui.Focus.Object, Ef
     implements {
         Efl.Ui.Focus.User.manager { get; }
         Efl.Ui.Focus.User.parent { get; }
-        Efl.Ui.Focus.Object.geometry_get;
+        Efl.Ui.Focus.Object.focus_geometry { get; }
     }
 }
