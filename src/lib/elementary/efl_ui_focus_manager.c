@@ -434,7 +434,7 @@ dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd, Node *node
 {
    if (!eina_list_data_find(pd->dirty, node)) return;
 
-   efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+   efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
 
    pd->dirty = eina_list_remove(pd->dirty, node);
 
@@ -446,7 +446,7 @@ dirty_flush_all(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Data *pd)
 {
    Node *node;
 
-   efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+   efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
 
    EINA_LIST_FREE(pd->dirty, node)
      {

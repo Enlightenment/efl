@@ -82,7 +82,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
     efl_ui_focus_manager_root_set(efl_added, root_manager)
    );
    //flush now all changes
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
    registered = NULL;
    unregistered = NULL;
 
@@ -129,7 +129,7 @@ START_TEST(correct_register)
    efl_ui_focus_manager_register(sub, child2, root, NULL);
    efl_ui_focus_manager_register(sub, child3, root, NULL);
    //now force submanager to flush things
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
    ck_assert_ptr_eq(unregistered, NULL);
    fail_if(!_set_equal(registered, set1));
 
@@ -164,7 +164,7 @@ START_TEST(correct_unregister)
    efl_ui_focus_manager_register(sub, child1, root, NULL);
    efl_ui_focus_manager_register(sub, child2, root, NULL);
    efl_ui_focus_manager_register(sub, child3, root, NULL);
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
    eina_list_free(unregistered);
    unregistered = NULL;
    eina_list_free(registered);
@@ -172,7 +172,7 @@ START_TEST(correct_unregister)
 
    //test unregister stuff
    efl_ui_focus_manager_unregister(sub, child3);
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
    ck_assert_ptr_eq(registered, NULL);
    fail_if(!_set_equal(unregistered, set));
    eina_list_free(unregistered);
@@ -206,7 +206,7 @@ START_TEST(correct_un_register)
    //test register stuff
    efl_ui_focus_manager_register(sub, child1, root, NULL);
    efl_ui_focus_manager_register(sub, child3, root, NULL);
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
    eina_list_free(unregistered);
    unregistered = NULL;
    eina_list_free(registered);
@@ -215,7 +215,7 @@ START_TEST(correct_un_register)
    //test unregister stuff
    efl_ui_focus_manager_unregister(sub, child3);
    efl_ui_focus_manager_register(sub, child2, root, NULL);
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
    fail_if(!_set_equal(registered, set_add));
    fail_if(!_set_equal(unregistered, set_del));
 

@@ -144,7 +144,7 @@ _redirect_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(parent_manager,
-    {EFL_UI_FOCUS_MANAGER_EVENT_PRE_FLUSH, _parent_manager_pre_flush},
+    {EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, _parent_manager_pre_flush},
     {EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, _redirect_changed_cb}
 );
 
