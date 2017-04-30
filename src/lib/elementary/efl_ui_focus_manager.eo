@@ -205,7 +205,10 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
                 starting from $child.]]
         }
         logical_end {
-            [[Return the last logical object]]
+            [[Return the last logical object.
+
+              The returned object is the last object that would be returned if you start at the root and move the direction into next.
+            ]]
             return : Efl.Ui.Focus.Object; [[Last object]]
         }
     }
