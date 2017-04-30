@@ -156,7 +156,6 @@ dl.el {
 .line {
   font-family: monospace, mono, fixed;
   font-size: 9pt;
-  line-height: 0%;
 }
 
 /* To avoid packed effect on bullet lists */
