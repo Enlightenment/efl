@@ -1,6 +1,6 @@
 class Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Object)
 {
-    [[An abstract class to have a sub manager.
+    [[A class that automatically registeres its border elements in the parent manager
 
       This sub manager will register its border elements on the parent manager.
       The parent manager is found with the @Efl.Ui.Focus.User interface of the
