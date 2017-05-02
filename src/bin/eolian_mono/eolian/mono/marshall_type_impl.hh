@@ -117,6 +117,59 @@ struct marshall_type_visitor_generate
    }
    bool operator()(attributes::complex_type_def const& complex) const
    {
+      using attributes::regular_type_def;
+      using attributes::qualifier_info;
+      struct match
+      {
+        eina::optional<std::string> name;
+        eina::optional<bool> has_own;
+        eina::optional<bool> is_const;
+        std::function<attributes::type_def::variant_type()> function;
+      } const matches[] =
+      {
+        {"array", nullptr, nullptr, [&]
+           {
+              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
+           }
+        }
+      };
+
+      auto default_match = [&] (attributes::complex_type_def const& complex)
+        {
+          regular_type_def no_pointer_regular = complex.outer;
+          // std::vector<attributes::pointer_indirection> pointers;
+          // pointers.swap(no_pointer_regular.pointers);
+          // if(is_out)
+          //   pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
+          return visitor_type{sink, context, c_type, false}(no_pointer_regular)
+            && as_generator("<" << (type % ", ") << ">").generate(sink, complex.subtypes, *context)
+          ;
+            // && detail::generate_pointers(sink, pointers, *context, false);
+        };
+
+      if(eina::optional<bool> b = call_match
+         (matches
+          , [&] (match const& m)
+          {
+            return (!m.name || *m.name == complex.outer.base_type)
+            && (!m.has_own || *m.has_own == bool(complex.outer.base_qualifier & qualifier_info::is_own))
+            && (!m.is_const || *m.is_const == bool(complex.outer.base_qualifier & qualifier_info::is_const));
+          }
+          , [&] (attributes::type_def::variant_type const& v)
+          {
+            if(v.empty())
+              return true;
+            else if(attributes::complex_type_def const* complex
+               = eina::get<attributes::complex_type_def>(&v))
+              return default_match(*complex);
+            else
+              return v.visit(*this);
+          }))
+        {
+           return *b;
+        }
+
+      //return default_match(complex);
      return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return}(complex);
      // return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);
    }

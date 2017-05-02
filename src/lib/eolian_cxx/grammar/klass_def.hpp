@@ -332,7 +332,7 @@ struct parameter_def
   parameter_direction direction;
   type_def type;
   std::string param_name;
-  std::string c_type;
+  std::string c_type; // TODO: Remove this. Use 'c_type' inside 'type' instead.
 
   friend inline bool operator==(parameter_def const& lhs, parameter_def const& rhs)
   {

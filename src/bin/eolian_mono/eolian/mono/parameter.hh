@@ -31,6 +31,10 @@ inline bool param_should_use_out_var(attributes::parameter_def const& param)
            || param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_Binbuf *", !WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_Binbuf *", WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "Eina_Array *", WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
       )
      return true;
 
@@ -43,6 +47,10 @@ inline bool param_should_use_in_var(attributes::parameter_def const& param)
         || param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_Binbuf *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_Binbuf *", WANT_OWN, !WANT_OUT)
+        || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, !WANT_OUT)
+        || param_is_acceptable(param, "Eina_Array *", WANT_OWN, !WANT_OUT)
+        || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, !WANT_OUT)
+        || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, !WANT_OUT)
        )
         return true;
 
@@ -145,6 +153,15 @@ struct native_convert_in_variable_generator
                 "var " << string << " = new eina.Binbuf(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false") << ");\n"
              ).generate(sink, in_variable_name(param.param_name), context);
         }
+     else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *")
+       {
+          attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
+          if (!complex)
+            return false;
+          return as_generator(
+               "var " << string << " = new eina.Array<" << (type % ", ") << ">(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false") << ");\n"
+            ).generate(sink, std::make_tuple(in_variable_name(param.param_name), complex->subtypes), context);
+       }
       return true;
    }
 
@@ -159,6 +176,20 @@ struct convert_in_variable_generator
         return true;
 
       if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
+        {
+           auto var_name = in_variable_name(param.param_name);
+           if (!as_generator(
+                 "var " << string << " = " << escape_keyword(param.param_name) << ".Handle;\n"
+              ).generate(sink, var_name, context))
+             return false;
+           if (param.type.has_own)
+             {
+                return as_generator(
+                     escape_keyword(param.param_name) << ".Own = false;\n"
+                  ).generate(sink, attributes::unused, context);
+             }
+        }
+      else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *")
         {
            auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
@@ -204,6 +235,16 @@ struct convert_out_variable_generator
                "System.IntPtr " << string << " = System.IntPtr.Zero;\n"
              ).generate(sink, out_variable_name(param.param_name), context);
         }
+      else if (param_is_acceptable(param, "Eina_Array *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
+              )
+        {
+           return as_generator(
+               "System.IntPtr " << string << " = System.IntPtr.Zero;\n"
+             ).generate(sink, out_variable_name(param.param_name), context);
+        }
       return true;
    }
 
@@ -230,6 +271,19 @@ struct native_convert_out_variable_generator
            return as_generator(
                "eina.Binbuf " << string << ";\n"
              ).generate(sink, out_variable_name(param.param_name), context);
+        }
+      else if (param_is_acceptable(param, "Eina_Array *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
+              )
+        {
+           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
+           if (!complex)
+             return false;
+           return as_generator(
+               "eina.Array<" << (type % ", ") << "> " << string << ";\n"
+             ).generate(sink, std::make_tuple(complex->subtypes, out_variable_name(param.param_name)), context);
         }
       return true;
    }
@@ -272,6 +326,19 @@ struct convert_out_assign_generator
            return as_generator(
                string << " = new eina.Binbuf(" << string << ", " << (param.type.has_own ? "true" : "false") << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
+        }
+      else if (param_is_acceptable(param, "Eina_Array *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_array *", !WANT_OWN, WANT_OUT)
+              )
+        {
+           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
+           if (!complex)
+             return false;
+           return as_generator(
+               string << " = new eina.Array<" << (type % ", ") << ">(" << string << ", " << (param.type.has_own ? "true" : "false") << ");\n"
+             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), complex->subtypes, out_variable_name(param.param_name)), context);
         }
       return true;
    }
@@ -323,6 +390,15 @@ struct convert_return_generator
              .generate(sink, attributes::unused, context))
              return false;
        }
+     else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *")
+       {
+           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
+           if (!complex)
+             return false;
+           if (!as_generator("return new eina.Array<" << (type % ", ") << ">(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"} << ");\n")
+             .generate(sink, complex->subtypes, context))
+             return false;
+       }
      else if (ret_type.c_type != "void")
        {
          return as_generator("return _ret_var;\n").generate(sink, ret_type, context);
@@ -356,6 +432,21 @@ struct native_convert_out_assign_generator
                || param_is_acceptable(param, "Eina_Binbuf *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Binbuf *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Binbuf *", !WANT_OWN, WANT_OUT)
+              )
+        {
+           if (!as_generator(
+                string << " = " << string << ".Handle;\n"
+              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context))
+             return false;
+           if (param.type.has_own)
+             return as_generator(
+                 string << ".Own = false;\n"
+               ).generate(sink, out_variable_name(param.param_name), context);
+        }
+      else if (param_is_acceptable(param, "Eina_Array *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
               )
         {
            if (!as_generator(
@@ -419,6 +510,15 @@ struct native_convert_return_generator
            }
      }
      else if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")
+       {
+          if (ret_type.has_own && !as_generator("_ret_var.Own = false; ")
+              .generate(sink, attributes::unused, context))
+            return false;
+
+          return as_generator("return _ret_var.Handle;\n")
+            .generate(sink, attributes::unused, context);
+       }
+     else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *")
        {
           if (ret_type.has_own && !as_generator("_ret_var.Own = false; ")
               .generate(sink, attributes::unused, context))

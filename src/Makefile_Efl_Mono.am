@@ -109,10 +109,10 @@ lib_efl_mono_libeflcustomexportsmono_la_SOURCES = \
 
 lib_efl_mono_libeflcustomexportsmono_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
-@EINA_CFLAGS@
+@EINA_CFLAGS@ @EO_CFLAGS@
 
-lib_efl_mono_libeflcustomexportsmono_la_LIBADD = @USE_EINA_LIBS@
-lib_efl_mono_libeflcustomexportsmono_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
+lib_efl_mono_libeflcustomexportsmono_la_LIBADD = @USE_EINA_LIBS@ @USE_EO_LIBS@
+lib_efl_mono_libeflcustomexportsmono_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 bin_PROGRAMS += lib/efl_mono/libefl_mono.dll
 

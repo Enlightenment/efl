@@ -1,3 +1,4 @@
+#include "Eo.h"
 #include "Eina.h"
 
 #include <stdlib.h>
@@ -43,6 +44,33 @@ EAPI const char *efl_mono_native_strdup(const char *str)
 {
     if (!str) return NULL;
     return strdup(str);
+}
+
+EAPI void eina_array_free_generic_custom_export_mono(Eina_Array *array) EINA_ARG_NONNULL(1)
+{
+   unsigned int i;
+   void *ele;
+   Eina_Array_Iterator it;
+   EINA_ARRAY_ITER_NEXT(array, i, ele, it)
+     free(ele);
+
+   eina_array_clean(array);
+}
+
+EAPI void eina_array_free_string_custom_export_mono(Eina_Array *array) EINA_ARG_NONNULL(1)
+{
+   eina_array_free_generic_custom_export_mono(array);
+}
+
+EAPI void eina_array_free_obj_custom_export_mono(Eina_Array *array) EINA_ARG_NONNULL(1)
+{
+   unsigned int i;
+   Eo *ele;
+   Eina_Array_Iterator it;
+   EINA_ARRAY_ITER_NEXT(array, i, ele, it)
+     efl_unref(ele);
+
+   eina_array_clean(array);
 }
 
 EAPI void eina_array_clean_custom_export_mono(Eina_Array *array) EINA_ARG_NONNULL(1)

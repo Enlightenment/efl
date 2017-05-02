@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-using static eina.ElementConvert;
+using static eina.ElementFunctions;
 using static eina.ArrayNativeFunctions;
 
 namespace eina {
@@ -40,6 +40,12 @@ public static class ArrayNativeFunctions
         eina_array_push(IntPtr array, IntPtr data);
 
     [DllImport("eflcustomexportsmono")] public static extern void
+        eina_array_free_generic_custom_export_mono(IntPtr array);
+    [DllImport("eflcustomexportsmono")] public static extern void
+        eina_array_free_string_custom_export_mono(IntPtr array);
+    [DllImport("eflcustomexportsmono")] public static extern void
+        eina_array_free_obj_custom_export_mono(IntPtr array);
+    [DllImport("eflcustomexportsmono")] public static extern void
         eina_array_clean_custom_export_mono(IntPtr array);
     [DllImport("eflcustomexportsmono")] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_array_push_custom_export_mono(IntPtr array, IntPtr data);
@@ -60,6 +66,12 @@ public class Array<T> : IDisposable
 {
     public static uint DefaultStep = 32;
 
+    private eina.ElementType elementType;
+    public eina.ElementType GetElementType()
+    {
+        return elementType;
+    }
+
     public IntPtr Handle {get;set;} = IntPtr.Zero;
     public bool Own {get;set;}
     public bool OwnContent {get;set;}
@@ -69,13 +81,11 @@ public class Array<T> : IDisposable
         get { return Count(); }
     }
 
-//     public int Length
-//     {
-//         get { return (int) GetLength(); }
-//     }
 
     private void InitNew(uint step)
     {
+        elementType = GetElementTypeCode(typeof(T));
+
         Handle = eina_array_new(step);
         Own = true;
         OwnContent = true;
@@ -113,19 +123,12 @@ public class Array<T> : IDisposable
         InitNew(step);
     }
 
-//     public Array(Array arr)
-//     {
-//         if (arr == null)
-//         {
-//             InitNew(DefaultStep);
-//             return;
-//         }
-//
-//         InitNew(arr.Step);
-//         Append(arr);
-//
-//         throw new SEHException("Not implemented");
-//     }
+    public Array(IntPtr handle, bool own)
+    {
+        Handle = handle;
+        Own = own;
+        OwnContent = own;
+    }
 
     public Array(IntPtr handle, bool own, bool ownContent)
     {
@@ -143,9 +146,21 @@ public class Array<T> : IDisposable
     {
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
-        if (Own && h != IntPtr.Zero) {
-            eina_array_free(Handle);
+        if (h == IntPtr.Zero)
+            return;
+
+        if (OwnContent)
+        {
+            if (elementType == ElementType.ObjectType)
+                eina_array_free_obj_custom_export_mono(h);
+            else if (elementType == ElementType.StringType)
+                eina_array_free_string_custom_export_mono(h);
+            else
+                eina_array_free_generic_custom_export_mono(h);
         }
+
+        if (Own)
+            eina_array_free(h);
     }
 
     public void Dispose()
@@ -202,7 +217,7 @@ public static class EinaArraySpecialMethods
 {
     public static bool Push<T>(this eina.Array<T> arr, T val)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
+        IntPtr ele = ManagedToNativeAlloc(val, arr.GetElementType());
         return arr.InternalPush(ele); // TODO: free if false ?
     }
 
@@ -215,39 +230,51 @@ public static class EinaArraySpecialMethods
     public static T Pop<T>(this eina.Array<T> arr)
     {
         IntPtr ele = arr.InternalPop();
-        var r = NativeToManaged(ele, new eina.TypeTag<T>());
+        var r = NativeToManaged<T>(ele, arr.GetElementType());
         if (arr.OwnContent && ele != IntPtr.Zero)
-            NativeFree<T>(ele);
+            NativeFree(ele, arr.GetElementType());
         return r;
     }
 
     public static string Pop(this eina.Array<string> arr)
     {
         IntPtr ele = arr.InternalPop();
-        var r = NativeToManaged(ele, new eina.TypeTag<string>());
+        var r = NativeToManagedString(ele);
         if (arr.OwnContent && ele != IntPtr.Zero)
-            NativeFree<string>(ele);
+            NativeFreeString(ele);
         return r;
     }
 
     public static T DataGet<T>(this eina.Array<T> arr, int idx)
     {
         IntPtr ele = arr.InternalDataGet(idx);
-        return NativeToManaged(ele, new eina.TypeTag<T>());
+        return NativeToManaged<T>(ele, arr.GetElementType());
     }
 
     public static string DataGet(this eina.Array<string> arr, int idx)
     {
         IntPtr ele = arr.InternalDataGet(idx);
-        return NativeToManaged(ele, new eina.TypeTag<string>());
+        return NativeToManagedString(ele);
+    }
+
+    public static T At<T>(this eina.Array<T> arr, int idx)
+    {
+        IntPtr ele = arr.InternalDataGet(idx);
+        return NativeToManaged<T>(ele, arr.GetElementType());
+    }
+
+    public static string At(this eina.Array<string> arr, int idx)
+    {
+        IntPtr ele = arr.InternalDataGet(idx);
+        return NativeToManagedString(ele);
     }
 
     public static void DataSet<T>(this eina.Array<T> arr, int idx, T val)
     {
-        IntPtr ele = arr.InternalDataGet(idx);
+        IntPtr ele = arr.InternalDataGet(idx); // TODO: check bondaries ??
         if (arr.OwnContent && ele != IntPtr.Zero)
-            NativeFree<T>(ele);
-        ele = ManagedToNativeAlloc(val);
+            NativeFree(ele, arr.GetElementType());
+        ele = ManagedToNativeAlloc(val, arr.GetElementType());
         arr.InternalDataSet(idx, ele);
     }
 
@@ -255,8 +282,30 @@ public static class EinaArraySpecialMethods
     {
         IntPtr ele = arr.InternalDataGet(idx);
         if (arr.OwnContent && ele != IntPtr.Zero)
-            NativeFree<string>(ele);
+            NativeFreeString(ele);
         ele = ManagedToNativeAlloc(val);
         arr.InternalDataSet(idx, ele);
+    }
+
+    public static T[] ToArray<T>(this eina.Array<T> arr)
+    {
+        int len = arr.Length;
+        var managed = new T[len];
+        for(int i = 0; i < len; ++i)
+        {
+            managed[i] = NativeToManaged<T>(arr.InternalDataGet(i), arr.GetElementType());
+        }
+        return managed;
+    }
+
+    public static string[] ToArray(this eina.Array<string> arr)
+    {
+        int len = arr.Length;
+        var managed = new string[len];
+        for(int i = 0; i < len; ++i)
+        {
+            managed[i] = NativeToManagedString(arr.InternalDataGet(i));
+        }
+        return managed;
     }
 }
