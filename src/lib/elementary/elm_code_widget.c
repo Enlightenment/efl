@@ -402,6 +402,9 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, uns
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    _elm_code_widget_resize(widget, newline);
 
+   if (newline)
+     _elm_code_widget_fill_line(widget, newline);
+
    // if called from new line cb, no need to update whole range unless visible
    if (newline && !elm_obj_code_widget_line_visible_get(widget, newline))
      return;
