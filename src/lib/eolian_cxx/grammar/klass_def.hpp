@@ -332,7 +332,7 @@ struct parameter_def
   parameter_direction direction;
   type_def type;
   std::string param_name;
-  std::string c_type;
+  std::string c_type; // TODO: Remove this. Use 'c_type' inside 'type' instead.
 
   parameter_def(parameter_direction direction, type_def type, std::string param_name, std::string c_type)
     : direction(direction), type(type), param_name(param_name), c_type(c_type) {}

@@ -250,6 +250,7 @@ struct visitor_generate
    bool operator()(attributes::complex_type_def const& complex) const
    {
       using attributes::regular_type_def;
+      using attributes::complex_type_def;
       using attributes::qualifier_info;
        struct match
       {
@@ -273,19 +274,11 @@ struct visitor_generate
            // generate_container(sink, complex, *context, " ::efl::eina::range_list");
            // return attributes::type_def::variant_type();
          }}
-        , {"array", true, nullptr, [&]
+        , {"array", nullptr, nullptr, [&]
            {
-           (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
-           return attributes::type_def::variant_type();
-           // generate_container(sink, complex, *context, " ::efl::eina::array");
-           // return attributes::type_def::variant_type();
-         }}
-        , {"array", false, nullptr, [&]
-           {
-           (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
-           return attributes::type_def::variant_type();
-           // generate_container(sink, complex, *context, " ::efl::eina::range_array");
-           // return attributes::type_def::variant_type();
+           complex_type_def c = complex;
+           c.outer.base_type = "eina.Array";
+           return c;
          }}
         , {"hash", nullptr, nullptr
            , [&]

@@ -791,7 +791,7 @@ class TestEinaArray
     }
 
     // //
-    // Generation
+    // Code Generation
     //
 /*
     public static void test_eina_array_int_in()
