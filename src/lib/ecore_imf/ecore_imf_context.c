@@ -1407,3 +1407,17 @@ ecore_imf_context_keyboard_mode_get(Ecore_IMF_Context *ctx)
 
    return mode;
 }
+
+EAPI void
+ecore_imf_context_prediction_hint_set(Ecore_IMF_Context *ctx, const char *prediction_hint)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_prediction_hint_set");
+        return;
+     }
+
+   if (ctx->klass->prediction_hint_set)
+     ctx->klass->prediction_hint_set(ctx, prediction_hint);
+}

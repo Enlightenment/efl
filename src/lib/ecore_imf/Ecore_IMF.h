@@ -712,6 +712,7 @@ struct _Ecore_IMF_Context_Class
    void (*input_hint_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints input_hints); /**< Sets input hint to fine-tune input methods behavior */
    void (*bidi_direction_set) (Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction); /**< Set bidirectionality at the cursor position */
    Ecore_IMF_Input_Panel_Keyboard_Mode (*keyboard_mode_get) (Ecore_IMF_Context *ctx); /**< Return the current keyboard mode of the input panel */
+   void (*prediction_hint_set) (Ecore_IMF_Context *ctx, const char *prediction_hint); /**< Set the prediction hint to the input panel */
 };
 
 /**
@@ -1883,6 +1884,22 @@ EAPI Ecore_IMF_BiDi_Direction      ecore_imf_context_bidi_direction_get(Ecore_IM
  * @return the keyboard mode
  */
 EAPI Ecore_IMF_Input_Panel_Keyboard_Mode ecore_imf_context_keyboard_mode_get(Ecore_IMF_Context *ctx);
+
+/**
+ * @ingroup Ecore_IMF_Context_Group
+ * @brief Set the prediction hint string to deliver to the input panel.
+ *
+ * This API can be used when you want to set prediction hint to use intelligent reply suggestion service.
+ * The intelligent reply suggestion service generates reply candidates for given prediction hint.
+ * Example
+ * prediction hint: How are you? -> result: I'm fine, Not bad, I'm all right.
+ *
+ * @since 1.20.0
+ *
+ * @param[in] ctx An #Ecore_IMF_Context
+ * @param[in] prediction_hint The prediction hint string.
+ */
+EAPI void                          ecore_imf_context_prediction_hint_set(Ecore_IMF_Context *ctx, const char *prediction_hint);
 
 /* The following entry points must be exported by each input method module
  */
