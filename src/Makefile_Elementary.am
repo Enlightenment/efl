@@ -1343,6 +1343,7 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_code_test_widget_selection.c \
 	tests/elementary/elm_code_test_widget_undo.c \
 	tests/elementary/elm_test_focus_common.c \
+	tests/elementary/elm_test_focus_common.h \
 	tests/elementary/elm_test_focus.c \
 	tests/elementary/elm_test_focus_sub.c
 
