@@ -209,6 +209,9 @@ START_TEST(eolian_function_pointers)
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_types_ref.h", output_filepath, "h"));
 
    // .eo.h
+   _remove_ref(output_filepath, "h");
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_as_argument.eo", "-gh", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_as_argument_ref.h", output_filepath, "h"));
 
    // .eo.c
    _remove_ref(output_filepath, "c");
