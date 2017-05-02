@@ -393,6 +393,9 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
    Elm_Code_Line *line;
    unsigned int y;
 
+   if (newline)
+     _elm_code_widget_fill_line(widget, newline);
+
    // if called from new line cb, no need to update whole range unless visible
    if (newline && !elm_obj_code_widget_line_visible_get(widget, newline))
      return;
