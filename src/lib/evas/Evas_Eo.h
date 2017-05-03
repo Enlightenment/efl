@@ -87,33 +87,23 @@
  * @section evas_canvas3d_intro Introduction
  *
  * Evas 3D is an extension to support 3D scene graph rendering into 2D Evas
- * canvases, supporting typical tree-based scene graph manipulation and other 3D
- * graphics rendering techniques.
+ * canvases, with tree-based scene graph manipulation and other typical 3D
+ * rendering techniques.
  *
- * Evas 3D provides 3D objects that are used for describing 3D scene and APIs
- * to connect the scene with an evas image object so that the scene is rendered
- * on that image object.
+ * 3D objects are used to describe three dimensional scenes and to provide
+ * interfaces to connect the scene to an Evas image object for rendering.
  *
- * Construction of a 3D scene is a process of locating desired cameras, lights and
- * meshes in the scene. Typically the scene is structured with some hierarchical
- * data structure. Evas 3D supports n-ary tree structures for describing the
- * scene. Node is used to build the tree representation of the scene. Other
- * objects, like camera, light and mesh can be located in the scene by being
- * contained in a node.
+ * Scenes are constructed by locating cameras and lights and selecting desired
+ * meshes, and organizing Node objects into hierarchical n-ary tree data structures.
+ * The scene is stacked on the canvas with existing Evas objects, which permits
+ * intermingling 3D rendered content in existing 2D application layouts.
  *
- * Like other 3D graphics engines, Evas 3D supports standard 3D rendering methods
- * like flat shading, phong shading and normal map and other features like
- * texture mapping and triangle meshes.
- *
- * Besides all the traditional 3D rendering things, one of the key features of
- * the Evas 3D is that it is able to use existing evas objects as textures
- * inside of the 3D scene. "Existing evas objects" means all the EFL widgets
- * and applications. By supporting this, it is easy to make a 3D version of an
- * application without modifying the original source that much.
- *
- * Also, 3D scene can be located on the canvas naturally stacked with existing
- * evas objects. This can make it possible to put 3D things into existing 2D
- * application layouts.
+ * Rendering techniques supported by Evas 3D include flat and phong
+ * shading, normal and texture mapping, and triangle meshes.  Existing
+ * Evas objects may also be used as textures inside the 3D scene,
+ * including EFL widgets and even application windows.  This latter
+ * capability makes it possible to create a 3D version of an arbitrary
+ * EFL application with minimal code changes.
  *
  * @section evas_canvas3d_example Introductory Example
  *
@@ -131,118 +121,131 @@
  * @defgroup Evas_Canvas3D_Object Generic 3D Object Descriptions
  * @ingroup Evas_3D
  *
- * Evas 3D object is a generic type of all evas 3D objects like scenes, nodes,
- * cameras, lights, meshes, textures and materials. Evas 3D object is basically
- * reference counted. Any successful function call on an object that makes a
- * reference to another object will increase the reference count. When the
- * reference count gets to 0, the object will be actually deleted.
- *
- * Any modifications are automatically propagated to other objects referencing
- * the modified objects. As a result, if the scene object is set to a modified
- * state, all image objects having the scene as a rendering source are marked
- * as dirty, so that rendering will be updated at next frame. But all these
- * things are done internally, so feel free to forget about calling some kind
- * of update functions.
+ * The Evas_Canvas3D_Object structure is an abstract base for other Evas
+ * 3D objects (scenes, nodes, lights, meshes, textures, and materials)
+ * with reference counting and propagation of modifications via
+ * reference tracking.  This permits, for example, when a scene object
+ * is modified (marked dirty), a number of image objects rendering that
+ * object to be notified to update themselves, without needing to call
+ * update functions manually.
  */
 
 /**
  * @defgroup Evas_Canvas3D_Scene Scene Object
  * @ingroup Evas_3D
  *
- * A scene represents a captured image of a scene graph through its viewing
- * camera. A scene can be set to an image object to be displayed on the Evas
- * canvas by using evas_object_image_scene_set() function.
+ * The Evas_Canvas3D_Scene structure represents a captured image of a
+ * scene graph through its viewing camera. A scene can be associated
+ * with an image object for canvas display via the
+ * evas_object_image_scene_set() function.
  */
 
 /**
  * @defgroup Evas_Canvas3D_Node Node Object
  * @ingroup Evas_3D
  *
- * A node is used for hierarchical construction of a scene graph. Evas 3D
- * provides n-ary tree structures for the scene graph construction. A node has
- * its position, orientation and scale. Other objects, like cameras, lights and
- * meshes can be contained in a node to be located in a 3D space.
+ * The Evas_Canvas3D_Node structure defines the position, orientation,
+ * and scale of canvas objects (cameras, lights, meshes, etc.) in a 3D
+ * space.  These nodes can be organized into a hierarchical n-ary tree
+ * structure to construct a scene graph.
  */
 
 /**
  * @defgroup Evas_Canvas3D_Camera Camera Object
  * @ingroup Evas_3D
  *
- * A camera object is used for taking a picture of a scene graph. A camera
- * object itself is just a set of properties on how the camera should take the
- * picture (like focus length and film size of the real world cameras). To be
- * able to take a shot of the scene, a camera should be located in the scene, so
- * that it has its viewing position and direction. It is done by containing the
- * camera on a node. If one wants to locate several cameras having same
- * properties, instead of creating multiple cameras, just create one camera and
- * multiple nodes containing the camera and locate them at each desired position
- * and direction. Just for convenience, use evas_canvas3d_node_position_set() to move
- * the camera to desired position and use evas_canvas3d_node_look_at_set() to adjust
- * the viewing direction of the camera.
+ * The Evas_Canvas3D_Camera structure defines properties used to
+ * generate 2D pictures of a given scene graph, similar in concept to
+ * focus length and film size for a real world camera.
+ *
+ * A given camera definition can be used to take multiple pictures of
+ * the scene by establishing multiple nodes for the
+ * Evas_Canvas3D_Camera, each of which are located at different
+ * positions and with different orientations.  Convenience routines
+ * evas_canvas3d_node_position_set() and
+ * evas_canvas3d_node_look_at_set() are provided to adjust the position
+ * and viewing direction for these nodes.
  */
 
 /**
  * @defgroup Evas_Canvas3D_Light Light Object
  * @ingroup Evas_3D
  *
- * A light object represents a set of properties of a light source. Evas 3D
- * provides standard reflection model that of ambient, diffuse and specular
- * reflection model. Also, Evas 3D support 3 types of light models: directional,
- * point and spot light. Light position and direction is determined by the node
- * containing the light.
+ * The Evas_Canvas3D_Light structure defines various light source
+ * properties.  Reflection models include: Ambient, diffuse, and
+ * specular.  Light models include directional, point, and spot.  The
+ * position and direction for the light is tracked by the node that
+ * contains the light.
  */
 
 /**
  * @defgroup Evas_Canvas3D_Mesh Mesh Object
  * @ingroup Evas_3D
  *
- * A mesh object is a set of information on a visible geometrical object like
- * character models, terrains or other structures and entities. Evas 3D supports
- * key-frame-based mesh animation, so a mesh can have multiple frames and each
- * frame has its own material and geometric data. Like other data objects, a
- * mesh can be located on a scene by being contained in a node. The mesh is
- * transformed from its modeling coordinate space into the node's coordinate
- * space. Also, the frame number is saved in the containing node. So, one can
- * locate multiple nodes having same mesh object with different animation frames
- * and transforms. Unlike camera and light objects, multiple meshes can be
- * contained in a single node.
+ * The Evas_Canvas3D_Mesh structure manages key-frame based mesh
+ * animations for geometrical objects like character models, terrain,
+ * buildings, and other such visible objects.  Each mesh frame can have
+ * its own material and geometric data.  Blending functions, fog
+ * effects, level of detail boundaries, and shadow properties are also
+ * supported.
+ *
+ * Like other data objects, a mesh definition is located and oriented in
+ * the canvas with one or more nodes, with the mesh transformed from its
+ * modeling coordinate space to the node's coordinate space.  The frame
+ * number is also tracked by the node, permitting creation of multiple
+ * nodes in the canvas each set to a different animation frame, for
+ * example.
+ *
+ * Unlike camera and light objects, multiple meshes can be contained in
+ * a single node.
  */
 
 /**
  * @defgroup Evas_Canvas3D_Primitive Primitive Object
  * @ingroup Evas_3D
  *
- * A primitive object is an object with necessary data for creating
- * meshes with primitive shapes.  Data from a primitive can be set to
- * Evas_Canvas3D_Mesh by using evas_canvas3d_mesh_from_primitive_set()
- * function.
+ * The Evas_Canvas3D_Primitive structure defines the data for
+ * generating meshes for various types of primitive shapes such as
+ * cubes, cylinders, spheres, surfaces, terrain, etc.  Use the
+ * evas_canvas3d_mesh_from_primitive_set() function to generate a
+ * mesh's frame of this primitive.
  */
 
 /**
  * @defgroup Evas_Canvas3D_Texture Texture Object
  * @ingroup Evas_3D
  *
- * A texture object is an image represents material of surfaces. A texture can
- * be set to a slot of Evas_Canvas3D_Material by using evas_canvas3d_material_texture_set()
- * function. The data of a texture can be loaded from memory, file and other
- * Evas_Object.
+ * The Evas_Canvas3D_Texture structure associates a 2D bitmap image to a
+ * material for a surface.  Image data for the texture can be loaded
+ * from memory, a file, or an Evas_Object.  Use the
+ * evas_canvas3d_material_texture_set() function to add the texture to
+ * an Evas_Canvas3DMaterial's slot.
  */
 
 /**
  * @defgroup Evas_Canvas3D_Material Material Object
  * @ingroup Evas_3D
  *
- * A material object represents properties of surfaces. Evas 3D defines the
- * properties with 5 material attributes, ambient, diffuse, specular emission
- * and normal. Each attribute has its own color value and texture map. Materials
- * are used to determine the color of mesh surfaces.
+ * The Evas_Canvas3D_Material structure defines a set of material
+ * attributes used for determining the color of mesh surfaces.  Each
+ * attribute is defined by a color value and texture map.  The five
+ * attributes are: ambient, diffuse, specular, emission, and normal.
  */
 
 /**
  * @typedef Evas_Canvas3D_Surface_Func
  *
- * User-defined parametric surface function.
- * Used for easy creation of custom surfaces as a primitive.
+ * The Evas_Canvas3D_Surface_Func type of functions are used to
+ * create parametric surfaces as primitives.  These compute the
+ * vertex x,y,z values for given v,u values.
+ *
+ * @param out_x The x component of the calculated value.
+ * @param out_y The y component of the calculated value.
+ * @param out_z The z component of the calculated value.
+ * @param a is the v value.
+ * @param b is the u value.
+
+ * @see Evas_Canvas3D_Primitive
  *
  * @since 1.15
  * @ingroup Evas_Canvas3D_Primitive
