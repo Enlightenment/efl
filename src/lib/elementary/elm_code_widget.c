@@ -1323,10 +1323,7 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
    const char *curtext, *indent_text;
 
    if (undo)
-     {
-        _elm_code_widget_change_selection_add(widget);
-        elm_code_widget_selection_delete(widget);
-     }
+     elm_code_widget_selection_delete(widget);
 
    code = elm_obj_code_widget_code_get(widget);
    elm_obj_code_widget_cursor_position_get(widget, &row, &col);
@@ -1372,14 +1369,14 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
      }
 }
 
-void
-_elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text, int length)
+EOLIAN void
+_elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd EINA_UNUSED, const char *text)
 {
-   _elm_code_widget_text_at_cursor_insert_do(widget, text, length, EINA_TRUE);
+   _elm_code_widget_text_at_cursor_insert_do(widget, text, strlen(text), EINA_TRUE);
 }
 
 void
-_elm_code_widget_text_at_cursor_insert_no_undo(Elm_Code_Widget *widget, const char *text, int length)
+_elm_code_widget_text_at_cursor_insert_no_undo(Elm_Code_Widget *widget, const char *text, unsigned int length)
 {
    _elm_code_widget_text_at_cursor_insert_do(widget, text, length, EINA_FALSE);
 }
@@ -1393,7 +1390,7 @@ _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    if (!pd->tab_inserts_spaces)
      {
-        _elm_code_widget_text_at_cursor_insert(widget, "\t", 1);
+        _elm_code_widget_text_at_cursor_insert(widget, pd, "\t");
         return;
      }
 
@@ -1402,7 +1399,7 @@ _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
 
    while (rem < pd->tabstop)
      {
-        _elm_code_widget_text_at_cursor_insert(widget, " ", 1);
+        _elm_code_widget_text_at_cursor_insert(widget, pd, " ");
         rem++;
      }
 }
@@ -1417,10 +1414,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    char *oldtext, *leading, *text;
 
    if (!elm_code_widget_selection_is_empty(widget))
-     {
-        _elm_code_widget_change_selection_add(widget);
-        elm_code_widget_selection_delete(widget);
-     }
+     elm_code_widget_selection_delete(widget);
 
    code = elm_obj_code_widget_code_get(widget);
    elm_obj_code_widget_cursor_position_get(widget, &row, &col);
@@ -1509,7 +1503,6 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
 
    if (!elm_code_widget_selection_is_empty(widget))
      {
-        _elm_code_widget_change_selection_add(widget);
         elm_code_widget_selection_delete(widget);
         return;
      }
@@ -1556,7 +1549,6 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
 
    if (!elm_code_widget_selection_is_empty(widget))
      {
-        _elm_code_widget_change_selection_add(widget);
         elm_code_widget_selection_delete(widget);
         return;
      }
@@ -1724,7 +1716,7 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      elm_code_widget_selection_clear(widget);
 
    else if (ev->string && strlen(ev->string) == 1)
-     _elm_code_widget_text_at_cursor_insert(widget, ev->string, 1);
+     _elm_code_widget_text_at_cursor_insert(widget, pd, ev->string);
    else
      INF("Unhandled key %s (%s) (%s)", ev->key, ev->keyname, ev->string);
 }
