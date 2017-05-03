@@ -126,6 +126,7 @@ ecore_drm2_plane_release(Ecore_Drm2_Plane *plane)
    EINA_SAFETY_ON_NULL_RETURN(plane);
 
    plane->state->in_use = EINA_FALSE;
+   plane->state->release = EINA_TRUE;
 }
 
 EAPI void
