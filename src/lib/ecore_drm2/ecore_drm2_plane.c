@@ -64,7 +64,7 @@ ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
              _plane_cursor_size_get(output->fd, &cw, &ch);
 
              /* check that this fb can fit in cursor plane */
-             if ((fb->w > cw) || (fb->h > ch))
+             if ((fb->w != cw) || (fb->h != ch))
                continue;
 
              /* if we reach here, this FB can go on the cursor plane */
