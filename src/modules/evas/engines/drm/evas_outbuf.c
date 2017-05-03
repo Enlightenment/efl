@@ -20,7 +20,7 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    ecore_drm2_fb_dirty(ofb->fb, rects, count);
 
    if (!ob->priv.plane)
-     ob->priv.plane = ecore_drm2_plane_assign(ob->priv.output, ofb->fb);
+     ob->priv.plane = ecore_drm2_plane_assign(ob->priv.output, ofb->fb, 0, 0);
    else ecore_drm2_plane_fb_set(ob->priv.plane, ofb->fb);
 
    ecore_drm2_fb_flip(ofb->fb, ob->priv.output);

@@ -39,7 +39,7 @@ _plane_cursor_size_get(int fd, int *width, int *height)
 }
 
 EAPI Ecore_Drm2_Plane *
-ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb)
+ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb, int x, int y)
 {
    Eina_List *l;
    Ecore_Drm2_Plane *plane;
@@ -101,6 +101,11 @@ out:
    pstate->sy.value = 0;
    pstate->sw.value = fb->w << 16;
    pstate->sh.value = fb->h << 16;
+
+   pstate->cx.value = x;
+   pstate->cy.value = y;
+   pstate->cw.value = fb->w;
+   pstate->ch.value = fb->h;
 
    plane->state = pstate;
    plane->type = pstate->type.value;
