@@ -12,7 +12,7 @@
 
 /**
  * @def EVAS_VERSION_MINOR
- * The minor number of eet version
+ * The minor number of evas version
  */
 #define EVAS_VERSION_MINOR EFL_VERSION_MINOR
 
@@ -121,7 +121,7 @@ typedef struct _Evas_Smart_Class Evas_Smart_Class;
  *
  * A smart object's @b base interface definition
  *
- * An Evas interface is exactly like the OO-concept: an 'contract' or
+ * An Evas interface is exactly like the OO-concept: a 'contract' or
  * API a given object is declared to support. A smart object may have
  * more than one interface, thus extending the behavior it gets from
  * sub-classing.
@@ -785,7 +785,7 @@ EAPI Evas_Alloc_Error  evas_alloc_error(void);
  * @return The canvas' asynchronous events read file descriptor.
  *
  * Evas' asynchronous events are meant to be dealt with internally,
- * i. e., when building stuff to be glued together into the EFL
+ * i.e., when building stuff to be glued together into the EFL
  * infrastructure -- a module, for example. The context that demands
  * its use is when calculations need to be done out of the main
  * thread, asynchronously, and some action must be performed after
@@ -1093,7 +1093,7 @@ EAPI void              evas_render_updates_free(Eina_List *updates);
  * processed.
  *
  * @warning Most of the time these functions are @b not what you're looking for.
- * These functions should only be used if you're not working with ecore evas(or
+ * These functions should only be used if you're not working with ecore evas (or
  * another input handling system). If you're not using ecore evas please
  * consider using it, in most situation it will make life a lot easier.
  *
@@ -1474,7 +1474,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  * manipulate it. That's because there are a number of basic actions to be done
  * to objects that are irrespective of the object's type, things like:
  * @li Showing/Hiding
- * @li Setting(and getting) geometry
+ * @li Setting (and getting) geometry
  * @li Bring up or down a layer
  * @li Color management
  * @li Handling focus
@@ -1483,7 +1483,7 @@ EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev)
  *
  * All of these issues are handled through the functions grouped here. Examples
  * of these function can be seen in @ref Example_Evas_Object_Manipulation(which
- * deals with the most common ones) and in @ref Example_Evas_Stacking(which
+ * deals with the most common ones) and in @ref Example_Evas_Stacking (which
  * deals with stacking functions).
  *
  * @ingroup Evas_Object_Group
@@ -2530,6 +2530,7 @@ EAPI void                             *evas_smart_data_get(const Evas_Smart *s) 
  * @param s A valid #Evas_Smart handle.
  * @param[out] count Returns the number of elements in the returned
  * array.
+ *
  * @return The array with callback descriptions known by this smart
  *         class, with its size returned in @a count parameter. It
  *         should not be modified in any way. If no callbacks are
@@ -2610,7 +2611,7 @@ EAPI Eina_Bool                         evas_smart_class_inherit_full(Evas_Smart_
  * instance @p s and remove from memory any of the Evas_Smart_Class that
  * was used to create the smart instance, if you desire. Removing it from
  * memory without doing this will cause problems (crashes, undefined
- * behavior etc. etc.), so either never remove the original
+ * behavior, etc.), so either never remove the original
  * Evas_Smart_Class data from memory (have it be a constant structure and
  * data), or use this API call and be very careful.
  */
@@ -3409,8 +3410,10 @@ EAPI int  evas_string_char_prev_get(const char *str, int pos, int *decoded) EINA
 
 /**
  * Get the length in characters of the string.
+ *
  * @param  str The string to get the length of.
  * @return The length in characters (not bytes)
+ *
  * @ingroup Evas_Utils
  */
 EAPI int  evas_string_char_len_get(const char *str) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
@@ -3420,6 +3423,7 @@ EAPI int  evas_string_char_len_get(const char *str) EINA_WARN_UNUSED_RESULT EINA
  *
  * The locale can change while a process is running. This call tells evas to
  * reload the locale from the environment like it does on start.
+ *
  * @ingroup Evas_Utils
  * @since 1.18
  */
@@ -3617,7 +3621,7 @@ EAPI const Eina_List        *evas_font_path_global_list(void) EINA_WARN_UNUSED_R
 
 /**
  * Reinitialize FontConfig. If FontConfig has to be reinitialized
- * according to changes of system environments(ex. Changing font config files), it will be useful.
+ * according to changes of system environments (e.g. Changing font config files), it will be useful.
  *
  * @ingroup Evas_Font_Path_Group
  * @since 1.14
