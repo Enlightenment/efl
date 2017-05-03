@@ -12,7 +12,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Efl.File)
 
            This function make evas read from the given buffer whenever it
            requires. If you want to release the buffer after calling this
-           functions, use @.frame_vertex_data_copy_set instead.
+           function, use @.frame_vertex_data_copy_set instead.
 
            After setting the vertex data, further modifications should be
            protected by map/unmap pair.
