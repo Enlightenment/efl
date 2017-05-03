@@ -185,10 +185,6 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
              updates = evas_render_updates(ee->evas);
              rend |= !!updates;
              evas_render_updates_free(updates);
-
-             // When there is no update, there is no RENDER_POST event
-             // Should we fix that here or in evas_render ?
-             if (!updates) _evas_evas_buffer_rendered(ee, NULL, NULL);
           }
      }
 
