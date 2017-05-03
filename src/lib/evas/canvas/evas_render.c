@@ -3765,7 +3765,6 @@ _evas_canvas_render_updates(Eo *eo_e, Evas_Public_Data *e)
 {
    Eina_List *ret, *updates = NULL;
    Render_Updates *ru;
-   if (!e->changed) return NULL;
    eina_evlog("+render_block", eo_e, 0.0, NULL);
    evas_canvas_async_block(e);
    eina_evlog("-render_block", eo_e, 0.0, NULL);
