@@ -26,7 +26,7 @@ START_TEST (elm_code_test_widget_undo_text_insert)
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
-   _elm_code_widget_text_at_cursor_insert(widget, "a", 1);
+   elm_code_widget_text_at_cursor_insert(widget, "a");
    line = elm_code_file_line_get(file, 1);
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("atest", content, length);
@@ -36,7 +36,7 @@ START_TEST (elm_code_test_widget_undo_text_insert)
    ck_assert_strn_eq("test", content, length);
 
    elm_code_widget_cursor_position_set(widget, 1, 3);
-   _elm_code_widget_text_at_cursor_insert(widget, "r", 1);
+   elm_code_widget_text_at_cursor_insert(widget, "r");
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("terst", content, length);
 
@@ -45,7 +45,7 @@ START_TEST (elm_code_test_widget_undo_text_insert)
    ck_assert_strn_eq("test", content, length);
 
    elm_code_widget_cursor_position_set(widget, 1, 4);
-   _elm_code_widget_text_at_cursor_insert(widget, "\t", 1);
+   elm_code_widget_text_at_cursor_insert(widget, "\t");
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("tes\tt", content, length);
 
@@ -76,8 +76,8 @@ START_TEST (elm_code_test_widget_undo_text_insert_multiple)
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
-   _elm_code_widget_text_at_cursor_insert(widget, "a", 1);
-   _elm_code_widget_text_at_cursor_insert(widget, "b", 1);
+   elm_code_widget_text_at_cursor_insert(widget, "a");
+   elm_code_widget_text_at_cursor_insert(widget, "b");
    line = elm_code_file_line_get(file, 1);
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("abtest", content, length);
@@ -173,7 +173,7 @@ START_TEST (elm_code_test_widget_undo_delete)
    ck_assert_strn_eq("test", content, length);
 
    elm_code_widget_cursor_position_set(widget, 1, 4);
-   _elm_code_widget_text_at_cursor_insert(widget, "\t", 1);
+   elm_code_widget_text_at_cursor_insert(widget, "\t");
    _elm_code_widget_backspace(widget);
    content = elm_code_line_text_get(line, &length);
    ck_assert_strn_eq("test", content, length);

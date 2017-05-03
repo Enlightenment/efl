@@ -25,6 +25,7 @@
 #define DBG(...) do { } while (0);
 
 #include "elm_code_parse.c"
+#include "elm_code_widget_selection.c"
 #include "elm_code_widget.c"
 
 static void _assert_cell_type(Evas_Textgrid_Cell cell, Elm_Code_Token_Type type, int id)
