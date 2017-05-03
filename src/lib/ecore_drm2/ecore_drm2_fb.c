@@ -232,8 +232,19 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
    output->pending.fb = NULL;
 
 #ifdef HAVE_ATOMIC_DRM
+   Eina_List *l, *ll;
+   Ecore_Drm2_Plane *plane;
+
    output->current.atomic_req = output->pending.atomic_req;
    output->pending.atomic_req = NULL;
+
+   EINA_LIST_FOREACH_SAFE(output->planes, l, ll, plane)
+     {
+        if (!plane->state->release) continue;
+        output->planes = eina_list_remove_list(output->planes, l);
+        free(plane);
+     }
+
 #endif
    return !!output->next.fb;
 }
@@ -272,6 +283,18 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
    EINA_LIST_FOREACH(output->planes, l, plane)
      {
         pstate = plane->state;
+
+        if (pstate->release)
+          {
+             pstate->cid.value = 0;
+             pstate->fid.value = 0;
+             pstate->sw.value = 0;
+             pstate->sh.value = 0;
+             pstate->cx.value = 0;
+             pstate->cy.value = 0;
+             pstate->cw.value = 0;
+             pstate->ch.value = 0;
+          }
 
         ret =
           sym_drmModeAtomicAddProperty(req, pstate->obj_id,
