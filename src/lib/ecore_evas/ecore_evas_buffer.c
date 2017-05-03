@@ -14,8 +14,6 @@
 #include "ecore_evas_buffer.h"
 #include "ecore_evas_private.h"
 
-static void _evas_evas_buffer_rendered(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED);
-
 static void
 _ecore_evas_buffer_free(Ecore_Evas *ee)
 {
@@ -140,27 +138,12 @@ _ecore_evas_buffer_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
      }
 }
 
-static int
-_ecore_evas_buffer_render(Ecore_Evas *ee)
+static Eina_Bool
+_ecore_evas_buffer_prepare(Ecore_Evas *ee)
 {
-   Eina_List *ll;
    Ecore_Evas_Engine_Buffer_Data *bdata;
-   Ecore_Evas *ee2;
-   int rend = 0;
 
    bdata = ee->engine.data;
-   if (bdata->in_render)
-     {
-        DBG("ee=%p is rendering, skip.", ee);
-        return 0;
-     }
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        if (ee2->engine.func->fn_render)
-           rend |= ee2->engine.func->fn_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
    if (bdata->image)
      {
         int w, h;
@@ -170,25 +153,8 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
            _ecore_evas_resize(ee, w, h);
         bdata->pixels = evas_object_image_data_get(bdata->image, 1);
      }
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-   if (bdata->pixels)
-     {
-        bdata->in_render = 1;
-        if (ee->can_async_render && !ee->manual_render)
-          {
-             rend |= !!evas_render_async(ee->evas);
-          }
-        else
-          {
-             Eina_List *updates;
 
-             updates = evas_render_updates(ee->evas);
-             rend |= !!updates;
-             evas_render_updates_free(updates);
-          }
-     }
-
-   return rend;
+   return EINA_TRUE;
 }
 
 static void
@@ -206,31 +172,13 @@ _ecore_evas_buffer_update_image(void *data, Evas *e EINA_UNUSED, void *event_inf
                                        r->x, r->y, r->w, r->h);
 }
 
-static void
-_evas_evas_buffer_rendered(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Ecore_Evas *ee = data;
-   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
-
-   _ecore_evas_idle_timeout_update(ee);
-
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-   bdata->in_render = 0;
-}
-
 EAPI int
 ecore_evas_buffer_render(Ecore_Evas *ee)
 {
-   Ecore_Evas_Engine_Buffer_Data *bdata;
-   Eina_Bool async;
    int r;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, 0);
 
-   bdata = ee->engine.data;
-   async = ee->can_async_render;
-   if (bdata->in_render) evas_sync(ee->evas);
-   r = _ecore_evas_buffer_render(ee);
-   ee->can_async_render = async;
+   r = ecore_evas_render(ee);
+   ecore_evas_render_wait(ee);
    return r;
 }
 
@@ -718,7 +666,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
 
-     _ecore_evas_buffer_render,
+     NULL,
      _ecore_evas_buffer_screen_geometry_get,
      NULL,  // screen_dpi_get
      _ecore_evas_buffer_msg_parent_send,
@@ -744,6 +692,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL, //fn_callback_device_mouse_in_set
      NULL, //fn_callback_device_mouse_out_set
      NULL, //fn_pointer_device_xy_get
+     _ecore_evas_buffer_prepare,
 };
 
 static void *
@@ -875,8 +824,6 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
 
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
-
    return ee;
 }
 
@@ -895,7 +842,8 @@ ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
    EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
 
    bdata = ee->engine.data;
-   _ecore_evas_buffer_render(ee);
+   ecore_evas_render(ee);
+   ecore_evas_render_wait(ee);
    return bdata->pixels;
 }
 
@@ -975,7 +923,6 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _ecore_evas_buffer_update_image, ee);
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
 
    bdata->image = o;
    evas_object_data_set(bdata->image, "Ecore_Evas", ee);
@@ -1069,9 +1016,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
         ecore_evas_free(ee);
         return NULL;
      }
-   _ecore_evas_register_animators(ee);
 
-   ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
-
+   _ecore_evas_subregister(ee_target, ee);
    return o;
 }
