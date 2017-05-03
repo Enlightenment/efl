@@ -4,7 +4,7 @@
  * Press "n" for use normal mapping shading. Pres "p" for use parallax occlusion mapping shading.
  *
  * @verbatim
- * gcc -o evas-3d-parallax-occlusion evas-3d-parallax-occlusion.c `pkg-config --libs --cflags evas ecore ecore-evas eo efl`-lm
+ * gcc -o evas-3d-parallax-occlusion evas-3d-parallax-occlusion.c `pkg-config --libs --cflags evas ecore ecore-evas eo efl` -lm
  * @endverbatim
  */
 

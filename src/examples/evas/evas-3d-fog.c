@@ -2,7 +2,7 @@
  * Example illustrating usage of fog effect.
  *
  * @verbatim
- * gcc -o evas-3d-fog evas-3d-fog.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`-lm
+ * gcc -o evas-3d-fog evas-3d-fog.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 

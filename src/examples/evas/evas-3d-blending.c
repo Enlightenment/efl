@@ -4,7 +4,7 @@
  * For more details see https://www.opengl.org/sdk/docs/man2/xhtml/glBlendFunc.xml
  *
  * @verbatim
- * gcc -o evas-3d-blending evas-3d-blending.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`-lm
+ * gcc -o evas-3d-blending evas-3d-blending.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 
