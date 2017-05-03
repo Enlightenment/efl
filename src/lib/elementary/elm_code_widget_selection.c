@@ -226,8 +226,8 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget *widget, Elm_Code_Widget
    free(selection);
 }
 
-EAPI void
-elm_code_widget_selection_delete(Evas_Object *widget)
+void
+_elm_code_widget_selection_delete_do(Evas_Object *widget, Eina_Bool undo)
 {
    Elm_Code_Widget_Data *pd;
    Elm_Code_Widget_Selection_Data *selection;
@@ -236,6 +236,8 @@ elm_code_widget_selection_delete(Evas_Object *widget)
 
    if (!pd->selection)
      return;
+   if (undo)
+     _elm_code_widget_change_selection_add(widget);
 
    selection = elm_code_widget_selection_normalized_get(widget);
    if (selection->start_line == selection->end_line)
@@ -249,6 +251,18 @@ elm_code_widget_selection_delete(Evas_Object *widget)
    free(selection);
 
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
+}
+
+EAPI void
+elm_code_widget_selection_delete(Evas_Object *widget)
+{
+   _elm_code_widget_selection_delete_do(widget, EINA_TRUE);
+}
+
+void
+_elm_code_widget_selection_delete_no_undo(Evas_Object *widget)
+{
+   _elm_code_widget_selection_delete_do(widget, EINA_FALSE);
 }
 
 EAPI void
@@ -364,7 +378,6 @@ elm_code_widget_selection_cut(Evas_Object *widget)
    elm_cnp_selection_loss_callback_set(widget, ELM_SEL_TYPE_CLIPBOARD, _selection_loss_cb, widget);
    free(text);
 
-   _elm_code_widget_change_selection_add(widget);
    elm_code_widget_selection_delete(widget);
 
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
@@ -480,7 +493,6 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
 EAPI void
 elm_code_widget_selection_paste(Evas_Object *widget)
 {
-   _elm_code_widget_change_selection_add(widget);
    elm_code_widget_selection_delete(widget);
 
    elm_cnp_selection_get(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, _selection_paste_cb, widget);

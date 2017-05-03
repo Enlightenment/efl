@@ -68,7 +68,7 @@ _elm_code_widget_undo_change(Evas_Object *widget,
      {
         elm_code_widget_selection_start(widget, info->start_line, info->start_col);
         elm_code_widget_selection_end(widget, info->end_line, info->end_col);
-        elm_code_widget_selection_delete(widget);
+        _elm_code_widget_selection_delete_no_undo(widget);
      }
    else
      {

@@ -237,6 +237,13 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
          }
          return: ptr(char); [[The text content between start and end positions]]
       }
+      text_at_cursor_insert {
+         [[Insert the provided text at the cursor position.
+           This will add the operation to the widget's undo list.]]
+         params {
+             text: string; [[The text to insert]]
+         }
+      }
 
       line_text_column_width_to_position {
       	 [[Get text column width at given position]]
