@@ -167,6 +167,8 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_callback_device_mouse_in_set) (Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
    void (*fn_callback_device_mouse_out_set) (Ecore_Evas *ee, Ecore_Evas_Mouse_IO_Cb func);
    void (*fn_pointer_device_xy_get)(const Ecore_Evas *ee, const Efl_Input_Device *pointer, Evas_Coord *x, Evas_Coord *y);
+
+   Eina_Bool (*fn_prepare)(Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Interface
@@ -473,6 +475,10 @@ EAPI Evas_Object *_ecore_evas_default_cursor_image_get(Ecore_Evas *ee);
 EAPI void _ecore_evas_default_cursor_hide(Ecore_Evas *ee);
 
 Eina_Bool _ecore_evas_cursors_init(Ecore_Evas *ee);
+
+EAPI void ecore_evas_render_wait(Ecore_Evas *ee);
+EAPI Eina_Bool ecore_evas_render(Ecore_Evas *ee);
+
 
 #undef EAPI
 #define EAPI

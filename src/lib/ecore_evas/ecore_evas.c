@@ -142,6 +142,75 @@ _ecore_evas_idle_exiter(void *data EINA_UNUSED)
    return ECORE_CALLBACK_RENEW;
 }
 
+EAPI void
+ecore_evas_render_wait(Ecore_Evas *ee)
+{
+   if (ee->in_async_render) evas_sync(ee->evas);
+}
+
+EAPI Eina_Bool
+ecore_evas_render(Ecore_Evas *ee)
+{
+   Eina_List *ll;
+   Ecore_Evas *ee2;
+   Eina_Bool rend = EINA_FALSE;
+
+   if (ee->in_async_render)
+     {
+        DBG("ee=%p is rendering, skip.", ee);
+        return EINA_TRUE;
+     }
+
+   if (ee->engine.func->fn_prepare)
+     if (!ee->engine.func->fn_prepare(ee))
+       return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
+     {
+        if (ee2->engine.func->fn_render)
+          rend |= ee2->engine.func->fn_render(ee2);
+        else
+          rend |= ecore_evas_render(ee2);
+     }
+   // We do not force the child to be sync, so we should wait for them to be done
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
+     ecore_evas_render_wait(ee2);
+
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+
+   ee->in_async_render = 1;
+
+   if (!ee->visible)
+     {
+        evas_norender(ee->evas);
+     }
+   else if (ee->can_async_render && !ee->manual_render)
+     {
+        rend |= !!evas_render_async(ee->evas);
+     }
+   else
+     {
+        Eina_List *updates;
+
+        updates = evas_render_updates(ee->evas);
+        rend |= !!updates;
+        evas_render_updates_free(updates);
+     }
+
+   return rend;
+}
+
+static void
+_evas_evas_buffer_rendered(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+
+   _ecore_evas_idle_timeout_update(ee);
+
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+   ee->in_async_render = 0;
+}
+
 static Eina_Bool
 _ecore_evas_idle_enter(void *data EINA_UNUSED)
 {
@@ -221,8 +290,12 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
              if (ee->engine.func->fn_render)
                {
                   change = ee->engine.func->fn_render(ee);
-                  rend |= change;
                }
+             else
+               {
+                  change = ecore_evas_render(ee);
+               }
+             rend |= change;
               /*
                * Some engines that generate their own ticks based on hardware
                * events need to know that render has been considered, and
@@ -2470,7 +2543,14 @@ ecore_evas_manual_render(Ecore_Evas *ee)
 {
    ECORE_EVAS_CHECK(ee);
    if (ee->engine.func->fn_render)
-     ee->engine.func->fn_render(ee);
+     {
+        ee->engine.func->fn_render(ee);
+     }
+   else
+     {
+        ecore_evas_render(ee);
+        ecore_evas_render_wait(ee);
+     }
 }
 
 EAPI void
@@ -3027,6 +3107,8 @@ _ecore_evas_register(Ecore_Evas *ee)
 
    if (_ecore_evas_render_sync) ee->first_frame = EINA_TRUE;
    if (!_general_tick) _ecore_evas_tick_source_find();
+   if (!ee->engine.func->fn_render)
+     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
 }
 
 EAPI void
