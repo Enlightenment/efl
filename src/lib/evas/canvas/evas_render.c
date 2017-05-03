@@ -3071,7 +3071,8 @@ evas_render_updates_internal(Evas *eo_e,
    MAGIC_CHECK_END();
 
    e = evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   if (!e->changed) return EINA_FALSE;
+   if (e->inside_post_render) return EINA_FALSE;
+   if (!e->changed) goto nothing2render;
 
    if (e->rendering)
      {
@@ -3087,7 +3088,6 @@ evas_render_updates_internal(Evas *eo_e,
              eina_evlog("-render_wait", eo_e, 0.0, NULL);
           }
      }
-
 #ifdef EVAS_RENDER_DEBUG_TIMING
    double start_time = _time_get();
 #endif
@@ -3526,12 +3526,14 @@ evas_render_updates_internal(Evas *eo_e,
 
    evas_module_clean();
 
+   // Send a RENDER_POST when we are rendering synchronously or when there is no update done asynchronously
    if (!do_async)
      {
         Evas_Event_Render_Post post;
         Eina_List *l;
         Render_Updates *ru;
 
+     nothing2render:
         post.updated_area = NULL;
         EINA_LIST_FOREACH(e->render.updates, l, ru)
           {
