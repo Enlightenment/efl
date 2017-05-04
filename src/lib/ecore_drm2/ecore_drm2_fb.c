@@ -240,7 +240,7 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 
    EINA_LIST_FOREACH_SAFE(output->planes, l, ll, plane)
      {
-        if (!plane->state->release) continue;
+        if (!plane->dead) continue;
         output->planes = eina_list_remove_list(output->planes, l);
         free(plane);
      }
@@ -283,7 +283,7 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
      {
         pstate = plane->state;
 
-        if (pstate->release)
+        if (!pstate->in_use)
           {
              pstate->cid.value = 0;
              pstate->fid.value = 0;
