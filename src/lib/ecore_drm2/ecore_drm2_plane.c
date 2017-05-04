@@ -132,6 +132,7 @@ ecore_drm2_plane_release(Ecore_Drm2_Plane *plane)
 
    plane->state->in_use = EINA_FALSE;
    plane->state->release = EINA_TRUE;
+   _fb_atomic_flip_test(plane->output);
 }
 
 EAPI void
