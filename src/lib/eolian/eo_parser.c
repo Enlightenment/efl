@@ -882,7 +882,10 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
                   int bline = ls->line_number, bcol = ls->column;
                   def->type = EOLIAN_TYPE_COMPLEX;
                   check_next(ls, '<');
-                  def->base_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
+                  if (tpid == KW_future)
+                    def->base_type = parse_type_void(ls, EINA_FALSE, EINA_FALSE);
+                  else
+                    def->base_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
                   pop_type(ls);
                   if (tpid == KW_hash)
                     {
@@ -892,7 +895,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
                     }
                   else if((tpid == KW_future) && test_next(ls, ','))
                     {
-                       def->base_type->next_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
+                       def->base_type->next_type = parse_type_void(ls, EINA_FALSE, EINA_FALSE);
                        pop_type(ls);
                     }
                   check_match(ls, '>', '<', bline, bcol);
