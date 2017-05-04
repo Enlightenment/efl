@@ -1460,7 +1460,7 @@ restart_back:
                     {
                        // Array callbacks are sorted, break if we are getting to high.
                        if (!legacy_compare &&
-                           ((const unsigned char *) desc - (const unsigned char *) it->desc) < 0)
+                           ((const unsigned char *) desc < (const unsigned char *) it->desc))
                          break;
                        if (!_cb_desc_match(it->desc, desc, legacy_compare))
                           continue;
