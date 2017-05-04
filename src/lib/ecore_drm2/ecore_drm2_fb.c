@@ -252,7 +252,6 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 Eina_Bool
 _fb_atomic_flip_test(Ecore_Drm2_Output *output)
 {
-   Eina_Bool res = EINA_FALSE;
 #ifdef HAVE_ATOMIC_DRM
    int ret = 0;
    Eina_List *l;
@@ -349,30 +348,21 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
 
    ret =
      sym_drmModeAtomicCommit(output->fd, req, flags, NULL);
-   if (ret < 0) ERR("Failed Atomic Commit Test: %m");
-   else res = EINA_TRUE;
+   if (ret < 0) goto err;
 
-   if (res)
-     {
-        if (output->prep.atomic_req)
-          {
-             /* clear any previous request */
-             sym_drmModeAtomicFree(output->prep.atomic_req);
+   /* clear any previous request */
+   if (output->prep.atomic_req)
+     sym_drmModeAtomicFree(output->prep.atomic_req);
 
-             /* just use the new request */
-             output->prep.atomic_req = req;
-          }
-        else
-          output->prep.atomic_req = req;
-     }
+   output->prep.atomic_req = req;
+   return EINA_TRUE;
 
-   return res;
-   
 err:
+   DBG("Failed Atomic Test: %m");
    sym_drmModeAtomicFree(req);
 #endif
 
-   return res;
+   return EINA_FALSE;
 }
 
 static int
