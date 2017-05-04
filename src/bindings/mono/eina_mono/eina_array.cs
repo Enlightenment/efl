@@ -196,6 +196,12 @@ public class Array<T> : IDisposable
         return (int) eina_array_count_custom_export_mono(Handle);
     }
 
+    public void SetAllOwn(bool own)
+    {
+        Own = own;
+        OwnContent = own;
+    }
+
 //     public void Add(int val)
 //     {
 //         Push(val);
@@ -307,5 +313,21 @@ public static class EinaArraySpecialMethods
             managed[i] = NativeToManagedString(arr.InternalDataGet(i));
         }
         return managed;
+    }
+
+    public static bool Append<T>(this eina.Array<T> arr, T[] values)
+    {
+        foreach(T v in values)
+            if (!arr.Push(v))
+                return false;
+        return true;
+    }
+
+    public static bool Append(this eina.Array<string> arr, string[] values)
+    {
+        foreach(string v in values)
+            if (!arr.Push(v))
+                return false;
+        return true;
     }
 }

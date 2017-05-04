@@ -212,6 +212,7 @@ class Test.Testing (Efl.Object) {
       }
 
       /* Eina Array */
+
       eina_array_int_in {
          params {
             @in arr: array<int>;
@@ -225,11 +226,17 @@ class Test.Testing (Efl.Object) {
          }
          return: bool;
       }
+      check_eina_array_int_in_own {
+         return: bool;
+      }
 
       eina_array_int_out {
          params {
             @out arr: array<int>;
          }
+         return: bool;
+      }
+      check_eina_array_int_out {
          return: bool;
       }
 
@@ -242,6 +249,9 @@ class Test.Testing (Efl.Object) {
 
       eina_array_int_return {
          return: array<int>;
+      }
+      check_eina_array_int_return {
+         return: bool;
       }
 
       eina_array_int_return_own {

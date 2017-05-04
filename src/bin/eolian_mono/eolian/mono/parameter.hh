@@ -199,7 +199,7 @@ struct convert_in_variable_generator
            if (param.type.has_own)
              {
                 return as_generator(
-                     escape_keyword(param.param_name) << ".Own = false;\n"
+                     escape_keyword(param.param_name) << ".SetAllOwn(false);\n"
                   ).generate(sink, attributes::unused, context);
              }
         }
@@ -455,7 +455,7 @@ struct native_convert_out_assign_generator
              return false;
            if (param.type.has_own)
              return as_generator(
-                 string << ".Own = false;\n"
+                 string << ".SetAllOwn(false);\n"
                ).generate(sink, out_variable_name(param.param_name), context);
         }
       return true;
@@ -520,7 +520,7 @@ struct native_convert_return_generator
        }
      else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *")
        {
-          if (ret_type.has_own && !as_generator("_ret_var.Own = false; ")
+          if (ret_type.has_own && !as_generator("_ret_var.SetAllOwn(false); ")
               .generate(sink, attributes::unused, context))
             return false;
 
