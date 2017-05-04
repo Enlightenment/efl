@@ -574,7 +574,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    _slave_added_opcode = _opcode_register("daemon/observer/slave_added", EINA_DEBUG_OPCODE_INVALID, NULL);
    _slave_deleted_opcode = _opcode_register("daemon/observer/slave_deleted", EINA_DEBUG_OPCODE_INVALID, NULL);
    _cid_from_pid_opcode = _opcode_register("daemon/info/cid_from_pid", EINA_DEBUG_OPCODE_INVALID, _cid_get_cb);
-   _test_loop_opcode = _opcode_register("daemon/test/loop", EINA_DEBUG_OPCODE_INVALID, _data_test_cb);
+   _test_loop_opcode = _opcode_register("Test/data_loop", EINA_DEBUG_OPCODE_INVALID, _data_test_cb);
 
    _server_launch();
    _monitor();

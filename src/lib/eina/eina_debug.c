@@ -45,6 +45,7 @@
 #include "eina_util.h"
 #include "eina_evlog.h"
 #include "eina_hash.h"
+#include "eina_stringshare.h"
 #include "eina_debug_private.h"
 
 #ifdef __CYGWIN__
@@ -83,11 +84,16 @@ static int _module_init_opcode = EINA_DEBUG_OPCODE_INVALID;
 static int _module_shutdown_opcode = EINA_DEBUG_OPCODE_INVALID;
 static Eina_Hash *_modules_hash = NULL;
 
+static int _bridge_keep_alive_opcode = EINA_DEBUG_OPCODE_INVALID;
+
 static unsigned int _poll_time = 0;
 static Eina_Debug_Timer_Cb _poll_timer_cb = NULL;
 static void *_poll_timer_data = NULL;
 
 static Eina_Semaphore _thread_cmd_ready_sem;
+
+typedef void *(*Eina_Debug_Encode_Cb)(const void *buffer, int size, int *ret_size);
+typedef void *(*Eina_Debug_Decode_Cb)(const void *buffer, int size, int *ret_size);
 
 typedef struct
 {
@@ -101,12 +107,22 @@ struct _Eina_Debug_Session
    Eina_List **cbs; /* Table of callbacks lists indexed by opcode id */
    Eina_List *opcode_reply_infos;
    Eina_Debug_Dispatch_Cb dispatch_cb; /* Session dispatcher */
+   Eina_Debug_Encode_Cb encode_cb; /* Packet encoder */
+   Eina_Debug_Decode_Cb decode_cb; /* Packet decoder */
+   double encoding_ratio; /* Encoding ratio */
+   /* List of shell commands to send before the communication
+    * with the daemon. Only used when a shell remote connection is requested.
+    */
+   Eina_List *cmds;
    int cbs_length; /* cbs table size */
    int fd_in; /* File descriptor to read */
    int fd_out; /* File descriptor to write */
+   /* Indicator to wait for input before continuing sending commands.
+    * Only used in shell remote connections */
+   Eina_Bool wait_for_input : 1;
 };
 
-static void _opcodes_register_all();
+static void _opcodes_register_all(Eina_Debug_Session *session);
 static void _thread_start(Eina_Debug_Session *session);
 
 EAPI int
@@ -121,16 +137,39 @@ eina_debug_session_send_to_thread(Eina_Debug_Session *session, int dest_id, int 
    hdr.opcode = op;
    hdr.cid = dest_id;
    hdr.thread_id = thread_id;
+   if (!session->encode_cb)
+     {
+        e_debug("socket: %d / opcode %X / bytes to send: %d",
+              session->fd_out, op, hdr.size);
 #ifndef _WIN32
-   e_debug("socket: %d / opcode %X / packet size %ld / bytes to send: %d",
-         session->fd_out, op, hdr->size + sizeof(int), total_size);
-   eina_spinlock_take(&_eina_debug_lock);
-   /* Sending header */
-   write(session->fd_out, &hdr, sizeof(hdr));
-   /* Sending payload */
-   if (size) write(session->fd_out, data, size);
-   eina_spinlock_release(&_eina_debug_lock);
+        eina_spinlock_take(&_eina_debug_lock);
+        /* Sending header */
+        write(session->fd_out, &hdr, sizeof(hdr));
+        /* Sending payload */
+        if (size) write(session->fd_out, data, size);
+        eina_spinlock_release(&_eina_debug_lock);
 #endif
+     }
+   else
+     {
+        unsigned char *total_buf = NULL;
+        void *new_buf;
+        int total_size = size + sizeof(hdr), new_size = 0;
+        total_buf = alloca(total_size);
+        memcpy(total_buf, &hdr, sizeof(hdr));
+        if (size > 0) memcpy(total_buf + sizeof(hdr), data, size);
+
+        new_buf = session->encode_cb(total_buf, total_size, &new_size);
+        e_debug("socket: %d / opcode %X / packet size %d / bytes to send: %d",
+              session->fd_out, op, total_size, new_size);
+#ifndef _WIN32
+        eina_spinlock_take(&_eina_debug_lock);
+        write(session->fd_out, new_buf, new_size);
+        eina_spinlock_release(&_eina_debug_lock);
+#endif
+        free(new_buf);
+     }
+
    return hdr.size;
 }
 
@@ -159,33 +198,133 @@ _daemon_greet(Eina_Debug_Session *session)
    eina_debug_session_send(session, 0, EINA_DEBUG_OPCODE_HELLO, buf, size);
 }
 
+static void
+_cmd_consume(Eina_Debug_Session *session)
+{
+   const char *line = NULL;
+   do {
+        line = eina_list_data_get(session->cmds);
+        session->cmds = eina_list_remove_list(session->cmds, session->cmds);
+        if (line)
+          {
+             if (!strncmp(line, "WAIT", 4))
+               {
+                  e_debug("Wait for input");
+                  session->wait_for_input = EINA_TRUE;
+                  return;
+               }
+             else if (!strncmp(line, "SLEEP_1", 7))
+               {
+                  e_debug("Sleep 1s");
+                  sleep(1);
+               }
+             else
+               {
+                  e_debug("Apply cmd line: %s", line);
+                  write(session->fd_out, line, strlen(line));
+                  write(session->fd_out, "\n", 1);
+               }
+          }
+   }
+   while (line);
+   /* When all the cmd has been applied, we can begin to send debug packets */
+   _daemon_greet(session);
+   _opcodes_register_all(session);
+}
+
+static Eina_List *
+_parse_cmds(const char *cmds)
+{
+   Eina_List *lines = NULL;
+   while (cmds && *cmds)
+     {
+        char *tmp = strchr(cmds, '\n');
+        Eina_Stringshare *line;
+        if (tmp)
+          {
+             line = eina_stringshare_add_length(cmds, tmp - cmds);
+             cmds = tmp + 1;
+          }
+        else
+          {
+             line = eina_stringshare_add(cmds);
+             cmds = NULL;
+          }
+        lines = eina_list_append(lines, line);
+     }
+   return lines;
+}
+
 #ifndef _WIN32
 static int
 _packet_receive(unsigned char **buffer)
 {
-   unsigned char *packet_buf = NULL;
-   int rret = -1;
-   int size = 0;
+   unsigned char *packet_buf = NULL, *size_buf;
+   int rret = -1, ratio, size_sz;
 
    if (!_session) goto end;
 
-   if (read(_session->fd_in, &size, 4) == 4)
+   if (_session->wait_for_input)
      {
+        /* Wait for input */
+        char c;
+        int flags = fcntl(_session->fd_in, F_GETFL, 0);
+        e_debug_begin("Characters received: ");
+        fcntl(_session->fd_in, F_SETFL, flags | O_NONBLOCK);
+        while (read(_session->fd_in, &c, 1) == 1) e_debug_continue("%c", c);
+        fcntl(_session->fd_in, F_SETFL, flags);
+        e_debug_end();
+        _session->wait_for_input = EINA_FALSE;
+        _cmd_consume(_session);
+        return 0;
+     }
+
+   ratio = _session->decode_cb && _session->encoding_ratio ? _session->encoding_ratio : 1.0;
+   size_sz = sizeof(int) * ratio;
+   size_buf = alloca(size_sz);
+   if ((rret = read(_session->fd_in, size_buf, size_sz)) == size_sz)
+     {
+        int size;
+        if (_session->decode_cb)
+          {
+             /* Decode the size if needed */
+             void *size_decoded_buf = _session->decode_cb(size_buf, size_sz, NULL);
+             size = (*(int *)size_decoded_buf) * _session->encoding_ratio;
+             free(size_decoded_buf);
+          }
+        else
+          {
+             size = *(int *)size_buf;
+          }
+        e_debug("Begin to receive a packet of %d bytes", size);
         // allocate a buffer for the next bytes to receive
         packet_buf = malloc(size);
         if (packet_buf)
           {
-             int cur_packet_size = 4;
-             memcpy(packet_buf, &size, sizeof(int));
+             int cur_packet_size = size_sz;
+             memcpy(packet_buf, size_buf, size_sz);
              /* Receive all the remaining packet bytes */
              while (cur_packet_size < size)
                {
                   rret = read(_session->fd_in, packet_buf + cur_packet_size, size - cur_packet_size);
-                  if (rret <= 0) goto end;
+                  if (rret <= 0)
+                    {
+                       e_debug("Error on read: %d", rret);
+                       perror("Read");
+                       goto end;
+                    }
                   cur_packet_size += rret;
+               }
+             if (_session->decode_cb)
+               {
+                  /* Decode the packet if needed */
+                  void *decoded_buf = _session->decode_cb(packet_buf, size, &cur_packet_size);
+                  free(packet_buf);
+                  packet_buf = decoded_buf;
                }
              *buffer = packet_buf;
              rret = cur_packet_size;
+             e_debug("Received a packet of %d bytes", cur_packet_size);
           }
         else
           {
@@ -329,6 +468,11 @@ _module_shutdown_cb(Eina_Debug_Session *session, int cid, void *buffer, int size
 static const Eina_Debug_Opcode _EINA_DEBUG_MONITOR_OPS[] = {
        {"module/init", &_module_init_opcode, &_module_init_cb},
        {"module/shutdown", &_module_shutdown_opcode, &_module_shutdown_cb},
+       {NULL, NULL, NULL}
+};
+
+static const Eina_Debug_Opcode _EINA_DEBUG_BRIDGE_OPS[] = {
+       {"Bridge/Keep-Alive", &_bridge_keep_alive_opcode, NULL},
        {NULL, NULL, NULL}
 };
 
@@ -534,6 +678,95 @@ err:
    return NULL;
 }
 
+EAPI Eina_Debug_Session *
+eina_debug_fds_attach(int fd_in, int fd_out)
+{
+   Eina_Debug_Session *session = calloc(1, sizeof(*session));
+   session->dispatch_cb = eina_debug_dispatch;
+   session->fd_out = fd_out;
+   session->fd_in = fd_in;
+   // start the monitor thread
+   _thread_start(session);
+   _opcodes_register_all(session);
+   _last_local_session = session;
+   return session;
+}
+
+static Eina_Bool
+_bridge_keep_alive_send(void *data)
+{
+   Eina_Debug_Session *s = data;
+   eina_debug_session_send(s, 0, _bridge_keep_alive_opcode, NULL, 0);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Debug_Session *
+eina_debug_shell_remote_connect(const char *cmds_str)
+{
+#ifndef _WIN32
+   Eina_List *cmds = _parse_cmds(cmds_str);
+   char *cmd = eina_list_data_get(cmds);
+   int pipeToShell[2], pipeFromShell[2];
+   int pid = -1;
+
+   cmds = eina_list_remove_list(cmds, cmds);
+
+   pipe(pipeToShell);
+   pipe(pipeFromShell);
+   pid = fork();
+   if (pid == -1) return EINA_FALSE;
+   if (!pid)
+     {
+        int i = 0;
+        const char *args[16] = { 0 };
+        /* Child */
+        close(STDIN_FILENO);
+        dup2(pipeToShell[0], STDIN_FILENO);
+        close(STDOUT_FILENO);
+        dup2(pipeFromShell[1], STDOUT_FILENO);
+        args[i++] = cmd;
+        do
+          {
+             cmd = strchr(cmd, ' ');
+             if (cmd)
+               {
+                  *cmd = '\0';
+                  args[i++] = ++cmd;
+               }
+          }
+        while (cmd);
+        args[i++] = 0;
+        execvpe(args[0], (char **)args, environ);
+        perror("execvpe");
+        exit(-1);
+     }
+   else
+     {
+        Eina_Debug_Session *session = calloc(1, sizeof(*session));
+        /* Parent */
+        session->dispatch_cb = eina_debug_dispatch;
+        session->fd_in = pipeFromShell[0];
+        session->fd_out = pipeToShell[1];
+
+        int flags = fcntl(session->fd_in, F_GETFL, 0);
+        flags &= ~O_NONBLOCK;
+        if (fcntl(session->fd_in, F_SETFL, flags) == -1) perror(0);
+
+        eina_debug_session_shell_codec_enable(session);
+        session->cmds = cmds;
+        _cmd_consume(session);
+        eina_debug_opcodes_register(session, _EINA_DEBUG_BRIDGE_OPS, NULL);
+        eina_debug_timer_add(10000, _bridge_keep_alive_send, session);
+        // start the monitor thread
+        _thread_start(session);
+        return session;
+     }
+#else
+   (void) cmd;
+   return NULL;
+#endif
+}
+
 EAPI Eina_Bool
 eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data)
 {
@@ -605,7 +838,7 @@ _monitor(void *_data)
                        // if not negative - we have a real message
                        if (size > 0)
                          {
-                            if(!_session->dispatch_cb(_session, buffer))
+                            if (EINA_DEBUG_OK != _session->dispatch_cb(_session, buffer))
                               {
                                  // something we don't understand
                                  e_debug("EINA DEBUG ERROR: Unknown command");
@@ -694,8 +927,65 @@ eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode
          session->opcode_reply_infos, info);
 
    //send only if _session's fd connected, if not -  it will be sent when connected
-   if(session && session->fd_in != -1)
+   if(session && session->fd_in != -1 && !session->cmds)
       _opcodes_registration_send(session, info);
+}
+
+/*
+ * Encoder for shell sessions
+ * Each byte is encoded in two bytes.
+ */
+static void *
+_shell_encode_cb(const void *data, int src_size, int *dest_size)
+{
+   const char *src = data;
+   int new_size = src_size * 2;
+   char *dest = malloc(new_size);
+   int i;
+   for (i = 0; i < src_size; i++)
+     {
+        dest[(i << 1) + 0] = ((src[i] & 0xF0) >> 4) + 0x40;
+        dest[(i << 1) + 1] = ((src[i] & 0x0F) >> 0) + 0x40;
+     }
+   if (dest_size) *dest_size = new_size;
+   return dest;
+}
+
+/*
+ * Decoder for shell sessions
+ * Each two bytes are merged into one byte.
+ */
+static void *
+_shell_decode_cb(const void *data, int src_size, int *dest_size)
+{
+   const char *src = data;
+   int i = 0, j;
+   char *dest = malloc(src_size / 2);
+   if (!dest) goto error;
+   for (i = 0, j = 0; j < src_size; j++)
+     {
+        if ((src[j] & 0xF0) == 0x40 && (src[j + 1] & 0xF0) == 0x40)
+          {
+             dest[i++] = ((src[j] - 0x40) << 4) | ((src[j + 1] - 0x40));
+             j++;
+          }
+     }
+   goto end;
+error:
+   free(dest);
+   dest = NULL;
+end:
+   if (dest_size) *dest_size = i;
+   return dest;
+}
+
+EAPI void
+eina_debug_session_shell_codec_enable(Eina_Debug_Session *session)
+{
+   if (!session) return;
+   session->encode_cb = _shell_encode_cb;
+   session->decode_cb = _shell_decode_cb;
+   session->encoding_ratio = 2.0;
 }
 
 static Eina_Debug_Error
