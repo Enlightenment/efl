@@ -1,6 +1,16 @@
 ==========
-EFL 1.18.4
+EFL 1.18.5
 ==========
+
+Changes since 1.18.4:
+---------------------
+
+Fixes:
+
+   * ecore_fb_init(): use 'name' parameter similar to ecore_evas_fb_new().
+   * edje_edit: fix scripts compilation
+   * elementary gengrid: fix for working item reorder mode correctly
+   * elm_code : LINE_APPEND Render fix
 
 Changes since 1.18.3:
 ---------------------
