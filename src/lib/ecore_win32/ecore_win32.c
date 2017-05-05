@@ -8,6 +8,7 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 #include <windowsx.h>
+#include <dbt.h>
 
 #include <Eina.h>
 #include <Ecore.h>
@@ -209,6 +210,7 @@ _ecore_win32_window_procedure(HWND   window,
           efl_AddClipboardFormatListener acfl;
 
           INF("create window message");
+
           acfl = (efl_AddClipboardFormatListener)GetProcAddress(GetModuleHandle("user32.dll"),
                                                                 "AddClipboardFormatListener");
           if (acfl)
@@ -386,6 +388,20 @@ _ecore_win32_window_procedure(HWND   window,
      case WM_SYNCPAINT:
        INF("sync paint message");
        return 0;
+       /* Desktop notifications */
+    case WM_DEVICECHANGE:
+       if (window == ecore_win32_monitor_window)
+         {
+            PDEV_BROADCAST_HDR pHdr = (PDEV_BROADCAST_HDR)data_param;
+
+            if ((window_param == DBT_DEVICEARRIVAL) &&
+                (pHdr->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE))
+              ecore_win32_monitor_update(1);
+
+            if ((window_param == DBT_DEVICEREMOVECOMPLETE) &&
+                (pHdr->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE))
+              ecore_win32_monitor_update(2);
+         }
      default:
        return DefWindowProc(window, message, window_param, data_param);
      }
@@ -578,6 +594,8 @@ ecore_win32_init()
    for (i = 0; i < 77; i++)
      _ecore_win32_cursor_x[i] = _ecore_win32_cursor_x11_shaped_new(i);
 
+   ecore_win32_monitor_init();
+
    return _ecore_win32_init_count;
 
  unregister_class:
@@ -611,6 +629,8 @@ ecore_win32_shutdown()
 
    if (--_ecore_win32_init_count != 0)
      return _ecore_win32_init_count;
+
+   ecore_win32_monitor_shutdown();
 
    for (i = 0; i < 77; i++)
      ecore_win32_cursor_free(_ecore_win32_cursor_x[i]);

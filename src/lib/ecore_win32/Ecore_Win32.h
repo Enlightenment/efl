@@ -741,6 +741,35 @@ EAPI Eina_Bool ecore_win32_clipboard_get(const Ecore_Win32_Window *window,
 EAPI Eina_Bool ecore_win32_clipboard_clear(const Ecore_Win32_Window *window);
 
 /**
+ * @typedef Ecore_Win32_Monitor
+ * Desktop geometry and dpi of a monitor.
+ *
+ * @since 1.20
+ */
+typedef struct
+{
+   Eina_Rectangle desktop; /**< Coordinates and size of the desktop */
+   struct
+   {
+      unsigned int x; /**< DPI along the X axis */
+      unsigned int y; /**< DPI along the Y axis */
+   } dpi;
+} Ecore_Win32_Monitor;
+
+/**
+ * @brief Return the coordinates, sizes DPI's of the monitors.
+ *
+ * @return An iterator of an Eina list, with #Ecore_Win32_Monitor
+ * as data.
+ *
+ * This function returns the coordinates, sizes and DPI's of the
+ * monitors as an iterator of a list of #Ecore_Win32_Monitor.
+ *
+ * @since 1.20
+ */
+EAPI Eina_Iterator *ecore_win32_monitors_get(void);
+
+/**
  * @}
  */
 
