@@ -178,8 +178,7 @@ tests_efl_mono_efl_mono_exe_SOURCES = \
      tests/efl_mono/Eo.cs \
      tests/efl_mono/Evas.cs \
      tests/efl_mono/Events.cs \
-     tests/efl_mono/Strings.cs \
-     tests/efl_mono/EcoreEvas.cs
+     tests/efl_mono/Strings.cs
 
 tests/efl_mono/efl_mono.exe$(EXEEXT): $(tests_efl_mono_efl_mono_exe_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll
 	@rm -f tests/efl_mono/efl_mono_exe$(EXEEXT)
