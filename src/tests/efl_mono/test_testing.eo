@@ -213,6 +213,7 @@ class Test.Testing (Efl.Object) {
 
       /* Eina Array */
 
+      /* Integer */
       eina_array_int_in {
          params {
             @in arr: array<int>;
@@ -256,6 +257,52 @@ class Test.Testing (Efl.Object) {
 
       eina_array_int_return_own {
          return: own(array<int>);
+      }
+
+      /* String */
+      eina_array_str_in {
+         params {
+            @in arr: array<string>;
+         }
+         return: bool;
+      }
+
+      eina_array_str_in_own {
+         params {
+            @in arr: own(array<string>);
+         }
+         return: bool;
+      }
+      check_eina_array_str_in_own {
+         return: bool;
+      }
+
+      eina_array_str_out {
+         params {
+            @out arr: array<string>;
+         }
+         return: bool;
+      }
+      check_eina_array_str_out {
+         return: bool;
+      }
+
+      eina_array_str_out_own {
+         params {
+            @out arr: own(array<string>);
+         }
+         return: bool;
+      }
+
+      eina_array_str_return {
+         return: array<string>;
+      }
+      check_eina_array_str_return {
+         return: bool;
+      }
+
+      eina_array_str_return_own {
+         return: own(array<string>);
       }
    }
 }
