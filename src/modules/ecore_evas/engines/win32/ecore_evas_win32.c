@@ -4,6 +4,7 @@
 #endif
 
 #include <stdlib.h> /* for NULL */
+#include <inttypes.h> /* for UINT_MAX */
 
 #include <Ecore.h>
 #include "ecore_private.h"
@@ -1090,42 +1091,89 @@ _ecore_evas_win32_alpha_set(Ecore_Evas *ee, int alpha)
 }
 
 static void
-_ecore_evas_win32_screen_dpi_get(const Ecore_Evas *ee EINA_UNUSED, int *xdpi, int *ydpi)
+_ecore_evas_win32_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
 {
-   HDC dc;
+   Eina_Iterator *iter;
+   Ecore_Win32_Monitor *ewm;
+   Ecore_Win32_Monitor *m;
+   unsigned int dist;
+   int lx;
+   int ly;
+   int wx;
+   int wy;
+   int ww;
+   int wh;
 
-   dc = GetDC(NULL);
-   if (!dc)
+   ecore_win32_window_geometry_get((Ecore_Win32_Window *)ee->prop.window,
+                                   &wx, &wy, &ww, &wh);
+   iter = ecore_win32_monitors_get();
+   dist = UINT32_MAX;
+
+   EINA_ITERATOR_FOREACH(iter, ewm)
      {
-        if (xdpi) *xdpi = 0;
-        if (ydpi) *ydpi = 0;
-        return;
+        unsigned int d;
+
+        lx = ewm->desktop.x - wx + (ewm->desktop.w - ww) / 2;
+        ly = ewm->desktop.y - wy + (ewm->desktop.h - wh) / 2;
+        d = lx * lx + ly * ly;
+        if (d < dist)
+          {
+             dist = d;
+             m = ewm;
+          }
      }
+   eina_iterator_free(iter);
 
-   if (xdpi) *xdpi = GetDeviceCaps(dc, LOGPIXELSX);
-   if (ydpi) *ydpi = GetDeviceCaps(dc, LOGPIXELSY);
+   if (x)
+     *x = m->desktop.x;
+   if (y)
+     *y = m->desktop.y;
+   if (w)
+     *w = m->desktop.w;
+   if (h)
+     *h = m->desktop.h;
+}
 
-   /*
-    * Alternative (to test)
-    int width_mm;
-    int height_mm;
-    int width_px;
-    int height_px;
+static void
+_ecore_evas_win32_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
+{
+   Eina_Iterator *iter;
+   Ecore_Win32_Monitor *ewm;
+   unsigned int dist;
+   int x_dpi;
+   int y_dpi;
+   int lx;
+   int ly;
+   int x;
+   int y;
+   int w;
+   int h;
 
-    width_mm = GetDeviceCaps(dc, HORZSIZE);
-    height_mm = GetDeviceCaps(dc, VERTSIZE);
-    width_px = GetDeviceCaps(dc, HORZRES);
-    height_px = GetDeviceCaps(dc, VERTRES);
+   ecore_win32_window_geometry_get((Ecore_Win32_Window *)ee->prop.window,
+                                   &x, &y, &w, &h);
+   iter = ecore_win32_monitors_get();
+   dist = UINT32_MAX;
 
-    *xdpi = (width_px * 254) / (width_mm * 10);
-    *ydpi = (height_px * 254) / (height_mm * 10);
+   EINA_ITERATOR_FOREACH(iter, ewm)
+     {
+        unsigned int d;
 
-    code with LOGPIXELS gives 96x96
-    code with the computation gives 101x77
+        lx = ewm->desktop.x - x + (ewm->desktop.w - w) / 2;
+        ly = ewm->desktop.y - y + (ewm->desktop.h - h) / 2;
+        d = lx * lx + ly * ly;
+        if (d < dist)
+          {
+             dist = d;
+             x_dpi = ewm->dpi.x;
+             y_dpi = ewm->dpi.y;
+          }
+     }
+   eina_iterator_free(iter);
 
-    */
-
-   ReleaseDC(NULL, dc);
+   if (xdpi)
+     *xdpi = x_dpi;
+   if (ydpi)
+     *ydpi = y_dpi;
 }
 
 static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
@@ -1188,7 +1236,7 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      NULL,
 
      NULL, // render
-     NULL, // screen_geometry_get
+     _ecore_evas_win32_screen_geometry_get,
      _ecore_evas_win32_screen_dpi_get,
      NULL,
      NULL,  // msg_send
