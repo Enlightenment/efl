@@ -129,6 +129,7 @@ EAPI void
 ecore_drm2_plane_release(Ecore_Drm2_Plane *plane)
 {
    EINA_SAFETY_ON_NULL_RETURN(plane);
+   EINA_SAFETY_ON_TRUE_RETURN(plane->dead);
 
    plane->dead = EINA_TRUE;
    plane->state->in_use = EINA_FALSE;
@@ -139,6 +140,7 @@ EAPI void
 ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, int h)
 {
    EINA_SAFETY_ON_NULL_RETURN(plane);
+   EINA_SAFETY_ON_TRUE_RETURN(plane->dead);
 
    plane->state->cx.value = x;
    plane->state->cy.value = y;
@@ -155,6 +157,7 @@ ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(plane, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(plane->dead, EINA_FALSE);
 
    fallback_id = plane->state->fid.value;
    plane->state->fid.value = fb->id;
