@@ -5554,26 +5554,45 @@ _cont_obj_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *ev
 static Eina_Bool elm_drag_item_container_del_internal(Evas_Object *obj, Eina_Bool full);
 
 static void
+_abort_drag(Evas_Object *obj, Item_Container_Drag_Info *st)
+{
+   evas_object_event_callback_del_full
+      (st->obj, EVAS_CALLBACK_MOUSE_MOVE, _cont_obj_mouse_move, st);
+   evas_object_event_callback_del_full
+      (st->obj, EVAS_CALLBACK_MOUSE_UP, _cont_obj_mouse_up, st);
+   elm_drag_item_container_del_internal(obj, EINA_FALSE);
+
+   ELM_SAFE_FREE(st->tm, ecore_timer_del);
+
+   _anim_st_free(st);
+}
+
+static void
 _cont_obj_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {  /* Cancel any drag waiting to start on timeout */
    cnp_debug("In\n");
    Item_Container_Drag_Info *st = data;
    Evas_Event_Mouse_Move *ev = event_info;
-   int dx = ev->cur.canvas.x - st->x_down, dy = ev->cur.canvas.y - st->y_down;
-   int finger_size = elm_config_finger_size_get();
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD || (dx * dx + dy * dy > finger_size * finger_size))
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
-        cnp_debug("event on hold or mouse moved too much - have to cancel DnD\n");
+        cnp_debug("event on hold or - have to cancel DnD\n");
 
-        evas_object_event_callback_del_full
-           (st->obj, EVAS_CALLBACK_MOUSE_MOVE, _cont_obj_mouse_move, st);
-        evas_object_event_callback_del_full
-           (st->obj, EVAS_CALLBACK_MOUSE_UP, _cont_obj_mouse_up, st);
-        elm_drag_item_container_del_internal(obj, EINA_FALSE);
+        _abort_drag(obj, st);
+        st = NULL;
+     }
 
-        ELM_SAFE_FREE(st->tm, ecore_timer_del);
+   if (st && evas_device_class_get(ev->dev) == EVAS_DEVICE_CLASS_TOUCH)
+     {
+        int dx = ev->cur.canvas.x - st->x_down, dy = ev->cur.canvas.y - st->y_down;
+        int finger_size = elm_config_finger_size_get();
+        if ((dx * dx + dy * dy > finger_size * finger_size))
+          {
+             cnp_debug("mouse moved too much - have to cancel DnD\n");
 
-        _anim_st_free(st);
+             _abort_drag(obj, st);
+             st = NULL;
+         }
      }
    cnp_debug("Out\n");
 }
