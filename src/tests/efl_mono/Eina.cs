@@ -655,6 +655,10 @@ class TestEinaArray
     private static readonly int[] append_arr_int = {42,43,33};
     private static readonly int[] modified_arr_int = {0x0,0x2A,0x42,42,43,33};
 
+    private static readonly string[] base_arr_str = {"0x0","0x2A","0x42"};
+    private static readonly string[] append_arr_str = {"42","43","33"};
+    private static readonly string[] modified_arr_str = {"0x0","0x2A","0x42","42","43","33"};
+
 
     public static void eina_array_default()
     {
@@ -793,6 +797,9 @@ class TestEinaArray
     // //
     // Code Generation
     //
+
+    // Integer //
+
     public static void test_eina_array_int_in()
     {
         test.Testing t = new test.TestingConcrete();
@@ -862,6 +869,80 @@ class TestEinaArray
         Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_arr_int));
         Test.Assert(arr.Append(append_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    // String //
+    public static void test_eina_array_str_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<string>();
+        arr.Append(base_arr_str);
+        Test.Assert(t.eina_array_str_in(arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(modified_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_array_str_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<string>();
+        arr.Append(base_arr_str);
+        Test.Assert(t.eina_array_str_in_own(arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(modified_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_array_str_in_own());
+    }
+
+    public static void test_eina_array_str_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Array<string> arr;
+        Test.Assert(t.eina_array_str_out(out arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_str));
+        Test.Assert(arr.Append(append_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_array_str_out());
+    }
+
+    public static void test_eina_array_str_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Array<string> arr;
+        Test.Assert(t.eina_array_str_out_own(out arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_str));
+        Test.Assert(arr.Append(append_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_array_str_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_array_str_return();
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_str));
+        Test.Assert(arr.Append(append_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_array_str_return());
+    }
+
+    public static void test_eina_array_str_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_array_str_return_own();
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_str));
+        Test.Assert(arr.Append(append_arr_str));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
     }
