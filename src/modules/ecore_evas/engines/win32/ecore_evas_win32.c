@@ -100,37 +100,16 @@ _ecore_evas_win32_render(Ecore_Evas *ee)
 {
    int rend = 0;
    Eina_List *updates = NULL;
-   Eina_List *ll;
-   Ecore_Evas *ee2;
 
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        if (ee2->engine.func->fn_render)
-          rend |= ee2->engine.func->fn_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
+   rend = ecore_evas_render_prepare(ee);
 
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-   if (ee->prop.avoid_damage)
+   if ((ee->visible) ||
+       ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
+       ((ee->should_be_visible) && (ee->prop.override)) ||
+       (ee->prop.avoid_damage))
      {
         updates = evas_render_updates(ee->evas);
         if (updates) evas_render_updates_free(updates);
-     }
-   else if ((ee->visible) ||
-            ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-            ((ee->should_be_visible) && (ee->prop.override)))
-     {
-        if (ee->shaped)
-          {
-             updates = evas_render_updates(ee->evas);
-             if (updates) evas_render_updates_free(updates);
-          }
-        else
-          {
-             updates = evas_render_updates(ee->evas);
-             if (updates) evas_render_updates_free(updates);
-          }
      }
    else
      evas_norender(ee->evas);
@@ -1388,6 +1367,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
    ee->req.y = ee->y;
    ee->req.w = ee->w;
    ee->req.h = ee->h;
+   ee->can_async_render = EINA_FALSE;
 
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
