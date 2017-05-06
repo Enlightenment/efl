@@ -762,8 +762,6 @@ static int
 _ecore_evas_x_render(Ecore_Evas *ee)
 {
    int rend = 0;
-   Eina_List *ll;
-   Ecore_Evas *ee2;
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    static int render2 = -1;
 
@@ -778,15 +776,8 @@ _ecore_evas_x_render(Ecore_Evas *ee)
         return 0;
      }
 
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        if (ee2->engine.func->fn_render)
-          rend |= ee2->engine.func->fn_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
+   rend = ecore_evas_render_prepare(ee);
 
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    if (render2 == -1)
      {
         if (getenv("RENDER2")) render2 = 1;
