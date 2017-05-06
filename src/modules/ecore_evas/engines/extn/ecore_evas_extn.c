@@ -1220,6 +1220,7 @@ ecore_evas_extn_plug_new_internal(Ecore_Evas *ee_target)
    ee->req.w = ee->w;
    ee->req.h = ee->h;
    ee->profile_supported = 1;
+   ee->can_async_render = 0;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
@@ -1289,7 +1290,7 @@ ecore_evas_extn_plug_new_internal(Ecore_Evas *ee_target)
 
 
    extn_ee_list = eina_list_append(extn_ee_list, ee);
-   ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
+   _ecore_evas_subregister(ee_target, ee);
 
    evas_event_callback_add(ee_target->evas, EVAS_CALLBACK_RENDER_PRE,
                            _ecore_evas_extn_plug_render_pre, ee);
@@ -1506,8 +1507,7 @@ _ecore_evas_socket_switch(void *data, void *dest_buf EINA_UNUSED)
 int
 _ecore_evas_extn_socket_render(Ecore_Evas *ee)
 {
-   Eina_List *updates = NULL, *l, *ll;
-   Ecore_Evas *ee2;
+   Eina_List *updates = NULL, *l;
    int rend = 0;
    Eina_Rectangle *r;
    Extn *extn;
@@ -1517,14 +1517,7 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
 
    extn = bdata->data;
    if (!extn) return rend;
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        if (ee2->engine.func->fn_render)
-          rend |= ee2->engine.func->fn_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+   rend = ecore_evas_render_prepare(ee);
 
    cur_b = extn->cur_b;
    if (bdata->pixels)
@@ -1538,7 +1531,7 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
         EINA_LIST_FOREACH(updates, l, r)
           {
              Ipc_Data_Update ipc;
-
+             Eina_List *ll;
 
              ipc.x = r->x;
              ipc.y = r->y;
@@ -1550,7 +1543,7 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
           }
         evas_render_updates_free(updates);
         _ecore_evas_idle_timeout_update(ee);
-        EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
+        EINA_LIST_FOREACH(extn->ipc.clients, l, client)
            ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0,
                                  cur_b, NULL, 0);
         if (extn->profile.done)
@@ -2145,6 +2138,7 @@ ecore_evas_extn_socket_new_internal(int w, int h)
    ee->prop.fullscreen = EINA_FALSE;
    ee->prop.withdrawn = EINA_FALSE;
    ee->prop.sticky = EINA_FALSE;
+   ee->can_async_render = EINA_FALSE;
 
    /* init evas here */
    ee->evas = evas_new();
