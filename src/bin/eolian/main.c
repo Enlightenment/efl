@@ -460,9 +460,11 @@ main(int argc, char **argv)
           break;
         case 'h':
           _print_usage(argv[0], stdout);
+          pret = 0;
           goto end;
         case 'v':
           _print_version(stdout);
+          pret = 0;
           goto end;
         default:
           _print_usage(argv[0], stderr);
