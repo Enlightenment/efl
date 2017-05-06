@@ -178,18 +178,8 @@ _ecore_evas_fb_render(Ecore_Evas *ee)
    if (ee->visible)
      {
         Eina_List *updates;
-        Eina_List *ll;
-        Ecore_Evas *ee2;
 
-        if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-
-        EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-          {
-             if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-             if (ee2->engine.func->fn_render)
-	       rend |= ee2->engine.func->fn_render(ee2);
-             if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-          }
+        rend = ecore_evas_render_prepare(ee);
 
         updates = evas_render_updates(ee->evas);
         if (updates)
@@ -638,6 +628,7 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
    ee->h = h;
    ee->req.w = ee->w;
    ee->req.h = ee->h;
+   ee->can_async_render = EINA_FALSE;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
