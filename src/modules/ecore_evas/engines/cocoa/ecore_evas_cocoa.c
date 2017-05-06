@@ -37,19 +37,10 @@ static const int _iface_version = 1;
 static int
 _ecore_evas_cocoa_render(Ecore_Evas *ee)
 {
+   Eina_List *updates = NULL;
    int rend = 0;
-   Eina_List *ll, *updates = NULL;
-   Ecore_Evas *ee2;
 
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        if (ee2->engine.func->fn_render)
-          rend |= ee2->engine.func->fn_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
-
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+   rend = ecore_evas_render_prepare(ee);
 
    if (((ee->visible) && (ee->draw_ok)) ||
        ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
@@ -589,6 +580,7 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    ee->prop.request_pos = EINA_FALSE;
    ee->prop.sticky = EINA_FALSE;
    ee->prop.withdrawn = EINA_TRUE;
+   ee->can_async_render = EINA_FALSE;
 
    ee->evas = evas_new();
    INF("ecore_evas: %p, evas: %p", ee, ee->evas);
