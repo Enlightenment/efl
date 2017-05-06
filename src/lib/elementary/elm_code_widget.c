@@ -2243,6 +2243,7 @@ EOLIAN static void
 _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Object *background, *gridrows, *scroller;
+   const char *fontname, *fontsize;
 
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
@@ -2264,6 +2265,11 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(background);
    elm_object_part_content_set(scroller, "elm.swallow.background", background);
+
+   fontname = edje_object_data_get(elm_layout_edje_get(obj), "font.name");
+   fontsize = edje_object_data_get(elm_layout_edje_get(obj), "font.size");
+   if (fontname && fontsize)
+     _elm_code_widget_font_set(obj, pd, fontname, atoi(fontsize));
 
    gridrows = elm_box_add(scroller);
    evas_object_size_hint_weight_set(gridrows, EVAS_HINT_EXPAND, 0.0);

@@ -1,5 +1,9 @@
 /* simple layout to pack our scrolling content into an elm_layout */
 group { name: "elm/code/layout/default";
+   data {
+      item: "font.name" "Mono";
+      item: "font.size" "10";
+   }
    parts {
       part { name: "elm.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;

@@ -60,7 +60,6 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
 
    code = elm_code_create();
    widget = efl_add(ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
-   elm_obj_code_widget_font_set(widget, NULL, 12);
    efl_event_callback_add(widget, &ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
    efl_event_callback_add(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code);
 
@@ -123,7 +122,6 @@ _elm_code_test_syntax_setup(Evas_Object *parent)
 
    code = elm_code_create();
    widget = efl_add(ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
-   elm_obj_code_widget_font_set(widget, NULL, 14);
    elm_obj_code_widget_editable_set(widget, EINA_TRUE);
    elm_obj_code_widget_syntax_enabled_set(widget, EINA_TRUE);
    elm_obj_code_widget_code_get(widget)->file->mime = "text/x-csrc";
@@ -172,7 +170,6 @@ _elm_code_test_diff_inline_setup(Evas_Object *parent)
 
    code = elm_code_create();
    diff = efl_add(ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
-   elm_obj_code_widget_font_set(diff, NULL, 14);
 
    evas_object_size_hint_weight_set(diff, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(diff, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -194,7 +191,6 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    elm_code_file_open(code, PACKAGE_DATA_DIR "/testdiff.diff");
 
    diff = elm_code_diff_widget_add(parent, code);
-   elm_code_diff_widget_font_set(diff, NULL, 14);
    return diff;
 }
 
