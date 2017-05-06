@@ -228,26 +228,17 @@ static int
 _drm_render(Ecore_Evas *ee)
 {
    int rend = 0;
-   Eina_List *l;
-   Ecore_Evas *ee2;
 
    if (ee->in_async_render) return 0;
+
+   rend = ecore_evas_render_prepare(ee);
 
    if (!ee->visible)
      {
         evas_norender(ee->evas);
+        ee->func.fn_post_render(ee);
         return 0;
      }
-
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, l, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        if (ee2->engine.func->fn_render)
-          rend |= ee2->engine.func->fn_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
-
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 
    if (!ee->can_async_render)
      {
