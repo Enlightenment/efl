@@ -479,6 +479,31 @@ Eina_Bool _ecore_evas_cursors_init(Ecore_Evas *ee);
 EAPI void ecore_evas_render_wait(Ecore_Evas *ee);
 EAPI Eina_Bool ecore_evas_render(Ecore_Evas *ee);
 
+static inline Eina_Bool
+ecore_evas_render_prepare(Ecore_Evas *ee)
+{
+   Ecore_Evas *ee2;
+   Eina_List *ll;
+   Eina_Bool r = EINA_FALSE;
+
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
+     {
+        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+        if (ee2->engine.func->fn_render)
+          r |= ee2->engine.func->fn_render(ee2);
+        else
+          r |= ecore_evas_render(ee2);
+        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+     }
+
+   // We do not force the child to be sync, so we should wait for them to be done
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
+     if (!ee2->engine.func->fn_render)
+       ecore_evas_render_wait(ee2);
+
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+   return r;
+}
 
 #undef EAPI
 #define EAPI

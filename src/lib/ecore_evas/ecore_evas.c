@@ -151,8 +151,6 @@ ecore_evas_render_wait(Ecore_Evas *ee)
 EAPI Eina_Bool
 ecore_evas_render(Ecore_Evas *ee)
 {
-   Eina_List *ll;
-   Ecore_Evas *ee2;
    Eina_Bool rend = EINA_FALSE;
 
    if (ee->in_async_render)
@@ -165,18 +163,7 @@ ecore_evas_render(Ecore_Evas *ee)
      if (!ee->engine.func->fn_prepare(ee))
        return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     {
-        if (ee2->engine.func->fn_render)
-          rend |= ee2->engine.func->fn_render(ee2);
-        else
-          rend |= ecore_evas_render(ee2);
-     }
-   // We do not force the child to be sync, so we should wait for them to be done
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     ecore_evas_render_wait(ee2);
-
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+   rend = ecore_evas_render_prepare(ee);
 
    ee->in_async_render = 1;
 
