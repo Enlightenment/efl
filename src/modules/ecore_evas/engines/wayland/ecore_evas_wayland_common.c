@@ -1527,10 +1527,8 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
 static int
 _ecore_evas_wl_common_render(Ecore_Evas *ee)
 {
-   int rend = 0;
-   Eina_List *l;
-   Ecore_Evas *ee2;
    Ecore_Evas_Engine_Wl_Data *wdata;
+   int rend = 0;
 
    if (!ee) return 0;
    if (!(wdata = ee->engine.data)) return 0;
@@ -1547,15 +1545,7 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
         return 0;
      }
 
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, l, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        if (ee2->engine.func->fn_render)
-          rend |= ee2->engine.func->fn_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
-
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+   rend = ecore_evas_render_prepare(ee);
 
    if (!ee->can_async_render)
      {
