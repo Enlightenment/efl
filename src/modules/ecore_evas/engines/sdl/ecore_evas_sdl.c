@@ -221,18 +221,8 @@ static int
 _ecore_evas_sdl_render(Ecore_Evas *ee)
 {
    int rend = 0;
-   Eina_List *ll;
-   Ecore_Evas *ee2;
 
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        if (ee2->engine.func->fn_render)
-          rend |= ee2->engine.func->fn_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
-
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+   rend = ecore_evas_render_prepare(ee);
 
    if (ee->prop.avoid_damage) rend = _ecore_evas_render(ee);
    else if ((ee->visible) ||
@@ -548,6 +538,7 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    ee->prop.sticky = EINA_FALSE;
    ee->prop.window = 0;
    ee->alpha = alpha;
+   ee->can_async_render = EINA_FALSE;
    ee->prop.hwsurface = hwsurface;
 
    /* init evas here */
