@@ -146,17 +146,7 @@ _ecore_evas_psl1ght_render(Ecore_Evas *ee)
 {
    int rend = 0;
 
-   Eina_List *ll;
-   Ecore_Evas *ee2;
-
-   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-     {
-        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-        rend |= ecore_evas_buffer_render(ee2);
-        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-     }
-
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+   rend = ecore_evas_render_prepare(ee);
 
    if (ee->prop.avoid_damage) rend = _ecore_evas_render(ee);
    else if ((ee->visible) ||
@@ -436,6 +426,7 @@ ecore_evas_psl1ght_new_internal(const char *name, int w, int h)
    ee->visible = 1;
    ee->w = w;
    ee->h = h;
+   ee->can_async_render = EINA_FALSE;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
