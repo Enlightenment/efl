@@ -3098,6 +3098,17 @@ _ecore_evas_register(Ecore_Evas *ee)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
 }
 
+void
+_ecore_evas_subregister(Ecore_Evas *ee_target, Ecore_Evas *ee)
+{
+   _ecore_evas_register_animators(ee);
+
+   ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
+
+   if (!ee->engine.func->fn_render)
+     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
+}
+
 EAPI void
 _ecore_evas_ref(Ecore_Evas *ee)
 {
