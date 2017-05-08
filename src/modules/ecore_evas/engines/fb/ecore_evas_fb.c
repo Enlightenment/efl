@@ -171,31 +171,6 @@ _ecore_evas_event_mouse_wheel(void *data, int type EINA_UNUSED, void *event)
 }
 
 static int
-_ecore_evas_fb_render(Ecore_Evas *ee)
-{
-   int rend = 0;
-
-   if (ee->visible)
-     {
-        Eina_List *updates;
-
-        rend = ecore_evas_render_prepare(ee);
-
-        updates = evas_render_updates(ee->evas);
-        if (updates)
-          {
-             evas_render_updates_free(updates);
-             _ecore_evas_idle_timeout_update(ee);
-             rend = 1;
-          }
-        if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-     }
-   else
-     evas_norender(ee->evas);
-   return rend;
-}
-
-static int
 _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
 {
    Eina_File_Direct_Info *info;
@@ -628,7 +603,6 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
    ee->h = h;
    ee->req.w = ee->w;
    ee->req.h = ee->h;
-   ee->can_async_render = EINA_FALSE;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
@@ -679,13 +653,12 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
 
    ecore_evas_input_event_register(ee);
 
-   ee->engine.func->fn_render = _ecore_evas_fb_render;
    _ecore_evas_register(ee);
    ecore_event_window_register(1, ee, ee->evas,
-			       (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-			       (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-			       (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-			       (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);              
+                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
    _ecore_event_window_direct_cb_set(1, _ecore_evas_input_direct_cb);
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return ee;
