@@ -549,38 +549,42 @@ _ecore_evas_ews_transparent_set(Ecore_Evas *ee, int val)
    _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE);
 }
 
-static int
-_ecore_evas_ews_render(Ecore_Evas *ee)
+static Eina_Bool
+_ecore_evas_ews_prepare(Ecore_Evas *ee)
 {
-   Eina_List *updates = NULL, *l;
-   Eina_Rectangle *r;
+   Evas_Coord w, h;
    void *pixels;
-   int w, h, rend;
-
-   rend = ecore_evas_render_prepare(ee);
 
    evas_object_image_size_get(ee->engine.ews.image, &w, &h);
    if ((w != ee->w) || (h != ee->h))
      ecore_evas_resize(ee, w, h);
 
    pixels = evas_object_image_data_get(ee->engine.ews.image, 1);
-   if (pixels)
-     {
-        updates = evas_render_updates(ee->evas);
-     }
-   evas_object_image_data_set(ee->engine.ews.image, pixels);
+   if (!pixels) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(updates, l, r)
+   evas_object_data_set(ee->engine.ews.image, "_ews.pixels", pixels);
+
+   return EINA_TRUE;
+}
+
+static void
+_ecore_evas_ews_update_image(void *data, Evas *e EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Render_Post *post = event_info;
+   Ecore_Evas *ee = data;
+   Eina_Rectangle *r;
+   Eina_List *l;
+   void *pixels;
+
+   pixels = evas_object_data_get(ee->engine.ews.image, "_ews.pixels");
+   if (!pixels) return ;
+
+   evas_object_image_data_set(ee->engine.ews.image, pixels);
+   EINA_LIST_FOREACH(post->updated_area, l, r)
      evas_object_image_data_update_add(ee->engine.ews.image,
                                        r->x, r->y, r->w, r->h);
 
-   if (updates)
-     {
-        evas_render_updates_free(updates);
-        _ecore_evas_idle_timeout_update(ee);
-     }
-
-   return updates ? 1 : rend;
+   evas_object_data_set(ee->engine.ews.image, "_ews.pixels", NULL);
 }
 
 static void
@@ -648,7 +652,7 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
      NULL,
      NULL,
 
-     _ecore_evas_ews_render,
+     NULL,
      _ecore_evas_ews_screen_geometry_get,
      NULL,  // screen_dpi_get
      NULL,
@@ -674,6 +678,7 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
      NULL, //fn_callback_device_mouse_in_set
      NULL, //fn_callback_device_mouse_out_set
      NULL, //fn_pointer_device_xy_get
+     _ecore_evas_ews_prepare,
 };
 
 void
@@ -1153,6 +1158,7 @@ ecore_evas_ews_new(int x, int y, int w, int h)
 
    ee->engine.ews.image = o;
    evas_object_data_set(ee->engine.ews.image, "Ecore_Evas", ee);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _ecore_evas_ews_update_image, ee);
    evas_object_event_callback_add(ee->engine.ews.image,
                                   EVAS_CALLBACK_MOUSE_IN,
                                   _ecore_evas_ews_cb_mouse_in, ee);
@@ -1243,7 +1249,7 @@ ecore_evas_ews_new(int x, int y, int w, int h)
         ecore_evas_free(ee);
      }
 
-   _ews_ee->sub_ecore_evas = eina_list_append(_ews_ee->sub_ecore_evas, ee);
+   _ecore_evas_subregister(_ews_ee, ee);
    _ews_children = eina_list_append(_ews_children, ee);
 
    _ecore_evas_ews_event(ee, ECORE_EVAS_EWS_EVENT_ADD);
