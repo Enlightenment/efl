@@ -203,39 +203,6 @@ _ecore_evas_sdl_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSED,
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
-_ecore_evas_render(Ecore_Evas *ee)
-{
-   Eina_List *updates;
-
-   updates = evas_render_updates(ee->evas);
-   if (updates)
-     {
-        evas_render_updates_free(updates);
-        _ecore_evas_idle_timeout_update(ee);
-     }
-   return updates ? 1 : 0;
-}
-
-static int
-_ecore_evas_sdl_render(Ecore_Evas *ee)
-{
-   int rend = 0;
-
-   rend = ecore_evas_render_prepare(ee);
-
-   if (ee->prop.avoid_damage) rend = _ecore_evas_render(ee);
-   else if ((ee->visible) ||
-            ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-            ((ee->should_be_visible) && (ee->prop.override)))
-     rend |= _ecore_evas_render(ee);
-   else
-     evas_norender(ee->evas);
-
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-   return rend;
-}
-
 static Eina_Bool
 _ecore_evas_sdl_event(void *data EINA_UNUSED)
 {
@@ -538,7 +505,6 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    ee->prop.sticky = EINA_FALSE;
    ee->prop.window = 0;
    ee->alpha = alpha;
-   ee->can_async_render = EINA_FALSE;
    ee->prop.hwsurface = hwsurface;
 
    /* init evas here */
@@ -550,6 +516,7 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    gl = !(rmethod == evas_render_method_lookup("buffer"));
+   ee->can_async_render = gl ? EINA_FALSE : EINA_TRUE;
 
    swd->w = SDL_CreateWindow(name,
                              SDL_WINDOWPOS_UNDEFINED,
@@ -653,7 +620,6 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 
    SDL_ShowCursor(SDL_ENABLE);
 
-   ee->engine.func->fn_render = _ecore_evas_sdl_render;
    _ecore_evas_register(ee);
 
    _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
