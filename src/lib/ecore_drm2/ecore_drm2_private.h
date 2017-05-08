@@ -702,6 +702,7 @@ struct _Ecore_Drm2_Fb
    void *gbm_bo;
 
    Eina_Bool gbm : 1;
+   Eina_Bool dmabuf : 1;
    Eina_Bool busy : 1;
 
    void *mmap;

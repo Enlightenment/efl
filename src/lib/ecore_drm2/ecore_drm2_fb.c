@@ -149,7 +149,7 @@ ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
 
    if (fb->id) sym_drmModeRmFB(fb->fd, fb->id);
 
-   if (!fb->gbm)
+   if (!fb->gbm && !fb->dmabuf)
      {
         drm_mode_destroy_dumb darg;
 
@@ -608,6 +608,7 @@ ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, u
      if (sym_drmPrimeFDToHandle(fd, dmabuf_fd[i], &fb->handles[i]))
        goto fail;
 
+   fb->dmabuf = EINA_TRUE;
    fb->fd = fd;
    fb->w = width;
    fb->h = height;
