@@ -42,11 +42,15 @@ struct TIFFRGBAMap {
 };
 
 static tsize_t
-_evas_tiff_RWProc(thandle_t handle EINA_UNUSED,
-                  tdata_t data EINA_UNUSED,
-                  tsize_t size EINA_UNUSED)
+_evas_tiff_RWProc(thandle_t handle,
+                  tdata_t data,
+                  tsize_t size)
 {
-   return 0;
+   TIFFRGBAMap *map = (TIFFRGBAMap*) handle;
+   if (!data) return 0;
+   memcpy(data, map->mem, size);
+
+   return size;
 }
 
 static toff_t
