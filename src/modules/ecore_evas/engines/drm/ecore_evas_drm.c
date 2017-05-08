@@ -183,78 +183,16 @@ _drm_rotation_do(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
      ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
 }
 
-static int
-_drm_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
-{
-   int rend = 0;
-
-   if ((ee->visible) && (updates))
-     {
-        _ecore_evas_idle_timeout_update(ee);
-        rend = 1;
-     }
-   else
-     evas_norender(ee->evas);
-
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-
-   return rend;
-}
-
 static void
-_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
+_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
 {
-   Evas_Event_Render_Post *ev;
-   Ecore_Evas *ee;
-
-   ev = event;
-   if (!ev) return;
-
-   ee = data;
-   if (!ee) return;
-
-   ee->in_async_render = EINA_FALSE;
+   Ecore_Evas *ee = data;
 
    if (ee->delayed.rotation_changed)
      {
         _drm_rotation_do(ee, ee->delayed.rotation, ee->delayed.rotation_resize);
         ee->delayed.rotation_changed = EINA_FALSE;
      }
-
-   _drm_render_updates_process(ee, ev->updated_area);
-}
-
-static int
-_drm_render(Ecore_Evas *ee)
-{
-   int rend = 0;
-
-   if (ee->in_async_render) return 0;
-
-   rend = ecore_evas_render_prepare(ee);
-
-   if (!ee->visible)
-     {
-        evas_norender(ee->evas);
-        ee->func.fn_post_render(ee);
-        return 0;
-     }
-
-   if (!ee->can_async_render)
-     {
-        Eina_List *updates;
-
-        updates = evas_render_updates(ee->evas);
-        rend = _drm_render_updates_process(ee, updates);
-        evas_render_updates_free(updates);
-     }
-   else if (evas_render_async(ee->evas))
-     {
-        ee->in_async_render = EINA_TRUE;
-        rend = 1;
-     }
-
-   return rend;
 }
 
 static void
@@ -302,7 +240,10 @@ _drm_show(Ecore_Evas *ee)
    ee->should_be_visible = 1;
 
    if (ee->prop.avoid_damage)
-     _drm_render(ee);
+     {
+        ecore_evas_render(ee);
+        ecore_evas_render_wait(ee);
+     }
 
    if (ee->prop.override)
      {
@@ -724,7 +665,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_demands_attention_set) (Ecore_Evas *ee, Eina_Bool on);
    NULL, //void (*fn_focus_skip_set) (Ecore_Evas *ee, Eina_Bool on);
 
-   _drm_render,
+   NULL,
 
    _drm_screen_geometry_get,
    _drm_screen_dpi_get,
@@ -749,6 +690,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //fn_callback_focus_device_in_set
    NULL, //fn_callback_focus_device_out_set
    NULL, //fn_pointer_device_xy_get
+   NULL, //fn_prepare
 };
 
 static Ecore_Evas *
