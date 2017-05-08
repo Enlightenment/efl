@@ -39,29 +39,6 @@ _ecore_evas_wl_common_state_update(Ecore_Evas *ee)
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
 }
 
-static int 
-_ecore_evas_wl_common_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
-{
-   int rend = 0;
-
-   if (((ee->visible) && (ee->draw_ok)) ||
-       ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-       ((ee->should_be_visible) && (ee->prop.override)))
-     {
-        if (updates)
-          {
-             _ecore_evas_idle_timeout_update(ee);
-             rend = 1;
-          }
-     }
-   else
-     evas_norender(ee->evas);
-
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-
-   return rend;
-}
-
 static Eina_Bool
 _ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -1501,10 +1478,6 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
    Evas_Event_Render_Post *ev = event;
    Ecore_Evas *ee = data;
 
-   if (!(ee) || !(ev)) return;
-
-   ee->in_async_render = EINA_FALSE;
-
    if (ee->delayed.alpha_changed)
      {
         _ecore_evas_wayland_alpha_do(ee, ee->delayed.alpha);
@@ -1520,50 +1493,19 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
         _rotation_do(ee, ee->delayed.rotation, ee->delayed.rotation_resize);
         ee->delayed.rotation_changed = EINA_FALSE;
      }
-
-   _ecore_evas_wl_common_render_updates_process(ee, ev->updated_area);
 }
 
-static int
-_ecore_evas_wl_common_render(Ecore_Evas *ee)
+static Eina_Bool
+_ecore_evas_wl_common_prepare(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
-   int rend = 0;
 
-   if (!ee) return 0;
-   if (!(wdata = ee->engine.data)) return 0;
-   if (!wdata->sync_done) return 0;
+   if (!(wdata = ee->engine.data)) return EINA_FALSE;
+   if (!wdata->sync_done) return EINA_FALSE;
 
-   if (wdata->win->pending.configure) return 0;
+   if (wdata->win->pending.configure) return EINA_FALSE;
 
-   /* TODO: handle comp no sync */
-
-   if (ee->in_async_render) return 0;
-   if (!ee->visible)
-     {
-        evas_norender(ee->evas);
-        return 0;
-     }
-
-   rend = ecore_evas_render_prepare(ee);
-
-   if (!ee->can_async_render)
-     {
-        Eina_List *updates;
-
-        updates = evas_render_updates(ee->evas);
-        rend = _ecore_evas_wl_common_render_updates_process(ee, updates);
-        evas_render_updates_free(updates);
-     }
-   else if (evas_render_async(ee->evas))
-     {
-        ee->in_async_render = EINA_TRUE;
-        rend = 1;
-     }
-   else if (ee->func.fn_post_render)
-     ee->func.fn_post_render(ee);
-
-   return rend;
+   return EINA_TRUE;
 }
 
 static void
@@ -2040,6 +1982,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, //fn_callback_device_mouse_in_set
    NULL, //fn_callback_device_mouse_out_set
    _ecore_evas_wl_common_pointer_device_xy_get,
+   _ecore_evas_wl_common_prepare,
 };
 
 Ecore_Evas *
@@ -2147,9 +2090,8 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    evas_output_size_set(ee->evas, ee->w + fw, ee->h + fh);
    evas_output_viewport_set(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
 
-   if (ee->can_async_render)
-     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
-                             _ecore_evas_wl_common_render_updates, ee);
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
+                           _ecore_evas_wl_common_render_updates, ee);
 
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
                            _ecore_evas_wl_common_render_flush_pre, ee);
@@ -2188,8 +2130,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
         ERR("Failed to create the devices");
         goto eng_err;
      }
-
-   ee->engine.func->fn_render = _ecore_evas_wl_common_render;
 
    _ecore_evas_register(ee);
    ecore_evas_input_event_register(ee);
