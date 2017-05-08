@@ -75,7 +75,7 @@ _on_bg_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, voi
 
    if (!strcmp(ev->key, "h"))
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
    else if (!strcmp(ev->key, "Down"))
@@ -103,7 +103,7 @@ _on_bg_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, voi
    else
      {
         printf("unhandled key: %s\n", ev->key);
-        fprintf(stdout, commands);
+        printf(commands);
      }
 }
 
@@ -171,7 +171,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 
    edje_object_signal_callback_add(edje_obj, "drag", PARTNAME, _on_knob_moved, NULL);
 
-   fprintf(stdout, commands);
+   printf(commands);
 
    ecore_evas_show(ee);
 

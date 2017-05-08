@@ -16,7 +16,7 @@ _msg_from_child_handler(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
 
    if (dataFromProcess->size >= (BUFFER_SIZE - 1))
      {
-        fprintf(stdout, "Data too big for bugger. error\n");
+        printf("Data too big for bugger. error\n");
         return ECORE_CALLBACK_DONE;
      }
 
@@ -25,11 +25,11 @@ _msg_from_child_handler(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
 
    if (strcmp(msg, "quit") == 0)
      {
-        fprintf(stdout, "My child said to me, QUIT!\n");
+        printf("My child said to me, QUIT!\n");
         ecore_main_loop_quit();
      }
    else
-     fprintf(stdout, "I received a message from my child: %s\n", msg);
+     printf("I received a message from my child: %s\n", msg);
 
    return ECORE_CALLBACK_DONE;
 }
@@ -47,7 +47,7 @@ _sendMessage(void *data)
    if (ecore_exe_send(childHandle, msg, strlen(msg)) != EINA_TRUE)
      fprintf(stderr, "Could not send my name to the child\n");
    else
-     fprintf(stdout,
+     printf(
              "I'm the father and I sent this message to the child: %s\n", msg);
 
    return ECORE_CALLBACK_RENEW;
@@ -78,7 +78,7 @@ main(void)
    if (childPid == -1)
      fprintf(stderr, "Could not retrive the PID!\n");
    else
-     fprintf(stdout, "The child process has PID:%u\n", (unsigned int)childPid);
+     printf("The child process has PID:%u\n", (unsigned int)childPid);
 
    ecore_event_handler_add(ECORE_EXE_EVENT_DATA, _msg_from_child_handler, NULL);
    ecore_timer_add(1, _sendMessage, childHandle);

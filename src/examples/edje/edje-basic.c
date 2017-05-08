@@ -51,7 +51,7 @@ _on_keydown(void        *data,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
    else if (strcmp(ev->key, "s") == 0) /* global scaling factor */
@@ -65,7 +65,7 @@ _on_keydown(void        *data,
 
         edje_scale_set(scale);
 
-        fprintf(stdout, "Setting global scaling factor to %f.\n", scale);
+        printf("Setting global scaling factor to %f.\n", scale);
 
         return;
      }
@@ -81,7 +81,7 @@ _on_keydown(void        *data,
 
         edje_object_scale_set(edje_obj, scale);
 
-        fprintf(stdout, "Setting center rectangle's scaling factor to %f.\n",
+        printf("Setting center rectangle's scaling factor to %f.\n",
                 scale);
 
         return;
@@ -91,7 +91,7 @@ _on_keydown(void        *data,
    else
      {
         printf("unhandled key: %s\n", ev->key);
-        fprintf(stdout, commands);
+        printf(commands);
      }
 }
 
@@ -163,7 +163,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
         goto shutdown_edje;
      }
 
-   fprintf(stdout, "Loaded Edje object bound to group 'example_group' from"
+   printf("Loaded Edje object bound to group 'example_group' from"
                    " file basic.edj with success!\n");
 
    evas_object_move(edje_obj, 20, 20);
@@ -183,41 +183,41 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    evas_object_move(border, 20 - 2, 20 - 2);
    evas_object_show(border);
 
-   fprintf(stdout, "'example_data' data field in group 'example_group' has "
+   printf("'example_data' data field in group 'example_group' has "
                    "the value: %s\n", edje_object_data_get(edje_obj,
                                                            "example_data"));
 
-   fprintf(stdout, "Testing if 'part_one' part exists: %s\n",
+   printf("Testing if 'part_one' part exists: %s\n",
            edje_object_part_exists(edje_obj, "part_one") ? "yes!" : "no");
 
    edje_object_part_geometry_get(edje_obj, "part_one", &x, &y, &w, &h);
-   fprintf(stdout, "The geometry of that part inside the Edje object's area "
+   printf("The geometry of that part inside the Edje object's area "
                    "is: x = %d, y = %d, w = %d, h = %d\n", x, y, w, h);
 
    evas_object_color_get(edje_object_part_object_get(edje_obj, "part_one"),
                          &x, &y, &w, &h);
-   fprintf(stdout, "That part's color components are: r = %d, g = %d, b = %d,"
+   printf("That part's color components are: r = %d, g = %d, b = %d,"
                    " a = %d\n", x, y, w, h);
 
    edje_object_size_max_get(edje_obj, &w, &h);
-   fprintf(stdout, "The Edje object's max. size is: %d, %d\n", w, h);
+   printf("The Edje object's max. size is: %d, %d\n", w, h);
 
    edje_object_size_min_get(edje_obj, &w, &h);
-   fprintf(stdout, "The Edje object's min. size is: %d, %d\n", w, h);
+   printf("The Edje object's min. size is: %d, %d\n", w, h);
 
    edje_object_size_min_calc(edje_obj, &w, &h);
-   fprintf(stdout, "The Edje object's min. size reported by min. size"
+   printf("The Edje object's min. size reported by min. size"
                    " calculation is: w = %d, h = %d\n", w, h);
 
    edje_object_size_min_restricted_calc(edje_obj, &w, &h, 500, 500);
-   fprintf(stdout, "The Edje object's min. size reported by *restricted* "
+   printf("The Edje object's min. size reported by *restricted* "
                    "min. size calculation is: w = %d, h = %d\n", w, h);
 
    edje_object_parts_extends_calc(edje_obj, &x, &y, &w, &h);
-   fprintf(stdout, "The Edje object's \"extended\" geometry is: x = %d, "
+   printf("The Edje object's \"extended\" geometry is: x = %d, "
                    "y = %d, w = %d, h = %d\n", x, y, w, h);
 
-   fprintf(stdout, commands);
+   printf(commands);
 
    ecore_evas_show(ee);
 

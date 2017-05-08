@@ -113,7 +113,7 @@ _on_bg_key_down(void *data, Evas *e, Evas_Object *o EINA_UNUSED, void *event_inf
 
    if (!strcmp(ev->key, "h"))
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
    if (!strcmp(ev->key, "i"))
@@ -151,7 +151,7 @@ _on_bg_key_down(void *data, Evas *e, Evas_Object *o EINA_UNUSED, void *event_inf
    else
      {
         printf("unhandled key: %s\n", ev->key);
-        fprintf(stdout, commands);
+        printf(commands);
      }
 }
 
@@ -216,7 +216,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 	   rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, ee);
      }
 
-   fprintf(stdout, commands);
+   printf(commands);
 
    ecore_evas_show(ee);
 

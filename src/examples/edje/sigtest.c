@@ -47,7 +47,7 @@ _on_keydown(void        *data,
 
    if (!strcmp(ev->key, "h"))
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
    else if (!strcmp(ev->key, "e"))
@@ -60,7 +60,7 @@ _on_keydown(void        *data,
            fprintf(stderr, "Could not load 'plain/edje/group' from sigtest.edj: %s\n", errmsg);
         }
       else
-         fprintf(stdout, "Loaded Edje object bound to group 'plain/edje/group' from"
+         printf("Loaded Edje object bound to group 'plain/edje/group' from"
                          " file sigtest.edj with success!\n");
         return;
      }
@@ -74,7 +74,7 @@ _on_keydown(void        *data,
            fprintf(stderr, "Could not load 'lua_base' from sigtest.edj: %s\n", errmsg);
         }
       else
-         fprintf(stdout, "Loaded Edje object bound to group 'lua_base' from"
+         printf("Loaded Edje object bound to group 'lua_base' from"
                          " file sigtest.edj with success!\n");
         return;
      }
@@ -82,19 +82,19 @@ _on_keydown(void        *data,
      {
         Edje_Message_String *msg = malloc(sizeof(*msg));
 
-	fprintf(stdout, "\n");
+	printf("\n");
         msg->str = strdup("C message text");
         edje_object_message_send(edje_obj, EDJE_MESSAGE_STRING, 2, msg);
         free(msg);
-	fprintf(stdout, "C message sent\n");
+	printf("C message sent\n");
         return;
      }
    else if (!strcmp(ev->key, "s"))
      {
-	fprintf(stdout, "\n");
+	printf("\n");
         edje_object_signal_emit(edje_obj, "C signal 1", "Csource");
         edje_object_signal_emit(edje_obj, "bubbles_lua:C signal 2", "Csource");
-	fprintf(stdout, "C signal sent\n");
+	printf("C signal sent\n");
         return;
      }
    else if (!strcmp(ev->key, "Escape"))
@@ -102,7 +102,7 @@ _on_keydown(void        *data,
    else
      {
         printf("unhandled key: %s\n", ev->key);
-        fprintf(stdout, commands);
+        printf(commands);
      }
 }
 
@@ -111,18 +111,18 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
 {
    int i;
 
-   fprintf(stdout, "C::message id=%d type=%d ", id, type);
+   printf("C::message id=%d type=%d ", id, type);
    switch (type)
      {
         case EDJE_MESSAGE_NONE :
           {
-             fprintf(stdout, " NONE");
+             printf(" NONE");
              break;
           }
 
         case EDJE_MESSAGE_SIGNAL :
           {
-             fprintf(stdout, " SIGNAL ");
+             printf(" SIGNAL ");
              break;
           }
 
@@ -130,7 +130,7 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_String *mmsg = msg;
 
-             fprintf(stdout, " STRING %s", mmsg->str);
+             printf(" STRING %s", mmsg->str);
              break;
           }
 
@@ -138,7 +138,7 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_Int *mmsg = msg;
 
-             fprintf(stdout, " INT %d", mmsg->val);
+             printf(" INT %d", mmsg->val);
              break;
           }
 
@@ -146,7 +146,7 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_Float *mmsg = msg;
 
-             fprintf(stdout, " FLOAT %f", mmsg->val);
+             printf(" FLOAT %f", mmsg->val);
              break;
           }
 
@@ -154,9 +154,9 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_String_Set *mmsg = msg;
 
-             fprintf(stdout, " STRING_SET -\n");
+             printf(" STRING_SET -\n");
              for (i = 0; i < mmsg->count; i++)
-                fprintf(stdout, "  %s\n", mmsg->str[i]);
+                printf("  %s\n", mmsg->str[i]);
              break;
           }
 
@@ -164,9 +164,9 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_Int_Set *mmsg = msg;
 
-             fprintf(stdout, " INT_SET -\n");
+             printf(" INT_SET -\n");
              for (i = 0; i < mmsg->count; i++)
-                fprintf(stdout, "  %d\n", mmsg->val[i]);
+                printf("  %d\n", mmsg->val[i]);
              break;
           }
 
@@ -174,9 +174,9 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_Float_Set *mmsg = msg;
 
-             fprintf(stdout, " FLOAT_SET -\n");
+             printf(" FLOAT_SET -\n");
              for (i = 0; i < mmsg->count; i++)
-                fprintf(stdout, "  %f\n", mmsg->val[i]);
+                printf("  %f\n", mmsg->val[i]);
              break;
           }
 
@@ -184,7 +184,7 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_String_Int *mmsg = msg;
 
-             fprintf(stdout, " STRING_INT %s %d", mmsg->str, mmsg->val);
+             printf(" STRING_INT %s %d", mmsg->str, mmsg->val);
              break;
           }
 
@@ -192,7 +192,7 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_String_Float *mmsg = msg;
 
-             fprintf(stdout, " STRING_FLOAT %s %f", mmsg->str, mmsg->val);
+             printf(" STRING_FLOAT %s %f", mmsg->str, mmsg->val);
              break;
           }
 
@@ -200,9 +200,9 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_String_Int_Set *mmsg = msg;
 
-             fprintf(stdout, " STRING_INT_SET %s -\n", mmsg->str);
+             printf(" STRING_INT_SET %s -\n", mmsg->str);
              for (i = 0; i < mmsg->count; i++)
-                fprintf(stdout, "  %d\n", mmsg->val[i]);
+                printf("  %d\n", mmsg->val[i]);
              break;
           }
 
@@ -210,19 +210,19 @@ _on_message(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Edje_Message_T
           {
              Edje_Message_String_Float_Set *mmsg = msg;
 
-             fprintf(stdout, " STRING_FLOAT_SET %s -\n", mmsg->str);
+             printf(" STRING_FLOAT_SET %s -\n", mmsg->str);
              for (i = 0; i < mmsg->count; i++)
-                fprintf(stdout, "  %f\n", mmsg->val[i]);
+                printf("  %f\n", mmsg->val[i]);
              break;
           }
      }
-   fprintf(stdout, "\n");
+   printf("\n");
 }
 
 static void
 _on_signal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char  *emission, const char  *source)
 {
-   fprintf(stdout, "C::signal sig=|%s| src=|%s|\n", emission, source);
+   printf("C::signal sig=|%s| src=|%s|\n", emission, source);
 }
 
 static void
@@ -283,7 +283,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
         goto shutdown_edje;
      }
 
-   fprintf(stdout, "Loaded Edje object bound to group 'lua_base' from"
+   printf("Loaded Edje object bound to group 'lua_base' from"
                    " file sigtest.edj with success!\n");
 
    evas_object_move(edje_obj, 20, 20);
@@ -305,7 +305,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    evas_object_move(border, 20 - 2, 20 - 2);
    evas_object_show(border);
 
-   fprintf(stdout, commands);
+   printf(commands);
 
    ecore_evas_show(ee);
 

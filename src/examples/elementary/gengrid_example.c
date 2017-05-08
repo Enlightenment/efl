@@ -57,7 +57,7 @@ _always_select_change(void        *data,
    else
      elm_gengrid_select_mode_set(grid, ELM_OBJECT_SELECT_MODE_DEFAULT);
 
-   fprintf(stdout, "\"Always select\" mode for gengrid items is now %s\n",
+   printf("\"Always select\" mode for gengrid items is now %s\n",
            always ? "on" : "off");
 }
 
@@ -72,7 +72,7 @@ _bouncing_change(void        *data,
 
    elm_scroller_bounce_set(grid, bounce, bounce);
 
-   fprintf(stdout, "Bouncing effect for gengrid is now %s\n",
+   printf("Bouncing effect for gengrid is now %s\n",
            bounce ? "on" : "off");
 }
 
@@ -87,7 +87,7 @@ _multi_change(void        *data,
 
    elm_gengrid_multi_select_set(grid, multi);
 
-   fprintf(stdout, "Multi-selection for gengrid is now %s\n",
+   printf("Multi-selection for gengrid is now %s\n",
            multi ? "on" : "off");
 
    elm_object_disabled_set(before_bt, multi);
@@ -116,7 +116,7 @@ _no_sel_change(void        *data,
    else
      elm_gengrid_select_mode_set(grid, ELM_OBJECT_SELECT_MODE_DEFAULT);
 
-   fprintf(stdout, "Selection for gengrid items is now %s\n",
+   printf("Selection for gengrid items is now %s\n",
            no_sel ? "disabled" : "enabled");
 }
 
@@ -131,7 +131,7 @@ _grid_sel(void        *data,
 
    elm_gengrid_item_pos_get(event_info, &x, &y);
 
-   fprintf(stdout, "Item [%p], with data [%p], path %s, at position (%d, %d),"
+   printf("Item [%p], with data [%p], path %s, at position (%d, %d),"
            " has been selected\n", event_info, data, it->path, x, y);
 }
 
@@ -216,7 +216,7 @@ _clear_cb(void        *data,
 {
    elm_gengrid_clear(data);
 
-   fprintf(stdout, "Clearing the grid!\n");
+   printf("Clearing the grid!\n");
 }
 
 /* bring in 1st item */
@@ -277,7 +277,7 @@ _double_click(void        *data EINA_UNUSED,
               Evas_Object *obj EINA_UNUSED,
               void        *event_info)
 {
-   fprintf(stdout, "Double click on item with handle %p\n", event_info);
+   printf("Double click on item with handle %p\n", event_info);
 }
 
 /* item long press callback */
@@ -286,7 +286,7 @@ _long_pressed(void        *data EINA_UNUSED,
               Evas_Object *obj EINA_UNUSED,
               void        *event_info)
 {
-   fprintf(stdout, "Long press on item with handle %p\n", event_info);
+   printf("Long press on item with handle %p\n", event_info);
 }
 
 /* label fetching callback */
@@ -364,7 +364,7 @@ _grid_scroll_stopped_cb(void        *data EINA_UNUSED,
 {
    int h_pagenumber = 0, v_pagenumber = 0;
    elm_scroller_current_page_get(obj, &h_pagenumber, &v_pagenumber);
-   fprintf(stdout, "Grid current horiz page is %d, vert page is %d\n",
+   printf("Grid current horiz page is %d, vert page is %d\n",
            h_pagenumber, v_pagenumber);
 }
 
@@ -379,7 +379,7 @@ _h_align_change_cb(void        *data,
 
    elm_gengrid_align_get(data, NULL, &v_align);
 
-   fprintf(stdout, "Setting horizontal alignment to %f\n", val);
+   printf("Setting horizontal alignment to %f\n", val);
    elm_gengrid_align_set(data, val, v_align);
 }
 
@@ -393,7 +393,7 @@ _v_align_change_cb(void        *data,
 
    elm_gengrid_align_get(data, &h_align, NULL);
 
-   fprintf(stdout, "Setting vertical alignment to %f\n", val);
+   printf("Setting vertical alignment to %f\n", val);
    elm_gengrid_align_set(data, h_align, val);
 }
 
@@ -407,7 +407,7 @@ _page_change_cb(void        *data,
 
    elm_scroller_page_relative_set(data, val, val);
 
-   fprintf(stdout, "Setting grid page's relative size to %f\n", val);
+   printf("Setting grid page's relative size to %f\n", val);
 }
 
 EAPI_MAIN int

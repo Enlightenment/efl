@@ -174,9 +174,9 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    slide_last = slide_it;
 
    list = elm_slideshow_items_get(slideshow);
-   fprintf(stdout, "List of items in the slideshow:\n");
+   printf("List of items in the slideshow:\n");
    EINA_LIST_FOREACH(list, l, slide_it)
-     fprintf(stdout, "\t%s\n",
+     printf("\t%s\n",
              (const char *)elm_object_item_data_get(slide_it));
 
    notify = elm_notify_add(win);

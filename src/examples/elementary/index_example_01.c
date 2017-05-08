@@ -20,7 +20,7 @@ static const char *dict[] = \
 static void
 _index_item_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   fprintf(stdout, "Deleting index node (%s). Comparing index "
+   printf("Deleting index node (%s). Comparing index "
            "item data reported via callback with the one returned by "
            "index's API on items: %s.\n",
            elm_index_item_letter_get(event_info),
@@ -36,7 +36,7 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED
 
    if (!it) return;
 
-   fprintf(stdout, "Deleting last selected index item, which had letter"
+   printf("Deleting last selected index item, which had letter"
            " %s (pointing to %p)\n", elm_index_item_letter_get(it),
            elm_object_item_data_get(it));
 
@@ -57,7 +57,7 @@ _active_set(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    Eina_Bool disabled = elm_index_autohide_disabled_get(data);
    elm_index_autohide_disabled_set(data, !disabled);
 
-   fprintf(stdout, "Toggling index programmatically to %s.\n",
+   printf("Toggling index programmatically to %s.\n",
            !disabled ? "On" : "Off");
 }
 
@@ -73,7 +73,7 @@ _index_selected(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *lit = event_info;
 
-   fprintf(stdout, "New index item selected. Comparing item reported"
+   printf("New index item selected. Comparing item reported"
            " via callback with the selection returned by the API: "
            "%s.\n", lit == elm_index_selected_item_get(obj, 0) ? "OK" :
            "FAIL, something went wrong");

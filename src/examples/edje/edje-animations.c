@@ -75,74 +75,74 @@ _on_key_down(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, v
 
    if (!strcmp(ev->key, "h"))
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
    else if (!strcmp(ev->key, "plus"))
      {
         frametime *= 2.0;
-        fprintf(stdout, "Increasing frametime to: %f\n", frametime);
+        printf("Increasing frametime to: %f\n", frametime);
         edje_frametime_set(frametime);
      }
    else if (!strcmp(ev->key, "minus"))
      {
         frametime /= 2.0;
-        fprintf(stdout, "Decreasing frametime to: %f\n", frametime);
+        printf("Decreasing frametime to: %f\n", frametime);
         edje_frametime_set(frametime);
      }
    else if (!strcmp(ev->key, "equal"))
      {
         ft = edje_frametime_get();
-        fprintf(stdout, "Frametime: %f\n", ft);
+        printf("Frametime: %f\n", ft);
         if (edje_object_play_get(obj))
-          fprintf(stdout, "Object is playing\n");
+          printf("Object is playing\n");
         else
-          fprintf(stdout, "Object was paused\n");
+          printf("Object was paused\n");
         if (edje_object_animation_get(obj))
-          fprintf(stdout, "Animation is running\n");
+          printf("Animation is running\n");
         else
-          fprintf(stdout, "Animation was stopped\n");
+          printf("Animation was stopped\n");
      }
    else if (!strcmp(ev->key, "s"))
      {
         edje_object_play_set(obj, EINA_FALSE);
-        fprintf(stdout, "Pausing the object\n");
+        printf("Pausing the object\n");
      }
    else if (!strcmp(ev->key, "p"))
      {
         edje_object_play_set(obj, EINA_TRUE);
-        fprintf(stdout, "Playing the object\n");
+        printf("Playing the object\n");
      }
    else if (!strcmp(ev->key, "f"))
-       fprintf(stdout, "Freezing object. Count: %d\n", edje_object_freeze(obj));
+       printf("Freezing object. Count: %d\n", edje_object_freeze(obj));
    else if (!strcmp(ev->key, "t"))
-       fprintf(stdout, "Thawing object. Count: %d\n", edje_object_thaw(obj));
+       printf("Thawing object. Count: %d\n", edje_object_thaw(obj));
    else if (!strcmp(ev->key, "F"))
      {
         edje_freeze();
-        fprintf(stdout, "Freezing all objects\n");
+        printf("Freezing all objects\n");
      }
    else if (!strcmp(ev->key, "T"))
      {
         edje_thaw();
-        fprintf(stdout, "Thawing all objects\n");
+        printf("Thawing all objects\n");
      }
    else if (!strcmp(ev->key, "a"))
      {
         edje_object_animation_set(obj, EINA_TRUE);
-        fprintf(stdout, "Starting the animation in the Edje object\n");
+        printf("Starting the animation in the Edje object\n");
      }
    else if (!strcmp(ev->key, "A"))
      {
         edje_object_animation_set(obj, EINA_FALSE);
-        fprintf(stdout, "Stopping the animation in the Edje object\n");
+        printf("Stopping the animation in the Edje object\n");
      }
    else if (!strcmp(ev->key, "Escape"))
      ecore_main_loop_quit();
    else
      {
         printf("unhandled key: %s\n", ev->key);
-        fprintf(stdout, commands);
+        printf(commands);
      }
 }
 
@@ -191,7 +191,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
                                   _on_key_down, NULL);
    evas_object_focus_set(edje_obj, EINA_TRUE);
 
-   fprintf(stdout, commands);
+   printf(commands);
 
    ecore_evas_show(ee);
 

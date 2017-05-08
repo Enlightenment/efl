@@ -49,7 +49,7 @@ _underflow_cb(void        *data EINA_UNUSED,
               Evas_Object *obj EINA_UNUSED,
               void        *event_info EINA_UNUSED)
 {
-   fprintf(stdout, "Underflow!\n");
+   printf("Underflow!\n");
 }
 
 void /* overflow callback */
@@ -57,7 +57,7 @@ _overflow_cb(void        *data EINA_UNUSED,
              Evas_Object *obj EINA_UNUSED,
              void        *event_info EINA_UNUSED)
 {
-   fprintf(stdout, "Overflow!\n");
+   printf("Overflow!\n");
 }
 
 static Eina_Bool
@@ -74,19 +74,19 @@ _on_keydown(void              *data,
 
    if (strcmp(ev->keyname, "h") == 0) /* print help */
      {
-        fprintf(stdout, "%s", commands);
+        printf("%s", commands);
      }
    else if (strcmp(ev->keyname, "n") == 0) /* flip to next item */
      {
         elm_flipselector_flip_next(fs);
 
-        fprintf(stdout, "Flipping to next item\n");
+        printf("Flipping to next item\n");
      }
    else if (strcmp(ev->keyname, "p") == 0) /* flip to previous item */
      {
         elm_flipselector_flip_prev(fs);
 
-        fprintf(stdout, "Flipping to previous item\n");
+        printf("Flipping to previous item\n");
      }
    else if (strcmp(ev->keyname, "f") == 0) /* print first item's label */
      {
@@ -94,7 +94,7 @@ _on_keydown(void              *data,
 
         it = elm_flipselector_first_item_get(fs);
 
-        fprintf(stdout, "Flip selector's first item is: %s\n", it ?
+        printf("Flip selector's first item is: %s\n", it ?
                 elm_object_item_text_get(it) : "none");
      }
    else if (strcmp(ev->keyname, "l") == 0) /* print last item's label */
@@ -103,7 +103,7 @@ _on_keydown(void              *data,
 
         it = elm_flipselector_last_item_get(fs);
 
-        fprintf(stdout, "Flip selector's last item is: %s\n", it ?
+        printf("Flip selector's last item is: %s\n", it ?
                 elm_object_item_text_get(it) : "none");
      }
    else if (strcmp(ev->keyname, "s") == 0) /* print selected item's label */
@@ -112,7 +112,7 @@ _on_keydown(void              *data,
 
         it = elm_flipselector_selected_item_get(fs);
 
-        fprintf(stdout, "Flip selector's selected item is: %s\n", it ?
+        printf("Flip selector's selected item is: %s\n", it ?
                 elm_object_item_text_get(it) : "none");
      }
    else
@@ -174,7 +174,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    evas_object_show(win);
 
-   fprintf(stdout, "%s", commands);
+   printf("%s", commands);
    elm_run();
 
    return 0;

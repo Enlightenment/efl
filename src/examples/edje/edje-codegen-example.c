@@ -54,7 +54,7 @@ _columns_rows_print(Evas_Object *edje_obj)
    int cols, rows;
 
    if (codegen_example_part_four_col_row_size_get(edje_obj, &cols, &rows))
-     fprintf(stdout, "Number of columns: %d\nNumber of rows: %d\n", cols, rows);
+     printf("Number of columns: %d\nNumber of rows: %d\n", cols, rows);
    else
      fprintf(stderr, "Cannot get the number of columns and rows\n");
 }

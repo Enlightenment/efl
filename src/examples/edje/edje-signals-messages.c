@@ -53,7 +53,7 @@ _on_keydown(void        *data,
 
    if (!strcmp(ev->key, "h")) /* print help */
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
    else if (!strcmp(ev->key, "t")) /* toggle right rectangle's visibility */
@@ -75,7 +75,7 @@ _on_keydown(void        *data,
    else
      {
         printf("unhandled key: %s\n", ev->key);
-        fprintf(stdout, commands);
+        printf(commands);
      }
 }
 
@@ -90,7 +90,7 @@ static void
 _sig_print(const char *emission,
            const char *source)
 {
-   fprintf(stdout, "Signal %s coming from part %s!\n", emission, source);
+   printf("Signal %s coming from part %s!\n", emission, source);
 }
 
 static void
@@ -138,7 +138,7 @@ _message_handle(void             *data EINA_UNUSED,
 
    m = msg;
 
-   fprintf(stdout, "String message received: %s\n", m->str);
+   printf("String message received: %s\n", m->str);
 }
 
 int
@@ -215,7 +215,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    evas_object_repeat_events_set(border, EINA_TRUE);
    evas_object_show(border);
 
-   fprintf(stdout, commands);
+   printf(commands);
 
    ecore_evas_show(ee);
 

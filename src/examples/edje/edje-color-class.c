@@ -71,25 +71,25 @@ _color_classes_print(void)
    Eina_List *classes;
    char *class_name;
 
-   fprintf(stdout, "Getting the color classes\n\n");
+   printf("Getting the color classes\n\n");
    classes = edje_color_class_list();
    EINA_LIST_FREE(classes, class_name)
      {
         int r1, r2, r3, g1, g2, g3, b1, b2, b3,
           a1, a2, a3;
 
-        fprintf(stdout, "\ncolor class: %s\n", class_name);
+        printf("\ncolor class: %s\n", class_name);
         if (!edje_color_class_get(class_name, &r1, &g1, &b1, &a1,
                                   &r2, &g2, &b2, &a2, &r3, &g3, &b3, &a3))
           fprintf(stderr, "Cannot get the color class\n");
         else
           {
 
-             fprintf(stdout,"Object color r: %d g: %d b: %d a: %d\n",
+             printf("Object color r: %d g: %d b: %d a: %d\n",
                      r1, g1, b1, a1);
-             fprintf(stdout,"Text outline color r: %d g: %d b: %d a: %d\n",
+             printf("Text outline color r: %d g: %d b: %d a: %d\n",
                      r2, g2, b2, a2);
-             fprintf(stdout,"Text shadow color r: %d g: %d b: %d a: %d\n",
+             printf("Text shadow color r: %d g: %d b: %d a: %d\n",
                      r3, g3, b3, a3);
           }
         free(class_name);
@@ -142,9 +142,9 @@ _color_class_callback_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
                              const char *emission, void *source EINA_UNUSED)
 {
    if (!strcmp(data, "process"))
-     fprintf(stdout, "Color class: %s deleted on process level\n", emission);
+     printf("Color class: %s deleted on process level\n", emission);
    else
-     fprintf(stdout, "Color class: %s deleted on object level\n", emission);
+     printf("Color class: %s deleted on object level\n", emission);
 }
 
 static int

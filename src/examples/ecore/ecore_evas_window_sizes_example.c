@@ -70,7 +70,7 @@ _on_keydown(void *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
 
@@ -81,13 +81,13 @@ _on_keydown(void *data EINA_UNUSED,
         if (min_set)
           {
              ecore_evas_size_min_set(ee, WIDTH / 2, HEIGHT / 2);
-             fprintf(stdout, "Imposing a minimum size of %d x %d\n",
+             printf("Imposing a minimum size of %d x %d\n",
                      WIDTH / 2, HEIGHT / 2);
           }
         else
           {
              ecore_evas_size_min_set(ee, 0, 0);
-             fprintf(stdout, "Taking off minimum size restriction from the"
+             printf("Taking off minimum size restriction from the"
                              " window\n");
           }
         return;
@@ -100,13 +100,13 @@ _on_keydown(void *data EINA_UNUSED,
         if (max_set)
           {
              ecore_evas_size_max_set(ee, WIDTH * 2, HEIGHT * 2);
-             fprintf(stdout, "Imposing a maximum size of %d x %d\n",
+             printf("Imposing a maximum size of %d x %d\n",
                      WIDTH * 2, HEIGHT * 2);
           }
         else
           {
              ecore_evas_size_max_set(ee, 0, 0);
-             fprintf(stdout, "Taking off maximum size restriction from the"
+             printf("Taking off maximum size restriction from the"
                              " window\n");
           }
         return;
@@ -119,13 +119,13 @@ _on_keydown(void *data EINA_UNUSED,
         if (base_set)
           {
              ecore_evas_size_base_set(ee, WIDTH * 2, HEIGHT * 2);
-             fprintf(stdout, "Imposing a base size of %d x %d\n",
+             printf("Imposing a base size of %d x %d\n",
                      WIDTH * 2, HEIGHT * 2);
           }
         else
           {
              ecore_evas_size_base_set(ee, 0, 0);
-             fprintf(stdout, "Taking off base size restriction from the"
+             printf("Taking off base size restriction from the"
                              " window\n");
           }
         return;
@@ -138,12 +138,12 @@ _on_keydown(void *data EINA_UNUSED,
         if (step_set)
           {
              ecore_evas_size_step_set(ee, 40, 40);
-             fprintf(stdout, "Imposing a step size of %d x %d\n", 40, 40);
+             printf("Imposing a step size of %d x %d\n", 40, 40);
           }
         else
           {
              ecore_evas_size_step_set(ee, 0, 0);
-             fprintf(stdout, "Taking off step size restriction from the"
+             printf("Taking off step size restriction from the"
                              " window\n");
           }
         return;
@@ -153,7 +153,7 @@ _on_keydown(void *data EINA_UNUSED,
      {
         int x, y, w, h;
         ecore_evas_screen_geometry_get(ee, &x, &y, &w, &h);
-        fprintf(stdout, "screen geometry: %d,%d, %dx%d\n", x, y, w, h);
+        printf("screen geometry: %d,%d, %dx%d\n", x, y, w, h);
         return;
      }
 }
@@ -195,7 +195,7 @@ main(void)
    evas_object_show(text);
 
    _canvas_resize_cb(ee);
-   fprintf(stdout, commands);
+   printf(commands);
    ecore_main_loop_begin();
 
    ecore_evas_free(ee);

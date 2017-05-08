@@ -57,7 +57,7 @@ _on_mouse_over(void *data, Evas_Object *edje_obj,
      y = HEIGHT;
    else if (y < 0) y = 0;
 
-   fprintf(stdout, "Moving object to - (%d,%d)\n", x, y);
+   printf("Moving object to - (%d,%d)\n", x, y);
 
    evas_object_move(edje_obj, x, y);
 }

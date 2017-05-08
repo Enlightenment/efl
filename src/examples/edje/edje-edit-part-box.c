@@ -82,12 +82,12 @@ _on_bg_key_down(void *data EINA_UNUSED,
 
    if (!strcmp(ev->key, "h"))
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
    if (!strcmp(ev->key, "p"))
      {
-        fprintf(stdout, "SOURCE CODE:\n%s \n", edje_edit_source_generate(edje_edit_obj));
+        printf("SOURCE CODE:\n%s \n", edje_edit_source_generate(edje_edit_obj));
         return;
      }
    if (!strcmp(ev->key, "n"))
@@ -99,7 +99,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
         if (align_x >= 1.0) align_x = 0.0;
         if (align_y >= 1.0) align_y = 0.0;
 
-        fprintf(stdout, "Changing align to x[%f] y[%f] \n", align_x, align_y);
+        printf("Changing align to x[%f] y[%f] \n", align_x, align_y);
 
         if (!edje_edit_part_item_index_align_x_set(edje_edit_obj, "green", 1, align_x))
           fprintf(stderr, "Couldn't set align x for item x2, something is absolutely wrong!!!\n");
@@ -108,7 +108,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         return;
      }
@@ -121,7 +121,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
         if (weight_x >= 30.0) weight_x = 0.0;
         if (weight_y >= 30.0) weight_y = 0.0;
 
-        fprintf(stdout, "Changing weight to x[%f] y[%f] \n", weight_x, weight_y);
+        printf("Changing weight to x[%f] y[%f] \n", weight_x, weight_y);
 
         if (!edje_edit_part_item_index_weight_x_set(edje_edit_obj, "green", 1, weight_x))
           fprintf(stderr, "Couldn't set weight x for item x2, something is absolutely wrong!!!\n");
@@ -130,7 +130,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         return;
      }
@@ -145,14 +145,14 @@ _on_bg_key_down(void *data EINA_UNUSED,
         if (t >= 32) t = 0;
         if (b >= 32) b = 0;
 
-        fprintf(stdout, "Changing paddings. left[%d], right[%d], top[%d], bottom[%d]\n", l, r, t, b);
+        printf("Changing paddings. left[%d], right[%d], top[%d], bottom[%d]\n", l, r, t, b);
 
         if (!edje_edit_part_item_index_padding_set(edje_edit_obj, "green", 1, l, r, t, b))
           fprintf(stderr, "Couldn't set paddings for item x2, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         return;
      }
@@ -171,7 +171,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
                spread_h = 1;
           }
 
-        fprintf(stdout, "Changing spread to w[%d] h[%d] \n", spread_w, spread_h);
+        printf("Changing spread to w[%d] h[%d] \n", spread_w, spread_h);
 
         if (!edje_edit_part_item_index_spread_w_set(edje_edit_obj, "green", 1, spread_w))
           fprintf(stderr, "Couldn't set spread w for item x2, something is absolutely wrong!!!\n");
@@ -180,7 +180,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         return;
      }
@@ -193,7 +193,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
         if (min_w >= 500) min_w = 200;
         if (min_h >= 500) min_h = 200;
 
-        fprintf(stdout, "Changing min to w[%d] h[%d] \n", min_w, min_h);
+        printf("Changing min to w[%d] h[%d] \n", min_w, min_h);
 
         if (!edje_edit_part_item_index_min_w_set(edje_edit_obj, "green", 1, min_w))
           fprintf(stderr, "Couldn't set min w for item x2, something is absolutely wrong!!!\n");
@@ -202,7 +202,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         return;
      }
@@ -215,7 +215,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
         if (max_w <= 0) max_w = 800;
         if (max_h <= 0) max_h = 800;
 
-        fprintf(stdout, "Changing max to w[%d] h[%d] \n", max_w, max_h);
+        printf("Changing max to w[%d] h[%d] \n", max_w, max_h);
 
         if (!edje_edit_part_item_index_max_w_set(edje_edit_obj, "green", 1, max_w))
           fprintf(stderr, "Couldn't set max w for item x2, something is absolutely wrong!!!\n");
@@ -224,7 +224,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         return;
      }
@@ -238,14 +238,14 @@ _on_bg_key_down(void *data EINA_UNUSED,
           group_number = 0;
          new_source = groups[group_number];
 
-        fprintf(stdout, "Changing item's source from [%s] to [%s] \n", source, new_source);
+        printf("Changing item's source from [%s] to [%s] \n", source, new_source);
 
         if (!edje_edit_part_item_index_source_set(edje_edit_obj, "green", 1, new_source))
           fprintf(stderr, "Couldn't change item's source, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         eina_stringshare_del(source);
         return;
@@ -255,7 +255,7 @@ _on_bg_key_down(void *data EINA_UNUSED,
         if (!edje_edit_part_item_append(edje_edit_obj, "green", "x_new", "complex_group"))
           {
              edje_edit_part_item_index_del(edje_edit_obj, "green", 3);
-             fprintf(stdout, "Successfully removed new item!\n");
+             printf("Successfully removed new item!\n");
           }
         else
           {
@@ -263,12 +263,12 @@ _on_bg_key_down(void *data EINA_UNUSED,
                fprintf(stderr, "Couldn't set min w for item x_new, something is absolutely wrong!!!\n");
              if (!edje_edit_part_item_index_min_h_set(edje_edit_obj, "green", 3, 200))
                fprintf(stderr, "Couldn't set min h for item x_new, something is absolutely wrong!!!\n");
-             fprintf(stdout, "Successfully added new item!\n");
+             printf("Successfully added new item!\n");
           }
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         return;
      }
@@ -282,14 +282,14 @@ _on_bg_key_down(void *data EINA_UNUSED,
           layout_number = 0;
         new_layout = layouts[layout_number];
 
-        fprintf(stdout, "Changing box's layout from [%s] to [%s] \n", layout, new_layout);
+        printf("Changing box's layout from [%s] to [%s] \n", layout, new_layout);
 
         if (!edje_edit_state_box_layout_set(edje_edit_obj, "green", "default", 0.0, new_layout))
           fprintf(stderr, "Couldn't change layout, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         eina_stringshare_del(layout);
         return;
@@ -304,14 +304,14 @@ _on_bg_key_down(void *data EINA_UNUSED,
           alt_layout_number = 0;
         new_layout = layouts[alt_layout_number];
 
-        fprintf(stdout, "Changing box's alternative layout from [%s] to [%s] \n", layout, new_layout);
+        printf("Changing box's alternative layout from [%s] to [%s] \n", layout, new_layout);
 
         if (!edje_edit_state_box_alt_layout_set(edje_edit_obj, "green", "default", 0.0, new_layout))
           fprintf(stderr, "Couldn't change alternative layout, something is absolutely wrong!!!\n");
 
         edje_edit_save_all(edje_edit_obj);
         if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-          fprintf(stdout, "Couldn't load edje edit object! \n");
+          printf("Couldn't load edje edit object! \n");
 
         eina_stringshare_del(layout);
         return;
@@ -348,7 +348,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    /* loading edje edit object here */
    edje_edit_obj = edje_edit_object_add(evas);
    if (!edje_object_file_set(edje_edit_obj, edje_file, "box_group"))
-     fprintf(stdout, "Couldn't load edje edit object! \n");
+     printf("Couldn't load edje edit object! \n");
 
    evas_object_resize(edje_edit_obj, WIDTH, HEIGHT);
    evas_object_show(edje_edit_obj);
@@ -358,7 +358,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    evas_object_focus_set(edje_edit_obj, EINA_TRUE);
    evas_object_event_callback_add(edje_edit_obj, EVAS_CALLBACK_KEY_DOWN, _on_bg_key_down, ee);
 
-   fprintf(stdout, commands);
+   printf(commands);
 
    ecore_evas_show(ee);
 

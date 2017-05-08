@@ -24,7 +24,7 @@ _main_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file)
 {
    int *number_of_listed_files = (int *)data;
 
-   fprintf(stdout, "Processing file:%s\n", file);
+   printf("Processing file:%s\n", file);
 
    (*number_of_listed_files)++;
 }
@@ -34,7 +34,7 @@ _done_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    int *number_of_listed_files = (int *)data;
 
-   fprintf(stdout, "Number of listed files:%d\n" \
+   printf("Number of listed files:%d\n" \
            "ls operation is done, quitting.\n", *number_of_listed_files);
 
    ecore_main_loop_quit();

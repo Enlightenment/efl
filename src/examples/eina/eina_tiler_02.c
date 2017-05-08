@@ -129,7 +129,7 @@ void tiler_calc()
         itr = eina_tiler_iterator_new(tiler);
         EINA_ITERATOR_FOREACH(itr, rect)
           {
-             fprintf(stdout, "Result Rect [%d] (%d, %d) (%d x %d)\n", i++, rect->x, rect->y, rect->w, rect->h);
+             printf("Result Rect [%d] (%d, %d) (%d x %d)\n", i++, rect->x, rect->y, rect->w, rect->h);
 
              o = evas_object_rectangle_add(evas);
              evas_object_color_set(o, 0, 255, 0, 255);
@@ -254,7 +254,7 @@ _on_key_down(void *data,
        /* change tiler tile size */
        tile_idx ++;
        tile_idx %= tile_count;
-       fprintf(stdout, "Tiler Size : %d\n", tilesize[tile_idx]);
+       printf("Tiler Size : %d\n", tilesize[tile_idx]);
 
        rect_update();
        return;
@@ -269,7 +269,7 @@ _on_key_down(void *data,
     }
   else
     {
-       fprintf(stdout, "Key %s not supported.\nCommands:%s", ev->key, commands);
+       printf("Key %s not supported.\nCommands:%s", ev->key, commands);
        return;
     }
 
@@ -285,7 +285,7 @@ main(int argc, char *argv[])
    Eina_Rectangle *rect;
    Eina_Iterator *itr;
 
-   fprintf(stdout, "Usage.\nCommands:%s", commands);
+   printf("Usage.\nCommands:%s", commands);
 
    ecore_evas_init();
    ecore_init();

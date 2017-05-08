@@ -75,10 +75,10 @@ elm_main(int    argc EINA_UNUSED,
    elm_app_compile_lib_dir_set(LIB_DIR);
    elm_app_info_set(elm_main, "elementary", "images/logo.png");
 
-   fprintf(stdout, "prefix was set to: %s\n", elm_app_prefix_dir_get());
-   fprintf(stdout, "data directory is: %s\n", elm_app_data_dir_get());
-   fprintf(stdout, "library directory is: %s\n", elm_app_lib_dir_get());
-   fprintf(stdout, "locale directory is: %s\n", elm_app_locale_dir_get());
+   printf("prefix was set to: %s\n", elm_app_prefix_dir_get());
+   printf("data directory is: %s\n", elm_app_data_dir_get());
+   printf("library directory is: %s\n", elm_app_lib_dir_get());
+   printf("locale directory is: %s\n", elm_app_locale_dir_get());
 
    win = elm_win_util_standard_add("top-level-funcs-example",
                                    "Elementary Top-level Functions Example");
@@ -105,7 +105,7 @@ elm_main(int    argc EINA_UNUSED,
    d.btn = elm_button_add(win);
    elm_object_text_set(d.btn, "Click me");
    elm_object_content_set(frame, d.btn);
-   fprintf(stdout, "Elementary's finger size is set to %d pixels\n.",
+   printf("Elementary's finger size is set to %d pixels\n.",
            elm_config_finger_size_get());
    evas_object_show(d.btn);
 

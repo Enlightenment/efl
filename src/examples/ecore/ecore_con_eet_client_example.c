@@ -36,8 +36,8 @@ static void
 _eet_raw_data_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply EINA_UNUSED, const char *protocol_name EINA_UNUSED, const char *section, void *value, size_t length EINA_UNUSED)
 {
    /* Only a perticular parameter's value is sent by Server. */
-   fprintf(stdout, "Section: %s\n", section);
-   fprintf(stdout, "Value: %s\n", (char *) value);
+   printf("Section: %s\n", section);
+   printf("Value: %s\n", (char *) value);
 }
 
 int main(int argc, const char *argv[])

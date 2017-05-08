@@ -43,7 +43,7 @@ _eet_data_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply, const char *protoco
    char toSend[] = "Received your message.";// The message to send to client.
    ECE_Example *received = value;// The message received from client.
 
-   fprintf(stdout, "id: %d\n message: %s\n not_sending: %s\n",
+   printf("id: %d\n message: %s\n not_sending: %s\n",
            received->id, received->message, received->not_sending);
    /* The not_sending would be empty as not_sending is not added in the
     * descriptor. So that value is not sent.

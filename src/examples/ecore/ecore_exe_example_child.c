@@ -21,13 +21,13 @@ _fd_handler_cb(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 
    if (numberOfMessages < 3)
      {
-        fprintf(stdout, "My father sent this message to me:%s\n", message);
+        printf("My father sent this message to me:%s\n", message);
         fflush(stdout);
         return ECORE_CALLBACK_RENEW;
      }
    else
      {
-        fprintf(stdout, "quit\n");
+        printf("quit\n");
         fflush(stdout);
         ecore_main_loop_quit();
         return ECORE_CALLBACK_DONE;

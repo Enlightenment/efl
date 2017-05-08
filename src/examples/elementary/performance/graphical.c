@@ -513,7 +513,7 @@ _xml_attr_data(void *data, const char *key, const char *value)
                format[i] = a[i + 1];
              if (strcmp(format, "md2") && strcmp(format, "obj") && strcmp(format, "ply"))
                {
-                  fprintf(stdout, "\nUnsupported fromat file\n");
+                  printf("\nUnsupported fromat file\n");
                   globalGraphical.model_path = NULL;
                }
              free(format);
@@ -595,7 +595,7 @@ static void _init_graphical()
    globalGraphical.model_path = NULL;
 
    if (!config)
-     fprintf(stdout, "Could not open initial_config.xml, count=4, speed=10, precision=100, perspective=120");
+     printf("Could not open initial_config.xml, count=4, speed=10, precision=100, perspective=120");
    else
      {
         buffer = (char*)(eina_file_map_all(config, EINA_FILE_RANDOM));

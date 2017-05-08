@@ -100,7 +100,7 @@ _on_bg_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, voi
 
    if (!strcmp(ev->key, "h"))
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
    // just moving the part and text
@@ -150,7 +150,7 @@ _on_bg_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, voi
    else
      {
         printf("unhandled key: %s\n", ev->key);
-        fprintf(stdout, commands);
+        printf(commands);
      }
 }
 
@@ -217,7 +217,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    edje_perspective_set(app.ps, 240, 160, 0, app.focal);
    edje_perspective_global_set(app.ps, EINA_TRUE);
 
-   fprintf(stdout, commands);
+   printf(commands);
 
    ecore_evas_show(ee);
 

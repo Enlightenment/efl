@@ -87,7 +87,7 @@ on_keydown(void *data, Evas *evas, Evas_Object *o EINA_UNUSED, void *einfo)
    mods = evas_key_modifier_get(evas);
    if (!strcmp(ev->key, "h"))
      {
-        fprintf(stdout, commands);
+        printf(commands);
         return;
      }
    if (evas_key_modifier_is_set(mods, "Shift"))
@@ -211,7 +211,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 	  }
      }
 
-   fprintf(stdout, commands);
+   printf(commands);
 
    ecore_evas_show(ee);
 

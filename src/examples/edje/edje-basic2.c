@@ -66,7 +66,7 @@ _on_key_down(void *data,
   }
   else
   {
-     fprintf(stdout, "Key %s not supported.\nCommands:%s", ev->key, commands);
+     printf("Key %s not supported.\nCommands:%s", ev->key, commands);
      return;
   }
 
@@ -130,7 +130,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
   ecore_evas_show(ee);
 
-  fprintf(stdout, "%s", commands);
+  printf("%s", commands);
 
   ecore_main_loop_begin();
 

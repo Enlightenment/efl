@@ -72,7 +72,7 @@ void _value_int_to_char(char *buf, int value, const char *description)
 static Eina_Bool
 _timer_update(void *data)
 {
-   fprintf(stdout, " frame rate = %f fps\n", fps_frames / 10.0);
+   printf(" frame rate = %f fps\n", fps_frames / 10.0);
    fps_frames = 0;
    return EINA_TRUE;
 }
@@ -144,7 +144,7 @@ _on_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
              diff_sec = ((float)time) / CLOCKS_PER_SEC / 10;
              if (pick)
                {
-                  fprintf(stdout, "Boom! Color pick time expended for pick: %2.7f \n", diff_sec);
+                  printf("Boom! Color pick time expended for pick: %2.7f \n", diff_sec);
                   if (n != globalGraphical.mesh_nodebox)
                     evas_canvas3d_node_scale_set(n, 0.5, 0.5, 0.5);
                }
@@ -157,7 +157,7 @@ _on_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
              diff_sec = ((float)time) / CLOCKS_PER_SEC / 10;
              if (pick)
                {
-                  fprintf(stdout, "Boom! Geometry pick time expended for pick: %2.7f, TexCoord (%f, %f)\n", diff_sec, s, t);
+                  printf("Boom! Geometry pick time expended for pick: %2.7f, TexCoord (%f, %f)\n", diff_sec, s, t);
                   if (n != globalGraphical.mesh_nodebox)
                      evas_canvas3d_node_scale_set(n, 0.5, 0.5, 0.5);
                }
@@ -545,7 +545,7 @@ _load_mesh(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
           }
         else
           {
-             fprintf(stdout, "\nUnsupported fromat file\n");
+             printf("\nUnsupported fromat file\n");
              globalGraphical.model_path = NULL;
              elm_object_text_set(obj, "load");
           }

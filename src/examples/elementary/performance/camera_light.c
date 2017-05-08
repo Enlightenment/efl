@@ -8,7 +8,7 @@ Eina_Bool _alloc_memory(Axis_Key **ckey, Panel_Struct **pobj, Axis_Key **lkey)
 
    if (!(*ckey) || !(*pobj) || !(*lkey))
      {
-        fprintf(stdout, "Not enough memory - at %s line %d\n", __FILE__, __LINE__);
+        printf("Not enough memory - at %s line %d\n", __FILE__, __LINE__);
         free(*ckey);
         free(*pobj);
         free(*lkey);
@@ -34,7 +34,7 @@ init_panel_camera_light(Evas_Object *win, Eo *camera_node, Eo *light_node, doubl
 
    if (ELM_WIN_UNKNOWN == elm_win_type_get(win))
      {
-        fprintf(stdout, "Not appropriate parent object - at %s line %d\n", __FILE__, __LINE__);
+        printf("Not appropriate parent object - at %s line %d\n", __FILE__, __LINE__);
         return NULL;
      }
 
