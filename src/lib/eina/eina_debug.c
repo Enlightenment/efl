@@ -86,10 +86,6 @@ static Eina_Hash *_modules_hash = NULL;
 
 static int _bridge_keep_alive_opcode = EINA_DEBUG_OPCODE_INVALID;
 
-static unsigned int _poll_time = 0;
-static Eina_Debug_Timer_Cb _poll_timer_cb = NULL;
-static void *_poll_timer_data = NULL;
-
 static Eina_Semaphore _thread_cmd_ready_sem;
 
 typedef void *(*Eina_Debug_Encode_Cb)(const void *buffer, int size, int *ret_size);
@@ -767,15 +763,6 @@ eina_debug_shell_remote_connect(const char *cmds_str)
 #endif
 }
 
-EAPI Eina_Bool
-eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data)
-{
-   _poll_time = timeout_ms;
-   _poll_timer_cb = cb;
-   _poll_timer_data = data;
-   return EINA_TRUE;
-}
-
 // this is a DEDICATED debug thread to monitor the application so it works
 // even if the mainloop is blocked or the app otherwise deadlocked in some
 // way. this is an alternative to using external debuggers so we can get
@@ -784,17 +771,7 @@ static void *
 _monitor(void *_data)
 {
 #ifndef _WIN32
-#define MAX_EVENTS   4
-   int ret;
-   struct epoll_event event;
-   struct epoll_event events[MAX_EVENTS];
-   int epfd = epoll_create(MAX_EVENTS);
-
    _session = _data;
-   event.data.fd = _session->fd_in;
-   event.events = EPOLLIN;
-   ret = epoll_ctl(epfd, EPOLL_CTL_ADD, _session->fd_in, &event);
-   if (ret) perror("epoll_ctl/add");
 
    // set a name for this thread for system debugging
 #ifdef EINA_HAVE_PTHREAD_SETNAME
@@ -811,63 +788,34 @@ _monitor(void *_data)
    // impact the application specifically
    for (;_session;)
      {
-        // if we are in a polling mode then set up a timeout and wait for it
-        int timeout = _poll_time ? (int)_poll_time : -1; //in milliseconds
+        int size;
+        unsigned char *buffer;
 
-        ret = epoll_wait(epfd, events, MAX_EVENTS, timeout);
-
-        // if the fd for debug daemon says it's alive, process it
-        if (ret)
+        size = _packet_receive(&buffer);
+        // if not negative - we have a real message
+        if (size > 0)
           {
-             int i;
-             //check which fd are set/ready for read
-             for (i = 0; i < ret; i++)
+             if (EINA_DEBUG_OK != _session->dispatch_cb(_session, buffer))
                {
-                  if (events[i].events & EPOLLHUP)
-                    {
-                       _opcodes_unregister_all(_session);
-                       free(_session);
-                       _session = NULL;
-                    }
-                  else if (events[i].events & EPOLLIN)
-                    {
-                       int size;
-                       unsigned char *buffer;
-
-                       size = _packet_receive(&buffer);
-                       // if not negative - we have a real message
-                       if (size > 0)
-                         {
-                            if (EINA_DEBUG_OK != _session->dispatch_cb(_session, buffer))
-                              {
-                                 // something we don't understand
-                                 e_debug("EINA DEBUG ERROR: Unknown command");
-                              }
-                            /* Free the buffer only if the default dispatcher is used */
-                            if (_session->dispatch_cb == eina_debug_dispatch)
-                               free(buffer);
-                         }
-                       else if (size == 0)
-                         {
-                            // May be due to a response from a script line
-                         }
-                       else
-                         {
-                            // major failure on debug daemon control fd - get out of here.
-                            //   else goto fail;
-                            close(_session->fd_in);
-                            //TODO if its not main _session we will tell the main_loop
-                            //that it disconneted
-                         }
-                    }
+                  // something we don't understand
+                  e_debug("EINA DEBUG ERROR: Unknown command");
                }
+             /* Free the buffer only if the default dispatcher is used */
+             if (_session->dispatch_cb == eina_debug_dispatch)
+                free(buffer);
           }
+#if 0
+        else if (size == 0)
+          {
+             // May be due to a response from a script line
+          }
+#endif
         else
           {
-             if (_poll_time && _poll_timer_cb)
-               {
-                  if (!_poll_timer_cb(_poll_timer_data)) _poll_time = 0;
-               }
+             close(_session->fd_in);
+             _opcodes_unregister_all(_session);
+             free(_session);
+             _session = NULL;
           }
      }
 #endif
@@ -1169,12 +1117,14 @@ eina_debug_init(void)
    _signal_init();
    _eina_debug_cpu_init();
    _eina_debug_bt_init();
+   _eina_debug_timer_init();
    return EINA_TRUE;
 }
 
 Eina_Bool
 eina_debug_shutdown(void)
 {
+   _eina_debug_timer_shutdown();
    _eina_debug_bt_shutdown();
    _eina_debug_cpu_shutdown();
    eina_semaphore_free(&_thread_cmd_ready_sem);

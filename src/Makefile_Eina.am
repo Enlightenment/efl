@@ -126,6 +126,7 @@ lib/eina/eina_debug_bt_file.c \
 lib/eina/eina_debug_chunk.c \
 lib/eina/eina_debug_thread.c \
 lib/eina/eina_debug_cpu.c \
+lib/eina/eina_debug_timer.c \
 lib/eina/eina_error.c \
 lib/eina/eina_evlog.c \
 lib/eina/eina_file_common.h \

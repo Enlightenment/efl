@@ -108,6 +108,11 @@ typedef Eina_Debug_Error (*Eina_Debug_Dispatch_Cb)(Eina_Debug_Session *session, 
 typedef Eina_Bool (*Eina_Debug_Timer_Cb)(void *);
 
 /**
+ * @typedef Eina_Debug_Timer
+ */
+typedef struct _Eina_Debug_Timer Eina_Debug_Timer;
+
+/**
  * @typedef Eina_Debug_Packet_Header
  *
  * Header of Eina Debug packet
@@ -275,15 +280,23 @@ EAPI int eina_debug_session_send_to_thread(Eina_Debug_Session *session, int dest
 /**
  * @brief Add a timer
  *
- * Needed for polling debug
- *
  * @param timeout_ms timeout in ms
  * @param cb callback to call when the timeout is reached
  * @param data user data
  *
- * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * @return the timer handle, NULL on error
  */
-EAPI Eina_Bool eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data);
+EAPI Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data);
+
+/**
+ * @brief Delete a timer
+ *
+ * @param timer the timer to delete
+ *
+ * If the timer reaches the end and has not be renewed, trying to delete it will lead to a crash, as
+ * it has already been deleted internally.
+ */
+EAPI void eina_debug_timer_del(Eina_Debug_Timer *timer);
 
 EAPI int eina_debug_thread_id_get(void);
 

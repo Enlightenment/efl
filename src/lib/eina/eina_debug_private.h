@@ -69,5 +69,8 @@ Eina_Bool _eina_debug_cpu_shutdown(void);
 
 Eina_Bool _eina_debug_bt_init(void);
 Eina_Bool _eina_debug_bt_shutdown(void);
+
+Eina_Bool _eina_debug_timer_init(void);
+Eina_Bool _eina_debug_timer_shutdown(void);
 #endif
 
