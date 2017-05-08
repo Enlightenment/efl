@@ -1086,7 +1086,7 @@
  *
  * Here it is:
  * @dontinclude edje-swallow2.c
- * @skipline char         edje_file
+ * @skipline const char  *edje_file
  * @skipline const char  *img
  * @skipline Evas_Load
  *
