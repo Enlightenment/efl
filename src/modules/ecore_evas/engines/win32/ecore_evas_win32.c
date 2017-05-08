@@ -96,29 +96,6 @@ static Eina_Bool _ecore_evas_win32_event_window_property_change(void *data EINA_
 /* Private functions */
 
 static int
-_ecore_evas_win32_render(Ecore_Evas *ee)
-{
-   int rend = 0;
-   Eina_List *updates = NULL;
-
-   rend = ecore_evas_render_prepare(ee);
-
-   if ((ee->visible) ||
-       ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-       ((ee->should_be_visible) && (ee->prop.override)) ||
-       (ee->prop.avoid_damage))
-     {
-        updates = evas_render_updates(ee->evas);
-        if (updates) evas_render_updates_free(updates);
-     }
-   else
-     evas_norender(ee->evas);
-   if (updates) rend = 1;
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-   return rend;
-}
-
-static int
 _ecore_evas_win32_init(void)
 {
    _ecore_evas_init_count++;
@@ -820,7 +797,10 @@ _ecore_evas_win32_show(Ecore_Evas *ee)
 
    ee->should_be_visible = 1;
    if (ee->prop.avoid_damage)
-     _ecore_evas_win32_render(ee);
+     {
+        ecore_evas_render(ee);
+        ecore_evas_render_wait(ee);
+     }
    ecore_win32_window_show((Ecore_Win32_Window *)ee->prop.window);
 /*    if (ee->prop.fullscreen) */
 /*      ecore_win32_window_focus(ee->prop.window); */
@@ -1400,7 +1380,6 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
         return NULL;
      }
 
-   ee->engine.func->fn_render = _ecore_evas_win32_render;
    _ecore_evas_register(ee);
    ecore_event_window_register(ee->prop.window, ee, ee->evas,
                                (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
