@@ -1,6 +1,6 @@
 class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal)
 {
-   [[Evas tex class]]
+   [[Evas text class]]
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;
    methods {
@@ -36,7 +36,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          }
       }
       @property ellipsis {
-         [[Conttrols the ellipsis that should be used for the text object.
+         [[Controls the ellipsis that should be used for the text object.
 
           This is a value between 0.0 and 1.0 indicating the position of the text
           to be shown. 0.0 means the start will be shown and the end trimmed, 1.0
@@ -71,7 +71,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          }
       }
       @property outline_color {
-         [[Controlss the outline color for the given text object.
+         [[Controls the outline color for the given text object.
 
            Outline effects (colored lines around text glyphs) will just be
            shown if the object is set to one of the following styles:
@@ -146,7 +146,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
            @Evas.Text_Style_Type.glow style.
 
            Note: Glow effects are placed from a short distance of the text
-           itself, but no touching it. For glowing effects right on the
+           itself, but not touching it. For glowing effects right on the
            borders of the glyphs, see 'glow 2' effects.]]
          set {
          }
@@ -230,7 +230,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
       }
       char_coords_get @const {
       	 [[Get character coordinates]]
-         return: int; [[Logical poistion of char]]
+         return: int; [[Logical position of char]]
          params {
             @in x: Evas.Coord; [[X coordinate]]
             @in y: Evas.Coord; [[Y coordinate]]
