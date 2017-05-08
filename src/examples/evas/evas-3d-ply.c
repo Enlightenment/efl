@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating import/export of .ply format.
+ * Example of .ply file format import/export in Evas-3D.
  *
  * Read meshes from "tested_man_all_with_mods.ply", "tested_man_only_geometry.ply" and "tested_man_without_UVs.ply".
  * After that change some properties of material.

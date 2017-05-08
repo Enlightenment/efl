@@ -1,6 +1,5 @@
 /**
- * Example showing the difference between Evas Map with and without
- * anti-aliasing (AA).
+ * Example comparing map with and without anti-aliasing (AA) in Evas.
  *
  * @verbatim
  * gcc -o evas-map-aa evas-map-aa.c `pkg-config --libs --cflags evas ecore ecore-evas eina`

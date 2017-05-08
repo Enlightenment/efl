@@ -1,5 +1,7 @@
 /**
- * Example illustrating usage of blending modes. Press "Up" or "Down" key for change source blending factor.
+ * Example of different blending modes in Evas-3D.
+ *
+ * Press "Up" or "Down" key for change source blending factor.
  * Press "Left" or "Right" for change destination blending factors.
  * For more details see https://www.opengl.org/sdk/docs/man2/xhtml/glBlendFunc.xml
  *
@@ -7,7 +9,6 @@
  * gcc -o evas-3d-blending evas-3d-blending.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
-
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

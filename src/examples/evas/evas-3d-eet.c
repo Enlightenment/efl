@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating .eet import/export
+ * Example of .eet file format import/export in Evas-3D.
  *
  * Take mesh from md2.
  * Set material to it.

@@ -1,5 +1,5 @@
 /**
- * Simple Evas-3D example illustrating import from .md2 format.
+ * Example of .md2 file format import in Evas-3D.
  *
  * @verbatim
  * gcc -o evas-3d-md2 evas-3d-md2.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`

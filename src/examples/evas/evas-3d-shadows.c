@@ -1,6 +1,9 @@
 /**
+ * Example of setting up an animated Evas-3D scene with lighting and anti-aliasing.
+ *
  * This example illustrates use of shadows, callbacks(clicked, collision),
  * technic of the billboard and post proccesing render with anti-aliasing.
+ *
  * Model and cube are clickable. Model detects collision with sphere.
  * Cube detects collision with sphere, model and cone. Model and cude are moveable.
  * @see evas_canvas3d_scene_shadows_enable_set(Eina_Bool _shadows_enabled)

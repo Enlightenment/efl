@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating some image objects functions
+ * Example saving data for modified image objects to disk with Evas.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one) and the png image loader/saver also built. See stdout/stderr

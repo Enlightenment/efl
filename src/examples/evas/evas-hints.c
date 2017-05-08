@@ -1,6 +1,8 @@
 /**
- * Simple Evas example illustrating <b>alignment, minimum size, maximum
- * size, padding and weight</b> hints on objects.
+ * Example of setting hints on objects in Evas.
+ *
+ * Object hints shown include <b>alignment, minimum size, maximum size,
+ * padding and weight</b>.
  *
  * To exemplify those hints, whe use the Evas box object, one of the
  * managers using size hints to layout its children.

@@ -1,7 +1,9 @@
 /**
- * This example is a testing example, first model (from the right side) is
- * original model, the second one is convex hull made in evas-3d,
- * the third one is convex hull made in blender.
+ * Example to test convex hull models made in Evas-3D vs. Blender.
+ *
+ * The first model (from the right side) is the original model, the
+ * second one is a convex hull made in Evas-3D, and the third one is a
+ * convex hull made in Blender.
  *
  * Press "Right" or "Left" to switch models, the result of test (vertex count)
  * will be printed in console window.

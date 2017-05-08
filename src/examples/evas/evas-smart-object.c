@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating a custom Evas smart object
+ * Example of custom smart objects in Evas.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one). See stdout/stderr for output.

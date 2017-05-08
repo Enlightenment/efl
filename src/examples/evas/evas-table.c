@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating usage of table object.
+ * Example of table objects in Evas.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one) and the png image loader also built.

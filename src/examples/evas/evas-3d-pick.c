@@ -1,5 +1,5 @@
 /**
- * This example shows how to attach mechanism of pick.
+ * Example of picking nodes and meshes by screen coordinates using Evas-3D.
  *
  * Here shown which transformation should be applied to event_info of
  * _on_mouse_down to make them usable in evas_canvas3d_scene_pick()

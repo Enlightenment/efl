@@ -1,5 +1,5 @@
 /**
- * Simple Evas-3D example illustrating how to create simple mesh without any loading.
+ * Example of creating simple meshes in Evas-3D.
  *
  * This example is the best to start introduction to usage of Evas-3D.
  *

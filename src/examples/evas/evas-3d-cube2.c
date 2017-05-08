@@ -1,6 +1,5 @@
 /**
- * Simple Evas-3D example illustrating usage of normal mapping and animation created
- * by interpolation between frames.
+ * Example of frame interpolation animation with normal mapping in Evas 3D.
  *
  * @verbatim
  * gcc -o evas-3d-cube2 evas-3d-cube2.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm

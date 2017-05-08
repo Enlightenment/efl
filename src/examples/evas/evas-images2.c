@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating some image objects functions
+ * Example of handling events for image objects in Evas.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one) and the png image loader/saver also built. See stdout/stderr

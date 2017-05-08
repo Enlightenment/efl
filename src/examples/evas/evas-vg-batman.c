@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating the use of Evas_VG animation
+ * Example of animation using Evas_VG.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one). See stdout/stderr for output.

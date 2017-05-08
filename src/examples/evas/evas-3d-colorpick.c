@@ -1,5 +1,6 @@
 /**
- * This example shows how to use color pick algorithm for finding node at scene.
+ * Example of finding nodes by color or geometry in an Evas-3D scene.
+ *
  * Enable color pick mode of meshes and scene objects.
  * Click (left for color pick, right for geometry pick) on 3D object and see
  * in terminal time response of the found node.

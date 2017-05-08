@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating aspect control hints on objects.
+ * Example of aspect control hints on objects in Evas.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one) and the png image loader also built. See stdout/stderr for

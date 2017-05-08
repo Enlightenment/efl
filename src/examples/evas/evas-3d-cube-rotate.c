@@ -1,5 +1,5 @@
 /**
- * This example shows how the work of events with callback of the mouse could be useful in node rotation.
+ * Example of using mouse callback events for node rotation in Evas-3D.
  *
  * After clicking the mouse on cube callbacks began to emit automatically,
  * depending on mouse's position change the cube rotates with a certain

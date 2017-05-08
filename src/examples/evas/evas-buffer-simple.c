@@ -1,5 +1,5 @@
 /**
- * Simple Evas example using the Buffer engine.
+ * Example of using the buffer engine in Evas.
  *
  * You must have Evas compiled with the buffer engine, and have the
  * evas-software-buffer pkg-config files installed.

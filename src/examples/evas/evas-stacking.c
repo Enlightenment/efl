@@ -1,6 +1,5 @@
 /**
- * Simple Evas example illustrating <b>objects stacking</b> and
- * <b>canvas layers</b>.
+ * Example of <b>object stacking</b> and <b>canvas layers</b> in Evas.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one) and the png image loader also built. See stdout/stderr for

@@ -1,5 +1,6 @@
 /**
- * This example illustrates using static LOD technic.
+ * Example of static LOD techniques in Evas-3D.
+ *
  * Main idea using several meshes with different quantity of polygons,
  * render mesh depends on distance to the camera node.
  * Use key up/down to change animtion style:

@@ -1,8 +1,5 @@
 /**
- * Porting evas-object-manipulation.c example
- * to use Eo-styled Evas API.
- *
- * Simple Evas example illustrating basic objects manipulation.
+ * Example of basic object manipulation with an Eo-styled Evas API.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one) and the png image loader also built. See stdout/stderr for

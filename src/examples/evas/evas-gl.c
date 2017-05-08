@@ -1,5 +1,5 @@
 /**
- * Evas example illustrating work with GL APIs.
+ * Example of working with OpenGL APIs in Evas.
  *
  * Evas_GL.h should be added for Evas GL APIs access.
  *

@@ -1,5 +1,5 @@
 /**
- * Evas textblock example for obstacles feature
+ * Example of textblock obstacles in Evas.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one). See stdout/stderr for output.

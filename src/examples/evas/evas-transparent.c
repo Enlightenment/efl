@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating a trasnparent window
+ * Example of transparent windows in Evas.
  *
  * @verbatim
  * gcc -o evas-transparent evas-transparent.c `pkg-config --libs --cflags evas ecore ecore-evas eina`

@@ -1,5 +1,5 @@
 /**
- * Example illustrating usage of parallax occlusion shading and texture animation.
+ * Example of parallax occlusion shading and texture animation in Evas-3D.
  *
  * Press "n" for use normal mapping shading. Pres "p" for use parallax occlusion mapping shading.
  *

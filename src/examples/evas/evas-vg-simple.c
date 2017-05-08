@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating a Evas_VG basic node usage.
+ * Example of basic nodes in Evas_VG.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one). See stdout/stderr for output.

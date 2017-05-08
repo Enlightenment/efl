@@ -1,6 +1,5 @@
 /**
- * Simple Evas example illustrating how to interact with canvas' (and
- * its objects') events and other canvas operations.
+ * Example of using callbacks to interact with the canvas and its objects in Evas.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one) and the png image loader also built. See stdout/stderr for

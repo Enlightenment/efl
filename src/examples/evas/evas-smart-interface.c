@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating Evas smart interfaces
+ * Example of smart interfaces in Evas.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one). See stdout/stderr for output.

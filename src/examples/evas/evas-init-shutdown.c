@@ -1,8 +1,9 @@
 /**
- * Simple example illustrating usage of evas_init() and
- * evas_shutdown(). Usually one would instantiate a canvas to have
- * something useful out of Evas. For an example of this kind, see the
- * @ref Example_Evas_Buffer_Simple.
+ * Example of initializing and shutting down Evas.
+ *
+ * Usually one would instantiate a canvas to have something useful out
+ * of Evas. For an example of this kind, see the @ref
+ * Example_Evas_Buffer_Simple.
  *
  * Here, we are just listing the engine Evas was compiled with support
  * to.

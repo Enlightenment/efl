@@ -1,5 +1,7 @@
 /**
- * Evas example illustrating how to handle events with multiseat information:
+ * Example of handling events with multiseat information in Evas.
+ *
+ * Illustrates handling of:
  *    * mouse events
  *    * keyboard events
  *    * focus events

@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating import from mmap.
+ * Example of mmap import in Evas-3D.
  *
  * Open files to Eina_Files.
  * Read meshes from Eina_Files.

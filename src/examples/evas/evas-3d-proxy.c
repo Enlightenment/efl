@@ -1,5 +1,5 @@
 /**
- * Evas-3D example illustrating usage of evas_canvas3d_texture_source_set()
+ * Example of setting the texture source of an object in Evas-3D.
  *
  * Data which will be used as texture can be generated directly in application.
  *

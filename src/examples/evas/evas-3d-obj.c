@@ -1,5 +1,6 @@
 /**
- * Simple Evas example illustrating import/export of .obj format.
+ * Example of .obj file format import in Evas-3D.
+ *
  * Example demonstrates possibility to load and save mesh without tex_coords or/and normals.
  *
  * Read mesh from "sweet_home(parameters).obj".

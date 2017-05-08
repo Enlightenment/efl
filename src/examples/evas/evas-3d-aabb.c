@@ -1,5 +1,5 @@
 ﻿/**
- * This example shows how to get and draw axis-aligned bounding box.
+ * Example of getting and drawing an axis-aligned bounding box in Evas-3D.
  *
  * @see _redraw_aabb();
  * Rotate axes (keys 1-4) for model and bounding box view from another angle.

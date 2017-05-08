@@ -1,5 +1,6 @@
 /**
- * This example shows how to work frustum culling.
+ * Example of frustum culling in Evas-3D.
+ *
  * Use 'w'/'s' key to move far frustum plane from/to the camera.
  * Use 't'/'g' key to move near frustum plane from/to the camera.
  * Use '1'/'2' key to set camera to the first/second position.

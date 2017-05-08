@@ -1,5 +1,5 @@
 /**
- * Simple Evas example illustrating basic map utils.
+ * Example of basic map utils with an Eo-styled Evas API.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one). See stdout/stderr for output.
