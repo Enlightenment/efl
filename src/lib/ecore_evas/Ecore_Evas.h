@@ -174,7 +174,25 @@ EAPI int         ecore_evas_init(void);
  */
 EAPI int         ecore_evas_shutdown(void);
 
+/**
+ * @brief Sets application compositor synchronization on/off
+ *
+ * Turns on client+server synchronized rendering in X11.  App comp sync
+ * is disabled by default, but can be turned on optionally.
+ *
+ * @note This is an experimental functionality and is likely to be removed.
+ *
+ * @param do_sync True to enable comp syncing, False to disable
+ */
 EAPI void        ecore_evas_app_comp_sync_set(Eina_Bool do_sync);
+
+/**
+ * @brief Get the compositing synchronization state
+ *
+ * @note This is an experimental functionality and is likely to be removed.
+ *
+ * @return True if app comp sync is enabled.
+ */
 EAPI Eina_Bool   ecore_evas_app_comp_sync_get(void);
 
 /**
@@ -2437,7 +2455,33 @@ EAPI void        ecore_evas_input_event_unregister(Ecore_Evas *ee);
  * pipeline, thus bring its window to an up to date state.
  */
 EAPI void        ecore_evas_manual_render(Ecore_Evas *ee);
+
+/**
+ * @brief Sets comp syncing to enabled/disabled
+ *
+ * Turns on client+server synchronized rendering in X11.  Comp sync is
+ * disabled by default, but can be turned on optionally.  Can also be
+ * set via the ECORE_EVAS_COMP_NOSYNC / ECORE_EVAS_COMP_SYNC
+ * environmental variables.
+ *
+ * @note This is an experimental functionality and is likely to be
+ * removed in future versions of EFL.
+ *
+ * @param ee An @c Ecore_Evas handle
+ * @param do_sync True to enable comp syncing, False to disable
+ */
 EAPI void        ecore_evas_comp_sync_set(Ecore_Evas *ee, Eina_Bool do_sync);
+
+/**
+ * @brief Gets the comp sync state
+ *
+ * @note This is an experimental functionality and is likely to be
+ * removed in future versions of EFL.
+ *
+ * @param ee An @c Ecore_Evas handle
+ *
+ * @return True if composition synchronization is enabled, False otherwise
+ */
 EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
 
 /**
