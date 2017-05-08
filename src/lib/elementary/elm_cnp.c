@@ -5576,7 +5576,7 @@ _cont_obj_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
-        cnp_debug("event on hold or - have to cancel DnD\n");
+        cnp_debug("event on hold - have to cancel DnD\n");
 
         _abort_drag(obj, st);
         st = NULL;
