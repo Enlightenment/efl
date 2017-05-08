@@ -34,29 +34,6 @@ static Ecore_Event_Handler      *ecore_evas_event_handlers[4];
 static const char *_iface_name = "opengl_cocoa";
 static const int _iface_version = 1;
 
-static int
-_ecore_evas_cocoa_render(Ecore_Evas *ee)
-{
-   Eina_List *updates = NULL;
-   int rend = 0;
-
-   rend = ecore_evas_render_prepare(ee);
-
-   if (((ee->visible) && (ee->draw_ok)) ||
-       ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-       ((ee->should_be_visible) && (ee->prop.override)))
-     {
-        updates = evas_render_updates(ee->evas);
-        if (updates) evas_render_updates_free(updates);
-     }
-   else
-     evas_norender(ee->evas);
-
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-
-   return (updates) ? 1 : rend;
-}
-
 static inline Ecore_Evas *
 _ecore_evas_cocoa_match(Ecore_Cocoa_Object *cocoa_win)
 {
@@ -506,7 +483,7 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL,
     NULL,
 
-    _ecore_evas_cocoa_render,
+    NULL,
     _ecore_evas_screen_geometry_get,
     NULL, // screen_dpi_get
     NULL,
@@ -531,6 +508,7 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL, //fn_callback_device_mouse_in_set
     NULL, //fn_callback_device_mouse_out_set
     NULL, //fn_pointer_device_xy_get
+    NULL, //fn_prepare
   };
 
 static Ecore_Cocoa_Window *
