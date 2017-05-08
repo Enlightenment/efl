@@ -127,39 +127,6 @@ _ecore_evas_psl1ght_event_quit (void *data EINA_UNUSED, int type EINA_UNUSED, vo
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
-_ecore_evas_render(Ecore_Evas *ee)
-{
-   Eina_List *updates;
-
-   updates = evas_render_updates(ee->evas);
-   if (updates)
-     {
-        evas_render_updates_free(updates);
-        _ecore_evas_idle_timeout_update(ee);
-     }
-   return updates ? 1 : 0;
-}
-
-static int
-_ecore_evas_psl1ght_render(Ecore_Evas *ee)
-{
-   int rend = 0;
-
-   rend = ecore_evas_render_prepare(ee);
-
-   if (ee->prop.avoid_damage) rend = _ecore_evas_render(ee);
-   else if ((ee->visible) ||
-            ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-            ((ee->should_be_visible) && (ee->prop.override)))
-     rend |= _ecore_evas_render(ee);
-   else
-     evas_norender(ee->evas);
-
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-   return rend;
-}
-
 static Eina_Bool
 _ecore_evas_psl1ght_event(void *data EINA_UNUSED)
 {
@@ -426,7 +393,6 @@ ecore_evas_psl1ght_new_internal(const char *name, int w, int h)
    ee->visible = 1;
    ee->w = w;
    ee->h = h;
-   ee->can_async_render = EINA_FALSE;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
@@ -482,7 +448,6 @@ ecore_evas_psl1ght_new_internal(const char *name, int w, int h)
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
    _ecore_event_window_direct_cb_set(0, _ecore_evas_input_direct_cb);
 
-   ee->engine.func->fn_render = _ecore_evas_psl1ght_render;
    _ecore_evas_register(ee);
 
    psl1ght_ee = ee;
@@ -494,6 +459,6 @@ ecore_evas_psl1ght_new_internal(const char *name, int w, int h)
 
    _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-   
+
    return ee;
 }
