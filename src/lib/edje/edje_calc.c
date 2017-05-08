@@ -770,7 +770,8 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
           {
              ep->param2 = eina_mempool_malloc(_edje_real_part_state_mp,
                                               sizeof(Edje_Real_Part_State));
-             memset(ep->param2, 0, sizeof(Edje_Real_Part_State));
+             if (ep->param2)
+               memset(ep->param2, 0, sizeof(Edje_Real_Part_State));
           }
         else if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
           {
@@ -779,7 +780,8 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
                _edje_external_parsed_params_free(ep->typedata.swallow->swallowed_object,
                                                  ep->param2->external_params);
           }
-        ep->param2->external_params = NULL;
+        if (ep->param2)
+          ep->param2->external_params = NULL;
      }
    else
    if (ep->param2)
