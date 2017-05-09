@@ -668,24 +668,27 @@ eina_str_escape(const char *str)
            {
              *d = '\\';
              d++;
+             *d = *s;
              break;
            }
          case '\n':
            {
              *d = '\\'; d++;
-             *d = 'n'; d++;
-             s++;
+             *d = 'n';
              break;
            }
          case '\t':
            {
              *d = '\\'; d++;
-             *d = 't'; d++;
-             s++;
+             *d = 't';
+             break;
+           }
+         default:
+           {
+             *d = *s;
              break;
            }
         }
-        *d = *s;
      }
    *d = 0;
    return s2;
