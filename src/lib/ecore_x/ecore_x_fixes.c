@@ -10,6 +10,7 @@
 static int _fixes_available;
 #ifdef ECORE_XFIXES
 static int _fixes_major, _fixes_minor;
+static int _cursor_visible = 1;
 #endif /* ifdef ECORE_XFIXES */
 
 void
@@ -405,4 +406,32 @@ ecore_x_region_picture_clip_set(Ecore_X_Region region,
                               region);
    if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
+}
+
+EAPI void
+ecore_x_cursor_show(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+#ifdef ECORE_XFIXES
+   if (!_cursor_visible)
+     {
+        XFixesShowCursor(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp));
+        XFlush(_ecore_x_disp);
+        _cursor_visible = 1;
+     }
+#endif  /* ifdef ECORE_XFIXES */
+}
+
+EAPI void
+ecore_x_cursor_hide(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+#ifdef ECORE_XFIXES
+   if (_cursor_visible)
+     {
+        XFixesHideCursor(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp));
+        XFlush(_ecore_x_disp);
+        _cursor_visible = 0;
+     }
+#endif  /* ifdef ECORE_XFIXES */
 }

@@ -2436,6 +2436,8 @@ EAPI void               ecore_x_region_expand(Ecore_X_Region dest, Ecore_X_Regio
 EAPI void               ecore_x_region_gc_clip_set(Ecore_X_Region region, Ecore_X_GC gc, int x_origin, int y_origin);
 EAPI void               ecore_x_region_window_shape_set(Ecore_X_Region region, Ecore_X_Window win, Ecore_X_Shape_Type type, int x_offset, int y_offset);
 EAPI void               ecore_x_region_picture_clip_set(Ecore_X_Region region, Ecore_X_Picture picture, int x_origin, int y_origin);
+EAPI void               ecore_x_cursor_show(void);
+EAPI void               ecore_x_cursor_hide(void);
 
 /**
  * xfixes selection notification request.
