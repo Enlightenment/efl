@@ -3098,7 +3098,7 @@ _ecore_evas_register(Ecore_Evas *ee)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
 }
 
-void
+EAPI void
 _ecore_evas_subregister(Ecore_Evas *ee_target, Ecore_Evas *ee)
 {
    _ecore_evas_register_animators(ee);
