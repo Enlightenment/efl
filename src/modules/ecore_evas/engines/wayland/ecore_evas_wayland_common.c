@@ -1473,9 +1473,8 @@ _ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent)
 }
 
 static void
-_ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
+_ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
 {
-   Evas_Event_Render_Post *ev = event;
    Ecore_Evas *ee = data;
 
    if (ee->delayed.alpha_changed)
