@@ -1,5 +1,12 @@
 import eina_types;
 
+function SimpleCb {
+   params {
+      a: int;
+   }
+   return: int;
+};
+
 class Test.Testing (Efl.Object) {
    methods {
       return_object {
@@ -349,6 +356,19 @@ class Test.Testing (Efl.Object) {
 
       eina_array_obj_return_own {
          return: own(array<own(Test.Numberwrapper)>);
+      }
+
+     set_callback {
+         params {
+            cb: SimpleCb;
+         }
+      }
+
+      call_callback {
+         params {
+            a: int;
+         }
+         return: int;
       }
    }
    implements {

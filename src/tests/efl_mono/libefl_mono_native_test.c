@@ -792,7 +792,15 @@ int _test_numberwrapper_number_get(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data 
    return pd->number;
 }
 
+void _test_testing_set_callback(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, SimpleCb cb, void *cb_data, Eina_Free_Cb cb_free_cb)
+{
+   // FIXME implement
+}
 
+int _test_testing_call_callback(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, int a)
+{
+   return -1; // FIXME implement
+}
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"
 
