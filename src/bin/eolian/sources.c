@@ -85,17 +85,17 @@ _gen_func_pointer_param(const char *name, Eina_Stringshare *c_type,
      eina_strbuf_append(params, ", ");
 
    eina_strbuf_append_printf(params, "%s, %s, %s",
-                             eina_strbuf_string_get(dataname),
                              name,
+                             eina_strbuf_string_get(dataname),
                              eina_strbuf_string_get(freename));
 
-   eina_strbuf_append_printf(params_full_imp, ", void *%s, %s %s, Eina_Free_Cb %s",
-                             eina_strbuf_string_get(dataname),
+   eina_strbuf_append_printf(params_full_imp, ", %s %s, void *%s, Eina_Free_Cb %s",
                              c_type, name,
+                             eina_strbuf_string_get(dataname),
                              eina_strbuf_string_get(freename));
-   eina_strbuf_append_printf(params_full, ", void *%s, %s %s, Eina_Free_Cb %s",
-                             eina_strbuf_string_get(dataname),
+   eina_strbuf_append_printf(params_full, ", %s %s, void *%s, Eina_Free_Cb %s",
                              c_type, name,
+                             eina_strbuf_string_get(dataname),
                              eina_strbuf_string_get(freename));
 
    eina_strbuf_free(dataname);
@@ -875,8 +875,8 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
 
              if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
                {
-                  eina_strbuf_append_printf(params, ", %s_data, %s, %s_free_cb", prn, prn, prn);
-                  eina_strbuf_append_printf(params_full, ", void *%s_data, %s %s, Eina_Free_Cb %s_free_cb", prn, ptn, prn, prn);
+                  eina_strbuf_append_printf(params, ", %s, %s_data, %s_free_cb", prn, prn, prn);
+                  eina_strbuf_append_printf(params_full, ", %s %s, void *%s_data, Eina_Free_Cb %s_free_cb", ptn, prn, prn, prn);
 
                   eina_stringshare_del(ptn);
                   continue;
