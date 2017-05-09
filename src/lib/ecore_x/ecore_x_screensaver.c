@@ -43,6 +43,8 @@ ecore_x_screensaver_idle_time_get(void)
 {
 #ifdef ECORE_XSS
    XScreenSaverInfo *xss;
+   unsigned long _idle;
+   int dummy;
    int idle;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -50,8 +52,45 @@ ecore_x_screensaver_idle_time_get(void)
    XScreenSaverQueryInfo(_ecore_x_disp,
                          RootWindow(_ecore_x_disp, DefaultScreen(
                                       _ecore_x_disp)), xss);
-   idle = xss->idle / 1000;
+
+   _idle = xss->idle;
    XFree(xss);
+   if (DPMSQueryExtension(_ecore_x_disp, &dummy, &dummy))
+     {
+        CARD16 standby, suspend, off;
+        CARD16 state;
+        BOOL onoff;
+
+        if (DPMSCapable(_ecore_x_disp))
+          {
+             DPMSGetTimeouts(_ecore_x_disp, &standby, &suspend, &off);
+             DPMSInfo(_ecore_x_disp, &state, &onoff);
+
+             if (onoff)
+               {
+                  switch (state)
+                    {
+                     case DPMSModeStandby:
+                        /* this check is a littlebit paranoid, but be sure */
+                        if (_idle < (unsigned) (standby * 1000))
+                          _idle += (standby * 1000);
+                        break;
+                     case DPMSModeSuspend:
+                        if (_idle < (unsigned) ((suspend + standby) * 1000))
+                          _idle += ((suspend + standby) * 1000);
+                        break;
+                     case DPMSModeOff:
+                        if (_idle < (unsigned) ((off + suspend + standby) * 1000))
+                          _idle += ((off + suspend + standby) * 1000);
+                        break;
+                     case DPMSModeOn:
+                     default:
+                        break;
+                    }
+               }
+          }
+     }
+   idle = _idle / 1000;
 
    return idle;
 #else
