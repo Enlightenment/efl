@@ -3527,7 +3527,7 @@ evas_render_updates_internal(Evas *eo_e,
    evas_module_clean();
 
    // Send a RENDER_POST when we are rendering synchronously or when there is no update done asynchronously
-   if (!do_async)
+   if (!do_async || !rendering)
      {
         Evas_Event_Render_Post post;
         Eina_List *l;
