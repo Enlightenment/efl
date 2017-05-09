@@ -3647,7 +3647,7 @@ _efl_canvas_object_propagate_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
    return !(obj->no_propagate);
 }
 
-EOLIAN void
+EOLIAN Eina_Bool
 _efl_canvas_object_pointer_mode_by_device_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Input_Device *dev, Evas_Object_Pointer_Mode setting)
 {
    int addgrab;
@@ -3657,13 +3657,13 @@ _efl_canvas_object_pointer_mode_by_device_set(Eo *eo_obj, Evas_Object_Protected_
    Evas_Object_Pointer_Data *obj_pdata;
 
    pdata = _evas_pointer_data_by_device_get(obj->layer->evas, dev);
-   if (!pdata) return;
+   if (!pdata) return EINA_FALSE;
 
    obj_pdata = _evas_object_pointer_data_get(pdata, obj);
-   EINA_SAFETY_ON_NULL_RETURN(obj_pdata);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj_pdata, EINA_FALSE);
 
    /* ignore no-ops */
-   if (obj_pdata->pointer_mode == setting) return;
+   if (obj_pdata->pointer_mode == setting) return EINA_FALSE;
 
    /* adjust by number of pointer down events */
    addgrab = pdata->downs;
@@ -3725,6 +3725,7 @@ _efl_canvas_object_pointer_mode_by_device_set(Eo *eo_obj, Evas_Object_Protected_
         pdata->mouse_grabbed += addgrab;
      }
    obj_pdata->pointer_mode = setting;
+   return EINA_TRUE;
 }
 
 EOLIAN Evas_Object_Pointer_Mode
@@ -3744,7 +3745,7 @@ _efl_canvas_object_pointer_mode_by_device_get(Eo *eo_obj EINA_UNUSED,
    return obj_pdata->pointer_mode;
 }
 
-EOLIAN void
+EOLIAN Eina_Bool
 _efl_canvas_object_pointer_mode_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                     Evas_Object_Pointer_Mode setting)
 {
