@@ -695,6 +695,7 @@ struct _Ecore_Drm2_Fb
    int fd;
    int w, h;
    int depth, bpp;
+   short ref;
    uint32_t id, handles[4];
    uint32_t strides[4], sizes[4];
    uint32_t format;
@@ -794,7 +795,6 @@ struct _Ecore_Drm2_Output
 
    Eina_List *plane_states;
    Eina_List *planes;
-
 
    Eina_Bool connected : 1;
    Eina_Bool primary : 1;

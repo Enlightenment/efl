@@ -119,6 +119,8 @@ out:
         return NULL;
      }
 
+   fb->ref++;
+
    DBG("FB %d assigned to Plane %d", fb->id, pstate->obj_id);
    output->planes = eina_list_append(output->planes, plane);
 

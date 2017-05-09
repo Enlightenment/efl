@@ -35,6 +35,7 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    fb->bpp = bpp;
    fb->depth = depth;
    fb->format = format;
+   fb->ref = 1;
 
    memset(&carg, 0, sizeof(drm_mode_create_dumb));
    carg.bpp = bpp;
@@ -113,6 +114,7 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
    fb->strides[0] = stride;
    fb->sizes[0] = fb->strides[0] * fb->h;
    fb->handles[0] = handle;
+   fb->ref = 1;
 
    if (!_fb2_create(fb))
      {
@@ -228,6 +230,7 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 
    if (output->current.fb && (output->current.fb != output->pending.fb))
      _release_buffer(output, &output->current);
+
    output->current.fb = output->pending.fb;
    output->pending.fb = NULL;
 
@@ -615,6 +618,8 @@ ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, u
    fb->bpp = bpp;
    fb->depth = depth;
    fb->format = format;
+   fb->ref = 1;
+
    memcpy(&fb->strides, strides, sizeof(fb->strides));
    if (_fb2_create(fb)) return fb;
 
