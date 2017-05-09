@@ -88,8 +88,8 @@ static int _bridge_keep_alive_opcode = EINA_DEBUG_OPCODE_INVALID;
 
 static Eina_Semaphore _thread_cmd_ready_sem;
 
-typedef void *(*Eina_Debug_Encode_Cb)(const void *buffer, int size, int *ret_size);
-typedef void *(*Eina_Debug_Decode_Cb)(const void *buffer, int size, int *ret_size);
+typedef void *(*Eina_Debug_Encode_Cb)(const void *buffer, unsigned int size, unsigned int *ret_size);
+typedef void *(*Eina_Debug_Decode_Cb)(const void *buffer, unsigned int size, unsigned int *ret_size);
 
 typedef struct
 {
@@ -150,7 +150,7 @@ eina_debug_session_send_to_thread(Eina_Debug_Session *session, int dest_id, int 
      {
         unsigned char *total_buf = NULL;
         void *new_buf;
-        int total_size = size + sizeof(hdr), new_size = 0;
+        unsigned int total_size = size + sizeof(hdr), new_size = 0;
         total_buf = alloca(total_size);
         memcpy(total_buf, &hdr, sizeof(hdr));
         if (size > 0) memcpy(total_buf + sizeof(hdr), data, size);
@@ -266,9 +266,9 @@ _packet_receive(unsigned char **buffer)
         char c;
         int flags = fcntl(_session->fd_in, F_GETFL, 0);
         e_debug_begin("Characters received: ");
-        fcntl(_session->fd_in, F_SETFL, flags | O_NONBLOCK);
+        if (fcntl(_session->fd_in, F_SETFL, flags | O_NONBLOCK) == -1) perror(0);
         while (read(_session->fd_in, &c, 1) == 1) e_debug_continue("%c", c);
-        fcntl(_session->fd_in, F_SETFL, flags);
+        if (fcntl(_session->fd_in, F_SETFL, flags) == -1) perror(0);
         e_debug_end();
         _session->wait_for_input = EINA_FALSE;
         _cmd_consume(_session);
@@ -280,24 +280,30 @@ _packet_receive(unsigned char **buffer)
    size_buf = alloca(size_sz);
    if ((rret = read(_session->fd_in, size_buf, size_sz)) == size_sz)
      {
-        int size;
+        unsigned int size;
         if (_session->decode_cb)
           {
              /* Decode the size if needed */
              void *size_decoded_buf = _session->decode_cb(size_buf, size_sz, NULL);
-             size = (*(int *)size_decoded_buf) * _session->encoding_ratio;
+             size = (*(unsigned int *)size_decoded_buf) * _session->encoding_ratio;
              free(size_decoded_buf);
           }
         else
           {
-             size = *(int *)size_buf;
+             size = *(unsigned int *)size_buf;
+          }
+        if (size > EINA_DEBUG_MAX_PACKET_SIZE)
+          {
+             e_debug("Packet too big: %d. The maximum allowed is %d", size, EINA_DEBUG_MAX_PACKET_SIZE);
+             rret = -1;
+             goto end;
           }
         e_debug("Begin to receive a packet of %d bytes", size);
         // allocate a buffer for the next bytes to receive
         packet_buf = malloc(size);
         if (packet_buf)
           {
-             int cur_packet_size = size_sz;
+             unsigned int cur_packet_size = size_sz;
              memcpy(packet_buf, size_buf, size_sz);
              /* Receive all the remaining packet bytes */
              while (cur_packet_size < size)
@@ -326,7 +332,7 @@ _packet_receive(unsigned char **buffer)
           {
              // we couldn't allocate memory for payloa buffer
              // internal memory limit error
-             e_debug("Cannot allocate %u bytes for op", (unsigned int)size);
+             e_debug("Cannot allocate %u bytes for op", size);
              goto end;
           }
      }
@@ -405,9 +411,9 @@ _module_init_cb(Eina_Debug_Session *session, int cid, void *buffer, int size)
      }
 
    e_debug("Init module %s", module_name);
+   snprintf(module_path, sizeof(module_path), PACKAGE_LIB_DIR "/lib%s_debug"LIBEXT, module_name);
    if (!minfo)
      {
-        snprintf(module_path, sizeof(module_path), PACKAGE_LIB_DIR "/lib%s_debug"LIBEXT, module_name);
         minfo = calloc(1, sizeof(*minfo));
         eina_hash_add(_modules_hash, module_name, minfo);
      }
@@ -666,7 +672,7 @@ err:
    // some kind of connection failure here, so close a valid socket and
    // get out of here
    if (fd >= 0) close(fd);
-   if (session) free(session);
+   free(session);
 #else
    (void) _session;
    (void) type;
@@ -884,12 +890,12 @@ eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode
  * Each byte is encoded in two bytes.
  */
 static void *
-_shell_encode_cb(const void *data, int src_size, int *dest_size)
+_shell_encode_cb(const void *data, unsigned int src_size, unsigned int *dest_size)
 {
    const char *src = data;
-   int new_size = src_size * 2;
+   unsigned int new_size = src_size * 2;
    char *dest = malloc(new_size);
-   int i;
+   unsigned int i;
    for (i = 0; i < src_size; i++)
      {
         dest[(i << 1) + 0] = ((src[i] & 0xF0) >> 4) + 0x40;
@@ -904,10 +910,10 @@ _shell_encode_cb(const void *data, int src_size, int *dest_size)
  * Each two bytes are merged into one byte.
  */
 static void *
-_shell_decode_cb(const void *data, int src_size, int *dest_size)
+_shell_decode_cb(const void *data, unsigned int src_size, unsigned int *dest_size)
 {
    const char *src = data;
-   int i = 0, j;
+   unsigned int i = 0, j;
    char *dest = malloc(src_size / 2);
    if (!dest) goto error;
    for (i = 0, j = 0; j < src_size; j++)

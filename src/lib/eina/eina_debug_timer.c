@@ -114,7 +114,7 @@ _monitor(void *_data EINA_UNUSED)
         if (ret)
           {
              char c;
-             read(pipeToThread[0], &c, 1);
+             if (read(pipeToThread[0], &c, 1) != 1) _exit_required = EINA_TRUE;
           }
         else
           {

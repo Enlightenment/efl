@@ -22,6 +22,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <fcntl.h>
+#include "eina_debug_private.h"
 
 #include <Eina.h>
 #include <Ecore.h>
@@ -116,7 +117,7 @@ _client_find_by_fd(int fd)
    return NULL;
 }
 
-static int
+static void
 _send(Client *dest, int opcode, void *payload, int payload_size)
 {
    int size = sizeof(Eina_Debug_Packet_Header) + payload_size;
@@ -128,7 +129,7 @@ _send(Client *dest, int opcode, void *payload, int payload_size)
    hdr->opcode = opcode;
    memcpy(buf + sizeof(Eina_Debug_Packet_Header), payload, payload_size);
    //printf("%d bytes sent (opcode %s) to %s fd %d\n", size, _opcodes[opcode]->opcode_string, dest->app_name, dest->fd);
-   return send(dest->fd, buf, size, 0);
+   if (send(dest->fd, buf, size, 0) != size) perror("send");
 }
 
 static void
@@ -161,7 +162,7 @@ _client_del(Client *c)
 }
 
 static Eina_Bool
-_dispatch(Client *src, void *buffer, int size)
+_dispatch(Client *src, void *buffer, unsigned int size)
 {
    Eina_Debug_Packet_Header *hdr = (Eina_Debug_Packet_Header *)buffer;
    if (hdr->cid)
@@ -173,7 +174,7 @@ _dispatch(Client *src, void *buffer, int size)
              if (dest->is_master != src->is_master)
                {
                   hdr->cid = src->cid;
-                  send(dest->fd, buffer, size, 0);
+                  if (send(dest->fd, buffer, size, 0) != size) perror("send");
                }
              else
                {
@@ -343,11 +344,10 @@ _opcode_register_cb(Client *src, void *buffer, int size)
 }
 
 static int
-_data_receive(Client *c, unsigned char **buffer)
+_data_receive(Client *c, unsigned char *buffer)
 {
-   unsigned char *recv_buf = NULL;
    int rret;
-   int size = 0;
+   unsigned int size = 0;
 
    if (!c) return -1;
 
@@ -355,23 +355,19 @@ _data_receive(Client *c, unsigned char **buffer)
 
    if (rret == sizeof(int))
      {
-        int cur_packet_size = 0;
-        // allocate a buffer for the next bytes to receive
-        recv_buf = malloc(size);
-        if (!recv_buf) goto error;
+        unsigned int cur_packet_size = 0;
+        if (size > EINA_DEBUG_MAX_PACKET_SIZE) goto error;
         while (cur_packet_size < size)
           {
-             rret = recv(c->fd, recv_buf + cur_packet_size, size - cur_packet_size, 0);
+             rret = recv(c->fd, buffer + cur_packet_size, size - cur_packet_size, 0);
              if (rret <= 0) goto error;
              cur_packet_size += rret;
           }
      }
-   if (buffer) *buffer = recv_buf;
    //printf("%d bytes received from client %s fd %d\n", size, c->app_name, c->fd);
    return size;
 error:
    if (rret == -1) perror("Read from socket");
-   if (recv_buf) free(recv_buf);
    return -1;
 }
 
@@ -382,6 +378,7 @@ _monitor()
 #define MAX_EVENTS 1000
    int ret = 0;
    struct epoll_event events[MAX_EVENTS];
+   unsigned char *buffer = malloc(EINA_DEBUG_MAX_PACKET_SIZE);
    Client *c;
 
    // sit forever processing commands or timeouts
@@ -427,17 +424,15 @@ _monitor()
                        if (c)
                           {
                              int size;
-                             unsigned char *buffer;
-                             size = _data_receive(c, &buffer);
+                             size = _data_receive(c, buffer);
                              // if not negative - we have a real message
-                             if (size > 0)
+                             if (size >= 0)
                                {
                                   if(!_dispatch(c, buffer, size))
                                     {
                                        // something we don't understand
                                        fprintf(stderr, "Dispatch: unknown command");
                                     }
-                                  free(buffer);
                                }
                              else
                                {
@@ -461,17 +456,24 @@ _monitor()
           }
 #endif
      }
+   free(buffer);
 #endif
 }
 
-static const char *
+static char *
 _socket_home_get()
 {
    // get possible debug daemon socket directory base
+   char *ret = NULL;
    const char *dir = getenv("XDG_RUNTIME_DIR");
    if (!dir) dir = eina_environment_home_get();
    if (!dir) dir = eina_environment_tmp_get();
-   return dir;
+   if (dir)
+     {
+        ret = calloc(1024, 1);
+        strncpy(ret, dir, 1023);
+     }
+   return ret;
 }
 
 #ifndef _WIN32
@@ -516,11 +518,9 @@ _server_launch()
    char buf[4096];
    struct epoll_event event = {0};
    mode_t mask = 0;
-   const char *socket_home_path = _socket_home_get();
-   char *socket_path = NULL;
-   if (!socket_home_path) return EINA_FALSE;
+   char *socket_path = _socket_home_get();
+   if (!socket_path) return EINA_FALSE;
    _epfd = epoll_create (MAX_EVENTS);
-   socket_path = strdup(socket_home_path);
 
    snprintf(buf, sizeof(buf), "%s/%s", socket_path, SERVER_PATH);
    if (mkdir(buf, S_IRWXU) < 0 && errno != EEXIST)
@@ -548,6 +548,7 @@ _server_launch()
    event.events = EPOLLIN;
    epoll_ctl (_epfd, EPOLL_CTL_ADD, _listening_slave_fd, &event);
    umask(mask);
+   free(socket_path);
    return EINA_TRUE;
 err:
    if (mask) umask(mask);

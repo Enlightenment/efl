@@ -17,6 +17,11 @@
 # define e_debug_end(x...) do { } while (0)
 #endif
 
+/* Max packet size
+ * If the shell is used, the ratio is 2.0. It means the max size (not encoded) should be half.
+ */
+#define EINA_DEBUG_MAX_PACKET_SIZE 10000000
+
 typedef struct _Eina_Debug_Session Eina_Debug_Session;
 
 typedef struct _Eina_Debug_Thread Eina_Debug_Thread;
