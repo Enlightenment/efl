@@ -63,9 +63,12 @@ static void
 run(options_type const& opts)
 {
    const Eolian_Class *klass = NULL;
+   Eina_Iterator *aliases = NULL;
+   const Eolian_Typedecl *tp = NULL;
    char* dup = strdup(opts.in_file.c_str());
    std::string basename_input = basename(dup);
    klass = ::eolian_class_get_by_file(basename_input.c_str());
+   aliases= ::eolian_typedecl_aliases_get_by_file(basename_input.c_str());
    free(dup);
 
    std::string class_file_name = opts.out_file;
@@ -91,7 +94,22 @@ run(options_type const& opts)
 
    as_generator("using System;\nusing System.Runtime.InteropServices;\nusing System.Collections.Generic;\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null());
-   
+
+   EINA_ITERATOR_FOREACH(aliases, tp)
+     {
+         if (eolian_typedecl_type_get(tp) != EOLIAN_TYPEDECL_FUNCTION_POINTER)
+             continue;
+
+         const Eolian_Function *fp = eolian_typedecl_function_pointer_get(tp);
+         std::string tpname = eolian_typedecl_full_name_get(tp);
+
+         EINA_LOG_ERR("WOuld be generating function pointer for type %s", eolian_typedecl_full_name_get(tp));
+         as_generator("public delegate void " << efl::eolian::grammar::string << "();\n")
+             .generate(iterator, tpname, efl::eolian::grammar::context_null());
+         /* eolian_mono::function_pointer */
+         /*   .generate(iterator, */ 
+     }
+
    if (klass)
      {
        efl::eolian::grammar::attributes::klass_def klass_def(klass);
