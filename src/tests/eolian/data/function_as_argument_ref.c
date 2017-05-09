@@ -1,11 +1,11 @@
 
-void _function_as_argument_set_cb(Eo *obj, Function_As_Argument_Data *pd, void *cb_data, SimpleFunc cb, Eina_Free_Cb cb_free_cb);
+void _function_as_argument_set_cb(Eo *obj, Function_As_Argument_Data *pd, SimpleFunc cb, void *cb_data, Eina_Free_Cb cb_free_cb);
 
-EOAPI EFL_VOID_FUNC_BODYV(function_as_argument_set_cb, EFL_FUNC_CALL(cb_data, cb, cb_free_cb), void *cb_data, SimpleFunc cb, Eina_Free_Cb cb_free_cb);
+EOAPI EFL_VOID_FUNC_BODYV(function_as_argument_set_cb, EFL_FUNC_CALL(cb, cb_data, cb_free_cb), SimpleFunc cb, void *cb_data, Eina_Free_Cb cb_free_cb);
 
-void _function_as_argument_set_nonull_cb(Eo *obj, Function_As_Argument_Data *pd, void *cb_data, VoidFunc cb, Eina_Free_Cb cb_free_cb);
+void _function_as_argument_set_nonull_cb(Eo *obj, Function_As_Argument_Data *pd, VoidFunc cb, void *cb_data, Eina_Free_Cb cb_free_cb);
 
-EOAPI EFL_VOID_FUNC_BODYV(function_as_argument_set_nonull_cb, EFL_FUNC_CALL(cb_data, cb, cb_free_cb), void *cb_data, VoidFunc cb, Eina_Free_Cb cb_free_cb);
+EOAPI EFL_VOID_FUNC_BODYV(function_as_argument_set_nonull_cb, EFL_FUNC_CALL(cb, cb_data, cb_free_cb), VoidFunc cb, void *cb_data, Eina_Free_Cb cb_free_cb);
 
 const char *_function_as_argument_call_cb(Eo *obj, Function_As_Argument_Data *pd, int a, double b);
 

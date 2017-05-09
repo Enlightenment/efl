@@ -133,8 +133,8 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
                   nidx += 3;
                   if (!first)
                     eina_strbuf_append(buf, ", ");
-                  eina_strbuf_append_printf(buf, "void *%s_data, %s %s, Eina_Free_Cb %s_free_cb",
-                                            prn, prtn, prn, prn);
+                  eina_strbuf_append_printf(buf, "%s %s, void *%s_data, Eina_Free_Cb %s_free_cb",
+                                            prtn, prn, prn, prn);
                   eina_stringshare_del(prtn);
                   if (!eolian_parameter_is_nonull(pr))
                     continue;
