@@ -5,6 +5,11 @@
 # include "eina_lock.h"
 # include "eina_thread.h"
 
+#define SERVER_PATH ".edebug"
+#define SERVER_NAME "efl_debug"
+#define SERVER_MASTER_PORT 0
+#define SERVER_SLAVE_PORT 1
+
 #ifdef DEBUGON
 # define e_debug(fmt, args...) fprintf(stderr, "%d:"__FILE__":%s/%d : " fmt "\n", getpid(), __FUNCTION__, __LINE__, ##args)
 # define e_debug_begin(fmt, args...) fprintf(stderr, "%d:"__FILE__":%s/%d : " fmt "", getpid(), __FUNCTION__, __LINE__, ##args)

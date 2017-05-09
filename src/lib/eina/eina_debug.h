@@ -33,11 +33,6 @@
  * @{
  */
 
-#define SERVER_PATH ".edebug"
-#define SERVER_NAME "efl_debug"
-#define SERVER_MASTER_PORT 0
-#define SERVER_SLAVE_PORT 1
-
 typedef enum
 {
    EINA_DEBUG_OK,
