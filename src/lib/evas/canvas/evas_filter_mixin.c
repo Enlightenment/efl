@@ -315,16 +315,16 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         ENFN->context_free(ENDT, drawctx);
 
-        // Add post-run callback and run filter
-        efl_ref(eo_obj);
-        evas_filter_context_post_run_callback_set(filter, _filter_cb, pd);
-        ok = evas_filter_run(filter);
-
         fcow = FCOW_BEGIN(pd);
         fcow->changed = EINA_FALSE;
         fcow->async = do_async;
-        if (!ok) fcow->invalid = EINA_TRUE;
+        fcow->invalid = EINA_FALSE;
         FCOW_END(fcow, pd);
+        efl_ref(eo_obj);
+
+        // Add post-run callback and run filter
+        evas_filter_context_post_run_callback_set(filter, _filter_cb, pd);
+        ok = evas_filter_run(filter);
 
         if (ok)
           {
@@ -334,6 +334,9 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         else
           {
              ERR("Rendering failed.");
+             fcow = FCOW_BEGIN(pd);
+             fcow->invalid = EINA_TRUE;
+             FCOW_END(fcow, pd);
              efl_unref(eo_obj);
              return EINA_FALSE;
           }
