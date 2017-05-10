@@ -304,5 +304,55 @@ class Test.Testing (Efl.Object) {
       eina_array_str_return_own {
          return: own(array<string>);
       }
+
+      /* Object */
+      eina_array_obj_in {
+         params {
+            @in arr: array<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_array_obj_in_own {
+         params {
+            @in arr: own(array<Test.Numberwrapper>);
+         }
+         return: bool;
+      }
+      check_eina_array_obj_in_own {
+         return: bool;
+      }
+
+      eina_array_obj_out {
+         params {
+            @out arr: array<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_array_obj_out {
+         return: bool;
+      }
+
+      eina_array_obj_out_own {
+         params {
+            @out arr: own(array<Test.Numberwrapper>);
+         }
+         return: bool;
+      }
+
+      eina_array_obj_return {
+         return: array<Test.Numberwrapper>;
+      }
+      check_eina_array_obj_return {
+         return: bool;
+      }
+
+      eina_array_obj_return_own {
+         return: own(array<Test.Numberwrapper>);
+      }
+   }
+   implements {
+      class.constructor;
+      class.destructor;
    }
 }
