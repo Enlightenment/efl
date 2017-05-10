@@ -44,6 +44,11 @@ main(int argc, char *argv[])
 
    if (!eina_init()) return 1;
 
+   efreetd_mp_stat = eina_mempool_add("chained_mempool",
+                                      "struct stat", NULL,
+                                     sizeof(struct stat), 10);
+   if (!efreetd_mp_stat) return 1;
+
    if (!ecore_init()) goto ecore_error;
    ecore_app_args_set(argc, (const char **)argv);
    if (!ecore_file_init()) goto ecore_file_error;
@@ -60,7 +65,7 @@ main(int argc, char *argv[])
    fd = eina_file_mkstemp(path, NULL);
    if (fd < 0)
      {
-        ERR("Can't create log file '%s'\b", path);;
+        ERR("Can't create log file '%s'\b", path);
         goto tmp_error;
      }
    log = fdopen(fd, "wb");
@@ -74,6 +79,8 @@ main(int argc, char *argv[])
      }
 
    ecore_main_loop_begin();
+
+   eina_mempool_del(efreetd_mp_stat);
 
    cache_shutdown();
    ipc_shutdown();

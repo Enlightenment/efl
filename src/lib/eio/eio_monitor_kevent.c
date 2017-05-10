@@ -100,6 +100,8 @@ _eio_kevent_ls(const char *directory)
         files = eina_list_append(files, file);
      }
 
+   eina_iterator_free(it);
+
    return files;
 }
 

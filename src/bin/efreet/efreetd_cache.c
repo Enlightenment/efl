@@ -89,7 +89,6 @@ static void
 subdir_cache_dir_free(Subdir_Cache_Dir *cd)
 {
    unsigned int i;
-
    if (!cd) return;
    if (cd->dirs)
      {
@@ -112,9 +111,10 @@ subdir_cache_hash_add(void *hash, const char *key, void *data)
 static void
 subdir_cache_init(void)
 {
-   char buf[PATH_MAX];
    Eet_Data_Descriptor_Class eddc;
    Eet_File *ef;
+   Eina_Strbuf *buf = eina_strbuf_new();
+   if (!buf) return;
 
    // set up data codecs for subdirs in memory
    eet_eina_stream_data_descriptor_class_set(&eddc, sizeof(Subdir_Cache_Dir), "D", sizeof(Subdir_Cache_Dir));
@@ -136,14 +136,16 @@ subdir_cache_init(void)
    EET_DATA_DESCRIPTOR_ADD_HASH(subdir_edd, Subdir_Cache, "dirs", dirs, subdir_dir_edd);
 
    // load subdirs from the cache file
-   snprintf(buf, sizeof(buf), "%s/efreet/subdirs_%s.eet",
-            efreet_cache_home_get(), efreet_hostname_get());
-   ef = eet_open(buf, EET_FILE_MODE_READ);
+   eina_strbuf_append_printf(buf, "%s/efreet/subdirs_%s.eet",
+                             efreet_cache_home_get(), efreet_hostname_get());
+   ef = eet_open(eina_strbuf_string_get(buf), EET_FILE_MODE_READ);
    if (ef)
      {
         subdir_cache = eet_data_read(ef, subdir_edd, "subdirs");
         eet_close(ef);
      }
+   eina_strbuf_free(buf);
+
    // if we don't have a decoded subdir cache - allocate one
    if (!subdir_cache) subdir_cache = calloc(1, sizeof(Subdir_Cache));
    if (!subdir_cache)
@@ -176,10 +178,13 @@ subdir_cache_shutdown(void)
 static void
 subdir_cache_save(void)
 {
-   char buf[PATH_MAX], buf2[PATH_MAX];
+   Eina_Strbuf *buf;
    Eet_File *ef;
    Eina_Tmpstr *tmpstr = NULL;
    int tmpfd;
+
+   buf = eina_strbuf_new();
+   if (!buf) return;
 
    // only if subdirs need saving... and we have subdirs.
    if (!subdir_need_save) return;
@@ -187,10 +192,13 @@ subdir_cache_save(void)
    if (!subdir_cache->dirs) return;
 
    // save to tmp file first
-   snprintf(buf2, sizeof(buf2), "%s/efreet/subdirs_%s.eet.XXXXXX.cache",
-            efreet_cache_home_get(), efreet_hostname_get());
-   tmpfd = eina_file_mkstemp(buf2, &tmpstr);
+   eina_strbuf_append_printf(buf, "%s/efreet/subdirs_%s.eet.XXXXXX.cache",
+                             efreet_cache_home_get(), efreet_hostname_get());
+
+   tmpfd = eina_file_mkstemp(eina_strbuf_string_get(buf), &tmpstr);
    if (tmpfd < 0) return;
+
+   eina_strbuf_reset(buf);
 
    // write out eet file to tmp file
    ef = eet_open(tmpstr, EET_FILE_MODE_WRITE);
@@ -207,16 +215,18 @@ subdir_cache_save(void)
 #endif
 
    // atomically rename subdirs file on top from tmp file
-   snprintf(buf, sizeof(buf), "%s/efreet/subdirs_%s.eet",
-            efreet_cache_home_get(), efreet_hostname_get());
-   if (rename(tmpstr, buf) < 0)
+   eina_strbuf_append_printf(buf, "%s/efreet/subdirs_%s.eet",
+                             efreet_cache_home_get(), efreet_hostname_get());
+
+   if (rename(tmpstr, eina_strbuf_string_get(buf)) < 0)
      {
         unlink(tmpstr);
-        ERR("Can't save subdir cache %s", buf);
+        ERR("Can't save subdir cache %s", eina_strbuf_string_get(buf));
      }
    // we dont need saving anymore - we just did
    subdir_need_save = EINA_FALSE;
    eina_tmpstr_del(tmpstr);
+   eina_strbuf_free(buf);
 }
 
 static const Subdir_Cache_Dir *
@@ -269,6 +279,7 @@ subdir_cache_get(const struct stat *st, const char *path)
    // go through content finding directories
    it = eina_file_stat_ls(path);
    if (!it) return cd;
+   
    EINA_ITERATOR_FOREACH(it, info)
      {
         // if ., .. or other "hidden" dot files - ignore
@@ -283,6 +294,7 @@ subdir_cache_get(const struct stat *st, const char *path)
           }
      }
    eina_iterator_free(it);
+   
    // now convert our temporary list into an array of stringshare strings
    cd->dirs_count = eina_list_count(files);
    if (cd->dirs_count > 0)
@@ -304,7 +316,8 @@ subdir_cache_get(const struct stat *st, const char *path)
 static Eina_Bool
 icon_cache_update_cache_cb(void *data EINA_UNUSED)
 {
-   char file[PATH_MAX];
+   Eina_Strbuf *file = eina_strbuf_new();
+   if (!file) return EINA_FALSE;
 
    icon_cache_timer = NULL;
 
@@ -325,19 +338,18 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
    subdir_cache_save();
 
    /* TODO: Queue if already running */
-   snprintf(file, sizeof(file),
-            "%s/efreet/" MODULE_ARCH "/efreet_icon_cache_create",
-            eina_prefix_lib_get(pfx));
+   eina_strbuf_append_printf(file, "%s/efreet/" MODULE_ARCH "/efreet_icon_cache_create",
+                             eina_prefix_lib_get(pfx));
    if (icon_extra_dirs)
      {
         Eina_List *ll;
         char *p;
 
-        eina_strlcat(file, " -d", sizeof(file));
+        eina_strbuf_append(file, " -d");
         EINA_LIST_FOREACH(icon_extra_dirs, ll, p)
           {
-             eina_strlcat(file, " ", sizeof(file));
-             eina_strlcat(file, p, sizeof(file));
+             eina_strbuf_append(file, " ");
+             eina_strbuf_append(file, p);
           }
      }
    if (icon_exts)
@@ -345,18 +357,22 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
         Eina_List *ll;
         char *p;
 
-        eina_strlcat(file, " -e", sizeof(file));
+        eina_strbuf_append(file, " -e");
         EINA_LIST_FOREACH(icon_exts, ll, p)
           {
-             eina_strlcat(file, " ", sizeof(file));
-             eina_strlcat(file, p, sizeof(file));
+             eina_strbuf_append(file, " ");
+             eina_strbuf_append(file, p);
           }
      }
    if (icon_flush)
-     eina_strlcat(file, " -f", sizeof(file));
+     eina_strbuf_append(file, " -f");
    icon_flush = EINA_FALSE;
    icon_cache_exe =
-      ecore_exe_pipe_run(file, ECORE_EXE_PIPE_READ|ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
+      ecore_exe_pipe_run(eina_strbuf_string_get(file), ECORE_EXE_PIPE_READ |
+                                                       ECORE_EXE_PIPE_READ_LINE_BUFFERED,
+                                                       NULL);
+
+   eina_strbuf_free(file);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -364,7 +380,7 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
 static Eina_Bool
 desktop_cache_update_cache_cb(void *data EINA_UNUSED)
 {
-   char file[PATH_MAX];
+   Eina_Strbuf *file = eina_strbuf_new();
 
    desktop_cache_timer = NULL;
 
@@ -383,24 +399,27 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
    desktop_changes_listen();
    subdir_cache_save();
 
-   snprintf(file, sizeof(file),
-            "%s/efreet/" MODULE_ARCH "/efreet_desktop_cache_create",
-            eina_prefix_lib_get(pfx));
+   eina_strbuf_append_printf(file, "%s/efreet/" MODULE_ARCH "/efreet_desktop_cache_create",
+                            eina_prefix_lib_get(pfx));
    if (desktop_extra_dirs)
      {
         Eina_List *ll;
         const char *str;
 
-        eina_strlcat(file, " -d", sizeof(file));
+        eina_strbuf_append(file, " -d");
         EINA_LIST_FOREACH(desktop_extra_dirs, ll, str)
           {
-             eina_strlcat(file, " ", sizeof(file));
-             eina_strlcat(file, str, sizeof(file));
+             eina_strbuf_append(file, " ");
+             eina_strbuf_append(file, str);
           }
      }
-   INF("Run desktop cache creation: %s", file);
+   INF("Run desktop cache creation: %s", eina_strbuf_string_get(file));
    desktop_cache_exe = ecore_exe_pipe_run
-     (file, ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
+     (eina_strbuf_string_get(file), ECORE_EXE_PIPE_READ |
+                                    ECORE_EXE_PIPE_READ_LINE_BUFFERED,
+                                    NULL);
+
+   eina_strbuf_free(file);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -536,14 +555,15 @@ _check_recurse_monitor_sanity(Eina_Inarray *stack, const char *path, unsigned in
 static void
 icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool base)
 {
-   struct stat st;
+   struct stat *st = eina_mempool_malloc(efreetd_mp_stat, sizeof(struct stat));
+   if (!st) return;
 
-   if (stat(path, &st) == -1) return;
-   if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
+   if (stat(path, st) == -1) return;
+   if (eina_inarray_search(stack, st, stat_cmp) >= 0) return;
    if (!_check_recurse_monitor_sanity(stack, path, 10)) return;
-   eina_inarray_push(stack, &st);
+   eina_inarray_push(stack, st);
 
-   if ((!S_ISDIR(st.st_mode)) && (base))
+   if ((!S_ISDIR(st->st_mode)) && (base))
      {
         // XXX: if it doesn't exist... walk the parent dirs back down
         // to this path until we find one that doesn't exist, then
@@ -553,36 +573,41 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
         // monitoring the next specific child dir down until we are
         // monitoring the original path again.
      }
-   if (S_ISDIR(st.st_mode))
+   if (S_ISDIR(st->st_mode))
      {
         unsigned int i;
-        const Subdir_Cache_Dir *cd = subdir_cache_get(&st, path);
-        icon_changes_monitor_add(&st, path);
+        const Subdir_Cache_Dir *cd = subdir_cache_get(st, path);
+        icon_changes_monitor_add(st, path);
         if (cd)
           {
+             Eina_Strbuf *buf = eina_strbuf_new();
+             if (!buf) return;
              for (i = 0; i < cd->dirs_count; i++)
                {
-                  char buf[PATH_MAX];
 
-                  snprintf(buf, sizeof(buf), "%s/%s", path, cd->dirs[i]);
-                  icon_changes_listen_recursive(stack, buf, EINA_FALSE);
+                  eina_strbuf_append_printf(buf,  "%s/%s", path, cd->dirs[i]);
+                  icon_changes_listen_recursive(stack, eina_strbuf_string_get(buf), EINA_FALSE);
+                  eina_strbuf_reset(buf);
                }
+             eina_strbuf_free(buf);
           }
      }
    eina_inarray_pop(stack);
+   eina_mempool_free(efreetd_mp_stat, st);
 }
 
 static void
 desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool base)
 {
-   struct stat st;
+   struct stat *st = eina_mempool_malloc(efreetd_mp_stat, sizeof(struct stat));
+   if (!st) return;
 
-   if (stat(path, &st) == -1) return;
-   if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
+   if (stat(path, st) == -1) return;
+   if (eina_inarray_search(stack, st, stat_cmp) >= 0) return;
    if (!_check_recurse_monitor_sanity(stack, path, 10)) return;
-   eina_inarray_push(stack, &st);
+   eina_inarray_push(stack, st);
 
-   if ((!S_ISDIR(st.st_mode)) && (base))
+   if ((!S_ISDIR(st->st_mode)) && (base))
      {
         // XXX: if it doesn't exist... walk the parent dirs back down
         // to this path until we find one that doesn't exist, then
@@ -592,23 +617,26 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
         // monitoring the next specific child dir down until we are
         // monitoring the original path again.
      }
-   if (S_ISDIR(st.st_mode))
+   if (S_ISDIR(st->st_mode))
      {
         unsigned int i;
-        const Subdir_Cache_Dir *cd = subdir_cache_get(&st, path);
-        desktop_changes_monitor_add(&st, path);
+        const Subdir_Cache_Dir *cd = subdir_cache_get(st, path);
+        desktop_changes_monitor_add(st, path);
         if (cd)
           {
+             Eina_Strbuf *buf = eina_strbuf_new();
+             if (!buf) return;
              for (i = 0; i < cd->dirs_count; i++)
                {
-                  char buf[PATH_MAX];
-
-                  snprintf(buf, sizeof(buf), "%s/%s", path, cd->dirs[i]);
-                  desktop_changes_listen_recursive(stack, buf, EINA_FALSE);
+                  eina_strbuf_append_printf(buf, "%s/%s", path, cd->dirs[i]);
+                  desktop_changes_listen_recursive(stack, eina_strbuf_string_get(buf), EINA_FALSE);
+                  eina_strbuf_reset(buf);
                }
+             eina_strbuf_free(buf);
           }
      }
    eina_inarray_pop(stack);
+   eina_mempool_free(efreetd_mp_stat, st);
 }
 
 static void
@@ -616,9 +644,10 @@ icon_changes_listen(void)
 {
    Eina_List *l;
    Eina_List *xdg_dirs;
-   char buf[PATH_MAX];
    const char *dir;
    Eina_Inarray *stack;
+   Eina_Strbuf *buf = eina_strbuf_new();
+   if (!buf) return;
 
    stack = eina_inarray_new(sizeof(struct stat), 16);
    if (!stack) return;
@@ -635,22 +664,25 @@ icon_changes_listen(void)
    xdg_dirs = efreet_data_dirs_get();
    EINA_LIST_FOREACH(xdg_dirs, l, dir)
      {
-        snprintf(buf, sizeof(buf), "%s/icons", dir);
+        eina_strbuf_append_printf(buf, "%s/icons", dir);
         eina_inarray_flush(stack);
-        icon_changes_listen_recursive(stack, buf, EINA_TRUE);
+        icon_changes_listen_recursive(stack, eina_strbuf_string_get(buf), EINA_TRUE);
+        eina_strbuf_reset(buf);
      }
 
 #ifndef STRICT_SPEC
    EINA_LIST_FOREACH(xdg_dirs, l, dir)
      {
-        snprintf(buf, sizeof(buf), "%s/pixmaps", dir);
+        eina_strbuf_append_printf(buf, "%s/pixmaps", dir);
         eina_inarray_flush(stack);
-        icon_changes_listen_recursive(stack, buf, EINA_TRUE);
+        icon_changes_listen_recursive(stack, eina_strbuf_string_get(buf), EINA_TRUE);
+        eina_strbuf_reset(buf);
      }
 #endif
    eina_inarray_flush(stack);
    icon_changes_listen_recursive(stack, "/usr/share/pixmaps", EINA_TRUE);
    eina_inarray_free(stack);
+   eina_strbuf_free(buf);
 }
 
 static void
@@ -681,10 +713,11 @@ fill_list(const char *file, Eina_List **l)
    Eina_File *f = NULL;
    Eina_Iterator *it = NULL;
    Eina_File_Line *line = NULL;
-   char buf[PATH_MAX];
-
-   snprintf(buf, sizeof(buf), "%s/efreet/%s", efreet_cache_home_get(), file);
-   f = eina_file_open(buf, EINA_FALSE);
+   Eina_Strbuf *buf = eina_strbuf_new();
+   if (!buf) return;
+   
+   eina_strbuf_append_printf(buf, "%s/efreet/%s", efreet_cache_home_get(), file);
+   f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
    if (!f) return;
    it = eina_file_map_lines(f);
    if (!it) goto error;
@@ -698,6 +731,7 @@ fill_list(const char *file, Eina_List **l)
      }
    eina_iterator_free(it);
 error:
+   eina_strbuf_free(buf);
    eina_file_close(f);
 }
 
@@ -715,16 +749,18 @@ static void
 save_list(const char *file, Eina_List *l)
 {
    FILE *f;
-   char buf[PATH_MAX];
    Eina_List *ll;
    const char *path;
+   Eina_Strbuf *buf = eina_strbuf_new();
+   if (!buf) return;
 
-   snprintf(buf, sizeof(buf), "%s/efreet/%s", efreet_cache_home_get(), file);
-   f = fopen(buf, "wb");
+   eina_strbuf_append_printf(buf, "%s/efreet/%s", efreet_cache_home_get(), file);
+   f = fopen(eina_strbuf_string_get(buf), "wb");
    if (!f) return;
    EINA_LIST_FOREACH(l, ll, path)
       fprintf(f, "%s\n", path);
    fclose(f);
+   eina_strbuf_free(buf);
 }
 
 static int
@@ -849,15 +885,17 @@ cache_desktop_exists(void)
 static void
 mime_update_launch(void)
 {
-   char file[PATH_MAX];
+   Eina_Strbuf *file = eina_strbuf_new();
+   if (!file) return;
 
-   snprintf(file, sizeof(file),
+   eina_strbuf_append_printf(file,
             "%s/efreet/" MODULE_ARCH "/efreet_mime_cache_create",
             eina_prefix_lib_get(pfx));
-   mime_cache_exe = ecore_exe_pipe_run(file,
+   mime_cache_exe = ecore_exe_pipe_run(eina_strbuf_string_get(file),
                                        ECORE_EXE_PIPE_READ |
                                        ECORE_EXE_PIPE_READ_LINE_BUFFERED,
                                        NULL);
+   eina_strbuf_free(file);
 }
 
 static Eina_Bool
@@ -879,7 +917,8 @@ mime_cache_init(void)
    Eio_Monitor *mon;
    Eina_List *datadirs, *l;
    const char *s;
-   char buf[PATH_MAX];
+   Eina_Strbuf *buf = eina_strbuf_new();
+   if (!buf) return;
 
    mime_monitors = eina_hash_string_superfast_new
      (EINA_FREE_CB(eio_monitor_del));
@@ -907,20 +946,21 @@ mime_cache_init(void)
    datadirs = efreet_data_dirs_get();
    EINA_LIST_FOREACH(datadirs, l, s)
      {
-        snprintf(buf, sizeof(buf), "%s/mime", s); // specifically lok at XXX/mime/globs
-        if (ecore_file_is_dir(buf))
+        eina_strbuf_append_printf(buf, "%s/mime", s); // specifically lok at XXX/mime/globs
+        if (ecore_file_is_dir(eina_strbuf_string_get(buf)))
           {
-             if (!eina_hash_find(mime_monitors, buf))
+             if (!eina_hash_find(mime_monitors, eina_strbuf_string_get(buf)))
                {
-                  mon = eio_monitor_add(buf);
+                  mon = eio_monitor_add(eina_strbuf_string_get(buf));
                   if (mon)
                     {
-                       eina_hash_add(mime_monitors, buf, mon);
+                       eina_hash_add(mime_monitors, eina_strbuf_string_get(buf), mon);
                        eina_hash_add(mime_monitors_mon, &mon, mon);
                     }
                }
           }
      }
+   eina_strbuf_free(buf);
 }
 
 static void
