@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace TestSuite
 {
@@ -659,6 +660,45 @@ class TestEinaArray
     private static readonly string[] append_arr_str = {"42","43","33"};
     private static readonly string[] modified_arr_str = {"0x0","0x2A","0x42","42","43","33"};
 
+    private static test.Numberwrapper[] BaseArrObj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        a.number_set(0x0);
+        b.number_set(0x2A);
+        c.number_set(0x42);
+        return new test.NumberwrapperConcrete[]{a,b,c};
+    }
+
+    private static test.Numberwrapper[] AppendArrObj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        a.number_set(42);
+        b.number_set(43);
+        c.number_set(33);
+        return new test.NumberwrapperConcrete[]{a,b,c};
+    }
+
+    private static test.Numberwrapper[] ModifiedArrObj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        var d = new test.NumberwrapperConcrete();
+        var e = new test.NumberwrapperConcrete();
+        var f = new test.NumberwrapperConcrete();
+        a.number_set(0x0);
+        b.number_set(0x2A);
+        c.number_set(0x42);
+        d.number_set(42);
+        e.number_set(43);
+        f.number_set(33);
+        return new test.NumberwrapperConcrete[]{a,b,c,d,e,f};
+    }
+
 
     public static void eina_array_default()
     {
@@ -946,6 +986,99 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
     }
+
+    // Object //
+
+    private static void NumberwrapperArrayAssertEqual(
+        test.Numberwrapper[] a
+        , test.Numberwrapper[] b
+        , [CallerLineNumber] int line = 0
+        , [CallerFilePath] string file = null
+        , [CallerMemberName] string member = null)
+    {
+        Test.Assert(a.Length == b.Length, "Different lenght", line, file, member);
+        for (int i = 0; i < a.Length; ++i)
+        {
+            int av = a[i].number_get();
+            int bv = b[i].number_get();
+            Test.Assert(av == bv, $"Different values for element [{i}]: {av} == {bv}", line, file, member);
+        }
+    }
+
+
+    public static void test_eina_array_obj_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<test.Numberwrapper>();
+        arr.Append(BaseArrObj());
+        Test.Assert(t.eina_array_obj_in(arr));
+        Test.Assert(arr.Own);
+        NumberwrapperArrayAssertEqual(arr.ToArray(), ModifiedArrObj());
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_array_obj_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<test.Numberwrapper>();
+        arr.Append(BaseArrObj());
+        Test.Assert(t.eina_array_obj_in_own(arr));
+        Test.Assert(!arr.Own);
+        NumberwrapperArrayAssertEqual(arr.ToArray(), ModifiedArrObj());
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_array_obj_in_own());
+    }
+
+    public static void test_eina_array_obj_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Array<test.Numberwrapper> arr;
+        Test.Assert(t.eina_array_obj_out(out arr));
+        Test.Assert(!arr.Own);
+        NumberwrapperArrayAssertEqual(arr.ToArray(), BaseArrObj());
+        Test.Assert(arr.Append(AppendArrObj()));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_array_obj_out());
+    }
+
+    public static void test_eina_array_obj_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Array<test.Numberwrapper> arr;
+        Test.Assert(t.eina_array_obj_out_own(out arr));
+        Test.Assert(arr.Own);
+        NumberwrapperArrayAssertEqual(arr.ToArray(), BaseArrObj());
+        Test.Assert(arr.Append(AppendArrObj()));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_array_obj_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_array_obj_return();
+        Test.Assert(!arr.Own);
+        NumberwrapperArrayAssertEqual(arr.ToArray(), BaseArrObj());
+        Test.Assert(arr.Append(AppendArrObj()));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_array_obj_return());
+    }
+
+    public static void test_eina_array_obj_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_array_obj_return_own();
+        Test.Assert(arr.Own);
+        NumberwrapperArrayAssertEqual(arr.ToArray(), BaseArrObj());
+        Test.Assert(arr.Append(AppendArrObj()));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
 
     // //
     // Inherit

@@ -35,7 +35,13 @@ typedef struct Test_Testing_Data
 {
 } Test_Testing_Data;
 
+typedef struct Test_Numberwrapper_Data
+{
+   int number;
+} Test_Numberwrapper_Data;
+
 #include "test_testing.eo.h"
+#include "test_numberwrapper.eo.h"
 
 // ############ //
 // Test.Testing //
@@ -336,11 +342,16 @@ static const unsigned int base_arr_str_size = EINA_C_ARRAY_LENGTH(base_arr_str);
 static const char * const modified_arr_str[] = {"0x0","0x2A","0x42","42","43","33"};
 static const unsigned int modified_arr_str_size = EINA_C_ARRAY_LENGTH(modified_arr_str);
 
+static const Test_Numberwrapper *base_arr_obj[] = {NULL,NULL,NULL};
+static const unsigned int base_arr_obj_size = EINA_C_ARRAY_LENGTH(base_arr_str);
+static const Test_Numberwrapper *modified_arr_obj[] = {NULL,NULL,NULL,NULL,NULL,NULL};
+static const unsigned int modified_arr_obj_size = EINA_C_ARRAY_LENGTH(modified_arr_str);
+
 static const unsigned int default_step = 32;
 
 // Integer
 
-Eina_Bool _array_int_equal(const Eina_Array *arr, const int *base, unsigned int len)
+Eina_Bool _array_int_equal(const Eina_Array *arr, const int base[], unsigned int len)
 {
    if (eina_array_count(arr) != len)
      return EINA_FALSE;
@@ -475,7 +486,7 @@ Eina_Array *_test_testing_eina_array_int_return_own(EINA_UNUSED Eo *obj, EINA_UN
 
 // String
 
-Eina_Bool _array_str_equal(const Eina_Array *arr, const char * const *base, unsigned int len)
+Eina_Bool _array_str_equal(const Eina_Array *arr, const char * const base[], unsigned int len)
 {
    if (eina_array_count(arr) != len)
      return EINA_FALSE;
@@ -601,6 +612,187 @@ Eina_Array *_test_testing_eina_array_str_return_own(EINA_UNUSED Eo *obj, EINA_UN
    return arr;
 }
 
+// Object
+
+Eina_Bool _array_obj_equal(const Eina_Array *arr, const Test_Numberwrapper * const base[], unsigned int len)
+{
+   if (eina_array_count(arr) != len)
+     return EINA_FALSE;
+   for (unsigned int i = 0; i < len; ++i)
+     {
+        const Test_Numberwrapper *eo = eina_array_data_get(arr, i);
+        int a = test_numberwrapper_number_get(eo);
+        int b = test_numberwrapper_number_get(base[i]);
+        if (a != b)
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+Test_Numberwrapper *_new_obj(int n)
+{
+   return efl_add(TEST_NUMBERWRAPPER_CLASS, NULL, test_numberwrapper_number_set(efl_added, n));
+}
+
+Eina_Bool _test_testing_eina_array_obj_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Array *arr)
+{
+   Eina_Bool r = _array_obj_equal(arr, base_arr_obj, base_arr_obj_size);
+   if (!r) return r;
+   eina_array_push(arr, _new_obj(42));
+   eina_array_push(arr, _new_obj(43));
+   eina_array_push(arr, _new_obj(33));
+   return r;
+}
+
+static Eina_Array *_array_obj_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_array_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Array *arr)
+{
+   Eina_Bool r = _array_obj_equal(arr, base_arr_obj, base_arr_obj_size);
+   if (!r) return r;
+   eina_array_push(arr, _new_obj(42));
+   eina_array_push(arr, _new_obj(43));
+   eina_array_push(arr, _new_obj(33));
+   _array_obj_in_own_to_check = arr;
+   return r;
+}
+
+Eina_Bool _test_testing_check_eina_array_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_array_obj_in_own_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _array_obj_equal(_array_obj_in_own_to_check, modified_arr_obj, modified_arr_obj_size);
+   if (!r) return r;
+
+   unsigned int i;
+   Test_Numberwrapper *ele;
+   Eina_Array_Iterator it;
+   EINA_ARRAY_ITER_NEXT(_array_obj_in_own_to_check, i, ele, it)
+     efl_unref(ele);
+
+   eina_array_free(_array_obj_in_own_to_check);
+   _array_obj_in_own_to_check = NULL;
+   return r;
+}
+
+Eina_Array *_array_obj_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_array_obj_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Array **arr)
+{
+   if (!arr) return EINA_FALSE;
+   *arr = eina_array_new(default_step);
+   eina_array_push(*arr, _new_obj(0x0));
+   eina_array_push(*arr, _new_obj(0x2A));
+   eina_array_push(*arr, _new_obj(0x42));
+   _array_obj_out_to_check = *arr;
+   return EINA_TRUE;
+}
+Eina_Bool _test_testing_check_eina_array_obj_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_array_obj_out_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _array_obj_equal(_array_obj_out_to_check, modified_arr_obj, modified_arr_obj_size);
+   if (!r) return r;
+
+   unsigned int i;
+   Test_Numberwrapper *ele;
+   Eina_Array_Iterator it;
+   EINA_ARRAY_ITER_NEXT(_array_obj_out_to_check, i, ele, it)
+     efl_unref(ele);
+
+   eina_array_free(_array_obj_out_to_check);
+   _array_obj_out_to_check = NULL;
+   return r;
+}
+
+Eina_Bool _test_testing_eina_array_obj_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Array **arr)
+{
+   if (!arr) return EINA_FALSE;
+   *arr = eina_array_new(default_step);
+   eina_array_push(*arr, _new_obj(0x0));
+   eina_array_push(*arr, _new_obj(0x2A));
+   eina_array_push(*arr, _new_obj(0x42));
+   return EINA_TRUE;
+}
+
+Eina_Array *_array_obj_return_to_check = NULL;
+
+Eina_Array *_test_testing_eina_array_obj_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Array *arr = eina_array_new(default_step);
+   eina_array_push(arr, _new_obj(0x0));
+   eina_array_push(arr, _new_obj(0x2A));
+   eina_array_push(arr, _new_obj(0x42));
+   _array_obj_return_to_check = arr;
+   return arr;
+}
+Eina_Bool _test_testing_check_eina_array_obj_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_array_obj_return_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _array_obj_equal(_array_obj_return_to_check, modified_arr_obj, modified_arr_obj_size);
+   if (!r) return r;
+
+   unsigned int i;
+   Test_Numberwrapper *ele;
+   Eina_Array_Iterator it;
+   EINA_ARRAY_ITER_NEXT(_array_obj_return_to_check, i, ele, it)
+     efl_unref(ele);
+
+   eina_array_free(_array_obj_return_to_check);
+   _array_obj_return_to_check = NULL;
+   return r;
+}
+
+Eina_Array *_test_testing_eina_array_obj_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Array *arr = eina_array_new(default_step);
+   eina_array_push(arr, _new_obj(0x0));
+   eina_array_push(arr, _new_obj(0x2A));
+   eina_array_push(arr, _new_obj(0x42));
+   return arr;
+}
+
+// Class constructor
+EOLIAN static void
+_test_testing_class_constructor(Efl_Class *klass)
+{
+   (void)klass;
+   modified_arr_obj[0] = base_arr_obj[0] = _new_obj(0x0);
+   modified_arr_obj[1] = base_arr_obj[1] = _new_obj(0x2A);
+   modified_arr_obj[2] = base_arr_obj[2] = _new_obj(0x42);
+   modified_arr_obj[3] = _new_obj(42);
+   modified_arr_obj[4] = _new_obj(43);
+   modified_arr_obj[5] = _new_obj(33);
+}
+
+EOLIAN static void
+_test_testing_class_destructor(Efl_Class *klass)
+{
+   (void)klass;
+   for (unsigned i = 0; i < base_arr_obj_size; ++i)
+     efl_unref(base_arr_obj[i]);
+   for (unsigned i = 0; i < modified_arr_obj_size; ++i)
+     efl_unref(modified_arr_obj[i]);
+}
+
+
+// ################## //
+// Test.Numberwrapper //
+// ################## //
+
+
+void _test_numberwrapper_number_set(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data *pd, int n)
+{
+   pd->number = n;
+}
+
+int _test_numberwrapper_number_get(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data *pd)
+{
+   return pd->number;
+}
+
 
 #include "test_testing.eo.c"
+#include "test_numberwrapper.eo.c"
 

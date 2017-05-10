@@ -154,9 +154,10 @@ tests_efl_mono_libefl_mono_native_test_la_LDFLAGS = -rpath $(abs_top_builddir)/t
 tests_efl_mono_libefl_mono_native_test_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 tests_efl_mono_libefl_mono_native_test_la_LIBTOOLFLAGS = --tag=disable-static
 
-efl_mono_test_eolian_mono_files = tests/efl_mono/test_testing.eo.cs
+efl_mono_test_eolian_mono_files = tests/efl_mono/test_testing.eo.cs \
+tests/efl_mono/test_numberwrapper.eo.cs
 
-tests/efl_mono/libefl_mono_native_test.c: tests/efl_mono/test_testing.eo.h tests/efl_mono/test_testing.eo.c
+tests/efl_mono/libefl_mono_native_test.c: tests/efl_mono/test_testing.eo.h tests/efl_mono/test_testing.eo.c tests/efl_mono/test_numberwrapper.eo.h tests/efl_mono/test_numberwrapper.eo.c
 
 tests/efl_mono/libefl_mono_test.dll$(EXEEXT): $(efl_mono_test_eolian_mono_files) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_native_test.la
 	@rm -f tests/efl_mono/libefl_mono_test.dll$(EXEEXT)
