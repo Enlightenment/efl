@@ -1105,14 +1105,6 @@ eng_image_native_set(void *data, void *image, void *native)
         if (ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF)
           {
              wl_buf = ns->data.wl_dmabuf.resource;
-             if (img->native.data)
-               {
-                  Evas_Native_Surface *ens;
-
-                  ens = img->native.data;
-                  if (ens->data.wl_dmabuf.resource == wl_buf)
-                    return img;
-               }
           }
         else if (ns->type == EVAS_NATIVE_SURFACE_WL)
           {
