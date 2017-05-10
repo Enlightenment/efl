@@ -88,7 +88,7 @@ _on_keydown(void        *data EINA_UNUSED,
         efl_gfx_color_set(d.clipper, r, g, b, alpha);
 
         printf("Changing clipper's opacity: %d%%\n",
-                (int)((alpha / 255.0) * 100));
+               (int)((alpha / 255.0) * 100));
         return;
      }
 
@@ -173,15 +173,15 @@ main(void)
     * Object must be deleted explicitly at the end of program.*/
    d.bg = efl_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
 
-   /* Eo-styled way to perform actions on an object*/
+   /* Eo-styled way to perform actions on an object */
    evas_object_name_set(d.bg, "background rectangle");
    efl_gfx_color_set(d.bg, 255, 255, 255, 255);
    /* white bg */
-               efl_gfx_position_set(d.bg, 0, 0);
+   efl_gfx_position_set(d.bg, 0, 0);
    /* at canvas' origin */
-               efl_gfx_size_set(d.bg, WIDTH, HEIGHT);
+   efl_gfx_size_set(d.bg, WIDTH, HEIGHT);
    /* covers full canvas */
-               efl_gfx_visible_set(d.bg, EINA_TRUE);
+   efl_gfx_visible_set(d.bg, EINA_TRUE);
    evas_object_focus_set(d.bg, EINA_TRUE);
 
    evas_object_event_callback_add(
@@ -207,7 +207,7 @@ main(void)
         efl_gfx_size_set(d.img, WIDTH, HEIGHT);
         efl_gfx_visible_set(d.img, EINA_TRUE);
         printf("Image object added, class name is: %s\n",
-                efl_class_name_get(d.img));
+               efl_class_name_get(d.img));
      }
 
    /* border on the image's clipper, here just to emphasize its position */
@@ -227,6 +227,7 @@ main(void)
         efl_gfx_size_set(d.clipper_border, (WIDTH / 2) + 6, (HEIGHT / 2) + 6);
         efl_gfx_visible_set(d.clipper_border, EINA_TRUE);
      }
+
    /* solid white clipper (note that it's the default color for a
     * rectangle) - it won't change clippees' colors, then (multiplying
     * by 255) */

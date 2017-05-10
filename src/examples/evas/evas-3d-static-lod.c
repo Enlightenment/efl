@@ -219,6 +219,7 @@ _scene_setup(Scene_Data *data)
    evas_canvas3d_scene_root_node_set(data->scene, data->root_node);
    evas_canvas3d_scene_camera_node_set(data->scene, data->camera_node);
 }
+
 static void
 _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED,
              void *event_info)
@@ -230,6 +231,7 @@ _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA_U
    else if(!strcmp("Down", ev->key))
      animation_type = EINA_TRUE;
 }
+
 int
 main(void)
 {

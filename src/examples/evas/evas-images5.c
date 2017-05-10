@@ -91,7 +91,7 @@ _on_keydown(void        *data EINA_UNUSED,
                   file_path, quality_str);
         else
           printf("Image saved to '%s' (flags '%s'), check it out with "
-                          "an image viewer\n", file_path, quality_str);
+                 "an image viewer\n", file_path, quality_str);
 
         return;
      }
@@ -170,9 +170,8 @@ main(void)
      }
    else
      {
-        printf(
-                "loaded image '%s' with success! error string is \"%s\"\n",
-                img_path, evas_load_error_str(err));
+        printf("loaded image '%s' with success! error string is \"%s\"\n",
+               img_path, evas_load_error_str(err));
 
         evas_object_move(d.img, WIDTH / 2, HEIGHT / 2);
         evas_object_image_fill_set(d.img, 0, 0, WIDTH / 2, HEIGHT / 2);

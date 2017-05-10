@@ -117,10 +117,10 @@ _on_keydown(void        *data EINA_UNUSED,
         printf(".\n");
 
         printf("Current target rectangle is %s\n",
-                _name_get(d.rects[d.cur_rect]));
+               _name_get(d.rects[d.cur_rect]));
 
         printf("Background rectangle's layer is %d\n",
-                evas_object_layer_get(d.bg));
+               evas_object_layer_get(d.bg));
 
         return;
      }
@@ -131,7 +131,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_layer_set(d.bg, d.layers[d.cur_layer]);
 
         printf("Changing background rectangle's layer to %d\n",
-                d.layers[d.cur_layer]);
+               d.layers[d.cur_layer]);
         return;
      }
 
@@ -140,7 +140,7 @@ _on_keydown(void        *data EINA_UNUSED,
         d.cur_rect = (d.cur_rect + 1) % 3;
 
         printf("Changing target rectangle to the %s one\n",
-                _name_get(d.rects[d.cur_rect]));
+               _name_get(d.rects[d.cur_rect]));
         return;
      }
 
@@ -151,11 +151,11 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_raise(d.rects[d.cur_rect]);
 
         printf("%s rectangle was re-stacked to the top if its layer\n",
-                name);
+               name);
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
         printf("Below of %s rect is %s\n", name,
-                neighbour ? _name_get(neighbour) : "no object");
+               neighbour ? _name_get(neighbour) : "no object");
         return;
      }
 
@@ -165,13 +165,12 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_lower(d.rects[d.cur_rect]);
 
-        printf(
-                "%s rectangle was re-stacked to the bottom if its layer\n",
-                name);
+        printf("%s rectangle was re-stacked to the bottom if its layer\n",
+               name);
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
         printf("Below of %s rect is %s\n", name,
-                neighbour ? _name_get(neighbour) : "no object");
+               neighbour ? _name_get(neighbour) : "no object");
         return;
      }
 
@@ -182,7 +181,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_pass_events_set(d.rects[d.cur_rect], !pass);
 
         printf("%s rectangle is now set to%s pass (ignore) events\n",
-                name, pass ? " NOT" : "");
+               name, pass ? " NOT" : "");
 
         return;
      }
@@ -194,7 +193,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_repeat_events_set(d.rects[d.cur_rect], !repeat);
 
         printf("%s rectangle is now set to%s repeat events\n",
-                name, repeat ? " NOT" : "");
+               name, repeat ? " NOT" : "");
 
         return;
      }
@@ -213,11 +212,11 @@ _on_keydown(void        *data EINA_UNUSED,
 
         neighbour = evas_object_above_get(d.rects[d.cur_rect]);
         printf("Above of %s rect is %s\n", name,
-                neighbour ? _name_get(neighbour) : "no object");
+               neighbour ? _name_get(neighbour) : "no object");
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
         printf("Below of %s rect is %s\n", name,
-                neighbour ? _name_get(neighbour) : "no object");
+               neighbour ? _name_get(neighbour) : "no object");
         return;
      }
 
@@ -235,12 +234,12 @@ _on_keydown(void        *data EINA_UNUSED,
 
         neighbour = evas_object_above_get(d.rects[d.cur_rect]);
         printf("Above of %s rect is %s\n", name,
-                neighbour ? _name_get(neighbour) : "no object");
+               neighbour ? _name_get(neighbour) : "no object");
 
         neighbour = evas_object_below_get(d.rects[d.cur_rect]);
 
         printf("Below of %s rect is %s\n", name,
-                neighbour ? _name_get(neighbour) : "no object");
+               neighbour ? _name_get(neighbour) : "no object");
         return;
      }
 }

@@ -79,7 +79,7 @@ _animator(void *data EINA_UNUSED, double pos)
 {
    int next = (animation_position + 1) % (sizeof (batmans_path) / sizeof (batmans_path[0]));
 
-   evas_vg_shape_interpolate(batman,   
+   evas_vg_shape_interpolate(batman,
                                    batmans_vg[animation_position],
                                    batmans_vg[next],
                                    ecore_animator_pos_map(pos, ECORE_POS_MAP_SINUSOIDAL, 0.0, 0.0));

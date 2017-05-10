@@ -109,7 +109,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_image_smooth_scale_set(d.border, !smooth_scale);
 
         printf("Image's border is now %s smooth scaling\n",
-                smooth_scale ? "without" : "with");
+               smooth_scale ? "without" : "with");
 
         return;
      }
@@ -157,7 +157,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_image_border_center_fill_set(d.border, fill);
 
         printf("Image's border center region aspect is now \"%s\"\n",
-                _border_fill_mode_to_str(fill));
+               _border_fill_mode_to_str(fill));
 
         return;
      }
@@ -169,7 +169,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_image_alpha_set(d.img1, !alpha);
 
         printf("Image's alpha channel is now %s\n",
-                alpha ? "off" : "on");
+               alpha ? "off" : "on");
 
         return;
      }
@@ -181,7 +181,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_image_filled_set(d.img1, !filled);
 
         printf("Image's x filled property is now %s\n",
-                filled ? "off" : "on");
+               filled ? "off" : "on");
 
         return;
      }
@@ -249,7 +249,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_image_fill_get(d.img1, &x, &y, &w, &h);
 
         printf("Image has fill properties set to: %d, %d, %d, %d\n",
-                x, y, w, h);
+               x, y, w, h);
 
         return;
      }
@@ -292,9 +292,8 @@ main(void)
      }
    else
      {
-        printf(
-                "loaded image '%s' with succes! error string is \"%s\"\n",
-                valid_path, evas_load_error_str(err));
+        printf("loaded image '%s' with succes! error string is \"%s\"\n",
+               valid_path, evas_load_error_str(err));
 
         evas_object_move(d.img1, 3, 3);
         evas_object_image_fill_set(d.img1, 0, 0, WIDTH / 2, HEIGHT / 2);

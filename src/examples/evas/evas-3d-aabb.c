@@ -48,7 +48,6 @@ Eo *material = NULL;
 Eo *texture = NULL;
 Eo *light = NULL;
 
-
 static Eina_Bool
 _redraw_aabb();
 
@@ -203,7 +202,7 @@ main(void)
    evas_canvas3d_mesh_vertex_assembly_set(mesh_box, EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES);
    evas_canvas3d_mesh_shader_mode_set(mesh_box, EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR);
    evas_canvas3d_mesh_frame_material_set(mesh_box, 0, material_box);
-    _redraw_aabb();
+   _redraw_aabb();
 
    evas_canvas3d_node_member_add(root_node, mesh_box_node);
    evas_canvas3d_node_mesh_add(mesh_box_node, mesh_box);

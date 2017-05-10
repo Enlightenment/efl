@@ -616,12 +616,14 @@ _on_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, voi
    evas_canvas3d_scene_pick(d->scene, ev->canvas.x, ev->canvas.y, &n, &m, &s, &t);
 
 }
+
 int
 main(void)
 {
    Scene_Data data;
    Ecore_Animator *anim;
    Eina_List *nodes1 = NULL, *nodes2 = NULL;
+
    // Unless Evas 3D supports Software renderer, we set gl backend forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
    if (!ecore_evas_init()) return 0;

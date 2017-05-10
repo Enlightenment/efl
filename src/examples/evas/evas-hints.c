@@ -116,20 +116,24 @@ _print_rect_stats(Evas_Object *rect)
    double x, y;
 
    evas_object_size_hint_align_get(rect, &x, &y);
-   printf("\talign hints: h(%f), v(%f)\n", x, y);
+   printf("\talign hints: h(%f), v(%f)\n",
+          x, y);
 
    efl_gfx_size_hint_combined_min_get(rect, &w, &h);
-   printf("\tmin. size hints: h(%d), v(%d)\n", w, h);
+   printf("\tmin. size hints: h(%d), v(%d)\n",
+          w, h);
 
    evas_object_size_hint_max_get(rect, &w, &h);
-   printf("\tmax. size hints: h(%d), v(%d)\n", w, h);
+   printf("\tmax. size hints: h(%d), v(%d)\n",
+          w, h);
 
    evas_object_size_hint_padding_get(rect, &l, &r, &t, &b);
    printf("\tpadding hints: l(%d), r(%d), t(%d), b(%d)\n",
-           l, r, t, b);
+          l, r, t, b);
 
    evas_object_size_hint_weight_get(rect, &x, &y);
-   printf("\tweight hints: h(%f), v(%f)\n", x, y);
+   printf("\tweight hints: h(%f), v(%f)\n",
+          x, y);
 }
 
 /* use the following commands to interact with this example - 'h' is
@@ -192,7 +196,7 @@ _on_keydown(void        *data EINA_UNUSED,
           rect, r_data->align_ptr->x, r_data->align_ptr->y);
 
         printf("Changing align hints for %s rect. to (%f, %f)\n",
-                name, r_data->align_ptr->x, r_data->align_ptr->y);
+               name, r_data->align_ptr->x, r_data->align_ptr->y);
         return;
      }
 
@@ -209,7 +213,7 @@ _on_keydown(void        *data EINA_UNUSED,
           rect, r_data->min_ptr->w, r_data->min_ptr->h);
 
         printf("Changing min. size hints for %s rect. to (%d, %d)\n",
-                name, r_data->min_ptr->w, r_data->min_ptr->h);
+               name, r_data->min_ptr->w, r_data->min_ptr->h);
         return;
      }
 
@@ -226,7 +230,7 @@ _on_keydown(void        *data EINA_UNUSED,
           rect, r_data->max_ptr->w, r_data->max_ptr->h);
 
         printf("Changing max. size hints for %s rect. to (%d, %d)\n",
-                name, r_data->max_ptr->w, r_data->max_ptr->h);
+               name, r_data->max_ptr->w, r_data->max_ptr->h);
         return;
      }
 
@@ -243,10 +247,9 @@ _on_keydown(void        *data EINA_UNUSED,
           rect, r_data->padding_ptr->l, r_data->padding_ptr->r,
           r_data->padding_ptr->t, r_data->padding_ptr->b);
 
-        printf("Changing padding size hints for %s rect."
-                        " to (%d, %d, %d, %d)\n",
-                name, r_data->padding_ptr->l, r_data->padding_ptr->r,
-                r_data->padding_ptr->t, r_data->padding_ptr->b);
+        printf("Changing padding size hints for %s rect. to (%d, %d, %d, %d)\n",
+               name, r_data->padding_ptr->l, r_data->padding_ptr->r,
+               r_data->padding_ptr->t, r_data->padding_ptr->b);
         return;
      }
 
@@ -266,7 +269,7 @@ _on_keydown(void        *data EINA_UNUSED,
           rect, r_data->weight_ptr->x, r_data->weight_ptr->y);
 
         printf("Changing weight hints for %s rect. to (%f, %f)\n",
-                name, r_data->weight_ptr->x, r_data->weight_ptr->y);
+               name, r_data->weight_ptr->x, r_data->weight_ptr->y);
         return;
      }
 }
@@ -376,4 +379,3 @@ error:
                    " up to ecore-evas for this example to run properly.\n");
    return -1;
 }
-

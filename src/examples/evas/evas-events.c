@@ -66,13 +66,13 @@ _object_focus_in_cb(void *data EINA_UNUSED,
                     void *event_info)
 {
    printf("An object got focused: %s\n",
-           evas_object_name_get(event_info));
+          evas_object_name_get(event_info));
 
    printf("Let's recheck it: %s\n",
-           evas_object_name_get(evas_focus_get(e)));
+          evas_object_name_get(evas_focus_get(e)));
 
    printf("And again: %s\n", evas_object_focus_get(event_info) ?
-           "OK!" : "Oops, something is bad.");
+          "OK!" : "Oops, something is bad.");
 }
 
 /* render flush callback */
@@ -106,7 +106,7 @@ static Eina_Bool
 _thaw_cb(void *data EINA_UNUSED)
 {
    printf("Canvas was frozen %d times, now thawing.\n",
-           evas_event_freeze_get(d.canvas));
+          evas_event_freeze_get(d.canvas));
    evas_event_thaw(d.canvas);
    return EINA_FALSE; /* do not re-issue the timer */
 }
@@ -141,8 +141,8 @@ _on_keydown(void        *data EINA_UNUSED,
    Evas_Event_Key_Down *ev = einfo;
 
    printf("We've got key input: %s\n", ev->key);
-   printf("It actually came from %s\n", d.focus ?
-           "focus" : "key grab");
+   printf("It actually came from %s\n",
+          d.focus ? "focus" : "key grab");
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
@@ -173,15 +173,15 @@ _on_keydown(void        *data EINA_UNUSED,
         Evas_Modifier_Mask mask =
           evas_key_modifier_mask_get(d.canvas, "Control");
 
-        printf("Switching to %s for key input\n", d.focus ?
-                "key grabs" : "focus");
+        printf("Switching to %s for key input\n",
+               d.focus ? "key grabs" : "focus");
 
         if (d.focus)
           {
              evas_object_focus_set(d.bg, EINA_FALSE);
              printf("Focused object is now %s\n",
-                     evas_focus_get(d.canvas) ?
-                     "still valid! Something went wrong." : "none.");
+                    evas_focus_get(d.canvas) ?
+                    "still valid! Something went wrong." : "none.");
 
              ret = evas_object_key_grab(d.bg, "a", 0, 0, EINA_TRUE);
              if (!ret)
@@ -269,8 +269,8 @@ c_end:
      {
         Eina_Bool precise = evas_object_precise_is_inside_get(d.img);
 
-        printf("Toggling precise point collision detection %s on"
-                        " Enlightenment logo\n", precise ? "off" : "on");
+        printf("Toggling precise point collision detection %s on Enlightenment logo\n",
+               precise ? "off" : "on");
         evas_object_precise_is_inside_set(d.img, !precise);
 
         return;

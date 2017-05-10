@@ -112,7 +112,6 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void 
    printf("sfactor = %s, dfactor = %s\n", blend_func_names[func1], blend_func_names[func2]);
 }
 
-
 static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
 {
@@ -153,14 +152,14 @@ _camera_setup(Scene_Data *data)
 
    evas_canvas3d_camera_projection_perspective_set(data->camera, 60.0, 1.0, 2.0, 50.0);
 
-  data->camera_node =
+   data->camera_node =
       efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
 
-  evas_canvas3d_node_camera_set(data->camera_node, data->camera);
-  evas_canvas3d_node_position_set(data->camera_node, 0.0, 0.0, 10.0);
-  evas_canvas3d_node_look_at_set(data->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
+   evas_canvas3d_node_camera_set(data->camera_node, data->camera);
+   evas_canvas3d_node_position_set(data->camera_node, 0.0, 0.0, 10.0);
+   evas_canvas3d_node_look_at_set(data->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
 
-  evas_canvas3d_node_member_add(data->root_node, data->camera_node);
+   evas_canvas3d_node_member_add(data->root_node, data->camera_node);
 }
 
 static void
@@ -297,7 +296,6 @@ main(void)
 
    /* Set the image object as render target for 3D scene. */
    efl_canvas_scene3d_set(image, data.scene);
-
 
    /* Add animation timer callback. */
    ecore_animator_frametime_set(0.008);

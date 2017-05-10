@@ -76,13 +76,14 @@ static Eina_Bool
 _continue_scene(void *data)
 {
    Scene_Data *d = (Scene_Data *)data;
+
    if (d->mouse_indicator == 1)
      {
         evas_event_feed_mouse_down(evas, 1, EVAS_BUTTON_NONE, 0, &data);
      }
+
    return EINA_TRUE;
 }
-
 
 static void
 _rotate_x_reload(Evas_Canvas3D_Scene *eo_scene, Evas_Event_Mouse_Down *ev, Evas_Canvas3D_Node *node, Evas_Canvas3D_Mesh *mesh,
@@ -133,6 +134,7 @@ static void
 _stop_scene(void *data, Evas *_evas EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info EINA_UNUSED)
 {
     Scene_Data *d = (Scene_Data *)data;
+
     d->angle = 0.0;
     d->mouse_indicator = 2;
 }

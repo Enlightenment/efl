@@ -352,4 +352,3 @@ panic:
                    " up to ecore-evas for this example to run properly.\n");
    return -2;
 }
-

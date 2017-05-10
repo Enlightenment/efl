@@ -169,7 +169,7 @@ _on_keydown(void        *data EINA_UNUSED,
         evas_object_text_style_set(d.text, type);
 
         printf("Changing text's style to \'%s\'\n",
-                _text_style_type_to_str(type));
+               _text_style_type_to_str(type));
 
         return;
      }
@@ -186,7 +186,8 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_text_font_set(d.text, *d.t_data.font_ptr, sz);
 
-        printf("Changing text's font to %s\n", *d.t_data.font_ptr);
+        printf("Changing text's font to %s\n",
+               *d.t_data.font_ptr);
 
         return;
      }
@@ -202,8 +203,8 @@ _on_keydown(void        *data EINA_UNUSED,
           d.t_data.text_ptr->b, d.t_data.text_ptr->a);
 
         printf("Changing base color for text to (%d, %d, %d, %d)\n",
-                d.t_data.text_ptr->r, d.t_data.text_ptr->g,
-                d.t_data.text_ptr->b, d.t_data.text_ptr->a);
+               d.t_data.text_ptr->r, d.t_data.text_ptr->g,
+               d.t_data.text_ptr->b, d.t_data.text_ptr->a);
 
         return;
      }
@@ -219,8 +220,8 @@ _on_keydown(void        *data EINA_UNUSED,
           d.t_data.glow2_ptr->b, d.t_data.glow2_ptr->a);
 
         printf("Changing glow 2 color for text to (%d, %d, %d, %d)\n",
-                d.t_data.glow2_ptr->r, d.t_data.glow2_ptr->g,
-                d.t_data.glow2_ptr->b, d.t_data.glow2_ptr->a);
+               d.t_data.glow2_ptr->r, d.t_data.glow2_ptr->g,
+               d.t_data.glow2_ptr->b, d.t_data.glow2_ptr->a);
 
         return;
      }
@@ -236,8 +237,8 @@ _on_keydown(void        *data EINA_UNUSED,
           d.t_data.glow_ptr->b, d.t_data.glow_ptr->a);
 
         printf("Changing glow color for text to (%d, %d, %d, %d)\n",
-                d.t_data.glow_ptr->r, d.t_data.glow_ptr->g,
-                d.t_data.glow_ptr->b, d.t_data.glow_ptr->a);
+               d.t_data.glow_ptr->r, d.t_data.glow_ptr->g,
+               d.t_data.glow_ptr->b, d.t_data.glow_ptr->a);
 
         return;
      }
@@ -253,8 +254,8 @@ _on_keydown(void        *data EINA_UNUSED,
           d.t_data.outline_ptr->b, d.t_data.outline_ptr->a);
 
         printf("Changing outline color for text to (%d, %d, %d, %d)\n",
-                d.t_data.outline_ptr->r, d.t_data.outline_ptr->g,
-                d.t_data.outline_ptr->b, d.t_data.outline_ptr->a);
+               d.t_data.outline_ptr->r, d.t_data.outline_ptr->g,
+               d.t_data.outline_ptr->b, d.t_data.outline_ptr->a);
 
         return;
      }
@@ -270,8 +271,8 @@ _on_keydown(void        *data EINA_UNUSED,
           d.t_data.shadow_ptr->b, d.t_data.shadow_ptr->a);
 
         printf("Changing shadow color for text to (%d, %d, %d, %d)\n",
-                d.t_data.shadow_ptr->r, d.t_data.shadow_ptr->g,
-                d.t_data.shadow_ptr->b, d.t_data.shadow_ptr->a);
+               d.t_data.shadow_ptr->r, d.t_data.shadow_ptr->g,
+               d.t_data.shadow_ptr->b, d.t_data.shadow_ptr->a);
 
         return;
      }
@@ -404,4 +405,3 @@ error:
    ecore_evas_shutdown();
    return -1;
 }
-

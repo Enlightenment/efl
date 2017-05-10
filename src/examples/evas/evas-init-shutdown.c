@@ -41,5 +41,4 @@ main(void)
 
    evas_shutdown();
    return 0;
- }
-
+}

@@ -58,6 +58,7 @@ struct color_tuple
 {
    int r, g, b, a;
 } clipper_colors[4] = {WHITE, RED, GREEN, BLUE};
+
 int cur_color = 0;
 int cur_angle = 0;
 
@@ -96,6 +97,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
 };
 
 typedef struct _Evas_Smart_Example_Data Evas_Smart_Example_Data;
+
 /*
  * This structure augments clipped smart object's instance data,
  * providing extra members required by our example smart object's
@@ -487,18 +489,17 @@ _on_keydown(void *data EINA_UNUSED,
         prev = evas_smart_example_set_left(d.smt, rect);
         d.rects[0] = rect;
 
-        printf("Setting smart object's left spot with a new"
-                        " rectangle.\n");
+        printf("Setting smart object's left spot with a new rectangle.\n");
         printf("Checking its new smart object parent: %s\n",
-                evas_object_smart_parent_get(rect) == d.smt ? "OK!" :
-                "Failure!");
+               evas_object_smart_parent_get(rect) == d.smt ? "OK!" :
+               "Failure!");
         if (prev)
           {
              int r, g, b;
 
              evas_object_color_get(prev, &r, &g, &b, NULL);
              printf("Deleting previous left child,"
-                             " which had colors (%d, %d, %d)\n", r, g, b);
+                    " which had colors (%d, %d, %d)\n", r, g, b);
              evas_object_del(prev);
           }
 
@@ -516,18 +517,17 @@ _on_keydown(void *data EINA_UNUSED,
         prev = evas_smart_example_set_right(d.smt, rect);
         d.rects[1] = rect;
 
-        printf("Setting smart object's right spot with a new"
-                        " rectangle.\n");
+        printf("Setting smart object's right spot with a new rectangle.\n");
         printf("Checking its new smart object parent: %s\n",
-                evas_object_smart_parent_get(rect) == d.smt ? "OK!" :
-                "Failure!");
+               evas_object_smart_parent_get(rect) == d.smt ? "OK!" :
+               "Failure!");
         if (prev)
           {
              int r, g, b;
 
              evas_object_color_get(prev, &r, &g, &b, NULL);
              printf("Deleting previous right child,"
-                             " which had colors (%d, %d, %d)\n", r, g, b);
+                    " which had colors (%d, %d, %d)\n", r, g, b);
              evas_object_del(prev);
           }
 
@@ -639,7 +639,7 @@ _on_example_smart_object_child_num_change(void *data EINA_UNUSED,
                                           void *event_info)
 {
    printf("Number of child members on our example smart"
-                   " object changed to %llu\n", (unsigned long long)(uintptr_t)event_info);
+          " object changed to %llu\n", (unsigned long long)(uintptr_t)event_info);
 }
 
 int
@@ -680,12 +680,12 @@ main(void)
 
    ret = evas_object_smart_type_check(d.smt, _evas_smart_example_type);
    printf("Adding smart object of type \"%s\" to the canvas: %s.\n",
-           _evas_smart_example_type, ret ? "success" : "failure");
+          _evas_smart_example_type, ret ? "success" : "failure");
 
    d.clipper = evas_object_smart_clipped_clipper_get(d.smt);
    printf("Checking if clipped smart object's clipper is a "
-                   "\"static\" one: %s\n", evas_object_static_clip_get(
-             d.clipper) ? "yes" : "no");
+          "\"static\" one: %s\n",
+          evas_object_static_clip_get(d.clipper) ? "yes" : "no");
 
    evas_object_color_set(
      d.clipper, clipper_colors[cur_color].r, clipper_colors[cur_color].g,
@@ -697,8 +697,8 @@ main(void)
    for (; *descriptions; descriptions++)
      {
         printf("We've found a smart callback on the smart object!"
-                        "\n\tname: %s\n\ttype: %s\n", (*descriptions)->name,
-                (*descriptions)->type);
+               "\n\tname: %s\n\ttype: %s\n", (*descriptions)->name,
+               (*descriptions)->type);
 
         if (strcmp((*descriptions)->type, "i")) continue;
         /* we know we don't have other types of smart callbacks

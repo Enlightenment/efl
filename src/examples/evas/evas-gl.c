@@ -256,8 +256,8 @@ img_pixel_cb(void *data, Evas_Object *obj)
    float model[16], mvp[16];
    GLData *gl_data = data;
    Evas_GL_API *glapi = gl_data->glapi;
-
    Evas_Coord w, h;
+
    evas_object_image_size_get(obj, &w, &h);
 
    //Set up the context and surface as the current one
@@ -377,6 +377,7 @@ _win_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
 {
    float aspect;
    Evas_Coord w,h;
+
    evas_object_geometry_get( obj, NULL, NULL, &w, &h);
 
    GLData *gl_data = data;

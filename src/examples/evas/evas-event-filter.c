@@ -274,4 +274,3 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    ecore_evas_shutdown();
    return EXIT_FAILURE;
 }
- 

@@ -38,7 +38,6 @@ Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
 Eo *background = NULL;
 Eo *image = NULL;
-
 Eo *scene = NULL;
 Eo *root_node = NULL;
 Eo *camera_node = NULL;

@@ -147,7 +147,7 @@ _on_keydown(void        *data EINA_UNUSED,
         else
            evas_object_show(obj);
         printf("Show/hide toggle for obstacle %p\n",
-              *d.t_data.obs_ptr);
+               *d.t_data.obs_ptr);
         evas_object_textblock_obstacles_update(d.text);
 
         return;
@@ -164,10 +164,12 @@ _on_keydown(void        *data EINA_UNUSED,
 
         evas_object_textblock_obstacles_update(d.text);
 
-        printf("Changing obstacle size to: %d,%d\n", *d.t_data.obs_size_ptr, *d.t_data.obs_size_ptr);
+        printf("Changing obstacle size to: %d,%d\n",
+               *d.t_data.obs_size_ptr, *d.t_data.obs_size_ptr);
 
         return;
      }
+
    if (strcmp(ev->key, "p") == 0) /* change obstacle position */
      {
         Evas_Coord x, y;
@@ -186,11 +188,13 @@ _on_keydown(void        *data EINA_UNUSED,
 
         return;
      }
+
    if (strcmp(ev->key, "w") == 0) /* change obstacle position */
      {
         (d.t_data.wrap_ptr)++;
         POINTER_CYCLE(d.t_data.wrap_ptr, d.t_data.wrap);
-        printf("Changing wrap mode to: %s\n", *d.t_data.wrap_ptr);
+        printf("Changing wrap mode to: %s\n",
+               *d.t_data.wrap_ptr);
         _style_set(*d.t_data.wrap_ptr);
         evas_object_textblock_obstacles_update(d.text);
 
@@ -308,4 +312,3 @@ error:
    ecore_evas_shutdown();
    return -1;
 }
-

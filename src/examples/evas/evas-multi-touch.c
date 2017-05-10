@@ -280,7 +280,7 @@ _axis_update_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EI
      }
 
     printf("distance %.2f, pressure %.2f, twist %.2f, azimuth %.2f, tilt %.2f\n",
-            distance, pressure, twist, azimuth, tilt);
+           distance, pressure, twist, azimuth, tilt);
     _mouse_update_handle(ev->toolid, azimuth, tilt, twist, pressure);
 }
 
@@ -344,4 +344,3 @@ error:
    ecore_evas_shutdown();
    return -1;
 }
-

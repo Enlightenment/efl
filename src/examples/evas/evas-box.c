@@ -161,8 +161,8 @@ list_free:
 
         evas_object_box_align_set(d.box, h, v);
 
-        printf("Applying new alignment values (%.1f, %.1f)"
-                        " on the box\n", h, v);
+        printf("Applying new alignment values (%.1f, %.1f) on the box\n",
+               h, v);
         return;
      }
 
@@ -179,8 +179,8 @@ list_free:
 
         evas_object_box_padding_set(d.box, h, v);
 
-        printf("Applying new padding values (%d, %d)"
-                        " on the box\n", h, v);
+        printf("Applying new padding values (%d, %d) on the box\n",
+               h, v);
         return;
      }
 
@@ -189,7 +189,8 @@ list_free:
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_horizontal, NULL, NULL);
 
-        printf("Applying '%s' layout on the box\n", "horizontal");
+        printf("Applying '%s' layout on the box\n",
+               "horizontal");
         return;
      }
 
@@ -198,7 +199,8 @@ list_free:
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_vertical, NULL, NULL);
 
-        printf("Applying '%s' layout on the box\n", "vertical");
+        printf("Applying '%s' layout on the box\n",
+               "vertical");
         return;
      }
 
@@ -209,7 +211,7 @@ list_free:
           NULL);
 
         printf("Applying '%s' layout on the box\n",
-                "horizontal homogeneous");
+               "horizontal homogeneous");
         return;
      }
 
@@ -219,7 +221,7 @@ list_free:
           d.box, evas_object_box_layout_homogeneous_vertical, NULL, NULL);
 
         printf("Applying '%s' layout on the box\n",
-                "vertical homogeneous");
+               "vertical homogeneous");
         return;
      }
 
@@ -230,7 +232,7 @@ list_free:
           NULL, NULL);
 
         printf("Applying '%s' layout on the box\n",
-                "horizontal maximum size homogeneous");
+               "horizontal maximum size homogeneous");
         return;
      }
 
@@ -241,7 +243,7 @@ list_free:
           NULL, NULL);
 
         printf("Applying '%s' layout on the box\n",
-                "vertical maximum size homogeneous");
+               "vertical maximum size homogeneous");
         return;
      }
 
@@ -250,7 +252,8 @@ list_free:
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_flow_horizontal, NULL, NULL);
 
-        printf("Applying '%s' layout on the box\n", "horizontal flow");
+        printf("Applying '%s' layout on the box\n",
+               "horizontal flow");
         return;
      }
 
@@ -259,7 +262,8 @@ list_free:
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_flow_vertical, NULL, NULL);
 
-        printf("Applying '%s' layout on the box\n", "vertical flow");
+        printf("Applying '%s' layout on the box\n",
+               "vertical flow");
         return;
      }
 
@@ -268,7 +272,8 @@ list_free:
         evas_object_box_layout_set(
           d.box, evas_object_box_layout_stack, NULL, NULL);
 
-        printf("Applying '%s' layout on the box\n", "stack");
+        printf("Applying '%s' layout on the box\n",
+               "stack");
         return;
      }
 
@@ -276,7 +281,8 @@ list_free:
      {
         evas_object_box_layout_set(d.box, _custom_layout, NULL, NULL);
 
-        printf("Applying '%s' layout on the box\n", "CUSTOM");
+        printf("Applying '%s' layout on the box\n",
+               "CUSTOM");
         return;
      }
 }

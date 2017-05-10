@@ -59,10 +59,10 @@ _on_keydown(void        *data EINA_UNUSED,
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
         printf("commands are:\n"
-                        "\to - change clipper's opacity\n"
-                        "\tr - toggle clipper's color between red and white\n"
-                        "\tc - toggle clipper's clipping function\n"
-                        "\tv - toggle clipper's visibility\n");
+               "\to - change clipper's opacity\n"
+               "\tr - toggle clipper's color between red and white\n"
+               "\tc - toggle clipper's clipping function\n"
+               "\tv - toggle clipper's visibility\n");
         return;
      }
 

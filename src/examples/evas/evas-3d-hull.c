@@ -173,12 +173,12 @@ _print_result(Evas_Canvas3D_Mesh *mesh, Evas_Canvas3D_Mesh *convex_mesh)
    v_count = evas_canvas3d_mesh_vertex_count_get(mesh);
 
    printf("Vertex count is %d for convex hull\n",
-           v_count);
+          v_count);
 
    v_count = evas_canvas3d_mesh_vertex_count_get(convex_mesh);
 
    printf("Vertex count is %d for blender convex hull\n\n",
-           v_count);
+          v_count);
 
    return;
 }

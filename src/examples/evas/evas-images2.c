@@ -52,8 +52,8 @@ _mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
             void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
-   printf("Mouse Down - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
-          ev->canvas.y);
+   printf("Mouse Down - obj(%p), coords(%d %d)\n",
+          obj, ev->canvas.x, ev->canvas.y);
 }
 
 static void
@@ -61,8 +61,8 @@ _mouse_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
             void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
-   printf("Mouse Move - obj(%p), coords(%d %d)\n", obj, ev->cur.canvas.x,
-          ev->cur.canvas.y);
+   printf("Mouse Move - obj(%p), coords(%d %d)\n",
+          obj, ev->cur.canvas.x, ev->cur.canvas.y);
 }
 
 static void
@@ -70,8 +70,8 @@ _mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
           void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
-   printf("Mouse Up - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
-          ev->canvas.y);
+   printf("Mouse Up - obj(%p), coords(%d %d)\n",
+          obj, ev->canvas.x, ev->canvas.y);
 }
 
 static void
@@ -79,8 +79,8 @@ _multi_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
             void *event_info)
 {
    Evas_Event_Multi_Down *ev = event_info;
-   printf("Multi Down - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
-          ev->canvas.y);
+   printf("Multi Down - obj(%p), coords(%d %d)\n",
+          obj, ev->canvas.x, ev->canvas.y);
 }
 
 static void
@@ -88,8 +88,8 @@ _multi_move(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
              void *event_info)
 {
    Evas_Event_Multi_Move *ev = event_info;
-   printf("Multi Move - obj(%p), coords(%d %d)\n", obj, ev->cur.canvas.x,
-          ev->cur.canvas.y);
+   printf("Multi Move - obj(%p), coords(%d %d)\n",
+          obj, ev->cur.canvas.x, ev->cur.canvas.y);
 }
 
 static void
@@ -97,8 +97,8 @@ _multi_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
           void *event_info)
 {
    Evas_Event_Multi_Up *ev = event_info;
-   printf("Multi Up - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
-          ev->canvas.y);
+   printf("Multi Up - obj(%p), coords(%d %d)\n",
+          obj, ev->canvas.x, ev->canvas.y);
 }
 
 static void
@@ -106,8 +106,8 @@ _mouse_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
           void *event_info)
 {
    Evas_Event_Mouse_In *ev = event_info;
-   printf("Mouse In - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
-          ev->canvas.y);
+   printf("Mouse In - obj(%p), coords(%d %d)\n",
+          obj, ev->canvas.x, ev->canvas.y);
 }
 
 static void
@@ -115,8 +115,8 @@ _mouse_out(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
            void *event_info)
 {
    Evas_Event_Mouse_Out *ev = event_info;
-   printf("Mouse Out - obj(%p), coords(%d %d)\n", obj, ev->canvas.x,
-          ev->canvas.y);
+   printf("Mouse Out - obj(%p), coords(%d %d)\n",
+          obj, ev->canvas.x, ev->canvas.y);
 }
 
 static void
@@ -172,7 +172,7 @@ _on_keydown(void        *data EINA_UNUSED,
         int stride = evas_object_image_stride_get(d.noise_img);
 
         printf("Image has row stride value of %d, which accounts"
-                        " for %d pixels\n", stride, stride / 4);
+               " for %d pixels\n", stride, stride / 4);
 
         return;
      }
@@ -199,7 +199,7 @@ _on_keydown(void        *data EINA_UNUSED,
                   file_path, quality_str);
         else
           printf("Image saved to '%s' (flags '%s'), check it out with "
-                          "an image viewer\n", file_path, quality_str);
+                 "an image viewer\n", file_path, quality_str);
 
         return;
      }
@@ -287,7 +287,7 @@ main(void)
    evas_object_resize(d.noise_img, WIDTH / 4, HEIGHT / 4);
    evas_object_show(d.noise_img);
    printf("Creating noise image with size %d, %d\n",
-           WIDTH / 4, HEIGHT / 4);
+          WIDTH / 4, HEIGHT / 4);
 
    d.text_obj = evas_object_textblock_add(d.evas);
    evas_object_textblock_text_markup_set(d.text_obj, "Hello world! :)");

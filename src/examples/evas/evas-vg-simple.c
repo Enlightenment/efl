@@ -22,19 +22,17 @@
 #define EFL_BETA_API_SUPPORT 1
 #endif
 
+#include <math.h>
+
 #include <Eo.h>
 #include <Efl.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-
-
-#include <math.h>
 #include <Eina.h>
 
 #define PATH_KAPPA 0.5522847498
 #define PI         3.1415926535
-
 
 static Efl_VG *beginning = NULL;
 static Efl_VG *end = NULL;
