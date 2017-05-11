@@ -66,12 +66,6 @@ public class Array<T> : IDisposable
 {
     public static uint DefaultStep = 32;
 
-    private eina.ElementType elementType;
-    public eina.ElementType GetElementType()
-    {
-        return elementType;
-    }
-
     public IntPtr Handle {get;set;} = IntPtr.Zero;
     public bool Own {get;set;}
     public bool OwnContent {get;set;}
@@ -84,8 +78,6 @@ public class Array<T> : IDisposable
 
     private void InitNew(uint step)
     {
-        elementType = GetElementTypeCode(typeof(T));
-
         Handle = eina_array_new(step);
         Own = true;
         OwnContent = true;
@@ -151,9 +143,10 @@ public class Array<T> : IDisposable
 
         if (OwnContent)
         {
-            if (elementType == ElementType.ObjectType)
+            var tc = GetElementTypeCode(typeof(T));
+            if (tc == ElementType.ObjectType)
                 eina_array_free_obj_custom_export_mono(h);
-            else if (elementType == ElementType.StringType)
+            else if (tc == ElementType.StringType)
                 eina_array_free_string_custom_export_mono(h);
             else
                 eina_array_free_generic_custom_export_mono(h);
@@ -202,132 +195,77 @@ public class Array<T> : IDisposable
         OwnContent = own;
     }
 
-//     public void Add(int val)
-//     {
-//         Push(val);
-//     }
-
-//     public T this[int i]
-//     {
-//         get
-//         {
-//             return this.DataGet(i);
-//         }
-//     }
-
-}
-
-}
-
-public static class EinaArraySpecialMethods
-{
-    public static bool Push<T>(this eina.Array<T> arr, T val)
-    {
-        IntPtr ele = ManagedToNativeAlloc(val, arr.GetElementType());
-        return arr.InternalPush(ele); // TODO: free if false ?
-    }
-
-    public static bool Push(this eina.Array<string> arr, string val)
+    public bool Push(T val)
     {
         IntPtr ele = ManagedToNativeAlloc(val);
-        return arr.InternalPush(ele); // TODO: free if false ?
+        return InternalPush(ele); // TODO: free if false ?
     }
 
-    public static T Pop<T>(this eina.Array<T> arr)
+    public void Add(T val)
     {
-        IntPtr ele = arr.InternalPop();
-        var r = NativeToManaged<T>(ele, arr.GetElementType());
-        if (arr.OwnContent && ele != IntPtr.Zero)
-            NativeFree(ele, arr.GetElementType());
+        Push(val);
+    }
+
+    public T Pop()
+    {
+        IntPtr ele = InternalPop();
+        var r = NativeToManaged<T>(ele);
+        if (OwnContent && ele != IntPtr.Zero)
+            NativeFree<T>(ele);
         return r;
     }
 
-    public static string Pop(this eina.Array<string> arr)
+    public T DataGet(int idx)
     {
-        IntPtr ele = arr.InternalPop();
-        var r = NativeToManagedString(ele);
-        if (arr.OwnContent && ele != IntPtr.Zero)
-            NativeFreeString(ele);
-        return r;
+        IntPtr ele = InternalDataGet(idx);
+        return NativeToManaged<T>(ele);
     }
 
-    public static T DataGet<T>(this eina.Array<T> arr, int idx)
+    public T At(int idx)
     {
-        IntPtr ele = arr.InternalDataGet(idx);
-        return NativeToManaged<T>(ele, arr.GetElementType());
+        return DataGet(idx);
     }
 
-    public static string DataGet(this eina.Array<string> arr, int idx)
+    public void DataSet(int idx, T val)
     {
-        IntPtr ele = arr.InternalDataGet(idx);
-        return NativeToManagedString(ele);
-    }
-
-    public static T At<T>(this eina.Array<T> arr, int idx)
-    {
-        IntPtr ele = arr.InternalDataGet(idx);
-        return NativeToManaged<T>(ele, arr.GetElementType());
-    }
-
-    public static string At(this eina.Array<string> arr, int idx)
-    {
-        IntPtr ele = arr.InternalDataGet(idx);
-        return NativeToManagedString(ele);
-    }
-
-    public static void DataSet<T>(this eina.Array<T> arr, int idx, T val)
-    {
-        IntPtr ele = arr.InternalDataGet(idx); // TODO: check bondaries ??
-        if (arr.OwnContent && ele != IntPtr.Zero)
-            NativeFree(ele, arr.GetElementType());
-        ele = ManagedToNativeAlloc(val, arr.GetElementType());
-        arr.InternalDataSet(idx, ele);
-    }
-
-    public static void DataSet(this eina.Array<string> arr, int idx, string val)
-    {
-        IntPtr ele = arr.InternalDataGet(idx);
-        if (arr.OwnContent && ele != IntPtr.Zero)
-            NativeFreeString(ele);
+        IntPtr ele = InternalDataGet(idx); // TODO: check bondaries ??
+        if (OwnContent && ele != IntPtr.Zero)
+            NativeFree<T>(ele);
         ele = ManagedToNativeAlloc(val);
-        arr.InternalDataSet(idx, ele);
+        InternalDataSet(idx, ele);
     }
 
-    public static T[] ToArray<T>(this eina.Array<T> arr)
+    public T this[int idx]
     {
-        int len = arr.Length;
+        get
+        {
+            return DataGet(idx);
+        }
+        set
+        {
+            DataSet(idx, value);
+        }
+    }
+
+    public T[] ToArray()
+    {
+        int len = Length;
         var managed = new T[len];
         for(int i = 0; i < len; ++i)
         {
-            managed[i] = NativeToManaged<T>(arr.InternalDataGet(i), arr.GetElementType());
+            managed[i] = NativeToManaged<T>(InternalDataGet(i));
         }
         return managed;
     }
 
-    public static string[] ToArray(this eina.Array<string> arr)
-    {
-        int len = arr.Length;
-        var managed = new string[len];
-        for(int i = 0; i < len; ++i)
-        {
-            managed[i] = NativeToManagedString(arr.InternalDataGet(i));
-        }
-        return managed;
-    }
-
-    public static bool Append<T>(this eina.Array<T> arr, T[] values)
+    public bool Append(T[] values)
     {
         foreach(T v in values)
-            if (!arr.Push(v))
+            if (!Push(v))
                 return false;
         return true;
     }
 
-    public static bool Append(this eina.Array<string> arr, string[] values)
-    {
-        foreach(string v in values)
-            if (!arr.Push(v))
-                return false;
-        return true;
-    }
+}
+
 }
