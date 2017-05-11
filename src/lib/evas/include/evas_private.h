@@ -1222,6 +1222,7 @@ struct _Evas_Object_Protected_Data
 
    Eina_Bool                   snapshot_needs_redraw : 1;
    Eina_Bool                   snapshot_no_obscure : 1;
+   Eina_Bool                   is_image_object : 1;
    Eina_Bool                   gfx_map_has : 1;
    Eina_Bool                   gfx_map_update : 1;
 

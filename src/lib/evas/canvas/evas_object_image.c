@@ -1416,6 +1416,7 @@ evas_object_image_init(Evas_Object *eo_obj)
    obj->func = &object_func;
    obj->private_data = efl_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
+   obj->is_image_object = EINA_TRUE;
 }
 
 EOLIAN static void

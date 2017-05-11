@@ -134,19 +134,9 @@ evas_object_map_move_sync(Evas_Object *eo_obj)
    _evas_map_calc_map_geometry(eo_obj);
 }
 
-Evas_Map *
-_evas_map_new(int count, Eina_Bool sync)
+static void
+_evas_map_init(Evas_Map *m, int count, Eina_Bool sync)
 {
-   Evas_Map *m;
-   int alloc;
-
-   /* Adjust allocation such that: at least 4 points, and always an even
-    * number: this allows the software engine to work efficiently */
-   alloc = (count < 4) ? 4 : count;
-   if (alloc & 0x1) alloc ++;
-
-   m = malloc(sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
-   if (!m) return NULL;
    m->move_sync.enabled = sync;
    m->count = count;
    m->persp.foc = 0;
@@ -160,7 +150,30 @@ _evas_map_new(int count, Eina_Bool sync)
         m->points[i].b = 255;
         m->points[i].a = 255;
      }
+}
+
+Evas_Map *
+_evas_map_new(int count, Eina_Bool sync)
+{
+   Evas_Map *m;
+   int alloc;
+
+   /* Adjust allocation such that: at least 4 points, and always an even
+    * number: this allows the software engine to work efficiently */
+   alloc = (count < 4) ? 4 : count;
+   if (alloc & 0x1) alloc ++;
+
+   m = malloc(sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
+   if (!m) return NULL;
+   _evas_map_init(m, count, sync);
    return m;
+}
+
+void
+_evas_map_reset(Evas_Map *m)
+{
+   if (!m) return;
+   _evas_map_init(m, m->count, m->move_sync.enabled);
 }
 
 static inline Eina_Bool

@@ -8,6 +8,7 @@
 #include <math.h>
 
 Evas_Map *_evas_map_new(int count, Eina_Bool sync);
+void _evas_map_reset(Evas_Map *m);
 void _evas_map_calc_map_geometry(Evas_Object *eo_obj);
 void _map_util_rotate(Evas_Map *m, double degrees, double cx, double cy);
 void _map_util_zoom(Evas_Map *m, double zoomx, double zoomy, double cx, double cy);
