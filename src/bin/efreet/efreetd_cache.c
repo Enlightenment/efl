@@ -196,7 +196,11 @@ subdir_cache_save(void)
                              efreet_cache_home_get(), efreet_hostname_get());
 
    tmpfd = eina_file_mkstemp(eina_strbuf_string_get(buf), &tmpstr);
-   if (tmpfd < 0) return;
+   if (tmpfd < 0)
+     {
+        eina_strbuf_free(buf);
+        return;
+     }
 
    eina_strbuf_reset(buf);
 
@@ -324,10 +328,15 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
    if (icon_cache_exe)
      {
         icon_queue = EINA_TRUE;
+        eina_strbuf_free(file);
         return ECORE_CALLBACK_CANCEL;
      }
    icon_queue = EINA_FALSE;
-   if ((!icon_flush) && (!icon_exts)) return ECORE_CALLBACK_CANCEL;
+   if ((!icon_flush) && (!icon_exts))
+     {
+        eina_strbuf_free(file);
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    if (icon_change_monitors) eina_hash_free(icon_change_monitors);
    if (icon_change_monitors_mon) eina_hash_free(icon_change_monitors_mon);
@@ -650,7 +659,11 @@ icon_changes_listen(void)
    if (!buf) return;
 
    stack = eina_inarray_new(sizeof(struct stat), 16);
-   if (!stack) return;
+   if (!stack)
+     {
+        eina_strbuf_free(buf);
+        return;
+     }
    icon_changes_listen_recursive(stack, efreet_icon_deprecated_user_dir_get(), EINA_TRUE);
    eina_inarray_flush(stack);
    icon_changes_listen_recursive(stack, efreet_icon_user_dir_get(), EINA_TRUE);
@@ -715,10 +728,10 @@ fill_list(const char *file, Eina_List **l)
    Eina_File_Line *line = NULL;
    Eina_Strbuf *buf = eina_strbuf_new();
    if (!buf) return;
-   
+
    eina_strbuf_append_printf(buf, "%s/efreet/%s", efreet_cache_home_get(), file);
    f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
-   if (!f) return;
+   if (!f) goto error_buf;
    it = eina_file_map_lines(f);
    if (!it) goto error;
    EINA_ITERATOR_FOREACH(it, line)
@@ -731,8 +744,9 @@ fill_list(const char *file, Eina_List **l)
      }
    eina_iterator_free(it);
 error:
-   eina_strbuf_free(buf);
    eina_file_close(f);
+error_buf:
+   eina_strbuf_free(buf);
 }
 
 static void
@@ -757,6 +771,10 @@ save_list(const char *file, Eina_List *l)
    eina_strbuf_append_printf(buf, "%s/efreet/%s", efreet_cache_home_get(), file);
    f = fopen(eina_strbuf_string_get(buf), "wb");
    if (!f) return;
+     {
+        eina_strbuf_free(buf);
+        return;
+     }
    EINA_LIST_FOREACH(l, ll, path)
       fprintf(f, "%s\n", path);
    fclose(f);
