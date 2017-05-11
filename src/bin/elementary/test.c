@@ -202,6 +202,7 @@ void test_flip3(void *data, Evas_Object *obj, void *event_info);
 void test_flip_interactive(void *data, Evas_Object *obj, void *event_info);
 void test_flip_to(void *data, Evas_Object *obj, void *event_info);
 void test_flip_page(void *data, Evas_Object *obj, void *event_info);
+void test_flip_page_eo(void *data, Evas_Object *obj, void *event_info);
 void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_label_slide(void *data, Evas_Object *obj, void *event_info);
 void test_label_wrap(void *data, Evas_Object *obj, void *event_info);
@@ -768,6 +769,7 @@ add_tests:
    ADD_TEST(NULL, "Effects", "Flip Interactive", test_flip_interactive);
    ADD_TEST(NULL, "Effects", "Flip To", test_flip_to);
    ADD_TEST(NULL, "Effects", "Flip Page", test_flip_page);
+   ADD_TEST(NULL, "Effects", "Flip Page (EO API)", test_flip_page_eo);
    ADD_TEST(NULL, "Effects", "Animation", test_anim);
 
    //------------------------------//

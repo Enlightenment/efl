@@ -779,6 +779,7 @@ bin/elementary/test_fileselector.c \
 bin/elementary/test_fileselector_entry.c \
 bin/elementary/test_flip.c \
 bin/elementary/test_flip_page.c \
+bin/elementary/test_flip_page_eo.c \
 bin/elementary/test_flipselector.c \
 bin/elementary/test_floating.c \
 bin/elementary/test_focus.c \
