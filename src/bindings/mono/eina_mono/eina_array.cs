@@ -6,26 +6,6 @@ using static eina.ArrayNativeFunctions;
 
 namespace eina {
 
-// public class TypeConvertions
-// {
-//     public static T NativeToManaged<T>(IntPtr ele)
-//     {
-//         Console.WriteLine("DATAGET GENERIC");
-//         var w = Marshal.PtrToStructure<eina.ValueConvertWrapper<T> >(ele);
-//         return w.Val;
-//     }
-//
-//     public static string NativeToManaged<T>(IntPtr ele)
-//     {
-//         Console.WriteLine("DATAGET STRING");
-//
-//         IntPtr ele = eina_array_data_get_custom_export_mono(arr.Handle, idx);
-//         if (ele == IntPtr.Zero)
-//             return null;
-//         return Marshal.PtrToStringAuto(ele);
-//     }
-// }
-
 public static class ArrayNativeFunctions
 {
     [DllImport("eina")] public static extern IntPtr
