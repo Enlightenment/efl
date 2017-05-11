@@ -4655,19 +4655,19 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
         const Ecore_Axis *axis = &(info->axis[n]);
         switch (axis->label)
           {
-           case EVAS_AXIS_LABEL_WINDOW_X:
+           case ECORE_AXIS_LABEL_WINDOW_X:
              _efl_input_value_mark(ev, EFL_INPUT_VALUE_X);
              x = axis->value;
              haswinx = EINA_TRUE;
              break;
 
-           case EVAS_AXIS_LABEL_WINDOW_Y:
+           case ECORE_AXIS_LABEL_WINDOW_Y:
              _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
              y = axis->value;
              haswiny = EINA_TRUE;
              break;
 
-           case EVAS_AXIS_LABEL_X:
+           case ECORE_AXIS_LABEL_X:
              if (!haswinx)
                {
                   _efl_input_value_mark(ev, EFL_INPUT_VALUE_X);
@@ -4677,7 +4677,7 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
              ev->has_raw = EINA_TRUE;
              break;
 
-           case EVAS_AXIS_LABEL_Y:
+           case ECORE_AXIS_LABEL_Y:
              if (!haswiny)
                {
                   _efl_input_value_mark(ev, EFL_INPUT_VALUE_Y);
@@ -4687,46 +4687,46 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
              ev->has_raw = EINA_TRUE;
              break;
 
-           case EVAS_AXIS_LABEL_NORMAL_X:
+           case ECORE_AXIS_LABEL_NORMAL_X:
              ev->norm.x = axis->value;
              ev->has_norm = EINA_TRUE;
              break;
 
-           case EVAS_AXIS_LABEL_NORMAL_Y:
+           case ECORE_AXIS_LABEL_NORMAL_Y:
              ev->norm.y = axis->value;
              ev->has_norm = EINA_TRUE;
              break;
 
-           case EVAS_AXIS_LABEL_PRESSURE:
+           case ECORE_AXIS_LABEL_PRESSURE:
              _efl_input_value_mark(ev, EFL_INPUT_VALUE_PRESSURE);
              ev->pressure = axis->value;
              break;
 
-           case EVAS_AXIS_LABEL_DISTANCE:
+           case ECORE_AXIS_LABEL_DISTANCE:
              _efl_input_value_mark(ev, EFL_INPUT_VALUE_DISTANCE);
              ev->distance = axis->value;
              break;
 
-           case EVAS_AXIS_LABEL_AZIMUTH:
+           case ECORE_AXIS_LABEL_AZIMUTH:
              _efl_input_value_mark(ev, EFL_INPUT_VALUE_AZIMUTH);
              ev->azimuth = axis->value;
              break;
 
-           case EVAS_AXIS_LABEL_TILT:
+           case ECORE_AXIS_LABEL_TILT:
              _efl_input_value_mark(ev, EFL_INPUT_VALUE_TILT);
              ev->tilt = axis->value;
              break;
 
-           case EVAS_AXIS_LABEL_TWIST:
+           case ECORE_AXIS_LABEL_TWIST:
              _efl_input_value_mark(ev, EFL_INPUT_VALUE_TWIST);
              ev->twist = axis->value;
              break;
 
-           case EVAS_AXIS_LABEL_UNKNOWN:
-           case EVAS_AXIS_LABEL_TOUCH_WIDTH_MAJOR:
-           case EVAS_AXIS_LABEL_TOUCH_WIDTH_MINOR:
-           case EVAS_AXIS_LABEL_TOOL_WIDTH_MAJOR:
-           case EVAS_AXIS_LABEL_TOOL_WIDTH_MINOR:
+           case ECORE_AXIS_LABEL_UNKNOWN:
+           case ECORE_AXIS_LABEL_TOUCH_WIDTH_MAJOR:
+           case ECORE_AXIS_LABEL_TOUCH_WIDTH_MINOR:
+           case ECORE_AXIS_LABEL_TOOL_WIDTH_MAJOR:
+           case ECORE_AXIS_LABEL_TOOL_WIDTH_MINOR:
            default:
              DBG("Unsupported axis label %d, value %f (discarded)",
                  axis->label, axis->value);
