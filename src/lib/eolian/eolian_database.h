@@ -279,6 +279,18 @@ struct _Eolian_Variable
    Eina_Bool is_extern :1;
 };
 
+struct _Eolian_Unit
+{
+   Eolian_Object  base;
+   Eolian_Class  *klass;
+   Eina_List     *dependencies;
+   Eina_List     *globals;
+   Eina_List     *constants;
+   Eina_List     *aliases;
+   Eina_List     *structs;
+   Eina_List     *enums;
+};
+
 int database_init(void);
 int database_shutdown(void);
 
@@ -289,6 +301,8 @@ void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
                        Eina_Stringshare *file, void *ptr);
 
 void database_doc_del(Eolian_Documentation *doc);
+
+void database_unit_del(Eolian_Unit *unit);
 
 /* types */
 

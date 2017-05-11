@@ -23,6 +23,7 @@ Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
 Eina_Hash *_decls      = NULL;
 Eina_Hash *_declsf     = NULL;
+Eina_Hash *_units      = NULL;
 
 Eina_Hash *_parsedeos  = NULL;
 Eina_Hash *_parsingeos = NULL;
@@ -61,6 +62,7 @@ database_init()
    _parsedeos  = eina_hash_string_small_new(NULL);
    _parsingeos = eina_hash_string_small_new(NULL);
    _defereos   = eina_hash_string_small_new(NULL);
+   _units      = eina_hash_stringshared_new(EINA_FREE_CB(database_unit_del));
    return ++_database_init_count;
 }
 
@@ -95,6 +97,7 @@ database_shutdown()
         eina_hash_free(_parsedeos ); _parsedeos  = NULL;
         eina_hash_free(_parsingeos); _parsingeos = NULL;
         eina_hash_free(_defereos  ); _defereos   = NULL;
+        eina_hash_free(_units     ); _units      = NULL;
         eina_shutdown();
      }
    return _database_init_count;
@@ -590,6 +593,11 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
    if (data) *data = cl;
    if (data2) *data2 = fid;
    return EOLIAN_DOC_REF_FUNC;
+}
+
+void
+database_unit_del(Eolian_Unit *unit)
+{
 }
 
 #define EO_SUFFIX ".eo"
