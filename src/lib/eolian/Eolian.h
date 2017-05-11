@@ -171,6 +171,12 @@ typedef struct _Eolian_Declaration Eolian_Declaration;
  */
 typedef struct _Eolian_Documentation Eolian_Documentation;
 
+/* Unit information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Unit Eolian_Unit;
+
 typedef enum
 {
    EOLIAN_UNRESOLVED = 0,
