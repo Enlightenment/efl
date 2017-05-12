@@ -54,7 +54,7 @@ struct _Node{
   Efl_Ui_Focus_Manager *redirect_manager;
 
   struct _Tree_Node{
-    Node *parent; //the parent in the tree
+    Node *parent; //the parent of the tree
     Eina_List *children; //this saves the original set of elements
     Eina_List *safed_order;
   }tree;
@@ -280,7 +280,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
           }
 
 
-        /* two only way the calculation does make sense is if the two number
+        /* The only way the calculation does make sense is if the two number
          * lines are not disconnected.
          * If they are connected one point of the 4 lies between the min and max of the other line
          */
@@ -764,13 +764,13 @@ _efl_ui_focus_manager_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data 
    F_DBG("Manager: %p unregister %p", obj, child);
 
 
-   //remove the object from the stack if it hasnt dont that until now
-   //after this its not at the top anymore
+   //remove the object from the stack if it hasn't done that until now
+   //after this it's not at the top anymore
    //elm_widget_focus_set(node->focusable, EINA_FALSE);
    //delete again from the list, for the case it was not at the top
    pd->focus_stack = eina_list_remove(pd->focus_stack, node);
 
-   //add all neighboors of the node to the dirty list
+   //add all neighbors of the node to the dirty list
    for(int i = 0; i < 4; i++)
      {
         Node *partner;
@@ -961,7 +961,7 @@ _coords_movement(Efl_Ui_Focus_Manager_Data *pd, Node *upper, Efl_Ui_Focus_Direct
    Node *candidate;
    Eina_List *node_list;
 
-   //we are searcing which of the partners is lower to the history
+   //we are searching which of the partners is lower to the history
    EINA_LIST_REVERSE_FOREACH(pd->focus_stack, node_list, candidate)
      {
         if (eina_list_data_find(G(upper).directions[direction].partners, candidate))
@@ -971,7 +971,7 @@ _coords_movement(Efl_Ui_Focus_Manager_Data *pd, Node *upper, Efl_Ui_Focus_Direct
           }
      }
 
-   //if we havent found anything in the history, use the widget with the smallest distance
+   //if we haven't found anything in the history, use the widget with the smallest distance
    {
       Eina_List *lst = G(upper).directions[direction].partners;
       Eina_List *n;
@@ -1025,7 +1025,7 @@ _next(Node *node)
         return eina_list_data_get(T(node).children);
      }
 
-   //case 2 we are the root and we dont have children, return ourself
+   //case 2 we are the root and we don't have children, return ourself
    if (!T(node).parent)
      {
         return node;
@@ -1076,11 +1076,11 @@ _prev(Node *node)
         return n;
      }
 
-   //case 2 there is a item in the parent preivous to node, which has no children
+   //case 2 there is a item in the parent previous to node, which has no children
    if (n)
      return n;
 
-   //case 3 there is a no item in the parent provious to this one
+   //case 3 there is a no item in the parent previous to this one
    return T(node).parent;
 }
 
@@ -1228,7 +1228,7 @@ _efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus
         pd->focus_stack = eina_list_remove(pd->focus_stack, node);
         pd->focus_stack = eina_list_append(pd->focus_stack, node);
 
-        //safe fields we later need
+        //save fields we later need
         focusable = node->focusable;
 
         //populate the new change
