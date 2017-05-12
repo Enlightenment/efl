@@ -412,14 +412,14 @@ ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
      }
 }
 
-EAPI void
+EAPI uint32_t
 ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window)
 {
    struct wl_surface *dsurface, *osurface;
 
-   EINA_SAFETY_ON_NULL_RETURN(input);
-   EINA_SAFETY_ON_NULL_RETURN(input->data.drag.source);
-   EINA_SAFETY_ON_NULL_RETURN(drag_window);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->data.drag.source, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(drag_window, 0);
 
    dsurface = ecore_wl2_window_surface_get(drag_window);
 
@@ -436,9 +436,11 @@ ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore
 
         wl_data_device_start_drag(input->data.device, input->data.drag.source,
                                   osurface, dsurface, input->display->serial);
+        input->data.drag.serial = input->display->serial;
 
         ecore_wl2_window_cursor_from_name_set(window, "move");
      }
+   return input->data.drag.serial;
 }
 
 EAPI void
@@ -481,67 +483,67 @@ ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input)
    return input->selection;
 }
 
-EAPI Eina_Bool
+EAPI uint32_t
 ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
 {
    struct wl_data_device_manager *manager;
    const char **type;
    char **t;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, 0);
 
    manager = input->display->wl.data_device_manager;
-   if (!manager) return EINA_FALSE;
+   if (!manager) return 0;
 
-   if (input->data.types.data)
+   if (input->data.selection.types.data)
      {
-        wl_array_for_each(t, &input->data.types)
+        wl_array_for_each(t, &input->data.selection.types)
           free(*t);
-        wl_array_release(&input->data.types);
-        wl_array_init(&input->data.types);
+        wl_array_release(&input->data.selection.types);
+        wl_array_init(&input->data.selection.types);
      }
 
-   input->data.source = NULL;
+   input->data.selection.source = NULL;
 
-   if (!types[0]) return EINA_FALSE;
+   if (!types[0]) return 0;
 
-   input->data.source = wl_data_device_manager_create_data_source(manager);
-   if (!input->data.source)
+   input->data.selection.source = wl_data_device_manager_create_data_source(manager);
+   if (!input->data.selection.source)
      {
         ERR("Could not create data source");
-        return EINA_FALSE;
+        return 0;
      }
 
    for (type = types; *type; type++)
      {
         if (!*type) continue;
-        t = wl_array_add(&input->data.types, sizeof(*t));
+        t = wl_array_add(&input->data.selection.types, sizeof(*t));
         if (t)
           {
              *t = strdup(*type);
-             wl_data_source_offer(input->data.source, *t);
+             wl_data_source_offer(input->data.selection.source, *t);
           }
      }
 
-   wl_data_source_add_listener(input->data.source, &_source_listener, input);
+   wl_data_source_add_listener(input->data.selection.source, &_source_listener, input);
 
-   wl_data_device_set_selection(input->data.device, input->data.source,
+   wl_data_device_set_selection(input->data.device, input->data.selection.source,
                                 input->display->serial);
-
-   return EINA_TRUE;
+   input->data.selection.serial = input->display->serial;
+   return input->display->serial;
 }
 
-EAPI Eina_Bool
+EAPI uint32_t
 ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(input->data.device, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->data.device, 0);
 
    wl_data_device_set_selection(input->data.device,
                                 NULL, input->display->serial);
-
-   return EINA_TRUE;
+   input->data.selection.serial = 0;
+   return input->display->serial;
 }
 
 static Ecore_Wl2_Drag_Action

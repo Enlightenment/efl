@@ -1026,10 +1026,11 @@ EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **type
  * @param window the window which is the origin of the drag operation
  *
  * @param drag_window the window which is used as window of the visible hint.
+ * @return The serial for the start_drag request
  *
  * @since 1.17
  */
-EAPI void ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window);
+EAPI uint32_t ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window);
 
 /**
  * End a drag started by a call to ecore_wl2_dnd_drag_start
@@ -1058,22 +1059,22 @@ EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
  *
  * @param types a null-terminated array of mimetypes supported by the client
  *
- * @return 1 on success 0 on failure
+ * @return serial of request on sucess, 0 on failure
  *
  * @since 1.17
  */
-EAPI Eina_Bool ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types);
+EAPI uint32_t ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types);
 
 /**
  * Clear the selection currently setted on this input.
  *
  * @param input the input to clear
  *
- * @return 1 on sucess 0 on failure
+ * @return serial of request on sucess, 0 on failure
  *
  * @since 1.17
  */
-EAPI Eina_Bool ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
+EAPI uint32_t ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
 
 /**
  * @defgroup Ecore_Wl2_Subsurface_Group Functions to manipulate subsurfaces.
