@@ -1557,7 +1557,7 @@ EAPI void
 ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
 {
    EINA_SAFETY_ON_NULL_RETURN(input);
-
+   EINA_SAFETY_ON_NULL_RETURN(input->display);
    _ecore_wl2_input_grab(input, window, button);
 }
 
@@ -1565,7 +1565,7 @@ EAPI void
 ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN(input);
-
+   EINA_SAFETY_ON_NULL_RETURN(input->display);
    _ecore_wl2_input_ungrab(input);
 }
 
@@ -1573,7 +1573,7 @@ EAPI struct wl_seat *
 ecore_wl2_input_seat_get(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
-
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, NULL);
    return input->wl.seat;
 }
 
@@ -1583,7 +1583,7 @@ ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input)
    Ecore_Wl2_Seat_Capabilities cap = ECORE_WL2_SEAT_CAPABILITIES_NONE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, cap);
-
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, 0);
    if (input->wl.keyboard)
      cap |= ECORE_WL2_SEAT_CAPABILITIES_KEYBOARD;
    if (input->wl.pointer)
@@ -1597,5 +1597,6 @@ EAPI unsigned int
 ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, 0);
    return input->id;
 }
