@@ -281,9 +281,8 @@ struct _Eolian_Variable
 
 struct _Eolian_Unit
 {
-   Eolian_Object  base;
-   Eolian_Class  *klass;
    Eina_List     *dependencies;
+   Eina_List     *classes;
    Eina_List     *globals;
    Eina_List     *constants;
    Eina_List     *aliases;
