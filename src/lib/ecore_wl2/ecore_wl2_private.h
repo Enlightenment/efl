@@ -348,9 +348,19 @@ struct _Ecore_Wl2_Input
    struct
      {
         struct wl_data_device *device;
-        struct wl_data_source *source;
-        struct wl_array types;
-        uint32_t action;
+        struct
+        {
+           struct wl_data_source *source;
+           struct wl_array types;
+           uint32_t serial;
+        } selection;
+        struct
+        {
+           struct wl_data_source *source;
+           struct wl_array types;
+           uint32_t action;
+           uint32_t serial;
+        } drag;
      } data;
 
    struct
