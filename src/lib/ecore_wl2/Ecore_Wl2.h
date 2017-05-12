@@ -493,6 +493,19 @@ EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find(Ecore_Wl2_Display *display,
 EAPI struct wl_registry *ecore_wl2_display_registry_get(Ecore_Wl2_Display *display);
 
 /**
+ * Check if the display has performed a sync
+ *
+ * @param display The display
+ *
+ * @return True if the display sync has occurred
+ * @see ECORE_WL2_EVENT_SYNC_DONE
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_display_sync_is_done(const Ecore_Wl2_Display *display);
+
+/**
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
  * @ingroup Ecore_Wl2_Group
  *
