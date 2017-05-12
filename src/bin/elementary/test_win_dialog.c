@@ -100,9 +100,9 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 }
 
 static void
-_bt4_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Efl_Canvas_Object *dia, *lb, *parent = data;
+   Efl_Canvas_Object *dia, *lb;
 
    dia = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
