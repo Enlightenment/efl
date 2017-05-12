@@ -687,9 +687,10 @@ ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes)
 {
    EINA_SAFETY_ON_NULL_RETURN(offer);
 
-   wl_data_offer_accept(offer->offer, offer->serial, NULL);
    if (mimes)
      eina_array_foreach(mimes, _emit_mime, offer);
+   else
+     wl_data_offer_accept(offer->offer, offer->serial, NULL);
 }
 
 typedef struct {
