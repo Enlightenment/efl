@@ -3079,7 +3079,11 @@ evas_render_updates_internal(Evas *eo_e,
 
    e = evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (e->inside_post_render) return EINA_FALSE;
-   if (!e->changed) goto nothing2render;
+   if (!e->changed)
+     {
+        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_PRE, NULL);
+        goto nothing2render;
+     }
 
    if (e->rendering)
      {
