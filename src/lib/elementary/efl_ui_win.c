@@ -187,10 +187,13 @@ struct _Efl_Ui_Win_Data
    int          aspect_w, aspect_h; /* used for the get API */
    int          size_base_w, size_base_h;
    int          size_step_w, size_step_h;
+   int          req_x, req_y, req_w, req_h;
    int          max_w, max_h;
    int          norender;
    int          modal_count;
    int          response;
+   Eina_Bool    req_wh : 1;
+   Eina_Bool    req_xy : 1;
 
    struct {
       short     pointer_move;
@@ -874,6 +877,7 @@ _elm_win_move(Ecore_Evas *ee)
    efl_event_callback_legacy_call(sd->obj, EFL_GFX_EVENT_MOVE, NULL);
    evas_nochange_push(evas_object_evas_get(sd->obj));
    sd->response++;
+   sd->req_xy = EINA_FALSE;
    evas_object_move(sd->obj, x, y);
    sd->response--;
    evas_nochange_pop(evas_object_evas_get(sd->obj));
@@ -915,6 +919,7 @@ _elm_win_resize_job(void *data)
      }
 
    sd->response++;
+   sd->req_wh = EINA_FALSE;
    evas_object_resize(sd->obj, w, h);
    evas_object_resize(sd->legacy.edje, w, h);
    sd->response--;
@@ -2899,7 +2904,13 @@ _efl_ui_win_efl_gfx_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord x, Eva
      }
    else
      {
-        if (!sd->response) TRAP(sd, move, x, y);
+        if (!sd->response)
+          {
+             sd->req_xy = EINA_TRUE;
+             sd->req_x = x;
+             sd->req_y = y;
+             TRAP(sd, move, x, y);
+          }
         if (!ecore_evas_override_get(sd->ee)) goto super_skip;
      }
 
@@ -2959,7 +2970,13 @@ _efl_ui_win_efl_gfx_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord w, Evas_Co
      }
 
    _elm_win_frame_geometry_adjust(sd);
-   if (!sd->response) TRAP(sd, resize, w, h);
+   if (!sd->response)
+     {
+        sd->req_wh = EINA_TRUE;
+        sd->req_w = w;
+        sd->req_h = h;
+        TRAP(sd, resize, w, h);
+     }
 
    efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 }
@@ -3444,11 +3461,18 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (w > maxw) w = maxw;
    if (h > maxh) h = maxh;
    //if ((w == ow) && (h == oh)) return;
+   sd->req_wh = EINA_FALSE;
    if (sd->img_obj) evas_object_resize(obj, w, h);
    else
      {
         _elm_win_frame_geometry_adjust(sd);
-        if (!sd->response) TRAP(sd, resize, w, h);
+        if (!sd->response)
+          {
+             sd->req_wh = EINA_TRUE;
+             sd->req_w = w;
+             sd->req_h = h;
+             TRAP(sd, resize, w, h);
+          }
      }
 }
 
@@ -5416,6 +5440,10 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
 {
    int win_w, win_h, screen_x, screen_y, screen_w, screen_h, nx, ny;
 
+   if (sd->deferred_resize_job) _elm_win_resize_job(sd->obj);
+   if (sd->frame_obj) edje_object_message_signal_process(sd->frame_obj);
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
+   _elm_win_resize_objects_eval(obj);
    if ((trap) && (trap->center) && (!trap->center(sd->trap_data, obj, h, v)))
      return;
 
@@ -5424,12 +5452,27 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
                                   &screen_w, &screen_h);
    if ((!screen_w) || (!screen_h)) return;
 
-   evas_object_geometry_get(obj, &nx, &ny, &win_w, &win_h);
+   if (sd->req_wh)
+     {
+        win_w = sd->req_w;
+        win_h = sd->req_h;
+     }
+   else evas_object_geometry_get(obj, NULL, NULL, &win_w, &win_h);
+   if (sd->req_xy)
+     {
+        nx = sd->req_x;
+        ny = sd->req_y;
+     }
+   else evas_object_geometry_get(obj, &nx, &ny, NULL, NULL);
+
    if ((!win_w) || (!win_h)) return;
 
    if (h) nx = win_w >= screen_w ? 0 : (screen_w / 2) - (win_w / 2);
    if (v) ny = win_h >= screen_h ? 0 : (screen_h / 2) - (win_h / 2);
 
+   sd->req_xy = EINA_TRUE;
+   sd->req_x = screen_x + nx;
+   sd->req_y = screen_y + ny;
    evas_object_move(obj, screen_x + nx, screen_y + ny);
 }
 

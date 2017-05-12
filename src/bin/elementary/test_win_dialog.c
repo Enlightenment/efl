@@ -99,6 +99,36 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    efl_gfx_visible_set(dia, EINA_TRUE);
 }
 
+static void
+_bt4_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Efl_Canvas_Object *dia, *lb, *parent = data;
+
+   dia = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
+                 efl_ui_win_name_set(efl_added, "window-dia-4"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),
+                 efl_text_set(efl_added, "Min/Max Size Dialog")
+                );
+
+   //lb = efl_add(EFL_UI_TEXT_CLASS, dia);,
+   lb = elm_label_add(dia);
+   efl_event_callback_add(dia, EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _size_update, lb);
+   efl_event_callback_add(dia, EFL_GFX_EVENT_RESIZE, _size_update, lb);
+   elm_object_text_set(lb, "This is a Centered Dialog Window");
+   efl_gfx_size_hint_weight_set(lb, 1.0, 1.0);
+
+   // Swallow in the label as the default content, this will make it visible.
+   efl_content_set(dia, lb);
+
+   // Set min & max size (app-side)
+   efl_gfx_size_hint_min_set(dia, ELM_SCALE_SIZE(0), ELM_SCALE_SIZE(100));
+   efl_gfx_size_hint_max_set(dia, ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600));
+
+   efl_ui_win_center(dia, EINA_TRUE, EINA_TRUE);
+   efl_gfx_visible_set(dia, EINA_TRUE);
+}
+
 void
 test_win_dialog(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -127,6 +157,12 @@ test_win_dialog(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Create a new dialog with min/max sizes");
    evas_object_smart_callback_add(bt, "clicked", _bt3_clicked_cb, win);
+   elm_box_pack_end(box, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Create a new centered dialog");
+   evas_object_smart_callback_add(bt, "clicked", _bt4_clicked_cb, win);
    elm_box_pack_end(box, bt);
    evas_object_show(bt);
 
