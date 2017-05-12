@@ -130,7 +130,6 @@ evas_async_events_init(void)
    _read_error = EINA_FALSE;
    _write_error = EINA_FALSE;
 
-
    eina_spinlock_new(&async_lock);
    eina_inarray_step_set(&async_queue, sizeof (Eina_Inarray), sizeof (Evas_Event_Async), 16);
 
@@ -197,7 +196,7 @@ evas_async_events_process(void)
 
    _event_count = 0;
    while (ecore_pipe_wait(_async_pipe, 1, 0.0))
-   count = _event_count;
+     count = _event_count;
 
    return count;
 }
