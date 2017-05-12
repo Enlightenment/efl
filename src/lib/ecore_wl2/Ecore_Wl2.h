@@ -944,6 +944,22 @@ EAPI Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2
 EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input);
 
 /**
+ * Get the display object of an input
+ * @param input The input
+ * @return The display
+ * @since 1.20
+ */
+EAPI Ecore_Wl2_Display *ecore_wl2_input_display_get(const Ecore_Wl2_Input *input);
+
+/**
+ * Get the xkb_keymap object of an input
+ * @param input The input
+ * @return The xkb_keymap object
+ * @since 1.20
+ */
+EAPI struct xkb_keymap *ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input);
+
+/**
  * Get the name of an input
  * @param input The input
  * @return The name
@@ -951,6 +967,24 @@ EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input);
  */
 EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
 
+/**
+ * Get the keyboard repeat rate and delay of an input
+ * @param input The input
+ * @param rate Pointer to store the repeat rate (in seconds)
+ * @param rate Pointer to store the repeat delay (in seconds)
+ * @return True if repeat is enabled
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, double *delay);
+
+/**
+ * Get the Evas_Device for the seat belonging to a window from an input
+ * @param input The input
+ * @param window The window
+ * @return The device object
+ * @since 1.20
+ */
+EAPI Eo *ecore_wl2_input_seat_device_get(const Ecore_Wl2_Input *input, const Ecore_Wl2_Window *window);
 /**
  * @defgroup Ecore_Wl2_Dnd_Group Wayland Library Drag-n-Drop Functions
  * @ingroup Ecore_Wl2_Group

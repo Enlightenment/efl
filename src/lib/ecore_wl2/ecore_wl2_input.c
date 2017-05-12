@@ -1620,3 +1620,42 @@ ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input)
    EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, 0);
    return input->id;
 }
+
+EAPI Ecore_Wl2_Display *
+ecore_wl2_input_display_get(const Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, NULL);
+   return input->display;
+}
+
+EAPI struct xkb_keymap *
+ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(input->wl.keyboard, NULL);
+   return input->xkb.keymap;
+}
+
+EAPI Eina_Bool
+ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, double *delay)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(input->wl.keyboard, EINA_FALSE);
+   if (rate) *rate = input->repeat.rate;
+   if (delay) *delay = input->repeat.delay;
+   return input->repeat.enabled;
+}
+
+EAPI Eo *
+ecore_wl2_input_seat_device_get(const Ecore_Wl2_Input *input, const Ecore_Wl2_Window *window)
+{
+   Ecore_Wl2_Input_Devices *devices;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+
+   devices = _ecore_wl2_devices_get(input, window->id);
+   return devices ?  devices->seat_dev : NULL;
+}
