@@ -451,6 +451,7 @@ typedef struct Ecore_Wl2_Event_Window_WWW_Drag
 } Ecore_Wl2_Event_Window_WWW_Drag;
 
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
+void _display_event_free(void *d, void *event EINA_UNUSED);
 
 void _ecore_wl2_output_add(Ecore_Wl2_Display *display, unsigned int id);
 void _ecore_wl2_output_del(Ecore_Wl2_Output *output);
