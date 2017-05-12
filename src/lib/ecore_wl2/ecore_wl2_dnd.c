@@ -80,6 +80,7 @@ data_source_target_free(void *data EINA_UNUSED, void *event)
    if (!ev) return;
 
    free(ev->type);
+   ecore_wl2_display_disconnect(ev->display);
    free(ev);
 }
 
@@ -95,6 +96,8 @@ data_source_target(void *data, struct wl_data_source *source EINA_UNUSED, const 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Data_Source_Target));
    if (!ev) return;
    ev->seat = input->id;
+   ev->display = input->display;
+   ev->display->refs++;
 
    if (mime_type) ev->type = strdup(mime_type);
 
@@ -134,6 +137,8 @@ data_source_send(void *data, struct wl_data_source *source, const char *mime_typ
      ev->serial = input->data.selection.serial;
    else
      ev->serial = input->data.drag.serial;
+   ev->display = input->display;
+   ev->display->refs++;
 
    ecore_event_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND, ev,
                    data_source_send_free, NULL);
@@ -149,6 +154,8 @@ event_fill(struct _Ecore_Wl2_Event_Data_Source_Event *ev, Ecore_Wl2_Input *input
    ev->action = input->data.drag.action;
    ev->seat = input->id;
    ev->serial = input->data.drag.serial;
+   ev->display = input->display;
+   ev->display->refs++;
 }
 
 static void
@@ -161,7 +168,7 @@ data_source_event_emit(Ecore_Wl2_Input *input, int event, Eina_Bool cancel)
 
    event_fill((void*)ev, input);
 
-   ecore_event_add(event, ev, NULL, NULL);
+   ecore_event_add(event, ev, _display_event_free, ev->display);
 }
 
 static void
@@ -215,10 +222,11 @@ static void
 _unset_serial(void *user_data, void *event)
 {
    Ecore_Wl2_Offer *offer = user_data;
+   Ecore_Wl2_Event_Dnd_Enter *ev = event;
 
    if (offer)
      offer->serial = 0;
-
+   ecore_wl2_display_disconnect(ev->display);
    free(event);
 }
 
@@ -269,6 +277,8 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
    ev->y = y;
    ev->offer = input->drag;
    ev->seat = input->id;
+   ev->display = input->display;
+   ev->display->refs++;
 
    ecore_event_add(ECORE_WL2_EVENT_DND_ENTER, ev, _unset_serial, input->drag);
 }
@@ -277,10 +287,11 @@ static void
 _delay_offer_destroy(void *user_data, void *event)
 {
    Ecore_Wl2_Offer *offer = user_data;
+   Ecore_Wl2_Event_Dnd_Leave *ev = event;
 
    if (offer)
      _ecore_wl2_offer_unref(offer);
-
+   ecore_wl2_display_disconnect(ev->display);
    free(event);
 }
 
@@ -299,6 +310,8 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
    ev->offer = input->drag;
    ev->offer->ref++;
    ev->seat = input->id;
+   ev->display = input->display;
+   ev->display->refs++;
 
    input->drag->window_id = 0;
    ecore_event_add(ECORE_WL2_EVENT_DND_LEAVE, ev, _delay_offer_destroy, ev->offer);
@@ -326,6 +339,8 @@ _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, uint32_t serial)
    ev->y = y;
    ev->offer = input->drag;
    ev->seat = input->id;
+   ev->display = input->display;
+   ev->display->refs++;
 
    ecore_event_add(ECORE_WL2_EVENT_DND_MOTION, ev, _unset_serial, input->drag);
 }
@@ -346,8 +361,10 @@ _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
    ev->y = input->pointer.sy;
    ev->offer = input->drag;
    ev->seat = input->id;
+   ev->display = input->display;
+   ev->display->refs++;
 
-   ecore_event_add(ECORE_WL2_EVENT_DND_DROP, ev, NULL, NULL);
+   ecore_event_add(ECORE_WL2_EVENT_DND_DROP, ev, _display_event_free, ev->display);
 }
 
 void
@@ -720,12 +737,14 @@ static void
 _free_buf(void *user_data, void *event)
 {
    Read_Buffer *buf = user_data;
+   Ecore_Wl2_Event_Offer_Data_Ready *ev = event;
 
    _ecore_wl2_offer_unref(buf->offer);
 
    free(buf->data);
    free(buf->mimetype);
    free(user_data);
+   ecore_wl2_display_disconnect(ev->display);
    free(event);
 }
 
@@ -764,6 +783,8 @@ _offer_receive_fd_cb(void *data, Ecore_Fd_Handler *fdh)
         ev->len = buf->len;
         ev->mimetype = buf->mimetype;
         ev->seat = buf->offer->input->id;
+        ev->display = buf->offer->input->display;
+        ev->display->refs++;
         ecore_event_add(ECORE_WL2_EVENT_OFFER_DATA_READY, ev, _free_buf, buf);
 
         buf->offer->reads = eina_list_remove(buf->offer->reads, fdh);

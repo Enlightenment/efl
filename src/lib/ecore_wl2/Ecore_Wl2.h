@@ -75,6 +75,7 @@ typedef struct _Ecore_Wl2_Global
 {
    Eina_Stringshare *interface;
    unsigned int id, version;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Global;
 
 typedef struct _Ecore_Wl2_Event_Global
@@ -89,6 +90,7 @@ typedef struct _Ecore_Wl2_Event_Focus_In
    unsigned int window;
    unsigned int timestamp;
    Eo *dev; //The seat device
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Focus_In;
 
 typedef struct _Ecore_Wl2_Event_Focus_Out
@@ -96,6 +98,7 @@ typedef struct _Ecore_Wl2_Event_Focus_Out
    unsigned int window;
    unsigned int timestamp;
    Eo *dev; //The seat device
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Focus_Out;
 
 typedef struct _Ecore_Wl2_Event_Dnd_Enter
@@ -104,6 +107,7 @@ typedef struct _Ecore_Wl2_Event_Dnd_Enter
    Ecore_Wl2_Offer *offer;
    int x, y;
    unsigned int seat;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Dnd_Enter;
 
 typedef struct _Ecore_Wl2_Event_Dnd_Leave
@@ -111,6 +115,7 @@ typedef struct _Ecore_Wl2_Event_Dnd_Leave
    unsigned int win, source;
    Ecore_Wl2_Offer *offer;
    unsigned int seat;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Dnd_Leave;
 
 typedef struct _Ecore_Wl2_Event_Dnd_Motion
@@ -119,6 +124,7 @@ typedef struct _Ecore_Wl2_Event_Dnd_Motion
    Ecore_Wl2_Offer *offer;
    int x, y;
    unsigned int seat;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Dnd_Motion;
 
 typedef struct _Ecore_Wl2_Event_Dnd_Drop
@@ -127,12 +133,14 @@ typedef struct _Ecore_Wl2_Event_Dnd_Drop
    int x, y;
    Ecore_Wl2_Offer *offer;
    unsigned int seat;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Dnd_Drop;
 
 typedef struct _Ecore_Wl2_Event_Dnd_End
 {
    unsigned int win, source;
    unsigned int seat;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Dnd_End;
 
 struct _Ecore_Wl2_Event_Data_Source_Event
@@ -141,6 +149,7 @@ struct _Ecore_Wl2_Event_Data_Source_Event
    Ecore_Wl2_Drag_Action action;
    unsigned int seat;
    uint32_t serial;
+   Ecore_Wl2_Display *display;
 };
 
 typedef struct _Ecore_Wl2_Event_Data_Source_Event Ecore_Wl2_Event_Data_Source_End;
@@ -151,6 +160,7 @@ typedef struct _Ecore_Wl2_Event_Data_Source_Target
 {
    char *type;
    unsigned int seat;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Data_Source_Target;
 
 typedef struct _Ecore_Wl2_Event_Data_Source_Send
@@ -159,12 +169,14 @@ typedef struct _Ecore_Wl2_Event_Data_Source_Send
    int fd;
    unsigned int seat;
    uint32_t serial;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Data_Source_Send;
 
 typedef struct _Ecore_Wl2_Event_Seat_Name
 {
    Eina_Stringshare *name;
    unsigned int id;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Seat_Name;
 
 typedef struct _Ecore_Wl2_Event_Seat_Capabilities
@@ -173,6 +185,7 @@ typedef struct _Ecore_Wl2_Event_Seat_Capabilities
    Eina_Bool pointer_enabled : 1;
    Eina_Bool keyboard_enabled : 1;
    Eina_Bool touch_enabled : 1;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Seat_Capabilities;
 
 typedef enum
@@ -228,6 +241,7 @@ typedef struct _Ecore_Wl2_Event_Offer_Data_Ready
    int len;
    const char *mimetype;
    unsigned int seat;
+   Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Offer_Data_Ready;
 
 typedef enum _Ecore_Wl2_Window_Type

@@ -408,6 +408,16 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
                    _input_event_cb_free, ev->dev);
 }
 
+static void
+_input_event_focus_cb_free(void *data, void *event)
+{
+   Ecore_Wl2_Event_Focus_In *ev = event;
+   if (data)
+     efl_unref(data);
+   ecore_wl2_display_disconnect(ev->display);
+   free(event);
+}
+
 void
 _ecore_wl2_input_focus_in_send(Ecore_Wl2_Window *window)
 {
@@ -423,7 +433,9 @@ _ecore_wl2_input_focus_in_send(Ecore_Wl2_Window *window)
    ev->timestamp = input->timestamp;
    ev->window = window->id;
    ev->dev = _ecore_wl2_seat_dev_get(input, window->id);
-   ecore_event_add(ECORE_WL2_EVENT_FOCUS_IN, ev, _input_event_cb_free,
+   ev->display = input->display;
+   ev->display->refs++;
+   ecore_event_add(ECORE_WL2_EVENT_FOCUS_IN, ev, _input_event_focus_cb_free,
                    ev->dev);
 }
 
@@ -442,7 +454,9 @@ _ecore_wl2_input_focus_out_send(Ecore_Wl2_Window *window)
    ev->timestamp = input->timestamp;
    ev->window = window->id;
    ev->dev = _ecore_wl2_seat_dev_get(input, window->id);
-   ecore_event_add(ECORE_WL2_EVENT_FOCUS_OUT, ev, _input_event_cb_free,
+   ev->display = input->display;
+   ev->display->refs++;
+   ecore_event_add(ECORE_WL2_EVENT_FOCUS_OUT, ev, _input_event_focus_cb_free,
                    ev->dev);
 }
 
@@ -1260,8 +1274,10 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
    ev->pointer_enabled = !!(caps & WL_SEAT_CAPABILITY_POINTER);
    ev->keyboard_enabled = !!(caps & WL_SEAT_CAPABILITY_KEYBOARD);
    ev->touch_enabled = !!(caps & WL_SEAT_CAPABILITY_TOUCH);
+   ev->display = input->display;
+   ev->display->refs++;
 
-   ecore_event_add(ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED, ev, NULL, NULL);
+   ecore_event_add(ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED, ev, _display_event_free, ev->display);
 }
 
 static void
@@ -1271,6 +1287,7 @@ _cb_seat_event_free(void *data EINA_UNUSED, void *event)
 
    ev = event;
    eina_stringshare_del(ev->name);
+   ecore_wl2_display_disconnect(ev->display);
    free(ev);
 }
 
@@ -1288,6 +1305,8 @@ _seat_cb_name(void *data, struct wl_seat *seat EINA_UNUSED, const char *name)
 
    ev->id = input->id;
    ev->name = eina_stringshare_add(name);
+   ev->display = input->display;
+   ev->display->refs++;
 
    ecore_event_add(ECORE_WL2_EVENT_SEAT_NAME_CHANGED, ev,
                    _cb_seat_event_free, NULL);
