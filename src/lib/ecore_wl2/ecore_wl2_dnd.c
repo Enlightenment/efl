@@ -744,6 +744,14 @@ ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes)
      wl_data_offer_accept(offer->offer, offer->serial, NULL);
 }
 
+EAPI void
+ecore_wl2_offer_accept(Ecore_Wl2_Offer *offer, const char *mime_type)
+{
+   EINA_SAFETY_ON_NULL_RETURN(offer);
+
+   wl_data_offer_accept(offer->offer, offer->serial, mime_type);
+}
+
 typedef struct {
    int len;
    void *data;

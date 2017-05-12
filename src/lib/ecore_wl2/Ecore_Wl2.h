@@ -1380,6 +1380,16 @@ EAPI Eina_Array* ecore_wl2_offer_mimes_get(Ecore_Wl2_Offer *offer);
 EAPI void ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes);
 
 /**
+ * Accept a single mime type for an offer
+ *
+ * @param offer the offer to use
+ * @param mime_type the mime type
+ *
+ * @since 1.20
+ */
+EAPI void ecore_wl2_offer_accept(Ecore_Wl2_Offer *offer, const char *mime_type);
+
+/**
  * Request the data from this offer.
  * The event ECORE_WL2_EVENT_OFFER_DATA_READY is called when the data is available.
  * There offer will be not destroyed as long as requested data is not emitted by the event.
