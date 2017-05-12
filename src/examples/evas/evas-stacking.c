@@ -68,8 +68,7 @@ _on_mouse_down(void        *data EINA_UNUSED,
    printf("Mouse down on rectangle %s!\n", _name_get(o));
 }
 
-/* here just to keep our example's window size and background image's
- * size in synchrony */
+/* Keep the example's window size in sync with the background image's size */
 static void
 _canvas_resize_cb(Ecore_Evas *ee)
 {

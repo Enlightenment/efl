@@ -48,8 +48,7 @@ struct test_data
 
 static struct test_data d = {0};
 
-/* here just to keep our example's window size and background image's
- * size in synchrony */
+/* Keep the example's window size in sync with the background image's size */
 static void
 _canvas_resize_cb(Ecore_Evas *ee)
 {
