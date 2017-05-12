@@ -13,6 +13,12 @@ static Eina_Bool _cb_connect_idle(void *data);
 static Eina_Bool _cb_connect_data(void *data, Ecore_Fd_Handler *hdl);
 static Eina_Bool _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync);
 
+void
+_display_event_free(void *d, void *event EINA_UNUSED)
+{
+   ecore_wl2_display_disconnect(d);
+}
+
 static void
 _ecore_wl2_display_event(Ecore_Wl2_Display *ewd, int event)
 {
@@ -21,7 +27,8 @@ _ecore_wl2_display_event(Ecore_Wl2_Display *ewd, int event)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Connect));
    EINA_SAFETY_ON_NULL_RETURN(ev);
    ev->display = ewd;
-   ecore_event_add(event, ev, NULL, NULL);
+   ewd->refs++;
+   ecore_event_add(event, ev, _display_event_free, ewd);
 }
 
 static void
@@ -93,6 +100,7 @@ _cb_global_event_free(void *data EINA_UNUSED, void *event)
 
    ev = event;
    eina_stringshare_del(ev->interface);
+   ecore_wl2_display_disconnect(ev->display);
    free(ev);
 }
 
@@ -192,6 +200,7 @@ event:
 
    ev->id = id;
    ev->display = ewd;
+   ewd->refs++;
    ev->version = version;
    ev->interface = eina_stringshare_add(interface);
 
@@ -219,6 +228,7 @@ _cb_global_remove(void *data, struct wl_registry *registry EINA_UNUSED, unsigned
 
    ev->id = id;
    ev->display = ewd;
+   ewd->refs++;
    ev->version = global->version;
    ev->interface = eina_stringshare_add(global->interface);
 
@@ -504,7 +514,8 @@ _cb_sync_done(void *data, struct wl_callback *cb, uint32_t serial EINA_UNUSED)
    if (!ev) return;
 
    ev->display = ewd;
-   ecore_event_add(ECORE_WL2_EVENT_SYNC_DONE, ev, NULL, NULL);
+   ewd->refs++;
+   ecore_event_add(ECORE_WL2_EVENT_SYNC_DONE, ev, _display_event_free, ewd);
 }
 
 static const struct wl_callback_listener _sync_listener =
