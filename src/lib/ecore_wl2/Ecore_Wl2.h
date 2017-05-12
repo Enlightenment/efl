@@ -152,7 +152,15 @@ struct _Ecore_Wl2_Event_Data_Source_Event
    Ecore_Wl2_Display *display;
 };
 
-typedef struct _Ecore_Wl2_Event_Data_Source_Event Ecore_Wl2_Event_Data_Source_End;
+typedef struct Ecore_Wl2_Event_Data_Source_End
+{
+   unsigned int win, source;
+   Ecore_Wl2_Drag_Action action;
+   unsigned int seat;
+   uint32_t serial;
+   Ecore_Wl2_Display *display;
+   Eina_Bool cancelled;
+} Ecore_Wl2_Event_Data_Source_End;
 typedef struct _Ecore_Wl2_Event_Data_Source_Event Ecore_Wl2_Event_Data_Source_Drop;
 typedef struct _Ecore_Wl2_Event_Data_Source_Event Ecore_Wl2_Event_Data_Source_Action;
 

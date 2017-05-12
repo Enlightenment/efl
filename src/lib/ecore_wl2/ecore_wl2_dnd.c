@@ -162,11 +162,20 @@ static void
 data_source_event_emit(Ecore_Wl2_Input *input, int event, Eina_Bool cancel)
 {
    struct _Ecore_Wl2_Event_Data_Source_Event *ev;
+   Ecore_Wl2_Event_Data_Source_End *ev2;
 
-   ev = calloc(1, sizeof(struct _Ecore_Wl2_Event_Data_Source_Event));
+   if (event == ECORE_WL2_EVENT_DATA_SOURCE_END)
+     {
+        ev2 = calloc(1, sizeof(Ecore_Wl2_Event_Data_Source_End));
+        ev = (void*)ev2;
+     }
+   else
+     ev = calloc(1, sizeof(struct _Ecore_Wl2_Event_Data_Source_Event));
    EINA_SAFETY_ON_NULL_RETURN(ev);
 
    event_fill((void*)ev, input);
+   if (event == ECORE_WL2_EVENT_DATA_SOURCE_END)
+     ev2->cancelled = cancel;
 
    ecore_event_add(event, ev, _display_event_free, ev->display);
 }
@@ -179,14 +188,14 @@ data_source_cancelled(void *data, struct wl_data_source *source)
    if (input->data.drag.source == source) input->data.drag.source = NULL;
    input->data.drag.action = WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;
    wl_data_source_destroy(source);
-   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_END);
+   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_END, 1);
 }
 
 static void
 data_source_dnd_drop_performed(void *data, struct wl_data_source *source EINA_UNUSED)
 {
    Ecore_Wl2_Input *input = data;
-   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_DROP);
+   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_DROP, 0);
 }
 
 static void
@@ -196,7 +205,7 @@ data_source_dnd_finished(void *data, struct wl_data_source *source)
 
    if (input->data.drag.source == source) input->data.drag.source = NULL;
    wl_data_source_destroy(source);
-   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_END);
+   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_END, 0);
 }
 
 static void
@@ -205,7 +214,7 @@ data_source_action(void *data, struct wl_data_source *source EINA_UNUSED, uint32
    Ecore_Wl2_Input *input = data;
 
    input->data.drag.action = dnd_action;
-   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_ACTION);
+   data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_ACTION, 0);
 }
 
 static const struct wl_data_source_listener _source_listener =
