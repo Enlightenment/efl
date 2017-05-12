@@ -33,8 +33,6 @@ enum Evas.Text_Style_Type {
    shadow_direction_right = (0x7 << 4)              [[shadow growing to the right]]
 }
 
-type Evas.Font.Size: int; [[A type for font size]]
-
 enum Evas.Font.Hinting_Flags {
    [[Flags for Font Hinting]]
    legacy: Evas_Font_Hinting;

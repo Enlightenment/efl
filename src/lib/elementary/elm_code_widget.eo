@@ -36,7 +36,7 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
          }
          values {
             name: string; [[The name of the font to load]]
-            size: Evas.Font.Size; [[The font size for the widget]]
+            size: int; [[The font size for the widget]]
          }
       }
       @property columns {

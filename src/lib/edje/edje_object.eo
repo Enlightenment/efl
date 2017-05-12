@@ -766,7 +766,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          values {
             font: string; [[Font name]]
-            size: Evas.Font.Size; [[Font Size]]
+            size: int; [[Font Size]]
          }
       }
       text_class_del {
