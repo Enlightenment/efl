@@ -3396,8 +3396,6 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
 
    win = elm_win_wl_window_get(dragwin);
 
-   ecore_wl2_window_type_set(win, ECORE_WL2_WINDOW_TYPE_DND);
-
    if (createicon)
      {
         Evas_Coord xoff = 0, yoff = 0;
