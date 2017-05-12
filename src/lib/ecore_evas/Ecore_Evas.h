@@ -2424,6 +2424,23 @@ EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, 
 EAPI Evas_Object*        ecore_evas_cursor_unset(Ecore_Evas *ee);
 
 /**
+ * @brief Unsets the cursor of the specified pointer device.
+ *
+ * @param ee The Ecore_Evas to unset the cursor.
+ * @param pointer A pointer device to set the cursor. Use @c NULL for the default.
+ *
+ * This function unsets the cursor from the Ecore_Evas, and returns the cursor
+ * object. If the cursor was set from ecore_evas_cursor_set(), this function
+ * returns the image. In this case, the image should be deleted when it is
+ * no longer needed.
+ *
+ * @see ecore_evas_cursor_device_set()
+ * @see ecore_evas_object_cursor_device_set()
+ * @since 1.20
+ */
+EAPI Evas_Object *ecore_evas_cursor_device_unset(Ecore_Evas *ee, Efl_Input_Device *pointer);
+
+/**
  * @brief Sets the cursor of an Ecore_Evas specified pointer device.
  *
  * @param ee The Ecore_Evas

@@ -1858,16 +1858,17 @@ ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, int *layer, int *
 }
 
 EAPI Evas_Object *
-ecore_evas_cursor_unset(Ecore_Evas *ee)
+ecore_evas_cursor_device_unset(Ecore_Evas *ee, Efl_Input_Device *pointer)
 {
-   Ecore_Evas_Cursor *cursor;
-   Efl_Input_Device *pointer;
+   Ecore_Evas_Cursor *cursor = NULL;
    Evas_Object *obj;
 
    ECORE_EVAS_CHECK(ee, NULL);
 
-   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
-   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   if (!pointer)
+     pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   if (pointer)
+     cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cursor, NULL);
    obj = cursor->object;
    if (ee->engine.func->fn_object_cursor_unset)
@@ -1878,6 +1879,12 @@ ecore_evas_cursor_unset(Ecore_Evas *ee)
                                        _ecore_evas_object_cursor_del,
                                        cursor);
    return obj;
+}
+
+EAPI Evas_Object *
+ecore_evas_cursor_unset(Ecore_Evas *ee)
+{
+   return ecore_evas_cursor_device_unset(ee, NULL);
 }
 
 EAPI void
