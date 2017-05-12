@@ -57,7 +57,7 @@ _ecore_wl2_input_mouse_down_info_get(int device)
 }
 
 static Ecore_Wl2_Input_Devices *
-_ecore_wl2_devices_get(Ecore_Wl2_Input *input, int window_id)
+_ecore_wl2_devices_get(const Ecore_Wl2_Input *input, int window_id)
 {
    Ecore_Wl2_Input_Devices *devices;
    Eina_List *l;
