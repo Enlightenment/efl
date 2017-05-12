@@ -5,6 +5,7 @@ import efl_input_types;
 /* FIXME: This shouldn't be here. */
 type list_data_get_func_type: __undefined_type; [[Elementary list data get function type]]
 type region_hook_func_type: __undefined_type; [[Elementary region hook function type]]
+type @extern Evas.Callback_Type: __undefined_type; [[Evas event type]]
 
 enum Elm.Activate
 {

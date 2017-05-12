@@ -393,6 +393,54 @@ typedef Efl_Input_Object_Pointer_Mode      Evas_Object_Pointer_Mode;
 #define EVAS_OBJECT_POINTER_MODE_NOGRAB    EFL_INPUT_OBJECT_POINTER_MODE_NO_GRAB
 #define EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN EFL_INPUT_OBJECT_POINTER_MODE_NO_GRAB_NO_REPEAT_UPDOWN
 
+// FIXME: Move to Evas_Legacy.h
+/** Identifier of callbacks to be set for Evas canvases or Evas objects. */
+typedef enum
+{
+  EVAS_CALLBACK_MOUSE_IN = 0, /**< Mouse In Event */
+  EVAS_CALLBACK_MOUSE_OUT, /**< Mouse Out Event */
+  EVAS_CALLBACK_MOUSE_DOWN, /**< Mouse Button Down Event */
+  EVAS_CALLBACK_MOUSE_UP, /**< Mouse Button Up Event */
+  EVAS_CALLBACK_MOUSE_MOVE, /**< Mouse Move Event */
+  EVAS_CALLBACK_MOUSE_WHEEL, /**< Mouse Wheel Event */
+  EVAS_CALLBACK_MULTI_DOWN, /**< Multi-touch Down Event */
+  EVAS_CALLBACK_MULTI_UP, /**< Multi-touch Up Event */
+  EVAS_CALLBACK_MULTI_MOVE, /**< Multi-touch Move Event */
+  EVAS_CALLBACK_FREE, /**< Object Being Freed (Called after Del) */
+  EVAS_CALLBACK_KEY_DOWN, /**< Key Press Event */
+  EVAS_CALLBACK_KEY_UP, /**< Key Release Event */
+  EVAS_CALLBACK_FOCUS_IN, /**< Focus In Event */
+  EVAS_CALLBACK_FOCUS_OUT, /**< Focus Out Event */
+  EVAS_CALLBACK_SHOW, /**< Show Event */
+  EVAS_CALLBACK_HIDE, /**< Hide Event */
+  EVAS_CALLBACK_MOVE, /**< Move Event */
+  EVAS_CALLBACK_RESIZE, /**< Resize Event */
+  EVAS_CALLBACK_RESTACK, /**< Restack Event */
+  EVAS_CALLBACK_DEL, /**< Object Being Deleted (called before Free) */
+  EVAS_CALLBACK_HOLD, /**< Events go on/off hold */
+  EVAS_CALLBACK_CHANGED_SIZE_HINTS, /**< Size hints changed event */
+  EVAS_CALLBACK_IMAGE_PRELOADED, /**< Image has been preloaded */
+  EVAS_CALLBACK_CANVAS_FOCUS_IN, /**< Canvas got focus as a whole */
+  EVAS_CALLBACK_CANVAS_FOCUS_OUT, /**< Canvas lost focus as a whole */
+  EVAS_CALLBACK_RENDER_FLUSH_PRE, /**< Called after render update regions have
+                                   * been calculated, but only if update regions exist */
+  EVAS_CALLBACK_RENDER_FLUSH_POST, /**< Called after render update regions have
+                                    * been sent to the display server, but only
+                                    * if update regions existed for the most recent frame */
+  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN, /**< Canvas object got focus */
+  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT, /**< Canvas object lost focus */
+  EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanism in Evas that throw out original image data) */
+  EVAS_CALLBACK_RENDER_PRE, /**< Called just before rendering starts on the canvas target. @since 1.2 */
+  EVAS_CALLBACK_RENDER_POST, /**< Called just after rendering stops on the canvas target. @since 1.2 */
+  EVAS_CALLBACK_IMAGE_RESIZE, /**< Image size is changed. @since 1.8 */
+  EVAS_CALLBACK_DEVICE_CHANGED, /**< Devices added, removed or changed on canvas. @since 1.8 */
+  EVAS_CALLBACK_AXIS_UPDATE, /**< Input device changed value on some axis. @since 1.13 */
+  EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, /**< Canvas viewport resized. @since 1.15 */
+  EVAS_CALLBACK_LAST /**< Sentinel value to indicate last enum field during
+                      * iteration */
+} Evas_Callback_Type;
+
+
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */
