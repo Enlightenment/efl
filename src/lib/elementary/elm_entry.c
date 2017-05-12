@@ -4286,8 +4286,9 @@ _elm_entry_select_none(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_select_all(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_select_all(Eo *obj, Elm_Entry_Data *sd)
 {
+   if (elm_entry_is_empty(obj)) return;
    if ((sd->password)) return;
    if (sd->sel_mode)
      {
@@ -4301,8 +4302,9 @@ _elm_entry_select_all(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_select_region_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, int start, int end)
+_elm_entry_select_region_set(Eo *obj, Elm_Entry_Data *sd, int start, int end)
 {
+   if (elm_entry_is_empty(obj)) return;
    if ((sd->password)) return;
    if (sd->sel_mode)
      {
