@@ -587,16 +587,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      widget_event_propagate {
-         [[Propagate event]]
-         legacy: elm_widget_event_propagate;
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in type: Evas.Callback_Type; [[Event type]]
-            @in event_info: void_ptr; [[event info]]
-            @in event_flags: ptr(Efl.Input.Flags); [[Event flags]]
-         }
-      }
       signal_callback_add {
       	 [[Add signal callback]]
          params {

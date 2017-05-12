@@ -1974,8 +1974,9 @@ _elm_widget_widget_event_callback_del(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data
    return NULL;
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_widget_event_propagate(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Callback_Type type, void *event_info, Evas_Event_Flags *event_flags)
+EAPI Eina_Bool
+elm_widget_event_propagate(Eo *obj, Evas_Callback_Type type, void *event_info,
+                           Evas_Event_Flags *event_flags)
 {
    Evas_Object *parent = obj;
    Elm_Event_Cb_Data *ecd;
