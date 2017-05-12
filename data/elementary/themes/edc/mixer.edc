@@ -1,4 +1,5 @@
 group { name: "e/modules/mixer/main";
+   alias: "e/modules/mixer/main_vert";
    images.image: "speaker.png" COMP;
    images.image: "inset_round_hilight.png" COMP;
    images.image: "inset_round_shadow.png" COMP;
