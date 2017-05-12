@@ -26,41 +26,6 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    ecore_drm2_fb_flip(ofb->fb, ob->priv.output);
    ofb->drawn = EINA_TRUE;
    ofb->age = 0;
-
-   /* plane = ecore_drm2_plane_find(ob->priv.output, ofb->fb, ob->format); */
-   /* if (plane) */
-   /*   { */
-   /*      drmVBlank vbl = */
-   /*        { */
-   /*           .request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT, */
-   /*           .request.sequence = 1, */
-   /*        }; */
-
-   /*      vbl.request.type |= ecore_drm2_output_vblank_get(ob->priv.output); */
-   /*      vbl.request.signal = (unsigned long)ofb; */
-
-   /*      ecore_drm2_fb_dirty(ofb->fb, rects, count); */
-
-   /*      if (!ecore_drm2_plane_fb_set(plane, ofb->fb)) */
-   /*        { */
-   /*           ERR("Failed to set FB on Plane"); */
-   /*           return; */
-   /*        } */
-
-   /*      if (drmWaitVBlank(ob->fd, &vbl) < 0) */
-   /*        { */
-   /*           _outbuf_tick_source_set(NULL); */
-   /*           return; */
-   /*        } */
-
-   /*      ofb->busy = EINA_TRUE; */
-   /*      ofb->drawn = EINA_TRUE; */
-   /*      ofb->age = 0; */
-
-   /*      ob->priv.current = NULL; */
-   /*   } */
-   /* else */
-   /*   WRN("Could not find a plane for this framebuffer"); */
 }
 
 static Eina_Bool
