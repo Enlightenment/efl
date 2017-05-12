@@ -613,6 +613,8 @@ _button_remove(Evas_Object *obj,
 
    ELM_SAFE_FREE(sd->buttons[pos], free);
 
+   sd->last_button_number = 0;
+
    for (i = ELM_POPUP_ACTION_BUTTON_MAX - 1; i >= 0; i--)
      {
         if (sd->buttons[i])
