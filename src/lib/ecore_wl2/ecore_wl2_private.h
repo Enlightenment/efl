@@ -419,6 +419,7 @@ struct _Ecore_Wl2_Input
 
    unsigned int seat_version;
    unsigned int id;
+   Eina_Stringshare *name;
 
    Ecore_Event_Handler *dev_add_handler;
    Ecore_Event_Handler *dev_remove_handler;

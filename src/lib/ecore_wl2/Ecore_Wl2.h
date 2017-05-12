@@ -944,6 +944,14 @@ EAPI Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2
 EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input);
 
 /**
+ * Get the name of an input
+ * @param input The input
+ * @return The name
+ * @since 1.20
+ */
+EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
+
+/**
  * @defgroup Ecore_Wl2_Dnd_Group Wayland Library Drag-n-Drop Functions
  * @ingroup Ecore_Wl2_Group
  *

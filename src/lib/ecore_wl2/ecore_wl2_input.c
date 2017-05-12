@@ -1281,6 +1281,7 @@ _seat_cb_name(void *data, struct wl_seat *seat EINA_UNUSED, const char *name)
    Ecore_Wl2_Input *input;
 
    input = data;
+   eina_stringshare_replace(&input->name, name);
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Seat_Name));
    EINA_SAFETY_ON_NULL_RETURN(ev);
@@ -1518,6 +1519,7 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
    EINA_INLIST_FOREACH(display->windows, window)
      if (window->input == input) window->input = NULL;
 
+   eina_stringshare_replace(&input->name, NULL);
    free(input);
 }
 
@@ -1591,6 +1593,13 @@ ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input)
    if (input->wl.touch)
      cap |= ECORE_WL2_SEAT_CAPABILITIES_TOUCH;
    return cap;
+}
+
+EAPI Eina_Stringshare *
+ecore_wl2_input_name_get(Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
+   return input->name;
 }
 
 EAPI unsigned int
