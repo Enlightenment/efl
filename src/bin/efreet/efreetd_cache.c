@@ -770,7 +770,7 @@ save_list(const char *file, Eina_List *l)
 
    eina_strbuf_append_printf(buf, "%s/efreet/%s", efreet_cache_home_get(), file);
    f = fopen(eina_strbuf_string_get(buf), "wb");
-   if (!f) return;
+   if (!f)
      {
         eina_strbuf_free(buf);
         return;
