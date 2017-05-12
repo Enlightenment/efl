@@ -110,11 +110,12 @@ data_source_send_free(void *data EINA_UNUSED, void *event)
    if (!ev) return;
 
    free(ev->type);
+   ecore_wl2_display_disconnect(ev->display);
    free(ev);
 }
 
 static void
-data_source_send(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type, int32_t fd)
+data_source_send(void *data, struct wl_data_source *source, const char *mime_type, int32_t fd)
 {
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Event_Data_Source_Send *ev;
@@ -127,6 +128,10 @@ data_source_send(void *data, struct wl_data_source *source EINA_UNUSED, const ch
 
    ev->fd = fd;
    ev->type = strdup(mime_type);
+   if (source == input->data.selection.source)
+     ev->serial = input->data.selection.serial;
+   else
+     ev->serial = input->data.drag.serial;
 
    ecore_event_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND, ev,
                    data_source_send_free, NULL);

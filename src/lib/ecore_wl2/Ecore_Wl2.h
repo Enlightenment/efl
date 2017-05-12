@@ -134,6 +134,7 @@ struct _Ecore_Wl2_Event_Data_Source_Event
 {
    unsigned int win, source;
    Ecore_Wl2_Drag_Action action;
+   uint32_t serial;
 };
 
 typedef struct _Ecore_Wl2_Event_Data_Source_Event Ecore_Wl2_Event_Data_Source_End;
@@ -149,6 +150,7 @@ typedef struct _Ecore_Wl2_Event_Data_Source_Send
 {
    char *type;
    int fd;
+   uint32_t serial;
 } Ecore_Wl2_Event_Data_Source_Send;
 
 typedef struct _Ecore_Wl2_Event_Seat_Name
