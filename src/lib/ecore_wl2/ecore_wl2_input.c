@@ -1430,7 +1430,8 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
    input->repeat.delay = 0.4;
    input->repeat.enabled = EINA_TRUE;
 
-   wl_array_init(&input->data.types);
+   wl_array_init(&input->data.selection.types);
+   wl_array_init(&input->data.drag.types);
 
    /* setup cursor size and theme */
    _ecore_wl2_input_cursor_setup(input);
@@ -1486,17 +1487,27 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 
    if (input->cursor.name) eina_stringshare_del(input->cursor.name);
 
-   if (input->data.types.data)
+   if (input->data.selection.types.data)
      {
         char **t;
 
-        wl_array_for_each(t, &input->data.types)
+        wl_array_for_each(t, &input->data.selection.types)
           free(*t);
 
-        wl_array_release(&input->data.types);
+        wl_array_release(&input->data.selection.types);
+     }
+   if (input->data.drag.types.data)
+     {
+        char **t;
+
+        wl_array_for_each(t, &input->data.drag.types)
+          free(*t);
+
+        wl_array_release(&input->data.drag.types);
      }
 
-   if (input->data.source) wl_data_source_destroy(input->data.source);
+   if (input->data.selection.source) wl_data_source_destroy(input->data.selection.source);
+   if (input->data.drag.source) wl_data_source_destroy(input->data.drag.source);
    if (input->drag) _ecore_wl2_offer_unref(input->drag);
    if (input->selection) _ecore_wl2_offer_unref(input->selection);
    if (input->data.device) wl_data_device_destroy(input->data.device);
