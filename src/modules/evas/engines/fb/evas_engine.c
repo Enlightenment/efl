@@ -14,12 +14,7 @@ static Eina_List *_outbufs = NULL;
 static Evas_Func func, pfunc;
 
 /* engine struct data */
-typedef struct _Render_Engine Render_Engine;
-
-struct _Render_Engine
-{
-   Render_Engine_Software_Generic generic;
-};
+typedef Render_Engine_Software_Generic Render_Engine;
 
 /* internal engine routines */
 static void *
@@ -38,7 +33,7 @@ _output_setup(int w, int h, int rot, int vt, int dev, int refresh)
    ob = evas_fb_outbuf_fb_setup_fb(w, h, rot, OUTBUF_DEPTH_INHERIT, vt, dev, refresh);
    if (!ob) goto on_error;
 
-   if (!evas_render_engine_software_generic_init(&re->generic, ob, NULL,
+   if (!evas_render_engine_software_generic_init(re, ob, NULL,
                                                  evas_fb_outbuf_fb_get_rot,
                                                  evas_fb_outbuf_fb_reconfigure,
                                                  NULL,
@@ -106,8 +101,8 @@ eng_output_free(void *engine EINA_UNUSED, void *data)
    re = (Render_Engine *)data;
    if (re)
      {
-        _outbufs = eina_list_remove(_outbufs, re->generic.ob);
-        evas_render_engine_software_generic_clean(&re->generic);
+        _outbufs = eina_list_remove(_outbufs, re->ob);
+        evas_render_engine_software_generic_clean(re);
         free(re);
      }
 }
@@ -118,7 +113,7 @@ eng_canvas_alpha_get(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return (re->generic.ob->priv.fb.fb->fb_var.transp.length > 0);
+   return (re->ob->priv.fb.fb->fb_var.transp.length > 0);
 }
 
 /* module advertising code */
