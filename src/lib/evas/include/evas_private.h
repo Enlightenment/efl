@@ -1304,7 +1304,8 @@ struct _Evas_Object_Func
 {
    void (*free) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
    void (*render) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data,
-                   void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
+                   void *engine, void *output, void *context, void *surface,
+                   int x, int y, Eina_Bool do_async);
    void (*render_pre) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
    void (*render_post) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
 
@@ -1354,227 +1355,225 @@ struct _Evas_Func
 {
    void *(*info)                           (Evas *e);
    void (*info_free)                       (Evas *e, void *info);
-   void *(*setup)                          (void *info, unsigned int w, unsigned int h);
-   int  (*update)                          (void *data, void *info, unsigned int w, unsigned int h);
+   void *(*setup)                          (void *engine, void *info, unsigned int w, unsigned int h);
+   int  (*update)                          (void *engine, void *data, void *info, unsigned int w, unsigned int h);
 
-   void (*output_free)                     (void *data);
-   void (*output_resize)                   (void *data, int w, int h);
-   void (*output_tile_size_set)            (void *data, int w, int h);
-   void (*output_redraws_rect_add)         (void *data, int x, int y, int w, int h);
-   void (*output_redraws_rect_del)         (void *data, int x, int y, int w, int h);
-   void (*output_redraws_clear)            (void *data);
-   void *(*output_redraws_next_update_get) (void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
-   void (*output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode);
-   void (*output_flush)                    (void *data, Evas_Render_Mode render_mode);
-   void (*output_idle_flush)               (void *data);
-   void (*output_dump)                     (void *data);
+   void (*output_free)                     (void *engine, void *data);
+   void (*output_resize)                   (void *engine, void *data, int w, int h);
+   void (*output_tile_size_set)            (void *engine, void *data, int w, int h);
+   void (*output_redraws_rect_add)         (void *engine, void *data, int x, int y, int w, int h);
+   void (*output_redraws_rect_del)         (void *engine, void *data, int x, int y, int w, int h);
+   void (*output_redraws_clear)            (void *engine, void *data);
+   void *(*output_redraws_next_update_get) (void *engine, void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
+   void (*output_redraws_next_update_push) (void *engine, void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode);
+   void (*output_flush)                    (void *engine, void *data, Evas_Render_Mode render_mode);
+   void (*output_idle_flush)               (void *engine, void *data);
+   void (*output_dump)                     (void *engine, void *data);
 
-   void *(*context_new)                    (void *data);
-   void *(*context_dup)                    (void *data, void *context);
-   Eina_Bool (*canvas_alpha_get)           (void *data);
-   void (*context_free)                    (void *data, void *context);
-   void (*context_clip_set)                (void *data, void *context, int x, int y, int w, int h);
-   void (*context_clip_image_set)          (void *data, void *context, void *surface, int x, int y, Evas_Public_Data *evas, Eina_Bool do_async);
-   void (*context_clip_image_unset)        (void *data, void *context);
-   void (*context_clip_image_get)          (void *data, void *context, void **surface, int *x, int *y); /* incref surface if not NULL */
-   void (*context_clip_clip)               (void *data, void *context, int x, int y, int w, int h);
-   void (*context_clip_unset)              (void *data, void *context);
-   int  (*context_clip_get)                (void *data, void *context, int *x, int *y, int *w, int *h);
-   void (*context_color_set)               (void *data, void *context, int r, int g, int b, int a);
-   int  (*context_color_get)               (void *data, void *context, int *r, int *g, int *b, int *a);
-   void (*context_multiplier_set)          (void *data, void *context, int r, int g, int b, int a);
-   void (*context_multiplier_unset)        (void *data, void *context);
-   int  (*context_multiplier_get)          (void *data, void *context, int *r, int *g, int *b, int *a);
-   void (*context_cutout_add)              (void *data, void *context, int x, int y, int w, int h);
-   void (*context_cutout_clear)            (void *data, void *context);
-   void (*context_cutout_target)           (void *data, void *context, int x, int y, int w, int h);
-   void (*context_anti_alias_set)          (void *data, void *context, unsigned char aa);
-   unsigned char (*context_anti_alias_get) (void *data, void *context);
-   void (*context_color_interpolation_set) (void *data, void *context, int color_space);
-   int  (*context_color_interpolation_get) (void *data, void *context);
-   void (*context_render_op_set)           (void *data, void *context, int render_op);
-   int  (*context_render_op_get)           (void *data, void *context);
+   void *(*context_new)                    (void *engine);
+   void *(*context_dup)                    (void *engine, void *context);
+   Eina_Bool (*canvas_alpha_get)           (void *engine);
+   void (*context_free)                    (void *engine, void *context);
+   void (*context_clip_set)                (void *engine, void *context, int x, int y, int w, int h);
+   void (*context_clip_image_set)          (void *engine, void *context, void *surface, int x, int y, Evas_Public_Data *evas, Eina_Bool do_async);
+   void (*context_clip_image_unset)        (void *engine, void *context);
+   void (*context_clip_image_get)          (void *engine, void *context, void **surface, int *x, int *y); /* incref surface if not NULL */
+   void (*context_clip_clip)               (void *engine, void *context, int x, int y, int w, int h);
+   void (*context_clip_unset)              (void *engine, void *context);
+   int  (*context_clip_get)                (void *engine, void *context, int *x, int *y, int *w, int *h);
+   void (*context_color_set)               (void *engine, void *context, int r, int g, int b, int a);
+   int  (*context_color_get)               (void *engine, void *context, int *r, int *g, int *b, int *a);
+   void (*context_multiplier_set)          (void *engine, void *context, int r, int g, int b, int a);
+   void (*context_multiplier_unset)        (void *engine, void *context);
+   int  (*context_multiplier_get)          (void *engine, void *context, int *r, int *g, int *b, int *a);
+   void (*context_cutout_add)              (void *engine, void *context, int x, int y, int w, int h);
+   void (*context_cutout_clear)            (void *engine, void *context);
+   void (*context_cutout_target)           (void *engine, void *context, int x, int y, int w, int h);
+   void (*context_anti_alias_set)          (void *engine, void *context, unsigned char aa);
+   unsigned char (*context_anti_alias_get) (void *engine, void *context);
+   void (*context_color_interpolation_set) (void *engine, void *context, int color_space);
+   int  (*context_color_interpolation_get) (void *engine, void *context);
+   void (*context_render_op_set)           (void *engine, void *context, int render_op);
+   int  (*context_render_op_get)           (void *engine, void *context);
 
-   void (*rectangle_draw)                  (void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async);
+   void (*rectangle_draw)                  (void *engine, void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async);
 
-   void (*line_draw)                       (void *data, void *context, void *surface, int x1, int y1, int x2, int y2, Eina_Bool do_async);
+   void (*line_draw)                       (void *engine, void *data, void *context, void *surface, int x1, int y1, int x2, int y2, Eina_Bool do_async);
 
-   void *(*polygon_point_add)              (void *data, void *polygon, int x, int y);
-   void *(*polygon_points_clear)           (void *data, void *polygon);
-   void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon, int x, int y, Eina_Bool do_async);
+   void *(*polygon_point_add)              (void *engine, void *polygon, int x, int y);
+   void *(*polygon_points_clear)           (void *engine, void *polygon);
+   void (*polygon_draw)                    (void *engine, void *data, void *context, void *surface, void *polygon, int x, int y, Eina_Bool do_async);
 
-   void *(*image_load)                     (void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
-   void *(*image_mmap)                     (void *data, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo);
-   void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
-   void *(*image_new_from_copied_data)     (void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
-   void (*image_free)                      (void *data, void *image);
-   void *(*image_ref)                      (void *data, void *image);
-   void (*image_size_get)                  (void *data, void *image, int *w, int *h);
-   void *(*image_size_set)                 (void *data, void *image, int w, int h);
-   void (*image_stride_get)                (void *data, void *image, int *stride);
-   void *(*image_dirty_region)             (void *data, void *image, int x, int y, int w, int h);
-   void *(*image_data_get)                 (void *data, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree);
-   void *(*image_data_put)                 (void *data, void *image, DATA32 *image_data);
-   Eina_Bool (*image_data_direct_get)      (void *data, void *image, int plane, Eina_Slice *slice, Evas_Colorspace *cspace, Eina_Bool load);
-   void  (*image_data_preload_request)     (void *data, void *image, const Eo *target);
-   void  (*image_data_preload_cancel)      (void *data, void *image, const Eo *target);
-   void *(*image_alpha_set)                (void *data, void *image, int has_alpha);
-   int  (*image_alpha_get)                 (void *data, void *image);
-   void *(*image_orient_set)               (void *data, void *image, Evas_Image_Orient orient);
-   Evas_Image_Orient (*image_orient_get)   (void *data, void *image);
-   Eina_Bool (*image_draw)                 (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
-   void (*image_colorspace_set)            (void *data, void *image, Evas_Colorspace cspace);
-   Evas_Colorspace (*image_colorspace_get) (void *data, void *image);
-   Evas_Colorspace (*image_file_colorspace_get)(void *data, void *image);
-   Eina_Bool (*image_can_region_get)       (void *data, void *image);
+   void *(*image_load)                     (void *engine, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo);
+   void *(*image_mmap)                     (void *engine, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo);
+   void *(*image_new_from_data)            (void *engine, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
+   void *(*image_new_from_copied_data)     (void *engine, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
+   void (*image_free)                      (void *engine, void *image);
+   void *(*image_ref)                      (void *engine, void *image);
+   void (*image_size_get)                  (void *engine, void *image, int *w, int *h);
+   void *(*image_size_set)                 (void *engine, void *image, int w, int h);
+   void (*image_stride_get)                (void *engine, void *image, int *stride);
+   void *(*image_dirty_region)             (void *engine, void *image, int x, int y, int w, int h);
+   void *(*image_data_get)                 (void *engine, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree);
+   void *(*image_data_put)                 (void *engine, void *image, DATA32 *image_data);
+   Eina_Bool (*image_data_direct_get)      (void *engine, void *image, int plane, Eina_Slice *slice, Evas_Colorspace *cspace, Eina_Bool load);
+   void  (*image_data_preload_request)     (void *engine, void *image, const Eo *target);
+   void  (*image_data_preload_cancel)      (void *engine, void *image, const Eo *target);
+   void *(*image_alpha_set)                (void *engine, void *image, int has_alpha);
+   int  (*image_alpha_get)                 (void *engine, void *image);
+   void *(*image_orient_set)               (void *engine, void *image, Evas_Image_Orient orient);
+   Evas_Image_Orient (*image_orient_get)   (void *engine, void *image);
+   Eina_Bool (*image_draw)                 (void *engine, void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
+   void (*image_colorspace_set)            (void *engine, void *image, Evas_Colorspace cspace);
+   Evas_Colorspace (*image_colorspace_get) (void *engine, void *image);
+   Evas_Colorspace (*image_file_colorspace_get)(void *engine, void *image);
+   Eina_Bool (*image_can_region_get)       (void *engine, void *image);
 
    /* image data map/unmap: direct or indirect access to pixels data */
-   Eina_Bool (*image_data_map)             (void *data, void **image, Eina_Rw_Slice *slice, int *stride, int x, int y, int w, int h, Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode, int plane);
-   Eina_Bool (*image_data_unmap)           (void *data, void *image, const Eina_Rw_Slice *slice);
-   int (*image_data_maps_get)              (void *data, const void *image, const Eina_Rw_Slice **slices);
+   Eina_Bool (*image_data_map)             (void *engine, void **image, Eina_Rw_Slice *slice, int *stride, int x, int y, int w, int h, Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode, int plane);
+   Eina_Bool (*image_data_unmap)           (void *engine, void *image, const Eina_Rw_Slice *slice);
+   int (*image_data_maps_get)              (void *engine, const void *image, const Eina_Rw_Slice **slices);
 
    /* new api for direct data set (not put) */
-   void *(*image_data_slice_add)           (void *data, void *image, const Eina_Slice *slice, Eina_Bool copy, int w, int h, int stride, Evas_Colorspace space, int plane, Eina_Bool alpha);
+   void *(*image_data_slice_add)           (void *engine, void *image, const Eina_Slice *slice, Eina_Bool copy, int w, int h, int stride, Evas_Colorspace space, int plane, Eina_Bool alpha);
 
-   void (*image_prepare)                   (void *data, void *image);
+   void (*image_prepare)                   (void *engine, void *image);
 
-   void *(*image_surface_noscale_new)      (void *data, int w, int h, int alpha);
-   void (*image_surface_noscale_region_get)(void *data, void *image, int *x, int *y, int *w, int *h);
+   void *(*image_surface_noscale_new)      (void *engine, int w, int h, int alpha);
+   void (*image_surface_noscale_region_get)(void *engine, void *image, int *x, int *y, int *w, int *h);
 
-   int (*image_native_init)                (void *data, Evas_Native_Surface_Type type);
-   void (*image_native_shutdown)           (void *data, Evas_Native_Surface_Type type);
-   void *(*image_native_set)               (void *data, void *image, void *native);
-   void *(*image_native_get)               (void *data, void *image);
+   int (*image_native_init)                (void *engine, Evas_Native_Surface_Type type);
+   void (*image_native_shutdown)           (void *engine, Evas_Native_Surface_Type type);
+   void *(*image_native_set)               (void *engine, void *image, void *native);
+   void *(*image_native_get)               (void *engine, void *image);
 
-   void (*image_cache_flush)               (void *data);
-   void (*image_cache_set)                 (void *data, int bytes);
-   int  (*image_cache_get)                 (void *data);
+   void (*image_cache_flush)               (void *engine);
+   void (*image_cache_set)                 (void *engine, int bytes);
+   int  (*image_cache_get)                 (void *engine);
 
-   Evas_Font_Set *(*font_load)             (void *data, const char *name, int size, Font_Rend_Flags wanted_rend);
-   Evas_Font_Set *(*font_memory_load)      (void *data, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
-   Evas_Font_Set *(*font_add)              (void *data, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend);
-   Evas_Font_Set *(*font_memory_add)       (void *data, Evas_Font_Set *font, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
-   void (*font_free)                       (void *data, Evas_Font_Set *font);
-   int  (*font_ascent_get)                 (void *data, Evas_Font_Set *font);
-   int  (*font_descent_get)                (void *data, Evas_Font_Set *font);
-   int  (*font_max_ascent_get)             (void *data, Evas_Font_Set *font);
-   int  (*font_max_descent_get)            (void *data, Evas_Font_Set *font);
-   void (*font_string_size_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int *w, int *h);
-   int  (*font_inset_get)                  (void *data, Evas_Font_Set *font, const Evas_Text_Props *text_props);
-   int  (*font_h_advance_get)              (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props);
-   int  (*font_v_advance_get)              (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props);
-   int  (*font_char_coords_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
-   int  (*font_char_at_coords_get)         (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
-   Eina_Bool (*font_draw)                  (void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Text_Props *intl_props, Eina_Bool do_async);
-   void (*font_cache_flush)                (void *data);
-   void (*font_cache_set)                  (void *data, int bytes);
-   int  (*font_cache_get)                  (void *data);
+   Evas_Font_Set *(*font_load)             (void *engine, const char *name, int size, Font_Rend_Flags wanted_rend);
+   Evas_Font_Set *(*font_memory_load)      (void *engine, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
+   Evas_Font_Set *(*font_add)              (void *engine, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend);
+   Evas_Font_Set *(*font_memory_add)       (void *engine, Evas_Font_Set *font, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
+   void (*font_free)                       (void *engine, Evas_Font_Set *font);
+   int  (*font_ascent_get)                 (void *engine, Evas_Font_Set *font);
+   int  (*font_descent_get)                (void *engine, Evas_Font_Set *font);
+   int  (*font_max_ascent_get)             (void *engine, Evas_Font_Set *font);
+   int  (*font_max_descent_get)            (void *engine, Evas_Font_Set *font);
+   void (*font_string_size_get)            (void *engine, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int *w, int *h);
+   int  (*font_inset_get)                  (void *engine, Evas_Font_Set *font, const Evas_Text_Props *text_props);
+   int  (*font_h_advance_get)              (void *engine, Evas_Font_Set *font, const Evas_Text_Props *intl_props);
+   int  (*font_v_advance_get)              (void *engine, Evas_Font_Set *font, const Evas_Text_Props *intl_props);
+   int  (*font_char_coords_get)            (void *engine, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
+   int  (*font_char_at_coords_get)         (void *engine, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
+   Eina_Bool (*font_draw)                  (void *engine, void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Text_Props *intl_props, Eina_Bool do_async);
+   void (*font_cache_flush)                (void *engine);
+   void (*font_cache_set)                  (void *engine, int bytes);
+   int  (*font_cache_get)                  (void *engine);
 
    /* Engine functions will over time expand from here */
 
-   void (*font_hinting_set)                (void *data, Evas_Font_Set *font, int hinting);
-   int  (*font_hinting_can_hint)           (void *data, int hinting);
+   void (*font_hinting_set)                (void *engine, Evas_Font_Set *font, int hinting);
+   int  (*font_hinting_can_hint)           (void *engine, int hinting);
 
-/*    void (*image_rotation_set)              (void *data, void *image); */
+   void (*image_scale_hint_set)            (void *engine, void *image, int hint);
+   int  (*image_scale_hint_get)            (void *engine, void *image);
+   int  (*font_last_up_to_pos)             (void *engine, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y, int width_offset);
 
-   void (*image_scale_hint_set)            (void *data, void *image, int hint);
-   int  (*image_scale_hint_get)            (void *data, void *image);
-   int  (*font_last_up_to_pos)             (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int x, int y, int width_offset);
+   Eina_Bool (*image_map_draw)             (void *engine, void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async);
+   void *(*image_map_surface_new)          (void *engine, int w, int h, int alpha);
+   void (*image_map_clean)                 (void *engine, RGBA_Map *m);
+   void *(*image_scaled_update)            (void *engine, void *scaled, void *image, int dst_w, int dst_h, Eina_Bool smooth, Evas_Colorspace cspace);
 
-   Eina_Bool (*image_map_draw)                  (void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async);
-   void *(*image_map_surface_new)          (void *data, int w, int h, int alpha);
-   void (*image_map_clean)                 (void *data, RGBA_Map *m);
-   void *(*image_scaled_update)            (void *data, void *scaled, void *image, int dst_w, int dst_h, Eina_Bool smooth, Evas_Colorspace cspace);
-
-   void (*image_content_hint_set)          (void *data, void *surface, int hint);
-   int  (*image_content_hint_get)          (void *data, void *surface);
-   int  (*font_pen_coords_get)             (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
-   Eina_Bool (*font_text_props_info_create) (void *data, Evas_Font_Instance *fi, const Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len, Evas_Text_Props_Mode mode, const char *lang);
-   int  (*font_right_inset_get)            (void *data, Evas_Font_Set *font, const Evas_Text_Props *text_props);
+   void (*image_content_hint_set)          (void *engine, void *surface, int hint);
+   int  (*image_content_hint_get)          (void *engine, void *surface);
+   int  (*font_pen_coords_get)             (void *engine, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
+   Eina_Bool (*font_text_props_info_create) (void *engine, Evas_Font_Instance *fi, const Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len, Evas_Text_Props_Mode mode, const char *lang);
+   int  (*font_right_inset_get)            (void *engine, Evas_Font_Set *font, const Evas_Text_Props *text_props);
 
    /* EFL-GL Glue Layer */
-   void *(*gl_surface_create)            (void *data, void *config, int w, int h);
-   void *(*gl_pbuffer_surface_create)    (void *data, void *config, int w, int h, int const *attrib_list);
-   int  (*gl_surface_destroy)            (void *data, void *surface);
-   void *(*gl_context_create)            (void *data, void *share_context, int version, void *(*native_context_get)(void *ctx), void *(*engine_data_get)(void *evasgl));
-   int  (*gl_context_destroy)            (void *data, void *context);
-   int  (*gl_make_current)               (void *data, void *surface, void *context);
-   const char *(*gl_string_query)        (void *data, int name);
-   void *(*gl_proc_address_get)          (void *data, const char *name);
-   int  (*gl_native_surface_get)         (void *data, void *surface, void *native_surface);
-   void *(*gl_api_get)                   (void *data, int version);
-   void (*gl_direct_override_get)        (void *data, Eina_Bool *override, Eina_Bool *force_off);
-   void (*gl_get_pixels_set)             (void *data, void *get_pixels, void *get_pixels_data, void *obj);
-   Eina_Bool (*gl_surface_lock)          (void *data, void *surface);
-   Eina_Bool (*gl_surface_read_pixels)   (void *data, void *surface, int x, int y, int w, int h, Evas_Colorspace cspace, void *pixels);
-   Eina_Bool (*gl_surface_unlock)        (void *data, void *surface);
-   int  (*gl_error_get)                  (void *data);
-   void *(*gl_current_context_get)       (void *data);
-   void *(*gl_current_surface_get)       (void *data);
-   int  (*gl_rotation_angle_get)         (void *data);
-   Eina_Bool (*gl_surface_query)         (void *data, void *surface, int attr, void *value);
-   Eina_Bool (*gl_surface_direct_renderable_get) (void *data, Evas_Native_Surface *ns, Eina_Bool *override, void *surface);
-   void (*gl_image_direct_set)           (void *data, void *image, Eina_Bool direct);
-   int  (*gl_image_direct_get)           (void *data, void *image);
-   void (*gl_get_pixels_pre)             (void *data);
-   void (*gl_get_pixels_post)            (void *data);
+   void *(*gl_surface_create)            (void *engine, void *config, int w, int h);
+   void *(*gl_pbuffer_surface_create)    (void *engine, void *config, int w, int h, int const *attrib_list);
+   int  (*gl_surface_destroy)            (void *engine, void *surface);
+   void *(*gl_context_create)            (void *engine, void *share_context, int version, void *(*native_context_get)(void *ctx), void *(*engine_data_get)(void *evasgl));
+   int  (*gl_context_destroy)            (void *engine, void *context);
+   int  (*gl_make_current)               (void *engine, void *surface, void *context);
+   const char *(*gl_string_query)        (void *engine, int name);
+   void *(*gl_proc_address_get)          (void *engine, const char *name);
+   int  (*gl_native_surface_get)         (void *engine, void *surface, void *native_surface);
+   void *(*gl_api_get)                   (void *engine, int version);
+   void (*gl_direct_override_get)        (void *engine, Eina_Bool *override, Eina_Bool *force_off);
+   void (*gl_get_pixels_set)             (void *engine, void *get_pixels, void *get_pixels_data, void *obj);
+   Eina_Bool (*gl_surface_lock)          (void *engine, void *surface);
+   Eina_Bool (*gl_surface_read_pixels)   (void *engine, void *surface, int x, int y, int w, int h, Evas_Colorspace cspace, void *pixels);
+   Eina_Bool (*gl_surface_unlock)        (void *engine, void *surface);
+   int  (*gl_error_get)                  (void *engine);
+   void *(*gl_current_context_get)       (void *engine);
+   void *(*gl_current_surface_get)       (void *engine);
+   int  (*gl_rotation_angle_get)         (void *engine);
+   Eina_Bool (*gl_surface_query)         (void *engine, void *surface, int attr, void *value);
+   Eina_Bool (*gl_surface_direct_renderable_get) (void *engine, Evas_Native_Surface *ns, Eina_Bool *override, void *surface);
+   void (*gl_image_direct_set)           (void *engine, void *image, Eina_Bool direct);
+   int  (*gl_image_direct_get)           (void *engine, void *image);
+   void (*gl_get_pixels_pre)             (void *engine);
+   void (*gl_get_pixels_post)            (void *engine);
 
-   int  (*image_load_error_get)          (void *data, void *image);
-   int  (*font_run_end_get)              (void *data, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
+   int  (*image_load_error_get)          (void *engine, void *image);
+   int  (*font_run_end_get)              (void *engine, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
 
    /* animated feature */
-   Eina_Bool (*image_animated_get)       (void *data, void *image);
-   int (*image_animated_frame_count_get) (void *data, void *image);
-   Evas_Image_Animated_Loop_Hint  (*image_animated_loop_type_get) (void *data, void *image);
-   int (*image_animated_loop_count_get)  (void *data, void *image);
-   double (*image_animated_frame_duration_get) (void *data, void *image, int start_frame, int frame_num);
-   Eina_Bool (*image_animated_frame_set) (void *data, void *image, int frame_index);
+   Eina_Bool (*image_animated_get)       (void *engine, void *image);
+   int (*image_animated_frame_count_get) (void *engine, void *image);
+   Evas_Image_Animated_Loop_Hint  (*image_animated_loop_type_get) (void *engine, void *image);
+   int (*image_animated_loop_count_get)  (void *engine, void *image);
+   double (*image_animated_frame_duration_get) (void *engine, void *image, int start_frame, int frame_num);
+   Eina_Bool (*image_animated_frame_set) (void *engine, void *image, int frame_index);
 
    /* max size query */
-   void (*image_max_size_get)            (void *data, int *maxw, int *maxh);
+   void (*image_max_size_get)            (void *engine, int *maxw, int *maxh);
 
    /* multiple font draws */
-   Eina_Bool (*multi_font_draw)          (void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Font_Array *texts, Eina_Bool do_async);
+   Eina_Bool (*multi_font_draw)          (void *engine, void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Font_Array *texts, Eina_Bool do_async);
 
    Eina_Bool (*pixel_alpha_get)          (void *image, int x, int y, DATA8 *alpha, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
-   void (*context_flush)                 (void *data);
+   void (*context_flush)                 (void *engine);
 
    /* 3D features */
-   void *(*drawable_new)                 (void *data, int w, int h, int alpha);
-   void  (*drawable_free)                (void *data, void *drawable);
-   void  (*drawable_size_get)            (void *data, void *drawable, int *w, int *h);
-   void *(*image_drawable_set)           (void *data, void *image, void *drawable);
+   void *(*drawable_new)                 (void *engine, int w, int h, int alpha);
+   void  (*drawable_free)                (void *engine, void *drawable);
+   void  (*drawable_size_get)            (void *engine, void *drawable, int *w, int *h);
+   void *(*image_drawable_set)           (void *engine, void *image, void *drawable);
    void (*drawable_texture_rendered_pixels_get) (unsigned int tex, int x, int y, int w, int h, void *drawable EINA_UNUSED, void *data);
-   void  (*drawable_scene_render)        (void *data, void *drawable, void *scene_data);
-   Eina_Bool (*drawable_scene_render_to_texture) (void *data, void *drawable, void *scene_data);
+   void  (*drawable_scene_render)        (void *engine, void *data, void *drawable, void *scene_data);
+   Eina_Bool (*drawable_scene_render_to_texture) (void *engine, void *drawable, void *scene_data);
 
    int (*drawable_texture_color_pick_id_get) (void *drawable);
    int (*drawable_texture_target_id_get) (void *drawable);
    void (*drawable_texture_pixel_color_get) (unsigned int tex EINA_UNUSED, int x, int y, Evas_Color *color, void *drawable);
 
-   void *(*texture_new)                  (void *data, Eina_Bool use_atlas);
-   void  (*texture_free)                 (void *data, void *texture);
-   void  (*texture_size_get)             (void *data, void *texture, int *w, int *h);
-   void  (*texture_wrap_set)             (void *data, void *texture, Evas_Canvas3D_Wrap_Mode s, Evas_Canvas3D_Wrap_Mode t);
-   void  (*texture_wrap_get)             (void *data, void *texture, Evas_Canvas3D_Wrap_Mode *s, Evas_Canvas3D_Wrap_Mode *t);
-   void  (*texture_filter_set)           (void *data, void *texture, Evas_Canvas3D_Texture_Filter min, Evas_Canvas3D_Texture_Filter mag);
-   void  (*texture_filter_get)           (void *data, void *texture, Evas_Canvas3D_Texture_Filter *min, Evas_Canvas3D_Texture_Filter *mag);
-   void  (*texture_image_set)            (void *data, void *texture, void *image);
-   void *(*texture_image_get)            (void *data, void *texture);
+   void *(*texture_new)                  (void *engine, Eina_Bool use_atlas);
+   void  (*texture_free)                 (void *engine, void *texture);
+   void  (*texture_size_get)             (void *engine, void *texture, int *w, int *h);
+   void  (*texture_wrap_set)             (void *engine, void *texture, Evas_Canvas3D_Wrap_Mode s, Evas_Canvas3D_Wrap_Mode t);
+   void  (*texture_wrap_get)             (void *engine, void *texture, Evas_Canvas3D_Wrap_Mode *s, Evas_Canvas3D_Wrap_Mode *t);
+   void  (*texture_filter_set)           (void *engine, void *texture, Evas_Canvas3D_Texture_Filter min, Evas_Canvas3D_Texture_Filter mag);
+   void  (*texture_filter_get)           (void *engine, void *texture, Evas_Canvas3D_Texture_Filter *min, Evas_Canvas3D_Texture_Filter *mag);
+   void  (*texture_image_set)            (void *engine, void *texture, void *image);
+   void *(*texture_image_get)            (void *engine, void *texture);
 
    Ector_Surface *(*ector_create)        (void *engine, void *output);
-   void  (*ector_destroy)                (void *data, Ector_Surface *surface);
-   Ector_Buffer *(*ector_buffer_wrap)    (void *data, Evas *e, void *engine_image);
-   Ector_Buffer *(*ector_buffer_new)     (void *data, Evas *e, int width, int height, Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags);
-   void  (*ector_begin)                  (void *data, void *context, Ector_Surface *ector, void *surface, void *engine_data, int x, int y, Eina_Bool do_async);
-   void  (*ector_renderer_draw)          (void *data, void *context, void *surface, void *engine_data, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
-   void  (*ector_end)                    (void *data, void *context, Ector_Surface *ector, void *surface, void *engine_data, Eina_Bool do_async);
-   void* (*ector_new)                    (void *data, void *context, Ector_Surface *ector, void *surface);
+   void  (*ector_destroy)                (void *engine, Ector_Surface *surface);
+   Ector_Buffer *(*ector_buffer_wrap)    (void *engine, Evas *e, void *engine_image);
+   Ector_Buffer *(*ector_buffer_new)     (void *engine, Evas *e, int width, int height, Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags);
+   void  (*ector_begin)                  (void *engine, void *context, Ector_Surface *ector, void *surface, void *engine_data, int x, int y, Eina_Bool do_async);
+   void  (*ector_renderer_draw)          (void *engine, void *data, void *context, void *surface, void *engine_data, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
+   void  (*ector_end)                    (void *engine, void *context, Ector_Surface *ector, void *surface, void *engine_data, Eina_Bool do_async);
+   void* (*ector_new)                    (void *engine, void *context, Ector_Surface *ector, void *surface);
    void  (*ector_free)                   (void *engine_data);
 
-   Evas_Filter_Support (*gfx_filter_supports) (void *data, Evas_Filter_Command *cmd);
-   Eina_Bool (*gfx_filter_process)       (void *data, Evas_Filter_Command *cmd);
+   Evas_Filter_Support (*gfx_filter_supports) (void *engine, Evas_Filter_Command *cmd);
+   Eina_Bool (*gfx_filter_process)       (void *engine, Evas_Filter_Command *cmd);
 };
 
 struct _Evas_Image_Save_Func
@@ -1737,11 +1736,11 @@ void evas_unref_queue_texts_put(Evas_Public_Data *pd, void *glyph);
 void evas_post_render_job_add(Evas_Public_Data *pd, void (*func)(void *), void *data);
 
 void evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
-                                     void *data, void *context, void *surface,
+                                     void *engine, void *data, void *context, void *surface,
                                      void *image, RGBA_Map *m, int smooth,
                                      int level, Eina_Bool do_async);
 void evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
-                                void *data, void *context, void *surface,
+                                void *engine, void *data, void *context, void *surface,
                                 Evas_Font_Set *font,
                                 int x, int y, int w, int h, int ow, int oh,
                                 Evas_Text_Props *intl_props, Eina_Bool do_async);
@@ -1926,7 +1925,7 @@ void evas_model_set_from_surface_primitive(Evas_Canvas3D_Mesh *mesh, int frame, 
 void evas_model_set_from_terrain_primitive(Evas_Canvas3D_Mesh *mesh, int frame, int precision, Eina_Vector2 tex_scale);
 
 /* Filter functions */
-Eina_Bool evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async, Eina_Bool alpha);
+Eina_Bool evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *engine, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async, Eina_Bool alpha);
 
 extern int _evas_alloc_error;
 extern int _evas_event_counter;

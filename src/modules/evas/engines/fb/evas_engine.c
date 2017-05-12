@@ -21,13 +21,6 @@ struct _Render_Engine
    Render_Engine_Software_Generic generic;
 };
 
-/* prototypes we will use here */
-static void *_output_setup(int w, int h, int rot, int vt, int dev, int refresh);
-
-static void *eng_info(Evas *eo_e);
-static void eng_info_free(Evas *eo_e, void *info);
-static void eng_output_free(void *data);
-
 /* internal engine routines */
 static void *
 _output_setup(int w, int h, int rot, int vt, int dev, int refresh)
@@ -93,7 +86,7 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_FB *info = in;
 
@@ -106,7 +99,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 

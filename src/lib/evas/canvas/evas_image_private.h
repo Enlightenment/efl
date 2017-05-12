@@ -148,7 +148,7 @@ struct _Evas_Image_Data
 void _evas_image_init_set(const Eina_File *f, const char *file, const char *key, Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Image_Load_Opts *lo);
 void _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
 void _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
-void *_evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, int *imagew, int *imageh, int *uvw, int *uvh, Eina_Bool filtered, Eina_Bool needs_post_render);
+void *_evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *engine, void *output, void *context, void *surface, int x, int y, int *imagew, int *imageh, int *uvw, int *uvh, Eina_Bool filtered, Eina_Bool needs_post_render);
 
 /* Efl.Gfx.Fill */
 void _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h);
@@ -191,7 +191,7 @@ int _evas_image_animated_frame_get(const Eo *eo_obj);
 /* Efl.Canvas.Proxy */
 void _evas_image_proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
 void _evas_image_proxy_set(Evas_Object *proxy, Evas_Object *src);
-void _evas_image_proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y, Eina_Bool do_async);
+void _evas_image_proxy_error(Evas_Object *proxy, void *engine, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
 Eina_Bool _evas_image_proxy_source_set(Eo *eo_obj, Evas_Object *eo_src);
 Evas_Object *_evas_image_proxy_source_get(const Eo *eo_obj);
 void _evas_image_proxy_source_clip_set(Eo *eo_obj, Eina_Bool source_clip);
@@ -200,7 +200,7 @@ void _evas_image_proxy_source_events_set(Eo *eo_obj, Eina_Bool source_events);
 Eina_Bool _evas_image_proxy_source_events_get(const Eo *eo_obj);
 
 /* Efl.Canvas.Scene3d */
-void _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene);
+void _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene, void *engine, void *output);
 void _evas_image_3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene);
 void _evas_image_3d_unset(Evas_Object *eo_obj, Evas_Object_Protected_Data *image, Evas_Image_Data *o);
 

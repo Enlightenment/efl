@@ -91,7 +91,7 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Software_Gdi *info;
 
@@ -107,7 +107,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *data, void *in, unsigned int w, unsigned int h)
+eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Software_Gdi *info;
    Render_Engine *re = data;
@@ -136,7 +136,7 @@ eng_update(void *data, void *in, unsigned int w, unsigned int h)
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 
@@ -148,7 +148,7 @@ eng_output_free(void *data)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data EINA_UNUSED)
+eng_canvas_alpha_get(void *engine EINA_UNUSED)
 {
 #warning "We need to handle window with alpha channel."
    return EINA_FALSE;

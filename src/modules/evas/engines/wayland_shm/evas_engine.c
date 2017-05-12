@@ -20,8 +20,6 @@ static Evas_Func func, pfunc;
 Evas_Native_Tbm_Surface_Image_Set_Call  glsym__evas_native_tbm_surface_image_set = NULL;
 Evas_Native_Tbm_Surface_Stride_Get_Call  glsym__evas_native_tbm_surface_stride_get = NULL;
 
-static void eng_output_resize(void *data, int w, int h);
-
 /* engine structure data */
 typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
@@ -136,7 +134,7 @@ eng_info_free(Evas *eo_evas EINA_UNUSED, void *info)
 }
 
 static void *
-eng_setup(void *info, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *einfo = info;
 
@@ -145,38 +143,8 @@ eng_setup(void *info, unsigned int w, unsigned int h)
    return _render_engine_swapbuf_setup(w, h, einfo);
 }
 
-static int
-eng_update(void *data, void *info, unsigned int w, unsigned int h)
-{
-   Evas_Engine_Info_Wayland *einfo = info;
-   Render_Engine *re = data;
-
-   if (!einfo->info.wl_surface) return 0;
-
-   _evas_outbuf_surface_set(re->generic.ob, einfo->info.wl_shm, einfo->info.wl_dmabuf, einfo->info.wl_surface);
-
-   eng_output_resize(re, w, h);
-
-   evas_render_engine_software_generic_update(&re->generic, re->generic.ob,
-                                              w, h);
-
-   return 1;
-}
-
 static void
-eng_output_free(void *data)
-{
-   Render_Engine *re;
-
-   if ((re = (Render_Engine *)data))
-     {
-        evas_render_engine_software_generic_clean(&re->generic);
-        free(re);
-     }
-}
-
-static void 
-eng_output_resize(void *data, int w, int h)
+eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 {
    Render_Engine *re;
    Evas_Engine_Info_Wayland *einfo;
@@ -203,7 +171,37 @@ eng_output_resize(void *data, int w, int h)
 }
 
 static int
-eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_update(void *engine, void *data, void *info, unsigned int w, unsigned int h)
+{
+   Evas_Engine_Info_Wayland *einfo = info;
+   Render_Engine *re = data;
+
+   if (!einfo->info.wl_surface) return 0;
+
+   _evas_outbuf_surface_set(re->generic.ob, einfo->info.wl_shm, einfo->info.wl_dmabuf, einfo->info.wl_surface);
+
+   eng_output_resize(engine, data, w, h);
+
+   evas_render_engine_software_generic_update(&re->generic, re->generic.ob,
+                                              w, h);
+
+   return 1;
+}
+
+static void
+eng_output_free(void *engine EINA_UNUSED, void *data)
+{
+   Render_Engine *re;
+
+   if ((re = (Render_Engine *)data))
+     {
+        evas_render_engine_software_generic_clean(&re->generic);
+        free(re);
+     }
+}
+
+static int
+eng_image_native_init(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -218,7 +216,7 @@ eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 }
 
 static void
-eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_image_native_shutdown(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -246,7 +244,7 @@ _native_evasgl_free(void *image)
 }
 
 static void *
-eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
+eng_image_native_set(void *engine EINA_UNUSED, void *image, void *native)
 {
    Evas_Native_Surface *ns = native;
    Image_Entry *ie = image;
@@ -326,7 +324,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 }
 
 static void *
-eng_image_native_get(void *data EINA_UNUSED, void *image)
+eng_image_native_get(void *engine EINA_UNUSED, void *image)
 {
    RGBA_Image *im = image;
    Native *n;

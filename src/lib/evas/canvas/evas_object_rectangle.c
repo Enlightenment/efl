@@ -21,10 +21,10 @@ struct _Efl_Canvas_Rectangle_Data
 /* private methods for rectangle objects */
 static void evas_object_rectangle_init(Evas_Object *eo_obj);
 static void evas_object_rectangle_render(Evas_Object *eo_obj,
-					 Evas_Object_Protected_Data *obj,
-					 void *type_private_data,
-					 void *output, void *context, void *surface,
-					 int x, int y, Eina_Bool do_async);
+                                         Evas_Object_Protected_Data *obj,
+                                         void *type_private_data,
+                                         void *engine, void *output, void *context, void *surface,
+                                         int x, int y, Eina_Bool do_async);
 static void evas_object_rectangle_render_pre(Evas_Object *eo_obj,
 					     Evas_Object_Protected_Data *obj,
 					     void *type_private_data);
@@ -183,35 +183,31 @@ nochange:
 
 static void
 evas_object_rectangle_render(Evas_Object *eo_obj EINA_UNUSED,
-			     Evas_Object_Protected_Data *obj,
-			     void *type_private_data EINA_UNUSED,
-			     void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+                             Evas_Object_Protected_Data *obj,
+                             void *type_private_data EINA_UNUSED,
+                             void *engine, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    /* render object to surface with context, and offxet by x,y */
-   obj->layer->evas->engine.func->context_color_set(output,
-						    context,
-						    obj->cur->cache.clip.r,
-						    obj->cur->cache.clip.g,
-						    obj->cur->cache.clip.b,
-						    obj->cur->cache.clip.a);
-   obj->layer->evas->engine.func->context_anti_alias_set(output, context,
+   obj->layer->evas->engine.func->context_color_set(engine,
+                                                    context,
+                                                    obj->cur->cache.clip.r,
+                                                    obj->cur->cache.clip.g,
+                                                    obj->cur->cache.clip.b,
+                                                    obj->cur->cache.clip.a);
+   obj->layer->evas->engine.func->context_anti_alias_set(engine, context,
                                                          obj->cur->anti_alias);
-   obj->layer->evas->engine.func->context_multiplier_unset(output,
-							   context);
-   obj->layer->evas->engine.func->context_render_op_set(output, context,
-							obj->cur->render_op);
-   obj->layer->evas->engine.func->rectangle_draw(output,
-						 context,
-						 surface,
-						 obj->cur->geometry.x + x,
-						 obj->cur->geometry.y + y,
-						 obj->cur->geometry.w,
-						 obj->cur->geometry.h,
-						 do_async);
-////						 obj->cur->cache.geometry.x + x,
-////						 obj->cur->cache.geometry.y + y,
-////						 obj->cur->cache.geometry.w,
-////						 obj->cur->cache.geometry.h);
+   obj->layer->evas->engine.func->context_multiplier_unset(engine, context);
+   obj->layer->evas->engine.func->context_render_op_set(engine, context,
+                                                        obj->cur->render_op);
+   obj->layer->evas->engine.func->rectangle_draw(engine,
+                                                 output,
+                                                 context,
+                                                 surface,
+                                                 obj->cur->geometry.x + x,
+                                                 obj->cur->geometry.y + y,
+                                                 obj->cur->geometry.w,
+                                                 obj->cur->geometry.h,
+                                                 do_async);
 }
 
 static void

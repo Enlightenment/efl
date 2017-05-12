@@ -29,7 +29,7 @@ static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_
 
 static void *eng_info(Evas *eo_e EINA_UNUSED);
 static void eng_info_free(Evas *eo_e EINA_UNUSED, void *info);
-static void eng_output_free(void *data);
+static void eng_output_free(void *engine EINA_UNUSED, void *data);
 
 /* internal engine routines */
 static void *
@@ -132,7 +132,7 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Buffer *info = in;
 
@@ -153,7 +153,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 

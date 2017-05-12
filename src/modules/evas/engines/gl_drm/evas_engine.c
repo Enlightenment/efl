@@ -815,7 +815,7 @@ _eng_merge_mode_get(void)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_Drm *info = in;
    Render_Engine *re = NULL;
@@ -903,7 +903,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *data, void *in, unsigned int w, unsigned int h)
+eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_Drm *info = (Evas_Engine_Info_GL_Drm *)in;
    Render_Engine *re = data;
@@ -965,7 +965,7 @@ eng_update(void *data, void *in, unsigned int w, unsigned int h)
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 
@@ -1007,7 +1007,7 @@ eng_canvas_alpha_get(void *data)
 }
 
 static void
-eng_output_dump(void *data)
+eng_output_dump(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 
@@ -1021,7 +1021,7 @@ eng_output_dump(void *data)
 }
 
 static int
-eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_image_native_init(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -1035,7 +1035,7 @@ eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 }
 
 static void
-eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_image_native_shutdown(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -1049,7 +1049,7 @@ eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 }
 
 static void *
-eng_image_native_set(void *data, void *image, void *native)
+eng_image_native_set(void *engine, void *image, void *native)
 {
    Render_Engine *re;
    Outbuf *ob;
@@ -1060,7 +1060,7 @@ eng_image_native_set(void *data, void *image, void *native)
    uint32_t texid;
    void *wlid, *wl_buf = NULL;
 
-   re = (Render_Engine *)data;
+   re = (Render_Engine *)engine;
    if (!re) return NULL;
 
    ob = eng_get_ob(re);

@@ -89,9 +89,10 @@ struct _Evas_Object_Text_Item
 /* private methods for text objects */
 static void evas_object_text_init(Evas_Object *eo_obj);
 static void evas_object_text_render(Evas_Object *eo_obj,
-				    Evas_Object_Protected_Data *obj,
-				    void *type_private_data,
-				    void *output, void *context, void *surface, int x, int y, Eina_Bool do_async);
+                                    Evas_Object_Protected_Data *obj,
+                                    void *type_private_data,
+                                    void *engine, void *output, void *context, void *surface,
+                                    int x, int y, Eina_Bool do_async);
 static void evas_object_text_free(Evas_Object *eo_obj,
 				  Evas_Object_Protected_Data *obj);
 static void evas_object_text_render_pre(Evas_Object *eo_obj,
@@ -1664,14 +1665,14 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
 void
 evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
-                           void *data, void *context, void *surface,
+                           void *engine, void *data, void *context, void *surface,
                            Evas_Font_Set *font,
                            int x, int y, int w, int h, int ow, int oh,
                            Evas_Text_Props *intl_props, Eina_Bool do_async)
 {
    Eina_Bool async_unref;
 
-   async_unref = obj->layer->evas->engine.func->font_draw(data, context, surface,
+   async_unref = obj->layer->evas->engine.func->font_draw(engine, data, context, surface,
                                                           font, x, y, w, h, ow, oh,
                                                           intl_props, do_async);
    if (do_async && async_unref)
@@ -1721,8 +1722,7 @@ _evas_text_efl_canvas_filter_internal_filter_state_prepare(Eo *eo_obj, Evas_Text
 
 EOLIAN static Eina_Bool
 _evas_text_efl_canvas_filter_internal_filter_input_render(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o,
-                                                          void *_filter, void *drawctx,
-                                                          void *data EINA_UNUSED,
+                                                          void *_filter, void *engine, void *output, void *drawctx, void *draw EINA_UNUSED,
                                                           int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
                                                           int x, int y,
                                                           Eina_Bool do_async)
@@ -1733,7 +1733,7 @@ _evas_text_efl_canvas_filter_internal_filter_input_render(Eo *eo_obj EINA_UNUSED
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      if ((o->font) && (it->text_props.len > 0))
        {
-          if (!evas_filter_font_draw(filter, drawctx,
+          if (!evas_filter_font_draw(filter, engine, output, drawctx,
                                      EVAS_FILTER_BUFFER_INPUT_ID, o->font,
                                      x + l + it->x,
                                      y + t + (int) o->max_ascent,
@@ -1749,7 +1749,7 @@ static void
 evas_object_text_render(Evas_Object *eo_obj,
                         Evas_Object_Protected_Data *obj,
                         void *type_private_data,
-                        void *output, void *context, void *surface,
+                        void *engine, void *output, void *context, void *surface,
                         int x, int y, Eina_Bool do_async)
 {
    int i, j;
@@ -1768,14 +1768,14 @@ evas_object_text_render(Evas_Object *eo_obj,
 
    /* render object to surface with context, and offxet by x,y */
    _evas_object_text_pad_get(eo_obj, o, &sl, NULL, &st, NULL);
-   ENFN->context_multiplier_unset(output, context);
-   ENFN->context_render_op_set(output, context, obj->cur->render_op);
+   ENFN->context_multiplier_unset(engine, context);
+   ENFN->context_render_op_set(engine, context, obj->cur->render_op);
    /* FIXME: This clipping is just until we fix inset handling correctly. */
-   ENFN->context_clip_clip(output, context,
-                              obj->cur->geometry.x + x,
-                              obj->cur->geometry.y + y,
-                              obj->cur->geometry.w,
-                              obj->cur->geometry.h);
+   ENFN->context_clip_clip(engine, context,
+                           obj->cur->geometry.x + x,
+                           obj->cur->geometry.y + y,
+                           obj->cur->geometry.w,
+                           obj->cur->geometry.h);
 
 /*
    ENFN->context_color_set(output,
@@ -1790,7 +1790,7 @@ evas_object_text_render(Evas_Object *eo_obj,
                         obj->cur->geometry.h);
  */
 #define COLOR_ONLY_SET(object, sub, col) \
-    ENFN->context_color_set(output, context, \
+    ENFN->context_color_set(engine, context, \
                 object->sub.col.r, \
                 object->sub.col.g, \
                 object->sub.col.b, \
@@ -1799,14 +1799,14 @@ evas_object_text_render(Evas_Object *eo_obj,
 #define COLOR_SET(object, sub, col) \
         if (obj->cur->clipper)\
           { \
-             ENFN->context_color_set(output, context, \
+             ENFN->context_color_set(engine, context, \
                 ((int)object->sub.col.r * ((int)obj->cur->clipper->cur->cache.clip.r + 1)) >> 8, \
                 ((int)object->sub.col.g * ((int)obj->cur->clipper->cur->cache.clip.g + 1)) >> 8, \
                 ((int)object->sub.col.b * ((int)obj->cur->clipper->cur->cache.clip.b + 1)) >> 8, \
                 ((int)object->sub.col.a * ((int)obj->cur->clipper->cur->cache.clip.a + 1)) >> 8); \
           } \
         else\
-          ENFN->context_color_set(output, context, \
+          ENFN->context_color_set(engine, context, \
                 object->sub.col.r, \
                 object->sub.col.g, \
                 object->sub.col.b, \
@@ -1815,43 +1815,46 @@ evas_object_text_render(Evas_Object *eo_obj,
 #define COLOR_SET_AMUL(object, sub, col, amul) \
         if (obj->cur->clipper) \
           { \
-             ENFN->context_color_set(output, context, \
+             ENFN->context_color_set(engine, context, \
                 (((int)object->sub.col.r) * ((int)obj->cur->clipper->cur->cache.clip.r) * (amul)) / 65025, \
                 (((int)object->sub.col.g) * ((int)obj->cur->clipper->cur->cache.clip.g) * (amul)) / 65025, \
                 (((int)object->sub.col.b) * ((int)obj->cur->clipper->cur->cache.clip.b) * (amul)) / 65025, \
                 (((int)object->sub.col.a) * ((int)obj->cur->clipper->cur->cache.clip.a) * (amul)) / 65025); \
           } \
         else \
-          ENFN->context_color_set(output, context, \
+          ENFN->context_color_set(engine, context, \
                 (((int)object->sub.col.r) * (amul)) / 255, \
                 (((int)object->sub.col.g) * (amul)) / 255, \
                 (((int)object->sub.col.b) * (amul)) / 255, \
                 (((int)object->sub.col.a) * (amul)) / 255);
 
 #define DRAW_TEXT(ox, oy) \
-   if ((o->font) && (it->text_props.len > 0)) { \
-      ENFN->context_cutout_target(output, context, \
+   if ((o->font) && (it->text_props.len > 0)) {                         \
+      ENFN->context_cutout_target(engine, context,              \
                                   obj->cur->geometry.x + x + sl + ox + it->x, \
-                                  obj->cur->geometry.y + y + st + oy, \
-                                  it->w, it->h); \
-      evas_font_draw_async_check(obj, output, \
-                                context, \
-                                surface, \
-                                o->font, \
-                                obj->cur->geometry.x + x + sl + ox + it->x, \
-                                obj->cur->geometry.y + y + st + oy + \
-                                (int)o->max_ascent, \
-                                obj->cur->geometry.w, \
-                                obj->cur->geometry.h, \
-                                obj->cur->geometry.w, \
-                                obj->cur->geometry.h, \
-                                &it->text_props, \
-                                do_async); \
+                                  obj->cur->geometry.y + y + st + oy,   \
+                                  it->w, it->h);                        \
+      evas_font_draw_async_check(obj, output,                           \
+                                 engine,                                \
+                                 context,                               \
+                                 surface,                               \
+                                 o->font,                               \
+                                 obj->cur->geometry.x + x + sl + ox + it->x, \
+                                 obj->cur->geometry.y + y + st + oy +   \
+                                 (int)o->max_ascent,                    \
+                                 obj->cur->geometry.w,                  \
+                                 obj->cur->geometry.h,                  \
+                                 obj->cur->geometry.w,                  \
+                                 obj->cur->geometry.h,                  \
+                                 &it->text_props,                       \
+                                 do_async);                             \
    }
 
    if (o->has_filter)
      {
-        if (evas_filter_object_render(eo_obj, obj, output, context, surface, x, y, do_async, EINA_TRUE))
+        if (evas_filter_object_render(eo_obj, obj,
+                                      engine, output, context, surface,
+                                      x, y, do_async, EINA_TRUE))
           return;
      }
 
@@ -1931,7 +1934,7 @@ evas_object_text_render(Evas_Object *eo_obj,
      }
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      {
-        ENFN->context_multiplier_set(output, context, 0, 0, 0, 0);
+        ENFN->context_multiplier_set(engine, context, 0, 0, 0, 0);
         /* Shadows */
         if (haveshad)
           {
@@ -2007,10 +2010,10 @@ evas_object_text_render(Evas_Object *eo_obj,
           }
 
         /* normal text */
-        ENFN->context_multiplier_unset(output, context);
+        ENFN->context_multiplier_unset(engine, context);
 
         if (obj->cur->clipper)
-          ENFN->context_multiplier_set(output, context,
+          ENFN->context_multiplier_set(engine, context,
                                        obj->cur->clipper->cur->cache.clip.r,
                                        obj->cur->clipper->cur->cache.clip.g,
                                        obj->cur->clipper->cur->cache.clip.b,
@@ -2018,7 +2021,7 @@ evas_object_text_render(Evas_Object *eo_obj,
 
         COLOR_ONLY_SET(obj, cur->cache, clip);
         DRAW_TEXT(0, 0);
-        ENFN->context_multiplier_unset(output, context);
+        ENFN->context_multiplier_unset(engine, context);
      }
 }
 

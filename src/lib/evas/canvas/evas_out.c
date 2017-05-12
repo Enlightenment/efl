@@ -58,9 +58,10 @@ efl_canvas_output_del(Efl_Canvas_Output *output)
 
         if (e->engine.func)
           {
-             e->engine.func->ector_destroy(output->output,
+             e->engine.func->ector_destroy(_evas_engine_context(e),
                                            output->ector);
-             e->engine.func->output_free(output->output);
+             e->engine.func->output_free(_evas_engine_context(e),
+                                         output->output);
              e->engine.func->info_free(output->canvas, output->info);
           }
         e->outputs = eina_list_remove(e->outputs, output);
@@ -114,12 +115,14 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
      {
         if (e->engine.func->update)
           {
-             e->engine.func->update(output->output, info, e->output.w, e->output.h);
+             e->engine.func->update(_evas_engine_context(e), output->output, info,
+                                    e->output.w, e->output.h);
           }
         else
           {
              // For engine who do not provide an update function
-             e->engine.func->output_free(output->output);
+             e->engine.func->output_free(_evas_engine_context(e),
+                                         output->output);
 
              goto setup;
           }
@@ -133,7 +136,8 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
           }
 
      setup:
-        output->output = e->engine.func->setup(info, e->output.w, e->output.h);
+        output->output = e->engine.func->setup(_evas_engine_context(e), info,
+                                               e->output.w, e->output.h);
      }
 
    return !!output->output;

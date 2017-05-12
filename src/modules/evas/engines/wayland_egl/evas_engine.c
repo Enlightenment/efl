@@ -569,7 +569,7 @@ _eng_merge_mode_get(void)
 }
 
 static void *
-eng_setup(void *info, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *inf = info;
    Render_Engine *re;
@@ -658,7 +658,7 @@ ob_err:
 }
 
 static int
-eng_update(void *data, void *info, unsigned int w, unsigned int h)
+eng_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *inf = info;
    Render_Engine *re = data;
@@ -755,18 +755,18 @@ ob_err:
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data)
+eng_canvas_alpha_get(void *engine)
 {
    Render_Engine *re;
 
-   if ((re = (Render_Engine *)data))
+   if ((re = (Render_Engine *)engine))
      return re->generic.software.ob->alpha;
 
    return EINA_FALSE;
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 
@@ -791,7 +791,7 @@ eng_output_free(void *data)
 }
 
 static void
-eng_output_dump(void *data)
+eng_output_dump(void *engine EINA_UNUSED, void *data)
 {
    Outbuf *ob;
    Render_Engine *re;
@@ -999,7 +999,7 @@ _native_cb_yinvert(void *image)
 }
 
 static int
-eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_image_native_init(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -1021,7 +1021,7 @@ eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 }
 
 static void
-eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_image_native_shutdown(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -1043,7 +1043,7 @@ eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 }
 
 static void *
-eng_image_native_set(void *data, void *image, void *native)
+eng_image_native_set(void *engine, void *image, void *native)
 {
    Render_Engine *re;
    Outbuf *ob;
@@ -1055,7 +1055,7 @@ eng_image_native_set(void *data, void *image, void *native)
    void *buffer = NULL;
    void *wlid, *wl_buf = NULL;
 
-   if (!(re = (Render_Engine *)data)) return NULL;
+   if (!(re = (Render_Engine *)engine)) return NULL;
    if (!(ob = eng_get_ob(re))) return NULL;
 
    ns = native;

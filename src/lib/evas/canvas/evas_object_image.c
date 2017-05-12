@@ -14,11 +14,11 @@ static Evas_Coord evas_object_image_figure_y_fill(Evas_Object *eo_obj, Evas_Obje
 
 static void evas_object_image_init(Evas_Object *eo_obj);
 static void evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
-				     void *type_private_data,
-				     void *output, void *context, void *surface,
-				     int x, int y, Eina_Bool do_async);
+                                     void *type_private_data,
+                                     void *engine, void *output, void *context, void *surface,
+                                     int x, int y, Eina_Bool do_async);
 static void _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
-                               void *output, void *context, void *surface,
+                               void *engine, void *output, void *context, void *surface,
                                int x, int y, int l, int t, int r, int b, Eina_Bool skip_map, Eina_Bool do_async);
 static void evas_object_image_free(Evas_Object *eo_obj,
 				   Evas_Object_Protected_Data *obj);
@@ -898,7 +898,8 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    evas_object_async_block(obj);
 
-   pixels = _evas_image_pixels_get((Eo *) eo_obj, obj, ENDT, NULL, NULL, 0, 0,
+   pixels = _evas_image_pixels_get((Eo *) eo_obj, obj, ENC, ENDT, NULL, NULL,
+                                   0, 0,
                                    &imagew, &imageh, &uvw, &uvh, EINA_TRUE, EINA_TRUE);
    if (!pixels) goto no_pixels;
 
@@ -1505,14 +1506,14 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
 static void
 _draw_image(Evas_Object_Protected_Data *obj,
-            void *data, void *context, void *surface, void *image,
+            void *engine, void *data, void *context, void *surface, void *image,
             int src_x, int src_y, int src_w, int src_h, int dst_x,
             int dst_y, int dst_w, int dst_h, int smooth,
             Eina_Bool do_async)
 {
    Eina_Bool async_unref;
 
-   async_unref = ENFN->image_draw(data, context, surface,
+   async_unref = ENFN->image_draw(engine, data, context, surface,
                                   image, src_x, src_y,
                                   src_w, src_h, dst_x,
                                   dst_y, dst_w, dst_h,
@@ -1532,14 +1533,14 @@ _draw_image(Evas_Object_Protected_Data *obj,
 
 void
 evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
-                                void *data, void *context, void *surface,
+                                void *engine, void *data, void *context, void *surface,
                                 void *image, RGBA_Map *m, int smooth, int level,
                                 Eina_Bool do_async)
 {
    Eina_Bool async_unref;
-   obj->layer->evas->engine.func->context_anti_alias_set(data, context,
+   obj->layer->evas->engine.func->context_anti_alias_set(engine, context,
                                                          obj->cur->anti_alias);
-   async_unref = ENFN->image_map_draw(data, context,
+   async_unref = ENFN->image_map_draw(engine, data, context,
                                       surface, image, m,
                                       smooth, level,
                                       do_async);
@@ -1558,7 +1559,7 @@ evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
 
 static void *
 evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o,
-                          void *output, void *surface, void *pixels)
+                          void *engine, void *output, void *surface, void *pixels)
 {
    Eina_Bool direct_override = EINA_FALSE, direct_force_off = EINA_FALSE;
 
@@ -1572,16 +1573,16 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                {
                   Evas_Native_Surface *ns;
 
-                  ns = ENFN->image_native_get(ENDT, o->engine_data);
+                  ns = ENFN->image_native_get(engine, o->engine_data);
                   if (ns)
                     {
                        Eina_Bool direct_renderable = EINA_FALSE;
 
                        // Check if we can do direct rendering...
                        if (ENFN->gl_direct_override_get)
-                         ENFN->gl_direct_override_get(output, &direct_override, &direct_force_off);
+                         ENFN->gl_direct_override_get(engine, &direct_override, &direct_force_off);
                        if (ENFN->gl_surface_direct_renderable_get)
-                         direct_renderable = ENFN->gl_surface_direct_renderable_get(output, ns, &direct_override, surface);
+                         direct_renderable = ENFN->gl_surface_direct_renderable_get(engine, ns, &direct_override, surface);
 
                        if ( ((direct_override) ||
                              ((direct_renderable) &&
@@ -1599,9 +1600,9 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                              ) && (!direct_force_off) )
                          {
                             if (ENFN->gl_get_pixels_set)
-                              ENFN->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
+                              ENFN->gl_get_pixels_set(engine, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
                             if (ENFN->gl_image_direct_set)
-                              ENFN->gl_image_direct_set(output, o->engine_data, EINA_TRUE);
+                              ENFN->gl_image_direct_set(engine, o->engine_data, EINA_TRUE);
                             o->direct_render = EINA_TRUE;
                          }
                        else
@@ -1612,7 +1613,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                        (ns->type == EVAS_NATIVE_SURFACE_X11))
                     {
                        if (ENFN->context_flush)
-                         ENFN->context_flush(output);
+                         ENFN->context_flush(engine);
                     }
                }
 
@@ -1637,10 +1638,10 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                CRI("Evas_Image_Data geometry did change during pixels get callback !");
 
              o->engine_data = ENFN->image_dirty_region
-               (ENDT, o->engine_data,
+               (engine, o->engine_data,
                 0, 0, o->cur->image.w, o->cur->image.h);
-	     if (o->engine_data != pixels)
-	       pixels = o->engine_data;
+             if (o->engine_data != pixels)
+               pixels = o->engine_data;
           }
         o->dirty_pixels = EINA_FALSE;
      }
@@ -1650,28 +1651,28 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
         if (o->direct_render && ENFN->image_native_get)
           {
              Evas_Native_Surface *ns;
-             ns = ENFN->image_native_get(output, o->engine_data);
+             ns = ENFN->image_native_get(engine, o->engine_data);
              if (ENFN->gl_direct_override_get)
-               ENFN->gl_direct_override_get(output, &direct_override, &direct_force_off);
+               ENFN->gl_direct_override_get(engine, &direct_override, &direct_force_off);
              if (ENFN->gl_surface_direct_renderable_get)
-               ENFN->gl_surface_direct_renderable_get(output, ns, &direct_override, surface);
+               ENFN->gl_surface_direct_renderable_get(engine, ns, &direct_override, surface);
 
              if (direct_override && !direct_force_off)
                {
                   // always use direct rendering
                   if (ENFN->gl_get_pixels_set)
-                    ENFN->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
+                    ENFN->gl_get_pixels_set(engine, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
                   if (ENFN->gl_image_direct_set)
-                    ENFN->gl_image_direct_set(output, o->engine_data, EINA_TRUE);
+                    ENFN->gl_image_direct_set(engine, o->engine_data, EINA_TRUE);
                }
              else
                {
                   // Auto-fallback to FBO rendering (for perf & power consumption)
                   if (ENFN->gl_get_pixels_pre)
-                    ENFN->gl_get_pixels_pre(output);
+                    ENFN->gl_get_pixels_pre(engine);
                   o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, obj->object);
                   if (ENFN->gl_get_pixels_post)
-                    ENFN->gl_get_pixels_post(output);
+                    ENFN->gl_get_pixels_post(engine);
                   o->direct_render = EINA_FALSE;
                }
           }
@@ -1745,26 +1746,26 @@ _image_is_scaled(Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
 
 EOLIAN static Eina_Bool
 _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
-      Eo *eo_obj, Evas_Image_Data *o, void *_filter, void *context EINA_UNUSED,
-      void *data EINA_UNUSED, int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
+      Eo *eo_obj, Evas_Image_Data *o,
+      void *_filter, void *engine, void *output, void *context, void *data EINA_UNUSED,
+      int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
       int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Filter_Context *filter = _filter;
-   void *surface, *output, *ctx;
+   void *surface, *ctx;
    Eina_Bool ok;
    int W, H;
 
    W = obj->cur->geometry.w;
    H = obj->cur->geometry.h;
-   output = ENDT;
 
    // FIXME: In GL we could use the image even if scaled
    if (!_image_has_border(obj, o) && _image_is_filled(obj, o) && !_image_is_scaled(obj, o))
      {
         int imagew, imageh, uvw, uvh;
 
-        surface = _evas_image_pixels_get(eo_obj, obj, output, NULL, NULL, x, y,
+        surface = _evas_image_pixels_get(eo_obj, obj, engine, output, context, NULL, x, y,
                                          &imagew, &imageh, &uvw, &uvh, EINA_FALSE, EINA_FALSE);
 
         ok = evas_filter_buffer_backing_set(filter, EVAS_FILTER_BUFFER_INPUT_ID, surface);
@@ -1782,31 +1783,32 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
         b = 0;
      }
 
-   ctx = ENFN->context_new(output);
+   ctx = ENFN->context_new(engine);
 
    if (o->cur->has_alpha && !obj->cur->snapshot)
      {
-        ENFN->context_color_set(output, ctx, 0, 0, 0, 0);
-        ENFN->context_render_op_set(output, ctx, EVAS_RENDER_COPY);
-        ENFN->rectangle_draw(output, ctx, surface, 0, 0, W, H, do_async);
-        ENFN->context_color_set(output, ctx, 255, 255, 255, 255);
-        ENFN->context_render_op_set(output, ctx, EVAS_RENDER_BLEND);
+        ENFN->context_color_set(engine, ctx, 0, 0, 0, 0);
+        ENFN->context_render_op_set(engine, ctx, EVAS_RENDER_COPY);
+        ENFN->rectangle_draw(engine, output, ctx, surface, 0, 0, W, H, do_async);
+        ENFN->context_color_set(engine, ctx, 255, 255, 255, 255);
+        ENFN->context_render_op_set(engine, ctx, EVAS_RENDER_BLEND);
      }
 
-   _evas_image_render(eo_obj, obj, output, ctx, surface,
+   _evas_image_render(eo_obj, obj,
+                      engine, output, ctx, surface,
                       x + l - obj->cur->geometry.x,
                       y + t - obj->cur->geometry.y,
                       l, t, r, b, EINA_TRUE, do_async);
 
-   ENFN->context_free(output, ctx);
-   ENFN->image_free(output, surface);
+   ENFN->context_free(engine, ctx);
+   ENFN->image_free(engine, surface);
 
    return EINA_TRUE;
 }
 
 static void
 evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *type_private_data,
-			 void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+                         void *engine, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    Evas_Image_Data *o = type_private_data;
 
@@ -1816,7 +1818,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
    /* Proxy sanity */
    if (o->proxyrendering)
      {
-        _evas_image_proxy_error(eo_obj, context, output, surface, x, y, EINA_FALSE);
+        _evas_image_proxy_error(eo_obj, engine, output, context, surface, x, y, EINA_FALSE);
         return;
      }
 
@@ -1829,9 +1831,9 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
 
    if (o->engine_data_prep)
      {
-        ENFN->context_multiplier_unset(output, context);
-        ENFN->context_render_op_set(ENDT, context, obj->cur->render_op);
-        ENFN->image_draw(output, context, surface, o->engine_data_prep,
+        ENFN->context_multiplier_unset(engine, context);
+        ENFN->context_render_op_set(engine, context, obj->cur->render_op);
+        ENFN->image_draw(engine, output, context, surface, o->engine_data_prep,
                          0, 0, obj->cur->geometry.w, obj->cur->geometry.h,
                          obj->cur->geometry.x + x, obj->cur->geometry.y + y,
                          obj->cur->geometry.w, obj->cur->geometry.h,
@@ -1843,10 +1845,10 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
    if (o->video_visible)
      {
         /* Create a transparent rectangle */
-        ENFN->context_color_set(output, context, 0, 0, 0, 0);
-        ENFN->context_multiplier_unset(output, context);
-        ENFN->context_render_op_set(output, context, EVAS_RENDER_COPY);
-        ENFN->rectangle_draw(output, context, surface,
+        ENFN->context_color_set(engine, context, 0, 0, 0, 0);
+        ENFN->context_multiplier_unset(engine, context);
+        ENFN->context_render_op_set(engine, context, EVAS_RENDER_COPY);
+        ENFN->rectangle_draw(engine, output, context, surface,
                              obj->cur->geometry.x + x, obj->cur->geometry.y + y,
                              obj->cur->geometry.w, obj->cur->geometry.h,
                              do_async);
@@ -1854,43 +1856,44 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
         return;
      }
 
-   ENFN->context_color_set(output, context, 255, 255, 255, 255);
+   ENFN->context_color_set(engine, context, 255, 255, 255, 255);
 
    if ((obj->cur->cache.clip.r == 255) &&
        (obj->cur->cache.clip.g == 255) &&
        (obj->cur->cache.clip.b == 255) &&
        (obj->cur->cache.clip.a == 255))
      {
-        ENFN->context_multiplier_unset(output, context);
+        ENFN->context_multiplier_unset(engine, context);
      }
    else
-     ENFN->context_multiplier_set(output, context,
+     ENFN->context_multiplier_set(engine, context,
                                   obj->cur->cache.clip.r,
                                   obj->cur->cache.clip.g,
                                   obj->cur->cache.clip.b,
                                   obj->cur->cache.clip.a);
 
-   ENFN->context_render_op_set(output, context, obj->cur->render_op);
+   ENFN->context_render_op_set(engine, context, obj->cur->render_op);
 
    // Clear out the pixel get stuff..
    if (ENFN->gl_get_pixels_set)
-     ENFN->gl_get_pixels_set(output, NULL, NULL, NULL);
+     ENFN->gl_get_pixels_set(engine, NULL, NULL, NULL);
    if (ENFN->gl_image_direct_set)
-     ENFN->gl_image_direct_set(output, o->engine_data, EINA_FALSE);
+     ENFN->gl_image_direct_set(engine, o->engine_data, EINA_FALSE);
 
    /* Render filter */
    if (o->has_filter)
      {
-        if (evas_filter_object_render(eo_obj, obj, output, context, surface, x, y, do_async, EINA_FALSE))
+        if (evas_filter_object_render(eo_obj, obj, engine, output, context, surface, x, y, do_async, EINA_FALSE))
           return;
      }
 
-   _evas_image_render(eo_obj, obj, output, context, surface, x, y, 0, 0, 0, 0, EINA_FALSE, do_async);
+   _evas_image_render(eo_obj, obj, engine, output, context, surface, x, y, 0, 0, 0, 0, EINA_FALSE, do_async);
 }
 
 void *
 _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
-                       void *output, void *context, void *surface, int x, int y,
+                       void *engine, void *output, void *context, void *surface,
+                       int x, int y,
                        int *imagew, int *imageh, int *uvw, int *uvh,
                        Eina_Bool filtered, Eina_Bool needs_post_render)
 {
@@ -1912,13 +1915,13 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
    if (pixels)
      {
-        ENFN->image_size_get(ENDT, pixels, imagew, imageh);
+        ENFN->image_size_get(engine, pixels, imagew, imageh);
         *uvw = *imagew;
         *uvh = *imageh;
      }
    else if (o->cur->scene)
      {
-        _evas_image_3d_render(obj->layer->evas->evas, eo_obj, obj, o, o->cur->scene);
+        _evas_image_3d_render(obj->layer->evas->evas, eo_obj, obj, o, o->cur->scene, engine, output);
         pixels = obj->data_3d->surface;
         *imagew = obj->data_3d->w;
         *imageh = obj->data_3d->h;
@@ -1938,7 +1941,7 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         // normal image (from file or user pixel set)
         needs_post_render = EINA_FALSE;
         if (output && surface)
-          pixels = evas_process_dirty_pixels(eo_obj, obj, o, output, surface, o->engine_data);
+          pixels = evas_process_dirty_pixels(eo_obj, obj, o, engine, output, surface, o->engine_data);
         else
           pixels = o->engine_data;
         *imagew = o->cur->image.w;
@@ -1967,7 +1970,7 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         /* check source_clip since we skip proxy_subrender here */
         if (context && o->proxy_src_clip && source->cur->clipper)
           {
-             ENFN->context_clip_clip(ENDT, context,
+             ENFN->context_clip_clip(engine, context,
                                      source->cur->clipper->cur->cache.clip.x + x,
                                      source->cur->clipper->cur->cache.clip.y + y,
                                      source->cur->clipper->cur->cache.clip.w,
@@ -2000,7 +2003,7 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
 static void
 _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
-                   void *output, void *context, void *surface, int x, int y,
+                   void *engine, void *output, void *context, void *surface, int x, int y,
                    int l, int t, int r, int b, Eina_Bool skip_map, Eina_Bool do_async)
 {
    Evas_Image_Data *o = obj->private_data;
@@ -2009,11 +2012,11 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    int idw, idh, idx, idy;
    void *pixels;
 
-   pixels = _evas_image_pixels_get(eo_obj, obj, output, context, surface, x, y,
+   pixels = _evas_image_pixels_get(eo_obj, obj, engine, output, context, surface, x, y,
                                    &imagew, &imageh, &uvw, &uvh, EINA_FALSE, EINA_FALSE);
 
    if (!pixels) return;
-   if (ENFN->context_clip_get(ENDT, context, NULL, NULL, &cw, &ch) && (!cw || !ch))
+   if (ENFN->context_clip_get(engine, context, NULL, NULL, &cw, &ch) && (!cw || !ch))
      return;
 
    if (!skip_map && (obj->map->cur.map) && (obj->map->cur.map->count > 3)
@@ -2022,13 +2025,13 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         evas_object_map_update(eo_obj, x, y, imagew, imageh, uvw, uvh);
 
         evas_draw_image_map_async_check(
-                 obj, output, context, surface, pixels, obj->map->spans,
+                 obj, engine, output, context, surface, pixels, obj->map->spans,
                  o->cur->smooth_scale | obj->map->cur.map->smooth, 0, do_async);
 
         return;
      }
 
-   ENFN->image_scale_hint_set(output, pixels, o->scale_hint);
+   ENFN->image_scale_hint_set(engine, pixels, o->scale_hint);
    idx = evas_object_image_figure_x_fill(eo_obj, obj, o->cur->fill.x, o->cur->fill.w, &idw);
    idy = evas_object_image_figure_y_fill(eo_obj, obj, o->cur->fill.y, o->cur->fill.h, &idh);
    if (idw < 1) idw = 1;
@@ -2086,7 +2089,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                  (o->cur->border.t == 0) && (o->cur->border.b == 0) &&
                  (o->cur->border.fill != 0))
                {
-                  _draw_image(obj, output, context, surface, pixels,
+                  _draw_image(obj, engine, output, context, surface, pixels,
                               0, 0, imagew, imageh,
                               offx + ix, offy + iy, iw, ih,
                               o->cur->smooth_scale, do_async);
@@ -2179,7 +2182,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   inw = bl; inh = bt;
                   outx = ox; outy = oy;
                   outw = bsl; outh = bst;
-                  _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                  _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                   // .##.
                   // |  |
                   // '--'
@@ -2187,7 +2190,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   inw = imw - bl - br; inh = bt;
                   outx = ox + bsl; outy = oy;
                   outw = iw - bsl - bsr; outh = bst;
-                  _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                  _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                   // .--#
                   // |  |
                   // '--'
@@ -2195,7 +2198,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   inw = br; inh = bt;
                   outx = ox + iw - bsr; outy = oy;
                   outw = bsr; outh = bst;
-                  _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                  _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                   // .--.
                   // #  |
                   // '--'
@@ -2203,7 +2206,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   inw = bl; inh = imh - bt - bb;
                   outx = ox; outy = oy + bst;
                   outw = bsl; outh = ih - bst - bsb;
-                  _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                  _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                   // .--.
                   // |##|
                   // '--'
@@ -2218,12 +2221,12 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                            (!obj->clip.mask) &&
                            (obj->cur->render_op == EVAS_RENDER_BLEND))
                          {
-                            ENFN->context_render_op_set(output, context, EVAS_RENDER_COPY);
-                            _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
-                            ENFN->context_render_op_set(output, context, obj->cur->render_op);
+                            ENFN->context_render_op_set(engine, context, EVAS_RENDER_COPY);
+                            _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                            ENFN->context_render_op_set(engine, context, obj->cur->render_op);
                          }
                        else
-                         _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                         _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                     }
                   // .--.
                   // |  #
@@ -2232,7 +2235,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   inw = br; inh = imh - bt - bb;
                   outx = ox + iw - bsr; outy = oy + bst;
                   outw = bsr; outh = ih - bst - bsb;
-                  _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                  _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                   // .--.
                   // |  |
                   // #--'
@@ -2240,7 +2243,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   inw = bl; inh = bb;
                   outx = ox; outy = oy + ih - bsb;
                   outw = bsl; outh = bsb;
-                  _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                  _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                   // .--.
                   // |  |
                   // '##'
@@ -2248,7 +2251,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   inw = imw - bl - br; inh = bb;
                   outx = ox + bsl; outy = oy + ih - bsb;
                   outw = iw - bsl - bsr; outh = bsb;
-                  _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                  _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                   // .--.
                   // |  |
                   // '--#
@@ -2256,7 +2259,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   inw = br; inh = bb;
                   outx = ox + iw - bsr; outy = oy + ih - bsb;
                   outw = bsr; outh = bsb;
-                  _draw_image(obj, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
+                  _draw_image(obj, engine, output, context, surface, pixels, inx, iny, inw, inh, outx, outy, outw, outh, o->cur->smooth_scale, do_async);
                }
              idy += idh;
              if (dobreak_h) break;
@@ -2984,7 +2987,7 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
    /* the following code is similar to evas_object_image_render(), but doesn't
     * draw, just get the pixels so we can check the transparency.
     */
-   pixels = _evas_image_pixels_get(eo_obj, obj, ENDT, NULL, NULL, 0, 0,
+   pixels = _evas_image_pixels_get(eo_obj, obj, ENC, ENDT, NULL, NULL, 0, 0,
                                    &imagew, &imageh, &uvw, &uvh, EINA_TRUE, EINA_FALSE);
    if (!pixels) return is_inside;
 

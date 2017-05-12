@@ -189,11 +189,11 @@ _evas_filter_context_program_reuse(Evas_Filter_Context *ctx)
         surface = evas_ector_buffer_render_image_get(fb->buffer);
         if (!surface) continue;
 
-        dc = ENFN->context_new(ENDT);
-        ENFN->context_color_set(ENDT, dc, 0, 0, 0, 0);
-        ENFN->context_render_op_set(ENDT, dc, EVAS_RENDER_COPY);
-        ENFN->rectangle_draw(ENDT, dc, surface, 0, 0, fb->w, fb->h, ctx->async);
-        ENFN->context_free(ENDT, dc);
+        dc = ENFN->context_new(ENC);
+        ENFN->context_color_set(ENC, dc, 0, 0, 0, 0);
+        ENFN->context_render_op_set(ENC, dc, EVAS_RENDER_COPY);
+        ENFN->rectangle_draw(ENC, ENDT, dc, surface, 0, 0, fb->w, fb->h, ctx->async);
+        ENFN->context_free(ENC, dc);
         fb->dirty = EINA_FALSE;
 
         evas_ector_buffer_engine_image_release(fb->buffer, surface);
@@ -1582,7 +1582,7 @@ _filter_target_render(Evas_Filter_Context *ctx)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx->target.surface, EINA_FALSE);
 
-   drawctx = ENFN->context_new(ENDT);
+   drawctx = ENFN->context_new(ENC);
    surface = ctx->target.surface;
 
    src = _filter_buffer_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
@@ -1595,39 +1595,39 @@ _filter_target_render(Evas_Filter_Context *ctx)
 
    if (ctx->target.clip_use)
      {
-        ENFN->context_clip_set(ENDT, drawctx, ctx->target.cx, ctx->target.cy,
+        ENFN->context_clip_set(ENC, drawctx, ctx->target.cx, ctx->target.cy,
                                ctx->target.cw, ctx->target.ch);
      }
 
    if (ctx->target.color_use)
      {
-        ENFN->context_multiplier_set(ENDT, drawctx,
+        ENFN->context_multiplier_set(ENC, drawctx,
                                      ctx->target.r, ctx->target.g,
                                      ctx->target.b, ctx->target.a);
      }
 
    if (ctx->target.mask)
      {
-        ENFN->context_clip_image_set(ENDT, drawctx, ctx->target.mask,
+        ENFN->context_clip_image_set(ENC, drawctx, ctx->target.mask,
                                      ctx->target.mask_x, ctx->target.mask_y,
                                      ctx->evas, EINA_FALSE);
      }
 
-   ENFN->context_render_op_set(ENDT, drawctx, ctx->target.rop);
+   ENFN->context_render_op_set(ENC, drawctx, ctx->target.rop);
    if (ctx->target.map)
      {
-        ENFN->image_map_draw(ENDT, drawctx, surface, image,
+        ENFN->image_map_draw(ENC, ENDT, drawctx, surface, image,
                              ctx->target.map, EINA_TRUE, 0, EINA_FALSE);
      }
    else
      {
-        ENFN->image_draw(ENDT, drawctx, surface, image,
+        ENFN->image_draw(ENC, ENDT, drawctx, surface, image,
                          0, 0, src->w, src->h,
                          ctx->target.x, ctx->target.y, src->w, src->h,
                          EINA_TRUE, EINA_FALSE);
      }
 
-   ENFN->context_free(ENDT, drawctx);
+   ENFN->context_free(ENC, drawctx);
    evas_ector_buffer_engine_image_release(src->buffer, image);
 
    ENFN->image_free(ENC, surface);
@@ -1646,7 +1646,8 @@ fail:
 
 /* Font drawing stuff */
 Eina_Bool
-evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
+evas_filter_font_draw(Evas_Filter_Context *ctx,
+                      void *engine, void *output, void *draw_context, int bufid,
                       Evas_Font_Set *font, int x, int y,
                       Evas_Text_Props *text_props, Eina_Bool do_async)
 {
@@ -1661,7 +1662,7 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
 
    // Copied from evas_font_draw_async_check
-   async_unref = ENFN->font_draw(ENC, draw_context, surface,
+   async_unref = ENFN->font_draw(engine, output, draw_context, surface,
                                  font, x, y, fb->w, fb->h, fb->w, fb->h,
                                  text_props, do_async);
    if (do_async && async_unref)

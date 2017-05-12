@@ -20,7 +20,7 @@ static void evas_object_polygon_init(Evas_Object *eo_obj);
 static void evas_object_polygon_render(Evas_Object *eo_obj,
                                        Evas_Object_Protected_Data *obj,
                                        void *type_private_data,
-                                       void *output, void *context, void *surface,
+                                       void *engine, void *output, void *context, void *surface,
                                        int x, int y, Eina_Bool do_async);
 static void evas_object_polygon_free(Evas_Object *eo_obj,
                                      Evas_Object_Protected_Data *obj,
@@ -267,40 +267,40 @@ evas_object_polygon_free(Evas_Object *eo_obj EINA_UNUSED,
 
 static void
 evas_object_polygon_render(Evas_Object *eo_obj EINA_UNUSED,
-			   Evas_Object_Protected_Data *obj,
-			   void *type_private_data,
-			   void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+                           Evas_Object_Protected_Data *obj,
+                           void *type_private_data,
+                           void *engine, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
 {
    Efl_Canvas_Polygon_Data *o = type_private_data;
    Eina_List *l;
    Efl_Canvas_Polygon_Point *p;
 
    /* render object to surface with context, and offxet by x,y */
-   obj->layer->evas->engine.func->context_color_set(output,
+   obj->layer->evas->engine.func->context_color_set(engine,
                                                     context,
                                                     obj->cur->cache.clip.r,
                                                     obj->cur->cache.clip.g,
                                                     obj->cur->cache.clip.b,
                                                     obj->cur->cache.clip.a);
-   obj->layer->evas->engine.func->context_multiplier_unset(output,
-                                                           context);
-   obj->layer->evas->engine.func->context_render_op_set(output, context,
+   obj->layer->evas->engine.func->context_multiplier_unset(engine, context);
+   obj->layer->evas->engine.func->context_render_op_set(engine, context,
                                                         obj->cur->render_op);
    if (o->changed)
      {
-        o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(ENC, o->engine_data);
+        o->engine_data = obj->layer->evas->engine.func->polygon_points_clear(engine, o->engine_data);
         EINA_LIST_FOREACH(o->points, l, p)
           {
              //px = evas_coord_world_x_to_screen(obj->layer->evas, p->x);
              //py = evas_coord_world_y_to_screen(obj->layer->evas, p->y);
-             o->engine_data = obj->layer->evas->engine.func->polygon_point_add(ENC,
+             o->engine_data = obj->layer->evas->engine.func->polygon_point_add(engine,
                                                                                o->engine_data,
                                                                                p->x, p->y);
           }
      }
 
    if (o->engine_data)
-     obj->layer->evas->engine.func->polygon_draw(output,
+     obj->layer->evas->engine.func->polygon_draw(engine,
+                                                 output,
                                                  context,
                                                  surface,
                                                  o->engine_data,

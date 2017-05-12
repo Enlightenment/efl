@@ -640,10 +640,10 @@ struct _Efl_Canvas_Text_Annotation_Iterator
 /* private methods for textblock objects */
 static void evas_object_textblock_init(Evas_Object *eo_obj);
 static void evas_object_textblock_render(Evas_Object *eo_obj,
-					 Evas_Object_Protected_Data *obj,
-					 void *type_private_data,
-					 void *output, void *context, void *surface,
-					 int x, int y, Eina_Bool do_async);
+                                         Evas_Object_Protected_Data *obj,
+                                         void *type_private_data,
+                                         void *engine, void *output, void *context, void *surface,
+                                         int x, int y, Eina_Bool do_async);
 static void evas_object_textblock_free(Evas_Object *eo_obj);
 static void evas_object_textblock_render_pre(Evas_Object *eo_obj,
 					     Evas_Object_Protected_Data *obj,
@@ -955,7 +955,7 @@ _format_unref_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
      {
         eina_stringshare_del(fmt->gfx_filter->name);
         if (fmt->gfx_filter->dc)
-          ENFN->context_free(ENDT, fmt->gfx_filter->dc);
+          ENFN->context_free(ENC, fmt->gfx_filter->dc);
         free(fmt->gfx_filter);
      }
    if ((obj->layer) && (obj->layer->evas))
@@ -2771,7 +2771,7 @@ _format_dup(Evas_Object *eo_obj, const Evas_Object_Textblock_Format *fmt)
         fmt2->gfx_filter = malloc(sizeof(*fmt2->gfx_filter));
         memcpy(fmt2->gfx_filter, fmt->gfx_filter, sizeof(*fmt->gfx_filter));
         fmt2->gfx_filter->name = eina_stringshare_ref(fmt->gfx_filter->name);
-        fmt2->gfx_filter->dc = ENFN->context_dup(ENDT, fmt->gfx_filter->dc);
+        fmt2->gfx_filter->dc = ENFN->context_dup(ENC, fmt->gfx_filter->dc);
      }
 
    return fmt2;
@@ -13114,10 +13114,10 @@ _filter_target_position_calc(Evas_Object_Protected_Data *obj,
 
 static void
 evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
-			     Evas_Object_Protected_Data *obj,
-			     void *type_private_data,
-			     void *output, void *context, void *surface,
-			     int x, int y, Eina_Bool do_async)
+                             Evas_Object_Protected_Data *obj,
+                             void *type_private_data,
+                             void *engine, void *output, void *context, void *surface,
+                             int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Textblock_Paragraph *par, *start = NULL;
    Evas_Object_Textblock_Item *itr;
@@ -13155,18 +13155,18 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    if (!o->paragraphs) return;
 
    /* render object to surface with context, and offxet by x,y */
-   ENFN->context_multiplier_unset(output, context);
-   ENFN->context_multiplier_set(output, context, 0, 0, 0, 0);
-   ENFN->context_render_op_set(output, context, obj->cur->render_op);
+   ENFN->context_multiplier_unset(engine, context);
+   ENFN->context_multiplier_set(engine, context, 0, 0, 0, 0);
+   ENFN->context_render_op_set(engine, context, obj->cur->render_op);
    /* FIXME: This clipping is just until we fix inset handling correctly. */
-   ENFN->context_clip_clip(output, context,
-                              obj->cur->geometry.x + x,
-                              obj->cur->geometry.y + y,
-                              obj->cur->geometry.w,
-                              obj->cur->geometry.h);
-   clip = ENFN->context_clip_get(output, context, &cx, &cy, &cw, &ch);
+   ENFN->context_clip_clip(engine, context,
+                           obj->cur->geometry.x + x,
+                           obj->cur->geometry.y + y,
+                           obj->cur->geometry.w,
+                           obj->cur->geometry.h);
+   clip = ENFN->context_clip_get(engine, context, &cx, &cy, &cw, &ch);
 
-   ENFN->context_color_set(output, context, 0, 0, 0, 0);
+   ENFN->context_color_set(engine, context, 0, 0, 0, 0);
    ca = cr = cg = cb = 0;
 
 #define ITEM_WALK() \
@@ -13238,7 +13238,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    na = obj->cur->cache.clip.a * ti->parent.format->color.col.a;        \
    if (na != ca || nb != cb || ng != cg || nr != cr)                    \
      {                                                                  \
-        ENFN->context_color_set(output, context,                        \
+        ENFN->context_color_set(engine, context,                        \
                                 nr / 255, ng / 255, nb / 255, na / 255); \
         cr = nr; cg = ng; cb = nb; ca = na;                             \
      }
@@ -13250,23 +13250,23 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    na = obj->cur->cache.clip.a * ti->parent.format->color.col.a * (amul); \
    if (na != ca || nb != cb || ng != cg || nr != cr)                    \
      {                                                                  \
-        ENFN->context_color_set(output, context,                        \
+        ENFN->context_color_set(engine, context,                        \
                                 nr / 65025, ng / 65025, nb / 65025, na / 65025); \
         cr = nr; cg = ng; cb = nb; ca = na;                             \
      }
 
 #define DRAW_TEXT_FILTER(gf, ox, oy) do {                               \
-   evas_filter_input_render(eo_obj, ti->gfx_filter->ctx, gf->dc, ti,    \
+      evas_filter_input_render(eo_obj, ti->gfx_filter->ctx, engine, output, gf->dc, ti, \
                             gf->pad.l, gf->pad.r, gf->pad.t, gf->pad.b, \
                             (ox), (oy), do_async);                      \
    } while (0)
 
 #define DRAW_TEXT_NOFILTER(ox, oy) do {                                 \
-   ENFN->context_cutout_target(output, context,                         \
+   ENFN->context_cutout_target(engine, context,                         \
                                obj->cur->geometry.x + ln->x - (ln->h * 4) + ti->parent.x + x + (ox) - 100, \
                                obj->cur->geometry.y + ln->par->y + ln->y - ln->h + y + (oy), \
                                ti->parent.w + (ln->h * 8), ln->h * 3);  \
-   evas_font_draw_async_check(obj, output, context, surface,            \
+   evas_font_draw_async_check(obj, engine, output, context, surface,    \
      ti->parent.format->font.font,                                      \
      obj->cur->geometry.x + ln->x + ti->parent.x + x + (ox),            \
      obj->cur->geometry.y + ln->par->y + ln->y + yoff + y + (oy),       \
@@ -13293,11 +13293,12 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         na = obj->cur->cache.clip.a * oa;                               \
         if (na != ca || nb != cb || ng != cg || nr != cr)               \
           {                                                             \
-             ENFN->context_color_set(output, context,                   \
+             ENFN->context_color_set(engine, context,                   \
                                      nr / 255, ng / 255, nb / 255, na / 255); \
              cr = nr; cg = ng; cb = nb; ca = na;                        \
           }                                                             \
-        ENFN->rectangle_draw(output,                                    \
+        ENFN->rectangle_draw(engine,                                    \
+                             output,                                    \
                              context,                                   \
                              surface,                                   \
                              obj->cur->geometry.x + ln->x + x + (ox),   \
@@ -13466,7 +13467,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                   if (!filter->redraw) continue;
                }
 
-             ENFN->image_free(ENDT, ti->gfx_filter->output);
+             ENFN->image_free(engine, ti->gfx_filter->output);
              ti->gfx_filter->output = NULL;
           }
 
@@ -13484,8 +13485,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         // target position
         evas_filter_program_padding_get(pgm, &filter->pad, NULL);
         target = _filter_target_position_calc(obj, ti, x, y);
-        ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
-        ENFN->context_multiplier_set(ENDT, context,
+        ENFN->context_color_set(engine, context, 255, 255, 255, 255);
+        ENFN->context_multiplier_set(engine, context,
                                      obj->cur->cache.clip.r, obj->cur->cache.clip.g,
                                      obj->cur->cache.clip.b, obj->cur->cache.clip.a);
         evas_filter_context_proxy_render_all(ctx, eo_obj, EINA_FALSE);
@@ -13497,13 +13498,13 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         // common data for all items (FIXME: should be common to object)
         if (!filter->dc)
           {
-             filter->dc = ENFN->context_new(ENDT);
-             ENFN->context_color_set(ENDT, filter->dc, 255, 255, 255, 255);
+             filter->dc = ENFN->context_new(engine);
+             ENFN->context_color_set(engine, filter->dc, 255, 255, 255, 255);
           }
         filter->eo_obj = eo_obj;
         filter->evas = obj->layer->evas;
 
-        ENFN->context_multiplier_unset(ENDT, context);
+        ENFN->context_multiplier_unset(engine, context);
      }
 
    /* shadows */
@@ -13707,10 +13708,10 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    /* Get the thickness, and save it for strikethrough of non-text items. */
    strikethrough_thickness = underline_thickness = evas_common_font_instance_underline_thickness_get(NULL);
    underline_position = evas_common_font_instance_underline_position_get(NULL);
-   ENFN->context_multiplier_unset(output, context);
+   ENFN->context_multiplier_unset(engine, context);
 
    if (obj->cur->clipper)
-     ENFN->context_multiplier_set(output, context,
+     ENFN->context_multiplier_set(engine, context,
                                   obj->cur->clipper->cur->cache.clip.r,
                                   obj->cur->clipper->cur->cache.clip.g,
                                   obj->cur->clipper->cur->cache.clip.b,
@@ -13779,9 +13780,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 
                        target = _filter_target_position_calc(obj, ti, x, y);
                        ca = cr = cb = cg = 255;
-                       ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
-                       ENFN->image_size_get(ENDT, buffer, &W, &H);
-                       ENFN->image_draw(ENDT, context, surface, buffer,
+                       ENFN->context_color_set(engine, context, 255, 255, 255, 255);
+                       ENFN->image_size_get(engine, buffer, &W, &H);
+                       ENFN->image_draw(engine, output, context, surface, buffer,
                                         0, 0, W, H, target.x, target.y, W, H, 0, do_async);
                     }
                   else if (ctx)
@@ -13810,7 +13811,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
               underline_position, underline_thickness);
      }
    ITEM_WALK_END();
-   ENFN->context_multiplier_unset(output, context);
+   ENFN->context_multiplier_unset(engine, context);
 }
 
 EOLIAN static void
@@ -13840,13 +13841,14 @@ _efl_canvas_text_efl_canvas_filter_internal_filter_state_prepare(
 
 EOLIAN static Eina_Bool
 _efl_canvas_text_efl_canvas_filter_internal_filter_input_render(
-      Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *pd EINA_UNUSED, void *filter, void *drawctx,
-      void *data, int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
+      Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *pd EINA_UNUSED, void *filter,
+      void *engine, void *output, void *drawctx, void *data,
+      int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
       int x, int y, Eina_Bool do_async)
 {
    Evas_Object_Textblock_Text_Item *ti = data;
 
-   return evas_filter_font_draw(filter, drawctx,
+   return evas_filter_font_draw(filter, engine, output, drawctx,
                                 EVAS_FILTER_BUFFER_INPUT_ID,
                                 ti->parent.format->font.font,
                                 x + l,

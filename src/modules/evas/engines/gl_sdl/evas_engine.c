@@ -181,7 +181,7 @@ evgl_eng_native_window_create(void *data EINA_UNUSED)
 }
 
 static int
-evgl_eng_native_window_destroy(void *data EINA_UNUSED, void *native_window)
+evgl_eng_native_window_destroy(void *data EINA_UNUSED, void *native_window EINA_UNUSED)
 {
    /* SDL_DestroyWindow(native_window); */
    return 1;
@@ -201,7 +201,7 @@ evgl_eng_window_surface_destroy(void *data EINA_UNUSED,
 }
 
 static void *
-evgl_eng_context_create(void *data, void *share_ctx EINA_UNUSED, int version)
+evgl_eng_context_create(void *data, void *share_ctx EINA_UNUSED, Evas_GL_Context_Version version)
 {
    Render_Engine *re = data;
 
@@ -287,7 +287,7 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Render_Engine *re = NULL;
    Outbuf *ob = NULL;
@@ -333,7 +333,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re = data;
 
@@ -341,7 +341,7 @@ eng_output_free(void *data)
 }
 
 static void
-eng_output_dump(void *data)
+eng_output_dump(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 

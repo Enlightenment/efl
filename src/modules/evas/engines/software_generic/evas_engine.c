@@ -443,7 +443,7 @@ static int _evas_soft_gen_log_dom = -1;
 #define QCMD evas_thread_queue_flush
 
 static void
-eng_output_dump(void *data EINA_UNUSED)
+eng_output_dump(void *engine EINA_UNUSED, void *data EINA_UNUSED)
 {
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
@@ -732,7 +732,7 @@ _draw_rectangle_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
 }
 
 static void
-eng_rectangle_draw(void *data EINA_UNUSED, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async)
+eng_rectangle_draw(void *engine EINA_UNUSED, void *data EINA_UNUSED, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async)
 {
    if (do_async)
      evas_common_rectangle_draw_cb(surface, context, x, y, w, h,
@@ -858,7 +858,7 @@ _line_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 }
 
 static void
-eng_line_draw(void *data EINA_UNUSED, void *context, void *surface, int x1, int y1, int x2, int y2, Eina_Bool do_async)
+eng_line_draw(void *engine EINA_UNUSED, void *data EINA_UNUSED, void *context, void *surface, int x1, int y1, int x2, int y2, Eina_Bool do_async)
 {
    if (do_async) _line_draw_thread_cmd(surface, context, x1, y1, x2, y2);
 #ifdef BUILD_PIPE_RENDER
@@ -995,7 +995,7 @@ _polygon_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 }
 
 static void
-eng_polygon_draw(void *data EINA_UNUSED, void *context, void *surface, void *polygon, int x, int y, Eina_Bool do_async)
+eng_polygon_draw(void *engine EINA_UNUSED, void *data EINA_UNUSED, void *context, void *surface, void *polygon, int x, int y, Eina_Bool do_async)
 {
    if (do_async) _polygon_draw_thread_cmd(surface, context, polygon, x, y);
 #ifdef BUILD_PIPE_RENDER
@@ -2518,7 +2518,7 @@ _image_thr_cb_sample(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, in
 }
 
 static Eina_Bool
-eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async)
+eng_image_draw(void *engine EINA_UNUSED, void *data EINA_UNUSED, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async)
 {
    RGBA_Image *im;
 
@@ -2806,7 +2806,7 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
 }
 
 static void
-evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset)
+evas_software_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset)
 {
    if (m->count - offset < 3) return;
 
@@ -2843,7 +2843,7 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
         dw = (m->pts[2 + offset].x >> FP) - dx;
         dh = (m->pts[2 + offset].y >> FP) - dy;
         eng_image_draw
-          (data, context, surface, im,
+          (engine, data, context, surface, im,
            0, 0, im->cache_entry.w, im->cache_entry.h,
            dx, dy, dw, dh, smooth,
            EINA_FALSE);
@@ -2869,12 +2869,12 @@ evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGB
 
    if (m->count > 4)
      {
-        evas_software_image_map_draw(data, context, surface, im, m, smooth, level, offset + 2);
+        evas_software_image_map_draw(engine, data, context, surface, im, m, smooth, level, offset + 2);
      }
 }
 
 static Eina_Bool
-eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
+eng_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
 {
    RGBA_Image *im = image;
 
@@ -2904,7 +2904,7 @@ eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_M
                                               _map_draw_thread_cmd);
      }
    else
-     evas_software_image_map_draw(data, context, surface, im, m,
+     evas_software_image_map_draw(engine, data, context, surface, im, m,
                                   smooth, level, 0);
 
    return EINA_FALSE;
@@ -3077,7 +3077,7 @@ _multi_font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y
 }
 
 static Eina_Bool
-eng_multi_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Font_Array *texts, Eina_Bool do_async)
+eng_multi_font_draw(void *engine EINA_UNUSED, void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Font_Array *texts, Eina_Bool do_async)
 {
    if (!texts) return EINA_FALSE;
 
@@ -3398,7 +3398,7 @@ _font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas
 }
 
 static Eina_Bool
-eng_font_draw(void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *text_props, Eina_Bool do_async)
+eng_font_draw(void *engine EINA_UNUSED, void *data EINA_UNUSED, void *context, void *surface, Evas_Font_Set *font EINA_UNUSED, int x, int y, int w EINA_UNUSED, int h EINA_UNUSED, int ow EINA_UNUSED, int oh EINA_UNUSED, Evas_Text_Props *text_props, Eina_Bool do_async)
 {
    if (do_async)
      {
@@ -3884,7 +3884,7 @@ eng_gl_rotation_angle_get(void *data EINA_UNUSED)
  */
 
 static void
-eng_output_resize(void *data, int w, int h)
+eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 {
    Render_Engine_Software_Generic *re;
 
@@ -3903,7 +3903,7 @@ eng_output_resize(void *data, int w, int h)
 }
 
 static void
-eng_output_tile_size_set(void *data, int w, int h)
+eng_output_tile_size_set(void *engine EINA_UNUSED, void *data, int w, int h)
 {
    Render_Engine_Software_Generic *re;
 
@@ -3912,7 +3912,7 @@ eng_output_tile_size_set(void *data, int w, int h)
 }
 
 static void
-eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
+eng_output_redraws_rect_add(void *engine EINA_UNUSED, void *data, int x, int y, int w, int h)
 {
    Render_Engine_Software_Generic *re;
 
@@ -3921,7 +3921,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 }
 
 static void
-eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
+eng_output_redraws_rect_del(void *engine EINA_UNUSED, void *data, int x, int y, int w, int h)
 {
    Render_Engine_Software_Generic *re;
 
@@ -3930,7 +3930,7 @@ eng_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 }
 
 static void
-eng_output_redraws_clear(void *data)
+eng_output_redraws_clear(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine_Software_Generic *re;
 
@@ -4135,7 +4135,7 @@ _merge_rects(Render_Engine_Merge_Mode merge_mode,
 
 
 static void *
-eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
+eng_output_redraws_next_update_get(void *engine EINA_UNUSED, void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine_Software_Generic *re;
    void *surface;
@@ -4263,7 +4263,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 }
 
 static void
-eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode)
+eng_output_redraws_next_update_push(void *engine EINA_UNUSED, void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode)
 {
    Render_Engine_Software_Generic *re;
 
@@ -4279,7 +4279,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 }
 
 static void
-eng_output_flush(void *data, Evas_Render_Mode render_mode)
+eng_output_flush(void *engine EINA_UNUSED, void *data, Evas_Render_Mode render_mode)
 {
    Render_Engine_Software_Generic *re;
 
@@ -4295,7 +4295,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
 }
 
 static void
-eng_output_idle_flush(void *data)
+eng_output_idle_flush(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine_Software_Generic *re;
 
@@ -4419,7 +4419,7 @@ _draw_thread_ector_draw(void *data)
 }
 
 static void
-eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, void *engine_data EINA_UNUSED, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async)
+eng_ector_renderer_draw(void *engine EINA_UNUSED, void *data EINA_UNUSED, void *context, void *surface, void *engine_data EINA_UNUSED, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async)
 {
    RGBA_Image *dst = surface;
    RGBA_Draw_Context *dc = context;

@@ -241,7 +241,7 @@ _evas_filter_obscured_region_changed(Evas_Filter_Data *pd)
 
 Eina_Bool
 evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
-                          void *output, void *context, void *surface,
+                          void *engine, void *output, void *context, void *surface,
                           int x, int y, Eina_Bool do_async, Eina_Bool alpha)
 {
    Evas_Filter_Data *pd = efl_data_scope_get(eo_obj, MY_CLASS);
@@ -263,26 +263,26 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    Y = obj->cur->geometry.y;
 
    // Prepare color multiplier
-   ENFN->context_color_set(output, context,
+   ENFN->context_color_set(engine, context,
                            obj->cur->cache.clip.r,
                            obj->cur->cache.clip.g,
                            obj->cur->cache.clip.b,
                            obj->cur->cache.clip.a);
    if (obj->cur->clipper)
-     ENFN->context_multiplier_set(output, context,
+     ENFN->context_multiplier_set(engine, context,
                                   obj->cur->clipper->cur->cache.clip.r,
                                   obj->cur->clipper->cur->cache.clip.g,
                                   obj->cur->clipper->cur->cache.clip.b,
                                   obj->cur->clipper->cur->cache.clip.a);
    else
-      ENFN->context_multiplier_unset(output, context);
+      ENFN->context_multiplier_unset(engine, context);
 
    if (obj->map->cur.usemap && obj->map->cur.map && (obj->map->cur.map->count >= 4))
      {
         int iw, ih;
 
         use_map = EINA_TRUE;
-        ENFN->image_size_get(ENC, previous, &iw, &ih);
+        ENFN->image_size_get(engine, previous, &iw, &ih);
         evas_object_map_update(eo_obj, x, y, iw, ih, iw, ih);
      }
 
@@ -348,12 +348,12 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
              // Render this image only
              if (use_map)
                {
-                  ENFN->image_map_draw(ENDT, context, surface, previous,
+                  ENFN->image_map_draw(engine, output, context, surface, previous,
                                        obj->map->spans, EINA_TRUE, 0, do_async);
                }
              else
                {
-                  ENFN->image_draw(ENDT, context,
+                  ENFN->image_draw(engine, output, context,
                                    surface, previous,
                                    0, 0, W, H,         // src
                                    X + x, Y + y, W, H, // dst
@@ -415,8 +415,8 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    evas_filter_context_proxy_render_all(filter, eo_obj, EINA_FALSE);
 
    // Draw Context
-   drawctx = ENFN->context_new(ENDT);
-   ENFN->context_color_set(ENDT, drawctx, 255, 255, 255, 255);
+   drawctx = ENFN->context_new(engine);
+   ENFN->context_color_set(engine, drawctx, 255, 255, 255, 255);
 
    // Set obscured region
    evas_filter_context_obscured_region_set(filter, pd->data->obscured);
@@ -428,10 +428,11 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
    // Request rendering from the object itself (child class)
    evas_filter_program_padding_get(pd->data->chain, &pad, NULL);
-   ok = evas_filter_input_render(eo_obj, filter, drawctx, NULL, pad.l, pad.r, pad.t, pad.b, 0, 0, do_async);
+   ok = evas_filter_input_render(eo_obj, filter, engine, output, drawctx, NULL,
+                                 pad.l, pad.r, pad.t, pad.b, 0, 0, do_async);
    if (!ok) ERR("Filter input render failed.");
 
-   ENFN->context_free(ENDT, drawctx);
+   ENFN->context_free(engine, drawctx);
 
    // Add post-run callback and run filter
    evas_filter_context_post_run_callback_set(filter, _filter_cb, pd);

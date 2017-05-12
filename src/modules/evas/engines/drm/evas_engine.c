@@ -73,7 +73,7 @@ eng_info_free(Evas *evas EINA_UNUSED, void *einfo)
 }
 
 static void *
-eng_setup(void *einfo, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *einfo, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Drm *info = einfo;
 
@@ -81,7 +81,7 @@ eng_setup(void *einfo, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *data, void *einfo, unsigned int w, unsigned int h)
+eng_update(void *engine EINA_UNUSED, void *data, void *einfo, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Drm *info = einfo;
    Render_Engine *re = data;
@@ -96,7 +96,7 @@ eng_update(void *data, void *einfo, unsigned int w, unsigned int h)
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 

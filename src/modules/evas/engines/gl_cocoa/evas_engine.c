@@ -149,7 +149,7 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_Cocoa *const info = in;
    Render_Engine *re;
@@ -217,7 +217,8 @@ err:
 }
 
 static int
-eng_update(void         *data EINA_UNUSED,
+eng_update(void *engine EINA_UNUSED,
+           void         *data EINA_UNUSED,
            void         *info EINA_UNUSED,
            unsigned int  w    EINA_UNUSED,
            unsigned int  h    EINA_UNUSED)
@@ -230,7 +231,7 @@ eng_update(void         *data EINA_UNUSED,
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *const re = data;
 

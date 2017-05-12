@@ -51,10 +51,6 @@ static void *_best_visual_get(int backend, void *connection, int screen);
 static unsigned int _best_colormap_get(int backend, void *connection, int screen);
 static int _best_depth_get(int backend, void *connection, int screen);
 
-static void *eng_info(Evas *eo_e);
-static void eng_info_free(Evas *eo_e, void *info);
-static void eng_output_free(void *data);
-
 static Eina_List *_outbufs = NULL;
 
 /* internal engine routines */
@@ -263,7 +259,7 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Software_X11 *info = in;
    Render_Engine *re = NULL;
@@ -314,7 +310,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *data, void *in, unsigned int w, unsigned int h)
+eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Software_X11 *info = in;
    Render_Engine *re = data;
@@ -373,7 +369,7 @@ eng_update(void *data, void *in, unsigned int w, unsigned int h)
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 
@@ -387,11 +383,11 @@ eng_output_free(void *data)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data)
+eng_canvas_alpha_get(void *engine)
 {
    Render_Engine *re;
 
-   re = (Render_Engine *)data;
+   re = (Render_Engine *)engine;
    return (re->generic.ob->priv.destination_alpha) ||
      (re->outbuf_alpha_get(re->generic.ob));
 }
@@ -411,7 +407,7 @@ _native_evasgl_free(void *image)
 }
 
 static int
-eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_image_native_init(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -429,7 +425,7 @@ eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 }
 
 static void
-eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_image_native_shutdown(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -448,9 +444,9 @@ eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 }
 
 static void *
-eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
+eng_image_native_set(void *engine, void *image, void *native)
 {
-   Render_Engine *re = (Render_Engine *)data;
+   Render_Engine *re = (Render_Engine *)engine;
    Evas_Native_Surface *ns = native;
    Image_Entry *ie = image, *ie2 = NULL;
    RGBA_Image *im = image;
@@ -556,7 +552,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 }
 
 static void *
-eng_image_native_get(void *data EINA_UNUSED, void *image)
+eng_image_native_get(void *engine EINA_UNUSED, void *image)
 {
    RGBA_Image *im = image;
    Native *n;

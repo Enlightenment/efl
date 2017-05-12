@@ -31,7 +31,7 @@ _efl_canvas_scene3d_scene3d_get(Eo *eo_obj, void *pd EINA_UNUSED)
 void
 _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj,
                       Evas_Object_Protected_Data *obj, Evas_Image_Data *o EINA_UNUSED,
-                      Evas_Canvas3D_Scene *scene)
+                      Evas_Canvas3D_Scene *scene, void *engine, void *output)
 {
    Evas_Public_Data *e;
    Eina_Bool need_native_set = EINA_FALSE;
@@ -56,14 +56,14 @@ _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj,
 
         if (e->engine.func->drawable_size_get)
           {
-             e->engine.func->drawable_size_get(_evas_engine_context(e),
+             e->engine.func->drawable_size_get(engine,
                                                pd_scene->surface, &w, &h);
           }
         if ((w != pd_scene->w) || (h != pd_scene->h))
           {
              if (e->engine.func->drawable_free)
                {
-                  e->engine.func->drawable_free(_evas_engine_context(e),
+                  e->engine.func->drawable_free(engine,
                                                 pd_scene->surface);
                }
              pd_scene->surface = NULL;
@@ -76,7 +76,7 @@ _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj,
         if (e->engine.func->drawable_new)
           {
              pd_scene->surface =
-               e->engine.func->drawable_new(_evas_engine_context(e),
+               e->engine.func->drawable_new(engine,
                                             pd_scene->w, pd_scene->h, 1);
           }
         need_native_set = EINA_TRUE;
@@ -90,7 +90,7 @@ _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj,
              if (e->engine.func->image_drawable_set)
                {
                   data->surface =
-                    e->engine.func->image_drawable_set(_evas_engine_context(e),
+                    e->engine.func->image_drawable_set(engine,
                                                        data->surface,
                                                        pd_scene->surface);
                }
@@ -131,7 +131,7 @@ _evas_image_3d_render(Evas *eo_e, Evas_Object *eo_obj,
    /* Phase 5 - Draw the scene. */
    if (e->engine.func->drawable_scene_render)
      {
-        e->engine.func->drawable_scene_render(_evas_engine_context(e),
+        e->engine.func->drawable_scene_render(engine, output,
                                               pd_scene->surface, &scene_data);
      }
    /* Clean up temporary resources. */

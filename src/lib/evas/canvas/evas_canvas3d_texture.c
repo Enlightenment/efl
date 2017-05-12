@@ -50,7 +50,7 @@ _texture_proxy_unset(Evas_Canvas3D_Texture_Data *texture)
 }
 
 static inline void
-_texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
+_texture_proxy_subrender(Evas_Canvas3D_Texture *obj, void *engine)
 {
    /* Code taken from _proxy_subrender() in file evas_object_image.c */
    Eo *evas = NULL;
@@ -78,7 +78,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
         if (is_image)
           {
              void *image = source->func->engine_data_get(pd->source);
-             e->engine.func->image_size_get(_evas_engine_context(e), image, &w, &h);
+             e->engine.func->image_size_get(engine, image, &w, &h);
           }
         else
           {
@@ -90,7 +90,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
         if ((proxy_write->surface) &&
             ((proxy_write->w != w) || (proxy_write->h != h)))
           {
-             e->engine.func->image_free(_evas_engine_context(e), proxy_write->surface);
+             e->engine.func->image_free(engine, proxy_write->surface);
              proxy_write->surface = NULL;
           }
 
@@ -99,23 +99,23 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
         if (!proxy_write->surface)
           {
              proxy_write->surface = e->engine.func->image_map_surface_new
-               (_evas_engine_context(e), w, h, 1);
+               (engine, w, h, 1);
              if (!proxy_write->surface) goto end;
              proxy_write->w = w;
              proxy_write->h = h;
           }
 
-        ctx = e->engine.func->context_new(_evas_default_output_get(e));
-        e->engine.func->context_color_set(_evas_default_output_get(e), ctx, 0, 0,
+        ctx = e->engine.func->context_new(engine);
+        e->engine.func->context_color_set(engine, ctx, 0, 0,
                                           0, 0);
-        e->engine.func->context_render_op_set(_evas_default_output_get(e), ctx,
+        e->engine.func->context_render_op_set(engine, ctx,
                                               EVAS_RENDER_COPY);
-        e->engine.func->rectangle_draw(_evas_default_output_get(e), ctx,
+        e->engine.func->rectangle_draw(engine, _evas_default_output_get(e), ctx,
                                        proxy_write->surface, 0, 0, w, h,
                                        EINA_FALSE);
-        e->engine.func->context_free(_evas_default_output_get(e), ctx);
+        e->engine.func->context_free(engine, ctx);
 
-        ctx = e->engine.func->context_new(_evas_default_output_get(e));
+        ctx = e->engine.func->context_new(engine);
 
         if (is_image)
           {
@@ -124,9 +124,9 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
              if (image)
                {
                   int imagew, imageh;
-                  e->engine.func->image_size_get(_evas_engine_context(e), image,
+                  e->engine.func->image_size_get(engine, image,
                                                  &imagew, &imageh);
-                  e->engine.func->image_draw(_evas_default_output_get(e), ctx,
+                  e->engine.func->image_draw(engine, _evas_default_output_get(e), ctx,
                                              proxy_write->surface, image,
                                              0, 0, imagew, imageh, 0, 0, w, h, 0, EINA_FALSE);
                }
@@ -148,9 +148,9 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
                                 &proxy_render_data, 1, EINA_FALSE);
           }
 
-        e->engine.func->context_free(_evas_default_output_get(e), ctx);
+        e->engine.func->context_free(engine, ctx);
         proxy_write->surface = e->engine.func->image_dirty_region
-          (_evas_default_output_get(e), proxy_write->surface, 0, 0, w, h);
+          (engine, proxy_write->surface, 0, 0, w, h);
      }
  end:
    EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_write);
@@ -256,7 +256,7 @@ _evas_canvas3d_texture_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D
           }
 
         pd->proxy_rendering = EINA_TRUE;
-        _texture_proxy_subrender(obj);
+        _texture_proxy_subrender(obj, _evas_engine_context(e));
 
         if (e->engine.func->texture_image_set)
           e->engine.func->texture_image_set(_evas_engine_context(e),

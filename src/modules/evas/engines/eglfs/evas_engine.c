@@ -691,7 +691,7 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *in)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Eglfs *info = in;
    Render_Engine *re = NULL;
@@ -777,7 +777,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *data, void *info, unsigned int w, unsigned int h)
+eng_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int w, unsigned int h)
 {
    Render_Engine *re = data;
 
@@ -837,7 +837,7 @@ eng_update(void *data, void *info, unsigned int w, unsigned int h)
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 
@@ -875,7 +875,7 @@ eng_canvas_alpha_get(void *data)
 }
 
 static void
-eng_output_dump(void *data)
+eng_output_dump(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 
@@ -889,7 +889,7 @@ eng_output_dump(void *data)
 }
 
 static void *
-eng_image_native_set(void *data, void *image, void *native)
+eng_image_native_set(void *engine EINA_UNUSED, void *data, void *image, void *native)
 {
    Render_Engine *re;
    Outbuf *ob;

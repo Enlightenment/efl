@@ -695,7 +695,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                 obj->cur->cache.clip.w,
                                 obj->cur->cache.clip.h);
              if ((w > 0) && (h > 0))
-               obj->layer->evas->engine.func->output_redraws_rect_add(ENDT,
+               obj->layer->evas->engine.func->output_redraws_rect_add(ENC, ENDT,
                                                                       x + e->framespace.x,
                                                                       y + e->framespace.y,
                                                                       w, h);
@@ -710,7 +710,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                 obj->prev->cache.clip.w,
                                 obj->prev->cache.clip.h);
              if ((w > 0) && (h > 0))
-               obj->layer->evas->engine.func->output_redraws_rect_add(ENDT,
+               obj->layer->evas->engine.func->output_redraws_rect_add(ENC, ENDT,
                                                                       x + e->framespace.x,
                                                                       y + e->framespace.y,
                                                                       w, h);
@@ -733,7 +733,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                           obj->cur->cache.clip.w,
                                           obj->cur->cache.clip.h);
                        if ((w > 0) && (h > 0))
-                         obj->layer->evas->engine.func->output_redraws_rect_add(ENDT,
+                         obj->layer->evas->engine.func->output_redraws_rect_add(ENC, ENDT,
                                                                                 x + e->framespace.x,
                                                                                 y + e->framespace.y,
                                                                                 w, h);
@@ -745,7 +745,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                                           obj->prev->cache.clip.w,
                                           obj->prev->cache.clip.h);
                        if ((w > 0) && (h > 0))
-                         obj->layer->evas->engine.func->output_redraws_rect_add(ENDT,
+                         obj->layer->evas->engine.func->output_redraws_rect_add(ENC, ENDT,
                                                                                 x + e->framespace.x,
                                                                                 y + e->framespace.y,
                                                                                 w, h);

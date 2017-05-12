@@ -90,10 +90,10 @@ struct _Evas_Object_Textgrid_Line
 /* private methods for textgrid objects */
 static void evas_object_textgrid_init(Evas_Object *eo_obj);
 static void evas_object_textgrid_render(Evas_Object *eo_obj,
-					Evas_Object_Protected_Data *obj,
-					void *type_private_data,
-					void *output, void *context, void *surface,
-					int x, int y, Eina_Bool do_async);
+                                        Evas_Object_Protected_Data *obj,
+                                        void *type_private_data,
+                                        void *engine, void *output, void *context, void *surface,
+                                        int x, int y, Eina_Bool do_async);
 static void evas_object_textgrid_render_pre(Evas_Object *eo_obj,
 					    Evas_Object_Protected_Data *obj,
 					    void *type_private_data);
@@ -404,7 +404,7 @@ static void
 evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                             Evas_Object_Protected_Data *obj,
                             void *type_private_data,
-                            void *output, void *context, void *surface,
+                            void *engine, void *output, void *context, void *surface,
                             int x, int y, Eina_Bool do_async)
 {
    Evas_Textgrid_Cell *cells;
@@ -415,8 +415,8 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
 
    /* render object to surface with context, and offset by x,y */
    Evas_Textgrid_Data *o = type_private_data;
-   ENFN->context_multiplier_unset(output, context);
-   ENFN->context_render_op_set(output, context, obj->cur->render_op);
+   ENFN->context_multiplier_unset(engine, context);
+   ENFN->context_render_op_set(engine, context, obj->cur->render_op);
 
    if (!(o->font_normal) || (!o->cur.cells)) return;
 
@@ -524,13 +524,13 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
         xp = obj->cur->geometry.x + x;
         for (xx = 0; xx < row->rects_num; xx++)
           {
-             ENFN->context_color_set(output, context,
+             ENFN->context_color_set(engine, context,
                                      row->rects[xx].r, row->rects[xx].g,
                                      row->rects[xx].b, row->rects[xx].a);
-             ENFN->context_cutout_target(output, context,
+             ENFN->context_cutout_target(engine, context,
                                          xp + row->rects[xx].x, yp,
                                          row->rects[xx].w, h);
-             ENFN->rectangle_draw(output, context, surface,
+             ENFN->rectangle_draw(engine, output, context, surface,
                                   xp + row->rects[xx].x, yp,
                                   row->rects[xx].w, h,
                                   do_async);
@@ -599,15 +599,15 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                          }
                        while (font == current_font);
 
-                       ENFN->context_cutout_target(output, context,
+                       ENFN->context_cutout_target(engine, context,
                                                    xp - w, yp + o->ascent - h,
                                                    w * 3, h * 3);
                        async_unref =
-                          ENFN->multi_font_draw(output, context, surface,
-                                                current_font,
-                                                xp,
-                                                yp + o->ascent,
-                                                ww, hh, ww, hh, texts, do_async);
+                         ENFN->multi_font_draw(engine, output, context, surface,
+                                               current_font,
+                                               xp,
+                                               yp + o->ascent,
+                                               ww, hh, ww, hh, texts, do_async);
                        if (async_unref)
                          evas_unref_queue_texts_put(obj->layer->evas, texts);
                        else
@@ -638,13 +638,13 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                        b = text->b;
                        a = text->a;
 
-                       ENFN->context_color_set(output, context,
+                       ENFN->context_color_set(engine, context,
                                                r, g, b, a);
                        font = _textgrid_font_get(o, text->bold, text->italic);
-                       ENFN->context_cutout_target(output, context,
+                       ENFN->context_cutout_target(engine, context,
                                                    tx - w, ty - h,
                                                    w * 3, h * 3);
-                       evas_font_draw_async_check(obj, output, context, surface,
+                       evas_font_draw_async_check(obj, engine, output, context, surface,
                                                   font, tx, ty, ww, hh,
                                                   ww, hh, props, do_async);
                     }
@@ -653,13 +653,13 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
 
         for (xx = 0; xx < row->lines_num; xx++)
           {
-             ENFN->context_color_set(output, context,
+             ENFN->context_color_set(engine, context,
                                      row->lines[xx].r, row->lines[xx].g,
                                      row->lines[xx].b, row->lines[xx].a);
-             ENFN->context_cutout_target(output, context,
+             ENFN->context_cutout_target(engine, context,
                                          xp + row->lines[xx].x, yp + row->lines[xx].y,
                                          row->lines[xx].w, 1);
-             ENFN->rectangle_draw(output, context, surface,
+             ENFN->rectangle_draw(engine, output, context, surface,
                                   xp + row->lines[xx].x, yp + row->lines[xx].y,
                                   row->lines[xx].w, 1,
                                   do_async);

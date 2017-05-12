@@ -1592,7 +1592,7 @@ _re_winfree(Render_Engine *re)
 }
 
 static void *
-eng_setup(void *in, unsigned int w, unsigned int h)
+eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_X11 *info = in;
    Render_Engine *re = NULL;
@@ -1722,7 +1722,7 @@ eng_setup(void *in, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *data, void *in, unsigned int w, unsigned int h)
+eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_X11 *info = in;
    Render_Engine *re = data;
@@ -1796,7 +1796,7 @@ eng_update(void *data, void *in, unsigned int w, unsigned int h)
 }
 
 static void
-eng_output_free(void *data)
+eng_output_free(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re;
 
@@ -1884,14 +1884,14 @@ eng_preload_make_current(void *data, void *doit)
 }
 
 static Eina_Bool
-eng_canvas_alpha_get(void *data)
+eng_canvas_alpha_get(void *engine)
 {
-   Render_Engine *re = (Render_Engine *)data;
+   Render_Engine *re = (Render_Engine *)engine;
    return re->generic.software.ob->alpha;
 }
 
 static void
-eng_output_dump(void *data)
+eng_output_dump(void *engine EINA_UNUSED, void *data)
 {
    Render_Engine *re = data;
 
@@ -1903,7 +1903,7 @@ eng_output_dump(void *data)
 }
 
 static void *
-eng_gl_current_context_get(void *data EINA_UNUSED)
+eng_gl_current_context_get(void *engine EINA_UNUSED)
 {
    EVGL_Context *ctx;
    EVGLNative_Context context;
@@ -1926,17 +1926,17 @@ eng_gl_current_context_get(void *data EINA_UNUSED)
 }
 
 static int
-eng_gl_error_get(void *data)
+eng_gl_error_get(void *engine)
 {
    int err;
 
-   if ((err = glsym_evas_gl_common_error_get(data)) != EVAS_GL_SUCCESS)
+   if ((err = glsym_evas_gl_common_error_get(engine)) != EVAS_GL_SUCCESS)
      goto end;
 
 #ifdef GL_GLES
    err = eglGetError() - EGL_SUCCESS;
 #else
-   Render_Engine *re = data;
+   Render_Engine *re = engine;
 
    if (!eng_get_ob(re)->win)
      err = EVAS_GL_BAD_DISPLAY;
@@ -1945,7 +1945,7 @@ eng_gl_error_get(void *data)
 #endif
 
 end:
-   glsym_evas_gl_common_error_set(data, EVAS_GL_SUCCESS);
+   glsym_evas_gl_common_error_set(engine, EVAS_GL_SUCCESS);
    return err;
 }
 
@@ -2281,7 +2281,7 @@ _native_yinvert_cb(void *image)
 }
 
 static int
-eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_image_native_init(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -2304,7 +2304,7 @@ eng_image_native_init(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 }
 
 static void
-eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
+eng_image_native_shutdown(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 {
    switch (type)
      {
@@ -2327,9 +2327,9 @@ eng_image_native_shutdown(void *data EINA_UNUSED, Evas_Native_Surface_Type type)
 }
 
 static void *
-eng_image_native_set(void *data, void *image, void *native)
+eng_image_native_set(void *engine, void *image, void *native)
 {
-  Render_Engine *re = (Render_Engine *)data;
+  Render_Engine *re = (Render_Engine *)engine;
   const Evas_Native_Surface *ns = native;
   Evas_GL_Image *im = image, *im2 = NULL;
   Visual *vis = NULL;

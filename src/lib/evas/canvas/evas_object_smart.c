@@ -80,10 +80,10 @@ _eo_evas_smart_cb(void *data, const Efl_Event *event)
 /* private methods for smart objects */
 static inline void evas_object_smart_init(Evas_Object *eo_obj);
 static void evas_object_smart_render(Evas_Object *eo_obj,
-				     Evas_Object_Protected_Data *obj,
-				     void *type_private_data,
-				     void *output, void *context, void *surface,
-				     int x, int y, Eina_Bool do_async);
+                                     Evas_Object_Protected_Data *obj,
+                                     void *type_private_data,
+                                     void *engine, void *output, void *context, void *surface,
+                                     int x, int y, Eina_Bool do_async);
 static void evas_object_smart_render_pre(Evas_Object *eo_obj,
 					 Evas_Object_Protected_Data *obj,
 					 void *type_private_data);
@@ -1538,7 +1538,7 @@ evas_object_smart_init(Evas_Object *eo_obj)
 }
 
 static void
-evas_object_smart_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED,  void *type_private_data EINA_UNUSED, void *output EINA_UNUSED, void *context EINA_UNUSED, void *surface EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
+evas_object_smart_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED,  void *type_private_data EINA_UNUSED, void *engine EINA_UNUSED, void *output EINA_UNUSED, void *context EINA_UNUSED, void *surface EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
    return;
 }

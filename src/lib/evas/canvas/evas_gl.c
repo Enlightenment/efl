@@ -29,6 +29,7 @@ struct _Evas_GL_Context
 struct _Evas_GL_Surface
 {
    void    *data;
+   void    *output;
 };
 
 struct _Evas_GL_TLS_data

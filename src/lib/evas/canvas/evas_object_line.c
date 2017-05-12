@@ -28,10 +28,10 @@ struct _Evas_Line_Data
 /* private methods for line objects */
 static void evas_object_line_init(Evas_Object *eo_obj);
 static void evas_object_line_render(Evas_Object *eo_obj,
-				    Evas_Object_Protected_Data *obj,
-				    void *type_private_data,
-				    void *output, void *context, void *surface,
-				    int x, int y, Eina_Bool do_async);
+                                    Evas_Object_Protected_Data *obj,
+                                    void *type_private_data,
+                                    void *engine, void *output, void *context, void *surface,
+                                    int x, int y, Eina_Bool do_async);
 static void evas_object_line_render_pre(Evas_Object *eo_obj,
 					Evas_Object_Protected_Data *obj,
 					void *type_private_data);
@@ -226,27 +226,27 @@ _evas_line_efl_object_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UN
 
 static void
 evas_object_line_render(Evas_Object *eo_obj EINA_UNUSED,
-			Evas_Object_Protected_Data *obj,
-			void *type_private_data,
-			void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+                        Evas_Object_Protected_Data *obj,
+                        void *type_private_data,
+                        void *engine, void *output, void *context, void *surface,
+                        int x, int y, Eina_Bool do_async)
 {
    Evas_Line_Data *o = type_private_data;
 
    /* render object to surface with context, and offxet by x,y */
 
-   obj->layer->evas->engine.func->context_color_set(output,
+   obj->layer->evas->engine.func->context_color_set(engine,
                                                     context,
                                                     obj->cur->cache.clip.r,
                                                     obj->cur->cache.clip.g,
                                                     obj->cur->cache.clip.b,
                                                     obj->cur->cache.clip.a);
-   obj->layer->evas->engine.func->context_multiplier_unset(output,
-                                                           context);
-   obj->layer->evas->engine.func->context_anti_alias_set(output, context,
+   obj->layer->evas->engine.func->context_multiplier_unset(engine, context);
+   obj->layer->evas->engine.func->context_anti_alias_set(engine, context,
                                                          obj->cur->anti_alias);
-   obj->layer->evas->engine.func->context_render_op_set(output, context,
+   obj->layer->evas->engine.func->context_render_op_set(engine, context,
                                                         obj->cur->render_op);
-   obj->layer->evas->engine.func->line_draw(output,
+   obj->layer->evas->engine.func->line_draw(engine, output,
                                             context,
                                             surface,
                                             o->cur.cache.x1 + x,

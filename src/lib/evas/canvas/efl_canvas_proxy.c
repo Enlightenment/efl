@@ -348,7 +348,8 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
  * Give them some pixels.  A random color
  */
 void
-_evas_image_proxy_error(Evas_Object *eo_proxy, void *context, void *output, void *surface,
+_evas_image_proxy_error(Evas_Object *eo_proxy,
+                        void *engine, void *output, void *context, void *surface,
                         int x, int y, Eina_Bool do_async)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_proxy, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
@@ -363,10 +364,10 @@ _evas_image_proxy_error(Evas_Object *eo_proxy, void *context, void *output, void
 
    proxy = efl_data_scope_get(eo_proxy, EFL_CANVAS_OBJECT_CLASS);
    func = proxy->layer->evas->engine.func;
-   func->context_color_set(output, context, 0, 0, 0, 255);
-   func->context_multiplier_unset(output, context);
-   func->context_render_op_set(output, context, proxy->cur->render_op);
-   func->rectangle_draw(output, context, surface, proxy->cur->geometry.x + x,
+   func->context_color_set(engine, context, 0, 0, 0, 255);
+   func->context_multiplier_unset(engine, context);
+   func->context_render_op_set(engine, context, proxy->cur->render_op);
+   func->rectangle_draw(engine, output, context, surface, proxy->cur->geometry.x + x,
                         proxy->cur->geometry.y + y,
                         proxy->cur->geometry.w,
                         proxy->cur->geometry.h,
