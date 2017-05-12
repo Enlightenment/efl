@@ -2219,19 +2219,6 @@ AC_ARG_ENABLE([fribidi],
    ],
    [want_fribidi="yes"])
 
-# Eo Id
-AC_ARG_ENABLE([eo_id],
-   [AS_HELP_STRING([--disable-eo-id],[disable Eo indirection. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_eo_id="yes"
-    else
-       want_eo_id="no"
-       CFOPT_WARNING="xyes"
-    fi
-   ],
-   [want_eo_id="yes"])
-
 # Harfbuzz
 AC_ARG_ENABLE([harfbuzz],
    [AS_HELP_STRING([--enable-harfbuzz],[enable complex text shaping and layouting support. @<:@default=disabled@:>@])],

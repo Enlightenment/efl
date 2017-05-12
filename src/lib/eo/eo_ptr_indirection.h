@@ -121,14 +121,14 @@ void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file
 #define EO_CLASS_POINTER_GOTO(klass_id, klass, label) \
    _Efl_Class *klass; \
    do { \
-      klass = _eo_class_pointer_get(klass_id, __FUNCTION__, __FILE__, __LINE__); \
+      klass = _eo_class_pointer_get(klass_id); \
       if (!klass) goto label; \
    } while (0)
 
 #define EO_CLASS_POINTER_GOTO_PROXY(klass_id, klass, label) \
    _Efl_Class *klass; \
    do { \
-      klass = _eo_class_pointer_get(klass_id, func_name, file, line); \
+      klass = _eo_class_pointer_get(klass_id); \
       if (!klass) goto label; \
    } while (0)
 

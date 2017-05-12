@@ -83,9 +83,6 @@ void _vtable_func_clean_all(Eo_Vtable *vtable);
 
 struct _Eo_Header
 {
-#ifndef HAVE_EO_ID
-     EINA_MAGIC
-#endif
      Eo_Id id;
 };
 
@@ -224,11 +221,7 @@ void _efl_object_parent_sink_set(Eo *obj, Eina_Bool sink);
 static inline
 Eo *_eo_header_id_get(const Eo_Header *header)
 {
-#ifdef HAVE_EO_ID
    return (Eo *) header->id;
-#else
-   return (Eo *) header;
-#endif
 }
 
 /* Retrieves the pointer to the object from the id */

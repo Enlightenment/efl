@@ -358,12 +358,9 @@ _eo_id_domain_compatible(const Eo *o1, const Eo *o2)
 static inline void
 _eo_obj_pointer_done(const Eo_Id obj_id)
 {
-#ifdef HAVE_EO_ID
    Efl_Id_Domain domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
    if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED)) return;
    eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
-#endif
-   (void)obj_id;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -483,7 +480,6 @@ _search_tables(Eo_Id_Table_Data *tdata)
 static inline Eo_Id
 _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id)
 {
-#ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry = NULL;
    Eo_Id_Data *data;
    Eo_Id_Table_Data *tdata;
@@ -555,17 +551,11 @@ shared_err:
         eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
    return id;
-#else
-   (void) obj;
-   (void) parent_id;
-   return MASK_OBJ_TAG;
-#endif
 }
 
 static inline void
 _eo_id_release(const Eo_Id obj_id)
 {
-#ifdef HAVE_EO_ID
    _Eo_Ids_Table *table;
    _Eo_Id_Entry *entry;
    Generation_Counter generation;
@@ -683,9 +673,6 @@ _eo_id_release(const Eo_Id obj_id)
         eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
    ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.", (void *)obj_id);
-#else
-   EINA_MAGIC_SET((Eo_Header *) obj_id, EO_FREED_EINA_MAGIC);
-#endif
 }
 
 static inline void

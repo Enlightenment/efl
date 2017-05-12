@@ -25,7 +25,6 @@ _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file, int
    _eo_log_obj_report((Eo_Id)obj_id, EINA_LOG_LEVEL_ERR, func_name, file, line);
 }
 
-#ifdef HAVE_EO_ID
 static void
 _eo_obj_pointer_invalid(const Eo_Id obj_id,
                         Eo_Id_Data *data,
@@ -68,12 +67,10 @@ _eo_obj_pointer_invalid(const Eo_Id obj_id,
       );
    _eo_log_obj_report(obj_id, EINA_LOG_LEVEL_ERR, func_name, file, line);
 }
-#endif
 
 _Eo_Object *
 _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file, int line)
 {
-#ifdef HAVE_EO_ID
    _Eo_Id_Entry *entry;
    Generation_Counter generation;
    Table_Index mid_table_id, table_id, entry_id;
@@ -183,22 +180,4 @@ err_shared:
 err:
    _eo_obj_pointer_invalid(obj_id, data, domain, func_name, file, line);
    return NULL;
-#else
-   Eo_Header *obj = (Eo_Header *)obj_id;
-   if (EINA_UNLIKELY(!obj))
-     {
-        eina_log_print(_eo_log_dom,
-                       EINA_LOG_LEVEL_DBG,
-                       file, func_name, line,
-                       "obj_id is NULL. Possibly unintended access?");
-        return NULL;
-     }
-   if (EINA_UNLIKELY(!EINA_MAGIC_CHECK(obj, EO_EINA_MAGIC)))
-     {
-        eina_magic_fail(obj, obj->__magic, EO_EINA_MAGIC, file, func_name, line);
-        _eo_log_obj_report(obj_id, EINA_LOG_LEVEL_ERR, func_name, file, line);
-        return NULL;
-     }
-   return (_Eo_Object *) obj_id;
-#endif
 }

@@ -272,11 +272,7 @@ _vtable_func_clean_all(Eo_Vtable *vtable)
 
 /* END OF DICH */
 
-#ifdef HAVE_EO_ID
-# define _EO_ID_GET(Id) ((Eo_Id) (Id))
-#else
-# define _EO_ID_GET(Id) ((Eo_Id) ((Id) ? ((Eo_Header *) (Id))->id : 0))
-#endif
+#define _EO_ID_GET(Id) ((Eo_Id) (Id))
 
 
 static inline Eina_Bool
@@ -294,30 +290,9 @@ _eo_is_a_class(const Eo *eo_id)
 }
 
 static inline _Efl_Class *
-_eo_class_pointer_get(const Efl_Class *klass_id, const char *func_name, const char *file, int line)
+_eo_class_pointer_get(const Efl_Class *klass_id)
 {
-#ifdef HAVE_EO_ID
    return ID_CLASS_GET((Eo_Id)klass_id);
-   (void)func_name;
-   (void)file;
-   (void)line;
-#else
-   Eo_Header *klass = (Eo_Header *)klass_id;
-   if (EINA_UNLIKELY(!klass))
-     {
-        eina_log_print(_eo_log_dom,
-                       EINA_LOG_LEVEL_DBG,
-                       file, func_name, line,
-                       "klass_id is NULL. Possibly unintended access?");
-        return NULL;
-     }
-   if (EINA_UNLIKELY(!EINA_MAGIC_CHECK(klass, EO_CLASS_EINA_MAGIC)))
-     {
-        eina_magic_fail(klass, klass->__magic, EO_CLASS_EINA_MAGIC, file, func_name, line);
-        return NULL;
-     }
-   return (_Efl_Class *) klass_id;
-#endif
 }
 
 static const char *
@@ -874,9 +849,6 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    obj->refcount++;
    obj->klass = klass;
 
-#ifndef HAVE_EO_ID
-   EINA_MAGIC_SET((Eo_Header *) obj, EO_EINA_MAGIC);
-#endif
    obj->header.id = _eo_id_allocate(obj, parent_id);
    Eo *eo_id = _eo_obj_id_get(obj);
 
@@ -1379,7 +1351,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
 
    if (parent_id)
      {
-        parent = _eo_class_pointer_get(parent_id, __FUNCTION__, __FILE__, __LINE__);
+        parent = _eo_class_pointer_get(parent_id);
         if (!parent)
           return NULL;
      }
@@ -1431,7 +1403,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
         extn_id = va_arg(p_list, Eo_Id *);
         while (extn_id)
           {
-             extn = _eo_class_pointer_get((Efl_Class *)extn_id, __FUNCTION__, __FILE__, __LINE__);
+             extn = _eo_class_pointer_get((Efl_Class *)extn_id);
              if (EINA_LIKELY(extn != NULL))
                {
                   switch (extn->desc->type)
@@ -1495,9 +1467,6 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
      }
 
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
-#ifndef HAVE_EO_ID
-   EINA_MAGIC_SET((Eo_Header *) klass, EO_CLASS_EINA_MAGIC);
-#endif
    eina_spinlock_new(&klass->objects.trash_lock);
    eina_spinlock_new(&klass->iterators.trash_lock);
    klass->parent = parent;
