@@ -2349,7 +2349,7 @@ _entry_paste_request_signal_cb(void *data,
    top = elm_widget_top_get(data);
    if ((top) && (elm_win_window_id_get(top)))
      {
-        Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
+        Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_TEXT;
 
         sd->selection_asked = EINA_TRUE;
 
