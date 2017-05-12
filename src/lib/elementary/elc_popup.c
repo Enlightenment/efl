@@ -118,8 +118,8 @@ _timeout_cb(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _hide_effect_finished_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(data, ELM_POPUP_EVENT_DISMISSED, NULL);
    efl_gfx_visible_set(data, EINA_FALSE);
+   efl_event_callback_legacy_call(data, ELM_POPUP_EVENT_DISMISSED, NULL);
 }
 
 
