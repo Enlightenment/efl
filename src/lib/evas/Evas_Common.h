@@ -780,47 +780,39 @@ EAPI int               evas_shutdown(void);
 EAPI Evas_Alloc_Error  evas_alloc_error(void);
 
 /**
- * @brief Get evas' internal asynchronous events read file descriptor.
+ * @brief Access the canvas' asynchronous event queue.
  *
- * @return The canvas' asynchronous events read file descriptor.
+ * @return A file descriptor to the asynchronous events.
  *
- * Evas' asynchronous events are meant to be dealt with internally,
- * i.e., when building stuff to be glued together into the EFL
- * infrastructure -- a module, for example. The context that demands
- * its use is when calculations need to be done out of the main
- * thread, asynchronously, and some action must be performed after
- * that.
+ * Normally, Evas handles asynchronous events internally, particularly
+ * in Evas-using modules that are part of the EFL infrastructure.
+ * Notably, ecore-evas takes care of processing these events for
+ * canvases instantiated through it.
  *
- * An example of actual use of this API is for image asynchronous
- * preload inside evas. If the canvas was instantiated through
- * ecore-evas usage, ecore itself will take care of calling those
- * events' processing.
- *
- * This function returns the read file descriptor where to get the
- * asynchronous events of the canvas. Naturally, other mainloops,
- * apart from ecore, may make use of it.
+ * However, when asynchronous calculations need to be done outside the
+ * main thread (in some other mainloop) with some followup action, this
+ * function permits accessing the events.  An example would be
+ * asynchronous image preloading.
  *
  * @ingroup Evas_Main_Group
  */
 EAPI int               evas_async_events_fd_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Trigger the processing of all events waiting on the file
- * descriptor returned by evas_async_events_fd_get().
+ * @brief Process the asynchronous event queue.
  *
  * @return The number of events processed.
  *
- * All asynchronous events queued up by evas_async_events_put() are
- * processed here. More precisely, the callback functions, informed
- * together with other event parameters, when queued, get called (with
- * those parameters), in that order.
+ * Triggers the callback functions for asynchronous events that were
+ * queued up by evas_async_events_put().  The callbacks are called in
+ * the same order that they were queued.
  *
  * @ingroup Evas_Main_Group
  */
 EAPI int               evas_async_events_process(void);
 
 /**
- * Insert asynchronous events on the canvas.
+ * @brief Insert asynchronous events on the canvas.
  *
  * @param target The target to be affected by the events.
  * @param type The type of callback function.
@@ -829,10 +821,9 @@ EAPI int               evas_async_events_process(void);
  *
  * @return EINA_FALSE if an error occurred, EINA_TRUE otherwise.
  *
- * This is the way, for a routine running outside evas' main thread,
- * to report an asynchronous event. A callback function is informed,
- * whose call is to happen after evas_async_events_process() is
- * called.
+ * Allows routines running outside Evas' main thread to report an
+ * asynchronous event.  The target, type, and event info will be passed
+ * to the callback function when evas_async_events_process() is called.
  *
  * @ingroup Evas_Main_Group
  */
