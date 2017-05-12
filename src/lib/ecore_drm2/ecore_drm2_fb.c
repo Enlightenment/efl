@@ -195,6 +195,7 @@ EAPI void *
 ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(fb->dead, NULL);
    return fb->mmap;
 }
 
@@ -202,6 +203,7 @@ EAPI unsigned int
 ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(fb->dead, 0);
    return fb->sizes[0];
 }
 
@@ -209,6 +211,8 @@ EAPI unsigned int
 ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(fb->dead, 0);
+
    return fb->strides[0];
 }
 
@@ -217,6 +221,7 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 {
    EINA_SAFETY_ON_NULL_RETURN(fb);
    EINA_SAFETY_ON_NULL_RETURN(rects);
+   EINA_SAFETY_ON_TRUE_RETURN(fb->dead);
 
 #ifdef DRM_MODE_FEATURE_DIRTYFB
    drmModeClip *clip;
@@ -573,6 +578,7 @@ EAPI Eina_Bool
 ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(fb->dead, EINA_FALSE);
 
    return !!(fb->ref - 1);
 }
@@ -616,6 +622,8 @@ EAPI void *
 ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(fb->dead, NULL);
+
    return fb->gbm_bo;
 }
 
