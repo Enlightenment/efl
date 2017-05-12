@@ -54,6 +54,7 @@ struct _Ecore_Wl2_Offer
    Eina_List *reads;
    int ref;
    unsigned int window_id;
+   Eina_Bool proxied : 1;
 };
 
 static int
@@ -859,6 +860,26 @@ ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime)
 
    offer->reads = eina_list_append(offer->reads, handler);
    return;
+}
+
+EAPI void
+ecore_wl2_offer_proxy_receive(Ecore_Wl2_Offer *offer, const char *mime, int fd)
+{
+   EINA_SAFETY_ON_NULL_RETURN(offer);
+
+   if (!offer->proxied) offer->ref++;
+   offer->proxied = 1;
+   wl_data_offer_receive(offer->offer, mime, fd);
+}
+
+EAPI void
+ecore_wl2_offer_proxy_receive_end(Ecore_Wl2_Offer *offer)
+{
+   EINA_SAFETY_ON_NULL_RETURN(offer);
+
+   if (!offer->proxied) return;
+   offer->proxied = 0;
+   _ecore_wl2_offer_unref(offer);
 }
 
 EAPI void

@@ -1412,6 +1412,28 @@ EAPI void ecore_wl2_offer_accept(Ecore_Wl2_Offer *offer, const char *mime_type);
 EAPI void ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime);
 
 /**
+ * Request the data from this offer on an externally managed fd.
+ * The event ECORE_WL2_EVENT_OFFER_DATA_READY is called when the data is available.
+ * There offer will be not destroyed as long as requested data is not emitted by the event.
+ *
+ * @param offer the offer to use
+ * @param mime the mimetype to receive
+ * @param fd the fd to pass for receiving
+ *
+ * @since 1.20
+ */
+EAPI void ecore_wl2_offer_proxy_receive(Ecore_Wl2_Offer *offer, const char *mime, int fd);
+
+/**
+ * End the use of a proxy received offer. This may invalidate the offer object
+ *
+ * @param offer the offer
+ *
+ * @since 1.20
+ */
+EAPI void ecore_wl2_offer_proxy_receive_end(Ecore_Wl2_Offer *offer);
+
+/**
  * Check if the given offer supports the given mimetype
  *
  * @param offer the offer to use
