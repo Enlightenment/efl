@@ -81,7 +81,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
             alpha: bool; [[$true by default.]]
          }
       }
-      @property map_raw_coord {
+      @property map_coord_absolute {
          [[A point's absolute coordinate on the canvas.
 
            This sets/gets the fixed point's coordinate in the map. Note that points

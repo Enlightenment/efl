@@ -96,25 +96,25 @@ _slice_apply(State *st, Slice *sl,
         if (st->dir == 0)
           {
              int p[4] = { 0, 1, 2, 3 };
-             efl_gfx_map_raw_coord_set(sl->obj, i, ox + sl->x[p[i]], oy + sl->y[p[i]], sl->z[p[i]]);
+             efl_gfx_map_coord_absolute_set(sl->obj, i, ox + sl->x[p[i]], oy + sl->y[p[i]], sl->z[p[i]]);
              efl_gfx_map_uv_set(sl->obj, i, sl->u[p[i]] , sl->v[p[i]]);
           }
         else if (st->dir == 1)
           {
              int p[4] = { 1, 0, 3, 2 };
-             efl_gfx_map_raw_coord_set(sl->obj, i, ox + (w - sl->x[p[i]]), oy + sl->y[p[i]], sl->z[p[i]]);
+             efl_gfx_map_coord_absolute_set(sl->obj, i, ox + (w - sl->x[p[i]]), oy + sl->y[p[i]], sl->z[p[i]]);
              efl_gfx_map_uv_set(sl->obj, i, 1. - sl->u[p[i]] , sl->v[p[i]]);
           }
         else if (st->dir == 2)
           {
              int p[4] = { 1, 0, 3, 2 };
-             efl_gfx_map_raw_coord_set(sl->obj, i, ox + sl->y[p[i]], oy + sl->x[p[i]], sl->z[p[i]]);
+             efl_gfx_map_coord_absolute_set(sl->obj, i, ox + sl->y[p[i]], oy + sl->x[p[i]], sl->z[p[i]]);
              efl_gfx_map_uv_set(sl->obj, i, sl->v[p[i]] , sl->u[p[i]]);
           }
         else if (st->dir == 3)
           {
              int p[4] = { 0, 1, 2, 3 };
-             efl_gfx_map_raw_coord_set(sl->obj, i, ox + sl->y[p[i]], oy + (w - sl->x[p[i]]), sl->z[p[i]]);
+             efl_gfx_map_coord_absolute_set(sl->obj, i, ox + sl->y[p[i]], oy + (w - sl->x[p[i]]), sl->z[p[i]]);
              efl_gfx_map_uv_set(sl->obj, i, sl->v[p[i]] , 1. - sl->u[p[i]]);
           }
      }
@@ -131,8 +131,8 @@ _slice_3d(State *st EINA_UNUSED, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coo
      {
         double xx, yy;
 
-        efl_gfx_map_raw_coord_get(sl->obj, i, &xx, &yy, NULL);
-        efl_gfx_map_raw_coord_set(sl->obj, i, xx, yy, 0);
+        efl_gfx_map_coord_absolute_get(sl->obj, i, &xx, &yy, NULL);
+        efl_gfx_map_coord_absolute_set(sl->obj, i, xx, yy, 0);
      }
    efl_gfx_visible_set(sl->obj, efl_gfx_map_clockwise_get(sl->obj));
 }

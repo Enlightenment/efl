@@ -534,8 +534,8 @@ _efl_gfx_map_map_alpha_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
 }
 
 EOLIAN static void
-_efl_gfx_map_map_raw_coord_get(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
-                               int idx, double *x, double *y, double *z)
+_efl_gfx_map_map_coord_absolute_get(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
+                                    int idx, double *x, double *y, double *z)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
    Evas_Map *m;
@@ -691,8 +691,8 @@ _gfx_map_op_add(Eo *eo_obj, Efl_Gfx_Map_Data *pd, Gfx_Map_Op_Type type,
 }
 
 EOLIAN static void
-_efl_gfx_map_map_raw_coord_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
-                               int idx, double x, double y, double z)
+_efl_gfx_map_map_coord_absolute_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
+                                    int idx, double x, double y, double z)
 {
    Gfx_Map_Op *op;
 

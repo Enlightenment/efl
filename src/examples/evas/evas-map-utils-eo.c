@@ -131,10 +131,10 @@ _anim_cb(void *data)
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);
-   efl_gfx_map_raw_coord_set(o, 0, x, y + h, 0);
-   efl_gfx_map_raw_coord_set(o, 1, x + w, y + h, 0);
-   efl_gfx_map_raw_coord_set(o, 2, win_w - 10, win_h - 30, 0);
-   efl_gfx_map_raw_coord_set(o, 3, (win_w / 2) + 10, win_h - 30, 0);
+   efl_gfx_map_coord_absolute_set(o, 0, x, y + h, 0);
+   efl_gfx_map_coord_absolute_set(o, 1, x + w, y + h, 0);
+   efl_gfx_map_coord_absolute_set(o, 2, win_w - 10, win_h - 30, 0);
+   efl_gfx_map_coord_absolute_set(o, 3, (win_w / 2) + 10, win_h - 30, 0);
    efl_gfx_map_uv_set(o, 0, 0, 1);
    efl_gfx_map_uv_set(o, 1, 1, 1);
    efl_gfx_map_uv_set(o, 2, 1, 2. / 3.);
