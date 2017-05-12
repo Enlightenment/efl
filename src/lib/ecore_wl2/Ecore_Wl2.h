@@ -1087,6 +1087,16 @@ EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **type
 EAPI uint32_t ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window);
 
 /**
+ * Call wl_data_source.set_actions on an existing source
+ *
+ * @param input the input to use
+ *
+ * @see ecore_wl2_dnd_drag_start for a more useful function.
+ *
+ * @since 1.20
+ */
+EAPI EAPI void ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input);
+/**
  * End a drag started by a call to ecore_wl2_dnd_drag_start
  *
  * @param input the input object on which the drag was started

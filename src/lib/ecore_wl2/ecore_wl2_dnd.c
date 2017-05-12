@@ -491,6 +491,17 @@ ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore
 }
 
 EAPI void
+ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN(input);
+   EINA_SAFETY_ON_NULL_RETURN(input->data.drag.source);
+   EINA_SAFETY_ON_NULL_RETURN(input->data.drag.types.data);
+   if (input->display->wl.data_device_manager_version >= WL_DATA_SOURCE_SET_ACTIONS_SINCE_VERSION)
+     wl_data_source_set_actions(input->data.drag.source,
+       WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE | WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY);
+}
+
+EAPI void
 ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input)
 {
    Ecore_Wl2_Event_Dnd_End *ev;
