@@ -947,6 +947,7 @@ EAPI Eina_Iterator *
 ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(display->pid, NULL);
    return eina_inlist_iterator_new(display->inputs);
 }
 
