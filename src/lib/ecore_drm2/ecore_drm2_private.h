@@ -646,6 +646,7 @@ typedef struct _Ecore_Drm2_Plane_State
 
    /* these are not part of an atomic state, but we store these here
     * so that we do not have to refetch properties when iterating planes */
+   Ecore_Drm2_Fb *fb;
    uint32_t rotation_map[6];
    uint32_t supported_rotations;
 
@@ -701,12 +702,11 @@ struct _Ecore_Drm2_Fb
    uint32_t format;
 
    void *gbm_bo;
+   void *mmap;
 
    Eina_Bool gbm : 1;
    Eina_Bool dmabuf : 1;
-   Eina_Bool busy : 1;
-
-   void *mmap;
+   Eina_Bool dead : 1;
 };
 
 struct _Ecore_Drm2_Plane
@@ -795,6 +795,7 @@ struct _Ecore_Drm2_Output
 
    Eina_List *plane_states;
    Eina_List *planes;
+   Eina_List *fbs;
 
    Eina_Bool connected : 1;
    Eina_Bool primary : 1;
@@ -837,6 +838,8 @@ struct _Ecore_Drm2_Device
 };
 
 Eina_Bool _fb_atomic_flip_test(Ecore_Drm2_Output *output);
+void _ecore_drm2_fb_ref(Ecore_Drm2_Fb *);
+void _ecore_drm2_fb_deref(Ecore_Drm2_Fb *);
 
 /* extern int (*sym_drmClose)(int fd); */
 /* extern int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl); */

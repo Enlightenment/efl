@@ -41,7 +41,7 @@ _evas_outbuf_fb_cb_destroy(struct gbm_bo *bo EINA_UNUSED, void *data)
    Ecore_Drm2_Fb *fb;
 
    fb = data;
-   if (fb) ecore_drm2_fb_destroy(fb);
+   if (fb) ecore_drm2_fb_discard(fb);
 }
 
 static Ecore_Drm2_Fb *

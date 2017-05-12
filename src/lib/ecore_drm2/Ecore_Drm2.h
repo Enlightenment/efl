@@ -803,16 +803,6 @@ EAPI Ecore_Drm2_Fb *ecore_drm2_fb_create(int fd, int width, int height, int dept
 EAPI Ecore_Drm2_Fb *ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo);
 
 /**
- * Destroy a framebuffer object
- *
- * @param fb
- *
- * @ingroup Ecore_Drm2_Fb_Group
- * @since 1.18
- */
-EAPI void ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb);
-
-/**
  * Get a framebuffer's mmap'd data
  *
  * @param fb
@@ -899,17 +889,6 @@ EAPI Eina_Bool ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output);
  * @since 1.19
  */
 EAPI Eina_Bool ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb);
-
-/**
- * Change the Ecore_Drm2_Fb's busy status
- *
- * @param fb
- * @param busy The new busy status
- *
- * @ingroup Ecore_Drm2_Fb_Group
- * @since 1.19
- */
-EAPI void ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy);
 
 /**
  * Try to force a framebuffer release for an output
@@ -1045,6 +1024,18 @@ EAPI void ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y
  */
 EAPI Eina_Bool ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb);
 
+/**
+ * Discard a framebuffer object
+ *
+ * Decreases the refcount on a fb object.  It will be destroyed when it's
+ * no longer attached to scanout or otherwise in use.
+ *
+ * @param fb
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.20
+ */
+EAPI void ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb);
 
 # endif
 

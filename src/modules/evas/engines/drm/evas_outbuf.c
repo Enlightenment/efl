@@ -81,7 +81,7 @@ _outbuf_fb_create(Outbuf *ob, Outbuf_Fb *ofb)
 static void
 _outbuf_fb_destroy(Outbuf_Fb *ofb)
 {
-   ecore_drm2_fb_destroy(ofb->fb);
+   ecore_drm2_fb_discard(ofb->fb);
 
    memset(ofb, 0, sizeof(*ofb));
    ofb->valid = EINA_FALSE;

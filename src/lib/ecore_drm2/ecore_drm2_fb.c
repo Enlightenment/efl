@@ -142,10 +142,12 @@ err:
    return NULL;
 }
 
-EAPI void
-ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
+static void
+_ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN(fb);
+
+   if (!fb->dead) ERR("Destroying an fb that hasn't been discarded");
 
    if (fb->mmap) munmap(fb->mmap, fb->sizes[0]);
 
@@ -161,6 +163,32 @@ ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
      }
 
    free(fb);
+}
+
+void
+_ecore_drm2_fb_ref(Ecore_Drm2_Fb *fb)
+{
+   fb->ref++;
+}
+
+void
+_ecore_drm2_fb_deref(Ecore_Drm2_Fb *fb)
+{
+   fb->ref--;
+   if (fb->ref) return;
+
+   _ecore_drm2_fb_destroy(fb);
+}
+
+
+EAPI void
+ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb)
+{
+   EINA_SAFETY_ON_NULL_RETURN(fb);
+   EINA_SAFETY_ON_TRUE_RETURN(fb->ref < 1);
+
+   fb->dead = EINA_TRUE;
+   _ecore_drm2_fb_deref(fb);
 }
 
 EAPI void *
@@ -213,8 +241,8 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 static void
 _release_buffer(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State *s)
 {
-   s->fb->busy = EINA_FALSE;
    if (output->release_cb) output->release_cb(output->release_data, s->fb);
+   _ecore_drm2_fb_deref(s->fb);
    s->fb = NULL;
 #ifdef HAVE_ATOMIC_DRM
    if (s->atomic_req)
@@ -226,6 +254,8 @@ _release_buffer(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State *s)
 EAPI Eina_Bool
 ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 {
+   Ecore_Drm2_Fb *fb;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
    if (output->current.fb && (output->current.fb != output->pending.fb))
@@ -249,6 +279,10 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
      }
 
 #endif
+   EINA_LIST_FREE(output->fbs, fb)
+     _ecore_drm2_fb_deref(fb);
+   output->fbs = NULL;
+
    return !!output->next.fb;
 }
 
@@ -427,7 +461,7 @@ _fb_flip(Ecore_Drm2_Output *output)
 
         if (output->current.fb) _release_buffer(output, &output->current);
         output->current.fb = fb;
-        output->current.fb->busy = EINA_TRUE;
+        _ecore_drm2_fb_ref(output->current.fb);
         output->next.fb = NULL;
         /* We used to return here, but now that the ticker is fixed this
          * can leave us hanging waiting for a tick to happen forever.
@@ -484,7 +518,7 @@ _fb_flip(Ecore_Drm2_Output *output)
    else if (ret < 0)
      {
         output->next.fb = fb;
-        output->next.fb->busy = EINA_TRUE;
+        _ecore_drm2_fb_ref(output->next.fb);
         return 0;
      }
 
@@ -501,11 +535,12 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 
    if (!output->enabled) return -1;
 
+   if (fb) _ecore_drm2_fb_ref(fb);
+
    if (output->pending.fb)
      {
         if (output->next.fb) _release_buffer(output, &output->next);
         output->next.fb = fb;
-        if (output->next.fb) output->next.fb->busy = EINA_TRUE;
         return 0;
      }
    if (!fb) fb = output->next.fb;
@@ -513,14 +548,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    /* So we can generate a tick by flipping to the current fb */
    if (!fb) fb = output->current.fb;
 
-   if (output->next.fb)
-     {
-        output->next.fb->busy = EINA_FALSE;
-        output->next.fb = NULL;
-#ifdef HAVE_ATOMIC_DRM
-        output->next.atomic_req = NULL;
-#endif
-     }
+   if (output->next.fb) _release_buffer(output, &output->next);
 
    /* If we don't have an fb to set by now, BAIL! */
    if (!fb) return -1;
@@ -533,7 +561,6 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
      ret = _fb_flip(output);
 
    output->pending.fb = output->prep.fb;
-   output->pending.fb->busy = EINA_TRUE;
    output->prep.fb = NULL;
 #ifdef HAVE_ATOMIC_DRM
    output->pending.atomic_req = output->prep.atomic_req;
@@ -546,14 +573,8 @@ EAPI Eina_Bool
 ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
-   return fb->busy;
-}
 
-EAPI void
-ecore_drm2_fb_busy_set(Ecore_Drm2_Fb *fb, Eina_Bool busy)
-{
-   EINA_SAFETY_ON_NULL_RETURN(fb);
-   fb->busy = busy;
+   return !!(fb->ref - 1);
 }
 
 EAPI Eina_Bool
