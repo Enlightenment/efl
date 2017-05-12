@@ -3300,8 +3300,8 @@ _ecore_evas_mouse_move_process_internal(Ecore_Evas *ee,
    if (!feed) return;
    if (ee->rotation == 0)
      {
-        evt_x = x;
-        evt_y = y;
+        evt_x = x - fx;
+        evt_y = y - fy;
      }
    else if (ee->rotation == 90)
      {
