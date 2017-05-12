@@ -174,6 +174,7 @@ struct regular_type_def
    std::string base_type;
    qualifier_def base_qualifier;
    std::vector<std::string> namespaces;
+   bool is_function_pointer;
 };
 
 inline bool operator==(regular_type_def const& rhs, regular_type_def const& lhs)
@@ -242,7 +243,7 @@ inline bool operator!=(type_def const& lhs, type_def const& rhs)
   return !(lhs == rhs);
 }
         
-type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void", false};
+type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}, false}, "void", false};
         
 inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit)
 {
@@ -252,17 +253,19 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
    switch( ::eolian_type_type_get(eolian_type))
      {
      case EOLIAN_TYPE_VOID:
-       original_type = attributes::regular_type_def{"void", {qualifiers(eolian_type), {}}, {}};
+       original_type = attributes::regular_type_def{"void", {qualifiers(eolian_type), {}}, {}, false};
        break;
      case EOLIAN_TYPE_REGULAR:
        {
          if(c_type == "va_list *")
            throw std::runtime_error("");
          std::vector<std::string> namespaces;
+         const Eolian_Typedecl *tpd = ::eolian_type_typedecl_get(eolian_type);
+         bool is_fp = tpd && ::eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_FUNCTION_POINTER;
          for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
                , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
            namespaces.push_back(&*namespace_iterator);
-         original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces}};
+         original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, is_fp}};
        }
        break;
      case EOLIAN_TYPE_CLASS:
@@ -295,7 +298,7 @@ inline void type_def::set(Eolian_Expression_Type eolian_exp_type)
     switch(eolian_exp_type)
       {
       case EOLIAN_EXPR_INT:
-        original_type = attributes::regular_type_def{"int", {{}, {}}, {}};
+        original_type = attributes::regular_type_def{"int", {{}, {}}, {}, false};
         c_type = "int";
         break;
       default:
