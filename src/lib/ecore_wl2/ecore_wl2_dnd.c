@@ -68,9 +68,6 @@ _win_id_get(Ecore_Wl2_Input *input)
    else if (input->focus.keyboard)
      win = input->focus.keyboard->id;
 
-   if (win == 0)
-     ERR("Failed to fetch window id");
-
    return win;
 }
 
