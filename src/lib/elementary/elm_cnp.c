@@ -2389,6 +2389,8 @@ struct _Wl_Cnp_Selection
    Elm_Sel_Format format;
    Ecore_Wl2_Window *win;
    Elm_Xdnd_Action action;
+   uint32_t selection_serial;
+   uint32_t drag_serial;
 
    Eina_Bool active : 1;
 };
@@ -2942,7 +2944,7 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
           }
         types[count - 1] = 0;
 
-        ecore_wl2_dnd_selection_set(ecore_wl2_window_input_get(win), types);
+        sel->selection_serial = ecore_wl2_dnd_selection_set(ecore_wl2_window_input_get(win), types);
 
         free(types);
         return EINA_TRUE;
@@ -3142,7 +3144,7 @@ _wl_elm_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection EINA_UNUSED
    ELM_SAFE_FREE(sel->selbuf, free);
    sel->buflen = 0;
    /* sel->clear(); */
-   ecore_wl2_dnd_selection_clear(ecore_wl2_window_input_get(_wl_elm_widget_window_get(obj)));
+   sel->selection_serial = ecore_wl2_dnd_selection_clear(ecore_wl2_window_input_get(_wl_elm_widget_window_get(obj)));
 
    return EINA_TRUE;
 }
@@ -3163,6 +3165,9 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
    cnp_debug("In\n");
    ev = event;
    sel = data;
+   if ((ev->serial != sel->selection_serial) &&
+       (ev->serial != sel->drag_serial))
+    return ECORE_CALLBACK_RENEW;
 
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
@@ -3455,7 +3460,7 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
         parent = ecore_evas_wayland2_window_get(ee);
      }
 
-   ecore_wl2_dnd_drag_start(ecore_wl2_window_input_get(win), parent, win);
+   wl_cnp_selection.drag_serial = ecore_wl2_dnd_drag_start(ecore_wl2_window_input_get(win), parent, win);
 
    return EINA_TRUE;
 }
@@ -3723,7 +3728,8 @@ _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    cnp_debug("In\n");
 
    ev = event;
-
+   if (ev->serial != wl_cnp_selection.drag_serial)
+    return ECORE_CALLBACK_RENEW;
    if (dragdonecb) dragdonecb(dragdonedata, dragwidget);
 
    if (dragwin)
