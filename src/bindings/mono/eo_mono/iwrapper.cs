@@ -170,12 +170,25 @@ public interface IWrapper
     }
 }
 
-public class MarshalTest<T> : ICustomMarshaler
+public interface IOwnershipTag
+{
+}
+
+public class OwnTag : IOwnershipTag
+{
+}
+
+public class NonOwnTag : IOwnershipTag
+{
+}
+
+public class MarshalTest<T, U> : ICustomMarshaler
+    where U : IOwnershipTag
 {
     public static ICustomMarshaler GetInstance(string cookie)
     {
         eina.Log.Debug("MarshalTest.GetInstace cookie " + cookie);
-        return new MarshalTest<T>();
+        return new MarshalTest<T, U>();
     }
     public void CleanUpManagedData(object ManagedObj)
     {
@@ -199,12 +212,17 @@ public class MarshalTest<T> : ICustomMarshaler
     public IntPtr MarshalManagedToNative(object ManagedObj)
     {
         eina.Log.Debug("MarshalTest.MarshallManagedToNative");
-        return ((IWrapper)ManagedObj).raw_handle;
+        var r = ((IWrapper)ManagedObj).raw_handle;
+        if (typeof(U) == typeof(OwnTag))
+            efl.eo.Globals.efl_ref(r);
+        return r;
     }
 
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
         eina.Log.Debug("MarshalTest.MarshalNativeToManaged");
+        if (typeof(U) != typeof(OwnTag))
+            efl.eo.Globals.efl_ref(pNativeData);
         return Activator.CreateInstance(typeof(T), new System.Object[] {pNativeData});
 //        return null;
     }

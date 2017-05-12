@@ -116,7 +116,7 @@ struct marshall_annotation_visitor_generate
      return as_generator
        ((is_return ? return_prefix : no_return_prefix)
         << *(lower_case[string] << ".") << string
-        << "Concrete>))]"
+        << "Concrete, efl.eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
         ).generate(sink, std::make_tuple(klass_name.namespaces, klass_name.eolian_name), *context);
    }
    bool operator()(attributes::complex_type_def const&) const
@@ -211,7 +211,7 @@ struct marshall_native_annotation_visitor_generate
      return as_generator
        ((is_return ? return_prefix : no_return_prefix)
         << *(lower_case[string] << ".") << string
-        << "Concrete>))]"
+        << "Concrete, efl.eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
         ).generate(sink, std::make_tuple(klass_name.namespaces, klass_name.eolian_name), *context);
    }
    bool operator()(attributes::complex_type_def const&) const
