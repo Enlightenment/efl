@@ -223,7 +223,7 @@ class Test.Testing (Efl.Object) {
 
       eina_array_int_in_own {
          params {
-            @in arr: own(array<int>);
+            @in arr: own(array<own(ptr(int))>);
          }
          return: bool;
       }
@@ -243,7 +243,7 @@ class Test.Testing (Efl.Object) {
 
       eina_array_int_out_own {
          params {
-            @out arr: own(array<int>);
+            @out arr: own(array<own(ptr(int))>);
          }
          return: bool;
       }
@@ -256,7 +256,7 @@ class Test.Testing (Efl.Object) {
       }
 
       eina_array_int_return_own {
-         return: own(array<int>);
+         return: own(array<own(ptr(int))>);
       }
 
       /* String */
@@ -269,7 +269,7 @@ class Test.Testing (Efl.Object) {
 
       eina_array_str_in_own {
          params {
-            @in arr: own(array<string>);
+            @in arr: own(array<own(string)>);
          }
          return: bool;
       }
@@ -289,7 +289,7 @@ class Test.Testing (Efl.Object) {
 
       eina_array_str_out_own {
          params {
-            @out arr: own(array<string>);
+            @out arr: own(array<own(string)>);
          }
          return: bool;
       }
@@ -302,7 +302,7 @@ class Test.Testing (Efl.Object) {
       }
 
       eina_array_str_return_own {
-         return: own(array<string>);
+         return: own(array<own(string)>);
       }
 
       /* Object */
@@ -315,7 +315,7 @@ class Test.Testing (Efl.Object) {
 
       eina_array_obj_in_own {
          params {
-            @in arr: own(array<Test.Numberwrapper>);
+            @in arr: own(array<own(Test.Numberwrapper)>);
          }
          return: bool;
       }
@@ -335,7 +335,7 @@ class Test.Testing (Efl.Object) {
 
       eina_array_obj_out_own {
          params {
-            @out arr: own(array<Test.Numberwrapper>);
+            @out arr: own(array<own(Test.Numberwrapper)>);
          }
          return: bool;
       }
@@ -348,7 +348,7 @@ class Test.Testing (Efl.Object) {
       }
 
       eina_array_obj_return_own {
-         return: own(array<Test.Numberwrapper>);
+         return: own(array<own(Test.Numberwrapper)>);
       }
    }
    implements {

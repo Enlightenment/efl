@@ -159,7 +159,10 @@ struct native_convert_in_variable_generator
           if (!complex)
             return false;
           return as_generator(
-               "var " << string << " = new eina.Array<" << (type % ", ") << ">(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false") << ");\n"
+               "var " << string << " = new eina.Array<" << (type % ", ") << ">(" << escape_keyword(param.param_name)
+               << ", " << (param.type.has_own ? "true" : "false")
+               << ", " << (complex->subtypes.front().has_own ? "true" : "false")
+               << ");\n"
             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), complex->subtypes), context);
        }
       return true;
@@ -191,17 +194,22 @@ struct convert_in_variable_generator
         }
       else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *")
         {
+           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
+           if (!complex)
+             return false;
            auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
                  "var " << string << " = " << escape_keyword(param.param_name) << ".Handle;\n"
               ).generate(sink, var_name, context))
              return false;
-           if (param.type.has_own)
-             {
-                return as_generator(
-                     escape_keyword(param.param_name) << ".SetAllOwn(false);\n"
-                  ).generate(sink, attributes::unused, context);
-             }
+           if (param.type.has_own && !as_generator(
+                     escape_keyword(param.param_name) << ".Own = false;\n"
+                  ).generate(sink, attributes::unused, context))
+             return false;
+           if (complex->subtypes.front().has_own && !as_generator(
+                     escape_keyword(param.param_name) << ".OwnContent = false;\n"
+                  ).generate(sink, attributes::unused, context))
+             return false;
         }
       return true;
    }
@@ -337,7 +345,10 @@ struct convert_out_assign_generator
            if (!complex)
              return false;
            return as_generator(
-               string << " = new eina.Array<" << (type % ", ") << ">(" << string << ", " << (param.type.has_own ? "true" : "false") << ");\n"
+               string << " = new eina.Array<" << (type % ", ") << ">(" << string
+               << ", " << (param.type.has_own ? "true" : "false")
+               << ", " << (complex->subtypes.front().has_own ? "true" : "false")
+               << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), complex->subtypes, out_variable_name(param.param_name)), context);
         }
       return true;
@@ -395,7 +406,9 @@ struct convert_return_generator
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
            if (!complex)
              return false;
-           if (!as_generator("return new eina.Array<" << (type % ", ") << ">(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"} << ");\n")
+           if (!as_generator("return new eina.Array<" << (type % ", ") << ">(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"}
+                   << ", " << (complex->subtypes.front().has_own ? "true" : "false")
+                   << ");\n")
              .generate(sink, complex->subtypes, context))
              return false;
        }
@@ -449,14 +462,22 @@ struct native_convert_out_assign_generator
                || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
               )
         {
+           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
+           if (!complex)
+             return false;
+           auto outvar = out_variable_name(param.param_name);
            if (!as_generator(
                 string << " = " << string << ".Handle;\n"
-              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context))
+              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), outvar), context))
              return false;
-           if (param.type.has_own)
-             return as_generator(
-                 string << ".SetAllOwn(false);\n"
-               ).generate(sink, out_variable_name(param.param_name), context);
+           if (param.type.has_own && !as_generator(
+                 string << ".Own = false;\n"
+               ).generate(sink, outvar, context))
+             return false;
+           if (complex->subtypes.front().has_own && !as_generator(
+                 string << ".OwnContent = false;\n"
+               ).generate(sink, outvar, context))
+             return false;
         }
       return true;
    }
@@ -520,7 +541,13 @@ struct native_convert_return_generator
        }
      else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *")
        {
-          if (ret_type.has_own && !as_generator("_ret_var.SetAllOwn(false); ")
+          attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
+          if (!complex)
+            return false;
+          if (ret_type.has_own && !as_generator("_ret_var.Own = false; ")
+              .generate(sink, attributes::unused, context))
+            return false;
+          if (complex->subtypes.front().has_own && !as_generator("_ret_var.OwnContent = false; ")
               .generate(sink, attributes::unused, context))
             return false;
 

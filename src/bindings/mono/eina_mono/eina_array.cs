@@ -169,10 +169,16 @@ public class Array<T> : IDisposable
         return (int) eina_array_count_custom_export_mono(Handle);
     }
 
-    public void SetAllOwn(bool own)
+    public void SetOwnership(bool ownAll)
+    {
+        Own = ownAll;
+        OwnContent = ownAll;
+    }
+
+    public void SetOwnership(bool own, bool ownContent)
     {
         Own = own;
-        OwnContent = own;
+        OwnContent = ownContent;
     }
 
     public bool Push(T val)
