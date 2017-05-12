@@ -94,6 +94,7 @@ data_source_target(void *data, struct wl_data_source *source EINA_UNUSED, const 
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Data_Source_Target));
    if (!ev) return;
+   ev->seat = input->id;
 
    if (mime_type) ev->type = strdup(mime_type);
 
@@ -128,6 +129,7 @@ data_source_send(void *data, struct wl_data_source *source, const char *mime_typ
 
    ev->fd = fd;
    ev->type = strdup(mime_type);
+   ev->seat = input->id;
    if (source == input->data.selection.source)
      ev->serial = input->data.selection.serial;
    else
@@ -145,6 +147,8 @@ event_fill(struct _Ecore_Wl2_Event_Data_Source_Event *ev, Ecore_Wl2_Input *input
 
    ev->win = _win_id_get(input);
    ev->action = input->data.drag.action;
+   ev->seat = input->id;
+   ev->serial = input->data.drag.serial;
 }
 
 static void
@@ -264,6 +268,7 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
    ev->x = x;
    ev->y = y;
    ev->offer = input->drag;
+   ev->seat = input->id;
 
    ecore_event_add(ECORE_WL2_EVENT_DND_ENTER, ev, _unset_serial, input->drag);
 }
@@ -293,6 +298,7 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
    ev->win = input->drag->window_id;
    ev->offer = input->drag;
    ev->offer->ref++;
+   ev->seat = input->id;
 
    input->drag->window_id = 0;
    ecore_event_add(ECORE_WL2_EVENT_DND_LEAVE, ev, _delay_offer_destroy, ev->offer);
@@ -319,6 +325,7 @@ _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, uint32_t serial)
    ev->x = x;
    ev->y = y;
    ev->offer = input->drag;
+   ev->seat = input->id;
 
    ecore_event_add(ECORE_WL2_EVENT_DND_MOTION, ev, _unset_serial, input->drag);
 }
@@ -338,6 +345,7 @@ _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
    ev->offer = input->drag;
+   ev->seat = input->id;
 
    ecore_event_add(ECORE_WL2_EVENT_DND_DROP, ev, NULL, NULL);
 }
@@ -755,6 +763,7 @@ _offer_receive_fd_cb(void *data, Ecore_Fd_Handler *fdh)
         ev->data = buf->data;
         ev->len = buf->len;
         ev->mimetype = buf->mimetype;
+        ev->seat = buf->offer->input->id;
         ecore_event_add(ECORE_WL2_EVENT_OFFER_DATA_READY, ev, _free_buf, buf);
 
         buf->offer->reads = eina_list_remove(buf->offer->reads, fdh);

@@ -103,12 +103,14 @@ typedef struct _Ecore_Wl2_Event_Dnd_Enter
    unsigned int win, source;
    Ecore_Wl2_Offer *offer;
    int x, y;
+   unsigned int seat;
 } Ecore_Wl2_Event_Dnd_Enter;
 
 typedef struct _Ecore_Wl2_Event_Dnd_Leave
 {
    unsigned int win, source;
    Ecore_Wl2_Offer *offer;
+   unsigned int seat;
 } Ecore_Wl2_Event_Dnd_Leave;
 
 typedef struct _Ecore_Wl2_Event_Dnd_Motion
@@ -116,6 +118,7 @@ typedef struct _Ecore_Wl2_Event_Dnd_Motion
    unsigned int win, source;
    Ecore_Wl2_Offer *offer;
    int x, y;
+   unsigned int seat;
 } Ecore_Wl2_Event_Dnd_Motion;
 
 typedef struct _Ecore_Wl2_Event_Dnd_Drop
@@ -123,17 +126,20 @@ typedef struct _Ecore_Wl2_Event_Dnd_Drop
    unsigned int win, source;
    int x, y;
    Ecore_Wl2_Offer *offer;
+   unsigned int seat;
 } Ecore_Wl2_Event_Dnd_Drop;
 
 typedef struct _Ecore_Wl2_Event_Dnd_End
 {
    unsigned int win, source;
+   unsigned int seat;
 } Ecore_Wl2_Event_Dnd_End;
 
 struct _Ecore_Wl2_Event_Data_Source_Event
 {
    unsigned int win, source;
    Ecore_Wl2_Drag_Action action;
+   unsigned int seat;
    uint32_t serial;
 };
 
@@ -144,12 +150,14 @@ typedef struct _Ecore_Wl2_Event_Data_Source_Event Ecore_Wl2_Event_Data_Source_Ac
 typedef struct _Ecore_Wl2_Event_Data_Source_Target
 {
    char *type;
+   unsigned int seat;
 } Ecore_Wl2_Event_Data_Source_Target;
 
 typedef struct _Ecore_Wl2_Event_Data_Source_Send
 {
    char *type;
    int fd;
+   unsigned int seat;
    uint32_t serial;
 } Ecore_Wl2_Event_Data_Source_Send;
 
@@ -219,6 +227,7 @@ typedef struct _Ecore_Wl2_Event_Offer_Data_Ready
    char *data;
    int len;
    const char *mimetype;
+   unsigned int seat;
 } Ecore_Wl2_Event_Offer_Data_Ready;
 
 typedef enum _Ecore_Wl2_Window_Type
