@@ -824,6 +824,16 @@ _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsign
         input->xkb.keymap = NULL;
         return;
      }
+   {
+      Ecore_Wl2_Event_Seat_Keymap_Changed *ev = malloc(sizeof(Ecore_Wl2_Event_Seat_Keymap_Changed));
+      if (ev)
+        {
+           ev->id = input->id;
+           ev->display = input->display;
+           input->display->refs++;
+           ecore_event_add(ECORE_WL2_EVENT_SEAT_KEYMAP_CHANGED, ev, _display_event_free, ev->display);
+        }
+   }
 
    input->xkb.control_mask =
      1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_CTRL);
@@ -1019,6 +1029,7 @@ static void
 _keyboard_cb_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, int32_t rate, int32_t delay)
 {
    Ecore_Wl2_Input *input;
+   Ecore_Wl2_Event_Seat_Keyboard_Repeat_Changed *ev;
 
    input = data;
    if (!input) return;
@@ -1032,6 +1043,14 @@ _keyboard_cb_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, 
    input->repeat.enabled = EINA_TRUE;
    input->repeat.rate = (1.0 / rate);
    input->repeat.delay = (delay / 1000.0);
+   ev = malloc(sizeof(Ecore_Wl2_Event_Seat_Keymap_Changed));
+   if (ev)
+     {
+        ev->id = input->id;
+        ev->display = input->display;
+        ev->display->refs++;
+        ecore_event_add(ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED, ev, _display_event_free, ev->display);
+     }
 }
 
 static const struct wl_keyboard_listener _keyboard_listener =

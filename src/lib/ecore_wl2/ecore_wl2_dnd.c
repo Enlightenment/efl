@@ -379,11 +379,19 @@ _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
 void
 _ecore_wl2_dnd_selection(Ecore_Wl2_Input *input, struct wl_data_offer *offer)
 {
+   Ecore_Wl2_Event_Seat_Selection *ev;
+
    if (input->selection) _ecore_wl2_offer_unref(input->selection);
    input->selection = NULL;
 
    if (offer)
      input->selection = wl_data_offer_get_user_data(offer);
+   ev = malloc(sizeof(Ecore_Wl2_Event_Seat_Selection));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+   ev->seat = input->id;
+   ev->display = input->display;
+   ev->display->refs++;
+   ecore_event_add(ECORE_WL2_EVENT_SEAT_SELECTION, ev, _display_event_free, ev->display);
 }
 
 void

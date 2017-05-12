@@ -180,6 +180,12 @@ typedef struct _Ecore_Wl2_Event_Data_Source_Send
    Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Data_Source_Send;
 
+typedef struct Ecore_Wl2_Event_Seat_Selection
+{
+   unsigned int seat;
+   Ecore_Wl2_Display *display;
+} Ecore_Wl2_Event_Seat_Selection;
+
 typedef struct _Ecore_Wl2_Event_Seat_Name
 {
    Eina_Stringshare *name;
@@ -237,6 +243,18 @@ typedef struct _Ecore_Wl2_Event_Window_Configure_Complete
    unsigned int win;
 } Ecore_Wl2_Event_Window_Configure_Complete;
 
+typedef struct _Ecore_Wl2_Event_Input_Keymap_Changed
+{
+   unsigned int id;
+   Ecore_Wl2_Display *display;
+} Ecore_Wl2_Event_Seat_Keymap_Changed;
+
+typedef struct Ecore_Wl2_Event_Seat_Keyboard_Repeat_Changed
+{
+   unsigned int id;
+   Ecore_Wl2_Display *display;
+} Ecore_Wl2_Event_Seat_Keyboard_Repeat_Changed;
+
 typedef struct _Ecore_Wl2_Event_Sync_Done
 {
    Ecore_Wl2_Display *display;
@@ -289,6 +307,9 @@ EAPI extern int ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_DEVICE_ADDED; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_DEVICE_REMOVED; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE; /** @since 1.19 */
+EAPI extern int ECORE_WL2_EVENT_SEAT_KEYMAP_CHANGED; /** @since 1.20 */
+EAPI extern int ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED; /** @since 1.20 */
+EAPI extern int ECORE_WL2_EVENT_SEAT_SELECTION; /** @since 1.20 */
 
 /**
  * @file
