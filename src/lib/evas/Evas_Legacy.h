@@ -4975,6 +4975,38 @@ EAPI void evas_object_text_text_set(Eo *obj, const char *text);
  */
 EAPI const char *evas_object_text_text_get(const Eo *obj);
 
+/**
+ * Types of styles to be applied on text objects. The
+ * EVAS_TEXT_STYLE_SHADOW_DIRECTION_* ones are to be OR'ed together with others
+ * imposing shadow, to change the shadow's direction.
+ *
+ * @see evas_object_text_style_set()
+ * @see evas_object_text_style_get()
+ */
+typedef enum
+{
+   EVAS_TEXT_STYLE_PLAIN = 0, /**< plain, standard text */
+   EVAS_TEXT_STYLE_SHADOW, /**< text with shadow underneath */
+   EVAS_TEXT_STYLE_OUTLINE, /**< text with an outline */
+   EVAS_TEXT_STYLE_SOFT_OUTLINE, /**< text with a soft outline */
+   EVAS_TEXT_STYLE_GLOW, /**< text with a glow effect */
+   EVAS_TEXT_STYLE_OUTLINE_SHADOW, /**< text with both outline and shadow effects */
+   EVAS_TEXT_STYLE_FAR_SHADOW, /**< text with (far) shadow underneath */
+   EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW, /**< text with outline and soft shadow effects combined */
+   EVAS_TEXT_STYLE_SOFT_SHADOW, /**< text with (soft) shadow underneath */
+   EVAS_TEXT_STYLE_FAR_SOFT_SHADOW, /**< text with (far soft) shadow underneath */
+
+   // Shadow direction modifiers
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT = 0 /* 0 >> 4 */, /**< shadow growing to bottom right */
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM = 16 /* 1 >> 4 */, /**< shadow growing to the bottom */
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT = 32 /* 2 >> 4 */, /**< shadow growing to bottom left */
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT = 48 /* 3 >> 4 */, /**< shadow growing to the left */
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT = 64 /* 4 >> 4 */, /**< shadow growing to top left */
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP = 80 /* 5 >> 4 */, /**< shadow growing to the top */
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT = 96 /* 6 >> 4 */, /**< shadow growing to top right */
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT = 112 /* 7 >> 4 */ /**< shadow growing to the right */
+} Evas_Text_Style_Type;
+
 #include "canvas/evas_text.eo.legacy.h"
 
 /**

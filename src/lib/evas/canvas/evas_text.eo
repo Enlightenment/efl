@@ -1,3 +1,5 @@
+type @extern Evas.Text_Style_Type : __undefined_type;
+
 class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal)
 {
    [[Evas text class]]
@@ -11,12 +13,12 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
            underneath it, will just be shown if the object is set to one of
            the following styles:
 
-           - @Evas.Text_Style_Type.shadow
-           - @Evas.Text_Style_Type.outline_shadow
-           - @Evas.Text_Style_Type.far_shadow
-           - @Evas.Text_Style_Type.outline_soft_shadow
-           - @Evas.Text_Style_Type.soft_shadow
-           - @Evas.Text_Style_Type.far_soft_shadow
+           - $EVAS_TEXT_STYLE_TYPE_SHADOW
+           - $EVAS_TEXT_STYLE_TYPE_OUTLINE_SHADOW
+           - $EVAS_TEXT_STYLE_TYPE_FAR_SHADOW
+           - $EVAS_TEXT_STYLE_TYPE_OUTLINE_SOFT_SHADOW
+           - $EVAS_TEXT_STYLE_TYPE_SOFT_SHADOW
+           - $EVAS_TEXT_STYLE_TYPE_FAR_SOFT_SHADOW
 
            One can also change the direction where the shadow grows to, with
            @.style
@@ -75,10 +77,11 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
 
            Outline effects (colored lines around text glyphs) will just be
            shown if the object is set to one of the following styles:
-           - @Evas.Text_Style_Type.outline
-           - @Evas.Text_Style_Type.soft_outline
-           - @Evas.Text_Style_Type.outline_shadow
-           - @Evas.Text_Style_Type.outline_soft_shadow]]
+           - $EVAS_TEXT_STYLE_TYPE_OUTLINE
+           - $EVAS_TEXT_STYLE_TYPE_SOFT_OUTLINE
+           - $EVAS_TEXT_STYLE_TYPE_OUTLINE_SHADOW
+           - $EVAS_TEXT_STYLE_TYPE_OUTLINE_SOFT_SHADOW
+         ]]
          set {
          }
          get {
@@ -95,8 +98,8 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
 
            'Glow 2' effects, which are glowing colors decorating the text's
            (immediate) surroundings, will just be shown if the object is set
-           to the @Evas.Text_Style_Type.glow style. See also
-           @.glow_color.]]
+           to the $EVAS_TEXT_STYLE_TYPE_GLOW style. See also @.glow_color.
+         ]]
          set {
          }
          get {
@@ -143,7 +146,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
 
            Glow effects, which are glowing colors decorating the text's
            surroundings, will just be shown if the object is set to the
-           @Evas.Text_Style_Type.glow style.
+           $EVAS_TEXT_STYLE_TYPE_GLOW style.
 
            Note: Glow effects are placed from a short distance of the text
            itself, but not touching it. For glowing effects right on the
@@ -221,7 +224,12 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          }
       }
       last_up_to_pos @const {
-         [[Returns the logical position of the last char in the text up to the pos given. This is NOT the position of the last char because of the possibility of RTL in the text.]]
+         [[Returns the logical position of the last char in the text up to
+           the pos given.
+
+           This is NOT the position of the last char because of the possibility
+           of RTL in the text.
+         ]]
          return: int(-1); [[Logical position of the last char]]
          params {
             @in x: Evas.Coord; [[X coordinate]]
