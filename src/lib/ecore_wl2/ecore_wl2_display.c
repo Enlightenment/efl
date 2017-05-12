@@ -72,7 +72,11 @@ static const struct zxdg_shell_v6_listener _zxdg_shell_listener =
 static void
 _session_recovery_create_uuid(void *data EINA_UNUSED, struct zwp_e_session_recovery *session_recovery EINA_UNUSED, struct wl_surface *surface, const char *uuid)
 {
-   Ecore_Wl2_Window *win = wl_surface_get_user_data(surface);
+   Ecore_Wl2_Window *win;
+
+   /* surface may have been destroyed */
+   if (!surface) return;
+   win = wl_surface_get_user_data(surface);
 
    eina_stringshare_replace(&win->uuid, uuid);
 }
