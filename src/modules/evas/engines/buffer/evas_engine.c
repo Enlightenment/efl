@@ -17,12 +17,7 @@ static Evas_Func func, pfunc;
 
 
 /* engine struct data */
-typedef struct _Render_Engine Render_Engine;
-
-struct _Render_Engine
-{
-   Render_Engine_Software_Generic generic;
-};
+typedef Render_Engine_Software_Generic Render_Engine;
 
 /* prototypes we will use here */
 static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes), void (*free_update_region) (int x, int y, int w, int h, void *data), void *(*switch_buffer) (void *data, void *dest_buffer), void *switch_data);
@@ -88,7 +83,7 @@ _output_setup(int w,
                                         switch_data);
    if (!ob) goto on_error;
 
-   if (!evas_render_engine_software_generic_init(&re->generic, ob,
+   if (!evas_render_engine_software_generic_init(re, ob,
                                                  evas_buffer_outbuf_buf_swap_mode_get,
                                                  evas_buffer_outbuf_buf_rot_get,
                                                  evas_buffer_outbuf_reconfigure,
@@ -159,7 +154,7 @@ eng_output_free(void *engine EINA_UNUSED, void *data)
 
    if ((re = (Render_Engine *)data))
      {
-        evas_render_engine_software_generic_clean(&re->generic);
+        evas_render_engine_software_generic_clean(re);
         free(re);
      }
 }
@@ -170,8 +165,8 @@ eng_canvas_alpha_get(void *data)
    Render_Engine *re;
 
    if ((re = (Render_Engine *)data))
-     if (re->generic.ob->priv.back_buf)
-       return re->generic.ob->priv.back_buf->cache_entry.flags.alpha;
+     if (re->ob->priv.back_buf)
+       return re->ob->priv.back_buf->cache_entry.flags.alpha;
    return EINA_TRUE;
 }
 
