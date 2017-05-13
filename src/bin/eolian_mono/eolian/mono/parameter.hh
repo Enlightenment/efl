@@ -79,14 +79,41 @@ inline std::string direction_modifier(attributes::parameter_def const& param)
    return " ";
 }
 
+struct is_fp_visitor
+{
+   typedef is_fp_visitor visitor_type;
+   typedef bool result_type;
+
+   bool operator()(grammar::attributes::regular_type_def const &type) const
+   {
+      return type.is_function_pointer;
+   }
+
+   template<typename T>
+   bool operator()(T const &) const
+   {
+      return false;
+   }
+};
+
 struct parameter_generator
 {
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
+     // if parameter type is function pointer, return:
+     //     return as_generator(param.type param.param_name, IntPtr paran_name_data, Eina_Free_Cb paran_name_free_cb);
+     std::string param_name = escape_keyword(param.param_name);
+
+     if (!param.type.original_type.visit(is_fp_visitor{}))
+         return as_generator(
+                   direction_modifier(param) << type << " " << string
+              ).generate(sink, std::make_tuple(param, param_name), context);
+
      return as_generator(
-             direction_modifier(param) << type << " " << string
-        ).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
+               type << " " << param_name << ", IntPtr " << param_name << "_data, Eina_Free_Cb "
+               << param_name << "_free_cb"
+           ).generate(sink, param, context);
    }
 } const parameter {};
 
@@ -95,27 +122,37 @@ struct marshall_parameter_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
+      std::string param_name = escape_keyword(param.param_name);
+
+      if (!param.type.original_type.visit(is_fp_visitor{}))
+         return as_generator(
+                 direction_modifier(param) << marshall_type << " " << string
+            ).generate(sink, std::make_tuple(param, param_name), context);
+
       return as_generator(
-              direction_modifier(param) << marshall_type << " " << string
-         ).generate(sink, std::make_tuple(param, escape_keyword(param.param_name)), context);
+               type << " " << param_name << ", IntPtr " << param_name << "_data, Eina_Free_Cb "
+               << param_name << "_free_cb"
+           ).generate(sink, param, context);
    }
 } const marshall_parameter {};
   
-inline std::string argument_forward(attributes::parameter_def const& param)
-{
-    //FIXME Support correct ownership
-     return escape_keyword(param.param_name);
-}
-
 struct argument_generator
 {
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
+     std::string param_name = escape_keyword(param.param_name);
      std::string direction = direction_modifier(param);
-     return as_generator(
-             direction << argument_forward(param)
-        ).generate(sink, attributes::unused, context);
+
+     if (!param.type.original_type.visit(is_fp_visitor{}))
+       return as_generator(
+                direction << param_name
+           ).generate(sink, attributes::unused, context);
+
+    return as_generator(
+            param_name << ", " << param_name << "_data, " << param_name << "_free_cb"
+          ).generate(sink, attributes::unused, context);
+
    }
 
 } const argument {};
@@ -132,6 +169,12 @@ struct argument_invocation_generator
        arg += out_variable_name(param.param_name);
      else if (param_should_use_in_var(param))
        arg += in_variable_name(param.param_name);
+     else if (param.type.original_type.visit(is_fp_visitor{}))
+       {
+          std::string param_name = escape_keyword(param.param_name);
+          return as_generator(param_name << ", " << param_name << "_data, " << param_name << "_free_cb")
+             .generate(sink, attributes::unused, context);
+       }
      else
        arg += escape_keyword(param.param_name);
 
