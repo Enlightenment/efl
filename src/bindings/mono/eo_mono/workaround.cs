@@ -42,10 +42,7 @@ public struct Evas_Object_Box_Layout
     IntPtr priv;
     IntPtr user_data;
 };
-public struct Eina_Free_Cb
-{
-    IntPtr data;
-};
+public delegate void Eina_Free_Cb(IntPtr data);
 public struct Evas_Object_Box_Option {
     IntPtr obj;
     [MarshalAsAttribute(UnmanagedType.U1)] bool max_reached;
