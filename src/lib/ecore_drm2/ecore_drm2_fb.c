@@ -553,7 +553,8 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    /* So we can generate a tick by flipping to the current fb */
    if (!fb) fb = output->current.fb;
 
-   if (output->next.fb) _release_buffer(output, &output->next);
+   if (output->next.fb && fb != output->next.fb)
+     _release_buffer(output, &output->next);
 
    /* If we don't have an fb to set by now, BAIL! */
    if (!fb) return -1;
