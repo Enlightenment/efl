@@ -2273,7 +2273,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
 
    TRAP(sd, show);
 
-   if (_elm_config->atspi_mode)
+   if (sd->type != ELM_WIN_SOCKET_IMAGE)
      {
         Eo *root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
         elm_interface_atspi_accessible_parent_set(obj, root);
@@ -6470,7 +6470,6 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
    Evas_Object *win;
    Eina_List *l;
 
-   Eo *root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {
         /**
@@ -6479,7 +6478,6 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
          * receive all org.a11y.window events and could keep track of active
          * windows whithin system.
          */
-        elm_interface_atspi_accessible_parent_set(win, root);
         elm_interface_atspi_window_created_signal_emit(win);
         if (elm_win_focus_get(win))
           {

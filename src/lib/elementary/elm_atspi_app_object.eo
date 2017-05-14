@@ -1,12 +1,22 @@
-class Elm.Atspi.App.Object (Efl.Object, Elm.Interface.Atspi_Accessible)
+import elm_general;
+
+class Elm.Atspi.App.Object (Elm.Atspi.Plug, Elm.Interface.Atspi_Accessible)
 {
    [[AT-SPI application object class]]
    legacy_prefix: elm_atspi_app_object;
    data: Elm_Atspi_App_Object_Data;
    implements {
+      Efl.Object.constructor;
       Efl.Object.destructor;
       Elm.Interface.Atspi_Accessible.name { get; }
       Elm.Interface.Atspi_Accessible.description { get; set; }
       Elm.Interface.Atspi_Accessible.role { get; }
+      Elm.Interface.Atspi_Accessible.index_in_parent { get; }
+      Elm.Atspi.Plug.on_embedded;
+      Elm.Atspi.Plug.on_unembedded;
+      Elm.Atspi.Plug.on_connected;
+      Elm.Atspi.Plug.on_disconnected;
+      Elm.Atspi.Plug.embed_by;
+      Elm.Atspi.Plug.unembed_by;
    }
 }

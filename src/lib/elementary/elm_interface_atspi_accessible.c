@@ -573,18 +573,19 @@ _elm_interface_atspi_accessible_efl_object_destructor(Eo *obj, Elm_Interface_Ats
    EINA_INLIST_FOREACH(pd->children, child_data)
       child_data->parent = NULL;
 
-   elm_interface_atspi_accessible_removed(obj);
    eina_stringshare_del(pd->name);
    eina_stringshare_del(pd->description);
    eina_stringshare_del(pd->translation_domain);
    elm_interface_atspi_accessible_parent_set(obj, NULL);
    elm_atspi_relation_set_free(pd->relations);
+   elm_interface_atspi_accessible_removed(obj);
 }
 
 EOLIAN Eo *
 _elm_interface_atspi_accessible_efl_object_constructor(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd)
 {
    pd->self = obj;
+   elm_interface_atspi_accessible_added(obj);
    return efl_constructor(efl_super(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
 }
 

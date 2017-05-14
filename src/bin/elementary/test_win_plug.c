@@ -5,6 +5,7 @@
 
 #define MAX_TRY 40
 
+extern char *plugid;
 static int try_num = 0;
 
 static void
@@ -171,6 +172,23 @@ _notify_error(Evas_Object *parent, const char *msg)
    evas_object_show(notif);
 }
 
+static void
+a11y_init(Evas_Object *plug)
+{
+   // assume bridge is initialized
+   Elm_Atspi_Socket *socket = efl_add(ELM_ATSPI_SOCKET_CLASS, plug);
+   Elm_Atspi_Proxy *proxy;
+
+   proxy = efl_add(ELM_ATSPI_PROXY_CLASS, socket, elm_atspi_proxy_id_constructor(efl_added, plugid));
+
+   // FIXME order seems important!
+   elm_interface_atspi_accessible_parent_set(socket, plug);
+   elm_interface_atspi_accessible_parent_set(proxy, socket);
+
+   // FIXME asume bridge is connected
+   elm_atspi_socket_embed(socket, proxy);
+}
+
 void
 test_win_plug(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -197,6 +215,9 @@ test_win_plug(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
         return;
      }
 
+   //FIXME oreder seems important
+   //a11y_init(plug);
+
    evas_object_smart_callback_add(plug, "image,deleted", cb_plug_disconnected, NULL);
    evas_object_smart_callback_add(plug, "image,resized", cb_plug_resized, NULL);
 
@@ -208,4 +229,6 @@ test_win_plug(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
 
    evas_object_resize(win, 400, 600);
    evas_object_show(win);
+
+   a11y_init(plug);
 }
