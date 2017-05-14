@@ -1,34 +1,28 @@
+import elm_general;
+
 class Elm.Atspi.Proxy (Efl.Object, Elm.Interface.Atspi_Accessible)
 {
-   [[AT-SPI Proxy class. Represents out-of-process accessibility object]]
+   [[AT-SPI Proxy class. Represents accessibility object from external process.]]
    legacy_prefix: elm_atspi_proxy;
    eo_prefix: elm_obj_atspi_proxy;
    methods {
-        @property path {
+        @property id {
              get {
-                  values {
-                     ret: string;
-                  }
+             }
+             values {
+                ret: string;
              }
         }
-        @property bus_name {
-             get {
-                  values {
-                     ret: string;
-                  }
+        id_constructor {
+             params {
+                  @in id: string;
              }
-        }
-        constructor {
-           params {
-                @in bus: string;
-                @in path: string;
-           }
         }
    }
    implements {
       Efl.Object.destructor;
    }
    constructors {
-        .constructor;
+        .id_constructor;
    }
 }

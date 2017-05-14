@@ -172,6 +172,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_scroller.h>
 #include <elm_entry.h>
 #include <elm_list.h>
+#include <elm_atspi_proxy.h>
 
 /* Interfaces */
 #include <elm_interfaces.h>
@@ -190,7 +191,8 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_actionslider.h>
 #include <elm_app.h>
 #include <elm_atspi_app_object.h>
-#include <elm_atspi_proxy.h>
+#include <elm_atspi_plug.h>
+#include <elm_atspi_socket.h>
 #include <elm_atspi_bridge.h>
 #include <elm_bg.h>
 #include <elm_box.h>

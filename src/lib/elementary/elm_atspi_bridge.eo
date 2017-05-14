@@ -20,7 +20,17 @@ class Elm.Atspi.Bridge (Efl.Object)
          set {
          }
          values {
-            ret: Efl.Object; [[Root accessible object, or null if not set ]]
+            ret: Elm.Atspi.Plug; [[Root accessible object, or null if not set ]]
+         }
+      }
+      plug_register {
+         params {
+              @in plug: Elm.Atspi.Plug;
+         }
+      }
+      plug_unregister {
+         params {
+              @in plug: Elm.Atspi.Plug;
          }
       }
    }

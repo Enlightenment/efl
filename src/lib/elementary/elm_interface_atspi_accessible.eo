@@ -1,6 +1,3 @@
-/* FIXME: This definitely shouldn't be here. */
-type Efl_Event_Cb: __undefined_type; [[Efl event callback type]]
-
 enum Elm.Atspi.Role
 {
    [[Describes the role of an object visible to AT-SPI Clients.]]
@@ -390,6 +387,8 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
             values {
                ret: Efl.Object; [[Root object]]
             }
+         }
+         set {
          }
       }
    }

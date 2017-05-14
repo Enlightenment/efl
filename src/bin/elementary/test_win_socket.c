@@ -3,6 +3,8 @@
 #endif
 #include <Elementary.h>
 
+char *plugid;
+
 static void
 _win_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -140,6 +142,29 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_show(sc);
 }
 
+static void
+_on_plug_id_changed(void *data, const Efl_Event *event)
+{
+   Elm_Atspi_Plug *plug = event->object;
+   plugid = elm_interface_atspi_socket_id_get(plug);
+   // send id using elementary IPC mechanism
+}
+
+static void
+a11y_init(Evas_Object *socket_window)
+{
+   // create a11y plug to get dbus reference to object
+   Elm_Atspi_Plug *plug = efl_add(ELM_ATSPI_PLUG_CLASS, socket_window);
+
+   // make plug parent of socket_window
+   elm_interface_atspi_accessible_parent_set(socket_window, plug);
+
+   // get address when bridge gets connected
+   efl_event_callback_add(plug, ELM_INTERFACE_ATSPI_SOCKET_EVENT_ID_CHANGED, _on_plug_id_changed, NULL);
+
+   plugid = elm_interface_atspi_socket_id_get(plug);
+}
+
 void
 test_win_socket(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -193,6 +218,7 @@ test_win_socket(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_win_autodel_set(win_socket, EINA_TRUE);
 
    fill(win_socket, EINA_TRUE);
+   a11y_init(win_socket);
 
    evas_object_resize(win_socket, 400, 600);
    evas_object_show(win_socket);

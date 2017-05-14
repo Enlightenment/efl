@@ -1,0 +1,69 @@
+import elm_general;
+
+mixin Elm.Interface.Atspi.Socket(Efl.Interface, Efl.Object)
+{
+   [[Elementary AT-SPI socket interface]]
+   eo_prefix: elm_interface_atspi_socket;
+   methods {
+        @property id {
+             get {
+             } set {
+             }
+             values {
+               ret: string;
+             }
+        }
+        @property occupied {
+             get {
+             }
+             set {
+             }
+             values {
+               ret: bool;
+             }
+        }
+        embed @pure_virtual {
+             [[ Embed remote accessible object as a child.]]
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        unembed @pure_virtual {
+             // unembed
+             params {
+                @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        embed_by @pure_virtual {
+             [[ Embed accessible object as a child of remote object.]]
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        unembed_by @pure_virtual {
+             // unembed
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        on_embedded {
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        on_unembedded {
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        on_connected {
+        }
+        on_disconnected {
+        }
+   }
+   events {
+        embedded;
+        unembedded;
+        id,changed;
+   }
+}

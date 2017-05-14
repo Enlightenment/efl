@@ -1,0 +1,13 @@
+class Elm.Atspi.Plug (Efl.Object, Elm.Interface.Atspi_Accessible,
+                      Elm.Interface.Atspi.Socket)
+{
+   [[AT-SPI Plug class.]]
+   legacy_prefix: elm_atspi_plug;
+   eo_prefix: elm_obj_atspi_plug;
+   implements {
+      Efl.Object.destructor;
+      Efl.Object.constructor;
+      Elm.Interface.Atspi.Socket.on_embedded;
+      Elm.Interface.Atspi.Socket.on_unembedded;
+   }
+}

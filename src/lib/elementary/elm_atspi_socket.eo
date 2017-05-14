@@ -1,0 +1,10 @@
+class Elm.Atspi.Socket (Efl.Object, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi.Socket)
+{
+   [[AT-SPI Socket class]]
+   legacy_prefix: elm_atspi_socket;
+   eo_prefix: elm_obj_atspi_socket;
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

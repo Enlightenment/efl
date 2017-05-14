@@ -128,10 +128,19 @@ struct _Elm_Interface_Atspi_Accessible_Data
    Eina_Inlist *children;
 };
 
+
 typedef struct _Elm_Interface_Atspi_Accessible_Data Elm_Interface_Atspi_Accessible_Data;
+
+struct Accessibility_Plugin
+{
+   void *plugin_private_data;
+};
+
+static void _elm_interface_atspi_accessible_observers_notify(Eo *object);
 
 
 static Eo *root;
+static Eina_List *plugins;
 
 EOLIAN static int
 _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
@@ -525,7 +534,33 @@ EOLIAN Eo *
 _elm_interface_atspi_accessible_efl_object_constructor(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd)
 {
    pd->self = obj;
+   _elm_interface_atspi_accessible_observers_notify(obj);
    return efl_constructor(efl_super(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
+}
+
+static void
+_elm_interface_atspi_accessible_observers_notify(Eo *object)
+{
+   if (observers)
+     {
+        ERR("Query observer");
+     }
+}
+
+EOLIAN void
+_elm_interface_atspi_accessible_observer_install(Eo *socket_class, void *data)
+{
+   ERR("Observer installed");
+   observers = 0x1;
+   if (!observers)
+     observers = eina_array_new(1);
+}
+
+EOLIAN void
+_elm_interface_atspi_accessible_observer_uninstall(Eo *socket_class, void *data)
+{
+   ERR("Observer uninstalled");
+   observers = NULL;
 }
 
 #include "elm_interface_atspi_accessible.eo.c"
