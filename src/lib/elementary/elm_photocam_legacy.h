@@ -67,7 +67,7 @@ EAPI const char *elm_photocam_file_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Photocam
  */
-EAPI void elm_photocam_image_orient_set(Elm_Photocam *obj, Evas_Image_Orient orient);
+EAPI void elm_photocam_image_orient_set(Evas_Object *obj, Evas_Image_Orient orient);
 
 /**
  * @brief Get the photocam image orientation.
@@ -79,6 +79,6 @@ EAPI void elm_photocam_image_orient_set(Elm_Photocam *obj, Evas_Image_Orient ori
  *
  * @ingroup Elm_Photocam
  */
-EAPI Evas_Image_Orient elm_photocam_image_orient_get(const Elm_Photocam *obj);
+EAPI Evas_Image_Orient elm_photocam_image_orient_get(const Evas_Object *obj);
 
 #include "elm_photocam.eo.legacy.h"
