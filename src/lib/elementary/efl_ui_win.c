@@ -2404,7 +2404,7 @@ _efl_ui_win_efl_input_interface_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   cnt = evas_canvas_touch_point_list_count(sd->evas);
+   cnt = evas_touch_point_list_count(sd->evas);
    if (!cnt) return NULL;
 
    it = calloc(1, sizeof(*it));
@@ -2422,11 +2422,11 @@ _efl_ui_win_efl_input_interface_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *
         ptr = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, (Eo *) obj, (void **) &ptrdata);
         if (!ptrdata) break;
 
-        ptrdata->tool = evas_canvas_touch_point_list_nth_id_get(sd->evas, i);
+        ptrdata->tool = evas_touch_point_list_nth_id_get(sd->evas, i);
         _efl_input_value_mark(ptrdata, EFL_INPUT_VALUE_TOOL);
 
         // Note that "still" maps to "down" here.
-        state = evas_canvas_touch_point_list_nth_state_get(sd->evas, i);
+        state = evas_touch_point_list_nth_state_get(sd->evas, i);
         switch (state)
           {
            case EVAS_TOUCH_POINT_DOWN:   ptrdata->action = EFL_POINTER_ACTION_DOWN; break;

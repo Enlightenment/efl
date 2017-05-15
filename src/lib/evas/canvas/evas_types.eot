@@ -12,17 +12,6 @@ enum Evas.Font.Hinting_Flags {
    bytecode [[Bytecode font hinting]]
 }
 
-enum Evas.Touch_Point_State {
-   [[State of Evas_Coord_Touch_Point]]
-   legacy: Evas_Touch_Point;
-
-   down, [[Touch point is pressed down]]
-   up, [[Touch point is released]]
-   move, [[Touch point is moved]]
-   still, [[Touch point is not moved after pressed]]
-   cancel [[Touch point is cancelled]]
-}
-
 struct Evas.Modifier; [[An opaque type containing information on which modifier keys are registered in an Evas canvas]]
 struct Evas.Lock; [[An opaque type containing information on which lock keys are registered in an Evas canvas]]
 

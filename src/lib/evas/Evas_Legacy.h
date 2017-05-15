@@ -596,6 +596,86 @@ EAPI void             evas_event_refeed_event(Evas *obj, void *event_copy, Evas_
  */
 
 /**
+ * @defgroup Evas_Touch_Point_List Touch Point List Functions
+ *
+ * Functions to get information of touched points in the Evas.
+ *
+ * Evas maintains list of touched points on the canvas. Each point has
+ * its co-ordinates, id and state. You can get the number of touched
+ * points and information of each point using evas_touch_point_list
+ * functions.
+ *
+ * @ingroup Evas_Canvas
+ *
+ * @{
+ */
+
+/**
+ * State of Evas_Coord_Touch_Point
+ */
+typedef enum
+{
+  EVAS_TOUCH_POINT_DOWN = 0, /**< Touch point is pressed down */
+  EVAS_TOUCH_POINT_UP, /**< Touch point is released */
+  EVAS_TOUCH_POINT_MOVE, /**< Touch point is moved */
+  EVAS_TOUCH_POINT_STILL, /**< Touch point is not moved after pressed */
+  EVAS_TOUCH_POINT_CANCEL /**< Touch point is cancelled */
+} Evas_Touch_Point_State;
+
+/**
+ * @brief Get the number of touched point in the evas.
+ *
+ * New touched point is added to the list whenever touching the evas and point
+ * is removed whenever removing touched point from the evas.
+ *
+ * @return The number of touched point on the evas.
+ */
+EAPI unsigned int evas_touch_point_list_count(Evas *obj);
+
+/**
+ * @brief This function returns the @c id of nth touch point.
+ *
+ * The point which comes from Mouse Event has @c id 0 and The point which comes
+ * from Multi Event has @c id that is same as Multi Event's device id.
+ *
+ * @param[in] n The number of the touched point (0 being the first).
+ *
+ * @return id of nth touch point, if the call succeeded, -1 otherwise.
+ */
+EAPI int evas_touch_point_list_nth_id_get(Evas *obj, unsigned int n);
+
+/**
+ * @brief This function returns the @c state of nth touch point.
+ *
+ * The point's @c state is EVAS_TOUCH_POINT_DOWN when pressed,
+ * EVAS_TOUCH_POINT_STILL when the point is not moved after pressed,
+ * EVAS_TOUCH_POINT_MOVE when moved at least once after pressed and
+ * EVAS_TOUCH_POINT_UP when released.
+ *
+ * @param[in] n The number of the touched point (0 being the first).
+ *
+ * @return @c state of nth touch point, if the call succeeded,
+ * EVAS_TOUCH_POINT_CANCEL otherwise.
+ */
+EAPI Evas_Touch_Point_State evas_touch_point_list_nth_state_get(Evas *obj, unsigned int n);
+
+/**
+ * @brief This function returns the nth touch point's coordinates.
+ *
+ * Touch point's coordinates is updated whenever moving that point on the
+ * canvas.
+ *
+ * @param[in] n The number of the touched point (0 being the first).
+ * @param[out] x The pointer to a Evas_Coord to be filled in.
+ * @param[out] y The pointer to a Evas_Coord to be filled in.
+ */
+EAPI void evas_touch_point_list_nth_xy_get(Evas *eo_e, unsigned int n, Evas_Coord *x, Evas_Coord *y);
+
+/**
+ * @}
+ */
+
+/**
  * @ingroup Evas_Font_Group
  *
  * @{

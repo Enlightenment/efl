@@ -661,15 +661,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
            should be used.
          ]]
       }
-      touch_point_list_count {
-         [[Get the number of touched point in the evas.
-
-           New touched point is added to the list whenever touching the
-           evas and point is removed whenever removing touched point from
-           the evas.
-         ]]
-         return: uint; [[The number of touched point on the evas.]]
-      }
       nochange_pop {
          [[Pop the nochange flag down 1.
 
@@ -839,18 +830,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             @in path: string @nonull; [[The new font path.]]
          }
       }
-      touch_point_list_nth_id_get {
-         [[This function returns the $id of nth touch point.
-
-           The point which comes from Mouse Event has $id 0 and The point
-           which comes from Multi Event has $id that is same as Multi
-           Event's device id.
-         ]]
-         return: int; [[id of nth touch point, if the call succeeded, -1 otherwise.]]
-         params {
-            @in n: uint; [[The number of the touched point (0 being the first).]]
-         }
-      }
       font_path_clear {
          [[Removes all font paths loaded into memory for the given evas.]]
       }
@@ -860,6 +839,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
            all smart objects in the canvas.
          ]]
       }
+      /* FIXME: The below function is only for efl.ui.win */
       touch_point_list_nth_xy_get {
          [[This function returns the nth touch point's coordinates.
 
@@ -1005,22 +985,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          ]]
          params {
             @in keyname: string @nonull; [[The name of the key to remove from the modifiers list.]]
-         }
-      }
-      touch_point_list_nth_state_get {
-         [[This function returns the $state of nth touch point.
-
-           The point's $state is EVAS_TOUCH_POINT_DOWN when pressed,
-           EVAS_TOUCH_POINT_STILL when the point is not moved after pressed,
-           EVAS_TOUCH_POINT_MOVE when moved at least once after pressed and
-           EVAS_TOUCH_POINT_UP when released.
-         ]]
-         return: Evas.Touch_Point_State; [[
-            $state of nth touch point, if the call succeeded,
-            EVAS_TOUCH_POINT_CANCEL otherwise.
-         ]]
-         params {
-            @in n: uint; [[The number of the touched point (0 being the first).]]
          }
       }
       focus_in {
