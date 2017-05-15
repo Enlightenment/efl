@@ -1,11 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define EVAS_LEGACY_API(_obj, _e, ...) \
-   Evas_Public_Data *_e = (_obj && efl_isa(_obj, EVAS_CANVAS_CLASS)) ? \
-     efl_data_scope_get(_obj, EVAS_CANVAS_CLASS) : NULL; \
-   if (!_e) return __VA_ARGS__
-
 void
 _evas_touch_point_append(Evas *eo_e, int id, Evas_Coord x, Evas_Coord y)
 {

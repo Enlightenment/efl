@@ -71,23 +71,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             data: void_ptr; [[The attached pointer.]]
          }
       }
-      @property font_hinting {
-         set {
-            [[Changes the font hinting for the given evas.
-
-              #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
-            ]]
-         }
-         get {
-            [[Retrieves the font hinting used by the given evas.]]
-         }
-         values {
-            hinting: Evas.Font.Hinting_Flags; [[
-               The used hinting, one of #EVAS_FONT_HINTING_NONE,
-               #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
-            ]]
-         }
-      }
       @property focus {
          get {
             [[Retrieve the object focused by the default seat.
@@ -697,17 +680,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       font_cache_flush {
          [[Force the given evas and associated engine to flush its font cache.]]
 
-      }
-      font_hinting_can_hint @const {
-         [[Checks if the font hinting is supported by the given evas.
-
-           One of #EVAS_FONT_HINTING_NONE, #EVAS_FONT_HINTING_AUTO,
-           #EVAS_FONT_HINTING_BYTECODE.
-         ]]
-         return: bool @warn_unused; [[$true if it is supported, $false otherwise.]]
-         params {
-            @in hinting: Evas.Font.Hinting_Flags; [[The hinting to use.]]
-         }
       }
       object_top_at_xy_get @const {
          [[Retrieve the Evas object stacked at the top of a given position

@@ -691,6 +691,57 @@ EAPI void evas_touch_point_list_nth_xy_get(Evas *eo_e, unsigned int n, Evas_Coor
  */
 EAPI void                    evas_font_available_list_free(Evas *e, Eina_List *available) EINA_ARG_NONNULL(1);
 
+/** Flags for Font Hinting
+ *
+ * @ingroup Evas_Font
+ */
+typedef enum
+{
+  EVAS_FONT_HINTING_NONE = 0, /**< No font hinting */
+  EVAS_FONT_HINTING_AUTO, /**< Automatic font hinting */
+  EVAS_FONT_HINTING_BYTECODE /**< Bytecode font hinting */
+} Evas_Font_Hinting_Flags;
+
+/**
+ * @brief Changes the font hinting for the given evas.
+ *
+ * #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
+ *
+ * @param[in] hinting The used hinting, one of #EVAS_FONT_HINTING_NONE,
+ * #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
+ *
+ * @ingroup Evas_Font_Group
+ */
+EAPI void evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting);
+
+/**
+ * @brief Retrieves the font hinting used by the given evas.
+ *
+ * @return The used hinting, one of #EVAS_FONT_HINTING_NONE,
+ * #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
+ *
+ * @ingroup Evas_Font_Group
+ */
+EAPI Evas_Font_Hinting_Flags evas_font_hinting_get(const Evas *e);
+
+/**
+ * @brief Checks if the font hinting is supported by the given evas.
+ *
+ * One of #EVAS_FONT_HINTING_NONE, #EVAS_FONT_HINTING_AUTO,
+ * #EVAS_FONT_HINTING_BYTECODE.
+ *
+ * @param[in] hinting The hinting to use.
+ *
+ * @return @c true if it is supported, @c false otherwise.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Eina_Bool evas_font_hinting_can_hint(const Evas *e, Evas_Font_Hinting_Flags hinting) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @}
+ */
+
 /**
  * @ingroup Evas_Object_Group_Basic
  *

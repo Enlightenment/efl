@@ -630,6 +630,11 @@ MAGIC_CHECK_FAILED(o, t, m)
    } } while (0)
 #endif
 
+#define EVAS_LEGACY_API(_obj, _e, ...) \
+   Evas_Public_Data *_e = (_obj && efl_isa(_obj, EVAS_CANVAS_CLASS)) ? \
+     efl_data_scope_get(_obj, EVAS_CANVAS_CLASS) : NULL; \
+   if (!_e) return __VA_ARGS__
+
 #define EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(cur, prev)                  \
   if (cur->u.file && !cur->mmaped_source)				\
     {                                                                   \

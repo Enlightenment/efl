@@ -31,6 +31,7 @@ interface Efl.Config ()
 }
 
 /* NOTES:
+ - Font hinting seems to be missing!
  - Elm_Color_Class list -> no need to return the struct, only the name matters
                            but also provide func to get desc from name
  - Elm_Color_Overlay -> see with Jee-Yong and his color patch (common intf)

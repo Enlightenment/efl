@@ -1445,11 +1445,12 @@ evas_font_object_rehint(Evas_Object *eo_obj)
      }
 }
 
-EOLIAN void
-_evas_canvas_font_hinting_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Font_Hinting_Flags hinting)
+EAPI void
+evas_font_hinting_set(Eo *eo_e, Evas_Font_Hinting_Flags hinting)
 {
    Evas_Layer *lay;
 
+   EVAS_LEGACY_API(eo_e, e);
    evas_canvas_async_block(e);
    if (e->hinting == hinting) return;
    e->hinting = hinting;
@@ -1463,15 +1464,17 @@ _evas_canvas_font_hinting_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Fo
      }
 }
 
-EOLIAN Evas_Font_Hinting_Flags
-_evas_canvas_font_hinting_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+EAPI Evas_Font_Hinting_Flags
+evas_font_hinting_get(const Evas *eo_e)
 {
+   EVAS_LEGACY_API(eo_e, e, EVAS_FONT_HINTING_NONE);
    return e->hinting;
 }
 
-EOLIAN Eina_Bool
-_evas_canvas_font_hinting_can_hint(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Font_Hinting_Flags hinting)
+EAPI Eina_Bool
+evas_font_hinting_can_hint(const Evas *eo_e, Evas_Font_Hinting_Flags hinting)
 {
+   EVAS_LEGACY_API(eo_e, e, EINA_FALSE);
    if (e->engine.func->font_hinting_can_hint && _evas_engine_context(e))
      return e->engine.func->font_hinting_can_hint(_evas_engine_context(e),
                                                   hinting);

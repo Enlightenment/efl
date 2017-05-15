@@ -3,15 +3,6 @@ type @extern Evas.Load_Error: int; [[Evas load error type]] /* FIXME: Need to mi
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
 type Evas.Coord: int; [[A type for coordinates]]
 
-enum Evas.Font.Hinting_Flags {
-   [[Flags for Font Hinting]]
-   legacy: Evas_Font_Hinting;
-
-   none, [[No font hinting]]
-   auto, [[Automatic font hinting]]
-   bytecode [[Bytecode font hinting]]
-}
-
 struct Evas.Modifier; [[An opaque type containing information on which modifier keys are registered in an Evas canvas]]
 struct Evas.Lock; [[An opaque type containing information on which lock keys are registered in an Evas canvas]]
 
