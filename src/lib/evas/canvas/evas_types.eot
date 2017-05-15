@@ -1,5 +1,4 @@
 type @extern Evas.Load_Error: int; [[Evas load error type]] /* FIXME: Need to migrate emile. */
-struct @extern Evas.Video_Surface; [[Evas video surface data structure]]  /* FIXME: The structure is full of the unsupported func pointers. */
 
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
 type Evas.Coord: int; [[A type for coordinates]]
@@ -51,10 +50,10 @@ enum Evas.Border_Fill_Mode
 
 struct Evas.Modifier; [[An opaque type containing information on which modifier keys are registered in an Evas canvas]]
 struct Evas.Lock; [[An opaque type containing information on which lock keys are registered in an Evas canvas]]
-struct Evas.Engine_Info; [[A generic Evas Engine information structure]]
-struct Evas.Axis; [[Details for a single device axis state
 
-                    @since 1.13]]
+
+// ----------------------------------------------------------------------------
+// All the below types are for Evas 3D
 
 type Evas.Real: double; [[A type for floating value]]
 

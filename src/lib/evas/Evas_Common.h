@@ -441,10 +441,11 @@ typedef enum
 } Evas_Callback_Type;
 
 
-struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
+typedef struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */
-};
+} Evas_Engine_Info;
+
 
 struct _Evas_Event_Mouse_Down /** Mouse button press event */
 {
@@ -664,11 +665,11 @@ typedef enum _Evas_Axis_Label
    EVAS_AXIS_LABEL_NORMAL_Y,      /**< Y normalized to the [0, 1] range. @since 1.19 */
 } Evas_Axis_Label; /**< Types of recognized device axes @since 1.13 */
 
-struct _Evas_Axis
+typedef struct _Evas_Axis
 {
    Evas_Axis_Label label;
    double value;
-};
+} Evas_Axis;
 
 struct _Evas_Event_Axis_Update
 {
