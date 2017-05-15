@@ -383,18 +383,18 @@ EAPI void elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  */
 typedef enum _Elm_Image_Orient_Type
 {
-  ELM_IMAGE_ORIENT_NONE = 0 /* Evas.Image_Orient.orient_none */,
-  ELM_IMAGE_ORIENT_0 = 0 /* Evas.Image_Orient.orient_0 */,
-  ELM_IMAGE_ROTATE_90 = 1 /* Evas.Image_Orient.orient_90 */,
-  ELM_IMAGE_ORIENT_90 = 1 /* Evas.Image_Orient.orient_90 */,
-  ELM_IMAGE_ROTATE_180 = 2 /* Evas.Image_Orient.orient_180 */,
-  ELM_IMAGE_ORIENT_180 = 2 /* Evas.Image_Orient.orient_180 */,
-  ELM_IMAGE_ROTATE_270 = 3 /* Evas.Image_Orient.orient_270 */,
-  ELM_IMAGE_ORIENT_270 = 3 /* Evas.Image_Orient.orient_270 */,
-  ELM_IMAGE_FLIP_HORIZONTAL = 4 /* Evas.Image_Orient.flip_horizontal */,
-  ELM_IMAGE_FLIP_VERTICAL = 5 /* Evas.Image_Orient.flip_vertical */,
-  ELM_IMAGE_FLIP_TRANSPOSE = 6 /* Evas.Image_Orient.flip_transpose */,
-  ELM_IMAGE_FLIP_TRANSVERSE = 7 /* Evas.Image_Orient.flip_transverse */
+  ELM_IMAGE_ORIENT_NONE = 0,      /**< no orientation change */
+  ELM_IMAGE_ORIENT_0 = 0,         /**< no orientation change */
+  ELM_IMAGE_ROTATE_90 = 1,        /**< rotate 90 degrees clockwise */
+  ELM_IMAGE_ORIENT_90 = 1,        /**< rotate 90 degrees clockwise */
+  ELM_IMAGE_ROTATE_180 = 2,       /**< rotate 180 degrees clockwise */
+  ELM_IMAGE_ORIENT_180 = 2,       /**< rotate 180 degrees clockwise */
+  ELM_IMAGE_ROTATE_270 = 3,       /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
+  ELM_IMAGE_ORIENT_270 = 3,       /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
+  ELM_IMAGE_FLIP_HORIZONTAL = 4,  /**< flip image horizontally (along the x = width / 2 line) */
+  ELM_IMAGE_FLIP_VERTICAL = 5,    /**< flip image vertically (along the y = height / 2 line) */
+  ELM_IMAGE_FLIP_TRANSPOSE = 6,   /**< flip image along the y = (width - x) line (bottom-left to top-right) */
+  ELM_IMAGE_FLIP_TRANSVERSE = 7   /**< flip image along the y = x line (top-left to bottom-right) */
 } Elm_Image_Orient;
 
 /**

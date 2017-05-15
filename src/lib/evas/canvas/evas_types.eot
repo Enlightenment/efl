@@ -23,22 +23,6 @@ enum Evas.Touch_Point_State {
    cancel [[Touch point is cancelled]]
 }
 
-enum Evas.Image.Orient
-{
-   [[Possible orientation options for evas_object_image_orient_set().
-     @since 1.14]]
-   legacy: evas_image;
-   orient_none = 0, [[no orientation change]]
-   orient_0 = 0, [[no orientation change]]
-   orient_90 = 1, [[orient 90 degrees clockwise]]
-   orient_180 = 2, [[orient 180 degrees clockwise]]
-   orient_270 = 3, [[rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise)]]
-   flip_horizontal = 4, [[flip image horizontally]]
-   flip_vertical = 5, [[flip image vertically]]
-   flip_transpose = 6, [[flip image along the y = (width - x) line (bottom-left to top-right)]]
-   flip_transverse = 7 [[flip image along the y = x line (top-left to bottom-right)]]
-}
-
 enum Evas.Border_Fill_Mode
 {
    [[How an image's center region (the complement to the border region) should be rendered by Evas]]

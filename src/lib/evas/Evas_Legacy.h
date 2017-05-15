@@ -3489,6 +3489,7 @@ EAPI void evas_vg_gradient_radial_focal_get(Eo *obj, double *x, double *y);
  *
  * @{
  */
+
 /**
  * Creates a new image object on the given Evas @p e canvas.
  *
@@ -3668,6 +3669,24 @@ EAPI void                          evas_object_image_native_surface_set(Evas_Obj
  * @return The native surface.
  */
 EAPI Evas_Native_Surface          *evas_object_image_native_surface_get(const Evas_Object *obj);
+
+/**
+ * Possible orientation options for evas_object_image_orient_set().
+ *
+ * @since 1.14
+ */
+typedef enum
+{
+  EVAS_IMAGE_ORIENT_NONE = 0, /**< no orientation change */
+  EVAS_IMAGE_ORIENT_0 = 0, /**< no orientation change */
+  EVAS_IMAGE_ORIENT_90 = 1, /**< rotate 90 degrees clockwise */
+  EVAS_IMAGE_ORIENT_180 = 2, /**< rotate 180 degrees clockwise */
+  EVAS_IMAGE_ORIENT_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
+  EVAS_IMAGE_FLIP_HORIZONTAL = 4, /**< flip image horizontally (along the x = width / 2 line) */
+  EVAS_IMAGE_FLIP_VERTICAL = 5, /**< flip image vertically (along the y = height / 2 line) */
+  EVAS_IMAGE_FLIP_TRANSPOSE = 6, /**< flip image along the y = (width - x) line (bottom-left to top-right) */
+  EVAS_IMAGE_FLIP_TRANSVERSE = 7 /**< flip image along the y = x line (top-left to bottom-right) */
+} Evas_Image_Orient;
 
 /**
  * Preload an image object's image data in the background
