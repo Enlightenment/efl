@@ -63,12 +63,14 @@ EAPI extern Evas_Version * evas_version;
  * @since 1.1
  */
 #define EVAS_CALLBACK_PRIORITY_BEFORE  -100
+
 /**
  * @def EVAS_CALLBACK_PRIORITY_DEFAULT
  * Default callback priority level
  * @since 1.1
  */
 #define EVAS_CALLBACK_PRIORITY_DEFAULT 0
+
 /**
  * @def EVAS_CALLBACK_PRIORITY_AFTER
  * Slightly less prioritized than default.
@@ -2119,7 +2121,6 @@ struct _Evas_Textgrid_Cell
  * @{
  */
 
-
 /**
  * @def EVAS_SMART_CLASS_VERSION
  *
@@ -2130,6 +2131,7 @@ struct _Evas_Textgrid_Cell
  * @ingroup Evas_Smart_Group
  */
 #define EVAS_SMART_CLASS_VERSION 4
+
 /**
  * @struct _Evas_Smart_Class
  *
@@ -3511,6 +3513,7 @@ EAPI void                    evas_language_reinit(void);
  * @addtogroup Evas_Keys
  * @{
  */
+
 /**
  * Checks the state of a given modifier of the default seat, at the time of the
  * call. If the modifier is set, such as shift being pressed, this
@@ -3531,6 +3534,7 @@ EAPI void                    evas_language_reinit(void);
  * @see evas_seat_key_modifier_is_set
  */
 EAPI Eina_Bool            evas_key_modifier_is_set(const Evas_Modifier *m, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+
 /**
  * Checks the state of a given modifier key of a given seat, at the time of the
  * call. If the modifier is set, such as shift being pressed, this
@@ -3555,6 +3559,7 @@ EAPI Eina_Bool            evas_key_modifier_is_set(const Evas_Modifier *m, const
  * @since 1.19
  */
 EAPI Eina_Bool            evas_seat_key_modifier_is_set(const Evas_Modifier *m, const char *keyname, const Evas_Device *seat) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+
 /**
  * Checks the state of a given lock key of the default seat, at the time of the call. If
  * the lock is set, such as caps lock, this function returns @c
