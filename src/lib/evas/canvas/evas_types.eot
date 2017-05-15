@@ -23,15 +23,6 @@ enum Evas.Touch_Point_State {
    cancel [[Touch point is cancelled]]
 }
 
-enum Evas.Border_Fill_Mode
-{
-   [[How an image's center region (the complement to the border region) should be rendered by Evas]]
-   legacy: evas_border_fill;
-   none = 0, [[Image's center region is $b not to be rendered]]
-   default = 1, [[Image's center region is to be $b blended with objects underneath it, if it has transparency. This is the default behavior for image objects]]
-   solid = 2 [[Image's center region is to be made solid, even if it has transparency on it]]
-}
-
 struct Evas.Modifier; [[An opaque type containing information on which modifier keys are registered in an Evas canvas]]
 struct Evas.Lock; [[An opaque type containing information on which lock keys are registered in an Evas canvas]]
 

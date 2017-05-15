@@ -4403,6 +4403,21 @@ EAPI void evas_object_image_border_scale_set(Evas_Object *obj, double scale);
 EAPI double evas_object_image_border_scale_get(const Evas_Object *obj);
 
 /**
+ * How an image's center region (the complement to the border region) should
+ * be rendered by Evas
+ */
+typedef enum
+{
+  EVAS_BORDER_FILL_NONE = 0, /**< Image's center region is @b not to be rendered */
+  EVAS_BORDER_FILL_DEFAULT = 1, /**< Image's center region is to be @b blended
+                                 * with objects underneath it, if it has
+                                 * transparency. This is the default behavior
+                                 * for image objects */
+  EVAS_BORDER_FILL_SOLID = 2 /**< Image's center region is to be made solid,
+                              * even if it has transparency on it */
+} Evas_Border_Fill_Mode;
+
+/**
  * @brief Specifies how the center part of the object (not the borders) should
  * be drawn when EFL is rendering it.
  *
