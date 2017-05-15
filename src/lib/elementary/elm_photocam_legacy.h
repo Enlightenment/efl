@@ -55,4 +55,30 @@ EAPI Evas_Load_Error elm_photocam_file_set(Evas_Object *obj, const char *file);
  */
 EAPI const char *elm_photocam_file_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the photocam image orientation.
+ *
+ * This function allows to rotate or flip the photocam image.
+ *
+ * @param[in] orient The photocam image orientation @ref Evas_Image_Orient.
+ * Default is #EVAS_IMAGE_ORIENT_NONE.
+ *
+ * @since 1.14
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI void elm_photocam_image_orient_set(Elm_Photocam *obj, Evas_Image_Orient orient);
+
+/**
+ * @brief Get the photocam image orientation.
+ *
+ * @return The photocam image orientation @ref Evas_Image_Orient. Default is
+ * #EVAS_IMAGE_ORIENT_NONE.
+ *
+ * @since 1.14
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI Evas_Image_Orient elm_photocam_image_orient_get(const Elm_Photocam *obj);
+
 #include "elm_photocam.eo.legacy.h"

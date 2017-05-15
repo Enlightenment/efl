@@ -13,7 +13,7 @@ enum Elm.Photocam.Zoom_Mode
 class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
                     Elm.Interface.Atspi_Widget_Action, Efl.File,
                     Efl.Ui.Clickable, Efl.Ui.Scrollable,
-                    Efl.Ui.Zoomable)
+                    Efl.Ui.Zoomable, Efl.Orientation, Efl.Flipable)
 {
    [[Elementary photocam class]]
    legacy_prefix: elm_photocam;
@@ -152,28 +152,6 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
             h: int; [[A pointer to the height return]]
          }
       }
-      @property image_orient {
-         set {
-            [[Set the photocam image orientation.
-
-              This function allows to rotate or flip the photocam image.
-
-              @since 1.14
-            ]]
-         }
-         get {
-            [[Get the photocam image orientation.
-
-              @since 1.14
-            ]]
-         }
-         values {
-            orient: Evas.Image.Orient; [[The photocam image orientation
-                                         \@ref Evas_Image_Orient. Default is
-                                         #EVAS_IMAGE_ORIENT_NONE.
-                                       ]]
-         }
-      }
       image_region_show {
          [[Set the viewed region of the image
 
@@ -201,6 +179,8 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Interface_Scrollable.region_bring_in;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.File.file { get; set; }
+      Efl.Orientation.orientation { get; set; }
+      Efl.Flipable.flip { get; set; }
    }
    events {
       press; [[Called when photocam got pressed]]

@@ -594,7 +594,8 @@ _grid_create(Evas_Object *obj)
              g->grid[tn].img =
                evas_object_image_add(evas_object_evas_get(obj));
              evas_object_image_load_orientation_set(g->grid[tn].img, EINA_TRUE);
-             evas_object_image_orient_set(g->grid[tn].img, sd->orient);
+             efl_orientation_set(g->grid[tn].img, sd->orient);
+             efl_flip_set(g->grid[tn].img, sd->flip);
              evas_object_image_scale_hint_set
                (g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
              evas_object_pass_events_set(g->grid[tn].img, EINA_TRUE);
@@ -1328,17 +1329,17 @@ _orient_do(Evas_Object *obj, Elm_Photocam_Data *sd)
    sd->calc_job = ecore_job_add(_calc_job_cb, obj);
 }
 
-EOLIAN static void
-_elm_photocam_image_orient_set(Eo *obj, Elm_Photocam_Data *sd, Evas_Image_Orient orient)
+static void
+_orient_apply(Eo *obj, Elm_Photocam_Data *sd)
 {
    int iw, ih;
    Eina_List *l;
    Elm_Phocam_Grid *g, *g_orient = NULL;
 
-   if (sd->orient == orient) return;
+   // Note: This is based on legacy code. Separating flip & orient in eo api
+   // means we need to do the apply twice. This could be delayed as a job.
 
    sd->orientation_changed = EINA_TRUE;
-   sd->orient = orient;
    g = _grid_create(obj);
    if (g)
      {
@@ -1364,7 +1365,8 @@ _elm_photocam_image_orient_set(Eo *obj, Elm_Photocam_Data *sd, Evas_Image_Orient
           }
      }
 
-   evas_object_image_orient_set(sd->img, orient);
+   efl_orientation_set(sd->img, sd->orient);
+   efl_flip_set(sd->img, sd->flip);
    evas_object_image_size_get(sd->img, &iw, &ih);
    sd->size.imw = iw;
    sd->size.imh = ih;
@@ -1373,10 +1375,35 @@ _elm_photocam_image_orient_set(Eo *obj, Elm_Photocam_Data *sd, Evas_Image_Orient
    _orient_do(obj, sd);
 }
 
-EOLIAN static Evas_Image_Orient
-_elm_photocam_image_orient_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
+EOLIAN static void
+_elm_photocam_efl_orientation_orientation_set(Eo *obj, Elm_Photocam_Data *sd,
+                                              Efl_Orient orient)
+{
+   if (sd->orient == orient) return;
+
+   sd->orient = orient;
+   _orient_apply(obj, sd);
+}
+
+EOLIAN static Efl_Orient
+_elm_photocam_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
 {
    return sd->orient;
+}
+
+EOLIAN static void
+_elm_photocam_efl_flipable_flip_set(Eo *obj, Elm_Photocam_Data *sd, Efl_Flip flip)
+{
+   if (sd->flip == flip) return;
+
+   sd->flip = flip;
+   _orient_apply(obj, sd);
+}
+
+EOLIAN static Efl_Flip
+_elm_photocam_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
+{
+   return sd->flip;
 }
 
 EOLIAN static void
@@ -1591,7 +1618,8 @@ _internal_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, Eina_File *
    tz = sd->zoom;
    sd->zoom = 0.0;
    elm_photocam_zoom_set(obj, tz);
-   sd->orient = EVAS_IMAGE_ORIENT_NONE;
+   sd->orient = EFL_ORIENT_NONE;
+   sd->flip = EFL_FLIP_NONE;
    sd->orientation_changed = EINA_FALSE;
 
    if (ret) *ret = evas_object_image_load_error_get(sd->img);
@@ -2320,6 +2348,107 @@ _elm_photocam_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
+}
+
+/* Legacy */
+
+static inline void
+_evas_orient_to_eo_orient_flip(const Evas_Image_Orient evas_orient,
+                               Efl_Orient *orient, Efl_Flip *flip)
+{
+   switch (evas_orient) {
+      case EVAS_IMAGE_ORIENT_NONE:
+        *orient = EFL_ORIENT_NONE;
+        *flip = EFL_FLIP_NONE;
+        break;
+      case EVAS_IMAGE_ORIENT_90:
+        *orient = EFL_ORIENT_90;
+        *flip = EFL_FLIP_NONE;
+        break;
+      case EVAS_IMAGE_ORIENT_180:
+        *orient = EFL_ORIENT_180;
+        *flip = EFL_FLIP_NONE;
+        break;
+      case EVAS_IMAGE_ORIENT_270:
+        *orient = EFL_ORIENT_270;
+        *flip = EFL_FLIP_NONE;
+        break;
+      case EVAS_IMAGE_FLIP_HORIZONTAL:
+        *orient = EFL_ORIENT_NONE;
+        *flip = EFL_FLIP_HORIZONTAL;
+        break;
+      case EVAS_IMAGE_FLIP_VERTICAL:
+        *orient = EFL_ORIENT_NONE;
+        *flip = EFL_FLIP_VERTICAL;
+        break;
+      case EVAS_IMAGE_FLIP_TRANSVERSE:
+        *orient = EFL_ORIENT_270;
+        *flip = EFL_FLIP_HORIZONTAL;
+        break;
+      case EVAS_IMAGE_FLIP_TRANSPOSE:
+        *orient = EFL_ORIENT_270;
+        *flip = EFL_FLIP_VERTICAL;
+        break;
+      default:
+        *orient = EFL_ORIENT_NONE;
+        *flip = EFL_FLIP_NONE;
+        break;
+     }
+}
+
+static inline Evas_Image_Orient
+_eo_orient_flip_to_evas_orient(Efl_Orient orient, Efl_Flip flip)
+{
+   switch (flip)
+     {
+      default:
+      case EFL_FLIP_NONE:
+        switch (orient)
+          {
+           default:
+           case EFL_ORIENT_0: return EVAS_IMAGE_ORIENT_0;
+           case EFL_ORIENT_90: return EVAS_IMAGE_ORIENT_90;
+           case EFL_ORIENT_180: return EVAS_IMAGE_ORIENT_180;
+           case EFL_ORIENT_270: return EVAS_IMAGE_ORIENT_270;
+          }
+      case EFL_FLIP_HORIZONTAL:
+        switch (orient)
+          {
+           default:
+           case EFL_ORIENT_0: return EVAS_IMAGE_FLIP_HORIZONTAL;
+           case EFL_ORIENT_90: return EVAS_IMAGE_FLIP_TRANSPOSE;
+           case EFL_ORIENT_180: return EVAS_IMAGE_FLIP_VERTICAL;
+           case EFL_ORIENT_270: return EVAS_IMAGE_FLIP_TRANSVERSE;
+          }
+      case EFL_FLIP_VERTICAL:
+        switch (orient)
+          {
+           default:
+           case EFL_ORIENT_0: return EVAS_IMAGE_FLIP_VERTICAL;
+           case EFL_ORIENT_90: return EVAS_IMAGE_FLIP_TRANSVERSE;
+           case EFL_ORIENT_180: return EVAS_IMAGE_FLIP_HORIZONTAL;
+           case EFL_ORIENT_270: return EVAS_IMAGE_FLIP_TRANSPOSE;
+          }
+     }
+}
+
+EAPI void
+elm_photocam_image_orient_set(Eo *obj, Evas_Image_Orient evas_orient)
+{
+   Efl_Orient orient;
+   Efl_Flip flip;
+
+   _evas_orient_to_eo_orient_flip(evas_orient, &orient, &flip);
+   efl_orientation_set(obj, orient);
+   efl_flip_set(obj, flip);
+}
+
+EAPI Evas_Image_Orient
+elm_photocam_image_orient_get(const Eo *obj)
+{
+   ELM_PHOTOCAM_CHECK(obj) EVAS_IMAGE_ORIENT_NONE;
+   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   return _eo_orient_flip_to_evas_orient(sd->orient, sd->flip);
 }
 
 #include "elm_photocam.eo.c"
