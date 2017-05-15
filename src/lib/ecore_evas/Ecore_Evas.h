@@ -259,9 +259,6 @@ EAPI void        ecore_evas_alpha_set(Ecore_Evas *ee, Eina_Bool alpha);
  * @return @c EINA_TRUE if ee has an alpha channel, @c EINA_FALSE if it does
  * not.
  *
- * This function returns @c EINA_TRUE if @p ee has an alpha channel, and
- * @c EINA_FALSE if it does not.
- *
  * @see ecore_evas_alpha_set()
  */
 EAPI Eina_Bool   ecore_evas_alpha_get(const Ecore_Evas *ee);
@@ -659,9 +656,7 @@ EAPI Eina_Bool   ecore_evas_ignore_events_get(const Ecore_Evas *ee);
  * @brief Queries whether an Ecore_Evas' window is visible or not.
  *
  * @param ee The Ecore_Evas to query.
- * @return @c 1 if visible, @c 0 if not.
- *
- * This function queries @p ee and returns @c 1 if it is visible, and @c 0 if not.
+ * @return @c 1 if @p ee is visible, @c 0 if not.
  *
  * @see ecore_evas_show()
  * @see ecore_evas_hide()
@@ -1180,8 +1175,6 @@ EAPI void        ecore_evas_title_set(Ecore_Evas *ee, const char *t);
  *
  * @param ee The Ecore_Evas whose title you wish to get.
  * @return The title of @p ee.
- *
- * This function returns the title of @p ee.
  *
  * @see ecore_evas_title_set()
  */
@@ -2160,9 +2153,7 @@ EAPI void        ecore_evas_callback_state_change_set(Ecore_Evas *ee, Ecore_Evas
  * @brief Gets an Ecore_Evas's Evas.
  *
  * @param ee The Ecore_Evas whose Evas you wish to get
- * @return The Evas wrapped by @p ee
- *
- * This function returns the Evas contained within @p ee.
+ * @return The Evas contained within @p ee.
  */
 EAPI Evas       *ecore_evas_get(const Ecore_Evas *ee);
 
@@ -2197,8 +2188,6 @@ EAPI void        ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped);
  *
  * @param ee The Ecore_Evas to query.
  * @return @c EINA_TRUE if shaped, @c EINA_FALSE if not.
- *
- * This function returns @c EINA_TRUE if @p ee is shaped, and @c EINA_FALSE if not.
  */
 EAPI Eina_Bool   ecore_evas_shaped_get(const Ecore_Evas *ee);
 
