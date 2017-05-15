@@ -196,7 +196,10 @@ public class Array<T> : IDisposable
     public bool Push(T val)
     {
         IntPtr ele = ManagedToNativeAlloc(val);
-        return InternalPush(ele); // TODO: free if false ?
+        var r = InternalPush(ele);
+        if (!r)
+            NativeFree<T>(ele);
+        return r;
     }
 
     public void Add(T val)
