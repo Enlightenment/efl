@@ -123,13 +123,11 @@ public class Array<T> : IDisposable
 
         if (OwnContent)
         {
-            var tc = GetElementTypeCode(typeof(T));
-            if (tc == ElementType.ObjectType)
-                eina_array_free_obj_custom_export_mono(h);
-            else if (tc == ElementType.StringType)
-                eina_array_free_string_custom_export_mono(h);
-            else
-                eina_array_free_generic_custom_export_mono(h);
+            int len = (int)eina_array_count_custom_export_mono(h);
+            for(int i = 0; i < len; ++i)
+            {
+                NativeFree<T>(eina_array_data_get_custom_export_mono(h, (uint)i));
+            }
         }
 
         if (Own)
@@ -154,13 +152,27 @@ public class Array<T> : IDisposable
         return h;
     }
 
+    private void FreeElementsIfOwned()
+    {
+        if (OwnContent)
+        {
+            int len = Length;
+            for(int i = 0; i < len; ++i)
+            {
+                NativeFree<T>(InternalDataGet(i));
+            }
+        }
+    }
+
     public void Clean()
     {
+        FreeElementsIfOwned();
         eina_array_clean_custom_export_mono(Handle);
     }
 
     public void Flush()
     {
+        FreeElementsIfOwned();
         eina_array_flush(Handle);
     }
 
