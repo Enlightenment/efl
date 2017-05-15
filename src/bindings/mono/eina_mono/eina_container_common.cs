@@ -41,7 +41,8 @@ public class StringElementTraits<T> : BaseElementTraits<T>
 
     public void NativeFree(IntPtr nat)
     {
-        efl_mono_native_free(nat);
+        if (nat != IntPtr.Zero)
+            efl_mono_native_free(nat);
     }
 
     public T NativeToManaged(IntPtr nat)
@@ -71,11 +72,14 @@ public class EflObjectElementTraits<T> : BaseElementTraits<T>
 
     public void NativeFree(IntPtr nat)
     {
-        efl.eo.Globals.efl_unref(nat);
+        if (nat != IntPtr.Zero)
+            efl.eo.Globals.efl_unref(nat);
     }
 
     public T NativeToManaged(IntPtr nat)
     {
+        if (nat == IntPtr.Zero)
+            return default(T);
         return (T) Activator.CreateInstance(concreteType, efl.eo.Globals.efl_ref(nat));
     }
 }
@@ -98,6 +102,11 @@ public class GeneralElementTraits<T> : BaseElementTraits<T>
 
     public T NativeToManaged(IntPtr nat)
     {
+        if (nat == IntPtr.Zero)
+        {
+            eina.Log.Error("Null pointer on primitive/struct container.");
+            return default(T);
+        }
         var w = Marshal.PtrToStructure<eina.ConvertWrapper<T> >(nat);
         return w.Val;
     }
