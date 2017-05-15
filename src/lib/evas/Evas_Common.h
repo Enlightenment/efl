@@ -3556,19 +3556,6 @@ EAPI Eina_Bool            evas_seat_key_lock_is_set(const Evas_Lock *l, const ch
  * @}
  */
 
-/**
- * @defgroup Evas_Touch_Point_List Touch Point List Functions
- *
- * Functions to get information of touched points in the Evas.
- *
- * Evas maintains list of touched points on the canvas. Each point has
- * its co-ordinates, id and state. You can get the number of touched
- * points and information of each point using evas_touch_point_list
- * functions.
- *
- * @ingroup Evas_Canvas
- */
-
 typedef Eo Evas_Out;
 
 #define _EVAS_OUT_EO_CLASS_TYPE

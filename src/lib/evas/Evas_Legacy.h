@@ -560,6 +560,37 @@ EAPI void             evas_event_refeed_event(Evas *obj, void *event_copy, Evas_
  */
 
 /**
+ * @defgroup Evas_Touch_Point_List Touch Point List Functions
+ *
+ * Functions to get information of touched points in the Evas.
+ *
+ * Evas maintains list of touched points on the canvas. Each point has
+ * its co-ordinates, id and state. You can get the number of touched
+ * points and information of each point using evas_touch_point_list
+ * functions.
+ *
+ * @ingroup Evas_Canvas
+ *
+ * @{
+ */
+
+/**
+ * @brief This function returns the nth touch point's coordinates.
+ *
+ * Touch point's coordinates is updated whenever moving that point on the
+ * canvas.
+ *
+ * @param[in] n The number of the touched point (0 being the first).
+ * @param[out] x The pointer to a Evas_Coord to be filled in.
+ * @param[out] y The pointer to a Evas_Coord to be filled in.
+ */
+EAPI void evas_touch_point_list_nth_xy_get(Evas *eo_e, unsigned int n, Evas_Coord *x, Evas_Coord *y);
+
+/**
+ * @}
+ */
+
+/**
  * @ingroup Evas_Font_Group
  *
  * @{
