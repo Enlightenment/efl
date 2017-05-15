@@ -82,8 +82,8 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
          get {
          }
          values {
-            horizontal: Evas.Coord; [[Horizontal padding]]
-            vertical: Evas.Coord; [[Vertical padding]]
+            horizontal: int; [[Horizontal padding]]
+            vertical: int; [[Vertical padding]]
          }
       }
       @property mirrored {

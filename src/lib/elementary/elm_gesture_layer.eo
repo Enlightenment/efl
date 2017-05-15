@@ -68,7 +68,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             ]]
          }
          values {
-            sz: Evas.Coord; [[The finger size.]]
+            sz: int; [[The finger size.]]
          }
       }
       @property hold_events {

@@ -88,8 +88,8 @@ class Elm.Bg (Elm.Layout, Efl.File)
             ]]
          }
          values {
-            w: Evas.Coord; [[The new width of the image pixmap representation.]]
-            h: Evas.Coord; [[The new height of the image pixmap representation.]]
+            w: int; [[The new width of the image pixmap representation.]]
+            h: int; [[The new height of the image pixmap representation.]]
          }
       }
    }

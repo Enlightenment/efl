@@ -165,7 +165,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
       @property max_descent {
       	 [[Maximal descent property]]
          get {
-            return: Evas.Coord; [[Evas coordinate]]
+            return: int; [[Evas coordinate]]
          }
       }
       @property style_pad {
@@ -190,37 +190,37 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
       @property ascent {
       	 [[Ascent property]]
          get {
-            return: Evas.Coord; [[Evas coordinate]]
+            return: int; [[Evas coordinate]]
          }
       }
       @property horiz_advance {
       	 [[Horizontal advance property]]
          get {
-            return: Evas.Coord; [[Evas coordinate]]
+            return: int; [[Evas coordinate]]
          }
       }
       @property inset {
       	 [[Inset property]]
          get {
-            return: Evas.Coord; [[Evas coordinate]]
+            return: int; [[Evas coordinate]]
          }
       }
       @property max_ascent {
       	 [[Maximal ascent property]]
          get {
-            return: Evas.Coord; [[Evas coordinate]]
+            return: int; [[Evas coordinate]]
          }
       }
       @property vert_advance {
       	 [[Vertical advance property]]
          get {
-            return: Evas.Coord; [[Evas coordinate]]
+            return: int; [[Evas coordinate]]
          }
       }
       @property descent {
       	 [[descent property]]
          get {
-            return: Evas.Coord; [[Evas coordinate]]
+            return: int; [[Evas coordinate]]
          }
       }
       last_up_to_pos @const {
@@ -232,20 +232,20 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          ]]
          return: int(-1); [[Logical position of the last char]]
          params {
-            @in x: Evas.Coord; [[X coordinate]]
-            @in y: Evas.Coord; [[Y coordinate]]
+            @in x: int; [[X coordinate]]
+            @in y: int; [[Y coordinate]]
          }
       }
       char_coords_get @const {
       	 [[Get character coordinates]]
          return: int; [[Logical position of char]]
          params {
-            @in x: Evas.Coord; [[X coordinate]]
-            @in y: Evas.Coord; [[Y coordinate]]
-            @out cx: Evas.Coord; [[X coordinate]]
-            @out cy: Evas.Coord; [[Y coordinate]]
-            @out cw: Evas.Coord; [[Width]]
-            @out ch: Evas.Coord; [[Height]]
+            @in x: int; [[X coordinate]]
+            @in y: int; [[Y coordinate]]
+            @out cx: int; [[X coordinate]]
+            @out cy: int; [[Y coordinate]]
+            @out cw: int; [[Width]]
+            @out ch: int; [[Height]]
          }
       }
       char_pos_get @const {
@@ -259,10 +259,10 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
          return: bool; [[$false on success, $true otherwise]]
          params {
             @in pos: int; [[The character position to request co-ordinates for.]]
-            @out cx: Evas.Coord; [[A pointer to an @Evas.Coord to store the X value in (can be NULL).]]
-            @out cy: Evas.Coord; [[A pointer to an @Evas.Coord to store the Y value in (can be NULL).]]
-            @out cw: Evas.Coord; [[A pointer to an @Evas.Coord to store the Width value in (can be NULL).]]
-            @out ch: Evas.Coord; [[A pointer to an @Evas.Coord to store the Height value in (can be NULL).]]
+            @out cx: int; [[A pointer to an int to store the X value in (can be NULL).]]
+            @out cy: int; [[A pointer to an int to store the Y value in (can be NULL).]]
+            @out cw: int; [[A pointer to an int to store the Width value in (can be NULL).]]
+            @out ch: int; [[A pointer to an int to store the Height value in (can be NULL).]]
          }
       }
    }

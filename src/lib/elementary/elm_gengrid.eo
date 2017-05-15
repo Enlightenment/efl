@@ -119,8 +119,8 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
             ]]
          }
          values {
-            w: Evas.Coord; [[The group items' width.]]
-            h: Evas.Coord; [[The group items' height.]]
+            w: int; [[The group items' width.]]
+            h: int; [[The group items' height.]]
          }
       }
       @property select_mode {
@@ -210,8 +210,8 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
             ]]
          }
          values {
-            w: Evas.Coord; [[The items' width.]]
-            h: Evas.Coord; [[The items' height.]]
+            w: int; [[The items' width.]]
+            h: int; [[The items' height.]]
          }
       }
       @property multi_select_mode {
@@ -272,8 +272,8 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
             [[Set a given gengrid widget's scrolling page size.]]
          }
          values {
-            h_pagesize: Evas.Coord; [[Page size horizontal]]
-            v_pagesize: Evas.Coord; [[Page size vertical]]
+            h_pagesize: int; [[Page size horizontal]]
+            v_pagesize: int; [[Page size vertical]]
          }
       }
       @property selected_item {
@@ -436,8 +436,8 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
          ]]
          return: Elm.Widget.Item; [[The item at the coordinates or $null if none.]]
          params {
-            @in x: Evas.Coord; [[The input x coordinate.]]
-            @in y: Evas.Coord; [[The input y coordinate.]]
+            @in x: int; [[The input x coordinate.]]
+            @in y: int; [[The input y coordinate.]]
             @out xposret: int; [[The position relative to the item returned here.]]
             @out yposret: int; [[The position relative to the item returned here.]]
          }

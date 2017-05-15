@@ -13,8 +13,8 @@ class Elm.Pan (Efl.Canvas.Group.Clipped)
          get {
          }
          values {
-            x: Evas.Coord; [[X coordinate]]
-            y: Evas.Coord; [[Y coordinate]]
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
          }
       }
       @property content_size {
@@ -22,8 +22,8 @@ class Elm.Pan (Efl.Canvas.Group.Clipped)
          get {
          }
          values {
-            w: Evas.Coord; [[Width]]
-            h: Evas.Coord; [[Height]]
+            w: int; [[Width]]
+            h: int; [[Height]]
          }
       }
       @property pos_min {
@@ -31,8 +31,8 @@ class Elm.Pan (Efl.Canvas.Group.Clipped)
          get {
          }
          values {
-            x: Evas.Coord; [[X coordinate]]
-            y: Evas.Coord; [[Y coordinate]]
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
          }
       }
       @property pos_max {
@@ -40,8 +40,8 @@ class Elm.Pan (Efl.Canvas.Group.Clipped)
          get {
          }
          values {
-            x: Evas.Coord; [[X coordinate]]
-            y: Evas.Coord; [[Y coordinate]]
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
          }
       }
    }

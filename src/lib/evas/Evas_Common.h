@@ -107,6 +107,7 @@ typedef struct _Evas_Coord_Precision_Size  Evas_Coord_Precision_Size;    /**< Ev
 typedef struct _Evas_Position              Evas_Position;   /**< associates given point in Canvas and Output */
 typedef struct _Evas_Precision_Position    Evas_Precision_Position;   /**< associates given point in Canvas and Output, with sub-pixel precision */
 
+typedef int                                Evas_Coord; /**< Type used for coordinates (in pixels, int). */
 typedef int                                Evas_Font_Size; /**< Type used for font sizes (int). */
 
 /**

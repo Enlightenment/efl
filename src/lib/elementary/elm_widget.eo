@@ -329,10 +329,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
-            x: Evas.Coord; [[X coordinate]]
-            y: Evas.Coord; [[Y coordinate]]
-            w: Evas.Coord; [[Width]]
-            h: Evas.Coord; [[Height]]
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
+            w: int; [[Width]]
+            h: int; [[Height]]
          }
       }
       @property top {
@@ -487,10 +487,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       focus_highlight_geometry_get @const {
          [[Get the focus highlight geometry of widget.]]
          params {
-            @out x: Evas.Coord; [[X coordinate]]
-            @out y: Evas.Coord; [[Y coordinate]]
-            @out w: Evas.Coord; [[Width]]
-            @out h: Evas.Coord; [[Height]]
+            @out x: int; [[X coordinate]]
+            @out y: int; [[Y coordinate]]
+            @out w: int; [[Width]]
+            @out h: int; [[Height]]
          }
       }
       activate {
@@ -563,10 +563,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       on_focus_region {
          [['Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise.]]
          params {
-            @out x: Evas.Coord; [[X coordinate]]
-            @out y: Evas.Coord; [[Y coordinate]]
-            @out w: Evas.Coord; [[Width]]
-            @out h: Evas.Coord; [[Height]]
+            @out x: int; [[X coordinate]]
+            @out y: int; [[Y coordinate]]
+            @out w: int; [[Width]]
+            @out h: int; [[Height]]
          }
          return: bool; [[$true on success, $false otherwise]]
       }
@@ -635,20 +635,20 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       show_region_set {
       	 [[Set show region]]
          params {
-            @in x: Evas.Coord; [[X coordinate]]
-            @in y: Evas.Coord; [[Y coordinate]]
-            @in w: Evas.Coord; [[Width]]
-            @in h: Evas.Coord; [[Height]]
+            @in x: int; [[X coordinate]]
+            @in y: int; [[Y coordinate]]
+            @in w: int; [[Width]]
+            @in h: int; [[Height]]
             @in forceshow: bool; [[$true if show should be forced, $false otherwise]]
          }
       }
       show_region_get @const {
       	 [[Get show region]]
          params {
-            @out x: Evas.Coord @optional; [[X coordinate]]
-            @out y: Evas.Coord @optional; [[Y coordinate]]
-            @out w: Evas.Coord @optional; [[Width]]
-            @out h: Evas.Coord @optional; [[Height]]
+            @out x: int @optional; [[X coordinate]]
+            @out y: int @optional; [[Y coordinate]]
+            @out w: int @optional; [[Width]]
+            @out h: int @optional; [[Height]]
          }
       }
       scroll_freeze_pop {

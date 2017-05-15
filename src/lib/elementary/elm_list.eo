@@ -297,8 +297,8 @@ class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
 
          return: Elm.Widget.Item; [[The item at the coordinates or NULL if none]]
          params {
-            @in x: Evas.Coord; [[The input x coordinate]]
-            @in y: Evas.Coord; [[The input y coordinate]]
+            @in x: int; [[The input x coordinate]]
+            @in y: int; [[The input y coordinate]]
             @out posret: int; [[The position relative to the item returned here]]
          }
       }

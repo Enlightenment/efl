@@ -51,8 +51,8 @@ interface Elm.Interface.Fileselector ()
             [[Get the size for the thumbnail of a given file selector widget]]
          }
          values {
-            w: Evas.Coord; [[Width]]
-            h: Evas.Coord; [[Height]]
+            w: int; [[Width]]
+            h: int; [[Height]]
          }
       }
       @property hidden_visible {

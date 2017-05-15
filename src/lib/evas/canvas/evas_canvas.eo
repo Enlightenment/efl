@@ -163,8 +163,8 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
            dev: Efl.Input.Device; [[The pointer device.]]
          }
          values {
-            x: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
-            y: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
+            x: int; [[The pointer to a Evas_Coord to be filled in.]]
+            y: int; [[The pointer to a Evas_Coord to be filled in.]]
          }
       }
       @property pointer_canvas_xy {
@@ -189,8 +189,8 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             */
          }
          values {
-            x: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
-            y: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
+            x: int; [[The pointer to a Evas_Coord to be filled in.]]
+            y: int; [[The pointer to a Evas_Coord to be filled in.]]
          }
       }
       @property event_down_count {
@@ -572,8 +572,8 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             The list of Evas objects that are over the given position in $e.
          ]]
          params {
-            @in x: Evas.Coord; [[The horizontal coordinate of the position.]]
-            @in y: Evas.Coord; [[The vertical coordinate of the position.]]
+            @in x: int; [[The horizontal coordinate of the position.]]
+            @in y: int; [[The vertical coordinate of the position.]]
             @in include_pass_events_objects: bool; [[
                Boolean flag to include or not objects which pass events
                in this calculation.
@@ -696,8 +696,8 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          ]]
          return: Efl.Canvas.Object @warn_unused; [[The Evas object that is over all other objects at the given position.]]
          params {
-            @in x: Evas.Coord; [[The horizontal coordinate of the position.]]
-            @in y: Evas.Coord; [[The vertical coordinate of the position.]]
+            @in x: int; [[The horizontal coordinate of the position.]]
+            @in y: int; [[The vertical coordinate of the position.]]
             @in include_pass_events_objects: bool; [[
                Boolean flag to include or not objects which pass events
                in this calculation.
@@ -769,10 +769,10 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       	 [[Get all objects in the given rectangle]]
          return: list<Efl.Canvas.Object> @warn_unused; [[List of objects]]
          params {
-            @in x: Evas.Coord; [[X coordinate]]
-            @in y: Evas.Coord; [[Y coordinate]]
-            @in w: Evas.Coord; [[Width]]
-            @in h: Evas.Coord; [[Height]]
+            @in x: int; [[X coordinate]]
+            @in y: int; [[Y coordinate]]
+            @in w: int; [[Width]]
+            @in h: int; [[Height]]
             @in include_pass_events_objects: bool; [[$true if the list should include objects which pass events]]
             @in include_hidden_objects: bool; [[$true if the list should include hidden objects]]
          }
@@ -886,7 +886,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          */
          return: int @warn_unused; [[The output/screen coordinate translated to output coordinates.]]
          params {
-            @in x: Evas.Coord; [[The canvas X coordinate.]]
+            @in x: int; [[The canvas X coordinate.]]
          }
       }
       render_updates {
@@ -944,7 +944,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          canvas_y = evas_coord_screen_y_to_world(evas, screen_y);
          @endcode
          */
-         return: Evas.Coord @warn_unused; [[The screen coordinate translated to canvas unit coordinates.]]
+         return: int @warn_unused; [[The screen coordinate translated to canvas unit coordinates.]]
          params {
             @in y: int; [[The screen/output y coordinate.]]
          }
@@ -1060,16 +1060,16 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             rectangular region.
          ]]
          params {
-            @in x: Evas.Coord; [[
+            @in x: int; [[
                The top left corner's horizontal coordinate for the
                rectangular region.
             ]]
-            @in y: Evas.Coord; [[
+            @in y: int; [[
                The top left corner's vertical coordinate for the
                rectangular region.
             ]]
-            @in w: Evas.Coord; [[The width of the rectangular region.]]
-            @in h: Evas.Coord; [[The height of the rectangular region.]]
+            @in w: int; [[The width of the rectangular region.]]
+            @in h: int; [[The height of the rectangular region.]]
             @in include_pass_events_objects: bool; [[
                Boolean flag to include or not objects which pass events
                in this calculation.
@@ -1129,7 +1129,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          canvas_x = evas_coord_screen_x_to_world(evas, screen_x);
          @endcode
          */
-         return: Evas.Coord @warn_unused; [[
+         return: int @warn_unused; [[
             The screen coordinate translated to canvas unit coordinates.
          ]]
          params {
@@ -1205,7 +1205,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          */
          return: int @warn_unused; [[The output/screen coordinate translated to output coordinates.]]
          params {
-            @in y: Evas.Coord; [[The canvas y coordinate.]]
+            @in y: int; [[The canvas y coordinate.]]
          }
       }
    }

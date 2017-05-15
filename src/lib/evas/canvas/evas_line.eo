@@ -20,10 +20,10 @@ class Evas.Line (Efl.Canvas.Object)
             ]]
          }
          values {
-            x1: Evas.Coord; [[The X coordinate of the first point.]]
-            y1: Evas.Coord; [[The Y coordinate of the first point.]]
-            x2: Evas.Coord; [[The X coordinate of the second point.]]
-            y2: Evas.Coord; [[The Y coordinate of the second point.]]
+            x1: int; [[The X coordinate of the first point.]]
+            y1: int; [[The Y coordinate of the first point.]]
+            x2: int; [[The X coordinate of the second point.]]
+            y2: int; [[The Y coordinate of the second point.]]
          }
       }
    }

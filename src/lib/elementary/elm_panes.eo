@@ -99,7 +99,7 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
          get {
          }
          values {
-            size: Evas.Coord; [[Value representing minimum size of left side in pixels.]]
+            size: int; [[Value representing minimum size of left side in pixels.]]
          }
       }
       @property content_right_min_size {
@@ -111,7 +111,7 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
          get {
          }
          values {
-            size: Evas.Coord; [[Value representing minimum size of right side in pixels.]]
+            size: int; [[Value representing minimum size of right side in pixels.]]
          }
       }
    }

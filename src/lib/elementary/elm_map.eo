@@ -174,8 +174,8 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          }
          values {
             degree: double; [[Angle from 0.0 to 360.0 to rotate around Z axis.]]
-            cx: Evas.Coord; [[Rotation's center horizontal position.]]
-            cy: Evas.Coord; [[Rotation's center vertical position.]]
+            cx: int; [[Rotation's center horizontal position.]]
+            cy: int; [[Rotation's center vertical position.]]
          }
       }
       @property user_agent {
@@ -364,8 +364,8 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          params {
             @in lon: double; [[The longitude to convert.]]
             @in lat: double; [[The latitude to convert.]]
-            @out x: Evas.Coord; [[A pointer to horizontal coordinate.]]
-            @out y: Evas.Coord; [[A pointer to vertical coordinate.]]
+            @out x: int; [[A pointer to horizontal coordinate.]]
+            @out y: int; [[A pointer to vertical coordinate.]]
          }
       }
       overlay_circle_add {
@@ -581,8 +581,8 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          ]]
          return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
          params {
-            @in x: Evas.Coord; [[horizontal pixel coordinate.]]
-            @in y: Evas.Coord; [[vertical pixel coordinate.]]
+            @in x: int; [[horizontal pixel coordinate.]]
+            @in y: int; [[vertical pixel coordinate.]]
          }
       }
       overlay_add {
@@ -617,8 +617,8 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            The canvas coordinates mean x, y coordinate from current viewport.
          ]]
          params {
-            @in x: Evas.Coord; [[Horizontal coordinate of the point to convert.]]
-            @in y: Evas.Coord; [[Vertical coordinate of the point to convert.]]
+            @in x: int; [[Horizontal coordinate of the point to convert.]]
+            @in y: int; [[Vertical coordinate of the point to convert.]]
             @out lon: double; [[A pointer to the longitude.]]
             @out lat: double; [[A pointer to the latitude.]]
          }

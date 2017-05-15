@@ -234,8 +234,8 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                */
          }
          values {
-            minw: Evas.Coord; [[Pointer to a variable where to store the minimum width]]
-            minh: Evas.Coord; [[Pointer to a variable where to store the minimum height]]
+            minw: int; [[Pointer to a variable where to store the minimum width]]
+            minh: int; [[Pointer to a variable where to store the minimum height]]
          }
       }
       @property size_max {
@@ -275,8 +275,8 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                */
          }
          values {
-            maxw: Evas.Coord; [[Pointer to a variable where to store the maximum width]]
-            maxh: Evas.Coord; [[Pointer to a variable where to store the maximum height]]
+            maxw: int; [[Pointer to a variable where to store the maximum width]]
+            maxh: int; [[Pointer to a variable where to store the maximum height]]
          }
       }
       preload {
@@ -329,10 +329,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
            documentation, then.]]
 
          params {
-            @out minw: Evas.Coord; [[Pointer to a variable where to store the minimum
-                                     required width]]
-            @out minh: Evas.Coord; [[Pointer to a variable where to store the minimum
-                                     required height]]
+            @out minw: int; [[Pointer to a variable where to store the minimum
+                              required width]]
+            @out minh: int; [[Pointer to a variable where to store the minimum
+                              required height]]
          }
       }
       size_min_restricted_calc {
@@ -353,14 +353,14 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
            into account in this calculation.]]
 
          params {
-            @out minw: Evas.Coord; [[Pointer to a variable where to store the minimum
-                                     required width]]
-            @out minh: Evas.Coord; [[Pointer to a variable where to store the minimum
-                                     required height]]
-            @in restrictedw: Evas.Coord; [[Do not allow object's calculated (minimum) width
-                                           to be less than this value]]
-            @in restrictedh: Evas.Coord; [[Do not allow object's calculated (minimum)
-                                           height to be less than this value]]
+            @out minw: int; [[Pointer to a variable where to store the minimum
+                              required width]]
+            @out minh: int; [[Pointer to a variable where to store the minimum
+                              required height]]
+            @in restrictedw: int; [[Do not allow object's calculated (minimum) width
+                                    to be less than this value]]
+            @in restrictedh: int; [[Do not allow object's calculated (minimum)
+                                    height to be less than this value]]
          }
       }
       parts_extends_calc {
@@ -382,14 +382,14 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
          return: bool; [[$true on success, $false otherwise]]
          params {
-            @out x: Evas.Coord; [[A pointer to a variable where to store the parts region's
-                                  x coordinate]]
-            @out y: Evas.Coord; [[A pointer to a variable where to store the parts region's
-                                  y coordinate]]
-            @out w: Evas.Coord; [[A pointer to a variable where to store the parts region's
-                                  width]]
-            @out h: Evas.Coord; [[A pointer to a variable where to store the parts region's
-                                  height]]
+            @out x: int; [[A pointer to a variable where to store the parts region's
+                           x coordinate]]
+            @out y: int; [[A pointer to a variable where to store the parts region's
+                           y coordinate]]
+            @out w: int; [[A pointer to a variable where to store the parts region's
+                           width]]
+            @out h: int; [[A pointer to a variable where to store the parts region's
+                           height]]
          }
       }
       calc_force {
@@ -910,12 +910,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             part: string; [[The Edje part's name]]
          }
          values {
-            x: Evas.Coord; [[A pointer to a variable where to store the part's x
-                             coordinate]]
-            y: Evas.Coord; [[A pointer to a variable where to store the part's y
-                             coordinate]]
-            w: Evas.Coord; [[A pointer to a variable where to store the part's width]]
-            h: Evas.Coord; [[A pointer to a variable where to store the part's height]]
+            x: int; [[A pointer to a variable where to store the part's x coordinate]]
+            y: int; [[A pointer to a variable where to store the part's y coordinate]]
+            w: int; [[A pointer to a variable where to store the part's width]]
+            h: int; [[A pointer to a variable where to store the part's height]]
          }
       }
       @property part_drag_value {
@@ -1445,10 +1443,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             part: string; [[The part name]]
          }
          values {
-            x: Evas.Coord; [[Cursor X position]]
-            y: Evas.Coord; [[Cursor Y position]]
-            w: Evas.Coord; [[Cursor width]]
-            h: Evas.Coord; [[Cursor height]]
+            x: int; [[Cursor X position]]
+            y: int; [[Cursor Y position]]
+            w: int; [[Cursor width]]
+            h: int; [[Cursor height]]
          }
       }
       @property part_text_cursor_coord {
@@ -1462,8 +1460,8 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          values {
             part: string; [[The part containing the object.]]
             cur: Edje.Cursor; [[The cursor to adjust.]]
-            x: Evas.Coord; [[X Coordinate.]]
-            y: Evas.Coord; [[Y Coordinate.]]
+            x: int; [[X Coordinate.]]
+            y: int; [[Y Coordinate.]]
          }
       }
       @property part_text_cursor_pos {
@@ -2051,10 +2049,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             item: string; [[The item name]]
          }
          values {
-            cx: Evas.Coord; [[Item x return (relative to entry part)]]
-            cy: Evas.Coord; [[Item y return (relative to entry part)]]
-            cw: Evas.Coord; [[Item width return]]
-            ch: Evas.Coord; [[Item height return]]
+            cx: int; [[Item x return (relative to entry part)]]
+            cy: int; [[Item y return (relative to entry part)]]
+            cw: int; [[Item width return]]
+            ch: int; [[Item height return]]
          }
       }
       @property part_text_item_list {

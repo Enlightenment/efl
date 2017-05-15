@@ -592,10 +592,10 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
-            x: Evas.Coord; [[X coordinate]]
-            y: Evas.Coord; [[Y coordinate]]
-            w: Evas.Coord; [[Width]]
-            h: Evas.Coord; [[Height]]
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
+            w: int; [[Width]]
+            h: int; [[Height]]
          }
       }
       @property imf_context {

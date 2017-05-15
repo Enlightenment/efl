@@ -78,8 +78,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Canvas.Filter.Internal)
          ]]
          get {}
          values {
-            w: Evas.Coord; [[The width of the object.]]
-            h: Evas.Coord; [[The height of the object.]]
+            w: int; [[The width of the object.]]
+            h: int; [[The height of the object.]]
          }
       }
       @property cursor {
@@ -113,8 +113,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Canvas.Filter.Internal)
          ]]
          get {}
          values {
-            w: Evas.Coord; [[The width returned.]]
-            h: Evas.Coord; [[The height returned.]]
+            w: int; [[The width returned.]]
+            h: int; [[The height returned.]]
          }
       }
       @property style_insets {
@@ -126,10 +126,10 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Canvas.Filter.Internal)
          ]]
          get {}
          values {
-            l: Evas.Coord; [[Left padding]]
-            r: Evas.Coord; [[Right padding]]
-            t: Evas.Coord; [[Top padding]]
-            b: Evas.Coord; [[Bottom padding]]
+            l: int; [[Left padding]]
+            r: int; [[Right padding]]
+            t: int; [[Top padding]]
+            b: int; [[Bottom padding]]
          }
       }
       @property is_empty {
@@ -335,10 +335,10 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Canvas.Filter.Internal)
          legacy: null;
          params {
             @in an: ptr(const(Efl.Canvas.Text.Annotation)); [[Given annotation to query]]
-            @out x: Evas.Coord; [[X coordinate of the annotation]]
-            @out y: Evas.Coord; [[Y coordinate of the annotation]]
-            @out w: Evas.Coord; [[Width of the annotation]]
-            @out h: Evas.Coord; [[Height of the annotation]]
+            @out x: int; [[X coordinate of the annotation]]
+            @out y: int; [[Y coordinate of the annotation]]
+            @out w: int; [[Width of the annotation]]
+            @out h: int; [[Height of the annotation]]
          }
          return: bool; [[$true if given annotation is an object item, $false otherwise]]
       }

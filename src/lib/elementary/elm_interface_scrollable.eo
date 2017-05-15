@@ -165,10 +165,10 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
          get {
          }
          values {
-            x: Evas.Coord; [[X coordinate of the region]]
-            y: Evas.Coord; [[Y coordinate of the region]]
-            w: Evas.Coord; [[Width of the region]]
-            h: Evas.Coord; [[Height of the region]]
+            x: int; [[X coordinate of the region]]
+            y: int; [[Y coordinate of the region]]
+            w: int; [[Width of the region]]
+            h: int; [[Height of the region]]
          }
       }
       @property repeat_events {
@@ -199,8 +199,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
          get {
          }
          values {
-            x: Evas.Coord; [[The horizontal page relative size]]
-            y: Evas.Coord; [[The vertical page relative size]]
+            x: int; [[The horizontal page relative size]]
+            y: int; [[The vertical page relative size]]
          }
       }
       @property bounce_animator_disabled {
@@ -256,8 +256,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
          values {
             pagerel_h: double; [[Page relation horizontal]]
             pagerel_v: double; [[Page relation vertical]]
-            pagesize_h: Evas.Coord; [[Page size horizontal]]
-            pagesize_v: Evas.Coord; [[Page size vertical]]
+            pagesize_h: int; [[Page size horizontal]]
+            pagesize_v: int; [[Page size vertical]]
          }
       }
       @property single_direction {
@@ -288,8 +288,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
          get {
          }
          values {
-            x: Evas.Coord; [[X coordinate]]
-            y: Evas.Coord; [[Y coordinate]]
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
          }
       }
       @property loop {
@@ -574,10 +574,10 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
          get {
          }
          values {
-            x: Evas.Coord; [[X coordinate]]
-            y: Evas.Coord; [[Y coordinate]]
-            w: Evas.Coord; [[Width]]
-            h: Evas.Coord; [[Height]]
+            x: int; [[X coordinate]]
+            y: int; [[Y coordinate]]
+            w: int; [[Width]]
+            h: int; [[Height]]
          }
       }
       @property content_size {
@@ -587,16 +587,16 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
               This gets the size of the content object of the scroller.]]
          }
          values {
-            w: Evas.Coord; [[Width of the content object.]]
-            h: Evas.Coord; [[Height of the content object.]]
+            w: int; [[Width of the content object.]]
+            h: int; [[Height of the content object.]]
 
          }
       }
       content_pos_set {
       	 [[Set the content position]]
          params {
-            @in x: Evas.Coord; [[X coordinate]]
-            @in y: Evas.Coord; [[Y coordinate]]
+            @in x: int; [[X coordinate]]
+            @in y: int; [[Y coordinate]]
             @in sig: bool; [[Send signals to the theme corresponding to the
                              scroll direction, or if an edge was reached.]]
          }
@@ -604,8 +604,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
       content_pos_get {
       	 [[Get content position]]
          params {
-            @out x: Evas.Coord; [[X coordinate]]
-            @out y: Evas.Coord; [[Y coordinate]]
+            @out x: int; [[X coordinate]]
+            @out y: int; [[Y coordinate]]
          }
       }
       page_show {
@@ -633,10 +633,10 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
 
            See @.content_region_show]]
          params {
-            @in x: Evas.Coord; [[X coordinate of the region]]
-            @in y: Evas.Coord; [[Y coordinate of the region]]
-            @in w: Evas.Coord; [[Width of the region]]
-            @in h: Evas.Coord; [[Height of the region]]
+            @in x: int; [[X coordinate of the region]]
+            @in y: int; [[Y coordinate of the region]]
+            @in w: int; [[Width of the region]]
+            @in h: int; [[Height of the region]]
          }
       }
       page_bring_in {
@@ -658,10 +658,10 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
            region in the virtual content object (0, 0 starting at the top-left of the
            virtual content object) is shown within the scroller.]]
          params {
-            @in x: Evas.Coord; [[X coordinate of the region]]
-            @in y: Evas.Coord; [[Y coordinate of the region]]
-            @in w: Evas.Coord; [[Width of the region]]
-            @in h: Evas.Coord; [[Height of the region]]
+            @in x: int; [[X coordinate of the region]]
+            @in y: int; [[Y coordinate of the region]]
+            @in w: int; [[Width of the region]]
+            @in h: int; [[Height of the region]]
          }
       }
       content_min_limit {

@@ -89,8 +89,8 @@ class Elm.Box (Elm.Widget)
             ]]
          }
          values {
-            horizontal: Evas.Coord; [[The horizontal space between elements]]
-            vertical: Evas.Coord; [[The vertical space between elements]]
+            horizontal: int; [[The horizontal space between elements]]
+            vertical: int; [[The vertical space between elements]]
          }
       }
       @property layout {

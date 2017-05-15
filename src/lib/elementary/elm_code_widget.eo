@@ -203,8 +203,8 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       position_at_coordinates_get {
          [[Get the row, col position for a given coordinate on the widget.]]
          params {
-            x: Evas.Coord; [[The x coordinate in the widget]]
-            y: Evas.Coord; [[The y coordinate in the widget]]
+            x: int; [[The x coordinate in the widget]]
+            y: int; [[The y coordinate in the widget]]
             row: ptr(uint); [[The row for the coordinates]]
             col: ptr(int); [[The column for the coordinates]]
          }
@@ -215,10 +215,10 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
          params {
             row: uint; [[The row for the requested position]]
             col: int; [[The column for the requested position]]
-            x: ptr(Evas.Coord); [[The x coordinate of the cell at specified position]]
-            y: ptr(Evas.Coord); [[The y coordinate of the cell at specified position]]
-            w: ptr(Evas.Coord); [[The width of the cell at specified position]]
-            h: ptr(Evas.Coord); [[The height of the cell at specified position]]
+            x: ptr(int); [[The x coordinate of the cell at specified position]]
+            y: ptr(int); [[The y coordinate of the cell at specified position]]
+            w: ptr(int); [[The width of the cell at specified position]]
+            h: ptr(int); [[The height of the cell at specified position]]
          }
          return: bool; [[$true if a cell exists at the specified position]]
       }

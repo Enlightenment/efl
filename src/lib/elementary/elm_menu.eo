@@ -14,8 +14,8 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
            Note: $x and $y coordinates are relative to parent.
          ]]
          params {
-            @in x: Evas.Coord; [[The new X coordinate]]
-            @in y: Evas.Coord; [[The new Y coordinate]]
+            @in x: int; [[The new X coordinate]]
+            @in y: int; [[The new Y coordinate]]
          }
       }
       item_add {

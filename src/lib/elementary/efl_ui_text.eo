@@ -6,19 +6,19 @@ struct Efl.Ui.Text.Anchor_Info
    [[EFL UI text anchor information]]
    name: string; [[The name of the anchor, as stated in its href.]]
    button: int; [[The mouse button used to click on it.]]
-   x: Evas.Coord; [[Anchor geometry, relative to canvas.]]
-   y: Evas.Coord; [[Anchor geometry, relative to canvas.]]
-   w: Evas.Coord; [[Anchor geometry, relative to canvas.]]
-   h: Evas.Coord; [[Anchor geometry, relative to canvas.]]
+   x: int; [[Anchor geometry, relative to canvas.]]
+   y: int; [[Anchor geometry, relative to canvas.]]
+   w: int; [[Anchor geometry, relative to canvas.]]
+   h: int; [[Anchor geometry, relative to canvas.]]
 }
 
 struct Efl.Ui.Text.Hover_Parent
 {
    [[EFL text hover parent]]
-   x: Evas.Coord; [[Hover parent X coordinate]]
-   y: Evas.Coord; [[Hover parent Y coordinate]]
-   w: Evas.Coord; [[Hover parent width]]
-   h: Evas.Coord; [[Hover parent height]]
+   x: int; [[Hover parent X coordinate]]
+   y: int; [[Hover parent Y coordinate]]
+   w: int; [[Hover parent width]]
+   h: int; [[Hover parent height]]
 }
 
 struct Efl.Ui.Text.Anchor_Hover_Info

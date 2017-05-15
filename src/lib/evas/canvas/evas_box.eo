@@ -53,8 +53,8 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
               See also @.padding.set.]]
          }
          values {
-            horizontal: Evas.Coord; [[The horizontal padding, in pixels.]]
-            vertical: Evas.Coord; [[The vertical padding, in pixels.]]
+            horizontal: int; [[The horizontal padding, in pixels.]]
+            vertical: int; [[The vertical padding, in pixels.]]
          }
       }
       @property layout {

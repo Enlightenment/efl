@@ -22,8 +22,8 @@ class Elm.Table (Elm.Widget)
             [[Get padding between cells.]]
          }
          values {
-            horizontal: Evas.Coord; [[The horizontal padding.]]
-            vertical: Evas.Coord; [[The vertical padding.]]
+            horizontal: int; [[The horizontal padding.]]
+            vertical: int; [[The vertical padding.]]
          }
       }
       @property align {

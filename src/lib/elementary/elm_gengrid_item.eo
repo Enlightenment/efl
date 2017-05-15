@@ -153,8 +153,8 @@ class Elm.Gengrid.Item(Elm.Widget.Item)
                        @since 1.19]]
                 }
                 values {
-                     w : Evas.Coord; [[The item's width.]]
-                     h : Evas.Coord; [[The item's height.]]
+                     w : int; [[The item's width.]]
+                     h : int; [[The item's height.]]
                 }
            }
            /*      init { FIXME

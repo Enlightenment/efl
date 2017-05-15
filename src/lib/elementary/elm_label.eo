@@ -26,7 +26,7 @@ class Elm.Label (Elm.Layout)
          get {
          }
          values {
-            w: Evas.Coord; [[The wrap width in pixels at a minimum where words need to wrap]]
+            w: int; [[The wrap width in pixels at a minimum where words need to wrap]]
          }
       }
       @property slide_speed {
