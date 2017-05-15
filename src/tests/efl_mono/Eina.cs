@@ -824,16 +824,6 @@ class TestEinaArray
         Test.Assert(a.Length == 3);
     }
 
-    public static void to_array_int()
-    {
-        // TODO
-    }
-
-    public static void to_array_string()
-    {
-        // TODO
-    }
-
     // //
     // Code Generation
     //
