@@ -161,8 +161,10 @@ _animate_scene(void *data)
         if (angle > 360) angle = 0.0;
      }
    else
-     evas_canvas3d_node_position_set(scene->mediator, 0.0, 6.0, 12.0);
-     evas_canvas3d_node_look_at_set(scene->mediator, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 3.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 5.0, 0.0);
+     {
+        evas_canvas3d_node_position_set(scene->mediator, 0.0, 6.0, 12.0);
+        evas_canvas3d_node_look_at_set(scene->mediator, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 3.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 5.0, 0.0);
+     }
 
    return EINA_TRUE;
 }
