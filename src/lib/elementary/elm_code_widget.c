@@ -1316,74 +1316,6 @@ _elm_code_widget_change_selection_add(Evas_Object *widget)
    free(selection);
 }
 
-void
-_elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *text, int length, Eina_Bool undo)
-{
-   Elm_Code *code;
-   Elm_Code_Line *line;
-   Elm_Code_Widget_Change_Info *change;
-   unsigned int row, col, position, col_width, curlen, indent;
-   const char *curtext, *indent_text;
-
-   if (undo)
-     elm_code_widget_selection_delete(widget);
-
-   code = elm_obj_code_widget_code_get(widget);
-   elm_obj_code_widget_cursor_position_get(widget, &row, &col);
-   line = elm_code_file_line_get(code->file, row);
-   if (line == NULL)
-     {
-        elm_code_file_line_append(code->file, "", 0, NULL);
-        row = elm_code_file_lines_get(code->file);
-        line = elm_code_file_line_get(code->file, row);
-     }
-   if (text[0] == '}')
-     {
-        curtext = elm_code_line_text_get(line, &curlen);
-
-        if (elm_code_text_is_whitespace(curtext, line->length))
-          {
-             indent_text = elm_code_line_indent_matching_braces_get(line, &indent);
-             elm_code_line_text_leading_whitespace_strip(line);
-
-             if (indent > 0)
-               elm_code_line_text_insert(line, 0, indent_text, indent);
-
-             elm_obj_code_widget_cursor_position_set(widget, row, indent + 1);
-             elm_obj_code_widget_cursor_position_get(widget, &row, &col);
-          }
-     }
-
-   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
-   elm_code_line_text_insert(line, position, text, length);
-   col_width = elm_code_widget_line_text_column_width_to_position(widget, line, position + length) -
-               elm_code_widget_line_text_column_width_to_position(widget, line, position);
-
-   // a workaround for when the cursor position would be off the line width
-   _elm_code_widget_resize(widget, line);
-   elm_obj_code_widget_cursor_position_set(widget, row, col + col_width);
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
-
-   if (undo)
-     {
-        change = _elm_code_widget_change_create(col, row, col + col_width - 1, row, text, length, EINA_TRUE);
-        _elm_code_widget_undo_change_add(widget, change);
-        _elm_code_widget_change_free(change);
-     }
-}
-
-EOLIAN void
-_elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd EINA_UNUSED, const char *text)
-{
-   _elm_code_widget_text_at_cursor_insert_do(widget, text, strlen(text), EINA_TRUE);
-}
-
-void
-_elm_code_widget_text_at_cursor_insert_no_undo(Elm_Code_Widget *widget, const char *text, unsigned int length)
-{
-   _elm_code_widget_text_at_cursor_insert_do(widget, text, length, EINA_FALSE);
-}
-
 static void
 _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
 {
@@ -1393,7 +1325,7 @@ _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    if (!pd->tab_inserts_spaces)
      {
-        _elm_code_widget_text_at_cursor_insert(widget, pd, "\t");
+        elm_code_widget_text_at_cursor_insert(widget, "\t");
         return;
      }
 
@@ -1402,7 +1334,7 @@ _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
 
    while (rem < pd->tabstop)
      {
-        _elm_code_widget_text_at_cursor_insert(widget, pd, " ");
+        elm_code_widget_text_at_cursor_insert(widget, " ");
         rem++;
      }
 }
@@ -1719,7 +1651,7 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      elm_code_widget_selection_clear(widget);
 
    else if (ev->string && strlen(ev->string) == 1)
-     _elm_code_widget_text_at_cursor_insert(widget, pd, ev->string);
+     elm_code_widget_text_at_cursor_insert(widget, ev->string);
    else
      INF("Unhandled key %s (%s) (%s)", ev->key, ev->keyname, ev->string);
 }
