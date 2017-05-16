@@ -27,6 +27,7 @@
 #include <eolian/mono/type_impl.hh>
 #include <eolian/mono/marshall_type_impl.hh>
 #include <eolian/mono/marshall_annotation.hh>
+#include <eolian/mono/function_pointer.hh>
 
 namespace eolian_mono {
 
@@ -101,13 +102,16 @@ run(options_type const& opts)
              continue;
 
          const Eolian_Function *fp = eolian_typedecl_function_pointer_get(tp);
-         std::string tpname = eolian_typedecl_full_name_get(tp);
+         efl::eolian::grammar::attributes::function_def function_def(fp, EOLIAN_FUNCTION_POINTER);
+         std::vector<std::string> namespaces;
 
-         EINA_LOG_ERR("WOuld be generating function pointer for type %s", eolian_typedecl_full_name_get(tp));
-         as_generator("public delegate void " << efl::eolian::grammar::string << "();\n")
-             .generate(iterator, tpname, efl::eolian::grammar::context_null());
-         /* eolian_mono::function_pointer */
-         /*   .generate(iterator, */ 
+         for (efl::eina::iterator<const char> namespace_iterator(::eolian_typedecl_namespaces_get(tp)), namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
+           {
+              namespaces.push_back(&*namespace_iterator);
+           }
+
+         eolian_mono::function_pointer
+           .generate(iterator, function_def, namespaces, efl::eolian::grammar::context_cons<eolian_mono::library_context>({opts.dllimport}));
      }
 
    if (klass)
