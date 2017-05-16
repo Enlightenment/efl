@@ -1096,6 +1096,7 @@ struct _Edje_Part_Collection
       unsigned int strncmp_count;
       unsigned int strrncmp_count;
       unsigned int nocmp_count;
+      unsigned int total_count;
    } programs;
 
    struct { /* list of limit that need to be monitored */
