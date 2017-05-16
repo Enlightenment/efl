@@ -1498,17 +1498,14 @@ static void
 _zoom_test_reset(Gesture_Info *gesture)
 {
    Zoom_Type *st;
-   Evas_Modifier_Mask mask;
 
    EINA_SAFETY_ON_NULL_RETURN(gesture);
    if (!gesture->data) return;
    ELM_GESTURE_LAYER_DATA_GET(gesture->obj, sd);
 
    st = gesture->data;
-   mask = evas_key_modifier_mask_get(
-       evas_object_evas_get(sd->target), "Control");
-   evas_object_key_ungrab(sd->target, "Control_L", mask, 0);
-   evas_object_key_ungrab(sd->target, "Control_R", mask, 0);
+   efl_canvas_object_key_ungrab(sd->target, "Control_L", EFL_INPUT_MODIFIER_CONTROL, 0);
+   efl_canvas_object_key_ungrab(sd->target, "Control_R", EFL_INPUT_MODIFIER_CONTROL, 0);
 
    memset(st, 0, sizeof(Zoom_Type));
    st->zoom_distance_tolerance = sd->zoom_distance_tolerance;
@@ -3265,16 +3262,16 @@ _zoom_with_wheel_test(Evas_Object *obj,
            }
          else
            { /* On first wheel event, report START */
-             Evas_Modifier_Mask mask = evas_key_modifier_mask_get(
-                 evas_object_evas_get(sd->target), "Control");
              force = EINA_FALSE;
              s = ELM_GESTURE_STATE_START;
-             if (!evas_object_key_grab
-                   (sd->target, "Control_L", mask, 0, EINA_FALSE))
-               ERR("Failed to Grabbed CTRL_L");
-             if (!evas_object_key_grab
-                   (sd->target, "Control_R", mask, 0, EINA_FALSE))
-               ERR("Failed to Grabbed CTRL_R");
+             if (!efl_canvas_object_key_grab(sd->target, "Control_L",
+                                             EFL_INPUT_MODIFIER_CONTROL, 0,
+                                             EINA_FALSE))
+               ERR("Failed to grab left Ctrl");
+             if (!efl_canvas_object_key_grab(sd->target, "Control_R",
+                                             EFL_INPUT_MODIFIER_CONTROL, 0,
+                                             EINA_FALSE))
+               ERR("Failed to grab right Ctrl");
            }
 
          st->zoom_distance_tolerance = 0; /* Cancel tolerance */
