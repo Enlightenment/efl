@@ -210,6 +210,16 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
      }
 }
 
+EAPI void elm_code_file_save_as(Elm_Code_File *file, const char *path)
+{
+   Eina_File *newfile;
+   newfile = eina_file_open(path, EINA_FALSE);
+   file->file = newfile;
+   file->mime = efreet_mime_type_get(path);
+
+   elm_code_file_save(file);
+}
+
 EAPI void elm_code_file_free(Elm_Code_File *file)
 {
    Elm_Code_Line *l;
