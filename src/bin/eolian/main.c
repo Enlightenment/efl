@@ -287,15 +287,16 @@ void eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
 }
 
 static Eina_Bool
-_write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
+_write_header(const Eolian_Unit *src, const char *ofname,
+              const char *ifname, Eina_Bool legacy)
 {
    INF("generating header: %s (legacy: %d)", ofname, legacy);
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   eo_gen_types_header_gen(ifname, buf, EINA_TRUE, legacy);
+   eo_gen_types_header_gen(src, ifname, buf, EINA_TRUE, legacy);
    buf = _include_guard(ifname, "TYPES", buf);
 
-   Eina_Strbuf *cltd = eo_gen_class_typedef_gen(ifname);
+   Eina_Strbuf *cltd = eo_gen_class_typedef_gen(src, ifname);
    if (cltd)
      {
         cltd = _include_guard(ifname, "CLASS_TYPE", cltd);
@@ -305,7 +306,7 @@ _write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
      }
 
    const Eolian_Class *cl = eolian_class_get_by_file(ifname);
-   eo_gen_header_gen(cl, buf, legacy);
+   eo_gen_header_gen(src, cl, buf, legacy);
    if (cl || !legacy)
      {
         buf = _include_guard(_get_filename(ofname), NULL, buf);
@@ -321,14 +322,15 @@ _write_header(const char *ofname, const char *ifname, Eina_Bool legacy)
 }
 
 static Eina_Bool
-_write_stub_header(const char *ofname, const char *ifname)
+_write_stub_header(const Eolian_Unit *src, const char *ofname,
+                   const char *ifname)
 {
    INF("generating stub header: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   eo_gen_types_header_gen(ifname, buf, EINA_FALSE, EINA_FALSE);
+   eo_gen_types_header_gen(src, ifname, buf, EINA_FALSE, EINA_FALSE);
 
-   Eina_Strbuf *cltd = eo_gen_class_typedef_gen(ifname);
+   Eina_Strbuf *cltd = eo_gen_class_typedef_gen(src, ifname);
    if (cltd)
      {
         eina_strbuf_prepend_char(buf, '\n');
@@ -344,14 +346,15 @@ _write_stub_header(const char *ofname, const char *ifname)
 }
 
 static Eina_Bool
-_write_source(const char *ofname, const char *ifname, Eina_Bool eot)
+_write_source(const Eolian_Unit *src, const char *ofname,
+              const char *ifname, Eina_Bool eot)
 {
    INF("generating source: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
    const Eolian_Class *cl = eolian_class_get_by_file(ifname);
-   eo_gen_types_source_gen(ifname, buf);
-   eo_gen_source_gen(cl, buf);
+   eo_gen_types_source_gen(src, ifname, buf);
+   eo_gen_source_gen(src, cl, buf);
    if (cl || (eot && eina_strbuf_length_get(buf)))
      {
         if (_write_file(ofname, buf))
@@ -366,7 +369,7 @@ _write_source(const char *ofname, const char *ifname, Eina_Bool eot)
 }
 
 static Eina_Bool
-_write_impl(const char *ofname, const char *ifname)
+_write_impl(const Eolian_Unit *src, const char *ofname, const char *ifname)
 {
    INF("generating impl: %s", ofname);
 
@@ -378,7 +381,7 @@ _write_impl(const char *ofname, const char *ifname)
    if (!_read_file(ofname, &buf))
      return EINA_FALSE;
 
-   eo_gen_impl_gen(cl, buf);
+   eo_gen_impl_gen(src, cl, buf);
    Eina_Bool ret = _write_file(ofname, buf);
    eina_strbuf_free(buf);
    return ret;
@@ -485,7 +488,8 @@ main(int argc, char **argv)
         goto end;
      }
 
-   if (!eolian_file_parse(input))
+   const Eolian_Unit *src = eolian_file_parse(input);
+   if (!src)
      {
         fprintf(stderr, "eolian: could not parse file '%s'\n", input);
         goto end;
@@ -506,15 +510,15 @@ main(int argc, char **argv)
 
    Eina_Bool succ = EINA_TRUE;
    if (gen_what & GEN_H)
-     succ = _write_header(outs[_get_bit_pos(GEN_H)], eobn, EINA_FALSE);
+     succ = _write_header(src, outs[_get_bit_pos(GEN_H)], eobn, EINA_FALSE);
    if (succ && (gen_what & GEN_H_LEGACY))
-     succ = _write_header(outs[_get_bit_pos(GEN_H_LEGACY)], eobn, EINA_TRUE);
+     succ = _write_header(src, outs[_get_bit_pos(GEN_H_LEGACY)], eobn, EINA_TRUE);
    if (succ && (gen_what & GEN_H_STUB))
-     succ = _write_stub_header(outs[_get_bit_pos(GEN_H_STUB)], eobn);
+     succ = _write_stub_header(src, outs[_get_bit_pos(GEN_H_STUB)], eobn);
    if (succ && (gen_what & GEN_C))
-     succ = _write_source(outs[_get_bit_pos(GEN_C)], eobn, !strcmp(ext, ".eot"));
+     succ = _write_source(src, outs[_get_bit_pos(GEN_C)], eobn, !strcmp(ext, ".eot"));
    if (succ && (gen_what & GEN_C_IMPL))
-     succ = _write_impl(outs[_get_bit_pos(GEN_C_IMPL)], eobn);
+     succ = _write_impl(src, outs[_get_bit_pos(GEN_C_IMPL)], eobn);
 
    if (!succ)
      goto end;

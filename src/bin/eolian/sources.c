@@ -636,7 +636,8 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
 }
 
 void
-eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
+eo_gen_source_gen(const Eolian_Unit *src EINA_UNUSED,
+                  const Eolian_Class *cl, Eina_Strbuf *buf)
 {
    if (!cl)
      return;
@@ -949,7 +950,8 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
 }
 
 void
-eo_gen_impl_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
+eo_gen_impl_gen(const Eolian_Unit *src EINA_UNUSED,
+                const Eolian_Class *cl, Eina_Strbuf *buf)
 {
    if (!cl)
      return;
