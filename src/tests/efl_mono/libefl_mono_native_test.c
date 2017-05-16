@@ -753,6 +753,11 @@ Eina_Array *_test_testing_eina_array_obj_return_own(EINA_UNUSED Eo *obj, EINA_UN
    return arr;
 }
 
+Eina_Array *_test_testing_eina_array_obj_return_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Array *arr)
+{
+   return arr;
+}
+
 // Class constructor
 EOLIAN static void
 _test_testing_class_constructor(Efl_Class *klass)

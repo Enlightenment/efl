@@ -1126,6 +1126,23 @@ class TestEinaArray
         Test.Assert(arr.Handle == IntPtr.Zero);
     }
 
+    public static void test_eina_array_obj_return_in_same_id()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var cmp = BaseArrObj();
+        var a = new eina.Array<test.Numberwrapper>();
+        a.Append(cmp);
+        var b = t.eina_array_obj_return_in(a);
+        NumberwrapperArrayAssertEqual(a.ToArray(), b.ToArray());
+        NumberwrapperArrayAssertEqual(a.ToArray(), BaseArrObj());
+        int len = a.Length;
+        for (int i=0; i < len; ++i)
+        {
+            Test.Assert(a[i].raw_handle == b[i].raw_handle);
+            Test.Assert(a[i].raw_handle == cmp[i].raw_handle);
+        }
+    }
+
 
     // //
     // Inherit
