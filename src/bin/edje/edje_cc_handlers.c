@@ -2389,7 +2389,7 @@ _handle_vector_image(void)
     @block
         images
     @context
-        vector {
+        images {
             vector: "filename1.svg";
             vector: "filename2.svg";
             vector: "filename3.svg";
