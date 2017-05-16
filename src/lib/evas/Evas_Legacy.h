@@ -98,6 +98,257 @@ EAPI Evas_Engine_Info *evas_engine_info_get(const Evas *obj);
  * @{
  */
 
+typedef struct _Evas_Event_Mouse_Down    Evas_Event_Mouse_Down; /**< Event structure for #EVAS_CALLBACK_MOUSE_DOWN event callbacks */
+typedef struct _Evas_Event_Mouse_Up      Evas_Event_Mouse_Up; /**< Event structure for #EVAS_CALLBACK_MOUSE_UP event callbacks */
+typedef struct _Evas_Event_Mouse_In      Evas_Event_Mouse_In; /**< Event structure for #EVAS_CALLBACK_MOUSE_IN event callbacks */
+typedef struct _Evas_Event_Mouse_Out     Evas_Event_Mouse_Out; /**< Event structure for #EVAS_CALLBACK_MOUSE_OUT event callbacks */
+typedef struct _Evas_Event_Mouse_Move    Evas_Event_Mouse_Move; /**< Event structure for #EVAS_CALLBACK_MOUSE_MOVE event callbacks */
+typedef struct _Evas_Event_Mouse_Wheel   Evas_Event_Mouse_Wheel; /**< Event structure for #EVAS_CALLBACK_MOUSE_WHEEL event callbacks */
+typedef struct _Evas_Event_Multi_Down    Evas_Event_Multi_Down; /**< Event structure for #EVAS_CALLBACK_MULTI_DOWN event callbacks */
+typedef struct _Evas_Event_Multi_Up      Evas_Event_Multi_Up; /**< Event structure for #EVAS_CALLBACK_MULTI_UP event callbacks */
+typedef struct _Evas_Event_Multi_Move    Evas_Event_Multi_Move; /**< Event structure for #EVAS_CALLBACK_MULTI_MOVE event callbacks */
+typedef struct _Evas_Event_Key_Down      Evas_Event_Key_Down; /**< Event structure for #EVAS_CALLBACK_KEY_DOWN event callbacks */
+typedef struct _Evas_Event_Key_Up        Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
+typedef struct _Evas_Event_Hold          Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
+typedef struct _Evas_Event_Axis_Update   Evas_Event_Axis_Update; /**< Event structure for #EVAS_CALLBACK_AXIS_UPDATE event callbacks @since 1.13 */
+
+struct _Evas_Event_Mouse_Down /** Mouse button press event */
+{
+   int               button; /**< Mouse button number that went down (1 - 32) */
+
+   Evas_Point        output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
+
+   void             *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock        *locks;
+
+   Evas_Button_Flags flags; /**< button flags set during the event */
+   unsigned int      timestamp;
+   Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
+   Evas_Object      *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
+};
+
+struct _Evas_Event_Mouse_Up /** Mouse button release event */
+{
+   int               button; /**< Mouse button number that was raised (1 - 32) */
+
+   Evas_Point        output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
+
+   void             *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock        *locks;
+
+   Evas_Button_Flags flags; /**< button flags set during the event */
+   unsigned int      timestamp;
+   Evas_Event_Flags  event_flags;
+   Evas_Device      *dev;
+   Evas_Object     *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
+};
+
+struct _Evas_Event_Mouse_In /** Mouse enter event */
+{
+   int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
+
+   Evas_Point        output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
+
+   void            *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock       *locks;
+   unsigned int     timestamp;
+   Evas_Event_Flags event_flags;
+   Evas_Device     *dev;
+   Evas_Object     *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
+};
+
+struct _Evas_Event_Mouse_Out /** Mouse leave event */
+{
+   int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
+
+   Evas_Point        output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
+
+   void            *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock       *locks;
+   unsigned int     timestamp;
+   Evas_Event_Flags event_flags;
+   Evas_Device     *dev;
+   Evas_Object     *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
+};
+
+struct _Evas_Event_Mouse_Move /** Mouse move event */
+{
+   int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
+
+   Evas_Position    cur; /**< Current mouse position */
+   Evas_Position    prev; /**< Previous mouse position */
+
+   void            *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock       *locks;
+   unsigned int     timestamp;
+   Evas_Event_Flags event_flags;
+   Evas_Device     *dev;
+   Evas_Object     *event_src; /**< The Evas Object that actually triggered the event, used in cases of proxy event propagation */
+};
+
+struct _Evas_Event_Mouse_Wheel /** Wheel event */
+{
+   int              direction; /* 0 = default up/down wheel FIXME: more wheel types */
+   int              z; /* ...,-2,-1 = down, 1,2,... = up */
+
+   Evas_Point        output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
+
+   void            *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock       *locks;
+   unsigned int     timestamp;
+   Evas_Event_Flags event_flags;
+   Evas_Device     *dev;
+};
+
+struct _Evas_Event_Multi_Down /** Multi button press event */
+{
+   int                        device; /**< Multi device number that went down (1 or more for extra touches) */
+   double                     radius, radius_x, radius_y;
+   double                     pressure, angle;
+
+   Evas_Point                 output;
+   Evas_Coord_Precision_Point canvas;
+
+   void                      *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock                 *locks;
+
+   Evas_Button_Flags flags; /**< button flags set during the event */
+   unsigned int               timestamp;
+   Evas_Event_Flags           event_flags;
+   Evas_Device               *dev;
+};
+
+struct _Evas_Event_Multi_Up /** Multi button release event */
+{
+   int                        device; /**< Multi device number that went up (1 or more for extra touches) */
+   double                     radius, radius_x, radius_y;
+   double                     pressure, angle;
+
+   Evas_Point                 output;
+   Evas_Coord_Precision_Point canvas;
+
+   void                      *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock                 *locks;
+
+   Evas_Button_Flags flags; /**< button flags set during the event */
+   unsigned int               timestamp;
+   Evas_Event_Flags           event_flags;
+   Evas_Device               *dev;
+};
+
+struct _Evas_Event_Multi_Move /** Multi button down event */
+{
+   int                     device; /**< Multi device number that moved (1 or more for extra touches) */
+   double                  radius, radius_x, radius_y;
+   double                  pressure, angle;
+
+   Evas_Precision_Position cur;
+
+   void                   *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock              *locks;
+   unsigned int            timestamp;
+   Evas_Event_Flags        event_flags;
+   Evas_Device            *dev;
+};
+
+struct _Evas_Event_Key_Down /** Key press event */
+{
+   char            *keyname; /**< the name string of the key pressed */
+   void            *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock       *locks;
+
+   const char      *key; /**< The logical key : (eg shift+1 == exclamation) */
+   const char      *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
+   const char      *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
+   unsigned int     timestamp;
+   Evas_Event_Flags event_flags;
+   Evas_Device     *dev;
+
+   unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
+};
+
+struct _Evas_Event_Key_Up /** Key release event */
+{
+   char            *keyname; /**< the name string of the key released */
+   void            *data;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
+   Evas_Lock       *locks;
+
+   const char      *key; /**< The logical key : (eg shift+1 == exclamation) */
+   const char      *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
+   const char      *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
+   unsigned int     timestamp;
+   Evas_Event_Flags event_flags;
+   Evas_Device     *dev;
+
+   unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
+};
+
+struct _Evas_Event_Hold /** Hold change event */
+{
+   int              hold; /**< The hold flag */
+   void            *data;
+
+   unsigned int     timestamp;
+   Evas_Event_Flags event_flags;
+   Evas_Device     *dev;
+};
+
+typedef enum _Evas_Axis_Label
+{
+   EVAS_AXIS_LABEL_UNKNOWN,       /**< Axis containing unknown (or not yet representable) data. Range: Unbounded. Unit: Undefined. @since 1.13 */
+   EVAS_AXIS_LABEL_X,             /**< Position along physical X axis; not window relative. Range: Unbounded. Unit: Undefined. @since 1.13 */
+   EVAS_AXIS_LABEL_Y,             /**< Position along physical Y axis; not window relative. Range: Unbounded. Unit: Undefined. @since 1.13 */
+   EVAS_AXIS_LABEL_PRESSURE,      /**< Force applied to tool tip. Range: [0.0, 1.0]. Unit: Unitless. @since 1.13 */
+   EVAS_AXIS_LABEL_DISTANCE,      /**< Relative distance along physical Z axis. Range: [0.0, 1.0]. Unit: Unitless @since 1.13 */
+   EVAS_AXIS_LABEL_AZIMUTH,       /**< Angle of tool about the Z axis from positive X axis. Range: [-PI, PI]. Unit: Radians. @since 1.13 */
+   EVAS_AXIS_LABEL_TILT,          /**< Angle of tool about plane of sensor from positive Z axis. Range: [0.0, PI]. Unit: Radians. @since 1.13 */
+   EVAS_AXIS_LABEL_TWIST,         /**< Rotation of tool about its major axis from its "natural" position. Range: [-PI, PI] Unit: Radians. @since 1.13 */
+   EVAS_AXIS_LABEL_TOUCH_WIDTH_MAJOR,   /**< Length of contact ellipse along AZIMUTH. Range: Unbounded: Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+   EVAS_AXIS_LABEL_TOUCH_WIDTH_MINOR,   /**< Length of contact ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+   EVAS_AXIS_LABEL_TOOL_WIDTH_MAJOR,    /**< Length of tool ellipse along AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+   EVAS_AXIS_LABEL_TOOL_WIDTH_MINOR,    /**< Length of tool ellipse perpendicular to AZIMUTH. Range: Unbounded. Unit: Same as EVAS_AXIS_LABEL_{X,Y}. @since 1.13 */
+   EVAS_AXIS_LABEL_WINDOW_X,      /**< X coordinate mapped to the window. @since 1.19 */
+   EVAS_AXIS_LABEL_WINDOW_Y,      /**< Y coordinate mapped to the window. @since 1.19 */
+   EVAS_AXIS_LABEL_NORMAL_X,      /**< X normalized to the [0, 1] range. @since 1.19 */
+   EVAS_AXIS_LABEL_NORMAL_Y,      /**< Y normalized to the [0, 1] range. @since 1.19 */
+} Evas_Axis_Label; /**< Types of recognized device axes @since 1.13 */
+
+typedef struct _Evas_Axis
+{
+   Evas_Axis_Label label;
+   double value;
+} Evas_Axis;
+
+struct _Evas_Event_Axis_Update
+{
+   void             *data;
+
+   unsigned int timestamp;
+   int device;
+   int toolid;
+
+   int naxis;
+   Evas_Axis *axis;
+   Evas_Device *dev;
+};
+
 /**
  * Add (register) a callback function to a given canvas event.
  *
