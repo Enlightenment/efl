@@ -193,3 +193,117 @@ _elm_code_widget_text_tabwidth_at_column_get(Eo *obj EINA_UNUSED, Elm_Code_Widge
    return pd->tabstop - ((column - 1) % pd->tabstop);
 }
 
+static void
+_elm_code_widget_text_insert_single(Elm_Code_Widget *widget, Elm_Code *code,
+                                    unsigned int col, unsigned int row, const char *text, unsigned int len)
+{
+   Elm_Code_Line *line;
+   unsigned int position, newcol;
+
+   line = elm_code_file_line_get(code->file, row);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
+   elm_code_line_text_insert(line, position, text, len);
+
+   newcol = elm_code_widget_line_text_column_width_to_position(widget, line, position + len);
+   elm_obj_code_widget_cursor_position_set(widget, row, newcol);
+}
+
+static void
+_elm_code_widget_text_insert_multi(Elm_Code_Widget *widget, Elm_Code *code,
+                                   unsigned int col, unsigned int row, const char *text, unsigned int len)
+{
+   Elm_Code_Line *line;
+   unsigned int position, newrow, remain;
+   int nlpos;
+   short nllen;
+   char *ptr;
+
+   line = elm_code_file_line_get(code->file, row);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
+   elm_code_line_split_at(line, position);
+
+   newrow = row;
+   ptr = (char *)text;
+   remain = len;
+   while ((nlpos = elm_code_text_newlinenpos(ptr, remain, &nllen)) != ELM_CODE_TEXT_NOT_FOUND)
+     {
+        if (newrow == row)
+          _elm_code_widget_text_insert_single(widget, code, col, row, text, nlpos);
+        else
+          elm_code_file_line_insert(code->file, newrow, ptr, nlpos, NULL);
+
+        remain -= nlpos + nllen;
+        ptr += nlpos + nllen;
+        newrow++;
+     }
+
+   _elm_code_widget_text_insert_single(widget, code, 1, newrow, ptr, len - (ptr - text));
+}
+
+void
+_elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *text, int length, Eina_Bool undo)
+{
+   Elm_Code *code;
+   Elm_Code_Line *line;
+   Elm_Code_Widget_Change_Info *change;
+   unsigned int row, col, end_row, end_col, curlen, indent;
+   const char *curtext, *indent_text;
+
+   if (undo)
+     elm_code_widget_selection_delete(widget);
+
+   code = elm_obj_code_widget_code_get(widget);
+   elm_obj_code_widget_cursor_position_get(widget, &row, &col);
+   line = elm_code_file_line_get(code->file, row);
+   if (line == NULL)
+     {
+        elm_code_file_line_append(code->file, "", 0, NULL);
+        row = elm_code_file_lines_get(code->file);
+        line = elm_code_file_line_get(code->file, row);
+     }
+   if (text[0] == '}')
+     {
+        curtext = elm_code_line_text_get(line, &curlen);
+
+        if (elm_code_text_is_whitespace(curtext, line->length))
+          {
+             indent_text = elm_code_line_indent_matching_braces_get(line, &indent);
+             elm_code_line_text_leading_whitespace_strip(line);
+
+             if (indent > 0)
+               elm_code_line_text_insert(line, 0, indent_text, indent);
+
+             elm_obj_code_widget_cursor_position_set(widget, row, indent + 1);
+             elm_obj_code_widget_cursor_position_get(widget, &row, &col);
+          }
+     }
+
+   if (elm_code_text_newlinenpos(text, length, NULL) == ELM_CODE_TEXT_NOT_FOUND)
+     _elm_code_widget_text_insert_single(widget, code, col, row, text, length);
+   else
+     _elm_code_widget_text_insert_multi(widget, code, col, row, text, length);
+   elm_obj_code_widget_cursor_position_get(widget, &end_row, &end_col);
+
+   // a workaround for when the cursor position would be off the line width
+   _elm_code_widget_resize(widget, line);
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+
+   if (undo)
+     {
+        change = _elm_code_widget_change_create(col, row, end_col, end_row, text, length, EINA_TRUE);
+        _elm_code_widget_undo_change_add(widget, change);
+        _elm_code_widget_change_free(change);
+     }
+}
+
+EOLIAN void
+_elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd EINA_UNUSED, const char *text)
+{
+   _elm_code_widget_text_at_cursor_insert_do(widget, text, strlen(text), EINA_TRUE);
+}
+
+void
+_elm_code_widget_text_at_cursor_insert_no_undo(Elm_Code_Widget *widget, const char *text, unsigned int length)
+{
+   _elm_code_widget_text_at_cursor_insert_do(widget, text, length, EINA_FALSE);
+}
