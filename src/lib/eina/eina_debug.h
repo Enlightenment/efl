@@ -33,11 +33,12 @@
  * @{
  */
 
+/** Used as a return value for callbacks invoked by the dispatcher */
 typedef enum
 {
-   EINA_DEBUG_OK,
-   EINA_DEBUG_ERROR,
-   EINA_DEBUG_AGAIN
+   EINA_DEBUG_OK, /**< Success */
+   EINA_DEBUG_ERROR, /**< Error in packet - will close the connection */
+   EINA_DEBUG_AGAIN /**< Recall the callback - may due to resources unavailability at the invocation time */
 } Eina_Debug_Error;
 
 enum
@@ -142,7 +143,7 @@ typedef struct
  *
  * Useful for applications that don't want debugging. The debug daemon is one
  * of them.
- * Need to be invoked before eina_init. Otherwise it can't have any effect.
+ * Need to be invoked before eina_init. Otherwise it won't have any effect.
  */
 EAPI void eina_debug_disable(void);
 
@@ -293,6 +294,12 @@ EAPI Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_
  */
 EAPI void eina_debug_timer_del(Eina_Debug_Timer *timer);
 
+/**
+ * @brief Get an id of the current thread
+ *
+ * This id corresponds to the index in the Eina threads table where the thread
+ * information is stored.
+ */
 EAPI int eina_debug_thread_id_get(void);
 
 #endif

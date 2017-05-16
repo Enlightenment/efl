@@ -63,7 +63,10 @@ Eina_Spinlock _eina_debug_lock;
 
 // only init once
 static Eina_Bool _inited = EINA_FALSE;
-static char *_my_app_name = NULL;
+
+#ifdef __linux__
+extern char *__progname;
+#endif
 
 extern Eina_Bool eina_module_init(void);
 extern Eina_Bool eina_mempool_init(void);
@@ -86,14 +89,19 @@ static Eina_Hash *_modules_hash = NULL;
 
 static int _bridge_keep_alive_opcode = EINA_DEBUG_OPCODE_INVALID;
 
+/* Semaphore used by the debug thread to wait for another thread to do the
+ * requested job.
+ * It is needed when packets are needed to be treated into a specific
+ * thread.
+ */
 static Eina_Semaphore _thread_cmd_ready_sem;
 
+/* Used to encode/decode data on sending/reception */
 typedef void *(*Eina_Debug_Encode_Cb)(const void *buffer, unsigned int size, unsigned int *ret_size);
 typedef void *(*Eina_Debug_Decode_Cb)(const void *buffer, unsigned int size, unsigned int *ret_size);
 
 typedef struct
 {
-   int magic; /* Used to certify the validity of the struct */
    const Eina_Debug_Opcode *ops;
    Eina_Debug_Opcode_Status_Cb status_cb;
 } _opcode_reply_info;
@@ -105,17 +113,17 @@ struct _Eina_Debug_Session
    Eina_Debug_Dispatch_Cb dispatch_cb; /* Session dispatcher */
    Eina_Debug_Encode_Cb encode_cb; /* Packet encoder */
    Eina_Debug_Decode_Cb decode_cb; /* Packet decoder */
+   Eina_List *cmds; /* List of shell commands to send before the communication
+                     * with the daemon. Only used when a shell remote
+                     * connection is requested.
+                     */
    double encoding_ratio; /* Encoding ratio */
-   /* List of shell commands to send before the communication
-    * with the daemon. Only used when a shell remote connection is requested.
-    */
-   Eina_List *cmds;
    int cbs_length; /* cbs table size */
    int fd_in; /* File descriptor to read */
    int fd_out; /* File descriptor to write */
-   /* Indicator to wait for input before continuing sending commands.
-    * Only used in shell remote connections */
-   Eina_Bool wait_for_input : 1;
+   Eina_Bool wait_for_input : 1; /* Indicator to wait for input before
+                                  * continuing sending commands.
+                                  * Only used in shell remote connections */
 };
 
 static void _opcodes_register_all(Eina_Debug_Session *session);
@@ -181,14 +189,19 @@ _daemon_greet(Eina_Debug_Session *session)
    /* say hello to our debug daemon - tell them our PID and protocol
       version we speak */
    /* Version + Pid + App name */
-   int size = 8 + (_my_app_name ? strlen(_my_app_name) : 0) + 1;
+#ifdef __linux__
+   char *app_name = __progname;
+#else
+   char *app_name = NULL;
+#endif
+   int size = 8 + (app_name ? strlen(app_name) : 0) + 1;
    unsigned char *buf = alloca(size);
    int version = 1; // version of protocol we speak
    int pid = getpid();
    memcpy(buf + 0, &version, 4);
    memcpy(buf + 4, &pid, 4);
-   if (_my_app_name)
-      memcpy(buf + 8, _my_app_name, strlen(_my_app_name) + 1);
+   if (app_name)
+      memcpy(buf + 8, app_name, strlen(app_name) + 1);
    else
       buf[8] = '\0';
    eina_debug_session_send(session, 0, EINA_DEBUG_OPCODE_HELLO, buf, size);
@@ -330,7 +343,7 @@ _packet_receive(unsigned char **buffer)
           }
         else
           {
-             // we couldn't allocate memory for payloa buffer
+             // we couldn't allocate memory for payload buffer
              // internal memory limit error
              e_debug("Cannot allocate %u bytes for op", size);
              goto end;
@@ -369,11 +382,12 @@ eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina_Debug_Dis
    session->dispatch_cb = disp_cb;
 }
 
-typedef struct {
-     Eina_Module *handle;
-     Eina_Bool (*init)(void);
-     Eina_Bool (*shutdown)(void);
-     int ref;
+typedef struct
+{
+   Eina_Module *handle;
+   Eina_Bool (*init)(void);
+   Eina_Bool (*shutdown)(void);
+   int ref;
 } _module_info;
 
 #define _LOAD_SYMBOL(cls_struct, pkg, sym) \
@@ -467,15 +481,17 @@ _module_shutdown_cb(Eina_Debug_Session *session, int cid, void *buffer, int size
    return EINA_DEBUG_OK;
 }
 
-static const Eina_Debug_Opcode _EINA_DEBUG_MONITOR_OPS[] = {
-       {"module/init", &_module_init_opcode, &_module_init_cb},
-       {"module/shutdown", &_module_shutdown_opcode, &_module_shutdown_cb},
-       {NULL, NULL, NULL}
+static const Eina_Debug_Opcode _MONITOR_OPS[] =
+{
+     {"module/init", &_module_init_opcode, &_module_init_cb},
+     {"module/shutdown", &_module_shutdown_opcode, &_module_shutdown_cb},
+     {NULL, NULL, NULL}
 };
 
-static const Eina_Debug_Opcode _EINA_DEBUG_BRIDGE_OPS[] = {
-       {"Bridge/Keep-Alive", &_bridge_keep_alive_opcode, NULL},
-       {NULL, NULL, NULL}
+static const Eina_Debug_Opcode _BRIDGE_OPS[] =
+{
+     {"Bridge/Keep-Alive", &_bridge_keep_alive_opcode, NULL},
+     {NULL, NULL, NULL}
 };
 
 static void
@@ -542,7 +558,7 @@ _opcodes_registration_send(Eina_Debug_Session *session,
    int count = 0;
    int size = sizeof(uint64_t);
 
-   while(info->ops[count].opcode_name)
+   while (info->ops[count].opcode_name)
      {
         size += strlen(info->ops[count].opcode_name) + 1;
         count++;
@@ -555,7 +571,7 @@ _opcodes_registration_send(Eina_Debug_Session *session,
    int size_curr = sizeof(uint64_t);
 
    count = 0;
-   while(info->ops[count].opcode_name)
+   while (info->ops[count].opcode_name)
      {
         int len = strlen(info->ops[count].opcode_name) + 1;
         memcpy(buf + size_curr, info->ops[count].opcode_name, len);
@@ -626,7 +642,6 @@ eina_debug_local_connect(Eina_Bool is_master)
    char buf[4096];
    int fd, socket_unix_len, curstate = 0;
    struct sockaddr_un socket_unix;
-#endif
 
    Eina_Debug_Session *session = calloc(1, sizeof(*session));
    session->dispatch_cb = eina_debug_dispatch;
@@ -637,7 +652,6 @@ eina_debug_local_connect(Eina_Bool is_master)
    //   /var/run/UID/.ecore/efl_debug/0
    // either way a 4k buffer should be ebough ( if it's not we're on an
    // insane system)
-#ifndef _WIN32
    snprintf(buf, sizeof(buf), "%s/%s/%s/%i", _socket_home_get(), SERVER_PATH, SERVER_NAME,
          is_master ? SERVER_MASTER_PORT : SERVER_SLAVE_PORT);
    // create the socket
@@ -664,7 +678,7 @@ eina_debug_local_connect(Eina_Bool is_master)
    _daemon_greet(session);
    _opcodes_register_all(session);
    if (!is_master)
-      eina_debug_opcodes_register(session, _EINA_DEBUG_MONITOR_OPS, NULL);
+      eina_debug_opcodes_register(session, _MONITOR_OPS, NULL);
 
    _last_local_session = session;
    return session;
@@ -674,8 +688,7 @@ err:
    if (fd >= 0) close(fd);
    free(session);
 #else
-   (void) _session;
-   (void) type;
+   (void) is_master;
 #endif
    return NULL;
 }
@@ -757,14 +770,14 @@ eina_debug_shell_remote_connect(const char *cmds_str)
         eina_debug_session_shell_codec_enable(session);
         session->cmds = cmds;
         _cmd_consume(session);
-        eina_debug_opcodes_register(session, _EINA_DEBUG_BRIDGE_OPS, NULL);
+        eina_debug_opcodes_register(session, _BRIDGE_OPS, NULL);
         eina_debug_timer_add(10000, _bridge_keep_alive_send, session);
         // start the monitor thread
         _thread_start(session);
         return session;
      }
 #else
-   (void) cmd;
+   (void) cmds_str;
    return NULL;
 #endif
 }
@@ -794,8 +807,8 @@ _monitor(void *_data)
    // impact the application specifically
    for (;_session;)
      {
-        int size;
         unsigned char *buffer;
+        int size;
 
         size = _packet_receive(&buffer);
         // if not negative - we have a real message
@@ -810,12 +823,6 @@ _monitor(void *_data)
              if (_session->dispatch_cb == eina_debug_dispatch)
                 free(buffer);
           }
-#if 0
-        else if (size == 0)
-          {
-             // May be due to a response from a script line
-          }
-#endif
         else
           {
              close(_session->fd_in);
@@ -864,7 +871,7 @@ _thread_start(Eina_Debug_Session *session)
 /*
  * Sends to daemon:
  * - Pointer to ops: returned in the response to determine which opcodes have been added
- * - List of opcode names seperated by \0
+ * - List of opcode names separated by \0
  */
 EAPI void
 eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode ops[],
@@ -880,7 +887,8 @@ eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode
    session->opcode_reply_infos = eina_list_append(
          session->opcode_reply_infos, info);
 
-   //send only if _session's fd connected, if not -  it will be sent when connected
+   /* Send only if _session's fd connected.
+    * Otherwise, it will be sent when connected */
    if(session && session->fd_in != -1 && !session->cmds)
       _opcodes_registration_send(session, info);
 }
@@ -986,8 +994,8 @@ eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
                   _eina_debug_thread_active[i].cmd_session = session;
                   _eina_debug_thread_active[i].cmd_buffer = buffer;
                   _eina_debug_thread_active[i].cmd_result = EINA_DEBUG_OK;
-                  pthread_kill(_eina_debug_thread_active[i].thread, SIG);
-                  nb_calls++;
+                  if (!pthread_kill(_eina_debug_thread_active[i].thread, SIG))
+                     nb_calls++;
                }
           }
         eina_spinlock_release(&_eina_debug_thread_lock);
@@ -1018,8 +1026,8 @@ eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
                                }
                           case EINA_DEBUG_AGAIN:
                                {
-                                  pthread_kill(_eina_debug_thread_active[i].thread, SIG);
-                                  nb_calls++;
+                                  if (!pthread_kill(_eina_debug_thread_active[i].thread, SIG))
+                                     nb_calls++;
                                   break;
                                }
                           default: break;
@@ -1057,10 +1065,6 @@ _signal_handler(int sig EINA_UNUSED,
    eina_semaphore_release(&_thread_cmd_ready_sem, 1);
 }
 
-#ifdef __linux__
-   extern char *__progname;
-#endif
-
 static void
 _signal_init(void)
 {
@@ -1072,7 +1076,7 @@ _signal_init(void)
    sa.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&sa.sa_mask);
    if (sigaction(SIG, &sa, NULL) != 0)
-     e_debug("EINA DEBUG ERROR: Can't set up sig %i handler!", SIG);
+      e_debug("EINA DEBUG ERROR: Can't set up sig %i handler!", SIG);
 
    sa.sa_sigaction = NULL;
    sa.sa_handler = SIG_IGN;
@@ -1112,9 +1116,6 @@ eina_debug_init(void)
    // if someone uses the EFL_NODEBUG env var or disabled debug - do not do
    // debugging. handy for when this debug code is buggy itself
 
-#ifdef __linux__
-   _my_app_name = __progname;
-#endif
    if (!getenv("EFL_NODEBUG") && !_debug_disabled)
      {
         eina_debug_local_connect(EINA_FALSE);
