@@ -203,10 +203,11 @@ public class Array<T> : IEnumerable<T>, IDisposable
         return r;
     }
 
-    public void Add(T val)
-    {
-        Push(val);
-    }
+//     public void Add(T val)
+//     {
+//         if (!Push(val))
+//           throw;
+//     }
 
     public T Pop()
     {
