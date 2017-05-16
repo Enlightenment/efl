@@ -37,9 +37,10 @@ _evas_canvas_key_modifier_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
    return &(e->modifiers);
 }
 
-EOLIAN const Evas_Lock*
-_evas_canvas_key_lock_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+EAPI const Evas_Lock*
+evas_key_lock_get(const Evas *eo_e)
 {
+   EVAS_LEGACY_API(eo_e, e, NULL);
    return &(e->locks);
 }
 

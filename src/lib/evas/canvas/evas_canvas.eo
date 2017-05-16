@@ -142,20 +142,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
                                                   on it (if any) or $null otherwise.]]
          }
       }
-      @property key_lock {
-         get {
-            [[Returns a handle to the list of lock keys registered in the
-              canvas $e.
-
-              This is required to check for which locks are set at a given
-              time with the \@ref evas_key_lock_is_set function.
-            ]]
-            return: ptr(const(Evas.Lock)) @warn_unused; [[
-               An Evas_Lock handle to query Evas' keys subsystem with
-               \@ref evas_key_lock_is_set or \@ref evas_seat_key_lock_is_set, or $null on error.
-            ]]
-         }
-      }
       @property pointer_canvas_xy_by_device {
          [[This function returns the current known default pointer coordinates. @since 1.19]]
          get {}

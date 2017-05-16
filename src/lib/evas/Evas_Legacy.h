@@ -91,6 +91,20 @@ EAPI Evas_Engine_Info *evas_engine_info_get(const Evas *obj);
  * @}
  */
 
+/** @addtogroup Evas_Keys
+ * @{
+ */
+
+/**
+ * An opaque type containing information on which lock keys are registered in
+ * an Evas canvas.
+ */
+typedef struct _Evas_Lock Evas_Lock;
+
+/**
+ * @}
+ */
+
 
 /**
  * @ingroup Evas_Canvas_Events
@@ -848,6 +862,15 @@ EAPI void             evas_event_feed_hold(Evas *obj, int hold, unsigned int tim
 EAPI void             evas_event_refeed_event(Evas *obj, void *event_copy, Evas_Callback_Type event_type);
 
 /**
+ * @}
+ */
+
+/**
+ * @addtogroup Evas_Keys
+ * @{
+ */
+
+/**
  * A bitmask of modifier keys.
  *
  * See evas_key_modifier_mask_get() for the keyname to bit conversion.
@@ -875,6 +898,110 @@ typedef unsigned long long Evas_Modifier_Mask;
  * @ingroup Evas_Canvas
  */
 EAPI Evas_Modifier_Mask evas_key_modifier_mask_get(const Evas *evas, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2);
+
+/**
+ * Checks the state of a given modifier of the default seat, at the time of the
+ * call. If the modifier is set, such as shift being pressed, this
+ * function returns @c Eina_True.
+ *
+ * @param m The current modifiers set, as returned by
+ *        evas_key_modifier_get().
+ * @param keyname The name of the modifier key to check status for.
+ *
+ * @return @c Eina_True if the modifier key named @p keyname is on, @c
+ *         Eina_False otherwise.
+ *
+ * @see evas_key_modifier_add
+ * @see evas_key_modifier_del
+ * @see evas_key_modifier_get
+ * @see evas_key_modifier_on
+ * @see evas_key_modifier_off
+ * @see evas_seat_key_modifier_is_set
+ */
+EAPI Eina_Bool            evas_key_modifier_is_set(const Evas_Modifier *m, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Checks the state of a given modifier key of a given seat, at the time of the
+ * call. If the modifier is set, such as shift being pressed, this
+ * function returns @c Eina_True.
+ *
+ * @param m The current modifiers set, as returned by
+ *        evas_key_modifier_get().
+ * @param keyname The name of the modifier key to check status for.
+ * @param seat The seat to check if the lock is set. Use @c NULL for the default seat.
+ *
+ * @return @c Eina_True if the modifier key named @p keyname is on, @c
+ *         Eina_False otherwise.
+ *
+ * @see evas_key_modifier_add
+ * @see evas_key_modifier_del
+ * @see evas_key_modifier_get
+ * @see evas_key_modifier_on
+ * @see evas_key_modifier_off
+ * @see evas_seat_key_modifier_on
+ * @see evas_seat_key_modifier_off
+ * @see evas_key_modifier_is_set
+ * @since 1.19
+ */
+EAPI Eina_Bool            evas_seat_key_modifier_is_set(const Evas_Modifier *m, const char *keyname, const Evas_Device *seat) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Checks the state of a given lock key of the default seat, at the time of the call. If
+ * the lock is set, such as caps lock, this function returns @c
+ * Eina_True.
+ *
+ * @param l The current locks set, as returned by evas_key_lock_get().
+ * @param keyname The name of the lock key to check status for.
+ *
+ * @return @c Eina_True if the @p keyname lock key is set, @c
+ *        Eina_False otherwise.
+ *
+ * @see evas_key_lock_get
+ * @see evas_key_lock_add
+ * @see evas_key_lock_del
+ * @see evas_key_lock_on
+ * @see evas_key_lock_off
+ * @see evas_seat_key_lock_on
+ * @see evas_seat_key_lock_off
+ * @see evas_seat_key_lock_is_set
+ */
+EAPI Eina_Bool            evas_key_lock_is_set(const Evas_Lock *l, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Checks the state of a given lock key of a given seat, at the time of the call. If
+ * the lock is set, such as caps lock, this function returns @c
+ * Eina_True.
+ *
+ * @param l The current locks set, as returned by evas_key_lock_get().
+ * @param keyname The name of the lock key to check status for.
+ * @param seat The seat to check if the lock is set. Use @c NULL for the default seat.
+ *
+ * @return @c Eina_True if the @p keyname lock key is set, @c
+ *        Eina_False otherwise.
+ *
+ * @see evas_key_lock_get
+ * @see evas_key_lock_add
+ * @see evas_key_lock_del
+ * @see evas_key_lock_on
+ * @see evas_key_lock_off
+ * @see evas_key_lock_is_set
+ * @since 1.19
+ */
+EAPI Eina_Bool            evas_seat_key_lock_is_set(const Evas_Lock *l, const char *keyname, const Evas_Device *seat) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Returns a handle to the list of lock keys registered in the canvas
+ * @c e.
+ *
+ * This is required to check for which locks are set at a given time with the
+ * @ref evas_key_lock_is_set function.
+ *
+ * @return An Evas_Lock handle to query Evas' keys subsystem with @ref
+ * evas_key_lock_is_set or @ref evas_seat_key_lock_is_set, or @c null on error.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI const Evas_Lock *evas_key_lock_get(const Evas *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @}

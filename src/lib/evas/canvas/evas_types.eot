@@ -1,6 +1,4 @@
 struct Evas.Modifier; [[An opaque type containing information on which modifier keys are registered in an Evas canvas]]
-struct Evas.Lock; [[An opaque type containing information on which lock keys are registered in an Evas canvas]]
-
 
 // ----------------------------------------------------------------------------
 // All the below types are for Evas 3D
