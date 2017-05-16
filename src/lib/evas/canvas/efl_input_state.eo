@@ -10,6 +10,7 @@ interface Efl.Input.State ()
          get {}
          keys {
             mod: Efl.Input.Modifier; [[The modifier key to test.]]
+            seat: const(Efl.Input.Device) @optional; [[The seat device, may be $null]]
          }
          values {
             is_set: bool; [[$true if the key modifier is pressed.]]
@@ -20,6 +21,7 @@ interface Efl.Input.State ()
          get {}
          keys {
             lock: Efl.Input.Lock; [[The lock key to test.]]
+            seat: const(Efl.Input.Device) @optional; [[The seat device, may be $null]]
          }
          values {
             is_set: bool; [[$true if the key lock is on.]]

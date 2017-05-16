@@ -240,28 +240,34 @@ _efl_input_key_efl_input_event_device_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_input_key_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, Efl_Input_Modifier mod)
+_efl_input_key_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd,
+                                                    Efl_Input_Modifier mod, const Efl_Input_Device *seat)
 {
-   Efl_Input_Device *seat;
    const char *name;
 
    if (!pd->modifiers) return EINA_FALSE;
-   seat = efl_input_device_seat_get(pd->device);
-   if (!seat) return EINA_FALSE;
+   if (!seat)
+     {
+        seat = efl_input_device_seat_get(pd->device);
+        if (!seat) return EINA_FALSE;
+     }
    name = _efl_input_modifier_to_string(mod);
    if (!name) return EINA_FALSE;
    return evas_seat_key_modifier_is_set(pd->modifiers, name, seat);
 }
 
 EOLIAN static Eina_Bool
-_efl_input_key_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, Efl_Input_Lock lock)
+_efl_input_key_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd,
+                                                Efl_Input_Lock lock, const Efl_Input_Device *seat)
 {
-   Efl_Input_Device *seat;
    const char *name;
 
    if (!pd->locks) return EINA_FALSE;
-   seat = efl_input_device_seat_get(pd->device);
-   if (!seat) return EINA_FALSE;
+   if (!seat)
+     {
+        seat = efl_input_device_seat_get(pd->device);
+        if (!seat) return EINA_FALSE;
+     }
    name = _efl_input_lock_to_string(lock);
    if (!name) return EINA_FALSE;
    return evas_seat_key_lock_is_set(pd->locks, name, seat);
