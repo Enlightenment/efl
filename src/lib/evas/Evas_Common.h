@@ -443,13 +443,7 @@ typedef enum
                       * iteration */
 } Evas_Callback_Type;
 
-
-typedef struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
-{
-   int magic; /**< Magic number */
-} Evas_Engine_Info;
-
-
+// FIXME: Move to Evas_Legacy.h
 struct _Evas_Event_Mouse_Down /** Mouse button press event */
 {
    int               button; /**< Mouse button number that went down (1 - 32) */

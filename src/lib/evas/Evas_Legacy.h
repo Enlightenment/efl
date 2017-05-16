@@ -44,6 +44,11 @@ EAPI Evas             *evas_new(void) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
  */
 EAPI void              evas_free(Evas *e)  EINA_ARG_NONNULL(1);
 
+typedef struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
+{
+   int magic; /**< Magic number */
+} Evas_Engine_Info;
+
 /**
  * @brief Applies the engine settings for the given evas from the given
  * @c Evas_Engine_Info structure.
