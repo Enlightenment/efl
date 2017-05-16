@@ -675,7 +675,7 @@ _elm_hoversel_elm_widget_widget_parent_set(Eo *obj, Elm_Hoversel_Data *_pd EINA_
 }
 
 EOLIAN static Eina_Bool
-_elm_hoversel_elm_button_admits_autorepeat_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd EINA_UNUSED)
+_elm_hoversel_efl_ui_autorepeat_supported_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd EINA_UNUSED)
 {
    return EINA_FALSE;
 }

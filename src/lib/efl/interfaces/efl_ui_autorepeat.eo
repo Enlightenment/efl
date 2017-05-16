@@ -1,0 +1,54 @@
+interface Efl.Ui.Autorepeat {
+   [[Efl UI autorepeat interface]]
+   methods {
+      @property initial_timeout {
+         [[The initial timeout before the autorepeat event is generated
+
+           Sets the timeout, in seconds, since the button is pressed until the
+           first $repeated signal is emitted. If $t is 0.0 or less, there
+           won't be any delay and the event will be fired the moment the button is
+           pressed.
+
+           See also @.enabled.set, @.gap_timeout.set.
+         ]]
+         values {
+            t: double; [[Timeout in seconds]]
+         }
+      }
+      @property gap_timeout {
+         [[The interval between each generated autorepeat event
+
+           After the first $repeated event is fired, all subsequent ones will
+           follow after a delay of $t seconds for each.
+
+           See also @.initial_timeout.set.
+         ]]
+         values {
+            t: double; [[Interval in seconds]]
+         }
+      }
+      @property enabled {
+         [[Turn on/off the autorepeat event generated when the button is kept pressed
+
+           When off, no autorepeat is performed and buttons emit a normal $clicked
+           signal when they are clicked.
+
+           When on, keeping a button pressed will continuously emit a $repeated
+           signal until the button is released. The time it takes until it starts
+           emitting the signal is given by @.initial_timeout.set, and the
+           time between each new emission by @.gap_timeout.set.
+         ]]
+         values {
+            on: bool; [[A bool to turn on/off the event]]
+         }
+      }
+      @property supported {
+         [[Whether the button supports autorepeat.]]
+         get {
+         }
+         values {
+            ret: bool; [[$true if autorepeat is supported, $false otherwise]]
+         }
+      }
+   }
+}

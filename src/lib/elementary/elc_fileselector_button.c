@@ -251,7 +251,7 @@ _elm_fileselector_button_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Bu
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_button_elm_button_admits_autorepeat_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd EINA_UNUSED)
+_elm_fileselector_button_efl_ui_autorepeat_supported_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd EINA_UNUSED)
 {
    return EINA_FALSE;
 }

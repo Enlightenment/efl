@@ -343,7 +343,7 @@ _elm_button_efl_object_constructor(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_button_autorepeat_set(Eo *obj EINA_UNUSED, Elm_Button_Data *sd, Eina_Bool on)
+_elm_button_efl_ui_autorepeat_enabled_set(Eo *obj EINA_UNUSED, Elm_Button_Data *sd, Eina_Bool on)
 {
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->autorepeat = on;
@@ -351,30 +351,30 @@ _elm_button_autorepeat_set(Eo *obj EINA_UNUSED, Elm_Button_Data *sd, Eina_Bool o
 }
 
 #define _AR_CAPABLE(obj) \
-  (_internal_elm_button_admits_autorepeat_get(obj))
+  (_internal_elm_button_autorepeat_supported_get(obj))
 
 static Eina_Bool
-_internal_elm_button_admits_autorepeat_get(const Evas_Object *obj)
+_internal_elm_button_autorepeat_supported_get(const Evas_Object *obj)
 {
    Eina_Bool ret = EINA_FALSE;
-   ret = elm_obj_button_admits_autorepeat_get((Eo *) obj);
+   ret = efl_ui_autorepeat_supported_get(obj);
    return ret;
 }
 
 EOLIAN static Eina_Bool
-_elm_button_admits_autorepeat_get(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
+_elm_button_efl_ui_autorepeat_supported_get(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_elm_button_autorepeat_get(Eo *obj, Elm_Button_Data *sd)
+_elm_button_efl_ui_autorepeat_enabled_get(Eo *obj, Elm_Button_Data *sd)
 {
    return (_AR_CAPABLE(obj) & sd->autorepeat);
 }
 
 EOLIAN static void
-_elm_button_autorepeat_initial_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
+_elm_button_efl_ui_autorepeat_initial_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
 {
    if (!_AR_CAPABLE(obj))
      {
@@ -388,7 +388,7 @@ _elm_button_autorepeat_initial_timeout_set(Eo *obj, Elm_Button_Data *sd, double 
 }
 
 EOLIAN static double
-_elm_button_autorepeat_initial_timeout_get(Eo *obj, Elm_Button_Data *sd)
+_elm_button_efl_ui_autorepeat_initial_timeout_get(Eo *obj, Elm_Button_Data *sd)
 {
    if (!_AR_CAPABLE(obj))
       return 0.0;
@@ -397,7 +397,7 @@ _elm_button_autorepeat_initial_timeout_get(Eo *obj, Elm_Button_Data *sd)
 }
 
 EOLIAN static void
-_elm_button_autorepeat_gap_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
+_elm_button_efl_ui_autorepeat_gap_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
 {
    if (!_AR_CAPABLE(obj))
      {
@@ -412,7 +412,7 @@ _elm_button_autorepeat_gap_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
 }
 
 EOLIAN static double
-_elm_button_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED, Elm_Button_Data *sd)
+_elm_button_efl_ui_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED, Elm_Button_Data *sd)
 {
    return sd->ar_gap_timeout;
 }
@@ -454,5 +454,41 @@ ELM_PART_OVERRIDE_CONTENT_SET(elm_button, ELM_BUTTON, ELM_LAYOUT, Elm_Button_Dat
 #include "elm_button_internal_part.eo.c"
 
 /* Efl.Part end */
+
+EAPI void
+elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t)
+{
+   efl_ui_autorepeat_initial_timeout_set(obj, t);
+}
+
+EAPI double
+elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj)
+{
+   return efl_ui_autorepeat_initial_timeout_get(obj);
+}
+
+EAPI void
+elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
+{
+   efl_ui_autorepeat_gap_timeout_set(obj, t);
+}
+
+EAPI double
+elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj)
+{
+   return efl_ui_autorepeat_gap_timeout_get(obj);
+}
+
+EAPI void
+elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
+{
+   efl_ui_autorepeat_enabled_set(obj, on);
+}
+
+EAPI Eina_Bool
+elm_button_autorepeat_get(const Evas_Object *obj)
+{
+   return efl_ui_autorepeat_enabled_get(obj);
+}
 
 #include "elm_button.eo.c"
