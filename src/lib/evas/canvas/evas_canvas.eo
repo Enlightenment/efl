@@ -352,24 +352,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             ]]
          }
       }
-      @property key_modifier {
-         get {
-            [[Returns a handle to the list of modifier keys registered in
-              the canvas $e.
-
-              This is required to check for which modifiers are set at a
-              given time with the \@ref evas_key_modifier_is_set function.
-
-              See also @.key_modifier_add, @.key_modifier_del,
-              @.key_modifier_on, @.key_modifier_off, @.seat_key_modifier_on,
-              @.seat_key_modifier_off.
-            ]]
-            return: ptr(const(Evas.Modifier)) @warn_unused; [[
-               An Evas_Modifier handle to query Evas' keys subsystem
-               with \@ref evas_key_modifier_is_set or \@ref evas_seat_key_modifier_is_set, or $null on error.
-            ]]
-         }
-      }
       @property pointer_button_down_mask_by_device {
          [[Returns a bitmask with the mouse buttons currently pressed,
               set to 1.]]

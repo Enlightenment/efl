@@ -102,6 +102,19 @@ EAPI Evas_Engine_Info *evas_engine_info_get(const Evas *obj);
 typedef struct _Evas_Lock Evas_Lock;
 
 /**
+ * An opaque type containing information on which modifier keys are registered
+ * in an Evas canvas.
+ */
+typedef struct _Evas_Modifier Evas_Modifier;
+
+/**
+ * A bitmask of modifier keys.
+ *
+ * See evas_key_modifier_mask_get() for the keyname to bit conversion.
+ */
+typedef unsigned long long Evas_Modifier_Mask;
+
+/**
  * @}
  */
 
@@ -871,11 +884,23 @@ EAPI void             evas_event_refeed_event(Evas *obj, void *event_copy, Evas_
  */
 
 /**
- * A bitmask of modifier keys.
+ * @brief Returns a handle to the list of modifier keys registered in the
+ * canvas @c e.
  *
- * See evas_key_modifier_mask_get() for the keyname to bit conversion.
+ * This is required to check for which modifiers are set at a given time with
+ * the @ref evas_key_modifier_is_set function.
+ *
+ * See also @ref evas_key_modifier_add, @ref evas_key_modifier_del,
+ * @ref evas_key_modifier_on, @ref evas_key_modifier_off,
+ * @ref evas_seat_key_modifier_on, @ref evas_seat_key_modifier_off.
+ *
+ * @return An Evas_Modifier handle to query Evas' keys subsystem with @ref
+ * evas_key_modifier_is_set or @ref evas_seat_key_modifier_is_set, or @c null
+ * on error.
+ *
+ * @ingroup Evas_Canvas
  */
-typedef unsigned long long Evas_Modifier_Mask;
+EAPI const Evas_Modifier *evas_key_modifier_get(const Evas *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Creates a bit mask from the @c keyname modifier key. Values returned
