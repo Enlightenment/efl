@@ -358,6 +358,13 @@ class Test.Testing (Efl.Object) {
          return: own(array<own(Test.Numberwrapper)>);
       }
 
+      eina_array_obj_return_in {
+         params {
+            @in arr: array<Test.Numberwrapper>;
+         }
+         return: array<Test.Numberwrapper>;
+     }
+
      set_callback {
          params {
             cb: SimpleCb;
