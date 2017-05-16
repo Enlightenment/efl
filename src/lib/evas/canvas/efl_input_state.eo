@@ -1,13 +1,15 @@
+import efl_input_types;
+
 interface Efl.Input.State ()
 {
    [[Efl input state interface]]
    eo_prefix: efl_input;
    methods {
       @property modifier_enabled {
-         [[Indicates whether a key modifier is on, such as Ctrl, Shift,...]]
+         [[Indicates whether a key modifier is on, such as Ctrl, Shift, ...]]
          get {}
          keys {
-            name: string; [[Key name]]
+            mod: Efl.Input.Modifier; [[The modifier key to test.]]
          }
          values {
             is_set: bool; [[$true if the key modifier is pressed.]]
@@ -17,7 +19,7 @@ interface Efl.Input.State ()
          [[Indicates whether a key lock is on, such as NumLock, CapsLock, ...]]
          get {}
          keys {
-            name: string; [[Lock name]]
+            lock: Efl.Input.Lock; [[The lock key to test.]]
          }
          values {
             is_set: bool; [[$true if the key lock is on.]]

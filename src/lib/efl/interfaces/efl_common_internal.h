@@ -119,6 +119,37 @@ struct _Efl_Input_Focus_Data
    double timestamp;
 };
 
+static inline const char *
+_efl_input_modifier_to_string(Efl_Input_Modifier mod)
+{
+   switch (mod)
+     {
+      default:
+      case EFL_INPUT_MODIFIER_NONE:    return NULL;
+      case EFL_INPUT_MODIFIER_ALT:     return "Alt";
+      case EFL_INPUT_MODIFIER_CONTROL: return "Control";
+      case EFL_INPUT_MODIFIER_SHIFT:   return "Shift";
+      case EFL_INPUT_MODIFIER_META:    return "Meta";
+      case EFL_INPUT_MODIFIER_ALTGR:   return "AltGr";
+      case EFL_INPUT_MODIFIER_HYPER:   return "Hyper";
+      case EFL_INPUT_MODIFIER_SUPER:   return "Super";
+     }
+}
+
+static inline const char *
+_efl_input_lock_to_string(Efl_Input_Lock lock)
+{
+   switch (lock)
+     {
+      default:
+      case EFL_INPUT_LOCK_NONE:    return NULL;
+      case EFL_INPUT_LOCK_NUM:     return "Num";
+      case EFL_INPUT_LOCK_CAPS:    return "Caps";
+      case EFL_INPUT_LOCK_SCROLL:  return "Scroll";
+      case EFL_INPUT_LOCK_SHIFT:   return "Shift";
+     }
+}
+
 static inline Eina_Bool
 _efl_input_value_has(const Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 {

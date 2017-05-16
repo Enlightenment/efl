@@ -1,6 +1,9 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#define EFL_INTERNAL_UNSTABLE
+#include "interfaces/efl_common_internal.h"
+
 /* private calls */
 
 /* FIXME: this is not optimal, but works. i should have a hash of keys per */
@@ -194,33 +197,28 @@ _object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *keyn
      }
 }
 
-// Matching function between legacy (used throughout EFL) and EO enums
-
-static const struct {
-   const char *keyname;
-   Efl_Input_Modifier mod;
-} _modifier_match[] = {
-   { "Alt", EFL_INPUT_MODIFIER_ALT },
-   { "Control", EFL_INPUT_MODIFIER_CONTROL },
-   { "Shift", EFL_INPUT_MODIFIER_SHIFT },
-   { "Meta", EFL_INPUT_MODIFIER_META },
-   { "AltGr", EFL_INPUT_MODIFIER_ALTGR },
-   { "Hyper", EFL_INPUT_MODIFIER_HYPER },
-   { "Super", EFL_INPUT_MODIFIER_SUPER },
-   { NULL, EFL_INPUT_MODIFIER_NONE }
-};
-
 static inline Evas_Modifier_Mask
 _efl_input_modifier_to_evas_modifier_mask(Evas_Public_Data *e, Efl_Input_Modifier in)
 {
    Evas_Modifier_Mask out = 0;
-   int i;
+   size_t i;
 
-   for (i = 0; _modifier_match[i].keyname; i++)
-     {
-        if (in & _modifier_match[i].mod)
-          out |= evas_key_modifier_mask_get(e->evas, _modifier_match[i].keyname);
-     }
+   static const Efl_Input_Modifier mods[] = {
+      EFL_INPUT_MODIFIER_ALT,
+      EFL_INPUT_MODIFIER_CONTROL,
+      EFL_INPUT_MODIFIER_SHIFT,
+      EFL_INPUT_MODIFIER_META,
+      EFL_INPUT_MODIFIER_ALTGR,
+      EFL_INPUT_MODIFIER_HYPER,
+      EFL_INPUT_MODIFIER_SUPER
+   };
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(mods); i++)
+     if (in & mods[i])
+       {
+          out |= evas_key_modifier_mask_get
+                (e->evas, _efl_input_modifier_to_string(mods[i]));
+       }
 
    return out;
 }

@@ -6557,16 +6557,18 @@ _efl_ui_win_elm_interface_atspi_component_extents_get(Eo *obj, Efl_Ui_Win_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, const char *name)
+_efl_ui_win_efl_input_state_modifier_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, Efl_Input_Modifier mod)
 {
    const Evas_Modifier *m = evas_key_modifier_get(pd->evas);
+   const char *name = _efl_input_modifier_to_string(mod);
    return evas_key_modifier_is_set(m, name);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, const char *name)
+_efl_ui_win_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, Efl_Input_Lock lock)
 {
    const Evas_Lock *m = evas_key_lock_get(pd->evas);
+   const char *name = _efl_input_lock_to_string(lock);
    return evas_key_lock_is_set(m, name);
 }
 
