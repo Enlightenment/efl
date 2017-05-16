@@ -48,6 +48,7 @@
 #include "interfaces/efl_ui_spin.eo.c"
 #include "interfaces/efl_ui_progress.eo.c"
 #include "interfaces/efl_ui_menu.eo.c"
+#include "interfaces/efl_ui_autorepeat.eo.c"
 #include "interfaces/efl_ui_item.eo.c"
 #include "interfaces/efl_ui_view.eo.c"
 #include "interfaces/efl_ui_model_connect.eo.c"
