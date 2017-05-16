@@ -592,6 +592,35 @@ EAPI void             evas_event_feed_hold(Evas *obj, int hold, unsigned int tim
 EAPI void             evas_event_refeed_event(Evas *obj, void *event_copy, Evas_Callback_Type event_type);
 
 /**
+ * A bitmask of modifier keys.
+ *
+ * See evas_key_modifier_mask_get() for the keyname to bit conversion.
+ */
+typedef unsigned long long Evas_Modifier_Mask;
+
+/**
+ * @brief Creates a bit mask from the @c keyname modifier key. Values returned
+ * from different calls to it may be ORed together, naturally.
+ *
+ * This function is meant to be using in conjunction with @ref
+ * evas_object_key_grab/\@ref evas_object_key_ungrab. Go check their
+ * documentation for more information.
+ *
+ * See also @ref evas_key_modifier_add, @ref evas_key_modifier_get,
+ * @ref evas_key_modifier_on, @ref evas_key_modifier_off,
+ * @ref evas_seat_key_modifier_on, @ref evas_seat_key_modifier_off, @ref
+ * evas_key_modifier_is_set, @ref evas_seat_key_modifier_is_set..
+ *
+ * @param[in] keyname The name of the modifier key to create the mask for.
+ *
+ * @return The bit mask or 0 if the @c keyname key wasn't registered as a
+ * modifier for canvas @c e.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Evas_Modifier_Mask evas_key_modifier_mask_get(const Evas *evas, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2);
+
+/**
  * @}
  */
 

@@ -496,27 +496,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             @in seat: Efl.Input.Device; [[The seat to disable the keylock. A $null seat repesents the default seat.]]
          }
       }
-      key_modifier_mask_get @const {
-         [[Creates a bit mask from the $keyname modifier key. Values
-           returned from different calls to it may be ORed together,
-           naturally.
-
-           This function is meant to be using in conjunction with
-           \@ref evas_object_key_grab/\@ref evas_object_key_ungrab.
-           Go check their documentation for more information.
-
-           See also @.key_modifier_add, \@ref evas_key_modifier_get,
-           @.key_modifier_on, @.key_modifier_off, @.seat_key_modifier_on, @.seat_key_modifier_off,
-           \@ref evas_key_modifier_is_set, \@ref evas_seat_key_modifier_is_set..
-         ]]
-         return: Evas.Modifier_Mask @warn_unused; [[
-            The bit mask or 0 if the $keyname key wasn't registered as a
-            modifier for canvas $e.
-         ]]
-         params {
-            @in keyname: string @nonull; [[The name of the modifier key to create the mask for.]]
-         }
-      }
       key_modifier_add {
          [[Adds the $keyname key to the current list of modifier keys.
 
@@ -548,7 +527,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
            name $keyname for the default seat.
 
            See also @.key_modifier_add, \@ref evas_key_modifier_get,
-           @.key_modifier_on, @.key_modifier_mask_get, @.seat_key_modifier_off,
+           @.key_modifier_on, @.seat_key_modifier_off,
            @.seat_key_modifier_off, \@ref evas_key_modifier_is_set, \@ref evas_seat_key_modifier_is_set.
          ]]
          params {
@@ -743,7 +722,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
            name $keyname for a given seat.
 
            See also @.key_modifier_add, \@ref evas_key_modifier_get,
-           @.key_modifier_on, @.key_modifier_mask_get, @.seat_key_modifier_off,
+           @.key_modifier_on, @.seat_key_modifier_off,
            @.seat_key_modifier_off, \@ref evas_key_modifier_is_set, \@ref evas_seat_key_modifier_is_set.
            @since 1.19
          ]]

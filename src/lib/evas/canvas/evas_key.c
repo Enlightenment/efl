@@ -265,12 +265,13 @@ _evas_canvas_key_lock_off(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
 
 /* errr need to add key grabbing/ungrabbing calls - missing modifier stuff. */
 
-EOLIAN Evas_Modifier_Mask
-_evas_canvas_key_modifier_mask_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *keyname)
+EAPI Evas_Modifier_Mask
+evas_key_modifier_mask_get(const Evas *eo_e, const char *keyname)
 {
    int n;
 
    if (!keyname) return 0;
+   EVAS_LEGACY_API(eo_e, e, 0);
    n = evas_key_modifier_number(&(e->modifiers), keyname);
    if (n < 0 || n > 63) return 0;
    return 1ULL << n;
