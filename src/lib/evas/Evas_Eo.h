@@ -74,6 +74,8 @@
  * @ingroup Evas
  */
 
+#include "canvas/evas_canvas3d_types.eot.h"
+
 /**
  * @page evas_canvas3d_main Evas 3D
  *

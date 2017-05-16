@@ -66,7 +66,7 @@ evas_eolian_priv_files = \
 	lib/evas/include/evas_ector_buffer.eo
 
 evas_eolian_type_files = \
-    lib/evas/canvas/evas_types.eot
+    lib/evas/canvas/evas_canvas3d_types.eot
 
 evas_eolian_priv_c = $(evas_eolian_priv_files:%.eo=%.eo.c)
 evas_eolian_priv_h = $(evas_eolian_priv_files:%.eo=%.eo.h) \
