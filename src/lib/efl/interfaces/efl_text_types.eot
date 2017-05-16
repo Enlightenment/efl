@@ -6,3 +6,5 @@ enum Efl.Text.Bidirectional_Type {
    rtl, [[Right to left text type]]
    inherit [[Inherit text type]]
 }
+
+struct Efl.Canvas.Text.Annotation; [[EFL text annotations data structure]]

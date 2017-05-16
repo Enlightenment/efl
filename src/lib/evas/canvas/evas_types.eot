@@ -290,5 +290,3 @@ enum Evas.Canvas3D.Material_Attrib
 }
 
 type Evas.Canvas3D.Surface_Func: __undefined_type; [[Evas 3D canvas surface function type]]
-
-struct Efl.Canvas.Text.Annotation; [[EFL text annotations data structure]]
