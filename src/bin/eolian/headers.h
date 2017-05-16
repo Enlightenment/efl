@@ -3,6 +3,6 @@
 
 #include "main.h"
 
-void eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy);
+void eo_gen_header_gen(const Eolian_Unit *src, const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy);
 
 #endif

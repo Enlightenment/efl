@@ -183,7 +183,8 @@ _var_generate(const Eolian_Variable *vr, Eina_Bool legacy)
    return buf;
 }
 
-void eo_gen_types_header_gen(const char *eof, Eina_Strbuf *buf,
+void eo_gen_types_header_gen(const Eolian_Unit *src EINA_UNUSED,
+                             const char *eof, Eina_Strbuf *buf,
                              Eina_Bool full, Eina_Bool legacy)
 {
    const Eolian_Declaration *decl;
@@ -237,7 +238,8 @@ void eo_gen_types_header_gen(const char *eof, Eina_Strbuf *buf,
      }
 }
 
-void eo_gen_types_source_gen(const char *eof, Eina_Strbuf *buf)
+void eo_gen_types_source_gen(const Eolian_Unit *src EINA_UNUSED,
+                             const char *eof, Eina_Strbuf *buf)
 {
    const Eolian_Declaration *decl;
 
@@ -285,7 +287,8 @@ void eo_gen_types_source_gen(const char *eof, Eina_Strbuf *buf)
      }
 }
 
-Eina_Strbuf *eo_gen_class_typedef_gen(const char *eof)
+Eina_Strbuf *eo_gen_class_typedef_gen(const Eolian_Unit *src EINA_UNUSED,
+                                      const char *eof)
 {
    const Eolian_Class *cl = eolian_class_get_by_file(eof);
    if (!cl)

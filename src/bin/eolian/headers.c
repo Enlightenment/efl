@@ -183,7 +183,8 @@ _gen_func(const Eolian_Function *fid, Eolian_Function_Type ftype,
 }
 
 void
-eo_gen_header_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Bool legacy)
+eo_gen_header_gen(const Eolian_Unit *src EINA_UNUSED, const Eolian_Class *cl,
+                  Eina_Strbuf *buf, Eina_Bool legacy)
 {
    if (!cl)
      return;
