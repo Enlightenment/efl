@@ -4666,6 +4666,26 @@ EAPI void evas_object_image_smooth_scale_set(Eo *obj, Eina_Bool smooth_scale);
  */
 EAPI Eina_Bool evas_object_image_smooth_scale_get(const Eo *obj);
 
+/* not implemented! removed from the interface, kept as legacy only */
+typedef enum _Efl_Gfx_Fill_Spread {
+   /** Fill spread mode. Warning: support is not implemented!
+    * @since 1.14 */
+   EFL_GFX_FILL_REFLECT = 0,          /**< Tiling reflects and repeats */
+   EFL_GFX_FILL_REPEAT = 1,           /**< Tiling repeats like a mosaic */
+   EFL_GFX_FILL_RESTRICT = 2,         /**< Tiling clamps, range offset ignored */
+   EFL_GFX_FILL_RESTRICT_REFLECT = 3, /**< Tiling clamps and any range offset reflects */
+   EFL_GFX_FILL_RESTRICT_REPEAT = 4,  /**< Tiling clamps and any range offset repeats */
+   EFL_GFX_FILL_PAD = 5,              /**< Tiling extends with end values */
+} Efl_Gfx_Fill_Spread;
+
+typedef Efl_Gfx_Fill_Spread Evas_Fill_Spread;
+#define EVAS_TEXTURE_REFLECT EFL_GFX_FILL_REFLECT
+#define EVAS_TEXTURE_REPEAT EFL_GFX_FILL_REPEAT
+#define EVAS_TEXTURE_RESTRICT EFL_GFX_FILL_RESTRICT
+#define EVAS_TEXTURE_RESTRICT_REFLECT EFL_GFX_FILL_RESTRICT_REFLECT
+#define EVAS_TEXTURE_RESTRICT_REPEAT EFL_GFX_FILL_RESTRICT_REPEAT
+#define EVAS_TEXTURE_PAD EFL_GFX_FILL_PAD
+
 /**
  *
  * Sets the tiling mode for the given evas image object's fill.
