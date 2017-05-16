@@ -328,7 +328,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Evas_Object *win, *box;
    char buf[PATH_MAX];
 
-   win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Bg EOAPI (Efl.Ui.Win)"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_ui_win_alpha_set(efl_added, 1));

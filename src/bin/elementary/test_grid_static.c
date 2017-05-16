@@ -104,7 +104,7 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    Eo *win, *gd, *bt, *rc, *en;
    api_data *api = calloc(1, sizeof(*api));
 
-   win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
                 efl_ui_win_name_set(efl_added, "grid"),
                 efl_text_set(efl_added, "Grid"),
                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),

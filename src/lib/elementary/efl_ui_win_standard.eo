@@ -1,8 +1,0 @@
-class Efl.Ui.Win.Standard (Efl.Ui.Win)
-{
-   [[Efl UI standard window class]]
-   data: null;
-   implements {
-      Efl.Object.finalize;
-   }
-}

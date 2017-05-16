@@ -7,6 +7,8 @@
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
 #define EFL_GFX_SIZE_HINT_PROTECTED
+#define EFL_CANVAS_OBJECT_BETA
+#define EFL_CANVAS_OBJECT_PROTECTED
 #define EFL_UI_WIN_BETA
 
 #include <Elementary.h>
@@ -242,6 +244,7 @@ struct _Efl_Ui_Win_Data
       Eina_Bool    forbidden : 1; /**< Marks some legacy APIs as not allowed. */
       Eina_Bool    bg_must_swallow : 1; /**< Legacy theme compatibility (elm_bg for standard window) */
       Eina_Bool    bg_must_swallow_init : 1;
+      Eina_Bool    ctor : 1; /**< legacy constructor: elm_win~add */
    } legacy;
 
    Eina_Bool    first_draw : 1;
@@ -4485,21 +4488,6 @@ _elm_x_io_err(void *data EINA_UNUSED)
 }
 #endif
 
-EAPI Evas_Object *
-elm_win_add(Evas_Object *parent,
-            const char *name,
-            Elm_Win_Type type)
-{
-   Evas_Object *obj = efl_add(MY_CLASS, parent, efl_ui_win_name_set(efl_added, name), efl_ui_win_type_set(efl_added, type));
-   return obj;
-}
-
-EAPI Evas_Object *
-elm_win_fake_add(Ecore_Evas *ee)
-{
-   return efl_add(MY_CLASS, NULL, elm_win_fake_canvas_set(efl_added, ee), efl_ui_win_name_set(efl_added, NULL), efl_ui_win_type_set(efl_added, ELM_WIN_FAKE));
-}
-
 static void
 _elm_win_cb_hide(void *data EINA_UNUSED,
                  Evas *e EINA_UNUSED,
@@ -5240,18 +5228,37 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         _elm_win_resize_job(obj);
         _elm_win_move(sd->ee);
      }
+
+   // All normal windows are "standard" windows with EO API
+   if (!sd->legacy.ctor)
+     {
+        switch (type)
+          {
+           case EFL_UI_WIN_UNKNOWN:
+           case EFL_UI_WIN_BASIC:
+           case EFL_UI_WIN_DIALOG_BASIC:
+             _elm_win_standard_init(obj);
+             break;
+           default: break;
+          }
+     }
+
    return obj;
 }
 
 EOLIAN static Eo *
-_efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *_pd)
+_efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   obj = _elm_win_finalize_internal(obj, _pd, _pd->name, _pd->type);
-   if (obj)
-     {
-        obj = efl_finalize(efl_super(obj, MY_CLASS));
-     }
-   return obj;
+   obj = _elm_win_finalize_internal(obj, sd, sd->name, sd->type);
+   if (!obj) return NULL;
+   return efl_finalize(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_ui_win_efl_canvas_object_legacy_ctor(Eo *obj, Efl_Ui_Win_Data *sd)
+{
+   sd->legacy.ctor = EINA_TRUE;
+   efl_canvas_object_legacy_ctor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *
@@ -7828,11 +7835,38 @@ elm_win_aspect_get(const Eo *obj)
 /* legacy APIs */
 
 EAPI Evas_Object *
+elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
+{
+   return efl_add(MY_CLASS, parent,
+                 efl_canvas_object_legacy_ctor(efl_added),
+                 efl_ui_win_name_set(efl_added, name),
+                 efl_ui_win_type_set(efl_added, type));
+}
+
+EAPI Evas_Object *
+elm_win_fake_add(Ecore_Evas *ee)
+{
+   return efl_add(MY_CLASS, NULL,
+                 efl_canvas_object_legacy_ctor(efl_added),
+                 elm_win_fake_canvas_set(efl_added, ee),
+                 efl_ui_win_name_set(efl_added, NULL),
+                 efl_ui_win_type_set(efl_added, ELM_WIN_FAKE));
+}
+
+EAPI Evas_Object *
 elm_win_util_standard_add(const char *name, const char *title)
 {
-   return efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
-                  efl_text_set(efl_added, title),
-                  efl_ui_win_name_set(efl_added, name));
+   Evas_Object *win;
+
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                 efl_canvas_object_legacy_ctor(efl_added),
+                 efl_text_set(efl_added, title),
+                 efl_ui_win_name_set(efl_added, name),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC));
+   if (!win) return NULL;
+
+   _elm_win_standard_init(win);
+   return win;
 }
 
 EAPI Evas_Object *
@@ -7841,6 +7875,7 @@ elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title
    Evas_Object *win;
 
    win = efl_add(EFL_UI_WIN_CLASS, parent,
+                 efl_canvas_object_legacy_ctor(efl_added),
                  efl_text_set(efl_added, title),
                  efl_ui_win_name_set(efl_added, name),
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC));

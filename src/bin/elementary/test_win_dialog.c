@@ -27,7 +27,7 @@ _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 {
    Efl_Canvas_Object *dia, *lb, *parent = data;
 
-   dia = efl_add(EFL_UI_WIN_STANDARD_CLASS, parent,
+   dia = efl_add(EFL_UI_WIN_CLASS, parent,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
                  efl_ui_win_name_set(efl_added, "window-dia-2"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
@@ -76,7 +76,7 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 {
    Efl_Canvas_Object *dia, *lb, *parent = data;
 
-   dia = efl_add(EFL_UI_WIN_STANDARD_CLASS, parent,
+   dia = efl_add(EFL_UI_WIN_CLASS, parent,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
                  efl_ui_win_name_set(efl_added, "window-dia-3"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
@@ -104,7 +104,7 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 {
    Efl_Canvas_Object *dia, *lb;
 
-   dia = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+   dia = efl_add(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
                  efl_ui_win_name_set(efl_added, "window-dia-4"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),

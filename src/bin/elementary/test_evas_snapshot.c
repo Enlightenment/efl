@@ -123,7 +123,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    Eo *win, *grid, *o, *snap, *box;
    const char *path;
 
-   win = efl_add(EFL_UI_WIN_STANDARD_CLASS, NULL,
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Evas Snapshot"),
                  efl_ui_win_autodel_set(efl_added, 1));
 
