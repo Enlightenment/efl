@@ -137,3 +137,42 @@ enum Efl.Input.Value {
    slider,     [[Current position of the slider on the tool. Range: [-1, 1].
                  Default: 0.]]
 }
+
+enum Efl.Input.Modifier {
+   [[Key modifiers such as Control, Alt, etc...
+
+     This enum may be used as a bitmask with OR operations, depending on the
+     API.
+
+     The available keys may vary depending on the physical keyboard layout, or
+     language and keyboard settings, or depending on the platform.
+
+     @since 1.20
+   ]]
+   none    = 0,      [[No key modifier]]
+   alt     = 1 << 0, [[Alt key modifier]]
+   control = 1 << 1, [[Control key modifier ("Ctrl" key)]]
+   shift   = 1 << 2, [[Shift key modifier]]
+   meta    = 1 << 3, [[Meta key modifier (often the "Windows" key)]]
+   altgr   = 1 << 4, [[AltGr key modifier (not present on all keyboards)]]
+   hyper   = 1 << 5, [[Hyper key modifier (may be "Windows" key)]]
+   super   = 1 << 6, [[Super key modifier (may be "Windows" key)]]
+}
+
+enum Efl.Input.Lock {
+   [[Key locks such as Num Lock, Scroll Lock and Caps Lock.
+
+     This enum may be used as a bitmask with OR operations, depending on the
+     API.
+
+     The available keys may vary depending on the physical keyboard layout, or
+     language and keyboard settings, or depending on the platform.
+
+     @since 1.20
+   ]]
+   none    = 0,      [[No key modifier]]
+   num     = 1 << 0, [[Num Lock for numeric key pad use]]
+   caps    = 1 << 1, [[Caps Lock for writing in all caps]]
+   scroll  = 1 << 2, [[Scroll Lock]]
+   shift   = 1 << 3, [[Shift Lock]]
+}

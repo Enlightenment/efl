@@ -139,10 +139,12 @@ evas_key_grab_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const c
    free(g);
 }
 
-/* public calls */
+// Legacy implementation. TODO: remove use of Evas_Modifier_Mask
 
-EOLIAN Eina_Bool
-_efl_canvas_object_key_grab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
+static Eina_Bool
+_object_key_grab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname,
+                 Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers,
+                 Eina_Bool exclusive)
 {
    /* MEM OK */
    Evas_Key_Grab *g;
@@ -152,8 +154,9 @@ _efl_canvas_object_key_grab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const c
    return ((!g) ? EINA_FALSE : EINA_TRUE);
 }
 
-EOLIAN void
-_efl_canvas_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+static void
+_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname,
+                   Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {
    /* MEM OK */
    Evas_Key_Grab *g;
@@ -189,4 +192,92 @@ _efl_canvas_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj, const
 
         evas_key_grab_free(g->object, g_object, keyname, modifiers, not_modifiers);
      }
+}
+
+// Matching function between legacy (used throughout EFL) and EO enums
+
+static const struct {
+   const char *keyname;
+   Efl_Input_Modifier mod;
+} _modifier_match[] = {
+   { "Alt", EFL_INPUT_MODIFIER_ALT },
+   { "Control", EFL_INPUT_MODIFIER_CONTROL },
+   { "Shift", EFL_INPUT_MODIFIER_SHIFT },
+   { "Meta", EFL_INPUT_MODIFIER_META },
+   { "AltGr", EFL_INPUT_MODIFIER_ALTGR },
+   { "Hyper", EFL_INPUT_MODIFIER_HYPER },
+   { "Super", EFL_INPUT_MODIFIER_SUPER },
+   { NULL, EFL_INPUT_MODIFIER_NONE }
+};
+
+static inline Evas_Modifier_Mask
+_efl_input_modifier_to_evas_modifier_mask(Evas_Public_Data *e, Efl_Input_Modifier in)
+{
+   Evas_Modifier_Mask out = 0;
+   int i;
+
+   for (i = 0; _modifier_match[i].keyname; i++)
+     {
+        if (in & _modifier_match[i].mod)
+          out |= evas_key_modifier_mask_get(e->evas, _modifier_match[i].keyname);
+     }
+
+   return out;
+}
+
+// EO API
+
+EOLIAN Eina_Bool
+_efl_canvas_object_key_grab(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+                            const char *keyname, Efl_Input_Modifier mod,
+                            Efl_Input_Modifier not_mod, Eina_Bool exclusive)
+{
+   Evas_Modifier_Mask modifiers, not_modifiers;
+
+   EVAS_OBJECT_DATA_VALID_CHECK(obj, EINA_FALSE);
+   modifiers = _efl_input_modifier_to_evas_modifier_mask(obj->layer->evas, mod);
+   not_modifiers = _efl_input_modifier_to_evas_modifier_mask(obj->layer->evas, not_mod);
+
+   return _object_key_grab(eo_obj, obj, keyname, modifiers, not_modifiers, exclusive);
+}
+
+EOLIAN void
+_efl_canvas_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+                              const char *keyname, Efl_Input_Modifier mod,
+                              Efl_Input_Modifier not_mod)
+{
+   Evas_Modifier_Mask modifiers, not_modifiers;
+
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
+   modifiers = _efl_input_modifier_to_evas_modifier_mask(obj->layer->evas, mod);
+   not_modifiers = _efl_input_modifier_to_evas_modifier_mask(obj->layer->evas, not_mod);
+
+   _object_key_ungrab(eo_obj, obj, keyname, modifiers, not_modifiers);
+}
+
+// Legacy API
+
+EAPI Eina_Bool
+evas_object_key_grab(Evas_Object *eo_obj, const char *keyname,
+                     Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers,
+                     Eina_Bool exclusive)
+{
+   Evas_Object_Protected_Data *obj;
+
+   obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
+   EVAS_OBJECT_DATA_VALID_CHECK(obj, EINA_FALSE);
+
+   return _object_key_grab(eo_obj, obj, keyname, modifiers, not_modifiers, exclusive);
+}
+
+EAPI void
+evas_object_key_ungrab(Efl_Canvas_Object *eo_obj, const char *keyname,
+                       Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+{
+   Evas_Object_Protected_Data *obj;
+
+   obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
+
+   _object_key_ungrab(eo_obj, obj, keyname, modifiers, not_modifiers);
 }

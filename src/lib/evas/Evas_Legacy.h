@@ -2004,6 +2004,60 @@ EAPI void     *evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Ty
 EAPI void     *evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 3);
 
 /**
+ * @brief Requests @c keyname key events be directed to @c obj.
+ *
+ * Key grabs allow one or more objects to receive key events for specific key
+ * strokes even if other objects have focus. Whenever a key is grabbed, only
+ * the objects grabbing it will get the events for the given keys.
+ *
+ * @c keyname is a platform dependent symbolic name for the key pressed (see
+ * @ref Evas_Keys for more information).
+ *
+ * @c modifiers and @c not_modifiers are bit masks of all the modifiers that
+ * must and mustn't, respectively, be pressed along with @c keyname key in
+ * order to trigger this new key grab. Modifiers can be things such as Shift
+ * and Ctrl as well as user defined types via @ref evas_key_modifier_add.
+ * Retrieve them with @ref evas_key_modifier_mask_get or use 0 for empty masks.
+ *
+ * @c exclusive will make the given object the only one permitted to grab the
+ * given key. If given @c true, subsequent calls on this function with
+ * different @c obj arguments will fail, unless the key is ungrabbed again.
+ *
+ * @warning Providing impossible modifier sets creates undefined behavior.
+ *
+ * See also @ref evas_object_key_ungrab, @ref evas_object_focus_get,
+ * @ref evas_object_focus_set, @ref evas_focus_get, @ref evas_key_modifier_add.
+ *
+ * @param[in] keyname The key to request events for.
+ * @param[in] modifiers A mask of modifiers that must be present to trigger the
+ * event.
+ * @param[in] not_modifiers A mask of modifiers that must not be present to
+ * trigger the event.
+ * @param[in] exclusive Request that the @c obj is the only object receiving
+ * the @c keyname events.
+ *
+ * @return @c true if the call succeeded, @c false otherwise.
+ */
+EAPI Eina_Bool evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2);
+
+/**
+ * @brief Removes the grab on @c keyname key events by @c obj.
+ *
+ * Removes a key grab on @c obj if @c keyname, @c modifiers, and
+ * @c not_modifiers match.
+ *
+ * See also @ref evas_object_key_grab, @ref evas_object_focus_get,
+ * @ref evas_object_focus_set, @ref evas_focus_get.
+ *
+ * @param[in] keyname The key the grab is set for.
+ * @param[in] modifiers A mask of modifiers that must be present to trigger the
+ * event.
+ * @param[in] not_modifiers A mask of modifiers that mus not not be present to
+ * trigger the event.
+ */
+EAPI void evas_object_key_ungrab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers) EINA_ARG_NONNULL(2);
+
+/**
  * @}
  */
 

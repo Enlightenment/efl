@@ -6088,7 +6088,10 @@ _efl_ui_win_prop_focus_skip_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_B
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_keygrab_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *key, Evas_Modifier_Mask modifiers EINA_UNUSED, Evas_Modifier_Mask not_modifiers EINA_UNUSED, int priority EINA_UNUSED, Efl_Ui_Win_Keygrab_Mode grab_mode)
+_efl_ui_win_keygrab_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *key,
+                        Efl_Input_Modifier modifiers EINA_UNUSED,
+                        Efl_Input_Modifier not_modifiers EINA_UNUSED,
+                        int priority EINA_UNUSED, Efl_Ui_Win_Keygrab_Mode grab_mode)
 {
    Eina_Bool ret = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_X
@@ -6124,7 +6127,9 @@ _efl_ui_win_keygrab_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *ke
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_keygrab_unset(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *key, Evas_Modifier_Mask modifiers EINA_UNUSED, Evas_Modifier_Mask not_modifiers EINA_UNUSED)
+_efl_ui_win_keygrab_unset(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *key,
+                          Efl_Input_Modifier modifiers EINA_UNUSED,
+                          Efl_Input_Modifier not_modifiers EINA_UNUSED)
 {
    Eina_Bool ret = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_X

@@ -1,5 +1,3 @@
-type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
-
 struct Evas.Modifier; [[An opaque type containing information on which modifier keys are registered in an Evas canvas]]
 struct Evas.Lock; [[An opaque type containing information on which lock keys are registered in an Evas canvas]]
 

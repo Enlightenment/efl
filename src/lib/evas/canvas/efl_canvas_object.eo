@@ -551,25 +551,17 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
            See also @.key_ungrab, @.key_focus.get, @.key_focus.set,
            \@ref evas_focus_get, \@ref evas_key_modifier_add.
          ]]
-         /* FIXME-doc
-         Example code follows.
-         @dontinclude evas-events.c
-         @skip if (d.focus)
-         @until else
-
-         See the full example @ref Example_Evas_Events "here".
-         */
-
          return: bool @warn_unused; [[$true if the call succeeded, $false otherwise.]]
          params {
             @in keyname: string @nonull; [[The key to request events for.]]
-            @in modifiers: Evas.Modifier_Mask; [[A mask of modifiers that must be
-                                                present to trigger the event.]]
-            @in not_modifiers: Evas.Modifier_Mask; [[A mask of modifiers that must
-                                                     not be present to trigger the event.]]
+            @in modifiers: Efl.Input.Modifier; [[A combinaison of modifier
+                              keys that must be present to trigger the event.]]
+            @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier
+                          keys that must not be present to trigger the event.]]
             @in exclusive: bool; [[Request that the $obj is the only object
                                    receiving the $keyname events.]]
          }
+         legacy: null;
       }
       key_ungrab {
          [[Removes the grab on $keyname key events by $obj.
@@ -578,25 +570,17 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
            $not_modifiers match.
 
            See also @.key_grab, @.key_focus.get, @.key_focus.set,
-           \@ref evas_focus_get.
+           and the legacy API evas_focus_get.
          ]]
-         /* FIXME-doc
-         Example code follows.
-         @dontinclude evas-events.c
-         @skip got here by key grabs
-         @until }
-
-         See the full example @ref Example_Evas_Events "here".
-         */
          params {
             @in keyname: string @nonull; [[The key the grab is set for.]]
-            @in modifiers: Evas.Modifier_Mask; [[A mask of modifiers that must be
+            @in modifiers: Efl.Input.Modifier; [[A mask of modifiers that must be
                                                  present to trigger the event.]]
-            @in not_modifiers: Evas.Modifier_Mask; [[A mask of modifiers that mus
+            @in not_modifiers: Efl.Input.Modifier; [[A mask of modifiers that must
                                                      not not be present to trigger
-                                                     the event.
-                                                   ]]
+                                                     the event.]]
          }
+         legacy: null;
       }
       @property no_render {
          get {

@@ -851,10 +851,13 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in key: string; [[This string is the keyname to grab.]]
-            @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
-            @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
-            @in proirity: int; [[This is for the priority of keygrab. Currently this feature is not supported.]]
-            @in grab_mode: Efl.Ui.Win.Keygrab_Mode; [[According to the grabmode, it can grab key differently.]]
+            @in modifiers: Efl.Input.Modifier; [[A combinaison of modifier keys
+                 that must be present to trigger the event. Not supported yet.]]
+            @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier
+                 keys that must not be present to trigger the event. Not supported yet.]]
+            @in priority: int; [[Not supported yet.]]
+            @in grab_mode: Efl.Ui.Win.Keygrab_Mode; [[Describes how the key should
+                 be grabbed, wrt. focus and stacking.]]
          }
       }
       keygrab_unset {
@@ -865,8 +868,10 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in key: string; [[This string is the keyname to grab.]]
-            @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
-            @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
+            @in modifiers: Efl.Input.Modifier; [[A combinaison of modifier keys
+                 that must be present to trigger the event. Not supported yet.]]
+            @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier keys
+                 that must not be present to trigger the event. Not supported yet.]]
          }
       }
       move_resize_start {
