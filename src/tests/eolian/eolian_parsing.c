@@ -1421,6 +1421,7 @@ START_TEST(eolian_function_types)
 
    fail_if(!(fid = eolian_typedecl_function_pointer_get(decl)));
    fail_if(eolian_function_type_get(fid) != EOLIAN_FUNCTION_POINTER);
+   fail_if(strcmp(eolian_function_name_get(fid), "SimpleFunc"));
 
    fail_if(!(type = eolian_function_return_type_get(fid, EOLIAN_FUNCTION_POINTER))); // void is null_return_type?
    fail_if(!(type_name = eolian_type_c_type_get(type)));
