@@ -444,7 +444,7 @@ struct function_def
     name = ::eolian_function_name_get(function);
     if(r_type)
       return_type.set(r_type, unit);
-     if(type == EOLIAN_METHOD)
+     if(type == EOLIAN_METHOD || type == EOLIAN_FUNCTION_POINTER)
        {
           for(efl::eina::iterator<Eolian_Function_Parameter> param_iterator ( ::eolian_function_parameters_get(function))
             , param_last; param_iterator != param_last; ++param_iterator)
