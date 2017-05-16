@@ -824,6 +824,63 @@ class TestEinaArray
         Test.Assert(a.Length == 3);
     }
 
+    public static void eina_array_as_ienumerable_int()
+    {
+        var a = new eina.Array<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(88));
+        Test.Assert(a.Push(44));
+        Test.Assert(a.Push(22));
+
+        int cmp = 88;
+        foreach (int e in a)
+        {
+            Test.AssertEquals(cmp, e);
+            cmp /= 2;
+        }
+    }
+
+    public static void eina_array_as_ienumerable_string()
+    {
+        var a = new eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("X"));
+        Test.Assert(a.Push("XX"));
+        Test.Assert(a.Push("XXX"));
+
+        string cmp = "X";
+        foreach (string e in a)
+        {
+            Test.AssertEquals(cmp, e);
+            cmp = cmp + "X";
+        }
+    }
+
+    public static void eina_array_as_ienumerable_obj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        a.number_set(88);
+        b.number_set(44);
+        c.number_set(22);
+        var cmp = new test.NumberwrapperConcrete[]{a,b,c};
+
+        var arr = new eina.Array<test.NumberwrapperConcrete>();
+        Test.Assert(arr.Handle != IntPtr.Zero);
+        Test.Assert(arr.Push(a));
+        Test.Assert(arr.Push(b));
+        Test.Assert(arr.Push(c));
+
+        int i = 0;
+        foreach (test.NumberwrapperConcrete e in arr)
+        {
+            Test.AssertEquals(cmp[i].number_get(), e.number_get());
+            Test.Assert(cmp[i].raw_handle == e.raw_handle);
+            ++i;
+        }
+    }
+
     // //
     // Code Generation
     //

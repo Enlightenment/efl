@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 using static eina.ElementFunctions;
 using static eina.ArrayNativeFunctions;
@@ -42,7 +43,7 @@ public static class ArrayNativeFunctions
         eina_array_foreach_custom_export_mono(IntPtr array, IntPtr cb, IntPtr fdata);
 }
 
-public class Array<T> : IDisposable
+public class Array<T> : IEnumerable<T>, IDisposable
 {
     public static uint DefaultStep = 32;
 
@@ -254,7 +255,7 @@ public class Array<T> : IDisposable
         var managed = new T[len];
         for(int i = 0; i < len; ++i)
         {
-            managed[i] = NativeToManaged<T>(InternalDataGet(i));
+            managed[i] = DataGet(i);
         }
         return managed;
     }
@@ -267,6 +268,19 @@ public class Array<T> : IDisposable
         return true;
     }
 
+    public IEnumerator<T> GetEnumerator()
+    {
+        int len = Length;
+        for(int i = 0; i < len; ++i)
+        {
+            yield return DataGet(i);
+        }
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+        return this.GetEnumerator();
+    }
 }
 
 }
