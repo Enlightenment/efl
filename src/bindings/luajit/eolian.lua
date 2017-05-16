@@ -28,6 +28,7 @@ ffi.cdef [[
     typedef struct _Eolian_Declaration Eolian_Declaration;
     typedef struct _Eolian_Documentation Eolian_Documentation;
     typedef struct _Eolian_Value Eolian_Value;
+    typedef struct _Eolian_Unit Eolian_Unit;
 
     typedef enum
     {
@@ -217,7 +218,7 @@ ffi.cdef [[
         const char *text, *text_end;
     } Eolian_Doc_Token;
 
-    Eina_Bool eolian_file_parse(const char *filepath);
+    const Eolian_Unit *eolian_file_parse(const char *filepath);
     Eina_Iterator *eolian_all_eo_file_paths_get(void);
     Eina_Iterator *eolian_all_eot_file_paths_get(void);
     Eina_Iterator *eolian_all_eo_files_get(void);
@@ -448,7 +449,7 @@ M.system_directory_scan = function()
 end
 
 M.file_parse = function(fpath)
-    return eolian.eolian_file_parse(fpath) ~= 0
+    return eolian.eolian_file_parse(fpath)
 end
 
 M.all_eo_files_parse = function()

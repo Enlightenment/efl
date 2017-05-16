@@ -384,13 +384,13 @@ typedef struct _Eolian_Doc_Token
  * If it's a filename, it must be scanned for first.
  *
  * @param[in] filepath Path to the file to parse.
- * @return EINA_TRUE on success, EINA_FALSE on failure.
+ * @return The unit corresponding to the parsed file or NULL.
  *
  * @see eolian_directory_scan
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_file_parse(const char *filepath);
+EAPI const Eolian_Unit *eolian_file_parse(const char *filepath);
 
 /*
  * @brief Get an iterator to all .eo file names with paths.

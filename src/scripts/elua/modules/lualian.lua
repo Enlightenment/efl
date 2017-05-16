@@ -696,7 +696,7 @@ M.system_directory_scan = function()
 end
 
 M.generate = function(fname, fstream)
-    if not eolian.file_parse(fname) then
+    if eolian.file_parse(fname) == nil then
         error("Failed parsing file: " .. fname)
     end
     if not eolian.database_validate() then
