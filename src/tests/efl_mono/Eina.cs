@@ -711,7 +711,7 @@ class TestEinaArray
         var a = new eina.Array<int>();
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push(88));
-        Test.Assert(a.DataGet(0) == 88);
+        Test.Assert(a[0] == 88);
     }
 
     public static void push_string()
@@ -719,7 +719,18 @@ class TestEinaArray
         var a = new eina.Array<string>();
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push(test_string));
-        Test.Assert(a.DataGet(0) == test_string);
+        Test.Assert(a[0] == test_string);
+    }
+
+    public static void push_obj()
+    {
+        var a = new eina.Array<test.NumberwrapperConcrete>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        var o = new test.NumberwrapperConcrete();
+        o.number_set(88);
+        Test.Assert(a.Push(o));
+        Test.Assert(a[0].raw_handle == o.raw_handle);
+        Test.Assert(a[0].number_get() == 88);
     }
 
     public static void pop_int()
@@ -740,14 +751,29 @@ class TestEinaArray
         Test.Assert(a.Count() == 0);
     }
 
+    public static void pop_obj()
+    {
+        var a = new eina.Array<test.NumberwrapperConcrete>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        var o = new test.NumberwrapperConcrete();
+        o.number_set(88);
+        Test.Assert(a.Push(o));
+        var p = a.Pop();
+        Test.Assert(p.raw_handle == o.raw_handle);
+        Test.Assert(p.number_get() == 88);
+        Test.Assert(a.Count() == 0);
+    }
+
     public static void data_set_int()
     {
         var a = new eina.Array<int>();
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push(88));
-        Test.Assert(a.DataGet(0) == 88);
+        Test.Assert(a[0] == 88);
         a.DataSet(0, 44);
-        Test.Assert(a.DataGet(0) == 44);
+        Test.Assert(a[0] == 44);
+        a[0] = 22;
+        Test.Assert(a[0] == 22);
     }
 
     public static void data_set_string()
@@ -755,9 +781,38 @@ class TestEinaArray
         var a = new eina.Array<string>();
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push(test_string));
-        Test.Assert(a.DataGet(0) == test_string);
+        Test.Assert(a[0] == test_string);
         a.DataSet(0, "other string");
-        Test.Assert(a.DataGet(0) == "other string");
+        Test.Assert(a[0] == "other string");
+        a[0] = "abc";
+        Test.Assert(a[0] == "abc");
+    }
+
+    public static void data_set_obj()
+    {
+        var a = new eina.Array<test.NumberwrapperConcrete>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+
+        var o1 = new test.NumberwrapperConcrete();
+        o1.number_set(88);
+
+        Test.Assert(a.Push(o1));
+        Test.Assert(a[0].raw_handle == o1.raw_handle);
+        Test.Assert(a[0].number_get() == 88);
+
+        var o2 = new test.NumberwrapperConcrete();
+        o2.number_set(44);
+
+        a.DataSet(0, o2);
+        Test.Assert(a[0].raw_handle == o2.raw_handle);
+        Test.Assert(a[0].number_get() == 44);
+
+        var o3 = new test.NumberwrapperConcrete();
+        o3.number_set(22);
+
+        a[0] = o3;
+        Test.Assert(a[0].raw_handle == o3.raw_handle);
+        Test.Assert(a[0].number_get() == 22);
     }
 
     public static void count_int()
@@ -766,13 +821,13 @@ class TestEinaArray
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Count() == 0);
         Test.Assert(a.Push(88));
-        Test.Assert(a.DataGet(0) == 88);
+        Test.Assert(a[0] == 88);
         Test.Assert(a.Count() == 1);
         Test.Assert(a.Push(44));
-        Test.Assert(a.DataGet(1) == 44);
+        Test.Assert(a[1] == 44);
         Test.Assert(a.Count() == 2);
         Test.Assert(a.Push(22));
-        Test.Assert(a.DataGet(2) == 22);
+        Test.Assert(a[2] == 22);
         Test.Assert(a.Count() == 3);
     }
 
@@ -782,13 +837,42 @@ class TestEinaArray
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Count() == 0);
         Test.Assert(a.Push("a"));
-        Test.Assert(a.DataGet(0) == "a");
+        Test.Assert(a[0] == "a");
         Test.Assert(a.Count() == 1);
         Test.Assert(a.Push("b"));
-        Test.Assert(a.DataGet(1) == "b");
+        Test.Assert(a[1] == "b");
         Test.Assert(a.Count() == 2);
         Test.Assert(a.Push("c"));
-        Test.Assert(a.DataGet(2) == "c");
+        Test.Assert(a[2] == "c");
+        Test.Assert(a.Count() == 3);
+    }
+
+    public static void count_obj()
+    {
+        var a = new eina.Array<test.NumberwrapperConcrete>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+
+        Test.Assert(a.Count() == 0);
+
+        var o1 = new test.NumberwrapperConcrete();
+        o1.number_set(88);
+        Test.Assert(a.Push(o1));
+        Test.Assert(a[0].raw_handle == o1.raw_handle);
+        Test.Assert(a[0].number_get() == 88);
+        Test.Assert(a.Count() == 1);
+
+        var o2 = new test.NumberwrapperConcrete();
+        o2.number_set(44);
+        Test.Assert(a.Push(o2));
+        Test.Assert(a[1].raw_handle == o2.raw_handle);
+        Test.Assert(a[1].number_get() == 44);
+        Test.Assert(a.Count() == 2);
+
+        var o3 = new test.NumberwrapperConcrete();
+        o3.number_set(22);
+        Test.Assert(a.Push(o3));
+        Test.Assert(a[2].raw_handle == o3.raw_handle);
+        Test.Assert(a[2].number_get() == 22);
         Test.Assert(a.Count() == 3);
     }
 
@@ -798,13 +882,13 @@ class TestEinaArray
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Length == 0);
         Test.Assert(a.Push(88));
-        Test.Assert(a.DataGet(0) == 88);
+        Test.Assert(a[0] == 88);
         Test.Assert(a.Length == 1);
         Test.Assert(a.Push(44));
-        Test.Assert(a.DataGet(1) == 44);
+        Test.Assert(a[1] == 44);
         Test.Assert(a.Length == 2);
         Test.Assert(a.Push(22));
-        Test.Assert(a.DataGet(2) == 22);
+        Test.Assert(a[2] == 22);
         Test.Assert(a.Length == 3);
     }
 
@@ -814,13 +898,13 @@ class TestEinaArray
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Length == 0);
         Test.Assert(a.Push("a"));
-        Test.Assert(a.DataGet(0) == "a");
+        Test.Assert(a[0] == "a");
         Test.Assert(a.Length == 1);
         Test.Assert(a.Push("b"));
-        Test.Assert(a.DataGet(1) == "b");
+        Test.Assert(a[1] == "b");
         Test.Assert(a.Length == 2);
         Test.Assert(a.Push("c"));
-        Test.Assert(a.DataGet(2) == "c");
+        Test.Assert(a[2] == "c");
         Test.Assert(a.Length == 3);
     }
 
