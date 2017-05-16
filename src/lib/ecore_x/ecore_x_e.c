@@ -2455,7 +2455,7 @@ ecore_x_e_stack_position_get(Ecore_X_Window win)
    unsigned int val;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, ECORE_X_STACK_NONE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, ECORE_X_STACK_POSITION_NONE);
 
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_STACK_POSITION,
                                         &val, 1);
