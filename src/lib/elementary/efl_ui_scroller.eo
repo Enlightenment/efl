@@ -1,0 +1,10 @@
+class Efl.Ui.Scroller (Elm.Layout, Efl.Ui.Scrollable)
+{
+   [[Efl ui scroller class]]
+   event_prefix: efl_ui_scroller;
+   eo_prefix: efl_ui_scroller;
+   implements {
+      Efl.Object.constructor;
+      Efl.Canvas.Group.group_add;
+   }
+}
