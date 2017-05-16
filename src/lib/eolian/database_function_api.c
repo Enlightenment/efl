@@ -75,7 +75,7 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id,
      }
 
    char tbuf[512];
-   const char *prefix = _get_eo_prefix(foo_id, tbuf, use_legacy);
+   const char *prefix = (ftype != EOLIAN_FUNCTION_POINTER) ? _get_eo_prefix(foo_id, tbuf, use_legacy): tbuf;
 
    if (!prefix)
      return NULL;
