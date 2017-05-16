@@ -1,4 +1,3 @@
-import evas_types;
 import efl_text_types;
 
 abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,

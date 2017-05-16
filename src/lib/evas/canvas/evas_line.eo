@@ -1,5 +1,3 @@
-import evas_types;
-
 class Evas.Line (Efl.Canvas.Object)
 {
    [[Evas line class]]

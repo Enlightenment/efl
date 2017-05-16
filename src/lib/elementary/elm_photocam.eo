@@ -1,5 +1,3 @@
-import evas_types;
-
 enum Elm.Photocam.Zoom_Mode
 {
    [[Types of zoom available.]]

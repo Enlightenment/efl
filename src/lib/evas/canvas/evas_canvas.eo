@@ -1,4 +1,3 @@
-import evas_types;
 import efl_input_types;
 
 class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
