@@ -61,7 +61,7 @@ _xdg_popup_cb_done(void *data, struct xdg_popup *xdg_popup EINA_UNUSED)
    win = data;
    if (!win) return;
 
-   _ecore_wl2_input_ungrab(win->input);
+   if (win->grab) _ecore_wl2_input_ungrab(win->grab);
 }
 
 static const struct xdg_popup_listener _xdg_popup_listener =
@@ -241,7 +241,7 @@ _zxdg_popup_cb_done(void *data, struct zxdg_popup_v6 *zxdg_popup EINA_UNUSED)
    win = data;
    if (!win) return;
 
-   _ecore_wl2_input_ungrab(win->input);
+   if (win->grab) _ecore_wl2_input_ungrab(win->grab);
 }
 
 static const struct zxdg_popup_v6_listener _zxdg_popup_listener =
@@ -279,7 +279,7 @@ _ecore_wl2_window_zxdg_popup_create(Ecore_Wl2_Window *win)
      }
 
    zxdg_positioner_v6_destroy(pos);
-   zxdg_popup_v6_grab(win->zxdg_popup, win->input->wl.seat,
+   zxdg_popup_v6_grab(win->zxdg_popup, win->grab->wl.seat,
                       wl_display_get_serial(win->display->wl.display));
    zxdg_popup_v6_set_user_data(win->zxdg_popup, win);
    zxdg_popup_v6_add_listener(win->zxdg_popup, &_zxdg_popup_listener, win);
@@ -296,16 +296,6 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
      {
       case ECORE_WL2_WINDOW_TYPE_MENU:
           {
-             Ecore_Wl2_Input *input;
-
-             input = win->input;
-             if ((!input) && (win->parent))
-               {
-                  input = win->parent->input;
-               }
-
-             if ((!input) || (!input->wl.seat)) return;
-
              if (win->zxdg_surface)
                _ecore_wl2_window_zxdg_popup_create(win);
              else if (win->xdg_surface)
@@ -313,7 +303,7 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
                   win->xdg_popup =
                     xdg_shell_get_xdg_popup(win->display->wl.xdg_shell,
                                             win->surface, win->parent->surface,
-                                            input->wl.seat,
+                                            win->grab->wl.seat,
                                             wl_display_get_serial(win->display->wl.display),
                                             win->geometry.x, win->geometry.y);
                   if (!win->xdg_popup)
@@ -1150,10 +1140,12 @@ ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type)
 }
 
 EAPI void
-ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type)
+ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
-   window->type = type;
+   EINA_SAFETY_ON_NULL_RETURN(input);
+   EINA_SAFETY_ON_TRUE_RETURN(window->type != ECORE_WL2_WINDOW_TYPE_MENU);
+   window->grab = input;
 }
 
 EAPI Ecore_Wl2_Display *

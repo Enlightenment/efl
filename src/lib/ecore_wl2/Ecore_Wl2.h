@@ -1490,6 +1490,18 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  * @since 1.20
  */
 EAPI Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
+
+/**
+ * @brief Set the seat for a popup window to be used with grab
+ * @param window The window
+ * @param input The seat
+ *
+ * Use this function for desktop shell requests involving popup grabs which require
+ * a seat for the grab.
+ *
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input);
 # endif
 
 # undef EAPI

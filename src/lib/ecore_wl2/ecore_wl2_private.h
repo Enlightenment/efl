@@ -140,6 +140,7 @@ struct _Ecore_Wl2_Window
    Ecore_Wl2_Input *input;
 
    Ecore_Wl2_Window *parent;
+   Ecore_Wl2_Input *grab;
 
    int id, rotation, surface_id;
    const char *title;

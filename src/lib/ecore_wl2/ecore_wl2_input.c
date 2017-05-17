@@ -1567,7 +1567,7 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
      eina_inlist_remove(display->inputs, EINA_INLIST_GET(input));
 
    EINA_INLIST_FOREACH(display->windows, window)
-     if (window->input == input) window->input = NULL;
+     if (window->grab == input) window->grab = NULL;
 
    eina_stringshare_replace(&input->name, NULL);
    free(input);
