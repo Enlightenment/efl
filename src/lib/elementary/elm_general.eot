@@ -7,62 +7,10 @@ struct Elm.Event.Policy_Changed
 }
 
 /* FIXME: These shouldn't be here, we don't do functions in eolian!!! */
-type Elm_Gen_Item_Text_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item text callback type]]
-type Elm_Gen_Item_Content_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item content callback type]]
-type Elm_Gen_Item_State_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item state callback type]]
-type Elm_Gen_Item_Del_Cb: __undefined_type; [[Elementary genlist/gengrid item del callback type]]
-type Elm_Gen_Item_Filter_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item filter callback type]]
-type Elm_Gen_Item_Reusable_Content_Get_Cb: __undefined_type; [[Elementary genlist/gengrid item reusable content callback type]]
 type Elm_Tooltip_Item_Content_Cb: __undefined_type; [[Elementary tooltip item content callback type]]
 type Elm_Object_Item_Signal_Cb: __undefined_type; [[Elementary object item signal callback type]]
 type Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
 type Eina_Compare_Cb: __undefined_type; [[Eina compare callback type]]
-
-/* FIXME: This shouldn't be here, we don't do functions in eolian!!! */
-struct Elm.Gen.Item.Class.Functions
-{
-   [[Elementary genlist/gengrid callback functions data structure]]
-   text_get: Elm_Gen_Item_Text_Get_Cb; [[ Text fetching class function for
-                                          genlist/gengrid item classes. ]]
-   content_get: Elm_Gen_Item_Content_Get_Cb; [[ Content fetching class function
-                                                for genlist/gengrid item classes. ]]
-   state_get: Elm_Gen_Item_State_Get_Cb; [[ State fetching class function for
-                                            genlist/gengrid item classes. ]]
-   del: Elm_Gen_Item_Del_Cb; [[ Deletion class function for genlist/gengrid
-                                item classes. ]]
-   filter_get: Elm_Gen_Item_Filter_Get_Cb;  [[ Filter seeking class function for
-                                               genlist/gengrid item classes. ]]
-   reusable_content_get: Elm_Gen_Item_Reusable_Content_Get_Cb; [[ Reusable content get class
-                                                                  function for gen item classes. ]]
-
-}
-
-struct Elm.Gen.Item.Class
-{
-   [[ Gengrid or Genlist item class definition. ]]
-   version: int; [[Set by elementary if you alloc an item class using
-                   elm_genlist/gengrid_item_class_new(), or if you set your own
-                   class (must be const) then set it to
-                   ELM_GENLIST/GENGRID_ITEM_CLASS_VERSION. ]]
-   refcount: uint; [[ Set it to 0 if you use your own const class, or
-                              its managed for you by class ref/unref calls. ]]
-   delete_me: bool; [[ Leave this alone - set it to 0 if you have a
-                               const class of your own. ]]
-   item_style: string; [[ Name of the visual style to use for this item.
-                                If you don't know use "default". ]]
-   decorate_item_style: string; [[ Style used if item is set to a decorate
-                                         mode. see elm_genlist_item_decorate_mode_set()
-                                         or NULL if you don't care. currently
-                                         it's used only in genlist. ]]
-   decorate_all_item_style: string; [[ Style to use when in edit mode, or
-                                             NULL if you don't care. Currently
-                                             it's used only in genlist. ]]
-   func: Elm.Gen.Item.Class.Functions; [[ Set of callbacks ]]
-}
-
-type Elm.Gengrid.Item.Class: Elm.Gen.Item.Class; [[ See @Elm.Gen.Item.Class. ]]
-
-type Elm.Genlist.Item.Class: Elm.Gen.Item.Class; [[ See @Elm.Gen.Item.Class. ]]
 
 enum Elm.Glob.Match_Flags
 {

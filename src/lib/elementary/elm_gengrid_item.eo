@@ -1,5 +1,7 @@
 import elm_general;
 
+type @extern Elm.Gengrid.Item.Class: __undefined_type;
+
 enum Elm.Gengrid.Item.Scrollto_Type
 {
    [[Defines where to position the item in the genlist.]]
