@@ -349,6 +349,18 @@ evas_device_emulation_source_get(const Evas_Device *dev)
    return efl_input_device_source_get(dev);
 }
 
+EAPI void
+evas_device_seat_id_set(Evas_Device *dev, unsigned int id)
+{
+   efl_input_device_seat_id_set(dev, id);
+}
+
+EAPI unsigned int
+evas_device_seat_id_get(const Evas_Device *dev)
+{
+   return efl_input_device_seat_id_get(dev);
+}
+
 void
 _evas_device_cleanup(Evas *eo_e)
 {

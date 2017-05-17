@@ -1048,6 +1048,30 @@ EAPI void evas_device_name_set(Evas_Device *dev, const char *name);
 EAPI const char *evas_device_name_get(const Evas_Device *dev);
 
 /**
+ * Set the seat id of a device
+ *
+ * @p dev The device to set the seat id of
+ * @p name The seat id
+ *
+ * @since 1.20
+ */
+EAPI void evas_device_seat_id_set(Evas_Device *dev, unsigned int id);
+
+/**
+ * Get the seat id of a device
+ *
+ * @p dev The device to query
+ * @return The device seat id or 0 if none is set
+ *
+ * This gets the seat id set by evas_device_seat id_set().
+ *
+ * A seat id is the hardware id of the seat.
+ *
+ * @since 1.20
+ */
+EAPI unsigned int evas_device_seat_id_get(const Evas_Device *dev);
+
+/**
  * Set the description of a device as a string
  *
  * @p dev The device to set the description of

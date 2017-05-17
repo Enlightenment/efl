@@ -1014,6 +1014,7 @@ evas_output_method_set(Evas *eo_e, int render_method)
    e->default_seat = evas_device_add_full(eo_e, "default", "The default seat",
                                           NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
                                           EVAS_DEVICE_SUBCLASS_NONE);
+   evas_device_seat_id_set(e->default_seat, 1);
    e->default_mouse = evas_device_add_full(eo_e, "keyboard",
                                            "The default mouse",
                                            e->default_seat, NULL,
