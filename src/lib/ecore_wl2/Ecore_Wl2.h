@@ -1496,6 +1496,14 @@ EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
  */
 EAPI void ecore_wl2_session_recovery_disable(void);
 
+/**
+ * @brief Get the activated state of a window
+ * @param window The window
+ * @return @c EINA_TRUE if activated
+ *
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
 # endif
 
 # undef EAPI

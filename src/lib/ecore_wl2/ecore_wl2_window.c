@@ -1273,3 +1273,10 @@ ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *window)
 
    return (window->xdg_surface || window->zxdg_surface);
 }
+
+EAPI Eina_Bool
+ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
+   return window->focused;
+}
