@@ -980,3 +980,10 @@ ecore_wl2_display_sync_is_done(const Ecore_Wl2_Display *display)
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, EINA_FALSE);
    return display->sync_done;
 }
+
+EAPI const char *
+ecore_wl2_display_name_get(const Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   return display->name;
+}

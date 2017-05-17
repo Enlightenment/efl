@@ -569,6 +569,18 @@ EAPI struct wl_registry *ecore_wl2_display_registry_get(Ecore_Wl2_Display *displ
 EAPI Eina_Bool ecore_wl2_display_sync_is_done(const Ecore_Wl2_Display *display);
 
 /**
+ * Get the name of the display object
+ *
+ * @param display The display
+ *
+ * @return The name of the display object
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.20
+ */
+EAPI const char *ecore_wl2_display_name_get(const Ecore_Wl2_Display *display);
+
+/**
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
  * @ingroup Ecore_Wl2_Group
  *
