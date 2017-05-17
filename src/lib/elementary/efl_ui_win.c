@@ -6880,6 +6880,13 @@ _efl_ui_win_move_resize_start(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_W
    return _win_move_resize_start(sd, mode);
 }
 
+EAPI Evas_Object *
+elm_win_get(Evas_Object *obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   return ecore_evas_data_get(ecore_evas_ecore_evas_get(evas_object_evas_get(obj)), "elm_win");
+}
+
 /* windowing specific calls - shall we do this differently? */
 
 EAPI Ecore_X_Window

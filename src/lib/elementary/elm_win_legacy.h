@@ -1088,3 +1088,11 @@ EAPI void elm_win_aspect_set(Elm_Win *obj, double aspect);
  * by height.
  */
 EAPI double elm_win_aspect_get(const Elm_Win *obj);
+
+/**
+ * @brief Get the elm_win object from any child object
+ * 
+ * @return The elm_win, or @c NULL on failure
+ * @since 1.20
+ */
+EAPI Evas_Object *elm_win_get(Evas_Object *obj);
