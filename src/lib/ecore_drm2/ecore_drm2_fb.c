@@ -570,13 +570,18 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    else
      ret = _fb_flip(output);
 
+   if (ret)
+     {
+        _release_buffer(output, &output->prep);
+        return ret;
+     }
    output->pending.fb = output->prep.fb;
    output->prep.fb = NULL;
 #ifdef HAVE_ATOMIC_DRM
    output->pending.atomic_req = output->prep.atomic_req;
    output->prep.atomic_req = NULL;
 #endif
-   return ret;
+   return 0;
 }
 
 EAPI Eina_Bool
