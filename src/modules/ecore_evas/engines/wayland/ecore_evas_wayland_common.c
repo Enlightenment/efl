@@ -351,7 +351,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl2_Event_Window_Configure *ev;
    int nw = 0, nh = 0, fw, fh, pfw, pfh;
-   Eina_Bool prev_max, prev_full, state_change = EINA_FALSE;
+   Eina_Bool active, prev_max, prev_full, state_change = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -369,6 +369,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      (ev->states & ECORE_WL2_WINDOW_STATE_MAXIMIZED) == ECORE_WL2_WINDOW_STATE_MAXIMIZED;
    ee->prop.fullscreen =
      (ev->states & ECORE_WL2_WINDOW_STATE_FULLSCREEN) == ECORE_WL2_WINDOW_STATE_FULLSCREEN;
+   active = wdata->activated;
+   wdata->activated = ecore_wl2_window_activated_get(wdata->win);
 
    nw = ev->w;
    nh = ev->h;
@@ -377,7 +379,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    pfh = fh = wdata->win->geometry.h - wdata->content.h;
 
    if ((prev_max != ee->prop.maximized) ||
-       (prev_full != ee->prop.fullscreen))
+       (prev_full != ee->prop.fullscreen) ||
+       (active != wdata->activated))
      {
         state_change = EINA_TRUE;
         _ecore_evas_wl_common_state_update(ee);

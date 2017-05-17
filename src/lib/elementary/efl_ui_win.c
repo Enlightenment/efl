@@ -1552,6 +1552,13 @@ _elm_win_state_change(Ecore_Evas *ee)
         else
           efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_UNSTICK, NULL);
      }
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     {
+        if (sd->csd.cur_focus != ecore_wl2_window_activated_get(sd->wl.win))
+          _elm_win_frame_style_update(sd, 0, 1);
+     }
+#endif
    if (ch_fullscreen)
      {
         _elm_win_frame_style_update(sd, 0, 1);
@@ -4365,7 +4372,13 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    maximized = sd->maximized;
    shadow = sd->csd.need_shadow && (!sd->fullscreen) && (!sd->maximized);
    if (alpha && borderless) shadow = 0;
+#ifdef HAVE_ELEMENTARY_WL2
+   if (sd->wl.win)
+     focus = ecore_wl2_window_activated_get(sd->wl.win);
+   else
+#else
    focus = ecore_evas_focus_get(sd->ee);
+#endif
    bg_solid = sd->csd.need_bg_solid;
    bg_standard = sd->csd.need_bg_standard;
    unresizable = sd->csd.need_unresizable;

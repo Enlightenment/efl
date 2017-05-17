@@ -50,6 +50,7 @@ struct _Ecore_Evas_Engine_Wl_Data
    Eina_Bool sync_done : 1;
    Eina_Bool defer_show : 1;
    Eina_Bool reset_pending : 1;
+   Eina_Bool activated : 1;
 };
 
 Ecore_Evas *_ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name);

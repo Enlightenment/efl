@@ -109,11 +109,6 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
           }
      }
 
-   if (win->focused)
-     _ecore_wl2_input_focus_in_send(win);
-   else
-     _ecore_wl2_input_focus_out_send(win);
-
    win->configure_serial = serial;
    if ((win->geometry.w == w) && (win->geometry.h == h))
      w = h = 0;
@@ -204,11 +199,6 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
              break;
           }
      }
-
-   if (win->focused)
-     _ecore_wl2_input_focus_in_send(win);
-   else
-     _ecore_wl2_input_focus_out_send(win);
 
    if ((win->geometry.w == width) && (win->geometry.h == height))
      width = height = 0;
