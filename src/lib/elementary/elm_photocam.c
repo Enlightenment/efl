@@ -2128,10 +2128,10 @@ _elm_photocam_zoom_mode_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
 }
 
 EOLIAN static void
-_elm_photocam_image_size_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd, int *w, int *h)
+_elm_photocam_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *pd, int *w, int *h)
 {
-   if (w) *w = sd->size.imw;
-   if (h) *h = sd->size.imh;
+   if (w) *w = pd->size.imw;
+   if (h) *h = pd->size.imh;
 }
 
 EOLIAN static void
@@ -2459,4 +2459,10 @@ elm_photocam_internal_image_get(const Evas_Object *obj)
    ELM_PHOTOCAM_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
 
    return sd->img;
+}
+
+EAPI void
+elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
+{
+   efl_gfx_view_size_get(obj, w, h);
 }

@@ -10,7 +10,7 @@ enum Elm.Photocam.Zoom_Mode
 
 class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
                     Elm.Interface.Atspi_Widget_Action, Efl.File,
-                    Efl.Ui.Clickable, Efl.Ui.Scrollable,
+                    Efl.Ui.Clickable, Efl.Ui.Scrollable, Efl.Gfx.View,
                     Efl.Ui.Zoomable, Efl.Orientation, Efl.Flipable)
 {
    [[Elementary photocam class]]
@@ -131,26 +131,13 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
             h: int; [[Height of region in image original pixels]]
          }
       }
-      @property image_size {
-         get {
-            [[Get the current image pixel width and height
-
-              This gets the current photo pixel width and height (for the
-              original). The size will be returned in the integers $w and $h
-              that are pointed to.
-            ]]
-         }
-         values {
-            w: int; [[A pointer to the width return]]
-            h: int; [[A pointer to the height return]]
-         }
-      }
    }
    implements {
       class.constructor;
       Efl.Object.constructor;
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
+      Efl.Gfx.View.view_size { get; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;

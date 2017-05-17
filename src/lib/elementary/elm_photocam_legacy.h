@@ -108,4 +108,17 @@ EAPI Evas_Object*      elm_photocam_internal_image_get(const Evas_Object *obj);
  */
 EAPI void              elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
 
+/**
+ * @brief Get the current image pixel width and height
+ *
+ * This gets the current photo pixel width and height (for the original). The
+ * size will be returned in the integers @c w and @c h that are pointed to.
+ *
+ * @param[out] w A pointer to the width return
+ * @param[out] h A pointer to the height return
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI void              elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h);
+
 #include "elm_photocam.eo.legacy.h"
