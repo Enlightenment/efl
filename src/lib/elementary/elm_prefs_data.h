@@ -30,6 +30,42 @@
  * @{
  */
 
+/** Modes of resetting a prefs widget. see elm_prefs_reset()
+ *
+ * @since 1.8
+ */
+typedef enum
+{
+  ELM_PREFS_RESET_DEFAULTS = 0, /**< reset to default values, declared in its
+                                 * <b>.epb</b> file */
+  ELM_PREFS_RESET_LAST /**< prefs will keep a small history of changes, so this
+                        *  resets back to last batch of changes on the UI
+                        * elements. it does <b>not</b> work on autosave mode */
+} Elm_Prefs_Reset_Mode;
+
+/** Elm Prefs item types.
+ *
+ * @since 1.8
+ */
+typedef enum
+{
+  ELM_PREFS_TYPE_UNKNOWN = 0, /**< Unknown type */
+  ELM_PREFS_TYPE_ACTION, /**< action type, bound to button-like UI elements */
+  ELM_PREFS_TYPE_BOOL, /**< boolean type, bound to checkbox-like UI elements */
+  ELM_PREFS_TYPE_INT, /**< integer type, bound to spinner-like UI elements */
+  ELM_PREFS_TYPE_FLOAT, /**< floating point type, bound to spinner-like UI elements */
+  ELM_PREFS_TYPE_LABEL, /**< label type, bound to read-only, label UI elements */
+  ELM_PREFS_TYPE_DATE, /**< date type, bound to date selection UI elements */
+  ELM_PREFS_TYPE_TEXT, /**< text type, bound to single-line, text entry UI elements */
+  ELM_PREFS_TYPE_TEXTAREA, /**< text area type, bound to multi-line, text entry UI elements */
+  ELM_PREFS_TYPE_PAGE, /**< page type, used to nest pages */
+  ELM_PREFS_TYPE_RESET, /**< values resetting trigger type, bound to button-like UI elements */
+  ELM_PREFS_TYPE_SAVE, /**< saving trigger type, bound to button-like UI elements */
+  ELM_PREFS_TYPE_SEPARATOR, /**< separator type, bound to separator-like UI elements */
+  ELM_PREFS_TYPE_SWALLOW /**< swallow type, bound to an empty 'spot' on the UI
+                          * meant to receive and display external content */
+} Elm_Prefs_Item_Type;
+
 /**
  * Types of events a given prefs data handle may issue.
  *
