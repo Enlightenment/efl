@@ -255,6 +255,8 @@ _ecore_wl2_window_zxdg_popup_create(Ecore_Wl2_Window *win)
 {
    struct zxdg_positioner_v6 *pos;
 
+   EINA_SAFETY_ON_NULL_RETURN(win->parent);
+   EINA_SAFETY_ON_NULL_RETURN(win->grab);
    pos = zxdg_shell_v6_create_positioner(win->display->wl.zxdg_shell);
    if (!pos) return;
 
@@ -266,17 +268,8 @@ _ecore_wl2_window_zxdg_popup_create(Ecore_Wl2_Window *win)
    zxdg_positioner_v6_set_gravity(pos, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM |
                                   ZXDG_POSITIONER_V6_ANCHOR_RIGHT);
 
-   if (win->parent)
-     {
-        win->zxdg_popup =
-          zxdg_surface_v6_get_popup(win->zxdg_surface,
-                                    win->parent->zxdg_surface, pos);
-     }
-   else
-     {
-        win->zxdg_popup =
-          zxdg_surface_v6_get_popup(win->zxdg_surface, NULL, pos);
-     }
+   win->zxdg_popup = zxdg_surface_v6_get_popup(win->zxdg_surface,
+                               win->parent->zxdg_surface, pos);
 
    zxdg_positioner_v6_destroy(pos);
    zxdg_popup_v6_grab(win->zxdg_popup, win->grab->wl.seat,
@@ -300,6 +293,8 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
                _ecore_wl2_window_zxdg_popup_create(win);
              else if (win->xdg_surface)
                {
+                  EINA_SAFETY_ON_TRUE_RETURN(!win->parent);
+                  EINA_SAFETY_ON_TRUE_RETURN(!win->grab);
                   win->xdg_popup =
                     xdg_shell_get_xdg_popup(win->display->wl.xdg_shell,
                                             win->surface, win->parent->surface,
