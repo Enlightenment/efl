@@ -522,6 +522,15 @@ EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, 
 EAPI Eina_Iterator *ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display);
 
 /**
+ * Find a seat for a given display object using the seat id
+ * @param display The display
+ * @param id The seat id
+ * @return The corresponding Ecore_Wl2_Input object or @c NULL if no match is found
+ * @since 1.20
+ */
+EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find(const Ecore_Wl2_Display *display, unsigned int id);
+
+/**
  * Find an Ecore_Wl2_Window based on id
  *
  * @param display The display to search for the window
