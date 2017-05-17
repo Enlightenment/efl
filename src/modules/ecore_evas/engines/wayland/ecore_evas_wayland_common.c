@@ -419,21 +419,11 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
              evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
              /* check for fullscreen */
-             if (!ee->prop.fullscreen)
-               {
-                  /* resize the ecore_wayland window */
-                  ecore_wl2_window_resize(wdata->win,
-                                          ee->req.h + fw, ee->req.w + fh, 0);
-               }
-             else
+             if (ee->prop.fullscreen)
                {
                   /* resize the canvas based on rotation */
                   if ((rotation == 0) || (rotation == 180))
                     {
-                       /* resize the ecore_wayland window */
-                       ecore_wl2_window_resize(wdata->win,
-                                               ee->req.w, ee->req.h, 0);
-
                        /* resize the canvas */
                        evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
                        evas_output_viewport_set(ee->evas, 0, 0, 
@@ -441,10 +431,6 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
                     }
                   else
                     {
-                       /* resize the ecore_wayland window */
-                       ecore_wl2_window_resize(wdata->win,
-                                               ee->req.h, ee->req.w, 0);
-
                        /* resize the canvas */
                        evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
                        evas_output_viewport_set(ee->evas, 0, 0, 
@@ -513,9 +499,6 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
      }
    else
      {
-        /* resize the ecore_wayland window */
-        ecore_wl2_window_resize(wdata->win, ee->w, ee->h, 0);
-
         /* record the current rotation of the ecore_evas */
         ee->rotation = rotation;
 
