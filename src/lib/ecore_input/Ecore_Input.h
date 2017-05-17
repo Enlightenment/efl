@@ -334,6 +334,7 @@ extern "C" {
         ECORE_AXIS_LABEL_WINDOW_Y,      /**< Y coordinate mapped to the window. @since 1.19 */
         ECORE_AXIS_LABEL_NORMAL_X,      /**< X normalized to the [0, 1] range. @since 1.19 */
         ECORE_AXIS_LABEL_NORMAL_Y,      /**< Y normalized to the [0, 1] range. @since 1.19 */
+        ECORE_AXIS_LABEL_TOUCH_PALM,    /**< Size of palm contact. Range: Unbounded. Unit: undefined. May be a boolean or a distance value, depending on the underlying H/W. @since 1.20 */
    } Ecore_Axis_Label; /**< @since 1.13 */
 
    struct _Ecore_Axis
