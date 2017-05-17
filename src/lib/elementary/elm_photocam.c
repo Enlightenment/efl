@@ -2257,12 +2257,6 @@ _elm_photocam_paused_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
    return sd->paused;
 }
 
-EOLIAN static Evas_Object*
-_elm_photocam_internal_image_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
-{
-   return sd->img;
-}
-
 EAPI void
 elm_photocam_bounce_set(Evas_Object *obj,
                         Eina_Bool h_bounce,
@@ -2452,3 +2446,11 @@ elm_photocam_image_orient_get(const Eo *obj)
 }
 
 #include "elm_photocam.eo.c"
+
+EAPI Evas_Object*
+elm_photocam_internal_image_get(const Evas_Object *obj)
+{
+   ELM_PHOTOCAM_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+
+   return sd->img;
+}

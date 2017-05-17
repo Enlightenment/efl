@@ -81,4 +81,17 @@ EAPI void elm_photocam_image_orient_set(Evas_Object *obj, Evas_Image_Orient orie
  */
 EAPI Evas_Image_Orient elm_photocam_image_orient_get(const Evas_Object *obj);
 
+/**
+ * @brief Get the internal low-res image used for photocam
+ *
+ * This gets the internal image object inside photocam. Do not modify it. It is
+ * for inspection only, and hooking callbacks to. Nothing else. It may be
+ * deleted at any time as well.
+ *
+ * @return The internal image object handle or @c null
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI Evas_Object*      elm_photocam_internal_image_get(const Evas_Object *obj);
+
 #include "elm_photocam.eo.legacy.h"

@@ -125,17 +125,6 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
             h: int; [[A pointer to the height]]
          }
       }
-      @property internal_image {
-         get {
-            [[Get the internal low-res image used for photocam
-
-              This gets the internal image object inside photocam. Do not
-              modify it. It is for inspection only, and hooking callbacks
-              to. Nothing else. It may be deleted at any time as well.
-            ]]
-            return: Efl.Canvas.Object; [[The internal image object handle or $null]]
-         }
-      }
       @property image_size {
          get {
             [[Get the current image pixel width and height
