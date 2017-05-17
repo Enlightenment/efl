@@ -1941,9 +1941,10 @@ _elm_widget_parent2_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Obj
    sd->parent2 = parent;
 }
 
-EOLIAN static void
-_elm_widget_widget_event_callback_add(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Event_Cb func, const void *data)
+EAPI void
+elm_widget_event_callback_add(Eo *obj, Elm_Event_Cb func, const void *data)
 {
+   API_ENTRY return;
    EINA_SAFETY_ON_NULL_RETURN(func);
 
    Elm_Event_Cb_Data *ecb = ELM_NEW(Elm_Event_Cb_Data);
@@ -1957,12 +1958,14 @@ _elm_widget_widget_event_callback_add(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data
    sd->event_cb = eina_list_append(sd->event_cb, ecb);
 }
 
-EOLIAN static void*
-_elm_widget_widget_event_callback_del(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Event_Cb func, const void *data)
+EAPI void *
+elm_widget_event_callback_del(Eo *obj, Elm_Event_Cb func, const void *data)
 {
+   API_ENTRY return NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
    Eina_List *l;
    Elm_Event_Cb_Data *ecd;
+
    EINA_LIST_FOREACH(sd->event_cb, l, ecd)
      if ((ecd->func == func) && (ecd->data == data))
        {

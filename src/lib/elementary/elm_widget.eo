@@ -523,14 +523,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      widget_event_callback_add {
-         [[Add event callback]]
-         legacy: elm_widget_event_callback_add;
-         params {
-            @in func: Elm_Event_Cb; [[Callback function]]
-            @in data: const(void_ptr) @optional; [[Data pointer]]
-         }
-      }
       access {
          [['Virtual' function on the widget being set access.]]
          params {
@@ -542,15 +534,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       	 [[Delete cursor]]
          params {
             @in cur: ptr(Elm.Cursor); [[Cursor to be deleted]]
-         }
-      }
-      widget_event_callback_del {
-         [[Delete event callback handler]]
-         legacy: elm_widget_event_callback_del;
-         return: void_ptr; [[Handle to deleted callback]]
-         params {
-            @in func: Elm_Event_Cb; [[Callback handler]]
-            @in data: const(void_ptr) @nullable; [[data pointer]]
          }
       }
       on_focus {
