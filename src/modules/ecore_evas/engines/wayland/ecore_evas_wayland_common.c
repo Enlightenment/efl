@@ -684,7 +684,7 @@ _ecore_evas_wl_common_seat_add(Ecore_Evas *ee, unsigned int id)
      evas_device_add_full(ee->evas, buf, "Wayland seat", NULL, NULL,
                           EVAS_DEVICE_CLASS_SEAT, EVAS_DEVICE_SUBCLASS_NONE);
    EINA_SAFETY_ON_NULL_GOTO(dev, err_dev);
-
+   evas_device_seat_id_set(dev, id);
    device->seat = dev;
    device->id = id;
 
