@@ -323,8 +323,8 @@ _elm_combobox_efl_gfx_visible_set(Eo *obj, Elm_Combobox_Data *sd, Eina_Bool vis)
 }
 
 EOLIAN static Eina_Bool
-_elm_combobox_efl_ui_autorepeat_supported_get(Eo *obj EINA_UNUSED,
-                                              Elm_Combobox_Data *sd EINA_UNUSED)
+_elm_combobox_efl_ui_autorepeat_autorepeat_supported_get(Eo *obj EINA_UNUSED,
+                                                         Elm_Combobox_Data *sd EINA_UNUSED)
 {
    return EINA_FALSE;
 }

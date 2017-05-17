@@ -343,7 +343,7 @@ _elm_button_efl_object_constructor(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_button_efl_ui_autorepeat_enabled_set(Eo *obj EINA_UNUSED, Elm_Button_Data *sd, Eina_Bool on)
+_elm_button_efl_ui_autorepeat_autorepeat_enabled_set(Eo *obj EINA_UNUSED, Elm_Button_Data *sd, Eina_Bool on)
 {
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->autorepeat = on;
@@ -362,19 +362,19 @@ _internal_elm_button_autorepeat_supported_get(const Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_elm_button_efl_ui_autorepeat_supported_get(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
+_elm_button_efl_ui_autorepeat_autorepeat_supported_get(Eo *obj EINA_UNUSED, Elm_Button_Data *_pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_elm_button_efl_ui_autorepeat_enabled_get(Eo *obj, Elm_Button_Data *sd)
+_elm_button_efl_ui_autorepeat_autorepeat_enabled_get(Eo *obj, Elm_Button_Data *sd)
 {
    return (_AR_CAPABLE(obj) & sd->autorepeat);
 }
 
 EOLIAN static void
-_elm_button_efl_ui_autorepeat_initial_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
+_elm_button_efl_ui_autorepeat_autorepeat_initial_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
 {
    if (!_AR_CAPABLE(obj))
      {
@@ -388,7 +388,7 @@ _elm_button_efl_ui_autorepeat_initial_timeout_set(Eo *obj, Elm_Button_Data *sd, 
 }
 
 EOLIAN static double
-_elm_button_efl_ui_autorepeat_initial_timeout_get(Eo *obj, Elm_Button_Data *sd)
+_elm_button_efl_ui_autorepeat_autorepeat_initial_timeout_get(Eo *obj, Elm_Button_Data *sd)
 {
    if (!_AR_CAPABLE(obj))
       return 0.0;
@@ -397,7 +397,7 @@ _elm_button_efl_ui_autorepeat_initial_timeout_get(Eo *obj, Elm_Button_Data *sd)
 }
 
 EOLIAN static void
-_elm_button_efl_ui_autorepeat_gap_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
+_elm_button_efl_ui_autorepeat_autorepeat_gap_timeout_set(Eo *obj, Elm_Button_Data *sd, double t)
 {
    if (!_AR_CAPABLE(obj))
      {
@@ -412,7 +412,7 @@ _elm_button_efl_ui_autorepeat_gap_timeout_set(Eo *obj, Elm_Button_Data *sd, doub
 }
 
 EOLIAN static double
-_elm_button_efl_ui_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED, Elm_Button_Data *sd)
+_elm_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED, Elm_Button_Data *sd)
 {
    return sd->ar_gap_timeout;
 }
