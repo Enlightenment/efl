@@ -15,7 +15,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   efl::ui::win::Standard win;
+   efl::ui::Win win;
    //win.title_set("Calendar Day Selection Example");
    win.autohide_set(true);
 
