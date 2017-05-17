@@ -8034,7 +8034,7 @@ _copied_map_colors_get(Edje_Part_Description_Common *parent)
    int i;
 
    if (parent->map.colors_count == 0) return NULL;
-   colors = malloc(sizeof(Edje_Map_Color *) * parent->map.colors_count);
+   colors = mem_alloc(sizeof(Edje_Map_Color *) * parent->map.colors_count);
 
    for (i = 0; i < (int)parent->map.colors_count; i++)
      {
@@ -8043,7 +8043,7 @@ _copied_map_colors_get(Edje_Part_Description_Common *parent)
         Edje_Map_Color *c = mem_alloc(SZ(Edje_Map_Color));
         if (!color)
           {
-             ERR("not enough memory");
+             ERR("Could not find allocated source when copying map colors");
              exit(-1);
              return NULL;
           }
