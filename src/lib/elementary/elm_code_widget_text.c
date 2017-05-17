@@ -174,7 +174,9 @@ _elm_code_widget_line_text_position_for_column_get(Eo *obj, Elm_Code_Widget_Data
    while ((unsigned int) count <= column && index <= (int) line->length)
      {
         position = (unsigned int) index;
-        unicode = eina_unicode_utf8_next_get(chars, &index);
+        if (index < (int) line->length)
+          unicode = eina_unicode_utf8_next_get(chars, &index);
+        else return line->length;
 
         if (unicode == 0)
           return line->length;
