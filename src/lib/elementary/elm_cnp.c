@@ -5260,6 +5260,13 @@ elm_selection_selection_has_owner(Evas_Object *obj)
    return _local_elm_selection_selection_has_owner(obj);
 }
 
+EAPI Eina_Bool
+elm_cnp_clipboard_selection_has_owner(Evas_Object *win)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(win, EINA_FALSE);
+   return elm_selection_selection_has_owner(win);
+}
+
 /* START - Support elm containers for Drag and Drop */
 /* START - Support elm containers for Drop */
 static int

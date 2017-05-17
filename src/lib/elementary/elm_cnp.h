@@ -311,6 +311,16 @@ EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
 EAPI void elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
 
 /**
+ * @brief Determine whether the clipboard selection has an owner
+ *
+ * @param win The window object to check for
+ * @return @c EINA_TRUE if the clipboard has a selection
+ * @ingroup CopyPaste
+ * @since 1.20
+ */
+EAPI Eina_Bool elm_cnp_clipboard_selection_has_owner(Evas_Object *win);
+
+/**
  * @brief Set the given object as a target for drops for drag-and-drop
  *
  * @param obj The target object
