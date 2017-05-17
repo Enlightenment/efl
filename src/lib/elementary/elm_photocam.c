@@ -2245,7 +2245,7 @@ _elm_photocam_elm_interface_scrollable_region_bring_in(Eo *obj, Elm_Photocam_Dat
 }
 
 EOLIAN static void
-_elm_photocam_paused_set(Eo *obj, Elm_Photocam_Data *sd, Eina_Bool paused)
+_elm_photocam_zoom_animation_set(Eo *obj, Elm_Photocam_Data *sd, Eina_Bool paused)
 {
    paused = !!paused;
 
@@ -2258,7 +2258,7 @@ _elm_photocam_paused_set(Eo *obj, Elm_Photocam_Data *sd, Eina_Bool paused)
 }
 
 EOLIAN static Eina_Bool
-_elm_photocam_paused_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
+_elm_photocam_zoom_animation_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
 {
    return sd->paused;
 }
@@ -2465,4 +2465,16 @@ EAPI void
 elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
 {
    efl_gfx_view_size_get(obj, w, h);
+}
+
+EAPI Eina_Bool
+elm_photocam_paused_get(const Evas_Object *obj)
+{
+   return elm_obj_photocam_zoom_animation_get(obj);
+}
+
+EAPI void
+elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
+{
+   elm_obj_photocam_zoom_animation_set(obj, paused);
 }

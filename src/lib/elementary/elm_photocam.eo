@@ -18,20 +18,20 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
    eo_prefix: elm_obj_photocam;
    event_prefix: elm_photocam;
    methods {
-      @property paused {
+      @property zoom_animation {
          set {
-            [[Set the paused state for photocam
+            [[Enable zoom animation
 
-              This sets the paused state to on or off for photocam. The
+              This sets the zoom animation state to on or off for photocam. The
               default is off. This will stop zooming using animation on
               zoom level changes and change instantly. This will stop any
               existing animations that are running.
             ]]
          }
          get {
-            [[Get the paused state for photocam
+            [[Disable zoom animation
 
-              This gets the current paused state for the photocam object.
+              This gets the current zoom animation state for the photocam object.
             ]]
          }
          values {

@@ -121,4 +121,28 @@ EAPI void              elm_photocam_image_region_show(Evas_Object *obj, int x, i
  */
 EAPI void              elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h);
 
+/**
+ * @brief Get the paused state for photocam
+ *
+ * This gets the current paused state for the photocam object.
+ *
+ * @return The pause state.
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI Eina_Bool         elm_photocam_paused_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the paused state for photocam
+ *
+ * This sets the paused state to on or off for photocam. The default is off.
+ * This will stop zooming using animation on zoom level changes and change
+ * instantly. This will stop any existing animations that are running.
+ *
+ * @param[in] paused The pause state.
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI void             elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
+
 #include "elm_photocam.eo.legacy.h"
