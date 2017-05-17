@@ -139,7 +139,6 @@ _evas_map_init(Evas_Map *m, int count, Eina_Bool sync)
 {
    m->move_sync.enabled = sync;
    m->count = count;
-   m->persp.foc = 0;
    m->alpha = 1;
    m->smooth = 1;
    m->magic = MAGIC_MAP;
@@ -163,7 +162,7 @@ _evas_map_new(int count, Eina_Bool sync)
    alloc = (count < 4) ? 4 : count;
    if (alloc & 0x1) alloc ++;
 
-   m = malloc(sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
+   m = calloc(1, sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
    if (!m) return NULL;
    _evas_map_init(m, count, sync);
    return m;
@@ -172,7 +171,16 @@ _evas_map_new(int count, Eina_Bool sync)
 void
 _evas_map_reset(Evas_Map *m)
 {
+   int alloc;
+
    if (!m) return;
+
+   /* Adjust allocation such that: at least 4 points, and always an even
+    * number: this allows the software engine to work efficiently */
+   alloc = (m->count < 4) ? 4 : m->count;
+   if (alloc & 0x1) alloc ++;
+
+   memset(m, 0, sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
    _evas_map_init(m, m->count, m->move_sync.enabled);
 }
 
