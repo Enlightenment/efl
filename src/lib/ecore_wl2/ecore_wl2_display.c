@@ -822,7 +822,12 @@ ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
    --display->refs;
    if (display->refs == 0)
      {
-        wl_display_roundtrip(display->wl.display);
+        int ret;
+
+        do
+          {
+             ret = wl_display_dispatch_pending(display->wl.display);
+          } while (ret > 0);
 
         _ecore_wl2_display_cleanup(display);
 
