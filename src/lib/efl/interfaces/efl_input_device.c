@@ -101,6 +101,20 @@ _efl_input_device_description_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd
    return pd->desc;
 }
 
+EOLIAN static void
+_efl_input_device_seat_id_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, unsigned int id)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(pd->klass != EFL_INPUT_DEVICE_CLASS_SEAT);
+   pd->id = id;
+}
+
+EOLIAN static unsigned int
+_efl_input_device_seat_id_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+{
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->klass != EFL_INPUT_DEVICE_CLASS_SEAT, 0);
+   return pd->id;
+}
+
 EOLIAN static Efl_Input_Device *
 _efl_input_device_seat_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
 {

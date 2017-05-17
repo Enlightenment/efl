@@ -103,6 +103,16 @@ class Efl.Input.Device (Efl.Object)
             seat: Efl.Input.Device; [[The seat this device belongs to.]]
          }
       }
+      @property seat_id {
+         [[Seat id number
+           @since 1.20
+         ]]
+          set{}
+          get{}
+          values {
+             id: uint; [[The id of the seat]]
+          }
+      }
    }
    implements {
       Efl.Object.constructor;
