@@ -247,6 +247,7 @@ _ecore_evas_vnc_server_client_connection_new(rfbClientRec *client)
                                       NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
                                       EVAS_DEVICE_SUBCLASS_NONE);
    EINA_SAFETY_ON_NULL_GOTO(cdata->seat, err_handler);
+   evas_device_seat_id_set(cdata->seat, 2);
    cdata->keyboard = evas_device_add_full(server->ee->evas, "Keyboard",
                                           "A remote VNC keyboard",
                                           cdata->seat, NULL,
