@@ -531,6 +531,15 @@ EAPI Eina_Iterator *ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display);
 EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find(const Ecore_Wl2_Display *display, unsigned int id);
 
 /**
+ * Find a seat for a given display object using the seat id
+ * @param display The display
+ * @param name The seat name
+ * @return The corresponding Ecore_Wl2_Input object or @c NULL if no match is found
+ * @since 1.20
+ */
+EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find_by_name(const Ecore_Wl2_Display *display, const char *name);
+
+/**
  * Find an Ecore_Wl2_Window based on id
  *
  * @param display The display to search for the window

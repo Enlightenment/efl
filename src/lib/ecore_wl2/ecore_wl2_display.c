@@ -979,6 +979,18 @@ ecore_wl2_display_input_find(const Ecore_Wl2_Display *display, unsigned int id)
    return NULL;
 }
 
+EAPI Ecore_Wl2_Input *
+ecore_wl2_display_input_find_by_name(const Ecore_Wl2_Display *display, const char *name)
+{
+   Ecore_Wl2_Input *input;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(display->pid, NULL);
+   EINA_INLIST_FOREACH(display->inputs, input)
+     if (eina_streq(input->name, name)) return input;
+   return NULL;
+}
+
 EAPI Eina_Bool
 ecore_wl2_display_sync_is_done(const Ecore_Wl2_Display *display)
 {
