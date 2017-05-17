@@ -417,7 +417,7 @@ _elm_glview_mode_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Mode mode)
         const int mask = 7 << 9;
         if ((mode & mask) == (ELM_GLVIEW_STENCIL_1 & mask))
           sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_1;
-        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_1 & mask))
+        else if ((mode & mask) == (ELM_GLVIEW_STENCIL_2 & mask))
           sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_2;
         else if ((mode & mask) == (ELM_GLVIEW_STENCIL_4 & mask))
           sd->config->stencil_bits = EVAS_GL_STENCIL_BIT_4;
