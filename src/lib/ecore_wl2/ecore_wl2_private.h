@@ -137,7 +137,6 @@ struct _Ecore_Wl2_Window
    EINA_INLIST;
 
    Ecore_Wl2_Display *display;
-   Ecore_Wl2_Input *input;
 
    Ecore_Wl2_Window *parent;
    Ecore_Wl2_Input *grab;

@@ -939,10 +939,6 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
  */
 EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
-/* TODO: doxy */
-/** @since 1.17 */
-EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
-
 /**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group

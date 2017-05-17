@@ -1150,29 +1150,6 @@ ecore_wl2_window_display_get(const Ecore_Wl2_Window *window)
    return window->display;
 }
 
-EAPI Ecore_Wl2_Input *
-ecore_wl2_window_input_get(Ecore_Wl2_Window *window)
-{
-   Ecore_Wl2_Input *input;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window->display, NULL);
-
-   if (window->input)
-     return window->input;
-   else if ((window->parent) && (window->parent->input))
-     return window->parent->input;
-
-   EINA_INLIST_FOREACH(window->display->inputs, input)
-     {
-        if ((input->wl.pointer) || (input->wl.keyboard) ||
-            (input->wl.touch))
-          return input;
-     }
-
-   return NULL;
-}
-
 EAPI Eina_Bool
 ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *window)
 {

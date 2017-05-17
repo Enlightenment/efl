@@ -634,7 +634,6 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
    if (!window) return;
 
-   window->input = input;
    input->focus.prev_pointer = NULL;
    input->focus.pointer = window;
 
