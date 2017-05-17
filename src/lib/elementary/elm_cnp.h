@@ -44,6 +44,13 @@
  */
 
 /**
+ * Event notifying that the selection has changed
+ * @see Elm_Cnp_Event_Selection_Changed
+ * @since 1.20
+ */
+EAPI int ELM_CNP_EVENT_SELECTION_CHANGED;
+
+/**
  * Defines the types of selection property names.
  * @see http://www.x.org/docs/X11/xlib.pdf
  * for more details.
@@ -105,6 +112,19 @@ struct _Elm_Selection_Data
    Elm_Xdnd_Action  action; /**< The action to perform with the data @since 1.8 */
 };
 typedef struct _Elm_Selection_Data Elm_Selection_Data;
+
+
+/** Event to notify when a display server's selection has changed
+ * Only sent for PRIMARY and CLIPBOARD selections
+ * @since 1.20
+ */
+typedef struct Elm_Cnp_Event_Selection_Changed
+{
+   Elm_Sel_Type type; /**< The selection type */
+   unsigned int seat_id; /**< The seat on which the selection changed, or @c NULL for "default" */
+   void *display; /**< The display connection object, @c NULL under X11 */
+   Eina_Bool exists; /**< @c EINA_TRUE if the selection has an owner */
+} Elm_Cnp_Event_Selection_Changed;
 
 /**
  * Callback invoked in when the selected data is 'dropped' at its destination.

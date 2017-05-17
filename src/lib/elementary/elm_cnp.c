@@ -17,6 +17,8 @@
 
 #define ARRAYINIT(foo)  [foo] =
 
+EAPI int ELM_CNP_EVENT_SELECTION_CHANGED = -1;
+
 // common stuff
 enum
 {
@@ -820,6 +822,32 @@ _x11_selection_clear(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
    sel->active = EINA_FALSE;
    ELM_SAFE_FREE(sel->selbuf, free);
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_x11_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
+{
+   Elm_Cnp_Event_Selection_Changed *e;
+   Ecore_X_Event_Fixes_Selection_Notify *ev = event;
+   Elm_Sel_Type type;
+
+   switch (ev->selection)
+     {
+      case ECORE_X_SELECTION_CLIPBOARD:
+        type = ELM_SEL_TYPE_CLIPBOARD;
+        break;
+      case ECORE_X_SELECTION_PRIMARY:
+        type = ELM_SEL_TYPE_PRIMARY;
+        break;
+      default: return ECORE_CALLBACK_RENEW;
+     }
+   e = calloc(1, sizeof(Elm_Cnp_Event_Selection_Changed));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
+   e->type = type;
+   e->seat_id = 1; /* under x11 this is always the default seat */
+   e->exists = !!ev->owner;
+   ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, ev, NULL, NULL);
+   return ECORE_CALLBACK_RENEW;
 }
 
 /*
@@ -1931,6 +1959,7 @@ _x11_elm_cnp_init(void)
    //XXX delete handlers?
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, _x11_selection_clear, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY, _x11_selection_notify, NULL);
+   ecore_event_handler_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY, _x11_fixes_selection_notify, NULL);
    return EINA_TRUE;
 }
 
@@ -3149,6 +3178,32 @@ _wl_elm_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection EINA_UNUSED
    return EINA_TRUE;
 }
 
+static void
+_wl_selection_changed_free(void *data, void *ev EINA_UNUSED)
+{
+   ecore_wl2_display_disconnect(data);
+}
+
+static Eina_Bool
+_wl_selection_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Elm_Cnp_Event_Selection_Changed *e;
+   Ecore_Wl2_Event_Seat_Selection *ev = event;
+   Ecore_Wl2_Input *seat;
+
+   seat = ecore_wl2_display_input_find(ev->display, ev->seat);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, ECORE_CALLBACK_RENEW);
+   e = calloc(1, sizeof(Elm_Cnp_Event_Selection_Changed));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
+   e->type = ELM_SEL_TYPE_CLIPBOARD;
+   e->seat_id = ev->seat;
+   /* connect again to add ref */
+   e->display = ecore_wl2_display_connect(ecore_wl2_display_name_get(ev->display));
+   e->exists = !!ecore_wl2_dnd_selection_get(seat);
+   ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, ev, _wl_selection_changed_free, ev->display);
+   return ECORE_CALLBACK_RENEW;
+}
+
 static Eina_Bool
 _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
 {
@@ -3220,6 +3275,8 @@ _wl_elm_cnp_init(void)
 
    ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND,
                            _wl_selection_send, &wl_cnp_selection);
+   ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_SELECTION,
+                           _wl_selection_changed, NULL);
    return EINA_TRUE;
 }
 
@@ -4847,6 +4904,7 @@ _elm_cnp_init(void)
    int i;
    if (_elm_cnp_init_count > 0) return EINA_TRUE;
    _elm_cnp_init_count++;
+   ELM_CNP_EVENT_SELECTION_CHANGED = ecore_event_type_new();
    text_uri = eina_stringshare_add("text/uri-list");
    _types_hash = eina_hash_string_small_new(NULL);
    for (i = 0; i < CNP_N_ATOMS; i++)
@@ -4861,6 +4919,7 @@ _elm_cnp_shutdown(void)
 {
    if (!_elm_cnp_init_count) return EINA_TRUE;
    if (--_elm_cnp_init_count > 0) return EINA_TRUE;
+   ELM_CNP_EVENT_SELECTION_CHANGED = -1;
    eina_stringshare_del(text_uri);
    text_uri = NULL;
    ELM_SAFE_FREE(_types_hash, eina_hash_free);
