@@ -3128,8 +3128,14 @@ _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
      }
 
    if ((sd->wl.win) && (sd->pointer.surf) && (sd->pointer.visible))
-     ecore_wl2_window_pointer_set(sd->wl.win, sd->pointer.surf,
-                                  sd->pointer.hot_x, sd->pointer.hot_y);
+     {
+        /* FIXME: multiseat */
+        Ecore_Wl2_Input *input;
+
+        input = ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(sd->wl.win), "default");
+        EINA_SAFETY_ON_NULL_RETURN(input);
+        ecore_wl2_input_pointer_set(input, sd->pointer.surf, sd->pointer.hot_x, sd->pointer.hot_y);
+     }
 }
 #endif
 
@@ -4080,7 +4086,7 @@ _elm_win_frame_cb_menu(void *data,
    if (x < 0) x += wx;
    if (y < 0) y += wy;
 
-   input = ecore_wl2_window_input_get(sd->wl.win);
+   input = ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(sd->wl.win), "default");
 
    if (sd->wl.win->zxdg_toplevel)
      zxdg_toplevel_v6_show_window_menu(sd->wl.win->zxdg_toplevel,

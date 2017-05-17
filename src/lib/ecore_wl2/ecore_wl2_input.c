@@ -1698,3 +1698,35 @@ ecore_wl2_input_seat_device_get(const Ecore_Wl2_Input *input, const Ecore_Wl2_Wi
    devices = _ecore_wl2_devices_get(input, window->id);
    return devices ?  devices->seat_dev : NULL;
 }
+
+EAPI void
+ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface *surface, int hot_x, int hot_y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(input);
+
+   input->cursor.surface = surface;
+   input->cursor.hot_x = hot_x;
+   input->cursor.hot_y = hot_y;
+
+   _ecore_wl2_input_cursor_update(input);
+}
+
+EAPI void
+ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const char *cursor)
+{
+   EINA_SAFETY_ON_NULL_RETURN(input);
+   _ecore_wl2_input_cursor_set(input, cursor);
+}
+
+EAPI Eina_Bool
+ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int *x, int *y)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
+
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (!input->wl.pointer) return EINA_FALSE;
+   if (x) *x = input->pointer.sx;
+   if (y) *y = input->pointer.sy;
+   return EINA_TRUE;
+}

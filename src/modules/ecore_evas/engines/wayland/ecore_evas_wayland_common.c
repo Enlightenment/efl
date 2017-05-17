@@ -1095,22 +1095,30 @@ static void
 _ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
+   Ecore_Wl2_Input *input;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    wdata = ee->engine.data;
-   ecore_wl2_window_pointer_xy_get(wdata->win, x, y);
+   input = ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(wdata->win), "default");
+   if (input) ecore_wl2_input_pointer_xy_get(input, x, y);
 }
 
 static void
 _ecore_evas_wl_common_pointer_device_xy_get(const Ecore_Evas *ee, const Efl_Input_Device *pointer, Evas_Coord *x, Evas_Coord *y)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
+   Ecore_Wl2_Input *input;
+   const Eo *seat;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    wdata = ee->engine.data;
-   ecore_wl2_window_pointer_device_xy_get(wdata->win, pointer, x, y);
+   seat = evas_device_parent_get(pointer);
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+   input = ecore_wl2_display_input_find(ecore_wl2_window_display_get(wdata->win), evas_device_seat_id_get(seat));
+   EINA_SAFETY_ON_NULL_RETURN(input);
+   ecore_wl2_input_pointer_xy_get(input, x, y);
 }
 
 static void
@@ -1233,13 +1241,15 @@ _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect)
 }
 
 static void
-_ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer EINA_UNUSED, int hot_x EINA_UNUSED, int hot_y EINA_UNUSED)
+_ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer EINA_UNUSED, int hot_x, int hot_y)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
+   Ecore_Wl2_Input *input;
 
    wdata = ee->engine.data;
-   if (obj != _ecore_evas_default_cursor_image_get(ee))
-     ecore_wl2_window_pointer_set(wdata->win, NULL, 0, 0);
+   if (obj == _ecore_evas_default_cursor_image_get(ee)) return;
+   input = ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(wdata->win), "default");
+   if (input) ecore_wl2_input_pointer_set(input, NULL, hot_x, hot_y);
 }
 
 static void

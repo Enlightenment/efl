@@ -1143,80 +1143,10 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 }
 
 EAPI void
-ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y)
+ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type)
 {
-   Ecore_Wl2_Input *input;
-
    EINA_SAFETY_ON_NULL_RETURN(window);
-
-   if (x) *x = 0;
-   if (y) *y = 0;
-
-   input = ecore_wl2_window_input_get(window);
-   if (!input) return;
-
-   if (x) *x = input->pointer.sx;
-   if (y) *y = input->pointer.sy;
-}
-
-EAPI void
-ecore_wl2_window_pointer_device_xy_get(Ecore_Wl2_Window *window, const Eo *pointer, int *x, int *y)
-{
-   Ecore_Wl2_Input_Devices *devs;
-   Eina_List *l;
-   Ecore_Wl2_Input *input;
-
-   EINA_SAFETY_ON_NULL_RETURN(window);
-   EINA_SAFETY_ON_NULL_RETURN(pointer);
-
-   if (x) *x = 0;
-   if (y) *y = 0;
-
-   EINA_INLIST_FOREACH(window->display->inputs, input)
-     {
-        if (!input->wl.pointer)
-          continue;
-
-        EINA_LIST_FOREACH(input->devices_list, l, devs)
-          {
-             if ((devs->window_id == window->id) &&
-                 (devs->pointer_dev == pointer))
-               {
-                  if (x) *x = input->pointer.sx;
-                  if (y) *y = input->pointer.sy;
-               }
-          }
-     }
-}
-
-EAPI void
-ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y)
-{
-   Ecore_Wl2_Input *input;
-
-   EINA_SAFETY_ON_NULL_RETURN(window);
-
-   input = ecore_wl2_window_input_get(window);
-   if (!input) return;
-
-   input->cursor.surface = surface;
-   input->cursor.hot_x = hot_x;
-   input->cursor.hot_y = hot_y;
-
-   _ecore_wl2_input_cursor_update(input);
-}
-
-EAPI void
-ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor)
-{
-   Ecore_Wl2_Input *input;
-
-   EINA_SAFETY_ON_NULL_RETURN(window);
-
-   input = ecore_wl2_window_input_get(window);
-   if (!input) return;
-
-   _ecore_wl2_input_cursor_set(input, cursor);
+   window->type = type;
 }
 
 EAPI void

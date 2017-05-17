@@ -374,7 +374,9 @@ static void
 set_focus(Ecore_IMF_Context *ctx)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
-   Ecore_Wl2_Input *input = ecore_wl2_window_input_get(imcontext->window);
+   Ecore_Wl2_Input *input;
+
+   input = ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(imcontext->window), "default");
    if (!input)
      return;
 

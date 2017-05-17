@@ -929,59 +929,6 @@ EAPI Eina_Bool ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified);
 
 /**
- * Retrieves the mouse position of the current window.
- *
- * @param window The window on which to retrieve the mouse position
- * @param x where to return the horizontal position. May be NULL. Returns 0 on error.
- * @param y where to return the vertical position. May be NULL. Returns 0 on error.
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @see ecore_wl2_window_pointer_device_xy_get
- * @since 1.17
- */
-EAPI void ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y);
-
-/**
- * Retrieves the mouse position of the current window.
- *
- * @param window The window on which to retrieve the mouse position.
- * @param pointer The Efl.Input.Pointer device to fetch the position.
- * @param x where to return the horizontal position. May be NULL. Returns 0 on error.
- * @param y where to return the vertical position. May be NULL. Returns 0 on error.
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.19
- */
-EAPI void ecore_wl2_window_pointer_device_xy_get(Ecore_Wl2_Window *window, const Eo *pointer, int *x, int *y);
-
-/**
- * Set a given wl_surface to use as the pointer on a window
- *
- * @param window The window to set this surface as the pointer on
- * @param surface The surface to use as the pointer
- * @param hot_x The x coordinate to use as the cursor hot spot
- * @param hot_y The y coordinate to use as the cursor hot spot
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y);
-
-/**
- * Set a specific cursor on a given window
- *
- * @brief This function will try to find a matching cursor inside the existing
- * cursor theme and set the pointer which is over the given window to be
- * the specified cursor
- *
- * @param window The window to set the cursor on
- * @param cursor The name of the cursor to try and set
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor);
-
-/**
  * Set the type of a given window
  *
  * @param window The window to set the type of
@@ -1074,6 +1021,45 @@ EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input,
  * @since 1.20
  */
 EAPI Eo *ecore_wl2_input_seat_device_get(const Ecore_Wl2_Input *input, const Ecore_Wl2_Window *window);
+
+/**
+ * Retrieves the mouse position of the seat
+ *
+ * @param input The seat
+ * @param x where to return the horizontal position. May be NULL. Returns 0 on error.
+ * @param y where to return the vertical position. May be NULL. Returns 0 on error.
+ * @return @c EINA_TRUE if coords were successfully retrieved
+ *
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int *x, int *y);
+
+/**
+ * Set a given wl_surface to use as the pointer on a seat
+ *
+ * @param input The seat to set this surface as the pointer on
+ * @param surface The surface to use as the pointer
+ * @param hot_x The x coordinate to use as the cursor hot spot
+ * @param hot_y The y coordinate to use as the cursor hot spot
+ *
+ * @since 1.20
+ */
+EAPI void ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
+
+/**
+ * Set a specific cursor on a given seat
+ *
+ * @brief This function will try to find a matching cursor inside the existing
+ * cursor theme and set the pointer for the specified seat to be
+ * the specified cursor
+ *
+ * @param input The seat to set the cursor on
+ * @param cursor The name of the cursor to try and set
+ *
+ * @since 1.20
+ */
+EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const char *cursor);
+
 /**
  * @defgroup Ecore_Wl2_Dnd_Group Wayland Library Drag-n-Drop Functions
  * @ingroup Ecore_Wl2_Group

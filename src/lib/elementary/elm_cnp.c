@@ -2880,6 +2880,18 @@ _wl_sel_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
    if (dragwidget == obj) dragwidget = NULL;
 }
 
+static Ecore_Wl2_Input *
+_wl_default_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj)
+{
+   Eo *seat;
+
+   if (!obj) return ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(win), "default");
+   seat = evas_device_get(evas_object_evas_get(obj), "default");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
+   return ecore_wl2_display_input_find(ecore_wl2_window_display_get(win),
+     evas_device_seat_id_get(seat));
+}
+
 static void
 _wl_sel_obj_del2(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
@@ -2973,7 +2985,7 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
           }
         types[count - 1] = 0;
 
-        sel->selection_serial = ecore_wl2_dnd_selection_set(ecore_wl2_window_input_get(win), types);
+        sel->selection_serial = ecore_wl2_dnd_selection_set(_wl_default_seat_get(win, obj), types);
 
         free(types);
         return EINA_TRUE;
@@ -3098,7 +3110,7 @@ _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Se
 
    if (selection == ELM_SEL_TYPE_XDND) return EINA_FALSE;
 
-   input = ecore_wl2_window_input_get(win);
+   input = _wl_default_seat_get(win, (void*)obj);
    offer = ecore_wl2_dnd_selection_get(input);
 
    //there can be no selection available
@@ -3173,7 +3185,7 @@ _wl_elm_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection EINA_UNUSED
    ELM_SAFE_FREE(sel->selbuf, free);
    sel->buflen = 0;
    /* sel->clear(); */
-   sel->selection_serial = ecore_wl2_dnd_selection_clear(ecore_wl2_window_input_get(_wl_elm_widget_window_get(obj)));
+   sel->selection_serial = ecore_wl2_dnd_selection_clear(_wl_default_seat_get(_wl_elm_widget_window_get(obj), obj));
 
    return EINA_TRUE;
 }
@@ -3426,7 +3438,7 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    types[nb_types] = NULL;
 
    win = _wl_elm_widget_window_get(obj);
-   ecore_wl2_dnd_drag_types_set(ecore_wl2_window_input_get(win), types);
+   ecore_wl2_dnd_drag_types_set(_wl_default_seat_get(win, obj), types);
 
    /* set the drag data used when a drop occurs */
    free(wl_cnp_selection.selbuf);
@@ -3517,7 +3529,7 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
         parent = ecore_evas_wayland2_window_get(ee);
      }
 
-   wl_cnp_selection.drag_serial = ecore_wl2_dnd_drag_start(ecore_wl2_window_input_get(win), parent, win);
+   wl_cnp_selection.drag_serial = ecore_wl2_dnd_drag_start(_wl_default_seat_get(win, obj), parent, win);
 
    return EINA_TRUE;
 }
@@ -3772,7 +3784,7 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
 
    win = ecore_wl2_display_window_find(_elm_wl_display, ev->win);
-   ecore_wl2_dnd_drag_end(ecore_wl2_window_input_get(win));
+   ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, NULL));
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -3812,7 +3824,7 @@ _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    doaccept = EINA_FALSE;
 
    win = ecore_wl2_display_window_find(_elm_wl_display, ev->win);
-   ecore_wl2_input_ungrab(ecore_wl2_window_input_get(win));
+   ecore_wl2_input_ungrab(_wl_default_seat_get(win, NULL));
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -3863,7 +3875,7 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl2_Event_Offer_Data_Ready
                     }
                }
              win = _wl_elm_widget_window_get(sel->requestwidget);
-             ecore_wl2_dnd_drag_end(ecore_wl2_window_input_get(win));
+             ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, NULL));
              if (tmp_info) _tmpinfo_free(tmp_info);
              free(ddata.data);
              return;
@@ -3871,7 +3883,7 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, Ecore_Wl2_Event_Offer_Data_Ready
      }
 
    win = _wl_elm_widget_window_get(sel->requestwidget);
-   ecore_wl2_dnd_drag_end(ecore_wl2_window_input_get(win));
+   ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, NULL));
    savedtypes.textreq = 0;
 }
 
@@ -5255,7 +5267,7 @@ elm_selection_selection_has_owner(Evas_Object *obj)
 
    win = _wl_elm_widget_window_get(obj);
    if (win)
-     return !!ecore_wl2_dnd_selection_get(ecore_wl2_window_input_get(win));
+     return !!ecore_wl2_dnd_selection_get(_wl_default_seat_get(win, obj));
 #endif
    return _local_elm_selection_selection_has_owner(obj);
 }
@@ -5784,7 +5796,7 @@ elm_drag_cancel(Evas_Object *obj)
 
    win = _wl_elm_widget_window_get(obj);
    if (win)
-     ecore_wl2_dnd_drag_end(ecore_wl2_window_input_get(win));
+     ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, obj));
 #endif
 
 end:

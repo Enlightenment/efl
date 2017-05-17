@@ -486,7 +486,7 @@ ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore
                                   osurface, dsurface, input->display->serial);
         input->data.drag.serial = input->display->serial;
 
-        ecore_wl2_window_cursor_from_name_set(window, "move");
+        ecore_wl2_input_cursor_from_name_set(input, "move");
      }
    return input->data.drag.serial;
 }
