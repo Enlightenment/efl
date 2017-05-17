@@ -3866,9 +3866,6 @@ _win_move_start(Efl_Ui_Win_Data *sd)
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
      {
-        ecore_wl2_window_pointer_set(sd->wl.win, NULL,
-                                     sd->pointer.hot_x, sd->pointer.hot_y);
-
         /* Note: Not passing any X,Y position as those don't make sense, only
          * the compositor can really handle the window & pointer position. */
         ecore_evas_wayland_move(sd->ee, 0, 0);
