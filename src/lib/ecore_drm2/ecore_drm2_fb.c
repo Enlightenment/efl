@@ -572,7 +572,8 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 
    if (ret)
      {
-        _release_buffer(output, &output->prep);
+        if (output->prep.fb != output->current.fb)
+          _release_buffer(output, &output->prep);
         return ret;
      }
    output->pending.fb = output->prep.fb;
