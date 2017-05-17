@@ -2101,7 +2101,7 @@ _elm_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *pd
          Eina_Hash_Tuple *tuple;
          Eina_Stringshare *name;
          Efl_Ui_Factory *factory;
-         Efl_Canvas *content;
+         Efl_Gfx *content;
 
          Eina_Iterator *it_p = eina_hash_iterator_tuple_new(pd->factories);
          while (eina_iterator_next(it_p, (void **)&tuple))

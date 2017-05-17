@@ -32,12 +32,14 @@ _efl_ui_image_factory_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Image_Fa
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Canvas *
-_efl_ui_image_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd, Efl_Model *model, Efl_Canvas *parent)
+EOLIAN static Efl_Gfx *
+_efl_ui_image_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd, Efl_Model *model, Efl_Gfx *parent)
 {
+   Efl_Gfx *ui_view;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->property, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Efl_Canvas *ui_view = efl_add(EFL_UI_IMAGE_CLASS, parent);
+   ui_view = efl_add(EFL_UI_IMAGE_CLASS, parent);
    efl_ui_view_model_set(ui_view, model);
    efl_ui_model_connect(ui_view, "filename", pd->property);
 
@@ -45,7 +47,7 @@ _efl_ui_image_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Image_Fa
 }
 
 EOLIAN static void
-_efl_ui_image_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd EINA_UNUSED, Efl_Canvas *ui_view)
+_efl_ui_image_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd EINA_UNUSED, Efl_Gfx *ui_view)
 {
    efl_parent_set(ui_view, NULL);
 }
