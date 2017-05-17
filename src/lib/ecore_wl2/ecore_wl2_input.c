@@ -418,14 +418,10 @@ _input_event_focus_cb_free(void *data, void *event)
    free(event);
 }
 
-void
-_ecore_wl2_input_focus_in_send(Ecore_Wl2_Window *window)
+static void
+_ecore_wl2_input_focus_in_send(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
 {
    Ecore_Wl2_Event_Focus_In *ev;
-   Ecore_Wl2_Input *input;
-
-   input = ecore_wl2_window_input_get(window);
-   if (!input) return;
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Focus_In));
    if (!ev) return;
@@ -439,14 +435,10 @@ _ecore_wl2_input_focus_in_send(Ecore_Wl2_Window *window)
                    ev->dev);
 }
 
-void
-_ecore_wl2_input_focus_out_send(Ecore_Wl2_Window *window)
+static void
+_ecore_wl2_input_focus_out_send(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
 {
    Ecore_Wl2_Event_Focus_Out *ev;
-   Ecore_Wl2_Input *input;
-
-   input = ecore_wl2_window_input_get(window);
-   if (!input) return;
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Focus_Out));
    if (!ev) return;
@@ -877,13 +869,14 @@ _keyboard_cb_enter(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
    if (!window) return;
 
    input->focus.keyboard = window;
-   window->input = input;
+   _ecore_wl2_input_focus_in_send(window, input);
 }
 
 static void
-_keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface EINA_UNUSED)
+_keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface)
 {
    Ecore_Wl2_Input *input;
+   Ecore_Wl2_Window *window;
 
    input = data;
    if (!input) return;
@@ -895,7 +888,15 @@ _keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
    input->repeat.time = 0;
    if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
    input->repeat.timer = NULL;
+   window = _ecore_wl2_display_window_surface_find(input->display, surface);
+   if (window)
+     {
+        if (input->focus.keyboard != window)
+          ERR("Received keyboard.leave when keyboard did not have enter");
+     }
    input->focus.keyboard = NULL;
+   if (window)
+     _ecore_wl2_input_focus_out_send(window, input);
 }
 
 static Eina_Bool
