@@ -687,19 +687,13 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
 }
 
 EAPI void
-ecore_wl2_window_move(Ecore_Wl2_Window *window, int x EINA_UNUSED, int y EINA_UNUSED)
+ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
 {
-   Ecore_Wl2_Input *input;
-
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   input = window->input;
-   if ((!input) && (window->parent))
-     {
-        input = window->parent->input;
-     }
-
-   if ((!input) || (!input->wl.seat)) return;
+   if (!input)
+     input = ecore_wl2_display_input_find_by_name(window->display, "default");
+   EINA_SAFETY_ON_NULL_RETURN(input);
 
    window->moving = EINA_TRUE;
 

@@ -1565,17 +1565,15 @@ _ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
 }
 
 static void
-_ecore_evas_wayland_move(Ecore_Evas *ee, int x, int y)
+_ecore_evas_wayland_move(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
-   if (!strncmp(ee->driver, "wayland", 7))
-     {
-	wdata = ee->engine.data;
-        if (wdata->win)
-          ecore_wl2_window_move(wdata->win, x, y);
-     }
+   wdata = ee->engine.data;
+   if (wdata->win) ecore_wl2_window_move(wdata->win, NULL);
 }
 
 static void
