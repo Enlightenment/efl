@@ -694,20 +694,16 @@ EAPI void ecore_wl2_window_free(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y);
 
 /**
- * Resize a given Ecore_Wl2_Window
- *
- * @brief The size requested (@p w, @p h) is not honored by Wayland because
- * Wayland does not allow specific window sizes to be set.
+ * @brief Begin resizing a given window
  *
  * @param window The Ecore_Wl2_Window which to resize
- * @param w Desired width of window
- * @param h Desired height of window
+ * @param input The seat on which the resize is active
  * @param location The edge of the window from where the resize should start
  *
  * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
+ * @since 1.20
  */
-EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location);
+EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int location);
 
 /**
  * Raise a given Ecore_Wl2_Window
