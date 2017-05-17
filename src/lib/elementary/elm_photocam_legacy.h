@@ -94,4 +94,18 @@ EAPI Evas_Image_Orient elm_photocam_image_orient_get(const Evas_Object *obj);
  */
 EAPI Evas_Object*      elm_photocam_internal_image_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the viewed region of the image
+ *
+ * This shows the region of the image without using animation.
+ *
+ * @param[in] x X-coordinate of region in image original pixels
+ * @param[in] y Y-coordinate of region in image original pixels
+ * @param[in] w Width of region in image original pixels
+ * @param[in] h Height of region in image original pixels
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI void              elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
+
 #include "elm_photocam.eo.legacy.h"

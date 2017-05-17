@@ -115,14 +115,20 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
          get {
             [[Get the region of the image that is currently shown
 
-              See also @.image_region_show.
+              See also @.image_region.set.
+            ]]
+         }
+         set {
+            [[Set the viewed region of the image
+
+              This shows the region of the image without using animation.
             ]]
          }
          values {
-            x: int; [[A pointer to the X-coordinate of region]]
-            y: int; [[A pointer to the Y-coordinate of region]]
-            w: int; [[A pointer to the width]]
-            h: int; [[A pointer to the height]]
+            x: int; [[X-coordinate of region in image original pixels]]
+            y: int; [[Y-coordinate of region in image original pixels]]
+            w: int; [[Width of region in image original pixels]]
+            h: int; [[Height of region in image original pixels]]
          }
       }
       @property image_size {
@@ -137,18 +143,6 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
          values {
             w: int; [[A pointer to the width return]]
             h: int; [[A pointer to the height return]]
-         }
-      }
-      image_region_show {
-         [[Set the viewed region of the image
-
-           This shows the region of the image without using animation.
-         ]]
-         params {
-            @in x: int; [[X-coordinate of region in image original pixels]]
-            @in y: int; [[Y-coordinate of region in image original pixels]]
-            @in w: int; [[Width of region in image original pixels]]
-            @in h: int; [[Height of region in image original pixels]]
          }
       }
    }

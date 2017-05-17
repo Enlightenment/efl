@@ -2186,7 +2186,7 @@ _elm_photocam_image_region_get(Eo *obj, Elm_Photocam_Data *sd, int *x, int *y, i
 }
 
 EOLIAN static void
-_elm_photocam_image_region_show(Eo *obj, Elm_Photocam_Data *sd, int x, int y, int w, int h)
+_elm_photocam_image_region_set(Eo *obj, Elm_Photocam_Data *sd, int x, int y, int w, int h)
 {
    int rx, ry, rw, rh;
 
@@ -2204,6 +2204,12 @@ _elm_photocam_image_region_show(Eo *obj, Elm_Photocam_Data *sd, int x, int y, in
    _elm_photocam_zoom_reset(obj, sd);
 
    elm_interface_scrollable_content_region_show(obj, rx, ry, rw, rh);
+}
+
+EAPI void
+elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h)
+{
+   elm_obj_photocam_image_region_set(obj, x, y, w, h);
 }
 
 EAPI void
