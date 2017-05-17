@@ -1374,11 +1374,11 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
      strlen(leading));
    elm_obj_code_widget_cursor_position_set(widget, row + 1, indent);
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
-   free(leading);
 
    textlen = strlen(leading) + 2;
    text = malloc(sizeof(char) * textlen);
    snprintf(text, textlen, "\n%s", leading);
+   free(leading);
 
    change = _elm_code_widget_change_create(width + 1, row, indent - 1, row + 1, text, strlen(text), EINA_TRUE);
    _elm_code_widget_undo_change_add(widget, change);
