@@ -493,6 +493,19 @@ in this Software without prior written authorization from The Open Group.
         unsigned char c;
 
         hbytes = (keysym >> 8);
+        if (!(bytes &&
+        ((hbytes == 0) ||
+        ((hbytes == 0xFF) &&
+        (((keysym >= XKB_KEY_BackSpace) && (keysym <= XKB_KEY_Clear)) ||
+        (keysym == XKB_KEY_Return) ||
+        (keysym == XKB_KEY_Escape) ||
+        (keysym == XKB_KEY_KP_Space) ||
+        (keysym == XKB_KEY_KP_Tab) ||
+        (keysym == XKB_KEY_KP_Enter) ||
+        ((keysym >= XKB_KEY_KP_Multiply) && (keysym <= XKB_KEY_KP_9)) ||
+        (keysym == XKB_KEY_KP_Equal) ||
+        (keysym == XKB_KEY_Delete))))))
+          return 0;
 
         if (keysym == XKB_KEY_KP_Space)
           c = (XKB_KEY_space & 0x7F);
