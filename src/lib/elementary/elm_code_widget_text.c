@@ -292,7 +292,7 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
 
    if (undo)
      {
-        change = _elm_code_widget_change_create(col, row, end_col, end_row, text, length, EINA_TRUE);
+        change = _elm_code_widget_change_create(col, row, end_col - 1, end_row, text, length, EINA_TRUE);
         _elm_code_widget_undo_change_add(widget, change);
         _elm_code_widget_change_free(change);
      }
