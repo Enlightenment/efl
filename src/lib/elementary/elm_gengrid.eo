@@ -2,6 +2,8 @@ import elm_general;
 import ecore_types;
 import elm_gengrid_item;
 
+type @extern Elm.Glob.Match_Flags: __undefined_type;
+
 enum Elm.Gengrid.Reorder_Type
 {
    [[Gengrid reorder modes]]
