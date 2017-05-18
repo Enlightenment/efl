@@ -1022,6 +1022,20 @@ EAPI const Eina_List *evas_device_list(Evas *e, const Evas_Device *dev);
 EAPI Evas_Device *evas_device_get(Evas *e, const char *name);
 
 /**
+ * Get a device by its seat id
+ *
+ * @param e The canvas to find the device on
+ * @param id The seat id of the device.
+ *
+ * Gets the device with id @p id on Evas @p e list of devices.
+ *
+ * @return the device or NULL if no device with a matching id was found.
+ *
+ * @since 1.20
+ */
+EAPI Evas_Device *evas_device_get_by_seat_id(Evas *eo_e, unsigned int id);
+
+/**
  * Set the name of a device as a string
  *
  * @p dev The device to set the name of

@@ -122,6 +122,29 @@ evas_device_get(Evas *eo_e, const char *name)
 }
 
 EAPI Evas_Device *
+evas_device_get_by_seat_id(Evas *eo_e, unsigned int id)
+{
+   unsigned int seat_id;
+   Evas_Public_Data *e;
+   Evas_Device *dev;
+   Eina_List *l;
+
+   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
+
+   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+
+   EINA_LIST_FOREACH(e->devices, l, dev)
+     {
+        seat_id = efl_input_device_seat_id_get(dev);
+
+        if (seat_id == id)
+          return dev;
+     }
+
+   return NULL;
+}
+
+EAPI Evas_Device *
 evas_device_add(Evas *eo_e)
 {
    return evas_device_add_full(eo_e, NULL, NULL, NULL, NULL,
