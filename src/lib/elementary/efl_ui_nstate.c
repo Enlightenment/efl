@@ -10,7 +10,7 @@
 
 #define MY_CLASS EFL_UI_NSTATE_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Nstate"
-#define MY_CLASS_NAME_LEGACY "elm_check"
+#define MY_CLASS_NAME_LEGACY "efl_ui_nstate"
 
 
 typedef struct
