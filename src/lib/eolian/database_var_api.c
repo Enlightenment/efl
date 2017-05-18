@@ -28,7 +28,8 @@ eolian_variable_constant_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
 }
 
 EAPI Eina_Iterator *
-eolian_variable_globals_get_by_file(const char *fname)
+eolian_variable_globals_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
+                                    const char *fname)
 {
    if (!_globalsf) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(fname);
@@ -39,7 +40,8 @@ eolian_variable_globals_get_by_file(const char *fname)
 }
 
 EAPI Eina_Iterator *
-eolian_variable_constants_get_by_file(const char *fname)
+eolian_variable_constants_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
+                                      const char *fname)
 {
    if (!_constantsf) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(fname);
