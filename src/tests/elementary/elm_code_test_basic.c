@@ -42,28 +42,9 @@ START_TEST (elm_code_open_test)
 }
 END_TEST
 
-START_TEST (elm_code_save_as_test)
-{
-   char *path = TESTS_SRC_DIR "/testfile.txt";
-   char *dest = "/tmp/dest.txt";
-   Elm_Code *code;
-
-   elm_init(1, NULL);
-   code = elm_code_create();
-   elm_code_file_open(code, path);
-
-   elm_code_file_save_as(code->file, dest);
-   ck_assert(ecore_file_exists(dest));
-
-   ecore_file_remove(dest);
-   elm_code_free(code);
-   elm_shutdown();
-}
-END_TEST
 
 void elm_code_test_basic(TCase *tc)
 {
    tcase_add_test(tc, elm_code_create_test);
    tcase_add_test(tc, elm_code_open_test);
-   tcase_add_test(tc, elm_code_save_as_test);
 }
