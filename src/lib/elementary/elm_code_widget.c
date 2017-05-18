@@ -362,7 +362,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         charwidth = 1;
         if (unichr == '\t')
           charwidth = elm_code_widget_text_tabwidth_at_column_get(widget, x - gutter + 1);
-        for (i = x + 1; i < x + charwidth; i++)
+        for (i = x + 1; i < x + charwidth && i < (unsigned int) w; i++)
           {
              cells[i].codepoint = 0;
              cells[i].bg = _elm_code_widget_status_type_get(widget, line, i - gutter + 1);
