@@ -1008,7 +1008,7 @@ EAPI const Eina_List *evas_device_list(Evas *e, const Evas_Device *dev);
 /**
  * Get a device by its name
  *
- * @param e The canvas to create the device node for.
+ * @param e The canvas to find the device on
  * @param name The name of the device.
  *
  * Gets the first ocurrence of a device named as @p name
