@@ -335,9 +335,18 @@ _elm_check_selected_get(Eo *obj, Elm_Check_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_check_selected_set(Eo *obj, Elm_Check_Data *pd EINA_UNUSED, Eina_Bool value)
+_elm_check_selected_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool value)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
    efl_ui_nstate_value_set(obj, value);
+   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
+   if (efl_ui_nstate_value_get(obj) == 1)
+     elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+   else if (efl_ui_nstate_value_get(obj) == 0)
+     elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+
+   edje_object_message_signal_process(wd->resize_obj);
 }
 
 EOLIAN static void
@@ -377,19 +386,7 @@ _elm_check_efl_object_constructor(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 EAPI void
 elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 {
-   ELM_CHECK_DATA_GET_OR_RETURN(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (state == efl_ui_nstate_value_get(obj)) return;
-
-   efl_ui_nstate_value_set(obj, state);
-   if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
-   if (efl_ui_nstate_value_get(obj) == 1)
-     elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-   else if (efl_ui_nstate_value_get(obj) == 0)
-     elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-
-   edje_object_message_signal_process(wd->resize_obj);
+   efl_ui_check_selected_set(obj, state);
 }
 
 EAPI Eina_Bool
