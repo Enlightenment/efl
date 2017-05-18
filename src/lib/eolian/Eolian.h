@@ -2077,6 +2077,7 @@ EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const Eolian_Un
 /*
  * @brief Get an iterator to all global variables contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -2084,11 +2085,12 @@ EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const Eolian_Un
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all constant variables contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -2096,7 +2098,7 @@ EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const char *fname);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all constant variables in the Eolian database.
