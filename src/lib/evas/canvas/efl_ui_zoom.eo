@@ -1,4 +1,4 @@
-enum Efl.Ui.Zoom_Mode
+enum Efl.Ui.Zoom.Mode
 {
    [[Types of zoom available.]]
    manual = 0, [[Zoom controlled normally by efl_ui_zoom_set]]
@@ -8,9 +8,9 @@ enum Efl.Ui.Zoom_Mode
    last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-interface Efl.Ui.Zoomable ()
+interface Efl.Ui.Zoom ()
 {
-   [[Efl UI zoomable interface]]
+   [[Efl UI zoom interface]]
    event_prefix: efl_ui;
    eo_prefix: efl_ui;
 
@@ -87,7 +87,7 @@ interface Efl.Ui.Zoomable ()
             ]]
          }
          values {
-            mode: Efl.Ui.Zoom_Mode; [[The zoom mode.]]
+            mode: Efl.Ui.Zoom.Mode; [[The zoom mode.]]
          }
       }
    }

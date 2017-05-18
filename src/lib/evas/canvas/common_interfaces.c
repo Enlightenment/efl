@@ -5,4 +5,4 @@
 #include "canvas/efl_ui_clickable.eo.c"
 #include "canvas/efl_ui_scrollable.eo.c"
 #include "canvas/efl_ui_selectable.eo.c"
-#include "canvas/efl_ui_zoomable.eo.c"
+#include "canvas/efl_ui_zoom.eo.c"
