@@ -2109,7 +2109,7 @@ EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const Eolian_Unit *uni
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_variable_all_constants_get(void);
+EAPI Eina_Iterator *eolian_variable_all_constants_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an iterator to all global variables in the Eolian database.
@@ -2120,7 +2120,7 @@ EAPI Eina_Iterator *eolian_variable_all_constants_get(void);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_variable_all_globals_get(void);
+EAPI Eina_Iterator *eolian_variable_all_globals_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get the type of a variable (global, constant)

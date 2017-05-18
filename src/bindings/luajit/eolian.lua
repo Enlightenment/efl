@@ -371,8 +371,8 @@ ffi.cdef [[
     const Eolian_Variable *eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name);
     Eina_Iterator *eolian_variable_globals_get_by_file(const Eolian_Unit *unit, const char *fname);
     Eina_Iterator *eolian_variable_constants_get_by_file(const Eolian_Unit *unit, const char *fname);
-    Eina_Iterator *eolian_variable_all_constants_get(void);
-    Eina_Iterator *eolian_variable_all_globals_get(void);
+    Eina_Iterator *eolian_variable_all_constants_get(const Eolian_Unit *unit);
+    Eina_Iterator *eolian_variable_all_globals_get(const Eolian_Unit *unit);
     Eolian_Variable_Type eolian_variable_type_get(const Eolian_Variable *var);
     const Eolian_Documentation *eolian_variable_documentation_get(const Eolian_Variable *var);
     const char *eolian_variable_file_get(const Eolian_Variable *var);
@@ -1384,14 +1384,14 @@ M.variable_constants_get_by_file = function(unit, fname)
         eolian.eolian_variable_constants_get_by_file(unit, fname))
 end
 
-M.variable_all_constants_get = function()
+M.variable_all_constants_get = function(unit)
     return Ptr_Iterator("const Eolian_Variable *",
-        eolian.eolian_variable_all_constants_get())
+        eolian.eolian_variable_all_constants_get(unit))
 end
 
-M.variable_all_globals_get = function()
+M.variable_all_globals_get = function(unit)
     return Ptr_Iterator("const Eolian_Variable *",
-        eolian.eolian_variable_all_globals_get())
+        eolian.eolian_variable_all_globals_get(unit))
 end
 
 M.Variable = ffi.metatype("Eolian_Variable", {
