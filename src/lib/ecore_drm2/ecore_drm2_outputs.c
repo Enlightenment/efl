@@ -441,6 +441,8 @@ _output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
         ret = EINA_FALSE;
      }
 
+   cstate->dpms.value = level;
+
 err:
    sym_drmModeAtomicFree(req);
 
