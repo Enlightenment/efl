@@ -193,6 +193,7 @@ _efl_input_value_mark(Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 #endif /* ! _WIN32 */
 
 EOAPI void *efl_input_legacy_info_get(const Eo *obj);
+EOAPI Eo *efl_input_instance_get(const Eo *obj, Efl_Object *owner, void **priv);
 
 #undef EAPI
 #define EAPI

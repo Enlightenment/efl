@@ -156,4 +156,9 @@ _efl_input_focus_efl_input_event_reset(Eo *obj, Efl_Input_Focus_Data *pd)
    pd->eo = obj;
 }
 
+/* Internal EO APIs */
+
+#define EFL_INPUT_FOCUS_EXTRA_CLASS_OPS \
+   EFL_OBJECT_OP_FUNC(efl_input_instance_get, _efl_input_focus_efl_input_event_instance_get)
+
 #include "efl_input_focus.eo.c"

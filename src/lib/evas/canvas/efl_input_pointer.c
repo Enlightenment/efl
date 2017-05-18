@@ -619,4 +619,7 @@ _efl_input_pointer_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Pointer_Da
 #define EFL_INPUT_POINTER_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_input_legacy_info_get, _efl_input_pointer_efl_input_event_legacy_info_get)
 
+#define EFL_INPUT_POINTER_EXTRA_CLASS_OPS \
+   EFL_OBJECT_OP_FUNC(efl_input_instance_get, _efl_input_pointer_efl_input_event_instance_get)
+
 #include "efl_input_pointer.eo.c"

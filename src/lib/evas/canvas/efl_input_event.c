@@ -65,9 +65,13 @@ _efl_input_event_efl_object_provider_find(Eo *obj, void *pd EINA_UNUSED, const E
 /* Internal EO APIs */
 
 EOAPI EFL_FUNC_BODY_CONST(efl_input_legacy_info_get, void *, NULL)
+EOAPI EFL_FUNC_BODYV_CONST(efl_input_instance_get, Efl_Input_Event *, NULL, EFL_FUNC_CALL(owner, priv), Efl_Object *owner, void **priv)
 
 #define EFL_INPUT_EVENT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_input_legacy_info_get, NULL)
+
+#define EFL_INPUT_EVENT_EXTRA_CLASS_OPS \
+   EFL_OBJECT_OP_FUNC(efl_input_instance_get, NULL)
 
 #include "efl_input_event.eo.c"
 #include "efl_input_state.eo.c"

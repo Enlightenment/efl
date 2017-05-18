@@ -12,7 +12,6 @@ class Efl.Input.Hold (Efl.Object, Efl.Input.Event)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Input.Event.instance_get;
       Efl.Input.Event.reset;
       Efl.Input.Event.dup;
       Efl.Input.Event.timestamp { get; set; }
