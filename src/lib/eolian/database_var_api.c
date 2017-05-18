@@ -52,13 +52,13 @@ eolian_variable_constants_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
 }
 
 EAPI Eina_Iterator *
-eolian_variable_all_constants_get(void)
+eolian_variable_all_constants_get(const Eolian_Unit *unit EINA_UNUSED)
 {
    return (_constants ? eina_hash_iterator_data_new(_constants) : NULL);
 }
 
 EAPI Eina_Iterator *
-eolian_variable_all_globals_get(void)
+eolian_variable_all_globals_get(const Eolian_Unit *unit EINA_UNUSED)
 {
    return (_globals ? eina_hash_iterator_data_new(_globals) : NULL);
 }
