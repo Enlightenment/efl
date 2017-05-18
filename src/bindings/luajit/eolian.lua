@@ -367,8 +367,8 @@ ffi.cdef [[
     Eolian_Unary_Operator eolian_expression_unary_operator_get(const Eolian_Expression *expr);
     const Eolian_Expression *eolian_expression_unary_expression_get(const Eolian_Expression *expr);
     Eolian_Value_t eolian_expression_value_get(const Eolian_Expression *expr);
-    const Eolian_Variable *eolian_variable_global_get_by_name(const char *name);
-    const Eolian_Variable *eolian_variable_constant_get_by_name(const char *name);
+    const Eolian_Variable *eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name);
+    const Eolian_Variable *eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name);
     Eina_Iterator *eolian_variable_globals_get_by_file(const char *fname);
     Eina_Iterator *eolian_variable_constants_get_by_file(const char *fname);
     Eina_Iterator *eolian_variable_all_constants_get(void);
@@ -1362,14 +1362,14 @@ M.Expression = ffi.metatype("Eolian_Expression", {
     }
 })
 
-M.variable_global_get_by_name = function(name)
-    local v = eolian.eolian_variable_global_get_by_name(name)
+M.variable_global_get_by_name = function(unit, name)
+    local v = eolian.eolian_variable_global_get_by_name(unit, name)
     if v == nil then return nil end
     return v
 end
 
-M.variable_constant_get_by_name = function(name)
-    local v = eolian.eolian_variable_constant_get_by_name(name)
+M.variable_constant_get_by_name = function(unit, name)
+    local v = eolian.eolian_variable_constant_get_by_name(unit, name)
     if v == nil then return nil end
     return v
 end

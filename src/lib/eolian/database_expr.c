@@ -493,8 +493,9 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
         }
       case EOLIAN_EXPR_NAME:
         {
+           /* FIXME: pass unit properly */
            const Eolian_Variable *var = eolian_variable_constant_get_by_name
-             (expr->value.s);
+             (NULL, expr->value.s);
            const Eolian_Expression *exp = NULL;
 
            if (!var)

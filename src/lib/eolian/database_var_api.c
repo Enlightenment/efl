@@ -6,7 +6,8 @@
 #include "eolian_database.h"
 
 EAPI const Eolian_Variable *
-eolian_variable_global_get_by_name(const char *name)
+eolian_variable_global_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
+                                   const char *name)
 {
    if (!_globals) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
@@ -16,7 +17,8 @@ eolian_variable_global_get_by_name(const char *name)
 }
 
 EAPI const Eolian_Variable *
-eolian_variable_constant_get_by_name(const char *name)
+eolian_variable_constant_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
+                                     const char *name)
 {
    if (!_constants) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
