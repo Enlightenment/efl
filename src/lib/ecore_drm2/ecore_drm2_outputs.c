@@ -416,7 +416,7 @@ _output_dpms_property_get(int fd, const drmModeConnector *conn)
 static Eina_Bool
 _output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
 {
-   Ecore_Drm2_Crtc_State *cstate;
+   Ecore_Drm2_Connector_State *cstate;
    drmModeAtomicReq *req = NULL;
    Eina_Bool ret = EINA_TRUE;
 
@@ -425,10 +425,10 @@ _output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
 
    sym_drmModeAtomicSetCursor(req, 0);
 
-   cstate = output->crtc_state;
+   cstate = output->conn_state;
 
    if (sym_drmModeAtomicAddProperty(req, cstate->obj_id,
-                                    cstate->active.id, level) < 0)
+                                    cstate->dpms.id, level) < 0)
      {
         ERR("Failed to add connector property DPMS");
         ret = EINA_FALSE;
