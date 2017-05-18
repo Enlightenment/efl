@@ -14,6 +14,8 @@
 # include <Eio.h>
 #endif
 
+#include <Evas_Internal.h>
+
 #include "Emotion.h"
 #include "emotion_private.h"
 

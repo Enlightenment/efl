@@ -8,15 +8,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
    legacy_prefix: evas_object;
    data: Evas_Object_Protected_Data;
    methods {
-      @property type @protected {
-         set {
-            [[Sets the legacy type name of this Evas object.]]
-            legacy: null;
-         }
-         values {
-            type: string; [[The type of the object.]]
-         }
-      }
       @property pointer_mode_by_device {
          [[Low-level pointer behaviour by device.
            See @.pointer_mode.get and @.pointer_mode.set for more explanation.
@@ -615,9 +606,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             enable: bool; [[Enable "no-render" mode.]]
          }
       }
-   }
-   constructors {
-      .type;
    }
    implements {
       Efl.Object.constructor;

@@ -49,6 +49,7 @@ EAPI Eina_Bool efl_canvas_output_unlock(Efl_Canvas_Output *output);
 
 /* Internal EO APIs */
 EOAPI void efl_canvas_object_legacy_ctor(Eo *obj);
+EOAPI void efl_canvas_object_type_set(Eo *obj, const char *type);
 
 
 #ifdef __cplusplus
