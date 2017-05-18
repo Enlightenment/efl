@@ -614,4 +614,9 @@ _efl_input_pointer_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Pointer_Da
    return efl_input_pointer_legacy_info_fill(NULL, obj, EVAS_CALLBACK_LAST, NULL);
 }
 
+/* Internal EO APIs */
+
+#define EFL_INPUT_POINTER_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_input_legacy_info_get, _efl_input_pointer_efl_input_event_legacy_info_get)
+
 #include "efl_input_pointer.eo.c"

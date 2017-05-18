@@ -124,4 +124,9 @@ _efl_input_hold_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Hold_Data *pd
    return efl_input_hold_legacy_info_fill(obj, NULL);
 }
 
+/* Internal EO APIs */
+
+#define EFL_INPUT_HOLD_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_input_legacy_info_get, _efl_input_hold_efl_input_event_legacy_info_get)
+
 #include "efl_input_hold.eo.c"

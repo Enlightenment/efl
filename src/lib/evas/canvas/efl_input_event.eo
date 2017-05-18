@@ -65,15 +65,6 @@ mixin Efl.Input.Event (Efl.Interface, Efl.Object)
             val: bool; [[$true if the event was not from real hardware, $false otherwise]]
          }
       }
-
-      /* FIXME: Internal functions should be marked as such, not as protected! */
-      @property legacy_info @protected @pure_virtual /* @internal */ {
-         [[Returns the legacy info structure. Internal API, do not use it!]]
-         get {}
-         values {
-            event_info: void_ptr; [[Should not be $null.]]
-         }
-      }
       instance_get @class @protected @pure_virtual /* @internal */ {
       	 [[Get an instance of this input event]]
          params {

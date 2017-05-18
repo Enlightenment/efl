@@ -286,4 +286,9 @@ _efl_input_key_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Key_Data *pd)
    return efl_input_key_legacy_info_fill(obj, NULL);
 }
 
+/* Internal EO APIs */
+
+#define EFL_INPUT_KEY_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_input_legacy_info_get, _efl_input_key_efl_input_event_legacy_info_get)
+
 #include "efl_input_key.eo.c"

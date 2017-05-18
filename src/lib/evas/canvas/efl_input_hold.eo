@@ -18,6 +18,5 @@ class Efl.Input.Hold (Efl.Object, Efl.Input.Event)
       Efl.Input.Event.timestamp { get; set; }
       Efl.Input.Event.event_flags { get; set; }
       Efl.Input.Event.device { get; set; }
-      Efl.Input.Event.legacy_info { get; }
    }
 }
