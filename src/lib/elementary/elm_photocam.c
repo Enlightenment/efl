@@ -1877,7 +1877,7 @@ elm_photocam_file_get(const Elm_Photocam *obj)
 }
 
 EOLIAN static void
-_elm_photocam_zoom_set(Eo *obj, Elm_Photocam_Data *sd, double zoom)
+_elm_photocam_efl_ui_zoomable_zoom_set(Eo *obj, Elm_Photocam_Data *sd, double zoom)
 {
    double z;
    Eina_List *l;
@@ -2104,13 +2104,13 @@ done:
 }
 
 EOLIAN static double
-_elm_photocam_zoom_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
+_elm_photocam_efl_ui_zoomable_zoom_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
 {
    return sd->zoom;
 }
 
 EOLIAN static void
-_elm_photocam_zoom_mode_set(Eo *obj, Elm_Photocam_Data *sd, Elm_Photocam_Zoom_Mode mode)
+_elm_photocam_efl_ui_zoomable_zoom_mode_set(Eo *obj, Elm_Photocam_Data *sd, Elm_Photocam_Zoom_Mode mode)
 {
    double tz;
    if (sd->mode == mode) return;
@@ -2122,7 +2122,7 @@ _elm_photocam_zoom_mode_set(Eo *obj, Elm_Photocam_Data *sd, Elm_Photocam_Zoom_Mo
 }
 
 EOLIAN static Elm_Photocam_Zoom_Mode
-_elm_photocam_zoom_mode_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
+_elm_photocam_efl_ui_zoomable_zoom_mode_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
 {
    return sd->mode;
 }
@@ -2245,7 +2245,7 @@ _elm_photocam_elm_interface_scrollable_region_bring_in(Eo *obj, Elm_Photocam_Dat
 }
 
 EOLIAN static void
-_elm_photocam_zoom_animation_set(Eo *obj, Elm_Photocam_Data *sd, Eina_Bool paused)
+_elm_photocam_efl_ui_zoomable_zoom_animation_set(Eo *obj, Elm_Photocam_Data *sd, Eina_Bool paused)
 {
    paused = !!paused;
 
@@ -2258,7 +2258,7 @@ _elm_photocam_zoom_animation_set(Eo *obj, Elm_Photocam_Data *sd, Eina_Bool pause
 }
 
 EOLIAN static Eina_Bool
-_elm_photocam_zoom_animation_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
+_elm_photocam_efl_ui_zoomable_zoom_animation_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
 {
    return sd->paused;
 }
@@ -2470,11 +2470,35 @@ elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
 EAPI Eina_Bool
 elm_photocam_paused_get(const Evas_Object *obj)
 {
-   return elm_obj_photocam_zoom_animation_get(obj);
+   return efl_ui_zoom_animation_get(obj);
 }
 
 EAPI void
 elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
 {
-   elm_obj_photocam_zoom_animation_set(obj, paused);
+   efl_ui_zoom_animation_set(obj, paused);
+}
+
+EAPI void
+elm_photocam_zoom_set(Evas_Object *obj, double zoom)
+{
+   efl_ui_zoom_set(obj, zoom);
+}
+
+EAPI double
+elm_photocam_zoom_get(const Evas_Object *obj)
+{
+   return efl_ui_zoom_get(obj);
+}
+
+EAPI void
+elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
+{
+   efl_ui_zoom_mode_set(obj, mode);
+}
+
+EAPI Elm_Photocam_Zoom_Mode
+elm_photocam_zoom_mode_get(const Evas_Object *obj)
+{
+   return efl_ui_zoom_mode_get(obj);
 }

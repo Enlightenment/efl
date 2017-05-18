@@ -145,4 +145,76 @@ EAPI Eina_Bool         elm_photocam_paused_get(const Evas_Object *obj);
  */
 EAPI void             elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
 
+/**
+ * @brief Set the zoom level of the photo
+ *
+ * This sets the zoom level. If @c zoom is 1, it means no zoom. If it's smaller
+ * than 1, it means zoom in. If it's bigger than 1, it means zoom out. For
+ *  example, @c zoom 1 will be 1:1 pixel for pixel. @c zoom 2 will be 2:1 (that
+ * is 2x2 photo pixels will display as 1 on-screen pixel) which is a zoom out.
+ * 4:1 will be 4x4 photo pixels as 1 screen pixel, and so on. The @c zoom
+ * parameter must be greater than 0. It is suggested to stick to powers of 2.
+ * (1, 2, 4, 8, 16, 32, etc.).
+ *
+ * @param[in] zoom The zoom level to set
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI void             elm_photocam_zoom_set(Evas_Object *obj, double zoom);
+
+/**
+ * @brief Get the zoom level of the photo
+ *
+ * This returns the current zoom level of the photocam object. Note that if you
+ * set the fill mode to other than #ELM_PHOTOCAM_ZOOM_MODE_MANUAL (which is the
+ * default), the zoom level may be changed at any time by the  photocam object
+ * itself to account for photo size and photocam viewport size.
+ *
+ * @return The zoom level to set
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI double           elm_photocam_zoom_get(const Evas_Object *obj);
+
+typedef Efl_Ui_Zoom_Mode Elm_Photocam_Zoom_Mode;
+
+#define ELM_PHOTOCAM_ZOOM_MODE_MANUAL           EFL_UI_ZOOM_MODE_MANUAL
+#define ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT         EFL_UI_ZOOM_MODE_AUTO_FIT
+#define ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL        EFL_UI_ZOOM_MODE_AUTO_FILL
+#define ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN      EFL_UI_ZOOM_MODE_AUTO_FIT_IN
+#define ELM_PHOTOCAM_ZOOM_MODE_LAST             EFL_UI_ZOOM_MODE_LAST
+
+/**
+ * @brief Set the zoom mode
+ *
+ * This sets the zoom mode to manual or one of several automatic levels. Manual
+ * (ELM_PHOTOCAM_ZOOM_MODE_MANUAL) means that zoom is set manually by
+ * @ref elm_photocam_zoom_mode_set and will stay at that level until changed by
+ * code or until zoom mode is changed. This is the default mode. The Automatic
+ * modes will allow the photocam object to automatically adjust zoom mode based
+ * on properties.
+ *
+ * #ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT) will adjust zoom so the photo fits EXACTLY
+ * inside the scroll frame with no pixels outside this region.
+ * #ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but ensure no pixels
+ * within the frame are left unfilled.
+ *
+ * @param[in] mode The zoom mode.
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI void               elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
+
+/**
+ * @brief Get the zoom mode
+ *
+ * This gets the current zoom mode of the photocam object.
+ *
+ * @return The zoom mode.
+ *
+ * @ingroup Elm_Photocam
+ */
+EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
+
+
 #include "elm_photocam.eo.legacy.h"

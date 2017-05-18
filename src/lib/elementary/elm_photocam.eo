@@ -1,13 +1,3 @@
-enum Elm.Photocam.Zoom_Mode
-{
-   [[Types of zoom available.]]
-   manual = 0, [[Zoom controlled normally by elm_photocam_zoom_set]]
-   auto_fit, [[Zoom until photo fits in photocam]]
-   auto_fill, [[Zoom until photo fills photocam]]
-   auto_fit_in, [[Zoom in until photo fits in photocam]]
-   last [[Sentinel value to indicate last enum field during iteration]]
-}
-
 class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
                     Elm.Interface.Atspi_Widget_Action, Efl.File,
                     Efl.Ui.Clickable, Efl.Ui.Scrollable, Efl.Gfx.View,
@@ -18,26 +8,6 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
    eo_prefix: elm_obj_photocam;
    event_prefix: elm_photocam;
    methods {
-      @property zoom_animation {
-         set {
-            [[Enable zoom animation
-
-              This sets the zoom animation state to on or off for photocam. The
-              default is off. This will stop zooming using animation on
-              zoom level changes and change instantly. This will stop any
-              existing animations that are running.
-            ]]
-         }
-         get {
-            [[Disable zoom animation
-
-              This gets the current zoom animation state for the photocam object.
-            ]]
-         }
-         values {
-            paused: bool; [[The pause state.]]
-         }
-      }
       @property gesture_enabled {
          set {
             [[Set the gesture state for photocam.
@@ -54,61 +24,6 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
          }
          values {
             gesture: bool; [[The gesture state.]]
-         }
-      }
-      @property zoom {
-         set {
-            [[Set the zoom level of the photo
-
-              This sets the zoom level. If $zoom is 1, it means no zoom. If
-              it's smaller than 1, it means zoom in. If it's bigger than 1,
-              it means zoom out. For  example, $zoom 1 will be 1:1 pixel for
-              pixel. $zoom 2 will be 2:1 (that is 2x2 photo pixels will
-              display as 1 on-screen pixel) which is a zoom out. 4:1 will
-              be 4x4 photo pixels as 1 screen pixel, and so on. The $zoom
-              parameter must be greater than 0. It is suggested to stick
-              to powers of 2. (1, 2, 4, 8, 16, 32, etc.).
-            ]]
-         }
-         get {
-            [[Get the zoom level of the photo
-
-              This returns the current zoom level of the photocam object.
-              Note that if you set the fill mode to other than
-              #ELM_PHOTOCAM_ZOOM_MODE_MANUAL (which is the default), the
-              zoom level may be changed at any time by the  photocam object
-              itself to account for photo size and photocam viewport size.
-            ]]
-         }
-         values {
-            zoom: double; [[The zoom level to set]]
-         }
-      }
-      @property zoom_mode {
-         set {
-            [[Set the zoom mode
-
-              This sets the zoom mode to manual or one of several automatic
-              levels. Manual (ELM_PHOTOCAM_ZOOM_MODE_MANUAL) means that zoom
-              is set manually by @.zoom.set and will stay at that level until
-              changed by code or until zoom mode is changed. This is the
-              default mode. The Automatic modes will allow the photocam object
-              to automatically adjust zoom mode based on properties.
-
-              #ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT) will adjust zoom so the photo
-              fits EXACTLY inside the scroll frame with no pixels outside this
-              region. #ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but
-              ensure no pixels within the frame are left unfilled.
-            ]]
-         }
-         get {
-            [[Get the zoom mode
-
-              This gets the current zoom mode of the photocam object.
-            ]]
-         }
-         values {
-            mode: Elm.Photocam.Zoom_Mode; [[The zoom mode.]]
          }
       }
       @property image_region {
@@ -138,6 +53,9 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Gfx.View.view_size { get; }
+      Efl.Ui.Zoomable.zoom_animation { set; get; }
+      Efl.Ui.Zoomable.zoom { set; get; }
+      Efl.Ui.Zoomable.zoom_mode { set; get; }
       Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
