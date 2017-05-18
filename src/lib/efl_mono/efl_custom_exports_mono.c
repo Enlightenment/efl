@@ -46,6 +46,8 @@ EAPI const char *efl_mono_native_strdup(const char *str)
     return strdup(str);
 }
 
+// Array //
+
 EAPI void eina_array_free_generic_custom_export_mono(Eina_Array *array) EINA_ARG_NONNULL(1)
 {
    unsigned int i;
@@ -107,3 +109,41 @@ EAPI Eina_Bool eina_array_foreach_custom_export_mono(Eina_Array *array, Eina_Eac
 {
    return eina_array_foreach(array, cb, fdata);
 }
+
+// List //
+
+EAPI Eina_List *eina_list_last_custom_export_mono(const Eina_List *list)
+{
+   return eina_list_last(list);
+}
+
+EAPI Eina_List *eina_list_next_custom_export_mono(const Eina_List *list)
+{
+   return eina_list_next(list);
+}
+
+EAPI Eina_List *eina_list_prev_custom_export_mono(const Eina_List *list)
+{
+   return eina_list_prev(list);
+}
+
+EAPI void *eina_list_data_get_custom_export_mono(const Eina_List *list)
+{
+   return eina_list_data_get(list);
+}
+
+EAPI void *eina_list_data_set_custom_export_mono(Eina_List *list, const void *data)
+{
+   return eina_list_data_set(list, data);
+}
+
+EAPI unsigned int eina_list_count_custom_export_mono(const Eina_List *list)
+{
+   return eina_list_count(list);
+}
+
+EAPI void *eina_list_last_data_get_custom_export_mono(const Eina_List *list)
+{
+   return eina_list_last_data_get(list);
+}
+
