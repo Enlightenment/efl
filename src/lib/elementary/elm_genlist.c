@@ -2571,8 +2571,6 @@ _elm_genlist_pan_class_constructor(Efl_Class *klass)
       evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
 
-#include "elm_genlist_pan.eo.c"
-
 static Eina_Bool
 _item_multi_select_up(Elm_Genlist_Data *sd)
 {
@@ -8699,5 +8697,14 @@ _elm_genlist_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
    return EINA_FALSE;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_GENLIST_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_genlist)
+
+#define ELM_GENLIST_PAN_EXTRA_OPS \
+   EFL_CANVAS_GROUP_DEL_OPS(elm_genlist_pan)
+
 #include "elm_genlist.eo.c"
+#include "elm_genlist_pan.eo.c"
 #include "elm_genlist_item.eo.c"

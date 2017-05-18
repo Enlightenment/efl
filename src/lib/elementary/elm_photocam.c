@@ -2451,6 +2451,11 @@ elm_photocam_image_orient_get(const Eo *obj)
    return _eo_orient_flip_to_evas_orient(sd->orient, sd->flip);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_PHOTOCAM_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_photocam)
+
 #include "elm_photocam.eo.c"
 
 EAPI Evas_Object*

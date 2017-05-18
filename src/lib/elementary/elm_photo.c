@@ -425,4 +425,9 @@ elm_photo_thumb_set(Evas_Object *obj, const char *file, const char *group)
    elm_icon_thumb_set(sd->icon, file, group);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_PHOTO_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_photo)
+
 #include "elm_photo.eo.c"

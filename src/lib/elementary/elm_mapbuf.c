@@ -449,4 +449,9 @@ ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Pa
 
 /* Efl.Part end */
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_MAPBUF_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_mapbuf)
+
 #include "elm_mapbuf.eo.c"

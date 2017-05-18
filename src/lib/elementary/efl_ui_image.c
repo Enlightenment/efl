@@ -2218,4 +2218,9 @@ elm_image_aspect_fixed_get(const Evas_Object *obj)
    return sd->aspect_fixed;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_IMAGE_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_image)
+
 #include "efl_ui_image.eo.c"

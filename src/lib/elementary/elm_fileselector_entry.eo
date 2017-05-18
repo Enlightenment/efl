@@ -6,8 +6,6 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface.Fileselector,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_add;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;

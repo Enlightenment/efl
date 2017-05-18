@@ -6025,4 +6025,9 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data
 
 /* Efl.Part end */
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_ENTRY_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_entry)
+
 #include "elm_entry.eo.c"

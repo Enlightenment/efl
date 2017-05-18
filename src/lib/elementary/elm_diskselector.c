@@ -1836,5 +1836,10 @@ _elm_diskselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
    return &atspi_actions[0];
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_DISKSELECTOR_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_diskselector)
+
 #include "elm_diskselector.eo.c"
 #include "elm_diskselector_item.eo.c"

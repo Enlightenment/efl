@@ -559,4 +559,10 @@ _elm_combobox_efl_gfx_size_set(Eo *obj, Elm_Combobox_Data *pd, Evas_Coord w, Eva
    if (pd->count > 0) _table_resize(obj);
    efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 }
+
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_COMBOBOX_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_combobox)
+
 #include "elm_combobox.eo.c"

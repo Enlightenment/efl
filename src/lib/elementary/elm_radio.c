@@ -407,4 +407,9 @@ _elm_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Radio_Data 
    return ret;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_RADIO_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_radio)
+
 #include "elm_radio.eo.c"

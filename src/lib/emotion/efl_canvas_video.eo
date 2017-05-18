@@ -58,8 +58,6 @@ class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.I
         Efl.Gfx.position { set; }
         Efl.Gfx.size { set; }
         Efl.Canvas.Object.clip { set; }
-        Efl.Canvas.Group.group_add;
-        Efl.Canvas.Group.group_del;
         Efl.File.file { get; set; }
         Efl.Player.play { get; set; }
         Efl.Player.position { get; set; }

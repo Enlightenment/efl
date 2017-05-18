@@ -842,5 +842,10 @@ _elm_segment_control_class_constructor(Efl_Class *klass)
       _elm_segment_control_smart_focus_next_enable = EINA_TRUE;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_SEGMENT_CONTROL_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_segment_control)
+
 #include "elm_segment_control_item.eo.c"
 #include "elm_segment_control.eo.c"

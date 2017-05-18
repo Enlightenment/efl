@@ -1746,4 +1746,9 @@ _elm_spinner_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Spinner_Data *
 
 // A11Y Accessibility - END
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_SPINNER_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_spinner)
+
 #include "elm_spinner.eo.c"

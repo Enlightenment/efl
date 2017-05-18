@@ -2358,7 +2358,11 @@ ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, 
 
 /* Efl.Part end */
 
+
+/* Internal EO APIs and hidden overrides */
+
 #define ELM_LAYOUT_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_layout), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_layout_efl_object_dbg_info_get)
 
 #include "elm_layout.eo.c"

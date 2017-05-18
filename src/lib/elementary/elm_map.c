@@ -5633,4 +5633,9 @@ _elm_map_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, 
    return &atspi_actions[0];
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_MAP_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_map)
+
 #include "elm_map.eo.c"

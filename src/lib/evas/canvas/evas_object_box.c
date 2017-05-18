@@ -1997,4 +1997,9 @@ _evas_box_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define EVAS_BOX_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(evas_box)
+
 #include "canvas/evas_box.eo.c"

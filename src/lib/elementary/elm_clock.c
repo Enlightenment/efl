@@ -957,4 +957,9 @@ _elm_clock_class_constructor(Efl_Class *klass)
       _elm_clock_smart_focus_next_enable = EINA_TRUE;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_CLOCK_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_clock)
+
 #include "elm_clock.eo.c"

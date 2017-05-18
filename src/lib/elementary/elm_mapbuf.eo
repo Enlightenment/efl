@@ -119,8 +119,6 @@ class Elm.Mapbuf (Elm.Widget, Efl.Container, Efl.Part)
       Efl.Gfx.visible { set; }
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
       Efl.Container.content { get; set; }

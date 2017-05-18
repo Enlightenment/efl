@@ -219,8 +219,6 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
       Efl.Object.constructor;
       Efl.Gfx.size { set; }
       Efl.Gfx.position { set; }
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_calculate;
    }
 }

@@ -429,4 +429,9 @@ _elm_table_elm_widget_focus_register(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Focus
 }
 
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_TABLE_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_table)
+
 #include "elm_table.eo.c"

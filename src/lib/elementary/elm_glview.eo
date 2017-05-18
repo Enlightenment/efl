@@ -190,8 +190,6 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
       class.constructor;
       Efl.Object.finalize;
       Efl.Gfx.size { set; }
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Elm.Widget.on_focus;
       Efl.Gfx.View.view_size { get; set; }
    }

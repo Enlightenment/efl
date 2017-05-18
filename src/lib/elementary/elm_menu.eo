@@ -51,8 +51,6 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Gfx.visible { set; }
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Elm.Widget.widget_parent { get; set; }
       Elm.Widget.theme_apply;
       Elm.Widget.translate;

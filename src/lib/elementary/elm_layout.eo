@@ -336,8 +336,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Object.constructor;
       Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
-      Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_add;
       Efl.Canvas.Group.group_calculate;
       Elm.Widget.focus_direction;
       Elm.Widget.sub_object_add;

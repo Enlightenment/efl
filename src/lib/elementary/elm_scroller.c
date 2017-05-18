@@ -1471,4 +1471,9 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scro
 
 /* Efl.Part end */
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_SCROLLER_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_OPS(elm_scroller)
+
 #include "elm_scroller.eo.c"

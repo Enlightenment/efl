@@ -65,8 +65,6 @@ class Elm.Progressbar (Elm.Layout, Efl.Ui.Progress,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;

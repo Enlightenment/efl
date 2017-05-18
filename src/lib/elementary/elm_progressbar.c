@@ -665,4 +665,9 @@ ELM_PART_OVERRIDE_CONTENT_SET(elm_progressbar, ELM_PROGRESSBAR, ELM_LAYOUT, Elm_
 
 /* Efl.Part end */
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_PROGRESSBAR_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_progressbar)
+
 #include "elm_progressbar.eo.c"

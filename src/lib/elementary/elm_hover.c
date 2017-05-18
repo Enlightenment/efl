@@ -879,4 +879,9 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, ELM_LAYOUT, Elm_Hover_Data
 
 /* Efl.Part end */
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_HOVER_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_hover)
+
 #include "elm_hover.eo.c"

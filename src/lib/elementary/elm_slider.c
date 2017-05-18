@@ -1683,4 +1683,9 @@ _elm_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
 
 // A11Y Accessibility - END
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_SLIDER_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_slider)
+
 #include "elm_slider.eo.c"

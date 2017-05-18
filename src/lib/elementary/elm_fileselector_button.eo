@@ -4,8 +4,6 @@ class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
    event_prefix: elm_fileselector_button;
    implements {
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
       Elm.Interface.Fileselector.selected_models { get; }

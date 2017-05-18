@@ -13,7 +13,6 @@ class Elm.Button (Elm.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat, Efl.Text,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_add;
       Efl.Ui.Autorepeat.autorepeat_initial_timeout { set; get; }
       Efl.Ui.Autorepeat.autorepeat_gap_timeout { set; get; }
       Efl.Ui.Autorepeat.autorepeat_enabled { set; get; }

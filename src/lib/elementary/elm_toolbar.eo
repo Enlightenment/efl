@@ -319,8 +319,6 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_calculate;
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.access;

@@ -1047,5 +1047,10 @@ _elm_hoversel_auto_update_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
    return sd->auto_update;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_HOVERSEL_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_hoversel)
+
 #include "elm_hoversel_item.eo.c"
 #include "elm_hoversel.eo.c"

@@ -713,4 +713,9 @@ ELM_PART_OVERRIDE_CONTENT_SET(elm_player, ELM_PLAYER, ELM_LAYOUT, Elm_Player_Dat
 
 /* End of Efl.Part */
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_PLAYER_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_player)
+
 #include "elm_player.eo.c"

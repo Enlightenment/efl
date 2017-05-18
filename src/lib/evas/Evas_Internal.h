@@ -50,6 +50,8 @@ EAPI Eina_Bool efl_canvas_output_unlock(Efl_Canvas_Output *output);
 /* Internal EO APIs */
 EOAPI void efl_canvas_object_legacy_ctor(Eo *obj);
 EOAPI void efl_canvas_object_type_set(Eo *obj, const char *type);
+EOAPI void efl_canvas_group_add(Eo *obj);
+EOAPI void efl_canvas_group_del(Eo *obj);
 
 EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;
 #define EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE (&(_EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE))
@@ -62,6 +64,11 @@ EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE;
 
 EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
 #define EVAS_CANVAS_EVENT_VIEWPORT_RESIZE (&(_EVAS_CANVAS_EVENT_VIEWPORT_RESIZE))
+
+#define EFL_CANVAS_GROUP_DEL_OPS(kls) EFL_OBJECT_OP_FUNC(efl_canvas_group_del, _##kls##_efl_canvas_group_group_del)
+#define EFL_CANVAS_GROUP_ADD_OPS(kls) EFL_OBJECT_OP_FUNC(efl_canvas_group_add, _##kls##_efl_canvas_group_group_add)
+#define EFL_CANVAS_GROUP_ADD_DEL_OPS(kls) EFL_CANVAS_GROUP_ADD_OPS(kls), EFL_CANVAS_GROUP_DEL_OPS(kls)
+
 
 #ifdef __cplusplus
 }

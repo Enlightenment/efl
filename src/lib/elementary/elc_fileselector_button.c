@@ -663,4 +663,9 @@ elm_fileselector_button_inwin_mode_get(const Eo *obj)
    return sd->inwin_mode;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_FILESELECTOR_BUTTON_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_button)
+
 #include "elm_fileselector_button.eo.c"

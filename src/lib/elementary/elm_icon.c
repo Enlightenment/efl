@@ -916,4 +916,9 @@ elm_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
    return ELM_ICON_LOOKUP_FDO_THEME;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_ICON_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_icon)
+
 #include "elm_icon.eo.c"

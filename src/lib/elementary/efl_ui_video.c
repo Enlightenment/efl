@@ -471,4 +471,9 @@ elm_video_play_position_get(const Evas_Object *obj)
    return efl_player_position_get(obj);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_VIDEO_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_video)
+
 #include "efl_ui_video.eo.c"

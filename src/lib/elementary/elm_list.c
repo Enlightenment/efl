@@ -3296,5 +3296,10 @@ _elm_list_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_
    return EINA_FALSE;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_LIST_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_list)
+
 #include "elm_list.eo.c"
 #include "elm_list_item.eo.c"

@@ -747,4 +747,9 @@ ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Pa
 
 /* Efl.Part end */
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_NOTIFY_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_notify)
+
 #include "elm_notify.eo.c"

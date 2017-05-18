@@ -907,4 +907,9 @@ elm_thumb_reload(Evas_Object *obj)
      _thumb_show(sd);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_THUMB_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_thumb)
+
 #include "elm_thumb.eo.c"

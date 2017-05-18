@@ -9,8 +9,6 @@ abstract Efl.Canvas.Group.Clipped (Efl.Canvas.Group)
       Efl.Canvas.Object.clip { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Group.group_member_del;
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
    }
 }

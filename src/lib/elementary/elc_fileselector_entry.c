@@ -685,4 +685,9 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, 
 
 /* Efl.Part end */
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_FILESELECTOR_ENTRY_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_entry)
+
 #include "elm_fileselector_entry.eo.c"

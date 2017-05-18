@@ -618,4 +618,10 @@ elm_glview_render_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
    sd->render_func = func;
    _set_render_policy_callback(obj);
 }
+
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_GLVIEW_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_glview)
+
 #include "elm_glview.eo.c"

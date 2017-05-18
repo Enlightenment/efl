@@ -6115,5 +6115,10 @@ _elm_gengrid_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
    return EINA_FALSE;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_GENGRID_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_gengrid)
+
 #include "elm_gengrid.eo.c"
 #include "elm_gengrid_item.eo.c"

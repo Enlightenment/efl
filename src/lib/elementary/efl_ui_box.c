@@ -610,4 +610,9 @@ _efl_ui_box_efl_pack_pack_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, do
    if (v) *v = pd->align.v;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_BOX_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_box)
+
 #include "efl_ui_box.eo.c"

@@ -661,8 +661,6 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
       Efl.Gfx.size { set; }
       Efl.Gfx.position { set; }
       Efl.Canvas.Group.group_calculate;
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
    }
    events {
       child,added; [[Called when a child object was added to the box]]

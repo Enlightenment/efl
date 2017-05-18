@@ -3188,7 +3188,10 @@ _elm_fileselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
    return &atspi_actions[0];
 }
 
+/* Internal EO APIs and hidden overrides */
+
 #define ELM_FILESELECTOR_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _elm_fileselector_efl_object_event_callback_legacy_call)
 
 #include "elm_fileselector.eo.c"

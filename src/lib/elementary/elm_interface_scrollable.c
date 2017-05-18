@@ -4708,5 +4708,13 @@ _elm_interface_scrollable_efl_ui_focus_manager_focus(Eo *obj, Elm_Scrollable_Sma
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_PAN_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_pan)
+
+#define ELM_INTERFACE_SCROLLABLE_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_interface_scrollable)
+
 #include "elm_interface_scrollable.eo.c"
 #include "elm_pan.eo.c"

@@ -186,4 +186,9 @@ _efl_ui_nstate_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_NSTATE_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_nstate)
+
 #include "efl_ui_nstate.eo.c"

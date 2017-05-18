@@ -1670,4 +1670,14 @@ _efl_canvas_group_efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUS
    return o->paragraph_direction;
 }
 
+/* Internal EO APIs */
+
+EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_add)
+EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_del)
+
+#define EFL_CANVAS_GROUP_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_canvas_group_add, _efl_canvas_group_group_add), \
+   EFL_OBJECT_OP_FUNC(efl_canvas_group_del, _efl_canvas_group_group_del)
+
+
 #include "canvas/efl_canvas_group.eo.c"

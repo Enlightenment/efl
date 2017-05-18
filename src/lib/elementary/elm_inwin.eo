@@ -22,7 +22,6 @@ class Elm.Inwin (Elm.Layout)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_add;
       Elm.Widget.widget_parent { set; }
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;

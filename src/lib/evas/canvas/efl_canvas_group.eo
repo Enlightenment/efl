@@ -96,14 +96,6 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          }
          legacy: null;
       }
-      group_add @protected @beta /* @internal */ {
-         [[Internal constructor function.]]
-         legacy: null;
-      }
-      group_del @protected @beta /* @internal */ {
-         [[Internal destructor function.]]
-         legacy: null;
-      }
    }
    implements {
       class.constructor;

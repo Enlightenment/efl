@@ -4176,5 +4176,11 @@ elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
 {
    return ELM_ICON_LOOKUP_FDO_THEME;
 }
+
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_TOOLBAR_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_toolbar)
+
 #include "elm_toolbar.eo.c"
 #include "elm_toolbar_item.eo.c"

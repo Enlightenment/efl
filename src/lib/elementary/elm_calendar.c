@@ -2334,4 +2334,9 @@ _elm_calendar_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
    return &atspi_actions[0];
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_CALENDAR_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_calendar)
+
 #include "elm_calendar.eo.c"

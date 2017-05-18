@@ -286,4 +286,9 @@ elm_bg_file_get(const Eo *obj, const char **file, const char **group)
    efl_file_get((Eo *) obj, file, group);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_BG_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_OPS(elm_bg)
+
 #include "elm_bg.eo.c"

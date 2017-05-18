@@ -242,5 +242,10 @@ evas_object_smart_clipped_class_get(void)
    return class;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_CANVAS_GROUP_CLIPPED_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_canvas_group_clipped)
+
 #include "canvas/efl_canvas_group_clipped.eo.c"
 

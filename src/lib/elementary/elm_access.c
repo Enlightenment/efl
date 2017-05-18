@@ -1508,4 +1508,9 @@ _elm_access_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
    return &atspi_actions[0];
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_ACCESS_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_OPS(elm_access)
+
 #include "elm_access.eo.c"

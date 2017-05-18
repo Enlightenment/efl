@@ -491,4 +491,9 @@ elm_button_autorepeat_get(const Evas_Object *obj)
    return efl_ui_autorepeat_enabled_get(obj);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_BUTTON_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_OPS(elm_button)
+
 #include "elm_button.eo.c"

@@ -356,4 +356,9 @@ ewm_class_get(void)
 #undef ELM_WEB_CLASS
 #define ELM_WEB_CLASS elm_web_class_get()
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_WEB_NONE_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_OPS(elm_web_none)
+
 #include "elm_web_none.eo.c"

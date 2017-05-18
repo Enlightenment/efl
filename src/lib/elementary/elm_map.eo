@@ -629,8 +629,6 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
       Efl.Object.constructor;
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;

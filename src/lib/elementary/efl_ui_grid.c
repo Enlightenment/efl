@@ -798,4 +798,9 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx *su
    return _pack_at(obj, pd, subobj, col, row, 1, 1, EINA_TRUE);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_GRID_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_grid)
+
 #include "efl_ui_grid.eo.c"

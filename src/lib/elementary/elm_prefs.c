@@ -1889,4 +1889,9 @@ elm_prefs_file_get(const Eo *obj, const char **file, const char **page)
    return EINA_TRUE;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_PREFS_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_prefs)
+
 #include "elm_prefs.eo.c"

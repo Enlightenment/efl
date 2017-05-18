@@ -144,8 +144,6 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       class.constructor;
       Efl.Object.constructor;
       Efl.Gfx.visible { set; }
-      Efl.Canvas.Group.group_del;
-      Efl.Canvas.Group.group_add;
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;

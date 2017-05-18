@@ -2623,6 +2623,11 @@ _elm_color_item_elm_widget_item_focus_get(Eo *eo_it, Elm_Color_Item_Data *it)
    return EINA_FALSE;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_COLORSELECTOR_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_colorselector)
+
 #include "elm_colorselector.eo.c"
 #include "elm_color_item.eo.c"
 

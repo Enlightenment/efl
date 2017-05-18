@@ -33,7 +33,6 @@ class Elm.Plug (Elm.Widget, Efl.Ui.Clickable)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_add;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
    }

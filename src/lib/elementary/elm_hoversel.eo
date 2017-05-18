@@ -95,8 +95,6 @@ class Elm.Hoversel (Elm.Button, Efl.Ui.Selectable,
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Gfx.visible { set; }
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Elm.Widget.widget_parent { set; }
       Elm.Widget.theme_apply;
       Elm.Widget.translate;

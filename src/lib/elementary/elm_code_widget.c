@@ -2222,6 +2222,11 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    efl_event_callback_add(obj, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, _elm_code_widget_selection_clear_cb, obj);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_CODE_WIDGET_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_OPS(elm_code_widget)
+
 #include "elm_code_widget_text.c"
 #include "elm_code_widget_undo.c"
 #include "elm_code_widget.eo.c"

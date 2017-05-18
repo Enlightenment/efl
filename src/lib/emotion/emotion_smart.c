@@ -2069,4 +2069,10 @@ _efl_canvas_video_efl_canvas_object_clip_set(Evas_Object *obj, Efl_Canvas_Video_
    evas_object_clip_set(sd->bg, clip);
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_CANVAS_VIDEO_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_canvas_video)
+
+
 #include "efl_canvas_video.eo.c"

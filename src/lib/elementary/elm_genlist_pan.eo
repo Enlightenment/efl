@@ -10,7 +10,6 @@ class Elm.Genlist.Pan (Elm.Pan)
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_calculate;
-      Efl.Canvas.Group.group_del;
       Elm.Pan.content_size { get; }
       Elm.Pan.pos { get; set; }
       Elm.Pan.pos_min { get; }

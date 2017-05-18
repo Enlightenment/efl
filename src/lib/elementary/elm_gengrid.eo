@@ -547,8 +547,6 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
       Efl.Object.constructor;
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Efl.Canvas.Group.group_member_add;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;

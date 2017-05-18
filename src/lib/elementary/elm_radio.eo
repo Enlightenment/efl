@@ -79,8 +79,6 @@ class Elm.Radio (Elm.Check, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Canvas.Group.group_add;
-      Efl.Canvas.Group.group_del;
       Elm.Widget.theme_apply;
       Elm.Widget.activate;
       Elm.Widget.widget_event;

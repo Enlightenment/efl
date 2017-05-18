@@ -2078,5 +2078,10 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Na
 
 /* Efl.Part end */
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_NAVIFRAME_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_naviframe)
+
 #include "elm_naviframe_item.eo.c"
 #include "elm_naviframe.eo.c"

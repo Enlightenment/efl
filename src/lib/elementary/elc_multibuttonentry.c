@@ -2101,5 +2101,10 @@ _elm_multibuttonentry_item_elm_interface_atspi_widget_action_elm_actions_get(Eo 
    return &atspi_actions[0];
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_MULTIBUTTONENTRY_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_multibuttonentry)
+
 #include "elm_multibuttonentry_item.eo.c"
 #include "elm_multibuttonentry.eo.c"

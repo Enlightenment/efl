@@ -1492,5 +1492,10 @@ _elm_menu_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, 
 
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_MENU_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_menu)
+
 #include "elm_menu_item.eo.c"
 #include "elm_menu.eo.c"

@@ -5629,6 +5629,11 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, ELM_LAYOUT, Efl_Ui_Text_
 /* Efl.Part end */
 #endif
 
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_TEXT_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_text)
+
 #include "efl_ui_text.eo.c"
 
 #undef MY_CLASS

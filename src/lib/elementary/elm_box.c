@@ -726,4 +726,9 @@ _elm_box_elm_widget_focus_register(Eo *obj, Elm_Box_Data *pd, Efl_Ui_Focus_Manag
    return result;
 }
 
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_BOX_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_box)
+
 #include "elm_box.eo.c"

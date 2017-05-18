@@ -2404,4 +2404,9 @@ ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm
 
 /* Efl.Part end */
 
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_FLIP_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_flip)
+
 #include "efl_ui_flip.eo.c"
