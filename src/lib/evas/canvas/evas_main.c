@@ -1184,4 +1184,15 @@ _evas_pointer_list_in_rect_get(Evas_Public_Data *edata, Evas_Object *obj,
    return list;
 }
 
+/* Internal EO APIs */
+
+EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE =
+   EFL_EVENT_DESCRIPTION("render,flush,pre");
+EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST =
+   EFL_EVENT_DESCRIPTION("render,flush,post");
+EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE =
+   EFL_EVENT_DESCRIPTION("axis,update");
+EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE =
+   EFL_EVENT_DESCRIPTION("viewport,resize");
+
 #include "canvas/evas_canvas.eo.c"
