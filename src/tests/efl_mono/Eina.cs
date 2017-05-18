@@ -1233,4 +1233,69 @@ class TestEinaArray
     //
 }
 
+class TestEinaList
+{
+    private static readonly string test_string = "abcdefghij";
+
+    private static readonly int[] base_arr_int = {0x0,0x2A,0x42};
+    private static readonly int[] append_arr_int = {42,43,33};
+    private static readonly int[] modified_arr_int = {0x0,0x2A,0x42,42,43,33};
+
+    private static readonly string[] base_arr_str = {"0x0","0x2A","0x42"};
+    private static readonly string[] append_arr_str = {"42","43","33"};
+    private static readonly string[] modified_arr_str = {"0x0","0x2A","0x42","42","43","33"};
+
+    private static test.Numberwrapper[] BaseArrObj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        a.number_set(0x0);
+        b.number_set(0x2A);
+        c.number_set(0x42);
+        return new test.NumberwrapperConcrete[]{a,b,c};
+    }
+
+    private static test.Numberwrapper[] AppendArrObj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        a.number_set(42);
+        b.number_set(43);
+        c.number_set(33);
+        return new test.NumberwrapperConcrete[]{a,b,c};
+    }
+
+    private static test.Numberwrapper[] ModifiedArrObj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        var d = new test.NumberwrapperConcrete();
+        var e = new test.NumberwrapperConcrete();
+        var f = new test.NumberwrapperConcrete();
+        a.number_set(0x0);
+        b.number_set(0x2A);
+        c.number_set(0x42);
+        d.number_set(42);
+        e.number_set(43);
+        f.number_set(33);
+        return new test.NumberwrapperConcrete[]{a,b,c,d,e,f};
+    }
+
+
+    public static void eina_list_default()
+    {
+        var a = new eina.List<int>();
+    }
+
+    public static void append_int()
+    {
+        var a = new eina.List<int>();
+        a.Append(88);
+        Test.Assert(a[0] == 88);
+    }
+}
+
 }
