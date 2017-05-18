@@ -966,7 +966,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Efl.Container.content { get; set; }
       Efl.Container.content_unset;
       Efl.Part.part;
-      Efl.Canvas.Object.legacy_ctor;
    }
    constructors {
       .name;

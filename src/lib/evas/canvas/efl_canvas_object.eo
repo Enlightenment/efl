@@ -8,9 +8,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
    legacy_prefix: evas_object;
    data: Evas_Object_Protected_Data;
    methods {
-      legacy_ctor @protected @beta {
-          [[Internal function. Do not use.]]
-      }
       @property type @protected {
          set {
             [[Sets the legacy type name of this Evas object.]]
@@ -620,7 +617,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       }
    }
    constructors {
-      .legacy_ctor;
       .type;
    }
    implements {

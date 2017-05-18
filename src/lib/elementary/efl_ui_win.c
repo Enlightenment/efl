@@ -8007,6 +8007,7 @@ elm_win_resize_object_del(Eo *obj, Evas_Object *subobj)
      ERR("could not remove sub object %p from window %p", subobj, obj);
 }
 
+
 // deprecated
 EAPI void
 elm_win_name_set(Evas_Object *obj, const char *name)
@@ -8045,5 +8046,9 @@ elm_win_teamwork_uri_open(Efl_Ui_Win *obj EINA_UNUSED, const char *uri EINA_UNUS
 {
    ERR("Calling deprecrated function '%s'", __FUNCTION__);
 }
+
+/* Internal EO APIs */
+#define EFL_UI_WIN_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _efl_ui_win_efl_canvas_object_legacy_ctor)
 
 #include "efl_ui_win.eo.c"

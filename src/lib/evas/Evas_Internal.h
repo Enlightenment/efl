@@ -46,6 +46,11 @@ EAPI Evas_Engine_Info *efl_canvas_output_engine_info_get(Efl_Canvas_Output *outp
 EAPI Eina_Bool efl_canvas_output_lock(Efl_Canvas_Output *output);
 EAPI Eina_Bool efl_canvas_output_unlock(Efl_Canvas_Output *output);
 
+
+/* Internal EO APIs */
+EOAPI void efl_canvas_object_legacy_ctor(Eo *obj);
+
+
 #ifdef __cplusplus
 }
 #endif
