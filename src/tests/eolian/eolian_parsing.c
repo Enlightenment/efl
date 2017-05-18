@@ -756,20 +756,21 @@ START_TEST(eolian_var)
    const Eolian_Expression *exp = NULL;
    const Eolian_Type *type = NULL;
    const Eolian_Class *class;
+   const Eolian_Unit *unit;
    Eolian_Value v;
    const char *name;
 
    eolian_init();
 
    /* Parsing */
-   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/var.eo"));
+   fail_if(!(unit = eolian_file_parse(PACKAGE_DATA_DIR"/data/var.eo")));
 
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_class_get_by_name("Var")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular constant */
-   fail_if(!(var = eolian_variable_constant_get_by_name("Foo")));
+   fail_if(!(var = eolian_variable_constant_get_by_name(unit, "Foo")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
    fail_if(eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -781,7 +782,7 @@ START_TEST(eolian_var)
    fail_if(v.value.i != 5);
 
    /* regular global */
-   fail_if(!(var = eolian_variable_global_get_by_name("Bar")));
+   fail_if(!(var = eolian_variable_global_get_by_name(unit, "Bar")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
    fail_if(eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -793,7 +794,7 @@ START_TEST(eolian_var)
    fail_if(((int)v.value.f) != 10);
 
    /* no-value global */
-   fail_if(!(var = eolian_variable_global_get_by_name("Baz")));
+   fail_if(!(var = eolian_variable_global_get_by_name(unit, "Baz")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
    fail_if(eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -802,7 +803,7 @@ START_TEST(eolian_var)
    fail_if(eolian_variable_value_get(var));
 
    /* extern global  */
-   fail_if(!(var = eolian_variable_global_get_by_name("Bah")));
+   fail_if(!(var = eolian_variable_global_get_by_name(unit, "Bah")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
    fail_if(!eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -822,6 +823,7 @@ START_TEST(eolian_enum)
    const Eolian_Type *type = NULL;
    const Eolian_Class *class;
    const Eolian_Expression *exp;
+   const Eolian_Unit *unit;
    Eina_Stringshare *cname;
    const char *name;
    Eolian_Value v;
@@ -829,7 +831,7 @@ START_TEST(eolian_enum)
    eolian_init();
 
    /* Parsing */
-   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/enum.eo"));
+   fail_if(!(unit = eolian_file_parse(PACKAGE_DATA_DIR"/data/enum.eo")));
 
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_class_get_by_name("Enum")));
@@ -892,7 +894,7 @@ START_TEST(eolian_enum)
    fail_if(strcmp(cname, "NAME_SPACED_PANTS"));
    eina_stringshare_del(cname);
 
-   fail_if(!(var = eolian_variable_constant_get_by_name("Bah")));
+   fail_if(!(var = eolian_variable_constant_get_by_name(unit, "Bah")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
    fail_if(eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
@@ -903,7 +905,7 @@ START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 0));
 
-   fail_if(!(var = eolian_variable_constant_get_by_name("Pants")));
+   fail_if(!(var = eolian_variable_constant_get_by_name(unit, "Pants")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
    fail_if(!(exp = eolian_variable_value_get(var)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
@@ -1136,13 +1138,14 @@ START_TEST(eolian_docs)
    const Eolian_Function_Parameter *par;
    const Eolian_Struct_Type_Field *sfl;
    const Eolian_Enum_Type_Field *efl;
+   const Eolian_Unit *unit;
    Eina_Iterator *itr;
 
    eolian_init();
 
    fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
 
-   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/docs.eo"));
+   fail_if(!(unit = eolian_file_parse(PACKAGE_DATA_DIR"/data/docs.eo")));
 
    fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Foo")));
    fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
@@ -1277,7 +1280,7 @@ START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_since_get(doc),
                   "2.0"));
 
-   fail_if(!(var = eolian_variable_global_get_by_name("pants")));
+   fail_if(!(var = eolian_variable_global_get_by_name(unit, "pants")));
    fail_if(!(doc = eolian_variable_documentation_get(var)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for var."));

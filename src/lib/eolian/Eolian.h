@@ -2055,22 +2055,24 @@ EAPI Eolian_Value eolian_expression_value_get(const Eolian_Expression *expr);
 /*
  * @brief Get a global variable by name. Supports namespaces.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the name of the variable
  * @return the variable handle or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Variable *eolian_variable_global_get_by_name(const char *name);
+EAPI const Eolian_Variable *eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get a constant variable by name. Supports namespaces.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the name of the variable
  * @return the variable handle or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const char *name);
+EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get an iterator to all global variables contained in a file.
