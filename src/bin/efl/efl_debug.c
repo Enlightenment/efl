@@ -208,7 +208,7 @@ _disp_cb(Eina_Debug_Session *session EINA_UNUSED, void *buffer)
 }
 
 static void
-_args_handle(Eina_Bool flag)
+_args_handle(void *data EINA_UNUSED, Eina_Bool flag)
 {
    if (!flag) exit(0);
    eina_debug_session_dispatch_override(_session, _disp_cb);;
@@ -254,7 +254,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         fprintf(stderr, "ERROR: Cannot connect to debug daemon.\n");
         return -1;
      }
-   eina_debug_opcodes_register(_session, ops, _args_handle);
+   eina_debug_opcodes_register(_session, ops, _args_handle, NULL);
 
    ecore_main_loop_begin();
 

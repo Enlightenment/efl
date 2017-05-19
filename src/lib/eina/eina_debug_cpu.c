@@ -295,7 +295,7 @@ _eina_debug_cpu_init(void)
           }
         _sysmon_thread_runs = EINA_TRUE;
      }
-   eina_debug_opcodes_register(NULL, _OPS, NULL);
+   eina_debug_opcodes_register(NULL, _OPS, NULL, NULL);
    return EINA_TRUE;
 }
 

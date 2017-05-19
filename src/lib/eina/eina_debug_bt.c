@@ -214,7 +214,7 @@ Eina_Bool
 _eina_debug_bt_init(void)
 {
    eina_semaphore_new(&_wait_for_bts_sem, 0);
-   eina_debug_opcodes_register(NULL, _OPS, NULL);
+   eina_debug_opcodes_register(NULL, _OPS, NULL, NULL);
    return EINA_TRUE;
 }
 

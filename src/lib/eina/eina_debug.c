@@ -104,6 +104,7 @@ typedef struct
 {
    const Eina_Debug_Opcode *ops;
    Eina_Debug_Opcode_Status_Cb status_cb;
+   void *status_data;
 } _opcode_reply_info;
 
 struct _Eina_Debug_Session
@@ -117,6 +118,7 @@ struct _Eina_Debug_Session
                      * with the daemon. Only used when a shell remote
                      * connection is requested.
                      */
+   void *data; /* User data */
    double encoding_ratio; /* Encoding ratio */
    int cbs_length; /* cbs table size */
    int fd_in; /* File descriptor to read */
@@ -548,7 +550,7 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
                   _static_opcode_register(session, os[i], info->ops[i].cb);
                   e_debug("Opcode %s -> %d", info->ops[i].opcode_name, os[i]);
                }
-             if (info->status_cb) info->status_cb(EINA_TRUE);
+             if (info->status_cb) info->status_cb(info->status_data, EINA_TRUE);
              return EINA_DEBUG_OK;
           }
      }
@@ -623,7 +625,7 @@ _opcodes_unregister_all(Eina_Debug_Session *session)
              if (op->opcode_id) *(op->opcode_id) = EINA_DEBUG_OPCODE_INVALID;
              op++;
           }
-        if (info->status_cb) info->status_cb(EINA_FALSE);
+        if (info->status_cb) info->status_cb(info->status_data, EINA_FALSE);
      }
 }
 
@@ -685,7 +687,7 @@ eina_debug_local_connect(Eina_Bool is_master)
    _daemon_greet(session);
    _opcodes_register_all(session);
    if (!is_master)
-      eina_debug_opcodes_register(session, _MONITOR_OPS, NULL);
+      eina_debug_opcodes_register(session, _MONITOR_OPS, NULL, NULL);
 
    _last_local_session = session;
    return session;
@@ -777,7 +779,7 @@ eina_debug_shell_remote_connect(const char *cmds_str)
         eina_debug_session_shell_codec_enable(session);
         session->cmds = cmds;
         _cmd_consume(session);
-        eina_debug_opcodes_register(session, _BRIDGE_OPS, NULL);
+        eina_debug_opcodes_register(session, _BRIDGE_OPS, NULL, NULL);
         eina_debug_timer_add(10000, _bridge_keep_alive_send, session);
         // start the monitor thread
         _thread_start(session);
@@ -882,7 +884,7 @@ _thread_start(Eina_Debug_Session *session)
  */
 EAPI void
 eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode ops[],
-      Eina_Debug_Opcode_Status_Cb status_cb)
+      Eina_Debug_Opcode_Status_Cb status_cb, void *data)
 {
    if (!session) session = _last_local_session;
    if (!session) return;
@@ -890,6 +892,7 @@ eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode
    _opcode_reply_info *info = malloc(sizeof(*info));
    info->ops = ops;
    info->status_cb = status_cb;
+   info->status_data = data;
 
    session->opcode_reply_infos = eina_list_append(
          session->opcode_reply_infos, info);

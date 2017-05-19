@@ -79,9 +79,10 @@ typedef Eina_Debug_Error (*Eina_Debug_Cb)(Eina_Debug_Session *session, int srcid
  * layer should not try to send more requests until a new connection is
  * established.
  *
+ * @param data data pointer given when registering opcodes
  * @param status EINA_TRUE if opcodes have been received from the daemon, EINA_FALSE otherwise.
  */
-typedef void (*Eina_Debug_Opcode_Status_Cb)(Eina_Bool status);
+typedef void (*Eina_Debug_Opcode_Status_Cb)(void *data, Eina_Bool status);
 
 /**
  * @typedef Eina_Debug_Dispatch_Cb
@@ -263,9 +264,15 @@ EAPI void *eina_debug_session_data_get(Eina_Debug_Session *session);
  * the opcodes ids is sent.
  * On the reception from the daemon, status_cb function is invoked to inform
  * the requester that the opcodes can now be used.
+ *
+ * @param session the session
+ * @param ops the operations to register
+ * @param status_cb a function to call when the opcodes are received
+ * @param status_data the data to give to status_cb
  */
 EAPI void eina_debug_opcodes_register(Eina_Debug_Session *session,
-      const Eina_Debug_Opcode ops[], Eina_Debug_Opcode_Status_Cb status_cb);
+      const Eina_Debug_Opcode ops[],
+      Eina_Debug_Opcode_Status_Cb status_cb, void *status_data);
 
 /**
  * @brief Send a packet to the given destination

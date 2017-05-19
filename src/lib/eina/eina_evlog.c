@@ -272,7 +272,7 @@ eina_evlog_init(void)
      }
 #endif
    eina_evlog("+eina_init", NULL, 0.0, NULL);
-   eina_debug_opcodes_register(NULL, _EINA_DEBUG_EVLOG_OPS, NULL);
+   eina_debug_opcodes_register(NULL, _EINA_DEBUG_EVLOG_OPS, NULL, NULL);
    return EINA_TRUE;
 }
 
