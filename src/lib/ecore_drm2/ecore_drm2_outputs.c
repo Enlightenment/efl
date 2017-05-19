@@ -417,6 +417,7 @@ static Eina_Bool
 _output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
 {
    Ecore_Drm2_Connector_State *cstate;
+   Ecore_Drm2_Crtc_State *rstate;
    drmModeAtomicReq *req = NULL;
    Eina_Bool ret = EINA_TRUE;
 
@@ -426,11 +427,21 @@ _output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
    sym_drmModeAtomicSetCursor(req, 0);
 
    cstate = output->conn_state;
+   rstate = output->crtc_state;
 
    if (sym_drmModeAtomicAddProperty(req, cstate->obj_id,
                                     cstate->dpms.id, level) < 0)
      {
         ERR("Failed to add connector property DPMS");
+        ret = EINA_FALSE;
+        goto err;
+     }
+
+   if (sym_drmModeAtomicAddProperty(req, rstate->obj_id,
+                                    rstate->active.id,
+                                    ((level == 0) ? 1 : 0)) < 0)
+     {
+        ERR("Failed to add crtc active property");
         ret = EINA_FALSE;
         goto err;
      }
@@ -442,6 +453,10 @@ _output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
      }
 
    cstate->dpms.value = level;
+   if (level == 0)
+     rstate->active.value = 1;
+   else
+     rstate->active.value = 0;
 
 err:
    sym_drmModeAtomicFree(req);
