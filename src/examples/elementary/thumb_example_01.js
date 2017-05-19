@@ -21,7 +21,7 @@ _client_connected_cb = function(obj)
    console.log("Connected client to ethumb daemon");
 }
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText("Thumb example.");
 win.setAutohide(true);
 

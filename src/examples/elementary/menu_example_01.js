@@ -1,6 +1,6 @@
 efl = require('efl');
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText("Menu");
 win.setAutohide(true);
 
@@ -10,7 +10,7 @@ rect.setHintMin( 0, 0);
 rect.setColor( 0, 0, 0, 0);
 rect.setVisible(true);
 
-menu = new elm.Elm.Menu(win);
+menu = new efl.Elm.Menu(win);
 menu.itemAdd(null, null, "first item", null, null); // item_add nao implementado
 menu_it = menu.itemAdd(null, "mail-reply-all", "second intem", null, null);
 

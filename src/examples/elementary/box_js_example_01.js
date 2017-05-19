@@ -1,7 +1,7 @@
 
 var efl = require('efl');
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText('title');
 win.setAutohide(true);
 
@@ -16,9 +16,9 @@ win.setContent(bx);
 
 entry = new efl.Elm.Label(win);
 entry.setSize(100, 100);
-entry.setText(null, "Texto");
+entry.setPartText(null, "Texto");
 
-console.log('Texto: ', entry.getText(null));
+console.log('Texto: ', entry.getPartText(null));
 
 entry.setHintWeight(1.0, 1.0);
 entry.setHintAlign(-1.0, -1.0);

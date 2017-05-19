@@ -1,11 +1,11 @@
 efl = require('efl');
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText("Popup");
 win.setAutohide(true);
 
 content = new efl.Elm.Label(win);
-content.setText("elm.text", "<align=center>Content</align>");
+content.setPartText("elm.text", "<align=center>Content</align>");
 
 popup = new efl.Elm.Popup(win);
 popup.setTimeout(3);
@@ -19,7 +19,7 @@ popup.on('timeout', function()
 content_container = popup.part("elm.swallow.content").cast("Efl.Container");
 content_container.setContent(content);
 
-popup.setText("title,text", "Title");
+popup.setPartText("title,text", "Title");
 popup.setVisible(true);
 
 popup.on('block_clicked', function()

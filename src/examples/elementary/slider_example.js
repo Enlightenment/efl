@@ -1,7 +1,7 @@
 
 efl = require('efl');
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText("Slider Example");
 win.setAutohide(true);
 
@@ -19,7 +19,7 @@ sl.setVisible(true);
 
 /* with icon, end and label */
 sl = new efl.Elm.Slider(win);
-sl.setText("elm.text", "Counter");
+sl.setPartText("elm.text", "Counter");
 
 ic = new efl.Efl.Ui.Image(win);
 ic.setIcon("home");
