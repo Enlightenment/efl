@@ -1,6 +1,22 @@
 ==========
-EFL 1.19.0
+EFL 1.19.1
 ==========
+
+Changes since 1.19.0:
+---------------------
+
+Fixes:
+
+   * elm_image: Fix file_set when preload is disabled
+   * elm_code: Fix selection,start signal
+   * build: bump minimum version requirement of gnutls to 3.3.6 (T5437)
+   * bump minimum version requirement of freetype2 to 16.2.10 which equals release 2.5.0.1 (T5437)
+   * evas/elm: Fix bad propagation of ON_HOLD flag
+   * evas render: Fix issue with map render
+   * nstate: correct the legacy class name
+   * check: fix efl_ui_check_selected_set() API
+   * elm_code : LINE_APPEND Render fix
+   * elm_code: Fix crash on tabs in long lines
 
 Changes since 1.18.0:
 ---------------------
