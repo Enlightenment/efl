@@ -5440,35 +5440,59 @@ st_collections_group_data_item(void)
         // collections
         // collections.group
         filters {
-            filter.script: "key" "Lua script here";
-            filter.file: "other" "filename.lua";
-            ..
+            // Inline as script block:
+            filter {
+               name: "myfilter1";
+               script {
+                  -- Some Lua code here, eg:
+                  blend { color = 'red' }
+               }
+            // Imported from an external file:
+            filter {
+               name: "myfilter2";
+               file: "filename.lua";
+            }
         }
     @description
         The "filter" block lets you embed filter scripts into an EDC group,
-        that can then be referred to in the @ref sec_collections_group_parts_description_filter "Text.Filter"
-        or @ref sec_collections_group_parts_description_filter "Image.Filter" statements.
+        that can then be referred to in the
+        @ref sec_collections_group_parts_description_filter "Text.Filter"
+        or @ref sec_collections_group_parts_description_filter "Image.Filter"
+        statements.
 
         In a similar way to the toplevel @ref sec_toplevel_data "Data" section,
         it is possible to embed filters from a external file inside the final EDJ.
+
+        Note that filters are defined globally, even if they appear inside a
+        specific group (as of EFL 1.19).
 
         Please also refer to @ref evasfiltersref "Evas filters reference".
     @endblock
 
     @property
-        inline
+        name
     @parameters
-        [name] [Lua script]
+        [name]
     @effect
-        Defines a new Lua script used for filtering.
+        Creates a new named filter. This filter can then be used in image, text
+        or textblock parts by name.
+    @endproperty
+
+    @property
+        script
+    @parameters
+        [Lua script]
+    @effect
+        A block of Lua code contained inside {}. Example: script { blur{5} }
     @endproperty
 
     @property
         file
     @parameters
-        [name] [Lua script filename]
+        [Path to Lua file]
     @effect
         Includes an external file to define a new Lua script used for filtering.
+        The file must be in the data path passed to edje_cc (-dd argument).
     @endproperty
 */
 
