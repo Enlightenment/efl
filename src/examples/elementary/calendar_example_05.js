@@ -6,7 +6,9 @@ _print_cal_info_cb = function ()
    //var sel_time = cal.selected_time_get()
 
    var interval = cal.getInterval();
-   var mm_yr = cal.getMinMaxYear();
+   // TODO Sort out Efl.Time support in the Js binding
+   // var mm_date = cal.getDateMin();
+   var mm_yr = [0, 0];
    var sel_enable = cal.getSelectMode() != efl.Elm.Calendar.Select.Mode.NONE;
    var wds = cal.getWeekdaysNames();
 
@@ -15,7 +17,7 @@ _print_cal_info_cb = function ()
 }
 
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText("Calendar Getters Example");
 win.setAutohide(true);
 

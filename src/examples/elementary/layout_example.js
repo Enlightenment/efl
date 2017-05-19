@@ -3,7 +3,7 @@ efl = require('efl');
 Evas = efl.Evas;
 Elm = efl.Elm;
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText('Layout');
 win.setAutohide(true);
 
@@ -53,7 +53,7 @@ ly.setVisible(true);
 //ly.on_layout('*', '*', function(emission, source)
 //             { console.log("signal: '" + emission + "' '" + source + "'");});
 
-bt = new Elm.Button(ly);
+bt = new efl.Efl.Ui.Button(ly);
 bt.setPartText(null, "Button 1");
 console.log("Will get part");
 element_container = ly.part('example/custom').cast('Efl.Container');

@@ -19,7 +19,7 @@ var twit = new Twitter({
   access_token_secret: 'l7ccNKXTVv6cymfSD1gQH61tmfixkdna2QmOjPtpVxSHD'
 });
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText("Twitter App");
 win.setAutohide(true);
 
@@ -52,11 +52,11 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
         var filename = path.join(__dirname, 'twitter_example_01.edj');
         layout.setFile(filename, "tweet");
 
-        layout.setText("user_name", screen_name);
-        layout.setText("screen_name", " - @"+screen_name);
+        layout.setPartText("user_name", screen_name);
+        layout.setPartText("screen_name", " - @"+screen_name);
 
         var entry = new efl.Elm.Entry(win);
-        entry.setText("elm.text", text);
+        entry.setPartText("elm.text", text);
         entry.setEditable(false);
         part = layout.part("tweet_text").cast("Efl.Container");
         part.setContent(entry);

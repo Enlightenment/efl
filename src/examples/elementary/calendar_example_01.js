@@ -1,7 +1,7 @@
 
 efl = require('efl');
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText("Calendar Creation Example");
 win.setAutohide(true);
 

@@ -78,16 +78,26 @@ EAPI void register_text_properties(v8::Handle<v8::Object> global, v8::Isolate* i
 }
 
 namespace efl { namespace ui {
+EAPI void register_button(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_check(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_progressbar(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_radio(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_slider(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_video(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_flip(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_frame(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_box(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_image(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_win(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }}
 
-namespace efl { namespace ui { namespace win {
-EAPI void register_standard(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+namespace efl { namespace ui { namespace image {
+EAPI void register_zoomable(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }}}
+
+namespace efl { namespace ui { namespace image { namespace zoomable {
+EAPI void register_pan(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+}}}}
 
 namespace efl { namespace canvas {
 EAPI void register_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -158,9 +168,7 @@ EAPI void register_elm_pan(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 namespace elm {
 
 EAPI void register_bg(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_button(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_calendar(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_check(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_clock(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_colorselector(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_conformant(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -189,16 +197,11 @@ EAPI void register_multibuttonentry(v8::Handle<v8::Object> global, v8::Isolate* 
 EAPI void register_notify(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_panel(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_panes(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_photocam(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_photocam_pan(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_player(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_plug(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_popup(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_progressbar(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_radio(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_route(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_scroller(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_slider(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_spinner(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_systray(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_toolbar(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -327,10 +330,10 @@ EAPI void init(v8::Handle<v8::Object> exports)
       // elm::register_box(exports, v8::Isolate::GetCurrent());
 
       elm::register_bg(exports, v8::Isolate::GetCurrent());
-      elm::register_button(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_button(exports, v8::Isolate::GetCurrent());
       elm::register_calendar(exports, v8::Isolate::GetCurrent());
 
-      elm::register_check(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_check(exports, v8::Isolate::GetCurrent());
 
       //  crash
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
@@ -423,9 +426,9 @@ EAPI void init(v8::Handle<v8::Object> exports)
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       elm::register_panes(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      elm::register_photocam(exports, v8::Isolate::GetCurrent());
+      efl::ui::image::register_zoomable(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      // elm::register_photocam_pan(exports, v8::Isolate::GetCurrent());
+      // efl::ui::image::zoomable::register_pan(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       elm::register_player(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
@@ -433,9 +436,9 @@ EAPI void init(v8::Handle<v8::Object> exports)
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       elm::register_popup(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      elm::register_progressbar(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_progressbar(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      elm::register_radio(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_radio(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
 
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
@@ -443,7 +446,7 @@ EAPI void init(v8::Handle<v8::Object> exports)
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       elm::register_scroller(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      elm::register_slider(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_slider(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       elm::register_spinner(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
@@ -465,7 +468,7 @@ EAPI void init(v8::Handle<v8::Object> exports)
       // crash
       // elm::register_win(exports, v8::Isolate::GetCurrent());
       fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
-      efl::ui::win::register_standard(exports, v8::Isolate::GetCurrent());
+      efl::ui::register_win(exports, v8::Isolate::GetCurrent());
 
       // fprintf(stderr, __FILE__ ":%d\n", __LINE__); fflush(stderr);
       // elm::register_widget_item(exports, v8::Isolate::GetCurrent());

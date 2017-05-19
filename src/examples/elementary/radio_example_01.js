@@ -5,7 +5,7 @@ _cb = function(obj){
    console.log(obj.getText("elm.text"), "state value:", obj.getStateValue());
 }
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText("Radio");
 win.setAutohide(true);
 
@@ -15,8 +15,8 @@ bx.setHintWeight(1.0, 1.0);
 win.setContent(bx);
 bx.setVisible(true);
 
-radio_g = new efl.Elm.Radio(win);
-radio_g.setText("elm.text", "Radio 1");
+radio_g = new efl.Efl.Ui.Radio(win);
+radio_g.setText("Radio 1");
 radio_g.setStateValue(1);
 radio_g.setValue(1);
 ic = new efl.Efl.Ui.Image(win);
@@ -28,8 +28,8 @@ radio_g.setHintAlign(-1.0, -1.0);
 radio_g.on('changed', _cb);
 radio_g.setVisible(true);
 
-radio = new efl.Elm.Radio(win);
-radio.setText("elm.text", "Radio 2");
+radio = new efl.Efl.Ui.Radio(win);
+radio.setText("Radio 2");
 radio.setStateValue(2);
 radio.addGroup(radio_g);
 ic = new efl.Efl.Ui.Image(win);
@@ -41,8 +41,8 @@ radio.setHintAlign(-1.0, -1.0);
 radio.on('changed', _cb);
 radio.setVisible(true);
 
-radio = new efl.Elm.Radio(win);
-radio.setText("elm.text", "Radio 3");
+radio = new efl.Efl.Ui.Radio(win);
+radio.setText("Radio 3");
 radio.setStateValue(3);
 radio.addGroup(radio_g);
 bx.packEnd(radio);
@@ -51,8 +51,8 @@ radio.setHintAlign(-1.0, -1.0);
 radio.on('changed', _cb);
 radio.setVisible(true);
 
-radio = new efl.Elm.Radio(win);
-radio.setText("elm.text", "Radio 4");
+radio = new efl.Efl.Ui.Radio(win);
+radio.setText("Radio 4");
 radio.setStateValue(4);
 radio.addGroup(radio_g);
 bx.packEnd(radio);

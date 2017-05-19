@@ -6,7 +6,7 @@ function setIcon(widget, icon) {
 }
 
 _btn_options_cb = function(_btn) {
-     var text = _btn.getText("elm.text");
+     var text = _btn.getText();
      var lbl = text.split(": ");
 
      var t = parseFloat(lbl[1]);
@@ -64,16 +64,16 @@ _btn_cursors_move = function(_btn) {
 }
 
 
-win = new efl.Efl.Ui.Win.Standard(null);
+win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
 win.setText("Button example");
 win.setAutohide(true);
 
 icon_still = new efl.Efl.Ui.Image(win);
-mid = new efl.Elm.Button(win);
-up = new efl.Elm.Button(win);
-down = new efl.Elm.Button(win);
-left = new efl.Elm.Button(win);
-right = new efl.Elm.Button(win);
+mid = new efl.Efl.Ui.Button(win);
+up = new efl.Efl.Ui.Button(win);
+down = new efl.Efl.Ui.Button(win);
+left = new efl.Efl.Ui.Button(win);
+right = new efl.Efl.Ui.Button(win);
 
 _btn_cursors_release = function() {
     if (icon_still)
@@ -94,21 +94,21 @@ box_initial.setHintWeight(1.0, 0.0);
 box.packEnd(box_initial);
 box_initial.setVisible(true);
 
-btn = new efl.Elm.Button(win);
-btn.setText("elm.text", "Initial: 0.0");
+btn = new efl.Efl.Ui.Button(win);
+btn.setText("Initial: 0.0");
 box_initial.packEnd(btn);
 btn.setVisible(true);
 
 btn.on('clicked', _btn_options_cb);
 
-btn2 = new efl.Elm.Button(win);
-btn2.setText("elm.text", "Initial: 1.0");
+btn2 = new efl.Efl.Ui.Button(win);
+btn2.setText("Initial: 1.0");
 box_initial.packEnd(btn2);
 btn2.setVisible(true);
 btn2.on('clicked', _btn_options_cb);
 
-btn3 = new efl.Elm.Button(win);
-btn3.setText("elm.text", "Initial: 5.0");
+btn3 = new efl.Efl.Ui.Button(win);
+btn3.setText("Initial: 5.0");
 box_initial.packEnd(btn3);
 btn3.setVisible(true);
 btn3.on('clicked', _btn_options_cb);
@@ -119,25 +119,25 @@ box_gap.setHintWeight(1.0, 0.0);
 box.packEnd(box_gap);
 box_gap.setVisible(true);
 
-btn4 = new efl.Elm.Button(win);
-btn4.setText("elm.text", "Gap: 0.1");
+btn4 = new efl.Efl.Ui.Button(win);
+btn4.setText("Gap: 0.1");
 box_gap.packEnd(btn4);
 btn4.setVisible(true);
 btn4.on('clicked', _btn_options_cb);
 
-btn5 = new efl.Elm.Button(win);
-btn5.setText("elm.text", "Gap: 0.5");
+btn5 = new efl.Efl.Ui.Button(win);
+btn5.setText("Gap: 0.5");
 box_gap.packEnd(btn5);
 btn5.setVisible(true);
 btn5.on('clicked', _btn_options_cb);
 
-btn6 = new efl.Elm.Button(win);
-btn6.setText("elm.text", "Gap: 1.0");
+btn6 = new efl.Efl.Ui.Button(win);
+btn6.setText("Gap: 1.0");
 box_gap.packEnd(btn6);
 btn6.setVisible(true);
 btn6.on('clicked', _btn_options_cb);
 
-up.setAutorepeat(true);
+up.setAutorepeatEnabled(true);
 up.setAutorepeatInitialTimeout(1.0);
 up.setAutorepeatGapTimeout(0.5);
 up.setHintWeight(1.0, 0.0);
@@ -157,7 +157,7 @@ box_inferior.setHintAlign(-1.0, -1.0);
 box.packEnd(box_inferior);
 box_inferior.setVisible(true);
 
-left.setAutorepeat(true);
+left.setAutorepeatEnabled(true);
 left.setAutorepeatInitialTimeout(1.0);
 left.setAutorepeatGapTimeout(0.5);
 left.setHintWeight(0.0, 1.0);
@@ -179,7 +179,7 @@ icon_mid = new efl.Efl.Ui.Image(win);
 icon_mid.setIcon("close");
 setIcon(mid, icon_mid);
 
-right.setAutorepeat(true);
+right.setAutorepeatEnabled(true);
 right.setAutorepeatInitialTimeout(1.0);
 right.setAutorepeatGapTimeout(0.5);
 right.setHintWeight(0.0, 1.0);
@@ -193,7 +193,7 @@ icon_right = new efl.Efl.Ui.Image(win);
 icon_right.setIcon("arrow_right");
 setIcon(right, icon_right);
 
-down.setAutorepeat(true);
+down.setAutorepeatEnabled(true);
 down.setAutorepeatInitialTimeout(1.0);
 down.setAutorepeatGapTimeout(0.5);
 down.setHintWeight(1.0, 0.0);
