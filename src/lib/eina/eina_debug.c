@@ -1047,6 +1047,19 @@ eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
    return ret;
 }
 
+EAPI void
+eina_debug_session_data_set(Eina_Debug_Session *session, void *data)
+{
+   if (session) session->data = data;
+}
+
+EAPI void *
+eina_debug_session_data_get(Eina_Debug_Session *session)
+{
+   if (session) return session->data;
+   else return NULL;
+}
+
 static void
 _signal_handler(int sig EINA_UNUSED,
       siginfo_t *si EINA_UNUSED, void *foo EINA_UNUSED)

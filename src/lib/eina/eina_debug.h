@@ -238,6 +238,24 @@ EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *
 EAPI Eina_Debug_Error eina_debug_dispatch(Eina_Debug_Session *session, void *buffer);
 
 /**
+ * @brief Set data to a session
+ *
+ * @param session the session
+ * @param data the data to set
+ *
+ */
+EAPI void eina_debug_session_data_set(Eina_Debug_Session *session, void *data);
+
+/**
+ * @brief Get the data attached to a session
+ *
+ * @param session the session
+ *
+ * @return the data of the session
+ */
+EAPI void *eina_debug_session_data_get(Eina_Debug_Session *session);
+
+/**
  * @brief Register opcodes to a session
  *
  * This function registers opcodes for the given session. If the session is not
