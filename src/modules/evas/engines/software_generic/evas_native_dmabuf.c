@@ -35,7 +35,7 @@ _native_bind_cb(void *image, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UN
         return;
      }
    size = a->height * a->stride[0];
-   im->image.data = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, a->fd[0], 0);
+   im->image.data = mmap(NULL, size, PROT_READ, MAP_SHARED, a->fd[0], 0);
    if (im->image.data == MAP_FAILED) im->image.data = NULL;
    n->ns_data.wl_surface_dmabuf.size = size;
    n->ns_data.wl_surface_dmabuf.ptr = im->image.data;
