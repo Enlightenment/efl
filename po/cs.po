@@ -5,12 +5,12 @@
 # quaker66@gmail.com
 # Vít Pelčák <vit@pelcak.org>, 2011.
 # Tomáš Čech <sleep_walker@suse.cz>, 2012.
-#: src/lib/elementary/elm_config.c:3770
+#: src/lib/elementary/elm_config.c:3747
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-01-20 08:38+0900\n"
+"POT-Creation-Date: 2017-05-19 16:43+0900\n"
 "PO-Revision-Date: 2014-05-22 22:44+0200\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -211,69 +211,69 @@ msgstr "CHYBA: neplatná hodnota geometrie '%s'\n"
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "CHYBA: neplatná hodnota velikosti '%s'\n"
 
-#: src/lib/efreet/efreet_base.c:123
+#: src/lib/efreet/efreet_base.c:126
 msgid "Desktop"
 msgstr "Plocha"
 
-#: src/lib/efreet/efreet_base.c:131
+#: src/lib/efreet/efreet_base.c:134
 msgid "Downloads"
 msgstr "Stažené"
 
-#: src/lib/efreet/efreet_base.c:140
+#: src/lib/efreet/efreet_base.c:143
 msgid "Templates"
 msgstr "Šablony"
 
-#: src/lib/efreet/efreet_base.c:149
+#: src/lib/efreet/efreet_base.c:152
 msgid "Public"
 msgstr "Veřejné"
 
-#: src/lib/efreet/efreet_base.c:158
+#: src/lib/efreet/efreet_base.c:161
 msgid "Documents"
 msgstr "Dokumenty"
 
-#: src/lib/efreet/efreet_base.c:166
+#: src/lib/efreet/efreet_base.c:169
 msgid "Music"
 msgstr "Hudba"
 
-#: src/lib/efreet/efreet_base.c:174
+#: src/lib/efreet/efreet_base.c:177
 msgid "Pictures"
 msgstr "Obrázky"
 
-#: src/lib/efreet/efreet_base.c:183
+#: src/lib/efreet/efreet_base.c:186
 msgid "Videos"
 msgstr "Videa"
 
-#: src/lib/elementary/elc_fileselector.c:1902
+#: src/lib/elementary/elc_fileselector.c:1892
 msgid "Up"
 msgstr "Nahoru"
 
-#: src/lib/elementary/elc_fileselector.c:1916
+#: src/lib/elementary/elc_fileselector.c:1906
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elementary/elc_fileselector.c:1935
+#: src/lib/elementary/elc_fileselector.c:1925
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:2230
-#: src/lib/elementary/elm_entry.c:1707 src/lib/elementary/elm_entry.c:1732
+#: src/lib/elementary/elc_fileselector.c:2216
+#: src/lib/elementary/elm_entry.c:1709 src/lib/elementary/elm_entry.c:1734
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/lib/elementary/elc_fileselector.c:2240
+#: src/lib/elementary/elc_fileselector.c:2226
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elementary/elc_hoversel.c:420 src/lib/elementary/elm_button.c:278
-#: src/lib/elementary/elm_check.c:212 src/lib/elementary/elm_gengrid.c:1442
-#: src/lib/elementary/elm_genlist.c:1729 src/lib/elementary/elm_list.c:2176
+#: src/lib/elementary/elc_hoversel.c:439 src/lib/elementary/elm_button.c:278
+#: src/lib/elementary/efl_ui_check.c:212 src/lib/elementary/elm_gengrid.c:1440
+#: src/lib/elementary/elm_genlist.c:1720 src/lib/elementary/elm_list.c:2176
 #: src/lib/elementary/elm_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1002 src/lib/elementary/elm_toolbar.c:2377
+#: src/lib/elementary/elm_spinner.c:1002 src/lib/elementary/elm_toolbar.c:2344
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
-#: src/lib/elementary/elc_hoversel.c:619
+#: src/lib/elementary/elc_hoversel.c:638
 msgid "Hoversel"
 msgstr ""
 
@@ -285,7 +285,7 @@ msgstr "popisek vícetlačítkového vstupu"
 msgid "multi button entry item"
 msgstr "položka vícetlačítkového vstupu"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1607
+#: src/lib/elementary/elc_multibuttonentry.c:1611
 msgid "multi button entry"
 msgstr "vícetlačítkový vstup"
 
@@ -294,19 +294,19 @@ msgid "Title"
 msgstr "Název"
 
 #: src/lib/elementary/elc_naviframe.c:993
-#: src/lib/elementary/elc_naviframe.c:1210
+#: src/lib/elementary/elc_naviframe.c:1211
 msgid "Back"
 msgstr "Zpět"
 
-#: src/lib/elementary/elc_naviframe.c:1308
+#: src/lib/elementary/elc_naviframe.c:1309
 msgid "Next"
 msgstr "Další"
 
-#: src/lib/elementary/elc_popup.c:298 src/lib/elementary/elc_popup.c:956
+#: src/lib/elementary/elc_popup.c:299 src/lib/elementary/elc_popup.c:959
 msgid "Popup Title"
 msgstr "Titulek vyskakujícího okna"
 
-#: src/lib/elementary/elc_popup.c:308 src/lib/elementary/elc_popup.c:1032
+#: src/lib/elementary/elc_popup.c:309 src/lib/elementary/elc_popup.c:1035
 msgid "Popup Body Text"
 msgstr "Text vyskakovacího okna"
 
@@ -362,21 +362,21 @@ msgstr "kalendářní měsíc"
 msgid "calendar year"
 msgstr "kalendářní rok"
 
-#: src/lib/elementary/elm_check.c:64 src/lib/elementary/elm_check.c:225
+#: src/lib/elementary/efl_ui_check.c:64 src/lib/elementary/efl_ui_check.c:225
 #: src/lib/elementary/elm_radio.c:120 src/lib/elementary/elm_radio.c:217
 msgid "State: On"
 msgstr "Stav: Zapnuto"
 
-#: src/lib/elementary/elm_check.c:75 src/lib/elementary/elm_check.c:237
+#: src/lib/elementary/efl_ui_check.c:75 src/lib/elementary/efl_ui_check.c:237
 #: src/lib/elementary/elm_radio.c:219
 msgid "State: Off"
 msgstr "Stav: Vypnuto"
 
-#: src/lib/elementary/elm_check.c:221 src/lib/elementary/elm_check.c:234
+#: src/lib/elementary/efl_ui_check.c:221 src/lib/elementary/efl_ui_check.c:234
 msgid "State"
 msgstr "Stav"
 
-#: src/lib/elementary/elm_check.c:315
+#: src/lib/elementary/efl_ui_check.c:315
 msgid "Check"
 msgstr "Ověřit"
 
@@ -420,11 +420,11 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "položka výběru barvy z palety"
 
-#: src/lib/elementary/elm_config.c:3787
+#: src/lib/elementary/elm_config.c:3764
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
-#: src/lib/elementary/elm_dayselector.c:408
+#: src/lib/elementary/elm_dayselector.c:405
 msgid "day selector item"
 msgstr "položka výběru dne"
 
@@ -432,27 +432,27 @@ msgstr "položka výběru dne"
 msgid "diskselector item"
 msgstr "položka výběru disků"
 
-#: src/lib/elementary/elm_entry.c:1697
+#: src/lib/elementary/elm_entry.c:1699
 msgid "Cut"
 msgstr "Vyjmout"
 
-#: src/lib/elementary/elm_entry.c:1700
+#: src/lib/elementary/elm_entry.c:1702
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: src/lib/elementary/elm_entry.c:1704 src/lib/elementary/elm_entry.c:1726
+#: src/lib/elementary/elm_entry.c:1706 src/lib/elementary/elm_entry.c:1728
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elementary/elm_entry.c:1719
+#: src/lib/elementary/elm_entry.c:1721
 msgid "Select"
 msgstr "Vybrat"
 
-#: src/lib/elementary/elm_entry.c:3804
+#: src/lib/elementary/elm_entry.c:3806
 msgid "Entry"
 msgstr "Vstup"
 
-#: src/lib/elementary/elm_gengrid.c:1472
+#: src/lib/elementary/elm_gengrid.c:1470
 msgid "Gengrid Item"
 msgstr "Položka mřížky"
 
@@ -464,7 +464,7 @@ msgstr "Index"
 msgid "Index Item"
 msgstr "Položka indexu"
 
-#: src/lib/elementary/elm_label.c:399
+#: src/lib/elementary/elm_label.c:408
 msgid "Label"
 msgstr "Popisek"
 
@@ -497,7 +497,7 @@ msgid "Radio"
 msgstr "Přepínač"
 
 #: src/lib/elementary/elm_segment_control.c:532
-#: src/lib/elementary/elm_toolbar.c:2379
+#: src/lib/elementary/elm_toolbar.c:2346
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
@@ -538,22 +538,22 @@ msgstr "odečítací tlačítko spinneru"
 msgid "spinner text"
 msgstr "spinner"
 
-#: src/lib/elementary/elm_toolbar.c:1834 src/lib/elementary/elm_toolbar.c:2435
+#: src/lib/elementary/elm_toolbar.c:1801 src/lib/elementary/elm_toolbar.c:2408
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elementary/elm_toolbar.c:2375
+#: src/lib/elementary/elm_toolbar.c:2342
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elementary/elm_toolbar.c:2381
+#: src/lib/elementary/elm_toolbar.c:2348
 msgid "Has menu"
 msgstr "Má nabídku"
 
-#: src/lib/elementary/elm_toolbar.c:2430
+#: src/lib/elementary/elm_toolbar.c:2403
 msgid "Unselected"
 msgstr "Nevybrané"
 
-#: src/lib/elementary/elm_toolbar.c:2447
+#: src/lib/elementary/elm_toolbar.c:2420
 msgid "Toolbar Item"
 msgstr "Položka panelu nástrojů"
