@@ -382,6 +382,13 @@ eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina_Debug_Dis
    session->dispatch_cb = disp_cb;
 }
 
+EAPI Eina_Debug_Dispatch_Cb
+eina_debug_session_dispatch_get(Eina_Debug_Session *session)
+{
+   if (session) return session->dispatch_cb;
+   else return NULL;
+}
+
 typedef struct
 {
    Eina_Module *handle;

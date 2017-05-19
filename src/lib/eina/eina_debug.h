@@ -215,6 +215,15 @@ EAPI void eina_debug_session_terminate(Eina_Debug_Session *session);
 EAPI void eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina_Debug_Dispatch_Cb disp_cb);
 
 /**
+ * @brief Get the dispatcher of a specific session
+ *
+ * @param session the session
+ *
+ * @return the session dispatcher
+ */
+EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *session);
+
+/**
  * @brief Dispatch a given packet according to its header.
  *
  * This function checks the header contained into the packet and invokes
