@@ -60,7 +60,7 @@
  */
 
 #ifdef EFL_EO_API_SUPPORT
-#include "efl_ui_check.eo.h"
+#include "efl_ui_check_eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_check_legacy.h"

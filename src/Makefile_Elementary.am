@@ -341,7 +341,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_calendar_legacy.h \
 	lib/elementary/elm_calendar_common.h \
 	lib/elementary/elm_check.h \
-	lib/elementary/efl_ui_check.eo.h \
+	lib/elementary/efl_ui_check_eo.h \
 	lib/elementary/elm_check_legacy.h \
 	lib/elementary/elm_clock.h \
 	lib/elementary/elm_clock_eo.h \
