@@ -414,13 +414,13 @@ ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
 EAPI void
 ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window)
 {
-   struct wl_surface *dsurface, *osurface;
+   struct wl_surface *dsurface = NULL, *osurface;
 
    EINA_SAFETY_ON_NULL_RETURN(input);
    EINA_SAFETY_ON_NULL_RETURN(input->data.drag.source);
-   EINA_SAFETY_ON_NULL_RETURN(drag_window);
 
-   dsurface = ecore_wl2_window_surface_get(drag_window);
+   if (drag_window)
+     dsurface = ecore_wl2_window_surface_get(drag_window);
 
    _ecore_wl2_input_ungrab(input);
 
