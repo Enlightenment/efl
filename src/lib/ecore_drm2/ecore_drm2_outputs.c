@@ -1235,19 +1235,13 @@ ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
 
    if (output->enabled)
      {
-        if (_ecore_drm2_use_atomic)
-          output->crtc_state->active.value = 1;
-
         ecore_drm2_fb_flip(NULL, output);
         ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_ON);
      }
    else
      {
         if (_ecore_drm2_use_atomic)
-          {
-             output->crtc_state->active.value = 0;
-             ecore_drm2_fb_flip(NULL, output);
-          }
+          ecore_drm2_fb_flip(NULL, output);
 
         ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_OFF);
         output->current.fb = NULL;
