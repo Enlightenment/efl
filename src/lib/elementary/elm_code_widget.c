@@ -599,6 +599,8 @@ _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
 
    grid = eina_list_data_get(eina_list_nth_list(pd->grids, pd->cursor_line - 1));
    evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
+   if (!rowy)  // EOF
+     rowy = cellh + viewh + viewy + oy;
 
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
    curx = (pd->cursor_col + gutter - 1) * cellw;
