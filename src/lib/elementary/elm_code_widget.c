@@ -727,6 +727,7 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
 
    grid = eina_list_nth(pd->grids, row - 1);
    evas_object_geometry_get(grid, x, y, NULL, NULL);
+
    if (x)
      *x += (col - 1 + gutter) * cellw;
    if (w)
@@ -1370,12 +1371,12 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    line = elm_code_file_line_get(code->file, row + 1);
    leading = elm_code_line_indent_get(line);
    elm_code_line_text_leading_whitespace_strip(line);
-   elm_code_line_text_insert(line, 0, leading, strlen(leading));
+   elm_code_widget_cursor_position_set(widget, row + 1, 1);
+   elm_code_widget_text_at_cursor_insert(widget, leading);
    free(oldtext);
 
    indent = elm_obj_code_widget_line_text_column_width_to_position(widget, line,
      strlen(leading));
-   elm_obj_code_widget_cursor_position_set(widget, row + 1, indent);
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    textlen = strlen(leading) + 2;
@@ -1419,8 +1420,6 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
         _elm_code_widget_change_selection_add(widget);
 
         elm_code_line_merge_up(line);
-
-        elm_obj_code_widget_cursor_position_set(widget, row - 1, position);
      }
    elm_code_widget_selection_clear(widget);
 // TODO construct and pass a change object
@@ -1852,6 +1851,8 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
 
         evas_object_textgrid_font_set(grid, pd->font_name, pd->font_size * elm_config_scale_get());
      }
+
+   elm_box_recalculate(pd->gridbox);
 }
 
 static void
@@ -1937,6 +1938,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
      _elm_code_widget_scroll_by(widget,
         (pd->gravity_x == 1.0 && ww > old_width) ? ww - old_width : 0,
         (pd->gravity_y == 1.0 && wh > old_height) ? wh - old_height : 0);
+   elm_box_recalculate(pd->gridbox);
 }
 
 EOAPI void
