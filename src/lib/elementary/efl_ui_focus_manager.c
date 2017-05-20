@@ -1436,6 +1436,9 @@ EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_logical_end(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Data *pd)
 {
    Node *child = pd->root;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child, NULL);
+
    //we need to return the most lower right element
 
    while(T(child).children)
