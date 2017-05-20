@@ -1,4 +1,4 @@
-class Focus.Test(Efl.Object, Efl.Ui.Focus.Object) {
+class Focus.Test(Efl.Object, Efl.Ui.Focus.Object, Efl.Gfx) {
     methods {
         size {
             params {
@@ -10,5 +10,6 @@ class Focus.Test(Efl.Object, Efl.Ui.Focus.Object) {
         Efl.Object.constructor;
         Efl.Ui.Focus.Object.focus_geometry { get; }
         Efl.Ui.Focus.Object.focus { set; }
+        Efl.Gfx.geometry { get; }
     }
 }
