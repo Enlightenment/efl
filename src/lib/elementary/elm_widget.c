@@ -1654,9 +1654,9 @@ _elm_widget_can_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool can_focu
           {
              o = elm_widget_parent_get(o);
              if (!o) break;
-             sd = efl_data_scope_get(o, MY_CLASS);
-             if (!sd || sd->child_can_focus) break;
-             sd->child_can_focus = EINA_TRUE;
+             ELM_WIDGET_DATA_GET(o, sdp);
+             if (!sdp || sdp->child_can_focus) break;
+             sdp->child_can_focus = EINA_TRUE;
           }
 
         efl_event_callback_array_add(obj, focus_callbacks(), NULL);
