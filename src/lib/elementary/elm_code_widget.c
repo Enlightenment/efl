@@ -599,8 +599,6 @@ _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
 
    grid = eina_list_data_get(eina_list_nth_list(pd->grids, pd->cursor_line - 1));
    evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
-   if (!rowy)  // EOF
-     rowy = cellh + viewh + viewy + oy;
 
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
    curx = (pd->cursor_col + gutter - 1) * cellw;
@@ -729,6 +727,7 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
 
    grid = eina_list_nth(pd->grids, row - 1);
    evas_object_geometry_get(grid, x, y, NULL, NULL);
+
    if (x)
      *x += (col - 1 + gutter) * cellw;
    if (w)
@@ -1372,12 +1371,12 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    line = elm_code_file_line_get(code->file, row + 1);
    leading = elm_code_line_indent_get(line);
    elm_code_line_text_leading_whitespace_strip(line);
-   elm_code_line_text_insert(line, 0, leading, strlen(leading));
+   elm_code_widget_cursor_position_set(widget, row + 1, 1);
+   elm_code_widget_text_at_cursor_insert(widget, leading);
    free(oldtext);
 
    indent = elm_obj_code_widget_line_text_column_width_to_position(widget, line,
      strlen(leading));
-   elm_obj_code_widget_cursor_position_set(widget, row + 1, indent);
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    textlen = strlen(leading) + 2;
@@ -1421,8 +1420,6 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
         _elm_code_widget_change_selection_add(widget);
 
         elm_code_line_merge_up(line);
-
-        elm_obj_code_widget_cursor_position_set(widget, row - 1, position);
      }
    elm_code_widget_selection_clear(widget);
 // TODO construct and pass a change object
@@ -1822,9 +1819,9 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
    existing = eina_list_count(pd->grids);
 
    // trim unneeded rows in our rendering
-   if (rows < existing)
+   if (rows + 1 < existing)
      {
-        for (i = existing - rows; i > 0; i--)
+        for (i = existing - rows + 1; i > 0; i--)
           {
              grid = eina_list_data_get(eina_list_last(pd->grids));
              evas_object_del(grid);
@@ -1834,10 +1831,10 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
         rows = existing;
      }
 
-   if (rows == existing)
+   if (rows + 1 == existing)
      return;
 
-   for (i = existing; i < rows; i++)
+   for (i = existing; i <= rows; i++)
      {
         grid = evas_object_textgrid_add(pd->gridbox);
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
