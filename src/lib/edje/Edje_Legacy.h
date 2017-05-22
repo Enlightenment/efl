@@ -97,6 +97,45 @@ EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char 
  */
 EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
+/**
+ * @brief Sets an Edje message handler function for a given Edje object.
+ *
+ * For scriptable programs on an Edje object's defining EDC file which send
+ * messages with the send_message() primitive, one can attach handler
+ * functions, to be called in the code which creates that object (see @ref
+ * edcref "the syntax" for EDC files).
+ *
+ * This function associates a message handler function and the attached data
+ * pointer to the object obj.
+ *
+ * See also @ref edje_object_message_send()
+ *
+ * @param[in] func The function to handle messages  coming from obj
+ * @param[in] data Auxiliary data to be passed to func
+ */
+EAPI void edje_object_message_handler_set(Edje_Object *obj, Edje_Message_Handler_Cb func, void *data);
+
+/**
+ * @brief Sends an (Edje) message to a given Edje object
+ *
+ * This function sends an Edje message to obj and to all of its child objects,
+ * if it has any (swallowed objects are one kind of child object). type and msg
+ *  must be matched accordingly, as documented in #Edje_Message_Type.
+ *
+ * The id argument as a form of code and theme defining a common interface on
+ * message communication. One should define the same IDs on both code and EDC
+ * declaration (see @ref edcref "the syntax" for EDC files), to individualize
+ * messages (binding them to a given context).
+ *
+ * The function to handle messages arriving  from obj is set with
+ * edje_object_message_handler_set().
+ *
+ * @param[in] type The type of message to send to obj
+ * @param[in] id A identification number for the message to be sent
+ * @param[in] msg The message's body, a struct depending on type
+ */
+EAPI void edje_object_message_send(Edje_Object *obj, Edje_Message_Type type, int id, void *msg);
+
  /**
  * @deprecated use evas_object_size_hint_min_set() instead.
  * @brief Sets the object minimum size.

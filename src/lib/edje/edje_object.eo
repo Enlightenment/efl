@@ -461,25 +461,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             key: string; [[The data field's key string]]
          }
       }
-      @property message_handler {
-         set {
-            [[Sets an Edje message handler function for a given Edje object.
-
-              For scriptable programs on an Edje object's defining EDC file which
-              send messages with the send_message() primitive, one can attach
-              handler functions, to be called in the code which creates
-              that object (see \@ref edcref "the syntax" for EDC files).
-
-              This function associates a message handler function and the
-              attached data pointer to the object obj.
-
-              See also @.message_send()]]
-         }
-         values {
-            func: Edje.Message_Handler_Cb; [[The function to handle messages  coming from obj]]
-            data: void_ptr; [[Auxiliary data to be passed to func]]
-         }
-      }
       message_send {
          [[Sends an (Edje) message to a given Edje object
 
@@ -498,10 +479,10 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
            edje_object_message_handler_set().]]
 
          params {
-            @in type: Edje.Message_Type; [[The type of message to send to obj]]
             @in id: int; [[A identification number for the message to be sent]]
-            @in msg: void_ptr; [[The message's body, a struct depending on type]]
+            @in msg: const(generic_value); [[The message's payload]]
          }
+         legacy: null;
       }
       signal_callback_add {
          [[Adds a callback for an arriving Edje signal, emitted by

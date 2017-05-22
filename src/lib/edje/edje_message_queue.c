@@ -32,15 +32,9 @@ _edje_object_message_popornot_send(Evas_Object *obj, Edje_Message_Type type, int
 }
 
 EOLIAN void
-_edje_object_message_send(Eo *obj, Edje *_pd EINA_UNUSED, Edje_Message_Type type, int id, void *msg)
+_edje_object_message_send(Eo *obj, Edje *pd EINA_UNUSED, int id, const Eina_Value *val)
 {
-   _edje_object_message_popornot_send(obj, type, id, msg, EINA_FALSE);
-}
-
-EOLIAN void
-_edje_object_message_handler_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Message_Handler_Cb func, void *data)
-{
-   _edje_message_cb_set(ed, func, data);
+   /* TODO */
 }
 
 EOLIAN void
@@ -127,12 +121,6 @@ end:
      tmp_msgq_restart = 0;
    else
      tmp_msgq_restart = 1;
-}
-
-EAPI void
-edje_message_signal_process(void)
-{
-   _edje_message_queue_process();
 }
 
 static Eina_Bool
@@ -887,3 +875,26 @@ _edje_message_del(Edje *ed)
      }
 }
 
+/* Legacy EAPI */
+
+EAPI void
+edje_object_message_send(Eo *obj, Edje_Message_Type type, int id, void *msg)
+{
+   _edje_object_message_popornot_send(obj, type, id, msg, EINA_FALSE);
+}
+
+EAPI void
+edje_message_signal_process(void)
+{
+   _edje_message_queue_process();
+}
+
+EAPI void
+edje_object_message_handler_set(Eo *obj, Edje_Message_Handler_Cb func, void *data)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   _edje_message_cb_set(ed, func, data);
+}
