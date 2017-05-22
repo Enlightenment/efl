@@ -167,36 +167,4 @@ _efl_input_value_mark(Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 
 #define _efl_input_value_mask(key) (1u << (int) key)
 
-/* Internal EO APIs */
-
-#undef EAPI
-
-#ifdef _WIN32
-# ifdef EFL_EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
-# else
-#  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EFL_BUILD */
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif /* ! _WIN32 */
-
-EOAPI void *efl_input_legacy_info_get(const Eo *obj);
-EOAPI Eo *efl_input_instance_get(const Eo *obj, Efl_Object *owner, void **priv);
-
-#undef EAPI
-#define EAPI
-
 #endif
