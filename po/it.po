@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-05-19 16:43+0900\n"
+"POT-Creation-Date: 2017-05-22 17:32+0900\n"
 "PO-Revision-Date: 2017-01-01 16:29+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
@@ -259,7 +259,7 @@ msgstr "Annulla"
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elementary/elc_hoversel.c:439 src/lib/elementary/elm_button.c:278
+#: src/lib/elementary/elc_hoversel.c:439 src/lib/elementary/efl_ui_button.c:278
 #: src/lib/elementary/efl_ui_check.c:212 src/lib/elementary/elm_gengrid.c:1440
 #: src/lib/elementary/elm_genlist.c:1720 src/lib/elementary/elm_list.c:2176
 #: src/lib/elementary/elm_radio.c:216
@@ -309,11 +309,11 @@ msgstr "Testo corpo popup"
 msgid "Bubble"
 msgstr "Bolla"
 
-#: src/lib/elementary/elm_button.c:69
+#: src/lib/elementary/efl_ui_button.c:69
 msgid "Clicked"
 msgstr "Cliccato"
 
-#: src/lib/elementary/elm_button.c:303
+#: src/lib/elementary/efl_ui_button.c:303
 msgid "Button"
 msgstr "Bottone"
 

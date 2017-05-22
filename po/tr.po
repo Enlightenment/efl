@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-05-19 16:43+0900\n"
+"POT-Creation-Date: 2017-05-22 17:32+0900\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -260,7 +260,7 @@ msgstr "İptal"
 msgid "OK"
 msgstr "Tamam"
 
-#: src/lib/elementary/elc_hoversel.c:439 src/lib/elementary/elm_button.c:278
+#: src/lib/elementary/elc_hoversel.c:439 src/lib/elementary/efl_ui_button.c:278
 #: src/lib/elementary/efl_ui_check.c:212 src/lib/elementary/elm_gengrid.c:1440
 #: src/lib/elementary/elm_genlist.c:1720 src/lib/elementary/elm_list.c:2176
 #: src/lib/elementary/elm_radio.c:216
@@ -310,11 +310,11 @@ msgstr "Pencere gövde metni"
 msgid "Bubble"
 msgstr "Balon"
 
-#: src/lib/elementary/elm_button.c:69
+#: src/lib/elementary/efl_ui_button.c:69
 msgid "Clicked"
 msgstr "Tıklanmış"
 
-#: src/lib/elementary/elm_button.c:303
+#: src/lib/elementary/efl_ui_button.c:303
 msgid "Button"
 msgstr "Düğme"
 
