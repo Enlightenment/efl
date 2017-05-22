@@ -133,7 +133,7 @@ _ ## type ## _efl_text_text_set(Eo *obj, Type *pd EINA_UNUSED, const char *text)
 } \
 \
 EOLIAN static const char * \
-_ ## type ## _efl_text_text_get(Eo *obj, Elm_Button_Data *pd EINA_UNUSED) \
+_ ## type ## _efl_text_text_get(Eo *obj, Efl_Ui_Button_Data *pd EINA_UNUSED) \
 { \
    return elm_layout_text_get(obj, NULL); \
 }

@@ -164,19 +164,19 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                   efl_gfx_visible_set(efl_added, 1));
 
    // FIXME: button EO API
-   efl_add(ELM_BUTTON_CLASS, win,
+   efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle mask"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_mask, ly),
            efl_pack(box2, efl_added),
            efl_gfx_visible_set(efl_added, 1));
 
-   efl_add(ELM_BUTTON_CLASS, win,
+   efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle map"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_map, ly),
            efl_pack(box2, efl_added),
            efl_gfx_visible_set(efl_added, 1));
 
-   efl_add(ELM_BUTTON_CLASS, win,
+   efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Rotate Window"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _rotate_win, win),
            efl_pack(box2, efl_added),

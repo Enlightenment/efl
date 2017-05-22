@@ -23,7 +23,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    // win.title_set("Hello, World!");
    win.autohide_set(true);
 
-   ::elm::Button btn(win);
+   efl::ui::Button btn(win);
    btn.eo_cxx::elm::Layout::text_set(nullptr,"Good-Bye, World!");
    btn.eo_cxx::efl::Gfx::size_set(120, 30);
    btn.eo_cxx::efl::Gfx::position_set(60, 15);

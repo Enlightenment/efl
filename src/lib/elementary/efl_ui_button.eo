@@ -1,4 +1,4 @@
-class Elm.Button (Elm.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat, Efl.Text,
+class Efl.Ui.Button (Elm.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat, Efl.Text,
                   Elm.Interface.Atspi_Widget_Action)
 {
    [[Push-button widget
@@ -7,7 +7,6 @@ class Elm.Button (Elm.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat, Efl.Text,
    and it also has an autorepeat feature.
    ]]
    legacy_prefix: elm_button;
-   eo_prefix: elm_obj_button;
    methods {
    }
    implements {

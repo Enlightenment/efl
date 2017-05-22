@@ -1,4 +1,4 @@
-class Elm.Fileselector_Button (Elm.Button, Elm.Interface.Fileselector)
+class Elm.Fileselector_Button (Efl.Ui.Button, Elm.Interface.Fileselector)
 {
    [[Elementary fileselector button class]]
    event_prefix: elm_fileselector_button;

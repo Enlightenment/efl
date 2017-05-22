@@ -84,7 +84,7 @@ my_efl_ui_text_anchor_hover_opened(void *data EINA_UNUSED, const Efl_Event *even
 
    Efl_Ui_Text_Anchor_Hover_Info *ei = event->info;
 
-   bt = efl_add(ELM_BUTTON_CLASS, en);
+   bt = efl_add(EFL_UI_BUTTON_CLASS, en);
    elm_object_text_set(bt, ei->anchor_info->name);
    evas_object_show(bt);
    elm_object_part_content_set(ei->hover, "middle", bt);

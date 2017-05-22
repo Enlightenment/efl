@@ -368,7 +368,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                   efl_gfx_visible_set(efl_added, 1));
       efl_pack(box2, o);
 
-      o = efl_add(ELM_BUTTON_CLASS, win,
+      o = efl_add(EFL_UI_BUTTON_CLASS, win,
                   efl_text_set(efl_added, "Flip"),
                   efl_gfx_size_hint_weight_set(efl_added, 0.0, 1.0),
                   efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),

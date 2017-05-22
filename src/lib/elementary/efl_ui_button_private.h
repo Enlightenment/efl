@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_BUTTON_H
-#define ELM_WIDGET_BUTTON_H
+#ifndef EFL_UI_BUTTON_PRIVATE_H
+#define EFL_UI_BUTTON_PRIVATE_H
 
 #include "Elementary.h"
 
@@ -24,7 +24,7 @@
 /**
  * Base widget smart data extended with button instance data.
  */
-typedef struct _Elm_Button_Data
+typedef struct _Efl_Ui_button_Data
 {
    /* auto-repeat stuff */
    double                ar_initial_timeout; /**< Time to wait until first auto-repeated click is generated */
@@ -34,14 +34,14 @@ typedef struct _Elm_Button_Data
 
    Eina_Bool             autorepeat : 1; /**< Whether auto-repetition of clicks is enabled or not (bound to _Elm_Button_Smart_Class::admits_autorepeat) */
    Eina_Bool             repeating : 1; /**< Whether auto-repetition is going on */
-} Elm_Button_Data;
+} Efl_Ui_Button_Data;
 
 /**
  * @}
  */
 
 #define ELM_BUTTON_DATA_GET(o, sd) \
-  Elm_Button_Data * sd = efl_data_scope_get(o, ELM_BUTTON_CLASS)
+  Efl_Ui_Button_Data * sd = efl_data_scope_get(o, EFL_UI_BUTTON_CLASS)
 
 #define ELM_BUTTON_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_BUTTON_DATA_GET(o, ptr);                       \
@@ -62,7 +62,7 @@ typedef struct _Elm_Button_Data
     }
 
 #define ELM_BUTTON_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), ELM_BUTTON_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_BUTTON_CLASS))) \
     return
 
 #endif

@@ -6,7 +6,7 @@
 #include "Elementary.h"
 #include "elm_priv.h"
 #include "efl_ui_nstate.eo.h"
-#include "elm_widget_button.h"
+#include "efl_ui_button_private.h"
 
 #define MY_CLASS EFL_UI_NSTATE_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Nstate"
