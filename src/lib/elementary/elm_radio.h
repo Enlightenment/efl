@@ -65,7 +65,7 @@
  */
 
 #ifdef EFL_EO_API_SUPPORT
-#include "elm_radio_eo.h"
+#include "efl_ui_radio_eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_radio_legacy.h"

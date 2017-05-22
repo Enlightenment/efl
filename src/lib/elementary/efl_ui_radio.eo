@@ -1,8 +1,8 @@
-class Elm.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
+class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary radio class]]
    legacy_prefix: elm_radio;
-   eo_prefix: elm_obj_radio;
+   //eo_prefix: elm_obj_radio;
    event_prefix: elm_radio;
    methods {
       @property state_value {
@@ -71,7 +71,7 @@ class Elm.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
          ]]
 
          params {
-            @in group: Elm.Radio; [[Any radio object whose group the obj is
+            @in group: Efl.Ui.Radio; [[Any radio object whose group the obj is
                                     to join.]]
          }
       }

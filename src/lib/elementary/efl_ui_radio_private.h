@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_RADIO_H
-#define ELM_WIDGET_RADIO_H
+#ifndef EFL_UI_RADIO_PRIVATE_H
+#define EFL_UI_RADIO_PRIVATE_H
 
 #include "Elementary.h"
 
@@ -23,7 +23,7 @@
 /**
  * Base layout smart data extended with radio instance data.
  */
-typedef struct _Elm_Radio_Data       Elm_Radio_Data;
+typedef struct _Efl_Ui_Radio_Data       Efl_Ui_Radio_Data;
 typedef struct _Group                Group;
 
 struct _Group
@@ -33,7 +33,7 @@ struct _Group
    Eina_List *radios;
 };
 
-struct _Elm_Radio_Data
+struct _Efl_Ui_Radio_Data
 {
    int                   value;
    Eina_Bool             state;
@@ -46,7 +46,7 @@ struct _Elm_Radio_Data
  */
 
 #define ELM_RADIO_DATA_GET(o, sd) \
-  Elm_Radio_Data * sd = efl_data_scope_get(o, ELM_RADIO_CLASS)
+  Efl_Ui_Radio_Data * sd = efl_data_scope_get(o, EFL_UI_RADIO_CLASS)
 
 #define ELM_RADIO_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_RADIO_DATA_GET(o, ptr);                        \
@@ -67,7 +67,7 @@ struct _Elm_Radio_Data
     }
 
 #define ELM_RADIO_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), ELM_RADIO_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_RADIO_CLASS))) \
     return
 
 #endif

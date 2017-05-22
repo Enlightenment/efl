@@ -8,4 +8,4 @@
  */
 EAPI Evas_Object                 *elm_radio_add(Evas_Object *parent);
 
-#include "elm_radio.eo.legacy.h"
+#include "efl_ui_radio.eo.legacy.h"

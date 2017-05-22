@@ -9,12 +9,12 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_widget_radio.h"
+#include "efl_ui_radio_private.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_RADIO_CLASS
+#define MY_CLASS EFL_UI_RADIO_CLASS
 
-#define MY_CLASS_NAME "Elm_Radio"
+#define MY_CLASS_NAME "Efl.Ui.Radio"
 #define MY_CLASS_NAME_LEGACY "elm_radio"
 
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
@@ -79,7 +79,7 @@ _state_set(Evas_Object *obj, Eina_Bool state, Eina_Bool activate)
 }
 
 static void
-_state_set_all(Elm_Radio_Data *sd, Eina_Bool activate)
+_state_set_all(Efl_Ui_Radio_Data *sd, Eina_Bool activate)
 {
    const Eina_List *l;
    Eina_Bool disabled = EINA_FALSE;
@@ -132,7 +132,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_radio_elm_widget_widget_event(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_efl_ui_radio_elm_widget_widget_event(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    Evas_Event_Key_Down *ev = event_info;
@@ -164,7 +164,7 @@ _icon_signal_emit(Evas_Object *obj)
 }
 
 EOLIAN static Elm_Theme_Apply
-_elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
+_efl_ui_radio_elm_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
@@ -220,7 +220,7 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_radio_efl_canvas_group_group_add(Eo *obj, Elm_Radio_Data *priv)
+_efl_ui_radio_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Radio_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -250,7 +250,7 @@ _elm_radio_efl_canvas_group_group_add(Eo *obj, Elm_Radio_Data *priv)
 }
 
 EOLIAN static void
-_elm_radio_efl_canvas_group_group_del(Eo *obj, Elm_Radio_Data *sd)
+_efl_ui_radio_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Radio_Data *sd)
 {
    sd->group->radios = eina_list_remove(sd->group->radios, obj);
    if (!sd->group->radios) free(sd->group);
@@ -259,7 +259,7 @@ _elm_radio_efl_canvas_group_group_del(Eo *obj, Elm_Radio_Data *sd)
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_radio_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Radio_Data *_pd EINA_UNUSED)
+_efl_ui_radio_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *_pd EINA_UNUSED)
 {
    return _text_aliases;
 }
@@ -273,7 +273,7 @@ elm_radio_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_radio_efl_object_constructor(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED)
+_efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -284,7 +284,7 @@ _elm_radio_efl_object_constructor(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_radio_group_add(Eo *obj, Elm_Radio_Data *sd, Evas_Object *group)
+_efl_ui_radio_group_add(Eo *obj, Efl_Ui_Radio_Data *sd, Evas_Object *group)
 {
    ELM_RADIO_DATA_GET(group, sdg);
 
@@ -309,7 +309,7 @@ _elm_radio_group_add(Eo *obj, Elm_Radio_Data *sd, Evas_Object *group)
 }
 
 EOLIAN static void
-_elm_radio_state_value_set(Eo *obj, Elm_Radio_Data *sd, int value)
+_efl_ui_radio_state_value_set(Eo *obj, Efl_Ui_Radio_Data *sd, int value)
 {
    sd->value = value;
    if (sd->value == sd->group->value) _state_set(obj, EINA_TRUE, EINA_FALSE);
@@ -317,13 +317,13 @@ _elm_radio_state_value_set(Eo *obj, Elm_Radio_Data *sd, int value)
 }
 
 EOLIAN static int
-_elm_radio_state_value_get(Eo *obj EINA_UNUSED, Elm_Radio_Data *sd)
+_efl_ui_radio_state_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    return sd->value;
 }
 
 EOLIAN static void
-_elm_radio_value_set(Eo *obj EINA_UNUSED, Elm_Radio_Data *sd, int value)
+_efl_ui_radio_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int value)
 {
    if (value == sd->group->value) return;
    sd->group->value = value;
@@ -332,13 +332,13 @@ _elm_radio_value_set(Eo *obj EINA_UNUSED, Elm_Radio_Data *sd, int value)
 }
 
 EOLIAN static int
-_elm_radio_value_get(Eo *obj EINA_UNUSED, Elm_Radio_Data *sd)
+_efl_ui_radio_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    return sd->group->value;
 }
 
 EOLIAN static void
-_elm_radio_value_pointer_set(Eo *obj EINA_UNUSED, Elm_Radio_Data *sd, int *valuep)
+_efl_ui_radio_value_pointer_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int *valuep)
 {
    if (valuep)
      {
@@ -353,7 +353,7 @@ _elm_radio_value_pointer_set(Eo *obj EINA_UNUSED, Elm_Radio_Data *sd, int *value
 }
 
 EOLIAN static Evas_Object*
-_elm_radio_selected_object_get(Eo *obj EINA_UNUSED, Elm_Radio_Data *sd)
+_efl_ui_radio_selected_object_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    Eina_List *l;
    Evas_Object *child;
@@ -369,7 +369,7 @@ _elm_radio_selected_object_get(Eo *obj EINA_UNUSED, Elm_Radio_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_radio_elm_widget_activate(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED, Elm_Activate act)
+_efl_ui_radio_elm_widget_activate(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED, Elm_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
@@ -380,13 +380,13 @@ _elm_radio_elm_widget_activate(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED, Elm_Act
 }
 
 EOLIAN static void
-_elm_radio_class_constructor(Efl_Class *klass)
+_efl_ui_radio_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 EOLIAN const Elm_Atspi_Action *
-_elm_radio_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Radio_Data *pd EINA_UNUSED)
+_efl_ui_radio_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *pd EINA_UNUSED)
 {
    static Elm_Atspi_Action atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
@@ -396,11 +396,11 @@ _elm_radio_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
 }
 
 EOLIAN Elm_Atspi_State_Set
-_elm_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Radio_Data *pd EINA_UNUSED)
+_efl_ui_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED)
 {
    Elm_Atspi_State_Set ret;
 
-   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, ELM_RADIO_CLASS));
+   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, EFL_UI_RADIO_CLASS));
    if (obj == elm_radio_selected_object_get(obj))
      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_CHECKED);
 
@@ -409,7 +409,7 @@ _elm_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Radio_Data 
 
 /* Internal EO APIs and hidden overrides */
 
-#define ELM_RADIO_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_radio)
+#define EFL_UI_RADIO_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_radio)
 
-#include "elm_radio.eo.c"
+#include "efl_ui_radio.eo.c"
