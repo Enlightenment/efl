@@ -569,6 +569,9 @@ struct _Efl_Canvas_Text_Annotation
    Eina_Bool                         is_item : 1; /**< indicates it is an item/object placeholder */
 };
 
+#define _FMT(x) (o->default_format.format.x)
+#define _FMT_INFO(x) (o->default_format.info.x)
+
 /* Size of the index array */
 #define TEXTBLOCK_PAR_INDEX_SIZE 10
 struct _Evas_Object_Textblock
@@ -595,6 +598,22 @@ struct _Evas_Object_Textblock
    struct {
       int                              l, r, t, b;
    } style_pad;
+   struct {
+      Evas_Object_Textblock_Format   format;
+      struct {
+         Eina_Stringshare               *font;
+         Evas_Font_Size                  size;
+         Eina_Stringshare               *font_source;
+         Eina_Stringshare               *font_fallbacks;
+         Eina_Stringshare               *font_lang;
+         unsigned int                    font_weight;
+         unsigned int                    font_slant;
+         unsigned int                    font_width;
+         Efl_Text_Style_Effect_Type      effect;
+         Efl_Text_Style_Shadow_Direction shadow_direction;
+         Efl_Text_Format_Wrap            wrap;
+      } info;
+   } default_format;
    double                              valign;
    Eina_Stringshare                   *markup_text;
    char                               *utf8;
@@ -622,6 +641,8 @@ struct _Evas_Object_Textblock
    Eina_Bool                           legacy_newline : 1;
    Eina_Bool                           inherit_paragraph_direction : 1;
    Eina_Bool                           changed_paragraph_direction : 1;
+   Eina_Bool                           multiline : 1;
+   Eina_Bool                           wrap_changed : 1;
 };
 
 struct _Evas_Textblock_Selection_Iterator
@@ -3292,6 +3313,8 @@ static Evas_Object_Textblock_Format *
 _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       Evas_Object_Textblock_Node_Format *fnode)
 {
+   Efl_Canvas_Text_Data *o = c->o;
+
    if (fmt)
      {
         fmt = _format_dup(c->obj, fmt);
@@ -3302,22 +3325,36 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
      {
         fmt = calloc(1, sizeof(Evas_Object_Textblock_Format));
         c->format_stack  = eina_list_prepend(c->format_stack, fmt);
+        *fmt = c->o->default_format.format;
         fmt->ref = 1;
-        fmt->halign = 0.0;
-        fmt->halign_auto = EINA_TRUE;
-        fmt->valign = -1.0;
-        fmt->style = EVAS_TEXT_STYLE_PLAIN;
-        fmt->tabstops = 32;
-        fmt->linesize = 0;
-        fmt->linerelsize = 0.0;
-        fmt->linegap = 0;
-        fmt->underline_dash_width = 6;
-        fmt->underline_dash_gap = 2;
-        fmt->underline_height = 1.0;
-        fmt->linerelgap = 0.0;
-        fmt->password = 1;
-        fmt->ellipsis = -1;
+
+        // Apply font if specified
+        if (_FMT_INFO(font))
+          {
+             Evas_Object_Protected_Data *evas_obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
+
+             if (fmt->font.fdesc)
+               {
+                  evas_font_desc_unref(fmt->font.fdesc);
+               }
+             fmt->font.fdesc = evas_font_desc_new();
+
+             evas_font_name_parse(fmt->font.fdesc, _FMT_INFO(font));
+             eina_stringshare_replace(&(fmt->font.fdesc->lang),
+                   evas_font_lang_normalize("auto"));
+             eina_stringshare_replace(&(fmt->font.fdesc->fallbacks),
+                   _FMT_INFO(font_fallbacks));
+
+             fmt->font.size = _FMT_INFO(size);
+             fmt->font.fdesc->weight = _FMT_INFO(font_weight);
+             fmt->font.fdesc->slant = _FMT_INFO(font_slant);
+             fmt->font.fdesc->width = _FMT_INFO(font_width);
+             fmt->font.fdesc->lang = _FMT_INFO(font_lang);
+             fmt->font.font = evas_font_load(evas_obj->layer->evas->evas, fmt->font.fdesc,
+                   fmt->font.source, (int)(((double) _FMT_INFO(size)) * evas_obj->cur->scale));
+          }
      }
+
    return fmt;
 }
 
@@ -5400,7 +5437,8 @@ _layout_par(Ctxt *c)
          * and we aren't just calculating. */
         if (!c->par->text_node->is_new && !c->par->text_node->dirty &&
               !c->width_changed && c->par->lines &&
-              !c->o->have_ellipsis && !c->o->obstacle_changed)
+              !c->o->have_ellipsis && !c->o->obstacle_changed &&
+              !c->o->wrap_changed)
           {
              Evas_Object_Textblock_Line *ln;
              /* Update c->line_no */
@@ -5575,7 +5613,8 @@ _layout_par(Ctxt *c)
                  ((c->y + ellip_h_thresh >
                    c->h - c->o->style_pad.t - c->o->style_pad.b) ||
                      (!it->format->wrap_word && !it->format->wrap_char &&
-                         !it->format->wrap_mixed && !it->format->wrap_hyphenation)))
+                         !it->format->wrap_mixed && !it->format->wrap_hyphenation) ||
+                     !c->o->multiline))
                {
                   _layout_handle_ellipsis(c, it, i);
                   ret = 1;
@@ -5583,7 +5622,8 @@ _layout_par(Ctxt *c)
                }
              /* If we want to wrap and it's worth checking for wrapping
               * (i.e there's actually text). */
-             else if (((wrap > 0) || it->format->wrap_word || it->format->wrap_char ||
+             else if (c->o->multiline &&
+                   ((wrap > 0) || it->format->wrap_word || it->format->wrap_char ||
                 it->format->wrap_mixed || it->format->wrap_hyphenation) && it->text_node)
                {
                   size_t line_start;
@@ -5805,7 +5845,8 @@ _layout_par(Ctxt *c)
                   /* If it's a newline, and we are not in newline compat
                    * mode, or we are in newline compat mode, and this is
                    * not used as a paragraph separator, advance */
-                  if (fi->item && _IS_LINE_SEPARATOR(fi->item) &&
+                  if (c->o->multiline &&
+                        fi->item && _IS_LINE_SEPARATOR(fi->item) &&
                         (!c->o->legacy_newline ||
                          eina_list_next(i)))
                     {
@@ -6263,6 +6304,11 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
         Eina_List *itr;
         Evas_Textblock_Style *style;
         Eina_Bool finalize = EINA_FALSE;
+        if (!c->fmt)
+          {
+             c->fmt = _layout_format_push(c, NULL, NULL);
+             finalize = EINA_TRUE;
+          }
         if ((c->o->style) && (c->o->style->default_tag))
           {
              c->fmt = _layout_format_push(c, NULL, NULL);
@@ -6274,10 +6320,6 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
           {
              if ((style) && (style->default_tag))
                {
-                  if (!c->fmt)
-                    {
-                       c->fmt = _layout_format_push(c, NULL, NULL);
-                    }
                   _format_fill(c->obj, c->fmt, style->default_tag);
                   finalize = EINA_TRUE;
                }
@@ -6429,6 +6471,7 @@ _relayout(const Evas_Object *eo_obj)
    o->formatted.valid = 1;
    o->formatted.oneline_h = 0;
    o->last_w = obj->cur->geometry.w;
+   o->wrap_changed = EINA_FALSE;
    LYDBG("ZZ: --------- layout %p @ %ix%i = %ix%i\n", eo_obj, obj->cur->geometry.w, obj->cur->geometry.h, o->formatted.w, o->formatted.h);
    o->last_h = obj->cur->geometry.h;
    if ((o->paragraphs) && (!EINA_INLIST_GET(o->paragraphs)->next) &&
@@ -6559,7 +6602,8 @@ evas_object_textblock_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
+   Evas_Object *eo_obj = efl_add(MY_CLASS, e,
+         efl_text_format_multiline_set(efl_added, EINA_TRUE));
    return eo_obj;
 }
 
@@ -6582,6 +6626,22 @@ _efl_canvas_text_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Text_Data *class_
    o->cursors = eina_list_remove_list(o->cursors, o->cursors);
    _format_command_init();
    evas_object_textblock_init(eo_obj);
+
+   _FMT(ref) = 1;
+   _FMT(halign) = 0.0;
+   _FMT(halign_auto) = EINA_TRUE;
+   _FMT(valign) = -1.0;
+   _FMT(style) = EVAS_TEXT_STYLE_PLAIN;
+   _FMT(tabstops) = 32;
+   _FMT(linesize) = 0;
+   _FMT(linerelsize) = 0.0;
+   _FMT(linegap) = 0;
+   _FMT(underline_dash_width) = 6;
+   _FMT(underline_dash_gap) = 2;
+   _FMT(underline_height) = 1.0;
+   _FMT(linerelgap) = 0.0;
+   _FMT(password) = 1;
+   _FMT(ellipsis) = -1;
 
    return eo_obj;
 }
@@ -12892,6 +12952,7 @@ evas_object_textblock_init(Evas_Object *eo_obj)
    evas_object_textblock_text_markup_set(eo_obj, "");
 
    o->legacy_newline = EINA_TRUE;
+   o->multiline = EINA_FALSE;
 #ifdef BIDI_SUPPORT
    o->inherit_paragraph_direction = EINA_TRUE;
 #endif
@@ -14826,6 +14887,656 @@ _efl_canvas_text_annotation_positions_get(Eo *eo_obj,
 
    _textblock_cursor_pos_at_fnode_set(eo_obj, start, annotation->start_node);
    _textblock_cursor_pos_at_fnode_set(eo_obj, end, annotation->end_node);
+}
+
+static void
+_canvas_text_format_changed(Eo *eo_obj, Efl_Canvas_Text_Data *o)
+{
+   o->format_changed = EINA_TRUE;
+   _evas_textblock_invalidate_all(o);
+   _evas_textblock_changed(o, eo_obj);
+   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+}
+
+/* Efl.Text.Font interface implementation */
+
+static void
+_efl_canvas_text_efl_text_font_font_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const char *font EINA_UNUSED, int size EINA_UNUSED)
+{
+   Eina_Bool changed = EINA_FALSE;
+
+   Eina_Stringshare *nfont;
+
+   if (o->default_format.info.size != size)
+     {
+        o->default_format.info.size = size;
+        changed = EINA_TRUE;
+     }
+
+   if (o->default_format.info.font != font)
+     {
+        nfont = eina_stringshare_add(font);
+        if (nfont == _FMT_INFO(font))
+          {
+             /* Already stringshared here, unref */
+             eina_stringshare_del(nfont);
+          }
+        else
+          {
+             // Set immediately, load font later
+             _FMT_INFO(font) = nfont;
+             changed = EINA_TRUE;
+          }
+     }
+
+   if (changed)
+     {
+        _canvas_text_format_changed(obj, o);
+     }
+}
+
+static void
+_efl_canvas_text_efl_text_font_font_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const char **font EINA_UNUSED, int *size EINA_UNUSED)
+{
+   if (font) *font = o->default_format.info.font;
+   if (size) *size = o->default_format.info.size;
+}
+
+static void
+_efl_canvas_text_efl_text_font_font_source_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const char *font_source EINA_UNUSED)
+{
+   Eina_Stringshare *nfont_source;
+   if (o->default_format.info.font_source != font_source)
+     {
+        nfont_source = eina_stringshare_add(font_source);
+        if (nfont_source == _FMT_INFO(font_source))
+          {
+             /* Already stringshared here, unref */
+             eina_stringshare_del(nfont_source);
+          }
+        else
+          {
+             // Set immediately, load font_source later
+             _FMT_INFO(font_source) = nfont_source;
+             _canvas_text_format_changed(obj, o);
+          }
+     }
+}
+
+static const char*
+_efl_canvas_text_efl_text_font_font_source_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT_INFO(font_source);
+}
+
+static void
+_efl_canvas_text_efl_text_font_font_fallbacks_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const char *font_fallbacks EINA_UNUSED)
+{
+   Eina_Stringshare *nfont_fallbacks;
+   if (o->default_format.info.font_fallbacks != font_fallbacks)
+     {
+        nfont_fallbacks = eina_stringshare_add(font_fallbacks);
+        if (nfont_fallbacks == _FMT_INFO(font_fallbacks))
+          {
+             /* Already stringshared here, unref */
+             eina_stringshare_del(nfont_fallbacks);
+          }
+        else
+          {
+             // Set immediately, load font_fallbacks later
+             _FMT_INFO(font_fallbacks) = nfont_fallbacks;
+             _canvas_text_format_changed(obj, o);
+          }
+     }
+}
+
+static const char*
+_efl_canvas_text_efl_text_font_font_fallbacks_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT_INFO(font_fallbacks);
+}
+
+static void
+_efl_canvas_text_efl_text_font_font_lang_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const char *font_lang EINA_UNUSED)
+{
+   Eina_Stringshare *nfont_lang;
+   if (o->default_format.info.font_lang != font_lang)
+     {
+        nfont_lang = eina_stringshare_add(font_lang);
+        if (nfont_lang == _FMT_INFO(font_lang))
+          {
+             /* Already stringshared here, unref */
+             eina_stringshare_del(nfont_lang);
+          }
+        else
+          {
+             // Set immediately, load font_lang later
+             _FMT_INFO(font_lang) = nfont_lang;
+             _canvas_text_format_changed(obj, o);
+          }
+     }
+}
+
+static const char*
+_efl_canvas_text_efl_text_font_font_lang_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT_INFO(font_lang);
+}
+
+static void
+_efl_canvas_text_efl_text_font_font_weight_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Font_Weight font_weight EINA_UNUSED)
+{
+   if (_FMT_INFO(font_weight) == font_weight) return;
+   _FMT_INFO(font_weight) = font_weight;
+   _canvas_text_format_changed(obj, o);
+}
+
+static Efl_Text_Font_Weight
+_efl_canvas_text_efl_text_font_font_weight_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT_INFO(font_weight);
+}
+
+static void
+_efl_canvas_text_efl_text_font_font_slant_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Font_Slant font_slant EINA_UNUSED)
+{
+   if (_FMT_INFO(font_slant) == font_slant) return;
+   _FMT_INFO(font_slant) = font_slant;
+   _canvas_text_format_changed(obj, o);
+}
+
+static Efl_Text_Font_Slant
+_efl_canvas_text_efl_text_font_font_slant_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT_INFO(font_slant);
+}
+
+static void
+_efl_canvas_text_efl_text_font_font_width_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Font_Width font_width EINA_UNUSED)
+{
+   if (_FMT_INFO(font_width) == font_width) return;
+   _FMT_INFO(font_width) = font_width;
+   _canvas_text_format_changed(obj, o);
+}
+
+static Efl_Text_Font_Width
+_efl_canvas_text_efl_text_font_font_width_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT_INFO(font_width);
+}
+
+/* Efl.Text.Style interface implementation */
+
+/* Helper: sets color fields of style 'x' and informs if any are changed. */
+#define _FMT_COLOR_SET(x) \
+   if ((_FMT(color.x).r == r) && (_FMT(color.x).g == g) \
+      && (_FMT(color.x).b == b) &&  (_FMT(color.x).a == a)) return; \
+      _FMT(color.x).r = r; \
+      _FMT(color.x).g = g; \
+      _FMT(color.x).b = b; \
+      _FMT(color.x).a = a; \
+      _canvas_text_format_changed(obj, o);
+
+/* Helper: returns color fields of style 'x'. */
+#define _FMT_COLOR_RET(x) \
+   if (r) *r = _FMT(color.x).r; \
+   if (g) *g = _FMT(color.x).g; \
+   if (b) *b = _FMT(color.x).b; \
+   if (a) *a = _FMT(color.x).a;
+
+/* Helper: updates format field, and informs if changed. */
+#define _FMT_SET(x, v) \
+   if (_FMT(x) == v) return; \
+   _FMT(x) = v; \
+   _canvas_text_format_changed(obj, o);
+
+/* Helper: updates format field of extended format information, and informs if changed. */
+#define _FMT_INFO_SET_START(x, v) \
+   Eina_Bool changed = EINA_FALSE; \
+   if (_FMT_INFO(x) == v) return; \
+   changed = EINA_TRUE; \
+   _FMT_INFO(x) = v; \
+
+#define _FMT_INFO_SET_END() \
+   if (changed) _canvas_text_format_changed(obj, o);
+
+static void
+_efl_canvas_text_efl_text_style_normal_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(normal);
+}
+
+static void
+_efl_canvas_text_efl_text_style_normal_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(normal);
+}
+
+static void
+_efl_canvas_text_efl_text_style_backing_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Backing_Type type EINA_UNUSED)
+{
+   _FMT_SET(backing, type);
+}
+
+static Efl_Text_Style_Backing_Type
+_efl_canvas_text_efl_text_style_backing_type_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(backing);
+}
+
+static void
+_efl_canvas_text_efl_text_style_backing_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(backing);
+}
+
+static void
+_efl_canvas_text_efl_text_style_backing_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(backing);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Underline_Type type EINA_UNUSED)
+{
+   _FMT_SET(underline, type);
+}
+
+static Efl_Text_Style_Underline_Type
+_efl_canvas_text_efl_text_style_underline_type_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(underline);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(underline);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(underline);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline_height_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, double height EINA_UNUSED)
+{
+   _FMT_SET(underline_height, height);
+}
+
+static double
+_efl_canvas_text_efl_text_style_underline_height_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(underline_height);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline_dashed_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(underline_dash);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline_dashed_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(underline_dash);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline_dashed_width_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, int width EINA_UNUSED)
+{
+   _FMT_SET(underline_dash_width, width);
+}
+
+static int
+_efl_canvas_text_efl_text_style_underline_dashed_width_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(underline_dash_width);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline_dashed_gap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, int gap EINA_UNUSED)
+{
+   _FMT_SET(underline_dash_gap, gap);
+}
+
+static int
+_efl_canvas_text_efl_text_style_underline_dashed_gap_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(underline_dash_width);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline2_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Underline_Type type EINA_UNUSED)
+{
+   _FMT_SET(underline2, type);
+}
+
+static Efl_Text_Style_Underline_Type
+_efl_canvas_text_efl_text_style_underline2_type_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(underline2);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline2_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(underline2);
+}
+
+static void
+_efl_canvas_text_efl_text_style_underline2_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(underline2);
+}
+
+static void
+_efl_canvas_text_efl_text_style_strikethrough_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Strikethrough_Type type EINA_UNUSED)
+{
+   _FMT_SET(strikethrough, type);
+}
+
+static Efl_Text_Style_Strikethrough_Type
+_efl_canvas_text_efl_text_style_strikethrough_type_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(strikethrough);
+}
+
+static void
+_efl_canvas_text_efl_text_style_strikethrough_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(strikethrough);
+}
+
+static void
+_efl_canvas_text_efl_text_style_strikethrough_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(strikethrough);
+}
+
+static const struct
+{
+   Efl_Text_Style_Effect_Type x;
+   Evas_Text_Style_Type y;
+} _map_style_effect[] = {
+   { EFL_TEXT_STYLE_EFFECT_TYPE_NONE,  EVAS_TEXT_STYLE_PLAIN },
+   { EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW, EVAS_TEXT_STYLE_SHADOW },
+   { EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE, EVAS_TEXT_STYLE_OUTLINE },
+   { EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE, EVAS_TEXT_STYLE_SOFT_OUTLINE },
+   { EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SHADOW, EVAS_TEXT_STYLE_OUTLINE_SHADOW },
+   { EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SOFT_SHADOW, EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW },
+   { EFL_TEXT_STYLE_EFFECT_TYPE_GLOW, EVAS_TEXT_STYLE_GLOW },
+   { EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW, EVAS_TEXT_STYLE_FAR_SHADOW },
+   { EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_SHADOW, EVAS_TEXT_STYLE_SOFT_SHADOW },
+   { EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW, EVAS_TEXT_STYLE_FAR_SOFT_SHADOW },
+};
+
+static const struct
+{
+   Efl_Text_Style_Shadow_Direction x;
+   Evas_Text_Style_Type y;
+} _map_shadow_dir[] = {
+   { EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT },
+   { EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM },
+   { EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT },
+   { EFL_TEXT_STYLE_SHADOW_DIRECTION_LEFT, EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT },
+   { EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT },
+   { EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP },
+   { EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT },
+   { EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT, EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT },
+};
+
+static void
+_efl_canvas_text_efl_text_style_effect_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Effect_Type type EINA_UNUSED)
+{
+   _FMT_INFO_SET_START(effect, type);
+   _FMT(style) = _map_style_effect[type].y;
+   // Re-apply shadow direction
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style), _map_shadow_dir[type].y);
+   _FMT_INFO_SET_END();
+}
+
+static Efl_Text_Style_Effect_Type
+_efl_canvas_text_efl_text_style_effect_type_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT_INFO(effect);
+}
+
+static void
+_efl_canvas_text_efl_text_style_outline_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(outline);
+}
+
+static void
+_efl_canvas_text_efl_text_style_outline_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(outline);
+}
+
+static void
+_efl_canvas_text_efl_text_style_shadow_direction_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Shadow_Direction type EINA_UNUSED)
+{
+   _FMT_INFO_SET_START(shadow_direction, type);
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style), _map_shadow_dir[type].y);
+   _FMT_INFO_SET_END();
+}
+
+static Efl_Text_Style_Shadow_Direction
+_efl_canvas_text_efl_text_style_shadow_direction_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT_INFO(shadow_direction);
+}
+
+static void
+_efl_canvas_text_efl_text_style_shadow_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(shadow);
+}
+
+static void
+_efl_canvas_text_efl_text_style_shadow_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(shadow);
+}
+
+static void
+_efl_canvas_text_efl_text_style_glow_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(glow);
+}
+
+static void
+_efl_canvas_text_efl_text_style_glow_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(glow);
+}
+
+static void
+_efl_canvas_text_efl_text_style_glow2_color_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char r EINA_UNUSED, unsigned char g EINA_UNUSED, unsigned char b EINA_UNUSED, unsigned char a EINA_UNUSED)
+{
+   _FMT_COLOR_SET(glow2);
+}
+
+static void
+_efl_canvas_text_efl_text_style_glow2_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
+{
+   _FMT_COLOR_RET(glow2);
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_ellipsis_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, double value EINA_UNUSED)
+{
+   _FMT_SET(ellipsis, value);
+}
+
+static double
+_efl_canvas_text_efl_text_format_format_ellipsis_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(ellipsis);
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_wrap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Format_Wrap wrap EINA_UNUSED)
+{
+   _FMT_INFO_SET_START(wrap, wrap);
+   _FMT(wrap_word) = (wrap == EFL_TEXT_FORMAT_WRAP_WORD);
+   _FMT(wrap_char) = (wrap == EFL_TEXT_FORMAT_WRAP_CHAR);
+   _FMT(wrap_mixed) = (wrap == EFL_TEXT_FORMAT_WRAP_MIXED);
+   _FMT(wrap_hyphenation) = (wrap == EFL_TEXT_FORMAT_WRAP_HYPHENATION);
+   _FMT_INFO_SET_END();
+}
+
+static Efl_Text_Format_Wrap
+_efl_canvas_text_efl_text_format_format_wrap_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT_INFO(wrap);
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_multiline_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Eina_Bool enabled EINA_UNUSED)
+{
+   if (o->multiline == enabled) return;
+   o->multiline = enabled;
+   _canvas_text_format_changed(obj, o);
+}
+
+static Eina_Bool
+_efl_canvas_text_efl_text_format_format_multiline_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return o->multiline;
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_halign_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, double value EINA_UNUSED)
+{
+   if (value < 0.0)
+     {
+        _FMT_SET(halign_auto, EINA_TRUE);
+     }
+   else
+     {
+        _FMT(halign_auto) = EINA_FALSE;
+        _FMT_SET(halign, value);
+     }
+}
+
+static double
+_efl_canvas_text_efl_text_format_format_halign_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return (_FMT(halign_auto) ? -1.0 : _FMT(halign));
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_valign_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, double value EINA_UNUSED)
+{
+   _FMT_SET(valign, value);
+}
+
+static double
+_efl_canvas_text_efl_text_format_format_valign_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(valign);
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_linegap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, double value EINA_UNUSED)
+{
+   double linerelgap = _FMT(linerelgap);
+   _FMT(linerelgap) = 0.0;
+
+   if (EINA_DBL_EQ(linerelgap, 0.0))
+     {
+        _FMT_SET(linegap, value);
+     }
+   else
+    {
+        _FMT(linegap) = value;
+        _FMT(linerelgap) = 0.0;
+        _canvas_text_format_changed(obj, o);
+    }
+}
+
+static double
+_efl_canvas_text_efl_text_format_format_linegap_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(linegap);
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_linerelgap_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, double value EINA_UNUSED)
+{
+   double linegap = _FMT(linegap);
+   _FMT(linegap) = 0.0;
+
+   if (EINA_DBL_EQ(linegap, 0.0))
+     {
+        _FMT_SET(linerelgap, value);
+     }
+   else
+    {
+        _FMT(linerelgap) = value;
+        _canvas_text_format_changed(obj, o);
+    }
+}
+
+static double
+_efl_canvas_text_efl_text_format_format_linerelgap_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(linerelgap);
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_tabstops_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, int value EINA_UNUSED)
+{
+   _FMT_SET(tabstops, value);
+}
+
+static int
+_efl_canvas_text_efl_text_format_format_tabstops_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(tabstops);
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_password_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Eina_Bool enabled EINA_UNUSED)
+{
+   _FMT_SET(password, enabled);
+}
+
+static Eina_Bool
+_efl_canvas_text_efl_text_format_format_password_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(password);
+}
+
+static void
+_efl_canvas_text_efl_text_format_format_replacement_char_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const char *repch EINA_UNUSED)
+{
+   Eina_Stringshare *nrepch;
+   if (o->repch != repch)
+     {
+        nrepch = eina_stringshare_add(repch);
+        if (nrepch == _FMT_INFO(font_fallbacks))
+          {
+             /* Already stringshared here, unref */
+             eina_stringshare_del(nrepch);
+          }
+        else
+          {
+             // Set immediately, load repch later
+             o->repch = nrepch;
+             _canvas_text_format_changed(obj, o);
+          }
+     }
+}
+
+static const char *
+_efl_canvas_text_efl_text_format_format_replacement_char_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return o->repch;
 }
 
 /**
