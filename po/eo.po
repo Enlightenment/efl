@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-05-22 17:32+0900\n"
+"POT-Creation-Date: 2017-05-22 19:16+0900\n"
 "PO-Revision-Date: 2013-11-05 18:59+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -263,7 +263,7 @@ msgstr "Bone"
 #: src/lib/elementary/elc_hoversel.c:439 src/lib/elementary/efl_ui_button.c:278
 #: src/lib/elementary/efl_ui_check.c:212 src/lib/elementary/elm_gengrid.c:1440
 #: src/lib/elementary/elm_genlist.c:1720 src/lib/elementary/elm_list.c:2176
-#: src/lib/elementary/elm_radio.c:216
+#: src/lib/elementary/efl_ui_radio.c:216
 #: src/lib/elementary/elm_segment_control.c:529
 #: src/lib/elementary/elm_spinner.c:1002 src/lib/elementary/elm_toolbar.c:2344
 msgid "State: Disabled"
@@ -359,12 +359,12 @@ msgid "calendar year"
 msgstr "jara kalendaro"
 
 #: src/lib/elementary/efl_ui_check.c:64 src/lib/elementary/efl_ui_check.c:225
-#: src/lib/elementary/elm_radio.c:120 src/lib/elementary/elm_radio.c:217
+#: src/lib/elementary/efl_ui_radio.c:120 src/lib/elementary/efl_ui_radio.c:217
 msgid "State: On"
 msgstr "Stato: enŝaltita"
 
 #: src/lib/elementary/efl_ui_check.c:75 src/lib/elementary/efl_ui_check.c:237
-#: src/lib/elementary/elm_radio.c:219
+#: src/lib/elementary/efl_ui_radio.c:219
 msgid "State: Off"
 msgstr "Stato: malŝaltita"
 
@@ -488,7 +488,7 @@ msgstr "butono de panelo"
 msgid "progressbar"
 msgstr "progresbreto"
 
-#: src/lib/elementary/elm_radio.c:245
+#: src/lib/elementary/efl_ui_radio.c:245
 msgid "Radio"
 msgstr "Radiobutono"
 
