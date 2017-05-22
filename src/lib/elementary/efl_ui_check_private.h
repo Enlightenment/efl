@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_CHECK_H
-#define ELM_WIDGET_CHECK_H
+#ifndef EFL_UI_CHECK_H
+#define EFL_UI_CHECK_H
 
 #include "Elementary.h"
 
@@ -23,8 +23,8 @@
 /**
  * Base layout smart data extended with check instance data.
  */
-typedef struct _Elm_Check_Data Elm_Check_Data;
-struct _Elm_Check_Data
+typedef struct _Efl_Ui_Check_Data Efl_Ui_Check_Data;
+struct _Efl_Ui_Check_Data
 {
    Eina_Bool            *statep;
 };
@@ -34,7 +34,7 @@ struct _Elm_Check_Data
  */
 
 #define ELM_CHECK_DATA_GET(o, sd) \
-  Elm_Check_Data * sd = efl_data_scope_get(o, ELM_CHECK_CLASS)
+  Efl_Ui_Check_Data * sd = efl_data_scope_get(o, EFL_UI_CHECK_CLASS)
 
 #define ELM_CHECK_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_CHECK_DATA_GET(o, ptr);                        \

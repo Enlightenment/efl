@@ -1,4 +1,4 @@
-class Elm.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
+class Efl.Ui.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
 {
    [[Check widget
 
@@ -8,7 +8,6 @@ class Elm.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
    the value of a boolean between false and true.
    ]]
    legacy_prefix: elm_check;
-   eo_prefix: efl_ui_check;
    methods {
       @property selected {
          [[The on/off state of the check object.]]

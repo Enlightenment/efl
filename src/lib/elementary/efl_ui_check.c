@@ -10,11 +10,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_nstate.eo.h"
-#include "elm_widget_check.h"
+#include "efl_ui_check_private.h"
 
-#define MY_CLASS ELM_CHECK_CLASS
+#define MY_CLASS EFL_UI_CHECK_CLASS
 
-#define MY_CLASS_NAME "Elm_Check"
+#define MY_CLASS_NAME "Efl.Ui.Check"
 #define MY_CLASS_NAME_LEGACY "elm_check"
 
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
@@ -100,11 +100,11 @@ _icon_signal_emit(Evas_Object *obj)
 }
 
 EOLIAN static Elm_Atspi_State_Set
-_elm_check_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
+_efl_ui_check_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
 {
    Elm_Atspi_State_Set states = 0;
 
-   states = elm_interface_atspi_accessible_state_set_get(efl_super(obj, ELM_CHECK_CLASS));
+   states = elm_interface_atspi_accessible_state_set_get(efl_super(obj, EFL_UI_CHECK_CLASS));
 
    if (elm_check_state_get(obj))
        STATE_TYPE_SET(states, ELM_ATSPI_STATE_CHECKED);
@@ -116,7 +116,7 @@ _elm_check_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Check_Data 
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
 EOLIAN static Eina_Bool
-_elm_check_elm_widget_sub_object_del(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_check_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -131,7 +131,7 @@ _elm_check_elm_widget_sub_object_del(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, E
 }
 
 EOLIAN static Eina_Bool
-_elm_check_elm_widget_activate(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED, Elm_Activate act)
+_efl_ui_check_elm_widget_activate(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *_pd EINA_UNUSED, Elm_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
@@ -149,7 +149,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_check_elm_widget_widget_event(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_efl_ui_check_elm_widget_widget_event(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    Evas_Event_Key_Down *ev = event_info;
@@ -165,7 +165,7 @@ _elm_check_elm_widget_widget_event(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, Eva
 }
 
 EOLIAN static Elm_Theme_Apply
-_elm_check_elm_widget_theme_apply(Eo *obj, Elm_Check_Data *sd EINA_UNUSED)
+_efl_ui_check_elm_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUSED)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
@@ -290,7 +290,7 @@ _on_check_toggle(void *data,
 }
 
 EOLIAN static void
-_elm_check_efl_canvas_group_group_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
+_efl_ui_check_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -323,19 +323,19 @@ _elm_check_efl_canvas_group_group_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_check_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Check_Data *_pd EINA_UNUSED)
+_efl_ui_check_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *_pd EINA_UNUSED)
 {
    return _text_aliases;
 }
 
 EOLIAN static Eina_Bool
-_elm_check_selected_get(Eo *obj, Elm_Check_Data *pd EINA_UNUSED)
+_efl_ui_check_selected_get(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
    return !!efl_ui_nstate_value_get(obj);
 }
 
 EOLIAN static void
-_elm_check_selected_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool value)
+_efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *sd, Eina_Bool value)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -350,13 +350,13 @@ _elm_check_selected_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool value)
 }
 
 EOLIAN static void
-_elm_check_efl_ui_nstate_count_set(Eo *obj EINA_UNUSED, Elm_Check_Data *pd EINA_UNUSED, int nstate EINA_UNUSED)
+_efl_ui_check_efl_ui_nstate_count_set(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED, int nstate EINA_UNUSED)
 {
    //NOP;
 }
 
 EOLIAN static void
-_elm_check_efl_ui_nstate_value_set(Eo *obj, Elm_Check_Data *pd EINA_UNUSED, int state)
+_efl_ui_check_efl_ui_nstate_value_set(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED, int state)
 {
    Eina_Bool _state = !!state;
    if (_state == efl_ui_nstate_value_get(obj)) return;
@@ -373,7 +373,7 @@ elm_check_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_check_efl_object_constructor(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
+_efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -417,7 +417,7 @@ elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
 }
 
 EOLIAN const Elm_Atspi_Action *
-_elm_check_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Check_Data *pd EINA_UNUSED)
+_efl_ui_check_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
    static Elm_Atspi_Action atspi_action[] = {
           { "activate", "activate", NULL, _key_action_activate },
@@ -427,14 +427,14 @@ _elm_check_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
 }
 
 static void
-_elm_check_class_constructor(Efl_Class *klass)
+_efl_ui_check_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 /* Internal EO APIs and hidden overrides */
 
-#define ELM_CHECK_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_OPS(elm_check)
+#define EFL_UI_CHECK_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_check)
 
-#include "elm_check.eo.c"
+#include "efl_ui_check.eo.c"

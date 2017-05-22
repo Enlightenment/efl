@@ -168,7 +168,7 @@ _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, ELM_CHECK_CLASS));
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, EFL_UI_CHECK_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
@@ -224,7 +224,7 @@ _elm_radio_efl_canvas_group_group_add(Eo *obj, Elm_Radio_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_canvas_group_add(efl_super(obj, ELM_CHECK_CLASS));
+   efl_canvas_group_add(efl_super(obj, EFL_UI_CHECK_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "radio", "base", elm_widget_style_get(obj)))
@@ -255,7 +255,7 @@ _elm_radio_efl_canvas_group_group_del(Eo *obj, Elm_Radio_Data *sd)
    sd->group->radios = eina_list_remove(sd->group->radios, obj);
    if (!sd->group->radios) free(sd->group);
 
-   efl_canvas_group_del(efl_super(obj, ELM_CHECK_CLASS));
+   efl_canvas_group_del(efl_super(obj, EFL_UI_CHECK_CLASS));
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
