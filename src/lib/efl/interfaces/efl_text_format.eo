@@ -1,0 +1,106 @@
+enum Efl.Text.Format.Wrap {
+   [[Wrap mode of the text (not in effect if not multiline)]]
+   none,
+   char,
+   word,
+   mixed,
+   hyphenation
+}
+
+interface Efl.Text.Format {
+   [[The look and layout of the text
+
+     The text format can affect the geometry of the text object, as well as
+     how characters are presented.
+
+     @since 1.20
+   ]]
+   methods {
+      @property format_ellipsis {
+         [[Ellipsis value (number from -1.0 to 1.0)]]
+         values
+         {
+            value: double;
+         }
+      }
+
+      @property format_wrap {
+         [[Wrap mode for use in the text]]
+         values {
+            wrap: Efl.Text.Format.Wrap;
+         }
+      }
+
+      @property format_multiline {
+         [[Multiline is enabled or not]]
+         values {
+            enabled: bool;
+         }
+      }
+
+      @property format_halign {
+         [[Horizontal alignment of text (number from 0.0 to 1.0)]]
+         values
+         {
+            value: double;
+         }
+      }
+
+      @property format_valign {
+         [[Vertical alignment of text (number from -1.0 to 1.0)]]
+         values
+         {
+            value: double;
+         }
+      }
+
+      @property format_linegap {
+         [[Minimal line gap (top and bottom) for each line in the text
+
+           $value is absolute size.
+         ]]
+         values
+         {
+            value: double;
+         }
+      }
+
+      @property format_linerelgap {
+         [[Relative line gap (top and bottom) for each line in the text
+
+           The original line gap value is multiplied by $value.
+         ]]
+         values
+         {
+            value: double;
+         }
+      }
+
+      @property format_tabstops {
+         [[Tabstops value]]
+         values
+         {
+            value: int;
+         }
+      }
+
+      @property format_password {
+         [[Whether text is a password]]
+         values
+         {
+            enabled: bool;
+         }
+      }
+
+      @property format_replacement_char {
+         [[The character used to replace characters that can not be displayed
+
+           Currently, only used to replace characters if @.format_password
+           is enabled.
+         ]]
+         values {
+            repch: string;
+         }
+      }
+   }
+}

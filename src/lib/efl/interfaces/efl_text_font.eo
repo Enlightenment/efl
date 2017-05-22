@@ -1,0 +1,117 @@
+// src/lib/efl/interfaces/efl_text_font.eo
+
+enum Efl.Text.Font.Weight {
+   [[Type of font weight]]
+   normal,
+   thin,
+   ultralight,
+   extralight,
+   light,
+   book,
+   medium,
+   semibold,
+   bold,
+   ultrabold,
+   extrabold,
+   black,
+   extrablack,
+}
+
+enum Efl.Text.Font.Width {
+   [[Type of font width]]
+   normal,
+   ultracondensed,
+   extracondensed,
+   condensed,
+   semicondensed,
+   semiexpanded,
+   expanded,
+   extraexpanded,
+   ultraexpanded,
+}
+
+enum Efl.Text.Font.Slant {
+    [[Type of font slant]]
+    normal,
+    oblique,
+    italic,
+}
+
+interface Efl.Text.Font {
+   [[Font settings of the text
+
+     @since 1.20
+   ]]
+   methods {
+      @property font {
+         [[The font name and size that is used for the displayed text]]
+         values {
+            font: string;
+            size: int;
+         }
+      }
+      @property font_source {
+         [[The source that will be used to lookup the font of the text
+
+           The source can be either a path to a font file e.g.
+           "/path/to/font.ttf", or an eet file e.g. "/path/to/font.eet".
+         ]]
+         values {
+            font_source: string;
+         }
+      }
+
+      @property font_fallbacks {
+         [[Comma-separated list of font fallbacks
+
+           Will be used in case the primary font isn't available.
+         ]]
+         values {
+            font_fallbacks: string;
+         }
+      }
+
+      @property font_weight {
+         [[Type of weight of the displayed font
+
+           Default is $Efl.Text.Font.Weight.normal\.
+         ]]
+         values {
+            font_weight: Efl.Text.Font.Weight;
+         }
+      }
+
+      @property font_slant {
+         [[Type of slant of the displayed font
+
+           Default is $Efl.Text.Font.Slant.normal\.
+         ]]
+         values {
+            style: Efl.Text.Font.Slant;
+         }
+      }
+
+      @property font_width {
+         [[Type of width of the displayed font
+
+           Default is $Efl.Text.Font.Width.normal\.
+         ]]
+         values {
+            width: Efl.Text.Font.Width;
+         }
+      }
+
+      @property font_lang {
+         [[Specific language of the displayed font
+
+           This is used to lookup fonts suitable to the specified language, as
+           well as helping the font shaper backend.
+           The language $lang can be either a code e.g "en_US",
+           "auto" to use the system locale, or "none".
+         ]]
+         values {
+            lang: string;
+         }
+      }
+   }
+}
