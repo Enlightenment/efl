@@ -1,6 +1,6 @@
 #include "edje_private.h"
 
-static void _edje_object_message_popornot_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg, Eina_Bool prop);
+static void _edje_message_propagate_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg, Eina_Bool prop);
 
 static int _injob = 0;
 static Ecore_Job *_job = NULL;
@@ -16,7 +16,7 @@ static int tmp_msgq_restart = 0;
 *============================================================================*/
 
 static void
-_edje_object_message_popornot_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg, Eina_Bool prop)
+_edje_object_message_propagate_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg, Eina_Bool prop)
 {
    Edje *ed;
    Eina_List *l;
@@ -24,10 +24,10 @@ _edje_object_message_popornot_send(Evas_Object *obj, Edje_Message_Type type, int
 
    ed = _edje_fetch(obj);
    if (!ed) return;
-   _edje_message_propornot_send(ed, EDJE_QUEUE_SCRIPT, type, id, msg, prop);
+   _edje_message_propagate_send(ed, EDJE_QUEUE_SCRIPT, type, id, msg, prop);
    EINA_LIST_FOREACH(ed->subobjs, l, o)
      {
-        _edje_object_message_popornot_send(o, type, id, msg, EINA_TRUE);
+        _edje_object_message_propagate_send(o, type, id, msg, EINA_TRUE);
      }
 }
 
@@ -339,8 +339,8 @@ _edje_message_free(Edje_Message *em)
    free(em);
 }
 
-void
-_edje_message_propornot_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg, Eina_Bool prop)
+static void
+_edje_message_propagate_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg, Eina_Bool prop)
 {
    /* FIXME: check all malloc & strdup fails and gracefully unroll and exit */
    Edje_Message *em;
@@ -530,7 +530,7 @@ _edje_message_propornot_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type,
 void
 _edje_util_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg)
 {
-   _edje_message_propornot_send(ed, queue, type, id, emsg, EINA_FALSE);
+   _edje_message_propagate_send(ed, queue, type, id, emsg, EINA_FALSE);
 }
 
 void
@@ -880,7 +880,7 @@ _edje_message_del(Edje *ed)
 EAPI void
 edje_object_message_send(Eo *obj, Edje_Message_Type type, int id, void *msg)
 {
-   _edje_object_message_popornot_send(obj, type, id, msg, EINA_FALSE);
+   _edje_object_message_propagate_send(obj, type, id, msg, EINA_FALSE);
 }
 
 EAPI void
