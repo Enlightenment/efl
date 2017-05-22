@@ -5,6 +5,7 @@
 #define EFL_INPUT_EVENT_PROTECTED
 
 #include <Evas.h>
+#include <Evas_Internal.h>
 
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"

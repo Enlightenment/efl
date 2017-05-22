@@ -53,6 +53,9 @@ EOAPI void efl_canvas_object_type_set(Eo *obj, const char *type);
 EOAPI void efl_canvas_group_add(Eo *obj);
 EOAPI void efl_canvas_group_del(Eo *obj);
 
+EOAPI void *efl_input_legacy_info_get(const Eo *obj);
+EOAPI Eo *efl_input_instance_get(const Eo *obj, Efl_Object *owner, void **priv);
+
 EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;
 #define EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE (&(_EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE))
 
