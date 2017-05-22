@@ -846,7 +846,7 @@ _x11_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
    e->type = type;
    e->seat_id = 1; /* under x11 this is always the default seat */
    e->exists = !!ev->owner;
-   ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, ev, NULL, NULL);
+   ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, e, NULL, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -3212,7 +3212,7 @@ _wl_selection_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    /* connect again to add ref */
    e->display = ecore_wl2_display_connect(ecore_wl2_display_name_get(ev->display));
    e->exists = !!ecore_wl2_dnd_selection_get(seat);
-   ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, ev, _wl_selection_changed_free, ev->display);
+   ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, e, _wl_selection_changed_free, ev->display);
    return ECORE_CALLBACK_RENEW;
 }
 
