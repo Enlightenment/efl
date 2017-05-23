@@ -1,0 +1,67 @@
+collections {
+   group { "test_group";
+      parts {
+         rect { "bg";
+            desc { "default";
+               color: 0 0 0 255;
+            }
+         }
+         text { "text";
+            desc { "default";
+               text {
+                  font: "Sans";
+                  size: 24;
+                  text: "HELLO";
+               }
+            }
+         }
+      }
+
+// Messages IDs:
+    //  0. string, text string
+    //  1. int, text size
+    //  2. int set, bg color (4 ints)
+    //  3. float, sends signal
+
+      script {
+         public message(Msg_Type:type, id, ...) {
+            if ((type == MSG_STRING) && (id == 0)) {
+               new str[64], buf[64];
+
+               getsarg(2, str, sizeof(str));
+               set_text(PART:"text", str);
+
+               snprintf(buf, sizeof(buf), "str %s", str);
+               emit(buf, "edc");
+            }
+            else if ((type == MSG_INT) && (id == 1)) {
+               new i, buf[64];
+
+               i = getarg(2);
+               set_state_val(PART:"text", STATE_TEXT_SIZE, i);
+
+               snprintf(buf, sizeof(buf), "int %d", i);
+               emit(buf, "edc");
+            }
+            else if ((type == MSG_FLOAT) && (id == 2)) {
+               new f, buf[64];
+
+               f = getarg(2);
+               snprintf(buf, sizeof(buf), "float %f", f);
+               emit(buf, "edc");
+            }
+            else if ((type == MSG_INT_SET) && (id == 3)) {
+               new r, g, b, a, buf[64];
+
+               r = getarg(2);
+               g = getarg(3);
+               b = getarg(4);
+               a = getarg(5);
+               set_state_val(PART:"bg", STATE_COLOR, r, g, b, a);
+
+               snprintf(buf, sizeof(buf), "int set %d %d %d %d", r, g, b, a);
+               emit(buf, "edc");
+            }
+         }
+      }
+   }

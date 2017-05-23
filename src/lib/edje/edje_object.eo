@@ -466,18 +466,17 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
            This function sends an Edje message to obj and to all of its
            child objects, if it has any (swallowed objects are one kind of
-           child object). type and msg  must be matched accordingly,
-           as documented in #Edje_Message_Type.
+           child object). Only a few types are supported:
+             - int,
+             - float/double,
+             - string/stringshare,
+             - arrays of int, float, double or strings.
 
            The id argument as a form of code and theme defining a common
            interface on message communication. One should define the same IDs
-           on both code and EDC declaration (see \@ref edcref "the syntax" for
-           EDC files), to individualize messages (binding them to a given
-           context).
-
-           The function to handle messages arriving  from obj is set with
-           edje_object_message_handler_set().]]
-
+           on both code and EDC declaration, to individualize messages
+           (binding them to a given context).
+         ]]
          params {
             @in id: int; [[A identification number for the message to be sent]]
             @in msg: const(generic_value); [[The message's payload]]

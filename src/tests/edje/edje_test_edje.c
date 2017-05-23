@@ -725,6 +725,148 @@ START_TEST(edje_test_combine_keywords)
 }
 END_TEST
 
+static void
+_message_signal_reply_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                         const char *emission, const char *source)
+{
+   int *id = data;
+
+   fprintf(stderr, "source %s emit %s id %d\n", source, emission, *id);
+   fflush(stderr);
+   ck_assert_str_eq(source, "edc");
+   ck_assert_ptr_nonnull(emission);
+
+   if (!strncmp(emission, "int set", 7))
+     ck_assert_str_eq(emission, "int set 7 12 42 255");
+   else if (!strncmp(emission, "int", 3))
+     ck_assert_str_eq(emission, "int 42");
+   else if (!strncmp(emission, "float", 5))
+     {
+        char buf[64];
+        sprintf(buf, "float %f", 0.12);
+        ck_assert_str_eq(emission, buf);
+     }
+   else if (!strncmp(emission, "str", 3))
+     ck_assert_str_eq(emission, "str hello world");
+   else ck_abort_msg("Invalid emission!");
+
+   (*id)++;
+}
+
+START_TEST(edje_test_message_send_legacy)
+{
+   Evas *evas;
+   Evas_Object *obj;
+   Edje_Message_Int msgi;
+   Edje_Message_Float msgf;
+   Edje_Message_String msgs;
+   Edje_Message_Int_Set *msgis;
+   int id = 0;
+
+   /* Ugly calls to process:
+    *
+    * 1. Send edje message (async)
+    * 2. Process edje message (sync)
+    * 3. EDC program emits edje signal (async)
+    * 4. Process edje signal (sync)
+    * 5. Finally reached signal cb
+    */
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_messages.edj"), "test_group"));
+   edje_object_signal_callback_add(obj, "*", "edc", _message_signal_reply_cb, &id);
+
+   msgs.str = "hello world";
+   edje_object_message_send(obj, EDJE_MESSAGE_STRING, 0, &msgs);
+   edje_message_signal_process();
+   ck_assert_int_eq(id, 1);
+
+   msgi.val = 42;
+   edje_object_message_send(obj, EDJE_MESSAGE_INT, 1, &msgi);
+   edje_message_signal_process();
+   ck_assert_int_eq(id, 2);
+
+   msgf.val = 0.12;
+   edje_object_message_send(obj, EDJE_MESSAGE_FLOAT, 2, &msgf);
+   edje_message_signal_process();
+   ck_assert_int_eq(id, 3);
+
+   msgis = alloca(sizeof(*msgis) + 4 * sizeof(msgis->val));
+   msgis->count = 4;
+   msgis->val[0] = 7;
+   msgis->val[1] = 12;
+   msgis->val[2] = 42;
+   msgis->val[3] = 255;
+   edje_object_message_send(obj, EDJE_MESSAGE_INT_SET, 3, msgis);
+   edje_message_signal_process();
+   ck_assert_int_eq(id, 4);
+
+   evas_object_del(obj);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
+START_TEST(edje_test_message_send_eo)
+{
+   Evas *evas;
+   Evas_Object *obj;
+   Eina_Value v, *va;
+   int id = 0;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = efl_add(EDJE_OBJECT_CLASS, evas,
+                 efl_file_set(efl_added, test_layout_get("test_messages.edj"), "test_group"));
+
+   // FIXME: EO API HERE
+   edje_object_signal_callback_add(obj, "*", "edc", _message_signal_reply_cb, &id);
+
+   // NOTE: edje_object_message_signal_process may or may not be in EO (TBD)
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_STRING);
+   eina_value_set(&v, "hello world");
+   edje_obj_message_send(obj, 0, v);
+   eina_value_flush(&v);
+   edje_message_signal_process();
+   edje_object_calc_force(obj);
+   ck_assert_int_eq(id, 1);
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+   eina_value_set(&v, 42);
+   edje_obj_message_send(obj, 1, v);
+   eina_value_flush(&v);
+   edje_message_signal_process();
+   edje_object_calc_force(obj);
+   ck_assert_int_eq(id, 2);
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_FLOAT);
+   eina_value_set(&v, 0.12);
+   edje_obj_message_send(obj, 2, v);
+   eina_value_flush(&v);
+   edje_message_signal_process();
+   edje_object_calc_force(obj);
+   ck_assert_int_eq(id, 3);
+
+   va = eina_value_array_new(EINA_VALUE_TYPE_INT, 4);
+   eina_value_array_append(va, 7);
+   eina_value_array_append(va, 12);
+   eina_value_array_append(va, 42);
+   eina_value_array_append(va, 255);
+   edje_obj_message_send(obj, 3, *va);
+   eina_value_free(va);
+   edje_message_signal_process();
+   edje_object_calc_force(obj);
+   ck_assert_int_eq(id, 4);
+
+   efl_del(obj);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
@@ -746,4 +888,6 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_table);
    tcase_add_test(tc, edje_test_table_eoapi);
    tcase_add_test(tc, edje_test_combine_keywords);
+   tcase_add_test(tc, edje_test_message_send_legacy);
+   tcase_add_test(tc, edje_test_message_send_eo);
 }
