@@ -67,7 +67,7 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
         << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
         << "((" << string << "Inherit)wrapper)." << string
-        << "(" << (argument_invocation % ", ") << ");\n"
+        << "(" << (native_argument_invocation % ", ") << ");\n"
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string << "Inherit." << string

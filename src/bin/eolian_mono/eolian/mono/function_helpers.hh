@@ -13,6 +13,7 @@
 /* #include "type.hh" */
 /* #include "marshall_type.hh" */
 #include "parameter.hh"
+#include "function_pointer.hh"
 /* #include "keyword.hh" */
 /* #include "using_decl.hh" */
 /* #include "library_context.hh" */
@@ -43,9 +44,11 @@ struct native_function_definition_preamble_generator
                 << *(scope_tab << scope_tab << native_convert_in_variable << "\n")
                 << scope_tab << scope_tab << "//Placeholder out variables\n"
                 << *(scope_tab << scope_tab << native_convert_out_variable << "\n")
+                << scope_tab << scope_tab << "//Function pointer wrappers\n"
+                << *(scope_tab << scope_tab << native_convert_function_pointer << "\n")
                 << scope_tab << scope_tab << "//Return variable and function call\n"
                 << scope_tab << scope_tab << native_convert_return_variable
-                ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
+                ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -68,9 +71,11 @@ struct function_definition_preamble_generator
                   << *(scope_tab << scope_tab << convert_in_variable << "\n")
                   << scope_tab << scope_tab << "//Placeholder out variables\n"
                   << *(scope_tab << scope_tab << convert_out_variable << "\n")
+                  << scope_tab << scope_tab << "//Function pointers handling\n"
+                  << *(scope_tab << scope_tab << convert_function_pointer << "\n")
                   << scope_tab << scope_tab << "//Return variable and function call\n"
                   << scope_tab << scope_tab << convert_return_variable
-                  ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
+                  ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
 
       return true;
