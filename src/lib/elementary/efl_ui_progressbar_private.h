@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_PROGRESSBAR_H
-#define ELM_WIDGET_PROGRESSBAR_H
+#ifndef EFL_UI_PROGRESSBAR_PRIVATE_H
+#define EFL_UI_PROGRESSBAR_PRIVATE_H
 
 #include "Elementary.h"
 
@@ -23,10 +23,10 @@
 /**
  * Base layout smart data extended with progressbar instance data.
  */
-typedef struct _Elm_Progressbar_Data Elm_Progressbar_Data;
-typedef struct _Elm_Progress_Status Elm_Progress_Status;
+typedef struct _Efl_Ui_Progressbar_Data Efl_Ui_Progressbar_Data;
+typedef struct _Efl_Ui_Progress_Status Efl_Ui_Progress_Status;
 
-struct _Elm_Progressbar_Data
+struct _Efl_Ui_Progressbar_Data
 {
    Evas_Object          *spacer; /**< The rect actual progressbar area, gets the progressbar size and gets the events */
    const char           *units; /**< The units will be displayed on progressbar */
@@ -43,7 +43,7 @@ struct _Elm_Progressbar_Data
    void                  (*unit_format_free)(char *str); /**< The freeing function for the format string */
 };
 
-struct _Elm_Progress_Status
+struct _Efl_Ui_Progress_Status
 {
    const char           *part_name;
    double                val;
@@ -54,7 +54,7 @@ struct _Elm_Progress_Status
  */
 
 #define ELM_PROGRESSBAR_DATA_GET(o, sd) \
-  Elm_Progressbar_Data * sd = efl_data_scope_get(o, ELM_PROGRESSBAR_CLASS)
+  Efl_Ui_Progressbar_Data * sd = efl_data_scope_get(o, EFL_UI_PROGRESSBAR_CLASS)
 
 #define ELM_PROGRESSBAR_DATA_GET_OR_RETURN(o, ptr)   \
   ELM_PROGRESSBAR_DATA_GET(o, ptr);                  \
@@ -75,7 +75,7 @@ struct _Elm_Progress_Status
     }
 
 #define ELM_PROGRESSBAR_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), ELM_PROGRESSBAR_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_PROGRESSBAR_CLASS))) \
     return
 
 #endif

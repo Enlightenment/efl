@@ -57,7 +57,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_player.eo \
 	lib/elementary/elm_plug.eo \
 	lib/elementary/elm_popup.eo \
-	lib/elementary/elm_progressbar.eo \
+	lib/elementary/efl_ui_progressbar.eo \
 	lib/elementary/efl_ui_radio.eo \
 	lib/elementary/elm_route.eo \
 	lib/elementary/elm_scroller.eo \
@@ -107,7 +107,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_notify_internal_part.eo \
 	lib/elementary/elm_panel_internal_part.eo \
 	lib/elementary/elm_player_internal_part.eo \
-	lib/elementary/elm_progressbar_internal_part.eo \
+	lib/elementary/efl_ui_progressbar_internal_part.eo \
 	lib/elementary/elm_popup_internal_part.eo \
 	lib/elementary/elm_scroller_internal_part.eo \
 	lib/elementary/elm_code_widget.eo \
@@ -260,7 +260,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_plug.h \
 	lib/elementary/elm_widget_popup.h \
 	lib/elementary/elm_widget_prefs.h \
-	lib/elementary/elm_widget_progressbar.h \
+	lib/elementary/efl_ui_progressbar_private.h \
 	lib/elementary/efl_ui_radio_private.h \
 	lib/elementary/elm_widget_route.h \
 	lib/elementary/elm_widget_scroller.h \
@@ -467,7 +467,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_prefs_data.h \
 	lib/elementary/elm_progressbar.h \
 	lib/elementary/elm_progressbar_common.h \
-	lib/elementary/elm_progressbar_eo.h \
+	lib/elementary/efl_ui_progressbar_eo.h \
 	lib/elementary/elm_progressbar_legacy.h \
 	lib/elementary/elm_radio.h \
 	lib/elementary/efl_ui_radio_eo.h \
@@ -628,7 +628,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_prefs.c \
 	lib/elementary/elm_prefs_data.c \
 	lib/elementary/elm_prefs_edd.x \
-	lib/elementary/elm_progressbar.c \
+	lib/elementary/efl_ui_progressbar.c \
 	lib/elementary/efl_ui_radio.c \
 	lib/elementary/elm_route.c \
 	lib/elementary/elm_scroller.c \

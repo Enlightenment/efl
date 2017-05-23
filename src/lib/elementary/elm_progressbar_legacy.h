@@ -186,4 +186,4 @@ EAPI const char *elm_progressbar_unit_format_get(const Evas_Object *obj);
  */
 EAPI void elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func);
 
-#include "elm_progressbar.eo.legacy.h"
+#include "efl_ui_progressbar.eo.legacy.h"
