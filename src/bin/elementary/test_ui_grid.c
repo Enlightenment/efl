@@ -213,7 +213,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    chk = o = elm_radio_add(win);
    elm_object_text_set(o, "No weight");
-   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, grid);
+   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, grid);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, NONE);
    efl_pack(bx, o);
@@ -221,7 +221,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "No weight + grid fill");
-   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, grid);
+   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, grid);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, NONE_BUT_FILL);
    elm_radio_group_add(o, chk);
@@ -230,7 +230,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Equal weights");
-   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, grid);
+   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, grid);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, EQUAL);
    elm_radio_group_add(o, chk);
@@ -239,7 +239,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "One weight only");
-   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, grid);
+   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, grid);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, ONE);
    elm_radio_group_add(o, chk);
@@ -248,7 +248,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Two weights");
-   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, grid);
+   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, grid);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, TWO);
    elm_radio_group_add(o, chk);
@@ -257,7 +257,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Custom layout");
-   efl_event_callback_add(o, ELM_RADIO_EVENT_CHANGED, weights_cb, grid);
+   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, grid);
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, CUSTOM);
    elm_radio_group_add(o, chk);

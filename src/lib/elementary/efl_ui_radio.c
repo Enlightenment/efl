@@ -119,7 +119,7 @@ _activate(Evas_Object *obj)
         if (_elm_config->access_mode)
           _elm_access_say(E_("State: On"));
         efl_event_callback_legacy_call
-          (obj, ELM_RADIO_EVENT_CHANGED, NULL);
+          (obj, EFL_UI_RADIO_EVENT_CHANGED, NULL);
 
      }
 }
