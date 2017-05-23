@@ -4382,9 +4382,8 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    if (sd->wl.win)
      focus = ecore_wl2_window_activated_get(sd->wl.win);
    else
-#else
-   focus = ecore_evas_focus_get(sd->ee);
 #endif
+   focus = ecore_evas_focus_get(sd->ee);
    bg_solid = sd->csd.need_bg_solid;
    bg_standard = sd->csd.need_bg_standard;
    unresizable = sd->csd.need_unresizable;
