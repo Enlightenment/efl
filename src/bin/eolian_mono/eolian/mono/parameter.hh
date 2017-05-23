@@ -418,11 +418,11 @@ struct native_convert_in_variable_generator
           if (!complex)
             return false;
           return as_generator(
-               "var " << string << " = new eina.Array<" << (type % ", ") << ">(" << escape_keyword(param.param_name)
+               "var " << string << " = new " << type << "(" << escape_keyword(param.param_name)
                << ", " << (param.type.has_own ? "true" : "false")
                << ", " << (complex->subtypes.front().has_own ? "true" : "false")
                << ");\n"
-            ).generate(sink, std::make_tuple(in_variable_name(param.param_name), complex->subtypes), context);
+            ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
        }
       return true;
    }
@@ -549,8 +549,8 @@ struct native_convert_out_variable_generator
            if (!complex)
              return false;
            return as_generator(
-               "eina.Array<" << (type % ", ") << "> " << string << ";\n"
-             ).generate(sink, std::make_tuple(complex->subtypes, out_variable_name(param.param_name)), context);
+               type << " " << string << ";\n"
+             ).generate(sink, std::make_tuple(param.type, out_variable_name(param.param_name)), context);
         }
       return true;
    }
@@ -604,11 +604,11 @@ struct convert_out_assign_generator
            if (!complex)
              return false;
            return as_generator(
-               string << " = new eina.Array<" << (type % ", ") << ">(" << string
+               string << " = new " << type << "(" << string
                << ", " << (param.type.has_own ? "true" : "false")
                << ", " << (complex->subtypes.front().has_own ? "true" : "false")
                << ");\n"
-             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), complex->subtypes, out_variable_name(param.param_name)), context);
+             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
         }
       return true;
    }
@@ -665,10 +665,10 @@ struct convert_return_generator
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
            if (!complex)
              return false;
-           if (!as_generator("return new eina.Array<" << (type % ", ") << ">(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"}
+           if (!as_generator("return new " << type << "(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"}
                    << ", " << (complex->subtypes.front().has_own ? "true" : "false")
                    << ");\n")
-             .generate(sink, complex->subtypes, context))
+             .generate(sink, ret_type, context))
              return false;
        }
      else if (ret_type.c_type != "void")
