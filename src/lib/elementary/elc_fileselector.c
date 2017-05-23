@@ -25,7 +25,7 @@
 #define MY_CLASS_NAME_LEGACY "elm_fileselector"
 
 /* FIXME: need a way to find a gap between the size of item and thumbnail */
-#define ITEM_SIZE_DEFAULT 16
+#define ITEM_SIZE_DEFAULT 70
 
 typedef struct _Legacy_Event_Path_Then_Data
 {
