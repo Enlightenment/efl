@@ -3853,6 +3853,20 @@ START_TEST(evas_textblock_size)
    evas_object_textblock_size_native_get(tb, &nw, NULL);
    ck_assert_int_eq(nw, w);
 
+     {
+        /* Check correct recalculation of sizes when some of the paragraphs
+         * are not dirty */
+        Evas_Coord bw, bh;
+        evas_object_textblock_text_markup_set(tb,
+              "XXXXXXXXXXXX<ps>"
+              "YYY");
+        evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+        evas_textblock_cursor_paragraph_last(cur);
+        evas_textblock_cursor_text_append(cur, "Y");
+        evas_object_textblock_size_formatted_get(tb, &w, &h);
+        ck_assert_int_eq(bw, w);
+     }
+
    /* FIXME: There is a lot more to be done. */
    END_TB_TEST();
 }

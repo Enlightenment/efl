@@ -398,6 +398,7 @@ struct _Evas_Object_Textblock_Paragraph
    Evas_BiDi_Paragraph_Props         *bidi_props; /**< Only valid during layout. */
    Evas_BiDi_Direction                direction;  /**< Bidi direction enum value. The display direction like right to left.*/
    Evas_Coord                         y, w, h;  /**< Text block co-ordinates. y co-ord, width and height. */
+   Evas_Coord                         last_fw;   /**< Last calculated formatted width  */
    int                                line_no;  /**< Line no of the text block. */
    Eina_Bool                          is_bidi : 1;  /**< EINA_TRUE if this is BiDi Paragraph, else EINA_FALSE. */
    Eina_Bool                          visible : 1;  /**< EINA_TRUE if paragraph visible, else EINA_FALSE. */
@@ -3844,6 +3845,7 @@ loop_advance:
      {
         Evas_Coord new_wmax = c->ln->w +
            c->marginl + c->marginr - (c->o->style_pad.l + c->o->style_pad.r);
+        c->par->last_fw = new_wmax;
         if (new_wmax > c->wmax)
            c->wmax = new_wmax;
      }
@@ -5409,17 +5411,10 @@ _layout_par(Ctxt *c)
 
              /* After this par we are no longer at the beginning, as there
               * must be some text in the par. */
-             if (!EINA_INLIST_GET(c->par)->next)
-               {
-                  c->position = (c->position == TEXTBLOCK_POSITION_START) ?
-                     TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
-               }
-             else
-               {
-                  if (c->position == TEXTBLOCK_POSITION_START)
-                     c->position = TEXTBLOCK_POSITION_ELSE;
-               }
+             if (c->position == TEXTBLOCK_POSITION_START)
+                c->position = TEXTBLOCK_POSITION_ELSE;
 
+             if (c->par->last_fw > c->wmax) c->wmax = c->par->last_fw;
              return 0;
           }
 
@@ -5488,12 +5483,7 @@ _layout_par(Ctxt *c)
 
    Eina_Bool item_preadv = EINA_FALSE;
    Evas_Textblock_Obstacle *obs = NULL;
-
-   /* Initialize wmax by 0.
-      It means the width calculation will be processed.
-      So, it does not need to use previous calculated width. */
-   if (c->wmax == -1) c->wmax = 0;
-
+   c->par->last_fw = 0;
    for (i = c->par->logical_items ; i ; )
      {
         Evas_Coord prevdescent = 0, prevascent = 0;
@@ -6252,7 +6242,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    c->x = c->y = 0;
    c->w = w;
    c->h = h;
-   c->wmax = c->hmax = -1;
+   c->wmax = c->hmax = 0;
    c->ascent = c->descent = 0;
    c->maxascent = c->maxdescent = 0;
    c->marginl = c->marginr = 0;
@@ -6434,14 +6424,8 @@ _relayout(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   Evas_Coord fw, fh;
-
-   _layout(eo_obj, obj->cur->geometry.w, obj->cur->geometry.h, &fw, &fh);
-
-   /* If formatted width/height from _layout() is -1,
-      It means the size calculation was skipped. */
-   if (fw >= 0) o->formatted.w = fw;
-   if (fh >= 0) o->formatted.h = fh;
+   _layout(eo_obj, obj->cur->geometry.w, obj->cur->geometry.h,
+         &o->formatted.w, &o->formatted.h);
    o->formatted.valid = 1;
    o->formatted.oneline_h = 0;
    o->last_w = obj->cur->geometry.w;
