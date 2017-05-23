@@ -1,5 +1,5 @@
-#ifndef EFL_UI_CHECK_H
-#define EFL_UI_CHECK_H
+#ifndef EFL_UI_CHECK_PRIVATE_H
+#define EFL_UI_CHECK_PRIVATE_H
 
 #include "Elementary.h"
 
