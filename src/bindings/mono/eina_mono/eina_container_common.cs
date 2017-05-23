@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+using eina.Callbacks;
 using static eina.NativeCustomExportFunctions;
 
 namespace eina {
@@ -17,6 +18,11 @@ public static class NativeCustomExportFunctions
         efl_mono_native_alloc_copy(IntPtr val, uint size);
     [DllImport("eflcustomexportsmono")] public static extern IntPtr
         efl_mono_native_strdup(string str);
+
+    [DllImport("eflcustomexportsmono")] public static extern IntPtr
+        efl_mono_native_ptr_compare_addr_get();
+    [DllImport("eflcustomexportsmono")] public static extern IntPtr
+        efl_mono_native_str_compare_addr_get();
 }
 
 [StructLayout(LayoutKind.Sequential)]
@@ -30,6 +36,7 @@ public interface BaseElementTraits<T>
     IntPtr ManagedToNativeAlloc(T man);
     void NativeFree(IntPtr nat);
     T NativeToManaged(IntPtr nat);
+    IntPtr EinaCompareCb();
 }
 
 public class StringElementTraits<T> : BaseElementTraits<T>
@@ -50,6 +57,11 @@ public class StringElementTraits<T> : BaseElementTraits<T>
         if (nat == IntPtr.Zero)
             return default(T);
         return (T)(object)Marshal.PtrToStringAuto(nat);
+    }
+
+    public IntPtr EinaCompareCb()
+    {
+        return efl_mono_native_str_compare_addr_get();
     }
 }
 
@@ -82,10 +94,17 @@ public class EflObjectElementTraits<T> : BaseElementTraits<T>
             return default(T);
         return (T) Activator.CreateInstance(concreteType, efl.eo.Globals.efl_ref(nat));
     }
+
+    public IntPtr EinaCompareCb()
+    {
+        return efl_mono_native_ptr_compare_addr_get();
+    }
 }
 
-public class GeneralElementTraits<T> : BaseElementTraits<T>
+public class PrimitiveElementTraits<T> : BaseElementTraits<T>
 {
+    private Eina_Compare_Cb dlgt = null;
+
     public IntPtr ManagedToNativeAlloc(T man)
     {
         GCHandle pinnedData = GCHandle.Alloc(man, GCHandleType.Pinned);
@@ -110,6 +129,21 @@ public class GeneralElementTraits<T> : BaseElementTraits<T>
         var w = Marshal.PtrToStructure<eina.ConvertWrapper<T> >(nat);
         return w.Val;
     }
+
+    private int PrimitiveCompareCb(IntPtr ptr1, IntPtr ptr2)
+    {
+        var m1 = (IComparable) NativeToManaged(ptr1);
+        var m2 = NativeToManaged(ptr2);
+        return m1.CompareTo(m2);
+    }
+
+    public IntPtr EinaCompareCb()
+    {
+        if (dlgt == null)
+            dlgt = new Eina_Compare_Cb(PrimitiveCompareCb);
+        return Marshal.GetFunctionPointerForDelegate(dlgt);
+    }
+
 }
 
 public static class ElementFunctions
@@ -154,7 +188,7 @@ public static class ElementFunctions
         else if (IsString(type))
             traits = new StringElementTraits<T>();
         else
-            traits = new GeneralElementTraits<T>();
+            traits = new PrimitiveElementTraits<T>();
 
         register[type] = traits;
         return traits;
@@ -174,6 +208,10 @@ public static class ElementFunctions
         return (BaseElementTraits<T>) traits;
     }
 
+    //                  //
+    // Traits functions //
+    //                  //
+
     // Convertion functions //
 
     public static IntPtr ManagedToNativeAlloc<T>(T man)
@@ -189,6 +227,13 @@ public static class ElementFunctions
     public static T NativeToManaged<T>(IntPtr nat)
     {
         return GetTypeTraits<T>().NativeToManaged(nat);
+    }
+
+    // Misc //
+
+    public static IntPtr EinaCompareCb<T>()
+    {
+        return GetTypeTraits<T>().EinaCompareCb();
     }
 }
 

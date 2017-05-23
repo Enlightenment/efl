@@ -46,6 +46,21 @@ EAPI const char *efl_mono_native_strdup(const char *str)
     return strdup(str);
 }
 
+EAPI int efl_mono_native_ptr_compare(const void *ptr1, const void *ptr2)
+{
+    return (int)((intptr_t)ptr1 - (intptr_t)ptr2);
+}
+
+EAPI Eina_Compare_Cb efl_mono_native_ptr_compare_addr_get()
+{
+    return efl_mono_native_ptr_compare;
+}
+
+EAPI Eina_Compare_Cb efl_mono_native_str_compare_addr_get()
+{
+    return (Eina_Compare_Cb)strcmp;
+}
+
 // Array //
 
 EAPI void eina_array_free_generic_custom_export_mono(Eina_Array *array) EINA_ARG_NONNULL(1)

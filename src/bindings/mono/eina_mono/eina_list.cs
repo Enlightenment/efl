@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using static eina.ElementFunctions;
 using static eina.ListNativeFunctions;
+using eina.Callbacks;
 
 namespace eina {
 
@@ -36,9 +37,9 @@ public static class ListNativeFunctions
     [DllImport("eina")] public static extern IntPtr
         eina_list_data_find_list(IntPtr list, IntPtr data);
     [DllImport("eina")] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
-        eina_list_move(IntPtr to, IntPtr from, IntPtr data);
+        eina_list_move(ref IntPtr to, ref IntPtr from, IntPtr data);
     [DllImport("eina")] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
-        eina_list_move_list(IntPtr to, IntPtr from, IntPtr data);
+        eina_list_move_list(ref IntPtr to, ref IntPtr from, IntPtr data);
     [DllImport("eina")] public static extern IntPtr
         eina_list_free(IntPtr list);
     [DllImport("eina")] public static extern IntPtr
@@ -60,7 +61,7 @@ public static class ListNativeFunctions
     [DllImport("eina")] public static extern IntPtr
         eina_list_sorted_merge(IntPtr left, IntPtr right, IntPtr func);
     [DllImport("eina")] public static extern IntPtr
-        eina_list_split_list(IntPtr list, IntPtr relative, IntPtr right);
+        eina_list_split_list(IntPtr list, IntPtr relative, ref IntPtr right);
     [DllImport("eina")] public static extern IntPtr
         eina_list_search_sorted_near_list(IntPtr list, IntPtr func, IntPtr data, IntPtr result_cmp);
     [DllImport("eina")] public static extern IntPtr
@@ -233,12 +234,32 @@ public class List<T> : IEnumerable<T>, IDisposable
         Handle = eina_list_prepend(Handle, ele);
     }
 
-//     public IntPtr LastDataGet()
-//     {
-//         return eina_list_last_data_get_custom_export_mono(Handle);
-//     }
+    public void SortedInsert(T val)
+    {
+        IntPtr ele = ManagedToNativeAlloc(val);
+        Handle = eina_list_sorted_insert(Handle, EinaCompareCb<T>(), ele);
+    }
 
-    // ########################################################
+    public void SortedInsert(Eina_Compare_Cb compareCb, T val)
+    {
+        IntPtr ele = ManagedToNativeAlloc(val);
+        Handle = eina_list_sorted_insert(Handle, Marshal.GetFunctionPointerForDelegate(compareCb), ele);
+    }
+
+    public void Sort(int limit = 0)
+    {
+        Handle = eina_list_sort(Handle, (uint)limit, EinaCompareCb<T>());
+    }
+
+    public void Sort(Eina_Compare_Cb compareCb)
+    {
+        Handle = eina_list_sort(Handle, 0, Marshal.GetFunctionPointerForDelegate(compareCb));
+    }
+
+    public void Sort(int limit, Eina_Compare_Cb compareCb)
+    {
+        Handle = eina_list_sort(Handle, (uint)limit, Marshal.GetFunctionPointerForDelegate(compareCb));
+    }
 
     public T Nth(int n)
     {
@@ -265,6 +286,22 @@ public class List<T> : IEnumerable<T>, IDisposable
         {
             DataSet(idx, value);
         }
+    }
+
+    public T LastDataGet()
+    {
+        IntPtr ele = eina_list_last_data_get_custom_export_mono(Handle);
+        return NativeToManaged<T>(ele);
+    }
+
+    public void Reverse()
+    {
+        Handle = eina_list_reverse(Handle);
+    }
+
+    public void Shuffle()
+    {
+        Handle = eina_list_shuffle(Handle, IntPtr.Zero);
     }
 
     public T[] ToArray()
