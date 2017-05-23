@@ -260,19 +260,11 @@ struct visitor_generate
         std::function<attributes::type_def::variant_type()> function;
       } const matches[] =
       {
-        {"list", true, nullptr, [&]
+        {"list", nullptr, nullptr, [&]
          {
-           (*this)(regular_type_def{" System.Collections.Generic.List", complex.outer.base_qualifier, {}});
-           return attributes::type_def::variant_type();
-           // generate_container(sink, complex, *context, " ::efl::eina::list");
-           // return attributes::type_def::variant_type();
-         }}
-        , {"list", false, nullptr, [&]
-           {
-           return replace_outer
-           (complex, regular_type_def{" System.Collections.Generic.List", complex.outer.base_qualifier, {}});
-           // generate_container(sink, complex, *context, " ::efl::eina::range_list");
-           // return attributes::type_def::variant_type();
+           complex_type_def c = complex;
+           c.outer.base_type = "eina.List";
+           return c;
          }}
         , {"array", nullptr, nullptr, [&]
            {
