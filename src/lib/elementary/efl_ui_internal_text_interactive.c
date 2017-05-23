@@ -16,7 +16,6 @@ typedef struct _Efl_Ui_Internal_Text_Interactive_Data
    Evas_Textblock_Cursor *preedit_start, *preedit_end;
    Eina_List             *seq;
    char                  *selection;
-   Eina_Bool              multiline : 1;
    Eina_Bool              composing : 1;
    Eina_Bool              selecting : 1;
    Eina_Bool              have_selection : 1;
@@ -730,7 +729,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
    super = evas_key_modifier_is_set(ev->modifiers, "Super");
    altgr = evas_key_modifier_is_set(ev->modifiers, "AltGr");
 #endif
-   multiline = en->multiline;
+   multiline = efl_text_format_multiline_get(obj);
 
    /* Translate some keys to strings. */
    if (!strcmp(ev->key, "Tab"))
@@ -1253,6 +1252,9 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord x, y, w, h;
    Evas_Textblock_Cursor *tc;
+   Eina_Bool multiline;
+
+   multiline = efl_text_format_multiline_get(obj);
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -1274,7 +1276,7 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
         cx = ev->cur.canvas.x - x;
         cy = ev->cur.canvas.y - y;
 
-        if (en->multiline)
+        if (multiline)
           {
              efl_canvas_text_cursor_coord_set(cur, cx, cy);
           }
@@ -1301,7 +1303,6 @@ EOLIAN static Efl_Object *
 _efl_ui_internal_text_interactive_efl_object_constructor(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    en->select_allow = EINA_TRUE;
-   en->multiline = EINA_TRUE;
    en->editable = EINA_TRUE;
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
@@ -1381,7 +1382,7 @@ _efl_ui_internal_text_interactive_efl_object_finalize(Eo *obj, Efl_Ui_Internal_T
            ecore_imf_context_input_panel_language_set(en->imf_context, ECORE_IMF_INPUT_PANEL_LANG_ALPHABET);
 #endif
 
-        if (en->multiline)
+        if (efl_text_format_multiline_get(obj))
            ecore_imf_context_input_hint_set(en->imf_context,
                  ecore_imf_context_input_hint_get(en->imf_context) | ECORE_IMF_INPUT_HINT_MULTILINE);
      }
@@ -1408,18 +1409,6 @@ _efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_cursors_get(
 {
    if (start) *start = pd->sel_start;
    if (end) *end = pd->sel_end;
-}
-
-EOLIAN static void
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_multiline_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Eina_Bool enabled)
-{
-   pd->multiline = enabled;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_multiline_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd)
-{
-   return pd->multiline;
 }
 
 EOLIAN static void

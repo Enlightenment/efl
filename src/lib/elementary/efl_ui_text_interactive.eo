@@ -10,7 +10,8 @@ struct Efl.Ui.Text.Interactive.Change_Info {
    merge: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
 }
 
-interface Efl.Ui.Text.Interactive ()
+interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
+   Efl.Text.Format, Efl.Text.Style)
 {
    [[This is an interface interactive text inputs should implement]]
    methods {
@@ -35,14 +36,6 @@ interface Efl.Ui.Text.Interactive ()
          values {
             start: Efl.Canvas.Text.Cursor; [[The start of the selection]]
             end: Efl.Canvas.Text.Cursor; [[The end of the selection]]
-         }
-      }
-      @property multiline {
-         [[Whether or not this textblock is allowed to be multiline]]
-         set {}
-         get {}
-         values {
-            enabled: bool; [[$true if enabled, $false otherwise]]
          }
       }
       @property editable {

@@ -9,7 +9,6 @@ class Efl.Ui.Internal.Text.Interactive (Efl.Canvas.Text, Efl.Ui.Text.Interactive
       Efl.Object.finalize;
       Efl.Ui.Text.Interactive.selection_allowed { get; set; }
       Efl.Ui.Text.Interactive.selection_cursors { get; }
-      Efl.Ui.Text.Interactive.multiline { get; set; }
       Efl.Ui.Text.Interactive.editable { get; set; }
    }
 }

@@ -115,22 +115,31 @@ my_efl_ui_text_bt_4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
          "size=32x32 href=emoticon");
 }
 
-const char *_wrap_modes[4] = { "none", "char", "word", "mixed" };
-
 static void
 my_efl_ui_text_bt_6(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char style[128];
-   Evas_Object *en = data;
-   size_t idx = (size_t) efl_key_data_get(en, "wrap_idx");
-   idx = (idx + 1) % 4;
-   efl_key_data_set(en, "wrap_idx", (void *)idx);
+   Eo *text_obj = data;
 
-   sprintf(style, "DEFAULT='font=Sans font_size=12 color=#fff wrap=%s'",
-         _wrap_modes[idx]);
-   efl_canvas_text_style_set(en, NULL, style);
-   printf("wrap mode changed to '%s'\n", _wrap_modes[idx]);
+   Efl_Text_Format_Wrap wrap = efl_text_format_wrap_get(text_obj);
 
+   switch(wrap)
+     {
+      case EFL_TEXT_FORMAT_WRAP_NONE:
+         wrap = EFL_TEXT_FORMAT_WRAP_CHAR;
+         break;
+      case EFL_TEXT_FORMAT_WRAP_CHAR:
+         wrap = EFL_TEXT_FORMAT_WRAP_WORD;
+         break;
+      case EFL_TEXT_FORMAT_WRAP_WORD:
+         wrap = EFL_TEXT_FORMAT_WRAP_MIXED;
+         break;
+      case EFL_TEXT_FORMAT_WRAP_MIXED:
+         wrap = EFL_TEXT_FORMAT_WRAP_NONE;
+         break;
+      default:
+         break;
+     }
+   efl_text_format_wrap_set(text_obj, wrap);
 }
 
 static void
@@ -154,7 +163,8 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   en = efl_add(EFL_UI_TEXT_CLASS, win);
+   en = efl_add(EFL_UI_TEXT_CLASS, win,
+         efl_text_format_multiline_set(efl_added, EINA_TRUE));
 
    printf("Added Efl.Ui.Text object\n");
    efl_key_data_set(en, "wrap_idx", 0);
