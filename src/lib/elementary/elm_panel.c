@@ -64,11 +64,8 @@ _elm_panel_elm_layout_sizing_eval(Eo *obj, Elm_Panel_Data *sd)
 
    if (sd->scrollable)
      {
-        int w, h;
-        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-
-        if (sd->hidden) _drawer_close(obj, w, h, EINA_FALSE);
-        else _drawer_open(obj, w, h, EINA_FALSE);
+        if (sd->hidden) _drawer_close(obj, wd->w, wd->h, EINA_FALSE);
+        else _drawer_open(obj, wd->w, wd->h, EINA_FALSE);
      }
 
    evas_object_smart_calculate(sd->bx);
