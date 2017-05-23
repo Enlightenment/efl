@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-05-22 19:16+0900\n"
+"POT-Creation-Date: 2017-05-23 18:43+0900\n"
 "PO-Revision-Date: 2014-05-25 20:18+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -490,7 +490,7 @@ msgstr ""
 msgid "panel button"
 msgstr "bouton de panneau"
 
-#: src/lib/elementary/elm_progressbar.c:313
+#: src/lib/elementary/efl_ui_progressbar.c:313
 msgid "progressbar"
 msgstr "barre de progression"
 
