@@ -1819,9 +1819,9 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
    existing = eina_list_count(pd->grids);
 
    // trim unneeded rows in our rendering
-   if (rows + 1 < existing)
+   if (rows < existing)
      {
-        for (i = existing - rows + 1; i > 0; i--)
+        for (i = existing - rows; i > 0; i--)
           {
              grid = eina_list_data_get(eina_list_last(pd->grids));
              evas_object_del(grid);
@@ -1831,10 +1831,10 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
         rows = existing;
      }
 
-   if (rows + 1 == existing)
+   if (rows == existing)
      return;
 
-   for (i = existing; i <= rows; i++)
+   for (i = existing; i < rows; i++)
      {
         grid = evas_object_textgrid_add(pd->gridbox);
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
@@ -1851,6 +1851,8 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
 
         evas_object_textgrid_font_set(grid, pd->font_name, pd->font_size * elm_config_scale_get());
      }
+
+   elm_box_recalculate(pd->gridbox);
 }
 
 static void
