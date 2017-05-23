@@ -31,8 +31,15 @@
 # endif
 #endif /* ! _WIN32 */
 
+#include "test_testing.eo.h"
+#include "test_numberwrapper.eo.h"
+
 typedef struct Test_Testing_Data
 {
+  SimpleCb cb;
+  void *cb_data;
+  Eina_Free_Cb free_cb;
+
 } Test_Testing_Data;
 
 typedef struct Test_Numberwrapper_Data
@@ -40,8 +47,6 @@ typedef struct Test_Numberwrapper_Data
    int number;
 } Test_Numberwrapper_Data;
 
-#include "test_testing.eo.h"
-#include "test_numberwrapper.eo.h"
 
 // ############ //
 // Test.Testing //
@@ -799,12 +804,23 @@ int _test_numberwrapper_number_get(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data 
 
 void _test_testing_set_callback(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, SimpleCb cb, void *cb_data, Eina_Free_Cb cb_free_cb)
 {
-   // FIXME implement
+   if (pd->free_cb)
+       pd->free_cb(pd->cb_data);
+
+   pd->cb = cb;
+   pd->cb_data = cb_data;
+   pd->free_cb = cb_free_cb;
 }
 
 int _test_testing_call_callback(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, int a)
 {
-   return -1; // FIXME implement
+   if (!pd->cb)
+     {
+       EINA_LOG_ERR("Trying to call with no callback set");
+       return -1; // FIXME implement
+     }
+
+   return pd->cb(pd->cb_data, a);
 }
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"
