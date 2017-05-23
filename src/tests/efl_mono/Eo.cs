@@ -69,7 +69,7 @@ class TestEo
        System.GC.WaitForPendingFinalizers();
 
        Test.Assert(delEventCalled, "DEL event not called");
-    }*/
+    }
 
     public static void derived_dispose_really_frees()
     {
@@ -82,6 +82,7 @@ class TestEo
 
        Test.Assert(delEventCalled, "DEL event not called");
     }
+    */
 }
 
 class MyLoop : efl.LoopInherit
