@@ -125,6 +125,7 @@ efl_eina_mono_files = \
 	bindings/mono/eina_mono/eina_array.cs \
 	bindings/mono/eina_mono/eina_list.cs \
 	bindings/mono/eina_mono/eina_container_common.cs \
+	bindings/mono/eina_mono/eina_common.cs \
 	bindings/mono/eina_mono/eina_log.cs \
 	bindings/mono/eina_mono/eina_binbuf.cs \
 	bindings/mono/eina_mono/eina_slice.cs \

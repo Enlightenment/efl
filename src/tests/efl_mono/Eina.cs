@@ -3,19 +3,83 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-namespace TestSuite
-{
+using EinaTestData;
+using static EinaTestData.BaseData;
 
-class TestEinaStringshare
+namespace EinaTestData
 {
-    // TODO
-}
 
 class BaseArray
 {
     public static byte[] Values()
     {
         return new byte[3]{0x0,0x2A,0x42};
+    }
+}
+
+public static class BaseData
+{
+    public static readonly int[] base_arr_int = {0x0,0x2A,0x42};
+    public static readonly int[] append_arr_int = {42,43,33};
+    public static readonly int[] modified_arr_int = {0x0,0x2A,0x42,42,43,33};
+
+    public static readonly string[] base_arr_str = {"0x0","0x2A","0x42"};
+    public static readonly string[] append_arr_str = {"42","43","33"};
+    public static readonly string[] modified_arr_str = {"0x0","0x2A","0x42","42","43","33"};
+
+    public static test.Numberwrapper[] BaseArrObj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        a.number_set(0x0);
+        b.number_set(0x2A);
+        c.number_set(0x42);
+        return new test.NumberwrapperConcrete[]{a,b,c};
+    }
+
+    public static test.Numberwrapper[] AppendArrObj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        a.number_set(42);
+        b.number_set(43);
+        c.number_set(33);
+        return new test.NumberwrapperConcrete[]{a,b,c};
+    }
+
+    public static test.Numberwrapper[] ModifiedArrObj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        var d = new test.NumberwrapperConcrete();
+        var e = new test.NumberwrapperConcrete();
+        var f = new test.NumberwrapperConcrete();
+        a.number_set(0x0);
+        b.number_set(0x2A);
+        c.number_set(0x42);
+        d.number_set(42);
+        e.number_set(43);
+        f.number_set(33);
+        return new test.NumberwrapperConcrete[]{a,b,c,d,e,f};
+    }
+
+    public static void NumberwrapperArrayAssertEqual(
+        test.Numberwrapper[] a
+        , test.Numberwrapper[] b
+        , [CallerLineNumber] int line = 0
+        , [CallerFilePath] string file = null
+        , [CallerMemberName] string member = null)
+    {
+        Test.Assert(a.Length == b.Length, "Different lenght", line, file, member);
+        for (int i = 0; i < a.Length; ++i)
+        {
+            int av = a[i].number_get();
+            int bv = b[i].number_get();
+            Test.Assert(av == bv, $"Different values for element [{i}]: {av} == {bv}", line, file, member);
+        }
     }
 }
 
@@ -209,6 +273,11 @@ class NativeInheritImpl : test.TestingInherit
         return r;
     }
 }
+
+} // EinaTestData
+
+namespace TestSuite
+{
 
 class TestEinaBinbuf
 {
@@ -650,56 +719,6 @@ class TestEinaSlice
 
 class TestEinaArray
 {
-    private static readonly string test_string = "abcdefghij";
-
-    private static readonly int[] base_arr_int = {0x0,0x2A,0x42};
-    private static readonly int[] append_arr_int = {42,43,33};
-    private static readonly int[] modified_arr_int = {0x0,0x2A,0x42,42,43,33};
-
-    private static readonly string[] base_arr_str = {"0x0","0x2A","0x42"};
-    private static readonly string[] append_arr_str = {"42","43","33"};
-    private static readonly string[] modified_arr_str = {"0x0","0x2A","0x42","42","43","33"};
-
-    private static test.Numberwrapper[] BaseArrObj()
-    {
-        var a = new test.NumberwrapperConcrete();
-        var b = new test.NumberwrapperConcrete();
-        var c = new test.NumberwrapperConcrete();
-        a.number_set(0x0);
-        b.number_set(0x2A);
-        c.number_set(0x42);
-        return new test.NumberwrapperConcrete[]{a,b,c};
-    }
-
-    private static test.Numberwrapper[] AppendArrObj()
-    {
-        var a = new test.NumberwrapperConcrete();
-        var b = new test.NumberwrapperConcrete();
-        var c = new test.NumberwrapperConcrete();
-        a.number_set(42);
-        b.number_set(43);
-        c.number_set(33);
-        return new test.NumberwrapperConcrete[]{a,b,c};
-    }
-
-    private static test.Numberwrapper[] ModifiedArrObj()
-    {
-        var a = new test.NumberwrapperConcrete();
-        var b = new test.NumberwrapperConcrete();
-        var c = new test.NumberwrapperConcrete();
-        var d = new test.NumberwrapperConcrete();
-        var e = new test.NumberwrapperConcrete();
-        var f = new test.NumberwrapperConcrete();
-        a.number_set(0x0);
-        b.number_set(0x2A);
-        c.number_set(0x42);
-        d.number_set(42);
-        e.number_set(43);
-        f.number_set(33);
-        return new test.NumberwrapperConcrete[]{a,b,c,d,e,f};
-    }
-
-
     public static void eina_array_default()
     {
         var a = new eina.Array<int>();
@@ -718,8 +737,8 @@ class TestEinaArray
     {
         var a = new eina.Array<string>();
         Test.Assert(a.Handle != IntPtr.Zero);
-        Test.Assert(a.Push(test_string));
-        Test.Assert(a[0] == test_string);
+        Test.Assert(a.Push("test string"));
+        Test.Assert(a[0] == "test string");
     }
 
     public static void push_obj()
@@ -746,8 +765,8 @@ class TestEinaArray
     {
         var a = new eina.Array<string>();
         Test.Assert(a.Handle != IntPtr.Zero);
-        Test.Assert(a.Push(test_string));
-        Test.Assert(a.Pop() == test_string);
+        Test.Assert(a.Push("test string"));
+        Test.Assert(a.Pop() == "test string");
         Test.Assert(a.Count() == 0);
     }
 
@@ -780,8 +799,8 @@ class TestEinaArray
     {
         var a = new eina.Array<string>();
         Test.Assert(a.Handle != IntPtr.Zero);
-        Test.Assert(a.Push(test_string));
-        Test.Assert(a[0] == test_string);
+        Test.Assert(a.Push("test string"));
+        Test.Assert(a[0] == "test string");
         a.DataSet(0, "other string");
         Test.Assert(a[0] == "other string");
         a[0] = "abc";
@@ -1120,23 +1139,6 @@ class TestEinaArray
 
     // Object //
 
-    private static void NumberwrapperArrayAssertEqual(
-        test.Numberwrapper[] a
-        , test.Numberwrapper[] b
-        , [CallerLineNumber] int line = 0
-        , [CallerFilePath] string file = null
-        , [CallerMemberName] string member = null)
-    {
-        Test.Assert(a.Length == b.Length, "Different lenght", line, file, member);
-        for (int i = 0; i < a.Length; ++i)
-        {
-            int av = a[i].number_get();
-            int bv = b[i].number_get();
-            Test.Assert(av == bv, $"Different values for element [{i}]: {av} == {bv}", line, file, member);
-        }
-    }
-
-
     public static void test_eina_array_obj_in()
     {
         test.Testing t = new test.TestingConcrete();
@@ -1235,66 +1237,329 @@ class TestEinaArray
 
 class TestEinaList
 {
-    private static readonly string test_string = "abcdefghij";
-
-    private static readonly int[] base_arr_int = {0x0,0x2A,0x42};
-    private static readonly int[] append_arr_int = {42,43,33};
-    private static readonly int[] modified_arr_int = {0x0,0x2A,0x42,42,43,33};
-
-    private static readonly string[] base_arr_str = {"0x0","0x2A","0x42"};
-    private static readonly string[] append_arr_str = {"42","43","33"};
-    private static readonly string[] modified_arr_str = {"0x0","0x2A","0x42","42","43","33"};
-
-    private static test.Numberwrapper[] BaseArrObj()
-    {
-        var a = new test.NumberwrapperConcrete();
-        var b = new test.NumberwrapperConcrete();
-        var c = new test.NumberwrapperConcrete();
-        a.number_set(0x0);
-        b.number_set(0x2A);
-        c.number_set(0x42);
-        return new test.NumberwrapperConcrete[]{a,b,c};
-    }
-
-    private static test.Numberwrapper[] AppendArrObj()
-    {
-        var a = new test.NumberwrapperConcrete();
-        var b = new test.NumberwrapperConcrete();
-        var c = new test.NumberwrapperConcrete();
-        a.number_set(42);
-        b.number_set(43);
-        c.number_set(33);
-        return new test.NumberwrapperConcrete[]{a,b,c};
-    }
-
-    private static test.Numberwrapper[] ModifiedArrObj()
-    {
-        var a = new test.NumberwrapperConcrete();
-        var b = new test.NumberwrapperConcrete();
-        var c = new test.NumberwrapperConcrete();
-        var d = new test.NumberwrapperConcrete();
-        var e = new test.NumberwrapperConcrete();
-        var f = new test.NumberwrapperConcrete();
-        a.number_set(0x0);
-        b.number_set(0x2A);
-        c.number_set(0x42);
-        d.number_set(42);
-        e.number_set(43);
-        f.number_set(33);
-        return new test.NumberwrapperConcrete[]{a,b,c,d,e,f};
-    }
-
-
     public static void eina_list_default()
     {
-        var a = new eina.List<int>();
+        var lst = new eina.List<int>();
     }
 
-    public static void append_int()
+    public static void data_set_int()
     {
-        var a = new eina.List<int>();
-        a.Append(88);
-        Test.Assert(a[0] == 88);
+        var lst = new eina.List<int>();
+        lst.Append(88);
+        Test.Assert(lst[0] == 88);
+        lst.DataSet(0, 44);
+        Test.Assert(lst[0] == 44);
+        lst[0] = 22;
+        Test.Assert(lst[0] == 22);
+    }
+
+    public static void data_set_string()
+    {
+        var lst = new eina.List<string>();
+        lst.Append("test string");
+        Test.Assert(lst[0] == "test string");
+        lst.DataSet(0, "other string");
+        Test.Assert(lst[0] == "other string");
+        lst[0] = "abc";
+        Test.Assert(lst[0] == "abc");
+    }
+
+    public static void data_set_obj()
+    {
+        var lst = new eina.List<test.NumberwrapperConcrete>();
+
+        var o1 = new test.NumberwrapperConcrete();
+        o1.number_set(88);
+
+        lst.Append(o1);
+        Test.Assert(lst[0].raw_handle == o1.raw_handle);
+        Test.Assert(lst[0].number_get() == 88);
+
+        var o2 = new test.NumberwrapperConcrete();
+        o2.number_set(44);
+
+        lst.DataSet(0, o2);
+        Test.Assert(lst[0].raw_handle == o2.raw_handle);
+        Test.Assert(lst[0].number_get() == 44);
+
+        var o3 = new test.NumberwrapperConcrete();
+        o3.number_set(22);
+
+        lst[0] = o3;
+        Test.Assert(lst[0].raw_handle == o3.raw_handle);
+        Test.Assert(lst[0].number_get() == 22);
+    }
+
+    public static void append_count_int()
+    {
+        var lst = new eina.List<int>();
+        Test.Assert(lst.Count() == 0);
+        lst.Append(88);
+        Test.Assert(lst[0] == 88);
+        Test.Assert(lst.Count() == 1);
+        lst.Append(44);
+        Test.Assert(lst[1] == 44);
+        Test.Assert(lst.Count() == 2);
+        lst.Append(22);
+        Test.Assert(lst[2] == 22);
+        Test.Assert(lst.Count() == 3);
+    }
+
+    public static void append_count_string()
+    {
+        var lst = new eina.List<string>();
+        Test.Assert(lst.Count() == 0);
+        lst.Append("a");
+        Test.Assert(lst[0] == "a");
+        Test.Assert(lst.Count() == 1);
+        lst.Append("b");
+        Test.Assert(lst[1] == "b");
+        Test.Assert(lst.Count() == 2);
+        lst.Append("c");
+        Test.Assert(lst[2] == "c");
+        Test.Assert(lst.Count() == 3);
+    }
+
+    public static void append_count_obj()
+    {
+        var lst = new eina.List<test.NumberwrapperConcrete>();
+
+        Test.Assert(lst.Count() == 0);
+
+        var o1 = new test.NumberwrapperConcrete();
+        o1.number_set(88);
+        lst.Append(o1);
+        Test.Assert(lst[0].raw_handle == o1.raw_handle);
+        Test.Assert(lst[0].number_get() == 88);
+        Test.Assert(lst.Count() == 1);
+
+        var o2 = new test.NumberwrapperConcrete();
+        o2.number_set(44);
+        lst.Append(o2);
+        Test.Assert(lst[1].raw_handle == o2.raw_handle);
+        Test.Assert(lst[1].number_get() == 44);
+        Test.Assert(lst.Count() == 2);
+
+        var o3 = new test.NumberwrapperConcrete();
+        o3.number_set(22);
+        lst.Append(o3);
+        Test.Assert(lst[2].raw_handle == o3.raw_handle);
+        Test.Assert(lst[2].number_get() == 22);
+        Test.Assert(lst.Count() == 3);
+    }
+
+    public static void length_int()
+    {
+        var lst = new eina.List<int>();
+        Test.Assert(lst.Length == 0);
+        lst.Append(88);
+        Test.Assert(lst[0] == 88);
+        Test.Assert(lst.Length == 1);
+        lst.Append(44);
+        Test.Assert(lst[1] == 44);
+        Test.Assert(lst.Length == 2);
+        lst.Append(22);
+        Test.Assert(lst[2] == 22);
+        Test.Assert(lst.Length == 3);
+    }
+
+    public static void length_string()
+    {
+        var lst = new eina.List<string>();
+        Test.Assert(lst.Length == 0);
+        lst.Append("a");
+        Test.Assert(lst[0] == "a");
+        Test.Assert(lst.Length == 1);
+        lst.Append("b");
+        Test.Assert(lst[1] == "b");
+        Test.Assert(lst.Length == 2);
+        lst.Append("c");
+        Test.Assert(lst[2] == "c");
+        Test.Assert(lst.Length == 3);
+    }
+
+    public static void prepend_count_int()
+    {
+        var lst = new eina.List<int>();
+        Test.Assert(lst.Count() == 0);
+        lst.Prepend(88);
+        Test.Assert(lst[0] == 88);
+        Test.Assert(lst.Count() == 1);
+        lst.Prepend(44);
+        Test.Assert(lst[0] == 44);
+        Test.Assert(lst.Count() == 2);
+        lst.Prepend(22);
+        Test.Assert(lst[0] == 22);
+        Test.Assert(lst.Count() == 3);
+    }
+
+    public static void prepend_count_string()
+    {
+        var lst = new eina.List<string>();
+        Test.Assert(lst.Count() == 0);
+        lst.Prepend("a");
+        Test.Assert(lst[0] == "a");
+        Test.Assert(lst.Count() == 1);
+        lst.Prepend("b");
+        Test.Assert(lst[0] == "b");
+        Test.Assert(lst.Count() == 2);
+        lst.Prepend("c");
+        Test.Assert(lst[0] == "c");
+        Test.Assert(lst.Count() == 3);
+    }
+
+    public static void prepend_count_obj()
+    {
+        var lst = new eina.List<test.NumberwrapperConcrete>();
+
+        Test.Assert(lst.Count() == 0);
+
+        var o1 = new test.NumberwrapperConcrete();
+        o1.number_set(88);
+        lst.Prepend(o1);
+        Test.Assert(lst[0].raw_handle == o1.raw_handle);
+        Test.Assert(lst[0].number_get() == 88);
+        Test.Assert(lst.Count() == 1);
+
+        var o2 = new test.NumberwrapperConcrete();
+        o2.number_set(44);
+        lst.Prepend(o2);
+        Test.Assert(lst[0].raw_handle == o2.raw_handle);
+        Test.Assert(lst[0].number_get() == 44);
+        Test.Assert(lst.Count() == 2);
+
+        var o3 = new test.NumberwrapperConcrete();
+        o3.number_set(22);
+        lst.Prepend(o3);
+        Test.Assert(lst[0].raw_handle == o3.raw_handle);
+        Test.Assert(lst[0].number_get() == 22);
+        Test.Assert(lst.Count() == 3);
+    }
+
+    public static void sorted_insert_int()
+    {
+        var lst = new eina.List<int>();
+        lst.SortedInsert(88);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{88}));
+        lst.SortedInsert(22);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{22,88}));
+        lst.SortedInsert(44);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{22,44,88}));
+
+    }
+
+    public static void sorted_insert_string()
+    {
+        var lst = new eina.List<string>();
+        lst.SortedInsert("c");
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"c"}));
+        lst.SortedInsert("a");
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a","c"}));
+        lst.SortedInsert("b");
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a","b","c"}));
+
+    }
+
+    public static void sort_int()
+    {
+        var lst = new eina.List<int>();
+        lst.Append(88);
+        lst.Append(22);
+        lst.Append(11);
+        lst.Append(44);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{88,22,11,44}));
+        lst.Sort();
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{11,22,44,88}));
+
+    }
+
+    public static void sort_string()
+    {
+        var lst = new eina.List<string>();
+        lst.Append("d");
+        lst.Append("b");
+        lst.Append("a");
+        lst.Append("c");
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"d","b","a","c"}));
+        lst.Sort();
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a","b","c","d"}));
+    }
+
+    public static void reverse_int()
+    {
+        var lst = new eina.List<int>();
+        lst.Append(22);
+        lst.Append(44);
+        lst.Append(88);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{22,44,88}));
+        lst.Reverse();
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{88,44,22}));
+
+    }
+
+    public static void reverse_string()
+    {
+        var lst = new eina.List<string>();
+        lst.Append("a");
+        lst.Append("b");
+        lst.Append("c");
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a","b","c"}));
+        lst.Reverse();
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"c","b","a"}));
+    }
+
+    public static void eina_list_as_ienumerable_int()
+    {
+        var lst = new eina.List<int>();
+        lst.Append(88);
+        lst.Append(44);
+        lst.Append(22);
+
+        int cmp = 88;
+        foreach (int e in lst)
+        {
+            Test.AssertEquals(cmp, e);
+            cmp /= 2;
+        }
+    }
+
+    public static void eina_list_as_ienumerable_string()
+    {
+        var lst = new eina.List<string>();
+        lst.Append("X");
+        lst.Append("XX");
+        lst.Append("XXX");
+
+        string cmp = "X";
+        foreach (string e in lst)
+        {
+            Test.AssertEquals(cmp, e);
+            cmp = cmp + "X";
+        }
+    }
+
+    public static void eina_list_as_ienumerable_obj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        a.number_set(88);
+        b.number_set(44);
+        c.number_set(22);
+        var cmp = new test.NumberwrapperConcrete[]{a,b,c};
+
+        var lst = new eina.List<test.NumberwrapperConcrete>();
+        lst.Append(a);
+        lst.Append(b);
+        lst.Append(c);
+
+        int i = 0;
+        foreach (test.NumberwrapperConcrete e in lst)
+        {
+            Test.AssertEquals(cmp[i].number_get(), e.number_get());
+            Test.Assert(cmp[i].raw_handle == e.raw_handle);
+            ++i;
+        }
     }
 }
 
