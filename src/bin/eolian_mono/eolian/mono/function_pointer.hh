@@ -18,9 +18,27 @@ struct function_pointer {
       auto open_namespace = *("namespace " << string << " {") << "\n";
       if(!as_generator(open_namespace).generate(sink, namespaces, add_lower_case_context(context))) return false;
 
+      // C# visible delegate
       if (!as_generator("public delegate " << type << " " << string
-                  << "(IntPtr data, " << (parameter % ", ") << ");\n")
+                  << "(" << (parameter % ", ") << ");\n")
               .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), context))
+          return false;
+      // "Internal" delegate, 1-to-1 with the Unamaged function type
+      if (!as_generator("public delegate " << type << " " << string // public?
+                  << "Internal(IntPtr data, " << (parameter % ", ") << ");\n")
+              .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), context))
+          return false;
+
+      std::string f_name = escape_keyword(f.name);
+      // Wrapper type, with callback matching the Unamanaged one
+      if (!as_generator("public class " << string << "Wrapper {\n"
+                  << scope_tab << "public static " << type << " Cb(IntPtr cb_data, " << (parameter % ", ") << ") {\n"
+                  << scope_tab << scope_tab << "GCHandle handle = GCHandle.FromIntPtr(cb_data);\n"
+                  << scope_tab << scope_tab << string << " cb = (" << string << ")handle.Target;\n"
+                  << scope_tab << scope_tab << "return cb(" << (argument_invocation % ", ") << ");\n"
+                  << scope_tab << "}\n"
+                  << "}\n"
+                  ).generate(sink, std::make_tuple(f_name, f.return_type, f.parameters, f_name, f_name, f.parameters), context))
           return false;
 
       auto close_namespace = *(lit("} ")) << "\n";

@@ -9,6 +9,207 @@
 #include "using_decl.hh"
 #include "keyword.hh"
 
+
+namespace eolian_mono {
+    struct parameter_generator;
+    struct marshall_parameter_generator;
+    struct argument_generator;
+    struct argument_invocation_generator;
+    struct native_argument_invocation_generator;
+    struct native_convert_in_variable_generator;
+    struct convert_in_variable_generator;
+    struct native_convert_out_variable_generator;
+    struct convert_out_variable_generator;
+    struct convert_out_assign_generator;
+    struct native_convert_out_assign_parameterized;
+    struct native_convert_out_assign_generator;
+    struct convert_return_generator;
+    struct convert_return_variable_generator;
+    struct native_convert_return_generator;
+    struct native_convert_return_parameterized;
+    struct native_convert_return_variable_generator;
+    struct convert_function_pointer_generator;
+    struct native_convert_function_pointer_generator;
+}
+
+namespace efl { namespace eolian { namespace grammar {
+
+template <>
+struct is_eager_generator< ::eolian_mono::parameter_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::parameter_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::parameter_generator> : std::integral_constant<int, 1> {};  
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::marshall_parameter_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::marshall_parameter_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::marshall_parameter_generator> : std::integral_constant<int, 1> {};  
+}
+      
+template <>
+struct is_eager_generator< ::eolian_mono::argument_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::argument_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::argument_generator> : std::integral_constant<int, 1> {};  
+}
+      
+template <>
+struct is_eager_generator< ::eolian_mono::argument_invocation_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::argument_invocation_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::argument_invocation_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_argument_invocation_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_argument_invocation_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_argument_invocation_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_in_variable_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_in_variable_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_in_variable_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::convert_in_variable_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::convert_in_variable_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::convert_in_variable_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::convert_out_variable_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::convert_out_variable_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::convert_out_variable_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_out_variable_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_out_variable_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_out_variable_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::convert_out_assign_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::convert_out_assign_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::convert_out_assign_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::convert_return_variable_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::convert_return_variable_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::convert_return_variable_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::convert_return_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::convert_return_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::convert_return_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_out_assign_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_out_assign_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_out_assign_parameterized> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_out_assign_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_return_variable_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_return_variable_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_return_variable_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_return_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_return_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_return_parameterized> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_return_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::convert_function_pointer_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::convert_function_pointer_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::convert_function_pointer_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::native_convert_function_pointer_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::native_convert_function_pointer_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::native_convert_function_pointer_generator> : std::integral_constant<int, 1> {};
+}
+
+} } }
+
 namespace eolian_mono {
 
 namespace attributes = efl::eolian::grammar::attributes;
@@ -101,19 +302,12 @@ struct parameter_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-     // if parameter type is function pointer, return:
-     //     return as_generator(param.type param.param_name, IntPtr paran_name_data, Eina_Free_Cb paran_name_free_cb);
      std::string param_name = escape_keyword(param.param_name);
 
-     if (!param.type.original_type.visit(is_fp_visitor{}))
-         return as_generator(
-                   direction_modifier(param) << type << " " << string
-              ).generate(sink, std::make_tuple(param, param_name), context);
-
      return as_generator(
-               type << " " << param_name << ", IntPtr " << param_name << "_data, Eina_Free_Cb "
-               << param_name << "_free_cb"
-           ).generate(sink, param, context);
+               direction_modifier(param) << type << " " << string
+          ).generate(sink, std::make_tuple(param, param_name), context);
+
    }
 } const parameter {};
 
@@ -130,7 +324,7 @@ struct marshall_parameter_generator
             ).generate(sink, std::make_tuple(param, param_name), context);
 
       return as_generator(
-               type << " " << param_name << ", IntPtr " << param_name << "_data, Eina_Free_Cb "
+               type << "Internal " << param_name << ", IntPtr " << param_name << "_data, Eina_Free_Cb "
                << param_name << "_free_cb"
            ).generate(sink, param, context);
    }
@@ -157,6 +351,28 @@ struct argument_generator
 
 } const argument {};
 
+struct native_argument_invocation_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+     std::string arg = direction_modifier(param);
+
+     if (param_should_use_out_var(param))
+       arg += out_variable_name(param.param_name);
+     else if (param_should_use_in_var(param))
+       arg += in_variable_name(param.param_name);
+     else if (param.type.original_type.visit(is_fp_visitor{}))
+       {
+          arg += escape_keyword(param.param_name) + "_wrapper";
+       }
+     else // FIXME Wrap data and C function pointers into some kind of structure.
+       arg += escape_keyword(param.param_name);
+
+     return as_generator(arg).generate(sink, attributes::unused, context);
+   }
+} const native_argument_invocation {};
+
 // Generates the correct parameter name when invoking a function
 struct argument_invocation_generator
 {
@@ -172,8 +388,8 @@ struct argument_invocation_generator
      else if (param.type.original_type.visit(is_fp_visitor{}))
        {
           std::string param_name = escape_keyword(param.param_name);
-          return as_generator(param_name << ", " << param_name << "_data, " << param_name << "_free_cb")
-             .generate(sink, attributes::unused, context);
+          return as_generator(type << "Wrapper.Cb, GCHandle.ToIntPtr(" << param_name << "_handle), efl.eo.Globals.free_gchandle")
+             .generate(sink, param.type, context);
        }
      else
        arg += escape_keyword(param.param_name);
@@ -620,153 +836,63 @@ struct native_convert_return_parameterized
     }
 } const native_convert_return;
 
+struct convert_function_pointer_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+      if (param.direction != attributes::parameter_direction::in)
+        return true;
+
+      if (!param.type.original_type.visit(is_fp_visitor{}))
+          return true;
+
+      std::string param_name = escape_keyword(param.param_name);
+      // Allocate GCHandle in "param_name"_handle for param;
+      if (!as_generator(
+                  "GCHandle " << param_name << "_handle = GCHandle.Alloc(" << param_name << ");\n"
+                  ).generate(sink, attributes::unused, context))
+      return false;
+
+      return true;
+   }
+
+} const convert_function_pointer {};
+
+struct native_convert_function_pointer_generator
+{
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+      if (param.direction != attributes::parameter_direction::in)
+        return true;
+
+      if (!param.type.original_type.visit(is_fp_visitor{}))
+        return true;
+
+      // Getting the type through C api
+      const Eolian_Typedecl *tpd = eolian_typedecl_alias_get_by_name(param.type.c_type.c_str());
+      if (eolian_typedecl_type_get(tpd) != EOLIAN_TYPEDECL_FUNCTION_POINTER)
+        return true;
+
+      const Eolian_Function *fd = eolian_typedecl_function_pointer_get(tpd);
+      attributes::function_def f(fd, EOLIAN_FUNCTION_POINTER);
+
+      std::string param_name = escape_keyword(param.param_name);
+      // Allocate GCHandle in "param_name"_handle for param;
+      if (!as_generator(
+                  scope_tab << type << " " << param_name << "_wrapper = (" << (parameter % ", ") << ") => {\n"
+                  << scope_tab << scope_tab << scope_tab << "return " << param_name << "(" << param_name << "_data, " << (argument_invocation % ", ") << ");\n"
+                  << scope_tab << scope_tab << "};\n"
+                  ).generate(sink, std::make_tuple(param.type, f.parameters, f.parameters), context))
+      return false;
+      // FIXME What about calling the free function?
+
+      return true;
+   }
+
+} const native_convert_function_pointer {};
+
 }
-
-namespace efl { namespace eolian { namespace grammar {
-
-template <>
-struct is_eager_generator< ::eolian_mono::parameter_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::parameter_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::parameter_generator> : std::integral_constant<int, 1> {};  
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::marshall_parameter_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::marshall_parameter_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::marshall_parameter_generator> : std::integral_constant<int, 1> {};  
-}
-      
-template <>
-struct is_eager_generator< ::eolian_mono::argument_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::argument_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::argument_generator> : std::integral_constant<int, 1> {};  
-}
-      
-template <>
-struct is_eager_generator< ::eolian_mono::argument_invocation_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::argument_invocation_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::argument_invocation_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::native_convert_in_variable_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::native_convert_in_variable_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::native_convert_in_variable_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::convert_in_variable_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::convert_in_variable_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::convert_in_variable_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::convert_out_variable_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::convert_out_variable_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::convert_out_variable_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::native_convert_out_variable_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::native_convert_out_variable_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::native_convert_out_variable_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::convert_out_assign_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::convert_out_assign_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::convert_out_assign_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::convert_return_variable_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::convert_return_variable_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::convert_return_variable_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::convert_return_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::convert_return_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::convert_return_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::native_convert_out_assign_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::native_convert_out_assign_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::native_convert_out_assign_parameterized> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::native_convert_out_assign_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::native_convert_return_variable_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::native_convert_return_variable_generator> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::native_convert_return_variable_generator> : std::integral_constant<int, 1> {};
-}
-
-template <>
-struct is_eager_generator< ::eolian_mono::native_convert_return_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::native_convert_return_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::native_convert_return_parameterized> : std::true_type {};
-
-namespace type_traits {
-template <>
-struct attributes_needed< ::eolian_mono::native_convert_return_generator> : std::integral_constant<int, 1> {};
-}
-} } }
 
 #endif

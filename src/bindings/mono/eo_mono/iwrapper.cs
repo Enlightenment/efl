@@ -156,7 +156,13 @@ public class Globals {
             eina.Stringshare.eina_stringshare_del(ptr);
         }
     }
-}        
+
+    public static void free_gchandle(IntPtr ptr)
+    {
+        GCHandle handle = GCHandle.FromIntPtr(ptr);
+        handle.Free();
+    }
+}
         
 public interface IWrapper
 {
