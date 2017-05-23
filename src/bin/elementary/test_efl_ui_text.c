@@ -172,6 +172,11 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
          " new UI Text widget.\xE2\x80\xA9This is the next paragraph.\nThis"
          " is the next line.\nThis is Yet another line! Line and paragraph"
          " separators are actually different!");
+   efl_text_font_set(en, "Sans", 14);
+   efl_text_font_weight_set(en, EFL_TEXT_FONT_WEIGHT_BOLD);
+   efl_text_font_slant_set(en, EFL_TEXT_FONT_SLANT_ITALIC);
+   efl_text_font_width_set(en, EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
+   efl_text_style_normal_color_set(en, 255, 255, 255, 255);
 
    main_cur = efl_canvas_text_cursor_get(en);
    cur = efl_ui_text_cursor_new(en);

@@ -3266,7 +3266,6 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
       (priv->entry_edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set
       (priv->entry_edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_canvas_text_style_set(text_obj, NULL, "DEFAULT='font=Sans font_size=14 color=#fff wrap=word'");
    efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
          _efl_ui_text_changed_cb, obj);
    efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
