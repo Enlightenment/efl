@@ -123,6 +123,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_focus_object.eo \
 	lib/elementary/efl_ui_focus_user.eo \
 	lib/elementary/efl_ui_scroller.eo \
+	lib/elementary/efl_ui_scroll_manager.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
@@ -288,6 +289,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_code_file.h \
 	lib/elementary/elm_code_parse.h \
 	lib/elementary/efl_ui_widget_scroller.h \
+	lib/elementary/efl_ui_widget_scroll_manager.h \
 	lib/elementary/elm_code_syntax.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
@@ -533,6 +535,8 @@ includesub_HEADERS = \
 	lib/elementary/elm_part_helper.h \
 	lib/elementary/efl_ui_scroller.h \
 	lib/elementary/efl_ui_scroller_eo.h \
+	lib/elementary/efl_ui_scroll_manager.h \
+	lib/elementary/efl_ui_scroll_manager_eo.h \
 	$(NULL)
 
 includesubdir = $(includedir)/elementary-@VMAJ@/
@@ -683,6 +687,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_focus_manager_sub.c \
 	lib/elementary/efl_ui_focus_object.c \
 	lib/elementary/efl_ui_scroller.c \
+	lib/elementary/efl_ui_scroll_manager.c \
 	$(NULL)
 
 

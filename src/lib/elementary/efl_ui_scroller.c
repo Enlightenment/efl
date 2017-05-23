@@ -17,6 +17,7 @@ EOLIAN static void
 _efl_ui_scroller_efl_canvas_group_group_add(Eo *obj EINA_UNUSED,
                                             Efl_Ui_Scroller_Data *sd EINA_UNUSED)
 {
+   Eo *smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
 }
 
 EOLIAN static Eo *
