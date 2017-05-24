@@ -253,4 +253,34 @@ EAPI void elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state);
  */
 EAPI Eina_Bool elm_progressbar_is_pulsing_get(const Evas_Object *obj);
 
+
+/**
+ * @brief Set the progress value (in percentage) on a given progress bar widget
+ * for the given part name
+ *
+ * Use this call to set progress bar status for more than one progress status .
+ *
+ * @param[in] part The partname to which val have to set
+ * @param[in] val The progress value (must be between $0.0 and 1.0)
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Progressbar
+ */
+EAPI void elm_progressbar_part_value_set(Evas_Object *obj, const char *part, double val);
+
+/**
+ * @brief Get the progress value (in percentage) on a given progress bar widget
+ * for a particular part
+ *
+ * @param[in] part The part name of the progress bar
+ *
+ * @return The value of the progressbar
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Progressbar
+ */
+EAPI double elm_progressbar_part_value_get(const Evas_Object *obj, const char *part);
+
 #include "efl_ui_progressbar.eo.legacy.h"

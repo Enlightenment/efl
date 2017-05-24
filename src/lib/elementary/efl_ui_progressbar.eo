@@ -2,7 +2,6 @@ class Efl.Ui.Progressbar (Elm.Layout, Efl.Ui.Progress,
                           Efl.Orientation)
 {
    [[Elementary progressbar class]]
-   //legacy_prefix: elm_progressbar;
    methods {
       @property pulse_mode {
          [[Control whether a given progress bar widget is at "pulsing mode" or not.
@@ -45,26 +44,6 @@ class Efl.Ui.Progressbar (Elm.Layout, Efl.Ui.Progress,
          }
          values {
            state: bool; [[$true, to start the pulsing animation, $false to stop it]]
-         }
-      }
-      part_value_set {
-         [[Set the progress value (in percentage) on a given progress bar widget for the given part name
-
-           Use this call to set progress bar status for more than one progress status .
-
-           @since 1.8]]
-         params {
-            @in part: string; [[The partname to which val have to set]]
-            @in val: double; [[The progress value (must be between $0.0 and 1.0)]]
-         }
-      }
-      part_value_get @const {
-         [[Get the progress value (in percentage) on a given progress bar widget for a particular part
-
-           @since 1.8]]
-         return: double; [[The value of the progressbar]]
-         params {
-            @in part: string; [[The part name of the progress bar]]
          }
       }
    }

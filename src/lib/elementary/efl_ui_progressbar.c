@@ -422,12 +422,62 @@ _efl_ui_progressbar_efl_ui_progress_span_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Pr
    return sd->size;
 }
 
+static void
+_progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *part_name, double val)
+{
+   Efl_Ui_Progress_Status *ps;
+   Eina_Bool  existing_ps = EINA_FALSE;
+   Eina_List *l;
+
+   if (val < MIN_RATIO_LVL) val = MIN_RATIO_LVL;
+   if (val > MAX_RATIO_LVL) val = MAX_RATIO_LVL;
+
+   if (!strcmp(part_name, "elm.cur.progressbar"))
+     sd->val = val;
+
+   EINA_LIST_FOREACH(sd->progress_status, l, ps)
+     {
+        if (!strcmp(ps->part_name, part_name))
+          {
+             existing_ps = EINA_TRUE;
+             break;
+          }
+     }
+
+   if (!existing_ps)
+      {
+         ps = _progress_status_new(part_name, val);
+         sd->progress_status = eina_list_append(sd->progress_status, ps);
+      }
+   else
+      ps->val = val;
+
+   _val_set(obj);
+   _units_set(obj);
+   efl_event_callback_legacy_call
+     (obj, EFL_UI_PROGRESSBAR_EVENT_CHANGED, NULL);
+}
+
+static double
+_progressbar_part_value_get(Efl_Ui_Progressbar_Data *sd, const char* part)
+{
+   Efl_Ui_Progress_Status *ps;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->progress_status, l, ps)
+     {
+        if (!strcmp(ps->part_name, part)) return ps->val;
+     }
+
+   return 0.0;
+}
+
 EOLIAN static void
 _efl_ui_progressbar_efl_ui_progress_progress_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, double val)
 {
    if (EINA_DBL_EQ(sd->val, val)) return;
 
-   elm_progressbar_part_value_set(obj, "elm.cur.progressbar", val);
+   _progressbar_part_value_set(obj, sd, "elm.cur.progressbar", val);
 }
 
 EOLIAN static double
@@ -475,56 +525,6 @@ EOLIAN static Eina_Bool
 _efl_ui_progressbar_pulse_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return (sd->pulse_state && sd->pulse);
-}
-
-EOLIAN static void
-_efl_ui_progressbar_part_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, const char *part_name, double val)
-{
-   Efl_Ui_Progress_Status *ps;
-   Eina_Bool  existing_ps = EINA_FALSE;
-   Eina_List *l;
-
-   if (val < MIN_RATIO_LVL) val = MIN_RATIO_LVL;
-   if (val > MAX_RATIO_LVL) val = MAX_RATIO_LVL;
-
-   if (!strcmp(part_name, "elm.cur.progressbar"))
-     sd->val = val;
-
-   EINA_LIST_FOREACH(sd->progress_status, l, ps)
-     {
-        if (!strcmp(ps->part_name, part_name))
-          {
-             existing_ps = EINA_TRUE;
-             break;
-          }
-     }
-
-   if (!existing_ps)
-      {
-         ps = _progress_status_new(part_name, val);
-         sd->progress_status = eina_list_append(sd->progress_status, ps);
-      }
-   else
-      ps->val = val;
-
-   _val_set(obj);
-   _units_set(obj);
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_PROGRESSBAR_EVENT_CHANGED, NULL);
-}
-
-EOLIAN static double
-_efl_ui_progressbar_part_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, const char* part)
-{
-   Efl_Ui_Progress_Status *ps;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(sd->progress_status, l, ps)
-     {
-        if (!strcmp(ps->part_name, part)) return ps->val;
-     }
-
-   return 0.0;
 }
 
 EAPI void
@@ -658,9 +658,34 @@ _efl_ui_progressbar_class_constructor(Efl_Class *klass)
 }
 
 /* Efl.Part begin */
-
 ELM_PART_OVERRIDE(efl_ui_progressbar, EFL_UI_PROGRESSBAR, ELM_LAYOUT, Efl_Ui_Progressbar_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_progressbar, EFL_UI_PROGRESSBAR, ELM_LAYOUT, Efl_Ui_Progressbar_Data, Elm_Part_Data)
+
+static EOLIAN Eina_Bool
+_efl_ui_progressbar_internal_part_efl_container_content_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Efl_Gfx *content)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
+   ELM_PART_RETURN_VAL(_efl_ui_progressbar_content_set(pd->obj, sd, pd->part, content));
+}
+
+EOLIAN static void
+_efl_ui_progressbar_internal_part_efl_ui_progress_progress_value_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, double val)
+{
+  Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+  Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
+
+  _progressbar_part_value_set(pd->obj, sd, pd->part, val);
+}
+
+EOLIAN static double
+_efl_ui_progressbar_internal_part_efl_ui_progress_progress_value_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
+
+   return _progressbar_part_value_get(sd, pd->part);
+}
+
 #include "efl_ui_progressbar_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -694,4 +719,17 @@ EAPI Eina_Bool
 elm_progressbar_is_pulsing_get(const Evas_Object *obj)
 {
    return efl_ui_progressbar_pulse_get(obj);
+}
+
+EAPI void
+elm_progressbar_part_value_set(Evas_Object *obj, const char *part, double val)
+{
+   if (EINA_DBL_EQ(efl_ui_progress_value_get(efl_part(obj, part)), val)) return;
+   efl_ui_progress_value_set(efl_part(obj, part), val);
+}
+
+EAPI double
+elm_progressbar_part_value_get(const Evas_Object *obj, const char *part)
+{
+   return efl_ui_progress_value_get(efl_part(obj, part));
 }
