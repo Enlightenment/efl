@@ -38,7 +38,6 @@ enum Efl.Input.Device.Sub_Class
 }
 
 
-/* This represents Evas_Device */
 /* FIXME: no children and no Evas */
 
 class Efl.Input.Device (Efl.Object)
@@ -48,7 +47,6 @@ class Efl.Input.Device (Efl.Object)
      @since 1.18
    ]]
    methods {
-      /* FIXME: device_class makes compilation error because of class_get() */
       @property device_type {
       	 [[Device type property]]
          values {
@@ -81,8 +79,6 @@ class Efl.Input.Device (Efl.Object)
       }
       @property parent {
       	 [[Device parent property]]
-         set {}
-         get {}
          values {
             parent: Efl.Input.Device; [[Parent input device]]
          }
@@ -105,10 +101,9 @@ class Efl.Input.Device (Efl.Object)
       }
       @property seat_id {
          [[Seat id number
+
            @since 1.20
          ]]
-          set{}
-          get{}
           values {
              id: uint; [[The id of the seat]]
           }
