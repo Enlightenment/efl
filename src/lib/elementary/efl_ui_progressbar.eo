@@ -2,9 +2,9 @@ class Efl.Ui.Progressbar (Elm.Layout, Efl.Ui.Progress,
                           Efl.Orientation)
 {
    [[Elementary progressbar class]]
-   legacy_prefix: elm_progressbar;
+   //legacy_prefix: elm_progressbar;
    methods {
-      @property pulse {
+      @property pulse_mode {
          [[Control whether a given progress bar widget is at "pulsing mode" or not.
 
            By default, progress bars will display values from the low to
@@ -15,13 +15,36 @@ class Efl.Ui.Progressbar (Elm.Layout, Efl.Ui.Progress,
            without exact progress values. In the default theme, it will
            animate its bar with the contents filling in constantly and back
            to non-filled, in a loop. To start and stop this pulsing
-           animation, one has to explicitly call elm_progressbar_pulse().]]
+           animation, one has to explicitly call elm_progressbar_pulse().
+
+           @since 1.20
+         ]]
+
          set {
          }
          get {
          }
          values {
             pulse: bool; [[$true to put $obj in pulsing mode, $false to put it back to its default one]]
+         }
+      }
+      @property pulse {
+         set {
+           [[Start/stop a given progress bar "pulsing" animation, if its under that mode
+
+           Note: This call won't do anything if $obj is not under "pulsing mode".
+
+           @since 1.20
+           ]]
+         }
+         get {
+            [[ Get the pulsing state on a given progressbar widget.
+
+            @since 1.20
+            ]]
+         }
+         values {
+           state: bool; [[$true, to start the pulsing animation, $false to stop it]]
          }
       }
       part_value_set {
@@ -43,21 +66,6 @@ class Efl.Ui.Progressbar (Elm.Layout, Efl.Ui.Progress,
          params {
             @in part: string; [[The part name of the progress bar]]
          }
-      }
-      pulse {
-         [[Start/stop a given progress bar "pulsing" animation, if its under that mode
-
-           Note: This call won't do anything if $obj is not under "pulsing mode".]]
-         params {
-            @in state: bool; [[$true, to start the pulsing animation, $false to stop it]]
-         }
-      }
-      is_pulsing_get @const {
-         [[Get the pulsing state on a given progressbar widget.
-
-           @since 1.19]]
-
-         return: bool; [[$true if the $obj is currently pulsing ]]
       }
    }
    implements {

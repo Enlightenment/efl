@@ -186,4 +186,71 @@ EAPI const char *elm_progressbar_unit_format_get(const Evas_Object *obj);
  */
 EAPI void elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func);
 
+/**
+ * @brief Control whether a given progress bar widget is at "pulsing mode" or
+ * not.
+ *
+ * By default, progress bars will display values from the low to high value
+ * boundaries. There are, though, contexts in which the progress of a given
+ * task is unknown. For such cases, one can set a progress bar widget to a
+ * "pulsing state", to give the user an idea that some computation is being
+ * held, but without exact progress values. In the default theme, it will
+ * animate its bar with the contents filling in constantly and back to
+ * non-filled, in a loop. To start and stop this pulsing animation, one has to
+ * explicitly call elm_progressbar_pulse().
+ *
+ * @param[in] pulse @c true to put @c obj in pulsing mode, @c false to put it
+ * back to its default one
+ *
+ * @ingroup Elm_Progressbar
+ */
+EAPI void elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse);
+
+
+/**
+ * @brief Control whether a given progress bar widget is at "pulsing mode" or
+ * not.
+ *
+ * By default, progress bars will display values from the low to high value
+ * boundaries. There are, though, contexts in which the progress of a given
+ * task is unknown. For such cases, one can set a progress bar widget to a
+ * "pulsing state", to give the user an idea that some computation is being
+ * held, but without exact progress values. In the default theme, it will
+ * animate its bar with the contents filling in constantly and back to
+ * non-filled, in a loop. To start and stop this pulsing animation, one has to
+ * explicitly call elm_progressbar_pulse().
+ *
+ * @return @c true to put @c obj in pulsing mode, @c false to put it back to
+ * its default one
+ *
+ * @ingroup Elm_Progressbar
+ */
+EAPI Eina_Bool elm_progressbar_pulse_get(const Evas_Object *obj);
+
+
+/**
+ * @brief Start/stop a given progress bar "pulsing" animation, if its under
+ * that mode
+ *
+ * @note This call won't do anything if @c obj is not under "pulsing mode".
+ *
+ * @param[in] state @c true, to start the pulsing animation, @c false to stop
+ * it
+ *
+ * @ingroup Elm_Progressbar
+ */
+EAPI void elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state);
+
+
+/**
+ * @brief Get the pulsing state on a given progressbar widget.
+ *
+ * @return @c true if the @c obj is currently pulsing
+ *
+ * @since 1.19
+ *
+ * @ingroup Elm_Progressbar
+ */
+EAPI Eina_Bool elm_progressbar_is_pulsing_get(const Evas_Object *obj);
+
 #include "efl_ui_progressbar.eo.legacy.h"

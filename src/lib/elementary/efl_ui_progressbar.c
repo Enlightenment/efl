@@ -367,7 +367,7 @@ _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd
 }
 
 EOLIAN static void
-_efl_ui_progressbar_pulse_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, Eina_Bool pulse)
+_efl_ui_progressbar_pulse_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, Eina_Bool pulse)
 {
    pulse = !!pulse;
    if (sd->pulse == pulse) return;
@@ -378,7 +378,7 @@ _efl_ui_progressbar_pulse_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_progressbar_pulse_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_pulse_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return sd->pulse;
 }
@@ -458,7 +458,7 @@ _efl_ui_progressbar_efl_ui_progress_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_
 }
 
 EOLIAN static void
-_efl_ui_progressbar_pulse(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool state)
+_efl_ui_progressbar_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool state)
 {
    state = !!state;
    if ((!sd->pulse) || (sd->pulse_state == state)) return;
@@ -472,7 +472,7 @@ _efl_ui_progressbar_pulse(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool state)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_progressbar_is_pulsing_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_pulse_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return (sd->pulse_state && sd->pulse);
 }
@@ -671,3 +671,27 @@ ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_progressbar, EFL_UI_PROGRESSBAR, ELM_LAYOUT
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"
+
+EAPI void
+elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse)
+{
+   efl_ui_progressbar_pulse_mode_set(obj, pulse);
+}
+
+EAPI Eina_Bool
+elm_progressbar_pulse_get(const Evas_Object *obj)
+{
+   return efl_ui_progressbar_pulse_mode_get(obj);
+}
+
+EAPI void
+elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state)
+{
+   efl_ui_progressbar_pulse_set(obj, state);
+}
+
+EAPI Eina_Bool
+elm_progressbar_is_pulsing_get(const Evas_Object *obj)
+{
+   return efl_ui_progressbar_pulse_get(obj);
+}
