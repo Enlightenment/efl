@@ -77,6 +77,52 @@ _cursor_set(Ecore_Evas *ee, Efl_Input_Device *pointer)
    ecore_evas_object_cursor_device_set(ee, pointer, obj, 0, 10, 10);
 }
 
+static const char *
+_device_type_to_string(Efl_Input_Device_Class klass)
+{
+   switch (klass)
+     {
+      case EFL_INPUT_DEVICE_CLASS_NONE:
+         return "None";
+      case EFL_INPUT_DEVICE_CLASS_SEAT:
+         return "Seat";
+      case EFL_INPUT_DEVICE_CLASS_KEYBOARD:
+         return "Keyboard";
+      case EFL_INPUT_DEVICE_CLASS_MOUSE:
+         return "Mouse";
+      case EFL_INPUT_DEVICE_CLASS_TOUCH:
+         return "Touch";
+      case EFL_INPUT_DEVICE_CLASS_PEN:
+         return "Pen";
+      case EFL_INPUT_DEVICE_CLASS_WAND:
+         return "Wand";
+      case EFL_INPUT_DEVICE_CLASS_GAMEPAD:
+         return "Gamepad";
+      default:
+         return "Unknown";
+     }
+}
+
+static void
+_seat_children_print(Efl_Input_Device *seat)
+{
+   Efl_Input_Device *child;
+   Eina_Iterator *it;
+
+   printf("Children of seat: %s (%s, seat id: %d)\n", efl_input_device_name_get(seat),
+          _device_type_to_string(efl_input_device_type_get(seat)),
+          efl_input_device_seat_id_get(seat));
+
+   it = efl_input_device_children_iterate(seat);
+   EINA_ITERATOR_FOREACH(it, child)
+     {
+        printf(" - Sub device: %s (%s, seat id: %d)\n", efl_input_device_name_get(child),
+               _device_type_to_string(efl_input_device_type_get(child)),
+               efl_input_device_seat_id_get(seat));
+     }
+   eina_iterator_free(it);
+}
+
 static void
 _device_added(void *data, const Efl_Event *event)
 {
@@ -94,13 +140,14 @@ _device_added(void *data, const Efl_Event *event)
      }
    printf("Setting cursor image at seat '%s'\n", efl_input_device_name_get(seat));
    _cursor_set(data, pointer);
+   _seat_children_print(seat);
 }
 
 int
 main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
    const Eina_List *devs, *l;
-   Efl_Input_Device *pointer;
+   Efl_Input_Device *dev;
    Ecore_Evas *ee;
    Evas_Object *bg;
    Evas *e;
@@ -140,11 +187,18 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 
    devs = evas_device_list(e, NULL);
 
-   EINA_LIST_FOREACH(devs, l, pointer)
+   EINA_LIST_FOREACH(devs, l, dev)
      {
-        if (efl_input_device_type_get(pointer) != EFL_INPUT_DEVICE_CLASS_MOUSE)
-          continue;
-        _cursor_set(ee, pointer);
+        switch (efl_input_device_type_get(dev))
+          {
+           case EFL_INPUT_DEVICE_CLASS_SEAT:
+             _seat_children_print(dev);
+             break;
+           case EFL_INPUT_DEVICE_CLASS_MOUSE:
+             _cursor_set(ee, dev);
+             break;
+           default: break;
+          }
      }
 
    t = ecore_timer_add(TIMEOUT, _mouse_pos_print, ee);

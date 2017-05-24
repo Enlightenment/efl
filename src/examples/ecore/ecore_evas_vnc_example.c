@@ -160,6 +160,26 @@ _device_type_to_string(Efl_Input_Device_Class klass)
 }
 
 static void
+_seat_children_print(Efl_Input_Device *seat)
+{
+   Efl_Input_Device *child;
+   Eina_Iterator *it;
+
+   printf("Children of seat: %s (%s, seat id: %d)\n", efl_input_device_name_get(seat),
+          _device_type_to_string(efl_input_device_type_get(seat)),
+          efl_input_device_seat_id_get(seat));
+
+   it = efl_input_device_children_iterate(seat);
+   EINA_ITERATOR_FOREACH(it, child)
+     {
+        printf(" - Sub device: %s (%s, seat id: %d)\n", efl_input_device_name_get(child),
+               _device_type_to_string(efl_input_device_type_get(child)),
+               efl_input_device_seat_id_get(seat));
+     }
+   eina_iterator_free(it);
+}
+
+static void
 _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Input_Device *dev = event->info;
@@ -169,6 +189,9 @@ _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
           _device_type_to_string(efl_input_device_type_get(dev)),
           efl_input_device_description_get(dev),
           event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED ? "added" : "removed");
+
+   if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
+     _seat_children_print(dev);
 }
 
 int
@@ -277,6 +300,7 @@ main(int argc, char *argv[])
    mouse_wheel = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
                                         _mouse_wheel, NULL);
 
+   _seat_children_print(evas_canvas_default_device_get(evas, EFL_INPUT_DEVICE_CLASS_SEAT));
    efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_ADDED,
                           _dev_added_or_removed, NULL);
    efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,
