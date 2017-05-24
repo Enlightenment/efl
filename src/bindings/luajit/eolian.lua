@@ -237,7 +237,7 @@ ffi.cdef [[
     const char *eolian_class_name_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_namespaces_get(const Eolian_Class *klass);
     Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
-    Eina_Iterator *eolian_all_classes_get(void);
+    Eina_Iterator *eolian_all_classes_get(const Eolian_Unit *unit);
     const Eolian_Documentation *eolian_class_documentation_get(const Eolian_Class *klass);
     const char *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
     const char *eolian_class_eo_prefix_get(const Eolian_Class *klass);
@@ -1020,9 +1020,9 @@ M.class_get_by_file = function(unit, fname)
     return v
 end
 
-M.all_classes_get = function()
+M.all_classes_get = function(unit)
     return Ptr_Iterator("const Eolian_Class*",
-        eolian.eolian_all_classes_get())
+        eolian.eolian_all_classes_get(unit))
 end
 
 M.class_type = {

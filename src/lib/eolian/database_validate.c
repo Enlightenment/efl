@@ -324,7 +324,8 @@ database_validate()
 {
    const Eolian_Class *cl;
 
-   Eina_Iterator *iter = eolian_all_classes_get();
+   /* FIXME: pass unit properly */
+   Eina_Iterator *iter = eolian_all_classes_get(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      if (!_validate_class(cl))
        {

@@ -592,11 +592,12 @@ EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
 /*
  * @brief Returns an iterator to all the classes stored into the database.
  *
+ * @param[in] unit the unit to look in
  * @return the iterator
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_all_classes_get(void);
+EAPI Eina_Iterator *eolian_all_classes_get(const Eolian_Unit *unit);
 
 /*
  * @brief Returns the documentation of a class.

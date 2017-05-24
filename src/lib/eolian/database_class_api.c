@@ -60,7 +60,7 @@ eolian_class_type_get(const Eolian_Class *cl)
 }
 
 EAPI Eina_Iterator *
-eolian_all_classes_get(void)
+eolian_all_classes_get(const Eolian_Unit *unit EINA_UNUSED)
 {
    return (_classes ? eina_hash_iterator_data_new(_classes) : NULL);
 }
