@@ -517,22 +517,24 @@ EAPI Eina_Bool eolian_database_validate();
 /*
  * @brief Gets a class by its name
  *
+ * @param[in] unit the unit to look in
  * @param[in] class_name name of the class to get.
  * @return the class
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_class_get_by_name(const char *class_name);
+EAPI const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
 
 /*
  * @brief Gets a class by its filename (name.eo)
  *
+ * @param[in] unit the unit to look in
  * @param[in] file_name the filename
  * @return the class stored in the file
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_class_get_by_file(const char *file_name);
+EAPI const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
 
 /*
  * @brief Returns the name of the file containing the given class.

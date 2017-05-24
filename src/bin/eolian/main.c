@@ -305,7 +305,7 @@ _write_header(const Eolian_Unit *src, const char *ofname,
         eina_strbuf_free(cltd);
      }
 
-   const Eolian_Class *cl = eolian_class_get_by_file(ifname);
+   const Eolian_Class *cl = eolian_class_get_by_file(src, ifname);
    eo_gen_header_gen(src, cl, buf, legacy);
    if (cl || !legacy)
      {
@@ -352,7 +352,7 @@ _write_source(const Eolian_Unit *src, const char *ofname,
    INF("generating source: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   const Eolian_Class *cl = eolian_class_get_by_file(ifname);
+   const Eolian_Class *cl = eolian_class_get_by_file(src, ifname);
    eo_gen_types_source_gen(src, ifname, buf);
    eo_gen_source_gen(src, cl, buf);
    if (cl || (eot && eina_strbuf_length_get(buf)))
@@ -373,7 +373,7 @@ _write_impl(const Eolian_Unit *src, const char *ofname, const char *ifname)
 {
    INF("generating impl: %s", ofname);
 
-   const Eolian_Class *cl = eolian_class_get_by_file(ifname);
+   const Eolian_Class *cl = eolian_class_get_by_file(src, ifname);
    if (!cl)
      return EINA_FALSE;
 

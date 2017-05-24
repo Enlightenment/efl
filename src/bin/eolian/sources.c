@@ -636,7 +636,7 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
 }
 
 void
-eo_gen_source_gen(const Eolian_Unit *src EINA_UNUSED,
+eo_gen_source_gen(const Eolian_Unit *src,
                   const Eolian_Class *cl, Eina_Strbuf *buf)
 {
    if (!cl)
@@ -763,7 +763,7 @@ eo_gen_source_gen(const Eolian_Unit *src EINA_UNUSED,
         eina_strbuf_append(buf, ", NULL");
       EINA_ITERATOR_FOREACH(itr, iname)
         {
-           const Eolian_Class *icl = eolian_class_get_by_name(iname);
+           const Eolian_Class *icl = eolian_class_get_by_name(src, iname);
            Eina_Stringshare *mname = eolian_class_c_name_get(icl);
            eina_strbuf_append_printf(buf, ", %s", mname);
            eina_stringshare_del(mname);
