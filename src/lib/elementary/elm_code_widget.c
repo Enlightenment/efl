@@ -1938,6 +1938,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
      _elm_code_widget_scroll_by(widget,
         (pd->gravity_x == 1.0 && ww > old_width) ? ww - old_width : 0,
         (pd->gravity_y == 1.0 && wh > old_height) ? wh - old_height : 0);
+   elm_box_recalculate(pd->gridbox);
 }
 
 EOAPI void
