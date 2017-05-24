@@ -166,8 +166,11 @@ _efl_gfx_map_efl_object_constructor(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
 EOLIAN static void
 _efl_gfx_map_efl_object_destructor(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
 {
-   _map_ops_clean(eo_obj, pd);
-   eina_cow_free(gfx_map_cow, (const Eina_Cow_Data **) &pd->cow);
+   if (pd->cow)
+     {
+        _map_ops_clean(eo_obj, pd);
+        eina_cow_free(gfx_map_cow, (const Eina_Cow_Data **) &pd->cow);
+     }
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
