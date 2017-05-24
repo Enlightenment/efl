@@ -48,6 +48,20 @@ typedef struct Test_Numberwrapper_Data
 } Test_Numberwrapper_Data;
 
 
+static
+void *_new_int(int v)
+{
+   int *r = malloc(sizeof(int));
+   *r = v;
+   return r;
+}
+
+static
+Test_Numberwrapper *_new_obj(int n)
+{
+   return efl_add(TEST_NUMBERWRAPPER_CLASS, NULL, test_numberwrapper_number_set(efl_added, n));
+}
+
 // ############ //
 // Test.Testing //
 // ############ //
@@ -333,10 +347,6 @@ Eina_Binbuf *_test_testing_eina_binbuf_return_own(EINA_UNUSED Eo *obj, EINA_UNUS
   return binbuf;
 }
 
-// //
-// Array
-//
-
 static const int base_arr_int[] = {0x0,0x2A,0x42};
 static const unsigned int base_arr_int_size = EINA_C_ARRAY_LENGTH(base_arr_int);
 static const int modified_arr_int[] = {0x0,0x2A,0x42,42,43,33};
@@ -352,6 +362,10 @@ static const unsigned int base_arr_obj_size = EINA_C_ARRAY_LENGTH(base_arr_str);
 static const Test_Numberwrapper *modified_arr_obj[] = {NULL,NULL,NULL,NULL,NULL,NULL};
 static const unsigned int modified_arr_obj_size = EINA_C_ARRAY_LENGTH(modified_arr_str);
 
+// //
+// Array
+//
+
 static const unsigned int default_step = 32;
 
 // Integer
@@ -366,13 +380,6 @@ Eina_Bool _array_int_equal(const Eina_Array *arr, const int base[], unsigned int
           return EINA_FALSE;
      }
    return EINA_TRUE;
-}
-
-void *_new_int(int v)
-{
-   int *r = malloc(sizeof(int));
-   *r = v;
-   return r;
 }
 
 Eina_Bool _test_testing_eina_array_int_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Array *arr)
@@ -634,11 +641,6 @@ Eina_Bool _array_obj_equal(const Eina_Array *arr, const Test_Numberwrapper * con
    return EINA_TRUE;
 }
 
-Test_Numberwrapper *_new_obj(int n)
-{
-   return efl_add(TEST_NUMBERWRAPPER_CLASS, NULL, test_numberwrapper_number_set(efl_added, n));
-}
-
 Eina_Bool _test_testing_eina_array_obj_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Array *arr)
 {
    Eina_Bool r = _array_obj_equal(arr, base_arr_obj, base_arr_obj_size);
@@ -761,6 +763,387 @@ Eina_Array *_test_testing_eina_array_obj_return_own(EINA_UNUSED Eo *obj, EINA_UN
 Eina_Array *_test_testing_eina_array_obj_return_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Array *arr)
 {
    return arr;
+}
+
+
+// //
+// List
+//
+
+// Integer
+
+Eina_Bool _list_int_equal(const Eina_List *lst, const int base[], unsigned int len)
+{
+   if (eina_list_count(lst) != len)
+     return EINA_FALSE;
+
+   const Eina_List *l;
+   int *data;
+   int i = 0;
+   EINA_LIST_FOREACH(lst, l, data)
+     {
+        if (*data != base[i])
+          return EINA_FALSE;
+        ++i;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool _test_testing_eina_list_int_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List *lst)
+{
+   Eina_Bool r = _list_int_equal(lst, base_arr_int, base_arr_int_size);
+   return r;
+}
+
+static Eina_List *_list_int_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_list_int_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List *lst)
+{
+   Eina_Bool r = _list_int_equal(lst, base_arr_int, base_arr_int_size);
+   if (!r) return r;
+
+   lst = eina_list_append(lst, _new_int(42));
+   lst = eina_list_append(lst, _new_int(43));
+   lst = eina_list_append(lst, _new_int(33));
+   _list_int_in_own_to_check = lst;
+   return r;
+}
+
+Eina_Bool _test_testing_check_eina_list_int_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_list_int_in_own_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_int_equal(_list_int_in_own_to_check, modified_arr_int, modified_arr_int_size);
+   if (!r) return r;
+
+   int *ele;
+   EINA_LIST_FREE(_list_int_in_own_to_check, ele)
+     free(ele);
+   _list_int_in_own_to_check = NULL;
+   return r;
+}
+
+Eina_List *_list_int_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_list_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List **lst)
+{
+    if (!lst) return EINA_FALSE;
+    *lst = eina_list_append(*lst, _new_int(0x0));
+    *lst = eina_list_append(*lst, _new_int(0x2A));
+    *lst = eina_list_append(*lst, _new_int(0x42));
+    _list_int_out_to_check = *lst;
+    return EINA_TRUE;
+}
+Eina_Bool _test_testing_check_eina_list_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_list_int_out_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_int_equal(_list_int_out_to_check, base_arr_int, base_arr_int_size);
+   if (!r) return r;
+
+   int *ele;
+   EINA_LIST_FREE(_list_int_out_to_check, ele)
+     free(ele);
+
+   _list_int_out_to_check = NULL;
+   return r;
+}
+
+Eina_Bool _test_testing_eina_list_int_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_list_append(*lst, _new_int(0x0));
+   *lst = eina_list_append(*lst, _new_int(0x2A));
+   *lst = eina_list_append(*lst, _new_int(0x42));
+   return EINA_TRUE;
+}
+
+Eina_List *_list_int_return_to_check = NULL;
+
+Eina_List *_test_testing_eina_list_int_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_List *lst = NULL;
+   lst = eina_list_append(lst, _new_int(0x0));
+   lst = eina_list_append(lst, _new_int(0x2A));
+   lst = eina_list_append(lst, _new_int(0x42));
+   _list_int_return_to_check = lst;
+   return lst;
+}
+Eina_Bool _test_testing_check_eina_list_int_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_list_int_return_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_int_equal(_list_int_return_to_check, base_arr_int, base_arr_int_size);
+   if (!r) return r;
+
+   int *ele;
+   EINA_LIST_FREE(_list_int_return_to_check, ele)
+     free(ele);
+
+   _list_int_return_to_check = NULL;
+   return r;
+}
+
+Eina_List *_test_testing_eina_list_int_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_List *lst = NULL;
+   lst = eina_list_append(lst, _new_int(0x0));
+   lst = eina_list_append(lst, _new_int(0x2A));
+   lst = eina_list_append(lst, _new_int(0x42));
+   return lst;
+}
+
+// String
+
+Eina_Bool _list_str_equal(const Eina_List *lst, const char * const base[], unsigned int len)
+{
+   if (eina_list_count(lst) != len)
+     return EINA_FALSE;
+
+   const Eina_List *l;
+   char *data;
+   int i = 0;
+   EINA_LIST_FOREACH(lst, l, data)
+     {
+        if (0 != strcmp(data, base[i]))
+          return EINA_FALSE;
+        ++i;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool _test_testing_eina_list_str_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List *lst)
+{
+   Eina_Bool r = _list_str_equal(lst, base_arr_str, base_arr_str_size);
+   return r;
+}
+
+static Eina_List *_list_str_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_list_str_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List *lst)
+{
+   Eina_Bool r = _list_str_equal(lst, base_arr_str, base_arr_str_size);
+   if (!r) return r;
+   lst = eina_list_append(lst, strdup("42"));
+   lst = eina_list_append(lst, strdup("43"));
+   lst = eina_list_append(lst, strdup("33"));
+   _list_str_in_own_to_check = lst;
+   return r;
+}
+
+Eina_Bool _test_testing_check_eina_list_str_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_list_str_in_own_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_str_equal(_list_str_in_own_to_check, modified_arr_str, modified_arr_str_size);
+   if (!r) return r;
+
+   char *ele;
+   EINA_LIST_FREE(_list_str_in_own_to_check, ele)
+     free(ele);
+
+   _list_str_in_own_to_check = NULL;
+   return r;
+}
+
+Eina_List *_list_str_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_list_str_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_list_append(*lst, strdup("0x0"));
+   *lst = eina_list_append(*lst, strdup("0x2A"));
+   *lst = eina_list_append(*lst, strdup("0x42"));
+   _list_str_out_to_check = *lst;
+   return EINA_TRUE;
+}
+Eina_Bool _test_testing_check_eina_list_str_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_list_str_out_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_str_equal(_list_str_out_to_check, base_arr_str, base_arr_str_size);
+   if (!r) return r;
+
+   char *ele;
+   EINA_LIST_FREE(_list_str_out_to_check, ele)
+     free(ele);
+
+   _list_str_out_to_check = NULL;
+   return r;
+}
+
+Eina_Bool _test_testing_eina_list_str_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_list_append(*lst, strdup("0x0"));
+   *lst = eina_list_append(*lst, strdup("0x2A"));
+   *lst = eina_list_append(*lst, strdup("0x42"));
+   return EINA_TRUE;
+}
+
+Eina_List *_list_str_return_to_check = NULL;
+
+Eina_List *_test_testing_eina_list_str_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_List *lst = NULL;
+   lst = eina_list_append(lst, strdup("0x0"));
+   lst = eina_list_append(lst, strdup("0x2A"));
+   lst = eina_list_append(lst, strdup("0x42"));
+   _list_str_return_to_check = lst;
+   return lst;
+}
+Eina_Bool _test_testing_check_eina_list_str_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_list_str_return_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_str_equal(_list_str_return_to_check, base_arr_str, base_arr_str_size);
+   if (!r) return r;
+
+   char *ele;
+   EINA_LIST_FREE(_list_str_return_to_check, ele)
+     free(ele);
+
+   _list_str_return_to_check = NULL;
+   return r;
+}
+
+Eina_List *_test_testing_eina_list_str_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_List *lst = NULL;
+   lst = eina_list_append(lst, strdup("0x0"));
+   lst = eina_list_append(lst, strdup("0x2A"));
+   lst = eina_list_append(lst, strdup("0x42"));
+   return lst;
+}
+
+// Object
+
+Eina_Bool _list_obj_equal(const Eina_List *lst, const Test_Numberwrapper * const base[], unsigned int len)
+{
+   if (eina_list_count(lst) != len)
+     return EINA_FALSE;
+
+   const Eina_List *l;
+   Test_Numberwrapper *eo;
+   int i = 0;
+   EINA_LIST_FOREACH(lst, l, eo)
+     {
+        int a = test_numberwrapper_number_get(eo);
+        int b = test_numberwrapper_number_get(base[i]);
+        if (a != b)
+          return EINA_FALSE;
+        ++i;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool _test_testing_eina_list_obj_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List *lst)
+{
+   Eina_Bool r = _list_obj_equal(lst, base_arr_obj, base_arr_obj_size);
+   return r;
+}
+
+static Eina_List *_list_obj_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_list_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List *lst)
+{
+   Eina_Bool r = _list_obj_equal(lst, base_arr_obj, base_arr_obj_size);
+   if (!r) return r;
+   lst = eina_list_append(lst, _new_obj(42));
+   lst = eina_list_append(lst, _new_obj(43));
+   lst = eina_list_append(lst, _new_obj(33));
+   _list_obj_in_own_to_check = lst;
+   return r;
+}
+
+Eina_Bool _test_testing_check_eina_list_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_list_obj_in_own_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_obj_equal(_list_obj_in_own_to_check, modified_arr_obj, modified_arr_obj_size);
+   if (!r) return r;
+
+   Test_Numberwrapper *ele;
+   EINA_LIST_FREE(_list_obj_in_own_to_check, ele)
+     efl_unref(ele);
+
+   _list_obj_in_own_to_check = NULL;
+   return r;
+}
+
+Eina_List *_list_obj_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_list_obj_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_list_append(*lst, _new_obj(0x0));
+   *lst = eina_list_append(*lst, _new_obj(0x2A));
+   *lst = eina_list_append(*lst, _new_obj(0x42));
+   _list_obj_out_to_check = *lst;
+   return EINA_TRUE;
+}
+Eina_Bool _test_testing_check_eina_list_obj_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_list_obj_out_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_obj_equal(_list_obj_out_to_check, base_arr_obj, base_arr_obj_size);
+   if (!r) return r;
+
+   Test_Numberwrapper *ele;
+   EINA_LIST_FREE(_list_obj_out_to_check, ele)
+     efl_unref(ele);
+
+   _list_obj_out_to_check = NULL;
+   return r;
+}
+
+Eina_Bool _test_testing_eina_list_obj_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_list_append(*lst, _new_obj(0x0));
+   *lst = eina_list_append(*lst, _new_obj(0x2A));
+   *lst = eina_list_append(*lst, _new_obj(0x42));
+   return EINA_TRUE;
+}
+
+Eina_List *_list_obj_return_to_check = NULL;
+
+Eina_List *_test_testing_eina_list_obj_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_List *lst = NULL;
+   lst = eina_list_append(lst, _new_obj(0x0));
+   lst = eina_list_append(lst, _new_obj(0x2A));
+   lst = eina_list_append(lst, _new_obj(0x42));
+   _list_obj_return_to_check = lst;
+   return lst;
+}
+Eina_Bool _test_testing_check_eina_list_obj_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_list_obj_return_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_obj_equal(_list_obj_return_to_check, base_arr_obj, base_arr_obj_size);
+   if (!r) return r;
+
+   Test_Numberwrapper *ele;
+   EINA_LIST_FREE(_list_obj_return_to_check, ele)
+     efl_unref(ele);
+
+   _list_obj_return_to_check = NULL;
+   return r;
+}
+
+Eina_List *_test_testing_eina_list_obj_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_List *lst = NULL;
+   lst = eina_list_append(lst, _new_obj(0x0));
+   lst = eina_list_append(lst, _new_obj(0x2A));
+   lst = eina_list_append(lst, _new_obj(0x42));
+   return lst;
+}
+
+Eina_List *_test_testing_eina_list_obj_return_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_List *lst)
+{
+   return lst;
 }
 
 // Class constructor
