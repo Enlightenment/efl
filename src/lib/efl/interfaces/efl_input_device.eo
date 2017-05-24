@@ -37,8 +37,10 @@ enum Efl.Input.Device.Sub_Class
    trackball,   [[A trackball style mouse.]]
 }
 
-
-/* FIXME: no children and no Evas */
+/* TODO: Add canvas property. Current problem is we need to return
+         Efl.Ui.Win and not Evas:
+  @property canvas { values { canvas: Efl.Canvas; } }
+*/
 
 class Efl.Input.Device (Efl.Object)
 {
@@ -107,6 +109,16 @@ class Efl.Input.Device (Efl.Object)
           values {
              id: uint; [[The id of the seat]]
           }
+      }
+      children_iterate {
+         [[Lists the children attached to this device.
+
+           This is mostly meaningful with seat devices, as they are groups of
+           real input devices.
+
+           @since 1.20
+         ]]
+         return: own(free(iterator<const(Efl.Input.Device)>, eina_iterator_free));
       }
    }
    implements {

@@ -9,6 +9,16 @@
 
 /* Efl Input Device = Evas Device */
 
+typedef struct _Child_Device_Iterator Child_Device_Iterator;
+
+struct _Child_Device_Iterator
+{
+   Eina_Iterator  iterator;
+   Eina_List     *list;
+   Eina_Iterator *real_iterator;
+   Eo            *object;
+};
+
 EOLIAN static Efl_Object *
 _efl_input_device_efl_object_constructor(Eo *obj, Efl_Input_Device_Data *pd)
 {
@@ -154,6 +164,53 @@ _efl_input_device_parent_set(Eo *obj, Efl_Input_Device_Data *pd, Efl_Input_Devic
         Efl_Input_Device_Data *p = efl_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
         p->children = eina_list_append(p->children, obj);
      }
+}
+
+static Eina_Bool
+_child_device_iterator_next(Child_Device_Iterator *it, void **data)
+{
+   Eo *sub;
+
+   if (!eina_iterator_next(it->real_iterator, (void **) &sub))
+     return EINA_FALSE;
+
+   if (data) *data = sub;
+   return EINA_TRUE;
+}
+
+static Eo *
+_child_device_iterator_get_container(Child_Device_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_child_device_iterator_free(Child_Device_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   eina_list_free(it->list);
+   free(it);
+}
+
+EOLIAN static Eina_Iterator *
+_efl_input_device_children_iterate(Eo *obj, Efl_Input_Device_Data *pd)
+{
+   Child_Device_Iterator *it;
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->list = pd->children;
+   it->real_iterator = eina_list_iterator_new(it->list);
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_child_device_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_child_device_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_child_device_iterator_free);
+   it->object = obj;
+
+   return &it->iterator;
 }
 
 #include "interfaces/efl_input_device.eo.c"
