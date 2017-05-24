@@ -467,7 +467,8 @@ _resolve_event(char *name, const void **data, const void **data2)
      return EOLIAN_DOC_REF_INVALID;
 
    *evname++ = '\0';
-   const Eolian_Class *cl = eolian_class_get_by_name(name);
+   /* FIXME: pass unit properly */
+   const Eolian_Class *cl = eolian_class_get_by_name(NULL, name);
    if (!cl)
      return EOLIAN_DOC_REF_INVALID;
 
@@ -581,7 +582,8 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
         *suffix++ = '\0';
      }
 
-   const Eolian_Class *cl = eolian_class_get_by_name(name);
+   /* FIXME: pass unit properly */
+   const Eolian_Class *cl = eolian_class_get_by_name(NULL, name);
    if (!cl)
      return EOLIAN_DOC_REF_INVALID;
 

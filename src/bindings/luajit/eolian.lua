@@ -230,8 +230,8 @@ ffi.cdef [[
     Eina_Bool eolian_all_eo_files_parse();
     Eina_Bool eolian_all_eot_files_parse();
     Eina_Bool eolian_database_validate();
-    const Eolian_Class *eolian_class_get_by_name(const char *class_name);
-    const Eolian_Class *eolian_class_get_by_file(const char *file_name);
+    const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
+    const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
     const char *eolian_class_file_get(const Eolian_Class *klass);
     const char *eolian_class_full_name_get(const Eolian_Class *klass);
     const char *eolian_class_name_get(const Eolian_Class *klass);
@@ -1008,14 +1008,14 @@ ffi.metatype("Eolian_Event", {
     }
 })
 
-M.class_get_by_name = function(cname)
-    local v = eolian.eolian_class_get_by_name(cname)
+M.class_get_by_name = function(unit, cname)
+    local v = eolian.eolian_class_get_by_name(unit, cname)
     if v == nil then return nil end
     return v
 end
 
-M.class_get_by_file = function(fname)
-    local v = eolian.eolian_class_get_by_file(fname)
+M.class_get_by_file = function(unit, fname)
+    local v = eolian.eolian_class_get_by_file(unit, fname)
     if v == nil then return nil end
     return v
 end

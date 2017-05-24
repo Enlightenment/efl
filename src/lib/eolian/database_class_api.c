@@ -31,7 +31,8 @@ eolian_class_namespaces_get(const Eolian_Class *cl)
 }
 
 EAPI const Eolian_Class *
-eolian_class_get_by_name(const char *class_name)
+eolian_class_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
+                         const char *class_name)
 {
    if (!_classes) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(class_name);
@@ -41,7 +42,8 @@ eolian_class_get_by_name(const char *class_name)
 }
 
 EAPI const Eolian_Class *
-eolian_class_get_by_file(const char *file_name)
+eolian_class_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
+                         const char *file_name)
 {
    if (!_classesf) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(file_name);

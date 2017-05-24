@@ -310,7 +310,8 @@ eolian_type_class_get(const Eolian_Type *tp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    if (eolian_type_type_get(tp) != EOLIAN_TYPE_CLASS)
      return NULL;
-   return eolian_class_get_by_name(tp->full_name);
+   /* FIXME: pass unit properly */
+   return eolian_class_get_by_name(NULL, tp->full_name);
 }
 
 EAPI size_t
