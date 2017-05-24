@@ -118,6 +118,10 @@ struct _Evas_Image_Data
    Efl_Flip               flip_value;
    Efl_Orient             orient_value;
 
+   struct {
+      short          w, h;
+   } file_size;
+
    Eina_Bool         changed : 1;
    Eina_Bool         dirty_pixels : 1;
    Eina_Bool         filled : 1;

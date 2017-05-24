@@ -1559,6 +1559,13 @@ _elm_photocam_efl_object_constructor(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED
    return obj;
 }
 
+EOLIAN static void
+_elm_photocam_efl_image_image_size_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *pd, int *w, int *h)
+{
+   if (w) *w = pd->size.imw;
+   if (h) *h = pd->size.imh;
+}
+
 static void
 _internal_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, Eina_File *f, Evas_Load_Error *ret)
 {

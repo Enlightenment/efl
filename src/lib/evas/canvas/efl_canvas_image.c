@@ -23,6 +23,8 @@ _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key)
    o->engine_data = ENFN->image_mmap(ENDT, o->cur->u.f, o->cur->key, &o->load_error, &lo);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);
+   o->file_size.w = o->cur->image.w;
+   o->file_size.h = o->cur->image.h;
 
    return EINA_TRUE;
 }
@@ -84,6 +86,8 @@ _evas_image_file_set(Eo *eo_obj, const char *file, const char *key)
    o->engine_data = ENFN->image_load(ENDT, file2, o->cur->key, &o->load_error, &lo);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);
+   o->file_size.w = o->cur->image.w;
+   o->file_size.h = o->cur->image.h;
    if ((o->file_obj) && (!efl_vpath_file_keep_get(o->file_obj)))
      {
         efl_del(o->file_obj);

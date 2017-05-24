@@ -20,6 +20,7 @@ abstract Efl.Canvas.Image.Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Interna
       Efl.Image.border_center_fill { get; set; }
       Efl.Image.scale_hint { get; set; }
       Efl.Image.content_hint { get; set; }
+      Efl.Image.image_size { get; }
       Efl.Gfx.Buffer.alpha { get; set; }
       Efl.Gfx.Buffer.buffer_update_add;
       Efl.Gfx.Buffer.colorspace { get; }

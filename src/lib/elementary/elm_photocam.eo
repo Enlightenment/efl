@@ -1,7 +1,7 @@
 class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
                     Elm.Interface.Atspi_Widget_Action, Efl.File,
                     Efl.Ui.Clickable, Efl.Ui.Scrollable, Efl.Gfx.View,
-                    Efl.Ui.Zoom, Efl.Orientation, Efl.Flipable)
+                    Efl.Ui.Zoom, Efl.Orientation, Efl.Flipable, Efl.Image)
 {
    [[Elementary photocam class]]
    legacy_prefix: elm_photocam;
@@ -53,6 +53,7 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Gfx.View.view_size { get; }
+      Efl.Image.image_size { get; }
       Efl.Ui.Zoom.zoom_animation { set; get; }
       Efl.Ui.Zoom.zoom { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }

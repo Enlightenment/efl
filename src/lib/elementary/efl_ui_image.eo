@@ -128,6 +128,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Gfx.View.view_size { get; }
+      Efl.Image.image_size { get; }
       Efl.Image.Load.load_size { get; set; }
       Efl.Image.smooth_scale { get; set; }
       Efl.Orientation.orientation { get; set; }

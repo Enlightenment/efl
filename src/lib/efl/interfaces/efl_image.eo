@@ -112,6 +112,23 @@ interface Efl.Image ()
             fill: Efl.Gfx.Border_Fill_Mode; [[Fill mode of the center region.]]
          }
       }
+      @property image_size {
+         [[This represents the size of the original image in pixels.
+
+           This may be different from the actual geometry on screen or even
+           the size of the loaded pixel buffer. This is the size of the image
+           as stored in the original file.
+
+           This is a read-only property, and may return 0x0.
+
+           @since 1.20
+         ]]
+         get {}
+         values {
+            w: int; [[The image width.]]
+            h: int; [[The image height.]]
+         }
+      }
 
       /* Note: those are obscure features of evas image. Expose in Efl.Image? */
       @property content_hint {

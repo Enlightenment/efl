@@ -1232,6 +1232,18 @@ _efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data 
    if (h) *h = th;
 }
 
+EOLIAN static void
+_efl_ui_image_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
+{
+   if (sd->edje)
+     {
+        if (w) *w = 0;
+        if (h) *h = 0;
+        return;
+     }
+
+   efl_image_size_get(sd->img, w, h);
+}
 
 EAPI void
 elm_image_prescale_set(Evas_Object *obj,

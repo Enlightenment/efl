@@ -395,6 +395,8 @@ _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Dat
           }
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
+   o->file_size.w = 0;
+   o->file_size.h = 0;
    o->written = EINA_FALSE;
    o->changed = EINA_TRUE;
    if (resize_call) evas_object_inform_call_image_resize(eo_obj);
@@ -700,6 +702,13 @@ _efl_canvas_image_internal_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Im
    if (y) *y = o->cur->fill.y;
    if (w) *w = o->cur->fill.w;
    if (h) *h = o->cur->fill.h;
+}
+
+EOLIAN static void
+_efl_canvas_image_internal_efl_image_image_size_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *w, int *h)
+{
+   if (w) *w = o->file_size.w;
+   if (h) *h = o->file_size.h;
 }
 
 EOLIAN static void
