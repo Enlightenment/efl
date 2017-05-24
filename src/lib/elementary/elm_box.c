@@ -555,8 +555,8 @@ _elm_box_unpack_all(Eo *obj, Elm_Box_Data *pd)
    _focus_order_flush(obj, pd);
 }
 
-EOLIAN static void
-_elm_box_layout_set(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object_Box_Layout cb, const void *data, Ecore_Cb free_data)
+EAPI void
+elm_box_layout_set(Eo *obj, Evas_Object_Box_Layout cb, const void *data, Ecore_Cb free_data)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (cb)
