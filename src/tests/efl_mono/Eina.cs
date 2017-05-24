@@ -1561,6 +1561,242 @@ class TestEinaList
             ++i;
         }
     }
+
+    // //
+    // Code Generation
+    //
+
+    // Integer //
+
+    public static void test_eina_list_int_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = new eina.List<int>();
+        lst.AppendArray(base_arr_int);
+        Test.Assert(t.eina_list_int_in(lst));
+        Test.Assert(lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_int));
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_list_int_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = new eina.List<int>();
+        lst.AppendArray(base_arr_int);
+        Test.Assert(t.eina_list_int_in_own(lst));
+        Test.Assert(!lst.Own);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_list_int_in_own());
+    }
+
+    public static void test_eina_list_int_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.List<int> lst;
+        Test.Assert(t.eina_list_int_out(out lst));
+        Test.Assert(!lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_int));
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_list_int_out());
+    }
+
+    public static void test_eina_list_int_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.List<int> lst;
+        Test.Assert(t.eina_list_int_out_own(out lst));
+        Test.Assert(lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_int));
+        lst.AppendArray(append_arr_int);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_list_int_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = t.eina_list_int_return();
+        Test.Assert(!lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_int));
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_list_int_return());
+    }
+
+    public static void test_eina_list_int_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = t.eina_list_int_return_own();
+        Test.Assert(lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_int));
+        lst.AppendArray(append_arr_int);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    // String //
+    public static void test_eina_list_str_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = new eina.List<string>();
+        lst.AppendArray(base_arr_str);
+        Test.Assert(t.eina_list_str_in(lst));
+        Test.Assert(lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_str));
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_list_str_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = new eina.List<string>();
+        lst.AppendArray(base_arr_str);
+        Test.Assert(t.eina_list_str_in_own(lst));
+        Test.Assert(!lst.Own);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_list_str_in_own());
+    }
+
+    public static void test_eina_list_str_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.List<string> lst;
+        Test.Assert(t.eina_list_str_out(out lst));
+        Test.Assert(!lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_str));
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_list_str_out());
+    }
+
+    public static void test_eina_list_str_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.List<string> lst;
+        Test.Assert(t.eina_list_str_out_own(out lst));
+        Test.Assert(lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_str));
+        lst.AppendArray(append_arr_str);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_list_str_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = t.eina_list_str_return();
+        Test.Assert(!lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_str));
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_list_str_return());
+    }
+
+    public static void test_eina_list_str_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = t.eina_list_str_return_own();
+        Test.Assert(lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_arr_str));
+        lst.AppendArray(append_arr_str);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    // Object //
+
+    public static void test_eina_list_obj_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = new eina.List<test.Numberwrapper>();
+        lst.AppendArray(BaseArrObj());
+        Test.Assert(t.eina_list_obj_in(lst));
+        Test.Assert(lst.Own);
+        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_list_obj_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = new eina.List<test.Numberwrapper>();
+        lst.AppendArray(BaseArrObj());
+        Test.Assert(t.eina_list_obj_in_own(lst));
+        Test.Assert(!lst.Own);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_list_obj_in_own());
+    }
+
+    public static void test_eina_list_obj_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.List<test.Numberwrapper> lst;
+        Test.Assert(t.eina_list_obj_out(out lst));
+        Test.Assert(!lst.Own);
+        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_list_obj_out());
+    }
+
+    public static void test_eina_list_obj_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.List<test.Numberwrapper> lst;
+        Test.Assert(t.eina_list_obj_out_own(out lst));
+        Test.Assert(lst.Own);
+        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        lst.AppendArray(AppendArrObj());
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_list_obj_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = t.eina_list_obj_return();
+        Test.Assert(!lst.Own);
+        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_list_obj_return());
+    }
+
+    public static void test_eina_list_obj_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var lst = t.eina_list_obj_return_own();
+        Test.Assert(lst.Own);
+        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        lst.AppendArray(AppendArrObj());
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_list_obj_return_in_same_id()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var cmp = BaseArrObj();
+        var a = new eina.List<test.Numberwrapper>();
+        a.AppendArray(cmp);
+        var b = t.eina_list_obj_return_in(a);
+        NumberwrapperArrayAssertEqual(a.ToArray(), b.ToArray());
+        NumberwrapperArrayAssertEqual(a.ToArray(), BaseArrObj());
+        int len = a.Length;
+        for (int i=0; i < len; ++i)
+        {
+            Test.Assert(a[i].raw_handle == b[i].raw_handle);
+            Test.Assert(a[i].raw_handle == cmp[i].raw_handle);
+        }
+    }
 }
 
 }

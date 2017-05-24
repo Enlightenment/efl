@@ -365,6 +365,154 @@ class Test.Testing (Efl.Object) {
          return: array<Test.Numberwrapper>;
      }
 
+      /* Eina List */
+
+      /* Integer */
+      eina_list_int_in {
+         params {
+            @in lst: list<int>;
+         }
+         return: bool;
+      }
+
+      eina_list_int_in_own {
+         params {
+            @in lst: own(list<own(ptr(int))>);
+         }
+         return: bool;
+      }
+      check_eina_list_int_in_own {
+         return: bool;
+      }
+
+      eina_list_int_out {
+         params {
+            @out lst: list<int>;
+         }
+         return: bool;
+      }
+      check_eina_list_int_out {
+         return: bool;
+      }
+
+      eina_list_int_out_own {
+         params {
+            @out lst: own(list<own(ptr(int))>);
+         }
+         return: bool;
+      }
+
+      eina_list_int_return {
+         return: list<int>;
+      }
+      check_eina_list_int_return {
+         return: bool;
+      }
+
+      eina_list_int_return_own {
+         return: own(list<own(ptr(int))>);
+      }
+
+      /* String */
+      eina_list_str_in {
+         params {
+            @in lst: list<string>;
+         }
+         return: bool;
+      }
+
+      eina_list_str_in_own {
+         params {
+            @in lst: own(list<own(string)>);
+         }
+         return: bool;
+      }
+      check_eina_list_str_in_own {
+         return: bool;
+      }
+
+      eina_list_str_out {
+         params {
+            @out lst: list<string>;
+         }
+         return: bool;
+      }
+      check_eina_list_str_out {
+         return: bool;
+      }
+
+      eina_list_str_out_own {
+         params {
+            @out lst: own(list<own(string)>);
+         }
+         return: bool;
+      }
+
+      eina_list_str_return {
+         return: list<string>;
+      }
+      check_eina_list_str_return {
+         return: bool;
+      }
+
+      eina_list_str_return_own {
+         return: own(list<own(string)>);
+      }
+
+      /* Object */
+      eina_list_obj_in {
+         params {
+            @in lst: list<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_list_obj_in_own {
+         params {
+            @in lst: own(list<own(Test.Numberwrapper)>);
+         }
+         return: bool;
+      }
+      check_eina_list_obj_in_own {
+         return: bool;
+      }
+
+      eina_list_obj_out {
+         params {
+            @out lst: list<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_list_obj_out {
+         return: bool;
+      }
+
+      eina_list_obj_out_own {
+         params {
+            @out lst: own(list<own(Test.Numberwrapper)>);
+         }
+         return: bool;
+      }
+
+      eina_list_obj_return {
+         return: list<Test.Numberwrapper>;
+      }
+      check_eina_list_obj_return {
+         return: bool;
+      }
+
+      eina_list_obj_return_own {
+         return: own(list<own(Test.Numberwrapper)>);
+      }
+
+      eina_list_obj_return_in {
+         params {
+            @in lst: list<Test.Numberwrapper>;
+         }
+         return: list<Test.Numberwrapper>;
+      }
+
+
      set_callback {
          params {
             cb: SimpleCb;
