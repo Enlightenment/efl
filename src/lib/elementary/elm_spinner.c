@@ -25,12 +25,16 @@ static const char SIG_CHANGED[] = "changed";
 static const char SIG_DRAG_START[] = "spinner,drag,start";
 static const char SIG_DRAG_STOP[] = "spinner,drag,stop";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
+static const char SIG_MIN_REACHED[] = "min,reached";
+static const char SIG_MAX_REACHED[] = "max,reached";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
    {SIG_DELAY_CHANGED, ""},
    {SIG_DRAG_START, ""},
    {SIG_DRAG_STOP, ""},
+   {SIG_MIN_REACHED, ""},
+   {SIG_MAX_REACHED, ""},
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
@@ -264,6 +268,11 @@ _value_set(Evas_Object *obj,
 
    if (new_val == sd->val) return EINA_FALSE;
    sd->val = new_val;
+
+   if (sd->val == sd->val_min)
+     efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_MIN_REACHED, NULL);
+   else if (sd->val == sd->val_max)
+     efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_MAX_REACHED, NULL);
 
    efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
    elm_interface_atspi_accessible_value_changed_signal_emit(obj);
