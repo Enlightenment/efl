@@ -449,7 +449,11 @@ M.system_directory_scan = function()
 end
 
 M.file_parse = function(fpath)
-    return eolian.eolian_file_parse(fpath)
+    local v = eolian.eolian_file_parse(fpath)
+    if v == nil then
+        return nil
+    end
+    return v
 end
 
 M.all_eo_files_parse = function()
