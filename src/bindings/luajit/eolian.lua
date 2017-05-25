@@ -300,12 +300,12 @@ ffi.cdef [[
     const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit, const char *name);
     const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit, const char *name);
     const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit, const char *name);
-    Eina_Iterator *eolian_typedecl_aliases_get_by_file(const char *fname);
-    Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
-    Eina_Iterator *eolian_typedecl_enums_get_by_file(const char *fname);
-    Eina_Iterator *eolian_typedecl_all_aliases_get(void);
-    Eina_Iterator *eolian_typedecl_all_structs_get(void);
-    Eina_Iterator *eolian_typedecl_all_enums_get(void);
+    Eina_Iterator *eolian_typedecl_aliases_get_by_file(const Eolian_Unit *unit, const char *fname);
+    Eina_Iterator *eolian_typedecl_structs_get_by_file(const Eolian_Unit *unit, const char *fname);
+    Eina_Iterator *eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit, const char *fname);
+    Eina_Iterator *eolian_typedecl_all_aliases_get(const Eolian_Unit *unit);
+    Eina_Iterator *eolian_typedecl_all_structs_get(const Eolian_Unit *unit);
+    Eina_Iterator *eolian_typedecl_all_enums_get(const Eolian_Unit *unit);
     Eolian_Type_Type eolian_type_type_get(const Eolian_Type *tp);
     Eolian_Typedecl_Type eolian_typedecl_type_get(const Eolian_Typedecl *tp);
     Eina_Iterator *eolian_typedecl_struct_fields_get(const Eolian_Typedecl *tp);
@@ -1160,34 +1160,34 @@ M.typedecl_enum_get_by_name = function(unit, name)
     return v
 end
 
-M.typedecl_aliases_get_by_file = function(fname)
+M.typedecl_aliases_get_by_file = function(unit, fname)
     return Ptr_Iterator("const Eolian_Typedecl *",
-        eolian.eolian_type_aliases_get_by_file(self))
+        eolian.eolian_type_aliases_get_by_file(unit, self))
 end
 
-M.typedecl_structs_get_by_file = function(fname)
+M.typedecl_structs_get_by_file = function(unit, fname)
     return Ptr_Iterator("const Eolian_Typedecl *",
-        eolian.eolian_type_structs_get_by_file(self))
+        eolian.eolian_type_structs_get_by_file(unit, self))
 end
 
-M.typedecl_enums_get_by_file = function(fname)
+M.typedecl_enums_get_by_file = function(unit, fname)
     return Ptr_Iterator("const Eolian_Typedecl *",
-        eolian.eolian_type_enums_get_by_file(self))
+        eolian.eolian_type_enums_get_by_file(unit, self))
 end
 
-M.typedecl_all_aliases_get = function()
+M.typedecl_all_aliases_get = function(unit)
     return Ptr_Iterator("const Eolian_Typedecl *",
-        eolian.eolian_typedecl_all_aliases_get())
+        eolian.eolian_typedecl_all_aliases_get(unit))
 end
 
-M.typedecl_all_structs_get = function()
+M.typedecl_all_structs_get = function(unit)
     return Ptr_Iterator("const Eolian_Typedecl *",
-        eolian.eolian_typedecl_all_structs_get())
+        eolian.eolian_typedecl_all_structs_get(unit))
 end
 
-M.typedecl_all_enums_get = function()
+M.typedecl_all_enums_get = function(unit)
     return Ptr_Iterator("const Eolian_Typedecl *",
-        eolian.eolian_typedecl_all_enums_get())
+        eolian.eolian_typedecl_all_enums_get(unit))
 end
 
 M.expression_type = {
