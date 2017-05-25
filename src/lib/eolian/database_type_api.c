@@ -79,19 +79,19 @@ eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
 }
 
 EAPI Eina_Iterator *
-eolian_typedecl_all_aliases_get(void)
+eolian_typedecl_all_aliases_get(const Eolian_Unit *unit EINA_UNUSED)
 {
    return (_aliases ? eina_hash_iterator_data_new(_aliases) : NULL);
 }
 
 EAPI Eina_Iterator *
-eolian_typedecl_all_structs_get(void)
+eolian_typedecl_all_structs_get(const Eolian_Unit *unit EINA_UNUSED)
 {
    return (_structs ? eina_hash_iterator_data_new(_structs) : NULL);
 }
 
 EAPI Eina_Iterator *
-eolian_typedecl_all_enums_get(void)
+eolian_typedecl_all_enums_get(const Eolian_Unit *unit EINA_UNUSED)
 {
    return (_enums ? eina_hash_iterator_data_new(_enums) : NULL);
 }

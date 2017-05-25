@@ -1442,35 +1442,38 @@ EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit, c
 /*
  * @brief Get an iterator to all aliases in the Eolian database.
  *
+ * @param[in] unit the unit to look in
  * @return the iterator or NULL
  *
  * Thanks to internal caching, this is an O(1) operation.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_all_aliases_get(void);
+EAPI Eina_Iterator *eolian_typedecl_all_aliases_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an iterator to all structs in the Eolian database.
  *
+ * @param[in] unit the unit to look in
  * @return the iterator or NULL
  *
  * Thanks to internal caching, this is an O(1) operation.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_all_structs_get(void);
+EAPI Eina_Iterator *eolian_typedecl_all_structs_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an iterator to all enums in the Eolian database.
  *
+ * @param[in] unit the unit to look in
  * @return the iterator or NULL
  *
  * Thanks to internal caching, this is an O(1) operation.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_all_enums_get(void);
+EAPI Eina_Iterator *eolian_typedecl_all_enums_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get the type of a type declaration.
