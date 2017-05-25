@@ -1,9 +1,8 @@
-class Elm.Inwin (Elm.Layout)
+class Elm.Inwin (Elm.Layout, Efl.Ui.Focus.Manager)
 {
    [[Elementary inwin class]]
    legacy_prefix: elm_inwin;
    eo_prefix: elm_obj_win_inwin;
-   data: null;
    methods {
       activate {
          [[Activates an inwin object, ensuring its visibility
@@ -27,5 +26,7 @@ class Elm.Inwin (Elm.Layout)
       Elm.Widget.focus_next;
       Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;
+      Efl.Gfx.visible { set; }
+      Efl.Ui.Focus.Manager.move;
    }
 }
