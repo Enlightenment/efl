@@ -523,7 +523,8 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
                      etpd = eolian_type_typedecl_get(etp);
                   }
 
-                if (!etpd) etpd = eolian_typedecl_enum_get_by_name(fulln);
+                /* FIXME: pass unit properly */
+                if (!etpd) etpd = eolian_typedecl_enum_get_by_name(NULL, fulln);
                 if (!etpd || etpd->type != EOLIAN_TYPEDECL_ENUM)
                   {
                      free(fulln);

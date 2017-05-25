@@ -848,7 +848,7 @@ START_TEST(eolian_enum)
    fail_if(!(class = eolian_class_get_by_name(unit, "Enum")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
-   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Foo")));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name(unit, "Foo")));
 
    fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "first")));
    fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
@@ -865,7 +865,7 @@ START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
 
-   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Bar")));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name(unit, "Bar")));
    fail_if(strcmp(eolian_typedecl_enum_legacy_prefix_get(tdl), "test"));
 
    fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "foo")));
@@ -878,7 +878,7 @@ START_TEST(eolian_enum)
    fail_if(strcmp(cname, "TEST_FOO"));
    eina_stringshare_del(cname);
 
-   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Baz")));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name(unit, "Baz")));
 
    fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "flag1")));
    fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
@@ -898,7 +898,7 @@ START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 2));
 
-   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Name.Spaced")));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name(unit, "Name.Spaced")));
    fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "pants")));
 
    cname = eolian_typedecl_enum_field_c_name_get(field);
@@ -1265,7 +1265,7 @@ START_TEST(eolian_docs)
                   "Another field documentation."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Bar")));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name(unit, "Bar")));
    fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for enum Bar."));

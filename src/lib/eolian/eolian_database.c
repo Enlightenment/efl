@@ -553,7 +553,8 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
      }
 
    /* try an enum field */
-   tpd = eolian_typedecl_enum_get_by_name(name);
+   /* FIXME: pass unit properly */
+   tpd = eolian_typedecl_enum_get_by_name(NULL, name);
    if (tpd)
      {
         const Eolian_Enum_Type_Field *fld = eolian_typedecl_enum_field_get(tpd, suffix);
