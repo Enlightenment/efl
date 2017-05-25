@@ -6,12 +6,13 @@
 #include "eo_lexer.h"
 
 EAPI Eolian_Value
-eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m)
+eolian_expression_eval(const Eolian_Unit *unit, const Eolian_Expression *expr,
+                       Eolian_Expression_Mask m)
 {
    Eolian_Value err;
    err.type = EOLIAN_EXPR_UNKNOWN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(expr, err);
-   return database_expr_eval(NULL, expr, m);
+   return database_expr_eval(unit, expr, m);
 }
 
 static Eolian_Value
@@ -90,13 +91,14 @@ _eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr,
 }
 
 EAPI Eolian_Value
-eolian_expression_eval_type(const Eolian_Expression *expr,
+eolian_expression_eval_type(const Eolian_Unit *unit,
+                            const Eolian_Expression *expr,
                             const Eolian_Type *type)
 {
    Eolian_Value err;
    err.type = EOLIAN_EXPR_UNKNOWN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(expr, err);
-   return _eval_type(NULL, expr, type);
+   return _eval_type(unit, expr, type);
 }
 
 static void

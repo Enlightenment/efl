@@ -165,7 +165,8 @@ _etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
         eina_strbuf_append(buf, ef->name);
         if (ef->value)
           {
-             Eolian_Value val = eolian_expression_eval(ef->value,
+             /* FIXME: pass unit properly */
+             Eolian_Value val = eolian_expression_eval(NULL, ef->value,
                  EOLIAN_MASK_INT);
              const char *ret;
              eina_strbuf_append(buf, " = ");
