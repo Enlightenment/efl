@@ -329,7 +329,7 @@ START_TEST(eolian_typedef)
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* Basic type */
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Evas.Coord")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Evas.Coord")));
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_ALIAS);
    fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(strcmp(type_name, "Coord"));
@@ -348,12 +348,12 @@ START_TEST(eolian_typedef)
    fail_if(strcmp(file, "typedef.eo"));
 
    /* Lowest alias base */
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Evas.Coord3")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Evas.Coord3")));
    fail_if(!(type = eolian_typedecl_aliased_base_get(tdl)));
    fail_if(strcmp(eolian_type_name_get(type), "int"));
 
    /* Complex type */
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("List_Objects")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "List_Objects")));
    fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(strcmp(type_name, "List_Objects"));
    fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
@@ -742,11 +742,11 @@ START_TEST(eolian_extern)
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular type */
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Foo")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Foo")));
    fail_if(eolian_typedecl_is_extern(tdl));
 
    /* extern type */
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Evas.Coord")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Evas.Coord")));
    fail_if(!eolian_typedecl_is_extern(tdl));
 
    /* regular struct */
@@ -986,9 +986,9 @@ START_TEST(eolian_free_func)
    fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "test_free"));
 
    /* typedef */
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Typedef1")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Typedef1")));
    fail_if(eolian_typedecl_free_func_get(tdl));
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Typedef2")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Typedef2")));
    fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "def_free"));
 
    /* opaque struct */
@@ -998,10 +998,10 @@ START_TEST(eolian_free_func)
    fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "opaque_free"));
 
    /* pointer */
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Pointer1")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Pointer1")));
    fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
    fail_if(eolian_type_free_func_get(type));
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Pointer2")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Pointer2")));
    fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
    fail_if(strcmp(eolian_type_free_func_get(type), "ptr_free"));
 
@@ -1071,7 +1071,7 @@ START_TEST(eolian_import)
    fail_if(!(unit = eolian_file_parse(PACKAGE_DATA_DIR"/data/import.eo")));
    fail_if(!(class = eolian_class_get_by_name(unit, "Import")));
 
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Imported")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Imported")));
    fail_if(strcmp(eolian_typedecl_file_get(tdl), "import_types.eot"));
 
    fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Imported_Struct")));
@@ -1287,7 +1287,7 @@ START_TEST(eolian_docs)
                   "Docs for bar."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Alias")));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Alias")));
    fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for typedef."));
