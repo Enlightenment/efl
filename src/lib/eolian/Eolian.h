@@ -1370,12 +1370,13 @@ EAPI Eina_Stringshare *eolian_class_c_data_type_get(const Eolian_Class *klass);
 /*
  * @brief Get an alias type declaration by name. Supports namespaces.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the name of the alias
  * @return the alias type or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const char *name);
+EAPI const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get a struct declaration by name. Supports namespaces.
