@@ -78,7 +78,6 @@ static Eina_Bool _debug_disabled = EINA_FALSE;
 
 /* Local session */
 /* __thread here to allow debuggers to be master and slave by using two different threads */
-static __thread Eina_Debug_Session *_session = NULL;
 static Eina_Debug_Session *_last_local_session = NULL;
 
 /* Opcode used to load a module
@@ -268,39 +267,39 @@ _parse_cmds(const char *cmds)
 
 #ifndef _WIN32
 static int
-_packet_receive(unsigned char **buffer)
+_packet_receive(Eina_Debug_Session *session, unsigned char **buffer)
 {
    unsigned char *packet_buf = NULL, *size_buf;
    int rret = -1, ratio, size_sz;
 
-   if (!_session) goto end;
+   if (!session) goto end;
 
-   if (_session->wait_for_input)
+   if (session->wait_for_input)
      {
         /* Wait for input */
         char c;
-        int flags = fcntl(_session->fd_in, F_GETFL, 0);
+        int flags = fcntl(session->fd_in, F_GETFL, 0);
         e_debug_begin("Characters received: ");
-        if (fcntl(_session->fd_in, F_SETFL, flags | O_NONBLOCK) == -1) perror(0);
-        while (read(_session->fd_in, &c, 1) == 1) e_debug_continue("%c", c);
-        if (fcntl(_session->fd_in, F_SETFL, flags) == -1) perror(0);
+        if (fcntl(session->fd_in, F_SETFL, flags | O_NONBLOCK) == -1) perror(0);
+        while (read(session->fd_in, &c, 1) == 1) e_debug_continue("%c", c);
+        if (fcntl(session->fd_in, F_SETFL, flags) == -1) perror(0);
         e_debug_end();
-        _session->wait_for_input = EINA_FALSE;
-        _cmd_consume(_session);
+        session->wait_for_input = EINA_FALSE;
+        _cmd_consume(session);
         return 0;
      }
 
-   ratio = _session->decode_cb && _session->encoding_ratio ? _session->encoding_ratio : 1.0;
+   ratio = session->decode_cb && session->encoding_ratio ? session->encoding_ratio : 1.0;
    size_sz = sizeof(int) * ratio;
    size_buf = alloca(size_sz);
-   if ((rret = read(_session->fd_in, size_buf, size_sz)) == size_sz)
+   if ((rret = read(session->fd_in, size_buf, size_sz)) == size_sz)
      {
         unsigned int size;
-        if (_session->decode_cb)
+        if (session->decode_cb)
           {
              /* Decode the size if needed */
-             void *size_decoded_buf = _session->decode_cb(size_buf, size_sz, NULL);
-             size = (*(unsigned int *)size_decoded_buf) * _session->encoding_ratio;
+             void *size_decoded_buf = session->decode_cb(size_buf, size_sz, NULL);
+             size = (*(unsigned int *)size_decoded_buf) * session->encoding_ratio;
              free(size_decoded_buf);
           }
         else
@@ -323,7 +322,7 @@ _packet_receive(unsigned char **buffer)
              /* Receive all the remaining packet bytes */
              while (cur_packet_size < size)
                {
-                  rret = read(_session->fd_in, packet_buf + cur_packet_size, size - cur_packet_size);
+                  rret = read(session->fd_in, packet_buf + cur_packet_size, size - cur_packet_size);
                   if (rret <= 0)
                     {
                        e_debug("Error on read: %d", rret);
@@ -332,10 +331,10 @@ _packet_receive(unsigned char **buffer)
                     }
                   cur_packet_size += rret;
                }
-             if (_session->decode_cb)
+             if (session->decode_cb)
                {
                   /* Decode the packet if needed */
-                  void *decoded_buf = _session->decode_cb(packet_buf, size, &cur_packet_size);
+                  void *decoded_buf = session->decode_cb(packet_buf, size, &cur_packet_size);
                   free(packet_buf);
                   packet_buf = decoded_buf;
                }
@@ -799,7 +798,7 @@ static void *
 _monitor(void *_data)
 {
 #ifndef _WIN32
-   _session = _data;
+   Eina_Debug_Session *session = _data;
 
    // set a name for this thread for system debugging
 #ifdef EINA_HAVE_PTHREAD_SETNAME
@@ -814,30 +813,30 @@ _monitor(void *_data)
    // sit forever processing commands or timeouts in the debug monitor
    // thread - this is separate to the rest of the app so it shouldn't
    // impact the application specifically
-   for (;_session;)
+   for (;session;)
      {
         unsigned char *buffer;
         int size;
 
-        size = _packet_receive(&buffer);
+        size = _packet_receive(session, &buffer);
         // if not negative - we have a real message
         if (size > 0)
           {
-             if (EINA_DEBUG_OK != _session->dispatch_cb(_session, buffer))
+             if (EINA_DEBUG_OK != session->dispatch_cb(session, buffer))
                {
                   // something we don't understand
                   e_debug("EINA DEBUG ERROR: Unknown command");
                }
              /* Free the buffer only if the default dispatcher is used */
-             if (_session->dispatch_cb == eina_debug_dispatch)
+             if (session->dispatch_cb == eina_debug_dispatch)
                 free(buffer);
           }
         else
           {
-             close(_session->fd_in);
-             _opcodes_unregister_all(_session);
-             free(_session);
-             _session = NULL;
+             close(session->fd_in);
+             _opcodes_unregister_all(session);
+             free(session);
+             session = NULL;
           }
      }
 #endif
@@ -897,7 +896,7 @@ eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode
    session->opcode_reply_infos = eina_list_append(
          session->opcode_reply_infos, info);
 
-   /* Send only if _session's fd connected.
+   /* Send only if session's fd connected.
     * Otherwise, it will be sent when connected */
    if(session && session->fd_in != -1 && !session->cmds)
       _opcodes_registration_send(session, info);
