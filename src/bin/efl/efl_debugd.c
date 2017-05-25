@@ -21,6 +21,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <fcntl.h>
 #include "eina_debug_private.h"
 
@@ -84,7 +86,7 @@ Opcode_Information *_opcodes[MAX_OPCODES];
 
 /* epoll stuff */
 #ifndef _WIN32
-static int _epfd = -1, _listening_master_fd = -1, _listening_slave_fd = -1;
+static int _epfd = -1, _listening_unix_fd = -1, _listening_tcp_fd = -1;
 #endif
 
 static Client *
@@ -402,7 +404,7 @@ _monitor()
                   if (events[i].events & EPOLLIN)
                     {
                        // Someone wants to connect
-                       if(events[i].data.fd == _listening_master_fd || events[i].data.fd == _listening_slave_fd)
+                       if(events[i].data.fd == _listening_unix_fd || events[i].data.fd == _listening_tcp_fd)
                          {
                             int new_fd = accept(events[i].data.fd, NULL, NULL);
                             if (new_fd < 0) perror("Accept");
@@ -411,7 +413,7 @@ _monitor()
                                  struct epoll_event event;
                                  c = calloc(1, sizeof(*c));
                                  c->fd = new_fd;
-                                 c->is_master = (events[i].data.fd == _listening_master_fd);
+                                 c->is_master = (events[i].data.fd == _listening_tcp_fd);
                                  _clients = eina_list_append(_clients, c);
                                  event.data.fd = new_fd;
                                  event.events = EPOLLIN;
@@ -480,12 +482,70 @@ _socket_home_get()
 #define LENGTH_OF_SOCKADDR_UN(s) \
    (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 static int
-_local_listening_socket_create(const char *path)
+_listening_unix_socket_create()
 {
+   char buf[1048];
    struct sockaddr_un socket_unix;
    int socket_unix_len, curstate = 0;
+   char *socket_path = _socket_home_get();
+   mode_t mask = 0;
    // create the socket
    int fd = socket(AF_UNIX, SOCK_STREAM, 0);
+   Eina_Bool ret = EINA_FALSE;
+
+   if (fd < 0) goto end;
+   // set the socket to close when we exec things so they don't inherit it
+   if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0) goto end;
+   // set up some socket options on addr re-use
+   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate,
+                  sizeof(curstate)) < 0)
+     goto end;
+
+   snprintf(buf, sizeof(buf), "%s/%s", socket_path, LOCAL_SERVER_PATH);
+   if (mkdir(buf, S_IRWXU) < 0 && errno != EEXIST)
+     {
+        perror("mkdir SERVER_PATH");
+        goto end;
+     }
+   snprintf(buf, sizeof(buf), "%s/%s/%s", socket_path, LOCAL_SERVER_PATH, LOCAL_SERVER_NAME);
+   if (mkdir(buf, S_IRWXU) < 0 && errno != EEXIST)
+     {
+        perror("mkdir SERVER_NAME");
+        goto end;
+     }
+   mask = umask(S_IRWXG | S_IRWXO);
+   snprintf(buf, sizeof(buf), "%s/%s/%s/%i", socket_path,
+         LOCAL_SERVER_PATH, LOCAL_SERVER_NAME, LOCAL_SERVER_PORT);
+   // sa that it's a unix socket and where the path is
+   socket_unix.sun_family = AF_UNIX;
+   strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path) - 1);
+   socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
+   unlink(socket_unix.sun_path);
+   if (bind(fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
+     {
+        perror("ERROR on binding");
+        goto end;
+     }
+   listen(fd, 5);
+   ret = EINA_TRUE;
+end:
+   umask(mask);
+   if (!ret && fd >= 0)
+     {
+        close(fd);
+        fd = -1;
+     }
+   free(socket_path);
+   return fd;
+}
+
+static int
+_listening_tcp_socket_create()
+{
+   struct sockaddr_in server;
+   int curstate = 0;
+   // create the socket
+   int fd = socket(AF_INET, SOCK_STREAM, 0);
    if (fd < 0) goto err;
    // set the socket to close when we exec things so they don't inherit it
    if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0) goto err;
@@ -493,12 +553,13 @@ _local_listening_socket_create(const char *path)
    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate,
                   sizeof(curstate)) < 0)
      goto err;
-   // sa that it's a unix socket and where the path is
-   socket_unix.sun_family = AF_UNIX;
-   strncpy(socket_unix.sun_path, path, sizeof(socket_unix.sun_path) - 1);
-   socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
-   unlink(socket_unix.sun_path);
-   if (bind(fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
+
+   //Prepare the sockaddr_in structure
+   server.sin_family = AF_INET;
+   inet_pton(AF_INET, "127.0.0.1", &server.sin_addr.s_addr);
+   server.sin_port = htons(REMOTE_SERVER_PORT);
+
+   if (bind(fd, (struct sockaddr *)&server, sizeof(server)) < 0)
      {
         perror("ERROR on binding");
         goto err;
@@ -515,48 +576,27 @@ static Eina_Bool
 _server_launch()
 {
 #ifndef _WIN32
-   char buf[4096];
    struct epoll_event event = {0};
-   mode_t mask = 0;
-   char *socket_path = _socket_home_get();
-   if (!socket_path) return EINA_FALSE;
+
    _epfd = epoll_create (MAX_EVENTS);
 
-   snprintf(buf, sizeof(buf), "%s/%s", socket_path, SERVER_PATH);
-   if (mkdir(buf, S_IRWXU) < 0 && errno != EEXIST)
-     {
-        perror("mkdir SERVER_PATH");
-        goto err;
-     }
-   snprintf(buf, sizeof(buf), "%s/%s/%s", socket_path, SERVER_PATH, SERVER_NAME);
-   if (mkdir(buf, S_IRWXU) < 0 && errno != EEXIST)
-     {
-        perror("mkdir SERVER_NAME");
-        goto err;
-     }
-   mask = umask(S_IRWXG | S_IRWXO);
-   snprintf(buf, sizeof(buf), "%s/%s/%s/%i", socket_path, SERVER_PATH, SERVER_NAME, SERVER_MASTER_PORT);
-   _listening_master_fd = _local_listening_socket_create(buf);
-   if (_listening_master_fd <= 0) goto err;
-   event.data.fd = _listening_master_fd;
+   _listening_unix_fd = _listening_unix_socket_create();
+   if (_listening_unix_fd <= 0) goto err;
+   event.data.fd = _listening_unix_fd;
    event.events = EPOLLIN;
-   epoll_ctl (_epfd, EPOLL_CTL_ADD, _listening_master_fd, &event);
-   snprintf(buf, sizeof(buf), "%s/%s/%s/%i", socket_path, SERVER_PATH, SERVER_NAME, SERVER_SLAVE_PORT);
-   _listening_slave_fd = _local_listening_socket_create(buf);
-   if (_listening_slave_fd <= 0) goto err;
-   event.data.fd = _listening_slave_fd;
+   epoll_ctl (_epfd, EPOLL_CTL_ADD, _listening_unix_fd, &event);
+
+   _listening_tcp_fd = _listening_tcp_socket_create();
+   if (_listening_tcp_fd <= 0) goto err;
+   event.data.fd = _listening_tcp_fd;
    event.events = EPOLLIN;
-   epoll_ctl (_epfd, EPOLL_CTL_ADD, _listening_slave_fd, &event);
-   umask(mask);
-   free(socket_path);
+   epoll_ctl (_epfd, EPOLL_CTL_ADD, _listening_tcp_fd, &event);
    return EINA_TRUE;
 err:
-   if (mask) umask(mask);
-   if (_listening_master_fd >= 0) close(_listening_master_fd);
-   _listening_master_fd = -1;
-   if (_listening_slave_fd >= 0) close(_listening_slave_fd);
-   _listening_slave_fd = -1;
-   free(socket_path);
+   if (_listening_unix_fd >= 0) close(_listening_unix_fd);
+   _listening_unix_fd = -1;
+   if (_listening_tcp_fd >= 0) close(_listening_tcp_fd);
+   _listening_tcp_fd = -1;
 #endif
    return EINA_FALSE;
 }

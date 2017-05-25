@@ -5,10 +5,11 @@
 # include "eina_lock.h"
 # include "eina_thread.h"
 
-#define SERVER_PATH ".edebug"
-#define SERVER_NAME "efl_debug"
-#define SERVER_MASTER_PORT 0
-#define SERVER_SLAVE_PORT 1
+#define LOCAL_SERVER_PATH ".edebug"
+#define LOCAL_SERVER_NAME "efl_debug"
+#define LOCAL_SERVER_PORT 0
+
+#define REMOTE_SERVER_PORT 6666
 
 #ifdef DEBUGON
 # define e_debug(fmt, args...) fprintf(stderr, "%d:"__FILE__":%s/%d : " fmt "\n", getpid(), __FUNCTION__, __LINE__, ##args)
@@ -22,9 +23,7 @@
 # define e_debug_end(x...) do { } while (0)
 #endif
 
-/* Max packet size
- * If the shell is used, the ratio is 2.0. It means the max size (not encoded) should be half.
- */
+/* Max packet size */
 #define EINA_DEBUG_MAX_PACKET_SIZE 10000000
 
 typedef struct _Eina_Debug_Session Eina_Debug_Session;

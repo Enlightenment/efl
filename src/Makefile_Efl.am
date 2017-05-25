@@ -164,18 +164,12 @@ endif
 
 bin_PROGRAMS += \
 bin/efl/efl_debugd \
-bin/efl/efl_debug_shell_bridge \
 bin/efl/efl_debug
 
 bin_efl_efl_debugd_SOURCES = bin/efl/efl_debugd.c
 bin_efl_efl_debugd_CPPFLAGS = -I$(top_builddir)/src/bin/efl @EINA_CFLAGS@ @ECORE_CFLAGS@ @ECORE_CON_CFLAGS@
 bin_efl_efl_debugd_LDADD = @EFL_LIBS@ @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
 bin_efl_efl_debugd_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
-
-bin_efl_efl_debug_shell_bridge_SOURCES = bin/efl/efl_debug_shell_bridge.c
-bin_efl_efl_debug_shell_bridge_CPPFLAGS = -I$(top_builddir)/src/bin/efl @EINA_CFLAGS@ @ECORE_CFLAGS@ @ECORE_CON_CFLAGS@
-bin_efl_efl_debug_shell_bridge_LDADD = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
-bin_efl_efl_debug_shell_bridge_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
 
 bin_efl_efl_debug_SOURCES = bin/efl/efl_debug.c
 bin_efl_efl_debug_CPPFLAGS = -I$(top_builddir)/src/bin/efl @EINA_CFLAGS@ @ECORE_CFLAGS@ @ECORE_CON_CFLAGS@

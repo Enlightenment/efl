@@ -153,47 +153,20 @@ EAPI void eina_debug_disable(void);
  *
  * @param is_master true if the application is a debugger. EINA_FALSE otherwise.
  *
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return the session on success or NULL otherwise
  */
 EAPI Eina_Debug_Session *eina_debug_local_connect(Eina_Bool is_master);
 
 /**
- * @brief Connect to remote shell daemon
+ * @brief Connect to remote daemon
  *
- * This function executes the shell. The given commands will be parsed and consumed one by one.
- * The last command should be the execution of efl_debug_shell_bridge.
+ * This function connects to localhost:port.
  *
- * @param cmds the commands to execute
+ * @param port the port to connect to
  *
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return the session on success or NULL otherwise
  */
-EAPI Eina_Debug_Session *eina_debug_shell_remote_connect(const char *cmds);
-
-/**
- * @brief Create a session and attach the given file descriptors
- *
- * This function is essentially used for the shell bridge, as it needs to connect
- * to the stdin/stdout file descriptors.
- *
- * @param fd_in the file descriptor to read from
- * @param fd_out the file descriptor to write to
- *
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
- */
-EAPI Eina_Debug_Session *eina_debug_fds_attach(int fd_in, int fd_out);
-
-/**
- * @brief Enable the shell codec on the given session
- *
- * This leads to encode and decode each packet that are going to/coming from
- * on this session.
- * It is needed for the communication between the debug tool and the
- * shell bridge, as some characters are interpreted by the terminal (sh/ssh...).
- *
- * @param session the session
- */
-EAPI void
-eina_debug_session_shell_codec_enable(Eina_Debug_Session *session);
+EAPI Eina_Debug_Session *eina_debug_remote_connect(int port);
 
 /**
  * @brief Terminate the session
