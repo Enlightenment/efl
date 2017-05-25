@@ -1,0 +1,15 @@
+class Efl.Ui.Focus.Manager.Root_Focus(Efl.Ui.Focus.Manager) {
+  [[ This class ensures that the root is at least focusable, if nothing else is focusable]]
+  implements {
+    Efl.Ui.Focus.Manager.register;
+    Efl.Ui.Focus.Manager.unregister;
+    Efl.Ui.Focus.Manager.focus;
+    Efl.Ui.Focus.Manager.focused;
+    Efl.Ui.Focus.Manager.fetch;
+    Efl.Ui.Focus.Manager.logical_end;
+    Efl.Ui.Focus.Manager.border_elements {get;}
+    Efl.Ui.Focus.Manager.request_move;
+    Efl.Ui.Focus.Manager.move;
+    Efl.Object.finalize;
+  }
+}
