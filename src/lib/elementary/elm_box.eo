@@ -1,5 +1,4 @@
 import evas_box;
-import ecore_types;
 
 class Elm.Box (Elm.Widget)
 {

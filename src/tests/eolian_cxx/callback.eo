@@ -1,5 +1,3 @@
-import ecore_types;
-
 struct Callback_Event
 {
   field1: int;

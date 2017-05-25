@@ -1,5 +1,3 @@
-import ecore_types;
-
 class Efl.Loop.Timer (Efl.Loop_User)
 {
    [[Timers are objects that will call a given callback at some point

@@ -2703,6 +2703,40 @@ typedef enum _Ecore_Animator_Source Ecore_Animator_Source;
  */
 typedef Eina_Bool (*Ecore_Timeline_Cb)(void *data, double pos);
 
+/** Defines the position mappings for the animation. */
+typedef enum
+{
+  ECORE_POS_MAP_LINEAR = 0, /**< Linear 0.0 -> 1.0 */
+  ECORE_POS_MAP_ACCELERATE, /**< Start slow then speed up */
+  ECORE_POS_MAP_DECELERATE, /**< Start fast then slow down */
+  ECORE_POS_MAP_SINUSOIDAL, /**< Start slow, speed up then slow down at end */
+  ECORE_POS_MAP_ACCELERATE_FACTOR, /**< Start slow then speed up, v1 being a
+                                    * power factor, 0.0 being linear, 1.0 being
+                                    * normal accelerate, 2.0 being much more
+                                    * pronounced accelerate (squared), 3.0
+                                    * being cubed, etc. */
+  ECORE_POS_MAP_DECELERATE_FACTOR, /**< Start fast then slow down, v1 being a
+                                    * power factor, 0.0 being linear, 1.0 being
+                                    * normal decelerate, 2.0 being much more
+                                    * pronounced decelerate (squared), 3.0
+                                    * being cubed, etc. */
+  ECORE_POS_MAP_SINUSOIDAL_FACTOR, /**< Start slow, speed up then slow down at
+                                    * end, v1 being a power factor, 0.0 being
+                                    * linear, 1.0 being normal sinusoidal, 2.0
+                                    * being much more pronounced sinusoidal
+                                    * (squared), 3.0 being cubed, etc. */
+  ECORE_POS_MAP_DIVISOR_INTERP, /**< Start at gradient * v1, interpolated via
+                                 * power of v2 curve */
+  ECORE_POS_MAP_BOUNCE, /**< Start at 0.0 then "drop" like a ball bouncing to
+                         * the ground at 1.0, and bounce v2 times, with decay
+                         * factor of v1 */
+  ECORE_POS_MAP_SPRING, /**< Start at 0.0 then "wobble" like a spring rest
+                         * position 1.0, and wobble v2 times, with decay factor
+                         * of v1 */
+  ECORE_POS_MAP_CUBIC_BEZIER /**< Follow the cubic-bezier curve calculated with
+                              * the control points (x1, y1), (x2, y2) */
+} Ecore_Pos_Map;
+
 /*
  * @since 1.8
  */

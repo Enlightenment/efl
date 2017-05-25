@@ -1,4 +1,4 @@
-import ecore_types;
+type @extern Ecore_Task_Cb: __undefined_type; [[Ecore task callback type]]
 
 enum Ecore.Poller_Type
 {
