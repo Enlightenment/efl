@@ -1392,12 +1392,13 @@ EAPI const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const Eolian_Unit
 /*
  * @brief Get an enum declaration by name. Supports namespaces.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the name of the struct
  * @return the struct or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const char *name);
+EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get an iterator to all aliases contained in a file.

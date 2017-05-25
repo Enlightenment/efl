@@ -53,7 +53,7 @@ _generate_ref(const Eolian_Unit *src, const char *refn, Eina_Strbuf *wbuf,
         return;
      }
 
-   tp = eolian_typedecl_enum_get_by_name(bname);
+   tp = eolian_typedecl_enum_get_by_name(src, bname);
    if (tp)
      {
         const Eolian_Enum_Type_Field *efl = eolian_typedecl_enum_field_get(tp, sfx + 1);
