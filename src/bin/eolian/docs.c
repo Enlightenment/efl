@@ -39,7 +39,7 @@ _generate_ref(const Eolian_Unit *src, const char *refn, Eina_Strbuf *wbuf,
 
    Eina_Stringshare *bname = eina_stringshare_add_length(refn, sfx - refn);
 
-   const Eolian_Typedecl *tp = eolian_typedecl_struct_get_by_name(bname);
+   const Eolian_Typedecl *tp = eolian_typedecl_struct_get_by_name(src, bname);
    if (tp)
      {
         if (!eolian_typedecl_struct_field_get(tp, sfx + 1))

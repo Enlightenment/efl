@@ -298,7 +298,7 @@ ffi.cdef [[
     Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
     const char *eolian_class_c_get_function_name_get(const Eolian_Class *klass);
     const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit, const char *name);
-    const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const char *name);
+    const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit, const char *name);
     const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const char *name);
     Eina_Iterator *eolian_typedecl_aliases_get_by_file(const char *fname);
     Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
@@ -1148,8 +1148,8 @@ M.typedecl_alias_get_by_name = function(unit, name)
     return v
 end
 
-M.typedecl_struct_get_by_name = function(name)
-    local v = eolian.eolian_typedecl_struct_get_by_name(name)
+M.typedecl_struct_get_by_name = function(unit, name)
+    local v = eolian.eolian_typedecl_struct_get_by_name(unit, name)
     if v == nil then return nil end
     return v
 end

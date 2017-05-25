@@ -539,7 +539,8 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
    *suffix++ = '\0';
 
    /* try a struct field */
-   const Eolian_Typedecl *tpd = eolian_typedecl_struct_get_by_name(name);
+   /* FIXME: pass unit properly */
+   const Eolian_Typedecl *tpd = eolian_typedecl_struct_get_by_name(NULL, name);
    if (tpd)
      {
         const Eolian_Struct_Type_Field *fld = eolian_typedecl_struct_field_get(tpd, suffix);
