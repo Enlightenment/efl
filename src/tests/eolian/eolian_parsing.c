@@ -662,7 +662,7 @@ START_TEST(eolian_struct)
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* named struct */
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Named")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Named")));
    fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(!(file = eolian_typedecl_file_get(tdl)));
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
@@ -696,7 +696,7 @@ START_TEST(eolian_struct)
    eina_stringshare_del(type_name);
 
    /* referencing */
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Another")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Another")));
    fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(!(file = eolian_typedecl_file_get(tdl)));
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
@@ -711,7 +711,7 @@ START_TEST(eolian_struct)
        != EOLIAN_TYPEDECL_STRUCT);
 
    /* opaque struct */
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Opaque")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Opaque")));
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT_OPAQUE);
 
    /* use in function */
@@ -750,11 +750,11 @@ START_TEST(eolian_extern)
    fail_if(!eolian_typedecl_is_extern(tdl));
 
    /* regular struct */
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("X")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "X")));
    fail_if(eolian_typedecl_is_extern(tdl));
 
    /* extern struct */
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Y")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Y")));
    fail_if(!eolian_typedecl_is_extern(tdl));
 
    eolian_shutdown();
@@ -980,9 +980,9 @@ START_TEST(eolian_free_func)
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular struct */
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Named1")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Named1")));
    fail_if(eolian_typedecl_free_func_get(tdl));
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Named2")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Named2")));
    fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "test_free"));
 
    /* typedef */
@@ -992,9 +992,9 @@ START_TEST(eolian_free_func)
    fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "def_free"));
 
    /* opaque struct */
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Opaque1")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Opaque1")));
    fail_if(eolian_typedecl_free_func_get(tdl));
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Opaque2")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Opaque2")));
    fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "opaque_free"));
 
    /* pointer */
@@ -1074,7 +1074,7 @@ START_TEST(eolian_import)
    fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Imported")));
    fail_if(strcmp(eolian_typedecl_file_get(tdl), "import_types.eot"));
 
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Imported_Struct")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Imported_Struct")));
    fail_if(strcmp(eolian_typedecl_file_get(tdl), "import_types.eot"));
 
    eolian_shutdown();
@@ -1163,7 +1163,7 @@ START_TEST(eolian_docs)
 
    fail_if(!(unit = eolian_file_parse(PACKAGE_DATA_DIR"/data/docs.eo")));
 
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Foo")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Foo")));
    fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "This is struct Foo. It does stuff."));
@@ -1302,7 +1302,7 @@ START_TEST(eolian_docs)
                   "Docs for var."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Opaque")));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Opaque")));
    fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Opaque struct docs. See @Foo for another struct."));

@@ -19,7 +19,8 @@ eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
 }
 
 EAPI const Eolian_Typedecl *
-eolian_typedecl_struct_get_by_name(const char *name)
+eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
+                                   const char *name)
 {
    if (!_structs) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
