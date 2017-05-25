@@ -69,12 +69,12 @@ _type_exists(const char *tname, Eina_Strbuf *buf)
 }
 
 static void
-_append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp,
-               const Eolian_Type *tp)
+_append_defval(const Eolian_Unit *src, Eina_Strbuf *buf,
+               const Eolian_Expression *exp, const Eolian_Type *tp)
 {
    if (exp)
      {
-        Eolian_Value val = eolian_expression_eval_type(exp, tp);
+        Eolian_Value val = eolian_expression_eval_type(src, exp, tp);
         Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
         if (lit)
           {
@@ -115,9 +115,9 @@ _append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp,
 }
 
 static void
-_gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
-          Eolian_Function_Type ftype, Eina_Strbuf *buf,
-          const Eolian_Implement *impl, Eina_Strbuf *lbuf)
+_gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
+          const Eolian_Function *fid, Eolian_Function_Type ftype,
+          Eina_Strbuf *buf, const Eolian_Implement *impl, Eina_Strbuf *lbuf)
 {
    Eina_Bool is_empty = eolian_implement_is_empty(impl, ftype);
    Eina_Bool is_auto = eolian_implement_is_auto(impl, ftype);
@@ -248,7 +248,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
                }
              else if ((ftype != EOLIAN_PROP_SET) && dfv)
                {
-                  Eolian_Value val = eolian_expression_eval(dfv, EOLIAN_MASK_ALL);
+                  Eolian_Value val = eolian_expression_eval(src, dfv, EOLIAN_MASK_ALL);
                   if (val.type)
                     {
                        Eina_Stringshare *vals = eolian_expression_value_to_literal(&val);
@@ -359,7 +359,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
              if (rtp)
                {
                   eina_strbuf_append(buf, "   return ");
-                  _append_defval(buf, def_ret, rtp);
+                  _append_defval(src, buf, def_ret, rtp);
                   eina_strbuf_append(buf, ";\n");
                }
              eina_strbuf_append(buf, "}\n\n");
@@ -420,7 +420,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
         if (strcmp(rtpn, "void"))
           {
              eina_strbuf_append_printf(buf, ", %s, ", rtpn);
-             _append_defval(buf, def_ret, rtp);
+             _append_defval(src, buf, def_ret, rtp);
           }
         if (has_params)
           {
@@ -682,14 +682,14 @@ eo_gen_source_gen(const Eolian_Unit *src,
              {
               case EOLIAN_PROP_GET:
               case EOLIAN_PROP_SET:
-                _gen_func(cl, fid, ftype, buf, imp, lbuf);
+                _gen_func(src, cl, fid, ftype, buf, imp, lbuf);
                 break;
               case EOLIAN_PROPERTY:
-                _gen_func(cl, fid, EOLIAN_PROP_SET, buf, imp, lbuf);
-                _gen_func(cl, fid, EOLIAN_PROP_GET, buf, imp, lbuf);
+                _gen_func(src, cl, fid, EOLIAN_PROP_SET, buf, imp, lbuf);
+                _gen_func(src, cl, fid, EOLIAN_PROP_GET, buf, imp, lbuf);
                 break;
               default:
-                _gen_func(cl, fid, EOLIAN_METHOD, buf, imp, lbuf);
+                _gen_func(src, cl, fid, EOLIAN_METHOD, buf, imp, lbuf);
              }
         }
       eina_iterator_free(itr);

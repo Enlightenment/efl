@@ -97,7 +97,7 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
                 else
                   {
                      Eolian_Value val =
-                        eolian_expression_eval(vale, EOLIAN_MASK_INT);
+                        eolian_expression_eval(src, vale, EOLIAN_MASK_INT);
                      const char *lit = eolian_expression_value_to_literal(&val);
                      eina_strbuf_append_printf(buf, "  %s = %s", membn, lit);
                      const char *exp = eolian_expression_serialize(vale);
@@ -164,7 +164,7 @@ _var_generate(const Eolian_Unit *src, const Eolian_Variable *vr, Eina_Bool legac
         eina_strbuf_prepend_printf(buf, "#ifndef %s\n", fn);
         eina_strbuf_append_printf(buf, "#define %s ", fn);
         const Eolian_Expression *vv = eolian_variable_value_get(vr);
-        Eolian_Value val = eolian_expression_eval_type(vv, vt);
+        Eolian_Value val = eolian_expression_eval_type(src, vv, vt);
         Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
         eina_strbuf_append(buf, lit);
         Eina_Stringshare *exp = eolian_expression_serialize(vv);
@@ -239,7 +239,7 @@ void eo_gen_types_header_gen(const Eolian_Unit *src,
      }
 }
 
-void eo_gen_types_source_gen(const Eolian_Unit *src EINA_UNUSED,
+void eo_gen_types_source_gen(const Eolian_Unit *src,
                              const char *eof, Eina_Strbuf *buf)
 {
    const Eolian_Declaration *decl;
@@ -274,7 +274,7 @@ void eo_gen_types_source_gen(const Eolian_Unit *src EINA_UNUSED,
         eina_stringshare_del(ct);
         free(fn);
 
-        Eolian_Value val = eolian_expression_eval_type(vv, vt);
+        Eolian_Value val = eolian_expression_eval_type(src, vv, vt);
         Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
         eina_strbuf_append(buf, lit);
         eina_strbuf_append_char(buf, ';');

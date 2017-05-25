@@ -174,10 +174,11 @@ _validate_expr(const Eolian_Expression *expr,
                const Eolian_Type *tp, Eolian_Expression_Mask msk)
 {
    Eolian_Value val;
+   /* FIXME: pass unit properly */
    if (tp)
-     val = eolian_expression_eval_type(expr, tp);
+     val = eolian_expression_eval_type(NULL, expr, tp);
    else
-     val = eolian_expression_eval(expr, msk);
+     val = eolian_expression_eval(NULL, expr, msk);
    return (val.type != EOLIAN_EXPR_UNKNOWN);
 }
 
