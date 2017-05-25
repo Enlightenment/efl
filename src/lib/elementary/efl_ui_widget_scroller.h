@@ -5,6 +5,8 @@
 
 typedef struct _Efl_Ui_Scroller_Data
 {
+   Eo                   *smanager;
+
 } Efl_Ui_Scroller_Data;
 
 #endif

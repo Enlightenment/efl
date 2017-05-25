@@ -6,5 +6,8 @@ class Efl.Ui.Scroller (Elm.Layout, Efl.Ui.Scrollable)
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
+      Efl.Gfx.size { set; }
+      Efl.Gfx.position { set; }
+      Efl.Container.content { set; }
    }
 }

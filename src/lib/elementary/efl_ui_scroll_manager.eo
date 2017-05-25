@@ -1,10 +1,22 @@
-class Efl.Ui.Scroll.Manager (Efl.Object, Elm.Interface_Scrollable)
+class Efl.Ui.Scroll.Manager (Efl.Canvas.Group, Elm.Interface_Scrollable)
 {
    [[Efl ui scroll manager class]]
    event_prefix: efl_ui_scroll_manager;
    eo_prefix: efl_ui_scroll_manager;
+   methods {
+      @property content {
+         [[Set the content]]
+         set {
+         }
+         values {
+            content: Efl.Gfx @nullable; [[content object]]
+         }
+      }
+   }
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_add;
+      Efl.Gfx.size { set; }
+      Efl.Gfx.position { set; }
    }
 }
