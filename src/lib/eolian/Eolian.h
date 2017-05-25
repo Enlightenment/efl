@@ -1403,6 +1403,7 @@ EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const Eolian_Unit *
 /*
  * @brief Get an iterator to all aliases contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -1410,11 +1411,12 @@ EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const Eolian_Unit *
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all named structs contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -1422,11 +1424,12 @@ EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const char *fname);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all enums contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -1434,7 +1437,7 @@ EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all aliases in the Eolian database.

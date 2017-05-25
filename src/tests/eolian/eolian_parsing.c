@@ -369,7 +369,7 @@ START_TEST(eolian_typedef)
    eina_stringshare_del(type_name);
 
    /* List */
-   fail_if(!(iter = eolian_typedecl_aliases_get_by_file("typedef.eo")));
+   fail_if(!(iter = eolian_typedecl_aliases_get_by_file(unit, "typedef.eo")));
    fail_if(!eina_iterator_next(iter, (void**)&tdl));
    fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(strcmp(type_name, "Coord"));
