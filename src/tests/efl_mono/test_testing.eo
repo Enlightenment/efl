@@ -525,6 +525,9 @@ class Test.Testing (Efl.Object) {
          }
          return: int;
       }
+
+      call_set_callback {
+      }
    }
    implements {
       class.constructor;

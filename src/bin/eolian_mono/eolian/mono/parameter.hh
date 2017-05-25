@@ -372,7 +372,7 @@ struct native_argument_invocation_generator
        arg += in_variable_name(param.param_name);
      else if (param.type.original_type.visit(is_fp_visitor{}))
        {
-          arg += escape_keyword(param.param_name) + "_wrapper";
+          arg += escape_keyword(param.param_name) + "_wrapper.ManagedCb";
        }
      else // FIXME Wrap data and C function pointers into some kind of structure.
        arg += escape_keyword(param.param_name);
@@ -913,10 +913,9 @@ struct native_convert_function_pointer_generator
       std::string param_name = escape_keyword(param.param_name);
       // Allocate GCHandle in "param_name"_handle for param;
       if (!as_generator(
-                  scope_tab << type << " " << param_name << "_wrapper = (" << (parameter % ", ") << ") => {\n"
-                  << scope_tab << scope_tab << scope_tab << "return " << param_name << "(" << param_name << "_data, " << (argument_invocation % ", ") << ");\n"
-                  << scope_tab << scope_tab << "};\n"
-                  ).generate(sink, std::make_tuple(param.type, f.parameters, f.parameters), context))
+                  scope_tab << type << "Wrapper " << param_name << "_wrapper = new " << type << "Wrapper("
+                      << param_name << ", " << param_name << "_data, " << param_name << "_free_cb);\n"
+                  ).generate(sink, std::make_tuple(param.type, param.type), context))
       return false;
       // FIXME What about calling the free function?
 

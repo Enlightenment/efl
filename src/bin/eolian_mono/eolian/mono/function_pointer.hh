@@ -31,14 +31,38 @@ struct function_pointer {
 
       std::string f_name = escape_keyword(f.name);
       // Wrapper type, with callback matching the Unamanaged one
-      if (!as_generator("public class " << string << "Wrapper {\n"
-                  << scope_tab << "public static " << type << " Cb(IntPtr cb_data, " << (parameter % ", ") << ") {\n"
+      if (!as_generator("public class " << f_name << "Wrapper\n"
+                  << "{\n\n"
+                  << scope_tab << "private " << f_name  << "Internal _cb;\n"
+                  << scope_tab << "private IntPtr _cb_data;\n"
+                  << scope_tab << "private Eina_Free_Cb _cb_free_cb;\n\n"
+
+                  << scope_tab << "public " << f_name << "Wrapper (" << f_name << "Internal _cb, IntPtr _cb_data, Eina_Free_Cb _cb_free_cb)\n"
+                  << scope_tab << "{\n"
+                  << scope_tab << scope_tab << "this._cb = _cb;\n"
+                  << scope_tab << scope_tab << "this._cb_data = _cb_data;\n"
+                  << scope_tab << scope_tab << "this._cb_free_cb = _cb_free_cb;\n"
+                  << scope_tab << "}\n\n"
+
+                  << scope_tab << "~" << f_name << "Wrapper()\n"
+                  << scope_tab << "{\n"
+                  << scope_tab << scope_tab << "if (this._cb_free_cb != null)\n"
+                  << scope_tab << scope_tab << scope_tab << "this._cb_free_cb(this._cb_data);\n"
+                  << scope_tab << "}\n\n"
+
+                  << scope_tab << "public " << type << " ManagedCb(" << (parameter % ",") << ")\n"
+                  << scope_tab << "{\n"
+                  << scope_tab << scope_tab << (f.return_type.c_type != "void" ? "return ": "") << "_cb(_cb_data, " << (argument_invocation % ", ") << ");\n"
+                  << scope_tab << "}\n\n"
+
+                  << scope_tab << "public static " << type << " Cb(IntPtr cb_data, " << (parameter % ", ") << ")\n"
+                  << scope_tab << "{\n"
                   << scope_tab << scope_tab << "GCHandle handle = GCHandle.FromIntPtr(cb_data);\n"
                   << scope_tab << scope_tab << string << " cb = (" << string << ")handle.Target;\n"
-                  << scope_tab << scope_tab << "return cb(" << (argument_invocation % ", ") << ");\n"
+                  << scope_tab << scope_tab << (f.return_type.c_type != "void" ? "return " : "") << "cb(" << (argument_invocation % ", ") << ");\n"
                   << scope_tab << "}\n"
                   << "}\n"
-                  ).generate(sink, std::make_tuple(f_name, f.return_type, f.parameters, f_name, f_name, f.parameters), context))
+                  ).generate(sink, std::make_tuple(f.return_type, f.parameters, f.parameters, f.return_type, f.parameters, f_name, f_name, f.parameters), context))
           return false;
 
       auto close_namespace = *(lit("} ")) << "\n";
