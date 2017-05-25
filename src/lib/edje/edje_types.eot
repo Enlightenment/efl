@@ -152,31 +152,6 @@ struct Edje.External.Param {
    s: string; [[Used by both string and choice]]
 }
 
-enum Edje.Message_Type {
-   [[Identifiers of Edje message types, which can be sent back and forth code and a given Edje object's theme file/group.
-     \@ref edje_object_message_send, \@ref edje_object_message_handler_set.
-   ]]
-   legacy: Edje_Message;
-
-   none = 0, [[No message type]]
-
-   signal = 1, [[DO NOT USE THIS]]
-
-   string = 2, [[A message with a string as value. Use #Edje_Message_String structs as message body, for this type.]]
-   int = 3, [[A message with an integer number as value. Use #Edje_Message_Int structs as message body, for this type.]]
-   float = 4, [[A message with a floating pointer number as value. Use #Edje_Message_Float structs as message body, for this type.]]
-
-   string_set = 5, [[A message with a list of strings as value. Use #Edje_Message_String_Set structs as message body, for this type.]]
-   int_set = 6, [[A message with a list of integer numbers as value. Use #Edje_Message_Int_Set structs as message body, for this type.]]
-   float_set = 7, [[A message with a list of floating point numbers as value. Use #Edje_Message_Float_Set structs as message body, for this type.]]
-
-   string_int = 8, [[A message with a struct containing a string and an integer number as value. Use #Edje_Message_String_Int structs as message body, for this type.]]
-   string_float = 9, [[A message with a struct containing a string and a floating point number as value. Use #Edje_Message_String_Float structs as message body, for this type.]]
-
-   string_int_set = 10, [[A message with a struct containing a string and list of integer numbers as value. Use #Edje_Message_String_Int_Set structs as message body, for this type.]]
-   string_float_set = 11 [[A message with a struct containing a string and list of floating point numbers as value. Use #Edje_Message_String_Float_Set structs as message body, for this type.]]
-}
-
 
 struct Edje.Perspective; [[Perspective info for maps inside edje objects]]
 

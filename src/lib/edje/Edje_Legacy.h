@@ -97,6 +97,55 @@ EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char 
  */
 EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
+
+/** Identifiers of Edje message types, which can be sent back and forth code
+ * and a given Edje object's theme file/group.
+ *
+ * @ref edje_object_message_send
+ * @ref edje_object_message_handler_set
+ */
+typedef enum
+{
+  EDJE_MESSAGE_NONE = 0, /**< No message type */
+  EDJE_MESSAGE_SIGNAL = 1, /**< DO NOT USE THIS */
+  EDJE_MESSAGE_STRING = 2, /**< A message with a string as value. Use
+                            * #Edje_Message_String structs as message body, for
+                            * this type. */
+  EDJE_MESSAGE_INT = 3, /**< A message with an integer number as value. Use
+                         * #Edje_Message_Int structs as message body, for this
+                         * type. */
+  EDJE_MESSAGE_FLOAT = 4, /**< A message with a floating pointer number as
+                           * value. Use #Edje_Message_Float structs as message
+                           * body, for this type. */
+  EDJE_MESSAGE_STRING_SET = 5, /**< A message with a list of strings as value.
+                                * Use #Edje_Message_String_Set structs as
+                                * message body, for this type. */
+  EDJE_MESSAGE_INT_SET = 6, /**< A message with a list of integer numbers as
+                             * value. Use #Edje_Message_Int_Set structs as
+                             * message body, for this type. */
+  EDJE_MESSAGE_FLOAT_SET = 7, /**< A message with a list of floating point
+                               * numbers as value. Use #Edje_Message_Float_Set
+                               * structs as message body, for this type. */
+  EDJE_MESSAGE_STRING_INT = 8, /**< A message with a struct containing a string
+                                * and an integer number as value. Use
+                                * #Edje_Message_String_Int structs as message
+                                * body, for this type. */
+  EDJE_MESSAGE_STRING_FLOAT = 9, /**< A message with a struct containing a
+                                  * string and a floating point number as
+                                  * value. Use #Edje_Message_String_Float
+                                  * structs as message body, for this type. */
+  EDJE_MESSAGE_STRING_INT_SET = 10, /**< A message with a struct containing a
+                                     * string and list of integer numbers as
+                                     * value. Use #Edje_Message_String_Int_Set
+                                     * structs as message body, for this type.
+                                     */
+  EDJE_MESSAGE_STRING_FLOAT_SET = 11 /**< A message with a struct containing a
+                                      * string and list of floating point
+                                      * numbers as value. Use
+                                      * #Edje_Message_String_Float_Set structs
+                                      * as message body, for this type. */
+} Edje_Message_Type;
+
 /**
  * @brief Sets an Edje message handler function for a given Edje object.
  *
