@@ -11,11 +11,12 @@ eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m)
    Eolian_Value err;
    err.type = EOLIAN_EXPR_UNKNOWN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(expr, err);
-   return database_expr_eval(expr, m);
+   return database_expr_eval(NULL, expr, m);
 }
 
 static Eolian_Value
-_eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
+_eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr,
+           const Eolian_Type *type)
 {
    Eolian_Value err;
    err.type = EOLIAN_EXPR_UNKNOWN;
@@ -25,21 +26,21 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
      {
       case EOLIAN_TYPE_CLASS:
       case EOLIAN_TYPE_COMPLEX:
-        return database_expr_eval(expr, EOLIAN_MASK_NULL);
+        return database_expr_eval(unit, expr, EOLIAN_MASK_NULL);
       case EOLIAN_TYPE_REGULAR:
         {
            int  kw = eo_lexer_keyword_str_to_id(type->name);
            if (type->is_ptr)
-             return database_expr_eval(expr, EOLIAN_MASK_NULL);
+             return database_expr_eval(unit, expr, EOLIAN_MASK_NULL);
            if (!kw || kw < KW_byte || kw >= KW_void)
              {
                 const Eolian_Typedecl *base = eolian_type_typedecl_get(type);
                 if (!base)
                   return err;
                 if (base->type == EOLIAN_TYPEDECL_ALIAS)
-                  return _eval_type(expr, eolian_typedecl_base_type_get(base));
+                  return _eval_type(unit, expr, eolian_typedecl_base_type_get(base));
                 else if (base->type == EOLIAN_TYPEDECL_ENUM)
-                  return database_expr_eval(expr, EOLIAN_MASK_INT);
+                  return database_expr_eval(unit, expr, EOLIAN_MASK_INT);
                 return err;
              }
            switch (kw)
@@ -57,7 +58,7 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
               case KW_ssize:
               case KW_intptr:
               case KW_ptrdiff:
-                return database_expr_eval(expr, EOLIAN_MASK_SINT);
+                return database_expr_eval(unit, expr, EOLIAN_MASK_SINT);
               case KW_ubyte:
               case KW_ushort:
               case KW_uint:
@@ -71,14 +72,14 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
               case KW_size:
               case KW_uintptr:
               case KW_time:
-                return database_expr_eval(expr, EOLIAN_MASK_UINT);
+                return database_expr_eval(unit, expr, EOLIAN_MASK_UINT);
               case KW_float:
               case KW_double:
-                return database_expr_eval(expr, EOLIAN_MASK_FLOAT);
+                return database_expr_eval(unit, expr, EOLIAN_MASK_FLOAT);
               case KW_bool:
-                return database_expr_eval(expr, EOLIAN_MASK_BOOL);
+                return database_expr_eval(unit, expr, EOLIAN_MASK_BOOL);
               case KW_char:
-                return database_expr_eval(expr, EOLIAN_MASK_CHAR);
+                return database_expr_eval(unit, expr, EOLIAN_MASK_CHAR);
               default:
                 return err;
              }
@@ -95,7 +96,7 @@ eolian_expression_eval_type(const Eolian_Expression *expr,
    Eolian_Value err;
    err.type = EOLIAN_EXPR_UNKNOWN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(expr, err);
-   return _eval_type(expr, type);
+   return _eval_type(NULL, expr, type);
 }
 
 static void

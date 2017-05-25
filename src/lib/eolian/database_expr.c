@@ -559,14 +559,15 @@ eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
 }
 
 Eolian_Value
-database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask)
+database_expr_eval(const Eolian_Unit *unit, const Eolian_Expression *expr,
+                   Eolian_Expression_Mask mask)
 {
    Eolian_Expression out;
    Eolian_Value ret;
    ret.type = EOLIAN_EXPR_UNKNOWN;
    if (!mask)
      return ret;
-   if (!eval_exp(NULL, expr, mask, &out))
+   if (!eval_exp(unit, expr, mask, &out))
      return ret;
    ret.type = out.type;
    ret.value = out.value;
