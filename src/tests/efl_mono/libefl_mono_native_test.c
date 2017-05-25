@@ -1205,6 +1205,22 @@ int _test_testing_call_callback(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, int 
 
    return pd->cb(pd->cb_data, a);
 }
+
+static int _callback(void *data, int a)
+{
+   EINA_LOG_ERR("Called the native callback with data %p and a equals to %d", data, a);
+   return a + 42;
+}
+
+static void _free_callback(void *data)
+{
+   EINA_LOG_ERR("Called the native free_callback with data %p", data);
+}
+
+void _test_testing_call_set_callback(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   test_testing_set_callback(obj, _callback, (void*)1984, _free_callback);
+}
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"
 

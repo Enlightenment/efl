@@ -136,6 +136,49 @@ class TestFunctionPointers
         Test.Assert(called, "call_callback must call a callback");
         Test.AssertEquals(42 * 3, x);
     }
+
+    public static void set_callback_inherited_called_from_c()
+    {
+        setup();
+        WithOverride obj = new WithOverride();
+        obj.call_set_callback();
+
+        Test.Assert(obj.set_called, "set_callback override must have been called");
+        Test.Assert(!obj.invoke_called, "invoke_callback must not have been called");
+
+        obj.set_called = false;
+        int x = obj.call_callback(42);
+
+        Test.Assert(!obj.set_called, "set_callback override must not have been called");
+        Test.Assert(obj.invoke_called, "set_callback in virtual should not call the callback");
+
+        /* Test.Assert(called, "call_callback must call a callback"); */
+        Test.AssertEquals(42 + 42, x);
+
+        setup();
+        obj.set_called = false;
+        obj.invoke_called = false;
+
+        // We actually can't directly test if the underlying callback is being freed, but
+        // at least the API can continue working.
+        obj.set_callback(twice);
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+
+        Test.Assert(obj.set_called, "set_callback override must have been called");
+        Test.Assert(!obj.invoke_called, "invoke_callback must not have been called");
+
+        obj.set_called = false;
+        x = obj.call_callback(42);
+
+        Test.Assert(!obj.set_called, "set_callback override must not have been called");
+        Test.Assert(obj.invoke_called, "set_callback in virtual should not call the callback");
+
+        Test.Assert(called, "call_callback must call a callback");
+        Test.AssertEquals(42 * 2, x);
+
+    }
 }
 
 }
