@@ -316,7 +316,7 @@ void database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf);
 
 /* expressions */
 
-Eolian_Value database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask);
+Eolian_Value database_expr_eval(const Eolian_Unit *unit, const Eolian_Expression *expr, Eolian_Expression_Mask mask);
 void database_expr_del(Eolian_Expression *expr);
 void database_expr_print(Eolian_Expression *expr);
 
