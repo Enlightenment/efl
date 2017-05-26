@@ -1265,21 +1265,25 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
  
    if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER) &&
        (libinput_device_pointer_has_button(device, BTN_LEFT))))
+     edev->caps |= EVDEV_SEAT_POINTER;
+   if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TABLET_TOOL))
+     edev->caps |= EVDEV_SEAT_POINTER | EVDEV_SEAT_TABLET_TOOL;
+   if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TABLET_PAD))
+     edev->caps |= EVDEV_SEAT_POINTER | EVDEV_SEAT_TABLET_PAD;
+   if (edev->caps & EVDEV_SEAT_POINTER)
      {
         _pointer_init(seat);
         edev->caps |= EVDEV_SEAT_POINTER;
      }
 
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TOUCH))
-     {
-        _touch_init(seat);
-        edev->caps |= EVDEV_SEAT_TOUCH;
-     }
+     edev->caps |= EVDEV_SEAT_TOUCH;
+   if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_GESTURE))
+     edev->caps |= EVDEV_SEAT_TOUCH | EVDEV_SEAT_GESTURE;
+   if (edev->caps & EVDEV_SEAT_TOUCH)
+     _touch_init(seat);
 
-   if (!((edev->caps & EVDEV_SEAT_KEYBOARD) ||
-         (edev->caps & EVDEV_SEAT_POINTER) ||
-         (edev->caps & EVDEV_SEAT_TOUCH)))
-     goto err;
+   if (!edev->caps) goto err;
 
    libinput_device_set_user_data(device, edev);
    libinput_device_ref(edev->device);

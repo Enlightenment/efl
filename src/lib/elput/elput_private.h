@@ -63,7 +63,10 @@ typedef enum _Elput_Device_Capability
 {
    EVDEV_SEAT_POINTER = (1 << 0),
    EVDEV_SEAT_KEYBOARD = (1 << 1),
-   EVDEV_SEAT_TOUCH = (1 << 2)
+   EVDEV_SEAT_TOUCH = (1 << 2),
+   EVDEV_SEAT_TABLET_TOOL = (1 << 3),
+   EVDEV_SEAT_TABLET_PAD = (1 << 4),
+   EVDEV_SEAT_GESTURE = (1 << 5),
 } Elput_Device_Capability;
 
 typedef struct _Elput_Interface
