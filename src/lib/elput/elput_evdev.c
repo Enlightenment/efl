@@ -1337,6 +1337,8 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
    edev->oh = seat->manager->output_h;
 
    oname = libinput_device_get_output_name(device);
+   if (!oname)
+     oname = libinput_device_get_name(device);
    eina_stringshare_replace(&edev->output_name, oname);
 
    if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_KEYBOARD)) &&
