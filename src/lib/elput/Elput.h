@@ -29,6 +29,17 @@
 
 # ifdef EFL_BETA_API_SUPPORT
 
+
+typedef enum
+{
+   ELPUT_DEVICE_CAPS_POINTER = (1 << 0),
+   ELPUT_DEVICE_CAPS_KEYBOARD = (1 << 1),
+   ELPUT_DEVICE_CAPS_TOUCH = (1 << 2),
+   ELPUT_DEVICE_CAPS_TABLET_TOOL = (1 << 3),
+   ELPUT_DEVICE_CAPS_TABLET_PAD = (1 << 4),
+   ELPUT_DEVICE_CAPS_GESTURE = (1 << 5),
+} Elput_Device_Caps;
+
 /* opaque structure to represent an input manager */
 typedef struct _Elput_Manager Elput_Manager;
 

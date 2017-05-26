@@ -1563,27 +1563,27 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
        (libinput_device_keyboard_has_key(device, KEY_ENTER)))
      {
         _keyboard_init(seat, seat->manager->cached.keymap);
-        edev->caps |= EVDEV_SEAT_KEYBOARD;
+        edev->caps |= ELPUT_DEVICE_CAPS_KEYBOARD;
      }
  
    if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER) &&
        (libinput_device_pointer_has_button(device, BTN_LEFT))))
-     edev->caps |= EVDEV_SEAT_POINTER;
+     edev->caps |= ELPUT_DEVICE_CAPS_POINTER;
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TABLET_TOOL))
-     edev->caps |= EVDEV_SEAT_POINTER | EVDEV_SEAT_TABLET_TOOL;
+     edev->caps |= ELPUT_DEVICE_CAPS_POINTER | ELPUT_DEVICE_CAPS_TABLET_TOOL;
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TABLET_PAD))
-     edev->caps |= EVDEV_SEAT_POINTER | EVDEV_SEAT_TABLET_PAD;
-   if (edev->caps & EVDEV_SEAT_POINTER)
+     edev->caps |= ELPUT_DEVICE_CAPS_POINTER | ELPUT_DEVICE_CAPS_TABLET_PAD;
+   if (edev->caps & ELPUT_DEVICE_CAPS_POINTER)
      {
         _pointer_init(seat);
-        edev->caps |= EVDEV_SEAT_POINTER;
+        edev->caps |= ELPUT_DEVICE_CAPS_POINTER;
      }
 
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TOUCH))
-     edev->caps |= EVDEV_SEAT_TOUCH;
+     edev->caps |= ELPUT_DEVICE_CAPS_TOUCH;
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_GESTURE))
-     edev->caps |= EVDEV_SEAT_TOUCH | EVDEV_SEAT_GESTURE;
-   if (edev->caps & EVDEV_SEAT_TOUCH)
+     edev->caps |= ELPUT_DEVICE_CAPS_TOUCH | ELPUT_DEVICE_CAPS_GESTURE;
+   if (edev->caps & ELPUT_DEVICE_CAPS_TOUCH)
      _touch_init(seat);
 
    if (!edev->caps) goto err;
@@ -1612,11 +1612,11 @@ _evdev_device_destroy(Elput_Device *edev)
 {
    if (!edev) return;
 
-   if (edev->caps & EVDEV_SEAT_POINTER)
+   if (edev->caps & ELPUT_DEVICE_CAPS_POINTER)
      _pointer_release(edev->seat);
-   if (edev->caps & EVDEV_SEAT_KEYBOARD)
+   if (edev->caps & ELPUT_DEVICE_CAPS_KEYBOARD)
      _keyboard_release(edev->seat);
-   if (edev->caps & EVDEV_SEAT_TOUCH)
+   if (edev->caps & ELPUT_DEVICE_CAPS_TOUCH)
      _touch_release(edev->seat);
 
    libinput_device_unref(edev->device);

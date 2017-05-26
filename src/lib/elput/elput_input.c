@@ -205,11 +205,11 @@ _device_add(Elput_Manager *em, struct libinput_device *dev)
    eseat->devices = eina_list_append(eseat->devices, edev);
 
    DBG("Input Device Added: %s", libinput_device_get_name(dev));
-   if (edev->caps & EVDEV_SEAT_KEYBOARD)
+   if (edev->caps & ELPUT_DEVICE_CAPS_KEYBOARD)
      DBG("\tDevice added as Keyboard device");
-   if (edev->caps & EVDEV_SEAT_POINTER)
+   if (edev->caps & ELPUT_DEVICE_CAPS_POINTER)
      DBG("\tDevice added as Pointer device");
-   if (edev->caps & EVDEV_SEAT_TOUCH)
+   if (edev->caps & ELPUT_DEVICE_CAPS_TOUCH)
      DBG("\tDevice added as Touch device");
 
    _device_event_send(edev, ELPUT_DEVICE_ADDED);
@@ -600,7 +600,7 @@ elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool enable)
      {
         EINA_LIST_FOREACH(eseat->devices, ll, edev)
           {
-             if (!(edev->caps & EVDEV_SEAT_KEYBOARD)) continue;
+             if (!(edev->caps & ELPUT_DEVICE_CAPS_KEYBOARD)) continue;
 
              edev->key_remap = enable;
              if ((!enable) && (edev->key_remap_hash))
@@ -631,7 +631,7 @@ elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, 
      {
         EINA_LIST_FOREACH(eseat->devices, ll, edev)
           {
-             if (!(edev->caps & EVDEV_SEAT_KEYBOARD)) continue;
+             if (!(edev->caps & ELPUT_DEVICE_CAPS_KEYBOARD)) continue;
 
              if (!edev->key_remap) continue;
              if (!edev->key_remap_hash)

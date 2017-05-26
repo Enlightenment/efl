@@ -60,16 +60,6 @@ extern int _elput_log_dom;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_elput_log_dom, __VA_ARGS__)
 
-typedef enum _Elput_Device_Capability
-{
-   EVDEV_SEAT_POINTER = (1 << 0),
-   EVDEV_SEAT_KEYBOARD = (1 << 1),
-   EVDEV_SEAT_TOUCH = (1 << 2),
-   EVDEV_SEAT_TABLET_TOOL = (1 << 3),
-   EVDEV_SEAT_TABLET_PAD = (1 << 4),
-   EVDEV_SEAT_GESTURE = (1 << 5),
-} Elput_Device_Capability;
-
 typedef struct _Elput_Interface
 {
    Eina_Bool (*connect)(Elput_Manager **manager, const char *seat, unsigned int tty);
@@ -225,7 +215,7 @@ struct _Elput_Device
    const char *output_name;
    struct libinput_device *device;
 
-   Elput_Device_Capability caps;
+   Elput_Device_Caps caps;
 
    Eina_Hash *key_remap_hash;
 
