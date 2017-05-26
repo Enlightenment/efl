@@ -1649,10 +1649,10 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
    else if (!strcmp(ev->key, "Escape"))
      elm_code_widget_selection_clear(widget);
 
-   else if (ev->string && strlen(ev->string) == 1)
+   else if (ev->string)
      elm_code_widget_text_at_cursor_insert(widget, ev->string);
    else
-     INF("Unhandled key %s (%s) (%s)", ev->key, ev->keyname, ev->string);
+     INF("Unhandled key %s (%s)", ev->key, ev->keyname);
 }
 
 static void
