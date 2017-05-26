@@ -302,23 +302,15 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             [[Gets the (last) file loading error for a given Edje object
 
               This function is meant to be used after an Edje EDJ file
-              loading, what takes place with the edje_object_file_set()
-              function. If that function does not return $true, one should
-              check for the reason of failure with this one.
-
-              \@ref edje_load_error_str()]]
-            return: Edje.Load_Error; [[The Edje loading error, one of:
-                                       - #EDJE_LOAD_ERROR_NONE
-                                       - #EDJE_LOAD_ERROR_GENERIC
-                                       - #EDJE_LOAD_ERROR_DOES_NOT_EXIST
-                                       - #EDJE_LOAD_ERROR_PERMISSION_DENIED
-                                       - #EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED
-                                       - #EDJE_LOAD_ERROR_CORRUPT_FILE
-                                       - #EDJE_LOAD_ERROR_UNKNOWN_FORMAT
-                                       - #EDJE_LOAD_ERROR_INCOMPATIBLE_FILE
-                                       - #EDJE_LOAD_ERROR_UNKNOWN_COLLECTION
-                                       - #EDJE_LOAD_ERROR_RECURSIVE_REFERENCE]]
-
+              loading, what takes place with the $file_set() function. If that
+              function does not return $true, one should check for the reason
+              of failure with this one.
+            ]]
+            legacy: null;
+         }
+         values {
+            error: Efl.Image.Load.Error(Efl.Image.Load.Error.generic);
+               [[The load error code.]]
          }
       }
       size_min_calc {

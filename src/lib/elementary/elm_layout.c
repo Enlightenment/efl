@@ -1898,13 +1898,13 @@ _elm_layout_efl_object_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EINA_
         Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
         const char *file, *edje_group;
         Evas_Object *edje_obj = wd->resize_obj;
+        Edje_Load_Error error;
 
         efl_file_get(edje_obj, &file, &edje_group);
         EFL_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
         EFL_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
-        Edje_Load_Error error = EDJE_LOAD_ERROR_GENERIC;
-        error = edje_obj_load_error_get(edje_obj);
+        error = edje_object_load_error_get(edje_obj);
         if (error != EDJE_LOAD_ERROR_NONE)
           {
              EFL_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,

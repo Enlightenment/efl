@@ -67,14 +67,14 @@ _edje_object_efl_object_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Efl_Dbg_
 {
    efl_dbg_info_get(efl_super(eo_obj, MY_CLASS), root);
    Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
+   Edje_Load_Error error;
 
    const char *file, *edje_group;
    efl_file_get(eo_obj, &file, &edje_group);
    EFL_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
    EFL_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
-   Edje_Load_Error error = EDJE_LOAD_ERROR_NONE;
-   error = edje_obj_load_error_get(eo_obj);
+   error = edje_object_load_error_get(eo_obj);
    if (error != EDJE_LOAD_ERROR_NONE)
      {
         EFL_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,

@@ -97,6 +97,57 @@ EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char 
  */
 EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
+/** Edje file loading error codes one can get - see edje_load_error_str() too. */
+typedef enum
+{
+  EDJE_LOAD_ERROR_NONE = 0, /**< No error happened, the loading was successful */
+  EDJE_LOAD_ERROR_GENERIC = 1, /**< A generic error happened during the loading */
+  EDJE_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< The file pointed to did not exist */
+  EDJE_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission to read the given file was denied */
+  EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Resource allocation failed during the loading */
+  EDJE_LOAD_ERROR_CORRUPT_FILE = 5, /**< The file pointed to was corrupt */
+  EDJE_LOAD_ERROR_UNKNOWN_FORMAT = 6, /**< The file pointed to had an unknown format */
+  EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7, /**< The file pointed to is incompatible, i.e., it doesn't
+                                          * match the library's current version's format */
+  EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8, /**< The group/collection set to load
+                                           * from was not found in the file */
+  EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9 /**< The group/collection set to load from had
+                                           * <b>recursive references</b> on its components */
+} Edje_Load_Error;
+
+/**
+ * @brief Gets the (last) file loading error for a given Edje object
+ *
+ * This function is meant to be used after an Edje EDJ file loading, what takes
+ * place with the edje_object_file_set() function. If that function does not
+ * return @c true, one should check for the reason of failure with this one.
+ *
+ * @ref edje_load_error_str()
+ *
+ * @return The Edje loading error, one of: - #EDJE_LOAD_ERROR_NONE -
+ * #EDJE_LOAD_ERROR_GENERIC - #EDJE_LOAD_ERROR_DOES_NOT_EXIST -
+ * #EDJE_LOAD_ERROR_PERMISSION_DENIED -
+ * #EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED - #EDJE_LOAD_ERROR_CORRUPT_FILE
+ * - #EDJE_LOAD_ERROR_UNKNOWN_FORMAT - #EDJE_LOAD_ERROR_INCOMPATIBLE_FILE -
+ * #EDJE_LOAD_ERROR_UNKNOWN_COLLECTION - #EDJE_LOAD_ERROR_RECURSIVE_REFERENCE
+ */
+EAPI Edje_Load_Error edje_object_load_error_get(const Evas_Object *obj);
+
+/**
+ * @brief Converts the given Edje file load error code into a string
+ * describing it in English.
+ *
+ * @param error the error code, a value in ::Edje_Load_Error.
+ * @return Always returns a valid string. If the given @p error is not
+ *         supported, <code>"Unknown error"</code> is returned.
+ *
+ * edje_object_file_set() is a function which sets an error value,
+ * afterwards, which can be fetched with
+ * edje_object_load_error_get(). The function in question is meant
+ * to be used in conjunction with the latter, for pretty-printing any
+ * possible error cause.
+ */
+EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
 
 /**
  * @ingroup Edje_Object_Communication_Interface_Message

@@ -167,9 +167,32 @@ _edje_object_efl_file_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char **file,
    if (group) *group = ed->group;
 }
 
-EOLIAN Edje_Load_Error
+EOLIAN Efl_Image_Load_Error
 _edje_object_load_error_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
+   switch (ed->load_error)
+     {
+      case EDJE_LOAD_ERROR_NONE: return EFL_IMAGE_LOAD_ERROR_NONE;
+      case EDJE_LOAD_ERROR_GENERIC: return EFL_IMAGE_LOAD_ERROR_GENERIC;
+      case EDJE_LOAD_ERROR_DOES_NOT_EXIST: return EFL_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
+      case EDJE_LOAD_ERROR_PERMISSION_DENIED: return EFL_IMAGE_LOAD_ERROR_PERMISSION_DENIED;
+      case EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED: return EFL_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+      case EDJE_LOAD_ERROR_CORRUPT_FILE: return EFL_IMAGE_LOAD_ERROR_CORRUPT_FILE;
+      case EDJE_LOAD_ERROR_UNKNOWN_FORMAT: return EFL_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
+      case EDJE_LOAD_ERROR_INCOMPATIBLE_FILE: return EFL_IMAGE_LOAD_ERROR_INCOMPATIBLE_FILE;
+      case EDJE_LOAD_ERROR_UNKNOWN_COLLECTION: return EFL_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION;
+      case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: return EFL_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE;
+      default: return EFL_IMAGE_LOAD_ERROR_GENERIC;
+     }
+}
+
+EAPI Edje_Load_Error
+edje_object_load_error_get(const Eo *obj)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return EDJE_LOAD_ERROR_GENERIC;
    return ed->load_error;
 }
 
@@ -3098,4 +3121,3 @@ _edje_svg_node_free(Svg_Node *node)
      }
   free(node);
 }
-

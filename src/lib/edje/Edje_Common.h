@@ -1839,22 +1839,6 @@ EAPI void             edje_file_collection_list_free (Eina_List *lst);
 EAPI Eina_Bool        edje_file_group_exists      (const char *file, const char *glob);
 
 /**
- * @brief Converts the given Edje file load error code into a string
- * describing it in English.
- *
- * @param error the error code, a value in ::Edje_Load_Error.
- * @return Always returns a valid string. If the given @p error is not
- *         supported, <code>"Unknown error"</code> is returned.
- *
- * edje_object_file_set() is a function which sets an error value,
- * afterwards, which can be fetched with
- * edje_object_load_error_get(). The function in question is meant
- * to be used in conjunction with the latter, for pretty-printing any
- * possible error cause.
- */
-EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
-
-/**
  * @}
  */
 

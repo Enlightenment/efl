@@ -183,7 +183,7 @@ enum Efl.Gfx.Size.Hint.Aspect
 
 enum Efl.Image.Load.Error
 {
-   [[Image load error type]]
+   [[Image or Edje load error type]]
    none = 0,                       [[No error on load]]
    generic = 1,                    [[A non-specific error occurred]]
    does_not_exist = 2,             [[File (or file path) does not exist]]
@@ -191,7 +191,10 @@ enum Efl.Image.Load.Error
    resource_allocation_failed = 4, [[Allocation of resources failure prevented load]]
    corrupt_file = 5,               [[File corrupt (but was detected as a known format)]]
    unknown_format = 6,             [[File is not a known format]]
-   cancelled = 7                   [[Reading operation has been cancelled during decoding]]
+   cancelled = 7,                  [[Reading operation has been cancelled during decoding]]
+   incompatible_file = 8,          [[(Edje only) The file pointed to is incompatible, i.e., it doesn't match the library's current version's format.]]
+   unknown_collection = 9,         [[(Edje only) The group/collection set to load from was not found in the file]]
+   recursive_reference = 10        [[(Edje only) The group/collection set to load from had recursive references on its components]]
 }
 
 enum Efl.Gfx.Size.Hint.Mode {
