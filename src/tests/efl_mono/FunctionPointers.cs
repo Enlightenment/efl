@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace TestSuite
 {
@@ -137,30 +138,37 @@ class TestFunctionPointers
         Test.AssertEquals(42 * 3, x);
     }
 
-    public static void set_callback_inherited_called_from_c()
-    {
+    // These are needed due to issues calling methods on obj from the GC thread (where the
+    // free function is actually called)
+    [System.Runtime.InteropServices.DllImport("efl_mono_native_test")] static extern bool free_called_get();
+    [System.Runtime.InteropServices.DllImport("efl_mono_native_test")] static extern bool free_called_set(bool val);
+
+     public static void set_callback_inherited_called_from_c()
+     {
         setup();
         WithOverride obj = new WithOverride();
+        free_called_set(false);
         obj.call_set_callback();
 
         Test.Assert(obj.set_called, "set_callback override must have been called");
         Test.Assert(!obj.invoke_called, "invoke_callback must not have been called");
+        Test.Assert(!free_called_get(), "call_set_callback must not call the free callback");
 
         obj.set_called = false;
         int x = obj.call_callback(42);
 
         Test.Assert(!obj.set_called, "set_callback override must not have been called");
         Test.Assert(obj.invoke_called, "set_callback in virtual should not call the callback");
+        Test.Assert(!free_called_get(), "call_callback must not call the free callback");
 
-        /* Test.Assert(called, "call_callback must call a callback"); */
-        Test.AssertEquals(42 + 42, x);
+        Test.AssertEquals(42 * 3, x);
 
         setup();
         obj.set_called = false;
         obj.invoke_called = false;
+        free_called_set(false);
 
-        // We actually can't directly test if the underlying callback is being freed, but
-        // at least the API can continue working.
+        // Should release the handle to the wrapper allocated when calling set_callback from C.
         obj.set_callback(twice);
 
         GC.Collect();
@@ -168,12 +176,15 @@ class TestFunctionPointers
 
         Test.Assert(obj.set_called, "set_callback override must have been called");
         Test.Assert(!obj.invoke_called, "invoke_callback must not have been called");
+        Test.Assert(free_called_get(), "free callback must have been called");
 
         obj.set_called = false;
+        free_called_set(false);
         x = obj.call_callback(42);
 
         Test.Assert(!obj.set_called, "set_callback override must not have been called");
         Test.Assert(obj.invoke_called, "set_callback in virtual should not call the callback");
+        Test.Assert(!free_called_get(), "must not call old free_callback on new callback");
 
         Test.Assert(called, "call_callback must call a callback");
         Test.AssertEquals(42 * 2, x);
