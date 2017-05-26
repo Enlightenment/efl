@@ -1555,6 +1555,8 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
    edev->seat = seat;
    edev->device = device;
    edev->caps = 0;
+   edev->ow = seat->manager->output_w;
+   edev->oh = seat->manager->output_h;
 
    oname = libinput_device_get_output_name(device);
    eina_stringshare_replace(&edev->output_name, oname);

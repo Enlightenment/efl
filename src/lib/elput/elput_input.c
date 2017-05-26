@@ -569,6 +569,9 @@ elput_input_devices_calibrate(Elput_Manager *manager, int w, int h)
 
    EINA_SAFETY_ON_NULL_RETURN(manager);
 
+   manager->output_w = w;
+   manager->output_h = h;
+
    EINA_LIST_FOREACH(manager->input.seats, l, eseat)
      {
         EINA_LIST_FOREACH(eseat->devices, ll, edev)

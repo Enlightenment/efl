@@ -253,6 +253,7 @@ struct _Elput_Manager
         struct xkb_context *context;
         int group;
      } cached;
+   int output_w, output_h;
 
    Elput_Input input;
    Eina_Bool del : 1;
