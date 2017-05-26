@@ -648,6 +648,30 @@ EAPI Eina_Stringshare *elput_device_output_name_get(Elput_Device *device);
  * @since 1.20
  */
 EAPI const Eina_List *elput_seat_devices_get(const Elput_Seat *seat);
+
+/**
+ * Get the name of a given seat
+ *
+ * @param seat
+ *
+ * @return The name
+ *
+ * @ingroup Elput_Seat_Group
+ * @since 1.20
+ */
+EAPI Eina_Stringshare *elput_seat_name_get(const Elput_Seat *seat);
+
+/**
+ * Get the manager of a given seat
+ *
+ * @param seat
+ *
+ * @return The Elput_Manager
+ *
+ * @ingroup Elput_Seat_Group
+ * @since 1.20
+ */
+EAPI Elput_Manager *elput_seat_manager_get(const Elput_Seat *seat);
 # endif
 
 # undef EAPI

@@ -744,3 +744,16 @@ elput_seat_devices_get(const Elput_Seat *seat)
    return seat->devices;
 }
 
+EAPI Eina_Stringshare *
+elput_seat_name_get(const Elput_Seat *seat)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
+   return seat->name;
+}
+
+EAPI Elput_Manager *
+elput_seat_manager_get(const Elput_Seat *seat)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
+   return seat->manager;
+}
