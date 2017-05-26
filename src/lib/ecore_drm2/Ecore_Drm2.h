@@ -285,26 +285,28 @@ EAPI void ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int w
 EAPI void ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h);
 
 /**
- * Set a cached context to be used on keyboards
+ * Set info to be used on keyboards
  *
  * @param device
  * @param context
+ * @param keymap
+ * @param group
  *
  * @ingroup Ecore_Drm2_Device_Group
- * @since 1.18
+ * @since 1.20
  */
-EAPI void ecore_drm2_device_keyboard_cached_context_set(Ecore_Drm2_Device *device, void *context);
+EAPI void ecore_drm2_device_keyboard_info_set(Ecore_Drm2_Device *device, void *context, void *keymap, int group);
 
 /**
- * Set a cached keymap to be used on keyboards
+ * Set a group layout to be used on keyboards
  *
  * @param device
- * @param keymap
+ * @param group
  *
  * @ingroup Ecore_Drm2_Device_Group
- * @since 1.18
+ * @since 1.20
  */
-EAPI void ecore_drm2_device_keyboard_cached_keymap_set(Ecore_Drm2_Device *device, void *keymap);
+EAPI void ecore_drm2_device_keyboard_group_set(Ecore_Drm2_Device *device, int group);
 
 /**
  * Get the crtcs of a given device

@@ -89,7 +89,7 @@ _keyboard_fd_get(off_t size)
 }
 
 static Elput_Keyboard_Info *
-_keyboard_info_create(struct xkb_keymap *keymap, Eina_Bool external)
+_keyboard_info_create(struct xkb_keymap *keymap)
 {
    Elput_Keyboard_Info *info;
    char *str;
@@ -112,9 +112,6 @@ _keyboard_info_create(struct xkb_keymap *keymap, Eina_Bool external)
      1 << xkb_keymap_mod_get_index(info->keymap.map, XKB_MOD_NAME_ALT);
    info->mods.altgr =
      1 << xkb_keymap_mod_get_index(info->keymap.map, "ISO_Level3_Shift");
-
-   /* if we are using an external keymap then we do not need go further */
-   if (external) return info;
 
    str = xkb_keymap_get_as_string(info->keymap.map, XKB_KEYMAP_FORMAT_TEXT_V1);
    if (!str) goto err;
@@ -145,17 +142,14 @@ err:
 }
 
 static void
-_keyboard_info_destroy(Elput_Keyboard_Info *info, Eina_Bool external)
+_keyboard_info_destroy(Elput_Keyboard_Info *info)
 {
    if (--info->refs > 0) return;
 
    xkb_keymap_unref(info->keymap.map);
 
-   if (!external)
-     {
-        if (info->keymap.area) munmap(info->keymap.area, info->keymap.size);
-        if (info->keymap.fd >= 0) close(info->keymap.fd);
-     }
+   if (info->keymap.area) munmap(info->keymap.area, info->keymap.size);
+   if (info->keymap.fd >= 0) close(info->keymap.fd);
 
    free(info);
 }
@@ -175,7 +169,7 @@ _keyboard_global_build(Elput_Keyboard *kbd)
    keymap = xkb_keymap_new_from_names(kbd->context, &kbd->names, 0);
    if (!keymap) return EINA_FALSE;
 
-   kbd->info = _keyboard_info_create(keymap, EINA_FALSE);
+   kbd->info = _keyboard_info_create(keymap);
    xkb_keymap_unref(keymap);
 
    if (!kbd->info) return EINA_FALSE;
@@ -231,7 +225,9 @@ _keyboard_init(Elput_Seat *seat, struct xkb_keymap *keymap)
 
    if (keymap)
      {
-        kbd->info = _keyboard_info_create(keymap, EINA_TRUE);
+        if (seat->manager->cached.keymap == keymap)
+          kbd->context = xkb_context_ref(seat->manager->cached.context);
+        kbd->info = _keyboard_info_create(keymap);
         if (!kbd->info) goto err;
      }
    else
@@ -254,7 +250,7 @@ _keyboard_init(Elput_Seat *seat, struct xkb_keymap *keymap)
    return EINA_TRUE;
 
 err:
-   if (kbd->info) _keyboard_info_destroy(kbd->info, kbd->external_map);
+   if (kbd->info) _keyboard_info_destroy(kbd->info);
    free(kbd);
    return EINA_FALSE;
 }
@@ -346,39 +342,91 @@ _keyboard_modifiers_send(Elput_Keyboard *kbd)
    ecore_event_add(ELPUT_EVENT_MODIFIERS_SEND, ev, NULL, NULL);
 }
 
-static void
+static Eina_Bool
+_keyboard_state_update(Elput_Keyboard *kbd, struct xkb_keymap *map, xkb_mod_mask_t *latched, xkb_mod_mask_t *locked)
+{
+   struct xkb_state *state, *maskless_state;
+
+   state = xkb_state_new(map);
+   if (!state) return EINA_FALSE;
+   maskless_state = xkb_state_new(map);
+   if (!maskless_state)
+     {
+        xkb_state_unref(state);
+        return EINA_FALSE;
+     }
+
+   *latched = xkb_state_serialize_mods(kbd->state, XKB_STATE_MODS_LATCHED);
+   *locked = xkb_state_serialize_mods(kbd->state, XKB_STATE_MODS_LOCKED);
+   xkb_state_update_mask(state, 0, *latched, *locked, kbd->seat->manager->cached.group, 0, 0);
+
+   xkb_state_unref(kbd->state);
+   kbd->state = state;
+   xkb_state_unref(kbd->maskless_state);
+   kbd->maskless_state = maskless_state;
+   return EINA_TRUE;
+}
+
+void
 _keyboard_keymap_update(Elput_Seat *seat)
 {
    Elput_Keyboard *kbd;
-   Elput_Keyboard_Info *info;
-   struct xkb_state *state;
+   Elput_Keyboard_Info *info = NULL;
    xkb_mod_mask_t latched, locked;
+   Eina_Bool state = EINA_TRUE;
+
+   kbd = _evdev_keyboard_get(seat);
+   if (!kbd) return;
+   kbd->pending_keymap = 1;
+   if (kbd->key_count) return;
+
+   if (kbd->seat->manager->cached.keymap)
+     {
+        if (kbd->context) xkb_context_unref(kbd->context);
+        kbd->context = xkb_context_ref(kbd->seat->manager->cached.context);
+        info = _keyboard_info_create(kbd->seat->manager->cached.keymap);
+        if (!info) return;
+        state = _keyboard_state_update(kbd, info->keymap.map, &latched, &locked);
+     }
+   else if (!_keyboard_global_build(kbd)) return;
+   else
+     state = _keyboard_state_update(kbd, kbd->info->keymap.map, &latched, &locked);
+   kbd->pending_keymap = 0;
+   if (!state)
+     {
+        if (info) _keyboard_info_destroy(info);
+        return;
+     }
+
+   if (info)
+     {
+        _keyboard_info_destroy(kbd->info);
+        kbd->info = info;
+     }
+
+   _keyboard_compose_init(kbd);
+
+   _keyboard_modifiers_update(kbd, seat);
+   _keyboard_keymap_send(kbd->info);
+
+   if ((!latched) && (!locked)) return;
+
+   _keyboard_modifiers_send(kbd);
+}
+
+void
+_keyboard_group_update(Elput_Seat *seat)
+{
+   Elput_Keyboard *kbd;
+   xkb_mod_mask_t latched, locked;
+   Eina_Bool state;
 
    kbd = _evdev_keyboard_get(seat);
    if (!kbd) return;
 
-   info = _keyboard_info_create(kbd->pending_map, kbd->external_map);
-   xkb_keymap_unref(kbd->pending_map);
-   kbd->pending_map = NULL;
-
-   if (!info) return;
-
-   state = xkb_state_new(info->keymap.map);
-   if (!state)
-     {
-        _keyboard_info_destroy(info, kbd->external_map);
-        return;
-     }
-
-   latched = xkb_state_serialize_mods(kbd->state, XKB_STATE_MODS_LATCHED);
-   locked = xkb_state_serialize_mods(kbd->state, XKB_STATE_MODS_LOCKED);
-   xkb_state_update_mask(state, 0, latched, locked, 0, 0, 0);
-
-   _keyboard_info_destroy(kbd->info, kbd->external_map);
-   kbd->info = info;
-
-   xkb_state_unref(kbd->state);
-   kbd->state = state;
+   state = _keyboard_state_update(kbd, kbd->info->keymap.map, &latched, &locked);
+   if (!state) return;
+   _keyboard_compose_init(kbd);
 
    _keyboard_modifiers_update(kbd, seat);
    _keyboard_keymap_send(kbd->info);
@@ -568,7 +616,7 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
    if (!kbd) return;
 
    state = libinput_event_keyboard_get_key_state(event);
-   count = libinput_event_keyboard_get_seat_key_count(event);
+   kbd->key_count = count = libinput_event_keyboard_get_seat_key_count(event);
 
    /* Ignore key events that are not seat wide state changes. */
    if (((state == LIBINPUT_KEY_STATE_PRESSED) && (count != 1)) ||
@@ -610,7 +658,7 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
    _keyboard_keysym_translate(sym, dev->seat->modifiers, compose, sizeof(compose));
    _keyboard_key_send(dev, state, keyname, key, compose, code, timestamp);
 
-   if ((kbd->pending_map) && (count == 0))
+   if ((kbd->pending_keymap) && (count == 0))
      _keyboard_keymap_update(dev->seat);
 
    if (state == LIBINPUT_KEY_STATE_PRESSED)
@@ -1588,12 +1636,14 @@ _evdev_keyboard_destroy(Elput_Keyboard *kbd)
    free((char *)kbd->names.variant);
    free((char *)kbd->names.options);
 
+   if (kbd->compose_table) xkb_compose_table_unref(kbd->compose_table);
+   if (kbd->compose_state) xkb_compose_state_unref(kbd->compose_state);
+
    if (kbd->state) xkb_state_unref(kbd->state);
-   if (kbd->info) _keyboard_info_destroy(kbd->info, kbd->external_map);
    if (kbd->maskless_state) xkb_state_unref(kbd->maskless_state);
+   if (kbd->info) _keyboard_info_destroy(kbd->info);
 
    xkb_context_unref(kbd->context);
-   xkb_keymap_unref(kbd->pending_map);
 
    free(kbd);
 }

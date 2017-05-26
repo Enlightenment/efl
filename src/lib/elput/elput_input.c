@@ -654,21 +654,37 @@ elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, 
 }
 
 EAPI void
-elput_input_keyboard_cached_context_set(Elput_Manager *manager, void *context)
+elput_input_keyboard_info_set(Elput_Manager *manager, void *context, void *keymap, int group)
 {
-   EINA_SAFETY_ON_NULL_RETURN(manager);
+   Eina_List *l;
+   Elput_Seat *seat;
 
-   if ((context) && (manager->cached.context == context)) return;
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+   EINA_SAFETY_ON_FALSE_RETURN((!!context) == (!!keymap));
+
+   if ((manager->cached.context == context) && (manager->cached.keymap == keymap)) return;
+   if (context) xkb_context_ref(context);
+   if (keymap) xkb_keymap_ref(keymap);
+   if (manager->cached.context) xkb_context_unref(manager->cached.context);
+   if (manager->cached.keymap) xkb_keymap_unref(manager->cached.keymap);
    manager->cached.context = context;
+   manager->cached.keymap = keymap;
+   manager->cached.group = group;
+   EINA_LIST_FOREACH(manager->input.seats, l, seat)
+     _keyboard_keymap_update(seat);
 }
 
 EAPI void
-elput_input_keyboard_cached_keymap_set(Elput_Manager *manager, void *keymap)
+elput_input_keyboard_group_set(Elput_Manager *manager, int group)
 {
+   Eina_List *l;
+   Elput_Seat *seat;
    EINA_SAFETY_ON_NULL_RETURN(manager);
 
-   if ((keymap) && (manager->cached.keymap == keymap)) return;
-   manager->cached.keymap = keymap;
+   if (manager->cached.group == group) return;
+   manager->cached.group = group;
+   EINA_LIST_FOREACH(manager->input.seats, l, seat)
+     _keyboard_group_update(seat);
 }
 
 EAPI Eina_Stringshare *

@@ -395,26 +395,28 @@ EAPI Eina_Bool elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool en
 EAPI Eina_Bool elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, int num);
 
 /**
- * Set a cached context to be used for keyboards
+ * Set info to be used for keyboards
  *
  * @param manager
  * @param context
+ * @param keymap
+ * @param group
  *
  * @ingroup Elput_Input_Group
- * @since 1.18
+ * @since 1.20
  */
-EAPI void elput_input_keyboard_cached_context_set(Elput_Manager *manager, void *context);
+EAPI void elput_input_keyboard_info_set(Elput_Manager *manager, void *context, void *keymap, int group);
 
 /**
- * Set a cached keymap to be used for keyboards
+ * Set group layout to be used for keyboards
  *
  * @param manager
- * @param keymap
+ * @param group
  *
  * @ingroup Elput_Input_Group
- * @since 1.18
+ * @since 1.20
  */
-EAPI void elput_input_keyboard_cached_keymap_set(Elput_Manager *manager, void *keymap);
+EAPI void elput_input_keyboard_group_set(Elput_Manager *manager, int group);
 
 /**
  * Return the output name associated with a given device

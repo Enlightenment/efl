@@ -777,19 +777,19 @@ ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h)
 }
 
 EAPI void
-ecore_drm2_device_keyboard_cached_context_set(Ecore_Drm2_Device *device, void *context)
+ecore_drm2_device_keyboard_info_set(Ecore_Drm2_Device *device, void *context, void *keymap, int group)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
 
-   elput_input_keyboard_cached_context_set(device->em, context);
+   elput_input_keyboard_info_set(device->em, context, keymap, group);
 }
 
 EAPI void
-ecore_drm2_device_keyboard_cached_keymap_set(Ecore_Drm2_Device *device, void *keymap)
+ecore_drm2_device_keyboard_group_set(Ecore_Drm2_Device *device, int group)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
 
-   elput_input_keyboard_cached_keymap_set(device->em, keymap);
+   elput_input_keyboard_group_set(device->em, group);
 }
 
 EAPI unsigned int *
@@ -848,3 +848,7 @@ ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device)
    else
      return EINA_FALSE;
 }
+
+/* prevent crashing with old apps compiled against these functions */
+EAPI void ecore_drm2_device_keyboard_cached_context_set(){};
+EAPI void ecore_drm2_device_keyboard_cached_keymap_set(){};

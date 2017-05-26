@@ -527,6 +527,8 @@ _logind_disconnect(Elput_Manager *em)
    _logind_dbus_close(em->dbus.conn);
    eina_stringshare_del(em->seat);
    free(em->sid);
+   if (em->cached.context) xkb_context_unref(em->cached.context);
+   if (em->cached.keymap) xkb_keymap_unref(em->cached.keymap);
    free(em);
 }
 

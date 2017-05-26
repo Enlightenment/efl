@@ -135,9 +135,9 @@ struct _Elput_Keyboard
      } grab;
 
    Elput_Keyboard_Info *info;
+   unsigned int key_count;
 
    struct xkb_state *state;
-   struct xkb_keymap *pending_map;
    struct xkb_state *maskless_state;
    struct xkb_context *context;
    struct xkb_rule_names names;
@@ -146,7 +146,7 @@ struct _Elput_Keyboard
 
    Elput_Seat *seat;
 
-   Eina_Bool external_map : 1;
+   Eina_Bool pending_keymap : 1;
 };
 
 struct _Elput_Pointer
@@ -261,6 +261,7 @@ struct _Elput_Manager
      {
         struct xkb_keymap *keymap;
         struct xkb_context *context;
+        int group;
      } cached;
 
    Elput_Input input;
@@ -291,5 +292,8 @@ Elput_Keyboard *_evdev_keyboard_get(Elput_Seat *seat);
 Elput_Touch *_evdev_touch_get(Elput_Seat *seat);
 
 extern Elput_Interface _logind_interface;
+
+void _keyboard_keymap_update(Elput_Seat *seat);
+void _keyboard_group_update(Elput_Seat *seat);
 
 #endif
