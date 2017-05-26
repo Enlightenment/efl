@@ -456,7 +456,8 @@ eolian_doc_token_text_get(const Eolian_Doc_Token *tok)
 }
 
 static Eolian_Doc_Ref_Type
-_resolve_event(char *name, const void **data, const void **data2)
+_resolve_event(const Eolian_Unit *src, char *name, const void **data,
+               const void **data2)
 {
    /* never trust the user */
    if (name[0] == ',')
@@ -467,8 +468,7 @@ _resolve_event(char *name, const void **data, const void **data2)
      return EOLIAN_DOC_REF_INVALID;
 
    *evname++ = '\0';
-   /* FIXME: pass unit properly */
-   const Eolian_Class *cl = eolian_class_get_by_name(NULL, name);
+   const Eolian_Class *cl = eolian_class_get_by_name(src, name);
    if (!cl)
      return EOLIAN_DOC_REF_INVALID;
 
@@ -482,8 +482,8 @@ _resolve_event(char *name, const void **data, const void **data2)
 }
 
 EAPI Eolian_Doc_Ref_Type
-eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
-                         const void **data2)
+eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
+                         const void **data, const void **data2)
 {
    if (tok->type != EOLIAN_DOC_TOKEN_REF)
      return EOLIAN_DOC_REF_INVALID;
@@ -498,7 +498,7 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
         char *ename = alloca(elen + 1);
         memcpy(ename, tok->text + 1, elen);
         ename[elen] = '\0';
-        return _resolve_event(ename, data, data2);
+        return _resolve_event(unit, ename, data, data2);
      }
 
    char *name = alloca(nlen + 1);
@@ -539,8 +539,7 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
    *suffix++ = '\0';
 
    /* try a struct field */
-   /* FIXME: pass unit properly */
-   const Eolian_Typedecl *tpd = eolian_typedecl_struct_get_by_name(NULL, name);
+   const Eolian_Typedecl *tpd = eolian_typedecl_struct_get_by_name(unit, name);
    if (tpd)
      {
         const Eolian_Struct_Type_Field *fld = eolian_typedecl_struct_field_get(tpd, suffix);
@@ -553,8 +552,7 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
      }
 
    /* try an enum field */
-   /* FIXME: pass unit properly */
-   tpd = eolian_typedecl_enum_get_by_name(NULL, name);
+   tpd = eolian_typedecl_enum_get_by_name(unit, name);
    if (tpd)
      {
         const Eolian_Enum_Type_Field *fld = eolian_typedecl_enum_field_get(tpd, suffix);
@@ -584,8 +582,7 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
         *suffix++ = '\0';
      }
 
-   /* FIXME: pass unit properly */
-   const Eolian_Class *cl = eolian_class_get_by_name(NULL, name);
+   const Eolian_Class *cl = eolian_class_get_by_name(unit, name);
    if (!cl)
      return EOLIAN_DOC_REF_INVALID;
 

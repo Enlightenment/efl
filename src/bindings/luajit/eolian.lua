@@ -398,7 +398,7 @@ ffi.cdef [[
     void eolian_doc_token_init(Eolian_Doc_Token *tok);
     Eolian_Doc_Token_Type eolian_doc_token_type_get(const Eolian_Doc_Token *tok);
     char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
-    Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data, const void **data2);
+    Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
 ]]
 
 local cutil = require("cutil")
@@ -1597,9 +1597,9 @@ M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
             return ret
         end,
 
-        ref_get = function(self)
+        ref_get = function(self, unit)
             local stor = ffi.new("const void *[2]")
-            local tp = tonumber(eolian.eolian_doc_token_ref_get(self, stor, stor + 1))
+            local tp = tonumber(eolian.eolian_doc_token_ref_get(unit, self, stor, stor + 1))
             local reft = M.doc_ref_type
             if tp == reft.CLASS then
                 return tp, ffi.cast("const Eolian_Class *", stor[0])

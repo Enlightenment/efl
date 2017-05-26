@@ -21,7 +21,8 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
         eolian_doc_token_init(&tok);
         while (ret && (doc = eolian_documentation_tokenize(doc, &tok)))
           if (eolian_doc_token_type_get(&tok) == EOLIAN_DOC_TOKEN_REF)
-            if (eolian_doc_token_ref_get(&tok, NULL, NULL) == EOLIAN_DOC_REF_INVALID)
+            /* FIXME: pass unit properly */
+            if (eolian_doc_token_ref_get(NULL, &tok, NULL, NULL) == EOLIAN_DOC_REF_INVALID)
               {
                  char *refn = eolian_doc_token_text_get(&tok);
                  fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
