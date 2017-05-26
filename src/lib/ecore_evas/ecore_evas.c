@@ -1664,12 +1664,14 @@ _ecore_evas_object_cursor_device_set(Ecore_Evas *ee, Efl_Input_Device *pointer,
    Ecore_Evas_Cursor *cursor;
    int x, y;
    Evas_Object *old;
+   Efl_Input_Device *dpointer;
 
    ECORE_EVAS_CHECK(ee);
 
+   dpointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
    if (!pointer)
      {
-        pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+        pointer = dpointer;
         if (!pointer)
           {
              ee->prop.cursor_cache.object = obj;
@@ -1679,6 +1681,8 @@ _ecore_evas_object_cursor_device_set(Ecore_Evas *ee, Efl_Input_Device *pointer,
              return;
           }
      }
+   if (pointer == dpointer)
+     memset(&ee->prop.cursor_cache, 0, sizeof(Ecore_Evas_Cursor));
 
    if (obj && ee->engine.func->fn_object_cursor_set)
      ee->engine.func->fn_object_cursor_set(ee, obj, layer, hot_x, hot_y);
