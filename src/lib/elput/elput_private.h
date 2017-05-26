@@ -150,6 +150,7 @@ struct _Elput_Pointer
    double x, y;
    int buttons;
    unsigned int timestamp;
+   double pressure;
 
    int minx, miny;
    int hotx, hoty;
@@ -179,6 +180,7 @@ struct _Elput_Touch
    int slot;
    unsigned int points;
    unsigned int timestamp;
+   double pressure;
 
    struct
      {

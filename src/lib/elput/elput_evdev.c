@@ -547,6 +547,7 @@ _pointer_init(Elput_Seat *seat)
 
    seat->ptr = ptr;
    seat->count.ptr = 1;
+   ptr->pressure = 1.0;
 
    _seat_caps_update(seat);
 
@@ -573,6 +574,7 @@ _touch_create(Elput_Seat *seat)
    if (!touch) return NULL;
 
    touch->seat = seat;
+   touch->pressure = 1.0;
 
    return touch;
 }
@@ -665,7 +667,7 @@ _pointer_motion_send(Elput_Device *edev)
    ev->multi.radius = 1;
    ev->multi.radius_x = 1;
    ev->multi.radius_y = 1;
-   ev->multi.pressure = 1.0;
+   ev->multi.pressure = ptr->pressure;
    ev->multi.angle = 0.0;
    ev->multi.x = ev->x;
    ev->multi.y = ev->y;
@@ -768,7 +770,7 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev->multi.radius = 1;
    ev->multi.radius_x = 1;
    ev->multi.radius_y = 1;
-   ev->multi.pressure = 1.0;
+   ev->multi.pressure = ptr->pressure;
    ev->multi.angle = 0.0;
    ev->multi.x = ev->x;
    ev->multi.y = ev->y;
@@ -995,7 +997,7 @@ _touch_event_send(Elput_Device *dev, int type)
    ev->multi.radius = 1;
    ev->multi.radius_x = 1;
    ev->multi.radius_y = 1;
-   ev->multi.pressure = 1.0;
+   ev->multi.pressure = touch->pressure;
    ev->multi.angle = 0.0;
    ev->multi.x = ev->x;
    ev->multi.y = ev->y;
@@ -1043,7 +1045,7 @@ _touch_motion_send(Elput_Device *dev)
    ev->multi.radius = 1;
    ev->multi.radius_x = 1;
    ev->multi.radius_y = 1;
-   ev->multi.pressure = 1.0;
+   ev->multi.pressure = touch->pressure;
    ev->multi.angle = 0.0;
    ev->multi.x = ev->x;
    ev->multi.y = ev->y;
