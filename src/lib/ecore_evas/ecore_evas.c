@@ -360,8 +360,12 @@ static void
 _ecore_evas_dev_added_or_removed(void *data, const Efl_Event *event)
 {
    Ecore_Evas *ee = data;
+   Efl_Input_Device_Class c = efl_input_device_type_get(event->info);
 
-   if (efl_input_device_type_get(event->info) != EFL_INPUT_DEVICE_CLASS_MOUSE)
+   if ((c != EFL_INPUT_DEVICE_CLASS_MOUSE) &&
+       (c != EFL_INPUT_DEVICE_CLASS_PEN) &&
+       (c != EFL_INPUT_DEVICE_CLASS_TOUCH) &&
+       (c != EFL_INPUT_DEVICE_CLASS_WAND))
      return;
 
    if (event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED)
@@ -387,7 +391,11 @@ _ecore_evas_cursors_init(Ecore_Evas *ee)
 
    EINA_LIST_FOREACH(devs, l, dev)
      {
-        if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_MOUSE)
+        Efl_Input_Device_Class c = efl_input_device_type_get(dev);
+        if ((c != EFL_INPUT_DEVICE_CLASS_MOUSE) &&
+            (c != EFL_INPUT_DEVICE_CLASS_PEN) &&
+            (c != EFL_INPUT_DEVICE_CLASS_TOUCH) &&
+            (c != EFL_INPUT_DEVICE_CLASS_WAND))
           continue;
         _ecore_evas_cursor_add(ee, dev);
      }
