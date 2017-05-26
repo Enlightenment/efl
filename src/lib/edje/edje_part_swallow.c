@@ -31,9 +31,4 @@ _efl_canvas_layout_internal_swallow_efl_container_content_unset(Eo *obj, void *_
    RETURN_VAL(content);
 }
 
-/* Internal EO APIs */
-
-#define EFL_CANVAS_LAYOUT_INTERNAL_SWALLOW_EXTRA_OPS \
-      EFL_OBJECT_OP_FUNC(_efl_canvas_layout_internal_real_part_set, _efl_canvas_layout_internal_swallow_efl_canvas_layout_internal_real_part_set),
-
 #include "efl_canvas_layout_internal_swallow.eo.c"

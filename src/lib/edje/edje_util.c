@@ -1822,40 +1822,6 @@ edje_object_part_object_get(const Eo *obj, const char *part)
    return rp->object;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_geometry_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
-{
-   Edje_Real_Part *rp;
-
-   if ((!ed) || (!part))
-     {
-        if (x) *x = 0;
-        if (y) *y = 0;
-        if (w) *w = 0;
-        if (h) *h = 0;
-        return EINA_FALSE;
-     }
-
-   /* Need to recalc before providing the object. */
-   _edje_recalc_do(ed);
-
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp)
-     {
-        if (x) *x = 0;
-        if (y) *y = 0;
-        if (w) *w = 0;
-        if (h) *h = 0;
-        return EINA_FALSE;
-     }
-   if (x) *x = rp->x;
-   if (y) *y = rp->y;
-   if (w) *w = rp->w;
-   if (h) *h = rp->h;
-
-   return EINA_TRUE;
-}
-
 EOLIAN void
 _edje_object_item_provider_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Item_Provider_Cb func, void *data)
 {

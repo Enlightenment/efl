@@ -2,7 +2,8 @@ class Efl.Canvas.Layout_Internal (Efl.Object, Efl.Gfx)
 {
    [[Common class for part proxy objects for $Efl.Canvas.Layout.]]
    implements {
-      //Efl.Gfx.Size.geometry { get; }
+      Efl.Object.finalize;
+      Efl.Gfx.geometry { get; }
       //Efl.Gfx.Size.size { get; }
    }
 }

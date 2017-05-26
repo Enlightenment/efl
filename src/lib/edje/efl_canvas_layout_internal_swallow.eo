@@ -7,7 +7,6 @@ class Efl.Canvas.Layout_Internal.Swallow (Efl.Canvas.Layout_Internal, Efl.Contai
    ]]
    data: null;
    implements {
-      Efl.Object.finalize;
       Efl.Container.content { get; set; }
       Efl.Container.content_unset;
    }

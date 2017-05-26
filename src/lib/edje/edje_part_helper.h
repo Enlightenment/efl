@@ -1,8 +1,6 @@
 #include "edje_private.h"
 #include "efl_canvas_layout_internal.eo.h"
 
-EOAPI void _efl_canvas_layout_internal_real_part_set(Eo *obj, void *ed, void *rp, const char *part);
-
 typedef struct _Efl_Canvas_Layout_Internal_Data Efl_Canvas_Layout_Internal_Data;
 
 struct _Efl_Canvas_Layout_Internal_Data
@@ -27,6 +25,8 @@ struct _Part_Item_Iterator
 #define RETURN_VOID do { PROXY_UNREF(obj, pd); return; } while(0)
 #define PROXY_CALL(a) ({ PROXY_REF(obj, pd); a; })
 
+void _edje_real_part_set(Eo *obj, void *ed, void *rp, const char *part);
+
 /* ugly macros to avoid code duplication */
 
 #define PROXY_RESET(type) \
@@ -48,7 +48,7 @@ _ ## type ## _shutdown(void); \
 static Eo * _ ## type ## _proxy = NULL; \
 \
 static void \
-type ## _del_cb(Eo *proxy) \
+_ ## type ## _del_cb(Eo *proxy) \
 { \
    if (_ ## type ## _proxy) \
      { \
@@ -85,8 +85,10 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
              ERR("Found invalid handle for efl_part. Reset."); \
              _ ## type ## _proxy = NULL; \
           } \
-        return efl_add(MY_CLASS, ed->obj, \
-                      _efl_canvas_layout_internal_real_part_set(efl_added, ed, rp, rp->part->name)); \
+        proxy = efl_add(MY_CLASS, ed->obj, \
+                        _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
+        efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
+        return proxy; \
      } \
    \
    if (EINA_UNLIKELY(pd->temp)) \
@@ -99,28 +101,9 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
      } \
    proxy = _ ## type ## _proxy; \
    _ ## type ## _proxy = NULL; \
-   _efl_canvas_layout_internal_real_part_set(proxy, ed, rp, rp->part->name); \
+   _edje_real_part_set(proxy, ed, rp, rp->part->name); \
+   efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
    return proxy; \
-} \
-\
-EOLIAN static void \
-_efl_canvas_layout_internal_ ## type ## _efl_canvas_layout_internal_real_part_set(Eo *obj, void *_pd EINA_UNUSED, void *ed, void *rp, const char *part) \
-{ \
-   PROXY_DATA_GET(obj, pd); \
-   pd->ed = ed; \
-   pd->rp = rp; \
-   pd->part = part; \
-   pd->temp = 1; \
-   efl_del_intercept_set(obj, type ## _del_cb); \
-   efl_parent_set(obj, pd->ed->obj); \
-} \
-\
-EOLIAN static Efl_Object * \
-_efl_canvas_layout_internal_ ## type ## _efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED) \
-{ \
-   PROXY_DATA_GET(obj, pd); \
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL); \
-   return efl_finalize(efl_super(obj, MY_CLASS)); \
 }
 
 #ifdef DEBUG

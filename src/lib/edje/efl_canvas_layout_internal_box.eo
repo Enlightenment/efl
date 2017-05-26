@@ -8,7 +8,6 @@ class Efl.Canvas.Layout_Internal.Box (Efl.Canvas.Layout_Internal, Efl.Pack.Linea
    ]]
    data: null;
    implements {
-      Efl.Object.finalize;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;

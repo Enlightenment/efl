@@ -837,32 +837,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             val_ret: double; [[Part state value]]
          }
       }
-      @property part_geometry {
-         get {
-            [[Retrieves the geometry of a given Edje part, in a given Edje
-              object's group definition, relative to the object's area.
-
-              This function gets the geometry of an Edje part within its
-              group. The x and y coordinates are relative to the top left
-              corner of the whole obj object's area.
-
-              Note: Use $null pointers on the geometry components you're not
-              interested in: they'll be ignored by the function.
-
-              Note: On failure, this function will make all non-$null geometry
-              pointers' pointed variables be set to zero.]]
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         keys {
-            part: string; [[The Edje part's name]]
-         }
-         values {
-            x: int; [[A pointer to a variable where to store the part's x coordinate]]
-            y: int; [[A pointer to a variable where to store the part's y coordinate]]
-            w: int; [[A pointer to a variable where to store the part's width]]
-            h: int; [[A pointer to a variable where to store the part's height]]
-         }
-      }
       @property part_drag_value {
          set {
             [[Sets the dragable object location.

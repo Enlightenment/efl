@@ -352,9 +352,4 @@ edje_object_part_table_clear(Edje_Object *obj, const char *part, Eina_Bool clear
      return efl_pack_unpack_all(table);
 }
 
-/* Internal EO APIs */
-
-#define EFL_CANVAS_LAYOUT_INTERNAL_TABLE_EXTRA_OPS \
-      EFL_OBJECT_OP_FUNC(_efl_canvas_layout_internal_real_part_set, _efl_canvas_layout_internal_table_efl_canvas_layout_internal_real_part_set),
-
 #include "efl_canvas_layout_internal_table.eo.c"

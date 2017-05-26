@@ -1,5 +1,6 @@
 #include "edje_private.h"
 #include "edje_part_helper.h"
+#define MY_CLASS EFL_CANVAS_LAYOUT_INTERNAL_CLASS
 
 PROXY_INIT(box)
 PROXY_INIT(table)
@@ -13,11 +14,43 @@ _edje_internal_proxy_shutdown(void)
    _swallow_shutdown();
 }
 
-/* Internal EO API */
+void
+_edje_real_part_set(Eo *obj, void *ed, void *rp, const char *part)
+{
+   PROXY_DATA_GET(obj, pd);
+   pd->ed = ed;
+   pd->rp = rp;
+   pd->part = part;
+   pd->temp = 1;
+   efl_parent_set(obj, pd->ed->obj);
+}
 
-EOAPI EFL_VOID_FUNC_BODYV(_efl_canvas_layout_internal_real_part_set, EFL_FUNC_CALL(ed, rp, part), void *ed, void *rp, const char *part)
+EOLIAN static Efl_Object *
+_efl_canvas_layout_internal_efl_object_finalize(Eo *obj, Efl_Canvas_Layout_Internal_Data *pd)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL);
+   return efl_finalize(efl_super(obj, MY_CLASS));
+}
 
-#define EFL_CANVAS_LAYOUT_INTERNAL_EXTRA_OPS \
-      EFL_OBJECT_OP_FUNC(_efl_canvas_layout_internal_real_part_set, NULL)
+EOLIAN void
+_efl_canvas_layout_internal_efl_gfx_geometry_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Internal_Data *pd, int *x, int *y, int *w, int *h)
+{
+   Edje_Real_Part *rp = pd->rp;
+
+   _edje_recalc_do(pd->ed);
+   if (!rp)
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (w) *w = 0;
+        if (h) *h = 0;
+     }
+
+   if (x) *x = rp->x;
+   if (y) *y = rp->y;
+   if (w) *w = rp->w;
+   if (h) *h = rp->h;
+   RETURN_VOID;
+}
 
 #include "efl_canvas_layout_internal.eo.c"

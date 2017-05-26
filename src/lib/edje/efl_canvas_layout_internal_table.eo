@@ -7,7 +7,6 @@ class Efl.Canvas.Layout_Internal.Table (Efl.Canvas.Layout_Internal, Efl.Pack.Gri
    ]]
    data: null;
    implements {
-      Efl.Object.finalize;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;

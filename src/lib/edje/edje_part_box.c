@@ -214,9 +214,4 @@ _efl_canvas_layout_internal_box_efl_orientation_orientation_get(Eo *obj, void *_
    RETURN_VAL(EFL_ORIENT_NONE);
 }
 
-/* Internal EO API */
-
-#define EFL_CANVAS_LAYOUT_INTERNAL_BOX_EXTRA_OPS \
-   EFL_OBJECT_OP_FUNC(_efl_canvas_layout_internal_real_part_set, _efl_canvas_layout_internal_box_efl_canvas_layout_internal_real_part_set)
-
 #include "efl_canvas_layout_internal_box.eo.c"

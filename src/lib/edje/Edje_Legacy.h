@@ -150,6 +150,32 @@ EAPI Edje_Load_Error edje_object_load_error_get(const Evas_Object *obj);
 EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
 
 /**
+ * @brief Retrieves the geometry of a given Edje part, in a given Edje object's
+ * group definition, relative to the object's area.
+ *
+ * This function gets the geometry of an Edje part within its group. The x and
+ * y coordinates are relative to the top left corner of the whole obj object's
+ * area.
+ *
+ * @note Use @c null pointers on the geometry components you're not interested
+ * in: they'll be ignored by the function.
+ *
+ * @note On failure, this function will make all non-$null geometry pointers'
+ * pointed variables be set to zero.
+ *
+ * @param[in] part The Edje part's name
+ * @param[out] x A pointer to a variable where to store the part's x coordinate
+ * @param[out] y A pointer to a variable where to store the part's y coordinate
+ * @param[out] w A pointer to a variable where to store the part's width
+ * @param[out] h A pointer to a variable where to store the part's height
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_geometry_get(const Edje_Object *obj, const char * part, int *x, int *y, int *w, int *h);
+
+/**
  * @brief Gets a handle to the Evas object implementing a given Edje part, in
  * an Edje object.
  *
