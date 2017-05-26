@@ -1188,7 +1188,7 @@ int _test_numberwrapper_number_get(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data 
 void _test_testing_set_callback(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, SimpleCb cb, void *cb_data, Eina_Free_Cb cb_free_cb)
 {
    if (pd->free_cb)
-       pd->free_cb(pd->cb_data);
+      pd->free_cb(pd->cb_data);
 
    pd->cb = cb;
    pd->cb_data = cb_data;
@@ -1200,26 +1200,39 @@ int _test_testing_call_callback(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, int 
    if (!pd->cb)
      {
        EINA_LOG_ERR("Trying to call with no callback set");
-       return -1; // FIXME implement
+       return -1; // FIXME Maybe use Eina error when exceptions are supported?
      }
 
    return pd->cb(pd->cb_data, a);
 }
 
-static int _callback(void *data, int a)
-{
-   EINA_LOG_ERR("Called the native callback with data %p and a equals to %d", data, a);
-   return a + 42;
+// Global var used due to the current issue of calling methods from the GC thread
+static Eina_Bool _free_called = EINA_FALSE;
+
+EAPI Eina_Bool free_called_get() {
+   return _free_called;
+}
+
+EAPI void free_called_set(Eina_Bool b) {
+   _free_called = b;
 }
 
 static void _free_callback(void *data)
 {
-   EINA_LOG_ERR("Called the native free_callback with data %p", data);
+   Eo *obj = data;
+
+   free_called_set(EINA_TRUE);
+   efl_unref(obj);
 }
 
-void _test_testing_call_set_callback(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+int _wrapper_cb(EINA_UNUSED void *data, int a)
 {
-   test_testing_set_callback(obj, _callback, (void*)1984, _free_callback);
+    return a * 3;
+}
+
+void _test_testing_call_set_callback(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   test_testing_set_callback(obj, _wrapper_cb, efl_ref(obj), _free_callback);
 }
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"
