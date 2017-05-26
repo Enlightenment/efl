@@ -514,8 +514,6 @@ _session_create(int fd)
    session->fd = fd;
    // start the monitor thread
    _thread_start(session);
-   _daemon_greet(session);
-   _opcodes_register_all(session);
    return session;
 }
 
@@ -609,6 +607,9 @@ _monitor(void *_data)
 {
 #ifndef _WIN32
    Eina_Debug_Session *session = _data;
+
+   _daemon_greet(session);
+   _opcodes_register_all(session);
 
    // set a name for this thread for system debugging
 #ifdef EINA_HAVE_PTHREAD_SETNAME
