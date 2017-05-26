@@ -270,8 +270,11 @@ public class List<T> : IEnumerable<T>, IDisposable
 
     public void DataSet(int idx, T val)
     {
-        // TODO: check bounds ???
         IntPtr pos = eina_list_nth_list(Handle, (uint)idx);
+        if (pos == IntPtr.Zero)
+            throw new IndexOutOfRangeException();
+        if (OwnContent)
+            NativeFree<T>(InternalDataGet(pos));
         IntPtr ele = ManagedToNativeAlloc(val);
         InternalDataSet(pos, ele);
     }
