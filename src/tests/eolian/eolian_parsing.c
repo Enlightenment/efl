@@ -333,7 +333,7 @@ START_TEST(eolian_typedef)
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_ALIAS);
    fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(strcmp(type_name, "Coord"));
-   fail_if(!(type_name = eolian_typedecl_c_type_get(tdl)));
+   fail_if(!(type_name = eolian_typedecl_c_type_get(unit, tdl)));
    fail_if(strcmp(type_name, "typedef int Evas_Coord"));
    eina_stringshare_del(type_name);
    fail_if(!(type = eolian_typedecl_base_type_get(tdl)));

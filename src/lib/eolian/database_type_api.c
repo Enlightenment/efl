@@ -368,14 +368,13 @@ eolian_type_c_type_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Stringshare *
-eolian_typedecl_c_type_get(const Eolian_Typedecl *tp)
+eolian_typedecl_c_type_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp)
 {
    Eina_Stringshare *ret;
    Eina_Strbuf *buf;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    buf = eina_strbuf_new();
-   /* FIXME: pass unit properly */
-   database_typedecl_to_str(NULL, tp, buf);
+   database_typedecl_to_str(unit, tp, buf);
    ret = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;

@@ -18,7 +18,7 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
      {
       case EOLIAN_TYPEDECL_ALIAS:
         {
-           Eina_Stringshare *tn = eolian_typedecl_c_type_get(tp);
+           Eina_Stringshare *tn = eolian_typedecl_c_type_get(src, tp);
            eina_strbuf_append(buf, tn);
            eina_stringshare_del(tn);
            break;
