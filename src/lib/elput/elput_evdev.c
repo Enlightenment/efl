@@ -392,44 +392,100 @@ _keyboard_remapped_key_get(Elput_Device *edev, int code)
 static int
 _keyboard_keysym_translate(xkb_keysym_t keysym, unsigned int modifiers, char *buffer, int bytes)
 {
-   unsigned long hbytes = 0;
-   unsigned char c;
+/* this function is copied, with slight changes in variable names, from KeyBind.c in libX11
+ * the license from that file can be found below:
+ */
+/*
 
+Copyright 1985, 1987, 1998  The Open Group
+
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of The Open Group shall not be
+used in advertising or otherwise to promote the sale, use or other dealings
+in this Software without prior written authorization from The Open Group.
+
+*/
    if (!keysym) return 0;
-   hbytes = (keysym >> 8);
 
-   if (!(bytes &&
-         ((hbytes == 0) ||
-          ((hbytes == 0xFF) &&
-           (((keysym >= XKB_KEY_BackSpace) && (keysym <= XKB_KEY_Clear)) ||
-            (keysym == XKB_KEY_Return) || (keysym == XKB_KEY_Escape) ||
-            (keysym == XKB_KEY_KP_Space) || (keysym == XKB_KEY_KP_Tab) ||
-            (keysym == XKB_KEY_KP_Enter) ||
-            ((keysym >= XKB_KEY_KP_Multiply) && (keysym <= XKB_KEY_KP_9)) ||
-            (keysym == XKB_KEY_KP_Equal) || (keysym == XKB_KEY_Delete))))))
-     return 0;
-
-   if (keysym == XKB_KEY_KP_Space)
-     c = (XKB_KEY_space & 0x7F);
-   else if (hbytes == 0xFF)
-     c = (keysym & 0x7F);
-   else
-     c = (keysym & 0xFF);
-
+   /* check for possible control codes */
    if (modifiers & ECORE_EVENT_MODIFIER_CTRL)
      {
-        if (((c >= '@') && (c < '\177')) || c == ' ')
+        Eina_Bool valid_control_code = EINA_TRUE;
+        unsigned long hbytes = 0;
+        unsigned char c;
+
+        hbytes = (keysym >> 8);
+        if (!(bytes &&
+        ((hbytes == 0) ||
+        ((hbytes == 0xFF) &&
+        (((keysym >= XKB_KEY_BackSpace) && (keysym <= XKB_KEY_Clear)) ||
+        (keysym == XKB_KEY_Return) ||
+        (keysym == XKB_KEY_Escape) ||
+        (keysym == XKB_KEY_KP_Space) ||
+        (keysym == XKB_KEY_KP_Tab) ||
+        (keysym == XKB_KEY_KP_Enter) ||
+        ((keysym >= XKB_KEY_KP_Multiply) && (keysym <= XKB_KEY_KP_9)) ||
+        (keysym == XKB_KEY_KP_Equal) ||
+        (keysym == XKB_KEY_Delete))))))
+          return 0;
+
+        if (keysym == XKB_KEY_KP_Space)
+          c = (XKB_KEY_space & 0x7F);
+        else if (hbytes == 0xFF)
+          c = (keysym & 0x7F);
+        else
+          c = (keysym & 0xFF);
+
+        /* We are building here a control code
+           for more details, read:
+           https://en.wikipedia.org/wiki/C0_and_C1_control_codes#C0_.28ASCII_and_derivatives.29
+         */
+
+        if (((c >= '@') && (c <= '_')) || /* those are the one defined in C0 with capital letters */
+             ((c >= 'a') && (c <= 'z')) ||  /* the lowercase symbols (not part of the standard, but usefull */
+              c == ' ')
           c &= 0x1F;
-        else if (c == '2')
-          c = '\000';
-        else if ((c >= '3') && (c <= '7'))
-          c -= ('3' - '\033');
-        else if (c == '8')
+        else if (c == '\x7f')
           c = '\177';
+        /* following codes are alternatives, they are longer here, i dont want to change them */
+        else if (c == '2')
+          c = '\000'; /* 0 code */
+        else if ((c >= '3') && (c <= '7'))
+          c -= ('3' - '\033'); /* from escape to unitseperator code*/
+        else if (c == '8')
+          c = '\177'; /* delete code */
         else if (c == '/')
-          c = '_' & 0x1F;
+          c = '_' & 0x1F; /* unit seperator code */
+        else
+          valid_control_code = EINA_FALSE;
+
+        if (valid_control_code)
+          buffer[0] = c;
+        else
+          return 0;
      }
-   buffer[0] = c;
+   else
+     {
+        /* if its not a control code, try to produce a usefull output */
+        if (!xkb_keysym_to_utf8(keysym, buffer, bytes))
+          return 0;
+     }
+
    return 1;
 }
 
