@@ -669,10 +669,10 @@ _pointer_motion_send(Elput_Device *edev)
    ev->multi.radius_y = 1;
    ev->multi.pressure = ptr->pressure;
    ev->multi.angle = 0.0;
-   ev->multi.x = ev->x;
-   ev->multi.y = ev->y;
-   ev->multi.root.x = ev->x;
-   ev->multi.root.y = ev->y;
+   ev->multi.x = ptr->x;
+   ev->multi.y = ptr->y;
+   ev->multi.root.x = ptr->x;
+   ev->multi.root.y = ptr->y;
 
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
@@ -772,10 +772,10 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev->multi.radius_y = 1;
    ev->multi.pressure = ptr->pressure;
    ev->multi.angle = 0.0;
-   ev->multi.x = ev->x;
-   ev->multi.y = ev->y;
-   ev->multi.root.x = ev->x;
-   ev->multi.root.y = ev->y;
+   ev->multi.x = ptr->x;
+   ev->multi.y = ptr->y;
+   ev->multi.root.x = ptr->x;
+   ev->multi.root.y = ptr->y;
 
    ev->buttons = ptr->buttons;
 
@@ -1034,10 +1034,10 @@ _touch_motion_send(Elput_Device *dev)
    ev->timestamp = touch->timestamp;
    ev->same_screen = 1;
 
-   ev->x = touch->x;
-   ev->y = touch->y;
-   ev->root.x = touch->x;
-   ev->root.y = touch->y;
+   ev->x = lround(touch->x);
+   ev->y = lround(touch->y);
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
 
    ev->modifiers = dev->seat->modifiers;
 
@@ -1047,10 +1047,10 @@ _touch_motion_send(Elput_Device *dev)
    ev->multi.radius_y = 1;
    ev->multi.pressure = touch->pressure;
    ev->multi.angle = 0.0;
-   ev->multi.x = ev->x;
-   ev->multi.y = ev->y;
-   ev->multi.root.x = ev->x;
-   ev->multi.root.y = ev->y;
+   ev->multi.x = touch->x;
+   ev->multi.y = touch->y;
+   ev->multi.root.x = touch->x;
+   ev->multi.root.y = touch->y;
 
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
