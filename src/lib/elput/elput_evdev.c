@@ -224,6 +224,7 @@ _keyboard_init(Elput_Seat *seat, struct xkb_keymap *keymap)
 
    kbd->state = xkb_state_new(kbd->info->keymap.map);
    if (!kbd->state) goto err;
+   kbd->maskless_state = xkb_state_new(kbd->info->keymap.map);
 
    seat->kbd = kbd;
    seat->count.kbd = 1;
@@ -482,12 +483,31 @@ in this Software without prior written authorization from The Open Group.
 }
 
 static void
+_elput_symbol_rep_find(xkb_keysym_t keysym, char *buffer, int size, unsigned int code)
+{
+    int n = 0;
+
+    n = xkb_keysym_to_utf8(keysym, buffer, size);
+
+    /* check if we are a control code */
+    if (n > 0 && !(
+        (buffer[0] > 0x0 && buffer[0] < 0x20) || /* others 0x0 to 0x1F control codes */
+        buffer[0] == 0x7F)) /*delete control code */
+      return;
+
+    if (xkb_keysym_get_name(keysym, buffer, size) != 0)
+      return;
+
+    snprintf(buffer, size, "Keycode-%u", code);
+}
+
+static void
 _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *event)
 {
    Elput_Device *dev;
    Elput_Keyboard *kbd;
    enum libinput_key_state state;
-   xkb_keysym_t sym = XKB_KEY_NoSymbol;
+   xkb_keysym_t sym_name, sym = XKB_KEY_NoSymbol;
    const xkb_keysym_t *syms;
    unsigned int code = 0;
    unsigned int nsyms;
@@ -522,12 +542,11 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
 
    nsyms = xkb_key_get_syms(kbd->state, code, &syms);
    if (nsyms == 1) sym = syms[0];
+   sym_name = xkb_state_key_get_one_sym(kbd->maskless_state, code);
 
-   memset(key, 0, sizeof(key));
-   xkb_keysym_get_name(sym, key, sizeof(key));
 
-   memset(keyname, 0, sizeof(keyname));
-   memcpy(keyname, key, sizeof(keyname));
+   _elput_symbol_rep_find(sym, key, sizeof(key), code);
+   _elput_symbol_rep_find(sym_name, keyname, sizeof(keyname), code);
 
    if (keyname[0] == '\0')
      snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
@@ -1541,6 +1560,7 @@ _evdev_keyboard_destroy(Elput_Keyboard *kbd)
 
    if (kbd->state) xkb_state_unref(kbd->state);
    if (kbd->info) _keyboard_info_destroy(kbd->info, kbd->external_map);
+   if (kbd->maskless_state) xkb_state_unref(kbd->maskless_state);
 
    xkb_context_unref(kbd->context);
    xkb_keymap_unref(kbd->pending_map);
