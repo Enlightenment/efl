@@ -127,3 +127,35 @@ test_inwin2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_resize(win, 320, 240);
    evas_object_show(win);
 }
+
+void
+test_inwin3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *inwin, *lb, *box;
+
+   win = elm_win_util_standard_add("inwin2", "InWin 2");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   inwin = elm_win_inwin_add(win);
+   elm_object_style_set(inwin, "minimal_vertical");
+   evas_object_show(inwin);
+
+   box = elm_box_add(win);
+   elm_win_inwin_content_set(inwin, box);
+   evas_object_show(box);
+
+   lb = elm_button_add(box);
+   elm_object_text_set(lb,
+                       "Test BTN 1");
+   elm_box_pack_end(box, lb);
+   evas_object_show(lb);
+
+   lb = elm_button_add(box);
+   elm_object_text_set(lb,
+                       "Test BTN 1");
+   elm_box_pack_end(box, lb);
+   evas_object_show(lb);
+
+   evas_object_resize(win, 320, 240);
+   evas_object_show(win);
+}

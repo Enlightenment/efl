@@ -104,6 +104,7 @@ void test_list_separator(void *data, Evas_Object *obj, void *event_info);
 void test_list_multi_select(void *data, Evas_Object *obj, void *event_info);
 void test_inwin(void *data, Evas_Object *obj, void *event_info);
 void test_inwin2(void *data, Evas_Object *obj, void *event_info);
+void test_inwin3(void *data, Evas_Object *obj, void *event_info);
 void test_scaling(void *data, Evas_Object *obj, void *event_info);
 void test_scaling2(void *data, Evas_Object *obj, void *event_info);
 void test_slider(void *data, Evas_Object *obj, void *event_info);
@@ -657,6 +658,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Window States 2", test_win_state2);
    ADD_TEST(NULL, "Window / Background", "Inwin", test_inwin);
    ADD_TEST(NULL, "Window / Background", "Inwin 2", test_inwin2);
+   ADD_TEST(NULL, "Window / Background", "Inwin 3", test_inwin3);
    ADD_TEST(NULL, "Window / Background", "Window Inline", test_win_inline);
    ADD_TEST(NULL, "Window / Background", "Window Socket", test_win_socket);
    ADD_TEST(NULL, "Window / Background", "Window Plug", test_win_plug);
