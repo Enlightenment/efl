@@ -67,8 +67,7 @@ _cb_device_change(void *data, int type EINA_UNUSED, void *event)
           {
              EINA_LIST_FOREACH(device->outputs, l, output)
                {
-                  if ((output->name) &&
-                      (!strcmp(output->name, name)))
+                  if (eina_streq(output->name, name))
                     {
                        ecore_drm2_device_calibrate(device,
                                                    output->w, output->h);
