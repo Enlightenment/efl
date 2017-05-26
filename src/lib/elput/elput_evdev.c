@@ -195,6 +195,24 @@ _keyboard_create(Elput_Seat *seat)
    return kbd;
 }
 
+static void
+_keyboard_compose_init(Elput_Keyboard *kbd)
+{
+   const char *locale;
+   if (!(locale = getenv("LC_ALL")))
+     if (!(locale = getenv("LC_CTYPE")))
+       if (!(locale = getenv("LANG")))
+         locale = "C";
+   if (kbd->compose_table) xkb_compose_table_unref(kbd->compose_table);
+   kbd->compose_table = xkb_compose_table_new_from_locale(kbd->context, locale,
+     XKB_COMPOSE_COMPILE_NO_FLAGS);
+   if (kbd->compose_table)
+     {
+        if (kbd->compose_state) xkb_compose_state_unref(kbd->compose_state);
+        kbd->compose_state = xkb_compose_state_new(kbd->compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
+     }
+}
+
 static Eina_Bool
 _keyboard_init(Elput_Seat *seat, struct xkb_keymap *keymap)
 {
@@ -225,6 +243,8 @@ _keyboard_init(Elput_Seat *seat, struct xkb_keymap *keymap)
    kbd->state = xkb_state_new(kbd->info->keymap.map);
    if (!kbd->state) goto err;
    kbd->maskless_state = xkb_state_new(kbd->info->keymap.map);
+
+   _keyboard_compose_init(kbd);
 
    seat->kbd = kbd;
    seat->count.kbd = 1;
@@ -482,6 +502,32 @@ in this Software without prior written authorization from The Open Group.
    return 1;
 }
 
+/* from weston/clients/window.c */
+/* Translate symbols appropriately if a compose sequence is being entered */
+static xkb_keysym_t
+process_key_press(xkb_keysym_t sym, Elput_Keyboard *kbd)
+{
+   if (!kbd->compose_state)
+     return sym;
+   if (sym == XKB_KEY_NoSymbol)
+     return sym;
+   if (xkb_compose_state_feed(kbd->compose_state, sym) != XKB_COMPOSE_FEED_ACCEPTED)
+     return sym;
+
+   switch (xkb_compose_state_get_status(kbd->compose_state))
+     {
+      case XKB_COMPOSE_COMPOSING:
+        return XKB_KEY_NoSymbol;
+      case XKB_COMPOSE_COMPOSED:
+        return xkb_compose_state_get_one_sym(kbd->compose_state);
+      case XKB_COMPOSE_CANCELLED:
+        return XKB_KEY_NoSymbol;
+      case XKB_COMPOSE_NOTHING:
+      default: break;
+     }
+   return sym;
+}
+
 static void
 _elput_symbol_rep_find(xkb_keysym_t keysym, char *buffer, int size, unsigned int code)
 {
@@ -512,8 +558,7 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
    unsigned int code = 0;
    unsigned int nsyms;
    unsigned int timestamp;
-   char key[256], keyname[256], buffer[256];
-   char *tmp = NULL, *compose = NULL;
+   char key[256] = {0}, keyname[256] = {0}, compose[256] = {0};
    int count;
 
    dev = libinput_device_get_user_data(idevice);
@@ -544,6 +589,8 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
    if (nsyms == 1) sym = syms[0];
    sym_name = xkb_state_key_get_one_sym(kbd->maskless_state, code);
 
+   if (state == LIBINPUT_KEY_STATE_PRESSED)
+     sym = process_key_press(sym, kbd);
 
    _elput_symbol_rep_find(sym, key, sizeof(key), code);
    _elput_symbol_rep_find(sym_name, keyname, sizeof(keyname), code);
@@ -560,25 +607,8 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
 
    _keyboard_modifiers_update(kbd, dev->seat);
 
-   memset(buffer, 0, sizeof(buffer));
-   if (_keyboard_keysym_translate(sym, dev->seat->modifiers, 
-                                  buffer, sizeof(buffer)))
-     {
-        compose = eina_str_convert("ISO8859-1", "UTF-8", buffer);
-        if (!compose)
-          {
-             ERR("Elput cannot convert input key string '%s' to UTF-8. "
-                 "Is Eina built with iconv support?", buffer);
-          }
-        else
-          tmp = compose;
-     }
-
-   if (!compose) compose = buffer;
-
+   _keyboard_keysym_translate(sym, dev->seat->modifiers, compose, sizeof(compose));
    _keyboard_key_send(dev, state, keyname, key, compose, code, timestamp);
-
-   if (tmp) free(tmp);
 
    if ((kbd->pending_map) && (count == 0))
      _keyboard_keymap_update(dev->seat);

@@ -22,6 +22,7 @@
 # include <linux/input.h>
 # include <libinput.h>
 # include <xkbcommon/xkbcommon.h>
+# include <xkbcommon/xkbcommon-compose.h>
 
 # ifdef HAVE_SYSTEMD
 #  include <systemd/sd-login.h>
@@ -140,6 +141,8 @@ struct _Elput_Keyboard
    struct xkb_state *maskless_state;
    struct xkb_context *context;
    struct xkb_rule_names names;
+   struct xkb_compose_table *compose_table;
+   struct xkb_compose_state *compose_state;
 
    Elput_Seat *seat;
 
