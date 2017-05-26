@@ -48,7 +48,9 @@ EAPI const char *efl_mono_native_strdup(const char *str)
 
 EAPI int efl_mono_native_ptr_compare(const void *ptr1, const void *ptr2)
 {
-    return (int)((intptr_t)ptr1 - (intptr_t)ptr2);
+    uintptr_t addr1 = (uintptr_t)ptr1;
+    uintptr_t addr2 = (uintptr_t)ptr2;
+    return (addr1 > addr2) - (addr1 < addr2);
 }
 
 EAPI Eina_Compare_Cb efl_mono_native_ptr_compare_addr_get()
