@@ -793,6 +793,36 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
      ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 }
 
+static void
+_pointer_click_update(Elput_Pointer *ptr, unsigned int btn)
+{
+   unsigned int current;
+
+   current = ptr->timestamp;
+   ptr->mouse.double_click = EINA_FALSE;
+   ptr->mouse.triple_click = EINA_FALSE;
+
+   if (((current - ptr->mouse.prev_time) <= ptr->mouse.threshold) &&
+       (btn == ptr->mouse.prev_button))
+     {
+        ptr->mouse.double_click = EINA_TRUE;
+        if (((current - ptr->mouse.last_time) <=
+             (2 * ptr->mouse.threshold)) &&
+            (btn == ptr->mouse.last_button))
+          {
+             ptr->mouse.triple_click = EINA_TRUE;
+             ptr->mouse.prev_time = 0;
+             ptr->mouse.last_time = 0;
+             current = 0;
+          }
+     }
+
+   ptr->mouse.last_time = ptr->mouse.prev_time;
+   ptr->mouse.prev_time = current;
+   ptr->mouse.last_button = ptr->mouse.prev_button;
+   ptr->mouse.prev_button = ptr->buttons;
+}
+
 static Eina_Bool
 _pointer_button(struct libinput_device *idev, struct libinput_event_pointer *event)
 {
@@ -825,34 +855,7 @@ _pointer_button(struct libinput_device *idev, struct libinput_event_pointer *eve
    ptr->buttons = btn;
    ptr->timestamp = libinput_event_pointer_get_time(event);
 
-   if (state)
-     {
-        unsigned int current;
-
-        current = ptr->timestamp;
-        ptr->mouse.double_click = EINA_FALSE;
-        ptr->mouse.triple_click = EINA_FALSE;
-
-        if (((current - ptr->mouse.prev_time) <= ptr->mouse.threshold) &&
-            (btn == ptr->mouse.prev_button))
-          {
-             ptr->mouse.double_click = EINA_TRUE;
-             if (((current - ptr->mouse.last_time) <=
-                  (2 * ptr->mouse.threshold)) &&
-                 (btn == ptr->mouse.last_button))
-               {
-                  ptr->mouse.triple_click = EINA_TRUE;
-                  ptr->mouse.prev_time = 0;
-                  ptr->mouse.last_time = 0;
-                  current = 0;
-               }
-          }
-
-        ptr->mouse.last_time = ptr->mouse.prev_time;
-        ptr->mouse.prev_time = current;
-        ptr->mouse.last_button = ptr->mouse.prev_button;
-        ptr->mouse.prev_button = ptr->buttons;
-     }
+   if (state) _pointer_click_update(ptr, btn);
 
    _pointer_button_send(edev, state);
 
@@ -1318,6 +1321,8 @@ _tablet_tool_tip(struct libinput_device *idev, struct libinput_event_tablet_tool
    state = libinput_event_tablet_tool_get_tip_state(event);
    ptr->buttons = 1;
    ptr->timestamp = libinput_event_tablet_tool_get_time(event);
+
+   if (press[state]) _pointer_click_update(ptr, 1);
 
    _pointer_button_send(dev, press[state]);
 }
