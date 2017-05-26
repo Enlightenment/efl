@@ -150,6 +150,32 @@ EAPI Edje_Load_Error edje_object_load_error_get(const Evas_Object *obj);
 EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
 
 /**
+ * @brief Gets a handle to the Evas object implementing a given Edje part, in
+ * an Edje object.
+ *
+ * This function gets a pointer of the Evas object corresponding to a given
+ * part in the obj object's group.
+ *
+ * You should  never modify the state of the returned object (with @ref
+ * evas_object_move() or @ref evas_object_hide() for example), because it's
+ * meant to be managed by Edje, solely. You are safe to query information about
+ * its current state (with evas_object_visible_get() or @ref
+ * evas_object_color_get() for example), though.
+ *
+ * @note If the type of Edje part is GROUP, SWALLOW or EXTERNAL, returned
+ * handle by this function will indicate nothing or transparent rectangle for
+ * events. Use $.part_swallow_get() in that case.
+ *
+ * @param[in] part The Edje part's name
+ *
+ * @return A pointer to the Evas object implementing the given part, @c null on
+ * failure (e.g. the given part doesn't exist)
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const Efl_Canvas_Object *edje_object_part_object_get(const Edje_Object *obj, const char * part);
+
+/**
  * @ingroup Edje_Object_Communication_Interface_Message
  *
  * @{

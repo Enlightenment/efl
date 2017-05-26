@@ -823,31 +823,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                                       group]]
          }
       }
-      @property part_object {
-         get {
-            [[Gets a handle to the Evas object implementing a given Edje
-              part, in an Edje object.
-
-              This function gets a pointer of the Evas object corresponding to a
-              given part in the obj object's group.
-
-              You should  never modify the state of the returned object (with
-              \@ref evas_object_move() or \@ref evas_object_hide() for example),
-              because it's meant to be managed by Edje, solely. You are safe to
-              query information about its current state (with
-              evas_object_visible_get() or \@ref evas_object_color_get() for
-              example), though.
-
-              Note: If the type of Edje part is GROUP, SWALLOW or EXTERNAL,
-              returned handle by this function will indicate nothing or transparent
-              rectangle for events. Use $.part_swallow_get() in that case.]]
-            return: const(Efl.Canvas.Object); [[A pointer to the Evas object implementing the given part,
-                                                $null on failure (e.g. the given part doesn't exist)]]
-         }
-         keys {
-            part: string; [[The Edje part's name]]
-         }
-      }
       @property part_state {
          get {
             [[Returns the state of the Edje part.]]

@@ -1803,11 +1803,14 @@ _edje_object_part_exists(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
    return EINA_TRUE;
 }
 
-EOLIAN const Evas_Object *
-_edje_object_part_object_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+/* Legacy API: exposes internal object. Easy to abuse. */
+EAPI const Evas_Object *
+edje_object_part_object_get(const Eo *obj, const char *part)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
 
+   ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return NULL;
 
    /* Need to recalc before providing the object. */
