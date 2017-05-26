@@ -20,6 +20,7 @@
 # include <sys/ioctl.h>
 # include <dlfcn.h>
 
+#ifndef DRM2_NODEFS
 extern int _ecore_drm2_log_dom;
 extern Eina_Bool _ecore_drm2_use_atomic;
 
@@ -52,7 +53,7 @@ extern Eina_Bool _ecore_drm2_use_atomic;
 #  undef CRIT
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm2_log_dom, __VA_ARGS__)
-
+#endif
 /* The following defines and structures were borrowed from drm.h */
 
 /**

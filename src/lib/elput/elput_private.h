@@ -28,6 +28,7 @@
 #  include <systemd/sd-login.h>
 # endif
 
+#ifndef ELPUT_NODEFS
 # ifdef ELPUT_DEFAULT_LOG_COLOR
 #  undef ELPUT_DEFAULT_LOG_COLOR
 # endif
@@ -59,7 +60,7 @@ extern int _elput_log_dom;
 #  undef CRIT
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_elput_log_dom, __VA_ARGS__)
-
+#endif
 typedef struct _Elput_Interface
 {
    Eina_Bool (*connect)(Elput_Manager **manager, const char *seat, unsigned int tty);
@@ -218,6 +219,7 @@ struct _Elput_Device
    Elput_Device_Caps caps;
 
    Eina_Hash *key_remap_hash;
+   Eo *evas_device;
 
    Eina_Bool left_handed : 1;
    Eina_Bool key_remap : 1;

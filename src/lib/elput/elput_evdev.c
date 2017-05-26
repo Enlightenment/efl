@@ -300,6 +300,7 @@ _keyboard_key_send(Elput_Device *dev, enum libinput_key_state state, const char 
    ev->modifiers = dev->seat->modifiers;
    ev->timestamp = timestamp;
    ev->same_screen = 1;
+   ev->dev = dev->evas_device;
 
    ev->window = dev->seat->manager->window;
    ev->event_window = dev->seat->manager->window;
@@ -803,6 +804,7 @@ _pointer_motion_send(Elput_Device *edev)
    ev->root_window = edev->seat->manager->window;
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
+   ev->dev = edev->evas_device;
 
    ev->x = ptr->x;
    ev->y = ptr->y;
@@ -912,6 +914,7 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev->root_window = edev->seat->manager->window;
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
+   ev->dev = edev->evas_device;
 
    ev->x = ptr->x;
    ev->y = ptr->y;
@@ -1033,6 +1036,7 @@ _pointer_axis_send(Elput_Device *dev, int direction, int value)
    ev->root_window = dev->seat->manager->window;
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
+   ev->dev = dev->evas_device;
 
    ev->x = ptr->x;
    ev->y = ptr->y;
@@ -1189,6 +1193,7 @@ _touch_motion_send(Elput_Device *dev)
    ev->root_window = dev->seat->manager->window;
    ev->timestamp = touch->timestamp;
    ev->same_screen = 1;
+   ev->dev = dev->evas_device;
 
    ev->x = lround(touch->x);
    ev->y = lround(touch->y);
@@ -1447,6 +1452,7 @@ _tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_too
    ev->root_window = dev->seat->manager->window;
    ev->timestamp = ptr->timestamp;
    ev->naxis = num;
+   ev->dev = dev->evas_device;
    ev->axis = axis = calloc(num, sizeof(Ecore_Axis));
    for (i = 0; i < num; i++)
      {

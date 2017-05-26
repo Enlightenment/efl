@@ -13,6 +13,12 @@
 #include <Ecore_Drm2.h>
 #include <Evas_Engine_Drm.h>
 
+#define DRM2_NODEFS
+#include "ecore_drm2_private.h"
+
+#define ELPUT_NODEFS
+#include "elput_private.h"
+
 #ifdef BUILD_ECORE_EVAS_GL_DRM
 # include <Evas_Engine_GL_Drm.h>
 # include <dlfcn.h>
@@ -83,11 +89,80 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    Ecore_Fd_Handler *hdlr;
    Ecore_Drm2_Device *dev;
    Ecore_Drm2_Output *output;
+   Evas_Device *seat;
    Eina_Bool pending : 1;
    Eina_Bool ticking : 1;
 } Ecore_Evas_Engine_Drm_Data;
 
 static int _drm_init_count = 0;
+static Eina_List *handlers;
+static Eina_List *canvases;
+
+static Eina_Bool
+_drm_device_change(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
+{
+   Elput_Event_Device_Change *ev = event;
+   const Eina_List *l;
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Drm_Data *edata;
+   Elput_Seat *seat;
+   Elput_Manager *manager;
+   Eina_Bool found = EINA_FALSE;
+   Elput_Device_Caps caps;
+   Evas_Device_Class devclass = EVAS_DEVICE_CLASS_NONE;
+   Eo *dev;
+
+   seat = elput_device_seat_get(ev->device);
+   manager = elput_seat_manager_get(seat);
+   caps = elput_device_caps_get(ev->device);
+
+   EINA_LIST_FOREACH(canvases, l, ee)
+     {
+        edata = ee->engine.data;
+        found = edata->dev->em == manager;
+        if (found) break;
+     }
+
+   if (!found) return ECORE_CALLBACK_RENEW;
+   if (caps & ELPUT_DEVICE_CAPS_TABLET_TOOL)
+     devclass = EVAS_DEVICE_CLASS_PEN; // idk how "pen" is a device class?
+   else if (caps & ELPUT_DEVICE_CAPS_POINTER)
+     devclass = EVAS_DEVICE_CLASS_MOUSE;
+   else if (caps & ELPUT_DEVICE_CAPS_TOUCH)
+     devclass = EVAS_DEVICE_CLASS_TOUCH;
+   else if (caps & ELPUT_DEVICE_CAPS_KEYBOARD)
+     devclass = EVAS_DEVICE_CLASS_KEYBOARD;
+   switch (ev->type)
+     {
+      case ELPUT_DEVICE_ADDED:
+        {
+           if (!edata->seat)
+             {
+                Eina_Stringshare *name = elput_seat_name_get(seat);
+                edata->seat = evas_device_add_full(ee->evas, name,
+                  "drm seat", NULL, NULL, EVAS_DEVICE_CLASS_SEAT, EVAS_DEVICE_CLASS_NONE);
+                evas_device_seat_id_set(edata->seat, strtol(name, NULL, 10));
+             }
+
+           dev = evas_device_add_full(ee->evas, elput_device_output_name_get(ev->device),
+             "drm device", edata->seat, NULL, devclass, EVAS_DEVICE_CLASS_NONE);
+           ev->device->evas_device = dev;
+           break;
+        }
+      case ELPUT_DEVICE_REMOVED:
+        {
+           EINA_LIST_FOREACH(evas_device_list(ee->evas, edata->seat), l, dev)
+             {
+                if (dev != ev->device->evas_device) continue;
+                evas_device_del(dev);
+                break;
+             }
+           break;
+        }
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
 
 static int
 _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const char *device)
@@ -130,6 +205,11 @@ _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const ch
    else WRN("Could not find output at %d %d", edata->x, edata->y);
 
    ecore_event_evas_init();
+   if (!handlers)
+     {
+        handlers = eina_list_append(handlers,
+          ecore_event_handler_add(ELPUT_EVENT_DEVICE_CHANGE, _drm_device_change, NULL));
+     }
 
    return _drm_init_count;
 
@@ -146,6 +226,7 @@ init_err:
 static int
 _ecore_evas_drm_shutdown(Ecore_Evas_Engine_Drm_Data *edata)
 {
+   Ecore_Event_Handler *h;
    if (--_drm_init_count != 0) return _drm_init_count;
 
    ecore_drm2_outputs_destroy(edata->dev);
@@ -153,6 +234,8 @@ _ecore_evas_drm_shutdown(Ecore_Evas_Engine_Drm_Data *edata)
    ecore_drm2_device_free(edata->dev);
    ecore_drm2_shutdown();
    ecore_event_evas_shutdown();
+   EINA_LIST_FREE(handlers, h)
+     ecore_event_handler_del(h);
 
    return _drm_init_count;
 }
@@ -165,6 +248,7 @@ _drm_free(Ecore_Evas *ee)
    ecore_evas_input_event_unregister(ee);
 
    edata = ee->engine.data;
+   canvases = eina_list_remove(canvases, ee);
    _ecore_evas_drm_shutdown(edata);
    free(edata);
 }
@@ -843,6 +927,8 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    edata->hdlr =
      ecore_main_fd_handler_add(edata->fd, ECORE_FD_READ, _cb_drm_event, ee,
                                NULL, NULL);
+
+   canvases = eina_list_append(canvases, ee);
    return ee;
 
 eng_err:
