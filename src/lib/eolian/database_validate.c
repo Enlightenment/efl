@@ -154,7 +154,8 @@ _validate_type(const Eolian_Type *tp)
         return _validate_type(tp->base_type);
       case EOLIAN_TYPE_CLASS:
         {
-           if (!eolian_type_class_get(tp))
+           /* FIXME: pass unit properly */
+           if (!eolian_type_class_get(NULL, tp))
              {
                 char buf[256];
                 snprintf(buf, sizeof(buf), "undefined class %s "
