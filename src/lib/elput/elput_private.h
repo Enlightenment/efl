@@ -134,6 +134,7 @@ struct _Elput_Keyboard
 
    struct xkb_state *state;
    struct xkb_keymap *pending_map;
+   struct xkb_state *maskless_state;
    struct xkb_context *context;
    struct xkb_rule_names names;
 
