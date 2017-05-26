@@ -2506,6 +2506,7 @@ void _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const cha
 void _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *));
 void _edje_emit_handle(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop);
 void  _edje_signals_sources_patterns_clean(Edje_Signals_Sources_Patterns *ssp);
+const char * _edje_object_part_state_get(Edje *ed, const char *part, double *val_ret);
 
 void _edje_focused_part_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp);
 Edje_Real_Part *_edje_focused_part_get(Edje *ed, const char *seat_name);

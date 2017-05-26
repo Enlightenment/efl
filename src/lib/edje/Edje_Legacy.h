@@ -176,6 +176,18 @@ EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
 EAPI Eina_Bool edje_object_part_geometry_get(const Edje_Object *obj, const char * part, int *x, int *y, int *w, int *h);
 
 /**
+ * @brief Returns the state of the Edje part.
+ *
+ * @param[in] part The part name
+ * @param[out] val_ret Part state value
+ *
+ * @return The part state: "default" for the default state "" for other states
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const char *edje_object_part_state_get(const Edje_Object *obj, const char * part, double *val_ret);
+
+/**
  * @brief Gets a handle to the Evas object implementing a given Edje part, in
  * an Edje object.
  *

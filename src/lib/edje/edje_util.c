@@ -3950,8 +3950,8 @@ again:
 }
 
 /* FIXME: Correctly return other states */
-EOLIAN const char *
-_edje_object_part_state_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *val_ret)
+const char *
+_edje_object_part_state_get(Edje *ed, const char *part, double *val_ret)
 {
    const char *ret;
 

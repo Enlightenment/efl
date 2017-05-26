@@ -53,4 +53,15 @@ _efl_canvas_layout_internal_efl_gfx_geometry_get(Eo *obj EINA_UNUSED, Efl_Canvas
    RETURN_VOID;
 }
 
+EOLIAN static void
+_efl_canvas_layout_internal_state_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Internal_Data *pd, const char **name, double *val)
+{
+   const char *str;
+
+   if (!name && !val) return;
+   str = _edje_object_part_state_get(pd->ed, pd->part, val);
+   if (name) *name = str;
+   RETURN_VOID;
+}
+
 #include "efl_canvas_layout_internal.eo.c"

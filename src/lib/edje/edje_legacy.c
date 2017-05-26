@@ -39,3 +39,11 @@ edje_object_part_geometry_get(const Edje_Object *obj, const char *part, int *x, 
    if (h) *h = rp->h;
    return EINA_TRUE;
 }
+
+EAPI const char *
+edje_object_part_state_get(const Edje_Object *obj, const char * part, double *val_ret)
+{
+   const char *str = "";
+   efl_canvas_layout_internal_state_get(efl_part(obj, part), &str, val_ret);
+   return str;
+}

@@ -823,20 +823,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                                       group]]
          }
       }
-      @property part_state {
-         get {
-            [[Returns the state of the Edje part.]]
-            return: string; [[The part state:
-                                   "default" for the default state
-                                    "" for other states]]
-         }
-         keys {
-            part: string; [[The part name]]
-         }
-         values {
-            val_ret: double; [[Part state value]]
-         }
-      }
       @property part_drag_value {
          set {
             [[Sets the dragable object location.
