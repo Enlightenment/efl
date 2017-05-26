@@ -1187,6 +1187,49 @@ cont:
      }
 }
 
+static void
+_tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_tool *event)
+{
+   Elput_Pointer *ptr;
+   struct libinput_tablet_tool *tool;
+   Elput_Device *dev = libinput_device_get_user_data(idev);
+
+   ptr = _evdev_pointer_get(dev->seat);
+   EINA_SAFETY_ON_NULL_RETURN(ptr);
+   tool = libinput_event_tablet_tool_get_tool(event);
+
+   ptr->x = libinput_event_tablet_tool_get_x_transformed(event, dev->ow);
+   ptr->y = libinput_event_tablet_tool_get_y_transformed(event, dev->oh);
+
+   if (libinput_tablet_tool_has_pressure(tool))
+     ptr->pressure = libinput_event_tablet_tool_get_pressure(event);
+
+   ptr->timestamp = libinput_event_tablet_tool_get_time(event);
+   _pointer_motion_send(dev);
+}
+
+static void
+_tablet_tool_tip(struct libinput_device *idev, struct libinput_event_tablet_tool *event)
+{
+   Elput_Pointer *ptr;
+   Elput_Device *dev = libinput_device_get_user_data(idev);
+   int state;
+   int press[] =
+   {
+    [LIBINPUT_TABLET_TOOL_TIP_DOWN] = LIBINPUT_BUTTON_STATE_PRESSED,
+    [LIBINPUT_TABLET_TOOL_TIP_UP] = LIBINPUT_BUTTON_STATE_RELEASED,
+   };
+
+   ptr = _evdev_pointer_get(dev->seat);
+   EINA_SAFETY_ON_NULL_RETURN(ptr);
+
+   state = libinput_event_tablet_tool_get_tip_state(event);
+   ptr->buttons = 1;
+   ptr->timestamp = libinput_event_tablet_tool_get_time(event);
+
+   _pointer_button_send(dev, press[state]);
+}
+
 int
 _evdev_event_process(struct libinput_event *event)
 {
@@ -1225,7 +1268,15 @@ _evdev_event_process(struct libinput_event *event)
       case LIBINPUT_EVENT_TOUCH_UP:
         _touch_up(idev, libinput_event_get_touch_event(event));
         break;
-      case LIBINPUT_EVENT_TOUCH_FRAME:
+      case LIBINPUT_EVENT_TOUCH_FRAME: break;
+      case LIBINPUT_EVENT_TABLET_TOOL_AXIS:
+        _tablet_tool_axis(idev, libinput_event_get_tablet_tool_event(event));
+        break;
+      case LIBINPUT_EVENT_TABLET_TOOL_PROXIMITY: /* is this useful? */
+        break;
+      case LIBINPUT_EVENT_TABLET_TOOL_TIP: /* is this useful? */
+        _tablet_tool_tip(idev, libinput_event_get_tablet_tool_event(event));
+        break;
       default:
         ret = 0;
         break;
