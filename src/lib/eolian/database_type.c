@@ -147,7 +147,8 @@ _stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 }
 
 static void
-_etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
+_etype_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
+              Eina_Strbuf *buf)
 {
    Eolian_Enum_Type_Field *ef;
    Eina_List *l;
@@ -165,8 +166,7 @@ _etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
         eina_strbuf_append(buf, ef->name);
         if (ef->value)
           {
-             /* FIXME: pass unit properly */
-             Eolian_Value val = eolian_expression_eval(NULL, ef->value,
+             Eolian_Value val = eolian_expression_eval(src, ef->value,
                  EOLIAN_MASK_INT);
              const char *ret;
              eina_strbuf_append(buf, " = ");
@@ -217,7 +217,8 @@ _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 }
 
 void
-database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
+database_typedecl_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
+                         Eina_Strbuf *buf)
 {
    switch (tp->type)
      {
@@ -225,7 +226,7 @@ database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
         _atype_to_str(tp, buf);
         break;
       case EOLIAN_TYPEDECL_ENUM:
-        _etype_to_str(tp, buf);
+        _etype_to_str(src, tp, buf);
         break;
       case EOLIAN_TYPEDECL_STRUCT:
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
