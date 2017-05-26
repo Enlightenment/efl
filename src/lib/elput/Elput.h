@@ -342,18 +342,6 @@ EAPI void elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, i
 EAPI Eina_Bool elput_input_pointer_left_handed_set(Elput_Manager *manager, const char *seat, Eina_Bool left);
 
 /**
- * Get the list of devices on a given seat
- *
- * @param seat
- *
- * @return An Eina_List of existing Elput_Devices on a given seat or NULL on failure
- *
- * @ingroup Elput_Input_Group
- * @since 1.18
- */
-EAPI const Eina_List *elput_input_devices_get(Elput_Seat *seat);
-
-/**
  * Set the maximum position of any existing mouse pointers
  *
  * @param manager
@@ -428,18 +416,6 @@ EAPI void elput_input_keyboard_info_set(Elput_Manager *manager, void *context, v
  * @since 1.20
  */
 EAPI void elput_input_keyboard_group_set(Elput_Manager *manager, int group);
-
-/**
- * Return the output name associated with a given device
- *
- * @param device
- *
- * @return An Eina_Stringshare of the output name for this device, or NULL on error
- *
- * @ingroup Elput_Input_Group
- * @since 1.18
- */
-EAPI Eina_Stringshare *elput_input_device_output_name_get(Elput_Device *device);
 
 /**
  * Set the pointer acceleration profile
@@ -618,6 +594,60 @@ EAPI Eina_Bool elput_touch_tap_enabled_set(Elput_Device *device, Eina_Bool enabl
  */
 EAPI Eina_Bool elput_touch_tap_enabled_get(Elput_Device *device);
 
+
+/**
+ * @defgroup Elput_Device_Group Elput device functions
+ *
+ * Functions for getting attributes of devices
+ */
+ 
+/**
+ * Get the seat object for a device
+ * @param dev
+ * @return The seat
+ * @ingroup Elput_Device_Group
+ * @since 1.20
+ */
+EAPI Elput_Seat *elput_device_seat_get(const Elput_Device *dev);
+
+/**
+ * Get the caps for a device
+ * @param dev
+ * @return The caps, 0 on failure
+ * @ingroup Elput_Device_Group
+ * @since 1.20
+ */
+EAPI Elput_Device_Caps elput_device_caps_get(const Elput_Device *dev);
+
+/**
+ * Return the output name associated with a given device
+ *
+ * @param device
+ *
+ * @return An Eina_Stringshare of the output name for this device, or NULL on error
+ *
+ * @ingroup Elput_Device_Group
+ * @since 1.20
+ */
+EAPI Eina_Stringshare *elput_device_output_name_get(Elput_Device *device);
+
+/**
+ * @defgroup Elput_Seat_Group Elput seat functions
+ *
+ * Functions for getting attributes of seats
+ */
+ 
+/**
+ * Get the list of devices on a given seat
+ *
+ * @param seat
+ *
+ * @return An immutable list of existing Elput_Devices on a given seat or NULL on failure
+ *
+ * @ingroup Elput_Seat_Group
+ * @since 1.20
+ */
+EAPI const Eina_List *elput_seat_devices_get(const Elput_Seat *seat);
 # endif
 
 # undef EAPI

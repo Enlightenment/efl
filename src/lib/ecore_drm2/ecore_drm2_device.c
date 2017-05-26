@@ -47,7 +47,7 @@ _cb_device_change(void *data, int type EINA_UNUSED, void *event)
         Ecore_Drm2_Output *output;
         Eina_Stringshare *name;
 
-        name = elput_input_device_output_name_get(ev->device);
+        name = elput_device_output_name_get(ev->device);
         if (!name)
           {
              output = eina_list_data_get(device->outputs);
@@ -67,8 +67,6 @@ _cb_device_change(void *data, int type EINA_UNUSED, void *event)
                        break;
                     }
                }
-
-             eina_stringshare_del(name);
           }
      }
 

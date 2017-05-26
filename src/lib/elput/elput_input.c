@@ -552,13 +552,6 @@ elput_input_pointer_left_handed_set(Elput_Manager *manager, const char *seat, Ei
    return EINA_TRUE;
 }
 
-EAPI const Eina_List *
-elput_input_devices_get(Elput_Seat *seat)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
-   return seat->devices;
-}
-
 EAPI void
 elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh)
 {
@@ -687,15 +680,6 @@ elput_input_keyboard_group_set(Elput_Manager *manager, int group)
      _keyboard_group_update(seat);
 }
 
-EAPI Eina_Stringshare *
-elput_input_device_output_name_get(Elput_Device *device)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
-
-   if (!device->output_name) return NULL;
-   return eina_stringshare_ref(device->output_name);
-}
-
 EAPI void
 elput_input_pointer_accel_profile_set(Elput_Manager *manager, const char *seat, uint32_t profile)
 {
@@ -730,3 +714,33 @@ elput_input_pointer_accel_profile_set(Elput_Manager *manager, const char *seat, 
           }
      }
 }
+
+EAPI Elput_Seat *
+elput_device_seat_get(const Elput_Device *dev)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+   return dev->seat;
+}
+
+EAPI Elput_Device_Caps
+elput_device_caps_get(const Elput_Device *dev)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, 0);
+   return dev->caps;
+}
+
+EAPI Eina_Stringshare *
+elput_device_output_name_get(Elput_Device *device)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
+
+   return device->output_name;
+}
+
+EAPI const Eina_List *
+elput_seat_devices_get(const Elput_Seat *seat)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
+   return seat->devices;
+}
+
