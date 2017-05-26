@@ -283,6 +283,7 @@ _ecore_evas_cursor_add(Ecore_Evas *ee, Efl_Input_Device *dev)
    Ecore_Evas_Cursor *cursor = calloc(1, sizeof(Ecore_Evas_Cursor));
    EINA_SAFETY_ON_NULL_RETURN(cursor);
    eina_hash_add(ee->prop.cursors, &dev, cursor);
+   if (dev != evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE)) return;
    if (ee->prop.cursor_cache.object)
      {
         ecore_evas_object_cursor_device_set(ee, dev,
