@@ -167,7 +167,21 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
              return NULL;
           }
 
-        if (!e->default_mouse)
+        if (e->default_mouse)
+          {
+             int x, y;
+
+             if ((clas == EVAS_DEVICE_CLASS_MOUSE) &&
+                 (parent_dev == e->default_seat) &&
+                 (evas_device_class_get(e->default_mouse) != EVAS_DEVICE_CLASS_MOUSE))
+               {
+                  evas_pointer_canvas_xy_get(eo_e, &x, &y);
+                  evas_event_feed_mouse_out(eo_e, 0, NULL);
+                  e->default_mouse = dev;
+                  evas_event_feed_mouse_in(eo_e, 0, NULL);
+               }
+          }
+        else
           e->default_mouse = dev;
      }
 
