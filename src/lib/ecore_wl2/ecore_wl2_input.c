@@ -832,6 +832,7 @@ _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsign
 {
    Ecore_Wl2_Input *input;
    char *map = NULL;
+   const char *locale;
 
    input = data;
    if (!input)
@@ -881,6 +882,17 @@ _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsign
         input->xkb.keymap = NULL;
         return;
      }
+
+   if (!(locale = getenv("LC_ALL")))
+     if (!(locale = getenv("LC_CTYPE")))
+       if (!(locale = getenv("LANG")))
+         locale = "C";
+   if (input->xkb.compose_table) xkb_compose_table_unref(input->xkb.compose_table);
+   input->xkb.compose_table = xkb_compose_table_new_from_locale(input->display->xkb_context,
+			  locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
+   if (input->xkb.compose_state) xkb_compose_state_unref(input->xkb.compose_state);
+   input->xkb.compose_state = xkb_compose_state_new(input->xkb.compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
+
    {
       Ecore_Wl2_Event_Seat_Keymap_Changed *ev = malloc(sizeof(Ecore_Wl2_Event_Seat_Keymap_Changed));
       if (ev)
@@ -992,6 +1004,32 @@ out:
    return ECORE_CALLBACK_CANCEL;
 }
 
+/* from weston/clients/window.c */
+/* Translate symbols appropriately if a compose sequence is being entered */
+static xkb_keysym_t
+process_key_press(xkb_keysym_t sym, Ecore_Wl2_Input *input)
+{
+   if (!input->xkb.compose_state)
+     return sym;
+   if (sym == XKB_KEY_NoSymbol)
+     return sym;
+   if (xkb_compose_state_feed(input->xkb.compose_state, sym) != XKB_COMPOSE_FEED_ACCEPTED)
+     return sym;
+
+   switch (xkb_compose_state_get_status(input->xkb.compose_state))
+     {
+      case XKB_COMPOSE_COMPOSING:
+        return XKB_KEY_NoSymbol;
+      case XKB_COMPOSE_COMPOSED:
+        return xkb_compose_state_get_one_sym(input->xkb.compose_state);
+      case XKB_COMPOSE_CANCELLED:
+        return XKB_KEY_NoSymbol;
+      case XKB_COMPOSE_NOTHING:
+      default: break;
+     }
+   return sym;
+}
+
 static void
 _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state)
 {
@@ -999,6 +1037,7 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
    Ecore_Wl2_Window *window;
    unsigned int code;
    xkb_keysym_t sym = XKB_KEY_NoSymbol, sym_name = XKB_KEY_NoSymbol;
+   const xkb_keysym_t *syms;
 
    input = data;
    if (!input) return;
@@ -1012,7 +1051,10 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
    /* xkb rules reflect X broken keycodes, so offset by 8 */
    code = keycode + 8;
 
-   sym = xkb_state_key_get_one_sym(input->xkb.state, code);
+   if (xkb_state_key_get_syms(input->xkb.state, code, &syms) == 1)
+     sym = syms[0];
+   if (state == WL_KEYBOARD_KEY_STATE_PRESSED)
+     sym = process_key_press(sym, input);
    sym_name = xkb_state_key_get_one_sym(input->xkb.maskless_state, code);
 
    _ecore_wl2_input_key_send(input, window, sym, sym_name, code, state, timestamp);
@@ -1620,6 +1662,8 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
    if (input->xkb.state) xkb_state_unref(input->xkb.state);
    if (input->xkb.maskless_state) xkb_state_unref(input->xkb.maskless_state);
    if (input->xkb.keymap) xkb_map_unref(input->xkb.keymap);
+   if (input->xkb.compose_table) xkb_compose_table_unref(input->xkb.compose_table);
+   if (input->xkb.compose_state) xkb_compose_state_unref(input->xkb.compose_state);
 
    if (input->wl.seat) wl_seat_destroy(input->wl.seat);
 

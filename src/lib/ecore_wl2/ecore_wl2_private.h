@@ -4,6 +4,7 @@
 # include <unistd.h>
 # include "Ecore_Wl2.h"
 # include "Ecore_Input.h"
+#include <xkbcommon/xkbcommon-compose.h>
 # include "www-client-protocol.h"
 
 #define EFL_TEAMWORK_VERSION 2
@@ -402,6 +403,8 @@ struct _Ecore_Wl2_Input
         struct xkb_keymap *keymap;
         struct xkb_state *state;
         struct xkb_state *maskless_state;
+        struct xkb_compose_table *compose_table;
+        struct xkb_compose_state *compose_state;
         xkb_mod_mask_t control_mask;
         xkb_mod_mask_t alt_mask;
         xkb_mod_mask_t shift_mask;
