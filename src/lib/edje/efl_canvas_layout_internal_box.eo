@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout_Internal.Box (Efl.Object, Efl.Canvas.Layout_Internal, Efl.Pack.Linear,
+class Efl.Canvas.Layout_Internal.Box (Efl.Canvas.Layout_Internal, Efl.Pack.Linear,
                                       Efl.Orientation)
 {
    [[Represents a Box created as part of a layout.
@@ -6,10 +6,9 @@ class Efl.Canvas.Layout_Internal.Box (Efl.Object, Efl.Canvas.Layout_Internal, Ef
      Its lifetime is limited to one function call only, unless an extra
      reference is explicitely held.
    ]]
-   data: Edje_Box_Data;
+   data: null;
    implements {
       Efl.Object.finalize;
-      Efl.Canvas.Layout_Internal.real_part { set; }
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;

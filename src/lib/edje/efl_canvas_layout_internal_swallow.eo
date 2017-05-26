@@ -1,14 +1,13 @@
-class Efl.Canvas.Layout_Internal.Swallow (Efl.Object, Efl.Canvas.Layout_Internal, Efl.Container)
+class Efl.Canvas.Layout_Internal.Swallow (Efl.Canvas.Layout_Internal, Efl.Container)
 {
    [[Represents a SWALLOW part of an Edje object.
 
      Its lifetime is limited to one function call only, unless an extra
      reference is explicitely held.
    ]]
-   data: Edje_Swallow_Data;
+   data: null;
    implements {
       Efl.Object.finalize;
-      Efl.Canvas.Layout_Internal.real_part { set; }
       Efl.Container.content { get; set; }
       Efl.Container.content_unset;
    }

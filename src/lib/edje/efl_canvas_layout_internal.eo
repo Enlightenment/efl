@@ -1,16 +1,8 @@
-interface Efl.Canvas.Layout_Internal ()
+class Efl.Canvas.Layout_Internal (Efl.Object, Efl.Gfx)
 {
-   [[Internal APIs used by Edje part objects.]]
-   eo_prefix: _edje;
-   methods {
-      @property real_part @protected {
-         [[Real part property]]
-         set {}
-         values {
-            ed: void_ptr; [[Edje object]]
-            rp: void_ptr; [[Real part object]]
-            part: string; [[Real part name]]
-         }
-      }
+   [[Common class for part proxy objects for $Efl.Canvas.Layout.]]
+   implements {
+      //Efl.Gfx.Size.geometry { get; }
+      //Efl.Gfx.Size.size { get; }
    }
 }
