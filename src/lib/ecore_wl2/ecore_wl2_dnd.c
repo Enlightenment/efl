@@ -143,7 +143,7 @@ event_fill(struct _Ecore_Wl2_Event_Data_Source_Event *ev, Ecore_Wl2_Input *input
 }
 
 static void
-data_source_event_emit(Ecore_Wl2_Input *input, int event, Eina_Bool cancel)
+data_source_event_emit(Ecore_Wl2_Input *input, int event)
 {
    struct _Ecore_Wl2_Event_Data_Source_Event *ev;
 
@@ -465,11 +465,8 @@ ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input)
 
 
    ev->win = _win_id_get(input);
-   ev->seat = input->id;
-   ev->display = input->display;
-   ev->display->refs++;
 
-   ecore_event_add(ECORE_WL2_EVENT_DND_END, ev, _display_event_free, ev->display);
+   ecore_event_add(ECORE_WL2_EVENT_DND_END, ev, NULL, NULL);
 }
 
 EAPI Ecore_Wl2_Offer*
@@ -492,20 +489,20 @@ ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
 
    manager = input->display->wl.data_device_manager;
 
-   if (input->data.types.data)
+   if (input->data.selection.types.data)
      {
-        wl_array_for_each(t, &input->data.types)
+        wl_array_for_each(t, &input->data.selection.types)
           free(*t);
-        wl_array_release(&input->data.types);
-        wl_array_init(&input->data.types);
+        wl_array_release(&input->data.selection.types);
+        wl_array_init(&input->data.selection.types);
      }
 
-   input->data.source = NULL;
+   input->data.selection.source = NULL;
 
    if (!types[0]) return EINA_FALSE;
 
-   input->data.source = wl_data_device_manager_create_data_source(manager);
-   if (!input->data.source)
+   input->data.selection.source = wl_data_device_manager_create_data_source(manager);
+   if (!input->data.selection.source)
      {
         ERR("Could not create data source");
         return EINA_FALSE;
@@ -514,17 +511,17 @@ ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
    for (type = types; *type; type++)
      {
         if (!*type) continue;
-        t = wl_array_add(&input->data.types, sizeof(*t));
+        t = wl_array_add(&input->data.selection.types, sizeof(*t));
         if (t)
           {
              *t = strdup(*type);
-             wl_data_source_offer(input->data.source, *t);
+             wl_data_source_offer(input->data.selection.source, *t);
           }
      }
 
-   wl_data_source_add_listener(input->data.source, &_source_listener, input);
+   wl_data_source_add_listener(input->data.selection.source, &_source_listener, input);
 
-   wl_data_device_set_selection(input->data.device, input->data.source,
+   wl_data_device_set_selection(input->data.device, input->data.selection.source,
                                 input->display->serial);
 
    return EINA_TRUE;
