@@ -1188,11 +1188,23 @@ cont:
 }
 
 static void
+_axis_event_free(void *d EINA_UNUSED, void *event)
+{
+   Ecore_Event_Axis_Update *ev = event;
+
+   free(ev->axis);
+   free(ev);
+}
+
+static void
 _tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_tool *event)
 {
    Elput_Pointer *ptr;
    struct libinput_tablet_tool *tool;
    Elput_Device *dev = libinput_device_get_user_data(idev);
+   Ecore_Event_Axis_Update *ev;
+   Ecore_Axis ax[8] = {0}, *axis = NULL;
+   int i, num = 0;
 
    ptr = _evdev_pointer_get(dev->seat);
    EINA_SAFETY_ON_NULL_RETURN(ptr);
@@ -1201,11 +1213,91 @@ _tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_too
    ptr->x = libinput_event_tablet_tool_get_x_transformed(event, dev->ow);
    ptr->y = libinput_event_tablet_tool_get_y_transformed(event, dev->oh);
 
+   if (libinput_event_tablet_tool_x_has_changed(event))
+     {
+        ax[num].label = ECORE_AXIS_LABEL_X;
+        ax[num].value = ptr->x;
+        num++;
+     }
+   if (libinput_event_tablet_tool_y_has_changed(event))
+     {
+        ax[num].label = ECORE_AXIS_LABEL_Y;
+        ax[num].value = ptr->y;
+        num++;
+     }
    if (libinput_tablet_tool_has_pressure(tool))
-     ptr->pressure = libinput_event_tablet_tool_get_pressure(event);
+     {
+        if (libinput_event_tablet_tool_pressure_has_changed(event))
+          {
+             ax[num].label = ECORE_AXIS_LABEL_PRESSURE;
+             ax[num].value = ptr->pressure = libinput_event_tablet_tool_get_pressure(event);
+             num++;
+          }
+     }
+   if (libinput_tablet_tool_has_distance(tool))
+     {
+        if (libinput_event_tablet_tool_distance_has_changed(event))
+          {
+             ax[num].label = ECORE_AXIS_LABEL_DISTANCE;
+             ax[num].value = libinput_event_tablet_tool_get_distance(event);
+             num++;
+          }
+     }
+   if (libinput_tablet_tool_has_tilt(tool))
+     {
+        if (libinput_event_tablet_tool_tilt_x_has_changed(event) ||
+            libinput_event_tablet_tool_tilt_y_has_changed(event))
+          {
+             double x = sin(libinput_event_tablet_tool_get_tilt_x(event));
+             double y = sin(-libinput_event_tablet_tool_get_tilt_y(event));
+
+             ax[num].label = ECORE_AXIS_LABEL_TILT;
+             ax[num].value = asin(sqrt((x * x) + (y * y)));
+             num++;
+
+             /* note: the value of atan2(0,0) is implementation-defined */
+             ax[num].label = ECORE_AXIS_LABEL_AZIMUTH;
+             ax[num].value = atan2(y, x);
+             num++;
+          }
+     }
+   if (libinput_tablet_tool_has_rotation(tool))
+     {
+        if (libinput_event_tablet_tool_rotation_has_changed(event))
+          {
+             ax[num].label = ECORE_AXIS_LABEL_TWIST;
+             ax[num].value = libinput_event_tablet_tool_get_rotation(event);
+             ax[num].value *= M_PI / 180;
+             num++;
+          }
+     }
 
    ptr->timestamp = libinput_event_tablet_tool_get_time(event);
-   _pointer_motion_send(dev);
+   /* FIXME: other properties which efl event structs don't support:
+    * slider_position
+    * wheel_delta
+    */
+
+
+   if (libinput_event_tablet_tool_x_has_changed(event) ||
+       libinput_event_tablet_tool_y_has_changed(event))
+     _pointer_motion_send(dev);
+
+   if (!num) return;
+   ev = calloc(1, sizeof(Ecore_Event_Axis_Update));
+
+   ev->window = dev->seat->manager->window;
+   ev->event_window = dev->seat->manager->window;
+   ev->root_window = dev->seat->manager->window;
+   ev->timestamp = ptr->timestamp;
+   ev->naxis = num;
+   ev->axis = axis = calloc(num, sizeof(Ecore_Axis));
+   for (i = 0; i < num; i++)
+     {
+        axis[i].label = ax[i].label;
+        axis[i].value = ax[i].value;
+     }
+   ecore_event_add(ECORE_EVENT_AXIS_UPDATE, ev, _axis_event_free, NULL);
 }
 
 static void
