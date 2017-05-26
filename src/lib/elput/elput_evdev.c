@@ -1582,7 +1582,7 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TABLET_TOOL))
      edev->caps |= ELPUT_DEVICE_CAPS_POINTER | ELPUT_DEVICE_CAPS_TABLET_TOOL;
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TABLET_PAD))
-     edev->caps |= ELPUT_DEVICE_CAPS_POINTER | ELPUT_DEVICE_CAPS_TABLET_PAD;
+     edev->caps |= ELPUT_DEVICE_CAPS_TABLET_PAD;
    if (edev->caps & ELPUT_DEVICE_CAPS_POINTER)
      {
         _pointer_init(seat);
