@@ -311,13 +311,12 @@ eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp)
 }
 
 EAPI const Eolian_Class *
-eolian_type_class_get(const Eolian_Type *tp)
+eolian_type_class_get(const Eolian_Unit *unit, const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    if (eolian_type_type_get(tp) != EOLIAN_TYPE_CLASS)
      return NULL;
-   /* FIXME: pass unit properly */
-   return eolian_class_get_by_name(NULL, tp->full_name);
+   return eolian_class_get_by_name(unit, tp->full_name);
 }
 
 EAPI size_t
