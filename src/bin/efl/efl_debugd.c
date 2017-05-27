@@ -130,7 +130,9 @@ _send(Client *dest, int opcode, void *payload, int payload_size)
    hdr->thread_id = 0;
    hdr->opcode = opcode;
    memcpy(buf + sizeof(Eina_Debug_Packet_Header), payload, payload_size);
-   //printf("%d bytes sent (opcode %s) to %s fd %d\n", size, _opcodes[opcode]->opcode_string, dest->app_name, dest->fd);
+   printf("Send packet (size = %d, opcode %s) to %s\n", size,
+         _opcodes[hdr->opcode]->opcode_string,
+         dest->app_name);
    if (send(dest->fd, buf, size, 0) != size) perror("send");
 }
 
@@ -404,9 +406,12 @@ _monitor()
                   if (events[i].events & EPOLLHUP)
                     {
                        c = _client_find_by_fd(events[i].data.fd);
-                       printf("Closing client %s/%d\n", c->app_name, c->pid);
                        close(events[i].data.fd);
-                       if (c) _client_del(c);
+                       if (c)
+                         {
+                            printf("Closing client %s/%d\n", c->app_name, c->pid);
+                            _client_del(c);
+                         }
                     }
                   if (events[i].events & EPOLLIN)
                     {
@@ -448,6 +453,7 @@ _monitor()
                                   // major failure on debug daemon control fd - get out of here.
                                   //   else goto fail;
                                   close(events[i].data.fd);
+                                  _client_del(c);
                                   //TODO if its not main session we will tell the main_loop
                                   //that it disconneted
                                }
