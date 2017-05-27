@@ -360,6 +360,7 @@ _data_receive(Client *c, unsigned char *buffer)
 
    rret = recv(c->fd, &size, sizeof(int), MSG_PEEK);
 
+   if (rret == -1 || !size) goto error;
    if (rret == sizeof(int))
      {
         unsigned int cur_packet_size = 0;
@@ -549,7 +550,7 @@ static int
 _listening_tcp_socket_create()
 {
    struct sockaddr_in server;
-   int curstate = 0;
+   int curstate = 1;
    // create the socket
    int fd = socket(AF_INET, SOCK_STREAM, 0);
    if (fd < 0) goto err;
