@@ -82,12 +82,6 @@ static Eina_Bool _debug_disabled = EINA_FALSE;
 /* __thread here to allow debuggers to be master and slave by using two different threads */
 static Eina_Debug_Session *_last_local_session = NULL;
 
-/* Opcode used to load a module
- * needed by the daemon to notify loading success */
-static int _module_init_opcode = EINA_DEBUG_OPCODE_INVALID;
-static int _module_shutdown_opcode = EINA_DEBUG_OPCODE_INVALID;
-static Eina_Hash *_modules_hash = NULL;
-
 /* Semaphore used by the debug thread to wait for another thread to do the
  * requested job.
  * It is needed when packets are needed to be treated into a specific
@@ -258,112 +252,6 @@ eina_debug_session_dispatch_get(Eina_Debug_Session *session)
    if (session) return session->dispatch_cb;
    else return NULL;
 }
-
-typedef struct
-{
-   Eina_Module *handle;
-   Eina_Bool (*init)(void);
-   Eina_Bool (*shutdown)(void);
-   int ref;
-} _module_info;
-
-#define _LOAD_SYMBOL(cls_struct, pkg, sym) \
-   do \
-     { \
-        char func_name[1024]; \
-        snprintf(func_name, sizeof(func_name), "%s_debug_" #sym, pkg); \
-        (cls_struct)->sym = eina_module_symbol_get((cls_struct)->handle, func_name); \
-        if (!(cls_struct)->sym) \
-          { \
-             e_debug("Failed loading symbol '%s' from the library.", func_name); \
-             eina_module_free((cls_struct)->handle); \
-             (cls_struct)->handle = NULL; \
-             free((cls_struct)); \
-             return EINA_FALSE; \
-          } \
-     } \
-   while (0)
-
-static Eina_Debug_Error
-_module_init_cb(Eina_Debug_Session *session, int cid, void *buffer, int size)
-{
-   char module_path[1024];
-   _module_info *minfo = NULL;
-   const char *module_name = buffer;
-   char *resp;
-   if (size <= 0) return EINA_DEBUG_ERROR;
-   if (!_modules_hash) _modules_hash = eina_hash_string_small_new(NULL);
-
-   minfo = eina_hash_find(_modules_hash, module_name);
-   if (minfo && minfo->ref)
-     {
-        minfo->ref++;
-        goto end;
-     }
-
-   e_debug("Init module %s", module_name);
-   snprintf(module_path, sizeof(module_path), PACKAGE_LIB_DIR "/lib%s_debug"LIBEXT, module_name);
-   if (!minfo)
-     {
-        minfo = calloc(1, sizeof(*minfo));
-        eina_hash_add(_modules_hash, module_name, minfo);
-     }
-   if (!minfo->handle) minfo->handle = eina_module_new(module_path);
-   if (!minfo->handle || !eina_module_load(minfo->handle))
-     {
-        e_debug("Failed loading debug module %s.", module_name);
-        if (minfo->handle) eina_module_free(minfo->handle);
-        minfo->handle = NULL;
-        goto end;
-     }
-
-   if (!minfo->init) _LOAD_SYMBOL(minfo, module_name, init);
-   if (!minfo->shutdown) _LOAD_SYMBOL(minfo, module_name, shutdown);
-
-   if (minfo->init()) minfo->ref = 1;
-
-end:
-   resp = alloca(size + 1);
-   memcpy(resp, buffer, size);
-   resp[size] = !!(minfo->ref);
-   eina_debug_session_send(session, cid, _module_init_opcode, resp, size+1);
-   return EINA_DEBUG_OK;
-}
-
-static Eina_Debug_Error
-_module_shutdown_cb(Eina_Debug_Session *session, int cid, void *buffer, int size)
-{
-   _module_info *minfo = NULL;
-   const char *module_name = buffer;
-   char *resp;
-   Eina_Bool ret = EINA_TRUE;
-   if (size <= 0 || !_modules_hash) return EINA_DEBUG_ERROR;
-
-   minfo = eina_hash_find(_modules_hash, module_name);
-   if (minfo)
-     {
-        if (!--(minfo->ref))
-          {
-             eina_hash_del(_modules_hash, module_name, minfo);
-             if (minfo->shutdown) ret = minfo->shutdown();
-             if (minfo->handle) eina_module_free(minfo->handle);
-             minfo->handle = NULL;
-             free(minfo);
-          }
-     }
-   resp = alloca(size + 1);
-   memcpy(resp, buffer, size);
-   resp[size] = !!ret;
-   eina_debug_session_send(session, cid, _module_shutdown_opcode, resp, size+1);
-   return EINA_DEBUG_OK;
-}
-
-static const Eina_Debug_Opcode _MONITOR_OPS[] =
-{
-     {"module/init", &_module_init_opcode, &_module_init_cb},
-     {"module/shutdown", &_module_shutdown_opcode, &_module_shutdown_cb},
-     {NULL, NULL, NULL}
-};
 
 static void
 _static_opcode_register(Eina_Debug_Session *session,
@@ -585,7 +473,6 @@ eina_debug_local_connect(Eina_Bool is_master)
       goto err;
 
    _last_local_session = _session_create(fd);
-   eina_debug_opcodes_register(_last_local_session, _MONITOR_OPS, NULL, NULL);
 
    return _last_local_session;
 err:
