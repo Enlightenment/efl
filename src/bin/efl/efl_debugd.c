@@ -608,12 +608,12 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    ecore_init();
 
    _string_to_opcode_hash = eina_hash_string_superfast_new(NULL);
-   _opcode_register("daemon/opcode/register", EINA_DEBUG_OPCODE_REGISTER, _opcode_register_cb);
-   _opcode_register("daemon/greet", EINA_DEBUG_OPCODE_HELLO, _hello_cb);
-   _clients_stat_register_opcode = _opcode_register("daemon/observer/client/register", EINA_DEBUG_OPCODE_INVALID, _cl_stat_obs_register_cb);
-   _slave_added_opcode = _opcode_register("daemon/observer/slave_added", EINA_DEBUG_OPCODE_INVALID, NULL);
-   _slave_deleted_opcode = _opcode_register("daemon/observer/slave_deleted", EINA_DEBUG_OPCODE_INVALID, NULL);
-   _cid_from_pid_opcode = _opcode_register("daemon/info/cid_from_pid", EINA_DEBUG_OPCODE_INVALID, _cid_get_cb);
+   _opcode_register("Daemon/opcode_register", EINA_DEBUG_OPCODE_REGISTER, _opcode_register_cb);
+   _opcode_register("Daemon/greet", EINA_DEBUG_OPCODE_HELLO, _hello_cb);
+   _clients_stat_register_opcode = _opcode_register("Daemon/Client/register_observer", EINA_DEBUG_OPCODE_INVALID, _cl_stat_obs_register_cb);
+   _slave_added_opcode = _opcode_register("Daemon/Client/added", EINA_DEBUG_OPCODE_INVALID, NULL);
+   _slave_deleted_opcode = _opcode_register("Daemon/Client/deleted", EINA_DEBUG_OPCODE_INVALID, NULL);
+   _cid_from_pid_opcode = _opcode_register("Daemon/Client/cid_from_pid", EINA_DEBUG_OPCODE_INVALID, _cid_get_cb);
    _test_loop_opcode = _opcode_register("Test/data_loop", EINA_DEBUG_OPCODE_INVALID, _data_test_cb);
 
    _server_launch();
