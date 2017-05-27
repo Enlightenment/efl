@@ -47,10 +47,6 @@ struct _Client
 {
    Eina_Stringshare *app_name;
 
-   Ecore_Timer      *evlog_fetch_timer;
-   int               evlog_on;
-   FILE             *evlog_file;
-
    int               version;
    int               fd;
    int               cid;
@@ -144,16 +140,6 @@ _client_del(Client *c)
    Eina_List *itr;
 
    _clients = eina_list_remove(_clients, c);
-   if (c->evlog_fetch_timer)
-     {
-        ecore_timer_del(c->evlog_fetch_timer);
-        c->evlog_fetch_timer = NULL;
-     }
-   if (c->evlog_file)
-     {
-        fclose(c->evlog_file);
-        c->evlog_file = NULL;
-     }
 
    /* Don't update the observers if the client is a master */
    if (c->is_master) return;
