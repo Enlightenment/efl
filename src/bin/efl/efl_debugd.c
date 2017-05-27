@@ -177,6 +177,11 @@ _dispatch(Client *src, void *buffer, unsigned int size)
                {
                   hdr->cid = src->cid;
                   if (send(dest->fd, buffer, size, 0) != size) perror("send");
+                  printf("Transfer of %d bytes from %s(%d) to %s(%d): operation %s\n",
+                        hdr->size,
+                        src->app_name, src->pid,
+                        dest->app_name, dest->pid,
+                        _opcodes[hdr->opcode]->opcode_string);
                }
              else
                {
@@ -240,9 +245,9 @@ _hello_cb(Client *c, void *buffer, int size)
      {
         c->app_name = eina_stringshare_add_length(buf, size);
      }
-   printf("Connection from %s: pid %d - name %s\n",
+   printf("Connection of %s: pid %d - name %s -> cid %d\n",
          c->is_master ? "Master" : "Slave",
-         c->pid, c->app_name);
+         c->pid, c->app_name, c->cid);
 
    if (c->is_master) return EINA_TRUE;
 
@@ -398,6 +403,7 @@ _monitor()
                   if (events[i].events & EPOLLHUP)
                     {
                        c = _client_find_by_fd(events[i].data.fd);
+                       printf("Closing client %s/%d\n", c->app_name, c->pid);
                        close(events[i].data.fd);
                        if (c) _client_del(c);
                     }
