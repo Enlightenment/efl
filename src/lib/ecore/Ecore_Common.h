@@ -4,8 +4,6 @@ extern "C" {
 
 #include <Efl_Config.h>
 
-#include "ecore_types.eot.h"
-
 /**
  * @ingroup Ecore
  * @defgroup Ecore_Init_Group Ecore initialization, shutdown functions and reset on fork.
