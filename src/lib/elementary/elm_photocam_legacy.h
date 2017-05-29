@@ -219,4 +219,4 @@ EAPI void               elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photoca
 EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
 
 
-#include "elm_photocam.eo.legacy.h"
+#include "efl_ui_image_zoomable.eo.legacy.h"

@@ -52,8 +52,8 @@ elm_public_eolian_files = \
 	lib/elementary/elm_pan.eo \
 	lib/elementary/elm_panel.eo \
 	lib/elementary/elm_panes.eo \
-	lib/elementary/elm_photocam.eo \
-	lib/elementary/elm_photocam_pan.eo \
+	lib/elementary/efl_ui_image_zoomable.eo \
+	lib/elementary/efl_ui_image_zoomable_pan.eo \
 	lib/elementary/elm_player.eo \
 	lib/elementary/elm_plug.eo \
 	lib/elementary/elm_popup.eo \
@@ -256,7 +256,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_panel.h \
 	lib/elementary/elm_widget_panes.h \
 	lib/elementary/elm_widget_photo.h \
-	lib/elementary/elm_widget_photocam.h \
+	lib/elementary/efl_ui_image_zoomable_private.h \
 	lib/elementary/elm_widget_player.h \
 	lib/elementary/elm_widget_plug.h \
 	lib/elementary/elm_widget_popup.h \
@@ -457,7 +457,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_photo.h \
 	lib/elementary/elm_photo_legacy.h \
 	lib/elementary/elm_photocam.h \
-	lib/elementary/elm_photocam_eo.h \
+	lib/elementary/efl_ui_image_zoomable_eo.h \
 	lib/elementary/elm_photocam_legacy.h \
 	lib/elementary/elm_plug.h \
 	lib/elementary/elm_plug_eo.h \
@@ -624,7 +624,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_panel.c \
 	lib/elementary/elm_panes.c \
 	lib/elementary/elm_photo.c \
-	lib/elementary/elm_photocam.c \
+	lib/elementary/efl_ui_image_zoomable.c \
 	lib/elementary/elm_plug.c \
 	lib/elementary/elm_prefs.c \
 	lib/elementary/elm_prefs_data.c \

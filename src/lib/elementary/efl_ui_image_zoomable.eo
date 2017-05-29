@@ -1,12 +1,12 @@
-class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
-                    Elm.Interface.Atspi_Widget_Action, Efl.File,
-                    Efl.Ui.Clickable, Efl.Ui.Scrollable, Efl.Gfx.View,
-                    Efl.Ui.Zoom, Efl.Orientation, Efl.Flipable, Efl.Image)
+class Efl.Ui.Image.Zoomable (Elm.Widget, Elm.Interface_Scrollable,
+                             Elm.Interface.Atspi_Widget_Action, Efl.File,
+                             Efl.Ui.Clickable, Efl.Ui.Scrollable, Efl.Gfx.View,
+                             Efl.Ui.Zoom, Efl.Orientation, Efl.Flipable, Efl.Image)
 {
-   [[Elementary photocam class]]
+   [[Elementary Image Zoomable class]]
    legacy_prefix: elm_photocam;
-   eo_prefix: elm_obj_photocam;
-   event_prefix: elm_photocam;
+   //eo_prefix: elm_obj_photocam;
+   //event_prefix: elm_photocam;
    methods {
       @property gesture_enabled {
          set {

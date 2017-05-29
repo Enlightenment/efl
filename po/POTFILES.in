@@ -146,7 +146,7 @@ src/lib/elementary/elm_notify.c
 src/lib/elementary/elm_panel.c
 src/lib/elementary/elm_panes.c
 src/lib/elementary/elm_photo.c
-src/lib/elementary/elm_photocam.c
+src/lib/elementary/efl_ui_image_zoomable.c
 src/lib/elementary/elm_plug.c
 src/lib/elementary/elm_prefs.c
 src/lib/elementary/elm_prefs_data.c

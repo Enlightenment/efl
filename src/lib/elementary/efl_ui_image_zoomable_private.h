@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_PHOTOCAM_H
-#define ELM_WIDGET_PHOTOCAM_H
+#ifndef EFL_UI_IMAGE_ZOOMABLE_PRIVATE_H
+#define EFL_UI_IMAGE_ZOOMABLE_PRIVATE_H
 
 #include "Elementary.h"
 
@@ -23,15 +23,15 @@
 /**
  * Base widget smart data extended with photocam instance data.
  */
-typedef struct _Elm_Photocam_Data           Elm_Photocam_Data;
-typedef struct _Elm_Photocam_Pan_Data       Elm_Photocam_Pan_Data;
-typedef struct _Elm_Phocam_Grid             Elm_Phocam_Grid;
-typedef struct _Elm_Photocam_Grid_Item      Elm_Photocam_Grid_Item;
+typedef struct _Efl_Ui_Image_Zoomable_Data           Efl_Ui_Image_Zoomable_Data;
+typedef struct _Efl_Ui_Image_Zoomable_Pan_Data       Efl_Ui_Image_Zoomable_Pan_Data;
+typedef struct _Efl_Ui_Image_Zoomable_Grid           Efl_Ui_Image_Zoomable_Grid;
+typedef struct _Efl_Ui_Image_Zoomable_Grid_Item      Efl_Ui_Image_Zoomable_Grid_Item;
 
-struct _Elm_Photocam_Grid_Item
+struct _Efl_Ui_Image_Zoomable_Grid_Item
 {
    Evas_Object             *obj;
-   Elm_Photocam_Data       *sd;
+   Efl_Ui_Image_Zoomable_Data       *sd;
    Evas_Object             *img;
 
    struct
@@ -43,7 +43,7 @@ struct _Elm_Photocam_Grid_Item
    Eina_Bool                have : 1;
 };
 
-struct _Elm_Phocam_Grid
+struct _Efl_Ui_Image_Zoomable_Grid
 {
    int                     tsize; /* size of tile (tsize x tsize pixels) */
    int                     zoom; /* zoom level tiles want for optimal
@@ -52,12 +52,12 @@ struct _Elm_Phocam_Grid
    int                     w, h; /* size of grid image in pixels
                                   * (represented by grid) */
    int                     gw, gh; /* size of grid in tiles */
-   Elm_Photocam_Grid_Item *grid;  /* the grid (gw * gh items) */
+   Efl_Ui_Image_Zoomable_Grid_Item *grid;  /* the grid (gw * gh items) */
    Eina_Bool               dead : 1; /* old grid. will die as soon as anim is
                                       * over */
 };
 
-struct _Elm_Photocam_Data
+struct _Efl_Ui_Image_Zoomable_Data
 {
    Evas_Object                          *hit_rect;
    Evas_Object                          *g_layer;
@@ -135,10 +135,10 @@ struct _Elm_Photocam_Data
    Eina_Bool    orientation_changed : 1;
 };
 
-struct _Elm_Photocam_Pan_Data
+struct _Efl_Ui_Image_Zoomable_Pan_Data
 {
    Evas_Object            *wobj;
-   Elm_Photocam_Data      *wsd;
+   Efl_Ui_Image_Zoomable_Data      *wsd;
 };
 
 /**
@@ -146,10 +146,10 @@ struct _Elm_Photocam_Pan_Data
  */
 
 #define ELM_PHOTOCAM_DATA_GET(o, sd) \
-  Elm_Photocam_Data * sd = efl_data_scope_get(o, ELM_PHOTOCAM_CLASS)
+  Efl_Ui_Image_Zoomable_Data * sd = efl_data_scope_get(o, EFL_UI_IMAGE_ZOOMABLE_CLASS)
 
 #define ELM_PHOTOCAM_PAN_DATA_GET(o, sd) \
-  Elm_Photocam_Pan_Data * sd = efl_data_scope_get(o, ELM_PHOTOCAM_PAN_CLASS)
+  Efl_Ui_Image_Zoomable_Pan_Data * sd = efl_data_scope_get(o, EFL_UI_IMAGE_ZOOMABLE_PAN_CLASS)
 
 #define ELM_PHOTOCAM_DATA_GET_OR_RETURN(o, ptr)      \
   ELM_PHOTOCAM_DATA_GET(o, ptr);                     \
@@ -170,7 +170,7 @@ struct _Elm_Photocam_Pan_Data
     }
 
 #define ELM_PHOTOCAM_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), ELM_PHOTOCAM_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_IMAGE_ZOOMABLE_CLASS))) \
     return
 
 #endif
