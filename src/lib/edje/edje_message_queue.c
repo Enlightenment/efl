@@ -141,8 +141,8 @@ bad_type:
    return;
 }
 
-EOLIAN void
-_edje_object_message_signal_process(Eo *obj EINA_UNUSED, Edje *ed)
+static void
+_edje_object_message_signal_process_do(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Eina_List *l, *ln, *tmpq = NULL;
    Edje *lookup_ed;
@@ -225,6 +225,25 @@ end:
      tmp_msgq_restart = 0;
    else
      tmp_msgq_restart = 1;
+}
+
+EOLIAN void
+_edje_object_message_signal_process(Eo *obj, Edje *ed, Eina_Bool recurse)
+{
+   Edje *sub_ed;
+   Eina_List *l;
+   Evas_Object *o;
+
+   _edje_object_message_signal_process_do(obj, ed);
+   if (!recurse) return;
+
+   EINA_LIST_FOREACH(ed->subobjs, l, o)
+     {
+        sub_ed = _edje_fetch(o);
+        if (!sub_ed) continue;
+
+        _edje_object_message_signal_process(o, sub_ed, EINA_TRUE);
+     }
 }
 
 static Eina_Bool

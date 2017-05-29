@@ -379,6 +379,30 @@ EAPI void edje_object_message_handler_set(Edje_Object *obj, Edje_Message_Handler
 EAPI void edje_object_message_send(Edje_Object *obj, Edje_Message_Type type, int id, void *msg);
 
 /**
+ * @brief Processes an object's message queue.
+ *
+ * This function goes through the object message queue processing the pending
+ * messages for  this specific Edje object. Normally they'd be processed only
+ * at idle time. Child objects will not be affected.
+ *
+ * @see edje_object_message_signal_recursive_process
+ */
+EAPI void edje_object_message_signal_process(Edje_Object *obj);
+
+/**
+ * @brief Processes an object's message queue recursively.
+ *
+ * This function goes through the object message queue processing the pending
+ * messages for this specific Edje object. Normally they'd be processed only
+ * at idle time. This will also propagate the processing to all child objects.
+ *
+ * @see edje_object_message_signal_process
+ *
+ * @since 1.20
+ */
+EAPI void edje_object_message_signal_recursive_process(Edje_Object *obj);
+
+/**
  * @}
  */
 

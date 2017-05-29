@@ -586,9 +586,17 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          [[Processes an object's message queue.
 
            This function goes through the object message queue processing the
-           pending messages for  this specific Edje object. Normally they'd
-           be processed only at idle time.]]
+           pending messages for this specific Edje object. Normally they'd
+           be processed only at idle time.
 
+           If $recurse is $true, this function will be called recursively
+           on all subobjects.
+         ]]
+         params {
+            recurse: bool @optional; [[Whether to process messages on children
+                                       objects.]]
+         }
+         legacy: null;
       }
       @property global_color_class @class {
          set {

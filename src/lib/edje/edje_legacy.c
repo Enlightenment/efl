@@ -47,3 +47,16 @@ edje_object_part_state_get(const Edje_Object *obj, const char * part, double *va
    efl_canvas_layout_internal_state_get(efl_part(obj, part), &str, val_ret);
    return str;
 }
+
+EAPI void
+edje_object_message_signal_process(Edje_Object *obj)
+{
+   edje_obj_message_signal_process(obj, EINA_FALSE);
+}
+
+/* since 1.20 */
+EAPI void
+edje_object_message_signal_recursive_process(Edje_Object *obj)
+{
+   edje_obj_message_signal_process(obj, EINA_TRUE);
+}
