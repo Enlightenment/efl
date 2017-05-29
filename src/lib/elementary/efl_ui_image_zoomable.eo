@@ -1,7 +1,6 @@
-class Efl.Ui.Image.Zoomable (Elm.Widget, Elm.Interface_Scrollable,
-                             Elm.Interface.Atspi_Widget_Action, Efl.File,
-                             Efl.Ui.Clickable, Efl.Ui.Scrollable, Efl.Gfx.View,
-                             Efl.Ui.Zoom, Efl.Orientation, Efl.Flipable, Efl.Image)
+class Efl.Ui.Image.Zoomable (Efl.Ui.Image, Efl.Ui.Zoom,
+                             Elm.Interface_Scrollable,
+                             Efl.Ui.Scrollable)
 {
    [[Elementary Image Zoomable class]]
    legacy_prefix: elm_photocam;
