@@ -88,11 +88,11 @@ evas_init(void)
    if (!evas_thread_init())
      goto shutdown_filter;
 
-   _efl_gfx_map_init();
-
    eina_log_timing(_evas_log_dom_global,
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
+
+   _efl_gfx_map_init();
 
    return _evas_init_count;
 
