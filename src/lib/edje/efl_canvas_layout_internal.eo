@@ -1,3 +1,4 @@
+/* FIXME: Rename to Efl.Canvas.Layout.Part */
 class Efl.Canvas.Layout_Internal (Efl.Object, Efl.Gfx)
 {
    [[Common class for part proxy objects for $Efl.Canvas.Layout.

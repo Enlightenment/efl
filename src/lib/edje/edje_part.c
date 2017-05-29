@@ -5,6 +5,7 @@
 PROXY_INIT(box)
 PROXY_INIT(table)
 PROXY_INIT(swallow)
+PROXY_INIT(external)
 
 void
 _edje_internal_proxy_shutdown(void)
@@ -12,6 +13,7 @@ _edje_internal_proxy_shutdown(void)
    _box_shutdown();
    _table_shutdown();
    _swallow_shutdown();
+   _external_shutdown();
 }
 
 void

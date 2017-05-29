@@ -368,6 +368,19 @@ typedef enum _Edje_External_Param_Flags
                                             EDJE_EXTERNAL_PARAM_FLAGS_STATE) /**< Convenience flag that sets property as GET, SET and STATE. */
 } Edje_External_Param_Flags;
 
+/** Struct that holds parameters for parts of type EXTERNAL.
+ */
+typedef struct _Edje_External_Param
+{
+  const char *name; /**< The name of the parameter. */
+  Edje_External_Param_Type type; /**< The type of the parameter. This defines
+                                  * which of the next three variables holds the
+                                  * value for it. */
+  int i; /**< Used by both integer and boolean */
+  double d; /**< Used by double */
+  const char *s; /**< Used by both string and choice */
+} Edje_External_Param;
+
 /**
  * @brief Converts type identifier to string nicer representation.
  *

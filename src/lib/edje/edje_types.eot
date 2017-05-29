@@ -113,30 +113,16 @@ enum Edje.Input_Panel.Layout {
                       @since 1.19]]
 }
 
+/* FIXME: This probably needs to be a more generic enum with a shorter name */
 enum Edje.External.Param_Type {
    [[The possible types the parameters of an EXTERNAL part can be.]]
-
    int, [[Parameter value is an integer.]]
    double, [[Parameter value is a double.]]
    string, [[Parameter value is a string.]]
    bool, [[Parameter value is boolean.]]
-   choice, [[Parameter value is one of a set of
-             predefined string choices.]]
+   choice, [[Parameter value is one of a set of predefined string choices.]]
    max [[Sentinel value to indicate last enum field during iteration]]
 }
-
-struct Edje.External.Param {
-   [[Struct that holds parameters for parts of type EXTERNAL.]]
-   name: string; [[The name of the parameter.]]
-   type: Edje.External.Param_Type; [[The type of the parameter. This defines
-                                     which of the next three variables holds
-                                     the value for it.]]
-   // XXX these could be in a union, but eet doesn't support them (or does it?)
-   i: int; [[Used by both integer and boolean]]
-   d: double; [[Used by double]]
-   s: string; [[Used by both string and choice]]
-}
-
 
 struct Edje.Perspective; [[Perspective info for maps inside edje objects]]
 

@@ -1,0 +1,78 @@
+import edje_types;
+
+class Efl.Canvas.Layout.External (Efl.Canvas.Layout_Internal)
+{
+   [[Class representing an external part in Edje layouts.
+
+     @since 1.20
+   ]]
+   data: null;
+   methods {
+      @property external_param {
+         [[This represents a parameter for an external object.
+
+           Parts of type external may carry extra properties that have
+           meanings defined by the external plugin. For instance, it may be a
+           string that defines a button label and setting this property will
+           change that label on the fly.
+
+           Parameters have a $name and a value which can be a boolean, an
+           integer, a floating-point number or a string. Some string parameters
+           only accept a certain set of values, like an enum.
+         ]]
+         set {
+            [[Sets the parameter for the external part.
+
+              Note: external parts have parameters set when they change
+              states. Those parameters will never be changed by this
+              function. The interpretation of how state_set parameters and
+              param_set will interact is up to the external plugin.
+
+              Note: this function will not check if parameter value is valid
+              using minimum, maximum, valid choices and others. However these
+              should be checked by the underlying implementation provided by
+              the external plugin. This is done for performance reasons.
+            ]]
+            return: bool; [[May return $false in case of failure.]]
+         }
+         get {
+            [[Gets the parameter for the external part.
+
+              This function asks the external plugin what is the current value,
+              independent on how it was set. This may return $null in case of
+              failure (eg. no such parameter exists).
+            ]]
+            values {
+               value: own(ptr(generic_value)); [[A pointer to a generic value
+                  holding a bool, int, float or string.]]
+            }
+         }
+         keys {
+            name: string; [[The name of the parameter.]]
+         }
+         values {
+            value: const(ptr(generic_value)); [[A pointer to a generic value
+               holding a bool, int, float or string.]]
+         }
+      }
+      @property external_param_type {
+         [[The type of a given parameter for this part (read only).]]
+         get {}
+         keys {
+            name: string; [[The name of the parameter.]]
+         }
+         values {
+            /* FIXME: Type name with "Edje" is no good! */
+            type: Edje.External.Param_Type; [[The type of parameter.]]
+         }
+      }
+      /*
+      external_param_choices {
+         [[Enumerates the possible values a choice-type parameter supports.]]
+         return: own(free(iterator<string>, eina_iterator_free));
+            [[An iterator over the accepted string values. Returns $null if
+              the parameter is not a choice parameter.]]
+      }
+      */
+   }
+}

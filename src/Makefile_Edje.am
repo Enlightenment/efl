@@ -12,7 +12,9 @@ edje_eolian_priv_files = \
 	lib/edje/efl_canvas_layout_internal.eo \
 	lib/edje/efl_canvas_layout_internal_box.eo \
 	lib/edje/efl_canvas_layout_internal_table.eo \
-	lib/edje/efl_canvas_layout_internal_swallow.eo
+	lib/edje/efl_canvas_layout_internal_swallow.eo \
+	lib/edje/efl_canvas_layout_external.eo \
+	$(NULL)
 
 edje_eolian_c = $(edje_eolian_files:%.eo=%.eo.c)
 edje_eolian_h = $(edje_eolian_files:%.eo=%.eo.h) \
@@ -95,6 +97,7 @@ lib/edje/edje_var.c \
 lib/edje/edje_signal.c \
 lib/edje/edje_part.c \
 lib/edje/edje_part_helper.h \
+lib/edje/edje_part_external.c \
 lib/edje/edje_part_swallow.c \
 lib/edje/edje_part_table.c \
 lib/edje/edje_part_box.c

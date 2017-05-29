@@ -56,14 +56,12 @@ _edje_object_part_external_object_get(Eo *obj EINA_UNUSED, Edje *ed, const char 
    return rp->typedata.swallow->swallowed_object;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_external_param_set(Eo *obj, Edje *ed, const char *part, const Edje_External_Param *param)
+Eina_Bool
+_edje_object_part_external_param_set(Edje *ed, const char *part, const Edje_External_Param *param)
 {
    Edje_Real_Part *rp;
 
-   if ((!param) || (!param->name)) return EINA_FALSE;
-
-   if ((!ed) || (!part)) return EINA_FALSE;
+   if (!ed || !part || !param || !param->name) return EINA_FALSE;
 
    rp = _edje_real_part_recursive_get(&ed, (char *)part);
    if (!rp)
@@ -72,19 +70,17 @@ _edje_object_part_external_param_set(Eo *obj, Edje *ed, const char *part, const 
         return EINA_FALSE;
      }
 
-   if (_edje_external_param_set(obj, rp, param))
+   if (_edje_external_param_set(ed->obj, rp, param))
      return EINA_TRUE;
    return EINA_FALSE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_external_param_get(Eo *obj, Edje *ed, const char *part, Edje_External_Param *param)
+Eina_Bool
+_edje_object_part_external_param_get(Edje *ed, const char *part, Edje_External_Param *param)
 {
    Edje_Real_Part *rp;
 
-   if ((!param) || (!param->name)) return EINA_FALSE;
-
-   if ((!ed) || (!part)) return EINA_FALSE;
+   if (!ed || !part || !param || !param->name) return EINA_FALSE;
 
    rp = _edje_real_part_recursive_get(&ed, (char *)part);
    if (!rp)
@@ -93,7 +89,7 @@ _edje_object_part_external_param_get(Eo *obj, Edje *ed, const char *part, Edje_E
         return EINA_FALSE;
      }
 
-   return _edje_external_param_get(obj, rp, param);
+   return _edje_external_param_get(ed->obj, rp, param);
 }
 
 EOLIAN Evas_Object *
@@ -117,8 +113,8 @@ _edje_object_part_external_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char
    return _edje_external_content_get(rp->typedata.swallow->swallowed_object, content);
 }
 
-EOLIAN Edje_External_Param_Type
-_edje_object_part_external_param_type_get(Eo *obj, Edje *ed, const char *part, const char *param)
+Edje_External_Param_Type
+_edje_object_part_external_param_type_get(Edje *ed, const char *part, const char *param)
 {
    Edje_Real_Part *rp;
    Edje_External_Type *type;
@@ -137,7 +133,7 @@ _edje_object_part_external_param_type_get(Eo *obj, Edje *ed, const char *part, c
    type = evas_object_data_get(rp->typedata.swallow->swallowed_object, "Edje_External_Type");
    if (!type)
      {
-        ERR("no external type for object %p", obj);
+        ERR("no external type for object %p", ed->obj);
         return EDJE_EXTERNAL_PARAM_TYPE_MAX;
      }
    if (!type->parameters_info)

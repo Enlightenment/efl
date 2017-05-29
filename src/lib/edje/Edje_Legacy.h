@@ -406,6 +406,84 @@ EAPI void edje_object_message_signal_recursive_process(Edje_Object *obj);
  * @}
  */
 
+/**
+ * @ingroup Edje_Object
+ *
+ * @{
+ */
+
+/**
+ * @brief Facility to query the type of the given parameter of the given part.
+ *
+ * @param[in] part The part name
+ * @param[in] param The parameter name to use
+ *
+ * @return @ref EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value from
+ * @ref Edje_External_Param_Type on success.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Edje_External_Param_Type edje_object_part_external_param_type_get(const Edje_Object *obj, const char *part, const char * param);
+
+/**
+ * @brief Sets the parameter for the external part.
+ *
+ * Parts of type external may carry extra properties that have meanings defined
+ * by the external plugin. For instance, it may be a string that defines a
+ * button label and setting this property will change that label on the fly.
+ *
+ * @note external parts have parameters set when they change states. Those
+ * parameters will never be changed by this function. The interpretation of how
+ * state_set parameters and param_set will interact is up to the external
+ * plugin.
+ *
+ * @note this function will not check if parameter value is valid using
+ * #Edje_External_Param_Info minimum, maximum, valid choices and others.
+ * However these should be checked by the underlying implementation provided by
+ * the external plugin. This is done for performance reasons.
+ *
+ * @param[in] part The part name
+ * @param[in] param The parameter details, including its name, type and actual
+ * value. This pointer should be valid, and the parameter must exist in
+ * #Edje_External_Type.parameters_info, with the exact type, otherwise the
+ * operation will fail and @c false will be returned.
+ *
+ * @return @c true if everything went fine, @c false on errors.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_external_param_set(Edje_Object *obj, const char *part, const Edje_External_Param *param);
+
+/**
+ * @brief Gets the parameter for the external part.
+ *
+ * Parts of type external may carry extra properties that have meanings defined
+ * by the external plugin. For instance, it may be a string that defines a
+ * button label. This property can be modified by state parameters, by explicit
+ * calls to edje_object_part_external_param_set() or getting the actual object
+ * with edje_object_part_external_object_get() and calling native functions.
+ *
+ * This function asks the external plugin what is the current value,
+ * independent on how it was set.
+ *
+ * @param[in] part The part name
+ * @param[out] param The parameter details. It is used as both input and output
+ * variable. This pointer should be valid, and the parameter must exist in
+ * #Edje_External_Type.parameters_info, with the exact type, otherwise the
+ * operation will fail and @c false will be returned.
+ *
+ * @return @c true if everything went fine and param members are filled with
+ * information, @c false on errors and param member values are not set or
+ * valid.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_external_param_get(const Edje_Object *obj, const char *part, Edje_External_Param *param);
+
+/**
+ * @}
+ */
+
  /**
  * @deprecated use evas_object_size_hint_min_set() instead.
  * @brief Sets the object minimum size.

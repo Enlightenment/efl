@@ -69,30 +69,43 @@ static Eina_Bool
 _timer_cb(void *data)
 {
    Evas_Object *edje = data;
-   Evas_Object *bt1, *bt2, *bt3, *pb1, *pb2, *pb3, *pb4, *pb5, *pb6, *pb7;
+   Evas_Object *bt1, *bt2, *bt3, *pb1, *pb2, *pb3, *pb5;
+   Edje_External_Param param;
    double progress;
+   Eina_Value v;
 
    pb1 = edje_object_part_external_object_get(edje, "ext_pbar1");
    pb2 = edje_object_part_external_object_get(edje, "ext_pbar2");
    pb3 = edje_object_part_external_object_get(edje, "ext_pbar3");
-   pb4 = edje_object_part_external_object_get(edje, "ext_pbar4");
-   pb6 = edje_object_part_external_object_get(edje, "ext_pbar6");
    progress = elm_progressbar_value_get(pb1) + 0.0123;
 
    elm_progressbar_value_set(pb1, progress);
    elm_progressbar_value_set(pb2, progress);
    elm_progressbar_value_set(pb3, progress);
-   elm_progressbar_value_set(pb4, progress);
-   elm_progressbar_value_set(pb6, progress);
+
+   /* Test external parameter API */
+   param.name = "value";
+   param.type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+   param.d = progress;
+   edje_object_part_external_param_set(edje, "ext_pbar6", &param);
+
+   param.name = "pulsing";
+   param.type = EDJE_EXTERNAL_PARAM_TYPE_BOOL;
+   param.i = EINA_TRUE;
+   edje_object_part_external_param_set(edje, "ext_pbar7", &param);
+
+   /* Test EO API for external parameters */
+   eina_value_setup(&v, EINA_VALUE_TYPE_DOUBLE);
+   eina_value_set(&v, progress);
+   efl_canvas_layout_external_param_set(efl_part(edje, "ext_pbar4"), "value", &v);
+   eina_value_flush(&v);
 
    if (progress < 1.0)
      return ECORE_CALLBACK_RENEW;
 
    pb5 = edje_object_part_external_object_get(edje, "ext_pbar5");
-   pb7 = edje_object_part_external_object_get(edje, "ext_pbar7");
    elm_progressbar_pulse(pb2, EINA_FALSE);
    elm_progressbar_pulse(pb5, EINA_FALSE);
-   elm_progressbar_pulse(pb7, EINA_FALSE);
 
    bt1 = edje_object_part_external_object_get(edje, "ext_button1");
    bt2 = edje_object_part_external_object_get(edje, "ext_button2");
@@ -101,6 +114,17 @@ _timer_cb(void *data)
    elm_object_disabled_set(bt2, EINA_FALSE);
    elm_object_disabled_set(bt3, EINA_FALSE);
 
+   /* Test external parameter API */
+   param.name = "value";
+   param.type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+   param.d = 0.0;
+   edje_object_part_external_param_set(edje, "ext_pbar6", &param);
+
+   param.name = "pulsing";
+   param.type = EDJE_EXTERNAL_PARAM_TYPE_BOOL;
+   param.i = EINA_FALSE;
+   edje_object_part_external_param_set(edje, "ext_pbar7", &param);
+
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -108,8 +132,11 @@ static void
 _bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *edje = data;
-   Evas_Object *bt1, *bt2, *bt3, *pb1, *pb2, *pb3, *pb4, *pb5, *pb6, *pb7;
+   Evas_Object *bt1, *bt2, *bt3, *pb1, *pb2, *pb3, *pb5;
+   Edje_External_Param param;
+   Eina_Value v;
 
+   /* Test direct API calls on embedded objects */
    bt1 = edje_object_part_external_object_get(edje, "ext_button1");
    bt2 = edje_object_part_external_object_get(edje, "ext_button2");
    bt3 = edje_object_part_external_object_get(edje, "ext_button3");
@@ -120,19 +147,30 @@ _bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    pb1 = edje_object_part_external_object_get(edje, "ext_pbar1");
    pb2 = edje_object_part_external_object_get(edje, "ext_pbar2");
    pb3 = edje_object_part_external_object_get(edje, "ext_pbar3");
-   pb4 = edje_object_part_external_object_get(edje, "ext_pbar4");
    pb5 = edje_object_part_external_object_get(edje, "ext_pbar5");
-   pb6 = edje_object_part_external_object_get(edje, "ext_pbar6");
-   pb7 = edje_object_part_external_object_get(edje, "ext_pbar7");
 
    elm_progressbar_value_set(pb1, 0.0);
    elm_progressbar_value_set(pb3, 0.0);
-   elm_progressbar_value_set(pb4, 0.0);
-   elm_progressbar_value_set(pb6, 0.0);
 
    elm_progressbar_pulse(pb2, EINA_TRUE);
    elm_progressbar_pulse(pb5, EINA_TRUE);
-   elm_progressbar_pulse(pb7, EINA_TRUE);
+
+   /* Test external parameter API */
+   param.name = "value";
+   param.type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
+   param.d = 0.0;
+   edje_object_part_external_param_set(edje, "ext_pbar6", &param);
+
+   param.name = "pulsing";
+   param.type = EDJE_EXTERNAL_PARAM_TYPE_BOOL;
+   param.i = EINA_TRUE;
+   edje_object_part_external_param_set(edje, "ext_pbar7", &param);
+
+   /* Test EO API for external parameters */
+   eina_value_setup(&v, EINA_VALUE_TYPE_DOUBLE);
+   eina_value_set(&v, 0.0);
+   efl_canvas_layout_external_param_set(efl_part(edje, "ext_pbar4"), "value", &v);
+   eina_value_flush(&v);
 
    ecore_timer_add(0.1, _timer_cb, edje);
 }

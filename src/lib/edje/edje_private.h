@@ -3120,6 +3120,12 @@ Eo *_edje_swallow_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part 
 Efl_Gfx *_edje_efl_container_content_get(Edje *ed, const char *part);
 Eina_Bool _edje_efl_container_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow);
 
+/* part containers: external */
+Eo *_edje_external_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Eina_Bool _edje_object_part_external_param_set(Edje *ed, const char *part, const Edje_External_Param *param);
+Eina_Bool _edje_object_part_external_param_get(Edje *ed, const char *part, Edje_External_Param *param);
+Edje_External_Param_Type _edje_object_part_external_param_type_get(Edje *ed, const char *part, const char *param);
+
 void _edje_internal_proxy_shutdown(void);
 
 // Svg loader
