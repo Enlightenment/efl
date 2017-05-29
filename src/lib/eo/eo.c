@@ -357,11 +357,17 @@ _efl_super_cast(const Eo *eo_id, const Efl_Class *cur_klass, Eina_Bool super)
 
 #ifdef EO_DEBUG
    if (EINA_UNLIKELY(!_eo_is_a_obj(eo_id) && !_eo_is_a_class(eo_id))) goto err_obj;
-   if (EINA_UNLIKELY(!efl_isa(eo_id, cur_klass))) goto err_obj_hierarchy;
 #endif
 
    if (EINA_UNLIKELY(!_eo_is_a_obj(eo_id)))
      goto do_klass;
+
+#ifndef EO_DEBUG
+   if (!super && EINA_UNLIKELY(!efl_isa(eo_id, cur_klass)))
+#else
+   if (EINA_UNLIKELY(!efl_isa(eo_id, cur_klass)))
+#endif
+     goto err_obj_hierarchy;
 
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
    obj->cur_klass = super_klass;
@@ -383,10 +389,10 @@ err:
 err_obj:
    _EO_POINTER_ERR(eo_id, "Object (%p) is an invalid ref, class=%p (%s).", eo_id, cur_klass, efl_class_name_get(cur_klass));
    return NULL;
+#endif
 err_obj_hierarchy:
    _EO_POINTER_ERR(eo_id, "Object (%p) class=%p (%s) is not an instance of class=%p (%s).", eo_id, efl_class_get(eo_id), efl_class_name_get(eo_id), cur_klass, efl_class_name_get(cur_klass));
    return NULL;
-#endif
 }
 
 EAPI Eo *
