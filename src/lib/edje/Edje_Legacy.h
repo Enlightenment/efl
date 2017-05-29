@@ -481,6 +481,22 @@ EAPI Eina_Bool edje_object_part_external_param_set(Edje_Object *obj, const char 
 EAPI Eina_Bool edje_object_part_external_param_get(const Edje_Object *obj, const char *part, Edje_External_Param *param);
 
 /**
+ * @brief Gets an object contained in an part of type EXTERNAL
+ *
+ * The content string must not be @c null. Its actual value depends on the code
+ * providing the EXTERNAL.
+ *
+ * @param[in] part The name of the part holding the EXTERNAL
+ * @param[in] content A string identifying which content from the EXTERNAL to
+ * get
+ *
+ * @return Canvas object
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Evas_Object *edje_object_part_external_content_get(const Edje_Object *obj, const char *part, const char *content);
+
+/**
  * @}
  */
 

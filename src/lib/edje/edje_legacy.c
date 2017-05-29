@@ -68,8 +68,8 @@ edje_object_part_external_param_set(Eo *obj, const char *part, const Edje_Extern
 
    if (!ed || !param || !part) return EINA_FALSE;
 
-#if 1
-   /* validate EO API - disable for performance */
+#if 0
+   /* validate EO API - disabled for performance */
    Eina_Value *v;
    Eina_Bool ok;
 
@@ -117,4 +117,12 @@ edje_object_part_external_param_type_get(const Eo *obj, const char *part, const 
 {
    Edje *ed = _edje_fetch(obj);
    return _edje_object_part_external_param_type_get(ed, part, param);
+}
+
+/* Legacy only. Shall we deprecate this API? */
+EAPI Evas_Object *
+edje_object_part_external_content_get(const Edje_Object *obj, const char *part, const char *content)
+{
+   Edje *ed = _edje_fetch(obj);
+   return _edje_object_part_external_content_get(ed, part, content);
 }

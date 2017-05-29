@@ -1027,19 +1027,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             part: string; [[The part name]]
          }
       }
-      @property part_external_content {
-         get {
-            [[Gets an object contained in an part of type EXTERNAL
-
-              The content string must not be $null. Its actual value depends on the
-              code providing the EXTERNAL.]]
-            return: Efl.Canvas.Object; [[Canvas object]] 
-         }
-         keys {
-            part: string; [[The name of the part holding the EXTERNAL]]
-            content: string; [[A string identifying which content from the EXTERNAL to get]]
-         }
-      }
       @property text_change_cb {
          set {
             [[Sets the object text callback.

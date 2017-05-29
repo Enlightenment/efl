@@ -92,8 +92,8 @@ _edje_object_part_external_param_get(Edje *ed, const char *part, Edje_External_P
    return _edje_external_param_get(ed->obj, rp, param);
 }
 
-EOLIAN Evas_Object *
-_edje_object_part_external_content_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const char *content)
+Evas_Object *
+_edje_object_part_external_content_get(Edje *ed, const char *part, const char *content)
 {
    Edje_Real_Part *rp;
 

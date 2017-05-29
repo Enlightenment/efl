@@ -3125,6 +3125,7 @@ Eo *_edje_external_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part
 Eina_Bool _edje_object_part_external_param_set(Edje *ed, const char *part, const Edje_External_Param *param);
 Eina_Bool _edje_object_part_external_param_get(Edje *ed, const char *part, Edje_External_Param *param);
 Edje_External_Param_Type _edje_object_part_external_param_type_get(Edje *ed, const char *part, const char *param);
+Evas_Object *_edje_object_part_external_content_get(Edje *ed, const char *part, const char *content);
 
 void _edje_internal_proxy_shutdown(void);
 
