@@ -119,6 +119,13 @@ edje_object_part_external_param_type_get(const Eo *obj, const char *part, const 
    return _edje_object_part_external_param_type_get(ed, part, param);
 }
 
+EAPI Evas_Object *
+edje_object_part_external_object_get(const Edje_Object *obj, const char *part)
+{
+   Edje *ed = _edje_fetch(obj);
+   return _edje_object_part_external_object_get(ed, part);
+}
+
 /* Legacy only. Shall we deprecate this API? */
 EAPI Evas_Object *
 edje_object_part_external_content_get(const Edje_Object *obj, const char *part, const char *content)

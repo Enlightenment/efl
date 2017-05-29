@@ -28,8 +28,8 @@ edje_external_param_type_str(Edje_External_Param_Type type)
      }
 }
 
-EOLIAN Evas_Object *
-_edje_object_part_external_object_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+Evas_Object *
+_edje_object_part_external_object_get(Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
 

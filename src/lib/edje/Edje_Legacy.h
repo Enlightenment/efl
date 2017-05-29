@@ -481,6 +481,29 @@ EAPI Eina_Bool edje_object_part_external_param_set(Edje_Object *obj, const char 
 EAPI Eina_Bool edje_object_part_external_param_get(const Edje_Object *obj, const char *part, Edje_External_Param *param);
 
 /**
+ * @brief Gets the object created by this external part.
+ *
+ * Parts of type external creates the part object using information provided by
+ * external plugins. It's somehow like "swallow" (edje_object_part_swallow()),
+ * but it's all set automatically.
+ *
+ * This function returns the part created by such external plugins and being
+ * currently managed by this Edje.
+ *
+ * @note Almost all swallow rules apply: you should not move, resize, hide,
+ * show, set the color or clipper of such part. It's a bit more restrictive as
+ * one must  never delete this object!
+ *
+ * @param[in] part The part name
+ *
+ * @return The externally created object, or @c null if there is none or part
+ * is not an external.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Evas_Object *edje_object_part_external_object_get(const Edje_Object *obj, const char * part);
+
+/**
  * @brief Gets an object contained in an part of type EXTERNAL
  *
  * The content string must not be @c null. Its actual value depends on the code

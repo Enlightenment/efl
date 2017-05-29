@@ -1006,27 +1006,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             @in dy: double; [[The y step]]
          }
       }
-      @property part_external_object {
-         get {
-            [[Gets the object created by this external part.
-
-              Parts of type external creates the part object using information
-              provided by external plugins. It's somehow like "swallow"
-              (edje_object_part_swallow()), but it's all set automatically.
-
-              This function returns the part created by such external plugins and
-              being currently managed by this Edje.
-
-              Note: Almost all swallow rules apply: you should not move, resize,
-              hide, show, set the color or clipper of such part. It's a bit
-              more restrictive as one must  never delete this object!]]
-            return: Efl.Canvas.Object; [[The externally created object, or $null if there is none or
-                                         part is not an external.]]
-         }
-         keys {
-            part: string; [[The part name]]
-         }
-      }
       @property text_change_cb {
          set {
             [[Sets the object text callback.
