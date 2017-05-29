@@ -132,4 +132,11 @@ _efl_canvas_layout_external_external_param_type_get(Eo *obj, void *_pd EINA_UNUS
    RETURN_VAL(_edje_object_part_external_param_type_get(pd->ed, pd->part, name));
 }
 
+EOLIAN static Efl_Gfx *
+_efl_canvas_layout_external_efl_container_content_get(Eo *obj, void *_pd EINA_UNUSED)
+{
+   PROXY_DATA_GET(obj, pd);
+   RETURN_VAL(_edje_object_part_external_object_get(pd->ed, pd->part));
+}
+
 #include "efl_canvas_layout_external.eo.c"

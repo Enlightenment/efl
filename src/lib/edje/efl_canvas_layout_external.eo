@@ -1,6 +1,7 @@
 import edje_types;
 
-class Efl.Canvas.Layout.External (Efl.Canvas.Layout_Internal, Efl.Canvas.Object)
+class Efl.Canvas.Layout.External (Efl.Canvas.Layout_Internal, Efl.Container,
+                                  Efl.Canvas.Object)
 {
    [[Class representing an external part in Edje layouts.
 
@@ -13,6 +14,9 @@ class Efl.Canvas.Layout.External (Efl.Canvas.Layout_Internal, Efl.Canvas.Object)
        dynamic_cast<efl::Text>(layout.part("title")).text_set("hello");
      Or in pseudo-C:
        efl_text_set(efl_part(layout, "title"), "hello");
+
+     The real widget represented by this part can be retrieved by calling
+     @Efl.Container.content.get.
 
      @since 1.20
    ]]
@@ -84,5 +88,8 @@ class Efl.Canvas.Layout.External (Efl.Canvas.Layout_Internal, Efl.Canvas.Object)
               the parameter is not a choice parameter.]]
       }
       */
+   }
+   implements {
+      Efl.Container.content { get; }
    }
 }
