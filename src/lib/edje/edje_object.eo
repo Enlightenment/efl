@@ -58,49 +58,48 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
           }
       }
       @property animation {
-         set {
-            [[Sets the object's animation state.
+         [[Whether this object is animating or not.
 
-              This function starts or stops an Edje object's animation. The
-              information if it's stopped can be retrieved by
-              edje_object_animation_get().
+           This property indicates whether animations are stopped or not.
+           Animations here refer to transitions between states.
 
-              See also @.animation.get()]]
-         }
+           If animations are disabled, transitions between states (as
+           defined in EDC) are then instantaneous. This is conceptually similar
+           to setting the @.transition_duration_factor to an infinitely high
+           value.
+         ]]
          get {
-            [[Gets the Edje object's animation state.
-
-              This function returns if the animation is stopped or not. The
-              animation state is set by edje_object_animation_set().
-
-              See also @.animation.set().]]
+            [[Get the current state of animation, $true by default.]]
+         }
+         set {
+            [[Start or stop animating this object.]]
          }
          values {
-            on: bool; [[The animation state. $true to starts or
-                        $false to stops.]]
+            on: bool; [[The animation state, $true by default.]]
          }
       }
       @property play {
-         set {
-            [[Sets the Edje object to playing or paused states.
+         [[Whether this object is playing or not.
 
-              This function sets the Edje object  obj to playing or paused
-              states, depending on the parameter  play. This has no effect if
-              the object was already at that state.
+           This property indicates whether the object is running or not. If
+           stopped (or paused), all transitions are disabled and programs
+           stop running, until resumed.
 
-              See also @.play.get().]]
-         }
+           If play is disabled, the object will remain the same, and its parts
+           will not change state. Note that play can be disabled during a
+           transition between states, effectively freezing the object in
+           flight. When paused, no events will be processed or sent.
+
+           Setting to $true resumes playing from the current state.
+         ]]
          get {
-            [[Gets the Edje object's state.
-
-              This function tells if an Edje object is playing or not. This state
-              is set by edje_object_play_set().
-
-              See also @.play.set().]]
+            [[Get the current state of play, $true by default.]]
+         }
+         set {
+            [[Start or stop playing programs in this object.]]
          }
          values {
-            play: bool; [[Object state ($true to playing,
-                          $false to paused).]]
+            play: bool; [[The play state, $true by default.]]
          }
       }
       @property perspective {
