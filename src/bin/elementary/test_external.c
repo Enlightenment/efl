@@ -69,19 +69,17 @@ static Eina_Bool
 _timer_cb(void *data)
 {
    Evas_Object *edje = data;
-   Evas_Object *bt1, *bt2, *bt3, *pb1, *pb2, *pb3, *pb5;
+   Evas_Object *bt1, *bt2, *bt3, *pb1, *pb2, *pb5;
    Edje_External_Param param;
    double progress;
    Eina_Value v;
 
    pb1 = edje_object_part_external_object_get(edje, "ext_pbar1");
    pb2 = edje_object_part_external_object_get(edje, "ext_pbar2");
-   pb3 = edje_object_part_external_object_get(edje, "ext_pbar3");
    progress = elm_progressbar_value_get(pb1) + 0.0123;
 
    elm_progressbar_value_set(pb1, progress);
    elm_progressbar_value_set(pb2, progress);
-   elm_progressbar_value_set(pb3, progress);
 
    /* Test external parameter API */
    param.name = "value";
@@ -99,6 +97,9 @@ _timer_cb(void *data)
    eina_value_set(&v, progress);
    efl_canvas_layout_external_param_set(efl_part(edje, "ext_pbar4"), "value", &v);
    eina_value_flush(&v);
+
+   /* Test EO API for direct function calls */
+   efl_ui_progress_value_set(efl_part(edje, "ext_pbar3"), progress);
 
    if (progress < 1.0)
      return ECORE_CALLBACK_RENEW;
@@ -171,6 +172,9 @@ _bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    eina_value_set(&v, 0.0);
    efl_canvas_layout_external_param_set(efl_part(edje, "ext_pbar4"), "value", &v);
    eina_value_flush(&v);
+
+   /* Test EO API for direct function calls */
+   efl_ui_progress_value_set(efl_part(edje, "ext_pbar3"), 0.0);
 
    ecore_timer_add(0.1, _timer_cb, edje);
 }

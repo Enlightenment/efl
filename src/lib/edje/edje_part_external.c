@@ -3,8 +3,17 @@
 
 #define MY_CLASS EFL_CANVAS_LAYOUT_EXTERNAL_CLASS
 
-PROXY_IMPLEMENTATION(external, EXTERNAL)
+static void _external_compose(Eo *obj, Edje *ed, const char *part);
+
+PROXY_IMPLEMENTATION(external, EXTERNAL, EINA_TRUE, _external_compose(proxy, ed, rp->part->name))
 #undef PROXY_IMPLEMENTATION
+
+static void
+_external_compose(Eo *obj, Edje *ed, const char *part)
+{
+   Eo *ext_obj = _edje_object_part_external_object_get(ed, part);
+   efl_composite_attach(obj, ext_obj);
+}
 
 EOLIAN static Eina_Bool
 _efl_canvas_layout_external_external_param_set(Eo *obj, void *_pd EINA_UNUSED,

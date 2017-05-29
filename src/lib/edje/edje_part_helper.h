@@ -25,6 +25,10 @@ struct _Part_Item_Iterator
 #define RETURN_VOID do { PROXY_UNREF(obj, pd); return; } while(0)
 #define PROXY_CALL(a) ({ PROXY_REF(obj, pd); a; })
 
+#ifndef PROXY_ADD_EXTRA_OP
+# define PROXY_ADD_EXTRA_OP
+#endif
+
 void _edje_real_part_set(Eo *obj, void *ed, void *rp, const char *part);
 
 /* ugly macros to avoid code duplication */
@@ -44,7 +48,7 @@ _ ## type ## _shutdown(void); \
 #define PROXY_DATA_GET(obj, pd) \
    Efl_Canvas_Layout_Internal_Data *pd = efl_data_scope_get(obj, EFL_CANVAS_LAYOUT_INTERNAL_CLASS)
 
-#define PROXY_IMPLEMENTATION(type, TYPE) \
+#define PROXY_IMPLEMENTATION(type, TYPE, no_del_cb, ...) \
 static Eo * _ ## type ## _proxy = NULL; \
 \
 static void \
@@ -87,7 +91,8 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
           } \
         proxy = efl_add(MY_CLASS, ed->obj, \
                         _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
-        efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
+        __VA_ARGS__; \
+        if (!no_del_cb) efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
         return proxy; \
      } \
    \
@@ -102,7 +107,8 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
    proxy = _ ## type ## _proxy; \
    _ ## type ## _proxy = NULL; \
    _edje_real_part_set(proxy, ed, rp, rp->part->name); \
-   efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
+   __VA_ARGS__; \
+   if (!no_del_cb) efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
    return proxy; \
 }
 

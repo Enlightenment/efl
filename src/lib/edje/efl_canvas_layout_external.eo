@@ -1,8 +1,18 @@
 import edje_types;
 
-class Efl.Canvas.Layout.External (Efl.Canvas.Layout_Internal)
+class Efl.Canvas.Layout.External (Efl.Canvas.Layout_Internal, Efl.Canvas.Object)
 {
    [[Class representing an external part in Edje layouts.
+
+     An object of this type is an Efl.Part object, which means its lifecycle
+     is limited to one and only one function call. This being said, since
+     this special part represents exactly one standard @Efl.Canvas.Object all
+     the functions of that object can be called on this proxy object.
+
+     Thus, it is possible to do the following, in pseudo-C++:
+       dynamic_cast<efl::Text>(layout.part("title")).text_set("hello");
+     Or in pseudo-C:
+       efl_text_set(efl_part(layout, "title"), "hello");
 
      @since 1.20
    ]]
