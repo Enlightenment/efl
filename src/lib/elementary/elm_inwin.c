@@ -152,9 +152,6 @@ EOLIAN static void
 _elm_inwin_efl_gfx_visible_set(Eo *obj, Elm_Inwin_Data *pd, Eina_Bool v)
 {
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), v);
-   Elm_Win *win;
-
-   win = elm_win_get(obj);
 
    if (v && !pd->registered)
      {
