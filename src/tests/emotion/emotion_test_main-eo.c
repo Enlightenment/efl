@@ -306,7 +306,7 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
    pos = emotion_object_position_get(obj);
    len = emotion_object_play_length_get(obj);
    scale = (len > 0.0) ? pos / len : 0.0;
-   edje_obj_part_drag_value_set(edje, "video_progress", scale, 0.0);
+   efl_ui_drag_value_set(efl_part(edje, "video_progress"), scale, 0.0);
 
    lh = len / 3600;
    lm = len / 60 - (lh * 60);
@@ -461,7 +461,7 @@ video_obj_signal_jump_cb(void *data, Evas_Object *o, const char *emission EINA_U
    double len;
    double x, y;
 
-   edje_obj_part_drag_value_get(o, source, &x, &y);
+   efl_ui_drag_value_get(efl_part(o, source), &x, &y);
    len = emotion_object_play_length_get(ov);
    emotion_object_position_set(ov, x * len);
 }
@@ -474,7 +474,7 @@ video_obj_signal_alpha_cb(void *data, Evas_Object *o, const char *emission EINA_
    double x, y;
    char buf[256];
 
-   edje_obj_part_drag_value_get(o, source, &x, &y);
+   efl_ui_drag_value_get(efl_part(o, source), &x, &y);
    alpha = 255 * y;
    efl_gfx_color_set(ov, alpha, alpha, alpha, alpha);
    snprintf(buf, sizeof(buf), "alpha %.0f", alpha);
@@ -488,7 +488,7 @@ video_obj_signal_vol_cb(void *data, Evas_Object *o, const char *emission EINA_UN
    double vol;
    char buf[256];
 
-   edje_obj_part_drag_value_get(o, source, NULL, &vol);
+   efl_ui_drag_value_get(efl_part(o, source), NULL, &vol);
    emotion_object_audio_volume_set(ov, vol);
    snprintf(buf, sizeof(buf), "vol %.2f", vol);
    edje_obj_part_text_set(o, "video_volume_txt", buf);
@@ -641,9 +641,9 @@ init_video_object(const char *module_filename, const char *filename)
    edje_obj_signal_callback_add(oe, "frame_resize", "start", video_obj_signal_frame_resize_start_cb, oe);
    edje_obj_signal_callback_add(oe, "frame_resize", "stop", video_obj_signal_frame_resize_stop_cb, oe);
    edje_obj_signal_callback_add(oe, "mouse, move", "*", video_obj_signal_frame_move_cb, oe);
-   edje_obj_part_drag_value_set(oe, "video_alpha", 0.0, 1.0);
+   efl_ui_drag_value_set(efl_part(oe, "video_alpha"), 0.0, 1.0);
    edje_obj_part_text_set(oe, "video_alpha_txt", "alpha 255");
-   edje_obj_part_drag_value_set(oe, "video_volume", 0.0, 0.5);
+   efl_ui_drag_value_set(efl_part(oe, "video_volume"), 0.0, 0.5);
    edje_obj_part_text_set(oe, "video_volume_txt", "vol 0.50");
    edje_obj_signal_emit(oe, "video_state", "play");
    efl_gfx_visible_set(oe, EINA_TRUE);

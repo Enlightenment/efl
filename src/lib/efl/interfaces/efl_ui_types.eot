@@ -1,0 +1,7 @@
+enum Efl.Ui.Drag.Dir {
+   [[Permitted directions for dragging objects.]]
+   none = 0,  [[Not draggable in any direction.]]
+   x = 1,     [[Draggable horizontally.]]
+   y = 2,     [[Draggable vertically.]]
+   xy = 3     [[Draggable in both directions.]]
+}

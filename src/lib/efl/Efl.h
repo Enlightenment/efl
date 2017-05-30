@@ -65,6 +65,7 @@ typedef struct tm Efl_Time;
 
 /* Data types */
 #include "interfaces/efl_gfx_types.eot.h"
+#include "interfaces/efl_ui_types.eot.h"
 typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 /* Interfaces */
@@ -81,6 +82,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_properties.eo.h"
 #include "interfaces/efl_orientation.eo.h"
 #include "interfaces/efl_flipable.eo.h"
+#include "interfaces/efl_ui_drag.eo.h"
 #include "interfaces/efl_ui_spin.eo.h"
 #include "interfaces/efl_ui_progress.eo.h"
 #include "interfaces/efl_ui_item.eo.h"
@@ -152,6 +154,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "interfaces/efl_gfx_types.eot.h"
+#include "interfaces/efl_ui_types.eot.h"
 #include "interfaces/efl_input_types.eot.h"
 #include "interfaces/efl_gfx_fill.eo.legacy.h"
 #include "interfaces/efl_gfx.eo.legacy.h"

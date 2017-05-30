@@ -4003,8 +4003,8 @@ _edje_object_part_state_get(Edje *ed, const char *part, double *val_ret)
    return ret;
 }
 
-EOLIAN Edje_Drag_Dir
-_edje_object_part_drag_dir_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+Edje_Drag_Dir
+_edje_object_part_drag_dir_get(Edje *ed, const char *part)
 {
    Edje_Drag_Dir ret;
    Edje_Real_Part *rp;
@@ -4026,8 +4026,8 @@ _edje_object_part_drag_dir_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
    return ret;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_drag_value_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
+Eina_Bool
+_edje_object_part_drag_value_set(Edje *ed, const char *part, double dx, double dy)
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
@@ -4079,8 +4079,8 @@ _edje_object_part_drag_value_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part
 }
 
 /* FIXME: Should this be x and y instead of dx/dy? */
-EOLIAN Eina_Bool
-_edje_object_part_drag_value_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *dx, double *dy)
+Eina_Bool
+_edje_object_part_drag_value_get(Edje *ed, const char *part, double *dx, double *dy)
 {
    Edje_Real_Part *rp;
    double ddx, ddy;
@@ -4112,8 +4112,8 @@ _edje_object_part_drag_value_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_drag_size_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dw, double dh)
+Eina_Bool
+_edje_object_part_drag_size_set(Edje *ed, const char *part, double dw, double dh)
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
@@ -4163,8 +4163,8 @@ _edje_object_part_drag_size_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_drag_size_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *dw, double *dh)
+Eina_Bool
+_edje_object_part_drag_size_get(Edje *ed, const char *part, double *dw, double *dh)
 {
    Edje_Real_Part *rp;
 
@@ -4191,8 +4191,8 @@ _edje_object_part_drag_size_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_drag_step_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
+Eina_Bool
+_edje_object_part_drag_step_set(Edje *ed, const char *part, double dx, double dy)
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
@@ -4235,8 +4235,8 @@ _edje_object_part_drag_step_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_drag_step_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *dx, double *dy)
+Eina_Bool
+_edje_object_part_drag_step_get(Edje *ed, const char *part, double *dx, double *dy)
 {
    Edje_Real_Part *rp;
 
@@ -4263,8 +4263,8 @@ _edje_object_part_drag_step_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_drag_page_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
+Eina_Bool
+_edje_object_part_drag_page_set(Edje *ed, const char *part, double dx, double dy)
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
@@ -4307,8 +4307,8 @@ _edje_object_part_drag_page_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_drag_page_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double *dx, double *dy)
+Eina_Bool
+_edje_object_part_drag_page_get(Edje *ed, const char *part, double *dx, double *dy)
 {
    Edje_Real_Part *rp;
 
@@ -4335,8 +4335,8 @@ _edje_object_part_drag_page_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_drag_step(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
+Eina_Bool
+_edje_object_part_drag_step(Edje *ed, const char *part, double dx, double dy)
 {
    Edje_Real_Part *rp;
    FLOAT_T px, py;
@@ -4387,8 +4387,8 @@ _edje_object_part_drag_step(Eo *obj EINA_UNUSED, Edje *ed, const char *part, dou
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_drag_page(Eo *obj EINA_UNUSED, Edje *ed, const char *part, double dx, double dy)
+Eina_Bool
+_edje_object_part_drag_page(Edje *ed, const char *part, double dx, double dy)
 {
    Edje_Real_Part *rp;
    FLOAT_T px, py;

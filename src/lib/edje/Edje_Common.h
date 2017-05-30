@@ -1449,29 +1449,6 @@ typedef enum _Edje_Aspect_Control
  */
 
 /**
- * @defgroup Edje_Part_Drag Edje Drag
- * @ingroup Edje_Object_Part
- *
- * @brief Functions that deal with dragable parts.
- *
- * To create a movable part it must be declared as dragable
- * in EDC file. To do so, one must define a "dragable" block inside
- * the "part" block.
- *
- * These functions are used to set dragging properties to a
- * part or get dragging information about it.
- *
- * @see @ref tutorial_edje_drag
- *
- *
- * @{
- */
-
-/**
- * @}
- */
-
-/**
  * @defgroup Edje_Part_Box Edje Box Part
  * @ingroup Edje_Object_Part
  *

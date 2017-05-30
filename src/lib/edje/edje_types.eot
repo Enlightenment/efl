@@ -9,14 +9,6 @@ enum Edje.Cursor {
    user_extra       [[User extra cursor state]]
 }
 
-enum Edje.Drag_Dir {
-   [[Dragable properties values]]
-   none = 0,  [[Not dragable value]]
-   x = 1,     [[X dragable value]]
-   y = 2,     [[Y dragable value]]
-   xy = 3     [[X and Y dragable value]]
-}
-
 enum Edje.Text.Autocapital_Type {
    [[All Text auto capital mode type values]]
    none,        [[None mode value]]

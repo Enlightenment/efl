@@ -1,5 +1,5 @@
 /* FIXME: Rename to Efl.Canvas.Layout.Part */
-class Efl.Canvas.Layout_Internal (Efl.Object, Efl.Gfx)
+class Efl.Canvas.Layout_Internal (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
 {
    [[Common class for part proxy objects for $Efl.Canvas.Layout.
 
@@ -28,5 +28,15 @@ class Efl.Canvas.Layout_Internal (Efl.Object, Efl.Gfx)
    implements {
       Efl.Object.finalize;
       Efl.Gfx.geometry { get; }
+      Efl.Ui.Drag.drag_value { set; get; }
+      Efl.Ui.Drag.drag_size { set; get; }
+      Efl.Ui.Drag.drag_dir { get; }
+      Efl.Ui.Drag.drag_step { set; get; }
+      Efl.Ui.Drag.drag_step_move;
+      Efl.Ui.Drag.drag_page { set; get; }
+      Efl.Ui.Drag.drag_page_move;
+   }
+   events {
+      /* FIXME: Are there really no events? */
    }
 }

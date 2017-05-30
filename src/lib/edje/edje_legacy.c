@@ -132,3 +132,70 @@ edje_object_part_external_content_get(const Edje_Object *obj, const char *part, 
    Edje *ed = _edje_fetch(obj);
    return _edje_object_part_external_content_get(ed, part, content);
 }
+
+/* Legacy part drag APIs */
+EAPI Edje_Drag_Dir
+edje_object_part_drag_dir_get(const Evas_Object *obj, const char *part)
+{
+   return efl_ui_drag_dir_get(efl_part(obj, part));
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   return efl_ui_drag_value_set(efl_part(obj, part), dx, dy);
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_value_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
+{
+   return efl_ui_drag_value_get(efl_part(obj, part), dx, dy);
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, double dh)
+{
+   return efl_ui_drag_size_set(efl_part(obj, part), dw, dh);
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_size_get(const Evas_Object *obj, const char *part, double *dw, double *dh)
+{
+   return efl_ui_drag_size_get(efl_part(obj, part), dw, dh);
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   return efl_ui_drag_step_set(efl_part(obj, part), dx, dy);
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_step_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
+{
+   return efl_ui_drag_step_get(efl_part(obj, part), dx, dy);
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   return efl_ui_drag_page_set(efl_part(obj, part), dx, dy);
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_page_get(const Evas_Object *obj, const char *part, double *dx, double *dy)
+{
+   return efl_ui_drag_page_get(efl_part(obj, part), dx, dy);
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   return efl_ui_drag_step_move(efl_part(obj, part), dx, dy);
+}
+
+EAPI Eina_Bool
+edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   return efl_ui_drag_page_move(efl_part(obj, part), dx, dy);
+}

@@ -44,6 +44,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_vpath_file.eo \
       lib/efl/interfaces/efl_vpath_core.eo \
       lib/efl/interfaces/efl_vpath_file_core.eo \
+      lib/efl/interfaces/efl_ui_drag.eo \
       lib/efl/interfaces/efl_ui_spin.eo \
       lib/efl/interfaces/efl_ui_progress.eo \
       lib/efl/interfaces/efl_ui_view.eo \
@@ -68,6 +69,7 @@ efl_eolian_files = \
 
 efl_eolian_type_files = \
 	lib/efl/interfaces/efl_gfx_types.eot \
+	lib/efl/interfaces/efl_ui_types.eot \
 	lib/efl/interfaces/efl_input_types.eot \
 	lib/efl/interfaces/efl_types.eot \
 	lib/efl/interfaces/efl_text_types.eot \

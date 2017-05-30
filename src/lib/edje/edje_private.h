@@ -3095,6 +3095,19 @@ void _edje_real_part_ignore_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_F
 Evas_Event_Flags _edje_real_part_mask_flags_get(Edje *ed, Edje_Real_Part *rp);
 void _edje_real_part_mask_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags mask_flags);
 
+/* part drag apis */
+Edje_Drag_Dir _edje_object_part_drag_dir_get(Edje *ed, const char *part);
+Eina_Bool _edje_object_part_drag_value_set(Edje *ed, const char *part, double dx, double dy);
+Eina_Bool _edje_object_part_drag_value_get(Edje *ed, const char *part, double *dx, double *dy);
+Eina_Bool _edje_object_part_drag_size_set(Edje *ed, const char *part, double dw, double dh);
+Eina_Bool _edje_object_part_drag_size_get(Edje *ed, const char *part, double *dw, double *dh);
+Eina_Bool _edje_object_part_drag_step_set(Edje *ed, const char *part, double dx, double dy);
+Eina_Bool _edje_object_part_drag_step_get(Edje *ed, const char *part, double *dx, double *dy);
+Eina_Bool _edje_object_part_drag_page_set(Edje *ed, const char *part, double dx, double dy);
+Eina_Bool _edje_object_part_drag_page_get(Edje *ed, const char *part, double *dx, double *dy);
+Eina_Bool _edje_object_part_drag_step(Edje *ed, const char *part, double dx, double dy);
+Eina_Bool _edje_object_part_drag_page(Edje *ed, const char *part, double dx, double dy);
+
 /* part proxy */
 Eo *_edje_other_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
 

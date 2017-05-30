@@ -321,12 +321,12 @@ _drag_cb(void *data,
    if (sd->button_layout)
      {
         if (!strncmp(style, "vertical", 8))
-          edje_obj_part_drag_value_get((Eo *)wd->resize_obj, "elm.dragable.slider", NULL, &pos);
+          efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable.slider"), NULL, &pos);
         else
-          edje_obj_part_drag_value_get((Eo *)wd->resize_obj, "elm.dragable.slider", &pos, NULL);
+          efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable.slider"), &pos, NULL);
      }
    else
-     edje_obj_part_drag_value_get((Eo *)wd->resize_obj, "elm.dragable.slider", &pos, NULL);
+     efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable.slider"), &pos, NULL);
 
    if (sd->drag_prev_pos != 0)
      sd->drag_val_step = pow((pos - sd->drag_prev_pos), 2);

@@ -48,6 +48,7 @@
 #include "interfaces/efl_animator.eo.c"
 #include "interfaces/efl_orientation.eo.c"
 #include "interfaces/efl_flipable.eo.c"
+#include "interfaces/efl_ui_drag.eo.c"
 #include "interfaces/efl_ui_spin.eo.c"
 #include "interfaces/efl_ui_progress.eo.c"
 #include "interfaces/efl_ui_menu.eo.c"
