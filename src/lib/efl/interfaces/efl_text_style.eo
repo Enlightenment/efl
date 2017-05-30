@@ -253,5 +253,17 @@ interface Efl.Text.Style {
             a: ubyte;
          }
       }
+
+      @property gfx_filter
+      {
+         [[Program that applies a special filter
+
+           See @Efl.Gfx.Filter.
+         ]]
+         values
+         {
+            code: string;
+         }
+      }
    }
 }

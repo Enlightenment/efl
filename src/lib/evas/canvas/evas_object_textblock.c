@@ -608,6 +608,7 @@ struct _Evas_Object_Textblock
          Eina_Stringshare               *font_source;
          Eina_Stringshare               *font_fallbacks;
          Eina_Stringshare               *font_lang;
+         Eina_Stringshare               *gfx_filter_name;
          unsigned int                    font_weight;
          unsigned int                    font_slant;
          unsigned int                    font_width;
@@ -1345,7 +1346,7 @@ static const char *replacement_charstr = NULL;
 static const char *underline_dash_widthstr = NULL;
 static const char *underline_dash_gapstr = NULL;
 static const char *underline_heightstr = NULL;
-static const char *gfx_filter = NULL;
+static const char *gfx_filterstr = NULL;
 
 /**
  * @page evas_textblock_style_page Evas Textblock Style Options
@@ -1451,7 +1452,7 @@ _format_command_init(void)
         underline_dash_widthstr = eina_stringshare_add("underline_dash_width");
         underline_dash_gapstr = eina_stringshare_add("underline_dash_gap");
         underline_heightstr = eina_stringshare_add("underline_height");
-        gfx_filter = eina_stringshare_add("gfx_filter"); // FIXME: bg, fg filters
+        gfx_filterstr = eina_stringshare_add("gfx_filter"); // FIXME: bg, fg filters
      }
    format_refcount++;
 }
@@ -1506,7 +1507,7 @@ _format_command_shutdown(void)
    eina_stringshare_del(underline_dash_widthstr);
    eina_stringshare_del(underline_dash_gapstr);
    eina_stringshare_del(underline_heightstr);
-   eina_stringshare_del(gfx_filter);
+   eina_stringshare_del(gfx_filterstr);
 }
 
 /**
@@ -2596,7 +2597,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         fmt->underline_height = atof(param);
         if (fmt->underline_height <= 0.0) fmt->underline_height = 1.0;
      }
-   else if (cmd == gfx_filter)
+   else if (cmd == gfx_filterstr)
      {
         /**
          * @page evas_textblock_style_page Evas Textblock Style Options
@@ -3364,6 +3365,15 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              fmt->font.fdesc->lang = _FMT_INFO(font_lang);
              fmt->font.font = evas_font_load(evas_obj->layer->evas->evas, fmt->font.fdesc,
                    fmt->font.source, (int)(((double) _FMT_INFO(size)) * evas_obj->cur->scale));
+          }
+        if (_FMT_INFO(gfx_filter_name))
+          {
+             if (!fmt->gfx_filter)
+               {
+                  fmt->gfx_filter = calloc(1, sizeof(Efl_Canvas_Text_Filter));
+                  eina_stringshare_replace(&fmt->gfx_filter->name,
+                        _FMT_INFO(gfx_filter_name));
+               }
           }
      }
 
@@ -15266,6 +15276,35 @@ static void
 _efl_canvas_text_efl_text_style_glow2_color_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, unsigned char *r EINA_UNUSED, unsigned char *g EINA_UNUSED, unsigned char *b EINA_UNUSED, unsigned char *a EINA_UNUSED)
 {
    _FMT_COLOR_RET(glow2);
+}
+
+static void
+_efl_canvas_text_efl_text_style_gfx_filter_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
+      const char *gfx_filter_name)
+{
+   Eina_Stringshare *ngfx_filter_name;
+
+   if (_FMT_INFO(gfx_filter_name) != gfx_filter_name)
+     {
+        ngfx_filter_name = eina_stringshare_add(gfx_filter_name);
+        if (_FMT_INFO(gfx_filter_name) == ngfx_filter_name)
+          {
+             /* Already stringshared here, unref */
+             eina_stringshare_del(ngfx_filter_name);
+          }
+        else
+          {
+             // Set immediately, load style_gfx_filter_name later
+             _FMT_INFO(gfx_filter_name) = ngfx_filter_name;
+             _canvas_text_format_changed(obj, o);
+          }
+     }
+}
+
+static const char *
+_efl_canvas_text_efl_text_style_gfx_filter_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(gfx_filter->name);
 }
 
 static void

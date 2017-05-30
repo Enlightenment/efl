@@ -290,6 +290,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
       Efl.Text.Style.shadow_color { get; set; }
       Efl.Text.Style.glow_color { get; set; }
       Efl.Text.Style.glow2_color { get; set; }
+      Efl.Text.Style.gfx_filter { get; set; }
       Efl.Text.Format.format_ellipsis { get; set; }
       Efl.Text.Format.format_wrap { get; set; }
       Efl.Text.Format.format_multiline { get; set; }

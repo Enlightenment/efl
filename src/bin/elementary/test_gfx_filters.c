@@ -517,7 +517,6 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
             "blur { 6, ox = 1, oy = 1, src = a, color = '#004' }"
             "blur { 3, ox = 1, oy = 1, color = 'black' }"
             "blend { color = 'lime' }";
-      Eina_Strbuf *buf;
 
       o = code = efl_add(EFL_UI_TEXT_EDITABLE_CLASS, win,
                          efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
@@ -526,12 +525,8 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_event_callback_add(o, EFL_UI_TEXT_EVENT_CHANGED_USER, _code_changed, win);
 
       // Insert filter code inside style string: DEFAULT='blah blah <here>'
-      buf = eina_strbuf_new();
-      eina_strbuf_append(buf, efl_canvas_text_style_get(o, NULL));
-      eina_strbuf_insert(buf, " gfx_filter=code", eina_strbuf_length_get(buf) - 1);
       efl_gfx_filter_program_set(o, code_filter, "code");
-      efl_canvas_text_style_set(o, NULL, eina_strbuf_string_get(buf));
-      eina_strbuf_free(buf);
+      efl_text_style_gfx_filter_set(o, "code");
 
       // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
       // Efl.Ui.Text doesn't seem to trigger the proper events during edit
