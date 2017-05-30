@@ -987,6 +987,7 @@ _format_unref_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
         if (fmt->gfx_filter->dc)
           ENFN->context_free(ENC, fmt->gfx_filter->dc);
         free(fmt->gfx_filter);
+        fmt->gfx_filter = NULL;
      }
    if ((obj->layer) && (obj->layer->evas))
      evas_font_free(obj->layer->evas->evas, fmt->font.font);
@@ -1033,7 +1034,10 @@ _item_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Line *ln, Evas_Objec
                }
              EINA_INLIST_REMOVE(o->gfx_filter.text_items, ti->gfx_filter);
              if (!ti->gfx_filter->ctx)
-               free(ti->gfx_filter);
+               {
+                  free(ti->gfx_filter);
+                  ti->gfx_filter = NULL;
+               }
              else
                ti->gfx_filter->ti = NULL;
           }
