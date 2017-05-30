@@ -639,9 +639,12 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
           }
      }
 
-   device->state = calloc(1, sizeof(Ecore_Drm2_Atomic_State));
-   if (device->state)
-     _drm2_atomic_state_fill(device->state, device->fd);
+   if (_ecore_drm2_use_atomic)
+     {
+        device->state = calloc(1, sizeof(Ecore_Drm2_Atomic_State));
+        if (device->state)
+          _drm2_atomic_state_fill(device->state, device->fd);
+     }
 
    device->active_hdlr =
      ecore_event_handler_add(ELPUT_EVENT_SESSION_ACTIVE,
@@ -674,7 +677,8 @@ ecore_drm2_device_free(Ecore_Drm2_Device *device)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
 
-   _drm2_atomic_state_free(device->state);
+   if (_ecore_drm2_use_atomic)
+     _drm2_atomic_state_free(device->state);
 
    ecore_event_handler_del(device->active_hdlr);
    ecore_event_handler_del(device->device_change_hdlr);
