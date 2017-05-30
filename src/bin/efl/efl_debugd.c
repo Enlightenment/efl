@@ -499,20 +499,20 @@ _listening_unix_socket_create()
                   sizeof(curstate)) < 0)
      goto end;
 
-   snprintf(buf, sizeof(buf), "%s/%s", socket_path, LOCAL_SERVER_PATH);
+   snprintf(buf, sizeof(buf) - 1, "%s/%s", socket_path, LOCAL_SERVER_PATH);
    if (mkdir(buf, S_IRWXU) < 0 && errno != EEXIST)
      {
         perror("mkdir SERVER_PATH");
         goto end;
      }
-   snprintf(buf, sizeof(buf), "%s/%s/%s", socket_path, LOCAL_SERVER_PATH, LOCAL_SERVER_NAME);
+   snprintf(buf, sizeof(buf) - 1, "%s/%s/%s", socket_path, LOCAL_SERVER_PATH, LOCAL_SERVER_NAME);
    if (mkdir(buf, S_IRWXU) < 0 && errno != EEXIST)
      {
         perror("mkdir SERVER_NAME");
         goto end;
      }
    mask = umask(S_IRWXG | S_IRWXO);
-   snprintf(buf, sizeof(buf), "%s/%s/%s/%i", socket_path,
+   snprintf(buf, sizeof(buf) - 1, "%s/%s/%s/%i", socket_path,
          LOCAL_SERVER_PATH, LOCAL_SERVER_NAME, LOCAL_SERVER_PORT);
    // sa that it's a unix socket and where the path is
    socket_unix.sun_family = AF_UNIX;
@@ -553,6 +553,7 @@ _listening_tcp_socket_create()
      goto err;
 
    //Prepare the sockaddr_in structure
+   memset(&server, 0, sizeof(server));
    server.sin_family = AF_INET;
    inet_pton(AF_INET, "127.0.0.1", &server.sin_addr.s_addr);
    server.sin_port = htons(REMOTE_SERVER_PORT);
