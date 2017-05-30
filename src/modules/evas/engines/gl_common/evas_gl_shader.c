@@ -423,7 +423,18 @@ evas_gl_common_shader_glsl_get(unsigned int flags, const char *base)
    unsigned int k;
    char *str;
 
-   //eina_strbuf_append_printf(s, "#version 300 es\n");
+   /* This is an env var to use for debugging purposes only */
+   static const char *evas_gl_shader_glsl_version = NULL;
+   if (!evas_gl_shader_glsl_version)
+     {
+        evas_gl_shader_glsl_version = getenv("EVAS_GL_SHADER_GLSL_VERSION");
+        if (!evas_gl_shader_glsl_version) evas_gl_shader_glsl_version = "";
+        else WRN("Using GLSL version tag: '%s'", evas_gl_shader_glsl_version);
+     }
+
+   if (*evas_gl_shader_glsl_version)
+     eina_strbuf_append_printf(s, "#version %s\n", evas_gl_shader_glsl_version);
+
    for (k = 0; k < SHADER_FLAG_COUNT; k++)
      {
         if (flags & (1 << k))
