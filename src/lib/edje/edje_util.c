@@ -3691,7 +3691,8 @@ _edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
      return _edje_swallow_internal_proxy_get(obj, ed, rp);
    else if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
      return _edje_external_internal_proxy_get(obj, ed, rp);
-   else return NULL; /* FIXME/TODO: text & others (color, ...) */
+   else
+     return _edje_other_internal_proxy_get(obj, ed, rp);
 }
 
 EOLIAN void

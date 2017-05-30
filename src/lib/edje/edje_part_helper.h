@@ -89,7 +89,7 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
              ERR("Found invalid handle for efl_part. Reset."); \
              _ ## type ## _proxy = NULL; \
           } \
-        proxy = efl_add(MY_CLASS, ed->obj, \
+        proxy = efl_add(EFL_CANVAS_LAYOUT_##TYPE##_CLASS, ed->obj, \
                         _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
         __VA_ARGS__; \
         if (!no_del_cb) efl_del_intercept_set(proxy, _ ## type ## _del_cb); \

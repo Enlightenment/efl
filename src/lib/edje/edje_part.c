@@ -2,10 +2,14 @@
 #include "edje_part_helper.h"
 #define MY_CLASS EFL_CANVAS_LAYOUT_INTERNAL_CLASS
 
+PROXY_IMPLEMENTATION(other, INTERNAL, EINA_FALSE)
+#undef PROXY_IMPLEMENTATION
+
 PROXY_INIT(box)
 PROXY_INIT(table)
 PROXY_INIT(swallow)
 PROXY_INIT(external)
+PROXY_INIT(other)
 
 void
 _edje_internal_proxy_shutdown(void)
@@ -14,6 +18,7 @@ _edje_internal_proxy_shutdown(void)
    _table_shutdown();
    _swallow_shutdown();
    _external_shutdown();
+   _other_shutdown();
 }
 
 void

@@ -3095,6 +3095,9 @@ void _edje_real_part_ignore_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_F
 Evas_Event_Flags _edje_real_part_mask_flags_get(Edje *ed, Edje_Real_Part *rp);
 void _edje_real_part_mask_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags mask_flags);
 
+/* part proxy */
+Eo *_edje_other_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+
 /* part containers: box */
 Eo *_edje_box_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
 Eina_Bool _edje_part_box_append(Edje *ed, const char *part, Evas_Object *child);
