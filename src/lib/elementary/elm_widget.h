@@ -432,6 +432,19 @@ typedef struct _Elm_Widget_Smart_Data
    Elm_Focus_Move_Policy         focus_move_policy;
    Elm_Focus_Region_Show_Mode    focus_region_show_mode;
 
+   struct {
+     Efl_Ui_Focus_Manager *manager; //manager which is currently regsitered in
+     Eina_Bool logical;
+   } focus;
+   struct {
+      int child_count;
+      Efl_Ui_Focus_Object *parent;
+   } logical;
+   struct {
+      Efl_Ui_Focus_Manager *manager;
+      Efl_Ui_Focus_User *provider;
+   } manager;
+
    Eina_Bool                     drag_x_locked : 1;
    Eina_Bool                     drag_y_locked : 1;
 
@@ -456,18 +469,6 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     on_create : 1; /**< This is true when the widget is on creation(general widget constructor). */
    Eina_Bool                     on_destroy: 1; /**< This is true when the widget is on destruction(general widget destructor). */
    Eina_Bool                     provider_lookup : 1; /**< This is true when efl_provider_find is currently walking the tree */
-   struct {
-     Efl_Ui_Focus_Manager *manager; //manager which is currently regsitered in
-     Eina_Bool logical;
-   } focus;
-   struct {
-      int child_count;
-      Efl_Ui_Focus_Object *parent;
-   } logical;
-   struct {
-      Efl_Ui_Focus_Manager *manager;
-      Efl_Ui_Focus_User *provider;
-   } manager;
 } Elm_Widget_Smart_Data;
 
 /**
