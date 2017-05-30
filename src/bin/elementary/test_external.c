@@ -64,6 +64,12 @@ test_external_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    evas_object_show(win);
 }
 
+static void
+_timer_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Ecore_Timer *t = data;
+   ecore_timer_del(t);
+}
 
 static Eina_Bool
 _timer_cb(void *data)
@@ -72,6 +78,7 @@ _timer_cb(void *data)
    Evas_Object *bt1, *bt2, *bt3, *pb1, *pb2, *pb5;
    Edje_External_Param param;
    double progress;
+   Ecore_Timer *t;
    Eina_Value v;
 
    pb1 = edje_object_part_external_object_get(edje, "ext_pbar1");
@@ -126,6 +133,10 @@ _timer_cb(void *data)
    param.i = EINA_FALSE;
    edje_object_part_external_param_set(edje, "ext_pbar7", &param);
 
+   t = efl_key_data_get(edje, "timer");
+   efl_event_callback_del(edje, EFL_EVENT_DEL, _timer_del, t);
+   efl_key_data_set(edje, "timer", NULL);
+
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -136,6 +147,7 @@ _bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    Evas_Object *bt1, *bt2, *bt3, *pb1, *pb2, *pb3, *pb5;
    Edje_External_Param param;
    Eina_Value v;
+   Ecore_Timer *t;
 
    /* Test direct API calls on embedded objects */
    bt1 = edje_object_part_external_object_get(edje, "ext_button1");
@@ -176,7 +188,9 @@ _bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    /* Test EO API for direct function calls */
    efl_ui_progress_value_set(efl_part(edje, "ext_pbar3"), 0.0);
 
-   ecore_timer_add(0.1, _timer_cb, edje);
+   t = ecore_timer_add(0.1, _timer_cb, edje);
+   efl_key_data_set(edje, "timer", t);
+   efl_event_callback_add(edje, EFL_EVENT_DEL, _timer_del, t);
 }
 
 void
