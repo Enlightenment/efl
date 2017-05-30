@@ -4004,6 +4004,9 @@ _evas_canvas_event_key_cb(void *data, const Efl_Event *event)
         ev->device = _evas_event_legacy_device_get(e->evas, EINA_FALSE);
      }
 
+   ev->modifiers = &e->modifiers;
+   ev->locks = &e->locks;
+
    if (ev->pressed)
      _canvas_event_feed_key_down_internal(e, ev);
    else
