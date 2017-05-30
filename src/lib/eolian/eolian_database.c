@@ -597,7 +597,7 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
 }
 
 void
-database_unit_del(Eolian_Unit *unit)
+database_unit_del(Eolian_Unit *unit EINA_UNUSED)
 {
 }
 
