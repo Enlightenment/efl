@@ -524,7 +524,6 @@ _fb_flip(Ecore_Drm2_Output *output)
      {
         output->next.fb = fb;
         _ecore_drm2_fb_ref(output->next.fb);
-        return 0;
      }
 
    return 0;
