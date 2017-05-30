@@ -1944,7 +1944,7 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_set(Eo *obj, Efl_Ui_Image_Zoomable_Data 
         if ((sd->size.imw < 1) || (sd->size.imh < 1))
           {
              sd->size.nw = 0;
-             sd->size.nw = 0;
+             sd->size.nh = 0;
           }
         else
           {
