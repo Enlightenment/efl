@@ -734,7 +734,7 @@ _message_signal_reply_cb(void *data, Evas_Object *obj EINA_UNUSED,
    fprintf(stderr, "source %s emit %s id %d\n", source, emission, *id);
    fflush(stderr);
    ck_assert_str_eq(source, "edc");
-   ck_assert_ptr_nonnull(emission);
+   ck_assert_ptr_ne(emission, NULL);
 
    if (!strncmp(emission, "int set", 7))
      ck_assert_str_eq(emission, "int set 7 12 42 255");

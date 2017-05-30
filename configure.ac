@@ -380,7 +380,7 @@ AM_CONDITIONAL([EFL_ENABLE_COVERAGE], [test "${want_coverage}" = "yes"])
 # check unit testing library
 
 if test "${want_tests}" = "yes"; then
-   PKG_CHECK_MODULES([CHECK], [check >= 0.9.5])
+   PKG_CHECK_MODULES([CHECK], [check >= 0.9.10])
 fi
 AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "${want_tests}" = "yes"])
 
