@@ -3146,6 +3146,11 @@ Edje_External_Param_Type _edje_object_part_external_param_type_get(Edje *ed, con
 Evas_Object *_edje_object_part_external_object_get(Edje *ed, const char *part);
 Evas_Object *_edje_object_part_external_content_get(Edje *ed, const char *part, const char *content);
 
+/* part text */
+Eo *_edje_text_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
+Eina_Bool   _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text);
+const char *_edje_efl_text_get(Eo *obj, Edje *ed, const char *part);
+
 void _edje_internal_proxy_shutdown(void);
 
 // Svg loader

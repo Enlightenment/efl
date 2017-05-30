@@ -2005,8 +2005,8 @@ _edje_user_define_string(Edje *ed, const char *part, const char *raw_text, Edje_
    eud->u.string.type = type;
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_text_set(Eo *obj, Edje *ed, const char *part, const char *text)
+Eina_Bool
+_edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text)
 {
    Edje_Real_Part *rp;
    Eina_Bool int_ret;
@@ -2026,8 +2026,8 @@ _edje_object_part_text_set(Eo *obj, Edje *ed, const char *part, const char *text
    return int_ret;
 }
 
-EOLIAN const char *
-_edje_object_part_text_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+const char *
+_edje_efl_text_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
 
@@ -3690,6 +3690,10 @@ _edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
      return _edje_swallow_internal_proxy_get(obj, ed, rp);
    else if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
      return _edje_external_internal_proxy_get(obj, ed, rp);
+   else if (rp->part->type == EDJE_PART_TYPE_TEXT)
+      return _edje_text_internal_proxy_get(obj, ed, rp);
+   else if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+      return _edje_text_internal_proxy_get(obj, ed, rp);
    else
      return _edje_other_internal_proxy_get(obj, ed, rp);
 }
@@ -6549,6 +6553,19 @@ EAPI Evas_Object *
 edje_object_part_swallow_get(const Edje_Object *obj, const char *part)
 {
    return efl_content_get(efl_part(obj, part));
+}
+
+EAPI Eina_Bool
+edje_object_part_text_set(const Edje_Object *obj, const char *part, const char *text)
+{
+   efl_text_set(efl_part(obj, part), text);
+   return EINA_TRUE;
+}
+
+EAPI const char *
+edje_object_part_text_get(const Edje_Object *obj, const char *part)
+{
+   return efl_text_get(efl_part(obj, part));
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

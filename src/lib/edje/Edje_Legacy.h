@@ -1354,8 +1354,29 @@ EAPI Eina_Bool edje_object_part_drag_page_get(const Edje_Object *obj, const char
 EAPI Eina_Bool edje_object_part_drag_page(Edje_Object *obj, const char *part, double dx, double dy);
 
 /**
+ * @brief Sets a given text to an Edje object @c TEXT or TEXTBLOCK
+ * parts.
+ *
+ * @param[in] part The part name
+ * @param[in] text The text to set on that part
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_set(const Edje_Object *obj, const char *part, const char *text);
+
+/**
+ * @brief Gets the text currntly set to the given part
+ *
+ * @param[in] part The part name
+ *
+ * @return The text set on the part, @c null otherwise.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const char * edje_object_part_text_get(const Edje_Object *obj, const char *part);
+
+/**
  * @}
  */
-
 #include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"

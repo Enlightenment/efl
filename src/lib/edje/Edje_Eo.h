@@ -7,4 +7,5 @@
 #include "efl_canvas_layout_internal_box.eo.h"
 #include "efl_canvas_layout_internal_table.eo.h"
 #include "efl_canvas_layout_internal_swallow.eo.h"
+#include "efl_canvas_layout_internal_text.eo.h"
 #include "efl_canvas_layout_external.eo.h"

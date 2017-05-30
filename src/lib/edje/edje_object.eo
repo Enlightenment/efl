@@ -780,25 +780,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             data: void_ptr; [[The data associated to the callback function.]]
          }
       }
-      @property part_text {
-         set {
-            [[Sets the text for an object part]]
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         get {
-            [[Returns the text of the object part.
-
-              This function returns the text associated to the object part.
-
-              See also @.part_text.set().]]
-         }
-         keys {
-            part: string; [[The part name]]
-         }
-         values {
-            text: string; [[The text string]]
-         }
-      }
       @property part_text_escaped {
          set {
             [[Sets the text for an object part, but converts HTML escapes to UTF8

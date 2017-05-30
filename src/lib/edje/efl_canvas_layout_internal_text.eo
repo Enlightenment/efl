@@ -1,0 +1,12 @@
+class Efl.Canvas.Layout_Internal.Text (Efl.Canvas.Layout_Internal, Efl.Text)
+{
+   [[Represents a TEXT part of a layout
+
+     Its lifetime is limited to one function call only, unless an extra
+     reference is explicitely held.
+   ]]
+   data: null;
+   implements {
+      Efl.Text.text { set; get; }
+   }
+}

@@ -320,7 +320,7 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
 
    snprintf(buf, sizeof(buf), "%i:%02i:%02i.%02i / %i:%02i:%02i",
             ph, pm, ps, pf, lh, lm, ls);
-   edje_obj_part_text_set(edje, "video_progress_txt", buf);
+   efl_text_set(efl_part(edje, "video_progress_txt"), buf);
 }
 
 static void
@@ -478,7 +478,7 @@ video_obj_signal_alpha_cb(void *data, Evas_Object *o, const char *emission EINA_
    alpha = 255 * y;
    efl_gfx_color_set(ov, alpha, alpha, alpha, alpha);
    snprintf(buf, sizeof(buf), "alpha %.0f", alpha);
-   edje_obj_part_text_set(o, "video_alpha_txt", buf);
+   efl_text_set(efl_part(o, "video_alpha_txt"), buf);
 }
 
 static void
@@ -491,7 +491,7 @@ video_obj_signal_vol_cb(void *data, Evas_Object *o, const char *emission EINA_UN
    efl_ui_drag_value_get(efl_part(o, source), NULL, &vol);
    emotion_object_audio_volume_set(ov, vol);
    snprintf(buf, sizeof(buf), "vol %.2f", vol);
-   edje_obj_part_text_set(o, "video_volume_txt", buf);
+   efl_text_set(efl_part(o, "video_volume_txt"), buf);
 }
 
 static void
@@ -642,9 +642,9 @@ init_video_object(const char *module_filename, const char *filename)
    edje_obj_signal_callback_add(oe, "frame_resize", "stop", video_obj_signal_frame_resize_stop_cb, oe);
    edje_obj_signal_callback_add(oe, "mouse, move", "*", video_obj_signal_frame_move_cb, oe);
    efl_ui_drag_value_set(efl_part(oe, "video_alpha"), 0.0, 1.0);
-   edje_obj_part_text_set(oe, "video_alpha_txt", "alpha 255");
+   efl_text_set(efl_part(oe, "video_alpha_txt"), "alpha 255");
    efl_ui_drag_value_set(efl_part(oe, "video_volume"), 0.0, 0.5);
-   edje_obj_part_text_set(oe, "video_volume_txt", "vol 0.50");
+   efl_text_set(efl_part(oe, "video_volume_txt"), "vol 0.50");
    edje_obj_signal_emit(oe, "video_state", "play");
    efl_gfx_visible_set(oe, EINA_TRUE);
 }
