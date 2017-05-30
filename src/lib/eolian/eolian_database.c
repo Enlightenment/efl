@@ -23,6 +23,7 @@ Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
 Eina_Hash *_decls      = NULL;
 Eina_Hash *_declsf     = NULL;
+Eina_Hash *_units      = NULL;
 
 Eina_Hash *_parsedeos  = NULL;
 Eina_Hash *_parsingeos = NULL;
@@ -61,6 +62,7 @@ database_init()
    _parsedeos  = eina_hash_string_small_new(NULL);
    _parsingeos = eina_hash_string_small_new(NULL);
    _defereos   = eina_hash_string_small_new(NULL);
+   _units      = eina_hash_stringshared_new(EINA_FREE_CB(database_unit_del));
    return ++_database_init_count;
 }
 
@@ -95,6 +97,7 @@ database_shutdown()
         eina_hash_free(_parsedeos ); _parsedeos  = NULL;
         eina_hash_free(_parsingeos); _parsingeos = NULL;
         eina_hash_free(_defereos  ); _defereos   = NULL;
+        eina_hash_free(_units     ); _units      = NULL;
         eina_shutdown();
      }
    return _database_init_count;
@@ -453,7 +456,8 @@ eolian_doc_token_text_get(const Eolian_Doc_Token *tok)
 }
 
 static Eolian_Doc_Ref_Type
-_resolve_event(char *name, const void **data, const void **data2)
+_resolve_event(const Eolian_Unit *src, char *name, const void **data,
+               const void **data2)
 {
    /* never trust the user */
    if (name[0] == ',')
@@ -464,7 +468,7 @@ _resolve_event(char *name, const void **data, const void **data2)
      return EOLIAN_DOC_REF_INVALID;
 
    *evname++ = '\0';
-   const Eolian_Class *cl = eolian_class_get_by_name(name);
+   const Eolian_Class *cl = eolian_class_get_by_name(src, name);
    if (!cl)
      return EOLIAN_DOC_REF_INVALID;
 
@@ -478,8 +482,8 @@ _resolve_event(char *name, const void **data, const void **data2)
 }
 
 EAPI Eolian_Doc_Ref_Type
-eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
-                         const void **data2)
+eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
+                         const void **data, const void **data2)
 {
    if (tok->type != EOLIAN_DOC_TOKEN_REF)
      return EOLIAN_DOC_REF_INVALID;
@@ -494,7 +498,7 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
         char *ename = alloca(elen + 1);
         memcpy(ename, tok->text + 1, elen);
         ename[elen] = '\0';
-        return _resolve_event(ename, data, data2);
+        return _resolve_event(unit, ename, data, data2);
      }
 
    char *name = alloca(nlen + 1);
@@ -535,7 +539,7 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
    *suffix++ = '\0';
 
    /* try a struct field */
-   const Eolian_Typedecl *tpd = eolian_typedecl_struct_get_by_name(name);
+   const Eolian_Typedecl *tpd = eolian_typedecl_struct_get_by_name(unit, name);
    if (tpd)
      {
         const Eolian_Struct_Type_Field *fld = eolian_typedecl_struct_field_get(tpd, suffix);
@@ -548,7 +552,7 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
      }
 
    /* try an enum field */
-   tpd = eolian_typedecl_enum_get_by_name(name);
+   tpd = eolian_typedecl_enum_get_by_name(unit, name);
    if (tpd)
      {
         const Eolian_Enum_Type_Field *fld = eolian_typedecl_enum_field_get(tpd, suffix);
@@ -578,7 +582,7 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
         *suffix++ = '\0';
      }
 
-   const Eolian_Class *cl = eolian_class_get_by_name(name);
+   const Eolian_Class *cl = eolian_class_get_by_name(unit, name);
    if (!cl)
      return EOLIAN_DOC_REF_INVALID;
 
@@ -590,6 +594,11 @@ eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data,
    if (data) *data = cl;
    if (data2) *data2 = fid;
    return EOLIAN_DOC_REF_FUNC;
+}
+
+void
+database_unit_del(Eolian_Unit *unit EINA_UNUSED)
+{
 }
 
 #define EO_SUFFIX ".eo"
@@ -679,12 +688,14 @@ _eolian_file_parse_nodep(const char *filepath)
    return eo_parser_database_fill(eopath, !is_eo);
 }
 
-EAPI Eina_Bool
+static Eolian_Unit unit_tmp;
+
+EAPI const Eolian_Unit *
 eolian_file_parse(const char *filepath)
 {
    const char *dep;
    if (!_eolian_file_parse_nodep(filepath))
-     return EINA_FALSE;
+     return NULL;
    /* parse doc dependencies (deferred eo files) */
    Eina_Iterator *itr = eina_hash_iterator_data_new(_defereos);
    EINA_ITERATOR_FOREACH(itr, dep)
@@ -693,12 +704,12 @@ eolian_file_parse(const char *filepath)
           {
              eina_iterator_free(itr);
              eina_hash_free_buckets(_defereos);
-             return EINA_FALSE;
+             return NULL;
           }
      }
    eina_iterator_free(itr);
    eina_hash_free_buckets(_defereos);
-   return EINA_TRUE;
+   return &unit_tmp;
 }
 
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)

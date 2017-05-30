@@ -1984,7 +1984,8 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
         eo_lexer_syntax_error(ls, ebuf);
      }
    _parse_dep(ls, fname, iname);
-   const Eolian_Class *dep = eolian_class_get_by_name(iname);
+   /* FIXME: pass unit properly */
+   const Eolian_Class *dep = eolian_class_get_by_name(NULL, iname);
    if (!dep)
      {
         char ebuf[PATH_MAX];
@@ -2242,7 +2243,8 @@ _get_impl_class(const Eolian_Class *cl, const char *cln)
         /* we can do a depth first search, it's easier and doesn't matter
          * which part of the inheritance tree we find the class in
          */
-        const Eolian_Class *fcl = _get_impl_class(eolian_class_get_by_name(s), cln);
+        /* FIXME: pass unit properly */
+        const Eolian_Class *fcl = _get_impl_class(eolian_class_get_by_name(NULL, s), cln);
         if (fcl)
           return fcl;
      }

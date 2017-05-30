@@ -15,6 +15,8 @@ local func_type = eolian.function_type
 local obj_scope = eolian.object_scope
 local param_dir = eolian.parameter_dir
 
+local gen_unit
+
 cutil.init_module(function()
     dom = log.Domain("lualian")
     if not dom:is_valid() then
@@ -669,7 +671,7 @@ local gen_class = function(klass)
     local mixins  = {} -- also includes ifaces, they're separated later
     for i = 1, #inherits do
         local v = inherits[i]
-        local tp = eolian.class_get_by_name(v):type_get()
+        local tp = eolian.class_get_by_name(gen_unit, v):type_get()
         if tp == class_type.REGULAR or tp == class_type.ABSTRACT then
             parents[#parents + 1] = v
         elseif tp == class_type.INTERFACE or tp == class_type.MIXIN then
@@ -696,14 +698,16 @@ M.system_directory_scan = function()
 end
 
 M.generate = function(fname, fstream)
-    if not eolian.file_parse(fname) then
+    local unit = eolian.file_parse(fname)
+    if unit == nil then
         error("Failed parsing file: " .. fname)
     end
+    gen_unit = unit
     if not eolian.database_validate() then
         error("Failed validating database.")
     end
     local sfn = fname:match(".*[\\/](.+)$") or fname
-    local klass = eolian.class_get_by_file(sfn)
+    local klass = eolian.class_get_by_file(unit, sfn)
     File(fname, klass, { gen_class(klass) }):generate(fstream or io.stdout)
 end
 

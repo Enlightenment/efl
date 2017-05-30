@@ -21,7 +21,8 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
         eolian_doc_token_init(&tok);
         while (ret && (doc = eolian_documentation_tokenize(doc, &tok)))
           if (eolian_doc_token_type_get(&tok) == EOLIAN_DOC_TOKEN_REF)
-            if (eolian_doc_token_ref_get(&tok, NULL, NULL) == EOLIAN_DOC_REF_INVALID)
+            /* FIXME: pass unit properly */
+            if (eolian_doc_token_ref_get(NULL, &tok, NULL, NULL) == EOLIAN_DOC_REF_INVALID)
               {
                  char *refn = eolian_doc_token_text_get(&tok);
                  fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
@@ -154,7 +155,8 @@ _validate_type(const Eolian_Type *tp)
         return _validate_type(tp->base_type);
       case EOLIAN_TYPE_CLASS:
         {
-           if (!eolian_type_class_get(tp))
+           /* FIXME: pass unit properly */
+           if (!eolian_type_class_get(NULL, tp))
              {
                 char buf[256];
                 snprintf(buf, sizeof(buf), "undefined class %s "
@@ -174,10 +176,11 @@ _validate_expr(const Eolian_Expression *expr,
                const Eolian_Type *tp, Eolian_Expression_Mask msk)
 {
    Eolian_Value val;
+   /* FIXME: pass unit properly */
    if (tp)
-     val = eolian_expression_eval_type(expr, tp);
+     val = eolian_expression_eval_type(NULL, expr, tp);
    else
-     val = eolian_expression_eval(expr, msk);
+     val = eolian_expression_eval(NULL, expr, msk);
    return (val.type != EOLIAN_EXPR_UNKNOWN);
 }
 
@@ -324,7 +327,8 @@ database_validate()
 {
    const Eolian_Class *cl;
 
-   Eina_Iterator *iter = eolian_all_classes_get();
+   /* FIXME: pass unit properly */
+   Eina_Iterator *iter = eolian_all_classes_get(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      if (!_validate_class(cl))
        {

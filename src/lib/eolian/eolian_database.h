@@ -279,6 +279,17 @@ struct _Eolian_Variable
    Eina_Bool is_extern :1;
 };
 
+struct _Eolian_Unit
+{
+   Eina_List     *dependencies;
+   Eina_List     *classes;
+   Eina_List     *globals;
+   Eina_List     *constants;
+   Eina_List     *aliases;
+   Eina_List     *structs;
+   Eina_List     *enums;
+};
+
 int database_init(void);
 int database_shutdown(void);
 
@@ -290,6 +301,8 @@ void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
 
 void database_doc_del(Eolian_Documentation *doc);
 
+void database_unit_del(Eolian_Unit *unit);
+
 /* types */
 
 void database_type_add(Eolian_Typedecl *def);
@@ -299,11 +312,11 @@ void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
 
 void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name);
-void database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf);
+void database_typedecl_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp, Eina_Strbuf *buf);
 
 /* expressions */
 
-Eolian_Value database_expr_eval(const Eolian_Expression *expr, Eolian_Expression_Mask mask);
+Eolian_Value database_expr_eval(const Eolian_Unit *unit, const Eolian_Expression *expr, Eolian_Expression_Mask mask);
 void database_expr_del(Eolian_Expression *expr);
 void database_expr_print(Eolian_Expression *expr);
 

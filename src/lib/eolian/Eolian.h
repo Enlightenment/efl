@@ -171,6 +171,12 @@ typedef struct _Eolian_Declaration Eolian_Declaration;
  */
 typedef struct _Eolian_Documentation Eolian_Documentation;
 
+/* Unit information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Unit Eolian_Unit;
+
 typedef enum
 {
    EOLIAN_UNRESOLVED = 0,
@@ -378,13 +384,13 @@ typedef struct _Eolian_Doc_Token
  * If it's a filename, it must be scanned for first.
  *
  * @param[in] filepath Path to the file to parse.
- * @return EINA_TRUE on success, EINA_FALSE on failure.
+ * @return The unit corresponding to the parsed file or NULL.
  *
  * @see eolian_directory_scan
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_file_parse(const char *filepath);
+EAPI const Eolian_Unit *eolian_file_parse(const char *filepath);
 
 /*
  * @brief Get an iterator to all .eo file names with paths.
@@ -511,22 +517,24 @@ EAPI Eina_Bool eolian_database_validate();
 /*
  * @brief Gets a class by its name
  *
+ * @param[in] unit the unit to look in
  * @param[in] class_name name of the class to get.
  * @return the class
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_class_get_by_name(const char *class_name);
+EAPI const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
 
 /*
  * @brief Gets a class by its filename (name.eo)
  *
+ * @param[in] unit the unit to look in
  * @param[in] file_name the filename
  * @return the class stored in the file
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_class_get_by_file(const char *file_name);
+EAPI const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
 
 /*
  * @brief Returns the name of the file containing the given class.
@@ -584,11 +592,12 @@ EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
 /*
  * @brief Returns an iterator to all the classes stored into the database.
  *
+ * @param[in] unit the unit to look in
  * @return the iterator
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_all_classes_get(void);
+EAPI Eina_Iterator *eolian_all_classes_get(const Eolian_Unit *unit);
 
 /*
  * @brief Returns the documentation of a class.
@@ -1361,36 +1370,40 @@ EAPI Eina_Stringshare *eolian_class_c_data_type_get(const Eolian_Class *klass);
 /*
  * @brief Get an alias type declaration by name. Supports namespaces.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the name of the alias
  * @return the alias type or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const char *name);
+EAPI const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get a struct declaration by name. Supports namespaces.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the name of the struct
  * @return the struct or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const char *name);
+EAPI const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get an enum declaration by name. Supports namespaces.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the name of the struct
  * @return the struct or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const char *name);
+EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get an iterator to all aliases contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -1398,11 +1411,12 @@ EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const char *name);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all named structs contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -1410,11 +1424,12 @@ EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const char *fname);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all enums contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -1422,40 +1437,43 @@ EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all aliases in the Eolian database.
  *
+ * @param[in] unit the unit to look in
  * @return the iterator or NULL
  *
  * Thanks to internal caching, this is an O(1) operation.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_all_aliases_get(void);
+EAPI Eina_Iterator *eolian_typedecl_all_aliases_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an iterator to all structs in the Eolian database.
  *
+ * @param[in] unit the unit to look in
  * @return the iterator or NULL
  *
  * Thanks to internal caching, this is an O(1) operation.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_all_structs_get(void);
+EAPI Eina_Iterator *eolian_typedecl_all_structs_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an iterator to all enums in the Eolian database.
  *
+ * @param[in] unit the unit to look in
  * @return the iterator or NULL
  *
  * Thanks to internal caching, this is an O(1) operation.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_typedecl_all_enums_get(void);
+EAPI Eina_Iterator *eolian_typedecl_all_enums_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get the type of a type declaration.
@@ -1659,6 +1677,7 @@ EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 /*
  * @brief Get the full C type name of the given type.
  *
+ * @param[in] unit the unit to look in
  * @param[in] tp the type declaration.
  * @return The C type name assuming @c tp is not NULL.
  *
@@ -1668,7 +1687,7 @@ EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
+EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the name of the given type declaration. Keep in mind that the
@@ -1790,12 +1809,13 @@ EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Type *tp);
 /*
  * @brief Get the class associated with an EOLIAN_TYPE_CLASS type.
  *
+ * @param[in] unit the unit to look in
  * @param[in] tp the type.
  * @return the class or NULL.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
+EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Unit *unit, const Eolian_Type *tp);
 
 /*
  * @brief Get the size of an EOLIAN_TYPE_STATIC_ARRAY.
@@ -1899,6 +1919,7 @@ EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
 /*
  * @brief Evaluate an Eolian expression.
  *
+ * @param[in] unit the unit to look in
  * @param[in] expr the expression.
  * @param[in] mask the mask of allowed values (can combine with bitwise OR).
  * @return the value, its type is set to EOLIAN_EXPR_UNKNOWN on error.
@@ -1908,11 +1929,12 @@ EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Value eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m);
+EAPI Eolian_Value eolian_expression_eval(const Eolian_Unit *unit, const Eolian_Expression *expr, Eolian_Expression_Mask m);
 
 /*
  * @brief Evaluate an Eolian expression given a type instead of a mask.
  *
+ * @param[in] unit the unit to look in
  * @param[in] expr the expression.
  * @param[in] type the type the expression is assigned to.
  * @return the value, its type is set to EOLIAN_EXPR_UNKNOWN on error.
@@ -1922,7 +1944,7 @@ EAPI Eolian_Value eolian_expression_eval(const Eolian_Expression *expr, Eolian_E
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Expression *expr, const Eolian_Type *type);
+EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr, const Eolian_Type *type);
 
 /*
  * @brief Convert the result of expression evaluation to a literal as in how
@@ -2049,26 +2071,29 @@ EAPI Eolian_Value eolian_expression_value_get(const Eolian_Expression *expr);
 /*
  * @brief Get a global variable by name. Supports namespaces.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the name of the variable
  * @return the variable handle or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Variable *eolian_variable_global_get_by_name(const char *name);
+EAPI const Eolian_Variable *eolian_variable_global_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get a constant variable by name. Supports namespaces.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the name of the variable
  * @return the variable handle or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const char *name);
+EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get an iterator to all global variables contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -2076,11 +2101,12 @@ EAPI const Eolian_Variable *eolian_variable_constant_get_by_name(const char *nam
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all constant variables contained in a file.
  *
+ * @param[in] unit the unit to look in
  * @param[in] fname the file name without full path
  * @return the iterator or NULL
  *
@@ -2088,7 +2114,7 @@ EAPI Eina_Iterator *eolian_variable_globals_get_by_file(const char *fname);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const Eolian_Unit *unit, const char *fname);
 
 /*
  * @brief Get an iterator to all constant variables in the Eolian database.
@@ -2099,7 +2125,7 @@ EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const char *fname);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_variable_all_constants_get(void);
+EAPI Eina_Iterator *eolian_variable_all_constants_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an iterator to all global variables in the Eolian database.
@@ -2110,7 +2136,7 @@ EAPI Eina_Iterator *eolian_variable_all_constants_get(void);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_variable_all_globals_get(void);
+EAPI Eina_Iterator *eolian_variable_all_globals_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get the type of a variable (global, constant)
@@ -2406,12 +2432,13 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  * and the second data is the event, when it's a struct field or enum field
  * the first data is is the struct/enum and the second data is the field.
  *
+ * @param[in] unit the unit to look in
  * @param[in] tok the token
  * @param[out] data the primary data
  * @param[out] data2 the secondary data
  * @return the kind of reference this is
  */
-EAPI Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Doc_Token *tok, const void **data, const void **data2);
+EAPI Eolian_Doc_Ref_Type eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok, const void **data, const void **data2);
 
 #endif
 

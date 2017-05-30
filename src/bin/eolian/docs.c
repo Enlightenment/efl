@@ -19,7 +19,8 @@ _indent_line(Eina_Strbuf *buf, int ind)
                                               : DOC_LINE_LIMIT)
 
 static void
-_generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
+_generate_ref(const Eolian_Unit *src, const char *refn, Eina_Strbuf *wbuf,
+              Eina_Bool use_legacy)
 {
    const Eolian_Declaration *decl = eolian_declaration_get_by_name(refn);
    if (decl)
@@ -38,7 +39,7 @@ _generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
 
    Eina_Stringshare *bname = eina_stringshare_add_length(refn, sfx - refn);
 
-   const Eolian_Typedecl *tp = eolian_typedecl_struct_get_by_name(bname);
+   const Eolian_Typedecl *tp = eolian_typedecl_struct_get_by_name(src, bname);
    if (tp)
      {
         if (!eolian_typedecl_struct_field_get(tp, sfx + 1))
@@ -46,13 +47,13 @@ _generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
              eina_stringshare_del(bname);
              goto noref;
           }
-        _generate_ref(bname, wbuf, use_legacy);
+        _generate_ref(src, bname, wbuf, use_legacy);
         eina_strbuf_append(wbuf, sfx);
         eina_stringshare_del(bname);
         return;
      }
 
-   tp = eolian_typedecl_enum_get_by_name(bname);
+   tp = eolian_typedecl_enum_get_by_name(src, bname);
    if (tp)
      {
         const Eolian_Enum_Type_Field *efl = eolian_typedecl_enum_field_get(tp, sfx + 1);
@@ -67,7 +68,7 @@ _generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
         return;
      }
 
-   const Eolian_Class *cl = eolian_class_get_by_name(bname);
+   const Eolian_Class *cl = eolian_class_get_by_name(src, bname);
    const Eolian_Function *fn = NULL;
    /* match methods and properties; we're only figuring out existence */
    Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
@@ -83,7 +84,7 @@ _generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
              while ((mname != refn) && (*mname != '.')) --mname;
              if (mname == refn) goto noref;
              bname = eina_stringshare_add_length(refn, mname - refn);
-             cl = eolian_class_get_by_name(bname);
+             cl = eolian_class_get_by_name(src, bname);
              eina_stringshare_del(bname);
           }
         if (cl)
@@ -113,8 +114,8 @@ noref:
 }
 
 static int
-_append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
-                Eina_Strbuf *wbuf, Eina_Bool use_legacy)
+_append_section(const Eolian_Unit *src, const char *desc, int ind, int curl,
+                Eina_Strbuf *buf, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
 {
    Eina_Bool try_note = EINA_TRUE;
    while (*desc)
@@ -165,7 +166,7 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
                     ++desc;
                   if (*(desc - 1) == '.') --desc;
                   Eina_Stringshare *refn = eina_stringshare_add_length(ref, desc - ref);
-                  _generate_ref(refn, wbuf, use_legacy);
+                  _generate_ref(src, refn, wbuf, use_legacy);
                   eina_stringshare_del(refn);
                }
              else
@@ -269,8 +270,8 @@ _append_group(Eina_Strbuf *buf, char *sgrp, int indent)
 }
 
 static void
-_gen_doc_brief(const char *summary, const char *since, const char *group,
-               const char *el, int indent, Eina_Strbuf *buf,
+_gen_doc_brief(const Eolian_Unit *src, const char *summary, const char *since,
+               const char *group, const char *el, int indent, Eina_Strbuf *buf,
                Eina_Bool use_legacy)
 {
    int curl = 4 + indent;
@@ -279,7 +280,7 @@ _gen_doc_brief(const char *summary, const char *since, const char *group,
      eina_strbuf_append(buf, "/**< ");
    else
      eina_strbuf_append(buf, "/** ");
-   curl = _append_section(summary, indent, curl, buf, wbuf, use_legacy);
+   curl = _append_section(src, summary, indent, curl, buf, wbuf, use_legacy);
    eina_strbuf_free(wbuf);
    curl = _append_extra(el, indent, curl, EINA_FALSE, buf);
    curl = _append_since(since, indent, curl, buf);
@@ -300,7 +301,8 @@ _gen_doc_brief(const char *summary, const char *since, const char *group,
 }
 
 static void
-_gen_doc_full(const char *summary, const char *description, const char *since,
+_gen_doc_full(const Eolian_Unit *src, const char *summary,
+              const char *description, const char *since,
               const char *group, const char *el, int indent, Eina_Strbuf *buf,
               Eina_Bool use_legacy)
 {
@@ -313,13 +315,13 @@ _gen_doc_full(const char *summary, const char *description, const char *since,
    curl += _indent_line(buf, indent);
    eina_strbuf_append(buf, " * @brief ");
    curl += sizeof(" * @brief ") - 1;
-   _append_section(summary, indent, curl, buf, wbuf, use_legacy);
+   _append_section(src, summary, indent, curl, buf, wbuf, use_legacy);
    eina_strbuf_append_char(buf, '\n');
    _indent_line(buf, indent);
    eina_strbuf_append(buf, " *\n");
    curl = _indent_line(buf, indent);
    eina_strbuf_append(buf, " * ");
-   _append_section(description, indent, curl + 3, buf, wbuf, use_legacy);
+   _append_section(src, description, indent, curl + 3, buf, wbuf, use_legacy);
    curl = _append_extra(el, indent, curl, EINA_TRUE, buf);
    curl = _append_since(since, indent, curl, buf);
    eina_strbuf_append_char(buf, '\n');
@@ -336,8 +338,9 @@ _gen_doc_full(const char *summary, const char *description, const char *since,
 }
 
 static Eina_Strbuf *
-_gen_doc_buf(const Eolian_Documentation *doc, const char *group,
-             const char *el, int indent, Eina_Bool use_legacy)
+_gen_doc_buf(const Eolian_Unit *src, const Eolian_Documentation *doc,
+             const char *group, const char *el, int indent,
+             Eina_Bool use_legacy)
 {
    if (!doc) return NULL;
 
@@ -347,21 +350,22 @@ _gen_doc_buf(const Eolian_Documentation *doc, const char *group,
 
    Eina_Strbuf *buf = eina_strbuf_new();
    if (!desc)
-     _gen_doc_brief(sum, since, group, el, indent, buf, use_legacy);
+     _gen_doc_brief(src, sum, since, group, el, indent, buf, use_legacy);
    else
-     _gen_doc_full(sum, desc, since, group, el, indent, buf, use_legacy);
+     _gen_doc_full(src, sum, desc, since, group, el, indent, buf, use_legacy);
    return buf;
 }
 
 Eina_Strbuf *
-eo_gen_docs_full_gen(const Eolian_Documentation *doc, const char *group,
-                     int indent, Eina_Bool use_legacy)
+eo_gen_docs_full_gen(const Eolian_Unit *src, const Eolian_Documentation *doc,
+                     const char *group, int indent, Eina_Bool use_legacy)
 {
-   return _gen_doc_buf(doc, group, NULL, indent, use_legacy);
+   return _gen_doc_buf(src, doc, group, NULL, indent, use_legacy);
 }
 
 Eina_Strbuf *
-eo_gen_docs_event_gen(const Eolian_Event *ev, const char *group)
+eo_gen_docs_event_gen(const Eolian_Unit *src, const Eolian_Event *ev,
+                      const char *group)
 {
    if (!ev) return NULL;
 
@@ -392,12 +396,13 @@ eo_gen_docs_event_gen(const Eolian_Event *ev, const char *group)
         return bufs;
      }
 
-   return _gen_doc_buf(doc, group, p, 0, EINA_FALSE);
+   return _gen_doc_buf(src, doc, group, p, 0, EINA_FALSE);
 }
 
 Eina_Strbuf *
-eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
-                     int indent, Eina_Bool use_legacy)
+eo_gen_docs_func_gen(const Eolian_Unit *src, const Eolian_Function *fid,
+                     Eolian_Function_Type ftype, int indent,
+                     Eina_Bool use_legacy)
 {
    const Eolian_Function_Parameter *par = NULL;
    const Eolian_Function_Parameter *vpar = NULL;
@@ -506,7 +511,7 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
    /* only summary, nothing else; generate standard brief doc */
    if (!desc && !par && !vpar && !rdoc && (ftype == EOLIAN_METHOD || !pdoc))
      {
-        _gen_doc_brief(sum ? sum : "No description supplied.", since, group,
+        _gen_doc_brief(src, sum ? sum : "No description supplied.", since, group,
                        NULL, indent, buf, use_legacy);
         return buf;
      }
@@ -517,7 +522,7 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
    curl += _indent_line(buf, indent);
    eina_strbuf_append(buf, " * @brief ");
    curl += sizeof(" * @brief ") - 1;
-   _append_section(sum ? sum : "No description supplied.",
+   _append_section(src, sum ? sum : "No description supplied.",
                    indent, curl, buf, wbuf, use_legacy);
 
    eina_strbuf_append_char(buf, '\n');
@@ -531,7 +536,7 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
      {
         curl = _indent_line(buf, indent);
         eina_strbuf_append(buf, " * ");
-        _append_section(desc, indent, curl + 3, buf, wbuf, use_legacy);
+        _append_section(src, desc, indent, curl + 3, buf, wbuf, use_legacy);
         eina_strbuf_append_char(buf, '\n');
         if (par || rdoc || pdoc || since)
           {
@@ -545,7 +550,7 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
         const char *pdesc = eolian_documentation_description_get(pdoc);
         curl = _indent_line(buf, indent);
         eina_strbuf_append(buf, " * ");
-        _append_section(eolian_documentation_summary_get(pdoc), indent,
+        _append_section(src, eolian_documentation_summary_get(pdoc), indent,
             curl + 3, buf, wbuf, use_legacy);
         eina_strbuf_append_char(buf, '\n');
         if (pdesc)
@@ -554,7 +559,7 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
              eina_strbuf_append(buf, " *\n");
              curl = _indent_line(buf, indent);
              eina_strbuf_append(buf, " * ");
-             _append_section(pdesc, indent, curl + 3, buf, wbuf, use_legacy);
+             _append_section(src, pdesc, indent, curl + 3, buf, wbuf, use_legacy);
              eina_strbuf_append_char(buf, '\n');
           }
         if (par || rdoc || since)
@@ -597,7 +602,7 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
           {
              eina_strbuf_append_char(buf, ' ');
              curl += 1;
-             _append_section(eolian_documentation_summary_get(adoc),
+             _append_section(src, eolian_documentation_summary_get(adoc),
                              indent, curl, buf, wbuf, use_legacy);
           }
 
@@ -630,8 +635,8 @@ eo_gen_docs_func_gen(const Eolian_Function *fid, Eolian_Function_Type ftype,
         curl = _indent_line(buf, indent);
         eina_strbuf_append(buf, " * @return ");
         curl += sizeof(" * @return ") - 1;
-        _append_section(eolian_documentation_summary_get(rdoc), indent, curl,
-            buf, wbuf, use_legacy);
+        _append_section(src, eolian_documentation_summary_get(rdoc), indent,
+            curl, buf, wbuf, use_legacy);
         eina_strbuf_append_char(buf, '\n');
         if (since)
           {
