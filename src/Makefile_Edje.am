@@ -33,9 +33,10 @@ BUILT_SOURCES += \
 edjeeolianfilesdir = $(datadir)/eolian/include/edje-@VMAJ@
 edjeeolianfiles_DATA = \
                        $(edje_eolian_files) \
-                       $(edje_eolian_type_files)
+                       $(edje_eolian_type_files) \
+		       $(edje_eolian_priv_files)
 
-noinst_DATA += $(edje_eolian_priv_c) $(edje_eolian_priv_h)
+noinst_DATA += $(edje_eolian_priv_c) # $(edje_eolian_priv_h)
 
 EXTRA_DIST2 += ${edjeeolianfiles_DATA} \
               $(edje_eolian_priv_files)
@@ -63,7 +64,8 @@ lib/edje/Edje_Legacy.h \
 lib/edje/Edje_Edit.h
 
 nodist_installed_edjemainheaders_DATA = \
-                                        $(edje_eolian_h)
+                                        $(edje_eolian_h) \
+					$(edje_eolian_priv_h)
 
 lib_edje_libedje_la_SOURCES = \
 lib/edje/edje_private.h \
