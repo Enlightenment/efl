@@ -766,12 +766,15 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    output->ocrtc = sym_drmModeGetCrtc(dev->fd, output->crtc_id);
 
-   output->crtc_state =
-     _output_crtc_state_get(dev->state, output->crtc_id);
-   output->conn_state =
-     _output_conn_state_get(dev->state, output->conn_id);
-   output->plane_states =
-     _output_plane_states_get(dev->state, output->crtc_id, output->pipe);
+   if (_ecore_drm2_use_atomic)
+     {
+        output->crtc_state =
+          _output_crtc_state_get(dev->state, output->crtc_id);
+        output->conn_state =
+          _output_conn_state_get(dev->state, output->conn_id);
+        output->plane_states =
+          _output_plane_states_get(dev->state, output->crtc_id, output->pipe);
+     }
 
    output->dpms = _output_dpms_property_get(dev->fd, conn);
 
@@ -926,8 +929,11 @@ _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
    EINA_LIST_FREE(output->planes, plane)
      free(plane);
 
-   free(output->conn_state);
-   free(output->crtc_state);
+   if (_ecore_drm2_use_atomic)
+     {
+        free(output->conn_state);
+        free(output->crtc_state);
+     }
 
    EINA_LIST_FREE(output->modes, mode)
      {
