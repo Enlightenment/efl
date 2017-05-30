@@ -923,14 +923,14 @@ _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
      }
 #endif
 
-   EINA_LIST_FREE(output->plane_states, pstate)
-     free(pstate);
-
-   EINA_LIST_FREE(output->planes, plane)
-     free(plane);
-
    if (_ecore_drm2_use_atomic)
      {
+        EINA_LIST_FREE(output->plane_states, pstate)
+          free(pstate);
+
+        EINA_LIST_FREE(output->planes, plane)
+          free(plane);
+
         free(output->conn_state);
         free(output->crtc_state);
      }
