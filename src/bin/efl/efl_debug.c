@@ -49,7 +49,7 @@ static int _cid = 0;
 static int my_argc = 0;
 static char **my_argv = NULL;
 
-static Eina_Debug_Error
+static Eina_Bool
 _evlog_get_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNUSED, void *buffer, int size)
 {
    static int received_times = 0;
@@ -81,7 +81,7 @@ _evlog_get_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNUSED, void
         ecore_main_loop_quit();
      }
 
-   return EINA_DEBUG_OK;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -103,7 +103,7 @@ _cb_evlog(void *data EINA_UNUSED)
    return ret;
 }
 
-static Eina_Debug_Error
+static Eina_Bool
 _cid_get_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buffer, int size EINA_UNUSED)
 {
    _cid = *(int *)buffer;
@@ -143,10 +143,10 @@ _cid_get_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *
    if(quit)
         ecore_main_loop_quit();
 
-   return EINA_DEBUG_OK;
+   return EINA_TRUE;
 }
 
-static Eina_Debug_Error
+static Eina_Bool
 _clients_info_added_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNUSED, void *buffer, int size)
 {
    char *buf = buffer;
@@ -162,10 +162,10 @@ _clients_info_added_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNU
         buf += len;
         size -= (2 * sizeof(int) + len);
      }
-   return EINA_DEBUG_OK;
+   return EINA_TRUE;
 }
 
-static Eina_Debug_Error
+static Eina_Bool
 _clients_info_deleted_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNUSED, void *buffer, int size)
 {
    char *buf = buffer;
@@ -191,7 +191,7 @@ _clients_info_deleted_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_U
         else
            printf("Deleted: CID: %d\n", cid);
      }
-   return EINA_DEBUG_OK;
+   return EINA_TRUE;
 }
 
 static void
@@ -200,11 +200,11 @@ _ecore_thread_dispatcher(void *data)
    eina_debug_dispatch(_session, data);
 }
 
-Eina_Debug_Error
+Eina_Bool
 _disp_cb(Eina_Debug_Session *session EINA_UNUSED, void *buffer)
 {
    ecore_main_loop_thread_safe_call_async(_ecore_thread_dispatcher, buffer);
-   return EINA_DEBUG_OK;
+   return EINA_TRUE;
 }
 
 static void

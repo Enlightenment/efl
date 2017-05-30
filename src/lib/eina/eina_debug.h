@@ -33,14 +33,6 @@
  * @{
  */
 
-/** Used as a return value for callbacks invoked by the dispatcher */
-typedef enum
-{
-   EINA_DEBUG_OK, /**< Success */
-   EINA_DEBUG_ERROR, /**< Error in packet - will close the connection */
-   EINA_DEBUG_AGAIN /**< Recall the callback - may due to resources unavailability at the invocation time */
-} Eina_Debug_Error;
-
 enum
 {
    EINA_DEBUG_OPCODE_INVALID = -1, /**< Invalid opcode value */
@@ -66,8 +58,10 @@ typedef struct _Eina_Debug_Session Eina_Debug_Session;
  * @param srcid the source id
  * @param buffer the packet payload data. It doesn't contain any transport information.
  * @param size the packet payload size
+ *
+ * return true on success, false if the connection seems compromised
  */
-typedef Eina_Debug_Error (*Eina_Debug_Cb)(Eina_Debug_Session *session, int srcid, void *buffer, int size);
+typedef Eina_Bool (*Eina_Debug_Cb)(Eina_Debug_Session *session, int srcid, void *buffer, int size);
 
 /**
  * @typedef Eina_Debug_Opcode_Status_Cb
@@ -94,8 +88,10 @@ typedef void (*Eina_Debug_Opcode_Status_Cb)(void *data, Eina_Bool status);
  * @param buffer the packet received
  *
  * The given packet is the entire data received, including the header.
+ *
+ * return the return result of the invoked callback
  */
-typedef Eina_Debug_Error (*Eina_Debug_Dispatch_Cb)(Eina_Debug_Session *session, void *buffer);
+typedef Eina_Bool (*Eina_Debug_Dispatch_Cb)(Eina_Debug_Session *session, void *buffer);
 
 /**
  * @typedef Eina_Debug_Timer_Cb
@@ -122,7 +118,6 @@ typedef struct
     * The daemon is in charge of swapping the id before forwarding the packet to the destination.
     */
    int cid;
-   int thread_id;
    int opcode; /**< Opcode of the packet */
 } Eina_Debug_Packet_Header;
 
@@ -207,9 +202,9 @@ EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *
  * @param session the session
  * @param buffer the packet
  *
- * @return EINA_DEBUG_OK on success, EINA_DEBUG_ERROR if the packet is not as expected.
+ * return true on success, false if the connection seems compromised
  */
-EAPI Eina_Debug_Error eina_debug_dispatch(Eina_Debug_Session *session, void *buffer);
+EAPI Eina_Bool eina_debug_dispatch(Eina_Debug_Session *session, void *buffer);
 
 /**
  * @brief Set data to a session
@@ -263,24 +258,6 @@ EAPI void eina_debug_opcodes_register(Eina_Debug_Session *session,
 EAPI int eina_debug_session_send(Eina_Debug_Session *session, int dest_id, int op, void *data, int size);
 
 /**
- * @brief Send a packet to the given thread of the given destination
- *
- * If the thread is 0x0, the packet will be treated by the debug thread itself.
- * If the thread is 0xFF..FF, the packet will be broadcasted to all the threads.
- * Otherwise, the packet will be treated by the specific thread.
- *
- * @param session the session to use to send the packet
- * @param dest_id the destination id to send the packet to
- * @param thread_id the thread to send the packet to.
- * @param op the opcode for this packet
- * @param data payload to send
- * @param size payload size
- *
- * @return the number of sent bytes
- */
-EAPI int eina_debug_session_send_to_thread(Eina_Debug_Session *session, int dest_id, int thread_id, int op, void *data, int size);
-
-/**
  * @brief Add a timer
  *
  * @param timeout_ms timeout in ms
@@ -300,14 +277,6 @@ EAPI Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_
  * it has already been deleted internally.
  */
 EAPI void eina_debug_timer_del(Eina_Debug_Timer *timer);
-
-/**
- * @brief Get an id of the current thread
- *
- * This id corresponds to the index in the Eina threads table where the thread
- * information is stored.
- */
-EAPI int eina_debug_thread_id_get(void);
 
 #endif
 /**

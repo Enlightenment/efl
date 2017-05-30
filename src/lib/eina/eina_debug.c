@@ -56,8 +56,6 @@
 # define LIBEXT ".so"
 #endif
 
-#define SIG SIGPROF
-
 // yes - a global debug spinlock. i expect contention to be low for now, and
 // when needed we can split this up into mroe locks to reduce contention when
 // and if that day comes
@@ -82,13 +80,6 @@ static Eina_Bool _debug_disabled = EINA_FALSE;
 /* __thread here to allow debuggers to be master and slave by using two different threads */
 static Eina_Debug_Session *_last_local_session = NULL;
 
-/* Semaphore used by the debug thread to wait for another thread to do the
- * requested job.
- * It is needed when packets are needed to be treated into a specific
- * thread.
- */
-static Eina_Semaphore _thread_cmd_ready_sem;
-
 typedef struct
 {
    const Eina_Debug_Opcode *ops;
@@ -110,7 +101,7 @@ static void _opcodes_register_all(Eina_Debug_Session *session);
 static void _thread_start(Eina_Debug_Session *session);
 
 EAPI int
-eina_debug_session_send_to_thread(Eina_Debug_Session *session, int dest_id, int thread_id, int op, void *data, int size)
+eina_debug_session_send(Eina_Debug_Session *session, int dest, int op, void *data, int size)
 {
    Eina_Debug_Packet_Header hdr;
 
@@ -119,8 +110,7 @@ eina_debug_session_send_to_thread(Eina_Debug_Session *session, int dest_id, int 
    /* Preparation of the packet header */
    hdr.size = size + sizeof(Eina_Debug_Packet_Header);
    hdr.opcode = op;
-   hdr.cid = dest_id;
-   hdr.thread_id = thread_id;
+   hdr.cid = dest;
    e_debug("socket: %d / opcode %X / bytes to send: %d",
          session->fd, op, hdr.size);
 #ifndef _WIN32
@@ -132,12 +122,6 @@ eina_debug_session_send_to_thread(Eina_Debug_Session *session, int dest_id, int 
    eina_spinlock_release(&_eina_debug_lock);
 #endif
    return hdr.size;
-}
-
-EAPI int
-eina_debug_session_send(Eina_Debug_Session *session, int dest, int op, void *data, int size)
-{
-   return eina_debug_session_send_to_thread(session, dest, 0, op, data, size);
 }
 
 static void
@@ -274,7 +258,7 @@ _static_opcode_register(Eina_Debug_Session *session,
  * Response of the daemon containing the ids of the requested opcodes.
  * PTR64 + (opcode id)*
  */
-static Eina_Debug_Error
+static Eina_Bool
 _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void *buffer, int size)
 {
    _opcode_reply_info *info = NULL, *info2;
@@ -286,7 +270,7 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
    memcpy(&info_64, buffer, sizeof(uint64_t));
    info = (_opcode_reply_info *)info_64;
 
-   if (!info) return EINA_DEBUG_ERROR;
+   if (!info) return EINA_FALSE;
    EINA_LIST_FOREACH(session->opcode_reply_infos, itr, info2)
      {
         if (info2 == info)
@@ -301,11 +285,11 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
                   e_debug("Opcode %s -> %d", info->ops[i].opcode_name, os[i]);
                }
              if (info->status_cb) info->status_cb(info->status_data, EINA_TRUE);
-             return EINA_DEBUG_OK;
+             return EINA_TRUE;
           }
      }
 
-   return EINA_DEBUG_ERROR;
+   return EINA_FALSE;
 }
 
 static void
@@ -520,7 +504,7 @@ _monitor(void *_data)
         // if not negative - we have a real message
         if (size > 0)
           {
-             if (EINA_DEBUG_OK != session->dispatch_cb(session, buffer))
+             if (EINA_TRUE != session->dispatch_cb(session, buffer))
                {
                   // something we don't understand
                   e_debug("EINA DEBUG ERROR: Unknown command");
@@ -600,8 +584,8 @@ eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode
       _opcodes_registration_send(session, info);
 }
 
-static Eina_Debug_Error
-_self_dispatch(Eina_Debug_Session *session, void *buffer)
+EAPI Eina_Bool
+eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
 {
    Eina_Debug_Packet_Header *hdr =  buffer;
    Eina_List *itr;
@@ -611,83 +595,18 @@ _self_dispatch(Eina_Debug_Session *session, void *buffer)
    if (opcode >= session->cbs_length)
      {
         e_debug("Invalid opcode %d", opcode);
-        return EINA_DEBUG_ERROR;
+        return EINA_FALSE;
      }
 
    EINA_LIST_FOREACH(session->cbs[opcode], itr, cb)
      {
         if (!cb) continue;
-        Eina_Debug_Error ret = cb(session, hdr->cid,
+        Eina_Bool ret = cb(session, hdr->cid,
               (unsigned char *)buffer + sizeof(*hdr),
               hdr->size - sizeof(*hdr));
-        if (ret == EINA_DEBUG_ERROR) return ret;
+        if (ret == EINA_FALSE) return ret;
      }
-   return EINA_DEBUG_OK;
-}
-
-EAPI Eina_Debug_Error
-eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
-{
-   Eina_Debug_Packet_Header *hdr = buffer;
-   Eina_Debug_Error ret = EINA_DEBUG_OK;
-   if (hdr->thread_id == 0) return _self_dispatch(session, buffer);
-   else
-     {
-        int i, nb_calls = 0;
-        eina_spinlock_take(&_eina_debug_thread_lock);
-        for (i = 0; i < _eina_debug_thread_active_num; i++)
-          {
-             _eina_debug_thread_active[i].cmd_buffer = NULL;
-             if (hdr->thread_id == (int)0xFFFFFFFF ||
-                   hdr->thread_id == _eina_debug_thread_active[i].thread_id)
-               {
-                  _eina_debug_thread_active[i].cmd_session = session;
-                  _eina_debug_thread_active[i].cmd_buffer = buffer;
-                  _eina_debug_thread_active[i].cmd_result = EINA_DEBUG_OK;
-                  if (!pthread_kill(_eina_debug_thread_active[i].thread, SIG))
-                     nb_calls++;
-               }
-          }
-        eina_spinlock_release(&_eina_debug_thread_lock);
-        while (nb_calls)
-          {
-             while (nb_calls)
-               {
-                  eina_semaphore_lock(&_thread_cmd_ready_sem);
-                  nb_calls--;
-               }
-             eina_spinlock_take(&_eina_debug_thread_lock);
-             for (i = 0; i < _eina_debug_thread_active_num; i++)
-               {
-                  if (_eina_debug_thread_active[i].cmd_buffer)
-                    {
-                       switch (_eina_debug_thread_active[i].cmd_result)
-                         {
-                          case EINA_DEBUG_OK:
-                               {
-                                  _eina_debug_thread_active[i].cmd_buffer = NULL;
-                                  break;
-                               }
-                          case EINA_DEBUG_ERROR:
-                               {
-                                  _eina_debug_thread_active[i].cmd_buffer = NULL;
-                                  ret = EINA_DEBUG_ERROR;
-                                  break;
-                               }
-                          case EINA_DEBUG_AGAIN:
-                               {
-                                  if (!pthread_kill(_eina_debug_thread_active[i].thread, SIG))
-                                     nb_calls++;
-                                  break;
-                               }
-                          default: break;
-                         }
-                    }
-               }
-             eina_spinlock_release(&_eina_debug_thread_lock);
-          }
-     }
-   return ret;
+   return EINA_TRUE;
 }
 
 EAPI void
@@ -701,51 +620,6 @@ eina_debug_session_data_get(Eina_Debug_Session *session)
 {
    if (session) return session->data;
    else return NULL;
-}
-
-static void
-_signal_handler(int sig EINA_UNUSED,
-      siginfo_t *si EINA_UNUSED, void *foo EINA_UNUSED)
-{
-   int i, slot = -1;
-   pthread_t self = pthread_self();
-   eina_spinlock_take(&_eina_debug_thread_lock);
-   for (i = 0; i < _eina_debug_thread_active_num; i++)
-     {
-        if (self == _eina_debug_thread_active[i].thread)
-          {
-             slot = i;
-             break;
-          }
-     }
-   eina_spinlock_release(&_eina_debug_thread_lock);
-   if (slot != -1)
-     {
-        _eina_debug_thread_active[slot].cmd_result =
-           _self_dispatch(_eina_debug_thread_active[slot].cmd_session,
-                 _eina_debug_thread_active[slot].cmd_buffer);
-     }
-   eina_semaphore_release(&_thread_cmd_ready_sem, 1);
-}
-
-static void
-_signal_init(void)
-{
-   struct sigaction sa;
-
-   // set up signal handler for our profiling signal - eevery thread should
-   // obey this (this is the case on linux - other OSs may vary)
-   sa.sa_sigaction = _signal_handler;
-   sa.sa_flags = SA_RESTART | SA_SIGINFO;
-   sigemptyset(&sa.sa_mask);
-   if (sigaction(SIG, &sa, NULL) != 0)
-      e_debug("EINA DEBUG ERROR: Can't set up sig %i handler!", SIG);
-
-   sa.sa_sigaction = NULL;
-   sa.sa_handler = SIG_IGN;
-   sigemptyset(&sa.sa_mask);
-   sa.sa_flags = 0;
-   if (sigaction(SIGPIPE, &sa, 0) == -1) perror(0);
 }
 
 Eina_Bool
@@ -783,8 +657,6 @@ eina_debug_init(void)
      {
         eina_debug_local_connect(EINA_FALSE);
      }
-   eina_semaphore_new(&_thread_cmd_ready_sem, 0);
-   _signal_init();
    _eina_debug_cpu_init();
    _eina_debug_bt_init();
    _eina_debug_timer_init();
@@ -797,7 +669,6 @@ eina_debug_shutdown(void)
    _eina_debug_timer_shutdown();
    _eina_debug_bt_shutdown();
    _eina_debug_cpu_shutdown();
-   eina_semaphore_free(&_thread_cmd_ready_sem);
    eina_spinlock_take(&_eina_debug_thread_lock);
    // yes - we never free on shutdown - this is because the monitor thread
    // never exits. this is not a leak - we intend to never free up any

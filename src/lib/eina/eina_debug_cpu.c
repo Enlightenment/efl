@@ -239,7 +239,7 @@ _sysmon(void *_data EINA_UNUSED)
    return NULL;
 }
 
-static Eina_Debug_Error
+static Eina_Bool
 _cpufreq_on_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buffer EINA_UNUSED, int size EINA_UNUSED)
 {
    if (!_eina_debug_evlog_active)
@@ -253,10 +253,10 @@ _cpufreq_on_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, voi
         _eina_debug_sysmon_active = 1;
         eina_lock_release(&_sysmon_lock);
      }
-   return EINA_DEBUG_OK;
+   return EINA_TRUE;
 }
 
-static Eina_Debug_Error
+static Eina_Bool
 _cpufreq_off_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buffer EINA_UNUSED, int size EINA_UNUSED)
 {
    if (_eina_debug_sysmon_active)
@@ -269,7 +269,7 @@ _cpufreq_off_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, vo
         eina_evlog_stop();
         _eina_debug_evlog_active = 0;
      }
-   return EINA_DEBUG_OK;
+   return EINA_TRUE;
 }
 
 static const Eina_Debug_Opcode _OPS[] = {

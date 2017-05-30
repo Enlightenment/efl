@@ -123,7 +123,6 @@ _send(Client *dest, int opcode, void *payload, int payload_size)
    Eina_Debug_Packet_Header *hdr = (Eina_Debug_Packet_Header *)buf;
    hdr->size = size;
    hdr->cid = 0;
-   hdr->thread_id = 0;
    hdr->opcode = opcode;
    memcpy(buf + sizeof(Eina_Debug_Packet_Header), payload, payload_size);
    printf("Send packet (size = %d, opcode %s) to %s\n", size,

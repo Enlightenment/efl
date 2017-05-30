@@ -103,16 +103,3 @@ _eina_debug_thread_mainloop_set(void *th)
    _eina_debug_thread_mainloop = *pth;
 }
 
-EAPI int
-eina_debug_thread_id_get(void)
-{
-   pthread_t self = pthread_self();
-   int i;
-
-   for (i = 0; i < _eina_debug_thread_active_num; i++)
-     {
-        if (self == _eina_debug_thread_active[i].thread)
-           return _eina_debug_thread_active[i].thread_id;
-     }
-   return -1;
-}
