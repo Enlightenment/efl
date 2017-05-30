@@ -1799,4 +1799,24 @@ class TestEinaList
     }
 }
 
+
+class TestEinaHash
+{
+    public static void eina_hash_default()
+    {
+        var hsh = new eina.Hash<int, int>();
+    }
+
+    public static void data_set_int()
+    {
+        var hsh = new eina.Hash<int, int>();
+        hsh[88] = 888;
+        Test.Assert(hsh[88] == 888);
+        hsh[44] = 444;
+        Test.Assert(hsh[44] == 444);
+        hsh[22] = 222;
+        Test.Assert(hsh[22] == 222);
+    }
+}
+
 }

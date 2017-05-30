@@ -63,6 +63,16 @@ EAPI Eina_Compare_Cb efl_mono_native_str_compare_addr_get()
     return (Eina_Compare_Cb)strcmp;
 }
 
+EAPI Eina_Free_Cb efl_mono_native_free_addr_get()
+{
+    return (Eina_Free_Cb)free;
+}
+
+EAPI Eina_Free_Cb efl_mono_native_efl_unref_addr_get()
+{
+    return (Eina_Free_Cb)efl_unref;
+}
+
 // Array //
 
 EAPI void eina_array_free_generic_custom_export_mono(Eina_Array *array) EINA_ARG_NONNULL(1)

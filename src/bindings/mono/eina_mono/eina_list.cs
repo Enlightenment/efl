@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using static eina.ElementFunctions;
+using static eina.TraitFunctions;
 using static eina.ListNativeFunctions;
 using eina.Callbacks;
 
