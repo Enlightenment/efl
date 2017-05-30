@@ -108,6 +108,7 @@ lib_efl_mono_libeflcustomexportsmono_la_SOURCES = \
 	$(efl_custom_exports_mono_files)
 
 lib_efl_mono_libeflcustomexportsmono_la_CPPFLAGS = \
+-DEFL_BETA_API_SUPPORT \
 -I$(top_builddir)/src/lib/efl \
 @EINA_CFLAGS@ @EO_CFLAGS@
 
@@ -123,6 +124,7 @@ efl_eo_mono_files = \
 
 efl_eina_mono_files = \
 	bindings/mono/eina_mono/eina_array.cs \
+	bindings/mono/eina_mono/eina_hash.cs \
 	bindings/mono/eina_mono/eina_list.cs \
 	bindings/mono/eina_mono/eina_container_common.cs \
 	bindings/mono/eina_mono/eina_common.cs \
