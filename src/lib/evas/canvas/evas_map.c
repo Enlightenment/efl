@@ -543,6 +543,10 @@ evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
             !memcmp(&map->persp, &obj->map->cur.map->persp, sizeof(map->persp)))
           return;
      }
+     /* changed_pchange means map's change.
+      * This flag will be used to decide whether to redraw the map surface. 
+      * And value of flag would be EINA_FALSE after rendering. */
+     obj->changed_pchange = EINA_TRUE;
 
    if ((!map) || (map->count < 4))
      {
