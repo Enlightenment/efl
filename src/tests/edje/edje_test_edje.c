@@ -867,6 +867,39 @@ START_TEST(edje_test_message_send_eo)
 }
 END_TEST
 
+START_TEST(edje_test_signals)
+{
+   Evas *evas;
+   Evas_Object *obj;
+   const char *state;
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = efl_add(EDJE_OBJECT_CLASS, evas,
+                 efl_file_set(efl_added, test_layout_get("test_signals.edj"), "level1"),
+                 efl_gfx_size_set(efl_added, 320, 240),
+                 efl_gfx_visible_set(efl_added, 1));
+
+   edje_object_signal_emit(obj, "mouse,in", "text");
+
+   edje_object_message_signal_process(obj);
+   state = edje_object_part_state_get(obj, "group:group:text", NULL);
+   ck_assert_str_eq(state, "default");
+
+   edje_object_message_signal_process(obj);
+   state = edje_object_part_state_get(obj, "group:group:text", NULL);
+   ck_assert_str_eq(state, "default");
+
+   edje_object_message_signal_recursive_process(obj);
+   state = edje_object_part_state_get(obj, "group:group:text", NULL);
+   ck_assert_str_eq(state, "over");
+
+   efl_del(obj);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
@@ -890,4 +923,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_combine_keywords);
    tcase_add_test(tc, edje_test_message_send_legacy);
    tcase_add_test(tc, edje_test_message_send_eo);
+   tcase_add_test(tc, edje_test_signals);
 }

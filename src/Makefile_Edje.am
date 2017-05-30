@@ -282,6 +282,7 @@ tests/edje/data/test_box.edc \
 tests/edje/data/test_table.edc \
 tests/edje/data/test_combine_keywords.edc \
 tests/edje/data/test_messages.edc \
+tests/edje/data/test_signals.edc \
 tests/edje/data/filter.lua
 
 
@@ -323,6 +324,7 @@ EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
                      tests/edje/data/test_table.edj \
                      tests/edje/data/test_combine_keywords.edj \
                      tests/edje/data/test_messages.edj \
+                     tests/edje/data/test_signals.edj \
                      $(NULL)
 
 CLEANFILES += $(EDJE_TEST_FILES)
