@@ -1,5 +1,7 @@
 import edje_types;
 
+// FIXME: This EO doc needs a direct link to the "edcref" doc
+
 class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                    Efl.Observer)
 {
@@ -452,6 +454,8 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             key: string; [[The data field's key string]]
          }
       }
+
+      /* MESSAGE & SIGNAL APIS BEGIN --------------------------------------- */
       message_send {
          [[Sends an (Edje) message to a given Edje object
 
@@ -597,6 +601,9 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          legacy: null;
       }
+      /* MESSAGE & SIGNAL APIS END ----------------------------------------- */
+
+      /* CLASS APIS BEGIN -------------------------------------------------- */
       @property global_color_class @class {
          set {
             [[Sets Edje color class.
@@ -809,174 +816,177 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             @in size_class: string; [[Size class name]]
          }
       }
+      /* CLASS APIS END ---------------------------------------------------- */
+
       access_part_iterate {
          [[Iterates over all accessibility-enabled part names.]]
          legacy: null;
          return: free(own(iterator<string>), eina_iterator_free); [[Part name iterator]]
       }
       part_exists @const {
-         [[Checks if an Edje part exists in a given Edje object's group
-           definition.
+         [[Checks if a part exists in a given Edje object's group definition.
 
            This function returns if a given part exists in the Edje group
-           bound to object obj (with edje_object_file_set()).
+           bound to this object (with @Efl.File.set()).
 
            This call is useful, for example, when one could expect or not a
-           given GUI element, depending on the  theme applied to obj.]]
+           given GUI element, depending on the theme applied to the object.
+
+           Note: @Efl.Part.part() called on an Edje object will return $null
+           if it doesn't contain the given part.
+         ]]
          return: bool; [[$true if the Edje part exists in obj's group, or
                          $false otherwise (and on errors)]]
          params {
             @in part: string; [[The part's name to check for existence in obj's
-                                      group]]
+                                group]]
          }
       }
+
+      /* DRAG PART APIS BEGIN ---------------------------------------------- */
+      // FIXME: "dragable" or "draggable"? Only EFL uses "dragable"...
       @property part_drag_value {
+         [[The dragable object relative location.
+
+           Some parts in Edje can be dragged along the X/Y axes, if the part
+           contains a "dragable" section (in EDC). For instance, scroll bars
+           can be dragable objects.
+
+           $dx and $dy are real numbers that range from 0 to 1, representing
+           the relative position to the dragable area on that axis.
+
+           This value means, for the vertical axis, that 0.0 will be at the top
+           if the first parameter of $y in the dragable part theme is 1, and at
+           the bottom if it is -1.
+
+           For the horizontal axis, 0.0 means left if the first parameter of $x
+           in the dragable part theme is 1, and right if it is -1.
+         ]]
          set {
             [[Sets the dragable object location.
 
-              Places the dragable object at the given location.
-
-              Values for dx and dy are real numbers that range from 0 to 1,
-              representing the relative position to the dragable area on that axis.
-
-              This value means, for the vertical axis, that 0.0 will be at the top if the
-              first parameter of $y in the dragable part theme is 1, and at bottom if it
-              is -1.
-
-              For the horizontal axis, 0.0 means left if the first parameter of $x in the
-              dragable part theme is 1, and right if it is -1.
-
-              See also @.part_drag_value.get()]]
+             This places the dragable object at the given location.
+            ]]
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Gets the dragable object location.
-
-              Values for dx and dy are real numbers that range from 0 to 1,
-              representing the relative position to the dragable area on that axis.
-
-              See also @.part_drag_value.set()
-
-              Gets the drag location values.]]
+            [[Gets the dragable object location.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          keys {
             part: string; [[The part name]]
          }
          values {
-            dx: double; [[The x value]]
-            dy: double; [[The y value]]
+            dx: double; [[The x relative position, from 0 to 1.]]
+            dy: double; [[The y relative position, from 0 to 1.]]
          }
       }
       @property part_drag_size {
+         [[The dragable object relative size.
+
+           Values for $dw and $dh are real numbers that range from 0 to 1,
+           representing the relative size of the dragable area on that axis.
+
+           For instance a scroll bar handle size may depend on much large is
+           the scroller's content.
+         ]]
          set {
-            [[Sets the dragable object size.
-
-              Values for dw and dh are real numbers that range from 0 to 1,
-              representing the relative size of the dragable area on that axis.
-
-              Sets the size of the dragable object.
-
-              See also @.part_drag_size.get()]]
+            [[Sets the size of the dragable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Gets the dragable object size.
-
-              Gets the dragable object size.
-
-              See also @.part_drag_size.set()]]
+            [[Gets the size of the dradgable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          keys {
             part: string; [[The part name]]
          }
          values {
-            dw: double; [[The drag width]]
-            dh: double; [[The drag height]]
+            dw: double; [[The drag relative width, from 0 to 1.]]
+            dh: double; [[The drag relative height, from 0 to 1.]]
          }
       }
       @property part_drag_dir {
-         get {
-            [[Determines dragable directions.
+         [[Determines the dragable directions (read-only).
 
-              The dragable directions are defined in the EDC file, inside the \@ref dragable
-              section, by the attributes $x and $y. See the \@ref edcref for more
-              information.]]
+           The dragable directions are defined in the EDC file, inside the
+           "dragable" section, by the attributes $x and $y. See the EDC
+           reference documentation for more information.
+         ]]
+         get {
+            [[Gets the dragable direction.]]
             return: Edje.Drag_Dir; [[#EDJE_DRAG_DIR_NONE: Not dragable
-                                     #EDJE_DRAG_DIR_X: Dragable in X direction
-                                     #EDJE_DRAG_DIR_Y: Dragable in Y direction
-                                     #EDJE_DRAG_DIR_XY: Dragable in X & Y directions]]
+                                     #EDJE_DRAG_DIR_X: dragable in X direction
+                                     #EDJE_DRAG_DIR_Y: dragable in Y direction
+                                     #EDJE_DRAG_DIR_XY: dragable in X & Y directions]]
          }
          keys {
             part: string; [[The part name]]
          }
       }
       @property part_drag_step {
+         [[The drag step increment.
+
+           Values for $dx and $dy are real numbers that range from 0 to 1,
+           representing the relative size of the dragable area on that axis by
+           which the part will be moved.
+
+           This differs from @.part_drag_page in that this is meant to
+           represent a unit increment, like a single line for example.
+
+           See also @.part_drag_page.
+         ]]
          set {
-            [[Sets the drag step increment.
-
-              Sets the x,y step increments for a dragable object.
-
-              Values for dx and dy are real numbers that range from 0 to 1,
-              representing the relative size of the dragable area on that axis by which the
-              part will be moved.
-
-              See also @.part_drag_step.get()]]
+            [[Sets the x,y step increments for a dragable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Gets the drag step increment values.
-
-              Gets the x and y step increments for the dragable object.
-
-              See also @.part_drag_step.set()]]
+            [[Gets the x and y step increments for the dragable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          keys {
             part: string; [[The part name]]
          }
          values {
-            dx: double; [[The x step amount]]
-            dy: double; [[The y step amount]]
+            dx: double; [[The x step relative amount, from 0 to 1.]]
+            dy: double; [[The y step relative amount, from 0 to 1.]]
          }
       }
       part_drag_step {
-         [[Steps the dragable x,y steps.
+         [[Moves the dragable by $dx,$dy steps.
 
-           Steps x,y where the step increment is the amount set by
-           @.part_drag_step.set().
+           This moves the dragable part by $dx,$dy steps where the step
+           increment is the amount set by @.part_drag_step.set().
 
-           Values for dx and dy are real numbers that range from 0 to 1.
-
-           See also @.part_drag_page()]]
-
+           $dx and $dy can be positive or negative numbers, integer values are
+           recommended.
+         ]]
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in part: string; [[The part name]]
-            @in dx: double; [[The x step]]
-            @in dy: double; [[The y step]]
+            @in dx: double; [[The number of steps horizontally.]]
+            @in dy: double; [[The number of steps vertically.]]
          }
       }
       @property part_drag_page {
+         [[The page step increments.
+
+           Values for $dx and $dy are real numbers that range from 0 to 1,
+           representing the relative size of the dragable area on that axis by
+           which the part will be moved.
+
+           This differs from @.part_drag_step in that this is meant to be a
+           larger step size, basically an entire page as opposed to a single
+           or couple of lines.
+
+           See also @.part_drag_step.
+         ]]
          set {
-            [[Sets the page step increments.
-
-              Sets the x,y page step increment values.
-
-              Values for dx and dy are real numbers that range from 0 to 1,
-              representing the relative size of the dragable area on that axis by which the
-              part will be moved.
-
-              See also @.part_drag_page.get()]]
+            [[Sets the x,y page step increment values.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          get {
-            [[Gets the page step increments.
-
-              Gets the x,y page step increments for the dragable object.
-
-              See also @.part_drag_page.set()]]
+            [[Gets the x,y page step increments for the dragable object.]]
             return: bool; [[$true on success, $false otherwise]]
          }
          keys {
@@ -988,24 +998,26 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       part_drag_page {
-         [[Pages x,y steps.
+         [[Moves the dragable by $dx,$dy pages.
 
-           Pages x,y where the increment is defined by
-           @.part_drag_page.set().
+           This moves the dragable by $dx,$dy pages where the increment is
+           defined by @.part_drag_page.set().
 
-           Values for dx and dy are real numbers that range from 0 to 1.
+           $dx and $dy can be positive or negative numbers, integer values are
+           recommended.
 
            Warning: Paging is bugged!
-
-           See also @.part_drag_step()]]
-
+         ]]
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in part: string; [[The part name]]
-            @in dx: double; [[The x step]]
-            @in dy: double; [[The y step]]
+            @in dx: double; [[The number of pages horizontally.]]
+            @in dy: double; [[The number of pages vertically.]]
          }
       }
+      /* DRAG PART APIS END ------------------------------------------------ */
+
+      /* TEXT PART APIS BEGIN ---------------------------------------------- */
       @property text_change_cb {
          set {
             [[Sets the object text callback.
@@ -1873,6 +1885,8 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             part: string; [[The part name]]
          }
       }
+      /* TEXT PART APIS END ------------------------------------------------ */
+
       @property seat {
          get {
             [[Returns the seat device given its Edje's name.
