@@ -15,44 +15,44 @@ enum Efl.Text.Style.Strikethrough_Type
 enum Efl.Text.Style.Effect_Type
 {
    [[Effect to apply to the displayed text]]
-   none = 0,
+   none = 0, [[No effect]]
 
    // colored with shadow_color
-   shadow,
-   far_shadow,
-   soft_shadow,
-   far_soft_shadow,
+   shadow, [[Shadow effect]]
+   far_shadow, [[Far shadow effect]]
+   soft_shadow, [[Soft shadow effect]]
+   far_soft_shadow, [[Far and soft shadow effect]]
    // colored with glow_color
-   glow,
+   glow, [[Glow effect]]
    // colored with outline_color
-   outline,
-   soft_outline,
+   outline, [[Outline effect]]
+   soft_outline, [[Soft outline effect]]
    // colored with outline_color + shadow_color
-   outline_shadow,
-   outline_soft_shadow,
+   outline_shadow, [[Outline shadow effect]]
+   outline_soft_shadow, [[Outline soft shadow effect]]
 }
 
 enum Efl.Text.Style.Shadow_Direction
 {
    [[Direction of the shadow style, if used]]
-   bottom_right = 0,
-   bottom,
-   bottom_left,
-   left,
-   top_left,
-   top,
-   top_right,
-   right,
+   bottom_right = 0, [[Shadow towards bottom right]]
+   bottom, [[Shadow towards botom]]
+   bottom_left, [[Shadow towards bottom left]]
+   left, [[Shadow towards left]]
+   top_left, [[Shadow towards top left]]
+   top, [[Shadow towards top]]
+   top_right, [[Shadow towards top right]]
+   right, [[Shadow towards right]]
 }
 
 enum Efl.Text.Style.Underline_Type
 {
    [[Underline type of the displayed text]]
-   off = 0,
-   on,
-   single,
-   double,
-   dashed,
+   off = 0, [[Text without underline]]
+   on, [[Underline enabled]]
+   single, [[Underlined with a signle line]]
+   double, [[Underlined with a double line]]
+   dashed, [[Underlined with a dashed line]]
 }
 
 interface Efl.Text.Style {
