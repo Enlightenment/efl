@@ -1128,7 +1128,9 @@ _content_set(Evas_Object *obj,
         _list_del(sd);
      }
 
+   evas_object_del(sd->content);
    sd->content = content;
+
    if (content)
      {
         if (!sd->scroll)
