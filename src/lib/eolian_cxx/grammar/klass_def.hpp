@@ -210,11 +210,11 @@ struct type_def
    type_def(variant_type original_type, std::string c_type)
      : original_type(original_type), c_type(c_type) {}
 
-   type_def(Eolian_Type const* eolian_type)
+   type_def(Eolian_Type const* eolian_type, Eolian_Unit const* unit)
    {
-     set(eolian_type);
+     set(eolian_type, unit);
    }
-   void set(Eolian_Type const* eolian_type);
+   void set(Eolian_Type const* eolian_type, Eolian_Unit const* unit);
 };
 
 struct get_qualifier_visitor
@@ -242,7 +242,7 @@ inline bool operator!=(type_def const& lhs, type_def const& rhs)
         
 type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void"};
         
-inline void type_def::set(Eolian_Type const* eolian_type)
+inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit)
 {
    c_type = ::eolian_type_c_type_get(eolian_type);
    // ::eina_stringshare_del(stringshare); // this crashes
@@ -264,7 +264,7 @@ inline void type_def::set(Eolian_Type const* eolian_type)
        break;
      case EOLIAN_TYPE_CLASS:
        {
-          Eolian_Class const* klass = eolian_type_class_get(eolian_type);
+          Eolian_Class const* klass = eolian_type_class_get(unit, eolian_type);
           original_type = klass_name(klass, {qualifiers(eolian_type), {}});
        }
        break;
@@ -275,7 +275,7 @@ inline void type_def::set(Eolian_Type const* eolian_type)
          Eolian_Type const* stp = eolian_type_base_type_get(eolian_type);
          while (stp)
            {
-              complex.subtypes.push_back({stp});
+              complex.subtypes.push_back({stp, unit});
               stp = eolian_type_next_type_get(stp);
            }
          original_type = complex;
@@ -329,8 +329,8 @@ struct parameter_def
   
   parameter_def(parameter_direction direction, type_def type, std::string param_name, std::string c_type)
     : direction(std::move(direction)), type(std::move(type)), param_name(std::move(param_name)), c_type(std::move(c_type)) {}
-  parameter_def(Eolian_Function_Parameter const* param)
-    : type( ::eolian_parameter_type_get(param))
+  parameter_def(Eolian_Function_Parameter const* param, Eolian_Unit const* unit)
+    : type( ::eolian_parameter_type_get(param), unit)
     , param_name( ::eolian_parameter_name_get(param))
     , c_type( ::eolian_type_c_type_get(::eolian_parameter_type_get(param)))
   {
@@ -415,19 +415,19 @@ struct function_def
                , std::string c_name, bool is_beta)
     : return_type(return_type), name(name), parameters(parameters), c_name(c_name), is_beta(is_beta) {}
   function_def() = default;
-  function_def( ::Eolian_Function const* function, Eolian_Function_Type type)
+  function_def( ::Eolian_Function const* function, Eolian_Function_Type type, Eolian_Unit const* unit)
     : return_type(void_)
   {
     Eolian_Type const* r_type = ::eolian_function_return_type_get(function, type);
     name = ::eolian_function_name_get(function);
     if(r_type)
-      return_type.set(r_type);
+      return_type.set(r_type, unit);
      if(type == EOLIAN_METHOD)
        {
           for(efl::eina::iterator<Eolian_Function_Parameter> param_iterator ( ::eolian_function_parameters_get(function))
             , param_last; param_iterator != param_last; ++param_iterator)
             {
-               parameters.push_back(&*param_iterator);
+               parameters.push_back({&*param_iterator, unit});
             }
        }
      else if(type == EOLIAN_PROP_GET || type == EOLIAN_PROP_SET)
@@ -440,14 +440,14 @@ struct function_def
                ( ::eolian_property_keys_get(function, type))
                , param_last; param_iterator != param_last; ++param_iterator)
            {
-              parameters.push_back(&*param_iterator);
+              parameters.push_back({&*param_iterator, unit});
            }
          std::vector<parameter_def> values;
          for(efl::eina::iterator<Eolian_Function_Parameter> param_iterator
                ( ::eolian_property_values_get(function, type))
                , param_last; param_iterator != param_last; ++param_iterator)
            {
-              values.push_back(&*param_iterator);
+              values.push_back({&*param_iterator, unit});
            }
 
          if(!r_type && type == EOLIAN_PROP_GET && values.size() == 1)
@@ -546,8 +546,8 @@ struct event_def
   
   event_def(type_def type, std::string name, std::string c_name, bool beta, bool protect)
     : type(type), name(name), c_name(c_name), beta(beta), protect(protect) {}
-  event_def(Eolian_Event const* event)
-    : type( ::eolian_event_type_get(event) ? ::eolian_event_type_get(event) : eina::optional<type_def>{})
+  event_def(Eolian_Event const* event, Eolian_Unit const* unit)
+    : type( ::eolian_event_type_get(event) ? eina::optional<type_def>{{::eolian_event_type_get(event), unit}} : eina::optional<type_def>{})
     , name( ::eolian_event_name_get(event))
     , c_name( ::eolian_event_c_name_get(event))
     , beta( ::eolian_event_is_beta(event))
@@ -622,7 +622,7 @@ struct klass_def
     , namespaces(namespaces)
     , functions(functions), inherits(inherits), type(type)
   {}
-  klass_def(Eolian_Class const* klass)
+  klass_def(Eolian_Class const* klass, Eolian_Unit const* unit)
   {
      for(efl::eina::iterator<const char> namespace_iterator( ::eolian_class_namespaces_get(klass))
            , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
@@ -640,19 +640,19 @@ struct klass_def
              try {
                 if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_GET)
                    && ::eolian_function_scope_get(function, EOLIAN_PROP_GET) != EOLIAN_SCOPE_PRIVATE)
-                  functions.push_back({function, EOLIAN_PROP_GET});
+                  functions.push_back({function, EOLIAN_PROP_GET, unit});
              } catch(std::exception const&) {}
              try {
                 if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_SET)
                    && ::eolian_function_scope_get(function, EOLIAN_PROP_SET) != EOLIAN_SCOPE_PRIVATE)
-                  functions.push_back({function, EOLIAN_PROP_SET});
+                  functions.push_back({function, EOLIAN_PROP_SET, unit});
              } catch(std::exception const&) {}
            }
          else
            try {
              if(! ::eolian_function_is_legacy_only(function, type)
                 && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
-               functions.push_back({function, type});
+               functions.push_back({function, type, unit});
            } catch(std::exception const&) {}
        }
      for(efl::eina::iterator<Eolian_Function const> eolian_functions ( ::eolian_class_functions_get(klass, EOLIAN_METHOD))
@@ -663,7 +663,7 @@ struct klass_def
              Eolian_Function_Type type = eolian_function_type_get(function);
              if(! ::eolian_function_is_legacy_only(function, EOLIAN_METHOD)
                 && ::eolian_function_scope_get(function, type) != EOLIAN_SCOPE_PRIVATE)
-               functions.push_back({function, EOLIAN_METHOD});
+               functions.push_back({function, EOLIAN_METHOD, unit});
          } catch(std::exception const&) {}
        }
      std::function<void(Eolian_Class const*)> inherit_algo = 
@@ -672,7 +672,7 @@ struct klass_def
          for(efl::eina::iterator<const char> inherit_iterator ( ::eolian_class_inherits_get(klass))
                , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
            {
-             Eolian_Class const* inherit = ::eolian_class_get_by_name(&*inherit_iterator);
+             Eolian_Class const* inherit = ::eolian_class_get_by_name(unit, &*inherit_iterator);
              inherits.insert({inherit, {}});
              inherit_algo(inherit);
            }
@@ -699,7 +699,7 @@ struct klass_def
            , event_last; event_iterator != event_last; ++event_iterator)
        {
          try {
-           events.push_back(&*event_iterator);
+           events.push_back({&*event_iterator, unit});
          } catch(std::exception const&) {}
        }
   }
@@ -711,7 +711,7 @@ inline klass_name get_klass_name(klass_def const& klass)
   return {klass.namespaces, klass.eolian_name, {qualifier_info::is_none, {}}, klass.type};
 }
 
-inline Eolian_Class const* get_klass(klass_name const& klass_name_)
+inline Eolian_Class const* get_klass(klass_name const& klass_name_, Eolian_Unit const* unit)
 {
   std::string klass_name;
   if(!as_generator(*(string << ".") << string)
@@ -720,7 +720,7 @@ inline Eolian_Class const* get_klass(klass_name const& klass_name_)
                , context_null{}))
     return nullptr;
   else
-    return ::eolian_class_get_by_name(klass_name.c_str());
+    return ::eolian_class_get_by_name(unit, klass_name.c_str());
 }
 
 inline std::vector<std::string> cpp_namespaces(std::vector<std::string> namespaces)

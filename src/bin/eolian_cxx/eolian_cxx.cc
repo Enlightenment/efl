@@ -33,6 +33,7 @@ struct options_type
 {
    std::vector<std::string> include_dirs;
    std::vector<std::string> in_files;
+   mutable Eolian_Unit const* unit;
    std::string out_file;
    bool main_header;
 
@@ -69,7 +70,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
    else
      header_impl_file_name.insert(header_impl_file_name.size(), ".impl");
 
-   efl::eolian::grammar::attributes::klass_def klass_def(klass);
+   efl::eolian::grammar::attributes::klass_def klass_def(klass, opts.unit);
    std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
    std::vector<efl::eolian::grammar::attributes::klass_def> forward_klasses{klass_def};
 
@@ -82,11 +83,11 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
    auto klass_name_function
      = [&] (efl::eolian::grammar::attributes::klass_name const& name)
      {
-        Eolian_Class const* klass = get_klass(name);
+        Eolian_Class const* klass = get_klass(name, opts.unit);
         assert(klass);
         c_headers.insert(eolian_class_file_get(klass) + std::string(".h"));
         cpp_headers.insert(eolian_class_file_get(klass) + std::string(".hh"));
-        efl::eolian::grammar::attributes::klass_def cls{klass};
+        efl::eolian::grammar::attributes::klass_def cls{klass, opts.unit};
         if(std::find(forward_klasses.begin(), forward_klasses.end(), cls) == forward_klasses.end())
           forward_klasses.push_back(cls);
      };
@@ -116,17 +117,17 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
        for(efl::eina::iterator<const char> inherit_iterator ( ::eolian_class_inherits_get(klass))
              , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
          {
-           Eolian_Class const* inherit = ::eolian_class_get_by_name(&*inherit_iterator);
+           Eolian_Class const* inherit = ::eolian_class_get_by_name(opts.unit, &*inherit_iterator);
            c_headers.insert(eolian_class_file_get(inherit) + std::string(".h"));
            cpp_headers.insert(eolian_class_file_get(inherit) + std::string(".hh"));
-           efl::eolian::grammar::attributes::klass_def klass{inherit};
+           efl::eolian::grammar::attributes::klass_def klass{inherit, opts.unit};
            if(std::find(forward_klasses.begin(), forward_klasses.end(), klass) == forward_klasses.end())
              forward_klasses.push_back(klass);
 
            klass_function(inherit);
          }
 
-       efl::eolian::grammar::attributes::klass_def klass_def(klass);
+       efl::eolian::grammar::attributes::klass_def klass_def(klass, opts.unit);
        for(auto&& f : klass_def.functions)
          {
            variant_function(f.return_type);
@@ -212,7 +213,7 @@ run(options_type const& opts)
        const Eolian_Class *klass = NULL;
        char* dup = strdup(opts.in_files[0].c_str());
        char* base = basename(dup);
-       klass = ::eolian_class_get_by_file(base);
+       klass = ::eolian_class_get_by_file(NULL, base);
        free(dup);
        if (klass)
          {
@@ -236,15 +237,20 @@ run(options_type const& opts)
 
        for(auto&& name : opts.in_files)
          {
-           bool b = ::eolian_file_parse(name.c_str());
-           if(!b)
+           Eolian_Unit const* unit = ::eolian_file_parse(name.c_str());
+           if(!unit)
              {
                EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
                  << "Failed parsing: " << name << ".";
              }
+           else
+             {
+               if(!opts.unit)
+                 opts.unit = unit;
+             }
            char* dup = strdup(name.c_str());
            char* base = basename(dup);
-           Eolian_Class const* klass = ::eolian_class_get_by_file(base);
+           Eolian_Class const* klass = ::eolian_class_get_by_file(unit, base);
            free(dup);
            if (klass)
              {
