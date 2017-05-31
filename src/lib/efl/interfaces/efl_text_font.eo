@@ -19,22 +19,22 @@ enum Efl.Text.Font.Weight {
 
 enum Efl.Text.Font.Width {
    [[Type of font width]]
-   normal,
-   ultracondensed,
-   extracondensed,
-   condensed,
-   semicondensed,
-   semiexpanded,
-   expanded,
-   extraexpanded,
-   ultraexpanded,
+   normal, [[Normal font width]]
+   ultracondensed, [[Ultracondensed font width]]
+   extracondensed, [[Extracondensed font width]]
+   condensed, [[Condensed font width]]
+   semicondensed, [[Semicondensed font width]]
+   semiexpanded, [[Semiexpanded font width]]
+   expanded, [[Expanded font width]]
+   extraexpanded, [[Extraexpanded font width]]
+   ultraexpanded, [[Ultraexpanded font width]]
 }
 
 enum Efl.Text.Font.Slant {
     [[Type of font slant]]
-    normal,
-    oblique,
-    italic,
+    normal, [[Normal font slant]]
+    oblique, [[Oblique font slant]]
+    italic, [[Italic font slant]]
 }
 
 interface Efl.Text.Font {
