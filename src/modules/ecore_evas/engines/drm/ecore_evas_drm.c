@@ -140,12 +140,12 @@ _drm_device_change(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
              {
                 Eina_Stringshare *name = elput_seat_name_get(seat);
                 edata->seat = evas_device_add_full(ee->evas, name,
-                  "drm seat", NULL, NULL, EVAS_DEVICE_CLASS_SEAT, EVAS_DEVICE_CLASS_NONE);
+                  "drm seat", NULL, NULL, EVAS_DEVICE_CLASS_SEAT, EVAS_DEVICE_SUBCLASS_NONE);
                 evas_device_seat_id_set(edata->seat, strtol(name, NULL, 10));
              }
 
            dev = evas_device_add_full(ee->evas, elput_device_output_name_get(ev->device),
-             "drm device", edata->seat, NULL, devclass, EVAS_DEVICE_CLASS_NONE);
+             "drm device", edata->seat, NULL, devclass, EVAS_DEVICE_SUBCLASS_NONE);
            ev->device->evas_device = dev;
            break;
         }
