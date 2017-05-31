@@ -6648,6 +6648,9 @@ _efl_canvas_text_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Text_Data *class_
    o->cursors = eina_list_remove_list(o->cursors, o->cursors);
    _format_command_init();
    evas_object_textblock_init(eo_obj);
+   // Override legacy newline (enabled in legacy textblock through
+   //   textblock_init.
+   o->legacy_newline = EINA_FALSE;
 
    _FMT(ref) = 1;
    _FMT(halign) = 0.0;
