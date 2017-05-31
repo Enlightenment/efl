@@ -521,7 +521,8 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       o = code = efl_add(EFL_UI_TEXT_EDITABLE_CLASS, win,
                          efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
                          efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                         efl_ui_text_scrollable_set(efl_added, 1));
+                         efl_ui_text_scrollable_set(efl_added, 1),
+                         efl_text_format_multiline_set(efl_added, 1));
       efl_event_callback_add(o, EFL_UI_TEXT_EVENT_CHANGED_USER, _code_changed, win);
 
       // Insert filter code inside style string: DEFAULT='blah blah <here>'
