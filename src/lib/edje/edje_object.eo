@@ -414,7 +414,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
          return: int; [[The frozen state or $0 if the object is not frozen or on error.]]
       }
-      @property data {
+      @property group_data {
          get {
             [[Retrives an EDC data field's value from a given Edje object's group.
 
@@ -424,34 +424,30 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
               application's theme to its code.
 
               EDC data fields always hold  strings as values, hence the return
-              type of this function. Check the complete \@ref edcref "syntax reference"
+              type of this function. Check the complete "syntax reference"
               for EDC files.
 
-              Warning: Do not confuse this call with edje_file_data_get(), which
-              queries for a  global EDC data field on an EDC declaration file.
+              This is how a data item is defined in EDC:
+              collections {
+                 group {
+                    name: "a_group";
+                    data {
+                       item: "key1" "value1";
+                       item: "key2" "value2";
+                    }
+                 }
+              }
 
-              \@ref edje_object_file_set()]]
-              /* FIXME-doc
-               * They look like the following:
-               * @code
-               * collections
-               *   {
-               *      group
-               *        {
-               *           name: "a_group";
-               *           data
-               *             {
-               *                item: "key1" "value1";
-               *                item: "key2" "value2";
-               *             }
-               *        }
-               *  }
-               * @endcode
-               */
-            return: string; [[The data's value string. Must not be freed.]]
+              Warning: Do not confuse this call with edje_file_data_get(), which
+              queries for a global EDC data field on an EDC declaration file.
+            ]]
+            legacy: edje_object_data_get;
          }
          keys {
             key: string; [[The data field's key string]]
+         }
+         values {
+            val: string; [[The data's value string.]]
          }
       }
 

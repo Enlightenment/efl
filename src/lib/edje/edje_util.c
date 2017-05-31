@@ -449,10 +449,9 @@ _edje_object_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 }
 
 EOLIAN const char *
-_edje_object_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
+_edje_object_group_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
 {
-   if ((!ed) || (!key))
-     return NULL;
+   if (!key) return NULL;
    if (!ed->collection) return NULL;
    if (!ed->collection->data) return NULL;
 
