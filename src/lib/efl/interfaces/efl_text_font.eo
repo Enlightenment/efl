@@ -2,19 +2,19 @@
 
 enum Efl.Text.Font.Weight {
    [[Type of font weight]]
-   normal,
-   thin,
-   ultralight,
-   extralight,
-   light,
-   book,
-   medium,
-   semibold,
-   bold,
-   ultrabold,
-   extrabold,
-   black,
-   extrablack,
+   normal, [[Normal font weight]]
+   thin, [[Thin font weight]]
+   ultralight, [[Ultralight font weight]]
+   extralight, [[Extralight font weight]]
+   light, [[Light font weight]]
+   book, [[Book font weight]]
+   medium, [[Medium font weight]]
+   semibold, [[Semibold font weight]]
+   bold, [[Bold font weight]]
+   ultrabold, [[Ultrabold font weight]]
+   extrabold, [[Extrabold font weight]]
+   black, [[Black font weight]]
+   extrablack, [[Extrablack font weight]]
 }
 
 enum Efl.Text.Font.Width {
