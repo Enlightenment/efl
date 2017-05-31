@@ -904,6 +904,7 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
           {
              ERR("NULL image file passed! (%p)", obj);
           }
+        _prev_img_del(sd);
         return EINA_FALSE;
      }
 
@@ -2022,6 +2023,8 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
               " bytes): %s (%p)", size, evas_load_error_str(err), sd->img);
         else
           ERR("NULL image data passed (%p)", sd->img);
+
+        _prev_img_del(sd);
         return EINA_FALSE;
      }
 
