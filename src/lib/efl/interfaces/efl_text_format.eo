@@ -1,10 +1,10 @@
 enum Efl.Text.Format.Wrap {
    [[Wrap mode of the text (not in effect if not multiline)]]
-   none,
-   char,
-   word,
-   mixed,
-   hyphenation
+   none, [[No wrapping]]
+   char, [[Wrap mode character]]
+   word, [[Wrap mode word]]
+   mixed, [[Wrap mode mixed]]
+   hyphenation [[Wrap mode hyphenation]]
 }
 
 interface Efl.Text.Format {
