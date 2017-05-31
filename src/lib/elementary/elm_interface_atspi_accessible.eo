@@ -384,12 +384,22 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
       @property root @class {
          get {
             [[Get's default root object of accessible object hierarchy]]
-            values {
-               ret: Efl.Object; [[Root object]]
-            }
          }
          set {
          }
+         values {
+            ret: Efl.Object; [[Root object]]
+         }
+      }
+      observer_install @class {
+           params {
+                @in observer: Elm.Interface.Accessible_Observer;
+           }
+      }
+      observer_uninstall @class {
+           params {
+                @in observer: Elm.Interface.Accessible_Observer;
+           }
       }
    }
    implements {

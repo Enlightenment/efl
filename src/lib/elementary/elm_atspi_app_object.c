@@ -65,21 +65,21 @@ _elm_atspi_app_object_elm_interface_atspi_accessible_role_get(Eo *obj EINA_UNUSE
 }
 
 EOLIAN static void
-_elm_atspi_app_object_elm_interface_atspi_socket_on_connected(Eo *obj, Elm_Atspi_App_Object_Data *_pd)
+_elm_atspi_app_object_elm_atspi_plug_on_connected(Eo *obj, Elm_Atspi_App_Object_Data *_pd)
 {
-   ERR("On Connected: %s", elm_interface_atspi_socket_id_get(obj));
-   elm_interface_atspi_socket_embed_by(obj, _pd->desktop_proxy);
+   ERR("On Connected: %s", elm_atspi_plug_id_get(obj));
+   elm_atspi_plug_embed_by(obj, _pd->desktop_proxy);
 }
 
 EOLIAN static void
-_elm_atspi_app_object_elm_interface_atspi_socket_on_disconnected(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
+_elm_atspi_app_object_elm_atspi_plug_on_disconnected(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
-   ERR("On Disconnected: %s", elm_interface_atspi_socket_id_get(obj));
-   elm_interface_atspi_socket_unembed_by(obj, _pd->desktop_proxy);
+   ERR("On Disconnected: %s", elm_atspi_plug_id_get(obj));
+   elm_atspi_plug_unembed_by(obj, _pd->desktop_proxy);
 }
 
 EOLIAN static void
-_elm_atspi_app_object_elm_interface_atspi_socket_on_embedded(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED, Elm_Atspi_Proxy *proxy EINA_UNUSED)
+_elm_atspi_app_object_elm_atspi_plug_on_embedded(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED, Elm_Atspi_Proxy *proxy EINA_UNUSED)
 {
    ERR("Application successfully registered as desktop child");
 }

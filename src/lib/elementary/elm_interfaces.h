@@ -1,3 +1,4 @@
+#include "elm_interface_accessible_observer.h"
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_text.h"
 #include "elm_interface_atspi_widget_action.h"
@@ -11,7 +12,6 @@
 #include "elm_interface_atspi_text_editable.eo.h"
 #include "elm_interface_atspi_image.eo.h"
 #include "elm_interface_atspi_selection.eo.h"
-#include "elm_interface_atspi_socket.eo.h"
 #include "elm_interface_atspi_value.eo.h"
 #endif
 #endif
@@ -22,7 +22,6 @@
 #include "elm_interface_atspi_text_editable.eo.legacy.h"
 #include "elm_interface_atspi_image.eo.legacy.h"
 #include "elm_interface_atspi_selection.eo.legacy.h"
-#include "elm_interface_atspi_socket.eo.legacy.h"
 #include "elm_interface_atspi_value.eo.legacy.h"
 #endif
 #endif

@@ -1,8 +1,31 @@
-class Elm.Atspi.Socket (Efl.Object, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi.Socket)
+class Elm.Atspi.Socket (Efl.Object, Elm.Interface.Atspi_Accessible)
 {
    [[AT-SPI Socket class]]
    legacy_prefix: elm_atspi_socket;
    eo_prefix: elm_obj_atspi_socket;
+   methods {
+        @property occupied {
+             get {
+             }
+             set {
+             }
+             values {
+               ret: bool;
+             }
+        }
+        embed @pure_virtual {
+             [[ Embed remote accessible object as a child.]]
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        unembed @pure_virtual {
+             // unembed
+             params {
+                @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+   }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;

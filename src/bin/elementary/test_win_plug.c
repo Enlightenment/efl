@@ -186,7 +186,7 @@ a11y_init(Evas_Object *plug)
    elm_interface_atspi_accessible_parent_set(proxy, socket);
 
    // FIXME asume bridge is connected
-   elm_interface_atspi_socket_embed(socket, proxy);
+   elm_atspi_socket_embed(socket, proxy);
 }
 
 void

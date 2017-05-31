@@ -1,3 +1,5 @@
+import elm_general;
+
 class Elm.Atspi.App.Object (Elm.Atspi.Plug, Elm.Interface.Atspi_Accessible)
 {
    [[AT-SPI application object class]]
@@ -10,8 +12,8 @@ class Elm.Atspi.App.Object (Elm.Atspi.Plug, Elm.Interface.Atspi_Accessible)
       Elm.Interface.Atspi_Accessible.description { get; set; }
       Elm.Interface.Atspi_Accessible.role { get; }
       Elm.Interface.Atspi_Accessible.index_in_parent { get; }
-      Elm.Interface.Atspi.Socket.on_embedded;
-      Elm.Interface.Atspi.Socket.on_connected;
-      Elm.Interface.Atspi.Socket.on_disconnected;
+      Elm.Atspi.Plug.on_embedded;
+      Elm.Atspi.Plug.on_connected;
+      Elm.Atspi.Plug.on_disconnected;
    }
 }

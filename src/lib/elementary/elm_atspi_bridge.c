@@ -155,8 +155,8 @@ static void _elm_atspi_bridge_pending_add(Elm_Atspi_Bridge *obj, Eldbus_Pending 
 static void _elm_atspi_bridge_pending_del(Elm_Atspi_Bridge *obj, Eldbus_Pending *pending);
 static void _elm_atspi_bridge_pending_cancel_all(Elm_Atspi_Bridge *obj);
 
-static void _elm_atspi_bridge_socket_hooks_uninstall(Elm_Interface_Atspi_Socket *socket);
-static void _elm_atspi_bridge_socket_hooks_install(Elm_Interface_Atspi_Socket *socket);
+static void _elm_atspi_bridge_plug_hooks_uninstall(Eo *socket);
+static void _elm_atspi_bridge_plug_hooks_install(Eo *socket);
 
 // utility functions
 static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
@@ -1041,9 +1041,9 @@ _socket_embedded(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
    ERR("Recieved embedded request");
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_SOCKET_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_ATSPI_PLUG_CLASS, msg);
 
-   elm_interface_atspi_socket_on_embedded(obj, NULL);
+   elm_atspi_plug_on_embedded(obj, NULL);
 
    return eldbus_message_method_return_new(msg);
 }
@@ -3648,9 +3648,9 @@ _on_elm_atspi_bridge_plug_register(void *data, const Eldbus_Message *msg, Eldbus
    Eo *proxy = eldbus_pending_data_get(pending, "__proxy");
 
    // check if object is still in cache, since it may be unregistered
-   // before dbus request complete
+   // before dbus request completes
    if (eina_hash_find(pd->cache, &obj))
-     elm_interface_atspi_socket_on_embedded(obj, proxy);
+     elm_atspi_plug_on_embedded(obj, proxy);
 }
 
 EAPI void
@@ -3661,8 +3661,10 @@ _elm_atspi_bridge_plugs_register(Eo *bridge)
    Eina_List *l;
    Elm_Atspi_Plug *plug;
 
+
    EINA_LIST_FOREACH(pd->plugs, l, plug)
      {
+      ERR("Plug register %d", plug);
         _bridge_object_register(bridge, plug);
      }
 }
@@ -4212,11 +4214,11 @@ _elm_atspi_bridge_on_object_unregistered(Elm_Atspi_Bridge *bridge, Eo *obj)
    efl_event_callback_array_del(obj, event_handlers(), bridge);
    _bridge_object_removed_signal_send(bridge, obj);
 
-   if (efl_isa(obj, ELM_INTERFACE_ATSPI_SOCKET_MIXIN))
+   if (efl_isa(obj, ELM_ATSPI_PLUG_CLASS))
      {
-        elm_interface_atspi_socket_on_disconnected(obj);
-        elm_interface_atspi_socket_id_set(obj, NULL);
-        _elm_atspi_bridge_socket_hooks_uninstall(obj);
+        elm_atspi_plug_on_disconnected(obj);
+        elm_atspi_plug_id_set(obj, NULL);
+        _elm_atspi_bridge_plug_hooks_uninstall(obj);
      }
 }
 
@@ -4224,20 +4226,25 @@ static void
 _elm_atspi_bridge_on_object_registered(Elm_Atspi_Bridge *bridge, Eo *obj)
 {
    struct dbus_address addr;
+
+   ERR("On object_registererd: %s", efl_class_name_get(obj));
    if (!efl_isa(obj, ELM_ATSPI_PROXY_CLASS))
      {
         _bridge_object_added_signal_send(bridge, obj);
         efl_event_callback_array_add(obj, event_handlers(), bridge);
      }
-
-   if (efl_isa(obj, ELM_INTERFACE_ATSPI_SOCKET_MIXIN))
+   if (efl_isa(obj, ELM_ATSPI_PLUG_CLASS))
      {
-        _elm_atspi_bridge_socket_hooks_install(obj);
+        ERR("pre hook install: %d", obj);
+        _elm_atspi_bridge_plug_hooks_install(obj);
         addr = _elm_atspi_bridge_address_from_object(bridge, obj);
         char *id = _elm_atspi_bridge_id_make(&addr);
-        elm_interface_atspi_socket_id_set(obj, id);
-        elm_interface_atspi_socket_on_connected(obj);
+        elm_atspi_plug_id_set(obj, id);
+        elm_atspi_plug_on_connected(obj);
         free(id);
+     }
+   if (efl_isa(obj, ELM_ATSPI_SOCKET_CLASS))
+     {
      }
 }
 
@@ -4485,10 +4492,9 @@ _elm_atspi_bridge_init(void)
    if (!_instance)
      {
         _instance = efl_add(ELM_ATSPI_BRIDGE_CLASS, NULL);
+        elm_interface_atspi_accessible_observer_install(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, _instance);
         Efl_Object *root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
-        elm_atspi_bridge_plug_register(_instance, root);
         elm_atspi_bridge_root_set(_instance, root);
-        elm_interface_atspi_accessible_observer_install(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
      }
 }
 
@@ -4503,7 +4509,7 @@ _elm_atspi_bridge_shutdown(void)
 {
    if (_instance)
      {
-        elm_interface_atspi_accessible_observer_uninstall(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+        elm_interface_atspi_accessible_observer_uninstall(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, _instance);
         efl_del(_instance);
         _instance = NULL;
      }
@@ -4847,22 +4853,23 @@ _elm_atspi_bridge_elm_interface_atspi_socket_unembed_by(Eo *obj, void *data, Elm
 }
 
 static void
-_elm_atspi_bridge_socket_hooks_uninstall(Elm_Interface_Atspi_Socket *socket)
+_elm_atspi_bridge_plug_hooks_uninstall(Eo *socket)
 {
    efl_object_override(socket, NULL);
 }
 
 static void
-_elm_atspi_bridge_socket_hooks_install(Elm_Interface_Atspi_Socket *socket)
+_elm_atspi_bridge_plug_hooks_install(Eo *plug)
 {
-   ERR("Install hooks for %s", efl_class_name_get(socket));
+   ERR("Install hooks for (%d), %s", plug, efl_class_name_get(plug));
    EFL_OPS_DEFINE(_elm_atspi_bridge_hooks,
-                  EFL_OBJECT_OP_FUNC(elm_interface_atspi_socket_embed, _elm_atspi_bridge_elm_interface_atspi_socket_embed),
-                  EFL_OBJECT_OP_FUNC(elm_interface_atspi_socket_unembed, _elm_atspi_bridge_elm_interface_atspi_socket_unembed),
-                  EFL_OBJECT_OP_FUNC(elm_interface_atspi_socket_embed_by, _elm_atspi_bridge_elm_interface_atspi_socket_embed_by),
-                  EFL_OBJECT_OP_FUNC(elm_interface_atspi_socket_unembed_by, _elm_atspi_bridge_elm_interface_atspi_socket_unembed_by));
+                  //EFL_OBJECT_OP_FUNC(elm_atspi_socket_embed, _elm_atspi_bridge_elm_interface_atspi_socket_embed),
+                  //EFL_OBJECT_OP_FUNC(elm_atspi_socket_unembed, _elm_atspi_bridge_elm_interface_atspi_socket_unembed),
+                  EFL_OBJECT_OP_FUNC(elm_atspi_plug_embed_by, _elm_atspi_bridge_elm_interface_atspi_socket_embed_by),
+                  EFL_OBJECT_OP_FUNC(elm_atspi_plug_unembed_by, _elm_atspi_bridge_elm_interface_atspi_socket_unembed_by));
 
-   efl_object_override(socket, &_elm_atspi_bridge_hooks);
+   efl_object_override(plug, &_elm_atspi_bridge_hooks);
+   ERR("Install hooks end");
 }
 
 EOLIAN Efl_Object*
@@ -5065,6 +5072,7 @@ _elm_atspi_bridge_plug_register(Eo *obj, Elm_Atspi_Bridge_Data *pd, Elm_Atspi_Pl
 
    if (!eina_list_data_find(pd->plugs, plug))
      {
+        ERR("Is connected: %d", pd->connected);
         if (pd->connected)
            _bridge_object_register(obj, plug);
         efl_event_callback_add(plug, EFL_EVENT_DEL, _elm_atspi_bridge_plug_del, obj);
@@ -5087,44 +5095,46 @@ _elm_atspi_bridge_plug_unregister(Eo *obj, Elm_Atspi_Bridge_Data *pd, Elm_Atspi_
      }
 }
 
+EOLIAN void
+_elm_atspi_bridge_elm_interface_accessible_observer_on_created(Eo *obj, Elm_Atspi_Bridge_Data *pd, Elm_Interface_Atspi_Accessible *accessible)
+{
+   if (efl_isa(accessible, ELM_ATSPI_PLUG_CLASS)) {
+        ERR("added plug %d", accessible);
+    elm_atspi_bridge_plug_register(obj, accessible);
+   }
+}
+
 static Eina_Bool
 _elm_atspi_bridge_id_parse(const char *id, struct dbus_address *addr)
 {
-   int written;
-   Eina_Bool ret = EINA_FALSE;
+   size_t source_len;
+   char *split;
+   int to_write;
 
    if (!addr || !id)
      return EINA_FALSE;
 
-   char *copy = strdup(id);
-   if (!copy)
+   split = strrchr(id, ':');
+   if (!split)
      return EINA_FALSE;
 
-   char *split = strrchr(copy, ':');
-   if (!split)
-     goto exit;
+   to_write = split - id + 1;
+   if (to_write > (int)sizeof(addr->bus))
+     return EINA_FALSE;
 
-   *split = '\0';
+   eina_strlcpy(addr->bus, id, to_write);
 
-   written = snprintf(addr->bus, sizeof(addr->bus), "%s", copy);
-   if ((written < 0) || (written >= (int)sizeof(addr->bus)))
-     goto exit;
+   source_len = eina_strlcpy(addr->path, split + 1, sizeof(addr->path));
+   if (source_len >= (int)sizeof(addr->path))
+     return EINA_FALSE;
 
-   written = snprintf(addr->path, sizeof(addr->path), "%s", split + 1);
-   if ((written < 0) || (written >= (int)sizeof(addr->path)))
-     goto exit;
-
-   ret = EINA_TRUE;
-
-exit:
-   free(copy);
-   return ret;
+   return EINA_TRUE;
 }
 
 static char*
 _elm_atspi_bridge_id_make(const struct dbus_address *address)
 {
-   char buf[256];
+   char buf[512];
 
    int written = snprintf(buf, sizeof(buf), "%s:%s", address->bus, address->path);
    if ((written < 0) || (written >= (int)sizeof(buf)))

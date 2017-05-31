@@ -131,16 +131,11 @@ struct _Elm_Interface_Atspi_Accessible_Data
 
 typedef struct _Elm_Interface_Atspi_Accessible_Data Elm_Interface_Atspi_Accessible_Data;
 
-struct Accessibility_Plugin
-{
-   void *plugin_private_data;
-};
-
-static void _elm_interface_atspi_accessible_observers_notify(Eo *object);
+static void _elm_interface_atspi_accessible_observers_notify_created(Eo *object);
 
 
 static Eo *root;
-static Eina_List *plugins;
+static Eina_List *observers;
 
 EOLIAN static int
 _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
@@ -515,6 +510,11 @@ _elm_interface_atspi_accessible_root_get(Eo *class EINA_UNUSED, void *pd EINA_UN
 }
 
 EOLIAN void
+_elm_interface_atspi_accessible_root_set(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *root)
+{
+}
+
+EOLIAN void
 _elm_interface_atspi_accessible_efl_object_destructor(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd)
 {
    efl_destructor(efl_super(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
@@ -534,33 +534,36 @@ EOLIAN Eo *
 _elm_interface_atspi_accessible_efl_object_constructor(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd)
 {
    pd->self = obj;
-   _elm_interface_atspi_accessible_observers_notify(obj);
+   _elm_interface_atspi_accessible_observers_notify_created(obj);
    return efl_constructor(efl_super(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
 }
 
-static void
-_elm_interface_atspi_accessible_observers_notify(Eo *object)
+static void _elm_interface_atspi_accessible_observers_notify_created(Eo *object)
 {
-   if (observers)
+   Eina_List *l;
+   Elm_Interface_Accessible_Observer *observer;
+
+   EINA_LIST_FOREACH(observers, l , observer)
      {
-        ERR("Query observer");
+        elm_interface_accessible_observer_on_created(observer, object);
      }
 }
 
 EOLIAN void
-_elm_interface_atspi_accessible_observer_install(Eo *socket_class, void *data)
+_elm_interface_atspi_accessible_observer_install(Eo *socket_class, void *data,
+                                                 Elm_Interface_Accessible_Observer *observer)
 {
-   ERR("Observer installed");
-   observers = 0x1;
-   if (!observers)
-     observers = eina_array_new(1);
+   if (efl_isa(observer, ELM_INTERFACE_ACCESSIBLE_OBSERVER_INTERFACE))
+      observers = eina_list_append(observers, observer);
+   else
+     ERR("Incorrct type: (%s) do not implement %s",
+         efl_class_name_get(observer), efl_class_name_get(ELM_INTERFACE_ACCESSIBLE_OBSERVER_INTERFACE));
 }
 
 EOLIAN void
-_elm_interface_atspi_accessible_observer_uninstall(Eo *socket_class, void *data)
+_elm_interface_atspi_accessible_observer_uninstall(Eo *socket_class, void *data, Elm_Interface_Accessible_Observer *observer)
 {
-   ERR("Observer uninstalled");
-   observers = NULL;
+   observers = eina_list_remove(observers, observer);
 }
 
 #include "elm_interface_atspi_accessible.eo.c"

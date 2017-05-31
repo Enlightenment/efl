@@ -1,13 +1,51 @@
-class Elm.Atspi.Plug (Efl.Object, Elm.Interface.Atspi_Accessible,
-                      Elm.Interface.Atspi.Socket)
+class Elm.Atspi.Plug (Efl.Object, Elm.Interface.Atspi_Accessible)
 {
    [[AT-SPI Plug class.]]
    legacy_prefix: elm_atspi_plug;
    eo_prefix: elm_obj_atspi_plug;
+   methods {
+        @property id {
+             get {
+             } set {
+             }
+             values {
+               ret: string;
+             }
+        }
+        embed_by {
+             [[ Embed accessible object as a child of remote object.]]
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        unembed_by {
+             // unembed
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        on_embedded {
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        on_unembedded {
+             params {
+                  @in proxy: Elm.Atspi.Proxy;
+             }
+        }
+        on_connected {
+        }
+        on_disconnected {
+        }
+   }
    implements {
       Efl.Object.destructor;
       Efl.Object.constructor;
-      Elm.Interface.Atspi.Socket.on_embedded;
-      Elm.Interface.Atspi.Socket.on_unembedded;
+   }
+   events {
+        embedded;
+        unembedded;
+        id,changed;
    }
 }

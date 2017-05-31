@@ -146,7 +146,7 @@ static void
 _on_plug_id_changed(void *data, const Efl_Event *event)
 {
    Elm_Atspi_Plug *plug = event->object;
-   plugid = elm_interface_atspi_socket_id_get(plug);
+   plugid = elm_atspi_plug_id_get(plug);
    // send id using elementary IPC mechanism
 }
 
@@ -160,9 +160,9 @@ a11y_init(Evas_Object *socket_window)
    elm_interface_atspi_accessible_parent_set(socket_window, plug);
 
    // get address when bridge gets connected
-   efl_event_callback_add(plug, ELM_INTERFACE_ATSPI_SOCKET_EVENT_ID_CHANGED, _on_plug_id_changed, NULL);
+   efl_event_callback_add(plug, ELM_OBJ_ATSPI_PLUG_EVENT_ID_CHANGED, _on_plug_id_changed, NULL);
 
-   plugid = elm_interface_atspi_socket_id_get(plug);
+   plugid = elm_atspi_plug_id_get(plug);
 }
 
 void

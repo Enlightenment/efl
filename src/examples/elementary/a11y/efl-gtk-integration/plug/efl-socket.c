@@ -24,6 +24,7 @@ static void a11y_init(void)
         // fires accessible parent should be set to eo_parent (???)
         elm_interface_atspi_accessible_parent_set(state.socket, state.container);
         // following line shuold be not necessary:
+
         elm_interface_atspi_accessible_parent_set(state.proxy, state.socket);
 
         // FIXME order matters =  should be fixed!!!

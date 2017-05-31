@@ -2,9 +2,8 @@
 ### Library
 
 elm_public_eolian_files = \
-	lib/elementary/elm_atspi_bridge.eo \
-	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/elm_atspi_plug.eo \
+	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/elm_atspi_proxy.eo \
 	lib/elementary/elm_atspi_socket.eo \
 	lib/elementary/elm_bg.eo \
@@ -37,7 +36,6 @@ elm_public_eolian_files = \
 	lib/elementary/elm_interface_atspi_text_editable.eo \
 	lib/elementary/elm_interface_atspi_image.eo \
 	lib/elementary/elm_interface_atspi_selection.eo \
-	lib/elementary/elm_interface_atspi_socket.eo \
 	lib/elementary/elm_interface_atspi_text.eo \
 	lib/elementary/elm_interface_atspi_value.eo \
 	lib/elementary/elm_interface_atspi_widget_action.eo \
@@ -130,6 +128,8 @@ elm_public_eolian_files = \
 
 # Private classes (not exposed or shipped)
 elm_private_eolian_files = \
+	lib/elementary/elm_atspi_bridge.eo \
+	lib/elementary/elm_interface_accessible_observer.eo \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
 	lib/elementary/efl_ui_win_internal_part.eo \
 	tests/elementary/focus_test.eo \
@@ -211,6 +211,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_atspi_plug.h \
 	lib/elementary/elm_atspi_proxy.h \
 	lib/elementary/elm_atspi_socket.h \
+	lib/elementary/elm_interface_accessible_observer.h \
 	lib/elementary/elm_interface_atspi_accessible.h \
 	lib/elementary/elm_interface_atspi_text.h \
 	lib/elementary/elm_interface_atspi_widget_action.h \
@@ -607,13 +608,13 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_icon.c \
 	lib/elementary/efl_ui_image.c \
 	lib/elementary/elm_index.c \
+	lib/elementary/elm_interface_accessible_observer.c \
 	lib/elementary/elm_interface_atspi_accessible.c \
 	lib/elementary/elm_interface_atspi_action.c \
 	lib/elementary/elm_interface_atspi_component.c \
 	lib/elementary/elm_interface_atspi_text_editable.c \
 	lib/elementary/elm_interface_atspi_image.c \
 	lib/elementary/elm_interface_atspi_selection.c \
-	lib/elementary/elm_interface_atspi_socket.c \
 	lib/elementary/elm_interface_atspi_text.c \
 	lib/elementary/elm_interface_atspi_value.c \
 	lib/elementary/elm_interface_atspi_widget_action.c \
