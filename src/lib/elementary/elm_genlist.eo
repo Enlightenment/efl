@@ -2,8 +2,6 @@ import elm_general;
 import elm_list;
 import elm_genlist_item;
 
-type @extern Elm.Glob.Match_Flags: __undefined_type;
-
 class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                    Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
                    Efl.Ui.Selectable)

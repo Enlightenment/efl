@@ -11,6 +11,7 @@ type Elm_Tooltip_Item_Content_Cb: __undefined_type; [[Elementary tooltip item co
 type Elm_Object_Item_Signal_Cb: __undefined_type; [[Elementary object item signal callback type]]
 type Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
 type Eina_Compare_Cb: __undefined_type; [[Eina compare callback type]]
+type @extern Elm.Glob.Match_Flags: __undefined_type;
 
 /* FIXME: elm_policy API is not bound to EO */
 enum Elm.Policy
