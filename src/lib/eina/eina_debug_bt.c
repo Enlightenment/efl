@@ -117,21 +117,18 @@ _signal_handler(int sig EINA_UNUSED,
 
    // find which slot in the array of threads we have so we store info
    // in the correct slot for us
-   if (self != _eina_debug_thread_mainloop)
+   for (i = 0; i < _eina_debug_thread_active_num; i++)
      {
-        for (i = 0; i < _eina_debug_thread_active_num; i++)
+        if (self == _eina_debug_thread_active[i].thread)
           {
-             if (self == _eina_debug_thread_active[i].thread)
-               {
-                  slot = i + 1;
-                  goto found;
-               }
+             slot = i;
+             goto found;
           }
-        // we couldn't find out thread reference! help!
-        e_debug("EINA DEBUG ERROR: can't find thread slot!");
-        eina_semaphore_release(&_wait_for_bts_sem, 1);
-        return;
      }
+   // we couldn't find out thread reference! help!
+   e_debug("EINA DEBUG ERROR: can't find thread slot!");
+   eina_semaphore_release(&_wait_for_bts_sem, 1);
+   return;
 found:
    // store thread info like what cpu core we are on now (not reliable
    // but hey - better than nothing), the amount of cpu time total
@@ -189,36 +186,31 @@ _trace_cb(void *data EINA_UNUSED)
    _eina_debug_chunk_tmp_reset();
    // get an array of pointers for the backtrace array for main + th
    _bt_buf = _eina_debug_chunk_tmp_push
-      ((1 + _eina_debug_thread_active_num) * sizeof(void *));
+      ((_eina_debug_thread_active_num) * sizeof(void *));
    if (!_bt_buf) goto err;
    // get an array of pointers for the timespec array for mainloop + th
    _bt_ts = _eina_debug_chunk_tmp_push
-      ((1 + _eina_debug_thread_active_num) * sizeof(struct timespec));
+      ((_eina_debug_thread_active_num) * sizeof(struct timespec));
    if (!_bt_ts) goto err;
    // get an array of pointers for the cpuid array for mainloop + th
    _bt_cpu = _eina_debug_chunk_tmp_push
-      ((1 + _eina_debug_thread_active_num) * sizeof(int));
+      ((_eina_debug_thread_active_num) * sizeof(int));
    if (!_bt_cpu) goto err;
-   // now get an array of void pts for mainloop bt
-   _bt_buf[0] = _eina_debug_chunk_tmp_push(EINA_MAX_BT * sizeof(void *));
-   if (!_bt_buf[0]) goto err;
    // get an array of void ptrs for each thread we know about for bt
    for (i = 0; i < _eina_debug_thread_active_num; i++)
      {
-        _bt_buf[i + 1] = _eina_debug_chunk_tmp_push(EINA_MAX_BT * sizeof(void *));
-        if (!_bt_buf[i + 1]) goto err;
+        _bt_buf[i] = _eina_debug_chunk_tmp_push(EINA_MAX_BT * sizeof(void *));
+        if (!_bt_buf[i]) goto err;
      }
    // get an array of ints to stor the bt len for mainloop + threads
    _bt_buf_len = _eina_debug_chunk_tmp_push
-      ((1 + _eina_debug_thread_active_num) * sizeof(int));
-   // collect bt from the mainloop - always there
-   _collect_bt(_eina_debug_thread_mainloop);
+      ((_eina_debug_thread_active_num) * sizeof(int));
    // now collect per thread
    for (i = 0; i < _eina_debug_thread_active_num; i++)
       _collect_bt(_eina_debug_thread_active[i].thread);
    // we're done probing. now collec all the "i'm done" msgs on the
    // semaphore for every thread + mainloop
-   for (i = 0; i < (_eina_debug_thread_active_num + 1); i++)
+   for (i = 0; i < (_eina_debug_thread_active_num); i++)
       eina_semaphore_lock(&_wait_for_bts_sem);
    // we now have gotten all the data from all threads
    // we can process it now as we see fit, so release thread lock
@@ -250,6 +242,7 @@ _prof_on_cb(Eina_Debug_Session *session, int cid EINA_UNUSED, void *buffer, int 
      {
         memcpy(&time, buffer, 4);
         _trace_t0 = 0.0;
+        if (_timer) eina_debug_timer_del(_timer);
         _timer = eina_debug_timer_add(time, _trace_cb, session);
      }
    return EINA_TRUE;
