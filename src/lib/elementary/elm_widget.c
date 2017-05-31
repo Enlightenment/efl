@@ -4624,13 +4624,15 @@ elm_widget_activate(Evas_Object *obj, Elm_Activate act)
  * After keypad showing, conform widget can change child's Evas_Display_Mode.
  * @ingroup Widget
  */
-EOLIAN static void
-_elm_widget_display_mode_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Display_Mode dispmode)
+/* Legacy only */
+EAPI void
+elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
 {
    Evas_Display_Mode prev_dispmode;
    Evas_Object *child;
    Eina_List *l;
 
+   API_ENTRY return;
    prev_dispmode = evas_object_size_hint_display_mode_get(obj);
 
    if ((prev_dispmode == dispmode) ||

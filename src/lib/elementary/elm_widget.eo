@@ -231,14 +231,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
             sobj: Efl.Canvas.Object @nullable; [[Hover sub object]]
          }
       }
-      @property display_mode {
-      	 [[Display mode property]]
-         set {
-         }
-         values {
-            dispmode: Efl.Gfx.Size.Hint.Mode; [[Display mode]]
-         }
-      }
       @property on_show_region_hook {
       	 [[Region hook on show property]]
          set {

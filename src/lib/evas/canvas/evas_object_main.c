@@ -1322,20 +1322,22 @@ _evas_object_size_hint_alloc(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
    obj->size_hints->dispmode = EVAS_DISPLAY_MODE_NONE;
 }
 
-EOLIAN static Evas_Display_Mode
-_efl_canvas_object_efl_gfx_size_hint_hint_display_mode_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+/* Legacy only */
+EAPI Evas_Display_Mode
+evas_object_size_hint_display_mode_get(const Evas_Object *eo_obj)
 {
-   if (!obj) return EVAS_DISPLAY_MODE_NONE;
-   if ((!obj->size_hints) || obj->delete_me)
-     return EVAS_DISPLAY_MODE_NONE;
+   Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, EVAS_DISPLAY_MODE_NONE);
+   if (!obj->size_hints) return EVAS_DISPLAY_MODE_NONE;
    return obj->size_hints->dispmode;
 }
 
-EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_display_mode_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Display_Mode dispmode)
+/* Legacy only */
+EAPI void
+evas_object_size_hint_display_mode_set(Eo *eo_obj, Evas_Display_Mode dispmode)
 {
-   if (!obj) return;
-   if (obj->delete_me) return;
+   Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
@@ -2546,18 +2548,6 @@ EAPI Evas *
 evas_object_evas_get(const Eo *eo_obj)
 {
    return efl_provider_find((Eo *) eo_obj, EVAS_CANVAS_CLASS);
-}
-
-EAPI void
-evas_object_size_hint_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
-{
-   efl_gfx_size_hint_display_mode_set(obj, dispmode);
-}
-
-EAPI Evas_Display_Mode
-evas_object_size_hint_display_mode_get(const Evas_Object *obj)
-{
-   return efl_gfx_size_hint_display_mode_get(obj);
 }
 
 /* Internal EO APIs and hidden overrides */
