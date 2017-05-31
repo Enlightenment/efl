@@ -142,6 +142,7 @@ typedef struct _Ecore_IMF_Event_Preedit_Changed    Ecore_IMF_Event_Preedit_Chang
 typedef struct _Ecore_IMF_Event_Commit             Ecore_IMF_Event_Commit;
 typedef struct _Ecore_IMF_Event_Delete_Surrounding Ecore_IMF_Event_Delete_Surrounding;
 typedef struct _Ecore_IMF_Event_Selection          Ecore_IMF_Event_Selection;
+typedef struct _Ecore_IMF_Event_Commit_Content     Ecore_IMF_Event_Commit_Content;
 
 /* Events to filter */
 typedef struct _Ecore_IMF_Event_Mouse_Down         Ecore_IMF_Event_Mouse_Down;
@@ -191,7 +192,8 @@ typedef enum
    ECORE_IMF_CALLBACK_COMMIT,             /**< "COMMIT" is called when a complete input sequence has been entered by the user @since 1.2 */
    ECORE_IMF_CALLBACK_DELETE_SURROUNDING, /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor @since 1.2 */
    ECORE_IMF_CALLBACK_SELECTION_SET,      /**< "SELECTION_SET" is called when the input method needs to set the selection @since 1.9 */
-   ECORE_IMF_CALLBACK_PRIVATE_COMMAND_SEND /**< "PRIVATE_COMMAND_SEND" is called when the input method sends a private command @since 1.12 */
+   ECORE_IMF_CALLBACK_PRIVATE_COMMAND_SEND, /**< "PRIVATE_COMMAND_SEND" is called when the input method sends a private command @since 1.12 */
+   ECORE_IMF_CALLBACK_COMMIT_CONTENT      /**< "COMMIT_CONTENT" is called when the input method commits content such as an image @since 1.20 */
 } Ecore_IMF_Callback_Type;
 
 /**
@@ -488,6 +490,19 @@ struct _Ecore_IMF_Event_Selection
    Ecore_IMF_Context *ctx;
    int                start;
    int                end;
+};
+
+/**
+ * @struct _Ecore_IMF_Event_Commit_Content
+ * @brief The structure type used with the Commit_Content Input Method event
+ * @since 1.20
+ */
+struct _Ecore_IMF_Event_Commit_Content
+{
+   Ecore_IMF_Context *ctx;                  /**< The associated Ecore IMF Context */
+   const char        *content_uri;          /**< The content URI */
+   const char        *description;          /**< The content description */
+   const char        *mime_types;           /**< The content MIME types */
 };
 
 /**
