@@ -11,22 +11,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
    event_prefix: edje_object;
    data: Edje;
    methods {
-      @property update_hints {
-         set {
-            [[Edje will automatically update the size hints on itself.
-
-              By default edje doesn't set size hints on itself. With this function
-              call, it will do so if update is $true. Be carefully, it cost a lot to
-              trigger this feature as it will recalc the object every time it make
-              sense to be sure that's its minimal size hint is always accurate.]]
-         }
-         get {
-            [[Whether or not Edje will update size hints on itself.]]
-         }
-         values {
-            update: bool; [[Whether or not update the size hints.]]
-         }
-      }
       @property mirrored {
          set {
             [[Sets the RTL orientation for this object.
@@ -135,24 +119,24 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       @property transition_duration_factor {
-         set {
-              [[Sets transition duration factor.
+         [[Transition duration factor.
 
-                This define the transition duration factor on this
-                specific object. By default all animation are run at a speed
-                factor of 1.0.]]
+           This defines a multiplier for the duration of transitions as they
+           are defined in EDC. By default this factor is 1.0, which means
+           animations play at the same speed as described in EDC.
+         ]]
+         set {
+            [[Sets transition duration factor.]]
          }
          get {
-              [[Gets transition duration factor.
-
-                This define the transition duration factor on this
-                specific object. By default all animation are run at a speed
-                factor of 1.0.]]
+            [[Gets transition duration factor.]]
          }
          values {
-            scale: double; [[The transition duration factor]]
+            scale: double(1.0); [[The transition duration factor.]]
          }
       }
+
+      // TODO: An Efl.Ui.Base class that contains mirrored, language, scale
       @property scale {
          set {
             [[Sets the scaling factor for a given Edje object.
@@ -199,87 +183,8 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                                   that means the edc file is made based on scale 1.0.]]
          }
       }
-      @property size_min {
-         get {
-            [[Gets the minimum size specified -- as an EDC property -- for a
-              given Edje object
 
-              This function retrieves the obj object's minimum size values,
-              as declared in its EDC group definition.
-
-              Note: If the $min EDC property was not declared for obj, this
-              call will return the value 0, for each axis.
-
-              Note: On failure, this function will make all non-$null size
-              pointers' pointed variables be set to zero.
-
-              See also @.size_max.get()]]
-              /* FIXME-doc
-               * Minimum size of groups have the following syntax
-               * @code
-               * collections
-               *   {
-               *      group
-               *        {
-               *           name: "a_group";
-               *           min: 100 100;
-               *        }
-               *   }
-               * @endcode
-               * where one declares a minimum size of 100 pixels both for width and
-               * height. Those are (hint) values which should be respected when the
-               * given object/group is to be controlled by a given container object
-               * (e.g. an Edje object being "swallowed" into a given $SWALLOW
-               * typed part, as in edje_object_part_swallow()). Check the complete
-               * \@ref edcref "syntax reference" for EDC files.
-               */
-         }
-         values {
-            minw: int; [[Pointer to a variable where to store the minimum width]]
-            minh: int; [[Pointer to a variable where to store the minimum height]]
-         }
-      }
-      @property size_max {
-         get {
-            [[Gets the maximum size specified -- as an EDC property -- for a
-              given Edje object
-
-              This function retrieves the obj object's maximum size values,
-              as declared in its EDC group definition.
-
-              Note: If the $max EDC property was not declared for obj, this
-              call will return the maximum size a given Edje object may have, for
-              each axis.
-
-              Note: On failure, this function will make all non-$null size
-              pointers' pointed variables be set to zero.
-
-              See also @.size_min.get()]]
-              /* FIXME-doc
-               * Maximum size of groups have the following syntax
-               * @code
-               * collections
-               *   {
-               *      group
-               *        {
-               *           name: "a_group";
-               *           max: 100 100;
-               *        }
-               *   }
-               * @endcode
-               * where one declares a maximum size of 100 pixels both for width and
-               * height. Those are (hint) values which should be respected when the
-               * given object/group is to be controlled by a given container object
-               * (e.g. an Edje object being "swallowed" into a given $SWALLOW
-               * typed part, as in edje_object_part_swallow()). Check the complete
-               * \@ref edcref "syntax reference" for EDC files.
-               */
-         }
-         values {
-            maxw: int; [[Pointer to a variable where to store the maximum width]]
-            maxh: int; [[Pointer to a variable where to store the maximum height]]
-         }
-      }
+      // TODO: Legacy only. EO may rely on futures.
       preload {
          [[Preloads the images on the Edje Object in the background.
 
@@ -314,48 +219,76 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                [[The load error code.]]
          }
       }
+
+      /* EDJE CALC APIS BEGIN ---------------------------------------------- */
+      @property calc_update_hints {
+         [[Whether this object updates its size hints automatically.
+
+           By default edje doesn't set size hints on itself. If this property
+           is set to $true, size hints will be updated after recalculation.
+           Be careful, as recalculation may happen often, enabling this
+           property may have a considerable performance impact as other widgets
+           will be notified of the size hints changes.
+
+           A layout recalculation can be triggered by @.size_min_calc(),
+           @.size_min_restricted_calc(), @.parts_extends_calc() or even any
+           other internal event.
+         ]]
+         set {
+            [[Enable or disable auto-update of size hints.]]
+            legacy: edje_object_update_hints_set;
+         }
+         get {
+            [[Whether this object updates its size hints automatically.]]
+            legacy: edje_object_update_hints_get;
+         }
+         values {
+            update: bool(false); [[Whether or not update the size hints.]]
+         }
+      }
+      // FIXME: Prefix with calc_ ?
       size_min_calc {
          [[Calculates the minimum required size for a given Edje object.
 
            This call works exactly as edje_object_size_min_restricted_calc(),
            with the last two arguments set to 0. Please refer to its
-           documentation, then.]]
-
+           documentation, then.
+         ]]
+         // FIXME: Return a 2D size type (no @out values)
          params {
-            @out minw: int; [[Pointer to a variable where to store the minimum
-                              required width]]
-            @out minh: int; [[Pointer to a variable where to store the minimum
-                              required height]]
+            @out minw: int; [[The minimum required width (return value)]]
+            @out minh: int; [[The minimum required height (return value)]]
          }
       }
+      // FIXME: Prefix with calc_ ?
       size_min_restricted_calc {
          [[Calculates the minimum required size for a given Edje object.
 
            This call will trigger an internal recalculation of all parts of
-           the obj object, in order to return its minimum required
-           dimensions for width and height. The user might choose to  impose
-           those minimum sizes, making the resulting calculation to get to values
-           equal or bigger than restrictedw and restrictedh, for width and
-           height, respectively.
+           the object, in order to return its minimum required dimensions for
+           width and height. The user might choose to impose those minimum
+           sizes, making the resulting calculation to get to values equal or
+           larger than $restrictedw and $restrictedh, for width and height,
+           respectively.
 
-           Note: At the end of this call, obj  won't be automatically
-           resized to new dimensions, but just return the calculated
-           sizes. The caller is the one up to change its geometry or not.
+           Note: At the end of this call, the object  won't be automatically
+           resized to the new dimensions, but just return the calculated sizes.
+           The caller is the one up to change its geometry or not.
 
-           Warning: Be advised that invisible parts in obj  will be taken
-           into account in this calculation.]]
-
+           Warning: Be advised that invisible parts in the object will be taken
+           into account in this calculation.
+         ]]
+         // FIXME: Return a 2D size type (no @out values)
          params {
-            @out minw: int; [[Pointer to a variable where to store the minimum
-                              required width]]
-            @out minh: int; [[Pointer to a variable where to store the minimum
-                              required height]]
-            @in restrictedw: int; [[Do not allow object's calculated (minimum) width
-                                    to be less than this value]]
-            @in restrictedh: int; [[Do not allow object's calculated (minimum)
-                                    height to be less than this value]]
+            @out minw: int; [[The minimum required width (return value)]]
+            @out minh: int; [[The minimum required height (return value)]]
+            @in restrictedw: int; [[The minimum width constraint as input,
+                                    $minw can not be lower than this]]
+            @in restrictedh: int; [[The minimum height constraint as input,
+                                    $minh can not be lower than this]]
          }
       }
+      // FIXME: Prefix with calc_ ?
       parts_extends_calc {
          [[Calculates the geometry of the region, relative to a given Edje
            object's area, occupied by all parts in the object.
@@ -367,52 +300,112 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
            boundaries will also be taken in account, so that x and y
            may be negative.
 
-           Note: Use $null pointers on the geometry components you're not
-           interested in: they'll be ignored by the function.
-
            Note: On failure, this function will make all non-$null geometry
-           pointers' pointed variables be set to zero.]]
-
+           pointers' pointed variables be set to zero.
+         ]]
          return: bool; [[$true on success, $false otherwise]]
+         /* FIXME: Return a 2D size type (no @out values) */
          params {
-            @out x: int; [[A pointer to a variable where to store the parts region's
-                           x coordinate]]
-            @out y: int; [[A pointer to a variable where to store the parts region's
-                           y coordinate]]
-            @out w: int; [[A pointer to a variable where to store the parts region's
-                           width]]
-            @out h: int; [[A pointer to a variable where to store the parts region's
-                           height]]
+            @out x: int; [[The parts region's X coordinate]]
+            @out y: int; [[The parts region's Y coordinate]]
+            @out w: int; [[The parts region's width]]
+            @out h: int; [[The parts region's height]]
          }
       }
       calc_force {
          [[Forces a Size/Geometry calculation.
 
-           Forces the object obj to recalculation layout regardless of
-           freeze/thaw.]]
+           Forces the object to recalculate its layout regardless of
+           freeze/thaw.
 
+           See also @.calc_freeze and @.calc_thaw.
+         ]]
       }
-      freeze {
+      calc_freeze {
          [[Freezes the Edje object.
 
            This function puts all changes on hold. Successive freezes will
            nest, requiring an equal number of thaws.
 
-           See also @.thaw()]]
-
-         return: int; [[The frozen state or 0 on Error]]
+           See also @.calc_thaw()
+         ]]
+         return: int; [[The frozen state or 0 on error]]
+         legacy: edje_object_freeze;
       }
-      thaw {
+      calc_thaw {
          [[Thaws the Edje object.
 
            This function thaws the given Edje object.
 
-           Note:: If sucessives freezes were done, an equal number of
-           thaws will be required.
+           Note: If sucessive freezes were done, an equal number of thaws will
+           be required.
 
-           See also @.freeze()]]
+           See also @.calc_freeze()
+         ]]
+         return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
+         legacy: edje_object_thaw;
+      }
+      /* EDJE CALC APIS END ------------------------------------------------ */
 
-         return: int; [[The frozen state or $0 if the object is not frozen or on error.]]
+      /* EDJE GROUP DATA APIS BEGIN ---------------------------------------- */
+      @property group_size_min {
+         get {
+            [[Gets the minimum size specified -- as an EDC property -- for a
+              given Edje object
+
+              This function retrieves the obj object's minimum size values,
+              as declared in its EDC group definition. For instance, for an
+              Edje object of minimum size 100x100 pixels:
+              collections {
+                 group {
+                    name: "a_group";
+                    min: 100 100;
+                 }
+              }
+
+              Note: If the $min EDC property was not declared for this object,
+              this call will return 0x0.
+
+              Note: On failure, this function also return 0x0.
+
+              See also @.group_size_max.
+            ]]
+            legacy: edje_object_size_min_get;
+         }
+         values {
+            minw: int; [[Pointer to a variable where to store the minimum width]]
+            minh: int; [[Pointer to a variable where to store the minimum height]]
+         }
+      }
+      @property group_size_max {
+         get {
+            [[Gets the maximum size specified -- as an EDC property -- for a
+              given Edje object
+
+              This function retrieves the object's maximum size values,
+              as declared in its EDC group definition. For instance, for an
+              Edje object of maximum size 100x100 pixels:
+              collections {
+                 group {
+                    name: "a_group";
+                    max: 100 100;
+                 }
+              }
+
+              Note: If the $max EDC property was not declared for the object,
+              this call will return the maximum size a given Edje object may
+              have, for each axis.
+
+              Note: On failure, this function will return 0x0.
+
+              See also @.group_size_min.
+            ]]
+            legacy: edje_object_size_max_get;
+         }
+         values {
+            maxw: int; [[The maximum width]]
+            maxh: int; [[The maximum height]]
+         }
       }
       @property group_data {
          get {
@@ -450,6 +443,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             val: string; [[The data's value string.]]
          }
       }
+      /* EDJE GROUP DATA APIS END ------------------------------------------ */
 
       /* MESSAGE & SIGNAL APIS BEGIN --------------------------------------- */
       message_send {

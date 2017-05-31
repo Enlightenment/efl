@@ -937,7 +937,7 @@ _edje_recalc_do(Edje *ed)
 
         ed->recalc_hints = EINA_FALSE;
 
-        edje_obj_size_min_calc(ed->obj, &w, &h);
+        edje_object_size_min_calc(ed->obj, &w, &h);
         efl_gfx_size_hint_restricted_min_set(ed->obj, w, h);
      }
 

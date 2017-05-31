@@ -353,7 +353,7 @@ video_obj_frame_resize_cb(void *data, const Efl_Event *event)
    if (ratio > 0.0) iw = (ih * ratio) + 0.5;
    evas_object_size_hint_min_set(event->object, iw, ih);
    edje_object_part_swallow(oe, "video_swallow", event->object);
-   edje_obj_size_min_calc(oe, &w, &h);
+   edje_object_size_min_calc(oe, &w, &h);
    efl_gfx_size_set(oe, w, h);
    evas_object_size_hint_min_set(event->object, 0, 0);
    edje_object_part_swallow(oe, "video_swallow", event->object);
@@ -625,7 +625,7 @@ init_video_object(const char *module_filename, const char *filename)
 
    offset = 20 * (eina_list_count(video_objs) - 1);
    efl_gfx_position_set(oe, offset, offset);
-   edje_obj_size_min_calc(oe, &w, &h);
+   edje_object_size_min_calc(oe, &w, &h);
    efl_gfx_size_set(oe, w, h);
 
    efl_event_callback_array_add(o, emotion_object_test_callbacks(), oe);
