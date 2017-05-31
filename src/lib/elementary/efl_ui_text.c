@@ -2979,6 +2979,11 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    efl_composite_attach(obj, text_obj);
 
+   // FIXME: use the theme, when a proper theming option is available
+   //  (possibly, text_classes).
+   // For now, set this for easier setup
+   efl_text_font_set(text_obj, "Sans", 12);
+
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
