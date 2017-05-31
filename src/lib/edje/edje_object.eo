@@ -3,7 +3,7 @@ import edje_types;
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
 class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
-                   Efl.Observer)
+                   Efl.Observer, Efl.Ui.Base)
 {
    [[Edje object class]]
    legacy_prefix: edje_object;
@@ -11,38 +11,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
    event_prefix: edje_object;
    data: Edje;
    methods {
-      @property mirrored {
-         set {
-            [[Sets the RTL orientation for this object.
-
-              @since 1.1.0]]
-         }
-         get {
-            [[Gets the RTL orientation for this object.
-
-              You can RTL orientation explicitly with edje_object_mirrored_set.
-
-              @since 1.1.0]]
-         }
-         values {
-            rtl: bool; [[New value of flag $true/$false]]
-         }
-      }
-      @property language {
-         set {
-            [[Sets the language for this object.
-
-              @since 1.1.0]]
-         }
-         get {
-            [[Gets the language for this object.
-
-              @since 1.1.0]]
-         }
-         values {
-            language: string; [[The language value]]
-          }
-      }
       @property animation {
          [[Whether this object is animating or not.
 
@@ -136,39 +104,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
 
-      // TODO: An Efl.Ui.Base class that contains mirrored, language, scale
-      @property scale {
-         set {
-            [[Sets the scaling factor for a given Edje object.
-
-              This function sets an  individual scaling factor on the  obj
-              Edje object. This property (or Edje's global scaling factor, when
-              applicable), will affect this object's part sizes. If scale is
-              not zero, than the individual scaling will  override any global
-              scaling set, for the object obj's parts. Put it back to zero to
-              get the effects of the global scaling again.
-
-              Warning: Only parts which, at EDC level, had the @"scale"
-              property set to @1, will be affected by this function. Check the
-              complete \@ref edcref "syntax reference" for EDC files.
-
-              See also @.scale.get()
-              \@ref edje_scale_get() for more details]]
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         get {
-            [[Gets a given Edje object's scaling factor.
-
-              This function returns the individual scaling factor set on the
-               obj Edje object.
-
-              See also @.scale.set() for more details]]
-         }
-         values {
-            scale: double; [[The scaling factor (the default value is @0.0,
-                             meaning individual scaling  not set)]]
-         }
-      }
       @property base_scale {
          get {
             [[Gets a given Edje object's base_scale factor.
@@ -1747,6 +1682,9 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { set; }
       Efl.Canvas.Group.group_calculate;
+      Efl.Ui.Base.mirrored { set; get; }
+      Efl.Ui.Base.language { set; get; }
+      Efl.Ui.Base.scale { set; get; }
       Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;

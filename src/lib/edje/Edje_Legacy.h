@@ -1020,6 +1020,91 @@ EAPI Eina_Bool edje_object_color_class_get(const Evas_Object *obj, const char * 
 EAPI void edje_object_part_text_select_allow_set(const Edje_Object *obj, const char *part, Eina_Bool allow);
 
 /**
+ * @brief Sets the RTL orientation for this object.
+ *
+ * @param[in] rtl New value of flag @c true/$false
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_mirrored_set(Edje_Object *obj, Eina_Bool rtl);
+
+/**
+ * @brief Gets the RTL orientation for this object.
+ *
+ * You can RTL orientation explicitly with edje_object_mirrored_set.
+ *
+ * @return New value of flag @c true/$false
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_mirrored_get(const Edje_Object *obj);
+
+/**
+ * @brief Sets the language for this object.
+ *
+ * @param[in] language The language value
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_language_set(Edje_Object *obj, const char *language);
+
+/**
+ * @brief Gets the language for this object.
+ *
+ * @return The language value
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const char *edje_object_language_get(const Edje_Object *obj);
+
+/**
+ * @brief Sets the scaling factor for a given Edje object.
+ *
+ * This function sets an  individual scaling factor on the  obj Edje object.
+ * This property (or Edje's global scaling factor, when applicable), will
+ * affect this object's part sizes. If scale is not zero, than the individual
+ * scaling will  override any global scaling set, for the object obj's parts.
+ * Put it back to zero to get the effects of the global scaling again.
+ *
+ * @warning Only parts which, at EDC level, had the @"scale" property set to
+ * @1, will be affected by this function. Check the complete @ref edcref
+ * "syntax reference" for EDC files.
+ *
+ * See also @ref edje_object_scale_get() @ref edje_scale_get() for more details
+ *
+ * @param[in] scale The scaling factor (the default value is @0.0, meaning
+ * individual scaling  not set)
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_scale_set(Edje_Object *obj, double scale);
+
+/**
+ * @brief Gets a given Edje object's scaling factor.
+ *
+ * This function returns the individual scaling factor set on the obj Edje
+ * object.
+ *
+ * See also @ref edje_object_scale_set() for more details
+ *
+ * @return The scaling factor (the default value is @0.0, meaning individual
+ * scaling  not set)
+ *
+ * @ingroup Edje_Object
+ */
+EAPI double edje_object_scale_get(const Edje_Object *obj);
+
+/**
  * @defgroup Edje_Part_Drag Edje Drag
  * @ingroup Edje_Object_Part
  *

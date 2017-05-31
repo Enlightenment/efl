@@ -96,6 +96,38 @@ edje_object_part_external_content_get(const Edje_Object *obj, const char *part, 
    return _edje_object_part_external_content_get(ed, part, content);
 }
 
+/* Efl.Ui.Base APIs */
+EAPI void
+edje_object_mirrored_set(Edje_Object *obj, Eina_Bool rtl)
+{
+   efl_ui_mirrored_set(obj, rtl);
+}
+
+EAPI Eina_Bool edje_object_mirrored_get(const Edje_Object *obj)
+{
+   return efl_ui_mirrored_get(obj);
+}
+
+EAPI void edje_object_language_set(Edje_Object *obj, const char *language)
+{
+   efl_ui_language_set(obj, language);
+}
+
+EAPI const char *edje_object_language_get(const Edje_Object *obj)
+{
+   return efl_ui_language_get(obj);
+}
+
+EAPI Eina_Bool edje_object_scale_set(Edje_Object *obj, double scale)
+{
+   return efl_ui_scale_set(obj, scale);
+}
+
+EAPI double edje_object_scale_get(const Edje_Object *obj)
+{
+   return efl_ui_scale_get(obj);
+}
+
 /* Legacy part drag APIs */
 EAPI Edje_Drag_Dir
 edje_object_part_drag_dir_get(const Evas_Object *obj, const char *part)

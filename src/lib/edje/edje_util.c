@@ -238,7 +238,7 @@ _edje_language_signal_emit(Edje *ed, Evas_Object *obj, char *signal)
 }
 
 EOLIAN void
-_edje_object_language_set(Eo *obj, Edje *ed, const char *locale)
+_edje_object_efl_ui_base_language_set(Eo *obj, Edje *ed, const char *locale)
 {
    const char *lookup;
    char *signal;
@@ -260,7 +260,7 @@ _edje_object_language_set(Eo *obj, Edje *ed, const char *locale)
 }
 
 EOLIAN const char *
-_edje_object_language_get(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_ui_base_language_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed->language)
      return _edje_language;
@@ -364,7 +364,7 @@ edje_password_show_last_timeout_set(double password_show_last_timeout)
 }
 
 EOLIAN Eina_Bool
-_edje_object_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
+_edje_object_efl_ui_base_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
 {
    Edje *ged;
    Evas_Object *o;
@@ -392,7 +392,7 @@ _edje_object_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
 }
 
 EOLIAN double
-_edje_object_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_ui_base_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    return TO_DOUBLE(ed->scale);
 }
@@ -405,7 +405,7 @@ _edje_object_base_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN Eina_Bool
-_edje_object_mirrored_get(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_ui_base_mirrored_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    return ed->is_rtl;
 }
@@ -421,7 +421,7 @@ _edje_object_orientation_inform(Evas_Object *obj)
 }
 
 EOLIAN void
-_edje_object_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
+_edje_object_efl_ui_base_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 {
    unsigned short i;
 
