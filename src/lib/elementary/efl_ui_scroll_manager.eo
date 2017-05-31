@@ -1,4 +1,6 @@
-class Efl.Ui.Scroll.Manager (Efl.Canvas.Group, Elm.Interface_Scrollable)
+class Efl.Ui.Scroll.Manager (Efl.Canvas.Group,
+                             Elm.Interface_Scrollable,
+                             Efl.Ui.Focus.User)
 {
    [[Efl ui scroll manager class]]
    event_prefix: efl_ui_scroll_manager;
@@ -18,5 +20,7 @@ class Efl.Ui.Scroll.Manager (Efl.Canvas.Group, Elm.Interface_Scrollable)
       Efl.Canvas.Group.group_add;
       Efl.Gfx.size { set; }
       Efl.Gfx.position { set; }
+      Efl.Ui.Focus.User.manager { get; }
+      Efl.Ui.Focus.User.parent { get; }
    }
 }

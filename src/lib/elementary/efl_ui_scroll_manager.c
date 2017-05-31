@@ -10,6 +10,20 @@
 #define MY_CLASS_NAME "Efl_Ui_Scroll_Manager"
 
 
+EOLIAN static Efl_Ui_Focus_Manager*
+_efl_ui_scroll_manager_efl_ui_focus_user_manager_get(Eo *obj EINA_UNUSED,
+                                                     Efl_Ui_Scroll_Manager_Data *sd)
+{
+   return efl_ui_focus_user_manager_get(sd->parent);
+}
+
+EOLIAN static Efl_Ui_Focus_Manager*
+_efl_ui_scroll_manager_efl_ui_focus_user_parent_get(Eo *obj EINA_UNUSED,
+                                                    Efl_Ui_Scroll_Manager_Data *sd)
+{
+   return efl_ui_focus_user_parent_get(sd->parent);
+}
+
 EOLIAN static void
 _efl_ui_scroll_manager_efl_gfx_size_set(Eo *obj EINA_UNUSED,
                                         Efl_Ui_Scroll_Manager_Data *sd,
