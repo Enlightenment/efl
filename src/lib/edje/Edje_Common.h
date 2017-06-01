@@ -352,6 +352,20 @@ EAPI void         edje_collection_cache_flush     (void);
  * @{
  */
 
+/** The possible types the parameters of an EXTERNAL part can be.
+ *
+ * @ingroup Edje_External
+ */
+typedef enum
+{
+  EDJE_EXTERNAL_PARAM_TYPE_INT = 0, /**< Parameter value is an integer. */
+  EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, /**< Parameter value is a double. */
+  EDJE_EXTERNAL_PARAM_TYPE_STRING, /**< Parameter value is a string. */
+  EDJE_EXTERNAL_PARAM_TYPE_BOOL, /**< Parameter value is boolean. */
+  EDJE_EXTERNAL_PARAM_TYPE_CHOICE, /**< Parameter value is one of a set of predefined string choices. */
+  EDJE_EXTERNAL_PARAM_TYPE_MAX /**< Sentinel value to indicate last enum field during iteration */
+} Edje_External_Param_Type;
+
 /**
  * Flags that determine how a parameter may be accessed in different
  * circumstances.
