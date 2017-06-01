@@ -1234,6 +1234,17 @@ void _test_testing_call_set_callback(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
    test_testing_set_callback(obj, _wrapper_cb, efl_ref(obj), _free_callback);
 }
+
+void _test_testing_raises_eina_error(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   eina_error_set(EIO);
+}
+
+Eina_Error _test_testing_returns_error(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   return EPERM;
+}
+
 #include "test_testing.eo.c"
 #include "test_numberwrapper.eo.c"
 

@@ -26,6 +26,33 @@ public class Test
             throw new Exception($"{file}:{line} ({member}) {msg}");
         }
     }
+
+    public delegate void Operation();
+
+    public static void AssertRaises<T>(Operation op, String msg = "Exception not raised",
+                              [CallerLineNumber] int line = 0,
+                              [CallerFilePath] string file = null,
+                              [CallerMemberName] string member = null) where T: Exception
+    {
+        try {
+            op();
+        } catch (T) {
+            return;
+        }
+        throw new Exception($"Assertion failed: {file}:{line} ({member}) {msg}");
+    }
+
+    public static void AssertNotRaises<T>(Operation op, String msg = "Exception raised.",
+                              [CallerLineNumber] int line = 0,
+                              [CallerFilePath] string file = null,
+                              [CallerMemberName] string member = null) where T: Exception
+    {
+        try {
+            op();
+        } catch (T) {
+            throw new Exception($"Assertion failed: {file}:{line} ({member}) {msg}");
+        }
+    }
 }
 
 class TestMain

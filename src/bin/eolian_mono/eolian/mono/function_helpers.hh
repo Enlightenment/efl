@@ -118,6 +118,7 @@ struct function_definition_epilogue_generator
                   << *(scope_tab << scope_tab << convert_out_assign << "\n")
                   << scope_tab << scope_tab << "//Converting return variable\n"
                   << scope_tab << scope_tab << convert_return
+                  << scope_tab << scope_tab << "eina.Error.RaiseIfOcurred();\n"
                   ).generate(sink, std::make_tuple(f.parameters, f.return_type), context))
           return false;
 
