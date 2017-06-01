@@ -307,7 +307,7 @@ _opcodes_registration_send(Eina_Debug_Session *session,
         count++;
      }
 
-   buf = alloca(size);
+   buf = malloc(size);
 
    uint64_t info_64 = (uint64_t)info;
    memcpy(buf, &info_64, sizeof(uint64_t));
@@ -323,6 +323,7 @@ _opcodes_registration_send(Eina_Debug_Session *session,
      }
 
    eina_debug_session_send(session, 0, EINA_DEBUG_OPCODE_REGISTER, buf, size);
+   free(buf);
 }
 
 static void
