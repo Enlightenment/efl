@@ -528,6 +528,14 @@ class Test.Testing (Efl.Object) {
 
       call_set_callback {
       }
+
+      raises_eina_error {
+
+      }
+
+      returns_error {
+         return: Eina.Error;
+      }
    }
    implements {
       class.constructor;

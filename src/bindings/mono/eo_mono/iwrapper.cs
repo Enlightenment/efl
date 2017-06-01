@@ -373,4 +373,11 @@ public class StringshareOwnOutMarshaler : ICustomMarshaler {
     static private StringshareOwnOutMarshaler marshaler;
 }
 
+public class EflException : Exception
+{
+    public EflException(string message) : base(message)
+    {
+    }
+}
+
 } }

@@ -1237,10 +1237,12 @@ class TestEinaArray
 
 class TestEinaList
 {
+#pragma warning disable 0219 // unused value after assignment.
     public static void eina_list_default()
     {
         var lst = new eina.List<int>();
     }
+#pragma warning restore 0219
 
     public static void data_set_int()
     {
@@ -1802,10 +1804,12 @@ class TestEinaList
 
 class TestEinaHash
 {
+#pragma warning disable 0219 // unused value after assignment.
     public static void eina_hash_default()
     {
         var hsh = new eina.Hash<int, int>();
     }
+#pragma warning restore 0219
 
     public static void data_set_int()
     {
