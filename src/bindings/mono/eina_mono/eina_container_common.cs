@@ -40,9 +40,9 @@ public struct ConvertWrapper<T>
 public interface IBaseElementTraits<T>
 {
     IntPtr ManagedToNativeAlloc(T man);
-    IntPtr ManagedToNativeAllocRef(T man);
+    IntPtr ManagedToNativeAllocRef(T man, bool refs = false);
     void NativeFree(IntPtr nat);
-    void NativeFreeRef(IntPtr nat);
+    void NativeFreeRef(IntPtr nat, bool unrefs = false);
     T NativeToManaged(IntPtr nat);
     IntPtr EinaCompareCb();
     IntPtr EinaFreeCb();
@@ -56,7 +56,7 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
         return efl_mono_native_strdup((string)(object)man);
     }
 
-    public IntPtr ManagedToNativeAllocRef(T man)
+    public IntPtr ManagedToNativeAllocRef(T man, bool refs = false)
     {
         // Keep alloc on C# ?
         return ManagedToNativeAlloc(man);
@@ -68,7 +68,7 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
             efl_mono_native_free(nat);
     }
 
-    public void NativeFreeRef(IntPtr nat)
+    public void NativeFreeRef(IntPtr nat, bool unrefs = false)
     {
         NativeFree(nat);
     }
@@ -101,14 +101,11 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     private System.Type concreteType = null;
     private static IBaseElementTraits<IntPtr> intPtrTraits = null;
 
-    public EflObjectElementTraits()
+    public EflObjectElementTraits(System.Type concrete)
     {
         if (intPtrTraits == null)
             intPtrTraits = TraitFunctions.GetTypeTraits<IntPtr>();
-    }
 
-    public EflObjectElementTraits(System.Type concrete)
-    {
         concreteType = concrete;
     }
 
@@ -120,9 +117,10 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
         return efl.eo.Globals.efl_ref(h);
     }
 
-    public IntPtr ManagedToNativeAllocRef(T man)
+    public IntPtr ManagedToNativeAllocRef(T man, bool refs = false)
     {
-        return intPtrTraits.ManagedToNativeAlloc(((efl.eo.IWrapper)man).raw_handle);
+        IntPtr h = refs ? ManagedToNativeAlloc(man) : ((efl.eo.IWrapper)man).raw_handle;
+        return intPtrTraits.ManagedToNativeAlloc(h);
     }
 
     public void NativeFree(IntPtr nat)
@@ -131,8 +129,10 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
             efl.eo.Globals.efl_unref(nat);
     }
 
-    public void NativeFreeRef(IntPtr nat)
+    public void NativeFreeRef(IntPtr nat, bool unrefs = false)
     {
+        if (unrefs)
+            NativeFree(intPtrTraits.NativeToManaged(nat));
         intPtrTraits.NativeFree(nat);
     }
 
@@ -210,19 +210,24 @@ public abstract class PrimitiveElementTraits<T>
 
 public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
 {
-    IBaseElementTraits<Int32> int32Traits = null;
+    private static IBaseElementTraits<Int32> int32Traits = null;
 
-    public IntPtr ManagedToNativeAllocRef(T man)
+    public Primitive32ElementTraits()
     {
         if (int32Traits == null)
-            int32Traits = TraitFunctions.GetTypeTraits<Int32>();
+            if (typeof(T) == typeof(Int32)) // avoid infinite recursion
+                int32Traits = (IBaseElementTraits<Int32>)this;
+            else
+                int32Traits = TraitFunctions.GetTypeTraits<Int32>();
+    }
+
+    public IntPtr ManagedToNativeAllocRef(T man, bool refs = false)
+    {
         return int32Traits.ManagedToNativeAlloc(Convert.ToInt32((object)man));
     }
 
-    public void NativeFreeRef(IntPtr nat)
+    public void NativeFreeRef(IntPtr nat, bool unrefs = false)
     {
-        if (int32Traits == null)
-            int32Traits = TraitFunctions.GetTypeTraits<Int32>();
         int32Traits.NativeFree(nat);
     }
 
@@ -234,19 +239,24 @@ public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, IBaseEleme
 
 public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
 {
-    IBaseElementTraits<Int64> int64Traits = null;
+    private static IBaseElementTraits<Int64> int64Traits = null;
 
-    public IntPtr ManagedToNativeAllocRef(T man)
+    public Primitive64ElementTraits()
     {
         if (int64Traits == null)
-            int64Traits = TraitFunctions.GetTypeTraits<Int64>();
+            if (typeof(T) == typeof(Int64)) // avoid infinite recursion
+                int64Traits = (IBaseElementTraits<Int64>)this;
+            else
+                int64Traits = TraitFunctions.GetTypeTraits<Int64>();
+    }
+
+    public IntPtr ManagedToNativeAllocRef(T man, bool refs = false)
+    {
         return int64Traits.ManagedToNativeAlloc(Convert.ToInt64((object)man));
     }
 
-    public void NativeFreeRef(IntPtr nat)
+    public void NativeFreeRef(IntPtr nat, bool unrefs = false)
     {
-        if (int64Traits == null)
-            int64Traits = TraitFunctions.GetTypeTraits<Int64>();
         int64Traits.NativeFree(nat);
     }
 
@@ -336,9 +346,9 @@ public static class TraitFunctions
         return GetTypeTraits<T>().ManagedToNativeAlloc(man);
     }
 
-    public static IntPtr ManagedToNativeAllocRef<T>(T man)
+    public static IntPtr ManagedToNativeAllocRef<T>(T man, bool refs = false)
     {
-        return GetTypeTraits<T>().ManagedToNativeAllocRef(man);
+        return GetTypeTraits<T>().ManagedToNativeAllocRef(man, refs);
     }
 
     public static void NativeFree<T>(IntPtr nat)
@@ -346,9 +356,9 @@ public static class TraitFunctions
         GetTypeTraits<T>().NativeFree(nat);
     }
 
-    public static void NativeFreeRef<T>(IntPtr nat)
+    public static void NativeFreeRef<T>(IntPtr nat, bool unrefs = false)
     {
-        GetTypeTraits<T>().NativeFreeRef(nat);
+        GetTypeTraits<T>().NativeFreeRef(nat, unrefs);
     }
 
     public static T NativeToManaged<T>(IntPtr nat)

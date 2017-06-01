@@ -111,7 +111,8 @@ public class Hash<TKey, TValue> : IDisposable
 {
     public IntPtr Handle {get; set;} = IntPtr.Zero;
     public bool Own {get; set;}
-    public bool OwnContent {get; set;}
+    public bool OwnKey {get; set;}
+    public bool OwnValue {get; set;}
 
     public int Count {
         get {
@@ -124,7 +125,8 @@ public class Hash<TKey, TValue> : IDisposable
     {
         Handle = EinaHashNew<TKey>();
         SetOwn(true);
-        SetOwnContent(true);
+        SetOwnKey(true);
+        SetOwnValue(true);
     }
 
     public Hash()
@@ -136,14 +138,16 @@ public class Hash<TKey, TValue> : IDisposable
     {
         Handle = handle;
         SetOwn(own);
-        SetOwnContent(own);
+        SetOwnKey(own);
+        SetOwnValue(own);
     }
 
-    public Hash(IntPtr handle, bool own, bool ownContent)
+    public Hash(IntPtr handle, bool own, bool ownKey, bool ownValue)
     {
         Handle = handle;
         SetOwn(own);
-        SetOwnContent(ownContent);
+        SetOwnKey(ownKey);
+        SetOwnValue(ownValue);
     }
 
     ~Hash()
@@ -185,24 +189,31 @@ public class Hash<TKey, TValue> : IDisposable
         Own = own;
     }
 
-    public void SetOwnContent(bool ownContent)
+    public void SetOwnKey(bool ownKey)
     {
-        OwnContent = ownContent;
+        OwnKey = ownKey;
+    }
 
-        if (ownContent)
+    public void SetOwnValue(bool ownValue)
+    {
+        OwnValue = ownValue;
+
+        if (ownValue)
             eina_hash_free_cb_set(Handle, EinaFreeCb<TValue>());
     }
 
     public void SetOwnership(bool ownAll)
     {
         SetOwn(ownAll);
-        SetOwnContent(ownAll);
+        SetOwnKey(ownAll);
+        SetOwnValue(ownAll);
     }
 
-    public void SetOwnership(bool own, bool ownContent)
+    public void SetOwnership(bool own, bool ownKey, bool ownValue)
     {
         SetOwn(own);
-        SetOwnContent(ownContent);
+        SetOwnKey(ownKey);
+        SetOwnValue(ownValue);
     }
 
     public void UnSetFreeCb()
@@ -212,7 +223,7 @@ public class Hash<TKey, TValue> : IDisposable
 
     public bool AddNew(TKey key, TValue val)
     {
-        var nk = ManagedToNativeAllocRef(key);
+        var nk = ManagedToNativeAllocRef(key, true);
         var nv = ManagedToNativeAlloc(val);
         var r = eina_hash_add(Handle, nk, nv);
         NativeFreeRef<TKey>(nk);
@@ -228,7 +239,7 @@ public class Hash<TKey, TValue> : IDisposable
     {
         var nk = ManagedToNativeAllocRef(key);
         var r = eina_hash_del_by_key(Handle, nk);
-        NativeFreeRef<TKey>(nk);
+        NativeFreeRef<TKey>(nk, OwnKey && r);
         return r;
     }
 
@@ -288,18 +299,18 @@ public class Hash<TKey, TValue> : IDisposable
             NativeFree<TValue>(nv);
             return false;
         }
-        if (OwnContent)
+        if (OwnValue)
             NativeFree<TValue>(old);
         return true;
     }
 
     public void Set(TKey key, TValue val)
     {
-        var nk = ManagedToNativeAllocRef(key);
+        var nk = ManagedToNativeAllocRef(key, true);
         var nv = ManagedToNativeAlloc(val);
         var old = eina_hash_set(Handle, nk, nv);
-        NativeFreeRef<TKey>(nk);
-        if (OwnContent && old != IntPtr.Zero)
+        NativeFreeRef<TKey>(nk, old != IntPtr.Zero);
+        if (old != IntPtr.Zero && OwnValue)
             NativeFree<TValue>(old);
     }
 
@@ -318,10 +329,10 @@ public class Hash<TKey, TValue> : IDisposable
     public bool Move(TKey key_old, TKey key_new)
     {
         var nk_old = ManagedToNativeAllocRef(key_old);
-        var nk_new = ManagedToNativeAllocRef(key_new);
+        var nk_new = ManagedToNativeAllocRef(key_new, true);
         var r = eina_hash_move(Handle, nk_old, nk_new);
-        NativeFreeRef<TKey>(nk_old);
-        NativeFreeRef<TKey>(nk_new);
+        NativeFreeRef<TKey>(nk_old, OwnKey && r);
+        NativeFreeRef<TKey>(nk_new, !r);
         return r;
     }
 
