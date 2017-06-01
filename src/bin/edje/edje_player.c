@@ -441,6 +441,22 @@ _slave_mode_info(Evas_Object *edje, char *args)
 }
 
 static void
+_slave_mode_text(Evas_Object *edje, char *args)
+{
+   char *part, *text, *p;
+
+   if (!args) return;
+   p = strchr(args, ' ');
+   if (!p) return;
+   part = malloc(p - args + 1);
+   strncpy(part, args, p - args);
+   part[p - args] = 0;
+   text = p + 1;
+   edje_object_part_text_set(edje, part, text);
+   free(part);
+}
+
+static void
 _slave_mode_quit(Evas_Object *edje EINA_UNUSED, char *args EINA_UNUSED)
 {
    puts("Bye!");
@@ -474,6 +490,8 @@ _slave_mode_help(Evas_Object *edje EINA_UNUSED, char *args EINA_UNUSED)
         "\t     * STRING_FLOAT_SET \"string\" <set length> float1 float2 ...\n"
         "\tinfo <part>\n"
         "\t   Print part geometry: <x>,<y>,<w>,<h>\n"
+        "\ttext <part> <text string>\n"
+        "\t   Set text of named part\n"
         "\tquit\n"
         "\t   exit edje player.\n"
         "\thelp\n"
@@ -496,6 +514,7 @@ struct slave_cmd
    {"signal", _slave_mode_signal},
    {"message", _slave_mode_message},
    {"info", _slave_mode_info},
+   {"text", _slave_mode_text},
    {"quit", _slave_mode_quit},
    {"help", _slave_mode_help},
    {NULL, NULL}
