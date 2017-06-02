@@ -30,6 +30,7 @@ typedef struct _Elm_List_Item_Data Elm_List_Item_Data;
 typedef struct _Elm_List_Data Elm_List_Data;
 struct _Elm_List_Data
 {
+   Eo                                   *smanager;
    Evas_Object                          *box, *hit_rect;
 
    Eina_List                            *items, *selected, *to_delete;
