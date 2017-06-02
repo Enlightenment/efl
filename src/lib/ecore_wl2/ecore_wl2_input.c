@@ -891,7 +891,9 @@ _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsign
    input->xkb.compose_table = xkb_compose_table_new_from_locale(input->display->xkb_context,
 			  locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
    if (input->xkb.compose_state) xkb_compose_state_unref(input->xkb.compose_state);
-   input->xkb.compose_state = xkb_compose_state_new(input->xkb.compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
+   input->xkb.compose_state = NULL;
+   if (input->xkb.compose_table)
+     input->xkb.compose_state = xkb_compose_state_new(input->xkb.compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
 
    {
       Ecore_Wl2_Event_Seat_Keymap_Changed *ev = malloc(sizeof(Ecore_Wl2_Event_Seat_Keymap_Changed));
