@@ -189,6 +189,7 @@ struct _Elput_Touch
 
 struct _Elput_Seat
 {
+   int refs; //for events
    const char *name;
 
    struct
@@ -209,6 +210,7 @@ struct _Elput_Seat
 struct _Elput_Device
 {
    Elput_Seat *seat;
+   int refs; //for events
 
    uint32_t ow, oh;
 
@@ -289,4 +291,6 @@ extern Elput_Interface _logind_interface;
 void _keyboard_keymap_update(Elput_Seat *seat);
 void _keyboard_group_update(Elput_Seat *seat);
 
+
+void _udev_seat_destroy(Elput_Seat *eseat);
 #endif
