@@ -1109,9 +1109,10 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
    snprintf(buf, sizeof(buf), "item/%s", style ? style : "default");
 
-   if (!elm_widget_theme_object_set(WIDGET(it), view,
-                                    "gengrid", buf,
-                                    elm_widget_style_get(WIDGET(it))))
+   Elm_Theme_Apply th_ret =
+      elm_widget_theme_object_set(WIDGET(it), view, "gengrid", buf,
+                                    elm_widget_style_get(WIDGET(it)));
+   if (th_ret == ELM_THEME_APPLY_FAILED)
      {
         ERR("%s is not a valid gengrid item style. "
             "Automatically falls back into default style.",

@@ -520,9 +520,10 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
                     "",style ? : "default");
      }
 
-   if (!elm_widget_theme_object_set(WIDGET(it), view,
-                                    "genlist", buf,
-                                    elm_widget_style_get(WIDGET(it))))
+   Elm_Theme_Apply th_ret =
+      elm_widget_theme_object_set(WIDGET(it), view, "genlist", buf,
+                                  elm_widget_style_get(WIDGET(it)));
+   if (th_ret == ELM_THEME_APPLY_FAILED)
      {
         ERR("%s is not a valid genlist item style. "
             "Automatically falls back into default style.",
