@@ -31,8 +31,8 @@
 # endif
 #endif /* ! _WIN32 */
 
-#include "test_testing.eo.h"
 #include "test_numberwrapper.eo.h"
+#include "test_testing.eo.h"
 
 typedef struct Test_Testing_Data
 {
@@ -1146,7 +1146,565 @@ Eina_List *_test_testing_eina_list_obj_return_in(EINA_UNUSED Eo *obj, EINA_UNUSE
    return lst;
 }
 
+
+
+//      //
+// Hash //
+//      //
+
+// Integer //
+
+Eina_Bool _hash_int_check(const Eina_Hash *hsh, int key, int expected_val)
+{
+   int *val = eina_hash_find(hsh, &key);
+   return val && (*val == expected_val);
+}
+
+
+// int in
+
+Eina_Bool _test_testing_eina_hash_int_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash *hsh)
+{
+   if (!_hash_int_check(hsh, 22, 222))
+     return EINA_FALSE;
+
+   int key = 44;
+   return eina_hash_add(hsh, &key, _new_int(444));
+}
+
+
+// int in own
+
+static Eina_Bool _hash_int_in_own_free_flag = EINA_FALSE;
+static void _hash_int_in_own_free_cb(void *data)
+{
+   _hash_int_in_own_free_flag = EINA_TRUE;
+   free(data);
+}
+static Eina_Hash *_hash_int_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_hash_int_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash *hsh)
+{
+   eina_hash_free_cb_set(hsh, _hash_int_in_own_free_cb);
+
+   if (!_hash_int_check(hsh, 22, 222))
+     return EINA_FALSE;
+
+   _hash_int_in_own_to_check = hsh;
+
+   int key = 44;
+   return eina_hash_add(hsh, &key, _new_int(444));
+}
+Eina_Bool _test_testing_check_eina_hash_int_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_hash_int_in_own_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_int_in_own_to_check;
+
+   if (!_hash_int_check(hsh, 22, 222)
+       || !_hash_int_check(hsh, 44, 444)
+       || !_hash_int_check(hsh, 88, 888))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   return _hash_int_in_own_free_flag;
+}
+
+
+// int out
+
+static Eina_Bool _hash_int_out_free_flag = EINA_FALSE;
+static void _hash_int_out_free_cb(void *data)
+{
+   _hash_int_out_free_flag = EINA_TRUE;
+   free(data);
+}
+Eina_Hash *_hash_int_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_hash_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash **hsh)
+{
+   if (!hsh) return EINA_FALSE;
+
+   *hsh = eina_hash_int32_new(_hash_int_out_free_cb);
+
+   _hash_int_out_to_check = *hsh;
+
+   int key = 22;
+   return eina_hash_add(*hsh, &key, _new_int(222));
+}
+Eina_Bool _test_testing_check_eina_hash_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_hash_int_out_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_int_out_to_check;
+
+   if (!_hash_int_check(hsh, 22, 222)
+       || !_hash_int_check(hsh, 44, 444))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   _hash_int_out_to_check = NULL;
+   return _hash_int_out_free_flag;
+}
+
+
+// int out own
+
+static Eina_Bool _hash_int_out_own_free_flag = EINA_FALSE;
+static void _hash_int_out_own_free_cb(void *data)
+{
+   _hash_int_out_own_free_flag = EINA_TRUE;
+   free(data);
+}
+Eina_Bool _test_testing_eina_hash_int_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash **hsh)
+{
+   if (!hsh) return EINA_FALSE;
+
+   *hsh = eina_hash_int32_new(_hash_int_out_own_free_cb);
+
+   int key = 22;
+   return eina_hash_add(*hsh, &key, _new_int(222));
+}
+Eina_Bool _test_testing_check_eina_hash_int_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   return !_hash_int_out_own_free_flag;
+}
+
+
+// int return
+
+static Eina_Bool _hash_int_return_free_flag = EINA_FALSE;
+static void _hash_int_return_free_cb(void *data)
+{
+   _hash_int_return_free_flag = EINA_TRUE;
+   free(data);
+}
+Eina_Hash *_hash_int_return_to_check = NULL;
+
+Eina_Hash *_test_testing_eina_hash_int_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Hash *hsh = eina_hash_int32_new(_hash_int_return_free_cb);
+
+   int key = 22;
+   eina_hash_add(hsh, &key, _new_int(222));
+
+   _hash_int_return_to_check = hsh;
+
+   return hsh;
+}
+Eina_Bool _test_testing_check_eina_hash_int_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_hash_int_return_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_int_return_to_check;
+
+   printf("\n22:%d | 44:%d\n", _hash_int_check(hsh, 22, 222), _hash_int_check(hsh, 44, 444));
+
+   if (!_hash_int_check(hsh, 22, 222)
+       || !_hash_int_check(hsh, 44, 444))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   _hash_int_return_to_check = NULL;
+   return _hash_int_return_free_flag;
+}
+
+
+// int return own
+
+static Eina_Bool _hash_int_return_own_free_flag = EINA_FALSE;
+static void _hash_int_return_own_free_cb(void *data)
+{
+   _hash_int_return_own_free_flag = EINA_TRUE;
+   free(data);
+}
+Eina_Hash *_test_testing_eina_hash_int_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Hash *hsh = eina_hash_int32_new(_hash_int_return_own_free_cb);
+
+   int key = 22;
+   eina_hash_add(hsh, &key, _new_int(222));
+
+   return hsh;
+}
+Eina_Bool _test_testing_check_eina_hash_int_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   return !_hash_int_return_own_free_flag;
+}
+
+
+// String //
+
+Eina_Bool _hash_str_check(const Eina_Hash *hsh, const char *key, const char *expected_val)
+{
+   const char *val = eina_hash_find(hsh, key);
+   return val && 0 == strcmp(val, expected_val);
+}
+
+
+// str in
+
+Eina_Bool _test_testing_eina_hash_str_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash *hsh)
+{
+   if (!_hash_str_check(hsh, "aa", "aaa"))
+     return EINA_FALSE;
+
+   return eina_hash_add(hsh, "bb", strdup("bbb"));
+}
+
+
+// str in own
+
+static Eina_Bool _hash_str_in_own_free_flag = EINA_FALSE;
+static void _hash_str_in_own_free_cb(void *data)
+{
+   _hash_str_in_own_free_flag = EINA_TRUE;
+   free(data);
+}
+static Eina_Hash *_hash_str_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_hash_str_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash *hsh)
+{
+   eina_hash_free_cb_set(hsh, _hash_str_in_own_free_cb);
+
+   if (!_hash_str_check(hsh, "aa", "aaa"))
+     return EINA_FALSE;
+
+   _hash_str_in_own_to_check = hsh;
+
+   return eina_hash_add(hsh, "bb", strdup("bbb"));
+}
+Eina_Bool _test_testing_check_eina_hash_str_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_hash_str_in_own_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_str_in_own_to_check;
+
+   if (!_hash_str_check(hsh, "aa", "aaa")
+       || !_hash_str_check(hsh, "bb", "bbb")
+       || !_hash_str_check(hsh, "cc", "ccc"))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   return _hash_str_in_own_free_flag;
+}
+
+
+// str out
+
+static Eina_Bool _hash_str_out_free_flag = EINA_FALSE;
+static void _hash_str_out_free_cb(void *data)
+{
+   _hash_str_out_free_flag = EINA_TRUE;
+   free(data);
+}
+Eina_Hash *_hash_str_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_hash_str_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash **hsh)
+{
+   if (!hsh) return EINA_FALSE;
+
+   *hsh = eina_hash_string_superfast_new(_hash_str_out_free_cb);
+
+   _hash_str_out_to_check = *hsh;
+
+   return eina_hash_add(*hsh, "aa", strdup("aaa"));
+}
+Eina_Bool _test_testing_check_eina_hash_str_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_hash_str_out_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_str_out_to_check;
+
+   if (!_hash_str_check(hsh, "aa", "aaa")
+       || !_hash_str_check(hsh, "bb", "bbb"))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   _hash_str_out_to_check = NULL;
+   return _hash_str_out_free_flag;
+}
+
+
+// str out own
+
+static Eina_Bool _hash_str_out_own_free_flag = EINA_FALSE;
+static void _hash_str_out_own_free_cb(void *data)
+{
+   _hash_str_out_own_free_flag = EINA_TRUE;
+   free(data);
+}
+Eina_Bool _test_testing_eina_hash_str_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash **hsh)
+{
+   if (!hsh) return EINA_FALSE;
+
+   *hsh = eina_hash_string_superfast_new(_hash_str_out_own_free_cb);
+
+   return eina_hash_add(*hsh, "aa", strdup("aaa"));
+}
+Eina_Bool _test_testing_check_eina_hash_str_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   return !_hash_str_out_own_free_flag;
+}
+
+
+// str return
+
+static Eina_Bool _hash_str_return_free_flag = EINA_FALSE;
+static void _hash_str_return_free_cb(void *data)
+{
+   _hash_str_return_free_flag = EINA_TRUE;
+   free(data);
+}
+Eina_Hash *_hash_str_return_to_check = NULL;
+
+Eina_Hash *_test_testing_eina_hash_str_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Hash *hsh = eina_hash_string_superfast_new(_hash_str_return_free_cb);
+
+   eina_hash_add(hsh, "aa", strdup("aaa"));
+
+   _hash_str_return_to_check = hsh;
+
+   return hsh;
+}
+Eina_Bool _test_testing_check_eina_hash_str_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   if (!_hash_str_return_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_str_return_to_check;
+
+   if (!_hash_str_check(hsh, "aa", "aaa")
+       || !_hash_str_check(hsh, "bb", "bbb"))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   _hash_str_return_to_check = NULL;
+   return _hash_str_return_free_flag;
+}
+
+
+// str return own
+
+static Eina_Bool _hash_str_return_own_free_flag = EINA_FALSE;
+static void _hash_str_return_own_free_cb(void *data)
+{
+   _hash_str_return_own_free_flag = EINA_TRUE;
+   free(data);
+}
+Eina_Hash *_test_testing_eina_hash_str_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Hash *hsh = eina_hash_string_superfast_new(_hash_str_return_own_free_cb);
+
+   eina_hash_add(hsh, "aa", strdup("aaa"));
+
+   return hsh;
+}
+Eina_Bool _test_testing_check_eina_hash_str_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   return !_hash_str_return_own_free_flag;
+}
+
+
+// Object //
+
+Eina_Bool _hash_obj_check(const Eina_Hash *hsh, Test_Numberwrapper *key, Test_Numberwrapper *expected_val, int knum, int vnum)
+{
+   Test_Numberwrapper *val = eina_hash_find(hsh, &key);
+   return val && (val == expected_val) && (test_numberwrapper_number_get(key) == knum) && (test_numberwrapper_number_get(val) == vnum);
+}
+
+
+// obj in
+
+Eina_Bool _test_testing_eina_hash_obj_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash *hsh, Test_Numberwrapper *nwk1, Test_Numberwrapper *nwv1, Test_Numberwrapper **nwk2, Test_Numberwrapper **nwv2)
+{
+   if (!_hash_obj_check(hsh, nwk1, nwv1, 22, 222))
+     return EINA_FALSE;
+
+   *nwk2 = _new_obj(44);
+   *nwv2 = _new_obj(444);
+
+   return eina_hash_add(hsh, nwk2, *nwv2);
+}
+
+
+// obj in own
+
+static Eina_Bool _hash_obj_in_own_free_flag = EINA_FALSE;
+static void _hash_obj_in_own_free_cb(void *data)
+{
+   _hash_obj_in_own_free_flag = EINA_TRUE;
+   efl_unref(data);
+}
+static Eina_Hash *_hash_obj_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_hash_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash *hsh, Test_Numberwrapper *nwk1, Test_Numberwrapper *nwv1, Test_Numberwrapper **nwk2, Test_Numberwrapper **nwv2)
+{
+   eina_hash_free_cb_set(hsh, _hash_obj_in_own_free_cb);
+
+   if (!_hash_obj_check(hsh, nwk1, nwv1, 22, 222))
+     return EINA_FALSE;
+
+   _hash_obj_in_own_to_check = hsh;
+
+   *nwk2 = _new_obj(44);
+   *nwv2 = _new_obj(444);
+
+   return eina_hash_add(hsh, nwk2, *nwv2);
+}
+Eina_Bool _test_testing_check_eina_hash_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_Numberwrapper *nwk1, Test_Numberwrapper *nwv1, Test_Numberwrapper *nwk2, Test_Numberwrapper *nwv2)
+{
+   if (!_hash_obj_in_own_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_obj_in_own_to_check;
+
+   if (!_hash_obj_check(hsh, nwk1, nwv1, 22, 222)
+       || !_hash_obj_check(hsh, nwk2, nwv2, 44, 444))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   return _hash_obj_in_own_free_flag;
+}
+
+
+// obj out
+
+static Eina_Bool _hash_obj_out_free_flag = EINA_FALSE;
+static void _hash_obj_out_free_cb(void *data)
+{
+   _hash_obj_out_free_flag = EINA_TRUE;
+   efl_unref(data);
+}
+Eina_Hash *_hash_obj_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_hash_obj_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash **hsh, Test_Numberwrapper **nwk, Test_Numberwrapper **nwv)
+{
+   if (!hsh) return EINA_FALSE;
+
+   *hsh = eina_hash_pointer_new(_hash_obj_out_free_cb);
+
+   _hash_obj_out_to_check = *hsh;
+
+   *nwk = _new_obj(22);
+   *nwv = _new_obj(222);
+   return eina_hash_add(*hsh, nwk, *nwv);
+}
+Eina_Bool _test_testing_check_eina_hash_obj_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_Numberwrapper *nwk1, Test_Numberwrapper *nwv1, Test_Numberwrapper *nwk2, Test_Numberwrapper *nwv2)
+{
+   if (!_hash_obj_out_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_obj_out_to_check;
+
+   if (!_hash_obj_check(hsh, nwk1, nwv1, 22, 222)
+       || !_hash_obj_check(hsh, nwk2, nwv2, 44, 444))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   _hash_obj_out_to_check = NULL;
+   return _hash_obj_out_free_flag;
+}
+
+
+// obj out own
+
+static Eina_Bool _hash_obj_out_own_free_flag = EINA_FALSE;
+static void _hash_obj_out_own_free_cb(void *data)
+{
+   _hash_obj_out_own_free_flag = EINA_TRUE;
+   efl_unref(data);
+}
+Eina_Bool _test_testing_eina_hash_obj_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Hash **hsh, Test_Numberwrapper **nwk, Test_Numberwrapper **nwv)
+{
+   if (!hsh) return EINA_FALSE;
+
+   *hsh = eina_hash_pointer_new(_hash_obj_out_own_free_cb);
+
+   *nwk = _new_obj(22);
+   *nwv = _new_obj(222);
+   return eina_hash_add(*hsh, nwk, *nwv);
+}
+Eina_Bool _test_testing_check_eina_hash_obj_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   return !_hash_obj_out_own_free_flag;
+}
+
+
+// obj return
+
+static Eina_Bool _hash_obj_return_free_flag = EINA_FALSE;
+static void _hash_obj_return_free_cb(void *data)
+{
+   _hash_obj_return_free_flag = EINA_TRUE;
+   efl_unref(data);
+}
+Eina_Hash *_hash_obj_return_to_check = NULL;
+
+Eina_Hash *_test_testing_eina_hash_obj_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_Numberwrapper **nwk, Test_Numberwrapper **nwv)
+{
+   Eina_Hash *hsh = eina_hash_pointer_new(_hash_obj_return_free_cb);
+
+   *nwk = _new_obj(22);
+   *nwv = _new_obj(222);
+
+   eina_hash_add(hsh, nwk, *nwv);
+
+   _hash_obj_return_to_check = hsh;
+
+   return hsh;
+}
+Eina_Bool _test_testing_check_eina_hash_obj_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_Numberwrapper *nwk1, Test_Numberwrapper *nwv1, Test_Numberwrapper *nwk2, Test_Numberwrapper *nwv2)
+{
+   if (!_hash_obj_return_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_obj_return_to_check;
+
+   if (!_hash_obj_check(hsh, nwk1, nwv1, 22, 222)
+       || !_hash_obj_check(hsh, nwk2, nwv2, 44, 444))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   _hash_obj_return_to_check = NULL;
+   return _hash_obj_return_free_flag;
+}
+
+
+// obj return own
+
+static Eina_Bool _hash_obj_return_own_free_flag = EINA_FALSE;
+static void _hash_obj_return_own_free_cb(void *data)
+{
+   _hash_obj_return_own_free_flag = EINA_TRUE;
+   efl_unref(data);
+}
+Eina_Hash *_test_testing_eina_hash_obj_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_Numberwrapper **nwk, Test_Numberwrapper **nwv)
+{
+   Eina_Hash *hsh = eina_hash_pointer_new(_hash_obj_return_own_free_cb);
+
+   *nwk = _new_obj(22);
+   *nwv = _new_obj(222);
+   eina_hash_add(hsh, nwk, *nwv);
+
+   return hsh;
+}
+Eina_Bool _test_testing_check_eina_hash_obj_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   return !_hash_obj_return_own_free_flag;
+}
+
+
+//                   //
 // Class constructor
+//                   //
 EOLIAN static void
 _test_testing_class_constructor(Efl_Class *klass)
 {

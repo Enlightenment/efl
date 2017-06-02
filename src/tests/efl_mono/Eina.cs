@@ -27,6 +27,13 @@ public static class BaseData
     public static readonly string[] append_arr_str = {"42","43","33"};
     public static readonly string[] modified_arr_str = {"0x0","0x2A","0x42","42","43","33"};
 
+    public static test.Numberwrapper NW(int n)
+    {
+        var nw = new test.NumberwrapperConcrete();
+        nw.number_set(n);
+        return nw;
+    }
+
     public static test.Numberwrapper[] BaseArrObj()
     {
         var a = new test.NumberwrapperConcrete();
@@ -1820,6 +1827,297 @@ class TestEinaHash
         Test.Assert(hsh[44] == 444);
         hsh[22] = 222;
         Test.Assert(hsh[22] == 222);
+    }
+
+    // //
+    // Code Generation
+    //
+
+    // Integer //
+
+    public static void test_eina_hash_int_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = new eina.Hash<int,int>();
+        hsh[22] = 222;
+        Test.Assert(t.eina_hash_int_in(hsh));
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh[22] == 222);
+        Test.Assert(hsh[44] == 444);
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_hash_int_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = new eina.Hash<int,int>();
+        hsh[22] = 222;
+        Test.Assert(t.eina_hash_int_in_own(hsh));
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh[22] == 222);
+        Test.Assert(hsh[44] == 444);
+        hsh[88] = 888;
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_int_in_own());
+    }
+
+    public static void test_eina_hash_int_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Hash<int,int> hsh;
+        Test.Assert(t.eina_hash_int_out(out hsh));
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh[22] == 222);
+        hsh[44] = 444;
+        Test.Assert(hsh[44] == 444);
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_int_out());
+    }
+
+    public static void test_eina_hash_int_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Hash<int,int> hsh;
+        Test.Assert(t.eina_hash_int_out_own(out hsh));
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh[22] == 222);
+        hsh[44] = 444;
+        Test.Assert(hsh[44] == 444);
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_int_out_own());
+    }
+
+    public static void test_eina_hash_int_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = t.eina_hash_int_return();
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh[22] == 222);
+        hsh[44] = 444;
+        Test.Assert(hsh[44] == 444);
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_int_return());
+    }
+
+    public static void test_eina_hash_int_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = t.eina_hash_int_return_own();
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh[22] == 222);
+        hsh[44] = 444;
+        Test.Assert(hsh[44] == 444);
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_int_return_own());
+    }
+
+    // String //
+
+    public static void test_eina_hash_str_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = new eina.Hash<string,string>();
+        hsh["aa"] = "aaa";
+        Test.Assert(t.eina_hash_str_in(hsh));
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_hash_str_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = new eina.Hash<string,string>();
+        hsh["aa"] = "aaa";
+        Test.Assert(t.eina_hash_str_in_own(hsh));
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh["cc"] = "ccc";
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_str_in_own());
+    }
+
+    public static void test_eina_hash_str_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Hash<string,string> hsh;
+        Test.Assert(t.eina_hash_str_out(out hsh));
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_str_out());
+    }
+
+    public static void test_eina_hash_str_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Hash<string,string> hsh;
+        Test.Assert(t.eina_hash_str_out_own(out hsh));
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_str_out_own());
+    }
+
+    public static void test_eina_hash_str_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = t.eina_hash_str_return();
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_str_return());
+    }
+
+    public static void test_eina_hash_str_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = t.eina_hash_str_return_own();
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_str_return_own());
+    }
+
+    // Object //
+
+    public static void test_eina_hash_obj_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = new eina.Hash<test.Numberwrapper,test.Numberwrapper>();
+        var nwk1 = NW(22);
+        var nwv1 = NW(222);
+        hsh[nwk1] = nwv1;
+        test.Numberwrapper nwk2;
+        test.Numberwrapper nwv2;
+        Test.Assert(t.eina_hash_obj_in(hsh, nwk1, nwv1, out nwk2, out nwv2));
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh[nwk1].raw_handle == nwv1.raw_handle);
+        Test.Assert(hsh[nwk1].number_get() == nwv1.number_get());
+        Test.Assert(hsh[nwk1].number_get() == 222);
+        Test.Assert(hsh[nwk2].raw_handle == nwv2.raw_handle);
+        Test.Assert(hsh[nwk2].number_get() == nwv2.number_get());
+        Test.Assert(hsh[nwk2].number_get() == 444);
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_hash_obj_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var hsh = new eina.Hash<test.Numberwrapper,test.Numberwrapper>();
+        var nwk1 = NW(22);
+        var nwv1 = NW(222);
+        hsh[nwk1] = nwv1;
+        test.Numberwrapper nwk2;
+        test.Numberwrapper nwv2;
+        Test.Assert(t.eina_hash_obj_in_own(hsh, nwk1, nwv1, out nwk2, out nwv2));
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh[nwk1].raw_handle == nwv1.raw_handle);
+        Test.Assert(hsh[nwk1].number_get() == nwv1.number_get());
+        Test.Assert(hsh[nwk1].number_get() == 222);
+        Test.Assert(hsh[nwk2].raw_handle == nwv2.raw_handle);
+        Test.Assert(hsh[nwk2].number_get() == nwv2.number_get());
+        Test.Assert(hsh[nwk2].number_get() == 444);
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_obj_in_own(nwk1, nwv1, nwk2, nwv2));
+    }
+
+    public static void test_eina_hash_obj_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Hash<test.Numberwrapper,test.Numberwrapper> hsh;
+        test.Numberwrapper nwk1;
+        test.Numberwrapper nwv1;
+        Test.Assert(t.eina_hash_obj_out(out hsh, out nwk1, out nwv1));
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh[nwk1].raw_handle == nwv1.raw_handle);
+        Test.Assert(hsh[nwk1].number_get() == nwv1.number_get());
+        Test.Assert(hsh[nwk1].number_get() == 222);
+        test.Numberwrapper nwk2 = NW(44);
+        test.Numberwrapper nwv2 = NW(444);
+        hsh[nwk2] = nwv2;
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_obj_out(nwk1, nwv1, nwk2, nwv2));
+    }
+
+    public static void test_eina_hash_obj_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Hash<test.Numberwrapper,test.Numberwrapper> hsh;
+        test.Numberwrapper nwk1;
+        test.Numberwrapper nwv1;
+        Test.Assert(t.eina_hash_obj_out_own(out hsh, out nwk1, out nwv1));
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh[nwk1].raw_handle == nwv1.raw_handle);
+        Test.Assert(hsh[nwk1].number_get() == nwv1.number_get());
+        Test.Assert(hsh[nwk1].number_get() == 222);
+        test.Numberwrapper nwk2 = NW(44);
+        test.Numberwrapper nwv2 = NW(444);
+        hsh[nwk2] = nwv2;
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_obj_out_own());
+    }
+
+    public static void test_eina_hash_obj_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        test.Numberwrapper nwk1;
+        test.Numberwrapper nwv1;
+        var hsh = t.eina_hash_obj_return(out nwk1, out nwv1);
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh[nwk1].raw_handle == nwv1.raw_handle);
+        Test.Assert(hsh[nwk1].number_get() == nwv1.number_get());
+        Test.Assert(hsh[nwk1].number_get() == 222);
+        test.Numberwrapper nwk2 = NW(44);
+        test.Numberwrapper nwv2 = NW(444);
+        hsh[nwk2] = nwv2;
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_obj_return(nwk1, nwv1, nwk2, nwv2));
+    }
+
+    public static void test_eina_hash_obj_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        test.Numberwrapper nwk1;
+        test.Numberwrapper nwv1;
+        var hsh = t.eina_hash_obj_return_own(out nwk1, out nwv1);
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh[nwk1].raw_handle == nwv1.raw_handle);
+        Test.Assert(hsh[nwk1].number_get() == nwv1.number_get());
+        Test.Assert(hsh[nwk1].number_get() == 222);
+        test.Numberwrapper nwk2 = NW(44);
+        test.Numberwrapper nwv2 = NW(444);
+        hsh[nwk2] = nwv2;
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_hash_obj_return_own());
     }
 }
 
