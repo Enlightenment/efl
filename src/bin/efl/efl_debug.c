@@ -225,19 +225,18 @@ _args_handle(void *data EINA_UNUSED, Eina_Bool flag)
      }
 }
 
-static const Eina_Debug_Opcode ops[] =
-{
-     {"Daemon/Client/register_observer",  &_cl_stat_reg_opcode,   NULL},
-     {"Daemon/Client/added",              NULL,                   &_clients_info_added_cb},
-     {"Daemon/Client/deleted",            NULL,                   &_clients_info_deleted_cb},
-     {"Daemon/Client/cid_from_pid",       &_cid_from_pid_opcode,  &_cid_get_cb},
-     {"Profiler/on",                      &_prof_on_opcode,       NULL},
-     {"Profiler/off",                     &_prof_off_opcode,      NULL},
-     {"CPU/Freq/on",                      &_cpufreq_on_opcode,    NULL},
-     {"CPU/Freq/off",                     &_cpufreq_off_opcode,   NULL},
-     {"EvLog/get",                        &_evlog_get_opcode,     _evlog_get_cb},
-     {NULL, NULL, NULL}
-};
+EINA_DEBUG_OPCODES_ARRAY_DEFINE(ops,
+      {"Daemon/Client/register_observer",  &_cl_stat_reg_opcode,   NULL},
+      {"Daemon/Client/added",              NULL,                   &_clients_info_added_cb},
+      {"Daemon/Client/deleted",            NULL,                   &_clients_info_deleted_cb},
+      {"Daemon/Client/cid_from_pid",       &_cid_from_pid_opcode,  &_cid_get_cb},
+      {"Profiler/on",                      &_prof_on_opcode,       NULL},
+      {"Profiler/off",                     &_prof_off_opcode,      NULL},
+      {"CPU/Freq/on",                      &_cpufreq_on_opcode,    NULL},
+      {"CPU/Freq/off",                     &_cpufreq_off_opcode,   NULL},
+      {"EvLog/get",                        &_evlog_get_opcode,     _evlog_get_cb},
+      {NULL, NULL, NULL}
+);
 
 int
 main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
@@ -254,7 +253,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         fprintf(stderr, "ERROR: Cannot connect to debug daemon.\n");
         return -1;
      }
-   eina_debug_opcodes_register(_session, ops, _args_handle, NULL);
+   eina_debug_opcodes_register(_session, ops(), _args_handle, NULL);
 
    ecore_main_loop_begin();
 

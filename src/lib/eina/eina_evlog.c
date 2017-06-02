@@ -249,13 +249,12 @@ _stop_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buf
    return EINA_TRUE;
 }
 
-static const Eina_Debug_Opcode _EINA_DEBUG_EVLOG_OPS[] =
-{
-     {"EvLog/on", NULL, &_start_cb},
-     {"EvLog/off", NULL, &_stop_cb},
-     {"EvLog/get", &_evlog_get_opcode, &_get_cb},
-     {NULL, NULL, NULL}
-};
+EINA_DEBUG_OPCODES_ARRAY_DEFINE(_EINA_DEBUG_EVLOG_OPS,
+      {"EvLog/on", NULL, &_start_cb},
+      {"EvLog/off", NULL, &_stop_cb},
+      {"EvLog/get", &_evlog_get_opcode, &_get_cb},
+      {NULL, NULL, NULL}
+);
 
 Eina_Bool
 eina_evlog_init(void)
@@ -273,7 +272,7 @@ eina_evlog_init(void)
      }
 #endif
    eina_evlog("+eina_init", NULL, 0.0, NULL);
-   eina_debug_opcodes_register(NULL, _EINA_DEBUG_EVLOG_OPS, NULL, NULL);
+   eina_debug_opcodes_register(NULL, _EINA_DEBUG_EVLOG_OPS(), NULL, NULL);
    return EINA_TRUE;
 }
 

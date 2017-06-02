@@ -122,6 +122,25 @@ typedef struct
 } Eina_Debug_Packet_Header;
 
 /**
+ * Helper for creating global opcodes arrays.
+ * The problem is on windows where you can't declare a static array with
+ * external symbols in it, because the addresses are only known at runtime.
+ */
+#define EINA_DEBUG_OPCODES_ARRAY_DEFINE(Name, ...)                           \
+  static Eina_Debug_Opcode *                                      \
+  Name(void)                                                            \
+  {                                                                     \
+     Eina_Debug_Opcode tmp[] = { __VA_ARGS__ }; \
+     static Eina_Debug_Opcode internal[EINA_C_ARRAY_LENGTH(tmp) + 1] = \
+       { { 0, 0, 0 } };         \
+     if (internal[0].opcode_name == NULL)                                      \
+       {                                                                \
+          memcpy(internal, tmp, sizeof(tmp)); \
+       }                                                                \
+     return internal;                                                   \
+  }
+
+/**
  * @typedef Eina_Debug_Opcode
  *
  * Structure to describe information for an opcode. It is used to register new

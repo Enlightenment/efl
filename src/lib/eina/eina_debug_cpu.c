@@ -272,12 +272,11 @@ _cpufreq_off_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, vo
    return EINA_TRUE;
 }
 
-static const Eina_Debug_Opcode _OPS[] =
-{
-     {"CPU/Freq/on", NULL, &_cpufreq_on_cb},
-     {"CPU/Freq/off", NULL, &_cpufreq_off_cb},
-     {NULL, NULL, NULL}
-};
+EINA_DEBUG_OPCODES_ARRAY_DEFINE(_OPS,
+      {"CPU/Freq/on", NULL, &_cpufreq_on_cb},
+      {"CPU/Freq/off", NULL, &_cpufreq_off_cb},
+      {NULL, NULL, NULL}
+);
 
 Eina_Bool
 _eina_debug_cpu_init(void)
@@ -296,7 +295,7 @@ _eina_debug_cpu_init(void)
           }
         _sysmon_thread_runs = EINA_TRUE;
      }
-   eina_debug_opcodes_register(NULL, _OPS, NULL, NULL);
+   eina_debug_opcodes_register(NULL, _OPS(), NULL, NULL);
    return EINA_TRUE;
 }
 
