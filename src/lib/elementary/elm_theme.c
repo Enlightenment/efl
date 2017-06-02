@@ -203,7 +203,7 @@ _elm_theme_clear(Elm_Theme *th)
      }
 }
 
-static Eina_File *
+Eina_File *
 _elm_theme_group_file_find(Elm_Theme *th, const char *group)
 {
    const Eina_List *l;

@@ -408,6 +408,8 @@ Eina_Bool            _elm_theme_icon_set(Elm_Theme *th,
                                          Evas_Object *o,
                                          const char *group,
                                          const char *style);
+Eina_File           *_elm_theme_group_file_find(Elm_Theme *th,
+                                                const char *group);
 void                 _elm_theme_parse(Elm_Theme *th,
                                       const char *theme);
 void                 _elm_theme_shutdown(void);

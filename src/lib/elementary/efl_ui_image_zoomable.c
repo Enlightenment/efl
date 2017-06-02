@@ -86,12 +86,16 @@ static Eina_Error PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT;
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_zoom(Evas_Object *obj, const char *params);
 static void _efl_ui_image_zoomable_remote_copier_cancel(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd);
+static Eina_Bool _internal_efl_ui_image_zoomable_icon_set(Evas_Object *obj, const char *name, Eina_Bool *fdo, Eina_Bool resize);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
    {"zoom", _key_action_zoom},
    {NULL, NULL}
 };
+
+static const char *icon_theme = NULL;
+#define NON_EXISTING (void *)-1
 
 static inline void
 _photocam_image_file_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd)
@@ -885,6 +889,11 @@ EOLIAN static Elm_Theme_Apply
 _efl_ui_image_zoomable_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd EINA_UNUSED)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Eina_Bool fdo = EINA_FALSE;
+
+   if (sd->stdicon)
+     _internal_efl_ui_image_zoomable_icon_set(obj, sd->stdicon, &fdo, EINA_TRUE);
+
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
@@ -1487,6 +1496,8 @@ _efl_ui_image_zoomable_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Zoomable
 {
    Efl_Ui_Image_Zoomable_Grid *g;
 
+   ELM_SAFE_FREE(sd->icon_edje, evas_object_del);
+
    EINA_LIST_FREE(sd->grids, g)
      {
         _grid_clear(obj, g);
@@ -1797,6 +1808,9 @@ static Evas_Load_Error
 _efl_ui_image_zoomable_file_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file)
 {
    Evas_Load_Error ret = EVAS_LOAD_ERROR_NONE;
+
+   ELM_SAFE_FREE(sd->icon_edje, evas_object_del);
+   eina_stringshare_replace(&sd->stdicon, NULL);
 
    _grid_clear_all(obj);
    _efl_ui_image_zoomable_zoom_reset(obj, sd);
@@ -2319,6 +2333,282 @@ _efl_ui_image_zoomable_gesture_enabled_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *
    elm_gesture_layer_cb_set
      (sd->g_layer, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_ABORT,
      _g_layer_zoom_end_cb, obj);
+}
+
+static void
+_icon_size_get(Evas_Object *o, int *w, int *h)
+{
+   ELM_PHOTOCAM_DATA_GET(o, sd);
+
+   efl_gfx_view_size_get(o, w, h);
+
+   if (*w == 0 || *h == 0)
+     {
+        evas_object_geometry_get(o, NULL, NULL, w, h);
+
+        if (*w == 0 || *h == 0)
+          {
+             edje_object_size_min_get(sd->icon_edje, w, h);
+          }
+     }
+}
+
+static Eina_Bool
+_image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, Eina_Bool resize)
+{
+   Elm_Theme *th = elm_widget_theme_get(o);
+   ELM_PHOTOCAM_DATA_GET(o, sd);
+   Evas_Load_Error err;
+
+   char buf[1024];
+   Eina_File *file;
+   int w, h;
+
+   if (!th) th = elm_theme_default_get();
+
+   snprintf(buf, sizeof(buf), "elm/icon/%s/%s", group, style);
+   file = _elm_theme_group_file_find(th, buf);
+   if (file)
+     {
+        ELM_WIDGET_DATA_GET_OR_RETURN(o, wd, EINA_FALSE);
+        double tz;
+
+        eina_stringshare_replace(&sd->file, eina_file_filename_get(file));
+        if (sd->f) eina_file_close(sd->f);
+        sd->f = file;
+        sd->zoom = 1.0;
+        evas_object_image_smooth_scale_set(sd->img, (sd->no_smooth == 0));
+        evas_object_image_file_set(sd->img, NULL, NULL);
+        evas_object_image_source_set(sd->img, NULL);
+        evas_object_image_load_scale_down_set(sd->img, 0);
+        if (!sd->icon_edje) sd->icon_edje = edje_object_add(evas_object_evas_get(o));
+        if (!resize) edje_object_mmap_set(sd->icon_edje, file, buf);
+        _icon_size_get(o, &w, &h);
+        evas_object_resize(sd->icon_edje, w, h);
+
+        evas_object_image_source_set(sd->img, sd->icon_edje);
+        evas_object_image_source_visible_set(sd->img, EINA_FALSE);
+        evas_object_size_hint_min_set(sd->img, w, h);
+        evas_object_show(sd->img);
+        evas_object_show(sd->icon_edje);
+
+        err = evas_object_image_load_error_get(sd->img);
+        if (err != EVAS_LOAD_ERROR_NONE)
+          {
+             ERR("Things are going bad for '%s' (%p) : %i", eina_file_filename_get(file), sd->img, err);
+
+             ELM_SAFE_FREE(sd->icon_edje, evas_object_del);
+
+             return EINA_FALSE;
+          }
+
+        sd->do_region = 0;
+        sd->size.imw = w;
+        sd->size.imh = h;
+        sd->size.w = sd->size.imw / sd->zoom;
+        sd->size.h = sd->size.imh / sd->zoom;
+        evas_object_image_preload(sd->img, 0);
+        sd->main_load_pending = EINA_TRUE;
+
+        sd->calc_job = ecore_job_add(_calc_job_cb, o);
+        efl_event_callback_legacy_call(o, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD, NULL);
+        sd->preload_num++;
+        if (sd->preload_num == 1)
+          {
+             edje_object_signal_emit
+                (wd->resize_obj, "elm,state,busy,start", "elm");
+             efl_event_callback_legacy_call(o, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD_DETAIL, NULL);
+          }
+
+        tz = sd->zoom;
+        sd->zoom = 0.0;
+        elm_photocam_zoom_set(o, tz);
+        sd->orient = EFL_ORIENT_NONE;
+        sd->flip = EFL_FLIP_NONE;
+        sd->orientation_changed = EINA_FALSE;
+        return EINA_TRUE;
+     }
+
+   ELM_SAFE_FREE(sd->icon_edje, evas_object_del);
+   _sizing_eval(o);
+   WRN("Failed to set icon '%s'. Icon theme '%s' not found", group, buf);
+   ELM_SAFE_FREE(sd->f, eina_file_close);
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_icon_standard_set(Evas_Object *obj, const char *name, Eina_Bool resize)
+{
+   ELM_PHOTOCAM_DATA_GET(obj, sd);
+
+   if (_image_zoomable_object_icon_set(obj, name, "default", resize))
+     {
+        /* TODO: elm_unneed_efreet() */
+        sd->freedesktop.use = EINA_FALSE;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_icon_freedesktop_set(Evas_Object *obj, const char *name, int size)
+{
+   const char *path;
+
+   ELM_PHOTOCAM_DATA_GET(obj, sd);
+
+   elm_need_efreet();
+
+   if (icon_theme == NON_EXISTING) return EINA_FALSE;
+
+   if (!icon_theme)
+     {
+        Efreet_Icon_Theme *theme;
+        /* TODO: Listen for EFREET_EVENT_ICON_CACHE_UPDATE */
+        theme = efreet_icon_theme_find(elm_config_icon_theme_get());
+        if (!theme)
+          {
+             const char **itr;
+             static const char *themes[] = {
+                "gnome", "Human", "oxygen", "hicolor", NULL
+             };
+             for (itr = themes; *itr; itr++)
+               {
+                  theme = efreet_icon_theme_find(*itr);
+                  if (theme) break;
+               }
+          }
+
+        if (!theme)
+          {
+             icon_theme = NON_EXISTING;
+             return EINA_FALSE;
+          }
+        else
+          icon_theme = eina_stringshare_add(theme->name.internal);
+     }
+   path = efreet_icon_path_find(icon_theme, name, size);
+   sd->freedesktop.use = !!path;
+   if (sd->freedesktop.use)
+     {
+        sd->freedesktop.requested_size = size;
+        efl_file_set(obj, path, NULL);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static inline int
+_icon_size_min_get(Evas_Object *image)
+{
+   int w, h;
+
+   evas_object_geometry_get(image, NULL, NULL, &w, &h);
+
+   return MAX(16, MIN(w, h));
+}
+
+/* FIXME: move this code to ecore */
+#ifdef _WIN32
+static Eina_Bool
+_path_is_absolute(const char *path)
+{
+   //TODO: Check if this works with all absolute paths in windows
+   return (isalpha(*path)) && (*(path + 1) == ':') &&
+           ((*(path + 2) == '\\') || (*(path + 2) == '/'));
+}
+
+#else
+static Eina_Bool
+_path_is_absolute(const char *path)
+{
+   return *path == '/';
+}
+
+#endif
+
+static Eina_Bool
+_internal_efl_ui_image_zoomable_icon_set(Evas_Object *obj, const char *name, Eina_Bool *fdo, Eina_Bool resize)
+{
+   char *tmp;
+   Eina_Bool ret = EINA_FALSE;
+
+   ELM_PHOTOCAM_DATA_GET(obj, sd);
+
+   /* try locating the icon using the specified theme */
+   if (!strcmp(ELM_CONFIG_ICON_THEME_ELEMENTARY, elm_config_icon_theme_get()))
+     {
+        ret = _icon_standard_set(obj, name, resize);
+        if (ret && fdo) *fdo = EINA_FALSE;
+     }
+   else
+     {
+        ret = _icon_freedesktop_set(obj, name, _icon_size_min_get(obj));
+        if (ret && fdo) *fdo = EINA_TRUE;
+     }
+
+   if (ret)
+     {
+        eina_stringshare_replace(&sd->stdicon, name);
+        _sizing_eval(obj);
+        return EINA_TRUE;
+     }
+    else
+      eina_stringshare_replace(&sd->stdicon, NULL);
+
+   if (_path_is_absolute(name))
+     {
+        if (fdo)
+          *fdo = EINA_FALSE;
+        return efl_file_set(obj, name, NULL);
+     }
+
+   /* if that fails, see if icon name is in the format size/name. if so,
+		try locating a fallback without the size specification */
+   if (!(tmp = strchr(name, '/'))) return EINA_FALSE;
+   ++tmp;
+   if (*tmp) return _internal_efl_ui_image_zoomable_icon_set(obj, tmp, fdo, resize);
+   /* give up */
+   return EINA_FALSE;
+}
+
+static void
+_efl_ui_image_zoomable_icon_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   ELM_PHOTOCAM_DATA_GET(data, sd);
+   const char *refup = eina_stringshare_ref(sd->stdicon);
+   Eina_Bool fdo = EINA_FALSE;
+
+   if (!_internal_efl_ui_image_zoomable_icon_set(obj, sd->stdicon, &fdo, EINA_TRUE) || (!fdo))
+     evas_object_event_callback_del_full
+       (obj, EVAS_CALLBACK_RESIZE, _efl_ui_image_zoomable_icon_resize_cb, data);
+   eina_stringshare_del(refup);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_zoomable_efl_ui_image_icon_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *pd EINA_UNUSED, const char *name)
+{
+   Eina_Bool fdo = EINA_FALSE;
+
+   if (!name) return EINA_FALSE;
+
+   evas_object_event_callback_del_full
+     (obj, EVAS_CALLBACK_RESIZE, _efl_ui_image_zoomable_icon_resize_cb, obj);
+
+   Eina_Bool int_ret = _internal_efl_ui_image_zoomable_icon_set(obj, name, &fdo, EINA_FALSE);
+
+   if (fdo)
+     evas_object_event_callback_add
+       (obj, EVAS_CALLBACK_RESIZE, _efl_ui_image_zoomable_icon_resize_cb, obj);
+
+   return int_ret;
+}
+
+EOLIAN static const char *
+_efl_ui_image_zoomable_efl_ui_image_icon_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
+{
+   return pd->stdicon;
 }
 
 EOLIAN static Eina_Bool

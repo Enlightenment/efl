@@ -4,8 +4,6 @@ class Efl.Ui.Image.Zoomable (Efl.Ui.Image, Efl.Ui.Zoom,
 {
    [[Elementary Image Zoomable class]]
    legacy_prefix: elm_photocam;
-   //eo_prefix: elm_obj_photocam;
-   //event_prefix: elm_photocam;
    methods {
       @property gesture_enabled {
          set {
@@ -53,6 +51,7 @@ class Efl.Ui.Image.Zoomable (Efl.Ui.Image, Efl.Ui.Zoom,
       Efl.Gfx.size { set; }
       Efl.Gfx.View.view_size { get; }
       Efl.Image.image_size { get; }
+      Efl.Ui.Image.icon { set; get; }
       Efl.Ui.Zoom.zoom_animation { set; get; }
       Efl.Ui.Zoom.zoom { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }
