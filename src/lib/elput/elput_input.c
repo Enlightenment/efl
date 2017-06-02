@@ -457,22 +457,10 @@ elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, int *x, int
 
    EINA_LIST_FOREACH(manager->input.seats, l, eseat)
      {
-        if (!eseat->ptr) continue;
-        if ((eseat->name) && (strcmp(eseat->name, seat)))
-          continue;
-        if (x) *x = eseat->ptr->x;
-        if (y) *y = eseat->ptr->y;
+        if (!eina_streq(eseat->name, seat)) continue;
+        if (x) *x = eseat->pointer.x;
+        if (y) *y = eseat->pointer.y;
         return;
-     }
-
-   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
-     {
-        if (!eseat->touch) continue;
-        if ((eseat->name) && (strcmp(eseat->name, seat)))
-          continue;
-        if (x) *x = eseat->touch->x;
-        if (y) *y = eseat->touch->y;
-        break;
      }
 }
 
@@ -501,8 +489,8 @@ elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int 
         if ((eseat->name) && (strcmp(eseat->name, seat)))
           continue;
 
-        eseat->ptr->x = x;
-        eseat->ptr->y = y;
+        eseat->pointer.x = x;
+        eseat->pointer.y = y;
         eseat->ptr->timestamp = ecore_loop_time_get();
 
         EINA_LIST_FOREACH(eseat->devices, ll, edev)

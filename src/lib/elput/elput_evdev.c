@@ -799,8 +799,8 @@ _pointer_motion_send(Elput_Device *edev)
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
    if (!ev) return;
 
-   x = ptr->x;
-   y = ptr->y;
+   x = ptr->seat->pointer.x;
+   y = ptr->seat->pointer.y;
 
    if (x < ptr->minx)
      x = ptr->minx;
@@ -812,8 +812,8 @@ _pointer_motion_send(Elput_Device *edev)
    else if (y >= ptr->miny + ptr->seat->manager->input.pointer_h)
      y = ptr->miny + ptr->seat->manager->input.pointer_h - 1;
 
-   ptr->x = x;
-   ptr->y = y;
+   ptr->seat->pointer.x = x;
+   ptr->seat->pointer.y = y;
 
    ev->window = edev->seat->manager->window;
    ev->event_window = edev->seat->manager->window;
@@ -823,10 +823,10 @@ _pointer_motion_send(Elput_Device *edev)
    ev->dev = edev->evas_device;
    if (ev->dev) efl_ref(ev->dev);
 
-   ev->x = ptr->x;
-   ev->y = ptr->y;
-   ev->root.x = ptr->x;
-   ev->root.y = ptr->y;
+   ev->x = ptr->seat->pointer.x;
+   ev->y = ptr->seat->pointer.y;
+   ev->root.x = ptr->seat->pointer.x;
+   ev->root.y = ptr->seat->pointer.y;
 
    kbd = _evdev_keyboard_get(edev->seat);
    if (kbd) _keyboard_modifiers_update(kbd, edev->seat);
@@ -841,10 +841,10 @@ _pointer_motion_send(Elput_Device *edev)
    ev->multi.radius_y = 1;
    ev->multi.pressure = ptr->pressure;
    ev->multi.angle = 0.0;
-   ev->multi.x = ptr->x;
-   ev->multi.y = ptr->y;
-   ev->multi.root.x = ptr->x;
-   ev->multi.root.y = ptr->y;
+   ev->multi.x = ptr->seat->pointer.x;
+   ev->multi.y = ptr->seat->pointer.y;
+   ev->multi.root.x = ptr->seat->pointer.x;
+   ev->multi.root.y = ptr->seat->pointer.y;
 
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, _event_free, ev->dev);
 }
@@ -878,8 +878,8 @@ _pointer_motion(struct libinput_device *idev, struct libinput_event_pointer *eve
    ptr = _evdev_pointer_get(edev->seat);
    if (!ptr) return EINA_FALSE;
 
-   ptr->x += libinput_event_pointer_get_dx(event);
-   ptr->y += libinput_event_pointer_get_dy(event);
+   ptr->seat->pointer.x += libinput_event_pointer_get_dx(event);
+   ptr->seat->pointer.y += libinput_event_pointer_get_dy(event);
    ptr->timestamp = libinput_event_pointer_get_time(event);
 
    _pointer_motion_send(edev);
@@ -900,8 +900,8 @@ _pointer_motion_abs(struct libinput_device *idev, struct libinput_event_pointer 
    ptr = _evdev_pointer_get(edev->seat);
    if (!ptr) return EINA_FALSE;
 
-   ptr->x = libinput_event_pointer_get_absolute_x_transformed(event, edev->ow);
-   ptr->y = libinput_event_pointer_get_absolute_y_transformed(event, edev->oh);
+   ptr->seat->pointer.x = libinput_event_pointer_get_absolute_x_transformed(event, edev->ow);
+   ptr->seat->pointer.y = libinput_event_pointer_get_absolute_y_transformed(event, edev->oh);
    ptr->timestamp = libinput_event_pointer_get_time(event);
 
    /* TODO: these needs to run a matrix transform based on output */
@@ -934,10 +934,10 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev->dev = edev->evas_device;
    if (ev->dev) efl_ref(ev->dev);
 
-   ev->x = ptr->x;
-   ev->y = ptr->y;
-   ev->root.x = ptr->x;
-   ev->root.y = ptr->y;
+   ev->x = ptr->seat->pointer.x;
+   ev->y = ptr->seat->pointer.y;
+   ev->root.x = ptr->seat->pointer.x;
+   ev->root.y = ptr->seat->pointer.y;
 
    touch = _evdev_touch_get(edev->seat);
    if (touch) ev->multi.device = touch->slot;
@@ -946,10 +946,10 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev->multi.radius_y = 1;
    ev->multi.pressure = ptr->pressure;
    ev->multi.angle = 0.0;
-   ev->multi.x = ptr->x;
-   ev->multi.y = ptr->y;
-   ev->multi.root.x = ptr->x;
-   ev->multi.root.y = ptr->y;
+   ev->multi.x = ptr->seat->pointer.x;
+   ev->multi.y = ptr->seat->pointer.y;
+   ev->multi.root.x = ptr->seat->pointer.x;
+   ev->multi.root.y = ptr->seat->pointer.y;
 
    ev->buttons = ptr->buttons;
 
@@ -1057,10 +1057,10 @@ _pointer_axis_send(Elput_Device *dev, int direction, int value)
    ev->dev = dev->evas_device;
    if (ev->dev) efl_ref(ev->dev);
 
-   ev->x = ptr->x;
-   ev->y = ptr->y;
-   ev->root.x = ptr->x;
-   ev->root.y = ptr->y;
+   ev->x = ptr->seat->pointer.x;
+   ev->y = ptr->seat->pointer.y;
+   ev->root.x = ptr->seat->pointer.x;
+   ev->root.y = ptr->seat->pointer.y;
 
    ev->z = value;
    ev->direction = direction;
@@ -1165,10 +1165,10 @@ _touch_event_send(Elput_Device *dev, int type)
    ev->timestamp = touch->timestamp;
    ev->same_screen = 1;
 
-   ev->x = touch->x;
-   ev->y = touch->y;
-   ev->root.x = touch->x;
-   ev->root.y = touch->y;
+   ev->x = touch->seat->pointer.x;
+   ev->y = touch->seat->pointer.y;
+   ev->root.x = touch->seat->pointer.x;
+   ev->root.y = touch->seat->pointer.y;
 
    ev->modifiers = dev->seat->modifiers;
 
@@ -1215,8 +1215,8 @@ _touch_motion_send(Elput_Device *dev)
    ev->dev = dev->evas_device;
    if (ev->dev) efl_ref(ev->dev);
 
-   ev->x = lround(touch->x);
-   ev->y = lround(touch->y);
+   ev->x = lround(touch->seat->pointer.x);
+   ev->y = lround(touch->seat->pointer.y);
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
@@ -1228,10 +1228,10 @@ _touch_motion_send(Elput_Device *dev)
    ev->multi.radius_y = 1;
    ev->multi.pressure = touch->pressure;
    ev->multi.angle = 0.0;
-   ev->multi.x = touch->x;
-   ev->multi.y = touch->y;
-   ev->multi.root.x = touch->x;
-   ev->multi.root.y = touch->y;
+   ev->multi.x = touch->seat->pointer.x;
+   ev->multi.y = touch->seat->pointer.y;
+   ev->multi.root.x = touch->seat->pointer.x;
+   ev->multi.root.y = touch->seat->pointer.y;
 
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, _event_free, ev->dev);
 }
@@ -1251,18 +1251,18 @@ _touch_down(struct libinput_device *idevice, struct libinput_event_touch *event)
    touch->slot = libinput_event_touch_get_seat_slot(event);
    touch->timestamp = libinput_event_touch_get_time(event);
 
-   touch->x = libinput_event_touch_get_x_transformed(event, dev->ow);
-   touch->y = libinput_event_touch_get_y_transformed(event, dev->oh);
+   touch->seat->pointer.x = libinput_event_touch_get_x_transformed(event, dev->ow);
+   touch->seat->pointer.y = libinput_event_touch_get_y_transformed(event, dev->oh);
 
    /* TODO: these needs to run a matrix transform based on output */
    /* _ecore_drm2_output_coordinate_transform(dev->output, */
-   /*                                         touch->x, touch->y, */
-   /*                                         &touch->x, &touch->y); */
+   /*                                         touch->seat->pointer.x, touch->seat->pointer.y, */
+   /*                                         &touch->seat->pointer.x, &touch->seat->pointer.y); */
 
    if (touch->slot == touch->grab.id)
      {
-        touch->grab.x = touch->x;
-        touch->grab.y = touch->y;
+        touch->grab.x = touch->seat->pointer.x;
+        touch->grab.y = touch->seat->pointer.y;
      }
 
    touch->points++;
@@ -1273,8 +1273,8 @@ _touch_down(struct libinput_device *idevice, struct libinput_event_touch *event)
    if (touch->points == 1)
      {
         touch->grab.id = touch->slot;
-        touch->grab.x = touch->x;
-        touch->grab.y = touch->y;
+        touch->grab.x = touch->seat->pointer.x;
+        touch->grab.y = touch->seat->pointer.y;
         touch->grab.timestamp = touch->timestamp;
      }
 }
@@ -1311,13 +1311,13 @@ _touch_motion(struct libinput_device *idevice, struct libinput_event_touch *even
    touch = _evdev_touch_get(dev->seat);
    if (!touch) return;
 
-   touch->x = libinput_event_touch_get_x_transformed(event, dev->ow);
-   touch->y = libinput_event_touch_get_y_transformed(event, dev->oh);
+   touch->seat->pointer.x = libinput_event_touch_get_x_transformed(event, dev->ow);
+   touch->seat->pointer.y = libinput_event_touch_get_y_transformed(event, dev->oh);
 
    /* TODO: these needs to run a matrix transform based on output */
    /* _ecore_drm2_output_coordinate_transform(dev->output, */
-   /*                                         touch->x, touch->y, */
-   /*                                         &touch->x, &touch->y); */
+   /*                                         touch->seat->pointer.x, touch->seat->pointer.y, */
+   /*                                         &touch->seat->pointer.x, &touch->seat->pointer.y); */
 
    touch->slot = libinput_event_touch_get_seat_slot(event);
    touch->timestamp = libinput_event_touch_get_time(event);
@@ -1392,19 +1392,19 @@ _tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_too
    EINA_SAFETY_ON_NULL_RETURN(ptr);
    tool = libinput_event_tablet_tool_get_tool(event);
 
-   ptr->x = libinput_event_tablet_tool_get_x_transformed(event, dev->ow);
-   ptr->y = libinput_event_tablet_tool_get_y_transformed(event, dev->oh);
+   ptr->seat->pointer.x = libinput_event_tablet_tool_get_x_transformed(event, dev->ow);
+   ptr->seat->pointer.y = libinput_event_tablet_tool_get_y_transformed(event, dev->oh);
 
    if (libinput_event_tablet_tool_x_has_changed(event))
      {
         ax[num].label = ECORE_AXIS_LABEL_X;
-        ax[num].value = ptr->x;
+        ax[num].value = ptr->seat->pointer.x;
         num++;
      }
    if (libinput_event_tablet_tool_y_has_changed(event))
      {
         ax[num].label = ECORE_AXIS_LABEL_Y;
-        ax[num].value = ptr->y;
+        ax[num].value = ptr->seat->pointer.y;
         num++;
      }
    if (libinput_tablet_tool_has_pressure(tool))

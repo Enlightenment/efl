@@ -142,7 +142,6 @@ struct _Elput_Keyboard
 
 struct _Elput_Pointer
 {
-   double x, y;
    int buttons;
    unsigned int timestamp;
    double pressure;
@@ -171,7 +170,6 @@ struct _Elput_Pointer
 
 struct _Elput_Touch
 {
-   double x, y;
    int slot;
    unsigned int points;
    unsigned int timestamp;
@@ -196,6 +194,11 @@ struct _Elput_Seat
      {
         int kbd, ptr, touch;
      } count;
+
+   struct
+   {
+      double x, y;
+   } pointer;
 
    unsigned int modifiers;
 
