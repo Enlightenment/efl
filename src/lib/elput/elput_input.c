@@ -400,6 +400,11 @@ _elput_input_enable(Elput_Manager *manager)
 void
 _elput_input_disable(Elput_Manager *manager)
 {
+   Elput_Seat *seat;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(manager->input.seats, l, seat)
+     seat->pending_motion = 1;
    libinput_suspend(manager->input.lib);
    _process_events(&manager->input);
    manager->input.suspended = EINA_TRUE;

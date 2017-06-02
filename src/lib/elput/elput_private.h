@@ -208,6 +208,7 @@ struct _Elput_Seat
 
    Eina_List *devices;
    Elput_Manager *manager;
+   Eina_Bool pending_motion : 1;
 };
 
 struct _Elput_Device

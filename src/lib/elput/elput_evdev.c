@@ -798,6 +798,7 @@ _pointer_motion_send(Elput_Device *edev)
 
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
    if (!ev) return;
+   edev->seat->pending_motion = 0;
 
    x = ptr->seat->pointer.x;
    y = ptr->seat->pointer.y;
@@ -1030,6 +1031,7 @@ _pointer_button(struct libinput_device *idev, struct libinput_event_pointer *eve
    ptr->timestamp = libinput_event_pointer_get_time(event);
 
    if (state) _pointer_click_update(ptr, btn);
+   if (edev->seat->pending_motion) _pointer_motion_send(edev);
 
    _pointer_button_send(edev, state);
 
