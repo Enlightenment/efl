@@ -513,6 +513,203 @@ class Test.Testing (Efl.Object) {
       }
 
 
+      // Eina Hash //
+
+      // Integer //
+      eina_hash_int_in {
+         params {
+            @in hsh: hash<int, int>;
+         }
+         return: bool;
+      }
+
+      eina_hash_int_in_own {
+         params {
+            @in hsh: own(hash<int, own(ptr(int))>);
+         }
+         return: bool;
+      }
+      check_eina_hash_int_in_own {
+         return: bool;
+      }
+
+      eina_hash_int_out {
+         params {
+            @out hsh: hash<int, int>;
+         }
+         return: bool;
+      }
+      check_eina_hash_int_out {
+         return: bool;
+      }
+
+      eina_hash_int_out_own {
+         params {
+            @out hsh: own(hash<int, own(ptr(int))>);
+         }
+         return: bool;
+      }
+      check_eina_hash_int_out_own {
+         return: bool;
+      }
+
+      eina_hash_int_return {
+         return: hash<int, int>;
+      }
+      check_eina_hash_int_return {
+         return: bool;
+      }
+
+      eina_hash_int_return_own {
+         return: own(hash<int, own(ptr(int))>);
+      }
+      check_eina_hash_int_return_own {
+         return: bool;
+      }
+
+      // String //
+      eina_hash_str_in {
+         params {
+            @in hsh: hash<string, string>;
+         }
+         return: bool;
+      }
+
+      eina_hash_str_in_own {
+         params {
+            @in hsh: own(hash<string, own(string)>);
+         }
+         return: bool;
+      }
+      check_eina_hash_str_in_own {
+         return: bool;
+      }
+
+      eina_hash_str_out {
+         params {
+            @out hsh: hash<string, string>;
+         }
+         return: bool;
+      }
+      check_eina_hash_str_out {
+         return: bool;
+      }
+
+      eina_hash_str_out_own {
+         params {
+            @out hsh: own(hash<string, own(string)>);
+         }
+         return: bool;
+      }
+      check_eina_hash_str_out_own {
+         return: bool;
+      }
+
+      eina_hash_str_return {
+         return: hash<string, string>;
+      }
+      check_eina_hash_str_return {
+         return: bool;
+      }
+
+      eina_hash_str_return_own {
+         return: own(hash<string, own(string)>);
+      }
+      check_eina_hash_str_return_own {
+         return: bool;
+      }
+
+      // Object //
+      eina_hash_obj_in {
+         params {
+            @in hsh: hash<Test.Numberwrapper, Test.Numberwrapper>;
+            @in nwk1: Test.Numberwrapper;
+            @in nwv1: Test.Numberwrapper;
+            @out nwk2: Test.Numberwrapper;
+            @out nwv2: Test.Numberwrapper;
+         }
+         return: bool;
+      }
+
+      eina_hash_obj_in_own {
+         params {
+            @in hsh: own(hash<Test.Numberwrapper, own(Test.Numberwrapper)>);
+            @in nwk1: Test.Numberwrapper;
+            @in nwv1: Test.Numberwrapper;
+            @out nwk2: Test.Numberwrapper;
+            @out nwv2: Test.Numberwrapper;
+         }
+         return: bool;
+      }
+      check_eina_hash_obj_in_own {
+         params {
+            @in nwk1: Test.Numberwrapper;
+            @in nwv1: Test.Numberwrapper;
+            @in nwk2: Test.Numberwrapper;
+            @in nwv2: Test.Numberwrapper;
+         }
+         return: bool;
+      }
+
+      eina_hash_obj_out {
+         params {
+            @out hsh: hash<Test.Numberwrapper, Test.Numberwrapper>;
+            @out nwk: Test.Numberwrapper;
+            @out nwv: Test.Numberwrapper;
+         }
+         return: bool;
+      }
+      check_eina_hash_obj_out {
+         params {
+            @in nwk1: Test.Numberwrapper;
+            @in nwv1: Test.Numberwrapper;
+            @in nwk2: Test.Numberwrapper;
+            @in nwv2: Test.Numberwrapper;
+         }
+         return: bool;
+      }
+
+      eina_hash_obj_out_own {
+         params {
+            @out hsh: own(hash<Test.Numberwrapper, own(Test.Numberwrapper)>);
+            @out nwk: Test.Numberwrapper;
+            @out nwv: Test.Numberwrapper;
+         }
+         return: bool;
+      }
+      check_eina_hash_obj_out_own {
+         return: bool;
+      }
+
+      eina_hash_obj_return {
+         params {
+            @out nwk: Test.Numberwrapper;
+            @out nwv: Test.Numberwrapper;
+         }
+         return: hash<Test.Numberwrapper, Test.Numberwrapper>;
+      }
+      check_eina_hash_obj_return {
+         params {
+            @in nwk1: Test.Numberwrapper;
+            @in nwv1: Test.Numberwrapper;
+            @in nwk2: Test.Numberwrapper;
+            @in nwv2: Test.Numberwrapper;
+         }
+         return: bool;
+      }
+
+      eina_hash_obj_return_own {
+         params {
+            @out nwk: Test.Numberwrapper;
+            @out nwv: Test.Numberwrapper;
+         }
+         return: own(hash<Test.Numberwrapper, own(Test.Numberwrapper)>);
+      }
+      check_eina_hash_obj_return_own {
+         return: bool;
+      }
+
+
      set_callback {
          params {
             cb: SimpleCb;

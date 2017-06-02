@@ -275,10 +275,9 @@ struct visitor_generate
         , {"hash", nullptr, nullptr
            , [&]
            {
-             return replace_outer
-             (complex, regular_type_def{" System.Collections.Generic.Dictionary", complex.outer.base_qualifier, {}});
-             // regular_type_def r{"Eina_Hash*", complex.outer.base_qualifier, {}};
-             // return r;
+             complex_type_def c = complex;
+             c.outer.base_type = "eina.Hash";
+             return c;
            }}
         , {"promise", nullptr, nullptr, [&]
            {
