@@ -190,6 +190,7 @@ struct _Elput_Touch
 
 struct _Elput_Seat
 {
+   int refs; //for events
    const char *name;
 
    struct
@@ -210,6 +211,7 @@ struct _Elput_Seat
 struct _Elput_Device
 {
    Elput_Seat *seat;
+   int refs; //for events
 
    uint32_t ow, oh;
 
@@ -285,4 +287,6 @@ Elput_Touch *_evdev_touch_get(Elput_Seat *seat);
 
 extern Elput_Interface _logind_interface;
 
+
+void _udev_seat_destroy(Elput_Seat *eseat);
 #endif

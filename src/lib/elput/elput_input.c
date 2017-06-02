@@ -103,6 +103,7 @@ _udev_seat_create(Elput_Manager *em, const char *name)
    if (!eseat) return NULL;
 
    eseat->manager = em;
+   eseat->refs = 1;
 
    eseat->name = eina_stringshare_add(name);
    em->input.seats = eina_list_append(em->input.seats, eseat);
@@ -110,10 +111,13 @@ _udev_seat_create(Elput_Manager *em, const char *name)
    return eseat;
 }
 
-static void
+void
 _udev_seat_destroy(Elput_Seat *eseat)
 {
    Elput_Device *edev;
+
+   eseat->refs--;
+   if (eseat->refs) return;
 
    EINA_LIST_FREE(eseat->devices, edev)
      _evdev_device_destroy(edev);
@@ -177,6 +181,7 @@ _device_event_cb_free(void *data EINA_UNUSED, void *event)
         if (seat)
           seat->devices = eina_list_remove(seat->devices, ev->device);
 
+        ev->device->refs--;
         _evdev_device_destroy(ev->device);
      }
 
@@ -193,6 +198,7 @@ _device_event_send(Elput_Device *edev, Elput_Device_Change_Type type)
 
    ev->device = edev;
    ev->type = type;
+   edev->refs++;
 
    ecore_event_add(ELPUT_EVENT_DEVICE_CHANGE, ev, _device_event_cb_free, NULL);
 }

@@ -1,6 +1,12 @@
 #include "elput_private.h"
 
 static void
+_seat_event_free(void *d, void *ev EINA_UNUSED)
+{
+   _udev_seat_destroy(d);
+}
+
+static void
 _seat_caps_update(Elput_Seat *seat)
 {
    Elput_Event_Seat_Caps *ev;
@@ -12,8 +18,9 @@ _seat_caps_update(Elput_Seat *seat)
    ev->keyboard_count = seat->count.kbd;
    ev->touch_count = seat->count.touch;
    ev->seat = seat;
+   seat->refs++;
 
-   ecore_event_add(ELPUT_EVENT_SEAT_CAPS, ev, NULL, NULL);
+   ecore_event_add(ELPUT_EVENT_SEAT_CAPS, ev, _seat_event_free, seat);
 }
 
 static void
@@ -25,7 +32,8 @@ _seat_frame_send(Elput_Seat *seat)
    if (!ev) return;
 
    ev->seat = seat;
-   ecore_event_add(ELPUT_EVENT_SEAT_FRAME, ev, NULL, NULL);
+   seat->refs++;
+   ecore_event_add(ELPUT_EVENT_SEAT_FRAME, ev, _seat_event_free, seat);
 }
 
 static void
@@ -1330,6 +1338,7 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
    edev = calloc(1, sizeof(Elput_Device));
    if (!edev) return NULL;
 
+   edev->refs = 1;
    edev->seat = seat;
    edev->device = device;
    edev->caps = 0;
@@ -1389,6 +1398,8 @@ void
 _evdev_device_destroy(Elput_Device *edev)
 {
    if (!edev) return;
+   edev->refs--;
+   if (edev->refs) return;
 
    if (edev->caps & EVDEV_SEAT_POINTER)
      _pointer_release(edev->seat);
