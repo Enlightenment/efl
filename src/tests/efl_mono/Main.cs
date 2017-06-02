@@ -70,7 +70,7 @@ class TestMain
 
     static int Main(string[] args)
     {
-        eina.Log.Init();
+        eina.Config.Init();
         efl_object_init();
         ecore_init();
         evas_init();
