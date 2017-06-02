@@ -243,8 +243,8 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 #endif
 }
 
-static void
-_release_buffer(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State *s)
+void
+_ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State *s)
 {
    if (output->release_cb) output->release_cb(output->release_data, s->fb);
    _ecore_drm2_fb_deref(s->fb);
@@ -264,7 +264,7 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
    if (output->current.fb && (output->current.fb != output->pending.fb))
-     _release_buffer(output, &output->current);
+     _ecore_drm2_fb_buffer_release(output, &output->current);
 
    output->current.fb = output->pending.fb;
    output->pending.fb = NULL;
@@ -464,7 +464,8 @@ _fb_flip(Ecore_Drm2_Output *output)
              return ret;
           }
 
-        if (output->current.fb) _release_buffer(output, &output->current);
+        if (output->current.fb)
+          _ecore_drm2_fb_buffer_release(output, &output->current);
         output->current.fb = fb;
         _ecore_drm2_fb_ref(output->current.fb);
         output->next.fb = NULL;
@@ -543,7 +544,8 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 
    if (output->pending.fb)
      {
-        if (output->next.fb) _release_buffer(output, &output->next);
+        if (output->next.fb)
+          _ecore_drm2_fb_buffer_release(output, &output->next);
         output->next.fb = fb;
         return 0;
      }
@@ -557,7 +559,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    if (!fb) fb = output->current.fb;
 
    if (output->next.fb)
-     _release_buffer(output, &output->next);
+     _ecore_drm2_fb_buffer_release(output, &output->next);
 
    /* If we don't have an fb to set by now, BAIL! */
    if (!fb) return -1;
@@ -572,7 +574,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    if (ret)
      {
         if (output->prep.fb != output->current.fb)
-          _release_buffer(output, &output->prep);
+          _ecore_drm2_fb_buffer_release(output, &output->prep);
         return ret;
      }
    output->pending.fb = output->prep.fb;
@@ -600,7 +602,7 @@ ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic)
 
    if (o->next.fb)
      {
-        _release_buffer(o, &o->next);
+        _ecore_drm2_fb_buffer_release(o, &o->next);
         return EINA_TRUE;
      }
    if (!panic) return EINA_FALSE;
@@ -615,13 +617,13 @@ ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic)
     */
    if (o->current.fb)
      {
-        _release_buffer(o, &o->current);
+        _ecore_drm2_fb_buffer_release(o, &o->current);
         return EINA_TRUE;
      }
 
    if (o->pending.fb)
      {
-        _release_buffer(o, &o->pending);
+        _ecore_drm2_fb_buffer_release(o, &o->pending);
         return EINA_TRUE;
      }
 

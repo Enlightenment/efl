@@ -841,6 +841,7 @@ struct _Ecore_Drm2_Device
 Eina_Bool _fb_atomic_flip_test(Ecore_Drm2_Output *output);
 void _ecore_drm2_fb_ref(Ecore_Drm2_Fb *);
 void _ecore_drm2_fb_deref(Ecore_Drm2_Fb *);
+void _ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State *s);
 
 /* extern int (*sym_drmClose)(int fd); */
 /* extern int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl); */
