@@ -373,6 +373,8 @@ public class StringshareOwnOutMarshaler : ICustomMarshaler {
     static private StringshareOwnOutMarshaler marshaler;
 }
 
+} // namespace eo
+
 public class EflException : Exception
 {
     public EflException(string message) : base(message)
@@ -380,4 +382,4 @@ public class EflException : Exception
     }
 }
 
-} }
+} // namespace efl

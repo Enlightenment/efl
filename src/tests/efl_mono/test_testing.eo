@@ -730,6 +730,13 @@ class Test.Testing (Efl.Object) {
 
       }
 
+      children_raise_error {
+
+      }
+      call_children_raise_error {
+
+      }
+
       returns_error {
          return: Eina.Error;
       }

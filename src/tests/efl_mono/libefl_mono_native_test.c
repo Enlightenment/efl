@@ -1796,6 +1796,16 @@ void _test_testing_raises_eina_error(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testi
    eina_error_set(EIO);
 }
 
+void _test_testing_children_raise_error(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+    // Native method shouldn't throw any error. Children must raise it.
+}
+
+void _test_testing_call_children_raise_error(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+    test_testing_children_raise_error(obj);
+}
+
 Eina_Error _test_testing_returns_error(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
    return EPERM;

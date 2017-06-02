@@ -7,6 +7,8 @@ public struct Error
 {
     int code;
 
+    public static Error EFL_ERROR;
+
     public static Error NO_ERROR = new Error(0);
     public static Error EPERM = new Error(1);
     public static Error ENOENT = new Error(2);
@@ -21,6 +23,16 @@ public struct Error
         return error.code;
     }
 
+    public static void Init()
+    {
+        if (eina_init() == 0)
+            throw (new efl.EflException("Failed to init Eina"));
+
+        EFL_ERROR = eina_error_msg_register("Managed Code Error");
+    }
+
+    [DllImport("eina")] private static extern int eina_init();
+    [DllImport("eina")] static extern Error eina_error_msg_register(string msg);
     [DllImport("eina")] static extern Error eina_error_get();
     [DllImport("eina")] static extern void eina_error_set(Error error);
     [DllImport("eina")] static extern IntPtr eina_error_msg_get(Error error);
@@ -51,7 +63,7 @@ public struct Error
     public static void Raise(Error e)
     {
         if (e != 0)
-            throw (new efl.eo.EflException(MsgGet(e)));
+            throw (new efl.EflException(MsgGet(e)));
     }
 
     public static void Clear()
