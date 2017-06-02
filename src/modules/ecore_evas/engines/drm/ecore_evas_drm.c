@@ -155,6 +155,7 @@ _drm_device_change(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
              {
                 if (dev != ev->device->evas_device) continue;
                 evas_device_del(dev);
+                ev->device->evas_device = NULL;
                 break;
              }
            break;
