@@ -1300,8 +1300,6 @@ Eina_Bool _test_testing_check_eina_hash_int_return(EINA_UNUSED Eo *obj, EINA_UNU
 
    Eina_Hash *hsh = _hash_int_return_to_check;
 
-   printf("\n22:%d | 44:%d\n", _hash_int_check(hsh, 22, 222), _hash_int_check(hsh, 44, 444));
-
    if (!_hash_int_check(hsh, 22, 222)
        || !_hash_int_check(hsh, 44, 444))
      return EINA_FALSE;
