@@ -2869,6 +2869,14 @@ _efl_loop_efl_object_provider_find(Eo *obj, Efl_Loop_Data *pd, const Efl_Object 
 }
 
 static void
+_poll_trigger(void *data, const Efl_Event *event)
+{
+   Eo *parent = efl_parent_get(event->object);
+
+   efl_event_callback_call(parent, data, NULL);
+}
+
+static void
 _check_event_catcher_add(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item *array = event->info;
@@ -2880,6 +2888,38 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
         if (array[i].desc == EFL_LOOP_EVENT_IDLE)
           {
              ++pd->idlers;
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_HIGH)
+          {
+             if (!pd->poll_high)
+               {
+                  // Would be better to have it in sync with normal wake up
+                  // of the main loop for better energy efficiency, I guess.
+                  pd->poll_high = efl_add(EFL_LOOP_TIMER_CLASS, event->object,
+                                          efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _poll_trigger, EFL_LOOP_EVENT_POLL_HIGH),
+                                          efl_loop_timer_interval_set(efl_added, 1/60));
+               }
+             ++pd->pollers.high;
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_MEDIUM)
+          {
+             if (!pd->poll_medium)
+               {
+                  pd->poll_medium = efl_add(EFL_LOOP_TIMER_CLASS, event->object,
+                                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _poll_trigger, EFL_LOOP_EVENT_POLL_MEDIUM),
+                                            efl_loop_timer_interval_set(efl_added, 6));
+               }
+             ++pd->pollers.medium;
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_LOW)
+          {
+             if (!pd->poll_low)
+               {
+                  pd->poll_low = efl_add(EFL_LOOP_TIMER_CLASS, event->object,
+                                         efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _poll_trigger, EFL_LOOP_EVENT_POLL_LOW),
+                                         efl_loop_timer_interval_set(efl_added, 66));
+               }
+             ++pd->pollers.low;
           }
      }
 }
@@ -2896,6 +2936,33 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
         if (array[i].desc == EFL_LOOP_EVENT_IDLE)
           {
              --pd->idlers;
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_HIGH)
+          {
+             --pd->pollers.high;
+             if (!pd->pollers.high)
+               {
+                  ecore_timer_del(pd->poll_high);
+                  pd->poll_high = NULL;
+               }
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_MEDIUM)
+          {
+             --pd->pollers.medium;
+             if (!pd->pollers.medium)
+               {
+                  ecore_timer_del(pd->poll_medium);
+                  pd->poll_medium = NULL;
+               }
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_LOW)
+          {
+             --pd->pollers.low;
+             if (!pd->pollers.low)
+               {
+                  ecore_timer_del(pd->poll_low);
+                  pd->poll_low = NULL;
+               }
           }
      }
 }
@@ -2920,9 +2987,13 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 EOLIAN static void
 _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
-   efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
-
    eina_hash_free(pd->providers);
+
+   efl_del(pd->poll_low);
+   efl_del(pd->poll_medium);
+   efl_del(pd->poll_high);
+
+   efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 }
 
 typedef struct _Efl_Internal_Promise Efl_Internal_Promise;

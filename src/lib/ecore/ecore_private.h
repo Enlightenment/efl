@@ -86,7 +86,17 @@ struct _Efl_Loop_Data
 {
    Eina_Hash *providers;
 
+   Ecore_Timer *poll_high;
+   Ecore_Timer *poll_medium;
+   Ecore_Timer *poll_low;
+
    int idlers;
+
+   struct {
+      int high;
+      int medium;
+      int low;
+   } pollers;
 };
 
 #define EVAS_FRAME_QUEUING        1 /* for test */
