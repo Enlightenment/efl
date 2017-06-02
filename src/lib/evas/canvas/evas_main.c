@@ -400,10 +400,10 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    _evas_device_cleanup(eo_e);
    e->focused_by = eina_list_free(e->focused_by);
 
-   EINA_LIST_FREE(e->pointers, pdata)
+   while (e->pointers)
      {
-        eina_list_free(pdata->object.in);
-        free(pdata);
+        pdata = eina_list_data_get(e->pointers);
+        _evas_pointer_data_remove(e, pdata->pointer);
      }
 
    eina_lock_free(&(e->lock_objects));
@@ -550,8 +550,8 @@ _evas_canvas_pointer_output_xy_by_device_get(Eo *eo_e EINA_UNUSED,
      }
    else
      {
-        if (x) *x = pdata->x;
-        if (y) *y = pdata->y;
+        if (x) *x = pdata->seat->x;
+        if (y) *y = pdata->seat->y;
      }
 
 }
@@ -571,8 +571,8 @@ _evas_canvas_pointer_canvas_xy_by_device_get(Eo *eo_e EINA_UNUSED,
      }
    else
      {
-        if (x) *x = pdata->x;
-        if (y) *y = pdata->y;
+        if (x) *x = pdata->seat->x;
+        if (y) *y = pdata->seat->y;
      }
 }
 
@@ -593,7 +593,7 @@ _evas_canvas_pointer_inside_by_device_get(Eo *eo_e EINA_UNUSED,
 {
    Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, dev);
    if (!pdata) return EINA_FALSE;
-   return pdata->inside;
+   return pdata->seat->inside;
 }
 
 EOLIAN static void
@@ -1142,12 +1142,36 @@ Eina_Bool
 _evas_pointer_data_add(Evas_Public_Data *edata, Efl_Input_Device *pointer)
 {
    Evas_Pointer_Data *pdata;
+   Evas_Pointer_Seat *pseat = NULL;
+   Eina_List *l;
+   Eo *seat;
 
+   seat = efl_input_device_seat_get(pointer);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pointer, EINA_FALSE);
+   EINA_LIST_FOREACH(edata->pointers, l, pdata)
+     if (pdata->seat->seat == seat)
+       {
+          pseat = pdata->seat;
+          break;
+       }
+   if (!pseat)
+     {
+        pseat = calloc(1, sizeof(Evas_Pointer_Seat));
+        EINA_SAFETY_ON_NULL_RETURN_VAL(pseat, EINA_FALSE);
+        pseat->seat = seat;
+     }
    pdata = calloc(1, sizeof(Evas_Pointer_Data));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, EINA_FALSE);
+   if (!pdata)
+     {
+        free(pseat);
+        ERR("alloc fail");
+        return EINA_FALSE;
+     }
 
    pdata->pointer = pointer;
    edata->pointers = eina_list_append(edata->pointers, pdata);
+   pdata->seat = pseat;
+   pseat->pointers = eina_list_append(pseat->pointers, pdata);
    return EINA_TRUE;
 }
 
@@ -1162,7 +1186,12 @@ _evas_pointer_data_remove(Evas_Public_Data *edata, Efl_Input_Device *pointer)
         if (pdata->pointer == pointer)
           {
              edata->pointers = eina_list_remove_list(edata->pointers, l);
-             eina_list_free(pdata->object.in);
+             pdata->seat->pointers = eina_list_remove(pdata->seat->pointers, pdata);
+             if (!pdata->seat->pointers)
+               {
+                  eina_list_free(pdata->seat->object.in);
+                  free(pdata->seat);
+               }
              free(pdata);
              break;
           }
@@ -1179,8 +1208,8 @@ _evas_pointer_list_in_rect_get(Evas_Public_Data *edata, Evas_Object *obj,
 
    EINA_LIST_FOREACH(edata->pointers, l, pdata)
      {
-        if (evas_object_is_in_output_rect(obj, obj_data, pdata->x,
-                                          pdata->y, w, h))
+        if (evas_object_is_in_output_rect(obj, obj_data, pdata->seat->x,
+                                          pdata->seat->y, w, h))
           list = eina_list_append(list, pdata);
      }
 
