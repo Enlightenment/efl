@@ -1237,16 +1237,19 @@ ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
 
    if (!output->connected) return;
    if (output->enabled == enabled) return;
-   output->enabled = enabled;
 
    if (output->enabled)
-     ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_ON);
+     {
+        output->enabled = enabled;
+        ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_ON);
+     }
    else
      {
         if (_ecore_drm2_use_atomic)
           ecore_drm2_fb_flip(NULL, output);
 
         ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_OFF);
+        output->enabled = enabled;
 
         if (output->current.fb)
           _ecore_drm2_fb_buffer_release(output, &output->current);
