@@ -256,10 +256,11 @@ _prof_off_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void 
    return EINA_TRUE;
 }
 
-static const Eina_Debug_Opcode _OPS[] = {
-       {"profiler/on", NULL, &_prof_on_cb},
-       {"profiler/off", NULL, &_prof_off_cb},
-       {NULL, NULL, NULL}
+static const Eina_Debug_Opcode _OPS[] =
+{
+     {"Profiler/on", NULL, &_prof_on_cb},
+     {"Profiler/off", NULL, &_prof_off_cb},
+     {NULL, NULL, NULL}
 };
 
 Eina_Bool

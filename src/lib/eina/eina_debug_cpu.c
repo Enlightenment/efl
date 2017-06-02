@@ -272,10 +272,11 @@ _cpufreq_off_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, vo
    return EINA_TRUE;
 }
 
-static const Eina_Debug_Opcode _OPS[] = {
-       {"cpufreq/on", NULL, &_cpufreq_on_cb},
-       {"cpufreq/off", NULL, &_cpufreq_off_cb},
-       {NULL, NULL, NULL}
+static const Eina_Debug_Opcode _OPS[] =
+{
+     {"CPU/Freq/on", NULL, &_cpufreq_on_cb},
+     {"CPU/Freq/off", NULL, &_cpufreq_off_cb},
+     {NULL, NULL, NULL}
 };
 
 Eina_Bool

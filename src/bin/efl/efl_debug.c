@@ -231,11 +231,11 @@ static const Eina_Debug_Opcode ops[] =
      {"Daemon/Client/added",              NULL,                   &_clients_info_added_cb},
      {"Daemon/Client/deleted",            NULL,                   &_clients_info_deleted_cb},
      {"Daemon/Client/cid_from_pid",       &_cid_from_pid_opcode,  &_cid_get_cb},
-     {"profiler/on",                      &_prof_on_opcode,       NULL},
-     {"profiler/off",                     &_prof_off_opcode,      NULL},
-     {"cpufreq/on",                       &_cpufreq_on_opcode,    NULL},
-     {"cpufreq/off",                      &_cpufreq_off_opcode,   NULL},
-     {"evlog/get",                        &_evlog_get_opcode,     _evlog_get_cb},
+     {"Profiler/on",                      &_prof_on_opcode,       NULL},
+     {"Profiler/off",                     &_prof_off_opcode,      NULL},
+     {"CPU/Freq/on",                      &_cpufreq_on_opcode,    NULL},
+     {"CPU/Freq/off",                     &_cpufreq_off_opcode,   NULL},
+     {"EvLog/get",                        &_evlog_get_opcode,     _evlog_get_cb},
      {NULL, NULL, NULL}
 };
 
