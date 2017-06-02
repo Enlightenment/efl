@@ -287,6 +287,13 @@ _keyboard_release(Elput_Seat *seat)
 }
 
 static void
+_event_free(void *dev, void *ev)
+{
+   if (dev) efl_unref(dev);
+   free(ev);
+}
+
+static void
 _keyboard_key_send(Elput_Device *dev, enum libinput_key_state state, const char *keyname, const char *key, const char *compose, unsigned int code, unsigned int timestamp)
 {
    Ecore_Event_Key *ev;
@@ -309,15 +316,16 @@ _keyboard_key_send(Elput_Device *dev, enum libinput_key_state state, const char 
    ev->timestamp = timestamp;
    ev->same_screen = 1;
    ev->dev = dev->evas_device;
+   if (ev->dev) efl_ref(ev->dev);
 
    ev->window = dev->seat->manager->window;
    ev->event_window = dev->seat->manager->window;
    ev->root_window = dev->seat->manager->window;
 
    if (state == LIBINPUT_KEY_STATE_PRESSED)
-     ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, _event_free, ev->dev);
    else
-     ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_KEY_UP, ev, _event_free, ev->dev);
 }
 
 static void
@@ -813,6 +821,7 @@ _pointer_motion_send(Elput_Device *edev)
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
    ev->dev = edev->evas_device;
+   if (ev->dev) efl_ref(ev->dev);
 
    ev->x = ptr->x;
    ev->y = ptr->y;
@@ -837,7 +846,7 @@ _pointer_motion_send(Elput_Device *edev)
    ev->multi.root.x = ptr->x;
    ev->multi.root.y = ptr->y;
 
-   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, _event_free, ev->dev);
 }
 
 static void
@@ -923,6 +932,7 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
    ev->dev = edev->evas_device;
+   if (ev->dev) efl_ref(ev->dev);
 
    ev->x = ptr->x;
    ev->y = ptr->y;
@@ -952,9 +962,9 @@ _pointer_button_send(Elput_Device *edev, enum libinput_button_state state)
    ev->modifiers = edev->seat->modifiers;
 
    if (state)
-     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, _event_free, ev->dev);
    else
-     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+     ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, _event_free, ev->dev);
 }
 
 static void
@@ -1045,6 +1055,7 @@ _pointer_axis_send(Elput_Device *dev, int direction, int value)
    ev->timestamp = ptr->timestamp;
    ev->same_screen = 1;
    ev->dev = dev->evas_device;
+   if (ev->dev) efl_ref(ev->dev);
 
    ev->x = ptr->x;
    ev->y = ptr->y;
@@ -1059,7 +1070,7 @@ _pointer_axis_send(Elput_Device *dev, int direction, int value)
 
    ev->modifiers = dev->seat->modifiers;
 
-   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, _event_free, ev->dev);
 }
 
 static double
@@ -1202,6 +1213,7 @@ _touch_motion_send(Elput_Device *dev)
    ev->timestamp = touch->timestamp;
    ev->same_screen = 1;
    ev->dev = dev->evas_device;
+   if (ev->dev) efl_ref(ev->dev);
 
    ev->x = lround(touch->x);
    ev->y = lround(touch->y);
@@ -1221,7 +1233,7 @@ _touch_motion_send(Elput_Device *dev)
    ev->multi.root.x = touch->x;
    ev->multi.root.y = touch->y;
 
-   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, _event_free, ev->dev);
 }
 
 static void
@@ -1361,6 +1373,7 @@ _axis_event_free(void *d EINA_UNUSED, void *event)
 {
    Ecore_Event_Axis_Update *ev = event;
 
+   if (ev->dev) efl_unref(ev->dev);
    free(ev->axis);
    free(ev);
 }
@@ -1461,6 +1474,7 @@ _tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_too
    ev->timestamp = ptr->timestamp;
    ev->naxis = num;
    ev->dev = dev->evas_device;
+   if (ev->dev) efl_ref(ev->dev);
    ev->axis = axis = calloc(num, sizeof(Ecore_Axis));
    for (i = 0; i < num; i++)
      {
