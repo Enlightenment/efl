@@ -1247,8 +1247,15 @@ ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled)
           ecore_drm2_fb_flip(NULL, output);
 
         ecore_drm2_output_dpms_set(output, DRM_MODE_DPMS_OFF);
-        output->current.fb = NULL;
-        /* output->next.fb = NULL; */
+
+        if (output->current.fb)
+          _ecore_drm2_fb_buffer_release(output, &output->current);
+
+        if (output->next.fb)
+          _ecore_drm2_fb_buffer_release(output, &output->next);
+
+        if (output->pending.fb)
+          _ecore_drm2_fb_buffer_release(output, &output->pending);
      }
 
    _output_event_send(output);
