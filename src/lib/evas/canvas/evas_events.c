@@ -3060,11 +3060,7 @@ _key_event_dispatch(Evas_Public_Data *e, void *event_info,
      {
         const char *name = efl_input_device_name_get(device);
 
-        while ((device = efl_input_device_parent_get(device)))
-          {
-             if (efl_input_device_type_get(device) == EFL_INPUT_DEVICE_CLASS_SEAT)
-               break;
-          }
+        device = efl_input_device_seat_get(device);
         if (!device)
           {
              ERR("Could not find the parent seat from device name '%s'. Using default seat instead", name);
