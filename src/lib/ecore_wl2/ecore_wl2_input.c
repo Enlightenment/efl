@@ -1462,17 +1462,17 @@ _ecore_evas_wl_common_cb_device_event(void *data, int type, void *event)
         return ECORE_CALLBACK_PASS_ON;
      }
 
-   if (ev->type == ECORE_WL2_DEVICE_TYPE_POINTER && devices->pointer_dev)
+   if ((ev->type == ECORE_WL2_DEVICE_TYPE_POINTER) && (devices->pointer_dev == ev->dev))
      {
         efl_unref(devices->pointer_dev);
         devices->pointer_dev = NULL;
      }
-   else if (ev->type == ECORE_WL2_DEVICE_TYPE_KEYBOARD && devices->keyboard_dev)
+   else if ((ev->type == ECORE_WL2_DEVICE_TYPE_KEYBOARD) && (devices->keyboard_dev == ev->dev))
      {
         efl_unref(devices->keyboard_dev);
         devices->keyboard_dev = NULL;
      }
-   else if (ev->type == ECORE_WL2_DEVICE_TYPE_TOUCH && devices->touch_dev)
+   else if ((ev->type == ECORE_WL2_DEVICE_TYPE_TOUCH) && (devices->touch_dev == ev->dev))
      {
         efl_unref(devices->touch_dev);
         devices->touch_dev = NULL;
