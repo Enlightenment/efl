@@ -137,17 +137,13 @@ public class Hash<TKey, TValue> : IDisposable
     public Hash(IntPtr handle, bool own)
     {
         Handle = handle;
-        SetOwn(own);
-        SetOwnKey(own);
-        SetOwnValue(own);
+        SetOwnership(own);
     }
 
     public Hash(IntPtr handle, bool own, bool ownKey, bool ownValue)
     {
         Handle = handle;
-        SetOwn(own);
-        SetOwnKey(ownKey);
-        SetOwnValue(ownValue);
+        SetOwnership(own, ownKey, ownValue);
     }
 
     ~Hash()
