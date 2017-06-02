@@ -614,7 +614,7 @@ text_input_keysym(void *data,
      snprintf(keyname, sizeof(keyname), "Keysym-%u", sym);
 
    memset(string, 0, sizeof(string));
-   xkb_keysym_to_utf8(sym, string, 32);
+   if (!xkb_keysym_to_utf8(sym, string, 32)) return;
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom,
                      "key event (key: %s)",
