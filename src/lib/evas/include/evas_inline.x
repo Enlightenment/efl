@@ -353,7 +353,7 @@ _evas_default_output_get(Evas_Public_Data *e)
    Efl_Canvas_Output *output;
 
    output = eina_list_data_get(e->outputs);
-   return output->output;
+   return output ? output->output : NULL;
 }
 
 static inline void *
