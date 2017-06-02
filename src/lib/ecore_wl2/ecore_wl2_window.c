@@ -500,7 +500,7 @@ surf_err:
 static void
 _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
 {
-   EINA_SAFETY_ON_NULL_RETURN(window->display->wl.compositor);
+   if (!window->display->wl.compositor) return;
 
    if (!window->surface)
      {
