@@ -115,10 +115,10 @@ _evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
                               Evas_Object_Pointer_Data *pdata)
 {
    if ((pdata->mouse_grabbed > 0) && (obj->layer) && (obj->layer->evas))
-     pdata->evas_pdata->mouse_grabbed -= pdata->mouse_grabbed;
+     pdata->evas_pdata->seat->mouse_grabbed -= pdata->mouse_grabbed;
    if (((pdata->mouse_in) || (pdata->mouse_grabbed > 0)) &&
        (obj->layer) && (obj->layer->evas))
-     pdata->evas_pdata->object.in = eina_list_remove(pdata->evas_pdata->object.in, obj->object);
+     pdata->evas_pdata->seat->object.in = eina_list_remove(pdata->evas_pdata->seat->object.in, obj->object);
    efl_event_callback_del(pdata->evas_pdata->pointer, EFL_EVENT_DEL,
                           _evas_device_del_cb, obj);
    obj->pointer_grabs = eina_inlist_remove(obj->pointer_grabs,
@@ -1745,8 +1745,8 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
                   EINA_INLIST_FOREACH(obj->pointer_grabs, obj_pdata)
                     {
                        if (!obj_pdata->mouse_grabbed &&
-                           evas_object_is_in_output_rect(eo_obj, obj, obj_pdata->evas_pdata->x,
-                                                         obj_pdata->evas_pdata->y,
+                           evas_object_is_in_output_rect(eo_obj, obj, obj_pdata->evas_pdata->seat->x,
+                                                         obj_pdata->evas_pdata->seat->y,
                                                          1, 1))
                          _evas_canvas_event_pointer_move_event_dispatch(obj->layer->evas, obj_pdata->evas_pdata, NULL);
                     }
@@ -2215,7 +2215,7 @@ evas_object_top_at_pointer_get(const Evas *eo_e)
 
    Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
-   return evas_canvas_object_top_at_xy_get((Eo *)eo_e, pdata->x, pdata->y, EINA_TRUE, EINA_TRUE);
+   return evas_canvas_object_top_at_xy_get((Eo *)eo_e, pdata->seat->x, pdata->seat->y, EINA_TRUE, EINA_TRUE);
 }
 
 EOLIAN Evas_Object*

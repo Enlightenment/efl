@@ -47,9 +47,9 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
    pdata = _evas_pointer_data_by_device_get(evas, ev->device);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
 
-#define COORD_DUP(e) do { (e)->output.x = pdata->x; (e)->output.y = pdata->y; } while (0)
-#define COORD_DUP_CUR(e) do { (e)->cur.output.x = pdata->x; (e)->cur.output.y = pdata->y; } while (0)
-#define COORD_DUP_PREV(e) do { (e)->prev.output.x = pdata->prev.x; (e)->prev.output.y = pdata->prev.y; } while (0)
+#define COORD_DUP(e) do { (e)->output.x = pdata->seat->x; (e)->output.y = pdata->seat->y; } while (0)
+#define COORD_DUP_CUR(e) do { (e)->cur.output.x = pdata->seat->x; (e)->cur.output.y = pdata->seat->y; } while (0)
+#define COORD_DUP_PREV(e) do { (e)->prev.output.x = pdata->seat->prev.x; (e)->prev.output.y = pdata->seat->prev.y; } while (0)
 #define TYPE_CHK(typ) do { if ((type != EVAS_CALLBACK_LAST) && (type != EVAS_CALLBACK_ ## typ)) return NULL; } while (0)
 
    switch (ev->action)

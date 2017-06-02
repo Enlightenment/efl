@@ -803,19 +803,26 @@ typedef struct
    Evas_Object_Protected_Data *obj;
 } Evas_Active_Entry;
 
-struct _Evas_Pointer_Data
+typedef struct Evas_Pointer_Seat
 {
-   Evas_Device    *pointer;
+   Evas_Device *seat;
+   Eina_List *pointers;
    struct {
       Eina_List *in;
    } object;
-   DATA32         button;
    Evas_Coord     x, y;
    Evas_Point     prev;
    int            mouse_grabbed;
    int            downs;
    int            nogrep;
    unsigned char  inside : 1;
+} Evas_Pointer_Seat;
+
+struct _Evas_Pointer_Data
+{
+   Evas_Device    *pointer;
+   DATA32         button;
+   Evas_Pointer_Seat *seat;
 };
 
 typedef struct _Evas_Post_Render_Job
