@@ -188,7 +188,6 @@ static void
 _child_device_iterator_free(Child_Device_Iterator *it)
 {
    eina_iterator_free(it->real_iterator);
-   eina_list_free(it->list);
    free(it);
 }
 
