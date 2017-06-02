@@ -702,6 +702,7 @@ _ecore_evas_wl_common_cb_global_added(void *d EINA_UNUSED, int t EINA_UNUSED, vo
         Eina_Bool already_present = EINA_FALSE;
         Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
 
+        if (ev->display != wdata->display) continue;
         EINA_LIST_FOREACH(wdata->devices_list, ll, device)
           {
              if (device->id == ev->id)
@@ -752,6 +753,7 @@ _ecore_evas_wl_common_cb_global_removed(void *d EINA_UNUSED, int t EINA_UNUSED, 
         Eina_Bool found = EINA_FALSE;
 
         wdata = ee->engine.data;
+        if (ev->display != wdata->display) continue;
 
         EINA_LIST_FOREACH(wdata->devices_list, ll, device)
           {
@@ -791,6 +793,7 @@ _ecore_evas_wl_common_cb_seat_name_changed(void *d EINA_UNUSED, int t EINA_UNUSE
         EE_Wl_Device *device;
 
         wdata = ee->engine.data;
+        if (ev->display != wdata->display) continue;
 
         EINA_LIST_FOREACH(wdata->devices_list, ll, device)
           {
@@ -818,6 +821,7 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
         EE_Wl_Device *device;
 
         wdata = ee->engine.data;
+        if (ev->display != wdata->display) continue;
 
         EINA_LIST_FOREACH(wdata->devices_list, ll, device)
           {
