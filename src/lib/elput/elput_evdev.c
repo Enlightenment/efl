@@ -200,11 +200,11 @@ _keyboard_compose_init(Elput_Keyboard *kbd)
    if (kbd->compose_table) xkb_compose_table_unref(kbd->compose_table);
    kbd->compose_table = xkb_compose_table_new_from_locale(kbd->context, locale,
      XKB_COMPOSE_COMPILE_NO_FLAGS);
+   if (kbd->compose_state) xkb_compose_state_unref(kbd->compose_state);
    if (kbd->compose_table)
-     {
-        if (kbd->compose_state) xkb_compose_state_unref(kbd->compose_state);
-        kbd->compose_state = xkb_compose_state_new(kbd->compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
-     }
+     kbd->compose_state = xkb_compose_state_new(kbd->compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
+   else
+     kbd->compose_state = NULL;
 }
 
 static Eina_Bool
