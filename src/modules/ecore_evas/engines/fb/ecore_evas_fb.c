@@ -56,13 +56,14 @@ struct _Ecore_Evas_Engine_FB_Data {
 static void
 _ecore_evas_mouse_move_process_fb(Ecore_Evas *ee, int x, int y)
 {
-   Efl_Input_Device *pointer;
+   const Efl_Input_Device *pointer;
    Ecore_Evas_Cursor *cursor;
    int fbw, fbh;
 
    ecore_fb_size_get(&fbw, &fbh);
 
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   pointer = evas_device_parent_get(pointer);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN(cursor);
    cursor->pos_x = x;
@@ -325,12 +326,13 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, in
 static void
 _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
 {
-   Evas_Device *pointer;
+   const Evas_Device *pointer;
    Ecore_Evas_Cursor *cursor;
    Evas_Engine_Info_FB *einfo;
    int rot_dif;
 
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   pointer = evas_device_parent_get(pointer);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN(cursor);
 

@@ -212,7 +212,7 @@ _ecore_evas_psl1ght_callback_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event
 static void
 _ecore_evas_screen_resized(Ecore_Evas *ee)
 {
-   Evas_Device *pointer;
+   const Evas_Device *pointer;
    Ecore_Evas_Cursor *cursor;
    int w, h;
 
@@ -222,6 +222,7 @@ _ecore_evas_screen_resized(Ecore_Evas *ee)
    ecore_psl1ght_screen_resolution_get (&w, &h);
 
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   pointer = evas_device_parent_get(pointer);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN(cursor);
 
