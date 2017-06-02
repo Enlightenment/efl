@@ -319,6 +319,8 @@ _drm_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
 static void
 _drm_show(Ecore_Evas *ee)
 {
+   Ecore_Evas_Engine_Drm_Data *edata;
+
    if ((!ee) || (ee->visible)) return;
 
    ee->should_be_visible = 1;
@@ -344,6 +346,14 @@ _drm_show(Ecore_Evas *ee)
         if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
      }
    if (ee->func.fn_show) ee->func.fn_show(ee);
+
+   edata = ee->engine.data;
+   /* HACK: sometimes we still have an animator ticking when we vc switch
+    * so for now we just fire off a flip here to kick it when we come back.
+    * This is just papering over a bug for now until I have time to track
+    * it down properly. :(
+    */
+   ecore_drm2_fb_flip(NULL, edata->output);
 }
 
 static void
