@@ -6,18 +6,6 @@ extern "C" {
 #endif
 
 /**
- * @ingroup Ecore_Poller_Group
- *
- * @{
- */
-
-#include "ecore_poller.eo.h"
-
-/**
- * @}
- */
-
-/**
  * @ingroup Ecore_Timer_Group
  *
  * @{

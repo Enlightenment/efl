@@ -7,8 +7,12 @@ extern "C" {
  *
  * @{
  */
+typedef enum
+{
+  ECORE_POLLER_CORE = 0 /**< The core poller interval */
+} Ecore_Poller_Type;
 
-#include "ecore_poller.eo.legacy.h"
+typedef struct _Ecore_Poller Ecore_Poller;
 
 /**
  * @brief Creates a poller to call the given function at a particular tick interval.
@@ -66,6 +70,26 @@ EAPI void ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_tim
  * This will get the time between ticks of the specified poller timer.
  */
 EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
+
+/**
+ * @brief Polling interval rate of the poller.
+ *
+ * @param[in] interval The tick interval; must be a power of 2 and <= 32768.
+ *
+ * @return @c true on success, @c false on failure.
+ *
+ * @ingroup Ecore_Poller
+ */
+EAPI Eina_Bool ecore_poller_poller_interval_set(Ecore_Poller *obj, int interval);
+
+/**
+ * @brief Polling interval rate of the poller.
+ *
+ * @return The tick interval; must be a power of 2 and <= 32768.
+ *
+ * @ingroup Ecore_Poller
+ */
+EAPI int ecore_poller_poller_interval_get(const Ecore_Poller *obj);
 
 /**
  * @}

@@ -2,7 +2,6 @@
 ### Library
 
 ecore_eolian_files_legacy = \
-	lib/ecore/ecore_poller.eo \
 	lib/ecore/ecore_exe.eo \
 	lib/ecore/efl_loop_timer.eo
 
