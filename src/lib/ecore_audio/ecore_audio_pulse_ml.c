@@ -46,6 +46,7 @@ _ecore_io_wrapper(void *data, Ecore_Fd_Handler *handler)
    pa_io_event_flags_t flags = 0;
    pa_io_event *event = (pa_io_event *)data;
    int fd = 0;
+   char *disp = NULL;
 
    fd = ecore_main_fd_handler_fd_get(handler);
    if (fd < 0) return ECORE_CALLBACK_RENEW;
@@ -70,7 +71,14 @@ _ecore_io_wrapper(void *data, Ecore_Fd_Handler *handler)
    if (ecore_main_fd_handler_active_get(handler, ECORE_FD_ERROR))
      flags |= PA_IO_EVENT_ERROR;
 
+   if (getenv("WAYLAND_DISPLAY"))
+     {
+        disp = eina_strdup(getenv("DISPLAY"));
+        unsetenv("DISPLAY");
+     }
    event->callback(event->mainloop, event, fd, flags, event->userdata);
+   if (disp) setenv("DISPLAY", disp, 1);
+   free(disp);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -142,9 +150,17 @@ Eina_Bool
 _ecore_time_wrapper(void *data)
 {
    pa_time_event *event = (pa_time_event *)data;
+   char *disp = NULL;
 
+   if (getenv("WAYLAND_DISPLAY"))
+     {
+        disp = eina_strdup(getenv("DISPLAY"));
+        unsetenv("DISPLAY");
+     }
    event->in_event = 1;
    event->callback(event->mainloop, event, &event->tv, event->userdata);
+   if (disp) setenv("DISPLAY", disp, 1);
+   free(disp);
    event->in_event = 0;
    event->timer = NULL;
    if (event->dead)
