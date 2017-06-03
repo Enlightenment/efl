@@ -23,6 +23,16 @@
 #  include "config.h"
 # endif
 
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define SWAP_64(x) x
+#define SWAP_32(x) x
+#define SWAP_16(x) x
+#else
+#define SWAP_64(x) eina_swap64(x)
+#define SWAP_32(x) eina_swap32(x)
+#define SWAP_16(x) eina_swap16(x)
+#endif
+
 #define EXTRACT(_buf, pval, sz) \
 { \
    memcpy(pval, _buf, sz); \
@@ -65,7 +75,7 @@ _evlog_get_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNUSED, void
              unsigned int header[3];
 
              header[0] = 0xffee211;
-             header[1] = blocksize;
+             header[1] = SWAP_32(blocksize);
              header[2] = *overflow;
              if (fwrite(header, 1, 12, _evlog_file) < 12 ||
                    fwrite(p, 1, blocksize, _evlog_file) < blocksize)
@@ -113,7 +123,7 @@ _cid_get_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *
 
    if ((!strcmp(op_str, "pon")) && (3 <= (my_argc - 1)))
      {
-        int freq = atoi(my_argv[3]);
+        int freq = SWAP_32(atoi(my_argv[3]));
         eina_debug_session_send(_session, _cid, _prof_on_opcode, &freq, sizeof(int));
      }
    else if (!strcmp(op_str, "poff"))
@@ -155,6 +165,8 @@ _clients_info_added_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_UNU
         int cid, pid, len;
         EXTRACT(buf, &cid, sizeof(int));
         EXTRACT(buf, &pid, sizeof(int));
+        cid = SWAP_32(cid);
+        pid = SWAP_32(pid);
         /* We dont need client notifications on evlog */
         if(!_evlog_fetch_timer)
            printf("Added: CID: %d - PID: %d - Name: %s\n", cid, pid, buf);
@@ -173,6 +185,7 @@ _clients_info_deleted_cb(Eina_Debug_Session *session EINA_UNUSED, int src EINA_U
      {
         int cid;
         EXTRACT(buf, &cid, sizeof(int));
+        cid = SWAP_32(cid);
         size -= sizeof(int);
 
         /* If client deleted dont send anymore evlog requests */

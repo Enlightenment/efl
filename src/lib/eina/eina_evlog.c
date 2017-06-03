@@ -39,6 +39,18 @@
 #  include <sys/mman.h>
 # endif
 
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define SWAP_64(x) x
+#define SWAP_32(x) x
+#define SWAP_16(x) x
+#define SWAP_DBL(x) x
+#else
+#define SWAP_64(x) eina_swap64(x)
+#define SWAP_32(x) eina_swap32(x)
+#define SWAP_16(x) eina_swap16(x)
+#define SWAP_DBL(x) SWAP_64(x)
+#endif
+
 # define EVLOG_BUF_SIZE (4 * (1024 * 1024))
 
 static Eina_Spinlock   _evlog_lock;
@@ -149,13 +161,13 @@ eina_evlog(const char *event, void *obj, double srctime, const char *detail)
    eina_spinlock_take(&_evlog_lock);
    strings             = push_buf(buf, size);
    item                = (Eina_Evlog_Item *)strings;
-   item->tim           = now;
-   item->srctim        = srctime;
-   item->thread        = (unsigned long long)(uintptr_t)pthread_self();
-   item->obj           = (unsigned long long)(uintptr_t)obj;
-   item->event_offset  = sizeof(Eina_Evlog_Item);
-   item->detail_offset = detail_offset;
-   item->event_next    = size;
+   item->tim           = SWAP_DBL(now);
+   item->srctim        = SWAP_DBL(srctime);
+   item->thread        = SWAP_64((unsigned long long)(uintptr_t)pthread_self());
+   item->obj           = SWAP_64((unsigned long long)(uintptr_t)obj);
+   item->event_offset  = SWAP_16(sizeof(Eina_Evlog_Item));
+   item->detail_offset = SWAP_16(detail_offset);
+   item->event_next    = SWAP_16(size);
    strcpy(strings + sizeof(Eina_Evlog_Item), event);
    if (detail_offset > 0) strcpy(strings + detail_offset, detail);
    eina_spinlock_release(&_evlog_lock);
@@ -222,13 +234,15 @@ _get_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void *buff
 
    if ((evlog) && (evlog->buf))
      {
+        int ovf = SWAP_32(evlog->overflow);
         resp_size = evlog->top + sizeof(evlog->overflow);
-        resp_buf = alloca(resp_size);
-        memcpy(resp_buf, &(evlog->overflow), sizeof(evlog->overflow));
+        resp_buf = malloc(resp_size);
+        memcpy(resp_buf, &ovf, sizeof(ovf));
         memcpy(resp_buf + sizeof(evlog->overflow), evlog->buf, evlog->top);
      }
    printf("send evlog size %d\n", resp_size);
    eina_debug_session_send(session, cid, _evlog_get_opcode, resp_buf, resp_size);
+   free(resp_buf);
 
    return EINA_TRUE;
 }

@@ -56,6 +56,16 @@
 # define LIBEXT ".so"
 #endif
 
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define SWAP_64(x) x
+#define SWAP_32(x) x
+#define SWAP_16(x) x
+#else
+#define SWAP_64(x) eina_swap64(x)
+#define SWAP_32(x) eina_swap32(x)
+#define SWAP_16(x) eina_swap16(x)
+#endif
+
 // yes - a global debug spinlock. i expect contention to be low for now, and
 // when needed we can split this up into mroe locks to reduce contention when
 // and if that day comes
@@ -108,11 +118,11 @@ eina_debug_session_send(Eina_Debug_Session *session, int dest, int op, void *dat
    if (!session) return -1;
    if (op == EINA_DEBUG_OPCODE_INVALID) return -1;
    /* Preparation of the packet header */
-   hdr.size = size + sizeof(Eina_Debug_Packet_Header);
-   hdr.opcode = op;
-   hdr.cid = dest;
+   hdr.size = SWAP_32(size + sizeof(Eina_Debug_Packet_Header));
+   hdr.opcode = SWAP_32(op);
+   hdr.cid = SWAP_32(dest);
    e_debug("socket: %d / opcode %X / bytes to send: %d",
-         session->fd, op, hdr.size);
+         session->fd, op, size + sizeof(*hdr));
 #ifndef _WIN32
    eina_spinlock_take(&_eina_debug_lock);
    /* Sending header */
@@ -121,7 +131,7 @@ eina_debug_session_send(Eina_Debug_Session *session, int dest, int op, void *dat
    if (size) write(session->fd, data, size);
    eina_spinlock_release(&_eina_debug_lock);
 #endif
-   return hdr.size;
+   return size;
 }
 
 static void
@@ -137,8 +147,9 @@ _daemon_greet(Eina_Debug_Session *session)
 #endif
    int size = 8 + (app_name ? strlen(app_name) : 0) + 1;
    unsigned char *buf = alloca(size);
-   int version = 1; // version of protocol we speak
+   int version = SWAP_32(1); // version of protocol we speak
    int pid = getpid();
+   pid = SWAP_32(pid);
    memcpy(buf + 0, &version, 4);
    memcpy(buf + 4, &pid, 4);
    if (app_name)
@@ -160,6 +171,7 @@ _packet_receive(Eina_Debug_Session *session, unsigned char **buffer)
 
    if ((rret = read(session->fd, &size, 4)) == 4)
      {
+        size = SWAP_32(size);
         if (size > EINA_DEBUG_MAX_PACKET_SIZE)
           {
              e_debug("Packet too big: %d. The maximum allowed is %d", size, EINA_DEBUG_MAX_PACKET_SIZE);
@@ -268,6 +280,7 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
 
    uint64_t info_64;
    memcpy(&info_64, buffer, sizeof(uint64_t));
+   info_64 = SWAP_64(info_64);
    info = (_opcode_reply_info *)info_64;
 
    if (!info) return EINA_FALSE;
@@ -280,9 +293,10 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
 
              for (i = 0; i < count; i++)
                {
-                  if (info->ops[i].opcode_id) *(info->ops[i].opcode_id) = os[i];
-                  _static_opcode_register(session, os[i], info->ops[i].cb);
-                  e_debug("Opcode %s -> %d", info->ops[i].opcode_name, os[i]);
+                  int op = SWAP_32(os[i]);
+                  if (info->ops[i].opcode_id) *(info->ops[i].opcode_id) = op;
+                  _static_opcode_register(session, op, info->ops[i].cb);
+                  e_debug("Opcode %s -> %d", info->ops[i].opcode_name, op);
                }
              if (info->status_cb) info->status_cb(info->status_data, EINA_TRUE);
              return EINA_TRUE;
@@ -310,6 +324,7 @@ _opcodes_registration_send(Eina_Debug_Session *session,
    buf = malloc(size);
 
    uint64_t info_64 = (uint64_t)info;
+   info_64 = SWAP_64(info_64);
    memcpy(buf, &info_64, sizeof(uint64_t));
    int size_curr = sizeof(uint64_t);
 
@@ -393,7 +408,6 @@ _session_create(int fd)
 EAPI Eina_Debug_Session *
 eina_debug_remote_connect(int port)
 {
-#ifndef _WIN32
    int fd;
    struct sockaddr_in server;
 
@@ -418,9 +432,6 @@ err:
    // some kind of connection failure here, so close a valid socket and
    // get out of here
    if (fd >= 0) close(fd);
-#else
-   (void) port;
-#endif
    return NULL;
 }
 
@@ -477,7 +488,6 @@ err:
 static void *
 _monitor(void *_data)
 {
-#ifndef _WIN32
    Eina_Debug_Session *session = _data;
 
    _daemon_greet(session);
@@ -505,6 +515,9 @@ _monitor(void *_data)
         // if not negative - we have a real message
         if (size > 0)
           {
+             Eina_Debug_Packet_Header *hdr = (Eina_Debug_Packet_Header *)buffer;
+             hdr->cid = SWAP_32(hdr->cid);
+             hdr->opcode = SWAP_32(hdr->opcode);
              if (EINA_TRUE != session->dispatch_cb(session, buffer))
                {
                   // something we don't understand
@@ -522,7 +535,6 @@ _monitor(void *_data)
              session = NULL;
           }
      }
-#endif
    return NULL;
 }
 
@@ -588,7 +600,7 @@ eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode
 EAPI Eina_Bool
 eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
 {
-   Eina_Debug_Packet_Header *hdr =  buffer;
+   Eina_Debug_Packet_Header *hdr = buffer;
    Eina_List *itr;
    int opcode = hdr->opcode;
    Eina_Debug_Cb cb = NULL;

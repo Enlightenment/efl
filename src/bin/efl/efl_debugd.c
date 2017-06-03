@@ -29,6 +29,16 @@
 #include <Eina.h>
 #include <Ecore.h>
 
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define SWAP_64(x) x
+#define SWAP_32(x) x
+#define SWAP_16(x) x
+#else
+#define SWAP_64(x) eina_swap64(x)
+#define SWAP_32(x) eina_swap32(x)
+#define SWAP_16(x) eina_swap16(x)
+#endif
+
 #define STORE(_buf, pval, sz) \
 { \
    memcpy(_buf, pval, sz); \
@@ -121,9 +131,9 @@ _send(Client *dest, int opcode, void *payload, int payload_size)
    int size = sizeof(Eina_Debug_Packet_Header) + payload_size;
    char *buf = alloca(size);
    Eina_Debug_Packet_Header *hdr = (Eina_Debug_Packet_Header *)buf;
-   hdr->size = size;
+   hdr->size = SWAP_32(size);
    hdr->cid = 0;
-   hdr->opcode = opcode;
+   hdr->opcode = SWAP_32(opcode);
    memcpy(buf + sizeof(Eina_Debug_Packet_Header), payload, payload_size);
    printf("Send packet (size = %d, opcode %s) to %s\n", size,
          _opcodes[hdr->opcode]->opcode_string,
@@ -145,7 +155,8 @@ _client_del(Client *c)
 
    EINA_LIST_FOREACH(_clients, itr, c2)
      {
-        if (c2->cl_stat_obs) _send(c2, _slave_deleted_opcode, &c->cid, sizeof(int));
+        int cid = SWAP_32(c->cid);
+        if (c2->cl_stat_obs) _send(c2, _slave_deleted_opcode, &cid, sizeof(int));
      }
    free(c);
 }
@@ -162,7 +173,7 @@ _dispatch(Client *src, void *buffer, unsigned int size)
           {
              if (dest->is_master != src->is_master)
                {
-                  hdr->cid = src->cid;
+                  hdr->cid = SWAP_32(src->cid);
                   if (send(dest->fd, buffer, size, 0) != size) perror("send");
                   printf("Transfer of %d bytes from %s(%d) to %s(%d): operation %s\n",
                         hdr->size,
@@ -222,12 +233,16 @@ _hello_cb(Client *c, void *buffer, int size)
 {
    Eina_List *itr;
    char *buf = (char *)buffer, *tmp;
+   int version, pid, cid;
 
-   EXTRACT(buf, &c->version, 4);
-   EXTRACT(buf, &c->pid, 4);
+   EXTRACT(buf, &version, 4);
+   EXTRACT(buf, &pid, 4);
+   c->version = SWAP_32(version);
+   c->pid = SWAP_32(pid);
    size -= 8;
 
    c->cid = _free_cid++;
+   cid = SWAP_32(c->cid);
    if (size > 1)
      {
         c->app_name = eina_stringshare_add_length(buf, size);
@@ -242,8 +257,8 @@ _hello_cb(Client *c, void *buffer, int size)
    size = 2 * sizeof(int) + (c->app_name ? strlen(c->app_name) : 0) + 1; /* cid + pid + name + \0 */
    buf = alloca(size);
    tmp = buf;
-   STORE(tmp, &c->cid, sizeof(int));
-   STORE(tmp, &c->pid, sizeof(int));
+   STORE(tmp, &cid, sizeof(int));
+   STORE(tmp, &pid, sizeof(int));
    if (c->app_name)
      {
         STORE(tmp, c->app_name, strlen(c->app_name) + 1);
@@ -263,9 +278,9 @@ _hello_cb(Client *c, void *buffer, int size)
 static Eina_Bool
 _cid_get_cb(Client *src, void *buffer, int size EINA_UNUSED)
 {
-   int pid = *(int *)buffer;
+   int pid = SWAP_32(*(int *)buffer);
    Client *c = _client_find_by_pid(pid);
-   int cid = c ? c->cid : 0;
+   int cid = c ? SWAP_32(c->cid) : 0;
    _send(src, _cid_from_pid_opcode, &cid, sizeof(int));
    return EINA_TRUE;
 }
@@ -292,12 +307,15 @@ _cl_stat_obs_register_cb(Client *src, void *buffer, int size)
         EINA_LIST_FOREACH(_clients, itr, c)
           {
              char *tmp;
+             int cid, pid;
              if (c->is_master) continue;
              size = 2 * sizeof(int) + (c->app_name ? strlen(c->app_name) : 0) + 1;
              buffer = alloca(size);
              tmp = buffer;
-             STORE(tmp, &c->cid, sizeof(int));
-             STORE(tmp, &c->pid, sizeof(int));
+             cid = SWAP_32(c->cid);
+             pid = SWAP_32(c->pid);
+             STORE(tmp, &cid, sizeof(int));
+             STORE(tmp, &pid, sizeof(int));
              if (c->app_name)
                {
                   STORE(tmp, c->app_name, strlen(c->app_name) + 1);
@@ -327,7 +345,7 @@ _opcode_register_cb(Client *src, void *buffer, int size)
    while (ops_size > 0)
      {
         int len = strlen(ops_buf) + 1;
-        *opcodes++ = _opcode_register(ops_buf, EINA_DEBUG_OPCODE_INVALID, NULL);
+        *opcodes++ = SWAP_32(_opcode_register(ops_buf, EINA_DEBUG_OPCODE_INVALID, NULL));
         ops_buf += len;
         ops_size -= len;
      }
@@ -350,7 +368,9 @@ _data_receive(Client *c, unsigned char *buffer)
    if (rret == -1 || !size) goto error;
    if (rret == sizeof(int))
      {
+        Eina_Debug_Packet_Header *hdr;
         unsigned int cur_packet_size = 0;
+        size = SWAP_32(size);
         if (size > EINA_DEBUG_MAX_PACKET_SIZE) goto error;
         while (cur_packet_size < size)
           {
@@ -358,6 +378,10 @@ _data_receive(Client *c, unsigned char *buffer)
              if (rret <= 0) goto error;
              cur_packet_size += rret;
           }
+        hdr = (Eina_Debug_Packet_Header *) buffer;
+        hdr->size = SWAP_32(hdr->size);
+        hdr->opcode = SWAP_32(hdr->opcode);
+        hdr->cid = SWAP_32(hdr->cid);
      }
    //printf("%d bytes received from client %s fd %d\n", size, c->app_name, c->fd);
    return size;
@@ -536,6 +560,7 @@ end:
    free(socket_path);
    return fd;
 }
+#endif
 
 static int
 _listening_tcp_socket_create()
@@ -569,17 +594,19 @@ err:
    if (fd >= 0) close(fd);
    return -1;
 }
-#endif
 
 static Eina_Bool
 _server_launch()
 {
-#ifndef _WIN32
    struct epoll_event event = {0};
 
    _epfd = epoll_create (MAX_EVENTS);
 
+#ifndef _WIN32
    _listening_unix_fd = _listening_unix_socket_create();
+#else
+   _listening_unix_fd = -1;
+#endif
    if (_listening_unix_fd <= 0) goto err;
    event.data.fd = _listening_unix_fd;
    event.events = EPOLLIN;
@@ -596,7 +623,6 @@ err:
    _listening_unix_fd = -1;
    if (_listening_tcp_fd >= 0) close(_listening_tcp_fd);
    _listening_tcp_fd = -1;
-#endif
    return EINA_FALSE;
 }
 
