@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -1702,6 +1703,39 @@ _elm_color_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED,
    elm_object_signal_emit(VIEW(it), emission, source);
 }
 
+static Eina_Bool
+_item_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   Eina_List *l;
+   ELM_COLOR_ITEM_DATA_GET(obj, item);
+   ELM_COLORSELECTOR_DATA_GET(WIDGET(item), sd);
+
+   elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
+   elm_interface_atspi_accessible_state_changed_signal_emit(obj,
+                                                            ELM_ATSPI_STATE_CHECKED,
+                                                            EINA_TRUE);
+   elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
+                               item->color->b, item->color->a);
+   evas_object_smart_callback_call(WIDGET(item), SIG_COLOR_ITEM_SELECTED,
+                                   EO_OBJ(item));
+
+   Eo *eo_temp_item = eina_list_data_get(sd->selected);
+   if (eo_temp_item && (eo_temp_item != EO_OBJ(item)))
+     {
+        ELM_COLOR_ITEM_DATA_GET(eo_temp_item, temp_item);
+        elm_object_signal_emit(VIEW(temp_item), "elm,state,unselected", "elm");
+     }
+
+   EINA_LIST_FOREACH(sd->items, l, eo_temp_item)
+     {
+        ELM_COLOR_ITEM_DATA_GET(eo_temp_item, temp_item);
+        if (item == temp_item) sd->selected = l;
+     }
+   sd->focused = ELM_COLORSELECTOR_PALETTE;
+
+   return EINA_TRUE;
+}
+
 EOLIAN static Eo *
 _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
 {
@@ -1743,6 +1777,8 @@ _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      elm_wdg_item_access_register(eo_item);
+
+   elm_interface_atspi_accessible_role_set(eo_item, ELM_ATSPI_ROLE_RADIO_BUTTON);
 
    return eo_item;
 }
@@ -2586,6 +2622,36 @@ _elm_colorselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EIN
    return &atspi_actions[0];
 }
 
+EOLIAN static Eina_List*
+_elm_colorselector_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+{
+   Eina_List *ret = NULL;
+
+   ret = elm_interface_atspi_accessible_children_get(efl_super(obj, ELM_COLORSELECTOR_CLASS));
+   // filter - out box contiainer
+   ret = eina_list_remove(ret, sd->palette_box);
+   // append items as colorselector children
+   ret = eina_list_merge(ret, eina_list_clone(sd->items));
+
+   return ret;
+}
+
+EOLIAN static Elm_Atspi_State_Set
+_elm_color_item_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Color_Item_Data *sd EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+   Eina_Bool sel;
+
+   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, ELM_COLOR_ITEM_CLASS));
+
+   sel = elm_obj_color_item_selected_get(obj);
+
+   if (sel)
+     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_CHECKED);
+
+   return ret;
+}
+
 EOLIAN static void
 _elm_color_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Color_Item_Data *it, Eina_Bool focused)
 {
@@ -2621,6 +2687,43 @@ _elm_color_item_elm_widget_item_focus_get(Eo *eo_it, Elm_Color_Item_Data *it)
    if (eo_it == sd->focused_item)
      return EINA_TRUE;
    return EINA_FALSE;
+}
+
+EOLIAN static const Elm_Atspi_Action*
+_elm_color_item_elm_interface_atspi_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Color_Item_Data *it EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "activate", "activate", NULL, _item_action_activate},
+          { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_actions[0];
+}
+
+EOLIAN static const char*
+_elm_color_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Color_Item_Data *it)
+{
+   Eina_Strbuf *buf;
+   const char *color_name = NULL;
+   const char *name;
+   char *accessible_name;
+
+   name = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_COLOR_ITEM_CLASS));
+   if (name) return name;
+
+   buf = eina_strbuf_new();
+   color_name = _get_color_name(it->color->r, it->color->g, it->color->b, it->color->a);
+   if (color_name)
+     eina_strbuf_append_printf(buf, "%s", color_name);
+   else
+     eina_strbuf_append_printf(buf, "red %d, green %d, blue %d, alpha %d",
+                               it->color->r, it->color->g, it->color->b, it->color->a);
+   accessible_name = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+
+   eina_stringshare_del(it->base->accessible_name);
+   it->base->accessible_name = eina_stringshare_add(accessible_name);
+   free(accessible_name);
+   return it->base->accessible_name;
 }
 
 /* Internal EO APIs and hidden overrides */
