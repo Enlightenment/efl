@@ -2318,6 +2318,10 @@ elm_layout_table_clear(Elm_Layout *obj, const char *part, Eina_Bool clear)
 EAPI Eina_Bool
 elm_layout_text_set(Elm_Layout *obj, const char *part, const char *text)
 {
+   if (!part || (*part == '\0'))
+     {
+        part = "elm.text";
+     }
    efl_text_set(efl_part(obj, part), text);
    return EINA_TRUE;
 }
@@ -2325,6 +2329,10 @@ elm_layout_text_set(Elm_Layout *obj, const char *part, const char *text)
 EAPI const char *
 elm_layout_text_get(const Elm_Layout *obj, const char *part)
 {
+   if (!part || (*part == '\0'))
+     {
+        part = "elm.text";
+     }
    return efl_text_get(efl_part(obj, part));
 }
 

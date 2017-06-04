@@ -3192,7 +3192,7 @@ _elm_entry_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *e
    int len = 0;
 
    if (!entry) entry = "";
-   if (part)
+   if (part && strcmp(part, "elm.text"))
      {
         if (!strcmp(part, "guide"))
           edje_object_part_text_set(sd->entry_edje, "elm.guide", entry);
@@ -3244,7 +3244,7 @@ _elm_entry_text_get(Eo *obj, Elm_Entry_Data *sd, const char *item)
 
    if (item)
      {
-        if (!strcmp(item, "default")) goto proceed;
+        if (!strcmp(item, "default") || strcmp(item, "elm.text")) goto proceed;
         else if (!strcmp(item, "guide"))
           {
              return edje_object_part_text_get(sd->entry_edje, "elm.guide");
@@ -4147,7 +4147,7 @@ elm_entry_entry_get(const Evas_Object *obj)
 {
    ELM_ENTRY_CHECK(obj) NULL;
    const char *text = NULL;
-   text = efl_text_get(efl_part(efl_super(obj, MY_CLASS), "elm.text"));
+   text = efl_text_get(efl_part(obj, "elm.text"));
    return text;
 }
 
