@@ -41,7 +41,6 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
       Elm.Widget.widget_event;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
-      Elm.Layout.text { set; }
       Elm.Interface.Fileselector.selected_models { get; }
       Elm.Interface.Fileselector.selected_model_get;
       Elm.Interface.Fileselector.selected_model_set;
@@ -59,6 +58,7 @@ class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
       Elm.Interface.Fileselector.mode { get; set; }
       Elm.Interface.Fileselector.current_name { get; set; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Part.part;
    }
    events {
       done; [[Called when OK button was pressed]]

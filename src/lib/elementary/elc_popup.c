@@ -1057,7 +1057,7 @@ end:
 }
 
 EOLIAN static Eina_Bool
-_elm_popup_elm_layout_text_set(Eo *obj, Elm_Popup_Data *_pd, const char *part, const char *label)
+_elm_popup_text_set(Eo *obj, Elm_Popup_Data *_pd, const char *part, const char *label)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -1091,7 +1091,7 @@ _content_text_get(const Elm_Popup_Data *sd)
 }
 
 EOLIAN static const char*
-_elm_popup_elm_layout_text_get(Eo *obj EINA_UNUSED, Elm_Popup_Data *_pd, const char *part)
+_elm_popup_text_get(Eo *obj EINA_UNUSED, Elm_Popup_Data *_pd, const char *part)
 {
    const char *text = NULL;
 
@@ -1915,6 +1915,8 @@ ELM_PART_OVERRIDE(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Dat
 ELM_PART_OVERRIDE_CONTENT_SET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
 #include "elm_popup_internal_part.eo.c"
 
 /* Efl.Part end */

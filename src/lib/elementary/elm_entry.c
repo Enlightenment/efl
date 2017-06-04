@@ -3187,7 +3187,7 @@ _entry_text_append(Evas_Object* obj, const char* entry, Eina_Bool set)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *entry)
+_elm_entry_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *entry)
 {
    int len = 0;
 
@@ -3238,7 +3238,7 @@ _elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, co
 }
 
 EOLIAN static const char *
-_elm_entry_elm_layout_text_get(Eo *obj, Elm_Entry_Data *sd, const char *item)
+_elm_entry_text_get(Eo *obj, Elm_Entry_Data *sd, const char *item)
 {
    const char *text;
 
@@ -4139,7 +4139,7 @@ elm_entry_entry_set(Evas_Object *obj,
                     const char *entry)
 {
    ELM_ENTRY_CHECK(obj);
-   elm_obj_layout_text_set(obj, NULL, entry);
+   efl_text_set(efl_part(efl_super(obj, MY_CLASS), "elm.text"), entry);
 }
 
 EAPI const char *
@@ -4147,7 +4147,7 @@ elm_entry_entry_get(const Evas_Object *obj)
 {
    ELM_ENTRY_CHECK(obj) NULL;
    const char *text = NULL;
-   text = elm_obj_layout_text_get((Eo *)obj, NULL);
+   text = efl_text_get(efl_part(efl_super(obj, MY_CLASS), "elm.text"));
    return text;
 }
 
@@ -6021,6 +6021,8 @@ _elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Entry_Data *sd)
 ELM_PART_OVERRIDE(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
 #include "elm_entry_internal_part.eo.c"
 
 /* Efl.Part end */

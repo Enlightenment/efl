@@ -1,4 +1,4 @@
-class Elm.Layout.Internal.Part (Efl.Object, Efl.Container)
+class Elm.Layout.Internal.Part (Efl.Object, Efl.Container, Efl.Text)
 {
    [[Elementary layout internal part class]]
    data: Elm_Part_Data;
@@ -6,5 +6,6 @@ class Elm.Layout.Internal.Part (Efl.Object, Efl.Container)
       Efl.Object.destructor;
       Efl.Container.content { get; set; }
       Efl.Container.content_unset;
+      Efl.Text.text { set; get; }
    }
 }

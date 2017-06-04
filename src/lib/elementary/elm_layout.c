@@ -2315,6 +2315,19 @@ elm_layout_table_clear(Elm_Layout *obj, const char *part, Eina_Bool clear)
      return efl_pack_unpack_all(efl_part(obj, part));
 }
 
+EAPI Eina_Bool
+elm_layout_text_set(Elm_Layout *obj, const char *part, const char *text)
+{
+   efl_text_set(efl_part(obj, part), text);
+   return EINA_TRUE;
+}
+
+EAPI const char *
+elm_layout_text_get(const Elm_Layout *obj, const char *part)
+{
+   return efl_text_get(efl_part(obj, part));
+}
+
 /* Efl.Part implementation */
 
 static EOLIAN Efl_Object *
@@ -2354,6 +2367,8 @@ ELM_PART_IMPLEMENT_DESTRUCTOR(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm
 ELM_PART_IMPLEMENT_CONTENT_SET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_TEXT_SET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_TEXT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 #include "elm_layout_internal_part.eo.c"
 
 /* Efl.Part end */

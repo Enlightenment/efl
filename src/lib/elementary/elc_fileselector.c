@@ -19,6 +19,9 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
 
+#include "elm_fileselector_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_FILESELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Fileselector"
@@ -3108,7 +3111,7 @@ _elm_fileselector_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Fileselect
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_elm_layout_text_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, const char *part, const char *label)
+_elm_fileselector_text_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, const char *part, const char *label)
 {
    if (!part) return EINA_FALSE;
 
@@ -3124,8 +3127,8 @@ _elm_fileselector_elm_layout_text_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Data
      }
    else
      {
-        Eina_Bool int_ret = EINA_FALSE;
-        int_ret = elm_obj_layout_text_set(efl_super(obj, MY_CLASS), part, label);
+        Eina_Bool int_ret = EINA_TRUE;
+        efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
         return int_ret;
      }
 
@@ -3188,6 +3191,14 @@ _elm_fileselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
    return &atspi_actions[0];
 }
 
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(elm_fileselector, ELM_FILESELECTOR, ELM_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector, ELM_FILESELECTOR, ELM_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
+#include "elm_fileselector_internal_part.eo.c"
+
+/* Efl.Part end */
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_FILESELECTOR_EXTRA_OPS \

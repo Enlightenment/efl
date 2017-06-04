@@ -13,6 +13,9 @@
 
 #include "elm_actionslider.eo.h"
 
+#include "elm_actionslider_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_ACTIONSLIDER_CLASS
 
 #define MY_CLASS_NAME "Elm_Actionslider"
@@ -449,24 +452,24 @@ _mirrored_part_fix(const Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_actionslider_elm_layout_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, const char *part, const char *text)
+_elm_actionslider_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, const char *part, const char *text)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_TRUE;
 
    _mirrored_part_fix(obj, &part);
-   int_ret = elm_obj_layout_text_set(efl_super(obj, MY_CLASS), part, text);
+   efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), text);
 
    return int_ret;
 }
 
 EOLIAN static const char*
-_elm_actionslider_elm_layout_text_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, const char *part)
+_elm_actionslider_text_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, const char *part)
 {
    const char *text = NULL;
 
    _mirrored_part_fix(obj, &part);
 
-   text = elm_obj_layout_text_get(efl_super(obj, MY_CLASS), part);
+   text = efl_text_get(efl_part(efl_super(obj, MY_CLASS), part));
 
    return text;
 }
@@ -653,6 +656,14 @@ _elm_actionslider_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+/* Efl.Part begin */
+ELM_PART_OVERRIDE(elm_actionslider, ELM_ACTIONSLIDER, ELM_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_actionslider, ELM_ACTIONSLIDER, ELM_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_actionslider, ELM_ACTIONSLIDER, ELM_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
+
+#include "elm_actionslider_internal_part.eo.c"
+/* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */
 

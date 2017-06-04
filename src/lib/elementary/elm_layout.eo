@@ -196,21 +196,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
             @in part_name: string; [[A part from loaded edje group.]]
          }
       }
-      @property text {
-         set {
-            [[Set the text of the given part.]]
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         get {
-            [[Get the text set in the given part.]]
-         }
-         keys {
-            part: string @nullable; [[The TEXT part where to set the text.]]
-         }
-         values {
-            text: string @nullable; [[The text to set.]]
-         }
-      }
       signal_callback_add {
          [[Add a callback for a (Edje) signal emitted by a layout widget's
            underlying Edje object.

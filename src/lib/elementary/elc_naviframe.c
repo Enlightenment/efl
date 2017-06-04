@@ -1028,7 +1028,7 @@ _elm_naviframe_elm_layout_signal_emit(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSE
 /* content/text smart functions proxying things to the top item, which
  * is the resize object of the layout */
 EOLIAN static Eina_Bool
-_elm_naviframe_elm_layout_text_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, const char *label)
+_elm_naviframe_text_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, const char *label)
 {
    Elm_Object_Item *it;
    const char *text = NULL;
@@ -1044,7 +1044,7 @@ _elm_naviframe_elm_layout_text_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, 
 }
 
 EOLIAN static const char*
-_elm_naviframe_elm_layout_text_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
+_elm_naviframe_text_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
    if (!it) return NULL;
@@ -2074,6 +2074,8 @@ ELM_PART_OVERRIDE(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, 
 ELM_PART_OVERRIDE_CONTENT_SET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
 #include "elm_naviframe_internal_part.eo.c"
 
 /* Efl.Part end */

@@ -10,6 +10,9 @@
 #include "elm_priv.h"
 #include "elm_widget_multibuttonentry.h"
 
+#include "elm_multibuttonentry_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS ELM_MULTIBUTTONENTRY_CLASS
 
 #define MY_CLASS_NAME "Elm_Multibuttonentry"
@@ -1505,9 +1508,9 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_multibuttonentry_elm_layout_text_set(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED, const char *part, const char *label)
+_elm_multibuttonentry_text_set(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED, const char *part, const char *label)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Eina_Bool int_ret = EINA_TRUE;
 
    if (!part || !strcmp(part, "default"))
      {
@@ -1520,13 +1523,13 @@ _elm_multibuttonentry_elm_layout_text_set(Eo *obj, Elm_Multibuttonentry_Data *sd
         int_ret = EINA_TRUE;
      }
    else
-     int_ret = elm_obj_layout_text_set(efl_super(obj, MY_CLASS), part, label);
+     efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
 
    return int_ret;
 }
 
 EOLIAN static const char*
-_elm_multibuttonentry_elm_layout_text_get(Eo *obj, Elm_Multibuttonentry_Data *sd, const char *part)
+_elm_multibuttonentry_text_get(Eo *obj, Elm_Multibuttonentry_Data *sd, const char *part)
 {
    const char *text = NULL;
 
@@ -1539,7 +1542,7 @@ _elm_multibuttonentry_elm_layout_text_get(Eo *obj, Elm_Multibuttonentry_Data *sd
         text = sd->guide_text_str;
      }
    else
-     text = elm_obj_layout_text_get(efl_super(obj, MY_CLASS), part);
+     text = efl_text_get(efl_part(efl_super(obj, MY_CLASS), part));
 
    return text;
 }
@@ -2101,6 +2104,14 @@ _elm_multibuttonentry_item_elm_interface_atspi_widget_action_elm_actions_get(Eo 
    return &atspi_actions[0];
 }
 
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(elm_multibuttonentry, ELM_MULTIBUTTONENTRY, ELM_LAYOUT, Elm_Multibuttonentry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_multibuttonentry, ELM_MULTIBUTTONENTRY, ELM_LAYOUT, Elm_Multibuttonentry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_multibuttonentry, ELM_MULTIBUTTONENTRY, ELM_LAYOUT, Elm_Multibuttonentry_Data, Elm_Part_Data)
+#include "elm_multibuttonentry_internal_part.eo.c"
+
+/* Efl.Part end */
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_MULTIBUTTONENTRY_EXTRA_OPS \

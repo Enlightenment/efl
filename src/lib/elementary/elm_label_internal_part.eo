@@ -1,0 +1,8 @@
+class Elm_Label.Internal.Part (Elm.Layout.Internal.Part, Efl.Text)
+{
+   [[Elementary button internal part class]]
+   data: null;
+   implements {
+      Efl.Text.text { set; }
+   }
+}

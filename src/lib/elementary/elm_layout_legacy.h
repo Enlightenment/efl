@@ -368,4 +368,27 @@ EAPI int elm_layout_freeze(Evas_Object *obj);
  */
 EAPI int elm_layout_thaw(Evas_Object *obj);
 
+/**
+ * @brief Set the text of the given part.
+ *
+ * @param[in] part The TEXT part where to set the text.
+ * @param[in] text The text to set.
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_text_set(Elm_Layout *obj, const char * part, const char *text);
+
+/**
+ * @brief Get the text set in the given part.
+ *
+ * @param[in] part The TEXT part where to set the text.
+ *
+ * @return The text to set.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI const char *elm_layout_text_get(const Elm_Layout *obj, const char * part);
+
 #include "elm_layout.eo.legacy.h"

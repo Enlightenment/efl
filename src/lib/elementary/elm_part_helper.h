@@ -77,6 +77,21 @@ _ ## type ## _internal_part_efl_container_content_unset(Eo *obj, partdata *pd) \
    ELM_PART_RETURN_VAL(_ ## type ## _content_unset(pd->obj, pd->sd, pd->part)); \
 }
 
+#define ELM_PART_IMPLEMENT_TEXT_SET(type, TYPE, typedata, partdata) \
+static EOLIAN void \
+_ ## type ## _internal_part_efl_text_text_set(Eo *obj EINA_UNUSED, partdata *pd, const char *text) \
+{ \
+  _ ## type ## _text_set(pd->obj, pd->sd, pd->part, text); \
+}
+
+#define ELM_PART_IMPLEMENT_TEXT_GET(type, TYPE, typedata, partdata) \
+static EOLIAN const char * \
+_ ## type ## _internal_part_efl_text_text_get(Eo *obj, partdata *pd) \
+{ \
+   ELM_PART_RETURN_VAL(_ ## type ## _text_get(pd->obj, pd->sd, pd->part)); \
+}
+
+
 // For widgets that inherit from something with parts (eg. from Elm.Layout)
 #define ELM_PART_OVERRIDE(type, TYPE, SUPER, typedata, partdata) \
 static EOLIAN Efl_Object * \
@@ -125,17 +140,34 @@ _ ## type ## _internal_part_efl_container_content_unset(Eo *obj, void *_pd EINA_
    ELM_PART_RETURN_VAL(_ ## type ## _content_unset(pd->obj, sd, pd->part)); \
 }
 
-#define EFL_TEXT_DEFAULT_IMPLEMENT(type, Type) \
+#define ELM_PART_OVERRIDE_TEXT_SET(type, TYPE, SUPER, typedata, partdata) \
+static EOLIAN void \
+_ ## type ## _internal_part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text) \
+{ \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   ELM_PART_CALL(_ ## type ## _text_set(pd->obj, sd, pd->part, text)); \
+}
+
+#define ELM_PART_OVERRIDE_TEXT_GET(type, TYPE, SUPER, typedata, partdata) \
+static EOLIAN const char *\
+_ ## type ## _internal_part_efl_text_text_get(Eo *obj, void *_pd EINA_UNUSED) \
+{ \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   ELM_PART_RETURN_VAL(_ ## type ## _text_get(pd->obj, sd, pd->part)); \
+}
+
+#define EFL_TEXT_PART_DEFAULT_IMPLEMENT(type, Type) \
 EOLIAN static void \
 _ ## type ## _efl_text_text_set(Eo *obj, Type *pd EINA_UNUSED, const char *text) \
 { \
-   elm_layout_text_set(obj, NULL, text); \
+   efl_text_set(efl_part(efl_super(obj, MY_CLASS), "elm.text"), text); \
 } \
-\
 EOLIAN static const char * \
-_ ## type ## _efl_text_text_get(Eo *obj, Efl_Ui_Button_Data *pd EINA_UNUSED) \
+_ ## type ## _efl_text_text_get(Eo *obj, Type *pd EINA_UNUSED) \
 { \
-   return elm_layout_text_get(obj, NULL); \
+  return efl_text_get(efl_part(efl_super(obj, MY_CLASS), "elm.text")); \
 }
 
 #endif

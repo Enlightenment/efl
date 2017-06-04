@@ -1,0 +1,8 @@
+class Elm_Actionslider.Internal.Part (Elm.Layout.Internal.Part, Efl.Text)
+{
+   [[Elementary Actionslider internal part class]]
+   data: null;
+   implements {
+      Efl.Text.text { set; get; }
+   }
+}

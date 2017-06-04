@@ -1,0 +1,8 @@
+class Elm_Bubble.Internal.Part (Elm.Layout.Internal.Part, Efl.Text)
+{
+   [[Elementary Bubble internal part class]]
+   data: null;
+   implements {
+      Efl.Text.text { set; }
+   }
+}
