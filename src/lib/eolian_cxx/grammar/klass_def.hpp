@@ -695,7 +695,7 @@ struct klass_def
      for(efl::eina::iterator<const char> inherit_iterator ( ::eolian_class_inherits_get(klass))
            , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
        {
-         Eolian_Class const* inherit = ::eolian_class_get_by_name(&*inherit_iterator);
+         Eolian_Class const* inherit = ::eolian_class_get_by_name(NULL, &*inherit_iterator);
          immediate_inherits.insert({inherit, {}});
        }
      std::function<void(Eolian_Class const*)> inherit_algo = 
@@ -765,7 +765,7 @@ struct enum_value_def
       name = eolian_typedecl_enum_field_name_get(enum_field);
       c_name = eolian_typedecl_enum_field_c_name_get(enum_field);
       auto exp = eolian_typedecl_enum_field_value_get(enum_field, EINA_TRUE);
-      value = eolian_expression_eval(exp, EOLIAN_MASK_INT); // FIXME hardcoded int
+      value = eolian_expression_eval(NULL, exp, EOLIAN_MASK_INT); // FIXME hardcoded int
   }
 };
 
@@ -803,7 +803,7 @@ struct struct_field_def
   {
      name = eolian_typedecl_struct_field_name_get(struct_field);
      try {
-        type.set(eolian_typedecl_struct_field_type_get(struct_field));
+        type.set(eolian_typedecl_struct_field_type_get(struct_field), NULL);
      } catch(std::runtime_error const&) { /* Silently skip pointer fields*/ }
   }
 
@@ -867,7 +867,7 @@ inline bool has_events(klass_def const &klass)
 
     for (auto&& c : klass.inherits)
       {
-         attributes::klass_def parent(get_klass(c));
+        attributes::klass_def parent(get_klass(c, NULL), NULL);
          for (auto&& e : parent.events)
            {
               (void)e;
@@ -889,7 +889,7 @@ inline bool has_type_return(klass_def const &klass, T visitor)
 
     for (auto&& c : klass.inherits)
       {
-         attributes::klass_def parent(get_klass(c));
+        attributes::klass_def parent(get_klass(c, NULL), NULL);
          if (has_type_return(parent, visitor))
            return true;
       }

@@ -90,7 +90,7 @@ struct native_function_definition_generator
         << "_delegate "
         << string << "_static_delegate = new " << string << "_delegate(" << string << "NativeInherit." << string << ");\n"
        )
-       .generate(sink, std::make_tuple(escape_keyword(f.name), escape_keyword(f.name), escape_keyword(f.name), escape_keyword(klass->cxx_name)
+       .generate(sink, std::make_tuple(escape_keyword(f.name), escape_keyword(f.name), escape_keyword(f.name), klass->cxx_name
                                        , escape_keyword(f.name)), context))
       return false;
     return true;

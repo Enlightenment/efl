@@ -236,7 +236,7 @@ struct klass
          for(auto first = std::begin(cls.inherits)
                , last = std::end(cls.inherits); first != last; ++first)
            {
-             attributes::klass_def klass(get_klass(*first));
+             attributes::klass_def klass(get_klass(*first, NULL), NULL);
              
              if(!as_generator(*(function_definition))
                 .generate(sink, klass.functions, context)) return false;
@@ -322,7 +322,7 @@ struct klass
          for(auto first = std::begin(cls.inherits)
                , last = std::end(cls.inherits); first != last; ++first)
            {
-             attributes::klass_def klass(get_klass(*first));
+             attributes::klass_def klass(get_klass(*first, NULL), NULL);
              
              if(!as_generator(*(function_definition(true)))
                 .generate(sink, klass.functions, context)) return false;
@@ -336,7 +336,7 @@ struct klass
      for(auto first = std::begin(cls.inherits)
            , last = std::end(cls.inherits); first != last; ++first)
        {
-         attributes::klass_def klass(get_klass(*first));
+         attributes::klass_def klass(get_klass(*first, NULL), NULL);
          function_count += klass.functions.size();
        }
      // function_count--;
@@ -363,7 +363,7 @@ struct klass
          for(auto first = std::begin(cls.inherits)
                , last = std::end(cls.inherits); first != last; ++first)
            {
-             attributes::klass_def klass(get_klass(*first));
+             attributes::klass_def klass(get_klass(*first, NULL), NULL);
              if(!as_generator(*(function_registration(index_generator, cls)))
                 .generate(sink, klass.functions, context)) return false;
            }
@@ -395,7 +395,7 @@ struct klass
          for(auto first = std::begin(cls.inherits)
                , last = std::end(cls.inherits); first != last; ++first)
            {
-             attributes::klass_def klass(get_klass(*first));
+             attributes::klass_def klass(get_klass(*first, NULL), NULL);
              
              if(!as_generator(*(native_function_definition(cls)))
                 .generate(sink, klass.functions, context)) return false;
@@ -434,7 +434,7 @@ struct klass
 
      for (auto&& c : cls.inherits)
        {
-          attributes::klass_def klass(get_klass(c));
+          attributes::klass_def klass(get_klass(c, NULL), NULL);
 
           for (auto&& e : klass.events)
             {
@@ -596,7 +596,7 @@ struct klass
      // Inherited events
      for (auto&& c : cls.inherits)
        {
-          attributes::klass_def klass(get_klass(c));
+          attributes::klass_def klass(get_klass(c, NULL), NULL);
 
           // FIXME Enable inherited events registration. Beware of conflicting events
           for (auto&& e : klass.events)

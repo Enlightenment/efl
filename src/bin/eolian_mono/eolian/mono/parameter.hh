@@ -1031,12 +1031,12 @@ struct native_convert_function_pointer_generator
         return true;
 
       // Getting the type through C api
-      const Eolian_Typedecl *tpd = eolian_typedecl_alias_get_by_name(param.type.c_type.c_str());
+      const Eolian_Typedecl *tpd = ::eolian_typedecl_alias_get_by_name(NULL, param.type.c_type.c_str());
       if (eolian_typedecl_type_get(tpd) != EOLIAN_TYPEDECL_FUNCTION_POINTER)
         return true;
 
       const Eolian_Function *fd = eolian_typedecl_function_pointer_get(tpd);
-      attributes::function_def f(fd, EOLIAN_FUNCTION_POINTER);
+      attributes::function_def f(fd, EOLIAN_FUNCTION_POINTER, NULL);
 
       std::string param_name = escape_keyword(param.param_name);
       // Allocate GCHandle in "param_name"_handle for param;
