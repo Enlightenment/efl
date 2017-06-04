@@ -67,7 +67,7 @@ class Efl.Input.Device (Efl.Object)
             src: Efl.Input.Device; [[Input device]]
          }
       }
-      @property name {
+      @property device_name {
       	 [[device name property]]
          values {
             name: string; [[Input device name]]
@@ -79,7 +79,7 @@ class Efl.Input.Device (Efl.Object)
             desc: string; [[Input device description]]
          }
       }
-      @property parent {
+      @property device_parent {
       	 [[Device parent property]]
          values {
             parent: Efl.Input.Device; [[Parent input device]]
