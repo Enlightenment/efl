@@ -22,6 +22,12 @@
 # include "eina_config.h"
 # include "eina_list.h"
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#ifdef EFL_BETA_API_SUPPORT
+
 /**
  * @page eina_debug_main Eina Debug
  *
@@ -297,7 +303,10 @@ EAPI Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_
  */
 EAPI void eina_debug_timer_del(Eina_Debug_Timer *timer);
 
-#endif
 /**
  * @}
  */
+
+#endif
+
+#endif
