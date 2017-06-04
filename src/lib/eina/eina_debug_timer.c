@@ -20,12 +20,18 @@
 #  define _GNU_SOURCE 1
 # endif
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/epoll.h>
+#ifdef HAVE_SYS_EPOLL_H
+# include <sys/epoll.h>
+#endif
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -182,7 +188,9 @@ Eina_Bool
 _eina_debug_timer_init(void)
 {
    eina_spinlock_new(&_lock);
+#ifndef _WIN32
    pipe(pipeToThread);
+#endif
    return EINA_TRUE;
 }
 

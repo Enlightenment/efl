@@ -16,13 +16,27 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <unistd.h>
-#include <sys/epoll.h>
+#ifdef HAVE_SYS_EPOLL_H
+# include <sys/epoll.h>
+#endif
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef HAVE_SYS_UN_H
+# include <sys/un.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
 #include <fcntl.h>
 #include "eina_debug_private.h"
 
@@ -598,15 +612,12 @@ err:
 static Eina_Bool
 _server_launch()
 {
+#ifndef _WIN32
    struct epoll_event event = {0};
 
    _epfd = epoll_create (MAX_EVENTS);
 
-#ifndef _WIN32
    _listening_unix_fd = _listening_unix_socket_create();
-#else
-   _listening_unix_fd = -1;
-#endif
    if (_listening_unix_fd <= 0) goto err;
    event.data.fd = _listening_unix_fd;
    event.events = EPOLLIN;
@@ -623,6 +634,7 @@ err:
    _listening_unix_fd = -1;
    if (_listening_tcp_fd >= 0) close(_listening_tcp_fd);
    _listening_tcp_fd = -1;
+#endif
    return EINA_FALSE;
 }
 

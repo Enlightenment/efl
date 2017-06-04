@@ -65,13 +65,19 @@ void  _eina_debug_chunk_tmp_reset(void);
 const char *_eina_debug_file_get(const char *fname);
 
 void _eina_debug_dump_fhandle_bt(FILE *f, void **bt, int btlen);
+
 #define EINA_MAX_BT 256
+#ifdef HAVE_BACKTRACE
 #define EINA_BT(file) \
    do { \
       void *bt[EINA_MAX_BT]; \
       int btlen = backtrace((void **)bt, EINA_MAX_BT); \
       _eina_debug_dump_fhandle_bt(file, bt, btlen); \
    } while (0)
+#else
+#define EINA_BT(file) do { } while (0)
+#endif
+
 
 Eina_Bool _eina_debug_cpu_init(void);
 Eina_Bool _eina_debug_cpu_shutdown(void);

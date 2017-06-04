@@ -21,14 +21,23 @@
 # endif
 
 #ifdef HAVE_DLADDR
-# include <dlfcn.h>
+# ifdef _WIN32
+#  include <Evil.h>
+# else
+#  include <dlfcn.h>
+# endif
 #endif
+
+#ifdef HAVE_UNWIND
 #include <libunwind.h>
+#endif
 
 #include "eina_debug.h"
 #include "eina_debug_private.h"
 
-#define SIG SIGPROF
+#ifndef _WIN32
+# define SIG SIGPROF
+#endif
 
 static Eina_Semaphore _wait_for_bts_sem;
 
@@ -45,6 +54,7 @@ static Eina_Debug_Timer *_timer = NULL;
 void
 _eina_debug_dump_fhandle_bt(FILE *f, void **bt, int btlen)
 {
+#ifndef _WIN32
    int i;
    Dl_info info;
    const char *file;
@@ -67,12 +77,18 @@ _eina_debug_dump_fhandle_bt(FILE *f, void **bt, int btlen)
         if (file) fprintf(f, "%s\t 0x%llx 0x%llx\n", file, offset, base);
         else fprintf(f, "??\t -\n");
      }
+#else
+   (void)f;
+   (void)bt;
+   (void)btlen;
+#endif
 }
 
 // a backtracer that uses libunwind to do the job
 static inline int
 _eina_debug_unwind_bt(void **bt, int max)
 {
+#ifdef HAVE_UNWIND
    unw_cursor_t cursor;
    unw_context_t uc;
    unw_word_t p;
@@ -90,6 +106,11 @@ _eina_debug_unwind_bt(void **bt, int max)
      }
    // return our total backtrace stack size
    return total;
+#else
+   (void)bt;
+   (void)max;
+   return 0;
+#endif
 }
 
 // a quick and dirty local time point getter func - not portable
@@ -107,6 +128,7 @@ get_time(void)
 #endif
 }
 
+#ifndef _WIN32
 static void
 _signal_handler(int sig EINA_UNUSED,
       siginfo_t *si EINA_UNUSED, void *foo EINA_UNUSED)
@@ -143,10 +165,12 @@ found:
    // backtrace info
    eina_semaphore_release(&_wait_for_bts_sem, 1);
 }
+#endif
 
 static void
 _signal_init(void)
 {
+#ifndef _WIN32
    struct sigaction sa;
 
    // set up signal handler for our profiling signal - eevery thread should
@@ -162,6 +186,7 @@ _signal_init(void)
    sigemptyset(&sa.sa_mask);
    sa.sa_flags = 0;
    if (sigaction(SIGPIPE, &sa, 0) == -1) perror(0);
+#endif
 }
 
 static void
@@ -169,7 +194,9 @@ _collect_bt(pthread_t pth)
 {
    // this async signals the thread to switch to the deebug signal handler
    // and collect a backtrace and other info from inside the thread
+#ifndef _WIN32
    pthread_kill(pth, SIG);
+#endif
 }
 
 static Eina_Bool
@@ -277,3 +304,4 @@ _eina_debug_bt_shutdown(void)
    eina_semaphore_free(&_wait_for_bts_sem);
    return EINA_TRUE;
 }
+

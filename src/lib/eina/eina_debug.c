@@ -20,12 +20,18 @@
 #  define _GNU_SOURCE 1
 # endif
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/epoll.h>
+#ifdef HAVE_SYS_EPOLL_H
+# include <sys/epoll.h>
+#endif
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -34,11 +40,24 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef HAVE_SYS_UN_H
+# include <sys/un.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
 #include <fcntl.h>
+
+#ifdef _WIN32
+# include <winsock2.h>
+# include <Evil.h>
+#endif
 
 #include "eina_debug.h"
 #include "eina_types.h"
@@ -50,7 +69,7 @@
 #include "eina_stringshare.h"
 #include "eina_debug_private.h"
 
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__) || defined (_WIN32)
 # define LIBEXT ".dll"
 #else
 # define LIBEXT ".so"
@@ -107,7 +126,9 @@ struct _Eina_Debug_Session
    int fd; /* File descriptor */
 };
 
+#ifndef _WIN32
 static void _opcodes_register_all(Eina_Debug_Session *session);
+#endif
 static void _thread_start(Eina_Debug_Session *session);
 
 EAPI int
@@ -130,10 +151,13 @@ eina_debug_session_send(Eina_Debug_Session *session, int dest, int op, void *dat
    /* Sending payload */
    if (size) write(session->fd, data, size);
    eina_spinlock_release(&_eina_debug_lock);
+#else
+   (void)data;
 #endif
    return size;
 }
 
+#ifndef _WIN32
 static void
 _daemon_greet(Eina_Debug_Session *session)
 {
@@ -159,7 +183,6 @@ _daemon_greet(Eina_Debug_Session *session)
    eina_debug_session_send(session, 0, EINA_DEBUG_OPCODE_HELLO, buf, size);
 }
 
-#ifndef _WIN32
 static int
 _packet_receive(Eina_Debug_Session *session, unsigned char **buffer)
 {
@@ -249,6 +272,7 @@ eina_debug_session_dispatch_get(Eina_Debug_Session *session)
    else return NULL;
 }
 
+#ifndef _WIN32
 static void
 _static_opcode_register(Eina_Debug_Session *session,
       int op_id, Eina_Debug_Cb cb)
@@ -305,6 +329,7 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
 
    return EINA_FALSE;
 }
+#endif
 
 static void
 _opcodes_registration_send(Eina_Debug_Session *session,
@@ -323,7 +348,7 @@ _opcodes_registration_send(Eina_Debug_Session *session,
 
    buf = malloc(size);
 
-   uint64_t info_64 = (uint64_t)info;
+   uint64_t info_64 = (uint64_t)(uintptr_t)info;
    info_64 = SWAP_64(info_64);
    memcpy(buf, &info_64, sizeof(uint64_t));
    int size_curr = sizeof(uint64_t);
@@ -341,6 +366,7 @@ _opcodes_registration_send(Eina_Debug_Session *session,
    free(buf);
 }
 
+#ifndef _WIN32
 static void
 _opcodes_register_all(Eina_Debug_Session *session)
 {
@@ -389,7 +415,6 @@ _socket_home_get()
    return dir;
 }
 
-#ifndef _WIN32
 #define LENGTH_OF_SOCKADDR_UN(s) \
    (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 #endif
@@ -485,6 +510,8 @@ err:
 // even if the mainloop is blocked or the app otherwise deadlocked in some
 // way. this is an alternative to using external debuggers so we can get
 // users or developers to get useful information about an app at all times
+
+#ifndef _WIN32
 static void *
 _monitor(void *_data)
 {
@@ -537,11 +564,13 @@ _monitor(void *_data)
      }
    return NULL;
 }
+#endif
 
 // start up the debug monitor if we haven't already
 static void
 _thread_start(Eina_Debug_Session *session)
 {
+#ifndef _WIN32
    pthread_t monitor_thread;
    int err;
    sigset_t oldset, newset;
@@ -569,6 +598,9 @@ _thread_start(Eina_Debug_Session *session)
         e_debug("EINA DEBUG ERROR: Can't create monitor debug thread!");
         abort();
      }
+#else
+   (void)session;
+#endif
 }
 
 /*
