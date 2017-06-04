@@ -1406,7 +1406,7 @@ START_TEST(eolian_function_types)
    fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/function_types.eot"));
 
    /* void func(void); */
-   fail_if(!(decl = eolian_typedecl_alias_get_by_name("VoidFunc")));
+   fail_if(!(decl = eolian_typedecl_alias_get_by_name(NULL, "VoidFunc")));
    fail_if(eolian_typedecl_type_get(decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
 
    fail_if(!(fid = eolian_typedecl_function_pointer_get(decl)));
@@ -1416,7 +1416,7 @@ START_TEST(eolian_function_types)
    fail_if((eolian_function_parameters_get(fid)));
 
    /* Function pointer with return and parameters */
-   fail_if(!(decl = eolian_typedecl_alias_get_by_name("SimpleFunc")));
+   fail_if(!(decl = eolian_typedecl_alias_get_by_name(NULL, "SimpleFunc")));
    fail_if(eolian_typedecl_type_get(decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
 
    fail_if(!(fid = eolian_typedecl_function_pointer_get(decl)));
@@ -1443,7 +1443,7 @@ START_TEST(eolian_function_types)
    fail_if(eina_iterator_next(iter, &dummy));
 
    /* Function pointer with parameter attributes (in/out) */
-   fail_if(!(decl = eolian_typedecl_alias_get_by_name("ComplexFunc")));
+   fail_if(!(decl = eolian_typedecl_alias_get_by_name(NULL, "ComplexFunc")));
    fail_if(eolian_typedecl_type_get(decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
 
    fail_if(!(fid = eolian_typedecl_function_pointer_get(decl)));
@@ -1475,7 +1475,7 @@ START_TEST(eolian_function_types)
    fail_if(eina_iterator_next(iter, &dummy));
 
    /* Function pointer receiving another function pointer */
-   fail_if(!(decl = eolian_typedecl_alias_get_by_name("FuncAsArgFunc")));
+   fail_if(!(decl = eolian_typedecl_alias_get_by_name(NULL, "FuncAsArgFunc")));
    fail_if(eolian_typedecl_type_get(decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
 
    fail_if(!(fid = eolian_typedecl_function_pointer_get(decl)));
@@ -1529,7 +1529,7 @@ START_TEST(eolian_function_as_arguments)
 
    fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/function_as_argument.eo"));
 
-   fail_if(!(cls = eolian_class_get_by_name("Function_As_Argument")));
+   fail_if(!(cls = eolian_class_get_by_name(NULL, "Function_As_Argument")));
 
    fail_if(!(fid = eolian_class_function_get_by_name(cls, "set_cb", EOLIAN_METHOD)));
 
