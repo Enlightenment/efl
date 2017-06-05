@@ -177,9 +177,38 @@ START_TEST (elm_image_async_mmap)
 }
 END_TEST
 
+START_TEST (efl_ui_image_icon)
+{
+   Evas_Object *win, *image;
+   Eina_Bool ok;
+   const char *icon_name;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
+
+   image = efl_add(EFL_UI_IMAGE_CLASS, win);
+   evas_object_show(image);
+
+   ok = efl_ui_image_icon_set(image, "folder");
+   ck_assert(ok);
+   icon_name = efl_ui_image_icon_get(image);
+   ck_assert_str_eq(icon_name, "folder");
+
+   ok = efl_ui_image_icon_set(image, "None");
+   ck_assert(ok == 0);
+   icon_name = efl_ui_image_icon_get(image);
+   ck_assert_str_eq(icon_name, NULL);
+
+   elm_run();
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_image(TCase *tc)
 {
     tcase_add_test(tc, elm_atspi_role_get);
     tcase_add_test(tc, elm_image_async_path);
     tcase_add_test(tc, elm_image_async_mmap);
+    tcase_add_test(tc, efl_ui_image_icon);
 }
