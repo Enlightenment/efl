@@ -31,6 +31,7 @@ class Elm.Multibuttonentry.Item(Elm.Widget.Item,
         Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.disable;
         Elm.Interface.Atspi_Accessible.name { get; }
+        Elm.Interface.Atspi_Accessible.state_set { get; }
         Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
 }

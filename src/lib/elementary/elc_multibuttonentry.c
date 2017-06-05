@@ -772,7 +772,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
      return NULL;
    WIDGET_ITEM_DATA_SET(eo_item, data);
 
-   elm_interface_atspi_accessible_role_set(eo_item, ELM_ATSPI_ROLE_PUSH_BUTTON);
+   elm_interface_atspi_accessible_role_set(eo_item, ELM_ATSPI_ROLE_RADIO_BUTTON);
 
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
    VIEW(item) = elm_layout_add(obj);
@@ -1758,7 +1758,7 @@ _elm_multibuttonentry_efl_object_constructor(Eo *obj, Elm_Multibuttonentry_Data 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ENTRY);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PANEL);
 
    return obj;
 }
@@ -2065,6 +2065,24 @@ _elm_multibuttonentry_item_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_
 
    const char *txt = elm_object_part_text_get(VIEW(item), "elm.btn.text");
    return txt;
+}
+
+EOLIAN static Elm_Atspi_State_Set
+_elm_multibuttonentry_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Multibuttonentry_Item_Data *sd EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+   Eina_Bool sel;
+
+   ret = elm_interface_atspi_accessible_state_set_get(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
+
+   sel = elm_obj_multibuttonentry_item_selected_get(eo_it);
+
+   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_EDITABLE);
+
+   if (sel)
+     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_CHECKED);
+
+   return ret;
 }
 
 static Eina_Bool
