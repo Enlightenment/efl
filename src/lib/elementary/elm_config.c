@@ -1530,6 +1530,8 @@ _config_apply(void)
 {
    _elm_theme_parse(NULL, _elm_config->theme);
    ecore_animator_frametime_set(1.0 / _elm_config->fps);
+   edje_password_show_last_set(_elm_config->password_show_last);
+   edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
 }
 
 static void
@@ -1537,8 +1539,6 @@ _config_sub_apply(void)
 {
    edje_frametime_set(1.0 / _elm_config->fps);
    edje_scale_set(_elm_config->scale);
-   edje_password_show_last_set(_elm_config->password_show_last);
-   edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
    edje_transition_duration_factor_set(_elm_config->transition_duration_factor);
    if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
    edje_audio_channel_mute_set(EDJE_CHANNEL_EFFECT, _elm_config->audio_mute_effect);
