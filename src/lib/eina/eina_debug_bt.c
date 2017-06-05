@@ -36,6 +36,7 @@
 #include "eina_debug_private.h"
 
 #ifndef _WIN32
+# include <signal.h>
 # define SIG SIGPROF
 #endif
 
