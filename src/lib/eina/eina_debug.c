@@ -535,7 +535,7 @@ _monitor(void *_data)
    // impact the application specifically
    for (;session;)
      {
-        unsigned char *buffer;
+        unsigned char *buffer = NULL;
         int size;
 
         size = _packet_receive(session, &buffer);
