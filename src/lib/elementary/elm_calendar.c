@@ -1148,10 +1148,12 @@ _button_widget_month_inc_start(void *data,
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
-   sd->interval = sd->first_interval;
    sd->spin_speed = 1;
-   _spin_month_value(data);
+   if (!sd->month_repeated)
+     sd->interval = sd->first_interval;
    sd->month_repeated = EINA_TRUE;
+   _spin_month_value(data);
+
 }
 
 static void
@@ -1178,10 +1180,11 @@ _button_widget_month_dec_start(void *data,
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
-   sd->interval = sd->first_interval;
    sd->spin_speed = -1;
-   _spin_month_value(data);
+   if (!sd->month_repeated)
+     sd->interval = sd->first_interval;
    sd->month_repeated = EINA_TRUE;
+   _spin_month_value(data);
 }
 
 static void
@@ -1208,10 +1211,11 @@ _button_widget_year_inc_start(void *data,
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
-   sd->interval = sd->first_interval;
    sd->spin_speed = 1;
-   _spin_year_value(data);
+   if (!sd->year_repeated)
+     sd->interval = sd->first_interval;
    sd->year_repeated = EINA_TRUE;
+   _spin_year_value(data);
 }
 
 static void
@@ -1238,10 +1242,11 @@ _button_widget_year_dec_start(void *data,
 {
    ELM_CALENDAR_DATA_GET(data, sd);
 
-   sd->interval = sd->first_interval;
    sd->spin_speed = -1;
-   _spin_year_value(data);
+   if (!sd->year_repeated)
+     sd->interval = sd->first_interval;
    sd->year_repeated = EINA_TRUE;
+   _spin_year_value(data);
 }
 
 static int
