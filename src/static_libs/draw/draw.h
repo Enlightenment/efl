@@ -98,16 +98,26 @@ draw_memset32(uint32_t *dest, uint32_t value, int length)
    if (length <= 0)
      return;
 
+   // Cute hack to align future memcopy operation
+   // and do unroll the loop a bit. Not sure it is
+   // the most efficient, but will do for now.
    n = (length + 7) / 8;
    switch (length & 0x07)
      {
         case 0: do { *dest++ = value;
+           EINA_FALLTHROUGH;
         case 7:      *dest++ = value;
+           EINA_FALLTHROUGH;
         case 6:      *dest++ = value;
+           EINA_FALLTHROUGH;
         case 5:      *dest++ = value;
+           EINA_FALLTHROUGH;
         case 4:      *dest++ = value;
+           EINA_FALLTHROUGH;
         case 3:      *dest++ = value;
+           EINA_FALLTHROUGH;
         case 2:      *dest++ = value;
+           EINA_FALLTHROUGH;
         case 1:      *dest++ = value;
         } while (--n > 0);
      }
