@@ -16,13 +16,16 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include "eina_debug.h"
 
-#ifdef EINA_HAVE_DEBUG
-
-# ifdef HAVE_MMAP
-#  include <sys/mman.h>
+# ifdef HAVE_CONFIG_H
+#  include "config.h"
 # endif
+
+#ifdef HAVE_MMAP
+# include <sys/mman.h>
 
 // custom memory allocators to avoid malloc/free during backtrace handling
 // just in case we're inside some signal handler due to mem corruption and
@@ -30,7 +33,6 @@
 // allocated memory, so implement scratch space just big enough for what we
 // need and then some via either a static 8k+4k buffer pair or via a growable
 // mmaped mem chunk pair
-# ifdef HAVE_MMAP
 // implement using mmap so we can grow if needed - unlikelt though
 static unsigned char *chunk1 = NULL;
 static unsigned char *chunk2 = NULL;
@@ -243,4 +245,3 @@ _eina_debug_chunk_strdup(const char *str)
    strcpy(s, str);
    return s;
 }
-#endif

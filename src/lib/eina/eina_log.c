@@ -37,10 +37,12 @@
 # include <Evil.h>
 #endif
 
-#include "eina_debug.h"
-#ifdef EINA_HAVE_DEBUG
-# define EINA_LOG_BACKTRACE
+#ifdef HAVE_EXECINFO_H
+# include <execinfo.h>
 #endif
+
+#include "eina_debug_private.h"
+#define EINA_LOG_BACKTRACE
 
 #include "eina_config.h"
 #include "eina_private.h"

@@ -237,16 +237,38 @@ static struct {
      void (*shutdown)(void);
      Eina_Bool (*app_connect)(const char *appname);
      Eina_Bool is_init;
+} _clouseau_old_info;
+
+static struct {
+     Eina_Module *handle;
+     Eina_Bool (*init)(void);
+     Eina_Bool (*shutdown)(void);
+     Eina_Bool is_init;
 } _clouseau_info;
+
+#define _CLOUSEAU_OLD_LOAD_SYMBOL(cls_struct, sym) \
+   do \
+     { \
+        if ((cls_struct).handle) \
+          (cls_struct).sym = eina_module_symbol_get((cls_struct).handle, "clouseau_" #sym); \
+        if (!(cls_struct).sym) \
+          { \
+             WRN("Failed loading symbol '%s' from the clouseau library.", "clouseau_" #sym); \
+             if ((cls_struct).handle) eina_module_free((cls_struct).handle); \
+             (cls_struct).handle = NULL; \
+          } \
+     } \
+   while (0)
 
 #define _CLOUSEAU_LOAD_SYMBOL(cls_struct, sym) \
    do \
      { \
-        (cls_struct).sym = eina_module_symbol_get((cls_struct).handle, "clouseau_" #sym); \
+        if ((cls_struct).handle) \
+          (cls_struct).sym = eina_module_symbol_get((cls_struct).handle, "clouseau_debug_" #sym); \
         if (!(cls_struct).sym) \
           { \
-             WRN("Failed loading symbol '%s' from the clouseau library.", "clouseau_" #sym); \
-             eina_module_free((cls_struct).handle); \
+             WRN("Failed loading symbol '%s' from the clouseau library.", "clouseau_debug_" #sym); \
+             if ((cls_struct).handle) eina_module_free((cls_struct).handle); \
              (cls_struct).handle = NULL; \
              return EINA_FALSE; \
           } \
@@ -256,21 +278,32 @@ static struct {
 static void
 _elm_clouseau_unload()
 {
-   if (!_clouseau_info.is_init)
-      return;
-
-   if (_clouseau_info.shutdown)
+   if (_clouseau_old_info.is_init)
      {
-        _clouseau_info.shutdown();
+        if (_clouseau_old_info.shutdown)
+          {
+             _clouseau_old_info.shutdown();
+          }
+        if (_clouseau_old_info.handle)
+          {
+             eina_module_free(_clouseau_old_info.handle);
+             _clouseau_old_info.handle = NULL;
+          }
+        _clouseau_old_info.is_init = EINA_FALSE;
      }
-
-   if (_clouseau_info.handle)
+   if (_clouseau_info.is_init)
      {
-        eina_module_free(_clouseau_info.handle);
-        _clouseau_info.handle = NULL;
+        if (_clouseau_info.shutdown)
+          {
+             _clouseau_info.shutdown();
+          }
+        if (_clouseau_info.handle)
+          {
+             eina_module_free(_clouseau_info.handle);
+             _clouseau_info.handle = NULL;
+          }
+        _clouseau_info.is_init = EINA_FALSE;
      }
-
-   _clouseau_info.is_init = EINA_FALSE;
 }
 
 Eina_Bool
@@ -282,30 +315,53 @@ _elm_clouseau_reload()
         return EINA_TRUE;
      }
 
-   if (_clouseau_info.is_init)
-      return EINA_TRUE;
-
-   _clouseau_info.handle = eina_module_new(
-         PACKAGE_LIB_DIR "/libclouseau" LIBEXT);
-   if (!_clouseau_info.handle || !eina_module_load(_clouseau_info.handle))
+   if (!_clouseau_old_info.is_init)
      {
-        WRN("Failed loading the clouseau library.");
-        if (_clouseau_info.handle) eina_module_free(_clouseau_info.handle);
-        _clouseau_info.handle = NULL;
-        return EINA_FALSE;
+        _clouseau_old_info.handle = eina_module_new(
+              PACKAGE_LIB_DIR "/libclouseau" LIBEXT);
+        if (!_clouseau_old_info.handle || !eina_module_load(_clouseau_old_info.handle))
+          {
+             WRN("Failed loading the clouseau_old library.");
+             if (_clouseau_old_info.handle) eina_module_free(_clouseau_old_info.handle);
+             _clouseau_old_info.handle = NULL;
+          }
+
+        _CLOUSEAU_OLD_LOAD_SYMBOL(_clouseau_old_info, init);
+        _CLOUSEAU_OLD_LOAD_SYMBOL(_clouseau_old_info, shutdown);
+        _CLOUSEAU_OLD_LOAD_SYMBOL(_clouseau_old_info, app_connect);
+
+        if (_clouseau_old_info.handle)
+          {
+             _clouseau_old_info.init();
+             if (!_clouseau_old_info.app_connect(elm_app_name_get()))
+               {
+                  ERR("Failed connecting to the clouseau server.");
+               }
+             _clouseau_old_info.is_init = EINA_TRUE;
+          }
      }
 
-   _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, init);
-   _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, shutdown);
-   _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, app_connect);
-
-   _clouseau_info.init();
-   if (!_clouseau_info.app_connect(elm_app_name_get()))
+   if (!_clouseau_info.is_init)
      {
-        ERR("Failed connecting to the clouseau server.");
-     }
+        _clouseau_info.handle = eina_module_new(
+              PACKAGE_LIB_DIR "/libclouseau_debug" LIBEXT);
+        if (!_clouseau_info.handle || !eina_module_load(_clouseau_info.handle))
+          {
+             WRN("Failed loading the clouseau library.");
+             if (_clouseau_info.handle) eina_module_free(_clouseau_info.handle);
+             _clouseau_info.handle = NULL;
+             return EINA_FALSE;
+          }
 
-   _clouseau_info.is_init = EINA_TRUE;
+        _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, init);
+        _CLOUSEAU_LOAD_SYMBOL(_clouseau_info, shutdown);
+
+        if (_clouseau_info.handle)
+          {
+             _clouseau_info.init();
+             _clouseau_info.is_init = EINA_TRUE;
+          }
+     }
 
    return EINA_TRUE;
 }

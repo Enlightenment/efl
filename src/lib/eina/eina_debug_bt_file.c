@@ -16,9 +16,14 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "eina_debug.h"
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-#ifdef EINA_HAVE_DEBUG
+#include "eina_debug_private.h"
+
+extern Eina_Spinlock _eina_debug_lock;
 
 static unsigned int _table_num = 0;
 static unsigned int _table_size = 0;
@@ -164,4 +169,3 @@ _eina_debug_file_get(const char *fname)
      }
    return file;
 }
-#endif
