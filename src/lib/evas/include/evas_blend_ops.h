@@ -410,25 +410,28 @@ mul3_sym_sse3(__m128i x, __m128i y) {
 #endif
 
 #define LOOP_ALIGNED_U1_A48(DEST, LENGTH, UOP, A4OP, A8OP) \
-   { \
+  {                                                        \
       while((uintptr_t)DEST & 0xF && LENGTH) UOP \
    \
       while(LENGTH) { \
-         switch(LENGTH) { \
-            case 3: UOP \
-            case 2: UOP \
-            case 1: UOP \
-               break; \
-            case 7: \
-            case 6: \
-            case 5: \
-            case 4: \
-               A4OP \
-               break; \
-            default: \
-               A8OP \
-               break; \
-         } \
+        switch(LENGTH) {                        \
+          case 3: UOP; EINA_FALLTHROUGH;        \
+          case 2: UOP; EINA_FALLTHROUGH;        \
+          case 1: UOP;                          \
+           break;                               \
+          case 7:                               \
+           EINA_FALLTHROUGH;                    \
+          case 6:                               \
+           EINA_FALLTHROUGH;                    \
+          case 5:                               \
+           EINA_FALLTHROUGH;                    \
+          case 4:                               \
+           A4OP                                 \
+           break;                               \
+          default:                              \
+           A8OP                                 \
+           break;                               \
+        }                                       \
       } \
    }
 
