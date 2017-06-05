@@ -405,7 +405,7 @@ error:
 }
 
 static void
-_monitor()
+_monitor(void)
 {
 #ifndef _WIN32
 #define MAX_EVENTS 1000
@@ -499,7 +499,7 @@ _monitor()
 }
 
 static char *
-_socket_home_get()
+_socket_home_get(void)
 {
    // get possible debug daemon socket directory base
    char *ret = NULL;
@@ -518,7 +518,7 @@ _socket_home_get()
 #define LENGTH_OF_SOCKADDR_UN(s) \
    (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 static int
-_listening_unix_socket_create()
+_listening_unix_socket_create(void)
 {
    char buf[1048];
    struct sockaddr_un socket_unix;
@@ -577,7 +577,7 @@ end:
 #endif
 
 static int
-_listening_tcp_socket_create()
+_listening_tcp_socket_create(void)
 {
    struct sockaddr_in server;
    int curstate = 1;
@@ -610,7 +610,7 @@ err:
 }
 
 static Eina_Bool
-_server_launch()
+_server_launch(void)
 {
 #ifndef _WIN32
    struct epoll_event event = {0};
