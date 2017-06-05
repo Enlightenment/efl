@@ -378,7 +378,7 @@ EAPI int elm_layout_thaw(Evas_Object *obj);
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_text_set(Elm_Layout *obj, const char * part, const char *text);
+EAPI Eina_Bool elm_layout_text_set(Evas_Object *obj, const char * part, const char *text);
 
 /**
  * @brief Get the text set in the given part.
@@ -389,6 +389,6 @@ EAPI Eina_Bool elm_layout_text_set(Elm_Layout *obj, const char * part, const cha
  *
  * @ingroup Elm_Layout
  */
-EAPI const char *elm_layout_text_get(const Elm_Layout *obj, const char * part);
+EAPI const char *elm_layout_text_get(const Evas_Object *obj, const char * part);
 
 #include "elm_layout.eo.legacy.h"
