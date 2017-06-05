@@ -1421,3 +1421,19 @@ ecore_imf_context_prediction_hint_set(Ecore_IMF_Context *ctx, const char *predic
    if (ctx->klass->prediction_hint_set)
      ctx->klass->prediction_hint_set(ctx, prediction_hint);
 }
+
+EAPI void
+ecore_imf_context_mime_type_accept_set(Ecore_IMF_Context *ctx, const char *mime_type)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_mime_type_accept_set");
+        return;
+     }
+
+   if (!mime_type) return;
+
+   if (ctx->klass->mime_type_accept_set)
+     ctx->klass->mime_type_accept_set(ctx, mime_type);
+}

@@ -728,6 +728,7 @@ struct _Ecore_IMF_Context_Class
    void (*bidi_direction_set) (Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction); /**< Set bidirectionality at the cursor position */
    Ecore_IMF_Input_Panel_Keyboard_Mode (*keyboard_mode_get) (Ecore_IMF_Context *ctx); /**< Return the current keyboard mode of the input panel */
    void (*prediction_hint_set) (Ecore_IMF_Context *ctx, const char *prediction_hint); /**< Set the prediction hint to the input panel */
+   void (*mime_type_accept_set) (Ecore_IMF_Context *ctx, const char *mime_type); /**< Set the MIME type to the input panel */
 };
 
 /**
@@ -1915,6 +1916,26 @@ EAPI Ecore_IMF_Input_Panel_Keyboard_Mode ecore_imf_context_keyboard_mode_get(Eco
  * @param[in] prediction_hint The prediction hint string.
  */
 EAPI void                          ecore_imf_context_prediction_hint_set(Ecore_IMF_Context *ctx, const char *prediction_hint);
+
+/**
+ * @ingroup Ecore_IMF_Context_Group
+ * @brief Sets the allowed MIME type to deliver to the input panel.
+ *
+ * @since 1.20.0
+ *
+ * @param[in] ctx An #Ecore_IMF_Context
+ * @param[in] mime_type The allowed MIME type in entry
+ *
+ * Example
+ * @code
+ * const char *mime_type = "text/plain,image/png,application/pdf";
+ * ecore_imf_context_mime_type_accept_set(imf_context, mime_type);
+ * @endcode
+ *
+ * @since_tizen 4.0
+ * @endif
+ */
+EAPI void                         ecore_imf_context_mime_type_accept_set(Ecore_IMF_Context *ctx, const char *mime_type);
 
 /* The following entry points must be exported by each input method module
  */
