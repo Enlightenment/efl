@@ -535,7 +535,7 @@ in this Software without prior written authorization from The Open Group.
          */
 
         if (((c >= '@') && (c <= '_')) || /* those are the one defined in C0 with capital letters */
-             ((c >= 'a') && (c <= 'z')) ||  /* the lowercase symbols (not part of the standard, but usefull */
+             ((c >= 'a') && (c <= 'z')) ||  /* the lowercase symbols (not part of the standard, but useful) */
               c == ' ')
           c &= 0x1F;
         else if (c == '\x7f')
@@ -559,7 +559,7 @@ in this Software without prior written authorization from The Open Group.
      }
    else
      {
-        /* if its not a control code, try to produce a usefull output */
+        /* if its not a control code, try to produce useful output */
         if (!xkb_keysym_to_utf8(keysym, buffer, bytes))
           return 0;
      }
