@@ -13,5 +13,6 @@ void eldbus_test_eldbus_model_method(TCase *tc);
 void eldbus_test_eldbus_model_signal(TCase *tc);
 void eldbus_test_eldbus_object(TCase *tc);
 void eldbus_test_eldbus_message(TCase *tc);
+void eldbus_test_eldbus_signal_handler(TCase *tc);
 
 #endif
