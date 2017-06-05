@@ -1,3 +1,5 @@
+import efl_text_types;
+
 struct Efl.Ui.Text.Interactive.Change_Info {
    [[This structure includes all the information about content changes.
 
@@ -26,7 +28,7 @@ interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
       @property selection_cursors {
          [[The cursors used for selection handling.
 
-           If the cursors are equal (@Efl.Canvas.Text.Cursor.equal), there is
+           If the cursors are equal, there is
            no selection.
 
            You are allowed to retain and modify them. Modifying them modifies
@@ -34,8 +36,8 @@ interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
          ]]
          get {}
          values {
-            start: Efl.Canvas.Text.Cursor; [[The start of the selection]]
-            end: Efl.Canvas.Text.Cursor; [[The end of the selection]]
+            start: ptr(Efl.Canvas.Text.Cursor); [[The start of the selection]]
+            end: ptr(Efl.Canvas.Text.Cursor); [[The end of the selection]]
          }
       }
       @property editable {

@@ -146,7 +146,7 @@ typedef struct _Efl_Canvas_Text_Style             Evas_Textblock_Style;
  * @see evas_object_textblock_cursor_new
  *
  */
-typedef Eo            Evas_Textblock_Cursor;
+typedef struct _Efl_Canvas_Text_Cursor            Evas_Textblock_Cursor;
 
 /**
  * @typedef Evas_Object_Textblock_Node_Format
@@ -841,7 +841,7 @@ EAPI void                                     evas_textblock_cursor_copy(const E
  *  @param obj The textblock to which the new cursor will associate.
  *  @return Returns a new cursor associated with the given textblock object.
  */
-EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_new(const Evas_Object *obj);
+EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_new(Evas_Object *obj);
 
 /**
  * @brief Sets the position of the cursor according to the X and Y coordinates.
@@ -908,7 +908,24 @@ EAPI void evas_object_textblock_valign_set(Evas_Object *obj, double align);
  */
 EAPI double evas_object_textblock_valign_get(const Evas_Object *obj);
 
-#include "canvas/efl_canvas_text_cursor.eo.legacy.h"
+EAPI void evas_textblock_cursor_paragraph_first(Efl_Canvas_Text_Cursor *cur);
+
+EAPI void evas_textblock_cursor_paragraph_last(Efl_Canvas_Text_Cursor *cur);
+
+EAPI int evas_textblock_cursor_compare(const Efl_Canvas_Text_Cursor *cur1, const Efl_Canvas_Text_Cursor *cur2);
+
+EAPI void evas_textblock_cursor_line_char_first(Efl_Canvas_Text_Cursor *cur);
+
+EAPI void evas_textblock_cursor_line_char_last(Efl_Canvas_Text_Cursor *cur);
+
+EAPI void evas_textblock_cursor_pos_set(Efl_Canvas_Text_Cursor *cur, int _pos);
+
+EAPI void evas_textblock_cursor_paragraph_char_first(Efl_Canvas_Text_Cursor *cur);
+
+EAPI void evas_textblock_cursor_paragraph_char_last(Efl_Canvas_Text_Cursor *cur);
+
+EAPI void evas_textblock_cursor_char_delete(Efl_Canvas_Text_Cursor *cur);
+//#include "canvas/efl_canvas_text_cursor.eo.legacy.h"
 #include "canvas/efl_canvas_text.eo.legacy.h"
 /**
  * @}

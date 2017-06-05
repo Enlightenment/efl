@@ -26,7 +26,7 @@
  *
  * @{
  */
-#include "canvas/efl_canvas_text_cursor.eo.h"
+//#include "canvas/efl_canvas_text_cursor.eo.h"
 #include "canvas/efl_canvas_text.eo.h"
 /**
  * @}

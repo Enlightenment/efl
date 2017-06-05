@@ -1,11 +1,60 @@
 struct Efl.Canvas.Text.Style; [[EFL text style data structure]]
 
+enum Efl.Canvas.Text.Cursor.Type
+{
+   [[Text cursor types]]
+   before, [[Cursor type before]]
+   under [[Cursor type under]]
+}
+
 class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal,
 Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
 {
    [[Efl canvas text class]]
    legacy_prefix: evas_object_textblock;
    methods {
+      @property is_empty {
+         [[Whether the object is empty (no text) or not
+
+           @since 1.18
+         ]]
+         get {
+            legacy: null;
+         }
+         values {
+            is_empty: bool; [[$true if empty, $false otherwise]]
+         }
+      }
+      visible_range_get {
+         [[Returns the currently visible range.
+
+           The given $start and $end cursor act like an out-variables here,
+           as these are set to the positions of the start and the end of the
+           visible range in the text, respectively.
+
+           @since 1.18
+         ]]
+         return: bool; [[$true on success, $false otherwise]]
+         params {
+            @in start: ptr(Efl.Canvas.Text.Cursor); [[Range start position]]
+            @in end: ptr(Efl.Canvas.Text.Cursor); [[Range end position]]
+         }
+      }
+      @property style_insets {
+         [[Gets the left, right, top and bottom insets of the text.
+
+           The inset is any applied padding on the text.
+
+           @since 1.18
+         ]]
+         get {}
+         values {
+            l: int; [[Left padding]]
+            r: int; [[Right padding]]
+            t: int; [[Top padding]]
+            b: int; [[Bottom padding]]
+         }
+      }
       @property bidi_delimiters {
          [[BiDi delimiters are used for in-paragraph separation of bidi
            segments. This is useful for example in recipients fields of
@@ -83,15 +132,6 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
             h: int; [[The height of the object.]]
          }
       }
-      @property cursor {
-         [[The object's main cursor.
-
-           @since 1.18
-         ]]
-         get {
-            return: Efl.Canvas.Text.Cursor; [[Text cursor object]]
-         }
-      }
       @property size_native {
          [[The native width and height.
 
@@ -118,33 +158,65 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
             h: int; [[The height returned.]]
          }
       }
-      @property style_insets {
-         [[Gets the left, right, top and bottom insets of the text.
-
-           The inset is any applied padding on the text.
+      range_text_get {
+         [[Returns the text in the range between $cur1 and $cur2.
 
            @since 1.18
          ]]
-         get {}
-         values {
-            l: int; [[Left padding]]
-            r: int; [[Right padding]]
-            t: int; [[Top padding]]
-            b: int; [[Bottom padding]]
+         legacy: null;
+         return: own(ptr(char)); [[The text in the given range]]
+         params {
+            @in cur1: const(ptr(Efl.Canvas.Text.Cursor)); [[Start of range]]
+            @in cur2: const(ptr(Efl.Canvas.Text.Cursor)); [[End of range]]
          }
       }
-      @property is_empty {
-         [[Whether the object is empty (no text) or not
+      range_geometry_get {
+         [[Get the geometry of a range in the text.
 
-           @since 1.18
+           The geometry is represented as rectangles for each of the line
+           segments in the given range [$cur1, $cur2].
+
+           @since 1.19
          ]]
-         get {
-            legacy: null;
+         legacy: null;
+         params {
+             @in cur1: const(ptr(Efl.Canvas.Text.Cursor)); [[Start of range]]
+             @in cur2: const(ptr(Efl.Canvas.Text.Cursor)); [[End of range]]
          }
-         values {
-            is_empty: bool; [[$true if empty, $false otherwise]]
+         return: free(own(iterator<Eina.Rectangle>),
+                         eina_iterator_free); [[Iterator on all geoemtries of
+                     the given range]]
+      }
+      range_simple_geometry_get {
+         [[Get the "simple" geometry of a range.
+
+           The geometry is the geometry in which rectangles in middle lines of
+           range are merged into one big rectangle. This is an optimized
+           version of @.range_geometry_get.
+
+           @since 1.19
+         ]]
+         legacy: null;
+         params {
+             @in cur1: ptr(const(Efl.Canvas.Text.Cursor)); [[Start of range]]
+             @in cur2: ptr(const(Efl.Canvas.Text.Cursor)); [[End of range]]
+         }
+         return: free(own(iterator<Eina.Rectangle>),
+                         eina_iterator_free); [[Iterator on all simple
+                     geometries of the given range]]
+      }
+      range_delete {
+         [[Deletes the range between given cursors.
+
+           This removes all the text in given range [$start,$end].
+         ]]
+         legacy: null;
+         params {
+            @in cur1: ptr(Efl.Canvas.Text.Cursor); [[Range start position]]
+            @in cur2: ptr(Efl.Canvas.Text.Cursor); [[Range end position]]
          }
       }
+      // Obstacles
       obstacle_add {
          [[Add obstacle evas object $eo_obs to be observed during layout
            of text.
@@ -185,6 +257,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
            @since 1.18
          ]]
       }
+      // Annotation
       @property annotation {
          [[A new format for $annotation.
 
@@ -216,8 +289,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          ]]
          legacy: null;
          params {
-              @in start: const(Efl.Canvas.Text.Cursor); [[Start of range]]
-              @in end:   const(Efl.Canvas.Text.Cursor); [[End of range]]
+              @in start: ptr(const(Efl.Canvas.Text.Cursor)); [[Start of range]]
+              @in end:   ptr(const(Efl.Canvas.Text.Cursor)); [[End of range]]
          }
          return: free(own(iterator<ptr(Efl.Canvas.Text.Annotation)>),
                  eina_iterator_free); [[Handle of the Annotation]]
@@ -232,8 +305,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          ]]
          legacy: null;
          params {
-              @in start: Efl.Canvas.Text.Cursor; [[Start of range]]
-              @in end:   Efl.Canvas.Text.Cursor; [[End of range]]
+              @in start: ptr(Efl.Canvas.Text.Cursor); [[Start of range]]
+              @in end:   ptr(Efl.Canvas.Text.Cursor); [[End of range]]
               @in format: string; [[Annotation format]]
          }
          return: ptr(Efl.Canvas.Text.Annotation); [[Handle of inserted annotation]]
@@ -252,79 +325,6 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
                 removed]]
          }
          return: bool; [[$true on success, $false otherwise.]]
-      }
-      range_geometry_get {
-         [[Get the geometry of a range in the text.
-
-           The geometry is represented as rectangles for each of the line
-           segments in the given range [$cur1, $cur2].
-
-           @since 1.19
-         ]]
-         legacy: null;
-         params {
-             @in cur1: const(Efl.Canvas.Text.Cursor); [[Start of range]]
-             @in cur2: const(Efl.Canvas.Text.Cursor); [[End of range]]
-         }
-         return: free(own(iterator<Eina.Rectangle>),
-                         eina_iterator_free); [[Iterator on all geoemtries of
-                     the given range]]
-      }
-      range_simple_geometry_get {
-         [[Get the "simple" geometry of a range.
-
-           The geometry is the geometry in which rectangles in middle lines of
-           range are merged into one big rectangle. This is an optimized
-           version of @.range_geometry_get.
-
-           @since 1.19
-         ]]
-         legacy: null;
-         params {
-             @in cur1: const(Efl.Canvas.Text.Cursor); [[Start of range]]
-             @in cur2: const(Efl.Canvas.Text.Cursor); [[End of range]]
-         }
-         return: free(own(iterator<Eina.Rectangle>),
-                         eina_iterator_free); [[Iterator on all simple
-                     geometries of the given range]]
-      }
-      range_delete {
-         [[Deletes the range between given cursors.
-
-           This removes all the text in given range [$start,$end].
-         ]]
-         legacy: null;
-         params {
-            @in cur1: Efl.Canvas.Text.Cursor; [[Range start position]]
-            @in cur2: Efl.Canvas.Text.Cursor; [[Range end position]]
-         }
-      }
-      visible_range_get {
-         [[Returns the currently visible range.
-
-           The given $start and $end cursor act like an out-variables here,
-           as these are set to the positions of the start and the end of the
-           visible range in the text, respectively.
-
-           @since 1.18
-         ]]
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in start: Efl.Canvas.Text.Cursor; [[Range start position]]
-            @in end: Efl.Canvas.Text.Cursor; [[Range end position]]
-         }
-      }
-      range_text_get {
-         [[Returns the text in the range between $cur1 and $cur2.
-
-           @since 1.18
-         ]]
-         legacy: null;
-         return: own(ptr(char)); [[The text in the given range]]
-         params {
-            @in cur1: const(Efl.Canvas.Text.Cursor); [[Start of range]]
-            @in cur2: const(Efl.Canvas.Text.Cursor); [[End of range]]
-         }
       }
       object_item_geometry_get {
          [[Queries a given object item for its geometry.
@@ -355,11 +355,239 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          params {
              @in annotation: ptr(const(Efl.Canvas.Text.Annotation)); [[Annotation
                  handle to query]]
-             @in start: Efl.Canvas.Text.Cursor; [[Cursor to be set to the start
+             @in start: ptr(Efl.Canvas.Text.Cursor); [[Cursor to be set to the start
              position of the annotation in the text]]
-             @in end: Efl.Canvas.Text.Cursor; [[Cursor to be set to the end
+             @in end: ptr(Efl.Canvas.Text.Cursor); [[Cursor to be set to the end
              position of the annotation in the text]]
          }
+      }
+      // Cursor
+      @property cursor {
+         [[The object's main cursor.
+
+           @since 1.18
+         ]]
+         get {
+            return: ptr(Efl.Canvas.Text.Cursor); [[Text cursor object]]
+         }
+      }
+      @property cursor_position {
+         set { legacy: null; }
+         get { legacy: null; }
+         values {
+            position: int;
+         }
+         keys {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      @property cursor_content {
+         [[The content of the cursor (the character under the cursor)]]
+         get {
+            legacy: null;
+         }
+         values {
+            content: Eina.Unicode; [[The unicode codepoint of the character]]
+         }
+         keys {
+            cur: ptr(const(Efl.Canvas.Text.Cursor));
+         }
+      }
+      @property cursor_geometry {
+         [[Returns the geometry of two cursors ("split cursor"), if logical cursor is
+           between LTR/RTL text, also considering paragraph direction.
+           Upper cursor is shown for the text of the same direction as paragraph,
+           lower cursor - for opposite.
+
+           Split cursor geometry is valid only  in '|' cursor mode.
+           In this case $true is returned and $cx2, $cy2, $cw2, $ch2 are set.
+         ]]
+         get {
+            legacy: null;
+            return: bool; [[ $true if split cursor, $false otherwise.]]
+         }
+         keys {
+            cur: ptr(const(Efl.Canvas.Text.Cursor));
+            ctype: Efl.Canvas.Text.Cursor.Type; [[The type of the cursor.]]
+         }
+         values {
+            cx: int; [[The x of the cursor (or upper cursor)]]
+            cy: int; [[The y of the cursor (or upper cursor)]]
+            cw: int; [[The width of the cursor (or upper cursor)]]
+            ch: int; [[The height of the cursor (or upper cursor)]]
+            cx2: int; [[The x of the lower cursor]]
+            cy2: int; [[The y of the lower cursor]]
+            cw2: int; [[The width of the lower cursor]]
+            ch2: int; [[The height of the lower cursor]]
+         }
+      }
+      @property cursor_object_item_annotation {
+         [[The object-item annotation at the cursor's position.]]
+         get {
+            legacy: null;
+         }
+         values {
+            annotation: ptr(Efl.Canvas.Text.Annotation); [[Annotation]]
+         }
+         keys {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_new {
+         legacy: null;
+         return: ptr(Efl.Canvas.Text.Cursor);
+      }
+      cursor_free {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_equal {
+         legacy: null;
+         params {
+            cur1: ptr(const(Efl.Canvas.Text.Cursor));
+            cur2: ptr(const(Efl.Canvas.Text.Cursor));
+         }
+         return: bool;
+      }
+      cursor_compare {
+         legacy: null;
+         params {
+            cur1: ptr(const(Efl.Canvas.Text.Cursor));
+            cur2: ptr(const(Efl.Canvas.Text.Cursor));
+         }
+         return: int;
+      }
+      cursor_copy {
+         legacy: null;
+         params {
+            dst: ptr(Efl.Canvas.Text.Cursor);
+            src: ptr(const(Efl.Canvas.Text.Cursor));
+         }
+      }
+      cursor_char_next {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_char_prev {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_paragraph_char_first {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_paragraph_char_last {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_word_start {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_word_end {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_line_char_first {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_line_char_last {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_paragraph_first {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_paragraph_last {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_paragraph_next {
+         [[Advances to the start of the next text node]]
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_paragraph_prev {
+         [[Advances to the end of the previous text node]]
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_line_jump_by {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+            by: int;
+         }
+      }
+      cursor_coord_set {
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+            @in x: int; [[X coord to set by.]]
+            @in y: int; [[Y coord to set by.]]
+         }
+      }
+      cursor_text_insert {
+         [[Adds text to the current cursor position and set the cursor to
+           *after* the start of the text just added.
+         ]]
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+            @in text: string; [[Text to append (UTF-8 format).]]
+         }
+         return: int; [[Length of the appended text.]]
+      }
+      cursor_char_delete {
+         [[Deletes a single character from position pointed by given cursor.]]
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+         }
+      }
+      cursor_object_item_insert {
+         [[Inserts a object item at specified position.
+
+           This adds a placeholder to be queried by higher-level code,
+           which in turn place graphics on top of it. It essentially places an
+           OBJECT REPLACEMENT CHARACTER and set a special annotation to it.
+         ]]
+         legacy: null;
+         params {
+            cur: ptr(Efl.Canvas.Text.Cursor);
+            @in format: string; [[Format of the inserted item.
+            See Format styles.]]
+         }
+         return: ptr(Efl.Canvas.Text.Annotation); [[The annotation handle of the
+         inserted item.]]
       }
    }
    implements {
@@ -411,7 +639,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
       Efl.Text.Format.format_replacement_char { get; set; }
    }
    events {
-      changed; [[Called when the content (text or annotations) changed.]]
+      cursor,changed;
+      changed;
       style_insets,changed; [[Called when the property @.style_insets changed.]]
    }
 }

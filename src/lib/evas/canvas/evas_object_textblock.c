@@ -559,6 +559,7 @@ struct _Efl_Canvas_Text_Cursor
    Eina_Bool                        changed : 1;
 };
 
+//typedef struct _Efl_Canvas_Text_Cursor Efl_Canvas_Text_Cursor_Data;
 typedef struct _Efl_Canvas_Text_Cursor Efl_Canvas_Text_Cursor_Data;
 
 struct _Efl_Canvas_Text_Annotation
@@ -578,7 +579,7 @@ struct _Evas_Object_Textblock
 {
    Evas_Textblock_Style               *style;
    Eina_List                          *styles;
-   Eo                                 *cursor;
+   Efl_Canvas_Text_Cursor             *cursor;
    Eina_List                          *cursors;
    Evas_Object_Textblock_Node_Text    *text_nodes;
    Evas_Object_Textblock_Node_Format  *format_nodes;
@@ -732,7 +733,6 @@ static const Evas_Object_Func object_func =
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ); \
    return (x); \
    MAGIC_CHECK_END();
-
 static Eina_Bool _evas_textblock_cursor_is_at_the_end(const Efl_Canvas_Text_Cursor_Data *cur);
 static void _evas_textblock_node_text_remove(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Text *n);
 static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_before_or_at_pos_get(const Efl_Canvas_Text_Cursor_Data *cur);
@@ -747,18 +747,25 @@ static void _evas_textblock_cursors_set_node(Efl_Canvas_Text_Data *o, const Evas
 static void _evas_textblock_annotations_clear(Efl_Canvas_Text_Data *o);
 static void _evas_textblock_annotation_remove(Efl_Canvas_Text_Data *o, Efl_Canvas_Text_Annotation *an, Eina_Bool remove_nodes);
 
-static void _evas_textblock_cursor_copy(Efl_Canvas_Text_Cursor_Data *dst, const Efl_Canvas_Text_Cursor_Data *src);
 static Eina_Bool _evas_textblock_cursor_format_is_visible_get(const Efl_Canvas_Text_Cursor_Data *cur);
 static void _evas_textblock_cursor_at_format_set(Efl_Canvas_Text_Cursor_Data *cur, const Evas_Object_Textblock_Node_Format *fmt);
-static void _evas_textblock_cursor_paragraph_char_last(Efl_Canvas_Text_Cursor_Data *cur);
 static void _evas_textblock_cursor_init(Efl_Canvas_Text_Cursor_Data *cur, const Evas_Object *tb);
-static int _efl_canvas_text_cursor_text_append(Efl_Canvas_Text_Cursor_Data *cur, const char *text);
 static Evas_Filter_Program *_format_filter_program_get(Efl_Canvas_Text_Data *o, Evas_Object_Textblock_Format *fmt);
-
 #ifdef HAVE_HYPHEN
 /* Hyphenation */
 #include "evas_textblock_hyphenation.x"
 #endif
+
+static int _efl_canvas_text_cursor_text_append(Efl_Canvas_Text_Cursor_Data *cur, const char *text);
+static Eina_Bool _evas_textblock_cursor_format_append(Efl_Canvas_Text_Cursor *cur, const char *format, Evas_Object_Textblock_Node_Format **_fnode, Eina_Bool is_item);
+EAPI Eina_Bool evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur);
+static void _evas_textblock_cursor_init(Efl_Canvas_Text_Cursor_Data *cur, const Evas_Object *tb);
+static Eina_Bool _evas_textblock_cursor_format_is_visible_get(const Efl_Canvas_Text_Cursor *cur);
+static void _find_layout_item_line_match(Evas_Object *eo_obj, Evas_Object_Textblock_Node_Text *n, size_t pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr);
+static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_at_pos_get(const Efl_Canvas_Text_Cursor *cur);
+static int _evas_textblock_cursor_text_prepend(Efl_Canvas_Text_Cursor *cur, const char *_text);
+EAPI int evas_textblock_cursor_compare(const Efl_Canvas_Text_Cursor *cur1, const Efl_Canvas_Text_Cursor *cur2);
+static void _evas_textblock_cursor_copy(Efl_Canvas_Text_Cursor *dst, const Efl_Canvas_Text_Cursor *src);
 
 /** selection iterator */
 /**
@@ -7313,13 +7320,12 @@ evas_textblock_string_escape_get(const char *string, int *len_ret)
 }
 
 static void
-_cursor_emit_if_changed(Efl_Canvas_Text_Cursor *cur_obj)
+_cursor_emit_if_changed(Efl_Canvas_Text_Cursor *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (cur->changed)
      {
         cur->changed = EINA_FALSE;
-        efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+        efl_event_callback_legacy_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
      }
 }
 
@@ -7367,16 +7373,16 @@ evas_object_textblock_text_markup_set(Eo *eo_obj, const char *text)
 
    _nodes_clear(eo_obj);
 
-   Efl_Canvas_Text_Cursor_Data *co = efl_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
+   Efl_Canvas_Text_Cursor_Data *co = o->cursor;
    co->node = _evas_textblock_node_text_new();
    o->text_nodes = _NODE_TEXT(eina_inlist_append(
             EINA_INLIST_GET(o->text_nodes),
             EINA_INLIST_GET(co->node)));
 
-   efl_event_freeze(o->cursor);
    evas_textblock_cursor_paragraph_first(o->cursor);
 
    evas_object_textblock_text_markup_prepend(o->cursor, text);
+   efl_event_freeze(eo_obj);
    /* Point all the cursors to the starrt */
      {
         Eina_List *l;
@@ -7385,26 +7391,19 @@ evas_object_textblock_text_markup_set(Eo *eo_obj, const char *text)
         evas_textblock_cursor_paragraph_first(o->cursor);
         EINA_LIST_FOREACH(o->cursors, l, data)
           {
-             efl_event_freeze(data);
              evas_textblock_cursor_paragraph_first(data);
           }
 
-        EINA_LIST_FOREACH(o->cursors, l, data)
-          {
-             efl_event_thaw(data);
-             efl_event_callback_legacy_call(data, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
-          }
      }
-   efl_event_thaw(o->cursor);
-   efl_event_callback_legacy_call(o->cursor, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_thaw(eo_obj);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 
     o->markup_text = text;
 }
 
 EAPI void
-evas_object_textblock_text_markup_prepend(Efl_Canvas_Text_Cursor *cur_obj, const char *text)
+evas_object_textblock_text_markup_prepend(Efl_Canvas_Text_Cursor *cur, const char *text)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return;
    Evas_Object *eo_obj = cur->obj;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -7444,19 +7443,19 @@ evas_object_textblock_text_markup_prepend(Efl_Canvas_Text_Cursor *cur_obj, const
                          {
                             memcpy(ttag, tag_start, ttag_len);
                             ttag[ttag_len] = 0;
-                            evas_textblock_cursor_format_prepend(cur_obj, ttag);
+                            evas_textblock_cursor_format_prepend(cur, ttag);
                             free(ttag);
                          }
                        tag_start = tag_end = NULL;
                     }
                   else if (esc_end)
                     {
-                       _prepend_escaped_char(cur_obj, esc_start, esc_end + 1);
+                       _prepend_escaped_char(cur, esc_start, esc_end + 1);
                        esc_start = esc_end = NULL;
                     }
                   else if (*p == 0)
                     {
-                       _prepend_text_run(cur_obj, s, p);
+                       _prepend_text_run(cur, s, p);
                        s = NULL;
                     }
                   if (*p == 0)
@@ -7470,7 +7469,7 @@ evas_object_textblock_text_markup_prepend(Efl_Canvas_Text_Cursor *cur_obj, const
                         * the start of the tag */
                        tag_start = p;
                        tag_end = NULL;
-                       _prepend_text_run(cur_obj, s, p);
+                       _prepend_text_run(cur, s, p);
                        s = NULL;
                     }
                }
@@ -7490,7 +7489,7 @@ evas_object_textblock_text_markup_prepend(Efl_Canvas_Text_Cursor *cur_obj, const
                         * the start of the escape sequence */
                        esc_start = p;
                        esc_end = NULL;
-                       _prepend_text_run(cur_obj, s, p);
+                       _prepend_text_run(cur, s, p);
                        s = NULL;
                     }
                }
@@ -7515,7 +7514,7 @@ evas_object_textblock_text_markup_prepend(Efl_Canvas_Text_Cursor *cur_obj, const
                   /*FIXME: currently just remove them, maybe do something
                    * fancier in the future, atm it breaks if this char
                    * is inside <> */
-                  _prepend_text_run(cur_obj, s, p);
+                  _prepend_text_run(cur, s, p);
                   /* it's also advanced later in this loop need +text_len
                      in total*/
                   p += text_len - 1;
@@ -8155,7 +8154,7 @@ _evas_textblock_cursor_nodes_merge(Efl_Canvas_Text_Cursor_Data *cur)
    _evas_textblock_nodes_merge(o, cur->node);
    _evas_textblock_cursors_update_offset(cur, nnode, 0, len);
    _evas_textblock_cursors_set_node(o, nnode, cur->node);
-   Efl_Canvas_Text_Cursor_Data *co = efl_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
+   Efl_Canvas_Text_Cursor_Data *co = o->cursor;
    if (nnode == co->node)
      {
         co->node = cur->node;
@@ -8171,7 +8170,7 @@ _evas_textblock_cursor_nodes_merge(Efl_Canvas_Text_Cursor_Data *cur)
  * @return the format node at the specific position or NULL if not found.
  */
 static Evas_Object_Textblock_Node_Format *
-_evas_textblock_cursor_node_format_at_pos_get(const Efl_Canvas_Text_Cursor_Data *cur)
+_evas_textblock_cursor_node_format_at_pos_get(const Efl_Canvas_Text_Cursor *cur)
 {
    Evas_Object_Textblock_Node_Format *node;
    Evas_Object_Textblock_Node_Format *itr;
@@ -8337,23 +8336,6 @@ _find_layout_item_match(const Efl_Canvas_Text_Cursor_Data *cur, Evas_Object_Text
    return previous_format;
 }
 
-EOLIAN static Efl_Canvas_Text_Cursor *
-_efl_canvas_text_cursor_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
-{
-   return o->cursor;
-}
-
-EOLIAN static Efl_Object *
-_efl_canvas_text_cursor_efl_object_finalize(Eo *obj, Efl_Canvas_Text_Cursor_Data *pd)
-{
-   if (!pd->obj)
-     {
-        return NULL;
-     }
-
-   return obj;
-}
-
 static void
 _evas_textblock_cursor_init(Efl_Canvas_Text_Cursor_Data *cur, const Evas_Object *tb)
 {
@@ -8364,48 +8346,20 @@ _evas_textblock_cursor_init(Efl_Canvas_Text_Cursor_Data *cur, const Evas_Object 
    cur->pos = 0;
 }
 
-EOLIAN static void
-_efl_canvas_text_cursor_text_object_set(Eo *obj, Efl_Canvas_Text_Cursor_Data *pd, const Evas_Object *tb)
-{
-   if (efl_finalized_get(obj))
-     {
-        ERR("Can't change the cursor's textblock after creation.");
-        return;
-     }
-
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(tb, MY_CLASS);
-   _evas_textblock_cursor_init(pd, tb);
-   o->cursors = eina_list_append(o->cursors, obj);
-}
-
-EOLIAN static const Evas_Object *
-_efl_canvas_text_cursor_text_object_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Cursor_Data *pd)
-{
-   return pd->obj;
-}
-
 EAPI Efl_Canvas_Text_Cursor *
-evas_object_textblock_cursor_new(const Eo *eo_obj)
+evas_object_textblock_cursor_new(Eo *eo_obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, NULL);
-   // XXX; Discarding const here
-   return efl_add(EFL_CANVAS_TEXT_CURSOR_CLASS, (Eo *) eo_obj,
-         efl_canvas_text_cursor_text_object_set(efl_added, eo_obj));
-}
-
-EOLIAN static void
-_efl_canvas_text_cursor_efl_object_destructor(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
-{
-   efl_destructor(efl_super(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS));
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
-   if (cur_obj == o->cursor) return;
-   o->cursors = eina_list_remove(o->cursors, cur_obj);
+   return efl_canvas_text_cursor_new(eo_obj);
 }
 
 EAPI void
 evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
 {
-   efl_del(cur);
+   Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
+   if (cur == o->cursor) return;
+   o->cursors = eina_list_remove(o->cursors, cur);
+   free(cur);
 }
 
 EAPI Eina_Bool
@@ -8419,9 +8373,8 @@ _evas_textblock_cursor_is_format(const Efl_Canvas_Text_Cursor_Data *cur)
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur_obj)
+evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return _evas_textblock_cursor_is_format(cur);
 }
 
@@ -8579,8 +8532,9 @@ found:
    _evas_textblock_changed(o, eo_obj);
 }
 
-static void
-_canvas_text_cursor_paragraph_first(Efl_Canvas_Text_Cursor_Data *cur)
+//FIXME: add to legacy header
+EAPI void
+evas_textblock_cursor_paragraph_first(Efl_Canvas_Text_Cursor *cur)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -8590,15 +8544,15 @@ _canvas_text_cursor_paragraph_first(Efl_Canvas_Text_Cursor_Data *cur)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_paragraph_first(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_paragraph_first(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
-   _canvas_text_cursor_paragraph_first(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_paragraph_first(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
-
-static void
-_canvas_text_cursor_paragraph_last(Efl_Canvas_Text_Cursor_Data *cur)
+//FIXME: add to legacy header
+EAPI void
+evas_textblock_cursor_paragraph_last(Efl_Canvas_Text_Cursor *cur)
 {
    Evas_Object_Textblock_Node_Text *node;
 
@@ -8611,7 +8565,7 @@ _canvas_text_cursor_paragraph_last(Efl_Canvas_Text_Cursor_Data *cur)
         node = _NODE_TEXT(EINA_INLIST_GET(node)->last);
         cur->node = node;
         cur->pos = 0;
-        _evas_textblock_cursor_paragraph_char_last(cur);
+        evas_textblock_cursor_paragraph_char_last(cur);
      }
    else
      {
@@ -8621,10 +8575,10 @@ _canvas_text_cursor_paragraph_last(Efl_Canvas_Text_Cursor_Data *cur)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_paragraph_last(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_paragraph_last(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
-   _canvas_text_cursor_paragraph_last(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_paragraph_last(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
 static Eina_Bool
@@ -8652,18 +8606,17 @@ _evas_textblock_cursor_paragraph_next(Efl_Canvas_Text_Cursor_Data *cur)
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_paragraph_next(Efl_Canvas_Text_Cursor *obj)
+evas_textblock_cursor_paragraph_next(Efl_Canvas_Text_Cursor *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
    return _evas_textblock_cursor_paragraph_next(cur);
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_paragraph_next(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_paragraph_next(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Evas_Textblock_Cursor *cur)
 {
-   _evas_textblock_cursor_paragraph_next(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_paragraph_next(cur);
+   efl_event_callback_legacy_call(obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
 static Eina_Bool
@@ -8687,26 +8640,27 @@ _evas_textblock_cursor_paragraph_prev(Efl_Canvas_Text_Cursor_Data *cur)
         if (pnode)
           {
              cur->node = pnode;
-             _evas_textblock_cursor_paragraph_char_last(cur);
+             evas_textblock_cursor_paragraph_char_last(cur);
              return EINA_TRUE;
           }
      }
    return EINA_FALSE;
 }
 
+
 EAPI Eina_Bool
-evas_textblock_cursor_paragraph_prev(Efl_Canvas_Text_Cursor *obj)
+evas_textblock_cursor_paragraph_prev(Efl_Canvas_Text_Cursor_Data *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
    return _evas_textblock_cursor_paragraph_prev(cur);
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_paragraph_prev(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_paragraph_prev(Eo *obj EINA_UNUSED,
+      Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
    _evas_textblock_cursor_paragraph_prev(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
 EAPI void
@@ -8716,11 +8670,10 @@ evas_textblock_cursor_set_at_format(Evas_Textblock_Cursor *cur, const Evas_Objec
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_format_next(Evas_Textblock_Cursor *cur_obj)
+evas_textblock_cursor_format_next(Evas_Textblock_Cursor *cur)
 {
    Evas_Object_Textblock_Node_Format *node;
 
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -8756,15 +8709,14 @@ evas_textblock_cursor_format_next(Evas_Textblock_Cursor *cur_obj)
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur_obj)
+evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
 {
    const Evas_Object_Textblock_Node_Format *node;
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
-   node = evas_textblock_cursor_format_get(cur_obj);
+   node = evas_textblock_cursor_format_get(cur);
    if (!node)
      {
         node = _evas_textblock_cursor_node_format_before_or_at_pos_get(cur);
@@ -8799,9 +8751,8 @@ evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur_obj)
    (breaks[i] == WORDBREAK_BREAK)
 
 EAPI Eina_Bool
-evas_textblock_cursor_word_start(Efl_Canvas_Text_Cursor *cur_obj)
+evas_textblock_cursor_word_start(Efl_Canvas_Text_Cursor *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
    const Eina_Unicode *text;
    size_t i;
@@ -8836,7 +8787,7 @@ evas_textblock_cursor_word_start(Efl_Canvas_Text_Cursor *cur_obj)
                   len = eina_ustrbuf_length_get(cur->node->unicode);
                   cur->pos = len - 1;
                   free(breaks);
-                  return evas_textblock_cursor_word_start(cur_obj);
+                  return evas_textblock_cursor_word_start(cur);
                }
              else
                {
@@ -8860,16 +8811,15 @@ evas_textblock_cursor_word_start(Efl_Canvas_Text_Cursor *cur_obj)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_word_start(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur EINA_UNUSED)
+_efl_canvas_text_cursor_word_start(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur EINA_UNUSED)
 {
-   evas_textblock_cursor_word_start(cur_obj);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_word_start(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_word_end(Efl_Canvas_Text_Cursor *cur_obj)
+evas_textblock_cursor_word_end(Efl_Canvas_Text_Cursor *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
    const Eina_Unicode *text;
    size_t i;
@@ -8902,7 +8852,7 @@ evas_textblock_cursor_word_end(Efl_Canvas_Text_Cursor *cur_obj)
              cur->node = nnode;
              cur->pos = 0;
              free(breaks);
-             return evas_textblock_cursor_word_end(cur_obj);
+             return evas_textblock_cursor_word_end(cur);
           }
      }
 
@@ -8922,14 +8872,14 @@ evas_textblock_cursor_word_end(Efl_Canvas_Text_Cursor *cur_obj)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_word_end(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur EINA_UNUSED)
+_efl_canvas_text_cursor_word_end(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur EINA_UNUSED)
 {
-   evas_textblock_cursor_word_end(cur_obj);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_word_end(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
-static Eina_Bool
-_evas_textblock_cursor_char_next(Efl_Canvas_Text_Cursor_Data *cur)
+EAPI Eina_Bool
+evas_textblock_cursor_char_next(Efl_Canvas_Text_Cursor_Data *cur)
 {
    int ind;
    const Eina_Unicode *text;
@@ -8968,19 +8918,11 @@ _evas_textblock_cursor_char_next(Efl_Canvas_Text_Cursor_Data *cur)
      }
 }
 
-EAPI Eina_Bool
-evas_textblock_cursor_char_next(Efl_Canvas_Text_Cursor *obj)
-{
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   if (!cur) return EINA_FALSE;
-   return _evas_textblock_cursor_char_next(cur);
-}
-
 EOLIAN static void
-_efl_canvas_text_cursor_char_next(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_char_next(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
-   _evas_textblock_cursor_char_next(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_char_next(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
 static Eina_Bool
@@ -8995,26 +8937,25 @@ _evas_textblock_cursor_char_prev(Efl_Canvas_Text_Cursor_Data *cur)
         cur->pos--;
         return EINA_TRUE;
      }
-   return _evas_textblock_cursor_paragraph_prev(cur);
+   return evas_textblock_cursor_paragraph_prev(cur);
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_char_prev(Efl_Canvas_Text_Cursor *obj)
+evas_textblock_cursor_char_prev(Efl_Canvas_Text_Cursor *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
    return _evas_textblock_cursor_char_prev(cur);
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_char_prev(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_char_prev(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
    _evas_textblock_cursor_char_prev(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
-static void
-_evas_textblock_cursor_paragraph_char_first(Efl_Canvas_Text_Cursor_Data *cur)
+EAPI void
+evas_textblock_cursor_paragraph_char_first(Efl_Canvas_Text_Cursor_Data *cur)
 {
    if (!cur) return;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
@@ -9023,14 +8964,14 @@ _evas_textblock_cursor_paragraph_char_first(Efl_Canvas_Text_Cursor_Data *cur)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_paragraph_char_first(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_paragraph_char_first(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
-   _evas_textblock_cursor_paragraph_char_first(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_paragraph_char_first(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
-static void
-_evas_textblock_cursor_paragraph_char_last(Efl_Canvas_Text_Cursor_Data *cur)
+EAPI void
+evas_textblock_cursor_paragraph_char_last(Efl_Canvas_Text_Cursor_Data *cur)
 {
    int ind;
 
@@ -9051,10 +8992,10 @@ _evas_textblock_cursor_paragraph_char_last(Efl_Canvas_Text_Cursor_Data *cur)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_paragraph_char_last(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
-   _evas_textblock_cursor_paragraph_char_last(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_paragraph_char_last(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
 static void
@@ -9084,13 +9025,15 @@ _cursor_line_first_char_get(Evas_Object_Textblock_Line *ln,
      }
 }
 
-EOLIAN static void
-_efl_canvas_text_cursor_line_char_first(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+EAPI void
+evas_textblock_cursor_line_char_first(Efl_Canvas_Text_Cursor *cur)
 {
    Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL;
-
+   if (!cur) return;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+
    evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node);
    Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
@@ -9103,11 +9046,10 @@ _efl_canvas_text_cursor_line_char_first(Evas_Textblock_Cursor *cur_obj, Efl_Canv
    if (!ln) return;
 
    _cursor_line_first_char_get(ln, cur, o);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
-static void
-_evas_textblock_cursor_line_char_last(Efl_Canvas_Text_Cursor_Data *cur)
+EAPI void
+evas_textblock_cursor_line_char_last(Efl_Canvas_Text_Cursor_Data *cur)
 {
    Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL;
@@ -9155,10 +9097,17 @@ _evas_textblock_cursor_line_char_last(Efl_Canvas_Text_Cursor_Data *cur)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_line_char_last(Evas_Textblock_Cursor *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_line_char_last(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
-   _evas_textblock_cursor_line_char_last(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_line_char_last(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
+}
+
+EOLIAN static void
+_efl_canvas_text_cursor_line_char_first(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
+{
+   evas_textblock_cursor_line_char_first(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
 /**
@@ -9338,6 +9287,7 @@ _evas_textblock_node_format_remove_matching(Efl_Canvas_Text_Data *o,
    while (fmt && (offset == 0) && (fmt->text_node == tnode));
    eina_list_free(formats);
 }
+
 /**
  * @internal
  * Add the offset (may be negative) to the first node after fmt which is
@@ -9600,16 +9550,16 @@ _evas_textblock_node_format_pos_get(const Evas_Object_Textblock_Node_Format *fmt
 }
 
 EOLIAN static int
-_efl_canvas_text_cursor_position_get(Eo *cur_obj EINA_UNUSED, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_position_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
    Evas_Object_Textblock_Node_Text *n;
    size_t npos = 0;
 
    if (!cur) return -1;
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   if (cur->obj != eo_obj) return -1;
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, 0);
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
    n = o->text_nodes;
    while (n != cur->node)
      {
@@ -9619,8 +9569,16 @@ _efl_canvas_text_cursor_position_get(Eo *cur_obj EINA_UNUSED, Efl_Canvas_Text_Cu
    return npos + cur->pos;
 }
 
-static void
-_evas_textblock_cursor_pos_set(Efl_Canvas_Text_Cursor_Data *cur, int _pos)
+EAPI int
+evas_textblock_cursor_pos_get(const Efl_Canvas_Text_Cursor *cur)
+{
+   if (!cur) return -1;
+   return efl_canvas_text_cursor_position_get(cur->obj,
+         (Efl_Canvas_Text_Cursor *) cur);
+}
+
+EAPI void
+evas_textblock_cursor_pos_set(Efl_Canvas_Text_Cursor_Data *cur, int _pos)
 {
    Evas_Object_Textblock_Node_Text *n;
    size_t pos;
@@ -9666,18 +9624,17 @@ _evas_textblock_cursor_pos_set(Efl_Canvas_Text_Cursor_Data *cur, int _pos)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_position_set(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur, int _pos)
+_efl_canvas_text_cursor_position_set(Eo *cur_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur, int _pos)
 {
-   _evas_textblock_cursor_pos_set(cur, _pos);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_pos_set(cur, _pos);
+   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur_obj, int line)
+evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 {
    Evas_Object_Textblock_Line *ln;
 
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -9695,55 +9652,54 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur_obj, int line)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_line_jump_by(Eo *c, Efl_Canvas_Text_Cursor_Data *pd EINA_UNUSED, int by)
+_efl_canvas_text_cursor_line_jump_by(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur EINA_UNUSED, int by)
 {
    int ln;
 
-   ln = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL) + by;
-   Evas_Object *o = (Eo *) efl_canvas_text_cursor_text_object_get(c);
+   ln = evas_textblock_cursor_line_geometry_get(cur, NULL, NULL, NULL, NULL) + by;
    Evas_Coord cx, cw;
    Evas_Coord lx, ly, lw, lh;
    int last;
 
-   evas_textblock_cursor_geometry_get(c, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
+   evas_textblock_cursor_geometry_get(cur, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
    cx += (cw / 2);
-   evas_textblock_cursor_paragraph_last(c);
-   last = evas_textblock_cursor_line_geometry_get(c, NULL, NULL, NULL, NULL);
+   evas_textblock_cursor_paragraph_last(cur);
+   last = evas_textblock_cursor_line_geometry_get(cur, NULL, NULL, NULL, NULL);
 
    if (ln < 0)
      {
-        evas_textblock_cursor_paragraph_first(c);
+        evas_textblock_cursor_paragraph_first(cur);
         return;
      }
    if (ln > last)
      {
-        evas_textblock_cursor_paragraph_last(c);
+        evas_textblock_cursor_paragraph_last(cur);
         return;
      }
 
-   if (!evas_object_textblock_line_number_geometry_get(o, ln, &lx, &ly, &lw, &lh))
+   if (!evas_object_textblock_line_number_geometry_get(cur->obj, ln, &lx, &ly, &lw, &lh))
      return;
-   if (evas_textblock_cursor_char_coord_set(c, cx, ly + (lh / 2)))
+   if (evas_textblock_cursor_char_coord_set(cur, cx, ly + (lh / 2)))
      return;
-   evas_textblock_cursor_line_set(c, ln);
+   evas_textblock_cursor_line_set(cur, ln);
    if (cx < (lx + (lw / 2)))
      {
-        if (ln == last) evas_textblock_cursor_paragraph_last(c);
-        evas_textblock_cursor_line_char_first(c);
+        if (ln == last) evas_textblock_cursor_paragraph_last(cur);
+        evas_textblock_cursor_line_char_first(cur);
      }
    else
      {
         if (ln == last)
-	   evas_textblock_cursor_paragraph_last(c);
+	   evas_textblock_cursor_paragraph_last(cur);
         else
-	   evas_textblock_cursor_line_char_last(c);
+	   evas_textblock_cursor_line_char_last(cur);
      }
 
-   efl_event_callback_legacy_call(c, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
-static int
-_evas_textblock_cursor_compare(const Efl_Canvas_Text_Cursor_Data *cur1,
+EAPI int
+evas_textblock_cursor_compare(const Efl_Canvas_Text_Cursor_Data *cur1,
       const Efl_Canvas_Text_Cursor_Data *cur2)
 {
    Eina_Inlist *l1, *l2;
@@ -9772,21 +9728,19 @@ _evas_textblock_cursor_compare(const Efl_Canvas_Text_Cursor_Data *cur1,
 }
 
 EOLIAN static int
-_efl_canvas_text_cursor_compare(const Eo *cur_obj EINA_UNUSED, Efl_Canvas_Text_Cursor_Data *cur, const Efl_Canvas_Text_Cursor *cur2_obj)
+_efl_canvas_text_cursor_compare(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
+      const Efl_Canvas_Text_Cursor *cur1, const Efl_Canvas_Text_Cursor *cur2)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur1->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   Efl_Canvas_Text_Cursor_Data *cur1 = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   Efl_Canvas_Text_Cursor_Data *cur2 = efl_data_scope_get(cur2_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   return _evas_textblock_cursor_compare(cur1, cur2);
+   return evas_textblock_cursor_compare(cur1, cur2);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_text_cursor_equal(const Eo *cur_obj EINA_UNUSED, Efl_Canvas_Text_Cursor_Data *cur, const Efl_Canvas_Text_Cursor *cur2_obj)
+_efl_canvas_text_cursor_equal(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const Efl_Canvas_Text_Cursor *cur, const Efl_Canvas_Text_Cursor *cur2)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   Efl_Canvas_Text_Cursor_Data *cur2 = efl_data_scope_get(cur2_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return ((cur->node == cur2->node) && (cur->pos == cur2->pos));
 }
 
@@ -9794,12 +9748,11 @@ EAPI void
 evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur_src, Efl_Canvas_Text_Cursor *cur_dest)
 {
    if (!cur_src || !cur_dest) return;
-   efl_canvas_text_cursor_copy(cur_dest, cur_src);
+   efl_canvas_text_cursor_copy(cur_src->obj, cur_dest, cur_src);
 }
 
 static void
-_evas_textblock_cursor_copy(Efl_Canvas_Text_Cursor_Data *dst,
-      const Efl_Canvas_Text_Cursor_Data *src)
+_evas_textblock_cursor_copy(Evas_Textblock_Cursor *dst, const Efl_Canvas_Text_Cursor *src)
 {
    if (!src) return;
    if (!dst) return;
@@ -9813,15 +9766,13 @@ _evas_textblock_cursor_copy(Efl_Canvas_Text_Cursor_Data *dst,
 }
 
 static EOLIAN void
-_efl_canvas_text_cursor_copy(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur,
-      const Efl_Canvas_Text_Cursor *src_obj)
+_efl_canvas_text_cursor_copy(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
+      Efl_Canvas_Text_Cursor *dst, const Efl_Canvas_Text_Cursor *src)
 {
-   Efl_Canvas_Text_Cursor_Data *src = efl_data_scope_get(src_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-
-   if (!efl_canvas_text_cursor_equal(cur_obj, src_obj))
+   if (!efl_canvas_text_cursor_equal(obj, dst, src))
      {
-        _evas_textblock_cursor_copy(cur, src);
-        efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+        _evas_textblock_cursor_copy(dst, src);
+        efl_event_callback_legacy_call(obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
      }
 }
 
@@ -9965,8 +9916,8 @@ _evas_textblock_cursors_set_node(Efl_Canvas_Text_Data *o,
       Evas_Object_Textblock_Node_Text *new_node)
 {
    Eina_List *l;
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   Efl_Canvas_Text_Cursor *data_obj;
+   Efl_Canvas_Text_Cursor_Data *cur = o->cursor;
+   Efl_Canvas_Text_Cursor_Data *data;
 
    if (n == cur->node)
      {
@@ -9974,10 +9925,8 @@ _evas_textblock_cursors_set_node(Efl_Canvas_Text_Data *o,
         cur->node = new_node;
         cur->changed = EINA_TRUE;
      }
-   EINA_LIST_FOREACH(o->cursors, l, data_obj)
+   EINA_LIST_FOREACH(o->cursors, l, data)
      {
-        Efl_Canvas_Text_Cursor_Data *data =
-           efl_data_scope_get(data_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
         if (n == data->node)
           {
              data->pos = 0;
@@ -10027,19 +9976,17 @@ _evas_textblock_cursors_update_offset(const Efl_Canvas_Text_Cursor_Data *cur,
       size_t start, int offset)
 {
    Eina_List *l;
-   Efl_Canvas_Text_Cursor *ocur_obj;
    Efl_Canvas_Text_Cursor_Data *ocur;
    Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
 
-   ocur = efl_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
+   ocur = o->cursor;
    if (cur != ocur)
      {
         _cursor_update_offset(ocur, o, n, start, offset);
      }
 
-   EINA_LIST_FOREACH(o->cursors, l, ocur_obj)
+   EINA_LIST_FOREACH(o->cursors, l, ocur)
      {
-        ocur = efl_data_scope_get(ocur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
         if (ocur != cur)
           {
              _cursor_update_offset(ocur, o, n, start, offset);
@@ -10070,6 +10017,7 @@ _evas_textblock_changed(Efl_Canvas_Text_Data *o, Evas_Object *eo_obj)
         o->markup_text = NULL;
      }
 
+   // FIXME: emit ONCE after this following checks
    _cursor_emit_if_changed(o->cursor);
    EINA_LIST_FOREACH(o->cursors, l, data_obj)
      {
@@ -10162,16 +10110,15 @@ _evas_textblock_cursor_text_append(Efl_Canvas_Text_Cursor_Data *cur, const char 
    n->dirty = EINA_TRUE;
    free(text);
 
-   main_cur = efl_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
+   main_cur = o->cursor;
    if (!main_cur->node)
       main_cur->node = o->text_nodes;
    return len;
 }
 
 EAPI int
-evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur_obj, const char *_text)
+evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return _evas_textblock_cursor_text_append(cur, _text);
 }
 
@@ -10190,18 +10137,18 @@ _evas_textblock_cursor_text_prepend(Efl_Canvas_Text_Cursor_Data *cur, const char
 }
 
 EAPI int
-evas_textblock_cursor_text_prepend(Efl_Canvas_Text_Cursor *cur_obj, const char *_text)
+evas_textblock_cursor_text_prepend(Efl_Canvas_Text_Cursor *cur, const char *_text)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return _evas_textblock_cursor_text_prepend(cur, _text);
 }
 
 EOLIAN static int
-_efl_canvas_text_cursor_text_insert(Eo *cur_obj,
-      Efl_Canvas_Text_Cursor_Data *cur, const char *_text)
+_efl_canvas_text_cursor_text_insert(Eo *eo_obj,
+      Efl_Canvas_Text_Data *o EINA_UNUSED,
+      Efl_Canvas_Text_Cursor *cur, const char *_text)
 {
    int len = _efl_canvas_text_cursor_text_append(cur, _text);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
    return len;
 }
 
@@ -10505,7 +10452,7 @@ _evas_textblock_cursor_format_append(Efl_Canvas_Text_Cursor_Data *cur,
 
    _evas_textblock_changed(o, cur->obj);
 
-   Efl_Canvas_Text_Cursor_Data *ocur = efl_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
+   Efl_Canvas_Text_Cursor_Data *ocur = o->cursor;
    if (!ocur->node)
       ocur->node = o->text_nodes;
 
@@ -10514,9 +10461,8 @@ _evas_textblock_cursor_format_append(Efl_Canvas_Text_Cursor_Data *cur,
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur_obj, const char *format)
+evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return _evas_textblock_cursor_format_append(cur, format, NULL, EINA_FALSE);
 }
 
@@ -10533,21 +10479,20 @@ _evas_textblock_cursor_format_prepend(Efl_Canvas_Text_Cursor_Data *cur, const ch
    if (is_visible)
      {
         /* Advance after the replacement char */
-        _evas_textblock_cursor_char_next(cur);
+        evas_textblock_cursor_char_next(cur);
      }
 
    return is_visible;
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur_obj, const char *format)
+evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return _evas_textblock_cursor_format_prepend(cur, format);
 }
 
-static void
-_evas_textblock_cursor_char_delete(Efl_Canvas_Text_Cursor_Data *cur)
+EAPI void
+evas_textblock_cursor_char_delete(Efl_Canvas_Text_Cursor_Data *cur)
 {
    Evas_Object_Textblock_Node_Text *n, *n2;
    const Eina_Unicode *text;
@@ -10625,52 +10570,45 @@ _evas_textblock_cursor_char_delete(Efl_Canvas_Text_Cursor_Data *cur)
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_char_delete(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_char_delete(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
-   _evas_textblock_cursor_char_delete(cur);
-   efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+   evas_textblock_cursor_char_delete(cur);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
 EAPI void
-evas_textblock_cursor_range_delete(Efl_Canvas_Text_Cursor *cur1_obj, Evas_Textblock_Cursor *cur2_obj)
+evas_textblock_cursor_range_delete(Efl_Canvas_Text_Cursor *cur1, Efl_Canvas_Text_Cursor *cur2)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   if (!cur) return;
-   efl_canvas_text_range_delete(cur->obj, cur1_obj, cur2_obj);
+   if (!cur1) return;
+   efl_canvas_text_range_delete(cur1->obj, cur1, cur2);
 }
 
 EOLIAN static void
 _efl_canvas_text_range_delete(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *pd EINA_UNUSED,
-      Efl_Canvas_Text_Cursor *cur1_obj, Evas_Textblock_Cursor *cur2_obj)
+      Efl_Canvas_Text_Cursor *cur1, Evas_Textblock_Cursor *cur2)
 {
    Evas_Object_Textblock_Node_Format *fnode = NULL;
    Evas_Object_Textblock_Node_Text *n1, *n2;
    Eina_Bool should_merge = EINA_FALSE, reset_cursor = EINA_FALSE;
 
-   Efl_Canvas_Text_Cursor_Data *cur1 = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   Efl_Canvas_Text_Cursor_Data *cur2 = efl_data_scope_get(cur2_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur1 || !cur1->node) return;
    if (!cur2 || !cur2->node) return;
    if (cur1->obj != cur2->obj) return;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur1->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    Efl_Canvas_Text_Data *o = efl_data_scope_get(cur1->obj, MY_CLASS);
-   if (evas_textblock_cursor_compare(cur1_obj, cur2_obj) > 0)
+   if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
-        Efl_Canvas_Text_Cursor *tc_obj;
         Efl_Canvas_Text_Cursor_Data *tc;
 
-        tc_obj = cur1_obj;
-        cur1_obj = cur2_obj;
-        cur2_obj = tc_obj;
         tc = cur1;
         cur1 = cur2;
         cur2 = tc;
      }
    n1 = cur1->node;
    n2 = cur2->node;
-   if ((evas_textblock_cursor_compare(o->cursor, cur1_obj) >= 0) &&
-         (evas_textblock_cursor_compare(cur2_obj, o->cursor) >= 0))
+   if ((evas_textblock_cursor_compare(o->cursor, cur1) >= 0) &&
+         (evas_textblock_cursor_compare(cur2, o->cursor) >= 0))
      {
         reset_cursor = EINA_TRUE;
      }
@@ -10744,34 +10682,33 @@ _efl_canvas_text_range_delete(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *pd E
      }
    _evas_textblock_node_format_remove_matching(o, fnode);
 
-   evas_textblock_cursor_copy(cur1_obj, cur2_obj);
+   evas_textblock_cursor_copy(cur1, cur2);
    if (reset_cursor)
-     evas_textblock_cursor_copy(cur1_obj, o->cursor);
+     evas_textblock_cursor_copy(cur1, o->cursor);
 
    _evas_textblock_changed(o, cur1->obj);
 }
 
-
 EOLIAN static Eina_Unicode
-_efl_canvas_text_cursor_content_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Cursor_Data *pd)
+_efl_canvas_text_cursor_content_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *pd EINA_UNUSED,
+      const Efl_Canvas_Text_Cursor *cur)
 {
-   return eina_ustrbuf_string_get(pd->node->unicode)[pd->pos];
+   return eina_ustrbuf_string_get(cur->node->unicode)[cur->pos];
 }
 
 EAPI char *
-evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur_obj)
+evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur || !cur->node) return NULL;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   if (evas_textblock_cursor_format_is_visible_get(cur_obj))
+   if (evas_textblock_cursor_format_is_visible_get(cur))
      {
         Eina_Strbuf *buf;
         Evas_Object_Textblock_Node_Format *fnode;
         char *ret;
         fnode = _evas_textblock_node_visible_at_pos_get(
-                 evas_textblock_cursor_format_get(cur_obj));
+                 evas_textblock_cursor_format_get(cur));
 
         buf = eina_strbuf_new();
         _markup_get_format_append(buf, fnode);
@@ -10785,7 +10722,7 @@ evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur_obj)
         Eina_Unicode buf[2];
         char *s;
 
-        buf[0] = efl_canvas_text_cursor_content_get(cur_obj);
+        buf[0] = efl_canvas_text_cursor_content_get(cur->obj, cur);
         buf[1] = 0;
         s = eina_unicode_unicode_to_utf8(buf, NULL);
 
@@ -10802,7 +10739,7 @@ _evas_textblock_cursor_range_text_markup_get(const Efl_Canvas_Text_Cursor_Data *
 
    buf = eina_strbuf_new();
 
-   if (_evas_textblock_cursor_compare(cur1, _cur2) > 0)
+   if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
      {
         const Efl_Canvas_Text_Cursor_Data *tc;
 
@@ -10910,7 +10847,7 @@ _evas_textblock_cursor_range_text_plain_get(const Efl_Canvas_Text_Cursor_Data *c
 
    buf = eina_ustrbuf_new();
 
-   if (_evas_textblock_cursor_compare(cur1, _cur2) > 0)
+   if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
      {
         const Efl_Canvas_Text_Cursor_Data *tc;
 
@@ -10958,14 +10895,12 @@ _evas_textblock_cursor_range_text_plain_get(const Efl_Canvas_Text_Cursor_Data *c
 }
 
 EAPI Eina_List *
-evas_textblock_cursor_range_formats_get(const Efl_Canvas_Text_Cursor *cur1_obj, const Evas_Textblock_Cursor *cur2_obj)
+evas_textblock_cursor_range_formats_get(const Efl_Canvas_Text_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
    Evas_Object *eo_obj;
    Eina_List *ret = NULL;
    Evas_Object_Textblock_Node_Text *n1, *n2;
    Evas_Object_Textblock_Node_Format *first, *last;
-   const Efl_Canvas_Text_Cursor_Data *cur1 = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   const Efl_Canvas_Text_Cursor_Data *cur2 = efl_data_scope_get(cur2_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur1 || !cur1->node) return NULL;
    if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
@@ -10975,7 +10910,7 @@ evas_textblock_cursor_range_formats_get(const Efl_Canvas_Text_Cursor *cur1_obj, 
    eo_obj = cur1->obj;
    TB_HEAD_RETURN(NULL);
 
-   if (_evas_textblock_cursor_compare(cur1, cur2) > 0)
+   if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
         const Efl_Canvas_Text_Cursor_Data *tc;
 
@@ -11050,30 +10985,26 @@ _evas_textblock_cursor_range_text_get(const Efl_Canvas_Text_Cursor_Data *cur1, c
 
 }
 
+// Add to legacy api
 EAPI char *
-evas_textblock_cursor_range_text_get(const Efl_Canvas_Text_Cursor *cur1_obj, const Evas_Textblock_Cursor *cur2_obj, Evas_Textblock_Text_Type format)
+evas_textblock_cursor_range_text_get(const Efl_Canvas_Text_Cursor *cur1, const Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format)
 {
-   const Efl_Canvas_Text_Cursor_Data *cur1 = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   const Efl_Canvas_Text_Cursor_Data *cur2 = efl_data_scope_get(cur2_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return _evas_textblock_cursor_range_text_get(cur1, cur2, format);
 }
 
 static EOLIAN char *
 _efl_canvas_text_range_text_get(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Data *pd EINA_UNUSED,
-      const Efl_Canvas_Text_Cursor *cur1_obj,
-      const Evas_Textblock_Cursor *cur2_obj)
+      const Efl_Canvas_Text_Cursor *cur1,
+      const Evas_Textblock_Cursor *cur2)
 {
-   const Efl_Canvas_Text_Cursor_Data *cur1 = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   const Efl_Canvas_Text_Cursor_Data *cur2 = efl_data_scope_get(cur2_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return _evas_textblock_cursor_range_text_get(cur1, cur2, EVAS_TEXTBLOCK_TEXT_PLAIN);
 }
 
 EAPI const char *
-evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur_obj)
+evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur)
 {
    Efl_Canvas_Text_Cursor_Data cur1, cur2;
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return NULL;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -11085,8 +11016,8 @@ evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur_obj)
    _evas_textblock_cursor_init(&cur1, cur->obj);
    _evas_textblock_cursor_init(&cur2, cur->obj);
    cur1.node = cur2.node = cur->node;
-   _evas_textblock_cursor_paragraph_char_first(&cur1);
-   _evas_textblock_cursor_paragraph_char_last(&cur2);
+   evas_textblock_cursor_paragraph_char_first(&cur1);
+   evas_textblock_cursor_paragraph_char_last(&cur2);
 
    cur->node->utf8 = _evas_textblock_cursor_range_text_get(&cur1, &cur2,
          EVAS_TEXTBLOCK_TEXT_MARKUP);
@@ -11094,10 +11025,9 @@ evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur_obj)
 }
 
 EAPI int
-evas_textblock_cursor_paragraph_text_length_get(const Evas_Textblock_Cursor *cur_obj)
+evas_textblock_cursor_paragraph_text_length_get(const Evas_Textblock_Cursor *cur)
 {
    int len;
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return -1;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -11111,9 +11041,8 @@ evas_textblock_cursor_paragraph_text_length_get(const Evas_Textblock_Cursor *cur
 }
 
 EAPI const Evas_Object_Textblock_Node_Format *
-evas_textblock_cursor_format_get(const Evas_Textblock_Cursor *cur_obj)
+evas_textblock_cursor_format_get(const Evas_Textblock_Cursor *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return NULL;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -11173,9 +11102,8 @@ _evas_textblock_cursor_at_format_set(Efl_Canvas_Text_Cursor_Data *cur,
 }
 
 EAPI void
-evas_textblock_cursor_at_format_set(Evas_Textblock_Cursor *cur_obj, const Evas_Object_Textblock_Node_Format *fmt)
+evas_textblock_cursor_at_format_set(Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Format *fmt)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    _evas_textblock_cursor_at_format_set(cur, fmt);
 }
 
@@ -11194,9 +11122,8 @@ _evas_textblock_cursor_format_is_visible_get(const Efl_Canvas_Text_Cursor_Data *
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur_obj)
+evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return _evas_textblock_cursor_format_is_visible_get(cur);
 }
 
@@ -11221,29 +11148,27 @@ _find_layout_line_by_item(Evas_Object_Textblock_Paragraph *par, Evas_Object_Text
 #endif
 
 EAPI Eina_Bool
-evas_textblock_cursor_geometry_bidi_get(const Efl_Canvas_Text_Cursor *cur_obj, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2, Evas_Textblock_Cursor_Type ctype)
+evas_textblock_cursor_geometry_bidi_get(const Efl_Canvas_Text_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2, Evas_Textblock_Cursor_Type ctype)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
-   return efl_canvas_text_cursor_geometry_get(cur_obj,
+   return efl_canvas_text_cursor_geometry_get(cur->obj, cur,
          (ctype == EVAS_TEXTBLOCK_CURSOR_BEFORE) ?
          EFL_CANVAS_TEXT_CURSOR_TYPE_BEFORE : EFL_CANVAS_TEXT_CURSOR_TYPE_UNDER,
          cx, cy, cw, ch, cx2, cy2, cw2, ch2);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_text_cursor_geometry_get(Eo *cur_obj EINA_UNUSED, Efl_Canvas_Text_Cursor_Data *cur, Efl_Canvas_Text_Cursor_Type ctype, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2)
+_efl_canvas_text_cursor_geometry_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const Efl_Canvas_Text_Cursor *cur, Efl_Canvas_Text_Cursor_Type ctype, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2)
 {
    if (!cur) return EINA_FALSE;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
    evas_object_async_block(obj);
 
    _relayout_if_needed(cur->obj, o);
 
    if (ctype == EFL_CANVAS_TEXT_CURSOR_TYPE_UNDER)
      {
-        evas_textblock_cursor_pen_geometry_get(cur_obj, cx, cy, cw, ch);
+        evas_textblock_cursor_pen_geometry_get(cur, cx, cy, cw, ch);
         return EINA_FALSE;
      }
 
@@ -11339,7 +11264,7 @@ _efl_canvas_text_cursor_geometry_get(Eo *cur_obj EINA_UNUSED, Efl_Canvas_Text_Cu
                   /* Handling last char in line (or in paragraph).
                    * T.e. prev condition didn't work, so we are not standing in the beginning of item,
                    * but in the end of line or paragraph. */
-                  else if (evas_textblock_cursor_eol_get(cur_obj))
+                  else if (evas_textblock_cursor_eol_get(cur))
                     {
                        EvasBiDiLevel par_level, it_level;
 
@@ -11410,17 +11335,16 @@ _efl_canvas_text_cursor_geometry_get(Eo *cur_obj EINA_UNUSED, Efl_Canvas_Text_Cu
    (void) cw2;
    (void) ch2;
 #endif
-   evas_textblock_cursor_geometry_get(cur_obj, cx, cy, cw, ch, NULL,
+   evas_textblock_cursor_geometry_get(cur, cx, cy, cw, ch, NULL,
          (ctype == EFL_CANVAS_TEXT_CURSOR_TYPE_BEFORE) ?
          EVAS_TEXTBLOCK_CURSOR_BEFORE : EVAS_TEXTBLOCK_CURSOR_UNDER);
    return EINA_FALSE;
 }
 
 EAPI int
-evas_textblock_cursor_geometry_get(const Efl_Canvas_Text_Cursor *cur_obj, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *dir, Evas_Textblock_Cursor_Type ctype)
+evas_textblock_cursor_geometry_get(const Efl_Canvas_Text_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *dir, Evas_Textblock_Cursor_Type ctype)
 {
    int ret = -1;
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return -1;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -11433,7 +11357,7 @@ evas_textblock_cursor_geometry_get(const Efl_Canvas_Text_Cursor *cur_obj, Evas_C
         Evas_Object_Textblock_Line *ln;
         Evas_Object_Textblock_Item *it;
 
-        ret = evas_textblock_cursor_pen_geometry_get(cur_obj, cx, cy, cw, ch);
+        ret = evas_textblock_cursor_pen_geometry_get(cur, cx, cy, cw, ch);
         _find_layout_item_match(cur, &ln, &it);
         if (ret >= 0)
           {
@@ -11453,7 +11377,7 @@ evas_textblock_cursor_geometry_get(const Efl_Canvas_Text_Cursor *cur_obj, Evas_C
         Evas_Object_Textblock_Line *ln;
         Evas_Object_Textblock_Item *it;
 
-        ret = evas_textblock_cursor_pen_geometry_get(cur_obj, &x, &y, &w, &h);
+        ret = evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
         _find_layout_item_match(cur, &ln, &it);
         if (ret >= 0)
           {
@@ -11492,7 +11416,7 @@ evas_textblock_cursor_geometry_get(const Efl_Canvas_Text_Cursor *cur_obj, Evas_C
  * @return line number of the char on success, -1 on error.
  */
 static int
-_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Evas_Textblock_Cursor *cur_obj, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL;
@@ -11502,7 +11426,6 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
    int pos;
    Eina_Bool previous_format;
 
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return -1;
    Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
 
@@ -11609,35 +11532,32 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
 }
 
 EAPI int
-evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur_obj, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return -1;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    return _evas_textblock_cursor_char_pen_geometry_common_get(
-         ENFN->font_char_coords_get, cur_obj, cx, cy, cw, ch);
+         ENFN->font_char_coords_get, cur, cx, cy, cw, ch);
 }
 
 EAPI int
-evas_textblock_cursor_pen_geometry_get(const Evas_Textblock_Cursor *cur_obj, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+evas_textblock_cursor_pen_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return -1;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    return _evas_textblock_cursor_char_pen_geometry_common_get(
-         ENFN->font_pen_coords_get, cur_obj, cx, cy, cw, ch);
+         ENFN->font_pen_coords_get, cur, cx, cy, cw, ch);
 }
 
 EAPI int
-evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur_obj, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL;
    int x, y, w, h;
 
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return -1;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -11666,16 +11586,15 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur_obj, Ev
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_visible_range_get(Efl_Canvas_Text_Cursor *start_obj, Evas_Textblock_Cursor *end_obj)
+evas_textblock_cursor_visible_range_get(Efl_Canvas_Text_Cursor *start, Evas_Textblock_Cursor *end)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(start_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   return efl_canvas_text_visible_range_get(cur->obj, start_obj, end_obj);
+   return efl_canvas_text_visible_range_get(start->obj, start, end);
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_text_visible_range_get(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Data *pd EINA_UNUSED,
-      Efl_Canvas_Text_Cursor *start_obj, Evas_Textblock_Cursor *end_obj)
+      Efl_Canvas_Text_Cursor *start, Evas_Textblock_Cursor *end)
 {
    Evas *eo_e;
    Evas_Coord cy, ch;
@@ -11686,18 +11605,17 @@ _efl_canvas_text_visible_range_get(Eo *eo_obj EINA_UNUSED,
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    cy = 0 - obj->cur->geometry.y;
    ch = e->viewport.h;
-   evas_textblock_cursor_line_coord_set(start_obj, cy);
-   evas_textblock_cursor_line_coord_set(end_obj, cy + ch);
-   evas_textblock_cursor_line_char_last(end_obj);
+   evas_textblock_cursor_line_coord_set(start, cy);
+   evas_textblock_cursor_line_coord_set(end, cy + ch);
+   evas_textblock_cursor_line_char_last(end);
 
    return EINA_TRUE;
 }
 
 
 EAPI Eina_Bool
-evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur_obj,  Evas_Coord x, Evas_Coord y)
+evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur,  Evas_Coord x, Evas_Coord y)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock_Item *it = NULL;
@@ -11729,11 +11647,11 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur_obj,  Evas_Coord
                        cur->node = found_par->text_node;
                        if (found_par->direction == EVAS_BIDI_DIRECTION_RTL)
                          {
-                            evas_textblock_cursor_line_char_last(cur_obj);
+                            evas_textblock_cursor_line_char_last(cur);
                          }
                        else
                          {
-                            evas_textblock_cursor_line_char_first(cur_obj);
+                            evas_textblock_cursor_line_char_first(cur);
                          }
                        ret = EINA_TRUE;
                        goto end;
@@ -11744,11 +11662,11 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur_obj,  Evas_Coord
                        cur->node = found_par->text_node;
                        if (found_par->direction == EVAS_BIDI_DIRECTION_RTL)
                          {
-                            evas_textblock_cursor_line_char_first(cur_obj);
+                            evas_textblock_cursor_line_char_first(cur);
                          }
                        else
                          {
-                            evas_textblock_cursor_line_char_last(cur_obj);
+                            evas_textblock_cursor_line_char_last(cur);
                          }
                        ret = EINA_TRUE;
                        goto end;
@@ -11810,13 +11728,13 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur_obj,  Evas_Coord
           {
              /* If we are after the last paragraph, use the last position in the
               * text. */
-             evas_textblock_cursor_paragraph_last(cur_obj);
+             evas_textblock_cursor_paragraph_last(cur);
              ret = EINA_TRUE;
              goto end;
           }
         else if (o->paragraphs && (y < (o->paragraphs->y + first_line->y)))
           {
-             evas_textblock_cursor_paragraph_first(cur_obj);
+             evas_textblock_cursor_paragraph_first(cur);
              ret = EINA_TRUE;
              goto end;
           }
@@ -11825,25 +11743,24 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur_obj,  Evas_Coord
 end:
    if (ret)
      {
-        efl_event_callback_legacy_call(cur_obj, EFL_CANVAS_TEXT_CURSOR_EVENT_CHANGED, NULL);
+        efl_event_callback_legacy_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
      }
    return ret;
 }
 
 EOLIAN static void
-_efl_canvas_text_cursor_coord_set(Eo *cur_obj, Efl_Canvas_Text_Cursor_Data *cur EINA_UNUSED,
+_efl_canvas_text_cursor_coord_set(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur EINA_UNUSED,
       Evas_Coord x, Evas_Coord y)
 {
-   evas_textblock_cursor_char_coord_set(cur_obj, x, y);
+   evas_textblock_cursor_char_coord_set(cur, x, y);
 }
 
 EAPI int
-evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur_obj, Evas_Coord y)
+evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 {
    Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
 
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return -1;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -11860,7 +11777,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur_obj, Evas_Coord 
         /* If we are before the first paragraph, use the first position in the text */
         if ((found_par->y >= y) && (!EINA_INLIST_GET(found_par)->prev))
           {
-             evas_textblock_cursor_paragraph_first(cur_obj);
+             evas_textblock_cursor_paragraph_first(cur);
              return 0;
           }
 
@@ -11870,7 +11787,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur_obj, Evas_Coord 
              if (ln->par->y + ln->y > y) break;
              if ((ln->par->y + ln->y <= y) && ((ln->par->y + ln->y + ln->h) > y))
                {
-                  evas_textblock_cursor_line_set(cur_obj, ln->par->line_no +
+                  evas_textblock_cursor_line_set(cur, ln->par->line_no +
                         ln->line_no);
                   return ln->par->line_no + ln->line_no;
                }
@@ -11881,7 +11798,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur_obj, Evas_Coord 
         int line_no = 0;
         /* If we are after the last paragraph, use the last position in the
          * text. */
-        evas_textblock_cursor_paragraph_last(cur_obj);
+        evas_textblock_cursor_paragraph_last(cur);
         if (cur->node && cur->node->par)
           {
              line_no = cur->node->par->line_no;
@@ -11896,7 +11813,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur_obj, Evas_Coord 
    else if (o->paragraphs && (y < o->paragraphs->y))
      {
         int line_no = 0;
-        evas_textblock_cursor_paragraph_first(cur_obj);
+        evas_textblock_cursor_paragraph_first(cur);
         if (cur->node && cur->node->par)
           {
              line_no = cur->node->par->line_no;
@@ -12263,25 +12180,22 @@ _line_fill_rect_get(const Evas_Object_Textblock_Line *ln,
 }
 
 EAPI Eina_Iterator *
-evas_textblock_cursor_range_simple_geometry_get(const Efl_Canvas_Text_Cursor *cur1_obj, const Evas_Textblock_Cursor *cur2_obj)
+evas_textblock_cursor_range_simple_geometry_get(const Efl_Canvas_Text_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   if (!cur) return NULL;
-   return efl_canvas_text_range_simple_geometry_get(cur->obj, cur1_obj, cur2_obj);
+   if (!cur1) return NULL;
+   return efl_canvas_text_range_simple_geometry_get(cur1->obj, cur1, cur2);
 }
 
 static EOLIAN Eina_Iterator *
 _efl_canvas_text_range_simple_geometry_get(Eo *eo_obj EINA_UNUSED,
-      Efl_Canvas_Text_Data *o, const Efl_Canvas_Text_Cursor *cur1_obj, const
-      Evas_Textblock_Cursor *cur2_obj)
+      Efl_Canvas_Text_Data *o, const Efl_Canvas_Text_Cursor *cur1, const
+      Evas_Textblock_Cursor *cur2)
 {
    Evas_Object_Textblock_Line *ln1, *ln2;
    Evas_Object_Textblock_Item *it1, *it2;
    Eina_List *rects = NULL;
    Eina_Iterator *itr = NULL;
 
-   const Efl_Canvas_Text_Cursor_Data *cur1 = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   const Efl_Canvas_Text_Cursor_Data *cur2 = efl_data_scope_get(cur2_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur1 || !cur1->node) return NULL;
    if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
@@ -12290,7 +12204,7 @@ _efl_canvas_text_range_simple_geometry_get(Eo *eo_obj EINA_UNUSED,
 
    _relayout_if_needed(cur1->obj, o);
 
-   if (_evas_textblock_cursor_compare(cur1, cur2) > 0)
+   if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
         const Efl_Canvas_Text_Cursor_Data *tc;
 
@@ -12381,16 +12295,14 @@ _efl_canvas_text_range_simple_geometry_get(Eo *eo_obj EINA_UNUSED,
 
 static Eina_List *
 _efl_canvas_text_range_geometry_list_get(Eo *eo_obj EINA_UNUSED,
-      Efl_Canvas_Text_Data *o, const Efl_Canvas_Text_Cursor *cur1_obj, const
-      Evas_Textblock_Cursor *cur2_obj)
+      Efl_Canvas_Text_Data *o, const Efl_Canvas_Text_Cursor *cur1, const
+      Evas_Textblock_Cursor *cur2)
 {
    Evas_Object_Textblock_Line *ln1, *ln2;
    Evas_Object_Textblock_Item *it1, *it2;
    Eina_List *rects = NULL;
    Evas_Textblock_Rectangle *tr;
 
-   const Efl_Canvas_Text_Cursor_Data *cur1 = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   const Efl_Canvas_Text_Cursor_Data *cur2 = efl_data_scope_get(cur2_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur1 || !cur1->node) return NULL;
    if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
@@ -12399,7 +12311,7 @@ _efl_canvas_text_range_geometry_list_get(Eo *eo_obj EINA_UNUSED,
 
    _relayout_if_needed(cur1->obj, o);
 
-   if (_evas_textblock_cursor_compare(cur1, cur2) > 0)
+   if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
         const Efl_Canvas_Text_Cursor_Data *tc;
 
@@ -12459,25 +12371,24 @@ _efl_canvas_text_range_geometry_list_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EAPI Eina_List *
-evas_textblock_cursor_range_geometry_get(const Efl_Canvas_Text_Cursor *cur1_obj, const Evas_Textblock_Cursor *cur2_obj)
+evas_textblock_cursor_range_geometry_get(const Efl_Canvas_Text_Cursor *cur1, const Evas_Textblock_Cursor *cur2_obj)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur1_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    Efl_Canvas_Text_Data *o;
 
-   if (!cur) return NULL;
+   if (!cur1) return NULL;
 
-   o = efl_data_scope_get(cur->obj, MY_CLASS);
+   o = efl_data_scope_get(cur1->obj, MY_CLASS);
 
-   return _efl_canvas_text_range_geometry_list_get(cur->obj, o, cur1_obj, cur2_obj);
+   return _efl_canvas_text_range_geometry_list_get(cur1->obj, o, cur1, cur2_obj);
 }
 
 static EOLIAN Eina_Iterator *
 _efl_canvas_text_range_geometry_get(Eo *eo_obj EINA_UNUSED,
-      Efl_Canvas_Text_Data *o, const Efl_Canvas_Text_Cursor *cur1_obj, const
-      Evas_Textblock_Cursor *cur2_obj)
+      Efl_Canvas_Text_Data *o, const Efl_Canvas_Text_Cursor *cur1, const
+      Evas_Textblock_Cursor *cur2)
 {
    Eina_List *rects = _efl_canvas_text_range_geometry_list_get(eo_obj,
-         o, cur1_obj, cur2_obj);
+         o, cur1, cur2);
    return _evas_textblock_selection_iterator_new(rects);
 }
 
@@ -12513,25 +12424,23 @@ _evas_textblock_cursor_format_item_geometry_get(const Efl_Canvas_Text_Cursor_Dat
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur_obj, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    return _evas_textblock_cursor_format_item_geometry_get(cur, cx, cy, cw, ch);
 }
 
 EAPI Eina_Bool
-evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur_obj)
+evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
 {
    Eina_Bool ret = EINA_FALSE;
    Efl_Canvas_Text_Cursor_Data cur2;
-   Efl_Canvas_Text_Cursor_Data *cur = efl_data_scope_get(cur_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
    if (!cur) return EINA_FALSE;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
 
    _evas_textblock_cursor_init(&cur2, cur->obj);
    _evas_textblock_cursor_copy(&cur2, cur);
-   _evas_textblock_cursor_line_char_last(&cur2);
+   evas_textblock_cursor_line_char_last(&cur2);
    if (cur2.pos == cur->pos)
      {
         ret = EINA_TRUE;
@@ -12578,16 +12487,15 @@ _evas_object_textblock_clear(Evas_Object *eo_obj)
      }
 
    _nodes_clear(eo_obj);
-   co = efl_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
+   co = o->cursor;
    co->node = NULL;
    co->pos = 0;
    co->changed = EINA_TRUE;
    EINA_LIST_FOREACH(o->cursors, l, cur)
      {
-        co = efl_data_scope_get(cur, EFL_CANVAS_TEXT_CURSOR_CLASS);
-        co->node = NULL;
-        co->pos = 0;
-        co->changed = EINA_TRUE;
+        cur->node = NULL;
+        cur->pos = 0;
+        cur->changed = EINA_TRUE;
      }
 
    _evas_textblock_changed(o, eo_obj);
@@ -12947,7 +12855,7 @@ evas_object_textblock_init(Evas_Object *eo_obj)
      }
 
    o = obj->private_data;
-   Efl_Canvas_Text_Cursor_Data *co = efl_data_scope_get(o->cursor, EFL_CANVAS_TEXT_CURSOR_CLASS);
+   Efl_Canvas_Text_Cursor_Data *co = o->cursor;
    co->obj = eo_obj;
    evas_object_textblock_text_markup_set(eo_obj, "");
 
@@ -12995,14 +12903,14 @@ evas_object_textblock_free(Evas_Object *eo_obj)
      {
         evas_object_textblock_style_user_pop(eo_obj);
      }
-   efl_del(o->cursor);
+   free(o->cursor);
    while (o->cursors)
      {
         Efl_Canvas_Text_Cursor *cur;
 
         cur = (Efl_Canvas_Text_Cursor *)o->cursors->data;
         o->cursors = eina_list_remove_list(o->cursors, o->cursors);
-        efl_del(cur);
+        free(cur);
      }
    if (o->repch) eina_stringshare_del(o->repch);
    if (o->ellip_ti) _item_free(eo_obj, NULL, _ITEM(o->ellip_ti));
@@ -14468,7 +14376,8 @@ _efl_canvas_text_efl_text_text_set(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUS
       const char *text)
 {
    evas_object_textblock_text_markup_set(eo_obj, "");
-   efl_canvas_text_cursor_text_insert(o->cursor, text);
+   efl_canvas_text_cursor_text_insert(eo_obj, o->cursor, text);
+   printf("canvas_text: eo_obj=%p\n", eo_obj);
    efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
 }
 
@@ -14480,8 +14389,8 @@ _canvas_text_get_all(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED)
    _evas_textblock_cursor_init(&start, eo_obj);
    _evas_textblock_cursor_init(&end, eo_obj);
 
-   _canvas_text_cursor_paragraph_first(&start);
-   _canvas_text_cursor_paragraph_last(&end);
+   evas_textblock_cursor_paragraph_first(&start);
+   evas_textblock_cursor_paragraph_last(&end);
 
    return _evas_textblock_cursor_range_text_get(&start, &end, EVAS_TEXTBLOCK_TEXT_PLAIN);
 }
@@ -14601,7 +14510,7 @@ _textblock_annotation_set(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o,
    len = strlen(format);
    buf = malloc(len + 4);
    sprintf(buf, "</%s>", format);
-   if (is_item) _evas_textblock_cursor_char_next(end);
+   if (is_item) evas_textblock_cursor_char_next(end);
    _evas_textblock_cursor_format_append(end, buf, &fnode, is_item);
    free(buf);
    an->end_node = fnode;
@@ -14672,7 +14581,7 @@ _evas_textblock_annotation_remove(Efl_Canvas_Text_Data *o,
              Efl_Canvas_Text_Cursor_Data cur;
              _evas_textblock_cursor_init(&cur, an->obj);
              _textblock_cursor_pos_at_fnode_set(an->obj, &cur, an->start_node);
-             _evas_textblock_cursor_char_delete(&cur);
+             evas_textblock_cursor_char_delete(&cur);
              return; // 'an' should be deleted after char deletion.
           }
         _evas_textblock_node_format_remove(o, an->start_node, 0);
@@ -14730,7 +14639,7 @@ _textblock_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
    const char *item;
 
    if (!format || (format[0] == '\0') ||
-         _evas_textblock_cursor_compare(start, end) > 0)
+         evas_textblock_cursor_compare(start, end) > 0)
      {
         return NULL;
      }
@@ -14786,12 +14695,10 @@ _textblock_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
 
 EOLIAN static Efl_Canvas_Text_Annotation *
 _efl_canvas_text_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
-      Efl_Canvas_Text_Cursor *start_obj, Efl_Canvas_Text_Cursor *end_obj,
+      Efl_Canvas_Text_Cursor *start, Efl_Canvas_Text_Cursor *end,
       const char *format)
 {
    Efl_Canvas_Text_Annotation *ret;
-   Efl_Canvas_Text_Cursor_Data *start = efl_data_scope_get(start_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   Efl_Canvas_Text_Cursor_Data *end = efl_data_scope_get(end_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
 
    ret = _textblock_annotation_insert(eo_obj, o, start, end, format,
          EINA_FALSE);
@@ -14801,12 +14708,10 @@ _efl_canvas_text_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
 
 EOLIAN static Eina_Iterator *
 _efl_canvas_text_range_annotations_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
-      const Evas_Textblock_Cursor *start_obj, const Evas_Textblock_Cursor *end_obj)
+      const Evas_Textblock_Cursor *start, const Evas_Textblock_Cursor *end)
 {
    Eina_List *lst = NULL;
    Efl_Canvas_Text_Annotation *it;
-   Efl_Canvas_Text_Cursor_Data *start = efl_data_scope_get(start_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   Efl_Canvas_Text_Cursor_Data *end = efl_data_scope_get(end_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
 
    EINA_INLIST_FOREACH(o->annotations, it)
      {
@@ -14818,8 +14723,8 @@ _efl_canvas_text_range_annotations_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_D
         _textblock_cursor_pos_at_fnode_set(eo_obj, &start2, it->start_node);
         _textblock_cursor_pos_at_fnode_set(eo_obj, &end2, it->end_node);
         _evas_textblock_cursor_char_prev(&end2);
-        if (!((_evas_textblock_cursor_compare(&start2, end) > 0) ||
-                 (_evas_textblock_cursor_compare(&end2, start) < 0)))
+        if (!((evas_textblock_cursor_compare(&start2, end) > 0) ||
+                 (evas_textblock_cursor_compare(&end2, start) < 0)))
           {
              lst = eina_list_append(lst, it);
           }
@@ -14828,25 +14733,23 @@ _efl_canvas_text_range_annotations_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_D
 }
 
 EOLIAN static Efl_Canvas_Text_Annotation *
-_efl_canvas_text_cursor_object_item_insert(Eo *cur_obj EINA_UNUSED,
-         Efl_Canvas_Text_Cursor_Data *cur, const char *format)
+_efl_canvas_text_cursor_object_item_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur, const char *format)
 {
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
    Efl_Canvas_Text_Annotation *ret =
       _textblock_annotation_insert(cur->obj, o, cur, cur, format, EINA_TRUE);
-   efl_event_callback_legacy_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
    return ret;
 }
 
 EOLIAN static Efl_Canvas_Text_Annotation *
-_efl_canvas_text_cursor_object_item_annotation_get(Eo *cur_obj EINA_UNUSED,
-      Efl_Canvas_Text_Cursor_Data *cur)
+_efl_canvas_text_cursor_object_item_annotation_get(Eo *eo_obj EINA_UNUSED,
+      Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
    Eina_Iterator *it;
    Efl_Canvas_Text_Annotation *data, *ret = NULL;
 
    it = efl_canvas_text_range_annotations_get(cur->obj,
-         cur_obj, cur_obj);
+         cur, cur);
    EINA_ITERATOR_FOREACH(it, data)
      {
         if (data->is_item)
@@ -14878,13 +14781,8 @@ EOLIAN static void
 _efl_canvas_text_annotation_positions_get(Eo *eo_obj,
       Efl_Canvas_Text_Data *o EINA_UNUSED,
       const Efl_Canvas_Text_Annotation *annotation,
-      Efl_Canvas_Text_Cursor *start_obj, Efl_Canvas_Text_Cursor *end_obj)
+      Efl_Canvas_Text_Cursor *start, Efl_Canvas_Text_Cursor *end)
 {
-   Efl_Canvas_Text_Cursor_Data *start, *end;
-
-   start = efl_data_scope_get(start_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-   end = efl_data_scope_get(end_obj, EFL_CANVAS_TEXT_CURSOR_CLASS);
-
    _textblock_cursor_pos_at_fnode_set(eo_obj, start, annotation->start_node);
    _textblock_cursor_pos_at_fnode_set(eo_obj, end, annotation->end_node);
 }
@@ -15648,5 +15546,32 @@ ppar(Evas_Object_Textblock_Paragraph *par)
 #define EFL_CANVAS_TEXT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_text_efl_object_dbg_info_get)
 
-#include "canvas/efl_canvas_text_cursor.eo.c"
+EOLIAN static Efl_Canvas_Text_Cursor *
+_efl_canvas_text_cursor_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
+{
+   return o->cursor;
+}
+
+EOLIAN static Efl_Canvas_Text_Cursor *
+_efl_canvas_text_cursor_new(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
+{
+   Efl_Canvas_Text_Cursor *cur;
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+
+   cur = calloc(1, sizeof(Efl_Canvas_Text_Cursor));
+   if (!cur) return NULL;
+   _evas_textblock_cursor_init(cur, eo_obj);
+
+   o->cursors = eina_list_append(o->cursors, cur);
+   return cur;
+}
+
+EOLIAN static void
+_efl_canvas_text_cursor_free(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
+      Efl_Canvas_Text_Cursor *cur)
+{
+   evas_textblock_cursor_free(cur);
+}
+
 #include "canvas/efl_canvas_text.eo.c"

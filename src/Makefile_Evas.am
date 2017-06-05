@@ -7,7 +7,6 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_polygon.eo \
 	lib/evas/canvas/efl_canvas_rectangle.eo \
 	lib/evas/canvas/efl_canvas_text.eo \
-	lib/evas/canvas/efl_canvas_text_cursor.eo \
 	lib/evas/canvas/efl_canvas_group.eo \
 	lib/evas/canvas/evas_canvas.eo \
 	lib/evas/canvas/efl_canvas_image_internal.eo \

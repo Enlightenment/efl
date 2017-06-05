@@ -8,3 +8,4 @@ enum Efl.Text.Bidirectional_Type {
 }
 
 struct Efl.Canvas.Text.Annotation; [[EFL text annotations data structure]]
+struct Efl.Canvas.Text.Cursor; [[Text cursor data structure]]

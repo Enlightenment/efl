@@ -116,9 +116,9 @@ elm_public_eolian_files = \
 	lib/elementary/elm_fileselector_internal_part.eo \
 	lib/elementary/elm_multibuttonentry_internal_part.eo \
 	lib/elementary/elm_code_widget.eo \
-	lib/elementary/efl_ui_text_interactive.eo \
-	lib/elementary/efl_ui_text.eo \
-	lib/elementary/efl_ui_text_editable.eo \
+   lib/elementary/efl_ui_text_interactive.eo \
+   lib/elementary/efl_ui_text.eo \
+   lib/elementary/efl_ui_text_editable.eo \
 	lib/elementary/efl_config_global.eo \
 	lib/elementary/efl_ui_clock.eo \
 	lib/elementary/efl_ui_image_factory.eo \
@@ -131,7 +131,7 @@ elm_public_eolian_files = \
 
 # Private classes (not exposed or shipped)
 elm_private_eolian_files = \
-	lib/elementary/efl_ui_internal_text_interactive.eo \
+   lib/elementary/efl_ui_internal_text_interactive.eo \
 	lib/elementary/efl_ui_win_internal_part.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
@@ -587,8 +587,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_diskselector.c \
 	lib/elementary/elm_entry.c \
 	lib/elementary/efl_ui_flip.c \
-	lib/elementary/efl_ui_internal_text_interactive.c \
-	lib/elementary/efl_ui_internal_text_interactive.h \
+   lib/elementary/efl_ui_internal_text_interactive.c \
+   lib/elementary/efl_ui_internal_text_interactive.h \
 	lib/elementary/elm_flipselector.c \
 	lib/elementary/elm_font.c \
 	lib/elementary/efl_ui_frame.c \
@@ -797,7 +797,6 @@ bin/elementary/test_genlist.c \
 bin/elementary/test_gesture_layer.c \
 bin/elementary/test_gesture_layer2.c \
 bin/elementary/test_gesture_layer3.c \
-bin/elementary/test_gfx_filters.c \
 bin/elementary/test_glview_simple.c \
 bin/elementary/test_glview.c \
 bin/elementary/test_glview_manygears.c \
@@ -860,7 +859,6 @@ bin/elementary/test_win_socket.c \
 bin/elementary/test_win_plug.c \
 bin/elementary/test_win_state.c \
 bin/elementary/test_win_wm_rotation.c \
-bin/elementary/test_win_dialog.c \
 bin/elementary/test_win_modal.c \
 bin/elementary/test_efl_ui_text.c \
 bin/elementary/test_win_stack.c \
