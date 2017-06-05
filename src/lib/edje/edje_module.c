@@ -148,6 +148,7 @@ edje_available_modules_get(void)
    Eina_Iterator *it;
    Eina_List *l;
    const char *path;
+   Eina_Strbuf *buf;
    Eina_List *result = NULL;
 
    /* FIXME: Stat each possible dir and check if they did change, before starting a huge round of readdir/stat */
@@ -157,32 +158,29 @@ edje_available_modules_get(void)
           eina_stringshare_del(path);
      }
 
+   buf = eina_strbuf_new();
    EINA_LIST_FOREACH(_modules_paths, l, path)
      {
         it = eina_file_direct_ls(path);
 
-        if (it)
+        EINA_ITERATOR_FOREACH(it, info)
           {
-             EINA_ITERATOR_FOREACH(it, info)
-               {
-                  char tmp[PATH_MAX];
-
-                  snprintf(tmp, sizeof (tmp), "%s/%s/" EDJE_MODULE_NAME, info->path, MODULE_ARCH
+             eina_strbuf_append_printf(buf, "%s/%s/" EDJE_MODULE_NAME, info->path, MODULE_ARCH
 #ifdef EDJE_EXTRA_MODULE_NAME
-                           , info->path + info->name_start
+                                       , info->path + info->name_start
 #endif
-                           );
+                                       );
 
-                  if (ecore_file_exists(tmp))
-                    result = eina_list_append(result, eina_stringshare_add(info->path + info->name_start));
-               }
-
-             eina_iterator_free(it);
+             if (ecore_file_exists(eina_strbuf_string_get(buf)))
+               result = eina_list_append(result, eina_stringshare_add(info->path + info->name_start));
+             eina_strbuf_reset(buf);
           }
+
+        eina_iterator_free(it);
      }
+   eina_strbuf_free(buf);
 
    _modules_found = result;
 
    return result;
 }
-
