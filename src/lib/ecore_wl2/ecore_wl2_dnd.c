@@ -163,7 +163,7 @@ static void
 data_source_event_emit(Ecore_Wl2_Input *input, int event, Eina_Bool cancel)
 {
    struct _Ecore_Wl2_Event_Data_Source_Event *ev;
-   Ecore_Wl2_Event_Data_Source_End *ev2;
+   Ecore_Wl2_Event_Data_Source_End *ev2 = NULL;
 
    if (event == ECORE_WL2_EVENT_DATA_SOURCE_END)
      {
