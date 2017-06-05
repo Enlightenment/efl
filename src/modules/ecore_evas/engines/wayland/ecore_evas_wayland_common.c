@@ -33,7 +33,7 @@ static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[13];
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 
 /* local functions */
-static void 
+static void
 _ecore_evas_wl_common_state_update(Ecore_Evas *ee)
 {
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
@@ -1994,7 +1994,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
    if (!(method = evas_render_method_lookup(engine_name)))
      {
-        ERR("Render method lookup failed for Wayland_Shm");
+        ERR("Render method lookup failed for %s", engine_name);
         return NULL;
      }
 
