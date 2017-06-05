@@ -1478,9 +1478,57 @@ EAPI Ecore_Evas     *ecore_evas_fb_new(const char *disp_name, int rotation, int 
 EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h) EINA_DEPRECATED;
 EAPI Ecore_DirectFB_Window *ecore_evas_directfb_window_get(const Ecore_Evas *ee) EINA_DEPRECATED;
 
-
+/**
+ * @brief Create an Ecore_Evas window using the wayland-shm engine.
+ *
+ * @param disp_name Name of the Wayland display to connect to.
+ * @param parent ID of the parent window this Ecore_Evas window belongs
+ *        to, or 0 if this is a top-level window.
+ * @param x Horizontal position of the Ecore_Evas window.
+ * @param y Vertical position of the Ecore_Evas window.
+ * @param w Width of the Ecore_Evas window to be created.
+ * @param h Height of the Ecore_Evas window to be created.
+ * @param frame Deprecated.  (Just pass EINA_FALSE.)
+ * @return Ecore_Evas instance or @c NULL if creation failed.
+ *
+ * Wayland's Shared Memory (SHM) rendering model stores client-drawn
+ * data in system memory buffers for communication with the display
+ * server.  The server then copies the buffer from system memory to the
+ * video output as appropriate.  This routine constructs an Ecore_Evas
+ * window object that uses SHM buffers for communication using the
+ * Wayland protocol.
+ *
+ * @see ecore_evas_new()
+ * @see ecore_evas_wayland_egl_new()
+ */
 EAPI Ecore_Evas     *ecore_evas_wayland_shm_new(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame);
+
+/**
+ * @brief Create an Ecore_Evas window using the wayland-egl engine.
+ *
+ * @param disp_name Name of the Wayland display to connect to.
+ * @param parent ID of the parent window this Ecore_Evas window belongs
+ *        to, or 0 if this is a top-level window.
+ * @param x Horizontal position of the Ecore_Evas window.
+ * @param y Vertical position of the Ecore_Evas window.
+ * @param w Width of the Ecore_Evas window to be created.
+ * @param h Height of the Ecore_Evas window to be created.
+ * @param frame Deprecated.  (Just pass EINA_FALSE.)
+ * @return Ecore_Evas instance or @c NULL if creation failed.
+ *
+ * Under Wayland, clients can also set up rendering directly to graphics
+ * hardware memory via various rendering APIs such as OpenGL, OpenGL ES,
+ * etc.) thus skipping the need for server-side copying of graphics data
+ * to the display device, thus providing higher performance than SHM.
+ * This routine constructs an Ecore_Evas window object using the
+ * Embedded-system Graphics Library (EGL) interface for handling the
+ * context management and rendering synchronization.
+ *
+ * @see ecore_evas_new()
+ * @see ecore_evas_wayland_shm_new()
+ */
 EAPI Ecore_Evas     *ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame);
+
 EAPI void            ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 EAPI void            ecore_evas_wayland_move(Ecore_Evas *ee, int x, int y);
 
