@@ -292,18 +292,25 @@ evas_image_load_file_data_tga(void *loader_data,
                               {
                                case 1:
                                  a = (a << 7) | (a << 6) | (a << 5) | (a << 4) | (a << 3) | (a << 2) | (a << 1) | (a);
+                                 EINA_FALLTHROUGH;
                                case 2:
                                  a = (a << 6) | (a << 4) | (a << 2) | (a);
+                                 EINA_FALLTHROUGH;
                                case 3:
                                  a = (a << 5) | (a << 2) | (a >> 1);
+                                 EINA_FALLTHROUGH;
                                case 4:
                                  a = (a << 4) | (a);
+                                 EINA_FALLTHROUGH;
                                case 5:
                                  a = (a << 3) | (a >> 2);
+                                 EINA_FALLTHROUGH;
                                case 6:
                                  a = (a << 2) | (a >> 4);
+                                 EINA_FALLTHROUGH;
                                case 7:
                                  a = (a << 1) | (a >> 6);
+                                 EINA_FALLTHROUGH;
                                default:
                                  break;
                               }
@@ -382,18 +389,25 @@ evas_image_load_file_data_tga(void *loader_data,
                               {
                                case 1:
                                  a = (a << 7) | (a << 6) | (a << 5) | (a << 4) | (a << 3) | (a << 2) | (a << 1) | (a);
+                                 EINA_FALLTHROUGH;
                                case 2:
                                  a = (a << 6) | (a << 4) | (a << 2) | (a);
+                                 EINA_FALLTHROUGH;
                                case 3:
                                  a = (a << 5) | (a << 2) | (a >> 1);
+                                 EINA_FALLTHROUGH;
                                case 4:
                                  a = (a << 4) | (a);
+                                 EINA_FALLTHROUGH;
                                case 5:
                                  a = (a << 3) | (a >> 2);
+                                 EINA_FALLTHROUGH;
                                case 6:
                                  a = (a << 2) | (a >> 4);
+                                 EINA_FALLTHROUGH;
                                case 7:
                                  a = (a << 1) | (a >> 6);
+                                 EINA_FALLTHROUGH;
                                default:
                                  break;
                               }
