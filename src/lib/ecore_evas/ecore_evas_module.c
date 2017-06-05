@@ -234,116 +234,116 @@ _ecore_evas_available_engines_get(void)
    Eina_File_Direct_Info *info;
    Eina_Iterator *it;
    Eina_List *l = NULL, *result = NULL;
+   Eina_Strbuf *buf;
    const char *path;
 
    if (_engines_available) return _engines_available;
 
+   buf = eina_strbuf_new();
    EINA_LIST_FOREACH(_engines_paths, l, path)
      {
         it = eina_file_direct_ls(path);
 
-        if (it)
+        EINA_ITERATOR_FOREACH(it, info)
           {
-             EINA_ITERATOR_FOREACH(it, info)
-               {
-                  char tmp[PATH_MAX];
-                  snprintf(tmp, sizeof (tmp), "%s/%s/" ECORE_EVAS_ENGINE_NAME,
-                           info->path, MODULE_ARCH);
+             eina_strbuf_append_printf(buf, "%s/%s/" ECORE_EVAS_ENGINE_NAME,
+                                       info->path, MODULE_ARCH);
 
-                  if (_file_exists(tmp))
-                    {
-                       const char *name;
+             if (_file_exists(eina_strbuf_string_get(buf)))
+               {
+                  const char *name;
 
 #ifdef _WIN32
-                       EVIL_PATH_SEP_WIN32_TO_UNIX(info->path);
+                  EVIL_PATH_SEP_WIN32_TO_UNIX(info->path);
 #endif
-                       name = strrchr(info->path, '/');
-                       if (name) name++;
-                       else name = info->path;
+                  name = strrchr(info->path, '/');
+                  if (name) name++;
+                  else name = info->path;
 #define ADDENG(x) result = eina_list_append(result, eina_stringshare_add(x))
-                       if (!strcmp(name, "fb"))
-                         {
+                  if (!strcmp(name, "fb"))
+                    {
 #ifdef BUILD_ECORE_EVAS_FB
-                            ADDENG("fb");
+                       ADDENG("fb");
 #endif
-                         }
-                       else if (!strcmp(name, "x"))
-                         {
+                    }
+                  else if (!strcmp(name, "x"))
+                    {
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
-                            ADDENG("opengl_x11");
+                       ADDENG("opengl_x11");
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_XLIB
-                            ADDENG("software_x11");
+                       ADDENG("software_x11");
 #endif
-                         }
-                       else if (!strcmp(name, "buffer"))
-                         {
+                    }
+                  else if (!strcmp(name, "buffer"))
+                    {
 #ifdef BUILD_ECORE_EVAS_BUFFER
-                            ADDENG("buffer");
+                       ADDENG("buffer");
 #endif
 #ifdef BUILD_ECORE_EVAS_EWS
-                            ADDENG("ews");
+                       ADDENG("ews");
 #endif
-                         }
-                       else if (!strcmp(name, "cocoa"))
-                         {
+                    }
+                  else if (!strcmp(name, "cocoa"))
+                    {
 #ifdef BUILD_ECORE_EVAS_OPENGL_COCOA
-                            ADDENG("opengl_cocoa");
+                       ADDENG("opengl_cocoa");
 #endif
-                         }
-                       else if (!strcmp(name, "psl1ght"))
-                         {
+                    }
+                  else if (!strcmp(name, "psl1ght"))
+                    {
 #ifdef BUILD_ECORE_EVAS_PSL1GHT
-                            ADDENG("psl1ght");
+                       ADDENG("psl1ght");
 #endif
-                         }
-                       else if (!strcmp(name, "sdl"))
-                         {
+                    }
+                  else if (!strcmp(name, "sdl"))
+                    {
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
-                            ADDENG("opengl_sdl");
+                       ADDENG("opengl_sdl");
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
-                            ADDENG("sdl");
+                       ADDENG("sdl");
 #endif
-                         }
-                       else if (!strcmp(name, "wayland"))
-                         {
+                    }
+                  else if (!strcmp(name, "wayland"))
+                    {
 #ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
-                            ADDENG("wayland_shm");
+                       ADDENG("wayland_shm");
 #endif
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-                            ADDENG("wayland_egl");
+                       ADDENG("wayland_egl");
 #endif
-                         }
-                       else if (!strcmp(name, "win32"))
-                         {
+                    }
+                  else if (!strcmp(name, "win32"))
+                    {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
-                            ADDENG("software_gdi");
+                       ADDENG("software_gdi");
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_DDRAW
-                            ADDENG("software_ddraw");
+                       ADDENG("software_ddraw");
 #endif
 #ifdef BUILD_ECORE_EVAS_DIRECT3D
-                            ADDENG("direct3d");
+                       ADDENG("direct3d");
 #endif
 #ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
-                            ADDENG("opengl_glew");
+                       ADDENG("opengl_glew");
 #endif
-                         }
-                       else if (!strcmp(name, "drm"))
-                         {
+                    }
+                  else if (!strcmp(name, "drm"))
+                    {
 #ifdef BUILD_ECORE_EVAS_DRM
-                            ADDENG("drm");
+                       ADDENG("drm");
 #endif
 #ifdef BUILD_ECORE_EVAS_GL_DRM
-                            ADDENG("gl_drm");
+                       ADDENG("gl_drm");
 #endif
-                         }
                     }
                }
-             eina_iterator_free(it);
+             eina_strbuf_reset(buf);
           }
+        eina_iterator_free(it);
      }
+   eina_strbuf_free(buf);
 
    _engines_available = result;
    return result;
