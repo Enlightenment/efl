@@ -393,6 +393,7 @@ eet_node_del(Eet_Node *n)
       case EET_G_HASH:
         eina_stringshare_del(n->key);
         /* No break here as we want it to fall through and free the resources */
+        EINA_FALLTHROUGH;
 
       case EET_G_UNKNOWN:
       case EET_G_VAR_ARRAY:
@@ -562,6 +563,9 @@ case Eet_Type:                                            \
 
       case EET_T_INLINED_STRING:
         type_name = "inlined: \"";
+        /* inlined string are just like a string, but not inside the general
+         * dictionnary. No need to duplicate code. */
+        EINA_FALLTHROUGH;
 
       case EET_T_STRING:
         if (!type_name)
