@@ -1990,6 +1990,7 @@ _edje_file_del(Edje *ed)
                             _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param1.external_params);
                             if (rp->param2)
                               _edje_external_parsed_params_free(rp->typedata.swallow->swallowed_object, rp->param2->external_params);
+                            EINA_FALLTHROUGH;
 
                           // fallthrough intentional
                           case EDJE_PART_TYPE_GROUP:
