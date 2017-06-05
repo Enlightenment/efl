@@ -38,7 +38,7 @@ struct _Elm_Calendar_Data
    Eina_List               *marks;
    double                   interval, first_interval;
    int                      spin_speed;
-   int                      today_it, selected_it, first_day_it, focused_it;
+   int                      today_it, selected_it, focused_it;
    Ecore_Timer             *spin_month, *spin_year, *update_timer;
    Elm_Calendar_Format_Cb   format_func;
    const char              *weekdays[ELM_DAY_LAST];
@@ -54,6 +54,8 @@ struct _Elm_Calendar_Data
    Elm_Calendar_Weekday     first_week_day;
    Elm_Calendar_Select_Mode select_mode;
    Elm_Calendar_Selectable  selectable;
+
+   unsigned char            first_day_it;
 
    Eina_Bool                selected : 1;
    Eina_Bool                double_spinners : 1;

@@ -388,13 +388,13 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 static void
 _access_calendar_item_register(Evas_Object *obj)
 {
-   int maxdays, day, i;
-   char day_s[3], pname[14];
+   unsigned int maxdays, i;
+   char day_s[13], pname[14];
+   unsigned day = 0;
    Evas_Object *ao;
 
    ELM_CALENDAR_DATA_GET(obj, sd);
 
-   day = 0;
    maxdays = _maxdays_get(&sd->shown_time, 0);
    for (i = 0; i < 42; i++)
      {
@@ -410,7 +410,7 @@ _access_calendar_item_register(Evas_Object *obj)
              _elm_access_callback_set(_elm_access_info_get(ao),
                            ELM_ACCESS_INFO, _access_info_cb, NULL);
 
-             snprintf(day_s, sizeof(day_s), "%i", day++);
+             snprintf(day_s, sizeof(day_s), "%i", (int) (day++));
              elm_widget_access_info_set(ao, (const char*)day_s);
           }
         else
