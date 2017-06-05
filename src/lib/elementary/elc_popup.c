@@ -673,6 +673,7 @@ _create_scroller(Evas_Object *obj)
                                   _on_table_del, obj);
    if (!sd->scroll)
      {
+        if (sd->content || sd->text_content_obj) efl_content_unset(efl_part(sd->content_area, CONTENT_PART));
         efl_content_set(efl_part(sd->content_area, CONTENT_PART), sd->tbl);
         efl_content_set(efl_part(sd->main_layout, CONTENT_PART), sd->content_area);
      }
@@ -1840,7 +1841,7 @@ _elm_popup_scrollable_set(Eo *obj, Elm_Popup_Data *pd, Eina_Bool scroll)
      _create_scroller(obj);
    else
      {
-        elm_layout_content_unset(pd->scr, "elm.swallow.content");
+        elm_object_content_unset(pd->scr);
         ELM_SAFE_FREE(pd->tbl, evas_object_del);
         _create_scroller(obj);
      }
@@ -1849,11 +1850,18 @@ _elm_popup_scrollable_set(Eo *obj, Elm_Popup_Data *pd, Eina_Bool scroll)
      {
         efl_content_set(efl_part(pd->content_area, CONTENT_PART), pd->tbl);
         efl_content_set(efl_part(pd->main_layout, CONTENT_PART), pd->content_area);
+        if (pd->content) efl_content_set(efl_part(pd->content_area, CONTENT_PART), pd->content);
+        else if (pd->text_content_obj) efl_content_set(efl_part(pd->content_area, CONTENT_PART), pd->text_content_obj);
         if (pd->theme_scroll)
           elm_layout_signal_emit(pd->content_area, "elm,scroll,disable", "elm");
      }
    else
      {
+        if (pd->content || pd->text_content_obj)
+          {
+             efl_content_unset(efl_part(pd->main_layout, CONTENT_PART));
+             elm_object_content_set(pd->scr, pd->content_area);
+          }
         efl_content_set(efl_part(pd->main_layout, CONTENT_PART), pd->tbl);
         if (pd->theme_scroll)
           elm_layout_signal_emit(pd->content_area, "elm,scroll,enable", "elm");
