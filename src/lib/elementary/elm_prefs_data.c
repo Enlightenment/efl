@@ -285,6 +285,7 @@ _eet_data_load(Elm_Prefs_Data *prefs_data,
 
            case ELM_PREFS_TYPE_PAGE:
              _eet_data_load(prefs_data, eet_file, it->value.s.s);
+             EINA_FALLTHROUGH;
 
            case ELM_PREFS_TYPE_TEXTAREA:
            case ELM_PREFS_TYPE_TEXT: /* using text type for all

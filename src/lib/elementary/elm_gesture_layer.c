@@ -3355,6 +3355,7 @@ _zoom_test(Evas_Object *obj,
         if ((!sd->glayer_continues_enable) &&
             (!st->zoom_st.timestamp))
           return;
+        EINA_FALLTHROUGH;
         // fallthrough is intentional
       case EVAS_CALLBACK_MOUSE_DOWN:
       case EVAS_CALLBACK_MULTI_DOWN:
@@ -3600,6 +3601,7 @@ _rotate_test(Evas_Object *obj,
         if ((!sd->glayer_continues_enable) &&
             (!st->rotate_st.timestamp))
           return;
+        EINA_FALLTHROUGH;
         // fallthrough is intentional
       case EVAS_CALLBACK_MOUSE_DOWN:
       case EVAS_CALLBACK_MULTI_DOWN:
