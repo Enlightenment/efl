@@ -133,6 +133,9 @@
 #ifdef EINA_SENTINEL
 # undef EINA_SENTINEL
 #endif
+#ifdef EINA_FALLTHROUGH
+# undef EINA_FALLTHROUGH
+#endif
 #ifdef EINA_PREFETCH
 # undef EINA_PREFETCH
 #endif
@@ -193,6 +196,7 @@
 #  define EINA_UNLIKELY(exp)    __builtin_expect((exp), 0)
 #  define EINA_LIKELY(exp)      __builtin_expect((exp), 1)
 #  define EINA_SENTINEL __attribute__((__sentinel__))
+#  define EINA_FALLTHROUGH __attribute__ ((fallthrough));
 #  ifndef __clang__
 #   define EINA_PREFETCH(arg) (arg ? __builtin_prefetch(arg) : (void) arg)
 #   define EINA_PREFETCH_WRITE(arg) (arg ? __builtin_prefetch(arg, 1) : (void) arg)
@@ -214,6 +218,7 @@
 #  define EINA_UNLIKELY(exp) exp
 #  define EINA_LIKELY(exp)   exp
 #  define EINA_SENTINEL
+#  define EINA_FALLTHROUGH
 #  define EINA_PREFETCH(arg) ((void) (arg))
 #  define EINA_PREFETCH_WRITE(arg) ((void) (arg))
 #  define EINA_PREFETCH_NOCACHE(arg) ((void) (arg))
@@ -239,6 +244,7 @@
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp)   exp
 # define EINA_SENTINEL
+# define EINA_FALLTHROUGH
 # define EINA_PREFETCH(arg) ((void) (arg))
 # define EINA_PREFETCH_WRITE(arg) ((void) (arg))
 # define EINA_PREFETCH_NOCACHE(arg) ((void) (arg))
@@ -268,6 +274,7 @@
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp)   exp
 # define EINA_SENTINEL
+# define EINA_FALLTHROUGH
 # define EINA_PREFETCH(arg) ((void) (arg))
 # define EINA_PREFETCH_WRITE(arg) ((void) (arg))
 # define EINA_PREFETCH_NOCACHE(arg) ((void) (arg))
@@ -361,6 +368,14 @@
  * @since 1.7
  */
 # define EINA_SENTINEL
+
+/**
+ * @def EINA_FALLTHROUGH
+ * @brief Attribute from gcc to prevent warning and indicate that we expect
+ * to actually go to the next switch statement
+ * @since 1.20
+ */
+# define EINA_FALLTHROUGH
 
 /**
  * @def EINA_PREFETCH
