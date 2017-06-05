@@ -513,7 +513,7 @@ int main(int argc, char** argv)
    {
      char* dup = strdup(in_file.c_str());
      char *bn = basename(dup);
-     klass = ::eolian_class_get_by_file(bn);
+     klass = ::eolian_class_get_by_file(NULL, bn);
      file_basename = bn;
      free(dup);
    }
@@ -543,7 +543,7 @@ int main(int argc, char** argv)
              , last; first != last; ++first)
          {
            EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << &*first << std::endl;
-           Eolian_Class const* base = ::eolian_class_get_by_name(&*first);
+           Eolian_Class const* base = ::eolian_class_get_by_name(NULL, &*first);
            function(base);
            recurse_inherits(base, function);
          }
@@ -679,7 +679,7 @@ int main(int argc, char** argv)
 
    // generate all structs parsed in this file
    std::stringstream structs_ss;
-   for (efl::eina::iterator<Eolian_Typedecl> first(::eolian_typedecl_structs_get_by_file(file_basename.c_str()))
+   for (efl::eina::iterator<Eolian_Typedecl> first(::eolian_typedecl_structs_get_by_file(NULL, file_basename.c_str()))
         , last; first != last; ++first)
      {
         std::stringstream ss;
@@ -1151,7 +1151,7 @@ int main(int argc, char** argv)
    os << structs_ss.str();
 
    // generate enumerations
-   for (efl::eina::iterator<Eolian_Typedecl> first(::eolian_typedecl_enums_get_by_file(file_basename.c_str()))
+   for (efl::eina::iterator<Eolian_Typedecl> first(::eolian_typedecl_enums_get_by_file(NULL, file_basename.c_str()))
         , last; first != last; ++first)
      {
         auto tpd = &*first;

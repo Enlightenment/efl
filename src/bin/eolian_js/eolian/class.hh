@@ -44,7 +44,7 @@ inline std::string type_class_name(Eolian_Type const* tp)
              tpt = ::eolian_type_type_get(tp);
              if (tpt == EOLIAN_TYPE_CLASS)
                {
-                  Eolian_Class const* klass = ::eolian_type_class_get(tp);
+                  Eolian_Class const* klass = ::eolian_type_class_get(NULL, tp);
                   if (klass)
                     {
                        Eina_Stringshare* klass_name = ::eolian_class_full_name_get(klass);
