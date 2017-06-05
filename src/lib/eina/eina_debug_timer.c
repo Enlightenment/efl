@@ -84,7 +84,7 @@ end:
 static void *
 _monitor(void *_data EINA_UNUSED)
 {
-#ifndef _WIN32
+#ifdef HAVE_SYS_EPOLL_H
 #define MAX_EVENTS   4
    struct epoll_event event;
    struct epoll_event events[MAX_EVENTS];

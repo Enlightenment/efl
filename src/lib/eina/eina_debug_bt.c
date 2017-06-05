@@ -153,15 +153,35 @@ _signal_handler(int sig EINA_UNUSED,
    eina_semaphore_release(&_wait_for_bts_sem, 1);
    return;
 found:
+   /*
+    * Below is very non-portable code!
+    *
+    * - clock_gettime() is not implemented on macOS < 10.12
+    * - sched_getcpu() is not implemented on macOS
+    * - pthread_getcpuclockid() is not implemented on macOS
+    * - CLOCK_THREAD_CPUTIME_ID should be identical to pthread_getcpuclockid(),
+    *   but it requires POSIX thingies to be defined.
+    */
+#if defined(HAVE_CLOCK_GETTIME) && defined(HAVE_SCHED_GETCPU)
    // store thread info like what cpu core we are on now (not reliable
    // but hey - better than nothing), the amount of cpu time total
    // we have consumed (it's cumulative so subtracing deltas can give
    // you an average amount of cpu time consumed between now and the
    // previous time we looked) and also a full backtrace
    _bt_cpu[slot] = sched_getcpu();
+# ifdef HAVE_PTHREAD_GETCPUCLOCKID
+   /* Try pthread_getcpuclockid() first */
    pthread_getcpuclockid(self, &cid);
+# elif defined(_POSIX_THREAD_CPUTIME)
+   /* Fallback to POSIX clock id. */
+   cid = CLOCK_THREAD_CPUTIME_ID;
+# else
+   /* Boom, we lost */
+#  error Cannot determine the clock id for clock_gettime()
+# endif
    clock_gettime(cid, &(_bt_ts[slot]));
    _bt_buf_len[slot] = _eina_debug_unwind_bt(_bt_buf[slot], EINA_MAX_BT);
+#endif /* HAVE_CLOCK_GETTIME && HAVE_SCHED_GETCPU */
    // now wake up the monitor to let them know we are done collecting our
    // backtrace info
    eina_semaphore_release(&_wait_for_bts_sem, 1);

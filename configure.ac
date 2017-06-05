@@ -683,6 +683,8 @@ geteuid \
 getuid \
 pause \
 gmtime_r \
+pthread_getcpuclockid \
+clock_gettime \
 ])
 
 AC_FUNC_ALLOCA
