@@ -1,3 +1,18 @@
+/**
+ * Example of filtering events in Evas
+ *
+ * Demonstrates how to filter events by seat using a pair of Evas
+ * objects and the efl_input_seat_event_filter_set() routine.  The blue
+ * rectangle can accept events from any seat, while the red one is
+ * filtered to only take events from a single seat.
+ *
+ * @see efl_input_seat_event_filter_set
+ *
+ * @verbatim
+ * gcc -o evas-event-filter evas-event-filter.c `pkg-config --libs --cflags evas ecore ecore-evas`
+ * @endverbatim
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
