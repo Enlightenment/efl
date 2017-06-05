@@ -8261,6 +8261,7 @@ st_collections_group_parts_part_description_inherit(void)
              break;
            case 2:
              parent_val = parse_float_range(1, 0.0, 1.0);
+             EINA_FALLTHROUGH;
            case 1:
              parent_name = parse_str(0);
              break;
