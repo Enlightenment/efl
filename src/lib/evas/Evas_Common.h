@@ -254,7 +254,7 @@ typedef enum _Evas_Alloc_Error
 {
    EVAS_ALLOC_ERROR_NONE = 0, /**< No allocation error */
    EVAS_ALLOC_ERROR_FATAL = 1, /**< Allocation failed despite attempts to free up memory */
-   EVAS_ALLOC_ERROR_RECOVERED = 2 /**< Allocation succeeded, but extra memory had to be found by freeing up speculative resources */
+   EVAS_ALLOC_ERROR_RECOVERED = 2 /**< Allocation succeeded after freeing up speculative resource memory */
 } Evas_Alloc_Error; /**< Possible allocation errors returned by evas_alloc_error() */
 
 typedef enum _Evas_Pixel_Import_Pixel_Format
@@ -495,31 +495,26 @@ EAPI int               evas_init(void);
 EAPI int               evas_shutdown(void);
 
 /**
- * Return if any allocation errors have occurred during the prior function
- * @return The allocation error flag
+ * @brief Get the error status of the most recent memory allocation call
  *
- * This function will return if any memory allocation errors occurred,
- * and what kind they were. The return value will be one of
- * EVAS_ALLOC_ERROR_NONE, EVAS_ALLOC_ERROR_FATAL or EVAS_ALLOC_ERROR_RECOVERED
- * with each meaning something different.
+ * @return Allocation error codes EVAS_ALLOC_ERROR_NONE,
+ * EVAS_ALLOC_ERROR_FATAL or EVAS_ALLOC_ERROR_RECOVERED.
  *
- * EVAS_ALLOC_ERROR_NONE means that no errors occurred at all and the function
- * worked as expected.
+ * Accesses the current error status for memory allocation, or
+ * EVAS_ALLOC_ERROR_NONE if allocation succeeded with no errors.
  *
- * EVAS_ALLOC_ERROR_FATAL means the function was completely unable to perform
- * its job and will  have  exited as cleanly as possible. The programmer
- * should consider this as a sign of very low memory and should try and safely
- * recover from the prior function's failure (or try free up memory elsewhere
- * and try again after more memory is freed).
+ * EVAS_ALLOC_ERROR_FATAL means that no memory allocation was possible, but
+ * the function call exited as cleanly as possible.  This is a sign of very low
+ * memory, and indicates the caller should attempt a safe recovery and possibly
+ * re-try after freeing up additional memory.
  *
- * EVAS_ALLOC_ERROR_RECOVERED means that an allocation error occurred, but was
- * recovered from by evas finding memory of its own that it had allocated, and
- * freeing what it sees as not really usefully allocated memory. What is freed
- * may vary. Evas may reduce the resolution of images, free cached images or
- * fonts, throw out pre-rendered data, reduce the complexity of change lists
- * etc. Evas and the program will function as per normal after this, but this
- * is a sign of low memory, and it is suggested that the program try and
- * identify memory it doesn't need, and free it.
+ * EVAS_ALLOC_ERROR_RECOVERED indicates that Evas was able to free up
+ * sufficient memory internally to perform the requested memory
+ * allocation and the program will continue to function normally, but
+ * memory is in a low state and the program should strive to free memory
+ * itself.  Evas' approach to free memory internally may reduce the
+ * resolution of images, free cached fonts or images, throw out
+ * pre-rendered data, or reduce the complexity of change lists.
  *
  * Example:
  * @code
@@ -529,11 +524,11 @@ EAPI int               evas_shutdown(void);
  * evas_object_event_callback_add(object, EVAS_CALLBACK_MOUSE_DOWN, callback, NULL);
  * if (evas_alloc_error() == EVAS_ALLOC_ERROR_FATAL)
  *   {
- *     fprintf(stderr, "ERROR: Completely unable to attach callback. Must\n");
- *     fprintf(stderr, "       destroy object now as it cannot be used.\n");
+ *     fprintf(stderr, "ERROR: Failed to attach callback.  Out of memory.\n");
+ *     fprintf(stderr, "       Must destroy object now as it cannot be used.\n");
  *     evas_object_del(object);
  *     object = NULL;
- *     fprintf(stderr, "WARNING: Memory is really low. Cleaning out RAM.\n");
+ *     fprintf(stderr, "WARNING: Cleaning out RAM.\n");
  *     my_memory_cleanup();
  *   }
  * if (evas_alloc_error() == EVAS_ALLOC_ERROR_RECOVERED)
