@@ -450,6 +450,7 @@ _output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
      {
         ERR("Could not set dpms property: %m");
         ret = EINA_FALSE;
+        goto err;
      }
 
    cstate->dpms.value = level;
