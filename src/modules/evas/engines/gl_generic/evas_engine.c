@@ -2915,9 +2915,11 @@ eng_image_data_slice_add(void *engine, void *image,
      {
       case EFL_GFX_COLORSPACE_ARGB8888:
         bpp = 4;
+        EINA_FALLTHROUGH;
         // falltrhough is intended
       case EFL_GFX_COLORSPACE_AGRY88:
         if (!bpp) bpp = 2;
+        EINA_FALLTHROUGH;
         // falltrhough is intended
       case EFL_GFX_COLORSPACE_GRY8:
         if (!bpp) bpp = 1;
@@ -2946,6 +2948,7 @@ eng_image_data_slice_add(void *engine, void *image,
         break;
 
       case EFL_GFX_COLORSPACE_YCBCR422P601_PL:
+        EINA_FALLTHROUGH;
       case EFL_GFX_COLORSPACE_YCBCR422P709_PL:
         /* YCbCr 4:2:2 Planar: Y rows, then the Cb, then Cr rows. */
         cs_data = im->cs.data;
