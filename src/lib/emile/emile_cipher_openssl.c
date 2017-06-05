@@ -618,6 +618,7 @@ _emile_cipher_client_handshake(Emile_SSL *client)
       case EMILE_SSL_STATE_INIT:
          client->ssl_state = EMILE_SSL_STATE_HANDSHAKING;
          client->handshaking = EINA_TRUE;
+         EINA_FALLTHROUGH;
 
       case EMILE_SSL_STATE_HANDSHAKING:
          if (!client->ssl) goto on_error;
@@ -641,6 +642,7 @@ _emile_cipher_client_handshake(Emile_SSL *client)
 
          client->handshaking = EINA_FALSE;
          client->ssl_state = EMILE_SSL_STATE_DONE;
+         EINA_FALLTHROUGH;
       case EMILE_SSL_STATE_DONE:
          break;
       case EMILE_SSL_STATE_ERROR:
@@ -1107,4 +1109,3 @@ emile_cipher_verify_basic_get(const Emile_SSL *emile)
 {
    return emile->verify_basic;
 }
-
