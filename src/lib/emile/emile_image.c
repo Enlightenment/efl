@@ -1844,6 +1844,10 @@ _emile_jpeg_data(Emile_Image *image,
              cinfo.out_color_space = JCS_GRAYSCALE;
              break;
           }
+        /* The caller doesn't handle GRAYSCALE,
+         * fallback to RGB.
+         */
+        EINA_FALLTHROUGH;
 
       case JCS_RGB:
       case JCS_YCbCr:
