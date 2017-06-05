@@ -2219,6 +2219,7 @@ _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
              minw = TO_INT(tmp);
              break;
           }
+        EINA_FALLTHROUGH;
 
       case EDJE_ASPECT_PREFER_HORIZONTAL:
         tmp = DIV(SCALE(params->eval.h, minw), w);
@@ -2227,8 +2228,10 @@ _edje_part_recalc_single_min(Edje_Part_Description_Common *desc,
              minh = TO_INT(tmp);
              break;
           }
+        EINA_FALLTHROUGH;
 
       case EDJE_ASPECT_PREFER_SOURCE:
+         EINA_FALLTHROUGH;
       case EDJE_ASPECT_PREFER_BOTH:
         tmp = DIV(SCALE(params->eval.w, minh), h);
         if (tmp >= FROM_INT(minw))
@@ -2289,6 +2292,7 @@ _edje_part_recalc_single_max(Edje_Part_Description_Common *desc,
              maxw = TO_INT(tmp);
              break;
           }
+        EINA_FALLTHROUGH;
 
       case EDJE_ASPECT_PREFER_HORIZONTAL:
         tmp = DIV(SCALE(params->eval.h, maxw), w);
@@ -2297,8 +2301,10 @@ _edje_part_recalc_single_max(Edje_Part_Description_Common *desc,
              maxh = TO_INT(tmp);
              break;
           }
+        EINA_FALLTHROUGH;
 
       case EDJE_ASPECT_PREFER_SOURCE:
+        EINA_FALLTHROUGH;
       case EDJE_ASPECT_PREFER_BOTH:
         tmp = DIV(SCALE(params->eval.w, maxh), h);
         if (tmp <= FROM_INT(maxw))
@@ -4852,7 +4858,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              p3->type.common->spec.image.t = INTP(p1->type.common->spec.image.t, p2->type.common->spec.image.t, pos);
              p3->type.common->spec.image.b = INTP(p1->type.common->spec.image.b, p2->type.common->spec.image.b, pos);
              p3->type.common->spec.image.border_scale_by = FFP(p1->type.common->spec.image.border_scale_by, p2->type.common->spec.image.border_scale_by, pos);
+             EINA_FALLTHROUGH;
 
+             /* No break as proxy and image share code and object. */
            case EDJE_PART_TYPE_PROXY:
              _edje_calc_params_need_type_common(p3);
              p3->type.common->fill.x = INTP(p1->type.common->fill.x, p2->type.common->fill.x, pos);
@@ -4864,8 +4872,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_TEXT:
              _edje_calc_params_need_type_text(p3);
              p3->type.text->size = INTP(p1->type.text->size, p2->type.text->size, pos);
+             EINA_FALLTHROUGH;
 
-           /* no break as we share code with the TEXTBLOCK type here. Intended fall-through */
+             /* no break as we share code with the TEXTBLOCK type here. */
            case EDJE_PART_TYPE_TEXTBLOCK:
              _edje_calc_params_need_type_text(p3);
              p3->type.text->color2.r = INTP(p1->type.text->color2.r, p2->type.text->color2.r, pos2);
@@ -5067,15 +5076,22 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
               evas_object_image_scale_hint_set(ep->object,
                                                img_desc->image.scale_hint);
+             EINA_FALLTHROUGH;
               /* No break here as we share the rest of the code for all types. Intended fall-through*/
            }
 
            case EDJE_PART_TYPE_PROXY:
+             EINA_FALLTHROUGH;
            case EDJE_PART_TYPE_RECTANGLE:
+             EINA_FALLTHROUGH;
            case EDJE_PART_TYPE_TEXTBLOCK:
+             EINA_FALLTHROUGH;
            case EDJE_PART_TYPE_BOX:
+             EINA_FALLTHROUGH;
            case EDJE_PART_TYPE_TABLE:
+             EINA_FALLTHROUGH;
            case EDJE_PART_TYPE_SNAPSHOT:
+             EINA_FALLTHROUGH;
            case EDJE_PART_TYPE_VECTOR:
              evas_object_color_set(ep->object,
                                    (pf->color.r * pf->color.a) / 255,
@@ -5115,6 +5131,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              if (pf->no_render_apply)
                efl_canvas_object_no_render_set(ep->object, pf->no_render);
 #endif
+             EINA_FALLTHROUGH;
 
            /* move and resize are needed for all previous object => no break here. */
            case EDJE_PART_TYPE_SWALLOW:

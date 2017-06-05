@@ -4212,6 +4212,7 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
              edje_object_file_set(child_obj, ed->file->path, source);
              _edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
           }
+        EINA_FALLTHROUGH;
 
       // this fall through case is intentional
       case EDJE_PART_TYPE_TEXTBLOCK:
