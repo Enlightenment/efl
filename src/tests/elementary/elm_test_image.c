@@ -197,7 +197,7 @@ START_TEST (efl_ui_image_icon)
    ok = efl_ui_image_icon_set(image, "None");
    ck_assert(ok == 0);
    icon_name = efl_ui_image_icon_get(image);
-   ck_assert_str_eq(icon_name, NULL);
+   ck_assert(icon_name == NULL);
 
    elm_run();
 

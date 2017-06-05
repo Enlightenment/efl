@@ -1704,6 +1704,8 @@ _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *f
         _efl_ui_image_sizing_eval(obj);
         return EINA_TRUE;
      }
+   else
+     eina_stringshare_replace(&sd->stdicon, NULL);
 
    if (_path_is_absolute(name))
      {
