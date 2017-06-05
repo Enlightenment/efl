@@ -16,12 +16,12 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Eina.h>
-#include <Ecore.h>
-
 # ifdef HAVE_CONFIG_H
 #  include "config.h"
 # endif
+
+#include <Eina.h>
+#include <Ecore.h>
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define SWAP_64(x) x

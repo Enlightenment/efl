@@ -12,6 +12,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "eina_debug.h"
 #include "eina_types.h"
 #include "eina_list.h"

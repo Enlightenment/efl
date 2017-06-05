@@ -22,10 +22,6 @@
 # include "eina_config.h"
 # include "eina_list.h"
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 #ifdef EFL_BETA_API_SUPPORT
 
 /**
