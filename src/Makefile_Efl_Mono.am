@@ -183,7 +183,11 @@ AM_TESTS_ENVIRONMENT += EINA_LOG_LEVEL=8; export EINA_LOG_LEVEL;
 check_PROGRAMS += tests/efl_mono/efl_mono.exe
 TESTS += tests/efl_mono/mono_test_driver.sh
 
+tests_efl_mono_examples = \
+     tests/efl_mono/examples/EinaArray01.cs
+
 tests_efl_mono_efl_mono_exe_SOURCES = \
+     $(tests_efl_mono_examples) \
      tests/efl_mono/Main.cs \
      tests/efl_mono/Eina.cs \
      tests/efl_mono/Eo.cs \
