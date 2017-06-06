@@ -4688,10 +4688,12 @@ _ephysics_body_box_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Face 
       case EPHYSICS_BODY_BOX_FACE_LEFT:
          _ephysics_body_geometry_set(body, bx, by, bz,
                                      bw, obj_h, obj_w, rate);
+         break;
       case EPHYSICS_BODY_BOX_FACE_TOP:
       case EPHYSICS_BODY_BOX_FACE_BOTTOM:
          _ephysics_body_geometry_set(body, bx, by, bz,
                                      obj_w, bh, obj_h, rate);
+         break;
       default:
          break;
      }
