@@ -1,4 +1,4 @@
-class Elm.Atspi.Bridge (Efl.Object)
+class Elm.Atspi.Bridge (Efl.Object, Elm.Interface.Accessible_Observer)
 {
    [[AT-SPI bridge class]]
    legacy_prefix: elm_atspi_bridge;
@@ -17,6 +17,7 @@ class Elm.Atspi.Bridge (Efl.Object)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Elm.Interface.Accessible_Observer.on_event;
    }
    events {
       connected; [[Connected with AT-SPI2 bus]]

@@ -28,6 +28,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_hover.eo \
 	lib/elementary/efl_ui_image.eo \
 	lib/elementary/elm_index.eo \
+	lib/elementary/elm_interface_accessible_observer.eo \
 	lib/elementary/elm_interface_atspi_accessible.eo \
 	lib/elementary/elm_interface_atspi_action.eo \
 	lib/elementary/elm_interface_atspi_component.eo \
@@ -602,6 +603,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_icon.c \
 	lib/elementary/efl_ui_image.c \
 	lib/elementary/elm_index.c \
+	lib/elementary/elm_interface_accessible_observer.c \
 	lib/elementary/elm_interface_atspi_accessible.c \
 	lib/elementary/elm_interface_atspi_action.c \
 	lib/elementary/elm_interface_atspi_component.c \

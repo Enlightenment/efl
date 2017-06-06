@@ -1,6 +1,3 @@
-/* FIXME: This definitely shouldn't be here. */
-type Efl_Event_Cb: __undefined_type; [[Efl event callback type]]
-
 enum Elm.Atspi.Role
 {
    [[Describes the role of an object visible to AT-SPI Clients.]]
@@ -186,8 +183,6 @@ enum Elm.Atspi.Relation_Type
 
 type Elm.Atspi.State_Set: uint64; [[AT-SPI object state set.]]
 
-struct Elm.Atspi.Event.Handler; [[AT-SPI event listener]]
-
 struct Elm.Atspi.Event.State_Changed.Data
 {
    [[AT-SPI state changed event data]]
@@ -329,18 +324,16 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
             states: Elm.Atspi.State_Set; [[Accessible state set]]
          }
       }
-      event_handler_add @class @protected {
+      event_observer_add @class @protected {
          [[Register accessibility event listener]]
          params {
-              @in cb: Efl_Event_Cb; [[Callback]]
-              @in data: void_ptr; [[Data]]
+              @in obs: Efl.Object; [[observer object]]
          }
-         return: ptr(Elm.Atspi.Event.Handler); [[Event handler]]
       }
-      event_handler_del @class @protected {
+      event_observer_del @class @protected {
          [[Deregister accessibility event listener]]
          params {
-              @in handler: ptr(Elm.Atspi.Event.Handler); [[Event handler]]
+              @in handler: Efl.Object; [[observer object]]
          }
       }
       event_emit @class @protected {

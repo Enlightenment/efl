@@ -1,4 +1,5 @@
 #include "elm_interface_atspi_accessible.h"
+#include "elm_interface_accessible_observer.h"
 #include "elm_interface_atspi_text.h"
 #include "elm_interface_atspi_widget_action.h"
 #include "elm_interface_atspi_window.h"
