@@ -42,6 +42,10 @@ public struct Evas_Object_Box_Layout
     IntPtr priv;
     IntPtr user_data;
 };
+[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+public struct Evas_Object_Box_Data
+{
+}
 public delegate void Eina_Free_Cb(IntPtr data);
 public struct Evas_Object_Box_Option {
     IntPtr obj;
