@@ -68,8 +68,8 @@ run(options_type const& opts)
    const Eolian_Typedecl *tp = NULL;
    char* dup = strdup(opts.in_file.c_str());
    std::string basename_input = basename(dup);
-   klass = ::eolian_class_get_by_file(basename_input.c_str());
-   aliases= ::eolian_typedecl_aliases_get_by_file(basename_input.c_str());
+   klass = ::eolian_class_get_by_file(NULL, basename_input.c_str());
+   aliases= ::eolian_typedecl_aliases_get_by_file(NULL, basename_input.c_str());
    free(dup);
 
    std::string class_file_name = opts.out_file;
@@ -102,7 +102,7 @@ run(options_type const& opts)
              continue;
 
          const Eolian_Function *fp = eolian_typedecl_function_pointer_get(tp);
-         efl::eolian::grammar::attributes::function_def function_def(fp, EOLIAN_FUNCTION_POINTER);
+         efl::eolian::grammar::attributes::function_def function_def(fp, EOLIAN_FUNCTION_POINTER, NULL);
          std::vector<std::string> namespaces;
 
          for (efl::eina::iterator<const char> namespace_iterator(::eolian_typedecl_namespaces_get(tp)), namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
@@ -116,7 +116,7 @@ run(options_type const& opts)
 
    if (klass)
      {
-       efl::eolian::grammar::attributes::klass_def klass_def(klass);
+       efl::eolian::grammar::attributes::klass_def klass_def(klass, NULL);
        std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
 
        eolian_mono::klass
@@ -124,14 +124,14 @@ run(options_type const& opts)
      }
    //else
      {
-       for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator( ::eolian_typedecl_enums_get_by_file(basename_input.c_str()))
+       for (efl::eina::iterator<const Eolian_Typedecl> enum_iterator( ::eolian_typedecl_enums_get_by_file(NULL, basename_input.c_str()))
                , enum_last; enum_iterator != enum_last; ++enum_iterator)
          {
             efl::eolian::grammar::attributes::enum_def enum_(&*enum_iterator);
             eolian_mono::enum_definition.generate(iterator, enum_, efl::eolian::grammar::context_null());
          }
 
-       for (efl::eina::iterator<const Eolian_Typedecl> struct_iterator( ::eolian_typedecl_structs_get_by_file(basename_input.c_str()))
+       for (efl::eina::iterator<const Eolian_Typedecl> struct_iterator( ::eolian_typedecl_structs_get_by_file(NULL, basename_input.c_str()))
                , struct_last; struct_iterator != struct_last; ++struct_iterator)
          {
             efl::eolian::grammar::attributes::struct_def struct_(&*struct_iterator);
@@ -169,7 +169,7 @@ database_load(options_type const& opts)
          << "Failed parsing: " << opts.in_file << ".";
        assert(false && "Error parsing input file");
      }
-   if (!::eolian_database_validate(EINA_FALSE))
+   if (!::eolian_database_validate())
      {
         EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
           << "Eolian failed validating database.";
