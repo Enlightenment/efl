@@ -766,7 +766,7 @@ struct _Ecore_Drm2_Output
    struct
      {
         const char *path;
-        int value, max;
+        double value, max;
         Ecore_Drm2_Backlight_Type type;
      } backlight;
 
