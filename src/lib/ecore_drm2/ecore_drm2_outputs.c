@@ -412,60 +412,6 @@ _output_dpms_property_get(int fd, const drmModeConnector *conn)
    return NULL;
 }
 
-#ifdef HAVE_ATOMIC_DRM
-static Eina_Bool
-_output_dpms_atomic_set(Ecore_Drm2_Output *output, int level)
-{
-   Ecore_Drm2_Connector_State *cstate;
-   Ecore_Drm2_Crtc_State *rstate;
-   drmModeAtomicReq *req = NULL;
-   Eina_Bool ret = EINA_TRUE;
-
-   req = sym_drmModeAtomicAlloc();
-   if (!req) return EINA_FALSE;
-
-   sym_drmModeAtomicSetCursor(req, 0);
-
-   cstate = output->conn_state;
-   rstate = output->crtc_state;
-
-   if (sym_drmModeAtomicAddProperty(req, cstate->obj_id,
-                                    cstate->dpms.id, level) < 0)
-     {
-        ERR("Failed to add connector property DPMS");
-        ret = EINA_FALSE;
-        goto err;
-     }
-
-   if (sym_drmModeAtomicAddProperty(req, rstate->obj_id,
-                                    rstate->active.id,
-                                    ((level == 0) ? 1 : 0)) < 0)
-     {
-        ERR("Failed to add crtc active property");
-        ret = EINA_FALSE;
-        goto err;
-     }
-
-   if (sym_drmModeAtomicCommit(output->fd, req, 0, NULL))
-     {
-        ERR("Could not set dpms property: %m");
-        ret = EINA_FALSE;
-        goto err;
-     }
-
-   cstate->dpms.value = level;
-   if (level == 0)
-     rstate->active.value = 1;
-   else
-     rstate->active.value = 0;
-
-err:
-   sym_drmModeAtomicFree(req);
-
-   return ret;
-}
-#endif
-
 static double
 _output_backlight_value_get(Ecore_Drm2_Output *output, const char *attr)
 {
@@ -1090,13 +1036,8 @@ ecore_drm2_output_dpms_set(Ecore_Drm2_Output *output, int level)
    EINA_SAFETY_ON_NULL_RETURN(output);
    EINA_SAFETY_ON_TRUE_RETURN(!output->enabled);
 
-#ifdef HAVE_ATOMIC_DRM
-   if (_ecore_drm2_use_atomic)
-     _output_dpms_atomic_set(output, level);
-   else
-#endif
-     sym_drmModeConnectorSetProperty(output->fd, output->conn_id,
-                                     output->dpms->prop_id, level);
+   sym_drmModeConnectorSetProperty(output->fd, output->conn_id,
+                                   output->dpms->prop_id, level);
 
    if (level == 0) /* DPMS on */
      ecore_drm2_fb_flip(NULL, output);
