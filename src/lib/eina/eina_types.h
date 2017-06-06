@@ -197,7 +197,11 @@
 #  define EINA_LIKELY(exp)      __builtin_expect((exp), 1)
 #  define EINA_SENTINEL __attribute__((__sentinel__))
 #  ifndef __clang__
-#   define EINA_FALLTHROUGH __attribute__ ((fallthrough));
+#   if __GNUC__ >= 7
+#    define EINA_FALLTHROUGH __attribute__ ((fallthrough));
+#   else
+#    define EINA_FALLTHROUGH
+#   endif
 #   define EINA_PREFETCH(arg) (arg ? __builtin_prefetch(arg) : (void) arg)
 #   define EINA_PREFETCH_WRITE(arg) (arg ? __builtin_prefetch(arg, 1) : (void) arg)
 #   define EINA_PREFETCH_NOCACHE(arg) (arg ? __builtin_prefetch(arg, 0, 0) : (void) arg)
