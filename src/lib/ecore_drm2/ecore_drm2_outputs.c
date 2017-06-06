@@ -466,6 +466,23 @@ err:
 }
 #endif
 
+static double
+_output_backlight_value_get(Ecore_Drm2_Output *output, const char *attr)
+{
+   const char *b = NULL;
+   double ret = 0.0;
+
+   if ((!output) || (!output->backlight.path)) return 0.0;
+
+   b = eeze_udev_syspath_get_sysattr(output->backlight.path, attr);
+   if (!b) return 0.0;
+
+   ret = strtod(b, NULL);
+   if (ret < 0) ret = 0.0;
+
+   return ret;
+}
+
 static void
 _output_backlight_init(Ecore_Drm2_Output *output, unsigned int conn_type)
 {
@@ -501,6 +518,10 @@ _output_backlight_init(Ecore_Drm2_Output *output, unsigned int conn_type)
      {
         output->backlight.type = type;
         output->backlight.path = eina_stringshare_add(dev);
+        output->backlight.max =
+          _output_backlight_value_get(output, "max_brightness");
+        output->backlight.value =
+          _output_backlight_value_get(output, "brightness");
      }
 
    EINA_LIST_FREE(devs, dev)
