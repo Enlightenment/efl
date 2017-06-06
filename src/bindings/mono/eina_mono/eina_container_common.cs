@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using eina.Callbacks;
 using static eina.HashNativeFunctions;
+using static eina.InarrayNativeFunctions;
 using static eina.NativeCustomExportFunctions;
 
 namespace eina {
@@ -37,6 +38,22 @@ public struct ConvertWrapper<T>
     public T Val {get;set;}
 }
 
+[StructLayout(LayoutKind.Sequential)]
+public struct InlistMem
+{
+    public IntPtr next {get;set;}
+    public IntPtr prev {get;set;}
+    public IntPtr last {get;set;}
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public struct InlistNode<T>
+{
+    public InlistMem __in_list {get;set;}
+    public T Val {get;set;}
+}
+
+
 public interface IBaseElementTraits<T>
 {
     IntPtr ManagedToNativeAlloc(T man);
@@ -47,6 +64,7 @@ public interface IBaseElementTraits<T>
     IntPtr EinaCompareCb();
     IntPtr EinaFreeCb();
     IntPtr EinaHashNew();
+    IntPtr EinaInarrayNew(uint step);
 }
 
 public class StringElementTraits<T> : IBaseElementTraits<T>
@@ -93,6 +111,11 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
     public IntPtr EinaHashNew()
     {
         return eina_hash_string_superfast_new(IntPtr.Zero);
+    }
+
+    public IntPtr EinaInarrayNew(uint step)
+    {
+        return eina_inarray_new(Marshal.SizeOf<IntPtr>(), step);
     }
 }
 
@@ -157,6 +180,11 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     {
         return eina_hash_pointer_new(IntPtr.Zero);
     }
+
+    public IntPtr EinaInarrayNew(uint step)
+    {
+        return eina_inarray_new(Marshal.SizeOf<IntPtr>(), step);
+    }
 }
 
 public abstract class PrimitiveElementTraits<T>
@@ -205,6 +233,11 @@ public abstract class PrimitiveElementTraits<T>
     public IntPtr EinaFreeCb()
     {
         return efl_mono_native_free_addr_get();
+    }
+
+    public IntPtr EinaInarrayNew(uint step)
+    {
+        return eina_inarray_new(Marshal.SizeOf<T>(), step);
     }
 }
 
@@ -381,6 +414,11 @@ public static class TraitFunctions
     public static IntPtr EinaHashNew<TKey>()
     {
         return GetTypeTraits<TKey>().EinaHashNew();
+    }
+
+    public static IntPtr EinaInarrayNew<T>(uint step)
+    {
+        return GetTypeTraits<T>().EinaInarrayNew(step);
     }
 }
 
