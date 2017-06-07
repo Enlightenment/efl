@@ -339,7 +339,10 @@ EOLIAN void
 _elm_interface_atspi_accessible_event_observer_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Object *observer)
 {
    if (efl_isa(observer, ELM_INTERFACE_ACCESSIBLE_OBSERVER_INTERFACE))
-      observers = eina_list_append(observers, observer);
+     {
+        observers = eina_list_append(observers, observer);
+        elm_interface_accessible_observer_on_root_changed(observer, root);
+     }
    else
      ERR("Invalid type, expected: ELM_INTERFACE_ACCESSIBLE_OBSERVER_INTERFACE, got: %s", efl_class_name_get(observer));
 }
@@ -538,11 +541,27 @@ _elm_interface_atspi_accessible_relationships_clear(Eo *obj EINA_UNUSED, Elm_Int
 EOLIAN Eo*
 _elm_interface_atspi_accessible_root_get(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
 {
-   if (!root) {
-      root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
-   }
-
    return root;
+}
+
+EOLIAN void
+_elm_interface_atspi_accessible_root_set(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Elm_Interface_Atspi_Accessible *new_root)
+{
+   Elm_Interface_Accessible_Observer *observer;
+   Eina_List *l;
+
+   if (new_root == root)
+     return;
+
+   if (root)
+     efl_unref(root);
+
+   root = new_root ? efl_ref(new_root) : NULL;
+
+   EINA_LIST_FOREACH(observers, l, observer)
+     {
+        elm_interface_accessible_observer_on_root_changed(observer, root);
+     }
 }
 
 EOLIAN void

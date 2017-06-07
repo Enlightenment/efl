@@ -18,6 +18,7 @@ class Elm.Atspi.Bridge (Efl.Object, Elm.Interface.Accessible_Observer)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Elm.Interface.Accessible_Observer.on_event;
+      Elm.Interface.Accessible_Observer.on_root_changed;
    }
    events {
       connected; [[Connected with AT-SPI2 bus]]

@@ -16,6 +16,12 @@ interface Elm.Interface.Accessible_Observer ()
                   @in event: const(ptr(Elm.Accessible.Event));
              }
         }
+        on_root_changed {
+             [[ Sets root object]]
+             params {
+                  @in new_root: Elm.Interface.Atspi_Accessible;
+             }
+        }
    }
 }
 
