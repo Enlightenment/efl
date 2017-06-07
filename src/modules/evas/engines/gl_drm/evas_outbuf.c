@@ -268,7 +268,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
 
    for (; i < ncfg; ++i)
      {
-        EGLint format;
+        EGLint format = 0;
 
         if (!eglGetConfigAttrib(ob->egl.disp, cfgs[i], EGL_NATIVE_VISUAL_ID,
                                 &format))
