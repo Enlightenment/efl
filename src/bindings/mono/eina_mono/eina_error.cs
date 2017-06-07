@@ -7,6 +7,11 @@ public struct Error
 {
     int code;
 
+    public string Message
+    {
+        get { return MsgGet(this); }
+    }
+
     public static Error EFL_ERROR;
 
     public static Error NO_ERROR = new Error(0);
@@ -69,6 +74,11 @@ public struct Error
     public static void Clear()
     {
         Set(0);
+    }
+
+    public static Error Register(string msg)
+    {
+        return eina_error_msg_register(msg);
     }
 }
 }
