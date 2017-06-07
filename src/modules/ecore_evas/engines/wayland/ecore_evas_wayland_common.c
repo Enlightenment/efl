@@ -1366,6 +1366,8 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
    if (!surf) return;
 
    wdata = ee->engine.data;
+   if (!wdata) return;
+
    if (wdata->win->pending.configure) return;
 
    wdata->anim_callback = wl_surface_frame(surf);
