@@ -16,25 +16,27 @@ class TestExampleEinaArray01
 
         var array = new eina.Array<string>(20U);
 
-        for (int i = 0; i < 20; i++)
+        // Push new elements
+        foreach (string s in strings)
         {
-            WriteLine("push: " + strings[i]);
-            array.Push(strings[i]);
+            WriteLine("push: " + s);
+            array.Push(s);
         }
 
+        // Check count
         WriteLine("array count: " + array.Count());
 
+        // Iterate over the array
         int idx = 0;
         foreach (string s in array)
         {
-            WriteLine("at[" + idx + "]: " + s);
+            WriteLine($"at[{idx}]: {s}");
             ++idx;
         }
 
+        // Remove one by one
         while (array.Length != 0)
             WriteLine("pop: " + array.Pop());
-
-        array.Dispose();
     }
 }
 
