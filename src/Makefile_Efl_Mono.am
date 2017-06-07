@@ -184,6 +184,7 @@ check_PROGRAMS += tests/efl_mono/efl_mono.exe
 TESTS += tests/efl_mono/mono_test_driver.sh
 
 tests_efl_mono_examples = \
+     tests/efl_mono/examples/EinaError01.cs \
      tests/efl_mono/examples/EinaBinbuf01.cs \
      tests/efl_mono/examples/EinaArray01.cs \
      tests/efl_mono/examples/EinaHash01.cs \
