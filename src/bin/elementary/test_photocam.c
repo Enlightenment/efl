@@ -731,3 +731,58 @@ test_photocam_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_resize(win, 150, 150);
    evas_object_show(win);
 }
+
+static void
+_btn_clicked_cb(void *data , Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *zoomable = data;
+   Eina_Bool play = EINA_FALSE;
+
+   play = !efl_player_play_get(zoomable);
+   printf("image clicked! play = %d\n", play);
+   efl_player_play_set(zoomable, play);
+}
+
+void
+test_photocam_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *lbl, *zoomable, *btn;
+   char buf[PATH_MAX];
+
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
+   win = elm_win_util_standard_add("ImageZoomable", "Image Zoomable animation");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   lbl = elm_label_add(bx);
+   elm_object_text_set(lbl, "Clicking the button will play/pause animation.");
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+
+   zoomable = efl_add(EFL_UI_IMAGE_ZOOMABLE_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/images/animated_logo.gif", elm_app_data_dir_get());
+   efl_file_set(zoomable, buf, NULL);
+   if (efl_player_playable_get(zoomable))
+     {
+        printf("animation is available for this image.\n");
+        efl_player_play_set(zoomable, EINA_TRUE);
+     }
+   evas_object_size_hint_weight_set(zoomable, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(zoomable, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, zoomable);
+   evas_object_show(zoomable);
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, bx);
+   efl_text_set(btn, "start/stop");
+   evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, zoomable);
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}

@@ -699,7 +699,6 @@ _main_img_preloaded_cb(void *data,
 
    ELM_PHOTOCAM_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
-
    evas_object_show(sd->img);
    sd->main_load_pending = 0;
    g = _grid_create(obj);
@@ -1496,6 +1495,7 @@ _efl_ui_image_zoomable_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Zoomable
 {
    Efl_Ui_Image_Zoomable_Grid *g;
 
+   ecore_timer_del(sd->anim_timer);
    ELM_SAFE_FREE(sd->icon_edje, evas_object_del);
 
    EINA_LIST_FREE(sd->grids, g)
@@ -2622,6 +2622,115 @@ _efl_ui_image_zoomable_efl_player_playable_get(Eo *obj EINA_UNUSED, Efl_Ui_Image
 {
    if (sd->icon_edje) return EINA_TRUE;
    return evas_object_image_animated_get(sd->img);
+}
+
+static Eina_Bool
+_efl_ui_image_zoomable_animated_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   if (sd->icon_edje)
+     return edje_object_animation_get(sd->icon_edje);
+   return sd->anim;
+}
+
+static void
+_efl_ui_image_zoomable_animated_set_internal(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, Eina_Bool anim)
+{
+   anim = !!anim;
+   if (sd->anim == anim) return;
+
+   sd->anim = anim;
+
+   if (sd->icon_edje)
+     {
+        edje_object_animation_set(sd->icon_edje, anim);
+        return;
+     }
+
+   if (!evas_object_image_animated_get(sd->img)) return;
+
+   if (anim)
+     {
+        sd->frame_count = evas_object_image_animated_frame_count_get(sd->img);
+        sd->cur_frame = 1;
+        sd->frame_duration =
+          evas_object_image_animated_frame_duration_get
+            (sd->img, sd->cur_frame, 0);
+        evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
+     }
+   else
+     {
+        sd->frame_count = -1;
+        sd->cur_frame = -1;
+        sd->frame_duration = -1;
+     }
+}
+
+static Eina_Bool
+_efl_ui_image_zoomable_animate_cb(void *data)
+{
+   ELM_PHOTOCAM_DATA_GET(data, sd);
+   _grid_clear_all(data);
+
+   if (!sd->anim) return ECORE_CALLBACK_CANCEL;
+
+   sd->cur_frame++;
+   if ((sd->frame_count > 0) && (sd->cur_frame > sd->frame_count))
+     sd->cur_frame = sd->cur_frame % sd->frame_count;
+
+   evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
+   sd->frame_duration = evas_object_image_animated_frame_duration_get
+       (sd->img, sd->cur_frame, 0);
+
+   if (sd->frame_duration > 0)
+     ecore_timer_interval_set(sd->anim_timer, sd->frame_duration);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_efl_ui_image_zoomable_animated_play_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Bool play)
+{
+   if (!sd->anim) return;
+   if (sd->play == play) return;
+   sd->play = play;
+   if (sd->icon_edje)
+     {
+        edje_object_play_set(sd->icon_edje, play);
+        return;
+     }
+   if (play)
+     {
+        sd->anim_timer = ecore_timer_add
+            (sd->frame_duration, _efl_ui_image_zoomable_animate_cb, obj);
+     }
+   else
+     {
+        ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
+     }
+}
+
+EOLIAN static void
+_efl_ui_image_zoomable_efl_player_play_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Bool play)
+{
+   evas_object_image_preload(sd->img, EINA_FALSE);
+   if (play && !_efl_ui_image_zoomable_animated_get_internal(obj, sd))
+     _efl_ui_image_zoomable_animated_set_internal(obj, sd, play);
+
+   _efl_ui_image_zoomable_animated_play_set_internal(obj, sd, play);
+}
+
+static Eina_Bool
+_efl_ui_image_zoomable_animated_play_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   if (sd->icon_edje)
+     return edje_object_play_get(sd->icon_edje);
+   return sd->play;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_zoomable_efl_player_play_get(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   return _efl_ui_image_zoomable_animated_play_get_internal(obj, sd);
 }
 
 EOLIAN static void

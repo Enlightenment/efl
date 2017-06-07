@@ -127,6 +127,11 @@ struct _Efl_Ui_Image_Zoomable_Data
       Eina_Bool use : 1;
    } freedesktop;
 
+   Ecore_Timer          *anim_timer;
+   double                frame_duration;
+   int                   cur_frame;
+   int                   frame_count;
+
    Eina_List   *grids;
    Efl_Orient   orient;
    Efl_Flip     flip;
@@ -140,6 +145,8 @@ struct _Efl_Ui_Image_Zoomable_Data
    Eina_Bool    on_hold : 1;
    Eina_Bool    paused : 1;
    Eina_Bool    orientation_changed : 1;
+   Eina_Bool    play : 1;
+   Eina_Bool    anim : 1;
 };
 
 struct _Efl_Ui_Image_Zoomable_Pan_Data
