@@ -187,7 +187,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    int ctx_attr[3];
    int cfg_attr[40];
    int maj = 0, min = 0, n = 0, i = 0;
-   EGLint ncfg;
+   EGLint ncfg = 0;
    EGLConfig *cfgs;
    const GLubyte *vendor, *renderer, *version, *glslversion;
    Eina_Bool blacklist = EINA_FALSE;
