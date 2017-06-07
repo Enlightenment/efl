@@ -1675,9 +1675,15 @@ _elm_interface_scrollable_mirrored_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart
 {
    Evas_Coord wx;
 
-   if (!sid->edje_obj || !sid->pan_obj) return;
+   if (!sid->edje_obj) return;
 
    mirrored = !!mirrored;
+
+   if (sid->is_mirrored == mirrored)
+     return;
+
+   sid->is_mirrored = mirrored;
+   edje_object_mirrored_set(sid->edje_obj, mirrored);
 
    if (sid->is_mirrored)
      wx = _elm_scroll_x_mirrored_get(sid->obj, sid->wx);
@@ -1685,12 +1691,6 @@ _elm_interface_scrollable_mirrored_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart
      wx = sid->wx;
 
    elm_interface_scrollable_content_pos_set(sid->obj, wx, sid->wy, EINA_FALSE);
-
-   if (sid->is_mirrored == mirrored)
-     return;
-
-   sid->is_mirrored = mirrored;
-   edje_object_mirrored_set(sid->edje_obj, mirrored);
 }
 
 /* returns TRUE when we need to move the scroller, FALSE otherwise.

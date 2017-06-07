@@ -329,13 +329,6 @@ _elm_scroller_elm_widget_activate(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, E
    return EINA_TRUE;
 }
 
-static void
-_mirrored_set(Evas_Object *obj,
-              Eina_Bool mirrored)
-{
-   elm_interface_scrollable_mirrored_set(obj, mirrored);
-}
-
 EOLIAN static void
 _elm_scroller_elm_layout_sizing_eval(Eo *obj, Elm_Scroller_Data *sd)
 {
@@ -401,8 +394,13 @@ _elm_scroller_elm_layout_sizing_eval(Eo *obj, Elm_Scroller_Data *sd)
    if ((maxh > 0) && (h > maxh)) h = maxh;
 
    evas_object_size_hint_min_set(obj, w, h);
+}
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+static void
+_mirrored_set(Evas_Object *obj,
+              Eina_Bool mirrored)
+{
+   elm_interface_scrollable_mirrored_set(obj, mirrored);
 }
 
 EOLIAN static Elm_Theme_Apply
@@ -411,6 +409,8 @@ _elm_scroller_elm_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
+
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
    elm_layout_sizing_eval(obj);
 
