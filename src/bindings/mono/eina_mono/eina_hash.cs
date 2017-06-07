@@ -332,12 +332,12 @@ public class Hash<TKey, TValue> : IDisposable
         return r;
     }
 
-    void FreeBuckets()
+    public void FreeBuckets()
     {
         eina_hash_free_buckets(Handle);
     }
 
-    int Population()
+    public int Population()
     {
         return eina_hash_population(Handle);
     }
