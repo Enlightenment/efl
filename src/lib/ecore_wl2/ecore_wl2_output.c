@@ -120,16 +120,24 @@ _ecore_wl2_output_del(Ecore_Wl2_Output *output)
 EAPI int
 ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output)
 {
-   int w, mw;
+   int w, h, mw, mh, dpi;
+   double target;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, 75);
 
    mw = output->mw;
    if (mw <= 0) return 75;
 
-   w = output->geometry.w;
+   mh = output->mh;
+   if (mh <= 0) return 75;
 
-   return (((w * 254) / mw) + 5) / 10;
+   w = output->geometry.w;
+   h = output->geometry.h;
+
+   target = (round((sqrt(mw * mw + mh * mh) / 25.4) * 10) / 10);
+   dpi = (round((sqrt(w * w + h * h) / target) * 10) / 10);
+
+   return dpi;
 }
 
 EAPI int
