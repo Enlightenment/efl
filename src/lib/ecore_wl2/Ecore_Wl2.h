@@ -1367,6 +1367,17 @@ EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurfac
 EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
 
 /**
+ * Get the current transform of a given output
+ *
+ * @param output The output to get the transform of
+ *
+ * @return The output's current transform value
+ * @ingroup Ecore_Wl2_Output_Group
+ * @since 1.20
+ */
+EAPI int ecore_wl2_output_transform_get(Ecore_Wl2_Output *output);
+
+/**
  * Return the version of the display's compositor object
  *
  * @param disp the display to get the compositor object version from

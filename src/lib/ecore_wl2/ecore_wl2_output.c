@@ -131,3 +131,10 @@ ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output)
 
    return (((w * 254) / mw) + 5) / 10;
 }
+
+EAPI int
+ecore_wl2_output_transform_get(Ecore_Wl2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+   return output->transform;
+}
