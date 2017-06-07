@@ -198,13 +198,13 @@ public class MarshalTest<T, U> : ICustomMarshaler
     }
     public void CleanUpManagedData(object ManagedObj)
     {
-        eina.Log.Warning("MarshalTest.CleanUpManagedData not implemented");
+        //eina.Log.Warning("MarshalTest.CleanUpManagedData not implemented");
         //throw new NotImplementedException();
     }
 
     public void CleanUpNativeData(IntPtr pNativeData)
     {
-        eina.Log.Warning("MarshalTest.CleanUpNativeData not implemented");
+        //eina.Log.Warning("MarshalTest.CleanUpNativeData not implemented");
         //throw new NotImplementedException();
     }
 
