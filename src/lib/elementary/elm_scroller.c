@@ -904,8 +904,6 @@ _elm_scroller_efl_canvas_group_group_add(Eo *obj, Elm_Scroller_Data *priv)
        (obj, "scroller", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
-
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(priv->hit_rect, obj);
    elm_widget_sub_object_add(obj, priv->hit_rect);
@@ -922,6 +920,8 @@ _elm_scroller_efl_canvas_group_group_add(Eo *obj, Elm_Scroller_Data *priv)
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
+
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
    elm_interface_scrollable_edge_left_cb_set(obj, _edge_left_cb);
    elm_interface_scrollable_edge_right_cb_set(obj, _edge_right_cb);
