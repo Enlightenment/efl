@@ -962,6 +962,17 @@ EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_T
 EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
 
 /**
+ * Set a buffer transform on a given window
+ *
+ * @param window The window on which to set the buffer transform
+ * @param transform The buffer transform being requested
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *

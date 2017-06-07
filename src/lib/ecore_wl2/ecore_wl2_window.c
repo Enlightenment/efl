@@ -1205,3 +1205,11 @@ ecore_wl2_window_output_find(Ecore_Wl2_Window *window)
 
    return NULL;
 }
+
+EAPI void
+ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   wl_surface_set_buffer_transform(window->surface, transform);
+}
