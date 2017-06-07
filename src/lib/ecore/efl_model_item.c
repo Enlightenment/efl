@@ -72,6 +72,7 @@ _efl_model_item_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Model_Item_Data 
 {
    Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
+   Efl_Model_Property_Event evt;
 
    Eina_Stringshare *sshared = eina_stringshare_add(property);
    Eina_Value *p_v = eina_hash_find(sd->properties, sshared);
@@ -96,6 +97,12 @@ _efl_model_item_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Model_Item_Data 
      }
 
    efl_promise_value_set(promise, p_v, NULL);
+
+   evt.changed_properties = eina_array_new(20);
+   eina_array_push(evt.changed_properties, property);
+   efl_event_callback_call(obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+   eina_array_free(evt.changed_properties);
+
    return future;
 
 err4:
