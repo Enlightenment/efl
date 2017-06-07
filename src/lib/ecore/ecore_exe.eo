@@ -51,7 +51,7 @@ class Ecore.Exe (Efl.Object, Efl.Control)
    event_prefix: ecore_exe;
    methods {
         @property command {
-             [[Control the command that's executed. FIXME: May need a split/rename.]]
+             [[Controls the command that's executed. FIXME: May need a split/rename.]]
              set {
                   legacy: null;
              }

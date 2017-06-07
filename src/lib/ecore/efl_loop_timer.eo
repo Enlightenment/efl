@@ -33,7 +33,7 @@ class Efl.Loop.Timer (Efl.Loop_User)
           * ecore_timer_delay(timer, ecore_timer_interval_get(timer) - ecore_timer_pending_get(timer));
           * @endcode
           */
-          [[Reset a timer to its full interval. This effectively makes the
+          [[Resets a timer to its full interval. This effectively makes the
             timer start ticking off from zero now.
 
             @since 1.2
@@ -45,7 +45,7 @@ class Efl.Loop.Timer (Efl.Loop_User)
 	 ]]
       }
       delay {
-         [[Add some delay for the next occurrence of a timer.
+         [[Adds some delay for the next occurrence of a timer.
            This doesn't affect the interval of a timer.
          ]]
          params {

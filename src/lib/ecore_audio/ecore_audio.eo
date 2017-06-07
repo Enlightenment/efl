@@ -33,7 +33,7 @@ class Ecore.Audio (Efl.Object)
          }
       }
       @property paused {
-         [[Pause state of the object
+         [[Pauses state of the object
 
            @since 1.8
          ]]

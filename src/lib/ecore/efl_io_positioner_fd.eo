@@ -1,5 +1,5 @@
 mixin Efl.Io.Positioner.Fd (Efl.Io.Positioner) {
-    [[Position fd using lseek(2).
+    [[Positions fd using lseek(2).
 
       @since 1.19
     ]]

@@ -33,7 +33,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
         }
 
         @property dont_route {
-            [[Avoid sent UDP packets being routed by a gateway, limiting them to the local network.
+            [[Avoids sent UDP packets being routed by a gateway, limiting them to the local network.
 
               This will use SO_DONTROUTE option to avoid gateways
               routing sent packets to outside of local network. It's
@@ -50,7 +50,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
         }
 
         multicast_join {
-            [[Join a multicast group.
+            [[Joins a multicast group.
 
               The multicast address should be in the format:
 
@@ -71,7 +71,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
         }
 
         multicast_leave {
-            [[Leave a multicast group.
+            [[Leaves a multicast group.
 
               This reverses the effect of @.multicast_join.
             ]]
@@ -82,7 +82,7 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Fd) {
         }
 
         multicast_groups_get {
-            [[Return the multicast groups this server has joined.
+            [[Returns the multicast groups this server has joined.
 
               The iterator is only valid until a new group is joined
               or left using @.multicast_join or @.multicast_leave.

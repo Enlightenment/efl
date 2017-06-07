@@ -37,7 +37,7 @@ struct Efl.Net.Control.Agent_Request_Input.Information {
 }
 
 struct Efl.Net.Control.Agent_Request_Input {
-    [[Request input to the agent.
+    [[Requests input to the agent.
 
       @since 1.19
     ]]
@@ -48,7 +48,7 @@ struct Efl.Net.Control.Agent_Request_Input {
 }
 
 struct Efl.Net.Control.Agent_Error {
-    [[Report error to the agent.
+    [[Reports error to the agent.
 
       @since 1.19
     ]]
@@ -57,7 +57,7 @@ struct Efl.Net.Control.Agent_Error {
 }
 
 struct Efl.Net.Control.Agent_Browser_Url {
-    [[Report to agent that it should open a browser at given URL.
+    [[Reports to agent that it should open a browser at given URL.
 
       @since 1.19
     ]]
@@ -66,7 +66,7 @@ struct Efl.Net.Control.Agent_Browser_Url {
 }
 
 class Efl.Net.Control (Efl.Loop_User) {
-    [[Control network connectivity.
+    [[Controls network connectivity.
 
       This class and its children objects are only useful to implement
       control of the network connectivity. If your application is only

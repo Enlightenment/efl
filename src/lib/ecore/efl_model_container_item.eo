@@ -11,7 +11,7 @@ class Efl.Model.Container.Item (Efl.Object, Efl.Model)
    ]]
    methods {
       define {
-         [[Define @Efl.Model.Container.Item internal data.]]
+         [[Defines @Efl.Model.Container.Item internal data.]]
          params {
             parent_data: void_ptr; [[Pointer to the private data of the
                                     @Efl.Model.Container parent object.]]
@@ -20,7 +20,7 @@ class Efl.Model.Container.Item (Efl.Object, Efl.Model)
          }
       }
       invalidate {
-         [[Invalidate the object preventing it from using the given parent
+         [[Invalidates the object preventing it from using the given parent
            data.]]
       }
    }

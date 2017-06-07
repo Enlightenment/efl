@@ -5,7 +5,7 @@ class Efl.Promise (Efl.Loop_User)
    [[Efl promise class]]
    methods {
       progress_set {
-         [[Update the progress and send it immediately to all connected Efl_Future.
+         [[Updates the progress and send it immediately to all connected Efl_Future.
 
            The progress is not kept and when the function return it will not be accessed
            anymore. The pointer is owned by the caller and will remain so after the return
@@ -16,7 +16,7 @@ class Efl.Promise (Efl.Loop_User)
 	 }
       }
       @property future {
-         [[Request a new future linked to this promise.
+         [[Requests a new future linked to this promise.
 
 	   Efl_Future are optional and will be automatically deleted if no then callback have
 	   been set before the next iteration of the main loop.
@@ -25,7 +25,7 @@ class Efl.Promise (Efl.Loop_User)
 	    [[The returned new future.]]
          }
          values {
-            f: future<void_ptr, void_ptr>; [[Return a future where the value will be set by calling value_set while the progress will be updated by progress_set.]]
+            f: future<void_ptr, void_ptr>; [[Returns a future where the value will be set by calling value_set while the progress will be updated by progress_set.]]
          }
       }
       @property value {
@@ -43,7 +43,7 @@ class Efl.Promise (Efl.Loop_User)
 	 }
       }
       @property failed {
-         [[Define the failure state of this promise.]]
+         [[Defines the failure state of this promise.]]
 	 set {
 	    [[
               This function can be called only once and you can not call #value.set after that.
@@ -54,7 +54,7 @@ class Efl.Promise (Efl.Loop_User)
          }
       }
       connect {
-         [[Connect a future output to this promise.
+         [[Connects a future output to this promise.
 
            This helper will automatically trigger #value.set or #failed.set when the future
            succeed or fail respectively with the value provided by the future.
@@ -62,7 +62,7 @@ class Efl.Promise (Efl.Loop_User)
 	 params {
 	    @in f: future<void_ptr, void_ptr>; [[The future to connect this promise to.]]
 	 }
-	 return: bool; [[Return false if unable to setup the connection.]]
+	 return: bool; [[Returns $false if unable to setup the connection.]]
       }
    }
    events {

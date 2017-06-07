@@ -8,7 +8,7 @@ class Efl.Loop_User (Efl.Object)
       @property loop {
          [[The loop to which this object belongs to.]]
          get {
-            [[Get a handle to the loop.]]
+            [[Gets a handle to the loop.]]
          }
          values {
             loop: Efl.Loop; [[Efl loop]]

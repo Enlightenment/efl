@@ -21,7 +21,7 @@ abstract Ector.Renderer (Efl.Object)
 	    [[Do not use.]]
 	 }
 	 get {
-	    [[Get the surface associated to this renderer. Can not be set.]]
+	    [[Gets the surface associated to this renderer. Can not be set.]]
 	 }
 	 values {
 	    s: Ector.Surface; [[Associated surface]]
@@ -108,7 +108,7 @@ abstract Ector.Renderer (Efl.Object)
 	 }
       }
       bounds_get @pure_virtual {
-         [[Retrieve the bounds of the renderer]]
+         [[Retrieves the bounds of the renderer]]
 	 params {
 	    @out r: Eina.Rectangle; [[Bounds as @Eina.Rectangle]]
 	 }

@@ -1,5 +1,5 @@
 mixin Efl.Io.Sizer.Fd (Efl.Io.Sizer) {
-    [[Resize fd usign ftruncate(2).
+    [[Resizes fd usign ftruncate(2).
 
       @since 1.19
     ]]

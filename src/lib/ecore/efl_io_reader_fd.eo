@@ -1,5 +1,5 @@
 mixin Efl.Io.Reader.Fd (Efl.Io.Reader) {
-    [[Read fd using read(2).
+    [[Reads fd using read(2).
 
       @since 1.19
     ]]

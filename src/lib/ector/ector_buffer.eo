@@ -72,7 +72,7 @@ mixin Ector.Buffer
          }
       }
       pixels_set @pure_virtual {
-         [[Set the source pixels for this buffer, or allocate a new memory region]]
+         [[Sets the source pixels for this buffer, or allocate a new memory region]]
          params {
             @in pixels: void_ptr; [[If $null, allocates an empty buffer]]
             @in width: int; [[Buffer width]]

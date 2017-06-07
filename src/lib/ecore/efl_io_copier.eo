@@ -189,7 +189,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
             [[If there is a line delimiter, the reads will buffer/queue up to the line delimiter before calling @Efl.Io.Writer.write on the @.destination and the event line is emitted with current line. The line may include the delimiter, unless it's end-of-stream on @.source or @.buffer_limit was reached.]]
             get { }
             set {
-               [[Change line delimiter to use. If empty, no delimiter is to be used]]
+               [[Changes line delimiter to use. If empty, no delimiter is to be used]]
             }
             values {
                 // TODO: eolian generates wrong type for getter with const(Eina.Slice)
@@ -272,7 +272,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
         }
 
         @property timeout_inactivity {
-            [[Terminate the copier with ETIMEDOUT if it becomes inactive for some time.
+            [[Terminates the copier with ETIMEDOUT if it becomes inactive for some time.
 
               If the copier cannot do any read or write in the given
               amount of seconds, then the copier will emit "error"
@@ -355,7 +355,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
             ]]
             params {
                 may_block: bool; [[If $true, then @Efl.Io.Reader.can_read and @Efl.Io.Writer.can_write are not checked and the call may block.]]
-                ignore_line_delimiter: bool; [[Force flush ignoring line delimiters]]
+                ignore_line_delimiter: bool; [[Forces flush ignoring line delimiters]]
             }
             return: bool(true); [[$true on success, $false otherwise]]
         }

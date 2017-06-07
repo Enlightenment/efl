@@ -15,14 +15,14 @@ class Efl.Model.Container (Efl.Object, Efl.Model)
    ]]
    methods {
       child_property_value_type_get {
-         [[Get the type of the given property.]]
+         [[Gets the type of the given property.]]
          params {
             name: string; [[Property name]]
          }
          return: ptr(const(Eina.Value.Type)); [[Property type]]
       }
       child_property_values_get {
-         [[Get the values for the given property.]]
+         [[Gets the values for the given property.]]
          params {
             name: string; [[Property name]]
          }
@@ -30,7 +30,7 @@ class Efl.Model.Container (Efl.Object, Efl.Model)
          [[The currently wrapped values]]
       }
       child_property_add {
-         [[Add the given property to child objects and supply the values.
+         [[Adds the given property to child objects and supply the values.
 
            Each item will represent the value of the given property in the
            respective child within the data model.

@@ -11,9 +11,9 @@ class Efl.Loop.Fd (Efl.Loop_User)
 
    methods {
       @property fd {
-         [[Define which file descriptor to watch. If it is a file, use file_fd variant.]]
+         [[Defines which file descriptor to watch. If it is a file, use file_fd variant.]]
 	 set {
-	    [[Define the fd to watch on.]]
+	    [[Defines the fd to watch on.]]
 	 }
 	 get {
 	 }
@@ -22,9 +22,9 @@ class Efl.Loop.Fd (Efl.Loop_User)
 	 }
       }
       @property fd_file {
-         [[Define which file descriptor to watch when watching a file.]]
+         [[Defines which file descriptor to watch when watching a file.]]
 	 set {
-	    [[Define the fd to watch on.]]
+	    [[Defines the fd to watch on.]]
 	 }
 	 get {
 	 }

@@ -1,5 +1,5 @@
 mixin Efl.Io.Writer.Fd (Efl.Io.Writer) {
-    [[Write fd using write(2).
+    [[Writes fd using write(2).
 
       @since 1.19
     ]]

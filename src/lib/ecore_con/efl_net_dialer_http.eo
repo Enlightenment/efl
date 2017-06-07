@@ -154,7 +154,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         @property allow_redirects {
-            [[Allow HTTP redirects to be followed.
+            [[Allows HTTP redirects to be followed.
 
               This should be set before dialing.
             ]]
@@ -166,7 +166,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         request_header_add {
-            [[Add a request header 'key: value'.
+            [[Adds a request header 'key: value'.
 
               See @.request_headers_clear
 
@@ -179,7 +179,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         request_headers_clear {
-            [[Clear all request headers.
+            [[Clears all request headers.
 
               See @.request_header_add
 
@@ -188,7 +188,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         request_headers_get {
-            [[Return an iterator to the key-value pairs for request headers]]
+            [[Returns an iterator to the key-value pairs for request headers]]
             return: free(own(iterator<Efl.Net.Http.Header>), eina_iterator_free) @warn_unused; [[Iterator for request headers]]
         }
 
@@ -242,7 +242,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         response_headers_get {
-            [[Return an iterator to the key-value pairs for the last response headers.
+            [[Returns an iterator to the key-value pairs for the last response headers.
 
               Since multiple requests can happen if @.allow_redirects
               is true, then all headers will be accumulated. This
@@ -256,7 +256,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         response_headers_all_get {
-            [[Return an iterator to the key-value pairs for all response headers.
+            [[Returns an iterator to the key-value pairs for all response headers.
 
               Since multiple requests can happen if @.allow_redirects
               is true, then all headers will be accumulated. To know
@@ -281,7 +281,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         response_headers_clear {
-            [[Save some memory by disposing the received headers]]
+            [[Saves some memory by disposing the received headers]]
         }
 
         @property progress_download {
@@ -364,7 +364,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         date_parse @class {
-            [[Parse the given string as time in seconds since 1/1/1970.
+            [[Parses the given string as time in seconds since 1/1/1970.
 
               This method is useful to parse header values such as
               "Last-Modified".
@@ -376,7 +376,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         date_serialize @class {
-            [[Serialize the given GMT time in seconds since 1/1/1970.
+            [[Serializes the given GMT time in seconds since 1/1/1970.
 
               The timezone must be GMT (ie: gmtime()).
             ]]

@@ -13,7 +13,7 @@ class Efl.Model.Composite.Boolean (Efl.Object, Efl.Model)
          }
       }
       property_add {
-         [[Add property]]
+         [[Adds property]]
          params {
             @in name: string; [[Property name]]
             @in initial_value: bool; [[Initial property value $bool]]
