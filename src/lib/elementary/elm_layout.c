@@ -1931,7 +1931,6 @@ _prop_future_error_cb(void* data, Efl_Event const*event EINA_UNUSED)
 static void
 _view_update(Elm_Layout_Smart_Data *pd, const char *name, const char *property)
 {
-   const char *source;
    Eina_Strbuf *buf;
 
    if (strncmp(SIGNAL_PREFIX, name, sizeof(SIGNAL_PREFIX) -1) != 0)
@@ -1941,14 +1940,13 @@ _view_update(Elm_Layout_Smart_Data *pd, const char *name, const char *property)
      }
 
    ELM_WIDGET_DATA_GET_OR_RETURN(pd->obj, wd);
-   source = efl_class_name_get(efl_class_get(pd->model));
 
    buf = eina_strbuf_new();
    eina_strbuf_append(buf, name);
    eina_strbuf_remove(buf, 0, sizeof(SIGNAL_PREFIX)-1);
    eina_strbuf_replace_all(buf, "%v", property);
 
-   edje_object_signal_emit(wd->resize_obj, eina_strbuf_string_get(buf), source);
+   edje_object_signal_emit(wd->resize_obj, eina_strbuf_string_get(buf), "elm");
    eina_strbuf_free(buf);
 }
 
@@ -1997,7 +1995,7 @@ _elm_layout_view_model_update(Elm_Layout_Smart_Data *pd)
    Eina_Iterator *it_p;
    int size;
 
-   if (!pd->prop_connect) return;
+   if (!pd->prop_connect || !pd->model) return;
 
    size = eina_hash_population(pd->prop_connect);
    if (size == 0) return;
@@ -2092,6 +2090,8 @@ _elm_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *pd
          efl_ref(pd->model);
          efl_event_callback_add(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, pd);
      }
+   else
+     return;
 
    if (pd->prop_connect)
      _elm_layout_view_model_update(pd);
@@ -2136,6 +2136,13 @@ _elm_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Elm_Layout_Smart_D
 {
    EINA_SAFETY_ON_NULL_RETURN(name);
    Eina_Stringshare *ss_name, *ss_prop;
+
+   if (property == NULL && pd->prop_connect)
+     {
+        ss_name = eina_stringshare_add(name);
+        eina_hash_del(pd->prop_connect, ss_name, NULL);
+        return;
+     }
 
    if (!_elm_layout_part_aliasing_eval(obj, pd, &name, EINA_TRUE))
      return;
