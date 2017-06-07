@@ -1164,3 +1164,44 @@ ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
    return window->focused;
 }
+
+EAPI Ecore_Wl2_Output *
+ecore_wl2_window_output_find(Ecore_Wl2_Window *window)
+{
+   Ecore_Wl2_Output *out;
+   Eina_Inlist *tmp;
+   int x = 0, y = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+
+   x = window->geometry.x;
+   y = window->geometry.y;
+
+   EINA_INLIST_FOREACH_SAFE(window->display->outputs, tmp, out)
+     {
+        int ox, oy, ow, oh;
+
+        ox = out->geometry.x;
+        oy = out->geometry.y;
+
+        switch (out->transform)
+          {
+           case WL_OUTPUT_TRANSFORM_90:
+           case WL_OUTPUT_TRANSFORM_270:
+           case WL_OUTPUT_TRANSFORM_FLIPPED_90:
+           case WL_OUTPUT_TRANSFORM_FLIPPED_270:
+             ow = out->geometry.h;
+             oh = out->geometry.w;
+             break;
+           default:
+             ow = out->geometry.w;
+             oh = out->geometry.h;
+             break;
+          }
+
+        if (((x >= ox) && (x < ow)) && ((y >= oy) && (y < oh)))
+          return out;
+     }
+
+   return NULL;
+}
