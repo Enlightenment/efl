@@ -263,7 +263,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
                         ncfg, &ncfg) || (ncfg == 0))
      {
         ERR("eglChooseConfig() fail. code=%#x", eglGetError());
-        return EINA_FALSE;
+        goto err;
      }
 
    for (; i < ncfg; ++i)
@@ -274,7 +274,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
                                 &format))
           {
              ERR("eglGetConfigAttrib() fail. code=%#x", eglGetError());
-             return EINA_FALSE;
+             goto err;
           }
 
         if (format == (int)ob->info->info.format)
@@ -297,7 +297,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
      {
         ERR("eglCreateWindowSurface() fail for %p. code=%#x",
             ob->surface, eglGetError());
-        return EINA_FALSE;
+        goto err;
      }
 
    ob->egl.context =
@@ -305,7 +305,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    if (ob->egl.context == EGL_NO_CONTEXT)
      {
         ERR("eglCreateContext() fail. code=%#x", eglGetError());
-        return EINA_FALSE;
+        goto err;
      }
 
    if (context == EGL_NO_CONTEXT) context = ob->egl.context;
@@ -314,7 +314,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
                       ob->egl.surface, ob->egl.context) == EGL_FALSE)
      {
         ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
-        return EINA_FALSE;
+        goto err;
      }
 
    vendor = glGetString(GL_VENDOR);
@@ -349,11 +349,11 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         ERR("Vendor: %s", (const char *)vendor);
         ERR("Renderer: %s", (const char *)renderer);
         ERR("Version: %s", (const char *)version);
-        return EINA_FALSE;
+        goto err;
      }
 
    ob->gl_context = glsym_evas_gl_common_context_new();
-   if (!ob->gl_context) return EINA_FALSE;
+   if (!ob->gl_context) goto err;
 
 #ifdef GL_GLES
    ob->gl_context->egldisp = ob->egl.disp;
@@ -366,7 +366,12 @@ _evas_outbuf_egl_setup(Outbuf *ob)
 
    ob->surf = EINA_TRUE;
 
+   free(cfgs);
    return EINA_TRUE;
+
+err:
+   free(cfgs);
+   return EINA_FALSE;
 }
 
 Outbuf *
