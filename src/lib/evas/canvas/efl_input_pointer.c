@@ -48,10 +48,11 @@ _del_hook(Eo *evt)
 
 EOLIAN static Efl_Input_Pointer *
 _efl_input_pointer_efl_input_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNUSED,
-                                          Eo *owner, void **priv)
+                                                Eo *owner, void **priv)
 {
    Efl_Input_Pointer_Data *ev;
    Efl_Input_Pointer *evt;
+   Evas *evas;
 
    if (s_cached_event)
      {
@@ -68,6 +69,14 @@ _efl_input_pointer_efl_input_event_instance_get(Eo *klass EINA_UNUSED, void *_pd
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    ev->fake = EINA_FALSE;
    if (priv) *priv = ev;
+
+   evas = efl_provider_find(owner, EVAS_CANVAS_CLASS);
+   if (evas)
+     {
+        Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
+        ev->modifiers = &e->modifiers;
+        ev->locks = &e->locks;
+     }
 
    return evt;
 }
