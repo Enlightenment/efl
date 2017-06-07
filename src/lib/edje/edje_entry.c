@@ -172,7 +172,7 @@ _edje_focus_in(Edje *ed, Efl_Input_Device *seat)
 
    _edje_seat_emit(ed, seat, "focus,in", "");
 #ifdef HAVE_ECORE_IMF
-   rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
+   rp = _edje_focused_part_get(ed, efl_name_get(seat));
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
@@ -207,7 +207,7 @@ _edje_focus_out(Edje *ed, Efl_Input_Device *seat)
    _edje_seat_emit(ed, seat, "focus,out", "");
 
 #ifdef HAVE_ECORE_IMF
-   rp = _edje_focused_part_get(ed, efl_input_device_name_get(seat));
+   rp = _edje_focused_part_get(ed, efl_name_get(seat));
    if (!rp) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;

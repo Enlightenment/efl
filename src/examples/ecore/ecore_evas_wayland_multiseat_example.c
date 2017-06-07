@@ -19,7 +19,7 @@ _keyboard_event(void *data EINA_UNUSED, int type, void *event)
      seat = efl_input_device_seat_get(e->dev);
 
    printf("The keyboard on seat '%s' %s the key '%s'\n", seat ?
-          efl_input_device_name_get(seat) : "unknown",
+          efl_name_get(seat) : "unknown",
           type == ECORE_EVENT_KEY_DOWN ? "pressed" : "released",
           e->keyname);
 
@@ -36,7 +36,7 @@ _mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      seat = efl_input_device_seat_get(e->dev);
 
    printf("The mouse on seat '%s' is at X: %d Y:%d\n",
-          seat ? efl_input_device_name_get(seat) : "unknown", e->x, e->y);
+          seat ? efl_name_get(seat) : "unknown", e->x, e->y);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -50,7 +50,7 @@ _mouse_button(void *data EINA_UNUSED, int type, void *event)
      seat = efl_input_device_seat_get(e->dev);
 
    printf("The mouse on seat '%s' %s the following button '%d'\n",
-          seat ? efl_input_device_name_get(seat) : "unknown",
+          seat ? efl_name_get(seat) : "unknown",
           type == ECORE_EVENT_MOUSE_BUTTON_DOWN ? "pressed" : "released",
           e->buttons);
    return ECORE_CALLBACK_PASS_ON;
@@ -66,7 +66,7 @@ _mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      seat = efl_input_device_seat_get(e->dev);
 
    printf("The mouse on seat '%s' moved the wheel '%s'\n",
-          seat ? efl_input_device_name_get(seat) : "unknown",
+          seat ? efl_name_get(seat) : "unknown",
           e->z < 0 ? "up" : "down");
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -103,9 +103,9 @@ _dev_added_or_removed(void *data, const Efl_Event *event)
    Efl_Input_Device *dev = event->info;
 
    printf("The device %p '%s' - class: '%s' - desc: '%s' was '%s' on ee %p\n",
-          dev, efl_input_device_name_get(dev),
+          dev, efl_name_get(dev),
           _device_type_to_string(efl_input_device_type_get(dev)),
-          efl_input_device_description_get(dev),
+          efl_comment_get(dev),
           event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED ? "added" : "removed",
           data);
 }
@@ -116,7 +116,7 @@ _dev_changed(void *data, const Efl_Event *event)
    Efl_Input_Device *dev = event->info;
 
    printf("The device %p '%s' - class: '%s' was changed on ee %p\n",
-          dev, efl_input_device_name_get(dev),
+          dev, efl_name_get(dev),
           _device_type_to_string(efl_input_device_type_get(dev)), data);
 }
 

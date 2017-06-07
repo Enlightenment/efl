@@ -66,7 +66,7 @@ _focus_obj_in_cb(void *data EINA_UNUSED, const Efl_Event *event)
    /* it always will print the default seat name, since FOCUS_OBJECT
       isn't setting a specific seat */
    printf("Focus set to object %s (seat %s)\n", evas_object_name_get(rect),
-          efl_input_device_name_get(efl_input_device_get(ev)));
+          efl_name_get(efl_input_device_get(ev)));
 }
 
 static void
@@ -75,7 +75,7 @@ _focus_obj_out_cb(void *data EINA_UNUSED, const Efl_Event *event)
    Efl_Input_Focus *ev = event->info;
    Evas_Object *rect = event->object;
    printf("Focus unset to object %s (seat %s)\n", evas_object_name_get(rect),
-          efl_input_device_name_get(efl_input_device_get(ev)));
+          efl_name_get(efl_input_device_get(ev)));
 }
 
 int

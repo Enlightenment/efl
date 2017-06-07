@@ -3138,7 +3138,7 @@ _key_event_dispatch(Evas_Public_Data *e, void *event_info,
      device = e->default_seat;
    else
      {
-        const char *name = efl_input_device_name_get(device);
+        const char *name = efl_name_get(device);
 
         device = efl_input_device_seat_get(device);
         if (!device)

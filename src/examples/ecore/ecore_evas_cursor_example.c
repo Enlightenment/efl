@@ -56,11 +56,11 @@ _mouse_pos_print(void *data)
         if (!seat)
           {
              fprintf(stderr, "Could not fetch the seat from mouse '%s'\n",
-                     efl_input_device_name_get(pointer));
+                     efl_name_get(pointer));
              continue;
           }
         printf("Mouse from seat '%s' is at (%d, %d)\n",
-               efl_input_device_name_get(seat), x, y);
+               efl_name_get(seat), x, y);
      }
    return EINA_TRUE;
 }
@@ -109,14 +109,14 @@ _seat_children_print(Efl_Input_Device *seat)
    Efl_Input_Device *child;
    Eina_Iterator *it;
 
-   printf("Children of seat: %s (%s, seat id: %d)\n", efl_input_device_name_get(seat),
+   printf("Children of seat: %s (%s, seat id: %d)\n", efl_name_get(seat),
           _device_type_to_string(efl_input_device_type_get(seat)),
           efl_input_device_seat_id_get(seat));
 
    it = efl_input_device_children_iterate(seat);
    EINA_ITERATOR_FOREACH(it, child)
      {
-        printf(" - Sub device: %s (%s, seat id: %d)\n", efl_input_device_name_get(child),
+        printf(" - Sub device: %s (%s, seat id: %d)\n", efl_name_get(child),
                _device_type_to_string(efl_input_device_type_get(child)),
                efl_input_device_seat_id_get(seat));
      }
@@ -135,10 +135,10 @@ _device_added(void *data, const Efl_Event *event)
    if (!seat)
      {
         fprintf(stderr, "Could not fetch the seat from pointer '%s'\n",
-                efl_input_device_name_get(pointer));
+                efl_name_get(pointer));
         return;
      }
-   printf("Setting cursor image at seat '%s'\n", efl_input_device_name_get(seat));
+   printf("Setting cursor image at seat '%s'\n", efl_name_get(seat));
    _cursor_set(data, pointer);
    _seat_children_print(seat);
 }

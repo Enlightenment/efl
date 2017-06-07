@@ -7,6 +7,8 @@
 #define EFL_INTERNAL_UNSTABLE
 #include "efl_common_internal.h"
 
+#define MY_CLASS EFL_INPUT_DEVICE_CLASS
+
 /* Efl Input Device = Evas Device */
 
 typedef struct _Child_Device_Iterator Child_Device_Iterator;
@@ -38,7 +40,7 @@ _seat_pointers_update(Efl_Input_Device_Data *seat, Efl_Input_Device_Data *dev)
 EOLIAN static Efl_Object *
 _efl_input_device_efl_object_constructor(Eo *obj, Efl_Input_Device_Data *pd)
 {
-   obj = efl_constructor(efl_super(obj, EFL_INPUT_DEVICE_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->eo = obj;
    return obj;
 }
@@ -46,34 +48,69 @@ _efl_input_device_efl_object_constructor(Eo *obj, Efl_Input_Device_Data *pd)
 EOLIAN static void
 _efl_input_device_efl_object_destructor(Eo *obj, Efl_Input_Device_Data *pd)
 {
-   Eo *eo_child;
+   pd->children = eina_list_free(pd->children);
+   if (pd->klass != EFL_INPUT_DEVICE_CLASS_SEAT)
+     {
+        Efl_Input_Device_Data *p;
+        Eo *seat;
 
-   eina_stringshare_del(pd->name);
-   eina_stringshare_del(pd->desc);
-   EINA_LIST_FREE(pd->children, eo_child)
-     {
-        Efl_Input_Device_Data *child = efl_data_scope_get(eo_child, EFL_INPUT_DEVICE_CLASS);
-        child->parent = NULL;
-     }
-   if (pd->parent)
-     {
-        Efl_Input_Device_Data *p = efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS);
-        p->children = eina_list_remove(p->children, obj);
-        if (_is_pointer(pd))
-          p->pointer_count--;
+        seat = efl_input_device_seat_get(obj);
+        p = efl_data_scope_get(seat, MY_CLASS);
+        if (p) p->children = eina_list_remove(p->children, obj);
      }
    efl_unref(pd->source);
 
-   return efl_destructor(efl_super(obj, EFL_INPUT_DEVICE_CLASS));
+   return efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_efl_input_device_device_type_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, Efl_Input_Device_Class klass)
+_efl_input_device_efl_object_parent_set(Eo *obj, Efl_Input_Device_Data *pd EINA_UNUSED, Eo *parent)
+{
+   Efl_Input_Device_Data *p;
+
+   if (parent)
+     {
+        if (efl_isa(parent, MY_CLASS))
+          {
+             p = efl_data_scope_get(parent, MY_CLASS);
+             EINA_SAFETY_ON_FALSE_RETURN(p->klass == EFL_INPUT_DEVICE_CLASS_SEAT);
+             if (!eina_list_data_find(p->children, obj))
+               {
+                  p->children = eina_list_append(p->children, obj);
+                  _seat_pointers_update(p, pd);
+               }
+          }
+        else if(!efl_isa(parent, EFL_CANVAS_INTERFACE))
+          {
+             EINA_SAFETY_ERROR("The parent of a device must be a seat or the canvas");
+             return;
+          }
+     }
+   else
+     {
+        Eo *old_parent = efl_parent_get(obj);
+        if (old_parent && efl_isa(old_parent, MY_CLASS))
+          {
+             p = efl_data_scope_get(old_parent, MY_CLASS);
+             p->children = eina_list_remove(p->children, obj);
+             if (_is_pointer(pd))
+               p->pointer_count--;
+          }
+     }
+
+   efl_parent_set(efl_super(obj, MY_CLASS), parent);
+}
+
+EOLIAN static void
+_efl_input_device_device_type_set(Eo *obj, Efl_Input_Device_Data *pd, Efl_Input_Device_Class klass)
 {
    EINA_SAFETY_ON_TRUE_RETURN(pd->klass);
    pd->klass = klass;
    if (klass != EFL_INPUT_DEVICE_CLASS_SEAT)
-     _seat_pointers_update(efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS), pd);
+     {
+        Efl_Input_Device_Data *seat = efl_data_scope_get(efl_input_device_seat_get(obj), MY_CLASS);
+        _seat_pointers_update(seat, pd);
+     }
 }
 
 EOLIAN static Efl_Input_Device_Class
@@ -109,30 +146,6 @@ _efl_input_device_source_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
 }
 
 EOLIAN static void
-_efl_input_device_name_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, const char *name)
-{
-   eina_stringshare_replace(&pd->name, name);
-}
-
-EOLIAN static const char *
-_efl_input_device_name_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
-{
-   return pd->name;
-}
-
-EOLIAN static void
-_efl_input_device_description_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, const char *desc)
-{
-   eina_stringshare_replace(&pd->desc, desc);
-}
-
-EOLIAN static const char *
-_efl_input_device_description_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
-{
-   return pd->desc;
-}
-
-EOLIAN static void
 _efl_input_device_seat_id_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, unsigned int id)
 {
    EINA_SAFETY_ON_TRUE_RETURN(pd->klass != EFL_INPUT_DEVICE_CLASS_SEAT);
@@ -148,44 +161,18 @@ _efl_input_device_seat_id_get(Eo *obj, Efl_Input_Device_Data *pd)
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_input_device_seat_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+_efl_input_device_seat_get(Eo *obj, Efl_Input_Device_Data *pd)
 {
-   while (1)
+   for (; obj; obj = efl_parent_get(obj))
      {
         if (pd->klass == EFL_INPUT_DEVICE_CLASS_SEAT)
           return pd->eo;
 
-        if (!pd->parent)
-          break;
-
-        pd = efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS);
+        if (!efl_isa(obj, MY_CLASS)) break;
+        pd = efl_data_scope_get(obj, MY_CLASS);
      }
 
    return NULL;
-}
-
-EOLIAN static Efl_Input_Device *
-_efl_input_device_parent_get(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
-{
-   return pd->parent;
-}
-
-EOLIAN static void
-_efl_input_device_parent_set(Eo *obj, Efl_Input_Device_Data *pd, Efl_Input_Device *parent)
-{
-   if (pd->parent == parent) return;
-   if (pd->parent)
-     {
-        Efl_Input_Device_Data *p = efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS);
-        p->children = eina_list_remove(p->children, obj);
-     }
-   pd->parent = parent;
-   if (parent)
-     {
-        Efl_Input_Device_Data *p = efl_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
-        p->children = eina_list_append(p->children, obj);
-        _seat_pointers_update(p, pd);
-     }
 }
 
 static Eina_Bool

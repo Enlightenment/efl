@@ -45,7 +45,7 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
 
    if (e->cleanup) return NULL;
    old_class = efl_input_device_type_get(old_dev);
-   old_parent = efl_input_device_parent_get(old_dev);
+   old_parent = efl_parent_get(old_dev);
    def = NULL;
 
    EINA_LIST_FOREACH(e->devices, l, dev)
@@ -55,7 +55,7 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
 
         def = dev;
         //Prefer devices with the same parent.
-        if (efl_input_device_parent_get(dev) == old_parent)
+        if (efl_parent_get(dev) == old_parent)
           break;
      }
 
@@ -112,7 +112,7 @@ evas_device_get(Evas *eo_e, const char *name)
 
    EINA_LIST_FOREACH(e->devices, l, dev)
      {
-        dev_name = efl_input_device_name_get(dev);
+        dev_name = efl_name_get(dev);
 
         if (eina_streq(dev_name, name))
           return dev;
@@ -163,13 +163,12 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
 
    SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
 
-   dev = efl_add(EFL_INPUT_DEVICE_CLASS, eo_e,
-                 efl_input_device_name_set(efl_added, name),
-                 efl_input_device_description_set(efl_added, desc),
+   dev = efl_add(EFL_INPUT_DEVICE_CLASS, parent_dev ?: eo_e,
+                 efl_name_set(efl_added, name),
+                 efl_comment_set(efl_added, desc),
                  efl_input_device_type_set(efl_added, clas),
                  efl_input_device_subtype_set(efl_added, sub_clas),
-                 efl_input_device_source_set(efl_added, emulation_dev),
-                 efl_input_device_parent_set(efl_added, parent_dev));
+                 efl_input_device_source_set(efl_added, emulation_dev));
 
    d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    d->evas = eo_e;
@@ -281,14 +280,14 @@ evas_device_name_set(Evas_Device *dev, const char *name)
 
    Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
 
-   efl_input_device_name_set(dev, name);
+   efl_name_set(dev, name);
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI const char *
 evas_device_name_get(const Evas_Device *dev)
 {
-   return efl_input_device_name_get(dev);
+   return efl_name_get(dev);
 }
 
 EAPI void
@@ -296,7 +295,7 @@ evas_device_description_set(Evas_Device *dev, const char *desc)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
-   efl_input_device_description_set(dev, desc);
+   efl_comment_set(dev, desc);
 
    Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
@@ -305,12 +304,16 @@ evas_device_description_set(Evas_Device *dev, const char *desc)
 EAPI const char *
 evas_device_description_get(const Evas_Device *dev)
 {
-   return efl_input_device_description_get(dev);
+   return efl_comment_get(dev);
 }
 
 EAPI void
 evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
 {
+   // Note: This function should be deprecated. parent_set doesn't make sense
+   // unless the parent is a seat device. Parent shouldn't be changed after
+   // creation.
+
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
 
    Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
@@ -318,15 +321,24 @@ evas_device_parent_set(Evas_Device *dev, Evas_Device *parent)
      {
         SAFETY_CHECK(parent, EFL_INPUT_DEVICE_CLASS);
      }
+   else if (efl_parent_get(dev))
+     {
+        efl_ref(dev);
+     }
 
-   efl_input_device_parent_set(dev, parent);
+   efl_parent_set(dev, parent);
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI const Evas_Device *
 evas_device_parent_get(const Evas_Device *dev)
 {
-   return efl_input_device_parent_get(dev);
+   Eo *parent = efl_parent_get(dev);
+
+   if (!efl_isa(parent, EFL_INPUT_DEVICE_CLASS))
+     return NULL;
+
+   return parent;
 }
 
 EAPI void

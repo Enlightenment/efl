@@ -593,7 +593,7 @@ _edje_device_add(Edje *ed, Efl_Input_Device *dev)
    Eina_List *l;
 
    if (ed->collection && ed->collection->use_custom_seat_names)
-     name = eina_stringshare_add(efl_input_device_name_get(dev));
+     name = eina_stringshare_add(efl_name_get(dev));
    else
      {
         ed->seats_count++;
@@ -619,7 +619,7 @@ _edje_device_add(Edje *ed, Efl_Input_Device *dev)
 
    seat->device = dev;
    snprintf(sig, sizeof(sig), "seat,added,%s,%s", seat->name,
-            efl_input_device_name_get(dev));
+            efl_name_get(dev));
    _edje_emit(ed, sig, "");
    _edje_seat_event_filter_apply(ed, seat);
 
@@ -692,7 +692,7 @@ _edje_device_changed_cb(void *data, const Efl_Event *event)
    if (!seat)
      return;
 
-   name = efl_input_device_name_get(dev);
+   name = efl_name_get(dev);
    if (!name)
      return;
 

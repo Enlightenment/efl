@@ -67,24 +67,6 @@ class Efl.Input.Device (Efl.Object)
             src: Efl.Input.Device; [[Input device]]
          }
       }
-      @property name {
-      	 [[device name property]]
-         values {
-            name: string; [[Input device name]]
-         }
-      }
-      @property description {
-      	 [[device description property]]
-         values {
-            desc: string; [[Input device description]]
-         }
-      }
-      @property parent {
-      	 [[Device parent property]]
-         values {
-            parent: Efl.Input.Device; [[Parent input device]]
-         }
-      }
       @property seat {
          [[Get the @Efl.Input.Device that represents a seat.
 
@@ -113,7 +95,7 @@ class Efl.Input.Device (Efl.Object)
       children_iterate {
          [[Lists the children attached to this device.
 
-           This is mostly meaningful with seat devices, as they are groups of
+           This is only meaningful with seat devices, as they are groups of
            real input devices.
 
            @since 1.20
@@ -135,5 +117,6 @@ class Efl.Input.Device (Efl.Object)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.parent { set; }
    }
 }

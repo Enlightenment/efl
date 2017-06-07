@@ -90,11 +90,8 @@ struct _Efl_Input_Device_Data
 {
    Eo               *eo;
    Eo               *evas; /* Evas */
-   Efl_Input_Device *parent;  /* no ref */
    Efl_Input_Device *source;  /* ref */
-   Eina_List        *children; /* ref */
-   Eina_Stringshare *name;
-   Eina_Stringshare *desc;
+   Eina_List        *children; /* ref'ed by efl_parent, not by this list */
    unsigned int      id;
    Efl_Input_Device_Class klass;
    Efl_Input_Device_Sub_Class subclass;

@@ -70,7 +70,7 @@ _allowed_seat_get(Evas_Object *filtered_obj,
           {
              printf("The '%s' shall only receive events from seat '%s'\n",
                     evas_object_name_get(filtered_obj),
-                    efl_input_device_name_get(seat));
+                    efl_name_get(seat));
              allowed_seat_changed = EINA_TRUE;
              *allowed_seat = seat;
              efl_input_seat_event_filter_set(filtered_obj, seat, EINA_TRUE);
@@ -78,7 +78,7 @@ _allowed_seat_get(Evas_Object *filtered_obj,
                {
                   fprintf(stderr, "ERROR: The '%s' could not be focused by the seat '%s'\n",
                           evas_object_name_get(filtered_obj),
-                          efl_input_device_name_get(seat));
+                          efl_name_get(seat));
                   return EINA_FALSE;
                }
           }
@@ -88,7 +88,7 @@ _allowed_seat_get(Evas_Object *filtered_obj,
                {
                   fprintf(stderr, "ERROR: The '%s' should not be focused by the seat '%s'\n",
                           evas_object_name_get(filtered_obj),
-                          efl_input_device_name_get(seat));
+                          efl_name_get(seat));
                   return EINA_FALSE;
                }
           }
@@ -138,13 +138,13 @@ _obj_events_cb(void *data, const Efl_Event *event)
         fprintf(stderr, "ERROR: The object '%s' should not receive the event"
                 "'%s' from the seat '%s'\n",
                 evas_object_name_get(event->object), event_name,
-                efl_input_device_name_get(seat));
+                efl_name_get(seat));
         ecore_main_loop_quit();
      }
    else
      printf("The object '%s' recevied a '%s' event from seat '%s'\n",
             evas_object_name_get(event->object), event_name,
-            efl_input_device_name_get(seat));
+            efl_name_get(seat));
 }
 
 static void

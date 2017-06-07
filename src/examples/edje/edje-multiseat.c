@@ -72,7 +72,7 @@ _on_rect_focus_in(void *data, const Efl_Event *event)
    name = edje_obj_seat_name_get(edje_obj, seat);
 
    printf("Seat %s (%s) focused the rect object\n",
-          efl_input_device_name_get(seat), name);
+          efl_name_get(seat), name);
 
    if (!strcmp(name, "seat1"))
      evas_object_color_set(rect, 200, 0, 0, 255);
@@ -97,7 +97,7 @@ _on_rect_focus_out(void *data, const Efl_Event *event)
    name = edje_obj_seat_name_get(edje_obj, seat);
 
    printf("Seat %s (%s) unfocused the rect object\n",
-          efl_input_device_name_get(seat), name);
+          efl_name_get(seat), name);
    evas_object_color_set(rect, 200, 200, 200, 255);
 
    efl_canvas_object_seat_focus_add(edje_obj, seat);
@@ -112,7 +112,7 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o, void *event_info)
    Evas *evas = data;
 
    seat = efl_input_device_seat_get(ev->dev);
-   printf("Seat %s (%s) pressed key %s\n", efl_input_device_name_get(seat),
+   printf("Seat %s (%s) pressed key %s\n", efl_name_get(seat),
           edje_obj_seat_name_get(o, seat), ev->key);
 
    mods = evas_key_modifier_get(evas);
@@ -141,7 +141,7 @@ _on_drag_started(void *data EINA_UNUSED, Evas_Object *o, const char *emission, c
    seat_name_str = emission + strlen("drag,start,");
    seat_name = eina_stringshare_add(seat_name_str);
    seat = edje_obj_seat_get(o, seat_name);
-   printf("Seat %s (%s) started drag %s\n", efl_input_device_name_get(seat),
+   printf("Seat %s (%s) started drag %s\n", efl_name_get(seat),
            seat_name, source);
    eina_stringshare_del(seat_name);
 }

@@ -40,7 +40,7 @@ _canvas_focus_in_cb(void *data EINA_UNUSED, const Efl_Event *event)
 
    printf("Object %s was focused by seat %s\n",
           evas_object_name_get(focused),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 }
 
 static void
@@ -55,7 +55,7 @@ _hold_cb(void *data EINA_UNUSED, const Efl_Event *event)
    printf("Hold %s at object %s from seat %s\n",
           efl_input_hold_get(ev) ? "on" : "off",
           evas_object_name_get(event->object),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 }
 
 static void
@@ -70,7 +70,7 @@ _focus_cb(void *data EINA_UNUSED, const Efl_Event *event)
    printf("Focus %s at object %s from seat %s\n",
           event->desc == EFL_EVENT_FOCUS_IN ? "in" : "out",
           evas_object_name_get(event->object),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 }
 
 static void
@@ -85,7 +85,7 @@ _pointer_in_out_cb(void *data EINA_UNUSED, const Efl_Event *event)
    printf("Pointer %s at object %s from seat %s\n",
           event->desc == EFL_EVENT_POINTER_IN ? "in" : "out",
           evas_object_name_get(event->object),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 }
 
 static void
@@ -115,7 +115,7 @@ _pointer_down_cb(void *data EINA_UNUSED, const Efl_Event *event)
 
    printf("%s at object %s from seat %s\n", buf,
           evas_object_name_get(event->object),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 }
 
 static void
@@ -130,7 +130,7 @@ _pointer_up_cb(void *data EINA_UNUSED, const Efl_Event *event)
    printf("Pointer button %i up at object %s from seat %s\n",
           efl_input_pointer_button_get(ev),
           evas_object_name_get(event->object),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 }
 
 static void
@@ -146,7 +146,7 @@ _pointer_move_cb(void *data EINA_UNUSED, const Efl_Event *event)
           efl_input_pointer_value_get(ev, EFL_INPUT_VALUE_X),
           efl_input_pointer_value_get(ev, EFL_INPUT_VALUE_Y),
           evas_object_name_get(event->object),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 }
 
 static void
@@ -162,7 +162,7 @@ _pointer_wheel_cb(void *data EINA_UNUSED, const Efl_Event *event)
           efl_input_pointer_wheel_direction_get(ev),
           efl_input_pointer_wheel_delta_get(ev),
           evas_object_name_get(event->object),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 }
 
 static void
@@ -179,11 +179,11 @@ _key_down_cb(void *data EINA_UNUSED, const Efl_Event *event)
    printf("Key down: '%s' on object %s from seat %s\n",
           efl_input_key_name_get(ev),
           evas_object_name_get(event->object),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 
    if (evas_seat_key_modifier_is_set(mods, "Control", seat))
      printf("Ctrl is pressed by seat %s\n",
-            efl_input_device_name_get(seat));
+            efl_name_get(seat));
 }
 
 static void
@@ -198,7 +198,7 @@ _key_up_cb(void *data EINA_UNUSED, const Efl_Event *event)
    printf("Key up: '%s' on object %s from seat %s\n",
           efl_input_key_name_get(ev),
           evas_object_name_get(event->object),
-          efl_input_device_name_get(seat));
+          efl_name_get(seat));
 }
 
 static void
@@ -210,8 +210,8 @@ _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
      return;
 
    printf("The seat '%s' - description: '%s' was '%s'\n",
-          efl_input_device_name_get(dev),
-          efl_input_device_description_get(dev),
+          efl_name_get(dev),
+          efl_comment_get(dev),
           event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED ? "added" : "removed");
 }
 
@@ -283,8 +283,8 @@ main(void)
      {
         if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
           printf("The seat '%s' - description: '%s' was 'added'\n",
-                 efl_input_device_name_get(dev),
-                 efl_input_device_description_get(dev));
+                 efl_name_get(dev),
+                 efl_comment_get(dev));
      }
 
    ecore_evas_show(ee);

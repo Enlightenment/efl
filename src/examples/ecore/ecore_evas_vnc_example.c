@@ -81,7 +81,7 @@ _keyboard_event(void *data EINA_UNUSED, int type, void *event)
      seat = efl_input_device_seat_get(e->dev);
 
    printf("The keyboard on seat '%s' %s the key '%s'\n", seat ?
-          efl_input_device_name_get(seat) : "default",
+          efl_name_get(seat) : "default",
           type == ECORE_EVENT_KEY_DOWN ? "pressed" : "released",
           e->keyname);
 
@@ -98,7 +98,7 @@ _mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      seat = efl_input_device_seat_get(e->dev);
 
    printf("The mouse on seat '%s' is at X: %d Y:%d\n",
-          seat ? efl_input_device_name_get(seat) : "default", e->x, e->y);
+          seat ? efl_name_get(seat) : "default", e->x, e->y);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -112,7 +112,7 @@ _mouse_button(void *data EINA_UNUSED, int type, void *event)
      seat = efl_input_device_seat_get(e->dev);
 
    printf("The mouse on seat '%s' %s the following button '%d'\n",
-          seat ? efl_input_device_name_get(seat) : "default",
+          seat ? efl_name_get(seat) : "default",
           type == ECORE_EVENT_MOUSE_BUTTON_DOWN ? "pressed" : "released",
           e->buttons);
    return ECORE_CALLBACK_PASS_ON;
@@ -128,7 +128,7 @@ _mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      seat = efl_input_device_seat_get(e->dev);
 
    printf("The mouse on seat '%s' moved the wheel '%s'\n",
-          seat ? efl_input_device_name_get(seat) : "default",
+          seat ? efl_name_get(seat) : "default",
           e->z < 0 ? "up" : "down");
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -165,14 +165,14 @@ _seat_children_print(Efl_Input_Device *seat)
    Efl_Input_Device *child;
    Eina_Iterator *it;
 
-   printf("Children of seat: %s (%s, seat id: %d)\n", efl_input_device_name_get(seat),
+   printf("Children of seat: %s (%s, seat id: %d)\n", efl_name_get(seat),
           _device_type_to_string(efl_input_device_type_get(seat)),
           efl_input_device_seat_id_get(seat));
 
    it = efl_input_device_children_iterate(seat);
    EINA_ITERATOR_FOREACH(it, child)
      {
-        printf(" - Sub device: %s (%s, seat id: %d)\n", efl_input_device_name_get(child),
+        printf(" - Sub device: %s (%s, seat id: %d)\n", efl_name_get(child),
                _device_type_to_string(efl_input_device_type_get(child)),
                efl_input_device_seat_id_get(seat));
      }
@@ -185,9 +185,9 @@ _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
    Efl_Input_Device *dev = event->info;
 
    printf("The device '%s' - class: '%s' - description: '%s' was '%s'\n",
-          efl_input_device_name_get(dev),
+          efl_name_get(dev),
           _device_type_to_string(efl_input_device_type_get(dev)),
-          efl_input_device_description_get(dev),
+          efl_comment_get(dev),
           event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED ? "added" : "removed");
 
    if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)

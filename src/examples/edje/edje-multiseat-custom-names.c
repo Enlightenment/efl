@@ -52,13 +52,13 @@ _device_rename(Efl_Input_Device *dev)
 {
    if (!default_seat) {
        default_seat = dev;
-       efl_input_device_name_set(dev, "default");
+       efl_name_set(dev, "default");
        return;
    }
 
    if (!secondary_seat) {
        secondary_seat = dev;
-       efl_input_device_name_set(dev, "secondary");
+       efl_name_set(dev, "secondary");
    }
 }
 
@@ -78,9 +78,9 @@ _device_changed(void *data EINA_UNUSED, const Efl_Event *event)
    Efl_Input_Device *dev = event->info;
 
    if (dev == default_seat)
-     efl_input_device_name_set(dev, "default");
+     efl_name_set(dev, "default");
    else if (dev == secondary_seat)
-     efl_input_device_name_set(dev, "secondary");
+     efl_name_set(dev, "secondary");
 }
 
 int
