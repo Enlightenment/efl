@@ -1366,7 +1366,7 @@ elm_image_animated_available_get(const Evas_Object *obj)
 EOLIAN static Eina_Bool
 _efl_ui_image_efl_player_playable_get(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   if (sd->edje) return EINA_FALSE;
+   if (sd->edje) return EINA_TRUE;
 
    return evas_object_image_animated_get(elm_image_object_get(obj));
 }
