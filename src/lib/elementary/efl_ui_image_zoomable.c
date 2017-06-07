@@ -2617,6 +2617,13 @@ _efl_ui_image_zoomable_gesture_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoo
    return sd->do_gesture;
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_image_zoomable_efl_player_playable_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   if (sd->icon_edje) return EINA_TRUE;
+   return evas_object_image_animated_get(sd->img);
+}
+
 EOLIAN static void
 _efl_ui_image_zoomable_class_constructor(Efl_Class *klass)
 {
