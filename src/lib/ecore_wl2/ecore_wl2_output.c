@@ -8,17 +8,40 @@ static void
 _cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make, const char *model, int transform)
 {
    Ecore_Wl2_Output *output;
+   int ot;
 
    output = data;
    if (!output) return;
+
+   eina_stringshare_replace(&output->make, make);
+   eina_stringshare_replace(&output->model, model);
 
    output->mw = w;
    output->mh = h;
    output->geometry.x = x;
    output->geometry.y = y;
-   output->transform = transform;
-   eina_stringshare_replace(&output->make, make);
-   eina_stringshare_replace(&output->model, model);
+
+   ot = output->transform;
+
+   if (transform & 0x4)
+     ERR("Cannot support output transformation");
+
+   transform &= 0x3;
+   if (output->transform != transform)
+     {
+        Ecore_Wl2_Event_Output_Transform *ev;
+
+        output->transform = transform;
+
+        ev = calloc(1, sizeof(Ecore_Wl2_Event_Output_Transform));
+        if (ev)
+          {
+             ev->output = output;
+             ev->old_transform = ot;
+             ev->transform = transform;
+             ecore_event_add(ECORE_WL2_EVENT_OUTPUT_TRANSFORM, ev, NULL, NULL);
+          }
+     }
 }
 
 static void

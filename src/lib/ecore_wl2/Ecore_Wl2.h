@@ -270,6 +270,12 @@ typedef struct _Ecore_Wl2_Event_Offer_Data_Ready
    Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Offer_Data_Ready;
 
+typedef struct _Ecore_Wl2_Event_Output_Transform
+{
+   Ecore_Wl2_Output *output;
+   int transform, old_transform;
+} Ecore_Wl2_Event_Output_Transform;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -310,6 +316,7 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE; /** @since 1.19 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_KEYMAP_CHANGED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_SELECTION; /** @since 1.20 */
+EAPI extern int ECORE_WL2_EVENT_OUTPUT_TRANSFORM; /** @since 1.20 */
 
 /**
  * @file
