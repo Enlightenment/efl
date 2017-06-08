@@ -120,6 +120,7 @@ typedef struct
    const Eina_Debug_Opcode *ops;
    Eina_Debug_Opcode_Status_Cb status_cb;
    void *status_data;
+   Eina_Bool sent : 1;
 } _opcode_reply_info;
 
 struct _Eina_Debug_Session
@@ -345,6 +346,13 @@ _opcodes_registration_send(Eina_Debug_Session *session,
 
    int count = 0;
    int size = sizeof(uint64_t);
+   Eina_Bool already_sent;
+
+   eina_spinlock_take(&_eina_debug_lock);
+   already_sent = info->sent;
+   info->sent = EINA_TRUE;
+   eina_spinlock_release(&_eina_debug_lock);
+   if (already_sent) return;
 
    while (info->ops[count].opcode_name)
      {
@@ -625,6 +633,7 @@ eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode
    info->ops = ops;
    info->status_cb = status_cb;
    info->status_data = data;
+   info->sent = EINA_FALSE;
 
    session->opcode_reply_infos = eina_list_append(
          session->opcode_reply_infos, info);
