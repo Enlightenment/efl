@@ -910,7 +910,6 @@ EOLIAN static Elm_Theme_Apply
 _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    const char *str;
-   const char *t;
    const char *style = elm_widget_style_get(obj);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -930,8 +929,6 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
-   t = eina_stringshare_add(elm_object_text_get(obj));
-
    elm_widget_theme_object_set
      (obj, sd->entry_edje, "efl_ui_text", _efl_ui_text_theme_group_get(obj), style);
 
@@ -941,10 +938,6 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    else
      edje_obj_part_text_select_allow_set
         (sd->entry_edje, "elm.text", EINA_FALSE);
-
-   elm_object_text_set(obj, t);
-   efl_text_set(obj, t);
-   eina_stringshare_del(t);
 
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
