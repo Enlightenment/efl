@@ -196,9 +196,9 @@ struct _Elput_Seat
      } count;
 
    struct
-   {
-      double x, y;
-   } pointer;
+     {
+        double x, y;
+     } pointer;
 
    unsigned int modifiers;
 
