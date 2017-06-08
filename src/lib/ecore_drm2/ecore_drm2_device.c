@@ -761,6 +761,14 @@ ecore_drm2_device_pointer_left_handed_set(Ecore_Drm2_Device *device, Eina_Bool l
    return elput_input_pointer_left_handed_set(device->em, NULL, left);
 }
 
+EAPI Eina_Bool
+ecore_drm2_device_pointer_rotation_set(Ecore_Drm2_Device *device, int rotation)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
+
+   return elput_input_pointer_rotation_set(device->em, rotation);
+}
+
 EAPI void
 ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int window)
 {
