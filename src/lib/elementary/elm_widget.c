@@ -6510,7 +6510,5 @@ _elm_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Ei
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_widget), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_widget_efl_object_dbg_info_get)
 
-#define ELM_GENLIST_EXTRA_OPS \
-
 #include "elm_widget_item.eo.c"
 #include "elm_widget.eo.c"
