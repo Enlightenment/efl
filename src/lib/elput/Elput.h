@@ -354,6 +354,19 @@ EAPI Eina_Bool elput_input_pointer_left_handed_set(Elput_Manager *manager, const
 EAPI void elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh);
 
 /**
+ * Set pointer value rotation
+ *
+ * @param manager
+ * @param rotation
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.20
+ */
+EAPI Eina_Bool elput_input_pointer_rotation_set(Elput_Manager *manager, int rotation);
+
+/**
  * Calibrate input devices for given screen size
  *
  * @param manager

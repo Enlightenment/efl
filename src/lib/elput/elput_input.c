@@ -559,6 +559,55 @@ elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh)
    manager->input.pointer_h = maxh;
 }
 
+EAPI Eina_Bool
+elput_input_pointer_rotation_set(Elput_Manager *manager, int rotation)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+   Eina_List *l, *ll;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(manager, EINA_FALSE);
+
+   if ((rotation % 90 != 0) || (rotation / 90 > 3) || (rotation < 0))
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        EINA_LIST_FOREACH(eseat->devices, ll, edev)
+          {
+             if (!(edev->caps & ELPUT_DEVICE_CAPS_POINTER)) continue;
+
+             switch (rotation)
+               {
+                case 0:
+                  edev->swap = EINA_FALSE;
+                  edev->invert_x = EINA_FALSE;
+                  edev->invert_y = EINA_FALSE;
+                  break;
+                case 90:
+                  edev->swap = EINA_TRUE;
+                  edev->invert_x = EINA_FALSE;
+                  edev->invert_y = EINA_TRUE;
+                  break;
+                case 180:
+                  edev->swap = EINA_FALSE;
+                  edev->invert_x = EINA_TRUE;
+                  edev->invert_y = EINA_TRUE;
+                  break;
+                case 270:
+                  edev->swap = EINA_TRUE;
+                  edev->invert_x = EINA_TRUE;
+                  edev->invert_y = EINA_FALSE;
+                  break;
+                default:
+                  break;
+               }
+          }
+     }
+
+   return EINA_TRUE;
+}
+
 EAPI void
 elput_input_devices_calibrate(Elput_Manager *manager, int w, int h)
 {

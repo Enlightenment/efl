@@ -229,6 +229,9 @@ struct _Elput_Device
 
    Eina_Bool left_handed : 1;
    Eina_Bool key_remap : 1;
+   Eina_Bool swap : 1;
+   Eina_Bool invert_x : 1;
+   Eina_Bool invert_y : 1;
 };
 
 struct _Elput_Manager
