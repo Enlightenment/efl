@@ -393,7 +393,7 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       cursor_new {
          [[Creates and returns a new cursor for the text.]]
-         return: ptr(Efl.Canvas.Text.Cursor); [[Text cursor]]
+         return: ptr(Efl.Text.Cursor.Cursor_Data); [[Text cursor]]
       }
    }
    implements {

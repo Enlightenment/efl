@@ -151,6 +151,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_font.eo.h"
 #include "interfaces/efl_text_style.eo.h"
 #include "interfaces/efl_text_format.eo.h"
+#include "interfaces/efl_text_cursor.eo.h"
 
 #else
 

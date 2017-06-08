@@ -36,8 +36,8 @@ interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
          ]]
          get {}
          values {
-            start: ptr(Efl.Canvas.Text.Cursor); [[The start of the selection]]
-            end: ptr(Efl.Canvas.Text.Cursor); [[The end of the selection]]
+            start: ptr(Efl.Text.Cursor.Cursor_Data); [[The start of the selection]]
+            end: ptr(Efl.Text.Cursor.Cursor_Data); [[The end of the selection]]
          }
       }
       @property editable {

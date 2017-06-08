@@ -11,11 +11,11 @@ _apply_style(Eo *obj, size_t start_pos, size_t end_pos, const char *style)
 {
    Efl_Canvas_Text_Cursor *start, *end;
 
-   start = efl_canvas_text_cursor_get(obj);
-   end = efl_canvas_text_cursor_get(obj);
+   start = efl_text_cursor_get(obj);
+   end = efl_text_cursor_get(obj);
 
-   efl_canvas_text_cursor_position_set(obj, start, start_pos);
-   efl_canvas_text_cursor_position_set(obj, end, end_pos);
+   efl_text_cursor_position_set(obj, start, start_pos);
+   efl_text_cursor_position_set(obj, end, end_pos);
 
    efl_canvas_text_annotation_insert(obj, start, end, style);
 }
@@ -101,8 +101,8 @@ my_efl_ui_text_bt_3(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
    const char *s = efl_canvas_text_range_text_get(data, sel_start, sel_end);
 
    printf("SELECTION REGION: %d - %d\n",
-         efl_canvas_text_cursor_position_get(obj, sel_start),
-         efl_canvas_text_cursor_position_get(obj, sel_end));
+         efl_text_cursor_position_get(obj, sel_start),
+         efl_text_cursor_position_get(obj, sel_end));
    printf("SELECTION:\n");
    if (s) printf("%s\n", s);
 }
@@ -111,7 +111,7 @@ static void
 my_efl_ui_text_bt_4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
-   efl_canvas_text_cursor_object_item_insert(obj, efl_canvas_text_cursor_get(en),
+   efl_canvas_text_cursor_object_item_insert(obj, efl_text_cursor_get(en),
          "size=32x32 href=emoticon");
 }
 
@@ -178,16 +178,16 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_text_font_width_set(en, EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
    efl_text_style_normal_color_set(en, 255, 255, 255, 255);
 
-   main_cur = efl_canvas_text_cursor_get(en);
-   cur = efl_canvas_text_cursor_new(en);
+   main_cur = efl_text_cursor_get(en);
+   cur = efl_text_cursor_new(en);
 
-   efl_canvas_text_cursor_position_set(en, cur, 2);
+   efl_text_cursor_position_set(en, cur, 2);
    efl_canvas_text_cursor_object_item_insert(en, cur, "size=32x32 href=emoticon");
-   efl_canvas_text_cursor_position_set(en, cur, 50);
+   efl_text_cursor_position_set(en, cur, 50);
    efl_canvas_text_cursor_object_item_insert(en, cur, "size=32x32 href=emoticon");
 
-   efl_canvas_text_cursor_position_set(en, main_cur, 5);
-   efl_canvas_text_cursor_position_set(en, cur, 20);
+   efl_text_cursor_position_set(en, main_cur, 5);
+   efl_text_cursor_position_set(en, cur, 20);
 
    efl_canvas_text_annotation_insert(en, main_cur, cur, "a href=#hello");
 

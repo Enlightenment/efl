@@ -146,7 +146,8 @@ typedef struct _Efl_Canvas_Text_Style             Evas_Textblock_Style;
  * @see evas_object_textblock_cursor_new
  *
  */
-typedef struct _Efl_Canvas_Text_Cursor            Evas_Textblock_Cursor;
+typedef struct _Efl_Text_Cursor_Cursor_Data       Evas_Textblock_Cursor;
+typedef struct _Efl_Text_Cursor_Cursor_Data       Efl_Canvas_Text_Cursor;
 
 /**
  * @typedef Evas_Object_Textblock_Node_Format
@@ -925,6 +926,8 @@ EAPI void evas_textblock_cursor_paragraph_char_first(Efl_Canvas_Text_Cursor *cur
 EAPI void evas_textblock_cursor_paragraph_char_last(Efl_Canvas_Text_Cursor *cur);
 
 EAPI void evas_textblock_cursor_char_delete(Efl_Canvas_Text_Cursor *cur);
+
+EAPI Efl_Canvas_Text_Cursor *evas_object_textblock_cursor_get(Evas_Object *obj);
 //#include "canvas/efl_canvas_text_cursor.eo.legacy.h"
 #include "canvas/efl_canvas_text.eo.legacy.h"
 /**

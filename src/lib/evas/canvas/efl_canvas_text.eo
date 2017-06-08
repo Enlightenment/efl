@@ -1,14 +1,9 @@
+import efl_text_types;
+
 struct Efl.Canvas.Text.Style; [[EFL text style data structure]]
 
-enum Efl.Canvas.Text.Cursor.Type
-{
-   [[Text cursor types]]
-   before, [[Cursor type before]]
-   under [[Cursor type under]]
-}
-
 class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal,
-Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
+Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor)
 {
    [[Efl canvas text class]]
    legacy_prefix: evas_object_textblock;
@@ -36,8 +31,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          ]]
          return: bool; [[$true on success, $false otherwise]]
          params {
-            @in start: ptr(Efl.Canvas.Text.Cursor); [[Range start position]]
-            @in end: ptr(Efl.Canvas.Text.Cursor); [[Range end position]]
+            @in start: ptr(Efl.Text.Cursor.Cursor_Data); [[Range start position]]
+            @in end: ptr(Efl.Text.Cursor.Cursor_Data); [[Range end position]]
          }
       }
       @property style_insets {
@@ -166,8 +161,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          legacy: null;
          return: own(ptr(char)); [[The text in the given range]]
          params {
-            @in cur1: const(ptr(Efl.Canvas.Text.Cursor)); [[Start of range]]
-            @in cur2: const(ptr(Efl.Canvas.Text.Cursor)); [[End of range]]
+            @in cur1: const(ptr(Efl.Text.Cursor.Cursor_Data)); [[Start of range]]
+            @in cur2: const(ptr(Efl.Text.Cursor.Cursor_Data)); [[End of range]]
          }
       }
       range_geometry_get {
@@ -180,8 +175,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          ]]
          legacy: null;
          params {
-             @in cur1: const(ptr(Efl.Canvas.Text.Cursor)); [[Start of range]]
-             @in cur2: const(ptr(Efl.Canvas.Text.Cursor)); [[End of range]]
+             @in cur1: const(ptr(Efl.Text.Cursor.Cursor_Data)); [[Start of range]]
+             @in cur2: const(ptr(Efl.Text.Cursor.Cursor_Data)); [[End of range]]
          }
          return: free(own(iterator<Eina.Rectangle>),
                          eina_iterator_free); [[Iterator on all geoemtries of
@@ -198,8 +193,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          ]]
          legacy: null;
          params {
-             @in cur1: ptr(const(Efl.Canvas.Text.Cursor)); [[Start of range]]
-             @in cur2: ptr(const(Efl.Canvas.Text.Cursor)); [[End of range]]
+             @in cur1: ptr(const(Efl.Text.Cursor.Cursor_Data)); [[Start of range]]
+             @in cur2: ptr(const(Efl.Text.Cursor.Cursor_Data)); [[End of range]]
          }
          return: free(own(iterator<Eina.Rectangle>),
                          eina_iterator_free); [[Iterator on all simple
@@ -212,8 +207,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          ]]
          legacy: null;
          params {
-            @in cur1: ptr(Efl.Canvas.Text.Cursor); [[Range start position]]
-            @in cur2: ptr(Efl.Canvas.Text.Cursor); [[Range end position]]
+            @in cur1: ptr(Efl.Text.Cursor.Cursor_Data); [[Range start position]]
+            @in cur2: ptr(Efl.Text.Cursor.Cursor_Data); [[Range end position]]
          }
       }
       // Obstacles
@@ -289,8 +284,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          ]]
          legacy: null;
          params {
-              @in start: ptr(const(Efl.Canvas.Text.Cursor)); [[Start of range]]
-              @in end:   ptr(const(Efl.Canvas.Text.Cursor)); [[End of range]]
+              @in start: ptr(const(Efl.Text.Cursor.Cursor_Data)); [[Start of range]]
+              @in end:   ptr(const(Efl.Text.Cursor.Cursor_Data)); [[End of range]]
          }
          return: free(own(iterator<ptr(Efl.Canvas.Text.Annotation)>),
                  eina_iterator_free); [[Handle of the Annotation]]
@@ -305,8 +300,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          ]]
          legacy: null;
          params {
-              @in start: ptr(Efl.Canvas.Text.Cursor); [[Start of range]]
-              @in end:   ptr(Efl.Canvas.Text.Cursor); [[End of range]]
+              @in start: ptr(Efl.Text.Cursor.Cursor_Data); [[Start of range]]
+              @in end:   ptr(Efl.Text.Cursor.Cursor_Data); [[End of range]]
               @in format: string; [[Annotation format]]
          }
          return: ptr(Efl.Canvas.Text.Annotation); [[Handle of inserted annotation]]
@@ -355,72 +350,13 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          params {
              @in annotation: ptr(const(Efl.Canvas.Text.Annotation)); [[Annotation
                  handle to query]]
-             @in start: ptr(Efl.Canvas.Text.Cursor); [[Cursor to be set to the start
+             @in start: ptr(Efl.Text.Cursor.Cursor_Data); [[Cursor to be set to the start
              position of the annotation in the text]]
-             @in end: ptr(Efl.Canvas.Text.Cursor); [[Cursor to be set to the end
+             @in end: ptr(Efl.Text.Cursor.Cursor_Data); [[Cursor to be set to the end
              position of the annotation in the text]]
          }
       }
       // Cursor
-      @property cursor {
-         [[The object's main cursor.
-
-           @since 1.18
-         ]]
-         get {
-            return: ptr(Efl.Canvas.Text.Cursor); [[Text cursor object]]
-         }
-      }
-      @property cursor_position {
-         set { legacy: null; }
-         get { legacy: null; }
-         values {
-            position: int;
-         }
-         keys {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      @property cursor_content {
-         [[The content of the cursor (the character under the cursor)]]
-         get {
-            legacy: null;
-         }
-         values {
-            content: Eina.Unicode; [[The unicode codepoint of the character]]
-         }
-         keys {
-            cur: ptr(const(Efl.Canvas.Text.Cursor));
-         }
-      }
-      @property cursor_geometry {
-         [[Returns the geometry of two cursors ("split cursor"), if logical cursor is
-           between LTR/RTL text, also considering paragraph direction.
-           Upper cursor is shown for the text of the same direction as paragraph,
-           lower cursor - for opposite.
-
-           Split cursor geometry is valid only  in '|' cursor mode.
-           In this case $true is returned and $cx2, $cy2, $cw2, $ch2 are set.
-         ]]
-         get {
-            legacy: null;
-            return: bool; [[ $true if split cursor, $false otherwise.]]
-         }
-         keys {
-            cur: ptr(const(Efl.Canvas.Text.Cursor));
-            ctype: Efl.Canvas.Text.Cursor.Type; [[The type of the cursor.]]
-         }
-         values {
-            cx: int; [[The x of the cursor (or upper cursor)]]
-            cy: int; [[The y of the cursor (or upper cursor)]]
-            cw: int; [[The width of the cursor (or upper cursor)]]
-            ch: int; [[The height of the cursor (or upper cursor)]]
-            cx2: int; [[The x of the lower cursor]]
-            cy2: int; [[The y of the lower cursor]]
-            cw2: int; [[The width of the lower cursor]]
-            ch2: int; [[The height of the lower cursor]]
-         }
-      }
       @property cursor_object_item_annotation {
          [[The object-item annotation at the cursor's position.]]
          get {
@@ -430,147 +366,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
             annotation: ptr(Efl.Canvas.Text.Annotation); [[Annotation]]
          }
          keys {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_new {
-         legacy: null;
-         return: ptr(Efl.Canvas.Text.Cursor);
-      }
-      cursor_free {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_equal {
-         legacy: null;
-         params {
-            cur1: ptr(const(Efl.Canvas.Text.Cursor));
-            cur2: ptr(const(Efl.Canvas.Text.Cursor));
-         }
-         return: bool;
-      }
-      cursor_compare {
-         legacy: null;
-         params {
-            cur1: ptr(const(Efl.Canvas.Text.Cursor));
-            cur2: ptr(const(Efl.Canvas.Text.Cursor));
-         }
-         return: int;
-      }
-      cursor_copy {
-         legacy: null;
-         params {
-            dst: ptr(Efl.Canvas.Text.Cursor);
-            src: ptr(const(Efl.Canvas.Text.Cursor));
-         }
-      }
-      cursor_char_next {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_char_prev {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_paragraph_char_first {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_paragraph_char_last {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_word_start {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_word_end {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_line_char_first {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_line_char_last {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_paragraph_first {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_paragraph_last {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_paragraph_next {
-         [[Advances to the start of the next text node]]
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_paragraph_prev {
-         [[Advances to the end of the previous text node]]
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-         }
-      }
-      cursor_line_jump_by {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-            by: int;
-         }
-      }
-      cursor_coord_set {
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-            @in x: int; [[X coord to set by.]]
-            @in y: int; [[Y coord to set by.]]
-         }
-      }
-      cursor_text_insert {
-         [[Adds text to the current cursor position and set the cursor to
-           *after* the start of the text just added.
-         ]]
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
-            @in text: string; [[Text to append (UTF-8 format).]]
-         }
-         return: int; [[Length of the appended text.]]
-      }
-      cursor_char_delete {
-         [[Deletes a single character from position pointed by given cursor.]]
-         legacy: null;
-         params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
+            cur: ptr(Efl.Text.Cursor.Cursor_Data);
          }
       }
       cursor_object_item_insert {
@@ -582,7 +378,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
          ]]
          legacy: null;
          params {
-            cur: ptr(Efl.Canvas.Text.Cursor);
+            cur: ptr(Efl.Text.Cursor.Cursor_Data);
             @in format: string; [[Format of the inserted item.
             See Format styles.]]
          }
@@ -637,6 +433,31 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format)
       Efl.Text.Format.format_tabstops { get; set; }
       Efl.Text.Format.format_password { get; set; }
       Efl.Text.Format.format_replacement_char { get; set; }
+      Efl.Text.Cursor.cursor { get; }
+      Efl.Text.Cursor.cursor_position { set; get; }
+      Efl.Text.Cursor.cursor_content { get; }
+      Efl.Text.Cursor.cursor_geometry { get; }
+      Efl.Text.Cursor.cursor_new;
+      Efl.Text.Cursor.cursor_free;
+      Efl.Text.Cursor.cursor_equal;
+      Efl.Text.Cursor.cursor_compare;
+      Efl.Text.Cursor.cursor_copy;
+      Efl.Text.Cursor.cursor_char_next;
+      Efl.Text.Cursor.cursor_char_prev;
+      Efl.Text.Cursor.cursor_paragraph_char_first;
+      Efl.Text.Cursor.cursor_paragraph_char_last;
+      Efl.Text.Cursor.cursor_word_start;
+      Efl.Text.Cursor.cursor_word_end;
+      Efl.Text.Cursor.cursor_line_char_first;
+      Efl.Text.Cursor.cursor_line_char_last;
+      Efl.Text.Cursor.cursor_paragraph_first;
+      Efl.Text.Cursor.cursor_paragraph_last;
+      Efl.Text.Cursor.cursor_paragraph_next;
+      Efl.Text.Cursor.cursor_paragraph_prev;
+      Efl.Text.Cursor.cursor_line_jump_by;
+      Efl.Text.Cursor.cursor_coord_set;
+      Efl.Text.Cursor.cursor_text_insert;
+      Efl.Text.Cursor.cursor_char_delete;
    }
    events {
       cursor,changed;
