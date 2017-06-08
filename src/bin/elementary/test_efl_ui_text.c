@@ -11,13 +11,16 @@ _apply_style(Eo *obj, size_t start_pos, size_t end_pos, const char *style)
 {
    Efl_Canvas_Text_Cursor *start, *end;
 
-   start = efl_text_cursor_get(obj);
-   end = efl_text_cursor_get(obj);
+   start = efl_text_cursor_new(obj);
+   end = efl_text_cursor_new(obj);
 
    efl_text_cursor_position_set(obj, start, start_pos);
    efl_text_cursor_position_set(obj, end, end_pos);
 
    efl_canvas_text_annotation_insert(obj, start, end, style);
+
+   efl_text_cursor_free(obj, start);
+   efl_text_cursor_free(obj, end);
 }
 
 static Eo *
