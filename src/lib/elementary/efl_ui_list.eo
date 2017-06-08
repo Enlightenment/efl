@@ -1,0 +1,86 @@
+struct Efl.Ui.List.Item_Event
+{
+   layout: Elm.Layout;
+   child: Efl.Model;
+   index: int;
+}
+
+class Efl.Ui.List (Elm.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
+                Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
+                Efl.Ui.Clickable, Efl.Ui.Selectable)
+{
+   methods {
+      @property homogeneous {
+         get {
+           [[Get whether the homogeneous mode is enabled.]]
+         }
+         set {
+           [[Enable/disable homogeneous mode.]]
+         }
+         values {
+            homogeneous: bool; [[Assume the items within the genlist are of
+                                 the same height and width. Default is $false.]]
+         }
+      }
+      @property select_mode {
+         [[Listview select mode.]]
+         get {}
+         set {}
+         values {
+            mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); [[The select mode.]]
+         }
+      }
+      @property default_style {
+         values {
+            style: stringshare;
+         }
+      }
+   }
+   events {
+      item,realized : Efl.Ui.List.Item_Event;
+      item,unrealized : Efl.Ui.List.Item_Event;
+      item,focused : Efl.Ui.List.Item_Event;
+      item,unfocused : Efl.Ui.List.Item_Event;
+      item,highlighted : Efl.Ui.List.Item_Event;
+      item,unhighlighted : Efl.Ui.List.Item_Event;
+      item,selected : Efl.Ui.List.Item_Event;
+      item,unselected : Efl.Ui.List.Item_Event;
+   }
+
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
+
+      // Smart obj
+      Efl.Canvas.Group.group_member_add;
+      Efl.Canvas.Group.group_calculate;
+
+      // Widget
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.focus_direction;
+//      Elm.Widget.activate;
+//      Elm.Widget.focused_item { get; }
+      Elm.Widget.focused_object { get; }
+      Elm.Widget.widget_event;
+
+      Elm.Layout.sizing_eval;
+      Efl.Ui.View.model { get; set; }
+
+      Elm.Interface.Atspi_Accessible.children { get; }
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Elm.Interface.Atspi.Selection.selected_children_count { get; }
+      Elm.Interface.Atspi.Selection.selected_child { get; }
+      Elm.Interface.Atspi.Selection.selected_child_deselect;
+      Elm.Interface.Atspi.Selection.child_select;
+      Elm.Interface.Atspi.Selection.child_deselect;
+      Elm.Interface.Atspi.Selection.is_child_selected;
+      Elm.Interface.Atspi.Selection.all_children_select;
+      Elm.Interface.Atspi.Selection.clear;
+   }
+}

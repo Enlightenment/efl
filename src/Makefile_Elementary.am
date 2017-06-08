@@ -128,6 +128,8 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_focus_manager_root_focus.eo \
 	lib/elementary/efl_ui_focus_object.eo \
 	lib/elementary/efl_ui_focus_user.eo \
+	lib/elementary/efl_ui_list.eo \
+	lib/elementary/efl_ui_list_pan.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
@@ -280,6 +282,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_thumb.h \
 	lib/elementary/elm_widget_toolbar.h \
 	lib/elementary/efl_ui_video_private.h \
+	lib/elementary/efl_ui_list_private.h \
 	lib/elementary/elm_widget_web.h \
 	lib/elementary/efl_ui_clock.h \
 	lib/elementary/elm_code.h \
@@ -683,6 +686,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_focus_manager_sub.c \
 	lib/elementary/efl_ui_focus_object.c \
 	lib/elementary/efl_ui_focus_manager_root_focus.c \
+	lib/elementary/efl_ui_list.c \
 	$(NULL)
 
 

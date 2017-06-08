@@ -280,6 +280,8 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_text_editable.eo.h>
 # include <efl_ui_clock.eo.h>
 # include <efl_ui_image_factory.eo.h>
+# include <efl_ui_list.eo.h>
+# include <efl_ui_list_pan.eo.h>
 #endif
 
 /* include deprecated calls last of all */
