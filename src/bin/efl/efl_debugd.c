@@ -20,29 +20,41 @@
 # include <config.h>
 #endif
 
-#include <unistd.h>
-#ifdef HAVE_SYS_EPOLL_H
-# include <sys/epoll.h>
-#endif
-#include <sys/types.h>
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
-#ifdef HAVE_SYS_UN_H
-# include <sys/un.h>
-#endif
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-#ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h>
-#endif
+#define EFL_BETA_API_SUPPORT 1
+#define EFL_EO_API_SUPPORT 1
+
 #include <fcntl.h>
 #include "eina_debug_private.h"
 
 #include <Eina.h>
 #include <Ecore.h>
+#include <Ecore_Con.h>
 
+static int _log_dom = -1;
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
+
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
+
+#ifdef CRI
+# undef CRI
+#endif
+#define CRI(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define SWAP_64(x) x
 #define SWAP_32(x) x
@@ -69,10 +81,10 @@ typedef struct _Client Client;
 
 struct _Client
 {
+   Eo *              client;
    Eina_Stringshare *app_name;
 
    int               version;
-   int               fd;
    int               cid;
    pid_t             pid;
 
@@ -81,6 +93,9 @@ struct _Client
 };
 
 static Eina_List *_clients = NULL;
+static int _retval;
+
+static Eo *_local_server = NULL, *_remote_server = NULL;
 
 typedef Eina_Bool (*Opcode_Cb)(Client *client, void *buffer, int size);
 
@@ -104,11 +119,6 @@ typedef struct
 #define MAX_OPCODES 1000
 Opcode_Information *_opcodes[MAX_OPCODES];
 
-/* epoll stuff */
-#ifndef _WIN32
-static int _epfd = -1, _listening_unix_fd = -1, _listening_tcp_fd = -1;
-#endif
-
 static Client *
 _client_find_by_cid(int cid)
 {
@@ -129,54 +139,48 @@ _client_find_by_pid(int pid)
    return NULL;
 }
 
-static Client *
-_client_find_by_fd(int fd)
-{
-   Eina_List *itr;
-   Client *c;
-   EINA_LIST_FOREACH(_clients, itr, c)
-      if (c->fd == fd) return c;
-   return NULL;
-}
-
 static void
 _send(Client *dest, int opcode, void *payload, int payload_size)
 {
+   Eina_Error err;
+   Eina_Slice s, r;
+   Eina_Debug_Packet_Header hdr;
    int size = sizeof(Eina_Debug_Packet_Header) + payload_size;
-   char *buf = alloca(size);
-   Eina_Debug_Packet_Header *hdr = (Eina_Debug_Packet_Header *)buf;
-   hdr->size = SWAP_32(size);
-   hdr->cid = 0;
-   hdr->opcode = SWAP_32(opcode);
-   memcpy(buf + sizeof(Eina_Debug_Packet_Header), payload, payload_size);
-   printf("Send packet (size = %d, opcode %s) to %s\n", size,
-         _opcodes[hdr->opcode]->opcode_string,
+
+   hdr.size = SWAP_32(size);
+   hdr.cid = 0;
+   hdr.opcode = SWAP_32(opcode);
+
+   s.mem = &hdr;
+   s.len = sizeof(hdr);
+
+   err = efl_io_writer_write(dest->client, &s, &r);
+   if (err || r.len) goto end;
+
+   if (!payload_size) goto end;
+
+   s.mem = payload;
+   s.len = payload_size;
+   err = efl_io_writer_write(dest->client, &s, &r);
+
+   INF("Send packet (size = %d, opcode %s) to %s", size,
+         _opcodes[opcode]->opcode_string,
          dest->app_name);
-   if (send(dest->fd, buf, size, 0) != size) perror("send");
-}
 
-static void
-_client_del(Client *c)
-{
-   Client *c2;
-   if (!c) return;
-   Eina_List *itr;
-
-   _clients = eina_list_remove(_clients, c);
-
-   /* Don't update the observers if the client is a master */
-   if (c->is_master) return;
-
-   EINA_LIST_FOREACH(_clients, itr, c2)
+ end:
+   if (err)
      {
-        int cid = SWAP_32(c->cid);
-        if (c2->cl_stat_obs) _send(c2, _slave_deleted_opcode, &cid, sizeof(int));
+        fprintf(stderr, "ERROR: could not queue message '%d': %s\n", opcode, eina_error_msg_get(err));
      }
-   free(c);
+
+   if (r.len)
+     {
+        fprintf(stderr, "ERROR: could not queue message '%d': out of memory\n", opcode);
+     }
 }
 
 static Eina_Bool
-_dispatch(Client *src, void *buffer, unsigned int size)
+_dispatch(Client *src, void *buffer)
 {
    Eina_Debug_Packet_Header *hdr = (Eina_Debug_Packet_Header *)buffer;
    if (hdr->cid)
@@ -187,9 +191,14 @@ _dispatch(Client *src, void *buffer, unsigned int size)
           {
              if (dest->is_master != src->is_master)
                {
+                  Eina_Slice s;
+                  s.mem = buffer;
+                  s.len = hdr->size;
                   hdr->cid = SWAP_32(src->cid);
-                  if (send(dest->fd, buffer, size, 0) != size) perror("send");
-                  printf("Transfer of %d bytes from %s(%d) to %s(%d): operation %s\n",
+                  hdr->size = SWAP_32(hdr->size);
+                  hdr->opcode = SWAP_32(hdr->opcode);
+                  efl_io_writer_write(dest->client, &s, NULL);
+                  INF("Transfer of %d bytes from %s(%d) to %s(%d): operation %s\n",
                         hdr->size,
                         src->app_name, src->pid,
                         dest->app_name, dest->pid,
@@ -201,16 +210,17 @@ _dispatch(Client *src, void *buffer, unsigned int size)
                    * Packets Master -> Master or Slave -> Slave are forbidden
                    * Only Master <-> Slave packets are allowed.
                    */
-                  printf("Packet from %d to %d: denied (same type)\n", hdr->cid, dest->cid);
+                  ERR("Packet from %d to %d: denied (same type)\n", hdr->cid, dest->cid);
                }
           }
      }
    else
      {
-        printf("Invoke %s\n", _opcodes[hdr->opcode]->opcode_string);
+        INF("Invoke %s\n", _opcodes[hdr->opcode]->opcode_string);
         if (_opcodes[hdr->opcode]->cb)
            return _opcodes[hdr->opcode]->cb(src,
-                 (char *)buffer + sizeof(Eina_Debug_Packet_Header), size - sizeof(Eina_Debug_Packet_Header));
+                 (char *)buffer + sizeof(Eina_Debug_Packet_Header),
+                 hdr->size - sizeof(Eina_Debug_Packet_Header));
      }
    return EINA_TRUE;
 }
@@ -238,7 +248,7 @@ _opcode_register(const char *op_name, int op_id, Opcode_Cb cb)
         eina_hash_add(_string_to_opcode_hash, op_name, op_info);
         _opcodes[op_id] = op_info;
      }
-   printf("Register %s -> opcode %d\n", op_name, op_info->opcode);
+   INF("Register %s -> opcode %d\n", op_name, op_info->opcode);
    return op_info->opcode;
 }
 
@@ -261,7 +271,7 @@ _hello_cb(Client *c, void *buffer, int size)
      {
         c->app_name = eina_stringshare_add_length(buf, size);
      }
-   printf("Connection of %s: pid %d - name %s -> cid %d\n",
+   INF("Connection of %s: pid %d - name %s -> cid %d\n",
          c->is_master ? "Master" : "Slave",
          c->pid, c->app_name, c->cid);
 
@@ -302,7 +312,7 @@ _cid_get_cb(Client *src, void *buffer, int size EINA_UNUSED)
 static Eina_Bool
 _data_test_cb(Client *src, void *buffer, int size)
 {
-   printf("Data test: loop packet of %d bytes\n", size);
+   DBG("Data test: loop packet of %d bytes\n", size);
    _send(src, _test_loop_opcode, buffer, size);
    return EINA_TRUE;
 }
@@ -369,133 +379,150 @@ _opcode_register_cb(Client *src, void *buffer, int size)
    return EINA_TRUE;
 }
 
-static int
-_data_receive(Client *c, unsigned char *buffer)
+static void
+_client_data(void *data, const Efl_Event *event)
 {
-   int rret;
+   static unsigned char *buffer = NULL;
    unsigned int size = 0;
+   Eina_Debug_Packet_Header *hdr;
+   Client *c = data;
+   Eina_Slice slice;
 
-   if (!c) return -1;
+   if (!c) return;
 
-   rret = recv(c->fd, &size, sizeof(int), MSG_PEEK);
+   if (!buffer) buffer = malloc(EINA_DEBUG_MAX_PACKET_SIZE);
 
-   if (rret == -1 || !size) goto error;
-   if (rret == sizeof(int))
+   slice = efl_io_buffered_stream_slice_get(c->client);
+
+   if (slice.len < sizeof(*hdr)) return;
+
+   hdr = (Eina_Debug_Packet_Header *)slice.mem;
+   size = SWAP_32(hdr->size);
+   if (size < sizeof(*hdr)) /* must contain at least the header */
      {
-        Eina_Debug_Packet_Header *hdr;
-        unsigned int cur_packet_size = 0;
-        size = SWAP_32(size);
-        if (size > EINA_DEBUG_MAX_PACKET_SIZE) goto error;
-        while (cur_packet_size < size)
-          {
-             rret = recv(c->fd, buffer + cur_packet_size, size - cur_packet_size, 0);
-             if (rret <= 0) goto error;
-             cur_packet_size += rret;
-          }
-        hdr = (Eina_Debug_Packet_Header *) buffer;
-        hdr->size = SWAP_32(hdr->size);
-        hdr->opcode = SWAP_32(hdr->opcode);
-        hdr->cid = SWAP_32(hdr->cid);
+        fprintf(stderr, "ERROR: invalid message header, size=%u\n", hdr->size);
+        goto err;
      }
-   //printf("%d bytes received from client %s fd %d\n", size, c->app_name, c->fd);
-   return size;
-error:
-   if (rret == -1) perror("Read from socket");
-   return -1;
+
+   if (size > EINA_DEBUG_MAX_PACKET_SIZE)
+     {
+        fprintf(stderr, "ERROR: packet too big (max: %d), size=%u\n",
+              EINA_DEBUG_MAX_PACKET_SIZE, hdr->size);
+        goto err;
+     }
+
+   /* Incomplete packet: need to wait */
+   if (size > slice.len) return;
+
+   memcpy(buffer, slice.mem, size);
+   hdr = (Eina_Debug_Packet_Header *)buffer;
+   hdr->size = SWAP_32(hdr->size);
+   hdr->opcode = SWAP_32(hdr->opcode);
+   hdr->cid = SWAP_32(hdr->cid);
+
+   if(!_dispatch(c, buffer))
+     {
+        // something we don't understand
+        fprintf(stderr, "Dispatch: unknown command: %d\n", hdr->opcode);
+     }
+   efl_io_buffered_stream_discard(c->client, size);
+   return;
+err:
+   if (!efl_io_closer_closed_get(event->object))
+      efl_io_closer_close(event->object);
+   fprintf(stderr, "INFO: client %p [pid: %d] sent invalid data\n", c, (int)c->pid);
 }
 
 static void
-_monitor(void)
+_client_error(void *data, const Efl_Event *event)
 {
-#ifndef _WIN32
-#define MAX_EVENTS 1000
-   int ret = 0;
-   struct epoll_event events[MAX_EVENTS];
-   unsigned char *buffer = malloc(EINA_DEBUG_MAX_PACKET_SIZE);
-   Client *c;
+   Client *c = data;
+   Eina_Error *perr = event->info;
+   WRN("client %p [pid: %d] error: %s",
+       c, (int)c->pid, eina_error_msg_get(*perr));
+   fprintf(stderr, "INFO: client %p [pid: %d] error: %s\n",
+           c, (int)c->pid, eina_error_msg_get(*perr));
+}
 
-   // sit forever processing commands or timeouts
-   for (; ret != -1;)
+static void
+_client_eos(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Client *c = data;
+   DBG("client %p (%p) [pid: %d] closed, pending read %zu, write %zu",
+       c, c->client, (int)c->pid,
+       efl_io_buffered_stream_pending_read_get(c->client),
+       efl_io_buffered_stream_pending_write_get(c->client));
+   efl_io_closer_close(c->client);
+}
+
+static void
+_client_write_finished(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Client *c = data;
+   DBG("client %p (%p) [pid: %d] finished writing, pending read %zu",
+       c, c->client, (int)c->pid, efl_io_buffered_stream_pending_read_get(c->client));
+}
+
+static void
+_client_read_finished(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Client *c = data;
+   DBG("client %p (%p) [pid: %d] finished reading, pending write %zu",
+       c, c->client, (int)c->pid, efl_io_buffered_stream_pending_write_get(c->client));
+}
+
+static Efl_Callback_Array_Item *_client_cbs(void);
+
+static void
+_client_finished(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eina_List *itr;
+   Client *c = data, *c2;
+   int cid = SWAP_32(c->cid);
+   efl_event_callback_array_del(c->client, _client_cbs(), c);
+   INF("finished client %p (%p) [pid:%d]", c, c->client, c->pid);
+   _clients = eina_list_remove(_clients, c);
+   efl_unref(c->client);
+
+   /* Don't update the observers if the client is a master */
+   if (c->is_master) return;
+
+   EINA_LIST_FOREACH(_clients, itr, c2)
      {
-        ret = epoll_wait (_epfd, events, MAX_EVENTS, -1);
-
-        // if the fd for debug daemon says it's alive, process it
-        if (ret > 0)
-          {
-             int i;
-             //check which fd are set/ready for read
-             for (i = 0; i < ret; i++)
-               {
-                  if (events[i].events & EPOLLHUP)
-                    {
-                       c = _client_find_by_fd(events[i].data.fd);
-                       close(events[i].data.fd);
-                       if (c)
-                         {
-                            printf("Closing client %s/%d\n", c->app_name, c->pid);
-                            _client_del(c);
-                         }
-                    }
-                  if (events[i].events & EPOLLIN)
-                    {
-                       // Someone wants to connect
-                       if(events[i].data.fd == _listening_unix_fd || events[i].data.fd == _listening_tcp_fd)
-                         {
-                            int new_fd = accept(events[i].data.fd, NULL, NULL);
-                            if (new_fd < 0) perror("Accept");
-                            else
-                              {
-                                 struct epoll_event event;
-                                 c = calloc(1, sizeof(*c));
-                                 c->fd = new_fd;
-                                 c->is_master = (events[i].data.fd == _listening_tcp_fd);
-                                 _clients = eina_list_append(_clients, c);
-                                 event.data.fd = new_fd;
-                                 event.events = EPOLLIN;
-                                 epoll_ctl (_epfd, EPOLL_CTL_ADD, new_fd, &event);
-                              }
-                            continue;
-                         }
-
-                       c = _client_find_by_fd(events[i].data.fd);
-                       if (c)
-                          {
-                             int size;
-                             size = _data_receive(c, buffer);
-                             // if not negative - we have a real message
-                             if (size >= 0)
-                               {
-                                  if(!_dispatch(c, buffer, size))
-                                    {
-                                       // something we don't understand
-                                       fprintf(stderr, "Dispatch: unknown command");
-                                    }
-                               }
-                             else
-                               {
-                                  // major failure on debug daemon control fd - get out of here.
-                                  //   else goto fail;
-                                  close(events[i].data.fd);
-                                  _client_del(c);
-                                  //TODO if its not main session we will tell the main_loop
-                                  //that it disconneted
-                               }
-                          }
-                    }
-               }
-          }
-#if 0
-        else
-          {
-             if (poll_time && poll_timer_cb)
-               {
-                  if (!poll_timer_cb()) poll_time = 0;
-               }
-          }
-#endif
+        if (c2->cl_stat_obs) _send(c2, _slave_deleted_opcode, &cid, sizeof(int));
      }
-   free(buffer);
-#endif
+   free(c);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(_client_cbs,
+                           { EFL_IO_READER_EVENT_EOS, _client_eos },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_ERROR, _client_error },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, _client_read_finished },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_WRITE_FINISHED, _client_write_finished },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, _client_finished },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_SLICE_CHANGED, _client_data });
+
+static void
+_client_add(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Client *c = calloc(1, sizeof(Client));
+
+   EINA_SAFETY_ON_NULL_RETURN(c);
+   c->client = efl_ref(event->info);
+   c->is_master = (event->object == _remote_server);
+   _clients = eina_list_append(_clients, c);
+   efl_event_callback_array_add(c->client, _client_cbs(), c);
+   INF("server %p new client %p (%p)", event->object, c, c->client);
+}
+
+static void
+_error(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Eina_Error *perr = event->info;
+   ERR("server %p error: %s", event->object, eina_error_msg_get(*perr));
+   fprintf(stderr, "ERROR: %s\n", eina_error_msg_get(*perr));
+   ecore_main_loop_quit();
+   _retval = EXIT_FAILURE;
 }
 
 static char *
@@ -514,127 +541,134 @@ _socket_home_get(void)
    return ret;
 }
 
-#ifndef _WIN32
-#define LENGTH_OF_SOCKADDR_UN(s) \
-   (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
-static int
-_listening_unix_socket_create(void)
+static Eina_Bool
+_local_server_create(void)
 {
-   char buf[1048];
-   struct sockaddr_un socket_unix;
-   int socket_unix_len, curstate = 0;
+   Eo *loop;
+   Eina_Error err;
    char *socket_path = _socket_home_get();
    mode_t mask = 0;
-   // create the socket
-   int fd = socket(AF_UNIX, SOCK_STREAM, 0);
+   char path[512];
    Eina_Bool ret = EINA_FALSE;
 
-   if (fd < 0) goto end;
-   // set the socket to close when we exec things so they don't inherit it
-   if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0) goto end;
-   // set up some socket options on addr re-use
-   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate,
-                  sizeof(curstate)) < 0)
-     goto end;
-
-   snprintf(buf, sizeof(buf) - 1, "%s/%s", socket_path, LOCAL_SERVER_PATH);
-   if (mkdir(buf, S_IRWXU) < 0 && errno != EEXIST)
+   snprintf(path, sizeof(path) - 1, "%s/%s", socket_path, LOCAL_SERVER_PATH);
+   if (mkdir(path, S_IRWXU) < 0 && errno != EEXIST)
      {
         perror("mkdir SERVER_PATH");
         goto end;
      }
-   snprintf(buf, sizeof(buf) - 1, "%s/%s/%s", socket_path, LOCAL_SERVER_PATH, LOCAL_SERVER_NAME);
-   if (mkdir(buf, S_IRWXU) < 0 && errno != EEXIST)
+   snprintf(path, sizeof(path) - 1, "%s/%s/%s", socket_path, LOCAL_SERVER_PATH, LOCAL_SERVER_NAME);
+   if (mkdir(path, S_IRWXU) < 0 && errno != EEXIST)
      {
         perror("mkdir SERVER_NAME");
         goto end;
      }
    mask = umask(S_IRWXG | S_IRWXO);
-   snprintf(buf, sizeof(buf) - 1, "%s/%s/%s/%i", socket_path,
+   snprintf(path, sizeof(path) - 1, "%s/%s/%s/%i", socket_path,
          LOCAL_SERVER_PATH, LOCAL_SERVER_NAME, LOCAL_SERVER_PORT);
-   // sa that it's a unix socket and where the path is
-   socket_unix.sun_family = AF_UNIX;
-   strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path) - 1);
-   socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
-   unlink(socket_unix.sun_path);
-   if (bind(fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
+
+   loop = ecore_main_loop_get();
+
+#ifdef EFL_NET_SERVER_UNIX_CLASS
+   _local_server = efl_add(EFL_NET_SERVER_SIMPLE_CLASS, loop,
+                    efl_net_server_simple_inner_class_set(efl_added, EFL_NET_SERVER_UNIX_CLASS));
+#else
+   /* TODO: maybe start a TCP using locahost:12345?
+    * Right now eina_debug_monitor is only for AF_UNIX, so not an issue.
+    */
+   fprintf(stderr, "ERROR: your platform doesn't support Efl.Net.Server.Unix\n");
+#endif
+   if (!_local_server)
      {
-        perror("ERROR on binding");
+        fprintf(stderr, "ERROR: could not create communication server\n");
         goto end;
      }
-   listen(fd, 5);
+
+   efl_event_callback_add(_local_server, EFL_NET_SERVER_EVENT_CLIENT_ADD, _client_add, NULL);
+   efl_event_callback_add(_local_server, EFL_NET_SERVER_EVENT_ERROR, _error, NULL);
+
+#ifdef EFL_NET_SERVER_UNIX_CLASS
+   {
+      Eo *inner_server = efl_net_server_simple_inner_server_get(_local_server);
+      efl_net_server_unix_unlink_before_bind_set(inner_server, EINA_TRUE);
+      efl_net_server_unix_leading_directories_create_set(inner_server, EINA_TRUE, 0700);
+   }
+#endif
+
+   err = efl_net_server_serve(_local_server, path);
+   if (err)
+     {
+        fprintf(stderr, "ERROR: could not serve '%s': %s\n", path, eina_error_msg_get(err));
+        goto end;
+     }
    ret = EINA_TRUE;
 end:
    umask(mask);
-   if (!ret && fd >= 0)
+   if (!ret)
      {
-        close(fd);
-        fd = -1;
+        efl_del(_local_server);
+        _local_server = NULL;
      }
    free(socket_path);
-   return fd;
+   return ret;
 }
-#endif
 
-static int
-_listening_tcp_socket_create(void)
+static Eina_Bool
+_remote_server_create(void)
 {
-   struct sockaddr_in server;
-   int curstate = 1;
-   // create the socket
-   int fd = socket(AF_INET, SOCK_STREAM, 0);
-   if (fd < 0) goto err;
-   // set the socket to close when we exec things so they don't inherit it
-   if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0) goto err;
-   // set up some socket options on addr re-use
-   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate,
-                  sizeof(curstate)) < 0)
-     goto err;
+   Eo *loop;
+   Eina_Error err;
+   mode_t mask = 0;
+   Eina_Bool ret = EINA_FALSE;
+   char address[256];
 
-   //Prepare the sockaddr_in structure
-   memset(&server, 0, sizeof(server));
-   server.sin_family = AF_INET;
-   inet_pton(AF_INET, "127.0.0.1", &server.sin_addr.s_addr);
-   server.sin_port = htons(REMOTE_SERVER_PORT);
+   loop = ecore_main_loop_get();
 
-   if (bind(fd, (struct sockaddr *)&server, sizeof(server)) < 0)
+   _remote_server = efl_add(EFL_NET_SERVER_SIMPLE_CLASS, loop,
+                    efl_net_server_simple_inner_class_set(efl_added, EFL_NET_SERVER_TCP_CLASS));
+   if (!_remote_server)
      {
-        perror("ERROR on binding");
-        goto err;
+        fprintf(stderr, "ERROR: could not create communication server\n");
+        goto end;
      }
-   listen(fd, 5);
-   return fd;
-err:
-   if (fd >= 0) close(fd);
-   return -1;
+
+   {
+      Eo *inner_server = efl_net_server_simple_inner_server_get(_remote_server);
+      efl_net_server_fd_close_on_exec_set(inner_server, EINA_TRUE);
+      efl_net_server_fd_reuse_address_set(inner_server, EINA_TRUE);
+   }
+   efl_event_callback_add(_remote_server, EFL_NET_SERVER_EVENT_CLIENT_ADD, _client_add, NULL);
+   efl_event_callback_add(_remote_server, EFL_NET_SERVER_EVENT_ERROR, _error, NULL);
+
+   sprintf(address, "127.0.0.1:%d", REMOTE_SERVER_PORT);
+   err = efl_net_server_serve(_remote_server, address);
+   if (err)
+     {
+        fprintf(stderr, "ERROR: could not serve port '%d': %s\n",
+              REMOTE_SERVER_PORT, eina_error_msg_get(err));
+        goto end;
+     }
+   ret = EINA_TRUE;
+end:
+   umask(mask);
+   if (!ret)
+     {
+        efl_del(_remote_server);
+        _remote_server = NULL;
+     }
+   return ret;
 }
 
 static Eina_Bool
 _server_launch(void)
 {
-#ifndef _WIN32
-   struct epoll_event event = {0};
+   if (_local_server_create() <= 0) goto err;
+   if (_remote_server_create() <= 0) goto err;
 
-   _epfd = epoll_create (MAX_EVENTS);
-
-   _listening_unix_fd = _listening_unix_socket_create();
-   if (_listening_unix_fd <= 0) goto err;
-   event.data.fd = _listening_unix_fd;
-   event.events = EPOLLIN;
-   epoll_ctl (_epfd, EPOLL_CTL_ADD, _listening_unix_fd, &event);
-
-   _listening_tcp_fd = _listening_tcp_socket_create();
-   if (_listening_tcp_fd <= 0) goto err;
-   event.data.fd = _listening_tcp_fd;
-   event.events = EPOLLIN;
-   epoll_ctl (_epfd, EPOLL_CTL_ADD, _listening_tcp_fd, &event);
    return EINA_TRUE;
 err:
-   if (_listening_unix_fd >= 0) close(_listening_unix_fd);
-   _listening_unix_fd = -1;
-   if (_listening_tcp_fd >= 0) close(_listening_tcp_fd);
-   _listening_tcp_fd = -1;
-#endif
+   efl_del(_local_server);
+   efl_del(_remote_server);
    return EINA_FALSE;
 }
 
@@ -642,8 +676,14 @@ int
 main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    eina_debug_disable();
+   ecore_app_no_system_modules();
+
    eina_init();
    ecore_init();
+   ecore_con_init();
+
+   _retval = EXIT_SUCCESS;
+   _log_dom = eina_log_domain_register("efl_debugd", EINA_COLOR_CYAN);
 
    _string_to_opcode_hash = eina_hash_string_superfast_new(NULL);
    _opcode_register("Daemon/opcode_register", EINA_DEBUG_OPCODE_REGISTER, _opcode_register_cb);
@@ -654,11 +694,12 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    _cid_from_pid_opcode = _opcode_register("Daemon/Client/cid_from_pid", EINA_DEBUG_OPCODE_INVALID, _cid_get_cb);
    _test_loop_opcode = _opcode_register("Test/data_loop", EINA_DEBUG_OPCODE_INVALID, _data_test_cb);
 
-   _server_launch();
-   _monitor();
+   if (_server_launch()) ecore_main_loop_begin();
+   else _retval = EXIT_FAILURE;
 
+   ecore_con_shutdown();
    ecore_shutdown();
    eina_shutdown();
 
-   return 0;
+   return _retval;
 }
