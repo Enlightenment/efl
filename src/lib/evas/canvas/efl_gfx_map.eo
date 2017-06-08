@@ -33,6 +33,16 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
            not modify the values of @.map_smooth or @.map_alpha.
          ]]
       }
+      @property map_point_count {
+         [[Number of points of a map.
+
+            This sets the number of points of map.
+            Currently, the number of points must be multiples of 4.
+         ]]
+         values {
+            count: int; [[The number of points of map]]
+         }
+      }
       @property map_clockwise {
          [[Clockwise state of a map (read-only).
 

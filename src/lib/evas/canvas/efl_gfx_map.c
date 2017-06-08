@@ -14,6 +14,7 @@ typedef struct _Gfx_Map               Gfx_Map;
 typedef struct _Gfx_Map_Op            Gfx_Map_Op;
 typedef struct _Gfx_Map_Pivot         Gfx_Map_Pivot;
 typedef struct _Efl_Gfx_Map_Data      Efl_Gfx_Map_Data;
+typedef struct _Gfx_Map_Point         Gfx_Map_Point;
 typedef enum _Gfx_Map_Op_Type         Gfx_Map_Op_Type;
 
 enum _Gfx_Map_Op_Type {
@@ -84,16 +85,19 @@ struct _Gfx_Map_Pivot
    Eina_Bool       changed;
 };
 
+struct _Gfx_Map_Point {
+     double u, v;
+};
+
 struct _Gfx_Map {
    Gfx_Map_Op *ops;
-   struct {
-      double u, v;
-   } point[4];
+   Gfx_Map_Point *points;
 
    Gfx_Map_Pivot *pivots;
    Evas_Map      *map;
    Gfx_Map_Op    *last_calc_op;
    int            imw, imh;
+   int            count;
 
    // FIXME: Those need a quality vs. performance setting instead
    Eina_Bool alpha;
@@ -111,10 +115,12 @@ static Eo *gfx_map_absolute = NULL;
 static Eina_Cow *gfx_map_cow = NULL;
 static const Gfx_Map gfx_map_cow_default = {
    NULL,
-   { { 0.0, 0.0 }, { 1.0, 0.0 }, { 1.0, 1.0 }, { 0.0, 1.0 } },
+   NULL,
+   NULL,
    NULL,
    NULL,
    0, 0,
+   4,
    EINA_TRUE,
    EINA_TRUE,
    EINA_FALSE
@@ -169,6 +175,8 @@ _efl_gfx_map_efl_object_destructor(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
    if (pd->cow)
      {
         _map_ops_clean(eo_obj, pd);
+        if (pd->cow->points)
+          free(pd->cow->points);
         eina_cow_free(gfx_map_cow, (const Eina_Cow_Data **) &pd->cow);
      }
    efl_destructor(efl_super(eo_obj, MY_CLASS));
@@ -244,6 +252,7 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
    Gfx_Map *mcow;
    Evas_Map *m;
    int imw, imh;
+   int count;
 
    if (pd->cow == &gfx_map_cow_default)
      return NULL;
@@ -252,6 +261,7 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
    if (!obj->gfx_map_update) return m;
 
    last_op = pd->cow->last_calc_op;
+   count = pd->cow->count < 4 ? 4 : pd->cow->count;
 
    EINA_INLIST_FOREACH(pd->cow->pivots, pivot)
      {
@@ -276,6 +286,20 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
           }
      }
 
+   if (!pd->cow->points)
+     {
+        Gfx_Map_Point *ps = calloc(1, count * sizeof(Gfx_Map_Point));
+        if (!ps) return m;
+        if (count == 4)
+          {
+             ps[0].u = 0.0; ps[0].v = 0.0;
+             ps[1].u = 1.0; ps[1].v = 0.0;
+             ps[2].u = 1.0; ps[2].v = 1.0;
+             ps[3].u = 0.0; ps[3].v = 1.0;
+          }
+        MAPCOW_WRITE(pd, points, ps);
+     }
+
    if (m && last_op)
      {
         first_op = EINA_INLIST_NEXT(last_op);
@@ -284,7 +308,7 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
      }
    else
      {
-        if (!m) m = evas_map_new(4);
+        if (!m) m = evas_map_new(count);
         else _evas_map_reset(m);
         m->alpha = pd->cow->alpha;
         m->smooth = pd->cow->smooth;
@@ -310,16 +334,16 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
         first_op = pd->cow->ops;
      }
 
-   for (int k = 0; k < 4; k++)
+   for (int k = 0; k < count; k++)
      {
         Evas_Map_Point *p = &(m->points[k]);
-        p->u = pd->cow->point[k].u * imw;
-        p->v = pd->cow->point[k].v * imh;
+        p->u = pd->cow->points[k].u * imw;
+        p->v = pd->cow->points[k].v * imh;
      }
 
    EINA_INLIST_FOREACH(first_op, op)
      {
-        int k, kmin = 0, kmax = 3;
+        int k, kmin = 0, kmax = count - 1;
         double cx, cy, cz;
         Evas_Map_Point *p;
 
@@ -493,6 +517,33 @@ _efl_gfx_map_map_reset(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
    obj->gfx_map_has = EINA_FALSE;
 }
 
+EOLIAN static int
+_efl_gfx_map_map_point_count_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd)
+{
+   return pd->cow->count;
+}
+
+EOLIAN static void
+_efl_gfx_map_map_point_count_set(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd, int count)
+{
+   Gfx_Map *mcow;
+
+   if (count % 4 != 0)
+     {
+        ERR("Map point count (%d) should be multiples of 4", count);
+        return;
+     }
+   if (pd->cow->count == count) return;
+
+   mcow = MAPCOW_BEGIN(pd);
+   mcow->count = count;
+   if (mcow->points == NULL)
+     mcow->points = calloc(1, count * sizeof(Gfx_Map_Point));
+   else
+     mcow->points = realloc(mcow->points, count * sizeof(Gfx_Map_Point));
+   MAPCOW_END(mcow, pd);
+}
+
 EOLIAN static Eina_Bool
 _efl_gfx_map_map_clockwise_get(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
 {
@@ -543,7 +594,7 @@ _efl_gfx_map_map_coord_absolute_get(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
    Evas_Map *m;
 
-   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < 4));
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < pd->cow->count));
 
    m = _map_calc(eo_obj, obj, pd);
    if (!m)
@@ -578,15 +629,21 @@ _efl_gfx_map_map_uv_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 {
    Gfx_Map *mcow;
 
-   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < 4));
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < pd->cow->count));
 
-   if (EINA_DBL_EQ(pd->cow->point[idx].u, u) &&
-       EINA_DBL_EQ(pd->cow->point[idx].v, v))
+   if (!pd->cow->points)
+     {
+        Gfx_Map_Point *ps = calloc(1, pd->cow->count * sizeof(Gfx_Map_Point));
+        if (!ps) return;
+        MAPCOW_WRITE(pd, points, ps);
+     }
+   if (EINA_DBL_EQ(pd->cow->points[idx].u, u) &&
+       EINA_DBL_EQ(pd->cow->points[idx].v, v))
      return;
 
    mcow = MAPCOW_BEGIN(pd);
-   mcow->point[idx].u = CLAMP(0.0, u, 1.0);
-   mcow->point[idx].v = CLAMP(0.0, v, 1.0);
+   mcow->points[idx].u = CLAMP(0.0, u, 1.0);
+   mcow->points[idx].v = CLAMP(0.0, v, 1.0);
    MAPCOW_END(mcow, pd);
 
    _map_dirty(eo_obj, pd, EINA_FALSE);
@@ -596,10 +653,11 @@ EOLIAN static void
 _efl_gfx_map_map_uv_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
                         int idx, double *u, double *v)
 {
-   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < 4));
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < pd->cow->count)
+                               && (pd->cow->points));
 
-   if (u) *u = pd->cow->point[idx].u;
-   if (v) *v = pd->cow->point[idx].v;
+   if (u) *u = pd->cow->points[idx].u;
+   if (v) *v = pd->cow->points[idx].v;
 }
 
 EOLIAN static void
@@ -610,7 +668,7 @@ _efl_gfx_map_map_color_get(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd,
    Evas_Map_Point *p;
    Evas_Map *m;
 
-   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < 4));
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < pd->cow->count));
 
    if (!r && !g && !b && !a) return;
 
@@ -699,7 +757,7 @@ _efl_gfx_map_map_coord_absolute_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 {
    Gfx_Map_Op *op;
 
-   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < 4));
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= 0) && (idx < pd->cow->count));
 
    op = _gfx_map_op_add(eo_obj, pd, GFX_MAP_RAW_COORD, NULL, 0, 0, 0, EINA_FALSE);
    if (!op) return;
@@ -716,7 +774,7 @@ _efl_gfx_map_map_color_set(Eo *eo_obj, Efl_Gfx_Map_Data *pd,
 {
    Gfx_Map_Op *op;
 
-   EINA_SAFETY_ON_FALSE_RETURN((idx >= -1) && (idx < 4));
+   EINA_SAFETY_ON_FALSE_RETURN((idx >= -1) && (idx < pd->cow->count));
 
    op = _gfx_map_op_add(eo_obj, pd, GFX_MAP_COLOR, NULL, 0, 0, 0, EINA_FALSE);
    if (!op) return;
