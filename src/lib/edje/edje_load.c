@@ -2625,7 +2625,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
         if ((pack_it->parent->part->type == EDJE_PART_TYPE_BOX) ||
             (!name && (pack_it->parent->part->type == EDJE_PART_TYPE_TABLE)))
           length_parent += eina_convert_itoa(i, new_src + length_parent);
-        else
+        else if (name)
           {
              memcpy(new_src + length_parent, name, length_index - 2);
              length_parent += length_index - 2;
