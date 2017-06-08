@@ -219,7 +219,6 @@ EOLIAN static Elm_Theme_Apply
 _elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
 {
    const char *str;
-   int w, h;
    Evas_Coord minw = 0, minh = 0;
 
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
@@ -237,9 +236,6 @@ _elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
         elm_widget_theme_object_set(obj, sd->scr_edje, "scroller", "panel",
                                     elm_widget_style_get(obj));
         _scrollable_layout_theme_set(obj, sd);
-        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-        if (!sd->hidden) _drawer_open(obj, w, h, EINA_FALSE);
-        else _drawer_close(obj, w, h, EINA_FALSE);
         handler_size = edje_object_data_get(sd->scr_edje, "handler_size");
         if (handler_size)
           sd->handler_size = (int) (elm_object_scale_get(obj)) * (atoi(handler_size));
@@ -516,131 +512,56 @@ static Eina_Bool
 _state_sync(Evas_Object *obj)
 {
    ELM_PANEL_DATA_GET(obj, sd);
-   Evas_Object *ao;
-   Evas_Coord pos, panel_size, w, h;
-   Eina_Bool open = EINA_FALSE, horizontal = EINA_FALSE;
+   Evas_Coord pos, panel_size, w, h, threshold;
+   Eina_Bool horizontal = EINA_FALSE, reverse = EINA_FALSE;
+
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
 
    if (!evas_object_visible_get(sd->bx)) return EINA_TRUE;
 
    switch (sd->orient)
      {
-      case ELM_PANEL_ORIENT_TOP:
-         if (h <= 0) return EINA_TRUE;
-
-         panel_size = h * sd->content_size_ratio;
-         elm_interface_scrollable_content_pos_get(obj, NULL, &pos);
-
-         if (pos == 0) open = EINA_TRUE;
-         else if (pos == panel_size) open = EINA_FALSE;
-         else return EINA_FALSE;
-         break;
-
       case ELM_PANEL_ORIENT_BOTTOM:
-         if (h <= 0) return EINA_TRUE;
-
-         panel_size = h * sd->content_size_ratio;
-         elm_interface_scrollable_content_pos_get(obj, NULL, &pos);
-
-         if (pos == panel_size) open = EINA_TRUE;
-         else if (pos == 0) open = EINA_FALSE;
-         else return EINA_FALSE;
-         break;
-
-      case ELM_PANEL_ORIENT_LEFT:
-         if (w <= 0) return EINA_TRUE;
-
-         panel_size = w * sd->content_size_ratio;
-         elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
-         horizontal = EINA_TRUE;
-
-         if (!elm_widget_mirrored_get(obj))
-           {
-              if (pos == 0) open = EINA_TRUE;
-              else if (pos == panel_size) open = EINA_FALSE;
-              else return EINA_FALSE;
-           }
-         else
-           {
-              if (pos == panel_size) open = EINA_TRUE;
-              else if (pos == 0) open = EINA_FALSE;
-              else return EINA_FALSE;
-           }
+         reverse = EINA_TRUE;
+      case ELM_PANEL_ORIENT_TOP:
          break;
 
       case ELM_PANEL_ORIENT_RIGHT:
+         reverse = EINA_TRUE;
+      case ELM_PANEL_ORIENT_LEFT:
+         horizontal = EINA_TRUE;
+         break;
+     }
+
+   if (horizontal)
+     {
          if (w <= 0) return EINA_TRUE;
 
          panel_size = w * sd->content_size_ratio;
          elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
-         horizontal = EINA_TRUE;
-
-         if (elm_widget_mirrored_get(obj))
-           {
-              if (pos == 0) open = EINA_TRUE;
-              else if (pos == panel_size) open = EINA_FALSE;
-              else return EINA_FALSE;
-           }
-         else
-           {
-              if (pos == panel_size) open = EINA_TRUE;
-              else if (pos == 0) open = EINA_FALSE;
-              else return EINA_FALSE;
-           }
-         break;
-     }
-
-   if (open)
-     {
-        if (sd->hidden)
-          {
-             sd->hidden = EINA_FALSE;
-             efl_event_callback_legacy_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
-          }
-        elm_interface_scrollable_single_direction_set
-              (obj, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
-
-        //focus & access
-        elm_object_tree_focus_allow_set(obj, EINA_TRUE);
-        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-          {
-             ao = _access_object_get(obj, ACCESS_OUTLINE_PART);
-             evas_object_show(ao);
-             _elm_access_highlight_set(ao);
-          }
-        else
-          elm_object_focus_set(obj, EINA_TRUE);
+         reverse ^= elm_widget_mirrored_get(obj);
      }
    else
      {
-        if (!sd->hidden)
-          {
-             sd->hidden = EINA_TRUE;
-             efl_event_callback_legacy_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
-          }
+         if (h <= 0) return EINA_TRUE;
 
-        if (horizontal)
-          elm_interface_scrollable_movement_block_set
-                (obj, ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL);
-        else
-          elm_interface_scrollable_movement_block_set
-                (obj, ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL);
-        sd->freeze = EINA_TRUE;
-        elm_layout_signal_emit(sd->scr_ly, "elm,state,content,hidden", "elm");
+         panel_size = h * sd->content_size_ratio;
+         elm_interface_scrollable_content_pos_get(obj, NULL, &pos);
+     }
+   threshold = (sd->hidden) ? panel_size - (panel_size / 4) : (panel_size / 4);
 
-        elm_interface_scrollable_single_direction_set
-              (obj, ELM_SCROLLER_SINGLE_DIRECTION_NONE);
-
-        //focus & access
-        elm_object_tree_focus_allow_set(obj, EINA_FALSE);
-        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-          {
-             ao = _access_object_get(obj, ACCESS_OUTLINE_PART);
-             evas_object_hide(ao);
-          }
+   if (reverse)
+     {
+         if (pos > panel_size - threshold) sd->hidden = EINA_FALSE;
+         else sd->hidden = EINA_TRUE;
+     }
+   else
+     {
+         if (pos < threshold) sd->hidden = EINA_FALSE;
+         else sd->hidden = EINA_TRUE;
      }
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -811,116 +732,21 @@ _on_mouse_up(void *data,
 {
    Elm_Panel_Data *sd = data;
    Evas_Event_Mouse_Up *ev = event_info;
-   Evas_Coord panel_size, threshold, pos, w, h;
+   Evas_Coord w, h;
+   Eina_Bool hidden;
 
+   hidden = sd->hidden;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
 
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
 
    if (_state_sync(obj)) return;
 
-   switch (sd->orient)
-     {
-      case ELM_PANEL_ORIENT_TOP:
-         panel_size = h * sd->content_size_ratio;
-         threshold = panel_size / 4;
-         elm_interface_scrollable_content_pos_get(obj, NULL, &pos);
+   if (sd->hidden) _drawer_close(obj, w, h, EINA_TRUE);
+   else _drawer_open(obj, w, h, EINA_TRUE);
 
-         if (sd->hidden)
-           {
-              if (pos < (panel_size - threshold)) _drawer_open(obj, w, h, EINA_TRUE);
-              else _drawer_close(obj, w, h, EINA_TRUE);
-           }
-         else
-           {
-              if (pos < threshold) _drawer_open(obj, w, h, EINA_TRUE);
-              else _drawer_close(obj, w, h, EINA_TRUE);
-           }
-         break;
-
-      case ELM_PANEL_ORIENT_BOTTOM:
-         panel_size = h * sd->content_size_ratio;
-         threshold = panel_size / 4;
-         elm_interface_scrollable_content_pos_get(obj, NULL, &pos);
-
-         if (sd->hidden)
-           {
-              if (pos > threshold) _drawer_open(obj, w, h, EINA_TRUE);
-              else _drawer_close(obj, w, h, EINA_TRUE);
-           }
-         else
-           {
-              if (pos > (panel_size - threshold)) _drawer_open(obj, w, h, EINA_TRUE);
-              else _drawer_close(obj, w, h, EINA_TRUE);
-           }
-         break;
-
-      case ELM_PANEL_ORIENT_LEFT:
-         panel_size = w * sd->content_size_ratio;
-         threshold = panel_size / 4;
-         elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
-
-         if (elm_widget_mirrored_get(obj))
-           {
-              if (sd->hidden)
-                {
-                   if (pos > threshold) _drawer_open(obj, w, h, EINA_TRUE);
-                   else _drawer_close(obj, w, h, EINA_TRUE);
-                }
-              else
-                {
-                   if (pos > (panel_size - threshold)) _drawer_open(obj, w, h, EINA_TRUE);
-                   else _drawer_close(obj, w, h, EINA_TRUE);
-                }
-           }
-         else
-           {
-              if (sd->hidden)
-                {
-                   if (pos < (panel_size - threshold)) _drawer_open(obj, w, h, EINA_TRUE);
-                   else _drawer_close(obj, w, h, EINA_TRUE);
-                }
-              else
-                {
-                   if (pos < threshold) _drawer_open(obj, w, h, EINA_TRUE);
-                   else _drawer_close(obj, w, h, EINA_TRUE);
-                }
-           }
-         break;
-
-      case ELM_PANEL_ORIENT_RIGHT:
-         panel_size = w * sd->content_size_ratio;
-         threshold = panel_size / 4;
-         elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
-
-         if (!elm_widget_mirrored_get(obj))
-           {
-              if (sd->hidden)
-                {
-                   if (pos > threshold) _drawer_open(obj, w, h, EINA_TRUE);
-                   else _drawer_close(obj, w, h, EINA_TRUE);
-                }
-              else
-                {
-                   if (pos > (panel_size - threshold)) _drawer_open(obj, w, h, EINA_TRUE);
-                   else _drawer_close(obj, w, h, EINA_TRUE);
-                }
-           }
-         else
-           {
-              if (sd->hidden)
-                {
-                   if (pos < (panel_size - threshold)) _drawer_open(obj, w, h, EINA_TRUE);
-                   else _drawer_close(obj, w, h, EINA_TRUE);
-                }
-              else
-                {
-                   if (pos < threshold) _drawer_open(obj, w, h, EINA_TRUE);
-                   else _drawer_close(obj, w, h, EINA_TRUE);
-                }
-           }
-         break;
-     }
+   if (sd->hidden != hidden)
+     efl_event_callback_legacy_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
 
    if (!sd->freeze && sd->hidden)
      ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1312,8 +1138,86 @@ _elm_panel_elm_widget_on_focus_region(Eo *obj,
 static void
 _anim_stop_cb(Evas_Object *obj, void *data EINA_UNUSED)
 {
+   ELM_PANEL_DATA_GET(obj, sd);
+   Evas_Object *ao;
+   Evas_Coord pos, w, h, panel_size = 0;
+   Eina_Bool open = EINA_FALSE, horizontal = EINA_FALSE, reverse = EINA_FALSE;
+
    if (elm_widget_disabled_get(obj)) return;
-   _state_sync(obj);
+
+   switch (sd->orient)
+     {
+      case ELM_PANEL_ORIENT_BOTTOM:
+         reverse = EINA_TRUE;
+      case ELM_PANEL_ORIENT_TOP:
+         break;
+
+      case ELM_PANEL_ORIENT_RIGHT:
+         reverse = EINA_TRUE;
+      case ELM_PANEL_ORIENT_LEFT:
+         horizontal = EINA_TRUE;
+         break;
+     }
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if (horizontal)
+     {
+         if (w <= 0) return;
+
+         panel_size = w * sd->content_size_ratio;
+         elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
+         reverse ^= elm_widget_mirrored_get(obj);
+     }
+   else
+     {
+         if (h <= 0) return;
+
+         panel_size = h * sd->content_size_ratio;
+         elm_interface_scrollable_content_pos_get(obj, NULL, &pos);
+     }
+
+   if (pos == 0) open = !reverse;
+   else if (pos == panel_size) open = reverse;
+   else return;
+
+   if (open)
+     {
+        elm_interface_scrollable_single_direction_set
+              (obj, ELM_SCROLLER_SINGLE_DIRECTION_HARD);
+
+        //focus & access
+        elm_object_tree_focus_allow_set(obj, EINA_TRUE);
+        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+          {
+             ao = _access_object_get(obj, ACCESS_OUTLINE_PART);
+             evas_object_show(ao);
+             _elm_access_highlight_set(ao);
+          }
+        else
+          elm_object_focus_set(obj, EINA_TRUE);
+     }
+   else
+     {
+        if (horizontal)
+          elm_interface_scrollable_movement_block_set
+                (obj, ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL);
+        else
+          elm_interface_scrollable_movement_block_set
+                (obj, ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL);
+        sd->freeze = EINA_TRUE;
+        elm_layout_signal_emit(sd->scr_ly, "elm,state,content,hidden", "elm");
+
+        elm_interface_scrollable_single_direction_set
+              (obj, ELM_SCROLLER_SINGLE_DIRECTION_NONE);
+
+        //focus & access
+        elm_object_tree_focus_allow_set(obj, EINA_FALSE);
+        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+          {
+             ao = _access_object_get(obj, ACCESS_OUTLINE_PART);
+             evas_object_hide(ao);
+          }
+     }
 }
 
 static void

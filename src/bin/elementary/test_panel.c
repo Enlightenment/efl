@@ -281,6 +281,27 @@ _clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
 }
 
 static void
+_toggled_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *list;
+   int i;
+
+   if (!elm_check_state_get(data)) return;
+
+   list = elm_object_content_get(obj);
+   evas_object_del(list);
+
+   list = elm_list_add(obj);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   for (i = 0; i < 7; i++)
+     elm_list_item_append(list, "panel list item", NULL, NULL, NULL, NULL);
+   elm_object_content_set(obj, list);
+
+   printf("Panel toggled:%s\n", elm_panel_hidden_get(obj) ? "hidden" : "visible");
+}
+
+static void
 _changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    elm_config_scroll_thumbscroll_enabled_set(elm_check_state_get(obj));
@@ -321,6 +342,11 @@ test_panel2(void *data EINA_UNUSED,
    elm_box_pack_end(box, check);
 
    evas_object_smart_callback_add(check, "changed", _changed_cb, NULL);
+
+   check = elm_check_add(box);
+   elm_object_text_set(check, "Reset content on toggle");
+   evas_object_show(check);
+   elm_box_pack_end(box, check);
 
    // toggle button
    button = elm_button_add(box);
@@ -365,5 +391,6 @@ test_panel2(void *data EINA_UNUSED,
      elm_list_item_append(list, "panel list item", NULL, NULL, NULL, NULL);
    elm_object_content_set(panel, list);
 
+   evas_object_smart_callback_add(panel, "toggled", _toggled_cb, check);
    evas_object_smart_callback_add(button, "clicked", _clicked_cb, panel);
 }
