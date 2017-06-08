@@ -19,6 +19,8 @@
 #ifndef _EINA_INLINE_SLICE_H
 #define _EINA_INLINE_SLICE_H
 
+#include <string.h>
+
 static inline Eina_Slice
 eina_rw_slice_slice_get(const Eina_Rw_Slice rw_slice)
 {
