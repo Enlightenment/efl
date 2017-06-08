@@ -2669,7 +2669,7 @@ _draw_thread_map_draw(void *data)
 
    do
      {
-        if (m->count - offset < 3) goto free_out;
+        if (m->count - offset < 4) goto free_out;
 
         //Fully Transparency. Skip this.
         if (!(m->pts[0 + offset].col & 0xff000000) &&
@@ -2677,7 +2677,7 @@ _draw_thread_map_draw(void *data)
             !(m->pts[2 + offset].col & 0xff000000) &&
             !(m->pts[3 + offset].col & 0xff000000))
           {
-             offset += 2;
+             offset += 4;
              continue;
           }
 
@@ -2739,9 +2739,9 @@ _draw_thread_map_draw(void *data)
 
         evas_common_cpu_end_opt();
 
-        offset += 2;
+        offset += 4;
      }
-   while ((m->count > 4) && (m->count - offset >= 3));
+   while ((m->count > 4) && (m->count - offset >= 4));
 
  free_out:
    free(m);
