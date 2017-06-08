@@ -23,17 +23,19 @@ class TestExampleEoInherit01
 {
     public static void EoInherit01()
     {
-        var obj = new PlusTenNumberWrapper();
+        var inheritObj = new PlusTenNumberWrapper();
+
+        WriteLine("## Using inherit object ##\n");
 
         int given = 111;
 
         // Call the C# override from the C method
-        test.NumberwrapperConcrete.test_numberwrapper_number_set(obj.raw_handle, given);
+        test.NumberwrapperConcrete.test_numberwrapper_number_set(inheritObj.raw_handle, given);
 
-        WriteLine($"Override successfully called? {obj.derivedCalled}!\n");
+        WriteLine($"Override successfully called? {inheritObj.derivedCalled}!\n");
 
-        // Call C function from C# obj
-        int stored = obj.number_get();
+        // Call C function from C# object
+        int stored = inheritObj.number_get();
 
         // Print actual value
         WriteLine($"Given value: {given}");
@@ -41,9 +43,22 @@ class TestExampleEoInherit01
 
         // Call C# override directly
         given = 333;
-        obj.number_set(given);
+        inheritObj.number_set(given);
 
-        stored = obj.number_get();
+        stored = inheritObj.number_get();
+
+        // Print actual value
+        WriteLine($"Given value: {given}");
+        WriteLine($"Stored value: {stored}\n");
+
+
+        WriteLine("## Using original object ##\n");
+
+        // Check original EFL object
+        var origObj = new test.NumberwrapperConcrete();
+        given = 111;
+        origObj.number_set(given);
+        stored = origObj.number_get();
 
         // Print actual value
         WriteLine($"Given value: {given}");
