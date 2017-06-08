@@ -268,6 +268,8 @@ static void _edje_signal_emit(Efl_Ui_Text_Data *obj, const char *sig, const char
 static void _decoration_defer_all(Eo *obj);
 static inline Eo * _decoration_create(Efl_Ui_Text_Data *sd, const char *file, const char *source, Eina_Bool above);
 static void _decoration_defer(Eo *obj);
+static void _anchors_clear_all(Evas_Object *o EINA_UNUSED, Efl_Ui_Text_Data *sd);
+static void _unused_item_objs_free(Efl_Ui_Text_Data *sd);
 
 static Mod_Api *
 _module_find(Evas_Object *obj EINA_UNUSED)
@@ -3248,6 +3250,9 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
         evas_object_del(sd->start_handler);
         evas_object_del(sd->end_handler);
      }
+
+   _anchors_clear_all(obj, sd);
+   _unused_item_objs_free(sd);
 
    text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    efl_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
