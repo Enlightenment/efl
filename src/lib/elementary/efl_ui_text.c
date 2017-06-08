@@ -5240,6 +5240,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
 
                   ll = ll->next;
                }
+             eina_iterator_free(range);
           }
      }
 
