@@ -1250,7 +1250,7 @@ _touch_down(struct libinput_device *idevice, struct libinput_event_touch *event)
    touch = _evdev_touch_get(dev->seat);
    if (!touch) return;
 
-   touch->slot = libinput_event_touch_get_seat_slot(event);
+   touch->slot = libinput_event_touch_get_slot(event);
    touch->timestamp = libinput_event_touch_get_time(event);
 
    touch->seat->pointer.x = libinput_event_touch_get_x_transformed(event, dev->ow);
@@ -1294,7 +1294,7 @@ _touch_up(struct libinput_device *idevice, struct libinput_event_touch *event)
    if (!touch) return;
 
    touch->points--;
-   touch->slot = libinput_event_touch_get_seat_slot(event);
+   touch->slot = libinput_event_touch_get_slot(event);
    touch->timestamp = libinput_event_touch_get_time(event);
 
    _touch_motion_send(dev);
@@ -1321,7 +1321,7 @@ _touch_motion(struct libinput_device *idevice, struct libinput_event_touch *even
    /*                                         touch->seat->pointer.x, touch->seat->pointer.y, */
    /*                                         &touch->seat->pointer.x, &touch->seat->pointer.y); */
 
-   touch->slot = libinput_event_touch_get_seat_slot(event);
+   touch->slot = libinput_event_touch_get_slot(event);
    touch->timestamp = libinput_event_touch_get_time(event);
 
    _touch_motion_send(dev);
