@@ -114,7 +114,7 @@ static void
 my_efl_ui_text_bt_4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
-   efl_text_cursor_object_item_insert(en, efl_text_cursor_get(en),
+   efl_text_cursor_object_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
          "size=32x32 href=emoticon");
 }
 
@@ -181,7 +181,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_text_font_width_set(en, EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
    efl_text_style_normal_color_set(en, 255, 255, 255, 255);
 
-   main_cur = efl_text_cursor_get(en);
+   main_cur = efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN);
    cur = efl_text_cursor_new(en);
 
    efl_text_cursor_position_set(en, cur, 2);

@@ -17,6 +17,9 @@ interface Efl.Text.Cursor {
             legacy: null;
             return: ptr(Efl.Text.Cursor.Cursor_Data); [[Text cursor object]]
          }
+         keys {
+            get_type: Efl.Text.Cursor.Cursor_Get_Type;
+         }
       }
       @property cursor_position {
          set { legacy: null; }
