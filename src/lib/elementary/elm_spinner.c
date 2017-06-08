@@ -430,7 +430,7 @@ _entry_value_apply(Evas_Object *obj)
 static int
 _decimal_points_get(const char *label)
 {
-   char result[2] = "";
+   char result[16] = "0";
    const char *start = strchr(label, '%');
 
    while (start)
@@ -447,7 +447,12 @@ _decimal_points_get(const char *label)
      }
 
    if (start)
-      sscanf(start, "%[^f]", result);
+     {
+        const char *p = strchr(start, 'f');
+
+        if ((p) && ((p - start) < 15))
+          sscanf(start, "%[^f]", result);
+     }
 
    return atoi(result);
 }
