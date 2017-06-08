@@ -388,6 +388,12 @@ next_token(char *p, char *end, char **new_p, int *delim)
              tmpstr = alloca(l + 1);
              strncpy(tmpstr, p, l);
              tmpstr[l] = 0;
+             if (l >= sizeof(fl))
+               {
+                  ERR("Line too long: %i chars: %s", l, tmpstr);
+                  err_show();
+                  exit(-1);
+               }
              l = sscanf(tmpstr, "%*s %i \"%[^\"]\"", &nm, fl);
              if (l == 2)
                {
