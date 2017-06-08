@@ -111,7 +111,7 @@ static void
 my_efl_ui_text_bt_4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
-   efl_canvas_text_cursor_object_item_insert(obj, efl_text_cursor_get(en),
+   efl_canvas_text_cursor_object_item_insert(en, efl_text_cursor_get(en),
          "size=32x32 href=emoticon");
 }
 
