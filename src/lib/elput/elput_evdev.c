@@ -1416,7 +1416,7 @@ _tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_too
    struct libinput_tablet_tool *tool;
    Elput_Device *dev = libinput_device_get_user_data(idev);
    Ecore_Event_Axis_Update *ev;
-   Ecore_Axis ax[8] = {0}, *axis = NULL;
+   Ecore_Axis ax[8] = {}, *axis = NULL;
    int i, num = 0;
 
    ptr = _evdev_pointer_get(dev->seat);
