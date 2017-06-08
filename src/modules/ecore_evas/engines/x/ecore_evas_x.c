@@ -1607,7 +1607,6 @@ _ecore_evas_x_shadow_update(Ecore_Evas *ee)
 static Eina_Bool
 _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-
    const Evas_Device *pointer;
    Ecore_Evas_Cursor *cursor;
    Ecore_Evas *ee;
