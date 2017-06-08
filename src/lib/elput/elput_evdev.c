@@ -201,16 +201,21 @@ static void
 _keyboard_compose_init(Elput_Keyboard *kbd)
 {
    const char *locale;
+
    if (!(locale = getenv("LC_ALL")))
      if (!(locale = getenv("LC_CTYPE")))
        if (!(locale = getenv("LANG")))
          locale = "C";
+
    if (kbd->compose_table) xkb_compose_table_unref(kbd->compose_table);
    kbd->compose_table = xkb_compose_table_new_from_locale(kbd->context, locale,
      XKB_COMPOSE_COMPILE_NO_FLAGS);
    if (kbd->compose_state) xkb_compose_state_unref(kbd->compose_state);
    if (kbd->compose_table)
-     kbd->compose_state = xkb_compose_state_new(kbd->compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
+     {
+        kbd->compose_state =
+          xkb_compose_state_new(kbd->compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
+     }
    else
      kbd->compose_state = NULL;
 }
@@ -375,7 +380,8 @@ _keyboard_state_update(Elput_Keyboard *kbd, struct xkb_keymap *map, xkb_mod_mask
 
    *latched = xkb_state_serialize_mods(kbd->state, XKB_STATE_MODS_LATCHED);
    *locked = xkb_state_serialize_mods(kbd->state, XKB_STATE_MODS_LOCKED);
-   xkb_state_update_mask(state, 0, *latched, *locked, kbd->seat->manager->cached.group, 0, 0);
+   xkb_state_update_mask(state, 0, *latched, *locked,
+                         kbd->seat->manager->cached.group, 0, 0);
 
    xkb_state_unref(kbd->state);
    kbd->state = state;
@@ -403,11 +409,15 @@ _keyboard_keymap_update(Elput_Seat *seat)
         kbd->context = xkb_context_ref(kbd->seat->manager->cached.context);
         info = _keyboard_info_create(kbd->seat->manager->cached.keymap);
         if (!info) return;
-        state = _keyboard_state_update(kbd, info->keymap.map, &latched, &locked);
+        state = _keyboard_state_update(kbd, info->keymap.map,
+                                       &latched, &locked);
      }
-   else if (!_keyboard_global_build(kbd)) return;
+   else if (!_keyboard_global_build(kbd))
+     return;
    else
-     state = _keyboard_state_update(kbd, kbd->info->keymap.map, &latched, &locked);
+     state = _keyboard_state_update(kbd, kbd->info->keymap.map,
+                                    &latched, &locked);
+
    kbd->pending_keymap = 0;
    if (!state)
      {
@@ -901,8 +911,10 @@ _pointer_motion_abs(struct libinput_device *idev, struct libinput_event_pointer 
    ptr = _evdev_pointer_get(edev->seat);
    if (!ptr) return EINA_FALSE;
 
-   ptr->seat->pointer.x = libinput_event_pointer_get_absolute_x_transformed(event, edev->ow);
-   ptr->seat->pointer.y = libinput_event_pointer_get_absolute_y_transformed(event, edev->oh);
+   ptr->seat->pointer.x =
+     libinput_event_pointer_get_absolute_x_transformed(event, edev->ow);
+   ptr->seat->pointer.y =
+     libinput_event_pointer_get_absolute_y_transformed(event, edev->oh);
    ptr->timestamp = libinput_event_pointer_get_time(event);
 
    /* TODO: these needs to run a matrix transform based on output */
@@ -1253,8 +1265,10 @@ _touch_down(struct libinput_device *idevice, struct libinput_event_touch *event)
    touch->slot = libinput_event_touch_get_slot(event);
    touch->timestamp = libinput_event_touch_get_time(event);
 
-   touch->seat->pointer.x = libinput_event_touch_get_x_transformed(event, dev->ow);
-   touch->seat->pointer.y = libinput_event_touch_get_y_transformed(event, dev->oh);
+   touch->seat->pointer.x =
+     libinput_event_touch_get_x_transformed(event, dev->ow);
+   touch->seat->pointer.y =
+     libinput_event_touch_get_y_transformed(event, dev->oh);
 
    /* TODO: these needs to run a matrix transform based on output */
    /* _ecore_drm2_output_coordinate_transform(dev->output, */
@@ -1313,8 +1327,10 @@ _touch_motion(struct libinput_device *idevice, struct libinput_event_touch *even
    touch = _evdev_touch_get(dev->seat);
    if (!touch) return;
 
-   touch->seat->pointer.x = libinput_event_touch_get_x_transformed(event, dev->ow);
-   touch->seat->pointer.y = libinput_event_touch_get_y_transformed(event, dev->oh);
+   touch->seat->pointer.x =
+     libinput_event_touch_get_x_transformed(event, dev->ow);
+   touch->seat->pointer.y =
+     libinput_event_touch_get_y_transformed(event, dev->oh);
 
    /* TODO: these needs to run a matrix transform based on output */
    /* _ecore_drm2_output_coordinate_transform(dev->output, */
@@ -1394,8 +1410,10 @@ _tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_too
    EINA_SAFETY_ON_NULL_RETURN(ptr);
    tool = libinput_event_tablet_tool_get_tool(event);
 
-   ptr->seat->pointer.x = libinput_event_tablet_tool_get_x_transformed(event, dev->ow);
-   ptr->seat->pointer.y = libinput_event_tablet_tool_get_y_transformed(event, dev->oh);
+   ptr->seat->pointer.x =
+     libinput_event_tablet_tool_get_x_transformed(event, dev->ow);
+   ptr->seat->pointer.y =
+     libinput_event_tablet_tool_get_y_transformed(event, dev->oh);
 
    if (libinput_event_tablet_tool_x_has_changed(event))
      {
@@ -1414,7 +1432,8 @@ _tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_too
         if (libinput_event_tablet_tool_pressure_has_changed(event))
           {
              ax[num].label = ECORE_AXIS_LABEL_PRESSURE;
-             ax[num].value = ptr->pressure = libinput_event_tablet_tool_get_pressure(event);
+             ax[num].value = ptr->pressure =
+               libinput_event_tablet_tool_get_pressure(event);
              num++;
           }
      }
@@ -1457,11 +1476,11 @@ _tablet_tool_axis(struct libinput_device *idev, struct libinput_event_tablet_too
      }
 
    ptr->timestamp = libinput_event_tablet_tool_get_time(event);
+
    /* FIXME: other properties which efl event structs don't support:
     * slider_position
     * wheel_delta
     */
-
 
    if (libinput_event_tablet_tool_x_has_changed(event) ||
        libinput_event_tablet_tool_y_has_changed(event))
@@ -1493,10 +1512,10 @@ _tablet_tool_tip(struct libinput_device *idev, struct libinput_event_tablet_tool
    Elput_Device *dev = libinput_device_get_user_data(idev);
    int state;
    int press[] =
-   {
-    [LIBINPUT_TABLET_TOOL_TIP_DOWN] = LIBINPUT_BUTTON_STATE_PRESSED,
-    [LIBINPUT_TABLET_TOOL_TIP_UP] = LIBINPUT_BUTTON_STATE_RELEASED,
-   };
+     {
+        [LIBINPUT_TABLET_TOOL_TIP_DOWN] = LIBINPUT_BUTTON_STATE_PRESSED,
+        [LIBINPUT_TABLET_TOOL_TIP_UP] = LIBINPUT_BUTTON_STATE_RELEASED,
+     };
 
    ptr = _evdev_pointer_get(dev->seat);
    EINA_SAFETY_ON_NULL_RETURN(ptr);
