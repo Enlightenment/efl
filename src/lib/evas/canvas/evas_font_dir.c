@@ -1246,7 +1246,7 @@ object_text_font_cache_dir_add(char *dir)
 	     char fname[4096], fdef[4096];
 
 	     /* read font alias lines */
-	     while (fscanf(f, "%4090s %[^\n]\n", fname, fdef) == 2)
+	     while (fscanf(f, "%4090s %4090[^\n]\n", fname, fdef) == 2)
 	       {
 		  Evas_Font_Alias *fa;
 
