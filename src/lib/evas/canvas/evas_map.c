@@ -649,7 +649,7 @@ evas_object_map_get(const Evas_Object *eo_obj)
 EAPI Evas_Map *
 evas_map_new(int count)
 {
-   if (count % 4 != 0)
+   if ((count <= 0) || (count % 4 != 0))
      {
         ERR("map point count (%i) should be multiples of 4!", count);
         return NULL;

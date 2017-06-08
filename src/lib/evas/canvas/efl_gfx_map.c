@@ -175,8 +175,7 @@ _efl_gfx_map_efl_object_destructor(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
    if (pd->cow)
      {
         _map_ops_clean(eo_obj, pd);
-        if (pd->cow->points)
-          free(pd->cow->points);
+        free(pd->cow->points);
         eina_cow_free(gfx_map_cow, (const Eina_Cow_Data **) &pd->cow);
      }
    efl_destructor(efl_super(eo_obj, MY_CLASS));
@@ -528,7 +527,7 @@ _efl_gfx_map_map_point_count_set(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd, i
 {
    Gfx_Map *mcow;
 
-   if (count % 4 != 0)
+   if ((count <= 0) || (count % 4 != 0))
      {
         ERR("Map point count (%d) should be multiples of 4", count);
         return;
@@ -536,11 +535,26 @@ _efl_gfx_map_map_point_count_set(Eo *eo_obj EINA_UNUSED, Efl_Gfx_Map_Data *pd, i
    if (pd->cow->count == count) return;
 
    mcow = MAPCOW_BEGIN(pd);
-   mcow->count = count;
    if (mcow->points == NULL)
-     mcow->points = calloc(1, count * sizeof(Gfx_Map_Point));
+     {
+        mcow->points = calloc(1, count * sizeof(Gfx_Map_Point));
+        if (mcow->points)
+          mcow->count = count;
+        else
+          ERR("Failed to allocate memory with calloc");
+     }
    else
-     mcow->points = realloc(mcow->points, count * sizeof(Gfx_Map_Point));
+     {
+        Gfx_Map_Point *ps = realloc(mcow->points, count * sizeof(Gfx_Map_Point));
+        if (ps)
+          {
+             mcow->points = ps;
+             mcow->count = count;
+             memset(mcow->points, 0, count * sizeof(Gfx_Map_Point));
+          }
+        else
+          ERR("Failed to allocate memory with realloc");
+     }
    MAPCOW_END(mcow, pd);
 }
 
