@@ -162,15 +162,9 @@ endif
 
 ### Binary
 
-bin_PROGRAMS += bin/efl/efl_debug
-
-# FIXME efl_debugd for now is too linux-specific. It cannot compile under
-# macOS/windows without commenting out most of the code. So, instead of
-# having an efl_debugd that won't do anything on macOS, we just wont't
-# compile it, until we've made it cross-platform.
-if !HAVE_OSX
-bin_PROGRAMS += bin/efl/efl_debugd
-endif
+bin_PROGRAMS += \
+bin/efl/efl_debugd \
+bin/efl/efl_debug
 
 bin_efl_efl_debugd_SOURCES = bin/efl/efl_debugd.c
 bin_efl_efl_debugd_CPPFLAGS = -I$(top_builddir)/src/bin/efl @EINA_CFLAGS@ @ECORE_CFLAGS@ @ECORE_CON_CFLAGS@
