@@ -267,7 +267,6 @@ AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
 AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS3], [test "x${have_ps3}" = "xyes"])
 
-AM_CONDITIONAL([HAVE_LINUX], [test "x${have_linux}" = "xyes"])
 AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
 AM_CONDITIONAL([HAVE_OSX], [test "x${have_darwin}" = "xyes"])
 AM_CONDITIONAL([HAVE_X86_64], [test "x${host_cpu}" = "xx86_64"])

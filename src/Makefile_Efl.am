@@ -168,7 +168,7 @@ bin_PROGRAMS += bin/efl/efl_debug
 # macOS/windows without commenting out most of the code. So, instead of
 # having an efl_debugd that won't do anything on macOS, we just wont't
 # compile it, until we've made it cross-platform.
-if HAVE_LINUX
+if !HAVE_OSX
 bin_PROGRAMS += bin/efl/efl_debugd
 endif
 
