@@ -937,6 +937,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
       Elm.Widget.widget_event;
+      Elm.Widget.focus_manager_factory;
       Elm.Interface.Atspi_Accessible.parent { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
       Elm.Interface.Atspi_Accessible.name { get; }

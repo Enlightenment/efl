@@ -108,6 +108,20 @@ elm_win_inwin_add(Evas_Object *parent)
    return obj;
 }
 
+
+EOLIAN static Efl_Ui_Focus_Manager*
+_elm_inwin_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Elm_Inwin_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+{
+   Efl_Ui_Focus_Manager *manager;
+
+   manager = efl_add(EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS, NULL,
+     efl_ui_focus_manager_root_set(efl_added, root)
+   );
+
+   return manager;
+}
+
+
 EOLIAN static Eo *
 _elm_inwin_efl_object_constructor(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 {
@@ -125,9 +139,7 @@ _elm_inwin_efl_object_constructor(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_GLASS_PANE);
 
-   pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS, NULL,
-    efl_ui_focus_manager_root_set(efl_added, obj)
-   );
+   pd->manager = elm_obj_widget_focus_manager_factory(obj, obj);
 
    efl_composite_attach(obj, pd->manager);
 

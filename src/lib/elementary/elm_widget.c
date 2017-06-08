@@ -6504,6 +6504,14 @@ _elm_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Ei
    efl_ui_focus_object_focus_set(efl_super(obj, MY_CLASS), focus);
 }
 
+EOLIAN static Efl_Ui_Focus_Manager*
+_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root EINA_UNUSED)
+{
+   ERR("No manager presented");
+   return NULL;
+}
+
+
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_WIDGET_EXTRA_OPS \

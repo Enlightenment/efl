@@ -54,6 +54,7 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
       Elm.Widget.widget_parent { get; set; }
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
+      Elm.Widget.focus_manager_factory;
       Elm.Interface.Atspi_Accessible.children { get; }
       Elm.Interface.Atspi.Selection.selected_children_count { get; }
       Elm.Interface.Atspi.Selection.selected_child { get; }

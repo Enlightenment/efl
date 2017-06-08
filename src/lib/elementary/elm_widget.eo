@@ -799,6 +799,16 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
          return : bool; [[return if it registered fully or not]]
       }
+      focus_manager_factory {
+         [[If the widget needs a manager, this function is called
+
+           It can be used and overriden to inject your own manager or set custom options on the manager
+         ]]
+         params {
+            root : Efl.Ui.Focus.Object; [[the logical root to use in the manager.]]
+         }
+         return : Efl.Ui.Focus.Manager;
+      }
    }
    implements {
       class.constructor;

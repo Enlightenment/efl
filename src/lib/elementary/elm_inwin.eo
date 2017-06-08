@@ -24,6 +24,7 @@ class Elm.Inwin (Elm.Layout, Efl.Ui.Focus.Manager)
       Elm.Widget.widget_parent { set; }
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
+      Elm.Widget.focus_manager_factory;
       Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;
       Efl.Gfx.visible { set; }
