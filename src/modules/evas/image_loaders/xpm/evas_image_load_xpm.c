@@ -707,10 +707,12 @@ module_open(Evas_Module *em)
      }
 
    /* Shouldn't we make that PATH configurable ? */
-   rgb_txt = eina_file_open("/usr/lib/X11/rgb.txt", 0);
+   rgb_txt = eina_file_open("/etc/X11/rgb.txt", 0);
+   if (!rgb_txt) rgb_txt = eina_file_open("/usr/lib/X11/rgb.txt", 0);
    if (!rgb_txt) rgb_txt = eina_file_open("/usr/X11/lib/X11/rgb.txt", 0);
    if (!rgb_txt) rgb_txt = eina_file_open("/usr/X11R6/lib/X11/rgb.txt", 0);
    if (!rgb_txt) rgb_txt = eina_file_open("/usr/openwin/lib/X11/rgb.txt", 0);
+   if (!rgb_txt) rgb_txt = eina_file_open("/usr/share/vim/vim80/rgb.txt", 0);
    if (rgb_txt)
      rgb_txt_map = eina_file_map_all(rgb_txt, EINA_FILE_WILLNEED);
    em->functions = (void *)(&evas_image_load_xpm_func);
