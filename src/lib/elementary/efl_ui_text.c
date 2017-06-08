@@ -270,6 +270,7 @@ static inline Eo * _decoration_create(Efl_Ui_Text_Data *sd, const char *file, co
 static void _decoration_defer(Eo *obj);
 static void _anchors_clear_all(Evas_Object *o EINA_UNUSED, Efl_Ui_Text_Data *sd);
 static void _unused_item_objs_free(Efl_Ui_Text_Data *sd);
+static void _clear_text_selection(Efl_Ui_Text_Data *sd);
 
 static Mod_Api *
 _module_find(Evas_Object *obj EINA_UNUSED)
@@ -3257,6 +3258,7 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
 
    _anchors_clear_all(obj, sd);
    _unused_item_objs_free(sd);
+   _clear_text_selection(sd);
 
    text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    efl_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
@@ -4729,6 +4731,18 @@ _update_text_cursors(Eo *obj)
              evas_object_hide(sd->cursor_bidi);
           }
      }
+}
+
+static void
+_clear_text_selection(Efl_Ui_Text_Data *sd)
+{
+   Efl_Ui_Text_Rectangle *r;
+
+   EINA_LIST_FREE(sd->sel, r)
+     {
+        free(r);
+     }
+
 }
 
 static void
