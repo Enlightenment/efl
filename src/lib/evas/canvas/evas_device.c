@@ -95,20 +95,14 @@ _del_cb(void *data, const Efl_Event *ev)
                            ev->object);
 }
 
-EAPI Evas_Device *
-evas_device_get(Evas *eo_e, const char *name)
+EOLIAN Efl_Input_Device *
+_evas_canvas_efl_canvas_device_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *name)
 {
    const char *dev_name;
-   Evas_Public_Data *e;
    Evas_Device *dev;
    Eina_List *l;
 
-   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
-
-   if (!name)
-       return NULL;
-
-   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   if (!name) return NULL;
 
    EINA_LIST_FOREACH(e->devices, l, dev)
      {
@@ -122,26 +116,33 @@ evas_device_get(Evas *eo_e, const char *name)
 }
 
 EAPI Evas_Device *
-evas_device_get_by_seat_id(Evas *eo_e, unsigned int id)
+evas_device_get(Evas *eo_e, const char *name)
 {
-   unsigned int seat_id;
-   Evas_Public_Data *e;
+   return efl_canvas_device_get(eo_e, name);
+}
+
+EOLIAN Efl_Input_Device *
+_evas_canvas_efl_canvas_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int id)
+{
    Evas_Device *dev;
    Eina_List *l;
 
-   SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
-
-   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-
    EINA_LIST_FOREACH(e->devices, l, dev)
      {
-        seat_id = efl_input_device_seat_id_get(dev);
+        if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_TYPE_SEAT)
+          continue;
 
-        if (seat_id == id)
+        if (efl_input_device_seat_id_get(dev) == id)
           return dev;
      }
 
    return NULL;
+}
+
+EAPI Evas_Device *
+evas_device_get_by_seat_id(Evas *eo_e, unsigned int id)
+{
+   return efl_canvas_seat_get(eo_e, id);
 }
 
 EAPI Evas_Device *

@@ -1,3 +1,5 @@
+import efl_input_device;
+
 interface Efl.Canvas ()
 {
    [[Common interface for window and some internal classes in EFL.]]
@@ -156,6 +158,47 @@ interface Efl.Canvas ()
                Boolean flag to include or not hidden objects in this
                calculation.
             ]]
+         }
+      }
+      seats {
+         [[Iterate over the input device seats.
+
+           @since 1.20
+         ]]
+         return: own(free(iterator<Efl.Input.Device>, eina_iterator_free));
+            [[An iterator over the attached seats.]]
+      }
+      @property device {
+         [[An input device attached to this canvas, found by name.
+
+           Note: This function is meant to find seats and not individual
+           input devices.
+
+           See also @.seat to find a seat by id instead of by name.
+         ]]
+         get {
+            [[Get a device by name.]]
+         }
+         keys {
+            name: string; [[The name of the seat to find.]]
+         }
+         values {
+            seat: Efl.Input.Device; [[The device or seat, $null if not found.]]
+         }
+      }
+      @property seat {
+         [[A seat attached to this canvas, found by id.
+
+           See also @.device to find a seat by name instead of by id.
+         ]]
+         get {
+            [[Get a seat by id.]]
+         }
+         keys {
+            id: int; [[The id of the seat to find.]]
+         }
+         values {
+            seat: Efl.Input.Device; [[The seat or $null if not found.]]
          }
       }
    }

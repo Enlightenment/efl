@@ -1118,7 +1118,8 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       }
       @property default_device {
          [[Return the default device of a given type.
-           \@note Currently Evas only creates a seat, mouse and keyboard.
+
+           Note: Currently EFL only creates a seat, mouse and keyboard.
            @since 1.19
          ]]
          get {}
@@ -1162,5 +1163,8 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       Efl.Object.event_freeze;
       Efl.Object.provider_find;
       Efl.Loop_User.loop { get; }
+      //Efl.Canvas.seats;
+      Efl.Canvas.device { get; }
+      Efl.Canvas.seat { get; }
    }
 }

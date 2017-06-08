@@ -115,6 +115,10 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_gfx_filter.eo.h"
 #include "interfaces/efl_gfx_size_hint.eo.h"
 
+/* Input events */
+#include "interfaces/efl_input_types.eot.h"
+#include "interfaces/efl_input_device.eo.h"
+
 /* Canvas & UI */
 #include "interfaces/efl_canvas.eo.h"
 #include "interfaces/efl_ui_view.eo.h"
@@ -132,10 +136,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_pack_layout.eo.h"
 #include "interfaces/efl_pack_linear.eo.h"
 #include "interfaces/efl_pack_grid.eo.h"
-
-/* Input events */
-#include "interfaces/efl_input_types.eot.h"
-#include "interfaces/efl_input_device.eo.h"
 
 /* Input and Output */
 #include "interfaces/efl_io_closer.eo.h"
