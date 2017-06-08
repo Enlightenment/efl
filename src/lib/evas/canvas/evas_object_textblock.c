@@ -14522,7 +14522,7 @@ _textblock_annotation_set(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o,
 }
 
 EOLIAN static const char *
-_efl_canvas_text_annotation_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
+_efl_canvas_text_efl_text_annotate_annotation_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
       Efl_Canvas_Text_Annotation *annotation)
 {
    if (!annotation || (annotation->obj != eo_obj))
@@ -14535,7 +14535,7 @@ _efl_canvas_text_annotation_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o 
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_text_annotation_set(Eo *eo_obj,
+_efl_canvas_text_efl_text_annotate_annotation_set(Eo *eo_obj,
       Efl_Canvas_Text_Data *o, Efl_Canvas_Text_Annotation *annotation,
       const char *format)
 {
@@ -14606,7 +14606,7 @@ _evas_textblock_annotations_clear(Efl_Canvas_Text_Data *o)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_text_annotation_del(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_text_efl_text_annotate_annotation_del(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Data *o, Efl_Canvas_Text_Annotation *annotation)
 {
    if (!annotation || (annotation->obj != eo_obj))
@@ -14695,7 +14695,7 @@ _textblock_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
 }
 
 EOLIAN static Efl_Canvas_Text_Annotation *
-_efl_canvas_text_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
+_efl_canvas_text_efl_text_annotate_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
       Efl_Canvas_Text_Cursor *start, Efl_Canvas_Text_Cursor *end,
       const char *format)
 {
@@ -14708,7 +14708,7 @@ _efl_canvas_text_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
 }
 
 EOLIAN static Eina_Iterator *
-_efl_canvas_text_range_annotations_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
+_efl_canvas_text_efl_text_annotate_range_annotations_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
       const Evas_Textblock_Cursor *start, const Evas_Textblock_Cursor *end)
 {
    Eina_List *lst = NULL;
@@ -14734,7 +14734,7 @@ _efl_canvas_text_range_annotations_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_D
 }
 
 EOLIAN static Efl_Canvas_Text_Annotation *
-_efl_canvas_text_cursor_object_item_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur, const char *format)
+_efl_canvas_text_efl_text_annotate_cursor_object_item_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur, const char *format)
 {
    Efl_Canvas_Text_Annotation *ret =
       _textblock_annotation_insert(cur->obj, o, cur, cur, format, EINA_TRUE);
@@ -14743,13 +14743,13 @@ _efl_canvas_text_cursor_object_item_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o E
 }
 
 EOLIAN static Efl_Canvas_Text_Annotation *
-_efl_canvas_text_cursor_object_item_annotation_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_text_efl_text_annotate_cursor_object_item_annotation_get(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Canvas_Text_Cursor *cur)
 {
    Eina_Iterator *it;
    Efl_Canvas_Text_Annotation *data, *ret = NULL;
 
-   it = efl_canvas_text_range_annotations_get(cur->obj,
+   it = efl_text_range_annotations_get(cur->obj,
          cur, cur);
    EINA_ITERATOR_FOREACH(it, data)
      {
@@ -14764,7 +14764,7 @@ _efl_canvas_text_cursor_object_item_annotation_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_text_object_item_geometry_get(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED,
+_efl_canvas_text_efl_text_annotate_object_item_geometry_get(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED,
       const Efl_Canvas_Text_Annotation *an, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Efl_Canvas_Text_Cursor_Data cur;
@@ -14779,7 +14779,7 @@ _efl_canvas_text_object_item_geometry_get(Eo *eo_obj, Efl_Canvas_Text_Data *o EI
 }
 
 EOLIAN static void
-_efl_canvas_text_annotation_positions_get(Eo *eo_obj,
+_efl_canvas_text_efl_text_annotate_annotation_positions_get(Eo *eo_obj,
       Efl_Canvas_Text_Data *o EINA_UNUSED,
       const Efl_Canvas_Text_Annotation *annotation,
       Efl_Canvas_Text_Cursor *start, Efl_Canvas_Text_Cursor *end)

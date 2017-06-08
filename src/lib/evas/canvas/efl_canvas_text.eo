@@ -3,7 +3,7 @@ import efl_text_types;
 struct Efl.Canvas.Text.Style; [[EFL text style data structure]]
 
 class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal,
-Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor)
+Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annotate)
 {
    [[Efl canvas text class]]
    legacy_prefix: evas_object_textblock;
@@ -252,139 +252,6 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor)
            @since 1.18
          ]]
       }
-      // Annotation
-      @property annotation {
-         [[A new format for $annotation.
-
-           This will replace the format applied by $annotation with $format.
-           Assumes that $annotation is a handle for an existing annotation,
-           i.e. one that was added using @.annotation_insert to this object.
-           Otherwise, this will fail and return $false.
-
-           @since 1.18
-         ]]
-         set {
-            legacy: null;
-            return: bool; [[$true on success, $false otherwise.]]
-         }
-         get {
-            legacy: null;
-         }
-         keys {
-            annotation: ptr(Efl.Canvas.Text.Annotation); [[Given annotation]]
-         }
-         values {
-            format: string; [[The new format for the given annotation]]
-         }
-      }
-      range_annotations_get {
-         [[Returns an iterator of all the handles in a range.
-
-           @since 1.18
-         ]]
-         legacy: null;
-         params {
-              @in start: ptr(const(Efl.Text.Cursor.Cursor_Data)); [[Start of range]]
-              @in end:   ptr(const(Efl.Text.Cursor.Cursor_Data)); [[End of range]]
-         }
-         return: free(own(iterator<ptr(Efl.Canvas.Text.Annotation)>),
-                 eina_iterator_free); [[Handle of the Annotation]]
-      }
-      annotation_insert {
-         [[Inserts an annotation format in a specified range [$start, $end - 1].
-
-           The $format will be applied to the given range, and the $annotation
-           handle will be returned for further handling.
-
-           @since 1.18
-         ]]
-         legacy: null;
-         params {
-              @in start: ptr(Efl.Text.Cursor.Cursor_Data); [[Start of range]]
-              @in end:   ptr(Efl.Text.Cursor.Cursor_Data); [[End of range]]
-              @in format: string; [[Annotation format]]
-         }
-         return: ptr(Efl.Canvas.Text.Annotation); [[Handle of inserted annotation]]
-      }
-      annotation_del {
-         [[Deletes given annotation.
-
-           All formats applied by $annotation will be removed and it will be
-           deleted.
-
-           @since 1.18
-         ]]
-         legacy: null;
-         params {
-            @in annotation: ptr(Efl.Canvas.Text.Annotation); [[Annotation to be
-                removed]]
-         }
-         return: bool; [[$true on success, $false otherwise.]]
-      }
-      object_item_geometry_get {
-         [[Queries a given object item for its geometry.
-
-           Note that the provided annotation should be an object item type.
-
-           @since 1.18
-         ]]
-         legacy: null;
-         params {
-            @in an: ptr(const(Efl.Canvas.Text.Annotation)); [[Given annotation to query]]
-            @out x: int; [[X coordinate of the annotation]]
-            @out y: int; [[Y coordinate of the annotation]]
-            @out w: int; [[Width of the annotation]]
-            @out h: int; [[Height of the annotation]]
-         }
-         return: bool; [[$true if given annotation is an object item, $false otherwise]]
-      }
-      annotation_positions_get {
-         [[Sets given cursors to the start and end positions of the annotation.
-
-           The cursors $start and $end will be set to the start and end
-           positions of the given annotation $annotation.
-
-           @since 1.18
-         ]]
-         legacy: null;
-         params {
-             @in annotation: ptr(const(Efl.Canvas.Text.Annotation)); [[Annotation
-                 handle to query]]
-             @in start: ptr(Efl.Text.Cursor.Cursor_Data); [[Cursor to be set to the start
-             position of the annotation in the text]]
-             @in end: ptr(Efl.Text.Cursor.Cursor_Data); [[Cursor to be set to the end
-             position of the annotation in the text]]
-         }
-      }
-      // Cursor
-      @property cursor_object_item_annotation {
-         [[The object-item annotation at the cursor's position.]]
-         get {
-            legacy: null;
-         }
-         values {
-            annotation: ptr(Efl.Canvas.Text.Annotation); [[Annotation]]
-         }
-         keys {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
-         }
-      }
-      cursor_object_item_insert {
-         [[Inserts a object item at specified position.
-
-           This adds a placeholder to be queried by higher-level code,
-           which in turn place graphics on top of it. It essentially places an
-           OBJECT REPLACEMENT CHARACTER and set a special annotation to it.
-         ]]
-         legacy: null;
-         params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
-            @in format: string; [[Format of the inserted item.
-            See Format styles.]]
-         }
-         return: ptr(Efl.Canvas.Text.Annotation); [[The annotation handle of the
-         inserted item.]]
-      }
    }
    implements {
       Efl.Object.constructor;
@@ -458,6 +325,14 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor)
       Efl.Text.Cursor.cursor_coord_set;
       Efl.Text.Cursor.cursor_text_insert;
       Efl.Text.Cursor.cursor_char_delete;
+      Efl.Text.Annotate.annotation { set; get; }
+      Efl.Text.Annotate.range_annotations_get;
+      Efl.Text.Annotate.annotation_insert;
+      Efl.Text.Annotate.annotation_del;
+      Efl.Text.Annotate.object_item_geometry_get;
+      Efl.Text.Annotate.annotation_positions_get;
+      Efl.Text.Annotate.cursor_object_item_annotation { get; }
+      Efl.Text.Annotate.cursor_object_item_insert;
    }
    events {
       cursor,changed;

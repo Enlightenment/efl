@@ -4392,7 +4392,7 @@ _textblock_node_format_to_atspi_text_attr(Eo *obj,
    Elm_Atspi_Text_Attribute *ret;
    const char *txt;
 
-   txt = efl_canvas_text_annotation_get(obj, annotation);
+   txt = efl_text_annotation_get(obj, annotation);
    if (!txt) return NULL;
 
    ret = calloc(1, sizeof(Elm_Atspi_Text_Attribute));
@@ -4426,7 +4426,7 @@ _efl_ui_text_elm_interface_atspi_text_attribute_get(Eo *obj, Efl_Ui_Text_Data *_
    evas_textblock_cursor_pos_set(cur1, *start_offset);
    evas_textblock_cursor_pos_set(cur2, *end_offset);
 
-   annotations = efl_canvas_text_range_annotations_get(obj, cur1, cur2);
+   annotations = efl_text_range_annotations_get(obj, cur1, cur2);
 
    evas_textblock_cursor_free(cur1);
    evas_textblock_cursor_free(cur2);
@@ -4472,7 +4472,7 @@ _efl_ui_text_elm_interface_atspi_text_attributes_get(Eo *obj, Efl_Ui_Text_Data *
    evas_textblock_cursor_pos_set(cur1, *start_offset);
    evas_textblock_cursor_pos_set(cur2, *end_offset);
 
-   annotations = efl_canvas_text_range_annotations_get(obj, cur1, cur2);
+   annotations = efl_text_range_annotations_get(obj, cur1, cur2);
 
    evas_textblock_cursor_free(cur1);
    evas_textblock_cursor_free(cur2);
@@ -4506,7 +4506,7 @@ _efl_ui_text_elm_interface_atspi_text_default_attributes_get(Eo *obj, Efl_Ui_Tex
    efl_text_cursor_paragraph_first(obj, start);
    efl_text_cursor_paragraph_last(obj, end);
 
-   annotations = efl_canvas_text_range_annotations_get(obj, start, end);
+   annotations = efl_text_range_annotations_get(obj, start, end);
 
    EINA_ITERATOR_FOREACH(annotations, an)
      {
@@ -4988,7 +4988,7 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
    efl_text_cursor_paragraph_first(obj, start);
    efl_text_cursor_paragraph_last(obj, end);
 
-   it = efl_canvas_text_range_annotations_get(obj, start, end);
+   it = efl_text_range_annotations_get(obj, start, end);
    efl_text_cursor_free(text_obj, start);
    efl_text_cursor_free(text_obj, end);
 
@@ -4997,13 +4997,13 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
         Eina_Bool is_anchor = EINA_FALSE;
         Eina_Bool is_item = EINA_FALSE;
 
-        if (efl_canvas_text_object_item_geometry_get(obj, anchor,
+        if (efl_text_object_item_geometry_get(obj, anchor,
                  NULL, NULL, NULL, NULL))
           {
              is_anchor = EINA_TRUE;
              is_item = EINA_TRUE;
           }
-        else if (!strncmp(efl_canvas_text_annotation_get(obj, anchor), "a ", 2))
+        else if (!strncmp(efl_text_annotation_get(obj, anchor), "a ", 2))
           {
              is_anchor = EINA_TRUE;
           }
@@ -5011,7 +5011,7 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
         if (is_anchor)
           {
              const char *p;
-             const char *item_str = efl_canvas_text_annotation_get(obj, anchor);
+             const char *item_str = efl_text_annotation_get(obj, anchor);
 
              an = calloc(1, sizeof(Anchor));
              if (!an)
@@ -5118,7 +5118,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
                   ob = _item_obj_get(an, o, smart, clip);
                   rect->obj = ob;
 
-                  efl_canvas_text_object_item_geometry_get(an->obj,
+                  efl_text_object_item_geometry_get(an->obj,
                            an->annotation, &cx, &cy, &cw, &ch);
                   evas_object_move(rect->obj, x + cx, y + cy);
                   evas_object_resize(rect->obj, cw, ch);
@@ -5134,7 +5134,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
 
              start = efl_text_cursor_new(o);
              end = efl_text_cursor_new(o);
-             efl_canvas_text_annotation_positions_get(o, an->annotation,
+             efl_text_annotation_positions_get(o, an->annotation,
                    start, end);
 
              range = efl_canvas_text_range_geometry_get(o, start, end);

@@ -18,6 +18,7 @@
 #include "interfaces/efl_text_style.eo.c"
 #include "interfaces/efl_text_format.eo.c"
 #include "interfaces/efl_text_cursor.eo.c"
+#include "interfaces/efl_text_annotate.eo.c"
 
 #include "interfaces/efl_gfx.eo.c"
 #include "interfaces/efl_gfx_buffer.eo.c"
