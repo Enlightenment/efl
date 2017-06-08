@@ -69,6 +69,12 @@
 #include "eina_stringshare.h"
 #include "eina_debug_private.h"
 
+#ifdef EINA_HAVE_PTHREAD_SETNAME
+# ifndef __linux__
+# include <pthread_np.h>
+# endif
+#endif
+
 #if defined(__CYGWIN__) || defined (_WIN32)
 # define LIBEXT ".dll"
 #else

@@ -24,6 +24,12 @@
 #include "eina_evlog.h"
 #include "eina_debug_private.h"
 
+#ifdef EINA_HAVE_PTHREAD_SETNAME
+# ifndef __linux__
+# include <pthread_np.h>
+# endif
+#endif
+
 volatile int           _eina_debug_sysmon_reset = 0;
 volatile int           _eina_debug_sysmon_active = 0;
 volatile int           _eina_debug_evlog_active = 0;
