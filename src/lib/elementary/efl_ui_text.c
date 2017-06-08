@@ -1049,6 +1049,10 @@ _cursor_geometry_recalc(Evas_Object *obj)
    Evas_Coord x2, y2, w2, h2;
    Evas_Coord cx, cy, cw, ch;
 
+   cx = cy = cw = ch = 0;
+   x2 = y2 = w2 = h2 = 0;
+   x = y = w = h = 0;
+
    Efl_Canvas_Text_Cursor *main_cur =
       efl_canvas_text_cursor_get(obj);
 
