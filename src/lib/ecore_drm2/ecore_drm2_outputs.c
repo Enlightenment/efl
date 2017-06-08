@@ -306,6 +306,10 @@ _output_mode_add(Ecore_Drm2_Output *output, const drmModeModeInfo *info)
    Ecore_Drm2_Output_Mode *mode;
    uint64_t refresh;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(info, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((info->htotal > 0), NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((info->vtotal > 0), NULL);
+
    mode = calloc(1, sizeof(Ecore_Drm2_Output_Mode));
    if (!mode) return NULL;
 
