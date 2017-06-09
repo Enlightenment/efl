@@ -2589,6 +2589,7 @@ void              _edje_real_part_table_clear(Edje *ed, Edje_Real_Part *rp, Eina
 Evas_Object      *_edje_children_get(Edje_Real_Part *rp, const char *partid);
 
 Eina_Bool         _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text);
+void _edje_user_define_string(Edje *ed, const char *part, const char *raw_text, Edje_Text_Type type);
 char             *_edje_text_escape(const char *text);
 char             *_edje_text_unescape(const char *text);
 
@@ -3150,6 +3151,21 @@ Evas_Object *_edje_object_part_external_content_get(Edje *ed, const char *part, 
 Eo *_edje_text_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
 Eina_Bool   _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text);
 const char *_edje_efl_text_get(Eo *obj, Edje *ed, const char *part);
+Evas_Textblock_Cursor *_edje_text_cursor_get(Edje_Real_Part *rp, Edje_Cursor cur);
+void _edje_text_cursor_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+void _edje_text_cursor_end(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+void _edje_text_cursor_pos_set(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur, int pos);
+int _edje_text_cursor_pos_get(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+Eina_Bool _edje_text_cursor_coord_set(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur, int x, int y);
+void _edje_text_cursor_line_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+void _edje_text_cursor_line_end(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+Eina_Bool _edje_text_cursor_next(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+Eina_Bool _edje_text_cursor_prev(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+Eina_Bool _edje_text_cursor_up(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+Eina_Bool _edje_text_cursor_down(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+void _edje_text_cursor_copy(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *dst, Efl_Text_Cursor_Cursor_Data *cur);
+char * _edje_text_cursor_content_get(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor_Data *cur);
+void _edje_object_part_text_insert(Edje *ed, Edje_Real_Part *rp, const char *text);
 
 void _edje_internal_proxy_shutdown(void);
 

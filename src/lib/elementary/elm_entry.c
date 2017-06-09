@@ -853,7 +853,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   edje_obj_part_text_hide_visible_password(sd->entry_edje, "elm.text");
+   edje_object_part_text_hide_visible_password(sd->entry_edje, "elm.text");
 
    edje_object_mirrored_set
      (wd->resize_obj, elm_widget_mirrored_get(obj));
@@ -864,7 +864,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
-   stl_user = eina_stringshare_add(edje_obj_part_text_style_user_peek(sd->entry_edje, "elm.text"));
+   stl_user = eina_stringshare_add(edje_object_part_text_style_user_peek(sd->entry_edje, "elm.text"));
    t = eina_stringshare_add(elm_object_text_get(obj));
 
    elm_widget_theme_object_set
@@ -877,7 +877,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
      edje_obj_part_text_select_allow_set
         (sd->entry_edje, "elm.text", EINA_FALSE);
 
-   edje_obj_part_text_style_user_push(sd->entry_edje, "elm.text", stl_user);
+   edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", stl_user);
    eina_stringshare_del(stl_user);
 
    elm_object_text_set(obj, t);

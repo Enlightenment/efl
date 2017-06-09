@@ -1376,6 +1376,566 @@ EAPI Eina_Bool edje_object_part_text_set(const Edje_Object *obj, const char *par
 EAPI const char * edje_object_part_text_get(const Edje_Object *obj, const char *part);
 
 /**
+ * @brief Moves the cursor to the beginning of the text part @ref
+ * evas_textblock_cursor_paragraph_first
+ *
+ * @param[in] part The part name
+ * @param[in] cur The edje cursor to work on
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_cursor_begin_set(Edje_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Moves the cursor to the end of the text part. @ref
+ * evas_textblock_cursor_paragraph_last
+ *
+ * @param[in] part The part name
+ * @param[in] cur The edje cursor to work on
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_cursor_end_set(Edje_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Sets the cursor position to the given value
+ *
+ * @param[in] part The part name
+ * @param[in] cur The cursor to move
+ * @param[in] pos The position of the cursor
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_cursor_pos_set(Edje_Object *obj, const char * part, Edje_Cursor cur, int pos);
+
+/**
+ * @brief Retrieves the current position of the cursor
+ *
+ * @param[in] part The part name
+ * @param[in] cur The cursor to move
+ *
+ * @return The position of the cursor
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI int edje_object_part_text_cursor_pos_get(const Edje_Object *obj, const char * part, Edje_Cursor cur);
+
+/**
+ * @brief Position the given cursor to a X,Y position.
+ *
+ * This is frequently used with the user cursor.
+ *
+ * @param[in] part The part containing the object.
+ * @param[in] cur The cursor to adjust.
+ * @param[in] x X Coordinate.
+ * @param[in] y Y Coordinate.
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_cursor_coord_set(Edje_Object *obj, const char *part, Edje_Cursor cur, int x, int y);
+
+/**
+ * @brief Moves the cursor to the beginning of the line. @ref
+ * evas_textblock_cursor_line_char_first
+ *
+ * @param[in] part The part name
+ * @param[in] cur The edje cursor to work on
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_cursor_line_begin_set(Edje_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Moves the cursor to the end of the line. @ref
+ * evas_textblock_cursor_line_char_last
+ *
+ * @param[in] part The part name
+ * @param[in] cur The edje cursor to work on
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_cursor_line_end_set(Edje_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Moves the cursor to the previous char @ref
+ * evas_textblock_cursor_char_prev
+ *
+ * @param[in] part The part name
+ * @param[in] cur The edje cursor to work on
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_cursor_prev(Edje_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Advances the cursor to the next cursor position. @ref
+ * evas_textblock_cursor_char_next
+ *
+ * @param[in] part The part name
+ * @param[in] cur The edje cursor to advance
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_cursor_next(Edje_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Moves the cursor to the char above the current cursor position.
+ *
+ * @param[in] part The part name
+ * @param[in] cur The edje cursor to work on
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_cursor_up(Edje_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Moves the cursor to the char below the current cursor position.
+ *
+ * @param[in] part The part name
+ * @param[in] cur The edje cursor to work on
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_cursor_down(Edje_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Copies the cursor to another cursor.
+ *
+ * @param[in] part The part name
+ * @param[in] src The cursor to copy from
+ * @param[in] dst The cursor to copy to
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_cursor_copy(Edje_Object *obj, const char *part, Edje_Cursor src, Edje_Cursor dst);
+
+/**
+ * @brief Returns the content (char) at the cursor position. @ref
+ * evas_textblock_cursor_content_get
+ *
+ * You must free the return (if not @c null) after you are done with it.
+ *
+ * @param[in] part The part name
+ * @param[in] cur The cursor to use
+ *
+ * @return The character string pointed to (may be a multi-byte utf8 sequence)
+ * terminated by a null byte.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI char *edje_object_part_text_cursor_content_get(const Edje_Object *obj, const char * part, Edje_Cursor cur);
+
+/**
+ * @brief Returns the cursor geometry of the part relative to the edje object.
+ *
+ * @param[in] part The part name
+ * @param[out] x Cursor X position
+ * @param[out] y Cursor Y position
+ * @param[out] w Cursor width
+ * @param[out] h Cursor height
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_cursor_geometry_get(const Edje_Object *obj, const char * part, int *x, int *y, int *w, int *h);
+
+/**
+ * @brief Hides visible last character for password mode.
+ *
+ * @param[in] part The part name
+ *
+ * @return @c true if the visible character is hidden. @c false if there is no
+ * visible character or the object is not set for password mode.
+ *
+ * @since 1.18.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_hide_visible_password(Edje_Object *obj, const char *part);
+
+/**
+ * @brief Returns whether the cursor points to a format. @ref
+ * evas_textblock_cursor_is_format
+ *
+ * @param[in] part The part name
+ * @param[in] cur The cursor to adjust.
+ *
+ * @return @c true if the cursor points to a format, @c false otherwise.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_cursor_is_format_get(Edje_Object *obj, const char * part, Edje_Cursor cur);
+
+/**
+ * @brief Returns @c true if the cursor points to a visible format For example
+ * \\t, \\n, item and etc. @ref evas_textblock_cursor_format_is_visible_get
+ *
+ * @param[in] part The part name
+ * @param[in] cur The cursor to adjust.
+ *
+ * @return @c true if the cursor points to a visible format, @c false
+ * otherwise.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_cursor_is_visible_format_get(Edje_Object *obj, const char * part, Edje_Cursor cur);
+
+/**
+ * @brief Returns a list of Evas_Textblock_Rectangle anchor rectangles.
+ *
+ * This function return a list of Evas_Textblock_Rectangle anchor rectangles.
+ *
+ * @param[in] part The part name
+ * @param[in] anchor The anchor name
+ *
+ * @return The list of anchor rects (const Evas_Textblock_Rectangle *), do not
+ * modify! Geometry is relative to entry part.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const Eina_List *edje_object_part_text_anchor_geometry_get(Edje_Object *obj, const char * part, const char * anchor);
+
+/**
+ * @brief Returns a list of char anchor names.
+ *
+ * This function returns a list of char anchor names.
+ *
+ * @param[in] part The part name
+ *
+ * @return The list of anchors (const char *), do not modify!
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const Eina_List *edje_object_part_text_anchor_list_get(Edje_Object *obj, const char * part);
+
+/**
+ * @brief Returns the text of the object part.
+ *
+ * This function returns the style associated with the textblock part.
+ *
+ * @param[in] part The part name
+ *
+ * @return The text string
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const char *edje_object_part_text_style_user_peek(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the style of the
+ *
+ * This function sets the style associated with the textblock part.
+ *
+ * @param[in] part The part name
+ * @param[in] style The style to set (textblock conventions).
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_style_user_push(Edje_Object *obj, const char *part, const char *style);
+
+/**
+ * @brief Deletes the top style form the user style stack.
+ *
+ * @param[in] part The part name
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_style_user_pop(Edje_Object *obj, const char *part);
+
+/**
+ * @brief Returns item geometry.
+ *
+ * This function return a list of Evas_Textblock_Rectangle item rectangles.
+ *
+ * @param[in] part The part name
+ * @param[in] item The item name
+ * @param[out] cx Item x return (relative to entry part)
+ * @param[out] cy Item y return (relative to entry part)
+ * @param[out] cw Item width return
+ * @param[out] ch Item height return
+ *
+ * @return $1 if item exists, $0 if not
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_item_geometry_get(const Edje_Object *obj, const char * part, const char * item, int *cx, int *cy, int *cw, int *ch);
+
+/**
+ * @brief Returns a list of char item names.
+ *
+ * This function returns a list of char item names.
+ *
+ * @param[in] part The part name
+ *
+ * @return The list of items (const char *), do not modify!
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const Eina_List *edje_object_part_text_item_list_get(const Edje_Object *obj, const char * part);
+
+/**
+ * @brief Adds a filter function for newly inserted text.
+ *
+ * Whenever text is inserted (not the same as set) into the given part, the
+ * list of filter functions will be called to decide if and how the new text
+ * will be accepted. There are three types of filters, EDJE_TEXT_FILTER_TEXT,
+ * EDJE_TEXT_FILTER_FORMAT and EDJE_TEXT_FILTER_MARKUP. The text parameter in
+ * the func filter can be modified by the user and it's up to him to free the
+ * one passed if he's to change the pointer. If doing so, the newly set text
+ * should be malloc'ed, as once all the filters are called Edje will free it.
+ * If the text is to be rejected, freeing it and setting the pointer to @c null
+ * will make Edje break out of the filter cycle and reject the inserted text.
+ *
+ * @warning This function will be deprecated because of difficulty in use. The
+ * type(format, text, or markup) of text should be always checked in the filter
+ * function for correct filtering. Please use
+ * edje_object_text_markup_filter_callback_add() instead. There is no need to
+ * check the type of text in the filter function because the text is always
+ * markup. Warning: If you use this function with
+ * edje_object_text_markup_filter_callback_add() together, all
+ * Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions will be
+ * executed, and then filtered text will be inserted.
+ *
+ * See also @ref edje_object_text_insert_filter_callback_del,
+ * @ref edje_object_text_insert_filter_callback_del_full and
+ * @ref edje_object_text_markup_filter_callback_add
+ *
+ * @param[in] part The part name
+ * @param[in] func The callback function that will act as filter
+ * @param[in] data User provided data to pass to the filter function
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_text_insert_filter_callback_add(Edje_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
+
+/**
+ * @brief Deletes a function from the filter list.
+ *
+ * Delete the given func filter from the list in part. Returns the user data
+ * pointer given when added.
+ *
+ * See also @ref edje_object_text_insert_filter_callback_add and
+ * @ref edje_object_text_insert_filter_callback_del_full
+ *
+ * @param[in] part The part name
+ * @param[in] func The function callback to remove
+ *
+ * @return The user data pointer if successful, or @c null otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void *edje_object_text_insert_filter_callback_del(Edje_Object *obj, const char *part, Edje_Text_Filter_Cb func);
+
+/**
+ * @brief Deletes a function and matching user data from the filter list.
+ *
+ * Delete the given func filter and data user data from the list in part.
+ * Returns the user data pointer given when added.
+ *
+ * See also @ref edje_object_text_insert_filter_callback_add and
+ * @ref edje_object_text_insert_filter_callback_del
+ *
+ * @param[in] part The part name
+ * @param[in] func The function callback to remove
+ * @param[in] data The data passed to the callback function
+ *
+ * @return The same data pointer if successful, or @c null otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void *edje_object_text_insert_filter_callback_del_full(Edje_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
+
+/**
+ * @brief Adds a markup filter function for newly inserted text.
+ *
+ * Whenever text is inserted (not the same as set) into the given part, the
+ * list of markup filter functions will be called to decide if and how the new
+ * text will be accepted. The text parameter in the func filter is always
+ * markup. It can be modified by the user and it's up to him to free the one
+ * passed if he's to change the pointer. If doing so, the newly set text should
+ * be malloc'ed, as once all the filters are called Edje will free it. If the
+ * text is to be rejected, freeing it and setting the pointer to @c null will
+ * make Edje break out of the filter cycle and reject the inserted text. This
+ * function is different from edje_object_text_insert_filter_callback_add() in
+ * that the text parameter in the fucn filter is always markup.
+ *
+ * @warning If you use this function with
+ * edje_object_text_insert_filter_callback_add() togehter, all
+ * Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions will be
+ * executed, and then filtered text will be inserted.
+ *
+ * See also @ref edje_object_text_markup_filter_callback_del,
+ * @ref edje_object_text_markup_filter_callback_del_full and
+ * @ref edje_object_text_insert_filter_callback_add
+ *
+ * @param[in] part The part name
+ * @param[in] func The callback function that will act as markup filter
+ * @param[in] data User provided data to pass to the filter function
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_text_markup_filter_callback_add(Edje_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
+
+/**
+ * @brief Deletes a function from the markup filter list.
+ *
+ * Delete the given func filter from the list in part. Returns the user data
+ * pointer given when added.
+ *
+ * See also @ref edje_object_text_markup_filter_callback_add and
+ * @ref edje_object_text_markup_filter_callback_del_full
+ *
+ * @param[in] part The part name
+ * @param[in] func The function callback to remove
+ *
+ * @return The user data pointer if successful, or @c null otherwise
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void *edje_object_text_markup_filter_callback_del(Edje_Object *obj, const char *part, Edje_Markup_Filter_Cb func);
+
+/**
+ * @brief Deletes a function and matching user data from the markup filter
+ * list.
+ *
+ * Delete the given func filter and data user data from the list in part.
+ * Returns the user data pointer given when added.
+ *
+ * See also @ref edje_object_text_markup_filter_callback_add and
+ * @ref edje_object_text_markup_filter_callback_del
+ *
+ * @param[in] part The part name
+ * @param[in] func The function callback to remove
+ * @param[in] data The data passed to the callback function
+ *
+ * @return The same data pointer if successful, or @c null otherwise
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void *edje_object_text_markup_filter_callback_del_full(Edje_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
+
+/**
+ * @brief This function inserts text as if the user has inserted it.
+ *
+ * This means it actually registers as a change and emits signals, triggers
+ * callbacks as appropriate.
+ *
+ * @param[in] part The part name
+ * @param[in] text The text string
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_user_insert(const Edje_Object *obj, const char *part, const char *text);
+
+/**
+ * @brief Inserts text for an object part.
+ *
+ * This function inserts the text for an object part at the end; It does not
+ * move the cursor.
+ *
+ * @param[in] part The part name
+ * @param[in] text The text string
+ *
+ * @since 1.1
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_append(Edje_Object *obj, const char *part, const char *text);
+
+/**
+ * @brief Sets the text for an object part, but converts HTML escapes to UTF8
+ *
+ * This converts the given string text to UTF8 assuming it contains HTML style
+ * escapes like "&amp;" and "&copy;" etc. IF the part is of type TEXT, as
+ * opposed to TEXTBLOCK.
+ *
+ * @param[in] part The part name
+ * @param[in] text The text string
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @since 1.2
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_escaped_set(Edje_Object *obj, const char *part, const char *text);
+
+/**
+ * @brief Sets the raw (non escaped) text for an object part.
+ *
+ * This function will not do escape for you if it is a TEXTBLOCK part, that is,
+ * if text contain tags, these tags will not be interpreted/parsed by
+ * TEXTBLOCK.
+ *
+ * See also @ref edje_object_part_text_unescaped_get().
+ *
+ * @param[in] part The part name
+ * @param[in] text_to_escape The text string
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_unescaped_set(Edje_Object *obj, const char * part, const char *text_to_escape);
+
+/**
+ * @brief Returns the text of the object part, without escaping.
+ *
+ * This function is the counterpart of
+ * @ref edje_object_part_text_unescaped_set(). Please notice that the result is
+ * newly allocated memory and should be released with free() when done.
+ *
+ * See also @ref edje_object_part_text_unescaped_set().
+ *
+ * @param[in] part The part name
+ *
+ * @return The text string
+ *
+ * @ingroup Edje_Object
+ */
+EAPI char *edje_object_part_text_unescaped_get(const Edje_Object *obj, const char * part);
+
+/**
+ * @brief Inserts text for an object part.
+ *
+ * This function inserts the text for an object part just before the cursor
+ * position.
+ *
+ * @param[in] part The part name
+ * @param[in] text The text string
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_insert(Edje_Object *obj, const char *part, const char *text);
+
+/**
  * @}
  */
 #include "edje_object.eo.legacy.h"

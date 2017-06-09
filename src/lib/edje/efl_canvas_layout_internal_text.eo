@@ -1,4 +1,5 @@
-class Efl.Canvas.Layout_Internal.Text (Efl.Canvas.Layout_Internal, Efl.Text)
+class Efl.Canvas.Layout_Internal.Text (Efl.Canvas.Layout_Internal, Efl.Text,
+   Efl.Text.Cursor)
 {
    [[Represents a TEXT part of a layout
 
@@ -8,5 +9,19 @@ class Efl.Canvas.Layout_Internal.Text (Efl.Canvas.Layout_Internal, Efl.Text)
    data: null;
    implements {
       Efl.Text.text { set; get; }
+      Efl.Text.Cursor.cursor { get; }
+      Efl.Text.Cursor.cursor_paragraph_first;
+      Efl.Text.Cursor.cursor_paragraph_last;
+      Efl.Text.Cursor.cursor_position { set; get; }
+      Efl.Text.Cursor.cursor_coord_set;
+      Efl.Text.Cursor.cursor_line_char_first;
+      Efl.Text.Cursor.cursor_line_char_last;
+      Efl.Text.Cursor.cursor_char_next;
+      Efl.Text.Cursor.cursor_char_prev;
+      Efl.Text.Cursor.cursor_line_jump_by;
+      Efl.Text.Cursor.cursor_copy;
+      Efl.Text.Cursor.cursor_content { get; }
+      Efl.Text.Cursor.cursor_geometry { get; }
+      Efl.Text.Cursor.cursor_text_insert;
    }
 }
