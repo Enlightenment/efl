@@ -189,6 +189,7 @@ struct _Ecore_Wl2_Window
    struct
      {
         Eina_Bool supported : 1;
+        Eina_Bool app_set : 1;
      } wm_rot;
 };
 

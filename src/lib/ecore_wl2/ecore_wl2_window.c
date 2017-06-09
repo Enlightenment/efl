@@ -1227,3 +1227,10 @@ ecore_wl2_window_wm_rotation_supported_get(Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
    return window->wm_rot.supported;
 }
+
+EAPI void
+ecore_wl2_window_rotation_app_set(Ecore_Wl2_Window *window, Eina_Bool set)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   window->wm_rot.app_set = set;
+}
