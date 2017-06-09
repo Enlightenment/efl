@@ -973,6 +973,17 @@ EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform);
 
 /**
+ * Set if window rotation is supported by the window manager
+ *
+ * @param window
+ * @param enabled
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_wm_rotation_supported_set(Ecore_Wl2_Window *window, Eina_Bool enabled);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *

@@ -185,6 +185,11 @@ struct _Ecore_Wl2_Window
      {
         Eina_Bool configure : 1;
      } pending;
+
+   struct
+     {
+        Eina_Bool supported : 1;
+     } wm_rot;
 };
 
 struct _Ecore_Wl2_Output

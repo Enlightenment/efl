@@ -1213,3 +1213,10 @@ ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform)
 
    wl_surface_set_buffer_transform(window->surface, transform);
 }
+
+EAPI void
+ecore_wl2_window_wm_rotation_supported_set(Ecore_Wl2_Window *window, Eina_Bool enabled)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   window->wm_rot.supported = enabled;
+}
