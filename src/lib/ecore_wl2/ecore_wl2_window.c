@@ -1307,3 +1307,23 @@ ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot,
 
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE, ev, NULL, NULL);
 }
+
+EAPI void
+ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int rot)
+{
+   Ecore_Wl2_Event_Window_Rotation_Change_Prepare_Done *ev;
+
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Prepare_Done));
+   if (!ev) return;
+
+   ev->window = window;
+   ev->rotation = rot;
+   ev->w = 0;
+   ev->h = 0;
+   ev->resize = 0;
+
+   ecore_event_add(ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE,
+                   ev, NULL, NULL);
+}
