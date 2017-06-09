@@ -192,9 +192,7 @@ struct _Ecore_Drm2_Output_Mode
 typedef struct _Ecore_Drm2_Output_State
 {
    Ecore_Drm2_Fb *fb;
-# ifdef HAVE_ATOMIC_DRM
    drmModeAtomicReq *atomic_req;
-# endif
 } Ecore_Drm2_Output_State;
 
 struct _Ecore_Drm2_Output
@@ -314,14 +312,12 @@ extern int (*sym_drmIoctl)(int fd, unsigned long request, void *arg);
 extern void *(*sym_drmModeObjectGetProperties)(int fd, uint32_t object_id, uint32_t object_type);
 extern void (*sym_drmModeFreeObjectProperties)(drmModeObjectPropertiesPtr ptr);
 extern int (*sym_drmModeCreatePropertyBlob)(int fd, const void *data, size_t size, uint32_t *id);
-# ifdef HAVE_ATOMIC_DRM
 extern void *(*sym_drmModeAtomicAlloc)(void);
 extern void (*sym_drmModeAtomicFree)(drmModeAtomicReqPtr req);
 extern int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id, uint32_t property_id, uint64_t value);
 extern int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data);
 extern void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor);
 extern int (*sym_drmModeAtomicMerge)(drmModeAtomicReqPtr base, drmModeAtomicReqPtr augment);
-# endif
 extern void *(*sym_drmModeGetEncoder)(int fd, uint32_t encoder_id);
 extern void (*sym_drmModeFreeEncoder)(drmModeEncoderPtr ptr);
 extern void *(*sym_drmModeGetCrtc)(int fd, uint32_t crtcId);

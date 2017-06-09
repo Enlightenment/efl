@@ -248,11 +248,12 @@ _ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State
    if (output->release_cb) output->release_cb(output->release_data, s->fb);
    _ecore_drm2_fb_deref(s->fb);
    s->fb = NULL;
-#ifdef HAVE_ATOMIC_DRM
-   if (s->atomic_req)
-     sym_drmModeAtomicFree(s->atomic_req);
-   s->atomic_req = NULL;
-#endif
+   if (_ecore_drm2_use_atomic)
+     {
+        if (s->atomic_req)
+          sym_drmModeAtomicFree(s->atomic_req);
+        s->atomic_req = NULL;
+     }
 }
 
 EAPI Eina_Bool
@@ -268,21 +269,22 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
    output->current.fb = output->pending.fb;
    output->pending.fb = NULL;
 
-#ifdef HAVE_ATOMIC_DRM
-   Eina_List *l, *ll;
-   Ecore_Drm2_Plane *plane;
-
-   output->current.atomic_req = output->pending.atomic_req;
-   output->pending.atomic_req = NULL;
-
-   EINA_LIST_FOREACH_SAFE(output->planes, l, ll, plane)
+   if (_ecore_drm2_use_atomic)
      {
-        if (!plane->dead) continue;
-        output->planes = eina_list_remove_list(output->planes, l);
-        free(plane);
+        Eina_List *l, *ll;
+        Ecore_Drm2_Plane *plane;
+
+        output->current.atomic_req = output->pending.atomic_req;
+        output->pending.atomic_req = NULL;
+
+        EINA_LIST_FOREACH_SAFE(output->planes, l, ll, plane)
+          {
+             if (!plane->dead) continue;
+             output->planes = eina_list_remove_list(output->planes, l);
+             free(plane);
+          }
      }
 
-#endif
    EINA_LIST_FREE(output->fbs, fb)
      _ecore_drm2_fb_deref(fb);
    output->fbs = NULL;
@@ -293,7 +295,6 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 Eina_Bool
 _fb_atomic_flip_test(Ecore_Drm2_Output *output)
 {
-#ifdef HAVE_ATOMIC_DRM
    int ret = 0;
    Eina_List *l;
    Ecore_Drm2_Crtc_State *cstate;
@@ -302,6 +303,8 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
    drmModeAtomicReq *req = NULL;
    uint32_t flags = DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_ATOMIC_ALLOW_MODESET |
      DRM_MODE_ATOMIC_TEST_ONLY;
+
+   if (!_ecore_drm2_use_atomic) return EINA_FALSE;
 
    req = sym_drmModeAtomicAlloc();
    if (!req) return EINA_FALSE;
@@ -401,7 +404,6 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
 err:
    DBG("Failed Atomic Test: %m");
    sym_drmModeAtomicFree(req);
-#endif
 
    return EINA_FALSE;
 }
@@ -409,11 +411,12 @@ err:
 static int
 _fb_atomic_flip(Ecore_Drm2_Output *output)
 {
-#ifdef HAVE_ATOMIC_DRM
    int res = 0;
    uint32_t flags =
      DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT |
      DRM_MODE_ATOMIC_ALLOW_MODESET;
+
+   if (!_ecore_drm2_use_atomic) return -1;
 
    /* If we have no req yet, we're flipping to current state.
     * rebuild the current state in the prep state */
@@ -433,9 +436,6 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
      }
 
    return 0;
-#endif
-
-   return -1;
 }
 
 static int
@@ -578,10 +578,13 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
      }
    output->pending.fb = output->prep.fb;
    output->prep.fb = NULL;
-#ifdef HAVE_ATOMIC_DRM
-   output->pending.atomic_req = output->prep.atomic_req;
-   output->prep.atomic_req = NULL;
-#endif
+
+   if (_ecore_drm2_use_atomic)
+     {
+        output->pending.atomic_req = output->prep.atomic_req;
+        output->prep.atomic_req = NULL;
+     }
+
    return 0;
 }
 

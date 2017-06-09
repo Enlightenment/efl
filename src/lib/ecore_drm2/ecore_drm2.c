@@ -17,14 +17,12 @@ int (*sym_drmIoctl)(int fd, unsigned long request, void *arg) = NULL;
 void *(*sym_drmModeObjectGetProperties)(int fd, uint32_t object_id, uint32_t object_type) = NULL;
 void (*sym_drmModeFreeObjectProperties)(drmModeObjectPropertiesPtr ptr) = NULL;
 int (*sym_drmModeCreatePropertyBlob)(int fd, const void *data, size_t size, uint32_t *id) = NULL;
-# ifdef HAVE_ATOMIC_DRM
 void *(*sym_drmModeAtomicAlloc)(void) = NULL;
 void (*sym_drmModeAtomicFree)(drmModeAtomicReqPtr req) = NULL;
 int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id, uint32_t property_id, uint64_t value) = NULL;
 int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data) = NULL;
 void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor) = NULL;
 int (*sym_drmModeAtomicMerge)(drmModeAtomicReqPtr base, drmModeAtomicReqPtr augment);
-# endif
 void *(*sym_drmModeGetEncoder)(int fd, uint32_t encoder_id) = NULL;
 void (*sym_drmModeFreeEncoder)(drmModeEncoderPtr ptr) = NULL;
 void *(*sym_drmModeGetCrtc)(int fd, uint32_t crtcId) = NULL;
@@ -96,14 +94,12 @@ _ecore_drm2_link(void)
         SYM(drm_lib, drmModeObjectGetProperties);
         SYM(drm_lib, drmModeFreeObjectProperties);
         SYM(drm_lib, drmModeCreatePropertyBlob);
-#ifdef HAVE_ATOMIC_DRM
         SYM(drm_lib, drmModeAtomicAlloc);
         SYM(drm_lib, drmModeAtomicFree);
         SYM(drm_lib, drmModeAtomicAddProperty);
         SYM(drm_lib, drmModeAtomicCommit);
         SYM(drm_lib, drmModeAtomicSetCursor);
         SYM(drm_lib, drmModeAtomicMerge);
-#endif
         SYM(drm_lib, drmModeGetEncoder);
         SYM(drm_lib, drmModeFreeEncoder);
         SYM(drm_lib, drmModeGetCrtc);

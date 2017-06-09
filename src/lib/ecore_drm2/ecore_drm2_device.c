@@ -4,9 +4,7 @@
 # define DRM_CAP_DUMB_PREFER_SHADOW 0x4
 #endif
 
-#ifdef HAVE_ATOMIC_DRM
-# include <sys/utsname.h>
-#endif
+#include <sys/utsname.h>
 
 Eina_Bool _ecore_drm2_use_atomic = EINA_TRUE;
 
@@ -143,7 +141,6 @@ out:
    return ret;
 }
 
-#ifdef HAVE_ATOMIC_DRM
 # if 0
 static Eina_Bool
 _drm2_atomic_usable(int fd)
@@ -187,7 +184,6 @@ _drm2_atomic_usable(int fd)
    return ret;
 }
 # endif
-#endif
 
 static void
 _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
@@ -614,15 +610,15 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
    DBG("Device Path: %s", device->path);
    DBG("Device Fd: %d", device->fd);
 
-#ifdef HAVE_ATOMIC_DRM
 # if 0
    /* check that this system can do atomic */
    _ecore_drm2_use_atomic = _drm2_atomic_usable(device->fd);
 # endif
+
    if (getenv("ECORE_DRM2_ATOMIC_DISABLE"))
      _ecore_drm2_use_atomic = EINA_FALSE;
+
    if (_ecore_drm2_use_atomic)
-#endif
      {
         if (sym_drmSetClientCap(device->fd,
                                 DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
