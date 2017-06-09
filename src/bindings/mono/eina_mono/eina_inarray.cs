@@ -195,8 +195,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         var r = eina_inarray_push(Handle, ele);
         if (r == -1)
             NativeFreeInplace<T>(ele);
-        else
-            ResidueFreeInplace<T>(ele);
+        ResidueFreeInplace<T>(ele);
         return r;
     }
 
@@ -231,10 +230,9 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     {
         IntPtr ele = ManagedToNativeAllocInplace(val);
         var r = eina_inarray_insert_at(Handle, idx, ele);
-        if (r)
-            ResidueFreeInplace<T>(ele);
-        else
+        if (!r)
             NativeFreeInplace<T>(ele);
+        ResidueFreeInplace<T>(ele);
         return r;
     }
 
@@ -247,10 +245,9 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
             NativeFreeInplace<T>(ele);
         ele = ManagedToNativeAllocInplace(val);
         var r = eina_inarray_insert_at(Handle, idx, ele);
-        if (r)
-            ResidueFreeInplace<T>(ele);
-        else
+        if (!r)
             NativeFreeInplace<T>(ele);
+        ResidueFreeInplace<T>(ele);
         return r;
     }
 
