@@ -58,5 +58,26 @@ interface Efl.Ui.Base
                                   meaning individual scaling is not set)]]
          }
       }
+      @property base_scale {
+         [[The base scale of a layout object (read-only).
+
+           The base scale refers to the scale for which the backing EDC file
+           was designed. By default it is 1.0 which means the EDC file was
+           designed for a scale of 1.0.
+
+           This base scale can be specified in an EDC file as the
+           collections' "base_scale" field.
+
+           If the object is not a layout, this will return 1.0.
+         ]]
+         get {
+            [[Gets a given layout object's base_scale factor.]]
+         }
+         values {
+            base_scale: double(1.0); [[The base_scale factor (the default value
+                                       is 1.0, meaning that the edc file was
+                                       designed based on scale 1.0).]]
+         }
+      }
    }
 }

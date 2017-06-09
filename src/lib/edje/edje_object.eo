@@ -104,21 +104,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
 
-      @property base_scale {
-         get {
-            [[Gets a given Edje object's base_scale factor.
-
-              This function returns the base_scale factor set on the
-               obj Edje object.
-              The base_scale can be set in the collection of edc.
-              If it isn't set, the default value is 1.0]]
-         }
-         values {
-            base_scale: double(1.0); [[The base_scale factor (the default value is @ 1.0,
-                                  that means the edc file is made based on scale 1.0.]]
-         }
-      }
-
       // TODO: Legacy only. EO may rely on futures.
       preload {
          [[Preloads the images on the Edje Object in the background.
@@ -1184,6 +1169,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       Efl.Ui.Base.mirrored { set; get; }
       Efl.Ui.Base.language { set; get; }
       Efl.Ui.Base.scale { set; get; }
+      Efl.Ui.Base.base_scale { get; }
       Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;

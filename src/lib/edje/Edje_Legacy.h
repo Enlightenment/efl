@@ -1105,6 +1105,20 @@ EAPI Eina_Bool edje_object_scale_set(Edje_Object *obj, double scale);
 EAPI double edje_object_scale_get(const Edje_Object *obj);
 
 /**
+ * @brief Gets a given Edje object's base_scale factor.
+ *
+ * This function returns the base_scale factor set on the obj Edje object. The
+ * base_scale can be set in the collection of edc. If it isn't set, the default
+ * value is 1.0
+ *
+ * @return The base_scale factor (the default value is @ 1.0, that means the
+ * edc file is made based on scale 1.0.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI double edje_object_base_scale_get(const Edje_Object *obj);
+
+/**
  * @defgroup Edje_Part_Drag Edje Drag
  * @ingroup Edje_Object_Part
  *
