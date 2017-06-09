@@ -716,7 +716,7 @@ struct convert_out_assign_generator
                || param_is_acceptable(param, "Eina_Inarray *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Inarray *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Inarray *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inarray *", !WANT_OWN, WANT_OUT
+               || param_is_acceptable(param, "const Eina_Inarray *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)

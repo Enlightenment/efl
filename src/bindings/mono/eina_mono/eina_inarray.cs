@@ -128,7 +128,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
             uint len = eina_inarray_count(h);
             for(uint i = 0; i < len; ++i)
             {
-                InarrayNativeFree<T>(eina_inarray_nth(h, i));
+                NativeFreeInplace<T>(eina_inarray_nth(h, i));
             }
         }
 
@@ -161,7 +161,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
             int len = Length;
             for (int i = 0; i < len; ++i)
             {
-                InarrayNativeFree<T>(eina_inarray_nth(Handle, i));
+                NativeFreeInplace<T>(eina_inarray_nth(Handle, (uint)i));
             }
         }
     }
@@ -191,12 +191,12 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public int Push(T val)
     {
-        IntPtr ele = InarrayManagedToNativeAlloc(val);
+        IntPtr ele = ManagedToNativeAllocInplace(val);
         var r = eina_inarray_push(Handle, ele);
         if (r == -1)
-            InarrayNativeFree<T>(ele);
+            NativeFreeInplace<T>(ele);
         else
-            InarrayTempFree<T>(ele);
+            ResidueFreeInplace<T>(ele);
         return r;
     }
 
@@ -210,16 +210,16 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     public T Pop()
     {
         IntPtr ele = eina_inarray_pop(Handle);
-        var r = InarrayNativeToManaged<T>(ele);
+        var r = NativeToManagedInplace<T>(ele);
         if (OwnContent && ele != IntPtr.Zero)
-            InarrayNativeFree<T>(ele);
+            NativeFreeInplace<T>(ele);
         return r;
     }
 
     public T Nth(uint idx)
     {
         IntPtr ele = eina_inarray_nth(Handle, idx);
-        return InarrayNativeToManaged<T>(ele);
+        return NativeToManagedInplace<T>(ele);
     }
 
     public T At(int idx)
@@ -229,12 +229,12 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public bool InsertAt(uint idx, T val)
     {
-        IntPtr ele = InarrayManagedToNativeAlloc(val);
+        IntPtr ele = ManagedToNativeAllocInplace(val);
         var r = eina_inarray_insert_at(Handle, idx, ele);
         if (r)
-            InarrayTempFree<T>(ele);
+            ResidueFreeInplace<T>(ele);
         else
-            InarrayNativeFree<T>(ele);
+            NativeFreeInplace<T>(ele);
         return r;
     }
 
@@ -244,13 +244,13 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         if (ele == IntPtr.Zero)
             return false;
         if (OwnContent)
-            InarrayNativeFree<T>(ele);
-        ele = InarrayManagedToNativeAlloc(val);
+            NativeFreeInplace<T>(ele);
+        ele = ManagedToNativeAllocInplace(val);
         var r = eina_inarray_insert_at(Handle, idx, ele);
         if (r)
-            InarrayTempFree<T>(ele);
+            ResidueFreeInplace<T>(ele);
         else
-            InarrayNativeFree<T>(ele);
+            NativeFreeInplace<T>(ele);
         return r;
     }
 
@@ -262,7 +262,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         }
         set
         {
-            ReplaceAt(idx, value);
+            ReplaceAt((uint)idx, value);
         }
     }
 
@@ -272,12 +272,12 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         if (ele == IntPtr.Zero)
             return false;
         if (OwnContent)
-            InarrayNativeFree<T>(ele);
+            NativeFreeInplace<T>(ele);
 
         return eina_inarray_remove_at(Handle, idx);
     }
 
-    public bool Reverse()
+    public void Reverse()
     {
         eina_inarray_reverse(Handle);
     }
@@ -288,7 +288,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         var managed = new T[len];
         for(int i = 0; i < len; ++i)
         {
-            managed[i] = DataGet(i);
+            managed[i] = At(i);
         }
         return managed;
     }
