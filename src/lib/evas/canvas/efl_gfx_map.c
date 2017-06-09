@@ -458,6 +458,7 @@ _efl_gfx_map_update(Eo *eo_obj)
    m = _map_calc(eo_obj, obj, pd);
    evas_object_map_set(eo_obj, m);
    _evas_object_map_enable_set(eo_obj, obj, m != NULL);
+   obj->gfx_map_has = (m != NULL);
 }
 
 static inline void
@@ -513,7 +514,6 @@ _efl_gfx_map_map_reset(Eo *eo_obj, Efl_Gfx_Map_Data *pd)
    _map_dirty(eo_obj, pd, EINA_TRUE);
    MAPCOW_WRITE(pd, alpha, alpha);
    MAPCOW_WRITE(pd, smooth, smooth);
-   obj->gfx_map_has = EINA_FALSE;
 }
 
 EOLIAN static int
