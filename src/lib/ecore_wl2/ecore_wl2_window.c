@@ -1263,3 +1263,28 @@ ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, const int *ro
    window->wm_rot.count = count;
    window->wm_rot.available_rots = rots;
 }
+
+EAPI Eina_Bool
+ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int count)
+{
+   int i = 0;
+   int *val = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
+
+   *count = window->wm_rot.count;
+
+   if (window->wm_rot.count >= 1)
+     {
+        val = calloc(window->wm_rot.count, sizeof(int));
+        if (!val) return EINA_FALSE;
+
+        for (; i < window->wm_rot.count; i++)
+          val[i] = ((int *)window->wm_rot.available_rots)[i];
+
+        *rots = val;
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}

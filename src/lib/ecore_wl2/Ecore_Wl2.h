@@ -1054,6 +1054,20 @@ EAPI int ecore_wl2_window_preferred_rotation_get(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, const int *rots, unsigned int count);
 
 /**
+ * Get a windows available rotations
+ *
+ * @param window
+ * @param rots
+ * @param count
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int count);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
