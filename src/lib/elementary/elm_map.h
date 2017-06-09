@@ -9,7 +9,7 @@
  * @image latex img/widget/map/preview-00.eps
  *
  * This is a widget specifically for displaying a map. It uses basically
- * OpenStreetMap provider http://www.openstreetmap.org/,
+ * OpenStreetMap provider http://www.openstreetmap.org/
  * but custom providers can be added.
  *
  * It supports some basic but yet nice features:
