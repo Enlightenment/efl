@@ -3859,8 +3859,6 @@ EFL_DEPEND_PKG([ECORE_DRM2], [DRM], [gbm])
 EFL_ADD_LIBS([ECORE_DRM2], [-lm])
 EFL_ADD_LIBS([ECORE_DRM2], [-ldl])
 
-AC_CHECK_LIB(drm, drmModeAtomicCommit, AC_DEFINE(HAVE_ATOMIC_DRM, [], [Atomic modeset supported]))
-
 EFL_EVAL_PKGS([ECORE_DRM2])
 
 ### Checks for header files
