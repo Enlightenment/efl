@@ -1030,6 +1030,18 @@ EAPI Eina_Bool ecore_wl2_window_rotation_app_get(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_preferred_rotation_set(Ecore_Wl2_Window *window, int rot);
 
 /**
+ * Get preferred rotation for a given window
+ *
+ * @param window
+ *
+ * @return Given windows preferred rotation
+ *
+ * @ingroup Ecore_Wl2_Window
+ * @since 1.20
+ */
+EAPI int ecore_wl2_window_preferred_rotation_get(Ecore_Wl2_Window *window);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
