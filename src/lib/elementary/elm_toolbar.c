@@ -1021,7 +1021,7 @@ _internal_elm_toolbar_icon_size_get(Evas_Object *obj)
        (wd->resize_obj, "icon_size");
 
    if (icon_size)
-     return (int)(atoi(icon_size) * elm_widget_scale_get(obj) * elm_config_scale_get()
+     return (int)(atoi(icon_size) * efl_ui_scale_get(obj) * elm_config_scale_get()
             / edje_object_base_scale_get(wd->resize_obj));
 
    return _elm_config->icon_size;
@@ -1565,7 +1565,7 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
    if (sd->priv_icon_size) sd->icon_size = sd->priv_icon_size;
    else sd->icon_size = sd->theme_icon_size;
 
-   scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+   scale = (efl_ui_scale_get(obj) * elm_config_scale_get());
    EINA_INLIST_FOREACH(sd->items, it)
      _item_theme_hook(obj, it, scale, sd->icon_size);
 
@@ -1693,7 +1693,7 @@ _elm_toolbar_item_elm_widget_item_part_content_set(Eo *eo_item EINA_UNUSED, Elm_
    if (item->object)
      elm_widget_sub_object_add(obj, item->object);
 
-   scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+   scale = (efl_ui_scale_get(obj) * elm_config_scale_get());
    _item_theme_hook(obj, item, scale, sd->icon_size);
 }
 
@@ -1727,7 +1727,7 @@ _elm_toolbar_item_elm_widget_item_part_content_unset(Eo *eo_item EINA_UNUSED, El
    _elm_widget_sub_object_redirect_to_top(obj, item->object);
    o = item->object;
    item->object = NULL;
-   scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+   scale = (efl_ui_scale_get(obj) * elm_config_scale_get());
    _item_theme_hook(obj, item, scale, sd->icon_size);
 
    return o;
@@ -3132,7 +3132,7 @@ _elm_toolbar_item_append(Eo *obj, Elm_Toolbar_Data *sd, const char *icon, const 
 
    it = _item_new(obj, icon, label, func, data);
    if (!it) return NULL;
-   scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+   scale = (efl_ui_scale_get(obj) * elm_config_scale_get());
 
    prev_list = evas_object_box_children_get(sd->bx);
 
@@ -3158,7 +3158,7 @@ _elm_toolbar_item_prepend(Eo *obj, Elm_Toolbar_Data *sd, const char *icon, const
 
    it = _item_new(obj, icon, label, func, data);
    if (!it) return NULL;
-   scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+   scale = (efl_ui_scale_get(obj) * elm_config_scale_get());
 
    prev_list = evas_object_box_children_get(sd->bx);
 
@@ -3187,7 +3187,7 @@ _elm_toolbar_item_insert_before(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *
 
    it = _item_new(obj, icon, label, func, data);
    if (!it) return NULL;
-   scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+   scale = (efl_ui_scale_get(obj) * elm_config_scale_get());
 
    prev_list = evas_object_box_children_get(sd->bx);
 
@@ -3216,7 +3216,7 @@ _elm_toolbar_item_insert_after(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *e
 
    it = _item_new(obj, icon, label, func, data);
    if (!it) return NULL;
-   scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+   scale = (efl_ui_scale_get(obj) * elm_config_scale_get());
 
    prev_list = evas_object_box_children_get(sd->bx);
 
@@ -3462,7 +3462,7 @@ _elm_toolbar_item_separator_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *
 
    if (item->separator == separator) return;
    item->separator = separator;
-   scale = (elm_widget_scale_get(obj) * elm_config_scale_get());
+   scale = (efl_ui_scale_get(obj) * elm_config_scale_get());
    _item_theme_hook(obj, item, scale, sd->icon_size);
    evas_object_size_hint_min_set(VIEW(item), -1, -1);
    if (separator) sd->separator_count++;

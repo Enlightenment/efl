@@ -215,7 +215,7 @@ _item_cache_add(Elm_Gen_Item *it)
    edje_object_mirrored_set(VIEW(it),
                             elm_widget_mirrored_get(WIDGET(it)));
    edje_object_scale_set(VIEW(it),
-                         elm_widget_scale_get(WIDGET(it))
+                         efl_ui_scale_get(WIDGET(it))
                          * elm_config_scale_get());
 
    evas_object_hide(itc->base_view);
@@ -1122,7 +1122,7 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
      }
 
    edje_object_mirrored_set(view, elm_widget_mirrored_get(WIDGET(it)));
-   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it)) *
+   edje_object_scale_set(view, efl_ui_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
    evas_object_stack_below(view, sd->stack);
 }
@@ -1136,7 +1136,7 @@ _view_create(Elm_Gen_Item *it, const char *style)
    Evas_Object *view = edje_object_add(evas_object_evas_get(WIDGET(it)));
    evas_object_smart_member_add(view, GG_IT(it)->wsd->pan_obj);
    elm_widget_sub_object_add(WIDGET(it), view);
-   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it)) *
+   edje_object_scale_set(view, efl_ui_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
 
    _view_style_update(it, view, style);

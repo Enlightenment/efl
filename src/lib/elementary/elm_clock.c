@@ -379,7 +379,7 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
           }
 
         edje_object_scale_set
-          (wd->resize_obj, elm_widget_scale_get(obj) *
+          (wd->resize_obj, efl_ui_scale_get(obj) *
           elm_config_scale_get());
 
         for (i = 0; i < 6; i++)
@@ -392,7 +392,7 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
              elm_widget_theme_object_set
                (obj, sd->digit[i], "clock", "flipdigit", style);
              edje_object_scale_set
-               (sd->digit[i], elm_widget_scale_get(obj) *
+               (sd->digit[i], efl_ui_scale_get(obj) *
                elm_config_scale_get());
 
              if ((sd->edit) && (sd->digedit & (1 << i)))
@@ -426,7 +426,7 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
                edje_object_add(evas_object_evas_get(wd->resize_obj));
              elm_widget_theme_object_set
                (obj, sd->am_pm_obj, "clock", "flipampm", style);
-             edje_object_scale_set(sd->am_pm_obj, elm_widget_scale_get(obj) *
+             edje_object_scale_set(sd->am_pm_obj, efl_ui_scale_get(obj) *
                                    _elm_config->scale);
              if (sd->edit)
                edje_object_signal_emit

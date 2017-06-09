@@ -293,7 +293,7 @@ _elm_menu_elm_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
              elm_wdg_item_disable(eo_item);
              /* SEOZ
              edje_object_scale_set
-               (VIEW(item), elm_widget_scale_get(obj) *
+               (VIEW(item), efl_ui_scale_get(obj) *
                elm_config_scale_get());
                */
           }

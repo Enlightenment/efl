@@ -925,7 +925,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    edje_object_scale_set
      (wd->resize_obj,
-     elm_widget_scale_get(obj) * elm_config_scale_get());
+     efl_ui_scale_get(obj) * elm_config_scale_get());
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 

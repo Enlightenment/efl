@@ -751,7 +751,7 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
    if (sd->no_scale)
      _efl_ui_image_internal_scale_set(obj, sd, 1.0);
    else
-     _efl_ui_image_internal_scale_set(obj, sd, elm_widget_scale_get(obj) * elm_config_scale_get());
+     _efl_ui_image_internal_scale_set(obj, sd, efl_ui_scale_get(obj) * elm_config_scale_get());
 
    ts = sd->scale;
    sd->scale = 1.0;

@@ -234,7 +234,7 @@ _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *s
         elm_widget_theme_object_set
           (obj, VIEW(it), "segment_control", "item",
           elm_widget_style_get(obj));
-        edje_object_scale_set(VIEW(it), elm_widget_scale_get(WIDGET(it)) *
+        edje_object_scale_set(VIEW(it), efl_ui_scale_get(WIDGET(it)) *
                               elm_config_scale_get());
         edje_object_mirrored_set(VIEW(it), rtl);
      }
@@ -597,7 +597,7 @@ _elm_segment_control_item_efl_object_constructor(Eo *obj, Elm_Segment_Control_It
    parent = efl_parent_get(obj);
 
    VIEW(it) = edje_object_add(evas_object_evas_get(parent));
-   edje_object_scale_set(VIEW(it),elm_widget_scale_get(WIDGET(it)) *
+   edje_object_scale_set(VIEW(it),efl_ui_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
    evas_object_smart_member_add(VIEW(it), parent);
 

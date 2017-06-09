@@ -729,8 +729,6 @@ EAPI int              elm_widget_scroll_hold_get(const Evas_Object *obj);
 EAPI void             elm_widget_scroll_freeze_push(Evas_Object *obj);
 EAPI void             elm_widget_scroll_freeze_pop(Evas_Object *obj);
 EAPI int              elm_widget_scroll_freeze_get(const Evas_Object *obj);
-EAPI void             elm_widget_scale_set(Evas_Object *obj, double scale);
-EAPI double           elm_widget_scale_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_mirrored_get(const Evas_Object *obj);
 EAPI void             elm_widget_mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
 EAPI Eina_Bool        elm_widget_mirrored_automatic_get(const Evas_Object *obj);

@@ -30,7 +30,9 @@ struct Elm.Tooltip; [[Elementary tooltip]]
 struct Elm.Cursor; [[Elementary cursor]]
 struct @extern Elm.Theme; [[Elementary theme]]
 
-abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Interface.Atspi_Component, Efl.Ui.Focus.User, Efl.Ui.Focus.Object)
+abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
+                     Elm.Interface.Atspi_Component, Efl.Ui.Focus.User,
+                     Efl.Ui.Focus.Object, Efl.Ui.Base)
 {
    [[Elementary widget abstract class]]
    legacy_prefix: elm_widget;
@@ -118,12 +120,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
          }
          values {
             style: string; [[Style name]]
-         }
-      }
-      @property scale {
-      	 [[Scale factor]]
-         values {
-            scale: double; [[Scale factor]]
          }
       }
       @property focus_custom_chain {
@@ -836,6 +832,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible, Elm.Inter
       Efl.Ui.Focus.User.parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
       Efl.Ui.Focus.Object.focus { set; }
+      Efl.Ui.Base.scale { get; set; }
    }
    events {
       moved; [[Called when widget moved]]

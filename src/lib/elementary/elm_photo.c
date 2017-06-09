@@ -37,7 +37,7 @@ _sizing_eval(Evas_Object *obj)
 
    if (sd->size <= 0) return;
 
-   scale = (sd->size * elm_widget_scale_get(obj) * elm_config_scale_get());
+   scale = (sd->size * efl_ui_scale_get(obj) * elm_config_scale_get());
 
    evas_object_size_hint_min_set(sd->icon, scale, scale);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -65,10 +65,10 @@ _elm_photo_elm_widget_theme_apply(Eo *obj, Elm_Photo_Data *sd)
      (obj, wd->resize_obj, "photo", "base",
      elm_widget_style_get(obj));
 
-   elm_object_scale_set(sd->icon, elm_widget_scale_get(obj));
+   elm_object_scale_set(sd->icon, efl_ui_scale_get(obj));
 
    edje_object_scale_set(wd->resize_obj,
-                         elm_widget_scale_get(obj) * elm_config_scale_get());
+                         efl_ui_scale_get(obj) * elm_config_scale_get());
    _sizing_eval(obj);
 
    return int_ret;
@@ -260,7 +260,7 @@ _elm_photo_efl_canvas_group_group_add(Eo *obj, Elm_Photo_Data *priv)
    elm_image_fill_outside_set(priv->icon, !priv->fill_inside);
    elm_image_prescale_set(priv->icon, 0);
 
-   elm_object_scale_set(priv->icon, elm_widget_scale_get(obj));
+   elm_object_scale_set(priv->icon, efl_ui_scale_get(obj));
 
    evas_object_event_callback_add
      (priv->icon, EVAS_CALLBACK_MOUSE_UP, _mouse_up, obj);

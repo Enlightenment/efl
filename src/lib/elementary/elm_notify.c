@@ -153,7 +153,7 @@ _elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
    if (sd->block_events) _block_events_theme_apply(obj);
 
    edje_object_scale_set
-     (sd->notify, elm_widget_scale_get(obj) * elm_config_scale_get());
+     (sd->notify, efl_ui_scale_get(obj) * elm_config_scale_get());
 
    _sizing_eval(obj);
 

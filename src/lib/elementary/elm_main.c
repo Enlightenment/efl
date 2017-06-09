@@ -1434,14 +1434,14 @@ elm_object_scale_set(Evas_Object *obj,
                      double       scale)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_scale_set(obj, scale);
+   efl_ui_scale_set(obj, scale);
 }
 
 EAPI double
 elm_object_scale_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0.0);
-   return elm_widget_scale_get(obj);
+   return efl_ui_scale_get(obj);
 }
 
 EAPI void

@@ -547,7 +547,7 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
      }
 
    edje_object_mirrored_set(view, elm_widget_mirrored_get(WIDGET(it)));
-   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it))
+   edje_object_scale_set(view, efl_ui_scale_get(WIDGET(it))
                          * elm_config_scale_get());
 
    stacking_even = edje_object_data_get(view, "stacking_even");
@@ -568,7 +568,7 @@ _view_create(Elm_Gen_Item *it, const char *style)
    Evas_Object *view = edje_object_add(evas_object_evas_get(WIDGET(it)));
    evas_object_smart_member_add(view, it->item->wsd->pan_obj);
    elm_widget_sub_object_add(WIDGET(it), view);
-   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it)) *
+   edje_object_scale_set(view, efl_ui_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
 
    _view_style_update(it, view, style);
@@ -1384,7 +1384,7 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    if (it->item->decorate_all_item_realized) return;
 
    it->deco_all_view = edje_object_add(evas_object_evas_get(WIDGET(it)));
-   edje_object_scale_set(it->deco_all_view, elm_widget_scale_get(WIDGET(it)) *
+   edje_object_scale_set(it->deco_all_view, efl_ui_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
    evas_object_smart_member_add(it->deco_all_view, sd->pan_obj);
    elm_widget_sub_object_add(WIDGET(it), it->deco_all_view);
@@ -1621,7 +1621,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    edje_object_mirrored_set(itc->base_view,
                             elm_widget_mirrored_get(WIDGET(it)));
    edje_object_scale_set(itc->base_view,
-                         elm_widget_scale_get(WIDGET(it))
+                         efl_ui_scale_get(WIDGET(it))
                          * elm_config_scale_get());
 
    it->spacer = NULL;
