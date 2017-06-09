@@ -1288,3 +1288,22 @@ ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, u
 
    return EINA_FALSE;
 }
+
+EAPI void
+ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot, int w, int h, Eina_Bool resize)
+{
+   Ecore_Wl2_Event_Window_Rotation_Change_Prepare *ev;
+
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Prepare));
+   if (!ev) return;
+
+   ev->window = window;
+   ev->rotation = rot;
+   ev->w = w;
+   ev->h = h;
+   ev->resize = resize;
+
+   ecore_event_add(ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE, ev, NULL, NULL);
+}

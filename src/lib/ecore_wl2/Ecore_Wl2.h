@@ -276,6 +276,14 @@ typedef struct _Ecore_Wl2_Event_Output_Transform
    int transform, old_transform;
 } Ecore_Wl2_Event_Output_Transform;
 
+typedef struct _Ecore_Wl2_Event_Window_Rotation
+{
+   Ecore_Wl2_Window *window;
+   int rotation, w, h;
+   Eina_Bool resize : 1;
+} Ecore_Wl2_Event_Window_Rotation;
+typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Prepare;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -317,6 +325,7 @@ EAPI extern int ECORE_WL2_EVENT_SEAT_KEYMAP_CHANGED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_SELECTION; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_OUTPUT_TRANSFORM; /** @since 1.20 */
+EAPI extern int ECORE_Wl2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE; /** @since 1.20 */
 
 /**
  * @file
@@ -1066,6 +1075,8 @@ EAPI void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, con
  * @since 1.20
  */
 EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int count);
+
+EAPI void ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot, int w, int h, Eina_Bool resize);
 
 /**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
