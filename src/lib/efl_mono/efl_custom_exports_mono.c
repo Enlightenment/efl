@@ -32,6 +32,12 @@ EAPI void efl_mono_native_free(void *ptr)
    free(ptr);
 }
 
+EAPI void efl_mono_native_free_ref(void **ptr)
+{
+   if (!ptr) return;
+   free(*ptr);
+}
+
 EAPI void *efl_mono_native_alloc_copy(const void *val, unsigned int size)
 {
     if (!val) return NULL;

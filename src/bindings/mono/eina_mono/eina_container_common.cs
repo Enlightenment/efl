@@ -6,6 +6,7 @@ using eina.Callbacks;
 using static eina.HashNativeFunctions;
 using static eina.InarrayNativeFunctions;
 using static eina.NativeCustomExportFunctions;
+using static eina.ContainerCommonData;
 
 namespace eina {
 
@@ -16,6 +17,8 @@ public static class NativeCustomExportFunctions
 {
     [DllImport("eflcustomexportsmono")] public static extern void
         efl_mono_native_free(IntPtr ptr);
+    [DllImport("eflcustomexportsmono")] public static extern void
+        efl_mono_native_free_ref(IntPtr ptr);
     [DllImport("eflcustomexportsmono")] public static extern IntPtr
         efl_mono_native_alloc_copy(IntPtr val, uint size);
     [DllImport("eflcustomexportsmono")] public static extern IntPtr
@@ -30,6 +33,11 @@ public static class NativeCustomExportFunctions
         efl_mono_native_free_addr_get();
     [DllImport("eflcustomexportsmono")] public static extern IntPtr
         efl_mono_native_efl_unref_addr_get();
+}
+
+public static class ContainerCommonData
+{
+    public static IBaseElementTraits<IntPtr> intPtrTraits = null;
 }
 
 [StructLayout(LayoutKind.Sequential)]
@@ -58,9 +66,13 @@ public interface IBaseElementTraits<T>
 {
     IntPtr ManagedToNativeAlloc(T man);
     IntPtr ManagedToNativeAllocRef(T man, bool refs = false);
+    IntPtr ManagedToNativeAllocInplace(T man);
     void NativeFree(IntPtr nat);
     void NativeFreeRef(IntPtr nat, bool unrefs = false);
+    void NativeFreeInplace(IntPtr nat);
+    void ResidueFreeInplace(IntPtr nat);
     T NativeToManaged(IntPtr nat);
+    T NativeToManagedInplace(IntPtr nat);
     IntPtr EinaCompareCb();
     IntPtr EinaFreeCb();
     IntPtr EinaHashNew();
@@ -69,6 +81,13 @@ public interface IBaseElementTraits<T>
 
 public class StringElementTraits<T> : IBaseElementTraits<T>
 {
+
+    public StringElementTraits()
+    {
+        if (intPtrTraits == null)
+            intPtrTraits = TraitFunctions.GetTypeTraits<IntPtr>();
+    }
+
     public IntPtr ManagedToNativeAlloc(T man)
     {
         return efl_mono_native_strdup((string)(object)man);
@@ -78,6 +97,11 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
     {
         // Keep alloc on C# ?
         return ManagedToNativeAlloc(man);
+    }
+
+    public IntPtr ManagedToNativeAllocInplace(T man)
+    {
+        return intPtrTraits.ManagedToNativeAlloc(ManagedToNativeAlloc(man));
     }
 
     public void NativeFree(IntPtr nat)
@@ -91,11 +115,28 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
         NativeFree(nat);
     }
 
+    public void NativeFreeInplace(IntPtr nat)
+    {
+        efl_mono_native_free_ref(nat);
+    }
+
+    public void ResidueFreeInplace(IntPtr nat)
+    {
+        intPtrTraits.NativeFree(nat);
+    }
+
     public T NativeToManaged(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
             return default(T);
         return (T)(object)Marshal.PtrToStringAuto(nat);
+    }
+
+    public T NativeToManagedInplace(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+            return default(T);
+        return NativeToManaged(intPtrTraits.NativeToManaged(nat));
     }
 
     public IntPtr EinaCompareCb()
@@ -115,14 +156,13 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
 
     public IntPtr EinaInarrayNew(uint step)
     {
-        return eina_inarray_new(Marshal.SizeOf<IntPtr>(), step);
+        return eina_inarray_new((uint)Marshal.SizeOf<IntPtr>(), step);
     }
 }
 
 public class EflObjectElementTraits<T> : IBaseElementTraits<T>
 {
     private System.Type concreteType = null;
-    private static IBaseElementTraits<IntPtr> intPtrTraits = null;
 
     public EflObjectElementTraits(System.Type concrete)
     {
@@ -146,6 +186,11 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
         return intPtrTraits.ManagedToNativeAlloc(h);
     }
 
+    public IntPtr ManagedToNativeAllocInplace(T man)
+    {
+        return intPtrTraits.ManagedToNativeAlloc(ManagedToNativeAlloc(man));
+    }
+
     public void NativeFree(IntPtr nat)
     {
         if (nat != IntPtr.Zero)
@@ -159,11 +204,28 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
         intPtrTraits.NativeFree(nat);
     }
 
+    public void NativeFreeInplace(IntPtr nat)
+    {
+        NativeFree(intPtrTraits.NativeToManaged(nat));
+    }
+
+    public void ResidueFreeInplace(IntPtr nat)
+    {
+        intPtrTraits.NativeFree(nat);
+    }
+
     public T NativeToManaged(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
             return default(T);
         return (T) Activator.CreateInstance(concreteType, efl.eo.Globals.efl_ref(nat));
+    }
+
+    public T NativeToManagedInplace(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+            return default(T);
+        return NativeToManaged(intPtrTraits.NativeToManaged(nat));
     }
 
     public IntPtr EinaCompareCb()
@@ -183,13 +245,22 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
 
     public IntPtr EinaInarrayNew(uint step)
     {
-        return eina_inarray_new(Marshal.SizeOf<IntPtr>(), step);
+        return eina_inarray_new((uint)Marshal.SizeOf<IntPtr>(), step);
     }
 }
 
 public abstract class PrimitiveElementTraits<T>
 {
     private Eina_Compare_Cb dlgt = null;
+
+    public PrimitiveElementTraits()
+    {
+        if (intPtrTraits == null)
+            if (typeof(T) == typeof(IntPtr)) // avoid infinite recursion
+                intPtrTraits = (IBaseElementTraits<IntPtr>)this;
+            else
+                intPtrTraits = TraitFunctions.GetTypeTraits<IntPtr>();
+    }
 
     public IntPtr ManagedToNativeAlloc(T man)
     {
@@ -200,9 +271,24 @@ public abstract class PrimitiveElementTraits<T>
         return nat;
     }
 
+    public IntPtr ManagedToNativeAllocInplace(T man)
+    {
+        return ManagedToNativeAlloc(man);
+    }
+
     public void NativeFree(IntPtr nat)
     {
         efl_mono_native_free(nat);
+    }
+
+    public void NativeFreeInplace(IntPtr nat)
+    {
+        // Do nothing
+    }
+
+    public void ResidueFreeInplace(IntPtr nat)
+    {
+        NativeFree(nat);
     }
 
     public T NativeToManaged(IntPtr nat)
@@ -214,6 +300,11 @@ public abstract class PrimitiveElementTraits<T>
         }
         var w = Marshal.PtrToStructure<eina.ConvertWrapper<T> >(nat);
         return w.Val;
+    }
+
+    public T NativeToManagedInplace(IntPtr nat)
+    {
+        return NativeToManaged(nat);
     }
 
     private int PrimitiveCompareCb(IntPtr ptr1, IntPtr ptr2)
@@ -237,7 +328,7 @@ public abstract class PrimitiveElementTraits<T>
 
     public IntPtr EinaInarrayNew(uint step)
     {
-        return eina_inarray_new(Marshal.SizeOf<T>(), step);
+        return eina_inarray_new((uint)Marshal.SizeOf<T>(), step);
     }
 }
 
@@ -384,6 +475,11 @@ public static class TraitFunctions
         return GetTypeTraits<T>().ManagedToNativeAllocRef(man, refs);
     }
 
+    public static IntPtr ManagedToNativeAllocInplace<T>(T man)
+    {
+        return GetTypeTraits<T>().ManagedToNativeAllocInplace(man);
+    }
+
     public static void NativeFree<T>(IntPtr nat)
     {
         GetTypeTraits<T>().NativeFree(nat);
@@ -394,9 +490,24 @@ public static class TraitFunctions
         GetTypeTraits<T>().NativeFreeRef(nat, unrefs);
     }
 
+    public static void NativeFreeInplace<T>(IntPtr nat)
+    {
+        GetTypeTraits<T>().NativeFreeInplace(nat);
+    }
+
+    public static void ResidueFreeInplace<T>(IntPtr nat)
+    {
+        GetTypeTraits<T>().ResidueFreeInplace(nat);
+    }
+
     public static T NativeToManaged<T>(IntPtr nat)
     {
         return GetTypeTraits<T>().NativeToManaged(nat);
+    }
+
+    public static T NativeToManagedInplace<T>(IntPtr nat)
+    {
+        return GetTypeTraits<T>().NativeToManagedInplace(nat);
     }
 
     // Misc //
