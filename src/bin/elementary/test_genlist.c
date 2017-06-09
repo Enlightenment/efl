@@ -203,9 +203,6 @@ Evas_Object *gl_content_full_get(void *data EINA_UNUSED, Evas_Object *obj, const
    elm_box_pack_end(bx, ck);
 
    elm_layout_content_set(fr, NULL, bx);
-   evas_object_size_hint_min_set(fr,
-                                 ELM_SCALE_SIZE(100),
-                                 ELM_SCALE_SIZE(100));
 
    return fr;
 }

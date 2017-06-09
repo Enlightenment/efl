@@ -364,6 +364,24 @@ _item_text_realize(Elm_Gen_Item *it,
 }
 
 static void
+_widget_calculate_recursive(Eo *obj)
+{
+   Elm_Widget_Smart_Data *pd = NULL;
+   Eina_List *l;
+   Evas_Object *child;
+
+   if (!efl_isa(obj, ELM_WIDGET_CLASS)) return;
+
+   pd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
+   if (!pd) return;
+
+   EINA_LIST_FOREACH(pd->subobjs, l, child)
+     _widget_calculate_recursive(child);
+
+   efl_canvas_group_calculate(obj);
+}
+
+static void
 _item_content_realize(Elm_Gen_Item *it,
                       Evas_Object *target,
                       Eina_List **contents,
@@ -409,18 +427,14 @@ _item_content_realize(Elm_Gen_Item *it,
 
         if (content != old)
           {
-             // FIXME: cause elm_layout sizing eval is delayed by smart calc,
-             // genlist cannot get actual min size of edje.
-             // This is workaround code to set min size directly.
-             if (efl_class_get(content) == ELM_LAYOUT_CLASS)
+             // FIXME: Genlist item doesn't update its size when the size of
+             // content is changed, so deferred calculation for content should
+             // be performed before realization.
+             if (efl_isa(content, ELM_WIDGET_CLASS))
                {
-                  Evas_Coord old_w, old_h, minw = 0, minh = 0;
-                  efl_gfx_size_hint_combined_min_get(content, &old_w, &old_h);
-                  edje_object_size_min_calc(elm_layout_edje_get(content), &minw, &minh);
-
-                  if (old_w > minw) minw = old_w;
-                  if (old_h > minh) minw = old_h;
-                  evas_object_size_hint_min_set(content, minw, minh);
+                  ELM_WIDGET_DATA_GET_OR_RETURN(content, wd);
+                  if (efl_canvas_group_need_recalculate_get(wd->resize_obj))
+                    _widget_calculate_recursive(content);
                }
 
              if (!edje_object_part_swallow(target, key, content))
