@@ -1255,3 +1255,11 @@ ecore_wl2_window_preferred_rotation_get(Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, 0);
    return window->wm_rot.preferred_rot;
 }
+
+EAPI void
+ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, const int *rots, unsigned int count)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   window->wm_rot.count = count;
+   window->wm_rot.available_rots = rots;
+}

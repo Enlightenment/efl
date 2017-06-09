@@ -1042,6 +1042,18 @@ EAPI void ecore_wl2_window_preferred_rotation_set(Ecore_Wl2_Window *window, int 
 EAPI int ecore_wl2_window_preferred_rotation_get(Ecore_Wl2_Window *window);
 
 /**
+ * Set a windows available rotations
+ *
+ * @param window
+ * @param rots
+ * @param count
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, const int *rots, unsigned int count);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
