@@ -284,6 +284,7 @@ typedef struct _Ecore_Wl2_Event_Window_Rotation
 } Ecore_Wl2_Event_Window_Rotation;
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Prepare;
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Prepare_Done;
+typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Request;
 
 typedef enum _Ecore_Wl2_Window_Type
 {
@@ -328,6 +329,7 @@ EAPI extern int ECORE_WL2_EVENT_SEAT_SELECTION; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_OUTPUT_TRANSFORM; /** @since 1.20 */
 EAPI extern int ECORE_Wl2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE; /** @since 1.20 */
 EAPI extern int ECORE_Wl2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE; /** @since 1.20 */
+EAPI extern int ECORE_Wl2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST; /** @since 1.20 */
 
 /**
  * @file
@@ -1080,6 +1082,7 @@ EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window
 
 EAPI void ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot, int w, int h, Eina_Bool resize);
 EAPI void ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int rot);
+EAPI void ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window, int rot);
 
 /**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions

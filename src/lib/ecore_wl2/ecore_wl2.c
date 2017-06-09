@@ -42,6 +42,7 @@ EAPI int ECORE_WL2_EVENT_SEAT_SELECTION = 0;
 EAPI int ECORE_WL2_EVENT_OUTPUT_TRANSFORM = 0;
 EAPI int ECORE_Wl2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE = 0;
 EAPI int ECORE_Wl2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE = 0;
+EAPI int ECORE_Wl2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST = 0;
 
 EAPI int _ecore_wl2_event_window_www = -1;
 EAPI int _ecore_wl2_event_window_www_drag = -1;
@@ -114,6 +115,7 @@ ecore_wl2_init(void)
         ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE = ecore_event_type_new();
         ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE =
           ecore_event_type_new();
+        ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST = ecore_event_type_new();
      }
    if (!no_session_recovery)
      no_session_recovery = !!getenv("EFL_NO_WAYLAND_SESSION_RECOVERY");
@@ -173,7 +175,8 @@ ecore_wl2_shutdown(void)
                           ECORE_WL2_EVENT_SEAT_SELECTION,
                           ECORE_WL2_EVENT_OUTPUT_TRANSFORM,
                           ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE,
-                          ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE);
+                          ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE,
+                          ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST);
 
    /* shutdown Ecore_Event */
    ecore_event_shutdown();
