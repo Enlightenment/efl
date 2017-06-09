@@ -1,7 +1,28 @@
+enum Efl.Ui.Scrollbar.Mode
+{
+   auto = 0, [[Visible if necessary]]
+   on, [[Always visible]]
+   off, [[Always invisible]]
+   last [[]]
+}
+
 interface Efl.Ui.Scrollable ()
 {
    [[Efl UI scrollable interface]]
    event_prefix: efl_ui;
+   methods {
+      @property scrollbar_mode {
+         [[Scrollbar visibility policy]]
+         set {
+         }
+         get {
+         }
+         values {
+            hbar: Efl.Ui.Scrollbar.Mode; [[Horizontal scrollbar]]
+            vbar: Efl.Ui.Scrollbar.Mode; [[Vertical scrollbar]]
+         }
+      }
+   }
    events {
       scroll; [[Called when scroll operation started]]
       scroll,anim,start; [[Called when scroll animation started]]

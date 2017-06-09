@@ -14,6 +14,17 @@ class Efl.Ui.Scroll.Manager (Efl.Canvas.Group,
             content: Efl.Gfx @nullable; [[content object]]
          }
       }
+      @property scrollbar_mode {
+         [[Scrollbar visibility policy]]
+         set {
+         }
+         //get {
+         //}
+         values {
+            hbar: Efl.Ui.Scrollbar.Mode; [[Horizontal scrollbar]]
+            vbar: Efl.Ui.Scrollbar.Mode; [[Vertical scrollbar]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;

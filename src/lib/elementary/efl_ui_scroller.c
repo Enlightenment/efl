@@ -15,6 +15,15 @@
 
 
 EOLIAN static void
+_efl_ui_scroller_efl_ui_scrollable_scrollbar_mode_set(Eo *obj,
+                                                      Efl_Ui_Scroller_Data *sd,
+                                                      Efl_Ui_Scrollbar_Mode hmode,
+                                                      Efl_Ui_Scrollbar_Mode vmode)
+{
+   efl_ui_scroll_manager_scrollbar_mode_set(sd->smanager, hmode, vmode);
+}
+
+EOLIAN static void
 _efl_ui_scroller_efl_gfx_size_set(Eo *obj,
                                   Efl_Ui_Scroller_Data *sd,
                                   Evas_Coord w,

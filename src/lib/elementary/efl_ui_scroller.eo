@@ -9,5 +9,6 @@ class Efl.Ui.Scroller (Elm.Layout, Efl.Ui.Scrollable)
       Efl.Gfx.size { set; }
       Efl.Gfx.position { set; }
       Efl.Container.content { set; }
+      Efl.Ui.Scrollable.scrollbar_mode { set; }
    }
 }
