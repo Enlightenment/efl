@@ -86,6 +86,20 @@ my_entry_bt_7(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
 }
 
 static void
+my_entry_bt_8(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_object_focus_set(en, EINA_TRUE);
+}
+
+static void
+my_entry_bt_9(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_object_focus_set(en, EINA_FALSE);
+}
+
+static void
 changed_cb1(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ck = data;
@@ -112,6 +126,18 @@ entry_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
    const char *event = data;
    printf("Entry '%s' callback called\n", event);
    
+}
+
+static void
+entry_focused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("Entry 'focused' callback called\n");
+}
+
+static void
+entry_unfocused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("Entry 'unfocused' callback called\n");
 }
 
 void
@@ -166,6 +192,8 @@ test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(en, "changed", entry_changed_cb, "changed");
    evas_object_smart_callback_add(en, "changed,user", entry_changed_cb, "changed,user");
+   evas_object_smart_callback_add(en, "focused", entry_focused_cb, NULL);
+   evas_object_smart_callback_add(en, "unfocused", entry_unfocused_cb, NULL);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
@@ -232,6 +260,24 @@ test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Edit");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_7, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   elm_object_focus_allow_set(bt, EINA_FALSE);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Focus");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_8, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   elm_object_focus_allow_set(bt, EINA_FALSE);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Unfocus");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_9, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);

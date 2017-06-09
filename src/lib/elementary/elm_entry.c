@@ -1228,19 +1228,17 @@ _return_key_enabled_check(Evas_Object *obj)
    elm_entry_input_panel_return_key_disabled_set(obj, return_key_disabled);
 }
 
-EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+static void
+_elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Object *top;
    Eina_Bool top_is_win = EINA_FALSE;
-
-   if (!sd->editable) return EINA_FALSE;
 
    top = elm_widget_top_get(obj);
    if (top && efl_isa(top, EFL_UI_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
-   if (elm_widget_focus_get(obj))
+   if (elm_widget_focus_get(obj) && sd->editable)
      {
         evas_object_focus_set(sd->entry_edje, EINA_TRUE);
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
@@ -1282,6 +1280,12 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *ite
           }
         edje_object_signal_emit(sd->scr_edje, "validation,default", "elm");
      }
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+{
+   _elm_entry_focus_update(obj, sd);
 
    return EINA_TRUE;
 }
@@ -4240,6 +4244,7 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
    if (sd->editable == editable) return;
    sd->editable = editable;
    elm_obj_widget_theme_apply(obj);
+   _elm_entry_focus_update(obj, sd);
 
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
