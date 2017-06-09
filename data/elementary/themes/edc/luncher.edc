@@ -456,6 +456,18 @@ group { name: "e/gadget/luncher/icon";
 }
 
 group { name: "e/gadget/luncher/preview"; 
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 1)) {
+            new size = getarg(2);
+
+            custom_state(PART:"icon", "default", 0.0);
+            set_state_val(PART:"icon", STATE_MIN, size, size);
+            set_state_val(PART:"icon", STATE_MAX, size, size);
+            set_state(PART:"icon", "custom", 0.0);
+         }
+      }
+   }
    parts {
       part { name: "base"; type: RECT;
          description { state: "default";
@@ -559,8 +571,8 @@ group { name: "e/gadget/luncher/preview";
          signal: "e,state,icon,preview"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "border";
-         target: "e.swallow.title"; 
-         target: "icon";
+         target: "e.swallow.title";
+         target: "icon"; 
       }
    }
 }
