@@ -133,8 +133,21 @@ my_bt_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    Evas_Object *ph = data;
    const char *file = event_info;
 
-   if (file)
+   if (file && !eina_str_has_extension(file, ".edj"))
      elm_photocam_file_set(ph, file);
+   else if (file)
+     {
+        Eina_List *grps = edje_file_collection_list(file);
+
+        if (eina_list_count(grps) > 0)
+          {
+             efl_file_set(ph, file, eina_list_nth(grps, 0));
+             printf("Successfully set the edje file: %s, group: %s\n", file, eina_list_nth(grps, 0));
+          }
+        else printf("Failed to set edje file\n");
+
+        eina_list_free(grps);
+     }
 }
 
 static void

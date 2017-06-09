@@ -120,12 +120,12 @@ struct _Efl_Ui_Image_Zoomable_Data
    int          no_smooth;
    int          preload_num;
 
-   const char           *stdicon;
-   Evas_Object          *icon_edje;
    struct {
       int       requested_size;
       Eina_Bool use : 1;
    } freedesktop;
+   Evas_Object          *edje;
+   const char           *stdicon;
 
    Ecore_Timer          *anim_timer;
    double                frame_duration;

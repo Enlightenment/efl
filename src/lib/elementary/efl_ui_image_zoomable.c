@@ -87,6 +87,7 @@ static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_zoom(Evas_Object *obj, const char *params);
 static void _efl_ui_image_zoomable_remote_copier_cancel(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd);
 static Eina_Bool _internal_efl_ui_image_zoomable_icon_set(Evas_Object *obj, const char *name, Eina_Bool *fdo, Eina_Bool resize);
+static void _min_obj_size_get(Evas_Object *o, int *w, int *h);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -1496,7 +1497,7 @@ _efl_ui_image_zoomable_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Zoomable
    Efl_Ui_Image_Zoomable_Grid *g;
 
    ecore_timer_del(sd->anim_timer);
-   ELM_SAFE_FREE(sd->icon_edje, evas_object_del);
+   ELM_SAFE_FREE(sd->edje, evas_object_del);
 
    EINA_LIST_FREE(sd->grids, g)
      {
@@ -1577,13 +1578,107 @@ _efl_ui_image_zoomable_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Imag
    if (h) *h = pd->size.imh;
 }
 
+static Eina_Bool
+_img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
+               const char *file, const Eina_File *f, const char *group,
+               Eina_Bool resize)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   double tz;
+   int w, h;
+
+   sd->zoom = 1.0;
+   evas_object_image_smooth_scale_set(sd->img, (sd->no_smooth == 0));
+   evas_object_image_file_set(sd->img, NULL, NULL);
+   evas_object_image_source_set(sd->img, NULL);
+   evas_object_image_load_scale_down_set(sd->img, 0);
+
+   if (!sd->edje)
+     sd->edje = edje_object_add(evas_object_evas_get(obj));
+   if (!resize)
+     {
+        if (f)
+          {
+             if (!edje_object_mmap_set(sd->edje, f, group))
+               {
+                  ERR("failed to set edje file '%s', group '%s': %s", sd->file, group,
+                      edje_load_error_str(edje_object_load_error_get(sd->edje)));
+                  return EINA_FALSE;
+               }
+          }
+        else if (file)
+          {
+             if (!edje_object_file_set(sd->edje, file, group))
+               {
+                  ERR("failed to set edje file '%s', group '%s': %s", file, group,
+                      edje_load_error_str(edje_object_load_error_get(sd->edje)));
+                  return EINA_FALSE;
+               }
+          }
+     }
+
+   _min_obj_size_get(obj, &w, &h);
+   evas_object_resize(sd->edje, w, h);
+
+   evas_object_image_source_set(sd->img, sd->edje);
+   evas_object_image_source_visible_set(sd->img, EINA_FALSE);
+   evas_object_size_hint_min_set(sd->img, w, h);
+   evas_object_show(sd->img);
+   evas_object_show(sd->edje);
+
+   sd->do_region = 0;
+   sd->size.imw = w;
+   sd->size.imh = h;
+   sd->size.w = sd->size.imw / sd->zoom;
+   sd->size.h = sd->size.imh / sd->zoom;
+   evas_object_image_preload(sd->img, 0);
+   sd->main_load_pending = EINA_TRUE;
+
+   sd->calc_job = ecore_job_add(_calc_job_cb, obj);
+   efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD, NULL);
+   sd->preload_num++;
+   if (sd->preload_num == 1)
+     {
+        edje_object_signal_emit
+           (wd->resize_obj, "elm,state,busy,start", "elm");
+        efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD_DETAIL, NULL);
+     }
+
+   tz = sd->zoom;
+   sd->zoom = 0.0;
+   elm_photocam_zoom_set(obj, tz);
+   sd->orient = EFL_ORIENT_NONE;
+   sd->flip = EFL_FLIP_NONE;
+   sd->orientation_changed = EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_image_zoomable_edje_file_set(Evas_Object *obj,
+                              const char *file,
+                              const char *group)
+{
+   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   if (file) eina_stringshare_replace(&sd->file, file);
+   return _img_proxy_set(obj, sd, file, NULL, group, EINA_FALSE);
+}
+
 static void
-_internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, Eina_File *f, Evas_Load_Error *ret)
+_internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, Eina_File *f, const char *key, Evas_Load_Error *ret)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Load_Error err;
    int w, h;
    double tz;
+
+   if (eina_str_has_extension(file, ".edj"))
+     {
+       _image_zoomable_edje_file_set(obj, file, key);
+       return;
+     }
 
    // It is actually to late, we have lost the reference to the previous
    // file descriptor already, so we can't know if the file changed. To
@@ -1692,7 +1787,7 @@ _efl_ui_image_zoomable_remote_copier_done(void *data, const Efl_Event *event EIN
                             eina_binbuf_length_get(sd->remote.binbuf),
                             EINA_FALSE);
 
-   _internal_file_set(obj, sd, url, f, &ret);
+   _internal_file_set(obj, sd, url, f, NULL, &ret);
    eina_file_close(f);
 
    if (ret != EVAS_LOAD_ERROR_NONE)
@@ -1805,11 +1900,11 @@ _efl_ui_image_zoomable_is_remote(const char *file)
 }
 
 static Evas_Load_Error
-_efl_ui_image_zoomable_file_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file)
+_efl_ui_image_zoomable_file_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, const char *key)
 {
    Evas_Load_Error ret = EVAS_LOAD_ERROR_NONE;
 
-   ELM_SAFE_FREE(sd->icon_edje, evas_object_del);
+   ELM_SAFE_FREE(sd->edje, evas_object_del);
    eina_stringshare_replace(&sd->stdicon, NULL);
 
    _grid_clear_all(obj);
@@ -1838,15 +1933,15 @@ _efl_ui_image_zoomable_file_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd
           }
      }
 
-   _internal_file_set(obj, sd, file, NULL, &ret);
+   _internal_file_set(obj, sd, file, NULL, key, &ret);
 
    return ret;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, const char *key EINA_UNUSED)
+_efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, const char *key)
 {
-   Evas_Load_Error ret = _efl_ui_image_zoomable_file_set_internal(obj, sd, file);
+   Evas_Load_Error ret = _efl_ui_image_zoomable_file_set_internal(obj, sd, file, key);
 
    if (ret == EVAS_LOAD_ERROR_NONE) return EINA_TRUE;
 
@@ -2336,7 +2431,7 @@ _efl_ui_image_zoomable_gesture_enabled_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *
 }
 
 static void
-_icon_size_get(Evas_Object *o, int *w, int *h)
+_min_obj_size_get(Evas_Object *o, int *w, int *h)
 {
    ELM_PHOTOCAM_DATA_GET(o, sd);
 
@@ -2348,7 +2443,7 @@ _icon_size_get(Evas_Object *o, int *w, int *h)
 
         if (*w == 0 || *h == 0)
           {
-             edje_object_size_min_get(sd->icon_edje, w, h);
+             edje_object_size_min_get(sd->edje, w, h);
           }
      }
 }
@@ -2358,78 +2453,24 @@ _image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, 
 {
    Elm_Theme *th = elm_widget_theme_get(o);
    ELM_PHOTOCAM_DATA_GET(o, sd);
-   Evas_Load_Error err;
 
    char buf[1024];
-   Eina_File *file;
-   int w, h;
+   Eina_File *f;
 
    if (!th) th = elm_theme_default_get();
 
    snprintf(buf, sizeof(buf), "elm/icon/%s/%s", group, style);
-   file = _elm_theme_group_file_find(th, buf);
-   if (file)
+   f = _elm_theme_group_file_find(th, buf);
+   if (f)
      {
-        ELM_WIDGET_DATA_GET_OR_RETURN(o, wd, EINA_FALSE);
-        double tz;
-
-        eina_stringshare_replace(&sd->file, eina_file_filename_get(file));
         if (sd->f) eina_file_close(sd->f);
-        sd->f = file;
-        sd->zoom = 1.0;
-        evas_object_image_smooth_scale_set(sd->img, (sd->no_smooth == 0));
-        evas_object_image_file_set(sd->img, NULL, NULL);
-        evas_object_image_source_set(sd->img, NULL);
-        evas_object_image_load_scale_down_set(sd->img, 0);
-        if (!sd->icon_edje) sd->icon_edje = edje_object_add(evas_object_evas_get(o));
-        if (!resize) edje_object_mmap_set(sd->icon_edje, file, buf);
-        _icon_size_get(o, &w, &h);
-        evas_object_resize(sd->icon_edje, w, h);
+        eina_stringshare_replace(&sd->file, eina_file_filename_get(f));
+        sd->f = f;
 
-        evas_object_image_source_set(sd->img, sd->icon_edje);
-        evas_object_image_source_visible_set(sd->img, EINA_FALSE);
-        evas_object_size_hint_min_set(sd->img, w, h);
-        evas_object_show(sd->img);
-        evas_object_show(sd->icon_edje);
-
-        err = evas_object_image_load_error_get(sd->img);
-        if (err != EVAS_LOAD_ERROR_NONE)
-          {
-             ERR("Things are going bad for '%s' (%p) : %i", eina_file_filename_get(file), sd->img, err);
-
-             ELM_SAFE_FREE(sd->icon_edje, evas_object_del);
-
-             return EINA_FALSE;
-          }
-
-        sd->do_region = 0;
-        sd->size.imw = w;
-        sd->size.imh = h;
-        sd->size.w = sd->size.imw / sd->zoom;
-        sd->size.h = sd->size.imh / sd->zoom;
-        evas_object_image_preload(sd->img, 0);
-        sd->main_load_pending = EINA_TRUE;
-
-        sd->calc_job = ecore_job_add(_calc_job_cb, o);
-        efl_event_callback_legacy_call(o, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD, NULL);
-        sd->preload_num++;
-        if (sd->preload_num == 1)
-          {
-             edje_object_signal_emit
-                (wd->resize_obj, "elm,state,busy,start", "elm");
-             efl_event_callback_legacy_call(o, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD_DETAIL, NULL);
-          }
-
-        tz = sd->zoom;
-        sd->zoom = 0.0;
-        elm_photocam_zoom_set(o, tz);
-        sd->orient = EFL_ORIENT_NONE;
-        sd->flip = EFL_FLIP_NONE;
-        sd->orientation_changed = EINA_FALSE;
-        return EINA_TRUE;
+        return _img_proxy_set(o, sd, NULL, f, buf, resize);
      }
 
-   ELM_SAFE_FREE(sd->icon_edje, evas_object_del);
+   ELM_SAFE_FREE(sd->edje, evas_object_del);
    _sizing_eval(o);
    WRN("Failed to set icon '%s'. Icon theme '%s' not found", group, buf);
    ELM_SAFE_FREE(sd->f, eina_file_close);
@@ -2620,15 +2661,15 @@ _efl_ui_image_zoomable_gesture_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoo
 EOLIAN static Eina_Bool
 _efl_ui_image_zoomable_efl_player_playable_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
-   if (sd->icon_edje) return EINA_TRUE;
+   if (sd->edje) return EINA_TRUE;
    return evas_object_image_animated_get(sd->img);
 }
 
 static Eina_Bool
 _efl_ui_image_zoomable_animated_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
-   if (sd->icon_edje)
-     return edje_object_animation_get(sd->icon_edje);
+   if (sd->edje)
+     return edje_object_animation_get(sd->edje);
    return sd->anim;
 }
 
@@ -2640,9 +2681,9 @@ _efl_ui_image_zoomable_animated_set_internal(Eo *obj EINA_UNUSED, Efl_Ui_Image_Z
 
    sd->anim = anim;
 
-   if (sd->icon_edje)
+   if (sd->edje)
      {
-        edje_object_animation_set(sd->icon_edje, anim);
+        edje_object_animation_set(sd->edje, anim);
         return;
      }
 
@@ -2693,9 +2734,9 @@ _efl_ui_image_zoomable_animated_play_set_internal(Eo *obj, Efl_Ui_Image_Zoomable
    if (!sd->anim) return;
    if (sd->play == play) return;
    sd->play = play;
-   if (sd->icon_edje)
+   if (sd->edje)
      {
-        edje_object_play_set(sd->icon_edje, play);
+        edje_object_play_set(sd->edje, play);
         return;
      }
    if (play)
@@ -2722,8 +2763,8 @@ _efl_ui_image_zoomable_efl_player_play_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *
 static Eina_Bool
 _efl_ui_image_zoomable_animated_play_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
-   if (sd->icon_edje)
-     return edje_object_play_get(sd->icon_edje);
+   if (sd->edje)
+     return edje_object_play_get(sd->edje);
    return sd->play;
 }
 
