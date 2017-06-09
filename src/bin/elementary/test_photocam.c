@@ -745,7 +745,7 @@ _zoomable_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info 
 void
 test_photocam_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *lbl, *zoomable;
+   Evas_Object *win, *bx, *lbl, *zoomable, *rect;
    char buf[PATH_MAX];
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -776,6 +776,17 @@ test_photocam_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    elm_box_pack_end(bx, zoomable);
    evas_object_show(zoomable);
    evas_object_smart_callback_add(zoomable, "clicked", _zoomable_clicked_cb, NULL);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_repeat_events_set(rect, EINA_TRUE);
+   evas_object_show(rect);
+   evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL, _photocam_mouse_wheel_cb, zoomable);
+   evas_object_raise(rect);
+
+   // add move/resize callbacks to resize rect manually
+   evas_object_event_callback_add(zoomable, EVAS_CALLBACK_RESIZE, _photocam_move_resize_cb, rect);
+   evas_object_event_callback_add(zoomable, EVAS_CALLBACK_MOVE, _photocam_move_resize_cb, rect);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
