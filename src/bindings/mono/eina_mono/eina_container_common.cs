@@ -253,15 +253,6 @@ public abstract class PrimitiveElementTraits<T>
 {
     private Eina_Compare_Cb dlgt = null;
 
-    public PrimitiveElementTraits()
-    {
-        if (intPtrTraits == null)
-            if (typeof(T) == typeof(IntPtr)) // avoid infinite recursion
-                intPtrTraits = (IBaseElementTraits<IntPtr>)this;
-            else
-                intPtrTraits = TraitFunctions.GetTypeTraits<IntPtr>();
-    }
-
     public IntPtr ManagedToNativeAlloc(T man)
     {
         GCHandle pinnedData = GCHandle.Alloc(man, GCHandleType.Pinned);
