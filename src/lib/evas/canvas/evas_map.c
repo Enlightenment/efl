@@ -171,7 +171,8 @@ _evas_map_new(int count, Eina_Bool sync)
 void
 _evas_map_reset(Evas_Map *m)
 {
-   int alloc;
+   int alloc, count;
+   Eina_Bool sync;
 
    if (!m) return;
 
@@ -180,8 +181,10 @@ _evas_map_reset(Evas_Map *m)
    alloc = (m->count < 4) ? 4 : m->count;
    if (alloc & 0x1) alloc ++;
 
+   count = m->count;
+   sync = m->move_sync.enabled;
    memset(m, 0, sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
-   _evas_map_init(m, m->count, m->move_sync.enabled);
+   _evas_map_init(m, count, sync);
 }
 
 static inline Eina_Bool
