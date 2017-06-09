@@ -162,6 +162,15 @@ _keyboard_info_destroy(Elput_Keyboard_Info *info)
    free(info);
 }
 
+/**
+ * @brief Creates the XKB context and keymap.
+ *
+ * @param kbd The keyboard config to be set up for XKB.
+ * @return EINA_TRUE if build successful, EINA_FALSE otherwise.
+ *
+ * Sets default settings for the keyboard if not set by the system.
+ * Assumes evdev rules, with a pc105 model keyboard and US key layout.
+ */
 static Eina_Bool
 _keyboard_global_build(Elput_Keyboard *kbd)
 {
@@ -220,6 +229,10 @@ _keyboard_compose_init(Elput_Keyboard *kbd)
      kbd->compose_state = NULL;
 }
 
+/**
+ * Create a new keyboard object for the seat, initialized
+ * to the given keymap.
+ */
 static Eina_Bool
 _keyboard_init(Elput_Seat *seat, struct xkb_keymap *keymap)
 {
@@ -298,6 +311,12 @@ _event_free(void *dev, void *ev)
    free(ev);
 }
 
+/**
+ * Creates an event key object and generates a corresponding event.
+ *
+ * An ECORE_EVENT_KEY_DOWN event is generated on state
+ * LIBINPUT_KEY_STATE_PRESSED, or ECORE_EVENT_KEY_DOWN otherwise.
+ */
 static void
 _keyboard_key_send(Elput_Device *dev, enum libinput_key_state state, const char *keyname, const char *key, const char *compose, unsigned int code, unsigned int timestamp)
 {
@@ -603,6 +622,9 @@ process_key_press(xkb_keysym_t sym, Elput_Keyboard *kbd)
    return sym;
 }
 
+/**
+ * Retrieve the string name ('q', 'bracketleft', etc.) for a given key symbol.
+ */
 static void
 _elput_symbol_rep_find(xkb_keysym_t keysym, char *buffer, int size, unsigned int code)
 {
@@ -622,6 +644,17 @@ _elput_symbol_rep_find(xkb_keysym_t keysym, char *buffer, int size, unsigned int
     snprintf(buffer, size, "Keycode-%u", code);
 }
 
+/**
+ * Handle keyboard events emitted by libinput.
+ *
+ * Processes a single key pressed / released event from libinput.  The
+ * key code will be remapped to another code if one has been registered
+ * (see elput_input_key_remap_enable()), and then XKB notified of the
+ * keyboard status change.  XKB translates the key code into the
+ * appropriate symbol for the current keyboard layout.  Compose
+ * translation is performed, if appropriate.  An up or down event is
+ * then generated for the processed key via _keyboard_key_send().
+ */
 static void
 _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *event)
 {
@@ -642,6 +675,7 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
    kbd = _evdev_keyboard_get(dev->seat);
    if (!kbd) return;
 
+   /* Retrieve details about the event from libinput */
    state = libinput_event_keyboard_get_key_state(event);
    kbd->key_count = count = libinput_event_keyboard_get_seat_key_count(event);
 
@@ -650,16 +684,24 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
        ((state == LIBINPUT_KEY_STATE_RELEASED) && (count != 0)))
      return;
 
+   /* Retrieve the code and remap it if a remap for it has been registered */
    code = libinput_event_keyboard_get_key(event);
    code = _keyboard_remapped_key_get(dev, code) + 8;
 
    timestamp = libinput_event_keyboard_get_time(event);
 
+   /* Update the XKB keyboard state for the key that was pressed or released */
    if (state == LIBINPUT_KEY_STATE_PRESSED)
      xkb_state_update_key(kbd->state, code, XKB_KEY_DOWN);
    else
      xkb_state_update_key(kbd->state, code, XKB_KEY_UP);
 
+   /* Apply the current keyboard state to translate the code for the key
+    * that was struck into its effective symbol (after applying
+    * modifiers like CAPSLOCK and so on).  We also use the maskless
+    * keyboard state to lookup the underlying symbol name (i.e. without
+    * applying modifiers).
+    */
    nsyms = xkb_key_get_syms(kbd->state, code, &syms);
    if (nsyms == 1) sym = syms[0];
    sym_name = xkb_state_key_get_one_sym(kbd->maskless_state, code);
@@ -667,12 +709,17 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
    if (state == LIBINPUT_KEY_STATE_PRESSED)
      sym = process_key_press(sym, kbd);
 
+   /* Lookup the textual name ('q', 'space', 'bracketleft', etc.) of the
+    * symbol and of the symbol name.
+    */
    _elput_symbol_rep_find(sym, key, sizeof(key), code);
    _elput_symbol_rep_find(sym_name, keyname, sizeof(keyname), code);
 
+   /* If no keyname was found, name it "Keycode-NNN" */
    if (keyname[0] == '\0')
      snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
 
+   /* If Shift key is active, downcase the keyname's first letter */
    if (xkb_state_mod_index_is_active(kbd->state, kbd->info->mods.shift,
                                      XKB_STATE_MODS_EFFECTIVE))
      {
@@ -680,9 +727,13 @@ _keyboard_key(struct libinput_device *idevice, struct libinput_event_keyboard *e
           keyname[0] = tolower(keyname[0]);
      }
 
+   /* Update the seat's modifiers to match what's active in the kbd */
    _keyboard_modifiers_update(kbd, dev->seat);
 
+   /* Translate the key symbol into a printable character in Unicode (UTF-8) format */
    _keyboard_keysym_translate(sym, dev->seat->modifiers, compose, sizeof(compose));
+
+   /* Issue the appropriate key up or down event with all related key data */
    _keyboard_key_send(dev, state, keyname, key, compose, code, timestamp);
 
    if ((kbd->pending_keymap) && (count == 0))
