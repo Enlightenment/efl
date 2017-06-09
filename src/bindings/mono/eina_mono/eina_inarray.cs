@@ -128,7 +128,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
             uint len = eina_inarray_count(h);
             for(uint i = 0; i < len; ++i)
             {
-                NativeFreeInplace<T>(eina_inarray_nth(h, i));
+                InarrayNativeFree<T>(eina_inarray_nth(h, i));
             }
         }
 
@@ -161,15 +161,9 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
             int len = Length;
             for (int i = 0; i < len; ++i)
             {
-                NativeFreeInplace<T>(eina_inarray_nth(h, i));
+                InarrayNativeFree<T>(eina_inarray_nth(Handle, i));
             }
         }
-    }
-
-    public void Clean()
-    {
-        FreeElementsIfOwned();
-        eina_inarray_clean_custom_export_mono(Handle);
     }
 
     public void Flush()
@@ -180,7 +174,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public int Count()
     {
-        return (int) eina_inarray_count_custom_export_mono(Handle);
+        return (int) eina_inarray_count(Handle);
     }
 
     public void SetOwnership(bool ownAll)
@@ -195,12 +189,14 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         OwnContent = ownContent;
     }
 
-    public bool Push(T val)
+    public int Push(T val)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
-        var r = InternalPush(ele);
-        if (!r)
-            NativeFree<T>(ele);
+        IntPtr ele = InarrayManagedToNativeAlloc(val);
+        var r = eina_inarray_push(Handle, ele);
+        if (r == -1)
+            InarrayNativeFree<T>(ele);
+        else
+            InarrayTempFree<T>(ele);
         return r;
     }
 
@@ -213,43 +209,77 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public T Pop()
     {
-        IntPtr ele = InternalPop();
-        var r = NativeToManaged<T>(ele);
+        IntPtr ele = eina_inarray_pop(Handle);
+        var r = InarrayNativeToManaged<T>(ele);
         if (OwnContent && ele != IntPtr.Zero)
-            NativeFree<T>(ele);
+            InarrayNativeFree<T>(ele);
         return r;
     }
 
-    public T DataGet(int idx)
+    public T Nth(uint idx)
     {
-        IntPtr ele = InternalDataGet(idx);
-        return NativeToManaged<T>(ele);
+        IntPtr ele = eina_inarray_nth(Handle, idx);
+        return InarrayNativeToManaged<T>(ele);
     }
 
     public T At(int idx)
     {
-        return DataGet(idx);
+        return Nth((uint)idx);
     }
 
-    public void DataSet(int idx, T val)
+    public bool InsertAt(uint idx, T val)
     {
-        IntPtr ele = InternalDataGet(idx); // TODO: check bondaries ??
-        if (OwnContent && ele != IntPtr.Zero)
-            NativeFree<T>(ele);
-        ele = ManagedToNativeAlloc(val);
-        InternalDataSet(idx, ele);
+        IntPtr ele = InarrayManagedToNativeAlloc(val);
+        var r = eina_inarray_insert_at(Handle, idx, ele);
+        if (r)
+            InarrayTempFree<T>(ele);
+        else
+            InarrayNativeFree<T>(ele);
+        return r;
+    }
+
+    public bool ReplaceAt(uint idx, T val)
+    {
+        IntPtr ele = eina_inarray_nth(Handle, idx);
+        if (ele == IntPtr.Zero)
+            return false;
+        if (OwnContent)
+            InarrayNativeFree<T>(ele);
+        ele = InarrayManagedToNativeAlloc(val);
+        var r = eina_inarray_insert_at(Handle, idx, ele);
+        if (r)
+            InarrayTempFree<T>(ele);
+        else
+            InarrayNativeFree<T>(ele);
+        return r;
     }
 
     public T this[int idx]
     {
         get
         {
-            return DataGet(idx);
+            return At(idx);
         }
         set
         {
-            DataSet(idx, value);
+            ReplaceAt(idx, value);
         }
+    }
+
+    public bool RemoveAt(uint idx)
+    {
+        IntPtr ele = eina_inarray_nth(Handle, idx);
+        if (ele == IntPtr.Zero)
+            return false;
+        if (OwnContent)
+            InarrayNativeFree<T>(ele);
+
+        return eina_inarray_remove_at(Handle, idx);
+    }
+
+    public bool Reverse()
+    {
+        eina_inarray_reverse(Handle);
     }
 
     public T[] ToArray()
@@ -266,7 +296,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     public bool Append(T[] values)
     {
         foreach(T v in values)
-            if (!Push(v))
+            if (Push(v) == -1)
                 return false;
         return true;
     }
@@ -276,7 +306,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         int len = Length;
         for(int i = 0; i < len; ++i)
         {
-            yield return DataGet(i);
+            yield return At(i);
         }
     }
 

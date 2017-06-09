@@ -272,6 +272,12 @@ struct visitor_generate
            c.outer.base_type = "eina.Array";
            return c;
          }}
+        , {"inarray", nullptr, nullptr, [&]
+           {
+           complex_type_def c = complex;
+           c.outer.base_type = "eina.Inarray";
+           return c;
+         }}
         , {"hash", nullptr, nullptr
            , [&]
            {
