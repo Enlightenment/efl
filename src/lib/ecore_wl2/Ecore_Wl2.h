@@ -1007,6 +1007,18 @@ EAPI Eina_Bool ecore_wl2_window_wm_rotation_supported_get(Ecore_Wl2_Window *wind
 EAPI void ecore_wl2_window_rotation_app_set(Ecore_Wl2_Window *window, Eina_Bool set);
 
 /**
+ * Get if an application has set window rotation
+ *
+ * @param window
+ *
+ * @return EINA_TRUE if set, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_window_rotation_app_get(Ecore_Wl2_Window *window);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
