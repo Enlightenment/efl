@@ -793,6 +793,31 @@ EAPI int ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output);
 EAPI Eina_Bool ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation);
 
 /**
+ * Set the user data for the output's page flip handler
+ *
+ * @param output The output to update user data for
+ * @param data The new user data pointer
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
+
+/**
+ * Register a callback for the buffer release handler
+ *
+ * When a flip completes ecore_drm2 may release a buffer.  Use this callback
+ * if you need to do bookkeeping or locking on buffer release.
+ *
+ * @param output The output to register the callback on
+ * @param handler The function to handle the callback
+ * @param data The user data to pass to the callback
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI void ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *output, Ecore_Drm2_Release_Handler handler, void *data);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
@@ -926,31 +951,6 @@ EAPI Eina_Bool ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb);
 EAPI Eina_Bool ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic);
 
 /**
- * Set the user data for the output's page flip handler
- *
- * @param output The output to update user data for
- * @param data The new user data pointer
- *
- * @ingroup Ecore_Drm2_Output_Group
- * @since 1.19
- */
-EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
-
-/**
- * Register a callback for the buffer release handler
- *
- * When a flip completes ecore_drm2 may release a buffer.  Use this callback
- * if you need to do bookkeeping or locking on buffer release.
- *
- * @param output The output to register the callback on
- * @param handler The function to handle the callback
- * @param data The user data to pass to the callback
- * @ingroup Ecore_Drm2_Output_Group
- * @since 1.19
- */
-EAPI void ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *output, Ecore_Drm2_Release_Handler handler, void *data);
-
-/**
  * Get the Framebuffer's gbm buffer object
  *
  * @param fb The framebuffer to query
@@ -982,6 +982,19 @@ EAPI void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
  *
  */
 EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count);
+
+/**
+ * Discard a framebuffer object
+ *
+ * Decreases the refcount on a fb object.  It will be destroyed when it's
+ * no longer attached to scanout or otherwise in use.
+ *
+ * @param fb
+ *
+ * @ingroup Ecore_Drm2_Fb_Group
+ * @since 1.20
+ */
+EAPI void ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb);
 
 /**
  * @defgroup Ecore_Drm2_Plane_Group Functions that deal with hardware planes
@@ -1038,19 +1051,6 @@ EAPI void ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y
  * @since 1.20
  */
 EAPI Eina_Bool ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb);
-
-/**
- * Discard a framebuffer object
- *
- * Decreases the refcount on a fb object.  It will be destroyed when it's
- * no longer attached to scanout or otherwise in use.
- *
- * @param fb
- *
- * @ingroup Ecore_Drm2_Fb_Group
- * @since 1.20
- */
-EAPI void ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb);
 
 # endif
 
