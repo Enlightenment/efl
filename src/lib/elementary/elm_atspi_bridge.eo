@@ -13,6 +13,10 @@ class Elm.Atspi.Bridge (Efl.Object, Elm.Interface.Accessible_Observer)
             }
          }
       }
+      activate {
+      }
+      deactivate {
+      }
    }
    implements {
       Efl.Object.constructor;

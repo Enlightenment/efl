@@ -102,6 +102,7 @@ typedef struct _Elm_Atspi_Bridge_Data
    Eldbus_Pending *stack_status_request;
    Eldbus_Proxy *status_proxy;
    Eina_Bool connected : 1;
+   Eina_Bool activated : 1;
 } Elm_Atspi_Bridge_Data;
 
 
@@ -1026,7 +1027,6 @@ _socket_embedded(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
    ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_ATSPI_SOCKET_CLASS, msg);
-
 
    elm_atspi_plug_on_embedded(obj, NULL);
 
@@ -4496,16 +4496,19 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
 }
 
 void
-_elm_atspi_bridge_init(void)
+_elm_atspi_bridge_init()
 {
    if (!_instance)
      {
         _instance = efl_add(ELM_ATSPI_BRIDGE_CLASS, NULL);
-        elm_interface_atspi_accessible_event_observer_add(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, _instance);
-        Eo *root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
-        elm_interface_atspi_accessible_root_set(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root);
-        efl_unref(root);
      }
+   Eo *root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+   if (!root) {
+      root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+      elm_interface_atspi_accessible_root_set(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root);
+      efl_unref(root);
+   }
+   elm_atspi_bridge_activate(_instance);
 }
 
 EAPI Eo*
@@ -4515,12 +4518,17 @@ _elm_atspi_bridge_get(void)
 }
 
 void
-_elm_atspi_bridge_shutdown(void)
+_elm_atspi_bridge_shutdown(Eina_Bool force_destroy)
 {
    if (_instance)
      {
-        elm_interface_atspi_accessible_event_observer_del(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, _instance);
-        efl_del(_instance);
+        if (force_destroy)
+          {
+             efl_del(_instance);
+             _instance = NULL;
+          }
+        else
+          elm_atspi_bridge_deactivate(_instance);
      }
 }
 
@@ -4881,6 +4889,7 @@ _socket_hooks_uninstall(Elm_Atspi_Socket *socket)
 static void
 _socket_hooks_install(Elm_Atspi_Socket *socket)
 {
+   ERR("Socket hooks install");
    EFL_OPS_DEFINE(_elm_atspi_bridge_hooks,
                   EFL_OBJECT_OP_FUNC(elm_obj_atspi_socket_embed, _bridge_elm_atspi_socket_embed),
                   EFL_OBJECT_OP_FUNC(elm_obj_atspi_socket_unembed, _bridge_elm_atspi_socket_unembed));
@@ -4897,6 +4906,7 @@ _plug_hooks_uninstall(Elm_Atspi_Plug *socket)
 static void
 _plug_hooks_install(Eo *plug)
 {
+   ERR("Plug hooks install");
    EFL_OPS_DEFINE(_elm_atspi_bridge_hooks,
                   EFL_OBJECT_OP_FUNC(elm_obj_atspi_plug_embed_by, _bridge_elm_atspi_plug_embed_by),
                   EFL_OBJECT_OP_FUNC(elm_obj_atspi_plug_unembed_by, _bridge_elm_atspi_plug_unembed_by));
@@ -4908,23 +4918,33 @@ EOLIAN Efl_Object*
 _elm_atspi_bridge_efl_object_constructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
 {
    efl_constructor(efl_super(obj, ELM_ATSPI_BRIDGE_CLASS));
-
    elm_need_eldbus();
+
+   ERR("Constructor");
+   pd->root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+   elm_interface_atspi_accessible_event_observer_add(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, obj);
+
+   return obj;
+}
+
+EOLIAN void
+_elm_atspi_bridge_activate(Eo *obj, Elm_Atspi_Bridge_Data *pd)
+{
+   if (pd->activated) return;
 
    if (!(pd->session_bus = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION)))
      {
         ERR("Unable to connect to Session Bus");
-        return NULL;
+        return;
      }
 
    if (!_bridge_platform_a11y_status_monitor_init(obj))
      {
         WRN("Unable to get platform's a11y status. Is a11y stack running?");
         eldbus_connection_unref(pd->session_bus);
-        return NULL;
+        return;
      }
-
-   return obj;
+   pd->activated = EINA_TRUE;
 }
 
 static void
@@ -4941,6 +4961,10 @@ _bridge_platform_a11y_status_monitor_shutdown(Elm_Atspi_Bridge *bridge)
         eldbus_proxy_unref(pd->status_proxy);
      }
    if (pd->bus_obj) eldbus_object_unref(pd->bus_obj);
+
+   pd->stack_status_request = NULL;
+   pd->status_proxy = NULL;
+   pd->bus_obj = NULL;
 }
 
 static void
@@ -4952,12 +4976,21 @@ _bridge_plugs_clean_up(Eo *bridge)
 }
 
 EOLIAN void
-_elm_atspi_bridge_efl_object_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd EINA_UNUSED)
+_elm_atspi_bridge_deactivate(Eo *obj, Elm_Atspi_Bridge_Data *pd EINA_UNUSED)
 {
+   if (!pd->activated) return;
    _bridge_disconnect(obj);
    _bridge_platform_a11y_status_monitor_shutdown(obj);
-   _bridge_plugs_clean_up(obj);
    eldbus_connection_unref(pd->session_bus);
+   pd->activated = EINA_FALSE;
+}
+
+EOLIAN void
+_elm_atspi_bridge_efl_object_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd EINA_UNUSED)
+{
+   elm_atspi_bridge_deactivate(obj);
+   elm_interface_atspi_accessible_event_observer_del(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, obj);
+   _bridge_plugs_clean_up(obj);
    efl_destructor(efl_super(obj, ELM_ATSPI_BRIDGE_CLASS));
 }
 
@@ -5068,6 +5101,7 @@ _bridge_on_disconnected(Elm_Atspi_Bridge *bridge)
 static void
 _bridge_on_connected(Elm_Atspi_Bridge *bridge)
 {
+   ERR("interfaces registered");
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
    pd->cache = eina_hash_pointer_new(NULL);
@@ -5076,6 +5110,7 @@ _bridge_on_connected(Elm_Atspi_Bridge *bridge)
    _bridge_interfaces_register(bridge);
    _bridge_event_handlers_register(bridge);
    _bridge_plugs_register(bridge);
+   _bridge_object_register(bridge, pd->root);
 }
 
 static void
@@ -5094,6 +5129,7 @@ _bridge_enabled_set(Elm_Atspi_Bridge *bridge, Eina_Bool value)
 EOLIAN static void
 _elm_atspi_bridge_elm_interface_accessible_observer_on_root_changed(Elm_Atspi_Bridge *bridge, Elm_Atspi_Bridge_Data *pd, Elm_Interface_Atspi_Accessible *new_root)
 {
+   ERR("Root changed: %s", efl_class_name_get(new_root));
    if (pd->root == new_root)
      return;
 
@@ -5153,6 +5189,7 @@ _bridge_plug_register(Eo *bridge, Elm_Atspi_Plug *plug)
    EINA_SAFETY_ON_NULL_RETURN(plug);
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
+   ERR("Plug register: %s", efl_class_name_get(plug));
    if (!eina_list_data_find(pd->plugs, plug))
      {
         if (pd->connected)

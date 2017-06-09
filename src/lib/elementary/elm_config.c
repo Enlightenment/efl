@@ -984,7 +984,7 @@ static void _elm_config_atspi_mode_set(Eina_Bool is_enabled)
    if (_elm_config->atspi_mode == is_enabled) return;
    _elm_config->atspi_mode = is_enabled;
 
-   if (!is_enabled) _elm_atspi_bridge_shutdown();
+   if (!is_enabled) _elm_atspi_bridge_shutdown(EINA_FALSE);
    else _elm_atspi_bridge_init();
 }
 

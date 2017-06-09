@@ -1,6 +1,25 @@
 class Elm.Atspi.Plug (Efl.Object, Elm.Interface.Atspi_Accessible)
 {
-   [[AT-SPI Plug class.]]
+   [[
+      Elm_Atspi_Plug togather with Elm_Atspi_Socket are a special-purpose accessibility object that should be used to
+      integrate application's accessibility objects with other ones coming from different process/toolkit.
+      The purpose of using such integration is to provide consistent view on
+      accessibility hierarchy for assitive technology providers such as screen readers
+      or screen magnifiers.
+
+      The typical use case includes applications which contains graphical
+      content coming from different process/toolkit. The example of such
+      application is web browser in which part of the UI may be rendered by native
+      framework (menus, uri bars, etc.) and the web content is rendered by web
+      engine. However from user perspecitive the application is considered as a
+      standalony application and in the same manner should be presenter for
+      assistive technology providers. At-Spi2 standard solves this problem in a
+      generic manner by introducing special purpose accessibility protocol.
+
+      The elm_atspi_plug abstracts this protocol and provides consistent API to
+      represent "embeddable" content, which means the part of UI which can be
+      displayed within other windows.
+   ]]
    legacy_prefix: elm_atspi_plug;
    eo_prefix: elm_obj_atspi_plug;
    methods {

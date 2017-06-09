@@ -341,7 +341,6 @@ _elm_interface_atspi_accessible_event_observer_add(Eo *class EINA_UNUSED, void *
    if (efl_isa(observer, ELM_INTERFACE_ACCESSIBLE_OBSERVER_INTERFACE))
      {
         observers = eina_list_append(observers, observer);
-        elm_interface_accessible_observer_on_root_changed(observer, root);
      }
    else
      ERR("Invalid type, expected: ELM_INTERFACE_ACCESSIBLE_OBSERVER_INTERFACE, got: %s", efl_class_name_get(observer));

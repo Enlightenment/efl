@@ -364,7 +364,7 @@ Eina_Bool            _elm_web_init(const char *engine);
 
 Eo                   *_elm_atspi_bridge_get(void);
 void                 _elm_atspi_bridge_init(void);
-void                 _elm_atspi_bridge_shutdown(void);
+void                 _elm_atspi_bridge_shutdown(Eina_Bool force_destroy);
 
 Eina_Bool            _elm_prefs_init(void);
 void                 _elm_prefs_shutdown(void);

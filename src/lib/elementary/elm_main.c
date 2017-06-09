@@ -439,7 +439,7 @@ elm_shutdown(void)
    ecore_event_handler_del(system_handlers[1]);
 
    _elm_win_shutdown();
-   _elm_atspi_bridge_shutdown();
+   _elm_atspi_bridge_shutdown(EINA_TRUE);
 
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
 
