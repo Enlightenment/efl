@@ -19,9 +19,9 @@ EAPI Ecore_Drm2_Fb *
 ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned int format)
 {
    Ecore_Drm2_Fb *fb;
-   drm_mode_create_dumb carg;
-   drm_mode_destroy_dumb darg;
-   drm_mode_map_dumb marg;
+   struct drm_mode_create_dumb carg;
+   struct drm_mode_destroy_dumb darg;
+   struct drm_mode_map_dumb marg;
    int ret;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL((fd < 0), NULL);
@@ -37,7 +37,7 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    fb->format = format;
    fb->ref = 1;
 
-   memset(&carg, 0, sizeof(drm_mode_create_dumb));
+   memset(&carg, 0, sizeof(struct drm_mode_create_dumb));
    carg.bpp = bpp;
    carg.width = width;
    carg.height = height;
@@ -61,7 +61,7 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
           }
      }
 
-   memset(&marg, 0, sizeof(drm_mode_map_dumb));
+   memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
    marg.handle = fb->handles[0];
    ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
    if (ret)
@@ -82,7 +82,7 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
 map_err:
    sym_drmModeRmFB(fd, fb->id);
 add_err:
-   memset(&darg, 0, sizeof(drm_mode_destroy_dumb));
+   memset(&darg, 0, sizeof(struct drm_mode_destroy_dumb));
    darg.handle = fb->handles[0];
    sym_drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
 err:
@@ -93,7 +93,7 @@ err:
 EAPI Ecore_Drm2_Fb *
 ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo)
 {
-   drm_mode_map_dumb marg;
+   struct drm_mode_map_dumb marg;
    Ecore_Drm2_Fb *fb;
    int ret;
 
@@ -127,7 +127,7 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
      }
 
    /* mmap it if we can so screenshots are easy */
-   memset(&marg, 0, sizeof(drm_mode_map_dumb));
+   memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
    marg.handle = fb->handles[0];
    ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
    if (!ret)
@@ -155,9 +155,9 @@ _ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
 
    if (!fb->gbm && !fb->dmabuf)
      {
-        drm_mode_destroy_dumb darg;
+        struct drm_mode_destroy_dumb darg;
 
-        memset(&darg, 0, sizeof(drm_mode_destroy_dumb));
+        memset(&darg, 0, sizeof(struct drm_mode_destroy_dumb));
         darg.handle = fb->handles[0];
         sym_drmIoctl(fb->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
      }
@@ -179,7 +179,6 @@ _ecore_drm2_fb_deref(Ecore_Drm2_Fb *fb)
 
    _ecore_drm2_fb_destroy(fb);
 }
-
 
 EAPI void
 ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb)

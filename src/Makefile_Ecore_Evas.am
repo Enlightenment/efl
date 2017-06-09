@@ -258,7 +258,13 @@ endif
 
 if BUILD_ECORE_EVAS_DRM
 DRMSOURCES = \
-modules/ecore_evas/engines/drm/ecore_evas_drm.c
+modules/ecore_evas/engines/drm/ecore_evas_drm.c \
+static_libs/libdrm/drm_fourcc.h \
+static_libs/libdrm/drm.h \
+static_libs/libdrm/drm_mode.h \
+static_libs/libdrm/xf86drm.h \
+static_libs/libdrm/xf86drmMode.h
+
 ecoreevasenginedrmpkgdir = $(libdir)/ecore_evas/engines/drm/$(MODULE_ARCH)
 ecoreevasenginedrmpkg_LTLIBRARIES = modules/ecore_evas/engines/drm/module.la
 
@@ -272,6 +278,7 @@ modules_ecore_evas_engines_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/ef
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_DRM2_CFLAGS@ \
 @ELPUT_CFLAGS@ \
+-I$(top_srcdir)/src/static_libs/libdrm \
 -I$(top_srcdir)/src/modules/evas/engines/drm \
 -I$(top_srcdir)/src/modules/evas/engines/gl_drm
 modules_ecore_evas_engines_drm_module_la_LIBADD = \
