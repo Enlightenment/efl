@@ -365,6 +365,153 @@ class Test.Testing (Efl.Object) {
          return: array<Test.Numberwrapper>;
      }
 
+      /* Eina Inarray */
+
+      /* Integer */
+      eina_inarray_int_in {
+         params {
+            @in arr: inarray<int>;
+         }
+         return: bool;
+      }
+
+      eina_inarray_int_in_own {
+         params {
+            @in arr: own(inarray<own(ref(int))>);
+         }
+         return: bool;
+      }
+      check_eina_inarray_int_in_own {
+         return: bool;
+      }
+
+      eina_inarray_int_out {
+         params {
+            @out arr: inarray<int>;
+         }
+         return: bool;
+      }
+      check_eina_inarray_int_out {
+         return: bool;
+      }
+
+      eina_inarray_int_out_own {
+         params {
+            @out arr: own(inarray<own(ref(int))>);
+         }
+         return: bool;
+      }
+
+      eina_inarray_int_return {
+         return: inarray<int>;
+      }
+      check_eina_inarray_int_return {
+         return: bool;
+      }
+
+      eina_inarray_int_return_own {
+         return: own(inarray<own(ref(int))>);
+      }
+
+      /* String */
+      eina_inarray_str_in {
+         params {
+            @in arr: inarray<string>;
+         }
+         return: bool;
+      }
+
+      eina_inarray_str_in_own {
+         params {
+            @in arr: own(inarray<own(string)>);
+         }
+         return: bool;
+      }
+      check_eina_inarray_str_in_own {
+         return: bool;
+      }
+
+      eina_inarray_str_out {
+         params {
+            @out arr: inarray<string>;
+         }
+         return: bool;
+      }
+      check_eina_inarray_str_out {
+         return: bool;
+      }
+
+      eina_inarray_str_out_own {
+         params {
+            @out arr: own(inarray<own(string)>);
+         }
+         return: bool;
+      }
+
+      eina_inarray_str_return {
+         return: inarray<string>;
+      }
+      check_eina_inarray_str_return {
+         return: bool;
+      }
+
+      eina_inarray_str_return_own {
+         return: own(inarray<own(string)>);
+      }
+
+      /* Object */
+      eina_inarray_obj_in {
+         params {
+            @in arr: inarray<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_inarray_obj_in_own {
+         params {
+            @in arr: own(inarray<own(Test.Numberwrapper)>);
+         }
+         return: bool;
+      }
+      check_eina_inarray_obj_in_own {
+         return: bool;
+      }
+
+      eina_inarray_obj_out {
+         params {
+            @out arr: inarray<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_inarray_obj_out {
+         return: bool;
+      }
+
+      eina_inarray_obj_out_own {
+         params {
+            @out arr: own(inarray<own(Test.Numberwrapper)>);
+         }
+         return: bool;
+      }
+
+      eina_inarray_obj_return {
+         return: inarray<Test.Numberwrapper>;
+      }
+      check_eina_inarray_obj_return {
+         return: bool;
+      }
+
+      eina_inarray_obj_return_own {
+         return: own(inarray<own(Test.Numberwrapper)>);
+      }
+
+      eina_inarray_obj_return_in {
+         params {
+            @in arr: inarray<Test.Numberwrapper>;
+         }
+         return: inarray<Test.Numberwrapper>;
+     }
+
       /* Eina List */
 
       /* Integer */

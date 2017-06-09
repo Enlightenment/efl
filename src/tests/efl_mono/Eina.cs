@@ -1242,6 +1242,519 @@ class TestEinaArray
     //
 }
 
+class TestEinaInarray
+{
+    public static void eina_inarray_default()
+    {
+        var a = new eina.Inarray<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+    }
+
+    public static void push_int()
+    {
+        var a = new eina.Inarray<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(88) == 0);
+        Test.Assert(a[0] == 88);
+    }
+
+    public static void push_string()
+    {
+        var a = new eina.Inarray<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("test string") == 0);
+        Test.Assert(a[0] == "test string");
+    }
+
+    public static void push_obj()
+    {
+        var a = new eina.Inarray<test.NumberwrapperConcrete>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        var o = new test.NumberwrapperConcrete();
+        o.number_set(88);
+        Test.Assert(a.Push(o) == 0);
+        Test.Assert(a[0].raw_handle == o.raw_handle);
+        Test.Assert(a[0].number_get() == 88);
+    }
+
+    public static void pop_int()
+    {
+        var a = new eina.Inarray<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(88) >= 0);
+        Test.Assert(a.Pop() == 88);
+        Test.Assert(a.Count() == 0);
+    }
+
+    public static void pop_string()
+    {
+        var a = new eina.Inarray<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("test string") >= 0);
+        Test.Assert(a.Pop() == "test string");
+        Test.Assert(a.Count() == 0);
+    }
+
+    public static void pop_obj()
+    {
+        var a = new eina.Inarray<test.NumberwrapperConcrete>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        var o = new test.NumberwrapperConcrete();
+        o.number_set(88);
+        Test.Assert(a.Push(o) >= 0);
+        var p = a.Pop();
+        Test.Assert(p.raw_handle == o.raw_handle);
+        Test.Assert(p.number_get() == 88);
+        Test.Assert(a.Count() == 0);
+    }
+
+    public static void replace_at_int()
+    {
+        var a = new eina.Inarray<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(88) >= 0);
+        Test.Assert(a[0] == 88);
+        a.ReplaceAt(0, 44);
+        Test.Assert(a[0] == 44);
+        a[0] = 22;
+        Test.Assert(a[0] == 22);
+    }
+
+    public static void replace_at_string()
+    {
+        var a = new eina.Inarray<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("test string") >= 0);
+        Test.Assert(a[0] == "test string");
+        a.ReplaceAt(0, "other string");
+        Test.Assert(a[0] == "other string");
+        a[0] = "abc";
+        Test.Assert(a[0] == "abc");
+    }
+
+    public static void replace_at_obj()
+    {
+        var a = new eina.Inarray<test.NumberwrapperConcrete>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+
+        var o1 = new test.NumberwrapperConcrete();
+        o1.number_set(88);
+
+        Test.Assert(a.Push(o1) >= 0);
+        Test.Assert(a[0].raw_handle == o1.raw_handle);
+        Test.Assert(a[0].number_get() == 88);
+
+        var o2 = new test.NumberwrapperConcrete();
+        o2.number_set(44);
+
+        a.ReplaceAt(0, o2);
+        Test.Assert(a[0].raw_handle == o2.raw_handle);
+        Test.Assert(a[0].number_get() == 44);
+
+        var o3 = new test.NumberwrapperConcrete();
+        o3.number_set(22);
+
+        a[0] = o3;
+        Test.Assert(a[0].raw_handle == o3.raw_handle);
+        Test.Assert(a[0].number_get() == 22);
+    }
+
+    public static void count_int()
+    {
+        var a = new eina.Inarray<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Count() == 0);
+        Test.Assert(a.Push(88) == 0);
+        Test.Assert(a[0] == 88);
+        Test.Assert(a.Count() == 1);
+        Test.Assert(a.Push(44) == 1);
+        Test.Assert(a[1] == 44);
+        Test.Assert(a.Count() == 2);
+        Test.Assert(a.Push(22) == 2);
+        Test.Assert(a[2] == 22);
+        Test.Assert(a.Count() == 3);
+    }
+
+    public static void count_string()
+    {
+        var a = new eina.Inarray<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Count() == 0);
+        Test.Assert(a.Push("a") == 0);
+        Test.Assert(a[0] == "a");
+        Test.Assert(a.Count() == 1);
+        Test.Assert(a.Push("b") == 1);
+        Test.Assert(a[1] == "b");
+        Test.Assert(a.Count() == 2);
+        Test.Assert(a.Push("c") == 2);
+        Test.Assert(a[2] == "c");
+        Test.Assert(a.Count() == 3);
+    }
+
+    public static void count_obj()
+    {
+        var a = new eina.Inarray<test.NumberwrapperConcrete>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+
+        Test.Assert(a.Count() == 0);
+
+        var o1 = new test.NumberwrapperConcrete();
+        o1.number_set(88);
+        Test.Assert(a.Push(o1) == 0);
+        Test.Assert(a[0].raw_handle == o1.raw_handle);
+        Test.Assert(a[0].number_get() == 88);
+        Test.Assert(a.Count() == 1);
+
+        var o2 = new test.NumberwrapperConcrete();
+        o2.number_set(44);
+        Test.Assert(a.Push(o2) == 1);
+        Test.Assert(a[1].raw_handle == o2.raw_handle);
+        Test.Assert(a[1].number_get() == 44);
+        Test.Assert(a.Count() == 2);
+
+        var o3 = new test.NumberwrapperConcrete();
+        o3.number_set(22);
+        Test.Assert(a.Push(o3) == 2);
+        Test.Assert(a[2].raw_handle == o3.raw_handle);
+        Test.Assert(a[2].number_get() == 22);
+        Test.Assert(a.Count() == 3);
+    }
+
+    public static void length_int()
+    {
+        var a = new eina.Inarray<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Length == 0);
+        Test.Assert(a.Push(88) >= 0);
+        Test.Assert(a[0] == 88);
+        Test.Assert(a.Length == 1);
+        Test.Assert(a.Push(44) >= 0);
+        Test.Assert(a[1] == 44);
+        Test.Assert(a.Length == 2);
+        Test.Assert(a.Push(22) >= 0);
+        Test.Assert(a[2] == 22);
+        Test.Assert(a.Length == 3);
+    }
+
+    public static void length_string()
+    {
+        var a = new eina.Inarray<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Length == 0);
+        Test.Assert(a.Push("a") >= 0);
+        Test.Assert(a[0] == "a");
+        Test.Assert(a.Length == 1);
+        Test.Assert(a.Push("b") >= 0);
+        Test.Assert(a[1] == "b");
+        Test.Assert(a.Length == 2);
+        Test.Assert(a.Push("c") >= 0);
+        Test.Assert(a[2] == "c");
+        Test.Assert(a.Length == 3);
+    }
+
+    public static void eina_inarray_as_ienumerable_int()
+    {
+        var a = new eina.Inarray<int>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push(88) == 0);
+        Test.Assert(a.Push(44) == 1);
+        Test.Assert(a.Push(22) == 2);
+
+        int cmp = 88;
+        foreach (int e in a)
+        {
+            Test.AssertEquals(cmp, e);
+            cmp /= 2;
+        }
+    }
+
+    public static void eina_inarray_as_ienumerable_string()
+    {
+        var a = new eina.Inarray<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("X") == 0);
+        Test.Assert(a.Push("XX") == 1);
+        Test.Assert(a.Push("XXX") == 2);
+
+        string cmp = "X";
+        foreach (string e in a)
+        {
+            Test.AssertEquals(cmp, e);
+            cmp = cmp + "X";
+        }
+    }
+
+    public static void eina_inarray_as_ienumerable_obj()
+    {
+        var a = new test.NumberwrapperConcrete();
+        var b = new test.NumberwrapperConcrete();
+        var c = new test.NumberwrapperConcrete();
+        a.number_set(88);
+        b.number_set(44);
+        c.number_set(22);
+        var cmp = new test.NumberwrapperConcrete[]{a,b,c};
+
+        var arr = new eina.Inarray<test.NumberwrapperConcrete>();
+        Test.Assert(arr.Handle != IntPtr.Zero);
+        Test.Assert(arr.Push(a) == 0);
+        Test.Assert(arr.Push(b) == 1);
+        Test.Assert(arr.Push(c) == 2);
+
+        int i = 0;
+        foreach (test.NumberwrapperConcrete e in arr)
+        {
+            Test.AssertEquals(cmp[i].number_get(), e.number_get());
+            Test.Assert(cmp[i].raw_handle == e.raw_handle);
+            ++i;
+        }
+    }
+
+    // //
+    // Code Generation
+    //
+
+    // Integer //
+
+    public static void test_eina_inarray_int_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Inarray<int>();
+        arr.Append(base_arr_int);
+        Test.Assert(t.eina_inarray_int_in(arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(modified_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_inarray_int_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Inarray<int>();
+        arr.Append(base_arr_int);
+        Test.Assert(t.eina_inarray_int_in_own(arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(modified_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_inarray_int_in_own());
+    }
+
+    public static void test_eina_inarray_int_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Inarray<int> arr;
+        Test.Assert(t.eina_inarray_int_out(out arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_int));
+        Test.Assert(arr.Append(append_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_inarray_int_out());
+    }
+
+    public static void test_eina_inarray_int_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Inarray<int> arr;
+        Test.Assert(t.eina_inarray_int_out_own(out arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_int));
+        Test.Assert(arr.Append(append_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_inarray_int_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_inarray_int_return();
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_int));
+        Test.Assert(arr.Append(append_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_inarray_int_return());
+    }
+
+    public static void test_eina_inarray_int_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_inarray_int_return_own();
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_int));
+        Test.Assert(arr.Append(append_arr_int));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    // String //
+    public static void test_eina_inarray_str_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Inarray<string>();
+        arr.Append(base_arr_str);
+        Test.Assert(t.eina_inarray_str_in(arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(modified_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_inarray_str_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Inarray<string>();
+        arr.Append(base_arr_str);
+        Test.Assert(t.eina_inarray_str_in_own(arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(modified_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_inarray_str_in_own());
+    }
+
+    public static void test_eina_inarray_str_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Inarray<string> arr;
+        Test.Assert(t.eina_inarray_str_out(out arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_str));
+        Test.Assert(arr.Append(append_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_inarray_str_out());
+    }
+
+    public static void test_eina_inarray_str_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Inarray<string> arr;
+        Test.Assert(t.eina_inarray_str_out_own(out arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_str));
+        Test.Assert(arr.Append(append_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_inarray_str_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_inarray_str_return();
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_str));
+        Test.Assert(arr.Append(append_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_inarray_str_return());
+    }
+
+    public static void test_eina_inarray_str_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_inarray_str_return_own();
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_arr_str));
+        Test.Assert(arr.Append(append_arr_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    // Object //
+
+    public static void test_eina_inarray_obj_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Inarray<test.Numberwrapper>();
+        arr.Append(BaseArrObj());
+        Test.Assert(t.eina_inarray_obj_in(arr));
+        Test.Assert(arr.Own);
+        NumberwrapperInarrayAssertEqual(arr.ToArray(), ModifiedArrObj());
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_inarray_obj_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Inarray<test.Numberwrapper>();
+        arr.Append(BaseArrObj());
+        Test.Assert(t.eina_inarray_obj_in_own(arr));
+        Test.Assert(!arr.Own);
+        NumberwrapperInarrayAssertEqual(arr.ToArray(), ModifiedArrObj());
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_inarray_obj_in_own());
+    }
+
+    public static void test_eina_inarray_obj_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Inarray<test.Numberwrapper> arr;
+        Test.Assert(t.eina_inarray_obj_out(out arr));
+        Test.Assert(!arr.Own);
+        NumberwrapperInarrayAssertEqual(arr.ToArray(), BaseArrObj());
+        Test.Assert(arr.Append(AppendArrObj()));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_inarray_obj_out());
+    }
+
+    public static void test_eina_inarray_obj_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Inarray<test.Numberwrapper> arr;
+        Test.Assert(t.eina_inarray_obj_out_own(out arr));
+        Test.Assert(arr.Own);
+        NumberwrapperInarrayAssertEqual(arr.ToArray(), BaseArrObj());
+        Test.Assert(arr.Append(AppendArrObj()));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_inarray_obj_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_inarray_obj_return();
+        Test.Assert(!arr.Own);
+        NumberwrapperInarrayAssertEqual(arr.ToArray(), BaseArrObj());
+        Test.Assert(arr.Append(AppendArrObj()));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.check_eina_inarray_obj_return());
+    }
+
+    public static void test_eina_inarray_obj_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = t.eina_inarray_obj_return_own();
+        Test.Assert(arr.Own);
+        NumberwrapperInarrayAssertEqual(arr.ToArray(), BaseArrObj());
+        Test.Assert(arr.Append(AppendArrObj()));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_inarray_obj_return_in_same_id()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var cmp = BaseArrObj();
+        var a = new eina.Inarray<test.Numberwrapper>();
+        a.Append(cmp);
+        var b = t.eina_inarray_obj_return_in(a);
+        NumberwrapperInarrayAssertEqual(a.ToArray(), b.ToArray());
+        NumberwrapperInarrayAssertEqual(a.ToArray(), BaseArrObj());
+        int len = a.Length;
+        for (int i=0; i < len; ++i)
+        {
+            Test.Assert(a[i].raw_handle == b[i].raw_handle);
+            Test.Assert(a[i].raw_handle == cmp[i].raw_handle);
+        }
+    }
+}
+
 class TestEinaList
 {
     public static void data_set_int()
