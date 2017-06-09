@@ -363,7 +363,7 @@ edje_password_show_last_timeout_set(double password_show_last_timeout)
    _edje_password_show_last_timeout = password_show_last_timeout;
 }
 
-EOLIAN Eina_Bool
+EOLIAN void
 _edje_object_efl_ui_base_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
 {
    Edje *ged;
@@ -371,7 +371,7 @@ _edje_object_efl_ui_base_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
    Eina_List *l;
    unsigned short i;
 
-   if (EQ(ed->scale, FROM_DOUBLE(scale))) return EINA_TRUE;
+   if (EQ(ed->scale, FROM_DOUBLE(scale))) return;
    ed->scale = FROM_DOUBLE(scale);
    EINA_LIST_FOREACH(ed->groups, l, ged)
      edje_object_scale_set(ged->obj, scale);
@@ -387,8 +387,6 @@ _edje_object_efl_ui_base_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
           }
      }
    _edje_recalc(ed);
-
-   return EINA_TRUE;
 }
 
 EOLIAN double

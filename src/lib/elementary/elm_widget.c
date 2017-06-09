@@ -3664,7 +3664,7 @@ _elm_widget_scroll_freeze_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->scroll_freeze;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_widget_efl_ui_base_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double scale)
 {
    if (scale < 0.0) scale = 0.0;
@@ -3673,7 +3673,6 @@ _elm_widget_efl_ui_base_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double sca
         sd->scale = scale;
         elm_widget_theme(obj);
      }
-   return EINA_TRUE;
 }
 
 EOLIAN static double

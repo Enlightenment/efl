@@ -48,7 +48,6 @@ interface Efl.Ui.Base
          ]]
          set {
             [[Sets the scaling factor of an object.]]
-            return: bool; [[$true on success, $false otherwise]]
          }
          get {
             [[Gets an object's scaling factor.]]
