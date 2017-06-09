@@ -1261,17 +1261,18 @@ ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, const int *ro
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    window->wm_rot.count = count;
-   window->wm_rot.available_rots = rots;
+   window->wm_rot.available_rots = (int *)rots;
 }
 
 EAPI Eina_Bool
-ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int count)
+ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int *count)
 {
-   int i = 0;
+   unsigned int i = 0;
    int *val = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
+   *rots = NULL;
    *count = window->wm_rot.count;
 
    if (window->wm_rot.count >= 1)
@@ -1299,7 +1300,7 @@ ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot,
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Prepare));
    if (!ev) return;
 
-   ev->window = window;
+   ev->win = window->id;
    ev->rotation = rot;
    ev->w = w;
    ev->h = h;
@@ -1318,7 +1319,7 @@ ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Prepare_Done));
    if (!ev) return;
 
-   ev->window = window;
+   ev->win = window->id;
    ev->rotation = rot;
    ev->w = 0;
    ev->h = 0;
@@ -1331,14 +1332,14 @@ ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int
 EAPI void
 ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window, int rot)
 {
-   Ecore_Wl2_Event_Window_Rotation_Change_Reqest *ev;
+   Ecore_Wl2_Event_Window_Rotation_Change_Request *ev;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Request));
    if (!ev) return;
 
-   ev->window = window;
+   ev->win = window->id;
    ev->rotation = rot;
    ev->w = 0;
    ev->h = 0;
@@ -1351,14 +1352,14 @@ ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window, int rot)
 EAPI void
 ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, int w, int h)
 {
-   Ecore_Wl2_Event_Window_Rotation_Change_Reqest *ev;
+   Ecore_Wl2_Event_Window_Rotation_Change_Done *ev;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Request));
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Done));
    if (!ev) return;
 
-   ev->window = window;
+   ev->win = window->id;
    ev->rotation = rot;
    ev->w = w;
    ev->h = h;

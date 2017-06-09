@@ -278,7 +278,7 @@ typedef struct _Ecore_Wl2_Event_Output_Transform
 
 typedef struct _Ecore_Wl2_Event_Window_Rotation
 {
-   Ecore_Wl2_Window *window;
+   unsigned int win;
    int rotation, w, h, angle;
    Eina_Bool resize : 1;
 } Ecore_Wl2_Event_Window_Rotation;
@@ -1081,7 +1081,7 @@ EAPI void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, con
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int count);
+EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int *count);
 
 EAPI void ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot, int w, int h, Eina_Bool resize);
 EAPI void ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int rot);
