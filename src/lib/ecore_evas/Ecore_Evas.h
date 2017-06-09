@@ -2828,11 +2828,86 @@ EAPI Eina_List   *ecore_evas_sub_ecore_evas_list_get(const Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_leader_set(Ecore_Evas *ee, Ecore_X_Window win);
 EAPI Ecore_X_Window ecore_evas_x11_leader_get(Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_leader_default_set(Ecore_Evas *ee);
+
+/**
+ * @brief Set the rectangular region that can "contain" the pointer, replacing
+ * any previously set region.
+ *
+ * @param ee The Ecore_Evas
+ * @param x The X coordinate for the origin of the input containment rectangle.
+ * @param y The Y coordinate for the origin of the input containment rectangle.
+ * @param w The width of the input containment rectangle.
+ * @param h The height of the input containment rectangle.
+ *
+ * Ecore_Evas may apply (orthogonal) rotations if needed, via an internal
+ * call to _ecore_evas_x11_convert_rectangle_with_angle().  Note that
+ * ecore_evas_x11_shape_input_apply() must be called to commit the changes
+ * to the window itself.
+ */
 EAPI void           ecore_evas_x11_shape_input_rectangle_set(Ecore_Evas *ee, int x, int y, int w, int h);
+
+/**
+ * @brief Extends the pointer containment region to the union of the new
+ * and existing input rectangle.
+ *
+ * @param ee The Ecore_Evas
+ * @param x The X coordinate of the rectangular area to add.
+ * @param y The Y coordinate of the rectangular area to add.
+ * @param w The width of the rectangluar area to add.
+ * @param h The height of the rectangluar area to add.
+ *
+ * Ecore_Evas may apply (orthogonal) rotations if needed, via an internal
+ * call to _ecore_evas_x11_convert_rectangle_with_angle().  Note that
+ * ecore_evas_x11_shape_input_apply() must be called to commit the changes
+ * to the window itself.
+ */
 EAPI void           ecore_evas_x11_shape_input_rectangle_add(Ecore_Evas *ee, int x, int y, int w, int h);
+
+/**
+ * @brief Modifies the pointer containment region to subtract a rectangular region from it.
+ *
+ * @param ee The Ecore_Evas
+ * @param x The X coordinate of the subtraction rectangle.
+ * @param y The Y coordinate of the subtraction rectangle.
+ * @param w The width of the subtraction rectangle.
+ * @param h The height of the subtraction rectangle.
+ *
+ * Ecore_Evas may apply (orthogonal) rotations if needed, via an internal
+ * call to _ecore_evas_x11_convert_rectangle_with_angle().  Note that
+ * ecore_evas_x11_shape_input_apply() must be called to commit the changes
+ * to the window itself.
+ */
 EAPI void           ecore_evas_x11_shape_input_rectangle_subtract(Ecore_Evas *ee, int x, int y, int w, int h);
+
+/**
+ * @brief Disables input for the window.
+ *
+ * @param ee The Ecore_Evas
+ *
+ * Sets the pointer containment region to a null rectangle, effectively
+ * disabling input for the window.  Note that
+ * ecore_evas_x11_shape_input_apply() must be called to commit the
+ * changes to the window itself.
+ */
 EAPI void           ecore_evas_x11_shape_input_empty(Ecore_Evas *ee);
+
+/**
+ * @brief Unsets the pointer containment for the window.
+ *
+ * @param ee The Ecore_Evas
+ *
+ * Sets the pointer containment region to a maximally wide and high
+ * rectangle, effectively permitting all allowed input events to reach
+ * the window.  Note that ecore_evas_x11_shape_input_apply() must be
+ * called to commit the changes to the window itself.
+ */
 EAPI void           ecore_evas_x11_shape_input_reset(Ecore_Evas *ee);
+
+/**
+ * @brief Applies the pointer containment region to the client window.
+ *
+ * @param ee The Ecore_Evas
+ */
 EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
 
 #ifdef EFL_BETA_API_SUPPORT
