@@ -279,7 +279,7 @@ typedef struct _Ecore_Wl2_Event_Output_Transform
 typedef struct _Ecore_Wl2_Event_Window_Rotation
 {
    Ecore_Wl2_Window *window;
-   int rotation, w, h;
+   int rotation, w, h, angle;
    Eina_Bool resize : 1;
 } Ecore_Wl2_Event_Window_Rotation;
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Prepare;
