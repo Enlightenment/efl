@@ -76,6 +76,9 @@ _item_focus_eval(Elm_Toolbar_Item_Data *pd)
    if (!evas_object_visible_get(VIEW(pd)))
      want = EINA_FALSE;
 
+   if (pd->separator)
+     want = EINA_FALSE;
+
    if (!!pd->registered == !!want) return;
 
    //grab manager from widget
