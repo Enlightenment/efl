@@ -809,6 +809,8 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
         servers = eina_list_remove(servers, svr);
 
         if (svr->buf) free(svr->buf);
+        eina_list_free(svr->dead_clients);
+        eina_list_free(svr->clients);
         ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
         DBG("server %p freed", svr);
         free(svr);
@@ -1233,6 +1235,9 @@ _ecore_ipc_client_socket_del(Ecore_Ipc_Client *cl)
           efl_io_closer_close(cl->socket.socket);
         efl_unref(cl->socket.socket);
         cl->socket.socket = NULL;
+        if (!cl->svr) return;
+        cl->svr->clients = eina_list_remove(cl->svr->clients, cl);
+        cl->svr->dead_clients = eina_list_append(cl->svr->dead_clients, cl);
      }
 }
 
@@ -1355,7 +1360,7 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
         svr = cl->svr;
         if (cl->socket.socket) _ecore_ipc_client_socket_del(cl);
         if (ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
-          svr->clients = eina_list_remove(svr->clients, cl);
+          svr->dead_clients = eina_list_remove(svr->dead_clients, cl);
         if (cl->buf) free(cl->buf);
         ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
         free(cl);
