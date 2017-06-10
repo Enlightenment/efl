@@ -187,6 +187,14 @@
  * //set_effect(part_id, Effect:fx)
  * set_mouse_events(part_id, ev)
  * get_mouse_events(part_id)
+ *
+ * Pointer_Mode {
+ *   POINTER_MODE_AUTOGRAB = 0,
+ *   POINTER_MODE_NOGRAB = 1,
+ *   POINTER_MODE_NOGREP = 2,
+ * }
+ * 
+ * set_pointer_mode(part_id, mode)
  * set_repeat_events(part_id, rep)
  * get_repeat_events(part_id)
  * set_ignore_flags(part_id, flags)
@@ -3600,6 +3608,28 @@ _edje_embryo_fn_get_mouse_events(Embryo_Program *ep, Embryo_Cell *params)
 
 }
 
+/* set_pointer_mode(part_id, mode) */
+static Embryo_Cell
+_edje_embryo_fn_set_pointer_mode(Embryo_Program *ep, Embryo_Cell *params)
+{
+   int part_id = 0;
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   CHKPARAM(2);
+
+   part_id = params[1];
+   if (part_id < 0) return 0;
+
+   ed = embryo_program_data_get(ep);
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+
+   if (rp)
+     _edje_real_part_pointer_mode_set(ed, rp, params[2]);
+
+   return 0;
+}
+
 /* set_repeat_events(part_id, rep) */
 static Embryo_Cell
 _edje_embryo_fn_set_repeat_events(Embryo_Program *ep, Embryo_Cell *params)
@@ -4557,6 +4587,7 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
 
    embryo_program_native_call_add(ep, "set_mouse_events", _edje_embryo_fn_set_mouse_events);
    embryo_program_native_call_add(ep, "get_mouse_events", _edje_embryo_fn_get_mouse_events);
+   embryo_program_native_call_add(ep, "set_pointer_mode", _edje_embryo_fn_set_pointer_mode);
    embryo_program_native_call_add(ep, "set_repeat_events", _edje_embryo_fn_set_repeat_events);
    embryo_program_native_call_add(ep, "get_repeat_events", _edje_embryo_fn_get_repeat_events);
    embryo_program_native_call_add(ep, "set_ignore_flags", _edje_embryo_fn_set_ignore_flags);

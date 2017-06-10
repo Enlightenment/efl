@@ -133,6 +133,7 @@ native       set_min_size     (Float:w, Float:h);
 native       set_max_size     (Float:w, Float:h);
 native       set_mouse_events (part_id, ev);
 native       get_mouse_events (part_id);
+native       set_pointer_mode(part_id, mode);
 native       set_repeat_events(part_id, rep);
 native       get_repeat_events(part_id);
 native       set_ignore_flags (part_id, flags);

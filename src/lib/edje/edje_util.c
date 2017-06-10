@@ -6524,6 +6524,16 @@ _edje_real_part_repeat_events_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina
      evas_object_repeat_events_set(rp->object, 0);
 }
 
+void
+_edje_real_part_pointer_mode_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Evas_Object_Pointer_Mode mode)
+{
+   if (!rp) return;
+
+   rp->pointer_mode = mode;
+
+   evas_object_pointer_mode_set(rp->object, mode);
+}
+
 Evas_Event_Flags
 _edje_real_part_ignore_flags_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
 {
