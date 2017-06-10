@@ -3831,6 +3831,7 @@ _edje_object_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord 
    Eina_Bool repeat_w, repeat_h;
    Eina_Bool reset_max = EINA_TRUE;
    Edje_Real_Part *pep = NULL;
+   Eina_Bool has_fixed_tb;
 
    if ((!ed) || (!ed->collection))
      {
@@ -3874,11 +3875,13 @@ again:
           }
 
         pep = NULL;
+        has_fixed_tb = EINA_TRUE;
 
         //for parts
         for (i = 0; i < ed->table_parts_size; i++)
           {
              Edje_Real_Part *ep = ed->table_parts[i];
+             Evas_Coord ins_l, ins_r;
 
              if (!ep->chosen_description) continue;
 
@@ -3886,21 +3889,49 @@ again:
              int over_w = (ep->w - ep->req.w);
              int over_h = (ep->h - ep->req.h);
 
+             Eina_Bool skip_h = EINA_FALSE;
+
              //width
-             if ((!ep->chosen_description->fixed.w) &&
-                 (over_w > max_over_w))
+             if (!ep->chosen_description->fixed.w)
                {
-                  max_over_w = over_w;
-                  repeat_w = EINA_TRUE;
-                  pep = ep;
+                  //We care textblock width size specially.
+                  if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                    {
+                       Evas_Coord tb_mw;
+                       evas_object_textblock_size_formatted_get(ep->object,
+                                                                &tb_mw, NULL);
+                       evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r, NULL, NULL);
+                       tb_mw = ins_l + tb_mw + ins_r;
+                       tb_mw -= ep->req.w;
+                       if (tb_mw > over_w) over_w = tb_mw;
+                       has_fixed_tb = EINA_FALSE;
+                    }
+
+                  if (over_w > max_over_w)
+                    {
+                       max_over_w = over_w;
+                       repeat_w = EINA_TRUE;
+                       pep = ep;
+                       skip_h = EINA_TRUE;
+                    }
                }
              //height
-             if ((!ep->chosen_description->fixed.h) &&
-                 (over_h > max_over_h))
+             if (!ep->chosen_description->fixed.h)
                {
-                  max_over_h = over_h;
-                  repeat_h = EINA_TRUE;
-                  pep = ep;
+                  if ((ep->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+                      ((Edje_Part_Description_Text *)ep->chosen_description)->text.min_x ||
+                      !skip_h)
+                    {
+                       if (over_h > max_over_h)
+                         {
+                            max_over_h = over_h;
+                            repeat_h = EINA_TRUE;
+                            pep = ep;
+                         }
+                    }
+
+                  if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                    has_fixed_tb = EINA_FALSE;
                }
           }
         if (repeat_w)
@@ -3920,14 +3951,18 @@ again:
 
         if (reset_max && (calc_count > CALC_COUNT_LIMIT))
           {
-             /* We should possibly avoid all of this if in this case, but in
+             /* Only print it if we have a non-fixed textblock.
+              * We should possibly avoid all of this if in this case, but in
               * the meanwhile, just doing this. */
-             if (pep)
-               ERR("file %s, group %s has a non-fixed part '%s'. Adding 'fixed: 1 1;' to source EDC may help. Continuing discarding faulty part.",
-                   ed->path, ed->group, pep->part->name);
-             else
-               ERR("file %s, group %s runs infinite minimum calculation loops.Continuing discarding faulty parts.",
-                   ed->path, ed->group);
+             if (!has_fixed_tb)
+               {
+                  if (pep)
+                    ERR("file %s, group %s has a non-fixed part '%s'. Adding 'fixed: 1 1;' to source EDC may help. Continuing discarding faulty part.",
+                        ed->path, ed->group, pep->part->name);
+                  else
+                    ERR("file %s, group %s runs infinite minimum calculation loops.Continuing discarding faulty parts.",
+                        ed->path, ed->group);
+               }
 
              reset_max = EINA_FALSE;
              goto again;
