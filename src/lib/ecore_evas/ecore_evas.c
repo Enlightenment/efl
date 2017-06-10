@@ -1936,7 +1936,7 @@ ecore_evas_cursor_device_unset(Ecore_Evas *ee, Efl_Input_Device *pointer)
      pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_SEAT);
    if (pointer)
      cursor = eina_hash_find(ee->prop.cursors, &pointer);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cursor, NULL);
+   if (!cursor) return NULL;
    obj = cursor->object;
    if (ee->engine.func->fn_object_cursor_unset)
      ee->engine.func->fn_object_cursor_unset(ee);
