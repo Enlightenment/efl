@@ -3,6 +3,7 @@
 
 evas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_object.eo \
+	lib/evas/canvas/efl_canvas_object_event_grabber.eo \
 	lib/evas/canvas/efl_canvas_polygon.eo \
 	lib/evas/canvas/efl_canvas_rectangle.eo \
 	lib/evas/canvas/efl_canvas_text.eo \
@@ -199,6 +200,7 @@ lib/evas/canvas/evas_map.h \
 lib/evas/canvas/evas_gl.c \
 lib/evas/canvas/evas_out.c \
 lib/evas/canvas/efl_canvas_image.c \
+lib/evas/canvas/efl_canvas_object_event_grabber.c \
 lib/evas/canvas/efl_canvas_proxy.c \
 lib/evas/canvas/efl_canvas_snapshot.c \
 lib/evas/canvas/efl_canvas_scene3d.c \

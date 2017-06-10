@@ -92,6 +92,8 @@ typedef struct _Evas_Object_Mask_Data       Evas_Object_Mask_Data;
 typedef struct _Evas_Object_Pointer_Data            Evas_Object_Pointer_Data;
 
 typedef struct _Evas_Smart_Data             Evas_Smart_Data;
+typedef struct _Efl_Object_Event_Grabber_Data  Efl_Object_Event_Grabber_Data;
+
 
 typedef struct _Evas_Object_Protected_State Evas_Object_Protected_State;
 typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
@@ -1169,6 +1171,11 @@ struct _Evas_Object_Protected_Data
       Evas_Object_Protected_Data *parent_object_data;
    } smart;
 
+   struct {
+      Evas_Object *parent;
+      Eina_Clist   member;
+   } event;
+
    // Eina_Cow pointer be careful when writing to it
    const Evas_Object_Proxy_Data *proxy;
    const Evas_Object_Map_Data *map;
@@ -1206,6 +1213,7 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   changed : 1;
    Eina_Bool                   restack : 1;
    Eina_Bool                   is_smart : 1;
+   Eina_Bool                   is_event_parent : 1;
    Eina_Bool                   pass_events : 1;
    Eina_Bool                   store : 1;
 
@@ -1688,6 +1696,8 @@ void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *othe
 void evas_object_smart_render_cache_clear(Evas_Object *eo_obj);
 void *evas_object_smart_render_cache_get(const Evas_Object *eo_obj);
 void evas_object_smart_render_cache_set(Evas_Object *eo_obj, void *data);
+
+const Eina_Clist *evas_object_event_grabber_members_list(const Eo *eo_obj);
 
 const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void _efl_canvas_group_group_members_all_del(Evas_Object *eo_obj);

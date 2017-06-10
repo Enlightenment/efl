@@ -436,11 +436,15 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 nothing_here:
    if (!obj->no_propagate)
      {
-        if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
+        if ((obj->smart.parent || obj->event.parent) && (type != EVAS_CALLBACK_FREE) &&
               (type <= EVAS_CALLBACK_KEY_UP))
           {
-             Evas_Object_Protected_Data *smart_parent = efl_data_scope_get(obj->smart.parent, EFL_CANVAS_OBJECT_CLASS);
-             evas_object_event_callback_call(obj->smart.parent, smart_parent, type, event_info, event_id, efl_event_desc);
+             Evas_Object_Protected_Data *parent_obj;
+             Eo *parent;
+
+             parent = obj->event.parent ?: obj->smart.parent;
+             parent_obj = efl_data_scope_get(parent, EFL_CANVAS_OBJECT_CLASS);
+             evas_object_event_callback_call(parent, parent_obj, type, event_info, event_id, efl_event_desc);
           }
      }
    _evas_unwalk(e);
