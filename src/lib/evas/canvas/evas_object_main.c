@@ -2370,6 +2370,46 @@ _efl_canvas_object_precise_is_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Pro
    return obj->precise_is_inside;
 }
 
+EOLIAN static Eina_Bool
+_efl_canvas_object_pointer_inside_by_device_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Input_Device *dev)
+{
+   Evas_Pointer_Data *pdata;
+   Evas_Object_Pointer_Data *obj_pdata;
+
+   if (!obj->layer) return EINA_FALSE;
+   pdata = _evas_pointer_data_by_device_get(obj->layer->evas, dev);
+   if (!pdata) return EINA_FALSE;
+   obj_pdata = _evas_object_pointer_data_get(pdata, obj);
+   return obj_pdata ? obj_pdata->mouse_in : EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_pointer_coords_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y)
+{
+   Evas_Coord_Rectangle c;
+
+   if (obj->is_smart)
+     {
+        Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+
+        evas_object_smart_bounding_box_update(obj);
+        evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
+        c = bounding_box;
+     }
+   else
+     {
+        if (obj->clip.clipees) return EINA_FALSE;
+        c = obj->cur->geometry;
+     }
+   return RECTS_INTERSECT(x, y, 1, 1, c.x, c.y, c.w, c.h);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_pointer_inside_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   return _efl_canvas_object_pointer_inside_by_device_get(eo_obj, obj, NULL);
+}
+
 static void
 _is_frame_flag_set(Evas_Object_Protected_Data *obj, Eina_Bool is_frame)
 {

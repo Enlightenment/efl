@@ -606,6 +606,56 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             enable: bool; [[Enable "no-render" mode.]]
          }
       }
+      @property pointer_inside_by_device {
+         [[Returns whether the mouse pointer is logically inside the
+           object. @since 1.20]]
+         keys {
+            dev: Efl.Input.Device; [[The pointer device.]]
+         }
+         get {}
+         values {
+            in: bool; [[$true if the pointer is inside, $false otherwise.]]
+         }
+      }
+      @property pointer_inside {
+         get {
+            [[Returns whether the default mouse pointer is logically inside the
+              object.
+
+              When this function is called it will return a value of either
+              $false or $true, depending on if event_feed_mouse_in or
+              event_feed_mouse_out have been called to feed in a mouse
+              enter event into the object.
+
+              A return value of $true indicates the mouse is logically
+              inside the object, and $false implies it is logically
+              outside the object.
+
+              If $e is not a valid object, the return value is undefined.
+            ]]
+            return: bool @warn_unused; [[$true if the mouse pointer is inside the object, $false otherwise]]
+         }
+      }
+      pointer_coords_inside_get {
+         [[Returns whether the coords are logically inside the
+           object.
+
+           When this function is called it will return a value of either
+           $false or $true, depending on if the coords are inside the object's
+           current geometry.
+
+           A return value of $true indicates the position is logically
+           inside the object, and $false implies it is logically
+           outside the object.
+
+           If $e is not a valid object, the return value is undefined.
+         ]]
+         params {
+            @in x: int; [[The canvas-relative x coordinate.]]
+            @in y: int; [[The canvas-relative y coordinate.]]
+         }
+         return: bool @warn_unused; [[$true if the coords are inside the object, $false otherwise]]
+      }
    }
    implements {
       Efl.Object.constructor;
