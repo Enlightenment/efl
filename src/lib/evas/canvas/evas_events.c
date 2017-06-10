@@ -99,263 +99,278 @@ clip_calc(Evas_Object_Protected_Data *obj, Evas_Coord_Rectangle *c)
 }
 
 static Eina_List *
+_evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data *obj, Eina_List *in, Evas_Object *stop,
+                                   int x, int y, int *no_rep, Eina_Bool source
+#ifdef DDD_DO
+                                   , int *spaces
+#endif
+                                   )
+{
+   Evas_Coord_Rectangle c;
+   int inside;
+   Evas_Object *eo_obj = obj->object;
+   if (eo_obj == stop)
+     {
+        *no_rep = 1;
+#ifdef DDD_DO
+        (*spaces)--;
+        DDD("***** NO REP - STOP *****\n");
+#endif
+        return in;
+     }
+   if (!obj->cur->visible) return in;
+   // XXX: this below DYNAMICALLY calculates the current clip rect
+   // by walking clippers to each parent clipper until there are
+   // no more of them. this is a necessary hack because cache.clip
+   // cooreds are broken. somewhere along the way in the past few years
+   // someone has forgotten to flag them as dirty and update them
+   // so a clicp recalce caqn work... somewhere. maybe a prexy or map fix
+   // or an optimization. finding this is really hard, so i'm going
+   // for plan b and doing this on the fly. it's only for event or
+   // callback handling so its a small percentage of the time, but
+   // it's better that we get this right
+
+   if (EINA_UNLIKELY((!!obj->map) && (obj->map->cur.map)
+                     && (obj->map->cur.usemap)))
+     c = obj->map->cur.map->normal_geometry;
+   else
+     {
+        if (obj->is_smart)
+          {
+             Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+
+             evas_object_smart_bounding_box_update(obj);
+             evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
+             c = bounding_box;
+          }
+        else
+          {
+             if (obj->clip.clipees) return in;
+             c = obj->cur->geometry;
+          }
+     }
+   clip_calc(obj->cur->clipper, &c);
+   // only worry about objects that intersect INCLUDING clippint
+   if ((!RECTS_INTERSECT(x, y, 1, 1, c.x, c.y, c.w, c.h)))
+     {
+#ifdef DDD_DO
+        if (obj->is_smart)
+          {
+             Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+
+             evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
+             DDD("___  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] b[%6i %6i %6ix%6i] %s\n",
+                 obj->object,
+                 obj->cur->geometry.x, obj->cur->geometry.y,
+                 obj->cur->geometry.w, obj->cur->geometry.h,
+                 obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                 obj->cur->cache.clip.w, obj->cur->cache.clip.h,
+                 bounding_box.x, bounding_box.y,
+                 bounding_box.w, bounding_box.h,
+                 obj->type);
+          }
+        else
+          {
+             DDD("___  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] %s\n",
+                 obj->object,
+                 obj->cur->geometry.x, obj->cur->geometry.y,
+                 obj->cur->geometry.w, obj->cur->geometry.h,
+                 obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                 obj->cur->cache.clip.w, obj->cur->cache.clip.h,
+                 obj->type);
+          }
+        if (!strcmp(obj->type, "e_layout"))
+          {
+             if (obj->cur->clipper)
+               walk_clippers_print(*spaces, obj->cur->clipper);
+          }
+#endif
+        return in;
+     }
+#ifdef DDD_DO
+   else
+     {
+        if (obj->is_smart)
+          {
+             Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+
+             evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
+             DDD("OBJ  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] b[%6i %6i %6ix%6i] %s\n",
+                 obj->object,
+                 obj->cur->geometry.x, obj->cur->geometry.y,
+                 obj->cur->geometry.w, obj->cur->geometry.h,
+                 obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                 obj->cur->cache.clip.w, obj->cur->cache.clip.h,
+                 bounding_box.x, bounding_box.y,
+                 bounding_box.w, bounding_box.h,
+                 obj->type);
+          }
+        else
+          {
+             DDD("OBJ  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] %s\n",
+                 obj->object,
+                 obj->cur->geometry.x, obj->cur->geometry.y,
+                 obj->cur->geometry.w, obj->cur->geometry.h,
+                 obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                 obj->cur->cache.clip.w, obj->cur->cache.clip.h,
+                 obj->type);
+          }
+//             if (!strcmp(obj->type, "e_layout"))
+          {
+             if (obj->cur->clipper)
+               walk_clippers_print(*spaces, obj->cur->clipper);
+          }
+     }
+#endif
+
+   if (!source)
+     {
+        if (evas_event_passes_through(eo_obj, obj)) return in;
+        if (evas_object_is_source_invisible(eo_obj, obj)) return in;
+     }
+   if ((obj->delete_me == 0) &&
+       ((source) || ((obj->cur->visible) && (!obj->clip.clipees) &&
+        (evas_object_clippers_is_visible(eo_obj, obj)))))
+     {
+        if (obj->is_smart)
+          {
+             DDD("CHILDREN ->\n");
+             Evas_Object_Protected_Data *clip = obj->cur->clipper;
+             int norep = 0;
+
+             if (clip && clip->mask->is_mask && clip->precise_is_inside)
+               if (!evas_object_is_inside(clip->object, clip, x, y))
+                 return in;
+
+             if ((obj->map->cur.usemap) && (obj->map->cur.map) &&
+                 (obj->map->cur.map->count == 4))
+               {
+                  inside = evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1);
+                  if (inside)
+                    {
+                       if (!evas_map_coords_get(obj->map->cur.map, x, y,
+                                                &(obj->map->cur.map->mx),
+                                                &(obj->map->cur.map->my), 0))
+                         {
+                            inside = 0;
+                         }
+                       else
+                         {
+                            in = _evas_event_object_list_in_get
+                               (eo_e, in,
+                                evas_object_smart_members_get_direct(eo_obj),
+                                stop,
+                                obj->cur->geometry.x + obj->map->cur.map->mx,
+                                obj->cur->geometry.y + obj->map->cur.map->my,
+                                &norep, source);
+                         }
+                    }
+               }
+             else
+               {
+                  Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+
+                  if (!obj->child_has_map)
+                    evas_object_smart_bounding_box_update(obj);
+
+                  evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
+
+                  if (obj->child_has_map ||
+                      (bounding_box.x <= x &&
+                       bounding_box.x + bounding_box.w >= x &&
+                       bounding_box.y <= y &&
+                       bounding_box.y + bounding_box.h >= y) ||
+                      (obj->cur->geometry.x <= x &&
+                       obj->cur->geometry.x + obj->cur->geometry.w >= x &&
+                       obj->cur->geometry.y <= y &&
+                       obj->cur->geometry.y + obj->cur->geometry.h >= y))
+                    in = _evas_event_object_list_in_get
+                       (eo_e, in, evas_object_smart_members_get_direct(eo_obj),
+                       stop, x, y, &norep, source);
+               }
+             if (norep)
+               {
+                  if (!obj->repeat_events)
+                    {
+                       *no_rep = 1;
+#ifdef DDD_DO
+                       (*spaces)--;
+                       DDD("***** NO REP1 *****\n");
+#endif
+                       return in;
+                    }
+               }
+          }
+        else
+          {
+             Evas_Object_Protected_Data *clip = obj->cur->clipper;
+             if (clip && clip->mask->is_mask && clip->precise_is_inside)
+               inside = evas_object_is_inside(clip->object, clip, x, y);
+             else
+               inside = evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1);
+
+             if (inside)
+               {
+                  if ((obj->map->cur.usemap) && (obj->map->cur.map) &&
+                      (obj->map->cur.map->count == 4))
+                    {
+                       if (!evas_map_coords_get(obj->map->cur.map, x, y,
+                                                &(obj->map->cur.map->mx),
+                                                &(obj->map->cur.map->my), 0))
+                         {
+                            inside = 0;
+                         }
+                    }
+               }
+             if (inside && ((!obj->precise_is_inside) ||
+                            (evas_object_is_inside(eo_obj, obj, x, y))))
+               {
+                  if (!evas_event_freezes_through(eo_obj, obj))
+                    {
+                       DDD("----------------> ADD obj %p\n", obj->object);
+                       in = eina_list_append(in, eo_obj);
+                    }
+                  if (!obj->repeat_events)
+                    {
+                       *no_rep = 1;
+#ifdef DDD_DO
+                       (*spaces)--;
+                       DDD("***** NO REP2 *****\n");
+#endif
+                       return in;
+                    }
+               }
+          }
+     }
+   return in;
+}
+
+static Eina_List *
 _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                                    const Eina_Inlist *list, Evas_Object *stop,
                                    int x, int y, int *no_rep, Eina_Bool source)
 {
-   Evas_Object *eo_obj;
    Evas_Object_Protected_Data *obj = NULL;
-   Evas_Coord_Rectangle c;
-   int inside;
 
 #ifdef DDD_DO
    static int spaces = 0;
-   int i;
 #endif
 
    if (!list) return in;
 #ifdef DDD_DO
    spaces++;
 #endif
-   for (obj = _EINA_INLIST_CONTAINER(obj, eina_inlist_last(list));
-        obj;
-        obj = _EINA_INLIST_CONTAINER(obj, EINA_INLIST_GET(obj)->prev))
-     {
-        eo_obj = obj->object;
-        if (eo_obj == stop)
+        for (obj = _EINA_INLIST_CONTAINER(obj, eina_inlist_last(list));
+             obj;
+             obj = _EINA_INLIST_CONTAINER(obj, EINA_INLIST_GET(obj)->prev))
           {
-             *no_rep = 1;
+             in = _evas_event_object_list_raw_in_get_single(eo_e, obj, in, stop, x, y, no_rep, source
 #ifdef DDD_DO
-             spaces--;
-             DDD("***** NO REP - STOP *****\n");
+               ,&spaces
 #endif
-             return in;
+             );
+             if (*no_rep) return in;
           }
-        if (!obj->cur->visible) continue;
-        // XXX: this below DYNAMICALLY calculates the current clip rect
-        // by walking clippers to each parent clipper until there are
-        // no more of them. this is a necessary hack because cache.clip
-        // cooreds are broken. somewhere along the way in the past few years
-        // someone has forgotten to flag them as dirty and update them
-        // so a clicp recalce caqn work... somewhere. maybe a prexy or map fix
-        // or an optimization. finding this is really hard, so i'm going
-        // for plan b and doing this on the fly. it's only for event or
-        // callback handling so its a small percentage of the time, but
-        // it's better that we get this right
-
-        if (EINA_UNLIKELY((!!obj->map) && (obj->map->cur.map)
-                          && (obj->map->cur.usemap)))
-          c = obj->map->cur.map->normal_geometry;
-        else
-          {
-             if (obj->is_smart)
-               {
-                  Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
-
-                  evas_object_smart_bounding_box_update(obj);
-                  evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
-                  c = bounding_box;
-               }
-             else
-               {
-                  if (obj->clip.clipees) continue;
-                  c = obj->cur->geometry;
-               }
-          }
-        clip_calc(obj->cur->clipper, &c);
-        // only worry about objects that intersect INCLUDING clippint
-        if ((!RECTS_INTERSECT(x, y, 1, 1, c.x, c.y, c.w, c.h)))
-          {
-#ifdef DDD_DO
-             if (obj->is_smart)
-               {
-                  Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
-
-                  evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
-                  DDD("___  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] b[%6i %6i %6ix%6i] %s\n",
-                      obj->object,
-                      obj->cur->geometry.x, obj->cur->geometry.y,
-                      obj->cur->geometry.w, obj->cur->geometry.h,
-                      obj->cur->cache.clip.x, obj->cur->cache.clip.y,
-                      obj->cur->cache.clip.w, obj->cur->cache.clip.h,
-                      bounding_box.x, bounding_box.y,
-                      bounding_box.w, bounding_box.h,
-                      obj->type);
-               }
-             else
-               {
-                  DDD("___  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] %s\n",
-                      obj->object,
-                      obj->cur->geometry.x, obj->cur->geometry.y,
-                      obj->cur->geometry.w, obj->cur->geometry.h,
-                      obj->cur->cache.clip.x, obj->cur->cache.clip.y,
-                      obj->cur->cache.clip.w, obj->cur->cache.clip.h,
-                      obj->type);
-               }
-             if (!strcmp(obj->type, "e_layout"))
-               {
-                  if (obj->cur->clipper)
-                    walk_clippers_print(spaces, obj->cur->clipper);
-               }
-#endif
-             continue;
-          }
-#ifdef DDD_DO
-        else
-          {
-             if (obj->is_smart)
-               {
-                  Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
-
-                  evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
-                  DDD("OBJ  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] b[%6i %6i %6ix%6i] %s\n",
-                      obj->object,
-                      obj->cur->geometry.x, obj->cur->geometry.y,
-                      obj->cur->geometry.w, obj->cur->geometry.h,
-                      obj->cur->cache.clip.x, obj->cur->cache.clip.y,
-                      obj->cur->cache.clip.w, obj->cur->cache.clip.h,
-                      bounding_box.x, bounding_box.y,
-                      bounding_box.w, bounding_box.h,
-                      obj->type);
-               }
-             else
-               {
-                  DDD("OBJ  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] %s\n",
-                      obj->object,
-                      obj->cur->geometry.x, obj->cur->geometry.y,
-                      obj->cur->geometry.w, obj->cur->geometry.h,
-                      obj->cur->cache.clip.x, obj->cur->cache.clip.y,
-                      obj->cur->cache.clip.w, obj->cur->cache.clip.h,
-                      obj->type);
-               }
-//             if (!strcmp(obj->type, "e_layout"))
-               {
-                  if (obj->cur->clipper)
-                    walk_clippers_print(spaces, obj->cur->clipper);
-               }
-          }
-#endif
-
-        if (!source)
-          {
-             if (evas_event_passes_through(eo_obj, obj)) continue;
-             if (evas_object_is_source_invisible(eo_obj, obj)) continue;
-          }
-        if ((obj->delete_me == 0) &&
-            ((source) || ((obj->cur->visible) && (!obj->clip.clipees) &&
-             evas_object_clippers_is_visible(eo_obj, obj))))
-          {
-             if (obj->is_smart)
-               {
-                  DDD("CHILDREN ->\n");
-                  Evas_Object_Protected_Data *clip = obj->cur->clipper;
-                  int norep = 0;
-
-                  if (clip && clip->mask->is_mask && clip->precise_is_inside)
-                    if (!evas_object_is_inside(clip->object, clip, x, y))
-                      continue;
-
-                  if ((obj->map->cur.usemap) && (obj->map->cur.map) &&
-                      (obj->map->cur.map->count == 4))
-                    {
-                       inside = evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1);
-                       if (inside)
-                         {
-                            if (!evas_map_coords_get(obj->map->cur.map, x, y,
-                                                     &(obj->map->cur.map->mx),
-                                                     &(obj->map->cur.map->my), 0))
-                              {
-                                 inside = 0;
-                              }
-                            else
-                              {
-                                 in = _evas_event_object_list_in_get
-                                    (eo_e, in,
-                                     evas_object_smart_members_get_direct(eo_obj),
-                                     stop,
-                                     obj->cur->geometry.x + obj->map->cur.map->mx,
-                                     obj->cur->geometry.y + obj->map->cur.map->my,
-                                     &norep, source);
-                              }
-                         }
-                    }
-                  else
-                    {
-                       Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
-
-                       if (!obj->child_has_map)
-                         evas_object_smart_bounding_box_update(obj);
-
-                       evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
-
-                       if (obj->child_has_map ||
-                           (bounding_box.x <= x &&
-                            bounding_box.x + bounding_box.w >= x &&
-                            bounding_box.y <= y &&
-                            bounding_box.y + bounding_box.h >= y) ||
-                           (obj->cur->geometry.x <= x &&
-                            obj->cur->geometry.x + obj->cur->geometry.w >= x &&
-                            obj->cur->geometry.y <= y &&
-                            obj->cur->geometry.y + obj->cur->geometry.h >= y))
-                         in = _evas_event_object_list_in_get
-                            (eo_e, in, evas_object_smart_members_get_direct(eo_obj),
-                            stop, x, y, &norep, source);
-                    }
-                  if (norep)
-                    {
-                       if (!obj->repeat_events)
-                         {
-                            *no_rep = 1;
-#ifdef DDD_DO
-                            spaces--;
-                            DDD("***** NO REP1 *****\n");
-#endif
-                            return in;
-                         }
-                    }
-               }
-             else
-               {
-                  Evas_Object_Protected_Data *clip = obj->cur->clipper;
-                  if (clip && clip->mask->is_mask && clip->precise_is_inside)
-                    inside = evas_object_is_inside(clip->object, clip, x, y);
-                  else
-                    inside = evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1);
-
-                  if (inside)
-                    {
-                       if ((obj->map->cur.usemap) && (obj->map->cur.map) &&
-                           (obj->map->cur.map->count == 4))
-                         {
-                            if (!evas_map_coords_get(obj->map->cur.map, x, y,
-                                                     &(obj->map->cur.map->mx),
-                                                     &(obj->map->cur.map->my), 0))
-                              {
-                                 inside = 0;
-                              }
-                         }
-                    }
-                  if (inside && ((!obj->precise_is_inside) ||
-                                 (evas_object_is_inside(eo_obj, obj, x, y))))
-                    {
-                       if (!evas_event_freezes_through(eo_obj, obj))
-                         {
-                            DDD("----------------> ADD obj %p\n", obj->object);
-                            in = eina_list_append(in, eo_obj);
-                         }
-                       if (!obj->repeat_events)
-                         {
-                            *no_rep = 1;
-#ifdef DDD_DO
-                            spaces--;
-                            DDD("***** NO REP2 *****\n");
-#endif
-                            return in;
-                         }
-                    }
-               }
-          }
-     }
    *no_rep = 0;
 #ifdef DDD_DO
    spaces--;
