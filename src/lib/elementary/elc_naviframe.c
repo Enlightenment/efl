@@ -1423,7 +1423,7 @@ _elm_naviframe_efl_canvas_group_group_add(Eo *obj, Elm_Naviframe_Data *priv)
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _on_obj_size_hints_changed, obj);
-   elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 }
 
 static void
