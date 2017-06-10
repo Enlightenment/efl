@@ -54,18 +54,13 @@ _recalc(void *data)
      resw = w;
    edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh, resw, 0);
 
-   /* This is a hack to workaround the way min size hints are treated.
-    * If the minimum width is smaller than the restricted width, it means
-    * the minimum doesn't matter. */
-   if ((minw <= resw) && (minw != sd->wrap_w))
-     {
-        Evas_Coord ominw = -1;
+   /* If wrap_w is not set, label's width has to be controlled
+      by outside of label. So, we don't need to set minimum width. */
+   if (sd->wrap_w == -1)
+     evas_object_size_hint_min_set(data, 0, minh);
+   else
+     evas_object_size_hint_min_set(data, minw, minh);
 
-        efl_gfx_size_hint_combined_min_get(data, &ominw, NULL);
-        minw = ominw;
-     }
-
-   evas_object_size_hint_min_set(data, minw, minh);
    evas_event_thaw(evas_object_evas_get(data));
    evas_event_thaw_eval(evas_object_evas_get(data));
 }
@@ -180,6 +175,18 @@ _label_slide_change(Evas_Object *obj)
      }
 }
 
+static void
+_elm_label_horizontal_size_policy_update(Eo *obj, Elm_Label_Data *sd)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (!sd->ellipsis && (sd->linewrap == ELM_WRAP_NONE))
+     edje_object_signal_emit(wd->resize_obj, "elm,state,horizontal,expandable", "elm");
+   else
+     edje_object_signal_emit(wd->resize_obj, "elm,state,horizontal,fixed", "elm");
+   edje_object_message_signal_process(wd->resize_obj);
+}
+
 EOLIAN static Elm_Theme_Apply
 _elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 {
@@ -191,6 +198,8 @@ _elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
+
+   _elm_label_horizontal_size_policy_update(obj, sd);
 
    _label_format_set(wd->resize_obj, sd->format);
    _label_slide_change(obj);
@@ -440,6 +449,10 @@ _elm_label_line_wrap_set(Eo *obj, Elm_Label_Data *sd, Elm_Wrap_Type wrap)
    if (sd->linewrap == wrap) return;
 
    sd->linewrap = wrap;
+   sd->lastw = -1;
+
+   _elm_label_horizontal_size_policy_update(obj, sd);
+
    text = elm_layout_text_get(obj, NULL);
    if (!text) return;
 
@@ -513,6 +526,9 @@ _elm_label_ellipsis_set(Eo *obj, Elm_Label_Data *sd, Eina_Bool ellipsis)
 
    if (sd->ellipsis == ellipsis) return;
    sd->ellipsis = ellipsis;
+   sd->lastw = -1;
+
+   _elm_label_horizontal_size_policy_update(obj, sd);
 
    text = elm_layout_text_get(obj, NULL);
    if (!text) return;
