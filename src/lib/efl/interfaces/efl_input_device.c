@@ -19,6 +19,22 @@ struct _Child_Device_Iterator
    Eo            *object;
 };
 
+static Eina_Bool
+_is_pointer(Efl_Input_Device_Data *pd)
+{
+   return (pd->klass == EFL_INPUT_DEVICE_CLASS_MOUSE ||
+           pd->klass == EFL_INPUT_DEVICE_CLASS_TOUCH ||
+           pd->klass == EFL_INPUT_DEVICE_CLASS_PEN ||
+           pd->klass == EFL_INPUT_DEVICE_CLASS_WAND);
+}
+
+static void
+_seat_pointers_update(Efl_Input_Device_Data *seat, Efl_Input_Device_Data *dev)
+{
+   if (seat && _is_pointer(dev))
+     seat->pointer_count++;
+}
+
 EOLIAN static Efl_Object *
 _efl_input_device_efl_object_constructor(Eo *obj, Efl_Input_Device_Data *pd)
 {
@@ -43,6 +59,8 @@ _efl_input_device_efl_object_destructor(Eo *obj, Efl_Input_Device_Data *pd)
      {
         Efl_Input_Device_Data *p = efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS);
         p->children = eina_list_remove(p->children, obj);
+        if (_is_pointer(pd))
+          p->pointer_count--;
      }
    efl_unref(pd->source);
 
@@ -52,7 +70,10 @@ _efl_input_device_efl_object_destructor(Eo *obj, Efl_Input_Device_Data *pd)
 EOLIAN static void
 _efl_input_device_device_type_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, Efl_Input_Device_Class klass)
 {
-   pd->klass= klass;
+   EINA_SAFETY_ON_TRUE_RETURN(pd->klass);
+   pd->klass = klass;
+   if (klass != EFL_INPUT_DEVICE_CLASS_SEAT)
+     _seat_pointers_update(efl_data_scope_get(pd->parent, EFL_INPUT_DEVICE_CLASS), pd);
 }
 
 EOLIAN static Efl_Input_Device_Class
@@ -163,6 +184,7 @@ _efl_input_device_parent_set(Eo *obj, Efl_Input_Device_Data *pd, Efl_Input_Devic
      {
         Efl_Input_Device_Data *p = efl_data_scope_get(parent, EFL_INPUT_DEVICE_CLASS);
         p->children = eina_list_append(p->children, obj);
+        _seat_pointers_update(p, pd);
      }
 }
 
@@ -210,6 +232,14 @@ _efl_input_device_children_iterate(Eo *obj, Efl_Input_Device_Data *pd)
    it->object = obj;
 
    return &it->iterator;
+}
+
+EOLIAN static unsigned int
+_efl_input_device_has_pointer_caps(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+{
+   if (pd->klass == EFL_INPUT_DEVICE_CLASS_SEAT)
+     return pd->pointer_count;
+   return _is_pointer(pd);
 }
 
 #include "interfaces/efl_input_device.eo.c"

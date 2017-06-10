@@ -120,6 +120,17 @@ class Efl.Input.Device (Efl.Object)
          ]]
          return: own(free(iterator<const(Efl.Input.Device)>, eina_iterator_free));
       }
+      has_pointer_caps {
+         [[Determine whether a device has pointer capabilities.
+
+           Returns 1 for Mouse, Touch, Pen, Pointer, and Wand type devices.
+
+           If a seat device is passed, returns the number of pointer devices in the seat.
+
+           @since 1.20
+         ]]
+         return: uint;
+      }
    }
    implements {
       Efl.Object.constructor;

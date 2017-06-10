@@ -98,6 +98,7 @@ struct _Efl_Input_Device_Data
    unsigned int      id;
    Efl_Input_Device_Class klass;
    Efl_Input_Device_Sub_Class subclass;
+   unsigned int pointer_count;
 };
 
 struct _Efl_Input_Hold_Data
