@@ -25,10 +25,12 @@
 
 #define EDJE_1_18_SUPPORTED " -DEFL_VERSION_1_18=1 "
 #define EDJE_1_19_SUPPORTED " -DEFL_VERSION_1_19=1 "
+#define EDJE_1_20_SUPPORTED " -DEFL_VERSION_1_20=1 "
 
 #define EDJE_CC_EFL_VERSION_SUPPORTED \
   EDJE_1_18_SUPPORTED \
-  EDJE_1_19_SUPPORTED
+  EDJE_1_19_SUPPORTED \
+  EDJE_1_20_SUPPORTED
 
 static void  new_object(void);
 static void  new_statement(void);
