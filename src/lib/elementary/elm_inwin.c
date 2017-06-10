@@ -25,7 +25,7 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 };
 
 typedef struct {
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager *manager, *registered_manager;
    Eina_Bool registered;
 } Elm_Inwin_Data;
 
@@ -167,12 +167,15 @@ _elm_inwin_efl_gfx_visible_set(Eo *obj, Elm_Inwin_Data *pd, Eina_Bool v)
 
    if (v && !pd->registered)
      {
-        efl_ui_focus_manager_redirect_set(pd->manager, obj);
+        pd->registered_manager = efl_ui_focus_user_manager_get(obj);
+
+        efl_ui_focus_manager_redirect_set(pd->registered_manager, obj);
+        efl_ui_focus_manager_focus(pd->manager, obj);
         pd->registered = EINA_TRUE;
      }
    else if (!v && pd->registered)
      {
-        efl_ui_focus_manager_redirect_set(pd->manager, NULL);
+        efl_ui_focus_manager_redirect_set(pd->registered_manager, NULL);
         pd->registered = EINA_FALSE;
      }
 }
