@@ -158,7 +158,6 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget *widget, Elm_Code_Widge
    old = elm_code_line_text_get(line, &old_length);
    start = elm_code_widget_line_text_position_for_column_get(widget, line, selection->start_col);
    end = elm_code_widget_line_text_position_for_column_get(widget, line, selection->end_col);
-   length = line->length - (end - start + 1);
 
    if (end == line->length)
      {
@@ -186,8 +185,7 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget *widget, Elm_Code_Widget
 {
    Elm_Code_Line *line;
    const char *first, *last;
-   unsigned int last_length, start, length, i;
-   int end;
+   unsigned int last_length, start, length, end, i;
    char *content;
    Elm_Code_Widget_Selection_Data *selection;
 
@@ -203,14 +201,19 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget *widget, Elm_Code_Widget
    last = elm_code_line_text_get(line, &last_length);
    end = (int)elm_code_widget_line_text_position_for_column_get(widget, line, selection->end_col);
 
-   if (selection->end_col == 0)
-     end = -1;
-
-   length = start + last_length - (end + 1);
+   if (end == line->length)
+     length = start + last_length - end;
+   else
+     length = start + last_length - (end + 1);
    content = malloc(sizeof(char) * length);
    strncpy(content, first, start);
    if (last_length > 0)
-     strncpy(content + start, last + end + 1, last_length - (end + 1));
+     {
+        if (end == last_length)
+          strncpy(content + start, last + end, last_length - end);
+        else
+          strncpy(content + start, last + end + 1, last_length - (end + 1));
+     }
 
    for (i = line->number; i > selection->start_line; i--)
      elm_code_file_line_remove(pd->code->file, i);
