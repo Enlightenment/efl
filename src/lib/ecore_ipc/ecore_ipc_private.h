@@ -103,6 +103,7 @@ struct _Ecore_Ipc_Server
    Eo *server;
 
    Eina_List        *clients;
+   Eina_List        *dead_clients;
    void              *data;
    unsigned char     *buf;
    int                buf_size;
