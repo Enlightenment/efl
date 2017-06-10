@@ -145,7 +145,7 @@ class Efl.Ui.Focus.Manager (Efl.Object) {
               the function on the redirect manager.
             ]]
             params {
-                focus : Efl.Ui.Focus.Object @nonull; [[The object to be focused.]]
+                focus : Efl.Ui.Focus.Object @nonull; [[The object to be focused. Pass the root to get the first available none logical registered child focused]]
             }
         }
         focused {
