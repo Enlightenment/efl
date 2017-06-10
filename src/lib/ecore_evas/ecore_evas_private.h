@@ -289,6 +289,7 @@ struct _Ecore_Evas
       Eina_Bool       modal            : 1;
       Eina_Bool       demand_attention : 1;
       Eina_Bool       focus_skip       : 1;
+      Eina_Bool       focused       : 1;
   } prop;
 
    struct {

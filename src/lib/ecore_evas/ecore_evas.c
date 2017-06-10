@@ -382,6 +382,11 @@ _ecore_evas_dev_added_or_removed(void *data, const Efl_Event *event)
      {
         if (_is_pointer(event->info))
           _ecore_evas_cursor_add(ee, event->info);
+        else if (event->info == evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_SEAT))
+          {
+             if (ee->prop.focused)
+               _ecore_evas_focus_device_set(ee, event->info, 1);
+          }
      }
    else
      {
@@ -1987,15 +1992,15 @@ _ecore_evas_focus_device_set(Ecore_Evas *ee, Efl_Input_Device *seat,
 
    if (!seat)
      seat = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_SEAT);
-   if (on)
-     EINA_SAFETY_ON_NULL_RETURN(seat);
-   else if (!seat) return;
+   if ((!on) && (!seat)) return;
 
-   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (seat && (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT))
      {
         ERR("The Input device must be an seat");
         return;
      }
+   ee->prop.focused = ee->prop.focused_by || on;
+   if (!seat) return;
 
    present = ecore_evas_focus_device_get(ee, seat);
    if (on)
