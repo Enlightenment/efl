@@ -1987,7 +1987,9 @@ _ecore_evas_focus_device_set(Ecore_Evas *ee, Efl_Input_Device *seat,
 
    if (!seat)
      seat = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_SEAT);
-   EINA_SAFETY_ON_NULL_RETURN(seat);
+   if (on)
+     EINA_SAFETY_ON_NULL_RETURN(seat);
+   else if (!seat) return;
 
    if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT)
      {
