@@ -1263,8 +1263,7 @@ _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
                                const Eina_Inlist *list, Evas_Object *stop,
                                int x, int y, int *no_rep, Eina_Bool source)
 {
-   if (!list) return NULL;
-   return _evas_event_object_list_raw_in_get(eo_e, in, list->last, stop, x, y,
+   return _evas_event_object_list_raw_in_get(eo_e, in, list, stop, x, y,
                                              no_rep, source);
 }
 
