@@ -211,6 +211,12 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
    efl_event_callback_call(eo_e, EFL_CANVAS_EVENT_DEVICE_ADDED, dev);
    // Keeping this event to do not break things...
    evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   if (e->pending_default_focus_obj && (e->default_seat == dev))
+     {
+        Eo *eo_obj = e->pending_default_focus_obj;
+        e->pending_default_focus_obj = NULL;
+        evas_object_focus_set(eo_obj, 1);
+     }
 
    return dev;
 }

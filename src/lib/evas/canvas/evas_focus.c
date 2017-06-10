@@ -132,6 +132,12 @@ _efl_canvas_object_seat_focus_del(Eo *eo_obj,
 
    if (!seat) seat = _default_seat_get(eo_obj);
 
+   if ((!seat) && obj->layer)
+     {
+        if (obj->layer->evas->pending_default_focus_obj == eo_obj)
+          obj->layer->evas->pending_default_focus_obj = NULL;
+     }
+
    EINA_LIST_FOREACH(obj->focused_by_seats, l, dev)
      {
         if (dev != seat)
@@ -166,9 +172,14 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    event_id = _evas_event_counter;
    if (!seat) seat = _default_seat_get(eo_obj);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, EINA_FALSE);
-   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (seat && (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT))
      return EINA_FALSE;
+
+   if (obj->layer && (!seat))
+     {
+        obj->layer->evas->pending_default_focus_obj = eo_obj;
+        return EINA_TRUE; //questionable return
+     }
 
    if (!efl_input_seat_event_filter_get(eo_obj, seat))
      return EINA_FALSE;

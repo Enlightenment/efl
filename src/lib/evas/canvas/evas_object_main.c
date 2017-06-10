@@ -1029,7 +1029,13 @@ _efl_canvas_object_efl_object_destructor(Eo *eo_obj, Evas_Object_Protected_Data 
    EINA_LIST_FREE(obj->events_whitelist, dev)
      efl_event_callback_del(dev, EFL_EVENT_DEL, _whitelist_events_device_remove_cb, obj);
    if (obj->name) evas_object_name_set(eo_obj, NULL);
-   if (!obj->layer)
+   if (obj->layer)
+     {
+        if (obj->layer->evas)
+          if (obj->layer->evas->pending_default_focus_obj == eo_obj)
+            obj->layer->evas->pending_default_focus_obj = NULL;
+     }
+   else
      {
         efl_manual_free_set(eo_obj, EINA_FALSE);
         obj->clean_layer = 1;

@@ -935,6 +935,7 @@ struct _Evas_Public_Data
    int            in_smart_calc;
    int            smart_calc_count;
 
+   Eo            *pending_default_focus_obj;
    Eina_Hash     *focused_objects; //Key - seat; value - the focused object
    Eina_List     *focused_by; //Which seat has the canvas focus
    void          *attach_data;
