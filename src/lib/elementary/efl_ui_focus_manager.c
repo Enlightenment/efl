@@ -950,7 +950,7 @@ _get_middle(Evas_Object *obj, Eina_Vector2 *elem)
 {
    Eina_Rectangle geom;
 
-   evas_object_geometry_get(obj, &geom.x, &geom.y, &geom.w, &geom.h);
+   geom = efl_ui_focus_object_focus_geometry_get(obj);
    elem->x = geom.x + geom.w/2;
    elem->y = geom.y + geom.h/2;
 }
