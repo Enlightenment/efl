@@ -729,7 +729,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
    super = evas_key_modifier_is_set(ev->modifiers, "Super");
    altgr = evas_key_modifier_is_set(ev->modifiers, "AltGr");
 #endif
-   multiline = efl_text_format_multiline_get(obj);
+   multiline = efl_text_multiline_get(obj);
 
    /* Translate some keys to strings. */
    if (!strcmp(ev->key, "Tab"))
@@ -1256,7 +1256,7 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
    Evas_Textblock_Cursor *tc;
    Eina_Bool multiline;
 
-   multiline = efl_text_format_multiline_get(obj);
+   multiline = efl_text_multiline_get(obj);
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -1384,7 +1384,7 @@ _efl_ui_internal_text_interactive_efl_object_finalize(Eo *obj, Efl_Ui_Internal_T
            ecore_imf_context_input_panel_language_set(en->imf_context, ECORE_IMF_INPUT_PANEL_LANG_ALPHABET);
 #endif
 
-        if (efl_text_format_multiline_get(obj))
+        if (efl_text_multiline_get(obj))
            ecore_imf_context_input_hint_set(en->imf_context,
                  ecore_imf_context_input_hint_get(en->imf_context) | ECORE_IMF_INPUT_HINT_MULTILINE);
      }

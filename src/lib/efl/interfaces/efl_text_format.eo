@@ -15,8 +15,9 @@ interface Efl.Text.Format {
 
      @since 1.20
    ]]
+   eo_prefix: efl_text;
    methods {
-      @property format_ellipsis {
+      @property ellipsis {
          [[Ellipsis value (number from -1.0 to 1.0)]]
          values
          {
@@ -24,21 +25,21 @@ interface Efl.Text.Format {
          }
       }
 
-      @property format_wrap {
+      @property wrap {
          [[Wrap mode for use in the text]]
          values {
             wrap: Efl.Text.Format.Wrap;
          }
       }
 
-      @property format_multiline {
+      @property multiline {
          [[Multiline is enabled or not]]
          values {
             enabled: bool;
          }
       }
 
-      @property format_halign {
+      @property halign {
          [[Horizontal alignment of text (number from 0.0 to 1.0)]]
          values
          {
@@ -46,7 +47,7 @@ interface Efl.Text.Format {
          }
       }
 
-      @property format_valign {
+      @property valign {
          [[Vertical alignment of text (number from -1.0 to 1.0)]]
          values
          {
@@ -54,7 +55,7 @@ interface Efl.Text.Format {
          }
       }
 
-      @property format_linegap {
+      @property linegap {
          [[Minimal line gap (top and bottom) for each line in the text
 
            $value is absolute size.
@@ -65,7 +66,7 @@ interface Efl.Text.Format {
          }
       }
 
-      @property format_linerelgap {
+      @property linerelgap {
          [[Relative line gap (top and bottom) for each line in the text
 
            The original line gap value is multiplied by $value.
@@ -76,7 +77,7 @@ interface Efl.Text.Format {
          }
       }
 
-      @property format_tabstops {
+      @property tabstops {
          [[Tabstops value]]
          values
          {
@@ -84,7 +85,7 @@ interface Efl.Text.Format {
          }
       }
 
-      @property format_password {
+      @property password {
          [[Whether text is a password]]
          values
          {
@@ -92,10 +93,10 @@ interface Efl.Text.Format {
          }
       }
 
-      @property format_replacement_char {
+      @property replacement_char {
          [[The character used to replace characters that can not be displayed
 
-           Currently, only used to replace characters if @.format_password
+           Currently, only used to replace characters if @.password
            is enabled.
          ]]
          values {

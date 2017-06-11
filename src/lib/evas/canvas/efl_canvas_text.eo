@@ -291,16 +291,16 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
       Efl.Text.Style.glow_color { get; set; }
       Efl.Text.Style.glow2_color { get; set; }
       Efl.Text.Style.gfx_filter { get; set; }
-      Efl.Text.Format.format_ellipsis { get; set; }
-      Efl.Text.Format.format_wrap { get; set; }
-      Efl.Text.Format.format_multiline { get; set; }
-      Efl.Text.Format.format_halign { get; set; }
-      Efl.Text.Format.format_valign { get; set; }
-      Efl.Text.Format.format_linegap { get; set; }
-      Efl.Text.Format.format_linerelgap { get; set; }
-      Efl.Text.Format.format_tabstops { get; set; }
-      Efl.Text.Format.format_password { get; set; }
-      Efl.Text.Format.format_replacement_char { get; set; }
+      Efl.Text.Format.ellipsis { get; set; }
+      Efl.Text.Format.wrap { get; set; }
+      Efl.Text.Format.multiline { get; set; }
+      Efl.Text.Format.halign { get; set; }
+      Efl.Text.Format.valign { get; set; }
+      Efl.Text.Format.linegap { get; set; }
+      Efl.Text.Format.linerelgap { get; set; }
+      Efl.Text.Format.tabstops { get; set; }
+      Efl.Text.Format.password { get; set; }
+      Efl.Text.Format.replacement_char { get; set; }
       Efl.Text.Cursor.cursor { get; }
       Efl.Text.Cursor.cursor_position { set; get; }
       Efl.Text.Cursor.cursor_content { get; }

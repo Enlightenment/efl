@@ -522,12 +522,12 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                          efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
                          efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
                          efl_ui_text_scrollable_set(efl_added, 1),
-                         efl_text_format_multiline_set(efl_added, 1));
+                         efl_text_multiline_set(efl_added, 1));
       efl_event_callback_add(o, EFL_UI_TEXT_EVENT_CHANGED_USER, _code_changed, win);
 
       // Insert filter code inside style string: DEFAULT='blah blah <here>'
       efl_gfx_filter_program_set(o, code_filter, "code");
-      efl_text_style_gfx_filter_set(o, "code");
+      efl_text_gfx_filter_set(o, "code");
 
       // FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
       // Efl.Ui.Text doesn't seem to trigger the proper events during edit

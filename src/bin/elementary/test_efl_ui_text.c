@@ -123,7 +123,7 @@ my_efl_ui_text_bt_6(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 {
    Eo *text_obj = data;
 
-   Efl_Text_Format_Wrap wrap = efl_text_format_wrap_get(text_obj);
+   Efl_Text_Format_Wrap wrap = efl_text_wrap_get(text_obj);
 
    switch(wrap)
      {
@@ -142,7 +142,7 @@ my_efl_ui_text_bt_6(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
       default:
          break;
      }
-   efl_text_format_wrap_set(text_obj, wrap);
+   efl_text_wrap_set(text_obj, wrap);
 }
 
 static void
@@ -167,7 +167,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_show(bx);
 
    en = efl_add(EFL_UI_TEXT_CLASS, win,
-         efl_text_format_multiline_set(efl_added, EINA_TRUE));
+         efl_text_multiline_set(efl_added, EINA_TRUE));
 
    printf("Added Efl.Ui.Text object\n");
    efl_key_data_set(en, "wrap_idx", 0);
@@ -179,7 +179,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_text_font_weight_set(en, EFL_TEXT_FONT_WEIGHT_BOLD);
    efl_text_font_slant_set(en, EFL_TEXT_FONT_SLANT_ITALIC);
    efl_text_font_width_set(en, EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
-   efl_text_style_normal_color_set(en, 255, 255, 255, 255);
+   efl_text_normal_color_set(en, 255, 255, 255, 255);
 
    main_cur = efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN);
    cur = efl_text_cursor_new(en);

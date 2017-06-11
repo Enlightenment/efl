@@ -62,6 +62,7 @@ interface Efl.Text.Style {
 
      @since 1.20
    ]]
+   eo_prefix: efl_text;
    methods {
       @property normal_color {
          [[Color of text, excluding style]]

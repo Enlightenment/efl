@@ -1080,7 +1080,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
    sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    if (!sw) return;
 
-   wrap = efl_text_format_wrap_get(sw);
+   wrap = efl_text_wrap_get(sw);
 
    if (!sd->changed && (resw == sd->ent_w) && (resh == sd->ent_h)) return;
 
@@ -1105,7 +1105,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
         if (vw > minw) minw = vw;
         efl_gfx_size_set(sd->entry_edje, minw, minh);
 
-        if (!efl_text_format_multiline_get(sw))
+        if (!efl_text_multiline_get(sw))
           {
              evas_object_size_hint_min_set(obj, -1, minh);
           }
@@ -2080,7 +2080,7 @@ _entry_changed_handle(void *data,
 
    EFL_UI_TEXT_DATA_GET(data, sd);
 
-   single_line = !efl_text_format_multiline_get(obj);
+   single_line = !efl_text_multiline_get(obj);
 
    evas_event_freeze(evas_object_evas_get(data));
    sd->changed = EINA_TRUE;
@@ -2997,7 +2997,7 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    priv->editable = EINA_TRUE;
    priv->sel_allow = EINA_TRUE;
 
-   priv->single_line = !efl_text_format_multiline_get(text_obj);
+   priv->single_line = !efl_text_multiline_get(text_obj);
 
    priv->drop_format = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
    elm_drop_target_add(obj, priv->drop_format,
