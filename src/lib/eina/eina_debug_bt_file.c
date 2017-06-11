@@ -21,6 +21,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#ifdef _WIN32
+#include <Evil.h>
+#endif
+
 #include "eina_debug_private.h"
 
 extern Eina_Spinlock _eina_debug_lock;
