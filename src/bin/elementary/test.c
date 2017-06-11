@@ -292,7 +292,7 @@ void test_dnd_genlist_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_multi_features(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_types(void *data, Evas_Object *obj, void *event_info);
 void test_task_switcher(void *data, Evas_Object *obj, void *event_info);
-//void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
+void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
 void test_win_modal(void *data, Evas_Object *obj, void *event_info);
 void test_box_disable(void *data, Evas_Object *obj, void *event_info);
 void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
@@ -310,7 +310,7 @@ void test_code_diff_inline(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_label(void *data, Evas_Object *obj, void *event_info);
 void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
-//void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
+void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
 void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
 void test_evas_map(void *data, Edje_Object *obj, void *event_info);
 void test_efl_gfx_map(void *data, Edje_Object *obj, void *event_info);
@@ -667,7 +667,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Window Socket", test_win_socket);
    ADD_TEST(NULL, "Window / Background", "Window Plug", test_win_plug);
    ADD_TEST(NULL, "Window / Background", "Window WM Rotation", test_win_wm_rotation);
-//   ADD_TEST(NULL, "Window / Background", "Window Standard/Dialog", test_win_dialog);
+   ADD_TEST(NULL, "Window / Background", "Window Standard/Dialog", test_win_dialog);
    ADD_TEST(NULL, "Window / Background", "Window Keygrab Set", test_win_keygrab);
    ADD_TEST(NULL, "Window / Background", "Window Modal", test_win_modal);
    ADD_TEST(NULL, "Window / Background", "Window Stack", test_win_stack);
@@ -1032,7 +1032,7 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Evas", "Masking", test_evas_mask);
-//   ADD_TEST(NULL, "Evas", "Gfx Filters", test_gfx_filters);
+   ADD_TEST(NULL, "Evas", "Gfx Filters", test_gfx_filters);
    ADD_TEST(NULL, "Evas", "Snapshot", test_evas_snapshot);
    ADD_TEST(NULL, "Evas", "Map", test_evas_map);
    ADD_TEST(NULL, "Evas", "Gfx Map", test_efl_gfx_map);

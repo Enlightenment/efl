@@ -797,6 +797,7 @@ bin/elementary/test_genlist.c \
 bin/elementary/test_gesture_layer.c \
 bin/elementary/test_gesture_layer2.c \
 bin/elementary/test_gesture_layer3.c \
+bin/elementary/test_gfx_filters.c \
 bin/elementary/test_glview_simple.c \
 bin/elementary/test_glview.c \
 bin/elementary/test_glview_manygears.c \
@@ -859,6 +860,7 @@ bin/elementary/test_win_socket.c \
 bin/elementary/test_win_plug.c \
 bin/elementary/test_win_state.c \
 bin/elementary/test_win_wm_rotation.c \
+bin/elementary/test_win_dialog.c \
 bin/elementary/test_win_modal.c \
 bin/elementary/test_efl_ui_text.c \
 bin/elementary/test_win_stack.c \
