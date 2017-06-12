@@ -39,6 +39,7 @@ struct _Elm_Hoversel_Data
    const char           *last_location;
 
    Eina_List            *items;
+   Ecore_Job            *resize_job;
 
    Eina_Bool             horizontal    : 1;
    Eina_Bool             expanded      : 1;

@@ -235,14 +235,20 @@ _create_scroller(Evas_Object *obj, Elm_Hoversel_Data *sd)
 }
 
 static void
-_resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
+_sizing_eval(void *data)
 {
+   Evas_Object *obj = data;
    const char *max_size_str;
    int max_size = 0;
    char buf[128];
    Evas_Coord box_w = -1, box_h = -1;
    Evas_Coord x, y, w, h, xx, yy, ww, hh;
    Evas_Coord obj_x, obj_y, obj_w;
+
+   ELM_HOVERSEL_DATA_GET(obj, sd);
+
+   if (sd->resize_job)
+     sd->resize_job = NULL;
 
    if ((!sd->expanded) || (!sd->bx)) return;
 
@@ -497,7 +503,9 @@ _activate(Evas_Object *obj)
    _create_scroller(obj, sd);
    elm_object_content_set(sd->scr, sd->bx);
 
-   _resizing_eval(obj, sd);
+   if (sd->resize_job)
+     ELM_SAFE_FREE(sd->resize_job, ecore_job_del);
+   _sizing_eval(obj);
    elm_object_part_content_set(sd->hover, sd->last_location, sd->tbl);
 
    if (_elm_config->access_mode) _access_widget_item_register(sd);
@@ -602,26 +610,27 @@ _elm_hoversel_item_efl_object_destructor(Eo *eo_item, Elm_Hoversel_Item_Data *it
 }
 
 static void
-_on_move_resize(void * data,
-           Evas *e EINA_UNUSED,
-           Evas_Object *obj,
-           void *event_info EINA_UNUSED)
+_on_geometry_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Elm_Hoversel_Data *sd = data;
+   Elm_Hoversel_Data *pd = data;
 
-   _resizing_eval(obj, sd);
+   if (pd->resize_job)
+     ELM_SAFE_FREE(pd->resize_job, ecore_job_del);
+
+   pd->resize_job = ecore_job_add(_sizing_eval, obj);
 }
 
 static void
 _on_parent_resize(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Evas_Object *obj = (Evas_Object *)data;
-   ELM_HOVERSEL_DATA_GET(obj, sd);
-   _on_move_resize(sd, NULL, obj, NULL);
+   ELM_HOVERSEL_DATA_GET(obj, pd);
+
+   _on_geometry_changed(pd, NULL, obj, NULL);
 }
 
 EOLIAN static void
-_elm_hoversel_efl_canvas_group_group_add(Eo *obj, Elm_Hoversel_Data *priv)
+_elm_hoversel_efl_canvas_group_group_add(Eo *obj, Elm_Hoversel_Data *pd)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
@@ -631,8 +640,8 @@ _elm_hoversel_efl_canvas_group_group_add(Eo *obj, Elm_Hoversel_Data *priv)
    //What are you doing here?
    elm_obj_widget_theme_apply(obj);
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _on_move_resize, priv);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_move_resize, priv);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _on_geometry_changed, pd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_geometry_changed, pd);
 
    _elm_access_text_set
      (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Hoversel"));
