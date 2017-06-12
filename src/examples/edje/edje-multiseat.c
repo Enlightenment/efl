@@ -183,7 +183,7 @@ _device_added(void *data, const Efl_Event *event)
    Efl_Input_Device *dev = event->info;
    Evas_Object *edje_obj = data;
 
-   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_TYPE_SEAT)
      return;
 
    efl_canvas_object_seat_focus_add(edje_obj, dev);
@@ -251,7 +251,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    devices = evas_device_list(evas, NULL);
    EINA_LIST_FOREACH(devices, l, dev)
      {
-        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
+        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_TYPE_SEAT)
           efl_canvas_object_seat_focus_add(edje_obj, dev);
 
      }

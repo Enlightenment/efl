@@ -49,7 +49,7 @@ _mouse_pos_print(void *data)
         Evas_Coord x, y;
         Efl_Input_Device *seat;
 
-        if (efl_input_device_type_get(pointer) != EFL_INPUT_DEVICE_CLASS_MOUSE)
+        if (efl_input_device_type_get(pointer) != EFL_INPUT_DEVICE_TYPE_MOUSE)
           continue;
         ecore_evas_pointer_device_xy_get(data, pointer, &x, &y);
         seat = efl_input_device_seat_get(pointer);
@@ -78,25 +78,25 @@ _cursor_set(Ecore_Evas *ee, Efl_Input_Device *pointer)
 }
 
 static const char *
-_device_type_to_string(Efl_Input_Device_Class klass)
+_device_type_to_string(Efl_Input_Device_Type klass)
 {
    switch (klass)
      {
-      case EFL_INPUT_DEVICE_CLASS_NONE:
+      case EFL_INPUT_DEVICE_TYPE_NONE:
          return "None";
-      case EFL_INPUT_DEVICE_CLASS_SEAT:
+      case EFL_INPUT_DEVICE_TYPE_SEAT:
          return "Seat";
-      case EFL_INPUT_DEVICE_CLASS_KEYBOARD:
+      case EFL_INPUT_DEVICE_TYPE_KEYBOARD:
          return "Keyboard";
-      case EFL_INPUT_DEVICE_CLASS_MOUSE:
+      case EFL_INPUT_DEVICE_TYPE_MOUSE:
          return "Mouse";
-      case EFL_INPUT_DEVICE_CLASS_TOUCH:
+      case EFL_INPUT_DEVICE_TYPE_TOUCH:
          return "Touch";
-      case EFL_INPUT_DEVICE_CLASS_PEN:
+      case EFL_INPUT_DEVICE_TYPE_PEN:
          return "Pen";
-      case EFL_INPUT_DEVICE_CLASS_WAND:
+      case EFL_INPUT_DEVICE_TYPE_WAND:
          return "Wand";
-      case EFL_INPUT_DEVICE_CLASS_GAMEPAD:
+      case EFL_INPUT_DEVICE_TYPE_GAMEPAD:
          return "Gamepad";
       default:
          return "Unknown";
@@ -129,7 +129,7 @@ _device_added(void *data, const Efl_Event *event)
    Efl_Input_Device *pointer = event->info;
    Efl_Input_Device *seat;
 
-   if (efl_input_device_type_get(pointer) != EFL_INPUT_DEVICE_CLASS_MOUSE)
+   if (efl_input_device_type_get(pointer) != EFL_INPUT_DEVICE_TYPE_MOUSE)
      return;
    seat = efl_input_device_seat_get(pointer);
    if (!seat)
@@ -191,10 +191,10 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
      {
         switch (efl_input_device_type_get(dev))
           {
-           case EFL_INPUT_DEVICE_CLASS_SEAT:
+           case EFL_INPUT_DEVICE_TYPE_SEAT:
              _seat_children_print(dev);
              break;
-           case EFL_INPUT_DEVICE_CLASS_MOUSE:
+           case EFL_INPUT_DEVICE_TYPE_MOUSE:
              _cursor_set(ee, dev);
              break;
            default: break;

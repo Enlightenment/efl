@@ -167,11 +167,13 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
                  efl_name_set(efl_added, name),
                  efl_comment_set(efl_added, desc),
                  efl_input_device_type_set(efl_added, clas),
-                 efl_input_device_subtype_set(efl_added, sub_clas),
                  efl_input_device_source_set(efl_added, emulation_dev));
 
    d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    d->evas = eo_e;
+
+   // Legacy support, subclass is most likely unused
+   d->subclass = (unsigned) sub_clas;
 
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -375,14 +377,17 @@ evas_device_subclass_set(Evas_Device *dev, Evas_Device_Subclass clas)
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
    Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
 
-   efl_input_device_subtype_set(dev, clas);
+   d->subclass = (unsigned) clas;
    evas_event_callback_call(d->evas, EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
 EAPI Evas_Device_Subclass
 evas_device_subclass_get(const Evas_Device *dev)
 {
-   return efl_input_device_subtype_get(dev);
+   SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS, EVAS_DEVICE_SUBCLASS_NONE);
+   Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
+
+   return (Evas_Device_Subclass) d->subclass;
 }
 
 EAPI void

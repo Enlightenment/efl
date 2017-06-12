@@ -1,10 +1,8 @@
-enum Efl.Input.Device.Class
+enum Efl.Input.Device.Type
 {
    [[General type of input device.
 
-     Legacy support since 1.8.
-
-     @since 1.18
+     Legacy support since 1.8 as $Evas_Device_Class.
    ]]
    none,     [[Not a device.]]
    seat,     [[The user/seat (the user themselves).]]
@@ -14,27 +12,6 @@ enum Efl.Input.Device.Class
    pen,      [[A special pen device.]]
    wand,     [[A laser pointer, wii-style or "minority report" pointing device.]]
    gamepad,  [[A gamepad controller or joystick.]]
-}
-
-enum Efl.Input.Device.Sub_Class
-{
-   [[Specific type of input device.
-
-     Legacy support since 1.8.
-
-     @since 1.18
-   ]]
-   none,        [[Not a device.]]
-   finger,      [[The normal flat of your finger.]]
-   fingernail,  [[A fingernail.]]
-   knuckle,     [[A Knuckle.]]
-   palm,        [[The palm of a users hand.]]
-   hand_size,   [[The side of your hand.]]
-   hand_flat,   [[The flat of your hand.]]
-   pen_tip,     [[The tip of a pen.]]
-   trackpad,    [[A trackpad style mouse.]]
-   trackpoint,  [[A trackpoint style mouse.]]
-   trackball,   [[A trackball style mouse.]]
 }
 
 /* TODO: Add canvas property. Current problem is we need to return
@@ -52,13 +29,7 @@ class Efl.Input.Device (Efl.Object)
       @property device_type {
       	 [[Device type property]]
          values {
-            klass: Efl.Input.Device.Class; [[Input device class]]
-         }
-      }
-      @property device_subtype {
-      	 [[Device subtype property]]
-         values {
-            klass: Efl.Input.Device.Sub_Class; [[Input device sub-class]]
+            klass: Efl.Input.Device.Type; [[Input device class]]
          }
       }
       @property source {
@@ -73,7 +44,7 @@ class Efl.Input.Device (Efl.Object)
            This method will find the seat the device belongs to.
 
            For this, it walk through device's parents looking for a device
-           with @Efl.Input.Device.Class.seat. It may be
+           with @Efl.Input.Device.Type.seat. It may be
            the device itself.
 
            In case no seat is found, $null is returned.

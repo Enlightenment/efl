@@ -478,13 +478,13 @@ _evas_canvas_coord_world_y_to_screen(const Eo *eo_e EINA_UNUSED, Evas_Public_Dat
 EOLIAN static Efl_Input_Device *
 _evas_canvas_default_device_get(Eo *eo_e EINA_UNUSED,
                                 Evas_Public_Data *e,
-                                Efl_Input_Device_Class klass)
+                                Efl_Input_Device_Type klass)
 {
-   if (klass == EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (klass == EFL_INPUT_DEVICE_TYPE_SEAT)
      return e->default_seat;
-   if (klass == EFL_INPUT_DEVICE_CLASS_MOUSE)
+   if (klass == EFL_INPUT_DEVICE_TYPE_MOUSE)
      return e->default_mouse;
-   if (klass == EFL_INPUT_DEVICE_CLASS_KEYBOARD)
+   if (klass == EFL_INPUT_DEVICE_TYPE_KEYBOARD)
      return e->default_keyboard;
    return NULL;
 }
@@ -655,7 +655,7 @@ _evas_canvas_seat_focus_in(Eo *eo_e, Evas_Public_Data *e,
                            Efl_Input_Device *seat)
 {
    if (!seat) seat = e->default_seat;
-   if (!seat || efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   if (!seat || efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT) return;
    _evas_canvas_focus_inout_dispatch(eo_e, seat, EINA_TRUE);
 }
 
@@ -664,7 +664,7 @@ _evas_canvas_seat_focus_out(Eo *eo_e, Evas_Public_Data *e,
                             Efl_Input_Device *seat)
 {
    if (!seat) seat = e->default_seat;
-   if (!seat || efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   if (!seat || efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT) return;
    _evas_canvas_focus_inout_dispatch(eo_e, seat, EINA_FALSE);
 }
 

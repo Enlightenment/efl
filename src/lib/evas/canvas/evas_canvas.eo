@@ -1123,7 +1123,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          ]]
          get {}
          keys {
-            type: Efl.Input.Device.Class; [[The class of the default device to fetch.]]
+            type: Efl.Input.Device.Type; [[The class of the default device to fetch.]]
          }
          values {
             seat: Efl.Input.Device; [[The default device or $null on error.]]

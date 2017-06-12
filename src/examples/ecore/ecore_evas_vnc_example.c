@@ -134,25 +134,25 @@ _mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 static const char *
-_device_type_to_string(Efl_Input_Device_Class klass)
+_device_type_to_string(Efl_Input_Device_Type klass)
 {
    switch (klass)
      {
-      case EFL_INPUT_DEVICE_CLASS_NONE:
+      case EFL_INPUT_DEVICE_TYPE_NONE:
          return "None";
-      case EFL_INPUT_DEVICE_CLASS_SEAT:
+      case EFL_INPUT_DEVICE_TYPE_SEAT:
          return "Seat";
-      case EFL_INPUT_DEVICE_CLASS_KEYBOARD:
+      case EFL_INPUT_DEVICE_TYPE_KEYBOARD:
          return "Keyboard";
-      case EFL_INPUT_DEVICE_CLASS_MOUSE:
+      case EFL_INPUT_DEVICE_TYPE_MOUSE:
          return "Mouse";
-      case EFL_INPUT_DEVICE_CLASS_TOUCH:
+      case EFL_INPUT_DEVICE_TYPE_TOUCH:
          return "Touch";
-      case EFL_INPUT_DEVICE_CLASS_PEN:
+      case EFL_INPUT_DEVICE_TYPE_PEN:
          return "Pen";
-      case EFL_INPUT_DEVICE_CLASS_WAND:
+      case EFL_INPUT_DEVICE_TYPE_WAND:
          return "Wand";
-      case EFL_INPUT_DEVICE_CLASS_GAMEPAD:
+      case EFL_INPUT_DEVICE_TYPE_GAMEPAD:
          return "Gamepad";
       default:
          return "Unknown";
@@ -190,7 +190,7 @@ _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
           efl_comment_get(dev),
           event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED ? "added" : "removed");
 
-   if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_TYPE_SEAT)
      _seat_children_print(dev);
 }
 
@@ -300,7 +300,7 @@ main(int argc, char *argv[])
    mouse_wheel = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
                                         _mouse_wheel, NULL);
 
-   _seat_children_print(evas_canvas_default_device_get(evas, EFL_INPUT_DEVICE_CLASS_SEAT));
+   _seat_children_print(evas_canvas_default_device_get(evas, EFL_INPUT_DEVICE_TYPE_SEAT));
    efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_ADDED,
                           _dev_added_or_removed, NULL);
    efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,

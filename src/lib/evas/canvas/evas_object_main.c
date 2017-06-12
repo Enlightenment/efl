@@ -911,7 +911,7 @@ _efl_canvas_object_efl_input_interface_seat_event_filter_set(Eo *eo_obj,
 {
    EINA_SAFETY_ON_NULL_RETURN(seat);
 
-   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT) return;
 
    obj->events_filter_enabled = EINA_TRUE;
    if (add)
@@ -928,7 +928,7 @@ _efl_canvas_object_efl_input_interface_seat_event_filter_set(Eo *eo_obj,
              EINA_LIST_FOREACH(devices, l, dev)
                {
                   if ((efl_input_device_type_get(dev) ==
-                       EFL_INPUT_DEVICE_CLASS_SEAT) && (dev != seat))
+                       EFL_INPUT_DEVICE_TYPE_SEAT) && (dev != seat))
                     efl_canvas_object_seat_focus_del(eo_obj, dev);
                }
           }

@@ -72,25 +72,25 @@ _mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 static const char *
-_device_type_to_string(Efl_Input_Device_Class klass)
+_device_type_to_string(Efl_Input_Device_Type klass)
 {
    switch (klass)
      {
-      case EFL_INPUT_DEVICE_CLASS_NONE:
+      case EFL_INPUT_DEVICE_TYPE_NONE:
          return "None";
-      case EFL_INPUT_DEVICE_CLASS_SEAT:
+      case EFL_INPUT_DEVICE_TYPE_SEAT:
          return "Seat";
-      case EFL_INPUT_DEVICE_CLASS_KEYBOARD:
+      case EFL_INPUT_DEVICE_TYPE_KEYBOARD:
          return "Keyboard";
-      case EFL_INPUT_DEVICE_CLASS_MOUSE:
+      case EFL_INPUT_DEVICE_TYPE_MOUSE:
          return "Mouse";
-      case EFL_INPUT_DEVICE_CLASS_TOUCH:
+      case EFL_INPUT_DEVICE_TYPE_TOUCH:
          return "Touch";
-      case EFL_INPUT_DEVICE_CLASS_PEN:
+      case EFL_INPUT_DEVICE_TYPE_PEN:
          return "Pen";
-      case EFL_INPUT_DEVICE_CLASS_WAND:
+      case EFL_INPUT_DEVICE_TYPE_WAND:
          return "Wand";
-      case EFL_INPUT_DEVICE_CLASS_GAMEPAD:
+      case EFL_INPUT_DEVICE_TYPE_GAMEPAD:
          return "Gamepad";
       default:
          return "Unknown";

@@ -67,7 +67,7 @@ _device_added(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Input_Device *dev = event->info;
 
-   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_TYPE_SEAT)
      return;
    _device_rename(dev);
 }
@@ -120,7 +120,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    devices = evas_device_list(evas, NULL);
    EINA_LIST_FOREACH(devices, l, dev)
      {
-        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
+        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_TYPE_SEAT)
           _device_rename(dev);
      }
    efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_ADDED,

@@ -206,7 +206,7 @@ _dev_added_or_removed(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Input_Device *dev = event->info;
 
-   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_TYPE_SEAT)
      return;
 
    printf("The seat '%s' - description: '%s' was '%s'\n",
@@ -281,7 +281,7 @@ main(void)
    devices = evas_device_list(canvas, NULL);
    EINA_LIST_FOREACH(devices, l, dev)
      {
-        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
+        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_TYPE_SEAT)
           printf("The seat '%s' - description: '%s' was 'added'\n",
                  efl_name_get(dev),
                  efl_comment_get(dev));

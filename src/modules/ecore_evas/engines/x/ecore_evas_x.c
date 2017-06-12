@@ -1621,7 +1621,7 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (edata->direct_resize) return ECORE_CALLBACK_PASS_ON;
 
-   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
    pointer = evas_device_parent_get(pointer);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cursor, ECORE_CALLBACK_PASS_ON);
@@ -2344,7 +2344,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
    int fw = 0, fh = 0;
 
-   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_CLASS_MOUSE);
+   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
    pointer = evas_device_parent_get(pointer);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN(cursor);

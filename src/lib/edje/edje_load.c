@@ -633,7 +633,7 @@ _edje_device_added_cb(void *data, const Efl_Event *event)
    Efl_Input_Device *dev = event->info;
    Edje *ed = data;
 
-   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_TYPE_SEAT)
      return;
 
    _edje_device_add(ed, dev);
@@ -648,7 +648,7 @@ _edje_device_removed_cb(void *data, const Efl_Event *event)
    char sig[256];
    Eina_List *l;
 
-   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_TYPE_SEAT)
      return;
 
    EINA_LIST_FOREACH(ed->seats, l, s)
@@ -677,7 +677,7 @@ _edje_device_changed_cb(void *data, const Efl_Event *event)
    char sig[256];
    Eina_List *l;
 
-   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_TYPE_SEAT)
      return;
 
    EINA_LIST_FOREACH(ed->seats, l, s)
@@ -744,7 +744,7 @@ _edje_devices_add(Edje *ed, Evas *tev)
    devices = evas_device_list(tev, NULL);
    EINA_LIST_FOREACH(devices, l, dev)
      {
-        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_CLASS_SEAT)
+        if (efl_input_device_type_get(dev) == EFL_INPUT_DEVICE_TYPE_SEAT)
           _edje_device_add(ed, dev);
      }
 

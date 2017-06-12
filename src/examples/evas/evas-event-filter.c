@@ -63,7 +63,7 @@ _allowed_seat_get(Evas_Object *filtered_obj,
    devs = evas_device_list(evas_object_evas_get(filtered_obj), NULL);
    EINA_LIST_FOREACH(devs, l, seat)
      {
-        if ((efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) ||
+        if ((efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT) ||
             (*allowed_seat == seat))
           continue;
         if (!allowed_seat_changed)
@@ -162,7 +162,7 @@ _device_added_removed_cb(void *data, const Efl_Event *event)
    Efl_Input_Device *dev = event->info;
    Context *ctx = data;
 
-   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_CLASS_SEAT)
+   if (efl_input_device_type_get(dev) != EFL_INPUT_DEVICE_TYPE_SEAT)
      return;
 
    if (event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED)

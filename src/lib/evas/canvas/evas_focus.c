@@ -172,7 +172,7 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    event_id = _evas_event_counter;
    if (!seat) seat = _default_seat_get(eo_obj);
 
-   if (seat && (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT))
+   if (seat && (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT))
      return EINA_FALSE;
 
    if (obj->layer && (!seat))

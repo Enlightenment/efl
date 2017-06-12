@@ -201,7 +201,7 @@ _evas_canvas_seat_key_modifier_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
    if (!seat)
      seat = e->default_seat;
    EINA_SAFETY_ON_NULL_RETURN(seat);
-   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT) return;
    _mask_set(evas_key_modifier_number(&(e->modifiers), keyname),
              e->modifiers.masks, seat, EINA_TRUE);
 }
@@ -237,7 +237,7 @@ _evas_canvas_seat_key_lock_on(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
    if (!seat)
      seat = e->default_seat;
    EINA_SAFETY_ON_NULL_RETURN(seat);
-   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_CLASS_SEAT) return;
+   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT) return;
    _mask_set(evas_key_lock_number(&(e->locks), keyname), e->locks.masks,
              seat, EINA_TRUE);
 }

@@ -294,31 +294,39 @@ typedef enum _Evas_Engine_Render_Mode
 
 typedef Efl_Gfx_Event_Render_Post          Evas_Event_Render_Post; /**< Event info sent after a frame was rendered. @since 1.18 */
 
-typedef Efl_Input_Device_Class             Evas_Device_Class;
+typedef Efl_Input_Device_Type             Evas_Device_Class;
 
-#define EVAS_DEVICE_CLASS_NONE             EFL_INPUT_DEVICE_CLASS_NONE /**< Not a device @since 1.8 */
-#define EVAS_DEVICE_CLASS_SEAT             EFL_INPUT_DEVICE_CLASS_SEAT /**< The user/seat (the user themselves) @since 1.8 */
-#define EVAS_DEVICE_CLASS_KEYBOARD         EFL_INPUT_DEVICE_CLASS_KEYBOARD /**< A regular keyboard, numberpad or attached buttons @since 1.8 */
-#define EVAS_DEVICE_CLASS_MOUSE            EFL_INPUT_DEVICE_CLASS_MOUSE /**< A mouse, trackball or touchpad relative motion device @since 1.8 */
-#define EVAS_DEVICE_CLASS_TOUCH            EFL_INPUT_DEVICE_CLASS_TOUCH /**< A touchscreen with fingers or stylus @since 1.8 */
-#define EVAS_DEVICE_CLASS_PEN              EFL_INPUT_DEVICE_CLASS_PEN /**< A special pen device @since 1.8 */
-#define EVAS_DEVICE_CLASS_POINTER          EFL_INPUT_DEVICE_CLASS_WAND /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
-#define EVAS_DEVICE_CLASS_WAND             EFL_INPUT_DEVICE_CLASS_WAND /**< A synonym for EVAS_DEVICE_CLASS_POINTER @since 1.18 */
-#define EVAS_DEVICE_CLASS_GAMEPAD          EFL_INPUT_DEVICE_CLASS_GAMEPAD /**<  A gamepad controller or joystick @since 1.8 */
+#define EVAS_DEVICE_CLASS_NONE             EFL_INPUT_DEVICE_TYPE_NONE /**< Not a device @since 1.8 */
+#define EVAS_DEVICE_CLASS_SEAT             EFL_INPUT_DEVICE_TYPE_SEAT /**< The user/seat (the user themselves) @since 1.8 */
+#define EVAS_DEVICE_CLASS_KEYBOARD         EFL_INPUT_DEVICE_TYPE_KEYBOARD /**< A regular keyboard, numberpad or attached buttons @since 1.8 */
+#define EVAS_DEVICE_CLASS_MOUSE            EFL_INPUT_DEVICE_TYPE_MOUSE /**< A mouse, trackball or touchpad relative motion device @since 1.8 */
+#define EVAS_DEVICE_CLASS_TOUCH            EFL_INPUT_DEVICE_TYPE_TOUCH /**< A touchscreen with fingers or stylus @since 1.8 */
+#define EVAS_DEVICE_CLASS_PEN              EFL_INPUT_DEVICE_TYPE_PEN /**< A special pen device @since 1.8 */
+#define EVAS_DEVICE_CLASS_POINTER          EFL_INPUT_DEVICE_TYPE_WAND /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
+#define EVAS_DEVICE_CLASS_WAND             EFL_INPUT_DEVICE_TYPE_WAND /**< A synonym for EVAS_DEVICE_CLASS_POINTER @since 1.18 */
+#define EVAS_DEVICE_CLASS_GAMEPAD          EFL_INPUT_DEVICE_TYPE_GAMEPAD /**<  A gamepad controller or joystick @since 1.8 */
 
-typedef Efl_Input_Device_Sub_Class         Evas_Device_Subclass;
-
-#define EVAS_DEVICE_SUBCLASS_NONE          EFL_INPUT_DEVICE_SUB_CLASS_NONE /**< Not a device @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_FINGER        EFL_INPUT_DEVICE_SUB_CLASS_FINGER /**< The normal flat of your finger @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_FINGERNAIL    EFL_INPUT_DEVICE_SUB_CLASS_FINGERNAIL /**< A fingernail @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_KNUCKLE       EFL_INPUT_DEVICE_SUB_CLASS_KNUCKLE /**< A Knuckle @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_PALM          EFL_INPUT_DEVICE_SUB_CLASS_PALM /**< The palm of a users hand @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_HAND_SIZE     EFL_INPUT_DEVICE_SUB_CLASS_HAND_SIZE /**< The side of your hand @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_HAND_FLAT     EFL_INPUT_DEVICE_SUB_CLASS_HAND_FLAT /**< The flat of your hand @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_PEN_TIP       EFL_INPUT_DEVICE_SUB_CLASS_PEN_TIP /**< The tip of a pen @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_TRACKPAD      EFL_INPUT_DEVICE_SUB_CLASS_TRACKPAD /**< A trackpad style mouse @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_TRACKPOINT    EFL_INPUT_DEVICE_SUB_CLASS_TRACKPOINT /**< A trackpoint style mouse @since 1.8 */
-#define EVAS_DEVICE_SUBCLASS_TRACKBALL     EFL_INPUT_DEVICE_SUB_CLASS_TRACKBALL /**< A trackball style mouse @since 1.8 */
+/**
+ * @brief Specific type of input device.
+ *
+ * Note: Currently not used inside EFL.
+ *
+ * @since 1.8
+ */
+typedef enum
+{
+  EVAS_DEVICE_SUBCLASS_NONE = 0, /**< Not a device. */
+  EVAS_DEVICE_SUBCLASS_FINGER, /**< The normal flat of your finger. */
+  EVAS_DEVICE_SUBCLASS_FINGERNAIL, /**< A fingernail. */
+  EVAS_DEVICE_SUBCLASS_KNUCKLE, /**< A Knuckle. */
+  EVAS_DEVICE_SUBCLASS_PALM, /**< The palm of a users hand. */
+  EVAS_DEVICE_SUBCLASS_HAND_SIZE, /**< The side of your hand. */
+  EVAS_DEVICE_SUBCLASS_HAND_FLAT, /**< The flat of your hand. */
+  EVAS_DEVICE_SUBCLASS_PEN_TIP, /**< The tip of a pen. */
+  EVAS_DEVICE_SUBCLASS_TRACKPAD, /**< A trackpad style mouse. */
+  EVAS_DEVICE_SUBCLASS_TRACKPOINT, /**< A trackpoint style mouse. */
+  EVAS_DEVICE_SUBCLASS_TRACKBALL /**< A trackball style mouse. */
+} Evas_Device_Subclass;
 
 typedef Efl_Pointer_Flags                  Evas_Button_Flags;
 
