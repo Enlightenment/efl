@@ -193,15 +193,11 @@ mkstemps(char *__template, int suffixlen)
    return -1;
 }
 
-#if __MINGW64_VERSION_MAJOR < 4
-
 int
 mkstemp(char *__template)
 {
    return mkstemps(__template, 0);
 }
-
-#endif
 
 char *
 realpath(const char *file_name, char *resolved_name)

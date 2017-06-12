@@ -67,8 +67,6 @@ EAPI int unsetenv(const char *name);
  *
  */
 
-#if __MINGW64_VERSION_MAJOR < 4
-
 /**
  * @brief Create a unique temporary file name.
  *
@@ -100,8 +98,6 @@ EAPI int unsetenv(const char *name);
  * Supported OS: Windows XP.
  */
 EAPI int mkstemp(char *__template);
-
-#endif
 
 /**
  * @brief create an unique temporary directory
