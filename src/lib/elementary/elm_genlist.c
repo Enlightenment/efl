@@ -375,6 +375,10 @@ _widget_calculate_recursive(Eo *obj)
    pd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
    if (!pd) return;
 
+   if (!efl_canvas_group_need_recalculate_get(obj) &&
+       !efl_canvas_group_need_recalculate_get(pd->resize_obj))
+     return;
+
    EINA_LIST_FOREACH(pd->subobjs, l, child)
      _widget_calculate_recursive(child);
 
@@ -433,8 +437,12 @@ _item_content_realize(Elm_Gen_Item *it,
              if (efl_isa(content, ELM_WIDGET_CLASS))
                {
                   ELM_WIDGET_DATA_GET_OR_RETURN(content, wd);
-                  if (efl_canvas_group_need_recalculate_get(wd->resize_obj))
-                    _widget_calculate_recursive(content);
+
+                  // FIXME : Layout need sizing eval before group calculate
+                  if (efl_class_get(content) == ELM_LAYOUT_CLASS)
+                    elm_obj_layout_sizing_eval(content);
+
+                  _widget_calculate_recursive(content);
                }
 
              if (!edje_object_part_swallow(target, key, content))
