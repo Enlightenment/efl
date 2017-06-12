@@ -1529,14 +1529,52 @@ EAPI Ecore_Evas     *ecore_evas_wayland_shm_new(const char *disp_name, unsigned 
  */
 EAPI Ecore_Evas     *ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame);
 
+/**
+ * @brief Begin resizing the Ecore_Evas window.
+ *
+ * @param ee The Ecore_Evas.
+ * @param location The edge of the window from which the resize should start.
+ *
+ * The location edge is an enum as defined by the XDG Shell protocol.  See
+ * the zxdg_toplevel_v6_resize_edge enum definition for edge numbering.
+ */
 EAPI void            ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
+
+/**
+ * @brief Begin moving the Ecore_Evas window.
+ *
+ * @param ee The Ecore_Evas.
+ * @param x (unused)
+ * @param y (unused)
+ */
 EAPI void            ecore_evas_wayland_move(Ecore_Evas *ee, int x, int y);
 
+/**
+ * @brief Set the pointer for the Ecore_Evas window.
+ *
+ * @param ee The Ecore_Evas.
+ * @param hot_x X coordinate.
+ * @param hot_y Y coordinate.
+ *
+ * @note: This routine is unimplemented.
+ */
 EAPI void            ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y);
+
+/**
+ * @brief Set the type of the Ecore_Evas window.
+ *
+ * Enables setting the window as top level, menu, dnd, etc.
+ *
+ * @param ee The Ecore_Evas.
+ * @param type The Ecore_Wl2_Window_Type to set on the window.
+ *
+ * @see ecore_wl2_window_type_set()
+ * @see Ecore_Wl2_Window_Type
+ */
 EAPI void            ecore_evas_wayland_type_set(Ecore_Evas *ee, int type);
+
 EAPI Ecore_Wl_Window *ecore_evas_wayland_window_get(const Ecore_Evas *ee);
 EAPI Ecore_Wl2_Window *ecore_evas_wayland2_window_get(const Ecore_Evas *ee); /** @since 1.17 */
-
 EAPI Ecore_Cocoa_Window *ecore_evas_cocoa_window_get(const Ecore_Evas *ee); /** @since 1.17 */
 
 EAPI Ecore_Evas     *ecore_evas_drm_new(const char *device, unsigned int parent, int x, int y, int w, int h);

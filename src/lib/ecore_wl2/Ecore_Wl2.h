@@ -720,7 +720,7 @@ EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input
  *
  * @param window The Ecore_Wl2_Window which to resize
  * @param input The seat on which the resize is active
- * @param location The edge of the window from where the resize should start
+ * @param location The edge of the window from which the resize should start
  *
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
