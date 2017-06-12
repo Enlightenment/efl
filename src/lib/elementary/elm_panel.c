@@ -528,6 +528,7 @@ _state_sync(Evas_Object *obj)
 
       case ELM_PANEL_ORIENT_RIGHT:
          reverse = EINA_TRUE;
+         EINA_FALLTHROUGH;
       case ELM_PANEL_ORIENT_LEFT:
          horizontal = EINA_TRUE;
          break;
@@ -1154,6 +1155,7 @@ _anim_stop_cb(Evas_Object *obj, void *data EINA_UNUSED)
 
       case ELM_PANEL_ORIENT_RIGHT:
          reverse = EINA_TRUE;
+         EINA_FALLTHROUGH;
       case ELM_PANEL_ORIENT_LEFT:
          horizontal = EINA_TRUE;
          break;
