@@ -145,7 +145,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_content_get(Eo *obj,
       const Efl_Text_Cursor_Cursor_Data *cur)
 {
    Eina_Unicode *ustr;
-   Eina_Unicode uc;
+   Eina_Unicode uc = { 0 };
    char *c;
    int len;
 
