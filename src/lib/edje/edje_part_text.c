@@ -12,6 +12,7 @@ _efl_canvas_layout_internal_text_efl_text_text_set(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_efl_text_set(obj, pd->ed, pd->part, text);
+   RETURN_VOID;
 }
 
 EOLIAN static const char *
