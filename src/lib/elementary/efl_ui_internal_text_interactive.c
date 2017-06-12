@@ -798,7 +798,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 
         efl_text_cursor_char_prev(obj, cur);
 #if defined(__APPLE__) && defined(__MACH__)
-        if (altgr) efl_text_cursor_word_start(cur);
+        if (altgr) efl_text_cursor_word_start(obj, cur);
 #else
         /* If control is pressed, go to the start of the word */
         if (control) efl_text_cursor_word_start(obj, cur);
@@ -814,7 +814,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         _key_down_sel_pre(obj, cur, en, shift, EINA_TRUE);
 
 #if defined(__APPLE__) && defined(__MACH__)
-        if (altgr) efl_text_cursor_word_end(cur);
+        if (altgr) efl_text_cursor_word_end(obj, cur);
 #else
         /* If control is pressed, go to the end of the word */
         if (control) efl_text_cursor_word_end(obj, cur);
