@@ -1,0 +1,30 @@
+class Elm.Atspi.Status.Monitor (Efl.Object)
+{
+   legacy_prefix: elm_atspi_status_monitor;
+   eo_prefix: elm_obj_atspi_status_monitor;
+   methods {
+        @property status {
+             get {
+             }
+             values {
+               ret: bool;
+             }
+        }
+        @property address {
+             [[ Returns address of accessibility bus or null if platform a11y
+                status is disabled ]]
+             get {
+             }
+             values {
+               ret: string;
+             }
+        }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+   events {
+      status,changed; [[status of accessibility object]]
+   }
+}
