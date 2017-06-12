@@ -150,8 +150,6 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
 
            @since 1.18
          ]]
-         set { }
-         get { }
          values {
             enable: bool; [[$true if two indicators are enabled, $false otherwise]]
          }
@@ -161,8 +159,6 @@ class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
 
            @since 1.18
          ]]
-         set { }
-         get { }
          values {
             from: double; [[Range minimum value]]
             to: double; [[Range maximum value]]
