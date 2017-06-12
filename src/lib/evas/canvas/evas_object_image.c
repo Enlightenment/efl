@@ -422,29 +422,23 @@ _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient or
         int stride = 0;
 
         o->engine_data = ENFN->image_orient_set(ENDT, o->engine_data, orient);
-        ENFN->image_size_get(ENDT, o->engine_data, &iw, &ih);
-        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-          {
-             state_write->image.w = iw;
-             state_write->image.h = ih;
-          }
-        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
         if(o->engine_data)
           {
-             EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-              state_write->orient = orient;
-             EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+             ENFN->image_size_get(ENDT, o->engine_data, &iw, &ih);
 
              if (ENFN->image_stride_get)
                ENFN->image_stride_get(ENDT, o->engine_data, &stride);
              else
-               stride = o->cur->image.w * 4;
-             if (o->cur->image.stride != stride)
+               stride = iw * 4;
+
+             EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
                {
-                  EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-                   state_write->image.stride = stride;
-                  EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+                  state_write->image.w = iw;
+                  state_write->image.h = ih;
+                  state_write->orient = orient;
+                  state_write->image.stride = stride;
                }
+             EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
              o->written = EINA_TRUE;
           }
      }
