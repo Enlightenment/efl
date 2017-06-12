@@ -286,7 +286,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_slider_horizontal_set(o, 0);
    efl_gfx_size_hint_align_set(o, 0.5, -1);
    efl_gfx_size_hint_weight_set(o, 1, 1);
-   efl_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, user_min_slider_cb, NULL);
+   efl_event_callback_add(o, EFL_UI_SLIDER_EVENT_CHANGED, user_min_slider_cb, NULL);
    elm_slider_min_max_set(o, 0, 250);
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 0);
@@ -313,7 +313,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_slider_horizontal_set(o, 0);
    efl_gfx_size_hint_align_set(o, 0.5, -1);
    efl_gfx_size_hint_weight_set(o, 1, 1);
-   efl_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, padding_slider_cb, grid);
+   efl_event_callback_add(o, EFL_UI_SLIDER_EVENT_CHANGED, padding_slider_cb, grid);
    elm_slider_min_max_set(o, 0, 40);
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 10);
@@ -340,7 +340,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_slider_horizontal_set(o, 0);
    efl_gfx_size_hint_align_set(o, 0.5, -1);
    efl_gfx_size_hint_weight_set(o, 1, 1);
-   efl_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, margin_slider_cb, grid);
+   efl_event_callback_add(o, EFL_UI_SLIDER_EVENT_CHANGED, margin_slider_cb, grid);
    elm_slider_min_max_set(o, 0, 40);
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 10);
@@ -367,7 +367,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_slider_horizontal_set(o, 0);
    efl_gfx_size_hint_align_set(o, 0.5, -1);
    efl_gfx_size_hint_weight_set(o, 1, 1);
-   efl_event_callback_add(o, ELM_SLIDER_EVENT_CHANGED, btnmargins_slider_cb, grid);
+   efl_event_callback_add(o, EFL_UI_SLIDER_EVENT_CHANGED, btnmargins_slider_cb, grid);
    elm_slider_min_max_set(o, 0, 40);
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 10);

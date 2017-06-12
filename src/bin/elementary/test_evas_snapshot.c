@@ -174,7 +174,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    efl_pack_grid(grid, o, 0, 0, GRID_SIZE, GRID_SIZE);
 
    // Controls
-   efl_add(ELM_SLIDER_CLASS, win,
+   efl_add(EFL_UI_SLIDER_CLASS, win,
            elm_object_text_set(efl_added, "Blur radius: "),
            elm_slider_min_max_set(efl_added, 0, 64),
            elm_slider_value_set(efl_added, 5),
@@ -182,7 +182,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack_grid(grid, efl_added, 0, GRID_SIZE, GRID_SIZE, 1),
-           efl_event_callback_add(efl_added, ELM_SLIDER_EVENT_CHANGED, _radius_set, win),
+           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _radius_set, win),
            efl_gfx_visible_set(efl_added, 1));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,

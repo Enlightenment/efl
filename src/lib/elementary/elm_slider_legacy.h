@@ -159,4 +159,4 @@ EAPI const char *elm_slider_unit_format_get(const Evas_Object *obj);
  */
 EAPI void elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
 
-#include "elm_slider.eo.legacy.h"
+#include "efl_ui_slider.eo.legacy.h"

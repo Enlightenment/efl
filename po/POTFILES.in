@@ -156,7 +156,7 @@ src/lib/elementary/elm_route.c
 src/lib/elementary/elm_scroller.c
 src/lib/elementary/elm_segment_control.c
 src/lib/elementary/elm_separator.c
-src/lib/elementary/elm_slider.c
+src/lib/elementary/efl_ui_slider.c
 src/lib/elementary/elm_slideshow.c
 src/lib/elementary/elm_spinner.c
 src/lib/elementary/elm_store.c

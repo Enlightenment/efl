@@ -1,5 +1,5 @@
-#ifndef ELM_WIDGET_SLIDER_H
-#define ELM_WIDGET_SLIDER_H
+#ifndef EFL_UI_SLIDER_PRIVATE_H
+#define EFL_UI_SLIDER_PRIVATE_H
 
 #include "Elementary.h"
 
@@ -23,8 +23,8 @@
 /**
  * Base layout smart data extended with slider instance data.
  */
-typedef struct _Elm_Slider_Data Elm_Slider_Data;
-struct _Elm_Slider_Data
+typedef struct _Efl_Ui_Slider_Data Efl_Ui_Slider_Data;
+struct _Efl_Ui_Slider_Data
 {
    Evas_Object          *spacer, *popup, *popup2, *track, *track2;
    Ecore_Timer          *delay;
@@ -64,7 +64,7 @@ struct _Elm_Slider_Data
  */
 
 #define ELM_SLIDER_DATA_GET(o, sd) \
-  Elm_Slider_Data * sd = efl_data_scope_get(o, ELM_SLIDER_CLASS)
+  Efl_Ui_Slider_Data * sd = efl_data_scope_get(o, EFL_UI_SLIDER_CLASS)
 
 #define ELM_SLIDER_DATA_GET_OR_RETURN(o, ptr)        \
   ELM_SLIDER_DATA_GET(o, ptr);                       \
@@ -85,7 +85,7 @@ struct _Elm_Slider_Data
     }
 
 #define ELM_SLIDER_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), ELM_SLIDER_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_SLIDER_CLASS))) \
     return
 
 #endif

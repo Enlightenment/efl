@@ -1,15 +1,13 @@
 type slider_func_type: __undefined_type; [[Elementary slider function type]]
 type slider_freefunc_type: __undefined_type; [[Elementary slider free function type]]
 
-class Elm.Slider (Elm.Layout, Efl.Ui.Progress,
-                  Efl.Orientation,
-                  Elm.Interface.Atspi.Value,
-                  Elm.Interface.Atspi_Widget_Action)
+class Efl.Ui.Slider (Elm.Layout, Efl.Ui.Progress,
+                     Efl.Orientation,
+                     Elm.Interface.Atspi.Value,
+                     Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary slider class]]
    legacy_prefix: elm_slider;
-   eo_prefix: elm_obj_slider;
-   event_prefix: elm_slider;
    methods {
       @property indicator_format {
          set {

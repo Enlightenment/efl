@@ -10,12 +10,12 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_widget_slider.h"
+#include "efl_ui_slider_private.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_SLIDER_CLASS
+#define MY_CLASS EFL_UI_SLIDER_CLASS
 
-#define MY_CLASS_NAME "Elm_Slider"
+#define MY_CLASS_NAME "Efl.Ui.Slider"
 #define MY_CLASS_NAME_LEGACY "elm_slider"
 #define SLIDER_DELAY_CHANGED_INTERVAL 0.2
 #define SLIDER_STEP 0.05
@@ -64,7 +64,7 @@ _delay_change(void *data)
    ELM_SLIDER_DATA_GET(data, sd);
 
    sd->delay = NULL;
-   efl_event_callback_legacy_call(data, ELM_SLIDER_EVENT_DELAY_CHANGED, NULL);
+   efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_DELAY_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_value_changed_signal_emit(data);
@@ -149,7 +149,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
         sd->range_from = val;
         if (user_event)
           {
-             efl_event_callback_legacy_call(obj, ELM_SLIDER_EVENT_CHANGED, NULL);
+             efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
              ecore_timer_del(sd->delay);
              sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
           }
@@ -159,7 +159,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
         sd->range_to = val2;
         if (user_event)
           {
-             efl_event_callback_legacy_call(obj, ELM_SLIDER_EVENT_CHANGED, NULL);
+             efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
              ecore_timer_del(sd->delay);
              sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
           }
@@ -356,7 +356,7 @@ _drag_start(void *data,
    if (!elm_widget_focus_get(data))
      elm_object_focus_set(data, EINA_TRUE);
    _slider_update(data, EINA_TRUE);
-   efl_event_callback_legacy_call(data, ELM_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
+   efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
    elm_widget_scroll_freeze_push(data);
 }
 
@@ -367,7 +367,7 @@ _drag_stop(void *data,
            const char *source EINA_UNUSED)
 {
    _slider_update(data, EINA_TRUE);
-   efl_event_callback_legacy_call(data, ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
+   efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
    elm_widget_scroll_freeze_pop(data);
 }
 
@@ -565,7 +565,7 @@ _wheel_indicator_timer_cb(void *data)
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_elm_widget_widget_event(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
 
@@ -607,7 +607,7 @@ _elm_slider_elm_widget_widget_event(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, Ev
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_elm_widget_activate(Eo *obj, Elm_Slider_Data *sd, Elm_Activate act)
+_efl_ui_slider_elm_widget_activate(Eo *obj, Efl_Ui_Slider_Data *sd, Elm_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (act == ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
@@ -692,7 +692,7 @@ _track2_resize_cb(void *data,
 }
 
 static void
-_popup_add(Elm_Slider_Data *sd, Eo *obj, Evas_Object **popup,
+_popup_add(Efl_Ui_Slider_Data *sd, Eo *obj, Evas_Object **popup,
            Evas_Object **track, Eina_Bool is_range)
 {
    /* if theme has an overlayed slider mode, then lets support it */
@@ -740,7 +740,7 @@ _popup_add(Elm_Slider_Data *sd, Eo *obj, Evas_Object **popup,
 }
 
 EOLIAN static Elm_Theme_Apply
-_elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
+_efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
    ELM_LAYOUT_DATA_GET(obj, ld);
@@ -853,7 +853,7 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
 }
 
 EOLIAN static void
-_elm_slider_elm_layout_sizing_eval(Eo *obj, Elm_Slider_Data *_pd EINA_UNUSED)
+_efl_ui_slider_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw = -1, minh = -1;
@@ -948,7 +948,7 @@ _spacer_down_cb(void *data,
    if (!elm_widget_focus_get(data))
      elm_object_focus_set(data, EINA_TRUE);
    _slider_update(data, EINA_TRUE);
-   efl_event_callback_legacy_call(data, ELM_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
+   efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
    elm_layout_signal_emit(data, "elm,state,indicator,show", "elm");
 }
 
@@ -987,7 +987,7 @@ _spacer_move_cb(void *data,
              if (sd->spacer_down) sd->spacer_down = EINA_FALSE;
              _slider_update(data, EINA_TRUE);
              efl_event_callback_legacy_call
-               (data, ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
+               (data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
              if (sd->frozen)
                {
                   elm_widget_scroll_freeze_pop(data);
@@ -1027,7 +1027,7 @@ _spacer_up_cb(void *data,
    if (sd->spacer_down) sd->spacer_down = EINA_FALSE;
 
    _slider_update(data, EINA_TRUE);
-   efl_event_callback_legacy_call(data, ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
+   efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
 
    if (sd->frozen)
      {
@@ -1072,7 +1072,7 @@ _min_max_set(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_slider_efl_canvas_group_group_calculate(Eo *obj, Elm_Slider_Data *sd)
+_efl_ui_slider_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Slider_Data *sd)
 {
    elm_layout_freeze(obj);
 
@@ -1137,7 +1137,7 @@ _on_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_slider_efl_canvas_group_group_add(Eo *obj, Elm_Slider_Data *priv)
+_efl_ui_slider_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Slider_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1202,7 +1202,7 @@ _elm_slider_efl_canvas_group_group_add(Eo *obj, Elm_Slider_Data *priv)
 }
 
 EOLIAN static void
-_elm_slider_efl_canvas_group_group_del(Eo *obj, Elm_Slider_Data *sd)
+_efl_ui_slider_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Slider_Data *sd)
 {
    eina_stringshare_del(sd->indicator);
    eina_stringshare_del(sd->units);
@@ -1215,25 +1215,25 @@ _elm_slider_efl_canvas_group_group_del(Eo *obj, Elm_Slider_Data *sd)
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_slider_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *_pd EINA_UNUSED)
+_efl_ui_slider_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
 {
    return _text_aliases;
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_slider_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *_pd EINA_UNUSED)
+_efl_ui_slider_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
 {
    return _content_aliases;
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_range_enabled_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd)
+_efl_ui_slider_range_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd)
 {
    return pd->range_enable;
 }
 
 EOLIAN static void
-_elm_slider_range_enabled_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool enable)
+_efl_ui_slider_range_enabled_set(Eo *obj, Efl_Ui_Slider_Data *sd, Eina_Bool enable)
 {
    if (sd->range_enable == enable) return;
 
@@ -1254,14 +1254,14 @@ _elm_slider_range_enabled_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool enable)
 }
 
 EOLIAN static void
-_elm_slider_range_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd, double *from, double *to)
+_efl_ui_slider_range_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd, double *from, double *to)
 {
    if (from) *from = fmin(pd->range_from, pd->range_to);
    if (to) *to = fmax(pd->range_from, pd->range_to);
 }
 
 EOLIAN static void
-_elm_slider_range_set(Eo *obj, Elm_Slider_Data *pd, double from, double to)
+_efl_ui_slider_range_set(Eo *obj, Efl_Ui_Slider_Data *pd, double from, double to)
 {
    pd->range_from = from;
    //TODO: remove val later
@@ -1283,7 +1283,7 @@ elm_slider_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_slider_efl_object_constructor(Eo *obj, Elm_Slider_Data *_pd EINA_UNUSED)
+_efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -1381,7 +1381,7 @@ elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, sl
 }
 
 EOLIAN static void
-_elm_slider_efl_orientation_orientation_set(Eo *obj, Elm_Slider_Data *sd, Efl_Orient dir)
+_efl_ui_slider_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Slider_Data *sd, Efl_Orient dir)
 {
    sd->orientation = dir;
 
@@ -1389,13 +1389,13 @@ _elm_slider_efl_orientation_orientation_set(Eo *obj, Elm_Slider_Data *sd, Efl_Or
 }
 
 EOLIAN static Efl_Orient
-_elm_slider_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->orientation;
 }
 
 EOLIAN static void
-_elm_slider_efl_ui_progress_span_size_set(Eo *obj, Elm_Slider_Data *sd, Evas_Coord size)
+_efl_ui_slider_efl_ui_progress_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, Evas_Coord size)
 {
    if (sd->size == size) return;
    sd->size = size;
@@ -1421,13 +1421,13 @@ _elm_slider_efl_ui_progress_span_size_set(Eo *obj, Elm_Slider_Data *sd, Evas_Coo
 }
 
 EOLIAN static Evas_Coord
-_elm_slider_efl_ui_progress_span_size_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_efl_ui_progress_span_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->size;
 }
 
 EOLIAN static void
-_elm_slider_efl_ui_progress_unit_format_set(Eo *obj, Elm_Slider_Data *sd, const char *units)
+_efl_ui_slider_efl_ui_progress_unit_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *units)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1454,26 +1454,26 @@ _elm_slider_efl_ui_progress_unit_format_set(Eo *obj, Elm_Slider_Data *sd, const 
 }
 
 EOLIAN static const char *
-_elm_slider_efl_ui_progress_unit_format_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_efl_ui_progress_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->units;
 }
 
 EOLIAN static void
-_elm_slider_indicator_format_set(Eo *obj, Elm_Slider_Data *sd, const char *indicator)
+_efl_ui_slider_indicator_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *indicator)
 {
    eina_stringshare_replace(&sd->indicator, indicator);
    evas_object_smart_changed(obj);
 }
 
 EOLIAN static const char*
-_elm_slider_indicator_format_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_indicator_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->indicator;
 }
 
 EOLIAN static void
-_elm_slider_min_max_set(Eo *obj, Elm_Slider_Data *sd, double min, double max)
+_efl_ui_slider_min_max_set(Eo *obj, Efl_Ui_Slider_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
    sd->val_min = min;
@@ -1485,14 +1485,14 @@ _elm_slider_min_max_set(Eo *obj, Elm_Slider_Data *sd, double min, double max)
 }
 
 EOLIAN static void
-_elm_slider_min_max_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double *min, double *max)
+_efl_ui_slider_min_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
 }
 
 EOLIAN static void
-_elm_slider_efl_ui_progress_progress_value_set(Eo *obj, Elm_Slider_Data *sd, double val)
+_efl_ui_slider_efl_ui_progress_progress_value_set(Eo *obj, Efl_Ui_Slider_Data *sd, double val)
 {
    if (sd->val == val) return;
    sd->val = val;
@@ -1505,13 +1505,13 @@ _elm_slider_efl_ui_progress_progress_value_set(Eo *obj, Elm_Slider_Data *sd, dou
 }
 
 EOLIAN static double
-_elm_slider_efl_ui_progress_progress_value_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_efl_ui_progress_progress_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->val;
 }
 
 EOLIAN static void
-_elm_slider_indicator_format_function_set(Eo *obj, Elm_Slider_Data *sd, slider_func_type func, slider_freefunc_type free_func)
+_efl_ui_slider_indicator_format_function_set(Eo *obj, Efl_Ui_Slider_Data *sd, slider_func_type func, slider_freefunc_type free_func)
 {
    sd->indicator_format_func = func;
    sd->indicator_format_free = free_func;
@@ -1519,7 +1519,7 @@ _elm_slider_indicator_format_function_set(Eo *obj, Elm_Slider_Data *sd, slider_f
 }
 
 EOLIAN static void
-_elm_slider_indicator_show_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool show)
+_efl_ui_slider_indicator_show_set(Eo *obj, Efl_Ui_Slider_Data *sd, Eina_Bool show)
 {
    if (show)
      {
@@ -1544,13 +1544,13 @@ _elm_slider_indicator_show_set(Eo *obj, Elm_Slider_Data *sd, Eina_Bool show)
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_indicator_show_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_indicator_show_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->indicator_show;
 }
 
 EOLIAN static void
-_elm_slider_step_set(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double step)
+_efl_ui_slider_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double step)
 {
    if (sd->step == step) return;
 
@@ -1561,13 +1561,13 @@ _elm_slider_step_set(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double step)
 }
 
 EOLIAN static double
-_elm_slider_step_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN static void
-_elm_slider_indicator_show_on_focus_set(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, Eina_Bool flag)
+_efl_ui_slider_indicator_show_on_focus_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, Eina_Bool flag)
 {
    if (flag)
      sd->indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS;
@@ -1576,38 +1576,38 @@ _elm_slider_indicator_show_on_focus_set(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_indicator_show_on_focus_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_indicator_show_on_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return (sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS);
 }
 
 EOLIAN static void
-_elm_slider_indicator_visible_mode_set(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode)
+_efl_ui_slider_indicator_visible_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode)
 {
    if (sd->indicator_visible_mode == indicator_visible_mode) return;
    sd->indicator_visible_mode = indicator_visible_mode;
 }
 
 EOLIAN static Elm_Slider_Indicator_Visible_Mode
-_elm_slider_indicator_visible_mode_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_indicator_visible_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->indicator_visible_mode;
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Slider_Data *_pd EINA_UNUSED)
+_efl_ui_slider_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Slider_Data *_pd EINA_UNUSED)
+_efl_ui_slider_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_elm_widget_on_focus(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_slider_elm_widget_on_focus(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -1622,7 +1622,7 @@ _elm_slider_elm_widget_on_focus(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, Elm_Ob
 }
 
 EOLIAN static void
-_elm_slider_class_constructor(Efl_Class *klass)
+_efl_ui_slider_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
@@ -1630,32 +1630,32 @@ _elm_slider_class_constructor(Efl_Class *klass)
 // A11Y Accessibility
 
 EOLIAN static void
-_elm_slider_elm_interface_atspi_value_value_and_text_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double *value, const char **text)
+_efl_ui_slider_elm_interface_atspi_value_value_and_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *value, const char **text)
 {
    if (value) *value = sd->val;
    if (text) *text = NULL;
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_elm_interface_atspi_value_value_and_text_set(Eo *obj, Elm_Slider_Data *sd, double value, const char *text EINA_UNUSED)
+_efl_ui_slider_elm_interface_atspi_value_value_and_text_set(Eo *obj, Efl_Ui_Slider_Data *sd, double value, const char *text EINA_UNUSED)
 {
    double oldval = sd->val;
 
    if (value < sd->val_min) value = sd->val_min;
    if (value > sd->val_max) value = sd->val_max; 
 
-   efl_event_callback_legacy_call(obj, ELM_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
    sd->val = value;
    _visuals_refresh(obj);
    sd->val = oldval;
    _slider_update(obj, EINA_TRUE);
-   efl_event_callback_legacy_call(obj, ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
 
    return EINA_TRUE;
 }
 
 EOLIAN static void
-_elm_slider_elm_interface_atspi_value_range_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double *lower, double *upper, const char **descr)
+_efl_ui_slider_elm_interface_atspi_value_range_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *lower, double *upper, const char **descr)
 {
    if (lower) *lower = sd->val_min;
    if (upper) *upper = sd->val_max;
@@ -1663,13 +1663,13 @@ _elm_slider_elm_interface_atspi_value_range_get(Eo *obj EINA_UNUSED, Elm_Slider_
 }
 
 EOLIAN static double
-_elm_slider_elm_interface_atspi_value_increment_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+_efl_ui_slider_elm_interface_atspi_value_increment_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN const Elm_Atspi_Action *
-_elm_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd EINA_UNUSED)
+_efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd EINA_UNUSED)
 {
    static Elm_Atspi_Action atspi_actions[] = {
           { "drag,left", "drag", "left", _key_action_drag},
@@ -1685,7 +1685,7 @@ _elm_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
 
 /* Internal EO APIs and hidden overrides */
 
-#define ELM_SLIDER_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_slider)
+#define EFL_UI_SLIDER_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
 
-#include "elm_slider.eo.c"
+#include "efl_ui_slider.eo.c"

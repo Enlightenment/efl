@@ -61,7 +61,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_radio.eo \
 	lib/elementary/elm_route.eo \
 	lib/elementary/elm_scroller.eo \
-	lib/elementary/elm_slider.eo \
+	lib/elementary/efl_ui_slider.eo \
 	lib/elementary/elm_spinner.eo \
 	lib/elementary/elm_sys_notify_interface.eo \
 	lib/elementary/elm_sys_notify.eo \
@@ -272,7 +272,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_scroller.h \
 	lib/elementary/elm_widget_segment_control.h \
 	lib/elementary/elm_widget_separator.h \
-	lib/elementary/elm_widget_slider.h \
+	lib/elementary/efl_ui_slider_private.h \
 	lib/elementary/elm_widget_slideshow.h \
 	lib/elementary/elm_widget_spinner.h \
 	lib/elementary/elm_widget_table.h \
@@ -492,7 +492,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_separator_legacy.h \
 	lib/elementary/elm_slider.h \
 	lib/elementary/elm_slider_common.h \
-	lib/elementary/elm_slider_eo.h \
+	lib/elementary/efl_ui_slider_eo.h \
 	lib/elementary/elm_slider_legacy.h \
 	lib/elementary/elm_slideshow.h \
 	lib/elementary/elm_slideshow_common.h \
@@ -640,7 +640,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_scroller.c \
 	lib/elementary/elm_segment_control.c \
 	lib/elementary/elm_separator.c \
-	lib/elementary/elm_slider.c \
+	lib/elementary/efl_ui_slider.c \
 	lib/elementary/elm_slideshow.c \
 	lib/elementary/elm_spinner.c \
 	lib/elementary/elm_store.c \

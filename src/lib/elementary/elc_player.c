@@ -87,9 +87,9 @@ EFL_CALLBACKS_ARRAY_DEFINE(_emotion_cb,
 );
 
 EFL_CALLBACKS_ARRAY_DEFINE(_slider_cb,
-   { ELM_SLIDER_EVENT_CHANGED, _update_position },
-   { ELM_SLIDER_EVENT_SLIDER_DRAG_START, _drag_start },
-   { ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, _drag_stop }
+   { EFL_UI_SLIDER_EVENT_CHANGED, _update_position },
+   { EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, _drag_start },
+   { EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, _drag_stop }
 );
 
 static Eina_Bool
@@ -657,7 +657,7 @@ _elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
    elm_layout_content_set(obj, "elm.swallow.media_player.volumeslider",
                           priv->vslider);
    efl_event_callback_add
-     (priv->vslider, ELM_SLIDER_EVENT_CHANGED, _update_volume, obj);
+     (priv->vslider, EFL_UI_SLIDER_EVENT_CHANGED, _update_volume, obj);
 
    elm_layout_sizing_eval(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
