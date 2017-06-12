@@ -141,8 +141,9 @@ my_bt_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         if (eina_list_count(grps) > 0)
           {
-             efl_file_set(ph, file, eina_list_nth(grps, 0));
-             printf("Successfully set the edje file: %s, group: %s\n", file, eina_list_nth(grps, 0));
+             const char *grp = eina_list_nth(grps, 0);
+             efl_file_set(ph, file, grp);
+             printf("Successfully set the edje file: %s, group: %s\n", file, grp);
           }
         else printf("Failed to set edje file\n");
 
