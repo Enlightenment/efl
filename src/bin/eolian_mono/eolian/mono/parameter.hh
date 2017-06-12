@@ -625,6 +625,13 @@ struct native_convert_out_variable_generator
                type << " " << string << ";\n"
              ).generate(sink, std::make_tuple(param.type, out_variable_name(param.param_name)), context);
         }
+      else if (param.direction == attributes::parameter_direction::out)
+        {
+           // Assign a default value to the out variable in case we end up in the catch clause.
+           return as_generator(
+                   string << " = default(" << type << ");"
+                   ).generate(sink, std::make_tuple(param.param_name, param), context);
+        }
       return true;
    }
 
