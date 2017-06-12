@@ -242,8 +242,7 @@ _sizing_eval(void *data)
    int max_size = 0;
    char buf[128];
    Evas_Coord box_w = -1, box_h = -1;
-   Evas_Coord x, y, w, h, xx, yy, ww, hh;
-   Evas_Coord obj_x, obj_y, obj_w;
+   Eina_Rectangle base, adjusted, parent;
 
    ELM_HOVERSEL_DATA_GET(obj, sd);
 
@@ -267,96 +266,90 @@ _sizing_eval(void *data)
 
    if (sd->horizontal)
      {
-        ww = (max_size > 0) ? MIN(box_w, max_size) : box_w ;
-        hh = box_h;
-
-        evas_object_size_hint_min_set(sd->spacer, ww, hh);
-
-        if (!sd->last_location)
-          sd->last_location = elm_hover_best_content_location_get(sd->hover, ELM_HOVER_AXIS_HORIZONTAL);
+        adjusted.w = (max_size > 0) ? MIN(box_w, max_size) : box_w ;
+        adjusted.h = box_h;
      }
    else
      {
-        ww = box_w;
-        hh = (max_size > 0) ? MIN(box_h, max_size) : box_h ;
-
-        evas_object_size_hint_min_set(sd->spacer, ww, hh);
-
-        if (!sd->last_location)
-          sd->last_location = elm_hover_best_content_location_get(sd->hover, ELM_HOVER_AXIS_VERTICAL);
+        adjusted.w = box_w;
+        adjusted.h = (max_size > 0) ? MIN(box_h, max_size) : box_h ;
      }
 
-   evas_object_geometry_get(sd->hover_parent, &x, &y, &w, &h);
+   evas_object_size_hint_min_set(sd->spacer, adjusted.w, adjusted.h);
+   if (!sd->last_location)
+     sd->last_location = elm_hover_best_content_location_get(sd->hover, !sd->horizontal + 1);
+
+   evas_object_geometry_get(sd->hover_parent, &parent.x, &parent.y, &parent.w, &parent.h);
    if (efl_isa(sd->hover_parent, EFL_UI_WIN_CLASS))
      {
-        x = 0;
-        y = 0;
+        parent.x = 0;
+        parent.y = 0;
      }
 
    snprintf(buf, sizeof(buf), "elm.swallow.slot.%s", sd->last_location);
-   edje_object_part_geometry_get(elm_layout_edje_get(sd->hover), buf, &xx, &yy, NULL, NULL);
-   xx += x;
-   yy += y;
+   edje_object_part_geometry_get(elm_layout_edje_get(sd->hover), buf, &adjusted.x, &adjusted.y, NULL, NULL);
+   adjusted.x += parent.x;
+   adjusted.y += parent.y;
 
-   evas_object_geometry_get(obj, &obj_x, &obj_y, &obj_w, NULL);
+   evas_object_geometry_get(obj, &base.x, &base.y, &base.w, NULL);
 
    if (sd->horizontal)
      {
         if (!strcmp(sd->last_location, "left"))
           {
-             xx = x;
-             if ((xx + ww) > obj_x)
-               ww = obj_x - xx;
+             adjusted.x = parent.x;
+             if ((adjusted.x + adjusted.w) > base.x)
+               adjusted.w = base.x - adjusted.x;
           }
         else
           {
-             if ((xx + ww) > (x + w))
-               ww = (x + w) - xx;
+             if ((adjusted.x + adjusted.w) > (parent.x + parent.w))
+               adjusted.w = (parent.x + parent.w) - adjusted.x;
           }
 
-        if (yy < 0) yy = y;
-        if ((yy + hh) > (y + h))
-          hh = (y + h) - yy;
+        if (adjusted.y < 0) adjusted.y = parent.y;
+        if ((adjusted.y + adjusted.h) > (parent.y + parent.h))
+          adjusted.h = (parent.y + parent.h) - adjusted.y;
      }
    else
      {
         if (!strcmp(sd->last_location, "top"))
           {
-             yy = y;
-             if ((yy + hh) > obj_y)
-               hh = obj_y - yy;
+             adjusted.y = parent.y;
+             if ((adjusted.y + adjusted.h) > base.y)
+               adjusted.h = base.y - adjusted.y;
           }
         else
           {
-             if ((yy + hh) > (y + h))
-               hh = (y + h) - yy;
+             if ((adjusted.y + adjusted.h) > (parent.y + parent.h))
+               adjusted.h = (parent.y + parent.h) - adjusted.y;
           }
 
-        if (xx < 0) xx = x;
-        if ((xx + ww) > (x + w))
+        if (adjusted.x < 0) adjusted.x = parent.x;
+        if ((adjusted.x + adjusted.w) > (parent.x + parent.w))
           {
-             if ((obj_x + obj_w - x) > ((x + w) - obj_x))
+             if ((base.x + base.w - parent.x) > ((parent.x + parent.w) - base.x))
                {
-                  if (elm_obj_widget_mirrored_get(obj))
-                    elm_obj_layout_signal_emit(sd->hover, "elm,state,align,right", "elm");
+                  if (elm_widget_mirrored_get(obj))
+                    elm_object_signal_emit(sd->hover, "elm,state,align,right", "elm");
                   else
-                    elm_obj_layout_signal_emit(sd->hover, "elm,state,align,default", "elm");
+                    elm_object_signal_emit(sd->hover, "elm,state,align,default", "elm");
 
-                  if ((obj_x + obj_w - ww) < x)
-                    ww = obj_x + obj_w - x;
+                  if ((base.x + base.w - adjusted.w) < parent.x)
+                    adjusted.w = base.x + base.w - parent.x;
                }
              else
                {
-                  if (elm_obj_widget_mirrored_get(obj))
-                    elm_obj_layout_signal_emit(sd->hover, "elm,state,align,default", "elm");
+                  if (elm_widget_mirrored_get(obj))
+                    elm_object_signal_emit(sd->hover, "elm,state,align,default", "elm");
                   else
-                    elm_obj_layout_signal_emit(sd->hover, "elm,state,align,right", "elm");
+                    elm_object_signal_emit(sd->hover, "elm,state,align,right", "elm");
 
-                  ww = (x + w) - xx;
+                  adjusted.w = (parent.x + parent.w) - adjusted.x;
                }
           }
      }
-   evas_object_size_hint_min_set(sd->spacer, ww, hh);
+   evas_object_size_hint_min_set(sd->spacer, adjusted.w, adjusted.h);
 }
 
 static void
