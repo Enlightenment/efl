@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using eina.Callbacks;
 using static eina.HashNativeFunctions;
 using static eina.InarrayNativeFunctions;
+using static eina.InlistNativeFunctions;
 using static eina.NativeCustomExportFunctions;
 using static eina.ContainerCommonData;
 
@@ -66,12 +67,15 @@ public interface IBaseElementTraits<T>
 {
     IntPtr ManagedToNativeAlloc(T man);
     IntPtr ManagedToNativeAllocRef(T man, bool refs = false);
+    IntPtr ManagedToNativeAllocInlistNode(T man);
     IntPtr ManagedToNativeAllocInplace(T man);
     void NativeFree(IntPtr nat);
     void NativeFreeRef(IntPtr nat, bool unrefs = false);
+    void NativeFreeInlistNode(IntPtr nat);
     void NativeFreeInplace(IntPtr nat);
     void ResidueFreeInplace(IntPtr nat);
     T NativeToManaged(IntPtr nat);
+    T NativeToManagedInlistNode(IntPtr nat);
     T NativeToManagedInplace(IntPtr nat);
     IntPtr EinaCompareCb();
     IntPtr EinaFreeCb();
@@ -99,6 +103,17 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
         return ManagedToNativeAlloc(man);
     }
 
+    public IntPtr ManagedToNativeAllocInlistNode(T man)
+    {
+        var node = new InlistNode<IntPtr>();
+        node.Val = ManagedToNativeAlloc(man);
+        GCHandle pinnedData = GCHandle.Alloc(node, GCHandleType.Pinned);
+        IntPtr ptr = pinnedData.AddrOfPinnedObject();
+        IntPtr nat = efl_mono_native_alloc_copy(ptr, (uint)(Marshal.SizeOf<InlistNode<IntPtr> >()));
+        pinnedData.Free();
+        return nat;
+    }
+
     public IntPtr ManagedToNativeAllocInplace(T man)
     {
         return intPtrTraits.ManagedToNativeAlloc(ManagedToNativeAlloc(man));
@@ -113,6 +128,15 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
     public void NativeFreeRef(IntPtr nat, bool unrefs = false)
     {
         NativeFree(nat);
+    }
+
+    public void NativeFreeInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+            return;
+        var node = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
+        NativeFree(node.Val);
+        efl_mono_native_free(nat);
     }
 
     public void NativeFreeInplace(IntPtr nat)
@@ -130,6 +154,17 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
         if (nat == IntPtr.Zero)
             return default(T);
         return (T)(object)Marshal.PtrToStringAuto(nat);
+    }
+
+    public T NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            eina.Log.Error("Null pointer for Inlist node.");
+            return default(T);
+        }
+        var w = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
+        return NativeToManaged(w.Val);
     }
 
     public T NativeToManagedInplace(IntPtr nat)
@@ -186,6 +221,17 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
         return intPtrTraits.ManagedToNativeAlloc(h);
     }
 
+    public IntPtr ManagedToNativeAllocInlistNode(T man)
+    {
+        var node = new InlistNode<IntPtr>();
+        node.Val = ManagedToNativeAlloc(man);
+        GCHandle pinnedData = GCHandle.Alloc(node, GCHandleType.Pinned);
+        IntPtr ptr = pinnedData.AddrOfPinnedObject();
+        IntPtr nat = efl_mono_native_alloc_copy(ptr, (uint)(Marshal.SizeOf<InlistNode<IntPtr> >()));
+        pinnedData.Free();
+        return nat;
+    }
+
     public IntPtr ManagedToNativeAllocInplace(T man)
     {
         return intPtrTraits.ManagedToNativeAlloc(ManagedToNativeAlloc(man));
@@ -204,6 +250,15 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
         intPtrTraits.NativeFree(nat);
     }
 
+    public void NativeFreeInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+            return;
+        var node = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
+        NativeFree(node.Val);
+        efl_mono_native_free(nat);
+    }
+
     public void NativeFreeInplace(IntPtr nat)
     {
         NativeFree(intPtrTraits.NativeToManaged(nat));
@@ -219,6 +274,17 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
         if (nat == IntPtr.Zero)
             return default(T);
         return (T) Activator.CreateInstance(concreteType, efl.eo.Globals.efl_ref(nat));
+    }
+
+    public T NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            eina.Log.Error("Null pointer for Inlist node.");
+            return default(T);
+        }
+        var w = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
+        return NativeToManaged(w.Val);
     }
 
     public T NativeToManagedInplace(IntPtr nat)
@@ -262,12 +328,28 @@ public abstract class PrimitiveElementTraits<T>
         return nat;
     }
 
+    public IntPtr ManagedToNativeAllocInlistNode(T man)
+    {
+        var node = new InlistNode<T>();
+        node.Val = man;
+        GCHandle pinnedData = GCHandle.Alloc(node, GCHandleType.Pinned);
+        IntPtr ptr = pinnedData.AddrOfPinnedObject();
+        IntPtr nat = efl_mono_native_alloc_copy(ptr, (uint)(Marshal.SizeOf< InlistNode<T> >()));
+        pinnedData.Free();
+        return nat;
+    }
+
     public IntPtr ManagedToNativeAllocInplace(T man)
     {
         return ManagedToNativeAlloc(man);
     }
 
     public void NativeFree(IntPtr nat)
+    {
+        efl_mono_native_free(nat);
+    }
+
+    public void NativeFreeInlistNode(IntPtr nat)
     {
         efl_mono_native_free(nat);
     }
@@ -290,6 +372,17 @@ public abstract class PrimitiveElementTraits<T>
             return default(T);
         }
         var w = Marshal.PtrToStructure<eina.ConvertWrapper<T> >(nat);
+        return w.Val;
+    }
+
+    public T NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            eina.Log.Error("Null pointer for Inlist node.");
+            return default(T);
+        }
+        var w = Marshal.PtrToStructure< InlistNode<T> >(nat);
         return w.Val;
     }
 
