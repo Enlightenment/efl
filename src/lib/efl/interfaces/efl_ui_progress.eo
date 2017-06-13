@@ -39,6 +39,34 @@ interface Efl.Ui.Progress
             val: double; [[The progress value (must be between $0.0 and 1.0)]]
          }
       }
+      @property progress_min_max {
+         set {
+            [[Set the minimum and maximum values for given progress widget.
+
+              Define the allowed range of values to be selected by the user.
+
+              If actual value is less than $min, it will be updated to $min.
+              If it is bigger then $max, will be updated to $max. Actual value
+              can be get with @Efl.Ui.Progress.progress_value.get
+
+              By default, min is equal to 0.0, and max is equal to 1.0.
+
+              Warning: maximum must be greater than minimum, otherwise behavior
+              is undefined.
+            ]]
+         }
+         get {
+            [[Get the minimum and maximum values of the given progress widget.
+
+              Note: If only one value is needed, the other pointer can be passed
+              as $null.
+            ]]
+         }
+         values {
+            min: double; [[The minimum value.]]
+            max: double; [[The maximum value.]]
+         }
+      }
       @property unit_format {
          [[Control the format string for a given progress widget's units label
 
