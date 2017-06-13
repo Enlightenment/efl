@@ -14,6 +14,9 @@ struct _Ecore_Evas_Interface_Wayland
    Ecore_Wl_Window* (*window_get)(const Ecore_Evas *ee);
    Ecore_Wl2_Window *(*window2_get)(const Ecore_Evas *ee);
    void (*pre_post_swap_callback_set)(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e));
+   void (*aux_hint_add)(Ecore_Evas *ee, int id, const char *hint, const char *val);
+   void (*aux_hint_change)(Ecore_Evas *ee, int id, const char *val);
+   void (*aux_hint_del)(Ecore_Evas *ee, int id);
 };
 
 #endif
