@@ -1418,3 +1418,28 @@ ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, const char *v
           }
      }
 }
+
+EAPI void
+ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id)
+{
+   Eina_Inlist *tmp;
+   Ecore_Wl2_Aux_Hint *ehint;
+
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   EINA_INLIST_FOREACH_SAFE(window->supported_aux_hints, tmp, ehint)
+     {
+        if (ehint->id == id)
+          {
+             window->supported_aux_hints =
+               eina_inlist_remove(window->supported_aux_hints,
+                                  EINA_INLIST_GET(ehint));
+
+             eina_stringshare_del(ehint->hint);
+             eina_stringshare_del(ehint->val);
+             free(ehint);
+
+             break;
+          }
+     }
+}

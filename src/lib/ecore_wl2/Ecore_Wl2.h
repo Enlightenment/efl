@@ -1134,6 +1134,17 @@ EAPI void ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *window, int id, const 
 EAPI void ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, const char *val);
 
 /**
+ * Delete an auxiliary hint on a given window
+ *
+ * @param window
+ * @param id
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
