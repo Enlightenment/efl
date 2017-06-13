@@ -52,7 +52,7 @@ enum Tokens
     \
     KW(static_array), KW(terminated_array), \
     \
-    KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), \
+    KW(accessor), KW(array), KW(inarray), KW(iterator), KW(hash), KW(list), KW(inlist), \
     KW(future),                                   \
     KW(generic_value), KW(string), KW(stringshare), \
     \
