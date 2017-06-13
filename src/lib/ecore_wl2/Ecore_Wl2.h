@@ -1145,6 +1145,44 @@ EAPI void ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, con
 EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
 
 /**
+ * @brief Get the activated state of a window
+ * @param window The window
+ * @return @c EINA_TRUE if activated
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
+
+/**
+ * @brief Set the seat for a popup window to be used with grab
+ * @param window The window
+ * @param input The seat
+ *
+ * Use this function for desktop shell requests involving popup grabs which require
+ * a seat for the grab.
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input);
+
+/**
+ * Check if a window has a shell surface - without one it can't be visible.
+ *
+ * @param The window to check
+ *
+ * @return Returns true if the window has an associated shell surface.
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.19
+ */
+EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
+
+/** @since 1.17 */
+EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
@@ -1572,9 +1610,6 @@ EAPI int ecore_wl2_output_transform_get(Ecore_Wl2_Output *output);
  */
 EAPI int ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *disp);
 
-/** @since 1.17 */
-EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
-
 /**
  * Get the actions available from the data source
  *
@@ -1704,18 +1739,6 @@ EAPI Eina_Bool ecore_wl2_offer_supports_mime(Ecore_Wl2_Offer *offer, const char 
 EAPI void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
 
 /**
- * Check if a window has a shell surface - without one it can't be visible.
- *
- * @param The window to check
- *
- * @return Returns true if the window has an associated shell surface.
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.19
- */
-EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
-
-/**
  * Disable session recovery for any further connections.  Must be called
  * before connecting.  This is irreversible and not intended for general
  * use.
@@ -1723,29 +1746,6 @@ EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
  * @since 1.19
  */
 EAPI void ecore_wl2_session_recovery_disable(void);
-
-/**
- * @brief Get the activated state of a window
- * @param window The window
- * @return @c EINA_TRUE if activated
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
-
-/**
- * @brief Set the seat for a popup window to be used with grab
- * @param window The window
- * @param input The seat
- *
- * Use this function for desktop shell requests involving popup grabs which require
- * a seat for the grab.
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input);
 
 # endif
 
