@@ -1400,3 +1400,21 @@ ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *window, int id, const char *hint
    window->supported_aux_hints =
      eina_inlist_append(window->supported_aux_hints, EINA_INLIST_GET(ehint));
 }
+
+EAPI void
+ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, const char *val)
+{
+   Eina_Inlist *tmp;
+   Ecore_Wl2_Aux_Hint *ehint;
+
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   EINA_INLIST_FOREACH_SAFE(window->supported_aux_hints, tmp, ehint)
+     {
+        if (ehint->id == id)
+          {
+             eina_stringshare_replace(&ehint->val, val);
+             break;
+          }
+     }
+}
