@@ -8550,10 +8550,10 @@ found:
    _evas_textblock_changed(o, eo_obj);
 }
 
-//FIXME: add to legacy header
 EAPI void
 evas_textblock_cursor_paragraph_first(Efl_Canvas_Text_Cursor *cur)
 {
+   if (!cur) return;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
@@ -8568,12 +8568,12 @@ _efl_canvas_text_efl_text_cursor_cursor_paragraph_first(Eo *eo_obj, Efl_Canvas_T
    efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
 }
 
-//FIXME: add to legacy header
 EAPI void
 evas_textblock_cursor_paragraph_last(Efl_Canvas_Text_Cursor *cur)
 {
    Evas_Object_Textblock_Node_Text *node;
 
+   if (!cur) return;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
