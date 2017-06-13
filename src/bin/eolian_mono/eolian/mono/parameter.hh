@@ -601,7 +601,7 @@ struct native_convert_out_variable_generator
               )
         {
            return as_generator(
-               "eina.Binbuf " << string << ";\n"
+               "eina.Binbuf " << string << " = default(eina.Binbuf);\n"
              ).generate(sink, out_variable_name(param.param_name), context);
         }
       else if (param_is_acceptable(param, "Eina_Array *", WANT_OWN, WANT_OUT)
@@ -622,8 +622,8 @@ struct native_convert_out_variable_generator
            if (!complex)
              return false;
            return as_generator(
-               type << " " << string << ";\n"
-             ).generate(sink, std::make_tuple(param.type, out_variable_name(param.param_name)), context);
+               type << " " << string << " = default(" << type << ");\n"
+             ).generate(sink, std::make_tuple(param.type, out_variable_name(param.param_name), param.type), context);
         }
       else if (param.direction == attributes::parameter_direction::out)
         {
