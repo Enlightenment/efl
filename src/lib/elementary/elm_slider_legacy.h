@@ -159,4 +159,38 @@ EAPI const char *elm_slider_unit_format_get(const Evas_Object *obj);
  */
 EAPI void elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
 
+/**
+ * @brief Set the minimum and maximum values for the slider.
+ *
+ * Define the allowed range of values to be selected by the user.
+ *
+ * If actual value is less than @c min, it will be updated to @c min. If it is
+ * bigger then @c max, will be updated to @c max. Actual value can be get with
+ * @ref Efl.Ui.Progress.progress_value.get
+ *
+ * By default, min is equal to 0.0, and max is equal to 1.0.
+ *
+ * @warning maximum must be greater than minimum, otherwise behavior is
+ * undefined.
+ *
+ * @param[in] min The minimum value.
+ * @param[in] max The maximum value.
+ *
+ * @ingroup Efl_Ui_Slider
+ */
+EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
+
+/**
+ * @brief Get the minimum and maximum values of the slider.
+ *
+ * @note If only one value is needed, the other pointer can be passed as
+ * @c null.
+ *
+ * @param[out] min The minimum value.
+ * @param[out] max The maximum value.
+ *
+ * @ingroup Efl_Ui_Slider
+ */
+EAPI void elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max);
+
 #include "efl_ui_slider.eo.legacy.h"

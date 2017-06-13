@@ -1473,7 +1473,7 @@ _efl_ui_slider_indicator_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_slider_min_max_set(Eo *obj, Efl_Ui_Slider_Data *sd, double min, double max)
+_efl_ui_slider_efl_ui_progress_progress_min_max_set(Eo *obj, Efl_Ui_Slider_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
    sd->val_min = min;
@@ -1485,7 +1485,7 @@ _efl_ui_slider_min_max_set(Eo *obj, Efl_Ui_Slider_Data *sd, double min, double m
 }
 
 EOLIAN static void
-_efl_ui_slider_min_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *min, double *max)
+_efl_ui_slider_efl_ui_progress_progress_min_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
@@ -1687,5 +1687,17 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 
 #define EFL_UI_SLIDER_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
+
+EAPI void
+elm_slider_min_max_set(Evas_Object *obj, double min, double max)
+{
+   efl_ui_progress_min_max_set(obj, min, max);
+}
+
+EAPI void
+elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
+{
+   efl_ui_progress_min_max_get(obj, min, max);
+}
 
 #include "efl_ui_slider.eo.c"
