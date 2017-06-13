@@ -86,6 +86,7 @@ typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 typedef struct _Evas_Coord_Touch_Point      Evas_Coord_Touch_Point;
 typedef struct _Evas_Object_Proxy_Data      Evas_Object_Proxy_Data;
 typedef struct _Evas_Object_Map_Data        Evas_Object_Map_Data;
+typedef struct _Evas_Object_Events_Data     Evas_Object_Events_Data;
 typedef struct _Evas_Proxy_Render_Data      Evas_Proxy_Render_Data;
 typedef struct _Evas_Object_3D_Data         Evas_Object_3D_Data;
 typedef struct _Evas_Object_Mask_Data       Evas_Object_Mask_Data;
@@ -1092,6 +1093,23 @@ struct _Evas_Object_Mask_Data
    Eina_Bool      is_scaled : 1;
 };
 
+struct _Evas_Object_Events_Data
+{
+   /*
+      The list below contain the seats (Efl.Input.Devices) which this
+      object allows events to be reported (Mouse, Keybord and focus events).
+    */
+   Eina_List                  *events_whitelist;
+
+   Eina_List                  *focused_by_seats;
+   Eina_Inlist                *pointer_grabs;
+
+   struct {
+      Evas_Object *parent;
+      Eina_Clist   member;
+   } event;
+};
+
 struct _Evas_Object_Protected_State
 {
    Evas_Object_Protected_Data *clipper;
@@ -1147,11 +1165,6 @@ struct _Evas_Object_Protected_Data
    Eina_List                  *grabs;
 
    Eina_Inlist                *callbacks;
-   /*
-      The list below contain the seats (Efl.Input.Devices) which this
-      object allows events to be reported (Mouse, Keybord and focus events).
-    */
-   Eina_List                  *events_whitelist;
 
    struct {
       Eina_List               *clipees;
@@ -1170,18 +1183,12 @@ struct _Evas_Object_Protected_Data
       Evas_Object_Protected_Data *parent_object_data;
    } smart;
 
-   struct {
-      Evas_Object *parent;
-      Eina_Clist   member;
-   } event;
-
    // Eina_Cow pointer be careful when writing to it
    const Evas_Object_Proxy_Data *proxy;
    const Evas_Object_Map_Data *map;
    const Evas_Object_3D_Data  *data_3d;
    const Evas_Object_Mask_Data *mask;
-   Eina_List                  *focused_by_seats;
-   Eina_Inlist                *pointer_grabs;
+   const Evas_Object_Events_Data *events;
 
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
@@ -2077,6 +2084,7 @@ extern Eina_Cow *evas_object_image_pixels_cow;
 extern Eina_Cow *evas_object_image_load_opts_cow;
 extern Eina_Cow *evas_object_image_state_cow;
 extern Eina_Cow *evas_object_mask_cow;
+extern Eina_Cow *evas_object_events_cow;
 
 # define EINA_COW_STATE_WRITE_BEGIN(Obj, Write, State)          \
   EINA_COW_WRITE_BEGIN(evas_object_state_cow, Obj->State, \

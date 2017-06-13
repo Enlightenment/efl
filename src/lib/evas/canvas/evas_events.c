@@ -387,7 +387,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
              obj;
              obj = _EINA_INLIST_CONTAINER(obj, EINA_INLIST_GET(obj)->prev))
           {
-             if (obj->event.parent) continue;
+             if (obj->events->event.parent) continue;
              in = _evas_event_object_list_raw_in_get_single(eo_e, obj, in, stop, x, y, no_rep, source
 #ifdef DDD_DO
                ,&spaces
@@ -398,7 +398,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
      }
    else
      {
-        EINA_CLIST_FOR_EACH_ENTRY_SAFE_REV(obj, nobj, clist, Evas_Object_Protected_Data, event.member)
+        EINA_CLIST_FOR_EACH_ENTRY_SAFE_REV(obj, nobj, clist, Evas_Object_Protected_Data, events->event.member)
           {
              in = _evas_event_object_list_raw_in_get_single(eo_e, obj, in, stop, x, y, no_rep, source
 #ifdef DDD_DO
