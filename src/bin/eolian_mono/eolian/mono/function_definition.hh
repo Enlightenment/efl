@@ -66,8 +66,13 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << "efl.eo.IWrapper wrapper = efl.eo.Globals.data_get(pd);\n"
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
         << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
-        << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "") << "((" << string << "Inherit)wrapper)." << string
+        << scope_tab << scope_tab << scope_tab << "try {\n"
+        << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "") << "((" << string << "Inherit)wrapper)." << string
         << "(" << (native_argument_invocation % ", ") << ");\n"
+        << scope_tab << scope_tab << scope_tab << "} catch (Exception e) {\n"
+        << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Warning($\"Callback error: {e.Message}\");\n"
+        << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
+        << scope_tab << scope_tab << scope_tab << "}\n"
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string << "Inherit." << string
