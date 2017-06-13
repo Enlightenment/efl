@@ -500,7 +500,7 @@ void _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf);
 
 void _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window);
 void _ecore_wl2_window_www_surface_init(Ecore_Wl2_Window *window);
-void _ecore_wl_window_semi_free(Ecore_Wl2_Window *window);
+void _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window);
 
 void _ecore_wl2_offer_unref(Ecore_Wl2_Offer *offer);
 

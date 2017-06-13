@@ -5,7 +5,7 @@
 #include "ecore_wl2_private.h"
 
 void
-_ecore_wl_window_semi_free(Ecore_Wl2_Window *window)
+_ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
 {
    if (window->zxdg_popup) zxdg_popup_v6_destroy(window->zxdg_popup);
    window->zxdg_popup = NULL;
@@ -518,6 +518,14 @@ _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
      }
 }
 
+static void
+_ecore_wl2_aux_hint_free(Ecore_Wl2_Aux_Hint *ehint)
+{
+   eina_stringshare_del(ehint->hint);
+   eina_stringshare_del(ehint->val);
+   free(ehint);
+}
+
 EAPI Ecore_Wl2_Window *
 ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h)
 {
@@ -632,6 +640,7 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    Ecore_Wl2_Display *display;
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Subsurface *subsurf;
+   Ecore_Wl2_Aux_Hint *ehint;
    Eina_Inlist *tmp;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
@@ -644,11 +653,14 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_free(subsurf);
 
+   EINA_INLIST_FOREACH_SAFE(window->supported_aux_hints, tmp, ehint)
+     _ecore_wl2_aux_hint_free(ehint);
+
    if (window->uuid && window->surface && window->display->wl.session_recovery)
      zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
                                          window->surface, window->uuid);
 
-   _ecore_wl_window_semi_free(window);
+   _ecore_wl2_window_semi_free(window);
 
    eina_stringshare_replace(&window->uuid, NULL);
 

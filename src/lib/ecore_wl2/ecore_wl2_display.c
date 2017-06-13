@@ -328,7 +328,7 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
 
         EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp2, subsurf)
           _ecore_wl2_subsurf_unmap(subsurf);
-        _ecore_wl_window_semi_free(window);
+        _ecore_wl2_window_semi_free(window);
         window->configure_serial = 0;
         window->configure_ack = NULL;
      }
