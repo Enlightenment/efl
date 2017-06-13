@@ -213,7 +213,7 @@ _item_cache_add(Elm_Gen_Item *it)
      }
 
    edje_object_mirrored_set(VIEW(it),
-                            elm_widget_mirrored_get(WIDGET(it)));
+                            efl_ui_mirrored_get(WIDGET(it)));
    edje_object_scale_set(VIEW(it),
                          efl_ui_scale_get(WIDGET(it))
                          * elm_config_scale_get());
@@ -445,7 +445,7 @@ _item_show_region(void *data)
                else
                  {
                     col = sd->item_count / row;
-                    if (elm_widget_mirrored_get(sd->obj))
+                    if (efl_ui_mirrored_get(sd->obj))
                       {
                          if (sd->item_count % row == 0)
                            x = col - 1 - it->x;
@@ -804,7 +804,7 @@ _item_mouse_move_cb(void *data,
      {
         const Efl_Event_Description *left_drag, *right_drag;
 
-        if (!elm_widget_mirrored_get(WIDGET(it)))
+        if (!efl_ui_mirrored_get(WIDGET(it)))
           {
              left_drag = EFL_UI_EVENT_DRAG_START_LEFT;
              right_drag = EFL_UI_EVENT_DRAG_START_RIGHT;
@@ -1121,7 +1121,7 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
           (WIDGET(it), view, "gengrid", "item/default", "default");
      }
 
-   edje_object_mirrored_set(view, elm_widget_mirrored_get(WIDGET(it)));
+   edje_object_mirrored_set(view, efl_ui_mirrored_get(WIDGET(it)));
    edje_object_scale_set(view, efl_ui_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
    evas_object_stack_below(view, sd->stack);
@@ -1810,7 +1810,7 @@ _item_place(Elm_Gen_Item *it,
                        + (item->prev_group * wsd->group_item_width)) -
                      wsd->pan_x + ox + alignw + wsd->custom_size_sum[cy];
 
-                  if (elm_widget_mirrored_get(WIDGET(it)))
+                  if (efl_ui_mirrored_get(WIDGET(it)))
                     it->item->sw = wsd->custom_tot_sum[cy] - wsd->custom_size_sum[cy] - it->item->w;
                   else
                     it->item->sw = wsd->custom_size_sum[cy];
@@ -1846,7 +1846,7 @@ _item_place(Elm_Gen_Item *it,
                }
              x = (cx * wsd->item_width) - wsd->pan_x + ox + alignw;
           }
-        if (elm_widget_mirrored_get(WIDGET(it))) /* Switch items side
+        if (efl_ui_mirrored_get(WIDGET(it))) /* Switch items side
                                                   * and componsate for
                                                   * pan_x when in RTL
                                                   * mode */
@@ -2209,7 +2209,7 @@ EOLIAN static void
 _elm_gengrid_pan_elm_pan_pos_min_get(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord mx = 0, my = 0;
-   Eina_Bool mirrored = elm_widget_mirrored_get(psd->wsd->obj);
+   Eina_Bool mirrored = efl_ui_mirrored_get(psd->wsd->obj);
 
    elm_obj_pan_pos_max_get(obj, &mx, &my);
    if (x)
@@ -2708,7 +2708,7 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
    Evas_Coord cx = 0, cy = 0; //prev or next item's geometry
    Elm_Object_Item *eo_item = NULL;
    Elm_Gen_Item *tmp = it;
-   Eina_Bool mirrored = elm_widget_mirrored_get(WIDGET(it));
+   Eina_Bool mirrored = efl_ui_mirrored_get(WIDGET(it));
 
    evas_object_geometry_get(VIEW(it), &ix, &iy, NULL, NULL);
 
@@ -3325,7 +3325,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
    Elm_Object_Item *it = NULL;
-   Eina_Bool mirrored = elm_widget_mirrored_get(obj);
+   Eina_Bool mirrored = efl_ui_mirrored_get(obj);
 
    elm_interface_scrollable_content_pos_get(obj, &x, &y);
    elm_interface_scrollable_step_size_get(obj, &step_x, &step_y);
@@ -4050,7 +4050,7 @@ _elm_gengrid_elm_widget_theme_apply(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    return int_ret;
 }

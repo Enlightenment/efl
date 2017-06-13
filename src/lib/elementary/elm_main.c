@@ -1401,14 +1401,14 @@ EAPI Eina_Bool
 elm_object_mirrored_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_widget_mirrored_get(obj);
+   return efl_ui_mirrored_get(obj);
 }
 
 EAPI void
 elm_object_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_mirrored_set(obj, mirrored);
+   efl_ui_mirrored_set(obj, mirrored);
 }
 
 EAPI Eina_Bool

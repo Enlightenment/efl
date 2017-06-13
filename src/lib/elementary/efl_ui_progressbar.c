@@ -116,7 +116,7 @@ _val_set(Evas_Object *obj)
    ELM_PROGRESSBAR_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   rtl = elm_widget_mirrored_get(obj);
+   rtl = efl_ui_mirrored_get(obj);
    Efl_Ui_Progress_Status *ps;
    Eina_List *l;
 

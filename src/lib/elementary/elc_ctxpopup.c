@@ -403,7 +403,7 @@ _arrow_update(Evas_Object *obj,
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
         edje_object_signal_emit(sd->arrow, "elm,state,left", "elm");
         if (!edje_object_part_swallow(wd->resize_obj,
-            (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_right" :
+            (efl_ui_mirrored_get(obj) ? "elm.swallow.arrow_right" :
              "elm.swallow.arrow_left"), sd->arrow))
           {
              evas_object_hide(sd->arrow);
@@ -421,7 +421,7 @@ _arrow_update(Evas_Object *obj,
              drag = (double)(y) / (double)(base_size.h - arrow_size.h);
              edje_object_part_drag_value_set
                 (wd->resize_obj,
-                 (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_right" :
+                 (efl_ui_mirrored_get(obj) ? "elm.swallow.arrow_right" :
                   "elm.swallow.arrow_left"), 1, drag);
           }
         break;
@@ -429,7 +429,7 @@ _arrow_update(Evas_Object *obj,
       case ELM_CTXPOPUP_DIRECTION_LEFT:
         edje_object_signal_emit(sd->arrow, "elm,state,right", "elm");
         if (!edje_object_part_swallow(wd->resize_obj,
-            (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_left" :
+            (efl_ui_mirrored_get(obj) ? "elm.swallow.arrow_left" :
              "elm.swallow.arrow_right"), sd->arrow))
           {
              evas_object_hide(sd->arrow);
@@ -447,7 +447,7 @@ _arrow_update(Evas_Object *obj,
              drag = (double)(y) / (double)(base_size.h - arrow_size.h);
              edje_object_part_drag_value_set
                 (wd->resize_obj,
-                 (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_left" :
+                 (efl_ui_mirrored_get(obj) ? "elm.swallow.arrow_left" :
                   "elm.swallow.arrow_right"), 0, drag);
           }
         break;
@@ -524,13 +524,13 @@ _show_signals_emit(Evas_Object *obj,
 
       case ELM_CTXPOPUP_DIRECTION_LEFT:
         elm_layout_signal_emit(obj,
-              (elm_widget_mirrored_get(obj) ? "elm,state,show,right" :
+              (efl_ui_mirrored_get(obj) ? "elm,state,show,right" :
                "elm,state,show,left"), "elm");
         break;
 
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
         elm_layout_signal_emit(obj,
-              (elm_widget_mirrored_get(obj) ? "elm,state,show,left" :
+              (efl_ui_mirrored_get(obj) ? "elm,state,show,left" :
                "elm,state,show,right"), "elm");
         break;
 
@@ -562,13 +562,13 @@ _hide_signals_emit(Evas_Object *obj,
 
       case ELM_CTXPOPUP_DIRECTION_LEFT:
         elm_layout_signal_emit(obj,
-              (elm_widget_mirrored_get(obj) ? "elm,state,hide,right" :
+              (efl_ui_mirrored_get(obj) ? "elm,state,hide,right" :
                "elm,state,hide,left"), "elm");
         break;
 
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
         elm_layout_signal_emit(obj,
-              (elm_widget_mirrored_get(obj) ? "elm,state,hide,left" :
+              (efl_ui_mirrored_get(obj) ? "elm,state,hide,left" :
                "elm,state,hide,right"), "elm");
         break;
 

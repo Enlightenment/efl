@@ -174,7 +174,7 @@ _elm_box_custom_layout(Evas_Object *o,
    ELM_BOX_DATA_GET(data, sd);
 
    _els_box_layout(o, priv, sd->horizontal, sd->homogeneous,
-                   elm_widget_mirrored_get(data));
+                   efl_ui_mirrored_get(data));
 }
 
 static Eina_Bool

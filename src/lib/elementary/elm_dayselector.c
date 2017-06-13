@@ -95,7 +95,7 @@ _update_items(Evas_Object *obj)
    if (last_day >= ELM_DAYSELECTOR_MAX)
      last_day = last_day % ELM_DAYSELECTOR_MAX;
 
-   rtl = elm_widget_mirrored_get(obj);
+   rtl = efl_ui_mirrored_get(obj);
    EINA_LIST_FOREACH(sd->items, l, it)
      {
         elm_object_signal_emit(VIEW(it), it->day_style, ""); // XXX: compat

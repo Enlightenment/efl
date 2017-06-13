@@ -1102,7 +1102,7 @@ _elm_list_elm_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    EINA_LIST_FOREACH(sd->items, n, eo_it)
      {
@@ -2311,7 +2311,7 @@ _item_new(Evas_Object *obj,
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_widget_item_register(it, EINA_TRUE);
 
-   edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(obj));
+   edje_object_mirrored_set(VIEW(it), efl_ui_mirrored_get(obj));
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, it);
    evas_object_event_callback_add
@@ -2323,7 +2323,7 @@ _item_new(Evas_Object *obj,
    evas_object_size_hint_weight_set
      (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-   edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(obj));
+   edje_object_mirrored_set(VIEW(it), efl_ui_mirrored_get(obj));
 
    if (it->icon)
      {

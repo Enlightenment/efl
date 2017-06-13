@@ -78,16 +78,16 @@ _elm_combobox_elm_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
 
    eina_stringshare_replace(&(wd->style), style);
 
-   mirrored = elm_widget_mirrored_get(obj);
+   mirrored = efl_ui_mirrored_get(obj);
 
    if (sd->hover)
      {
-        elm_widget_mirrored_set(sd->hover, mirrored);
+        efl_ui_mirrored_set(sd->hover, mirrored);
         elm_widget_style_set(sd->hover, buf);
      }
 
-   elm_widget_mirrored_set(sd->genlist, mirrored);
-   elm_widget_mirrored_set(sd->entry, mirrored);
+   efl_ui_mirrored_set(sd->genlist, mirrored);
+   efl_ui_mirrored_set(sd->entry, mirrored);
 
    elm_widget_style_set(sd->genlist, buf);
    elm_widget_style_set(sd->entry, buf);
@@ -386,7 +386,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    sd->genlist = gl = efl_add(ELM_GENLIST_CLASS, obj);
    elm_genlist_filter_set(gl, NULL);
    elm_widget_mirrored_automatic_set(gl, EINA_FALSE);
-   elm_widget_mirrored_set(gl, elm_widget_mirrored_get(obj));
+   efl_ui_mirrored_set(gl, efl_ui_mirrored_get(obj));
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(gl, "selected", _on_item_selected, obj);
@@ -400,7 +400,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    // This is the entry object that will take over the entry call
    sd->entry = entry = efl_add(ELM_ENTRY_CLASS, obj);
    elm_widget_mirrored_automatic_set(entry, EINA_FALSE);
-   elm_widget_mirrored_set(entry, elm_widget_mirrored_get(obj));
+   efl_ui_mirrored_set(entry, efl_ui_mirrored_get(obj));
    elm_scroller_policy_set(entry, ELM_SCROLLER_POLICY_OFF,
                            ELM_SCROLLER_POLICY_OFF);
    elm_entry_scrollable_set(entry, EINA_TRUE);

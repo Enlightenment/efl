@@ -131,7 +131,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
    if (_is_horizontal(sd->orientation)) pos2 = posx2;
    else pos2 = posy2;
 
-   rtl = elm_widget_mirrored_get(obj);
+   rtl = efl_ui_mirrored_get(obj);
    if ((!rtl && _is_inverted(sd->orientation)) ||
        (rtl && ((sd->orientation == EFL_ORIENT_UP) ||
                 (sd->orientation == EFL_ORIENT_RIGHT))))
@@ -192,7 +192,7 @@ _val_set(Evas_Object *obj)
    else if (pos2 > 1.0)
      pos2 = 1.0;
 
-   rtl = elm_widget_mirrored_get(obj);
+   rtl = efl_ui_mirrored_get(obj);
    if ((!rtl && _is_inverted(sd->orientation)) ||
        (rtl && ((sd->orientation == EFL_ORIENT_UP) ||
                 (sd->orientation == EFL_ORIENT_RIGHT))))

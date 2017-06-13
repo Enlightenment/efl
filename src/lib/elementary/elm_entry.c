@@ -405,7 +405,7 @@ _mirrored_set(Evas_Object *obj,
    edje_object_mirrored_set(sd->entry_edje, rtl);
 
    if (sd->anchor_hover.hover)
-     elm_widget_mirrored_set(sd->anchor_hover.hover, rtl);
+     efl_ui_mirrored_set(sd->anchor_hover.hover, rtl);
 }
 
 static void
@@ -856,13 +856,13 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    edje_object_part_text_hide_visible_password(sd->entry_edje, "elm.text");
 
    edje_object_mirrored_set
-     (wd->resize_obj, elm_widget_mirrored_get(obj));
+     (wd->resize_obj, efl_ui_mirrored_get(obj));
 
    edje_object_scale_set
      (wd->resize_obj,
      efl_ui_scale_get(obj) * elm_config_scale_get());
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    stl_user = eina_stringshare_add(edje_object_part_text_style_user_peek(sd->entry_edje, "elm.text"));
    t = eina_stringshare_add(elm_object_text_get(obj));
@@ -929,7 +929,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
      {
         Elm_Theme_Apply ok = ELM_THEME_APPLY_FAILED;
 
-        elm_interface_scrollable_mirrored_set(obj, elm_widget_mirrored_get(obj));
+        elm_interface_scrollable_mirrored_set(obj, efl_ui_mirrored_get(obj));
 
         if (sd->single_line)
           ok = elm_widget_theme_object_set
@@ -2535,8 +2535,8 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
    sd->anchor_hover.hover = elm_hover_add(obj);
    evas_object_event_callback_add
      (sd->anchor_hover.hover, EVAS_CALLBACK_DEL, _anchor_hover_del_cb, obj);
-   elm_widget_mirrored_set
-     (sd->anchor_hover.hover, elm_widget_mirrored_get(obj));
+   efl_ui_mirrored_set
+     (sd->anchor_hover.hover, efl_ui_mirrored_get(obj));
    if (sd->anchor_hover.hover_style)
      elm_object_style_set
        (sd->anchor_hover.hover, sd->anchor_hover.hover_style);
@@ -2564,7 +2564,7 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
    if (py > (y + ((h * 2) / 3))) ei.hover_bottom = 0;
 
    /* Swap right and left because they switch sides in RTL */
-   if (elm_widget_mirrored_get(sd->anchor_hover.hover))
+   if (efl_ui_mirrored_get(sd->anchor_hover.hover))
      {
         Eina_Bool tmp = ei.hover_left;
 
@@ -3802,7 +3802,7 @@ _elm_entry_efl_canvas_group_group_add(Eo *obj, Elm_Entry_Data *priv)
    // if found - hook in
    if ((priv->api) && (priv->api->obj_hook)) priv->api->obj_hook(obj);
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    // access
    _elm_access_object_register(obj, priv->entry_edje);

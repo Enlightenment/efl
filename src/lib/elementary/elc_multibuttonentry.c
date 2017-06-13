@@ -1362,7 +1362,7 @@ _box_layout_cb(Evas_Object *o,
    efl_gfx_size_hint_combined_min_get(o, &minw, &minh);
    evas_object_size_hint_align_get(o, &ax, &ay);
 
-   rtl = elm_widget_mirrored_get(data);
+   rtl = efl_ui_mirrored_get(data);
    if (rtl) ax = 1.0 - ax;
 
    if (w < minw)

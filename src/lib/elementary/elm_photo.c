@@ -59,7 +59,7 @@ _elm_photo_elm_widget_theme_apply(Eo *obj, Elm_Photo_Data *sd)
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    edje_object_mirrored_set
-     (wd->resize_obj, elm_widget_mirrored_get(obj));
+     (wd->resize_obj, efl_ui_mirrored_get(obj));
 
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "photo", "base",

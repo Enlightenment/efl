@@ -49,7 +49,7 @@ _mirrored_set(Evas_Object *obj,
    ELM_PANEL_DATA_GET(obj, sd);
 
    if ((sd->content) && (efl_isa(sd->content, ELM_WIDGET_CLASS)))
-     elm_widget_mirrored_set(sd->content, rtl);
+     efl_ui_mirrored_set(sd->content, rtl);
    elm_panel_orient_set(obj, elm_panel_orient_get(obj));
 }
 
@@ -228,7 +228,7 @@ _elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    if (sd->scrollable)
      {
@@ -376,7 +376,7 @@ _drawer_open(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
       case ELM_PANEL_ORIENT_TOP:
          break;
       case ELM_PANEL_ORIENT_LEFT:
-         if (elm_widget_mirrored_get(obj))
+         if (efl_ui_mirrored_get(obj))
            x = w * sd->content_size_ratio;
          break;
 
@@ -385,7 +385,7 @@ _drawer_open(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
          break;
 
       case ELM_PANEL_ORIENT_RIGHT:
-         if (!elm_widget_mirrored_get(obj))
+         if (!efl_ui_mirrored_get(obj))
            x = w * sd->content_size_ratio;
          break;
      }
@@ -413,7 +413,7 @@ _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
          break;
 
       case ELM_PANEL_ORIENT_LEFT:
-         if (!elm_widget_mirrored_get(obj))
+         if (!efl_ui_mirrored_get(obj))
            x = w * sd->content_size_ratio;
          horizontal = EINA_TRUE;
          break;
@@ -422,7 +422,7 @@ _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
          break;
 
       case ELM_PANEL_ORIENT_RIGHT:
-         if (elm_widget_mirrored_get(obj))
+         if (efl_ui_mirrored_get(obj))
            x = w * sd->content_size_ratio;
          horizontal = EINA_TRUE;
          break;
@@ -540,7 +540,7 @@ _state_sync(Evas_Object *obj)
 
          panel_size = w * sd->content_size_ratio;
          elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
-         reverse ^= elm_widget_mirrored_get(obj);
+         reverse ^= efl_ui_mirrored_get(obj);
      }
    else
      {
@@ -618,7 +618,7 @@ _on_mouse_down(void *data,
    Evas_Coord finger_size = elm_config_finger_size_get();
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   Eina_Bool is_mirrored = elm_widget_mirrored_get(obj);
+   Eina_Bool is_mirrored = efl_ui_mirrored_get(obj);
 
    sd->down_x = ev->canvas.x - x;
    sd->down_y = ev->canvas.y - y;
@@ -671,7 +671,7 @@ _on_mouse_move(void *data,
    Evas_Coord x, y, w, h, cur_x, cur_y, finger_size;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    finger_size = elm_config_finger_size_get();
-   Eina_Bool is_mirrored = elm_widget_mirrored_get(obj);
+   Eina_Bool is_mirrored = efl_ui_mirrored_get(obj);
 
    cur_x = ev->cur.canvas.x - x;
    cur_y = ev->cur.canvas.y - y;
@@ -883,7 +883,7 @@ _elm_panel_efl_canvas_group_group_add(Eo *obj, Elm_Panel_Data *priv)
    elm_layout_signal_callback_add
      (obj, "elm,action,panel,toggle", "*", _panel_toggle, obj);
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    priv->event = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->event, 0, 0, 0, 0);
@@ -1168,7 +1168,7 @@ _anim_stop_cb(Evas_Object *obj, void *data EINA_UNUSED)
 
          panel_size = w * sd->content_size_ratio;
          elm_interface_scrollable_content_pos_get(obj, &pos, NULL);
-         reverse ^= elm_widget_mirrored_get(obj);
+         reverse ^= efl_ui_mirrored_get(obj);
      }
    else
      {
@@ -1254,7 +1254,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
          event.rel_y = (double) y / (double) ((sd->content_size_ratio) * h);
         break;
       case ELM_PANEL_ORIENT_LEFT:
-        if (!elm_widget_mirrored_get(obj))
+        if (!efl_ui_mirrored_get(obj))
           {
              event.rel_x = 1 - ((double) x / (double) ((sd->content_size_ratio) * w));
              event.rel_y = 1;
@@ -1266,7 +1266,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
            }
         break;
       case ELM_PANEL_ORIENT_RIGHT:
-        if (elm_widget_mirrored_get(obj))
+        if (efl_ui_mirrored_get(obj))
           {
              event.rel_x = 1 - ((double) x / (double) ((sd->content_size_ratio) * w));
              event.rel_y = 1;

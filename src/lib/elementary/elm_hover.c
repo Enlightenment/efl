@@ -249,7 +249,7 @@ _elm_hover_smt_sub_re_eval(Evas_Object *obj)
      efl_event_callback_legacy_call
        (obj, ELM_HOVER_EVENT_SMART_CHANGED, (void *)sd->smt_sub->swallow);
 
-   if (elm_widget_mirrored_get(obj))
+   if (efl_ui_mirrored_get(obj))
      {
         if (sd->smt_sub == _HOV_BOTTOM_LEFT) sd->smt_sub = _HOV_BOTTOM_RIGHT;
         else if (sd->smt_sub == _HOV_BOTTOM_RIGHT)
@@ -331,7 +331,7 @@ _elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
      }
    evas_object_geometry_get(obj, &x2, &y2, &w2, &h2);
 
-   if (elm_widget_mirrored_get(obj)) ofs_x = w - (x2 - x) - w2;
+   if (efl_ui_mirrored_get(obj)) ofs_x = w - (x2 - x) - w2;
    else ofs_x = x2 - x;
 
    if (y < 0)

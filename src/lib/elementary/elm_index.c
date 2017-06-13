@@ -66,7 +66,7 @@ _box_custom_layout(Evas_Object *o,
    else
      horizontal = EINA_FALSE;
 
-   _els_box_layout(o, priv, horizontal, EINA_TRUE, elm_widget_mirrored_get(data));
+   _els_box_layout(o, priv, horizontal, EINA_TRUE, efl_ui_mirrored_get(data));
 }
 
 static void
@@ -233,7 +233,7 @@ _index_box_auto_fill(Evas_Object *obj,
 
    if ((sd->omit_enabled) && (ih <= 0)) return;
 
-   rtl = elm_widget_mirrored_get(obj);
+   rtl = efl_ui_mirrored_get(obj);
 
    EINA_LIST_FREE(sd->omit, om)
      free(om);

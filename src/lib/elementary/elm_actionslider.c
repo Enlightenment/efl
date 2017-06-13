@@ -49,7 +49,7 @@ static Elm_Actionslider_Pos
 _get_pos_by_orientation(const Evas_Object *obj,
                         Elm_Actionslider_Pos pos)
 {
-   if (elm_widget_mirrored_get(obj))
+   if (efl_ui_mirrored_get(obj))
      {
         switch (pos)
           {
@@ -161,10 +161,10 @@ _drag_button_move_cb(void *data,
      (wd->resize_obj, "elm.drag_button_base", &pos, NULL);
    if (EINA_DBL_EQ(pos, 0.0))
      efl_event_callback_legacy_call
-       (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !elm_widget_mirrored_get(obj) ? "left" : "right");
+       (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !efl_ui_mirrored_get(obj) ? "left" : "right");
    else if (EINA_DBL_EQ(pos, 1.0))
      efl_event_callback_legacy_call
-       (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !elm_widget_mirrored_get(obj) ? "right" : "left");
+       (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, !efl_ui_mirrored_get(obj) ? "right" : "left");
    else if (pos >= 0.45 && pos <= 0.55)
      efl_event_callback_legacy_call
        (obj, ELM_ACTIONSLIDER_EVENT_POS_CHANGED, "center");
@@ -199,7 +199,7 @@ _button_animator(void *data)
    {
       double adjusted_final;
 
-      adjusted_final = (!elm_widget_mirrored_get(obj)) ?
+      adjusted_final = (!efl_ui_mirrored_get(obj)) ?
         sd->final_position : 1.0 - sd->final_position;
 
       if ((EINA_DBL_EQ(adjusted_final, 0.0)) ||
@@ -279,8 +279,8 @@ _drag_button_up_cb(void *data,
    _text_get(obj, &left, &right, &center);
 
    if ((sd->enabled_position & ELM_ACTIONSLIDER_LEFT) &&
-       ((!elm_widget_mirrored_get(obj) && EINA_DBL_EQ(position, 0.0)) ||
-        (elm_widget_mirrored_get(obj) && EINA_DBL_EQ(position, 1.0))))
+       ((!efl_ui_mirrored_get(obj) && EINA_DBL_EQ(position, 0.0)) ||
+        (efl_ui_mirrored_get(obj) && EINA_DBL_EQ(position, 1.0))))
      {
         sd->final_position = 0;
         efl_event_callback_legacy_call
@@ -303,8 +303,8 @@ _drag_button_up_cb(void *data,
      }
 
    if ((sd->enabled_position & ELM_ACTIONSLIDER_RIGHT) &&
-       ((!elm_widget_mirrored_get(obj) && EINA_DBL_EQ(position, 1)) ||
-        (elm_widget_mirrored_get(obj) && EINA_DBL_EQ(position, 0))))
+       ((!efl_ui_mirrored_get(obj) && EINA_DBL_EQ(position, 1)) ||
+        (efl_ui_mirrored_get(obj) && EINA_DBL_EQ(position, 0))))
      {
         sd->final_position = 1;
         efl_event_callback_legacy_call
@@ -315,7 +315,7 @@ _drag_button_up_cb(void *data,
    if (sd->magnet_position == ELM_ACTIONSLIDER_NONE) return;
 
 #define _FIX_POS_ON_MIRROREDNESS(x) \
-  ((!elm_widget_mirrored_get(obj)) ? x : 1.0 - x)
+  ((!efl_ui_mirrored_get(obj)) ? x : 1.0 - x)
 
    position = _FIX_POS_ON_MIRROREDNESS(position);
 
@@ -438,7 +438,7 @@ static void
 _mirrored_part_fix(const Evas_Object *obj,
                    const char **part)
 {
-   if (elm_widget_mirrored_get(obj))
+   if (efl_ui_mirrored_get(obj))
      {
         /* exchange left and right */
         if (!strcmp(*part, "left")) *part = "right";

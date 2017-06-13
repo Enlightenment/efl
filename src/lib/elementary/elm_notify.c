@@ -87,7 +87,7 @@ _notify_move_to_orientation(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_C
 
    ax = sd->horizontal_align;
    ay = sd->vertical_align;
-   if ((elm_widget_mirrored_get(obj)) && (ax != ELM_NOTIFY_ALIGN_FILL)) ax = 1.0 - ax;
+   if ((efl_ui_mirrored_get(obj)) && (ax != ELM_NOTIFY_ALIGN_FILL)) ax = 1.0 - ax;
 
    if (ax == ELM_NOTIFY_ALIGN_FILL) minw = w;
    if (ay == ELM_NOTIFY_ALIGN_FILL) minh = h;
@@ -147,7 +147,7 @@ _elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    int_ret &= _notify_theme_apply(obj);
    if (sd->block_events) _block_events_theme_apply(obj);

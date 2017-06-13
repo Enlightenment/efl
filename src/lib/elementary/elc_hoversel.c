@@ -90,7 +90,7 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
    eina_stringshare_replace(&(wd->style), style);
 
    if (sd->hover)
-     elm_widget_mirrored_set(sd->hover, elm_widget_mirrored_get(obj));
+     efl_ui_mirrored_set(sd->hover, efl_ui_mirrored_get(obj));
 
    if (sd->horizontal)
      snprintf(buf, sizeof(buf), "hoversel_horizontal_entry/%s", style);
@@ -330,7 +330,7 @@ _sizing_eval(void *data)
           {
              if ((base.x + base.w - parent.x) > ((parent.x + parent.w) - base.x))
                {
-                  if (elm_widget_mirrored_get(obj))
+                  if (efl_ui_mirrored_get(obj))
                     elm_object_signal_emit(sd->hover, "elm,state,align,right", "elm");
                   else
                     elm_object_signal_emit(sd->hover, "elm,state,align,default", "elm");
@@ -340,7 +340,7 @@ _sizing_eval(void *data)
                }
              else
                {
-                  if (elm_widget_mirrored_get(obj))
+                  if (efl_ui_mirrored_get(obj))
                     elm_object_signal_emit(sd->hover, "elm,state,align,default", "elm");
                   else
                     elm_object_signal_emit(sd->hover, "elm,state,align,right", "elm");
@@ -849,7 +849,7 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
               elm_widget_style_get(obj));
 
    VIEW(item) = bt = elm_button_add(obj);
-   elm_widget_mirrored_set(bt, elm_widget_mirrored_get(obj));
+   efl_ui_mirrored_set(bt, efl_ui_mirrored_get(obj));
    elm_object_style_set(bt, buf);
    elm_object_text_set(bt, item->label);
 

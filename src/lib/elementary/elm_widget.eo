@@ -75,12 +75,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             tree_unfocusable: bool; [[$true for unfocusable, $false for focusable.]]
          }
       }
-      @property mirrored {
-         [[Control the widget's mirrored mode.]]
-         values {
-            mirrored: bool; [[$true if the widget is in mirrored mode, $false otherwise]]
-         }
-      }
       @property theme {
       	 [[Widget theme]]
          values {
@@ -833,6 +827,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       Efl.Ui.Focus.Object.focus_geometry { get; }
       Efl.Ui.Focus.Object.focus { set; }
       Efl.Ui.Base.scale { get; set; }
+      Efl.Ui.Base.mirrored { get; set; }
    }
    events {
       moved; [[Called when widget moved]]

@@ -341,7 +341,7 @@ _drag_cb(void *data,
    /* Dragable is inverse of spinner value */
    if (!strncmp(style, "vertical", 8)) delta *= -1;
    /* If we are on rtl mode, change the delta to be negative on such changes */
-   if (elm_widget_mirrored_get(obj)) delta *= -1;
+   if (efl_ui_mirrored_get(obj)) delta *= -1;
    if (_value_set(data, sd->val + delta)) _label_write(data);
    sd->dragging = 1;
 }

@@ -221,7 +221,7 @@ _elm_fileselector_entry_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_D
 
    style = elm_widget_style_get(obj);
 
-   elm_widget_mirrored_set(sd->button, elm_widget_mirrored_get(obj));
+   efl_ui_mirrored_set(sd->button, efl_ui_mirrored_get(obj));
 
    if (elm_object_disabled_get(obj))
      elm_layout_signal_emit(obj, "elm,state,disabled", "elm");
@@ -323,7 +323,7 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
 
    priv->button = elm_fileselector_button_add(obj);
    elm_widget_mirrored_automatic_set(priv->button, EINA_FALSE);
-   elm_widget_mirrored_set(priv->button, elm_widget_mirrored_get(obj));
+   efl_ui_mirrored_set(priv->button, efl_ui_mirrored_get(obj));
    elm_widget_style_set(priv->button, "fileselector_entry/default");
 
    elm_fileselector_expandable_set

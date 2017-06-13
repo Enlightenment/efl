@@ -362,7 +362,7 @@ _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
    Eina_List *elist;
    char buf[1024], style[1024];
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
    elm_widget_style_set(sd->notify, style);

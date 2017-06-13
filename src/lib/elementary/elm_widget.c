@@ -1248,7 +1248,7 @@ _elm_widget_theme_apply(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
  *
  **/
 EOLIAN static Eina_Bool
-_elm_widget_mirrored_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_elm_widget_efl_ui_base_mirrored_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    return sd->is_mirrored;
 }
@@ -1262,7 +1262,7 @@ _elm_widget_mirrored_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
  * @param mirrored EINA_TRUE to set mirrored mode. EINA_FALSE to unset.
  */
 EOLIAN static void
-_elm_widget_mirrored_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool mirrored)
+_elm_widget_efl_ui_base_mirrored_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool mirrored)
 {
    mirrored = !!mirrored;
 
@@ -1303,7 +1303,7 @@ _elm_widget_mirrored_automatic_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool
 
         if (automatic)
           {
-             elm_widget_mirrored_set(obj, elm_config_mirrored_get());
+             efl_ui_mirrored_set(obj, elm_config_mirrored_get());
           }
      }
 }
@@ -1354,7 +1354,7 @@ elm_widget_sub_object_parent_add(Evas_Object *sobj)
 EOLIAN static Eina_Bool
 _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
 {
-   Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
+   Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(obj);
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
@@ -1448,7 +1448,7 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
 
         scale = efl_ui_scale_get(sobj);
         th = elm_widget_theme_get(sobj);
-        mirrored = elm_widget_mirrored_get(sobj);
+        mirrored = efl_ui_mirrored_get(sobj);
 
         if (!sdc->on_create)
           {
@@ -4154,7 +4154,7 @@ _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_
    EFL_DBG_INFO_APPEND(group, "Disabled", EINA_VALUE_TYPE_CHAR,
          elm_widget_disabled_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Mirrored", EINA_VALUE_TYPE_CHAR,
-         elm_widget_mirrored_get(eo_obj));
+         efl_ui_mirrored_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Tree Unfocusable", EINA_VALUE_TYPE_CHAR,
          elm_widget_tree_unfocusable_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Automatic mirroring", EINA_VALUE_TYPE_CHAR,

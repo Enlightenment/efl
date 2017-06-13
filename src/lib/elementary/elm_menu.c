@@ -148,7 +148,7 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
      }
 
    /* If it overflows on the right, adjust the x */
-   if ((x_p + bw > px + pw) || elm_widget_mirrored_get(WIDGET(parent_it)))
+   if ((x_p + bw > px + pw) || efl_ui_mirrored_get(WIDGET(parent_it)))
      x_p = x2 - bw;
 
    /* If it overflows on the left, adjust the x - usually only happens
@@ -204,7 +204,7 @@ _sizing_eval(Evas_Object *obj)
    x_p = sd->xloc;
    y_p = sd->yloc;
 
-   if (elm_widget_mirrored_get(obj)) x_p -= w_p;
+   if (efl_ui_mirrored_get(obj)) x_p -= w_p;
 
    if (x_p + bw > x2 + w2) x_p -= x_p + bw - (x2 + w2);
    if (x_p < x2) x_p = x2;
@@ -628,7 +628,7 @@ _item_submenu_obj_create(Elm_Menu_Item_Data *item)
    elm_interface_atspi_accessible_type_set(item->submenu.location, ELM_ATSPI_TYPE_DISABLED);
    item->submenu.hv = hv = elm_hover_add(sd->bx);
    elm_interface_atspi_accessible_type_set(item->submenu.hv, ELM_ATSPI_TYPE_SKIPPED);
-   elm_widget_mirrored_set(hv, EINA_FALSE);
+   efl_ui_mirrored_set(hv, EINA_FALSE);
    elm_hover_target_set(hv, item->submenu.location);
    elm_hover_parent_set(hv, sd->parent);
 
@@ -646,7 +646,7 @@ _item_submenu_obj_create(Elm_Menu_Item_Data *item)
      }
 
    item->submenu.bx = bx = elm_box_add(sd->bx);
-   elm_widget_mirrored_set(bx, EINA_FALSE);
+   efl_ui_mirrored_set(bx, EINA_FALSE);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bx);
    elm_object_part_content_set
@@ -697,7 +697,7 @@ _elm_menu_efl_canvas_group_group_add(Eo *obj, Elm_Menu_Data *priv)
 
    priv->hv = elm_hover_add(obj);
    elm_interface_atspi_accessible_type_set(priv->hv, ELM_ATSPI_TYPE_SKIPPED);
-   elm_widget_mirrored_set(priv->hv, EINA_FALSE);
+   efl_ui_mirrored_set(priv->hv, EINA_FALSE);
 
    elm_object_style_set(priv->hv, "menu/default");
    efl_event_callback_add
@@ -705,7 +705,7 @@ _elm_menu_efl_canvas_group_group_add(Eo *obj, Elm_Menu_Data *priv)
 
    priv->bx = elm_box_add(obj);
    elm_interface_atspi_accessible_type_set(priv->bx, ELM_ATSPI_TYPE_SKIPPED);
-   elm_widget_mirrored_set(priv->bx, EINA_FALSE);
+   efl_ui_mirrored_set(priv->bx, EINA_FALSE);
    evas_object_size_hint_weight_set
      (priv->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 

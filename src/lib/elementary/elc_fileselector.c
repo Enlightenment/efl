@@ -169,11 +169,11 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
    ELM_FILESELECTOR_DATA_GET(obj, sd);
 
-   elm_widget_mirrored_set(sd->cancel_button, rtl);
-   elm_widget_mirrored_set(sd->ok_button, rtl);
-   elm_widget_mirrored_set(sd->files_view, rtl);
-   elm_widget_mirrored_set(sd->up_button, rtl);
-   elm_widget_mirrored_set(sd->home_button, rtl);
+   efl_ui_mirrored_set(sd->cancel_button, rtl);
+   efl_ui_mirrored_set(sd->ok_button, rtl);
+   efl_ui_mirrored_set(sd->files_view, rtl);
+   efl_ui_mirrored_set(sd->up_button, rtl);
+   efl_ui_mirrored_set(sd->home_button, rtl);
 }
 
 static Eina_Bool
@@ -215,7 +215,7 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    style = elm_widget_style_get(obj);
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 

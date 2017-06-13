@@ -90,7 +90,7 @@ _position_items(Elm_Segment_Control_Data *sd)
    evas_object_geometry_get
      (wd->resize_obj, &bx, &by, &bw, &bh);
    sd->item_width = bw / item_count;
-   rtl = elm_widget_mirrored_get(sd->obj);
+   rtl = efl_ui_mirrored_get(sd->obj);
 
    if (rtl) pos = bx + bw - sd->item_width;
    else pos = bx;
@@ -169,7 +169,7 @@ _update_list(Elm_Segment_Control_Data *sd)
         return;
      }
 
-   rtl = elm_widget_mirrored_get(sd->obj);
+   rtl = efl_ui_mirrored_get(sd->obj);
    EINA_LIST_FOREACH(sd->items, l, eo_it)
      {
         ELM_SEGMENT_ITEM_DATA_GET(eo_it, it);
@@ -226,7 +226,7 @@ _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *s
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
-   rtl = elm_widget_mirrored_get(obj);
+   rtl = efl_ui_mirrored_get(obj);
 
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
@@ -604,7 +604,7 @@ _elm_segment_control_item_efl_object_constructor(Eo *obj, Elm_Segment_Control_It
    elm_widget_sub_object_add(parent, VIEW(it));
    elm_widget_theme_object_set
      (parent, VIEW(it), "segment_control", "item", elm_object_style_get(parent));
-   edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(WIDGET(it)));
+   edje_object_mirrored_set(VIEW(it), efl_ui_mirrored_get(WIDGET(it)));
 
    return obj;
 }

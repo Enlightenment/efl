@@ -42,7 +42,7 @@ _efl_ui_grid_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED
    yl = y;
    wl = w;
    hl = h;
-   mirror = elm_widget_mirrored_get(obj);
+   mirror = efl_ui_mirrored_get(obj);
 
    if (!gd->req_cols || !gd->req_rows)
      {

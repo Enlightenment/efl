@@ -410,7 +410,7 @@ _elm_scroller_elm_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    elm_layout_sizing_eval(obj);
 
@@ -757,7 +757,7 @@ _loop_content_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *content)
         elm_widget_on_show_region_hook_set(sd->contents, _show_region_hook, obj);
 
         elm_widget_mirrored_automatic_set(sd->contents, EINA_FALSE);
-        elm_widget_mirrored_set(sd->contents, EINA_FALSE);
+        efl_ui_mirrored_set(sd->contents, EINA_FALSE);
      }
    elm_object_part_content_set(sd->contents, "elm.swallow.content", content);
    sd->content = content;
@@ -921,7 +921,7 @@ _elm_scroller_efl_canvas_group_group_add(Eo *obj, Elm_Scroller_Data *priv)
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    elm_interface_scrollable_edge_left_cb_set(obj, _edge_left_cb);
    elm_interface_scrollable_edge_right_cb_set(obj, _edge_right_cb);

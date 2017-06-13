@@ -554,7 +554,7 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
           (WIDGET(it), view, "genlist", "item/default", "default");
      }
 
-   edje_object_mirrored_set(view, elm_widget_mirrored_get(WIDGET(it)));
+   edje_object_mirrored_set(view, efl_ui_mirrored_get(WIDGET(it)));
    edje_object_scale_set(view, efl_ui_scale_get(WIDGET(it))
                          * elm_config_scale_get());
 
@@ -1418,7 +1418,7 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    it->item->nostacking = !!strcmp("yes", stacking);
 
    edje_object_mirrored_set
-     (it->deco_all_view, elm_widget_mirrored_get(WIDGET(it)));
+     (it->deco_all_view, efl_ui_mirrored_get(WIDGET(it)));
 
    _elm_genlist_item_position_state_update(it);
    _elm_genlist_item_state_update(it);
@@ -1627,7 +1627,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    _item_mouse_callbacks_del(it, itc->base_view);
 
    edje_object_mirrored_set(itc->base_view,
-                            elm_widget_mirrored_get(WIDGET(it)));
+                            efl_ui_mirrored_get(WIDGET(it)));
    edje_object_scale_set(itc->base_view,
                          efl_ui_scale_get(WIDGET(it))
                          * elm_config_scale_get());
@@ -3462,7 +3462,7 @@ _elm_genlist_elm_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    eina_hash_free_buckets(sd->size_caches);
    sd->minw = sd->minh = sd->realminw = 0;
@@ -5679,7 +5679,7 @@ _elm_genlist_efl_canvas_group_group_add(Eo *obj, Elm_Genlist_Data *priv)
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    elm_layout_sizing_eval(obj);
 

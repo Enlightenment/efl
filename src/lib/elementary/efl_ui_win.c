@@ -6207,7 +6207,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
                                    elm_widget_style_get(obj));
    if (!int_ret) return ELM_THEME_APPLY_FAILED;
 
-   edje_object_mirrored_set(sd->legacy.edje, elm_widget_mirrored_get(obj));
+   edje_object_mirrored_set(sd->legacy.edje, efl_ui_mirrored_get(obj));
    edje_object_scale_set(sd->legacy.edje,
                          efl_ui_scale_get(obj) * elm_config_scale_get());
 

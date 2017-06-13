@@ -289,8 +289,8 @@ _item_mirrored_set(Evas_Object *obj EINA_UNUSED,
                    Elm_Toolbar_Item_Data *it,
                    Eina_Bool mirrored)
 {
-   elm_widget_mirrored_set(VIEW(it), mirrored);
-   if (it->o_menu) elm_widget_mirrored_set(it->o_menu, mirrored);
+   efl_ui_mirrored_set(VIEW(it), mirrored);
+   if (it->o_menu) efl_ui_mirrored_set(it->o_menu, mirrored);
 }
 
 static void
@@ -649,7 +649,7 @@ _resize_job(void *data)
      }
    eina_list_free(list);
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    _item_focus_eval_all(obj, sd);
 }
@@ -1318,7 +1318,7 @@ _item_theme_hook(Evas_Object *obj,
 
    style = elm_widget_style_get(obj);
 
-   _item_mirrored_set(obj, it, elm_widget_mirrored_get(obj));
+   _item_mirrored_set(obj, it, efl_ui_mirrored_get(obj));
    edje_object_scale_set(elm_layout_edje_get(view), scale);
 
    if (!it->separator && !it->object)
@@ -1559,7 +1559,7 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
    else
      elm_object_signal_emit(sd->more, "elm,orient,horizontal", "elm");
 
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    sd->theme_icon_size = _internal_elm_toolbar_icon_size_get(obj);
    if (sd->priv_icon_size) sd->icon_size = sd->priv_icon_size;
@@ -2321,7 +2321,7 @@ _layout(Evas_Object *o,
    horizontal = sd->orientation ? EINA_TRUE : EINA_FALSE;
 
    _els_box_layout
-     (o, priv, horizontal, sd->homogeneous, elm_widget_mirrored_get(obj));
+     (o, priv, horizontal, sd->homogeneous, efl_ui_mirrored_get(obj));
 }
 
 static char *

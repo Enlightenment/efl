@@ -317,7 +317,7 @@ _visuals_refresh(Evas_Object *obj,
    _parts_cursors_apply(sd);
 
    edje_object_mirrored_set
-     (wd->resize_obj, elm_widget_mirrored_get(obj));
+     (wd->resize_obj, efl_ui_mirrored_get(obj));
 
    edje_object_scale_set
      (wd->resize_obj,

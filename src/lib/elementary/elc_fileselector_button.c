@@ -175,8 +175,8 @@ _activate(Elm_Fileselector_Button_Data *sd)
      sd->fsw = _new_window_add(sd);
 
    sd->fs = elm_fileselector_add(sd->fsw);
-   elm_widget_mirrored_set
-     (sd->fs, elm_widget_mirrored_get(sd->obj));
+   efl_ui_mirrored_set
+     (sd->fs, efl_ui_mirrored_get(sd->obj));
    elm_widget_mirrored_automatic_set(sd->fs, EINA_FALSE);
    elm_fileselector_expandable_set(sd->fs, sd->fsd.expandable);
    elm_fileselector_folder_only_set(sd->fs, sd->fsd.folder_only);
