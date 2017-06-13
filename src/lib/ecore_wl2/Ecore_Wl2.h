@@ -1097,6 +1097,18 @@ EAPI void ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window
 EAPI void ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, int w, int h);
 
 /**
+ * Get list of supported auxiliary window hints
+ *
+ * @param window
+ *
+ * @return An Eina_List of supported auxiliary hints, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI Eina_List *ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *window);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *

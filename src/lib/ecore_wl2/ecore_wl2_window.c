@@ -1368,3 +1368,17 @@ ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, in
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_DONE,
                    ev, NULL, NULL);
 }
+
+EAPI Eina_List *
+ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *window)
+{
+   Eina_List *ret = NULL;
+   Ecore_Wl2_Aux_Hint *ehint;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+
+   EINA_INLIST_FOREACH(window->supported_aux_hints, ehint)
+     ret = eina_list_append(ret, eina_stringshare_add(ehint->val));
+
+   return ret;
+}
