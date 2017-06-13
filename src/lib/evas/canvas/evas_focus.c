@@ -106,10 +106,7 @@ _evas_object_unfocus(Evas_Object_Protected_Data *obj, Efl_Input_Device *seat)
 {
    int event_id = _evas_event_counter;
 
-   EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-     events->focused_by_seats = eina_list_remove(events->focused_by_seats, seat);
-   EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
-
+   obj->focused_by_seats = eina_list_remove(obj->focused_by_seats, seat);
    _evas_focus_set(obj->object, seat, EINA_FALSE);
    _evas_focus_dispatch_event(obj, seat, EINA_FALSE);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
@@ -141,7 +138,7 @@ _efl_canvas_object_seat_focus_del(Eo *eo_obj,
           obj->layer->evas->pending_default_focus_obj = NULL;
      }
 
-   EINA_LIST_FOREACH(obj->events->focused_by_seats, l, dev)
+   EINA_LIST_FOREACH(obj->focused_by_seats, l, dev)
      {
         if (dev != seat)
           continue;
@@ -187,7 +184,7 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    if (!efl_input_seat_event_filter_get(eo_obj, seat))
      return EINA_FALSE;
 
-   if (_already_focused(obj->events->focused_by_seats, seat))
+   if (_already_focused(obj->focused_by_seats, seat))
      goto end;
 
    if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
@@ -205,10 +202,7 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
 
    efl_event_callback_add(seat, EFL_EVENT_DEL, _evas_focus_device_del_cb, obj);
 
-   EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-     events->focused_by_seats = eina_list_append(events->focused_by_seats, seat);
-   EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
-
+   obj->focused_by_seats = eina_list_append(obj->focused_by_seats, seat);
    _evas_focus_set(eo_obj, seat, EINA_TRUE);
 
    _evas_focus_dispatch_event(obj, seat, EINA_TRUE);
@@ -231,7 +225,7 @@ _efl_canvas_object_seat_focus_check(Eo *eo_obj,
 
    if (!seat) seat = _default_seat_get(eo_obj);
 
-   EINA_LIST_FOREACH(obj->events->focused_by_seats, l, s)
+   EINA_LIST_FOREACH(obj->focused_by_seats, l, s)
      {
         if (s == seat)
           return EINA_TRUE;
@@ -259,7 +253,7 @@ _efl_canvas_object_seat_focus_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   return eina_list_count(obj->events->focused_by_seats) ? EINA_TRUE : EINA_FALSE;
+   return eina_list_count(obj->focused_by_seats) ? EINA_TRUE : EINA_FALSE;
 }
 
 EOLIAN Eina_Bool
