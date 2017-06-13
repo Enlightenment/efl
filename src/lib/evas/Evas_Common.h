@@ -3221,6 +3221,14 @@ EAPI int  evas_string_char_prev_get(const char *str, int pos, int *decoded) EINA
 EAPI int  evas_string_char_len_get(const char *str) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
+ * Get language direction.
+ *
+ * @ingroup Evas_Utils
+ * @since 1.18
+ */
+EAPI Evas_BiDi_Direction     evas_language_direction_get(void);
+
+/**
  * Reinitialize language from the environment.
  *
  * The locale can change while a process is running. This call tells evas to

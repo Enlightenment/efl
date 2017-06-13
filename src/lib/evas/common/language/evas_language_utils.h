@@ -132,6 +132,9 @@ evas_common_language_from_locale_get(void);
 const char *
 evas_common_language_from_locale_full_get(void);
 
+Evas_BiDi_Direction
+evas_common_language_direction_get(void);
+
 void
 evas_common_language_reinit(void);
 #endif

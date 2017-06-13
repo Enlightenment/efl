@@ -820,6 +820,12 @@ evas_ector_get(Evas_Public_Data *e, void *output)
    return NULL;
 }
 
+EAPI Evas_BiDi_Direction
+evas_language_direction_get(void)
+{
+   return evas_common_language_direction_get();
+}
+
 EAPI void
 evas_language_reinit(void)
 {

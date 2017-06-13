@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include <locale.h>
+#include <libintl.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -47,6 +48,7 @@
 
 static char lang[6]; /* FIXME: Maximum length I know about */
 static char lang_full[32];
+static Evas_BiDi_Direction lang_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
 
 static Evas_Script_Type
 _evas_common_language_char_script_search(Eina_Unicode unicode)
@@ -194,10 +196,27 @@ evas_common_language_from_locale_full_get(void)
    return "";
 }
 
+Evas_BiDi_Direction
+evas_common_language_direction_get(void)
+{
+   if (lang_dir == EVAS_BIDI_DIRECTION_NEUTRAL)
+     {
+        const char *dir_str = dgettext(PACKAGE, "default:LTR");
+
+        if (dir_str && !strcmp(dir_str, "default:RTL"))
+          lang_dir = EVAS_BIDI_DIRECTION_RTL;
+        else
+          lang_dir = EVAS_BIDI_DIRECTION_LTR;
+     }
+
+   return lang_dir;
+}
+
 void
 evas_common_language_reinit(void)
 {
    *lang = *lang_full = '\0';
+   lang_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
 }
 
 /*

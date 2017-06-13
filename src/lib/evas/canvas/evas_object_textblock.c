@@ -421,6 +421,13 @@ typedef enum _Evas_Textblock_Item_Type
    EVAS_TEXTBLOCK_ITEM_FORMAT,
 } Evas_Textblock_Item_Type;
 
+typedef enum _Evas_Textblock_Align_Auto
+{
+   EVAS_TEXTBLOCK_ALIGN_AUTO_NONE,
+   EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL,
+   EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE
+} Evas_Textblock_Align_Auto;
+
 struct _Evas_Object_Textblock_Item
 {
    EINA_INLIST;
@@ -538,7 +545,7 @@ struct _Evas_Object_Textblock_Format
    Eina_Bool            strikethrough : 1;  /**< EINA_TRUE if text should be stricked off, else EINA_FALSE */
    Eina_Bool            backing : 1;  /**< EINA_TRUE if enable background color, else EINA_FALSE */
    Eina_Bool            password : 1;  /**< EINA_TRUE if the text is password, else EINA_FALSE */
-   Eina_Bool            halign_auto : 1;  /**< EINA_TRUE if auto horizontal align, else EINA_FALSE */
+   Evas_Textblock_Align_Auto halign_auto : 2;  /**< Auto horizontal align mode */
 };
 
 struct _Efl_Canvas_Text_Style
@@ -1928,6 +1935,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          * Sets the horizontal alignment of the text. The value can either be
          * a number, a percentage or one of several presets:
          * @li "auto" - Respects LTR/RTL settings
+         * @li "locale" - Respects locale(language) direction settings
          * @li "center" - Centers the text in the line
          * @li "middle" - Alias for "center"
          * @li "left" - Puts the text at the left of the line
@@ -1942,7 +1950,11 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          */
         if (len == 4 && !strcmp(param, "auto"))
           {
-             fmt->halign_auto = EINA_TRUE;
+             fmt->halign_auto = EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL;
+          }
+        if (len == 6 && !strcmp(param, "locale"))
+          {
+             fmt->halign_auto = EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE;
           }
         else
           {
@@ -1982,7 +1994,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
                   if (fmt->halign < 0.0) fmt->halign = 0.0;
                   else if (fmt->halign > 1.0) fmt->halign = 1.0;
                }
-             fmt->halign_auto = EINA_FALSE;
+             fmt->halign_auto = EVAS_TEXTBLOCK_ALIGN_AUTO_NONE;
           }
      }
    else if (cmd == valignstr)
@@ -2859,7 +2871,7 @@ struct _Ctxt
    int have_underline, have_underline2;
    double align, valign;
    Textblock_Position position;
-   Eina_Bool align_auto : 1;
+   Evas_Textblock_Align_Auto align_auto : 2;
    Eina_Bool width_changed : 1;
 };
 
@@ -3503,7 +3515,7 @@ static inline double
 _layout_line_align_get(Ctxt *c)
 {
 #ifdef BIDI_SUPPORT
-   if (c->align_auto && c->ln)
+   if ((c->align_auto == EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL) && c->ln)
      {
         if (c->ln->items && c->ln->items->text_node &&
               (c->ln->par->direction == EVAS_BIDI_DIRECTION_RTL))
@@ -3517,6 +3529,20 @@ _layout_line_align_get(Ctxt *c)
              return 0.0;
           }
      }
+   else if (c->align_auto == EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE)
+     {
+        if (evas_common_language_direction_get() == EVAS_BIDI_DIRECTION_RTL)
+          {
+             /* Align right*/
+             return 1.0;
+          }
+        else
+          {
+             /* Align left */
+             return 0.0;
+          }
+     }
+
 #endif
    return c->align;
 }
