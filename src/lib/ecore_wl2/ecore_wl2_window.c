@@ -1382,3 +1382,21 @@ ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *window)
 
    return ret;
 }
+
+EAPI void
+ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *window, int id, const char *hint, const char *val)
+{
+   Ecore_Wl2_Aux_Hint *ehint;
+
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   ehint = calloc(1, sizeof(Ecore_Wl2_Aux_Hint));
+   if (!ehint) return;
+
+   ehint->id = id;
+   ehint->hint = eina_stringshare_add(hint);
+   ehint->val = eina_stringshare_add(val);
+
+   window->supported_aux_hints =
+     eina_inlist_append(window->supported_aux_hints, EINA_INLIST_GET(ehint));
+}
