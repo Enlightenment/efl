@@ -46,8 +46,7 @@ class TestEolianError
     {
         test.Testing obj = new Overrider();
 
-        // WIP 
-        /* Test.AssertRaises<efl.EflException>(obj.call_children_raise_error); */
+        Test.AssertRaises<efl.EflException>(obj.call_children_raise_error);
     }
 
     // return eina_error
