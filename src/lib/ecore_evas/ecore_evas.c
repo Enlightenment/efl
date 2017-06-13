@@ -2445,7 +2445,7 @@ ecore_evas_aux_hint_val_set(Ecore_Evas *ee, const int id, const char *val)
           }
      }
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 EAPI const char *
