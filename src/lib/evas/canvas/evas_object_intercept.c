@@ -113,22 +113,19 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
           }
         i = va_arg(args, int);
         j = va_arg(args, int);
-        if (!obj->interceptors)
-          {
-             if ((obj->cur->geometry.x == i) && (obj->cur->geometry.y == j))
-               blocked = EINA_TRUE;
-             break;
-          }
-        blocked = evas_object_intercept_call_move(eo_obj, obj, i, j);
+        if (obj->interceptors)
+          blocked = evas_object_intercept_call_move(eo_obj, obj, i, j);
+        if (!blocked && (obj->cur->geometry.x == i) && (obj->cur->geometry.y == j))
+          blocked = 1;
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_RESIZE:
         i = va_arg(args, int);
         j = va_arg(args, int);
-        if (_efl_canvas_object_efl_gfx_size_set_block(eo_obj, obj, i, j, internal))
-          return 1;
-        if (!obj->interceptors) return 0;
-        blocked = evas_object_intercept_call_resize(eo_obj, obj, i, j);
+        if (obj->interceptors)
+          blocked = evas_object_intercept_call_resize(eo_obj, obj, i, j);
+        if (!blocked && _efl_canvas_object_efl_gfx_size_set_block(eo_obj, obj, i, j, internal))
+          blocked = 1;
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_RAISE:
