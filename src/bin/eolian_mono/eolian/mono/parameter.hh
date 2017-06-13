@@ -896,7 +896,9 @@ struct native_convert_return_variable_generator
    bool generate(OutputIterator sink, attributes::type_def const& ret_type, Context const& context) const
    {
      if (ret_type.c_type != "void")
-       return as_generator("var _ret_var = ").generate(sink, attributes::unused, context);
+       return as_generator(
+                    type << " _ret_var = default(" << type << ");"
+               ).generate(sink, std::make_tuple(ret_type, ret_type), context);
      return true;
    }
 

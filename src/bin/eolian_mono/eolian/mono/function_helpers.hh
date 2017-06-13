@@ -47,7 +47,7 @@ struct native_function_definition_preamble_generator
                 << scope_tab << scope_tab << "//Function pointer wrappers\n"
                 << *(scope_tab << scope_tab << native_convert_function_pointer << "\n")
                 << scope_tab << scope_tab << "//Return variable and function call\n"
-                << scope_tab << scope_tab << native_convert_return_variable
+                << scope_tab << scope_tab << scope_tab << native_convert_return_variable << "\n"
                 ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
 
