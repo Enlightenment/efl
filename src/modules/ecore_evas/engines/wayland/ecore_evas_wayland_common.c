@@ -1813,6 +1813,36 @@ _ecore_evas_wayland_window_get(const Ecore_Evas *ee)
 
 /* } */
 
+static void
+_ecore_evas_wayland_aux_hint_add(Ecore_Evas *ee, int id, const char *hint, const char *val)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   if (!ee) return;
+   wdata = ee->engine.data;
+   ecore_wl2_window_aux_hint_add(wdata->win, id, hint, val);
+}
+
+static void
+_ecore_evas_wayland_aux_hint_change(Ecore_Evas *ee, int id, const char *val)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   if (!ee) return;
+   wdata = ee->engine.data;
+   ecore_wl2_window_aux_hint_change(wdata->win, id, val);
+}
+
+static void
+_ecore_evas_wayland_aux_hint_del(Ecore_Evas *ee, int id)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   if (!ee) return;
+   wdata = ee->engine.data;
+   ecore_wl2_window_aux_hint_del(wdata->win, id);
+}
+
 static Ecore_Evas_Interface_Wayland *
 _ecore_evas_wl_interface_new(void)
 {
@@ -1829,6 +1859,9 @@ _ecore_evas_wl_interface_new(void)
    /* iface->pointer_set = _ecore_evas_wayland_pointer_set; */
    iface->type_set = _ecore_evas_wayland_type_set;
    iface->window2_get = _ecore_evas_wayland_window_get;
+   iface->aux_hint_add = _ecore_evas_wayland_aux_hint_add;
+   iface->aux_hint_change = _ecore_evas_wayland_aux_hint_change;
+   iface->aux_hint_del = _ecore_evas_wayland_aux_hint_del;
 
    return iface;
 }
