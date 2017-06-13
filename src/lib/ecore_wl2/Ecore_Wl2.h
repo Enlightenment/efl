@@ -44,6 +44,7 @@ typedef struct _Ecore_Wl2_Pointer Ecore_Wl2_Pointer;
 typedef struct _Ecore_Wl2_Keyboard Ecore_Wl2_Keyboard;
 typedef struct _Ecore_Wl2_Touch Ecore_Wl2_Touch;
 typedef struct _Ecore_Wl2_Offer Ecore_Wl2_Offer;
+typedef struct _Ecore_Wl2_Aux_Hint Ecore_Wl2_Aux_Hint;
 
 /* matches protocol values */
 typedef enum
@@ -297,6 +298,12 @@ typedef enum _Ecore_Wl2_Window_Type
    ECORE_WL2_WINDOW_TYPE_LAST
 } Ecore_Wl2_Window_Type;
 
+typedef struct _Ecore_Wl2_Event_Aux_Hint_Allowed
+{
+   unsigned int win;
+   int id;
+} Ecore_Wl2_Event_Aux_Hint_Allowed;
+
 typedef void (*Ecore_Wl2_Bind_Cb)(struct wl_client *client, void *data, uint32_t version, uint32_t id);
 typedef void (*Ecore_Wl2_Unbind_Cb)(struct wl_resource *resource);
 
@@ -333,6 +340,7 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE; /** @since 1.20 
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_DONE; /** @since 1.20 */
+EAPI extern int ECORE_WL2_EVENT_AUX_HINT_ALLOWED; /** @since 1.20 */
 
 /**
  * @file

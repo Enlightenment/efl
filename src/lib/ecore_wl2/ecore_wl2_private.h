@@ -133,6 +133,14 @@ struct _Ecore_Wl2_Subsurface
    Eina_Bool sync : 1;
 };
 
+struct _Ecore_Wl2_Aux_Hint
+{
+   EINA_INLIST;
+
+   int id;
+   const char *hint, *val;
+};
+
 struct _Ecore_Wl2_Window
 {
    EINA_INLIST;
@@ -168,6 +176,7 @@ struct _Ecore_Wl2_Window
    Ecore_Wl2_Window_Type type;
 
    Eina_Inlist *subsurfs;
+   Eina_Inlist *supported_aux_hints;
 
    Eina_Bool moving : 1;
    Eina_Bool minimized : 1;
