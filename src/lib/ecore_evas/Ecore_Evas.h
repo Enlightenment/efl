@@ -2862,9 +2862,35 @@ EAPI Eina_List   *ecore_evas_ecore_evas_list_get(void);
  */
 EAPI Eina_List   *ecore_evas_sub_ecore_evas_list_get(const Ecore_Evas *ee);
 
-/* specific calls to an x11 environment ecore_evas */
+/**
+ * @brief Set the window's client leader.
+ *
+ * @param ee Ecore_Evas for the window.
+ * @param win The window.
+ *
+ * Sets the client leader X atom property for the given window.  All
+ * non-transient top-level windows created by an app other than the main
+ * window must have this property set to the app's main window.
+ */
 EAPI void           ecore_evas_x11_leader_set(Ecore_Evas *ee, Ecore_X_Window win);
+
+/**
+ * @brief Get the client leader.
+ *
+ * @param ee Ecore_Evas for the window.
+ * @return the current client leader.
+ *
+ * @see ecore_evas_x11_leader_set()
+ */
 EAPI Ecore_X_Window ecore_evas_x11_leader_get(Ecore_Evas *ee);
+
+/**
+ * @brief Reset the client leader to default.
+ *
+ * @param ee Ecore_Evas for the window.
+ *
+ * @see ecore_evas_x11_leader_set()
+ */
 EAPI void           ecore_evas_x11_leader_default_set(Ecore_Evas *ee);
 
 /**
