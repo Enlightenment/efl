@@ -151,6 +151,19 @@ EAPI int ector_init(void);
  */
 EAPI int ector_shutdown(void);
 
+/**
+ * @brief Registers OpenGL API calls with the internal Ector_GL_API.
+ *
+ * @param glsym Function to use for looking up dynamically loaded symbols
+ * @param lib Dynamically loaded shared object, or RTLD_DEFAULT or RTLD_NEXT
+ * @return EINA_TRUE if call succeeded, EINA_FALSE if glsym was undefined or an error occurred
+ *
+ * The RTLD_DEFAULT and RTLD_NEXT pseudo-handles can be passed as lib to
+ * look up the first or next occurance of the desired symbol in the dynamic
+ * library search order.
+ *
+ * @see dlsym()
+ */
 EAPI Eina_Bool ector_glsym_set(void *(*glsym)(void *lib, const char *name), void *lib);
 
 /* Avoid redefinition of types */
