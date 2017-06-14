@@ -1225,16 +1225,45 @@ EAPI Eo * _efl_add_internal_start(const char *file, int line, const Efl_Class *k
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
+ *
  * The data reference count is not incremented. The pointer must be used only
  * in the scope of the function and its callees.
+ *
  * @param obj the object to work on.
  * @param klass the klass associated with the data.
  * @return a pointer to the data.
  *
  * @see efl_data_ref()
  * @see efl_data_unref()
+ * @see efl_data_scope_safe_get()
  */
 EAPI void *efl_data_scope_get(const Eo *obj, const Efl_Class *klass);
+
+/**
+ * @brief Safely get a pointer to the data of an object for a specific class.
+ *
+ * This call runs a dynamic check and returns NULL if there is no valid data
+ * to return.
+ *
+ * The data reference count is not incremented. The pointer must be used only
+ * in the scope of the function and its callees. This function will return NULL
+ * if there is no data for this class, or if this object is not an instance of
+ * the given class. The function will return NULL if the data size is 0.
+ * Note that objects of class A inheriting from another class C as an
+ * interface (like: class A(B, C) {} ) will have no data for class C. This
+ * means that efl_isa(a, C) will return true but there is no data for C. This
+ * function's behaviour is similar to efl_data_scope_get() when running in
+ * debug mode (but this prints less error logs).
+ *
+ * @param obj the object to work on.
+ * @param klass the klass associated with the data.
+ * @return a pointer to the data or NULL in case of error or $obj was NULL.
+ *
+ * @see efl_data_scope_get()
+ *
+ * @since 1.20
+ */
+EAPI void *efl_data_scope_safe_get(const Eo *obj, const Efl_Class *klass);
 
 /**
  * @def efl_data_xref(obj, klass, ref_obj)

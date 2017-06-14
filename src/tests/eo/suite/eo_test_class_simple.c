@@ -142,13 +142,33 @@ static const Efl_Class_Description class_desc2 = {
      EO_VERSION,
      "Simple2",
      EFL_CLASS_TYPE_REGULAR,
-     0,
+     sizeof(Simple_Public_Data),
      _class_initializer2,
      NULL,
      NULL
 };
 
 EFL_DEFINE_CLASS(simple2_class_get, &class_desc2, EO_CLASS, NULL)
+
+
+static Eina_Bool
+_class_initializer3(Efl_Class *klass)
+{
+   return efl_class_functions_set(klass, NULL, NULL);
+}
+
+static const Efl_Class_Description class_desc3 = {
+     EO_VERSION,
+     "Simple3",
+     EFL_CLASS_TYPE_REGULAR,
+     sizeof(Simple_Public_Data),
+     _class_initializer3,
+     NULL,
+     NULL
+};
+
+EFL_DEFINE_CLASS(simple3_class_get, &class_desc3, SIMPLE_CLASS, SIMPLE2_CLASS, NULL)
+
 
 static Efl_Object*
 _interface_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const Efl_Object *klass)

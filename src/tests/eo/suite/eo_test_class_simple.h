@@ -29,6 +29,10 @@ EAPI int simple2_class_beef_get(const Efl_Class *obj);
 #define SIMPLE2_CLASS simple2_class_get()
 const Efl_Class *simple2_class_get(void);
 
+// simple3(simple, simple2)
+#define SIMPLE3_CLASS simple3_class_get()
+const Efl_Class *simple3_class_get(void);
+
 #define SEARCHABLE_CLASS searchable_class_get()
 const Efl_Class *searchable_class_get(void);
 

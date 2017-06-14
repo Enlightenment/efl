@@ -304,6 +304,29 @@ START_TEST(efl_data_fetch)
 }
 END_TEST
 
+START_TEST(efl_data_safe_fetch)
+{
+   efl_object_init();
+
+   Eo *obj = efl_add(SIMPLE2_CLASS, NULL);
+   fail_if(!obj || !efl_data_scope_safe_get(obj, SIMPLE2_CLASS));
+   efl_unref(obj);
+
+   obj = efl_add(SIMPLE3_CLASS, NULL);
+   fail_if(!obj);
+   fail_if(!efl_isa(obj, SIMPLE_CLASS));
+   fail_if(!efl_isa(obj, SIMPLE2_CLASS));
+   fail_if(!efl_isa(obj, SIMPLE3_CLASS));
+   fail_if(!efl_data_scope_safe_get(obj, SIMPLE_CLASS));
+   fail_if(!efl_data_scope_safe_get(obj, SIMPLE3_CLASS));
+   fail_if(efl_data_scope_safe_get(obj, SIMPLE2_CLASS) != NULL);
+   fail_if(efl_data_scope_safe_get(NULL, EFL_OBJECT_CLASS) != NULL);
+   efl_unref(obj);
+
+   efl_object_shutdown();
+}
+END_TEST
+
 START_TEST(efl_isa_tests)
 {
    efl_object_init();
@@ -1687,6 +1710,7 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, efl_object_override_tests);
    tcase_add_test(tc, eo_signals);
    tcase_add_test(tc, efl_data_fetch);
+   tcase_add_test(tc, efl_data_safe_fetch);
    tcase_add_test(tc, efl_isa_tests);
    tcase_add_test(tc, efl_composite_tests);
    tcase_add_test(tc, eo_man_free);

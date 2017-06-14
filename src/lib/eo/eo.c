@@ -1102,7 +1102,6 @@ _vtable_init(Eo_Vtable *vtable, size_t size)
    vtable->chain = calloc(vtable->size, sizeof(*vtable->chain));
 }
 
-#ifdef EO_DEBUG
 static Eina_Bool
 _eo_class_mro_has(const _Efl_Class *klass, const _Efl_Class *find)
 {
@@ -1116,7 +1115,6 @@ _eo_class_mro_has(const _Efl_Class *klass, const _Efl_Class *find)
      }
    return EINA_FALSE;
 }
-#endif
 
 static Eina_List *
 _eo_class_list_remove_duplicates(Eina_List* list)
@@ -2000,6 +1998,27 @@ efl_data_scope_get(const Eo *obj_id, const Efl_Class *klass_id)
 err_klass:
    EO_OBJ_DONE(obj_id);
    return ret;
+}
+
+EAPI void *
+efl_data_scope_safe_get(const Eo *obj_id, const Efl_Class *klass_id)
+{
+#ifndef EO_DEBUG
+   void *ret = NULL;
+
+   if (!obj_id) return NULL;
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, NULL);
+   EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
+
+   if (_eo_class_mro_has(obj->klass, klass))
+     ret = _efl_data_scope_safe_get(obj, klass);
+
+err_klass:
+   EO_OBJ_DONE(obj_id);
+   return ret;
+#else
+   return efl_data_scope_get(obj_id, klass_id);
+#endif
 }
 
 EAPI void *
