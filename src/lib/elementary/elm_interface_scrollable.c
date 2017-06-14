@@ -45,7 +45,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static void _elm_pan_content_set(Evas_Object *, Evas_Object *);
 static void
 _elm_scroll_scroll_to_x(Elm_Scrollable_Smart_Interface_Data *sid,
                         double t_in,
@@ -96,7 +95,7 @@ _elm_pan_efl_canvas_group_group_add(Eo *obj, Elm_Pan_Smart_Data *priv)
 EOLIAN static void
 _elm_pan_efl_canvas_group_group_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
-   _elm_pan_content_set(obj, NULL);
+   elm_obj_pan_content_set(obj, NULL);
 
    efl_canvas_group_del(efl_super(obj, MY_PAN_CLASS));
 }
@@ -240,13 +239,12 @@ _elm_pan_content_resize_cb(void *data,
    efl_event_callback_legacy_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
-static void
+EOLIAN static void
 _elm_pan_content_set(Evas_Object *obj,
+                     Elm_Pan_Smart_Data *psd,
                      Evas_Object *content)
 {
    Evas_Coord w, h;
-
-   ELM_PAN_DATA_GET_OR_RETURN(obj, psd);
 
    if (content == psd->content) return;
    if (psd->content)
@@ -3935,7 +3933,7 @@ _elm_interface_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
    if (sid->content)
      {
         /* if we had content, for sure we had a pan object */
-        _elm_pan_content_set(sid->pan_obj, NULL);
+        elm_obj_pan_content_set(sid->pan_obj, NULL);
         evas_object_event_callback_del_full
           (sid->content, EVAS_CALLBACK_DEL, _elm_scroll_content_del_cb, sid);
      }
@@ -3960,7 +3958,7 @@ _elm_interface_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
    evas_object_event_callback_add
      (content, EVAS_CALLBACK_DEL, _elm_scroll_content_del_cb, sid);
 
-   _elm_pan_content_set(sid->pan_obj, content);
+   elm_obj_pan_content_set(sid->pan_obj, content);
    elm_obj_pan_content_size_get(sid->pan_obj, &w, &h);
    sid->content_info.w = w;
    sid->content_info.h = h;

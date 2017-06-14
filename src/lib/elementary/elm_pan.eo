@@ -6,6 +6,14 @@ class Elm.Pan (Efl.Canvas.Group.Clipped)
    event_prefix: elm_pan;
    data: Elm_Pan_Smart_Data;
    methods {
+      @property content {
+         [[Content]]
+         set {
+         }
+         values {
+            content: Efl.Canvas.Object @nullable; [[Content object]]
+         }
+      }
       @property pos {
       	 [[Position]]
          set {
