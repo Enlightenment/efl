@@ -7,25 +7,6 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
    eo_prefix: elm_obj_scroller;
    event_prefix: elm_scroller;
    methods {
-      @property propagate_events {
-         set {
-            [[Set event propagation on a scroller
-
-              This enables or disables event propagation from the scroller
-              content to the scroller and its parent. By default event
-              propagation is enabled.
-            ]]
-         }
-         get {
-            [[Get event propagation for a scroller
-
-              This gets the event propagation for a scroller.
-            ]]
-         }
-         values {
-            propagation: bool; [[The propagation state]]
-         }
-      }
       @property custom_widget_base_theme {
          set {
             [[Set custom theme elements for the scroller]]

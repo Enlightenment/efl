@@ -559,3 +559,28 @@ EAPI void                          elm_scroller_wheel_disabled_set(Evas_Object *
  * @ingroup Elm_Scroller
  */
 EAPI Eina_Bool                     elm_scroller_wheel_disabled_get(const Evas_Object *obj);
+
+/**
+ * @brief Set event propagation on a scroller
+ *
+ * This enables or disables event propagation from the scroller content to the
+ * scroller and its parent. By default event propagation is enabled.
+ *
+ * @param[in] obj The scroller object
+ * @param[in] propagation The propagation state
+ *
+ * @ingroup Elm_Scroller
+ */
+EAPI void elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation);
+
+/**
+ * @brief Get event propagation for a scroller
+ *
+ * This gets the event propagation for a scroller.
+ *
+ * @param[in] obj The scroller object
+ * @return The propagation state
+ *
+ * @ingroup Elm_Scroller
+ */
+EAPI Eina_Bool elm_scroller_propagate_events_get(const Evas_Object *obj);
