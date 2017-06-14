@@ -10,7 +10,10 @@ int _evas_event_counter = 0;
 
 static Eina_List *
 _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
-                               const Eina_Inlist *list, const Eina_Clist *clist, Evas_Object *stop,
+                               const Eina_Inlist *list,
+                               const Eina_Clist *clist,
+                               const Eina_List *list,
+                               Evas_Object *stop,
                                int x, int y, int *no_rep, Eina_Bool source);
 
 /* FIXME: use eina_list_clone */
@@ -260,6 +263,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
                                (eo_e, in,
                                 evas_object_smart_members_get_direct(eo_obj),
                                 NULL,
+                                NULL,
                                 stop,
                                 obj->cur->geometry.x + obj->map->cur.map->mx,
                                 obj->cur->geometry.y + obj->map->cur.map->my,
@@ -286,7 +290,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
                        obj->cur->geometry.y <= y &&
                        obj->cur->geometry.y + obj->cur->geometry.h >= y))
                     in = _evas_event_object_list_in_get
-                       (eo_e, in, evas_object_smart_members_get_direct(eo_obj), NULL,
+                      (eo_e, in, evas_object_smart_members_get_direct(eo_obj), NULL, NULL,
                        stop, x, y, &norep, source);
                }
              if (norep)
@@ -306,7 +310,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
           {
              int norep = 0;
              in = _evas_event_object_list_in_get(eo_e, in,
-               NULL, evas_object_event_grabber_members_list(eo_obj),
+               NULL, evas_object_event_grabber_members_list(eo_obj), NULL,
                stop, x, y, &norep, source);
              if (norep)
                {
@@ -367,7 +371,10 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
 
 static Eina_List *
 _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
-                                   const Eina_Inlist *list, const Eina_Clist *clist, Evas_Object *stop,
+                                   const Eina_Inlist *ilist,
+                                   const Eina_Clist *clist,
+                                   const Eina_List *list,
+                                   Evas_Object *stop,
                                    int x, int y, int *no_rep, Eina_Bool source)
 {
    Evas_Object_Protected_Data *obj = NULL;
@@ -377,13 +384,13 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
    static int spaces = 0;
 #endif
 
-   if ((!list) && (!clist)) return in;
+   if ((!ilist) && (!clist) && (!list)) return in;
 #ifdef DDD_DO
    spaces++;
 #endif
-   if (list)
+   if (ilist)
      {
-        for (obj = _EINA_INLIST_CONTAINER(obj, eina_inlist_last(list));
+        for (obj = _EINA_INLIST_CONTAINER(obj, eina_inlist_last(ilist));
              obj;
              obj = _EINA_INLIST_CONTAINER(obj, EINA_INLIST_GET(obj)->prev))
           {
@@ -396,7 +403,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
              if (*no_rep) return in;
           }
      }
-   else
+   else if (clist)
      {
         EINA_CLIST_FOR_EACH_ENTRY_SAFE_REV(obj, nobj, clist, Evas_Object_Protected_Data, events->event.member)
           {
@@ -405,6 +412,20 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                ,&spaces
 #endif
              );
+             if (*no_rep) return in;
+          }
+     }
+   else
+     {
+        Eina_List *l;
+
+        EINA_LIST_REVERSE_FOREACH(list, l, obj)
+          {
+             in = _evas_event_object_list_raw_in_get_single(eo_e, obj, in, stop, x, y, no_rep, source
+#ifdef DDD_DO
+                                                            ,&spaces
+#endif
+                                                            );
              if (*no_rep) return in;
           }
      }
@@ -491,14 +512,14 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
           {
              proxy_write->src_event_in = _evas_event_object_list_raw_in_get
                (eo_e, proxy_write->src_event_in,
-                evas_object_smart_members_get_direct(eo_src), NULL,
+                evas_object_smart_members_get_direct(eo_src), NULL, NULL,
                 NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
          }
        else if (src->is_event_parent)
          {
             proxy_write->src_event_in = _evas_event_object_list_raw_in_get
                (eo_e, proxy_write->src_event_in,
-                NULL, evas_object_event_grabber_members_list(eo_src),
+                NULL, evas_object_event_grabber_members_list(eo_src), NULL,
                 NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
          }
        else
@@ -675,13 +696,13 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
           {
              int no_rep = 0;
              ins = _evas_event_object_list_raw_in_get(eo_e, ins, evas_object_smart_members_get_direct(eo_src),
-                                                      NULL, NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
+                                                      NULL, NULL, NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
           }
         else if (src->is_event_parent)
           {
              int no_rep = 0;
              ins = _evas_event_object_list_raw_in_get(eo_e, ins, NULL, evas_object_event_grabber_members_list(eo_src),
-                                                      NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
+                                                      NULL, NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
           }
         else
           ins = eina_list_append(ins, eo_src);
@@ -1122,14 +1143,14 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
           {
              int no_rep = 0;
              ins = _evas_event_object_list_raw_in_get
-                   (eo_e, ins, evas_object_smart_members_get_direct(eo_src), NULL, NULL,
+                   (eo_e, ins, evas_object_smart_members_get_direct(eo_src), NULL, NULL, NULL,
                     ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
           }
         if (src->is_event_parent)
           {
              int no_rep = 0;
              ins = _evas_event_object_list_raw_in_get
-                   (eo_e, ins, NULL, evas_object_event_grabber_members_list(eo_src), NULL,
+                   (eo_e, ins, NULL, evas_object_event_grabber_members_list(eo_src), NULL, NULL,
                     ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
           }
         else
@@ -1215,14 +1236,14 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,
      {
         int no_rep = 0;
         ins = _evas_event_object_list_raw_in_get(eo_e, ins, evas_object_smart_members_get_direct(eo_src),
-                                                 NULL, NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
+                                                 NULL, NULL, NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
 
      }
    else if (src->is_event_parent)
      {
         int no_rep = 0;
         ins = _evas_event_object_list_raw_in_get(eo_e, ins, NULL, evas_object_event_grabber_members_list(eo_src),
-                                                 NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
+                                                 NULL, NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
 
      }
    else
@@ -1326,10 +1347,13 @@ _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e,
 
 static Eina_List *
 _evas_event_object_list_in_get(Evas *eo_e, Eina_List *in,
-                               const Eina_Inlist *list, const Eina_Clist *clist, Evas_Object *stop,
+                               const Eina_Inlist *ilist,
+                               const Eina_Clist *clist,
+                               const Eina_List *list,
+                               Evas_Object *stop,
                                int x, int y, int *no_rep, Eina_Bool source)
 {
-   return _evas_event_object_list_raw_in_get(eo_e, in, list, clist, stop, x, y,
+   return _evas_event_object_list_raw_in_get(eo_e, in, ilist, clist, list, stop, x, y,
                                              no_rep, source);
 }
 
@@ -1348,7 +1372,7 @@ _evas_event_objects_event_list_no_frozen_check(Evas *eo_e, Evas_Object *stop, in
         int no_rep = 0;
         D("############################# check layer %i\n", lay->layer);
         in = _evas_event_object_list_in_get(eo_e, in,
-                                            EINA_INLIST_GET(lay->objects), NULL,
+                                            EINA_INLIST_GET(lay->objects), NULL, NULL,
                                             stop, x, y, &no_rep, EINA_FALSE);
         if (no_rep) return in;
      }
