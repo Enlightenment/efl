@@ -72,8 +72,6 @@ _state_set(Evas_Object *obj, Eina_Bool state, Eina_Bool activate)
                {
                   elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, EINA_TRUE);
                }
-             else
-               elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, EINA_FALSE);
           }
      }
 }

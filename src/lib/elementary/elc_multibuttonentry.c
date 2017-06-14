@@ -516,6 +516,11 @@ _on_item_clicked(void *data,
 
    _item_select(WIDGET(it), it);
 
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it,
+                                                              ELM_ATSPI_STATE_CHECKED,
+                                                              EINA_TRUE);
+
    if (sd->selected_it)
      efl_event_callback_legacy_call
        (WIDGET(it), ELM_MULTIBUTTONENTRY_EVENT_ITEM_CLICKED, eo_it);
