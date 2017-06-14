@@ -10,7 +10,8 @@
 struct _Efl_Object_Event_Grabber_Data
 {
    Eo *rect;
-   Eina_Clist contained;
+   Eina_List *contained;
+
    Eina_Bool vis : 1;
 };
 
@@ -18,35 +19,25 @@ typedef struct Efl_Object_Event_Grabber_Iterator
 {
    Eina_Iterator iterator;
 
-   Eina_Clist *head;
-   Eina_Clist *current;
+   Eina_Iterator *itl;
    Eo *parent;
 } Efl_Object_Event_Grabber_Iterator;
 
 
 static Eina_Bool
-_efl_canvas_object_event_grabber_efl_canvas_group_group_iterator_next(Efl_Object_Event_Grabber_Iterator *it, void **data)
+_efl_canvas_group_group_iterator_next(Efl_Object_Event_Grabber_Iterator *it, void **data)
 {
-   Evas_Object_Protected_Data *obj;
-
-   if (!eina_clist_next(it->head, it->current)) return EINA_FALSE;
-
-   obj = EINA_CLIST_ENTRY(eina_clist_head(it->current), Evas_Object_Protected_Data, events->event.member);
-   if (data) *data = obj->object;
-
-   it->current = eina_clist_next(it->head, it->current);
-
-   return EINA_TRUE;
+   return eina_iterator_next(it->itl, data);
 }
 
 static Evas_Object *
-_efl_canvas_object_event_grabber_efl_canvas_group_group_iterator_get_container(Efl_Object_Event_Grabber_Iterator *it)
+_efl_canvas_group_group_iterator_get_container(Efl_Object_Event_Grabber_Iterator *it)
 {
    return it->parent;
 }
 
 static void
-_efl_canvas_object_event_grabber_efl_canvas_group_group_iterator_free(Efl_Object_Event_Grabber_Iterator *it)
+_efl_canvas_group_group_iterator_free(Efl_Object_Event_Grabber_Iterator *it)
 {
    efl_unref(it->parent);
    free(it);
@@ -57,18 +48,18 @@ _efl_canvas_object_event_grabber_efl_canvas_group_group_children_iterate(const E
 {
    Efl_Object_Event_Grabber_Iterator *it;
 
-   if (eina_clist_empty(&pd->contained)) return NULL;
+   if (!pd->contained) return NULL;
 
    it = calloc(1, sizeof(Efl_Object_Event_Grabber_Iterator));
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
    it->parent = efl_ref(eo_obj);
-   it->head = it->current = &pd->contained;
+   it->itl = eina_list_iterator_new(pd->contained);
 
-   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_canvas_object_event_grabber_efl_canvas_group_group_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_efl_canvas_object_event_grabber_efl_canvas_group_group_iterator_get_container);
-   it->iterator.free = FUNC_ITERATOR_FREE(_efl_canvas_object_event_grabber_efl_canvas_group_group_iterator_free);
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_canvas_group_group_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_efl_canvas_group_group_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_canvas_group_group_iterator_free);
 
    return &it->iterator;
 }
@@ -100,59 +91,41 @@ _stacking_verify(Efl_Object_Event_Grabber_Data *pd, Evas_Object_Protected_Data *
 }
 
 static void
-_child_add_after(Evas_Object_Protected_Data *a, Evas_Object_Events_Data *events)
-{
-   EINA_COW_WRITE_BEGIN(evas_object_events_cow, a->events, Evas_Object_Events_Data, evs)
-     eina_clist_add_after(&evs->event.member, &events->event.member);
-   EINA_COW_WRITE_END(evas_object_events_cow, a->events, evs);
-}
-
-static void
 _child_insert(Efl_Object_Event_Grabber_Data *pd, Evas_Object_Protected_Data *obj)
 {
    Evas_Object_Protected_Data *a, *i;
-
-   if (eina_clist_empty(&pd->contained))
-     {
-        /* pd->rect case */
-        EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-          eina_clist_add_head(&pd->contained, &events->event.member);
-        EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
-        return;
-     }
+   Eina_List *l;
+   Eina_Bool found = EINA_FALSE;
 
    if (pd->vis) _stacking_verify(pd, obj);
-   EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
+
+   EINA_LIST_REVERSE_FOREACH(pd->contained, l, a)
      {
-        EINA_CLIST_FOR_EACH_ENTRY_REV(a, &pd->contained, Evas_Object_Protected_Data, events->event.member)
+        if (a->object == pd->rect)
           {
-             if (a->object == pd->rect)
+             found = EINA_TRUE;
+             break;
+          }
+        if (a->layer->layer > obj->layer->layer) continue;
+        if (a->layer->layer < obj->layer->layer)
+          {
+             found = EINA_TRUE;
+             break;
+          }
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(a->layer->objects), i)
+          {
+             if (a == i || obj == i)
                {
-                  _child_add_after(a, events);
-                  return;
-               }
-             if (a->layer->layer > obj->layer->layer) continue;
-             if (a->layer->layer < obj->layer->layer)
-               {
-                  _child_add_after(a, events);
-                  return;
-               }
-             EINA_INLIST_FOREACH(EINA_INLIST_GET(a->layer->objects), i)
-               {
-                  if (a == i)
-                    {
-                       _child_add_after(a, events);
-                       return;
-                    }
-                  if (obj == i)
-                    {
-                       _child_add_after(a, events);
-                       return;
-                    }
+                  found = EINA_TRUE;
+                  break;
                }
           }
      }
-   EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
+
+   if (found)
+     pd->contained = eina_list_append_relative(pd->contained, obj, a);
+   else
+     pd->contained = eina_list_prepend(pd->contained, obj);
 }
 
 static void
@@ -161,10 +134,7 @@ _efl_canvas_object_event_grabber_child_restack(void *data, const Efl_Event *even
    Efl_Object_Event_Grabber_Data *pd = data;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(event->object, EFL_CANVAS_OBJECT_CLASS);
 
-   EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-     eina_clist_remove(&events->event.member);
-   EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
-
+   pd->contained = eina_list_remove(pd->contained, obj);
    _child_insert(pd, obj);
 }
 
@@ -214,11 +184,11 @@ _efl_canvas_object_event_grabber_efl_canvas_group_group_member_add(Eo *eo_obj, E
              return;
           }
      }
-   if (obj->events->event.parent == eo_obj) return;
+   if (obj->events->parent == eo_obj) return;
 
-   if (obj->smart.parent || obj->events->event.parent) evas_object_smart_member_del(member);
+   if (obj->smart.parent || obj->events->parent) evas_object_smart_member_del(member);
    EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-     events->event.parent = eo_obj;
+     events->parent = eo_obj;
    EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
    _child_insert(pd, obj);
    efl_event_callback_add(member, EFL_EVENT_DEL, _efl_canvas_object_event_grabber_child_del, pd);
@@ -227,17 +197,16 @@ _efl_canvas_object_event_grabber_efl_canvas_group_group_member_add(Eo *eo_obj, E
 }
 
 EOLIAN static void
-_efl_canvas_object_event_grabber_efl_canvas_group_group_member_del(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd EINA_UNUSED, Eo *member)
+_efl_canvas_object_event_grabber_efl_canvas_group_group_member_del(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd, Eo *member)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(member, EFL_CANVAS_OBJECT_CLASS);
 
    efl_event_callback_del(member, EFL_EVENT_DEL, _efl_canvas_object_event_grabber_child_del, pd);
    efl_event_callback_del(member, EFL_GFX_EVENT_RESTACK, _efl_canvas_object_event_grabber_child_restack, pd);
+   pd->contained = eina_list_remove(pd->contained, obj);
+
    EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-     {
-        eina_clist_remove(&events->event.member);
-        events->event.parent = NULL;
-     }
+     events->parent = NULL;
    EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
 }
 
@@ -285,8 +254,9 @@ _efl_canvas_object_event_grabber_efl_gfx_visible_set(Eo *eo_obj EINA_UNUSED, Efl
    if (set)
      {
         Evas_Object_Protected_Data *obj;
+        Eina_List *l;
 
-        EINA_CLIST_FOR_EACH_ENTRY(obj, &pd->contained, Evas_Object_Protected_Data, events->event.member)
+        EINA_LIST_FOREACH(pd->contained, l, obj)
           if (obj->object != pd->rect) _stacking_verify(pd, obj);
      }
    pd->vis = !!set;
@@ -303,21 +273,25 @@ _efl_canvas_object_event_grabber_efl_gfx_stack_layer_set(Eo *eo_obj, Efl_Object_
 static void
 _efl_canvas_object_event_grabber_restack(void *data, const Efl_Event *event)
 {
+   Evas_Object_Protected_Data *obj;
    Efl_Object_Event_Grabber_Data *pd = data;
+   Evas_Object_Protected_Data *root = NULL;
    Eina_List *list = NULL;
-   Evas_Object_Protected_Data *obj, *nobj;
 
    evas_object_layer_set(pd->rect, evas_object_layer_get(event->object));
    evas_object_stack_below(pd->rect, event->object);
 
-   EINA_CLIST_FOR_EACH_ENTRY_SAFE(obj, nobj, &pd->contained, Evas_Object_Protected_Data, events->event.member)
+   EINA_LIST_FREE(pd->contained, obj)
      {
-        if (obj->object == pd->rect) continue;
+        if (obj->object == pd->rect)
+          {
+             root = obj;
+             continue;
+          }
         list = eina_list_append(list, obj);
-        EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
-          eina_clist_remove(&events->event.member);
-        EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
      }
+
+   pd->contained = eina_list_append(pd->contained, root);
    EINA_LIST_FREE(list, obj)
      _child_insert(pd, obj);
 }
@@ -332,7 +306,7 @@ _efl_canvas_object_event_grabber_efl_object_constructor(Eo *eo_obj, Efl_Object_E
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    obj->is_event_parent = 1;
    obj->is_smart = 0;
-   eina_clist_init(&pd->contained);
+
    efl_event_callback_add(eo_obj, EFL_GFX_EVENT_RESTACK, _efl_canvas_object_event_grabber_restack, pd);
    pd->rect = evas_object_rectangle_add(efl_parent_get(eo_obj));
    evas_object_pointer_mode_set(pd->rect, EVAS_OBJECT_POINTER_MODE_NOGRAB);
@@ -345,8 +319,10 @@ _efl_canvas_object_event_grabber_efl_object_constructor(Eo *eo_obj, Efl_Object_E
 EOLIAN static void
 _efl_canvas_object_event_grabber_efl_object_destructor(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd)
 {
-   Evas_Object_Protected_Data *obj, *nobj;
-   EINA_CLIST_FOR_EACH_ENTRY_SAFE(obj, nobj, &pd->contained, Evas_Object_Protected_Data, events->event.member)
+   Evas_Object_Protected_Data *obj;
+   Eina_List *l, *ln;
+
+   EINA_LIST_FOREACH_SAFE(pd->contained, l, ln, obj)
      efl_canvas_group_member_del(eo_obj, obj->object);
    efl_canvas_group_del(eo_obj);
    efl_destructor(efl_super(eo_obj, MY_CLASS));
@@ -358,11 +334,11 @@ _efl_canvas_object_event_grabber_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-const Eina_Clist *
+const Eina_List *
 evas_object_event_grabber_members_list(const Eo *eo_obj)
 {
    Efl_Object_Event_Grabber_Data *pd = efl_data_scope_get(eo_obj, MY_CLASS);
-   return &pd->contained;
+   return pd->contained;
 }
 
 EAPI Evas_Object *
