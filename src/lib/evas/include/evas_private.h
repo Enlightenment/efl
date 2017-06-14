@@ -633,8 +633,7 @@ MAGIC_CHECK_FAILED(o, t, m)
 #endif
 
 #define EVAS_LEGACY_API(_obj, _e, ...) \
-   Evas_Public_Data *_e = (_obj && efl_isa(_obj, EVAS_CANVAS_CLASS)) ? \
-     efl_data_scope_get(_obj, EVAS_CANVAS_CLASS) : NULL; \
+   Evas_Public_Data *_e = efl_data_scope_safe_get((_obj), EVAS_CANVAS_CLASS); \
    if (!_e) return __VA_ARGS__
 
 #define EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(cur, prev)                  \

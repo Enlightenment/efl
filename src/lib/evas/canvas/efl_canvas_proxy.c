@@ -251,7 +251,7 @@ _proxy_image_get(Evas_Image_Data *o)
      return NULL;
 
    if (efl_isa(o->cur->source, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
-     source_img = efl_data_scope_get(o->cur->source, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+     source_img = efl_data_scope_safe_get(o->cur->source, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
    if (source_img)
      return source_img->engine_data;
