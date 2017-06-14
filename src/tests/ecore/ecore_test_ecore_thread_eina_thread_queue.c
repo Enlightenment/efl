@@ -113,7 +113,7 @@ typedef struct
 static volatile int msgs = 0;
 
 static void
-thspeed1_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+thspeed2_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    Msg2 *msg;
    void *ref;
@@ -145,7 +145,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t2)
 
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
-   ecore_thread_feedback_run(thspeed1_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   ecore_thread_feedback_run(thspeed2_do, NULL, NULL, NULL, NULL, EINA_TRUE);
 
    for (i = 0; i < 10000000; i++)
      {
@@ -171,7 +171,7 @@ typedef struct
 } Msg3;
 
 static void
-th21_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+th31_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int val = 100;
 
@@ -190,7 +190,7 @@ th21_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 }
 
 static void
-th22_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+th32_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int val = 100;
 
@@ -230,8 +230,8 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
    parent = eina_thread_queue_parent_get(thq2);
    fail_if(parent != thqmaster);
 
-   ecore_thread_feedback_run(th21_do, NULL, NULL, NULL, NULL, EINA_TRUE);
-   ecore_thread_feedback_run(th22_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   ecore_thread_feedback_run(th31_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   ecore_thread_feedback_run(th32_do, NULL, NULL, NULL, NULL, EINA_TRUE);
    for (;;)
      {
         Eina_Thread_Queue_Msg_Sub *sub;
@@ -284,7 +284,7 @@ typedef struct
 } Msg4;
 
 static void
-th31_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+th41_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int val = 100;
 
@@ -302,7 +302,7 @@ th31_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 }
 
 static void
-th32_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+th42_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int val = 10000000;
 
@@ -329,8 +329,8 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
    ecore_init();
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
-   ecore_thread_feedback_run(th31_do, NULL, NULL, NULL, NULL, EINA_TRUE);
-   ecore_thread_feedback_run(th32_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   ecore_thread_feedback_run(th41_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   ecore_thread_feedback_run(th42_do, NULL, NULL, NULL, NULL, EINA_TRUE);
    for (;;)
      {
         Msg4 *msg;
@@ -371,8 +371,10 @@ typedef struct
    char                   pad[10];
 } Msg5;
 
+static Eina_Semaphore th4_sem;
+
 static void
-th41_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+th51_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int val = 100;
 
@@ -388,10 +390,12 @@ th41_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         if (val == 1100) break;
         val++;
      }
+
+   eina_semaphore_release(&th4_sem, 1);
 }
 
 static void
-th42_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+th52_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int val;
 
@@ -412,6 +416,8 @@ th42_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         eina_thread_queue_send_done(thq2, ref);
         if (val == 1100) break;
      }
+
+   eina_semaphore_release(&th4_sem, 1);
 }
 
 
@@ -419,15 +425,15 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
 {
    int val = 99;
 
-   eina_init();
    ecore_init();
+   eina_semaphore_new(&th4_sem, 0);
 
    thq1 = eina_thread_queue_new();
    if (!thq1) fail();
    thq2 = eina_thread_queue_new();
    if (!thq2) fail();
-   ecore_thread_feedback_run(th41_do, NULL, NULL, NULL, NULL, EINA_TRUE);
-   ecore_thread_feedback_run(th42_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   ecore_thread_feedback_run(th51_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   ecore_thread_feedback_run(th52_do, NULL, NULL, NULL, NULL, EINA_TRUE);
 
    for (;;)
      {
@@ -453,6 +459,16 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
              usleep((rand() % 10) * 1000);
           }
      }
+
+   eina_semaphore_lock(&th4_sem);
+   eina_semaphore_lock(&th4_sem);
+
+   // All done!
+   eina_semaphore_free(&th4_sem);
+   eina_thread_queue_free(thq1);
+   eina_thread_queue_free(thq2);
+
+   ecore_shutdown();
 }
 END_TEST
 
@@ -465,29 +481,32 @@ typedef struct
 
 static Eina_Spinlock msgnum_lock;
 static volatile int msgnum = 0;
+static Eina_Semaphore th6_sem;
+const int EXIT_MESSAGE = -42;
 
 static void
-th51_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+th61_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int val = 100;
 
-   for (;;)
+   for (val = 100; val < 10100; val++)
      {
         Msg6 *msg;
         void *ref;
 
         msg = eina_thread_queue_send(thq1, sizeof(Msg6), &ref);
-        if (!msg) fail();
+        fail_if(!msg);
         msg->value = val;
         eina_thread_queue_send_done(thq1, ref);
-        val++;
-        if (val == 10100) break;
         usleep(1);
      }
+
+   eina_semaphore_release(&th6_sem, 1);
+   if (DEBUG) printf("%s: message sending done!\n", __FUNCTION__);
 }
 
 static void
-th52_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+th62_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int cnt = 0;
 
@@ -495,24 +514,29 @@ th52_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
      {
         Msg6 *msg;
         void *ref;
+        int val;
+
         msg = eina_thread_queue_wait(thq1, &ref);
-        if (!msg) fail();
-        if (DEBUG) printf("v %08i: %i  [%i]\n", cnt, msg->value, eina_thread_queue_pending_get(thq1));
+        fail_if(!msg);
+        if (DEBUG) printf("%s: v %08i: %i  [%i]\n", __FUNCTION__, cnt, msg->value, eina_thread_queue_pending_get(thq1));
+        val = msg->value;
         eina_thread_queue_wait_done(thq1, ref);
+        if (val == EXIT_MESSAGE) break;
         cnt++;
         eina_spinlock_take(&msgnum_lock);
         msgnum++;
-        if (msgnum == 10000)
-          {
-             eina_spinlock_release(&msgnum_lock);
-             break;
-          }
         eina_spinlock_release(&msgnum_lock);
      }
+
+   eina_spinlock_take(&msgnum_lock);
+   ck_assert_int_eq(msgnum, 10000);
+   eina_spinlock_release(&msgnum_lock);
+   eina_semaphore_release(&th6_sem, 1);
+   if (DEBUG) printf("%s: message reading done!\n", __FUNCTION__);
 }
 
 static void
-th53_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+th63_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    int cnt = 0;
 
@@ -520,50 +544,78 @@ th53_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
      {
         Msg6 *msg;
         void *ref;
+        int val;
+
         msg = eina_thread_queue_wait(thq1, &ref);
-        if (!msg) fail();
-        if (DEBUG) printf("v %08i: %i  [%i]\n", cnt, msg->value, eina_thread_queue_pending_get(thq1));
+        fail_if(!msg);
+        if (DEBUG) printf("%s: v %08i: %i  [%i]\n", __FUNCTION__, cnt, msg->value, eina_thread_queue_pending_get(thq1));
+        val = msg->value;
         eina_thread_queue_wait_done(thq1, ref);
+        if (val == EXIT_MESSAGE) break;
         cnt++;
         eina_spinlock_take(&msgnum_lock);
         msgnum++;
-        if (msgnum == 10000)
-          {
-             eina_spinlock_release(&msgnum_lock);
-             break;
-          }
         eina_spinlock_release(&msgnum_lock);
      }
+
+   eina_spinlock_take(&msgnum_lock);
+   ck_assert_int_eq(msgnum, 10000);
+   eina_spinlock_release(&msgnum_lock);
+   eina_semaphore_release(&th6_sem, 1);
+   if (DEBUG) printf("%s: message reading done!\n", __FUNCTION__);
 }
 
 START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)
 {
+   Ecore_Thread *t1, *t2, *t3;
+   int do_break = 0;
+   Msg6 *msg;
+   void *ref;
+
+   if (DEBUG) setbuf(stdout, NULL);
+
    eina_init();
    ecore_init();
 
+   eina_semaphore_new(&th6_sem, 0);
    eina_spinlock_new(&msgnum_lock);
    thq1 = eina_thread_queue_new();
-   if (!thq1) fail();
-   ecore_thread_feedback_run(th51_do, NULL, NULL, NULL, NULL, EINA_TRUE);
-   ecore_thread_feedback_run(th52_do, NULL, NULL, NULL, NULL, EINA_TRUE);
-   ecore_thread_feedback_run(th53_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   fail_if(!thq1);
+   t1 = ecore_thread_feedback_run(th61_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   t2 = ecore_thread_feedback_run(th62_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   t3 = ecore_thread_feedback_run(th63_do, NULL, NULL, NULL, NULL, EINA_TRUE);
 
-   for (;;)
+   // Spin until we reach 10000 messages sent
+   while (!do_break)
      {
         eina_spinlock_take(&msgnum_lock);
         if (DEBUG) printf("msgnum %i\n", msgnum);
-        if (msgnum == 10000)
-          {
-             eina_spinlock_release(&msgnum_lock);
-             break;
-          }
-        else if (msgnum > 10000)
-          {
-             fail();
-          }
+        if (msgnum == 10000) do_break = 1;
+        else ck_assert_int_lt(msgnum, 10000);
         eina_spinlock_release(&msgnum_lock);
      }
-   printf("msg multi to 1 ok\n");
+
+   // Send exit message twice
+   msg = eina_thread_queue_send(thq1, sizeof(Msg6), &ref);
+   msg->value = EXIT_MESSAGE;
+   eina_thread_queue_send_done(thq1, ref);
+
+   msg = eina_thread_queue_send(thq1, sizeof(Msg6), &ref);
+   msg->value = EXIT_MESSAGE;
+   eina_thread_queue_send_done(thq1, ref);
+
+   // Wait for 3 threads
+   fail_if(!eina_semaphore_lock(&th6_sem));
+   fail_if(!eina_semaphore_lock(&th6_sem));
+   fail_if(!eina_semaphore_lock(&th6_sem));
+
+   // All done!
+   eina_semaphore_free(&th6_sem);
+   eina_thread_queue_free(thq1);
+   eina_spinlock_free(&msgnum_lock);
+
+   ecore_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -577,7 +629,7 @@ typedef struct
 int p[2];
 
 static void
-thspeed21_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
+thspeed7_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 {
    Msg7 *msg;
    void *ref;
@@ -611,7 +663,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
    ret = eina_thread_queue_fd_get(thq1);
    fail_if(ret != p[1]);
 
-   ecore_thread_feedback_run(thspeed21_do, NULL, NULL, NULL, NULL, EINA_TRUE);
+   ecore_thread_feedback_run(thspeed7_do, NULL, NULL, NULL, NULL, EINA_TRUE);
    for (;;)
      {
         char buf;
