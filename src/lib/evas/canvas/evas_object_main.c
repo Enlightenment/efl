@@ -36,7 +36,7 @@ static const Evas_Object_Mask_Data default_mask = {
   NULL, 0, 0, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
 };
 static const Evas_Object_Events_Data default_events = {
-  NULL, NULL, NULL, { NULL, { 0 } }
+  NULL, NULL, NULL, NULL
 };
 
 Eina_Cow *evas_object_proxy_cow = NULL;
