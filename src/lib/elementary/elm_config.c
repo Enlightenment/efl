@@ -1023,6 +1023,7 @@ _elm_config_font_overlay_set(const char    *text_class,
 
    /* the text class doesn't exist */
    efd = calloc(1, sizeof(Elm_Font_Overlay));
+   if (!efd) return;
    efd->text_class = eina_stringshare_add(text_class);
    efd->font = eina_stringshare_add(font);
    efd->size = size;
@@ -1287,6 +1288,7 @@ _elm_config_color_set(const char *palette_name,
           continue;
 
         color = calloc(1, sizeof(Elm_Color_RGBA));
+        if (!color) continue;
         color->r = r;
         color->g = g;
         color->b = b;
@@ -3753,7 +3755,7 @@ _translation_init(void)
     * en_/C where translating only parts of the interface make some
     * sense).
     */
-   if (msg_locale)
+   if (msg_locale && cur_dom)
      _elm_config->translate = !(strcmp (cur_dom, "messages") &&
            !*trans_comment && strncmp (msg_locale, "en_", 3) &&
            strcmp (msg_locale, "C"));
