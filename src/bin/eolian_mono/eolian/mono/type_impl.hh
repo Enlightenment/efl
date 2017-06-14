@@ -86,7 +86,7 @@ struct visitor_generate
            , {"void_ptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
            , {"Error", nullptr, [&] // Eina.Error
               {
-                return regular_type_def{" System.IntPtr", regular.base_qualifier, {}};
+                return regular_type_def{" eina.Error", regular.base_qualifier, {}};
               }} // TODO
            , {"string", true, [&]
               {
