@@ -472,6 +472,7 @@ evas_object_free(Evas_Object *eo_obj, Eina_Bool clean_layer)
    eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->prev);
    eina_cow_free(evas_object_3d_cow, (const Eina_Cow_Data**) &obj->data_3d);
    eina_cow_free(evas_object_mask_cow, (const Eina_Cow_Data**) &obj->mask);
+   eina_cow_free(evas_object_events_cow, (const Eina_Cow_Data**) &obj->events);
    efl_data_unref(eo_obj, obj->private_data);
    obj->private_data = NULL;
 
