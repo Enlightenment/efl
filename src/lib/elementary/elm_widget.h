@@ -487,6 +487,9 @@ typedef struct _Elm_Access_Item Elm_Access_Item;
 
 typedef struct _Elm_Action Elm_Action;
 
+/** Internal type for mouse cursors */
+typedef struct _Elm_Cursor Elm_Cursor;
+
 #define ELM_ACCESS_DONE          -1   /* sentence done - send done event here */
 #define ELM_ACCESS_CANCEL        -2   /* stop reading immediately */
 

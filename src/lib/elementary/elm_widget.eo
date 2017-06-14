@@ -27,7 +27,6 @@ enum Elm.Theme.Apply
 }
 
 struct Elm.Tooltip; [[Elementary tooltip]]
-struct Elm.Cursor; [[Elementary cursor]]
 struct @extern Elm.Theme; [[Elementary theme]]
 
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
@@ -401,12 +400,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       scroll_hold_push {
          [[Push scroll hold]]
       }
-      cursor_add {
-      	 [[Add cursor]]
-         params {
-            @in cur: ptr(Elm.Cursor); [[Cursor to be added]]
-         }
-      }
       focus_next_object_set {
          [[Set the next object with specific focus direction.
 
@@ -511,12 +504,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @in acs: bool; [[$true if access is set, $false otherwise]]
          }
          legacy: null;
-      }
-      cursor_del {
-      	 [[Delete cursor]]
-         params {
-            @in cur: ptr(Elm.Cursor); [[Cursor to be deleted]]
-         }
       }
       on_focus {
          [['Virtual' function handling focus in/out events on the widget]]

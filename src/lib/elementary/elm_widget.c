@@ -4030,15 +4030,21 @@ _elm_widget_tooltip_del(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Tool
    sd->tooltips = eina_list_remove(sd->tooltips, tt);
 }
 
-EOLIAN static void
-_elm_widget_cursor_add(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Cursor *cur)
+EAPI void
+elm_widget_cursor_add(Eo *obj, Elm_Cursor *cur)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    sd->cursors = eina_list_append(sd->cursors, cur);
 }
 
-EOLIAN static void
-_elm_widget_cursor_del(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Cursor *cur)
+EAPI void
+elm_widget_cursor_del(Eo *obj, Elm_Cursor *cur)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    sd->cursors = eina_list_remove(sd->cursors, cur);
 }
 
