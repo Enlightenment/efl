@@ -21,14 +21,12 @@
 //FIXME
 #include "elm_atspi_status_monitor.eo.h"
 #include "elm_atspi_status_monitor.eo.legacy.h"
+#include "elm_atspi_device_event_controller.eo.h"
+#include "elm_atspi_device_event_controller.eo.legacy.h"
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
  */
-#define A11Y_DBUS_NAME "org.a11y.Bus"
-#define A11Y_DBUS_PATH "/org/a11y/bus"
-#define A11Y_DBUS_INTERFACE "org.a11y.Bus"
-#define A11Y_DBUS_STATUS_INTERFACE "org.a11y.Status"
 #define ATSPI_DBUS_INTERFACE_EVENT_WINDOW "org.a11y.atspi.Event.Window"
 
 #define CACHE_ITEM_SIGNATURE "((so)(so)(so)a(so)assusau)"
@@ -61,24 +59,16 @@
    if (!(obj) || !efl_isa(obj, class)) \
      return _dbus_invalid_ref_error_new(msg);
 
-typedef struct Key_Event_Info {
-     Ecore_Event_Key event;
-     int type;
-     Eo *bridge;
-} Key_Event_Info;
-
 typedef struct _Elm_Atspi_Bridge_Data
 {
    Elm_Atspi_Status_Monitor *monitor;
+   Elm_Atspi_Device_Event_Controller *device_event_controller;
 
-   // bridge
+   // connection
    Eldbus_Connection *a11y_bus;
 
-   // device controller
-   Eina_List *reemited_events;
    Eldbus_Signal_Handler *register_hdl;
    Eldbus_Signal_Handler *unregister_hdl;
-   Ecore_Event_Filter *key_flr;
 
    // cache
    Eina_Hash *cache;
@@ -107,9 +97,6 @@ typedef struct _Elm_Atspi_Bridge_Data
    } interfaces;
    Elm_Interface_Atspi_Accessible *root;
    Eina_List *plugs;
-   Eldbus_Pending *connect_request;
-   Eldbus_Pending *stack_status_request;
-   Eldbus_Proxy *status_proxy;
    Eina_List *pending_requests;
    Eina_Bool connected : 1;
    Eina_Bool activated : 1;
@@ -174,7 +161,6 @@ static void _bridge_object_removed_signal_send(Elm_Atspi_Bridge *bridge, Elm_Int
 
 // utility functions
 static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
-static Eina_Bool _elm_atspi_bridge_key_filter(void *data, void *loop, int type, void *event);
 static Eina_Bool _id_parse(const char *id, struct dbus_address *addr);
 static char *_id_make(const struct dbus_address *addr);
 static void _socket_hooks_install(Elm_Atspi_Socket *socket);
@@ -4172,8 +4158,6 @@ _bridge_event_handlers_register(Eo *bridge)
    // register signal handlers in order to update list of registered listeners of ATSPI-Clients
    pd->register_hdl = eldbus_signal_handler_add(pd->a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerRegistered", _handle_listener_change, bridge);
    pd->unregister_hdl = eldbus_signal_handler_add(pd->a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerDeregistered", _handle_listener_change, bridge);
-
-   pd->key_flr = ecore_event_filter_add(NULL, _elm_atspi_bridge_key_filter, NULL, bridge);
 }
 
 static void
@@ -4519,155 +4503,6 @@ _elm_atspi_bridge_shutdown(Eina_Bool force_destroy)
      }
 }
 
-static Key_Event_Info*
-_key_event_info_new(int event_type, const Ecore_Event_Key *data, Eo *bridge)
-{
-   Key_Event_Info *ret;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
-
-   ret = calloc(1, sizeof(Key_Event_Info));
-
-   ret->type = event_type;
-   ret->event = *data;
-   ret->bridge = bridge;
-
-   ret->event.keyname = eina_stringshare_add(data->keyname);
-   ret->event.key = eina_stringshare_add(data->key);
-   ret->event.string = eina_stringshare_add(data->string);
-   ret->event.compose = eina_stringshare_add(data->compose);
-   ret->event.modifiers = data->modifiers;
-
-   // not sure why it is here, but explicite keep it NULLed.
-   ret->event.data = NULL;
-
-   return ret;
-}
-
-static void
-_key_event_info_free(Key_Event_Info *data)
-{
-   EINA_SAFETY_ON_NULL_RETURN(data);
-
-   eina_stringshare_del(data->event.keyname);
-   eina_stringshare_del(data->event.key);
-   eina_stringshare_del(data->event.string);
-   eina_stringshare_del(data->event.compose);
-
-   free(data);
-}
-
-static short
-_ecore_modifiers_2_atspi(unsigned int modifiers)
-{
-   short ret = 0;
-
-   if (modifiers & ECORE_EVENT_MODIFIER_SHIFT)
-     ret |= (1 << ATSPI_MODIFIER_SHIFT);
-   if (modifiers & ECORE_EVENT_MODIFIER_CAPS)
-     ret |= (1 << ATSPI_MODIFIER_SHIFTLOCK);
-   if (modifiers & ECORE_EVENT_MODIFIER_CTRL)
-     ret |= (1 << ATSPI_MODIFIER_CONTROL);
-   if (modifiers & ECORE_EVENT_MODIFIER_ALT)
-     ret |= (1 << ATSPI_MODIFIER_ALT);
-   if (modifiers & ECORE_EVENT_MODIFIER_WIN)
-     ret |= (1 << ATSPI_MODIFIER_META);
-   if (modifiers & ECORE_EVENT_MODIFIER_NUM)
-     ret |= (1 << ATSPI_MODIFIER_NUMLOCK);
-
-   return ret;
-}
-
-static void
-_iter_marshall_key_event(Eldbus_Message_Iter *iter, Key_Event_Info *data)
-{
-   Eldbus_Message_Iter *struct_iter;
-   EINA_SAFETY_ON_NULL_RETURN(data);
-
-   struct_iter = eldbus_message_iter_container_new(iter, 'r', NULL);
-
-   const char *str = data->event.keyname ? data->event.keyname : "";
-   int is_text = data->event.keyname ? 1 : 0;
-   int type;
-   if (data->type == ECORE_EVENT_KEY_DOWN)
-     type = ATSPI_KEY_PRESSED_EVENT;
-   else
-     type = ATSPI_KEY_RELEASED_EVENT;
-
-   eldbus_message_iter_arguments_append(struct_iter, "uinnisb", type, 0, data->event.keycode, _ecore_modifiers_2_atspi(data->event.modifiers), data->event.timestamp, str, is_text);
-   eldbus_message_iter_container_close(iter, struct_iter);
-}
-
-static void
-_on_event_del(void *user_data, void *func_data EINA_UNUSED)
-{
-   Key_Event_Info *info = user_data;
-   _key_event_info_free(info);
-}
-
-static void
-_on_listener_answer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-   Key_Event_Info *info = data;
-   const char *errname, *errmsg;
-   Eina_Bool ret = EINA_TRUE;
-
-   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(info->bridge, pd);
-
-   if (eldbus_message_error_get(msg, &errname, &errmsg))
-     {
-        ERR("%s %s", errname, errmsg);
-        goto reemit;
-     }
-   if (!eldbus_message_arguments_get(msg, "b", &ret))
-     {
-        ERR("Return message doen not contian return value");
-        goto reemit;
-     }
-   if (ret)
-     {
-        _key_event_info_free(info);
-        return;
-     }
-reemit:
-   ecore_event_add(info->type, &info->event, _on_event_del, info);
-   pd->reemited_events = eina_list_append(pd->reemited_events, &info->event);
-}
-
-static Eina_Bool
-_elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void *event)
-{
-   Eldbus_Message *msg;
-   Eldbus_Message_Iter *iter;
-   Ecore_Event_Key *key_event = event;
-   Key_Event_Info *ke;
-   Eo *bridge = data;
-
-   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, EINA_TRUE);
-
-   if ((type != ECORE_EVENT_KEY_DOWN) && (type != ECORE_EVENT_KEY_UP)) return EINA_TRUE;
-
-   // check if reemited
-   if (eina_list_data_find(pd->reemited_events, event))
-     {
-        pd->reemited_events = eina_list_remove(pd->reemited_events, event);
-        return EINA_TRUE;
-     }
-
-   ke = _key_event_info_new(type, key_event, bridge);
-   if (!ke) return EINA_TRUE;
-
-   msg = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_DEC,
-                                        ATSPI_DBUS_INTERFACE_DEC, "NotifyListenersSync");
-   iter = eldbus_message_iter_get(msg);
-   _iter_marshall_key_event(iter, ke);
-
-   // timeout should be kept reasonaby low to avoid delays
-   if (!eldbus_connection_send(pd->a11y_bus, msg, _on_listener_answer, ke, 100))
-     return EINA_TRUE;
-
-   return EINA_FALSE;
-}
-
 EOLIAN Eina_Bool
 _elm_atspi_bridge_connected_get(Eo *obj EINA_UNUSED, Elm_Atspi_Bridge_Data *pd)
 {
@@ -4873,7 +4708,7 @@ _bridge_connect(Elm_Atspi_Bridge *bridge)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
-   if (pd->connected || pd->connect_request)
+   if (pd->connected)
      return;
 
    _bridge_connection_init(bridge, elm_atspi_status_monitor_address_get(pd->monitor));
@@ -4883,12 +4718,6 @@ static void
 _bridge_disconnect(Elm_Atspi_Bridge *bridge)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
-
-   if (pd->connect_request)
-     {
-        eldbus_pending_cancel(pd->connect_request);
-        pd->connect_request = NULL;
-     }
 
    if (!pd->connected)
      return;
@@ -4931,7 +4760,6 @@ _bridge_event_handlers_unregister(Eo *bridge)
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
    eldbus_signal_handler_del(pd->register_hdl);
    eldbus_signal_handler_del(pd->unregister_hdl);
-   ecore_event_filter_del(pd->key_flr);
 }
 
 /**
@@ -4942,9 +4770,12 @@ _bridge_event_handlers_unregister(Eo *bridge)
 static void
 _bridge_on_disconnected(Elm_Atspi_Bridge *bridge)
 {
+   ERR("On disconnected");
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
    _bridge_pending_cancel_all(bridge);
+
+   efl_del(pd->device_event_controller);
 
    _bridge_plugs_unregister(bridge);
    _bridge_event_handlers_unregister(bridge);
@@ -4963,8 +4794,12 @@ _bridge_on_connected(Elm_Atspi_Bridge *bridge)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
+   ERR("On connected");
    pd->cache = eina_hash_pointer_new(NULL);
    pd->state_hash = _elm_atspi_state_hash_build();
+   pd->device_event_controller =
+      efl_add(ELM_ATSPI_DEVICE_EVENT_CONTROLLER_CLASS, NULL,
+              elm_obj_atspi_event_controller_constructor(efl_added, pd->a11y_bus));
 
    _bridge_interfaces_register(bridge);
    _bridge_event_handlers_register(bridge);

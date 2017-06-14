@@ -1,0 +1,21 @@
+import eldbus_types;
+
+class Elm.Atspi.Device.Event.Controller (Efl.Object)
+{
+   legacy_prefix: elm_atspi_event_controller;
+   eo_prefix: elm_obj_atspi_event_controller;
+   methods {
+        constructor {
+             params {
+                  @in conn: ptr(Eldbus.Connection);
+             }
+        }
+   }
+   implements {
+        Efl.Object.destructor;
+   }
+   constructors {
+        .constructor;
+   }
+}
+

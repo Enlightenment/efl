@@ -147,6 +147,7 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_access.eo \
 	lib/elementary/elm_actionslider.eo \
 	lib/elementary/elm_atspi_status_monitor.eo \
+	lib/elementary/elm_atspi_device_event_controller.eo \
 	lib/elementary/elm_box.eo \
 	lib/elementary/elm_bubble.eo \
 	lib/elementary/elm_diskselector.eo \
@@ -568,7 +569,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_atspi_app_object.c \
 	lib/elementary/elm_atspi_bridge.c \
 	lib/elementary/elm_atspi_cache.c \
-	lib/elementary/elm_atspi_event_controller.c \
+	lib/elementary/elm_atspi_device_event_controller.c \
 	lib/elementary/elm_atspi_plug.c \
 	lib/elementary/elm_atspi_proxy.c \
 	lib/elementary/elm_atspi_socket.c \
