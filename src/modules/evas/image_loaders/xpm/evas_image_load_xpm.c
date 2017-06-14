@@ -1712,7 +1712,6 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
    Eina_Bool    res = EINA_FALSE;
 
    done = 0;
-//   transp = -1;
    transp = 1;
 
    /* if immediate_load is 1, then dont delay image laoding as below, or */
@@ -1721,11 +1720,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
    length = eina_file_size_get(f);
    position = 0;
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-   if (length < 9)
-     {
-//        ERR("XPM ERROR: file size, %zd, is to small", length);
-        goto on_error;
-     }
+   if (length < 9) goto on_error;
 
    map = eina_file_map_all(f, load_data ? EINA_FILE_WILLNEED : EINA_FILE_RANDOM);
    if (!map)
@@ -1736,7 +1731,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
 
    if (strncmp("/* XPM */", map, 9))
      {
-	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         goto on_error;
      }
 
@@ -1756,7 +1751,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
    line = malloc(lsz);
    if (!line)
      {
-	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         goto on_error;
      }
 
@@ -1769,10 +1764,8 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
         c = (char) map[position++];
         if (!quote)
           {
-             if ((pc == '/') && (c == '*'))
-	       comment = 1;
-             else if ((pc == '*') && (c == '/') && (comment))
-	       comment = 0;
+             if ((pc == '/') && (c == '*')) comment = 1;
+             else if ((pc == '*') && (c == '/') && (comment)) comment = 0;
           }
         if (!comment)
           {
@@ -1790,7 +1783,6 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                        /* Header */
                        if (sscanf(line, "%i %i %i %i", &w, &h, &ncolors, &cpp) != 4)
                          {
-//                            ERR("XPM ERROR: XPM file malformed header");
                             *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
                             goto on_error;
                          }
@@ -1868,11 +1860,11 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                             strncpy(cmap[j].str, line, cpp);
                             cmap[j].str[cpp] = 0;
                             if (load_data) root = eina_rbtree_inline_insert(root, EINA_RBTREE_GET(&cmap[j]), _cmap_cmp_node_cb, NULL);
-			    for (slen = 0; slen < cpp; slen++)
-			      {
-				 /* fix the ascii of the  color string - if its < 32 - just limit to 32 */
-				 if (cmap[j].str[slen] < 32) cmap[j].str[slen] = 0;
-			      }
+                            for (slen = 0; slen < cpp; slen++)
+                              {
+                                 /* fix the ascii of the  color string - if its < 32 - just limit to 32 */
+                                 if (cmap[j].str[slen] < 32) cmap[j].str[slen] = 0;
+                              }
                             cmap[j].r = -1;
                             cmap[j].transp = 0;
                             for (k = cpp; k < len; k++)
@@ -1887,20 +1879,19 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                       k += slen;
                                       if (slen == 1 && *s == 'c') iscolor = 1;
                                       if ((slen == 1 && ((s[0] == 'm') || (s[0] == 's') || (s[0] == 'g') || (s[0] == 'c'))) ||
-					  (slen == 2 && (s[0] == 'g') && (s[1] == '4')) ||
-					  (k >= len))
+                                          (slen == 2 && (s[0] == 'g') && (s[1] == '4')) ||
+                                          (k >= len))
                                         {
                                            if (k >= len)
                                              {
                                                 if (col[0])
-						  {
-						     if (strlen(col) < (sizeof(col) - 2))
-						       strcat(col, " ");
-						     else
-						       done = 1;
-						  }
+                                                  {
+                                                     if (strlen(col) < (sizeof(col) - 2))
+                                                       strcat(col, " ");
+                                                     else done = 1;
+                                                  }
                                                 if ((strlen(col) + strlen(s)) < (sizeof(col) - 1))
-						  strcat(col, s);
+                                                  strcat(col, s);
                                              }
                                            if (col[0])
                                              {
@@ -1908,9 +1899,9 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                                   {
                                                      transp = 1;
                                                      cmap[j].transp = 1;
-						     cmap[j].r = 0;
-						     cmap[j].g = 0;
-						     cmap[j].b = 0;
+                                                     cmap[j].r = 0;
+                                                     cmap[j].g = 0;
+                                                     cmap[j].b = 0;
                                                   }
                                                 else
                                                   {
@@ -1930,15 +1921,14 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                         }
                                       else
                                         {
-					   if (col[0])
-					     {
-						if (strlen(col) < ( sizeof(col) - 2))
-						  strcat(col, " ");
-						else
-						  done = 1;
-					     }
-					   if ((strlen(col) + strlen(s)) < (sizeof(col) - 1))
-					     strcat(col, s);
+                                           if (col[0])
+                                             {
+                                                if (strlen(col) < ( sizeof(col) - 2))
+                                                  strcat(col, " ");
+                                                else done = 1;
+                                             }
+                                           if ((strlen(col) + strlen(s)) < (sizeof(col) - 1))
+                                             strcat(col, s);
                                         }
                                    }
                               }
@@ -1947,15 +1937,15 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                        if (load_data && j >= ncolors)
                          {
                             if (cpp == 1)
-			      {
-				 for (i = 0; i < ncolors; i++)
-				   lookup[(int)cmap[i].str[0] - 32][0] = i;
-			      }
+                              {
+                                 for (i = 0; i < ncolors; i++)
+                                   lookup[(int)cmap[i].str[0] - 32][0] = i;
+                              }
                             if (cpp == 2)
-			      {
-				 for (i = 0; i < ncolors; i++)
-				   lookup[(int)cmap[i].str[0] - 32][(int)cmap[i].str[1] - 32] = i;
-			      }
+                              {
+                                 for (i = 0; i < ncolors; i++)
+                                   lookup[(int)cmap[i].str[0] - 32][(int)cmap[i].str[1] - 32] = i;
+                              }
                             context++;
                          }
 
@@ -1967,7 +1957,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                             head = ptr;
                             if (!ptr)
                               {
-				 *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                                 *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                                  goto on_error;
                               }
                             size = w * h;
@@ -1975,7 +1965,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                          }
                        else
                          {
-			    *error = EVAS_LOAD_ERROR_NONE;
+                            *error = EVAS_LOAD_ERROR_NONE;
                             goto on_success;
                          }
                     }
@@ -1987,8 +1977,8 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                          {
                             /* Chars per pixel = 0? well u never know */
                          }
-		       /* it's xpm - don't care about speed too much. still faster
-			* that most xpm loaders anyway */
+                       /* it's xpm - don't care about speed too much. still faster
+                        * that most xpm loaders anyway */
                        else if (cpp == 1)
                          {
                             if (transp)
@@ -1997,15 +1987,15 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                       ((i < 65536) && (ptr < end) && (line[i]));
                                       i++)
                                    {
-				      lu1 = (int)line[i] - 32;
-				      if (lu1 < 0) continue;
+                                      lu1 = (int)line[i] - 32;
+                                      if (lu1 < 0) continue;
                                       if (cmap[lookup[lu1][0]].transp)
                                         {
-					   r = (unsigned char)cmap[lookup[lu1][0]].r;
+                                           r = (unsigned char)cmap[lookup[lu1][0]].r;
                                            g = (unsigned char)cmap[lookup[lu1][0]].g;
                                            b = (unsigned char)cmap[lookup[lu1][0]].b;
                                            *ptr = RGB_JOIN(r, g, b);
-					   ptr++;
+                                           ptr++;
                                            count++;
                                         }
                                       else
@@ -2014,7 +2004,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                            g = (unsigned char)cmap[lookup[lu1][0]].g;
                                            b = (unsigned char)cmap[lookup[lu1][0]].b;
                                            *ptr = ARGB_JOIN(0xff, r, g, b);
-					   ptr++;
+                                           ptr++;
                                            count++;
                                         }
                                    }
@@ -2025,14 +2015,14 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                       ((i < 65536) && (ptr < end) && (line[i]));
                                       i++)
                                    {
-				      lu1 = (int)line[i] - 32;
-				      if (lu1 < 0) continue;
-				      r = (unsigned char)cmap[lookup[lu1][0]].r;
-				      g = (unsigned char)cmap[lookup[lu1][0]].g;
-				      b = (unsigned char)cmap[lookup[lu1][0]].b;
-				      *ptr = ARGB_JOIN(0xff, r, g, b);
-				      ptr++;
-				      count++;
+                                      lu1 = (int)line[i] - 32;
+                                      if (lu1 < 0) continue;
+                                      r = (unsigned char)cmap[lookup[lu1][0]].r;
+                                      g = (unsigned char)cmap[lookup[lu1][0]].g;
+                                      b = (unsigned char)cmap[lookup[lu1][0]].b;
+                                      *ptr = ARGB_JOIN(0xff, r, g, b);
+                                      ptr++;
+                                      count++;
                                    }
                               }
                          }
@@ -2044,18 +2034,18 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                       ((i < 65536) && (ptr < end) && (line[i]));
                                       i++)
                                    {
-				      lu1 = (int)line[i] - 32;
-				      i++;
-				      lu2 = (int)line[i] - 32;
-				      if (lu1 < 0) continue;
-				      if (lu2 < 0) continue;
+                                      lu1 = (int)line[i] - 32;
+                                      i++;
+                                      lu2 = (int)line[i] - 32;
+                                      if (lu1 < 0) continue;
+                                      if (lu2 < 0) continue;
                                       if (cmap[lookup[lu1][lu2]].transp)
                                         {
-					   r = (unsigned char)cmap[lookup[lu1][lu2]].r;
+                                           r = (unsigned char)cmap[lookup[lu1][lu2]].r;
                                            g = (unsigned char)cmap[lookup[lu1][lu2]].g;
                                            b = (unsigned char)cmap[lookup[lu1][lu2]].b;
                                            *ptr = RGB_JOIN(r, g, b);
-					   ptr++;
+                                           ptr++;
                                            count++;
                                         }
                                       else
@@ -2064,7 +2054,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                            g = (unsigned char)cmap[lookup[lu1][lu2]].g;
                                            b = (unsigned char)cmap[lookup[lu1][lu2]].b;
                                            *ptr = ARGB_JOIN(0xff, r, g, b);
-					   ptr++;
+                                           ptr++;
                                            count++;
                                         }
                                    }
@@ -2075,17 +2065,17 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                       ((i < 65536) && (ptr < end) && (line[i]));
                                       i++)
                                    {
-				      lu1 = (int)line[i] - 32;
-				      i++;
-				      lu2 = (int)line[i] - 32;
-				      if (lu1 < 0) continue;
-				      if (lu2 < 0) continue;
-				      r = (unsigned char)cmap[lookup[lu1][lu2]].r;
-				      g = (unsigned char)cmap[lookup[lu1][lu2]].g;
-				      b = (unsigned char)cmap[lookup[lu1][lu2]].b;
-				      *ptr = ARGB_JOIN(0xff, r, g, b);
-				      ptr++;
-				      count++;
+                                      lu1 = (int)line[i] - 32;
+                                      i++;
+                                      lu2 = (int)line[i] - 32;
+                                      if (lu1 < 0) continue;
+                                      if (lu2 < 0) continue;
+                                      r = (unsigned char)cmap[lookup[lu1][lu2]].r;
+                                      g = (unsigned char)cmap[lookup[lu1][lu2]].g;
+                                      b = (unsigned char)cmap[lookup[lu1][lu2]].b;
+                                      *ptr = ARGB_JOIN(0xff, r, g, b);
+                                      ptr++;
+                                      count++;
                                    }
                               }
                          }
@@ -2100,10 +2090,10 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                       Eina_Rbtree *l;
 
                                       for (j = 0; j < cpp; j++, i++)
-					{
-					   col[j] = line[i];
-					   if (col[j] < 32) col[j] = 32;
-					}
+                                        {
+                                           col[j] = line[i];
+                                           if (col[j] < 32) col[j] = 32;
+                                        }
                                       col[j] = 0;
                                       i--;
 
@@ -2116,13 +2106,9 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                            g = (unsigned char)cm->g;
                                            b = (unsigned char)cm->b;
                                            if (cm->transp)
-                                             {
-                                                *ptr = RGB_JOIN(r, g, b);
-                                             }
+                                             *ptr = RGB_JOIN(r, g, b);
                                            else
-                                             {
-                                                *ptr = ARGB_JOIN(0xff, r, g, b);
-                                             }
+                                             *ptr = ARGB_JOIN(0xff, r, g, b);
 
                                            ptr++;
                                            count++;
@@ -2138,9 +2124,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                       Eina_Rbtree *l;
 
                                       for (j = 0; j < cpp; j++, i++)
-                                        {
-                                           col[j] = line[i];
-                                        }
+                                        col[j] = line[i];
                                       col[j] = 0;
                                       i--;
 
@@ -2148,7 +2132,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
                                       if (l)
                                         {
                                            CMap *cm = EINA_RBTREE_CONTAINER_GET(l, CMap);
-                                           
+
                                            r = (unsigned char)cm->r;
                                            g = (unsigned char)cm->g;
                                            b = (unsigned char)cm->b;
@@ -2167,29 +2151,27 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
           {
              if (c < 32) c = 32;
              else if (c > 127) c = 127;
-	     if (c =='\\')
-	       {
-		  if (++backslash < 2)
-		    line[i++] = c;
-		  else
-		    backslash = 0;
-	       }
-	     else
-	       {
-		  backslash = 0;
-		  line[i++] = c;
-	       }
+             if (c =='\\')
+               {
+                  if (++backslash < 2) line[i++] = c;
+                  else backslash = 0;
+               }
+             else
+               {
+                  backslash = 0;
+                  line[i++] = c;
+               }
           }
         if (i >= lsz)
           {
              lsz += 256;
              tl = realloc(line, lsz);
              if (!tl) break;
-	     line = tl;
+             line = tl;
           }
         if (((ptr) && ((ptr - head) >= (w * h))) ||
             ((context > 1) && (count >= size)))
-	  break;
+          break;
      }
 
  on_success:
@@ -2205,9 +2187,9 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
 
 static void *
 evas_image_load_file_open_xpm(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
-			      Evas_Image_Load_Opts *opts EINA_UNUSED,
-			      Evas_Image_Animated *animated EINA_UNUSED,
-			      int *error EINA_UNUSED)
+                              Evas_Image_Load_Opts *opts EINA_UNUSED,
+                              Evas_Image_Animated *animated EINA_UNUSED,
+                              int *error EINA_UNUSED)
 {
   return f;
 }
@@ -2219,8 +2201,8 @@ evas_image_load_file_close_xpm(void *loader_data EINA_UNUSED)
 
 static Eina_Bool
 evas_image_load_file_head_xpm(void *loader_data,
-			      Evas_Image_Property *prop,
-			      int *error)
+                              Evas_Image_Property *prop,
+                              int *error)
 {
    Eina_File *f = loader_data;
 
@@ -2229,9 +2211,9 @@ evas_image_load_file_head_xpm(void *loader_data,
 
 static Eina_Bool
 evas_image_load_file_data_xpm(void *loader_data,
-			      Evas_Image_Property *prop,
-			      void *pixels,
-			      int *error)
+                              Evas_Image_Property *prop,
+                              void *pixels,
+                              int *error)
 {
    Eina_File *f = loader_data;
 
