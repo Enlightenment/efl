@@ -737,6 +737,12 @@ class Test.Testing (Efl.Object) {
 
       }
 
+      error_ret_set {
+         params {
+            error: Eina.Error;
+         }
+      }
+
       returns_error {
          return: Eina.Error;
       }

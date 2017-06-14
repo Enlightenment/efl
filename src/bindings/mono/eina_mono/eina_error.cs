@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace eina {
 
-public struct Error
+public struct Error : IComparable<Error>
 {
     int code;
 
@@ -26,6 +26,14 @@ public struct Error
     static public implicit operator int(Error error)
     {
         return error.code;
+    }
+    public int CompareTo(Error err)
+    {
+        return code.CompareTo(err.code);
+    }
+    public override string ToString()
+    {
+        return "eina.Error(" + code + ")";
     }
 
     public static void Init()

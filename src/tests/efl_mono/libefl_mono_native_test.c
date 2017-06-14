@@ -39,6 +39,7 @@ typedef struct Test_Testing_Data
   SimpleCb cb;
   void *cb_data;
   Eina_Free_Cb free_cb;
+  Eina_Error error_code;
 
 } Test_Testing_Data;
 
@@ -1806,9 +1807,14 @@ void _test_testing_call_children_raise_error(Eo *obj, EINA_UNUSED Test_Testing_D
     test_testing_children_raise_error(obj);
 }
 
-Eina_Error _test_testing_returns_error(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+void _test_testing_error_ret_set(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Eina_Error error)
 {
-   return EPERM;
+    pd->error_code = error;
+}
+
+Eina_Error _test_testing_returns_error(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
+{
+   return pd->error_code;
 }
 
 #include "test_testing.eo.c"

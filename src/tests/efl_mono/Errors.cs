@@ -50,6 +50,49 @@ class TestEolianError
     }
 
     // return eina_error
+    public static void eina_error_return()
+    {
+        test.Testing obj = new test.TestingConcrete();
+        eina.Error expected = 42;
+        obj.error_ret_set(expected);
+        eina.Error error = obj.returns_error();
+
+        Test.AssertEquals(expected, error);
+
+        expected = 0;
+        obj.error_ret_set(expected);
+        error = obj.returns_error();
+
+        Test.AssertEquals(expected, error);
+    }
+
+    class ReturnOverride : test.TestingInherit {
+        eina.Error code;
+        public override void error_ret_set(eina.Error err) {
+            code = 2 * err;
+        }
+        public override eina.Error returns_error()
+        {
+            return code;
+        }
+    }
+
+    public static void eina_error_return_from_inherited_virtual()
+    {
+        test.Testing obj = new ReturnOverride();
+        eina.Error expected = 42;
+        obj.error_ret_set(expected);
+        eina.Error error = obj.returns_error();
+
+        Test.AssertEquals(new eina.Error(expected * 2), error);
+
+        expected = 0;
+        obj.error_ret_set(expected);
+        error = obj.returns_error();
+
+        Test.AssertEquals(new eina.Error(expected * 2), error);
+    }
+
     // events
     // virtual callbacks
 }
