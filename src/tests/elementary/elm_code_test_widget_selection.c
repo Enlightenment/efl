@@ -365,12 +365,12 @@ START_TEST (elm_code_test_widget_selection_delete_twoline)
    ck_assert_int_eq(2, elm_code_file_lines_get(file));
 
    elm_code_widget_selection_start(widget, 1, 5);
-   elm_code_widget_selection_end(widget, 2, 0);
+   elm_code_widget_selection_end(widget, 2, 1);
    elm_code_widget_selection_delete(widget);
 
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, &length);
-   ck_assert_strn_eq("teXTremove", text, length);
+   ck_assert_strn_eq("teXTemove", text, length);
    ck_assert_int_eq(1, elm_code_file_lines_get(file));
 
    elm_code_free(code);
@@ -411,13 +411,13 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
    ck_assert_strn_eq("teXT", text, length);
    ck_assert_int_eq(2, elm_code_file_lines_get(file));
 
-   elm_code_widget_selection_start(widget, 2, 0);
+   elm_code_widget_selection_start(widget, 2, 1);
    elm_code_widget_selection_end(widget, 1, 5);
    elm_code_widget_selection_delete(widget);
 
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, &length);
-   ck_assert_strn_eq("teXTremove", text, length);
+   ck_assert_strn_eq("teXTemove", text, length);
    ck_assert_int_eq(1, elm_code_file_lines_get(file));
 
    elm_code_free(code);
@@ -461,12 +461,12 @@ START_TEST (elm_code_test_widget_selection_delete_multiline)
    ck_assert_int_eq(3, elm_code_file_lines_get(file));
 
    elm_code_widget_selection_start(widget, 1, 5);
-   elm_code_widget_selection_end(widget, 3, 0);
+   elm_code_widget_selection_end(widget, 3, 1);
    elm_code_widget_selection_delete(widget);
 
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, &length);
-   ck_assert_strn_eq("teXTREMOVE", text, length);
+   ck_assert_strn_eq("teXTEMOVE", text, length);
    ck_assert_int_eq(1, elm_code_file_lines_get(file));
 
    elm_code_free(code);
@@ -509,13 +509,13 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    ck_assert_strn_eq("teXT", text, length);
    ck_assert_int_eq(3, elm_code_file_lines_get(file));
 
-   elm_code_widget_selection_start(widget, 3, 0);
+   elm_code_widget_selection_start(widget, 3, 1);
    elm_code_widget_selection_end(widget, 1, 5);
    elm_code_widget_selection_delete(widget);
 
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, &length);
-   ck_assert_strn_eq("teXTREMOVE", text, length);
+   ck_assert_strn_eq("teXTEMOVE", text, length);
    ck_assert_int_eq(1, elm_code_file_lines_get(file));
 
    elm_code_free(code);
