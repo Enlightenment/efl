@@ -216,6 +216,8 @@ _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
    edf->size_classes = oedf->size_classes;
    edf->version = oedf->version;
    edf->feature_ver = oedf->feature_ver;
+   edf->efl_version.major = oedf->efl_version.major;
+   edf->efl_version.minor = oedf->efl_version.minor;
    edf->compiler = oedf->compiler;
 
    edf->dangling = EINA_FALSE;

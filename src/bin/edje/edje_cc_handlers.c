@@ -199,6 +199,7 @@ static void _program_free(Edje_Program *pr);
 
 static void check_has_anchors(void);
 
+static void st_efl_version(void);
 static void st_externals_external(void);
 
 static void st_images_image(void);
@@ -695,6 +696,7 @@ static void _handle_vector_image(void);
 
 New_Statement_Handler statement_handlers[] =
 {
+     {"efl_version", st_efl_version},
      {"externals.external", st_externals_external},
      IMAGE_STATEMENTS("")
      FONT_STYLE_CC_STATEMENTS("")
@@ -2140,6 +2142,29 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
 /*****/
 
 /** @edcsection{toplevel,Top-Level blocks} */
+
+/** @edcsubsection{toplevel_efl_version,
+ *                 Efl_version} */
+
+/**
+    @page edcref
+
+    @property
+        efl_version
+    @parameters
+        [major] [minor]
+    @effect
+        Used to show which version of EFL is used for developing a edje file.
+    @endproperty
+ */
+static void
+st_efl_version(void)
+{
+   check_arg_count(2);
+
+   edje_file->efl_version.major = parse_int(0);
+   edje_file->efl_version.minor = parse_int(1);
+}
 
 /** @edcsubsection{toplevel_externals,
  *                 Externals} */

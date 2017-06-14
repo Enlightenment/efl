@@ -592,6 +592,11 @@ struct _Edje_File
    int                             version;
    int                             minor;
    int                             feature_ver;
+   struct {
+      int                          major;
+      int                          minor;
+   } efl_version;
+
    FLOAT_T                         base_scale;
 
    char                            fid[8+8+8+2];

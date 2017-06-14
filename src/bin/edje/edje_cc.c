@@ -398,6 +398,15 @@ main(int argc, char **argv)
 				* does not load nicely as a NULL or 0 value
 				* and needs a special fallback initialization
 				*/
+   /* efl_version is used for specify efl's version
+    * which was used for developing a edje file.
+    * It is useful if Edje(or other EFL libs) need to keep
+    * backward compatibility.
+    * efl_version was added just after EFL 1.19.
+    * Thus, 1.19 will be default.
+    */
+   edje_file->efl_version.major = 1;
+   edje_file->efl_version.minor = 19;
    edje_file->base_scale = FROM_INT(1);
 
    source_edd();

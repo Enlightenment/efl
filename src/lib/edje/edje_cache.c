@@ -354,6 +354,13 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
         WRN("The base_scale can not be a 0.0. It is changed the default value(1.0)");
      }
 
+   /* Set default efl_version if there is no version information */
+   if ((edf->efl_version.major == 0) && (edf->efl_version.minor == 0))
+     {
+        edf->efl_version.major = 1;
+        edf->efl_version.minor = 19;
+     }
+
    edf->path = eina_stringshare_add(eina_file_filename_get(f));
    edf->references = 1;
 
