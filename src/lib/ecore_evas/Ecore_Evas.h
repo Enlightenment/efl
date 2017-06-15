@@ -1577,7 +1577,43 @@ EAPI Ecore_Wl_Window *ecore_evas_wayland_window_get(const Ecore_Evas *ee);
 EAPI Ecore_Wl2_Window *ecore_evas_wayland2_window_get(const Ecore_Evas *ee); /** @since 1.17 */
 EAPI Ecore_Cocoa_Window *ecore_evas_cocoa_window_get(const Ecore_Evas *ee); /** @since 1.17 */
 
+/**
+ * @brief Create an Ecore_Evas window using the drm engine.
+ *
+ * @param disp_name Name of the Wayland display to connect to.
+ * @param parent (Unused)
+ * @param x Horizontal position of the Ecore_Evas window.
+ * @param y Vertical position of the Ecore_Evas window.
+ * @param w Width of the Ecore_Evas window to be created.
+ * @param h Height of the Ecore_Evas window to be created.
+ * @return Ecore_Evas instance or @c NULL if creation failed.
+ *
+ * Creates an Ecore_Evas window using the Direct Rendering Manager (DRM)
+ * backend.  DRM is a kernel-level module providing direct graphic
+ * hardware access, bypassing the GL stack entirely.
+ *
+ * @see ecore_evas_new()
+ * @see ecore_evas_gl_drm_new()
+ */
 EAPI Ecore_Evas     *ecore_evas_drm_new(const char *device, unsigned int parent, int x, int y, int w, int h);
+
+/**
+ * @brief Create an Ecore_Evas window using the drm engine with GL support.
+ *
+ * @param disp_name Name of the Wayland display to connect to.
+ * @param parent (Unused)
+ * @param x Horizontal position of the Ecore_Evas window.
+ * @param y Vertical position of the Ecore_Evas window.
+ * @param w Width of the Ecore_Evas window to be created.
+ * @param h Height of the Ecore_Evas window to be created.
+ * @return Ecore_Evas instance or @c NULL if creation failed.
+ *
+ * This creates a drm backend backed Ecore_Evas window, that also includes
+ * gl support using libglapi.
+ *
+ * @see ecore_evas_new()
+ * @see ecore_evas_drm_new()
+ */
 EAPI Ecore_Evas     *ecore_evas_gl_drm_new(const char *device, unsigned int parent, int x, int y, int w, int h); /** @since 1.12 */
 
 /**
