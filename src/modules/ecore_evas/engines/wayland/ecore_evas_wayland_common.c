@@ -1456,46 +1456,6 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
 }
 
 static void
-_ecore_evas_wl_common_layer_update(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   wdata = ee->engine.data;
-   if (!wdata) return;
-
-   if (ee->prop.layer < 3)
-     {
-        if ((wdata->stack.above) || (!wdata->stack.below))
-          {
-             wdata->stack.above = EINA_FALSE;
-             wdata->stack.below = EINA_TRUE;
-             ecore_wl2_window_stack_mode_set(wdata->win,
-                                             ECORE_WL2_WINDOW_STACK_BELOW);
-          }
-     }
-   else if (ee->prop.layer > 5)
-     {
-        if ((!wdata->stack.above) || (wdata->stack.below))
-          {
-             wdata->stack.above = EINA_TRUE;
-             wdata->stack.below = EINA_FALSE;
-             ecore_wl2_window_stack_mode_set(wdata->win,
-                                             ECORE_WL2_WINDOW_STACK_ABOVE);
-          }
-     }
-   else
-     {
-        if ((wdata->stack.above) || (wdata->stack.below))
-          {
-             wdata->stack.above = EINA_FALSE;
-             wdata->stack.below = EINA_FALSE;
-             ecore_wl2_window_stack_mode_set(wdata->win,
-                                             ECORE_WL2_WINDOW_STACK_NONE);
-          }
-     }
-}
-
-static void
 _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1505,7 +1465,6 @@ _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer)
    if (layer < 1) layer = 1;
    else if (layer > 255) layer = 255;
    ee->prop.layer = layer;
-   _ecore_evas_wl_common_layer_update(ee);
    _ecore_evas_wl_common_state_update(ee);
 }
 

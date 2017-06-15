@@ -57,12 +57,6 @@ struct _Ecore_Evas_Engine_Wl_Data
         Ecore_Job *manual_mode_job;
      } wm_rot;
 
-   struct
-     {
-        Eina_Bool above : 1;
-        Eina_Bool below : 1;
-     } stack;
-
    Eina_Bool dragging : 1;
    Eina_Bool sync_done : 1;
    Eina_Bool defer_show : 1;
