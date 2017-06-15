@@ -97,6 +97,7 @@ struct _Efl_Ui_Win_Data
    struct
    {
       Ecore_Win32_Window *win;
+      Ecore_Event_Handler *key_down_handler;
    } win32;
 #endif
 
@@ -2803,6 +2804,9 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    if (sd->pointer.ee) ecore_evas_free(sd->pointer.ee);
    sd->pointer.surf = NULL;
 #endif
+#ifdef HAVE_ELEMENTARY_WIN32
+   ecore_event_handler_del(sd->win32.key_down_handler);
+#endif
 
    if (sd->type == ELM_WIN_INLINED_IMAGE)
      {
@@ -3713,6 +3717,23 @@ _elm_win_property_change(void *data,
      }
    return ECORE_CALLBACK_PASS_ON;
 }
+#endif
+
+#ifdef HAVE_ELEMENTARY_WIN32
+static Eina_Bool
+_elm_win_key_down(void *data,
+                  int type EINA_UNUSED,
+                  void *event)
+{
+   ELM_WIN_DATA_GET(data, sd);
+   Ecore_Event_Key *e = event;
+   if ((e->modifiers & ECORE_EVENT_MODIFIER_ALT) &&
+       (strcmp(e->key, "F4") == 0))
+     _elm_win_delete_request(sd->ee);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 #endif
 
 static void
@@ -5012,6 +5033,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    _elm_win_cocoawindow_get(sd);
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
+   sd->win32.key_down_handler = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+                                                        _elm_win_key_down, obj);
    _internal_elm_win_win32window_get(sd);
 #endif
 
