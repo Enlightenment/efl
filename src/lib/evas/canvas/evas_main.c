@@ -1132,13 +1132,14 @@ _evas_pointer_data_by_device_get(Evas_Public_Data *edata, Efl_Input_Device *poin
 {
    Eina_List *l;
    Evas_Pointer_Data *pdata;
+   Efl_Input_Device *seat = NULL;
 
-   if (!pointer)
-     pointer = edata->default_mouse;
+   if (pointer) seat = efl_input_device_seat_get(pointer);
+   if (!seat) seat = edata->default_seat;
 
    EINA_LIST_FOREACH(edata->pointers, l, pdata)
      {
-        if (pdata->pointer == pointer)
+        if (pdata->seat->seat == seat)
           return pdata;
      }
    return NULL;
