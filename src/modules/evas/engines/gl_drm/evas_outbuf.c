@@ -44,6 +44,17 @@ _evas_outbuf_fb_cb_destroy(struct gbm_bo *bo EINA_UNUSED, void *data)
    if (fb) ecore_drm2_fb_discard(fb);
 }
 
+void
+_evas_outbuf_release_fb(void *ob_v, Ecore_Drm2_Fb *fb)
+ {
+   struct gbm_bo *bo;
+   Outbuf *ob;
+
+   ob = ob_v;
+   bo = ecore_drm2_fb_bo_get(fb);
+   gbm_surface_release_buffer(ob->surface, bo);
+}
+
 static Ecore_Drm2_Fb *
 _evas_outbuf_fb_get(Outbuf *ob, struct gbm_bo *bo)
 {
@@ -73,17 +84,6 @@ _evas_outbuf_fb_get(Outbuf *ob, struct gbm_bo *bo)
    gbm_bo_set_user_data(bo, fb, _evas_outbuf_fb_cb_destroy);
 
    return fb;
-}
-
-void
-_evas_outbuf_release_fb(void *ob_v, Ecore_Drm2_Fb *fb)
-{
-   struct gbm_bo *bo;
-   Outbuf *ob;
-
-   ob = ob_v;
-   bo = ecore_drm2_fb_bo_get(fb);
-   gbm_surface_release_buffer(ob->surface, bo);
 }
 
 static void
