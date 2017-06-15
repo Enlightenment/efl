@@ -1,6 +1,6 @@
 using static System.Console;
 
-class PlusTenNumberWrapper : test.NumberwrapperInherit
+class PlusTenNumberWrapper : example.NumberwrapperInherit
 {
     public PlusTenNumberWrapper(efl.Object parent = null)
         : base(parent)
@@ -16,13 +16,13 @@ class PlusTenNumberWrapper : test.NumberwrapperInherit
     }
 }
 
-namespace TestSuite
+public class ExampleEoInherit01
 {
-
-class TestExampleEoInherit01
-{
-    public static void EoInherit01()
+    public static void Main()
     {
+        eina.Config.Init();
+        efl.eo.Config.Init();
+
         var inheritObj = new PlusTenNumberWrapper();
 
         WriteLine("## Using inherit object ##\n");
@@ -30,7 +30,7 @@ class TestExampleEoInherit01
         int given = 111;
 
         // Call the C# override from the C method
-        test.NumberwrapperConcrete.test_numberwrapper_number_set(inheritObj.raw_handle, given);
+        example.NumberwrapperConcrete.example_numberwrapper_number_set(inheritObj.raw_handle, given);
 
         WriteLine($"Override successfully called? {inheritObj.derivedCalled}!\n");
 
@@ -51,11 +51,10 @@ class TestExampleEoInherit01
         WriteLine($"Given value: {given}");
         WriteLine($"Stored value: {stored}\n");
 
-
         WriteLine("## Using original object ##\n");
 
         // Check original EFL object
-        var origObj = new test.NumberwrapperConcrete();
+        var origObj = new example.NumberwrapperConcrete();
         given = 111;
         origObj.number_set(given);
         stored = origObj.number_get();
@@ -64,7 +63,5 @@ class TestExampleEoInherit01
         WriteLine($"Given value: {given}");
         WriteLine($"Stored value: {stored}\n");
     }
-}
-
 }
 

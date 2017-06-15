@@ -1,0 +1,3 @@
+#!/bin/sh
+export MONO_PATH="@abs_top_builddir@/src/lib/efl_mono:${LD_LIBRARY_PATH_APPEND}"
+mono --config "@abs_top_builddir@/src/examples/efl_mono/examples_mono.config" "@abs_top_builddir@/src/examples/efl_mono/EinaBinbuf01.exe"

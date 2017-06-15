@@ -1,21 +1,18 @@
 using static System.Console;
 
-namespace TestSuite
+public class ExampleEinaError01
 {
-
-class TestExampleEinaError01
-{
-    private static bool RegisterdErrors = false;
+    private static bool RegisteredErrors = false;
     private static eina.Error MyErrorNegative;
     private static eina.Error MyErrorNull;
 
     private static void testFunc(int n, string s)
     {
-        if (!RegisterdErrors)
+        if (!RegisteredErrors)
         {
             MyErrorNegative = eina.Error.Register("Negative number");
             MyErrorNull = eina.Error.Register("NULL pointer");
-            RegisterdErrors = true;
+            RegisteredErrors = true;
         }
 
         if (n < 0)
@@ -31,8 +28,10 @@ class TestExampleEinaError01
         }
     }
 
-    public static void EinaError01()
+    public static void Main()
     {
+        eina.Config.Init();
+
         // Handling Eina_Error with exception
         try
         {
@@ -73,4 +72,3 @@ class TestExampleEinaError01
     }
 }
 
-}

@@ -5623,6 +5623,12 @@ src/lib/efl/Efl_Config.h
 src/lib/elementary/Elementary_Options.h
 src/scripts/eo/eo_debug
 src/tests/efl_mono/efl_mono.exe.config
+src/examples/efl_mono/examples_mono.config
+src/examples/efl_mono/EinaArray01.sh
+src/examples/efl_mono/EinaBinbuf01.sh
+src/examples/efl_mono/EinaError01.sh
+src/examples/efl_mono/EinaHash01.sh
+src/examples/efl_mono/EoInherit01.sh
 elm_intro.h
 spec/efl.spec
 pc/evil.pc

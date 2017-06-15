@@ -1,12 +1,11 @@
 using static System.Console;
 
-namespace TestSuite
+public class ExampleEinaBinbuf01
 {
-
-class TestExampleEinaBinbuf01
-{
-    public static void EinaBinbuf01()
+    public static void Main()
     {
+        eina.Config.Init();
+
         var bytes = new byte[]{0, 1, 2, 3, 4, 5, 6};
 
         var bb = new eina.Binbuf();
@@ -62,7 +61,5 @@ class TestExampleEinaBinbuf01
             ++idx;
         }
     }
-}
-
 }
 

@@ -183,15 +183,7 @@ AM_TESTS_ENVIRONMENT += EINA_LOG_LEVEL=8; export EINA_LOG_LEVEL;
 check_PROGRAMS += tests/efl_mono/efl_mono.exe
 TESTS += tests/efl_mono/mono_test_driver.sh
 
-tests_efl_mono_examples = \
-     tests/efl_mono/examples/EinaError01.cs \
-     tests/efl_mono/examples/EinaBinbuf01.cs \
-     tests/efl_mono/examples/EinaArray01.cs \
-     tests/efl_mono/examples/EinaHash01.cs \
-     tests/efl_mono/examples/EoInherit01.cs
-
 tests_efl_mono_efl_mono_exe_SOURCES = \
-     $(tests_efl_mono_examples) \
      tests/efl_mono/Main.cs \
      tests/efl_mono/Eina.cs \
      tests/efl_mono/Eo.cs \
@@ -204,6 +196,62 @@ tests_efl_mono_efl_mono_exe_SOURCES = \
 tests/efl_mono/efl_mono.exe$(EXEEXT): $(tests_efl_mono_efl_mono_exe_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll
 	@rm -f tests/efl_mono/efl_mono_exe$(EXEEXT)
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/tests/efl_mono/libefl_mono_test.dll -out:$@ $(filter %.cs, $(^))
+
+### Examples
+
+lib_LTLIBRARIES += examples/efl_mono/libefl_mono_native_example.la
+
+examples_efl_mono_libefl_mono_native_example_la_CPPFLAGS =  \
+-I$(builddir)/examples/efl_mono \
+-DEXAMPLES_WD=\"`pwd`\" \
+-DEXAMPLES_SRC_DIR=\"$(top_srcdir)/src/examples/efl_mono\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/examples/efl_mono\" \
+-DEXAMPLES_BUILD_DIR=\"$(top_builddir)/src/examples/efl_mono\" \
+@EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@
+
+examples_efl_mono_libefl_mono_native_example_la_LIBADD = @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
+examples_efl_mono_libefl_mono_native_example_la_LDFLAGS = -rpath $(abs_top_builddir)/examples/efl_mono @EFL_LTLIBRARY_FLAGS@
+examples_efl_mono_libefl_mono_native_example_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
+examples_efl_mono_libefl_mono_native_example_la_LIBTOOLFLAGS = --tag=disable-static
+
+efl_mono_example_eolian_mono_files = examples/efl_mono/example_numberwrapper.eo.cs
+
+examples/efl_mono/libefl_mono_native_example.c: examples/efl_mono/example_numberwrapper.eo.h examples/efl_mono/example_numberwrapper.eo.c
+
+examples/efl_mono/libefl_mono_example.dll$(EXEEXT): $(efl_mono_example_eolian_mono_files) examples/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll examples/efl_mono/libefl_mono_native_example.la
+	@rm -f examples/efl_mono/libefl_mono_example.dll$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_builddir)/lib/efl_mono/libefl_mono.dll -out:$@ -t:library $(filter %.cs, $(^))
+
+
+bin_PROGRAMS += examples/efl_mono/EinaArray01.exe
+examples_efl_mono_EinaArray01_exe_SOURCES = examples/efl_mono/EinaArray01.cs
+examples/efl_mono/EinaArray01.exe$(EXEEXT): $(examples_efl_mono_EinaArray01_exe_SOURCES) examples/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll examples/efl_mono/libefl_mono_example.dll
+	@rm -f examples/efl_mono/EinaArray01_exe$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/examples/efl_mono/libefl_mono_example.dll -out:$@ $(filter %.cs, $(^))
+
+bin_PROGRAMS += examples/efl_mono/EinaBinbuf01.exe
+examples_efl_mono_EinaBinbuf01_exe_SOURCES = examples/efl_mono/EinaBinbuf01.cs
+examples/efl_mono/EinaBinbuf01.exe$(EXEEXT): $(examples_efl_mono_EinaBinbuf01_exe_SOURCES) examples/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll examples/efl_mono/libefl_mono_example.dll
+	@rm -f examples/efl_mono/EinaBinbuf01_exe$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/examples/efl_mono/libefl_mono_example.dll -out:$@ $(filter %.cs, $(^))
+
+bin_PROGRAMS += examples/efl_mono/EinaError01.exe
+examples_efl_mono_EinaError01_exe_SOURCES = examples/efl_mono/EinaError01.cs
+examples/efl_mono/EinaError01.exe$(EXEEXT): $(examples_efl_mono_EinaError01_exe_SOURCES) examples/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll examples/efl_mono/libefl_mono_example.dll
+	@rm -f examples/efl_mono/EinaError01_exe$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/examples/efl_mono/libefl_mono_example.dll -out:$@ $(filter %.cs, $(^))
+
+bin_PROGRAMS += examples/efl_mono/EinaHash01.exe
+examples_efl_mono_EinaHash01_exe_SOURCES = examples/efl_mono/EinaHash01.cs
+examples/efl_mono/EinaHash01.exe$(EXEEXT): $(examples_efl_mono_EinaHash01_exe_SOURCES) examples/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll examples/efl_mono/libefl_mono_example.dll
+	@rm -f examples/efl_mono/EinaHash01_exe$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/examples/efl_mono/libefl_mono_example.dll -out:$@ $(filter %.cs, $(^))
+
+bin_PROGRAMS += examples/efl_mono/EoInherit01.exe
+examples_efl_mono_EoInherit01_exe_SOURCES = examples/efl_mono/EoInherit01.cs
+examples/efl_mono/EoInherit01.exe$(EXEEXT): $(examples_efl_mono_EoInherit01_exe_SOURCES) examples/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll examples/efl_mono/libefl_mono_example.dll
+	@rm -f examples/efl_mono/EoInherit01_exe$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/examples/efl_mono/libefl_mono_example.dll -out:$@ $(filter %.cs, $(^))
 
 SUFFIXES += .eo.cs
 
@@ -246,6 +294,11 @@ tests/efl_mono/%.eo.cs: tests/efl_mono/%.eo $(_EOLIAN_MONO_DEP)
 	$(AM_V_EOLMONO) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport efl_mono_native_test -o $@ $<
+
+examples/efl_mono/%.eo.cs: examples/efl_mono/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) --dllimport efl_mono_native_example -o $@ $<
 
 endif
 endif
