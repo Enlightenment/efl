@@ -37,6 +37,13 @@ typedef enum _Ecore_Drm2_Rotation
    ECORE_DRM2_ROTATION_REFLECT_Y = 32
 } Ecore_Drm2_Rotation;
 
+typedef enum _Ecore_Drm2_Fb_Status
+{
+   ECORE_DRM2_FB_STATUS_SCANOUT_ON = 1,
+   ECORE_DRM2_FB_STATUS_SCANOUT_OFF = 2,
+   ECORE_DRM2_FB_STATUS_RELEASE = 4,
+} Ecore_Drm2_Fb_Status;
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm2_Device Ecore_Drm2_Device;
 
@@ -85,6 +92,7 @@ EAPI extern int ECORE_DRM2_EVENT_OUTPUT_CHANGED;
 EAPI extern int ECORE_DRM2_EVENT_ACTIVATE;
 
 typedef void (*Ecore_Drm2_Release_Handler)(void *data, Ecore_Drm2_Fb *b);
+typedef void (*Ecore_Drm2_Fb_Status_Handler)(Ecore_Drm2_Fb *b, Ecore_Drm2_Fb_Status status, void *data);
 
 /**
  * @file
@@ -1061,6 +1069,23 @@ EAPI void ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y
  */
 EAPI Eina_Bool ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb);
 
+/**
+ * Register a callback for buffer status updates
+ *
+ * When a flip completes ecore_drm2 may release a buffer.  Use this callback
+ * if you need to do bookkeeping or locking on buffer release.
+ *
+ * Additionally, an fb may be placed on scanout or removed from scanout by
+ * evas.  When this happens a compositor needs to ensure the buffers aren't
+ * released back to a client while they're on scanout.
+ *
+ * @param fb The fb to register the callback on
+ * @param handler The function to handle the callback
+ * @param data The user data to pass to the callback
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.20
+ */
+EAPI void ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Status_Handler handler, void *data);
 # endif
 
 #endif

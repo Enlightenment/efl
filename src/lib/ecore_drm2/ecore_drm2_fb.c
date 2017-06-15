@@ -670,3 +670,10 @@ fail:
    free(fb);
    return NULL;
 }
+
+EAPI void
+ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Status_Handler handler, void *data)
+{
+   fb->status_handler = handler;
+   fb->status_data = data;
+}

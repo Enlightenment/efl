@@ -162,6 +162,9 @@ struct _Ecore_Drm2_Fb
    void *gbm_bo;
    void *mmap;
 
+   Ecore_Drm2_Fb_Status_Handler status_handler;
+   void *status_data;
+
    Eina_Bool gbm : 1;
    Eina_Bool dmabuf : 1;
    Eina_Bool dead : 1;
