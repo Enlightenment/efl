@@ -1931,9 +1931,6 @@ EAPI void                          ecore_imf_context_prediction_hint_set(Ecore_I
  * const char *mime_type = "text/plain,image/png,application/pdf";
  * ecore_imf_context_mime_type_accept_set(imf_context, mime_type);
  * @endcode
- *
- * @since_tizen 4.0
- * @endif
  */
 EAPI void                         ecore_imf_context_mime_type_accept_set(Ecore_IMF_Context *ctx, const char *mime_type);
 
