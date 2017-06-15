@@ -7,27 +7,7 @@ enum Efl.Text.Bidirectional_Type {
    inherit [[Inherit text type]]
 }
 
-enum Efl.Text.Cursor.Cursor_Get_Type {
-   [[All available cursor states]]
-   legacy: efl_text_cursor_get;
-   default = 0,     [[Main cursor state (alias to "main")]]
-   main,            [[Main cursor state]]
-   selection_begin, [[Selection begin cursor state]]
-   selection_end,   [[Selection end cursor state]]
-   preedit_start,   [[Pre-edit start cursor state]]
-   preedit_end,     [[Pre-edit end cursor starge]]
-   user,            [[User cursor state]]
-   user_extra       [[User extra cursor state]]
-}
-
 type @extern Efl.Canvas.Text.Annotation: __undefined_type; [[EFL text annotations data structure]]
 
 type @extern Efl.Text.Cursor.Cursor_Data: __undefined_type; [[Text cursor data structure]]
 
-enum Efl.Text.Cursor.Cursor_Type
-{
-   [[Text cursor types]]
-   legacy: efl_text_cursor_type;
-   before, [[Cursor type before]]
-   under [[Cursor type under]]
-}
