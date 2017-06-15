@@ -2883,10 +2883,20 @@ _wl_sel_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
 static Ecore_Wl2_Input *
 _wl_default_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj)
 {
-   Eo *seat;
+   Eo *seat, *parent2;
 
+   // FIXME: In wayland the default seat is not named "default" but "seat-X"
+   // where X may be 0 or really anything else.
    if (!obj) return ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(win), "default");
-   seat = evas_device_get(evas_object_evas_get(obj), "default");
+
+   // FIXME (there might be a better solution):
+   // In case of inwin, we want to use the main wl2 window for cnp, but obj
+   // obj belongs to the buffer canvas, so the default seat for obj does not
+   // match the window win.
+   parent2 = elm_widget_parent2_get(elm_widget_top_get(obj));
+   if (parent2) obj = elm_widget_top_get(parent2) ?: parent2;
+
+   seat = evas_canvas_default_device_get(evas_object_evas_get(obj), EFL_INPUT_DEVICE_TYPE_SEAT);
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
    return ecore_wl2_display_input_find(ecore_wl2_window_display_get(win),
      evas_device_seat_id_get(seat));
