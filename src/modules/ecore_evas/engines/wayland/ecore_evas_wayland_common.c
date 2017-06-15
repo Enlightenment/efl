@@ -1432,6 +1432,18 @@ _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect)
 }
 
 static void
+_ecore_evas_wl_common_focus_skip_set(Ecore_Evas *ee, Eina_Bool skip)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   wdata = ee->engine.data;
+   if (!wdata) return;
+   if (ee->prop.focus_skip == skip) return;
+   ee->prop.focus_skip = skip;
+   ecore_wl2_window_focus_skip_set(wdata->win, skip);
+}
+
+static void
 _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer EINA_UNUSED, int hot_x, int hot_y)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -2172,7 +2184,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // urgent set
    NULL, // modal set
    NULL, // demand attention set
-   NULL, // focus skip set
+   _ecore_evas_wl_common_focus_skip_set,
    NULL, //_ecore_evas_wl_common_render,
    _ecore_evas_wl_common_screen_geometry_get,
    _ecore_evas_wl_common_screen_dpi_get,
