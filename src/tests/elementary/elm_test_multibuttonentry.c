@@ -18,7 +18,7 @@ START_TEST (elm_atspi_role_get)
    multibuttonentry = elm_multibuttonentry_add(win);
    role = elm_interface_atspi_accessible_role_get(multibuttonentry);
 
-   ck_assert(role == ELM_ATSPI_ROLE_ENTRY);
+   ck_assert_int_eq(role, ELM_ATSPI_ROLE_PANEL);
 
    elm_shutdown();
 }
