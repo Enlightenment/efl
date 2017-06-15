@@ -1217,6 +1217,29 @@ EAPI Eina_Bool ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role);
 
 /**
+ * Set if a given window is in floating mode
+ *
+ * @param window
+ * @param floating
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool floating);
+
+/**
+ * Get if a given window is in floating mode
+ *
+ * @param window
+ *
+ * @return EINA_TRUE if floating, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *

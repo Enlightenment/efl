@@ -192,6 +192,7 @@ struct _Ecore_Wl2_Window
    Eina_Bool opaque_set : 1;
 
    Eina_Bool focus_skip : 1;
+   Eina_Bool floating : 1;
 
    struct
      {

@@ -1477,3 +1477,17 @@ ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role)
    EINA_SAFETY_ON_NULL_RETURN(window);
    eina_stringshare_replace(&window->role, role);
 }
+
+EAPI void
+ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool floating)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   window->floating = floating;
+}
+
+EAPI Eina_Bool
+ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
+   return window->floating;
+}
