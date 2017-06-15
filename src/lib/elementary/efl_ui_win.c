@@ -2505,6 +2505,18 @@ _efl_ui_win_efl_canvas_object_top_in_rectangle_get(const Eo *obj EINA_UNUSED, Ef
    return evas_object_top_in_rectangle_get(sd->evas, x, y, w, h, include_pass_events_objects, include_hidden_objects);
 }
 
+EOLIAN static Efl_Input_Device *
+_efl_ui_win_efl_canvas_device_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *name)
+{
+   return efl_canvas_device_get(sd->evas, name);
+}
+
+EOLIAN static Efl_Input_Device *
+_efl_ui_win_efl_canvas_seat_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int id)
+{
+   return efl_canvas_seat_get(sd->evas, id);
+}
+
 static void
 _elm_win_on_parent_del(void *data,
                        Evas *e EINA_UNUSED,
