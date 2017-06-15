@@ -322,7 +322,7 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    elm_widget_sub_object_parent_add(obj);
 
    priv->button = elm_fileselector_button_add(obj);
-   elm_widget_mirrored_automatic_set(priv->button, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(priv->button, EINA_FALSE);
    efl_ui_mirrored_set(priv->button, efl_ui_mirrored_get(obj));
    elm_widget_style_set(priv->button, "fileselector_entry/default");
 
@@ -338,7 +338,7 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
 
    priv->entry = elm_entry_add(obj);
    elm_entry_scrollable_set(priv->entry, EINA_TRUE);
-   elm_widget_mirrored_automatic_set(priv->entry, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(priv->entry, EINA_FALSE);
    elm_widget_style_set(priv->entry, "fileselector_entry/default");
    elm_entry_single_line_set(priv->entry, EINA_TRUE);
    elm_entry_editable_set(priv->entry, EINA_TRUE);

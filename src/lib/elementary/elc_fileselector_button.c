@@ -177,7 +177,7 @@ _activate(Elm_Fileselector_Button_Data *sd)
    sd->fs = elm_fileselector_add(sd->fsw);
    efl_ui_mirrored_set
      (sd->fs, efl_ui_mirrored_get(sd->obj));
-   elm_widget_mirrored_automatic_set(sd->fs, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(sd->fs, EINA_FALSE);
    elm_fileselector_expandable_set(sd->fs, sd->fsd.expandable);
    elm_fileselector_folder_only_set(sd->fs, sd->fsd.folder_only);
    elm_fileselector_is_save_set(sd->fs, sd->fsd.is_save);
@@ -227,7 +227,7 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
    priv->w = 400;
    priv->h = 400;
 
-   elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(obj, EINA_FALSE);
 
    efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _button_clicked, priv);
 

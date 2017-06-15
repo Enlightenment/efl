@@ -290,7 +290,7 @@ _elm_combobox_efl_canvas_group_group_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNU
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(obj, EINA_FALSE);
 
    efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _on_clicked, obj);
 
@@ -358,7 +358,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    //hover
    sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent);
    evas_object_layer_set(sd->hover, EVAS_LAYER_MAX);
-   elm_widget_mirrored_automatic_set(sd->hover, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(sd->hover, EINA_FALSE);
    elm_hover_target_set(sd->hover, obj);
    elm_widget_sub_object_add(obj, sd->hover);
    snprintf(buf, sizeof(buf), "combobox_vertical/%s",
@@ -385,7 +385,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    // This is the genlist object that will take over the genlist call
    sd->genlist = gl = efl_add(ELM_GENLIST_CLASS, obj);
    elm_genlist_filter_set(gl, NULL);
-   elm_widget_mirrored_automatic_set(gl, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(gl, EINA_FALSE);
    efl_ui_mirrored_set(gl, efl_ui_mirrored_get(obj));
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -399,7 +399,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
 
    // This is the entry object that will take over the entry call
    sd->entry = entry = efl_add(ELM_ENTRY_CLASS, obj);
-   elm_widget_mirrored_automatic_set(entry, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(entry, EINA_FALSE);
    efl_ui_mirrored_set(entry, efl_ui_mirrored_get(obj));
    elm_scroller_policy_set(entry, ELM_SCROLLER_POLICY_OFF,
                            ELM_SCROLLER_POLICY_OFF);

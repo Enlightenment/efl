@@ -459,9 +459,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     access_highlight_in_theme : 1;
    Eina_Bool                     disabled : 1;
    Eina_Bool                     is_mirrored : 1;
-   Eina_Bool                     mirrored_auto_mode : 1; /* This is
-                                                          * TRUE by
-                                                          * default */
+   Eina_Bool                     mirrored_auto_mode : 1; /* This is TRUE by default */
    Eina_Bool                     still_in : 1;
    Eina_Bool                     highlighted : 1;
    Eina_Bool                     highlight_root : 1;
@@ -732,8 +730,6 @@ EAPI int              elm_widget_scroll_hold_get(const Evas_Object *obj);
 EAPI void             elm_widget_scroll_freeze_push(Evas_Object *obj);
 EAPI void             elm_widget_scroll_freeze_pop(Evas_Object *obj);
 EAPI int              elm_widget_scroll_freeze_get(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_mirrored_automatic_get(const Evas_Object *obj);
-EAPI void             elm_widget_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic);
 EAPI void             elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th);
 EAPI Elm_Theme       *elm_widget_theme_get(const Evas_Object *obj);
 EAPI Elm_Theme_Apply  elm_widget_style_set(Evas_Object *obj, const char *style);

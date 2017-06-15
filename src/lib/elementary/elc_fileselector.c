@@ -1592,7 +1592,7 @@ _files_list_add(Evas_Object *obj)
 
    li = elm_genlist_add(obj);
    evas_object_data_set(li, "parent", obj);
-   elm_widget_mirrored_automatic_set(li, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(li, EINA_FALSE);
 
    efl_event_callback_add
      (li, EFL_UI_EVENT_SELECTED, _on_item_selected, obj);
@@ -1623,7 +1623,7 @@ _files_grid_add(Evas_Object *obj)
 
    grid = elm_gengrid_add(obj);
    evas_object_data_set(grid, "parent", obj);
-   elm_widget_mirrored_automatic_set(grid, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(grid, EINA_FALSE);
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
@@ -1890,7 +1890,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "go-up");
    bt = elm_button_add(obj);
-   elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Up"));
    efl_event_callback_add
@@ -1904,7 +1904,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    ic = elm_icon_add(obj);
    elm_icon_standard_set(ic, "go-home");
    bt = elm_button_add(obj);
-   elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Home"));
    efl_event_callback_add
@@ -1920,7 +1920,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    en = elm_entry_add(obj);
    elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(en, EINA_FALSE);
    elm_entry_editable_set(en, EINA_TRUE);
    elm_entry_single_line_set(en, EINA_TRUE);
    elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
@@ -1952,7 +1952,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    // path entry
    en = elm_entry_add(obj);
    elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(en, EINA_FALSE);
    elm_entry_single_line_set(en, EINA_TRUE);
    elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
 
@@ -1972,7 +1972,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    // name entry
    en = elm_entry_add(obj);
    elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(en, EINA_FALSE);
    elm_entry_editable_set(en, EINA_TRUE);
    elm_entry_single_line_set(en, EINA_TRUE);
    elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
@@ -2215,7 +2215,7 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
      {
         // cancel btn
         bt = elm_button_add(obj);
-        elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
+        efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
         elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Cancel"));
 
         efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _canc, obj);
@@ -2225,7 +2225,7 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
 
         // ok btn
         bt = elm_button_add(obj);
-        elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
+        efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
         elm_object_domain_translatable_text_set(bt, PACKAGE, N_("OK"));
 
         efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ok, obj);

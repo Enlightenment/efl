@@ -756,7 +756,7 @@ _loop_content_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *content)
         elm_widget_sub_object_add(obj, sd->contents);
         elm_widget_on_show_region_hook_set(sd->contents, _show_region_hook, obj);
 
-        elm_widget_mirrored_automatic_set(sd->contents, EINA_FALSE);
+        efl_ui_mirrored_automatic_set(sd->contents, EINA_FALSE);
         efl_ui_mirrored_set(sd->contents, EINA_FALSE);
      }
    elm_object_part_content_set(sd->contents, "elm.swallow.content", content);

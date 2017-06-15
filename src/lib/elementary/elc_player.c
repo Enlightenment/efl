@@ -482,7 +482,7 @@ _player_button_add(Evas_Object *obj,
 
    bt = elm_button_add(obj);
    if (ic) evas_object_data_set(bt, "icon", ic);
-   elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_content_set(bt, ic);
    evas_object_show(ic);
 

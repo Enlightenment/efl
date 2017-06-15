@@ -1415,14 +1415,14 @@ EAPI Eina_Bool
 elm_object_mirrored_automatic_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_widget_mirrored_automatic_get(obj);
+   return efl_ui_mirrored_automatic_get(obj);
 }
 
 EAPI void
 elm_object_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_mirrored_automatic_set(obj, automatic);
+   efl_ui_mirrored_automatic_set(obj, automatic);
 }
 
 /**

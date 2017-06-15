@@ -92,12 +92,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             ignore: bool; [[$true if highlights are ignored, $false otherwise]]
          }
       }
-      @property mirrored_automatic {
-         [[Control the widget's mirrored mode setting.]]
-         values {
-            automatic: bool; [[$true if the widget uses automatic mirrored mode, $false otherwise]]
-         }
-      }
       @property orientation_mode_disabled {
       	 [[Orientation mode disabled or enabled]]
          values {
@@ -815,6 +809,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       Efl.Ui.Focus.Object.focus { set; }
       Efl.Ui.Base.scale { get; set; }
       Efl.Ui.Base.mirrored { get; set; }
+      Efl.Ui.Base.mirrored_automatic { get; set; }
    }
    events {
       moved; [[Called when widget moved]]

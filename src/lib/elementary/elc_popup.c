@@ -699,7 +699,7 @@ _create_scroller(Evas_Object *obj)
    elm_scroller_bounce_set(sd->scr, EINA_FALSE, EINA_TRUE);
    evas_object_event_callback_add(sd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _size_hints_changed_cb, obj);
-   elm_widget_mirrored_automatic_set(sd->scr, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(sd->scr, EINA_FALSE);
    elm_object_mirrored_set(sd->scr, elm_object_mirrored_get(obj));
    elm_table_pack(sd->tbl, sd->scr, 0, 0, 1, 1);
    evas_object_show(sd->scr);
@@ -928,7 +928,7 @@ _item_new(Elm_Popup_Item_Data *it)
 
    VIEW(it) = elm_layout_add(WIDGET(it));
    elm_object_focus_allow_set(VIEW(it), EINA_TRUE);
-   elm_widget_mirrored_automatic_set(VIEW(it), EINA_FALSE);
+   efl_ui_mirrored_automatic_set(VIEW(it), EINA_FALSE);
    elm_object_mirrored_set(VIEW(it), elm_object_mirrored_get(WIDGET(it)));
 
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(WIDGET(it)));
@@ -1210,7 +1210,7 @@ _action_button_set(Evas_Object *obj,
         evas_object_event_callback_add
           (sd->action_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
            _size_hints_changed_cb, sd->main_layout);
-        elm_widget_mirrored_automatic_set(sd->action_area, EINA_FALSE);
+        efl_ui_mirrored_automatic_set(sd->action_area, EINA_FALSE);
         elm_object_mirrored_set(sd->action_area, elm_object_mirrored_get(obj));
         efl_content_set(efl_part(sd->main_layout, "elm.swallow.action_area"), sd->action_area);
 
@@ -1530,7 +1530,7 @@ _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
    evas_object_size_hint_align_set
      (priv->notify, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_member_add(priv->notify, obj);
-   elm_widget_mirrored_automatic_set(priv->notify, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(priv->notify, EINA_FALSE);
    elm_object_mirrored_set(priv->notify, elm_object_mirrored_get(obj));
 
    evas_object_event_callback_add(priv->notify, EVAS_CALLBACK_RESIZE, _notify_resize_cb, obj);
@@ -1543,7 +1543,7 @@ _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
    elm_object_content_set(priv->notify, priv->main_layout);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
-   elm_widget_mirrored_automatic_set(priv->main_layout, EINA_FALSE);
+   efl_ui_mirrored_automatic_set(priv->main_layout, EINA_FALSE);
    elm_object_mirrored_set(priv->main_layout, elm_object_mirrored_get(obj));
 
    elm_layout_signal_callback_add

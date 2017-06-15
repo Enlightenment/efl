@@ -426,7 +426,7 @@ _elm_widget_mirrored_reload(Evas_Object *obj)
    API_ENTRY return;
    Eina_Bool mirrored = elm_config_mirrored_get();
 
-   if (elm_widget_mirrored_automatic_get(obj) && (sd->is_mirrored != mirrored))
+   if (efl_ui_mirrored_automatic_get(obj) && (sd->is_mirrored != mirrored))
      {
         sd->is_mirrored = mirrored;
      }
@@ -1280,7 +1280,7 @@ _elm_widget_efl_ui_base_mirrored_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bo
  *
  **/
 EOLIAN static Eina_Bool
-_elm_widget_mirrored_automatic_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_elm_widget_efl_ui_base_mirrored_automatic_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    return sd->mirrored_auto_mode;
 }
@@ -1295,7 +1295,7 @@ _elm_widget_mirrored_automatic_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *s
  * @param automatic EINA_TRUE for auto mirrored mode. EINA_FALSE for manual.
  */
 EOLIAN static void
-_elm_widget_mirrored_automatic_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool automatic)
+_elm_widget_efl_ui_base_mirrored_automatic_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool automatic)
 {
    if (sd->mirrored_auto_mode != automatic)
      {
@@ -4164,7 +4164,7 @@ _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_
    EFL_DBG_INFO_APPEND(group, "Tree Unfocusable", EINA_VALUE_TYPE_CHAR,
          elm_widget_tree_unfocusable_get(eo_obj));
    EFL_DBG_INFO_APPEND(group, "Automatic mirroring", EINA_VALUE_TYPE_CHAR,
-         elm_widget_mirrored_automatic_get(eo_obj));
+         efl_ui_mirrored_automatic_get(eo_obj));
 
    rel = efl_ui_focus_manager_fetch(_pd->focus.manager, eo_obj);
    if (rel)
