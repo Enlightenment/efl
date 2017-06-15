@@ -1492,15 +1492,6 @@ ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data)
 }
 
 EAPI void
-ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *o, Ecore_Drm2_Release_Handler cb, void *data)
-{
-   EINA_SAFETY_ON_NULL_RETURN(o);
-
-   o->release_data = data;
-   o->release_cb = cb;
-}
-
-EAPI void
 ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, uint16_t *red, uint16_t *green, uint16_t *blue)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);

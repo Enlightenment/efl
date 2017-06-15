@@ -246,8 +246,6 @@ struct _Ecore_Drm2_Output
    Eina_List *modes;
 
    void *user_data;
-   Ecore_Drm2_Release_Handler release_cb;
-   void *release_data;
 
    Ecore_Drm2_Crtc_State *crtc_state;
    Ecore_Drm2_Connector_State *conn_state;
