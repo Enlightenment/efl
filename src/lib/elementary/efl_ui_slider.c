@@ -254,7 +254,7 @@ _units_set(Evas_Object *obj)
           {
              double v1, v2;
 
-             elm_slider_range_get(obj, &v1, &v2);
+             efl_ui_range_interval_get(obj, &v1, &v2);
              snprintf(buf, sizeof(buf), sd->units, v2 - v1);
           }
 
@@ -1227,13 +1227,13 @@ _efl_ui_slider_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_range_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd)
+_efl_ui_slider_efl_ui_range_range_interval_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd)
 {
    return pd->range_enable;
 }
 
 EOLIAN static void
-_efl_ui_slider_range_enabled_set(Eo *obj, Efl_Ui_Slider_Data *sd, Eina_Bool enable)
+_efl_ui_slider_efl_ui_range_range_interval_enabled_set(Eo *obj, Efl_Ui_Slider_Data *sd, Eina_Bool enable)
 {
    if (sd->range_enable == enable) return;
 
@@ -1254,14 +1254,14 @@ _efl_ui_slider_range_enabled_set(Eo *obj, Efl_Ui_Slider_Data *sd, Eina_Bool enab
 }
 
 EOLIAN static void
-_efl_ui_slider_range_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd, double *from, double *to)
+_efl_ui_slider_efl_ui_range_range_interval_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd, double *from, double *to)
 {
    if (from) *from = fmin(pd->range_from, pd->range_to);
    if (to) *to = fmax(pd->range_from, pd->range_to);
 }
 
 EOLIAN static void
-_efl_ui_slider_range_set(Eo *obj, Efl_Ui_Slider_Data *pd, double from, double to)
+_efl_ui_slider_efl_ui_range_range_interval_set(Eo *obj, Efl_Ui_Slider_Data *pd, double from, double to)
 {
    pd->range_from = from;
    //TODO: remove val later

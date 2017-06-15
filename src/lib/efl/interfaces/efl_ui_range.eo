@@ -88,5 +88,24 @@ interface Efl.Ui.Range
             units: string @nullable; [[The format string for $obj's units label]]
          }
       }
+    @property range_interval_enabled {
+         [[ This enables two indicators in given range widget.
+
+           @since 1.18
+         ]]
+         values {
+            enable: bool; [[$true if two indicators are enabled, $false otherwise]]
+         }
+      }
+      @property range_interval {
+         [[ Sets up a start and end range point for given range widget.
+
+           @since 1.18
+         ]]
+         values {
+            from: double; [[Interval minimum value]]
+            to: double; [[Interval maximum value]]
+         }
+      }
    }
 }

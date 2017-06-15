@@ -111,25 +111,6 @@ class Efl.Ui.Slider (Elm.Layout, Efl.Ui.Range,
             free_func: slider_freefunc_type @nullable; [[The freeing function for the format string.]]
          }
       }
-      @property range_enabled {
-         [[ This enables two indicators in slider.
-
-           @since 1.18
-         ]]
-         values {
-            enable: bool; [[$true if two indicators are enabled, $false otherwise]]
-         }
-      }
-      @property range {
-         [[ Sets up a start and end range point for the slider
-
-           @since 1.18
-         ]]
-         values {
-            from: double; [[Range minimum value]]
-            to: double; [[Range maximum value]]
-         }
-      }
    }
    implements {
       class.constructor;
@@ -148,6 +129,8 @@ class Efl.Ui.Slider (Elm.Layout, Efl.Ui.Range,
       Efl.Ui.Range.range_value { get; set; }
       Efl.Ui.Range.unit_format { get; set; }
       Efl.Ui.Range.range_min_max {get; set; }
+      Efl.Ui.Range.range_interval_enabled { get; set; }
+      Efl.Ui.Range.range_interval { get; set; }
       Efl.Orientation.orientation { get; set; }
       Elm.Interface.Atspi.Value.value_and_text { get; set; }
       Elm.Interface.Atspi.Value.range { get; }
