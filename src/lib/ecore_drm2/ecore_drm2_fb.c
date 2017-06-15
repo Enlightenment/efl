@@ -242,12 +242,11 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 #endif
 }
 
+/* perhaps output is no longer a necessary parameter for this function */
 void
-_ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State *s)
+_ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output EINA_UNUSED, Ecore_Drm2_Output_State *s)
 {
    Ecore_Drm2_Fb *fb = s->fb;
-
-   if (output->release_cb) output->release_cb(output->release_data, s->fb);
 
    if (fb->status_handler)
      fb->status_handler(fb, ECORE_DRM2_FB_STATUS_RELEASE, fb->status_data);
