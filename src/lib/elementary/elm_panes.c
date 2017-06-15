@@ -83,56 +83,45 @@ _elm_panes_elm_widget_theme_apply(Eo *obj, Elm_Panes_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_panes_elm_widget_focus_next(Eo *obj, Elm_Panes_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+_elm_panes_elm_widget_focus_next(Eo *obj, Elm_Panes_Data *sd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
-   double w, h;
-   unsigned char i;
-   Evas_Object *to_focus;
-   Evas_Object *chain[2];
-   Evas_Object *left, *right;
-   Elm_Object_Item *to_focus_item;
+   Eina_Bool int_ret = EINA_FALSE;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   Eina_List *items = NULL;
+   Eina_List *(*list_free)(Eina_List *list);
+   void *(*list_data_get)(const Eina_List *list);
+   Evas_Object *left = NULL;
+   Evas_Object *right = NULL;
 
-   edje_object_part_drag_value_get
-     (wd->resize_obj, "elm.bar", &w, &h);
-
-   left = elm_layout_content_get(obj, "left");
-   right = elm_layout_content_get(obj, "right");
-
-   if (((sd->orientation == EFL_ORIENT_HORIZONTAL) && (EINA_DBL_EQ(h, 0.0))) ||
-       ((sd->orientation == EFL_ORIENT_VERTICAL) && (EINA_DBL_EQ(w, 0.0))))
+   /* Focus chain */
+   /* TODO: Change this to use other chain */
+   if ((items = (Eina_List *)elm_widget_focus_custom_chain_get(obj)))
      {
-       return elm_widget_focus_next_get(right, dir, next, next_item);
+        list_data_get = eina_list_data_get;
+        list_free = NULL;
+     }
+   else
+     {
+        left = elm_layout_content_get(obj, "left");
+        if (left)
+          items = eina_list_append(items, left);
+
+        right = elm_layout_content_get(obj, "right");
+        if (right)
+          items = eina_list_append(items, right);
+
+        list_data_get = eina_list_data_get;
+        list_free = eina_list_free;
+
+        if (!items) return EINA_FALSE;
      }
 
-   /* Direction */
-   if (dir == ELM_FOCUS_PREVIOUS)
-     {
-        chain[0] = right;
-        chain[1] = left;
-     }
-   else if (dir == ELM_FOCUS_NEXT)
-     {
-        chain[0] = left;
-        chain[1] = right;
-     }
-   else return EINA_FALSE;
+   int_ret = elm_widget_focus_list_next_get
+      (obj, (const Eina_List *)items, list_data_get, dir, next, next_item);
 
-   i = elm_widget_focus_get(chain[1]);
+   if (list_free) list_free((Eina_List *)items);
 
-   if (elm_widget_focus_next_get(chain[i], dir, next, next_item)) return EINA_TRUE;
-
-   i = !i;
-
-   if (elm_widget_focus_next_get(chain[i], dir, &to_focus, &to_focus_item))
-     {
-        *next = to_focus;
-        *next_item = to_focus_item;
-        return !!i;
-     }
-
-   return EINA_FALSE;
+   return int_ret;
 }
 
 static void
