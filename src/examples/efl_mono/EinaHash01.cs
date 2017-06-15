@@ -1,12 +1,11 @@
 using static System.Console;
 
-namespace TestSuite
+public class ExampleEinaHash01
 {
-
-class TestExampleEinaHash01
-{
-    public static void EinaHash01()
+    public static void Main()
     {
+        eina.Config.Init();
+
         var phone_book = new eina.Hash<string, string>();
 
         // Add initial entries to our hash
@@ -64,5 +63,4 @@ class TestExampleEinaHash01
     }
 }
 
-}
 

@@ -1,12 +1,11 @@
 using static System.Console;
 
-namespace TestSuite
+public class ExampleEinaArray01
 {
-
-class TestExampleEinaArray01
-{
-    public static void EinaArray01()
+    public static void Main()
     {
+        eina.Config.Init();
+
         var strings = new string[]{
             "helo", "hera", "starbuck", "kat", "boomer",
             "hotdog", "longshot", "jammer", "crashdown", "hardball",
@@ -40,4 +39,3 @@ class TestExampleEinaArray01
     }
 }
 
-}
