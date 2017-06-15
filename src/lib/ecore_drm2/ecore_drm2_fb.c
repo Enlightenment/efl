@@ -245,8 +245,14 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 void
 _ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State *s)
 {
+   Ecore_Drm2_Fb *fb = s->fb;
+
    if (output->release_cb) output->release_cb(output->release_data, s->fb);
-   _ecore_drm2_fb_deref(s->fb);
+
+   if (fb->status_handler)
+     fb->status_handler(fb, ECORE_DRM2_FB_STATUS_RELEASE, fb->status_data);
+
+   _ecore_drm2_fb_deref(fb);
    s->fb = NULL;
    if (_ecore_drm2_use_atomic)
      {
