@@ -666,6 +666,7 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
 
    if (window->title) eina_stringshare_del(window->title);
    if (window->class) eina_stringshare_del(window->class);
+   if (window->role) eina_stringshare_del(window->role);
 
    display->windows =
      eina_inlist_remove(display->windows, EINA_INLIST_GET(window));
@@ -1468,4 +1469,11 @@ ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
    return window->focus_skip;
+}
+
+EAPI void
+ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   eina_stringshare_replace(&window->role, role);
 }

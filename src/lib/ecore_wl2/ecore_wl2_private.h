@@ -153,6 +153,7 @@ struct _Ecore_Wl2_Window
    int id, rotation, surface_id;
    const char *title;
    const char *class;
+   const char *role;
 
    struct wl_surface *surface;
    struct xdg_surface *xdg_surface;

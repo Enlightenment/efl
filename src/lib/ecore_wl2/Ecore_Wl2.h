@@ -1206,6 +1206,17 @@ EAPI void ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool fo
 EAPI Eina_Bool ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window);
 
 /**
+ * Set the role of a given window
+ *
+ * @param window
+ * @param role
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
