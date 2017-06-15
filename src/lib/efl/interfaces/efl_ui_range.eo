@@ -67,7 +67,7 @@ interface Efl.Ui.Range
             max: double; [[The maximum value.]]
          }
       }
-      @property unit_format {
+      @property range_unit_format {
          [[Control the format string for a given range widget's units label
 
            If $NULL is passed on $format, it will make $obj's units

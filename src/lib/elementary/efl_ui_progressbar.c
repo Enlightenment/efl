@@ -487,7 +487,7 @@ _efl_ui_progressbar_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Pro
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_ui_range_unit_format_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *units)
+_efl_ui_progressbar_efl_ui_range_range_unit_format_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *units)
 {
    const char *sig;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -502,7 +502,7 @@ _efl_ui_progressbar_efl_ui_range_unit_format_set(Eo *obj, Efl_Ui_Progressbar_Dat
 }
 
 EOLIAN static const char *
-_efl_ui_progressbar_efl_ui_range_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_efl_ui_range_range_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return sd->units;
 }

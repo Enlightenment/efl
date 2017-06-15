@@ -59,7 +59,7 @@ class Efl.Ui.Progressbar (Elm.Layout, Efl.Ui.Range,
       Elm.Layout.sizing_eval;
       Efl.Ui.Range.span_size { get; set; }
       Efl.Ui.Range.range_value { get; set; }
-      Efl.Ui.Range.unit_format { get; set; }
+      Efl.Ui.Range.range_unit_format { get; set; }
       Efl.Orientation.orientation { get; set; }
       Efl.Part.part;
    }

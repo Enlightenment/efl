@@ -1427,7 +1427,7 @@ _efl_ui_slider_efl_ui_range_span_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Dat
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_range_unit_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *units)
+_efl_ui_slider_efl_ui_range_range_unit_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *units)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1454,7 +1454,7 @@ _efl_ui_slider_efl_ui_range_unit_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, con
 }
 
 EOLIAN static const char *
-_efl_ui_slider_efl_ui_range_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
+_efl_ui_slider_efl_ui_range_range_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->units;
 }
