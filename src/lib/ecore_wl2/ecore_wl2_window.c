@@ -1455,3 +1455,10 @@ ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id)
           }
      }
 }
+
+EAPI void
+ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool focus_skip)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   window->focus_skip = focus_skip;
+}

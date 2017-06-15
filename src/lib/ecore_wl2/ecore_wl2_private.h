@@ -190,6 +190,8 @@ struct _Ecore_Wl2_Window
    Eina_Bool input_set : 1;
    Eina_Bool opaque_set : 1;
 
+   Eina_Bool focus_skip : 1;
+
    struct
      {
         Eina_Bool configure : 1;
