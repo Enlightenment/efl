@@ -1153,9 +1153,11 @@ EAPI const Evas_Device *evas_device_parent_get(const Evas_Device *dev);
  * This sets the "primary" class of device (a broad thing like mouse, keyboard,
  * touch, pen etc.).
  *
+ * @deprecated The class of a device can not be changed after creation.
+ *
  * @since 1.8
  */
-EAPI void evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas);
+EAPI void evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas) EINA_DEPRECATED;
 
 /**
  * Get the major class of a device

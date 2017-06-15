@@ -350,6 +350,7 @@ EAPI void
 evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
+   EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(dev));
 
    Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    Evas_Public_Data *edata = efl_data_scope_get(d->evas, EVAS_CANVAS_CLASS);
