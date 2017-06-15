@@ -398,7 +398,7 @@ _efl_ui_progressbar_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_ui_progress_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size)
+_efl_ui_progressbar_efl_ui_range_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size)
 {
    if (sd->size == size) return;
 
@@ -417,7 +417,7 @@ _efl_ui_progressbar_efl_ui_progress_span_size_set(Eo *obj, Efl_Ui_Progressbar_Da
 }
 
 EOLIAN static Evas_Coord
-_efl_ui_progressbar_efl_ui_progress_span_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_efl_ui_range_span_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return sd->size;
 }
@@ -473,7 +473,7 @@ _progressbar_part_value_get(Efl_Ui_Progressbar_Data *sd, const char* part)
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_ui_progress_progress_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, double val)
+_efl_ui_progressbar_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, double val)
 {
    if (EINA_DBL_EQ(sd->val, val)) return;
 
@@ -481,13 +481,13 @@ _efl_ui_progressbar_efl_ui_progress_progress_value_set(Eo *obj, Efl_Ui_Progressb
 }
 
 EOLIAN static double
-_efl_ui_progressbar_efl_ui_progress_progress_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return sd->val;
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_ui_progress_unit_format_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *units)
+_efl_ui_progressbar_efl_ui_range_unit_format_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *units)
 {
    const char *sig;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -502,7 +502,7 @@ _efl_ui_progressbar_efl_ui_progress_unit_format_set(Eo *obj, Efl_Ui_Progressbar_
 }
 
 EOLIAN static const char *
-_efl_ui_progressbar_efl_ui_progress_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_efl_ui_range_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return sd->units;
 }
@@ -530,37 +530,37 @@ _efl_ui_progressbar_pulse_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 EAPI void
 elm_progressbar_value_set(Evas_Object *obj, double val)
 {
-   efl_ui_progress_value_set(obj, val);
+   efl_ui_range_value_set(obj, val);
 }
 
 EAPI double
 elm_progressbar_value_get(const Evas_Object *obj)
 {
-   return efl_ui_progress_value_get(obj);
+   return efl_ui_range_value_get(obj);
 }
 
 EAPI void
 elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
-   efl_ui_progress_span_size_set(obj, size);
+   efl_ui_range_span_size_set(obj, size);
 }
 
 EAPI Evas_Coord
 elm_progressbar_span_size_get(const Evas_Object *obj)
 {
-   return efl_ui_progress_span_size_get(obj);
+   return efl_ui_range_span_size_get(obj);
 }
 
 EAPI void
 elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
 {
-   efl_ui_progress_unit_format_set(obj, units);
+   efl_ui_range_unit_format_set(obj, units);
 }
 
 EAPI const char *
 elm_progressbar_unit_format_get(const Evas_Object *obj)
 {
-   return efl_ui_progress_unit_format_get(obj);
+   return efl_ui_range_unit_format_get(obj);
 }
 
 EAPI void
@@ -669,7 +669,7 @@ _efl_ui_progressbar_internal_part_efl_container_content_set(Eo *obj, Elm_Part_Da
 }
 
 EOLIAN static void
-_efl_ui_progressbar_internal_part_efl_ui_progress_progress_value_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, double val)
+_efl_ui_progressbar_internal_part_efl_ui_range_range_value_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, double val)
 {
   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
@@ -678,7 +678,7 @@ _efl_ui_progressbar_internal_part_efl_ui_progress_progress_value_set(Eo *obj, El
 }
 
 EOLIAN static double
-_efl_ui_progressbar_internal_part_efl_ui_progress_progress_value_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
+_efl_ui_progressbar_internal_part_efl_ui_range_range_value_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
@@ -724,12 +724,12 @@ elm_progressbar_is_pulsing_get(const Evas_Object *obj)
 EAPI void
 elm_progressbar_part_value_set(Evas_Object *obj, const char *part, double val)
 {
-   if (EINA_DBL_EQ(efl_ui_progress_value_get(efl_part(obj, part)), val)) return;
-   efl_ui_progress_value_set(efl_part(obj, part), val);
+   if (EINA_DBL_EQ(efl_ui_range_value_get(efl_part(obj, part)), val)) return;
+   efl_ui_range_value_set(efl_part(obj, part), val);
 }
 
 EAPI double
 elm_progressbar_part_value_get(const Evas_Object *obj, const char *part)
 {
-   return efl_ui_progress_value_get(efl_part(obj, part));
+   return efl_ui_range_value_get(efl_part(obj, part));
 }

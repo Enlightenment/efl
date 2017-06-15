@@ -1296,25 +1296,25 @@ _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUS
 EAPI void
 elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
-   efl_ui_progress_span_size_set(obj, size);
+   efl_ui_range_span_size_set(obj, size);
 }
 
 EAPI Evas_Coord
 elm_slider_span_size_get(const Evas_Object *obj)
 {
-   return efl_ui_progress_span_size_get(obj);
+   return efl_ui_range_span_size_get(obj);
 }
 
 EAPI void
 elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 {
-   efl_ui_progress_unit_format_set(obj, units);
+   efl_ui_range_unit_format_set(obj, units);
 }
 
 EAPI const char *
 elm_slider_unit_format_get(const Evas_Object *obj)
 {
-   return efl_ui_progress_unit_format_get(obj);
+   return efl_ui_range_unit_format_get(obj);
 }
 
 EAPI void
@@ -1340,13 +1340,13 @@ elm_slider_horizontal_get(const Evas_Object *obj)
 EAPI void
 elm_slider_value_set(Evas_Object *obj, double val)
 {
-   efl_ui_progress_value_set(obj, val);
+   efl_ui_range_value_set(obj, val);
 }
 
 EAPI double
 elm_slider_value_get(const Evas_Object *obj)
 {
-   return efl_ui_progress_value_get(obj);
+   return efl_ui_range_value_get(obj);
 }
 
 EAPI void
@@ -1395,7 +1395,7 @@ _efl_ui_slider_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Slide
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_progress_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, Evas_Coord size)
+_efl_ui_slider_efl_ui_range_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, Evas_Coord size)
 {
    if (sd->size == size) return;
    sd->size = size;
@@ -1421,13 +1421,13 @@ _efl_ui_slider_efl_ui_progress_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, Ev
 }
 
 EOLIAN static Evas_Coord
-_efl_ui_slider_efl_ui_progress_span_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
+_efl_ui_slider_efl_ui_range_span_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->size;
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_progress_unit_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *units)
+_efl_ui_slider_efl_ui_range_unit_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *units)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1454,7 +1454,7 @@ _efl_ui_slider_efl_ui_progress_unit_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, 
 }
 
 EOLIAN static const char *
-_efl_ui_slider_efl_ui_progress_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
+_efl_ui_slider_efl_ui_range_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->units;
 }
@@ -1473,7 +1473,7 @@ _efl_ui_slider_indicator_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_progress_progress_min_max_set(Eo *obj, Efl_Ui_Slider_Data *sd, double min, double max)
+_efl_ui_slider_efl_ui_range_range_min_max_set(Eo *obj, Efl_Ui_Slider_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
    sd->val_min = min;
@@ -1485,14 +1485,14 @@ _efl_ui_slider_efl_ui_progress_progress_min_max_set(Eo *obj, Efl_Ui_Slider_Data 
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_progress_progress_min_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *min, double *max)
+_efl_ui_slider_efl_ui_range_range_min_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_progress_progress_value_set(Eo *obj, Efl_Ui_Slider_Data *sd, double val)
+_efl_ui_slider_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Slider_Data *sd, double val)
 {
    if (sd->val == val) return;
    sd->val = val;
@@ -1505,7 +1505,7 @@ _efl_ui_slider_efl_ui_progress_progress_value_set(Eo *obj, Efl_Ui_Slider_Data *s
 }
 
 EOLIAN static double
-_efl_ui_slider_efl_ui_progress_progress_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
+_efl_ui_slider_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->val;
 }
@@ -1691,13 +1691,13 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 EAPI void
 elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 {
-   efl_ui_progress_min_max_set(obj, min, max);
+   efl_ui_range_min_max_set(obj, min, max);
 }
 
 EAPI void
 elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
-   efl_ui_progress_min_max_get(obj, min, max);
+   efl_ui_range_min_max_get(obj, min, max);
 }
 
 #include "efl_ui_slider.eo.c"

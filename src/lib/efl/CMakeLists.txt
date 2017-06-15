@@ -52,7 +52,7 @@ set(PUBLIC_EO_FILES
   interfaces/efl_types.eot
   interfaces/efl_ui_item.eo
   interfaces/efl_ui_menu.eo
-  interfaces/efl_ui_progress.eo
+  interfaces/efl_ui_range.eo
   interfaces/efl_ui_spin.eo
   interfaces/efl_ui_autorepeat.eo
   interfaces/efl_vpath.eo

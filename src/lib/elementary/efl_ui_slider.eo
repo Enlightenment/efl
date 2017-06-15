@@ -1,7 +1,7 @@
 type slider_func_type: __undefined_type; [[Elementary slider function type]]
 type slider_freefunc_type: __undefined_type; [[Elementary slider free function type]]
 
-class Efl.Ui.Slider (Elm.Layout, Efl.Ui.Progress,
+class Efl.Ui.Slider (Elm.Layout, Efl.Ui.Range,
                      Efl.Orientation,
                      Elm.Interface.Atspi.Value,
                      Elm.Interface.Atspi_Widget_Action)
@@ -144,10 +144,10 @@ class Efl.Ui.Slider (Elm.Layout, Efl.Ui.Progress,
       Elm.Layout.text_aliases { get; }
       Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;
-      Efl.Ui.Progress.span_size { get; set; }
-      Efl.Ui.Progress.progress_value { get; set; }
-      Efl.Ui.Progress.unit_format { get; set; }
-      Efl.Ui.Progress.progress_min_max {get; set; }
+      Efl.Ui.Range.span_size { get; set; }
+      Efl.Ui.Range.range_value { get; set; }
+      Efl.Ui.Range.unit_format { get; set; }
+      Efl.Ui.Range.range_min_max {get; set; }
       Efl.Orientation.orientation { get; set; }
       Elm.Interface.Atspi.Value.value_and_text { get; set; }
       Elm.Interface.Atspi.Value.range { get; }

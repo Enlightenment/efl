@@ -1,12 +1,12 @@
-interface Efl.Ui.Progress
+interface Efl.Ui.Range
 {
    [[Efl UI progress interface]]
    methods {
       @property span_size {
-         [[Control the (exact) length of the bar region of a given progress widget
+         [[Control the (exact) length of the bar region of a given range widget
 
            This sets the minimum width (when in horizontal mode) or height
-           (when in vertical mode) of the actual bar area of the progress
+           (when in vertical mode) of the actual bar area of the range
            bar $obj. This in turn affects the object's minimum size. Use
            this when you're not setting other size hints expanding on the
            given direction (like weight and alignment hints) and you would
@@ -20,34 +20,34 @@ interface Efl.Ui.Progress
          get {
          }
          values {
-            size: int; [[The length of the progress's bar region]]
+            size: int; [[The length of the range's bar region]]
          }
       }
-      @property progress_value {
-         [[Control the progress value (in percentage) on a given progress widget
+      @property range_value {
+         [[Control the range value (in percentage) on a given range widget
 
-           Use this call to set progress levels.
+           Use this call to set range levels.
 
-           Note: If you pass a value out of the specified range for
+           Note: If you pass a value out of the specified interval for
            $val, it will be interpreted as the closest of the boundary
-           values in the range.]]
+           values in the interval.]]
          set {
          }
          get {
          }
          values {
-            val: double; [[The progress value (must be between $0.0 and 1.0)]]
+            val: double; [[The range value (must be between $0.0 and 1.0)]]
          }
       }
-      @property progress_min_max {
+      @property range_min_max {
          set {
-            [[Set the minimum and maximum values for given progress widget.
+            [[Set the minimum and maximum values for given range widget.
 
               Define the allowed range of values to be selected by the user.
 
               If actual value is less than $min, it will be updated to $min.
               If it is bigger then $max, will be updated to $max. Actual value
-              can be get with @Efl.Ui.Progress.progress_value.get
+              can be get with @Efl.Ui.Range.range_value.get
 
               By default, min is equal to 0.0, and max is equal to 1.0.
 
@@ -56,7 +56,7 @@ interface Efl.Ui.Progress
             ]]
          }
          get {
-            [[Get the minimum and maximum values of the given progress widget.
+            [[Get the minimum and maximum values of the given range widget.
 
               Note: If only one value is needed, the other pointer can be passed
               as $null.
@@ -68,7 +68,7 @@ interface Efl.Ui.Progress
          }
       }
       @property unit_format {
-         [[Control the format string for a given progress widget's units label
+         [[Control the format string for a given range widget's units label
 
            If $NULL is passed on $format, it will make $obj's units
            area to be hidden completely. If not, it'll set the <b>format
@@ -78,7 +78,7 @@ interface Efl.Ui.Progress
            optional. Use a format string such as "%1.2f meters" for
            example.
 
-           Note: The default format string for a progress is an integer
+           Note: The default format string for a range is an integer
            percentage, as in $"%.0f %%".]]
          set {
          }

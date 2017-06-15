@@ -1,9 +1,9 @@
-class Efl.Ui.Progressbar.Internal.Part (Elm.Layout.Internal.Part, Efl.Ui.Progress)
+class Efl.Ui.Progressbar.Internal.Part (Elm.Layout.Internal.Part, Efl.Ui.Range)
 {
    [[Elementary progressbar internal part class]]
    data: Elm_Part_Data;
    implements {
       Efl.Container.content { set; }
-      Efl.Ui.Progress.progress_value { set; get; }
+      Efl.Ui.Range.range_value { set; get; }
    }
 }

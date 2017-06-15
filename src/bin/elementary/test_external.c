@@ -101,7 +101,7 @@ _timer_cb(void *data)
    edje_object_part_external_param_set(edje, "ext_pbar7", &param);
 
    /* Test EO API for direct function calls */
-   efl_ui_progress_value_set(efl_part(edje, "ext_pbar3"), progress);
+   efl_ui_range_value_set(efl_part(edje, "ext_pbar3"), progress);
 
    if (progress < 1.0)
      return ECORE_CALLBACK_RENEW;
@@ -176,7 +176,7 @@ _bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    edje_object_part_external_param_set(edje, "ext_pbar7", &param);
 
    /* Test EO API for direct function calls */
-   efl_ui_progress_value_set(efl_part(edje, "ext_pbar3"), 0.0);
+   efl_ui_range_value_set(efl_part(edje, "ext_pbar3"), 0.0);
 
    t = ecore_timer_add(0.1, _timer_cb, edje);
    efl_key_data_set(edje, "timer", t);
