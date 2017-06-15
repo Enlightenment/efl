@@ -45,12 +45,14 @@ _evas_outbuf_fb_cb_destroy(struct gbm_bo *bo EINA_UNUSED, void *data)
 }
 
 void
-_evas_outbuf_release_fb(void *ob_v, Ecore_Drm2_Fb *fb)
- {
+_evas_outbuf_release_fb(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Status status, void *data)
+{
    struct gbm_bo *bo;
    Outbuf *ob;
 
-   ob = ob_v;
+   if (status != ECORE_DRM2_FB_STATUS_RELEASE) return;
+
+   ob = data;
    bo = ecore_drm2_fb_bo_get(fb);
    gbm_surface_release_buffer(ob->surface, bo);
 }
@@ -80,6 +82,8 @@ _evas_outbuf_fb_get(Outbuf *ob, struct gbm_bo *bo)
         ERR("Failed to create FBO");
         return NULL;
      }
+
+   ecore_drm2_fb_status_handler_set(fb, _evas_outbuf_release_fb, ob);
 
    gbm_bo_set_user_data(bo, fb, _evas_outbuf_fb_cb_destroy);
 
@@ -399,10 +403,6 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
    ob->bpp = info->info.bpp;
    ob->format = info->info.format;
    ob->priv.output = info->info.output;
-
-   ecore_drm2_output_release_handler_set(ob->priv.output,
-                                         _evas_outbuf_release_fb,
-                                         ob);
 
    /* if ((num = getenv("EVAS_GL_DRM_VSYNC"))) */
    /*   ob->vsync = atoi(num); */
