@@ -31,4 +31,3 @@ enum Efl.Text.Cursor.Cursor_Type
    before, [[Cursor type before]]
    under [[Cursor type under]]
 }
-

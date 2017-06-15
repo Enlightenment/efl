@@ -15379,35 +15379,82 @@ _efl_canvas_text_efl_text_format_multiline_get(Eo *obj EINA_UNUSED, Efl_Canvas_T
 }
 
 static void
-_efl_canvas_text_efl_text_format_halign_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, double value EINA_UNUSED)
+_efl_canvas_text_efl_text_format_halign_set(Eo *obj, Efl_Canvas_Text_Data *o, Efl_Text_Format_Horizontal_Alignment_Type type)
 {
-   if (value < 0.0)
+   if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO)
      {
-        _FMT_SET(halign_auto, EINA_TRUE);
+        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL);
+     }
+   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_LOCALE)
+     {
+        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE);
      }
    else
      {
+        double value = 0.0; // EFL_TEXT_HORIZONTAL_ALIGNMENT_LEFT
         _FMT(halign_auto) = EINA_FALSE;
+
+        if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER)
+          {
+             value = 0.5;
+          }
+        else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_RIGHT)
+          {
+             value = 1.0;
+          }
         _FMT_SET(halign, value);
      }
 }
 
-static double
-_efl_canvas_text_efl_text_format_halign_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+static Efl_Text_Format_Horizontal_Alignment_Type
+_efl_canvas_text_efl_text_format_halign_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
 {
-   return (_FMT(halign_auto) ? -1.0 : _FMT(halign));
+   Efl_Text_Format_Horizontal_Alignment_Type ret =
+      EFL_TEXT_HORIZONTAL_ALIGNMENT_LEFT;
+
+   if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL)
+     {
+        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO;
+     }
+   else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE)
+     {
+        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_LOCALE;
+     }
+   else if (EINA_DBL_EQ(_FMT(halign), 0.5))
+     {
+        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER;
+     }
+   else if (EINA_DBL_EQ(_FMT(halign), 1.0))
+     {
+        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_RIGHT;
+     }
+   return ret;
 }
 
 static void
-_efl_canvas_text_efl_text_format_valign_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, double value EINA_UNUSED)
+_efl_canvas_text_efl_text_format_valign_set(Eo *obj, Efl_Canvas_Text_Data *o,
+      Efl_Text_Format_Vertical_Alignment_Type type)
 {
-   _FMT_SET(valign, value);
+   double value = 0.0; // EFL_TEXT_VERTICAL_ALIGNMENT_TOP
+   if (type == EFL_TEXT_VERTICAL_ALIGNMENT_CENTER)
+     {
+        value = 0.5;
+     }
+   else if (type == EFL_TEXT_VERTICAL_ALIGNMENT_BOTTOM)
+     {
+        value = 1.0;
+     }
+   if (!EINA_DBL_EQ(o->valign, value))
+     {
+        o->valign = value;
+        _canvas_text_format_changed(obj, o);
+     }
 }
 
-static double
+static Efl_Text_Format_Vertical_Alignment_Type
 _efl_canvas_text_efl_text_format_valign_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
 {
-   return _FMT(valign);
+   return o->valign;
 }
 
 static void

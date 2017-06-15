@@ -7,6 +7,24 @@ enum Efl.Text.Format.Wrap {
    hyphenation [[Wrap mode hyphenation]]
 }
 
+enum Efl.Text.Format.Horizontal_Alignment_Type {
+   [[Horizontal alignment of the text]]
+   legacy: efl_text_horizontal_alignment;
+   auto,    [[Respects LTR/RTL (bidirectional) settings]]
+   locale,  [[Respects locale's langauge settings]]
+   left,    [[Text is placed at the left end of the line]]
+   right,   [[Text is placed at the right end of the line]]
+   center   [[Text is places at the center of the line]]
+}
+
+enum Efl.Text.Format.Vertical_Alignment_Type {
+   [[Horizontal alignment of the text]]
+   legacy: efl_text_vertical_alignment;
+   top,    [[Text is placed at the top]]
+   center, [[Text is placed at the center]]
+   bottom  [[Text is placed at the bottom]]
+}
+
 interface Efl.Text.Format {
    [[The look and layout of the text
 
@@ -40,18 +58,16 @@ interface Efl.Text.Format {
       }
 
       @property halign {
-         [[Horizontal alignment of text (number from 0.0 to 1.0)]]
-         values
-         {
-            value: double;
+         [[Horizontal alignment of text]]
+         values {
+            value: Efl.Text.Format.Horizontal_Alignment_Type;
          }
       }
 
       @property valign {
-         [[Vertical alignment of text (number from -1.0 to 1.0)]]
-         values
-         {
-            value: double;
+         [[Vertical alignment of text]]
+         values {
+            value: Efl.Text.Format.Vertical_Alignment_Type;
          }
       }
 
