@@ -1491,10 +1491,3 @@ ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
    return window->floating;
 }
-
-EAPI void
-ecore_wl2_window_stack_mode_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Stack_Mode mode)
-{
-   EINA_SAFETY_ON_NULL_RETURN(window);
-   window->stack_mode = mode;
-}

@@ -64,13 +64,6 @@ typedef enum
   ECORE_WL2_SEAT_CAPABILITIES_TOUCH = 4
 } Ecore_Wl2_Seat_Capabilities;
 
-typedef enum
-{
-   ECORE_WL2_WINDOW_STACK_NONE = 0,
-   ECORE_WL2_WINDOW_STACK_ABOVE = 1,
-   ECORE_WL2_WINDOW_STACK_BELOW = 2,
-} Ecore_Wl2_Window_Stack_Mode;
-
 struct _Ecore_Wl2_Event_Connection
 {
    Ecore_Wl2_Display *display;
@@ -1245,17 +1238,6 @@ EAPI void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool
  * @since 1.20
  */
 EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
-
-/**
- * Set a stack mode on a given window
- *
- * @param window
- * @param mode
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.20
- */
-EAPI void ecore_wl2_window_stack_mode_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Stack_Mode mode);
 
 /**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions

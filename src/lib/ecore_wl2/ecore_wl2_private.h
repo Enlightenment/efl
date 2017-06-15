@@ -175,7 +175,6 @@ struct _Ecore_Wl2_Window
    Eina_Rectangle input_rect;
 
    Ecore_Wl2_Window_Type type;
-   Ecore_Wl2_Window_Stack_Mode stack_mode;
 
    Eina_Inlist *subsurfs;
    Eina_Inlist *supported_aux_hints;
