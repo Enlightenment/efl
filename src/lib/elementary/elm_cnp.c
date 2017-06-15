@@ -4042,9 +4042,9 @@ _wl_elm_widget_window_get(const Evas_Object *obj)
           {
              ee = ecore_evas_buffer_ecore_evas_parent_get(ee);
              if (!ee) return NULL;
-             win = ecore_evas_wayland2_window_get(ee);
+             engine_name = ecore_evas_engine_name_get(ee);
           }
-        else if (!strncmp(engine_name, "wayland", sizeof("wayland") - 1))
+        if (!strncmp(engine_name, "wayland", sizeof("wayland") - 1))
           {
              /* In case the engine is not a buffer, we want to check once. */
              win = ecore_evas_wayland2_window_get(ee);
