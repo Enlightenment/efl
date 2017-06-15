@@ -65,19 +65,19 @@ _evas_event_havemap_adjust_f(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
 
 #if 0
 # define DDD_DO 1
-# define DDD(...) do { for (i = 0; i < spaces; i++) printf(" "); printf(__VA_ARGS__); } while (0)
+# define DDD(...) do { for (int _i = 0; _i < spaces; _i++) printf(" "); printf(__VA_ARGS__); } while (0)
 # define D(...) do { printf(__VA_ARGS__); } while (0)
+# define DDD_STATIC static
 #else
 # define DDD(...) do { } while (0)
 # define D(...) do { } while (0)
+# define DDD_STATIC
 #endif
 
 #ifdef DDD_DO
 static void
 walk_clippers_print(int spaces, Evas_Object_Protected_Data *obj)
 {
-   int i;
-   spaces++;
    DDD("<<< CLIP %p c[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i]\n",
        obj->object,
        obj->cur->geometry.x, obj->cur->geometry.y,
@@ -85,8 +85,7 @@ walk_clippers_print(int spaces, Evas_Object_Protected_Data *obj)
        obj->cur->cache.clip.x, obj->cur->cache.clip.y,
        obj->cur->cache.clip.w, obj->cur->cache.clip.h
       );
-   if (obj->cur->clipper) walk_clippers_print(spaces, obj->cur->clipper);
-   spaces--;
+   if (obj->cur->clipper) walk_clippers_print(spaces + 1, obj->cur->clipper);
 }
 #endif
 
@@ -102,11 +101,7 @@ clip_calc(Evas_Object_Protected_Data *obj, Evas_Coord_Rectangle *c)
 
 static Eina_List *
 _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data *obj, Eina_List *in, Evas_Object *stop,
-                                   int x, int y, int *no_rep, Eina_Bool source
-#ifdef DDD_DO
-                                   , int *spaces
-#endif
-                                   )
+                                          int x, int y, int *no_rep, Eina_Bool source, int spaces EINA_UNUSED)
 {
    Evas_Coord_Rectangle c;
    int inside;
@@ -114,10 +109,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
    if (eo_obj == stop)
      {
         *no_rep = 1;
-#ifdef DDD_DO
-        (*spaces)--;
         DDD("***** NO REP - STOP *****\n");
-#endif
         return in;
      }
    if ((!obj->cur->visible) && (!obj->is_event_parent)) return in;
@@ -184,7 +176,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
         if (!strcmp(obj->type, "e_layout"))
           {
              if (obj->cur->clipper)
-               walk_clippers_print(*spaces, obj->cur->clipper);
+               walk_clippers_print(spaces + 1, obj->cur->clipper);
           }
 #endif
         return in;
@@ -220,7 +212,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
 //             if (!strcmp(obj->type, "e_layout"))
           {
              if (obj->cur->clipper)
-               walk_clippers_print(*spaces, obj->cur->clipper);
+               walk_clippers_print(spaces + 1, obj->cur->clipper);
           }
      }
 #endif
@@ -296,10 +288,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
                   if (!obj->repeat_events)
                     {
                        *no_rep = 1;
-#ifdef DDD_DO
-                       (*spaces)--;
                        DDD("***** NO REP1 *****\n");
-#endif
                        return in;
                     }
                }
@@ -315,10 +304,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
                   if (!obj->repeat_events)
                     {
                        *no_rep = 1;
-#ifdef DDD_DO
-                       (*spaces)--;
                        DDD("***** NO REP1 *****\n");
-#endif
                        return in;
                     }
                }
@@ -355,10 +341,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
                   if (!obj->repeat_events)
                     {
                        *no_rep = 1;
-#ifdef DDD_DO
-                       (*spaces)--;
                        DDD("***** NO REP2 *****\n");
-#endif
                        return in;
                     }
                }
@@ -375,15 +358,11 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                                    int x, int y, int *no_rep, Eina_Bool source)
 {
    Evas_Object_Protected_Data *obj = NULL;
-
-#ifdef DDD_DO
-   static int spaces = 0;
-#endif
+   DDD_STATIC int spaces = 0;
 
    if ((!ilist) && (!list)) return in;
-#ifdef DDD_DO
+
    spaces++;
-#endif
    if (ilist)
      {
         for (obj = _EINA_INLIST_CONTAINER(obj, eina_inlist_last(ilist));
@@ -391,12 +370,8 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
              obj = _EINA_INLIST_CONTAINER(obj, EINA_INLIST_GET(obj)->prev))
           {
              if (obj->events->parent) continue;
-             in = _evas_event_object_list_raw_in_get_single(eo_e, obj, in, stop, x, y, no_rep, source
-#ifdef DDD_DO
-               ,&spaces
-#endif
-             );
-             if (*no_rep) return in;
+             in = _evas_event_object_list_raw_in_get_single(eo_e, obj, in, stop, x, y, no_rep, source, spaces);
+             if (*no_rep) goto end;
           }
      }
    else
@@ -405,18 +380,14 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
 
         EINA_LIST_REVERSE_FOREACH(list, l, obj)
           {
-             in = _evas_event_object_list_raw_in_get_single(eo_e, obj, in, stop, x, y, no_rep, source
-#ifdef DDD_DO
-                                                            ,&spaces
-#endif
-                                                            );
-             if (*no_rep) return in;
+             in = _evas_event_object_list_raw_in_get_single(eo_e, obj, in, stop, x, y, no_rep, source, spaces);
+             if (*no_rep) goto end;
           }
      }
    *no_rep = 0;
-#ifdef DDD_DO
+
+end:
    spaces--;
-#endif
    return in;
 }
 
