@@ -49,14 +49,14 @@ struct _Efl_Ui_Slider_Data
    Evas_Coord            downx, downy;
    Efl_Orient            orientation;
 
-   double                range_from, range_to;
+   double                intvl_from, intvl_to;
 
    Eina_Bool             indicator_show : 1;
    Eina_Bool             spacer_down : 1;
    Eina_Bool             frozen : 1;
    Eina_Bool             units_show : 1;
    Eina_Bool             popup_visible : 1;
-   Eina_Bool             range_enable : 1;
+   Eina_Bool             intvl_enable : 1;
 };
 
 /**

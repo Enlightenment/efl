@@ -146,7 +146,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
    if (fabs(val - sd->val) > DBL_EPSILON)
      {
         sd->val = val;
-        sd->range_from = val;
+        sd->intvl_from = val;
         if (user_event)
           {
              efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
@@ -154,9 +154,9 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
              sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
           }
      }
-   if (fabs(val2 - sd->range_to) > DBL_EPSILON)
+   if (fabs(val2 - sd->intvl_to) > DBL_EPSILON)
      {
-        sd->range_to = val2;
+        sd->intvl_to = val2;
         if (user_event)
           {
              efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
@@ -177,7 +177,7 @@ _val_set(Evas_Object *obj)
    if (sd->val_max > sd->val_min)
      {
         pos = (sd->val - sd->val_min) / (sd->val_max - sd->val_min);
-        pos2 = (sd->range_to - sd->val_min) / (sd->val_max - sd->val_min);
+        pos2 = (sd->intvl_to - sd->val_min) / (sd->val_max - sd->val_min);
      }
    else
      {
@@ -205,7 +205,7 @@ _val_set(Evas_Object *obj)
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", pos, pos);
 
-   if (sd->range_enable)
+   if (sd->intvl_enable)
      edje_object_part_drag_value_set
         (wd->resize_obj, "elm.dragable2.slider", pos2, pos2);
 
@@ -248,7 +248,7 @@ _units_set(Evas_Object *obj)
      {
         char buf[1024];
 
-        if (!sd->range_enable)
+        if (!sd->intvl_enable)
           snprintf(buf, sizeof(buf), sd->units, sd->val);
         else
           {
@@ -293,7 +293,7 @@ _indicator_set(Evas_Object *obj)
         if (sd->popup2)
           {
              if (sd->indicator_format_free) sd->indicator_format_free(buf);
-             buf = sd->indicator_format_func(sd->range_to);
+             buf = sd->indicator_format_func(sd->intvl_to);
              elm_layout_text_set(obj, "elm.dragable2.slider:elm.indicator", buf);
              edje_object_part_text_set(sd->popup2, "elm.indicator", buf);
           }
@@ -312,7 +312,7 @@ _indicator_set(Evas_Object *obj)
         if (sd->popup2)
           {
              memset(buf, 0, 1024);
-             snprintf(buf, sizeof(buf), sd->indicator, sd->range_to);
+             snprintf(buf, sizeof(buf), sd->indicator, sd->intvl_to);
              elm_layout_text_set(obj, "elm.dragable2.slider:elm.indicator", buf);
              edje_object_part_text_set(sd->popup2, "elm.indicator", buf);
           }
@@ -748,7 +748,7 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
 
    if (_is_horizontal(sd->orientation))
      {
-        if (!sd->range_enable)
+        if (!sd->intvl_enable)
           eina_stringshare_replace(&ld->group, "horizontal");
         else
           eina_stringshare_replace(&ld->group, "range/horizontal");
@@ -763,7 +763,7 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
      }
    else
      {
-        if (!sd->range_enable)
+        if (!sd->intvl_enable)
           eina_stringshare_replace(&ld->group, "vertical");
         else
           eina_stringshare_replace(&ld->group, "range/vertical");
@@ -785,16 +785,16 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
      {
         edje_object_scale_set(sd->popup, efl_ui_scale_get(obj) *
                               elm_config_scale_get());
-        if (sd->range_enable && sd->popup2)
+        if (sd->intvl_enable && sd->popup2)
           edje_object_scale_set(sd->popup2, efl_ui_scale_get(obj) *
                                 elm_config_scale_get());
-        else if (sd->range_enable && !sd->popup2)
+        else if (sd->intvl_enable && !sd->popup2)
           _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
      }
    else
      {
         _popup_add(sd, obj, &sd->popup, &sd->track, EINA_FALSE);
-        if (sd->range_enable && !sd->popup2)
+        if (sd->intvl_enable && !sd->popup2)
           _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
      }
 
@@ -807,7 +807,7 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
        (sd->spacer, 1, (double)sd->size * efl_ui_scale_get(obj) *
        elm_config_scale_get());
 
-   if (sd->range_enable)
+   if (sd->intvl_enable)
      elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
    else
      elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
@@ -871,7 +871,7 @@ _move_knob_on_mouse(Evas_Object *obj, double button_x, double button_y)
    ELM_SLIDER_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (!sd->range_enable)
+   if (!sd->intvl_enable)
      {
         edje_object_part_drag_value_set
            (wd->resize_obj, "elm.dragable.slider",
@@ -1174,10 +1174,10 @@ _efl_ui_slider_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Slider_Data *priv)
    evas_object_pass_events_set(priv->spacer, EINA_TRUE);
    elm_layout_content_set(obj, "elm.swallow.bar", priv->spacer);
 
-   if (!priv->range_enable)
-     _popup_add(priv, obj, &priv->popup, &priv->track, priv->range_enable);
+   if (!priv->intvl_enable)
+     _popup_add(priv, obj, &priv->popup, &priv->track, priv->intvl_enable);
    else
-     _popup_add(priv, obj, &priv->popup2, &priv->track2, priv->range_enable);
+     _popup_add(priv, obj, &priv->popup2, &priv->track2, priv->intvl_enable);
 
    evas_object_event_callback_add
      (priv->spacer, EVAS_CALLBACK_MOUSE_DOWN, _spacer_down_cb, obj);
@@ -1229,18 +1229,18 @@ _efl_ui_slider_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider
 EOLIAN static Eina_Bool
 _efl_ui_slider_efl_ui_range_range_interval_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd)
 {
-   return pd->range_enable;
+   return pd->intvl_enable;
 }
 
 EOLIAN static void
 _efl_ui_slider_efl_ui_range_range_interval_enabled_set(Eo *obj, Efl_Ui_Slider_Data *sd, Eina_Bool enable)
 {
-   if (sd->range_enable == enable) return;
+   if (sd->intvl_enable == enable) return;
 
-   sd->range_enable = enable;
+   sd->intvl_enable = enable;
 
    elm_obj_widget_theme_apply(obj);
-   if (sd->range_enable)
+   if (sd->intvl_enable)
      {
         elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
         if (sd->indicator_show)
@@ -1256,20 +1256,20 @@ _efl_ui_slider_efl_ui_range_range_interval_enabled_set(Eo *obj, Efl_Ui_Slider_Da
 EOLIAN static void
 _efl_ui_slider_efl_ui_range_range_interval_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd, double *from, double *to)
 {
-   if (from) *from = fmin(pd->range_from, pd->range_to);
-   if (to) *to = fmax(pd->range_from, pd->range_to);
+   if (from) *from = fmin(pd->intvl_from, pd->intvl_to);
+   if (to) *to = fmax(pd->intvl_from, pd->intvl_to);
 }
 
 EOLIAN static void
 _efl_ui_slider_efl_ui_range_range_interval_set(Eo *obj, Efl_Ui_Slider_Data *pd, double from, double to)
 {
-   pd->range_from = from;
+   pd->intvl_from = from;
    //TODO: remove val later
    pd->val = from;
-   pd->range_to = to;
+   pd->intvl_to = to;
 
-   if (pd->range_from < pd->val_min) pd->range_from = pd->val_min;
-   if (pd->range_to > pd->val_max) pd->range_to = pd->val_max;
+   if (pd->intvl_from < pd->val_min) pd->intvl_from = pd->val_min;
+   if (pd->intvl_to > pd->val_max) pd->intvl_to = pd->val_max;
 
    _visuals_refresh(obj);
 }
@@ -1496,7 +1496,7 @@ _efl_ui_slider_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Slider_Data *sd, dou
 {
    if (sd->val == val) return;
    sd->val = val;
-   sd->range_from = val;
+   sd->intvl_from = val;
 
    if (sd->val < sd->val_min) sd->val = sd->val_min;
    if (sd->val > sd->val_max) sd->val = sd->val_max;
