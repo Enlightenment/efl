@@ -1462,3 +1462,10 @@ ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool focus_skip)
    EINA_SAFETY_ON_NULL_RETURN(window);
    window->focus_skip = focus_skip;
 }
+
+EAPI Eina_Bool
+ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
+   return window->focus_skip;
+}

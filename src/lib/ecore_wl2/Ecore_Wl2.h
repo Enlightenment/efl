@@ -1194,6 +1194,18 @@ EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *win
 EAPI void ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool focus_skip);
 
 /**
+ * Get if this window ignores focus requests
+ *
+ * @param window
+ *
+ * @return EINA_TRUE if a window should skip focus requests, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window);
+
+/**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
  *
