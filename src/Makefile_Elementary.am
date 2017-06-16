@@ -32,6 +32,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_index.eo \
 	lib/elementary/elm_interface_accessible_observer.eo \
 	lib/elementary/elm_interface_atspi_accessible.eo \
+	lib/elementary/elm_atspi_adaptor.eo \
 	lib/elementary/elm_interface_atspi_action.eo \
 	lib/elementary/elm_interface_atspi_component.eo \
 	lib/elementary/elm_interface_atspi_text_editable.eo \
@@ -136,6 +137,10 @@ elm_public_eolian_files = \
 elm_private_eolian_files = \
 	lib/elementary/elm_atspi_bridge.eo \
 	lib/elementary/elm_interface_accessible_observer.eo \
+	lib/elementary/elm_atspi_status_monitor.eo \
+	lib/elementary/elm_atspi_adaptor.eo \
+	lib/elementary/elm_atspi_cache.eo \
+	lib/elementary/elm_atspi_device_event_controller.eo \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
 	lib/elementary/efl_ui_win_internal_part.eo \
 	tests/elementary/focus_test.eo \
@@ -146,8 +151,6 @@ elm_private_eolian_files = \
 elm_legacy_eolian_files = \
 	lib/elementary/elm_access.eo \
 	lib/elementary/elm_actionslider.eo \
-	lib/elementary/elm_atspi_status_monitor.eo \
-	lib/elementary/elm_atspi_device_event_controller.eo \
 	lib/elementary/elm_box.eo \
 	lib/elementary/elm_bubble.eo \
 	lib/elementary/elm_diskselector.eo \
@@ -565,7 +568,6 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elc_scrolled_entry.c \
 	lib/elementary/elm_access.c \
 	lib/elementary/elm_actionslider.c \
-	lib/elementary/elm_atspi_adaptor.c \
 	lib/elementary/elm_atspi_app_object.c \
 	lib/elementary/elm_atspi_bridge.c \
 	lib/elementary/elm_atspi_cache.c \
@@ -573,7 +575,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_atspi_plug.c \
 	lib/elementary/elm_atspi_proxy.c \
 	lib/elementary/elm_atspi_socket.c \
+	lib/elementary/elm_atspi_adaptor.c \
 	lib/elementary/elm_atspi_status_monitor.c \
+	lib/elementary/elm_atspi_dbus_reference_private.c \
 	lib/elementary/elm_bg.c \
 	lib/elementary/elm_box.c \
 	lib/elementary/elm_bubble.c \

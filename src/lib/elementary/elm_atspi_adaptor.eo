@@ -1,0 +1,16 @@
+import elm_interface_atspi_accessible;
+
+class Elm.Atspi.Adaptor (Efl.Object)
+{
+   methods {
+        event_handle {
+             params {
+                  @in event: const(ptr(Elm.Accessible.Event));
+             }
+        }
+   }
+   implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+   }
+}

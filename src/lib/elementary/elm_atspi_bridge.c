@@ -23,6 +23,8 @@
 #include "elm_atspi_status_monitor.eo.legacy.h"
 #include "elm_atspi_device_event_controller.eo.h"
 #include "elm_atspi_device_event_controller.eo.legacy.h"
+#include "elm_atspi_adaptor.eo.h"
+#include "elm_atspi_adaptor.eo.legacy.h"
 
 /*
  * Accessibility Bus info not defined in atspi-constants.h
@@ -61,11 +63,11 @@
 
 typedef struct _Elm_Atspi_Bridge_Data
 {
-   Elm_Atspi_Status_Monitor *monitor;
-   Elm_Atspi_Device_Event_Controller *device_event_controller;
-
    // connection
    Eldbus_Connection *a11y_bus;
+
+   Elm_Atspi_Status_Monitor *monitor;
+   Elm_Atspi_Device_Event_Controller *device_event_controller;
 
    Eldbus_Signal_Handler *register_hdl;
    Eldbus_Signal_Handler *unregister_hdl;
@@ -4897,7 +4899,7 @@ _bridge_plug_unregister(Eo *bridge, Elm_Atspi_Plug *plug)
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
    Eina_List *node;
 
-   if ((node = eina_list_data_find_list(pd->plugs, plug)))
+   if (node = eina_list_data_find_list(pd->plugs, plug))
      {
         if (pd->connected)
            _bridge_object_unregister(bridge, plug);

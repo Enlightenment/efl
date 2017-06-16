@@ -1,0 +1,25 @@
+class Elm.Atspi.Cache (Efl.Object)
+{
+   methods {
+        add {
+             params {
+                  @in access: Elm.Interface.Atspi_Accessible;
+             }
+        }
+        remove {
+             params {
+                  @in access: Elm.Interface.Atspi_Accessible;
+             }
+        }
+        object_contains {
+             params {
+                  @in access: Elm.Interface.Atspi_Accessible;
+             }
+             return: bool;
+        }
+   }
+   implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+   }
+}

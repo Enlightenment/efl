@@ -1,11 +1,3 @@
-struct Elm.Accessible.Event
-{
-   [[Accessibility event]]
-   object: Elm.Interface.Atspi_Accessible;
-   desc: const(ptr(Efl.Event.Description));
-   info: void_ptr;
-}
-
 interface Elm.Interface.Accessible_Observer ()
 {
    [[Interface should be implemented by any object that requires listening
