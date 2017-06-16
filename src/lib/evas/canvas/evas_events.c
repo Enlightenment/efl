@@ -39,6 +39,15 @@ _evas_event_feed_check(Evas_Public_Data *e)
    CRI("Feeding new input events from a post-event callback is risky!");
 }
 
+static inline Eina_Bool
+_evas_event_object_pointer_allow(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Pointer_Data *obj_pdata)
+{
+   return (obj->is_event_parent || evas_object_clippers_is_visible(eo_obj, obj) || obj_pdata->mouse_grabbed) &&
+           (!evas_event_passes_through(eo_obj, obj)) &&
+           (!evas_event_freezes_through(eo_obj, obj)) &&
+           (!obj->clip.clipees);
+}
+
 #define EVAS_EVENT_FEED_SAFETY_CHECK(evas) _evas_event_feed_check(evas)
 
 static void
@@ -591,12 +600,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                   continue;
                }
 
-             if ((child->is_event_parent ||
-                 evas_object_clippers_is_visible(eo_child, child) ||
-                 obj_pdata->mouse_grabbed) &&
-               (!evas_event_passes_through(eo_child, child)) &&
-               (!evas_event_freezes_through(eo_child, child)) &&
-               (!child->clip.clipees))
+             if (_evas_event_object_pointer_allow(eo_child, child, obj_pdata))
                {
                   ev->cur = curpt;
                   ev->prev = prevpt;
@@ -681,13 +685,8 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
              ev->cur = curpt;
              if (evas_object_is_in_output_rect(eo_child, child,
                                                ev->cur.x, ev->cur.y, 1, 1) &&
-                (child->is_event_parent ||
-                 evas_object_clippers_is_visible(eo_child, child) ||
-                 obj_pdata->mouse_grabbed) &&
+                _evas_event_object_pointer_allow(eo_child, child, obj_pdata) &&
                 eina_list_data_find(ins, eo_child) &&
-               (!evas_event_passes_through(eo_child, child)) &&
-               (!evas_event_freezes_through(eo_child, child)) &&
-               (!child->clip.clipees) &&
                ((!child->precise_is_inside) ||
                 evas_object_is_inside(eo_child, child, ev->cur.x, ev->cur.y)))
                {
@@ -1076,11 +1075,7 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
                       ev->device);
                   continue;
                }
-             if (((child->is_event_parent || evas_object_clippers_is_visible(eo_child, child)) ||
-                  ((obj_pdata->mouse_grabbed) &&
-                  (!evas_event_passes_through(eo_child, child)) &&
-                  (!evas_event_freezes_through(eo_child, child)) &&
-                  (!child->clip.clipees))))
+             if (_evas_event_object_pointer_allow(eo_child, child, obj_pdata))
                {
                   ev->cur = point;
                   _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, obj_pdata->mouse_grabbed);
@@ -1126,12 +1121,8 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
                }
 
              if (evas_object_is_in_output_rect(eo_child, child, ev->cur.x, ev->cur.y, 1, 1) &&
-                (child->is_event_parent || evas_object_clippers_is_visible(eo_child, child) ||
-                 obj_pdata->mouse_grabbed) &&
+                _evas_event_object_pointer_allow(eo_child, child, obj_pdata) &&
                 eina_list_data_find(ins, eo_child) &&
-               (!evas_event_passes_through(eo_child, child)) &&
-               (!evas_event_freezes_through(eo_child, child)) &&
-               (!child->clip.clipees) &&
                ((!child->precise_is_inside) ||
                 evas_object_is_inside(eo_child, child, ev->cur.x, ev->cur.y)))
                {
@@ -2115,13 +2106,9 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                   continue;
                }
              if ((!e->is_frozen) &&
-                 (obj->is_event_parent || evas_object_clippers_is_visible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
-                 (!evas_event_passes_through(eo_obj, obj)) &&
-                 (!evas_event_freezes_through(eo_obj, obj)) &&
+                 _evas_event_object_pointer_allow(eo_obj, obj, obj_pdata) &&
                  (!evas_object_is_source_invisible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
-                 (!obj->clip.clipees))
+                  obj_pdata->mouse_grabbed))
                {
                   if ((px != x) || (py != y))
                     {
@@ -2208,14 +2195,10 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              //	     evas_object_clip_recalc(eo_obj);
              if ((!e->is_frozen) &&
                  evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1) &&
-                 (obj->is_event_parent || evas_object_clippers_is_visible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
+                 _evas_event_object_pointer_allow(eo_obj, obj, obj_pdata) &&
                  eina_list_data_find(ins, eo_obj) &&
-                 (!evas_event_passes_through(eo_obj, obj)) &&
-                 (!evas_event_freezes_through(eo_obj, obj)) &&
                  (!evas_object_is_source_invisible(eo_obj, obj) ||
                   obj_pdata->mouse_grabbed) &&
-                 (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
                 )
                {
@@ -2351,14 +2334,10 @@ nogrep:
              //	     evas_object_clip_recalc(eo_obj);
              if ((!e->is_frozen) &&
                  evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1) &&
-                 (obj->is_event_parent || evas_object_clippers_is_visible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
+                 _evas_event_object_pointer_allow(eo_obj, obj, obj_pdata) &&
                  eina_list_data_find(newin, eo_obj) &&
-                 (!evas_event_passes_through(eo_obj, obj)) &&
-                 (!evas_event_freezes_through(eo_obj, obj)) &&
                  (!evas_object_is_source_invisible(eo_obj, obj) ||
                   obj_pdata->mouse_grabbed) &&
-                 (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
                 )
                {
@@ -3000,13 +2979,9 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                       ev->device);
                   continue;
                }
-             if ((obj->is_event_parent || evas_object_clippers_is_visible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
-                 (!evas_event_passes_through(eo_obj, obj)) &&
-                 (!evas_event_freezes_through(eo_obj, obj)) &&
+             if (_evas_event_object_pointer_allow(eo_obj, obj, obj_pdata) &&
                  (!evas_object_is_source_invisible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
-                 (!obj->clip.clipees))
+                  obj_pdata->mouse_grabbed))
                {
                   ev->cur = point;
                   _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj_pdata->mouse_grabbed);
@@ -3044,14 +3019,10 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              // FIXME: i don't think we need this
              //	     evas_object_clip_recalc(eo_obj);
              if (evas_object_is_in_output_rect(eo_obj, obj, ev->cur.x, ev->cur.y, 1, 1) &&
-                 (obj->is_event_parent || evas_object_clippers_is_visible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
+                 _evas_event_object_pointer_allow(eo_obj, obj, obj_pdata) &&
                  eina_list_data_find(ins, eo_obj) &&
-                 (!evas_event_passes_through(eo_obj, obj)) &&
-                 (!evas_event_freezes_through(eo_obj, obj)) &&
                  (!evas_object_is_source_invisible(eo_obj, obj) ||
                   obj_pdata->mouse_grabbed) &&
-                 (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, ev->cur.x, ev->cur.y))
                 )
                {
