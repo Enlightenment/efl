@@ -444,12 +444,6 @@ group { name: "e/widgets/border/default/border";
          description { rel.to: "top";
             color: 0 0 0 0;
          }
-         program {
-            signal: "e,titlebar,nograb"; source: "e";
-            script {
-               set_pointer_mode(PART:"e.event.titlebar", 1);
-            }
-         }
       }
       part { name: "e.event.icon"; type: RECT;
          description { state: "default" 0.0;
@@ -664,6 +658,18 @@ group { name: "e/widgets/border/default/border";
 
    }
    programs {
+      program {
+         signal: "e,version,22"; source: "e";
+         script {
+            set_pointer_mode(PART:"e.event.titlebar", 1);
+            set_pointer_mode(PART:"e.event.resize.tl", 1);
+            set_pointer_mode(PART:"e.event.resize.t", 1);
+            set_pointer_mode(PART:"e.event.resize.tr", 1);
+            set_pointer_mode(PART:"e.event.resize.bl", 1);
+            set_pointer_mode(PART:"e.event.resize.b", 1);
+            set_pointer_mode(PART:"e.event.resize.br", 1);
+         }
+      }
       program {
          signal: "e,state,shadow,on"; source: "e";
          action: STATE_SET "default" 0.0;
