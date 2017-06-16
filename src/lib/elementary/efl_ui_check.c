@@ -47,7 +47,7 @@ static const Elm_Action key_actions[] = {
 static void
 _activate(Evas_Object *obj)
 {
-   ELM_CHECK_DATA_GET(obj, sd);
+   EFL_UI_CHECK_DATA_GET(obj, sd);
 
    efl_ui_nstate_activate(obj);
    if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
@@ -245,7 +245,7 @@ _on_check_off(void *data,
 {
    Evas_Object *obj = data;
 
-   ELM_CHECK_DATA_GET(obj, sd);
+   EFL_UI_CHECK_DATA_GET(obj, sd);
 
    efl_ui_nstate_value_set(obj, 0);
    if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
@@ -267,7 +267,7 @@ _on_check_on(void *data,
 {
    Evas_Object *obj = data;
 
-   ELM_CHECK_DATA_GET(obj, sd);
+   EFL_UI_CHECK_DATA_GET(obj, sd);
 
    efl_ui_nstate_value_set(obj, 1);
    if (sd->statep) *sd->statep = efl_ui_nstate_value_get(obj);
@@ -398,7 +398,7 @@ elm_check_state_get(const Evas_Object *obj)
 EAPI void
 elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
 {
-   ELM_CHECK_DATA_GET_OR_RETURN(obj, sd);
+   EFL_UI_CHECK_DATA_GET_OR_RETURN(obj, sd);
    if (!statep)
      {
         sd->statep = NULL;

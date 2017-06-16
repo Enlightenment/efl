@@ -33,11 +33,11 @@ struct _Efl_Ui_Check_Data
  * @}
  */
 
-#define ELM_CHECK_DATA_GET(o, sd) \
+#define EFL_UI_CHECK_DATA_GET(o, sd) \
   Efl_Ui_Check_Data * sd = efl_data_scope_get(o, EFL_UI_CHECK_CLASS)
 
-#define ELM_CHECK_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_CHECK_DATA_GET(o, ptr);                        \
+#define EFL_UI_CHECK_DATA_GET_OR_RETURN(o, ptr)         \
+  EFL_UI_CHECK_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("No widget data for object %p (%s)",      \
@@ -45,8 +45,8 @@ struct _Efl_Ui_Check_Data
        return;                                       \
     }
 
-#define ELM_CHECK_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_CHECK_DATA_GET(o, ptr);                         \
+#define EFL_UI_CHECK_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  EFL_UI_CHECK_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
        CRI("No widget data for object %p (%s)",       \
@@ -54,7 +54,7 @@ struct _Efl_Ui_Check_Data
        return val;                                    \
     }
 
-#define ELM_CHECK_CHECK(obj)                       \
+#define EFL_UI_CHECK_CHECK(obj)                       \
   if (EINA_UNLIKELY(!efl_isa((obj), ELM_CHECK_CLASS))) \
     return
 
