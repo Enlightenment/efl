@@ -88,6 +88,25 @@ _del_cb(void *data, const Efl_Event *ev)
    else if (e->default_keyboard == ev->object)
      e->default_keyboard = _new_default_device_find(e, ev->object);
 
+   if ((efl_input_device_type_get(ev->object) == EFL_INPUT_DEVICE_TYPE_SEAT) && (!e->default_seat))
+     {
+        Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, ev->object);
+        if (pdata)
+          {
+             Evas_Pointer_Seat *pseat;
+
+             EINA_INLIST_FOREACH(e->seats, pseat)
+               {
+                  /* store to dummy seat data for when seat reattaches */
+                  if (pseat->seat) continue;
+                  pseat->x = pdata->seat->x;
+                  pseat->y = pdata->seat->y;
+                  pseat->inside = pdata->seat->inside;
+                  break;
+               }
+          }
+     }
+
    _evas_pointer_data_remove(e, ev->object);
    eina_hash_del_by_key(e->locks.masks, &ev->object);
    eina_hash_del_by_key(e->modifiers.masks, &ev->object);
