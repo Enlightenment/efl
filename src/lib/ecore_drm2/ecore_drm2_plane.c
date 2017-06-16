@@ -137,7 +137,6 @@ ecore_drm2_plane_release(Ecore_Drm2_Plane *plane)
      eina_list_append(plane->output->fbs, plane->state->fb);
 
    plane->dead = EINA_TRUE;
-   plane->state->fb = NULL;
    plane->state->in_use = EINA_FALSE;
    _fb_atomic_flip_test(plane->output);
 }
