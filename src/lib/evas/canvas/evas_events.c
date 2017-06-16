@@ -4122,16 +4122,18 @@ _evas_canvas_event_pointer_in_rect_mouse_move_feed(Evas_Public_Data *edata,
                                                    Eina_Bool in_objects_list,
                                                    void *data)
 {
-   Eina_List *l;
-   Evas_Pointer_Data *pdata;
+   Evas_Pointer_Seat *pseat;
 
-   EINA_LIST_FOREACH(edata->pointers, l, pdata)
+   EINA_INLIST_FOREACH(edata->seats, pseat)
      {
-        if (!evas_object_is_in_output_rect(obj, obj_data, pdata->seat->x,
-                                           pdata->seat->y, w, h))
+        if (!evas_object_is_in_output_rect(obj, obj_data, pseat->x,
+                                           pseat->y, w, h))
           continue;
-        if ((in_objects_list && eina_list_data_find(pdata->seat->object.in, obj)) || !in_objects_list)
-          _evas_canvas_event_pointer_move_event_dispatch(edata, pdata, data);
+        if ((in_objects_list && eina_list_data_find(pseat->object.in, obj)) || !in_objects_list)
+          {
+             Evas_Pointer_Data *pdata = EINA_INLIST_CONTAINER_GET(pseat->pointers, Evas_Pointer_Data);
+             _evas_canvas_event_pointer_move_event_dispatch(edata, pdata, data);
+          }
      }
 }
 
@@ -4144,17 +4146,26 @@ _evas_canvas_event_pointer_in_list_mouse_move_feed(Evas_Public_Data *edata,
                                                    Eina_Bool xor_rule,
                                                    void *data)
 {
-   Eina_List *l;
-   Evas_Pointer_Data *pdata;
+   Evas_Pointer_Seat *pseat;
 
-   EINA_LIST_FOREACH(edata->pointers, l, pdata)
+   EINA_INLIST_FOREACH(edata->seats, pseat)
      {
-        int in = evas_object_is_in_output_rect(obj, obj_data, pdata->seat->x,
-                                               pdata->seat->y, w, h);
-        Evas_Pointer_Data *found = eina_list_data_find(was, pdata);
+        Evas_Pointer_Data *pdata, *found = NULL;
+        Eina_List *l;
+        int in = evas_object_is_in_output_rect(obj, obj_data, pseat->x,
+                                               pseat->y, w, h);
+        EINA_LIST_FOREACH(was, l, pdata)
+          if (pdata->seat == pseat)
+            {
+               found = pdata;
+               break;
+            }
 
         if ((xor_rule && ((in && !found) || (!in && found))) ||
             (!xor_rule && (in || found)))
-          _evas_canvas_event_pointer_move_event_dispatch(edata, pdata, data);
+          {
+             if (!pdata) pdata = EINA_INLIST_CONTAINER_GET(pseat->pointers, Evas_Pointer_Data);
+             _evas_canvas_event_pointer_move_event_dispatch(edata, pdata, data);
+          }
      }
 }

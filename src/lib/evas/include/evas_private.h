@@ -826,8 +826,9 @@ typedef struct
 
 typedef struct Evas_Pointer_Seat
 {
+   EINA_INLIST;
    Evas_Device *seat;
-   Eina_List *pointers;
+   Eina_Inlist *pointers;
    struct {
       Eina_List *in;
    } object;
@@ -841,6 +842,7 @@ typedef struct Evas_Pointer_Seat
 
 struct _Evas_Pointer_Data
 {
+   EINA_INLIST;
    Evas_Device    *pointer;
    DATA32         button;
    Evas_Pointer_Seat *seat;
@@ -860,7 +862,7 @@ struct _Evas_Public_Data
    DATA32            magic;
    Evas              *evas;
 
-   Eina_List         *pointers;
+   Eina_Inlist       *seats;
 
    struct  {
       Evas_Coord     x, y, w, h;

@@ -279,7 +279,6 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    Efl_Canvas_Output *evo;
    int i;
    Eina_Bool del;
-   Evas_Pointer_Data *pdata;
 
    evas_canvas_async_block(e);
    if (e->walking_list == 0) evas_render_idle_flush(eo_e);
@@ -400,10 +399,19 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    _evas_device_cleanup(eo_e);
    e->focused_by = eina_list_free(e->focused_by);
 
-   while (e->pointers)
+   while (e->seats)
      {
-        pdata = eina_list_data_get(e->pointers);
-        _evas_pointer_data_remove(e, pdata->pointer);
+        Evas_Pointer_Seat *pseat = EINA_INLIST_CONTAINER_GET(e->seats, Evas_Pointer_Seat);
+
+        eina_list_free(pseat->object.in);
+        while (pseat->pointers)
+          {
+             Evas_Pointer_Data *pdata = EINA_INLIST_CONTAINER_GET(pseat->pointers, Evas_Pointer_Data);
+             pseat->pointers = eina_inlist_remove(pseat->pointers, pseat->pointers);
+             free(pdata);
+          }
+        e->seats = eina_inlist_remove(e->seats, e->seats);
+        free(pseat);
      }
 
    eina_lock_free(&(e->lock_objects));
@@ -1130,18 +1138,25 @@ evas_output_viewport_get(const Evas *eo_e, Evas_Coord *x, Evas_Coord *y, Evas_Co
 Evas_Pointer_Data *
 _evas_pointer_data_by_device_get(Evas_Public_Data *edata, Efl_Input_Device *pointer)
 {
-   Eina_List *l;
    Evas_Pointer_Data *pdata;
-   Efl_Input_Device *seat = NULL;
+   Evas_Pointer_Seat *pseat;
+   Eo *seat;
 
-   if (pointer) seat = efl_input_device_seat_get(pointer);
-   if (!seat) seat = edata->default_seat;
+   if (!pointer)
+     pointer = edata->default_mouse;
+   if (!pointer) return NULL;
+   seat = efl_input_device_seat_get(pointer);
+   if (!seat) return NULL;
 
-   EINA_LIST_FOREACH(edata->pointers, l, pdata)
-     {
-        if (pdata->seat->seat == seat)
-          return pdata;
-     }
+   EINA_INLIST_FOREACH(edata->seats, pseat)
+     EINA_INLIST_FOREACH(pseat->pointers, pdata)
+       {
+          if (pointer == seat)
+            {
+               if (pseat->seat == seat) return pdata;
+            }
+          else if (pdata->pointer == pointer) return pdata;
+       }
    return NULL;
 }
 
@@ -1150,58 +1165,60 @@ _evas_pointer_data_add(Evas_Public_Data *edata, Efl_Input_Device *pointer)
 {
    Evas_Pointer_Data *pdata;
    Evas_Pointer_Seat *pseat = NULL;
-   Eina_List *l;
    Eo *seat;
 
    seat = efl_input_device_seat_get(pointer);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pointer, EINA_FALSE);
-   EINA_LIST_FOREACH(edata->pointers, l, pdata)
-     if (pdata->seat->seat == seat)
-       {
-          pseat = pdata->seat;
-          break;
-       }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, EINA_FALSE);
+   EINA_INLIST_FOREACH(edata->seats, pseat)
+     if (pseat->seat == seat) break;
    if (!pseat)
      {
         pseat = calloc(1, sizeof(Evas_Pointer_Seat));
         EINA_SAFETY_ON_NULL_RETURN_VAL(pseat, EINA_FALSE);
         pseat->seat = seat;
+        edata->seats = eina_inlist_append(edata->seats, EINA_INLIST_GET(pseat));
      }
    pdata = calloc(1, sizeof(Evas_Pointer_Data));
    if (!pdata)
      {
-        free(pseat);
+        if (!pseat->pointers)
+          {
+             edata->seats = eina_inlist_remove(edata->seats, EINA_INLIST_GET(pseat));
+             free(pseat);
+          }
         ERR("alloc fail");
         return EINA_FALSE;
      }
 
    pdata->pointer = pointer;
-   edata->pointers = eina_list_append(edata->pointers, pdata);
    pdata->seat = pseat;
-   pseat->pointers = eina_list_append(pseat->pointers, pdata);
+   pseat->pointers = eina_inlist_append(pseat->pointers, EINA_INLIST_GET(pdata));
    return EINA_TRUE;
 }
 
 void
 _evas_pointer_data_remove(Evas_Public_Data *edata, Efl_Input_Device *pointer)
 {
-   Eina_List *l;
    Evas_Pointer_Data *pdata;
+   Evas_Pointer_Seat *pseat;
+   Eo *seat;
 
-   EINA_LIST_FOREACH(edata->pointers, l, pdata)
+   seat = efl_input_device_seat_get(pointer);   
+   EINA_INLIST_FOREACH(edata->seats, pseat)
      {
-        if (pdata->pointer == pointer)
-          {
-             edata->pointers = eina_list_remove_list(edata->pointers, l);
-             pdata->seat->pointers = eina_list_remove(pdata->seat->pointers, pdata);
-             if (!pdata->seat->pointers)
-               {
-                  eina_list_free(pdata->seat->object.in);
-                  free(pdata->seat);
-               }
-             free(pdata);
-             break;
-          }
+        if (pseat->seat != seat) continue;
+        EINA_INLIST_FOREACH(pseat->pointers, pdata)
+          if (pdata->pointer == pointer)
+            {
+               pseat->pointers = eina_inlist_remove(pseat->pointers, EINA_INLIST_GET(pdata));
+               free(pdata);
+               break;
+            }
+        if (pseat->pointers) break;
+        eina_list_free(pseat->object.in);
+        edata->seats = eina_inlist_remove(edata->seats, EINA_INLIST_GET(pseat));
+        free(pseat);
+        break;
      }
 }
 
@@ -1210,13 +1227,15 @@ _evas_pointer_list_in_rect_get(Evas_Public_Data *edata, Evas_Object *obj,
                                Evas_Object_Protected_Data *obj_data,
                                int w, int h)
 {
-   Eina_List *l, *list = NULL;
-   Evas_Pointer_Data *pdata;
+   Eina_List *list = NULL;
+   Evas_Pointer_Seat *pseat;
 
-   EINA_LIST_FOREACH(edata->pointers, l, pdata)
+   EINA_INLIST_FOREACH(edata->seats, pseat)
      {
-        if (evas_object_is_in_output_rect(obj, obj_data, pdata->seat->x,
-                                          pdata->seat->y, w, h))
+        Evas_Pointer_Data *pdata;
+        if (!evas_object_is_in_output_rect(obj, obj_data, pseat->x, pseat->y, w, h)) continue;
+        pdata = EINA_INLIST_CONTAINER_GET(pseat->pointers, Evas_Pointer_Data);
+        if (pdata)
           list = eina_list_append(list, pdata);
      }
 
