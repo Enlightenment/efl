@@ -2054,8 +2054,26 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    if (e->is_frozen) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
-   pdata = _evas_pointer_data_by_device_get(e, ev->device);
-   if (!pdata) return;
+   if (ev->device)
+     {
+        pdata = _evas_pointer_data_by_device_get(e, ev->device);
+        if (!pdata) return;
+     }
+   else
+     {
+        Evas_Pointer_Seat *pseat;
+        if (!e->seats) return;
+        pseat = EINA_INLIST_CONTAINER_GET(e->seats, Evas_Pointer_Seat);
+        pseat->inside = 1;
+        e->last_timestamp = ev->timestamp;
+        pseat->prev.x = pseat->x;
+        pseat->prev.y = pseat->y;
+
+        // new pos
+        pseat->x = ev->cur.x;
+        pseat->y = ev->cur.y;
+        return;
+     }
 
    eo_e = e->evas;
    e->last_timestamp = ev->timestamp;
@@ -2469,8 +2487,19 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
    if (!e || !ev) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
-   pdata = _evas_pointer_data_by_device_get(e, ev->device);
-   if (!pdata) return;
+   if (ev->device)
+     {
+        pdata = _evas_pointer_data_by_device_get(e, ev->device);
+        if (!pdata) return;
+     }
+   else
+     {
+        Evas_Pointer_Seat *pseat;
+        if (!e->seats) return;
+        pseat = EINA_INLIST_CONTAINER_GET(e->seats, Evas_Pointer_Seat);
+        pseat->inside = 1;
+        return;
+     }
 
    pdata->seat->inside = 1;
    if (e->is_frozen) return;
@@ -2549,8 +2578,19 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
 
    if (!e || !ev) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
-   pdata = _evas_pointer_data_by_device_get(e, ev->device);
-   if (!pdata) return;
+   if (ev->device)
+     {
+        pdata = _evas_pointer_data_by_device_get(e, ev->device);
+        if (!pdata) return;
+     }
+   else
+     {
+        Evas_Pointer_Seat *pseat;
+        if (!e->seats) return;
+        pseat = EINA_INLIST_CONTAINER_GET(e->seats, Evas_Pointer_Seat);
+        pseat->inside = 0;
+        return;
+     }
    pdata->seat->inside = 0;
 
    if (e->is_frozen) return;
@@ -4126,6 +4166,7 @@ _evas_canvas_event_pointer_in_rect_mouse_move_feed(Evas_Public_Data *edata,
 
    EINA_INLIST_FOREACH(edata->seats, pseat)
      {
+        if (!pseat->pointers) continue;
         if (!evas_object_is_in_output_rect(obj, obj_data, pseat->x,
                                            pseat->y, w, h))
           continue;
@@ -4152,7 +4193,10 @@ _evas_canvas_event_pointer_in_list_mouse_move_feed(Evas_Public_Data *edata,
      {
         Evas_Pointer_Data *pdata, *found = NULL;
         Eina_List *l;
-        int in = evas_object_is_in_output_rect(obj, obj_data, pseat->x,
+        int in;
+
+        if (!pseat->pointers) continue;
+        in = evas_object_is_in_output_rect(obj, obj_data, pseat->x,
                                                pseat->y, w, h);
         EINA_LIST_FOREACH(was, l, pdata)
           if (pdata->seat == pseat)

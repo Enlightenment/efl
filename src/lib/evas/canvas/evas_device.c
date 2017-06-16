@@ -186,7 +186,8 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
      e->default_keyboard = dev;
    else if (_is_pointer(clas))
      {
-        if (!_evas_pointer_data_add(e, dev))
+        Evas_Pointer_Data *pdata = _evas_pointer_data_add(e, dev);
+        if (!pdata)
           {
              efl_del(dev);
              return NULL;
@@ -198,7 +199,6 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
                  (parent_dev == e->default_seat) &&
                  (evas_device_class_get(e->default_mouse) != EVAS_DEVICE_CLASS_MOUSE))
                {
-                  Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, e->default_mouse);
                   Eina_Bool inside = pdata->seat->inside;
 
                   if (inside)
@@ -209,7 +209,19 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
                }
           }
         else
-          e->default_mouse = dev;
+          {
+             Evas_Pointer_Seat *pseat;
+
+             EINA_INLIST_FOREACH(e->seats, pseat)
+               if (!pseat->pointers) break;
+             e->default_mouse = dev;
+             if (pseat)
+               {
+                  if (pseat->inside)
+                    evas_event_feed_mouse_in(eo_e, 0, NULL);
+                  evas_event_feed_mouse_move(eo_e, pseat->x, pseat->y, 0, NULL);
+               }
+          }
      }
 
    // FIXME: All devices are in the same list, while evas only refs the seats
