@@ -818,6 +818,15 @@ EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
 EAPI void ecore_drm2_output_release_handler_set(Ecore_Drm2_Output *output, Ecore_Drm2_Release_Handler handler, void *data);
 
 /**
+ * Get the subpixel state of the output
+ * @param output the output
+ * @return The state value
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.20
+ */
+EAPI unsigned int ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers

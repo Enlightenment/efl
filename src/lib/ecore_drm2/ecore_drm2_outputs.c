@@ -1584,3 +1584,10 @@ err:
 
    return ret;
 }
+
+EAPI unsigned int
+ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+   return output->subpixel;
+}
