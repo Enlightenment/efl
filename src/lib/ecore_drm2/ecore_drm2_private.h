@@ -154,6 +154,7 @@ struct _Ecore_Drm2_Fb
    int w, h;
    int depth, bpp;
    short ref;
+   int scanout_count;
    uint32_t id, handles[4];
    uint32_t strides[4], sizes[4];
    uint32_t format;

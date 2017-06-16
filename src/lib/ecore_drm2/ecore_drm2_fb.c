@@ -149,6 +149,9 @@ _ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb)
 
    if (!fb->dead) ERR("Destroying an fb that hasn't been discarded");
 
+   if (fb->scanout_count)
+     ERR("Destroyed fb on scanout %d times.", fb->scanout_count);
+
    if (fb->mmap) munmap(fb->mmap, fb->sizes[0]);
 
    if (fb->id) sym_drmModeRmFB(fb->fd, fb->id);
@@ -264,6 +267,7 @@ _ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output EINA_UNUSED, Ecore_Drm2_
 EAPI Eina_Bool
 ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 {
+   Eina_Bool plane_scanout;
    Ecore_Drm2_Fb *fb;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
@@ -284,13 +288,22 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 
         EINA_LIST_FOREACH_SAFE(output->planes, l, ll, plane)
           {
+             fb = plane->fb;
              if (!plane->dead)
                {
+                  /* First time this plane is scanned out */
+                  if (!plane->scanout)
+                    fb->scanout_count++;
+
                   plane->scanout = EINA_TRUE;
                   continue;
                }
+             plane_scanout = plane->scanout;
              output->planes = eina_list_remove_list(output->planes, l);
              free(plane);
+             if (!plane_scanout) continue;
+
+             fb->scanout_count--;
           }
      }
 
