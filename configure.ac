@@ -5030,9 +5030,18 @@ EFL_LIB_END([Ethumb_Client])
 #### End of Ethumb_Client
 
 #### Elua
-
+AC_ARG_ENABLE([elua],
+   [AS_HELP_STRING([--enable-elua],[enable ELUA support. @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_elua="yes"
+    else
+       want_elua="no"
+    fi
+   ],
+   [want_elua="yes"])
 have_elua="yes"
-if test "${want_lua_old}" = "yes"; then
+if test "${want_lua_old}" = "yes" -o "x$want_elua" = "xno"; then
   have_elua="no"
 fi
 
