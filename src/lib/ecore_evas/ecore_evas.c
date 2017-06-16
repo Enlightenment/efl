@@ -3399,6 +3399,7 @@ _ecore_evas_mouse_move_process_internal(Ecore_Evas *ee,
    Efl_Input_Pointer *evt;
    Eina_Bool send_event = EINA_TRUE;
    Ecore_Evas_Cursor *cursor;
+   Eo *seat;
    int fx, fy, fw, fh, evt_x, evt_y;
 
    evas_output_framespace_get(ee->evas, &fx, &fy, &fw, &fh);
@@ -3406,16 +3407,20 @@ _ecore_evas_mouse_move_process_internal(Ecore_Evas *ee,
    if (pointer)
      {
         if (efl_input_device_type_get(pointer) != EFL_INPUT_DEVICE_TYPE_SEAT)
-          pointer = efl_input_device_seat_get(pointer);
-        if (efl_input_device_type_get(pointer) != EFL_INPUT_DEVICE_TYPE_SEAT)
-          {
-             ERR("Could not find seat");
-             return;
-          }
+          seat = efl_input_device_seat_get(pointer);
+        else seat = pointer;
      }
    else
-     pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
-   cursor = eina_hash_find(ee->prop.cursors, &pointer);
+     {
+        pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
+        seat = efl_input_device_seat_get(pointer);
+     }
+   if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT)
+     {
+        ERR("Could not find seat");
+        return;
+     }
+   cursor = eina_hash_find(ee->prop.cursors, &seat);
    if (cursor)
      {
         cursor->pos_x = x;
