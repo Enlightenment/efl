@@ -43,6 +43,8 @@ typedef enum _Ecore_Drm2_Fb_Status
    ECORE_DRM2_FB_STATUS_SCANOUT_OFF = 2,
    ECORE_DRM2_FB_STATUS_RELEASE = 4,
    ECORE_DRM2_FB_STATUS_DELETED = 8,
+   ECORE_DRM2_FB_STATUS_PLANE_ASSIGN = 16,
+   ECORE_DRM2_FB_STATUS_PLANE_RELEASE = 32,
 } Ecore_Drm2_Fb_Status;
 
 /* opaque structure to represent a drm device */

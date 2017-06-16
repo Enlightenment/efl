@@ -124,6 +124,10 @@ out:
    DBG("FB %d assigned to Plane %d", fb->id, pstate->obj_id);
    output->planes = eina_list_append(output->planes, plane);
 
+   if (fb->status_handler)
+     fb->status_handler(fb,
+                        ECORE_DRM2_FB_STATUS_PLANE_ASSIGN,
+                        fb->status_data);
    return plane;
 }
 
@@ -143,6 +147,11 @@ ecore_drm2_plane_release(Ecore_Drm2_Plane *plane)
    plane->dead = EINA_TRUE;
    plane->state->in_use = EINA_FALSE;
    _fb_atomic_flip_test(plane->output);
+
+   if (fb->status_handler)
+     fb->status_handler(fb,
+                        ECORE_DRM2_FB_STATUS_PLANE_RELEASE,
+                        fb->status_data);
 }
 
 EAPI void
