@@ -48,6 +48,13 @@ _evas_event_object_pointer_allow(Eo *eo_obj, Evas_Object_Protected_Data *obj, Ev
            (!obj->clip.clipees);
 }
 
+static inline Eina_Bool
+_evas_event_object_pointer_allow_precise(Eo *eo_obj, Evas_Object_Protected_Data *obj, int x, int y, const Eina_List *ins)
+{
+   return eina_list_data_find(ins, eo_obj) &&
+     ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y));
+}
+
 #define EVAS_EVENT_FEED_SAFETY_CHECK(evas) _evas_event_feed_check(evas)
 
 static void
@@ -686,9 +693,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
              if (evas_object_is_in_output_rect(eo_child, child,
                                                ev->cur.x, ev->cur.y, 1, 1) &&
                 _evas_event_object_pointer_allow(eo_child, child, obj_pdata) &&
-                eina_list_data_find(ins, eo_child) &&
-               ((!child->precise_is_inside) ||
-                evas_object_is_inside(eo_child, child, ev->cur.x, ev->cur.y)))
+                _evas_event_object_pointer_allow_precise(eo_child, child, ev->cur.x, ev->cur.y, ins))
                {
                   ev->action = EFL_POINTER_ACTION_MOVE;
                   _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, obj_pdata->mouse_grabbed);
@@ -1122,9 +1127,7 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
 
              if (evas_object_is_in_output_rect(eo_child, child, ev->cur.x, ev->cur.y, 1, 1) &&
                 _evas_event_object_pointer_allow(eo_child, child, obj_pdata) &&
-                eina_list_data_find(ins, eo_child) &&
-               ((!child->precise_is_inside) ||
-                evas_object_is_inside(eo_child, child, ev->cur.x, ev->cur.y)))
+                _evas_event_object_pointer_allow_precise(eo_child, child, ev->cur.x, ev->cur.y, ins))
                {
                   _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, obj_pdata->mouse_grabbed);
                   evas_object_event_callback_call(obj->object, obj, EVAS_CALLBACK_MULTI_MOVE, evt,
@@ -2196,11 +2199,9 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              if ((!e->is_frozen) &&
                  evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1) &&
                  _evas_event_object_pointer_allow(eo_obj, obj, obj_pdata) &&
-                 eina_list_data_find(ins, eo_obj) &&
+                 _evas_event_object_pointer_allow_precise(eo_obj, obj, x, y, ins) &&
                  (!evas_object_is_source_invisible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
-                 ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
-                )
+                  obj_pdata->mouse_grabbed))
                {
                   if ((px != x) || (py != y))
                     {
@@ -2335,11 +2336,9 @@ nogrep:
              if ((!e->is_frozen) &&
                  evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1) &&
                  _evas_event_object_pointer_allow(eo_obj, obj, obj_pdata) &&
-                 eina_list_data_find(newin, eo_obj) &&
+                 _evas_event_object_pointer_allow_precise(eo_obj, obj, x, y, newin) &&
                  (!evas_object_is_source_invisible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
-                 ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y))
-                )
+                  obj_pdata->mouse_grabbed))
                {
                   if ((px != x) || (py != y))
                     {
@@ -3020,11 +3019,9 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              //	     evas_object_clip_recalc(eo_obj);
              if (evas_object_is_in_output_rect(eo_obj, obj, ev->cur.x, ev->cur.y, 1, 1) &&
                  _evas_event_object_pointer_allow(eo_obj, obj, obj_pdata) &&
-                 eina_list_data_find(ins, eo_obj) &&
+                 _evas_event_object_pointer_allow_precise(eo_obj, obj, ev->cur.x, ev->cur.y, ins) &&
                  (!evas_object_is_source_invisible(eo_obj, obj) ||
-                  obj_pdata->mouse_grabbed) &&
-                 ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, ev->cur.x, ev->cur.y))
-                )
+                  obj_pdata->mouse_grabbed))
                {
                   ev->cur = point;
                   _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj_pdata->mouse_grabbed);
