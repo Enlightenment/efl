@@ -37,7 +37,6 @@ public class ExampleEoInherit01
         // Call C function from C# object
         int stored = inheritObj.number_get();
 
-        // Print actual value
         WriteLine($"Given value: {given}");
         WriteLine($"Stored value: {stored}\n");
 
@@ -47,7 +46,6 @@ public class ExampleEoInherit01
 
         stored = inheritObj.number_get();
 
-        // Print actual value
         WriteLine($"Given value: {given}");
         WriteLine($"Stored value: {stored}\n");
 
@@ -59,7 +57,6 @@ public class ExampleEoInherit01
         origObj.number_set(given);
         stored = origObj.number_get();
 
-        // Print actual value
         WriteLine($"Given value: {given}");
         WriteLine($"Stored value: {stored}\n");
     }
