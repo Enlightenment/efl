@@ -284,7 +284,11 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 
         EINA_LIST_FOREACH_SAFE(output->planes, l, ll, plane)
           {
-             if (!plane->dead) continue;
+             if (!plane->dead)
+               {
+                  plane->scanout = EINA_TRUE;
+                  continue;
+               }
              output->planes = eina_list_remove_list(output->planes, l);
              free(plane);
           }

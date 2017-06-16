@@ -176,6 +176,7 @@ struct _Ecore_Drm2_Plane
    Ecore_Drm2_Output *output;
    Ecore_Drm2_Fb *fb;
    Eina_Bool dead;
+   Eina_Bool scanout;
 };
 
 struct _Ecore_Drm2_Output_Mode
