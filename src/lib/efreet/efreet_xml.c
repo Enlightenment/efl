@@ -96,6 +96,12 @@ efreet_xml_new(const char *file)
     if (fd == -1) goto efreet_error;
 
     if (fstat(fd, &st) < 0) goto efreet_error;
+    /* empty file: not an error */
+    if (!st.st_size)
+      {
+         close(fd);
+         return NULL;
+      }
 
     /* let's make mmap safe and just get 0 pages for IO erro */
     eina_mmap_safety_enabled_set(EINA_TRUE);
