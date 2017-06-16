@@ -253,6 +253,13 @@ examples/efl_mono/EoInherit01.exe$(EXEEXT): $(examples_efl_mono_EoInherit01_exe_
 	@rm -f examples/efl_mono/EoInherit01_exe$(EXEEXT)
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/examples/efl_mono/libefl_mono_example.dll -out:$@ $(filter %.cs, $(^))
 
+bin_PROGRAMS += examples/efl_mono/FunctionPointer01.exe
+examples_efl_mono_FunctionPointer01_exe_SOURCES = examples/efl_mono/FunctionPointer01.cs
+examples/efl_mono/FunctionPointer01.exe$(EXEEXT): $(examples_efl_mono_FunctionPointer01_exe_SOURCES) examples/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll examples/efl_mono/libefl_mono_example.dll
+	@rm -f examples/efl_mono/FunctionPointer01_exe$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/examples/efl_mono/libefl_mono_example.dll -out:$@ $(filter %.cs, $(^))
+
+
 SUFFIXES += .eo.cs
 
 lib/eo/%.eo.cs: lib/eo/%.eo $(_EOLIAN_MONO_DEP)

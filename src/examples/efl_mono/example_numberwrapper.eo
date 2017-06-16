@@ -1,3 +1,10 @@
+function NumberCb {
+   params {
+      n: int;
+   }
+   return: int;
+};
+
 class Example.Numberwrapper (Efl.Object) {
    methods {
       @property number {
@@ -8,6 +15,16 @@ class Example.Numberwrapper (Efl.Object) {
          values {
              n: int;
          }
+      }
+
+      number_callback_set {
+         params {
+            cb: NumberCb;
+         }
+      }
+
+      callback_call {
+         return: int;
       }
    }
 }
