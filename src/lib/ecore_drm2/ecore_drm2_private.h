@@ -104,7 +104,6 @@ typedef struct _Ecore_Drm2_Plane_State
 
    /* these are not part of an atomic state, but we store these here
     * so that we do not have to refetch properties when iterating planes */
-   Ecore_Drm2_Fb *fb;
    uint32_t rotation_map[6];
    uint32_t supported_rotations;
 
@@ -175,6 +174,7 @@ struct _Ecore_Drm2_Plane
    int type;
    Ecore_Drm2_Plane_State *state;
    Ecore_Drm2_Output *output;
+   Ecore_Drm2_Fb *fb;
    Eina_Bool dead;
 };
 

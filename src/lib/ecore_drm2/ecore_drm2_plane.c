@@ -96,7 +96,7 @@ out:
    pstate->in_use = EINA_TRUE;
    pstate->cid.value = output->crtc_id;
    pstate->fid.value = fb->id;
-   pstate->fb = fb;
+   plane->fb = fb;
 
    pstate->sx.value = 0;
    pstate->sy.value = 0;
@@ -130,11 +130,15 @@ out:
 EAPI void
 ecore_drm2_plane_release(Ecore_Drm2_Plane *plane)
 {
+   Ecore_Drm2_Fb *fb;
+
    EINA_SAFETY_ON_NULL_RETURN(plane);
    EINA_SAFETY_ON_TRUE_RETURN(plane->dead);
 
+   fb = plane->fb;
+
    plane->output->fbs =
-     eina_list_append(plane->output->fbs, plane->state->fb);
+     eina_list_append(plane->output->fbs, fb);
 
    plane->dead = EINA_TRUE;
    plane->state->in_use = EINA_FALSE;
@@ -171,9 +175,9 @@ ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb)
         _ecore_drm2_fb_ref(fb);
 
         plane->output->fbs =
-          eina_list_append(plane->output->fbs, plane->state->fb);
+          eina_list_append(plane->output->fbs, plane->fb);
 
-        plane->state->fb = fb;
+        plane->fb = fb;
         return EINA_TRUE;
      }
    plane->state->fid.value = fallback_id;
