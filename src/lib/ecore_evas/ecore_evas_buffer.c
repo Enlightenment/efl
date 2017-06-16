@@ -271,6 +271,7 @@ _ecore_evas_buffer_cb_mouse_in(void *data, Evas *e, Evas_Object *obj EINA_UNUSED
 
    ee = data;
    ev = event_info;
+   if (!ee->evas) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
 }
@@ -283,6 +284,7 @@ _ecore_evas_buffer_cb_mouse_out(void *data, Evas *e, Evas_Object *obj EINA_UNUSE
 
    ee = data;
    ev = event_info;
+   if (!ee->evas) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);
 }
@@ -295,6 +297,7 @@ _ecore_evas_buffer_cb_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUS
 
    ee = data;
    ev = event_info;
+   if (!ee->evas) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_down(ee->evas, ev->button, ev->flags, ev->timestamp, NULL);
 }
@@ -307,6 +310,7 @@ _ecore_evas_buffer_cb_mouse_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED
 
    ee = data;
    ev = event_info;
+   if (!ee->evas) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_up(ee->evas, ev->button, ev->flags, ev->timestamp, NULL);
 }
@@ -322,6 +326,7 @@ _ecore_evas_buffer_cb_mouse_move(void *data, Evas *e, Evas_Object *obj EINA_UNUS
    ev = event_info;
    x = ev->cur.canvas.x;
    y = ev->cur.canvas.y;
+   if (!ee->evas) return;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    _ecore_evas_mouse_move_process(ee, x, y, ev->timestamp);
@@ -335,6 +340,7 @@ _ecore_evas_buffer_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj EINA_UNU
 
    ee = data;
    ev = event_info;
+   if (!ee->evas) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_wheel(ee->evas, ev->direction, ev->z, ev->timestamp, NULL);
 }
@@ -353,6 +359,7 @@ _ecore_evas_buffer_cb_multi_down(void *data, Evas *e, Evas_Object *obj EINA_UNUS
    y = ev->canvas.y;
    xx = x;
    yy = y;
+   if (!ee->evas) return;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    xf = (ev->canvas.xsub - (double)xx) + (double)x;
    yf = (ev->canvas.ysub - (double)yy) + (double)y;
@@ -374,6 +381,7 @@ _ecore_evas_buffer_cb_multi_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED
    y = ev->canvas.y;
    xx = x;
    yy = y;
+   if (!ee->evas) return;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    xf = (ev->canvas.xsub - (double)xx) + (double)x;
    yf = (ev->canvas.ysub - (double)yy) + (double)y;
@@ -395,6 +403,7 @@ _ecore_evas_buffer_cb_multi_move(void *data, Evas *e, Evas_Object *obj EINA_UNUS
    y = ev->cur.canvas.y;
    xx = x;
    yy = y;
+   if (!ee->evas) return;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    xf = (ev->cur.canvas.xsub - (double)xx) + (double)x;
    yf = (ev->cur.canvas.ysub - (double)yy) + (double)y;
@@ -419,6 +428,7 @@ _ecore_evas_buffer_cb_key_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED
 
    ee = data;
    ev = event_info;
+   if (!ee->evas) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_key_down(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
@@ -431,6 +441,7 @@ _ecore_evas_buffer_cb_key_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, 
 
    ee = data;
    ev = event_info;
+   if (!ee->evas) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_key_up(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
@@ -441,6 +452,7 @@ _ecore_evas_buffer_cb_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    Ecore_Evas *ee;
 
    ee = data;
+   if (!ee->evas) return;
    _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
 }
 
@@ -450,6 +462,7 @@ _ecore_evas_buffer_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
    Ecore_Evas *ee;
 
    ee = data;
+   if (!ee->evas) return;
    _ecore_evas_focus_device_set(ee, NULL, EINA_FALSE);
 }
 
