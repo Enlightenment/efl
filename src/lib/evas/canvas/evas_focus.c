@@ -128,12 +128,14 @@ _efl_canvas_object_seat_focus_del(Eo *eo_obj,
 {
    Eina_List *l;
    Efl_Input_Device *dev;
+   Eo *default_seat;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   if (!seat) seat = _default_seat_get(eo_obj);
+   if (seat) default_seat = _default_seat_get(eo_obj);
+   else default_seat = seat = _default_seat_get(eo_obj);
 
    if ((!seat) && obj->layer)
      {
@@ -145,8 +147,21 @@ _efl_canvas_object_seat_focus_del(Eo *eo_obj,
      {
         if (dev != seat)
           continue;
-        if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
-                                             1, EINA_FALSE))
+        if (obj->interceptors && obj->interceptors->focus_set.func && obj->interceptors->device_focus_set.func)
+          {
+             CRI("Your object is trying to use both focus_set and device_focus_set intercept! Sad!");
+             return EINA_FALSE;
+          }
+        if (obj->interceptors && obj->interceptors->focus_set.func && (seat == default_seat))
+          {
+             if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
+                                                  1, EINA_FALSE))
+               {
+                  return EINA_FALSE;
+               }
+          }
+        else if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_DEVICE_FOCUS_SET,
+                                             1, EINA_FALSE, seat))
           {
              return EINA_FALSE;
           }
@@ -167,13 +182,15 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
 {
    Eo *current_focus;
    int event_id;
+   Eo *default_seat;
 
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
    event_id = _evas_event_counter;
-   if (!seat) seat = _default_seat_get(eo_obj);
+   if (seat) default_seat = _default_seat_get(eo_obj);
+   else default_seat = seat = _default_seat_get(eo_obj);
 
    if (seat && (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT))
      return EINA_FALSE;
@@ -190,12 +207,24 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    if (_already_focused(obj->events->focused_by_seats, seat))
      goto end;
 
-   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
-                                        1, EINA_TRUE))
+   if (obj->interceptors && obj->interceptors->focus_set.func && obj->interceptors->device_focus_set.func)
+     {
+        CRI("Your object is trying to use both focus_set and device_focus_set intercept! Sad!");
+        return EINA_FALSE;
+     }
+   if (obj->interceptors && obj->interceptors->focus_set.func && (seat == default_seat))
+     {
+        if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
+                                             1, EINA_TRUE))
+          {
+             return EINA_FALSE;
+          }
+     }
+   else if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_DEVICE_FOCUS_SET,
+                                        1, EINA_TRUE, seat))
      {
         return EINA_FALSE;
      }
-
    current_focus = _current_focus_get(eo_obj, seat);
    if (current_focus)
      efl_canvas_object_seat_focus_del(current_focus, seat);

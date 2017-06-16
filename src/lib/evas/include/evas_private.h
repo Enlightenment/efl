@@ -749,6 +749,11 @@ struct _Evas_Intercept_Func
       void *data;
       Eina_Bool intercepted;
    } focus_set;
+   struct {
+      Evas_Object_Intercept_Device_Focus_Set_Cb func;
+      void *data;
+      Eina_Bool intercepted;
+   } device_focus_set;
 };
 
 struct _Evas_Smart_Cb_Description_Array

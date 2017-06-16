@@ -79,6 +79,7 @@ EVAS_OBJECT_INTERCEPT_CALL(stack_above, (COMMON_ARGS, Evas_Object *rel_to), UNPA
 EVAS_OBJECT_INTERCEPT_CALL(stack_below, (COMMON_ARGS, Evas_Object *rel_to), UNPACK_ARG1(rel_to))
 EVAS_OBJECT_INTERCEPT_CALL(layer_set,   (COMMON_ARGS, int l), UNPACK_ARG1(l))
 EVAS_OBJECT_INTERCEPT_CALL(focus_set,   (COMMON_ARGS, int focus), UNPACK_ARG1(focus))
+EVAS_OBJECT_INTERCEPT_CALL(device_focus_set,   (COMMON_ARGS, int focus, Eo *seat), UNPACK_ARG2(focus, seat))
 EVAS_OBJECT_INTERCEPT_CALL(color_set,   (COMMON_ARGS, int r, int g, int b, int a), UNPACK_ARG4(r, g, b, a))
 EVAS_OBJECT_INTERCEPT_CALL(clip_set,    (COMMON_ARGS, Evas_Object *clip), UNPACK_ARG1(clip))
 
@@ -91,6 +92,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
    Eina_Bool blocked = 0;
    Evas_Object *eo_other;
    int r, g, b, a, i, j;
+   Eo *seat;
 
    evas_object_async_block(obj);
 
@@ -160,6 +162,13 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
         if (!obj->interceptors) return 0;
         i = va_arg(args, int);
         blocked = evas_object_intercept_call_focus_set(eo_obj, obj, !!i);
+        break;
+
+      case EVAS_OBJECT_INTERCEPT_CB_DEVICE_FOCUS_SET:
+        if (!obj->interceptors) return 0;
+        i = va_arg(args, int);
+        seat = va_arg(args, Eo*);
+        blocked = evas_object_intercept_call_device_focus_set(eo_obj, obj, !!i, seat);
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_COLOR_SET:
@@ -283,6 +292,7 @@ EVAS_OBJECT_INTERCEPT_CALLBACK_DEFINE(Stack_Above, stack_above);
 EVAS_OBJECT_INTERCEPT_CALLBACK_DEFINE(Stack_Below, stack_below);
 EVAS_OBJECT_INTERCEPT_CALLBACK_DEFINE(Layer_Set, layer_set);
 EVAS_OBJECT_INTERCEPT_CALLBACK_DEFINE(Focus_Set, focus_set);
+EVAS_OBJECT_INTERCEPT_CALLBACK_DEFINE(Device_Focus_Set, device_focus_set);
 EVAS_OBJECT_INTERCEPT_CALLBACK_DEFINE(Color_Set, color_set);
 EVAS_OBJECT_INTERCEPT_CALLBACK_DEFINE(Clip_Set, clip_set);
 EVAS_OBJECT_INTERCEPT_CALLBACK_DEFINE(Clip_Unset, clip_unset);

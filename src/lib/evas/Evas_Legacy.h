@@ -2766,6 +2766,21 @@ typedef void (*Evas_Object_Intercept_Layer_Set_Cb)(void *data, Evas_Object *obj,
 typedef void (*Evas_Object_Intercept_Focus_Set_Cb)(void *data, Evas_Object *obj, Eina_Bool focus);
 
 /**
+ * Function signature for the focus set event of an evas object with seat info
+ *
+ * @param data the pointer passed through the callback.
+ * @param obj the object being focused
+ * @param focus the focus value, EINA_TRUE if the object is focused, EINA_FALSE otherwise
+ * @param seat the seat for which focus is being set
+ *
+ * @see  evas_object_intercept_device_focus_set_callback_add()
+ * @see  evas_object_intercept_device_focus_set_callback_del()
+ *
+ * @since 1.20
+ */
+typedef void (*Evas_Object_Intercept_Device_Focus_Set_Cb)(void *data, Evas_Object *obj, Eina_Bool focus, Eo *seat);
+
+/**
  * Function signature for the color set event of an evas object
  *
  * @param data the pointer passed through the callback.
@@ -3183,6 +3198,39 @@ EAPI void  evas_object_intercept_focus_set_callback_add(Evas_Object *obj, Evas_O
  */
 EAPI void *evas_object_intercept_focus_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Focus_Set_Cb func) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * Set the callback function that intercepts a focus set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given function to be the callback function.
+ * @param data The data passed to the callback function.
+ *
+ * This function sets a callback function to intercepts a focus set event
+ * of a canvas object and provides seat info.
+ *
+ * @see evas_object_intercept_device_focus_set_callback_del().
+ *
+ * @since 1.20
+ *
+ */
+EAPI void  evas_object_intercept_device_focus_set_callback_add(Evas_Object *obj, Evas_Object_Intercept_Device_Focus_Set_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Unset the callback function that intercepts a focus set event of an object.
+ *
+ * @param obj The given canvas object pointer.
+ * @param func The given callback function.
+ *
+ * This function sets a callback function to intercepts a focus set event
+ * of a canvas object and provides seat info.
+ *
+ * @see evas_object_intercept_device_focus_set_callback_add().
+ *
+ * @since 1.20
+ *
+ */
+EAPI void *evas_object_intercept_device_focus_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Device_Focus_Set_Cb func) EINA_ARG_NONNULL(1, 2);
+
 /* Internal APIs for legacy compatibility */
 #ifdef EFL_CANVAS_OBJECT_PROTECTED
 
@@ -3199,6 +3247,7 @@ enum _Evas_Object_Intercept_Cb_Type
    EVAS_OBJECT_INTERCEPT_CB_FOCUS_SET,
    EVAS_OBJECT_INTERCEPT_CB_COLOR_SET,
    EVAS_OBJECT_INTERCEPT_CB_CLIP_SET,
+   EVAS_OBJECT_INTERCEPT_CB_DEVICE_FOCUS_SET,
 };
 typedef enum _Evas_Object_Intercept_Cb_Type Evas_Object_Intercept_Cb_Type;
 
