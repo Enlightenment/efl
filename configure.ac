@@ -5806,6 +5806,7 @@ src/examples/efl_mono/EinaBinbuf01.sh
 src/examples/efl_mono/EinaError01.sh
 src/examples/efl_mono/EinaHash01.sh
 src/examples/efl_mono/EoInherit01.sh
+src/examples/efl_mono/FunctionPointer01.sh
 elm_intro.h
 spec/efl.spec
 pc/evil.pc

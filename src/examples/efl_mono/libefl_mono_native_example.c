@@ -37,6 +37,9 @@
 typedef struct Example_Numberwrapper_Data
 {
    int number;
+   NumberCb cb;
+   void *cb_data;
+   Eina_Free_Cb free_cb;
 } Example_Numberwrapper_Data;
 
 // ##################### //
@@ -52,6 +55,32 @@ void _example_numberwrapper_number_set(EINA_UNUSED Eo *obj, Example_Numberwrappe
 int _example_numberwrapper_number_get(EINA_UNUSED Eo *obj, Example_Numberwrapper_Data *pd)
 {
    return pd->number;
+}
+
+
+void _example_numberwrapper_number_callback_set(EINA_UNUSED Eo *obj, Example_Numberwrapper_Data *pd, NumberCb cb, void *cb_data, Eina_Free_Cb cb_free_cb)
+{
+   if (pd->free_cb)
+      pd->free_cb(pd->cb_data);
+
+   pd->cb = cb;
+   pd->cb_data = cb_data;
+   pd->free_cb = cb_free_cb;
+}
+
+
+int _example_numberwrapper_callback_call(EINA_UNUSED Eo *obj, Example_Numberwrapper_Data *pd)
+{
+   if (!pd->cb)
+     {
+        static Eina_Error no_cb_err = 0;
+        if (!no_cb_err)
+          no_cb_err = eina_error_msg_static_register("Trying to call with no callback set");
+        eina_error_set(no_cb_err);
+        return -1;
+     }
+
+   return pd->cb(pd->cb_data, pd->number);
 }
 
 #include "example_numberwrapper.eo.c"
