@@ -87,7 +87,7 @@ _is_inverted(Efl_Orient orientation)
 static void
 _units_set(Evas_Object *obj)
 {
-   ELM_PROGRESSBAR_DATA_GET(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
 
    if (sd->unit_format_func)
      {
@@ -113,7 +113,7 @@ _val_set(Evas_Object *obj)
    Eina_Bool rtl;
    double pos;
 
-   ELM_PROGRESSBAR_DATA_GET(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    rtl = efl_ui_mirrored_get(obj);
@@ -567,7 +567,7 @@ EAPI void
 elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func)
 {
    const char *sig;
-   ELM_PROGRESSBAR_DATA_GET(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    sd->unit_format_func = func;
@@ -603,7 +603,7 @@ EAPI void
 elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    Efl_Orient dir;
-   ELM_PROGRESSBAR_DATA_GET(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
 
    dir = _orientation_get(horizontal, _is_inverted(sd->orientation));
 
@@ -623,7 +623,7 @@ EAPI void
 elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
    Efl_Orient dir;
-   ELM_PROGRESSBAR_DATA_GET(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
 
    dir = _orientation_get(_is_horizontal(sd->orientation), inverted);
 
