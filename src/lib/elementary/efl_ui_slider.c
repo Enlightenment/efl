@@ -61,7 +61,7 @@ static const Elm_Action key_actions[] = {
 static Eina_Bool
 _delay_change(void *data)
 {
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
 
    sd->delay = NULL;
    efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_DELAY_CHANGED, NULL);
@@ -118,7 +118,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
    double posx2 = 0.0, posy2 = 0.0, pos2 = 0.0, val2;
 
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    edje_object_part_drag_value_get
@@ -172,7 +172,7 @@ _val_set(Evas_Object *obj)
    Eina_Bool rtl;
    double pos, pos2;
 
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
 
    if (sd->val_max > sd->val_min)
      {
@@ -217,7 +217,7 @@ _val_set(Evas_Object *obj)
 static void
 _units_set(Evas_Object *obj)
 {
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
 
    if (sd->units_format_func)
      {
@@ -279,7 +279,7 @@ _units_set(Evas_Object *obj)
 static void
 _indicator_set(Evas_Object *obj)
 {
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
 
    if (sd->indicator_format_func)
      {
@@ -388,7 +388,7 @@ _drag_up(void *data,
 {
    double step;
 
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    step = sd->step;
 
    if (_is_inverted(sd->orientation)) step *= -1.0;
@@ -406,7 +406,7 @@ _drag_down(void *data,
 {
    double step;
 
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    step = -sd->step;
 
    if (_is_inverted(sd->orientation)) step *= -1.0;
@@ -422,7 +422,7 @@ _popup_show(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    if (sd->popup &&
        (sd->indicator_visible_mode != ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE))
      {
@@ -449,7 +449,7 @@ _popup_hide(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
 
    if (!sd->popup_visible || !sd->popup) return;
 
@@ -474,7 +474,7 @@ _popup_hide_done(void *data,
                  const char *emission EINA_UNUSED,
                  const char *source EINA_UNUSED)
 {
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    if (sd->popup)
      {
         if (!((elm_widget_focus_get(data)) &&
@@ -500,7 +500,7 @@ _popup_emit(void *data,
             const char *emission,
             const char *source)
 {
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    if (sd->popup)
      {
         edje_object_signal_emit(sd->popup, emission, source);
@@ -514,7 +514,7 @@ _popup_emit(void *data,
 static Eina_Bool
 _key_action_drag(Evas_Object *obj, const char *params)
 {
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
    const char *dir = params;
 
    if (!strcmp(dir, "left"))
@@ -557,7 +557,7 @@ _key_action_drag(Evas_Object *obj, const char *params)
 static Eina_Bool
 _wheel_indicator_timer_cb(void *data)
 {
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    sd->wheel_indicator_timer = NULL;
 
    _popup_hide(data, NULL, NULL, NULL);
@@ -647,7 +647,7 @@ _track_move_cb(void *data,
 {
    Evas_Coord x, y;
 
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    evas_object_move(sd->popup, x, y);
 }
@@ -660,7 +660,7 @@ _track2_move_cb(void *data,
 {
    Evas_Coord x, y;
 
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    evas_object_move(sd->popup2, x, y);
 }
@@ -673,7 +673,7 @@ _track_resize_cb(void *data,
 {
    Evas_Coord w, h;
 
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_resize(sd->popup, w, h);
 }
@@ -686,7 +686,7 @@ _track2_resize_cb(void *data,
 {
    Evas_Coord w, h;
 
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_resize(sd->popup2, w, h);
 }
@@ -868,7 +868,7 @@ _efl_ui_slider_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUS
 static void
 _move_knob_on_mouse(Evas_Object *obj, double button_x, double button_y)
 {
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!sd->intvl_enable)
@@ -919,7 +919,7 @@ _spacer_down_cb(void *data,
                 Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
 
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y, w, h;
@@ -958,7 +958,7 @@ _spacer_move_cb(void *data,
                 Evas_Object *obj EINA_UNUSED,
                 void *event_info)
 {
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
 
    Evas_Coord x, y, w, h;
    double button_x = 0.0, button_y = 0.0;
@@ -1021,7 +1021,7 @@ _spacer_up_cb(void *data,
               Evas_Object *obj EINA_UNUSED,
               void *event_info EINA_UNUSED)
 {
-   ELM_SLIDER_DATA_GET(data, sd);
+   EFL_UI_SLIDER_DATA_GET(data, sd);
 
    if (!sd->spacer_down) return;
    if (sd->spacer_down) sd->spacer_down = EINA_FALSE;
@@ -1043,7 +1043,7 @@ _min_max_set(Evas_Object *obj)
    char *buf_min = NULL;
    char *buf_max = NULL;
 
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
 
    if (sd->units_format_func)
      {
@@ -1131,7 +1131,7 @@ static void
 _on_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
          void *event_info EINA_UNUSED)
 {
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
    if (sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS)
      _popup_show(obj, NULL, NULL, NULL);
 }
@@ -1321,7 +1321,7 @@ EAPI void
 elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    Efl_Orient dir;
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
 
    dir = _orientation_get(horizontal, _is_inverted(sd->orientation));
 
@@ -1353,7 +1353,7 @@ EAPI void
 elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
    Efl_Orient dir;
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
 
    dir = _orientation_get(_is_horizontal(sd->orientation), inverted);
 
@@ -1372,7 +1372,7 @@ elm_slider_inverted_get(const Evas_Object *obj)
 EAPI void
 elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func)
 {
-   ELM_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
 
    sd->units_format_func = func;
    sd->units_format_free = free_func;
