@@ -1160,7 +1160,7 @@ _evas_pointer_data_by_device_get(Evas_Public_Data *edata, Efl_Input_Device *poin
    return NULL;
 }
 
-Eina_Bool
+Evas_Pointer_Data *
 _evas_pointer_data_add(Evas_Public_Data *edata, Efl_Input_Device *pointer)
 {
    Evas_Pointer_Data *pdata;
@@ -1168,13 +1168,13 @@ _evas_pointer_data_add(Evas_Public_Data *edata, Efl_Input_Device *pointer)
    Eo *seat;
 
    seat = efl_input_device_seat_get(pointer);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
    EINA_INLIST_FOREACH(edata->seats, pseat)
      if (pseat->seat == seat) break;
    if (!pseat)
      {
         pseat = calloc(1, sizeof(Evas_Pointer_Seat));
-        EINA_SAFETY_ON_NULL_RETURN_VAL(pseat, EINA_FALSE);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(pseat, NULL);
         pseat->seat = seat;
         edata->seats = eina_inlist_append(edata->seats, EINA_INLIST_GET(pseat));
      }
@@ -1187,13 +1187,13 @@ _evas_pointer_data_add(Evas_Public_Data *edata, Efl_Input_Device *pointer)
              free(pseat);
           }
         ERR("alloc fail");
-        return EINA_FALSE;
+        return NULL;
      }
 
    pdata->pointer = pointer;
    pdata->seat = pseat;
    pseat->pointers = eina_inlist_append(pseat->pointers, EINA_INLIST_GET(pdata));
-   return EINA_TRUE;
+   return pdata;
 }
 
 void

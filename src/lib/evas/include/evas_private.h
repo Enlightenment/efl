@@ -2071,7 +2071,7 @@ Eina_Bool _evas_image_proxy_source_clip_get(const Eo *eo_obj);
 void _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj,
                                 Efl_Input_Device *seat, Eina_Bool in);
 Evas_Pointer_Data *_evas_pointer_data_by_device_get(Evas_Public_Data *edata, Efl_Input_Device *pointer);
-Eina_Bool _evas_pointer_data_add(Evas_Public_Data *edata, Efl_Input_Device *pointer);
+Evas_Pointer_Data *_evas_pointer_data_add(Evas_Public_Data *edata, Efl_Input_Device *pointer);
 void _evas_pointer_data_remove(Evas_Public_Data *edata, Efl_Input_Device *pointer);
 Eina_List *_evas_pointer_list_in_rect_get(Evas_Public_Data *edata,
                                          Evas_Object *obj,
