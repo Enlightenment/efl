@@ -198,9 +198,14 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
                  (parent_dev == e->default_seat) &&
                  (evas_device_class_get(e->default_mouse) != EVAS_DEVICE_CLASS_MOUSE))
                {
-                  evas_event_feed_mouse_out(eo_e, 0, NULL);
+                  Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, e->default_mouse);
+                  Eina_Bool inside = pdata->seat->inside;
+
+                  if (inside)
+                    evas_event_feed_mouse_out(eo_e, 0, NULL);
                   e->default_mouse = dev;
-                  evas_event_feed_mouse_in(eo_e, 0, NULL);
+                  if (inside)
+                    evas_event_feed_mouse_in(eo_e, 0, NULL);
                }
           }
         else
