@@ -180,6 +180,9 @@ _ecore_drm2_fb_deref(Ecore_Drm2_Fb *fb)
    fb->ref--;
    if (fb->ref) return;
 
+   if (fb->status_handler)
+     fb->status_handler(fb, ECORE_DRM2_FB_STATUS_DELETED, fb->status_data);
+
    _ecore_drm2_fb_destroy(fb);
 }
 
