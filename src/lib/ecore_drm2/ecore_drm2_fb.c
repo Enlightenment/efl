@@ -299,6 +299,10 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
                     fb->scanout_count++;
 
                   plane->scanout = EINA_TRUE;
+                  if (fb->status_handler && (fb->scanout_count == 1))
+                    fb->status_handler(fb,
+                                       ECORE_DRM2_FB_STATUS_SCANOUT_ON,
+                                       fb->status_data);
                   continue;
                }
              plane_scanout = plane->scanout;
@@ -307,6 +311,10 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
              if (!plane_scanout) continue;
 
              fb->scanout_count--;
+             if (fb->status_handler && (fb->scanout_count == 0))
+               fb->status_handler(fb,
+                                  ECORE_DRM2_FB_STATUS_SCANOUT_OFF,
+                                  fb->status_data);
           }
      }
 
