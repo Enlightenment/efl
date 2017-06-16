@@ -65,42 +65,10 @@ _keyboard_modifiers_update(Elput_Keyboard *kbd, Elput_Seat *seat)
      seat->modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
 }
 
-static int
-_keyboard_fd_get(off_t size)
-{
-   Eina_Tmpstr *fullname;
-   int fd = 0;
-   Efl_Vpath_File *file_obj;
-
-   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                      "(:run:)/elput-keymap-XXXXXX");
-   fd = eina_file_mkstemp(efl_vpath_file_result_get(file_obj), &fullname);
-   efl_del(file_obj);
-
-   if (fd < 0) return -1;
-
-   if (!eina_file_close_on_exec(fd, EINA_TRUE))
-     {
-        close(fd);
-        return -1;
-     }
-
-   if (ftruncate(fd, size) < 0)
-     {
-        close(fd);
-        return -1;
-     }
-
-   unlink(fullname);
-   eina_tmpstr_del(fullname);
-   return fd;
-}
-
 static Elput_Keyboard_Info *
 _keyboard_info_create(struct xkb_keymap *keymap)
 {
    Elput_Keyboard_Info *info;
-   char *str;
 
    info = calloc(1, sizeof(Elput_Keyboard_Info));
    if (!info) return NULL;
@@ -121,32 +89,7 @@ _keyboard_info_create(struct xkb_keymap *keymap)
    info->mods.altgr =
      1 << xkb_keymap_mod_get_index(info->keymap.map, "ISO_Level3_Shift");
 
-   str = xkb_keymap_get_as_string(info->keymap.map, XKB_KEYMAP_FORMAT_TEXT_V1);
-   if (!str) goto err;
-
-   info->keymap.size = strlen(str) + 1;
-
-   info->keymap.fd = _keyboard_fd_get(info->keymap.size);
-   if (info->keymap.fd < 0) goto err_fd;
-
-   info->keymap.area =
-     mmap(NULL, info->keymap.size, PROT_READ | PROT_WRITE,
-          MAP_SHARED, info->keymap.fd, 0);
-   if (info->keymap.area == MAP_FAILED) goto err_map;
-
-   strcpy(info->keymap.area, str);
-   free(str);
-
    return info;
-
-err_map:
-   close(info->keymap.fd);
-err_fd:
-   free(str);
-err:
-   xkb_keymap_unref(info->keymap.map);
-   free(info);
-   return NULL;
 }
 
 static void
@@ -155,9 +98,6 @@ _keyboard_info_destroy(Elput_Keyboard_Info *info)
    if (--info->refs > 0) return;
 
    xkb_keymap_unref(info->keymap.map);
-
-   if (info->keymap.area) munmap(info->keymap.area, info->keymap.size);
-   if (info->keymap.fd >= 0) close(info->keymap.fd);
 
    free(info);
 }
@@ -353,21 +293,6 @@ _keyboard_key_send(Elput_Device *dev, enum libinput_key_state state, const char 
 }
 
 static void
-_keyboard_keymap_send(Elput_Keyboard_Info *info)
-{
-   Elput_Event_Keymap_Send *ev;
-
-   ev = calloc(1, sizeof(Elput_Event_Keymap_Send));
-   if (!ev) return;
-
-   ev->fd = info->keymap.fd;
-   ev->size = info->keymap.size;
-   ev->format = XKB_KEYMAP_FORMAT_TEXT_V1;
-
-   ecore_event_add(ELPUT_EVENT_KEYMAP_SEND, ev, NULL, NULL);
-}
-
-static void
 _keyboard_modifiers_send(Elput_Keyboard *kbd)
 {
    Elput_Event_Modifiers_Send *ev;
@@ -453,7 +378,6 @@ _keyboard_keymap_update(Elput_Seat *seat)
    _keyboard_compose_init(kbd);
 
    _keyboard_modifiers_update(kbd, seat);
-   _keyboard_keymap_send(kbd->info);
 
    if ((!latched) && (!locked)) return;
 
@@ -475,7 +399,6 @@ _keyboard_group_update(Elput_Seat *seat)
    _keyboard_compose_init(kbd);
 
    _keyboard_modifiers_update(kbd, seat);
-   _keyboard_keymap_send(kbd->info);
 
    if ((!latched) && (!locked)) return;
 

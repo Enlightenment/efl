@@ -92,9 +92,6 @@ typedef struct _Elput_Keyboard_Info
 
    struct
      {
-        int fd;
-        size_t size;
-        char *area;
         struct xkb_keymap *map;
      } keymap;
 
