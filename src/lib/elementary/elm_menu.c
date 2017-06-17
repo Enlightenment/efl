@@ -987,6 +987,12 @@ _elm_menu_move(Eo *obj, Elm_Menu_Data *sd, Evas_Coord x, Evas_Coord y)
 }
 
 EOLIAN static void
+_elm_menu_open(Eo *obj, Elm_Menu_Data *sd)
+{
+   evas_object_show(obj);
+}
+
+EOLIAN static void
 _elm_menu_close(Eo *obj, Elm_Menu_Data *sd)
 {
    _menu_hide(obj, sd->hv, NULL);

@@ -32,6 +32,12 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
             @in data: const(void_ptr) @optional; [[Data sent by the callback.]]
          }
       }
+      open {
+         [[Oepn a closed menu
+
+           Show the menu with no child sub-enus expanded..
+         ]]
+      }
       close {
          [[Close a opened menu
 
