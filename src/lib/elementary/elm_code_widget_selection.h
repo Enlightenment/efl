@@ -35,6 +35,9 @@ EAPI void elm_code_widget_selection_paste(Evas_Object *widget);
 
 EAPI Eina_Bool elm_code_widget_selection_is_empty(Evas_Object *widget);
 
+EAPI void elm_code_widget_selection_select_all(Evas_Object *widget);
+
+
 /**
  * @}
  */

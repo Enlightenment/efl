@@ -88,6 +88,22 @@ elm_code_widget_selection_end(Evas_Object *widget,
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
 }
 
+EAPI void
+elm_code_widget_selection_select_all(Evas_Object *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Widget_Selection_Data *selection;
+
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_code_widget_selection_start(widget, 0, 0);
+   int maxrow = elm_code_file_lines_get(pd->code->file);
+   elm_code_widget_selection_end(widget, maxrow, pd->col_count);
+
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
+}
+
+
 EAPI Elm_Code_Widget_Selection_Data *
 elm_code_widget_selection_normalized_get(Evas_Object *widget)
 {

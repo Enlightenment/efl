@@ -1536,6 +1536,8 @@ _elm_code_widget_control_key_down_cb(Elm_Code_Widget *widget, const char *key)
      elm_code_widget_redo(widget);
    else if (!strcmp("z", key))
      elm_code_widget_undo(widget);
+   else if (!strcmp("a", key))
+     elm_code_widget_selection_select_all(widget);
 }
 
 static Eina_Bool
