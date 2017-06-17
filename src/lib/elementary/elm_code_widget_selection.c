@@ -91,14 +91,19 @@ elm_code_widget_selection_end(Evas_Object *widget,
 EAPI void
 elm_code_widget_selection_select_all(Evas_Object *widget)
 {
+   Elm_Code_Line *last_line;
+   unsigned int last_length, last_col;
    Elm_Code_Widget_Data *pd;
-   Elm_Code_Widget_Selection_Data *selection;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   elm_code_widget_selection_start(widget, 0, 0);
+   elm_code_widget_selection_start(widget, 1, 1);
    int maxrow = elm_code_file_lines_get(pd->code->file);
-   elm_code_widget_selection_end(widget, maxrow, pd->col_count);
+   last_line = elm_code_file_line_get(pd->code->file, elm_code_file_lines_get(pd->code->file));
+   (void*) elm_code_line_text_get(last_line, &last_length);
+   last_col = elm_code_widget_line_text_column_width_to_position(widget, last_line, last_length);
+
+   elm_code_widget_selection_end(widget, maxrow, last_col);
 
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
 }
