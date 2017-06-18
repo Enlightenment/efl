@@ -3437,7 +3437,7 @@ _layout_format_pop(Ctxt *c, const char *format)
                    * I.e whole of the ending tag matches the start of the
                    * starting tag, and the starting tag's next char is either
                    * NULL or white. Skip the starting '+'. */
-                  if (fmt->fnode && _FORMAT_IS_CLOSER_OF(
+                  if (_FORMAT_IS_CLOSER_OF(
                            fmt->fnode->orig_format, format + 1, len - 1))
                     {
                        _format_unref_free(c->obj, fmt);
@@ -3445,7 +3445,7 @@ _layout_format_pop(Ctxt *c, const char *format)
                     }
                   else
                     {
- if (fmt->fnode)                      redo_nodes = eina_list_prepend(redo_nodes, fmt->fnode);
+                       redo_nodes = eina_list_prepend(redo_nodes, fmt->fnode);
                        _format_unref_free(c->obj, fmt);
                     }
                }
@@ -6359,7 +6359,6 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
           }
         if ((c->o->style) && (c->o->style->default_tag))
           {
-             c->fmt = _layout_format_push(c, NULL, NULL);
              _format_fill(c->obj, c->fmt, c->o->style->default_tag);
              finalize = EINA_TRUE;
           }
