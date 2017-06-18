@@ -33,9 +33,9 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
          }
       }
       open {
-         [[Oepn a closed menu
+         [[Open a closed menu
 
-           Show the menu with no child sub-enus expanded..
+           Show the menu with no child sub-menus expanded..
          ]]
       }
       close {

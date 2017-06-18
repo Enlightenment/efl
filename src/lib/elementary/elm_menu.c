@@ -987,7 +987,7 @@ _elm_menu_move(Eo *obj, Elm_Menu_Data *sd, Evas_Coord x, Evas_Coord y)
 }
 
 EOLIAN static void
-_elm_menu_open(Eo *obj, Elm_Menu_Data *sd)
+_elm_menu_open(Eo *obj, Elm_Menu_Data *sd EINA_UNUSED)
 {
    evas_object_show(obj);
 }
