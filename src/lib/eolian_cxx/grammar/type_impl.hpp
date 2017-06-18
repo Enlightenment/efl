@@ -132,7 +132,7 @@ struct visitor_generate
              (
               lit("void") << (regular.base_qualifier & qualifier_info::is_const ? " const" : "")
               << "*"
-              << (is_out ? "&" : "")
+              << (is_out ? "*" : "")
              )
              .generate(sink, attributes::unused, *context);
         }
@@ -220,7 +220,7 @@ struct visitor_generate
                   || (regular.base_qualifier & qualifier_info::is_ref
                       && !is_return && !is_out)
                   ? " const" : "")
-              << (regular.base_qualifier & qualifier_info::is_ref? "&" : "")
+              << (regular.base_qualifier & qualifier_info::is_ref ? (regular.is_undefined ? "*" : "&") : "")
              )
              .generate(sink, std::make_tuple(regular.namespaces, regular.base_type), *context))
             return true;

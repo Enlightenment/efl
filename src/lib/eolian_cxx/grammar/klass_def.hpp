@@ -174,6 +174,7 @@ struct regular_type_def
    std::string base_type;
    qualifier_def base_qualifier;
    std::vector<std::string> namespaces;
+   bool is_undefined = false;
 };
 
 inline bool operator==(regular_type_def const& rhs, regular_type_def const& lhs)
@@ -253,13 +254,24 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
        break;
      case EOLIAN_TYPE_REGULAR:
        {
+         bool is_undefined = false;
+         Eolian_Typedecl const* decl = eolian_type_typedecl_get(eolian_type);
+         if(decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_ALIAS)
+           {
+             Eolian_Type const* aliased = eolian_typedecl_base_type_get(decl);
+             if(aliased && eolian_type_type_get(aliased) == EOLIAN_TYPE_UNDEFINED)
+               {
+                 is_undefined = true;
+               }
+           }
+         
          if(c_type == "va_list *")
            throw std::runtime_error("");
          std::vector<std::string> namespaces;
          for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
                , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
            namespaces.push_back(&*namespace_iterator);
-         original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces}};
+         original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, is_undefined}};
        }
        break;
      case EOLIAN_TYPE_CLASS:

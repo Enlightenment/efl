@@ -85,6 +85,11 @@ struct tag
 };
   
 template <typename T>
+void assign_out_impl(T*& lhs, T* rhs, tag<T*, T*>)
+{
+  lhs = rhs;
+}
+template <typename T>
 void assign_out_impl(T& lhs, T*& rhs, tag<T&, T*>, typename std::enable_if<!std::is_const<T>::value>::type* = 0)
 {
   lhs = *rhs;
@@ -535,8 +540,13 @@ Eina_Array** convert_to_c_impl(efl::eina::range_array<T>& /*c*/, tag<Eina_Array 
 {
   std::abort();
 }
+template <typename T>
+T* convert_to_c_impl(T const* p, tag<T*, T const*>) // needed for property_get
+{
+  return const_cast<T*>(p);
 }
-    
+}
+
 template <typename T, typename U, bool Own, typename V>
 T convert_to_c(V&& object)
 {

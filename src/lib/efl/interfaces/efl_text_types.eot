@@ -20,9 +20,9 @@ enum Efl.Text.Cursor.Cursor_Get_Type {
    user_extra       [[User extra cursor state]]
 }
 
-struct Efl.Canvas.Text.Annotation; [[EFL text annotations data structure]]
+type @extern Efl.Canvas.Text.Annotation: __undefined_type; [[EFL text annotations data structure]]
 
-struct Efl.Text.Cursor.Cursor_Data; [[Text cursor data structure]]
+type @extern Efl.Text.Cursor.Cursor_Data: __undefined_type; [[Text cursor data structure]]
 
 enum Efl.Text.Cursor.Cursor_Type
 {
