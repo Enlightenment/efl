@@ -171,10 +171,16 @@ get(klass_name const& klass)
         
 struct regular_type_def
 {
+   regular_type_def() : is_undefined(false) {}
+   regular_type_def(std::string base_type, qualifier_def qual, std::vector<std::string> namespaces
+                    , bool is_undefined = false)
+     : base_type(std::move(base_type)), base_qualifier(qual), namespaces(std::move(namespaces))
+     , is_undefined(is_undefined) {}
+  
    std::string base_type;
    qualifier_def base_qualifier;
    std::vector<std::string> namespaces;
-   bool is_undefined = false;
+   bool is_undefined;
 };
 
 inline bool operator==(regular_type_def const& rhs, regular_type_def const& lhs)
