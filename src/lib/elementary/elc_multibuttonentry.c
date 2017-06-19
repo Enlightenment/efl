@@ -270,9 +270,12 @@ _shrink_mode_set(Evas_Object *obj,
                }
           }
 
-        sd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
-        efl_event_callback_legacy_call
-          (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)1);
+        if (sd->view_state != MULTIBUTTONENTRY_VIEW_SHRINK)
+          {
+             sd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
+             efl_event_callback_legacy_call
+               (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)1);
+          }
      }
    else
      {
@@ -300,9 +303,12 @@ _shrink_mode_set(Evas_Object *obj,
              item->visible = EINA_TRUE;
           }
 
-        sd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
-        efl_event_callback_legacy_call
-          (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)(uintptr_t)sd->shrink);
+        if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK)
+          {
+             sd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
+             efl_event_callback_legacy_call
+               (obj, ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)(uintptr_t)sd->shrink);
+          }
      }
 
    if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK)
