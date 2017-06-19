@@ -18,9 +18,8 @@
 #define WIDTH 400
 #define HEIGHT 400
 
-#ifndef EFL_BETA_API_SUPPORT
-#define EFL_BETA_API_SUPPORT 1
-#endif
+#define EFL_BETA_API_SUPPORT
+#define EFL_EO_API_SUPPORT
 
 #include <math.h>
 
