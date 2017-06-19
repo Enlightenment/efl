@@ -47,7 +47,7 @@ public static class InlistNativeFunctions
         eina_inlist_sorted_insert(IntPtr list, IntPtr item, IntPtr func);
 
     [DllImport("eina")] public static extern IntPtr
-        eina_inlist_sorted_state_new(void);
+        eina_inlist_sorted_state_new();
 
     [DllImport("eina")] public static extern int
         eina_inlist_sorted_state_init(IntPtr state, IntPtr list);
@@ -65,8 +65,9 @@ public static class InlistNativeFunctions
 // static inline IntPtr eina_inlist_last(IntPtr list);
 }
 
-public class Inlist<T> : IEnumerable<T>, IDisposable
+public class Inlist<T> // : IEnumerable<T>, IDisposable
 {
+/*
     public IntPtr Handle {get;set;} = IntPtr.Zero;
     public bool Own {get;set;}
     public bool OwnContent {get;set;}
@@ -302,6 +303,7 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     {
         return this.GetEnumerator();
     }
+*/
 }
 
 }

@@ -133,6 +133,7 @@ efl_eina_mono_files = \
 	bindings/mono/eina_mono/eina_hash.cs \
 	bindings/mono/eina_mono/eina_list.cs \
 	bindings/mono/eina_mono/eina_inarray.cs \
+	bindings/mono/eina_mono/eina_inlist.cs \
 	bindings/mono/eina_mono/eina_container_common.cs \
 	bindings/mono/eina_mono/eina_common.cs \
 	bindings/mono/eina_mono/eina_log.cs \
