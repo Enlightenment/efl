@@ -58,7 +58,7 @@ void *_new_int(int v)
 }
 
 static
-int **_int_ref(int n)
+int *_int_ref(int n)
 {
    static int r;
    r = n;
@@ -911,7 +911,7 @@ Eina_Bool _inarray_str_equal(const Eina_Inarray *arr, const char * const base[],
      return EINA_FALSE;
    for (unsigned int i = 0; i < len; ++i)
      {
-        if (0 != strcmp(*((char**)eina_inarray_nth(arr, i), base[i]))
+        if (0 != strcmp(*((char**)eina_inarray_nth(arr, i)), base[i]))
           return EINA_FALSE;
      }
    return EINA_TRUE;
@@ -972,7 +972,7 @@ Eina_Bool _test_testing_check_eina_inarray_str_out(EINA_UNUSED Eo *obj, EINA_UNU
    Eina_Bool r = _inarray_str_equal(_inarray_str_out_to_check, modified_arr_str, modified_arr_str_size);
 
    char **ele;
-   EINA_INARRAY_FOREACH(_inarray_str_in_own_to_check, ele)
+   EINA_INARRAY_FOREACH(_inarray_str_out_to_check, ele)
      free(*ele);
 
    eina_inarray_free(_inarray_str_out_to_check);
@@ -1008,7 +1008,7 @@ Eina_Bool _test_testing_check_eina_inarray_str_return(EINA_UNUSED Eo *obj, EINA_
    Eina_Bool r = _inarray_str_equal(_inarray_str_return_to_check, modified_arr_str, modified_arr_str_size);
 
    char **ele;
-   EINA_INARRAY_FOREACH(_inarray_str_in_own_to_check, ele)
+   EINA_INARRAY_FOREACH(_inarray_str_return_to_check, ele)
      free(*ele);
 
    eina_inarray_free(_inarray_str_return_to_check);
@@ -1100,7 +1100,7 @@ Eina_Bool _test_testing_check_eina_inarray_obj_out(EINA_UNUSED Eo *obj, EINA_UNU
    if (!r) return r;
 
    Test_Numberwrapper **ele;
-   EINA_INARRAY_FOREACH(_inarray_obj_in_own_to_check, ele)
+   EINA_INARRAY_FOREACH(_inarray_obj_out_to_check, ele)
      efl_unref(*ele);
 
    eina_inarray_free(_inarray_obj_out_to_check);
@@ -1137,7 +1137,7 @@ Eina_Bool _test_testing_check_eina_inarray_obj_return(EINA_UNUSED Eo *obj, EINA_
    if (!r) return r;
 
    Test_Numberwrapper **ele;
-   EINA_INARRAY_FOREACH(_inarray_obj_in_own_to_check, ele)
+   EINA_INARRAY_FOREACH(_inarray_obj_return_to_check, ele)
      efl_unref(*ele);
 
    eina_inarray_free(_inarray_obj_return_to_check);
