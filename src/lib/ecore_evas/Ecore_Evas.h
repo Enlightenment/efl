@@ -47,7 +47,6 @@
  * to do soon:
  * - iconfication api needs to work
  * - maximization api needs to work
- * - document all calls
  *
  * later:
  * - buffer back-end that renders to an evas_image_object ???
@@ -1573,9 +1572,45 @@ EAPI void            ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, i
  */
 EAPI void            ecore_evas_wayland_type_set(Ecore_Evas *ee, int type);
 
+/**
+ * @brief Gets the window from Ecore_Evas using the wayland backend.
+ *
+ * @param ee The Ecore_Evas from which to get the window.
+ * @return The window of type Ecore_X_Window.
+ *
+ * @note If ecore is not compiled with support for wayland or if @p ee
+ * was not created with ecore_evas_wayland_shm_new() or
+ * ecore_evas_wayland_egl_new() then nothing is done and NULL is returned.
+ */
 EAPI Ecore_Wl_Window *ecore_evas_wayland_window_get(const Ecore_Evas *ee);
-EAPI Ecore_Wl2_Window *ecore_evas_wayland2_window_get(const Ecore_Evas *ee); /** @since 1.17 */
-EAPI Ecore_Cocoa_Window *ecore_evas_cocoa_window_get(const Ecore_Evas *ee); /** @since 1.17 */
+
+/**
+ * @brief Gets the window from Ecore_Evas using the wayland2 backend.
+ *
+ * @param ee The Ecore_Evas from which to get the window.
+ * @return The window of type Ecore_X_Window.
+ *
+ * @note If ecore is not compiled with support for wayland or if @p ee
+ * was not created with ecore_evas_wayland_shm_new() or
+ * ecore_evas_wayland_egl_new() then nothing is done and NULL is returned.
+ *
+ * @since 1.17
+ */
+EAPI Ecore_Wl2_Window *ecore_evas_wayland2_window_get(const Ecore_Evas *ee);
+
+/**
+ * @brief Gets the window from Ecore_Evas using the opengl_cocoa backend.
+ *
+ * @param ee The Ecore_Evas from which to get the window.
+ * @return The window of type Ecore_X_Window.
+ *
+ * @note If ecore is not compiled with support for opengl_cocoa or if @p
+ * ee was not created with ecore_evas_cocoa_new() then nothing is done
+ * and NULL is returned.
+ *
+ * @since 1.17
+ */
+EAPI Ecore_Cocoa_Window *ecore_evas_cocoa_window_get(const Ecore_Evas *ee);
 
 /**
  * @brief Create an Ecore_Evas window using the drm engine.
@@ -1827,12 +1862,44 @@ EAPI Ecore_Evas     *ecore_evas_object_ecore_evas_get(Evas_Object *obj);
  */
 EAPI Evas           *ecore_evas_object_evas_get(Evas_Object *obj);
 
+/**
+ * @brief Creates a new @c Ecore_Evas canvas bound to the Evas
+ * @b gdi (software) engine.
+ *
+ * @param parent ID of the parent window this Ecore_Evas window belongs
+ *        to, or 0 if this is a top-level window.
+ * @param x Horizontal position of window, in pixels.
+ * @param y Vertical position of window, in pixels.
+ * @param width The width of the canvas, in pixels.
+ * @param height The height of the canvas, in pixels.
+ * @return A new @c Ecore_Evas instance, or @c NULL on failure.
+ *
+ * The Graphics Device Interface (GDI) is a display API for Microsoft
+ * Win32 similar in concept to Xlib or Quartz, providing an
+ * abstraction layer for performing advanced drawing functionalities
+ * using software rendering.
+ */
 EAPI Ecore_Evas     *ecore_evas_software_gdi_new(Ecore_Win32_Window *parent,
                                                  int                 x,
                                                  int                 y,
                                                  int                 width,
                                                  int                 height);
 
+/**
+ * @brief Creates a new @c Ecore_Evas canvas bound to the Evas
+ * @b DirectDraw (software) engine.
+ *
+ * @param parent ID of the parent window this Ecore_Evas window belongs
+ *        to, or 0 if this is a top-level window.
+ * @param x Horizontal position of window, in pixels
+ * @param y Vertical position of window, in pixels
+ * @param width The width of the canvas, in pixels
+ * @param height The height of the canvas, in pixels
+ * @return A new @c Ecore_Evas instance or @c NULL on failure
+ *
+ * DirectDraw is an old Microsoft Win32 API for graphics rendering.
+ * This API uses the unaccelerated software-based rendering.
+ */
 EAPI Ecore_Evas     *ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
                                                    int                 x,
                                                    int                 y,
@@ -1859,8 +1926,34 @@ EAPI Ecore_Evas *ecore_evas_gl_glew_new(Ecore_Win32_Window *parent,
 
 EAPI Ecore_Win32_Window *ecore_evas_win32_window_get(const Ecore_Evas *ee);
 
+/**
+ * @brief Creates a new @c Ecore_Evas canvas bound to the Evas
+ * @b SDL engine.
+ *
+ * @param name        Device target name, defaults to "EFL SDL" if NULL.
+ * @param w           Width of the canvas, in pixels.
+ * @param h           Height of the canvas, in pixels.
+ * @param fullscreen  Set the fullscreen property for the window.
+ * @param hwsurface   Set the hardware surface property for the window.
+ * @param noframe     Set the noframe flag on the einfo.
+ * @param alpha       Set alpha for the Ecore_Evas window.
+ * @return A new @c Ecore_Evas instance, or @c NULL on failure.
+ */
 EAPI Ecore_Evas     *ecore_evas_sdl_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha);
+
 EAPI Ecore_Evas     *ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha);
+
+/**
+ * @brief Creates a new @c Ecore_Evas canvas bound to the Evas
+ * @b SDL + gl engine.
+ *
+ * @param name        Device target name, defaults to "EFL SDL" if NULL.
+ * @param w           Width of the canvas, in pixels.
+ * @param h           Height of the canvas, in pixels.
+ * @param fullscreen  Set the fullscreen property for the window.
+ * @param noframe     Set the noframe flag on the einfo.
+ * @return A new @c Ecore_Evas instance or @c NULL on failure
+ */
 EAPI Ecore_Evas     *ecore_evas_gl_sdl_new(const char* name, int w, int h, int fullscreen, int noframe);
 
 EAPI Ecore_Evas     *ecore_evas_software_wince_new(Ecore_WinCE_Window *parent,
@@ -1895,12 +1988,38 @@ EAPI Ecore_Evas     *ecore_evas_software_wince_gdi_new(Ecore_WinCE_Window *paren
 
 EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(const Ecore_Evas *ee) EINA_DEPRECATED;
 
+/**
+ * @brief Creates a new @c Ecore_Evas canvas bound to the Evas
+ * @b Cocoa engine.
+ *
+ * @param parent ID of the parent window this Ecore_Evas window belongs
+ *        to, or 0 if this is a top-level window.
+ * @param x Horizontal position of window, in pixels
+ * @param y Vertical position of window, in pixels
+ * @param w Width of the canvas, in pixels.
+ * @param h Height of the canvas, in pixels.
+ *
+ * The cocoa backend is used for MacOS based systems.
+ */
 EAPI Ecore_Evas *ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent,
                                       int x,
                                       int y,
                                       int w,
                                       int h);
 
+/**
+ * @brief Creates a new @c Ecore_Evas canvas bound to the Evas
+ * @b psl1ght engine.
+ *
+ * @param parent ID of the parent window this Ecore_Evas window belongs
+ *        to, or 0 if this is a top-level window.
+ * @param x Horizontal position of window, in pixels
+ * @param y Vertical position of window, in pixels
+ * @param w Width of the canvas, in pixels.
+ * @param h Height of the canvas, in pixels.
+ *
+ * The psl1ght backend is used for the PS3 GameOS.
+ */
 EAPI Ecore_Evas *ecore_evas_psl1ght_new(const char* name, int w, int h);
 
 
