@@ -73,7 +73,7 @@ public static class BaseData
         return new test.NumberwrapperConcrete[]{a,b,c,d,e,f};
     }
 
-    public static void NumberwrapperArrayAssertEqual(
+    public static void NumberwrapperSequenceAssertEqual(
         test.Numberwrapper[] a
         , test.Numberwrapper[] b
         , [CallerLineNumber] int line = 0
@@ -1153,7 +1153,7 @@ class TestEinaArray
         arr.Append(BaseArrObj());
         Test.Assert(t.eina_array_obj_in(arr));
         Test.Assert(arr.Own);
-        NumberwrapperArrayAssertEqual(arr.ToArray(), ModifiedArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), ModifiedArrObj());
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
     }
@@ -1165,7 +1165,7 @@ class TestEinaArray
         arr.Append(BaseArrObj());
         Test.Assert(t.eina_array_obj_in_own(arr));
         Test.Assert(!arr.Own);
-        NumberwrapperArrayAssertEqual(arr.ToArray(), ModifiedArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), ModifiedArrObj());
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.check_eina_array_obj_in_own());
@@ -1177,7 +1177,7 @@ class TestEinaArray
         eina.Array<test.Numberwrapper> arr;
         Test.Assert(t.eina_array_obj_out(out arr));
         Test.Assert(!arr.Own);
-        NumberwrapperArrayAssertEqual(arr.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseArrObj());
         Test.Assert(arr.Append(AppendArrObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
@@ -1190,7 +1190,7 @@ class TestEinaArray
         eina.Array<test.Numberwrapper> arr;
         Test.Assert(t.eina_array_obj_out_own(out arr));
         Test.Assert(arr.Own);
-        NumberwrapperArrayAssertEqual(arr.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseArrObj());
         Test.Assert(arr.Append(AppendArrObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
@@ -1201,7 +1201,7 @@ class TestEinaArray
         test.Testing t = new test.TestingConcrete();
         var arr = t.eina_array_obj_return();
         Test.Assert(!arr.Own);
-        NumberwrapperArrayAssertEqual(arr.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseArrObj());
         Test.Assert(arr.Append(AppendArrObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
@@ -1213,7 +1213,7 @@ class TestEinaArray
         test.Testing t = new test.TestingConcrete();
         var arr = t.eina_array_obj_return_own();
         Test.Assert(arr.Own);
-        NumberwrapperArrayAssertEqual(arr.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseArrObj());
         Test.Assert(arr.Append(AppendArrObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
@@ -1226,8 +1226,8 @@ class TestEinaArray
         var a = new eina.Array<test.Numberwrapper>();
         a.Append(cmp);
         var b = t.eina_array_obj_return_in(a);
-        NumberwrapperArrayAssertEqual(a.ToArray(), b.ToArray());
-        NumberwrapperArrayAssertEqual(a.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(a.ToArray(), b.ToArray());
+        NumberwrapperSequenceAssertEqual(a.ToArray(), BaseArrObj());
         int len = a.Length;
         for (int i=0; i < len; ++i)
         {
@@ -1671,7 +1671,7 @@ class TestEinaInarray
         arr.Append(BaseArrObj());
         Test.Assert(t.eina_inarray_obj_in(arr));
         Test.Assert(arr.Own);
-        NumberwrapperInarrayAssertEqual(arr.ToArray(), ModifiedArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), ModifiedArrObj());
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
     }
@@ -1683,7 +1683,7 @@ class TestEinaInarray
         arr.Append(BaseArrObj());
         Test.Assert(t.eina_inarray_obj_in_own(arr));
         Test.Assert(!arr.Own);
-        NumberwrapperInarrayAssertEqual(arr.ToArray(), ModifiedArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), ModifiedArrObj());
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.check_eina_inarray_obj_in_own());
@@ -1695,7 +1695,7 @@ class TestEinaInarray
         eina.Inarray<test.Numberwrapper> arr;
         Test.Assert(t.eina_inarray_obj_out(out arr));
         Test.Assert(!arr.Own);
-        NumberwrapperInarrayAssertEqual(arr.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseArrObj());
         Test.Assert(arr.Append(AppendArrObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
@@ -1708,7 +1708,7 @@ class TestEinaInarray
         eina.Inarray<test.Numberwrapper> arr;
         Test.Assert(t.eina_inarray_obj_out_own(out arr));
         Test.Assert(arr.Own);
-        NumberwrapperInarrayAssertEqual(arr.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseArrObj());
         Test.Assert(arr.Append(AppendArrObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
@@ -1719,7 +1719,7 @@ class TestEinaInarray
         test.Testing t = new test.TestingConcrete();
         var arr = t.eina_inarray_obj_return();
         Test.Assert(!arr.Own);
-        NumberwrapperInarrayAssertEqual(arr.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseArrObj());
         Test.Assert(arr.Append(AppendArrObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
@@ -1731,7 +1731,7 @@ class TestEinaInarray
         test.Testing t = new test.TestingConcrete();
         var arr = t.eina_inarray_obj_return_own();
         Test.Assert(arr.Own);
-        NumberwrapperInarrayAssertEqual(arr.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(arr.ToArray(), BaseArrObj());
         Test.Assert(arr.Append(AppendArrObj()));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
@@ -1744,8 +1744,8 @@ class TestEinaInarray
         var a = new eina.Inarray<test.Numberwrapper>();
         a.Append(cmp);
         var b = t.eina_inarray_obj_return_in(a);
-        NumberwrapperInarrayAssertEqual(a.ToArray(), b.ToArray());
-        NumberwrapperInarrayAssertEqual(a.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(a.ToArray(), b.ToArray());
+        NumberwrapperSequenceAssertEqual(a.ToArray(), BaseArrObj());
         int len = a.Length;
         for (int i=0; i < len; ++i)
         {
@@ -2233,7 +2233,7 @@ class TestEinaList
         lst.AppendArray(BaseArrObj());
         Test.Assert(t.eina_list_obj_in(lst));
         Test.Assert(lst.Own);
-        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseArrObj());
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
     }
@@ -2256,7 +2256,7 @@ class TestEinaList
         eina.List<test.Numberwrapper> lst;
         Test.Assert(t.eina_list_obj_out(out lst));
         Test.Assert(!lst.Own);
-        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseArrObj());
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.check_eina_list_obj_out());
@@ -2268,7 +2268,7 @@ class TestEinaList
         eina.List<test.Numberwrapper> lst;
         Test.Assert(t.eina_list_obj_out_own(out lst));
         Test.Assert(lst.Own);
-        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseArrObj());
         lst.AppendArray(AppendArrObj());
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
@@ -2279,7 +2279,7 @@ class TestEinaList
         test.Testing t = new test.TestingConcrete();
         var lst = t.eina_list_obj_return();
         Test.Assert(!lst.Own);
-        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseArrObj());
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.check_eina_list_obj_return());
@@ -2290,7 +2290,7 @@ class TestEinaList
         test.Testing t = new test.TestingConcrete();
         var lst = t.eina_list_obj_return_own();
         Test.Assert(lst.Own);
-        NumberwrapperArrayAssertEqual(lst.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(lst.ToArray(), BaseArrObj());
         lst.AppendArray(AppendArrObj());
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
@@ -2303,8 +2303,8 @@ class TestEinaList
         var a = new eina.List<test.Numberwrapper>();
         a.AppendArray(cmp);
         var b = t.eina_list_obj_return_in(a);
-        NumberwrapperArrayAssertEqual(a.ToArray(), b.ToArray());
-        NumberwrapperArrayAssertEqual(a.ToArray(), BaseArrObj());
+        NumberwrapperSequenceAssertEqual(a.ToArray(), b.ToArray());
+        NumberwrapperSequenceAssertEqual(a.ToArray(), BaseArrObj());
         int len = a.Length;
         for (int i=0; i < len; ++i)
         {
