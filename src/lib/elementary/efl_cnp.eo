@@ -1,0 +1,53 @@
+import elm_entry;
+
+enum Efl.Cnp.Format
+{
+   [[Selection format]]
+   targets = -1, [[For matching every possible atom]]
+   none = 0x0, [[Content is from outside of Elementary]]
+   text = 0x01, [[Plain unformatted text: Used for things that don't want rich markup]]
+   markup = 0x2, [[Edje textblock markup, including inline images]]
+   image = 0x4, [[Images]]
+   vcard = 0x08, [[Vcards]]
+   html = 0x10 [[Raw HTML-like data (eg. webkit)]]
+}
+
+struct Efl.Cnp.Selection
+{
+   [[EFL Cnp selection]]
+   data: void_ptr; [[data]]
+   length: int; [[length]]
+}
+
+
+//mixin or class
+//class: how to get top_win and set selection
+//mixin: every object can get/set selection, how to handle it efficiently
+class Efl.Cnp (Efl.Object) {
+   [[Efl Copy and Paste class]]
+   //legacy_prefix: elm_cnp;
+   eo_prefix: efl_cnp;
+   methods {
+      selection_set {
+         params {
+           @in cnp_mode: Elm.Cnp_Mode;
+           @in format: Efl.Cnp.Format; [[Selection Format]]
+           @in buf: const(void_ptr);
+           @in len: int; [[The buffer's length.]]
+         }
+      }
+      selection_get {
+         params {
+           @in cnp_mode: Elm.Cnp_Mode; [[Copy and Paste mode]]
+           @in format: Efl.Cnp.Format; [[Selection Format]]
+           //@in datacb: future<generic_value>; [[Future of selection that is ready]]
+           @in data: const(void_ptr); [[The data passed to $func.]]
+         }
+        return: future<generic_value>; [[Future of selection that is ready]]
+      }
+   }
+   implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+   }
+}
