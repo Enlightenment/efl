@@ -113,11 +113,14 @@ _contracted_cb(void *data EINA_UNUSED,
 
 // "contracted,state,changed" smart callback
 static void
-_shrink_state_changed_cb(void *data EINA_UNUSED,
+_expand_state_changed_cb(void *data EINA_UNUSED,
                          Evas_Object *obj EINA_UNUSED,
                          void *event_info EINA_UNUSED)
 {
-   printf("contracted state changed! \n");
+   if (elm_multibuttonentry_expanded_get(obj))
+     printf("expand state changed: EXPANDED \n");
+   else
+     printf("expand state changed: SHRANK \n");
 }
 
 // "longpressed" smart callback
@@ -219,7 +222,7 @@ _add_multibuttonentry(Evas_Object *parent)
 
    evas_object_smart_callback_add(mbe, "expanded", _expanded_cb, NULL);
    evas_object_smart_callback_add(mbe, "contracted", _contracted_cb, NULL);
-   evas_object_smart_callback_add(mbe, "shrink,state,changed", _shrink_state_changed_cb, NULL);
+   evas_object_smart_callback_add(mbe, "expand,state,changed", _expand_state_changed_cb, NULL);
    evas_object_smart_callback_add(mbe, "item,longpressed", _longpressed_cb, NULL);
 
    btn = _format_change_btn_add(mbe);
@@ -305,7 +308,7 @@ _add_multibuttonentry_shrink(Evas_Object *parent)
 
    evas_object_smart_callback_add(mbe, "expanded", _expanded_cb, NULL);
    evas_object_smart_callback_add(mbe, "contracted", _contracted_cb, NULL);
-   evas_object_smart_callback_add(mbe, "shrink,state,changed", _shrink_state_changed_cb, NULL);
+   evas_object_smart_callback_add(mbe, "expand,state,changed", _expand_state_changed_cb, NULL);
    evas_object_smart_callback_add(mbe, "item,longpressed", _longpressed_cb, NULL);
 
    btn = _format_change_btn_add(mbe);
