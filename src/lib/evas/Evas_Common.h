@@ -3224,7 +3224,7 @@ EAPI int  evas_string_char_len_get(const char *str) EINA_WARN_UNUSED_RESULT EINA
  * Get language direction.
  *
  * @ingroup Evas_Utils
- * @since 1.18
+ * @since 1.20
  */
 EAPI Evas_BiDi_Direction     evas_language_direction_get(void);
 
