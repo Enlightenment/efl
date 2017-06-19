@@ -19,7 +19,11 @@
 #define HEIGHT 600
 
 #ifndef EFL_BETA_API_SUPPORT
-#define EFL_BETA_API_SUPPORT 1
+#define EFL_BETA_API_SUPPORT
+#endif
+
+#ifndef EFL_EO_API_SUPPORT
+#define EFL_EO_API_SUPPORT
 #endif
 
 #include <Eo.h>
