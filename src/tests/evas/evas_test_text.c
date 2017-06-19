@@ -150,11 +150,12 @@ START_TEST(evas_text_geometries)
    ck_assert_int_lt(w, adv);
 
 #ifdef HAVE_HARFBUZZ
-   /* Obviously, adv < width case */
-   evas_object_text_text_set(to, "ନୂଁ");
-   adv = evas_object_text_horiz_advance_get(to);
-   evas_object_geometry_get(to, NULL, NULL, &w, NULL);
-   ck_assert_int_lt(adv, w);
+   // FIXME: missing a font for Oriya script in our test suite
+   ///* Obviously, adv < width case */
+   //evas_object_text_text_set(to, "ନୂଁ");
+   //adv = evas_object_text_horiz_advance_get(to);
+   //evas_object_geometry_get(to, NULL, NULL, &w, NULL);
+   //ck_assert_int_lt(adv, w);
 #endif
 
    END_TEXT_TEST();
