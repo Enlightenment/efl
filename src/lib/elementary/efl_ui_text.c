@@ -1208,8 +1208,11 @@ _efl_ui_text_elm_widget_on_focus_region(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *s
 {
    Evas_Coord edje_x, edje_y, elm_x, elm_y;
 
-   edje_object_part_text_cursor_geometry_get
-     (sd->entry_edje, "elm.text", x, y, w, h);
+   efl_text_cursor_geometry_get(obj,
+         efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN),
+         EFL_TEXT_CURSOR_TYPE_BEFORE,
+         x, y, w, h,
+         NULL, NULL, NULL, NULL);
 
    if (sd->single_line)
      {
