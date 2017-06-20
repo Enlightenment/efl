@@ -94,6 +94,25 @@ class TestEolianError
     }
 
     // events
-    // virtual callbacks
+    class Listener
+    {
+        public bool called = false;
+        public void callback(object sender, EventArgs e) {
+            throw (new CustomException("Event exception"));
+        }
+        public void another_callback(object sender, EventArgs e) {}
+    }
+
+    public static void eina_error_event_raise_exception()
+    {
+        // An event whose managed delegate generates an exception
+        // must set an eina_error so it can be reported back to
+        // the managed code
+        efl.Loop loop = new efl.LoopConcrete();
+        Listener listener = new Listener();
+        loop.CALLBACK_ADD += listener.callback;
+
+        Test.AssertRaises<efl.EflException>(() => loop.IDLE += listener.another_callback);
+    }
 }
 }

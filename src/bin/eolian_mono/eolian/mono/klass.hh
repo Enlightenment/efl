@@ -479,7 +479,7 @@ struct klass
          return true;
 
      if (!as_generator(scope_tab << "private readonly object eventLock = new object();\n"
-             << scope_tab << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n")
+             << scope_tab << "private Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n")
              .generate(sink, NULL, context))
          return false;
 
@@ -496,6 +496,7 @@ struct klass
             << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Failed to add event proxy for event ${key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
             << scope_tab << scope_tab << scope_tab << "}\n"
+            << scope_tab << scope_tab << scope_tab << "eina.Error.RaiseIfOcurred();\n"
             << scope_tab << scope_tab << "} \n"
             << scope_tab << scope_tab << "event_cb_count[key]++;\n"
             << scope_tab << scope_tab << "return true;\n"
@@ -511,6 +512,7 @@ struct klass
             << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Failed to remove event proxy for event ${key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
             << scope_tab << scope_tab << scope_tab << "}\n"
+            << scope_tab << scope_tab << scope_tab << "eina.Error.RaiseIfOcurred();\n"
             << scope_tab << scope_tab << "} else if (event_count == 0) {\n"
             << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Trying to remove proxy for event ${key} when there is nothing registered.\");\n"
             << scope_tab << scope_tab << scope_tab << "return false;\n"
@@ -562,7 +564,12 @@ struct klass
                 << scope_tab << "public void on_" << event_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)\n"
                 << scope_tab << "{\n"
                 << scope_tab << event_args
-                << scope_tab << scope_tab << "On_" << event_name << "(args);\n"
+                << scope_tab << scope_tab << "try {\n"
+                << scope_tab << scope_tab << scope_tab << "On_" << event_name << "(args);\n"
+                << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
+                << scope_tab << scope_tab << scope_tab << "eina.Log.Error(e.Message);\n"
+                << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
+                << scope_tab << scope_tab << "}\n"
                 << scope_tab << "}\n"
                 << scope_tab << "efl.Event_Cb evt_" << event_name << "_delegate;\n"
                 << scope_tab << "event EventHandler" << wrapper_args_template << " " << cls.cxx_name << "." << upper_name << "{\n")
@@ -644,7 +651,12 @@ struct klass
                      << scope_tab << "protected void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)"
                      << scope_tab << "{\n"
                      << scope_tab << event_args
-                     << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
+                    << scope_tab << scope_tab << "try {\n"
+                    << scope_tab << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
+                    << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
+                    << scope_tab << scope_tab << scope_tab << "eina.Log.Error(e.Message);\n"
+                    << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
+                    << scope_tab << scope_tab << "}\n"
                      << scope_tab << "}\n"
                      << scope_tab << "event EventHandler" << wrapper_args_template << " " << *(lower_case[string] << ".") << klass.cxx_name << ".")
                        .generate(sink, escape_namespace(klass.namespaces), context))
