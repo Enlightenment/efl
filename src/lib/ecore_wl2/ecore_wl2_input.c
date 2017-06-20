@@ -205,9 +205,11 @@ _ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
    ev->multi.y = input->pointer.sy;
    ev->multi.root.x = input->pointer.sx;
    ev->multi.root.y = input->pointer.sy;
-   ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
-   if (!ev->dev)
+
+   if ((input->focus.touch) && (input->focus.touch == window))
      ev->dev = _ecore_wl2_touch_dev_get(input, window->id);
+   else if ((input->focus.pointer) && (input->focus.pointer == window))
+     ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
 
    info = _ecore_wl2_input_mouse_down_info_get(device);
    if (info)
@@ -252,16 +254,21 @@ _ecore_wl2_input_mouse_wheel_send(Ecore_Wl2_Input *input, unsigned int axis, int
      {
         ev->window = input->focus.pointer->id;
         ev->event_window = input->focus.pointer->id;
+        ev->dev = _ecore_wl2_mouse_dev_get(input, input->focus.pointer->id);
      }
    else if (input->focus.touch)
      {
         ev->window = input->focus.touch->id;
         ev->event_window = input->focus.touch->id;
+        ev->dev = _ecore_wl2_touch_dev_get(input, input->focus.touch->id);
      }
 
-   ev->dev = _ecore_wl2_mouse_dev_get(input, ev->window);
    if (!ev->dev)
-     ev->dev = _ecore_wl2_touch_dev_get(input, ev->window);
+     {
+        ev->dev = _ecore_wl2_mouse_dev_get(input, ev->window);
+        if (!ev->dev)
+          ev->dev = _ecore_wl2_touch_dev_get(input, ev->window);
+     }
 
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, _input_event_cb_free, ev->dev);
 }
@@ -351,9 +358,11 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
      {
         ev->window = window->id;
         ev->event_window = window->id;
-        ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
-        if (!ev->dev)
+
+        if ((input->focus.touch) && (input->focus.touch == window))
           ev->dev = _ecore_wl2_touch_dev_get(input, window->id);
+        else if ((input->focus.pointer) && (input->focus.pointer == window))
+          ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
      }
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev,
@@ -425,9 +434,11 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
 
    ev->window = window->id;
    ev->event_window = window->id;
-   ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
-   if (!ev->dev)
+
+   if ((input->focus.touch) && (input->focus.touch == window))
      ev->dev = _ecore_wl2_touch_dev_get(input, window->id);
+   else if ((input->focus.pointer) && (input->focus.pointer == window))
+     ev->dev = _ecore_wl2_mouse_dev_get(input, window->id);
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev,
                    _input_event_cb_free, ev->dev);
