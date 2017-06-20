@@ -69,7 +69,7 @@ _http_headers_done(void *data EINA_UNUSED, const Efl_Event *event)
            efl_net_dialer_http_response_content_type_get(o),
            efl_net_dialer_http_response_content_length_get(o));
 
-   fprintf(stderr, "INFO: to upload %zd bytes\n", efl_net_dialer_http_request_content_length_get(o));
+   fprintf(stderr, "INFO: to upload %"PRIi64" bytes\n", efl_net_dialer_http_request_content_length_get(o));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
