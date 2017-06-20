@@ -171,11 +171,7 @@ efl_thread_2.c \
 efl_thread_3.c \
 efl_thread_4.c \
 efl_thread_5.c \
-efl_thread_6.c \
-efl_thread_win32_1.c \
-efl_thread_win32_2.c \
-efl_thread_win32_3.c \
-efl_thread_win32_4.c 
+efl_thread_6.c
 
 if HAVE_CXX11
 SRCS += \
@@ -437,17 +433,10 @@ button_cxx_example_00
 # bg_cxx_example_01
 endif
 
-if HAVE_WINDOWS
-efl_thread_1_SOURCES = efl_thread_win32_1.c
-efl_thread_2_SOURCES = efl_thread_win32_2.c
-efl_thread_3_SOURCES = efl_thread_win32_3.c
-efl_thread_4_SOURCES = efl_thread_win32_4.c
-else
 efl_thread_1_SOURCES = efl_thread_1.c
 efl_thread_2_SOURCES = efl_thread_2.c
 efl_thread_3_SOURCES = efl_thread_3.c
 efl_thread_4_SOURCES = efl_thread_4.c
-endif
 
 if HAVE_CXX11
 icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
