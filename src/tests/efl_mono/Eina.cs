@@ -1248,6 +1248,7 @@ class TestEinaInarray
     {
         var a = new eina.Inarray<int>();
         Test.Assert(a.Handle != IntPtr.Zero);
+        a.Dispose();
     }
 
     public static void push_int()
@@ -1256,6 +1257,7 @@ class TestEinaInarray
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push(88) == 0);
         Test.Assert(a[0] == 88);
+        a.Dispose();
     }
 
     public static void push_string()
@@ -1264,6 +1266,7 @@ class TestEinaInarray
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push("test string") == 0);
         Test.Assert(a[0] == "test string");
+        a.Dispose();
     }
 
     public static void push_obj()
@@ -1275,6 +1278,7 @@ class TestEinaInarray
         Test.Assert(a.Push(o) == 0);
         Test.Assert(a[0].raw_handle == o.raw_handle);
         Test.Assert(a[0].number_get() == 88);
+        a.Dispose();
     }
 
     public static void pop_int()
@@ -1284,6 +1288,7 @@ class TestEinaInarray
         Test.Assert(a.Push(88) >= 0);
         Test.Assert(a.Pop() == 88);
         Test.Assert(a.Count() == 0);
+        a.Dispose();
     }
 
     public static void pop_string()
@@ -1293,6 +1298,7 @@ class TestEinaInarray
         Test.Assert(a.Push("test string") >= 0);
         Test.Assert(a.Pop() == "test string");
         Test.Assert(a.Count() == 0);
+        a.Dispose();
     }
 
     public static void pop_obj()
@@ -1306,6 +1312,7 @@ class TestEinaInarray
         Test.Assert(p.raw_handle == o.raw_handle);
         Test.Assert(p.number_get() == 88);
         Test.Assert(a.Count() == 0);
+        a.Dispose();
     }
 
     public static void replace_at_int()
@@ -1316,8 +1323,11 @@ class TestEinaInarray
         Test.Assert(a[0] == 88);
         a.ReplaceAt(0, 44);
         Test.Assert(a[0] == 44);
+        Test.Assert(a.Count() == 1);
         a[0] = 22;
         Test.Assert(a[0] == 22);
+        Test.Assert(a.Count() == 1);
+        a.Dispose();
     }
 
     public static void replace_at_string()
@@ -1328,8 +1338,11 @@ class TestEinaInarray
         Test.Assert(a[0] == "test string");
         a.ReplaceAt(0, "other string");
         Test.Assert(a[0] == "other string");
+        Test.Assert(a.Count() == 1);
         a[0] = "abc";
         Test.Assert(a[0] == "abc");
+        Test.Assert(a.Count() == 1);
+        a.Dispose();
     }
 
     public static void replace_at_obj()
@@ -1350,6 +1363,7 @@ class TestEinaInarray
         a.ReplaceAt(0, o2);
         Test.Assert(a[0].raw_handle == o2.raw_handle);
         Test.Assert(a[0].number_get() == 44);
+        Test.Assert(a.Count() == 1);
 
         var o3 = new test.NumberwrapperConcrete();
         o3.number_set(22);
@@ -1357,6 +1371,9 @@ class TestEinaInarray
         a[0] = o3;
         Test.Assert(a[0].raw_handle == o3.raw_handle);
         Test.Assert(a[0].number_get() == 22);
+        Test.Assert(a.Count() == 1);
+
+        a.Dispose();
     }
 
     public static void count_int()
@@ -1373,6 +1390,7 @@ class TestEinaInarray
         Test.Assert(a.Push(22) == 2);
         Test.Assert(a[2] == 22);
         Test.Assert(a.Count() == 3);
+        a.Dispose();
     }
 
     public static void count_string()
@@ -1389,6 +1407,7 @@ class TestEinaInarray
         Test.Assert(a.Push("c") == 2);
         Test.Assert(a[2] == "c");
         Test.Assert(a.Count() == 3);
+        a.Dispose();
     }
 
     public static void count_obj()
@@ -1418,6 +1437,8 @@ class TestEinaInarray
         Test.Assert(a[2].raw_handle == o3.raw_handle);
         Test.Assert(a[2].number_get() == 22);
         Test.Assert(a.Count() == 3);
+
+        a.Dispose();
     }
 
     public static void length_int()
@@ -1434,6 +1455,7 @@ class TestEinaInarray
         Test.Assert(a.Push(22) >= 0);
         Test.Assert(a[2] == 22);
         Test.Assert(a.Length == 3);
+        a.Dispose();
     }
 
     public static void length_string()
@@ -1450,6 +1472,7 @@ class TestEinaInarray
         Test.Assert(a.Push("c") >= 0);
         Test.Assert(a[2] == "c");
         Test.Assert(a.Length == 3);
+        a.Dispose();
     }
 
     public static void eina_inarray_as_ienumerable_int()
@@ -1466,6 +1489,7 @@ class TestEinaInarray
             Test.AssertEquals(cmp, e);
             cmp /= 2;
         }
+        a.Dispose();
     }
 
     public static void eina_inarray_as_ienumerable_string()
@@ -1482,6 +1506,7 @@ class TestEinaInarray
             Test.AssertEquals(cmp, e);
             cmp = cmp + "X";
         }
+        a.Dispose();
     }
 
     public static void eina_inarray_as_ienumerable_obj()
@@ -1507,6 +1532,7 @@ class TestEinaInarray
             Test.Assert(cmp[i].raw_handle == e.raw_handle);
             ++i;
         }
+        arr.Dispose();
     }
 
     // //
@@ -1752,6 +1778,7 @@ class TestEinaInarray
             Test.Assert(a[i].raw_handle == b[i].raw_handle);
             Test.Assert(a[i].raw_handle == cmp[i].raw_handle);
         }
+        a.Dispose();
     }
 }
 
