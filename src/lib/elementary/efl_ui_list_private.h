@@ -21,7 +21,7 @@ struct _Efl_Ui_List_Item
    Elm_Layout           *layout;
    Efl_Future           *future;
    unsigned int         index;
-   Evas_Coord           x, y;
+   Evas_Coord           x, y, w, h;
    Eina_Bool            down: 1;
    Eina_Bool            selected: 1;
    Eina_Bool            longpressed : 1;
@@ -54,13 +54,15 @@ struct _Efl_Ui_List_Data
    } align;
 
    Eina_List                    *items, *selected;
+   Eina_List                    *realizes;
    Eina_Stringshare             *style;
    Elm_Object_Select_Mode       select_mode;
    Elm_List_Mode                mode;
+   unsigned int                 re_idx;
 
    Evas_Object                  *pan_obj;
    Eina_Bool                    pan_changed : 1;
-   Evas_Coord                   pan_x, pan_y, minw, minh, dx, dy;
+   Evas_Coord                   pan_x, pan_y, minw, minh, dx, dy, rlzw, rlzh;
    Efl_Ui_List_Item             *focused;
 };
 
