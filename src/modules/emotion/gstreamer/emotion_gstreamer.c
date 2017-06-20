@@ -1853,6 +1853,8 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
         gst_caps_unref(caps);
      unref_pad_v:
         gst_object_unref(pad);
+     if(str)
+	g_free(str);
      }
 
    /* Audio streams */
