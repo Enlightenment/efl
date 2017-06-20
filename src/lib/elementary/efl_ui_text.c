@@ -4732,6 +4732,7 @@ _update_text_cursors(Eo *obj)
              evas_object_hide(sd->cursor_bidi);
           }
      }
+   _cursor_geometry_recalc(obj);
 }
 
 static void
@@ -5319,7 +5320,6 @@ _efl_ui_text_cursor_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
    EFL_UI_TEXT_DATA_GET(data, sd);
    sd->cur_changed = EINA_TRUE;
    sd->deferred_decoration_cursor = EINA_TRUE;
-   _cursor_geometry_recalc(data);
    _decoration_defer(data);
 }
 
