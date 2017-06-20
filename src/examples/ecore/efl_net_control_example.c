@@ -466,6 +466,7 @@ _ctl_agent_browser_url(void *data EINA_UNUSED, const Efl_Event *event)
 static void
 _ctl_agent_request_input(void *data EINA_UNUSED, const Efl_Event *event)
 {
+   char buf[100];
    Eo *ctl = event->object;
    Efl_Net_Control_Agent_Request_Input *ri = event->info;
    Eina_List *n;
@@ -476,7 +477,6 @@ _ctl_agent_request_input(void *data EINA_UNUSED, const Efl_Event *event)
    char *ssid = NULL;
    char *wps = NULL;
    Eina_Slice ssid_slice = { };
-   ssize_t r;
    size_t len;
 
    printf("INFO: Needs agent input!\n");
@@ -491,50 +491,56 @@ _ctl_agent_request_input(void *data EINA_UNUSED, const Efl_Event *event)
         if (ri->fields & EFL_NET_CONTROL_AGENT_REQUEST_INPUT_FIELD_NAME)
           {
              printf("INFO: Name="); fflush(stdout);
-             len = 0;
-             r = getline(&name, &len, stdin);
-             if ((r > 1) && (name[r - 1] == '\n'))
+             if ((name = fgets(buf, sizeof(buf), stdin)) != NULL)
                {
-                  name[r - 1] = '\0';
-               }
-             else
-               {
-                  free(name);
-                  name = NULL;
+                  len = strlen(name);
+                  if (name[len - 1] == '\n')
+                    {
+                       name[len - 1] = '\0';
+                    }
+                  else
+                    {
+                       free(name);
+                       name = NULL;
+                    }
                }
           }
 
         if (ri->fields & EFL_NET_CONTROL_AGENT_REQUEST_INPUT_FIELD_SSID)
           {
              printf("INFO: SSID="); fflush(stdout);
-             len = 0;
-             r = getline(&ssid, &len, stdin);
-             if ((r > 1) && (ssid[r - 1] == '\n'))
+             if ((ssid = fgets(buf, sizeof(buf), stdin)) != NULL)
                {
-                  ssid[r - 1] = '\0';
-                  ssid_slice.mem = ssid;
-                  ssid_slice.len = r - 1;
-               }
-             else
-               {
-                  free(ssid);
-                  ssid = NULL;
+                  len = strlen(ssid);
+                  if (ssid[len - 1] == '\n')
+                    {
+                       ssid[len - 1] = '\0';
+                       ssid_slice.mem = ssid;
+                       ssid_slice.len = len - 1;
+                    }
+                  else
+                    {
+                       free(ssid);
+                       ssid = NULL;
+                    }
                }
           }
 
         if (ri->fields & EFL_NET_CONTROL_AGENT_REQUEST_INPUT_FIELD_USERNAME)
           {
              printf("INFO: Username="); fflush(stdout);
-             len = 0;
-             r = getline(&username, &len, stdin);
-             if ((r > 1) && (username[r - 1] == '\n'))
+             if ((username = fgets(buf, sizeof(buf), stdin)) != NULL)
                {
-                  username[r - 1] = '\0';
-               }
-             else
-               {
-                  free(username);
-                  username = NULL;
+                  len = strlen(username);
+                  if (username[len - 1] == '\n')
+                    {
+                       username[len - 1] = '\0';
+                    }
+                  else
+                    {
+                       free(username);
+                       username = NULL;
+                    }
                }
           }
 
@@ -545,34 +551,38 @@ _ctl_agent_request_input(void *data EINA_UNUSED, const Efl_Event *event)
              else
                printf("INFO: Passphrase=");
              fflush(stdout);
-             len = 0;
-             r = getline(&passphrase, &len, stdin);
-             if ((r > 1) && (passphrase[r - 1] == '\n'))
+             if ((passphrase = fgets(buf, sizeof(buf), stdin)) != NULL)
                {
-                  passphrase[r - 1] = '\0';
-               }
-             else
-               {
-                  free(passphrase);
-                  passphrase = NULL;
+                  len = strlen(passphrase);
+                  if (passphrase[len - 1] == '\n')
+                    {
+                       passphrase[len - 1] = '\0';
+                    }
+                  else
+                    {
+                       free(passphrase);
+                       passphrase = NULL;
+                    }
                }
           }
 
         if (ri->fields & EFL_NET_CONTROL_AGENT_REQUEST_INPUT_FIELD_WPS)
           {
              printf("INFO: WPS (use a single dot, '.', for pushbutton)="); fflush(stdout);
-             len = 0;
-             r = getline(&wps, &len, stdin);
-             if ((r > 1) && (wps[r - 1] == '\n'))
+             if ((wps = fgets(buf, sizeof(buf), stdin)) != NULL)
                {
-                  wps[r - 1] = '\0';
-                  if ((r == 2) && (wps[0] == '.'))
-                    wps[0] = '\0'; /* API uses empty string for pushbutton */
-               }
-             else
-               {
-                  free(wps);
-                  wps = NULL;
+                  len = strlen(wps);
+                  if (wps[len - 1] == '\n')
+                    {
+                       wps[len - 1] = '\0';
+                       if ((len == 2) && (wps[0] == '.'))
+                         wps[0] = '\0'; /* API uses empty string for pushbutton */
+                    }
+                  else
+                    {
+                       free(wps);
+                       wps = NULL;
+                    }
                }
           }
      }
