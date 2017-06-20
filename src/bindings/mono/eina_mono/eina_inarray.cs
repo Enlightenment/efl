@@ -238,15 +238,13 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public bool ReplaceAt(uint idx, T val)
     {
-        IntPtr ele = eina_inarray_nth(Handle, idx);
-        if (ele == IntPtr.Zero)
+        var old = eina_inarray_nth(Handle, idx);
+        if (old == IntPtr.Zero)
             return false;
         if (OwnContent)
-            NativeFreeInplace<T>(ele);
-        ele = ManagedToNativeAllocInplace(val);
-        var r = eina_inarray_insert_at(Handle, idx, ele);
-        if (!r)
-            NativeFreeInplace<T>(ele);
+            NativeFreeInplace<T>(old);
+        var ele = ManagedToNativeAllocInplace(val);
+        var r = eina_inarray_replace_at(Handle, idx, ele);
         ResidueFreeInplace<T>(ele);
         return r;
     }
