@@ -1,10 +1,17 @@
 #define EFL_BETA_API_SUPPORT 1
 #define EFL_EO_API_SUPPORT 1
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 #include <Ecore.h>
 #include <Ecore_Con.h>
 #include <Ecore_Getopt.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
 
 static int retval = EXIT_SUCCESS;
 static Eina_List *resolving = NULL;
