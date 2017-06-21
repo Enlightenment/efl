@@ -63,7 +63,7 @@ _change_range_print_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_inf
 {
    double from, to;
 
-   efl_ui_range_interval_get(obj, &from, &to);
+   elm_slider_range_get(obj, &from, &to);
 
    printf("range values:- from: %f, to: %f\n", from, to);
 }
@@ -332,8 +332,8 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    elm_object_disabled_set(sl, EINA_TRUE);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
-   efl_ui_range_interval_set(sl, 20, 100);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_set(sl, 20, 100);
    elm_box_pack_end(bx3, sl);
    evas_object_show(sl);
 
@@ -345,8 +345,8 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_unit_format_set(sl, "%1.5f units");
    elm_slider_indicator_format_set(sl, "%1.5f");
    elm_slider_span_size_set(sl, 160);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
-   efl_ui_range_interval_set(sl, 0.4, 0.9);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_set(sl, 0.4, 0.9);
    elm_box_pack_end(bx3, sl);
    evas_object_show(sl);
 
@@ -360,7 +360,7 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_step_set(sl, step);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
    elm_box_pack_end(bx3, sl);
    evas_object_show(sl);
 
@@ -375,7 +375,7 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_indicator_show_on_focus_set(sl, EINA_TRUE);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
    elm_box_pack_end(bx3, sl);
    evas_object_show(sl);
 
@@ -393,7 +393,7 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_span_size_set(sl, 120);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
    elm_box_pack_end(bx3, sl);
    evas_object_show(sl);
 
@@ -412,7 +412,7 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_inverted_set(sl, EINA_TRUE);
    evas_object_size_hint_align_set(sl, 0.5, 0.5);
    evas_object_size_hint_weight_set(sl, 0.0, 0.0);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
    elm_box_pack_end(bx3, sl);
    evas_object_show(sl);
 
@@ -431,7 +431,7 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_disabled_set(sl, EINA_TRUE);
    evas_object_size_hint_align_set(sl, 0.5, 0.5);
    evas_object_size_hint_weight_set(sl, 0.0, 0.0);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
    elm_slider_inverted_set(sl, EINA_TRUE);
    elm_box_pack_end(bx3, sl);
    evas_object_show(sl);
@@ -446,8 +446,8 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_indicator_format_set(sl, "%3.0f");
    elm_slider_min_max_set(sl, 50, 150);
    elm_object_scale_set(sl, 2.0);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
-   efl_ui_range_interval_set(sl, 100, 145);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_set(sl, 100, 145);
    elm_box_pack_end(bx3, sl);
    evas_object_show(sl);
 
@@ -460,8 +460,8 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(bx4);
 
    sl = elm_slider_add(bx4);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
-   efl_ui_range_interval_set(sl, 0.2, 0.9);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_set(sl, 0.2, 0.9);
    elm_slider_horizontal_set(sl, EINA_FALSE);
    elm_object_text_set(sl, "Vertical");
    elm_slider_unit_format_set(sl, "%1.1f units");
@@ -490,11 +490,11 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_object_scale_set(sl, 1.0);
    elm_slider_horizontal_set(sl, EINA_FALSE);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
    elm_box_pack_end(bx4, sl);
    evas_object_show(sl);
    elm_slider_min_max_set(sl, 50, 150);
-   efl_ui_range_interval_set(sl, 100, 130);
+   elm_slider_range_set(sl, 100, 130);
 
    ic = elm_icon_add(bx4);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -514,8 +514,8 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_scale_set(sl, 1.0);
    elm_slider_horizontal_set(sl, EINA_FALSE);
    elm_object_disabled_set(sl, EINA_TRUE);
-   efl_ui_range_interval_enabled_set(sl, EINA_TRUE);
-   efl_ui_range_interval_set(sl, 0.2, 0.9);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
+   elm_slider_range_set(sl, 0.2, 0.9);
    elm_box_pack_end(bx4, sl);
    evas_object_show(sl);
 

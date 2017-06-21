@@ -1683,10 +1683,31 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 
 // A11Y Accessibility - END
 
-/* Internal EO APIs and hidden overrides */
+/* Legacy APIs */
 
-#define EFL_UI_SLIDER_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
+EAPI void
+elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable)
+{
+   efl_ui_range_interval_enabled_set(obj, enable);
+}
+
+EAPI Eina_Bool
+elm_slider_range_enabled_get(const Evas_Object *obj)
+{
+   return efl_ui_range_interval_enabled_get(obj);
+}
+
+EAPI void
+elm_slider_range_set(Evas_Object *obj, double from, double to)
+{
+   efl_ui_range_interval_set(obj, from, to);
+}
+
+EAPI void
+elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
+{
+   efl_ui_range_interval_get(obj, from, to);
+}
 
 EAPI void
 elm_slider_min_max_set(Evas_Object *obj, double min, double max)
@@ -1699,5 +1720,10 @@ elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
    efl_ui_range_min_max_get(obj, min, max);
 }
+
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_SLIDER_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
 
 #include "efl_ui_slider.eo.c"

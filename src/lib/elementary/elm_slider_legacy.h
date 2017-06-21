@@ -193,4 +193,42 @@ EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
  */
 EAPI void elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max);
 
+/**
+ * @brief This enables two indicators in slider.
+ *
+ * @param[in] enable @c true if two indicators are enabled, @c false otherwise
+ *
+ * @since 1.18
+ */
+EAPI void elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable);
+
+/**
+ * @brief This enables two indicators in slider.
+ *
+ * @return @c true if two indicators are enabled, @c false otherwise
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool elm_slider_range_enabled_get(const Evas_Object *obj);
+
+/**
+ * @brief Sets up a start and end range point for the slider
+ *
+ * @param[in] from Range minimum value
+ * @param[in] to Range maximum value
+ *
+ * @since 1.18
+ */
+EAPI void elm_slider_range_set(Evas_Object *obj, double from, double to);
+
+/**
+ * @brief Sets up a start and end range point for the slider
+ *
+ * @param[out] from Range minimum value
+ * @param[out] to Range maximum value
+ *
+ * @since 1.18
+ */
+EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to);
+
 #include "efl_ui_slider.eo.legacy.h"
