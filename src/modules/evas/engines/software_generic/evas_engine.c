@@ -4745,6 +4745,8 @@ static Evas_Func func =
      eng_image_cache_flush,
      eng_image_cache_set,
      eng_image_cache_get,
+     NULL, // image_plane_assign
+     NULL, // image_plane_release
      /* font draw functions */
      eng_font_load,
      eng_font_memory_load,

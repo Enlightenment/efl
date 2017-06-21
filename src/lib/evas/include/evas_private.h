@@ -1482,6 +1482,9 @@ struct _Evas_Func
    void (*image_cache_set)                 (void *engine, int bytes);
    int  (*image_cache_get)                 (void *engine);
 
+   void *(*image_plane_assign)             (void *data, void *image, int x, int y);
+   void (*image_plane_release)             (void *data, void *image, void *plane);
+
    Evas_Font_Set *(*font_load)             (void *engine, const char *name, int size, Font_Rend_Flags wanted_rend);
    Evas_Font_Set *(*font_memory_load)      (void *engine, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
    Evas_Font_Set *(*font_add)              (void *engine, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend);
