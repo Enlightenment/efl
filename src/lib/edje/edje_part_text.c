@@ -171,7 +171,12 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_geometry_get(Eo *obj,
       Evas_Coord *cw2 EINA_UNUSED, Evas_Coord *ch2 EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
-   _edje_entry_cursor_geometry_get(pd->rp, cx, cy, cw, ch, NULL);
+   if (pd->rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_cursor_geometry_get(pd->rp, cx, cy, cw, ch, NULL);
+        if (cx) *cx -= pd->ed->x;
+        if (cy) *cy -= pd->ed->y;
+     }
    RETURN_VAL(EINA_FALSE);
 }
 
