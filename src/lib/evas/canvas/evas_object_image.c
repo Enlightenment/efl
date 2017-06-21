@@ -1033,6 +1033,8 @@ _evas_image_native_surface_set(Eo *eo_obj, Evas_Native_Surface *surf)
      evas_object_event_callback_add
      (eo_obj, EVAS_CALLBACK_DEL, _on_image_native_surface_del, NULL);
 
+   o->can_scanout = EINA_FALSE;
+
    evas_render_rendering_wait(obj->layer->evas);
    _evas_image_cleanup(eo_obj, obj, o);
    if (!ENFN->image_native_set) return EINA_FALSE;
@@ -1040,6 +1042,19 @@ _evas_image_native_surface_set(Eo *eo_obj, Evas_Native_Surface *surf)
        ((surf->version < 2) ||
         (surf->version > EVAS_NATIVE_SURFACE_VERSION))) return EINA_FALSE;
    o->engine_data = ENFN->image_native_set(ENDT, o->engine_data, surf);
+
+   if (surf && surf->version > 4)
+     {
+        switch (surf->type)
+          {
+           case EVAS_NATIVE_SURFACE_WL_DMABUF:
+             if (surf->data.wl_dmabuf.scanout.handler)
+               o->can_scanout = EINA_TRUE;
+             break;
+           default:
+             break;
+          }
+     }
    return (o->engine_data != NULL);
 }
 

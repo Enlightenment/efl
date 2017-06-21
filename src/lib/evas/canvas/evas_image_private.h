@@ -146,6 +146,7 @@ struct _Evas_Image_Data
    } delayed;
    Eina_Bool         legacy_type : 1;
    Eina_Bool         skip_head : 1;
+   Eina_Bool         can_scanout : 1;
 };
 
 /* shared functions between legacy and new eo classes */
