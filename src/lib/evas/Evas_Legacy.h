@@ -4254,7 +4254,7 @@ EAPI void                          evas_object_image_memfile_set(Evas_Object *ob
  * Magic version number to know what the native surface struct looks like
  */
 
-#define EVAS_NATIVE_SURFACE_VERSION 4
+#define EVAS_NATIVE_SURFACE_VERSION 5
 
 /**
  * Native surface types that image object supports
@@ -4272,6 +4272,28 @@ typedef enum _Evas_Native_Surface_Type
    EVAS_NATIVE_SURFACE_EVASGL, /**< Evas GL based type. evas gl surface @since 1.14 */
    EVAS_NATIVE_SURFACE_WL_DMABUF, /**< Wayland system based type. using dmabuf @since 1.18 */
 } Evas_Native_Surface_Type;
+
+/**
+ * Native surface types that image object supports
+ *
+ * @see Evas_Native_Surface
+ * @see evas_object_image_native_surface_set()
+ */
+typedef enum _Evas_Native_Surface_Status
+{
+   EVAS_NATIVE_SURFACE_STATUS_SCANOUT_ON,
+   EVAS_NATIVE_SURFACE_STATUS_SCANOUT_OFF,
+   EVAS_NATIVE_SURFACE_STATUS_PLANE_ASSIGN,
+   EVAS_NATIVE_SURFACE_STATUS_PLANE_RELEASE,
+} Evas_Native_Surface_Status;
+
+typedef void (*Evas_Native_Scanout_Handler)(void *scanout_data, Evas_Native_Surface_Status status);
+
+typedef struct _Evas_Native_Scanout
+{
+   Evas_Native_Scanout_Handler handler;
+   void *data;
+} Evas_Native_Scanout;
 
 /**
  * @brief A generic datatype for engine specific native surface information.
@@ -4328,6 +4350,7 @@ typedef struct _Evas_Native_Surface
       {
          void *attr; /**< Pointer to dmabuf attributes - contents copied */
          void *resource; /**< Wayland resource pointer, kept as is */
+         Evas_Native_Scanout scanout;
       } wl_dmabuf; /**< Set this struct fields if surface data is Wayland dmabuf based. @since 1.18 */
       struct
       {
