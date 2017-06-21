@@ -13,6 +13,7 @@ dist_installed_einaheaders_DATA = \
 lib/eina/eina_safety_checks.h \
 lib/eina/eina_error.h \
 lib/eina/eina_debug.h \
+lib/eina/eina_debug_private.h \
 lib/eina/eina_log.h \
 lib/eina/eina_inline_log.x \
 lib/eina/eina_fp.h \
