@@ -1274,14 +1274,6 @@ _efl_ui_slider_efl_ui_range_range_interval_set(Eo *obj, Efl_Ui_Slider_Data *pd, 
    _visuals_refresh(obj);
 }
 
-EAPI Evas_Object *
-elm_slider_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent);
-   return obj;
-}
-
 EOLIAN static Eo *
 _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
 {
@@ -1291,93 +1283,6 @@ _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUS
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SLIDER);
 
    return obj;
-}
-
-EAPI void
-elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
-{
-   efl_ui_range_span_size_set(obj, size);
-}
-
-EAPI Evas_Coord
-elm_slider_span_size_get(const Evas_Object *obj)
-{
-   return efl_ui_range_span_size_get(obj);
-}
-
-EAPI void
-elm_slider_unit_format_set(Evas_Object *obj, const char *units)
-{
-   efl_ui_range_unit_format_set(obj, units);
-}
-
-EAPI const char *
-elm_slider_unit_format_get(const Evas_Object *obj)
-{
-   return efl_ui_range_unit_format_get(obj);
-}
-
-EAPI void
-elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
-{
-   Efl_Orient dir;
-   EFL_UI_SLIDER_DATA_GET(obj, sd);
-
-   dir = _orientation_get(horizontal, _is_inverted(sd->orientation));
-
-   efl_orientation_set(obj, dir);
-}
-
-EAPI Eina_Bool
-elm_slider_horizontal_get(const Evas_Object *obj)
-{
-   Efl_Orient dir;
-   dir = efl_orientation_get(obj);
-
-   return _is_horizontal(dir);
-}
-
-EAPI void
-elm_slider_value_set(Evas_Object *obj, double val)
-{
-   efl_ui_range_value_set(obj, val);
-}
-
-EAPI double
-elm_slider_value_get(const Evas_Object *obj)
-{
-   return efl_ui_range_value_get(obj);
-}
-
-EAPI void
-elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
-{
-   Efl_Orient dir;
-   EFL_UI_SLIDER_DATA_GET(obj, sd);
-
-   dir = _orientation_get(_is_horizontal(sd->orientation), inverted);
-
-   efl_orientation_set(obj, dir);
-}
-
-EAPI Eina_Bool
-elm_slider_inverted_get(const Evas_Object *obj)
-{
-   Efl_Orient dir;
-   dir = efl_orientation_get(obj);
-
-   return _is_inverted(dir);
-}
-
-EAPI void
-elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func)
-{
-   EFL_UI_SLIDER_DATA_GET(obj, sd);
-
-   sd->units_format_func = func;
-   sd->units_format_free = free_func;
-
-   evas_object_smart_changed(obj);
 }
 
 EOLIAN static void
@@ -1684,6 +1589,101 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 // A11Y Accessibility - END
 
 /* Legacy APIs */
+
+EAPI Evas_Object *
+elm_slider_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
+   return obj;
+}
+
+EAPI void
+elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
+{
+   efl_ui_range_span_size_set(obj, size);
+}
+
+EAPI Evas_Coord
+elm_slider_span_size_get(const Evas_Object *obj)
+{
+   return efl_ui_range_span_size_get(obj);
+}
+
+EAPI void
+elm_slider_unit_format_set(Evas_Object *obj, const char *units)
+{
+   efl_ui_range_unit_format_set(obj, units);
+}
+
+EAPI const char *
+elm_slider_unit_format_get(const Evas_Object *obj)
+{
+   return efl_ui_range_unit_format_get(obj);
+}
+
+EAPI void
+elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Efl_Orient dir;
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
+
+   dir = _orientation_get(horizontal, _is_inverted(sd->orientation));
+
+   efl_orientation_set(obj, dir);
+}
+
+EAPI Eina_Bool
+elm_slider_horizontal_get(const Evas_Object *obj)
+{
+   Efl_Orient dir;
+   dir = efl_orientation_get(obj);
+
+   return _is_horizontal(dir);
+}
+
+EAPI void
+elm_slider_value_set(Evas_Object *obj, double val)
+{
+   efl_ui_range_value_set(obj, val);
+}
+
+EAPI double
+elm_slider_value_get(const Evas_Object *obj)
+{
+   return efl_ui_range_value_get(obj);
+}
+
+EAPI void
+elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
+{
+   Efl_Orient dir;
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
+
+   dir = _orientation_get(_is_horizontal(sd->orientation), inverted);
+
+   efl_orientation_set(obj, dir);
+}
+
+EAPI Eina_Bool
+elm_slider_inverted_get(const Evas_Object *obj)
+{
+   Efl_Orient dir;
+   dir = efl_orientation_get(obj);
+
+   return _is_inverted(dir);
+}
+
+EAPI void
+elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func)
+{
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
+
+   sd->units_format_func = func;
+   sd->units_format_free = free_func;
+
+   evas_object_smart_changed(obj);
+}
 
 EAPI void
 elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable)
