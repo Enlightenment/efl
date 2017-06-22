@@ -1360,6 +1360,9 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    Eina_Bool surface_below, stacking_check, object_above = EINA_FALSE;
    Eina_Bool ignore_window;
 
+   if (!_evas_object_image_can_use_plane(obj))
+     return EINA_FALSE;
+
    video_parent = _evas_object_image_video_parent_get(eo_obj);
 
    /* Check if any one is the stack make this object mapped */
@@ -3075,6 +3078,7 @@ evas_render_updates_internal(Evas *eo_e,
    unsigned int i;
    Phase1_Context p1ctx;
    int redraw_all = 0;
+   Evas_Active_Entry *ao;
    Evas_Render_Mode render_mode = !do_async ?
      EVAS_RENDER_MODE_SYNC :
      EVAS_RENDER_MODE_ASYNC_INIT;
@@ -3157,6 +3161,30 @@ evas_render_updates_internal(Evas *eo_e,
         else
           _evas_object_image_video_overlay_hide(eo_obj);
      }
+
+   /* check if individual image objects can be dropped into hardware planes */
+   if (ENFN->image_plane_assign)
+     EINA_INARRAY_FOREACH(&evas->active_objects, ao)
+       {
+          Evas_Object_Protected_Data *obj;
+          Evas_Object *eo_obj;
+
+          obj = ao->obj;
+          eo_obj = obj->object;
+
+          if (!efl_isa(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS)) continue;
+
+          if (evas_object_image_video_surface_get(eo_obj)) continue;
+
+          _evas_object_image_plane_release(eo_obj, obj);
+          if (!_evas_render_can_use_overlay(e, eo_obj))
+            {
+               /* This may free up things temporarily allocated by
+                * _can_use_overlay() testing in the engine */
+               _evas_object_image_plane_release(eo_obj, obj);
+            }
+       }
+
    eina_evlog("+render_phase1_direct", eo_e, 0.0, NULL);
    /* phase 1.8. pre render for proxy */
    _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects,
