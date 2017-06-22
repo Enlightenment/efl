@@ -36,35 +36,43 @@ _eo_obj_pointer_invalid(const Eo_Id obj_id,
    Eina_Thread thread = eina_thread_self();
    const char *tself = "main";
    const char *type = "object";
+   const char *reason = "This ID has probably been deleted";
    char tbuf[128];
-   if (obj_id & ((Eo_Id)1 << (REF_TAG_SHIFT - 1))) type = "class";
+   if (obj_id & MASK_CLASS_TAG) type = "class";
    if (thread != _efl_object_main_thread)
      {
         snprintf(tbuf, sizeof(tbuf), "%p", (void *)thread);
         tself = tbuf;
      }
+
+   if (!data->tables[(int)data->local_domain])
+     reason = "This ID does not seem to belong to this thread";
+   else if ((Efl_Id_Domain)domain == EFL_ID_DOMAIN_SHARED)
+     reason = "This shared ID has probably been deleted";
+
    eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR,
-       file, func_name, line,
-       "EOID %p is not a valid %s. "
-       "EOID domain=%i, current_domain=%i, local_domain=%i. "
-       "EOID generation=%lx, id=%lx, ref=%i. "
-       "Thread self=%s. "
-       "Available domains [%s %s %s %s]. "
-       "Maybe it has been deleted or does not belong to your thread?",
-       (void *)obj_id,
-       type,
-       (int)domain,
-       (int)data->domain_stack[data->stack_top],
-       (int)data->local_domain,
-       (unsigned long)(obj_id & MASK_GENERATIONS),
-       (unsigned long)(obj_id >> SHIFT_ENTRY_ID) & (MAX_ENTRY_ID | MAX_TABLE_ID | MAX_MID_TABLE_ID),
-       (int)(obj_id >> REF_TAG_SHIFT) & 0x1,
-       tself,
-       (data->tables[0]) ? "0" : " ",
-       (data->tables[1]) ? "1" : " ",
-       (data->tables[2]) ? "2" : " ",
-       (data->tables[3]) ? "3" : " "
-      );
+                  file, func_name, line,
+                  "Eo ID %p is not a valid %s. "
+                  "Current thread: %s. "
+                  "%s or this was never a valid %s ID. "
+                  "(domain=%i, current_domain=%i, local_domain=%i, "
+                  "available_domains=[%s %s %s %s], "
+                  "generation=%lx, id=%lx, ref=%i)",
+                  (void *)obj_id,
+                  type,
+                  tself,
+                  reason,
+                  type,
+                  (int)domain,
+                  (int)data->domain_stack[data->stack_top],
+                  (int)data->local_domain,
+                  (data->tables[0]) ? "0" : " ",
+                  (data->tables[1]) ? "1" : " ",
+                  (data->tables[2]) ? "2" : " ",
+                  (data->tables[3]) ? "3" : " ",
+                  (unsigned long)(obj_id & MASK_GENERATIONS),
+                  (unsigned long)(obj_id >> SHIFT_ENTRY_ID) & (MAX_ENTRY_ID | MAX_TABLE_ID | MAX_MID_TABLE_ID),
+                  (int)(obj_id >> REF_TAG_SHIFT) & 0x1);
    _eo_log_obj_report(obj_id, EINA_LOG_LEVEL_ERR, func_name, file, line);
 }
 
