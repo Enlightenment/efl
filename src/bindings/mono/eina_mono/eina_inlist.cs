@@ -61,13 +61,21 @@ public static class InlistNativeFunctions
     [DllImport("eina")] public static extern IntPtr
         eina_inlist_sort(IntPtr head, IntPtr func);
 
-// static inline IntPtr eina_inlist_first(IntPtr list);
-// static inline IntPtr eina_inlist_last(IntPtr list);
+
+    [DllImport("eflcustomexportsmono")] public static extern IntPtr
+        eina_inlist_first_custom_export_mono(IntPtr list);
+    [DllImport("eflcustomexportsmono")] public static extern IntPtr
+        eina_inlist_last_custom_export_mono(IntPtr list);
+
+
+    [DllImport("eflcustomexportsmono")] public static extern IntPtr
+        eina_inlist_next_custom_export_mono(IntPtr list);
+    [DllImport("eflcustomexportsmono")] public static extern IntPtr
+        eina_inlist_prev_custom_export_mono(IntPtr list);
 }
 
-public class Inlist<T> // : IEnumerable<T>, IDisposable
+public class Inlist<T> : IEnumerable<T>, IDisposable
 {
-/*
     public IntPtr Handle {get;set;} = IntPtr.Zero;
     public bool Own {get;set;}
     public bool OwnContent {get;set;}
@@ -85,9 +93,25 @@ public class Inlist<T> // : IEnumerable<T>, IDisposable
         OwnContent = true;
     }
 
+    private IntPtr InternalFirst()
+    {
+        return eina_inlist_first_custom_export_mono(Handle);
+    }
+
     private IntPtr InternalLast()
     {
         return eina_inlist_last_custom_export_mono(Handle);
+    }
+
+    private IntPtr InternalAt(int idx)
+    {
+        if (idx < 0)
+            return IntPtr.Zero;
+
+        IntPtr curr = Handle;
+        for (int n = 0; n != idx && curr != IntPtr.Zero; ++n)
+            curr = InternalNext(curr);
+        return curr;
     }
 
     private static IntPtr InternalNext(IntPtr inlist)
@@ -98,16 +122,6 @@ public class Inlist<T> // : IEnumerable<T>, IDisposable
     private static IntPtr InternalPrev(IntPtr inlist)
     {
         return eina_inlist_prev_custom_export_mono(inlist);
-    }
-
-    private static IntPtr InternalDataGet(IntPtr inlist)
-    {
-        return eina_inlist_data_get_custom_export_mono(inlist);
-    }
-
-    private static IntPtr InternalDataSet(IntPtr inlist, IntPtr data)
-    {
-        return eina_inlist_data_set_custom_export_mono(inlist, data);
     }
 
 
@@ -146,12 +160,19 @@ public class Inlist<T> // : IEnumerable<T>, IDisposable
         {
             for(IntPtr curr = h; curr != IntPtr.Zero; curr = InternalNext(curr))
             {
-                NativeFree<T>(InternalDataGet(curr));
+                NativeFreeInlistNodeElement<T>(curr);
             }
         }
 
         if (Own)
-            eina_inlist_free(h);
+        {
+            while (h != IntPtr.Zero)
+            {
+                var aux = h;
+                h = eina_inlist_remove(h, h);
+                NativeFreeInlistNode<T>(aux, false);
+            }
+        }
     }
 
     public void Dispose()
@@ -186,71 +207,65 @@ public class Inlist<T> // : IEnumerable<T>, IDisposable
 
     public int Count()
     {
-        return (int) eina_inlist_count_custom_export_mono(Handle);
+        return (int) eina_inlist_count(Handle);
+    }
+
+    public void Clean()
+    {
+        while (Handle != IntPtr.Zero)
+        {
+            var aux = Handle;
+            Handle = eina_inlist_remove(Handle, Handle);
+            NativeFreeInlistNode<T>(aux, OwnContent);
+        }
     }
 
     public void Append(T val)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
-        Handle = eina_inlist_append(Handle, ele);
+        IntPtr node = ManagedToNativeAllocInlistNode(val);
+        Handle = eina_inlist_append(Handle, node);
     }
 
     public void Prepend(T val)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
-        Handle = eina_inlist_prepend(Handle, ele);
+        IntPtr node = ManagedToNativeAllocInlistNode(val);
+        Handle = eina_inlist_prepend(Handle, node);
     }
 
-    public void SortedInsert(T val)
+    public void Remove(int idx)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
-        Handle = eina_inlist_sorted_insert(Handle, EinaCompareCb<T>(), ele);
+        IntPtr node = InternalAt(idx);
+        Handle = eina_inlist_remove(Handle, node);
+        NativeFreeInlistNode<T>(node, OwnContent);
     }
 
-    public void SortedInsert(Eina_Compare_Cb compareCb, T val)
+    public T At(int idx)
     {
-        IntPtr ele = ManagedToNativeAlloc(val);
-        Handle = eina_inlist_sorted_insert(Handle, Marshal.GetFunctionPointerForDelegate(compareCb), ele);
-    }
-
-    public void Sort(int limit = 0)
-    {
-        Handle = eina_inlist_sort(Handle, (uint)limit, EinaCompareCb<T>());
-    }
-
-    public void Sort(Eina_Compare_Cb compareCb)
-    {
-        Handle = eina_inlist_sort(Handle, 0, Marshal.GetFunctionPointerForDelegate(compareCb));
-    }
-
-    public void Sort(int limit, Eina_Compare_Cb compareCb)
-    {
-        Handle = eina_inlist_sort(Handle, (uint)limit, Marshal.GetFunctionPointerForDelegate(compareCb));
-    }
-
-    public T Nth(int n)
-    {
-        // TODO: check bounds ???
-        IntPtr ele = eina_inlist_nth(Handle, (uint)n);
-        return NativeToManaged<T>(ele);
+        IntPtr node = InternalAt(idx);
+        if (node == IntPtr.Zero)
+            throw new IndexOutOfRangeException();
+        return NativeToManagedInlistNode<T>(node);
     }
 
     public void DataSet(int idx, T val)
     {
-        IntPtr pos = eina_inlist_nth_inlist(Handle, (uint)idx);
-        if (pos == IntPtr.Zero)
+        IntPtr old = InternalAt(idx);
+        if (old == IntPtr.Zero)
             throw new IndexOutOfRangeException();
-        if (OwnContent)
-            NativeFree<T>(InternalDataGet(pos));
-        IntPtr ele = ManagedToNativeAlloc(val);
-        InternalDataSet(pos, ele);
+
+        IntPtr new_node = ManagedToNativeAllocInlistNode(val);
+
+        Handle = eina_inlist_append_relative(Handle, new_node, old);
+        Handle = eina_inlist_remove(Handle, old);
+
+        NativeFreeInlistNode<T>(old, OwnContent);
     }
 
     public T this[int idx]
     {
         get
         {
-            return Nth(idx);
+            return At(idx);
         }
         set
         {
@@ -258,29 +273,13 @@ public class Inlist<T> // : IEnumerable<T>, IDisposable
         }
     }
 
-    public T LastDataGet()
-    {
-        IntPtr ele = eina_inlist_last_data_get_custom_export_mono(Handle);
-        return NativeToManaged<T>(ele);
-    }
-
-    public void Reverse()
-    {
-        Handle = eina_inlist_reverse(Handle);
-    }
-
-    public void Shuffle()
-    {
-        Handle = eina_inlist_shuffle(Handle, IntPtr.Zero);
-    }
-
     public T[] ToArray()
     {
         var managed = new T[Count()];
         int i = 0;
-        for(IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr), ++i)
+        for(IntPtr curr = Handle; curr != IntPtr.Zero; ++i, curr = InternalNext(curr))
         {
-            managed[i] = NativeToManaged<T>(InternalDataGet(curr));
+            managed[i] = NativeToManagedInlistNode<T>(curr);
         }
         return managed;
     }
@@ -295,7 +294,7 @@ public class Inlist<T> // : IEnumerable<T>, IDisposable
     {
         for(IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr))
         {
-            yield return NativeToManaged<T>(InternalDataGet(curr));
+            yield return NativeToManagedInlistNode<T>(curr);
         }
     }
 
@@ -303,7 +302,6 @@ public class Inlist<T> // : IEnumerable<T>, IDisposable
     {
         return this.GetEnumerator();
     }
-*/
 }
 
 }

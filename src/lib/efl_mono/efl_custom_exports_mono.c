@@ -180,3 +180,28 @@ EAPI void *eina_list_last_data_get_custom_export_mono(const Eina_List *list)
    return eina_list_last_data_get(list);
 }
 
+// Inlist //
+
+EAPI Eina_Inlist *eina_inlist_first_custom_export_mono(const Eina_Inlist *list)
+{
+   return eina_inlist_first(list);
+}
+
+EAPI Eina_Inlist *eina_inlist_last_custom_export_mono(const Eina_Inlist *list)
+{
+   return eina_inlist_last(list);
+}
+
+EAPI Eina_Inlist *eina_inlist_next_custom_export_mono(const Eina_Inlist *list)
+{
+   if (list)
+     return list->next;
+   return NULL;
+}
+
+EAPI Eina_Inlist *eina_inlist_prev_custom_export_mono(const Eina_Inlist *list)
+{
+   if (list)
+     return list->prev;
+   return NULL;
+}

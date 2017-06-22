@@ -244,6 +244,10 @@ inline bool param_should_use_out_var(attributes::parameter_def const& param)
            || param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
+           || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "Eina_Hash *", !WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "Eina_Hash *", WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_Hash *", !WANT_OWN, WANT_OUT)
@@ -272,6 +276,10 @@ inline bool param_should_use_in_var(attributes::parameter_def const& param)
         || param_is_acceptable(param, "Eina_List *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_List *", WANT_OWN, !WANT_OUT)
+        || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, !WANT_OUT)
+        || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, !WANT_OUT)
+        || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, !WANT_OUT)
+        || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "Eina_Hash *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "Eina_Hash *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_Hash *", !WANT_OWN, !WANT_OUT)
@@ -452,6 +460,7 @@ struct native_convert_in_variable_generator
      else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *"
               || param.type.c_type == "Eina_Inarray *" || param.type.c_type == "const Eina_Inarray *"
               || param.type.c_type == "Eina_List *" || param.type.c_type == "const Eina_List *"
+              || param.type.c_type == "Eina_Inlist *" || param.type.c_type == "const Eina_Inlist *"
      )
        {
           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
@@ -518,6 +527,7 @@ struct convert_in_variable_generator
       else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *"
                || param.type.c_type == "Eina_Inarray *" || param.type.c_type == "const Eina_Inarray *"
                || param.type.c_type == "Eina_List *" || param.type.c_type == "const Eina_List *"
+               || param.type.c_type == "Eina_Inlist *" || param.type.c_type == "const Eina_Inlist *"
       )
         {
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
@@ -581,6 +591,10 @@ struct convert_out_variable_generator
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Hash *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Hash *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Hash *", WANT_OWN, WANT_OUT)
@@ -630,6 +644,10 @@ struct native_convert_out_variable_generator
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Hash *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Hash *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Hash *", WANT_OWN, WANT_OUT)
@@ -721,6 +739,10 @@ struct convert_out_assign_generator
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
               )
         {
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
@@ -798,6 +820,7 @@ struct convert_return_generator
      else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *"
               || ret_type.c_type == "Eina_Inarray *" || ret_type.c_type == "const Eina_Inarray *"
               || ret_type.c_type == "Eina_List *" || ret_type.c_type == "const Eina_List *"
+              || ret_type.c_type == "Eina_Inlist *" || ret_type.c_type == "const Eina_Inlist *"
      )
        {
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
@@ -893,6 +916,10 @@ struct native_convert_out_assign_generator
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
+               || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
               )
         {
            attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&param.type.original_type);
@@ -995,6 +1022,7 @@ struct native_convert_return_generator
      else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *"
               || ret_type.c_type == "Eina_Inarray *" || ret_type.c_type == "const Eina_Inarray *"
               || ret_type.c_type == "Eina_List *" || ret_type.c_type == "const Eina_List *"
+              || ret_type.c_type == "Eina_Inlist *" || ret_type.c_type == "const Eina_Inlist *"
      )
        {
           attributes::complex_type_def const* complex = efl::eina::get<attributes::complex_type_def>(&ret_type.original_type);
