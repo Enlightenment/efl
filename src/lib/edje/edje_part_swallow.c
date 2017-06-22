@@ -3,7 +3,7 @@
 #include "efl_canvas_layout_internal_swallow.eo.h"
 #define MY_CLASS EFL_CANVAS_LAYOUT_INTERNAL_SWALLOW_CLASS
 
-PROXY_IMPLEMENTATION(swallow, INTERNAL_SWALLOW, EINA_FALSE)
+PROXY_IMPLEMENTATION(swallow, MY_CLASS, EINA_FALSE)
 #undef PROXY_IMPLEMENTATION
 
 /* Swallow parts */

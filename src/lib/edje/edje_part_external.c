@@ -5,7 +5,7 @@
 
 static void _external_compose(Eo *obj, Edje *ed, const char *part);
 
-PROXY_IMPLEMENTATION(external, EXTERNAL, EINA_TRUE, _external_compose(proxy, ed, rp->part->name))
+PROXY_IMPLEMENTATION(external, MY_CLASS, EINA_TRUE, _external_compose(proxy, ed, rp->part->name))
 #undef PROXY_IMPLEMENTATION
 
 static void

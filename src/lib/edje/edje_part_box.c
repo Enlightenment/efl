@@ -5,7 +5,7 @@
 
 #include "../evas/canvas/evas_box.eo.h"
 
-PROXY_IMPLEMENTATION(box, INTERNAL_BOX, EINA_FALSE)
+PROXY_IMPLEMENTATION(box, MY_CLASS, EINA_FALSE)
 #undef PROXY_IMPLEMENTATION
 
 typedef struct _Part_Item_Iterator Part_Item_Iterator;
