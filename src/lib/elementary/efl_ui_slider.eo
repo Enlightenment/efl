@@ -136,6 +136,7 @@ class Efl.Ui.Slider (Elm.Layout, Efl.Ui.Range,
       Elm.Interface.Atspi.Value.range { get; }
       Elm.Interface.Atspi.Value.increment { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Part.part;
    }
    events {
       changed; [[Called when slider changed]]

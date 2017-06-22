@@ -13,6 +13,9 @@
 #include "efl_ui_slider_private.h"
 #include "elm_widget_layout.h"
 
+#include "efl_ui_slider_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS EFL_UI_SLIDER_CLASS
 
 #define MY_CLASS_NAME "Efl.Ui.Slider"
@@ -1302,27 +1305,10 @@ _efl_ui_slider_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Slide
 EOLIAN static void
 _efl_ui_slider_efl_ui_range_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, Evas_Coord size)
 {
-   if (sd->size == size) return;
-   sd->size = size;
-
-   if (sd->indicator_show)
-     {
-        elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
-     }
+   if (_is_horizontal(sd->orientation))
+     efl_gfx_size_hint_min_set(efl_part(obj, "elm.swallow.bar"), size, 1);
    else
-     {
-        elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
-     }
-
-   evas_object_smart_changed(obj);
+     efl_gfx_size_hint_min_set(efl_part(obj, "elm.swallow.bar"), 1, size);
 }
 
 EOLIAN static Evas_Coord
@@ -1587,6 +1573,91 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 }
 
 // A11Y Accessibility - END
+
+/* Efl.Part begin */
+ELM_PART_OVERRIDE(efl_ui_slider, EFL_UI_SLIDER, ELM_LAYOUT, Efl_Ui_Slider_Data, Elm_Part_Data)
+
+static Eina_Bool
+_efl_ui_slider_content_set(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+{
+   Eina_Bool int_ret;
+
+   int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
+   if (!int_ret) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static EOLIAN Eina_Bool
+_efl_ui_slider_internal_part_efl_container_content_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Efl_Gfx *content)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
+   ELM_PART_RETURN_VAL(_efl_ui_slider_content_set(pd->obj, sd, pd->part, content));
+}
+
+static void
+_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int w, int h)
+{
+   Evas_Coord size;
+
+   if (_is_horizontal(sd->orientation))
+     size = w;
+   else
+     size = h;
+
+   if (sd->size == size) return;
+   sd->size = size;
+
+   if (sd->indicator_show)
+     {
+        elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+     }
+   else
+     {
+        elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
+     }
+
+   evas_object_smart_changed(obj);
+}
+
+EOLIAN void
+_efl_ui_slider_internal_part_efl_gfx_size_hint_hint_min_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, int w, int h)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
+
+   _span_size_set(pd->obj, sd, w, h);
+}
+
+EOLIAN void
+_efl_ui_slider_internal_part_efl_gfx_size_hint_hint_min_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, int *w, int *h)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
+
+   if (_is_horizontal(sd->orientation))
+     {
+        if (w) *w = sd->size;
+        if (h) *h = 1;
+     }
+   else
+     {
+        if (w) *w = 1;
+        if (h) *h = sd->size;
+     }
+}
+
+#include "efl_ui_slider_internal_part.eo.c"
+/* Efl.Part end */
 
 /* Legacy APIs */
 
