@@ -701,7 +701,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
              if (obj->animator_ref++ > 0) break;
 
              efl_event_callback_add(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
-             INF("Registering an animator tick on canvas %p for object %p.",
+             DBG("Registering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
         else if ((type = _legacy_evas_callback_type(array[i].desc)) != EVAS_CALLBACK_LAST)
@@ -725,7 +725,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
              if ((--obj->animator_ref) > 0) break;
 
              efl_event_callback_del(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
-             INF("Unregistering an animator tick on canvas %p for object %p.",
+             DBG("Unregistering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
      }
