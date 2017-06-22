@@ -27,9 +27,7 @@ static Eo *
 _create_label(Eo *win, Eo *bx)
 {
    Eo *en;
-   en = efl_add(EFL_UI_TEXT_CLASS, win,
-         efl_text_halign_set(efl_added, EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER)
-         );
+   en = efl_add(EFL_UI_TEXT_CLASS, win);
    printf("Added Efl.Ui.Text object\n");
    efl_ui_text_interactive_editable_set(en, EINA_FALSE);
 
@@ -55,18 +53,41 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    evas_object_show(bx);
 
    en = _create_label(win, bx);
-   efl_text_set(en, "This is a small label");
+   efl_text_set(en, "This is a\t small label");
    //                012345678901234567890
    _apply_style(en, 0, 21, "font_size=12 font_weight=bold");
+   efl_text_halign_set(en, EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER);
+   efl_text_font_weight_set(en, EFL_TEXT_FONT_WEIGHT_BOLD);
 
    en = _create_label(win, bx);
+   efl_text_halign_set(en, EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER);
    efl_text_set(en, "This is a text. Is also has\n"
          "newlines. There are several styles applied.");
    _apply_style(en, 40, 45, "font_weight=bold color=#ff0");
    _apply_style(en, 52, 58, "font_weight=italic color=#f00");
-   efl_canvas_text_style_set(en, NULL, "DEFAULT='align=center font=Sans font_size=12 color=#fff wrap=word'");
+   efl_text_multiline_set(en, EINA_TRUE);
 
-//   elm_object_focus_set(en, EINA_TRUE);
+   en = _create_label(win, bx);
+   efl_text_halign_set(en, EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER);
+   efl_text_set(en, "By default 'multiline' is disabled.\n"
+         "So, \\n would only work if you enable it.");
+
+   en = _create_label(win, bx);
+   efl_text_set(en, "You can input text here.");
+   efl_text_font_set(en, "Sans", 14);
+   efl_ui_text_interactive_editable_set(en, EINA_TRUE);
+   efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
+   efl_ui_text_scrollable_set(en, EINA_TRUE);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.5);
+
+   en = _create_label(win, bx);
+   efl_text_set(en, "Input multiline here.");
+   efl_text_font_set(en, "Sans", 14);
+   efl_ui_text_interactive_editable_set(en, EINA_TRUE);
+   efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
+   efl_text_multiline_set(en, EINA_TRUE);
+   efl_ui_text_scrollable_set(en, EINA_TRUE);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.5);
 
    evas_object_resize(win, 480, 320);
    evas_object_show(win);
@@ -79,22 +100,6 @@ typedef struct
    const char *wrap_mode[4];
    size_t cur_wrap;
 } Test_Data;
-
-static void
-my_efl_ui_text_anchor_hover_opened(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   Eo *bt;
-   Eo *en = data;
-
-   Efl_Ui_Text_Anchor_Hover_Info *ei = event->info;
-
-   bt = efl_add(EFL_UI_BUTTON_CLASS, en);
-   elm_object_text_set(bt, ei->anchor_info->name);
-   evas_object_show(bt);
-   elm_object_part_content_set(ei->hover, "middle", bt);
-
-   printf("anchor hover\n");
-}
 
 static void
 my_efl_ui_text_bt_3(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -244,17 +249,6 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_object_focus_allow_set(bt, EINA_FALSE);
    evas_object_show(bt);
 
-#if 0
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "Edit");
-   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_7, en);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, bt);
-   elm_object_focus_allow_set(bt, EINA_FALSE);
-   evas_object_show(bt);
-#endif
-
    bx3 = elm_box_add(win);
    elm_box_horizontal_set(bx3, EINA_TRUE);
    evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, 0.0);
@@ -264,8 +258,6 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx3);
    evas_object_show(bx2);
-
-   efl_event_callback_add(en, EFL_UI_TEXT_EVENT_ANCHOR_HOVER_OPENED, my_efl_ui_text_anchor_hover_opened, en);
 
    evas_object_resize(win, 480, 320);
    evas_object_show(win);
