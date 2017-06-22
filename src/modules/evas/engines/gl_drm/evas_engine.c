@@ -20,6 +20,12 @@
 
 #define EVAS_GL_UPDATE_TILE_SIZE 16
 
+struct scanout_handle
+{
+   Evas_Native_Scanout_Handler handler;
+   void *data;
+};
+
 /* external variables */
 int _evas_engine_gl_drm_log_dom = -1;
 int _extn_have_buffer_age = 1;
@@ -587,6 +593,25 @@ _re_winfree(Render_Engine *re)
    evas_outbuf_unsurf(eng_get_ob(re));
 }
 
+static Ecore_Drm2_Fb *
+drm_import_simple_dmabuf(int fd, struct dmabuf_attributes *attributes)
+{
+   unsigned int stride[4] = { 0 };
+   int dmabuf_fd[4] = { 0 };
+   int i;
+
+   for (i = 0; i < attributes->n_planes; i++)
+     {
+        stride[i] = attributes->stride[i];
+        dmabuf_fd[i] = attributes->fd[i];
+     }
+
+   return ecore_drm2_fb_dmabuf_import(fd, attributes->width,
+                                      attributes->height, 32, 32,
+                                      attributes->format, stride,
+                                      dmabuf_fd, attributes->n_planes);
+}
+
 /* Code from weston's gl-renderer... */
 static EGLImageKHR
 gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes)
@@ -716,6 +741,94 @@ _native_cb_unbind(void *image)
 }
 
 static void
+_eng_fb_release(Ecore_Drm2_Fb *fb EINA_UNUSED, Ecore_Drm2_Fb_Status status, void *data)
+{
+   struct scanout_handle *sh;
+
+   sh = data;
+   if (status == ECORE_DRM2_FB_STATUS_DELETED)
+     {
+        free(sh);
+        return;
+     }
+
+   if (!sh->handler) return;
+
+   switch (status)
+     {
+      case ECORE_DRM2_FB_STATUS_SCANOUT_ON:
+        sh->handler(sh->data, EVAS_NATIVE_SURFACE_STATUS_SCANOUT_ON);
+        break;
+      case ECORE_DRM2_FB_STATUS_SCANOUT_OFF:
+        sh->handler(sh->data, EVAS_NATIVE_SURFACE_STATUS_SCANOUT_OFF);
+        break;
+      case ECORE_DRM2_FB_STATUS_PLANE_ASSIGN:
+        sh->handler(sh->data, EVAS_NATIVE_SURFACE_STATUS_PLANE_ASSIGN);
+        break;
+      case ECORE_DRM2_FB_STATUS_PLANE_RELEASE:
+        sh->handler(sh->data, EVAS_NATIVE_SURFACE_STATUS_PLANE_RELEASE);
+        break;
+      default:
+        ERR("Unhandled framebuffer status");
+     }
+}
+
+static void *
+eng_image_plane_assign(void *data, void *image, int x, int y)
+{
+   Render_Engine *re;
+   Outbuf *ob;
+   Evas_GL_Image *img;
+   Native *n;
+   Ecore_Drm2_Fb *fb = NULL;
+   Ecore_Drm2_Plane *plane = NULL;
+   struct scanout_handle *g;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
+
+   re = (Render_Engine *)data;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(re, EINA_FALSE);
+
+   ob = eng_get_ob(re);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ob, EINA_FALSE);
+
+   img = image;
+   n = img->native.data;
+
+   /* Perhaps implementable on other surface types, but we're
+    * sticking to this one for now */
+   if (n->ns.type != EVAS_NATIVE_SURFACE_WL_DMABUF) return NULL;
+
+   fb = drm_import_simple_dmabuf(re->fd, &n->ns_data.wl_surface_dmabuf.attr);
+
+   if (!fb) return NULL;
+
+   g = calloc(1, sizeof(struct scanout_handle));
+   if (!g) goto out;
+
+   g->handler = n->ns.data.wl_dmabuf.scanout.handler;
+   g->data = n->ns.data.wl_dmabuf.scanout.data;
+   ecore_drm2_fb_status_handler_set(fb, _eng_fb_release, g);
+
+   /* Fail or not, we're going to drop that fb and let refcounting get rid of
+    * it later
+    */
+   plane = ecore_drm2_plane_assign(ob->priv.output, fb, x, y);
+
+out:
+   ecore_drm2_fb_discard(fb);
+   return plane;
+}
+
+static void
+eng_image_plane_release(void *data EINA_UNUSED, void *image EINA_UNUSED, void *plin)
+{
+   Ecore_Drm2_Plane *plane = plin;
+
+   ecore_drm2_plane_release(plane);
+}
+
+ static void
 _native_cb_free(void *image)
 {
    Evas_GL_Image *img;
@@ -1393,6 +1506,8 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(image_native_set, &func, eng_);
    EVAS_API_OVERRIDE(image_native_init, &func, eng_);
    EVAS_API_OVERRIDE(image_native_shutdown, &func, eng_);
+   EVAS_API_OVERRIDE(image_plane_assign, &func, eng_);
+   EVAS_API_OVERRIDE(image_plane_release, &func, eng_);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */
