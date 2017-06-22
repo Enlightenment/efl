@@ -659,6 +659,153 @@ class Test.Testing (Efl.Object) {
          return: list<Test.Numberwrapper>;
       }
 
+      /* Eina Inlist */
+
+      /* Integer */
+      eina_inlist_int_in {
+         params {
+            @in lst: inlist<int>;
+         }
+         return: bool;
+      }
+
+      eina_inlist_int_in_own {
+         params {
+            @in lst: own(inlist<own(ref(int))>);
+         }
+         return: bool;
+      }
+      check_eina_inlist_int_in_own {
+         return: bool;
+      }
+
+      eina_inlist_int_out {
+         params {
+            @out lst: inlist<int>;
+         }
+         return: bool;
+      }
+      check_eina_inlist_int_out {
+         return: bool;
+      }
+
+      eina_inlist_int_out_own {
+         params {
+            @out lst: own(inlist<own(ref(int))>);
+         }
+         return: bool;
+      }
+
+      eina_inlist_int_return {
+         return: inlist<int>;
+      }
+      check_eina_inlist_int_return {
+         return: bool;
+      }
+
+      eina_inlist_int_return_own {
+         return: own(inlist<own(ref(int))>);
+      }
+
+      /* String */
+      eina_inlist_str_in {
+         params {
+            @in lst: inlist<string>;
+         }
+         return: bool;
+      }
+
+      eina_inlist_str_in_own {
+         params {
+            @in lst: own(inlist<own(string)>);
+         }
+         return: bool;
+      }
+      check_eina_inlist_str_in_own {
+         return: bool;
+      }
+
+      eina_inlist_str_out {
+         params {
+            @out lst: inlist<string>;
+         }
+         return: bool;
+      }
+      check_eina_inlist_str_out {
+         return: bool;
+      }
+
+      eina_inlist_str_out_own {
+         params {
+            @out lst: own(inlist<own(string)>);
+         }
+         return: bool;
+      }
+
+      eina_inlist_str_return {
+         return: inlist<string>;
+      }
+      check_eina_inlist_str_return {
+         return: bool;
+      }
+
+      eina_inlist_str_return_own {
+         return: own(inlist<own(string)>);
+      }
+
+      /* Object */
+      eina_inlist_obj_in {
+         params {
+            @in lst: inlist<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_inlist_obj_in_own {
+         params {
+            @in lst: own(inlist<own(Test.Numberwrapper)>);
+         }
+         return: bool;
+      }
+      check_eina_inlist_obj_in_own {
+         return: bool;
+      }
+
+      eina_inlist_obj_out {
+         params {
+            @out lst: inlist<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_inlist_obj_out {
+         return: bool;
+      }
+
+      eina_inlist_obj_out_own {
+         params {
+            @out lst: own(inlist<own(Test.Numberwrapper)>);
+         }
+         return: bool;
+      }
+
+      eina_inlist_obj_return {
+         return: inlist<Test.Numberwrapper>;
+      }
+      check_eina_inlist_obj_return {
+         return: bool;
+      }
+
+      eina_inlist_obj_return_own {
+         return: own(inlist<own(Test.Numberwrapper)>);
+      }
+
+      eina_inlist_obj_return_in {
+         params {
+            @in lst: inlist<Test.Numberwrapper>;
+         }
+         return: inlist<Test.Numberwrapper>;
+      }
+
 
       // Eina Hash //
 

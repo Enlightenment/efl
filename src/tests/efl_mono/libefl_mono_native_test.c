@@ -1540,6 +1540,468 @@ Eina_List *_test_testing_eina_list_obj_return_in(EINA_UNUSED Eo *obj, EINA_UNUSE
 }
 
 
+// //
+// Inlist
+//
+
+// Integer
+
+typedef struct _Test_Inlist_Node_Int
+{
+   EINA_INLIST;
+   int val;
+} Test_Inlist_Node_Int;
+
+
+Eina_Inlist *_new_inlist_int(int v)
+{
+   Test_Inlist_Node_Int *node = malloc(sizeof(Test_Inlist_Node_Int));
+   node->val = v;
+   return EINA_INLIST_GET(node);
+}
+
+Eina_Bool _inlist_int_equal(const Eina_Inlist *lst, const int base[], unsigned int len)
+{
+   if (eina_inlist_count(lst) != len)
+     return EINA_FALSE;
+
+   const Test_Inlist_Node_Int *node;
+   int i = 0;
+   EINA_INLIST_FOREACH(lst, node)
+     {
+        if (node->val != base[i])
+          return EINA_FALSE;
+        ++i;
+     }
+
+   return EINA_TRUE;
+}
+
+Eina_Bool _test_testing_eina_inlist_int_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist *lst)
+{
+   Eina_Bool r = _inlist_int_equal(lst, base_arr_int, base_arr_int_size);
+   return r;
+}
+
+static Eina_Inlist *_inlist_int_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_inlist_int_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist *lst)
+{
+   Eina_Bool r = _inlist_int_equal(lst, base_arr_int, base_arr_int_size);
+   if (!r) return r;
+
+   lst = eina_inlist_append(lst, _new_inlist_int(42));
+   lst = eina_inlist_append(lst, _new_inlist_int(43));
+   lst = eina_inlist_append(lst, _new_inlist_int(33));
+   _inlist_int_in_own_to_check = lst;
+   return r;
+}
+
+Eina_Bool _test_testing_check_eina_inlist_int_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_int_in_own_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_int_in_own_to_check = NULL;
+
+   Eina_Bool r = _inlist_int_equal(lst, modified_arr_int, modified_arr_int_size);
+   if (!r) return r;
+
+   Test_Inlist_Node_Int *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        free(node);
+     }
+   return r;
+}
+
+Eina_Inlist *_inlist_int_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_inlist_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist **lst)
+{
+    if (!lst) return EINA_FALSE;
+    *lst = eina_inlist_append(*lst, _new_inlist_int(0x0));
+    *lst = eina_inlist_append(*lst, _new_inlist_int(0x2A));
+    *lst = eina_inlist_append(*lst, _new_inlist_int(0x42));
+    _inlist_int_out_to_check = *lst;
+    return EINA_TRUE;
+}
+Eina_Bool _test_testing_check_eina_inlist_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_int_out_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_int_out_to_check = NULL;
+
+   Eina_Bool r = _inlist_int_equal(lst, base_arr_int, base_arr_int_size);
+   if (!r) return r;
+
+   Test_Inlist_Node_Int *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Bool _test_testing_eina_inlist_int_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_inlist_append(*lst, _new_inlist_int(0x0));
+   *lst = eina_inlist_append(*lst, _new_inlist_int(0x2A));
+   *lst = eina_inlist_append(*lst, _new_inlist_int(0x42));
+   return EINA_TRUE;
+}
+
+Eina_Inlist *_inlist_int_return_to_check = NULL;
+
+Eina_Inlist *_test_testing_eina_inlist_int_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = NULL;
+   lst = eina_inlist_append(lst, _new_inlist_int(0x0));
+   lst = eina_inlist_append(lst, _new_inlist_int(0x2A));
+   lst = eina_inlist_append(lst, _new_inlist_int(0x42));
+   _inlist_int_return_to_check = lst;
+   return lst;
+}
+Eina_Bool _test_testing_check_eina_inlist_int_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_int_return_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_int_return_to_check = NULL;
+
+   Eina_Bool r = _inlist_int_equal(lst, base_arr_int, base_arr_int_size);
+   if (!r) return r;
+
+   Test_Inlist_Node_Int *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Inlist *_test_testing_eina_inlist_int_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = NULL;
+   lst = eina_inlist_append(lst, _new_inlist_int(0x0));
+   lst = eina_inlist_append(lst, _new_inlist_int(0x2A));
+   lst = eina_inlist_append(lst, _new_inlist_int(0x42));
+   return lst;
+}
+
+// String
+
+typedef struct _Test_Inlist_Node_Str
+{
+   EINA_INLIST;
+   char *val;
+} Test_Inlist_Node_Str;
+
+
+Eina_Inlist *_new_inlist_str(const char *v)
+{
+   Test_Inlist_Node_Str *node = malloc(sizeof(Test_Inlist_Node_Str));
+   node->val = strdup(v);
+   return EINA_INLIST_GET(node);
+}
+
+Eina_Bool _inlist_str_equal(const Eina_Inlist *lst, const char * const base[], unsigned int len)
+{
+   if (eina_inlist_count(lst) != len)
+     return EINA_FALSE;
+
+   const Test_Inlist_Node_Str *node;
+   int i = 0;
+   EINA_INLIST_FOREACH(lst, node)
+     {
+        if (0 != strcmp(node->val, base[i]))
+          return EINA_FALSE;
+        ++i;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool _test_testing_eina_inlist_str_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist *lst)
+{
+   Eina_Bool r = _inlist_str_equal(lst, base_arr_str, base_arr_str_size);
+   return r;
+}
+
+static Eina_Inlist *_inlist_str_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_inlist_str_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist *lst)
+{
+   Eina_Bool r = _inlist_str_equal(lst, base_arr_str, base_arr_str_size);
+   if (!r) return r;
+   lst = eina_inlist_append(lst, _new_inlist_str("42"));
+   lst = eina_inlist_append(lst, _new_inlist_str("43"));
+   lst = eina_inlist_append(lst, _new_inlist_str("33"));
+   _inlist_str_in_own_to_check = lst;
+   return r;
+}
+
+Eina_Bool _test_testing_check_eina_inlist_str_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_str_in_own_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_str_in_own_to_check = NULL;
+
+   Eina_Bool r = _inlist_str_equal(lst, modified_arr_str, modified_arr_str_size);
+   if (!r) return r;
+
+   Test_Inlist_Node_Str *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        free(node->val);
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Inlist *_inlist_str_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_inlist_str_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_inlist_append(*lst, _new_inlist_str("0x0"));
+   *lst = eina_inlist_append(*lst, _new_inlist_str("0x2A"));
+   *lst = eina_inlist_append(*lst, _new_inlist_str("0x42"));
+   _inlist_str_out_to_check = *lst;
+   return EINA_TRUE;
+}
+Eina_Bool _test_testing_check_eina_inlist_str_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_str_out_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_str_out_to_check = NULL;
+
+   Eina_Bool r = _inlist_str_equal(lst, base_arr_str, base_arr_str_size);
+   if (!r) return r;
+
+   Test_Inlist_Node_Str *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        free(node->val);
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Bool _test_testing_eina_inlist_str_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_inlist_append(*lst, _new_inlist_str("0x0"));
+   *lst = eina_inlist_append(*lst, _new_inlist_str("0x2A"));
+   *lst = eina_inlist_append(*lst, _new_inlist_str("0x42"));
+   return EINA_TRUE;
+}
+
+Eina_Inlist *_inlist_str_return_to_check = NULL;
+
+Eina_Inlist *_test_testing_eina_inlist_str_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = NULL;
+   lst = eina_inlist_append(lst, _new_inlist_str("0x0"));
+   lst = eina_inlist_append(lst, _new_inlist_str("0x2A"));
+   lst = eina_inlist_append(lst, _new_inlist_str("0x42"));
+   _inlist_str_return_to_check = lst;
+   return lst;
+}
+Eina_Bool _test_testing_check_eina_inlist_str_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_str_return_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_str_return_to_check = NULL;
+
+   Eina_Bool r = _inlist_str_equal(lst, base_arr_str, base_arr_str_size);
+   if (!r) return r;
+
+   Test_Inlist_Node_Str *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        free(node->val);
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Inlist *_test_testing_eina_inlist_str_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = NULL;
+   lst = eina_inlist_append(lst, _new_inlist_str("0x0"));
+   lst = eina_inlist_append(lst, _new_inlist_str("0x2A"));
+   lst = eina_inlist_append(lst, _new_inlist_str("0x42"));
+   return lst;
+}
+
+// Object
+
+typedef struct _Test_Inlist_Node_Obj
+{
+   EINA_INLIST;
+   Test_Numberwrapper *val;
+} Test_Inlist_Node_Obj;
+
+
+Eina_Inlist *_new_inlist_obj(int v)
+{
+   Test_Inlist_Node_Obj *node = malloc(sizeof(Test_Inlist_Node_Obj));
+   node->val = _new_obj(v);
+   return EINA_INLIST_GET(node);
+}
+
+Eina_Bool _inlist_obj_equal(const Eina_Inlist *lst, const Test_Numberwrapper * const base[], unsigned int len)
+{
+   if (eina_inlist_count(lst) != len)
+     return EINA_FALSE;
+
+   const Test_Inlist_Node_Obj *node;
+   int i = 0;
+   EINA_INLIST_FOREACH(lst, node)
+     {
+        int a = test_numberwrapper_number_get(node->val);
+        int b = test_numberwrapper_number_get(base[i]);
+        if (a != b)
+          return EINA_FALSE;
+        ++i;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool _test_testing_eina_inlist_obj_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist *lst)
+{
+   Eina_Bool r = _inlist_obj_equal(lst, base_arr_obj, base_arr_obj_size);
+   return r;
+}
+
+static Eina_Inlist *_inlist_obj_in_own_to_check = NULL;
+
+Eina_Bool _test_testing_eina_inlist_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist *lst)
+{
+   Eina_Bool r = _inlist_obj_equal(lst, base_arr_obj, base_arr_obj_size);
+   if (!r) return r;
+   lst = eina_inlist_append(lst, _new_inlist_obj(42));
+   lst = eina_inlist_append(lst, _new_inlist_obj(43));
+   lst = eina_inlist_append(lst, _new_inlist_obj(33));
+   _inlist_obj_in_own_to_check = lst;
+   return r;
+}
+
+Eina_Bool _test_testing_check_eina_inlist_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_obj_in_own_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_obj_in_own_to_check = NULL;
+
+   Eina_Bool r = _inlist_obj_equal(lst, modified_arr_obj, modified_arr_obj_size);
+   if (!r) return r;
+
+   Test_Inlist_Node_Obj *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        efl_unref(node->val);
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Inlist *_inlist_obj_out_to_check = NULL;
+
+Eina_Bool _test_testing_eina_inlist_obj_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_inlist_append(*lst, _new_inlist_obj(0x0));
+   *lst = eina_inlist_append(*lst, _new_inlist_obj(0x2A));
+   *lst = eina_inlist_append(*lst, _new_inlist_obj(0x42));
+   _inlist_obj_out_to_check = *lst;
+   return EINA_TRUE;
+}
+Eina_Bool _test_testing_check_eina_inlist_obj_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_obj_out_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_obj_out_to_check = NULL;
+
+   Eina_Bool r = _inlist_obj_equal(lst, base_arr_obj, base_arr_obj_size);
+   if (!r) return r;
+
+   Test_Inlist_Node_Obj *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        efl_unref(node->val);
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Bool _test_testing_eina_inlist_obj_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_inlist_append(*lst, _new_inlist_obj(0x0));
+   *lst = eina_inlist_append(*lst, _new_inlist_obj(0x2A));
+   *lst = eina_inlist_append(*lst, _new_inlist_obj(0x42));
+   return EINA_TRUE;
+}
+
+Eina_Inlist *_inlist_obj_return_to_check = NULL;
+
+Eina_Inlist *_test_testing_eina_inlist_obj_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = NULL;
+   lst = eina_inlist_append(lst, _new_inlist_obj(0x0));
+   lst = eina_inlist_append(lst, _new_inlist_obj(0x2A));
+   lst = eina_inlist_append(lst, _new_inlist_obj(0x42));
+   _inlist_obj_return_to_check = lst;
+   return lst;
+}
+Eina_Bool _test_testing_check_eina_inlist_obj_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_obj_return_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_obj_return_to_check = NULL;
+
+   Eina_Bool r = _inlist_obj_equal(lst, base_arr_obj, base_arr_obj_size);
+   if (!r) return r;
+
+   Test_Inlist_Node_Obj *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        efl_unref(node->val);
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Inlist *_test_testing_eina_inlist_obj_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Eina_Inlist *lst = NULL;
+   lst = eina_inlist_append(lst, _new_inlist_obj(0x0));
+   lst = eina_inlist_append(lst, _new_inlist_obj(0x2A));
+   lst = eina_inlist_append(lst, _new_inlist_obj(0x42));
+   return lst;
+}
+
+Eina_Inlist *_test_testing_eina_inlist_obj_return_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Inlist *lst)
+{
+   return lst;
+}
+
 
 //      //
 // Hash //

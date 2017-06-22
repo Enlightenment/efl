@@ -266,6 +266,12 @@ struct visitor_generate
            c.outer.base_type = "eina.List";
            return c;
          }}
+        , {"inlist", nullptr, nullptr, [&]
+           {
+           complex_type_def c = complex;
+           c.outer.base_type = "eina.Inlist";
+           return c;
+         }}
         , {"array", nullptr, nullptr, [&]
            {
            complex_type_def c = complex;
