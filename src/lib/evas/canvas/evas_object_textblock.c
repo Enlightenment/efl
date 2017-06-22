@@ -14405,6 +14405,11 @@ _efl_canvas_text_cursor_text_append(Efl_Text_Cursor_Cursor_Data *cur,
              format = "br";
              n = strlen(_NEWLINE_UTF8);
           }
+        else if (!strncmp(_TAB_UTF8, off, strlen(_TAB_UTF8)))
+          {
+             format = "tab";
+             n = strlen(_TAB_UTF8);
+          }
 
         if (format)
           {
