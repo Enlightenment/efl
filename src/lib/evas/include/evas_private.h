@@ -1696,6 +1696,8 @@ Evas_Object *_evas_object_image_video_parent_get(Evas_Object *obj);
 void _evas_object_image_video_overlay_show(Evas_Object *obj);
 void _evas_object_image_video_overlay_hide(Evas_Object *obj);
 void _evas_object_image_video_overlay_do(Evas_Object *obj);
+Eina_Bool _evas_object_image_can_use_plane(Evas_Object_Protected_Data *obj);
+void _evas_object_image_plane_release(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 void _evas_object_image_free(Evas_Object *obj);
 void evas_object_smart_bounding_box_get(Evas_Object_Protected_Data *obj,
                                         Evas_Coord_Rectangle *cur_bounding_box,

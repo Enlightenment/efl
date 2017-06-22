@@ -110,6 +110,8 @@ struct _Evas_Image_Data
    void             *engine_data_prep;
    Efl_Vpath_File   *file_obj;
 
+   void             *plane;
+
    int               pixels_checked_out;
    int               load_error;
 

@@ -1824,6 +1824,58 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
    return EINA_TRUE;
 }
 
+void
+_evas_object_image_plane_release(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   Evas_Image_Data *o;
+
+   if (!obj) return;
+
+   o = obj->private_data;
+
+   if (!o->engine_data) return;
+
+   if (!o->plane) return;
+
+   ENFN->image_plane_release(ENDT, o->engine_data, o->plane);
+   o->plane = NULL;
+}
+
+Eina_Bool
+_evas_object_image_can_use_plane(Evas_Object_Protected_Data *obj)
+{
+   Evas_Native_Surface *ns;
+   Evas_Image_Data *o = obj->private_data;
+
+   /* Let the video surface code handle this one... */
+   if (o->video_surface)
+     return EINA_TRUE;
+
+   if (!o->can_scanout)
+     return EINA_FALSE;
+
+   if (!o->engine_data)
+     return EINA_FALSE;
+
+   if (!ENFN->image_plane_assign)
+     return EINA_FALSE;
+
+   if (!ENFN->image_native_get)
+     return EINA_FALSE;
+
+   ns = ENFN->image_native_get(ENDT, o->engine_data);
+   if (!ns) return EINA_FALSE;
+
+   o->plane = ENFN->image_plane_assign(ENDT, o->engine_data,
+                                       obj->cur->geometry.x,
+                                       obj->cur->geometry.y);
+
+   if (!o->plane)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 static void
 evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *type_private_data,
                          void *engine, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
@@ -1859,6 +1911,38 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
         return;
      }
 
+   if (o->plane)
+     {
+        int imagew, imageh, uvw, uvh;
+
+        /* We must call pixels get because enlightenment uses it for internal
+         * bookkeeping and won't send frame callbacks to wayland clients if we
+         * don't
+         */
+        _evas_image_pixels_get(eo_obj, obj, engine, output, context, surface, x, y,
+                                   &imagew, &imageh, &uvw, &uvh, EINA_FALSE, EINA_FALSE);
+#if 0
+        Evas_Native_Surface *ns;
+
+        /* Draw a bright red rectangle where the object replaced by
+         * a hardware plane would have been.
+         */
+        ns = ENFN->image_native_get(ENDT, o->engine_data);
+        if (ns && ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF)
+          {
+             ENFN->context_color_set(output, context, 255, 0, 0, 255);
+             ENFN->context_multiplier_unset(output, context);
+             ENFN->context_render_op_set(output, context, EVAS_RENDER_COPY);
+             ENFN->rectangle_draw(engine, output, context, surface,
+                                  obj->cur->geometry.x + x,
+                                  obj->cur->geometry.y + y,
+                                  obj->cur->geometry.w,
+                                  obj->cur->geometry.h,
+                                  do_async);
+          }
+#endif
+        return;
+     }
    /* We are displaying the overlay */
    if (o->video_visible)
      {
