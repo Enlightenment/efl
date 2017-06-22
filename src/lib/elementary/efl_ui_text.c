@@ -2986,6 +2986,7 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    //  (possibly, text_classes).
    // For now, set this for easier setup
    efl_text_font_set(text_obj, "Sans", 12);
+   efl_text_normal_color_set(text_obj, 255, 255, 255, 255);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
