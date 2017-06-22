@@ -27,10 +27,11 @@ static Eo *
 _create_label(Eo *win, Eo *bx)
 {
    Eo *en;
-   en = efl_add(EFL_UI_TEXT_CLASS, win);
+   en = efl_add(EFL_UI_TEXT_CLASS, win,
+         efl_text_halign_set(efl_added, EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER)
+         );
    printf("Added Efl.Ui.Text object\n");
    efl_ui_text_interactive_editable_set(en, EINA_FALSE);
-   efl_canvas_text_style_set(en, NULL, "DEFAULT='align=center font=Sans font_size=10 color=#fff wrap=word'");
 
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
