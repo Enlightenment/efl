@@ -366,7 +366,9 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
         // Layer usage shouldn't reach 0 here (as parent is still in layer)
         obj->layer->usage--;
      }
-   evas_object_inject(eo_obj, obj, obj->layer->evas->evas);
+   /* layer may be destroyed in evas_object_release() call */
+   if (obj->layer)
+     evas_object_inject(eo_obj, obj, obj->layer->evas->evas);
    obj->restack = 1;
    evas_object_change(eo_obj, obj);
    evas_object_mapped_clip_across_mark(eo_obj, obj);
