@@ -178,6 +178,7 @@ struct _Item_Cache
    EINA_INLIST;
    Evas_Object *base_view, *spacer;
    const char  *item_style; // it->itc->item_style
+   Eina_List *contents;
 };
 
 typedef struct _Elm_Gengrid_Pan_Data Elm_Gengrid_Pan_Data;

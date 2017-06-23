@@ -89,7 +89,7 @@ typedef Eina_Bool                     (*Elm_Gen_Item_Filter_Get_Cb)(void *data, 
  */
 typedef Evas_Object                  *(*Elm_Gen_Item_Reusable_Content_Get_Cb)(void *data, Evas_Object *obj, const char *part, Evas_Object *old); /**< Cache Pop class function for gen item classes. */
 
-#define ELM_GEN_ITEM_CLASS_VERSION 3
+#define ELM_GEN_ITEM_CLASS_VERSION 4
 #define ELM_GEN_ITEM_CLASS_HEADER ELM_GEN_ITEM_CLASS_VERSION, 0, 0
 
 
