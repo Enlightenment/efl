@@ -190,6 +190,11 @@ EOLIAN static Evas_Object_Box_Option *
 _evas_box_internal_option_new(Eo *o EINA_UNUSED, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Object *child)
 {
    Evas_Object_Box_Option *opt;
+   Evas_Object *parent;
+
+   parent = evas_object_smart_parent_get(child);
+   if (parent && efl_isa(parent, MY_CLASS))
+     CRI("Adding object to box which currently belongs to different box");
 
    opt = (Evas_Object_Box_Option *)malloc(sizeof(*opt));
    if (!opt)
