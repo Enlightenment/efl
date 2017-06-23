@@ -1429,7 +1429,7 @@ eina_log_print_unlocked(int domain,
 #ifdef EINA_SAFETY_CHECKS
    if (EINA_UNLIKELY(d->deleted))
      {
-        if (level > d->level)
+        if ((!d->level) || (level > d->level))
           fprintf(stderr, "ERR<%u>:eina_log %s:%d %s() log domain %d was deleted\n",
                   eina_log_pid_get(), file, line, fnc, domain);
         else
@@ -1450,7 +1450,7 @@ eina_log_print_unlocked(int domain,
 
 #endif
 
-   if (level > d->level)
+   if ((!d->level) || (level > d->level))
       return;
 
    _print_cb(d, level, file, fnc, line, fmt, _print_cb_data, args);
