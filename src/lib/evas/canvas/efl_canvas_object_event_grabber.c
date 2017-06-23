@@ -13,6 +13,8 @@ struct _Efl_Object_Event_Grabber_Data
    Eina_List *contained;
 
    Eina_Bool vis : 1;
+   Eina_Bool freeze : 1;
+   Eina_Bool restack : 1;
 };
 
 typedef struct Efl_Object_Event_Grabber_Iterator
@@ -129,11 +131,38 @@ _child_insert(Efl_Object_Event_Grabber_Data *pd, Evas_Object_Protected_Data *obj
 }
 
 static void
+_full_restack(Efl_Object_Event_Grabber_Data *pd)
+{
+   Evas_Object_Protected_Data *obj;
+   Evas_Object_Protected_Data *root = NULL;
+   Eina_List *list = NULL;
+   EINA_LIST_FREE(pd->contained, obj)
+     {
+        if (obj->object == pd->rect)
+          {
+             root = obj;
+             continue;
+          }
+        list = eina_list_append(list, obj);
+     }
+
+   pd->contained = eina_list_append(pd->contained, root);
+   EINA_LIST_FREE(list, obj)
+     _child_insert(pd, obj);
+   pd->restack = 0;
+}
+
+static void
 _efl_canvas_object_event_grabber_child_restack(void *data, const Efl_Event *event)
 {
    Efl_Object_Event_Grabber_Data *pd = data;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(event->object, EFL_CANVAS_OBJECT_CLASS);
 
+   if (pd->vis && pd->freeze)
+     {
+        pd->restack = 1;
+        return;
+     }
    pd->contained = eina_list_remove(pd->contained, obj);
    _child_insert(pd, obj);
 }
@@ -261,6 +290,8 @@ _efl_canvas_object_event_grabber_efl_gfx_visible_set(Eo *eo_obj EINA_UNUSED, Efl
      }
    pd->vis = !!set;
    efl_gfx_visible_set(pd->rect, set);
+   if (pd->restack && pd->freeze && (!set))
+     _full_restack(pd);
 }
 
 EOLIAN static void
@@ -273,27 +304,14 @@ _efl_canvas_object_event_grabber_efl_gfx_stack_layer_set(Eo *eo_obj, Efl_Object_
 static void
 _efl_canvas_object_event_grabber_restack(void *data, const Efl_Event *event)
 {
-   Evas_Object_Protected_Data *obj;
    Efl_Object_Event_Grabber_Data *pd = data;
-   Evas_Object_Protected_Data *root = NULL;
-   Eina_List *list = NULL;
 
    evas_object_layer_set(pd->rect, evas_object_layer_get(event->object));
    evas_object_stack_below(pd->rect, event->object);
 
-   EINA_LIST_FREE(pd->contained, obj)
-     {
-        if (obj->object == pd->rect)
-          {
-             root = obj;
-             continue;
-          }
-        list = eina_list_append(list, obj);
-     }
-
-   pd->contained = eina_list_append(pd->contained, root);
-   EINA_LIST_FREE(list, obj)
-     _child_insert(pd, obj);
+   pd->restack = 1;
+   if (pd->vis && pd->freeze) return;
+   _full_restack(pd);
 }
 
 EOLIAN static Eo *
@@ -339,6 +357,22 @@ evas_object_event_grabber_members_list(const Eo *eo_obj)
 {
    Efl_Object_Event_Grabber_Data *pd = efl_data_scope_get(eo_obj, MY_CLASS);
    return pd->contained;
+}
+
+EOLIAN static void
+_efl_canvas_object_event_grabber_freeze_when_visible_set(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd, Eina_Bool set)
+{
+   set = !!set;
+   if (pd->freeze == set) return;
+   pd->freeze = set;
+   if (pd->vis && pd->restack && (!set))
+     _full_restack(pd);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_event_grabber_freeze_when_visible_get(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd)
+{
+   return pd->freeze;
 }
 
 EAPI Evas_Object *
