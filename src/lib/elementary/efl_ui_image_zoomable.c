@@ -1552,14 +1552,6 @@ _efl_ui_image_zoomable_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Image_Z
      evas_object_raise(sd->hit_rect);
 }
 
-EAPI Evas_Object *
-elm_photocam_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent);
-   return obj;
-}
-
 EOLIAN static Eo *
 _efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Data *_pd EINA_UNUSED)
 {
@@ -1956,40 +1948,11 @@ _efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd
    return EINA_FALSE;
 }
 
-EAPI Evas_Load_Error
-elm_photocam_file_set(Evas_Object *obj, const char *file)
-{
-   ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_NONE;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EVAS_LOAD_ERROR_NONE);
-   if (efl_file_set(obj, file, NULL)) return EVAS_LOAD_ERROR_NONE;
-
-   Eina_Error err = eina_error_get();
-   return err == PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST ?
-            EVAS_LOAD_ERROR_DOES_NOT_EXIST :
-          err == PHOTO_FILE_LOAD_ERROR_PERMISSION_DENIED ?
-            EVAS_LOAD_ERROR_PERMISSION_DENIED :
-          err == PHOTO_FILE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED ?
-            EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED :
-          err == PHOTO_FILE_LOAD_ERROR_CORRUPT_FILE ?
-            EVAS_LOAD_ERROR_CORRUPT_FILE :
-          err == PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT ?
-            EVAS_LOAD_ERROR_UNKNOWN_FORMAT :
-          EVAS_LOAD_ERROR_GENERIC;
-}
-
 EOLIAN static void
 _efl_ui_image_zoomable_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, const char **file, const char **key)
 {
    if (file) *file = sd->file;
    if (key) *key = NULL;
-}
-
-EAPI const char*
-elm_photocam_file_get(const Evas_Object *obj)
-{
-   const char *ret = NULL;
-   efl_file_get(obj, &ret, NULL);
-   return ret;
 }
 
 EOLIAN static void
@@ -2322,23 +2285,6 @@ _efl_ui_image_zoomable_image_region_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd,
    elm_interface_scrollable_content_region_show(obj, rx, ry, rw, rh);
 }
 
-EAPI void
-elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h)
-{
-   efl_ui_image_zoomable_image_region_set(obj, x, y, w, h);
-}
-
-EAPI void
-elm_photocam_image_region_bring_in(Evas_Object *obj,
-                                   int x,
-                                   int y,
-                                   int w,
-                                   int h EINA_UNUSED)
-{
-   ELM_PHOTOCAM_CHECK(obj);
-   elm_interface_scrollable_region_bring_in(obj, x, y, w, h);
-}
-
 EOLIAN static void
 _efl_ui_image_zoomable_elm_interface_scrollable_region_bring_in(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
@@ -2377,26 +2323,6 @@ EOLIAN static Eina_Bool
 _efl_ui_image_zoomable_efl_ui_zoom_zoom_animation_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->paused;
-}
-
-EAPI void
-elm_photocam_bounce_set(Evas_Object *obj,
-                        Eina_Bool h_bounce,
-                        Eina_Bool v_bounce)
-{
-   ELM_PHOTOCAM_CHECK(obj);
-
-   elm_interface_scrollable_bounce_allow_set(obj, h_bounce, v_bounce);
-}
-
-EAPI void
-elm_photocam_bounce_get(const Evas_Object *obj,
-                        Eina_Bool *h_bounce,
-                        Eina_Bool *v_bounce)
-{
-   ELM_PHOTOCAM_CHECK(obj);
-
-   elm_interface_scrollable_bounce_allow_get((Eo *)obj, h_bounce, v_bounce);
 }
 
 EOLIAN static void
@@ -2804,7 +2730,15 @@ _efl_ui_image_zoomable_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj
    return &atspi_actions[0];
 }
 
-/* Legacy */
+/* Legacy APIs */
+
+EAPI Evas_Object *
+elm_photocam_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
+   return obj;
+}
 
 static inline void
 _evas_orient_to_eo_orient_flip(const Evas_Image_Orient evas_orient,
@@ -2905,13 +2839,6 @@ elm_photocam_image_orient_get(const Eo *obj)
    return _eo_orient_flip_to_evas_orient(sd->orient, sd->flip);
 }
 
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_IMAGE_ZOOMABLE_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_image_zoomable)
-
-#include "efl_ui_image_zoomable.eo.c"
-
 EAPI Evas_Object*
 elm_photocam_internal_image_get(const Evas_Object *obj)
 {
@@ -2961,3 +2888,76 @@ elm_photocam_zoom_mode_get(const Evas_Object *obj)
 {
    return efl_ui_zoom_mode_get(obj);
 }
+
+EAPI Evas_Load_Error
+elm_photocam_file_set(Evas_Object *obj, const char *file)
+{
+   ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_NONE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EVAS_LOAD_ERROR_NONE);
+   if (efl_file_set(obj, file, NULL)) return EVAS_LOAD_ERROR_NONE;
+
+   Eina_Error err = eina_error_get();
+   return err == PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST ?
+            EVAS_LOAD_ERROR_DOES_NOT_EXIST :
+          err == PHOTO_FILE_LOAD_ERROR_PERMISSION_DENIED ?
+            EVAS_LOAD_ERROR_PERMISSION_DENIED :
+          err == PHOTO_FILE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED ?
+            EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED :
+          err == PHOTO_FILE_LOAD_ERROR_CORRUPT_FILE ?
+            EVAS_LOAD_ERROR_CORRUPT_FILE :
+          err == PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT ?
+            EVAS_LOAD_ERROR_UNKNOWN_FORMAT :
+          EVAS_LOAD_ERROR_GENERIC;
+}
+
+EAPI const char*
+elm_photocam_file_get(const Evas_Object *obj)
+{
+   const char *ret = NULL;
+   efl_file_get(obj, &ret, NULL);
+   return ret;
+}
+
+EAPI void
+elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h)
+{
+   efl_ui_image_zoomable_image_region_set(obj, x, y, w, h);
+}
+
+EAPI void
+elm_photocam_image_region_bring_in(Evas_Object *obj,
+                                   int x,
+                                   int y,
+                                   int w,
+                                   int h EINA_UNUSED)
+{
+   ELM_PHOTOCAM_CHECK(obj);
+   elm_interface_scrollable_region_bring_in(obj, x, y, w, h);
+}
+
+EAPI void
+elm_photocam_bounce_set(Evas_Object *obj,
+                        Eina_Bool h_bounce,
+                        Eina_Bool v_bounce)
+{
+   ELM_PHOTOCAM_CHECK(obj);
+
+   elm_interface_scrollable_bounce_allow_set(obj, h_bounce, v_bounce);
+}
+
+EAPI void
+elm_photocam_bounce_get(const Evas_Object *obj,
+                        Eina_Bool *h_bounce,
+                        Eina_Bool *v_bounce)
+{
+   ELM_PHOTOCAM_CHECK(obj);
+
+   elm_interface_scrollable_bounce_allow_get((Eo *)obj, h_bounce, v_bounce);
+}
+
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_IMAGE_ZOOMABLE_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_image_zoomable)
+
+#include "efl_ui_image_zoomable.eo.c"
