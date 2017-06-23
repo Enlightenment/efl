@@ -343,7 +343,7 @@ _begin_recovery_maybe(Ecore_Wl2_Display *ewd, int code)
 {
    if ((_server_displays || (code != EPROTO)) && ewd->wl.session_recovery)// && (errno == EPIPE))
      _recovery_timer_add(ewd);
-   else
+   else if (!_server_displays)
      {
         ERR("Wayland Socket Error: %s", strerror(errno));
         _ecore_wl2_display_signal_exit();
