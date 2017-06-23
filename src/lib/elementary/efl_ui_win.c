@@ -3143,10 +3143,12 @@ _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
      {
         /* FIXME: multiseat */
         Ecore_Wl2_Input *input;
+        Eina_Iterator *it;
 
-        input = ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(sd->wl.win), "default");
-        EINA_SAFETY_ON_NULL_RETURN(input);
-        ecore_wl2_input_pointer_set(input, sd->pointer.surf, sd->pointer.hot_x, sd->pointer.hot_y);
+        it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(sd->wl.win));
+        EINA_ITERATOR_FOREACH(it, input)
+          ecore_wl2_input_pointer_set(input, sd->pointer.surf, sd->pointer.hot_x, sd->pointer.hot_y);
+        eina_iterator_free(it);
      }
 }
 #endif
@@ -4115,8 +4117,12 @@ _elm_win_frame_cb_menu(void *data,
    if (x < 0) x += wx;
    if (y < 0) y += wy;
 
-   input = ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(sd->wl.win), "default");
-
+   {
+      Eina_Iterator *it;
+      it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(sd->wl.win));
+      EINA_ITERATOR_FOREACH(it, input) break;
+      eina_iterator_free(it);
+   }
    if (sd->wl.win->zxdg_toplevel)
      zxdg_toplevel_v6_show_window_menu(sd->wl.win->zxdg_toplevel,
                                        ecore_wl2_input_seat_get(input), 0, x, y);
