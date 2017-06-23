@@ -123,7 +123,7 @@ static void
 _calc_job_cb(void *data)
 {
    Evas_Object *obj = data;
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    Evas_Coord minw, minh;
 
    minw = sd->size.w;
@@ -186,7 +186,7 @@ _image_place(Evas_Object *obj,
 {
    Evas_Coord ax, ay, gw, gh;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    ax = 0;
    ay = 0;
@@ -215,7 +215,7 @@ _grid_load(Evas_Object *obj,
    int x, y;
    Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh, gw, gh, tx, ty;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
@@ -313,7 +313,7 @@ _grid_place(Evas_Object *obj,
    Evas_Coord ax, ay, gw, gh, tx, ty;
    int x, y;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    ax = 0;
    ay = 0;
@@ -459,7 +459,7 @@ _grid_clear(Evas_Object *obj,
 {
    int x, y;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!g->grid) return;
@@ -498,7 +498,7 @@ _tile_preloaded_cb(void *data,
                    void *event_info EINA_UNUSED)
 {
    Efl_Ui_Image_Zoomable_Grid_Item *git = data;
-   ELM_PHOTOCAM_DATA_GET(git->obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(git->obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(git->obj, wd);
 
    if (git->want)
@@ -533,7 +533,7 @@ _grid_create(Evas_Object *obj)
    int x, y;
    Efl_Ui_Image_Zoomable_Grid *g;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    g = calloc(1, sizeof(Efl_Ui_Image_Zoomable_Grid));
    if (!g) return NULL;
@@ -623,7 +623,7 @@ _grid_clear_all(Evas_Object *obj)
 {
    Efl_Ui_Image_Zoomable_Grid *g;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    EINA_LIST_FREE(sd->grids, g)
      {
@@ -639,7 +639,7 @@ _smooth_update(Evas_Object *obj)
    int x, y;
    Eina_List *l;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    EINA_LIST_FOREACH(sd->grids, l, g)
      {
@@ -679,7 +679,7 @@ _grid_raise(Efl_Ui_Image_Zoomable_Grid *g)
 static Eina_Bool
 _scroll_timeout_cb(void *data)
 {
-   ELM_PHOTOCAM_DATA_GET(data, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
 
    sd->no_smooth--;
    if (!sd->no_smooth) _smooth_update(data);
@@ -698,7 +698,7 @@ _main_img_preloaded_cb(void *data,
    Evas_Object *obj = data;
    Efl_Ui_Image_Zoomable_Grid *g;
 
-   ELM_PHOTOCAM_DATA_GET(data, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    evas_object_show(sd->img);
    sd->main_load_pending = 0;
@@ -727,7 +727,7 @@ _zoom_do(Evas_Object *obj,
 {
    Evas_Coord xx, yy, ow = 0, oh = 0;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    sd->size.w = (sd->size.ow * (1.0 - t)) + (sd->size.nw * t);
    sd->size.h = (sd->size.oh * (1.0 - t)) + (sd->size.nh * t);
@@ -783,7 +783,7 @@ _zoom_anim_cb(void *data, const Efl_Event *event EINA_UNUSED)
    double t;
    Evas_Object *obj = data;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    t = ecore_loop_time_get();
    if (t >= sd->t_end)
@@ -806,7 +806,7 @@ _zoom_anim_cb(void *data, const Efl_Event *event EINA_UNUSED)
 static Eina_Bool
 _long_press_cb(void *data)
 {
-   ELM_PHOTOCAM_DATA_GET(data, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
 
    sd->long_timer = NULL;
    sd->longpressed = EINA_TRUE;
@@ -824,7 +824,7 @@ _mouse_down_cb(void *data,
 {
    Evas_Event_Mouse_Down *ev = event_info;
 
-   ELM_PHOTOCAM_DATA_GET(data, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
@@ -848,7 +848,7 @@ _mouse_up_cb(void *data,
 {
    Evas_Event_Mouse_Up *ev = event_info;
 
-   ELM_PHOTOCAM_DATA_GET(data, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
@@ -938,7 +938,7 @@ static void
 _scroll_cb(Evas_Object *obj,
            void *data EINA_UNUSED)
 {
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    if (!sd->scr_timer)
      {
@@ -1053,7 +1053,7 @@ static void
 _bounce_eval(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *obj = data;
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    double t, tt;
 
    if ((sd->g_layer_zoom.imx == sd->g_layer_zoom.bounce.x_end) &&
@@ -1131,7 +1131,7 @@ _g_layer_zoom_do(Evas_Object *obj,
    Evas_Coord rx, ry, rw = 0, rh = 0;
    int xx, yy;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    sd->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
    sd->zoom = sd->g_layer_start / g_layer->zoom;
    sd->size.ow = sd->size.w;
@@ -1189,7 +1189,7 @@ _g_layer_zoom_start_cb(void *data,
 {
    Evas_Object *obj = data;
    Elm_Gesture_Zoom_Info *p = event_info;
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    double marginx = 0, marginy = 0;
    Evas_Coord rw = 0, rh = 0;
    int x, y, w, h;
@@ -1235,7 +1235,7 @@ _g_layer_zoom_end_cb(void *data,
                      void *event_info EINA_UNUSED)
 {
    Evas_Object *obj = data;
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    Evas_Coord rw, rh;
 
    elm_interface_scrollable_content_viewport_geometry_get
@@ -1659,7 +1659,7 @@ _image_zoomable_edje_file_set(Evas_Object *obj,
                               const char *file,
                               const char *group)
 {
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (file) eina_stringshare_replace(&sd->file, file);
@@ -2433,7 +2433,7 @@ _efl_ui_image_zoomable_gesture_enabled_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *
 static void
 _min_obj_size_get(Evas_Object *o, int *w, int *h)
 {
-   ELM_PHOTOCAM_DATA_GET(o, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(o, sd);
 
    efl_gfx_view_size_get(o, w, h);
 
@@ -2452,7 +2452,7 @@ static Eina_Bool
 _image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, Eina_Bool resize)
 {
    Elm_Theme *th = elm_widget_theme_get(o);
-   ELM_PHOTOCAM_DATA_GET(o, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(o, sd);
 
    char buf[1024];
    Eina_File *f;
@@ -2481,7 +2481,7 @@ _image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, 
 static Eina_Bool
 _icon_standard_set(Evas_Object *obj, const char *name, Eina_Bool resize)
 {
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    if (_image_zoomable_object_icon_set(obj, name, "default", resize))
      {
@@ -2497,7 +2497,7 @@ _icon_freedesktop_set(Evas_Object *obj, const char *name, int size)
 {
    const char *path;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    elm_need_efreet();
 
@@ -2575,7 +2575,7 @@ _internal_efl_ui_image_zoomable_icon_set(Evas_Object *obj, const char *name, Ein
    char *tmp;
    Eina_Bool ret = EINA_FALSE;
 
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    /* try locating the icon using the specified theme */
    if (!strcmp(ELM_CONFIG_ICON_THEME_ELEMENTARY, elm_config_icon_theme_get()))
@@ -2617,7 +2617,7 @@ _internal_efl_ui_image_zoomable_icon_set(Evas_Object *obj, const char *name, Ein
 static void
 _efl_ui_image_zoomable_icon_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   ELM_PHOTOCAM_DATA_GET(data, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
    const char *refup = eina_stringshare_ref(sd->stdicon);
    Eina_Bool fdo = EINA_FALSE;
 
@@ -2709,7 +2709,7 @@ _efl_ui_image_zoomable_animated_set_internal(Eo *obj EINA_UNUSED, Efl_Ui_Image_Z
 static Eina_Bool
 _efl_ui_image_zoomable_animate_cb(void *data)
 {
-   ELM_PHOTOCAM_DATA_GET(data, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
    _grid_clear_all(data);
 
    if (!sd->anim) return ECORE_CALLBACK_CANCEL;
@@ -2901,7 +2901,7 @@ EAPI Evas_Image_Orient
 elm_photocam_image_orient_get(const Eo *obj)
 {
    ELM_PHOTOCAM_CHECK(obj) EVAS_IMAGE_ORIENT_NONE;
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    return _eo_orient_flip_to_evas_orient(sd->orient, sd->flip);
 }
 
@@ -2915,7 +2915,7 @@ elm_photocam_image_orient_get(const Eo *obj)
 EAPI Evas_Object*
 elm_photocam_internal_image_get(const Evas_Object *obj)
 {
-   ELM_PHOTOCAM_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
 
    return sd->img;
 }
