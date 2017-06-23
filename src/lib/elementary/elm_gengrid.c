@@ -743,7 +743,7 @@ _item_mouse_move_cb(void *data,
                }
           }
      }
-  else if (ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y) &&
+  else if (it->down && ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y) &&
            !sd->reorder_it )
     {
        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
