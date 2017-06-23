@@ -1622,7 +1622,7 @@ _mouse_move_cb(void *data,
                }
           }
      }
-   else if (ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y))
+   else if (sd->mouse_down && ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y))
      {
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if (!sd->was_selected)
