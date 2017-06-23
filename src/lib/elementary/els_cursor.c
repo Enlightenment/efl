@@ -176,6 +176,12 @@ struct _Elm_Cursor
       Ecore_Cocoa_Window *win;
    } cocoa;
 #endif
+   struct
+   {
+      Evas_Object *obj;
+      int layer;
+      int x, y;
+   } prev;
 
    Eina_Bool visible:1;
    Eina_Bool use_engine:1;
@@ -267,6 +273,7 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
         ELM_SAFE_FREE(cur->obj, evas_object_del);
         return EINA_FALSE;
      }
+   evas_object_data_set(cur->obj, "elm-cursor", (void*)1);
    cur->hotobj = evas_object_rectangle_add(cur->evas);
    evas_object_color_set(cur->hotobj, 0, 0, 0, 0);
    evas_object_event_callback_add(cur->obj, EVAS_CALLBACK_MOVE,
@@ -312,9 +319,19 @@ _elm_cursor_set(Elm_Cursor *cur)
         if (!cur->obj)
           _elm_cursor_obj_add(cur->owner, cur);
         if (cur->obj)
-          ecore_evas_object_cursor_set(cur->ee, cur->obj,
+          {
+             ecore_evas_cursor_get(cur->ee, &cur->prev.obj, &cur->prev.layer, &cur->prev.x, &cur->prev.y);
+             if (cur->prev.obj)
+               {
+                  if (evas_object_data_get(cur->prev.obj, "elm-cursor"))
+                    memset(&cur->prev, 0, sizeof(cur->prev));
+                  else
+                    ecore_evas_cursor_unset(cur->ee);
+               }
+             ecore_evas_object_cursor_set(cur->ee, cur->obj,
                                        ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
                                        cur->hot_y);
+          }
         cur->visible = !!cur->obj;
      }
    else
@@ -397,8 +414,15 @@ _elm_cursor_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_
      }
 
    if (!cur->use_engine)
-     ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
-                                  cur->hot_x, cur->hot_y);
+     {
+        if (cur->prev.obj)
+          ecore_evas_object_cursor_set(cur->ee, cur->prev.obj, cur->prev.layer,
+                                       cur->prev.x, cur->prev.y);
+        else
+          ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
+                                       cur->hot_x, cur->hot_y);
+        memset(&cur->prev, 0, sizeof(cur->prev));
+     }
    else
      {
 #ifdef HAVE_ELEMENTARY_X
