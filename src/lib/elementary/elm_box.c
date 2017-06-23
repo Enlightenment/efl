@@ -538,18 +538,21 @@ _elm_box_unpack_all(Eo *obj, Elm_Box_Data *pd)
 {
    Evas_Object_Box_Data *bd;
    Evas_Object_Box_Option *opt;
-   Eina_List *l;
+   Eina_List *l, *children = NULL;
+   Evas_Object *c;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    /* set this to block _sizing_eval() calls */
    pd->delete_me = EINA_TRUE;
    bd = evas_object_smart_data_get(wd->resize_obj);
    EINA_LIST_FOREACH (bd->children, l, opt)
-     _elm_widget_sub_object_redirect_to_top(obj, opt->obj);
+     children = eina_list_append(children, opt->obj);
    pd->delete_me = EINA_FALSE;
 
    /* EINA_FALSE means do not delete objects */
    evas_object_box_remove_all(wd->resize_obj, EINA_FALSE);
+   EINA_LIST_FREE(children, c)
+     _elm_widget_sub_object_redirect_to_top(obj, c);
    /* update size hints */
    _sizing_eval(obj);
    _focus_order_flush(obj, pd);
