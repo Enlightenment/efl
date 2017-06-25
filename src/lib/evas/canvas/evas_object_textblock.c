@@ -6650,11 +6650,14 @@ _find_layout_line_num(const Evas_Object *eo_obj, int line)
 EAPI Evas_Object *
 evas_object_textblock_add(Evas *e)
 {
+   Efl_Canvas_Text_Data *o;
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
    Evas_Object *eo_obj = efl_add(MY_CLASS, e,
          efl_text_multiline_set(efl_added, EINA_TRUE));
+   o = efl_data_scope_get(eo_obj, MY_CLASS);
+   o->legacy_newline = EINA_TRUE;
    return eo_obj;
 }
 
@@ -6677,9 +6680,6 @@ _efl_canvas_text_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Text_Data *class_
    o->cursors = eina_list_remove_list(o->cursors, o->cursors);
    _format_command_init();
    evas_object_textblock_init(eo_obj);
-   // Override legacy newline (enabled in legacy textblock through
-   //   textblock_init.
-   o->legacy_newline = EINA_FALSE;
 
    _FMT(ref) = 1;
    _FMT(halign) = 0.0;
@@ -12907,7 +12907,6 @@ evas_object_textblock_init(Evas_Object *eo_obj)
    co->obj = eo_obj;
    evas_object_textblock_text_markup_set(eo_obj, "");
 
-   o->legacy_newline = EINA_TRUE;
    o->multiline = EINA_FALSE;
 #ifdef BIDI_SUPPORT
    o->inherit_paragraph_direction = EINA_TRUE;
