@@ -75,7 +75,7 @@ EAPI void elm_code_widget_selection_select_line(Evas_Object *widget, unsigned in
  *
  * @param[in] widget @c The elm_widget object.
  * @param[in] line @c The line index of the widget.
- * @param[in] widget @c The column index of the widget.
+ * @param[in] col @c The column index of the widget.
  *
  * @return None
  *
