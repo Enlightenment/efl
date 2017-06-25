@@ -92,6 +92,30 @@ EFL_CALLBACKS_ARRAY_DEFINE(monitoring_callbacks,
                           { EFL_MODEL_EVENT_CHILD_ADDED, _resource_created },
                           { EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted });
 
+
+static void
+_focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
+{
+   Eina_List *tmp = NULL;
+
+#define A(p) tmp = eina_list_append(tmp, p);
+
+   A(pd->up_button)
+   A(pd->home_button)
+   A(pd->search_entry)
+   A(pd->files_view)
+   A(pd->path_entry)
+   A(pd->name_entry)
+   A(pd->filter_hoversel)
+   A(pd->ok_button)
+   A(pd->cancel_button)
+
+
+#undef A
+
+   efl_ui_focus_manager_update_order(efl_ui_focus_user_manager_get(obj), obj, tmp);
+}
+
 static void
 _model_free_eo_cb(void *data)
 {
@@ -1990,6 +2014,8 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    elm_object_part_content_set(obj, "elm.swallow.files", priv->files_view);
 
    elm_obj_layout_sizing_eval(obj);
+
+   _focus_chain_update(obj, priv);
 }
 
 EOLIAN static void
@@ -2154,6 +2180,8 @@ _elm_fileselector_elm_interface_fileselector_is_save_set(Eo *obj, Elm_Fileselect
 
    if (is_save) elm_layout_signal_emit(obj, "elm,state,save,on", "elm");
    else elm_layout_signal_emit(obj, "elm,state,save,off", "elm");
+
+   _focus_chain_update(obj, sd);
 }
 
 EAPI Eina_Bool
@@ -2213,16 +2241,6 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
 
    if (visible)
      {
-        // cancel btn
-        bt = elm_button_add(obj);
-        efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
-        elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Cancel"));
-
-        efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _canc, obj);
-
-        sd->cancel_button = bt;
-        elm_object_part_content_set(obj, "elm.swallow.cancel", sd->cancel_button);
-
         // ok btn
         bt = elm_button_add(obj);
         efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
@@ -2232,12 +2250,24 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
 
         sd->ok_button = bt;
         elm_object_part_content_set(obj, "elm.swallow.ok", sd->ok_button);
+
+        // cancel btn
+        bt = elm_button_add(obj);
+        efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
+        elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Cancel"));
+
+        efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _canc, obj);
+
+        sd->cancel_button = bt;
+        elm_object_part_content_set(obj, "elm.swallow.cancel", sd->cancel_button);
      }
    else
      {
         ELM_SAFE_FREE(sd->cancel_button, evas_object_del);
         ELM_SAFE_FREE(sd->ok_button, evas_object_del);
      }
+
+   _focus_chain_update(obj, sd);
 }
 
 EOLIAN static Eina_Bool
@@ -3087,6 +3117,17 @@ _elm_fileselector_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm
 {
    return EINA_TRUE;
 }
+
+EOLIAN static Eina_Bool
+_elm_fileselector_elm_widget_focus_register(Eo *obj, Elm_Fileselector_Data *pd, Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Object *logical, Eina_Bool full)
+{
+   Eina_Bool ret = elm_obj_widget_focus_register(efl_super(obj, MY_CLASS), manager, logical, full);
+
+   _focus_chain_update(obj, pd);
+
+   return ret;
+}
+
 
 EOLIAN static Eina_Bool
 _elm_fileselector_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
