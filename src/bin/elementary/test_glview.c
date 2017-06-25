@@ -179,9 +179,9 @@ make_gear(GLData *gld, GLfloat inner_radius, GLfloat outer_radius, GLfloat width
 static void
 free_gear(Gear *gear)
 {
+    if (!gear) return;
     free(gear->vertices);
     free(gear);
-    gear = NULL;
 }
 
 static void
@@ -446,12 +446,15 @@ _del_gl(Evas_Object *obj)
      }
    Evas_GL_API *gl = gld->glapi;
 
-   gl->glDeleteShader(gld->vtx_shader);
-   gl->glDeleteShader(gld->fgmt_shader);
-   gl->glDeleteProgram(gld->program);
-   gl->glDeleteBuffers(1, &gld->gear1->vbo);
-   gl->glDeleteBuffers(1, &gld->gear2->vbo);
-   gl->glDeleteBuffers(1, &gld->gear3->vbo);
+   if (gl)
+     {
+        gl->glDeleteShader(gld->vtx_shader);
+        gl->glDeleteShader(gld->fgmt_shader);
+        gl->glDeleteProgram(gld->program);
+        gl->glDeleteBuffers(1, &gld->gear1->vbo);
+        gl->glDeleteBuffers(1, &gld->gear2->vbo);
+        gl->glDeleteBuffers(1, &gld->gear3->vbo);
+     }
 
    free_gear(gld->gear1);
    free_gear(gld->gear2);
