@@ -938,7 +938,10 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          }
       }
       prediction_hint_set {
-         [[Sets the prediction hint to use an intelligent reply suggestion service.]]
+         [[Sets the prediction hint to use an intelligent reply suggestion service.
+
+           @since 1.20
+         ]]
          params {
             prediction_hint: string; [[The prediction hint text.]]
          }
