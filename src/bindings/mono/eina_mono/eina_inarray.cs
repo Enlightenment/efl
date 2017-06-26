@@ -296,6 +296,16 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         return true;
     }
 
+    public eina.Iterator<T> GetIterator()
+    {
+        return new eina.Iterator<T>(eina_inarray_iterator_new(Handle), true, false);
+    }
+
+    public eina.Iterator<T> GetReversedIterator()
+    {
+        return new eina.Iterator<T>(eina_inarray_iterator_reversed_new(Handle), true, false);
+    }
+
     public IEnumerator<T> GetEnumerator()
     {
         int len = Length;

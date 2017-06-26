@@ -290,6 +290,12 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
             Append(v);
     }
 
+
+    public eina.Iterator<T> GetIterator()
+    {
+        return new eina.Iterator<T>(eina_inlist_iterator_new(Handle), true, false);
+    }
+
     public IEnumerator<T> GetEnumerator()
     {
         for(IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr))

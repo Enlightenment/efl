@@ -20,6 +20,9 @@ public static class ArrayNativeFunctions
     [DllImport("eina")] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_array_push(IntPtr array, IntPtr data);
 
+    [DllImport("eina")] public static extern IntPtr
+        eina_array_iterator_new(IntPtr array);
+
     [DllImport("eflcustomexportsmono")] public static extern void
         eina_array_free_generic_custom_export_mono(IntPtr array);
     [DllImport("eflcustomexportsmono")] public static extern void
@@ -268,6 +271,12 @@ public class Array<T> : IEnumerable<T>, IDisposable
             if (!Push(v))
                 return false;
         return true;
+    }
+
+
+    public eina.Iterator<T> GetIterator()
+    {
+        return new eina.Iterator<T>(eina_array_iterator_new(Handle), true, false);
     }
 
     public IEnumerator<T> GetEnumerator()
