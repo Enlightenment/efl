@@ -307,10 +307,9 @@ struct visitor_generate
           }
         , {"iterator", nullptr, nullptr, [&]
            {
-             (*this)(regular_type_def{" int", complex.outer.base_qualifier, {}});
-             return attributes::type_def::variant_type();
-             // return replace_outer
-             // (complex, regular_type_def{" ::efl::eina::iterator", complex.outer.base_qualifier, {}});
+             complex_type_def c = complex;
+             c.outer.base_type = "eina.Iterator";
+             return c;
            }           
           }
         , {"accessor", nullptr, nullptr, [&]
