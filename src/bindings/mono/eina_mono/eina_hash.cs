@@ -3,11 +3,20 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
 using static eina.TraitFunctions;
+using static eina.IteratorNativeFunctions;
 using static eina.HashNativeFunctions;
 using eina.Callbacks;
 
 namespace eina
 {
+
+[StructLayout(LayoutKind.Sequential)]
+public struct HashTupleNative
+{
+    public IntPtr key;
+    public IntPtr data;
+    public uint   key_length;
+}
 
 public static class HashNativeFunctions
 {
@@ -92,6 +101,15 @@ public static class HashNativeFunctions
     [DllImport("eina")] public static extern IntPtr
         eina_hash_modify_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash, IntPtr data);
 
+    [DllImport("eina")] public static extern IntPtr
+        eina_hash_iterator_key_new(IntPtr hash);
+
+    [DllImport("eina")] public static extern IntPtr
+        eina_hash_iterator_data_new(IntPtr hash);
+
+    [DllImport("eina")] public static extern IntPtr
+        eina_hash_iterator_tuple_new(IntPtr hash);
+
     [DllImport("eina")] public static extern void
         eina_hash_foreach(IntPtr hash, IntPtr func, IntPtr fdata);
 
@@ -107,7 +125,7 @@ public static class HashNativeFunctions
         eina_hash_superfast(string key, int len);
 }
 
-public class Hash<TKey, TValue> : IDisposable
+public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDisposable
 {
     public IntPtr Handle {get; set;} = IntPtr.Zero;
     public bool Own {get; set;}
@@ -342,19 +360,33 @@ public class Hash<TKey, TValue> : IDisposable
         return eina_hash_population(Handle);
     }
 
-// TODO: implement when iterator is ready
-//     public IEnumerator<KeyValuePair<TKey, TValue> > GetEnumerator()
-//     {
-//         for (IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr))
-//         {
-//             yield return NativeToManaged<T>(InternalDataGet(curr));
-//         }
-//     }
-//
-//     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-//     {
-//         return this.GetEnumerator();
-//     }
+    public eina.Iterator<TKey> GetKeyIterator()
+    {
+        return new eina.Iterator<TKey>(eina_hash_iterator_key_new(Handle), true, false);
+    }
+
+    public eina.Iterator<TValue> GetValueIterator()
+    {
+        return new eina.Iterator<TValue>(eina_hash_iterator_data_new(Handle), true, false);
+    }
+
+    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+    {
+        IntPtr itr = eina_hash_iterator_tuple_new(Handle);
+        for (IntPtr tuplePtr; !eina_iterator_next(itr, out tuplePtr);)
+        {
+            var tuple = Marshal.PtrToStructure<eina.HashTupleNative>(tuplePtr);
+            var key = NativeToManaged<TKey>(tuple.key);
+            var val = NativeToManaged<TValue>(tuple.data);
+            yield return new KeyValuePair<TKey, TValue>(key, val);
+        }
+        eina_iterator_free(itr);
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+        return this.GetEnumerator();
+    }
 }
 
 }

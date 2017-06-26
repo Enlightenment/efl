@@ -324,6 +324,17 @@ public class List<T> : IEnumerable<T>, IDisposable
             Append(v);
     }
 
+
+    public eina.Iterator<T> GetIterator()
+    {
+        return new eina.Iterator<T>(eina_list_iterator_new(Handle), true, false);
+    }
+
+    public eina.Iterator<T> GetReversedIterator()
+    {
+        return new eina.Iterator<T>(eina_list_iterator_reversed_new(Handle), true, false);
+    }
+
     public IEnumerator<T> GetEnumerator()
     {
         for(IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr))
