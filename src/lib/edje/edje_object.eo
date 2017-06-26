@@ -1120,6 +1120,19 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             ondemand: bool; [[If $true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)]]
          }
       }
+      @property part_text_prediction_hint {
+         set {
+            [[Sets the prediction hint to use an intelligent reply suggestion service.
+
+              @since 1.20.0]]
+         }
+         keys {
+            part: string; [[The part name]]
+         }
+         values {
+            prediction_hint: string; [[Prediction hint]]
+         }
+      }
       /* TEXT PART APIS END ------------------------------------------------ */
 
       @property seat {

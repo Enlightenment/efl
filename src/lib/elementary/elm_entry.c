@@ -907,6 +907,8 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
      (sd->entry_edje, "elm.text", sd->input_panel_return_key_disabled);
    edje_object_part_text_input_panel_show_on_demand_set
      (sd->entry_edje, "elm.text", sd->input_panel_show_on_demand);
+   edje_object_part_text_prediction_hint_set
+     (sd->entry_edje, "elm.text", sd->prediction_hint);
 
    // elm_entry_cursor_pos_set -> cursor,changed -> widget_show_region_set
    // -> smart_objects_calculate will call all smart calculate functions,
@@ -3915,6 +3917,12 @@ _elm_entry_efl_canvas_group_group_del(Eo *obj, Elm_Entry_Data *sd)
      }
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    free(sd->input_panel_imdata);
+
+   if (sd->prediction_hint)
+     {
+        ELM_SAFE_FREE(sd->prediction_hint, free);
+     }
+
    eina_stringshare_del(sd->anchor_hover.hover_style);
 
    evas_event_thaw(evas_object_evas_get(obj));
@@ -5213,6 +5221,18 @@ EOLIAN static Elm_Input_Hints
 _elm_entry_input_hint_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_hints;
+}
+
+EOLIAN static void
+_elm_entry_prediction_hint_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *prediction_hint)
+{
+   if (sd->prediction_hint)
+     free(sd->prediction_hint);
+
+   sd->prediction_hint = strdup(prediction_hint);
+
+   edje_object_part_text_prediction_hint_set
+     (sd->entry_edje, "elm.text", prediction_hint);
 }
 
 EOLIAN static void

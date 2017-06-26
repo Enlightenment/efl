@@ -43,6 +43,7 @@ struct _Elm_Entry_Data
    /* for deferred appending */
    Ecore_Idler                          *append_text_idler;
    char                                 *append_text_left;
+   char                                 *prediction_hint;
    int                                   append_text_position;
    int                                   append_text_len;
    /* Only for clipboard */

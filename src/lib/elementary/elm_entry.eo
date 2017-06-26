@@ -937,6 +937,12 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             @in data: void_ptr @optional; [[User data to pass to $func.]]
          }
       }
+      prediction_hint_set {
+         [[Sets the prediction hint to use an intelligent reply suggestion service.]]
+         params {
+            prediction_hint: string; [[The prediction hint text.]]
+         }
+      }
    }
    implements {
       class.constructor;

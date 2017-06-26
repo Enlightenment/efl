@@ -4557,6 +4557,23 @@ _edje_entry_imf_cursor_info_set(Entry *en)
 #endif
 }
 
+void
+_edje_entry_prediction_hint_set(Edje_Real_Part *rp, const char *prediction_hint)
+{
+   Entry *en;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text)) return;
+   en = rp->typedata.text->entry_data;
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_prediction_hint_set(en->imf_context, prediction_hint);
+#else
+   (void)prediction_hint;
+#endif
+}
+
 #ifdef HAVE_ECORE_IMF
 
 static Edje_Real_Part *
