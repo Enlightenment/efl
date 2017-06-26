@@ -139,7 +139,11 @@ _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int count, int start
 
    for (x = start; x <= end && x < count; x++)
      {
-        cells[x - 1].fg = type;
+        // TODO find a way to mark if a token is themes fg or bg
+        if (type == ELM_CODE_TOKEN_TYPE_MATCH)
+          cells[x - 1].bg = type;
+        else
+          cells[x - 1].fg = type;
      }
 }
 
@@ -345,9 +349,6 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    grid = eina_list_nth(pd->grids, line->number - 1);
    cells = evas_object_textgrid_cellrow_get(grid, 0);
 
-   _elm_code_widget_fill_gutter(widget, cells, w, line->status, line->number);
-   _elm_code_widget_fill_line_tokens(widget, cells, w, line);
-
    length = elm_code_widget_line_text_column_width_get(widget, line);
    chrpos = 0;
    chr = (char *)elm_code_line_text_get(line, NULL);
@@ -375,6 +376,9 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         cells[x].codepoint = 0;
         cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
      }
+
+   _elm_code_widget_fill_gutter(widget, cells, w, line->status, line->number);
+   _elm_code_widget_fill_line_tokens(widget, cells, w, line);
 
    _elm_code_widget_fill_selection(widget, line, cells, gutter, w);
    _elm_code_widget_fill_cursor(widget, line->number, gutter, w);
@@ -1798,6 +1802,9 @@ _elm_code_widget_setup_palette(Evas_Object *o)
                                     255, 54, 54, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CHANGED,
                                     54, 54, 255, 255);
+
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_MATCH,
+                                    187, 187, 51, 255);
 
    // other styles that the widget uses
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_SELECTION,

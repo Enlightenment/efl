@@ -68,6 +68,11 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    _append_line(code->file, "");
    _append_line(code->file, "This is a demo of elm_code's capabilities.");
 
+   line = elm_code_file_line_get(code->file, 1);
+   elm_code_line_token_add(line, 17, 19, 1, ELM_CODE_TOKEN_TYPE_MATCH);
+   line = elm_code_file_line_get(code->file, 4);
+   elm_code_line_token_add(line, 18, 20, 1, ELM_CODE_TOKEN_TYPE_MATCH);
+ 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(widget);
