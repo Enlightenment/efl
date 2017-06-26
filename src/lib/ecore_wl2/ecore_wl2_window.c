@@ -678,10 +678,9 @@ EAPI void
 ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
-
+   EINA_SAFETY_ON_NULL_RETURN(window->display->inputs);
    if (!input)
-     input = ecore_wl2_display_input_find_by_name(window->display, "default");
-   EINA_SAFETY_ON_NULL_RETURN(input);
+     input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
 
    window->moving = EINA_TRUE;
 
@@ -697,10 +696,9 @@ EAPI void
 ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int location)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
-
+   EINA_SAFETY_ON_NULL_RETURN(window->display->inputs);
    if (!input)
-     input = ecore_wl2_display_input_find_by_name(window->display, "default");
-   EINA_SAFETY_ON_NULL_RETURN(input);
+     input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
 
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_resize(window->zxdg_toplevel, input->wl.seat,
