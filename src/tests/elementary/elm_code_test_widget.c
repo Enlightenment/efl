@@ -42,6 +42,7 @@ START_TEST (elm_code_widget_token_render_simple_test)
    Evas_Object *win;
 
    int length;
+   unsigned int gutter;
 
    Evas_Textgrid_Cell cells[25];
 
@@ -56,16 +57,14 @@ START_TEST (elm_code_widget_token_render_simple_test)
    line = elm_code_file_line_get(file, 1);
    length = line->length;
 
-   elm_code_line_token_add(line, 6, 17, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
-   elm_code_line_token_add(line, 21, 22, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+   elm_code_line_token_add(line, 5, 18, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+   elm_code_line_token_add(line, 21, 22, 1, ELM_CODE_TOKEN_TYPE_NUMBER);
 
    _elm_code_widget_fill_line_tokens(widget, cells, length+1, line);
-   _assert_cell_type(cells[1], ELM_CODE_TOKEN_TYPE_DEFAULT, 1);
-   _assert_cell_type(cells[4], ELM_CODE_TOKEN_TYPE_DEFAULT, 4);
-   _assert_cell_type(cells[5], ELM_CODE_TOKEN_TYPE_DEFAULT, 5);
-   _assert_cell_type(cells[16], ELM_CODE_TOKEN_TYPE_COMMENT, 16);
-   _assert_cell_type(cells[20], ELM_CODE_TOKEN_TYPE_DEFAULT, 20);
-   _assert_cell_type(cells[22], ELM_CODE_TOKEN_TYPE_COMMENT, 22);
+   gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
+
+   _assert_cell_type(cells[gutter+15], ELM_CODE_TOKEN_TYPE_COMMENT, 16);
+   _assert_cell_type(cells[gutter+21], ELM_CODE_TOKEN_TYPE_NUMBER, 22);
 
    elm_code_free(code);
    elm_shutdown();
