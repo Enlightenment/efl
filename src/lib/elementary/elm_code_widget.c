@@ -177,7 +177,6 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 
    offset = elm_obj_code_widget_text_left_gutter_width_get(widget);
    length = elm_code_widget_line_text_column_width_get(widget, line) + offset;
-   _elm_code_widget_fill_line_token(cells, count, offset, length, ELM_CODE_TOKEN_TYPE_DEFAULT);
 
    EINA_LIST_FOREACH(line->tokens, item, token)
      {
@@ -358,6 +357,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         unichr = eina_unicode_utf8_next_get(chr, &chrpos);
 
         cells[x].codepoint = unichr;
+        cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
         cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
 
         charwidth = 1;
