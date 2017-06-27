@@ -526,6 +526,21 @@ _ecore_wl2_aux_hint_free(Ecore_Wl2_Aux_Hint *ehint)
    free(ehint);
 }
 
+static void
+_ecore_wl2_window_show_send(Ecore_Wl2_Window *window)
+{
+   Ecore_Wl2_Event_Window_Show *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Show));
+   if (!ev) return;
+
+   ev->win = window->id;
+   if (window->parent)
+     ev->parent_win = window->parent->id;
+   ev->event_win = window->id;
+   ecore_event_add(ECORE_WL2_EVENT_WINDOW_SHOW, ev, NULL, NULL);
+}
+
 EAPI Ecore_Wl2_Window *
 ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h)
 {
@@ -608,6 +623,7 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
      {
         _ecore_wl2_window_shell_surface_init(window);
         _ecore_wl2_window_www_surface_init(window);
+        _ecore_wl2_window_show_send(window);
      }
    else
      window->pending.configure = EINA_FALSE;

@@ -288,6 +288,13 @@ typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Request;
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Done;
 
+typedef struct _Ecore_Wl2_Event_Window_Show
+{
+   unsigned int win;
+   unsigned int parent_win;
+   unsigned int event_win;
+} Ecore_Wl2_Event_Window_Show;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -341,6 +348,7 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE; /** @since 
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_DONE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_AUX_HINT_ALLOWED; /** @since 1.20 */
+EAPI extern int ECORE_WL2_EVENT_WINDOW_SHOW; /** @since 1.20 */
 
 /**
  * @file
