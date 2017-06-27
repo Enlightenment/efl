@@ -30,9 +30,10 @@ extern int _ecore_cocoa_log_domain;
 
 /*
  * macOS Sierra (10.12) deprecated enumeration types in profit to others,
- * more meaningful ones.
+ * more meaningful ones. We define aliases to these new types to use the
+ * most recent API while being retro-compatible.
  */
-#ifndef __MAC_10_12
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1012 /* Before 10.12 */
 # define NSWindowStyleMaskTitled NSTitledWindowMask
 # define NSWindowStyleMaskClosable NSClosableWindowMask
 # define NSWindowStyleMaskResizable NSResizableWindowMask

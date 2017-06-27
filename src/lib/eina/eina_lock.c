@@ -17,7 +17,7 @@
  * stdbool.h, which is not wanted: it would introduce new macros,
  * and break compilation of existing programs.
  */
-# ifdef __MAC_10_12
+# if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1012
 #  include <os/lock.h>
 #  define SPINLOCK_GET(LCK) ((os_unfair_lock_t)(LCK))
 # else
