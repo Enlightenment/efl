@@ -7,6 +7,7 @@ namespace efl { namespace eo {
 
 public class Globals {
     [DllImport("eo")] public static extern void efl_object_init();
+    [DllImport("eo")] public static extern void efl_object_shutdown();
     [DllImport("eo")] public static extern IntPtr
         _efl_add_internal_start([MarshalAs(UnmanagedType.LPStr)] String file, int line,
                                 IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
@@ -170,6 +171,11 @@ public static class Config
     public static void Init()
     {
         Globals.efl_object_init();
+    }
+
+    public static void Shutdown()
+    {
+        Globals.efl_object_shutdown();
     }
 }
 
