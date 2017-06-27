@@ -4,9 +4,6 @@ using System.Runtime.CompilerServices;
 
 class TestMain
 {
-    [DllImport("eo")] static extern void efl_object_init();
-    [DllImport("ecore")] static extern void ecore_init();
-
     /* private efl.Loop loop; */
 
     public TestMain(efl.Loop loop)
@@ -16,8 +13,7 @@ class TestMain
 
     static void Main(string[] args)
     {
-        efl_object_init();
-        ecore_init();
+        efl.All.Init();
 
         efl.Loop loop = new efl.LoopConcrete();
 
@@ -29,6 +25,8 @@ class TestMain
         loop.CALLBACK_ADD -= listener.on_idle_enter;
 
         loop.IDLE += listener.on_idle_enter; // Will trigger CALLBACK_ADD
+
+        efl.All.Shutdown();
     }
 
     public void on_idle_enter(object sender, EventArgs e)

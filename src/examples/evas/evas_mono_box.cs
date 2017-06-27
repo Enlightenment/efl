@@ -28,15 +28,9 @@ public class MyBox : evas.BoxInherit
 
 class TestMain
 {
-    [DllImport("eo")] static extern void efl_object_init();
-    [DllImport("ecore")] static extern void ecore_init();
-    [DllImport("evas")] static extern void evas_init();
-
     static void Main(string[] args)
     {
-        efl_object_init();
-        ecore_init();
-        evas_init();
+        efl.All.Init();
 
         efl.Loop loop = new efl.LoopConcrete();
 
@@ -66,5 +60,7 @@ class TestMain
         box.append(rect2);
 
         loop.begin();
+
+        efl.All.Shutdown();
     }
 }

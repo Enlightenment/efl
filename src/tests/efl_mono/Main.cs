@@ -57,10 +57,6 @@ public class Test
 
 class TestMain
 {
-    [DllImport("eo")] static extern void efl_object_init();
-    [DllImport("ecore")] static extern void ecore_init();
-    [DllImport("evas")] static extern void evas_init();
-
     static Type[] GetTestCases(String name="")
     {
         return Assembly.GetExecutingAssembly().GetTypes().Where(t => String.Equals(t.Namespace, "TestSuite", StringComparison.Ordinal) &&
@@ -70,10 +66,7 @@ class TestMain
 
     static int Main(string[] args)
     {
-        eina.Config.Init();
-        efl_object_init();
-        ecore_init();
-        evas_init();
+        efl.All.Init();
 
         bool pass = true;
 

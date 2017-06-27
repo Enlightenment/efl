@@ -1,13 +1,7 @@
 using System;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 
 class TestMain
 {
-    [DllImport("eo")] static extern void efl_object_init();
-    [DllImport("ecore")] static extern void ecore_init();
-    [DllImport("evas")] static extern void evas_init();
-
     private static int[,] colors = new int[,] {
         {255, 0, 0},
         {0, 255, 0},
@@ -18,10 +12,7 @@ class TestMain
     {
         int color_index = 0;
 
-        eina.Log.Init();
-        efl_object_init();
-        ecore_init();
-        evas_init();
+        efl.All.Init();
 
         efl.Loop loop = new efl.LoopConcrete();
         EcoreEvas ecore_evas = new EcoreEvas();
@@ -47,5 +38,7 @@ class TestMain
         };
 
         loop.begin();
+
+        efl.All.Shutdown();
     }
 }

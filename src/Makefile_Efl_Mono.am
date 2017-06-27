@@ -144,6 +144,7 @@ efl_eina_mono_files = \
 	bindings/mono/eina_mono/eina_error.cs
 
 lib_efl_mono_libefl_mono_dll_SOURCES = \
+	bindings/mono/efl_mono/efl_all.cs \
 	$(efl_eo_mono_files) \
 	$(efl_eina_mono_files)
 

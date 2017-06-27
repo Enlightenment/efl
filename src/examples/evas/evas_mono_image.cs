@@ -1,13 +1,8 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 class TestMain
 {
-    [DllImport("eo")] static extern void efl_object_init();
-    [DllImport("ecore")] static extern void ecore_init();
-    [DllImport("evas")] static extern void evas_init();
-
     static int WIDTH = 320;
     static int HEIGHT = 240;
 
@@ -26,9 +21,7 @@ class TestMain
 
     static void Main(string[] args)
     {
-        efl_object_init();
-        ecore_init();
-        evas_init();
+        efl.All.Init();
 
         efl.Loop loop = new efl.LoopConcrete();
 
@@ -76,6 +69,8 @@ class TestMain
         /*         callback, null); */
 
         loop.begin();
+
+        efl.All.Shutdown();
     }
 
     public void on_key_down(object sender, EventArgs e)

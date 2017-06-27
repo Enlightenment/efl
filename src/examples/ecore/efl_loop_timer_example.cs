@@ -4,9 +4,6 @@ using System.Runtime.CompilerServices;
 
 class TestMain
 {
-    [DllImport("eo")] static extern void efl_object_init();
-    [DllImport("ecore")] static extern void ecore_init();
-
     private efl.Loop loop;
     private int count;
 
@@ -18,8 +15,7 @@ class TestMain
 
     static void Main(string[] args)
     {
-        efl_object_init();
-        ecore_init();
+        efl.All.Init();
 
         efl.Loop loop = new efl.LoopConcrete();
         efl.loop.Timer timer = new efl.loop.TimerConcrete(loop);
@@ -35,6 +31,8 @@ class TestMain
         timer.TICK -= listener.another_callback;
 
         loop.begin();
+
+        efl.All.Shutdown();
     }
 
     public void on_tick(object sender, EventArgs e)
