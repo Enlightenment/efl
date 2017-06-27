@@ -15,34 +15,33 @@ int _evas_engine_buffer_log_dom = -1;
 
 static Evas_Func func, pfunc;
 
-
 /* engine struct data */
 typedef Render_Engine_Software_Generic Render_Engine;
 
 /* prototypes we will use here */
-static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes), void (*free_update_region) (int x, int y, int w, int h, void *data), void *(*switch_buffer) (void *data, void *dest_buffer), void *switch_data);
+static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region)(int x, int y, int w, int h, int *row_bytes), void (*free_update_region)(int x, int y, int w, int h, void *data), void *(*switch_buffer)(void *data, void *dest_buffer), void *switch_data);
 
 static void *eng_info(Evas *eo_e EINA_UNUSED);
-static void eng_info_free(Evas *eo_e EINA_UNUSED, void *info);
-static void eng_output_free(void *engine EINA_UNUSED, void *data);
+static void  eng_info_free(Evas *eo_e EINA_UNUSED, void *info);
+static void  eng_output_free(void *engine EINA_UNUSED, void *data);
 
 /* internal engine routines */
 static void *
 _output_setup(int w,
-	      int h,
-	      void *dest_buffer,
-	      int dest_buffer_row_bytes,
-	      int depth_type,
-	      int use_color_key,
-	      int alpha_threshold,
-	      int color_key_r,
-	      int color_key_g,
-	      int color_key_b,
-	      void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes),
-	      void (*free_update_region) (int x, int y, int w, int h, void *data),
-              void *(*switch_buffer) (void *data, void *dest_buffer),
+              int h,
+              void *dest_buffer,
+              int dest_buffer_row_bytes,
+              int depth_type,
+              int use_color_key,
+              int alpha_threshold,
+              int color_key_r,
+              int color_key_g,
+              int color_key_b,
+              void *(*new_update_region)(int x, int y, int w, int h, int *row_bytes),
+              void (*free_update_region)(int x, int y, int w, int h, void *data),
+              void *(*switch_buffer)(void *data, void *dest_buffer),
               void *switch_data
-	      )
+              )
 {
    Outbuf *ob;
    Render_Engine *re;
@@ -55,7 +54,7 @@ _output_setup(int w,
    evas_buffer_outbuf_buf_init();
 
    dep = OUTBUF_DEPTH_BGR_24BPP_888_888;
-   if      (depth_type == EVAS_ENGINE_BUFFER_DEPTH_ARGB32)
+   if (depth_type == EVAS_ENGINE_BUFFER_DEPTH_ARGB32)
      dep = OUTBUF_DEPTH_ARGB_32BPP_8888_8888;
    else if (depth_type == EVAS_ENGINE_BUFFER_DEPTH_RGB32)
      dep = OUTBUF_DEPTH_RGB_32BPP_888_8888;
@@ -100,7 +99,7 @@ _output_setup(int w,
      goto on_error;
    return re;
 
- on_error:
+on_error:
    if (ob) evas_buffer_outbuf_buf_free(ob);
    free(re);
    return NULL;
@@ -179,7 +178,7 @@ module_open(Evas_Module *em)
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
 
    _evas_engine_buffer_log_dom = eina_log_domain_register
-     ("evas-buffer", EINA_COLOR_BLUE);
+       ("evas-buffer", EINA_COLOR_BLUE);
    if (_evas_engine_buffer_log_dom < 0)
      {
         EINA_LOG_ERR("Can not create a module log domain.");
@@ -216,8 +215,8 @@ static Evas_Module_Api evas_modapi =
    "buffer",
    "none",
    {
-     module_open,
-     module_close
+      module_open,
+      module_close
    }
 };
 
