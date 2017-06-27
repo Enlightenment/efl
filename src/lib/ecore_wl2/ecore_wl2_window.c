@@ -541,6 +541,21 @@ _ecore_wl2_window_show_send(Ecore_Wl2_Window *window)
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_SHOW, ev, NULL, NULL);
 }
 
+static void
+_ecore_wl2_window_hide_send(Ecore_Wl2_Window *window)
+{
+   Ecore_Wl2_Event_Window_Hide *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Hide));
+   if (!ev) return;
+
+   ev->win = window->id;
+   if (window->parent)
+     ev->parent_win = window->parent->id;
+   ev->event_win = window->id;
+   ecore_event_add(ECORE_WL2_EVENT_WINDOW_HIDE, ev, NULL, NULL);
+}
+
 EAPI Ecore_Wl2_Window *
 ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h)
 {
@@ -636,6 +651,8 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    Eina_Inlist *tmp;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
+
+   _ecore_wl2_window_hide_send(window);
 
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_unmap(subsurf);
