@@ -54,6 +54,21 @@ _ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigne
 }
 
 static void
+_ecore_wl2_window_activate_send(Ecore_Wl2_Window *window)
+{
+   Ecore_Wl2_Event_Window_Activate *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Activate));
+   if (!ev) return;
+
+   ev->win = window->id;
+   if (window->parent)
+     ev->parent_win = window->parent->id;
+   ev->event_win = window->id;
+   ecore_event_add(ECORE_WL2_EVENT_WINDOW_ACTIVATE, ev, NULL, NULL);
+}
+
+static void
 _xdg_popup_cb_done(void *data, struct xdg_popup *xdg_popup EINA_UNUSED)
 {
    Ecore_Wl2_Window *win;
@@ -118,6 +133,9 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
 
    _ecore_wl2_window_configure_send(win, w, h, !!win->resizing,
                                     win->fullscreen, win->maximized);
+
+   if (win->focused)
+     _ecore_wl2_window_activate_send(win);
 }
 
 static void
@@ -208,6 +226,9 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
 
    _ecore_wl2_window_configure_send(win, width, height, !!win->resizing,
                                     win->fullscreen, win->maximized);
+
+   if (win->focused)
+     _ecore_wl2_window_activate_send(win);
 }
 
 static void
