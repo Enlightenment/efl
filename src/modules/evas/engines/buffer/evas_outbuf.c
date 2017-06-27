@@ -246,33 +246,17 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
               dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
            }
          if (!dest) break;
-         if (buf->use_color_key)
+         for (yy = 0; yy < h; yy++)
            {
-              for (yy = 0; yy < h; yy++)
+              dst = dest + (yy * row_bytes);
+              src = update->image.data + (yy * update->cache_entry.w);
+              for (xx = 0; xx < update->cache_entry.w; xx++)
                 {
-                   dst = dest + (yy * row_bytes);
-                   src = update->image.data + (yy * update->cache_entry.w);
-                   for (xx = 0; xx < w; xx++)
-                     {
-                        if (A_VAL(src) > thresh)
-                          dst = _update_24bpp_888_888(dst, src, buf->depth);
-                        else
-                          dst = _update_24bpp_888_888(dst, &colorkey, buf->depth);
-                        src++;
-                     }
-                }
-           }
-         else
-           {
-              for (yy = 0; yy < h; yy++)
-                {
-                   dst = dest + (yy * row_bytes);
-                   src = update->image.data + (yy * update->cache_entry.w);
-                   for (xx = 0; xx < w; xx++)
-                     {
-                        dst = _update_24bpp_888_888(dst, src, buf->depth);
-                        src++;
-                     }
+                   if ((!buf->use_color_key) || (A_VAL(src) > thresh))
+                     dst = _update_24bpp_888_888(dst, src, buf->depth);
+                   else
+                     dst = _update_24bpp_888_888(dst, &colorkey, buf->depth);
+                   src++;
                 }
            }
          if (buf->func.free_update_region)
