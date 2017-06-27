@@ -309,6 +309,13 @@ typedef struct _Ecore_Wl2_Event_Window_Activate
    unsigned int event_win;
 } Ecore_Wl2_Event_Window_Activate;
 
+typedef struct _Ecore_Wl2_Event_Window_Deactivate
+{
+   unsigned int win;
+   unsigned int parent_win;
+   unsigned int event_win;
+} Ecore_Wl2_Event_Window_Deactivate;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -365,6 +372,7 @@ EAPI extern int ECORE_WL2_EVENT_AUX_HINT_ALLOWED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_SHOW; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_HIDE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ACTIVATE; /** @since 1.20 */
+EAPI extern int ECORE_WL2_EVENT_WINDOW_DEACTIVATE; /** @since 1.20 */
 
 /**
  * @file
