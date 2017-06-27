@@ -201,12 +201,31 @@ evas_buffer_outbuf_buf_switch_buffer(Outbuf *buf, Tilebuf_Rect *surface_damage E
      }
 }
 
+static inline DATA8 *
+_update_24bpp_888_888(DATA8 *dst, DATA32 *src, int depth)
+{
+   if (depth == OUTBUF_DEPTH_RGB_24BPP_888_888)
+     {
+        *dst++ = R_VAL(src);
+        *dst++ = G_VAL(src);
+        *dst++ = B_VAL(src);
+     }
+   else
+     {
+        *dst++ = B_VAL(src);
+        *dst++ = G_VAL(src);
+        *dst++ = R_VAL(src);
+     }
+   return dst;
+}
+
 void
 evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h)
 {
    /* copy update image to out buf & convert */
    switch (buf->depth)
      {
+      case OUTBUF_DEPTH_BGR_24BPP_888_888:
       case OUTBUF_DEPTH_RGB_24BPP_888_888:
         /* copy & pack into 24bpp - if colorkey is enabled... etc. */
       {
@@ -236,17 +255,9 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
                    for (xx = 0; xx < w; xx++)
                      {
                         if (A_VAL(src) > thresh)
-                          {
-                             *dst++ = R_VAL(src);
-                             *dst++ = G_VAL(src);
-                             *dst++ = B_VAL(src);
-                          }
+                          dst = _update_24bpp_888_888(dst, src, buf->depth);
                         else
-                          {
-                             *dst++ = R_VAL(&colorkey);
-                             *dst++ = G_VAL(&colorkey);
-                             *dst++ = B_VAL(&colorkey);
-                          }
+                          dst = _update_24bpp_888_888(dst, &colorkey, buf->depth);
                         src++;
                      }
                 }
@@ -259,75 +270,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
                    src = update->image.data + (yy * update->cache_entry.w);
                    for (xx = 0; xx < w; xx++)
                      {
-                        *dst++ = R_VAL(src);
-                        *dst++ = G_VAL(src);
-                        *dst++ = B_VAL(src);
-                        src++;
-                     }
-                }
-           }
-         if (buf->func.free_update_region)
-           {
-              buf->func.free_update_region(x, y, w, h, dest);
-           }
-      }
-      break;
-
-      case OUTBUF_DEPTH_BGR_24BPP_888_888:
-        /* copy & pack into 24bpp - if colorkey is enabled... etc. */
-      {
-         DATA8 thresh;
-         int xx, yy;
-         int row_bytes;
-         DATA8 *dest;
-         DATA32 colorkey;
-         DATA32 *src;
-         DATA8 *dst;
-
-         colorkey = buf->color_key;
-         thresh = buf->alpha_level;
-         row_bytes = buf->dest_row_bytes;
-         dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 3);
-         if (buf->func.new_update_region)
-           {
-              dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
-           }
-         if (!dest) break;
-         if (buf->use_color_key)
-           {
-              for (yy = 0; yy < h; yy++)
-                {
-                   dst = dest + (yy * row_bytes);
-                   src = update->image.data + (yy * update->cache_entry.w);
-                   for (xx = 0; xx < w; xx++)
-                     {
-                        if (A_VAL(src) > thresh)
-                          {
-                             *dst++ = B_VAL(src);
-                             *dst++ = G_VAL(src);
-                             *dst++ = R_VAL(src);
-                          }
-                        else
-                          {
-                             *dst++ = B_VAL(&colorkey);
-                             *dst++ = G_VAL(&colorkey);
-                             *dst++ = R_VAL(&colorkey);
-                          }
-                        src++;
-                     }
-                }
-           }
-         else
-           {
-              for (yy = 0; yy < h; yy++)
-                {
-                   dst = dest + (yy * row_bytes);
-                   src = update->image.data + (yy * update->cache_entry.w);
-                   for (xx = 0; xx < w; xx++)
-                     {
-                        *dst++ = B_VAL(src);
-                        *dst++ = G_VAL(src);
-                        *dst++ = R_VAL(src);
+                        dst = _update_24bpp_888_888(dst, src, buf->depth);
                         src++;
                      }
                 }
@@ -375,37 +318,6 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
       break;
 
       case OUTBUF_DEPTH_BGR_32BPP_888_8888:
-      {
-         DATA32 *src, *dst;
-         DATA8 *dest;
-         int xx, yy, row_bytes;
-
-         row_bytes = buf->dest_row_bytes;
-         dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4);
-         if (buf->func.new_update_region)
-           {
-              dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
-           }
-         for (yy = 0; yy < h; yy++)
-           {
-              dst = (DATA32 *)(dest + (yy * row_bytes));
-              src = update->image.data + (yy * update->cache_entry.w);
-              for (xx = 0; xx < w; xx++)
-                {
-                   A_VAL(dst) = B_VAL(src);
-                   R_VAL(dst) = G_VAL(src);
-                   G_VAL(dst) = R_VAL(src);
-                   dst++;
-                   src++;
-                }
-           }
-         if (buf->func.free_update_region)
-           {
-              buf->func.free_update_region(x, y, w, h, dest);
-           }
-      }
-      break;
-
       case OUTBUF_DEPTH_BGRA_32BPP_8888_8888:
       {
          DATA32 *src, *dst;
