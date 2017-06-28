@@ -313,7 +313,7 @@ elua_ftostring(lua_State *L)
    return 1;
 }
 
-static const luaL_reg elua_popenlib[] =
+static const luaL_Reg elua_popenlib[] =
 {
    { "close"     , elua_close     },
    { "flush"     , elua_flush     },

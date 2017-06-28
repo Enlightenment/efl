@@ -355,7 +355,7 @@ _elua_get_localeconv(lua_State *L)
    return 1;
 };
 
-const luaL_reg gettextlib[] =
+const luaL_Reg gettextlib[] =
 {
    { "bind_textdomain", _elua_gettext_bind_textdomain },
    { "get_message_language", _elua_get_message_language },
@@ -442,7 +442,7 @@ _elua_file_rmrf(lua_State *L)
    return 1;
 }
 
-const luaL_reg _elua_cutillib[] =
+const luaL_Reg _elua_cutillib[] =
 {
    { "init_module", _elua_module_init },
    { "popenv"     , _elua_io_popen    },

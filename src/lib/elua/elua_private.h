@@ -28,11 +28,6 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
-// FIX for luajit 2.1.0-beta3: see https://phab.enlightenment.org/T2728
-#ifndef luaL_reg
-# define luaL_reg luaL_Reg
-#endif
-
 #include "Elua.h"
 
 struct _Elua_State
