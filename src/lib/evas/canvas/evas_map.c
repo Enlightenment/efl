@@ -239,7 +239,7 @@ _evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
    free(m);
 }
 
-Eina_Bool
+EAPI Eina_Bool
 evas_map_coords_get(const Evas_Map *m, double x, double y,
                     double *mx, double *my, int grab)
 {

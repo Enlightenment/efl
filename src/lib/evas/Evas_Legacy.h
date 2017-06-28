@@ -7534,6 +7534,20 @@ EAPI void            evas_map_free(Evas_Map *m);
 EAPI int             evas_map_count_get(const Evas_Map *m) EINA_CONST;
 
 /**
+ * Apply a map transformation on given coordinate
+ *
+ * @param m map to use to transform x and y
+ * @param x point x source coordinate
+ * @param y point y source coordinate
+ * @param mx point x after transformation by m
+ * @param my point y after transformation by m
+ * @param grab
+ * @return #EINA_TRUE on success interpolation, @EINA_FALSE otherwise
+ */
+EAPI Eina_Bool       evas_map_coords_get(const Evas_Map *m, double x, double y,
+                                         double *mx, double *my, int grab);
+
+/**
  * Change the map point's coordinate.
  *
  * This sets the fixed point's coordinate in the map. Note that points
