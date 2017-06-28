@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
@@ -2838,12 +2839,164 @@ class TestEinaHash
     public static void data_set_int()
     {
         var hsh = new eina.Hash<int, int>();
+        Test.Assert(hsh.Count == 0);
+
         hsh[88] = 888;
         Test.Assert(hsh[88] == 888);
+        Test.Assert(hsh.Count == 1);
+
         hsh[44] = 444;
         Test.Assert(hsh[44] == 444);
+        Test.Assert(hsh.Count == 2);
+
         hsh[22] = 222;
         Test.Assert(hsh[22] == 222);
+        Test.Assert(hsh.Count == 3);
+
+        hsh.Dispose();
+    }
+
+    public static void data_set_str()
+    {
+        var hsh = new eina.Hash<string, string>();
+        Test.Assert(hsh.Count == 0);
+
+        hsh["aa"] = "aaa";
+        Test.Assert(hsh["aa"] == "aaa");
+        Test.Assert(hsh.Count == 1);
+
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        Test.Assert(hsh.Count == 2);
+
+        hsh["cc"] = "ccc";
+        Test.Assert(hsh["cc"] == "ccc");
+        Test.Assert(hsh.Count == 3);
+
+        hsh.Dispose();
+    }
+
+    public static void data_set_obj()
+    {
+        var hsh = new eina.Hash<test.Numberwrapper, test.Numberwrapper>();
+        Test.Assert(hsh.Count == 0);
+
+        var a = NW(22);
+        var aa = NW(222);
+        var b = NW(44);
+        var bb = NW(444);
+        var c = NW(88);
+        var cc = NW(888);
+
+        hsh[a] = aa;
+        Test.Assert(hsh[a].raw_handle == aa.raw_handle);
+        Test.Assert(hsh[a].number_get() == aa.number_get());
+        Test.Assert(hsh.Count == 1);
+
+        hsh[b] = bb;
+        Test.Assert(hsh[b].raw_handle == bb.raw_handle);
+        Test.Assert(hsh[b].number_get() == bb.number_get());
+        Test.Assert(hsh.Count == 2);
+
+        hsh[c] = cc;
+        Test.Assert(hsh[c].raw_handle == cc.raw_handle);
+        Test.Assert(hsh[c].number_get() == cc.number_get());
+
+        Test.Assert(hsh.Count == 3);
+
+        hsh.Dispose();
+    }
+
+    public static void eina_hash_as_ienumerable_int()
+    {
+        var hsh = new eina.Hash<int, int>();
+        var dct = new Dictionary<int, int>();
+
+        hsh[88] = 888;
+        hsh[44] = 444;
+        hsh[22] = 222;
+
+        dct[88] = 888;
+        dct[44] = 444;
+        dct[22] = 222;
+
+        int count = 0;
+
+        foreach (KeyValuePair<int, int> kvp in hsh)
+        {
+            Test.Assert(dct[kvp.Key] == kvp.Value);
+            dct.Remove(kvp.Key);
+            ++count;
+        }
+
+        Test.AssertEquals(count, 3);
+        Test.AssertEquals(dct.Count, 0);
+
+        hsh.Dispose();
+    }
+
+    public static void eina_hash_as_ienumerable_str()
+    {
+        var hsh = new eina.Hash<string, string>();
+        var dct = new Dictionary<string, string>();
+
+        hsh["aa"] = "aaa";
+        hsh["bb"] = "bbb";
+        hsh["cc"] = "ccc";
+
+        dct["aa"] = "aaa";
+        dct["bb"] = "bbb";
+        dct["cc"] = "ccc";
+
+        int count = 0;
+
+        foreach (KeyValuePair<string, string> kvp in hsh)
+        {
+            Test.Assert(dct[kvp.Key] == kvp.Value);
+            dct.Remove(kvp.Key);
+            ++count;
+        }
+
+        Test.AssertEquals(count, 3);
+        Test.AssertEquals(dct.Count, 0);
+
+        hsh.Dispose();
+    }
+
+    public static void eina_hash_as_ienumerable_obj()
+    {
+        var hsh = new eina.Hash<test.Numberwrapper, test.Numberwrapper>();
+        var dct = new Dictionary<int, test.Numberwrapper>();
+
+        var a = NW(22);
+        var aa = NW(222);
+        var b = NW(44);
+        var bb = NW(444);
+        var c = NW(88);
+        var cc = NW(888);
+
+        hsh[a] = aa;
+        hsh[b] = bb;
+        hsh[c] = cc;
+
+        dct[a.number_get()] = aa;
+        dct[b.number_get()] = bb;
+        dct[c.number_get()] = cc;
+
+        int count = 0;
+
+        foreach (KeyValuePair<test.Numberwrapper, test.Numberwrapper> kvp in hsh)
+        {
+            Test.Assert(dct[kvp.Key.number_get()].raw_handle == kvp.Value.raw_handle);
+            Test.Assert(dct[kvp.Key.number_get()].number_get() == kvp.Value.number_get());
+            dct.Remove(kvp.Key.number_get());
+            ++count;
+        }
+
+        Test.AssertEquals(count, 3);
+        Test.AssertEquals(dct.Count, 0);
+
+        hsh.Dispose();
     }
 
     // //
@@ -3141,6 +3294,8 @@ class TestEinaHash
 
 class TestEinaIterator
 {
+    // Array //
+
     public static void eina_array_int_empty_iterator()
     {
         var arr = new eina.Array<int>();
@@ -3227,6 +3382,35 @@ class TestEinaIterator
         Test.Assert(entered);
     }
 
+    // Inarray
+
+    public static void eina_inarray_int_empty_iterator()
+    {
+        var arr = new eina.Inarray<int>();
+        var itr = arr.GetIterator();
+        bool entered = false;
+        foreach (int e in itr)
+        {
+            entered = true;
+        }
+        Test.Assert(!entered);
+    }
+
+    public static void eina_inarray_int_filled_iterator()
+    {
+        var arr = new eina.Inarray<int>();
+        arr.Append(base_seq_int);
+        var itr = arr.GetIterator();
+        bool entered = false;
+        var i = 0;
+        foreach (int e in itr)
+        {
+            entered = true;
+            Test.Assert(e == base_seq_int[i]);
+            ++i;
+        }
+        Test.Assert(entered);
+    }
 
 //     // //
 //     // Code Generation
