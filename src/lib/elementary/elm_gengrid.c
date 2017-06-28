@@ -3432,14 +3432,6 @@ _key_action_move(Evas_Object *obj, const char *params)
         else
           {
              Evas_Object *next = NULL;
-             Elm_Object_Item *next_item = NULL;
-             next_item = elm_object_item_focus_next_item_get(sd->focused_item,
-                                                             ELM_FOCUS_LEFT);
-             if (next_item)
-               {
-                  elm_object_item_focus_set(next_item, EINA_TRUE);
-                  return EINA_TRUE;
-               }
              next = elm_object_item_focus_next_object_get(sd->focused_item,
                                                           ELM_FOCUS_LEFT);
              if (next)
@@ -3514,14 +3506,6 @@ _key_action_move(Evas_Object *obj, const char *params)
         else
           {
              Evas_Object *next = NULL;
-             Elm_Object_Item *next_item = NULL;
-             next_item = elm_object_item_focus_next_item_get(sd->focused_item,
-                                                             ELM_FOCUS_RIGHT);
-             if (next_item)
-               {
-                  elm_object_item_focus_set(next_item, EINA_TRUE);
-                  return EINA_TRUE;
-               }
              next = elm_object_item_focus_next_object_get(sd->focused_item,
                                                           ELM_FOCUS_RIGHT);
              if (next)
@@ -3594,14 +3578,6 @@ _key_action_move(Evas_Object *obj, const char *params)
         else
           {
              Evas_Object *next = NULL;
-             Elm_Object_Item *next_item = NULL;
-             next_item = elm_object_item_focus_next_item_get(sd->focused_item,
-                                                             ELM_FOCUS_UP);
-             if (next_item)
-               {
-                  elm_object_item_focus_set(next_item, EINA_TRUE);
-                  return EINA_TRUE;
-               }
              next = elm_object_item_focus_next_object_get(sd->focused_item,
                                                           ELM_FOCUS_UP);
              if (next)
@@ -3658,14 +3634,6 @@ _key_action_move(Evas_Object *obj, const char *params)
         else
           {
              Evas_Object *next = NULL;
-             Elm_Object_Item *next_item = NULL;
-             next_item = elm_object_item_focus_next_item_get(sd->focused_item,
-                                                             ELM_FOCUS_DOWN);
-             if (next_item)
-               {
-                  elm_object_item_focus_set(next_item, EINA_TRUE);
-                  return EINA_TRUE;
-               }
              next = elm_object_item_focus_next_object_get(sd->focused_item,
                                                           ELM_FOCUS_DOWN);
              if (next)
