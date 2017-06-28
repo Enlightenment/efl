@@ -39,11 +39,13 @@ struct _Outbuf
    Outbuf_Depth                  depth;
 
    void                         *dest;
+   void                         *rdest;
    unsigned int                  dest_row_bytes;
    void                         *switch_data;
 
    int                           alpha_level;
    DATA32                        color_key;
+   int                           rotation;
    Eina_Bool                     use_color_key : 1;
    Eina_Bool                     first_frame : 1;
 
@@ -54,7 +56,8 @@ struct _Outbuf
    } func;
 
    struct {
-      RGBA_Image                *back_buf;
+      RGBA_Image                *back_buf; //not actually the back buffer, just a cache entry for the front buffer
+      RGBA_Image                *render_buf;
    } priv;
 };
 
@@ -64,9 +67,10 @@ void         evas_buffer_outbuf_buf_init                   (void);
 void         evas_buffer_outbuf_buf_free                   (Outbuf *buf);
 
 void         evas_buffer_outbuf_buf_update_fb              (Outbuf *buf,
-                                                            int w, int h,
+                                                            int w, int h, int rot,
                                                             Outbuf_Depth depth,
                                                             void *dest,
+                                                            void *rdest,
                                                             int dest_row_bytes,
                                                             int use_color_key,
                                                             DATA32 color_key,
@@ -75,7 +79,7 @@ void         evas_buffer_outbuf_buf_update_fb              (Outbuf *buf,
                                                             void   (*free_update_region) (int x, int y, int w, int h, void *data),
                                                             void * (*switch_buffer) (void *data, void *dest_buffer),
                                                             void *switch_data);
-Outbuf      *evas_buffer_outbuf_buf_setup_fb               (int w, int h, Outbuf_Depth depth, void *dest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
+Outbuf      *evas_buffer_outbuf_buf_setup_fb               (int w, int h, int rot, Outbuf_Depth depth, void *dest, void *rdest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
 							    void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes),
 							    void   (*free_update_region) (int x, int y, int w, int h, void *data),
                                                             void * (*switch_buffer)(void *switch_data, void *dest),

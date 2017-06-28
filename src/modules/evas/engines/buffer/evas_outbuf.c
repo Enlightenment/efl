@@ -17,6 +17,15 @@ evas_buffer_outbuf_buf_init(void)
 void
 evas_buffer_outbuf_buf_free(Outbuf *buf)
 {
+   if (buf->priv.render_buf)
+     {
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_close(&buf->priv.render_buf->cache_entry);
+        else
+#endif
+        evas_cache_image_drop(&buf->priv.render_buf->cache_entry);
+     }
    if (buf->priv.back_buf)
      {
 #ifdef EVAS_CSERVE2
@@ -30,7 +39,7 @@ evas_buffer_outbuf_buf_free(Outbuf *buf)
 }
 
 void
-evas_buffer_outbuf_buf_update_fb(Outbuf *buf, int w, int h, Outbuf_Depth depth, void *dest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
+evas_buffer_outbuf_buf_update_fb(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth, void *dest, void *rdest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
                                  void * (*new_update_region)(int x, int y, int w, int h, int *row_bytes),
                                  void (*free_update_region)(int x, int y, int w, int h, void *data),
                                  void * (*switch_buffer)(void *data, void *dest_buffer),
@@ -38,9 +47,11 @@ evas_buffer_outbuf_buf_update_fb(Outbuf *buf, int w, int h, Outbuf_Depth depth, 
 {
    buf->w = w;
    buf->h = h;
+   buf->rotation = rot;
    buf->depth = depth;
 
    buf->dest = dest;
+   buf->rdest = rdest;
    buf->dest_row_bytes = dest_row_bytes;
 
    buf->alpha_level = alpha_level;
@@ -59,37 +70,67 @@ evas_buffer_outbuf_buf_update_fb(Outbuf *buf, int w, int h, Outbuf_Depth depth, 
         memset(buf->dest, 0, h * buf->dest_row_bytes);
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
-          buf->priv.back_buf = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
-                                                                    w, h,
-                                                                    buf->dest,
-                                                                    1, EVAS_COLORSPACE_ARGB8888);
+          {
+             buf->priv.back_buf = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
+                                                                       w, h,
+                                                                       buf->dest,
+                                                                       1, EVAS_COLORSPACE_ARGB8888);
+             if (buf->rdest)
+               buf->priv.render_buf = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
+                                                                       w, h,
+                                                                       buf->rdest,
+                                                                       1, EVAS_COLORSPACE_ARGB8888);
+
+          }
         else
 #endif
-        buf->priv.back_buf = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
-                                                                 w, h,
-                                                                 buf->dest,
-                                                                 1, EVAS_COLORSPACE_ARGB8888);
+          {
+             buf->priv.back_buf = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
+                                                                      w, h,
+                                                                      buf->dest,
+                                                                      1, EVAS_COLORSPACE_ARGB8888);
+             if (buf->rdest)
+               buf->priv.render_buf = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
+                                                                        w, h,
+                                                                        buf->rdest,
+                                                                        1, EVAS_COLORSPACE_ARGB8888);
+          }
      }
    else if ((buf->depth == OUTBUF_DEPTH_RGB_32BPP_888_8888) &&
             (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
      {
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
-          buf->priv.back_buf = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
-                                                                    w, h,
-                                                                    buf->dest,
-                                                                    0, EVAS_COLORSPACE_ARGB8888);
+          {
+             buf->priv.back_buf = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
+                                                                       w, h,
+                                                                       buf->dest,
+                                                                       0, EVAS_COLORSPACE_ARGB8888);
+             if (buf->rdest)
+               buf->priv.render_buf = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
+                                                                       w, h,
+                                                                       buf->rdest,
+                                                                       0, EVAS_COLORSPACE_ARGB8888);
+
+          }
         else
 #endif
-        buf->priv.back_buf = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
-                                                                 w, h,
-                                                                 buf->dest,
-                                                                 0, EVAS_COLORSPACE_ARGB8888);
+          {
+             buf->priv.back_buf = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
+                                                                      w, h,
+                                                                      buf->dest,
+                                                                      0, EVAS_COLORSPACE_ARGB8888);
+             if (buf->rdest)
+               buf->priv.render_buf = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
+                                                                        w, h,
+                                                                        buf->rdest,
+                                                                        0, EVAS_COLORSPACE_ARGB8888);
+          }
      }
 }
 
 Outbuf *
-evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
+evas_buffer_outbuf_buf_setup_fb(int w, int h, int rot, Outbuf_Depth depth, void *dest, void *rdest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
                                 void * (*new_update_region)(int x, int y, int w, int h, int *row_bytes),
                                 void (*free_update_region)(int x, int y, int w, int h, void *data),
                                 void * (*switch_buffer)(void *data, void *dest_buffer),
@@ -103,8 +144,10 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
    evas_buffer_outbuf_buf_update_fb(buf,
                                     w,
                                     h,
+                                    rot,
                                     depth,
                                     dest,
+                                    rdest,
                                     dest_row_bytes,
                                     use_color_key,
                                     color_key,
@@ -122,6 +165,11 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 {
    RGBA_Image *im;
 
+   if (buf->priv.render_buf)
+     {
+        *cx = x; *cy = y; *cw = w; *ch = h;
+        return buf->priv.render_buf;
+     }
    if (buf->priv.back_buf)
      {
         *cx = x; *cy = y; *cw = w; *ch = h;
@@ -158,7 +206,7 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 void
 evas_buffer_outbuf_buf_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 {
-   if (update != buf->priv.back_buf)
+   if ((update != buf->priv.back_buf) && (update != buf->priv.render_buf))
      {
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
@@ -175,6 +223,7 @@ evas_buffer_outbuf_buf_switch_buffer(Outbuf *buf, Tilebuf_Rect *surface_damage E
    if (buf->func.switch_buffer)
      {
         buf->dest = buf->func.switch_buffer(buf->switch_data, buf->dest);
+
         if (buf->priv.back_buf)
           {
 #ifdef EVAS_CSERVE2
@@ -222,6 +271,39 @@ _update_24bpp_888_888(DATA8 *dst, DATA32 *src, int depth)
 void
 evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h)
 {
+   Eina_Rectangle r = {0}, pr;
+   int rx = 0, ry = 0;
+
+   if (buf->rotation == 0)
+     {
+        r.x = x;
+        r.y = y;
+     }
+   else if (buf->rotation == 90)
+     {
+        r.x = y;
+        r.y = buf->w - x - w;
+     }
+   else if (buf->rotation == 180)
+     {
+        r.x = buf->w - x - w;
+        r.y = buf->h - y - h;
+     }
+   else if (buf->rotation == 270)
+     {
+        r.x = buf->h - y - h;
+        r.y = x;
+     }
+   if ((buf->rotation == 0) || (buf->rotation == 180))
+     {
+        r.w = w;
+        r.h = h;
+     }
+   else if ((buf->rotation == 90) || (buf->rotation == 270))
+     {
+        r.w = h;
+        r.h = w;
+     }
    /* copy update image to out buf & convert */
    switch (buf->depth)
      {
@@ -246,18 +328,32 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
               dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
            }
          if (!dest) break;
-         for (yy = 0; yy < h; yy++)
+         for (yy = 0; yy < update->cache_entry.h; yy++)
            {
-              dst = dest + (yy * row_bytes);
-              src = update->image.data + (yy * update->cache_entry.w);
-              for (xx = 0; xx < update->cache_entry.w; xx++)
-                {
-                   if ((!buf->use_color_key) || (A_VAL(src) > thresh))
-                     dst = _update_24bpp_888_888(dst, src, buf->depth);
-                   else
-                     dst = _update_24bpp_888_888(dst, &colorkey, buf->depth);
-                   src++;
-                }
+                   dst = dest + (yy * row_bytes);
+                   src = update->image.data + (yy * update->cache_entry.w);
+                   for (xx = 0; xx < update->cache_entry.w; xx++)
+                     {
+                        if ((!buf->use_color_key) || (A_VAL(src) > thresh))
+                          dst = _update_24bpp_888_888(dst, src, buf->depth);
+                        else
+                          dst = _update_24bpp_888_888(dst, &colorkey, buf->depth);
+                        src++;
+                     }
+/* FIXME: finish these...
+                 case 90:
+                   dst = dest + ((update->cache_entry.h - yy - 1) * row_bytes);
+                   src = update->image.data + yy;
+                   for (xx = 0; xx < update->cache_entry.h; xx++)
+                     {
+                        if ((!buf->use_color_key) || (A_VAL(src) > thresh))
+                          dst = _update_24bpp_888_888(dst, src, buf->depth);
+                        else
+                          dst = _update_24bpp_888_888(dst, &colorkey, buf->depth);
+                        src += w;
+                     }
+                   break;
+*/
            }
          if (buf->func.free_update_region)
            {
@@ -269,11 +365,12 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
       case OUTBUF_DEPTH_RGB_32BPP_888_8888:
       case OUTBUF_DEPTH_ARGB_32BPP_8888_8888:
       {
-         DATA32 *dest, *src, *dst;
+         DATA32 *dest, *src;
          int yy, row_bytes;
 
          row_bytes = buf->dest_row_bytes;
          dest = (DATA32 *)((DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4));
+         src = update->image.data;
          if (buf->func.new_update_region)
            {
               dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
@@ -286,13 +383,53 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
               func = evas_common_draw_func_copy_get(w, 0);
               if (func)
                 {
-                   for (yy = 0; yy < h; yy++)
+                   for (yy = 0; yy < update->cache_entry.h; yy++)
                      {
+                        DATA32 *dst;
                         src = update->image.data + (yy * update->cache_entry.w);
                         dst = (DATA32 *)((DATA8 *)(buf->dest) + ((y + yy) * row_bytes));
                         func(src, dst, w);
                      }
                 }
+           }
+         else if (buf->rotation)
+           {
+              Gfx_Func_Convert conv_func;
+              DATA8 *dst = buf->dest;
+
+              conv_func = evas_common_convert_func_get(0, buf->w, buf->h, 32,
+                0x00ff0000, 0x0000ff00, 0x000000ff, 0, buf->rotation);
+              if (buf->rotation == 180)
+                {
+                   pr = r;
+                   RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, buf->w, buf->h);
+                   rx = pr.w - r.w; ry = pr.h - r.h;
+                   src += (update->cache_entry.w * ry) + rx;
+                   w -= rx;
+                }
+              else if (buf->rotation == 90)
+                {
+                   pr = r;
+                   RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, buf->w, buf->h);
+                   rx = pr.w - r.w; ry = pr.h - r.h;
+                   src += ry;
+                   w -= ry;
+                }
+              else if (buf->rotation == 270)
+                {
+                   pr = r;
+                   RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h, 0, 0, buf->w, buf->h);
+                   rx = pr.w - r.w; ry = pr.h - r.h;
+                   src += (update->cache_entry.w * rx);
+                   w -= ry;
+                }
+              if (conv_func)
+               conv_func(src, dst,
+                 update->cache_entry.w - w,
+                 (row_bytes / 4) - r.w,
+                 r.w, r.h,
+                 x + rx, y + ry,
+                 NULL);
            }
          if (buf->func.free_update_region)
            {
@@ -314,11 +451,12 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
            {
               dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
            }
-         for (yy = 0; yy < h; yy++)
+         /* FIXME: use evas convert functions with rotations */
+         for (yy = 0; yy < update->cache_entry.h; yy++)
            {
               dst = (DATA32 *)(dest + (yy * row_bytes));
               src = update->image.data + (yy * update->cache_entry.w);
-              for (xx = 0; xx < w; xx++)
+              for (xx = 0; xx < update->cache_entry.w; xx++)
                 {
                    A_VAL(dst) = B_VAL(src);
                    R_VAL(dst) = G_VAL(src);
@@ -340,9 +478,9 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 }
 
 void
-evas_buffer_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot EINA_UNUSED, Outbuf_Depth depth)
+evas_buffer_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 {
-   void *dest;
+   void *dest, *rdest;
    int dest_row_bytes;
    int alpha_level;
    DATA32 color_key;
@@ -354,6 +492,7 @@ evas_buffer_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot EINA_UNUSED, Ou
 
    if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth;
    dest = ob->dest;
+   rdest = ob->rdest;
    dest_row_bytes = ob->dest_row_bytes;
    alpha_level = ob->alpha_level;
    color_key = ob->color_key;
@@ -366,8 +505,10 @@ evas_buffer_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot EINA_UNUSED, Ou
    evas_buffer_outbuf_buf_update_fb(ob,
                                     w,
                                     h,
+                                    rot,
                                     depth,
                                     dest,
+                                    rdest,
                                     dest_row_bytes,
                                     use_color_key,
                                     color_key,
@@ -386,8 +527,8 @@ evas_buffer_outbuf_buf_swap_mode_get(Outbuf *ob)
 }
 
 int
-evas_buffer_outbuf_buf_rot_get(Outbuf *buf EINA_UNUSED)
+evas_buffer_outbuf_buf_rot_get(Outbuf *buf)
 {
-   return 0;
+   return buf->rotation;
 }
 

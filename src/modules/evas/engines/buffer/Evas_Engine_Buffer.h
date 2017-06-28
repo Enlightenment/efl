@@ -19,6 +19,7 @@ struct _Evas_Engine_Info_Buffer
       int   depth_type;
 
       void      *dest_buffer;
+      void      *render_buffer;
       int        dest_buffer_row_bytes;
 
       Eina_Bool  use_color_key : 1;
@@ -33,6 +34,7 @@ struct _Evas_Engine_Info_Buffer
       } func;
 
       void *switch_data;
+      int rotation;
    } info;
 
    /* non-blocking or blocking mode */

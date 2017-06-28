@@ -5,6 +5,7 @@ typedef struct _Ecore_Evas_Engine_Buffer_Data Ecore_Evas_Engine_Buffer_Data;
 
 struct _Ecore_Evas_Engine_Buffer_Data {
    void *pixels;
+   void *swap;
    Evas_Object *image;
    void  (*free_func) (void *data, void *pix);
    void *(*alloc_func) (void *data, int size);

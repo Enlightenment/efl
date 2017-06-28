@@ -19,7 +19,6 @@ static Evas_Func func, pfunc;
 typedef Render_Engine_Software_Generic Render_Engine;
 
 /* prototypes we will use here */
-static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region)(int x, int y, int w, int h, int *row_bytes), void (*free_update_region)(int x, int y, int w, int h, void *data), void *(*switch_buffer)(void *data, void *dest_buffer), void *switch_data);
 
 static void *eng_info(Evas *eo_e EINA_UNUSED);
 static void  eng_info_free(Evas *eo_e EINA_UNUSED, void *info);
@@ -29,7 +28,9 @@ static void  eng_output_free(void *engine EINA_UNUSED, void *data);
 static void *
 _output_setup(int w,
               int h,
+              int rot,
               void *dest_buffer,
+              void *render_buffer,
               int dest_buffer_row_bytes,
               int depth_type,
               int use_color_key,
@@ -70,8 +71,10 @@ _output_setup(int w,
    A_VAL(&color_key) = 0;
    ob = evas_buffer_outbuf_buf_setup_fb(w,
                                         h,
+                                        rot,
                                         dep,
                                         dest_buffer,
+                                        render_buffer,
                                         dest_buffer_row_bytes,
                                         use_color_key,
                                         color_key,
@@ -132,7 +135,9 @@ eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 
    return _output_setup(w,
                         h,
+                        info->info.rotation,
                         info->info.dest_buffer,
+                        info->info.render_buffer,
                         info->info.dest_buffer_row_bytes,
                         info->info.depth_type,
                         info->info.use_color_key,

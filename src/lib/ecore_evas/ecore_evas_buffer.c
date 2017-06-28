@@ -30,8 +30,9 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
      }
    else
      {
-        bdata->free_func(bdata->data,
-			 bdata->pixels);
+        bdata->free_func(bdata->data, bdata->pixels);
+        if (bdata->swap)
+          bdata->free_func(bdata->data, bdata->swap);
      }
 
    free(bdata);
@@ -51,9 +52,18 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    if ((w == ee->w) && (h == ee->h)) return;
    ee->w = w;
    ee->h = h;
-   evas_output_size_set(ee->evas, ee->w, ee->h);
-   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+   if (PORTRAIT_CHECK(ee->rotation))
+     {
+        evas_output_size_set(ee->evas, ee->w, ee->h);
+        evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     }
+   else
+     {
+        evas_output_size_set(ee->evas, ee->h, ee->w);
+        evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+        evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+     }
 
    if (bdata->image)
      {
@@ -63,11 +73,18 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    else
      {
         if (bdata->pixels)
-          bdata->free_func(bdata->data,
-                                      bdata->pixels);
-        bdata->pixels = bdata->alloc_func(bdata->data,
-					  ee->w * ee->h * sizeof(int));
-        stride = ee->w * sizeof(int);
+          bdata->free_func(bdata->data, bdata->pixels);
+        if (bdata->swap)
+          bdata->free_func(bdata->data, bdata->swap);
+        bdata->pixels = bdata->alloc_func(bdata->data, ee->w * ee->h * sizeof(int));
+        bdata->swap = NULL;
+        if (ee->rotation)
+          bdata->swap = bdata->alloc_func(bdata->data, ee->w * ee->h * sizeof(int));
+        if (PORTRAIT_CHECK(ee->rotation))
+          stride = ee->w;
+        else
+          stride = ee->h;
+        stride *= sizeof(int);
      }
 
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
@@ -83,6 +100,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
         einfo->info.alpha_threshold = 0;
         einfo->info.func.new_update_region = NULL;
         einfo->info.func.free_update_region = NULL;
+        einfo->info.render_buffer = bdata->swap;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -97,6 +115,47 @@ static void
 _ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
 {
    _ecore_evas_resize(ee, w, h);
+}
+
+static void
+_ecore_evas_buffer_rotation_set(Ecore_Evas *ee, int rotation, int resize)
+{
+   Evas_Engine_Info_Buffer *einfo;
+   const Evas_Device *pointer;
+   Ecore_Evas_Cursor *cursor = NULL;
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+
+   if (rotation == ee->rotation) return;
+   if (bdata->image) return; //parent canvas should rotate?
+   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
+   if (pointer) cursor = eina_hash_find(ee->prop.cursors, &pointer);
+   einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
+   einfo->info.rotation = rotation;
+   if (!resize)
+     {
+        if ((!rotation) && bdata->swap)
+          {
+             bdata->free_func(bdata->data, bdata->swap);
+             bdata->swap = NULL;
+          }
+        if (rotation && (!bdata->swap))
+          bdata->swap = bdata->alloc_func(bdata->data, ee->w * ee->h * sizeof(int));
+     }
+   einfo->info.render_buffer = bdata->swap;
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info*)einfo))
+     {
+        ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+     }
+   ee->rotation = rotation;
+   if (resize)
+     {
+        int w = ee->w, h = ee->h;
+        ee->w = 0, ee->h = 0;
+        _ecore_evas_resize(ee, w, h);
+     }
+   if (!cursor) return;
+   _ecore_evas_mouse_move_process(ee, cursor->pos_x, cursor->pos_y,
+                                  (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
 }
 
 static void
@@ -641,7 +700,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      _ecore_evas_resize,
      _ecore_evas_move_resize,
-     NULL,
+     _ecore_evas_buffer_rotation_set,
      NULL,
      _ecore_evas_show,
      NULL,
@@ -801,6 +860,7 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
         einfo->info.alpha_threshold = 0;
         einfo->info.func.new_update_region = NULL;
         einfo->info.func.free_update_region = NULL;
+        einfo->info.switch_data = ee;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
