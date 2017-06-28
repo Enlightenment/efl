@@ -1267,7 +1267,11 @@ _title_icon_get(const Elm_Popup_Data *sd)
 static Evas_Object *
 _content_get(const Elm_Popup_Data *sd)
 {
-   return sd->content;
+   Evas_Object *ret;
+
+   ret = sd->content ? sd->content : sd->text_content_obj;
+
+   return ret;
 }
 
 static Evas_Object *
