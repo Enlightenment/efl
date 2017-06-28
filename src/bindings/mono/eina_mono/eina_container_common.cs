@@ -76,6 +76,7 @@ public interface IBaseElementTraits<T>
     void NativeFreeInplace(IntPtr nat);
     void ResidueFreeInplace(IntPtr nat);
     T NativeToManaged(IntPtr nat);
+    T NativeToManagedRef(IntPtr nat);
     T NativeToManagedInlistNode(IntPtr nat);
     T NativeToManagedInplace(IntPtr nat);
     IntPtr EinaCompareCb();
@@ -163,6 +164,11 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
         if (nat == IntPtr.Zero)
             return default(T);
         return (T)(object)Marshal.PtrToStringAuto(nat);
+    }
+
+    public T NativeToManagedRef(IntPtr nat)
+    {
+        return NativeToManaged(nat);
     }
 
     public T NativeToManagedInlistNode(IntPtr nat)
@@ -293,6 +299,13 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
         return (T) Activator.CreateInstance(concreteType, efl.eo.Globals.efl_ref(nat));
     }
 
+    public T NativeToManagedRef(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+            return default(T);
+        return NativeToManaged(intPtrTraits.NativeToManaged(nat));
+    }
+
     public T NativeToManagedInlistNode(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
@@ -395,6 +408,11 @@ public abstract class PrimitiveElementTraits<T>
         }
         var w = Marshal.PtrToStructure<eina.ConvertWrapper<T> >(nat);
         return w.Val;
+    }
+
+    public T NativeToManagedRef(IntPtr nat)
+    {
+        return NativeToManaged(nat);
     }
 
     public T NativeToManagedInlistNode(IntPtr nat)
@@ -624,6 +642,11 @@ public static class TraitFunctions
     public static T NativeToManaged<T>(IntPtr nat)
     {
         return GetTypeTraits<T>().NativeToManaged(nat);
+    }
+
+    public static T NativeToManagedRef<T>(IntPtr nat)
+    {
+        return GetTypeTraits<T>().NativeToManagedRef(nat);
     }
 
     public static T NativeToManagedInlistNode<T>(IntPtr nat)
