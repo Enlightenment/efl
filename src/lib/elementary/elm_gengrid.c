@@ -3339,6 +3339,64 @@ _item_horizontal_loop(Evas_Object *obj, Elm_Focus_Direction dir)
    return EINA_FALSE;
 }
 
+/*
+ * transform the focus direction so it can be used for deciding in which direction to go on the internal data structure
+ * This is respecting the horizontal
+ */
+
+static Elm_Focus_Direction
+_direction_transform_horizontal(Elm_Gengrid_Data *sd, Elm_Focus_Direction dir)
+{
+   if (!sd->horizontal) return dir;
+
+   switch(dir){
+      case ELM_FOCUS_DOWN: return ELM_FOCUS_RIGHT;
+      case ELM_FOCUS_UP: return ELM_FOCUS_LEFT;
+      case ELM_FOCUS_RIGHT: return ELM_FOCUS_DOWN;
+      case ELM_FOCUS_LEFT: return ELM_FOCUS_UP;
+      default: break;
+   }
+   ERR("unhandled transform case");
+   return dir;
+}
+
+static Elm_Object_Item*
+_get_neighbor(Elm_Gengrid_Data *sd, Elm_Object_Item *item, Elm_Focus_Direction dir)
+{
+   Elm_Focus_Direction access_dir = _direction_transform_horizontal(sd, dir);
+
+   switch(access_dir){
+      case ELM_FOCUS_DOWN: return get_down_item(sd, item);
+      case ELM_FOCUS_UP: return get_up_item(sd, item);
+      case ELM_FOCUS_RIGHT: return elm_gengrid_item_next_get(item);
+      case ELM_FOCUS_LEFT: return elm_gengrid_item_prev_get(item);
+      default: break;
+   }
+
+   return NULL;
+}
+
+static Eina_Bool
+_reorder_helper(Elm_Gengrid_Data *sd, Elm_Focus_Direction dir)
+{
+   Elm_Object_Item *neighbor;
+
+   if (_elm_gengrid_item_edge_check(sd->focused_item, dir))
+     {
+        if ((dir == ELM_FOCUS_LEFT || dir == ELM_FOCUS_RIGHT) && sd->item_loop_enable)
+          return EINA_TRUE;
+        return EINA_FALSE;
+     }
+
+   neighbor = _get_neighbor(sd, sd->focused_item, dir);
+
+   if (!neighbor) return EINA_FALSE;
+
+   _swap_items(sd->focused_item, neighbor, dir);
+
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
@@ -3369,23 +3427,7 @@ _key_action_move(Evas_Object *obj, const char *params)
      {
         if (sd->reorder_mode)
           {
-             Elm_Object_Item *eo_left;
-
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT))
-               {
-                  if (sd->item_loop_enable)
-                    return EINA_TRUE;
-                  return EINA_FALSE;
-               }
-             if (!sd->horizontal)
-               eo_left = elm_gengrid_item_prev_get(sd->focused_item);
-             else
-               eo_left = get_up_item(sd, sd->focused_item);
-             if (!eo_left)
-               return EINA_TRUE;
-             _swap_items(sd->focused_item, eo_left, ELM_FOCUS_LEFT);
-
-             return EINA_TRUE;
+             return _reorder_helper(sd, ELM_FOCUS_LEFT);
           }
         else
           {
@@ -3467,23 +3509,7 @@ _key_action_move(Evas_Object *obj, const char *params)
      {
         if (sd->reorder_mode)
           {
-             Elm_Object_Item *eo_right;
-
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT))
-               {
-                  if (sd->item_loop_enable)
-                    return EINA_TRUE;
-                  return EINA_FALSE;
-               }
-             if (!sd->horizontal)
-               eo_right = elm_gengrid_item_next_get(sd->focused_item);
-             else
-               eo_right = get_down_item(sd, sd->focused_item);
-             if (!eo_right)
-               return EINA_TRUE;
-             _swap_items(sd->focused_item, eo_right, ELM_FOCUS_RIGHT);
-
-             return EINA_TRUE;
+             return _reorder_helper(sd, ELM_FOCUS_RIGHT);
           }
         else
           {
@@ -3563,19 +3589,7 @@ _key_action_move(Evas_Object *obj, const char *params)
      {
         if (sd->reorder_mode)
           {
-             Elm_Object_Item *eo_up;
-
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_UP))
-               return EINA_FALSE;
-             if (!sd->horizontal)
-               eo_up = get_up_item(sd, sd->focused_item);
-             else
-               eo_up = elm_gengrid_item_prev_get(sd->focused_item);
-             if (!eo_up)
-               return EINA_TRUE;
-             _swap_items(sd->focused_item, eo_up, ELM_FOCUS_UP);
-
-             return EINA_TRUE;
+             return _reorder_helper(sd, ELM_FOCUS_UP);
           }
         else
           {
@@ -3639,19 +3653,7 @@ _key_action_move(Evas_Object *obj, const char *params)
      {
         if (sd->reorder_mode)
           {
-             Elm_Object_Item *eo_down;
-
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_DOWN))
-               return EINA_FALSE;
-             if (!sd->horizontal)
-               eo_down = get_down_item(sd, sd->focused_item);
-             else
-               eo_down = elm_gengrid_item_next_get(sd->focused_item);
-             if (!eo_down)
-               return EINA_TRUE;
-             _swap_items(sd->focused_item, eo_down, ELM_FOCUS_DOWN);
-
-             return EINA_TRUE;
+             return _reorder_helper(sd, ELM_FOCUS_DOWN);
           }
         else
           {
