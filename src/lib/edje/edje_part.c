@@ -80,6 +80,7 @@ _edje_real_part_set(Eo *obj, Edje *ed, Edje_Real_Part *rp, const char *part)
    pd->rp = rp;
    pd->part = part;
    pd->temp = 1;
+   pd->in_use = 1;
    pd->in_call = 0;
    efl_parent_set(obj, ed->obj);
 }

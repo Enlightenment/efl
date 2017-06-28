@@ -9,7 +9,7 @@ struct _Efl_Canvas_Layout_Internal_Data
    Edje_Real_Part *rp;
    const char     *part;
    Eo             *obj;
-   unsigned char   temp, in_call;
+   unsigned char   temp, in_call, in_use;
 };
 
 struct _Part_Item_Iterator
@@ -40,11 +40,11 @@ void _edje_real_part_set(Eo *obj, Edje *ed, Edje_Real_Part *rp, const char *part
 static inline void
 _part_proxy_del_cb(Eo *proxy, Eo **static_var)
 {
+   Efl_Canvas_Layout_Internal_Data *pd;
    if (*static_var)
      {
         // FIXME: Enable debug checks only in debug mode
-        Efl_Canvas_Layout_Internal_Data *pd = efl_data_scope_get
-              (*static_var, EFL_CANVAS_LAYOUT_INTERNAL_CLASS);
+        pd = efl_data_scope_get(*static_var, EFL_CANVAS_LAYOUT_INTERNAL_CLASS);
         if (pd && pd->temp && !pd->in_call)
           _part_reuse_error(pd);
         if (*static_var != proxy)
@@ -56,6 +56,8 @@ _part_proxy_del_cb(Eo *proxy, Eo **static_var)
         efl_parent_set(proxy, NULL);
      }
    efl_reuse(proxy);
+   pd = efl_data_scope_get(proxy, EFL_CANVAS_LAYOUT_INTERNAL_CLASS);
+   pd->in_use = EINA_FALSE;
    *static_var = proxy;
 }
 
@@ -107,7 +109,7 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
         goto end ; \
      } \
    \
-   if (EINA_UNLIKELY(pd->temp)) \
+   if (EINA_UNLIKELY(pd->in_use)) \
      { \
         /* if (!pd->in_call) _part_reuse_error(pd); */ \
         PROXY_STATIC_VAR(type) = efl_add(KLASS, ed->obj, _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
