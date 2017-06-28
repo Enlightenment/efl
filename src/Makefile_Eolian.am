@@ -94,6 +94,8 @@ tests/eolian/data/no_nmsp.eo \
 tests/eolian/data/import.eo \
 tests/eolian/data/decl.eo \
 tests/eolian/data/docs.eo \
+tests/eolian/data/function_types.eot \
+tests/eolian/data/function_as_argument.eo \
 tests/eolian/data/import_types.eot
 
 EOLIAN_TESTS_EOS_GENERATED = \
@@ -144,5 +146,9 @@ tests/eolian/data/class_simple_ref_legacy.h \
 tests/eolian/data/import_types_ref.h \
 tests/eolian/data/docs_ref.h \
 tests/eolian/data/docs_ref_legacy.h \
+tests/eolian/data/function_types_ref.h \
+tests/eolian/data/function_as_argument_impl_ref.c \
+tests/eolian/data/function_as_argument_ref.c \
+tests/eolian/data/function_as_argument_ref.h \
 tests/eolian/generated_future.eo \
 $(EOLIAN_TESTS_EOS)
