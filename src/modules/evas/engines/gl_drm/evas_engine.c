@@ -1197,10 +1197,11 @@ eng_image_native_set(void *engine, void *image, void *native)
              if (!ns->data.wl_dmabuf.resource)
                {
                   struct dmabuf_attributes *attr;
-                  void *v;
+                  void *v = NULL;
 
                   attr = ns->data.wl_dmabuf.attr;
-                  v = gl_import_simple_dmabuf(ob->egl.disp, attr);
+                  if (attr->version == EVAS_DMABUF_ATTRIBUTE_VERSION)
+                    v = gl_import_simple_dmabuf(ob->egl.disp, attr);
                   if (!v) {
                        ns->data.wl_dmabuf.attr = NULL;
                        return NULL;
