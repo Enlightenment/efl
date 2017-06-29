@@ -1,6 +1,274 @@
 ==========
-EFL 1.19.0
+EFL 1.20.0
 ==========
+
+Changes since 1.19.0:
+---------------------
+
+Features:
+
+   * evas: Make save() work on snapshots (T2102)
+   * ecore-drm2: Add support for plane formats
+   * ecore-drm2: Support multiple planes on a given output
+   * ecore-drm2: Add hardware plane functions
+   * ecore-drm2: Add API function to set plane destination
+   * ecore-drm2: Add library symlink to merge atomic commit requests
+   * ecore-drm2: Add API functions for atomic commit test and commit
+   * eo: Add new API efl_cast (T5311)
+   * Ecore_Win32: add ecore_win32_window_state_get() API to retrieve a window states
+   * Ecore_Win32: add Property event API
+   * Ecore_Win32: add API to retrieve the geometry and dpi of plugged displays
+   * evas map: Introduce new API for maps (Efl.Gfx.Map)
+   * evas map: Reach feature parity with legacy API
+   * ecore-evas: add function for unsetting a specific seat's cursor
+   * ecore-wl2: store names for inputs and add api for retrieving name
+   * ecore-wl2: add some accessors for useful Ecore_Wl2_Input struct members
+   * ecore-wl2: add function for checking if a client connection sync is done
+   * ecore-wl2: change selection setting apis to return the serial of the request
+   * ecore-wl2: add events for changes in keymap, selection, and kbd repeat rate
+   * ecore-wl2: add function for accepting a single mime type
+   * ecore-wl2: add function for setting a drag source's actions without a drag
+   * ecore-wl2: add functions for proxying a selection receive externally
+   * efl_input_device: add seat_id property
+   * evas_device: add seat_id property, set seat id for default fallback seat
+   * ecore-wl2: add ecore_wl2_display_input_find()
+   * ecore-wl2: add ecore_wl2_display_name_get()
+   * elm_cnp: add event for selection change
+   * elm_cnp: add elm_cnp_clipboard_selection_has_owner()
+   * elm_win: add elm_win_get()
+   * ecore-wl2: add ecore_wl2_display_input_find_by_name()
+   * ecore-wl2: add ecore_wl2_window_activated_get()
+   * ecore-wl2: add ecore_wl2_window_popup_input_set()
+   * evas: add evas_device_get_by_seat_id()
+   * edje: Implement EO API for message_send
+   * evas: Add children_iterate to Efl.Input.Device
+   * evas/elm: Add Efl.Image.image_size read-only property
+   * elput: group tablet input devices into pointer devices
+   * elput: add initial input tablet support
+   * ecore-wl2: implement compose keys (T5006)
+   * elput: implement compose sequences (T5006)
+   * wayland/drm: create evas_devices and add device pointer to input events
+   * Efl text: add Font, Format and Style interfaces
+   * Canvas text: implement Font, Format and Style interfaces
+   * edje: Add recursive flag for message_signal_process
+   * eolian: add new unit API
+   * Efl.Ui.Image.Zoomable: implement Ui.Image.icon property
+   * ecore-wl2: Add event for output transformation
+   * ecore-wl2: Add API function to find an output for given window
+   * ecore-wl2: Add API function to return an output transformation
+   * ecore-wl2: Add API function to set surface buffer transform
+   * evas_map: support map with number of points as multiples of 4
+   * efl.gfx.map: support for map points as multiples of 4
+   * elput: Add API function to swap dx & dy axis from pointer motion event
+   * ecore-drm2: Add API function to set pointer rotation
+   * Efl.Ui.Image.Zoomable: make zoomable to work with edj file
+   * ecore-wl2: Add API function to set if wm rotation is supported
+   * ecore-wl2: Add API to get if window manager rotation is supported
+   * ecore-wl2: Add API to set if an application has rotation a window
+   * ecore-wl2: Add API to get if an application has set window rotation
+   * ecore-wl2: Add API to set window preferred rotation
+   * ecore-wl2: Add API to return a windows preferred rotation
+   * ecore-wl2: Add API to set window available rotations
+   * ecore-wl2: Add API to return window available rotations
+   * ecore-wl2: Add API and event for window rotation change prepare
+   * ecore-wl2: Add API and Event for window rotation change prepare done
+   * ecore-wl2: Add API and Event for window rotation change request
+   * ecore-wl2: Add API and Event for window rotation change done
+   * ecore-wl2: Add event type for window rotate events
+   * ecore-evas-wl: Add support for Window Manager rotations
+   * efl_input_device: add function for determining if a device has pointer caps
+   * evas: add some functions for determining if pointer coords are inside an object
+   * evas: add new event_grabber smart-ish object
+   * efl.canvas: Add "seat" (by id) and "device" (by name) properties
+   * ecore-evas-wayland: Add aux_hint functions to Wayland Interface
+   * ecore-wl2: Add event and structure for auxiliary hints
+   * ecore-wl2: Add API function to get list of supported auxiliary hints
+   * ecore-wl2: Add API to support adding auxiliary window hints
+   * ecore-wl2: Add API function to change auxiliary window hint
+   * ecore-wl2: Add API to support deleting auxiliary window hints
+   * ecore-wl2: Free auxiliary window hints when we destroy a window
+   * ecore-evas: Support auxiliary hints for ecore-evas-wayland
+   * ecore-evas-wayland: Add support for setting auxiliary hints
+   * eo: Add API efl_data_scope_safe_get
+   * edje: add efl_version property (T5548)
+   * evas textblock: add align=locale option to respect locale's direction
+   * ecore-wl2: Add API to set if a window should skip focus
+   * ecore-wl2: Add API to get if a window should ignore focus events
+   * ecore-evas-wayland: Add support for focus_skip_set
+   * ecore-wl2: Add API to set window role
+   * ecore-wl2: Add API to get/set if a window is in floating mode
+   * ecore-wl2: Add API to support setting window stack mode
+   * ecore-evas-wayland: Add support for setting window stack mode
+   * evas: add seat-based focus interceptor
+   * ecore-drm2: add ecore_drm2_output_subpixel_get()
+   * build: add flag to disable elua
+   * gengrid: implement reusable content based on genlist implementation
+   * evas event grabber: add function to block stacking updates while visible
+   * elm_entry: Add prediction hint API
+   * ecore-wl2: Add client-side event for Window Show
+   * ecore-wl2: Add client-side event for Window Hide
+   * ecore-wl2: Add client-side event for Window Activate
+   * ecore-wl2: Add client-side event for Window Deactivate
+   * ecore-wl2: Add more window types to Window Type enum
+   * edje player - add slave command to set text of text part for testing
+
+Fixes:
+
+   * evas/elm: Fix bad propagation of ON_HOLD flag
+   * notify: fix hide animation logic for popup
+   * ecore_con: send server_upgrade event *after* clearing pending saves (CID1373485)
+   * evas gl: Make sure a deleted image can't be the target
+   * evas filters: Fix rare crash with async render
+   * emotion - gstreamer1 - fix yuv import funcs to use gst stride + offset
+   * elm test - fix windows compilation as _close is used in windows (T5391)
+   * fileselector: apply style for files view
+   * elm_fileselector: fix thumbnail size for other themes bisides default
+   * evas - table - remove logically dead code (CID1372487)
+   * evas key modifier state set - remove dead code
+   * evas key lock state set - remove dead code
+   * efreet cache create - check return values of i/o funcs (CID1361941)
+   * ecore-drm2: Disable driver whitelist tests
+   * ecore-drm2: Remove old atomic flipping code
+   * ecore-drm2: Store cursor size on device
+   * ecore-drm2: Move defines for CAP_CURSOR sizes to private header
+   * elm_map: Fix elm_map_overlay_color_get
+   * Evas.Table: Apply mirrored correctly when align is set
+   * ecore-con: Remove unused variable
+   * elput: Remove unused variable
+   * elput: Remove specific case for pointer wheel tilt
+   * ecore-drm2: Iterate plane formats properly
+   * elm_image: Fix file_set when preload is disabled
+   * elm widget - fix weak reference messup that causes segv's
+   * elm_win: do not require mouse buttons to be pressed to activate csd move/resize
+   * eina_tiler: use int size matching Eina_Rectangle internally to avoid overflow
+   * ecore_drm2: Fix ticking when atomic mode set is enabled
+   * efreetd - make efreetd use eio and not ecore_file_monitor for monitoring (T5130)
+   * evas: round glyph's advance before adding it to pen_x
+   * evas render: Fix issue with map render
+   * efl_ui_focus_manager: check for null return from node_get (CID1374434)
+   * Ecore_Evas: use window states and event property to fix ecore_evas_fullscreen_set()
+   * elm_cursor: add style name for sub cursor (T5408)
+   * elm_fileselector: made fileselector styling more flexible
+   * evas font code - build on older freetypes without new definitions
+   * build: bump minimum version requirement of gnutls to 3.3.6 (T5437)
+   * bump minimum version requirement of freetype2 to 16.2.10 which equals release 2.5.0.1 (T5437)
+   * elm_code: Fix selection,start signal
+   * elm_code : LINE_APPEND Render fix
+   * eo: fix missing event emission
+   * ecore-drm2: Enable reuse of existing state structures for non-atomic
+   * ecore-drm2: Enable filling state structures without atomic support
+   * ecore-drm2: Fill output states regardless if atomic
+   * ecore-drm2: Remove #ifdef for HAVE_ATOMIC in plane_assign function
+   * edje: null checking the return value of a function eina_mempool_malloc
+   * Ecore_Evas (Win32): add geometry_get() method and fix dpi_get(), using the new API in Ecore_Win32.
+   * evas examples: Fix invalid assumption about proxy
+   * evas textblock: fix dereferenced memory after free issue for ellipsis
+   * popup: enable to set last_button_number to 0
+   * popup: move "visible_set(FALSE)" before calling dismissed callback
+   * evas gl: Fix typo and revert hack (GLES 3.1)
+   * efreet: Fix failure to save list data to output (CID1375004, CID1375005)
+   * efl ui win -> add test for centering + fix center of window before show
+   * elm_entry: request both text and markup when pasting
+   * ecore-evas: account for framespace when processing mouse movement
+   * ecore-wl2: split data offers into selection and drag
+   * ecore-wl2: handle case where session recovery listener triggers on dead surface
+   * ecore-wl2: correctly refcount display objects during events
+   * ecore-wl2: remove ERR when trying to find the focused window id
+   * ecore-wl2: do not offer a null mime first in ecore_wl2_offer_mimes_set()
+   * edje_cc docs - fix docs for vector images as it is wrong
+   * elm glview -> fix pvs studio caught typo in stencil bit mappings
+   * edje_cc - use mem_alloc to fail and exit if alloc fails and fix err out
+   * nstate: correct the legacy class name
+   * check: fix efl_ui_check_selected_set() API
+   * ecore-drm2: Fix setting dpms level using atomic state
+   * ecore-drm2: Update connector state dpms value if setting works
+   * elm_code: Fix crash on tabs in long lines
+   * eina: fix reproductible build. (T5495)
+   * doc: Fix filters documentation in edcref
+   * ecore-drm2: Fix atomic dpms setting (round 2)
+   * ecore-drm2: Don't call fb_flip until output is enabled
+   * ecore-wl2: use nonblocking event flush when disconnecting a client
+   * ecore-evas-wayland: do not trigger resize operation when performing rotation
+   * wayland: use shell activated state to indicate focus in csd
+   * wayland: send focus in/out events when receiving/losing keyboard focus
+   * ecore-wl2: do not attempt to call zxdg_surface_v6.get_popup without a parent
+   * ecore-wl2: add copyright info to code copied from libX11
+   * ecore-wl2: block key->string translation when appropriate
+   * ecore-wl2: permit null drag icon window in ecore_wl2_dnd_drag_start()
+   * dmabuf: Drop requirement that buffer be writeable
+   * Evas textblock: fix width calculation of non-dirty paragraphs
+   * elm_fileselector: use a sane item size
+   * elput: use unrounded coords for subpixel struct members in events
+   * ecore-evas: only apply cursor object cache for default pointer
+   * ecore-evas: clear cursor object cache when setting default cursor
+   * ecore-evas: init cursors for all pointer-ish objects
+   * elput: store output w/h and apply to devices on creation
+   * evas: better handle async device creation of default mouse
+   * elm_code: Allow multibyte characters to be entered (T5496)
+   * efl_ui_image_zoomable: fix wrong initial value for zoom mode
+   * ecore-drm2: Don't fill output atomic states if not using atomic
+   * ecore-drm2: Don't fill device atomic state if atomic is disabled
+   * ecore-drm2: Don't free output plane states if not using atomic
+   * popup: remove previous object when setting new content
+   * popup: fix object_mirrored_set didn't work
+   * ecore_drm2: Don't try to disable all devices when session deactivates (T5483)
+   * ecore-evas: redo per-device cursor internals to be per-seat (T5531)
+   * ecore-wl2: do not unref non-matching input device upon removal
+   * ee wayland: only handle events for ee with matching display object
+   * evas: don't crash in _evas_default_output_get() if no outputs exist
+   * elput: add refcounting for seats/devices
+   * efl_input_device: do not free list when freeing children iterator
+   * evas: redo pointer data to be per-seat instead of per-device
+   * elput: move pointer coords into seat struct
+   * ecore-audio: unset DISPLAY conditionally before processing pulse events (T2599)
+   * efl.ui.image: fix icon_get API
+   * calendar: fix elm_calendar_interval_set() API not working.
+   * popup: fix unintentional object deletion when change scrollable
+   * ecore-drm2: Fix output backlight value type definitions
+   * ecore-drm2: Don't use Atomic functions to set DPMS levels (T5462)
+   * ephysics: set proper geometry when setting an object to a face (T5547)
+   * Efl.Ui.Image: fix efl.player.playable.get API
+   * ecore-evas-wl: Don't check window visibility on raising
+   * ecore-wl2: Add missing doxygen groups for documentation
+   * ecore-wl2: Use output height when calculating dpi
+   * evas-gl-drm: Fix potential memory leak
+   * elm_prefs_cc: handle line too long for buffers
+   * edje_cc handle line too long for buffers
+   * elm spinner - handle more digits for format string + handle invalid fmt
+   * evas - font dir fonts.alias - limit alias parse length
+   * edje: pass whole text to IMF in case of selection
+   * edje - fix signal propagate crash
+   * evas-gl-drm: Be sure to initialize ncfg variable
+   * evas-gl-drm: Fix uninitialized variable
+   * ecore-evas-wayland: Fix potential null dereference
+   * elput: Get touch event slots using slot not seat_slot
+   * ecore-drm2: Fix potential SIGFPE when adding output mode
+   * elementary entry: update focus state when editable state is changed
+   * ecore-drm2: Use static libdrm to build ecore-drm2
+   * ecore-drm2: Fix drm_mode variables to work with static lib
+   * ecore-evas: make focus-setting work with async device init
+   * ecore-ipc: don't return dead clients in ecore_ipc_server_clients_get (T5383)
+   * evas: handle focus setting with async input init
+   * elm_code: Fix possible crash when deleting a selection
+   * elua - fix build for luajit2.1.0-beta3+ (T2728)
+   * evas textblock: fix evas test suite build errors
+   * edje text: add a missing return macro
+   * ecore-evas: Fix return value in ecore_evas_aux_hint_val_set function
+   * evas: Fix resize & move intercepts (T5573, T4749)
+   * evas xpm loader - remove the rgb txt file db loading and compile in
+   * efreet: don't raise ERR on empty file in efreet_xml_new()
+   * ecore-evas: block buffer canvas events during deletion
+   * Evas text: fix test with Oriya script
+   * evas: fix version info for evas_language_direction_get
+   * ecore-wl2: Fix issue(s) of setting wrong event device
+   * evas_box: add safety check for adding box children to multiple boxes
+   * elm_cursor: store and reapply non-elm cursors when setting an elm cursor
+   * ecore-wl2: do not send exit event on disconnect if servers exist
+   * evas: check object layer existence before deref to avoid crash
+   * eina_log: make a log level of 0 disable the log domain
+   * elm_list/genlist/gengrid: don't unselect items when moving the mouse out of them
+   * Test: check gl API nullity before invoking deletion functions
+   * eina,ecore_cocoa: fix detection of the macOS SDK version
 
 Changes since 1.18.0:
 ---------------------
