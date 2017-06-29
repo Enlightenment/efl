@@ -6054,6 +6054,7 @@ ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, 
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_CONTENT_DEFAULT_SET(elm_entry, "icon")
 #include "elm_entry_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -6061,6 +6062,7 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_ENTRY_EXTRA_OPS \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_entry)
 
 #include "elm_entry.eo.c"

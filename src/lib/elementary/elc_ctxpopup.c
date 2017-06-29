@@ -1568,20 +1568,22 @@ _elm_ctxpopup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Ctxpopup
    return ret;
 }
 
-/* Internal EO APIs and hidden overrides */
-
-#define ELM_CTXPOPUP_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_ctxpopup)
-
 /* Efl.Part begin */
 
 ELM_PART_OVERRIDE(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
+ELM_PART_CONTENT_DEFAULT_SET(elm_ctxpopup, "default")
 #include "elm_ctxpopup_internal_part.eo.c"
 
 /* Efl.Part end */
+
+/* Internal EO APIs and hidden overrides */
+
+#define ELM_CTXPOPUP_EXTRA_OPS \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_ctxpopup), \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_ctxpopup)
 
 #include "elm_ctxpopup_item.eo.c"
 #include "elm_ctxpopup.eo.c"

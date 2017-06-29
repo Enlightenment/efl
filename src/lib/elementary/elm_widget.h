@@ -866,6 +866,9 @@ EAPI Eina_Bool _elm_layout_part_aliasing_eval(const Evas_Object *obj,
                                               const char **part,
                                               Eina_Bool is_text);
 
+/* Internal EO APIs */
+const char *elm_widget_default_content_part_get(const Eo *obj);
+
 
 #define ELM_WIDGET_ITEM_PROTECTED
 #include "elm_widget_item.eo.h"

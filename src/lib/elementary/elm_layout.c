@@ -2349,6 +2349,7 @@ _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
    Elm_Part_Data *pd;
    Eo *proxy;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
      return NULL;
 
@@ -2374,6 +2375,15 @@ _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
    return proxy;
 }
 
+static const char *
+_elm_layout_default_content_part_get(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED)
+{
+   const char *part = NULL;
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
+     return NULL;
+   return part;
+}
+
 ELM_PART_IMPLEMENT_DESTRUCTOR(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_SET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
@@ -2389,6 +2399,7 @@ ELM_PART_IMPLEMENT_TEXT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_P
 
 #define ELM_LAYOUT_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_layout), \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_layout), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_layout_efl_object_dbg_info_get)
 
 #include "elm_layout.eo.c"

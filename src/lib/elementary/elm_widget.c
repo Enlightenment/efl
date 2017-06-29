@@ -14,6 +14,7 @@
 #include "elm_priv.h"
 #include "elm_widget_container.h"
 #include "elm_interface_scrollable.h"
+#include "elm_part_helper.h"
 
 /* FIXME: remove this when we don't rely on evas event structs anymore */
 #define EFL_INTERNAL_UNSTABLE
@@ -3948,34 +3949,6 @@ _elm_widget_focus_reconfigure(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
    _elm_widget_focus_move_policy_reload(obj);
 }
 
-EAPI void
-elm_widget_content_part_set(Evas_Object *obj,
-                            const char *part,
-                            Evas_Object *content)
-{
-   ELM_WIDGET_CHECK(obj);
-   if (!efl_isa(obj, EFL_PART_INTERFACE)) return;
-   efl_content_set(efl_part(obj, part), content);
-}
-
-EAPI Evas_Object *
-elm_widget_content_part_get(const Evas_Object *obj,
-                            const char *part)
-{
-   ELM_WIDGET_CHECK(obj) NULL;
-   if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
-   return efl_content_get(efl_part(obj, part));
-}
-
-EAPI Evas_Object *
-elm_widget_content_part_unset(Evas_Object *obj,
-                              const char *part)
-{
-   ELM_WIDGET_CHECK(obj) NULL;
-   if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
-   return efl_content_unset(efl_part(obj, part));
-}
-
 EOLIAN static void
 _elm_widget_access_info_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, const char *txt)
 {
@@ -6521,10 +6494,64 @@ _elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd
 }
 
 
+/* Legacy APIs */
+
+/* elm_object_content_xxx APIs are supposed to work on all objects for which
+ * elm_object_widget_check() returns true. The below checks avoid printing out
+ * undesired ERR messages. */
+EAPI void
+elm_widget_content_part_set(Evas_Object *obj,
+                            const char *part,
+                            Evas_Object *content)
+{
+   ELM_WIDGET_CHECK(obj);
+   if (!efl_isa(obj, EFL_PART_INTERFACE)) return;
+   if (!part)
+     {
+        part = elm_widget_default_content_part_get(obj);
+        if (!part) return;
+     }
+   efl_content_set(efl_part(obj, part), content);
+}
+
+EAPI Evas_Object *
+elm_widget_content_part_get(const Evas_Object *obj,
+                            const char *part)
+{
+   ELM_WIDGET_CHECK(obj) NULL;
+   if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
+   if (!part)
+     {
+        part = elm_widget_default_content_part_get(obj);
+        if (!part) return NULL;
+     }
+   return efl_content_get(efl_part(obj, part));
+}
+
+EAPI Evas_Object *
+elm_widget_content_part_unset(Evas_Object *obj,
+                              const char *part)
+{
+   ELM_WIDGET_CHECK(obj) NULL;
+   if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
+   if (!part)
+     {
+        part = elm_widget_default_content_part_get(obj);
+        if (!part) return NULL;
+     }
+   return efl_content_unset(efl_part(obj, part));
+}
+
+
 /* Internal EO APIs and hidden overrides */
+
+EFL_FUNC_BODY_CONST(elm_widget_default_content_part_get, const char *, NULL)
+
+ELM_PART_CONTENT_DEFAULT_SET(elm_widget, NULL)
 
 #define ELM_WIDGET_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_widget), \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_widget), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_widget_efl_object_dbg_info_get)
 
 #include "elm_widget_item.eo.c"

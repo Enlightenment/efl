@@ -2400,6 +2400,7 @@ ELM_PART_IMPLEMENT(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
+ELM_PART_CONTENT_DEFAULT_SET(efl_ui_flip, "front")
 #include "efl_ui_flip_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -2407,6 +2408,7 @@ ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_FLIP_EXTRA_OPS \
+   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_flip), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_flip)
 
 #include "efl_ui_flip.eo.c"

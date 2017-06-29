@@ -1929,6 +1929,7 @@ ELM_PART_OVERRIDE_CONTENT_GET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, 
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
+ELM_PART_CONTENT_DEFAULT_SET(elm_popup, "default")
 #include "elm_popup_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -1936,6 +1937,7 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_POPUP_EXTRA_OPS \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_popup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup)
 
 #include "elm_popup.eo.c"

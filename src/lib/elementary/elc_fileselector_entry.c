@@ -681,6 +681,7 @@ ELM_PART_OVERRIDE_CONTENT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, EL
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, ELM_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, ELM_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, ELM_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
+ELM_PART_CONTENT_DEFAULT_SET(elm_fileselector_entry, "button icon")
 #include "elm_fileselector_entry_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -688,6 +689,7 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, ELM_L
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_FILESELECTOR_ENTRY_EXTRA_OPS \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_fileselector_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_entry)
 
 #include "elm_fileselector_entry.eo.c"

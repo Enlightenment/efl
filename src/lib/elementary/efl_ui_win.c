@@ -6660,7 +6660,7 @@ if (x < 0) { x = 0; bad = 1; } } while (0)
 
 /* Efl.Part APIs */
 
-#define WIN_PART_ERR(part) ERR("No such part in window: '%s'. Supported parts are: 'background'.", part);
+#define WIN_PART_ERR(part) ERR("No such part in window: '%s'. Supported parts are: 'content' and 'background'.", part);
 
 static Eina_Bool
 _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
@@ -6737,7 +6737,6 @@ static Eina_Bool
 _efl_ui_win_content_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, Eo *content)
 {
    sd->legacy.forbidden = EINA_TRUE;
-   if (!part) part = "content";
    if (eina_streq(part, "content"))
      {
         if (sd->content == content) return EINA_TRUE;
@@ -6773,7 +6772,6 @@ static Efl_Canvas_Object *
 _efl_ui_win_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *part)
 {
    sd->legacy.forbidden = EINA_TRUE;
-   if (!part) part = "content";
    if (eina_streq(part, "content"))
      return sd->content;
    else if (eina_streq(part, "background"))
@@ -6909,25 +6907,26 @@ _efl_ui_win_internal_part_efl_file_file_get(Eo *obj, Elm_Part_Data *pd, const ch
 EOLIAN static Eina_Bool
 _efl_ui_win_efl_container_content_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Object *content)
 {
-   return _efl_ui_win_content_set(obj, sd, NULL, content);
+   return _efl_ui_win_content_set(obj, sd, "content", content);
 }
 
 EOLIAN static Evas_Object*
 _efl_ui_win_efl_container_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   return _efl_ui_win_content_get(obj, sd, NULL);
+   return _efl_ui_win_content_get(obj, sd, "content");
 }
 
 EOLIAN static Evas_Object*
 _efl_ui_win_efl_container_content_unset(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   return _efl_ui_win_content_unset(obj, sd, NULL);
+   return _efl_ui_win_content_unset(obj, sd, "content");
 }
 
 ELM_PART_IMPLEMENT(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
+ELM_PART_CONTENT_DEFAULT_SET(efl_ui_win, "content")
 #include "efl_ui_win_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -8110,6 +8109,7 @@ elm_win_teamwork_uri_open(Efl_Ui_Win *obj EINA_UNUSED, const char *uri EINA_UNUS
 
 #define EFL_UI_WIN_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_win), \
+   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_win), \
    EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _efl_ui_win_efl_canvas_object_legacy_ctor)
 
 #include "efl_ui_win.eo.c"

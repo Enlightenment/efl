@@ -709,6 +709,7 @@ _elm_player_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
 
 ELM_PART_OVERRIDE(elm_player, ELM_PLAYER, ELM_LAYOUT, Elm_Player_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_player, ELM_PLAYER, ELM_LAYOUT, Elm_Player_Data, Elm_Part_Data)
+ELM_PART_CONTENT_DEFAULT_SET(elm_player, "video")
 #include "elm_player_internal_part.eo.c"
 
 /* End of Efl.Part */
@@ -716,6 +717,7 @@ ELM_PART_OVERRIDE_CONTENT_SET(elm_player, ELM_PLAYER, ELM_LAYOUT, Elm_Player_Dat
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_PLAYER_EXTRA_OPS \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_player), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_player)
 
 #include "elm_player.eo.c"

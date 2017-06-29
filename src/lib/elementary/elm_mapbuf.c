@@ -445,6 +445,7 @@ ELM_PART_IMPLEMENT(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_SET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
+ELM_PART_CONTENT_DEFAULT_SET(elm_mapbuf, "default")
 #include "elm_mapbuf_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -452,6 +453,7 @@ ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Pa
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_MAPBUF_EXTRA_OPS \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_mapbuf), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_mapbuf)
 
 #include "elm_mapbuf.eo.c"

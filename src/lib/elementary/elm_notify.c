@@ -743,6 +743,7 @@ ELM_PART_IMPLEMENT(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_SET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
+ELM_PART_CONTENT_DEFAULT_SET(elm_notify, "default")
 #include "elm_notify_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -750,6 +751,7 @@ ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Pa
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_NOTIFY_EXTRA_OPS \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_notify), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_notify)
 
 #include "elm_notify.eo.c"
