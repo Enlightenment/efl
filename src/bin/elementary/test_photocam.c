@@ -149,6 +149,10 @@ my_bt_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
         eina_list_free(grps);
      }
+
+   if (file && eina_str_has_extension(file, ".gif")
+       && efl_player_playable_get(ph))
+     efl_player_play_set(ph, EINA_TRUE);
 }
 
 static void
