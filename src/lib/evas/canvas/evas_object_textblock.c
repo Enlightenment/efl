@@ -5493,8 +5493,16 @@ _layout_par(Ctxt *c)
 
              /* After this par we are no longer at the beginning, as there
               * must be some text in the par. */
-             if (c->position == TEXTBLOCK_POSITION_START)
-                c->position = TEXTBLOCK_POSITION_ELSE;
+             if (!EINA_INLIST_GET(c->par)->next)
+               {
+                  c->position = (c->position == TEXTBLOCK_POSITION_START) ?
+                     TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
+               }
+             else
+               {
+                  if (c->position == TEXTBLOCK_POSITION_START)
+                     c->position = TEXTBLOCK_POSITION_ELSE;
+               }
 
              if (c->par->last_fw > c->wmax) c->wmax = c->par->last_fw;
              return 0;
