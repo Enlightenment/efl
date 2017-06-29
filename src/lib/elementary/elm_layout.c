@@ -618,18 +618,17 @@ _elm_layout_theme_enable(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UN
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_elm_layout_part_aliasing_eval(const Evas_Object *obj EINA_UNUSED,
-                               Elm_Layout_Smart_Data *sd,
+EAPI Eina_Bool
+_elm_layout_part_aliasing_eval(const Evas_Object *obj,
                                const char **part,
                                Eina_Bool is_text)
 {
    const Elm_Layout_Part_Alias_Description *aliases = NULL;
 
    if (is_text)
-     aliases = elm_obj_layout_text_aliases_get(sd->obj);
+     aliases = elm_obj_layout_text_aliases_get(obj);
    else
-     aliases =  elm_obj_layout_content_aliases_get(sd->obj);
+     aliases =  elm_obj_layout_content_aliases_get(obj);
 
    while (aliases && aliases->alias && aliases->real_part)
      {
@@ -646,7 +645,7 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj EINA_UNUSED,
    if (!*part)
      {
         ERR("no default content part set for object %p -- "
-            "part must not be NULL", sd->obj);
+            "part must not be NULL", obj);
         return EINA_FALSE;
      }
 
@@ -1025,7 +1024,7 @@ _elm_layout_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Ev
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_FALSE))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
      return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
@@ -1100,7 +1099,7 @@ _elm_layout_content_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
    const Eina_List *l;
    Elm_Layout_Sub_Object_Data *sub_d;
 
-   if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_FALSE))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
      return NULL;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
@@ -1132,7 +1131,7 @@ _elm_layout_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_FALSE))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
      return NULL;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
@@ -1281,7 +1280,7 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
    Eina_List *l;
    Elm_Layout_Sub_Object_Data *sub_d = NULL;
 
-   if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_TRUE))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
      return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
@@ -1344,11 +1343,11 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
 }
 
 EOLIAN static const char*
-_elm_layout_text_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
+_elm_layout_text_get(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED, const char *part)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_TRUE))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
      return NULL;
 
    return edje_object_part_text_get(wd->resize_obj, part);
@@ -2144,7 +2143,7 @@ _elm_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Elm_Layout_Smart_D
         return;
      }
 
-   if (!_elm_layout_part_aliasing_eval(obj, pd, &name, EINA_TRUE))
+   if (!_elm_layout_part_aliasing_eval(obj, &name, EINA_TRUE))
      return;
 
    ss_name = eina_stringshare_add(name);
@@ -2182,7 +2181,7 @@ _elm_layout_efl_ui_model_factory_connect_connect(Eo *obj EINA_UNUSED, Elm_Layout
    Efl_Ui_Factory *old_factory;
    Evas_Object *new_ev, *old_ev;
 
-   if (!_elm_layout_part_aliasing_eval(obj, pd, &name, EINA_TRUE))
+   if (!_elm_layout_part_aliasing_eval(obj, &name, EINA_TRUE))
      return;
 
    ss_name = eina_stringshare_add(name);
@@ -2343,14 +2342,14 @@ elm_layout_text_get(const Elm_Layout *obj, const char *part)
 /* Efl.Part implementation */
 
 static EOLIAN Efl_Object *
-_elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd,
+_elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
                           const char *part)
 {
    Edje_Part_Type type;
    Elm_Part_Data *pd;
    Eo *proxy;
 
-   if (!_elm_layout_part_aliasing_eval(obj, sd, &part, EINA_FALSE))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
      return NULL;
 
    ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);

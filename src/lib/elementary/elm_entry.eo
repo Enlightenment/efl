@@ -967,6 +967,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Layout.signal_callback_add;
       Elm.Layout.signal_callback_del;
       Elm.Layout.signal_emit;
+      Elm.Layout.text_aliases { get; }
       Elm.Layout.content_aliases { get; }
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.bounce_allow { set; }

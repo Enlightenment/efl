@@ -862,6 +862,11 @@ _elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
 
 EAPI Eina_Bool elm_selection_selection_has_owner(Evas_Object *obj);
 
+EAPI Eina_Bool _elm_layout_part_aliasing_eval(const Evas_Object *obj,
+                                              const char **part,
+                                              Eina_Bool is_text);
+
+
 #define ELM_WIDGET_ITEM_PROTECTED
 #include "elm_widget_item.eo.h"
 

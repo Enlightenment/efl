@@ -74,6 +74,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_ENTRY_SIGNALS
 
+static const Elm_Layout_Part_Alias_Description _text_aliases[] =
+{
+   {"default", "elm.text"},
+   {"guide", "elm.guide"},
+   {NULL, NULL}
+};
+
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
    {"icon", "elm.swallow.icon"},
@@ -3116,7 +3123,7 @@ _elm_entry_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *par
    if (!part || !strcmp(part, "icon") || !strcmp(part, "elm.swallow.icon"))
      elm_entry_icon_visible_set(obj, EINA_TRUE);
 
-   if (!part || !strcmp(part, "end") || !strcmp(part, "elm.swallow.end"))
+   if (part && (!strcmp(part, "end") || !strcmp(part, "elm.swallow.end")))
      elm_entry_end_visible_set(obj, EINA_TRUE);
 
    return EINA_TRUE;
@@ -3134,7 +3141,7 @@ _elm_entry_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *p
    if (!part || !strcmp(part, "icon") || !strcmp(part, "elm.swallow.icon"))
      elm_entry_icon_visible_set(obj, EINA_FALSE);
 
-   if (!part || !strcmp(part, "end") || !strcmp(part, "elm.swallow.end"))
+   if (part && (!strcmp(part, "end") || !strcmp(part, "elm.swallow.end")))
      elm_entry_end_visible_set(obj, EINA_FALSE);
 
    return ret;
@@ -3200,12 +3207,12 @@ _elm_entry_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *e
    int len = 0;
 
    if (!entry) entry = "";
-   if (part && strcmp(part, "elm.text"))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+     return EINA_FALSE;
+
+   if (strcmp(part, "elm.text"))
      {
-        if (!strcmp(part, "guide"))
-          edje_object_part_text_set(sd->entry_edje, "elm.guide", entry);
-        else
-          edje_object_part_text_set(sd->entry_edje, part, entry);
+        edje_object_part_text_set(sd->entry_edje, part, entry);
 
         return EINA_TRUE;
      }
@@ -3250,20 +3257,11 @@ _elm_entry_text_get(Eo *obj, Elm_Entry_Data *sd, const char *item)
 {
    const char *text;
 
-   if (item)
-     {
-        if (!strcmp(item, "default") || strcmp(item, "elm.text")) goto proceed;
-        else if (!strcmp(item, "guide"))
-          {
-             return edje_object_part_text_get(sd->entry_edje, "elm.guide");
-          }
-        else
-          {
-             return edje_object_part_text_get(sd->entry_edje, item);
-          }
-     }
+   if (!_elm_layout_part_aliasing_eval(obj, &item, EINA_TRUE))
+     return NULL;
 
-proceed:
+   if (strcmp(item, "elm.text"))
+     return edje_object_part_text_get(sd->entry_edje, item);
 
    text = edje_object_part_text_get(sd->entry_edje, "elm.text");
    if (!text)
@@ -3988,6 +3986,12 @@ _elm_entry_efl_canvas_group_group_member_add(Eo *obj, Elm_Entry_Data *sd, Evas_O
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
+}
+
+EOLIAN static const Elm_Layout_Part_Alias_Description*
+_elm_entry_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_sd EINA_UNUSED)
+{
+   return _text_aliases;
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description *
