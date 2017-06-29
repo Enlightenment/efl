@@ -518,17 +518,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if (eminw && (ominw < eminw)) ominw = eminw;
    if (eminh && (ominh < eminh)) ominh = eminh;
 
-   if ((ominw < 1) || (ominh < 1))
-     {
-        evas_object_move(tt->tt_win ? : tt->tooltip, -9999, -9999);
-        evas_object_resize(tt->tt_win ? : tt->tooltip, 1, 1);
-        TTDBG("FAKE: tx=%d,ty=%d,tw=%d,th=%d\n", -9999, -9999, 1, 1);
-        evas_object_show(tt->tooltip);
-        if (tt->tt_win) evas_object_show(tt->tt_win);
-        _elm_tooltip_reconfigure_job_start(tt);
-        return;
-     }
-
    edje_object_size_min_restricted_calc(tt->tooltip, &tw, &th, ominw, ominh);
    TTDBG("TTSIZE:  tw=%d,th=%d,ominw=%d,ominh=%d\n", tw, th, ominw, ominh);
 
