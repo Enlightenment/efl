@@ -3300,12 +3300,12 @@ class TestEinaIterator
     {
         var arr = new eina.Array<int>();
         var itr = arr.GetIterator();
-        bool entered = false;
+        int idx = 0;
         foreach (int e in itr)
         {
-            entered = true;
+            ++idx;
         }
-        Test.Assert(!entered);
+        Test.AssertEquals(idx, 0);
     }
 
     public static void eina_array_int_filled_iterator()
@@ -3313,27 +3313,25 @@ class TestEinaIterator
         var arr = new eina.Array<int>();
         arr.Append(base_seq_int);
         var itr = arr.GetIterator();
-        bool entered = false;
-        var i = 0;
+        int idx = 0;
         foreach (int e in itr)
         {
-            entered = true;
-            Test.Assert(e == base_seq_int[i]);
-            ++i;
+            Test.Assert(e == base_seq_int[idx]);
+            ++idx;
         }
-        Test.Assert(entered);
+        Test.AssertEquals(idx, base_seq_int.Length);
     }
 
     public static void eina_array_str_empty_iterator()
     {
         var arr = new eina.Array<string>();
         var itr = arr.GetIterator();
-        bool entered = false;
+        int idx = 0;
         foreach (string e in itr)
         {
-            entered = true;
+            ++idx;
         }
-        Test.Assert(!entered);
+        Test.AssertEquals(idx, 0);
     }
 
     public static void eina_array_str_filled_iterator()
@@ -3341,27 +3339,25 @@ class TestEinaIterator
         var arr = new eina.Array<string>();
         arr.Append(base_seq_str);
         var itr = arr.GetIterator();
-        bool entered = false;
-        var i = 0;
+        int idx = 0;
         foreach (string e in itr)
         {
-            entered = true;
-            Test.Assert(e == base_seq_str[i]);
-            ++i;
+            Test.Assert(e == base_seq_str[idx]);
+            ++idx;
         }
-        Test.Assert(entered);
+        Test.AssertEquals(idx, base_seq_str.Length);
     }
 
     public static void eina_array_obj_empty_iterator()
     {
         var arr = new eina.Array<test.Numberwrapper>();
         var itr = arr.GetIterator();
-        bool entered = false;
+        int idx = 0;
         foreach (test.Numberwrapper e in itr)
         {
-            entered = true;
+            ++idx;
         }
-        Test.Assert(!entered);
+        Test.AssertEquals(idx, 0);
     }
 
     public static void eina_array_obj_filled_iterator()
@@ -3370,16 +3366,14 @@ class TestEinaIterator
         var base_objs = BaseSeqObj();
         arr.Append(base_objs);
         var itr = arr.GetIterator();
-        bool entered = false;
-        var i = 0;
+        int idx = 0;
         foreach (test.Numberwrapper e in itr)
         {
-            entered = true;
-            Test.Assert(e.raw_handle == base_objs[i].raw_handle);
-            Test.Assert(e.number_get() == base_objs[i].number_get());
-            ++i;
+            Test.Assert(e.raw_handle == base_objs[idx].raw_handle);
+            Test.Assert(e.number_get() == base_objs[idx].number_get());
+            ++idx;
         }
-        Test.Assert(entered);
+        Test.AssertEquals(idx, base_objs.Length);
     }
 
     // Inarray
@@ -3388,6 +3382,144 @@ class TestEinaIterator
     {
         var arr = new eina.Inarray<int>();
         var itr = arr.GetIterator();
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            ++idx;
+        }
+        Test.AssertEquals(idx, 0);
+    }
+
+    public static void eina_inarray_int_filled_iterator()
+    {
+        var arr = new eina.Inarray<int>();
+        arr.Append(base_seq_int);
+        var itr = arr.GetIterator();
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            Test.Assert(e == base_seq_int[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_int.Length);
+    }
+
+    // List //
+
+    public static void eina_list_int_empty_iterator()
+    {
+        var lst = new eina.List<int>();
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            ++idx;
+        }
+        Test.AssertEquals(idx, 0);
+    }
+
+    public static void eina_list_int_filled_iterator()
+    {
+        var lst = new eina.List<int>();
+        lst.AppendArray(base_seq_int);
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            Test.Assert(e == base_seq_int[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_int.Length);
+    }
+
+    public static void eina_list_str_empty_iterator()
+    {
+        var lst = new eina.List<string>();
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            ++idx;
+        }
+        Test.AssertEquals(idx, 0);
+    }
+
+    public static void eina_list_str_filled_iterator()
+    {
+        var lst = new eina.List<string>();
+        lst.AppendArray(base_seq_str);
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.Assert(e == base_seq_str[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_str.Length);
+    }
+
+    public static void eina_list_obj_empty_iterator()
+    {
+        var lst = new eina.List<test.Numberwrapper>();
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (test.Numberwrapper e in itr)
+        {
+            ++idx;
+        }
+        Test.AssertEquals(idx, 0);
+    }
+
+    public static void eina_list_obj_filled_iterator()
+    {
+        var lst = new eina.List<test.Numberwrapper>();
+        var base_objs = BaseSeqObj();
+        lst.AppendArray(base_objs);
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (test.Numberwrapper e in itr)
+        {
+            Test.Assert(e.raw_handle == base_objs[idx].raw_handle);
+            Test.Assert(e.number_get() == base_objs[idx].number_get());
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_objs.Length);
+    }
+
+    // Inlist //
+
+    public static void eina_inlist_int_empty_iterator()
+    {
+        var lst = new eina.Inlist<int>();
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            ++idx;
+        }
+        Test.AssertEquals(idx, 0);
+    }
+
+    public static void eina_inlist_int_filled_iterator()
+    {
+        var lst = new eina.Inlist<int>();
+        lst.AppendArray(base_seq_int);
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            Test.Assert(e == base_seq_int[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_int.Length);
+    }
+
+    // Hash //
+
+    public static void eina_hash_keys_int_empty_iterator()
+    {
+        var hsh = new eina.Hash<int, int>();
+        var itr = hsh.Keys();
         bool entered = false;
         foreach (int e in itr)
         {
@@ -3396,20 +3528,224 @@ class TestEinaIterator
         Test.Assert(!entered);
     }
 
-    public static void eina_inarray_int_filled_iterator()
+    public static void eina_hash_values_int_empty_iterator()
     {
-        var arr = new eina.Inarray<int>();
-        arr.Append(base_seq_int);
-        var itr = arr.GetIterator();
+        var hsh = new eina.Hash<int, int>();
+        var itr = hsh.Values();
         bool entered = false;
-        var i = 0;
         foreach (int e in itr)
         {
             entered = true;
-            Test.Assert(e == base_seq_int[i]);
-            ++i;
         }
-        Test.Assert(entered);
+        Test.Assert(!entered);
+    }
+
+    public static void eina_hash_keys_int_filled_iterator()
+    {
+        var hsh = new eina.Hash<int, int>();
+        var dct = new Dictionary<int, bool>();
+        hsh[22] = 222;
+        hsh[44] = 444;
+        hsh[88] = 888;
+        dct[22] = true;
+        dct[44] = true;
+        dct[88] = true;
+
+        var itr = hsh.Keys();
+
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            Test.Assert(dct[e]);
+            dct.Remove(e);
+            ++idx;
+        }
+        Test.AssertEquals(dct.Count, 0);
+        Test.AssertEquals(idx, 3);
+    }
+
+    public static void eina_hash_values_int_filled_iterator()
+    {
+        var hsh = new eina.Hash<int, int>();
+        var dct = new Dictionary<int, bool>();
+        hsh[22] = 222;
+        hsh[44] = 444;
+        hsh[88] = 888;
+        dct[222] = true;
+        dct[444] = true;
+        dct[888] = true;
+
+        var itr = hsh.Values();
+
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            Test.Assert(dct[e]);
+            dct.Remove(e);
+            ++idx;
+        }
+        Test.AssertEquals(dct.Count, 0);
+        Test.AssertEquals(idx, 3);
+    }
+
+    public static void eina_hash_keys_str_empty_iterator()
+    {
+        var hsh = new eina.Hash<string, string>();
+        var itr = hsh.Keys();
+        bool entered = false;
+        foreach (string e in itr)
+        {
+            entered = true;
+        }
+        Test.Assert(!entered);
+    }
+
+    public static void eina_hash_values_str_empty_iterator()
+    {
+        var hsh = new eina.Hash<string, string>();
+        var itr = hsh.Values();
+        bool entered = false;
+        foreach (string e in itr)
+        {
+            entered = true;
+        }
+        Test.Assert(!entered);
+    }
+
+    public static void eina_hash_keys_str_filled_iterator()
+    {
+        var hsh = new eina.Hash<string, string>();
+        var dct = new Dictionary<string, bool>();
+        hsh["aa"] = "aaa";
+        hsh["bb"] = "bbb";
+        hsh["cc"] = "ccc";
+        dct["aa"] = true;
+        dct["bb"] = true;
+        dct["cc"] = true;
+
+        var itr = hsh.Keys();
+
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.Assert(dct[e]);
+            dct.Remove(e);
+            ++idx;
+        }
+        Test.AssertEquals(dct.Count, 0);
+        Test.AssertEquals(idx, 3);
+    }
+
+    public static void eina_hash_values_str_filled_iterator()
+    {
+        var hsh = new eina.Hash<string, string>();
+        var dct = new Dictionary<string, bool>();
+        hsh["aa"] = "aaa";
+        hsh["bb"] = "bbb";
+        hsh["cc"] = "ccc";
+        dct["aaa"] = true;
+        dct["bbb"] = true;
+        dct["ccc"] = true;
+
+        var itr = hsh.Values();
+
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.Assert(dct[e]);
+            dct.Remove(e);
+            ++idx;
+        }
+        Test.AssertEquals(dct.Count, 0);
+        Test.AssertEquals(idx, 3);
+    }
+
+    public static void eina_hash_keys_obj_empty_iterator()
+    {
+        var hsh = new eina.Hash<test.Numberwrapper, test.Numberwrapper>();
+        var itr = hsh.Keys();
+        bool entered = false;
+        foreach (test.Numberwrapper e in itr)
+        {
+            entered = true;
+        }
+        Test.Assert(!entered);
+    }
+
+    public static void eina_hash_values_obj_empty_iterator()
+    {
+        var hsh = new eina.Hash<test.Numberwrapper, test.Numberwrapper>();
+        var itr = hsh.Values();
+        bool entered = false;
+        foreach (test.Numberwrapper e in itr)
+        {
+            entered = true;
+        }
+        Test.Assert(!entered);
+    }
+
+    public static void eina_hash_keys_obj_filled_iterator()
+    {
+        var hsh = new eina.Hash<test.Numberwrapper, test.Numberwrapper>();
+        var dct = new eina.Hash<int, test.Numberwrapper>();
+        var a = NW(22);
+        var b = NW(44);
+        var c = NW(88);
+        var aa = NW(222);
+        var bb = NW(444);
+        var cc = NW(888);
+        hsh[a] = aa;
+        hsh[b] = bb;
+        hsh[c] = cc;
+        dct[a.number_get()] = a;
+        dct[b.number_get()] = b;
+        dct[c.number_get()] = c;
+
+        var itr = hsh.Keys();
+
+        int idx = 0;
+        foreach (test.Numberwrapper e in itr)
+        {
+            Test.Assert(dct[e.number_get()] != null);
+            Test.Assert(dct[e.number_get()].raw_handle == e.raw_handle);
+            Test.Assert(dct[e.number_get()].number_get() == e.number_get());
+            dct.Remove(e.number_get());
+            ++idx;
+        }
+        Test.AssertEquals(dct.Count, 0);
+        Test.AssertEquals(idx, 3);
+    }
+
+    public static void eina_hash_values_obj_filled_iterator()
+    {
+        var hsh = new eina.Hash<test.Numberwrapper, test.Numberwrapper>();
+        var dct = new eina.Hash<int, test.Numberwrapper>();
+        var a = NW(22);
+        var b = NW(44);
+        var c = NW(88);
+        var aa = NW(222);
+        var bb = NW(444);
+        var cc = NW(888);
+        hsh[a] = aa;
+        hsh[b] = bb;
+        hsh[c] = cc;
+        dct[aa.number_get()] = aa;
+        dct[bb.number_get()] = bb;
+        dct[cc.number_get()] = cc;
+
+        var itr = hsh.Values();
+
+        int idx = 0;
+        foreach (test.Numberwrapper e in itr)
+        {
+            Test.Assert(dct[e.number_get()] != null);
+            Test.Assert(dct[e.number_get()].raw_handle == e.raw_handle);
+            Test.Assert(dct[e.number_get()].number_get() == e.number_get());
+            dct.Remove(e.number_get());
+            ++idx;
+        }
+        Test.AssertEquals(dct.Count, 0);
+        Test.AssertEquals(idx, 3);
     }
 
 //     // //

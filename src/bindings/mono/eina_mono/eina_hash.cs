@@ -123,6 +123,9 @@ public static class HashNativeFunctions
 
     [DllImport("eina")] public static extern int
         eina_hash_superfast(string key, int len);
+
+    [DllImport("eflcustomexportsmono")] public static extern IntPtr
+        eina_hash_iterator_ptr_key_wrapper_new_custom_export_mono(IntPtr hash);
 }
 
 public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDisposable
@@ -360,12 +363,12 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return eina_hash_population(Handle);
     }
 
-    public eina.Iterator<TKey> GetKeyIterator()
+    public eina.Iterator<TKey> Keys()
     {
-        return new eina.Iterator<TKey>(eina_hash_iterator_key_new(Handle), true, false);
+        return new eina.Iterator<TKey>(EinaHashIteratorKeyNew<TKey>(Handle), true, false);
     }
 
-    public eina.Iterator<TValue> GetValueIterator()
+    public eina.Iterator<TValue> Values()
     {
         return new eina.Iterator<TValue>(eina_hash_iterator_data_new(Handle), true, false);
     }
