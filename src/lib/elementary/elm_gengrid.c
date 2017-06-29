@@ -2331,168 +2331,6 @@ _elm_gengrid_item_unfocused(Elm_Object_Item *eo_it)
 }
 
 static Eina_Bool
-_item_focus_up(Elm_Gengrid_Data *sd)
-{
-   unsigned int i;
-   Elm_Gen_Item *prev = NULL;
-
-   if (!sd->focused_item)
-     {
-        prev = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
-        while (prev &&
-               (prev->generation < sd->generation ||
-                elm_object_item_disabled_get(EO_OBJ(prev))))
-          prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
-     }
-   else
-     {
-        Elm_Object_Item *eo_prev = elm_gengrid_item_prev_get(sd->focused_item);
-        if (!eo_prev) return EINA_FALSE;
-        if (eo_prev == sd->focused_item) return EINA_FALSE;
-
-        eo_prev = sd->focused_item;
-        while (eo_prev)
-          {
-             for (i = 0; i < sd->nmax; i++)
-               {
-                  eo_prev = elm_gengrid_item_prev_get(eo_prev);
-                  if (!eo_prev) return EINA_FALSE;
-               }
-             if (!elm_object_item_disabled_get(eo_prev)) break;
-          }
-
-        prev = efl_data_scope_get(eo_prev, ELM_GENGRID_ITEM_CLASS);
-     }
-
-   if (!prev) return EINA_FALSE;
-
-   elm_object_item_focus_set(EO_OBJ(prev), EINA_TRUE);
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_item_focus_down(Elm_Gengrid_Data *sd)
-{
-   unsigned int i, idx;
-   Elm_Gen_Item *next = NULL;
-   Elm_Object_Item *eo_next = NULL;
-
-   if (!sd->focused_item)
-     {
-        next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
-        while (next &&
-               (next->generation < sd->generation
-                || elm_object_item_disabled_get(EO_OBJ(next))))
-          next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
-     }
-   else
-     {
-
-        idx = elm_gengrid_item_index_get(sd->focused_item);
-
-        if (idx > sd->item_count -
-            ((sd->item_count % sd->nmax) == 0 ?
-             sd->nmax : (sd->item_count % sd->nmax)))
-          return EINA_FALSE;
-        if (idx > sd->item_count - sd->nmax)
-          {
-             eo_next = elm_gengrid_last_item_get(sd->obj);
-             if (elm_object_item_disabled_get(eo_next)) return EINA_FALSE;
-          }
-        else
-          {
-             eo_next = sd->focused_item;
-             while (eo_next)
-               {
-                  for (i = 0; i < sd->nmax; i++)
-                    {
-                       eo_next = elm_gengrid_item_next_get(eo_next);
-                       if (!eo_next) return EINA_FALSE;
-                    }
-                  if (!elm_object_item_disabled_get(eo_next)) break;
-               }
-          }
-
-	  next = efl_data_scope_get(eo_next, ELM_GENGRID_ITEM_CLASS);
-     }
-
-   if (!next) return EINA_FALSE;
-
-   elm_object_item_focus_set(EO_OBJ(next), EINA_TRUE);
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_item_focus_left(Elm_Gengrid_Data *sd)
-{
-   Elm_Gen_Item *prev;
-
-   if (!sd->focused_item)
-     {
-        prev = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
-        while (((prev) && (prev->generation < sd->generation))
-               || elm_object_item_disabled_get(EO_OBJ(prev)))
-          prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
-     }
-   else
-     {
-        Elm_Object_Item *eo_prev = elm_gengrid_item_prev_get(sd->focused_item);
-        if (!eo_prev) return EINA_FALSE;
-        if (eo_prev == sd->focused_item) return EINA_FALSE;
-
-        while (eo_prev)
-          {
-             if (!elm_object_item_disabled_get(eo_prev)) break;
-             eo_prev = elm_gengrid_item_prev_get(eo_prev);
-          }
-
-        prev = efl_data_scope_get(eo_prev, ELM_GENGRID_ITEM_CLASS);
-     }
-
-   if (!prev) return EINA_FALSE;
-
-   elm_object_item_focus_set(EO_OBJ(prev), EINA_TRUE);
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_item_focus_right(Elm_Gengrid_Data *sd)
-{
-   Elm_Gen_Item *next;
-
-   if (!sd->focused_item)
-     {
-        next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
-        while (((next) && (next->generation < sd->generation))
-               || elm_object_item_disabled_get(EO_OBJ(next)))
-          next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
-     }
-   else
-     {
-        Elm_Object_Item *eo_next = elm_gengrid_item_next_get(sd->focused_item);
-        if (!eo_next) return EINA_FALSE;
-        if (eo_next == sd->focused_item) return EINA_FALSE;
-
-        while (eo_next)
-          {
-            if (!elm_object_item_disabled_get(eo_next)) break;
-             eo_next = elm_gengrid_item_next_get(eo_next);
-          }
-
-        next = efl_data_scope_get(eo_next, ELM_GENGRID_ITEM_CLASS);
-     }
-
-   if (!next) return EINA_FALSE;
-
-   elm_object_item_focus_set(EO_OBJ(next), EINA_TRUE);
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
 _item_multi_select_left(Elm_Gengrid_Data *sd)
 {
    Elm_Object_Item *eo_prev;
@@ -3359,7 +3197,19 @@ _direction_transform_horizontal(Elm_Gengrid_Data *sd, Elm_Focus_Direction dir)
    ERR("unhandled transform case");
    return dir;
 }
-
+static Elm_Focus_Direction
+_direction_mirror(Elm_Focus_Direction dir)
+{
+   switch(dir){
+      case ELM_FOCUS_DOWN: return ELM_FOCUS_UP;
+      case ELM_FOCUS_UP: return ELM_FOCUS_DOWN;
+      case ELM_FOCUS_RIGHT: return ELM_FOCUS_LEFT;
+      case ELM_FOCUS_LEFT: return ELM_FOCUS_RIGHT;
+      default: break;
+   }
+   ERR("unhandled transform case");
+   return dir;
+}
 static Elm_Object_Item*
 _get_neighbor(Elm_Gengrid_Data *sd, Elm_Object_Item *item, Elm_Focus_Direction dir)
 {
@@ -3395,6 +3245,70 @@ _reorder_helper(Elm_Gengrid_Data *sd, Elm_Focus_Direction dir)
    _swap_items(sd->focused_item, neighbor, dir);
 
    return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_focus(Elm_Gengrid_Data *sd, Elm_Focus_Direction dir)
+{
+   Elm_Object_Item *candidate;
+
+   if (!sd->focused_item)
+     {
+        Elm_Gen_Item *next;
+
+        if (dir == ELM_FOCUS_RIGHT || dir == ELM_FOCUS_DOWN)
+          next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
+        else
+          next = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
+
+        while (((next) && (next->generation < sd->generation))
+               || elm_object_item_disabled_get(EO_OBJ(next)))
+          {
+            if (dir == ELM_FOCUS_RIGHT || dir == ELM_FOCUS_DOWN)
+              next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
+            else
+              next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->prev);
+          }
+        candidate = EO_OBJ(next);
+     }
+   else
+     {
+        candidate = sd->focused_item;
+        do {
+          candidate = _get_neighbor(sd, candidate, dir);
+          if (!candidate) return EINA_FALSE;
+          if (candidate == sd->focused_item) return EINA_FALSE;
+
+        } while(elm_object_item_disabled_get(candidate));
+     }
+
+   elm_object_item_focus_set(candidate, EINA_TRUE);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_focus_move(Evas_Object *obj, Elm_Gengrid_Data *sd, Elm_Focus_Direction dir)
+{
+   Elm_Focus_Direction access_dir = _direction_transform_horizontal(sd, dir);
+   if (_elm_gengrid_item_edge_check(sd->focused_item, dir))
+     {
+        if (sd->item_loop_enable && (access_dir == ELM_FOCUS_RIGHT || access_dir == ELM_FOCUS_LEFT))
+          {
+             if (_item_horizontal_loop(obj, _direction_mirror(access_dir)))
+               return EINA_TRUE;
+          }
+    }
+
+    if (!_elm_config->item_select_on_focus_disable)
+      {
+         if (access_dir == ELM_FOCUS_UP) _item_single_select_up(sd);
+         if (access_dir == ELM_FOCUS_DOWN) _item_single_select_down(sd);
+         if (access_dir == ELM_FOCUS_RIGHT) _item_single_select_right(sd);
+         if (access_dir == ELM_FOCUS_LEFT) _item_single_select_left(sd);
+      }
+
+    return _item_focus(sd, dir);
 }
 
 static Eina_Bool
@@ -3440,43 +3354,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                   return EINA_TRUE;
                }
           }
-        if (sd->horizontal)
-          {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT))
-               {
-                  if (sd->item_loop_enable)
-                    {
-                       if (_item_horizontal_loop(obj, ELM_FOCUS_RIGHT))
-                         return EINA_TRUE;
-                    }
-                  return EINA_FALSE;
-               }
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  return _item_single_select_up(sd);
-               }
-             else
-               return _item_focus_up(sd);
-          }
-        else
-          {
-             if (sd->focused_item && (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT) ||
-                 !elm_gengrid_item_prev_get(sd->focused_item)))
-               {
-                  if (sd->item_loop_enable)
-                    {
-                       if (_item_horizontal_loop(obj, ELM_FOCUS_RIGHT))
-                         return EINA_TRUE;
-                    }
-                  return EINA_FALSE;
-               }
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  return _item_single_select_left(sd);
-               }
-             else
-               return _item_focus_left(sd);
-          }
+        return _focus_move(obj, sd, ELM_FOCUS_LEFT);
      }
    else if ((!strcmp(dir, "left_multi") && !mirrored) ||
             (!strcmp(dir, "right_multi") && mirrored))
@@ -3514,42 +3392,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                   return EINA_TRUE;
                }
           }
-        if (sd->horizontal)
-          {
-             if (sd->focused_item && _elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT))
-               {
-                  if (sd->item_loop_enable)
-                    {
-                       if (_item_horizontal_loop(obj, ELM_FOCUS_UP))
-                         return EINA_TRUE;
-                    }
-               }
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  return _item_single_select_down(sd);
-               }
-             else
-               return _item_focus_down(sd);
-          }
-        else
-          {
-             if (sd->focused_item && (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT) ||
-                 !elm_gengrid_item_next_get(sd->focused_item)))
-               {
-                  if (sd->item_loop_enable)
-                    {
-                       if (_item_horizontal_loop(obj, ELM_FOCUS_LEFT))
-                         return EINA_TRUE;
-                    }
-                  return EINA_FALSE;
-               }
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  return _item_single_select_right(sd);
-               }
-             else
-               return _item_focus_right(sd);
-          }
+        return _focus_move(obj, sd, ELM_FOCUS_RIGHT);
      }
    else if ((!strcmp(dir, "right_multi") && !mirrored) ||
             (!strcmp(dir, "left_multi") && mirrored))
@@ -3586,27 +3429,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                   return EINA_TRUE;
                }
           }
-        if (sd->horizontal)
-          {
-             if (sd->focused_item && _elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_UP))
-               return EINA_FALSE;
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  if (_item_single_select_left(sd)) return EINA_TRUE;
-                  else return EINA_FALSE;
-               }
-             else
-               return _item_focus_left(sd);
-          }
-        else
-          {
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  return _item_single_select_up(sd);
-               }
-             else
-               return _item_focus_up(sd);
-          }
+        return _focus_move(obj, sd, ELM_FOCUS_UP);
      }
    else if (!strcmp(dir, "up_multi"))
      {
@@ -3642,26 +3465,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                   return EINA_TRUE;
                }
           }
-        if (sd->horizontal)
-          {
-             if (sd->focused_item && _elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_DOWN))
-               return EINA_FALSE;
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  return _item_single_select_right(sd);
-               }
-             else
-               return _item_focus_right(sd);
-          }
-        else
-          {
-             if (!_elm_config->item_select_on_focus_disable)
-               {
-                  return _item_single_select_down(sd);
-               }
-             else
-               return _item_focus_down(sd);
-          }
+        return _focus_move(obj, sd, ELM_FOCUS_DOWN);
      }
    else if (!strcmp(dir, "down_multi"))
      {
