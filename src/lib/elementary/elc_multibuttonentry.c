@@ -1523,7 +1523,7 @@ _elm_multibuttonentry_text_set(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSE
 {
    Eina_Bool int_ret = EINA_TRUE;
 
-   if (!part || !strcmp(part, "default"))
+   if (!part || !strcmp(part, "default") || !strcmp(part, "elm.text"))
      {
         if (label) _label_set(obj, label);
         int_ret = EINA_TRUE;

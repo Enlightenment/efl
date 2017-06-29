@@ -121,6 +121,7 @@ _elm_bubble_text_set(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, const char *part
 {
    Eina_Bool int_ret = EINA_TRUE;
 
+   if (!part) part = _text_aliases[0].real_part;
    efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
    if (!int_ret) return EINA_FALSE;
 

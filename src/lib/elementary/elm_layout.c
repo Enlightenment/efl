@@ -2325,10 +2325,7 @@ elm_layout_table_clear(Elm_Layout *obj, const char *part, Eina_Bool clear)
 EAPI Eina_Bool
 elm_layout_text_set(Elm_Layout *obj, const char *part, const char *text)
 {
-   if (!part || (*part == '\0'))
-     {
-        part = "elm.text";
-     }
+   if (!part) part = "elm.text";
    efl_text_set(efl_part(obj, part), text);
    return EINA_TRUE;
 }

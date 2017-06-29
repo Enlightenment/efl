@@ -348,6 +348,7 @@ _elm_label_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, const char *l
    if (!label) label = "";
    _label_format_set(wd->resize_obj, sd->format);
 
+   if (!part) part = _text_aliases[0].real_part;
    efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
 
    if (int_ret)

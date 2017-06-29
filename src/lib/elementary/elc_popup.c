@@ -1062,7 +1062,7 @@ _elm_popup_text_set(Eo *obj, Elm_Popup_Data *_pd, const char *part, const char *
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   if (!part || !strcmp(part, "default"))
+   if (!part || !strcmp(part, "default") || !strcmp(part, "elm.text"))
      int_ret = _content_text_set(obj, label);
    else if (!strcmp(part, "title,text"))
      int_ret = _title_text_set(obj, label);
