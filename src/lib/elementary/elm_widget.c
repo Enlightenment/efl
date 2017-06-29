@@ -3954,6 +3954,7 @@ elm_widget_content_part_set(Evas_Object *obj,
                             Evas_Object *content)
 {
    ELM_WIDGET_CHECK(obj);
+   if (!efl_isa(obj, EFL_PART_INTERFACE)) return;
    efl_content_set(efl_part(obj, part), content);
 }
 
@@ -3962,6 +3963,7 @@ elm_widget_content_part_get(const Evas_Object *obj,
                             const char *part)
 {
    ELM_WIDGET_CHECK(obj) NULL;
+   if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
    return efl_content_get(efl_part(obj, part));
 }
 
@@ -3970,6 +3972,7 @@ elm_widget_content_part_unset(Evas_Object *obj,
                               const char *part)
 {
    ELM_WIDGET_CHECK(obj) NULL;
+   if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
    return efl_content_unset(efl_part(obj, part));
 }
 
