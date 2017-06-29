@@ -15,8 +15,8 @@
 #define PACKAGE_EXAMPLES_DIR "."
 #endif
 
-#define WIDTH 400
-#define HEIGHT 400
+#define WIDTH 600
+#define HEIGHT 600
 
 #ifndef EFL_BETA_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
@@ -26,8 +26,6 @@
 #define EFL_EO_API_SUPPORT
 #endif
 
-#include <math.h>
-
 #include <Eo.h>
 #include <Efl.h>
 #include <Evas.h>
@@ -35,28 +33,58 @@
 #include <Ecore_Evas.h>
 #include <Eina.h>
 
-#define PATH_KAPPA 0.5522847498
-#define PI         3.1415926535
-
-static Efl_VG *beginning = NULL;
-static Efl_VG *end = NULL;
-static Efl_VG *root = NULL;
-static double start_time = 0;
-static Ecore_Animator *anim = NULL;
-
 struct example_data
 {
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *bg;
    Evas_Object *vg;
+   Eina_List   *shape_list;
+
 };
 
 static struct example_data d;
+Ecore_Animator *animator;
+static const char *batman = "M 256,213 C 245,181 206,187 234,262 147,181 169,71.2 233,18 220,56 235,81 283,88 285,78.7 286,69.3 288,60 289,61.3 290,62.7 291,64 291,64 297,63 300,63 303,63 309,64 309,64 310,62.7 311,61.3 312,60 314,69.3 315,78.7 317,88 365,82 380,56 367,18 431,71 453,181 366,262 394,187 356,181 344,213 328,185 309,184 300,284 291,184 272,185 256,213 Z";
+
+static const char *morph1[2] = {"M 0,0 L 0,0 L 100,0 L 100,0 L 100,100 L 100,100 L 0,100 L 0,100 L 0,0",
+                                "M 0,0 L 50,-80 L 100,0 L 180,50 L 100,100 L 50,180 L 0,100 L -80,50 L 0,0"};
+
+static void _main_menu();
+static void _main_menu_key_handle(void *data, Evas *evas, Evas_Object *o, void *einfo);
+
+static const char *main_menu = \
+  "Main Menu:\n"
+  "\t1 - Basic Shape test\n"
+  "\t2 - Interpolation\n"
+  "\te - Exit\n"
+  "\th - print help\n";
+
+static const char *basic_shape_menu = \
+  "Basic Shape Menu:\n"
+  "\tup   - Increase Stroke Width by 0.5\n"
+  "\tdown - Decrease Stroke Width by 0.5\n"
+  "\tr    - +10 degree rotation\n"
+  "\tR    - -10 degree rotation\n"
+  "\ts    - +(.1, .1) scale\n"
+  "\tS    - -(.1, .1) scale\n"
+  "\tt    - +(10,10) translation\n"
+  "\tT    - +(10,10) translation\n"
+  "\td    - Reset path data\n"
+  "\te    - Exit\n"
+  "\tb    - Back to Main Menu\n"
+  "\th    - print help\n";
+
+static const char *interpolation_menu = \
+  "Interpolation Menu:\n"
+  "\te    - Exit\n"
+  "\tb    - Back to Main Menu\n"
+  "\th    - print help\n";
 
 static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
 {
+   if (animator) ecore_animator_del(animator);
    ecore_main_loop_quit();
 }
 
@@ -71,192 +99,413 @@ _canvas_resize_cb(Ecore_Evas *ee)
 }
 
 static void
-vector_set(int x, int y, int w, int h)
+reset_test()
 {
-   int vg_w = w, vg_h = h;
-   Efl_VG *root_node, *tmp_vg;
+  if(d.vg) evas_object_del(d.vg);
+  d.shape_list = eina_list_free(d.shape_list);
 
-   //Create VG Object
-   Evas_Object *tmp = evas_object_rectangle_add(d.evas);
-   evas_object_resize(tmp, vg_w, vg_h);
-   evas_object_color_set(tmp, 100, 100, 50, 100);
-   evas_object_move(tmp, x,y);
-   evas_object_show(tmp);
 
-   d.vg = evas_object_vg_add(d.evas);
-   evas_object_resize(d.vg, vg_w, vg_h);
-   evas_object_move(d.vg, x,y);
-   evas_object_show(d.vg);
-   evas_object_clip_set(d.vg, tmp);
-
-     // Applying map on the evas_object_vg
-//   Evas_Map *m = evas_map_new(4);
-//   evas_map_smooth_set(m, EINA_TRUE);
-//   evas_map_util_points_populate_from_object_full(m, d.vg, 0);
-//   evas_map_util_rotate(m, 10, 0,0);
-//   evas_object_map_enable_set(d.vg, EINA_TRUE);
-//   evas_object_map_set(d.vg, m);
-
-   // apply some transformation
-   double radian = 30.0 * 2 * 3.141 / 360.0;
-   Eina_Matrix3 matrix;
-   eina_matrix3_identity(&matrix);
-   eina_matrix3_rotate(&matrix, radian);
-
-   root = efl_add(EFL_VG_CONTAINER_CLASS, NULL);
-   //evas_vg_node_transformation_set(root, &matrix);
-
-   Efl_VG *bg = efl_add(EFL_VG_SHAPE_CLASS, root, efl_vg_name_set(efl_added, "bg"));
-   evas_vg_shape_append_rect(bg, 0, 0 , vg_w, vg_h, 0, 0);
-   evas_vg_node_origin_set(bg, 0,0);
-   evas_vg_shape_stroke_width_set(bg, 1.0);
-   evas_vg_node_color_set(bg, 80, 80, 80, 80);
-
-   Efl_VG *shape = efl_add(EFL_VG_SHAPE_CLASS, root, efl_vg_name_set(efl_added, "shape"));
-   Efl_VG *rgradient = efl_add(EFL_VG_GRADIENT_RADIAL_CLASS, NULL, efl_vg_name_set(efl_added, "rgradient"));
-   Efl_VG *lgradient = efl_add(EFL_VG_GRADIENT_LINEAR_CLASS, NULL, efl_vg_name_set(efl_added, "lgradient"));
-
-   evas_vg_shape_append_arc(shape, 0, 0, 100, 100, 25, 330);
-
-   Efl_Gfx_Gradient_Stop stops[3];
-   stops[0].r = 255;
-   stops[0].g = 0;
-   stops[0].b = 0;
-   stops[0].a = 255;
-   stops[0].offset = 0;
-   stops[1].r = 0;
-   stops[1].g = 255;
-   stops[1].b = 0;
-   stops[1].a = 255;
-   stops[1].offset = 0.5;
-   stops[2].r = 0;
-   stops[2].g = 0;
-   stops[2].b = 255;
-   stops[2].a = 255;
-   stops[2].offset = 1;
-
-   evas_vg_node_origin_set(rgradient, 10, 10);
-   evas_vg_gradient_spread_set(rgradient, EFL_GFX_GRADIENT_SPREAD_REFLECT);
-   evas_vg_gradient_stop_set(rgradient, stops, 3);
-   evas_vg_gradient_radial_center_set(rgradient, 30, 30);
-   evas_vg_gradient_radial_radius_set(rgradient, 80);
-
-   evas_vg_node_origin_set(lgradient, 10, 10);
-   evas_vg_gradient_stop_set(lgradient, stops, 3);
-   evas_vg_gradient_spread_set(lgradient, EFL_GFX_GRADIENT_SPREAD_REFLECT);
-   evas_vg_gradient_stop_set(lgradient, stops, 3);
-   evas_vg_gradient_linear_start_set(lgradient, 10, 10);
-   evas_vg_gradient_linear_end_set(lgradient, 50, 50);
-
-   evas_vg_node_origin_set(shape, 10, 10);
-   evas_vg_shape_fill_set(shape, rgradient);
-   evas_vg_shape_stroke_scale_set(shape, 2.0);
-   evas_vg_shape_stroke_width_set(shape, 1.0);
-   evas_vg_node_color_set(shape, 0, 0, 255, 255);
-   evas_vg_shape_stroke_color_set(shape, 0, 0, 255, 128);
-
-   Efl_VG *rect = efl_add(EFL_VG_SHAPE_CLASS, root, efl_vg_name_set(efl_added, "rect"));
-   evas_vg_shape_append_rect(rect, 0, 0, 100, 100, 0, 0);
-   evas_vg_node_origin_set(rect, 100, 100);
-   evas_vg_shape_fill_set(rect, lgradient);
-   evas_vg_shape_stroke_width_set(rect, 2.0);
-   evas_vg_shape_stroke_join_set(rect, EFL_GFX_JOIN_ROUND);
-   evas_vg_shape_stroke_color_set(rect, 255, 255, 255, 255);
-
-   Efl_VG *rect1 = efl_add(EFL_VG_SHAPE_CLASS, root, efl_vg_name_set(efl_added, "rect1"));
-   evas_vg_shape_append_rect(rect1, 0, 0, 70, 70, 0, 0);
-   evas_vg_node_origin_set(rect1, 50, 70);
-   evas_vg_shape_stroke_scale_set(rect1, 2);
-   evas_vg_shape_stroke_width_set(rect1, 8.0);
-   evas_vg_shape_stroke_join_set(rect1, EFL_GFX_JOIN_ROUND);
-   evas_vg_shape_stroke_color_set(rect1, 0, 100, 80, 100);
-
-   Efl_VG *circle = efl_add(EFL_VG_SHAPE_CLASS, root, efl_vg_name_set(efl_added, "circle"));
-   evas_vg_shape_append_arc(circle, 0, 0, 250, 100, 30, 300);
-   evas_vg_shape_fill_set(circle, lgradient);
-   //evas_vg_node_transformation_set(&matrix),
-   evas_vg_node_origin_set(circle, 50,50);
-   evas_vg_node_color_set(circle, 50, 0, 0, 50);
-
-   // Foreground
-   Efl_VG *fg = efl_add(EFL_VG_SHAPE_CLASS, root, efl_vg_name_set(efl_added, "fg"));
-   evas_vg_shape_append_rect(fg, 0, 0, vg_w, vg_h, 0, 0);
-   evas_vg_node_origin_set(fg, 0, 0);
-   evas_vg_shape_stroke_width_set(fg, 5.0);
-   evas_vg_shape_stroke_join_set(fg, EFL_GFX_JOIN_ROUND);
-   evas_vg_shape_stroke_color_set(fg, 70, 70, 0, 70);
-
-   Efl_VG *tst = efl_add(EFL_VG_SHAPE_CLASS, root, efl_vg_name_set(efl_added, "tst"));
-   evas_vg_shape_append_rect(tst, 50, 25, 200, 200, 3, 5);
-   evas_vg_node_color_set(tst, 0, 0, 200, 200);
-   evas_vg_shape_stroke_width_set(tst, 2);
-   evas_vg_shape_stroke_color_set(tst, 255, 0, 0, 255);
-
-   Efl_VG *vc = efl_add(EFL_VG_SHAPE_CLASS, root, efl_vg_name_set(efl_added, "vc"));
-   evas_vg_shape_append_circle(vc, 100, 100, 23);
-   evas_vg_node_color_set(vc, 0, 200, 0, 255);
-   evas_vg_shape_stroke_width_set(vc, 4);
-   evas_vg_shape_stroke_color_set(vc, 255, 0, 0, 255);
-
-   beginning = efl_add(EFL_VG_CONTAINER_CLASS, NULL, efl_vg_dup(efl_added, root));
-   end = efl_add(EFL_VG_CONTAINER_CLASS, NULL, efl_vg_dup(efl_added, root));
-
-   circle = efl_vg_container_child_get(end, "circle");
-   efl_vg_transformation_set(circle, &matrix);
-
-   root_node = evas_object_vg_root_node_get(d.vg);
-   // check if the dupe is working properly or not
-   efl_parent_set(beginning, root_node);
-
-   tmp_vg = root;
-   root = beginning;
-   beginning = tmp_vg;
+  d.vg = evas_object_vg_add(d.evas);
+  evas_object_show(d.vg);
+  evas_object_focus_set(d.vg, 1);
+  _canvas_resize_cb(d.ee);
 }
 
-static Eina_Bool
-_anim(void *data EINA_UNUSED)
+
+
+// 2.Basic shape  Test Case START
+
+static void
+_added_transformation(Efl_VG *shape, Eina_Matrix3 *m)
 {
-   double pos, now;
+   Eina_Matrix3 new_m;
+   const Eina_Matrix3 *old_m;
 
-   now = ecore_loop_time_get();
-
-   if (now - start_time > 3)
+   old_m = evas_vg_node_transformation_get(shape);
+   if (old_m)
      {
-        Efl_VG *tmp = beginning;
+        eina_matrix3_compose(m, old_m, &new_m);
+        evas_vg_node_transformation_set(shape, &new_m);
+     }
+   else
+     {
+        evas_vg_node_transformation_set(shape, m);
+     }
+}
 
-        beginning = end;
-        end = tmp;
-        start_time = now;
+static void
+_basic_shape_key_handle(void        *data EINA_UNUSED,
+                      Evas        *evas EINA_UNUSED,
+                      Evas_Object *o EINA_UNUSED,
+                      void        *einfo)
+{
+   Evas_Event_Key_Down *ev = einfo;
+   Efl_VG *shape;
+   Eina_List *l;
+   Eina_Matrix3 m;
+   double stroke_w;
+
+   if (strcmp(ev->key, "h") == 0) /* print help */
+     {
+        puts(basic_shape_menu);
+        return;
+     }
+   if (strcmp(ev->key, "e") == 0)
+     {
+        _on_delete(d.ee);
+        return;
      }
 
-   pos = ecore_animator_pos_map((now - start_time) / 3, ECORE_POS_MAP_SINUSOIDAL, 0, 0);
+   if (strcmp(ev->key, "b") == 0)
+     {
+        _main_menu();
+        return;
+     }
+   if (strcmp(ev->key, "Up") == 0)
+     {
 
-   efl_vg_interpolate(root, beginning, end, pos);
+        EINA_LIST_FOREACH(d.shape_list, l, shape)
+        {
+          stroke_w = evas_vg_shape_stroke_width_get(shape);
+          evas_vg_shape_stroke_width_set(shape, stroke_w + 0.5);
+        }
+        return;
+     }
+   if (strcmp(ev->key, "Down") == 0)
+     {
+        EINA_LIST_FOREACH(d.shape_list, l, shape)
+        {
+          stroke_w = evas_vg_shape_stroke_width_get(shape);
+          if (stroke_w <= 0.5) stroke_w = 1;
+          evas_vg_shape_stroke_width_set(shape, stroke_w - 0.5);
+        }
+        return;
+     }
+   if (strcmp(ev->key, "r") == 0)
+     {
+        eina_matrix3_identity(&m);
+        eina_matrix3_rotate(&m, 10.0 * 2 * 3.141 / 360.0);
+        EINA_LIST_FOREACH(d.shape_list, l, shape)
+        {
+          _added_transformation(shape, &m);
+        }
+        return;
+     }
+   if (strcmp(ev->key, "R") == 0)
+     {
+        eina_matrix3_identity(&m);
+        eina_matrix3_rotate(&m, -10.0 * 2 * 3.141 / 360.0);
+        EINA_LIST_FOREACH(d.shape_list, l, shape)
+        {
+          _added_transformation(shape, &m);
+        }
+        return;
+     }
+   if (strcmp(ev->key, "s") == 0)
+     {
+        eina_matrix3_identity(&m);
+        eina_matrix3_scale(&m, 1.1, 1.1);
+        EINA_LIST_FOREACH(d.shape_list, l, shape)
+        {
+          _added_transformation(shape, &m);
+        }
+        return;
+     }
+   if (strcmp(ev->key, "S") == 0)
+     {
+        eina_matrix3_identity(&m);
+        eina_matrix3_scale(&m, .9, .9);
+        EINA_LIST_FOREACH(d.shape_list, l, shape)
+        {
+          _added_transformation(shape, &m);
+        }
+        return;
+     }
+   if (strcmp(ev->key, "t") == 0)
+     {
+        eina_matrix3_identity(&m);
+        eina_matrix3_translate(&m, 10, 10);
+        EINA_LIST_FOREACH(d.shape_list, l, shape)
+        {
+          _added_transformation(shape, &m);
+        }
+        return;
+     }
+   if (strcmp(ev->key, "T") == 0)
+     {
+        eina_matrix3_identity(&m);
+        eina_matrix3_translate(&m, -10, -10);
+        EINA_LIST_FOREACH(d.shape_list, l, shape)
+        {
+          _added_transformation(shape, &m);
+        }
+        return;
+     }
+   if (strcmp(ev->key, "d") == 0)
+     {
+        EINA_LIST_FOREACH(d.shape_list, l, shape)
+        {
+          evas_vg_shape_reset(shape);
+        }
+        return;
+     }
+}
 
+static void
+_1_basic_shape_test()
+{
+  Efl_VG *container, *shape, *new_shape;
+
+  reset_test();
+  evas_object_event_callback_add(d.vg, EVAS_CALLBACK_KEY_DOWN, _basic_shape_key_handle, NULL);
+  puts(basic_shape_menu);
+
+  container = evas_vg_container_add(evas_object_vg_root_node_get(d.vg));
+
+  // Line
+  shape = evas_vg_shape_add(container);
+  evas_vg_shape_append_move_to(shape, 0, 0);
+  evas_vg_shape_append_line_to(shape, 100, 0);
+  evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
+  evas_vg_shape_stroke_width_set(shape, 5);
+  evas_vg_node_origin_set(shape, 50, 50);
+  evas_vg_shape_stroke_cap_set(shape, EFL_GFX_CAP_ROUND);
+  d.shape_list = eina_list_append(d.shape_list, shape);
+
+  new_shape = evas_vg_shape_add(container);
+  evas_vg_shape_dup(new_shape, shape);
+  evas_vg_shape_stroke_color_set(new_shape, 0, 100, 0, 100);
+  evas_vg_shape_append_line_to(new_shape, 100, 50);
+  evas_vg_node_origin_set(new_shape, 200, 50);
+  evas_vg_shape_stroke_cap_set(new_shape, EFL_GFX_CAP_SQUARE);
+  d.shape_list = eina_list_append(d.shape_list, new_shape);
+
+
+  new_shape = evas_vg_shape_add(container);
+  evas_vg_shape_dup(new_shape, shape);
+  evas_vg_shape_stroke_color_set(new_shape, 0, 0, 255, 255);
+  evas_vg_shape_append_line_to(new_shape, 50, 50);
+  evas_vg_node_origin_set(new_shape, 350, 50);
+  evas_vg_shape_stroke_cap_set(new_shape, EFL_GFX_CAP_ROUND);
+  evas_vg_shape_stroke_join_set(new_shape, EFL_GFX_JOIN_ROUND);
+  d.shape_list = eina_list_append(d.shape_list, new_shape);
+
+  // Rect
+  shape = evas_vg_shape_add(container);
+  evas_vg_shape_append_rect(shape, 0, 0, 100 , 100, 10, 10);
+  evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
+  evas_vg_shape_stroke_width_set(shape, 5);
+  evas_vg_node_origin_set(shape, 50, 150);
+  d.shape_list = eina_list_append(d.shape_list, shape);
+
+  new_shape = evas_vg_shape_add(container);
+  evas_vg_shape_dup(new_shape, shape);
+  evas_vg_shape_stroke_color_set(new_shape, 0, 0, 0, 0);
+  evas_vg_node_color_set(new_shape, 0, 0, 100, 100);
+  evas_vg_node_origin_set(new_shape, 200, 150);
+  d.shape_list = eina_list_append(d.shape_list, new_shape);
+
+  new_shape = evas_vg_shape_add(container);
+  evas_vg_shape_dup(new_shape, shape);
+  evas_vg_shape_stroke_color_set(new_shape, 100, 0, 0, 100);
+  evas_vg_node_color_set(new_shape, 0, 100, 100, 100);
+  evas_vg_node_origin_set(new_shape, 350, 150);
+  d.shape_list = eina_list_append(d.shape_list, new_shape);
+
+  // Circle
+  shape = evas_vg_shape_add(container);
+  evas_vg_shape_append_circle(shape, 50, 50, 50);
+  evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
+  evas_vg_shape_stroke_width_set(shape, 5);
+  evas_vg_node_origin_set(shape, 50, 300);
+  d.shape_list = eina_list_append(d.shape_list, shape);
+
+  new_shape = evas_vg_shape_add(container);
+  evas_vg_shape_dup(new_shape, shape);
+  evas_vg_shape_stroke_color_set(new_shape, 0, 0, 0, 0);
+  evas_vg_node_color_set(new_shape, 0, 0, 255, 255);
+  evas_vg_node_origin_set(new_shape, 200, 300);
+  d.shape_list = eina_list_append(d.shape_list, new_shape);
+
+  new_shape = evas_vg_shape_add(container);
+  evas_vg_shape_dup(new_shape, shape);
+  evas_vg_shape_stroke_color_set(new_shape, 150, 0, 0, 150);
+  evas_vg_node_color_set(new_shape, 0, 0, 200, 200);
+  evas_vg_node_origin_set(new_shape, 350, 300);
+  d.shape_list = eina_list_append(d.shape_list, new_shape);
+
+  // Arc
+  shape = evas_vg_shape_add(container);
+  evas_vg_shape_append_arc(shape, 0, 0, 100, 100, 45, -200);
+  evas_vg_shape_append_line_to(shape, 50, 50);
+  evas_vg_shape_stroke_cap_set(shape, EFL_GFX_CAP_ROUND);
+  evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
+  evas_vg_shape_stroke_width_set(shape, 5);
+  evas_vg_node_origin_set(shape, 50, 450);
+  d.shape_list = eina_list_append(d.shape_list, shape);
+
+  new_shape = evas_vg_shape_add(container);
+  evas_vg_shape_append_arc(new_shape, 0, 0, 100, 100, 90, 200);
+  evas_vg_shape_stroke_color_set(new_shape, 0, 0, 0, 0);
+  evas_vg_node_color_set(new_shape, 0, 0, 200, 200);
+  evas_vg_node_origin_set(new_shape, 200, 450);
+  d.shape_list = eina_list_append(d.shape_list, new_shape);
+
+  new_shape = evas_vg_shape_add(container);
+  evas_vg_shape_append_arc(new_shape, 0, 0, 100, 100, 90, 200);
+  evas_vg_shape_append_line_to(new_shape, 50, 50);
+  evas_vg_shape_stroke_color_set(new_shape, 0, 0, 0, 0);
+  evas_vg_node_color_set(new_shape, 0, 0, 200, 200);
+  evas_vg_node_origin_set(new_shape, 350, 450);
+  d.shape_list = eina_list_append(d.shape_list, new_shape);
+
+}
+
+// 2.Basic shape  Test Case END
+
+// 2.Interpolation Test Case START
+
+static void
+_interpolation_key_handle(void  *data EINA_UNUSED,
+                          Evas        *evas EINA_UNUSED,
+                          Evas_Object *o EINA_UNUSED,
+                          void        *einfo)
+{
+   Evas_Event_Key_Down *ev = einfo;
+
+   if (strcmp(ev->key, "h") == 0) /* print help */
+     {
+        puts(basic_shape_menu);
+        return;
+     }
+   if (strcmp(ev->key, "e") == 0) /* print help */
+     {
+        _on_delete(d.ee);
+        return;
+     }
+
+   if (strcmp(ev->key, "b") == 0) /* print help */
+     {
+        _main_menu();
+        return;
+     }
+}
+
+static int anim_index = 0;
+static Eina_Bool
+_interpolation_keyframe(void *data EINA_UNUSED, double pos)
+{
+  int next = (anim_index == 1) ? 0 : 1;
+
+  evas_vg_shape_reset(eina_list_nth(d.shape_list, 2));
+  evas_vg_shape_interpolate(eina_list_nth(d.shape_list, 2),
+                             eina_list_nth(d.shape_list, anim_index),
+                             eina_list_nth(d.shape_list, next),
+                             ecore_animator_pos_map(pos, ECORE_POS_MAP_SINUSOIDAL, 0.0, 0.0));
+
+   if (pos == 1.0)
+     {
+        anim_index = (anim_index == 1) ? 0 : 1;
+        animator = ecore_animator_timeline_add(1, _interpolation_keyframe, NULL);
+     }
    return EINA_TRUE;
 }
 
 static void
-_keydown(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *einfo)
+_2_interpolation_test()
+{
+  anim_index = 0;
+
+  Efl_VG *shape;
+
+  reset_test();
+  evas_object_event_callback_add(d.vg, EVAS_CALLBACK_KEY_DOWN, _interpolation_key_handle, NULL);
+  animator = ecore_animator_timeline_add(1, _interpolation_keyframe, NULL);
+  puts(interpolation_menu);
+
+  shape = evas_vg_shape_add(NULL);
+  evas_vg_shape_append_svg_path(shape, morph1[0]);
+  evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
+  evas_vg_shape_stroke_width_set(shape, 5);
+  evas_vg_node_origin_set(shape, 100, 100);
+  d.shape_list = eina_list_append(d.shape_list, shape);
+
+  shape = evas_vg_shape_add(NULL);
+  evas_vg_shape_append_svg_path(shape, morph1[1]);
+  evas_vg_shape_stroke_color_set(shape, 0, 0, 255, 255);
+  evas_vg_shape_stroke_width_set(shape, 10);
+  evas_vg_node_origin_set(shape, 150, 150);
+  d.shape_list = eina_list_append(d.shape_list, shape);
+
+  shape = evas_vg_shape_add(evas_object_vg_root_node_get(d.vg));
+  evas_vg_node_origin_set(shape, 150, 150);
+  d.shape_list = eina_list_append(d.shape_list, shape);
+
+
+}
+
+// 2.Interpolation Test Case END
+
+// Main Menu START
+
+static void
+_main_menu()
+{
+  Efl_VG *shape;
+  if (animator) ecore_animator_del(animator);
+  animator = NULL;
+  if(d.vg) evas_object_del(d.vg);
+  if(d.bg) evas_object_del(d.bg);
+   d.bg = evas_object_rectangle_add(d.evas);
+   evas_object_color_set(d.bg, 255, 255, 255, 255);
+   evas_object_focus_set(d.bg, 1);
+   evas_object_show(d.bg);
+   evas_object_event_callback_add(d.bg, EVAS_CALLBACK_KEY_DOWN, _main_menu_key_handle, NULL);
+
+   // create the initial screen
+   d.vg = evas_object_vg_add(d.evas);
+   evas_object_show(d.vg);
+   shape = evas_vg_shape_add(evas_object_vg_root_node_get(d.vg));
+   evas_vg_shape_append_svg_path(shape, batman);
+   evas_vg_node_color_set(shape, 10, 0, 0, 10);
+   evas_vg_node_origin_set(shape, 0, 100);
+
+   _canvas_resize_cb(d.ee);
+   puts(main_menu);
+}
+
+static void
+_main_menu_key_handle(void        *data EINA_UNUSED,
+                      Evas        *evas EINA_UNUSED,
+                      Evas_Object *o EINA_UNUSED,
+                      void        *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;
 
-   if (strcmp(ev->key, "a") == 0)
+   if (strcmp(ev->key, "h") == 0)
      {
-        if (!anim)
-          {
-             anim = ecore_animator_add(_anim, NULL);
-             start_time = ecore_loop_time_get();
-          }
-        else
-          {
-             ecore_animator_del(anim);
-             anim = NULL;
-          }
-        /* efl_vg_interpolate(root, beginning, end, 0.5); */
+        puts(main_menu);
+        return;
      }
-   fprintf(stderr, "key: [%s]\n", ev->key);
+   if (strcmp(ev->key, "e") == 0)
+     {
+        _on_delete(d.ee);
+        return;
+     }
+
+   if (strcmp(ev->key, "1") == 0)
+     {
+        _1_basic_shape_test();
+        return;
+     }
+   if (strcmp(ev->key, "2") == 0)
+     {
+        _2_interpolation_test();
+        return;
+     }
 }
+
+// Main Menu END
 
 int
 main(void)
@@ -276,16 +525,7 @@ main(void)
 
    d.evas = ecore_evas_get(d.ee);
 
-   d.bg = evas_object_rectangle_add(d.evas);
-   evas_object_color_set(d.bg, 70, 70, 70, 255); /* white bg */
-   evas_object_focus_set(d.bg, 1);
-   evas_object_event_callback_add(d.bg, EVAS_CALLBACK_KEY_DOWN, _keydown, NULL);
-   evas_object_show(d.bg);
-
-   _canvas_resize_cb(d.ee);
-
-   vector_set(50, 50, 300 ,300);
-   //vector_set(30, 90, 300 ,300);
+   _main_menu();
 
    ecore_main_loop_begin();
    ecore_evas_shutdown();
