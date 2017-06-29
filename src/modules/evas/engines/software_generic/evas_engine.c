@@ -1134,7 +1134,21 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    RGBA_Image *im = image;
    Image_Entry *ie = image, *ie2;
 
-   if (!im) return NULL;
+   if (!im)
+     {
+        /* This is a probe for wl_dmabuf viability */
+        if (ns && ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF &&
+            !ns->data.wl_dmabuf.resource)
+          {
+             struct dmabuf_attributes *attr;
+
+             attr = ns->data.wl_dmabuf.attr;
+             if (attr->version != EVAS_DMABUF_ATTRIBUTE_VERSION)
+               ns->data.wl_dmabuf.attr = NULL;
+          }
+
+        return NULL;
+     }
    if (!ns)
      {
         if (im->native.data && im->native.func.free)
