@@ -12,6 +12,7 @@ elementary/objects/font_preview.edc \
 elementary/objects/postit_ent.edc \
 elementary/objects/multibuttonentry.edc \
 elementary/objects/test_focus_style.edc \
+elementary/objects/test_tooltip.edc \
 elementary/objects/over.png \
 elementary/objects/under.png \
 elementary/objects/sky.jpg \

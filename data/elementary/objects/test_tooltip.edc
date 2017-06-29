@@ -1,0 +1,41 @@
+collections {
+   group { "elm/tooltip/base/nomin";
+      /* Copied from default theme */
+      data.item: "pad_x" "10";
+      data.item: "pad_y" "10";
+      data.item: "pad_border_x" "1";
+      data.item: "pad_border_y" "1";
+      data.item: "hide_timeout" "0.35";
+      data.item: "transparent" "enabled";
+      parts {
+         rect { "base";
+            desc { "";
+               color: 32 32 32 255;
+            }
+         }
+         rect { "outside";
+            desc { "";
+               rel1.offset: -60 -20;
+               rel2.offset: 59 19;
+               color: 32 64 96 128;
+            }
+         }
+         text { "info";
+            desc { "";
+               text {
+                  font: "Sans";
+                  size: 10;
+                  text: "No Min Size";
+               }
+               rel1.offset: -60 -20;
+               rel2.offset: 59 19;
+               color: 255 255 255 255;
+            }
+         }
+         swallow { "elm.swallow.content";
+            desc { "";
+            }
+         }
+      }
+   }
+}

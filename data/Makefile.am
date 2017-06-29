@@ -218,7 +218,10 @@ elementary/objects/postit_ent.edj \
 elementary/objects/multibuttonentry.edj \
 elementary/objects/test_prefs.edj \
 elementary/objects/test_prefs.epb \
-elementary/objects/test_focus_style.edj
+elementary/objects/test_focus_style.edj \
+elementary/objects/test_tooltip.edj \
+$(NULL)
+
 CLEANFILES += $(elementaryobjects_DATA)
 
 include elementary/objects/Makefile.am
@@ -269,6 +272,11 @@ elementary/objects/test_prefs.edj: elementary/objects/test_prefs.edc
 	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
 
 elementary/objects/test_focus_style.edj: elementary/objects/test_focus_style.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(top_srcdir)/data/elementary/themes/img $< $@
+
+elementary/objects/test_tooltip.edj: elementary/objects/test_tooltip.edc
 	$(AM_V_EDJ) \
 	$(MKDIR_P) elementary/objects/; \
 	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(top_srcdir)/data/elementary/themes/img $< $@
