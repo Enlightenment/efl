@@ -3197,6 +3197,17 @@ _focus_move(Evas_Object *obj, Elm_Gengrid_Data *sd, Elm_Focus_Direction dir)
 }
 
 static Eina_Bool
+_get_direction(const char *str, Elm_Focus_Direction *dir)
+{
+   if (!strcmp(str, "left")) *dir = ELM_FOCUS_LEFT;
+   else if (!strcmp(str, "right")) *dir = ELM_FOCUS_RIGHT;
+   else if (!strcmp(str, "up")) *dir = ELM_FOCUS_UP;
+   else if (!strcmp(str, "down")) *dir = ELM_FOCUS_DOWN;
+   else return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
    ELM_GENGRID_DATA_GET(obj, sd);
@@ -3212,6 +3223,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    Evas_Coord page_y = 0;
    Elm_Object_Item *it = NULL;
    Eina_Bool mirrored = efl_ui_mirrored_get(obj);
+   Elm_Focus_Direction direction;
 
    elm_interface_scrollable_content_pos_get(obj, &x, &y);
    elm_interface_scrollable_step_size_get(obj, &step_x, &step_y);
@@ -3221,12 +3233,17 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    if (sd->reorder_mode && sd->reorder.running) return EINA_TRUE;
    _elm_widget_focus_auto_show(obj);
-   if ((!strcmp(dir, "left") && !mirrored) ||
-       (!strcmp(dir, "right") && mirrored))
+
+   if (_get_direction(dir, &direction))
      {
+        if (mirrored)
+          {
+            if (direction == ELM_FOCUS_RIGHT || direction == ELM_FOCUS_LEFT)
+              direction = _direction_mirror(direction);
+          }
         if (sd->reorder_mode)
           {
-             return _reorder_helper(sd, ELM_FOCUS_LEFT);
+             return _reorder_helper(sd, direction);
           }
         else
           {
@@ -3239,7 +3256,8 @@ _key_action_move(Evas_Object *obj, const char *params)
                   return EINA_TRUE;
                }
           }
-        return _focus_move(obj, sd, ELM_FOCUS_LEFT);
+        return _focus_move(obj, sd, direction);
+
      }
    else if ((!strcmp(dir, "left_multi") && !mirrored) ||
             (!strcmp(dir, "right_multi") && mirrored))
@@ -3259,26 +3277,6 @@ _key_action_move(Evas_Object *obj, const char *params)
              else return EINA_FALSE;
           }
      }
-   else if ((!strcmp(dir, "right") && !mirrored) ||
-            (!strcmp(dir, "left") && mirrored))
-     {
-        if (sd->reorder_mode)
-          {
-             return _reorder_helper(sd, ELM_FOCUS_RIGHT);
-          }
-        else
-          {
-             Evas_Object *next = NULL;
-             next = elm_object_item_focus_next_object_get(sd->focused_item,
-                                                          ELM_FOCUS_RIGHT);
-             if (next)
-               {
-                  elm_object_focus_set(next, EINA_TRUE);
-                  return EINA_TRUE;
-               }
-          }
-        return _focus_move(obj, sd, ELM_FOCUS_RIGHT);
-     }
    else if ((!strcmp(dir, "right_multi") && !mirrored) ||
             (!strcmp(dir, "left_multi") && mirrored))
      {
@@ -3297,25 +3295,6 @@ _key_action_move(Evas_Object *obj, const char *params)
              else return EINA_FALSE;
           }
      }
-   else if (!strcmp(dir, "up"))
-     {
-        if (sd->reorder_mode)
-          {
-             return _reorder_helper(sd, ELM_FOCUS_UP);
-          }
-        else
-          {
-             Evas_Object *next = NULL;
-             next = elm_object_item_focus_next_object_get(sd->focused_item,
-                                                          ELM_FOCUS_UP);
-             if (next)
-               {
-                  elm_object_focus_set(next, EINA_TRUE);
-                  return EINA_TRUE;
-               }
-          }
-        return _focus_move(obj, sd, ELM_FOCUS_UP);
-     }
    else if (!strcmp(dir, "up_multi"))
      {
         if (sd->horizontal)
@@ -3332,25 +3311,6 @@ _key_action_move(Evas_Object *obj, const char *params)
              else if (_selection_single_move(obj, sd, ELM_FOCUS_UP)) return EINA_TRUE;
              else return EINA_FALSE;
           }
-     }
-   else if (!strcmp(dir, "down"))
-     {
-        if (sd->reorder_mode)
-          {
-             return _reorder_helper(sd, ELM_FOCUS_DOWN);
-          }
-        else
-          {
-             Evas_Object *next = NULL;
-             next = elm_object_item_focus_next_object_get(sd->focused_item,
-                                                          ELM_FOCUS_DOWN);
-             if (next)
-               {
-                  elm_object_focus_set(next, EINA_TRUE);
-                  return EINA_TRUE;
-               }
-          }
-        return _focus_move(obj, sd, ELM_FOCUS_DOWN);
      }
    else if (!strcmp(dir, "down_multi"))
      {
