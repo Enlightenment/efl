@@ -29,6 +29,8 @@
 
 //#include <Evas_Common.h>
 
+#define EVAS_DMABUF_ATTRIBUTE_VERSION 1
+
 struct dmabuf_attributes
 {
   /* This must exactly match the struct in Enlightenment.

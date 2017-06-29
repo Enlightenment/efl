@@ -107,7 +107,7 @@ _evas_native_dmabuf_surface_image_set(void *image, void *native)
         if (!n) return NULL;
 
         a = ns->data.wl_dmabuf.attr;
-        if (a->version != 1)
+        if (a->version != EVAS_DMABUF_ATTRIBUTE_VERSION)
           {
              free(n);
              return NULL;

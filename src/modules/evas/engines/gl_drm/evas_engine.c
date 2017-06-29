@@ -1320,7 +1320,7 @@ eng_image_native_set(void *engine, void *image, void *native)
              struct dmabuf_attributes *a;
 
              a = ns->data.wl_dmabuf.attr;
-             if (a->version != 1)
+             if (a->version != EVAS_DMABUF_ATTRIBUTE_VERSION)
                {
                   glsym_evas_gl_common_image_free(img);
                   return NULL;
