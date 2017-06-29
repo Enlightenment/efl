@@ -72,6 +72,9 @@ public static class InlistNativeFunctions
         eina_inlist_next_custom_export_mono(IntPtr list);
     [DllImport("eflcustomexportsmono")] public static extern IntPtr
         eina_inlist_prev_custom_export_mono(IntPtr list);
+
+    [DllImport("eflcustomexportsmono")] public static extern IntPtr
+        eina_inlist_iterator_wrapper_new_custom_export_mono(IntPtr in_list);
 }
 
 public class Inlist<T> : IEnumerable<T>, IDisposable
@@ -293,7 +296,7 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
 
     public eina.Iterator<T> GetIterator()
     {
-        return new eina.Iterator<T>(eina_inlist_iterator_new(Handle), true, false);
+        return new eina.Iterator<T>(eina_inlist_iterator_wrapper_new_custom_export_mono(Handle), true, false);
     }
 
     public IEnumerator<T> GetEnumerator()

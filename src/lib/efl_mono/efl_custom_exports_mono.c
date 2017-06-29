@@ -79,6 +79,50 @@ EAPI Eina_Free_Cb efl_mono_native_efl_unref_addr_get()
     return (Eina_Free_Cb)efl_unref;
 }
 
+// Iterator Wrapper //
+
+typedef struct _Eina_Iterator_Wrapper_Mono
+{
+   Eina_Iterator iterator; // Must be the first
+   Eina_Iterator *internal;
+} Eina_Iterator_Wrapper_Mono;
+
+static void *eina_iterator_wrapper_get_container_mono(Eina_Iterator_Wrapper_Mono *it)
+{
+   return eina_iterator_container_get(it->internal);
+}
+
+static void eina_iterator_wrapper_free_mono(Eina_Iterator_Wrapper_Mono *it)
+{
+   eina_iterator_free(it->internal);
+   free(it);
+}
+
+
+static Eina_Iterator *eina_iterator_wrapper_new_mono(Eina_Iterator *internal, Eina_Iterator_Next_Callback next_cb)
+{
+   if (!internal) return NULL;
+
+   Eina_Iterator_Wrapper_Mono *it = calloc(1, sizeof(Eina_Iterator_Wrapper_Mono));
+   if (!it)
+     {
+        eina_iterator_free(internal);
+        return NULL;
+     }
+
+   it->internal = internal;
+
+   it->iterator.next = next_cb;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(eina_iterator_wrapper_get_container_mono);
+   it->iterator.free = FUNC_ITERATOR_FREE(eina_iterator_wrapper_free_mono);
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   return &it->iterator;
+}
+
 // Array //
 
 EAPI void eina_array_free_generic_custom_export_mono(Eina_Array *array) EINA_ARG_NONNULL(1)
@@ -182,6 +226,30 @@ EAPI void *eina_list_last_data_get_custom_export_mono(const Eina_List *list)
 
 // Inlist //
 
+typedef struct _Inlist_Node_Mono
+{
+   EINA_INLIST;
+   char mem_start;
+} Inlist_Node_Mono;
+
+static Eina_Bool eina_inlist_iterator_wrapper_next_mono(Eina_Iterator_Wrapper_Mono *it, void **data)
+{
+   Inlist_Node_Mono *node = NULL;
+
+   if (!eina_iterator_next(it->internal, (void**)&node))
+     return EINA_FALSE;
+
+   if (data)
+     *data = &node->mem_start;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Iterator *eina_inlist_iterator_wrapper_new_custom_export_mono(const Eina_Inlist *in_list)
+{
+   return eina_iterator_wrapper_new_mono(eina_inlist_iterator_new(in_list), FUNC_ITERATOR_NEXT(eina_inlist_iterator_wrapper_next_mono));
+}
+
 EAPI Eina_Inlist *eina_inlist_first_custom_export_mono(const Eina_Inlist *list)
 {
    return eina_inlist_first(list);
@@ -205,3 +273,24 @@ EAPI Eina_Inlist *eina_inlist_prev_custom_export_mono(const Eina_Inlist *list)
      return list->prev;
    return NULL;
 }
+
+// Hash //
+
+static Eina_Bool eina_hash_iterator_ptr_key_wrapper_next_mono(Eina_Iterator_Wrapper_Mono *it, void **data)
+{
+   void **ptr = NULL;
+
+   if (!eina_iterator_next(it->internal, (void**)&ptr))
+     return EINA_FALSE;
+
+   if (data)
+     *data = *ptr;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Iterator *eina_hash_iterator_ptr_key_wrapper_new_custom_export_mono(const Eina_Hash *hash)
+{
+   return eina_iterator_wrapper_new_mono(eina_hash_iterator_key_new(hash), FUNC_ITERATOR_NEXT(eina_hash_iterator_ptr_key_wrapper_next_mono));
+}
+

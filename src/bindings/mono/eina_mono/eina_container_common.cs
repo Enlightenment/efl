@@ -83,6 +83,7 @@ public interface IBaseElementTraits<T>
     IntPtr EinaFreeCb();
     IntPtr EinaHashNew();
     IntPtr EinaInarrayNew(uint step);
+    IntPtr EinaHashIteratorKeyNew(IntPtr hash);
 }
 
 public class StringElementTraits<T> : IBaseElementTraits<T>
@@ -207,6 +208,11 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
     public IntPtr EinaInarrayNew(uint step)
     {
         return eina_inarray_new((uint)Marshal.SizeOf<IntPtr>(), step);
+    }
+
+    public IntPtr EinaHashIteratorKeyNew(IntPtr hash)
+    {
+        return eina_hash_iterator_key_new(hash);
     }
 }
 
@@ -343,6 +349,11 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     {
         return eina_inarray_new((uint)Marshal.SizeOf<IntPtr>(), step);
     }
+
+    public IntPtr EinaHashIteratorKeyNew(IntPtr hash)
+    {
+        return eina_hash_iterator_ptr_key_wrapper_new_custom_export_mono(hash);
+    }
 }
 
 public abstract class PrimitiveElementTraits<T>
@@ -453,6 +464,11 @@ public abstract class PrimitiveElementTraits<T>
     public IntPtr EinaInarrayNew(uint step)
     {
         return eina_inarray_new((uint)Marshal.SizeOf<T>(), step);
+    }
+
+    public IntPtr EinaHashIteratorKeyNew(IntPtr hash)
+    {
+        return eina_hash_iterator_key_new(hash);
     }
 }
 
@@ -679,6 +695,11 @@ public static class TraitFunctions
     public static IntPtr EinaInarrayNew<T>(uint step)
     {
         return GetTypeTraits<T>().EinaInarrayNew(step);
+    }
+
+    public static IntPtr EinaHashIteratorKeyNew<T>(IntPtr hash)
+    {
+        return GetTypeTraits<T>().EinaHashIteratorKeyNew(hash);
     }
 }
 
