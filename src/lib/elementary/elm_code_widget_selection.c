@@ -100,7 +100,7 @@ elm_code_widget_selection_select_all(Evas_Object *widget)
    elm_code_widget_selection_start(widget, 1, 1);
    int maxrow = elm_code_file_lines_get(pd->code->file);
    last_line = elm_code_file_line_get(pd->code->file, elm_code_file_lines_get(pd->code->file));
-   (void*) elm_code_line_text_get(last_line, &last_length);
+   elm_code_line_text_get(last_line, &last_length);
    last_col = elm_code_widget_line_text_column_width_to_position(widget, last_line, last_length);
 
    elm_code_widget_selection_end(widget, maxrow, last_col);
