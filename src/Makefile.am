@@ -96,9 +96,6 @@ endif
 include Makefile_Eolian_Js.am
 include Makefile_Efl_Js.am
 
-# Make sure all generated files getting cleaned up
-CLEANFILES += $(BUILT_SOURCES)
-
 .PHONY: benchmark examples
 
 BENCHMARK_SUBDIRS = \
@@ -186,6 +183,7 @@ clean-local:
 	find . -type f -name check-results.xml -delete
 	rm -f $(GENERATED_JS_BINDINGS)
 	rm -f $(GENERATED_LUA_BINDINGS)
+	rm -f $(BUILT_SOURCES)
 
 install-exec-hook:
 	$(MKDIR_P) $(DESTDIR)$(libdir)
