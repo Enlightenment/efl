@@ -784,13 +784,13 @@ eng_image_plane_assign(void *data, void *image, int x, int y)
    Ecore_Drm2_Plane *plane = NULL;
    struct scanout_handle *g;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(image, NULL);
 
    re = (Render_Engine *)data;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(re, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(re, NULL);
 
    ob = eng_get_ob(re);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ob, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ob, NULL);
 
    img = image;
    n = img->native.data;
