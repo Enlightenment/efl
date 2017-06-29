@@ -1193,9 +1193,14 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 }
 
 static void *
-eng_image_native_get(void *data EINA_UNUSED, void *image EINA_UNUSED)
+eng_image_native_get(void *data EINA_UNUSED, void *image)
 {
-   return NULL;
+   RGBA_Image *im = image;
+   Evas_Native_Surface *n;
+
+   if (!im) return NULL;
+   n = im->native.data;
+   return n;
 }
 
 static void *
