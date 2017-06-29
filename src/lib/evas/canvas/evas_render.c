@@ -3166,22 +3166,22 @@ evas_render_updates_internal(Evas *eo_e,
    if (ENFN->image_plane_assign)
      EINA_INARRAY_FOREACH(&evas->active_objects, ao)
        {
-          Evas_Object_Protected_Data *obj;
-          Evas_Object *eo_obj;
+          Evas_Object_Protected_Data *obj2;
+          Evas_Object *eo_obj2;
 
-          obj = ao->obj;
-          eo_obj = obj->object;
+          obj2 = ao->obj;
+          eo_obj2 = obj2->object;
 
-          if (!efl_isa(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS)) continue;
+          if (!efl_isa(eo_obj2, EFL_CANVAS_IMAGE_INTERNAL_CLASS)) continue;
 
-          if (evas_object_image_video_surface_get(eo_obj)) continue;
+          if (evas_object_image_video_surface_get(eo_obj2)) continue;
 
-          _evas_object_image_plane_release(eo_obj, obj);
-          if (!_evas_render_can_use_overlay(e, eo_obj))
+          _evas_object_image_plane_release(eo_obj2, obj2);
+          if (!_evas_render_can_use_overlay(e, eo_obj2))
             {
                /* This may free up things temporarily allocated by
                 * _can_use_overlay() testing in the engine */
-               _evas_object_image_plane_release(eo_obj, obj);
+               _evas_object_image_plane_release(eo_obj2, obj2);
             }
        }
 
