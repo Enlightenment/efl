@@ -3208,6 +3208,27 @@ _get_direction(const char *str, Elm_Focus_Direction *dir)
 }
 
 static Eina_Bool
+_get_multi_direction(const char *str, Elm_Focus_Direction *dir)
+{
+   if (!strcmp(str, "left_multi")) *dir = ELM_FOCUS_LEFT;
+   else if (!strcmp(str, "right_multi")) *dir = ELM_FOCUS_RIGHT;
+   else if (!strcmp(str, "up_multi")) *dir = ELM_FOCUS_UP;
+   else if (!strcmp(str, "down_multi")) *dir = ELM_FOCUS_DOWN;
+   else return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_multi_select(Elm_Gengrid_Data *sd, Elm_Focus_Direction direction)
+{
+   if (direction == ELM_FOCUS_UP) return _item_multi_select_up(sd);
+   else if (direction == ELM_FOCUS_DOWN) return _item_multi_select_down(sd);
+   else if (direction == ELM_FOCUS_RIGHT) return _item_multi_select_right(sd);
+   else if (direction == ELM_FOCUS_LEFT) return _item_multi_select_left(sd);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
    ELM_GENGRID_DATA_GET(obj, sd);
@@ -3259,75 +3280,21 @@ _key_action_move(Evas_Object *obj, const char *params)
         return _focus_move(obj, sd, direction);
 
      }
-   else if ((!strcmp(dir, "left_multi") && !mirrored) ||
-            (!strcmp(dir, "right_multi") && mirrored))
+   else if (_get_multi_direction(dir, &direction))
      {
-        if (sd->horizontal)
+        if (mirrored)
           {
-             if (_item_multi_select_up(sd)) return EINA_TRUE;
-             else if (_selection_single_move(obj, sd, ELM_FOCUS_UP)) return EINA_TRUE;
-             else return EINA_FALSE;
+            if (direction == ELM_FOCUS_RIGHT || direction == ELM_FOCUS_LEFT)
+              direction = _direction_mirror(direction);
           }
-        else
+        if (direction == ELM_FOCUS_LEFT || direction == ELM_FOCUS_RIGHT)
           {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT))
+             if (_elm_gengrid_item_edge_check(sd->focused_item, direction))
                return EINA_FALSE;
-             if (_item_multi_select_left(sd)) return EINA_TRUE;
-             else if (_selection_single_move(obj, sd, ELM_FOCUS_LEFT)) return EINA_TRUE;
-             else return EINA_FALSE;
           }
-     }
-   else if ((!strcmp(dir, "right_multi") && !mirrored) ||
-            (!strcmp(dir, "left_multi") && mirrored))
-     {
-        if (sd->horizontal)
-          {
-             if (_item_multi_select_down(sd)) return EINA_TRUE;
-             else if (_selection_single_move(obj, sd, ELM_FOCUS_DOWN)) return EINA_TRUE;
-             else return EINA_FALSE;
-          }
-        else
-          {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_RIGHT))
-               return EINA_FALSE;
-             if (_item_multi_select_right(sd)) return EINA_TRUE;
-             else if (_selection_single_move(obj, sd, ELM_FOCUS_RIGHT)) return EINA_TRUE;
-             else return EINA_FALSE;
-          }
-     }
-   else if (!strcmp(dir, "up_multi"))
-     {
-        if (sd->horizontal)
-          {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_UP))
-               return EINA_FALSE;
-             if (_item_multi_select_left(sd)) return EINA_TRUE;
-             else if (_selection_single_move(obj, sd, ELM_FOCUS_LEFT)) return EINA_TRUE;
-             else return EINA_FALSE;
-          }
-        else
-          {
-             if (_item_multi_select_up(sd)) return EINA_TRUE;
-             else if (_selection_single_move(obj, sd, ELM_FOCUS_UP)) return EINA_TRUE;
-             else return EINA_FALSE;
-          }
-     }
-   else if (!strcmp(dir, "down_multi"))
-     {
-        if (sd->horizontal)
-          {
-             if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_DOWN))
-               return EINA_FALSE;
-             if (_item_multi_select_right(sd)) return EINA_TRUE;
-             else if (_selection_single_move(obj, sd, ELM_FOCUS_RIGHT)) return EINA_TRUE;
-             else return EINA_FALSE;
-          }
-        else
-          {
-             if (_item_multi_select_down(sd)) return EINA_TRUE;
-             else if (_selection_single_move(obj, sd, ELM_FOCUS_DOWN)) return EINA_TRUE;
-             else return EINA_FALSE;
-          }
+        if (_item_multi_select(sd, direction)) return EINA_TRUE;
+        else if (_selection_single_move(obj, sd, direction)) return EINA_TRUE;
+        else return EINA_FALSE;
      }
    else if (!strcmp(dir, "first"))
      {
