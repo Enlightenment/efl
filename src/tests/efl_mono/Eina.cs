@@ -3306,6 +3306,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        arr.Dispose();
     }
 
     public static void eina_array_int_filled_iterator()
@@ -3320,6 +3323,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_int.Length);
+
+        itr.Dispose();
+        arr.Dispose();
     }
 
     public static void eina_array_str_empty_iterator()
@@ -3332,6 +3338,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        arr.Dispose();
     }
 
     public static void eina_array_str_filled_iterator()
@@ -3346,6 +3355,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_str.Length);
+
+        itr.Dispose();
+        arr.Dispose();
     }
 
     public static void eina_array_obj_empty_iterator()
@@ -3358,6 +3370,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        arr.Dispose();
     }
 
     public static void eina_array_obj_filled_iterator()
@@ -3374,6 +3389,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_objs.Length);
+
+        itr.Dispose();
+        arr.Dispose();
     }
 
     // Inarray
@@ -3388,6 +3406,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        arr.Dispose();
     }
 
     public static void eina_inarray_int_filled_iterator()
@@ -3402,6 +3423,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_int.Length);
+
+        itr.Dispose();
+        arr.Dispose();
     }
 
     // List //
@@ -3416,6 +3440,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        lst.Dispose();
     }
 
     public static void eina_list_int_filled_iterator()
@@ -3430,6 +3457,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_int.Length);
+
+        itr.Dispose();
+        lst.Dispose();
     }
 
     public static void eina_list_str_empty_iterator()
@@ -3442,6 +3472,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        lst.Dispose();
     }
 
     public static void eina_list_str_filled_iterator()
@@ -3456,6 +3489,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_str.Length);
+
+        itr.Dispose();
+        lst.Dispose();
     }
 
     public static void eina_list_obj_empty_iterator()
@@ -3468,6 +3504,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        lst.Dispose();
     }
 
     public static void eina_list_obj_filled_iterator()
@@ -3484,6 +3523,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_objs.Length);
+
+        itr.Dispose();
+        lst.Dispose();
     }
 
     // Inlist //
@@ -3498,6 +3540,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        lst.Dispose();
     }
 
     public static void eina_inlist_int_filled_iterator()
@@ -3512,6 +3557,9 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_int.Length);
+
+        itr.Dispose();
+        lst.Dispose();
     }
 
     // Hash //
@@ -3526,6 +3574,9 @@ class TestEinaIterator
             entered = true;
         }
         Test.Assert(!entered);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_values_int_empty_iterator()
@@ -3538,6 +3589,9 @@ class TestEinaIterator
             entered = true;
         }
         Test.Assert(!entered);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_keys_int_filled_iterator()
@@ -3562,6 +3616,9 @@ class TestEinaIterator
         }
         Test.AssertEquals(dct.Count, 0);
         Test.AssertEquals(idx, 3);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_values_int_filled_iterator()
@@ -3586,6 +3643,9 @@ class TestEinaIterator
         }
         Test.AssertEquals(dct.Count, 0);
         Test.AssertEquals(idx, 3);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_keys_str_empty_iterator()
@@ -3598,6 +3658,9 @@ class TestEinaIterator
             entered = true;
         }
         Test.Assert(!entered);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_values_str_empty_iterator()
@@ -3610,6 +3673,9 @@ class TestEinaIterator
             entered = true;
         }
         Test.Assert(!entered);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_keys_str_filled_iterator()
@@ -3634,6 +3700,9 @@ class TestEinaIterator
         }
         Test.AssertEquals(dct.Count, 0);
         Test.AssertEquals(idx, 3);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_values_str_filled_iterator()
@@ -3658,6 +3727,9 @@ class TestEinaIterator
         }
         Test.AssertEquals(dct.Count, 0);
         Test.AssertEquals(idx, 3);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_keys_obj_empty_iterator()
@@ -3670,6 +3742,9 @@ class TestEinaIterator
             entered = true;
         }
         Test.Assert(!entered);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_values_obj_empty_iterator()
@@ -3682,6 +3757,9 @@ class TestEinaIterator
             entered = true;
         }
         Test.Assert(!entered);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_keys_obj_filled_iterator()
@@ -3714,6 +3792,9 @@ class TestEinaIterator
         }
         Test.AssertEquals(dct.Count, 0);
         Test.AssertEquals(idx, 3);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
     public static void eina_hash_values_obj_filled_iterator()
@@ -3746,6 +3827,9 @@ class TestEinaIterator
         }
         Test.AssertEquals(dct.Count, 0);
         Test.AssertEquals(idx, 3);
+
+        itr.Dispose();
+        hsh.Dispose();
     }
 
 //     // //
