@@ -157,10 +157,11 @@ _efl_gfx_shape_stroke_color_get(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
 }
 
 static void
-_efl_gfx_shape_stroke_width_set(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
-                                double w)
+_efl_gfx_shape_stroke_width_set(Eo *obj, Efl_Gfx_Shape_Data *pd, double w)
 {
    pd->public.stroke.width = w;
+   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
 static double
