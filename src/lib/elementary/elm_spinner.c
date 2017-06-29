@@ -314,6 +314,7 @@ _drag_cb(void *data,
    ELM_SPINNER_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (elm_widget_disabled_get(data)) return;
    if (sd->entry_visible) return;
 
    style = elm_widget_style_get(obj);
@@ -353,7 +354,7 @@ _drag_start_cb(void *data,
                const char *source EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
-
+   if (elm_widget_disabled_get(data)) return;
    sd->drag_prev_pos = 0;
    sd->drag_val_step = 1;
 
@@ -369,6 +370,7 @@ _drag_stop_cb(void *data,
 {
    ELM_SPINNER_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+   if (elm_widget_disabled_get(data)) return;
 
    sd->drag_prev_pos = 0;
    sd->drag_val_step = 1;
