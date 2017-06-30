@@ -7962,11 +7962,15 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
    const Eina_List *l;
    Evas_Object *child;
    Evas_Object_Box_Option *opt;
-   Evas_Coord x, y, w, h;
+   Evas_Coord x, y, w, h, menuw = 0;
    double wx, wy;
    Evas_Coord minw = -1, minh = -1;
    double weight_x = EVAS_HINT_EXPAND;
    double weight_y = EVAS_HINT_EXPAND;
+
+   ELM_WIN_DATA_GET(data, sd);
+   if (sd->main_menu && efl_gfx_visible_get(sd->main_menu))
+     efl_gfx_size_hint_combined_min_get(sd->main_menu, &menuw, NULL);
 
    EINA_LIST_FOREACH(p->children, l, opt)
      {
@@ -7980,6 +7984,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
         if (h > minh) minh = h;
      }
 
+   if (minw < menuw) minw = menuw;
    efl_gfx_size_hint_restricted_min_set(o, minw, minh);
    evas_object_geometry_get(o, &x, &y, &w, &h);
    if (w < minw) w = minw;
@@ -7993,7 +7998,6 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
         evas_object_resize(child, w, h);
      }
 
-   ELM_WIN_DATA_GET(data, sd);
    efl_gfx_size_hint_weight_set(sd->legacy.edje, weight_x, weight_y);
    evas_object_smart_changed(sd->legacy.edje);
 }
