@@ -180,6 +180,8 @@ _efl_observable_observers_update(Eo *obj, Efl_Observable_Data *pd EINA_UNUSED, c
      {
         efl_observer_update(o, obj, key, data);
      }
+
+   eina_iterator_free(it);
 }
 
 typedef struct
