@@ -270,6 +270,7 @@ void test_ui_clock(void *data, Evas_Object *obj, void *event_info);
 void test_popup(void *data, Evas_Object *obj, void *event_info);
 void test_dayselector(void *data, Evas_Object *obj, void *event_info);
 void test_image(void *data, Evas_Object *obj, void *event_info);
+void test_image_swallow_align(void *data, Evas_Object *obj, void *event_info);
 void test_remote_image(void *data, Evas_Object *obj, void *event_info);
 void test_click_image(void *data, Evas_Object *obj, void *event_info);
 void test_load_image(void *data, Evas_Object *obj, void *event_info);
@@ -684,6 +685,7 @@ add_tests:
    ADD_TEST(NULL, "Images", "Photo", test_photo);
    ADD_TEST(NULL, "Images", "Thumb", test_thumb);
    ADD_TEST(NULL, "Images", "Image", test_image);
+   ADD_TEST(NULL, "Images", "Image Align", test_image_swallow_align);
    ADD_TEST(NULL, "Images", "Image Remote", test_remote_image);
    ADD_TEST(NULL, "Images", "Image Click", test_click_image);
    ADD_TEST(NULL, "Images", "Image Async Load", test_load_image);

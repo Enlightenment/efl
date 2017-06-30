@@ -881,4 +881,24 @@ collections {
          }
       }
    }
+   group { name: "image_align";
+      parts {
+         part { name: "color";
+            type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "swallow";
+               rel2.to: "swallow";
+               color: 255 0 0 50;
+            }
+         }
+         part { name: "swallow";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.relative: 0.1 0.1;
+               rel2.relative: 0.9 0.9;
+            }
+         }
+
+      }
+   }
 }
