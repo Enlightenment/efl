@@ -1139,13 +1139,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
         /* This is a probe for wl_dmabuf viability */
         if (ns && ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF &&
             !ns->data.wl_dmabuf.resource)
-          {
-             struct dmabuf_attributes *attr;
-
-             attr = ns->data.wl_dmabuf.attr;
-             if (attr->version != EVAS_DMABUF_ATTRIBUTE_VERSION)
-               ns->data.wl_dmabuf.attr = NULL;
-          }
+          return _evas_native_dmabuf_surface_image_set(image, native);
 
         return NULL;
      }

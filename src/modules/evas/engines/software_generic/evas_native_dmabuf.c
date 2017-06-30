@@ -80,7 +80,30 @@ _evas_native_dmabuf_surface_image_set(void *image, void *native)
    Evas_Native_Surface *ns = native;
    RGBA_Image *im = image;
 
-   if (!im) return NULL;
+   if (!im)
+     {
+        if (ns && ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF &&
+            !ns->data.wl_dmabuf.resource)
+          {
+             struct dmabuf_attributes *attr;
+
+             attr = ns->data.wl_dmabuf.attr;
+             if (attr->version != EVAS_DMABUF_ATTRIBUTE_VERSION)
+               return NULL;
+             if (attr->n_planes != 1)
+               return NULL;
+             if (attr->format != DRM_FORMAT_ARGB8888 &&
+                 attr->format != DRM_FORMAT_XRGB8888)
+               return NULL;
+
+             return evas_cache_image_data(evas_common_image_cache_get(),
+                                          attr->width, attr->height,
+                                          NULL, 1,
+                                          EVAS_COLORSPACE_ARGB8888);
+          }
+       return NULL;
+     }
+
    if (ns)
      {
         struct dmabuf_attributes *a;
