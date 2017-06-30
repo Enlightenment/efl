@@ -276,7 +276,7 @@ group { name: "e/gadget/clock/digital";
 #endif         
          dosec = get_int(do_seconds);
          if (dosec) {
-            v = round(second);
+            v = round(second, FLOOR);
             tim = timer(1.0 - (second - v), "clock_cb", 1);
             // set seconds to v
             valset("s0", v / 10);
@@ -792,7 +792,7 @@ group { name: "e/gadget/clock/analog";
 #endif
             dosec = get_int(do_seconds);
             if (dosec) {
-               v = round(second);
+               v = round(second, FLOOR);
                tim = timer(1.0 - (second - v), "clock_cb", 1);
                
                custom_state(PART:"seconds", "default", 0.0);
