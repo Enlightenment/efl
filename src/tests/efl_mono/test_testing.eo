@@ -1003,6 +1003,147 @@ class Test.Testing (Efl.Object) {
          return: bool;
       }
 
+      /* Eina Iterator */
+
+      /* Integer */
+      eina_iterator_int_in {
+         params {
+            @in itr: iterator<int>;
+         }
+         return: bool;
+      }
+
+      eina_iterator_int_in_own {
+         params {
+            @in itr: own(iterator<own(ref(int))>);
+         }
+         return: bool;
+      }
+      check_eina_iterator_int_in_own {
+         return: bool;
+      }
+
+      eina_iterator_int_out {
+         params {
+            @out itr: iterator<int>;
+         }
+         return: bool;
+      }
+      check_eina_iterator_int_out {
+         return: bool;
+      }
+
+      eina_iterator_int_out_own {
+         params {
+            @out itr: own(iterator<own(ref(int))>);
+         }
+         return: bool;
+      }
+
+      eina_iterator_int_return {
+         return: iterator<int>;
+      }
+      check_eina_iterator_int_return {
+         return: bool;
+      }
+
+      eina_iterator_int_return_own {
+         return: own(iterator<own(ref(int))>);
+      }
+
+      /* String */
+      eina_iterator_str_in {
+         params {
+            @in itr: iterator<string>;
+         }
+         return: bool;
+      }
+
+      eina_iterator_str_in_own {
+         params {
+            @in itr: own(iterator<own(string)>);
+         }
+         return: bool;
+      }
+      check_eina_iterator_str_in_own {
+         return: bool;
+      }
+
+      eina_iterator_str_out {
+         params {
+            @out itr: iterator<string>;
+         }
+         return: bool;
+      }
+      check_eina_iterator_str_out {
+         return: bool;
+      }
+
+      eina_iterator_str_out_own {
+         params {
+            @out itr: own(iterator<own(string)>);
+         }
+         return: bool;
+      }
+
+      eina_iterator_str_return {
+         return: iterator<string>;
+      }
+      check_eina_iterator_str_return {
+         return: bool;
+      }
+
+      eina_iterator_str_return_own {
+         return: own(iterator<own(string)>);
+      }
+
+      /* Object */
+      eina_iterator_obj_in {
+         params {
+            @in itr: iterator<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_iterator_obj_in_own {
+         params {
+            @in itr: own(iterator<own(Test.Numberwrapper)>);
+         }
+         return: bool;
+      }
+      check_eina_iterator_obj_in_own {
+         return: bool;
+      }
+
+      eina_iterator_obj_out {
+         params {
+            @out itr: iterator<Test.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_iterator_obj_out {
+         return: bool;
+      }
+
+      eina_iterator_obj_out_own {
+         params {
+            @out itr: own(iterator<own(Test.Numberwrapper)>);
+         }
+         return: bool;
+      }
+
+      eina_iterator_obj_return {
+         return: iterator<Test.Numberwrapper>;
+      }
+      check_eina_iterator_obj_return {
+         return: bool;
+      }
+
+      eina_iterator_obj_return_own {
+         return: own(iterator<own(Test.Numberwrapper)>);
+      }
+
+     /* Function Pointer */
 
      set_callback {
          params {
