@@ -3832,87 +3832,436 @@ class TestEinaIterator
         hsh.Dispose();
     }
 
-//     // //
-//     // Code Generation
-//     //
-//
-//     // Integer //
-//
-//     public static void test_eina_iterator_int_in()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_int_in_own()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_int_out()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_int_out_own()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_int_return()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_int_return_own()
-//     {
-//     }
-//
-//     // String //
-//
-//     public static void test_eina_iterator_str_in()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_str_in_own()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_str_out()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_str_out_own()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_str_return()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_str_return_own()
-//     {
-//     }
-//
-//     // Object //
-//
-//     public static void test_eina_iterator_obj_in()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_obj_in_own()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_obj_out()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_obj_out_own()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_obj_return()
-//     {
-//     }
-//
-//     public static void test_eina_iterator_obj_return_own()
-//     {
-//     }
+    // //
+    // Code Generation
+    //
+
+    // Integer //
+
+    public static void test_eina_iterator_int_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<int>();
+        arr.Append(base_seq_int);
+        var itr = arr.GetIterator();
+
+        Test.Assert(itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        Test.Assert(t.eina_iterator_int_in(itr));
+
+        Test.Assert(itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        itr.Dispose();
+        arr.Dispose();
+    }
+
+    public static void test_eina_iterator_int_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<int>();
+        arr.Append(base_seq_int);
+        var itr = arr.GetIterator();
+        arr.OwnContent = false;
+        itr.OwnContent = true;
+
+        Test.Assert(itr.Own);
+        Test.Assert(itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(!arr.OwnContent);
+
+        Test.Assert(t.eina_iterator_int_in_own(itr));
+
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(!arr.OwnContent);
+
+        itr.Dispose();
+        arr.Dispose();
+
+        Test.Assert(t.check_eina_iterator_int_in_own());
+    }
+
+    public static void test_eina_iterator_int_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Iterator<int> itr;
+
+        Test.Assert(t.eina_iterator_int_out(out itr));
+
+
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            Test.AssertEquals(e, base_seq_int[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_int.Length);
+
+        itr.Dispose();
+
+        Test.Assert(t.check_eina_iterator_int_out());
+    }
+
+    public static void test_eina_iterator_int_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Iterator<int> itr;
+
+        Test.Assert(t.eina_iterator_int_out_own(out itr));
+
+        Test.Assert(itr.Own);
+        Test.Assert(itr.OwnContent);
+
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            Test.AssertEquals(e, base_seq_int[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_int.Length);
+
+        itr.Dispose();
+    }
+
+    public static void test_eina_iterator_int_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+
+        var itr = t.eina_iterator_int_return();
+
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            Test.AssertEquals(e, base_seq_int[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_int.Length);
+
+        itr.Dispose();
+
+        Test.Assert(t.check_eina_iterator_int_return());
+    }
+
+    public static void test_eina_iterator_int_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+
+        var itr = t.eina_iterator_int_return_own();
+
+        Test.Assert(itr.Own);
+        Test.Assert(itr.OwnContent);
+
+        int idx = 0;
+        foreach (int e in itr)
+        {
+            Test.AssertEquals(e, base_seq_int[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_int.Length);
+
+        itr.Dispose();
+    }
+
+    // String //
+
+    public static void test_eina_iterator_str_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<string>();
+        arr.Append(base_seq_str);
+        var itr = arr.GetIterator();
+
+        Test.Assert(itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        Test.Assert(t.eina_iterator_str_in(itr));
+
+        Test.Assert(itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        itr.Dispose();
+        arr.Dispose();
+    }
+
+    public static void test_eina_iterator_str_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<string>();
+        arr.Append(base_seq_str);
+        var itr = arr.GetIterator();
+        arr.OwnContent = false;
+        itr.OwnContent = true;
+
+        Test.Assert(itr.Own);
+        Test.Assert(itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(!arr.OwnContent);
+
+        Test.Assert(t.eina_iterator_str_in_own(itr));
+
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(!arr.OwnContent);
+
+        itr.Dispose();
+        arr.Dispose();
+
+        Test.Assert(t.check_eina_iterator_str_in_own());
+    }
+
+    public static void test_eina_iterator_str_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Iterator<string> itr;
+
+        Test.Assert(t.eina_iterator_str_out(out itr));
+
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.AssertEquals(e, base_seq_str[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_str.Length);
+
+        itr.Dispose();
+
+        Test.Assert(t.check_eina_iterator_str_out());
+    }
+
+    public static void test_eina_iterator_str_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Iterator<string> itr;
+
+        Test.Assert(t.eina_iterator_str_out_own(out itr));
+
+        Test.Assert(itr.Own);
+        Test.Assert(itr.OwnContent);
+
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.AssertEquals(e, base_seq_str[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_str.Length);
+
+        itr.Dispose();
+    }
+
+    public static void test_eina_iterator_str_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+
+        var itr = t.eina_iterator_str_return();
+
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.AssertEquals(e, base_seq_str[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_str.Length);
+
+        itr.Dispose();
+
+        Test.Assert(t.check_eina_iterator_str_return());
+    }
+
+    public static void test_eina_iterator_str_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+
+        var itr = t.eina_iterator_str_return_own();
+
+        Test.Assert(itr.Own);
+        Test.Assert(itr.OwnContent);
+
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.AssertEquals(e, base_seq_str[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_str.Length);
+
+        itr.Dispose();
+    }
+
+    // Object //
+
+    public static void test_eina_iterator_obj_in()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<test.Numberwrapper>();
+        arr.Append(BaseSeqObj());
+        var itr = arr.GetIterator();
+
+        Test.Assert(itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        Test.Assert(t.eina_iterator_obj_in(itr));
+
+        Test.Assert(itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        itr.Dispose();
+        arr.Dispose();
+    }
+
+    public static void test_eina_iterator_obj_in_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        var arr = new eina.Array<test.Numberwrapper>();
+        arr.Append(BaseSeqObj());
+        var itr = arr.GetIterator();
+        arr.OwnContent = false;
+        itr.OwnContent = true;
+
+        Test.Assert(itr.Own);
+        Test.Assert(itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(!arr.OwnContent);
+
+        Test.Assert(t.eina_iterator_obj_in_own(itr));
+
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+        Test.Assert(arr.Own);
+        Test.Assert(!arr.OwnContent);
+
+        itr.Dispose();
+        arr.Dispose();
+
+        Test.Assert(t.check_eina_iterator_obj_in_own());
+    }
+
+    public static void test_eina_iterator_obj_out()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Iterator<test.Numberwrapper> itr;
+
+        Test.Assert(t.eina_iterator_obj_out(out itr));
+
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+
+        var base_seq_obj = BaseSeqObj();
+
+        int idx = 0;
+        foreach (test.Numberwrapper e in itr)
+        {
+            Test.AssertEquals(e.number_get(), base_seq_obj[idx].number_get());
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_obj.Length);
+
+        itr.Dispose();
+
+        Test.Assert(t.check_eina_iterator_obj_out());
+    }
+
+    public static void test_eina_iterator_obj_out_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+        eina.Iterator<test.Numberwrapper> itr;
+
+        Test.Assert(t.eina_iterator_obj_out_own(out itr));
+
+        Test.Assert(itr.Own);
+        Test.Assert(itr.OwnContent);
+
+        var base_seq_obj = BaseSeqObj();
+
+        int idx = 0;
+        foreach (test.Numberwrapper e in itr)
+        {
+            Test.AssertEquals(e.number_get(), base_seq_obj[idx].number_get());
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_obj.Length);
+
+        itr.Dispose();
+    }
+
+    public static void test_eina_iterator_obj_return()
+    {
+        test.Testing t = new test.TestingConcrete();
+
+        var itr = t.eina_iterator_obj_return();
+
+        Test.Assert(!itr.Own);
+        Test.Assert(!itr.OwnContent);
+
+        var base_seq_obj = BaseSeqObj();
+
+        int idx = 0;
+        foreach (test.Numberwrapper e in itr)
+        {
+            Test.AssertEquals(e.number_get(), base_seq_obj[idx].number_get());
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_obj.Length);
+
+        itr.Dispose();
+
+        Test.Assert(t.check_eina_iterator_obj_return());
+    }
+
+    public static void test_eina_iterator_obj_return_own()
+    {
+        test.Testing t = new test.TestingConcrete();
+
+        var itr = t.eina_iterator_obj_return_own();
+
+        Test.Assert(itr.Own);
+        Test.Assert(itr.OwnContent);
+
+        var base_seq_obj = BaseSeqObj();
+
+        int idx = 0;
+        foreach (test.Numberwrapper e in itr)
+        {
+            Test.AssertEquals(e.number_get(), base_seq_obj[idx].number_get());
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_obj.Length);
+
+        itr.Dispose();
+    }
 } // < TestEinaIterator
 
 }
