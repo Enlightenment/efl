@@ -292,6 +292,7 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
         EINA_LIST_FOREACH_SAFE(output->planes, l, ll, plane)
           {
              fb = plane->fb;
+             plane_scanout = plane->scanout;
              if (!plane->dead)
                {
                   /* First time this plane is scanned out */
@@ -299,13 +300,13 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
                     fb->scanout_count++;
 
                   plane->scanout = EINA_TRUE;
-                  if (fb->status_handler && (fb->scanout_count == 1))
+                  if (fb->status_handler && (fb->scanout_count == 1) &&
+                      (plane_scanout != plane->scanout))
                     fb->status_handler(fb,
                                        ECORE_DRM2_FB_STATUS_SCANOUT_ON,
                                        fb->status_data);
                   continue;
                }
-             plane_scanout = plane->scanout;
              output->planes = eina_list_remove_list(output->planes, l);
              free(plane);
              if (!plane_scanout) continue;
