@@ -3037,46 +3037,9 @@ Eina_Iterator *_test_testing_eina_iterator_obj_return_own(EINA_UNUSED Eo *obj, E
    return eina_array_iterator_new(arr);
 }
 
-//                   //
-// Class constructor
-//                   //
-EOLIAN static void
-_test_testing_class_constructor(Efl_Class *klass)
-{
-   (void)klass;
-   modified_seq_obj[0] = base_seq_obj[0] = _new_obj(0x0);
-   modified_seq_obj[1] = base_seq_obj[1] = _new_obj(0x2A);
-   modified_seq_obj[2] = base_seq_obj[2] = _new_obj(0x42);
-   modified_seq_obj[3] = _new_obj(42);
-   modified_seq_obj[4] = _new_obj(43);
-   modified_seq_obj[5] = _new_obj(33);
-}
-
-EOLIAN static void
-_test_testing_class_destructor(Efl_Class *klass)
-{
-   (void)klass;
-   for (unsigned i = 0; i < base_seq_obj_size; ++i)
-     efl_unref(base_seq_obj[i]);
-   for (unsigned i = 0; i < modified_seq_obj_size; ++i)
-     efl_unref(modified_seq_obj[i]);
-}
-
-
-// ################## //
-// Test.Numberwrapper //
-// ################## //
-
-
-void _test_numberwrapper_number_set(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data *pd, int n)
-{
-   pd->number = n;
-}
-
-int _test_numberwrapper_number_get(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data *pd)
-{
-   return pd->number;
-}
+//                                 //
+// Callbacks and Function Pointers //
+//                                 //
 
 void _test_testing_set_callback(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, SimpleCb cb, void *cb_data, Eina_Free_Cb cb_free_cb)
 {
@@ -3151,6 +3114,47 @@ void _test_testing_error_ret_set(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Ein
 Eina_Error _test_testing_returns_error(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
 {
    return pd->error_code;
+}
+
+//                   //
+// Class constructor
+//                   //
+EOLIAN static void
+_test_testing_class_constructor(Efl_Class *klass)
+{
+   (void)klass;
+   modified_seq_obj[0] = base_seq_obj[0] = _new_obj(0x0);
+   modified_seq_obj[1] = base_seq_obj[1] = _new_obj(0x2A);
+   modified_seq_obj[2] = base_seq_obj[2] = _new_obj(0x42);
+   modified_seq_obj[3] = _new_obj(42);
+   modified_seq_obj[4] = _new_obj(43);
+   modified_seq_obj[5] = _new_obj(33);
+}
+
+EOLIAN static void
+_test_testing_class_destructor(Efl_Class *klass)
+{
+   (void)klass;
+   for (unsigned i = 0; i < base_seq_obj_size; ++i)
+     efl_unref(base_seq_obj[i]);
+   for (unsigned i = 0; i < modified_seq_obj_size; ++i)
+     efl_unref(modified_seq_obj[i]);
+}
+
+
+// ################## //
+// Test.Numberwrapper //
+// ################## //
+
+
+void _test_numberwrapper_number_set(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data *pd, int n)
+{
+   pd->number = n;
+}
+
+int _test_numberwrapper_number_get(EINA_UNUSED Eo *obj, Test_Numberwrapper_Data *pd)
+{
+   return pd->number;
 }
 
 #include "test_testing.eo.c"
