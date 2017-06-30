@@ -1,0 +1,50 @@
+if HAVE_ECORE_WL2
+
+lib_LTLIBRARIES += lib/efl_wl/libefl_wl.la
+
+installed_eflwlmainheadersdir = $(includedir)/efl-wl-@VMAJ@
+dist_installed_eflwlmainheaders_DATA = lib/efl_wl/Efl_Wl.h
+
+lib_efl_wl_libefl_wl_la_SOURCES = \
+lib/efl_wl/efl_wl.c \
+lib/efl_wl/dmabuf.c \
+lib/efl_wl/dmabuf.h
+
+
+nodist_lib_efl_wl_libefl_wl_la_SOURCES = \
+lib/efl_wl/linux-dmabuf-unstable-v1-protocol.c \
+lib/efl_wl/linux-dmabuf-unstable-v1-server-protocol.h \
+lib/efl_wl/xdg-shell-unstable-v6-protocol.c \
+lib/efl_wl/xdg-shell-unstable-v6-server-protocol.h
+
+lib_efl_wl_libefl_wl_la_CPPFLAGS = -I$(top_builddir)/lib/efl @EFL_WL_CFLAGS@
+lib_efl_wl_libefl_wl_la_LIBADD = @EFL_WL_LIBS@
+lib_efl_wl_libefl_wl_la_DEPENDENCIES = @EFL_WL_INTERNAL_LIBS@ \
+lib/efl_wl/copiedfromweston.x \
+lib/efl_wl/x11.x
+
+lib_efl_wl_libefl_wl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+BUILT_SOURCES += $(nodist_lib_efl_wl_libefl_wl_la_SOURCES)
+
+bin_PROGRAMS += \
+bin/efl_wl/efl_wl_test \
+bin/efl_wl/efl_wl_test_stack
+
+bin_efl_wl_efl_wl_test_SOURCES = bin/efl_wl/efl_wl_test.c
+bin_efl_wl_efl_wl_test_stack_SOURCES = bin/efl_wl/efl_wl_test_stack.c
+
+bin_efl_wl_efl_wl_test_LDADD = @USE_EFL_WL_LIBS@ @USE_ELEMENTARY_LIBS@
+bin_efl_wl_efl_wl_test_DEPENDENCIES = @USE_EFL_WL_INTERNAL_LIBS@ @USE_ELEMENTARY_INTERNAL_LIBS@
+bin_efl_wl_efl_wl_test_CPPFLAGS = \
+@EFL_WL_CFLAGS@ \
+@ELEMENTARY_CFLAGS@
+
+bin_efl_wl_efl_wl_test_stack_LDADD = @USE_EFL_WL_LIBS@ @USE_ELEMENTARY_LIBS@
+bin_efl_wl_efl_wl_test_stack_DEPENDENCIES = @USE_EFL_WL_INTERNAL_LIBS@ @USE_ELEMENTARY_INTERNAL_LIBS@
+bin_efl_wl_efl_wl_test_stack_CPPFLAGS = \
+@EFL_WL_CFLAGS@ \
+@ELEMENTARY_CFLAGS@
+
+
+endif

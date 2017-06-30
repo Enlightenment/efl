@@ -73,6 +73,7 @@ include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
 include Makefile_Elocation.am
 include Makefile_Elementary.am
+include Makefile_efl_wl.am
 
 include Makefile_Cxx.am
 include Makefile_Eolian_Cxx.am

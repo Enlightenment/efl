@@ -3672,6 +3672,44 @@ EFL_EVAL_PKGS([ECORE_WL2])
 EFL_LIB_END_OPTIONAL([Ecore_Wl2])
 #### End of Ecore_Wl2
 
+#### Efl_Wl
+EFL_LIB_START_OPTIONAL([Efl_Wl], [test -n "${ECORE_WL2_CFLAGS}"])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EFL_WL], [ecore-wl2])
+EFL_INTERNAL_DEPEND_PKG([EFL_WL], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([EFL_WL], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EFL_WL], [ecore-evas])
+EFL_INTERNAL_DEPEND_PKG([EFL_WL], [evas])
+EFL_INTERNAL_DEPEND_PKG([EFL_WL], [emile])
+EFL_INTERNAL_DEPEND_PKG([EFL_WL], [eo])
+EFL_INTERNAL_DEPEND_PKG([EFL_WL], [efl])
+EFL_INTERNAL_DEPEND_PKG([EFL_WL], [eina])
+EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EFL_WL], [${want_x11_any}], [ecore_x])
+
+EFL_EVAL_PKGS([EFL_WL])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END_OPTIONAL([Efl_Wl])
+#### End of Efl_Wl
+
 #### Eldbus
 EFL_LIB_START([Eldbus])
 
