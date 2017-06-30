@@ -1,4 +1,4 @@
-if HAVE_ECORE_WL2
+if HAVE_EFL_WL
 
 lib_LTLIBRARIES += lib/efl_wl/libefl_wl.la
 

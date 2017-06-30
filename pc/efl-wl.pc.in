@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: efl-wl
+Description: EFL Wayland compositor widget
+Requires.private: @requirements_pc_efl_wl@
+Version: @VERSION@
+Libs: -L${libdir} -lefl_wl
+Libs.private: @requirements_libs_efl_wl@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/efl-wl-@VMAJ@
