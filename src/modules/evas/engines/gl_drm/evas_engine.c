@@ -1202,12 +1202,16 @@ eng_image_native_set(void *engine, void *image, void *native)
                   attr = ns->data.wl_dmabuf.attr;
                   if (attr->version == EVAS_DMABUF_ATTRIBUTE_VERSION)
                     v = gl_import_simple_dmabuf(ob->egl.disp, attr);
-                  if (!v) {
-                       ns->data.wl_dmabuf.attr = NULL;
-                       return NULL;
-                    }
+                  if (!v) return NULL;
+
                   glsym_eglDestroyImage(ob->egl.disp, v);
-                  return NULL;
+                  img =
+                    glsym_evas_gl_common_image_new_from_data(ob->gl_context,
+                                                             attr->width,
+                                                             attr->height,
+                                                             NULL, 1,
+                                                             EVAS_COLORSPACE_ARGB8888);
+                  return img;
                }
           }
         else
