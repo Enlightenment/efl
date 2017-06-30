@@ -483,7 +483,17 @@ EAPI void
 evas_object_image_native_surface_set(Evas_Object *eo_obj, Evas_Native_Surface *surf)
 {
    EVAS_IMAGE_API(eo_obj);
-   _evas_image_native_surface_set(eo_obj, surf);
+
+   Eina_Bool ret;
+
+   ret = _evas_image_native_surface_set(eo_obj, surf);
+
+   if (surf && !ret)
+     {
+        Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+
+        o->load_error = EVAS_LOAD_ERROR_GENERIC;
+     }
 }
 
 EAPI Evas_Native_Surface *
