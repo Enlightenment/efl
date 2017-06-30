@@ -2956,7 +2956,7 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
    // handle item loop feature
    if (sd->item_loop_enable && !sd->item_looping_on)
      {
-        if (min > v)
+        if (min < v)
           {
              if (dir == ELM_FOCUS_UP)
                {
@@ -2972,9 +2972,19 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
         else
           {
              if (dir == ELM_FOCUS_UP)
-               it = elm_genlist_last_item_get(obj);
+               {
+                  it = elm_genlist_last_item_get(obj);
+                  ELM_GENLIST_ITEM_DATA_GET(it, gen_it);
+                  while (_is_no_select(gen_it) || elm_wdg_item_disabled_get(it))
+                    it = elm_genlist_item_prev_get(it);
+               }
             else if (dir == ELM_FOCUS_DOWN)
-               it = elm_genlist_first_item_get(obj);
+              {
+                 it = elm_genlist_first_item_get(obj);
+                 ELM_GENLIST_ITEM_DATA_GET(it, gen_it);
+                 while (_is_no_select(gen_it) || elm_wdg_item_disabled_get(it))
+                   it = elm_genlist_item_next_get(it);
+              }
 
              if (it && focus_only)
                elm_object_item_focus_set(it, EINA_TRUE);
