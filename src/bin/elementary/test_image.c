@@ -81,6 +81,78 @@ test_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_in
    evas_object_show(win);
 }
 
+
+static void
+im_align_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   double h,v;
+   Evas_Object *win = data;
+   Evas_Object *im = evas_object_data_get(win, "im");
+   Evas_Object *h_sl = evas_object_data_get(win, "h_sl");
+   Evas_Object *v_sl = evas_object_data_get(win, "v_sl");
+
+   h = elm_slider_value_get(h_sl);
+   v = elm_slider_value_get(v_sl);
+   evas_object_size_hint_align_set(im, h, v);
+   evas_object_size_hint_align_get(im, &h, &v);
+   printf("align %.3f %.3f\n", h, v);
+}
+
+void
+test_image_swallow_align(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box, *im, *ly, *sl;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("image align", "Test Align Inside Layout");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "image_align");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, ly);
+   evas_object_show(ly);
+
+   im = elm_image_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
+   elm_image_file_set(im, buf, NULL);
+   evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(im, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_layout_content_set(ly, "swallow", im);
+   evas_object_show(im);
+   evas_object_data_set(win, "im", im);
+
+   sl = elm_slider_add(win);
+   elm_slider_value_set(sl, 0.5);
+   elm_object_text_set(sl, "Horiz Align");
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(sl, "changed", im_align_cb, win);
+   elm_box_pack_end(box, sl);
+   evas_object_show(sl);
+   evas_object_data_set(win, "h_sl", sl);
+
+   sl = elm_slider_add(win);
+   elm_slider_value_set(sl, 0.5);
+   elm_object_text_set(sl, "Vert Align");
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(sl, "changed", im_align_cb, win);
+   elm_box_pack_end(box, sl);
+   evas_object_show(sl);
+   evas_object_data_set(win, "v_sl", sl);
+
+   evas_object_resize(win, 300, 600);
+   evas_object_show(win);
+}
+
 static void
 _download_start_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
