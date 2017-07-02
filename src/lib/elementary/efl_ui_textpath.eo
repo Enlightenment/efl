@@ -1,0 +1,59 @@
+enum Efl.Ui.Textpath.Orientation {
+     left_to_right,
+     right_to_left
+}
+
+class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text)
+{
+   [[Efl Ui Textpath class]]
+   methods {
+      @property path {
+         [[The path to place text.
+           Currently, it only supports circle and points paths.]]
+         values {
+            path: Efl.Gfx.Path;
+         }
+      }
+      circle_set {
+         [[Set a circle with given center, radius, and start angle.]]
+         params {
+            @in x: double;
+            @in y: double;
+            @in radius: double;
+            @in start_angle: double;
+         }
+      }
+      @property orientation {
+         [[The orientation where text is placed:
+           left-to-right or right-to-left]]
+         values {
+            orient: Efl.Ui.Textpath.Orientation;
+         }
+      }
+      @property autofit {
+         [[The ability to fit the text within the path.
+           Set it to EINA_TRUE to let text occupy only portion
+           same as its size. Otherwise, text will occupied the whole path.
+           By default, it is EINA_TRUE.]]
+         values {
+            autofit: bool;
+         }
+      }
+      @property slice_number {
+         [[The number of slices. The larger the number of slice_num is,
+           The better the text follow the path.]]
+         values {
+            slice_no: int;
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Elm.Layout.sizing_eval;
+      Efl.Text.text {get; set;}
+   }
+   events {
+   }
+}
