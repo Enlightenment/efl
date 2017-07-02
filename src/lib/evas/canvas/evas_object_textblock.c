@@ -15336,7 +15336,7 @@ _efl_canvas_text_efl_text_style_gfx_filter_set(Eo *obj EINA_UNUSED, Efl_Canvas_T
 static const char *
 _efl_canvas_text_efl_text_style_gfx_filter_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
 {
-   return _FMT(gfx_filter->name);
+   return _FMT(gfx_filter)?_FMT(gfx_filter->name):NULL;
 }
 
 static void
