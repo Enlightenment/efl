@@ -4670,8 +4670,6 @@ _create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd)
    efl_file_get(sd->entry_edje, &file, NULL);
    sd->cursor = _decoration_create(sd, file, "elm/entry/cursor/default", EINA_TRUE);
    sd->cursor_bidi = _decoration_create(sd, file, "elm/entry/cursor/default", EINA_TRUE);
-   edje_object_signal_emit(sd->cursor, "elm,action,focus", "elm");
-   edje_object_signal_emit(sd->cursor_bidi, "elm,action,focus", "elm");
 
    if (!efl_ui_text_interactive_editable_get(obj))
      {
