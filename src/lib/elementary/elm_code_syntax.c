@@ -29,6 +29,18 @@ static Elm_Code_Syntax _elm_code_syntax_c =
       "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while", NULL}
 };
 
+static Elm_Code_Syntax _elm_code_syntax_rust =
+{
+   "-*!&+/%|^<=>:;.,{}()[]",
+   "#",
+   "//",
+   NULL,
+   NULL,
+   {"as", "break", "const", "continue", "create", "else",  "enum", "extern", "false", "fn", "for", "if", \
+      "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub", "ref", "return", "Self", "self", \
+      "static", "struct", "super", "trait", "true", "type", "unsafe", "use", "where", "while", NULL}
+};
+
 static Elm_Code_Syntax _elm_code_syntax_py =
 {
    "{}()[]:;%/*+!=<->,.",
@@ -70,6 +82,8 @@ elm_code_syntax_for_mime_get(const char *mime)
 
    if (!strcmp("text/x-chdr", mime) || !strcmp("text/x-csrc", mime))
      return &_elm_code_syntax_c;
+   if (!strcmp("text/rust", mime))
+     return &_elm_code_syntax_rust;
    if (!strcmp("text/x-python", mime))
      return &_elm_code_syntax_py;
    if (!strcmp("text/x-eolian", mime))
