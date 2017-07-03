@@ -2,8 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 AM_MAKEFLAGS = --no-print-directory
 AM_DISTCHECK_CONFIGURE_FLAGS = \
 --with-tests=regular \
---with-systemdunitdir=. \
---enable-always-build-examples
+--with-systemdunitdir=.
 
 SUBDIRS = src data config doc
 

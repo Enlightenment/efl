@@ -5226,7 +5226,7 @@ if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
 fi
 
 AC_ARG_ENABLE([always-build-examples],
-   [AS_HELP_STRING([--enable-always-build-examples],[always build examples. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--enable-always-build-examples],[always build examples. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_always_build_examples="yes"
@@ -5234,7 +5234,7 @@ AC_ARG_ENABLE([always-build-examples],
        want_always_build_examples="no"
     fi
    ],
-   [want_always_build_examples="no"])
+   [want_always_build_examples="yes"])
 AM_CONDITIONAL([ALWAYS_BUILD_EXAMPLES], [test "${want_always_build_examples}" = "yes"])
 
 BARF_OK="xno"
