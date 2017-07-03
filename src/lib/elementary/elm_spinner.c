@@ -845,6 +845,8 @@ _inc_dec_button_pressed_cb(void *data, const Efl_Event *event)
    sd->longpress_timer = ecore_timer_add
                            (_elm_config->longpress_timeout,
                             _val_inc_dec_start, data);
+
+   if (sd->entry_visible) _entry_value_apply(data);
 }
 
 static void
