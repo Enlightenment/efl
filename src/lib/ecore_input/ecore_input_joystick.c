@@ -625,7 +625,7 @@ ecore_input_joystick_event_axis_deadzone_get(void)
 EAPI Eina_Slstr *
 ecore_input_joystick_name_get(int index)
 {
-#ifdef JSIOCGNAME
+#if defined(HAVE_EEZE) && defined(JSIOCGNAME)
    int fd;
    char name[128];
    Eina_List *l;
