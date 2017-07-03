@@ -111,9 +111,112 @@ Features:
    * ecore-wl2: Add client-side event for Window Deactivate
    * ecore-wl2: Add more window types to Window Type enum
    * edje player - add slave command to set text of text part for testing
+   * efl_wl: a multiseat wayland compositor in an evas smart object
 
 Fixes:
 
+   * elm_code: Fix syntax crash on trailing newline in multiline macro
+   * ecore-wl2: roundtrip during client disconnect
+   * evas: fix bugs in gif image loader
+   * ecore-evas-wayland: Fix setting rotation during async render
+   * ecore-evas-drm: Fix setting rotation during async render
+   * evas textblock: keep previous size when the calculation is skipped
+   * Edje calc: Fix textblock size calculation logic
+   * ecore-wl2: Fix setting opaque region on a window
+   * ecore-wl2: Fix setting input region on a window
+   * elm_code: Fix Coverity issues. (CID1356612, CID1368489, CID1371128, CID1371123, CID1368335, CID1371124, CID1371126)
+   * elm_code: Another Coverity fix, better this time. (CID1371322)
+   * Canvas text: fix clearing existing style (T5187)
+   * eina utils: fix build without getpwent.
+   * edje: Fix a major issue with recalc loop (T4909)
+   * elementary gengrid: fix for working item reorder mode correctly
+   * edje_edit: fix scripts compilation
+   * elementary: Fix compilation for SDL
+   * ecore-evas: use ee->prop.window in ecore_evas_input_event_register()
+   * ecore: do not access 'timer_thread' global from animator thread
+   * evas gl common - fix nv12 text upload with upack row length
+   * genlist: (Mostly) fix item index odd/even styles (T3086)
+   * genlist: Fix rare jump in prepend insert
+   * genlist: Fix fileselector crazy behaviour
+   * genlist: Final fix for odd/even styles issue (T3086)
+   * elementary: Don't set pointer object theme on start (T5209)
+   * ecore-evas-wayland: Don't register animators until window gets shown (T5209)
+   * elementary: Fix issue of trying to init ecore_wl2 if DISPLAY is set
+   * ecore-imf: Don't always load all modules
+   * elm_code: Hide the cursor when it is off screen
+   * eina: move the _eina_main_loop set before we init anything (T4891)
+   * ecore-wl2: Only bind one shell (T5226)
+   * ecore-wl2: Avoid resetting opaque & input regions if they match (T5226)
+   * ecore-imf-wayland: Remove duplicate header include
+   * ecore-imf-wayland: Reduce calls to set_cursor_rectangle (T5226)
+   * elementary: Don't update opaque/input regions if not visible (T5226)
+   * ecore-wl2: Ensure display cleanup after roundtrips
+   * ecore-wl2: Send surface_commit after ack_configure (T5192)
+   * ecore-evas-wayland: Fix issue of apps not starting up in fullscreen mode (T5044)
+   * ecore-evas-wayland: Remove duplicated code
+   * ecore_wl2: Fix a wayland session recovery breaker... again (T5226, T5005)
+   * ecore-evas-wayland: Fix yet another wayland session recovery break (T5005)
+   * emotion - fix empty video data frame update when using vdpau accel
+   * genlist: Remove weird behavior about item_show, bring_in (T4854)
+   * evas: Fix double clipping issue with map
+   * elm_code: Fix missing syntax for .eo files
+   * tests: Remove CPU affinity from all threads
+   * naviframe: keep unfocusable state of item before finishing item push/pop
+   * evas: clean up GL images for emojis when GL context is free'd
+   * evas image cache - add lots more locking to try stamp out any thread bug (T5223)
+   * evas: Check for null pointer deref (CID1371826)
+   * popup: hides the popup when hide effect is finished
+   * evas filters: Save selected render op of the final object
+   * ecore: add ecore_event_type_flush.
+   * genlist: Fix invalid state of reused content (T5236)
+   * ecore_animator: use EINA_DBL_EQ for comparing double values
+   * Gengrid: Correct double comparision.
+   * elm_code: Fix position of cursor in selection
+   * elm_code: Don't leak rows when we resize down
+   * ecore-evas reduce modifier modification on every event to cut cpu (T5252)
+   * eina: Fix typo in doxygen
+   * eina: Fix more typo in doxygen
+   * edje: Fix rare issue with map (T1551)
+   * evas gl: Fix usage of OSMesa
+   * ecore_animator: improve comparision check for stopping animator.
+   * elementary: Fix minor typo in efl_ui_win.eo
+   * evas: drop redundant pointer check (CID1371525)
+   * gengrid: avoid call select callback twice in mode ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL
+   * evas table: CRI when attempting to pack a table child into another table
+   * theme: remove event gaps in enlightenment window frames
+   * genlist: Fix another issue with insert sorted (T5274)
+   * elm_map: Fix work of elm_map_overlay_icon_set if icon is NULL.
+   * elm_code: fix keyboard selection forward
+   * evas: Fix a rare issue with GL and map and mask
+   * Eina_Xattr: fix memory corruption
+   * ecore audio: Fix loss of last stream (T5281)
+   * ecore-drm2: Remove unused field in Output structure
+   * evas_events: look for seats on hash instead of input devices (T5146)
+   * elm_code: fix CID 1368489
+   * Gengrid: Bring the item into view scope before swapping.
+   * gengrid: fix the crash in _elm_gengrid_item_edge_check
+   * elm_code: Fix newline crash on BSD
+   * ecore-evas: add flag for buffer canvas to prevent deadlock in pixels_get
+   * evas textblock: fix top/bottom valign tag reversed issue
+   * elm_code: better safety around widget edge cases
+   * elm_code: Fix crashes with backspace on OpenBSD
+   * elm - cache dump - disable this to fix jp's issues of proxies etc.
+   * evas: always send a proper event to simplify callee logic.
+   * elm_code: Fix bug when deleting slection beyond start of document.
+   * elm_code: Fix coverity issue divide by zero
+   * edje: fix name check matching correctly
+   * ecore-wl2: stop setting all windows as toplevels on creation
+   * elm_win: set wl window type during finalize
+   * ecore-wl2: do not reconnect on protocol error for non-server processes
+   * elm_code: trigger user change event on applying an undo/redo
+   * evas - async preload cancel fix - don't double delete/free (T5374)
+   * elm config - reload at runtime - fix env var overrides being lost
+   * evas: give width offset when Evas tries to find ellipsis position
+   * edje: Add workaround for misuses of clip_set
+   * evas filters: Fix a rare crash in text render (SW)
+   * elementary - efl ui flip - fix map apply for page flip
+   * scroller: Fix wheel scroll with imbricated H+V scrollers
+   * scroller: Fix issues with looping and paging
    * evas/elm: Fix bad propagation of ON_HOLD flag
    * notify: fix hide animation logic for popup
    * ecore_con: send server_upgrade event *after* clearing pending saves (CID1373485)
@@ -269,6 +372,9 @@ Fixes:
    * elm_list/genlist/gengrid: don't unselect items when moving the mouse out of them
    * Test: check gl API nullity before invoking deletion functions
    * eina,ecore_cocoa: fix detection of the macOS SDK version
+   * Efl.Observable: Free an iterator after use in observers_update()
+   * Filter: check nullity before accessing structure member
+   * elm_spinner: Entry hide when inc/dec button pressed.
 
 Changes since 1.18.0:
 ---------------------
