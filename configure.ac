@@ -5621,6 +5621,32 @@ case "$host_os" in
       ;;
 esac
 
+if test "x$want_always_build_examples" = "xyes" ; then
+  if test "x$have_cxx11" = "xyes" ; then
+    cxx_examples="src/examples/eina_cxx/Makefile
+      src/examples/eolian_cxx/Makefile"
+  fi
+  if test "x$have_elua" = "xyes" ; then
+    elua_examples="src/examples/elua/Makefile"
+  fi
+  examples_build="src/examples/eina/Makefile
+    src/examples/eet/Makefile
+    src/examples/evas/Makefile
+    src/examples/ecore/Makefile
+    src/examples/ecore_avahi/Makefile
+    src/examples/eio/Makefile
+    src/examples/eldbus/Makefile
+    src/examples/ephysics/Makefile
+    src/examples/edje/Makefile
+    src/examples/emotion/Makefile
+    src/examples/emile/Makefile
+    src/examples/ethumb_client/Makefile
+    src/examples/elocation/Makefile
+    src/examples/elementary/Makefile
+    $elua_examples
+    $cxx_examples"
+fi
+
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
@@ -5639,23 +5665,7 @@ src/Makefile
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
 src/benchmarks/evas/Makefile
-src/examples/eina/Makefile
-src/examples/eina_cxx/Makefile
-src/examples/eet/Makefile
-src/examples/evas/Makefile
-src/examples/ecore/Makefile
-src/examples/ecore_avahi/Makefile
-src/examples/eio/Makefile
-src/examples/eldbus/Makefile
-src/examples/ephysics/Makefile
-src/examples/edje/Makefile
-src/examples/emotion/Makefile
-src/examples/emile/Makefile
-src/examples/ethumb_client/Makefile
-src/examples/elua/Makefile
-src/examples/eolian_cxx/Makefile
-src/examples/elocation/Makefile
-src/examples/elementary/Makefile
+$examples_build
 src/lib/eina/eina_config.h
 src/lib/efl/Efl_Config.h
 src/lib/elementary/Elementary_Options.h

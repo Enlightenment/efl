@@ -97,7 +97,12 @@ endif
 include Makefile_Eolian_Js.am
 include Makefile_Efl_Js.am
 
-.PHONY: benchmark examples
+PHONIES = benchmark
+if ALWAYS_BUILD_EXAMPLES
+PHONIES += examples
+endif
+
+.PHONY: $(PHONIES)
 
 BENCHMARK_SUBDIRS = \
 benchmarks/eina \
@@ -150,6 +155,7 @@ check-build: all
 	@$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 endif
 
+if ALWAYS_BUILD_EXAMPLES
 examples: all
 	@for d in $(EXAMPLES_SUBDIRS); do \
 	   echo "Making examples in $$d"; \
@@ -161,6 +167,7 @@ install-examples:
 	   echo "Making install-examples in $$d"; \
 	   $(MAKE) $(AM_MAKEFLAGS) -C $$d install-examples || exit 1; \
 	done
+endif
 
 dist-hook:
 	@mkdir -p $(distdir)/tests/elua/data/apps $(distdir)/tests/eolian/data
