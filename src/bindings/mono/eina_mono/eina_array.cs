@@ -24,12 +24,6 @@ public static class ArrayNativeFunctions
         eina_array_iterator_new(IntPtr array);
 
     [DllImport("eflcustomexportsmono")] public static extern void
-        eina_array_free_generic_custom_export_mono(IntPtr array);
-    [DllImport("eflcustomexportsmono")] public static extern void
-        eina_array_free_string_custom_export_mono(IntPtr array);
-    [DllImport("eflcustomexportsmono")] public static extern void
-        eina_array_free_obj_custom_export_mono(IntPtr array);
-    [DllImport("eflcustomexportsmono")] public static extern void
         eina_array_clean_custom_export_mono(IntPtr array);
     [DllImport("eflcustomexportsmono")] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_array_push_custom_export_mono(IntPtr array, IntPtr data);
