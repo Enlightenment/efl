@@ -1789,7 +1789,7 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
         GstStructure *structure;
         GstQuery     *query;
         const GValue *val;
-        gchar        *str;
+        gchar        *str = NULL;
         
         gdouble length_time = 0.0;
         gint width;
@@ -1851,6 +1851,7 @@ _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
         gst_query_unref(query);
      unref_caps_v:
         gst_caps_unref(caps);
+        g_free(str);
      unref_pad_v:
         gst_object_unref(pad);
      }
