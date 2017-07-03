@@ -46,5 +46,8 @@ bin_efl_wl_efl_wl_test_stack_CPPFLAGS = \
 @EFL_WL_CFLAGS@ \
 @ELEMENTARY_CFLAGS@
 
+EXTRA_DIST2 += \
+lib/efl_wl/copiedfromweston.x \
+lib/efl_wl/x11.x
 
 endif
