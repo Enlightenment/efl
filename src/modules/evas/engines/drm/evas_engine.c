@@ -179,16 +179,16 @@ eng_image_plane_assign(void *data, void *image, int x, int y)
    RGBA_Image *img;
    Native *n;
    Ecore_Drm2_Fb *fb = NULL;
-   Ecore_Drm2_Plane *plane;
+   Ecore_Drm2_Plane *plane = NULL;
    struct scanout_handle *g;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(image, NULL);
 
    re = (Render_Engine *)data;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(re, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(re, NULL);
 
    ob = re->generic.ob;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ob, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ob, NULL);
 
    img = image;
    n = img->native.data;
@@ -198,7 +198,6 @@ eng_image_plane_assign(void *data, void *image, int x, int y)
    if (n->ns.type != EVAS_NATIVE_SURFACE_WL_DMABUF) return NULL;
 
    fb = drm_import_simple_dmabuf(re->fd, &n->ns_data.wl_surface_dmabuf.attr);
-
    if (!fb) return NULL;
 
    g = calloc(1, sizeof(struct scanout_handle));
