@@ -97,6 +97,12 @@ _ ## type ## _internal_part_efl_text_text_get(Eo *obj, partdata *pd) \
 #define ELM_PART_CONTENT_DEFAULT_OPS(type) \
    EFL_OBJECT_OP_FUNC(elm_widget_default_content_part_get, _ ## type ## _default_content_part_get)
 
+#define ELM_PART_TEXT_DEFAULT_GET(type, part) \
+   static const char * _ ## type ## _default_text_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED) { return part; }
+
+#define ELM_PART_TEXT_DEFAULT_OPS(type) \
+   EFL_OBJECT_OP_FUNC(elm_widget_default_text_part_get, _ ## type ## _default_text_part_get)
+
 // For widgets that inherit from something with parts (eg. from Elm.Layout)
 #define ELM_PART_OVERRIDE(type, TYPE, SUPER, typedata, partdata) \
 static EOLIAN Efl_Object * \

@@ -456,9 +456,11 @@ _elm_actionslider_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, cons
 {
    Eina_Bool int_ret = EINA_TRUE;
 
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+     return EINA_FALSE;
+
    _mirrored_part_fix(obj, &part);
 
-   if (!part || !strcmp(part, "elm.text")) part = _text_aliases[0].real_part;
    efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), text);
 
    return int_ret;
@@ -469,9 +471,11 @@ _elm_actionslider_text_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, cons
 {
    const char *text = NULL;
 
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+     return NULL;
+
    _mirrored_part_fix(obj, &part);
 
-   if (!part) part = _text_aliases[0].real_part;
    text = efl_text_get(efl_part(efl_super(obj, MY_CLASS), part));
 
    return text;

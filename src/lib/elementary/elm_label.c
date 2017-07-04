@@ -27,12 +27,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {NULL, NULL}
-};
-
 static void
 _recalc(void *data)
 {
@@ -348,7 +342,6 @@ _elm_label_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, const char *l
    if (!label) label = "";
    _label_format_set(wd->resize_obj, sd->format);
 
-   if (!part) part = _text_aliases[0].real_part;
    efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
 
    if (int_ret)
@@ -621,12 +614,6 @@ EOLIAN static double
 _elm_label_slide_duration_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
    return sd->slide_duration;
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_label_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Label_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
 }
 
 EOLIAN static Eina_Bool

@@ -119,13 +119,12 @@ _elm_bubble_elm_widget_focus_direction(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED
 EOLIAN static Eina_Bool
 _elm_bubble_text_set(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, const char *part, const char *label)
 {
-   Eina_Bool int_ret = EINA_TRUE;
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+     return EINA_FALSE;
 
-   if (!part) part = _text_aliases[0].real_part;
    efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
-   if (!int_ret) return EINA_FALSE;
 
-   if (part && (!strcmp(part, "info") || !strcmp(part, "elm.info")))
+   if (!strcmp(part, "elm.info"))
      {
         if (label)
           elm_layout_signal_emit(obj, "elm,state,info,visible", "elm");

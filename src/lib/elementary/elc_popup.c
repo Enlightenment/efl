@@ -1057,12 +1057,15 @@ end:
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
+static Eina_Bool
 _elm_popup_text_set(Eo *obj, Elm_Popup_Data *_pd, const char *part, const char *label)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   if (!part || !strcmp(part, "default") || !strcmp(part, "elm.text"))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+      return EINA_FALSE;
+
+   if (!strcmp(part, "elm.text"))
      int_ret = _content_text_set(obj, label);
    else if (!strcmp(part, "title,text"))
      int_ret = _title_text_set(obj, label);
@@ -1096,7 +1099,10 @@ _elm_popup_text_get(Eo *obj EINA_UNUSED, Elm_Popup_Data *_pd, const char *part)
 {
    const char *text = NULL;
 
-   if (!part || !strcmp(part, "default"))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+      return NULL;
+
+   if (!strcmp(part, "elm.text"))
      text = _content_text_get(_pd);
    else if (!strcmp(part, "title,text"))
      text = _title_text_get(_pd);

@@ -2332,7 +2332,11 @@ elm_layout_table_clear(Elm_Layout *obj, const char *part, Eina_Bool clear)
 EAPI Eina_Bool
 elm_layout_text_set(Elm_Layout *obj, const char *part, const char *text)
 {
-   if (!part) part = "elm.text";
+   if (!part)
+     {
+        part = elm_widget_default_text_part_get(obj);
+        if (!part) return EINA_FALSE;
+     }
    efl_text_set(efl_part(obj, part), text);
    return EINA_TRUE;
 }
@@ -2340,9 +2344,10 @@ elm_layout_text_set(Elm_Layout *obj, const char *part, const char *text)
 EAPI const char *
 elm_layout_text_get(const Elm_Layout *obj, const char *part)
 {
-   if (!part || (*part == '\0'))
+   if (!part)
      {
-        part = "elm.text";
+        part = elm_widget_default_text_part_get(obj);
+        if (!part) return NULL;
      }
    return efl_text_get(efl_part(obj, part));
 }
@@ -2392,6 +2397,15 @@ _elm_layout_default_content_part_get(const Eo *obj, Elm_Layout_Smart_Data *sd EI
    return part;
 }
 
+static const char *
+_elm_layout_default_text_part_get(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED)
+{
+   const char *part = NULL;
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+     return NULL;
+   return part;
+}
+
 ELM_PART_IMPLEMENT_DESTRUCTOR(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_SET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
@@ -2408,6 +2422,7 @@ ELM_PART_IMPLEMENT_TEXT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_P
 #define ELM_LAYOUT_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_layout), \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_layout), \
+   ELM_PART_TEXT_DEFAULT_OPS(elm_layout), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_layout_efl_object_dbg_info_get)
 
 #include "elm_layout.eo.c"

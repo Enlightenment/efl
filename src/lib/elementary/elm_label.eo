@@ -127,7 +127,6 @@ class Elm.Label (Elm.Layout)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
-      Elm.Layout.text_aliases { get; }
       Elm.Layout.sizing_eval;
       Efl.Part.part;
    }

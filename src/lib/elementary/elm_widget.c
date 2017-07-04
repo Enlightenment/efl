@@ -6546,12 +6546,15 @@ elm_widget_content_part_unset(Evas_Object *obj,
 /* Internal EO APIs and hidden overrides */
 
 EFL_FUNC_BODY_CONST(elm_widget_default_content_part_get, const char *, NULL)
+EFL_FUNC_BODY_CONST(elm_widget_default_text_part_get, const char *, NULL)
 
 ELM_PART_CONTENT_DEFAULT_SET(elm_widget, NULL)
+ELM_PART_TEXT_DEFAULT_GET(elm_widget, NULL)
 
 #define ELM_WIDGET_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_widget), \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_widget), \
+   ELM_PART_TEXT_DEFAULT_OPS(elm_widget), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_widget_efl_object_dbg_info_get)
 
 #include "elm_widget_item.eo.c"
