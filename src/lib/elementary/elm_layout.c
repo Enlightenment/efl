@@ -1012,7 +1012,11 @@ elm_layout_content_set(Evas_Object *obj,
                        Evas_Object *content)
 {
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
-
+   if (!swallow)
+     {
+        swallow = elm_widget_default_content_part_get(obj);
+        if (!swallow) return EINA_FALSE;
+     }
    return efl_content_set(efl_part(obj, swallow), content);
 }
 
@@ -1089,7 +1093,11 @@ elm_layout_content_get(const Evas_Object *obj,
                        const char *swallow)
 {
    ELM_LAYOUT_CHECK(obj) NULL;
-
+   if (!swallow)
+     {
+        swallow = elm_widget_default_content_part_get(obj);
+        if (!swallow) return NULL;
+     }
    return efl_content_get(efl_part(obj, swallow));
 }
 
