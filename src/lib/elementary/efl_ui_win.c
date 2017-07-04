@@ -351,7 +351,7 @@ static Elm_Theme_Apply _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
 static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style);
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
-static void _elm_win_resize_objects_eval(Evas_Object *obj);
+static void _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize);
 static void _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha);
 static void _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd);
 
@@ -1461,7 +1461,7 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
    evas_object_geometry_get(sd->frame_obj, &ox, &oy, &ow, &oh);
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &cx, &cy, &cw, &ch);
    if (_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch))
-     _elm_win_resize_objects_eval(sd->obj);
+     _elm_win_resize_objects_eval(sd->obj, EINA_TRUE);
 }
 
 static void
@@ -3428,7 +3428,7 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
   * @param obj window object
   */
 static void
-_elm_win_resize_objects_eval(Evas_Object *obj)
+_elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Evas_Coord w, h, minw, minh, maxw, maxh, ow, oh;
@@ -3490,7 +3490,9 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (h < minh) h = minh;
    if (w > maxw) w = maxw;
    if (h > maxh) h = maxh;
-   //if ((w == ow) && (h == oh)) return;
+   if (!force_resize && (w == ow) && (h == oh))
+     return;
+
    sd->req_wh = EINA_FALSE;
    if (sd->img_obj) evas_object_resize(obj, w, h);
    else
@@ -3512,7 +3514,7 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           Evas_Object *obj EINA_UNUSED,
                                           void *event_info EINA_UNUSED)
 {
-   _elm_win_resize_objects_eval(data);
+   _elm_win_resize_objects_eval(data, EINA_FALSE);
 }
 
 void
@@ -5512,7 +5514,7 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
    if (sd->deferred_resize_job) _elm_win_resize_job(sd->obj);
    if (sd->frame_obj) edje_object_message_signal_process(sd->frame_obj);
    evas_smart_objects_calculate(evas_object_evas_get(obj));
-   _elm_win_resize_objects_eval(obj);
+   _elm_win_resize_objects_eval(obj, EINA_FALSE);
    if ((trap) && (trap->center) && (!trap->center(sd->trap_data, obj, h, v)))
      return;
 
@@ -5556,7 +5558,7 @@ _efl_ui_win_borderless_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool borderless)
 #endif
      TRAP(sd, borderless_set, borderless);
 
-   _elm_win_resize_objects_eval(obj);
+   _elm_win_resize_objects_eval(obj, EINA_FALSE);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
@@ -5648,7 +5650,7 @@ static void
 _main_menu_resize_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    // After resize, the framespace size has changed, so update the win geometry
-   _elm_win_resize_objects_eval(ev->object);
+   _elm_win_resize_objects_eval(ev->object, EINA_FALSE);
    efl_event_callback_del(ev->object, EFL_GFX_EVENT_RESIZE, _main_menu_resize_cb, NULL);
 }
 
@@ -5664,7 +5666,7 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
         edje_object_part_unswallow(swallow, sd->main_menu);
         sd->csd.need_menu = EINA_FALSE;
         _elm_menu_menu_bar_hide(sd->main_menu);
-        _elm_win_resize_objects_eval(sd->obj);
+        _elm_win_resize_objects_eval(sd->obj, EINA_FALSE);
      }
    else
      {
@@ -5679,7 +5681,7 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
           }
      }
    _elm_win_frame_style_update(sd, 0, 1);
-   sd->deferred_resize_job = EINA_TRUE;
+   //sd->deferred_resize_job = EINA_TRUE;
 }
 
 EOLIAN static void
@@ -5907,7 +5909,7 @@ _efl_ui_win_efl_gfx_size_hint_hint_max_set(Eo *obj, Efl_Ui_Win_Data *sd, int w, 
         if (h < 1) h = -1;
         sd->max_w = w;
         sd->max_h = h;
-        _elm_win_resize_objects_eval(obj);
+        _elm_win_resize_objects_eval(obj, EINA_FALSE);
      }
 }
 
@@ -5983,7 +5985,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    else TRAP(sd, rotation_set, rotation);
    efl_gfx_size_hint_restricted_min_set(obj, -1, -1);
    efl_gfx_size_hint_max_set(obj, -1, -1);
-   _elm_win_resize_objects_eval(obj);
+   _elm_win_resize_objects_eval(obj, EINA_FALSE);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
@@ -7976,8 +7978,8 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
      {
         child = opt->obj;
         efl_gfx_size_hint_weight_get(child, &wx, &wy);
-        if (wx == 0.0) weight_x = 0;
-        if (wy == 0.0) weight_y = 0;
+        if (EINA_DBL_EQ(wx, 0.0)) weight_x = 0;
+        if (EINA_DBL_EQ(wy, 0.0)) weight_y = 0;
 
         efl_gfx_size_hint_combined_min_get(child, &w, &h);
         if (w > minw) minw = w;
@@ -7999,7 +8001,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
      }
 
    efl_gfx_size_hint_weight_set(sd->legacy.edje, weight_x, weight_y);
-   evas_object_smart_changed(sd->legacy.edje);
+   //evas_object_smart_changed(sd->legacy.edje);
 }
 
 static void
