@@ -2526,6 +2526,7 @@ EAPI unsigned int   ecore_x_dpms_timeout_off_get(void);
 EAPI void           ecore_x_dpms_timeout_standby_set(unsigned int new_timeout);
 EAPI void           ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout);
 EAPI void           ecore_x_dpms_timeout_off_set(unsigned int new_timeout);
+EAPI void           ecore_x_dpms_force(Eina_Bool on);
 
 EAPI Eina_Bool      ecore_x_test_fake_key_down(const char *key);
 EAPI Eina_Bool      ecore_x_test_fake_key_up(const char *key);

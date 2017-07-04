@@ -283,3 +283,19 @@ ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
    DPMSSetTimeouts(_ecore_x_disp, standby, suspend, new_timeout);
 #endif /* ifdef ECORE_XDPMS */
 }
+
+/**
+ * Forces DPMS on or off
+ * @param on If DPMS is to be forced on (EINA_TRUE) or forced off
+ * @ingroup Ecore_X_DPMS_Group
+ */
+EAPI void
+ecore_x_dpms_force(Eina_Bool on)
+{
+#ifdef ECORE_XDPMS
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+   if (on) DPMSForceLevel(_ecore_x_disp, DPMSModeOn);
+   else DPMSForceLevel(_ecore_x_disp, DPMSModeOff);
+#endif /* ifdef ECORE_XDPMS */
+}
