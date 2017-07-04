@@ -335,14 +335,12 @@ struct parameter_def
   parameter_direction direction;
   type_def type;
   std::string param_name;
-  std::string c_type; // TODO: Remove this. Use 'c_type' inside 'type' instead.
 
-  parameter_def(parameter_direction direction, type_def type, std::string param_name, std::string c_type)
-    : direction(direction), type(type), param_name(param_name), c_type(c_type) {}
+  parameter_def(parameter_direction direction, type_def type, std::string param_name)
+    : direction(direction), type(type), param_name(param_name){}
   parameter_def(Eolian_Function_Parameter const* param)
     : type( ::eolian_parameter_type_get(param))
     , param_name( ::eolian_parameter_name_get(param))
-    , c_type( ::eolian_type_c_type_get(::eolian_parameter_type_get(param)))
   {
      Eolian_Parameter_Dir direction = ::eolian_parameter_direction_get(param);
      switch(direction)
@@ -387,8 +385,8 @@ template <>
 struct tuple_element<3ul, parameter_def>
 {
   typedef std::string type;
-  static type const& get(parameter_def const& p) { return p.c_type; }
-  static type& get(parameter_def& p) { return p.c_type; }
+  static type const& get(parameter_def const& p) { return p.type.c_type; }
+  static type& get(parameter_def& p) { return p.type.c_type; }
 };
 template <int I>
 typename tuple_element<I, parameter_def>::type const& get(parameter_def const& p)
