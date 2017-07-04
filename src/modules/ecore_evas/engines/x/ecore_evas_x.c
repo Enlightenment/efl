@@ -1612,6 +1612,7 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Configure *e;
    Ecore_Evas_Engine_Data_X11 *edata;
+   Eina_Bool framespace_resized = EINA_FALSE;
    int fw = 0, fh = 0, w, h;
 
    e = event;
@@ -1646,8 +1647,16 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (!ECORE_EVAS_PORTRAIT(ee))
      SWAP_INT(fw, fh);
 
+   if ((fw != ee->framespace.w) || (fh != ee->framespace.h))
+     {
+        ee->framespace.w = fw;
+        ee->framespace.h = fh;
+        framespace_resized = EINA_TRUE;
+     }
+
    if (((ee->w + fw) != e->w) || ((ee->h + fh) != e->h) ||
-       ((ee->req.w + fw) != e->w) || ((ee->req.h + fh) != e->h))
+       ((ee->req.w + fw) != e->w) || ((ee->req.h + fh) != e->h) ||
+       framespace_resized)
      {
         w = e->w;
         h = e->h;

@@ -236,6 +236,10 @@ struct _Ecore_Evas
    } expecting_resize;
 
    struct {
+      int      w, h;
+   } framespace;
+
+   struct {
       Eina_Hash      *cursors;
       char           *title;
       char           *name;
