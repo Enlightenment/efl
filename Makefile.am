@@ -437,13 +437,7 @@ endif
 EXTRA_DIST += $(systemdunits_DATA)
 
 
-PHONIES = doc benchmark
-
-if ALWAYS_BUILD_EXAMPLES
-PHONIES += examples install-examples
-endif
-
-.PHONY: $(PHONIES)
+.PHONY: doc benchmark examples install-examples
 
 # Documentation
 
@@ -501,13 +495,13 @@ benchmark:
 	@cd benchmark && ../src/benchmarks/eo/eo_bench$(EXEEXT) `date +%F_%s`
 
 # examples
-if ALWAYS_BUILD_EXAMPLES
+
 examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src examples
 
 install-examples:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src install-examples
-endif
+
 pkgbuild::
 	@echo "making arch packages"
 	makepkg -f -p $(top_builddir)/pkgbuild/PKGBUILD
