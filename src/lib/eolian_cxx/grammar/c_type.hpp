@@ -35,10 +35,10 @@ inline std::string c_type(parameter_def const& param)
    switch(param.direction)
      {
      case parameter_direction::in:
-       return param.type.original_type.visit(c_type_visitor{&param.c_type});
+       return param.type.original_type.visit(c_type_visitor{&param.type.c_type});
      case parameter_direction::out:
      case parameter_direction::inout:
-       return param.type.original_type.visit(c_type_visitor{&param.c_type}) + "*";
+       return param.type.original_type.visit(c_type_visitor{&param.type.c_type}) + "*";
      default:
        throw std::runtime_error("Unknown parameter direction");
      };
