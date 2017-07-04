@@ -605,6 +605,7 @@ struct _Edje_File
    unsigned char                   allocated_strings : 1;
    unsigned char                   dangling : 1;
    unsigned char                   warning : 1;
+   unsigned char                   has_textblock_min_max : 1;
 };
 
 struct _Edje_Style

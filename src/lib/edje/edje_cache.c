@@ -358,7 +358,7 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
    if ((edf->efl_version.major == 0) && (edf->efl_version.minor == 0))
      {
         edf->efl_version.major = 1;
-        edf->efl_version.minor = 19;
+        edf->efl_version.minor = 18;
      }
 
    edf->path = eina_stringshare_add(eina_file_filename_get(f));

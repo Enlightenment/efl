@@ -11134,6 +11134,9 @@ st_collections_group_parts_part_description_text_min(void)
 
    ed->text.min_x = parse_bool(0);
    ed->text.min_y = parse_bool(1);
+
+   if (current_part->type == EDJE_PART_TYPE_TEXTBLOCK)
+     edje_file->has_textblock_min_max = EINA_TRUE;
 }
 
 /**
@@ -11168,6 +11171,9 @@ st_collections_group_parts_part_description_text_max(void)
 
    ed->text.max_x = parse_bool(0);
    ed->text.max_y = parse_bool(1);
+
+   if (current_part->type == EDJE_PART_TYPE_TEXTBLOCK)
+     edje_file->has_textblock_min_max = EINA_TRUE;
 }
 
 /**

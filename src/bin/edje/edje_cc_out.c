@@ -2672,6 +2672,18 @@ data_write(void)
 	exit(-1);
      }
 
+   if ((edje_file->efl_version.major <= 1) && (edje_file->efl_version.minor <= 18)
+       && edje_file->has_textblock_min_max)
+     {
+        WRN("This EDC file was designed for EFL 1.18. Until 1.19, EFL used an "
+            "invalid calculation mechanism for textblock parts, where the value "
+            "of text min/max was not properly taken into account. You might "
+            "want to consider adding \"efl_version: %d %d;\" in your EDC "
+            "\"collections\" block, and then check the sizing for all textblock "
+            "parts that specify text min/max values.",
+            EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
+     }
+
    check_groups(ef);
 
    ecore_thread_max_set(ecore_thread_max_get() * 2);

@@ -402,11 +402,11 @@ main(int argc, char **argv)
     * which was used for developing a edje file.
     * It is useful if Edje(or other EFL libs) need to keep
     * backward compatibility.
-    * efl_version was added just after EFL 1.19.
-    * Thus, 1.19 will be default.
+    * efl_version was added to fix backward compatibility issue caused from EFL 1.19.
+    * Thus, 1.18 will be default.
     */
    edje_file->efl_version.major = 1;
-   edje_file->efl_version.minor = 19;
+   edje_file->efl_version.minor = 18;
    edje_file->base_scale = FROM_INT(1);
 
    source_edd();

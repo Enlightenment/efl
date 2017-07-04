@@ -1467,6 +1467,369 @@ _edje_part_recalc_single_textblock_scale_range_adjust(Edje_Part_Description_Text
    return scale;
 }
 
+/*
+ * Legacy function for min/max calculation of textblock part.
+ * It can't calculate min/max properly in many cases.
+ *
+ * To keep backward compatibility, it will be used for old version of EDJ files.
+ * You can't see proper min/max result accroding to documents with this function.
+ */
+static void
+_edje_part_recalc_single_textblock_min_max_calc_legacy(Edje_Real_Part *ep,
+                                                       Edje_Part_Description_Text *chosen_desc,
+                                                       Edje_Calc_Params *params,
+                                                       int *minw, int *minh,
+                                                       int *maxw, int *maxh)
+{
+   Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
+
+   /* Legacy code for Textblock min/max calculation */
+   if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
+     {
+        int mw = 0, mh = 0;
+
+        tw = th = 0;
+        if (!chosen_desc->text.min_x)
+          {
+             efl_gfx_size_set(ep->object, TO_INT(params->eval.w), TO_INT(params->eval.h));
+             efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+          }
+        else
+          evas_object_textblock_size_native_get(ep->object, &tw, &th);
+        evas_object_textblock_style_insets_get(ep->object, &ins_l,
+                                               &ins_r, &ins_t, &ins_b);
+        mw = ins_l + tw + ins_r;
+        mh = ins_t + th + ins_b;
+        if (minw && chosen_desc->text.min_x)
+          {
+             if (mw > *minw) *minw = mw;
+          }
+        if (minh && chosen_desc->text.min_y)
+          {
+             if (mh > *minh) *minh = mh;
+          }
+     }
+
+   if ((chosen_desc->text.max_x) || (chosen_desc->text.max_y))
+     {
+        int mw = 0, mh = 0;
+
+        tw = th = 0;
+        if (!chosen_desc->text.max_x)
+          {
+             efl_gfx_size_set(ep->object, TO_INT(params->eval.w), TO_INT(params->eval.h));
+             efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+          }
+        else
+          evas_object_textblock_size_native_get(ep->object, &tw, &th);
+        evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r,
+                                               &ins_t, &ins_b);
+        mw = ins_l + tw + ins_r;
+        mh = ins_t + th + ins_b;
+        if (maxw && chosen_desc->text.max_x)
+          {
+             if (mw > *maxw) *maxw = mw;
+             if (minw && (*maxw < *minw)) *maxw = *minw;
+          }
+        if (maxh && chosen_desc->text.max_y)
+          {
+             if (mh > *maxh) *maxh = mh;
+             if (minh && (*maxh < *minh)) *maxh = *minh;
+          }
+     }
+}
+
+static void
+_edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
+                                                Edje_Part_Description_Text *chosen_desc,
+                                                Edje_Calc_Params *params,
+                                                int *minw, int *minh,
+                                                int *maxw, int *maxh)
+{
+   Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
+   Evas_Coord min_calc_w = 0, min_calc_h = 0;
+
+   /* min_calc_* values need to save calculated minumum size
+    * for maximum size calculation */
+   if (minw) min_calc_w = *minw;
+   if (minh) min_calc_h = *minh;
+
+   if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
+     {
+        evas_object_textblock_style_insets_get(ep->object, &ins_l,
+                                               &ins_r, &ins_t, &ins_b);
+
+        tw = th = 0;
+        if (!chosen_desc->text.min_x)
+          {
+             /* text.min: 0 1
+              * text.max: X X */
+             int temp_h = TO_INT(params->eval.h);
+             int temp_w = TO_INT(params->eval.w);
+
+             if (min_calc_w > temp_w)
+               temp_w = min_calc_w;
+             if ((!chosen_desc->text.max_x) &&
+                 maxw && (*maxw > -1) && (*maxw < temp_w))
+               temp_w = *maxw;
+
+             if (chosen_desc->text.max_y)
+               {
+                  /* text.min: 0 1
+                   * text.max: X 1 */
+                  temp_h = INT_MAX / 10000;
+               }
+             else if (maxh && (*maxh > TO_INT(params->eval.h)))
+               {
+                  /* text.min: 0 1
+                   * text.max: X 0
+                   * And there is a limit for height. */
+                  temp_h = *maxh;
+               }
+
+             /* If base width for calculation is 0,
+              * don't get meaningless height for multiline */
+             if (temp_w > 0)
+               {
+                  efl_gfx_size_set(ep->object, temp_w, temp_h);
+                  efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+
+                  tw += ins_l + ins_r;
+                  th += ins_t + ins_b;
+               }
+             else
+               {
+                  efl_canvas_text_size_native_get(ep->object, NULL, &th);
+
+                  th += ins_t + ins_b;
+               }
+          }
+        else
+          {
+             /* text.min: 1 X
+              * text.max: X X */
+             if (chosen_desc->text.min_y && (!chosen_desc->text.max_x) &&
+                 maxw && (*maxw > -1))
+               {
+                  /* text.min: 1 1
+                   * text.max: 0 X */
+                  int temp_w, temp_h;
+
+                  temp_w = *maxw;
+                  temp_h = INT_MAX / 10000;
+
+                  if (min_calc_w > temp_w)
+                    temp_w = min_calc_w;
+
+                  if ((!chosen_desc->text.max_y) && maxh && (*maxh > -1))
+                    {
+                       /* text.min: 1 1
+                        * text.max: 0 0
+                        * There is limit for height. */
+                       temp_h = *maxh;
+                    }
+
+                  efl_gfx_size_set(ep->object, temp_w, temp_h);
+                  efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+
+                  tw += ins_l + ins_r;
+                  th += ins_t + ins_b;
+
+                  /* If base width for calculation is 0,
+                   * don't get meaningless height for multiline */
+                  if (temp_w <= 0)
+                    {
+                       efl_canvas_text_size_native_get(ep->object, NULL, &th);
+
+                       th += ins_t + ins_b;
+                    }
+               }
+             else
+               {
+                  /* text.min: 1 X
+                   * text.max: 1 X
+                   * Or,
+                   * text.min: 1 X
+                   * text.max: 0 X without max width.
+                   * It is a singleline Textblock. */
+                  efl_canvas_text_size_native_get(ep->object, &tw, &th);
+
+                  tw += ins_l + ins_r;
+                  th += ins_t + ins_b;
+
+                  if (!chosen_desc->text.max_x &&
+                      (maxw && (*maxw > -1) && (*maxw < tw)))
+                    {
+                       /* text.min: 1 0
+                        * text.max: 0 X */
+                       tw = *maxw;
+                    }
+               }
+          }
+
+        if (tw > min_calc_w) min_calc_w = tw;
+        if (th > min_calc_h) min_calc_h = th;
+        if (chosen_desc->text.min_x && minw) *minw = min_calc_w;
+        if (chosen_desc->text.min_y && minh) *minh = min_calc_h;
+     }
+
+   if ((chosen_desc->text.max_x) || (chosen_desc->text.max_y))
+     {
+        evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r,
+                                               &ins_t, &ins_b);
+
+        tw = th = 0;
+        if (!chosen_desc->text.max_x)
+          {
+             /* text.min: X X
+              * text.max: 0 1 */
+             int temp_w, temp_h;
+
+             if (chosen_desc->text.min_y)
+               {
+                  /* text.min: X 1
+                   * text.max: 0 1
+                   * Already calculated in text for height. */
+                  tw = TO_INT(params->eval.w);
+                  if (min_calc_w > tw)
+                    tw = min_calc_w;
+
+                  th = min_calc_h;
+               }
+             else
+               {
+                  /* text.min: X 0
+                   * text.max: 0 1 */
+                  temp_w = TO_INT(params->eval.w);
+                  temp_h = TO_INT(params->eval.h);
+
+                  if (min_calc_w > temp_w)
+                    temp_w = min_calc_w;
+                  if (maxw && (*maxw > -1) && (*maxw < temp_w))
+                    temp_w = *maxw;
+                  if (min_calc_h > temp_h)
+                    temp_h = min_calc_h;
+
+                  /* If base width for calculation is 0,
+                   * don't get meaningless height for multiline */
+                  if (temp_w > 0)
+                    {
+                       efl_gfx_size_set(ep->object, temp_w, temp_h);
+                       efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+
+                       tw += ins_l + ins_r;
+                       th += ins_t + ins_b;
+                    }
+                  else
+                    {
+                       efl_canvas_text_size_native_get(ep->object, NULL, &th);
+
+                       th += ins_t + ins_b;
+                    }
+               }
+          }
+        else
+          {
+             /* text.max: 1 X */
+             if (chosen_desc->text.min_x)
+               {
+                  /* text.min: 1 X
+                   * text.max: 1 X
+                   * Singleline. */
+                  efl_canvas_text_size_native_get(ep->object, &tw, &th);
+
+                  tw += ins_l + ins_r;
+                  th += ins_t + ins_b;
+               }
+             else
+               {
+                  /* text.min: 0 X
+                   * text.max: 1 X */
+                  if (chosen_desc->text.max_y)
+                    {
+                       /* text.min: 0 X
+                        * text.max: 1 1 */
+                       int temp_w, temp_h;
+
+                       temp_w = TO_INT(params->eval.w);
+                       temp_h = TO_INT(params->eval.h);
+
+                       if (min_calc_w > temp_w)
+                         temp_w = min_calc_w;
+                       if (min_calc_h > temp_h)
+                         temp_h = min_calc_h;
+
+                       if (chosen_desc->text.min_y)
+                         {
+                            /* text.min: 0 1
+                             * text.max: 1 1
+                             * There is no need to calculate it again. */
+                            tw = min_calc_w;
+                            th = min_calc_h;
+                         }
+                       else
+                         {
+                            /* text.min: 0 0
+                             * text.max: 1 1 */
+
+                            efl_gfx_size_set(ep->object, temp_w, temp_h);
+                            efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+
+                            tw += ins_l + ins_r;
+                            th += ins_t + ins_b;
+
+                            /* If base width for calculation is 0,
+                             * don't get meaningless height for multiline */
+                            if (temp_w <= 0)
+                              {
+                                 efl_canvas_text_size_native_get(ep->object, NULL, &th);
+
+                                 th += ins_t + ins_b;
+                              }
+                         }
+                    }
+                  else
+                    {
+                       /* text.min: 0 X
+                        * text.max: 1 0 */
+                       int temp_w, temp_h;
+
+                       temp_w = TO_INT(params->eval.w);
+                       if (min_calc_w > temp_w)
+                         temp_w = min_calc_w;
+
+                       efl_gfx_size_get(ep->object, NULL, &temp_h);
+                       efl_gfx_size_set(ep->object, temp_w, temp_h);
+                       efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
+
+                       tw += ins_l + ins_r;
+                       th += ins_t + ins_b;
+
+                       /* If base width for calculation is 0,
+                        * don't get meaningless height for multiline */
+                       if (temp_w <= 0)
+                         {
+                            efl_canvas_text_size_native_get(ep->object, NULL, &th);
+
+                            th += ins_t + ins_b;
+                         }
+                    }
+               }
+          }
+
+        if (maxw && chosen_desc->text.max_x)
+          {
+             if (tw > *maxw) *maxw = tw;
+             if (minw && (*maxw < *minw)) *maxw = *minw;
+          }
+        if (maxh && chosen_desc->text.max_y)
+          {
+             if (th > *maxh) *maxh = th;
+             if (minh && (*maxh < *minh)) *maxh = *minh;
+          }
+     }
+}
+
 static void
 _edje_part_recalc_single_textblock(FLOAT_T sc,
                                    Edje *ed,
@@ -1476,20 +1839,13 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                                    int *minw, int *minh,
                                    int *maxw, int *maxh)
 {
-   int min_calc_w = 0, min_calc_h = 0;
-
    if ((ep->type != EDJE_RP_TYPE_TEXT) ||
        (!ep->typedata.text))
      return;
 
-   /* min_calc_* values need to save calculated minumum size
-    * for maximum size calculation */
-   if (minw) min_calc_w = *minw;
-   if (minh) min_calc_h = *minh;
-
    if (chosen_desc)
      {
-        Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
+        Evas_Coord tw, th;
         const char *text = "";
         const char *style = "";
         Edje_Style *stl = NULL;
@@ -1629,279 +1985,22 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                {
                   evas_object_textblock_text_markup_set(ep->object, text);
                }
-             if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
+
+             if ((ed->file->efl_version.major >= 1) && (ed->file->efl_version.minor >= 19))
                {
-                  evas_object_textblock_style_insets_get(ep->object, &ins_l,
-                                                         &ins_r, &ins_t, &ins_b);
-
-                  tw = th = 0;
-                  if (!chosen_desc->text.min_x)
-                    {
-                       /* text.min: 0 1
-                        * text.max: X X */
-                       int temp_h = TO_INT(params->eval.h);
-                       int temp_w = TO_INT(params->eval.w);
-
-                       if (min_calc_w > temp_w)
-                         temp_w = min_calc_w;
-                       if ((!chosen_desc->text.max_x) &&
-                           maxw && (*maxw > -1) && (*maxw < temp_w))
-                         temp_w = *maxw;
-
-                       if (chosen_desc->text.max_y)
-                         {
-                            /* text.min: 0 1
-                             * text.max: X 1 */
-                            temp_h = INT_MAX / 10000;
-                         }
-                       else if (maxh && (*maxh > TO_INT(params->eval.h)))
-                         {
-                            /* text.min: 0 1
-                             * text.max: X 0
-                             * And there is a limit for height. */
-                            temp_h = *maxh;
-                         }
-
-                       /* If base width for calculation is 0,
-                        * don't get meaningless height for multiline */
-                       if (temp_w > 0)
-                         {
-                            efl_gfx_size_set(ep->object, temp_w, temp_h);
-                            efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
-
-                            tw += ins_l + ins_r;
-                            th += ins_t + ins_b;
-                         }
-                       else
-                         {
-                            efl_canvas_text_size_native_get(ep->object, NULL, &th);
-
-                            th += ins_t + ins_b;
-                         }
-                    }
-                  else
-                    {
-                       /* text.min: 1 X
-                        * text.max: X X */
-                       if (chosen_desc->text.min_y && (!chosen_desc->text.max_x) &&
-                           maxw && (*maxw > -1))
-                         {
-                            /* text.min: 1 1
-                             * text.max: 0 X */
-                            int temp_w, temp_h;
-
-                            temp_w = *maxw;
-                            temp_h = INT_MAX / 10000;
-
-                            if (min_calc_w > temp_w)
-                              temp_w = min_calc_w;
-
-                            if ((!chosen_desc->text.max_y) && maxh && (*maxh > -1))
-                              {
-                                 /* text.min: 1 1
-                                  * text.max: 0 0
-                                  * There is limit for height. */
-                                 temp_h = *maxh;
-                              }
-
-                            efl_gfx_size_set(ep->object, temp_w, temp_h);
-                            efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
-
-                            tw += ins_l + ins_r;
-                            th += ins_t + ins_b;
-
-                            /* If base width for calculation is 0,
-                             * don't get meaningless height for multiline */
-                            if (temp_w <= 0)
-                              {
-                                 efl_canvas_text_size_native_get(ep->object, NULL, &th);
-
-                                 th += ins_t + ins_b;
-                              }
-                         }
-                       else
-                         {
-                            /* text.min: 1 X
-                             * text.max: 1 X
-                             * Or,
-                             * text.min: 1 X
-                             * text.max: 0 X without max width.
-                             * It is a singleline Textblock. */
-                            efl_canvas_text_size_native_get(ep->object, &tw, &th);
-
-                            tw += ins_l + ins_r;
-                            th += ins_t + ins_b;
-
-                            if (!chosen_desc->text.max_x &&
-                                (maxw && (*maxw > -1) && (*maxw < tw)))
-                              {
-                                 /* text.min: 1 0
-                                  * text.max: 0 X */
-                                 tw = *maxw;
-                              }
-                         }
-                    }
-
-                  if (tw > min_calc_w) min_calc_w = tw;
-                  if (th > min_calc_h) min_calc_h = th;
-                  if (chosen_desc->text.min_x && minw) *minw = min_calc_w;
-                  if (chosen_desc->text.min_y && minh) *minh = min_calc_h;
+                  _edje_part_recalc_single_textblock_min_max_calc(ep,
+                                                                  chosen_desc,
+                                                                  params,
+                                                                  minw, minh,
+                                                                  maxw, maxh);
                }
-
-             if ((chosen_desc->text.max_x) || (chosen_desc->text.max_y))
+             else
                {
-                  evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r,
-                                                         &ins_t, &ins_b);
-
-                  tw = th = 0;
-                  if (!chosen_desc->text.max_x)
-                    {
-                       /* text.min: X X
-                        * text.max: 0 1 */
-                       int temp_w, temp_h;
-
-                       if (chosen_desc->text.min_y)
-                         {
-                            /* text.min: X 1
-                             * text.max: 0 1
-                             * Already calculated in text for height. */
-                            tw = TO_INT(params->eval.w);
-                            if (min_calc_w > tw)
-                              tw = min_calc_w;
-
-                            th = min_calc_h;
-                         }
-                       else
-                         {
-                            /* text.min: X 0
-                             * text.max: 0 1 */
-                            temp_w = TO_INT(params->eval.w);
-                            temp_h = TO_INT(params->eval.h);
-
-                            if (min_calc_w > temp_w)
-                              temp_w = min_calc_w;
-                            if (maxw && (*maxw > -1) && (*maxw < temp_w))
-                              temp_w = *maxw;
-                            if (min_calc_h > temp_h)
-                              temp_h = min_calc_h;
-
-                            /* If base width for calculation is 0,
-                             * don't get meaningless height for multiline */
-                            if (temp_w > 0)
-                              {
-                                 efl_gfx_size_set(ep->object, temp_w, temp_h);
-                                 efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
-
-                                 tw += ins_l + ins_r;
-                                 th += ins_t + ins_b;
-                              }
-                            else
-                              {
-                                 efl_canvas_text_size_native_get(ep->object, NULL, &th);
-
-                                 th += ins_t + ins_b;
-                              }
-                         }
-                    }
-                  else
-                    {
-                       /* text.max: 1 X */
-                       if (chosen_desc->text.min_x)
-                         {
-                            /* text.min: 1 X
-                             * text.max: 1 X
-                             * Singleline. */
-                            efl_canvas_text_size_native_get(ep->object, &tw, &th);
-
-                            tw += ins_l + ins_r;
-                            th += ins_t + ins_b;
-                         }
-                       else
-                         {
-                            /* text.min: 0 X
-                             * text.max: 1 X */
-                            if (chosen_desc->text.max_y)
-                              {
-                                 /* text.min: 0 X
-                                  * text.max: 1 1 */
-                                 int temp_w, temp_h;
-
-                                 temp_w = TO_INT(params->eval.w);
-                                 temp_h = TO_INT(params->eval.h);
-
-                                 if (min_calc_w > temp_w)
-                                   temp_w = min_calc_w;
-                                 if (min_calc_h > temp_h)
-                                   temp_h = min_calc_h;
-
-                                 if (chosen_desc->text.min_y)
-                                   {
-                                      /* text.min: 0 1
-                                       * text.max: 1 1
-                                       * There is no need to calculate it again. */
-                                      tw = min_calc_w;
-                                      th = min_calc_h;
-                                   }
-                                 else
-                                   {
-                                      /* text.min: 0 0
-                                       * text.max: 1 1 */
-
-                                      efl_gfx_size_set(ep->object, temp_w, temp_h);
-                                      efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
-
-                                      tw += ins_l + ins_r;
-                                      th += ins_t + ins_b;
-
-                                      /* If base width for calculation is 0,
-                                       * don't get meaningless height for multiline */
-                                      if (temp_w <= 0)
-                                        {
-                                           efl_canvas_text_size_native_get(ep->object, NULL, &th);
-
-                                           th += ins_t + ins_b;
-                                        }
-                                   }
-                              }
-                            else
-                              {
-                                 /* text.min: 0 X
-                                  * text.max: 1 0 */
-                                 int temp_w, temp_h;
-
-                                 temp_w = TO_INT(params->eval.w);
-                                 if (min_calc_w > temp_w)
-                                   temp_w = min_calc_w;
-
-                                 efl_gfx_size_get(ep->object, NULL, &temp_h);
-                                 efl_gfx_size_set(ep->object, temp_w, temp_h);
-                                 efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
-
-                                 tw += ins_l + ins_r;
-                                 th += ins_t + ins_b;
-
-                                 /* If base width for calculation is 0,
-                                  * don't get meaningless height for multiline */
-                                 if (temp_w <= 0)
-                                   {
-                                      efl_canvas_text_size_native_get(ep->object, NULL, &th);
-
-                                      th += ins_t + ins_b;
-                                   }
-                              }
-                         }
-                    }
-
-                  if (maxw && chosen_desc->text.max_x)
-                    {
-                       if (tw > *maxw) *maxw = tw;
-                       if (minw && (*maxw < *minw)) *maxw = *minw;
-                    }
-                  if (maxh && chosen_desc->text.max_y)
-                    {
-                       if (th > *maxh) *maxh = th;
-                       if (minh && (*maxh < *minh)) *maxh = *minh;
-                    }
+                  _edje_part_recalc_single_textblock_min_max_calc_legacy(ep,
+                                                                         chosen_desc,
+                                                                         params,
+                                                                         minw, minh,
+                                                                         maxw, maxh);
                }
           }
 
