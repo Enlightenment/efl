@@ -2363,9 +2363,6 @@ _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
    Eo *proxy;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
-   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
-     return NULL;
-
    ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);
 
    // Check part type with edje_edit, as edje_object_part_object_get()
