@@ -46,7 +46,7 @@ elm_focus_test_manager_new(Efl_Ui_Focus_Object **middle)
    Efl_Ui_Focus_Manager *m;
 
    root = elm_focus_test_object_new("middle", 40, 40, 20, 20);
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
      efl_ui_focus_manager_root_set(efl_added, root)
    );
    if (middle)

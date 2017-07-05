@@ -1453,7 +1453,7 @@ _elm_scroller_elm_widget_focus_register(Eo *obj, Elm_Scroller_Data *pd EINA_UNUS
 {
    //undepended from logical or not we always reigster as full with ourself as redirect
    *logical_flag = EINA_TRUE;
-   return efl_ui_focus_manager_register_logical(manager, obj, logical, obj);
+   return efl_ui_focus_manager_calc_register_logical(manager, obj, logical, obj);
 }
 
 

@@ -806,7 +806,7 @@ _elm_menu_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Elm_Menu_Data *p
 {
    Efl_Ui_Focus_Manager *manager;
 
-   manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, obj,
+   manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
      efl_ui_focus_manager_root_set(efl_added, root)
    );
 

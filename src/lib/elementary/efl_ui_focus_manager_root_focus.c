@@ -29,20 +29,20 @@ _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
    if (!pd->none_logicals && pd->rect_registered)
      {
-         efl_ui_focus_manager_unregister(obj, pd->rect);
+         efl_ui_focus_manager_calc_unregister(obj, pd->rect);
          pd->rect_registered = EINA_FALSE;
      }
    else if (pd->none_logicals && !pd->rect_registered)
      {
-         efl_ui_focus_manager_register(obj, pd->rect, pd->root, NULL);
+         efl_ui_focus_manager_calc_register(obj, pd->rect, pd->root, NULL);
          pd->rect_registered = EINA_TRUE;
      }
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_register(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *redirect)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *redirect)
 {
-   if (efl_ui_focus_manager_register(efl_super(obj, MY_CLASS), child, parent, redirect))
+   if (efl_ui_focus_manager_calc_register(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
         pd->none_logicals = eina_list_append(pd->none_logicals, child);
         return EINA_TRUE;
@@ -53,9 +53,9 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_register(Eo *obj, Efl_Ui_F
 }
 
 EOLIAN static void
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_unregister(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_unregister(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child)
 {
-   efl_ui_focus_manager_unregister(efl_super(obj, MY_CLASS), child);
+   efl_ui_focus_manager_calc_unregister(efl_super(obj, MY_CLASS), child);
 
    pd->none_logicals = eina_list_remove(pd->none_logicals, child);
 

@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Object)
+class Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager.Calc, Efl.Object)
 {
     [[A class that automatically registeres its border elements in the parent manager
 
