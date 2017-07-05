@@ -81,21 +81,60 @@ test_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_in
    evas_object_show(win);
 }
 
+typedef struct _min_size_obj
+{
+   Evas_Object *tb, *rect;
+} min_size_obj;
 
 static void
 im_align_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    double h,v;
    Evas_Object *win = data;
-   Evas_Object *im = evas_object_data_get(win, "im");
    Evas_Object *h_sl = evas_object_data_get(win, "h_sl");
    Evas_Object *v_sl = evas_object_data_get(win, "v_sl");
+   min_size_obj *mso = evas_object_data_get(win, "mso");
 
    h = elm_slider_value_get(h_sl);
    v = elm_slider_value_get(v_sl);
-   evas_object_size_hint_align_set(im, h, v);
-   evas_object_size_hint_align_get(im, &h, &v);
+
+   elm_table_align_set(mso->tb, h, v);
    printf("align %.3f %.3f\n", h, v);
+}
+
+static min_size_obj *
+_min_size_obj_set(Evas_Object *obj, Evas_Object *pack_obj, int w, int h)
+{
+   Evas_Object *tb, *rect;
+   min_size_obj *mso = malloc(sizeof(min_size_obj));
+
+   tb = elm_table_add(obj);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(tb));
+   evas_object_size_hint_min_set(rect, w, h);
+   evas_object_size_hint_max_set(rect, w, h);
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_size_hint_align_set(rect, EVAS_HINT_FILL,
+                                   EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
+   elm_table_pack(tb, rect, 0, 0, 1, 1);
+   elm_table_pack(tb, pack_obj, 0, 0, 1, 1);
+   evas_object_show(rect);
+   evas_object_show(tb);
+
+   mso->rect = rect;
+   mso->tb = tb;
+
+   return mso;
+}
+
+static void
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   min_size_obj *mso = data;
+
+   free(mso);
 }
 
 void
@@ -103,6 +142,7 @@ test_image_swallow_align(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, 
 {
    Evas_Object *win, *box, *im, *ly, *sl;
    char buf[PATH_MAX];
+   min_size_obj *mso;
 
    win = elm_win_util_standard_add("image align", "Test Align Inside Layout");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -125,9 +165,11 @@ test_image_swallow_align(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, 
    elm_image_file_set(im, buf, NULL);
    evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(im, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_layout_content_set(ly, "swallow", im);
    evas_object_show(im);
-   evas_object_data_set(win, "im", im);
+
+   mso = _min_size_obj_set(win, im, 50, 50);
+   elm_layout_content_set(ly, "swallow", mso->tb);
+   evas_object_data_set(win, "mso", mso);
 
    sl = elm_slider_add(win);
    elm_slider_value_set(sl, 0.5);
@@ -151,6 +193,7 @@ test_image_swallow_align(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, 
 
    evas_object_resize(win, 300, 600);
    evas_object_show(win);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, mso);
 }
 
 static void
