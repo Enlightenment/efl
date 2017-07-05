@@ -6,15 +6,15 @@ START_TEST(focus_unregister_twice)
    Efl_Ui_Focus_Object *r1 = efl_add(FOCUS_TEST_CLASS, NULL);
    Efl_Ui_Focus_Object *r2 = efl_add(FOCUS_TEST_CLASS, NULL);
 
-   Efl_Ui_Focus_Manager *m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   Efl_Ui_Focus_Manager *m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, r1)
    );
 
-   fail_if(!efl_ui_focus_manager_register(m, r2, r1, NULL));
+   fail_if(!efl_ui_focus_manager_calc_register(m, r2, r1, NULL));
 
-   efl_ui_focus_manager_unregister(m, r1);
-   efl_ui_focus_manager_unregister(m, r1);
-   efl_ui_focus_manager_unregister(m, r1);
+   efl_ui_focus_manager_calc_unregister(m, r1);
+   efl_ui_focus_manager_calc_unregister(m, r1);
+   efl_ui_focus_manager_calc_unregister(m, r1);
 
    efl_del(r2);
    efl_del(r1);
@@ -31,12 +31,12 @@ START_TEST(focus_register_twice)
    Efl_Ui_Focus_Object *r1 = elm_focus_test_object_new("r1", 0, 0, 10, 10);
    Efl_Ui_Focus_Object *r2 = elm_focus_test_object_new("r2", 0, 10, 10, 10);
 
-   Efl_Ui_Focus_Manager *m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   Efl_Ui_Focus_Manager *m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, r1)
    );
 
-   fail_if(!efl_ui_focus_manager_register(m, r2, r1, NULL));
-   fail_if(efl_ui_focus_manager_register(m, r2, r1, NULL));
+   fail_if(!efl_ui_focus_manager_calc_register(m, r2, r1, NULL));
+   fail_if(efl_ui_focus_manager_calc_register(m, r2, r1, NULL));
 
    efl_del(r1);
    efl_del(m);
@@ -55,11 +55,11 @@ START_TEST(pos_check)
    elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
 
    m = elm_focus_test_manager_new(&root);
-   efl_ui_focus_manager_register(m, middle, root, NULL);
-   efl_ui_focus_manager_register(m, north, root, NULL);
-   efl_ui_focus_manager_register(m, south, root, NULL);
-   efl_ui_focus_manager_register(m, west, root, NULL);
-   efl_ui_focus_manager_register(m, east, root, NULL);
+   efl_ui_focus_manager_calc_register(m, middle, root, NULL);
+   efl_ui_focus_manager_calc_register(m, north, root, NULL);
+   efl_ui_focus_manager_calc_register(m, south, root, NULL);
+   efl_ui_focus_manager_calc_register(m, west, root, NULL);
+   efl_ui_focus_manager_calc_register(m, east, root, NULL);
 
 #define CHECK(obj, r,l,u,d) \
    efl_ui_focus_manager_focus(m, obj); \
@@ -97,16 +97,16 @@ START_TEST(redirect)
    TEST_OBJ_NEW(one, 0, 0, 20, 20);
    TEST_OBJ_NEW(two, 20, 0, 20, 20);
 
-   Efl_Ui_Focus_Manager *m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   Efl_Ui_Focus_Manager *m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, root)
    );
 
-   Efl_Ui_Focus_Manager *m2 = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   Efl_Ui_Focus_Manager *m2 = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, root2)
    );
 
-   efl_ui_focus_manager_register(m2, one, root2, NULL);
-   efl_ui_focus_manager_register(m2, two, root2, NULL);
+   efl_ui_focus_manager_calc_register(m2, one, root2, NULL);
+   efl_ui_focus_manager_calc_register(m2, two, root2, NULL);
 
    efl_ui_focus_manager_redirect_set(m, m2);
    efl_ui_focus_manager_focus(m2, one);
@@ -130,11 +130,11 @@ START_TEST(border_check)
    elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
 
    m = elm_focus_test_manager_new(&root);
-   efl_ui_focus_manager_register(m, middle, root, NULL);
-   efl_ui_focus_manager_register(m, south, root, NULL);
-   efl_ui_focus_manager_register(m, north, root, NULL);
-   efl_ui_focus_manager_register(m, east, root, NULL);
-   efl_ui_focus_manager_register(m, west, root, NULL);
+   efl_ui_focus_manager_calc_register(m, middle, root, NULL);
+   efl_ui_focus_manager_calc_register(m, south, root, NULL);
+   efl_ui_focus_manager_calc_register(m, north, root, NULL);
+   efl_ui_focus_manager_calc_register(m, east, root, NULL);
+   efl_ui_focus_manager_calc_register(m, west, root, NULL);
 
    iter = efl_ui_focus_manager_border_elements_get(m);
 
@@ -192,16 +192,16 @@ START_TEST(logical_chain)
    TEST_OBJ_NEW(subchild23, 0, i*20, 20, 20);
 
    //register everything
-   efl_ui_focus_manager_register(m, root, lroot, NULL);
-   efl_ui_focus_manager_register(m, child1, root, NULL);
-   efl_ui_focus_manager_register(m, child2, root, NULL);
-   efl_ui_focus_manager_register_logical(m, child3, root, NULL);
-   efl_ui_focus_manager_register(m, subchild11, child1, NULL);
-   efl_ui_focus_manager_register(m, subchild12, child1, NULL);
-   efl_ui_focus_manager_register(m, subchild13, child1, NULL);
-   efl_ui_focus_manager_register(m, subchild21, child3, NULL);
-   efl_ui_focus_manager_register(m, subchild22, child3, NULL);
-   efl_ui_focus_manager_register(m, subchild23, child3, NULL);
+   efl_ui_focus_manager_calc_register(m, root, lroot, NULL);
+   efl_ui_focus_manager_calc_register(m, child1, root, NULL);
+   efl_ui_focus_manager_calc_register(m, child2, root, NULL);
+   efl_ui_focus_manager_calc_register_logical(m, child3, root, NULL);
+   efl_ui_focus_manager_calc_register(m, subchild11, child1, NULL);
+   efl_ui_focus_manager_calc_register(m, subchild12, child1, NULL);
+   efl_ui_focus_manager_calc_register(m, subchild13, child1, NULL);
+   efl_ui_focus_manager_calc_register(m, subchild21, child3, NULL);
+   efl_ui_focus_manager_calc_register(m, subchild22, child3, NULL);
+   efl_ui_focus_manager_calc_register(m, subchild23, child3, NULL);
 
    efl_ui_focus_manager_focus(m, root);
 
@@ -228,7 +228,7 @@ START_TEST(finalize_check)
 
    elm_init(1, NULL);
 
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL);
+   m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL);
    fail_if(m);
 
    elm_shutdown();
@@ -245,15 +245,15 @@ START_TEST(redirect_param)
    TEST_OBJ_NEW(root2, 0, 20, 20, 20);
    TEST_OBJ_NEW(child, 0, 20, 20, 20);
 
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, root)
    );
 
-   m2 = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   m2 = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, root2)
    );
 
-   efl_ui_focus_manager_register(m, child, root, m2);
+   efl_ui_focus_manager_calc_register(m, child, root, m2);
    efl_ui_focus_manager_focus(m, child);
 
    ck_assert_ptr_eq(efl_ui_focus_manager_redirect_get(m), m2);
@@ -272,23 +272,23 @@ START_TEST(invalid_args_check)
    TEST_OBJ_NEW(child, 0, 20, 20, 20);
    TEST_OBJ_NEW(child2, 0, 20, 20, 20);
 
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, root)
    );
 
    //no child and no parent
-   ck_assert_int_eq(efl_ui_focus_manager_register(m, NULL, NULL, NULL), 0);
-   ck_assert_int_eq(efl_ui_focus_manager_register(m, child, NULL, NULL), 0);
-   ck_assert_int_eq(efl_ui_focus_manager_register(m, NULL, root, NULL), 0);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_register(m, NULL, NULL, NULL), 0);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_register(m, child, NULL, NULL), 0);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_register(m, NULL, root, NULL), 0);
 
-   ck_assert_int_eq(efl_ui_focus_manager_register(m, child, root, NULL), 1);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_register(m, child, root, NULL), 1);
 
-   ck_assert_int_eq(efl_ui_focus_manager_update_parent(m, child, NULL), 0);
-   ck_assert_int_eq(efl_ui_focus_manager_update_parent(m, NULL, NULL), 0);
-   ck_assert_int_eq(efl_ui_focus_manager_update_parent(m, child, child2), 0);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_update_parent(m, child, NULL), 0);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_update_parent(m, NULL, NULL), 0);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_update_parent(m, child, child2), 0);
 
-   ck_assert_int_eq(efl_ui_focus_manager_register(m, child2, root, NULL), 1);
-   ck_assert_int_eq(efl_ui_focus_manager_update_parent(m, child, child2), 1);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_register(m, child2, root, NULL), 1);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_update_parent(m, child, child2), 1);
 
    elm_shutdown();
 }
@@ -306,27 +306,27 @@ START_TEST(order_check)
    TEST_OBJ_NEW(child2, 0, 20, 20, 20);
    TEST_OBJ_NEW(child3, 0, 20, 20, 20);
 
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, root)
    );
 
    //no child and no parent
-   efl_ui_focus_manager_register(m, child1, root, NULL);
-   efl_ui_focus_manager_register(m, child2, root, NULL);
-   efl_ui_focus_manager_register(m, child3, root, NULL);
+   efl_ui_focus_manager_calc_register(m, child1, root, NULL);
+   efl_ui_focus_manager_calc_register(m, child2, root, NULL);
+   efl_ui_focus_manager_calc_register(m, child3, root, NULL);
 
    //positiv check
    order = eina_list_append(order, child2);
    order = eina_list_append(order, child3);
    order = eina_list_append(order, child1);
-   ck_assert_int_eq(efl_ui_focus_manager_update_children(m, root, order), 1);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_update_children(m, root, order), 1);
 
    order = NULL;
 
    //negativ check
    order = eina_list_append(order, child1);
    order = eina_list_append(order, child2);
-   ck_assert_int_eq(efl_ui_focus_manager_update_children(m, root, order), 0);
+   ck_assert_int_eq(efl_ui_focus_manager_calc_update_children(m, root, order), 0);
 
    elm_shutdown();
 }

@@ -146,6 +146,7 @@ EAPI extern Elm_Version *elm_version;
 #if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
 # include "efl_ui_focus_object.eo.h"
 # include "efl_ui_focus_manager.eo.h"
+# include "efl_ui_focus_manager_calc.eo.h"
 # include "efl_ui_focus_manager_sub.eo.h"
 # include "efl_ui_focus_manager_root_focus.eo.h"
 # include "efl_ui_focus_user.eo.h"

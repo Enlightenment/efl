@@ -51,14 +51,14 @@ _focus_changed(void *data, const Efl_Event *event)
 static void
 _register(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node, Efl_Ui_Focus_Object *logical)
 {
-   efl_ui_focus_manager_register(par_m, node, logical, obj);
+   efl_ui_focus_manager_calc_register(par_m, node, logical, obj);
    efl_event_callback_add(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed, obj);
 }
 
 static void
 _unregister(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node)
 {
-   efl_ui_focus_manager_unregister(par_m, node);
+   efl_ui_focus_manager_calc_unregister(par_m, node);
    efl_event_callback_del(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed, obj);
 }
 
@@ -170,7 +170,7 @@ _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
    EINA_LIST_FOREACH(pd->current_border, n, b)
      {
         if (b == ev->object) continue;
-        efl_ui_focus_manager_update_parent(manager, b, ev->info);
+        efl_ui_focus_manager_calc_update_parent(manager, b, ev->info);
      }
 }
 

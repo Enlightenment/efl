@@ -87,12 +87,12 @@ _item_focus_eval(Elm_Toolbar_Item_Data *pd)
 
    if (want)
      {
-        efl_ui_focus_manager_register(manager, EO_OBJ(pd), widget, NULL);
+        efl_ui_focus_manager_calc_register(manager, EO_OBJ(pd), widget, NULL);
         pd->registered = manager;
      }
    else
      {
-        efl_ui_focus_manager_unregister(manager, EO_OBJ(pd));
+        efl_ui_focus_manager_calc_unregister(manager, EO_OBJ(pd));
         pd->registered = NULL;
      }
 
@@ -118,7 +118,7 @@ _item_focus_eval_all(Elm_Toolbar *obj, Elm_Toolbar_Data *pd)
         order = eina_list_append(order, EO_OBJ(pd->more_item));
      }
 
-   efl_ui_focus_manager_update_order(wpd->focus.manager, obj, order);
+   efl_ui_focus_manager_calc_update_order(wpd->focus.manager, obj, order);
 }
 
 static int
@@ -2381,7 +2381,7 @@ _elm_toolbar_item_efl_object_destructor(Eo *eo_item, Elm_Toolbar_Item_Data *item
 
    if (item->registered)
      {
-        efl_ui_focus_manager_unregister(item->registered, eo_item);
+        efl_ui_focus_manager_calc_unregister(item->registered, eo_item);
         item->registered = NULL;
      }
 
@@ -3092,7 +3092,7 @@ EOLIAN static Eina_Bool
 _elm_toolbar_elm_widget_focus_register(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Object *logical, Eina_Bool *logical_flag)
 {
    *logical_flag = EINA_TRUE;
-   return efl_ui_focus_manager_register_logical(manager, obj, logical, NULL);
+   return efl_ui_focus_manager_calc_register_logical(manager, obj, logical, NULL);
 }
 
 EOLIAN static Eo *

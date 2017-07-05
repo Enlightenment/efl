@@ -246,7 +246,7 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
    Efl_Ui_Focus_Manager *new = NULL, *old = NULL;
 
    parent = elm_widget_parent_get(obj);
-   if (efl_isa(parent, EFL_UI_FOCUS_MANAGER_CLASS))
+   if (efl_isa(parent, EFL_UI_FOCUS_MANAGER_INTERFACE))
      {
         new = parent;
      }
@@ -280,9 +280,9 @@ _elm_widget_focus_register(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
 {
 
    if (!*logical_flag)
-     return efl_ui_focus_manager_register(manager, obj, logical, NULL);
+     return efl_ui_focus_manager_calc_register(manager, obj, logical, NULL);
    else
-     return efl_ui_focus_manager_register_logical(manager, obj, logical, NULL);
+     return efl_ui_focus_manager_calc_register_logical(manager, obj, logical, NULL);
 }
 
 
@@ -329,7 +329,7 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
         (pd->focus.manager && should && want_full == pd->focus.logical)
       )
      {
-        efl_ui_focus_manager_unregister(pd->focus.manager, obj);
+        efl_ui_focus_manager_calc_unregister(pd->focus.manager, obj);
         pd->focus.manager = NULL;
         pd->focus.parent = NULL;
      }
@@ -355,7 +355,7 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      }
    else if (!should && pd->focus.manager)
      {
-        efl_ui_focus_manager_unregister(pd->focus.manager, obj);
+        efl_ui_focus_manager_calc_unregister(pd->focus.manager, obj);
         pd->focus.manager = NULL;
         pd->focus.parent = NULL;
      }
@@ -4127,7 +4127,7 @@ _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_
      }
 
    //if thats a focus manager, give useful information like the border elements
-   if (efl_isa(eo_obj, EFL_UI_FOCUS_MANAGER_CLASS))
+   if (efl_isa(eo_obj, EFL_UI_FOCUS_MANAGER_INTERFACE))
      {
         Efl_Dbg_Info *border;
 

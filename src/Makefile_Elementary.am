@@ -126,6 +126,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_cursor.eo \
 	lib/elementary/efl_ui_image_factory.eo \
 	lib/elementary/efl_ui_focus_manager.eo \
+   lib/elementary/efl_ui_focus_manager_calc.eo \
 	lib/elementary/efl_ui_focus_manager_sub.eo \
 	lib/elementary/efl_ui_focus_manager_root_focus.eo \
 	lib/elementary/efl_ui_focus_object.eo \
@@ -681,6 +682,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_clock_private.h \
 	lib/elementary/efl_ui_image_factory.c \
 	lib/elementary/efl_ui_focus_manager.c \
+	lib/elementary/efl_ui_focus_manager_calc.c \
 	lib/elementary/efl_ui_focus_manager_sub.c \
 	lib/elementary/efl_ui_focus_object.c \
 	lib/elementary/efl_ui_focus_manager_root_focus.c \
