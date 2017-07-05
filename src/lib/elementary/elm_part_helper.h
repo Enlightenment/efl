@@ -43,13 +43,14 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
    partdata *pd; \
    Eo *proxy; \
 \
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
    proxy = efl_add(TYPE ## _INTERNAL_PART_CLASS, (Eo *) obj); \
    pd = efl_data_scope_get(proxy, TYPE ## _INTERNAL_PART_CLASS); \
    if (pd) \
      { \
         pd->obj = (Eo *) obj; \
         pd->sd = efl_data_xref(pd->obj, TYPE ## _CLASS, proxy); \
-        pd->part = part ? strdup(part) : NULL; \
+        pd->part = strdup(part); \
         pd->temp = 1; \
      } \
 \
@@ -111,13 +112,14 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
    partdata *pd; \
    Eo *proxy; \
 \
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
    proxy = efl_add(TYPE ## _INTERNAL_PART_CLASS, (Eo *) obj); \
    pd = efl_data_scope_get(proxy, SUPER ## _INTERNAL_PART_CLASS); \
    if (pd) \
      { \
         pd->obj = (Eo *) obj; \
         pd->sd = efl_data_xref(pd->obj, SUPER ## _CLASS, proxy); \
-        pd->part = part ? strdup(part) : NULL; \
+        pd->part = strdup(part); \
         pd->temp = 1; \
      } \
 \

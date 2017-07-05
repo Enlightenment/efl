@@ -2381,7 +2381,7 @@ _elm_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
      {
         pd->obj = (Eo *) obj;
         pd->sd = efl_data_xref(pd->obj, ELM_LAYOUT_CLASS, proxy);
-        pd->part = part ? strdup(part) : NULL;
+        pd->part = strdup(part);
         pd->temp = 1;
      }
 
