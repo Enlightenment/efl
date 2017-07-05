@@ -333,7 +333,7 @@ _stringshare_key_value_replace(const char **srcstring, const char *key, const ch
    return 0;
 }
 
-EOLIAN static Eina_Bool
+static Eina_Bool
 _elm_label_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, const char *label)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);

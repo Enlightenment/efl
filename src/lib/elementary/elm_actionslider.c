@@ -451,7 +451,7 @@ _mirrored_part_fix(const Evas_Object *obj,
      }
 }
 
-EOLIAN static Eina_Bool
+static Eina_Bool
 _elm_actionslider_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, const char *part, const char *text)
 {
    Eina_Bool int_ret = EINA_TRUE;
@@ -466,7 +466,7 @@ _elm_actionslider_text_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, cons
    return int_ret;
 }
 
-EOLIAN static const char*
+static const char *
 _elm_actionslider_text_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, const char *part)
 {
    const char *text = NULL;

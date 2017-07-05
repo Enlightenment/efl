@@ -459,7 +459,7 @@ _access_obj_process(Elm_Naviframe_Item_Data *it, Eina_Bool is_access)
      }
 }
 
-EOLIAN static void
+static void
 _elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it,
                                                   Elm_Naviframe_Item_Data *it,
                                                   const char *part,
@@ -1027,7 +1027,7 @@ _elm_naviframe_elm_layout_signal_emit(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSE
 
 /* content/text smart functions proxying things to the top item, which
  * is the resize object of the layout */
-EOLIAN static Eina_Bool
+static Eina_Bool
 _elm_naviframe_text_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, const char *label)
 {
    Elm_Object_Item *it;
@@ -1043,7 +1043,7 @@ _elm_naviframe_text_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char 
    return EINA_FALSE;
 }
 
-EOLIAN static const char*
+static const char *
 _elm_naviframe_text_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);

@@ -3151,7 +3151,7 @@ _elm_fileselector_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Fileselect
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
+static Eina_Bool
 _elm_fileselector_text_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, const char *part, const char *label)
 {
    if (!part) return EINA_FALSE;

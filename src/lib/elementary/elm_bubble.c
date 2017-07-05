@@ -116,7 +116,7 @@ _elm_bubble_elm_widget_focus_direction(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED
             (content, base, degree, direction, direction_item, weight);
 }
 
-EOLIAN static Eina_Bool
+static Eina_Bool
 _elm_bubble_text_set(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, const char *part, const char *label)
 {
    if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))

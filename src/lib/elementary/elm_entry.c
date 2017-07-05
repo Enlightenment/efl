@@ -3201,7 +3201,7 @@ _entry_text_append(Evas_Object* obj, const char* entry, Eina_Bool set)
      }
 }
 
-EOLIAN static Eina_Bool
+static Eina_Bool
 _elm_entry_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *entry)
 {
    int len = 0;
@@ -3252,7 +3252,7 @@ _elm_entry_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *e
    return EINA_TRUE;
 }
 
-EOLIAN static const char *
+static const char *
 _elm_entry_text_get(Eo *obj, Elm_Entry_Data *sd, const char *item)
 {
    const char *text;

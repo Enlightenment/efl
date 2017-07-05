@@ -255,7 +255,7 @@ _elm_fileselector_entry_elm_widget_disable(Eo *obj, Elm_Fileselector_Entry_Data 
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
+static Eina_Bool
 _elm_fileselector_entry_text_set(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part, const char *label)
 {
    if (part && strcmp(part, "default"))
@@ -267,7 +267,7 @@ _elm_fileselector_entry_text_set(Eo *obj, Elm_Fileselector_Entry_Data *sd, const
    return EINA_TRUE;
 }
 
-EOLIAN static const char *
+static const char *
 _elm_fileselector_entry_text_get(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default"))

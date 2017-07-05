@@ -1094,7 +1094,7 @@ _content_text_get(const Elm_Popup_Data *sd)
    return str;
 }
 
-EOLIAN static const char*
+static const char *
 _elm_popup_text_get(Eo *obj EINA_UNUSED, Elm_Popup_Data *_pd, const char *part)
 {
    const char *text = NULL;
