@@ -1106,12 +1106,12 @@ struct _Evas_Object_Events_Data
       The list below contain the seats (Efl.Input.Devices) which this
       object allows events to be reported (Mouse, Keybord and focus events).
     */
-   Eina_List     *events_whitelist;
+   Eina_List     *events_whitelist; /* Efl_Input_Device */
 
-   Eina_List     *focused_by_seats;
-   Eina_Inlist   *pointer_grabs;
+   Eina_List     *focused_by_seats; /* Efl_Input_Device */
+   Eina_Inlist   *pointer_grabs; /* Evas_Object_Pointer_Data */
 
-   Evas_Object   *parent;
+   Evas_Object   *parent; /* An Efl.Canvas.Object.Event.Grabber */
 };
 
 struct _Evas_Object_Protected_State
