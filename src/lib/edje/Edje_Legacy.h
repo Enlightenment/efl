@@ -1591,7 +1591,7 @@ EAPI Eina_Bool edje_object_part_text_hide_visible_password(Edje_Object *obj, con
  *
  * @ingroup Edje_Object
  */
-EAPI Eina_Bool edje_object_part_text_cursor_is_format_get(Edje_Object *obj, const char * part, Edje_Cursor cur);
+EAPI Eina_Bool edje_object_part_text_cursor_is_format_get(const Edje_Object *obj, const char * part, Edje_Cursor cur);
 
 /**
  * @brief Returns @c true if the cursor points to a visible format For example
@@ -1605,7 +1605,7 @@ EAPI Eina_Bool edje_object_part_text_cursor_is_format_get(Edje_Object *obj, cons
  *
  * @ingroup Edje_Object
  */
-EAPI Eina_Bool edje_object_part_text_cursor_is_visible_format_get(Edje_Object *obj, const char * part, Edje_Cursor cur);
+EAPI Eina_Bool edje_object_part_text_cursor_is_visible_format_get(const Edje_Object *obj, const char * part, Edje_Cursor cur);
 
 /**
  * @brief Returns a list of Evas_Textblock_Rectangle anchor rectangles.
@@ -1620,7 +1620,7 @@ EAPI Eina_Bool edje_object_part_text_cursor_is_visible_format_get(Edje_Object *o
  *
  * @ingroup Edje_Object
  */
-EAPI const Eina_List *edje_object_part_text_anchor_geometry_get(Edje_Object *obj, const char * part, const char * anchor);
+EAPI const Eina_List *edje_object_part_text_anchor_geometry_get(const Edje_Object *obj, const char * part, const char * anchor);
 
 /**
  * @brief Returns a list of char anchor names.
@@ -1633,7 +1633,7 @@ EAPI const Eina_List *edje_object_part_text_anchor_geometry_get(Edje_Object *obj
  *
  * @ingroup Edje_Object
  */
-EAPI const Eina_List *edje_object_part_text_anchor_list_get(Edje_Object *obj, const char * part);
+EAPI const Eina_List *edje_object_part_text_anchor_list_get(const Edje_Object *obj, const char * part);
 
 /**
  * @brief Returns the text of the object part.

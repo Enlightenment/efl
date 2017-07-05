@@ -341,14 +341,13 @@ edje_object_part_text_hide_visible_password(Eo *obj, const char *part)
    return int_ret;
 }
 
-EOLIAN Eina_Bool
-edje_object_part_text_cursor_is_format_get(Eo *obj, const char *part, Edje_Cursor cur)
+EAPI Eina_Bool
+edje_object_part_text_cursor_is_format_get(const Eo *obj, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
    Edje *ed;
 
-   ed = efl_data_scope_get(obj, EDJE_OBJECT_CLASS);
-
+   ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
@@ -359,14 +358,13 @@ edje_object_part_text_cursor_is_format_get(Eo *obj, const char *part, Edje_Curso
    return EINA_FALSE;
 }
 
-EOLIAN Eina_Bool
-edje_object_part_text_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, const char *part, Edje_Cursor cur)
+EAPI Eina_Bool
+edje_object_part_text_cursor_is_visible_format_get(const Eo *obj, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
    Edje *ed;
 
-   ed = efl_data_scope_get(obj, EDJE_OBJECT_CLASS);
-
+   ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
@@ -379,13 +377,12 @@ edje_object_part_text_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, const ch
 }
 
 EAPI const Eina_List *
-edje_object_part_text_anchor_list_get(Eo *obj EINA_UNUSED, const char *part)
+edje_object_part_text_anchor_list_get(const Eo *obj, const char *part)
 {
    Edje_Real_Part *rp;
    Edje *ed;
 
-   ed = efl_data_scope_get(obj, EDJE_OBJECT_CLASS);
-
+   ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return NULL;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return NULL;
@@ -396,13 +393,12 @@ edje_object_part_text_anchor_list_get(Eo *obj EINA_UNUSED, const char *part)
 }
 
 EAPI const Eina_List *
-edje_object_part_text_anchor_geometry_get(Eo *obj EINA_UNUSED, const char *part, const char *anchor)
+edje_object_part_text_anchor_geometry_get(const Eo *obj, const char *part, const char *anchor)
 {
    Edje_Real_Part *rp;
    Edje *ed;
 
-   ed = efl_data_scope_get(obj, EDJE_OBJECT_CLASS);
-
+   ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return NULL;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return NULL;
