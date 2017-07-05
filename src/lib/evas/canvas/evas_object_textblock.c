@@ -14208,7 +14208,7 @@ done:
 static void
 evas_object_textblock_render_post(Evas_Object *eo_obj EINA_UNUSED,
                                   Evas_Object_Protected_Data *obj,
-                                  void *type_private_data EINA_UNUSED)
+                                  void *type_private_data)
 {
    /*   Efl_Canvas_Text_Data *o; */
 
@@ -14221,6 +14221,7 @@ evas_object_textblock_render_post(Evas_Object *eo_obj EINA_UNUSED,
    /* move cur to prev safely for object data */
    evas_object_cur_prev(obj);
 /*   o->prev = o->cur; */
+   EINA_SAFETY_ON_NULL_RETURN(type_private_data);
    _filter_output_cache_prune(obj, type_private_data);
 }
 
