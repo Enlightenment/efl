@@ -38,6 +38,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Bool _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file, const Eina_File *f, const char *key);
+static void _on_size_hints_changed(void *data, const Efl_Event *e);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -122,7 +123,7 @@ _img_new(Evas_Object *obj)
 }
 
 static void
-_efl_ui_image_internal_sizing_eval(Evas_Object *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_internal_sizing_eval(Evas_Object *obj, Efl_Ui_Image_Data *sd)
 {
    if (!sd->img) return;
 
@@ -137,7 +138,7 @@ _efl_ui_image_internal_sizing_eval(Evas_Object *obj EINA_UNUSED, Efl_Ui_Image_Da
    else
      {
         Evas_Coord x = 0, y = 0, w = 1, h = 1;
-
+        double alignh = 0.5, alignv = 0.5;
         int iw = 0, ih = 0, offset_x = 0, offset_y = 0;
 
         //1. Get the original image size (iw x ih)
@@ -197,8 +198,20 @@ _efl_ui_image_internal_sizing_eval(Evas_Object *obj EINA_UNUSED, Efl_Ui_Image_Da
           }
 
         //3. Calculate offset according to align value
-        offset_x = ((sd->img_w - w) * sd->align_x);
-        offset_y = ((sd->img_h - h) * sd->align_y);
+        if (!sd->legacy_align)
+          {
+             offset_x = ((sd->img_w - w) * sd->align_x);
+             offset_y = ((sd->img_h - h) * sd->align_y);
+          }
+        else
+          {
+             evas_object_size_hint_align_get(obj, &alignh, &alignv);
+             if (EINA_DBL_EQ(alignh, EVAS_HINT_FILL)) alignh = 0.5;
+             if (EINA_DBL_EQ(alignv, EVAS_HINT_FILL)) alignv = 0.5;
+
+             offset_x = ((sd->img_w - w) * alignh);
+             offset_y = ((sd->img_h - h) * alignv);
+          }
 
         x = sd->img_x + offset_x;
         y = sd->img_y + offset_y;
@@ -612,6 +625,9 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
 {
+   if (sd->legacy_align)
+     efl_event_callback_del(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
+                            _on_size_hints_changed, sd);
    ecore_timer_del(sd->anim_timer);
    evas_object_del(sd->img);
    evas_object_del(sd->prev_img);
@@ -865,11 +881,22 @@ _efl_ui_image_file_set_do(Evas_Object *obj)
      }
 }
 
+static void
+_on_size_hints_changed(void *data, const Efl_Event *ev)
+{
+   _efl_ui_image_internal_sizing_eval(ev->object, data);
+}
+
 EAPI Evas_Object *
 elm_image_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = eo_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent);
+   EFL_UI_IMAGE_DATA_GET(obj, priv);
+
+   priv->legacy_align = EINA_TRUE;
+   efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_size_hints_changed, priv);
+
    return obj;
 }
 
@@ -1452,6 +1479,7 @@ _efl_ui_image_scalable_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool
 EOLIAN static void
 _efl_ui_image_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double align_y)
 {
+   sd->legacy_align = EINA_FALSE;
    if (align_x > 1.0)
      align_x = 1.0;
    else if (align_x < 0.0)
