@@ -197,6 +197,27 @@ _efl_canvas_object_efl_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data
    return eo_obj;
 }
 
+EOLIAN static Eo *
+_efl_canvas_object_efl_object_finalize(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   Evas_Public_Data *e;
+
+   if (!EVAS_OBJECT_DATA_ALIVE(obj)) goto end;
+   if (obj->legacy.ctor) goto end;
+
+   if (obj->legacy.visible_set /* && ... */)
+     {
+        obj->legacy.finalized = EINA_TRUE;
+        goto end;
+     }
+
+   e = obj->layer->evas;
+   e->finalize_objects = eina_list_prepend(e->finalize_objects, eo_obj);
+
+end:
+   return efl_finalize(efl_super(eo_obj, MY_CLASS));
+}
+
 void
 evas_object_change_reset(Evas_Object_Protected_Data *obj)
 {
@@ -1833,6 +1854,9 @@ EOLIAN static void
 _efl_canvas_object_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                        Eina_Bool vis)
 {
+   if (!obj->legacy.visible_set)
+     obj->legacy.visible_set = EINA_TRUE;
+
    if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 1, vis))
      return;
 
@@ -1840,11 +1864,17 @@ _efl_canvas_object_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Protected_Data *o
    else _hide(eo_obj, obj);
 }
 
-static Eina_Bool
+EOLIAN static Eina_Bool
 _efl_canvas_object_efl_gfx_visible_get(Eo *eo_obj EINA_UNUSED,
                                        Evas_Object_Protected_Data *obj)
 {
-   if (obj->delete_me) return EINA_FALSE;
+   if (!EVAS_OBJECT_DATA_ALIVE(obj)) return EINA_FALSE;
+#if 0
+   // Try to return TRUE when an object is an EO object but not yet finalized.
+   // This is disabled as it leads to render bugs.
+   if (!obj->legacy.ctor && !obj->legacy.finalized && !obj->legacy.visible_set)
+     return EINA_TRUE;
+#endif
    return obj->cur->visible;
 }
 
@@ -2506,7 +2536,7 @@ EOLIAN static void
 _efl_canvas_object_legacy_ctor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    EINA_SAFETY_ON_FALSE_RETURN(!efl_finalized_get(eo_obj));
-   obj->legacy = EINA_TRUE;
+   obj->legacy.ctor = EINA_TRUE;
 }
 
 

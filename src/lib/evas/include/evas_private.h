@@ -627,7 +627,7 @@ MAGIC_CHECK_FAILED(o, t, m)
 #define EVAS_OBJECT_LEGACY_API(_eo, ...) \
    do { Evas_Object_Protected_Data *_o = efl_data_scope_get(_eo, EFL_CANVAS_OBJECT_CLASS); \
       if (EINA_UNLIKELY(!_o)) return __VA_ARGS__; \
-      if (EINA_UNLIKELY(!_o->legacy)) { \
+      if (EINA_UNLIKELY(!_o->legacy.ctor)) { \
          char buf[1024]; snprintf(buf, sizeof(buf), "Calling legacy API on EO object '%s' is not permitted!", efl_class_name_get(_o->object)); \
          EINA_SAFETY_ERROR(buf); \
    } } while (0)
@@ -919,6 +919,7 @@ struct _Evas_Public_Data
    Eina_Array     image_unref_queue;
    Eina_Array     glyph_unref_queue;
    Eina_Array     texts_unref_queue;
+   Eina_List     *finalize_objects;
 
    struct {
       Evas_Post_Render_Job *jobs;
@@ -1249,7 +1250,6 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   child_has_map : 1;
    Eina_Bool                   efl_del_called : 1;
    Eina_Bool                   no_render : 1; // since 1.15
-   Eina_Bool                   legacy : 1; // used legacy constructor
    Eina_Bool                   clean_layer : 1; // destructor option
 
    Eina_Bool                   snapshot_needs_redraw : 1;
@@ -1257,6 +1257,12 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   is_image_object : 1;
    Eina_Bool                   gfx_map_has : 1;
    Eina_Bool                   gfx_map_update : 1;
+
+   struct {
+      Eina_Bool                ctor : 1; // used legacy constructor
+      Eina_Bool                visible_set : 1; // visibility manually set
+      Eina_Bool                finalized : 1; // object fully constructed
+   } legacy;
 
    struct  {
       Eina_Bool                pass_events : 1;
