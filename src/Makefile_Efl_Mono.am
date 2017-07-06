@@ -141,7 +141,8 @@ efl_eina_mono_files = \
 	bindings/mono/eina_mono/eina_binbuf.cs \
 	bindings/mono/eina_mono/eina_slice.cs \
 	bindings/mono/eina_mono/eina_stringshare.cs \
-	bindings/mono/eina_mono/eina_error.cs
+	bindings/mono/eina_mono/eina_error.cs \
+	bindings/mono/eina_mono/eina_value.cs
 
 lib_efl_mono_libefl_mono_dll_SOURCES = \
 	bindings/mono/efl_mono/efl_all.cs \
@@ -196,7 +197,8 @@ tests_efl_mono_efl_mono_exe_SOURCES = \
      tests/efl_mono/Events.cs \
      tests/efl_mono/FunctionPointers.cs \
      tests/efl_mono/Strings.cs \
-     tests/efl_mono/TestUtils.cs
+     tests/efl_mono/TestUtils.cs \
+     tests/efl_mono/Value.cs
 
 
 tests/efl_mono/efl_mono.exe$(EXEEXT): $(tests_efl_mono_efl_mono_exe_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll

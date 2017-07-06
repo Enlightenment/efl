@@ -267,3 +267,85 @@ EAPI Eina_Iterator *eina_hash_iterator_ptr_key_wrapper_new_custom_export_mono(co
    return eina_iterator_wrapper_new_mono(eina_hash_iterator_key_new(hash), FUNC_ITERATOR_NEXT(eina_hash_iterator_ptr_key_wrapper_next_mono));
 }
 
+// Eina Value //
+EAPI const Eina_Value_Type *type_int32() {
+   return EINA_VALUE_TYPE_INT;
+}
+EAPI const Eina_Value_Type *type_uint32() {
+   return EINA_VALUE_TYPE_UINT;
+}
+EAPI const Eina_Value_Type *type_string() {
+   return EINA_VALUE_TYPE_STRING;
+}
+EAPI const Eina_Value_Type *type_array() {
+   return EINA_VALUE_TYPE_ARRAY;
+}
+
+EAPI size_t eina_value_sizeof()
+{
+   return sizeof(Eina_Value);
+}
+
+EAPI Eina_Bool eina_value_set_wrapper(Eina_Value *value, va_list argp)
+{
+   return eina_value_set(value, argp);
+}
+
+EAPI Eina_Bool eina_value_setup_wrapper(Eina_Value *value,
+                                   const Eina_Value_Type *type)
+{
+   return eina_value_setup(value, type);
+}
+
+EAPI void eina_value_flush_wrapper(Eina_Value *value)
+{
+   eina_value_flush(value);
+}
+
+EAPI const Eina_Value_Type *eina_value_type_get_wrapper(const Eina_Value *value)
+{
+   return eina_value_type_get(value);
+}
+
+EAPI Eina_Bool eina_value_get_wrapper(const Eina_Value *value, void *output)
+{
+   return eina_value_get(value, output);
+}
+
+EAPI int eina_value_compare_wrapper(const Eina_Value *this, const Eina_Value *other)
+{
+   return eina_value_compare(this, other);
+}
+
+EAPI Eina_Bool eina_value_array_setup_wrapper(Eina_Value *array, const Eina_Value_Type *subtype, unsigned int step)
+{
+   return eina_value_array_setup(array, subtype, step);
+}
+
+EAPI Eina_Bool eina_value_array_append_wrapper(Eina_Value *array, va_list argp)
+{
+   return eina_value_array_append(array, argp);
+}
+
+EAPI Eina_Bool eina_value_array_get_wrapper(const Eina_Value *array, int i, void *output)
+{
+   return eina_value_array_get(array, i, output);
+}
+
+EAPI Eina_Bool eina_value_array_set_wrapper(const Eina_Value *array, int i, void *value)
+{
+   return eina_value_array_set(array, i, value);
+}
+
+// Not actually a wrapper, but keeping the naming convention for functions on this file.
+EAPI const Eina_Value_Type* eina_value_array_subtype_get_wrapper(const Eina_Value *array)
+{
+   Eina_Value_Array array_value;
+   eina_value_get(array, &array_value);
+   return array_value.subtype;
+}
+
+EAPI unsigned int eina_value_array_count_wrapper(const Eina_Value *array)
+{
+   return eina_value_array_count(array);
+}
