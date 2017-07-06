@@ -10,6 +10,7 @@
 typedef struct _Elm_Code_Syntax
 {
    const char *symbols;
+   const char *numparts;
    const char *preprocessor;
    const char *comment_single;
    const char *comment_start;
@@ -20,6 +21,7 @@ typedef struct _Elm_Code_Syntax
 static Elm_Code_Syntax _elm_code_syntax_c =
 {
    "{}()[]:;%^/*+&|~!=<->,.",
+   ".",
    "#",
    "//",
    "/*",
@@ -32,6 +34,7 @@ static Elm_Code_Syntax _elm_code_syntax_c =
 static Elm_Code_Syntax _elm_code_syntax_rust =
 {
    "-*!&+/%|^<=>:;.,{}()[]",
+   "._",
    "#",
    "//",
    NULL,
@@ -45,6 +48,7 @@ static Elm_Code_Syntax _elm_code_syntax_rust =
 static Elm_Code_Syntax _elm_code_syntax_py =
 {
    "{}()[]:;%/*+!=<->,.",
+   ".",
    NULL,
    "#",
    "\"\"\"",
@@ -58,6 +62,7 @@ static Elm_Code_Syntax _elm_code_syntax_py =
 static Elm_Code_Syntax _elm_code_syntax_eo =
 {
    "{}():;*,.",
+   ".",
    NULL,
    "//",
    "[[",
@@ -93,13 +98,28 @@ elm_code_syntax_for_mime_get(const char *mime)
    return NULL;
 }
 
+static Eina_Bool
+_char_is_number(char c, Elm_Code_Syntax *syntax)
+{
+   const char *sym;
+
+   if (isdigit(c))
+     return EINA_TRUE;
+
+   for (sym = syntax->numparts; *sym; sym++)
+     if (c == *sym)
+       return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
 static void
 _elm_code_syntax_parse_token(Elm_Code_Syntax *syntax, Elm_Code_Line *line, unsigned int pos, const char *token, unsigned int length)
 {
    const char **keyword;
    unsigned int i;
 
-  for (keyword = syntax->keywords; *keyword; keyword++)
+   for (keyword = syntax->keywords; *keyword; keyword++)
      if (strlen(*keyword) == length && !strncmp(token, *keyword, length))
        {
           elm_code_line_token_add(line, pos, pos + length - 1, 1, ELM_CODE_TOKEN_TYPE_KEYWORD);
@@ -108,7 +128,7 @@ _elm_code_syntax_parse_token(Elm_Code_Syntax *syntax, Elm_Code_Line *line, unsig
 
    for (i = 0; i < length; i++)
      {
-        if (!isdigit(token[i]))
+        if (!_char_is_number(token[i], syntax))
           break;
         if (i == length - 1)
           elm_code_line_token_add(line, pos, pos + length - 1, 1, ELM_CODE_TOKEN_TYPE_NUMBER);
