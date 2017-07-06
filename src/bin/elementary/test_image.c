@@ -81,6 +81,7 @@ test_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_in
    evas_object_show(win);
 }
 
+
 static void
 im_align_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -92,10 +93,8 @@ im_align_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
 
    h = elm_slider_value_get(h_sl);
    v = elm_slider_value_get(v_sl);
-
-   efl_ui_image_align_set(im, h, v);
-   efl_ui_image_align_get(im, &h, &v);
-
+   evas_object_size_hint_align_set(im, h, v);
+   evas_object_size_hint_align_get(im, &h, &v);
    printf("align %.3f %.3f\n", h, v);
 }
 
