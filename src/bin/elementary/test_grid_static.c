@@ -114,7 +114,6 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                 efl_gfx_size_hint_weight_set(efl_added, 1, 1));
    efl_content_set(win, gd);
    api->data.grid = gd;
-   efl_gfx_visible_set(gd, 1);
 
    /* FIXME: EO-ify entry & button & test_set! */
 
@@ -169,28 +168,22 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 128, 0, 0, 128);
    efl_pack_grid(gd, rc, 40, 70, 20, 10);
-   efl_gfx_visible_set(rc, 1);
 
    rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 0, 128, 0, 128);
    efl_pack_grid(gd, rc, 60, 70, 10, 10);
-   efl_gfx_visible_set(rc, 1);
 
    rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 0, 0, 128, 128);
    efl_pack_grid(gd, rc, 40, 80, 10, 10);
-   efl_gfx_visible_set(rc, 1);
 
    rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 128, 0, 128, 128);
    efl_pack_grid(gd, rc, 50, 80, 10, 10);
-   efl_gfx_visible_set(rc, 1);
 
    rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 128, 64, 0, 128);
    efl_pack_grid(gd, rc, 60, 80, 10, 10);
-   efl_gfx_visible_set(rc, 1);
 
    efl_gfx_size_set(win, 480, 480);
-   efl_gfx_visible_set(win, 1);
 }

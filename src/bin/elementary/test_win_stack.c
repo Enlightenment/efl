@@ -88,7 +88,6 @@ _bt_pressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    snprintf(buf, sizeof(buf), "Level %i", level);
    win = _win_new(data, buf);
    efl_ui_win_stack_master_id_set(win, efl_ui_win_stack_id_get(data));
-   evas_object_show(win);
 }
 
 void

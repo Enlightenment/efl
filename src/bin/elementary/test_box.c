@@ -904,8 +904,7 @@ test_box_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win,
                efl_gfx_color_set(efl_added, 0, 64, 128, 255),
                efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
-               efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
-               efl_gfx_visible_set(efl_added, EINA_TRUE));
+               efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND));
    efl_pack(bx, o);
 
    /* rectangle with a max size */
@@ -913,8 +912,7 @@ test_box_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                efl_gfx_color_set(efl_added, 64, 128, 64, 255),
                efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
                efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
-               efl_gfx_size_hint_max_set(efl_added, 128, 20),
-               efl_gfx_visible_set(efl_added, EINA_TRUE));
+               efl_gfx_size_hint_max_set(efl_added, 128, 20));
    efl_pack(bx, o);
 
    /* image with a forced min size */
@@ -923,13 +921,11 @@ test_box_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
                efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
                efl_gfx_size_hint_min_set(efl_added, 64, 64),
-               efl_file_set(efl_added, buf, NULL),
-               efl_gfx_visible_set(efl_added, EINA_TRUE));
+               efl_file_set(efl_added, buf, NULL));
    efl_pack(bx, o);
 
    /* make window resizable: add a weight to its content */
    efl_gfx_size_hint_weight_set(bx, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
 
    efl_gfx_size_set(win, 300, 300);
-   efl_gfx_visible_set(win, EINA_TRUE);
 }

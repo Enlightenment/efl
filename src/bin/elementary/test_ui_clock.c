@@ -68,7 +68,6 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_ui_clock_pause_set(dt1, EINA_TRUE);
    elm_box_pack_end(bx, dt1);
    evas_object_smart_callback_add(dt1, "changed", _changed_cb, NULL);
-   evas_object_show(dt1);
 
    dt2 = efl_add(EFL_UI_CLOCK_CLASS, bx);
    evas_object_size_hint_weight_set(dt2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -80,13 +79,11 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx, dt2);
    efl_ui_clock_pause_set(dt2, EINA_TRUE);
    elm_object_disabled_set(dt2, EINA_TRUE);
-   evas_object_show(dt2);
 
    dt3 = efl_add(EFL_UI_CLOCK_CLASS, bx);
    evas_object_size_hint_weight_set(dt3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(dt3, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, dt3);
-   evas_object_show(dt3);
 
    //editable
    lb = efl_add(ELM_LABEL_CLASS, bx);
@@ -97,7 +94,6 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_size_hint_align_set(lb, 0, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(lb, 100, 25);
    elm_box_pack_end(bx, lb);
-   evas_object_show(lb);
 
    dt4 = efl_add(EFL_UI_CLOCK_CLASS, bx);
    evas_object_size_hint_weight_set(dt4, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -105,7 +101,6 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_ui_clock_edit_mode_set(dt4, EINA_TRUE);
    efl_ui_clock_pause_set(dt4, EINA_TRUE);
    elm_box_pack_end(bx, dt4);
-   evas_object_show(dt4);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Back to the future...");

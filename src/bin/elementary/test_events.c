@@ -170,7 +170,6 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, -1, -1);
    efl_content_set(win, bx);
-   evas_object_show(bx);
    td->win = win;
 
    txt = elm_label_add(win);
@@ -200,7 +199,6 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, -1, -1);
    efl_pack(bx, o);
-   evas_object_show(o);
 
    efl_event_callback_add(td->button, EFL_UI_EVENT_CLICKED, _clicked_button1, td);
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _clicked_button2, td);

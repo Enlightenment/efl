@@ -126,8 +126,7 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    ly = efl_add(ELM_LAYOUT_CLASS, win,
                 efl_file_set(efl_added, buf, "masking"),
                 efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
-                efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                efl_gfx_visible_set(efl_added, 1));
+                efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0));
    efl_pack(box, ly);
 
    // FIXME: No genlist in EO API
@@ -160,28 +159,23 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                   efl_orientation_set(efl_added, EFL_ORIENT_RIGHT),
                   efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
                   efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                  efl_pack(box, efl_added),
-                  efl_gfx_visible_set(efl_added, 1));
+                  efl_pack(box, efl_added));
 
    // FIXME: button EO API
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle mask"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_mask, ly),
-           efl_pack(box2, efl_added),
-           efl_gfx_visible_set(efl_added, 1));
+           efl_pack(box2, efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle map"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_map, ly),
-           efl_pack(box2, efl_added),
-           efl_gfx_visible_set(efl_added, 1));
+           efl_pack(box2, efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Rotate Window"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _rotate_win, win),
-           efl_pack(box2, efl_added),
-           efl_gfx_visible_set(efl_added, 1));
+           efl_pack(box2, efl_added));
 
    efl_gfx_size_set(win, 500, 600);
-   efl_gfx_visible_set(win, 1);
 }
