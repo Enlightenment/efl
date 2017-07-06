@@ -38,7 +38,8 @@ static Elm_Code_Syntax _elm_code_syntax_rust =
    NULL,
    {"as", "break", "const", "continue", "create", "else",  "enum", "extern", "false", "fn", "for", "if", \
       "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub", "ref", "return", "Self", "self", \
-      "static", "struct", "super", "trait", "true", "type", "unsafe", "use", "where", "while", NULL}
+      "static", "struct", "super", "trait", "true", "type", "unsafe", "use", "where", "while",
+      "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize", "f32", "f64", "char", NULL}
 };
 
 static Elm_Code_Syntax _elm_code_syntax_py =
