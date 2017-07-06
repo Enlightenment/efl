@@ -1,5 +1,5 @@
-group { name: "e/modules/netstatus/main";
-   alias: "e/modules/netstatus/main_vert";
+group { name: "e/gadget/netstatus/main";
+   alias: "e/gadget/netstatus/main_vert";
    image: "netstatus_rx.png" COMP;
    image: "netstatus_tx.png" COMP;
    image: "netstatus_base.png" COMP;

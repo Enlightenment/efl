@@ -1,5 +1,5 @@
-group { name: "e/modules/batman/main";
-   alias: "e/modules/batman/main_vert";
+group { name: "e/gadget/batman/main";
+   alias: "e/gadget/batman/main_vert";
    images.image: "bat_shadow.png" COMP;
    images.image: "bat_base.png" COMP;
    images.image: "bat_shine.png" COMP;
@@ -242,7 +242,7 @@ group { name: "e/modules/batman/main";
    }
 }
 
-group { name: "e/modules/batman/popup";
+group { name: "e/gadget/batman/popup";
    min: 240 60;
    parts {
       part { name: "e.swallow.batman"; type: SWALLOW;

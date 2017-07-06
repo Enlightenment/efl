@@ -1,6 +1,6 @@
 group { name: "e/modules/cpufreq/main";
-   alias: "e/modules/cpuclock/main";
-   alias: "e/modules/cpuclock/main_vert";
+   alias: "e/gadget/cpuclock/main";
+   alias: "e/gadget/cpuclock/main_vert";
    images.image: "tacho_base.png" COMP;
    images.image: "inset_round_hilight.png" COMP;
    images.image: "inset_round_shadow.png" COMP;

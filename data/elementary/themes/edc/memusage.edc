@@ -1,4 +1,4 @@
-group { name: "e/modules/memusage/main";
+group { name: "e/gadget/memusage/main";
    image: "mem_bar.png" COMP;
    image: "mem_on.png" COMP;
    script {
@@ -111,7 +111,7 @@ group { name: "e/modules/memusage/main";
    }
 }
 
-group { name: "e/modules/memusage/main_vert";
+group { name: "e/gadget/memusage/main_vert";
    image: "mem_bar_vert.png" COMP;
    image: "mem_on_vert.png" COMP;
    script {

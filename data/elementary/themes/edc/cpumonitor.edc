@@ -1,4 +1,4 @@
-group { name: "e/modules/cpumonitor/main";
+group { name: "e/gadget/cpumonitor/main";
    image: "cpu_bar.png" COMP;
    image: "cpu_green_on.png" COMP;
    image: "cpu_yellow_on.png" COMP;
@@ -87,7 +87,7 @@ group { name: "e/modules/cpumonitor/main";
    }
 }
 
-group { name: "e/modules/cpumonitor/main_vert";
+group { name: "e/gadget/cpumonitor/main_vert";
    image: "cpu_bar_vert.png" COMP;
    image: "cpu_green_on_vert.png" COMP;
    image: "cpu_yellow_on_vert.png" COMP;
