@@ -103,6 +103,7 @@ struct _Efl_Ui_Image_Data
    Eina_Bool             scale_up : 1;
    Eina_Bool             scale_down : 1;
    Eina_Bool             con_icon : 1;
+   Eina_Bool             legacy_align : 1;
 };
 
 /**
