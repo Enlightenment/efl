@@ -20,8 +20,7 @@ evas_canvas3d_primitive_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = efl_add(MY_CLASS, e);
-   return eo_obj;
+   return efl_add(MY_CLASS, e);
 }
 
 EOLIAN static Eo *

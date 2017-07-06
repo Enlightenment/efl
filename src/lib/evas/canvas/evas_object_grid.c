@@ -279,8 +279,7 @@ evas_object_grid_add(Evas *evas)
    MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *obj = efl_add(MY_CLASS, evas);
-   return obj;
+   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

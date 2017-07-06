@@ -851,7 +851,7 @@ EAPI Evas_Object *
 elm_image_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
    EFL_UI_IMAGE_DATA_GET(obj, priv);
 
    priv->legacy_align = EINA_TRUE;

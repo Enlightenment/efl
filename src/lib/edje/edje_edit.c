@@ -292,9 +292,7 @@ _edje_edit_efl_file_mmap_set(Eo *obj, Edje_Edit *eed, const Eina_File *mmap, con
 EAPI Evas_Object *
 edje_edit_object_add(Evas *evas)
 {
-   Evas_Object *e;
-   e = efl_add(MY_CLASS, evas);
-   return e;
+   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

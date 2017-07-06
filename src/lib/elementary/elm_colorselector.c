@@ -1872,7 +1872,8 @@ _create_colorpalette(Evas_Object *obj)
    sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj,
                              efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL),
                              efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                             efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL));
+                             efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
+                             efl_gfx_visible_set(efl_added, EINA_FALSE));
 
    hpadstr = edje_object_data_get(wd->resize_obj, "horizontal_pad");
    if (hpadstr) h_pad = atoi(hpadstr);
@@ -2290,8 +2291,7 @@ EAPI Evas_Object *
 elm_colorselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent);
-   return obj;
+   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

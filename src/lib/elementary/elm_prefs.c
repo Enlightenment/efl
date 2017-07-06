@@ -507,8 +507,7 @@ elm_prefs_add(Evas_Object *parent)
         return NULL;
      }
 
-   Evas_Object *obj = efl_add(MY_CLASS, parent);
-   return obj;
+   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

@@ -248,9 +248,7 @@ _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int 
 EAPI Evas_Object *
 emotion_object_add(Evas *evas)
 {
-   Evas_Object *e;
-   e = efl_add(MY_CLASS, evas);
-   return e;
+   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

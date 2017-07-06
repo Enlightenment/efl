@@ -1161,7 +1161,7 @@ EAPI Evas_Object *
 elm_ctxpopup_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent);
+   Evas_Object *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
 
    /* access: parent could be any object such as elm_list which does
       not know elc_ctxpopup as its child object in the focus_next(); */

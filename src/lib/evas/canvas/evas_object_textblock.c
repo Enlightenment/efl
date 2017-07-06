@@ -6655,7 +6655,8 @@ evas_object_textblock_add(Evas *e)
    return NULL;
    MAGIC_CHECK_END();
    Evas_Object *eo_obj = efl_add(MY_CLASS, e,
-         efl_text_multiline_set(efl_added, EINA_TRUE));
+         efl_text_multiline_set(efl_added, EINA_TRUE),
+         efl_canvas_object_legacy_ctor(efl_added));
    o = efl_data_scope_get(eo_obj, MY_CLASS);
    o->legacy_newline = EINA_TRUE;
    return eo_obj;

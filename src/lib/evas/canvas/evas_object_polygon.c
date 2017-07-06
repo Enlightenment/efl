@@ -85,7 +85,7 @@ static const Evas_Object_Func object_func =
 EAPI Evas_Object *
 evas_object_polygon_add(Evas *e)
 {
-   return efl_add(MY_CLASS, e);
+   return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

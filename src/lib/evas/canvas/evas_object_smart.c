@@ -626,7 +626,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   eo_obj = efl_add(EFL_CANVAS_GROUP_CLASS, eo_e);
+   eo_obj = efl_add(EFL_CANVAS_GROUP_CLASS, eo_e, efl_canvas_object_legacy_ctor(efl_added));
    evas_object_smart_attach(eo_obj, s);
    return eo_obj;
 }

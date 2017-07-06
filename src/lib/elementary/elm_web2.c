@@ -80,7 +80,7 @@ elm_web_add(Evas_Object *parent)
 {
    if (!parent || !ewm.class_get) return NULL;
 
-   return efl_add(ewm.class_get(), parent);
+   return efl_add(ewm.class_get(), parent, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EAPI const Efl_Class *
