@@ -1443,7 +1443,7 @@ _efl_canvas_image_internal_efl_object_destructor(Eo *eo_obj, Evas_Image_Data *o 
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   if (obj->legacy)
+   if (obj->legacy.ctor)
      evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_image_free(eo_obj, obj);
    efl_destructor(efl_super(eo_obj, MY_CLASS));

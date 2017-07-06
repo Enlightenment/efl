@@ -2860,6 +2860,29 @@ end:
    eina_tiler_free(tiler);
 }
 
+static void
+evas_render_pre(Evas *eo_e, Evas_Public_Data *evas)
+{
+   Eo *eo_obj;
+
+   // Finalize EO objects now
+   eina_evlog("+render_pre_objects_finalize", eo_e, 0.0, NULL);
+
+   EINA_LIST_FREE(evas->finalize_objects, eo_obj)
+     {
+        Evas_Object_Protected_Data *obj;
+
+        obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+        if (!EVAS_OBJECT_DATA_ALIVE(obj)) continue;
+        obj->legacy.finalized = EINA_TRUE;
+
+        if (!obj->legacy.visible_set)
+          efl_gfx_visible_set(eo_obj, EINA_TRUE);
+     }
+
+   eina_evlog("-render_pre_objects_finalize", eo_e, 0.0, NULL);
+}
+
 static Eina_Bool
 evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                                   void *surface, void *context,
@@ -2880,6 +2903,8 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
 
    eina_evlog("+render_setup", eo_e, 0.0, NULL);
    RD(level, "  [--- UPDATE %i %i %ix%i\n", ux, uy, uw, uh);
+
+   evas_render_pre(eo_e, evas);
 
    off_x = cx - ux;
    off_y = cy - uy;

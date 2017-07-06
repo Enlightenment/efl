@@ -660,6 +660,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.finalize;
       Efl.Object.provider_find;
       Efl.Gfx.visible { get; set; }
       Efl.Gfx.color { get; set; }
