@@ -376,14 +376,20 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
         IntPtr itr = eina_hash_iterator_tuple_new(Handle);
-        for (IntPtr tuplePtr; eina_iterator_next(itr, out tuplePtr);)
+        try
         {
-            var tuple = Marshal.PtrToStructure<eina.HashTupleNative>(tuplePtr);
-            var key = NativeToManagedRef<TKey>(tuple.key);
-            var val = NativeToManaged<TValue>(tuple.data);
-            yield return new KeyValuePair<TKey, TValue>(key, val);
+            for (IntPtr tuplePtr; eina_iterator_next(itr, out tuplePtr);)
+            {
+                var tuple = Marshal.PtrToStructure<eina.HashTupleNative>(tuplePtr);
+                var key = NativeToManagedRef<TKey>(tuple.key);
+                var val = NativeToManaged<TValue>(tuple.data);
+                yield return new KeyValuePair<TKey, TValue>(key, val);
+            }
         }
-        eina_iterator_free(itr);
+        finally
+        {
+            eina_iterator_free(itr);
+        }
     }
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
