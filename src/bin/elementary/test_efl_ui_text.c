@@ -33,7 +33,6 @@ _create_label(Eo *win, Eo *bx)
 
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(en);
    elm_box_pack_end(bx, en);
    return en;
 }
@@ -205,7 +204,6 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, en);
-   evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
 
    bx2 = elm_box_add(win);

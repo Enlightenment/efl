@@ -183,7 +183,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_size_hint_weight_set(vbox, 1, 1);
    efl_gfx_size_hint_margin_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
-   efl_gfx_visible_set(vbox, 1);
 
 
    // create here to pass in cb
@@ -201,7 +200,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    hbox = efl_add(EFL_UI_BOX_CLASS, win);
    elm_object_content_set(f, hbox);
    efl_pack_padding_set(hbox, 10, 0, EINA_TRUE);
-   efl_gfx_visible_set(hbox, 1);
 
 
    /* weights radio group */
@@ -209,7 +207,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
                efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_pack(hbox, bx);
-   efl_gfx_visible_set(bx, 1);
 
    chk = o = elm_radio_add(win);
    elm_object_text_set(o, "No weight");
@@ -273,7 +270,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_size_hint_align_set(bx, 0.5, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
-   efl_gfx_visible_set(bx, 1);
 
    o = elm_label_add(win);
    elm_object_text_set(o, "User min size");
@@ -300,7 +296,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
-   efl_gfx_visible_set(bx, 1);
 
    o = elm_label_add(win);
    elm_object_text_set(o, "Padding");
@@ -327,7 +322,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
-   efl_gfx_visible_set(bx, 1);
 
    o = elm_label_add(win);
    elm_object_text_set(o, "Margin");
@@ -354,7 +348,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
-   efl_gfx_visible_set(bx, 1);
 
    o = elm_label_add(win);
    elm_object_text_set(o, "Buttons margins");
@@ -381,7 +374,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
-   efl_gfx_visible_set(bx, 1);
 
    o = elm_label_add(win);
    elm_object_text_set(o, "<b>Properties</>");
@@ -420,7 +412,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_size_hint_min_set(o, 10, 10);
    efl_gfx_color_set(o, 64, 96, 128, 255);
    efl_pack_grid(grid, o, 0, 0, 3, 1);
-   efl_gfx_visible_set(o, 1);
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Button 1");

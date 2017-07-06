@@ -813,15 +813,12 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_orientation_set(efl_added, EFL_ORIENT_DOWN),
                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
-                efl_content_set(win, efl_added),
-                efl_gfx_visible_set(efl_added, EINA_TRUE)
-               );
+                efl_content_set(win, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, bx,
            efl_text_set(efl_added, "Clicking the image will play/pause animation."),
            efl_ui_text_interactive_editable_set(efl_added, EINA_FALSE),
            efl_canvas_text_style_set(efl_added, NULL, "DEFAULT='align=center font=Sans font_size=10 color=#fff wrap=word'"),
-           efl_gfx_visible_set(efl_added, EINA_TRUE),
            efl_pack(bx, efl_added)
           );
 
@@ -830,7 +827,6 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
                       efl_file_set(efl_added, buf, NULL),
                       efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
                       efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
-                      efl_gfx_visible_set(efl_added, EINA_TRUE),
                       efl_pack(bx, efl_added),
                       efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _zoomable_clicked_cb, NULL)
                      );
@@ -843,7 +839,6 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win,
                   efl_gfx_color_set(efl_added, 0, 0, 0, 0),
-                  efl_gfx_visible_set(efl_added, EINA_TRUE),
                   efl_gfx_stack_raise(efl_added),
                   efl_canvas_object_repeat_events_set(efl_added, EINA_TRUE),
                   efl_event_callback_add(efl_added, EFL_EVENT_POINTER_WHEEL, _zoomable_mouse_wheel_cb, zoomable)
@@ -854,5 +849,4 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    efl_event_callback_add(zoomable, EFL_GFX_EVENT_MOVE, _zoomable_move_resize_cb, rect);
 
    efl_gfx_size_set(win, 300, 320);
-   efl_gfx_visible_set(win, EINA_TRUE);
 }

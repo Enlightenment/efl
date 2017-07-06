@@ -46,8 +46,6 @@ _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 
    // Swallow in the label as the default content, this will make it visible.
    efl_content_set(dia, lb);
-
-   efl_gfx_visible_set(dia, EINA_TRUE);
 }
 
 static void
@@ -95,8 +93,6 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    // Set min & max size (app-side)
    efl_gfx_size_hint_min_set(dia, ELM_SCALE_SIZE(0), ELM_SCALE_SIZE(100));
    efl_gfx_size_hint_max_set(dia, ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600));
-
-   efl_gfx_visible_set(dia, EINA_TRUE);
 }
 
 static void
@@ -126,7 +122,6 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    efl_gfx_size_hint_max_set(dia, ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600));
 
    efl_ui_win_center(dia, EINA_TRUE, EINA_TRUE);
-   efl_gfx_visible_set(dia, EINA_TRUE);
 }
 
 void

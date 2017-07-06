@@ -33,7 +33,6 @@ test_nstate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_ui_nstate_count_set(nstate, 5);
    elm_object_text_set(nstate, "nstate = 0");
    elm_box_pack_end(bx, nstate);
-   evas_object_show(nstate);
    evas_object_smart_callback_add(nstate, "state,changed",
                                   _state_changed_cb, NULL);
 

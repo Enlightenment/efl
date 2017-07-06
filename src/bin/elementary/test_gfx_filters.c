@@ -339,22 +339,19 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
                      efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL),
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-                     efl_gfx_size_hint_align_set(efl_added, -1.0, 0.0),
-                     efl_gfx_visible_set(efl_added, 1));
+                     efl_gfx_size_hint_align_set(efl_added, -1.0, 0.0));
       efl_pack(box, box2);
 
       /* FIXME: Efl.Ui.Text doesn't work as expected. */
       o = efl_add(EFL_UI_TEXT_CLASS, win,
                   efl_gfx_size_hint_weight_set(efl_added, 0.0, 1.0),
-                  efl_gfx_size_hint_align_set(efl_added, 1.0, 0.5),
-                  efl_gfx_visible_set(efl_added, 1));
+                  efl_gfx_size_hint_align_set(efl_added, 1.0, 0.5));
       efl_text_set(o, "Filter:");
       efl_pack(box2, o);
 
       o = spinner = efl_add(ELM_SPINNER_CLASS, win,
                             efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
-                            efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
-                            efl_gfx_visible_set(efl_added, 1));
+                            efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5));
       _spinner_fill(o);
       efl_pack(box2, o);
       spinner = o;
@@ -364,16 +361,14 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                   efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
                   elm_spinner_min_max_set(efl_added, 6, 120),
                   elm_spinner_value_set(efl_added, default_font_size),
-                  efl_event_callback_add(efl_added, ELM_SPINNER_EVENT_DELAY_CHANGED, _font_size_change, win),
-                  efl_gfx_visible_set(efl_added, 1));
+                  efl_event_callback_add(efl_added, ELM_SPINNER_EVENT_DELAY_CHANGED, _font_size_change, win));
       efl_pack(box2, o);
 
       o = efl_add(EFL_UI_BUTTON_CLASS, win,
                   efl_text_set(efl_added, "Flip"),
                   efl_gfx_size_hint_weight_set(efl_added, 0.0, 1.0),
                   efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
-                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _flip_click, win),
-                  efl_gfx_visible_set(efl_added, 1));
+                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _flip_click, win));
       efl_pack(box2, o);
    }
 
@@ -400,8 +395,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                        efl_gfx_size_hint_min_set(efl_added, ELM_SCALE_SIZE(48), ELM_SCALE_SIZE(48)),
                        efl_file_set(efl_added, buf, NULL),
                        efl_name_set(efl_added, images[k].src_name),
-                       elm_object_tooltip_text_set(efl_added, images[k].src_name),
-                       efl_gfx_visible_set(efl_added, 1));
+                       elm_object_tooltip_text_set(efl_added, images[k].src_name));
            if (efl_player_playable_get(o))
              efl_player_play_set(o, 1);
            efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, _img_click, win);
@@ -430,36 +424,30 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                   efl_gfx_size_hint_max_set(efl_added, -1, ELM_SCALE_SIZE(48 * 2)),
                   efl_name_set(efl_added, "myColor"),
                   elm_object_tooltip_text_set(efl_added, "Pick a color to use as variable 'myColor'"),
-                  efl_event_callback_add(efl_added, ELM_COLORSELECTOR_EVENT_CHANGED, _colsel_cb, win),
-                  efl_gfx_visible_set(efl_added, 1));
+                  efl_event_callback_add(efl_added, ELM_COLORSELECTOR_EVENT_CHANGED, _colsel_cb, win));
       efl_pack(box2, o);
 
       for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(colors); k++)
         elm_colorselector_palette_color_add(o, colors[k].r, colors[k].g, colors[k].b, colors[k].a);
-
-      efl_gfx_visible_set(box2, 1);
    }
 
    /* FIXME: No panes in EO APIs. */
    o = split = efl_add(ELM_PANES_CLASS, win,
                        efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
                        efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                       efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL),
-                       efl_gfx_visible_set(efl_added, 1));
+                       efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL));
    efl_pack(box, split);
 
    {
       flip = efl_add(EFL_UI_FLIP_CLASS, win,
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-                     efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                     efl_gfx_visible_set(efl_added, 1));
+                     efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0));
       efl_content_set(efl_part(split, "top"), flip);
 
       box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                     efl_pack_align_set(efl_added, 0.5, 0.5),
-                     efl_gfx_visible_set(efl_added, 1));
+                     efl_pack_align_set(efl_added, 0.5, 0.5));
       efl_pack(flip, box2);
 
       // Note: No TEXT object with EO APIs
@@ -507,7 +495,6 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_canvas_object_scale_set(o, elm_config_scale_get());
       efl_pack(box2, o);
       evas_object_resize(o, 1, 1);
-      efl_gfx_visible_set(o, 1);
    }
 
    {
@@ -546,5 +533,4 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    _spinner_cb(win, NULL);
 
    efl_gfx_size_set(win, 500, 600);
-   efl_gfx_visible_set(win, 1);
 }
