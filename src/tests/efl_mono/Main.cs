@@ -46,7 +46,7 @@ class TestMain
                 {
                     pass = false;
                     caseResult = false;
-                    Console.WriteLine("[ ERROR       ] " + e.InnerException.Message);
+                    Console.WriteLine("[ ERROR       ] " + e.InnerException.ToString());
                 }
                 Console.WriteLine("[        " + (caseResult ? "PASS" : "FAIL") + " ] " + testCase.Name + "." + localTestCase.Name);
             }
