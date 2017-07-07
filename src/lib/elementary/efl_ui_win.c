@@ -4393,6 +4393,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    if (!sd->frame_obj)
      {
         if (EINA_LIKELY(sd->type == ELM_WIN_FAKE)) return;
+        if (!efl_finalized_get(sd->obj)) return;
         CRI("Window has no frame object!");
         return;
      }
