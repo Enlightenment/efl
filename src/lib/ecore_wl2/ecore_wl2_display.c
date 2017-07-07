@@ -138,10 +138,13 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
 
    if (!strcmp(interface, "wl_compositor"))
      {
+        Ecore_Wl2_Window *window;
         ewd->wl.compositor_version = MIN(version, 4);
         ewd->wl.compositor =
           wl_registry_bind(registry, id, &wl_compositor_interface,
                            ewd->wl.compositor_version);
+        EINA_INLIST_FOREACH(ewd->windows, window)
+          _ecore_wl2_window_surface_create(window);
      }
    else if (!strcmp(interface, "wl_subcompositor"))
      {

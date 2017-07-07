@@ -537,7 +537,7 @@ surf_err:
    ERR("Failed to create surface for window");
 }
 
-static void
+void
 _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
 {
    if (!window->display->wl.compositor) return;
