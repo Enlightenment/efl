@@ -74,7 +74,7 @@ struct _Efl_Ui_List_Data
 
    Evas_Coord                   minw, minh;
    Efl_Ui_List_Item             *focused;
-   int                 avit, avsom, item_count;
+   int                          avit, avsom, item_count;
    Efl_Future                   *future;
 };
 
@@ -92,7 +92,7 @@ typedef struct _Efl_Ui_List_Slice Efl_Ui_List_Slice;
 struct _Efl_Ui_List_Slice
 {
    Efl_Ui_List_Data       *pd;
-   int                    newstart, slicestart, newsize;
+   int                    newstart, slicestart, newslice;
 };
 
 
