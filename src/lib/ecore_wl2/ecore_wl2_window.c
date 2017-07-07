@@ -608,6 +608,7 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    /* try to allocate space for window structure */
    win = calloc(1, sizeof(Ecore_Wl2_Window));
    if (!win) return NULL;
+   display->refs++;
 
    win->display = display;
    win->parent = parent;
@@ -744,6 +745,7 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    display->windows =
      eina_inlist_remove(display->windows, EINA_INLIST_GET(window));
 
+   ecore_wl2_display_disconnect(window->display);
    free(window);
 }
 
