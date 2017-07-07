@@ -169,7 +169,7 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    bx = efl_add(EFL_UI_BOX_CLASS, win, efl_orientation_set(efl_added, EFL_ORIENT_VERTICAL));
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, -1, -1);
-   efl_pack(win, bx);
+   efl_content_set(win, bx);
    evas_object_show(bx);
    td->win = win;
 
