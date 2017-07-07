@@ -926,6 +926,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Object.finalize;
       Efl.Gfx.visible { set; }
       Efl.Gfx.position { set; }

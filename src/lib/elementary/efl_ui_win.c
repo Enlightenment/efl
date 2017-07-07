@@ -5048,6 +5048,16 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           }
         ecore_wl2_window_type_set(sd->wl.win, wtype);
      }
+   else if (sd->type == ELM_WIN_FAKE)
+     {
+        const char *env = getenv("WAYLAND_DISPLAY");
+        if (env)
+          {
+             Ecore_Wl2_Display *d = ecore_wl2_display_connect(env);
+             sd->wl.win = ecore_wl2_window_new(d, NULL, 0, 0, 1, 1);
+             ecore_wl2_display_disconnect(d);
+          }
+     }
 #endif
 
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -5326,6 +5336,16 @@ _efl_ui_win_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Efl_Ui_Win_Dat
    );
 
    return manager;
+}
+
+EOLIAN static void
+_efl_ui_win_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+{
+#ifdef HAVE_ELEMENTARY_WL2
+   if (pd->type == ELM_WIN_FAKE)
+     ecore_wl2_window_free(pd->wl.win);
+#endif
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *
