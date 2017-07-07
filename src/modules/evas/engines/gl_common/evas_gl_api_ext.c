@@ -789,6 +789,8 @@ _evgl_api_gles2_ext_init(void *getproc, const char *glueexts)
    if (!glexts)
      {
         ERR("glGetString returned NULL! Something is very wrong...");
+        eina_strbuf_free(sb);
+        eina_strbuf_free(sboff);
         return EINA_FALSE;
      }
 
@@ -1033,25 +1035,25 @@ _evgl_api_gles1_ext_init(void *getproc, const char *glueexts)
    if (!(rsc=_evgl_tls_resource_get()))
      {
         ERR("Unable to initialize GLES1 extensions. Error retrieving tls");
-        return EINA_FALSE;
+        goto error;
      }
 
    if ((dpy == EGL_NO_DISPLAY) || !rsc->current_ctx)
      {
         DBG("Unable to initialize GLES1 extensions. Engine not initialized");
-        return EINA_FALSE;
+        goto error;
      }
 
    if (!eglQueryContext(dpy, rsc->current_ctx->context, EGL_CONTEXT_CLIENT_VERSION, &context_version))
      {
         ERR("Unable to initialize GLES1 extensions. eglQueryContext failed 0x%x", eglGetError());
-        return EINA_FALSE;
+        goto error;
      }
 
    if (context_version != EVAS_GL_GLES_1_X)
      {
         DBG("GLESv1 context not bound");
-        return EINA_FALSE;
+        goto error;
      }
 #endif
 
@@ -1059,14 +1061,14 @@ _evgl_api_gles1_ext_init(void *getproc, const char *glueexts)
    if (!gles1_funcs || !gles1_funcs->glGetString)
      {
         ERR("Could not get address of glGetString in GLESv1 library!");
-        return EINA_FALSE;
+        goto error;
      }
 
    glexts = (const char *) gles1_funcs->glGetString(GL_EXTENSIONS);
    if (!glexts)
      {
         ERR("GLESv1:glGetString(GL_EXTENSIONS) returned NULL!");
-        return EINA_FALSE;
+        goto error;
      }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1226,6 +1228,10 @@ _evgl_api_gles1_ext_init(void *getproc, const char *glueexts)
    // GLESv1 version has been initialized!
    _evgl_api_ext_status |= EVASGL_API_GLES1_EXT_INITIALIZED;
    return EINA_TRUE;
+error:
+   eina_strbuf_free(sb);
+   eina_strbuf_free(sboff);
+   return EINA_FALSE;
 }
 
 void
@@ -1317,25 +1323,25 @@ _evgl_api_gles3_ext_init(void *getproc, const char *glueexts)
    if (!(rsc=_evgl_tls_resource_get()))
      {
         ERR("Unable to initialize GLES3 extensions. Error retrieving tls");
-        return EINA_FALSE;
+        goto error;
      }
 
    if ((dpy == EGL_NO_DISPLAY) || !rsc->current_ctx)
      {
         DBG("Unable to initialize GLES3 extensions. Engine not initialized");
-        return EINA_FALSE;
+        goto error;
      }
 
    if (!eglQueryContext(dpy, rsc->current_ctx->context, EGL_CONTEXT_CLIENT_VERSION, &context_version))
      {
         ERR("Unable to initialize GLES3 extensions. eglQueryContext failed 0x%x", eglGetError());
-        return EINA_FALSE;
+        goto error;
      }
 
    if (context_version != EVAS_GL_GLES_3_X)
      {
         DBG("GLESv3 context not bound");
-        return EINA_FALSE;
+        goto error;
      }
 #endif
 
@@ -1344,14 +1350,14 @@ _evgl_api_gles3_ext_init(void *getproc, const char *glueexts)
    if (!gles3_funcs || !gles3_funcs->glGetString)
      {
         ERR("Could not get address of glGetString in GLESv3 library!");
-        return EINA_FALSE;
+        goto error;
      }
 
    glexts = (const char *) gles3_funcs->glGetString(GL_EXTENSIONS);
    if (!glexts)
      {
         ERR("GLESv3:glGetString(GL_EXTENSIONS) returned NULL!");
-        return EINA_FALSE;
+        goto error;
      }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1510,6 +1516,10 @@ _evgl_api_gles3_ext_init(void *getproc, const char *glueexts)
    // GLESv3 version has been initialized!
    _evgl_api_ext_status |= EVASGL_API_GLES3_EXT_INITIALIZED;
    return EINA_TRUE;
+error:
+   eina_strbuf_free(sb);
+   eina_strbuf_free(sboff);
+   return EINA_FALSE;
 }
 
 void

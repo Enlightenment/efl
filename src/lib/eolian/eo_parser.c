@@ -969,6 +969,7 @@ parse_typedef(Eo_Lexer *ls)
    pop_type(ls);
    check_next(ls, ';');
    FILL_DOC(ls, def, doc);
+   pop_strbuf(ls);
    return def;
 }
 
@@ -1016,6 +1017,7 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
      }
    check_next(ls, ';');
    FILL_DOC(ls, def, doc);
+   pop_strbuf(ls);
    return def;
 }
 

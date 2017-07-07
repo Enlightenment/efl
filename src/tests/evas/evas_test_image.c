@@ -381,6 +381,8 @@ START_TEST(evas_object_image_tgv_loader_data)
    evas_object_del(obj);
    evas_object_del(ref);
 
+   eina_strbuf_free(str);
+
    evas_free(e);
    evas_shutdown();
 }
