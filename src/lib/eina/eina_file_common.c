@@ -448,6 +448,7 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
 
    if (copy)
      {
+        file->copied = EINA_TRUE;
         file->global_map = ((char *)file) + head_padded;
         memcpy((char *)file->global_map, data, length);
      }
