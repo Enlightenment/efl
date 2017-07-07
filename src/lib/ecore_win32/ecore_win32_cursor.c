@@ -355,6 +355,14 @@ ecore_win32_cursor_size_get(int *width, int *height)
    if (*height) *height = GetSystemMetrics(SM_CYCURSOR);
 }
 
+EAPI void
+ecore_win32_cursor_show(Eina_Bool show)
+{
+   INF("show cursor");
+
+   ShowCursor(show ? TRUE : FALSE);
+}
+
 /**
  * @}
  */

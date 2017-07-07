@@ -675,6 +675,8 @@ EAPI const Ecore_Win32_Cursor *ecore_win32_cursor_x11_shaped_get(Ecore_Win32_Cur
 
 EAPI void                ecore_win32_cursor_size_get(int *width, int *height);
 
+EAPI void                ecore_win32_cursor_show(Eina_Bool show);
+
 
 
 /* Drag and drop */

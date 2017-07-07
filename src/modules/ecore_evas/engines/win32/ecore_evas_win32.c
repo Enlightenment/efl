@@ -909,6 +909,22 @@ _ecore_evas_win32_size_step_set(Ecore_Evas *ee, int width, int height)
 }
 
 static void
+_ecore_evas_win32_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj,
+                                    int layer EINA_UNUSED,
+                                    int hot_x EINA_UNUSED,
+                                    int hot_y EINA_UNUSED)
+{
+   if (obj != _ecore_evas_default_cursor_image_get(ee))
+     ecore_win32_cursor_show(EINA_FALSE);
+}
+
+static void
+_ecore_evas_win32_object_cursor_unset(Ecore_Evas *ee)
+{
+   ecore_win32_cursor_show(EINA_TRUE);
+}
+
+static void
 _ecore_evas_win32_focus_set(Ecore_Evas *ee, Eina_Bool on EINA_UNUSED)
 {
    ecore_win32_window_focus((Ecore_Win32_Window *)ee->prop.window);
@@ -1212,8 +1228,8 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      _ecore_evas_win32_size_max_set,
      _ecore_evas_win32_size_base_set,
      _ecore_evas_win32_size_step_set,
-     NULL,
-     NULL,
+     _ecore_evas_win32_object_cursor_set,
+     _ecore_evas_win32_object_cursor_unset,
      NULL, /* _ecore_evas_x_layer_set */
      _ecore_evas_win32_focus_set,
      _ecore_evas_win32_iconified_set,
