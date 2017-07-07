@@ -66,7 +66,7 @@ static internal class UnsafeNativeMethods {
 
     [DllImport("eflcustomexportsmono")]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_array_append_wrapper(IntPtr handle, int data);
+    internal static extern bool eina_value_array_append_wrapper(IntPtr handle, IntPtr data);
 
     [DllImport("eflcustomexportsmono")]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -535,7 +535,9 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     // Array methods
     public bool Append(object o) {
         SanityChecks();
-        return eina_value_array_append_wrapper(this.Handle, (int)o);
+        using (DisposableIntPtr marshalled_value = MarshalValue(o)) {
+            return eina_value_array_append_wrapper(this.Handle, marshalled_value.Handle);
+        }
     }
 
     public object this[int i]
@@ -551,23 +553,19 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
         set {
             SanityChecks();
-            IntPtr marshalled_value = MarshalValue(value);
+            using (DisposableIntPtr marshalled_value = MarshalValue(value))
+            {
+                if (!eina_value_array_set_wrapper(this.Handle, i, marshalled_value.Handle)) {
 
-            if (!eina_value_array_set_wrapper(this.Handle, i, marshalled_value)) {
+                    uint size = eina_value_array_count_wrapper(this.Handle);
 
-                if (GetValueSubType().IsString())
-                    Marshal.FreeHGlobal(marshalled_value);
+                    if (i >= size)
+                        throw new System.ArgumentOutOfRangeException(
+                                $"Index {i} is larger than max array index {size-1}");
 
-                uint size = eina_value_array_count_wrapper(this.Handle);
-
-                if (i >= size)
-                    throw new System.ArgumentOutOfRangeException($"Index {i} is larger than max array index {size-1}");
-
-                throw new SetItemFailedException($"Failed to set item at index {i}");
+                    throw new SetItemFailedException($"Failed to set item at index {i}");
+                }
             }
-
-            if (GetValueSubType().IsString())
-                Marshal.FreeHGlobal(marshalled_value);
         }
     }
 
@@ -579,39 +577,46 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return ValueTypeBridge.GetManaged(native_subtype);
     }
 
-    private IntPtr MarshalValue(object value)
+    private DisposableIntPtr MarshalValue(object value)
     {
+        IntPtr ret = IntPtr.Zero;
+        bool shouldFree = false;
         switch(GetValueSubType()) {
             case ValueType.Int32:
                 {
-                    int x = (int)value;
-                    return new IntPtr(x);
+                    int x = Convert.ToInt32(value);
+                    ret = new IntPtr(x);
                 }
+                break;
             case ValueType.UInt32:
                 {
-                    uint x = (uint)value;
-                    return new IntPtr((int)x);
+                    uint x = Convert.ToUInt32(value);
+                    ret = new IntPtr((int)x);
                 }
+                break;
             case ValueType.String:
                 {
                     string x = value as string;
                     if (x == null)
-                        return IntPtr.Zero;
-                    // Warning: Caller will have ownership of this memory.
-                    return Marshal.StringToHGlobalAnsi(x);
+                        ret = IntPtr.Zero;
+                    else {
+                        ret = Marshal.StringToHGlobalAnsi(x);
+                        shouldFree = true;
+                    }
                 }
-            default:
-                return IntPtr.Zero;
+                break;
         }
+
+        return new DisposableIntPtr(ret, shouldFree);
     }
 
     private object UnMarshalPtr(IntPtr data)
     {
         switch(GetValueSubType()) {
             case ValueType.Int32:
-                return Convert.ToInt32(data.ToInt64());
+                return Convert.ToInt32(data.ToInt32());
             case ValueType.UInt32:
-                return Convert.ToUInt32(data.ToInt64());
+                return Convert.ToUInt32(data.ToInt32());
             case ValueType.String:
                 return Marshal.PtrToStringAuto(data);
             default:

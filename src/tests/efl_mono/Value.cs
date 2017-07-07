@@ -336,6 +336,35 @@ public static class TestEinaValue {
             Test.AssertEquals((int)array[1], 1);
             Test.AssertEquals((int)array[2], 5);
             Test.AssertEquals((int)array[3], 42);
+
+            array[0] = 1984;
+            array[1] = -42;
+
+            Test.AssertEquals((int)array[0], 1984);
+            Test.AssertEquals((int)array[1], -42);
+            Test.AssertEquals((int)array[2], 5);
+            Test.AssertEquals((int)array[3], 42);
+        }
+
+        using(eina.Value array = new eina.Value(eina.ValueType.Array, eina.ValueType.UInt32)) {
+            Test.Assert(array.Append(2));
+            Test.AssertEquals((uint)array[0], (uint)2);
+            Test.AssertRaises<OverflowException>(() => array[0] = -1);
+        }
+
+        using(eina.Value array = new eina.Value(eina.ValueType.Array, eina.ValueType.String)) {
+
+            Test.Assert(array.Append("hello"));
+            Test.Assert(array.Append("world"));
+
+            Test.AssertEquals((string)array[0], "hello");
+            Test.AssertEquals((string)array[1], "world");
+
+            array[0] = "efl";
+            array[1] = "rocks";
+
+            Test.AssertEquals((string)array[0], "efl");
+            Test.AssertEquals((string)array[1], "rocks");
         }
 
         Test.AssertRaises<ArgumentException>(() => {
