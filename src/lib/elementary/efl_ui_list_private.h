@@ -21,13 +21,13 @@ struct _Efl_Ui_List_Item
    Elm_Layout           *layout;
    Efl_Future           *future;
    unsigned int         index;
-   Evas_Coord           x, y, w, h;
+   Evas_Coord           x, y, minw, minh;
+   double               h, v, wx, wy;
    Eina_Bool            down: 1;
    Eina_Bool            selected: 1;
    Eina_Bool            longpressed : 1;
    Ecore_Timer         *long_timer;
 };
-
 
 typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
 
@@ -37,33 +37,45 @@ struct _Efl_Ui_List_Data
    Evas_Object                  *hit_rect;
    Efl_Model                    *model;
 
-   Efl_Orient orient;
+   Efl_Orient                   orient;
    Eina_Bool                    homogeneous : 1;
-   Eina_Bool                    delete_me : 1;
    Eina_Bool                    recalc : 1;
    Eina_Bool                    on_hold : 1;
-   Eina_Bool                    was_selected : 1;
 
    struct {
-      double h, v;
-      Eina_Bool scalable: 1;
+      double                    h, v;
+      Eina_Bool                 scalable: 1;
    } pad;
 
    struct {
-      double h, v;
+      double                    h, v;
    } align;
 
-   Eina_List                    *items, *selected;
-   Eina_List                    *realizes;
+   struct {
+      double                    x, y;
+   } weight;
+
+   struct {
+      Evas_Coord                x, y, w, h;
+      int                       start;
+      int                       slice;
+   } realized;
+
+   struct {
+      Evas_Coord                x, y, diff;
+      Evas_Object               *obj;
+   } pan;
+
+   Eina_List                    *selected;
+   Eina_Array                   *items;
    Eina_Stringshare             *style;
    Elm_Object_Select_Mode       select_mode;
    Elm_List_Mode                mode;
-   unsigned int                 re_idx;
 
-   Evas_Object                  *pan_obj;
-   Eina_Bool                    pan_changed : 1;
-   Evas_Coord                   pan_x, pan_y, minw, minh, dx, dy, rlzw, rlzh;
+   Evas_Coord                   minw, minh;
    Efl_Ui_List_Item             *focused;
+   int                 avit, avsom, item_count;
+   Efl_Future                   *future;
 };
 
 typedef struct _Efl_Ui_List_Pan_Data Efl_Ui_List_Pan_Data;
@@ -74,6 +86,15 @@ struct _Efl_Ui_List_Pan_Data
    Efl_Ui_List_Data       *wpd;
    Ecore_Job              *resize_job;
 };
+
+typedef struct _Efl_Ui_List_Slice Efl_Ui_List_Slice;
+
+struct _Efl_Ui_List_Slice
+{
+   Efl_Ui_List_Data       *pd;
+   int                    newstart, slicestart, newsize;
+};
+
 
 
 #define EFL_UI_LIST_DATA_GET(o, ptr) \

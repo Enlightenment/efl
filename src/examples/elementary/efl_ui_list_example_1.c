@@ -42,8 +42,7 @@ _realized_cb(void *data, const Efl_Event *event)
    Efl_Ui_List_Item_Event *ie = event->info;
    Private_Data *pd = data;
 
-   ie->layout = efl_add(ELM_LAYOUT_CLASS, pd->li);
-   efl_ui_view_model_set(ie->layout, ie->child);
+   //efl_ui_view_model_set(ie->layout, ie->child);
    elm_layout_theme_set(ie->layout, "list", "item", "default");
 
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
@@ -59,8 +58,8 @@ _unrealized_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
 
-   efl_ui_view_model_set(ie->layout, NULL);
-   efl_del(ie->layout);
+   //efl_ui_view_model_set(ie->layout, NULL);
+   //efl_del(ie->layout);
 }
 
 static Efl_Model*
