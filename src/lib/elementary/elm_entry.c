@@ -100,6 +100,16 @@ struct _Mod_Api
 static void _create_selection_handlers(Evas_Object *obj, Elm_Entry_Data *sd);
 static void _magnifier_move(void *data);
 
+static Evas_Object *
+_entry_win_get(Evas_Object *obj)
+{
+   Evas_Object *top;
+   top = elm_widget_top_get(obj);
+   if ((!elm_win_window_id_get(top)) && (elm_win_type_get(top) == ELM_WIN_INLINED_IMAGE))
+     top = elm_widget_parent2_get(top);
+   return top;
+}
+
 static Mod_Api *
 _module_find(Evas_Object *obj EINA_UNUSED)
 {
@@ -2296,6 +2306,14 @@ _entry_selection_none_signal_cb(void *data,
    elm_entry_select_none(data);
 }
 
+static inline Eina_Bool
+_entry_win_is_wl(Evas_Object *obj)
+{
+   Evas_Object *win = _entry_win_get(obj);
+   /* primary selection does not exist (yet) */
+   return win && elm_win_wl_window_get(win);
+}
+
 static void
 _entry_selection_changed_signal_cb(void *data,
                                    Evas_Object *obj EINA_UNUSED,
@@ -2307,7 +2325,8 @@ _entry_selection_changed_signal_cb(void *data,
    sd->have_selection = EINA_TRUE;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_CHANGED, NULL);
-   _selection_store(ELM_SEL_TYPE_PRIMARY, data);
+   if (!_entry_win_is_wl(data))
+     _selection_store(ELM_SEL_TYPE_PRIMARY, data);
    _update_selection_handler(data);
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL);
@@ -2326,18 +2345,21 @@ _entry_selection_cleared_signal_cb(void *data,
    sd->have_selection = EINA_FALSE;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
-   if (sd->cut_sel)
+   if (!_entry_win_is_wl(data))
      {
-        elm_cnp_selection_set
-           (data, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_MARKUP,
-            sd->cut_sel, eina_stringshare_strlen(sd->cut_sel));
-        elm_cnp_selection_loss_callback_set(data, ELM_SEL_TYPE_PRIMARY, _selection_clear, data);
+        if (sd->cut_sel)
+          {
+             elm_cnp_selection_set
+                (data, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_MARKUP,
+                 sd->cut_sel, eina_stringshare_strlen(sd->cut_sel));
+             elm_cnp_selection_loss_callback_set(data, ELM_SEL_TYPE_PRIMARY, _selection_clear, data);
 
-        ELM_SAFE_FREE(sd->cut_sel, eina_stringshare_del);
-     }
-   else
-     {
-        elm_object_cnp_selection_clear(data, ELM_SEL_TYPE_PRIMARY);
+             ELM_SAFE_FREE(sd->cut_sel, eina_stringshare_del);
+          }
+        else
+          {
+             elm_object_cnp_selection_clear(data, ELM_SEL_TYPE_PRIMARY);
+          }
      }
    _hide_selection_handler(data);
 }
@@ -2356,6 +2378,7 @@ _entry_paste_request_signal_cb(void *data,
      ELM_SEL_TYPE_PRIMARY : ELM_SEL_TYPE_CLIPBOARD;
 
    if (!sd->editable) return;
+   if ((type == ELM_SEL_TYPE_PRIMARY) && _entry_win_is_wl(data)) return;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
