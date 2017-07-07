@@ -2382,10 +2382,8 @@ _entry_paste_request_signal_cb(void *data,
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
-   top = elm_widget_top_get(data);
-   if (!elm_win_window_id_get(top))
-     top = elm_widget_parent2_get(top);
-   if ((top) && (elm_win_window_id_get(top)))
+   top = _entry_win_get(data);
+   if (top)
      {
         Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_TEXT;
 
