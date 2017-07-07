@@ -332,7 +332,7 @@ EAPI Eina_Bool eina_value_array_get_wrapper(const Eina_Value *array, int i, void
    return eina_value_array_get(array, i, output);
 }
 
-EAPI Eina_Bool eina_value_array_set_wrapper(const Eina_Value *array, int i, void *value)
+EAPI Eina_Bool eina_value_array_set_wrapper(Eina_Value *array, int i, void *value)
 {
    return eina_value_array_set(array, i, value);
 }
