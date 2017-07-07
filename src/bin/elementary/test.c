@@ -181,7 +181,7 @@ void test_index_horizontal(void *data, Evas_Object *obj, void *event_info);
 void test_photocam(void *data, Evas_Object *obj, void *event_info);
 void test_photocam_remote(void *data, Evas_Object *obj, void *event_info);
 void test_photocam_icon(void *data, Evas_Object *obj, void *event_info);
-void test_photocam_animated(void *data, Evas_Object *obj, void *event_info);
+void test_image_zoomable_animated(void *data, Evas_Object *obj, void *event_info);
 void test_photo(void *data, Evas_Object *obj, void *event_info);
 void test_prefs(void *data, Evas_Object *obj, void *event_info);
 void test_thumb(void *data, Evas_Object *obj, void *event_info);
@@ -681,7 +681,7 @@ add_tests:
    ADD_TEST(NULL, "Images", "Photocam", test_photocam);
    ADD_TEST(NULL, "Images", "Photocam Remote", test_photocam_remote);
    ADD_TEST(NULL, "Images", "Photocam Icon", test_photocam_icon);
-   ADD_TEST(NULL, "Images", "Image Zoomable animation", test_photocam_animated);
+   ADD_TEST(NULL, "Images", "Image Zoomable animation", test_image_zoomable_animated);
    ADD_TEST(NULL, "Images", "Photo", test_photo);
    ADD_TEST(NULL, "Images", "Thumb", test_thumb);
    ADD_TEST(NULL, "Images", "Image", test_image);
