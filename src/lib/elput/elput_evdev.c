@@ -1,9 +1,10 @@
 #include "elput_private.h"
 
 static void
-_seat_event_free(void *d, void *ev EINA_UNUSED)
+_seat_event_free(void *d, void *ev)
 {
    _udev_seat_destroy(d);
+   free(ev);
 }
 
 static void
