@@ -403,7 +403,7 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
    Eina_Nano_Time tp;
    long int ti;
    const char *tmpname = "/dev/mem/virtual\\/%16x";
-   int slen;
+   size_t slen, head_padded;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
 
@@ -412,19 +412,19 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
    ti = _eina_time_convert(&tp);
 
    slen = virtual_name ? strlen(virtual_name) + 1 : strlen(tmpname) + 17;
+   // align copied data at end of file struct to 16 bytes...
+   head_padded = 16 * ((sizeof(Eina_File) + slen + 15) / 16);
 
-   file = malloc(sizeof (Eina_File) +
-                 slen +
-                 (copy ? length : 0));
+   file = malloc(head_padded + (copy ? length : 0));
    if (!file) return NULL;
 
    memset(file, 0, sizeof(Eina_File));
    EINA_MAGIC_SET(file, EINA_FILE_MAGIC);
-   file->filename = (char*) (file + 1);
+   file->filename = (char *)(file + 1);
    if (virtual_name)
-     strcpy((char*) file->filename, virtual_name);
+     strcpy((char *)file->filename, virtual_name);
    else
-     sprintf((char*) file->filename, tmpname, ti);
+     sprintf((char *)file->filename, tmpname, ti);
 
    eina_lock_new(&file->lock);
    file->mtime = ti / 1000;
@@ -448,13 +448,12 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
 
    if (copy)
      {
-        file->global_map = (void*)(file->filename +
-                                   strlen(file->filename) + 1);
-        memcpy((char*) file->global_map, data, length);
+        file->global_map = ((char *)file) + head_padded;
+        memcpy((char *)file->global_map, data, length);
      }
    else
      {
-        file->global_map = (void*) data;
+        file->global_map = (void *)data;
      }
 
    return file;
