@@ -6992,14 +6992,8 @@ EAPI Ecore_Wl2_Window *
 elm_win_wl_window_get(const Evas_Object *obj)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   const char *engine_name;
 
    if (!sd) return NULL;
-   engine_name = ecore_evas_engine_name_get(sd->ee);
-   if (!(engine_name &&
-         ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
-          (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
-     return NULL;
 
    if (!evas_object_smart_type_check_ptr(obj, MY_CLASS_NAME_LEGACY))
      {
