@@ -335,7 +335,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
                  efl_gfx_size_hint_weight_set(efl_added, 1, 1),
-                 efl_pack(win, efl_added), // FIXME / use content set
+                 efl_content_set(win, efl_added),
                  efl_gfx_visible_set(efl_added, 1));
 
    efl_add(ELM_COLORSELECTOR_CLASS, win,
