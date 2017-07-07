@@ -201,6 +201,10 @@ static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format fo
 
 static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
+
+static Eina_Bool _local_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata);
+static Eina_Bool _local_elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection);
+static Eina_Bool _local_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
 
@@ -2011,7 +2015,7 @@ _x11_elm_cnp_selection_set(Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type s
           sel->selbuf = strdup((char*)selbuf);
      }
 
-   return EINA_TRUE;
+   return _local_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
 }
 
 static void
@@ -2052,7 +2056,7 @@ _x11_elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
    ELM_SAFE_FREE(sel->selbuf, free);
    sel->clear();
 
-   return EINA_TRUE;
+   return _local_elm_object_cnp_selection_clear(obj, selection);
 }
 
 static Eina_Bool
@@ -2065,6 +2069,8 @@ _x11_elm_cnp_selection_get(Ecore_X_Window xwin, const Evas_Object *obj, Elm_Sel_
    _x11_elm_cnp_init();
 
    sel = _x11_selections + selection;
+   if (sel->active)
+     return _local_elm_cnp_selection_get(obj, selection, format, datacb, udata);
 
    if (sel->requestwidget)
      evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
@@ -3002,7 +3008,7 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
         sel->selection_serial = ecore_wl2_dnd_selection_set(_wl_default_seat_get(win, obj), types);
 
         free(types);
-        return EINA_TRUE;
+        return _local_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
      }
    else
      {
@@ -3118,11 +3124,15 @@ _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Se
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Offer *offer;
    int i = 0;
+   //Wl_Cnp_Selection *sel = &wl_cnp_selection;
+
    _wl_elm_cnp_init();
 
-   win = _wl_elm_widget_window_get(obj);
-
    if (selection == ELM_SEL_TYPE_XDND) return EINA_FALSE;
+
+   //if (sel->active)
+     //return _local_elm_cnp_selection_get(obj, selection, format, datacb, udata);
+   win = _wl_elm_widget_window_get(obj);
 
    input = _wl_default_seat_get(win, (void*)obj);
    offer = ecore_wl2_dnd_selection_get(input);
@@ -3201,7 +3211,7 @@ _wl_elm_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection EINA_UNUSED
    /* sel->clear(); */
    sel->selection_serial = ecore_wl2_dnd_selection_clear(_wl_default_seat_get(_wl_elm_widget_window_get(obj), obj));
 
-   return EINA_TRUE;
+   return _local_elm_object_cnp_selection_clear(obj, selection);
 }
 
 static void
