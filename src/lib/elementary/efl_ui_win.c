@@ -7774,60 +7774,45 @@ elm_win_inlined_image_object_get(const Evas_Object *obj)
 static Ecore_Window
 _elm_win_window_id_get(Efl_Ui_Win_Data *sd)
 {
-   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
-
-   if ((engine_name &&
-        ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
-         (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
-     {
 #if HAVE_ELEMENTARY_WL2
-        if (sd->wl.win)
-          return (Ecore_Window)ecore_wl2_window_id_get(sd->wl.win);
-        if (sd->parent)
-          {
-             Ecore_Wl2_Window *parent;
+   if (sd->wl.win)
+     return (Ecore_Window)ecore_wl2_window_id_get(sd->wl.win);
+   if (sd->parent)
+     {
+        Ecore_Wl2_Window *parent;
 
-             parent = elm_win_wl_window_get(sd->parent);
-             if (parent)
-               return (Ecore_Window)ecore_wl2_window_id_get(parent);
-             return 0;
-          }
-#endif
+        parent = elm_win_wl_window_get(sd->parent);
+        if (parent)
+          return (Ecore_Window)ecore_wl2_window_id_get(parent);
      }
-   else if ((engine_name &&
-             ((!strcmp(engine_name, ELM_SOFTWARE_X11)) ||
-              (!strcmp(engine_name, ELM_OPENGL_X11)))))
-     {
+#endif
 #ifdef HAVE_ELEMENTARY_X
-        _internal_elm_win_xwindow_get(sd);
-        if (sd->x.xwin) return (Ecore_Window)sd->x.xwin;
-        if (sd->parent) return (Ecore_Window)elm_win_xwindow_get(sd->parent);
-#endif
-     }
-   else if (engine_name &&
-            ((!strcmp(engine_name, ELM_OPENGL_COCOA)) ||
-             (!strcmp(engine_name, "gl_cocoa"))))
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin) return (Ecore_Window)sd->x.xwin;
+   if (sd->parent)
      {
+        Ecore_Window xwin = elm_win_xwindow_get(sd->parent);
+        if (xwin) return xwin;
+     }
+#endif
 #ifdef HAVE_ELEMENTARY_COCOA
-        if (sd->cocoa.win) return (Ecore_Window)(sd->cocoa.win);
-        if (sd->parent)
-          {
-             Ecore_Cocoa_Window *pwin;
-             pwin = elm_win_cocoa_window_get(sd->parent);
-             return (Ecore_Window)pwin;
-          }
-#endif
-     }
-   else if ((engine_name &&
-             ((!strcmp(engine_name, ELM_SOFTWARE_WIN32)) ||
-              (!strcmp(engine_name, ELM_SOFTWARE_DDRAW)))))
+   if (sd->cocoa.win) return (Ecore_Window)(sd->cocoa.win);
+   if (sd->parent)
      {
+        Ecore_Cocoa_Window *pwin;
+        pwin = elm_win_cocoa_window_get(sd->parent);
+        if (pwin) return (Ecore_Window)pwin;
+     }
+#endif
 #ifdef HAVE_ELEMENTARY_WIN32
         _internal_elm_win_win32window_get(sd);
         if (sd->win32.win) return (Ecore_Window)sd->win32.win;
-        if (sd->parent) return (Ecore_Window)elm_win_win32_window_get(sd->parent);
+        if (sd->parent)
+          {
+             Ecore_Window wwin = (Ecore_Window)elm_win_win32_window_get(sd->parent);
+             if (wwin) return wwin;
+          }
 #endif
-     }
 
    return 0;
 }
