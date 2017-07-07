@@ -6,6 +6,7 @@ enum Efl.Ui.Textpath.Orientation {
 class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text)
 {
    [[Efl Ui Textpath class]]
+   legacy_prefix: elm_textpath;
    methods {
       @property path {
          [[The path to place text.
@@ -46,6 +47,16 @@ class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text)
             slice_no: int;
          }
       }
+      @property ellipsis {
+         [[Control the ellipsis behavior of the textpath.]]
+         set {
+         }
+         get {
+         }
+         values {
+            ellipsis: bool; [[To ellipsis text or not]]
+         }
+      }
    }
    implements {
       class.constructor;
@@ -53,6 +64,7 @@ class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text)
       Efl.Object.destructor;
       Elm.Layout.sizing_eval;
       Efl.Text.text {get; set;}
+      Efl.Part.part;
    }
    events {
    }

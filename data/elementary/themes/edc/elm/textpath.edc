@@ -1,0 +1,46 @@
+group { name: "elm/textpath/base/default";
+alias: "elm/textpath/text/default";
+   styles {
+      style { name: "textpath_style";
+         base: "font="FN" font_size=12 text_class=tb_plain wrap=none align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         tag: "br" "\n";
+         tag: "b" "+ font="FNBD" text_class=tb_light";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
+   parts {
+      part { name: "test";
+         type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 255 255 0 100;
+            //min: 1 1;
+            //max: 0 0;
+         }
+      }
+      part { name: "elm.swallow.background";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            //min: 1 1;
+            //max: 0 0;
+         }
+      }
+      part { name: "elm.text";  
+         type: TEXTBLOCK;
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.0 0.0;
+            text {
+               style: "textpath_style";
+               min: 0 1;
+               //max: 0 0;
+               align: 0.0 0.5;
+            }
+         }
+      }
+   }
+}

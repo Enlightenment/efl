@@ -23,12 +23,19 @@ elm_main(int argc, char *argv[])
     elm_win_autodel_set(win, EINA_TRUE);
 
     txtpath = efl_add(EFL_UI_TEXTPATH_CLASS, win);
-    efl_ui_textpath_circle_set(txtpath, 200, 200, 100, 45);
-    //efl_ui_textpath_autofit_set(txtpath, EINA_TRUE);
+    efl_ui_textpath_circle_set(txtpath, 200, 200, 100, 0);
+    efl_ui_textpath_autofit_set(txtpath, EINA_TRUE);
     //efl_text_set(txtpath, "abcdef and more you can see from this test");
-    efl_text_set(txtpath, "abcdefghijklm");
+    //efl_text_set(txtpath, "abcd&lt;efghi&gt;jklm");
+    //efl_text_set(txtpath, "abcd&lt;eghi&gt;j");
+    //elm_object_text_set(txtpath, "abcd&lt;eghi&gt;j");
+    efl_text_set(txtpath, "abcd&lt;eghi&gt;j more and more, so long to make it ellipsis? No, it is not enough, want to see more?xy");
+    efl_ui_textpath_ellipsis_set(txtpath, EINA_TRUE);
     efl_gfx_geometry_set(txtpath, 0, 0, 200, 200);
     efl_gfx_visible_set(txtpath, EINA_TRUE);
+
+    printf("text by efl: %s\n", efl_text_get(txtpath));
+    printf("text by elm: %s\n", elm_object_text_get(txtpath));
 
     elm_win_resize_object_add(win, txtpath);
     evas_object_resize(win, WIDTH, HEIGHT);
