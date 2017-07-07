@@ -637,8 +637,8 @@ _button_remove(Evas_Object *obj,
 
    if (!sd->last_button_number)
      {
-        _visuals_set(obj);
         ELM_SAFE_FREE(sd->action_area, evas_object_del);
+        _visuals_set(obj);
      }
    else
      {
