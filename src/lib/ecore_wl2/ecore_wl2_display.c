@@ -14,9 +14,10 @@ static Eina_Bool _cb_connect_data(void *data, Ecore_Fd_Handler *hdl);
 static Eina_Bool _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync);
 
 void
-_display_event_free(void *d, void *event EINA_UNUSED)
+_display_event_free(void *d, void *event)
 {
    ecore_wl2_display_disconnect(d);
+   free(event);
 }
 
 static void
