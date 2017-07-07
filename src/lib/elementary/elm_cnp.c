@@ -830,6 +830,7 @@ _x11_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
    Elm_Cnp_Event_Selection_Changed *e;
    Ecore_X_Event_Fixes_Selection_Notify *ev = event;
    Elm_Sel_Type type;
+   X11_Cnp_Selection *sel;
 
    switch (ev->selection)
      {
@@ -841,6 +842,9 @@ _x11_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
         break;
       default: return ECORE_CALLBACK_RENEW;
      }
+   sel = _x11_selections + type;
+   if (sel->active && (sel->xwin != ev->owner))
+     _x11_elm_object_cnp_selection_clear(sel->widget, type);
    e = calloc(1, sizeof(Elm_Cnp_Event_Selection_Changed));
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
    e->type = type;
