@@ -2893,18 +2893,31 @@ _wl_sel_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
 static Ecore_Wl2_Input *
 _wl_default_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj)
 {
-   Eo *seat, *parent2;
+   Eo *seat, *parent2, *ewin;
 
-   // FIXME: In wayland the default seat is not named "default" but "seat-X"
-   // where X may be 0 or really anything else.
-   if (!obj) return ecore_wl2_display_input_find_by_name(ecore_wl2_window_display_get(win), "default");
+   if (obj)
+     {
 
-   // FIXME (there might be a better solution):
-   // In case of inwin, we want to use the main wl2 window for cnp, but obj
-   // obj belongs to the buffer canvas, so the default seat for obj does not
-   // match the window win.
-   parent2 = elm_widget_parent2_get(elm_widget_top_get(obj));
-   if (parent2) obj = elm_widget_top_get(parent2) ?: parent2;
+        // FIXME (there might be a better solution):
+        // In case of inwin, we want to use the main wl2 window for cnp, but obj
+        // obj belongs to the buffer canvas, so the default seat for obj does not
+        // match the window win.
+        parent2 = elm_widget_parent2_get(elm_widget_top_get(obj));
+        if (parent2) obj = elm_widget_top_get(parent2) ?: parent2;
+        /* fake win means canvas seat id will not match protocol seat id */
+        ewin = elm_win_get(obj);
+        if (elm_win_type_get(ewin) == ELM_WIN_FAKE) obj = NULL;
+     }
+
+   if (!obj)
+     {
+        Ecore_Wl2_Input *input;
+        Eina_Iterator *it;
+        it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(win));
+        EINA_ITERATOR_FOREACH(it, input) break;
+        eina_iterator_free(it);
+        return input;
+     }
 
    seat = evas_canvas_default_device_get(evas_object_evas_get(obj), EFL_INPUT_DEVICE_TYPE_SEAT);
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
