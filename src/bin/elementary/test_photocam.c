@@ -788,6 +788,7 @@ _zoomable_mouse_wheel_cb(void *data, const Efl_Event *e)
      zoom *= 2;
 
    val = 1;
+   _zoom = zoom;
    while (_zoom>1)
      {
         _zoom /= 2;
