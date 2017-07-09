@@ -471,6 +471,7 @@ _ecore_evas_win32_event_window_property_change(void *data EINA_UNUSED, int type 
                    break;
                }
           }
+        free(state);
      }
 
    if ((prev.win32.fullscreen != wdata->state.fullscreen) ||
