@@ -1,14 +1,29 @@
 group { name: "e/pointer/enlightenment/default/color";
    images.image: "pointer.png" COMP;
    images.image: "pointer_glow.png" COMP;
+   data.item: "can_suspend" "1";
    parts {
+      part { name: "parent"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "suspend" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.5 0.5;
+            rel2.relative: 0.5 0.5;
+            color: 255 255 255 0;
+         }
+      }
       part { name: "base";
+         clip_to: "parent";
          description { state: "default" 0.0;
             image.normal: "pointer.png";
+            rel.to: "parent";
          }
       }
       part { name: "glow";
          description { state: "default" 0.0;
+            rel.to: "base";
             image.normal: "pointer_glow.png";
             color: 255 255 255 0;
          }
@@ -26,8 +41,7 @@ group { name: "e/pointer/enlightenment/default/color";
             fixed: 1 1;
             visible: 0;
             rel1.relative: (5/32) (5/32);
-            rel1.to: "base";
-            rel2.to: "base";
+            rel.to: "base";
             rel2.relative: (5/32) (5/32); 
             rel2.offset: 0 0;
         }
@@ -69,6 +83,24 @@ group { name: "e/pointer/enlightenment/default/color";
          action: ACTION_STOP;
          target: "pulse";
          target: "pulse2";
+      }
+      program {
+         signal: "e,state,mouse,suspend"; source: "e";
+         action: STATE_SET "suspend" 0.0;
+         transition: ACCELERATE 1.0;
+         target: "parent";
+         sequence {
+            action: SIGNAL_EMIT "e,state,mouse,suspend,done" "e";
+         }
+      }
+      program {
+         signal: "e,state,mouse,resume"; source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 1.0;
+         target: "parent";
+         sequence {
+            action: SIGNAL_EMIT "e,state,mouse,resume,done" "e";
+         }
       }
    }
 }
