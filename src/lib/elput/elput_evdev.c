@@ -80,6 +80,8 @@ _keyboard_modifiers_update(Elput_Keyboard *kbd, Elput_Seat *seat)
      seat->modifiers |= ECORE_EVENT_MODIFIER_WIN;
    if (mask & kbd->info->mods.altgr)
      seat->modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
+   if (mask & kbd->info->mods.caps)
+     seat->modifiers |= ECORE_EVENT_MODIFIER_CAPS;
 
    if (xkb_state_led_index_is_active(kbd->state, kbd->info->leds.num))
      leds |= ELPUT_LED_NUM;
