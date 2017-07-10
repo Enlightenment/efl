@@ -1141,6 +1141,13 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
         sd->anim = EINA_FALSE;
      }
 
+   if (!file && !sd->prev_img) return EINA_FALSE;
+   else if (!file &&  sd->prev_img)
+     {
+        _prev_img_del(sd);
+        return EINA_TRUE;
+     }
+
    if (_efl_ui_image_is_remote(file))
      {
         evas_object_hide(sd->img);
