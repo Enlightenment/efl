@@ -1605,13 +1605,6 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
    wl_seat_add_listener(input->wl.seat, &_seat_listener, input);
    wl_seat_set_user_data(input->wl.seat, input);
 
-   if (!display->wl.data_device_manager) return;
-
-   input->data.device =
-     wl_data_device_manager_get_data_device(display->wl.data_device_manager,
-                                            input->wl.seat);
-   wl_data_device_add_listener(input->data.device, &_data_listener, input);
-
    input->dev_add_handler =
      ecore_event_handler_add(ECORE_WL2_EVENT_DEVICE_ADDED,
                              _ecore_wl2_cb_device_event, input);
@@ -1619,6 +1612,13 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
    input->dev_remove_handler =
      ecore_event_handler_add(ECORE_WL2_EVENT_DEVICE_REMOVED,
                              _ecore_wl2_cb_device_event, input);
+
+   if (!display->wl.data_device_manager) return;
+
+   input->data.device =
+     wl_data_device_manager_get_data_device(display->wl.data_device_manager,
+                                            input->wl.seat);
+   wl_data_device_add_listener(input->data.device, &_data_listener, input);
 }
 
 void
