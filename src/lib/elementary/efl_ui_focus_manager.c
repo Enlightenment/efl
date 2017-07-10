@@ -169,6 +169,7 @@ node_item_free(Node *item)
         border_partners_set(item, i, NULL);
      }
 
+   //free the tree items
    if (!item->tree.parent && item->tree.children)
      {
         ERR("Freeing the root with children is going to break the logical tree!");
@@ -194,6 +195,9 @@ node_item_free(Node *item)
         parent = item->tree.parent;
         T(parent).children = eina_list_remove(T(parent).children, item);
      }
+
+   //free the safed order
+   ELM_SAFE_FREE(T(item).safed_order, eina_list_free);
 
    free(item);
 }
