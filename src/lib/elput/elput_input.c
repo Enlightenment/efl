@@ -706,7 +706,9 @@ elput_input_keyboard_info_set(Elput_Manager *manager, void *context, void *keyma
    EINA_SAFETY_ON_NULL_RETURN(manager);
    EINA_SAFETY_ON_FALSE_RETURN((!!context) == (!!keymap));
 
-   if ((manager->cached.context == context) && (manager->cached.keymap == keymap)) return;
+   if ((manager->cached.context == context) &&
+       (manager->cached.keymap == keymap))
+     return;
    if (context) xkb_context_ref(context);
    if (keymap) xkb_keymap_ref(keymap);
    if (manager->cached.context) xkb_context_unref(manager->cached.context);
