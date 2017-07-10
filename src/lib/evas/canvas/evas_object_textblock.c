@@ -8404,6 +8404,7 @@ evas_object_textblock_cursor_new(Eo *eo_obj)
 EAPI void
 evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
 {
+   if (!cur) return;
    Efl_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
    if (cur == o->cursor) return;
    o->cursors = eina_list_remove(o->cursors, cur);
