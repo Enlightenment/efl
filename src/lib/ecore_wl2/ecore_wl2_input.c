@@ -1503,7 +1503,7 @@ _ecore_wl2_devices_free(Ecore_Wl2_Input_Devices *devices)
 }
 
 static Eina_Bool
-_ecore_evas_wl_common_cb_device_event(void *data, int type, void *event)
+_ecore_wl2_cb_device_event(void *data, int type, void *event)
 {
    Ecore_Wl2_Input_Devices *devs, *devices = NULL;;
    Ecore_Wl2_Event_Device *ev = event;
@@ -1614,11 +1614,11 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
 
    input->dev_add_handler =
      ecore_event_handler_add(ECORE_WL2_EVENT_DEVICE_ADDED,
-                             _ecore_evas_wl_common_cb_device_event, input);
+                             _ecore_wl2_cb_device_event, input);
 
    input->dev_remove_handler =
      ecore_event_handler_add(ECORE_WL2_EVENT_DEVICE_REMOVED,
-                             _ecore_evas_wl_common_cb_device_event, input);
+                             _ecore_wl2_cb_device_event, input);
 }
 
 void
