@@ -46,13 +46,13 @@ _del_hook(Eo *evt)
      }
 }
 
-EOLIAN static Efl_Input_Pointer *
+/* internal eo */
+static Efl_Input_Pointer *
 _efl_input_pointer_efl_input_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNUSED,
                                                 Eo *owner, void **priv)
 {
    Efl_Input_Pointer_Data *ev;
    Efl_Input_Pointer *evt;
-   Evas *evas;
 
    if (s_cached_event)
      {
@@ -70,15 +70,34 @@ _efl_input_pointer_efl_input_event_instance_get(Eo *klass EINA_UNUSED, void *_pd
    ev->fake = EINA_FALSE;
    if (priv) *priv = ev;
 
-   evas = efl_provider_find(owner, EVAS_CANVAS_CLASS);
-   if (evas)
-     {
-        Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
-        ev->modifiers = &e->modifiers;
-        ev->locks = &e->locks;
-     }
-
    return evt;
+}
+
+EAPI void
+efl_input_pointer_finalize(Efl_Input_Pointer *obj)
+{
+   const Evas_Pointer_Data *pdata;
+   Efl_Input_Pointer_Data *ev;
+   Evas_Public_Data *evas;
+   Evas *eo_evas;
+
+   ev = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   eo_evas = efl_provider_find(obj, EVAS_CANVAS_CLASS);
+   evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
+   if (!evas) return;
+
+   /* FIXME: modifiers & locks should be seat-based! */
+   ev->modifiers = &evas->modifiers;
+   ev->locks = &evas->locks;
+
+   pdata = _evas_pointer_data_by_device_get(evas, ev->device);
+   if (!pdata) return;
+
+   ev->prev.x = pdata->seat->x;
+   ev->prev.y = pdata->seat->y;
+   ev->pressed_buttons = pdata->button;
 }
 
 EOLIAN static void

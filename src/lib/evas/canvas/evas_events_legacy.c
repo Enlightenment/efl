@@ -37,19 +37,15 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
 {
    Efl_Input_Pointer_Data *ev = efl_data_scope_get(eo_ev, EFL_INPUT_POINTER_CLASS);
    Evas_Public_Data *evas;
-   Evas_Pointer_Data *pdata;
 
    if (!ev) return NULL;
    if (!eo_evas) eo_evas = efl_provider_find(eo_ev, EVAS_CANVAS_CLASS);
    evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
    if (!evas) return NULL;
 
-   pdata = _evas_pointer_data_by_device_get(evas, ev->device);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pdata, NULL);
-
-#define COORD_DUP(e) do { (e)->output.x = pdata->seat->x; (e)->output.y = pdata->seat->y; } while (0)
-#define COORD_DUP_CUR(e) do { (e)->cur.output.x = pdata->seat->x; (e)->cur.output.y = pdata->seat->y; } while (0)
-#define COORD_DUP_PREV(e) do { (e)->prev.output.x = pdata->seat->prev.x; (e)->prev.output.y = pdata->seat->prev.y; } while (0)
+#define COORD_DUP(e) do { (e)->output.x = (e)->canvas.x; (e)->output.y = (e)->canvas.y; } while (0)
+#define COORD_DUP_CUR(e) do { (e)->cur.output.x = (e)->cur.canvas.x; (e)->cur.output.y = (e)->cur.canvas.y; } while (0)
+#define COORD_DUP_PREV(e) do { (e)->prev.output.x = (e)->prev.canvas.x; (e)->prev.output.y = (e)->prev.canvas.y; } while (0)
 #define TYPE_CHK(typ) do { if ((type != EVAS_CALLBACK_LAST) && (type != EVAS_CALLBACK_ ## typ)) return NULL; } while (0)
 
    switch (ev->action)
