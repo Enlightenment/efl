@@ -218,6 +218,12 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
      }
    EINA_INLIST_FOREACH(ecore_evases, ee)
      {
+        if (ee->manual_render)
+          {
+             if (ee->engine.func->fn_evas_changed)
+               ee->engine.func->fn_evas_changed(ee, EINA_FALSE);
+             continue;
+          }
         if (_ecore_evas_render_sync)
           {
              if (!ee->first_frame)
@@ -271,32 +277,24 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
           }
 #endif
 
-        if (!ee->manual_render)
-          {
-             Eina_Bool change = EINA_FALSE;
+        Eina_Bool change = EINA_FALSE;
 
-             if (ee->engine.func->fn_render)
-               {
-                  change = ee->engine.func->fn_render(ee);
-               }
-             else
-               {
-                  change = ecore_evas_render(ee);
-               }
-             rend |= change;
-              /*
-               * Some engines that generate their own ticks based on hardware
-               * events need to know that render has been considered, and
-               * whether it will actually generate a new image or not
-               */
-             if (ee->engine.func->fn_evas_changed)
-               ee->engine.func->fn_evas_changed(ee, change);
+        if (ee->engine.func->fn_render)
+          {
+             change = ee->engine.func->fn_render(ee);
           }
         else
-         {
-            if (ee->engine.func->fn_evas_changed)
-               ee->engine.func->fn_evas_changed(ee, EINA_FALSE);
-         }
+          {
+             change = ecore_evas_render(ee);
+          }
+        rend |= change;
+         /*
+          * Some engines that generate their own ticks based on hardware
+          * events need to know that render has been considered, and
+          * whether it will actually generate a new image or not
+          */
+        if (ee->engine.func->fn_evas_changed)
+          ee->engine.func->fn_evas_changed(ee, change);
 
 #ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
         if ((ee->in_async_render) && (ee->async_render_start <= 0.0))
