@@ -135,7 +135,7 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
    evas_object_geometry_get(VIEW(parent_it), &x2, &y2, &w2, &h2);
    evas_object_geometry_get(parent_it->submenu.bx, &bx, &by, &bw, &bh);
    _parent_geometry_get(sd, &px, &py, &pw, &ph);
-   
+
    if (sd->menu_bar && !parent_it->parent)
      {
         x_p = x2;
@@ -806,7 +806,7 @@ _elm_menu_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Elm_Menu_Data *p
 {
    Efl_Ui_Focus_Manager *manager;
 
-   manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+   manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, obj,
      efl_ui_focus_manager_root_set(efl_added, root)
    );
 
