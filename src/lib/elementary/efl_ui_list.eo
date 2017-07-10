@@ -7,7 +7,7 @@ struct Efl.Ui.List.Item_Event
 
 class Efl.Ui.List (Elm.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
                 Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
-                Efl.Ui.Clickable, Efl.Ui.Selectable)
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Focus.Manager)
 {
    methods {
       @property homogeneous {
@@ -60,13 +60,13 @@ class Efl.Ui.List (Elm.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
 
       // Widget
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction;
+//      Elm.Widget.focus_next_manager_is;
+//      Elm.Widget.focus_direction_manager_is;
+//      Elm.Widget.focus_next;
+//      Elm.Widget.focus_direction;
 //      Elm.Widget.activate;
 //      Elm.Widget.focused_item { get; }
-      Elm.Widget.focused_object { get; }
+//      Elm.Widget.focused_object { get; }
       Elm.Widget.widget_event;
 
       Elm.Layout.sizing_eval;

@@ -125,7 +125,10 @@ static void
 _realized_1_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
+   elm_layout_theme_set(ie->layout, "list", "item", "default");
 
+   evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_ui_model_connect(ie->layout, "elm.text", "name");
    efl_ui_model_connect(ie->layout, "signal/elm,state,%v", "odd_style");
 }
@@ -134,7 +137,10 @@ static void
 _realized_2_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
+   elm_layout_theme_set(ie->layout, "list", "item", "default");
 
+   evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_ui_model_connect(ie->layout, "elm.text", "occupation");
 }
 

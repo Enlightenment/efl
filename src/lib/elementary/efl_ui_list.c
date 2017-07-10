@@ -520,6 +520,7 @@ _children_then(void * data, Efl_Event const* event)
                }
              memmove(array->data+diff, array->data, idx * s);
              memcpy(array->data, cacheit, diff * s);
+             free(cacheit);
           }
         idx = 0;
      }
@@ -543,6 +544,7 @@ _children_then(void * data, Efl_Event const* event)
                }
              memmove(array->data, array->data+diff, idx * s);
              memcpy(array->data+idx, cacheit, diff * s);
+             free(cacheit);
           }
      }
 
@@ -582,21 +584,6 @@ _children_then(void * data, Efl_Event const* event)
           ++idx;
        }
 
-   for (;i < sd->newslice;++i)
-     {
-        item = eina_array_pop(array);
-        elm_widget_sub_object_del(pd->obj, item->layout);
-        if (horz)
-          pd->realized.w -= item->minw;
-        else
-          pd->realized.h -= item->minh;
-        free(item);
-     }
-/*
-   Eina_Array_Iterator iterator;
-   EINA_ARRAY_ITER_NEXT(pd->items, i, item, iterator)
-     printf("id=%d\n", item->index);
-*/
    pd->avsom = horz ? pd->realized.w : pd->realized.h;
    free(sd);
    pd->avit = pd->avsom / eina_array_count(pd->items);
@@ -714,73 +701,6 @@ _efl_ui_list_elm_widget_theme_apply(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED)
    return elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_list_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-static void *
-_efl_ui_list_eina_list_layout_get(const Eina_List *list)
-{
-   Efl_Ui_List_Item *litem = eina_list_data_get(list);
-
-   return litem->layout;
-}
-
-
-EOLIAN static Evas_Object*
-_efl_ui_list_elm_widget_focused_object_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
-{
-  if (!pd->focused) return NULL;
-  return pd->focused->layout;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_list_elm_widget_focus_next(Eo *obj, Efl_Ui_List_Data *pd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   const Eina_List *items;
-   void *(*list_data_get)(const Eina_List *list);
-
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
-     list_data_get = eina_list_data_get;
-   else
-     {
-   //     items = pd->items;
-   //FIXME     list_data_get = _efl_ui_list_eina_list_layout_get;
-
-        if (!items) return EINA_FALSE;
-     }
-
-   return elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next, next_item);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_list_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_list_elm_widget_focus_direction(Eo *obj, Efl_Ui_List_Data *pd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
-{
-   const Eina_List *items;
-   void *(*list_data_get)(const Eina_List *list);
-
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
-     list_data_get = eina_list_data_get;
-   else
-     {
-//FIXME        items = pd->items;
-//        list_data_get = _efl_ui_list_eina_list_layout_get;
-
-        if (!items) return EINA_FALSE;
-     }
-
-   return elm_widget_focus_list_direction_get
-         (obj, base, items, list_data_get, degree, direction, direction_item, weight);
-}
-
 EOLIAN static void
 _efl_ui_list_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Data *pd)
 {
@@ -805,13 +725,28 @@ _efl_ui_list_efl_gfx_position_set(Eo *obj, Efl_Ui_List_Data *pd, Evas_Coord x, E
 EOLIAN static void
 _efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Evas_Coord w, Evas_Coord h)
 {
+   Evas_Coord oldw, oldh;
+   Eina_Bool load = EINA_FALSE;
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
      return;
+
+   evas_object_geometry_get(obj, NULL, NULL, &oldw, &oldh);
 
    efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
    evas_object_resize(pd->hit_rect, w, h);
 
-   if (_load_items(obj, pd, EINA_TRUE))
+
+   if (_horiz(pd->orient))
+     {
+        if (w != oldw) load = EINA_TRUE;
+     }
+   else
+     {
+        if (h != oldh) load = EINA_TRUE;
+     }
+
+
+   if (load && _load_items(obj, pd, EINA_TRUE))
      return;
 
    _efl_ui_list_custom_layout(obj);
@@ -889,6 +824,8 @@ _efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSE
    efl_data_ref(obj, MY_CLASS);
    pan_data->wobj = obj;
    pan_data->wpd = pd;
+   pd->pan.x = 0;
+   pd->pan.y = 0;
 
    elm_interface_scrollable_extern_pan_set(obj, pd->pan.obj);
    evas_object_show(pd->pan.obj);
@@ -914,6 +851,18 @@ _efl_ui_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_Data *pd)
 EOLIAN static Eo *
 _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
 {
+
+   {
+      Efl_Ui_Focus_Manager *manager;
+
+      manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, NULL,
+        efl_ui_focus_manager_root_set(efl_added, obj)
+      );
+
+      efl_composite_attach(obj, manager);
+      _efl_ui_focus_manager_redirect_events_add(manager, obj);
+   }
+
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
@@ -1328,7 +1277,6 @@ _load_items(Eo *obj, Efl_Ui_List_Data *pd, Eina_Bool recalc)
    slice = slice > 8 ? slice : 8;
    slicestart = newstart = newstart > 1 ? newstart : 1;
 
-   printf("avit=%d slice=%d\n", pd->avit, slice);
    if (!recalc && newstart == pd->realized.start && slice == pd->realized.slice)
      return EINA_FALSE;
 
@@ -1354,10 +1302,9 @@ _load_items(Eo *obj, Efl_Ui_List_Data *pd, Eina_Bool recalc)
      {
        int aux = (slicestart + slice - 1) - pd->item_count;
        slice -= aux;
-       newstart -= aux;
+       newstart = newstart - aux > 1 ? newstart - aux : 1;
      }
 
-//   printf("start=%d slicestart=%d slice=%d\n", newstart, slicestart, slice);
    if (slice > 0)
      {
         sd = malloc(sizeof(Efl_Ui_List_Slice));
@@ -1369,21 +1316,23 @@ _load_items(Eo *obj, Efl_Ui_List_Data *pd, Eina_Bool recalc)
         pd->future = efl_model_children_slice_get(pd->model, slicestart, slice);
         efl_future_then(pd->future, &_children_then, &_children_error, NULL, sd);
      }
-   else if (slice < 0)
+   else
      {
-        while (slice++ < 0)
-          {
-             item = eina_array_pop(pd->items);
-             if (!item) break;
-             if (horz)
-               pd->realized.w -= item->minw;
-             else
-               pd->realized.h -= item->minh;
-             _child_remove(pd, item);
-          }
-        pd->avsom = horz ? pd->realized.w : pd->realized.h;
-        pd->avit = pd->avsom / eina_array_count(pd->items);
-        evas_object_smart_changed(pd->obj);
+       while (pd->realized.slice < (int)eina_array_count(pd->items))
+         {
+            item = eina_array_pop(pd->items);
+            if (!item) break;
+            if (horz)
+              pd->realized.w -= item->minw;
+            else
+              pd->realized.h -= item->minh;
+            _child_remove(pd, item);
+         }
+       pd->avsom = horz ? pd->realized.w : pd->realized.h;
+       if (eina_array_count(pd->items))
+         pd->avit = pd->avsom / eina_array_count(pd->items);
+
+       return EINA_FALSE;
      }
 
      return EINA_TRUE;

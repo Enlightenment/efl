@@ -35,6 +35,11 @@ _realized_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
    Priv_Data *pd = data;
+   elm_layout_theme_set(ie->layout, "list", "item", "default");
+   printf("realize %d\n", ie->index);
+
+   evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    efl_ui_model_connect(ie->layout, "elm.text", "filename");
    efl_ui_model_factory_connect(ie->layout, "elm.swallow.icon", pd->imf);
