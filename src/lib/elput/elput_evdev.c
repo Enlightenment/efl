@@ -38,9 +38,25 @@ _seat_frame_send(Elput_Seat *seat)
 }
 
 static void
+_evdev_leds_update(Elput_Device *edev, Elput_Leds leds)
+{
+   enum libinput_led input_leds = 0;
+
+   if (leds & ELPUT_LED_NUM)
+     input_leds |= LIBINPUT_LED_NUM_LOCK;
+   if (leds & ELPUT_LED_CAPS)
+     input_leds |= LIBINPUT_LED_CAPS_LOCK;
+   if (leds & ELPUT_LED_SCROLL)
+     input_leds |= LIBINPUT_LED_SCROLL_LOCK;
+
+   libinput_device_led_update(edev->device, input_leds);
+}
+
+static void
 _keyboard_modifiers_update(Elput_Keyboard *kbd, Elput_Seat *seat)
 {
    xkb_mod_mask_t mask;
+   Elput_Leds leds = 0;
 
    kbd->mods.depressed =
      xkb_state_serialize_mods(kbd->state, XKB_STATE_DEPRESSED);
@@ -64,6 +80,26 @@ _keyboard_modifiers_update(Elput_Keyboard *kbd, Elput_Seat *seat)
      seat->modifiers |= ECORE_EVENT_MODIFIER_WIN;
    if (mask & kbd->info->mods.altgr)
      seat->modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
+
+   if (xkb_state_led_index_is_active(kbd->state, kbd->info->leds.num))
+     leds |= ELPUT_LED_NUM;
+
+   if (xkb_state_led_index_is_active(kbd->state, kbd->info->leds.caps))
+     leds |= ELPUT_LED_CAPS;
+
+   if (xkb_state_led_index_is_active(kbd->state, kbd->info->leds.scroll))
+     leds |= ELPUT_LED_SCROLL;
+
+   if (kbd->leds != leds)
+     {
+        Eina_List *l;
+        Elput_Device *edev;
+
+        EINA_LIST_FOREACH(seat->devices, l, edev)
+          _evdev_leds_update(edev, leds);
+
+        kbd->leds = leds;
+     }
 }
 
 static Elput_Keyboard_Info *
@@ -89,6 +125,13 @@ _keyboard_info_create(struct xkb_keymap *keymap)
      1 << xkb_keymap_mod_get_index(info->keymap.map, XKB_MOD_NAME_ALT);
    info->mods.altgr =
      1 << xkb_keymap_mod_get_index(info->keymap.map, "ISO_Level3_Shift");
+
+   info->leds.num =
+     xkb_keymap_led_get_index(info->keymap.map, XKB_LED_NAME_NUM);
+   info->leds.caps =
+     xkb_keymap_led_get_index(info->keymap.map, XKB_LED_NAME_CAPS);
+   info->leds.scroll =
+     xkb_keymap_led_get_index(info->keymap.map, XKB_LED_NAME_SCROLL);
 
    return info;
 }

@@ -86,6 +86,13 @@ typedef struct _Elput_Input
    Eina_Bool suspended : 1;
 } Elput_Input;
 
+typedef enum _Elput_Leds
+{
+   ELPUT_LED_NUM = (1 << 0),
+   ELPUT_LED_CAPS = (1 << 1),
+   ELPUT_LED_SCROLL = (1 << 2)
+} Elput_Leds;
+
 typedef struct _Elput_Keyboard_Info
 {
    int refs;
@@ -104,6 +111,13 @@ typedef struct _Elput_Keyboard_Info
         xkb_mod_index_t altgr;
         xkb_mod_index_t super;
      } mods;
+
+   struct
+     {
+        xkb_led_index_t num;
+        xkb_led_index_t caps;
+        xkb_led_index_t scroll;
+     } leds;
 } Elput_Keyboard_Info;
 
 struct _Elput_Keyboard
@@ -131,6 +145,8 @@ struct _Elput_Keyboard
    struct xkb_rule_names names;
    struct xkb_compose_table *compose_table;
    struct xkb_compose_state *compose_state;
+
+   Elput_Leds leds;
 
    Elput_Seat *seat;
 
@@ -295,6 +311,6 @@ extern Elput_Interface _logind_interface;
 void _keyboard_keymap_update(Elput_Seat *seat);
 void _keyboard_group_update(Elput_Seat *seat);
 
-
 void _udev_seat_destroy(Elput_Seat *eseat);
+
 #endif
