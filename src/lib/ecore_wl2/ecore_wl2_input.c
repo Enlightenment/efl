@@ -842,6 +842,7 @@ static void
 _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int format, int fd, unsigned int size)
 {
    Ecore_Wl2_Input *input;
+   Ecore_Wl2_Event_Seat_Keymap_Changed *ev;
    char *map = NULL;
    const char *locale;
 
@@ -898,24 +899,33 @@ _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsign
      if (!(locale = getenv("LC_CTYPE")))
        if (!(locale = getenv("LANG")))
          locale = "C";
-   if (input->xkb.compose_table) xkb_compose_table_unref(input->xkb.compose_table);
-   input->xkb.compose_table = xkb_compose_table_new_from_locale(input->display->xkb_context,
-			  locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
-   if (input->xkb.compose_state) xkb_compose_state_unref(input->xkb.compose_state);
-   input->xkb.compose_state = NULL;
-   if (input->xkb.compose_table)
-     input->xkb.compose_state = xkb_compose_state_new(input->xkb.compose_table, XKB_COMPOSE_STATE_NO_FLAGS);
 
-   {
-      Ecore_Wl2_Event_Seat_Keymap_Changed *ev = malloc(sizeof(Ecore_Wl2_Event_Seat_Keymap_Changed));
-      if (ev)
-        {
-           ev->id = input->id;
-           ev->display = input->display;
-           input->display->refs++;
-           ecore_event_add(ECORE_WL2_EVENT_SEAT_KEYMAP_CHANGED, ev, _display_event_free, ev->display);
-        }
-   }
+   if (input->xkb.compose_table)
+     xkb_compose_table_unref(input->xkb.compose_table);
+
+   input->xkb.compose_table =
+     xkb_compose_table_new_from_locale(input->display->xkb_context,
+                                       locale, XKB_COMPOSE_COMPILE_NO_FLAGS);
+   if (input->xkb.compose_state)
+     xkb_compose_state_unref(input->xkb.compose_state);
+   input->xkb.compose_state = NULL;
+
+   if (input->xkb.compose_table)
+     {
+        input->xkb.compose_state =
+          xkb_compose_state_new(input->xkb.compose_table,
+                                XKB_COMPOSE_STATE_NO_FLAGS);
+     }
+
+   ev = malloc(sizeof(Ecore_Wl2_Event_Seat_Keymap_Changed));
+   if (ev)
+     {
+        ev->id = input->id;
+        ev->display = input->display;
+        input->display->refs++;
+        ecore_event_add(ECORE_WL2_EVENT_SEAT_KEYMAP_CHANGED, ev,
+                        _display_event_free, ev->display);
+     }
 
    input->xkb.control_mask =
      1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_CTRL);
@@ -1001,7 +1011,11 @@ _keyboard_cb_repeat(void *data)
    window = input->focus.keyboard;
    if (!window) goto out;
 
-   _ecore_wl2_input_key_send(input, input->focus.keyboard, input->repeat.sym, input->repeat.sym_name, input->repeat.key + 8, WL_KEYBOARD_KEY_STATE_PRESSED,  input->repeat.time);
+   _ecore_wl2_input_key_send(input, input->focus.keyboard,
+                             input->repeat.sym, input->repeat.sym_name,
+                             input->repeat.key + 8,
+                             WL_KEYBOARD_KEY_STATE_PRESSED,
+                             input->repeat.time);
 
    if (!input->repeat.repeating)
      {
@@ -1026,7 +1040,8 @@ process_key_press(xkb_keysym_t sym, Ecore_Wl2_Input *input)
      return sym;
    if (sym == XKB_KEY_NoSymbol)
      return sym;
-   if (xkb_compose_state_feed(input->xkb.compose_state, sym) != XKB_COMPOSE_FEED_ACCEPTED)
+   if (xkb_compose_state_feed(input->xkb.compose_state, sym) !=
+       XKB_COMPOSE_FEED_ACCEPTED)
      return sym;
 
    switch (xkb_compose_state_get_status(input->xkb.compose_state))
@@ -1070,7 +1085,8 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
      sym = process_key_press(sym, input);
    sym_name = xkb_state_key_get_one_sym(input->xkb.maskless_state, code);
 
-   _ecore_wl2_input_key_send(input, window, sym, sym_name, code, state, timestamp);
+   _ecore_wl2_input_key_send(input, window, sym, sym_name, code,
+                             state, timestamp);
 
    if (!xkb_keymap_key_repeats(input->xkb.keymap, code)) return;
 
@@ -1170,7 +1186,8 @@ _keyboard_cb_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, 
         ev->id = input->id;
         ev->display = input->display;
         ev->display->refs++;
-        ecore_event_add(ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED, ev, _display_event_free, ev->display);
+        ecore_event_add(ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED, ev,
+                        _display_event_free, ev->display);
      }
 }
 
@@ -1417,7 +1434,8 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
    ev->display = input->display;
    ev->display->refs++;
 
-   ecore_event_add(ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED, ev, _display_event_free, ev->display);
+   ecore_event_add(ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED, ev,
+                   _display_event_free, ev->display);
 }
 
 static void
@@ -1528,8 +1546,8 @@ _ecore_wl2_cb_device_event(void *data, int type, void *event)
           {
              devices = calloc(1, sizeof(Ecore_Wl2_Input_Devices));
              EINA_SAFETY_ON_NULL_RETURN_VAL(devices, ECORE_CALLBACK_PASS_ON);
-             input->devices_list = eina_list_append(input->devices_list,
-                                                    devices);
+             input->devices_list =
+               eina_list_append(input->devices_list, devices);
              devices->window_id = ev->window_id;
           }
 
@@ -1550,23 +1568,26 @@ _ecore_wl2_cb_device_event(void *data, int type, void *event)
 
    if (ev->type == ECORE_WL2_DEVICE_TYPE_SEAT)
      {
-        input->devices_list = eina_list_remove(input->devices_list,
-                                               devices);
+        input->devices_list =
+          eina_list_remove(input->devices_list, devices);
         _ecore_wl2_devices_free(devices);
         return ECORE_CALLBACK_PASS_ON;
      }
 
-   if ((ev->type == ECORE_WL2_DEVICE_TYPE_POINTER) && (devices->pointer_dev == ev->dev))
+   if ((ev->type == ECORE_WL2_DEVICE_TYPE_POINTER) &&
+       (devices->pointer_dev == ev->dev))
      {
         efl_unref(devices->pointer_dev);
         devices->pointer_dev = NULL;
      }
-   else if ((ev->type == ECORE_WL2_DEVICE_TYPE_KEYBOARD) && (devices->keyboard_dev == ev->dev))
+   else if ((ev->type == ECORE_WL2_DEVICE_TYPE_KEYBOARD) &&
+            (devices->keyboard_dev == ev->dev))
      {
         efl_unref(devices->keyboard_dev);
         devices->keyboard_dev = NULL;
      }
-   else if ((ev->type == ECORE_WL2_DEVICE_TYPE_TOUCH) && (devices->touch_dev == ev->dev))
+   else if ((ev->type == ECORE_WL2_DEVICE_TYPE_TOUCH) &&
+            (devices->touch_dev == ev->dev))
      {
         efl_unref(devices->touch_dev);
         devices->touch_dev = NULL;
@@ -1666,8 +1687,10 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
         wl_array_release(&input->data.drag.types);
      }
 
-   if (input->data.selection.source) wl_data_source_destroy(input->data.selection.source);
-   if (input->data.drag.source) wl_data_source_destroy(input->data.drag.source);
+   if (input->data.selection.source)
+     wl_data_source_destroy(input->data.selection.source);
+   if (input->data.drag.source)
+     wl_data_source_destroy(input->data.drag.source);
    if (input->drag) _ecore_wl2_offer_unref(input->drag);
    if (input->selection) _ecore_wl2_offer_unref(input->selection);
    if (input->data.device) wl_data_device_destroy(input->data.device);
@@ -1675,8 +1698,10 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
    if (input->xkb.state) xkb_state_unref(input->xkb.state);
    if (input->xkb.maskless_state) xkb_state_unref(input->xkb.maskless_state);
    if (input->xkb.keymap) xkb_map_unref(input->xkb.keymap);
-   if (input->xkb.compose_table) xkb_compose_table_unref(input->xkb.compose_table);
-   if (input->xkb.compose_state) xkb_compose_state_unref(input->xkb.compose_state);
+   if (input->xkb.compose_table)
+     xkb_compose_table_unref(input->xkb.compose_table);
+   if (input->xkb.compose_state)
+     xkb_compose_state_unref(input->xkb.compose_state);
 
    if (input->wl.seat) wl_seat_destroy(input->wl.seat);
 
