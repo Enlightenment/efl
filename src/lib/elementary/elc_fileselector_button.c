@@ -175,6 +175,7 @@ _activate(Elm_Fileselector_Button_Data *sd)
      sd->fsw = _new_window_add(sd);
 
    sd->fs = elm_fileselector_add(sd->fsw);
+   elm_fileselector_hidden_visible_set(sd->fs, sd->fsd.hidden_visible);
    efl_ui_mirrored_set
      (sd->fs, efl_ui_mirrored_get(sd->obj));
    efl_ui_mirrored_automatic_set(sd->fs, EINA_FALSE);
