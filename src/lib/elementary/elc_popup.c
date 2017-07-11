@@ -469,7 +469,7 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         efl_gfx_size_hint_combined_min_get(sd->scr, &minw, &minh);
         evas_object_size_hint_max_get(sd->scr, &minw, &minh);
      }
-   else if (sd->scroll && (sd->content || sd->text_content_obj))
+   else if (sd->scroll)
      {
         double horizontal, vertical;
         Evas_Coord w, h;

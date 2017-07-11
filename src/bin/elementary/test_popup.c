@@ -624,7 +624,13 @@ gl_popup_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EIN
 }
 
 static void
-_popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj EINA_UNUSED,
+_delete_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   elm_object_content_set(data, NULL);
+}
+
+static void
+_popup_center_title_list_content_2button_cb(void *data, Evas_Object *obj EINA_UNUSED,
                                             void *event_info EINA_UNUSED)
 {
    Evas_Object *popup, *list;
@@ -647,6 +653,11 @@ _popup_center_title_list_content_1button_cb(void *data, Evas_Object *obj EINA_UN
    elm_object_text_set(btn, "OK");
    elm_object_part_content_set(popup, "button1", btn);
    evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
+
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Delete");
+   elm_object_part_content_set(popup, "button2", btn);
+   evas_object_smart_callback_add(btn, "clicked", _delete_btn_clicked, popup);
 
    // popup show should be called after adding all the contents and the buttons
    // of popup to set the focus into popup's contents correctly.
@@ -885,8 +896,8 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         _popup_transparent_cb, win);
    elm_list_item_append(list, "popup-transparent-align", NULL, NULL,
                         _popup_transparent_align_cb, win);
-   elm_list_item_append(list, "popup-center-title + list content + 1 button",
-                        NULL, NULL, _popup_center_title_list_content_1button_cb,
+   elm_list_item_append(list, "popup-center-title + list content + 2 button (with delete content)",
+                        NULL, NULL, _popup_center_title_list_content_2button_cb,
                         win);
    elm_list_item_append(list, "popup-center-title + genlist content + 1 button",
                         NULL, NULL, _popup_center_title_genlist_content_1button_cb,
