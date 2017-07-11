@@ -1,11 +1,8 @@
 /**
  * Example of basic object manipulation in Evas.
  *
- * The evas-buffer-simple.c example shows how to manually create and
- * manage buffers, but mentioned that real code would use higher level
- * functionality from Ecore's Ecore-Evas submodule.  This example
- * shows the use of that submodule to create an Evas canvas and
- * manipulate the objects within it.
+ * This example shows how to manipulate objects within an Ecore-Evas
+ * canvas.
  *
  * Please note that this example uses Evas' legacy API.  Compare this
  * implementation with evas-object-manipulation-eo.c to learn how the
@@ -28,6 +25,7 @@
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+
 #include <stdio.h>
 #include <errno.h>
 #include "evas-common.h"
@@ -167,32 +165,16 @@ main(void)
 {
    int err;
 
-   /* In other examples, evas_init() has been used to turn Evas on.  In this
-    * example we're using Ecore-Evas' init routine, which takes care of
-    * bringing up Evas.
-    */
    if (!ecore_evas_init())
      return EXIT_FAILURE;
 
-   /* In the evas-buffer-simple.c example, we coded our own
-    * create_canvas() routine.  Here we make use of Ecore-Evas's
-    * ecore_evas_new() routine to do it.  The first argument of this
-    * function is used to specify the name of an engine we wish to use;
-    * by passing NULL instead, we are requesting a window with an Evas
-    * canvas using the first engine available.
-    */
    d.ee = ecore_evas_new(NULL, 10, 10, WIDTH, HEIGHT, NULL);
    if (!d.ee)
      goto error;
 
-   /* Like other windowing systems, Ecore-Evas provides hooks for a
-    * number of different events.  We can register our own functions to
-    * be called when the events occur in our window.
-    */
    ecore_evas_callback_resize_set(d.ee, _canvas_resize_cb);
    ecore_evas_show(d.ee);
 
-   /* Retrieve a pointer to the canvas we created. */
    d.canvas = ecore_evas_get(d.ee);
 
    /* Create background.  As mentioned earlier, the evas_object_*
@@ -206,10 +188,6 @@ main(void)
    evas_object_resize(d.bg, WIDTH, HEIGHT); /* covers full canvas */
    evas_object_show(d.bg);
 
-   /* Callbacks can also be set on Evas objects.  We'll add a keyboard
-    * handler routine to the background rectangle, for processing user
-    * key hits.
-    */
    evas_object_focus_set(d.bg, EINA_TRUE);
    evas_object_event_callback_add(
      d.bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);

@@ -10,9 +10,9 @@ points to start from in learning more advanced topics.
 == Basic Evas ==
 
 evas-init-shutdown.c            - Introduction to Evas
-evas-buffer-simple.c            - Using the buffer engine
+evas-buffer-simple.c            - Using the Evas buffer engine
+evas-transparent.c              - Introduction to Ecore-Evas
 evas-object-manipulation.c      - Introduction to object manipulation
-evas-transparent.c              - Setting alpha transparency on objects
 
 
 == Event Handling ==
