@@ -2391,6 +2391,7 @@ endif
 
 EXTRA_DIST2 += \
 tests/evas/TestFont.eet \
+tests/evas/fonts/evas_test_font.ttf \
 tests/evas/images/HM7Y9233-50.tgv \
 tests/evas/images/HM7Y9233.jpg \
 tests/evas/images/Light-50.png \

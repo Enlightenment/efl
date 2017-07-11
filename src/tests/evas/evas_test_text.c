@@ -11,8 +11,10 @@
 #include "evas_suite.h"
 #include "evas_tests_helpers.h"
 
+#define TEST_FONT_DIR TESTS_SRC_DIR "/fonts/"
 #define TEST_FONT_NAME "DejaVuSans,UnDotum"
-#define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"
+#define TEST_FONT_SOURCE TEST_FONT_DIR "TestFont.eet"
+#define TEST_FONT_TTF_NAME "Evas Test Font"
 
 #define START_TEXT_TEST() \
    Evas *evas; \
@@ -654,6 +656,32 @@ START_TEST(evas_text_render)
 }
 END_TEST
 
+START_TEST(evas_text_font_load)
+{
+   Ecore_Evas *ee = ecore_evas_buffer_new(500, 500);
+   Evas *evas = ecore_evas_get(ee);
+   const char *font, *match;
+   Eina_List *list, *li;
+   int found = 0;
+
+   evas_font_path_global_append(TEST_FONT_DIR);
+   match = eina_stringshare_printf("%s:style=Regular", TEST_FONT_TTF_NAME);
+   list = evas_font_available_list(evas);
+   EINA_LIST_FOREACH(list, li, font)
+     if (eina_streq(font, match))
+       {
+          found = 1;
+          break;
+       }
+   evas_font_available_list_free(evas, list);
+   eina_stringshare_del(match);
+
+   ck_assert_int_eq(found, 1);
+
+   ecore_evas_free(ee);
+}
+END_TEST
+
 void evas_test_text(TCase *tc)
 {
    tcase_add_test(tc, evas_text_simple);
@@ -668,4 +696,5 @@ void evas_test_text(TCase *tc)
 
    tcase_add_test(tc, evas_text_unrelated);
    tcase_add_test(tc, evas_text_render);
+   tcase_add_test(tc, evas_text_font_load);
 }

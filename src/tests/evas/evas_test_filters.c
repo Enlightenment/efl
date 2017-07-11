@@ -18,7 +18,7 @@
 #include "evas_suite.h"
 
 #define TEST_FONT_NAME "DejaVuSans,UnDotum"
-#define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"
+#define TEST_FONT_SOURCE TESTS_SRC_DIR "/fonts/TestFont.eet"
 #define EVAS_DATA_DIR TESTS_SRC_DIR "/../../lib/evas"
 
 #define START_FILTER_TEST() \

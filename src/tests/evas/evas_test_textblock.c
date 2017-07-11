@@ -23,7 +23,7 @@ EAPI int
 _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n);
 /* end of functions defined in evas_object_textblock.c */
 
-#define TEST_FONT "font=DejaVuSans,UnDotum,malayalam font_source=" TESTS_SRC_DIR "/TestFont.eet"
+#define TEST_FONT "font=DejaVuSans,UnDotum,malayalam font_source=" TESTS_SRC_DIR "/fonts/TestFont.eet"
 
 static const char *style_buf =
    "DEFAULT='" TEST_FONT " font_size=10 color=#000 text_class=entry'"

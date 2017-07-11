@@ -11,7 +11,7 @@
 #include "evas_tests_helpers.h"
 
 #define TEST_FONT_NAME "DejaVuSans,UnDotum"
-#define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"
+#define TEST_FONT_SOURCE TESTS_SRC_DIR "/fonts/TestFont.eet"
 
 #define START_MASK_TEST(w, h) \
    Ecore_Evas *ee; Evas *e; \

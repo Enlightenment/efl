@@ -15,7 +15,7 @@
 #include "evas_suite.h"
 #include "evas_tests_helpers.h"
 
-#define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"
+#define TEST_FONT_SOURCE TESTS_SRC_DIR "/fonts/TestFont.eet"
 #define TEST_TEXTBLOCK_FONT "font=DejaVuSans font_source=" TEST_FONT_SOURCE
 #define TEST_TEXTBLOCK_FONT_SIZE "14"
 #define TEST_TEXT_FONT "DejaVuSans,UnDotum"
