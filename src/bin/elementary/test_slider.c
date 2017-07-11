@@ -3,17 +3,82 @@
 #endif
 #include <Elementary.h>
 
+struct _api_data
+{
+   Evas_Object *slider;
+   Evas_Object *popup;
+   Eina_Bool limit;
+};
+typedef struct _api_data api_data;
+
 void
 _delay_change_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-    printf("delay,changed! slider value : %d\n", (int)round(elm_slider_value_get(obj)));
+   printf("delay,changed! slider value : %d\n", (int)round(elm_slider_value_get(obj)));
 }
 
 void
 _change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   double val = elm_slider_value_get(obj);
+   elm_slider_value_set(data, val);
+}
+
+static void
+_ok_btn_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+		        void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   api->limit = EINA_FALSE;
+   evas_object_del(api->popup);
+   api->popup = NULL;
+}
+
+static void
+_close_btn_clicked(void *data, Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   evas_object_del(api->popup);
+   api->popup = NULL;
+}
+
+void
+_popup_add(api_data *api)
+{
+   Evas_Object *win;
+   Evas_Object *btn, *btn2;
+
+   if (!api->popup)
+     {
+        win = elm_object_top_widget_get(api->slider);
+        api->popup = elm_popup_add(win);
+
+        elm_object_text_set(api->popup, "Tap Ok to allow the value to be increased above 80.");
+
+        btn = elm_button_add(api->popup);
+        elm_object_text_set(btn, "Ok");
+        elm_object_part_content_set(api->popup, "button1", btn);
+        evas_object_smart_callback_add(btn, "clicked", _ok_btn_clicked, api);
+
+        btn2 = elm_button_add(api->popup);
+        elm_object_text_set(btn2, "Close");
+        elm_object_part_content_set(api->popup, "button2", btn2);
+        evas_object_smart_callback_add(btn2, "clicked", _close_btn_clicked, api);
+
+        evas_object_show(api->popup);
+     }
+}
+
+void
+_change_cb2(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+	api_data *api = data;
     double val = elm_slider_value_get(obj);
-    elm_slider_value_set(data, val);
+    if (val >= 80.0 && api->limit) {
+         elm_slider_value_set(obj, 80.0);
+         _popup_add(api);
+    }
 }
 
 void
@@ -68,6 +133,12 @@ _change_range_print_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_inf
    printf("range values:- from: %f, to: %f\n", from, to);
 }
 
+static void
+_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   free(data);
+}
+
 void
 test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -75,8 +146,11 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    double step;
    char buf[PATH_MAX];
 
+   api_data *api = calloc(1, sizeof(api_data));
+
    win = elm_win_util_standard_add("slider", "Slider");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -195,6 +269,21 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_weight_set(sl, 0.0, 0.0);
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
+
+   // limited slider
+   api->slider = sl = elm_slider_add(bx);
+   api->limit = EINA_TRUE;
+   elm_object_text_set(sl, "Limited");
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.0f units");
+   elm_slider_indicator_format_set(sl, "%1.0f");
+   elm_slider_min_max_set(sl, 0, 100);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", _change_cb2, api);
 
    // scale doubled slider
    sl = elm_slider_add(bx);
