@@ -1652,7 +1652,7 @@ EAPI Ecore_Evas     *ecore_evas_drm_new(const char *device, unsigned int parent,
 EAPI Ecore_Evas     *ecore_evas_gl_drm_new(const char *device, unsigned int parent, int x, int y, int w, int h); /** @since 1.12 */
 
 /**
- * @brief Creates a new @c Ecore_Evas canvas bound to the Evas.
+ * @brief Creates a new @c Ecore_Evas canvas bound to the Evas
  * @b buffer engine
  *
  * @param w The width of the canvas, in pixels
@@ -1675,7 +1675,7 @@ EAPI Ecore_Evas     *ecore_evas_gl_drm_new(const char *device, unsigned int pare
 EAPI Ecore_Evas     *ecore_evas_buffer_new(int w, int h);
 
 /**
- * @brief Creates a new @c Ecore_Evas canvas bound to the Evas.
+ * @brief Creates a new @c Ecore_Evas canvas bound to the Evas
  * @b buffer engine, giving custom allocation and freeing functions for
  * the canvas memory region
  *
