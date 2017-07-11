@@ -61,7 +61,15 @@ evas_font_init(void)
 {
 #ifdef HAVE_FONTCONFIG
    if (!fc_config)
-     fc_config = FcInitLoadConfigAndFonts();
+     {
+        Eina_List *l;
+        char *path;
+
+        fc_config = FcInitLoadConfigAndFonts();
+
+        EINA_LIST_FOREACH(global_font_path, l, path)
+           FcConfigAppFontAddDir(fc_config, (const FcChar8 *) path);
+     }
 #endif
 }
 
