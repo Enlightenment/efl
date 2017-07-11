@@ -99,7 +99,8 @@ _efl_loop_future_success(Efl_Event *ev, Efl_Loop_Future_Data *pd, void *value)
    chain_success.value = value;
 
    pd->propagating++;
-   EINA_INLIST_FREE(pd->callbacks, cb)
+   // This is done on purpose, we are using cb as a reminder to the head of the list
+   while ((cb = (void*) pd->callbacks))
      {
         // Remove callback early to avoid double execution while
         // doing recursive call
@@ -136,7 +137,8 @@ _efl_loop_future_failure(Efl_Event *ev, Efl_Loop_Future_Data *pd, Eina_Error err
    chain_fail.error = error;
 
    pd->propagating++;
-   EINA_INLIST_FREE(pd->callbacks, cb)
+   // This is done on purpose, we are using cb as a reminder to the head of the list
+   while ((cb = (void*) pd->callbacks))
      {
         // Remove callback early to avoid double execution while
         // doing recursive call
