@@ -2646,6 +2646,14 @@ ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_render)
 {
    ECORE_EVAS_CHECK(ee);
    ee->manual_render = manual_render;
+   if (!ee->anim_count) return;
+   if (!ee->engine.func->fn_animator_register) return;
+   if (!ee->engine.func->fn_animator_unregister) return;
+
+   if (manual_render)
+     ee->engine.func->fn_animator_unregister(ee);
+   else
+     ee->engine.func->fn_animator_register(ee);
 }
 
 EAPI Eina_Bool
@@ -3085,6 +3093,11 @@ _ecore_evas_custom_tick_begin(void *data)
 
    if (ee->anim_count++ > 0) return;
 
+   if (ee->manual_render)
+     {
+       DBG("Attempt to schedule tick for manually rendered canvas.");
+       return;
+     }
    ee->engine.func->fn_animator_register(ee);
 }
 
@@ -3094,6 +3107,8 @@ _ecore_evas_custom_tick_end(void *data)
    Ecore_Evas *ee = data;
 
    if ((--ee->anim_count) > 0) return;
+
+   if (ee->manual_render) return;
 
    ee->engine.func->fn_animator_unregister(ee);
 }
