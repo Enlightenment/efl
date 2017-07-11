@@ -112,12 +112,11 @@ Features:
    * ecore-wl2: Add more window types to Window Type enum
    * edje player - add slave command to set text of text part for testing
    * efl_wl: a multiseat wayland compositor in an evas smart object
+   * ecore-x - add ecore x dpms force api
+   * Add ecore_win32_cursor_show() API and ecore_evas_win32_cursor_(un)set() functions
 
 Fixes:
 
-   * elm_code: Fix syntax crash on trailing newline in multiline macro
-   * ecore-wl2: roundtrip during client disconnect
-   * evas: fix bugs in gif image loader
    * ecore-evas-wayland: Fix setting rotation during async render
    * ecore-evas-drm: Fix setting rotation during async render
    * evas textblock: keep previous size when the calculation is skipped
@@ -375,6 +374,22 @@ Fixes:
    * Efl.Observable: Free an iterator after use in observers_update()
    * Filter: check nullity before accessing structure member
    * elm_spinner: Entry hide when inc/dec button pressed.
+   * Emotion: freed allocated string.
+   * elm_code: Fix number parsing to include legal separators
+   * eina - fix eina_file_virtualize to copy data to an aligned addr
+   * eina_file: fix unmap of unmapped region when Eina_File has copied data and not a map; (T5479)
+   * ecore-wl2: add display object refs for windows
+   * ecore-wl2: create surfaces once compositor global is bound
+   * elm_cnp: mark x11 selection as lost when selection is lost in event
+   * elm_entry: don't update PRIMARY selection under wayland
+   * Add ecore_win32_cursor_show() API and ecore_evas_win32_cursor_(un)set() functions
+   * default theme - add signals to pointer theme to fix glitch in x
+   * ecore-wl2: Add event handlers even if no data device manager exists
+   * elput: Fix support for setting keyboard led(s) (T5655)
+   * elput: Update modifers for caps lock
+   * popup: fix sizing eval logic when scrollable set TRUE
+   * evas font: append global font path when Evas initializes Fontconfig
+   * elm: Fix fileselector button "hidden files" (T5465)
 
 Changes since 1.18.0:
 ---------------------
