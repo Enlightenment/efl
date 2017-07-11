@@ -2390,7 +2390,7 @@ tests_evas_evas_suite_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 endif
 
 EXTRA_DIST2 += \
-tests/evas/TestFont.eet \
+tests/evas/fonts/TestFont.eet \
 tests/evas/fonts/evas_test_font.ttf \
 tests/evas/images/HM7Y9233-50.tgv \
 tests/evas/images/HM7Y9233.jpg \
