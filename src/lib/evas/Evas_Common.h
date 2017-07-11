@@ -437,66 +437,58 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
 EAPI const char *evas_cserve_path_get(void);
 
 /**
- * Initialize Evas
+ * @brief Directly initialize Evas and its required dependencies.
  *
- * @return The init counter value.
+ * @return The number of times evas_init() has been called.
  *
- * This function initializes Evas and increments a counter of the
- * number of calls to it. It returns the new counter's value.
+ * Permits use of Evas independently from @ref Ecore.  This can be
+ * useful in certain types of examples and test programs, as well as by
+ * Ecore-Evas' @c ecore_evas_init() itself (which is what most EFL
+ * applications will be using instead).
  *
- * @see evas_shutdown().
- *
- * Most EFL users wouldn't be using this function directly, because
- * they wouldn't access Evas directly by themselves. Instead, they
- * would be using higher level helpers, like @c ecore_evas_init().
- * See @ref Ecore.
- *
- * You should be using this if your use is something like the
- * following. The buffer engine is just one of the many ones Evas
- * provides.
+ * The @ref Example_Evas_Buffer_Simple "evas-buffer-simple.c" example
+ * demonstrates use of evas_init(), and then manually setting up the
+ * canvas:
  *
  * @dontinclude evas-buffer-simple.c
  * @skip int main
  * @until return -1;
- * And being the canvas creation something like:
+ *
+ * The canvas is set up using the example's create_canvas() routine,
+ * which forces selection of Evas' "buffer" rendering engine.  The
+ * buffer engine simply renders to a memory buffer with no hardware
+ * acceleration.
+ *
  * @skip static Evas *create_canvas
  * @until    evas_output_viewport_set(canvas,
  *
- * Note that this is code creating an Evas canvas with no usage of
- * Ecore helpers at all -- no linkage with Ecore on this scenario,
- * thus. Again, this wouldn't be on Evas common usage for most
- * developers. See the full @ref Example_Evas_Buffer_Simple "example".
+ * @see evas_shutdown().
  *
  * @ingroup Evas_Main_Group
  */
 EAPI int               evas_init(void);
 
 /**
- * Shutdown Evas
+ * @brief Directly shutdown Evas.
  *
- * @return Evas' init counter value.
+ * @return The (decremented) init reference counter.
  *
- * This function finalizes Evas, decrementing the counter of the
- * number of calls to the function evas_init(). This new value for the
- * counter is returned.
+ * Low level routine to finalize Evas.  Decrements a counter of the
+ * number of times evas_init() has been called, and, if appropriate,
+ * shuts down associated dependency modules and libraries.  A return
+ * value of 0 indicates that everything has been properly shut down.
  *
- * @see evas_init().
+ * Ecore-Evas applications will typically use ecore_evas_shutdown()
+ * instead, as described in evas_init().
  *
- * If you were the sole user of Evas, by means of evas_init(), you can
- * check if it's being properly shut down by expecting a return value
- * of 0.
+ * The @ref Example_Evas_Buffer_Simple "evas-buffer-simple.c" example
+ * shows use of evas_shutdown() in its destroy_canvas() routine:
  *
- * Example code follows.
  * @dontinclude evas-buffer-simple.c
- * @skip // NOTE: use ecore_evas_buffer_new
- * @until evas_shutdown
- * Where that function would contain:
- * @skip   evas_free(canvas)
+ * @skip static void destroy_canvas
  * @until   evas_free(canvas)
  *
- * Most users would be using ecore_evas_shutdown() instead, like told
- * in evas_init(). See the full @ref Example_Evas_Buffer_Simple
- * "example".
+ * @see evas_init().
  *
  * @ingroup Evas_Main_Group
  */
