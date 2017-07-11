@@ -653,10 +653,7 @@ _drm_animator_register(Ecore_Evas *ee)
    Ecore_Evas_Engine_Drm_Data *edata;
 
    if (ee->manual_render)
-     {
-        ERR("Attempt to schedule tick for manually rendered canvas");
-        return;
-      }
+     ERR("Attempt to schedule tick for manually rendered canvas");
 
    edata = ee->engine.data;
    edata->ticking = EINA_TRUE;
