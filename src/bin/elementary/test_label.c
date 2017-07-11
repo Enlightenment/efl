@@ -185,7 +185,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    elm_grid_pack(gd, rect, 5, 10, 90, 10);
-   evas_object_color_set(rect, 255, 125, 125, 255);
+   evas_object_color_set(rect, 55, 125, 250, 255);
    evas_object_show(rect);
 
    lb = elm_label_add(win);
@@ -272,7 +272,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    elm_grid_pack(gd, rect, 5, 70, 90, 20);
-   evas_object_color_set(rect, 255, 125, 125, 255);
+   evas_object_color_set(rect, 55, 125, 250, 255);
    evas_object_show(rect);
 
    lb1 = elm_label_add(win);
