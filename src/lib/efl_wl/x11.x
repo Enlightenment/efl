@@ -99,6 +99,7 @@ x11_send_send(Comp_Data_Device_Source *source, const char* mime_type, int32_t fd
    Ecore_X_Atom t, sel = ECORE_X_ATOM_SELECTION_CLIPBOARD;
    Comp_Data_Device_Transfer *dt;
    Ecore_Window win;
+   char *name;
    win = ecore_evas_window_get(ecore_evas_ecore_evas_get(source->seat->c->evas));
    if (type == COMP_DATA_DEVICE_OFFER_TYPE_DND)
      sel = ECORE_X_ATOM_SELECTION_XDND;
@@ -112,7 +113,9 @@ x11_send_send(Comp_Data_Device_Source *source, const char* mime_type, int32_t fd
    dt->type = type;
    dt->fdh = ecore_main_fd_handler_add(fd, 0, x11_offer_write, dt, NULL, NULL);
    dt->source = source;
-   dt->mime_type = eina_stringshare_add(ecore_x_atom_name_get(t));
+   name = ecore_x_atom_name_get(t);
+   dt->mime_type = eina_stringshare_add(name);
+   free(name);
    dt->source->transfers = eina_inlist_append(dt->source->transfers, EINA_INLIST_GET(dt));
    xconvertselection(ecore_x_display_get(), sel, t, comp_dnd_atom, win, ecore_x_current_time_get());
 }
