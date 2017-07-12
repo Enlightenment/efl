@@ -169,6 +169,8 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_pointer_device_xy_get)(const Ecore_Evas *ee, const Efl_Input_Device *pointer, Evas_Coord *x, Evas_Coord *y);
 
    Eina_Bool (*fn_prepare)(Ecore_Evas *ee);
+
+   double (*fn_last_tick_get)(Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Interface
