@@ -302,7 +302,7 @@ void _ecore_drm2_fb_deref(Ecore_Drm2_Fb *);
 void _ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output, Ecore_Drm2_Output_State *s);
 
 /* extern int (*sym_drmClose)(int fd); */
-/* extern int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl); */
+extern int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl);
 extern int (*sym_drmHandleEvent)(int fd, drmEventContext *evctx);
 extern void *(*sym_drmGetVersion)(int fd);
 extern void (*sym_drmFreeVersion)(void *drmver);

@@ -1075,6 +1075,20 @@ EAPI Eina_Bool ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *f
  * @since 1.20
  */
 EAPI void ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Status_Handler handler, void *data);
+
+/**
+ * Get the time of the last vblank
+ *
+ * Query the display hardware for the time of the last vblank.
+ *
+ * @param output
+ * @param sec
+ * @param usec
+ *
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, long *sec, long *usec);
+
 # endif
 
 #endif

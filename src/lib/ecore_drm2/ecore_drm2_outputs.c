@@ -1582,3 +1582,25 @@ ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
    return output->subpixel;
 }
+
+EAPI Eina_Bool
+ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, long *sec, long *usec)
+{
+  drmVBlank v;
+  int ret;
+
+  EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+  EINA_SAFETY_ON_NULL_RETURN_VAL(sec, EINA_FALSE);
+  EINA_SAFETY_ON_NULL_RETURN_VAL(usec, EINA_FALSE);
+
+  memset(&v, 0, sizeof(v));
+  v.request.type = DRM_VBLANK_RELATIVE;
+  ret = sym_drmWaitVBlank(output->fd, &v);
+  if (ret) return EINA_FALSE;
+  if (v.reply.tval_sec < 0) return EINA_FALSE;
+  if (v.reply.tval_usec < 0) return EINA_FALSE;
+
+  *sec = v.reply.tval_sec;
+  *usec = v.reply.tval_usec;
+  return EINA_TRUE;
+}
