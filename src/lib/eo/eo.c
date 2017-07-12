@@ -691,8 +691,12 @@ _efl_object_api_op_id_get(const void *api_func)
 EAPI Efl_Object_Op
 _efl_object_op_api_id_get(const void *api_func, const Eo *obj, const char *api_func_name, const char *file, int line)
 {
-   Efl_Object_Op op = _efl_object_api_op_id_get_internal(api_func);
+   Efl_Object_Op op;
 
+#ifndef EO_DEBUG
+   if (!obj) return EFL_NOOP;
+#endif
+   op = _efl_object_api_op_id_get_internal(api_func);
    if (op == EFL_NOOP)
      {
         eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR,
