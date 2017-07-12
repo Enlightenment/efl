@@ -254,6 +254,7 @@ ecore_poller_add(Ecore_Poller_Type type EINA_UNUSED,
    if (!func)
      {
         ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
+        free(poller);
         return NULL;
      }
 
