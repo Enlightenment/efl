@@ -2667,6 +2667,19 @@ EAPI void
 ecore_evas_manual_render(Ecore_Evas *ee)
 {
    ECORE_EVAS_CHECK(ee);
+
+   if (ee->manual_render)
+     {
+        double t = -1.0;
+
+        if (ee->engine.func->fn_last_tick_get)
+          t = ee->engine.func->fn_last_tick_get(ee);
+        if (t < 0.0)
+          t = ecore_loop_time_get();
+
+        ecore_evas_animator_tick(ee, NULL, t);
+     }
+
    if (ee->engine.func->fn_render)
      {
         ee->engine.func->fn_render(ee);
