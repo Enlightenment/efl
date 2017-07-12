@@ -3493,7 +3493,7 @@ seat_keymap_update(Comp_Seat *s)
    eina_file_unlink(file);
    eina_tmpstr_del(file);
    s->kbd.keymap_mem =
-     mmap(NULL, s->kbd.keymap_mem_size,
+     mmap(NULL, s->kbd.keymap_mem_size + 1,
        PROT_READ | PROT_WRITE, MAP_SHARED, s->kbd.keymap_fd, 0);
 
    memcpy(s->kbd.keymap_mem, str, s->kbd.keymap_mem_size);
