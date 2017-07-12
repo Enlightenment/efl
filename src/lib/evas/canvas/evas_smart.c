@@ -326,7 +326,11 @@ _evas_smart_cb_description_cmp_search(const void *p1, const void *p2)
 const Evas_Smart_Cb_Description *
 evas_smart_cb_description_find(const Evas_Smart_Cb_Description_Array *a, const char *name)
 {
+   const Evas_Smart_Cb_Description **found = NULL;
+
    if (!a->array) return NULL;
-   return bsearch(name, a->array, a->size, sizeof(Evas_Smart_Cb_Description *),
-                  _evas_smart_cb_description_cmp_search);
+   found = bsearch(name, a->array, a->size, sizeof(Evas_Smart_Cb_Description *),
+                   _evas_smart_cb_description_cmp_search);
+
+   return found ? (*found) : NULL;
 }
