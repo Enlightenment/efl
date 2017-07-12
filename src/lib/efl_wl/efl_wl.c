@@ -3466,6 +3466,14 @@ seat_keymap_update(Comp_Seat *s)
    str = xkb_map_get_as_string(s->kbd.keymap);
    s->kbd.keymap_mem_size = strlen(str) + 1;
    s->kbd.keymap_fd = eina_file_mkstemp("comp-keymapXXXXXX", &file);
+   if (s->kbd.keymap_fd < 0)
+     {
+        EINA_LOG_ERR("mkstemp failed!\n");
+        s->kbd.keymap_fd = -1;
+        xkb_state_unref(s->kbd.state);
+        s->kbd.state = NULL;
+        return;
+     }
    if (!eina_file_close_on_exec(s->kbd.keymap_fd, 1))
      {
         EINA_LOG_ERR("Failed to set CLOEXEC on fd %d\n", s->kbd.keymap_fd);
