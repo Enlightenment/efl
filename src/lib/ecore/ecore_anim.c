@@ -397,6 +397,8 @@ _timer_tick_begin(void)
         int fds[2];
 
         if (pipe(fds) != 0) return;
+        eina_file_close_on_exec(fds[0], EINA_TRUE);
+        eina_file_close_on_exec(fds[1], EINA_TRUE);
         timer_fd_read = fds[0];
         timer_fd_write = fds[1];
         if (getenv("ECORE_ANIMATOR_SKIP")) tick_skip = EINA_TRUE;
