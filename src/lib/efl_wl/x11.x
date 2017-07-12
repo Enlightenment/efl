@@ -341,7 +341,7 @@ x11_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
      }
    else
      {
-        const char *name;
+        char *name;
         Pipe *p;
 
         name = ecore_x_atom_name_get(ev->target);
