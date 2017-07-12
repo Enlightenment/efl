@@ -350,6 +350,7 @@ x11_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
                eina_hash_add(pipes, &p->win, p);
                break;
             }
+       free(name);
      }
    return ECORE_CALLBACK_RENEW;
 }
