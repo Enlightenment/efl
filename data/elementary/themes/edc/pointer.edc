@@ -65,6 +65,7 @@ group { name: "e/pointer/enlightenment/default/color";
             action: SIGNAL_EMIT "e,state,mouse,resume,done" "e";
          }
       }
+/*
       program { name: "pulse";
          signal: "e,state,mouse,idle"; source: "e";
          in: 10.0 0.0;
@@ -90,6 +91,7 @@ group { name: "e/pointer/enlightenment/default/color";
          target: "pulse";
          target: "pulse2";
       }
+ */
    }
 }
 
