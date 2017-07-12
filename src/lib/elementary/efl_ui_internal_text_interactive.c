@@ -721,6 +721,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 
    cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
    old_cur_pos = evas_textblock_cursor_pos_get(cur);
+   if (old_cur_pos < 0) return;
 
    control = evas_key_modifier_is_set(ev->modifiers, "Control");
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
