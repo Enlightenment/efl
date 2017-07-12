@@ -1507,7 +1507,7 @@ _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
         return;
      }
 
-   efl_pack_layout_request(sd->palette_box);
+   if (sd->palette_box) efl_pack_layout_request(sd->palette_box);
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 }
