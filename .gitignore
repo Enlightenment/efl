@@ -77,6 +77,8 @@ Session.vim
 /src/modules/evas/engines/gl_common/shader_3d/evas_3d_shaders.x
 /src/scripts/eo/eo_debug
 /src/bin/ecore_con/efl_net_proxy_helper
+/src/bin/efl_wl/efl_wl_test
+/src/bin/efl_wl/efl_wl_test_stack
 
 #wayland generated protocol - some legacy headers will be ignored
 *-protocol.h
