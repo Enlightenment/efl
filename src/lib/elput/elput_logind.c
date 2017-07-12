@@ -196,7 +196,10 @@ _logind_session_object_path_get(Elput_Manager *em)
         goto message_fail;
      }
    if (!eldbus_message_arguments_get(reply, "o", &str))
+     {
+        eldbus_message_unref(reply);
         goto message_fail;
+     }
 
    em->dbus.path = strdup(str);
    eldbus_message_unref(reply);
