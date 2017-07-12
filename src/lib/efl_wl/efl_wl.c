@@ -1002,7 +1002,7 @@ static Eina_Bool
 data_device_selection_read(void *d, Ecore_Fd_Handler *fdh)
 {
    Comp_Data_Device_Source *ds = d;
-   int len;
+   int len = -1;
 
    do
      {
