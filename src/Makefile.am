@@ -175,7 +175,7 @@ dist-hook:
 	@mkdir -p $(distdir)/lib/evas/common/evas_op_mask $(distdir)/lib/evas/common/evas_op_mul
 	@mkdir -p $(distdir)/lib/evas/common/evas_op_sub $(distdir)/lib/evas/filters/blur
 	@mkdir -p $(distdir)/static_libs/http-parser/contrib $(distdir)/bindings/luajit/eina
-	@mkdir -p $(distdir)/wayland_protocol
+	@mkdir -p $(distdir)/wayland_protocol $(distdir)/lib/efl_wl/
 	@mkdir -p $(distdir)/modules/evas/engines/software_generic/filters/blur
 	for F in $(EXTRA_DIST2); do cp -f $(srcdir)/$$F $(distdir)/$$F; done
 
