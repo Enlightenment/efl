@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-06-28 12:12+0200\n"
+"POT-Creation-Date: 2017-07-11 17:19+0900\n"
 "PO-Revision-Date: 2014-05-22 22:44+0200\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -243,33 +243,33 @@ msgstr "Obrázky"
 msgid "Videos"
 msgstr "Videa"
 
-#: src/lib/elementary/elc_fileselector.c:1895
+#: src/lib/elementary/elc_fileselector.c:1919
 msgid "Up"
 msgstr "Nahoru"
 
-#: src/lib/elementary/elc_fileselector.c:1909
+#: src/lib/elementary/elc_fileselector.c:1933
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elementary/elc_fileselector.c:1928
+#: src/lib/elementary/elc_fileselector.c:1952
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:2219
-#: src/lib/elementary/elm_entry.c:1715 src/lib/elementary/elm_entry.c:1740
-msgid "Cancel"
-msgstr "Zrušit"
-
-#: src/lib/elementary/elc_fileselector.c:2229
+#: src/lib/elementary/elc_fileselector.c:2246
 msgid "OK"
 msgstr "OK"
 
+#: src/lib/elementary/elc_fileselector.c:2256
+#: src/lib/elementary/elm_entry.c:1732 src/lib/elementary/elm_entry.c:1757
+msgid "Cancel"
+msgstr "Zrušit"
+
 #: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:278
 #: src/lib/elementary/efl_ui_check.c:212 src/lib/elementary/elm_gengrid.c:1470
-#: src/lib/elementary/elm_genlist.c:1743 src/lib/elementary/elm_list.c:2176
+#: src/lib/elementary/elm_genlist.c:1738 src/lib/elementary/elm_list.c:2176
 #: src/lib/elementary/efl_ui_radio.c:214
 #: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1016 src/lib/elementary/elm_toolbar.c:2347
+#: src/lib/elementary/elm_spinner.c:1020 src/lib/elementary/elm_toolbar.c:2347
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
@@ -432,23 +432,23 @@ msgstr "položka výběru dne"
 msgid "diskselector item"
 msgstr "položka výběru disků"
 
-#: src/lib/elementary/elm_entry.c:1705
+#: src/lib/elementary/elm_entry.c:1722
 msgid "Cut"
 msgstr "Vyjmout"
 
-#: src/lib/elementary/elm_entry.c:1708
+#: src/lib/elementary/elm_entry.c:1725
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: src/lib/elementary/elm_entry.c:1712 src/lib/elementary/elm_entry.c:1734
+#: src/lib/elementary/elm_entry.c:1729 src/lib/elementary/elm_entry.c:1751
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elementary/elm_entry.c:1727
+#: src/lib/elementary/elm_entry.c:1744
 msgid "Select"
 msgstr "Vybrat"
 
-#: src/lib/elementary/elm_entry.c:3814
+#: src/lib/elementary/elm_entry.c:3833
 msgid "Entry"
 msgstr "Vstup"
 
@@ -464,7 +464,7 @@ msgstr "Index"
 msgid "Index Item"
 msgstr "Položka indexu"
 
-#: src/lib/elementary/elm_label.c:411
+#: src/lib/elementary/elm_label.c:405
 msgid "Label"
 msgstr "Popisek"
 
@@ -513,27 +513,27 @@ msgstr "položka ovládání segmentu"
 msgid "slider"
 msgstr "šoupátko"
 
-#: src/lib/elementary/elm_spinner.c:1046
+#: src/lib/elementary/elm_spinner.c:1050
 msgid "incremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1052
+#: src/lib/elementary/elm_spinner.c:1056
 msgid "decremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1085 src/lib/elementary/elm_spinner.c:1152
+#: src/lib/elementary/elm_spinner.c:1089 src/lib/elementary/elm_spinner.c:1156
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elementary/elm_spinner.c:1094 src/lib/elementary/elm_spinner.c:1135
+#: src/lib/elementary/elm_spinner.c:1098 src/lib/elementary/elm_spinner.c:1139
 msgid "spinner increment button"
 msgstr "přičítací tlačítko spinneru"
 
-#: src/lib/elementary/elm_spinner.c:1097 src/lib/elementary/elm_spinner.c:1144
+#: src/lib/elementary/elm_spinner.c:1101 src/lib/elementary/elm_spinner.c:1148
 msgid "spinner decrement button"
 msgstr "odečítací tlačítko spinneru"
 
-#: src/lib/elementary/elm_spinner.c:1099
+#: src/lib/elementary/elm_spinner.c:1103
 #, fuzzy
 msgid "spinner text"
 msgstr "spinner"

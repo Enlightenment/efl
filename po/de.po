@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-06-28 12:12+0200\n"
+"POT-Creation-Date: 2017-07-11 17:19+0900\n"
 "PO-Revision-Date: 2011-02-25 20:22+0100\n"
 "Last-Translator: Fabian Nowak <timystery@arcor.de>\n"
 "Language-Team: German\n"
@@ -241,33 +241,33 @@ msgstr ""
 msgid "Videos"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:1895
+#: src/lib/elementary/elc_fileselector.c:1919
 msgid "Up"
 msgstr "Aufwärts"
 
-#: src/lib/elementary/elc_fileselector.c:1909
+#: src/lib/elementary/elc_fileselector.c:1933
 msgid "Home"
 msgstr "Persönlicher Ordner"
 
-#: src/lib/elementary/elc_fileselector.c:1928
+#: src/lib/elementary/elc_fileselector.c:1952
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:2219
-#: src/lib/elementary/elm_entry.c:1715 src/lib/elementary/elm_entry.c:1740
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: src/lib/elementary/elc_fileselector.c:2229
+#: src/lib/elementary/elc_fileselector.c:2246
 msgid "OK"
 msgstr "OK"
 
+#: src/lib/elementary/elc_fileselector.c:2256
+#: src/lib/elementary/elm_entry.c:1732 src/lib/elementary/elm_entry.c:1757
+msgid "Cancel"
+msgstr "Abbrechen"
+
 #: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:278
 #: src/lib/elementary/efl_ui_check.c:212 src/lib/elementary/elm_gengrid.c:1470
-#: src/lib/elementary/elm_genlist.c:1743 src/lib/elementary/elm_list.c:2176
+#: src/lib/elementary/elm_genlist.c:1738 src/lib/elementary/elm_list.c:2176
 #: src/lib/elementary/efl_ui_radio.c:214
 #: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1016 src/lib/elementary/elm_toolbar.c:2347
+#: src/lib/elementary/elm_spinner.c:1020 src/lib/elementary/elm_toolbar.c:2347
 msgid "State: Disabled"
 msgstr ""
 
@@ -430,23 +430,23 @@ msgstr ""
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elementary/elm_entry.c:1705
+#: src/lib/elementary/elm_entry.c:1722
 msgid "Cut"
 msgstr "Ausschneiden"
 
-#: src/lib/elementary/elm_entry.c:1708
+#: src/lib/elementary/elm_entry.c:1725
 msgid "Copy"
 msgstr "Kopieren"
 
-#: src/lib/elementary/elm_entry.c:1712 src/lib/elementary/elm_entry.c:1734
+#: src/lib/elementary/elm_entry.c:1729 src/lib/elementary/elm_entry.c:1751
 msgid "Paste"
 msgstr "Einfügen"
 
-#: src/lib/elementary/elm_entry.c:1727
+#: src/lib/elementary/elm_entry.c:1744
 msgid "Select"
 msgstr "Auswählen"
 
-#: src/lib/elementary/elm_entry.c:3814
+#: src/lib/elementary/elm_entry.c:3833
 msgid "Entry"
 msgstr ""
 
@@ -462,7 +462,7 @@ msgstr ""
 msgid "Index Item"
 msgstr ""
 
-#: src/lib/elementary/elm_label.c:411
+#: src/lib/elementary/elm_label.c:405
 msgid "Label"
 msgstr ""
 
@@ -512,27 +512,27 @@ msgstr ""
 msgid "slider"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1046
+#: src/lib/elementary/elm_spinner.c:1050
 msgid "incremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1052
+#: src/lib/elementary/elm_spinner.c:1056
 msgid "decremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1085 src/lib/elementary/elm_spinner.c:1152
+#: src/lib/elementary/elm_spinner.c:1089 src/lib/elementary/elm_spinner.c:1156
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1094 src/lib/elementary/elm_spinner.c:1135
+#: src/lib/elementary/elm_spinner.c:1098 src/lib/elementary/elm_spinner.c:1139
 msgid "spinner increment button"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1097 src/lib/elementary/elm_spinner.c:1144
+#: src/lib/elementary/elm_spinner.c:1101 src/lib/elementary/elm_spinner.c:1148
 msgid "spinner decrement button"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1099
+#: src/lib/elementary/elm_spinner.c:1103
 msgid "spinner text"
 msgstr ""
 
