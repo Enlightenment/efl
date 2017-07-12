@@ -14378,7 +14378,7 @@ _edje_generate_source_state_map(Edje *ed,
              for (i = 0; i < pd->map.colors_count; ++i)
                {
                   if ((pd->map.colors[i]->r != 255) || (pd->map.colors[i]->g != 255) ||
-                      (pd->map.colors[i]->b != 255) || (pd->map.colors[i]->b != 255))
+                      (pd->map.colors[i]->b != 255) || (pd->map.colors[i]->a != 255))
                     BUF_APPENDF(I6 "color: %d %d %d %d %d;\n", pd->map.colors[i]->idx,
                                 pd->map.colors[i]->r, pd->map.colors[i]->g,
                                 pd->map.colors[i]->b, pd->map.colors[i]->a);
