@@ -273,8 +273,12 @@ x11_pipe_read(void *data, Ecore_Fd_Handler *fdh)
         return ECORE_CALLBACK_RENEW;
      }
    if (len)
-     p->buf = eina_binbuf_manage_new(buf, len, 0);
-   _incr_upload(p);
+     {
+        p->buf = eina_binbuf_manage_new(buf, len, 0);
+        _incr_upload(p);
+     }
+   else
+     free(buf);
    if (p->incr)
      ecore_main_fd_handler_active_set(p->fdh, 0);
    else
