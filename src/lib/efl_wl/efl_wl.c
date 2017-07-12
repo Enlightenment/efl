@@ -395,8 +395,11 @@ tiler_new(void)
 static inline void
 fdh_del(Ecore_Fd_Handler *fdh)
 {
+   int fd;
    if (!fdh) return;
-   close(ecore_main_fd_handler_fd_get(fdh));
+   fd = ecore_main_fd_handler_fd_get(fdh);
+   if (fd >= 0)
+     close(fd);
    ecore_main_fd_handler_del(fdh);
 }
 
@@ -1004,8 +1007,11 @@ data_device_selection_read(void *d, Ecore_Fd_Handler *fdh)
    do
      {
         unsigned char buf[2048];
+        int fd;
 
-        len = read(ecore_main_fd_handler_fd_get(fdh), buf, sizeof(buf));
+        fd = ecore_main_fd_handler_fd_get(fdh);
+        if (fd < 0) break;
+        len = read(fd, buf, sizeof(buf));
         if (len > 0)
           {
              if (!ds->reader_data)

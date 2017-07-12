@@ -25,7 +25,9 @@ typedef struct
 static void
 _pipe_free(Pipe *p)
 {
-   close(ecore_main_fd_handler_fd_get(p->fdh));
+   int fd = ecore_main_fd_handler_fd_get(p->fdh);
+   if (fd >= 0)
+     close(fd);
    ecore_main_fd_handler_del(p->fdh);
    eina_binbuf_free(p->buf);
    free(p);
@@ -57,9 +59,11 @@ x11_offer_write(void *data, Ecore_Fd_Handler *fdh)
 
    if (ecore_main_fd_handler_active_get(fdh, ECORE_FD_WRITE))
      {
-        len = write(ecore_main_fd_handler_fd_get(fdh),
-                    eina_binbuf_string_get(dt->source->reader_data) + dt->offset,
-                    eina_binbuf_length_get(dt->source->reader_data) - dt->offset);
+        int fd = ecore_main_fd_handler_fd_get(fdh);
+        if (fd >= 0)
+          len = write(fd,
+                      eina_binbuf_string_get(dt->source->reader_data) + dt->offset,
+                      eina_binbuf_length_get(dt->source->reader_data) - dt->offset);
         if (len > 0) dt->offset += len;
      }
 
@@ -237,11 +241,14 @@ static Eina_Bool
 x11_pipe_read(void *data, Ecore_Fd_Handler *fdh)
 {
    Pipe *p = data;
-   ssize_t len;
+   ssize_t len = -1;
    unsigned char *buf;
+   int fd;
 
    buf = malloc(INCR_CHUNK_SIZE);
-   len = read(ecore_main_fd_handler_fd_get(fdh), (void*)buf, INCR_CHUNK_SIZE);
+   fd = ecore_main_fd_handler_fd_get(fdh);
+   if (fd >= 0)
+     len = read(fd, (void*)buf, INCR_CHUNK_SIZE);
    if (len < 0)
      {
         free(buf);
