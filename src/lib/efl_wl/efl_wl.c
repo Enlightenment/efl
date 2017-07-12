@@ -3466,10 +3466,15 @@ seat_keymap_update(Comp_Seat *s)
    str = xkb_map_get_as_string(s->kbd.keymap);
    s->kbd.keymap_mem_size = strlen(str) + 1;
    s->kbd.keymap_fd = eina_file_mkstemp("comp-keymapXXXXXX", &file);
-   {
-      int flags = fcntl(s->kbd.keymap_fd, F_GETFD);
-      fcntl(s->kbd.keymap_fd, F_SETFD, flags | FD_CLOEXEC);
-   }
+   if (!eina_file_close_on_exec(s->kbd.keymap_fd, 1))
+     {
+        EINA_LOG_ERR("Failed to set CLOEXEC on fd %d\n", s->kbd.keymap_fd);
+        close(s->kbd.keymap_fd);
+        s->kbd.keymap_fd = -1;
+        xkb_state_unref(s->kbd.state);
+        s->kbd.state = NULL;
+        return;
+     }
    ftruncate(s->kbd.keymap_fd, s->kbd.keymap_mem_size);
    eina_file_unlink(file);
    eina_tmpstr_del(file);
