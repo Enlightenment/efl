@@ -342,9 +342,19 @@ x11_selection_request(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Sele
             {
                int fds[2];
 
+               if (socketpair(AF_UNIX, (SOCK_STREAM | SOCK_CLOEXEC), 0, fds) < 0)
+                 {
+                    EINA_LOG_ERR("socketpair failed!\n");
+                    continue;
+                 }
+               if (fcntl(fds[0], F_SETFL, O_NONBLOCK) < 0)
+                 {
+                    close(fds[0]);
+                    close(fds[1]);
+                    EINA_LOG_ERR("NONBLOCK for socketpair failed!\n");
+                    continue;
+                 }
                p = calloc(1, sizeof(Pipe));
-               socketpair(AF_UNIX, (SOCK_STREAM | SOCK_CLOEXEC), 0, fds);
-               fcntl(fds[0], F_SETFL, O_NONBLOCK);
                p->fdh = ecore_main_fd_handler_add(fds[0], ECORE_FD_READ, x11_pipe_read, p, NULL, NULL);
                p->win = ev->requestor;
                p->source = source;
