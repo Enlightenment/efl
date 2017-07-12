@@ -3,7 +3,7 @@ enum Efl.Ui.Textpath.Orientation {
      right_to_left
 }
 
-class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text)
+class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
 {
    [[Efl Ui Textpath class]]
    legacy_prefix: elm_textpath;

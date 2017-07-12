@@ -78,8 +78,182 @@ _textpath_ellipsis_enable_set(Efl_Ui_Textpath_Data *pd, int length, Eina_Bool en
    ERR("set format: %s", format);
 }
 
+
+
 static void
-_circle_draw(Efl_Ui_Textpath_Data *pd)
+_draw_text_on_path(Efl_Ui_Textpath_Data *pd, double px0, double py0, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1, double px1, double py1)
+{
+   ERR("In");
+   int x = 0, y = 0, w = 0, h = 0;
+   int i;
+   double u0, u1, v0, v1;
+   double dist, t, dt;
+   double px, py, px2, py2;
+   double rad;
+   Eina_Vector2 vec, nvec, vec0, vec1, vec2, vec3;
+   Eina_Matrix2 mat;
+   Evas *e;
+   Evas_Object *proxy;
+
+   e = evas_object_evas_get(pd->text_obj);
+   efl_gfx_size_get(pd->text_obj, &w, &h);
+   dt = 1.0 / (double) pd->slice_no;
+   dist = ((double) w / (double) pd->slice_no);
+    //Compute Beziers.
+   Eina_Bezier bezier;
+   eina_bezier_values_set(&bezier, px0, py0,
+                                   ctrl_x0, ctrl_y0,
+                                   ctrl_x1, ctrl_y1,
+                                   px1, py1);
+
+   //length = eina_bezier_length_get(&bezier);
+   rad = _deg_to_rad(90);
+   eina_matrix2_values_set(&mat, cos(rad), -sin(rad), sin(rad), cos(rad));
+
+   //index 0: v0, v3
+   t = 0;
+   eina_bezier_point_at(&bezier, t, &px, &py);
+   eina_bezier_point_at(&bezier, t + dt, &px2, &py2);
+
+   vec.x = (px2 - px);
+   vec.y = (py2 - py);
+   eina_vector2_normalize(&nvec, &vec);
+
+   eina_vector2_transform(&vec, &mat, &nvec);
+   eina_vector2_normalize(&nvec, &vec);
+   eina_vector2_scale(&vec, &nvec, ((double) h) * 0.5);
+
+   vec1.x = (vec.x + px);
+   vec1.y = (vec.y + py);
+   vec2.x = (-vec.x + px);
+   vec2.y = (-vec.y + py);
+
+   //Proxy Object
+   proxy = evas_object_image_filled_add(e);
+   //if (pd->proxy)
+   //    evas_object_del(pd->proxy);
+   pd->proxy = proxy;
+   efl_gfx_size_set(proxy, w, h);
+   evas_object_image_source_set(proxy, pd->content);
+   //efl_gfx_visible_set(proxy, EINA_TRUE);
+
+   ////
+   efl_gfx_position_set(proxy, 50, 50);
+   ////
+
+   Evas_Map *map = evas_map_new(pd->slice_no * 4);
+
+
+   for (i = 0; i < pd->slice_no; i++)
+     {
+        //v0, v3
+        vec0.x = vec1.x;
+        vec0.y = vec1.y;
+        vec3.x = vec2.x;
+        vec3.y = vec2.y;
+
+        //v1, v2
+        t = ((double) (i + 1) * dt);
+        eina_bezier_point_at(&bezier, t, &px, &py);
+        eina_bezier_point_at(&bezier, t + dt, &px2, &py2);
+
+        vec.x = (px2 - px);
+        vec.y = (py2 - py);
+        eina_vector2_normalize(&nvec, &vec);
+
+        eina_vector2_transform(&vec, &mat, &nvec);
+        eina_vector2_normalize(&nvec, &vec);
+        eina_vector2_scale(&vec, &nvec, ((double) h) * 0.5);
+
+        vec1.x = (vec.x + px);
+        vec1.y = (vec.y + py);
+        vec2.x = (-vec.x + px);
+        vec2.y = (-vec.y + py);
+
+
+        evas_map_point_coord_set(map, i * 4, (int) vec0.x + x, (int) vec0.y + y, 0);
+        evas_map_point_coord_set(map, i * 4 + 1, (int) vec1.x + x, (int) vec1.y + y, 0);
+        evas_map_point_coord_set(map, i * 4 + 2, (int) vec2.x + x, (int) vec2.y + y, 0);
+        evas_map_point_coord_set(map, i * 4 + 3, (int) vec3.x + x, (int) vec3.y + y, 0);
+
+        //UV
+        u0 = (((double) i) * dist);
+        u1 = (u0 + dist);
+        v0 = (double) 0;
+        v1 = (double) h;
+
+        evas_map_point_image_uv_set(map, i * 4, u0, v0);
+        evas_map_point_image_uv_set(map, i * 4 + 1, u1, v0);
+        evas_map_point_image_uv_set(map, i * 4 + 2, u1, v1);
+        evas_map_point_image_uv_set(map, i * 4 + 3, u0, v1);
+
+	if (i < 5)
+	{
+	    ERR("map: %d %d :: %d %d :: %d %d :: %d %d", (int)vec0.x + x, (int)vec0.y + y, (int)vec1.x + x, (int)vec1.y + y, (int)vec2.x + x, (int)vec2.y + y, (int)vec3.x + x, (int)vec3.y + y);
+	    ERR("map uv: %.1f %.1f :: %.1f %.1f", u0, v0, u1, v1);
+	}
+     }
+
+   evas_object_map_enable_set(pd->text_obj, EINA_TRUE);
+   evas_object_map_set(pd->text_obj, map);
+   //evas_object_map_enable_set(proxy, EINA_TRUE);
+   //evas_object_map_set(proxy, map);
+   evas_map_free(map);
+}
+
+
+static void
+_path_draw(Efl_Ui_Textpath_Data *obj, Efl_Ui_Textpath_Data *pd)
+{
+   ERR("In");
+
+   Efl_Gfx_Path_Command *cmd;
+   const double *points;
+   efl_gfx_path_get(obj, &cmd, &points);
+   if (cmd)
+     {
+	 ERR("cmd exist");
+        int pos = -1;
+        while (*cmd != EFL_GFX_PATH_COMMAND_TYPE_END)
+          {
+             double px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1;
+             ERR("cmd: %d", *cmd);
+             if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO)
+               {
+                  pos++;
+                  px0 = points[pos];
+                  pos++;
+                  py0 = points[pos];
+               }
+             else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO)
+               {
+                  pos++;
+                  ctrl_x0 = points[pos];
+                  pos++;
+                  ctrl_y0 = points[pos];
+                  pos++;
+                  ctrl_x1 = points[pos];
+                  pos++;
+                  ctrl_y1 = points[pos];
+                  pos++;
+                  px1 = points[pos];
+                  pos++;
+                  py1 = points[pos];
+
+                  //draw text on path
+                  _draw_text_on_path(pd, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
+
+                  //move points
+                  px0 = px1;
+                  py0 = py1;
+               }
+             cmd++;
+          }
+     }
+}
+
+static void
+_circle_draw(Efl_Ui_Textpath_Data *eo, Efl_Ui_Textpath_Data *pd)
 {
    Evas_Coord x, y, w, h;
    Evas_Object *proxy;
@@ -163,35 +337,41 @@ _circle_draw(Efl_Ui_Textpath_Data *pd)
    //return;
    //
 
+   //to revert direction
+   //radius = -radius;
+   //change map points (3,2,1,0 instead of 0,1,2,3)
+   ///
 
    map = evas_map_new(slice_no * 4);
 
    for (i = 0; i < slice_no; i++)
      {
-        _transform_coord(0, -pd->circle.radius,
+        //_transform_coord(0, -pd->circle.radius,
+        _transform_coord(pd->circle.radius + h/2, 0,
                          i * angle + start_angle,
                          pd->circle.x, pd->circle.y,
                          &tx, &ty);
         if (i < 3)
         ERR("map: %d:: %d %d, circle: %.0f %.0f", i*4, tx, ty, pd->circle.x, pd->circle.y);
         evas_map_point_coord_set(map, i * 4, tx, ty, 0);
-        _transform_coord(0, -pd->circle.radius,
+        //_transform_coord(0, -pd->circle.radius,
+        _transform_coord(pd->circle.radius + h/2, 0,
                          (i + 1) * angle + start_angle,
                          pd->circle.x, pd->circle.y,
                          &tx, &ty);
         if (i < 3)
         ERR("map: %d:: %d %d, circle: %.0f %.0f", i*4 + 1, tx, ty, pd->circle.x, pd->circle.y);
         evas_map_point_coord_set(map, i * 4 + 1, tx, ty, 0);
-        _transform_coord(0, -(pd->circle.radius - h),
-        //_transform_coord(0, (pd->circle.radius - h),
+        //_transform_coord(0, -(pd->circle.radius - h),
+        _transform_coord(pd->circle.radius - h/2, 0,
                          (i + 1) * angle + start_angle,
                          pd->circle.x, pd->circle.y,
                          &tx, &ty);
         if (i < 3)
         ERR("map: %d:: %d %d, circle: %.0f %.0f, angle: %.1f", i*4 + 2, tx, ty, pd->circle.x, pd->circle.y, (i+1)*angle + start_angle);
         evas_map_point_coord_set(map, i * 4 + 2, tx, ty, 0);
-        _transform_coord(0, -(pd->circle.radius - h),
-        //_transform_coord(0, (pd->circle.radius - h),
+        //_transform_coord(0, -(pd->circle.radius - h),
+        _transform_coord(pd->circle.radius - h/2, 0,
                          i * angle + start_angle,
                          pd->circle.x, pd->circle.y,
                          &tx, &ty);
@@ -257,16 +437,17 @@ _circle_draw(Efl_Ui_Textpath_Data *pd)
 }
 
 static void
-_sizing_eval(Efl_Ui_Textpath_Data *pd)
+_sizing_eval(Efl_Ui_Textpath_Data *obj, Efl_Ui_Textpath_Data *pd)
 {
-   _circle_draw(pd);
+   //_circle_draw(obj, pd);
+   _path_draw(obj, pd);
 }
 
 static void
 _content_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Efl_Ui_Textpath_Data *pd = data;
-   _sizing_eval(pd);
+   _sizing_eval(obj, pd);
 }
 
 //exposed API
@@ -274,7 +455,7 @@ EOLIAN static void
 _efl_ui_textpath_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    ERR("In");
-   _sizing_eval(pd);
+   _sizing_eval(obj, pd);
 
 
 
@@ -535,7 +716,7 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
         efl_gfx_size_set(pd->content, 2 * radius, 2 * radius);
      }
 
-   _sizing_eval(pd);
+   _sizing_eval(obj, pd);
 }
 
 EOLIAN static Efl_Ui_Textpath_Orientation
@@ -562,7 +743,7 @@ _efl_ui_textpath_autofit_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool autofi
 {
     if (pd->autofit == autofit) return;
     pd->autofit = autofit;
-    _sizing_eval(pd);
+   _sizing_eval(obj, pd);
 }
 
 EOLIAN static int
@@ -576,7 +757,7 @@ _efl_ui_textpath_slice_number_set(Eo *obj, Efl_Ui_Textpath_Data *pd, int slice_n
 {
    if (pd->slice_no == slice_no) return;
    pd->slice_no = slice_no;
-   _sizing_eval(pd);
+   _sizing_eval(obj, pd);
 }
 
 EOLIAN static void
@@ -614,7 +795,7 @@ _efl_ui_textpath_ellipsis_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool ellip
    _textpath_ellipsis_enable_set(pd, circum, is_ellipsis);
    elm_layout_sizing_eval(pd->text_obj);
    //
-   _sizing_eval(pd);
+   _sizing_eval(obj, pd);
 }
 
 EOLIAN static Eina_Bool

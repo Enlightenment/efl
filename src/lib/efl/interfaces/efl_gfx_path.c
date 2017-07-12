@@ -65,20 +65,22 @@ efl_gfx_path_grow(Efl_Gfx_Path_Command command,
 {
    Efl_Gfx_Path_Command *cmd_tmp;
    double *pts_tmp;
-   unsigned int cmd_length = 0, pts_length = 0;
+   unsigned int cmd_length = 0, pts_length = 0, length = 0;
 
    cmd_length = pd->commands_count ? pd->commands_count : 1;
    pts_length = pd->points_count;
 
-   if (_efl_gfx_path_command_length(command))
+   length = _efl_gfx_path_command_length(command);//should we change?
+   //need 4bytes, inline function + switch needs table with 6 values (3bits)
+   if (length)
      {
-        pts_length += _efl_gfx_path_command_length(command);
+        pts_length += length;
         pts_tmp = realloc(pd->points, pts_length * sizeof (double));
         if (!pts_tmp) return EINA_FALSE;
 
         pd->points = pts_tmp;
         *offset_point =
-           pd->points + pts_length - _efl_gfx_path_command_length(command);
+           pd->points + pts_length - length;
      }
 
    cmd_tmp = realloc(pd->commands,
@@ -1046,6 +1048,8 @@ _efl_gfx_path_append_circle(Eo *obj, Efl_Gfx_Path_Data *pd,
 
    _efl_gfx_path_append_arc(obj, pd, (xc - radius), (yc - radius),
                            (2 * radius), (2 * radius), 0, 360);
+   //_efl_gfx_path_append_arc(obj, pd, (xc - radius), (yc - radius),
+   //                        (2 * radius), (2 * radius), 45, -360);
    _efl_gfx_path_append_close(obj, pd);
 
    //update convex flag
