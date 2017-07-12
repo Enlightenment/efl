@@ -254,6 +254,7 @@ x11_pipe_read(void *data, Ecore_Fd_Handler *fdh)
         free(buf);
         _incr_update(p, 0);
         eina_hash_del_by_key(pipes, &p->win);
+        return ECORE_CALLBACK_RENEW;
      }
    if (len == INCR_CHUNK_SIZE)
      {
