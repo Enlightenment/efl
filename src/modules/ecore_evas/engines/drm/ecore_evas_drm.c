@@ -673,6 +673,19 @@ _drm_animator_unregister(Ecore_Evas *ee)
    edata->ticking = EINA_FALSE;
 }
 
+static double
+_drm_last_tick_get(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Drm_Data *edata;
+   long sec, usec;
+
+   edata = ee->engine.data;
+   if (!ecore_drm2_output_blanktime_get(edata->output, &sec, &usec))
+     return -1.0;
+
+   return sec + usec / 1000000.0;
+}
+
 static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 {
    _drm_free,
@@ -760,7 +773,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //fn_callback_device_mouse_out_set
    NULL, //fn_pointer_device_xy_get
    NULL, //fn_prepare
-   NULL, //fn_last_tick_get
+   _drm_last_tick_get,
 };
 
 static Ecore_Evas *
