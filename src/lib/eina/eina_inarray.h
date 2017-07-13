@@ -420,9 +420,6 @@ EAPI void *eina_inarray_pop(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  * @param[in] position The member position
  * @return A pointer to current the member memory
  *
- * @see eina_inarray_lookup()
- * @see eina_inarray_lookup_sorted()
- *
  * @since 1.2
  */
 EAPI void *eina_inarray_nth(const Eina_Inarray *array,
@@ -565,8 +562,6 @@ EAPI void eina_inarray_sort(Eina_Inarray *array,
  *
  * @note The data given to the @p compare function is a pointer to the member
  *       memory itself, do no change it.
- *
- * @see eina_inarray_lookup_sorted()
  *
  * @since 1.2
  */
