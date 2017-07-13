@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager.Calc, Efl.Object)
+mixin Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager, Efl.Object)
 {
     [[A class that automatically registeres its border elements in the parent manager
 
@@ -13,17 +13,10 @@ class Efl.Ui.Focus.Manager.Sub (Efl.Ui.Focus.Manager.Calc, Efl.Object)
       You can filter the border elements by overriding the property
       @Efl.Ui.Focus.Manager.border_elements.
 
-      This class is only working as composite object to a @Efl.Ui.Focus.User
-      and @Efl.Ui.Focus.Object.
-
-      The object itself redirects the manager's events to the object where this
-      object is attached.
-
       @since 1.20
     ]]
     implements {
         Efl.Object.constructor;
         Efl.Object.destructor;
-        Efl.Object.parent { set; }
     }
 }

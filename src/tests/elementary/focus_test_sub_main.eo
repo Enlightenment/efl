@@ -1,4 +1,4 @@
-class Focus.Test.Sub.Main(Efl.Object, Efl.Ui.Focus.User, Efl.Ui.Focus.Object, Efl.Ui.Focus.Manager) {
+class Focus.Test.Sub.Main(Efl.Object, Efl.Ui.Focus.User, Efl.Ui.Focus.Object, Efl.Ui.Focus.Manager.Sub) {
     implements {
         Efl.Ui.Focus.User.manager { get; }
         Efl.Ui.Focus.User.parent { get; }
