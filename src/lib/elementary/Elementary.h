@@ -143,7 +143,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_config.h>
 #include <elm_focus.h>
 
-#ifdef EFL_EO_API_SUPPORT
+#if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
 # include "efl_ui_focus_object.eo.h"
 # include "efl_ui_focus_manager.eo.h"
 # include "efl_ui_focus_manager_sub.eo.h"
