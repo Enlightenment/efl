@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#define MY_CLASS EFL_UI_FOCUS_MANAGER_SUB_CLASS
+#define MY_CLASS EFL_UI_FOCUS_MANAGER_SUB_MIXIN
 #define MY_DATA(o, p) Efl_Ui_Focus_Manager_Sub_Data *p = efl_data_scope_get(o, MY_CLASS);
 typedef struct {
     Efl_Ui_Focus_Manager *manager;//the manager where current_border is currently registered
@@ -34,10 +34,8 @@ _focus_changed(void *data, const Efl_Event *event)
 {
    Efl_Ui_Focus_Manager_Sub *m = data;
    Efl_Ui_Focus_Manager *manager;
-   Elm_Widget *elem;
 
-   elem = efl_parent_get(m);
-   manager = efl_ui_focus_user_manager_get(elem);
+   manager = efl_ui_focus_user_manager_get(m);
 
    //only do this when we are getting focus
    if (!event->info) return;
@@ -69,11 +67,9 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    Eina_List *selection, *tmp;
    Efl_Ui_Focus_Object *node, *logical;
    Efl_Ui_Focus_Manager *manager;
-   Efl_Ui_Focus_Manager *elem;
 
-   elem = efl_parent_get(obj);
-   manager = efl_ui_focus_user_manager_get(elem);
-   logical = elem;
+   manager = efl_ui_focus_user_manager_get(obj);
+   logical = obj;
    borders = efl_ui_focus_manager_border_elements_get(obj);
 
    selection = NULL;
@@ -89,7 +85,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 
    EINA_LIST_FREE(tmp, node)
      {
-        if (node == elem) continue;
+        if (node == obj) continue;
         _unregister(obj, manager, node);
      }
 
@@ -99,7 +95,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 
    EINA_LIST_FREE(tmp, node)
      {
-        if (node == elem) continue;
+        if (node == obj) continue;
         _register(obj, manager, node, logical);
      }
 
@@ -112,14 +108,11 @@ _border_unregister(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 {
    Efl_Ui_Focus_Object *node;
    Efl_Ui_Focus_Manager *manager;
-   Efl_Ui_Focus_Manager *elem;
 
-   elem = efl_parent_get(obj);
-
-   manager = efl_ui_focus_user_manager_get(elem);
+   manager = efl_ui_focus_user_manager_get(obj);
    EINA_LIST_FREE(pd->current_border, node)
      {
-        if (node == elem) continue;
+        if (node == obj) continue;
         _unregister(obj, manager, node);
      }
 }
@@ -178,14 +171,13 @@ static void
 _flush_manager(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 {
    Efl_Ui_Focus_Manager *manager;
-   Efl_Ui_Focus_Object *logical, *real_object;
+   Efl_Ui_Focus_Object *logical;
    Efl_Ui_Focus_User *b;
    Eina_List *n;
 
-   real_object = efl_parent_get(obj);
 
-   logical = efl_ui_focus_user_parent_get(real_object);
-   manager = efl_ui_focus_user_manager_get(real_object);
+   logical = efl_ui_focus_user_parent_get(obj);
+   manager = efl_ui_focus_user_manager_get(obj);
 
    //unregister from the old
    efl_event_callback_array_del(pd->manager, parent_manager(), obj);
@@ -193,7 +185,7 @@ _flush_manager(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 
    EINA_LIST_FOREACH(pd->current_border , n, b)
      {
-        if (b == real_object) continue;
+        if (b == obj) continue;
 
         _unregister(obj, manager, b);
         _register(obj, manager, b, logical);
@@ -216,28 +208,13 @@ EFL_CALLBACKS_ARRAY_DEFINE(self_manager,
     {EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_change}
 );
 
-EOLIAN static void
-_efl_ui_focus_manager_sub_efl_object_parent_set(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd EINA_UNUSED, Efl_Object *parent)
-{
-   Eo *old_parent, *new_parent;
-
-   old_parent = efl_parent_get(obj);
-
-   _efl_ui_focus_manager_redirect_events_del(obj, old_parent);
-   efl_event_callback_array_del(old_parent, self_manager(), obj);
-
-   efl_parent_set(efl_super(obj, MY_CLASS), parent);
-
-   new_parent = efl_parent_get(obj);
-   _efl_ui_focus_manager_redirect_events_add(obj, new_parent);
-   efl_event_callback_array_add(new_parent, self_manager(), obj);
-
-   _flush_manager(obj, pd);
-}
-
 EOLIAN static Efl_Object*
 _efl_ui_focus_manager_sub_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd EINA_UNUSED)
 {
+   efl_event_callback_array_add(obj, self_manager(), obj);
+
+   _flush_manager(obj, pd);
+
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
