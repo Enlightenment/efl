@@ -170,6 +170,9 @@ public struct Rectangle {
 }
 
 namespace efl {
+namespace observable {
+public class Tuple {}
+}
 
 namespace loop {
 public struct Arguments {
