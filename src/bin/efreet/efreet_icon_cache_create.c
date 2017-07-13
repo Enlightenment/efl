@@ -85,6 +85,7 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir)
         char *name;
         char *ext;
         unsigned int i;
+        void *p;
 
         if (entry->type == EINA_FILE_DIR)
             continue;
@@ -114,7 +115,13 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir)
         if (i != icon->icons_count)
             continue;
 
-        icon->icons = realloc(icon->icons, sizeof (char *) * (icon->icons_count + 1));
+        p = realloc(icon->icons, sizeof (char *) * (icon->icons_count + 1));
+        if (!p)
+          {
+             ERR("Out of memory");
+             exit(1);
+          }
+        icon->icons = p;
         icon->icons[icon->icons_count] = eina_stringshare_add(entry->path);
         eina_array_push(strs, icon->icons[icon->icons_count++]);
     }
