@@ -149,12 +149,6 @@ EAPI extern Elm_Version *elm_version;
 # include "efl_ui_focus_manager_sub.eo.h"
 # include "efl_ui_focus_manager_root_focus.eo.h"
 # include "efl_ui_focus_user.eo.h"
-#else
-# include "efl_ui_focus_object.eo.legacy.h"
-# include "efl_ui_focus_manager.eo.legacy.h"
-# include "efl_ui_focus_manager_sub.eo.legacy.h"
-# include "efl_ui_focus_manager_root_focus.eo.legacy.h"
-# include "efl_ui_focus_user.eo.legacy.h"
 #endif
 
 #include <elm_tooltip.h>
