@@ -2,7 +2,6 @@
 #define ELM_WIDGET_PREFS_H
 
 #include "Elementary.h"
-#include "elm_prefs.eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
