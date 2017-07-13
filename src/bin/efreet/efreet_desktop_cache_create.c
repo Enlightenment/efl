@@ -96,27 +96,29 @@ cache_add(Eet_File *ef, const char *path, const char *file_id, int priority EINA
         char *data;
         Efreet_Cache_Array_String *array;
 
+#define ADD(hash) \
+   do { \
+      array = eina_hash_find((hash), data); \
+      if (!array) array = NEW(Efreet_Cache_Array_String, 1); \
+      void *p = realloc(array->array, \
+                        sizeof(char *) * (array->array_count + 1)); \
+      if (!p) { \
+         ERR("Out of memory"); \
+         exit(1); \
+      } \
+      array->array = p; \
+      array->array[array->array_count++] = desk->orig_path; \
+      eina_hash_set((hash), data, array); \
+   } while (0)
 #define ADD_LIST(list, hash) \
-        EINA_LIST_FOREACH((list), l, data) \
-        { \
-            array = eina_hash_find((hash), data); \
-            if (!array) \
-                array = NEW(Efreet_Cache_Array_String, 1); \
-            array->array = realloc(array->array, sizeof (char *) * (array->array_count + 1)); \
-            array->array[array->array_count++] = desk->orig_path; \
-            eina_hash_set((hash), data, array); \
-        }
+   EINA_LIST_FOREACH((list), l, data) { \
+      ADD(hash); \
+   }
 #define ADD_ELEM(elem, hash) \
-        if ((elem)) \
-        { \
-            data = (elem); \
-            array = eina_hash_find((hash), data); \
-            if (!array) \
-                array = NEW(Efreet_Cache_Array_String, 1); \
-            array->array = realloc(array->array, sizeof (char *) * (array->array_count + 1)); \
-            array->array[array->array_count++] = desk->orig_path; \
-            eina_hash_set((hash), data, array); \
-        }
+   if ((elem)) { \
+      data = (elem); \
+      ADD(hash); \
+   }
         /* Desktop Spec 1.0 */
         ADD_LIST(desk->mime_types, mime_types);
         ADD_LIST(desk->categories, categories);
