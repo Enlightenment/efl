@@ -231,7 +231,9 @@ _eo_op_class_get(Efl_Object_Op op)
 }
 
 static inline Eina_Bool
-_vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass, Efl_Object_Op op, Eo_Op_Func_Type func, Eina_Bool allow_same_override)
+_vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass,
+                 const _Efl_Class *hierarchy_klass, Efl_Object_Op op,
+                 Eo_Op_Func_Type func, Eina_Bool allow_same_override)
 {
    op_type_funcs *fsrc;
    size_t idx1 = DICH_CHAIN1(op);
@@ -241,12 +243,28 @@ _vtable_func_set(Eo_Vtable *vtable, const _Efl_Class *klass, Efl_Object_Op op, E
    chain1 = &vtable->chain[idx1];
    _vtable_chain_write_prepare(chain1);
    fsrc = &chain1->chain2->funcs[DICH_CHAIN_LAST(op)];
-   if (!allow_same_override && (fsrc->src == klass))
+   if (hierarchy_klass)
      {
-        const _Efl_Class *op_kls = _eo_op_class_get(op);
-        ERR("Class '%s': Overriding already set func %p for op %d (%s) with %p.",
-              klass->desc->name, fsrc->func, op, op_kls->desc->name, func);
-        return EINA_FALSE;
+        if (!func)
+          {
+             op_type_funcs *fsrc_orig;
+             Dich_Chain1 *chain1_orig;
+
+             chain1_orig = &hierarchy_klass->vtable.chain[idx1];
+             fsrc_orig = &chain1_orig->chain2->funcs[DICH_CHAIN_LAST(op)];
+             func = fsrc_orig->func;
+             klass = fsrc_orig->src;
+          }
+     }
+   else
+     {
+        if (!allow_same_override && (fsrc->src == klass))
+          {
+             const _Efl_Class *op_kls = _eo_op_class_get(op);
+             ERR("Class '%s': Overriding already set func %p for op %d (%s) with %p.",
+                 klass->desc->name, fsrc->func, op, op_kls->desc->name, func);
+             return EINA_FALSE;
+          }
      }
 
    fsrc->func = func;
@@ -712,24 +730,32 @@ _efl_object_op_api_id_get(const void *api_func, const Eo *obj, const char *api_f
 static Eina_Bool
 _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Class *hierarchy_klass, const _Efl_Class *klass, Efl_Object_Op id_offset, Eina_Bool override_only)
 {
-   unsigned int i;
+   unsigned int i, j;
    Efl_Object_Op op_id;
-   const void *last_api_func;
    const Efl_Op_Description *op_desc;
    const Efl_Op_Description *op_descs;
+   const _Efl_Class *override_class;
+   const void **api_funcs;
+   Eina_Bool check_equal;
 
    op_id = hierarchy_klass->base_id + id_offset;
    op_descs = ops->descs;
+   override_class = override_only ? hierarchy_klass : NULL;
 
    DBG("Set functions for class '%s':%p", klass->desc->name, klass);
 
-   if (!op_descs) return EINA_TRUE;
+   if (!op_descs || !ops->count) return EINA_TRUE;
 
-   last_api_func = NULL;
+#ifdef EO_DEBUG
+   check_equal = EINA_TRUE;
+#else
+   check_equal = !override_only;
+#endif
+   api_funcs = alloca(ops->count * sizeof(api_funcs[0]));
+
+   /* sanity checks */
    for (i = 0, op_desc = op_descs; i < ops->count; i++, op_desc++)
      {
-        Efl_Object_Op op = EFL_NOOP;
-
         if (op_desc->api_func == NULL)
           {
              ERR("Class '%s': NULL API not allowed (NULL->%p '%s').",
@@ -737,44 +763,53 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
              return EINA_FALSE;
           }
 
-        /* Get the opid for the function. */
+        if (check_equal)
           {
-             if (_eo_api_func_equal(op_desc->api_func, last_api_func))
+             for (j = 0; j < i; j++)
                {
-                  ERR("Class '%s': API previously defined (%p->%p '%s').",
-                      klass->desc->name, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
+                  if (_eo_api_func_equal(op_desc->api_func, api_funcs[j]))
+                    {
+                       ERR("Class '%s': API previously defined (%p->%p '%s').",
+                           klass->desc->name, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
+                       return EINA_FALSE;
+                    }
+               }
+
+             api_funcs[i] = op_desc->api_func;
+          }
+     }
+
+   for (i = 0, op_desc = op_descs; i < ops->count; i++, op_desc++)
+     {
+        Efl_Object_Op op = EFL_NOOP;
+
+        /* Get the opid for the function. */
+        op = _efl_object_api_op_id_get_internal(op_desc->api_func);
+
+        if (op == EFL_NOOP)
+          {
+             if (override_only)
+               {
+                  ERR("Class '%s': Tried overriding a previously undefined function.", klass->desc->name);
                   return EINA_FALSE;
                }
 
-             op = _efl_object_api_op_id_get_internal(op_desc->api_func);
-
-             if (op == EFL_NOOP)
-               {
-                  if (override_only)
-                    {
-                       ERR("Class '%s': Tried overriding a previously undefined function.", klass->desc->name);
-                       return EINA_FALSE;
-                    }
-
-                  op = op_id;
-                  eina_spinlock_take(&_ops_storage_lock);
+             op = op_id;
+             eina_spinlock_take(&_ops_storage_lock);
 #ifndef _WIN32
-                  eina_hash_add(_ops_storage, &op_desc->api_func, (void *) (uintptr_t) op);
+             eina_hash_add(_ops_storage, &op_desc->api_func, (void *) (uintptr_t) op);
 #else
-                  eina_hash_add(_ops_storage, op_desc->api_func, (void *) (uintptr_t) op);
+             eina_hash_add(_ops_storage, op_desc->api_func, (void *) (uintptr_t) op);
 #endif
-                  eina_spinlock_release(&_ops_storage_lock);
+             eina_spinlock_release(&_ops_storage_lock);
 
-                  op_id++;
-               }
+             op_id++;
           }
 
         DBG("%p->%p '%s'", op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
 
-        if (!_vtable_func_set(vtable, klass, op, op_desc->func, EINA_FALSE))
+        if (!_vtable_func_set(vtable, klass, override_class, op, op_desc->func, EINA_TRUE))
           return EINA_FALSE;
-
-        last_api_func = op_desc->api_func;
      }
 
    return EINA_TRUE;
@@ -1280,8 +1315,8 @@ _eo_class_isa_recursive_set(_Efl_Class *klass, const _Efl_Class *cur)
 {
    const _Efl_Class **extn_itr;
 
-   _vtable_func_set(&klass->vtable, klass, cur->base_id + cur->ops_count,
-         _eo_class_isa_func, EINA_TRUE);
+   _vtable_func_set(&klass->vtable, klass, NULL, cur->base_id + cur->ops_count,
+                    _eo_class_isa_func, EINA_TRUE);
 
    for (extn_itr = cur->extensions ; *extn_itr ; extn_itr++)
      {
@@ -1594,18 +1629,15 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
 
    if (ops)
      {
-        Eo_Vtable *vtable;
+        Eo_Vtable *vtable = obj->opt->vtable;
 
-        if (EINA_UNLIKELY(obj->opt->vtable != NULL))
+        if (!vtable)
           {
-             ERR("Function table already overridden, not allowed to override again. "
-                 "Call with NULL to reset the function table first.");
-             goto err;
+             vtable = calloc(1, sizeof(*vtable));
+             _vtable_init(vtable, obj->klass->vtable.size);
+             _vtable_copy_all(vtable, &obj->klass->vtable);
           }
 
-        vtable = calloc(1, sizeof(*vtable));
-        _vtable_init(vtable, obj->klass->vtable.size);
-        _vtable_copy_all(vtable, &obj->klass->vtable);
         if (!_eo_class_funcs_set(vtable, ops, obj->klass, klass, 0, EINA_TRUE))
           {
              // FIXME: Maybe leaking some chain stuff from copy above?

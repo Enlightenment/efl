@@ -648,6 +648,8 @@ EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Obje
  * It is not possible to override a function table of an object when it's
  * already been overridden. Call efl_object_override(obj, NULL) first if you really
  * need to do that.
+ *
+ * @see EFL_OPS_DEFINE
  */
 EAPI Eina_Bool efl_object_override(Eo *obj, const Efl_Object_Ops *ops);
 
