@@ -225,8 +225,8 @@ struct _Evas_Event_Mouse_Move /** Mouse move event */
 
 struct _Evas_Event_Mouse_Wheel /** Wheel event */
 {
-   int              direction; /* 0 = default up/down wheel FIXME: more wheel types */
-   int              z; /* ...,-2,-1 = down, 1,2,... = up */
+   int              direction; /**< Axis of screen wheel - 0 = default up/down wheel, 1 = horizontal left/right wheel */
+   int              z; /**< The step for the wheel movement relative to the direction above...,-2,-1 = down, 1,2,... = up */
 
    Evas_Point        output; /**< The X/Y location of the cursor */
    Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
