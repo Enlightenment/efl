@@ -5339,7 +5339,7 @@ _efl_ui_win_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Efl_Ui_Win_Dat
 }
 
 EOLIAN static void
-_efl_ui_win_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+_efl_ui_win_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED)
 {
 #ifdef HAVE_ELEMENTARY_WL2
    if (pd->type == ELM_WIN_FAKE)
