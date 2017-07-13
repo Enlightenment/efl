@@ -18,10 +18,10 @@ public class MyBox : evas.BoxInherit
         IntPtr evas = evas_object_evas_get(raw_handle);
         evas_event_freeze(evas);
         eina.Log.Debug("called group_calculate");
-        layouting_set(true);
+        // slayouting_set(true);
         evas_obj_box_layout_vertical(raw_handle, IntPtr.Zero, IntPtr.Zero);
-        layouting_set(false);
-        children_changed_set(false);
+        // layouting_set(false);
+        // children_changed_set(false);
         evas_event_thaw(evas);
     }
 }
