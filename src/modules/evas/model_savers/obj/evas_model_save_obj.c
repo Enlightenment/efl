@@ -228,17 +228,14 @@ evas_model_save_file_obj(const Evas_Canvas3D_Mesh *mesh,
    Evas_Canvas3D_Material_Data *mat;
 
    len = strlen(_obj_file_name);
-   _without_extention = (char *)malloc(len - 3);
-   _mtl_file_name = (char *)malloc(len + 1);
+   _without_extention = alloca(len - 3);
+   _mtl_file_name = alloca(len + 1);
    eina_strlcpy(_without_extention, _obj_file_name, len - 3);
    eina_str_join(_mtl_file_name, len + 1, '.', _without_extention, "mtl");
-   free(_without_extention);
 
    Evas_Canvas3D_Mesh_Data *pd = efl_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
    mat = efl_data_scope_get(f->material, EVAS_CANVAS3D_MATERIAL_CLASS);
 
    if (mat != NULL) _save_material(pd, _mtl_file_name, mat);
    _save_mesh(pd, _obj_file_name, _mtl_file_name, f);
-
-   free(_mtl_file_name);
 }
