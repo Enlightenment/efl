@@ -1252,6 +1252,11 @@ void
 eo_lexer_context_push(Eo_Lexer *ls)
 {
    Lexer_Ctx *ctx = malloc(sizeof(Lexer_Ctx));
+   if (!ctx)
+     {
+        fprintf(stderr, "eolian: out of memory pushing context\n");
+        longjmp(ls->err_jmp, EINA_TRUE);
+     }
    ctx->line = ls->line_number;
    ctx->column = ls->column;
    ctx->linestr = ls->stream_line;
