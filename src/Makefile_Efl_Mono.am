@@ -45,10 +45,15 @@ lib/efl/interfaces/efl_io_sizer.eo.cs \
 lib/efl/interfaces/efl_io_writer.eo.cs \
 lib/efl/interfaces/efl_text_properties.eo.cs \
 lib/efl/interfaces/efl_gfx_buffer.eo.cs \
-lib/efl/interfaces/efl_gfx_shape.eo.cs
+lib/efl/interfaces/efl_gfx_shape.eo.cs \
+lib/efl/interfaces/efl_gfx_gradient.eo.cs \
+lib/efl/interfaces/efl_gfx_gradient_linear.eo.cs \
+lib/efl/interfaces/efl_gfx_gradient_radial.eo.cs \
+lib/efl/interfaces/efl_file.eo.cs
 
 ecore_eolian_blacklisted_files = \
 lib/ecore/efl_io_closer_fd.eo.cs \
+lib/ecore/efl_io_buffered_stream.eo.cs \
 lib/ecore/efl_io_positioner_fd.eo.cs \
 lib/ecore/efl_io_reader_fd.eo.cs \
 lib/ecore/efl_io_writer_fd.eo.cs \

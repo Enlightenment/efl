@@ -191,4 +191,31 @@ public struct Animator_Tick {
 }
 }
 
+public interface File {}
+
+namespace canvas {
+
+namespace filter {
+
+public class State {}
+
+}
+
+namespace image {
+
+        
+} }
+    
+}
+
+namespace eina {
+
+public interface File {}
+
+}
+
+namespace evas {
+
+public class Text_Style_Type {};
+    
 }
