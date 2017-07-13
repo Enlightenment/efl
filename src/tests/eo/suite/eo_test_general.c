@@ -79,6 +79,7 @@ START_TEST(efl_object_override_tests)
     * make sure we don't cache. */
    ck_assert_int_eq(simple_a_get(obj), 0);
 
+   /* Test override */
    EFL_OPS_DEFINE(
             overrides,
             EFL_OBJECT_OP_FUNC(simple_a_get, _simple_obj_override_a_get));
@@ -86,7 +87,7 @@ START_TEST(efl_object_override_tests)
 
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A);
 
-   /* Check super works. */
+   /* Check non-overriden functions work. */
    simple_a_set(obj, OVERRIDE_A_SIMPLE);
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + OVERRIDE_A_SIMPLE);
 
@@ -100,21 +101,35 @@ START_TEST(efl_object_override_tests)
    simple_a_set(obj, OVERRIDE_A_SIMPLE);
    ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A_SIMPLE * 2);
 
-   /* Try overriding again - not allowed by policy */
-   fail_if(efl_object_override(obj, &overrides));
-   ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A_SIMPLE * 2);
+   /* Try overriding again, allowed since 1.21. */
+   fail_if(!efl_object_override(obj, &overrides));
+   ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + OVERRIDE_A_SIMPLE * 2);
 
    /* Try introducing a new function */
    EFL_OPS_DEFINE(
             overrides3,
             EFL_OBJECT_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set));
+   fail_if(efl_object_override(obj, &overrides3));
    fail_if(!efl_object_override(obj, NULL));
    fail_if(efl_object_override(obj, &overrides3));
 
-   /* Test override reset */
+   /* Test override reset of all functions */
    fail_if(!efl_object_override(obj, NULL));
    simple_a_set(obj, 42 * OVERRIDE_A_SIMPLE);
    ck_assert_int_eq(simple_a_get(obj), 42 * OVERRIDE_A_SIMPLE);
+
+   /* Test override reset of a single functions, allowed since 1.21. */
+   EFL_OPS_DEFINE(
+            overrides4,
+            EFL_OBJECT_OP_FUNC(simple_a_get, NULL));
+   fail_if(!efl_object_override(obj, NULL));
+   simple_a_set(obj, 1337);
+   ck_assert_int_eq(simple_a_get(obj), 1337);
+   fail_if(!efl_object_override(obj, &overrides));
+   fail_if(!efl_object_override(obj, &overrides2));
+   ck_assert_int_eq(simple_a_get(obj), OVERRIDE_A + 1337);
+   fail_if(!efl_object_override(obj, &overrides4));
+   ck_assert_int_eq(simple_a_get(obj), 1337);
 
    efl_unref(obj);
 
