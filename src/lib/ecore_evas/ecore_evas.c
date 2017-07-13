@@ -3296,6 +3296,8 @@ _ecore_evas_free(Ecore_Evas *ee)
         ee->engine.func->fn_animator_unregister(ee);
         if (_general_tick == ee) _ecore_evas_tick_source_find();
      }
+
+   efl_event_callback_array_del(ee->evas, animator_watch(), ee);
    if (ee->anim)
      ecore_animator_del(ee->anim);
    ee->anim = NULL;
