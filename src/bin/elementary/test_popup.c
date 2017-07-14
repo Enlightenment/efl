@@ -624,7 +624,7 @@ gl_popup_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EIN
 }
 
 static void
-_delete_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_delete_btn_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_object_content_set(data, NULL);
 }
