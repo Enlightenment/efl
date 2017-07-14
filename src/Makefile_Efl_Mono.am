@@ -209,6 +209,7 @@ tests/efl_mono/efl_mono.exe$(EXEEXT): $(tests_efl_mono_efl_mono_exe_SOURCES) tes
 
 lib_LTLIBRARIES += examples/efl_mono/libefl_mono_native_example.la
 
+examples_efl_mono_libefl_mono_native_example_la_SOURCES = examples/efl_mono/libefl_mono_native_example.c
 examples_efl_mono_libefl_mono_native_example_la_CPPFLAGS =  \
 -I$(builddir)/examples/efl_mono \
 -DEXAMPLES_WD=\"`pwd`\" \
@@ -218,7 +219,7 @@ examples_efl_mono_libefl_mono_native_example_la_CPPFLAGS =  \
 @EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@
 
 examples_efl_mono_libefl_mono_native_example_la_LIBADD = @USE_EO_LIBS@ @USE_EINA_LIBS@ @USE_EOLIAN_LIBS@
-examples_efl_mono_libefl_mono_native_example_la_LDFLAGS = -rpath $(abs_top_builddir)/examples/efl_mono @EFL_LTLIBRARY_FLAGS@
+examples_efl_mono_libefl_mono_native_example_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 examples_efl_mono_libefl_mono_native_example_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 examples_efl_mono_libefl_mono_native_example_la_LIBTOOLFLAGS = --tag=disable-static
 
