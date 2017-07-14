@@ -691,6 +691,23 @@ EAPI Eina_Bool efl_isa(const Eo *obj, const Efl_Class *klass);
 EAPI const char *efl_class_name_get(const Efl_Class *klass);
 
 /**
+ * @brief Gets a debug name for this object
+ * @param obj_id The object (or class)
+ * @return A name to use in logs and for other debugging purposes
+ *
+ * Note that subclasses can override Efl.Object "debug_name_override" to
+ * provide more meaningful debug strings. The standard format includes the
+ * class name, the object ID (this @p obj_id), the reference count and
+ * optionally the object name (as defined by Efl.Object.name).
+ *
+ * This might return a temporary string, as created by eina_slstr, which means
+ * that a main loop should probably be running.
+ *
+ * @since 1.21
+ */
+EAPI const char *efl_debug_name_get(const Eo *obj_id);
+
+/**
  * @}
  */
 
