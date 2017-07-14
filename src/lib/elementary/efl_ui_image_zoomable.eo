@@ -34,7 +34,9 @@ class Efl.Ui.Image.Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
             [[Set the viewed region of the image
 
               This shows the region of the image without using animation.
+              @since 1.20
             ]]
+            legacy: null;
          }
          values {
             x: int; [[X-coordinate of region in image original pixels]]
