@@ -74,8 +74,8 @@ glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 
 /* dynamic loaded local egl function pointers */
 _eng_fn (*glsym_eglGetProcAddress)(const char *a) = NULL;
-EGLImageKHR (*glsym_evas_gl_common_eglCreateImage) (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
-void (*glsym_eglDestroyImage)(EGLDisplay a, void *b) = NULL;
+EGLImageKHR  (*glsym_evas_gl_common_eglCreateImage) (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
+int          (*glsym_evas_gl_common_eglDestroyImage) (EGLDisplay a, void *b) = NULL;
 void (*glsym_glEGLImageTargetTexture2DOES)(int a, void *b) = NULL;
 unsigned int (*glsym_eglSwapBuffersWithDamage)(EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
 unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, void *b, EGLint c, EGLint *d) = NULL;
@@ -155,6 +155,7 @@ static void
 gl_symbols(void)
 {
    static Eina_Bool done = EINA_FALSE;
+   const char *exts = NULL;
 
    if (done) return;
 
@@ -187,14 +188,15 @@ gl_symbols(void)
 
    LINK2GENERIC(eglGetProcAddress);
    LINK2GENERIC(evas_gl_common_eglCreateImage);
+   LINK2GENERIC(evas_gl_common_eglDestroyImage);
 
 #define FINDSYM(dst, sym, typ) \
    if (!dst) dst = (typ)glsym_eglGetProcAddress(sym);
 
-   glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
-
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
+   // Find EGL extensions
+   // FIXME: whgen above eglGetDisplay() is fixed... fix the below...
+//   exts = eglQueryString(ob->egl_disp, EGL_EXTENSIONS);
+   glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress, exts);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES,
            "glEGLImageTargetTexture2DOES", glsym_func_void);
@@ -620,7 +622,7 @@ gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes
    int atti = 0;
 
    if (!dmabuf_present) return NULL;
-   if (!glsym_eglDestroyImage) return NULL;
+   if (!glsym_evas_gl_common_eglDestroyImage) return NULL;
 
    /* This requires the Mesa commit in
     * Mesa 10.3 (08264e5dad4df448e7718e782ad9077902089a07) or
@@ -690,7 +692,7 @@ _native_cb_bind(void *image)
 
         /* Must re-import every time for coherency. */
         if (n->ns_data.wl_surface_dmabuf.image)
-          glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
+          glsym_evas_gl_common_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
         v = gl_import_simple_dmabuf(img->native.disp, &n->ns_data.wl_surface_dmabuf.attr);
         if (!v) return;
         glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, v);
@@ -727,7 +729,7 @@ _native_cb_unbind(void *image)
    if (n->ns.type == EVAS_NATIVE_SURFACE_WL_DMABUF)
      {
         if (n->ns_data.wl_surface_dmabuf.image)
-          glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
+          glsym_evas_gl_common_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
         n->ns_data.wl_surface_dmabuf.image = NULL;
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
@@ -846,9 +848,9 @@ _native_cb_free(void *image)
         eina_hash_del(img->native.shared->native_wl_hash, &wlid, img);
         if (n->ns_data.wl_surface.surface)
           {
-             if (glsym_eglDestroyImage && n->ns_data.wl_surface_dmabuf.image)
+             if (glsym_evas_gl_common_eglDestroyImage && n->ns_data.wl_surface_dmabuf.image)
                {
-                  glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
+                  glsym_evas_gl_common_eglDestroyImage(img->native.disp, n->ns_data.wl_surface_dmabuf.image);
                   GLERRV("eglDestroyImage() failed.");
                }
           }
@@ -859,9 +861,9 @@ _native_cb_free(void *image)
         eina_hash_del(img->native.shared->native_wl_hash, &wlid, img);
         if (n->ns_data.wl_surface.surface)
           {
-             if (glsym_eglDestroyImage)
+             if (glsym_evas_gl_common_eglDestroyImage)
                {
-                  glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface.surface);
+                  glsym_evas_gl_common_eglDestroyImage(img->native.disp, n->ns_data.wl_surface.surface);
                   GLERRV("eglDestroyImage() failed.");
                }
              else
@@ -1204,7 +1206,7 @@ eng_image_native_set(void *engine, void *image, void *native)
                     v = gl_import_simple_dmabuf(ob->egl.disp, attr);
                   if (!v) return NULL;
 
-                  glsym_eglDestroyImage(ob->egl.disp, v);
+                  glsym_evas_gl_common_eglDestroyImage(ob->egl.disp, v);
                   img =
                     glsym_evas_gl_common_image_new_from_data(ob->gl_context,
                                                              attr->width,
@@ -1395,7 +1397,7 @@ eng_image_native_set(void *engine, void *image, void *native)
                                 &wlid, img);
 
                   n->ns_data.wl_surface.wl_buf = wl_buf;
-                  if (glsym_eglDestroyImage)
+                  if (glsym_evas_gl_common_eglDestroyImage)
                     n->ns_data.wl_surface.surface = glsym_evas_gl_common_eglCreateImage(ob->egl.disp,
                                                                                         NULL,
                                                                                         EGL_WAYLAND_BUFFER_WL,

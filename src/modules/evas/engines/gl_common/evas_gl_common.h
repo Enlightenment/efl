@@ -562,7 +562,7 @@ EAPI int          evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const c
 EAPI void         evas_gl_preload_render_lock(evas_gl_make_current_cb make_current, void *engine_data);
 EAPI void         evas_gl_preload_render_unlock(evas_gl_make_current_cb make_current, void *engine_data);
 EAPI void         evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_data);
-EAPI void         evas_gl_symbols(void *(*GetProcAddress)(const char *name));
+EAPI void         evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn);
 
 EAPI void         evas_gl_common_error_set(void *data, int error_enum);
 EAPI int          evas_gl_common_error_get(void *data);
@@ -576,7 +576,7 @@ typedef void (*Evas_GL_Preload_Render_Call)(evas_gl_make_current_cb make_current
 typedef Evas_Engine_GL_Context *(*Evas_GL_Common_Context_New)(void);
 typedef void (*Evas_GL_Common_Context_Resize_Call)(Evas_Engine_GL_Context *gc, int w, int h, int rot);
 typedef int (*Evas_GL_Common_Buffer_Dump_Call)(Evas_Engine_GL_Context *gc,const char* dname, const char* fname, int frame, const char* suffix);
-typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym));
+typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym), const char *extsn);
 
 EAPI void __evas_gl_err(int err, const char *file, const char *func, int line, const char *op);
 
@@ -773,6 +773,7 @@ extern void       (*glsym_glRenderbufferStorageMultisample)(GLenum target, GLsiz
 
 #ifdef GL_GLES
 EAPI void *           evas_gl_common_eglCreateImage          (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list);
+EAPI int              evas_gl_common_eglDestroyImage         (EGLDisplay dpy, void *im);
 extern unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);
 extern void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
 extern void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d);

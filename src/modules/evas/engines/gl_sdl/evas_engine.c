@@ -360,6 +360,8 @@ eng_canvas_alpha_get(void *data EINA_UNUSED)
 static void
 gl_symbols(void)
 {
+   const char *exts = NULL;
+
 #define LINK2GENERIC(sym)                       \
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
 
@@ -372,7 +374,12 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_common_context_resize);
    LINK2GENERIC(evas_gl_preload_render_lock);
 
-   glsym_evas_gl_symbols((void*)SDL_GL_GetProcAddress);
+   // Find EGL extensions
+   // FIXME: whgen above eglGetDisplay() is fixed... fix the below...
+//   exts = eglQueryString(ob->egl_disp, EGL_EXTENSIONS);
+
+   // Find EGL extensions
+   glsym_evas_gl_symbols((void*)SDL_GL_GetProcAddress, exts);
 }
 
 static int

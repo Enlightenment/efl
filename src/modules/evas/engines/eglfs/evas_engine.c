@@ -143,6 +143,7 @@ static void
 gl_symbols(void)
 {
    static Eina_Bool done = EINA_FALSE;
+   const char *exts = NULL;
 
    if (done) return;
 
@@ -185,7 +186,10 @@ gl_symbols(void)
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
 
-   glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
+   // Find EGL extensions
+   // FIXME: whgen above eglGetDisplay() is fixed... fix the below...
+//   exts = eglQueryString(ob->egl_disp, EGL_EXTENSIONS);
+   glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress, exts);
 
    FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
    FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT", glsym_func_void_ptr);

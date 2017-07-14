@@ -68,7 +68,7 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
 _eng_fn (*glsym_eglGetProcAddress) (const char *a) = NULL;
 EGLImageKHR (*glsym_evas_gl_common_eglCreateImage)(EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
-void (*glsym_eglDestroyImage) (EGLDisplay a, void *b) = NULL;
+int (*glsym_evas_gl_common_eglDestroyImage) (EGLDisplay a, void *b) = NULL;
 void (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
 unsigned int (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
 unsigned int (*glsym_eglSetDamageRegionKHR) (EGLDisplay a, EGLSurface b, EGLint *c, EGLint d) = NULL;
@@ -95,6 +95,7 @@ static void
 gl_symbols(void)
 {
    static Eina_Bool done = EINA_FALSE;
+   const char *exts = NULL;
 
    if (done) return;
 
@@ -136,6 +137,7 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_symbols);
    LINK2GENERIC(eglGetProcAddress);
    LINK2GENERIC(evas_gl_common_eglCreateImage);
+   LINK2GENERIC(evas_gl_common_eglDestroyImage);
 
 #define FINDSYM(dst, sym, typ) \
    if (glsym_eglGetProcAddress) { \
@@ -144,10 +146,12 @@ gl_symbols(void)
       if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
    }
 
-   glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
+   // Find EGL extensions
+   // FIXME: whgen above eglGetDisplay() is fixed... fix the below...
+//   exts = eglQueryString(ob->egl_disp, EGL_EXTENSIONS);
 
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
+   // Find GL extensions
+   glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress, exts);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES",
            glsym_func_void);
@@ -919,17 +923,20 @@ _native_cb_free(void *image)
      {
         wlid = (void*)n->ns_data.wl_surface.wl_buf;
         eina_hash_del(img->native.shared->native_wl_hash, &wlid, img);
+#ifdef GL_GLES
         if (n->ns_data.wl_surface.surface)
           {
-             if (glsym_eglDestroyImage)
+             if (glsym_evas_gl_common_eglDestroyImage)
                {
-                  glsym_eglDestroyImage(img->native.disp, n->ns_data.wl_surface.surface);
+                  glsym_evas_gl_common_eglDestroyImage(img->native.disp,
+                                                       n->ns_data.wl_surface.surface);
                   if (eglGetError() != EGL_SUCCESS)
                     ERR("eglDestroyImage() failed.");
                }
              else
                ERR("Try eglDestroyImage on EGL with  no support");
           }
+#endif
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      {
@@ -947,10 +954,10 @@ _native_cb_free(void *image)
       if (n->ns_data.tbm.surface)
         {
            int err;
-           if (glsym_eglDestroyImage)
+           if (glsym_evas_gl_common_eglDestroyImage)
              {
-                glsym_eglDestroyImage(img->native.disp,
-                                      n->ns_data.tbm.surface);
+                glsym_evas_gl_common_eglDestroyImage(img->native.disp,
+                                                     n->ns_data.tbm.surface);
                 if ((err = eglGetError()) != EGL_SUCCESS)
                   {
                      ERR("eglDestroyImage() failed.");
@@ -1245,8 +1252,9 @@ eng_image_native_set(void *engine, void *image, void *native)
                                 &wlid, img);
 
                   n->ns_data.wl_surface.wl_buf = wl_buf;
-                  if (glsym_eglDestroyImage)
-                    n->ns_data.wl_surface.surface = glsym_evas_gl_common_eglCreateImage(ob->egl_disp,
+                  if (glsym_evas_gl_common_eglDestroyImage)
+                    n->ns_data.wl_surface.surface =
+                      glsym_evas_gl_common_eglCreateImage(ob->egl_disp,
                                                           NULL,
                                                           EGL_WAYLAND_BUFFER_WL,
                                                           wl_buf, attribs);
@@ -1355,12 +1363,13 @@ eng_image_native_set(void *engine, void *image, void *native)
                memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
                n->ns_data.tbm.buffer = buffer;
 
-               if (glsym_eglDestroyImage)
-                 n->ns_data.tbm.surface = glsym_evas_gl_common_eglCreateImage(ob->egl_disp,
-                                                               EGL_NO_CONTEXT,
-                                                               EGL_NATIVE_SURFACE_TIZEN,
-                                                               (void *)buffer,
-                                                               NULL);
+               if (glsym_evas_gl_common_eglDestroyImage)
+                 n->ns_data.tbm.surface =
+                   glsym_evas_gl_common_eglCreateImage(ob->egl_disp,
+                                                       EGL_NO_CONTEXT,
+                                                       EGL_NATIVE_SURFACE_TIZEN,
+                                                       (void *)buffer,
+                                                       NULL);
                else
                  ERR("Try eglCreateImage on EGL with no support");
                if (!n->ns_data.tbm.surface)

@@ -119,11 +119,16 @@ _has_ext(const char *ext, const char **pexts, int *pnum)
 }
 
 #ifdef GL_GLES
-void *
+static int
+_has_extn(const char *ext, const char *exts)
+{
+   if (!exts || !ext) return EINA_FALSE;
+   return strstr(exts, ext) != NULL;
+}
+
+EAPI void *
 evas_gl_common_eglCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list)
 {
-   if (eglsym_eglCreateImage)
-     return eglsym_eglCreateImage(dpy, ctx, target, buffer, attrib_list);
    if (eglsym_eglCreateImageKHR)
      {
         int count, i;
@@ -139,14 +144,24 @@ evas_gl_common_eglCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EG
           }
         return eglsym_eglCreateImageKHR(dpy, ctx, target, buffer, ints);
      }
+   if (eglsym_eglCreateImage)
+     return eglsym_eglCreateImage(dpy, ctx, target, buffer, attrib_list);
    return NULL;
+}
+
+EAPI int
+evas_gl_common_eglDestroyImage(EGLDisplay dpy, void *im)
+{
+   if (secsym_eglDestroyImage)
+     return secsym_eglDestroyImage(dpy, im);
+   return EGL_FALSE;
 }
 
 #endif
 
 /* FIXME: return error if a required symbol was not found */
 EAPI void
-evas_gl_symbols(void *(*GetProcAddress)(const char *name))
+evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn EINA_UNUSED)
 {
    int failed = 0, num = 0;
    const char *exts = NULL;
@@ -293,34 +308,73 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
    FINDSYM(glsym_glRenderbufferStorageMultisample, "glRenderbufferStorageMultisample", NULL, glsym_func_void);
 
 #ifdef GL_GLES
+   Eina_Bool dl_fallback = EINA_FALSE;
+#define FINDSYMN(dst, sym, ext, typ) do { \
+   if (!dst) { \
+      if (_has_extn(ext, extsn) && GetProcAddress) \
+        dst = (typ) GetProcAddress(sym); \
+      if ((!dst) && dl_fallback) \
+        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
+   }} while (0)
+
 // yes - gl core looking for egl stuff. i know it's odd. a reverse-layer thing
 // but it will work as the egl/glx layer calls gl core common stuff and thus
 // these symbols will work. making the glx/egl + x11 layer do this kind-of is
 // wrong as this is not x11 (output) layer specific like the native surface
 // stuff. this is generic zero-copy textures for gl
 
-   FINDSYM(eglsym_eglCreateImage, "eglCreateImage", NULL, secsym_func_void_ptr);
-   FINDSYM(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
-   FINDSYM(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image", secsym_func_void_ptr);
-   FINDSYM(eglsym_eglCreateImageKHR, "eglCreateImageOES", "GL_OES_EGL_image_base", secsym_func_void_ptr);
-   FINDSYM(eglsym_eglCreateImageKHR, "eglCreateImageOES", "GL_OES_EGL_image", secsym_func_void_ptr);
-
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImage", NULL, secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image_base", secsym_func_uint);
-   FINDSYM(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image", secsym_func_uint);
+   if (extsn)
+     {
+        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
+        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image", secsym_func_void_ptr);
+        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageOES", "GL_OES_EGL_image_base", secsym_func_void_ptr);
+        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageOES", "GL_OES_EGL_image", secsym_func_void_ptr);
+        if (eglsym_eglCreateImageKHR)
+          {
+             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
+             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image", secsym_func_uint);
+             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image_base", secsym_func_uint);
+             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image", secsym_func_uint);
+          }
+        else
+          {
+             FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", "EGL_KHR_get_all_proc_addresses", secsym_func_void_ptr);
+             FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", "EGL_KHR_client_get_all_proc_addresses", secsym_func_void_ptr);
+             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", "EGL_KHR_get_all_proc_addresses", secsym_func_uint);
+             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", "EGL_KHR_client_get_all_proc_addresses", secsym_func_uint);
+          }
+     }
+   else
+     {
+        // FIXME: this fl_fallback is a hack for wayland gl_drm to work
+        // .... :(
+        dl_fallback = EINA_TRUE;
+        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", NULL, secsym_func_void_ptr);
+        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageOES", NULL, secsym_func_void_ptr);
+        if (eglsym_eglCreateImageKHR)
+          {
+             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", NULL, secsym_func_uint);
+             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageOES", NULL, secsym_func_uint);
+          }
+        else
+          {
+             FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", NULL, secsym_func_void_ptr);
+             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", NULL, secsym_func_uint);
+          }
+     }
 
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_geometry_shader4", glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4", glsym_func_void);
 
-   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
+   FINDSYMN(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
 
    // Old SEC extensions
-   FINDSYM(secsym_eglMapImageSEC, "eglMapImageSEC", NULL, secsym_func_void_ptr);
-   FINDSYM(secsym_eglUnmapImageSEC, "eglUnmapImageSEC", NULL, secsym_func_uint);
-   FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", NULL, secsym_func_uint);
+   FINDSYMN(secsym_eglMapImageSEC, "eglMapImageSEC", NULL, secsym_func_void_ptr);
+   FINDSYMN(secsym_eglUnmapImageSEC, "eglUnmapImageSEC", NULL, secsym_func_uint);
+   FINDSYMN(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", NULL, secsym_func_uint);
+
+#undef FINDSYMN
 
 #endif
 
