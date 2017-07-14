@@ -1556,17 +1556,17 @@ eina_tiler_equal(const Eina_Tiler *t1,
    while((rect1) && (rect2))
      {
         if (!eina_rectangles_intersect(rect1, rect2))
-          break;
+          goto cleanup;
 
         if ((rect1->x != rect2->x) || (rect1->y != rect2->y) ||
             (rect1->w != rect2->w) || (rect1->h != rect2->h))
-          break;
+          goto cleanup;
 
         next_t1 = eina_iterator_next(itr1, (void**)&rect1);
         next_t2 = eina_iterator_next(itr2, (void**)&rect2);
 
         if (next_t1 != next_t2)
-          break;
+          goto cleanup;
 
         if (!next_t1 && !next_t2)
           break;
