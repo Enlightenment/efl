@@ -1199,7 +1199,7 @@ EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
 }
 
 EAPI Eina_Bool
-eina_tiler_empty(Eina_Tiler *t)
+eina_tiler_empty(const Eina_Tiler *t)
 {
    EINA_MAGIC_CHECK_TILER(t, EINA_TRUE);
    return ((!t->splitter.rects.head) && (!t->splitter.rects.tail));
@@ -1528,8 +1528,8 @@ cleanup:
 }
 
 EAPI Eina_Bool
-eina_tiler_equal(Eina_Tiler *t1,
-                 Eina_Tiler *t2)
+eina_tiler_equal(const Eina_Tiler *t1,
+                 const Eina_Tiler *t2)
 {
    Eina_Iterator  *itr1 = NULL, *itr2 = NULL;
    Eina_Rectangle *rect1 = NULL, *rect2 = NULL;
