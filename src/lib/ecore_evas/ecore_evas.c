@@ -432,8 +432,8 @@ _ecore_evas_cursors_init(Ecore_Evas *ee)
    return EINA_TRUE;
 }
 
-EAPI Ecore_Evas_Interface *
-_ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname)
+static Ecore_Evas_Interface *
+_ecore_evas_interface_get_internal(const Ecore_Evas *ee, const char *iname, Eina_Bool cri)
 {
    Eina_List *l;
    Ecore_Evas_Interface *i;
@@ -443,14 +443,21 @@ _ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname)
 
    EINA_LIST_FOREACH(ee->engine.ifaces, l, i)
      {
-	if (!strcmp(i->name, iname))
-	  return i;
+        if (!strcmp(i->name, iname))
+          return i;
      }
 
-   CRI("Ecore_Evas %p (engine: %s) does not have interface '%s'",
-        ee, ee->driver, iname);
+   if (cri)
+     CRI("Ecore_Evas %p (engine: %s) does not have interface '%s'",
+          ee, ee->driver, iname);
 
    return NULL;
+}
+
+EAPI Ecore_Evas_Interface *
+_ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname)
+{
+   return _ecore_evas_interface_get_internal(ee, iname, 1);
 }
 
 /**
@@ -3831,8 +3838,8 @@ EAPI Ecore_X_Window
 ecore_evas_software_x11_window_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Interface_Software_X11 *iface;
-   iface = (Ecore_Evas_Interface_Software_X11 *)_ecore_evas_interface_get(ee, "software_x11");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
+   iface = (Ecore_Evas_Interface_Software_X11 *)_ecore_evas_interface_get_internal(ee, "software_x11", 0);
+   if (!iface) return 0;
 
    return iface->window_get(ee);
 }
@@ -3980,8 +3987,8 @@ EAPI Ecore_X_Window
 ecore_evas_gl_x11_window_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Interface_Gl_X11 *iface;
-   iface = (Ecore_Evas_Interface_Gl_X11 *)_ecore_evas_interface_get(ee, "gl_x11");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, 0);
+   iface = (Ecore_Evas_Interface_Gl_X11 *)_ecore_evas_interface_get_internal(ee, "gl_x11", 0);
+   if (!iface) return 0;
 
    return iface->window_get(ee);
 }
@@ -4413,8 +4420,8 @@ EAPI Ecore_Wl_Window *
 ecore_evas_wayland_window_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Interface_Wayland *iface;
-   iface = (Ecore_Evas_Interface_Wayland *)_ecore_evas_interface_get(ee, "wayland");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
+   iface = (Ecore_Evas_Interface_Wayland *)_ecore_evas_interface_get_internal(ee, "wayland", 0);
+   if (!iface) return NULL;
 
    return iface->window_get(ee);
 }
@@ -4424,7 +4431,7 @@ ecore_evas_cocoa_window_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Interface_Cocoa *iface;
    iface = (Ecore_Evas_Interface_Cocoa *)_ecore_evas_interface_get(ee, "opengl_cocoa");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
+   if (!iface) return NULL;
    return iface->window_get(ee);
 }
 
@@ -4432,8 +4439,8 @@ EAPI Ecore_Wl2_Window *
 ecore_evas_wayland2_window_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Interface_Wayland *iface;
-   iface = (Ecore_Evas_Interface_Wayland *)_ecore_evas_interface_get(ee, "wayland");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
+   iface = (Ecore_Evas_Interface_Wayland *)_ecore_evas_interface_get_internal(ee, "wayland", 0);
+   if (!iface) return NULL;
 
    return iface->window2_get(ee);
 }
@@ -4535,7 +4542,7 @@ ecore_evas_win32_window_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Interface_Win32 *iface;
    iface = (Ecore_Evas_Interface_Win32 *)_ecore_evas_interface_get(ee, "win32");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
+   if (!iface) return NULL;
 
    return iface->window_get(ee);
 }
