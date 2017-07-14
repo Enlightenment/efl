@@ -341,6 +341,9 @@ START_TEST(eina_test_tiler_calculation)
 
    fail_if(!eina_tiler_equal(t, t1));
    fail_if(!eina_tiler_equal(t1, t));
+   EINA_RECTANGLE_SET(&r1, 0, 0, 250, 250);
+   eina_tiler_rect_del(t, &r1);
+   fail_if(eina_tiler_equal(t1, t));
 
    eina_tiler_free(t);
    eina_tiler_free(t1);
