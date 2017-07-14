@@ -15,7 +15,6 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_win_autodel_set(win, EINA_TRUE);
 
    icon = elm_icon_add(win);
-   elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_THEME_FDO);
    elm_icon_standard_set(icon, "home");
 
    path = NULL;
