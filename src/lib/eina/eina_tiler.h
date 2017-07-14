@@ -250,7 +250,7 @@ EAPI void               eina_tiler_strict_set(Eina_Tiler *t, Eina_Bool strict);
  *
  * @since 1.8
  */
-EAPI Eina_Bool          eina_tiler_empty(Eina_Tiler *t);
+EAPI Eina_Bool          eina_tiler_empty(const Eina_Tiler *t);
 
 /**
  * @brief Adds a rectangle to a tiler.
@@ -359,7 +359,7 @@ EAPI Eina_Tiler        *eina_tiler_intersection(Eina_Tiler *t1, Eina_Tiler *t2);
  * It returns #EINA_TRUE if tilers are equal.
  * @since 1.11
  */
-EAPI Eina_Bool           eina_tiler_equal(Eina_Tiler *t1, Eina_Tiler *t2);
+EAPI Eina_Bool           eina_tiler_equal(const Eina_Tiler *t1, const Eina_Tiler *t2);
 
 /**
  * @brief Iterates over the tiles set by eina_tile_grid_slicer_setup().
