@@ -8452,6 +8452,8 @@ st_collections_group_parts_part_description_inherit(void)
               Edje_Part_Description_Proxy *pparent = (Edje_Part_Description_Proxy*) parent;
 
               data_queue_copied_part_lookup(pc, &(pparent->proxy.id), &(ped->proxy.id));
+              ped->proxy.source_clip = pparent->proxy.source_clip;
+              ped->proxy.source_visible = pparent->proxy.source_visible;
               _filter_copy(&ped->filter, &pparent->filter);
 
               break;
