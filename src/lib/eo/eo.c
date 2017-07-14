@@ -2476,6 +2476,67 @@ err:
    return EINA_FALSE;
 }
 
+EAPI const char *
+efl_debug_name_get(const Eo *obj_id)
+{
+   const char *override = "";
+   const char *name, *clsname, *ret;
+
+   if (!obj_id) return "(null)";
+
+   if (_eo_is_a_class(obj_id))
+     {
+        const char *clstype;
+
+        EO_CLASS_POINTER(obj_id, klass);
+        if (!klass || !klass->desc)
+          return eina_slstr_printf("Invalid_Class_ID(invalid)@%p", obj_id);
+
+        switch (klass->desc->type)
+          {
+           case EFL_CLASS_TYPE_REGULAR: clstype = "regular"; break;
+           case EFL_CLASS_TYPE_REGULAR_NO_INSTANT: clstype = "abstract"; break;
+           case EFL_CLASS_TYPE_INTERFACE: clstype = "interface"; break;
+           case EFL_CLASS_TYPE_MIXIN: clstype = "mixin"; break;
+           default: clstype = "invalid"; break;
+          }
+
+        return eina_slstr_printf("%s(%s)@%p", klass->desc->name, clstype, obj_id);
+     }
+
+   EO_OBJ_POINTER(obj_id, obj);
+   if (!obj) return eina_slstr_printf("Invalid_Object_ID@%p", obj_id);
+
+   if (!obj->cur_klass)
+     {
+        ret = efl_debug_name_override_get(obj_id);
+        if (ret) goto end;
+     }
+   else
+     {
+        if (obj->super)
+          ret = efl_debug_name_override_get(efl_super(obj_id, (Efl_Class *) obj->cur_klass->header.id));
+        else
+          ret = efl_debug_name_override_get(efl_cast(obj_id, (Efl_Class *) obj->cur_klass->header.id));
+        obj->super = EINA_FALSE;
+        obj->cur_klass = NULL;
+        if (ret) goto end;
+     }
+
+   name = efl_name_get(obj_id);
+   clsname = obj->klass->desc->name;
+   if (_obj_is_override(obj)) override = "(override)";
+
+   if (name)
+     ret = eina_slstr_printf("%s%s@%p[%d]:'%s'", clsname, override, obj_id, (int) obj->refcount, name);
+   else
+     ret = eina_slstr_printf("%s%s@%p[%d]", clsname, override, obj_id, (int) obj->refcount);
+
+end:
+   EO_OBJ_DONE(obj_id);
+   return ret;
+}
+
 EAPI int
 efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_Array_Item *b)
 {

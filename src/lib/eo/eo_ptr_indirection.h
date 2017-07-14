@@ -69,7 +69,7 @@ void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file
 #define EO_CLASS_POINTER(klass_id, klass)   \
    _Efl_Class *klass; \
    do { \
-      klass = _eo_class_pointer_get(klass_id, __FUNCTION__, __FILE__, __LINE__); \
+      klass = _eo_class_pointer_get(klass_id); \
    } while (0)
 
 #define EO_CLASS_POINTER_PROXY(klass_id, klass)   \

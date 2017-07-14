@@ -81,6 +81,16 @@ abstract Efl.Object ()
            comment: string @nullable; [[The comment]]
          }
       }
+      @property debug_name_override {
+         [[ A read-only name for this object used for debugging.
+
+            @since 1.21
+         ]]
+         get {}
+         values {
+            name: string; [[A name including class name and object name.]]
+         }
+      }
       @property event_global_freeze_count @class {
          get {
             [[Return freeze events of object.
