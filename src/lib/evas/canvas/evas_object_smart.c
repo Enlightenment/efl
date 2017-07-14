@@ -647,6 +647,15 @@ _efl_canvas_group_efl_object_destructor(Eo *eo_obj, Evas_Smart_Data *o)
      }
 }
 
+EOLIAN static const char *
+_efl_canvas_group_efl_object_debug_name_override_get(Eo *eo_obj, Evas_Smart_Data *o)
+{
+   const char *base;
+
+   base = efl_debug_name_get(efl_super(eo_obj, MY_CLASS));
+   return eina_slstr_printf("%s:children=%d", base, eina_inlist_count(o->contained));
+}
+
 static inline void
 _evas_object_smart_move_relative_internal(Evas_Smart_Data *o, Evas_Coord dx, Evas_Coord dy)
 {

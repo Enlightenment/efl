@@ -6608,6 +6608,15 @@ _efl_ui_win_class_constructor(Efl_Class *klass)
      }
 }
 
+EOLIAN static const char *
+_efl_ui_win_efl_object_debug_name_override_get(Eo *obj, Efl_Ui_Win_Data *pd)
+{
+   const char *base;
+
+   base = efl_debug_name_get(efl_super(obj, MY_CLASS));
+   return eina_slstr_printf("%s:'%s':'%s'", base, pd->name, pd->title);
+}
+
 EOLIAN static Eo*
 _efl_ui_win_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
