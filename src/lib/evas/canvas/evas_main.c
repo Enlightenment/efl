@@ -312,7 +312,10 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
                     {
                        if ((o->ref > 0) || (efl_ref_get(o->object) > 0))
                          {
-                            ERR("obj(%p, %s) ref count(%d) is bigger than 0. This object couldn't be deleted", o, o->type, efl_ref_get(o->object));
+                            ERR("obj(%s) ref count(%d) is bigger than 0. This "
+                                "object couldn't be deleted",
+                                efl_debug_name_get(o->object),
+                                efl_ref_get(o->object));
                             continue;
                          }
                        unrefs = eina_list_append(unrefs, o->object);

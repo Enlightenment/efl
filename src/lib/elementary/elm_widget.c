@@ -6234,6 +6234,16 @@ _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
    sd->on_destroy = EINA_FALSE;
 }
 
+EOLIAN static const char *
+_elm_widget_efl_object_debug_name_override_get(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+{
+   const char *base, *focus = "";
+
+   if (elm_obj_widget_focus_get(obj)) focus = ":focused";
+   base = efl_debug_name_get(efl_super(obj, MY_CLASS));
+   return eina_slstr_printf("%s%s", base, focus);
+}
+
 EOLIAN static Eina_Bool
 _elm_widget_on_focus(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {

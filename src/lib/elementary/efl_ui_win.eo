@@ -930,6 +930,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.finalize;
+      Efl.Object.debug_name_override { get; }
       Efl.Gfx.visible { set; }
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
