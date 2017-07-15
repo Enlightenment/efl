@@ -315,5 +315,8 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface.Atspi.Text)
       selection,start; [[Called when a selection is started]]
       selection,changed; [[Called when selection changed]]
       selection,cleared; [[Called when selection was cleared]]
+      selection,cut; [[Called when a cut action is performed]]
+      selection,copy; [[Called when a copy action is performed]]
+      selection,paste; [[Called when a paste action is performed]]
    }
 }

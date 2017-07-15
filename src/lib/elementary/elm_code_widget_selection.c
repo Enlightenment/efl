@@ -399,6 +399,7 @@ elm_code_widget_selection_cut(Evas_Object *widget)
 
    elm_code_widget_selection_delete(widget);
 
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CUT, widget);
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
@@ -414,6 +415,8 @@ elm_code_widget_selection_copy(Evas_Object *widget)
    elm_cnp_selection_set(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, text, strlen(text));
    elm_cnp_selection_loss_callback_set(widget, ELM_SEL_TYPE_CLIPBOARD, _selection_loss_cb, widget);
    free(text);
+
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_COPY, widget);
 }
 
 static Eina_Bool
@@ -424,6 +427,8 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
    widget = (Elm_Code_Widget *)data;
 
    elm_code_widget_text_at_cursor_insert(widget, ev->data);
+
+   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_PASTE, widget);
    return EINA_TRUE;
 }
 
