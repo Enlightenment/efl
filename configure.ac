@@ -120,7 +120,7 @@ esac
 
 AC_ARG_WITH([tests],
    [AS_HELP_STRING([--with-tests=none|regular|coverage],[choose testing method: regular, coverage or none.
-                    @<:@default=none@:>@])],
+                    @<:@default=auto@:>@])],
    [build_tests=${withval}],
    [build_tests=auto])
 
