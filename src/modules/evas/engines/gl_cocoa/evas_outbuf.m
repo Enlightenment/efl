@@ -127,7 +127,7 @@ evas_outbuf_new(Evas_Engine_Info_GL_Cocoa *info,
      }
    ob->ns_gl_view = glview;
    [[glview openGLContext] makeCurrentContext];
-   * glsym_evas_gl_symbols(_dlsym, NULL); /* XXX: NULL is ok for now for extns
+   glsym_evas_gl_symbols(_dlsym, NULL); /* XXX: NULL is ok for now for extns
    * but i need to find out howon osx to get the extension string list
    * for egl/whatever */
 
