@@ -900,6 +900,49 @@ START_TEST(edje_test_signals)
 }
 END_TEST
 
+static int _signal_count;
+
+static void
+_signal_callback_count_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                         const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   int *_data = data;
+   _signal_count += *_data;
+}
+
+START_TEST(edje_test_signal_callback_del_full)
+{
+   Evas *evas;
+   Evas_Object *obj;
+   int data[4] = { 1, 2, 4, 8 };
+
+   evas = EDJE_TEST_INIT_EVAS();
+
+   obj = efl_add(EDJE_OBJECT_CLASS, evas,
+                 efl_file_set(efl_added,
+                 test_layout_get("test_signal_callback_del_full.edj"), "test"),
+                 efl_gfx_size_set(efl_added, 320, 240),
+                 efl_gfx_visible_set(efl_added, 1));
+
+   edje_object_signal_callback_add(obj, "some_signal", "event", _signal_callback_count_cb, &data[0]);
+   edje_object_signal_callback_add(obj, "some_signal", "event", _signal_callback_count_cb, &data[1]);
+   edje_object_signal_callback_add(obj, "some_signal", "event", _signal_callback_count_cb, &data[2]);
+   edje_object_signal_callback_add(obj, "some_signal", "event", _signal_callback_count_cb, &data[3]);
+
+   edje_object_signal_callback_del_full(obj, "some_signal", "event", _signal_callback_count_cb, &data[0]);
+   edje_object_signal_callback_del_full(obj, "some_signal", "event", _signal_callback_count_cb, &data[3]);
+
+   edje_object_signal_emit(obj, "some_signal", "event");
+
+   edje_object_message_signal_process(obj);
+   ck_assert_int_eq(_signal_count, (data[1] + data[2]));
+
+   efl_del(obj);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {
    tcase_add_test(tc, edje_test_edje_init);
@@ -924,4 +967,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_message_send_legacy);
    tcase_add_test(tc, edje_test_message_send_eo);
    tcase_add_test(tc, edje_test_signals);
+   tcase_add_test(tc, edje_test_signal_callback_del_full);
 }

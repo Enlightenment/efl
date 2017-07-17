@@ -363,6 +363,11 @@ _edje_signal_callback_move_last(Edje_Signal_Callback_Group *gp,
              gp->custom_data[i] = gp->custom_data[j];
              return;
           }
+        else
+          {
+             _edje_signal_callback_unset(gp, j);
+             m->matches_count--;
+          }
      }
 }
 
