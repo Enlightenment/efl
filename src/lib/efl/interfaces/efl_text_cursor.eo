@@ -36,7 +36,7 @@ interface Efl.Text.Cursor {
          ]]
          get {
             legacy: null;
-            return: ptr(Efl.Text.Cursor.Cursor_Data); [[Text cursor object]]
+            return: ptr(Efl.Text.Cursor.Cursor); [[Text cursor object]]
          }
          keys {
             get_type: Efl.Text.Cursor.Cursor_Get_Type;
@@ -49,7 +49,7 @@ interface Efl.Text.Cursor {
             position: int;
          }
          keys {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       @property cursor_content {
@@ -61,7 +61,7 @@ interface Efl.Text.Cursor {
             content: Eina.Unicode; [[The unicode codepoint of the character]]
          }
          keys {
-            cur: ptr(const(Efl.Text.Cursor.Cursor_Data));
+            cur: ptr(const(Efl.Text.Cursor.Cursor));
          }
       }
       @property cursor_geometry {
@@ -78,7 +78,7 @@ interface Efl.Text.Cursor {
             return: bool; [[ $true if split cursor, $false otherwise.]]
          }
          keys {
-            cur: ptr(const(Efl.Text.Cursor.Cursor_Data));
+            cur: ptr(const(Efl.Text.Cursor.Cursor));
             ctype: Efl.Text.Cursor.Cursor_Type; [[The type of the cursor.]]
          }
          values {
@@ -94,122 +94,122 @@ interface Efl.Text.Cursor {
       }
       cursor_new {
          legacy: null;
-         return: ptr(Efl.Text.Cursor.Cursor_Data);
+         return: ptr(Efl.Text.Cursor.Cursor);
       }
       cursor_free {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_equal {
          legacy: null;
          params {
-            cur1: ptr(const(Efl.Text.Cursor.Cursor_Data));
-            cur2: ptr(const(Efl.Text.Cursor.Cursor_Data));
+            cur1: ptr(const(Efl.Text.Cursor.Cursor));
+            cur2: ptr(const(Efl.Text.Cursor.Cursor));
          }
          return: bool;
       }
       cursor_compare {
          legacy: null;
          params {
-            cur1: ptr(const(Efl.Text.Cursor.Cursor_Data));
-            cur2: ptr(const(Efl.Text.Cursor.Cursor_Data));
+            cur1: ptr(const(Efl.Text.Cursor.Cursor));
+            cur2: ptr(const(Efl.Text.Cursor.Cursor));
          }
          return: int;
       }
       cursor_copy {
          legacy: null;
          params {
-            dst: ptr(Efl.Text.Cursor.Cursor_Data);
-            src: ptr(const(Efl.Text.Cursor.Cursor_Data));
+            dst: ptr(Efl.Text.Cursor.Cursor);
+            src: ptr(const(Efl.Text.Cursor.Cursor));
          }
       }
       cursor_char_next {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_char_prev {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_paragraph_char_first {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_paragraph_char_last {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_word_start {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_word_end {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_line_char_first {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_line_char_last {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_paragraph_first {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_paragraph_last {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_paragraph_next {
          [[Advances to the start of the next text node]]
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_paragraph_prev {
          [[Advances to the end of the previous text node]]
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_line_jump_by {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
             by: int;
          }
       }
       cursor_coord_set {
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
             @in x: int; [[X coord to set by.]]
             @in y: int; [[Y coord to set by.]]
          }
@@ -220,7 +220,7 @@ interface Efl.Text.Cursor {
          ]]
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
             @in text: string; [[Text to append (UTF-8 format).]]
          }
          return: int; [[Length of the appended text.]]
@@ -229,7 +229,7 @@ interface Efl.Text.Cursor {
          [[Deletes a single character from position pointed by given cursor.]]
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
    }

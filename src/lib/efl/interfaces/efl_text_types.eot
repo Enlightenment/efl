@@ -9,5 +9,5 @@ enum Efl.Text.Bidirectional_Type {
 
 type @extern Efl.Canvas.Text.Annotation: __undefined_type; [[EFL text annotations data structure]]
 
-type @extern Efl.Text.Cursor.Cursor_Data: __undefined_type; [[Text cursor data structure]]
+type @extern Efl.Text.Cursor.Cursor: __undefined_type; [[Text cursor data structure]]
 

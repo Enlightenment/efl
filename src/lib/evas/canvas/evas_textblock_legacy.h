@@ -146,8 +146,7 @@ typedef struct _Efl_Canvas_Text_Style             Evas_Textblock_Style;
  * @see evas_object_textblock_cursor_new
  *
  */
-typedef struct _Efl_Text_Cursor_Cursor_Data       Evas_Textblock_Cursor;
-typedef struct _Efl_Text_Cursor_Cursor_Data       Efl_Canvas_Text_Cursor;
+typedef struct _Efl_Text_Cursor_Cursor       Evas_Textblock_Cursor;
 
 /**
  * @typedef Evas_Object_Textblock_Node_Format
@@ -584,8 +583,6 @@ EAPI Eina_Bool                                evas_textblock_cursor_eol_get(cons
  * @brief Advances the cursor one char backwards.
  *
  * @return @c true on success, @c false otherwise.
- *
- * @ingroup Efl_Canvas_Text_Cursor
  */
 EAPI Eina_Bool evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *obj);
 
@@ -850,8 +847,6 @@ EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_new(const Evas_Object *
  * @param[in] y y coord to set by.
  *
  * @return @c true on success, @c false otherwise.
- *
- * @ingroup Efl_Canvas_Text_Cursor
  */
 EAPI Eina_Bool evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *obj, Evas_Coord x, Evas_Coord y);
 
@@ -970,10 +965,8 @@ EAPI int evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const 
  * @return @c true if equal
  *
  * @since 1.18
- *
- * @ingroup Efl_Canvas_Text_Cursor
  */
-EAPI Eina_Bool evas_textblock_cursor_equal(const Efl_Canvas_Text_Cursor *obj, const Efl_Canvas_Text_Cursor *cur);
+EAPI Eina_Bool evas_textblock_cursor_equal(const Evas_Textblock_Cursor *obj, const Evas_Textblock_Cursor *cur);
 
 /**
  * Go to the start of the current line

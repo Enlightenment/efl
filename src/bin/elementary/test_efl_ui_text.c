@@ -9,7 +9,7 @@
 static void
 _apply_style(Eo *obj, size_t start_pos, size_t end_pos, const char *style)
 {
-   Efl_Canvas_Text_Cursor *start, *end;
+   Efl_Text_Cursor_Cursor *start, *end;
 
    start = efl_text_cursor_new(obj);
    end = efl_text_cursor_new(obj);
@@ -104,7 +104,7 @@ typedef struct
 static void
 my_efl_ui_text_bt_3(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Efl_Canvas_Text_Cursor *sel_start, *sel_end;
+   Efl_Text_Cursor_Cursor *sel_start, *sel_end;
 
    efl_ui_text_interactive_selection_cursors_get(data, &sel_start, &sel_end);
    const char *s = efl_canvas_text_range_text_get(data, sel_start, sel_end);
@@ -162,7 +162,7 @@ void
 test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx2, *bx3, *bt, *en;
-   Efl_Canvas_Text_Cursor *main_cur, *cur;
+   Efl_Text_Cursor_Cursor *main_cur, *cur;
 
    win = elm_win_util_standard_add("entry", "Entry");
    elm_win_autodel_set(win, EINA_TRUE);

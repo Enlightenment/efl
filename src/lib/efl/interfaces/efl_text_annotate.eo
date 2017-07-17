@@ -40,8 +40,8 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-              @in start: ptr(const(Efl.Text.Cursor.Cursor_Data)); [[Start of range]]
-              @in end:   ptr(const(Efl.Text.Cursor.Cursor_Data)); [[End of range]]
+              @in start: ptr(const(Efl.Text.Cursor.Cursor)); [[Start of range]]
+              @in end:   ptr(const(Efl.Text.Cursor.Cursor)); [[End of range]]
          }
          return: free(own(iterator<ptr(Efl.Canvas.Text.Annotation)>),
                  eina_iterator_free); [[Handle of the Annotation]]
@@ -56,8 +56,8 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-              @in start: ptr(Efl.Text.Cursor.Cursor_Data); [[Start of range]]
-              @in end:   ptr(Efl.Text.Cursor.Cursor_Data); [[End of range]]
+              @in start: ptr(Efl.Text.Cursor.Cursor); [[Start of range]]
+              @in end:   ptr(Efl.Text.Cursor.Cursor); [[End of range]]
               @in format: string; [[Annotation format]]
          }
          return: ptr(Efl.Canvas.Text.Annotation); [[Handle of inserted annotation]]
@@ -106,9 +106,9 @@ interface Efl.Text.Annotate {
          params {
              @in annotation: ptr(const(Efl.Canvas.Text.Annotation)); [[Annotation
                  handle to query]]
-             @in start: ptr(Efl.Text.Cursor.Cursor_Data); [[Cursor to be set to the start
+             @in start: ptr(Efl.Text.Cursor.Cursor); [[Cursor to be set to the start
              position of the annotation in the text]]
-             @in end: ptr(Efl.Text.Cursor.Cursor_Data); [[Cursor to be set to the end
+             @in end: ptr(Efl.Text.Cursor.Cursor); [[Cursor to be set to the end
              position of the annotation in the text]]
          }
       }
@@ -122,7 +122,7 @@ interface Efl.Text.Annotate {
             annotation: ptr(Efl.Canvas.Text.Annotation); [[Annotation]]
          }
          keys {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
          }
       }
       cursor_object_item_insert {
@@ -134,7 +134,7 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor_Data);
+            cur: ptr(Efl.Text.Cursor.Cursor);
             @in format: string; [[Format of the inserted item.
             See Format styles.]]
          }

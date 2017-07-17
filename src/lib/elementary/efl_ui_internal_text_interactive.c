@@ -75,7 +75,7 @@ static Eina_Bool
 _entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, char **text, int *cursor_pos)
 {
    Efl_Canvas_Text *obj = data;
-   Efl_Canvas_Text_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
    const char *str;
 
    if (text)
@@ -177,7 +177,7 @@ static void
 _entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Efl_Canvas_Text *obj = data;
-   Efl_Canvas_Text_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
    int cursor_pos;
    int preedit_start_pos, preedit_end_pos;
@@ -330,7 +330,7 @@ static void
 _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info)
 {
    Efl_Canvas_Text *obj = data;
-   Efl_Canvas_Text_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
    Ecore_IMF_Event_Delete_Surrounding *ev = event_info;
    Evas_Textblock_Cursor *del_start, *del_end;
@@ -373,7 +373,7 @@ static void
 _entry_imf_event_selection_set_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event_info)
 {
    Efl_Canvas_Text *obj = data;
-   Efl_Canvas_Text_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
    Ecore_IMF_Event_Selection *ev = event_info;
 
@@ -415,7 +415,7 @@ _entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED,
 #endif
 
 static void
-_entry_imf_cursor_location_set(Eo *obj, Efl_Canvas_Text_Cursor *cur, Efl_Ui_Internal_Text_Interactive_Data *en)
+_entry_imf_cursor_location_set(Eo *obj, Efl_Text_Cursor_Cursor *cur, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
@@ -460,7 +460,7 @@ _focus_in_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 {
 #ifdef HAVE_ECORE_IMF
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Canvas_Text_Cursor *cur;
+   Efl_Text_Cursor_Cursor *cur;
 
    if (!en->imf_context) return;
 
@@ -581,7 +581,7 @@ _sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en
 }
 
 static void
-_range_del_emit(Evas_Object *obj, Efl_Canvas_Text_Cursor *cur1, Efl_Canvas_Text_Cursor *cur2)
+_range_del_emit(Evas_Object *obj, Efl_Text_Cursor_Cursor *cur1, Efl_Text_Cursor_Cursor *cur2)
 {
    size_t start, end;
    char *tmp;
@@ -668,7 +668,7 @@ _compose_seq_reset(Efl_Ui_Internal_Text_Interactive_Data *en)
  * movement_forward: if the movement we are going to do is forward (towards the end of the textblock)
  */
 static void
-_key_down_sel_pre(Efl_Ui_Internal_Text_Interactive *obj, Efl_Canvas_Text_Cursor *cur, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool shift, Eina_Bool movement_forward)
+_key_down_sel_pre(Efl_Ui_Internal_Text_Interactive *obj, Efl_Text_Cursor_Cursor *cur, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool shift, Eina_Bool movement_forward)
 {
    if (en->select_allow)
      {
@@ -689,7 +689,7 @@ _key_down_sel_pre(Efl_Ui_Internal_Text_Interactive *obj, Efl_Canvas_Text_Cursor 
 }
 
 static void
-_key_down_sel_post(Efl_Ui_Internal_Text_Interactive *obj, Efl_Canvas_Text_Cursor *cur, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool shift)
+_key_down_sel_post(Efl_Ui_Internal_Text_Interactive *obj, Efl_Text_Cursor_Cursor *cur, Efl_Ui_Internal_Text_Interactive_Data *en, Eina_Bool shift)
 {
    if (en->select_allow)
      {
@@ -702,7 +702,7 @@ static void
 _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
-   Efl_Canvas_Text_Cursor *cur;
+   Efl_Text_Cursor_Cursor *cur;
    Eina_Bool control, alt, shift;
 #if defined(__APPLE__) && defined(__MACH__)
    Eina_Bool super, altgr;
@@ -1057,7 +1057,7 @@ end:
 }
 
 static void
-_cursor_char_coord_set(Efl_Canvas_Text *obj, Efl_Canvas_Text_Cursor *cur, Evas_Coord canvasx, Evas_Coord canvasy, Evas_Coord *_cx, Evas_Coord *_cy)
+_cursor_char_coord_set(Efl_Canvas_Text *obj, Efl_Text_Cursor_Cursor *cur, Evas_Coord canvasx, Evas_Coord canvasy, Evas_Coord *_cx, Evas_Coord *_cy)
 {
    Evas_Coord cx, cy;
    Evas_Coord x, y, lh = 0, cly = 0;
@@ -1099,7 +1099,7 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    Evas_Coord cx, cy;
    Evas_Event_Mouse_Down *ev = event_info;
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Canvas_Text_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
    Evas_Textblock_Cursor *tc = NULL;
    Eina_Bool dosel = EINA_FALSE;
    Eina_Bool shift;
@@ -1210,7 +1210,7 @@ _mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 {
    Evas_Coord cx, cy;
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Canvas_Text_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
    Evas_Event_Mouse_Up *ev = event_info;
 
    if ((!ev) || (ev->button != 1)) return;
@@ -1251,7 +1251,7 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
 {
    Evas_Coord cx, cy;
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Canvas_Text_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord x, y, w, h;
    Evas_Textblock_Cursor *tc;
@@ -1408,7 +1408,7 @@ _efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_allowed_get(
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_cursors_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Efl_Canvas_Text_Cursor **start, Evas_Textblock_Cursor **end)
+_efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_cursors_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Efl_Text_Cursor_Cursor **start, Evas_Textblock_Cursor **end)
 {
    if (start) *start = pd->sel_start;
    if (end) *end = pd->sel_end;

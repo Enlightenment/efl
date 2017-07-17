@@ -31,8 +31,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
          ]]
          return: bool; [[$true on success, $false otherwise]]
          params {
-            @in start: ptr(Efl.Text.Cursor.Cursor_Data); [[Range start position]]
-            @in end: ptr(Efl.Text.Cursor.Cursor_Data); [[Range end position]]
+            @in start: ptr(Efl.Text.Cursor.Cursor); [[Range start position]]
+            @in end: ptr(Efl.Text.Cursor.Cursor); [[Range end position]]
          }
       }
       @property style_insets {
@@ -161,8 +161,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
          legacy: null;
          return: own(ptr(char)); [[The text in the given range]]
          params {
-            @in cur1: const(ptr(Efl.Text.Cursor.Cursor_Data)); [[Start of range]]
-            @in cur2: const(ptr(Efl.Text.Cursor.Cursor_Data)); [[End of range]]
+            @in cur1: const(ptr(Efl.Text.Cursor.Cursor)); [[Start of range]]
+            @in cur2: const(ptr(Efl.Text.Cursor.Cursor)); [[End of range]]
          }
       }
       range_geometry_get {
@@ -175,8 +175,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
          ]]
          legacy: null;
          params {
-             @in cur1: const(ptr(Efl.Text.Cursor.Cursor_Data)); [[Start of range]]
-             @in cur2: const(ptr(Efl.Text.Cursor.Cursor_Data)); [[End of range]]
+             @in cur1: const(ptr(Efl.Text.Cursor.Cursor)); [[Start of range]]
+             @in cur2: const(ptr(Efl.Text.Cursor.Cursor)); [[End of range]]
          }
          return: free(own(iterator<Eina.Rectangle>),
                          eina_iterator_free); [[Iterator on all geoemtries of
@@ -193,8 +193,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
          ]]
          legacy: null;
          params {
-             @in cur1: ptr(const(Efl.Text.Cursor.Cursor_Data)); [[Start of range]]
-             @in cur2: ptr(const(Efl.Text.Cursor.Cursor_Data)); [[End of range]]
+             @in cur1: ptr(const(Efl.Text.Cursor.Cursor)); [[Start of range]]
+             @in cur2: ptr(const(Efl.Text.Cursor.Cursor)); [[End of range]]
          }
          return: free(own(iterator<Eina.Rectangle>),
                          eina_iterator_free); [[Iterator on all simple
@@ -207,8 +207,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
          ]]
          legacy: null;
          params {
-            @in cur1: ptr(Efl.Text.Cursor.Cursor_Data); [[Range start position]]
-            @in cur2: ptr(Efl.Text.Cursor.Cursor_Data); [[Range end position]]
+            @in cur1: ptr(Efl.Text.Cursor.Cursor); [[Range start position]]
+            @in cur2: ptr(Efl.Text.Cursor.Cursor); [[Range end position]]
          }
       }
       // Obstacles
