@@ -622,7 +622,7 @@ ecore_input_joystick_event_axis_deadzone_get(void)
    return _event_axis_deadzone;
 }
 
-EAPI Eina_Slstr *
+EAPI const char *
 ecore_input_joystick_name_get(int index)
 {
 #if defined(HAVE_EEZE) && defined(JSIOCGNAME)

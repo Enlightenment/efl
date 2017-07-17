@@ -489,7 +489,7 @@ extern "C" {
     * @return name of joystick.
     * @since 1.20
     */
-   EAPI Eina_Slstr *ecore_input_joystick_name_get(int index);
+   EAPI const char *ecore_input_joystick_name_get(int index);
 #ifdef __cplusplus
 }
 #endif
