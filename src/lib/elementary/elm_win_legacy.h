@@ -1090,6 +1090,39 @@ EAPI void elm_win_aspect_set(Elm_Win *obj, double aspect);
 EAPI double elm_win_aspect_get(const Elm_Win *obj);
 
 /**
+ * @brief Set keygrab value of the window
+ *
+ * This function grabs the @c key of window using @c grab_mode.
+ *
+ * @param[in] key This string is the keyname to grab.
+ * @param[in] modifiers A combinaison of modifier keys that must be present to
+ * trigger the event. Not supported yet.
+ * @param[in] not_modifiers A combinaison of modifier keys that must not be
+ * present to trigger the event. Not supported yet.
+ * @param[in] priority Not supported yet.
+ * @param[in] grab_mode Describes how the key should be grabbed, wrt. focus and
+ * stacking.
+ *
+ * @return @c true on success, @c false otherwise
+ */
+EAPI Eina_Bool elm_win_keygrab_set(Elm_Win *obj, const char *key, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int priority, Elm_Win_Keygrab_Mode grab_mode);
+
+/**
+ * @brief Unset keygrab value of the window
+ *
+ * This function unset keygrab value. Ungrab @c key of window.
+ *
+ * @param[in] key This string is the keyname to grab.
+ * @param[in] modifiers A combinaison of modifier keys that must be present to
+ * trigger the event. Not supported yet.
+ * @param[in] not_modifiers A combinaison of modifier keys that must not be
+ * present to trigger the event. Not supported yet.
+ *
+ * @return @c true on success, @c false otherwise
+ */
+EAPI Eina_Bool elm_win_keygrab_unset(Elm_Win *obj, const char *key, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
+
+/**
  * @brief Get the elm_win object from any child object
  * 
  * @return The elm_win, or @c NULL on failure

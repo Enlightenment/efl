@@ -859,6 +859,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             @in grab_mode: Efl.Ui.Win.Keygrab_Mode; [[Describes how the key should
                  be grabbed, wrt. focus and stacking.]]
          }
+         legacy: null;
       }
       keygrab_unset {
          [[Unset keygrab value of the window
@@ -873,6 +874,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier keys
                  that must not be present to trigger the event. Not supported yet.]]
          }
+         legacy: null;
       }
       move_resize_start {
          [[Start moving or resizing the window.

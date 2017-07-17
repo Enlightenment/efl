@@ -8071,6 +8071,24 @@ elm_win_resize_object_del(Eo *obj, Evas_Object *subobj)
      ERR("could not remove sub object %p from window %p", subobj, obj);
 }
 
+EAPI Eina_Bool
+elm_win_keygrab_set(Elm_Win *obj, const char *key,
+                    Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers,
+                    int priority, Elm_Win_Keygrab_Mode grab_mode)
+{
+   return efl_ui_win_keygrab_set(obj, key,
+                                 (Efl_Input_Modifier) modifiers,
+                                 (Efl_Input_Modifier) not_modifiers,
+                                 priority, grab_mode);
+}
+
+EAPI Eina_Bool
+elm_win_keygrab_unset(Elm_Win *obj, const char *key, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+{
+   return efl_ui_win_keygrab_unset(obj, key,
+                                   (Efl_Input_Modifier) modifiers,
+                                   (Efl_Input_Modifier) not_modifiers);
+}
 
 // deprecated
 EAPI void
