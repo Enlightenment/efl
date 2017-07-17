@@ -215,10 +215,10 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
 typedef struct _Evas_Textblock_Selection_Iterator Evas_Textblock_Selection_Iterator;
 /**
  * @internal
- * @typedef Efl_Canvas_Text_Annotation_Iterator
+ * @typedef Efl_Text_Annotate_Annotation_Iterator
  * A textblock annotation iterator.
  */
-typedef struct _Efl_Canvas_Text_Annotation_Iterator Efl_Canvas_Text_Annotation_Iterator;
+typedef struct _Efl_Text_Annotate_Annotation_Iterator Efl_Text_Annotate_Annotation_Iterator;
 /**
  * @internal
  * @typedef Efl_Canvas_Text_Filter
@@ -336,7 +336,7 @@ struct _Evas_Textblock_Node_Format
    const char                         *format;  /**< Cached, parsed and translated version of orig_format. */
    const char                         *orig_format;  /**< Original format information. */
    Evas_Object_Textblock_Node_Text    *text_node;  /**< The text node it's pointing to. */
-   Efl_Canvas_Text_Annotation         *annotation; /**< Pointer to this node's annotation handle (if exists). */
+   Efl_Text_Annotate_Annotation         *annotation; /**< Pointer to this node's annotation handle (if exists). */
    size_t                              offset;  /**< Offset from the last format node of the same text. */
    struct {
       unsigned char l, r, t, b;
@@ -566,7 +566,7 @@ struct _Efl_Text_Cursor_Cursor
    Eina_Bool                        changed : 1;
 };
 
-struct _Efl_Canvas_Text_Annotation
+struct _Efl_Text_Annotate_Annotation
 {
    EINA_INLIST;
    Evas_Object                       *obj;
@@ -598,7 +598,7 @@ struct _Evas_Object_Textblock
    Eina_List                          *anchors_item;
    Eina_List                          *obstacles;
    Eina_List                          *hyphen_items; /* Hyphen items storage to free when clearing lines */
-   Efl_Canvas_Text_Annotation         *annotations; /* All currently applied annotations on the text. */
+   Efl_Text_Annotate_Annotation         *annotations; /* All currently applied annotations on the text. */
    int                                 last_w, last_h;
    struct {
       int                              l, r, t, b;
@@ -658,7 +658,7 @@ struct _Evas_Textblock_Selection_Iterator
    Eina_List                           *current; /**< Current node in loop. */
 };
 
-struct _Efl_Canvas_Text_Annotation_Iterator
+struct _Efl_Text_Annotate_Annotation_Iterator
 {
    Eina_Iterator                       iterator; /**< Eina Iterator. */
    Eina_List                           *list; /**< Head of list. */
@@ -750,7 +750,7 @@ static void _evas_textblock_invalidate_all(Efl_Canvas_Text_Data *o);
 static void _evas_textblock_cursors_update_offset(const Efl_Text_Cursor_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Efl_Canvas_Text_Data *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
 static void _evas_textblock_annotations_clear(Efl_Canvas_Text_Data *o);
-static void _evas_textblock_annotation_remove(Efl_Canvas_Text_Data *o, Efl_Canvas_Text_Annotation *an, Eina_Bool remove_nodes);
+static void _evas_textblock_annotation_remove(Efl_Canvas_Text_Data *o, Efl_Text_Annotate_Annotation *an, Eina_Bool remove_nodes);
 
 static Eina_Bool _evas_textblock_cursor_format_is_visible_get(const Efl_Text_Cursor_Cursor *cur);
 static void _evas_textblock_cursor_at_format_set(Efl_Text_Cursor_Cursor *cur, const Evas_Object_Textblock_Node_Format *fmt);
@@ -9309,7 +9309,7 @@ _evas_textblock_node_format_remove_matching(Efl_Canvas_Text_Data *o,
                        if (_FORMAT_IS_CLOSER_OF(
                                 fnode->orig_format, fstr + 1, fstr_len - 1))
                          {
-                            Efl_Canvas_Text_Annotation *an = fmt->annotation;
+                            Efl_Text_Annotate_Annotation *an = fmt->annotation;
 
                             fnode = eina_list_data_get(i);
                             formats = eina_list_remove_list(formats, i);
@@ -14469,7 +14469,7 @@ _efl_canvas_text_efl_text_text_get(Eo *eo_obj, Efl_Canvas_Text_Data *o)
   * @return EINA_FALSE if unsuccessful. Otherwise, returns EINA_TRUE.
   */
 static Eina_Bool
-_evas_textblock_annotation_iterator_next(Efl_Canvas_Text_Annotation_Iterator *it, void **data)
+_evas_textblock_annotation_iterator_next(Efl_Text_Annotate_Annotation_Iterator *it, void **data)
 {
    if (!it->current)
      return EINA_FALSE;
@@ -14487,7 +14487,7 @@ _evas_textblock_annotation_iterator_next(Efl_Canvas_Text_Annotation_Iterator *it
   * @return EINA_FALSE if unsuccessful. Otherwise, returns EINA_TRUE.
   */
 static Eina_Bool
-_evas_textblock_annotation_iterator_free(Efl_Canvas_Text_Annotation_Iterator *it)
+_evas_textblock_annotation_iterator_free(Efl_Text_Annotate_Annotation_Iterator *it)
 {
    EINA_MAGIC_SET(&it->iterator, 0);
    it->current = NULL;
@@ -14508,7 +14508,7 @@ _evas_textblock_annotation_iterator_new(Eina_List *list)
 {
    Evas_Textblock_Selection_Iterator *it;
 
-   it = calloc(1, sizeof(Efl_Canvas_Text_Annotation_Iterator));
+   it = calloc(1, sizeof(Efl_Text_Annotate_Annotation_Iterator));
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
@@ -14535,7 +14535,7 @@ _textblock_cursor_pos_at_fnode_set(Eo *eo_obj EINA_UNUSED,
 
 static Eina_Bool
 _textblock_annotation_set(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o,
-      Efl_Canvas_Text_Annotation *an,
+      Efl_Text_Annotate_Annotation *an,
       Efl_Text_Cursor_Cursor *start, Efl_Text_Cursor_Cursor *end,
       const char *format, Eina_Bool is_item)
 {
@@ -14575,7 +14575,7 @@ _textblock_annotation_set(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o,
 
 EOLIAN static const char *
 _efl_canvas_text_efl_text_annotate_annotation_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
-      Efl_Canvas_Text_Annotation *annotation)
+      Efl_Text_Annotate_Annotation *annotation)
 {
    if (!annotation || (annotation->obj != eo_obj))
      {
@@ -14588,7 +14588,7 @@ _efl_canvas_text_efl_text_annotate_annotation_get(Eo *eo_obj EINA_UNUSED, Efl_Ca
 
 EOLIAN static Eina_Bool
 _efl_canvas_text_efl_text_annotate_annotation_set(Eo *eo_obj,
-      Efl_Canvas_Text_Data *o, Efl_Canvas_Text_Annotation *annotation,
+      Efl_Canvas_Text_Data *o, Efl_Text_Annotate_Annotation *annotation,
       const char *format)
 {
    Efl_Text_Cursor_Cursor start, end;
@@ -14624,7 +14624,7 @@ _efl_canvas_text_efl_text_annotate_annotation_set(Eo *eo_obj,
 
 static void
 _evas_textblock_annotation_remove(Efl_Canvas_Text_Data *o,
-      Efl_Canvas_Text_Annotation *an, Eina_Bool remove_nodes)
+      Efl_Text_Annotate_Annotation *an, Eina_Bool remove_nodes)
 {
    if (remove_nodes)
      {
@@ -14640,7 +14640,7 @@ _evas_textblock_annotation_remove(Efl_Canvas_Text_Data *o,
         _evas_textblock_node_format_remove(o, an->start_node, 0);
         _evas_textblock_node_format_remove(o, an->end_node, 0);
      }
-   o->annotations = (Efl_Canvas_Text_Annotation *)
+   o->annotations = (Efl_Text_Annotate_Annotation *)
       eina_inlist_remove(EINA_INLIST_GET(o->annotations),
             EINA_INLIST_GET(an));
    free(an);
@@ -14649,7 +14649,7 @@ _evas_textblock_annotation_remove(Efl_Canvas_Text_Data *o,
 static void
 _evas_textblock_annotations_clear(Efl_Canvas_Text_Data *o)
 {
-   Efl_Canvas_Text_Annotation *an;
+   Efl_Text_Annotate_Annotation *an;
 
    EINA_INLIST_FREE(o->annotations, an)
      {
@@ -14659,7 +14659,7 @@ _evas_textblock_annotations_clear(Efl_Canvas_Text_Data *o)
 
 EOLIAN static Eina_Bool
 _efl_canvas_text_efl_text_annotate_annotation_del(Eo *eo_obj EINA_UNUSED,
-      Efl_Canvas_Text_Data *o, Efl_Canvas_Text_Annotation *annotation)
+      Efl_Canvas_Text_Data *o, Efl_Text_Annotate_Annotation *annotation)
 {
    if (!annotation || (annotation->obj != eo_obj))
      {
@@ -14681,12 +14681,12 @@ _efl_canvas_text_efl_text_annotate_annotation_del(Eo *eo_obj EINA_UNUSED,
    return EINA_TRUE;
 }
 
-static Efl_Canvas_Text_Annotation *
+static Efl_Text_Annotate_Annotation *
 _textblock_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
       Efl_Text_Cursor_Cursor *start, Efl_Text_Cursor_Cursor *end,
       const char *format, Eina_Bool is_item)
 {
-   Efl_Canvas_Text_Annotation *ret = NULL;
+   Efl_Text_Annotate_Annotation *ret = NULL;
    Eina_Strbuf *buf;
    Eina_Bool first = EINA_TRUE;
    const char *item;
@@ -14728,10 +14728,10 @@ _textblock_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
    format = eina_strbuf_string_get(buf);
    if (format && (format[0] != '\0'))
      {
-        ret = calloc(1, sizeof(Efl_Canvas_Text_Annotation));
+        ret = calloc(1, sizeof(Efl_Text_Annotate_Annotation));
         ret->obj = eo_obj;
 
-        o->annotations = (Efl_Canvas_Text_Annotation *)
+        o->annotations = (Efl_Text_Annotate_Annotation *)
            eina_inlist_append(EINA_INLIST_GET(o->annotations),
                  EINA_INLIST_GET(ret));
 
@@ -14746,12 +14746,12 @@ _textblock_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
    return ret;
 }
 
-EOLIAN static Efl_Canvas_Text_Annotation *
+EOLIAN static Efl_Text_Annotate_Annotation *
 _efl_canvas_text_efl_text_annotate_annotation_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o,
       Efl_Text_Cursor_Cursor *start, Efl_Text_Cursor_Cursor *end,
       const char *format)
 {
-   Efl_Canvas_Text_Annotation *ret;
+   Efl_Text_Annotate_Annotation *ret;
 
    ret = _textblock_annotation_insert(eo_obj, o, start, end, format,
          EINA_FALSE);
@@ -14764,7 +14764,7 @@ _efl_canvas_text_efl_text_annotate_range_annotations_get(Eo *eo_obj EINA_UNUSED,
       const Evas_Textblock_Cursor *start, const Evas_Textblock_Cursor *end)
 {
    Eina_List *lst = NULL;
-   Efl_Canvas_Text_Annotation *it;
+   Efl_Text_Annotate_Annotation *it;
 
    EINA_INLIST_FOREACH(o->annotations, it)
      {
@@ -14785,21 +14785,21 @@ _efl_canvas_text_efl_text_annotate_range_annotations_get(Eo *eo_obj EINA_UNUSED,
    return _evas_textblock_annotation_iterator_new(lst);
 }
 
-EOLIAN static Efl_Canvas_Text_Annotation *
+EOLIAN static Efl_Text_Annotate_Annotation *
 _efl_canvas_text_efl_text_annotate_cursor_object_item_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Cursor_Cursor *cur, const char *format)
 {
-   Efl_Canvas_Text_Annotation *ret =
+   Efl_Text_Annotate_Annotation *ret =
       _textblock_annotation_insert(cur->obj, o, cur, cur, format, EINA_TRUE);
    efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
    return ret;
 }
 
-EOLIAN static Efl_Canvas_Text_Annotation *
+EOLIAN static Efl_Text_Annotate_Annotation *
 _efl_canvas_text_efl_text_annotate_cursor_object_item_annotation_get(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    Eina_Iterator *it;
-   Efl_Canvas_Text_Annotation *data, *ret = NULL;
+   Efl_Text_Annotate_Annotation *data, *ret = NULL;
 
    it = efl_text_range_annotations_get(cur->obj,
          cur, cur);
@@ -14817,7 +14817,7 @@ _efl_canvas_text_efl_text_annotate_cursor_object_item_annotation_get(Eo *eo_obj 
 
 EOLIAN static Eina_Bool
 _efl_canvas_text_efl_text_annotate_object_item_geometry_get(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED,
-      const Efl_Canvas_Text_Annotation *an, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+      const Efl_Text_Annotate_Annotation *an, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Efl_Text_Cursor_Cursor cur;
 
@@ -14833,7 +14833,7 @@ _efl_canvas_text_efl_text_annotate_object_item_geometry_get(Eo *eo_obj, Efl_Canv
 EOLIAN static void
 _efl_canvas_text_efl_text_annotate_annotation_positions_get(Eo *eo_obj,
       Efl_Canvas_Text_Data *o EINA_UNUSED,
-      const Efl_Canvas_Text_Annotation *annotation,
+      const Efl_Text_Annotate_Annotation *annotation,
       Efl_Text_Cursor_Cursor *start, Efl_Text_Cursor_Cursor *end)
 {
    _textblock_cursor_pos_at_fnode_set(eo_obj, start, annotation->start_node);

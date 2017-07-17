@@ -53,7 +53,7 @@ extern "C" {
 typedef struct tm Efl_Time;
 
 typedef struct _Efl_Text_Cursor_Cursor Efl_Text_Cursor_Cursor;
-typedef struct _Efl_Canvas_Text_Annotation Efl_Canvas_Text_Annotation;
+typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 
 #ifdef EFL_BETA_API_SUPPORT
 

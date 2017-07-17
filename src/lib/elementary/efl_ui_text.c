@@ -134,7 +134,7 @@ struct _Anchor
 {
    Eo                    *obj;
    char                  *name;
-   Efl_Canvas_Text_Annotation *annotation;
+   Efl_Text_Annotate_Annotation *annotation;
    Eina_List             *sel;
    Eina_Bool              item : 1;
 };
@@ -4395,7 +4395,7 @@ _efl_ui_text_elm_interface_atspi_text_range_extents_get(Eo *obj, Efl_Ui_Text_Dat
 
 static Elm_Atspi_Text_Attribute*
 _textblock_node_format_to_atspi_text_attr(Eo *obj,
-      Efl_Canvas_Text_Annotation *annotation)
+      Efl_Text_Annotate_Annotation *annotation)
 {
    Elm_Atspi_Text_Attribute *ret;
    const char *txt;
@@ -4419,7 +4419,7 @@ _efl_ui_text_elm_interface_atspi_text_attribute_get(Eo *obj, Efl_Ui_Text_Data *_
    Evas_Textblock_Cursor *cur1, *cur2;
    Elm_Atspi_Text_Attribute *attr;
    Eina_Iterator *annotations;
-   Efl_Canvas_Text_Annotation *an;
+   Efl_Text_Annotate_Annotation *an;
 
    cur1 = evas_object_textblock_cursor_new(obj);
    if (!cur1) return EINA_FALSE;
@@ -4465,7 +4465,7 @@ _efl_ui_text_elm_interface_atspi_text_attributes_get(Eo *obj, Efl_Ui_Text_Data *
    Eina_List *ret = NULL;
    Elm_Atspi_Text_Attribute *attr;
    Eina_Iterator *annotations;
-   Efl_Canvas_Text_Annotation *an;
+   Efl_Text_Annotate_Annotation *an;
 
    cur1 = evas_object_textblock_cursor_new(obj);
    if (!cur1) return NULL;
@@ -4505,7 +4505,7 @@ _efl_ui_text_elm_interface_atspi_text_default_attributes_get(Eo *obj, Efl_Ui_Tex
    Elm_Atspi_Text_Attribute *attr;
    Efl_Text_Cursor_Cursor *start, *end;
    Eina_Iterator *annotations;
-   Efl_Canvas_Text_Annotation *an;
+   Efl_Text_Annotate_Annotation *an;
 
    /* Retrieve all annotations in the text. */
    start = efl_text_cursor_new(obj);
@@ -4983,7 +4983,7 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
    Eina_Iterator *it;
    Anchor *an = NULL;
    Efl_Text_Cursor_Cursor *start, *end;
-   Efl_Canvas_Text_Annotation *anchor;
+   Efl_Text_Annotate_Annotation *anchor;
 
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    _anchors_clear_all(obj, sd);

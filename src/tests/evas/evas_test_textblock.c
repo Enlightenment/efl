@@ -4156,7 +4156,7 @@ _test_check_annotation(Evas_Object *tb,
       size_t start_pos, size_t end_pos,
       size_t len, const char **formats)
 {
-   Efl_Canvas_Text_Annotation *an;
+   Efl_Text_Annotate_Annotation *an;
    Efl_Text_Cursor_Cursor *start, *end;
 
    start = evas_object_textblock_cursor_new(tb);
@@ -4196,7 +4196,7 @@ _test_check_annotation(Evas_Object *tb,
 START_TEST(evas_textblock_annotation)
 {
    START_TB_TEST();
-   Efl_Canvas_Text_Annotation *an, *an2;
+   Efl_Text_Annotate_Annotation *an, *an2;
    Efl_Text_Cursor_Cursor *start, *end;
 
    start = evas_object_textblock_cursor_new(tb);
