@@ -33,7 +33,7 @@ extern int _ecore_cocoa_log_domain;
  * more meaningful ones. We define aliases to these new types to use the
  * most recent API while being retro-compatible.
  */
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1012 /* Before 10.12 */
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200 /* Before 10.12 */
 # define NSWindowStyleMaskTitled NSTitledWindowMask
 # define NSWindowStyleMaskClosable NSClosableWindowMask
 # define NSWindowStyleMaskResizable NSResizableWindowMask
