@@ -3275,7 +3275,8 @@ _ecore_evas_register(Ecore_Evas *ee)
    if (_ecore_evas_render_sync) ee->first_frame = EINA_TRUE;
    if (!_general_tick) _ecore_evas_tick_source_find();
    if (!ee->engine.func->fn_render)
-     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
+     evas_event_callback_priority_add(ee->evas, EVAS_CALLBACK_RENDER_POST, EVAS_CALLBACK_PRIORITY_AFTER,
+                                      _evas_evas_buffer_rendered, ee);
 }
 
 EAPI void
@@ -3286,7 +3287,8 @@ _ecore_evas_subregister(Ecore_Evas *ee_target, Ecore_Evas *ee)
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
 
    if (!ee->engine.func->fn_render)
-     evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _evas_evas_buffer_rendered, ee);
+     evas_event_callback_priority_add(ee->evas, EVAS_CALLBACK_RENDER_POST, EVAS_CALLBACK_PRIORITY_AFTER,
+                                      _evas_evas_buffer_rendered, ee);
 }
 
 EAPI void
