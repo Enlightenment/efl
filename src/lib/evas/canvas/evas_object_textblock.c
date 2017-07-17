@@ -769,7 +769,6 @@ static Eina_Bool _evas_textblock_cursor_format_is_visible_get(const Efl_Text_Cur
 static void _find_layout_item_line_match(Evas_Object *eo_obj, Evas_Object_Textblock_Node_Text *n, size_t pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr);
 static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_at_pos_get(const Efl_Text_Cursor_Cursor_Data *cur);
 static int _evas_textblock_cursor_text_prepend(Efl_Text_Cursor_Cursor_Data *cur, const char *_text);
-EAPI int evas_textblock_cursor_compare(const Efl_Text_Cursor_Cursor_Data *cur1, const Efl_Canvas_Text_Cursor *cur2);
 static void _evas_textblock_cursor_copy(Efl_Text_Cursor_Cursor_Data *dst, const Efl_Canvas_Text_Cursor *src);
 
 /** selection iterator */
@@ -8395,10 +8394,10 @@ _evas_textblock_cursor_init(Efl_Text_Cursor_Cursor_Data *cur, const Evas_Object 
 }
 
 EAPI Efl_Text_Cursor_Cursor_Data *
-evas_object_textblock_cursor_new(Eo *eo_obj)
+evas_object_textblock_cursor_new(const Evas_Object *eo_obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, NULL);
-   return efl_text_cursor_new(eo_obj);
+   return efl_text_cursor_new((Eo *) eo_obj);
 }
 
 EAPI void
@@ -15687,7 +15686,7 @@ _efl_canvas_text_efl_text_cursor_cursor_get(Eo *eo_obj EINA_UNUSED, Efl_Canvas_T
 }
 
 EAPI Efl_Text_Cursor_Cursor_Data *
-evas_object_textblock_cursor_get(Eo *eo_obj EINA_UNUSED)
+evas_object_textblock_cursor_get(const Evas_Object *eo_obj EINA_UNUSED)
 {
    return efl_text_cursor_get(eo_obj, EFL_TEXT_CURSOR_GET_MAIN);
 }
