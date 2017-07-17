@@ -8073,21 +8073,26 @@ elm_win_resize_object_del(Eo *obj, Evas_Object *subobj)
 
 EAPI Eina_Bool
 elm_win_keygrab_set(Elm_Win *obj, const char *key,
-                    Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers,
+                    Evas_Modifier_Mask modifiers EINA_UNUSED,
+                    Evas_Modifier_Mask not_modifiers EINA_UNUSED,
                     int priority, Elm_Win_Keygrab_Mode grab_mode)
 {
+   // Note: Not converting modifiers as they are not used in the implementation
    return efl_ui_win_keygrab_set(obj, key,
-                                 (Efl_Input_Modifier) modifiers,
-                                 (Efl_Input_Modifier) not_modifiers,
+                                 EFL_INPUT_MODIFIER_NONE,
+                                 EFL_INPUT_MODIFIER_NONE,
                                  priority, grab_mode);
 }
 
 EAPI Eina_Bool
-elm_win_keygrab_unset(Elm_Win *obj, const char *key, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+elm_win_keygrab_unset(Elm_Win *obj, const char *key,
+                      Evas_Modifier_Mask modifiers EINA_UNUSED,
+                      Evas_Modifier_Mask not_modifiers EINA_UNUSED)
 {
+   // Note: Not converting modifiers as they are not used in the implementation
    return efl_ui_win_keygrab_unset(obj, key,
-                                   (Efl_Input_Modifier) modifiers,
-                                   (Efl_Input_Modifier) not_modifiers);
+                                   EFL_INPUT_MODIFIER_NONE,
+                                   EFL_INPUT_MODIFIER_NONE);
 }
 
 // deprecated
