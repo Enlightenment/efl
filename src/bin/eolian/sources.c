@@ -562,18 +562,9 @@ _gen_opfunc(const Eolian_Function *fid, Eolian_Function_Type ftype,
      }
 }
 
-static Eina_Bool
+static void
 _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
 {
-   Eina_Iterator *itr = eolian_class_implements_get(cl);
-   const Eolian_Implement *imp;
-   if (!eina_iterator_next(itr, (void **)&imp))
-     {
-        eina_iterator_free(itr);
-        return EINA_FALSE;
-     }
-   eina_iterator_free(itr);
-
    char *cnamel = NULL, *cnameu = NULL;
    eo_gen_class_names_get(cl, NULL, &cnameu, &cnamel);
 
@@ -585,7 +576,8 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
    Eina_Strbuf *ops = eina_strbuf_new(), *cops = eina_strbuf_new();
 
    /* start over with clean itearator */
-   itr = eolian_class_implements_get(cl);
+   const Eolian_Implement *imp;
+   Eina_Iterator *itr = eolian_class_implements_get(cl);
    EINA_ITERATOR_FOREACH(itr, imp)
      {
         const Eolian_Class *icl = eolian_implement_class_get(imp);
@@ -673,8 +665,6 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    free(cnameu);
    free(cnamel);
-
-   return EINA_TRUE;
 }
 
 void
@@ -738,7 +728,7 @@ eo_gen_source_gen(const Eolian_Unit *src,
    }
 
    /* class initializer - contains method defs */
-   Eina_Bool has_init = _gen_initializer(cl, buf);
+   _gen_initializer(cl, buf);
 
    /* class description */
    eina_strbuf_append(buf, "static const Efl_Class_Description _");
@@ -770,10 +760,7 @@ eo_gen_source_gen(const Eolian_Unit *src,
      eina_strbuf_append_printf(buf, "   sizeof(%s),\n", dt);
    eina_stringshare_del(dt);
 
-   if (has_init)
-     eina_strbuf_append_printf(buf, "   _%s_class_initializer,\n", cnamel);
-   else
-     eina_strbuf_append(buf, "   NULL,\n");
+   eina_strbuf_append_printf(buf, "   _%s_class_initializer,\n", cnamel);
 
    if (eolian_class_ctor_enable_get(cl))
      eina_strbuf_append_printf(buf, "   _%s_class_constructor,\n", cnamel);
