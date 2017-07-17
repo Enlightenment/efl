@@ -4,6 +4,8 @@
 
 #include "codegen.h"
 
+char *output_dir = NULL;
+
 static const Ecore_Getopt optdesc = {
   "eldbus_codegen",
   "%prog [options] <file.xml>",
@@ -16,6 +18,7 @@ static const Ecore_Getopt optdesc = {
     ECORE_GETOPT_STORE_STR('p', "prefix", "The prefix for the generated code."),
     ECORE_GETOPT_STORE_STR('i', "interface", "To generate code of only one interface of xml."),
     ECORE_GETOPT_STORE_STR('o', "output file name", "The name of output files, only used if a interface is selected."),
+    ECORE_GETOPT_STORE_STR('O', "output dir", "The directory to output files to."),
     ECORE_GETOPT_LICENSE('L', "license"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_VERSION('V', "version"),
@@ -36,6 +39,7 @@ main(int argc, char **argv)
       ECORE_GETOPT_VALUE_STR(prefix),
       ECORE_GETOPT_VALUE_STR(interface),
       ECORE_GETOPT_VALUE_STR(output),
+      ECORE_GETOPT_VALUE_STR(output_dir),
       ECORE_GETOPT_VALUE_BOOL(quit_option),
       ECORE_GETOPT_VALUE_BOOL(quit_option),
       ECORE_GETOPT_VALUE_BOOL(quit_option),

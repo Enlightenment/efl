@@ -110,3 +110,5 @@ char *replace_string(const char *string, const char *substr, const char *replace
 char *dbus_name_to_c(const char *dbus);
 char *string_build(const char *fmt, ...);
 char *get_pieces(const char *string, char break_in, int amount);
+
+extern char *output_dir;
