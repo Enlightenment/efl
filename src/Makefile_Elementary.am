@@ -661,7 +661,6 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_view_form.c \
 	lib/elementary/elm_web2.c \
 	lib/elementary/elm_widget.c \
-	lib/elementary/elm_widget_item.c \
 	lib/elementary/efl_ui_win.c \
 	lib/elementary/elm_helper.c \
 	lib/elementary/els_box.c \
