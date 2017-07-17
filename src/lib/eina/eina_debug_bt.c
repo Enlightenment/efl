@@ -136,7 +136,9 @@ _signal_handler(int sig EINA_UNUSED,
 {
    int i, slot = 0;
    pthread_t self = pthread_self();
+#if defined(HAVE_CLOCK_GETTIME) && defined(HAVE_SCHED_GETCPU) && defined(__clockid_t_defined)
    clockid_t cid;
+#endif
 
    // find which slot in the array of threads we have so we store info
    // in the correct slot for us
@@ -162,7 +164,7 @@ found:
     * - CLOCK_THREAD_CPUTIME_ID should be identical to pthread_getcpuclockid(),
     *   but it requires POSIX thingies to be defined.
     */
-#if defined(HAVE_CLOCK_GETTIME) && defined(HAVE_SCHED_GETCPU)
+#if defined(HAVE_CLOCK_GETTIME) && defined(HAVE_SCHED_GETCPU) && defined(__clockid_t_defined)
    // store thread info like what cpu core we are on now (not reliable
    // but hey - better than nothing), the amount of cpu time total
    // we have consumed (it's cumulative so subtracing deltas can give
