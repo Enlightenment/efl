@@ -315,7 +315,19 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      }
 
    if (!should && pd->logical.child_count > 0)
-     should = EINA_TRUE;
+     {
+        should = EINA_TRUE;
+
+        if (_tree_unfocusable(obj))
+          should = EINA_FALSE;
+
+        if (_tree_disabled(obj))
+          should = EINA_FALSE;
+
+        if (!evas_object_visible_get(obj))
+          should = EINA_FALSE;
+
+     }
 
    if ( //check if we have changed the manager
         (pd->focus.manager != manager && should) ||
