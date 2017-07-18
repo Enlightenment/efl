@@ -214,6 +214,19 @@ _tree_unfocusable(Eo *obj)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_tree_disabled(Eo *obj)
+{
+   Elm_Widget *wid = obj;
+
+   do {
+     ELM_WIDGET_DATA_GET(wid, wid_pd);
+
+     if (wid_pd->disabled) return EINA_TRUE;
+   } while((wid = elm_widget_parent_widget_get(wid)));
+
+   return EINA_FALSE;
+}
 
 static void _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd);
 
@@ -287,10 +300,11 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      {
         should = EINA_TRUE;
         //can focus can be overridden by the following properties
-        if (pd->disabled)
-          should = EINA_FALSE;
 
         if (_tree_unfocusable(obj))
+          should = EINA_FALSE;
+
+        if (_tree_disabled(obj))
           should = EINA_FALSE;
 
         if (!evas_object_visible_get(obj))
