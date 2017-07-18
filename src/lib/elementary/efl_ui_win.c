@@ -5659,7 +5659,19 @@ _efl_ui_win_fullscreen_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 static inline Eo *
 _main_menu_swallow_get(Efl_Ui_Win_Data *sd)
 {
-   if (edje_object_part_exists(sd->legacy.edje, "elm.swallow.menu"))
+   Eina_Bool legacy_menu_swallow = EINA_TRUE;
+   const char *data;
+   int version;
+
+   data = edje_object_data_get(sd->legacy.edje, "version");
+   version = data ? atoi(data) : 0;
+   if (version >= 119) legacy_menu_swallow = EINA_FALSE;
+
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (sd->cocoa.win) legacy_menu_swallow = EINA_TRUE;
+#endif
+
+   if (legacy_menu_swallow)
      {
         DBG("Detected legacy theme, using legacy swallows.");
         return sd->legacy.edje;
@@ -5688,6 +5700,13 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
         sd->csd.need_menu = EINA_FALSE;
         _elm_menu_menu_bar_hide(sd->main_menu);
         _elm_win_resize_objects_eval(sd->obj, EINA_FALSE);
+        if (swallow != sd->frame_obj)
+          {
+             // Note: Based on EFL 1.18 the signal was "elm,action,hide"
+             // and not "elm,action,hide_menu" as expected.
+             edje_object_signal_emit(swallow, "elm,action,hide", "elm");
+             edje_object_message_signal_recursive_process(swallow);
+          }
      }
    else
      {
@@ -5699,6 +5718,11 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
           {
              efl_canvas_object_is_frame_object_set(sd->main_menu, EINA_TRUE);
              sd->csd.need_menu = EINA_TRUE;
+          }
+        else
+          {
+             edje_object_signal_emit(swallow, "elm,action,show_menu", "elm");
+             edje_object_message_signal_recursive_process(swallow);
           }
      }
    _elm_win_frame_style_update(sd, 0, 1);
