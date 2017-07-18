@@ -327,14 +327,10 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn EIN
      {
         FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
         FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image", secsym_func_void_ptr);
-        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageOES", "GL_OES_EGL_image_base", secsym_func_void_ptr);
-        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageOES", "GL_OES_EGL_image", secsym_func_void_ptr);
         if (eglsym_eglCreateImageKHR)
           {
              FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
              FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image", secsym_func_uint);
-             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image_base", secsym_func_uint);
-             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageOES", "GL_OES_EGL_image", secsym_func_uint);
           }
         else
           {
@@ -350,11 +346,9 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn EIN
         // .... :(
         dl_fallback = EINA_TRUE;
         FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", NULL, secsym_func_void_ptr);
-        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageOES", NULL, secsym_func_void_ptr);
         if (eglsym_eglCreateImageKHR)
           {
              FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", NULL, secsym_func_uint);
-             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageOES", NULL, secsym_func_uint);
           }
         else
           {
