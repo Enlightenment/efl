@@ -45,7 +45,7 @@ _focus_changed(void *data, const Efl_Event *event)
    //if there is already the redirect, ignore this focus request
    if (efl_ui_focus_manager_redirect_get(manager)) return;
 
-   efl_ui_focus_manager_focus(m, event->object);
+   efl_ui_focus_manager_focus_set(m, event->object);
 }
 
 static void

@@ -4349,7 +4349,7 @@ _elm_widget_focus_mouse_up_handle(Eo *obj, Elm_Widget_Smart_Data *pd)
           }
 
 
-        efl_ui_focus_manager_focus(pd->focus.manager, obj);
+        efl_ui_focus_manager_focus_set(pd->focus.manager, obj);
      }
 }
 
