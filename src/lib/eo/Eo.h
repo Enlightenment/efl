@@ -605,6 +605,10 @@ typedef struct _Efl_Class_Description Efl_Class_Description;
  * @param ... A NULL terminated list of extensions (interfaces, mixins and the classes of any composite objects).
  * @return The new class's handle on success, or NULL otherwise.
  *
+ * @note There are two types of extensions, mixins and none-mixins.
+ *       Mixins are inheriting api AND the implementation.
+ *       Non-mixins only inherit the api, so a class which inherits a non-mixin as extension must implement the api.
+ *
  * You should use #EFL_DEFINE_CLASS. It'll provide thread safety and other
  * features easily.
  *
