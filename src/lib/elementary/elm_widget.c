@@ -3409,7 +3409,7 @@ _elm_widget_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool disabled)
    elm_widget_disabled_internal(obj, disabled);
 
    if (efl_finalized_get(obj))
-     _focus_state_eval(obj, sd);
+     _full_eval_children(obj, sd);
 }
 
 EOLIAN static Eina_Bool
