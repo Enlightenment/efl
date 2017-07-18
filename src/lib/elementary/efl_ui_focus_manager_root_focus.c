@@ -65,16 +65,16 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_unregister(Eo *obj, E
 
 
 EOLIAN static void
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *focus)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *focus)
 {
-   efl_ui_focus_manager_focus(efl_super(obj, MY_CLASS), _trap(pd, focus));
+   efl_ui_focus_manager_focus_set(efl_super(obj, MY_CLASS), _trap(pd, focus));
 }
 
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_focused(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_focus_get(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
-   return _trap(pd, efl_ui_focus_manager_focused(efl_super(obj, MY_CLASS)));
+   return _trap(pd, efl_ui_focus_manager_focus_get(efl_super(obj, MY_CLASS)));
 }
 
 

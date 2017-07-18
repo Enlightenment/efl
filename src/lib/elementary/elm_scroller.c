@@ -134,7 +134,7 @@ _key_action_move(Evas_Object *obj, const char *params)
       Efl_Ui_Focus_Object *focused;
       Eina_Rectangle focused_geom, viewport;
 
-      focused = efl_ui_focus_manager_focused(obj);
+      focused = efl_ui_focus_manager_focus_get(obj);
 
       if (focused &&
           (!strcmp(dir, "next") ||

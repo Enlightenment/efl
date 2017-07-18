@@ -164,7 +164,7 @@ _elm_inwin_efl_gfx_visible_set(Eo *obj, Elm_Inwin_Data *pd, Eina_Bool v)
         pd->registered_manager = efl_ui_focus_user_manager_get(obj);
 
         efl_ui_focus_manager_redirect_set(pd->registered_manager, obj);
-        efl_ui_focus_manager_focus(pd->manager, obj);
+        efl_ui_focus_manager_focus_set(pd->manager, obj);
         pd->registered = EINA_TRUE;
      }
    else if (!v && pd->registered)
@@ -183,9 +183,9 @@ _elm_inwin_efl_ui_focus_manager_move(Eo *obj, Elm_Inwin_Data *pd, Efl_Ui_Focus_D
      return ret;
 
    if ((direction == EFL_UI_FOCUS_DIRECTION_PREV) || (direction == EFL_UI_FOCUS_DIRECTION_NEXT))
-     efl_ui_focus_manager_focus(pd->manager, obj);
+     efl_ui_focus_manager_focus_set(pd->manager, obj);
 
-   return efl_ui_focus_manager_focused(obj);
+   return efl_ui_focus_manager_focus_get(obj);
 }
 
 

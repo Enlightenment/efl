@@ -59,20 +59,12 @@ interface Efl.Ui.Focus.Manager {
             }
             return : Efl.Ui.Focus.Object; [[Next object to focus]]
         }
-        focus {
-            [[Make the given object the currently focused object in this manager.
+        @property focus {
+            [[The element which is currently focused by this manager]]
 
-              The object has to be part of this manager object.
-              If you want to focus something in the redirect manager, just call
-              the function on the redirect manager.
-            ]]
-            params {
-                focus : Efl.Ui.Focus.Object @nonull; [[The object to be focused. Pass the root to get the first available none logical registered child focused]]
+            values {
+                focus : Efl.Ui.Focus.Object @nonull;
             }
-        }
-        focused {
-            [[Return the currently focused element of this manager.]]
-            return : Efl.Ui.Focus.Object; [[The object that has focus.]]
         }
         @property redirect {
             [[Add a another manager to serve the move requests.

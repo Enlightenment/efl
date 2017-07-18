@@ -4700,12 +4700,12 @@ _elm_interface_scrollable_efl_ui_focus_manager_border_elements_get(Eo *obj, Elm_
 }
 
 EOLIAN static void
-_elm_interface_scrollable_efl_ui_focus_manager_focus(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *focus)
+_elm_interface_scrollable_efl_ui_focus_manager_focus_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *focus)
 {
    Eina_Rectangle geom;
    Eina_Rectangle obj_geom;
 
-   efl_ui_focus_manager_focus(efl_super(obj, MY_SCROLLABLE_INTERFACE), focus);
+   efl_ui_focus_manager_focus_set(efl_super(obj, MY_SCROLLABLE_INTERFACE), focus);
 
    if (!focus) return;
 

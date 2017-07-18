@@ -1184,7 +1184,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED
 }
 
 EOLIAN static void
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
 {
    Node *node;
    Node *old_focus;
@@ -1250,7 +1250,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus(Eo *obj, Efl_Ui_Focus_Mana
         Efl_Ui_Focus_Object *root;
 
         root = efl_ui_focus_manager_root_get(node->redirect_manager);
-        efl_ui_focus_manager_focus(node->redirect_manager, root);
+        efl_ui_focus_manager_focus_set(node->redirect_manager, root);
      }
 
    //now check if this is also a listener object
@@ -1271,7 +1271,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
      {
         Efl_Ui_Focus_Object *old_candidate = NULL;
         candidate = efl_ui_focus_manager_move(pd->redirect, direction);
-        old_candidate = efl_ui_focus_manager_focused(pd->redirect);
+        old_candidate = efl_ui_focus_manager_focus_get(pd->redirect);
 
         if (!candidate)
           {
@@ -1289,7 +1289,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                    {
                       n = T(n).parent;
                       new_candidate = _request_move(obj, pd, direction, n);
-                      efl_ui_focus_manager_focus(obj, new_candidate);
+                      efl_ui_focus_manager_focus_set(obj, new_candidate);
                       candidate = new_candidate;
                    }
                }
@@ -1302,7 +1302,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                   if (new_candidate)
                     {
                        //redirect does not have smth. but we do have.
-                       efl_ui_focus_manager_focus(obj, new_candidate);
+                       efl_ui_focus_manager_focus_set(obj, new_candidate);
                     }
                  candidate = new_candidate;
                }
@@ -1314,7 +1314,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
         candidate = efl_ui_focus_manager_request_move(obj, direction);
 
         if (candidate)
-          efl_ui_focus_manager_focus(obj, candidate);
+          efl_ui_focus_manager_focus_set(obj, candidate);
      }
 
    F_DBG("Manager: %p moved to %p %s in direction %d", obj, candidate, efl_class_name_get(candidate), direction);
@@ -1378,7 +1378,7 @@ _convert(Eina_List *node_list)
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_focused(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Node *upper = NULL;
 

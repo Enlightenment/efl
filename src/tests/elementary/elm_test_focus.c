@@ -62,15 +62,15 @@ START_TEST(pos_check)
    efl_ui_focus_manager_calc_register(m, east, root, NULL);
 
 #define CHECK(obj, r,l,u,d) \
-   efl_ui_focus_manager_focus(m, obj); \
+   efl_ui_focus_manager_focus_set(m, obj); \
    ck_assert_ptr_eq(efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_RIGHT), r); \
-   efl_ui_focus_manager_focus(m, obj); \
+   efl_ui_focus_manager_focus_set(m, obj); \
    ck_assert_ptr_eq(efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_LEFT), l); \
-   efl_ui_focus_manager_focus(m, obj); \
+   efl_ui_focus_manager_focus_set(m, obj); \
    ck_assert_ptr_eq(efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_UP), u); \
-   efl_ui_focus_manager_focus(m, obj); \
+   efl_ui_focus_manager_focus_set(m, obj); \
    ck_assert_ptr_eq(efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_DOWN), d); \
-   efl_ui_focus_manager_focus(m, obj);
+   efl_ui_focus_manager_focus_set(m, obj);
 
    CHECK(middle, east, west, north, south)
    CHECK(east, NULL, middle, NULL, NULL)
@@ -109,7 +109,7 @@ START_TEST(redirect)
    efl_ui_focus_manager_calc_register(m2, two, root2, NULL);
 
    efl_ui_focus_manager_redirect_set(m, m2);
-   efl_ui_focus_manager_focus(m2, one);
+   efl_ui_focus_manager_focus_set(m2, one);
 
    ck_assert_ptr_eq(efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_RIGHT), two);
 
@@ -203,7 +203,7 @@ START_TEST(logical_chain)
    efl_ui_focus_manager_calc_register(m, subchild22, child3, NULL);
    efl_ui_focus_manager_calc_register(m, subchild23, child3, NULL);
 
-   efl_ui_focus_manager_focus(m, root);
+   efl_ui_focus_manager_focus_set(m, root);
 
    Efl_Object *logical_chain[] = {
     child1, subchild11, subchild12, subchild13,
@@ -254,7 +254,7 @@ START_TEST(redirect_param)
    );
 
    efl_ui_focus_manager_calc_register(m, child, root, m2);
-   efl_ui_focus_manager_focus(m, child);
+   efl_ui_focus_manager_focus_set(m, child);
 
    ck_assert_ptr_eq(efl_ui_focus_manager_redirect_get(m), m2);
 
