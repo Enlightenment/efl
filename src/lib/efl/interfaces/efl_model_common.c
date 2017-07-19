@@ -70,7 +70,7 @@ efl_model_list_slice(Eina_List *list, unsigned start, unsigned count)
 
    Eo *child;
    Eina_List *l, *ln, *lr = NULL;
-   ln = eina_list_nth_list(list, (start-1));
+   ln = eina_list_nth_list(list, (start));
    if (!ln)
      {
         return NULL;
