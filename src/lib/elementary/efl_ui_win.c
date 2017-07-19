@@ -5343,7 +5343,10 @@ _efl_ui_win_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_
 {
 #ifdef HAVE_ELEMENTARY_WL2
    if (pd->type == ELM_WIN_FAKE)
-     ecore_wl2_window_free(pd->wl.win);
+     {
+        if (pd->wl.win)
+          ecore_wl2_window_free(pd->wl.win);
+     }
 #endif
    efl_destructor(efl_super(obj, MY_CLASS));
 }
