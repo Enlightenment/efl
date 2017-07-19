@@ -831,6 +831,7 @@ eng_image_data_get(void *engine, void *image, int to_write, DATA32 **image_data,
                eng_image_alpha_get(engine, image), EVAS_COLORSPACE_ARGB8888);
         if (!im_new)
           {
+             eng_gl_surface_unlock(engine, im);
              if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
              ERR("Allocation failed.");
              return NULL;
