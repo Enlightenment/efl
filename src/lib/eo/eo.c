@@ -1695,12 +1695,14 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
         // Currently implemented by reusing the LAST op id. Just marking it with
         // _eo_class_isa_func.
         isa = tdata->cache.isa = (func && (func->func == _eo_class_isa_func));
+        EO_OBJ_DONE(eo_id);
         eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
    return isa;
 
 err_shared_class:
    _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id);
+   EO_OBJ_DONE(eo_id);
 err_shared_obj:
    eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
    return EINA_FALSE;
