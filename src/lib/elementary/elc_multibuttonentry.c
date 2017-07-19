@@ -393,6 +393,7 @@ _item_del(Elm_Multibuttonentry_Item_Data *item)
 
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
 
+   sd->items = eina_list_remove(sd->items, EO_OBJ(item));
    elm_box_unpack(sd->box, VIEW(item));
 
    efl_event_callback_legacy_call
@@ -551,7 +552,6 @@ _on_item_deleted(void *data,
         if (VIEW(temp_it) == obj)
           {
              elm_wdg_item_del(eo_temp_it);
-             sd->items = eina_list_remove(sd->items, eo_temp_it);
              break;
           }
      }
@@ -1142,7 +1142,6 @@ _layout_key_down_cb(void *data,
              Elm_Multibuttonentry_Item_Data *item = sd->selected_it;
              if (item && sd->editable)
                {
-                  sd->items = eina_list_remove(sd->items, EO_OBJ(item));
                   elm_wdg_item_del(EO_OBJ(item));
                   elm_object_focus_set(sd->entry, EINA_TRUE);
                }
@@ -1630,13 +1629,14 @@ _elm_multibuttonentry_efl_canvas_group_group_add(Eo *obj, Elm_Multibuttonentry_D
 EOLIAN static void
 _elm_multibuttonentry_efl_canvas_group_group_del(Eo *obj, Elm_Multibuttonentry_Data *sd)
 {
+   Eina_List *l;
    Elm_Object_Item *eo_item;
    Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;
 
-   EINA_LIST_FREE(sd->items, eo_item)
+   EINA_LIST_FOREACH(sd->items, l, eo_item)
      efl_del(eo_item);
 
-   sd->items = NULL;
+   sd->items = eina_list_free(sd->items);
 
    sd->selected_it = NULL;
 
