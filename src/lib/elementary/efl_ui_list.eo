@@ -7,7 +7,7 @@ struct Efl.Ui.List.Item_Event
 
 class Efl.Ui.List (Elm.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
                 Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
-                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Focus.Manager)
+                Efl.Ui.Clickable, Efl.Ui.Selectable)
 {
    methods {
       @property homogeneous {
@@ -50,10 +50,8 @@ class Efl.Ui.List (Elm.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
-
       // Smart obj
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_calculate;
@@ -62,16 +60,19 @@ class Efl.Ui.List (Elm.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
       Elm.Widget.theme_apply;
 //      Elm.Widget.focus_next_manager_is;
 //      Elm.Widget.focus_direction_manager_is;
+//      Elm.Widget.focus_register;
 //      Elm.Widget.focus_next;
-//      Elm.Widget.focus_direction;
+      Elm.Widget.on_focus;
 //      Elm.Widget.activate;
 //      Elm.Widget.focused_item { get; }
 //      Elm.Widget.focused_object { get; }
+      Elm.Widget.focus_manager_factory;
       Elm.Widget.widget_event;
 
       Elm.Layout.sizing_eval;
       Efl.Ui.View.model { get; set; }
 
+      Elm.Interface_Scrollable.region_bring_in;
       Elm.Interface.Atspi_Accessible.children { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Elm.Interface.Atspi.Selection.selected_children_count { get; }

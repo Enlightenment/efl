@@ -25,8 +25,8 @@ struct _Efl_Ui_List_Item
    // double               h, v, wx, wy;
    double               wx, wy;
    Ecore_Timer         *long_timer;
-   Eina_Bool            down: 1;
    Eina_Bool            selected: 1;
+   Eina_Bool            down: 1;
    Eina_Bool            longpressed : 1;
 };
 
@@ -72,8 +72,8 @@ struct _Efl_Ui_List_Data
    Elm_Object_Select_Mode       select_mode;
    Elm_List_Mode                mode;
 
+   Efl_Ui_Focus_Manager         *manager;
    Evas_Coord                   minw, minh;
-   Efl_Ui_List_Item             *focused;
    int                          /*average_item_size, avsom, */item_count;
    Efl_Future                   *future;
    struct {

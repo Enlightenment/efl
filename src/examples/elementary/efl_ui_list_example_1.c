@@ -21,28 +21,10 @@ const char *styles[] = {
 
 char edj_path[PATH_MAX];
 
-struct _Private_Data
-{
-   Eo *model;
-   Evas_Object *li;
-};
-typedef struct _Private_Data Private_Data;
-
-static void
-_cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Private_Data *pd = data;
-   efl_unref(pd->model);
-   efl_unref(pd->li);
-}
-
 static void
 _realized_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
-   Private_Data *pd = data;
-
-   //efl_ui_view_model_set(ie->layout, ie->child);
    elm_layout_theme_set(ie->layout, "list", "item", "default");
 
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
@@ -53,15 +35,16 @@ _realized_cb(void *data, const Efl_Event *event)
    efl_ui_model_connect(ie->layout, "signal/elm,state,%v", "odd_style");
 }
 
+/*
 static void
 _unrealized_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
 
-   //efl_ui_view_model_set(ie->layout, NULL);
-   //efl_del(ie->layout);
+   efl_ui_view_model_set(ie->layout, NULL);
+   efl_del(ie->layout);
 }
-
+*/
 static Efl_Model*
 _make_model()
 {
@@ -93,34 +76,28 @@ _make_model()
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Private_Data *priv;
-   Evas_Object *win;
-
-   priv = alloca(sizeof(Private_Data));
-   memset(priv, 0, sizeof(Private_Data));
+   Evas_Object *win, *li;
+   Eo *model;
 
    win = elm_win_util_standard_add("viewlist", "Viewlist");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    elm_win_autodel_set(win, EINA_TRUE);
 
-   priv->model = _make_model();
-   priv->li = efl_add(EFL_UI_LIST_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
-   efl_event_callback_add(priv->li, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_cb, priv);
-   efl_event_callback_add(priv->li, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, _unrealized_cb, priv);
+   model = _make_model();
+   li = efl_add(EFL_UI_LIST_CLASS, win, efl_ui_view_model_set(efl_added, model));
+   efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_cb, NULL);
+//   efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, _unrealized_cb, NULL);
 
-   elm_win_resize_object_add(win, priv->li);
-   evas_object_size_hint_weight_set(priv->li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, li);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, priv);
    //showall
-   evas_object_show(priv->li);
+   evas_object_show(li);
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 
    elm_run();
-   elm_shutdown();
-   ecore_shutdown();
 
    return 0;
 }
