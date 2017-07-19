@@ -137,15 +137,28 @@ emotion_video_sink_dispose(GObject* object)
    sink = EMOTION_VIDEO_SINK(object);
    priv = sink->priv;
 
-   if ((priv->mapped) && (priv->last_buffer))
+   if (priv->vfmapped)
      {
         if (priv->evas_object)
           {
              evas_object_image_size_set(priv->evas_object, 1, 1);
              evas_object_image_data_set(priv->evas_object, NULL);
           }
-        gst_buffer_unmap(priv->last_buffer, &(priv->map_info));
-        priv->mapped = EINA_FALSE;
+        gst_video_frame_unmap(&(priv->last_vframe));
+        priv->vfmapped = EINA_FALSE;
+     }
+   else
+     {
+        if ((priv->mapped) && (priv->last_buffer))
+          {
+             if (priv->evas_object)
+               {
+                  evas_object_image_size_set(priv->evas_object, 1, 1);
+                  evas_object_image_data_set(priv->evas_object, NULL);
+               }
+             gst_buffer_unmap(priv->last_buffer, &(priv->map_info));
+             priv->mapped = EINA_FALSE;
+          }
      }
    if (priv->last_buffer)
      {
@@ -231,6 +244,16 @@ emotion_video_sink_stop(GstBaseSink* base_sink)
    INF("sink stop");
 
    eina_lock_take(&priv->m);
+   if (priv->vfmapped)
+     {
+        if (priv->evas_object)
+          {
+             evas_object_image_size_set(priv->evas_object, 1, 1);
+             evas_object_image_data_set(priv->evas_object, NULL);
+          }
+        gst_video_frame_unmap(&(priv->last_vframe));
+        priv->vfmapped = EINA_FALSE;
+     }
    if (priv->last_buffer)
      {
         if (priv->evas_object)
@@ -401,10 +424,13 @@ emotion_video_sink_main_render(void *data)
 
    buffer = gst_buffer_ref(send->frame);
 
-   if (!gst_buffer_map(buffer, &map, GST_MAP_READ))
+   if (!send->vfmapped)
      {
-        ERR("Cannot map video buffer for read.\n");
-        goto exit_point;
+        if (!gst_buffer_map(buffer, &map, GST_MAP_READ))
+          {
+             ERR("Cannot map video buffer for read.\n");
+             goto exit_point;
+          }
      }
 
    INF("sink main render [%i, %i] (source height: %i)", send->info.width, send->eheight, send->info.height);
@@ -434,14 +460,39 @@ emotion_video_sink_main_render(void *data)
    info.plane_offset[2] = send->info.offset[2];
    info.plane_offset[3] = send->info.offset[3];
  */
-   info.stride[0] = send->info.stride[0];
-   info.stride[1] = send->info.stride[1];
-   info.stride[2] = send->info.stride[2];
-   info.stride[3] = send->info.stride[3];
-   info.plane_offset[0] = send->info.offset[0];
-   info.plane_offset[1] = send->info.offset[1];
-   info.plane_offset[2] = send->info.offset[2];
-   info.plane_offset[3] = send->info.offset[3];
+   if (send->vfmapped)
+     {
+        GstVideoFrame *vframe = &(send->vframe);
+
+        map.data = GST_VIDEO_FRAME_PLANE_DATA(vframe, 0);
+        info.bpp[0] = GST_VIDEO_FRAME_COMP_PSTRIDE(vframe, 0);
+        info.bpp[1] = GST_VIDEO_FRAME_COMP_PSTRIDE(vframe, 1);
+        info.bpp[2] = GST_VIDEO_FRAME_COMP_PSTRIDE(vframe, 2);
+        info.bpp[3] = GST_VIDEO_FRAME_COMP_PSTRIDE(vframe, 3);
+        info.stride[0] = GST_VIDEO_FRAME_COMP_STRIDE(vframe, 0);
+        info.stride[1] = GST_VIDEO_FRAME_COMP_STRIDE(vframe, 1);
+        info.stride[2] = GST_VIDEO_FRAME_COMP_STRIDE(vframe, 2);
+        info.stride[3] = GST_VIDEO_FRAME_COMP_STRIDE(vframe, 3);
+        info.plane_ptr[0] = GST_VIDEO_FRAME_PLANE_DATA(vframe, 0);
+        info.plane_ptr[1] = GST_VIDEO_FRAME_PLANE_DATA(vframe, 1);
+        info.plane_ptr[2] = GST_VIDEO_FRAME_PLANE_DATA(vframe, 2);
+        info.plane_ptr[3] = GST_VIDEO_FRAME_PLANE_DATA(vframe, 3);
+     }
+   else
+     {
+        info.bpp[0] = 1;
+        info.bpp[1] = 1;
+        info.bpp[2] = 1;
+        info.bpp[3] = 1;
+        info.stride[0] = send->info.stride[0];
+        info.stride[1] = send->info.stride[1];
+        info.stride[2] = send->info.stride[2];
+        info.stride[3] = send->info.stride[3];
+        info.plane_ptr[0] = ((unsigned char *)map.data) + send->info.offset[0];
+        info.plane_ptr[1] = ((unsigned char *)map.data) + send->info.offset[1];
+        info.plane_ptr[2] = ((unsigned char *)map.data) + send->info.offset[2];
+        info.plane_ptr[3] = ((unsigned char *)map.data) + send->info.offset[3];
+     }
 
    if (send->func)
      send->func(evas_data, map.data, send->info.width, send->info.height, send->eheight, &info);
@@ -459,10 +510,26 @@ emotion_video_sink_main_render(void *data)
 
    _emotion_frame_resize(priv->emotion_object, send->info.width, send->eheight, ratio);
 
-   if ((priv->mapped) && (priv->last_buffer))
-     gst_buffer_unmap(priv->last_buffer, &(priv->map_info));
-   priv->map_info = map;
-   priv->mapped = EINA_TRUE;
+   if (priv->vfmapped)
+     {
+        gst_video_frame_unmap(&(priv->last_vframe));
+     }
+   else
+     {
+        if ((priv->mapped) && (priv->last_buffer))
+          gst_buffer_unmap(priv->last_buffer, &(priv->map_info));
+     }
+   if (send->vfmapped)
+     {
+        priv->last_vframe = send->vframe;
+        priv->vfmapped = EINA_TRUE;
+     }
+   else
+     {
+        priv->vfmapped = EINA_FALSE;
+        priv->map_info = map;
+        priv->mapped = EINA_TRUE;
+     }
 
    if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
    priv->last_buffer = buffer;

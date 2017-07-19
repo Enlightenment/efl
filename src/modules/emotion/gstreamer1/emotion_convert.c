@@ -6,7 +6,8 @@
 
 static inline void
 _evas_video_bgrx_step(unsigned char *evas_data, const unsigned char *gst_data,
-                      unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height, unsigned int step)
+                      unsigned int w, unsigned int h EINA_UNUSED,
+                      unsigned int output_height, unsigned int step)
 {
    unsigned int x, y;
 
@@ -25,7 +26,9 @@ _evas_video_bgrx_step(unsigned char *evas_data, const unsigned char *gst_data,
 }
 
 static void
-_evas_video_bgr(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
+_evas_video_bgr(unsigned char *evas_data, const unsigned char *gst_data,
+                unsigned int w, unsigned int h, unsigned int output_height,
+                Emotion_Convert_Info *info EINA_UNUSED)
 {
    // XXX: need to check offset and stride that gst provide and what they
    // mean with a non-planar format like bgra
@@ -33,7 +36,9 @@ _evas_video_bgr(unsigned char *evas_data, const unsigned char *gst_data, unsigne
 }
 
 static void
-_evas_video_bgrx(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
+_evas_video_bgrx(unsigned char *evas_data, const unsigned char *gst_data,
+                 unsigned int w, unsigned int h, unsigned int output_height,
+                 Emotion_Convert_Info *info EINA_UNUSED)
 {
    // XXX: need to check offset and stride that gst provide and what they
    // mean with a non-planar format like bgra
@@ -41,7 +46,10 @@ _evas_video_bgrx(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
+_evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data,
+                 unsigned int w, unsigned int h EINA_UNUSED,
+                 unsigned int output_height,
+                 Emotion_Convert_Info *info EINA_UNUSED)
 {
    unsigned int x, y;
 
@@ -65,51 +73,70 @@ _evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
+_evas_video_i420(unsigned char *evas_data,
+                 const unsigned char *gst_data EINA_UNUSED,
+                 unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED,
+                 unsigned int output_height,
+                 Emotion_Convert_Info *info)
 {
    const unsigned char **rows, *ptr;
    unsigned int i, j, jump, rh;
 
+   if (info->bpp[0] != 1) ERR("Plane 0 bpp != 1");
+   if (info->bpp[1] != 1) ERR("Plane 1 bpp != 1");
+   if (info->bpp[2] != 1) ERR("Plane 2 bpp != 1");
+
    rh = output_height;
    rows = (const unsigned char **)evas_data;
 
-   ptr = gst_data + info->plane_offset[0];
+   ptr = info->plane_ptr[0];
    jump = info->stride[0];
    for (i = 0; i < rh; i++, ptr += jump) rows[i] = ptr;
 
-   ptr = gst_data + info->plane_offset[1];
+   ptr = info->plane_ptr[1];
    jump = info->stride[1];
    for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 
-   ptr = gst_data + info->plane_offset[2];
+   ptr = info->plane_ptr[2];
    jump = info->stride[2];
    for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 }
 
 static void
-_evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
+_evas_video_yv12(unsigned char *evas_data,
+                 const unsigned char *gst_data EINA_UNUSED,
+                 unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED,
+                 unsigned int output_height,
+                 Emotion_Convert_Info *info)
 {
    const unsigned char **rows, *ptr;
    unsigned int i, j, jump, rh;
 
+   if (info->bpp[0] != 1) ERR("Plane 0 bpp != 1");
+   if (info->bpp[1] != 1) ERR("Plane 1 bpp != 1");
+   if (info->bpp[2] != 1) ERR("Plane 2 bpp != 1");
+
    rh = output_height;
    rows = (const unsigned char **)evas_data;
 
-   ptr = gst_data + info->plane_offset[0];
+   ptr = info->plane_ptr[0];
    jump = info->stride[0];
    for (i = 0; i < rh; i++, ptr += jump) rows[i] = ptr;
 
-   ptr = gst_data + info->plane_offset[2];
+   ptr = info->plane_ptr[1];
    jump = info->stride[1];
    for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 
-   ptr = gst_data + info->plane_offset[1];
+   ptr = info->plane_ptr[2];
    jump = info->stride[2];
    for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 }
 
 static void
-_evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info EINA_UNUSED)
+_evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data,
+                 unsigned int w, unsigned int h EINA_UNUSED,
+                 unsigned int output_height,
+                 Emotion_Convert_Info *info EINA_UNUSED)
 {
    const unsigned char **rows;
    unsigned int i, stride;
@@ -124,19 +151,26 @@ _evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_nv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED, unsigned int output_height, Emotion_Convert_Info *info)
+_evas_video_nv12(unsigned char *evas_data,
+                 const unsigned char *gst_data EINA_UNUSED,
+                 unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED,
+                 unsigned int output_height, Emotion_Convert_Info *info)
 {
    const unsigned char **rows, *ptr;
    unsigned int i, j, jump, rh;
 
+   if (info->bpp[0] != 1) ERR("Plane 0 bpp != 1");
+   // XXX: not sure this should be 1 but 2 bytes per pixel... no?
+   //if (info->bpp[1] != 1) ERR("Plane 1 bpp != 1");
+
    rh = output_height;
    rows = (const unsigned char **)evas_data;
 
-   ptr = gst_data + info->plane_offset[0];
+   ptr = info->plane_ptr[0];
    jump = info->stride[0];
    for (i = 0; i < rh; i++, ptr += jump) rows[i] = ptr;
 
-   ptr = gst_data + info->plane_offset[1];
+   ptr = info->plane_ptr[1];
    jump = info->stride[1];
    for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 }

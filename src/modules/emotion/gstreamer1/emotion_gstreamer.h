@@ -39,8 +39,9 @@ typedef struct _Emotion_Gstreamer_Message Emotion_Gstreamer_Message;
 
 struct _Emotion_Convert_Info
 {
+   unsigned int bpp[4];
    unsigned int stride[4];
-   unsigned int plane_offset[4];
+   unsigned char *plane_ptr[4];
 };
 
 struct _Emotion_Gstreamer_Metadata
@@ -121,6 +122,8 @@ struct _EmotionVideoSinkPrivate {
    GstBuffer        *last_buffer;
    GstMapInfo        map_info;
 
+   GstVideoFrame last_vframe;
+
    int frames;
    int flapse;
    double rtime;
@@ -136,18 +139,19 @@ struct _EmotionVideoSinkPrivate {
    // Protected by the buffer mutex
    Eina_Bool unlocked : 1;
    Eina_Bool mapped : 1;
+   Eina_Bool vfmapped : 1;
 };
 
 struct _Emotion_Gstreamer_Buffer
 {
+   GstVideoFrame vframe;
    EmotionVideoSink *sink;
-
    GstBuffer *frame;
-
    GstVideoInfo info;
+   Evas_Video_Convert_Cb func;
    Evas_Colorspace eformat;
    int eheight;
-   Evas_Video_Convert_Cb func;
+   Eina_Bool vfmapped : 1;
 };
 
 struct _Emotion_Gstreamer_Message
