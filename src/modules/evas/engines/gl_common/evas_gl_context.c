@@ -308,12 +308,11 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn EIN
    FINDSYM(glsym_glRenderbufferStorageMultisample, "glRenderbufferStorageMultisample", NULL, glsym_func_void);
 
 #ifdef GL_GLES
-   Eina_Bool dl_fallback = EINA_FALSE;
 #define FINDSYMN(dst, sym, ext, typ) do { \
    if (!dst) { \
       if (_has_extn(ext, extsn) && GetProcAddress) \
         dst = (typ) GetProcAddress(sym); \
-      if ((!dst) && dl_fallback) \
+      if (!dst) \
         dst = (typ) dlsym(RTLD_DEFAULT, sym); \
    }} while (0)
 
@@ -323,38 +322,19 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn EIN
 // wrong as this is not x11 (output) layer specific like the native surface
 // stuff. this is generic zero-copy textures for gl
 
-   if (extsn)
+   FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
+   FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image", secsym_func_void_ptr);
+   if (eglsym_eglCreateImageKHR)
      {
-        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
-        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image", secsym_func_void_ptr);
-        if (eglsym_eglCreateImageKHR)
-          {
-             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
-             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image", secsym_func_uint);
-          }
-        else
-          {
-             FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", "EGL_KHR_get_all_proc_addresses", secsym_func_void_ptr);
-             FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", "EGL_KHR_client_get_all_proc_addresses", secsym_func_void_ptr);
-             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", "EGL_KHR_get_all_proc_addresses", secsym_func_uint);
-             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", "EGL_KHR_client_get_all_proc_addresses", secsym_func_uint);
-          }
+        FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
+        FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image", secsym_func_uint);
      }
    else
      {
-        // FIXME: this fl_fallback is a hack for wayland gl_drm to work
-        // .... :(
-        dl_fallback = EINA_TRUE;
-        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", NULL, secsym_func_void_ptr);
-        if (eglsym_eglCreateImageKHR)
-          {
-             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", NULL, secsym_func_uint);
-          }
-        else
-          {
-             FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", NULL, secsym_func_void_ptr);
-             FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", NULL, secsym_func_uint);
-          }
+        FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", "EGL_KHR_get_all_proc_addresses", secsym_func_void_ptr);
+        FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", "EGL_KHR_client_get_all_proc_addresses", secsym_func_void_ptr);
+        FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", "EGL_KHR_get_all_proc_addresses", secsym_func_uint);
+        FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", "EGL_KHR_client_get_all_proc_addresses", secsym_func_uint);
      }
 
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
