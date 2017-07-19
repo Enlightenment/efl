@@ -356,6 +356,8 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         goto err;
      }
 
+   eng_gl_symbols(ob->egl.disp);
+
    ob->gl_context = glsym_evas_gl_common_context_new();
    if (!ob->gl_context) goto err;
 
