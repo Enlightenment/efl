@@ -21,12 +21,13 @@ struct _Efl_Ui_List_Item
    Elm_Layout           *layout;
    Efl_Future           *future;
    unsigned int         index;
-   Evas_Coord           x, y, minw, minh;
-   double               h, v, wx, wy;
+   Evas_Coord           x, y, minw, minh, w, h;
+   // double               h, v, wx, wy;
+   double               wx, wy;
+   Ecore_Timer         *long_timer;
    Eina_Bool            down: 1;
    Eina_Bool            selected: 1;
    Eina_Bool            longpressed : 1;
-   Ecore_Timer         *long_timer;
 };
 
 typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
@@ -38,9 +39,6 @@ struct _Efl_Ui_List_Data
    Efl_Model                    *model;
 
    Efl_Orient                   orient;
-   Eina_Bool                    homogeneous : 1;
-   Eina_Bool                    recalc : 1;
-   Eina_Bool                    on_hold : 1;
 
    struct {
       double                    h, v;
@@ -56,26 +54,36 @@ struct _Efl_Ui_List_Data
    } weight;
 
    struct {
-      Evas_Coord                x, y, w, h;
+      Evas_Coord                w, h;
       int                       start;
       int                       slice;
    } realized;
 
    struct {
-      Evas_Coord                x, y, diff;
+      Evas_Coord                x, y, move_diff;
       Evas_Object               *obj;
    } pan;
 
    Eina_List                    *selected;
-   Eina_Array                   *items;
+   struct {
+     Eina_Inarray               array;
+   } items;
    Eina_Stringshare             *style;
    Elm_Object_Select_Mode       select_mode;
    Elm_List_Mode                mode;
 
    Evas_Coord                   minw, minh;
    Efl_Ui_List_Item             *focused;
-   int                          avit, avsom, item_count;
+   int                          /*average_item_size, avsom, */item_count;
    Efl_Future                   *future;
+   struct {
+     int slice_start;
+     int slice;
+   } outstanding_slice;
+
+   Eina_Bool                    homogeneous : 1;
+   Eina_Bool                    recalc : 1;
+   Eina_Bool                    on_hold : 1;
 };
 
 typedef struct _Efl_Ui_List_Pan_Data Efl_Ui_List_Pan_Data;
