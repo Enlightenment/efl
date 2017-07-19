@@ -80,7 +80,6 @@ unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, void *b, EGLint c, E
 unsigned int (*glsym_eglSetDamageRegionKHR)(EGLDisplay a, EGLSurface b, EGLint *c, EGLint d) = NULL;
 
 /* local function prototypes */
-static void gl_symbols(void);
 static void gl_extn_veto(Render_Engine *re);
 
 static void *evgl_eng_display_get(void *data);
@@ -148,12 +147,10 @@ eng_gbm_shutdown(Evas_Engine_Info_GL_Drm *info)
    return EINA_TRUE;
 }
 
-/* local functions */
 static void
-gl_symbols(void)
+symbols(void)
 {
    static Eina_Bool done = EINA_FALSE;
-   const char *exts = NULL;
 
    if (done) return;
 
@@ -188,12 +185,21 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_common_eglCreateImage);
    LINK2GENERIC(evas_gl_common_eglDestroyImage);
 
+   done = EINA_TRUE;
+}
+
+void
+eng_gl_symbols(EGLDisplay edsp)
+{
+   static Eina_Bool done = EINA_FALSE;
+   const char *exts = NULL;
+
+   if (done) return;
+
 #define FINDSYM(dst, sym, typ) \
    if (!dst) dst = (typ)glsym_eglGetProcAddress(sym);
 
-   // Find EGL extensions
-   // FIXME: whgen above eglGetDisplay() is fixed... fix the below...
-//   exts = eglQueryString(ob->egl_disp, EGL_EXTENSIONS);
+   exts = eglQueryString(edsp, EGL_EXTENSIONS);
    glsym_evas_gl_symbols(glsym_eglGetProcAddress, exts);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES,
@@ -1518,7 +1524,7 @@ module_open(Evas_Module *em)
     * implicit env set (EGL_PLATFORM=drm) prevent that. */
    setenv("EGL_PLATFORM", "drm", 1);
 
-   gl_symbols();
+   symbols();
 
    /* now advertise out own api */
    em->functions = (void *)(&func);
