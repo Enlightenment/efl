@@ -90,10 +90,9 @@ eng_get_ob(Render_Engine *re)
 }
 
 static void
-gl_symbols(void)
+symbols(void)
 {
    static Eina_Bool done = EINA_FALSE;
-   const char *exts = NULL;
 
    if (done) return;
 
@@ -137,6 +136,16 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_common_eglCreateImage);
    LINK2GENERIC(evas_gl_common_eglDestroyImage);
 
+   done = EINA_TRUE;
+}
+
+void
+eng_gl_symbols(EGLDisplay edsp)
+{
+   static Eina_Bool done = EINA_FALSE;
+   const char *exts = NULL;
+
+   if (done) return;
 #define FINDSYM(dst, sym, typ) \
    if (glsym_eglGetProcAddress) { \
       if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
@@ -146,8 +155,7 @@ gl_symbols(void)
 
    // Find EGL extensions
    // FIXME: whgen above eglGetDisplay() is fixed... fix the below...
-//   exts = eglQueryString(ob->egl_disp, EGL_EXTENSIONS);
-
+   exts = eglQueryString(edsp, EGL_EXTENSIONS);
    // Find GL extensions
    glsym_evas_gl_symbols(glsym_eglGetProcAddress, exts);
 
@@ -1455,7 +1463,7 @@ module_open(Evas_Module *em)
    ORD(image_native_init);
    ORD(image_native_shutdown);
 
-   gl_symbols();
+   symbols();
 
    /* advertise out which functions we support */
    em->functions = (void *)(&func);

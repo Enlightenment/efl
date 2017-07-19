@@ -168,6 +168,8 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
         return NULL;
      }
 
+   eng_gl_symbols(gw->egl_disp);
+
    if (!(gw->gl_context = glsym_evas_gl_common_context_new()))
      {
         eng_window_free(gw);
