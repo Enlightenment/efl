@@ -1511,6 +1511,13 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         efl_del(o->file_obj);
         o->file_obj = NULL;
      }
+   if (o->pixels->images_to_free)
+     {
+        eina_hash_free(o->pixels->images_to_free);
+        EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+          pixi_write->images_to_free = NULL;
+        EINA_COW_PIXEL_WRITE_END(o, pixi_write);
+     }
    if (o->pixels->pixel_updates)
      {
        EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
