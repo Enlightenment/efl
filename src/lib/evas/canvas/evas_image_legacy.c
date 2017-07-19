@@ -14,6 +14,14 @@
    EVAS_IMAGE_API(_o, __VA_ARGS__); \
    } while (0)
 
+typedef struct _Evas_Image_Legacy_Pixels_Entry Evas_Image_Legacy_Pixels_Entry;
+
+struct _Evas_Image_Legacy_Pixels_Entry
+{
+   Eo    *object;
+   void  *image;
+};
+
 EAPI Evas_Object *
 evas_object_image_add(Evas *eo_e)
 {
@@ -552,7 +560,7 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
 
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   void *p_data;
+   void *p_data, *pixels;
    Eina_Bool resize_call = EINA_FALSE;
 
 
@@ -563,6 +571,13 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
    p_data = o->engine_data;
    if (data)
      {
+        // r/o FBO data_get: only free the image, don't update pixels
+        if ((pixels = eina_hash_find(o->pixels->images_to_free, data)) != NULL)
+          {
+             eina_hash_del(o->pixels->images_to_free, data, pixels);
+             return;
+          }
+
         if (o->engine_data)
           {
              o->engine_data = ENFN->image_data_put(ENDT, o->engine_data, data);
@@ -640,14 +655,28 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
    if (resize_call) evas_object_inform_call_image_resize(eo_obj);
 }
 
+static void
+_image_to_free_del_cb(void *data)
+{
+   Evas_Image_Legacy_Pixels_Entry *px_entry = data;
+   Evas_Object_Protected_Data *obj;
+
+   obj = efl_data_scope_safe_get(px_entry->object, EFL_CANVAS_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   ENFN->image_free(ENDT, px_entry->image);
+   free(px_entry);
+}
+
 EAPI void*
 evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
 {
    EVAS_IMAGE_API(eo_obj, NULL);
 
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   Evas_Image_Legacy_Pixels_Entry *px_entry = NULL;
+   Eina_Bool tofree = 0;
+   void *pixels = NULL;
    int stride = 0;
-   void *pixels;
    DATA32 *data;
 
    if (!o->engine_data) return NULL;
@@ -662,25 +691,48 @@ evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
      ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
    if (ENFN->image_content_hint_set)
      ENFN->image_content_hint_set(ENDT, o->engine_data, o->content_hint);
-   pixels = ENFN->image_data_get(ENDT, o->engine_data, for_writing, &data, &o->load_error, NULL);
+   pixels = ENFN->image_data_get(ENDT, o->engine_data, for_writing, &data, &o->load_error, &tofree);
 
    /* if we fail to get engine_data, we have to return NULL */
    if (!pixels) return NULL;
 
-   o->engine_data = pixels;
-   if (ENFN->image_stride_get)
-     ENFN->image_stride_get(ENDT, o->engine_data, &stride);
-   else
-     stride = o->cur->image.w * 4;
-
-   if (o->cur->image.stride != stride)
+   if (!tofree)
      {
-        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-          state_write->image.stride = stride;
-        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+        o->engine_data = pixels;
+        if (ENFN->image_stride_get)
+          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+        else
+           stride = o->cur->image.w * 4;
+
+        if (o->cur->image.stride != stride)
+          {
+             EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+                   state_write->image.stride = stride;
+             EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+          }
+
+        o->pixels_checked_out++;
+     }
+   else
+     {
+        Eina_Hash *hash = o->pixels->images_to_free;
+
+        if (!hash)
+          {
+             hash = eina_hash_pointer_new(_image_to_free_del_cb);
+             if (!hash) goto error;
+             EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
+               pixi_write->images_to_free = hash;
+             EINA_COW_PIXEL_WRITE_END(o, pixi_write);
+          }
+
+        px_entry = calloc(1, sizeof(*px_entry));
+        px_entry->object = (Eo *) eo_obj;
+        px_entry->image = pixels;
+        if (!eina_hash_add(hash, data, px_entry))
+          goto error;
      }
 
-   o->pixels_checked_out++;
    if (for_writing)
      {
         o->written = EINA_TRUE;
@@ -688,6 +740,12 @@ evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
      }
 
    return data;
+
+error:
+   free(px_entry);
+   if (tofree && pixels)
+     ENFN->image_free(ENDT, pixels);
+   return NULL;
 }
 
 EAPI void

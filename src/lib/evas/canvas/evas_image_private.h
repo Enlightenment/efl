@@ -61,6 +61,7 @@ struct _Evas_Object_Image_Pixels
       Evas_Object_Image_Pixels_Get_Cb  get_pixels;
       void                            *get_pixels_data;
    } func;
+   Eina_Hash       *images_to_free; /* pixel void* -> Evas_Image_Legacy_Pixels_Entry */
 
    Evas_Video_Surface video;
    unsigned int video_caps;
