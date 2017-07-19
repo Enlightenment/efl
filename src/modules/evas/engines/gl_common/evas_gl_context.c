@@ -161,13 +161,15 @@ evas_gl_common_eglDestroyImage(EGLDisplay dpy, void *im)
 
 /* FIXME: return error if a required symbol was not found */
 EAPI void
-evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn EINA_UNUSED)
+evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
 {
    int failed = 0, num = 0;
    const char *exts = NULL;
 
    static int done = 0;
    if (done) return;
+
+   if (!extsn) ERR("GL extension string was empty");
 
    /* For all extension functions, we need to match with the extension itself
     * since GetProcAddress() can return a non-NULL value even when the function
