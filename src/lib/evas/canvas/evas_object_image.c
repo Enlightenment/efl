@@ -88,7 +88,7 @@ static const Evas_Object_Image_Load_Opts default_load_opts = {
 };
 
 static const Evas_Object_Image_Pixels default_pixels = {
-  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, ~0x0
+  NULL, { NULL, NULL }, NULL, { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, ~0x0
 };
 
 static const Evas_Object_Image_State default_state = {
