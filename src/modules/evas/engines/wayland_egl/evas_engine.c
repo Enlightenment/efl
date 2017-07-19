@@ -32,8 +32,6 @@ struct _Render_Engine
 };
 
 /* local function prototypes */
-typedef void (*_eng_fn) (void);
-typedef _eng_fn (*glsym_func_eng_fn) ();
 typedef void (*glsym_func_void) ();
 typedef void *(*glsym_func_void_ptr) ();
 typedef int (*glsym_func_int) ();
@@ -66,7 +64,7 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
-_eng_fn (*glsym_eglGetProcAddress) (const char *a) = NULL;
+void * (*glsym_eglGetProcAddress) (const char *a) = NULL;
 EGLImageKHR (*glsym_evas_gl_common_eglCreateImage)(EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
 int (*glsym_evas_gl_common_eglDestroyImage) (EGLDisplay a, void *b) = NULL;
 void (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
@@ -151,7 +149,7 @@ gl_symbols(void)
 //   exts = eglQueryString(ob->egl_disp, EGL_EXTENSIONS);
 
    // Find GL extensions
-   glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress, exts);
+   glsym_evas_gl_symbols(glsym_eglGetProcAddress, exts);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES",
            glsym_func_void);
