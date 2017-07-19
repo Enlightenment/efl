@@ -322,19 +322,14 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn EIN
 // wrong as this is not x11 (output) layer specific like the native surface
 // stuff. this is generic zero-copy textures for gl
 
-   FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
-   FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image", secsym_func_void_ptr);
-   if (eglsym_eglCreateImageKHR)
+   FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", NULL, secsym_func_void_ptr);
+   FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", NULL, secsym_func_uint);
+   if (!eglsym_eglCreateImage || !secsym_eglDestroyImage)
      {
+        eglsym_eglCreateImage = NULL;
+        secsym_eglDestroyImage = NULL;
+        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
         FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
-        FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image", secsym_func_uint);
-     }
-   else
-     {
-        FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", "EGL_KHR_get_all_proc_addresses", secsym_func_void_ptr);
-        FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", "EGL_KHR_client_get_all_proc_addresses", secsym_func_void_ptr);
-        FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", "EGL_KHR_get_all_proc_addresses", secsym_func_uint);
-        FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", "EGL_KHR_client_get_all_proc_addresses", secsym_func_uint);
      }
 
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
