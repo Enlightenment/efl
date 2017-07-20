@@ -287,7 +287,6 @@ _elm_flipselector_item_efl_object_destructor(Eo *eo_item, Elm_Flipselector_Item_
         eina_stringshare_del(item->label);
         sd->items = eina_list_remove(sd->items, eo_item);
         efl_destructor(efl_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
-
         return;
      }
 
@@ -302,7 +301,6 @@ _elm_flipselector_item_efl_object_destructor(Eo *eo_item, Elm_Flipselector_Item_
 
    eina_stringshare_del(item->label);
    sd->items = eina_list_remove(sd->items, eo_item);
-   efl_destructor(efl_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
 
    _sentinel_eval(sd);
 
@@ -311,6 +309,8 @@ _elm_flipselector_item_efl_object_destructor(Eo *eo_item, Elm_Flipselector_Item_
         if (sd->view_update) ecore_job_del(sd->view_update);
         sd->view_update = ecore_job_add(_view_update, WIDGET(item));
      }
+
+   efl_destructor(efl_super(eo_item, ELM_FLIPSELECTOR_ITEM_CLASS));
 }
 
 EOLIAN static Eo *
