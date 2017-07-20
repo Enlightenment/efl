@@ -1725,6 +1725,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    Evas_Object_Protected_Data *obj2;
    Eina_Bool clean_them = EINA_FALSE;
    Eina_Bool proxy_src_clip = EINA_TRUE;
+   Eina_Bool was_pre_render_done = obj->pre_render_done;
    void *ctx;
 
    if (!proxy_render_data)
@@ -1876,12 +1877,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
         sw = obj->cur->geometry.w;
         sh = obj->cur->geometry.h;
         RD(level, "  surf size: %ix%i\n", sw, sh);
-        if ((sw <= 0) || (sh <= 0))
-          {
-             RD(level, "}\n");
-             eina_evlog("-render_object", eo_obj, 0.0, NULL);
-             return clean_them;
-          }
+        if ((sw <= 0) || (sh <= 0)) goto end;
 
         changed = evas_object_map_update(eo_obj, off_x, off_y, sw, sh, sw, sh);
 
@@ -2298,8 +2294,10 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 on_empty_clip:
         ENFN->context_free(ENDT, ctx);
      }
-   RD(level, "}\n");
 
+end:
+   RD(level, "}\n");
+   obj->pre_render_done = was_pre_render_done;
    eina_evlog("-render_object", eo_obj, 0.0, NULL);
    return clean_them;
 }
