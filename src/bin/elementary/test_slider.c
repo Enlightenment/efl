@@ -79,6 +79,11 @@ _change_cb2(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
          elm_slider_value_set(obj, 80.0);
          _popup_add(api);
     }
+    else if (api->popup)
+    {
+         evas_object_del(api->popup);
+         api->popup = NULL;
+    }
 }
 
 void
