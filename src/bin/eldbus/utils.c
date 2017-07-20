@@ -37,9 +37,10 @@ file_write(const char *file_name, const char *buffer)
    const char *filename = file_name;
    Eina_Strbuf *fname = NULL;
 
+   fname = eina_strbuf_new();
+
    if (output_dir)
      {
-        fname = eina_strbuf_new();
         eina_strbuf_append_printf(fname, "%s/%s", output_dir, file_name);
         filename = eina_strbuf_string_get(fname);
      }
@@ -47,6 +48,7 @@ file_write(const char *file_name, const char *buffer)
    if (!file_handler)
      {
         printf("Error to write file: %s\n", file_name);
+        eina_strbuf_free(fname);
         return EINA_FALSE;
      }
 
