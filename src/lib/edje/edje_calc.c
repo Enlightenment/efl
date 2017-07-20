@@ -1075,6 +1075,7 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
    Evas_Coord ex = 0, ey = 0;
    /* check whether this part is dragable at all */
    if (!ep->drag) return;
+   if (ep->drag->down.count > 0) return;
 
    /* instead of checking for equality, we really should check that
     * the difference is greater than foo, but I have no idea what
@@ -1085,8 +1086,6 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
 
    if (NEQ(ep->drag->x, x) || ep->drag->tmp.x)
      {
-        if (ep->drag->down.count > 0)
-          ep->drag->down.x = ex;
         ep->drag->x = x;
         ep->drag->tmp.x = 0;
         ep->drag->need_reset = 0;
@@ -1096,8 +1095,6 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
 
    if (NEQ(ep->drag->y, y) || ep->drag->tmp.y)
      {
-        if (ep->drag->down.count > 0)
-          ep->drag->down.y = ey;
         ep->drag->y = y;
         ep->drag->tmp.y = 0;
         ep->drag->need_reset = 0;
