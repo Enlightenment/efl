@@ -766,9 +766,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          params {
             manager : Efl.Ui.Focus.Manager; [[The manager to register against]]
             logical : Efl.Ui.Focus.Object; [[The logical parent to use]]
-            full : bool; [[flag if this should register full or just logical]]
+            logical_flag : ptr(bool); [[reference to the flag indicating if the should be logical or not change this flag to the value you have it registered]]
          }
-         return : bool; [[return if it registered fully or not]]
+         return : bool; [[return $true or $false if the registration was successfull or not]]
       }
       focus_manager_factory {
          [[If the widget needs a manager, this function is called
