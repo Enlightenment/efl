@@ -876,7 +876,7 @@ eng_image_data_get(void *engine, void *image, int to_write, DATA32 **image_data,
 
    if (error != EVAS_LOAD_ERROR_NONE)
      {
-        if (tofree)
+        if (tofree && !to_write)
           goto rotate_image;
      }
 
