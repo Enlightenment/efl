@@ -114,19 +114,10 @@ Features:
    * efl_wl: a multiseat wayland compositor in an evas smart object
    * ecore-x - add ecore x dpms force api
    * Add ecore_win32_cursor_show() API and ecore_evas_win32_cursor_(un)set() functions
+   * eldbus: support output dir in codegen
 
 Fixes:
 
-   * ecore-evas-wayland: Fix setting rotation during async render
-   * ecore-evas-drm: Fix setting rotation during async render
-   * evas textblock: keep previous size when the calculation is skipped
-   * Edje calc: Fix textblock size calculation logic
-   * ecore-wl2: Fix setting opaque region on a window
-   * ecore-wl2: Fix setting input region on a window
-   * elm_code: Fix Coverity issues. (CID1356612, CID1368489, CID1371128, CID1371123, CID1368335, CID1371124, CID1371126)
-   * elm_code: Another Coverity fix, better this time. (CID1371322)
-   * Canvas text: fix clearing existing style (T5187)
-   * eina utils: fix build without getpwent.
    * edje: Fix a major issue with recalc loop (T4909)
    * elementary gengrid: fix for working item reorder mode correctly
    * edje_edit: fix scripts compilation
@@ -390,6 +381,22 @@ Fixes:
    * popup: fix sizing eval logic when scrollable set TRUE
    * evas font: append global font path when Evas initializes Fontconfig
    * elm: Fix fileselector button "hidden files" (T5465)
+   * evas mouse in/out/move event fix to remove "invalid move" (T5582)
+   * edje: give proper width to entry's cursor according to its theme
+   * ecore: Fix coverity resource leak (CID1377544)
+   * elput: Fix resource leak (CID1377539)
+   * efl_wl: Fix resource leak (CID1377537)
+   * edje_cc: Add copy item for proxy part
+   * eina: fix eina_tiler_equal to not always return true
+   * evas mesh save - use alloca for tmp strings instead of heap
+   * efreet cache create binary - check realloc results and handle failure
+   * efreet icon cache create bin - check realloc results and handle
+   * evas gl - fix compositing/native surface with egl/gles after glvnd
+   * eina debug bt sig handle - fix build on osx for clockid_t
+   * eolian: always generate a class initializer (T5736)
+   * emtoion gst1 - workaround gst break between 1.10 and 1.12
+   * multibuttonentry: Fix item resource clean up logic.
+   * elm_widget: do not check for the visibility
 
 Changes since 1.18.0:
 ---------------------
