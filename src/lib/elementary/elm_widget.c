@@ -276,15 +276,13 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 EOLIAN static Eina_Bool
 _elm_widget_focus_register(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
   Efl_Ui_Focus_Manager *manager,
-  Efl_Ui_Focus_Object *logical, Eina_Bool full)
+  Efl_Ui_Focus_Object *logical, Eina_Bool *logical_flag)
 {
 
-   if (full)
-     efl_ui_focus_manager_register(manager, obj, logical, NULL);
+   if (!*logical_flag)
+     return efl_ui_focus_manager_register(manager, obj, logical, NULL);
    else
-     efl_ui_focus_manager_register_logical(manager, obj, logical, NULL);
-
-   return full;
+     return efl_ui_focus_manager_register_logical(manager, obj, logical, NULL);
 }
 
 
@@ -344,8 +342,13 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 
              if (!pd->logical.parent) return;
 
-             pd->focus.logical =
-                !elm_obj_widget_focus_register(obj, pd->focus.manager, pd->logical.parent, want_full);
+             pd->focus.logical = !want_full;
+
+             if (!elm_obj_widget_focus_register(obj, pd->focus.manager,
+                  pd->logical.parent, &pd->focus.logical))
+               {
+                  pd->focus.manager = NULL;
+               }
           }
      }
    else if (!should && pd->focus.manager)
