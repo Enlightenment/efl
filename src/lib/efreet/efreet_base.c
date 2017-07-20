@@ -181,10 +181,8 @@ efreet_pictures_dir_get(void)
 EAPI const char *
 efreet_videos_dir_get(void)
 {
-   printf("0: %s\n", xdg_videos_dir);
     if (xdg_videos_dir) return xdg_videos_dir;
     xdg_videos_dir = efreet_user_dir_get("XDG_VIDEOS_DIR", _("Videos"));
-   printf("1: %s\n", xdg_videos_dir);
     return xdg_videos_dir;
 }
 
