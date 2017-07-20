@@ -6214,15 +6214,13 @@ _elm_widget_efl_object_finalize(Eo *obj, Elm_Widget_Smart_Data *pd)
 
 
 EOLIAN static void
-_elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+_elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
-   sd->on_destroy = EINA_TRUE;
-   efl_destructor(efl_super(obj, ELM_WIDGET_CLASS));
-   sd->on_destroy = EINA_FALSE;
-
    if (sd->manager.provider)
-     efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
-   sd->manager.provider = NULL;
+     {
+        efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
+        sd->manager.provider = NULL;
+     }
 
    elm_interface_atspi_accessible_removed(obj);
    if (sd->logical.parent)
@@ -6230,6 +6228,10 @@ _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED
         efl_weak_unref(&sd->logical.parent);
         sd->logical.parent = NULL;
      }
+
+   sd->on_destroy = EINA_TRUE;
+   efl_destructor(efl_super(obj, ELM_WIDGET_CLASS));
+   sd->on_destroy = EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
