@@ -277,6 +277,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    Evas_Post_Render_Job *job;
    Evas_Layer *lay;
    Efl_Canvas_Output *evo;
+   unsigned int prev_zombie_count = UINT_MAX;
    int i;
    Eina_Bool del;
 
@@ -295,13 +296,14 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
    e->cleanup = 1;
    while (del)
      {
+        Eina_Bool detach_zombies = EINA_FALSE;
+        Evas_Object_Protected_Data *o;
+        Eina_List *unrefs = NULL;
+        Eo *eo_obj;
+
         del = EINA_FALSE;
         EINA_INLIST_FOREACH(e->layers, lay)
           {
-             Eo *eo_obj;
-             Evas_Object_Protected_Data *o;
-             Eina_List *unrefs = NULL;
-
              evas_layer_pre_free(lay);
 
              EINA_INLIST_FOREACH(lay->objects, o)
@@ -313,21 +315,43 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
                             ERR("obj(%p, %s) ref count(%d) is bigger than 0. This object couldn't be deleted", o, o->type, efl_ref_get(o->object));
                             continue;
                          }
-                       else
-                         {
-                            unrefs = eina_list_append(unrefs, o->object);
-                         }
+                       unrefs = eina_list_append(unrefs, o->object);
                        del = EINA_TRUE;
                     }
                }
-             EINA_LIST_FREE(unrefs, eo_obj)
-               {
-                  ERR("Killing Zombie Object [%p] ref=%i:%i\n", eo_obj, efl_ref_get(eo_obj), ___efl_ref2_get(eo_obj));
-                  ___efl_ref2_reset(eo_obj);
-                  while (efl_ref_get(eo_obj) > 1) efl_unref(eo_obj);
-                  while (efl_ref_get(eo_obj) < 1) efl_ref(eo_obj);
-                  efl_del(eo_obj);
-               }
+          }
+
+        if (eina_list_count(unrefs) >= prev_zombie_count)
+          detach_zombies = EINA_TRUE;
+        prev_zombie_count = eina_list_count(unrefs);
+
+        EINA_LIST_FREE(unrefs, eo_obj)
+          {
+             ERR("Killing Zombie Object [%s@%p]. Refs: %i:%i",
+                 efl_class_name_get(eo_obj), eo_obj, efl_ref_get(eo_obj), ___efl_ref2_get(eo_obj));
+             ___efl_ref2_reset(eo_obj);
+             while (efl_ref_get(eo_obj) > 1) efl_unref(eo_obj);
+             while (efl_ref_get(eo_obj) < 1) efl_ref(eo_obj);
+             efl_del(eo_obj);
+
+             if (!detach_zombies) continue;
+
+             EINA_INLIST_FOREACH(e->layers, lay)
+               EINA_INLIST_FOREACH(lay->objects, o)
+                 if (o && (o->object == eo_obj))
+                   {
+                      ERR("Zombie Object [%s@%p] could not be removed "
+                          "from the list of objects. Maybe this object "
+                          "was deleted but the call to efl_destructor() "
+                          "was not propagated to all the parent classes? "
+                          "Forcibly removing it. This may leak! Refs: %i:%i",
+                          efl_class_name_get(eo_obj), eo_obj, efl_ref_get(eo_obj), ___efl_ref2_get(eo_obj));
+                      lay->objects = (Evas_Object_Protected_Data *)
+                            eina_inlist_remove(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(o));
+                      goto next_zombie;
+                   }
+next_zombie:
+             continue;
           }
      }
    EINA_INLIST_FOREACH(e->layers, lay)
