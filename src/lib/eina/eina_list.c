@@ -473,6 +473,8 @@ eina_list_sort_merge(Eina_List *a, Eina_List *b, Eina_Compare_Cb func)
  *                                 Global                                     *
  *============================================================================*/
 
+static int _eina_list_init = 0;
+
 /**
  * @internal
  * @brief Initialize the list module.
@@ -492,6 +494,9 @@ Eina_Bool
 eina_list_init(void)
 {
    const char *choice, *tmp;
+
+   if ((_eina_list_init++) > 0)
+     return _eina_list_init;
 
    _eina_list_log_dom = eina_log_domain_register("eina_list",
                                                  EINA_LOG_COLOR_DEFAULT);
@@ -557,9 +562,17 @@ on_init_fail:
 Eina_Bool
 eina_list_shutdown(void)
 {
+   if ((--_eina_list_init) != 0)
+     {
+        if (_eina_list_init < 0) _eina_list_init = 0;
+        return _eina_list_init;
+     }
+
    eina_freeq_clear(eina_freeq_main_get());
    eina_mempool_del(_eina_list_accounting_mp);
    eina_mempool_del(_eina_list_mp);
+   _eina_list_accounting_mp = NULL;
+   _eina_list_mp = NULL;
 
    eina_log_domain_unregister(_eina_list_log_dom);
    _eina_list_log_dom = -1;
