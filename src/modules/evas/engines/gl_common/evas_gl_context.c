@@ -324,15 +324,29 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
 // wrong as this is not x11 (output) layer specific like the native surface
 // stuff. this is generic zero-copy textures for gl
 
-   FINDSYMN(eglsym_eglCreateImage, "eglCreateImage", NULL, secsym_func_void_ptr);
-   FINDSYMN(secsym_eglDestroyImage, "eglDestroyImage", NULL, secsym_func_uint);
-   if (!eglsym_eglCreateImage || !secsym_eglDestroyImage)
-     {
-        eglsym_eglCreateImage = NULL;
-        secsym_eglDestroyImage = NULL;
-        FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
-        FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
-     }
+   {
+      const char *egl_version = eglQueryString(eglGetCurrentDisplay(), EGL_VERSION);
+      int vmin = 1, vmaj = 0;
+
+      if (!egl_version || (sscanf(egl_version, "%d.%d", &vmaj, &vmin) != 2))
+        vmaj = 0;
+
+      // Verify that EGL is >= 1.5 before looking up core function
+      if ((vmaj > 1) || (vmaj == 1 && vmin >= 5))
+        {
+           eglsym_eglCreateImage = dlsym(RTLD_DEFAULT, "eglCreateImage");
+           secsym_eglDestroyImage = dlsym(RTLD_DEFAULT, "eglDestroyImage");
+        }
+
+      // For EGL <= 1.4 only the KHR extension exists: "EGL_KHR_image_base"
+      if (!eglsym_eglCreateImage || !secsym_eglDestroyImage)
+        {
+           eglsym_eglCreateImage = NULL;
+           secsym_eglDestroyImage = NULL;
+           FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
+           FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
+        }
+   }
 
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_geometry_shader4", glsym_func_void);
