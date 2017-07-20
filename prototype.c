@@ -477,8 +477,44 @@ _text_on_path_draw(Efl_Ui_TextPath_Data *pd)
 }
 
 static void
-_text_on_line_draw(Efl_Ui_TextPath_Data *pd, double px0, double py0, double px1, double py1)
+_text_on_line_draw(Efl_Ui_TextPath_Data *pd, double x1, double y1, double x2, double y2)
 {
+   //test: line
+   Eo *line = evas_object_line_add(evas_object_evas_get(pd->content));
+   efl_gfx_size_set(line, 500, 500);
+   efl_gfx_color_set(line, 255, 255, 0, 255);
+   efl_gfx_visible_set(line, EINA_TRUE);
+   evas_object_line_xy_set(line, x1, y1, x2, y2);
+   //
+   Evas_Coord x, y, w, h;
+   efl_gfx_geometry_get(pd->content, &x, &y, &w, &h);
+   ERR("content goe: %d %d %d %d", x, y, w, h);
+
+   double len, sina, cosa;
+   len = sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+   sina = (y2 - y1) / len;
+   cosa = (x2 - x1) / len;
+
+   h = h / 2;
+   Evas_Map *map = evas_map_new(4);
+   evas_map_point_coord_set(map, 3, x1 - h * sina, y1 + h * cosa, 0);
+   evas_map_point_coord_set(map, 2, x2 - h * sina, y2 + h * cosa, 0);
+   evas_map_point_coord_set(map, 1, x2 + h * sina, y2 - h * cosa, 0);
+   evas_map_point_coord_set(map, 0, x1 + h * sina, y1 - h * cosa, 0);
+
+   h *= 2;
+   w = len < w ? len : w;
+   evas_map_point_image_uv_set(map, 0, 0, 0);
+   evas_map_point_image_uv_set(map, 1, w, 0);
+   evas_map_point_image_uv_set(map, 2, w, h);
+   evas_map_point_image_uv_set(map, 3, 0, h);
+
+   Evas_Object *proxy = evas_object_image_filled_add(evas_object_evas_get(pd->content));
+   evas_object_image_source_set(proxy, pd->content);
+   efl_gfx_visible_set(proxy, EINA_TRUE);
+
+   evas_object_map_enable_set(proxy, EINA_TRUE);
+   evas_object_map_set(proxy, map);
 }
 
 static void
@@ -1147,9 +1183,14 @@ content_cb(void *data, Evas_Object *obj, void *event_info)
    //////
    Eo *root = efl_add(EFL_VG_CONTAINER_CLASS, NULL);
    Eo *vg = efl_add(EFL_VG_SHAPE_CLASS, root, efl_vg_name_set(efl_added, "rect"));
-   efl_gfx_path_append_circle(vg, 200, 200, 100);
-   //efl_gfx_path_append_move_to(vg, 200, 200);
-   //efl_gfx_path_append_line_to(vg, 300, 300);
+
+   //remove comment to enable circle text
+   //efl_gfx_path_append_circle(vg, 200, 200, 100);
+
+   //remove comment to enable line text
+   efl_gfx_path_append_move_to(vg, 200, 200);
+   efl_gfx_path_append_line_to(vg, 300, 400);
+
    Efl_Ui_TextPath_Data *pd = data;
    pd->vg = vg;
    //////

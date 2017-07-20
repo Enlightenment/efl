@@ -21,7 +21,16 @@
 #define SLICE_MAX 200
 #define SLICE_DEFAULT_NO 69
 
+typedef struct _Efl_Ui_Textpath_Segment Efl_Ui_Textpath_Segment;
 typedef struct _Efl_Ui_Textpath_Data Efl_Ui_Textpath_Data;
+
+struct _Efl_Ui_Textpath_Segment
+{
+   EINA_INLIST;
+   int length;
+   Eina_Bezier bezier;
+};
+
 
 struct _Efl_Ui_Textpath_Data {
    Evas_Object *content;
@@ -38,6 +47,9 @@ struct _Efl_Ui_Textpath_Data {
    int slice_no;
    Eina_Bool autofit;
    Eina_Bool ellipsis;
+
+   Eina_Inlist *segments;
+   int total_length;
 };
 
 #define EFL_UI_TEXTPATH_DATA_GET(o, sd) \
@@ -201,13 +213,82 @@ _draw_text_on_path(Efl_Ui_Textpath_Data *pd, double px0, double py0, double ctrl
    evas_map_free(map);
 }
 
+static void
+_bezier_segment_store(Efl_Ui_Textpath_Data *pd, double px0, double py0,
+                      double ctrl_x0, double ctrl_y0,
+                      double ctrl_x1, double ctrl_y1,
+                      double px1, double py1)
+{
+   Eina_Bezier bz;
+   eina_bezier_values_set(&bz, px0, py0,
+                          ctrl_x0, ctrl_y0,
+                          ctrl_x1, ctrl_y1,
+                          px1, py1);
+   int len = eina_bezier_length_get(&bz);
+   Efl_Ui_Textpath_Segment *seg = malloc(sizeof(Efl_Ui_Textpath_Segment));
+   if (!seg)
+     {
+        ERR("Failed to allocate segment");
+        return;
+     }
+   seg->length = len;
+   seg->bezier = bz;
+
+   pd->segments = eina_inlist_append(pd->segments, EINA_INLIST_GET(seg));
+
+   pd->total_length += len;
+   ERR("bezier point: %.1f %.1f; len: %d; total_length: %d", px0, py0, len, pd->total_length);
+}
+
 
 static void
-_path_draw(Efl_Ui_Textpath_Data *obj, Efl_Ui_Textpath_Data *pd)
+_text_on_line_draw(Efl_Ui_Textpath_Data *pd, double x1, double y1, double x2, double y2)
+{
+   //test: line
+   Eo *line = evas_object_line_add(evas_object_evas_get(pd->text_obj));
+   efl_gfx_size_set(line, 500, 500);
+   efl_gfx_color_set(line, 255, 255, 0, 255);
+   efl_gfx_visible_set(line, EINA_TRUE);
+   evas_object_line_xy_set(line, x1, y1, x2, y2);
+   //
+   Evas_Coord x, y, w, h;
+   efl_gfx_geometry_get(pd->text_obj, &x, &y, &w, &h);
+   ERR("content geo: %d %d %d %d", x, y, w, h);
+
+   double len, sina, cosa;
+   len = sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+   sina = (y2 - y1) / len;
+   cosa = (x2 - x1) / len;
+
+   h = h / 2;
+   Evas_Map *map = evas_map_new(4);
+   evas_map_point_coord_set(map, 3, x1 - h * sina, y1 + h * cosa, 0);
+   evas_map_point_coord_set(map, 2, x2 - h * sina, y2 + h * cosa, 0);
+   evas_map_point_coord_set(map, 1, x2 + h * sina, y2 - h * cosa, 0);
+   evas_map_point_coord_set(map, 0, x1 + h * sina, y1 - h * cosa, 0);
+
+   h *= 2;
+   //w = len < w ? len : w;
+   evas_map_point_image_uv_set(map, 0, 0, 0);
+   evas_map_point_image_uv_set(map, 1, w, 0);
+   evas_map_point_image_uv_set(map, 2, w, h);
+   evas_map_point_image_uv_set(map, 3, 0, h);
+
+   Evas_Object *proxy = evas_object_image_filled_add(evas_object_evas_get(pd->text_obj));
+   evas_object_image_source_set(proxy, pd->text_obj);
+   efl_gfx_visible_set(proxy, EINA_TRUE);
+
+   evas_object_map_enable_set(proxy, EINA_TRUE);
+   evas_object_map_set(proxy, map);
+}
+
+
+static void
+_path_draw(Evas_Object *obj, Efl_Ui_Textpath_Data *pd)
 {
    ERR("In");
 
-   Efl_Gfx_Path_Command *cmd;
+   const Efl_Gfx_Path_Command_Type *cmd;
    const double *points;
    efl_gfx_path_get(obj, &cmd, &points);
    if (cmd)
@@ -240,12 +321,23 @@ _path_draw(Efl_Ui_Textpath_Data *obj, Efl_Ui_Textpath_Data *pd)
                   pos++;
                   py1 = points[pos];
 
+                  _bezier_segment_store(pd, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
                   //draw text on path
-                  _draw_text_on_path(pd, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
+                  //_draw_text_on_path(pd, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
 
                   //move points
                   px0 = px1;
                   py0 = py1;
+               }
+             else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
+               {
+                  pos++;
+                  px1 = points[pos];
+                  pos++;
+                  py1 = points[pos];
+                  ERR("line: %.1f %.1f :: %.1f %.1f", px0, py0, px1, py1);
+
+                  _text_on_line_draw(pd, px0, py0, px1, py1);
                }
              cmd++;
           }
@@ -253,7 +345,7 @@ _path_draw(Efl_Ui_Textpath_Data *obj, Efl_Ui_Textpath_Data *pd)
 }
 
 static void
-_circle_draw(Efl_Ui_Textpath_Data *eo, Efl_Ui_Textpath_Data *pd)
+_circle_draw(Evas_Object *eo, Efl_Ui_Textpath_Data *pd)
 {
    Evas_Coord x, y, w, h;
    Evas_Object *proxy;
@@ -437,7 +529,7 @@ _circle_draw(Efl_Ui_Textpath_Data *eo, Efl_Ui_Textpath_Data *pd)
 }
 
 static void
-_sizing_eval(Efl_Ui_Textpath_Data *obj, Efl_Ui_Textpath_Data *pd)
+_sizing_eval(Evas_Object *obj, Efl_Ui_Textpath_Data *pd)
 {
    //_circle_draw(obj, pd);
    _path_draw(obj, pd);
