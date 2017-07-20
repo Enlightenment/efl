@@ -9784,6 +9784,14 @@ _efl_canvas_text_efl_text_cursor_cursor_compare(Eo *eo_obj EINA_UNUSED, Efl_Canv
    return evas_textblock_cursor_compare(cur1, cur2);
 }
 
+EAPI Eina_Bool
+evas_textblock_cursor_equal(const Evas_Textblock_Cursor *cur1,
+      const Evas_Textblock_Cursor *cur2)
+{
+   if (!cur1->obj) return EINA_FALSE;
+   return efl_text_cursor_equal(cur1->obj, cur1, cur2);
+}
+
 EOLIAN static Eina_Bool
 _efl_canvas_text_efl_text_cursor_cursor_equal(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, const Efl_Text_Cursor_Cursor *cur, const Efl_Text_Cursor_Cursor *cur2)
 {
