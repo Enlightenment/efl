@@ -44,6 +44,7 @@ _evas_focus_set(Eo *evas_obj, Efl_Input_Device *key, Eina_Bool focus)
    Evas_Public_Data *edata;
    Evas *evas = evas_object_evas_get(evas_obj);
 
+   EINA_SAFETY_ON_NULL_RETURN(evas);
    edata = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    if (focus)
@@ -58,6 +59,7 @@ _current_focus_get(Eo *evas_obj, Efl_Input_Device *key)
    Evas_Public_Data *edata;
    Evas *evas = evas_object_evas_get(evas_obj);
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evas, NULL);
    edata = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    return eina_hash_find(edata->focused_objects, &key);
@@ -71,6 +73,7 @@ _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *se
    Evas_Callback_Type cb_evas, cb_obj_evas;
    const Efl_Event_Description *efl_object_focus_event;
 
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    evt = efl_input_instance_get(EFL_INPUT_FOCUS_CLASS,
                                 efl_provider_find(obj->object, EVAS_CANVAS_CLASS),
                                 (void **) &ev_data);
@@ -106,6 +109,7 @@ _evas_object_unfocus(Evas_Object_Protected_Data *obj, Efl_Input_Device *seat)
 {
    int event_id = _evas_event_counter;
 
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
      events->focused_by_seats = eina_list_remove(events->focused_by_seats, seat);
    EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
