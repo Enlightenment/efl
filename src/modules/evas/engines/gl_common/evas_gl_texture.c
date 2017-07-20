@@ -941,7 +941,7 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
 error:
   if (pt->dyn.img)
     {
-       secsym_eglDestroyImage(egldisplay, pt->dyn.img);
+       eglsym_eglDestroyImage(egldisplay, pt->dyn.img);
        pt->dyn.img = NULL;
     }
   glBindTexture(pt->dyn.target, 0);
@@ -1005,7 +1005,7 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
           }
         if (pt->dyn.buffer)
           secsym_tbm_surface_destroy(pt->dyn.buffer);
-        secsym_eglDestroyImage(pt->gc->egldisp, pt->dyn.img);
+        eglsym_eglDestroyImage(pt->gc->egldisp, pt->dyn.img);
         pt->dyn.img = NULL;
         pt->dyn.buffer = NULL;
         pt->dyn.data = NULL;
