@@ -49,7 +49,7 @@ typedef int  (*secsym_func_int) ();
 typedef unsigned int  (*secsym_func_uint) ();
 typedef void         *(*secsym_func_void_ptr) ();
 
-unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b) = NULL;
+unsigned int   (*eglsym_eglDestroyImage)              (void *a, void *b) = NULL;
 void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b) = NULL;
 void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d) = NULL;
 unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b, int c) = NULL;
@@ -152,8 +152,8 @@ evas_gl_common_eglCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EG
 EAPI int
 evas_gl_common_eglDestroyImage(EGLDisplay dpy, void *im)
 {
-   if (secsym_eglDestroyImage)
-     return secsym_eglDestroyImage(dpy, im);
+   if (eglsym_eglDestroyImage)
+     return eglsym_eglDestroyImage(dpy, im);
    return EGL_FALSE;
 }
 
@@ -335,16 +335,16 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
       if ((vmaj > 1) || (vmaj == 1 && vmin >= 5))
         {
            eglsym_eglCreateImage = dlsym(RTLD_DEFAULT, "eglCreateImage");
-           secsym_eglDestroyImage = dlsym(RTLD_DEFAULT, "eglDestroyImage");
+           eglsym_eglDestroyImage = dlsym(RTLD_DEFAULT, "eglDestroyImage");
         }
 
       // For EGL <= 1.4 only the KHR extension exists: "EGL_KHR_image_base"
-      if (!eglsym_eglCreateImage || !secsym_eglDestroyImage)
+      if (!eglsym_eglCreateImage || !eglsym_eglDestroyImage)
         {
            eglsym_eglCreateImage = NULL;
-           secsym_eglDestroyImage = NULL;
+           eglsym_eglDestroyImage = NULL;
            FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
-           FINDSYMN(secsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
+           FINDSYMN(eglsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
         }
    }
 
@@ -933,7 +933,7 @@ evas_gl_common_context_new(void)
                {
                   // test for all needed symbols - be "conservative" and
                   // need all of it
-                  if ((secsym_eglDestroyImage) &&
+                  if ((eglsym_eglDestroyImage) &&
                       (secsym_glEGLImageTargetTexture2DOES) &&
                       (secsym_eglMapImageSEC) &&
                       (secsym_eglUnmapImageSEC) &&
