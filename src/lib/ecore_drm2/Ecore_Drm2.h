@@ -144,7 +144,7 @@ EAPI int ecore_drm2_shutdown(void);
 /**
  * Read and process pending Drm events
  *
- * @param fd drm file descriptor
+ * @param dev drm device
  * @param ctx
  *
  * @return 0 on success, -1 otherwise
@@ -156,7 +156,7 @@ EAPI int ecore_drm2_shutdown(void);
  * @ingroup Ecore_Drm_Init_Group
  * @since 1.19
  */
-EAPI int ecore_drm2_event_handle(int fd, Ecore_Drm2_Context *drmctx);
+EAPI int ecore_drm2_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Context *drmctx);
 
 /**
  * @defgroup Ecore_Drm2_Device_Group Drm device functions
@@ -832,7 +832,7 @@ EAPI unsigned int ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output
 /**
  * Create a new framebuffer object
  *
- * @param fd
+ * @param dev
  * @param width
  * @param height
  * @param depth
@@ -844,9 +844,9 @@ EAPI unsigned int ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.18
  */
-EAPI Ecore_Drm2_Fb *ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned int format);
+EAPI Ecore_Drm2_Fb *ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format);
 
-EAPI Ecore_Drm2_Fb *ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo);
+EAPI Ecore_Drm2_Fb *ecore_drm2_fb_gbm_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo);
 
 /**
  * Get a framebuffer's mmap'd data
@@ -971,7 +971,7 @@ EAPI void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
 /**
  * Import a dmabuf object as a Framebuffer
  *
- * @param fd
+ * @param dev
  * @param width
  * @param height
  * @param depth
@@ -987,7 +987,7 @@ EAPI void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
  * @since 1.20
  *
  */
-EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count);
+EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count);
 
 /**
  * Discard a framebuffer object
@@ -1093,6 +1093,18 @@ EAPI void ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Stat
  * @since 1.20
  */
 EAPI Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec);
+
+/**
+ * Get the fd of an Ecore_Drm2_Device
+ *
+ * Query the fd of the device.
+ *
+ * @param device
+ *
+ * @since 1.20
+ */
+
+EAPI int ecore_drm2_device_fd_get(Ecore_Drm2_Device *device);
 
 # endif
 

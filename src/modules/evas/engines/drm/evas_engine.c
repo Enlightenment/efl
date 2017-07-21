@@ -5,7 +5,7 @@ typedef struct _Render_Engine
 {
    Render_Engine_Software_Generic generic;
 
-   int fd;
+   Ecore_Drm2_Device *dev;
 } Render_Engine;
 
 struct scanout_handle
@@ -30,7 +30,7 @@ _render_engine_setup(Evas_Engine_Info_Drm *info, int w, int h)
    ob = _outbuf_setup(info, w, h);
    if (!ob) goto err;
 
-   re->fd = info->info.fd;
+   re->dev = info->info.dev;
 
    if (!evas_render_engine_software_generic_init(&re->generic, ob,
                                                  _outbuf_state_get,
@@ -120,7 +120,7 @@ eng_output_free(void *engine EINA_UNUSED, void *data)
 }
 
 static Ecore_Drm2_Fb *
-drm_import_simple_dmabuf(int fd, struct dmabuf_attributes *attributes)
+drm_import_simple_dmabuf(Ecore_Drm2_Device *dev, struct dmabuf_attributes *attributes)
 {
    unsigned int stride[4] = { 0 };
    int dmabuf_fd[4] = { 0 };
@@ -132,7 +132,7 @@ drm_import_simple_dmabuf(int fd, struct dmabuf_attributes *attributes)
         dmabuf_fd[i] = attributes->fd[i];
      }
 
-   return ecore_drm2_fb_dmabuf_import(fd, attributes->width,
+   return ecore_drm2_fb_dmabuf_import(dev, attributes->width,
                                       attributes->height, 32, 32,
                                       attributes->format, stride,
                                       dmabuf_fd, attributes->n_planes);
@@ -197,7 +197,7 @@ eng_image_plane_assign(void *data, void *image, int x, int y)
     * sticking to this one for now */
    if (n->ns.type != EVAS_NATIVE_SURFACE_WL_DMABUF) return NULL;
 
-   fb = drm_import_simple_dmabuf(re->fd, &n->ns_data.wl_surface_dmabuf.attr);
+   fb = drm_import_simple_dmabuf(re->dev, &n->ns_data.wl_surface_dmabuf.attr);
    if (!fb) return NULL;
 
    g = calloc(1, sizeof(struct scanout_handle));

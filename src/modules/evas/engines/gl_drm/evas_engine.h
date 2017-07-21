@@ -70,7 +70,7 @@ struct _Render_Engine
 {
    Render_Engine_GL_Generic generic;
 
-   int fd;
+   Ecore_Drm2_Device *dev;
 };
 
 struct _Context_3D
@@ -85,7 +85,9 @@ struct _Outbuf
    Evas_Engine_Info_GL_Drm *info;
    Evas_Engine_GL_Context *gl_context;
 
-   int fd, w, h, bpp;
+   Ecore_Drm2_Device *dev;
+
+   int w, h, bpp;
    unsigned int rotation, depth, format;
    int prev_age;
    Render_Engine_Swap_Mode swap_mode;

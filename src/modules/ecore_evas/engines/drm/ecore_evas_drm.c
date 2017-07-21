@@ -48,7 +48,6 @@
 
 typedef struct _Ecore_Evas_Engine_Drm_Data
 {
-   int fd;
    int cw, ch;
    int clockid;
    int x, y, w, h;
@@ -156,8 +155,7 @@ _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const ch
         goto dev_err;
      }
 
-   edata->fd = ecore_drm2_device_open(edata->dev);
-   if (edata->fd < 0)
+   if (ecore_drm2_device_open(edata->dev) < 0)
      {
         ERR("Failed to open device");
         goto open_err;
@@ -597,7 +595,7 @@ _cb_drm_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 
    ee = data;
    edata = ee->engine.data;
-   ret = ecore_drm2_event_handle(edata->fd, &edata->ctx);
+   ret = ecore_drm2_event_handle(edata->dev, &edata->ctx);
    if (ret)
      {
         WRN("drmHandleEvent failed to read an event");
@@ -907,7 +905,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
         if ((num) && (!atoi(num)))
           einfo->info.vsync = EINA_FALSE;
 
-        einfo->info.fd = edata->fd;
+        einfo->info.dev = edata->dev;
         einfo->info.bpp = edata->bpp;
         einfo->info.depth = edata->depth;
         einfo->info.format = edata->format;
@@ -925,7 +923,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
      {
         Evas_Engine_Info_Drm *einfo = tinfo;
 
-        einfo->info.fd = edata->fd;
+        einfo->info.dev = edata->dev;
         einfo->info.bpp = edata->bpp;
         einfo->info.depth = edata->depth;
         einfo->info.format = edata->format;
@@ -962,7 +960,8 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    edata->ctx.page_flip_handler = _cb_pageflip;
 
    edata->hdlr =
-     ecore_main_fd_handler_add(edata->fd, ECORE_FD_READ, _cb_drm_event, ee,
+     ecore_main_fd_handler_add(ecore_drm2_device_fd_get(edata->dev),
+                               ECORE_FD_READ, _cb_drm_event, ee,
                                NULL, NULL);
 
    canvases = eina_list_append(canvases, ee);
