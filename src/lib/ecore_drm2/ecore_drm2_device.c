@@ -71,13 +71,35 @@ _cb_device_change(void *data, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_drm2_device_modeset_capable(int fd)
+{
+   int ret = EINA_TRUE;
+   drmModeRes *res;
+
+   res = drmModeGetResources(fd);
+   if (!res)
+     return EINA_FALSE;
+
+   if (res->count_crtcs <= 0 ||
+       res->count_connectors <= 0 ||
+       res->count_encoders <= 0)
+     ret = EINA_FALSE;
+
+   drmModeFreeResources(res);
+
+   return ret;
+}
+
 static const char *
-_drm2_device_find(const char *seat)
+_drm2_device_find(Elput_Manager *em, const char *seat)
 {
    Eina_List *devs, *l;
    const char *dev, *ret = NULL;
    Eina_Bool found = EINA_FALSE;
    Eina_Bool platform = EINA_FALSE;
+   Eina_Bool modeset;
+   int fd;
 
    devs = eeze_udev_find_by_subsystem_sysname("drm", "card[0-9]*");
    if (!devs) return NULL;
@@ -95,6 +117,14 @@ _drm2_device_find(const char *seat)
         if ((seat) && (strcmp(seat, dseat)))
           goto cont;
         else if (strcmp(dseat, "seat0"))
+          goto cont;
+
+        fd = elput_manager_open(em, dpath, -1);
+        if (fd < 0)
+          goto cont;
+        modeset = _drm2_device_modeset_capable(fd);
+        elput_manager_close(em, fd);
+        if (!modeset)
           goto cont;
 
         dparent = eeze_udev_syspath_get_parent_filtered(dev, "pci", NULL);
