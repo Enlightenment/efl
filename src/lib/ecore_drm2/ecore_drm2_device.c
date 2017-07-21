@@ -570,13 +570,6 @@ ecore_drm2_device_find(const char *seat, unsigned int tty)
    dev = calloc(1, sizeof(Ecore_Drm2_Device));
    if (!dev) return NULL;
 
-   dev->path = _drm2_device_find(seat);
-   if (!dev->path)
-     {
-        ERR("Could not find drm device on seat %s", seat);
-        goto path_err;
-     }
-
    dev->em = elput_manager_connect(seat, tty);
    if (!dev->em)
      {
@@ -584,11 +577,18 @@ ecore_drm2_device_find(const char *seat, unsigned int tty)
         goto man_err;
      }
 
+   dev->path = _drm2_device_find(dev->em, seat);
+   if (!dev->path)
+     {
+        ERR("Could not find drm device on seat %s", seat);
+        goto path_err;
+     }
+
    return dev;
 
-man_err:
-   eina_stringshare_del(dev->path);
 path_err:
+   elput_manager_disconnect(dev->em);
+man_err:
    free(dev);
    return NULL;
 }
