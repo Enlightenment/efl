@@ -174,12 +174,13 @@ _evas_outbuf_init(void)
    static int _init = 0;
    if (_init) return EINA_TRUE;
 #ifdef EGL_MESA_platform_gbm
+   /* FIXME: Pretty sure we should be checking if EGL_EXT_platform_base
+    * exists before looking these up and trusting them?
+    */
    dlsym_eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)
          eglGetProcAddress("eglGetPlatformDisplayEXT");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dlsym_eglGetPlatformDisplayEXT, EINA_FALSE);
    dlsym_eglCreatePlatformWindowSurfaceEXT = (PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC)
          eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dlsym_eglCreatePlatformWindowSurfaceEXT, EINA_FALSE);
 #endif
    _init = 1;
    return EINA_TRUE;
@@ -225,13 +226,16 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    else cfg_attr[n++] = 0;
    cfg_attr[n++] = EGL_NONE;
 
+   ob->egl.disp = EGL_NO_DISPLAY;
 #ifdef EGL_MESA_platform_gbm
-   ob->egl.disp =
-     dlsym_eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA, ob->info->info.gbm, NULL);
-#else
-   ob->egl.disp = eglGetDisplay((EGLNativeDisplayType)ob->info->info.gbm);
+   if (dlsym_eglGetPlatformDisplayEXT)
+     ob->egl.disp = dlsym_eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA,
+                                                   ob->info->info.gbm,
+                                                   NULL);
 #endif
-   if (ob->egl.disp  == EGL_NO_DISPLAY)
+   if (ob->egl.disp == EGL_NO_DISPLAY)
+     ob->egl.disp = eglGetDisplay((EGLNativeDisplayType)ob->info->info.gbm);
+   if (ob->egl.disp == EGL_NO_DISPLAY)
      {
         ERR("eglGetDisplay() fail. code=%#x", eglGetError());
         return EINA_FALSE;
@@ -288,15 +292,17 @@ _evas_outbuf_egl_setup(Outbuf *ob)
           }
      }
 
+   ob->egl.surface = EGL_NO_SURFACE;
 #ifdef EGL_MESA_platform_gbm
-   ob->egl.surface =
-     dlsym_eglCreatePlatformWindowSurfaceEXT(ob->egl.disp, ob->egl.config,
-                                             ob->surface, NULL);
-#else
-   ob->egl.surface =
-     eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
-                            (EGLNativeWindowType)ob->surface, NULL);
+   if (dlsym_eglCreatePlatformWindowSurfaceEXT)
+     ob->egl.surface =
+       dlsym_eglCreatePlatformWindowSurfaceEXT(ob->egl.disp, ob->egl.config,
+                                               ob->surface, NULL);
 #endif
+   if (ob->egl.surface == EGL_NO_SURFACE)
+     ob->egl.surface = eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
+                                              (EGLNativeWindowType)ob->surface,
+                                              NULL);
    if (ob->egl.surface == EGL_NO_SURFACE)
      {
         ERR("eglCreateWindowSurface() fail for %p. code=%#x",
