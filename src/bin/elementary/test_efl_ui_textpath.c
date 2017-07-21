@@ -33,10 +33,11 @@ elm_main(int argc, char *argv[])
     //efl_ui_textpath_circle_set(txtpath, 200, 200, 100, 0);
     //efl_gfx_path_append_circle(txtpath, 200, 200, 100);
 
-    //efl_gfx_path_append_arc(txtpath, 100, 100, 200, 200, 0, -360);
+    efl_gfx_path_append_arc(txtpath, 100, 100, 200, 200, 0, -90);
+    efl_gfx_path_append_line_to(txtpath, 100, 200);
 
-    efl_gfx_path_append_move_to(txtpath, 100, 100);
-    efl_gfx_path_append_line_to(txtpath, 200, 300);
+    //efl_gfx_path_append_move_to(txtpath, 100, 100);
+    //efl_gfx_path_append_line_to(txtpath, 200, 300);
 
     efl_ui_textpath_ellipsis_set(txtpath, EINA_TRUE);
     efl_gfx_geometry_set(txtpath, 0, 0, 200, 200);

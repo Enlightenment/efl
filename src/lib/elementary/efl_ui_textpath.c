@@ -1062,6 +1062,8 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
    pd->circle.y = y;
    pd->circle.radius = radius;
    pd->circle.start_angle = start_angle;
+   
+   efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2, radius * 2,  start_angle, -360);
 
    if (pd->content)
      {
