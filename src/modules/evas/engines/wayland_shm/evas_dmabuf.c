@@ -562,20 +562,24 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
    Dmabuf_Surface *surface;
    int i;
 
+   if ((!w) || (!h)) return;
    surface = s->surf.dmabuf;
    for (i = 0; i < surface->nbuf; i++)
      {
-        Dmabuf_Buffer *b = surface->buffer[i];
-        int stride = b->stride;
-
-        /* If stride is a little bigger than width we still fit */
-        if (!force && (w >= b->w) && (w <= stride / 4) && (h == b->h))
+        if (surface->buffer[i])
           {
-             b->w = w;
-             continue;
-          }
+             Dmabuf_Buffer *b = surface->buffer[i];
+             int stride = b->stride;
 
-        _evas_dmabuf_buffer_destroy(b);
+             /* If stride is a little bigger than width we still fit */
+             if (!force && (w >= b->w) && (w <= stride / 4) && (h == b->h))
+               {
+                  b->w = w;
+                  continue;
+               }
+
+             _evas_dmabuf_buffer_destroy(b);
+          }
         buf = _evas_dmabuf_buffer_init(surface, w, h);
         surface->buffer[i] = buf;
         if (!buf)
@@ -795,14 +799,17 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
 
    if (!_buffer_manager_get()) goto err;
 
-   for (i = 0; i < num_buff; i++)
+   if (w && h)
      {
-        surf->buffer[i] = _evas_dmabuf_buffer_init(surf, w, h);
-        if (!surf->buffer[i])
+        for (i = 0; i < num_buff; i++)
           {
-             DBG("Could not create buffers");
-             /* _init() handled surface cleanup when it failed */
-             return EINA_FALSE;
+             surf->buffer[i] = _evas_dmabuf_buffer_init(surf, w, h);
+             if (!surf->buffer[i])
+               {
+                  DBG("Could not create buffers");
+                  /* _init() handled surface cleanup when it failed */
+                  return EINA_FALSE;
+               }
           }
      }
 

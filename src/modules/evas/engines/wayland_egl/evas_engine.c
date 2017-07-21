@@ -701,7 +701,7 @@ eng_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int w, uns
         return 1;
      }
 
-   if ((ob) && (_re_wincheck(ob)))
+   if (ob)
      {
         ob->info = inf;
         if ((ob->info->info.wl_display != ob->disp) ||

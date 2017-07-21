@@ -86,6 +86,7 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
         else if (ob->priv.num > 4) ob->priv.num = 4;
      }
 
+   if ((!w) || (!h)) return ob;
    for (i = 0; i < ob->priv.num; i++)
      {
         if (!_outbuf_fb_create(ob, &(ob->priv.ofb[i])))
@@ -179,6 +180,7 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
    for (i = 0; i < ob->priv.num; i++)
      _outbuf_fb_destroy(&ob->priv.ofb[i]);
 
+   if ((!w) || (!h)) return;
    for (i = 0; i < ob->priv.num; i++)
      {
         if (!_outbuf_fb_create(ob, &(ob->priv.ofb[i])))

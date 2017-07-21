@@ -184,9 +184,6 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    wdata = ee->engine.data;
    if (!wdata) return;
 
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
-
    ee->req.w = w;
    ee->req.h = h;
 
@@ -2274,9 +2271,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
    ee->driver = engine_name;
    if (disp_name) ee->name = strdup(disp_name);
-
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
 
    ee->x = x;
    ee->y = y;

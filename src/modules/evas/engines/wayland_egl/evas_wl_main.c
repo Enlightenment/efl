@@ -101,22 +101,6 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
         return NULL;
      }
 
-   if ((gw->rot == 0) || (gw->rot == 180))
-     gw->win = wl_egl_window_create(gw->surface, gw->w, gw->h);
-   else if ((gw->rot == 90) || (gw->rot == 270))
-     gw->win = wl_egl_window_create(gw->surface, gw->h, gw->w);
-
-   gw->egl_surface =
-     eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
-                            (EGLNativeWindowType)gw->win, NULL);
-   if (gw->egl_surface == EGL_NO_SURFACE)
-     {
-        ERR("eglCreateWindowSurface() fail for %p. code=%#x", 
-            gw->win, eglGetError());
-        eng_window_free(gw);
-        return NULL;
-     }
-
    gw->egl_context =
      eglCreateContext(gw->egl_disp, gw->egl_config, context, context_attrs);
    if (gw->egl_context == EGL_NO_CONTEXT)
@@ -127,14 +111,6 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
      }
 
    if (context == EGL_NO_CONTEXT) context = gw->egl_context;
-
-   if (eglMakeCurrent(gw->egl_disp, gw->egl_surface,
-                      gw->egl_surface, gw->egl_context) == EGL_FALSE)
-     {
-        ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
-        eng_window_free(gw);
-        return NULL;
-     }
 
    vendor = glGetString(GL_VENDOR);
    renderer = glGetString(GL_RENDERER);
@@ -168,22 +144,29 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
         return NULL;
      }
 
-   eng_gl_symbols(gw->egl_disp);
-
-   if (!(gw->gl_context = glsym_evas_gl_common_context_new()))
+   if (w && h)
+     eng_window_resurf(gw);
+   else
      {
-        eng_window_free(gw);
-        return NULL;
+        if (eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE,
+                      EGL_NO_SURFACE, gw->egl_context) == EGL_FALSE)
+          {
+             ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
+             eng_window_free(gw);
+             return NULL;
+          }
+        eng_gl_symbols(gw->egl_disp);
+
+        if (!(gw->gl_context = glsym_evas_gl_common_context_new()))
+          {
+             eng_window_free(gw);
+             return NULL;
+          }
+        gw->gl_context->egldisp = gw->egl_disp;
+        gw->gl_context->eglctxt = gw->egl_context;
+        eng_window_use(gw);
+
      }
-
-   gw->gl_context->egldisp = gw->egl_disp;
-   gw->gl_context->eglctxt = gw->egl_context;
-
-   eng_window_use(gw);
-   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, gw->rot);
-
-   gw->surf = EINA_TRUE;
-
    return gw;
 }
 
@@ -298,11 +281,18 @@ eng_window_resurf(Outbuf *gw)
 {
    if (gw->surf) return;
    if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", gw);
+   if ((!gw->w) || (!gw->h)) return;
+   if (!gw->win)
+     {
+        if ((gw->rot == 0) || (gw->rot == 180))
+          gw->win = wl_egl_window_create(gw->surface, gw->w, gw->h);
+        else if ((gw->rot == 90) || (gw->rot == 270))
+          gw->win = wl_egl_window_create(gw->surface, gw->h, gw->w);
+     }
 
    gw->egl_surface =
      eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                             (EGLNativeWindowType)gw->win, NULL);
-
    if (gw->egl_surface == EGL_NO_SURFACE)
      {
         ERR("eglCreateWindowSurface() fail for %p. code=%#x",
@@ -310,9 +300,12 @@ eng_window_resurf(Outbuf *gw)
         return;
      }
 
-   if (eglMakeCurrent(gw->egl_disp, gw->egl_surface, gw->egl_surface,
-                      gw->egl_context) == EGL_FALSE)
-     ERR("eglMakeCurrent() failed!");
+   if (eglMakeCurrent(gw->egl_disp, gw->egl_surface,
+                      gw->egl_surface, gw->egl_context) == EGL_FALSE)
+     {
+        ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
+        return;
+     }
 
    gw->surf = EINA_TRUE;
 }
@@ -323,6 +316,9 @@ eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EIN
    ob->w = w;
    ob->h = h;
    ob->rot = rot;
+
+   if (!ob->win)
+     eng_window_resurf(ob);
    eng_window_use(ob);
    glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
 
