@@ -9,7 +9,7 @@
 #include "evas_macros.h"
 
 #ifdef HAVE_DLSYM
-# include <dlfcn.h>      /* dlopen,dlclose,etc */
+# include <dlfcn.h> /* dlopen,dlclose,etc */
 #else
 # undef BUILD_ENGINE_SOFTWARE_XLIB
 #endif
@@ -17,19 +17,19 @@
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
 #include "evas_x_egl.h"
 
-#define EGL_SURFACE_TYPE                0x3033
-#define EGL_WINDOW_BIT                  0x0004
-#define EGL_RENDERABLE_TYPE             0x3040
-#define EGL_ALPHA_SIZE                  0x3021
-#define EGL_BLUE_SIZE                   0x3022
-#define EGL_GREEN_SIZE                  0x3023
-#define EGL_RED_SIZE                    0x3024
-#define EGL_DEPTH_SIZE                  0x3025
-#define EGL_STENCIL_SIZE                0x3026
-#define EGL_SURFACE_TYPE                0x3033
-#define EGL_NONE                        0x3038
-#define EGL_FALSE                       0
-#define EGL_TRUE                        1
+#define EGL_SURFACE_TYPE                      0x3033
+#define EGL_WINDOW_BIT                        0x0004
+#define EGL_RENDERABLE_TYPE                   0x3040
+#define EGL_ALPHA_SIZE                        0x3021
+#define EGL_BLUE_SIZE                         0x3022
+#define EGL_GREEN_SIZE                        0x3023
+#define EGL_RED_SIZE                          0x3024
+#define EGL_DEPTH_SIZE                        0x3025
+#define EGL_STENCIL_SIZE                      0x3026
+#define EGL_SURFACE_TYPE                      0x3033
+#define EGL_NONE                              0x3038
+#define EGL_FALSE                             0
+#define EGL_TRUE                              1
 
 #define EGL_LOCK_SURFACE_BIT_KHR              0x0080
 #define EGL_OPTIMAL_FORMAT_BIT_KHR            0x0100
@@ -56,22 +56,23 @@
 static int egl_found = -1;
 static void *egl_lib = NULL;
 
-static struct {
-   void *       (*GetProcAddress)      (const char *name);
-   void *       (*GetDisplay)          (void *d);
-   unsigned int (*Initialize)          (void *ed, int *vmaj, int *vmin);
-   unsigned int (*Terminate)           (void *ed);
-   const char * (*QueryString)         (void *ed, int name);
-   unsigned int (*ChooseConfig)        (void *ed, int *attr, void **configs, int config_size, int *num_config);
-   unsigned int (*GetConfigAttrib)     (void *ed, void *config, int attr, int *val);
-   unsigned int (*QuerySurface)        (void *ed, void *surf, int attr, int *val);
-   void *       (*CreateWindowSurface) (void *ed, void *config, Window win, int *attr);
-   unsigned int (*DestroySurface)      (void *ed, void *surf);
-   unsigned int (*SwapBuffers)         (void *ed, void *surf);
-   unsigned int (*SwapInterval)        (void *ed, int interval);
-   
-   unsigned int (*LockSurface)         (void *ed, void *surf, int *attr);
-   unsigned int (*UnlockSurface)       (void *ed, void *surf);
+static struct
+{
+   void       * (*GetProcAddress)(const char *name);
+   void       * (*GetDisplay)(void *d);
+   unsigned int (*Initialize)(void *ed, int *vmaj, int *vmin);
+   unsigned int (*Terminate)(void *ed);
+   const char * (*QueryString)(void *ed, int name);
+   unsigned int (*ChooseConfig)(void *ed, int *attr, void **configs, int config_size, int *num_config);
+   unsigned int (*GetConfigAttrib)(void *ed, void *config, int attr, int *val);
+   unsigned int (*QuerySurface)(void *ed, void *surf, int attr, int *val);
+   void       * (*CreateWindowSurface)(void *ed, void *config, Window win, int *attr);
+   unsigned int (*DestroySurface)(void *ed, void *surf);
+   unsigned int (*SwapBuffers)(void *ed, void *surf);
+   unsigned int (*SwapInterval)(void *ed, int interval);
+
+   unsigned int (*LockSurface)(void *ed, void *surf, int *attr);
+   unsigned int (*UnlockSurface)(void *ed, void *surf);
 } egl;
 
 static int
@@ -86,31 +87,32 @@ _egl_find(void)
      }
    if (!(egl.GetProcAddress = dlsym(egl_lib, "eglGetProcAddress"))) goto err;
 
-#define SYM(x, y) if (!(egl.x = egl.GetProcAddress(y))) goto err
+#define SYM(x, y) if (!(egl.x = egl.GetProcAddress(y))) \
+    goto err
 // core syms used
-   SYM(GetDisplay ,         "eglGetDisplay");
-   SYM(Initialize,          "eglInitialize");
-   SYM(Terminate,           "eglTerminate");
-   SYM(QueryString,         "eglQueryString");
-   SYM(ChooseConfig,        "eglChooseConfig");
-   SYM(UnlockSurface,       "eglGetConfigAttrib");
-   SYM(QuerySurface,        "eglQuerySurface");
+   SYM(GetDisplay, "eglGetDisplay");
+   SYM(Initialize, "eglInitialize");
+   SYM(Terminate, "eglTerminate");
+   SYM(QueryString, "eglQueryString");
+   SYM(ChooseConfig, "eglChooseConfig");
+   SYM(UnlockSurface, "eglGetConfigAttrib");
+   SYM(QuerySurface, "eglQuerySurface");
    SYM(CreateWindowSurface, "eglCreateWindowSurface");
-   SYM(DestroySurface,      "eglDestroySurface");
-   SYM(SwapBuffers,         "eglSwapBuffers");
-   SYM(SwapInterval,        "eglSwapInterval");
+   SYM(DestroySurface, "eglDestroySurface");
+   SYM(SwapBuffers, "eglSwapBuffers");
+   SYM(SwapInterval, "eglSwapInterval");
 
 #undef SYM
 #define SYM(x, y) egl.x = egl.GetProcAddress(y)
-// extns   
+// extns
    SYM(LockSurface, "eglLockSurface");
    if (!egl.LockSurface) SYM(LockSurface, "eglLockSurfaceKHR");
    SYM(UnlockSurface, "eglUnlockSurface");
    if (!egl.UnlockSurface) SYM(UnlockSurface, "eglUnlockSurfaceKHR");
-   
+
    if (!egl.LockSurface) goto err;
    if (!egl.UnlockSurface) goto err;
-   
+
    egl_found = 1;
    return 1;
 err:
@@ -118,6 +120,7 @@ err:
    egl_lib = NULL;
    return 0;
 }
+
 #endif
 
 void *
@@ -163,7 +166,7 @@ _egl_x_disp_choose_config(void *ed)
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
    int config_attrs[40], n = 0, num_config = 0;
    void *eglconfig = NULL;
-   
+
    if (!_egl_find()) return NULL;
    config_attrs[n++] = EGL_SURFACE_TYPE;
    config_attrs[n++] = EGL_WINDOW_BIT;
@@ -183,9 +186,9 @@ _egl_x_disp_choose_config(void *ed)
    config_attrs[n++] = EGL_LOCK_SURFACE_BIT_KHR;
    config_attrs[n++] = EGL_MATCH_FORMAT_KHR;
    config_attrs[n++] = EGL_FORMAT_RGBA_8888_KHR;
-   
+
    config_attrs[n++] = EGL_NONE;
-   
+
    if (!egl.ChooseConfig(ed, config_attrs, &eglconfig, 1, &num_config))
      return NULL;
    return eglconfig;
@@ -202,6 +205,7 @@ _egl_x_win_surf_new(void *ed, Window win, void *config)
    if (!_egl_find()) return NULL;
    return egl.CreateWindowSurface(ed, config, win, NULL);
 }
+
 #endif
 
 void
@@ -222,17 +226,17 @@ _egl_x_surf_map(void *ed, void *surf, int *stride)
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
    int config_attrs[40], n = 0;
    void *ptr = NULL;
-   int pitch = 0,  origin = 0;
+   int pitch = 0, origin = 0;
    int r_offset = 0, g_offset = 0, b_offset = 0;
-   
+
    if (!_egl_find()) return NULL;
-   
+
    config_attrs[n++] = EGL_MAP_PRESERVE_PIXELS_KHR;
    config_attrs[n++] = EGL_TRUE;
    config_attrs[n++] = EGL_LOCK_USAGE_HINT_KHR;
    config_attrs[n++] = EGL_READ_SURFACE_BIT_KHR | EGL_WRITE_SURFACE_BIT_KHR;
    config_attrs[n++] = EGL_NONE;
-   
+
    if (!egl.LockSurface(ed, surf, config_attrs)) return NULL;
    if (!egl.QuerySurface(ed, surf, EGL_BITMAP_POINTER_KHR, (int *)&ptr)) goto err;
    if (!egl.QuerySurface(ed, surf, EGL_BITMAP_PITCH_KHR, &pitch)) goto err;
@@ -240,7 +244,7 @@ _egl_x_surf_map(void *ed, void *surf, int *stride)
    if (!egl.QuerySurface(ed, surf, EGL_BITMAP_PIXEL_RED_OFFSET_KHR, &r_offset)) goto err;
    if (!egl.QuerySurface(ed, surf, EGL_BITMAP_PIXEL_GREEN_OFFSET_KHR, &g_offset)) goto err;
    if (!egl.QuerySurface(ed, surf, EGL_BITMAP_PIXEL_BLUE_OFFSET_KHR, &b_offset)) goto err;
-   
+
    if (!ptr) goto err;
    if (pitch <= 0) goto err;
    // must be top-left to bottom-right ordered
@@ -294,20 +298,21 @@ evas_software_egl_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
                                  int grayscale, int max_colors, Pixmap mask,
                                  int shape_dither, int destination_alpha)
 {
-   (void) w;
-   (void) h;
-   (void) rot;
-   (void) depth;
-   (void) draw;
-   (void) cmap;
-   (void) x_depth;
-   (void) grayscale;
-   (void) max_colors;
-   (void) mask;
-   (void) shape_dither;
-   (void) destination_alpha;
-   (void) disp;
-   (void) vis;
+   (void)w;
+   (void)h;
+   (void)rot;
+   (void)depth;
+   (void)draw;
+   (void)cmap;
+   (void)x_depth;
+   (void)grayscale;
+   (void)max_colors;
+   (void)mask;
+   (void)shape_dither;
+   (void)destination_alpha;
+   (void)disp;
+   (void)vis;
    return NULL;
 }
+
 #endif

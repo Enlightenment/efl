@@ -7,7 +7,7 @@
 #include "evas_xlib_swapper.h"
 
 #ifdef HAVE_DLSYM
-# include <dlfcn.h>      /* dlopen,dlclose,etc */
+# include <dlfcn.h> /* dlopen,dlclose,etc */
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
@@ -16,12 +16,12 @@
 // X(shm)image emulation of multiple buffers + swapping /////////////////////
 typedef struct
 {
-   XImage          *xim;
-   XShmSegmentInfo  shm_info;
-   void            *data;
-   int              w, h, bpl;
-   Eina_Bool        shm : 1;
-   Eina_Bool        valid : 1;
+   XImage         *xim;
+   XShmSegmentInfo shm_info;
+   void           *data;
+   int             w, h, bpl;
+   Eina_Bool       shm : 1;
+   Eina_Bool       valid : 1;
 } Buffer;
 
 struct _X_Swapper
@@ -33,7 +33,7 @@ struct _X_Swapper
    Buffer    buf[3];
    int       w, h, depth;
    int       buf_cur, buf_num;
-   Eina_Bool mapped: 1;
+   Eina_Bool mapped : 1;
 };
 
 static Eina_Bool _x_err = EINA_FALSE;
@@ -64,7 +64,7 @@ _buf_new(X_Swapper *swp, Buffer *buf)
           {
              buf->shm_info.readOnly = False;
              buf->shm_info.shmaddr = buf->data = buf->xim->data =
-               shmat(buf->shm_info.shmid, 0, 0);
+                   shmat(buf->shm_info.shmid, 0, 0);
              if (buf->shm_info.shmaddr != ((void *)-1))
                {
                   XErrorHandler ph;
@@ -146,7 +146,7 @@ _buf_put(X_Swapper *swp, Buffer *buf, Eina_Rectangle *rects, int nrects)
 
    if (!buf->xim) return;
    tmpr = XCreateRegion();
-   if ((rects)/* && 0*/) // set to 0 to test buffer stuff
+   if ((rects) /* && 0*/) // set to 0 to test buffer stuff
      {
         for (i = 0; i < nrects; i++)
           {
@@ -273,8 +273,10 @@ evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
    if (count == swp->buf_num)
      {
         if (count == 1) return MODE_COPY;
-        else if (count == 2) return MODE_DOUBLE;
-        else if (count == 3) return MODE_TRIPLE;
+        else if (count == 2)
+          return MODE_DOUBLE;
+        else if (count == 3)
+          return MODE_TRIPLE;
      }
    return MODE_FULL;
 }
@@ -299,7 +301,6 @@ evas_xlib_swapper_bit_order_get(X_Swapper *swp)
 
 #else
 
-
 // DRM/DRI buffer swapping+access (driver specific) /////////////////////
 
 static Eina_Bool tried = EINA_FALSE;
@@ -308,39 +309,38 @@ static Eina_Bool tried = EINA_FALSE;
 static void *drm_lib = NULL;
 
 typedef unsigned int drm_magic_t;
-static int (*sym_drmGetMagic) (int fd, drm_magic_t *magic) = NULL;
+static int (*sym_drmGetMagic)(int fd, drm_magic_t *magic) = NULL;
 
 ////////////////////////////////////
 // libtbm.so.1
-#define TBM_DEVICE_CPU 1
-#define TBM_OPTION_READ     (1 << 0)
-#define TBM_OPTION_WRITE    (1 << 1)
+#define TBM_DEVICE_CPU   1
+#define TBM_OPTION_READ  (1 << 0)
+#define TBM_OPTION_WRITE (1 << 1)
 static void *tbm_lib = NULL;
 
 typedef struct _tbm_bufmgr *tbm_bufmgr;
-typedef struct _tbm_bo *tbm_bo;
+typedef struct _tbm_bo     *tbm_bo;
 
 typedef union _tbm_bo_handle
 {
-   void     *ptr;
+   void    *ptr;
    int32_t  s32;
    uint32_t u32;
    int64_t  s64;
    uint64_t u64;
 } tbm_bo_handle;
 
-
-static tbm_bo (*sym_tbm_bo_import) (tbm_bufmgr bufmgr, unsigned int key) = NULL;
-static tbm_bo_handle (*sym_tbm_bo_map) (tbm_bo bo, int device, int opt) = NULL;
-static int (*sym_tbm_bo_unmap)  (tbm_bo bo) = NULL;
-static void (*sym_tbm_bo_unref) (tbm_bo bo) = NULL;
-static tbm_bufmgr (*sym_tbm_bufmgr_init) (int fd) = NULL;
-static void (*sym_tbm_bufmgr_deinit) (tbm_bufmgr bufmgr) = NULL;
+static tbm_bo (*sym_tbm_bo_import)(tbm_bufmgr bufmgr, unsigned int key) = NULL;
+static tbm_bo_handle (*sym_tbm_bo_map)(tbm_bo bo, int device, int opt) = NULL;
+static int (*sym_tbm_bo_unmap)(tbm_bo bo) = NULL;
+static void (*sym_tbm_bo_unref)(tbm_bo bo) = NULL;
+static tbm_bufmgr (*sym_tbm_bufmgr_init)(int fd) = NULL;
+static void (*sym_tbm_bufmgr_deinit)(tbm_bufmgr bufmgr) = NULL;
 
 // legacy compatibility
-static void *(*sym_drm_slp_bo_map) (tbm_bo bo, int device, int opt) = NULL;
-static int (*sym_drm_slp_bo_unmap)  (tbm_bo bo, int device) = NULL;
-static tbm_bufmgr (*sym_drm_slp_bufmgr_init) (int fd, void *arg) = NULL;
+static void *(*sym_drm_slp_bo_map)(tbm_bo bo, int device, int opt) = NULL;
+static int (*sym_drm_slp_bo_unmap)(tbm_bo bo, int device) = NULL;
+static tbm_bufmgr (*sym_drm_slp_bufmgr_init)(int fd, void *arg) = NULL;
 
 ////////////////////////////////////
 // libdri2.so.0
@@ -366,34 +366,34 @@ typedef union
 {
    unsigned int flags;
    struct
-     {
-        unsigned int type:1;
-        unsigned int is_framebuffer:1;
-        unsigned int is_mapped:1;
-        unsigned int is_reused:1;
-        unsigned int idx_reuse:3;
-     }
+   {
+      unsigned int type : 1;
+      unsigned int is_framebuffer : 1;
+      unsigned int is_mapped : 1;
+      unsigned int is_reused : 1;
+      unsigned int idx_reuse : 3;
+   }
    data;
 } DRI2BufferFlags;
 
-static DRI2Buffer *(*sym_DRI2GetBuffers) (Display *display, XID drawable, int *width, int *height, unsigned int *attachments, int count, int *outCount) = NULL;
-static Bool (*sym_DRI2QueryExtension) (Display *display, int *eventBase, int *errorBase) = NULL;
-static Bool (*sym_DRI2QueryVersion) (Display *display, int *major, int *minor) = NULL;
-static Bool (*sym_DRI2Connect) (Display *display, XID window, char **driverName, char **deviceName) = NULL;
-static Bool (*sym_DRI2Authenticate) (Display *display, XID window, unsigned int magic) = NULL;
-static void (*sym_DRI2CreateDrawable) (Display *display, XID drawable) = NULL;
-static void (*sym_DRI2SwapBuffersWithRegion) (Display *display, XID drawable, XID region, CD64 *count) = NULL;
-static void (*sym_DRI2SwapBuffers) (Display *display, XID drawable, CD64 target_msc, CD64 divisor, CD64 remainder, CD64 *count) = NULL;
-static void (*sym_DRI2DestroyDrawable) (Display *display, XID handle) = NULL;
+static DRI2Buffer *(*sym_DRI2GetBuffers)(Display * display, XID drawable, int *width, int *height, unsigned int *attachments, int count, int *outCount) = NULL;
+static Bool (*sym_DRI2QueryExtension)(Display *display, int *eventBase, int *errorBase) = NULL;
+static Bool (*sym_DRI2QueryVersion)(Display *display, int *major, int *minor) = NULL;
+static Bool (*sym_DRI2Connect)(Display *display, XID window, char **driverName, char **deviceName) = NULL;
+static Bool (*sym_DRI2Authenticate)(Display *display, XID window, unsigned int magic) = NULL;
+static void (*sym_DRI2CreateDrawable)(Display *display, XID drawable) = NULL;
+static void (*sym_DRI2SwapBuffersWithRegion)(Display *display, XID drawable, XID region, CD64 *count) = NULL;
+static void (*sym_DRI2SwapBuffers)(Display *display, XID drawable, CD64 target_msc, CD64 divisor, CD64 remainder, CD64 *count) = NULL;
+static void (*sym_DRI2DestroyDrawable)(Display *display, XID handle) = NULL;
 
 ////////////////////////////////////
 // libXfixes.so.3
 static void *xfixes_lib = NULL;
 
-static Bool (*sym_XFixesQueryExtension) (Display *display, int *event_base_return, int *error_base_return) = NULL;
-static Status (*sym_XFixesQueryVersion) (Display *display, int *major_version_return, int *minor_version_return) = NULL;
-static XID (*sym_XFixesCreateRegion) (Display *display, XRectangle *rectangles, int nrectangles) = NULL;
-static void (*sym_XFixesDestroyRegion) (Display *dpy, XID region) = NULL;
+static Bool (*sym_XFixesQueryExtension)(Display *display, int *event_base_return, int *error_base_return) = NULL;
+static Status (*sym_XFixesQueryVersion)(Display *display, int *major_version_return, int *minor_version_return) = NULL;
+static XID (*sym_XFixesCreateRegion)(Display *display, XRectangle *rectangles, int nrectangles) = NULL;
+static void (*sym_XFixesDestroyRegion)(Display *dpy, XID region) = NULL;
 
 ////////////////////////////////////////////////////////////////////////////
 #define MAX_BO_CACHE 4
@@ -416,7 +416,7 @@ struct _X_Swapper
    int         buf_w, buf_h;
    Eina_List  *buf_cache;
    int         last_count;
-   Eina_Bool   mapped: 1;
+   Eina_Bool   mapped : 1;
 };
 
 static int inits = 0;
@@ -472,13 +472,13 @@ _drm_init(Display *disp, int scr)
         goto err;
      }
 
-#define SYM(l, x) \
-   do { sym_ ## x = dlsym(l, #x); \
-      if (!sym_ ## x) { \
-         if (swap_debug) ERR("Can't load symbol "#x); \
-         goto err; \
-      } \
-   } while (0)
+#define SYM(l, x)                                          \
+  do { sym_ ## x = dlsym(l, #x);                           \
+       if (!sym_ ## x) {                                   \
+            if (swap_debug) ERR("Can't load symbol " #x);  \
+            goto err;                                      \
+         }                                                 \
+    } while (0)
 
    SYM(drm_lib, drmGetMagic);
 
@@ -543,8 +543,9 @@ _drm_init(Display *disp, int scr)
      }
    if (dri2_minor < 99)
      {
-        if (swap_debug) ERR("Not supported by DRI2 version(%i.%i)",
-                            dri2_major, dri2_minor);
+        if (swap_debug)
+          ERR("Not supported by DRI2 version(%i.%i)",
+              dri2_major, dri2_minor);
         goto err;
      }
    if (!sym_DRI2Connect(disp, RootWindow(disp, scr), &drv_name, &dev_name))
@@ -569,7 +570,7 @@ _drm_init(Display *disp, int scr)
         if (swap_debug) ERR("DRI2 authenticate failed with magic 0x%x on screen %i", (unsigned int)magic, scr);
         goto err;
      }
-   
+
    if (!slp_mode)
      bufmgr = sym_tbm_bufmgr_init(drm_fd);
    else
@@ -680,8 +681,8 @@ evas_xlib_swapper_new(Display *disp, Drawable draw, Visual *vis,
         free(swp);
         return NULL;
      }
-   if (swp->depth == 24)
-     { // need to adjust to 32bpp?? have to check
+   if (swp->depth == 24) // need to adjust to 32bpp?? have to check
+     {
         swp->depth = 32;
      }
    if (swap_debug) printf("Swapper allocated OK\n");
@@ -868,10 +869,14 @@ evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
      }
    if (swap_debug) printf("Swap state idx_reuse = %i (0=FULL, 1=COPY, 2=DOUBLE, 3=TRIPLE, 4=QUAD)\n", flags->data.idx_reuse);
    if (flags->data.idx_reuse == 0) return MODE_FULL;
-   else if (flags->data.idx_reuse == 1) return MODE_COPY;
-   else if (flags->data.idx_reuse == 2) return MODE_DOUBLE;
-   else if (flags->data.idx_reuse == 3) return MODE_TRIPLE;
-   else if (flags->data.idx_reuse == 4) return MODE_QUADRUPLE;
+   else if (flags->data.idx_reuse == 1)
+     return MODE_COPY;
+   else if (flags->data.idx_reuse == 2)
+     return MODE_DOUBLE;
+   else if (flags->data.idx_reuse == 3)
+     return MODE_TRIPLE;
+   else if (flags->data.idx_reuse == 4)
+     return MODE_QUADRUPLE;
    return MODE_FULL;
 }
 
@@ -896,43 +901,6 @@ evas_xlib_swapper_bit_order_get(X_Swapper *swp EINA_UNUSED)
 #endif
 
 #else
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 X_Swapper *
 evas_xlib_swapper_new(Display *disp EINA_UNUSED, Drawable draw EINA_UNUSED,
@@ -986,4 +954,5 @@ evas_xlib_swapper_bit_order_get(X_Swapper *swp EINA_UNUSED)
 {
    return 0;
 }
+
 #endif

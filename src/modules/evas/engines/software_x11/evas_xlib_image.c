@@ -57,11 +57,11 @@ _native_free_cb(void *image)
      }
    n->ns_data.x11.visual = NULL;
 
-   im->native.data        = NULL;
-   im->native.func.bind   = NULL;
+   im->native.data = NULL;
+   im->native.func.bind = NULL;
    im->native.func.unbind = NULL;
-   im->native.func.free   = NULL;
-   im->image.data         = NULL;
+   im->native.func.free = NULL;
+   im->image.data = NULL;
    free(n);
 }
 
@@ -70,10 +70,10 @@ evas_xlib_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 {
    RGBA_Image *im = image;
    Evas_Native_Surface *ns = native;
-   Native  *n = NULL;
+   Native *n = NULL;
    Ecore_X_Image *exim = NULL;
-   Visual  *vis = NULL;
-   Pixmap   pm = 0;
+   Visual *vis = NULL;
+   Pixmap pm = 0;
    int w, h, depth;
 
    if ((ns) && (ns->type == EVAS_NATIVE_SURFACE_X11))
@@ -109,3 +109,4 @@ evas_xlib_image_native_set(void *data EINA_UNUSED, void *image, void *native)
      }
    return im;
 }
+

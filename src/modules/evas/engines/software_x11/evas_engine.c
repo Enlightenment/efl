@@ -24,8 +24,8 @@
 #include <Ecore.h>
 #include <Eina.h>
 
-Evas_Native_Tbm_Surface_Image_Set_Call  glsym__evas_native_tbm_surface_image_set = NULL;
-Evas_Native_Tbm_Surface_Stride_Get_Call  glsym__evas_native_tbm_surface_stride_get = NULL;
+Evas_Native_Tbm_Surface_Image_Set_Call glsym__evas_native_tbm_surface_image_set = NULL;
+Evas_Native_Tbm_Surface_Stride_Get_Call glsym__evas_native_tbm_surface_stride_get = NULL;
 int _evas_engine_soft_x11_log_dom = -1;
 
 /* function tables - filled in later (func and parent func) */
@@ -37,9 +37,10 @@ typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
 {
    Render_Engine_Software_Generic generic;
-   Eina_Bool (*outbuf_alpha_get)(Outbuf *ob);
+   Eina_Bool                      (*outbuf_alpha_get)(Outbuf *ob);
 
-   struct {
+   struct
+   {
       void *disp;
       void *config;
       void *surface;
@@ -47,9 +48,9 @@ struct _Render_Engine
 };
 
 /* prototypes we will use here */
-static void *_best_visual_get(int backend, void *connection, int screen);
+static void        *_best_visual_get(int backend, void *connection, int screen);
 static unsigned int _best_colormap_get(int backend, void *connection, int screen);
-static int _best_depth_get(int backend, void *connection, int screen);
+static int          _best_depth_get(int backend, void *connection, int screen);
 
 static Eina_List *_outbufs = NULL;
 
@@ -129,7 +130,7 @@ _output_xlib_setup(int w, int h, int rot, Display *disp, Drawable draw,
 
    return re;
 
- on_error:
+on_error:
    if (ob) evas_software_xlib_outbuf_free(ob);
    free(re);
    return NULL;
@@ -175,7 +176,7 @@ _output_swapbuf_setup(int w, int h, int rot, Display *disp, Drawable draw,
      goto on_error;
    return re;
 
- on_error:
+on_error:
    if (ob) evas_software_xlib_swapbuf_free(ob);
    free(re);
    return NULL;
@@ -220,7 +221,7 @@ _symbols(void)
    if (done) return;
 
 #define LINK2GENERIC(sym) \
-   glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
+  glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
 
    // Get function pointer to native_common that is now provided through the link of SW_Generic.
    LINK2GENERIC(_evas_native_tbm_surface_image_set);
@@ -264,7 +265,7 @@ eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
    Evas_Engine_Info_Software_X11 *info = in;
    Render_Engine *re = NULL;
    static int try_swapbuf = -1;
-   char* s;
+   char *s;
 
    if (info->info.backend != EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
      return NULL;
@@ -304,7 +305,7 @@ eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
         re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
      }
 
-   _outbufs =  eina_list_append(_outbufs, re->generic.ob);
+   _outbufs = eina_list_append(_outbufs, re->generic.ob);
 
    return re;
 }
@@ -363,7 +364,7 @@ eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsig
         evas_render_engine_software_generic_update(&re->generic, ob, w, h);
      }
 
-   _outbufs =  eina_list_append(_outbufs, re->generic.ob);
+   _outbufs = eina_list_append(_outbufs, re->generic.ob);
 
    return 1;
 }
@@ -389,7 +390,7 @@ eng_canvas_alpha_get(void *engine)
 
    re = (Render_Engine *)engine;
    return (re->generic.ob->priv.destination_alpha) ||
-     (re->outbuf_alpha_get(re->generic.ob));
+          (re->outbuf_alpha_get(re->generic.ob));
 }
 
 static void
@@ -398,10 +399,10 @@ _native_evasgl_free(void *image)
    RGBA_Image *im = image;
    Native *n = im->native.data;
 
-   im->native.data        = NULL;
-   im->native.func.bind   = NULL;
+   im->native.data = NULL;
+   im->native.func.bind = NULL;
    im->native.func.unbind = NULL;
-   im->native.func.free   = NULL;
+   im->native.func.free = NULL;
    //im->image.data         = NULL;
    free(n);
 }
@@ -414,10 +415,12 @@ eng_image_native_init(void *engine EINA_UNUSED, Evas_Native_Surface_Type type)
 #ifdef GL_GLES
       case EVAS_NATIVE_SURFACE_TBM:
         return _evas_native_tbm_init();
+
 #endif
       case EVAS_NATIVE_SURFACE_X11:
       case EVAS_NATIVE_SURFACE_EVASGL:
         return 1;
+
       default:
         ERR("Native surface type %d not supported!", type);
         return 0;
@@ -433,10 +436,12 @@ eng_image_native_shutdown(void *engine EINA_UNUSED, Evas_Native_Surface_Type typ
       case EVAS_NATIVE_SURFACE_TBM:
         _evas_native_tbm_shutdown();
         return;
+
 #endif
       case EVAS_NATIVE_SURFACE_X11:
       case EVAS_NATIVE_SURFACE_OPENGL:
         return;
+
       default:
         ERR("Native surface type %d not supported!", type);
         return;
@@ -496,8 +501,8 @@ eng_image_native_set(void *engine, void *image, void *native)
      {
         stride = glsym__evas_native_tbm_surface_stride_get(re->generic.ob, ns);
         ie2 = evas_cache_image_copied_data(evas_common_image_cache_get(),
-                                   stride, ie->h, NULL, ie->flags.alpha,
-                                   EVAS_COLORSPACE_ARGB8888);
+                                           stride, ie->h, NULL, ie->flags.alpha,
+                                           EVAS_COLORSPACE_ARGB8888);
      }
    else
      ie2 = evas_cache_image_data(evas_common_image_cache_get(),
@@ -515,15 +520,15 @@ eng_image_native_set(void *engine, void *image, void *native)
      evas_cache2_image_close(ie);
    else
 #endif
-     evas_cache_image_drop(ie);
+   evas_cache_image_drop(ie);
    ie = ie2;
 
    if (ns->type == EVAS_NATIVE_SURFACE_X11)
      {
         RGBA_Image *ret_im = NULL;
         ret_im = evas_xlib_image_dri_native_set(re->generic.ob, ie, ns);
-        if (!ret_im) 
-           ret_im = evas_xlib_image_native_set(re->generic.ob, ie, ns);
+        if (!ret_im)
+          ret_im = evas_xlib_image_native_set(re->generic.ob, ie, ns);
         return ret_im;
      }
    else if (ns->type == EVAS_NATIVE_SURFACE_TBM)
@@ -537,7 +542,7 @@ eng_image_native_set(void *engine, void *image, void *native)
         if (n)
           {
              n->ns_data.evasgl.surface = ns->data.evasgl.surface;
-             im = (RGBA_Image *) ie;
+             im = (RGBA_Image *)ie;
              n->ns.type = EVAS_NATIVE_SURFACE_EVASGL;
              n->ns.version = EVAS_NATIVE_SURFACE_VERSION;
              n->ns.data.evasgl.surface = ns->data.evasgl.surface;
@@ -562,7 +567,6 @@ eng_image_native_get(void *engine EINA_UNUSED, void *image)
    return &(n->ns);
 }
 
-
 /* module advertising code */
 static int
 module_open(Evas_Module *em)
@@ -572,7 +576,7 @@ module_open(Evas_Module *em)
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
 
-   _evas_engine_soft_x11_log_dom = 
+   _evas_engine_soft_x11_log_dom =
      eina_log_domain_register("evas-software_x11", EVAS_DEFAULT_LOG_COLOR);
 
    if (_evas_engine_soft_x11_log_dom < 0)
@@ -617,8 +621,8 @@ static Evas_Module_Api evas_modapi =
 {
    EVAS_MODULE_API_VERSION, "software_x11", "none",
    {
-     module_open,
-     module_close
+      module_open,
+      module_close
    }
 };
 
