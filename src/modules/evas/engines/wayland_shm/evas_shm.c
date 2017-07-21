@@ -431,6 +431,7 @@ _evas_shm_surface_reconfigure(Surface *s, int w, int h, uint32_t flags, Eina_Boo
    surface->w = w;
    surface->h = h;
 
+   if ((!w) || (!h)) return;
    for (i = 0; i < surface->num_buff; i++)
      {
         if (surface->leaf[i].busy) continue;
@@ -600,13 +601,16 @@ _evas_shm_surface_create(Surface *s, int w, int h, int num_buff)
    surf->alpha = s->info->info.destination_alpha;
    surf->compositor_version = s->info->info.compositor_version;
 
-   /* create surface buffers */
-   for (; i < surf->num_buff; i++)
+   if (w && h)
      {
-        if (!_shm_leaf_create(surf, &(surf->leaf[i]), w, h))
+        /* create surface buffers */
+        for (; i < surf->num_buff; i++)
           {
-             ERR("Could not create surface leaf");
-             goto err;
+             if (!_shm_leaf_create(surf, &(surf->leaf[i]), w, h))
+               {
+                  ERR("Could not create surface leaf");
+                  goto err;
+               }
           }
      }
 
