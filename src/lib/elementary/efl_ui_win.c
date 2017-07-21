@@ -3439,8 +3439,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    double wx, wy;
 
    efl_gfx_size_hint_combined_min_get(sd->legacy.edje, &minw, &minh);
-   if (minw < 1) minw = 1;
-   if (minh < 1) minh = 1;
+   if ((!minw) && (!minh)) return;
 
    // If content has a weight, make resizable
    efl_gfx_size_hint_weight_get(sd->legacy.edje, &wx, &wy);
@@ -4383,7 +4382,8 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
    _elm_win_frame_style_update(sd, 1, 1);
    _elm_win_frame_geometry_adjust(sd);
    ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
-   ecore_evas_resize(sd->ee, w, h);
+   if ((w > 1) && (h > 1))
+     ecore_evas_resize(sd->ee, w, h);
 }
 
 static void
@@ -4890,7 +4890,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         for (i = 0; i < p; i++)
           {
              if (!strcmp(enginelist[i], ELM_SOFTWARE_X11))
-               tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+               tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_OPENGL_X11))
                {
                   int opt[20], opt_i = 0;
@@ -4917,14 +4917,14 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
                     }
                   opt[opt_i] = 0;
                   if (opt_i > 0)
-                    tmp_sd.ee = ecore_evas_gl_x11_options_new(NULL, 0, 0, 0, 1, 1, opt);
+                    tmp_sd.ee = ecore_evas_gl_x11_options_new(NULL, 0, 0, 0, 0, 0, opt);
                   else
-                    tmp_sd.ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
+                    tmp_sd.ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 0, 0);
                }
              else if (!strcmp(enginelist[i], ELM_WAYLAND_SHM))
-               tmp_sd.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 1, 1, 0);
+               tmp_sd.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_WAYLAND_EGL))
-               tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
+               tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_WIN32))
                tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_DDRAW))
@@ -5097,8 +5097,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    sd->evas = ecore_evas_get(sd->ee);
 
    evas_object_color_set(obj, 0, 0, 0, 0);
-   evas_object_move(obj, 0, 0);
-   evas_object_resize(obj, 1, 1);
    evas_object_pass_events_set(obj, EINA_TRUE);
 
    if (type == ELM_WIN_INLINED_IMAGE)
