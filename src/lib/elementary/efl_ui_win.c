@@ -5115,6 +5115,31 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    _elm_win_need_frame_adjust(sd, engine);
    _elm_win_apply_alpha(obj, sd);
 
+#ifdef HAVE_ELEMENTARY_WL2
+   if ((type != ELM_WIN_FAKE) && (type != ELM_WIN_INLINED_IMAGE))
+     {
+        if ((engine) &&
+            ((!strcmp(engine, ELM_WAYLAND_SHM) ||
+              (!strcmp(engine, ELM_WAYLAND_EGL)))))
+          {
+             Evas *pevas;
+
+             if (!strcmp(engine, ELM_WAYLAND_SHM))
+               sd->pointer.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 0, 0, 0);
+             else if (!strcmp(engine, ELM_WAYLAND_EGL))
+               sd->pointer.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 0, 0, 0);
+
+             pevas = ecore_evas_get(sd->pointer.ee);
+
+             sd->pointer.obj = edje_object_add(pevas);
+
+             sd->pointer.win = ecore_evas_wayland2_window_get(sd->pointer.ee);
+             ecore_wl2_window_type_set(sd->pointer.win,
+                                       ECORE_WL2_WINDOW_TYPE_NONE);
+          }
+     }
+#endif
+
    /* do not append to list; all windows render as black rects */
    if (type != ELM_WIN_FAKE)
      {
@@ -5144,31 +5169,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
         if (_elm_config->focus_highlight_animate)
           elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
      }
-
-#ifdef HAVE_ELEMENTARY_WL2
-   if ((type != ELM_WIN_FAKE) && (type != ELM_WIN_INLINED_IMAGE))
-     {
-        if ((engine) &&
-            ((!strcmp(engine, ELM_WAYLAND_SHM) ||
-              (!strcmp(engine, ELM_WAYLAND_EGL)))))
-          {
-             Evas *pevas;
-
-             if (!strcmp(engine, ELM_WAYLAND_SHM))
-               sd->pointer.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 1, 1, 0);
-             else if (!strcmp(engine, ELM_WAYLAND_EGL))
-               sd->pointer.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
-
-             pevas = ecore_evas_get(sd->pointer.ee);
-
-             sd->pointer.obj = edje_object_add(pevas);
-
-             sd->pointer.win = ecore_evas_wayland2_window_get(sd->pointer.ee);
-             ecore_wl2_window_type_set(sd->pointer.win,
-                                       ECORE_WL2_WINDOW_TYPE_NONE);
-          }
-     }
-#endif
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_WINDOW);
    if (_elm_config->atspi_mode)
