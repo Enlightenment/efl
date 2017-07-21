@@ -330,8 +330,8 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 
         EINA_LIST_FREE(unrefs, eo_obj)
           {
-             ERR("Killing Zombie Object [%s@%p]. Refs: %i:%i",
-                 efl_class_name_get(eo_obj), eo_obj, efl_ref_get(eo_obj), ___efl_ref2_get(eo_obj));
+             ERR("Killing Zombie Object [%s]. Refs: %i:%i",
+                 efl_debug_name_get(eo_obj), efl_ref_get(eo_obj), ___efl_ref2_get(eo_obj));
              ___efl_ref2_reset(eo_obj);
              while (efl_ref_get(eo_obj) > 1) efl_unref(eo_obj);
              while (efl_ref_get(eo_obj) < 1) efl_ref(eo_obj);
@@ -343,12 +343,12 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
                EINA_INLIST_FOREACH(lay->objects, o)
                  if (o && (o->object == eo_obj))
                    {
-                      ERR("Zombie Object [%s@%p] could not be removed "
+                      ERR("Zombie Object [%s] could not be removed "
                           "from the list of objects. Maybe this object "
                           "was deleted but the call to efl_destructor() "
                           "was not propagated to all the parent classes? "
                           "Forcibly removing it. This may leak! Refs: %i:%i",
-                          efl_class_name_get(eo_obj), eo_obj, efl_ref_get(eo_obj), ___efl_ref2_get(eo_obj));
+                          efl_debug_name_get(eo_obj), efl_ref_get(eo_obj), ___efl_ref2_get(eo_obj));
                       lay->objects = (Evas_Object_Protected_Data *)
                             eina_inlist_remove(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(o));
                       goto next_zombie;

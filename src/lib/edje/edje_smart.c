@@ -60,15 +60,14 @@ _edje_object_efl_object_destructor(Eo *obj, Edje *class_data)
    efl_data_unref(obj, class_data->base);
 }
 
-EOLIAN static const char *
-_edje_object_efl_object_debug_name_override_get(Eo *obj, Edje *ed)
+EOLIAN static Eina_Strbuf *
+_edje_object_efl_object_debug_name_override(Eo *obj, Edje *ed, Eina_Strbuf *sb)
 {
-   const char *base;
-
-   base = efl_debug_name_get(efl_super(obj, MY_CLASS));
-   return eina_slstr_printf("%s:file='%s':group='%s'", base,
-                            ed->file ? eina_file_filename_get(ed->file->f) : NULL,
-                            ed->group);
+   sb = efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+   eina_strbuf_append_printf(sb, ":file='%s':group='%s'",
+                             ed->file ? eina_file_filename_get(ed->file->f) : NULL,
+                             ed->group);
+   return sb;
 }
 
 EOLIAN static void

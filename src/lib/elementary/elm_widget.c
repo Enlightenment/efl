@@ -6234,14 +6234,15 @@ _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
    sd->on_destroy = EINA_FALSE;
 }
 
-EOLIAN static const char *
-_elm_widget_efl_object_debug_name_override_get(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+EOLIAN static Eina_Strbuf *
+_elm_widget_efl_object_debug_name_override(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Strbuf *sb)
 {
-   const char *base, *focus = "";
+   const char *focus = "";
 
    if (elm_obj_widget_focus_get(obj)) focus = ":focused";
-   base = efl_debug_name_get(efl_super(obj, MY_CLASS));
-   return eina_slstr_printf("%s%s", base, focus);
+   sb = efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+   eina_strbuf_append_printf(sb, "%s", focus);
+   return sb;
 }
 
 EOLIAN static Eina_Bool

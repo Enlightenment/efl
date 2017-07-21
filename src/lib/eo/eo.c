@@ -2480,7 +2480,8 @@ EAPI const char *
 efl_debug_name_get(const Eo *obj_id)
 {
    const char *override = "";
-   const char *name, *clsname, *ret;
+   const char *name, *clsname;
+   Eina_Strbuf *sb;
 
    if (!obj_id) return "(null)";
 
@@ -2507,34 +2508,32 @@ efl_debug_name_get(const Eo *obj_id)
    EO_OBJ_POINTER(obj_id, obj);
    if (!obj) return eina_slstr_printf("Invalid_Object_ID@%p", obj_id);
 
-   if (!obj->cur_klass)
-     {
-        ret = efl_debug_name_override_get(obj_id);
-        if (ret) goto end;
-     }
-   else
-     {
-        if (obj->super)
-          ret = efl_debug_name_override_get(efl_super(obj_id, (Efl_Class *) obj->cur_klass->header.id));
-        else
-          ret = efl_debug_name_override_get(efl_cast(obj_id, (Efl_Class *) obj->cur_klass->header.id));
-        obj->super = EINA_FALSE;
-        obj->cur_klass = NULL;
-        if (ret) goto end;
-     }
-
+   sb = eina_strbuf_new();
    name = efl_name_get(obj_id);
    clsname = obj->klass->desc->name;
    if (_obj_is_override(obj)) override = "(override)";
 
    if (name)
-     ret = eina_slstr_printf("%s%s@%p[%d]:'%s'", clsname, override, obj_id, (int) obj->refcount, name);
+     eina_strbuf_append_printf(sb, "%s%s@%p[%d]:'%s'", clsname, override, obj_id, (int) obj->refcount, name);
    else
-     ret = eina_slstr_printf("%s%s@%p[%d]", clsname, override, obj_id, (int) obj->refcount);
+     eina_strbuf_append_printf(sb, "%s%s@%p[%d]", clsname, override, obj_id, (int) obj->refcount);
 
-end:
+   if (!obj->cur_klass)
+     {
+        sb = efl_debug_name_override((Eo *) obj_id, sb);
+     }
+   else
+     {
+        if (obj->super)
+          sb = efl_debug_name_override(efl_super(obj_id, (Efl_Class *) obj->cur_klass->header.id), sb);
+        else
+          sb = efl_debug_name_override(efl_cast(obj_id, (Efl_Class *) obj->cur_klass->header.id), sb);
+        obj->super = EINA_FALSE;
+        obj->cur_klass = NULL;
+     }
+
    EO_OBJ_DONE(obj_id);
-   return ret;
+   return eina_slstr_strbuf_new(sb);
 }
 
 EAPI int

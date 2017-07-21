@@ -67,22 +67,22 @@ evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, int rec
 }
 
 /* new in EO */
-EOLIAN const char *
-_efl_canvas_object_efl_object_debug_name_override_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+EOLIAN Eina_Strbuf *
+_efl_canvas_object_efl_object_debug_name_override(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Strbuf *sb)
 {
    const char *norend = obj->no_render ? ":no_render" : "";
    const char *clip = obj->clip.clipees ? ":clipper" : "";
-   const char *base;
 
-   base = efl_debug_name_get(efl_super(eo_obj, EFL_CANVAS_OBJECT_CLASS));
+   sb = efl_debug_name_override(efl_super(eo_obj, EFL_CANVAS_OBJECT_CLASS), sb);
    if (obj->cur->visible)
      {
-        return eina_slstr_printf("%s%s%s:(%d,%d %dx%d)", base, norend, clip,
-                                 obj->cur->geometry.x, obj->cur->geometry.y,
-                                 obj->cur->geometry.w, obj->cur->geometry.h);
+        eina_strbuf_append_printf(sb, "%s%s:(%d,%d %dx%d)", norend, clip,
+                                  obj->cur->geometry.x, obj->cur->geometry.y,
+                                  obj->cur->geometry.w, obj->cur->geometry.h);
      }
    else
      {
-        return eina_slstr_printf("%s:hidden%s%s", base, norend, clip);
+        eina_strbuf_append_printf(sb, ":hidden%s%s", norend, clip);
      }
+   return sb;
 }

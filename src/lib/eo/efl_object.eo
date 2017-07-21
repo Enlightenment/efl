@@ -81,15 +81,26 @@ abstract Efl.Object ()
            comment: string @nullable; [[The comment]]
          }
       }
-      @property debug_name_override {
-         [[ A read-only name for this object used for debugging.
+      debug_name_override {
+         [[ Build a read-only name for this object used for debugging.
+
+            Multiple calls using efl_super() can be chained in order to build
+            the entire debug name, from parent to child classes. In C the usual
+            way to build the string is as follows:
+
+            sb = efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+            eina_strbuf_append_printf(sb, "new_information");
+            return sb;
+
+            The receiving function should always either free the strbuf or
+            returning it back to the caller, as ownership is transferred.
 
             @since 1.21
          ]]
-         get {}
-         values {
-            name: string; [[A name including class name and object name.]]
+         params {
+            @in sb: own(ptr(Eina.Strbuf)); [[A string buffer, must not be $null.]]
          }
+         return: own(ptr(Eina.Strbuf)); [[Should not be $null, may be $sb.]]
       }
       @property event_global_freeze_count @class {
          get {

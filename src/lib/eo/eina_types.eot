@@ -47,6 +47,7 @@ enum @extern Eina.Xattr.Flags {
 type @extern Eina.Error: int; [[Eina error type]]
 
 struct @extern @free(eina_binbuf_free) Eina.Binbuf; [[Eina binbuf data structure]]
+struct @extern @free(eina_strbuf_free) Eina.Strbuf; [[Eina strbuf data structure]]
 
 struct @extern Eina.Slice {
     [[A linear, read-only, memory segment]]
