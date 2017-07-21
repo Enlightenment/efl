@@ -3693,6 +3693,9 @@ EFL_INTERNAL_DEPEND_PKG([EFL_WL], [efl])
 EFL_INTERNAL_DEPEND_PKG([EFL_WL], [eina])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EFL_WL], [${want_x11_any}], [ecore_x])
 
+EFL_DEPEND_PKG([EFL_WL], [WAYLAND],
+               [wayland-server >= 1.11.0])
+
 EFL_EVAL_PKGS([EFL_WL])
 
 ### Checks for header files
