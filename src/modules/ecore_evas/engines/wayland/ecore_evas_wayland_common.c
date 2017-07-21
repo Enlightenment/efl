@@ -1959,6 +1959,9 @@ _ecore_evas_wl_common_hide(Ecore_Evas *ee)
    ee->visible = 0;
    ee->should_be_visible = 0;
    ee->draw_ok = EINA_FALSE;
+   if (wdata->anim_callback) wl_callback_destroy(wdata->anim_callback);
+   wdata->anim_callback = NULL;
+   ecore_evas_manual_render_set(ee, 0);
 
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
