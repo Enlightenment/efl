@@ -1723,11 +1723,7 @@ evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, 
    if (length < 9) goto on_error;
 
    map = eina_file_map_all(f, load_data ? EINA_FILE_WILLNEED : EINA_FILE_RANDOM);
-   if (!map)
-     {
-        ERR("XPM ERROR: file failed to mmap");
-        goto on_error;
-     }
+   if (!map) goto on_error;
 
    if (strncmp("/* XPM */", map, 9))
      {
