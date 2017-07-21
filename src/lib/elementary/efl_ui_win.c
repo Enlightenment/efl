@@ -962,10 +962,9 @@ _elm_win_mouse_in(Ecore_Evas *ee)
    if ((sd->wl.win) && (sd->pointer.ee))
      {
         sd->pointer.visible = EINA_TRUE;
-        ecore_evas_show(sd->pointer.ee);
         sd->pointer.surf = ecore_wl2_window_surface_get(sd->pointer.win);
-
         _elm_win_wl_cursor_set(sd->obj, NULL);
+        ecore_evas_show(sd->pointer.ee);
      }
 #endif
 }
