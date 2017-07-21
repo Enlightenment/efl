@@ -52,7 +52,8 @@ typedef struct _Outbuf_Fb
 
 struct _Outbuf
 {
-   int fd, w, h, bpp, rotation;
+   Ecore_Drm2_Device *dev;
+   int w, h, bpp, rotation;
    unsigned int depth, format;
 
    struct

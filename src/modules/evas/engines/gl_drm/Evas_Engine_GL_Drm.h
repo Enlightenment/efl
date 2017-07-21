@@ -18,7 +18,8 @@ struct _Evas_Engine_Info_GL_Drm
      {
         struct gbm_device *gbm;
 
-        int fd, bpp;
+        Ecore_Drm2_Device *dev;
+        int bpp;
         unsigned int rotation, depth;
         unsigned int format, flags;
 

@@ -16,7 +16,7 @@ _fb2_create(Ecore_Drm2_Fb *fb)
 }
 
 EAPI Ecore_Drm2_Fb *
-ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned int format)
+ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format)
 {
    Ecore_Drm2_Fb *fb;
    struct drm_mode_create_dumb carg;
@@ -24,12 +24,12 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    struct drm_mode_map_dumb marg;
    int ret;
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL((fd < 0), NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
 
    fb = calloc(1, sizeof(Ecore_Drm2_Fb));
    if (!fb) return NULL;
 
-   fb->fd = fd;
+   fb->fd = dev->fd;
    fb->w = width;
    fb->h = height;
    fb->bpp = bpp;
@@ -42,7 +42,7 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    carg.width = width;
    carg.height = height;
 
-   ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
+   ret = sym_drmIoctl(dev->fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
    if (ret) goto err;
 
    fb->handles[0] = carg.handle;
@@ -52,7 +52,7 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    if (!_fb2_create(fb))
      {
         ret =
-          sym_drmModeAddFB(fd, width, height, depth, bpp,
+          sym_drmModeAddFB(dev->fd, width, height, depth, bpp,
                            fb->strides[0], fb->handles[0], &fb->id);
         if (ret)
           {
@@ -63,14 +63,14 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
 
    memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
    marg.handle = fb->handles[0];
-   ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
+   ret = sym_drmIoctl(dev->fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
    if (ret)
      {
         ERR("Could not map framebuffer: %m");
         goto map_err;
      }
 
-   fb->mmap = mmap(NULL, fb->sizes[0], PROT_WRITE, MAP_SHARED, fd, marg.offset);
+   fb->mmap = mmap(NULL, fb->sizes[0], PROT_WRITE, MAP_SHARED, dev->fd, marg.offset);
    if (fb->mmap == MAP_FAILED)
      {
         ERR("Could not mmap framebuffer memory: %m");
@@ -80,22 +80,22 @@ ecore_drm2_fb_create(int fd, int width, int height, int depth, int bpp, unsigned
    return fb;
 
 map_err:
-   sym_drmModeRmFB(fd, fb->id);
+   sym_drmModeRmFB(dev->fd, fb->id);
 add_err:
    memset(&darg, 0, sizeof(struct drm_mode_destroy_dumb));
    darg.handle = fb->handles[0];
-   sym_drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
+   sym_drmIoctl(dev->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
 err:
    free(fb);
    return NULL;
 }
 
 EAPI Ecore_Drm2_Fb *
-ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo)
+ecore_drm2_fb_gbm_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo)
 {
    Ecore_Drm2_Fb *fb;
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL((fd < 0), NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
 
    fb = calloc(1, sizeof(Ecore_Drm2_Fb));
    if (!fb) return NULL;
@@ -103,7 +103,7 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
    fb->gbm = EINA_TRUE;
    fb->gbm_bo = bo;
 
-   fb->fd = fd;
+   fb->fd = dev->fd;
    fb->w = width;
    fb->h = height;
    fb->bpp = bpp;
@@ -116,7 +116,7 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
 
    if (!_fb2_create(fb))
      {
-        if (sym_drmModeAddFB(fd, width, height, depth, bpp,
+        if (sym_drmModeAddFB(dev->fd, width, height, depth, bpp,
                              fb->strides[0], fb->handles[0], &fb->id))
           {
              ERR("Could not add framebuffer: %m");
@@ -664,20 +664,22 @@ ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb)
 }
 
 EAPI Ecore_Drm2_Fb *
-ecore_drm2_fb_dmabuf_import(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count)
+ecore_drm2_fb_dmabuf_import(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count)
 {
    int i;
    Ecore_Drm2_Fb *fb;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
 
    fb = calloc(1, sizeof(Ecore_Drm2_Fb));
    if (!fb) return NULL;
 
    for (i = 0; i < dmabuf_fd_count; i++)
-     if (sym_drmPrimeFDToHandle(fd, dmabuf_fd[i], &fb->handles[i]))
+     if (sym_drmPrimeFDToHandle(dev->fd, dmabuf_fd[i], &fb->handles[i]))
        goto fail;
 
    fb->dmabuf = EINA_TRUE;
-   fb->fd = fd;
+   fb->fd = dev->fd;
    fb->w = width;
    fb->h = height;
    fb->bpp = bpp;

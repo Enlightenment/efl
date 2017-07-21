@@ -1,6 +1,8 @@
 #ifndef _EVAS_ENGINE_DRM_H
 # define _EVAS_ENGINE_DRM_H
 
+# include <Ecore_Drm2.h>
+
 typedef struct _Evas_Engine_Info_Drm
 {
    /* PRIVATE - don't mess with this baby or evas will poke its tongue out */
@@ -9,7 +11,7 @@ typedef struct _Evas_Engine_Info_Drm
 
    struct
      {
-        int fd;
+        Ecore_Drm2_Device *dev;
         int depth, bpp;
         unsigned int format, rotation;
 

@@ -219,16 +219,16 @@ ecore_drm2_shutdown(void)
 }
 
 EAPI int
-ecore_drm2_event_handle(int fd, Ecore_Drm2_Context *drmctx)
+ecore_drm2_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Context *drmctx)
 {
    drmEventContext ctx;
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL((fd < 0), -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, -1);
 
    memset(&ctx, 0, sizeof(ctx));
    ctx.version = 2;
    ctx.page_flip_handler = drmctx->page_flip_handler;
    ctx.vblank_handler = drmctx->vblank_handler;
 
-   return sym_drmHandleEvent(fd, &ctx);
+   return sym_drmHandleEvent(dev->fd, &ctx);
 }

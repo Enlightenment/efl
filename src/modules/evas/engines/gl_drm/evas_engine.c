@@ -122,9 +122,11 @@ static const EVGL_Interface evgl_funcs =
 Eina_Bool
 eng_gbm_init(Evas_Engine_Info_GL_Drm *info)
 {
+   int fd;
    if (!info) return EINA_FALSE;
 
-   if (!(info->info.gbm = gbm_create_device(info->info.fd)))
+   fd = ecore_drm2_device_fd_get(info->info.dev);
+   if (!(info->info.gbm = gbm_create_device(fd)))
      {
         ERR("Coult not create gbm device");
         return EINA_FALSE;
@@ -600,7 +602,7 @@ _re_winfree(Render_Engine *re)
 }
 
 static Ecore_Drm2_Fb *
-drm_import_simple_dmabuf(int fd, struct dmabuf_attributes *attributes)
+drm_import_simple_dmabuf(Ecore_Drm2_Device *dev, struct dmabuf_attributes *attributes)
 {
    unsigned int stride[4] = { 0 };
    int dmabuf_fd[4] = { 0 };
@@ -612,7 +614,7 @@ drm_import_simple_dmabuf(int fd, struct dmabuf_attributes *attributes)
         dmabuf_fd[i] = attributes->fd[i];
      }
 
-   return ecore_drm2_fb_dmabuf_import(fd, attributes->width,
+   return ecore_drm2_fb_dmabuf_import(dev, attributes->width,
                                       attributes->height, 32, 32,
                                       attributes->format, stride,
                                       dmabuf_fd, attributes->n_planes);
@@ -805,7 +807,7 @@ eng_image_plane_assign(void *data, void *image, int x, int y)
     * sticking to this one for now */
    if (n->ns.type != EVAS_NATIVE_SURFACE_WL_DMABUF) return NULL;
 
-   fb = drm_import_simple_dmabuf(re->fd, &n->ns_data.wl_surface_dmabuf.attr);
+   fb = drm_import_simple_dmabuf(re->dev, &n->ns_data.wl_surface_dmabuf.attr);
 
    if (!fb) return NULL;
 
@@ -958,7 +960,7 @@ eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
         return NULL;
      }
 
-   re->fd = info->info.fd;
+   re->dev = info->info.dev;
 
    /* try to create new outbuf */
    ob = evas_outbuf_new(info, w, h, swap_mode);

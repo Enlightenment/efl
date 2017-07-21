@@ -32,7 +32,7 @@ static Eina_Bool
 _outbuf_fb_create(Outbuf *ob, Outbuf_Fb *ofb)
 {
    ofb->fb =
-     ecore_drm2_fb_create(ob->fd, ob->w, ob->h,
+     ecore_drm2_fb_create(ob->dev, ob->w, ob->h,
                           ob->depth, ob->bpp, ob->format);
    if (!ofb->fb) return EINA_FALSE;
 
@@ -66,7 +66,7 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
 
    ob->w = w;
    ob->h = h;
-   ob->fd = info->info.fd;
+   ob->dev = info->info.dev;
    ob->alpha = info->info.alpha;
    ob->rotation = info->info.rotation;
 

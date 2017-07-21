@@ -75,7 +75,7 @@ _evas_outbuf_fb_get(Outbuf *ob, struct gbm_bo *bo)
    /* fb->size = fb->stride * fb->h; */
 
    fb =
-     ecore_drm2_fb_gbm_create(ob->fd, w, h, ob->depth, ob->bpp,
+     ecore_drm2_fb_gbm_create(ob->dev, w, h, ob->depth, ob->bpp,
                               format, hdl, stride, bo);
    if (!fb)
      {
@@ -407,7 +407,7 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
    /* ob->vsync = info->info.vsync; */
    ob->swap_mode = swap_mode;
 
-   ob->fd = info->info.fd;
+   ob->dev = info->info.dev;
    ob->bpp = info->info.bpp;
    ob->format = info->info.format;
    ob->priv.output = info->info.output;

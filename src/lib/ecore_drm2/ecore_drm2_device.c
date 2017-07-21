@@ -885,6 +885,14 @@ ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device)
      return EINA_FALSE;
 }
 
+EAPI int
+ecore_drm2_device_fd_get(Ecore_Drm2_Device *device)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(device, -1);
+
+   return device->fd;
+}
+
 /* prevent crashing with old apps compiled against these functions */
 EAPI void ecore_drm2_device_keyboard_cached_context_set(){};
 EAPI void ecore_drm2_device_keyboard_cached_keymap_set(){};
