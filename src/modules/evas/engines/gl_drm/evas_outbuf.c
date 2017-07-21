@@ -111,35 +111,6 @@ _evas_outbuf_buffer_swap(Outbuf *ob)
         else ecore_drm2_plane_fb_set(ob->priv.plane, fb);
 
         ecore_drm2_fb_flip(fb, ob->priv.output);
-
-        /* Ecore_Drm2_Plane *plane; */
-
-        /* plane = ecore_drm2_plane_find(ob->priv.output, fb, ob->format); */
-        /* if (plane) */
-        /*   { */
-        /*      int ret; */
-        /*      drmVBlank vbl = */
-        /*        { */
-        /*           .request.type = DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT, */
-        /*           .request.sequence = 1, */
-        /*        }; */
-
-        /*      vbl.request.type |= ecore_drm2_output_vblank_get(ob->priv.output); */
-        /*      vbl.request.signal = (unsigned long)ob; */
-
-        /*      ecore_drm2_fb_dirty(fb, rects, count); */
-
-        /*      if (!ecore_drm2_plane_fb_set(plane, fb)) */
-        /*        { */
-        /*           ERR("Failed to set FB on Plane"); */
-        /*           return; */
-        /*        } */
-
-        /*      ret = drmWaitVBlank(ob->fd, &vbl); */
-        /*      if (ret) return; */
-        /*   } */
-        /* else */
-        /*   WRN("NO PLANE FOUND"); */
      }
    else
      WRN("Could not get FBO from Bo");
