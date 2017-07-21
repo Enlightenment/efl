@@ -647,13 +647,12 @@ _efl_canvas_group_efl_object_destructor(Eo *eo_obj, Evas_Smart_Data *o)
      }
 }
 
-EOLIAN static const char *
-_efl_canvas_group_efl_object_debug_name_override_get(Eo *eo_obj, Evas_Smart_Data *o)
+EOLIAN static Eina_Strbuf *
+_efl_canvas_group_efl_object_debug_name_override(Eo *eo_obj, Evas_Smart_Data *o, Eina_Strbuf *sb)
 {
-   const char *base;
-
-   base = efl_debug_name_get(efl_super(eo_obj, MY_CLASS));
-   return eina_slstr_printf("%s:children=%d", base, eina_inlist_count(o->contained));
+   sb = efl_debug_name_override(efl_super(eo_obj, MY_CLASS), sb);
+   eina_strbuf_append_printf(sb, ":children=%d", eina_inlist_count(o->contained));
+   return sb;
 }
 
 static inline void

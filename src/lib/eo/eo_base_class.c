@@ -572,10 +572,10 @@ _efl_object_comment_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
    return pd->ext->comment;
 }
 
-EOLIAN static const char *
-_efl_object_debug_name_override_get(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED)
+EOLIAN static Eina_Strbuf *
+_efl_object_debug_name_override(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED, Eina_Strbuf *sb)
 {
-   return NULL;
+   return sb;
 }
 
 EOLIAN static void
