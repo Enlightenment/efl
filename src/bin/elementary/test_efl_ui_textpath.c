@@ -24,17 +24,20 @@ elm_main(int argc, char *argv[])
 
     txtpath = efl_add(EFL_UI_TEXTPATH_CLASS, win);
     efl_ui_textpath_autofit_set(txtpath, EINA_TRUE);
-    //efl_text_set(txtpath, "abcdef and more you can see from this test");
+
+    efl_text_set(txtpath, "abcdef and more you can see from this test");
     //efl_text_set(txtpath, "abcd&lt;efghi&gt;jklm");
     //efl_text_set(txtpath, "abcd&lt;eghi&gt;j");
     //elm_object_text_set(txtpath, "abcd&lt;eghi&gt;j");
-    efl_text_set(txtpath, "abcd&lt;eghi&gt;j more and more, so long to make it ellipsis? No, it is not enough, want to see more?xy");
+    //efl_text_set(txtpath, "abcd&lt;eghi&gt;j more and more, so long to make it ellipsis? No, it is not enough, want to see more?xy");
 
     //efl_ui_textpath_circle_set(txtpath, 200, 200, 100, 0);
     //efl_gfx_path_append_circle(txtpath, 200, 200, 100);
 
     efl_gfx_path_append_arc(txtpath, 100, 100, 200, 200, 0, -90);
-    efl_gfx_path_append_line_to(txtpath, 100, 200);
+    efl_gfx_path_append_line_to(txtpath, 300, 350);
+    //efl_gfx_path_append_move_to(txtpath, 200, 300);
+    //efl_gfx_path_append_line_to(txtpath, 300, 350);
 
     //efl_gfx_path_append_move_to(txtpath, 100, 100);
     //efl_gfx_path_append_line_to(txtpath, 200, 300);

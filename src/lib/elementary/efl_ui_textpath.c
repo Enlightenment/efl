@@ -382,6 +382,7 @@ _text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *
    Evas_Coord x, y, w, h;
    efl_gfx_geometry_get(pd->text_obj, &x, &y, &w, &h);
    ERR("content geo: %d %d %d %d", x, y, w, h);
+   ERR("line geo: %.1f %.1f :: %.1f %.1f, area: %d %d, cmp: %d", x1, y1, x2, y2, w1, w2, cmp);
 
    double len, sina, cosa;
    len = sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
@@ -398,9 +399,9 @@ _text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *
    h *= 2;
    //w = len < w ? len : w;
    evas_map_point_image_uv_set(map, cmp + 0, w1, 0);
-   evas_map_point_image_uv_set(map, cmp + 1, w2 - w1, 0);
-   evas_map_point_image_uv_set(map, cmp + 2, w2 - w1, h);
-   evas_map_point_image_uv_set(map, cmp + 3, 0, h);
+   evas_map_point_image_uv_set(map, cmp + 1, w2, 0);
+   evas_map_point_image_uv_set(map, cmp + 2, w2, h);
+   evas_map_point_image_uv_set(map, cmp + 3, w1, h);
 
 }
 
@@ -452,10 +453,11 @@ _text_draw(Eo *obj, Efl_Ui_Textpath_Data *pd)
    if (map_no == 0) return;
    map = evas_map_new(map_no);
 
+   w1 = w2 = 0;
    EINA_INLIST_FOREACH(pd->segments, seg)
      {
         int len = seg->length;
-        w1 = w - remained_w;
+        //w1 = w - remained_w;
         w2 = w1 + len;
         remained_w -= len;
         if (seg->type == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
@@ -475,6 +477,7 @@ _text_draw(Eo *obj, Efl_Ui_Textpath_Data *pd)
              _segment_draw(pd, slice_no, slice_len, w1, w2, cur_map_point, map, EINA_FALSE, seg->bezier);
              cur_map_point += slice_no * 4;
           }
+        w1 = w2;
      }
    
    /*
