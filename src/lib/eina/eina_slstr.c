@@ -172,7 +172,7 @@ eina_slstr_strbuf_new(Eina_Strbuf *string)
    if (!string) return NULL;
 
    fq = _slstr_freeq_get(EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fq, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(fq, error);
 
    str = eina_strbuf_release(string);
 #ifdef DEBUG
@@ -180,6 +180,10 @@ eina_slstr_strbuf_new(Eina_Strbuf *string)
 #endif
    eina_freeq_ptr_add(fq, str, free, len);
    return str;
+
+error:
+   eina_strbuf_free(string);
+   return NULL;
 }
 
 EAPI Eina_Slstr *
