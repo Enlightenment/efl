@@ -5,3 +5,4 @@ void
 evas_software_xlib_x_init(void)
 {
 }
+
