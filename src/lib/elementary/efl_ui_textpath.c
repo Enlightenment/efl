@@ -21,14 +21,33 @@
 #define SLICE_MAX 200
 #define SLICE_DEFAULT_NO 69
 
+typedef struct _Efl_Ui_Textpath_Point Efl_Ui_Textpath_Point;
+typedef struct _Efl_Ui_Textpath_Line Efl_Ui_Textpath_Line;
 typedef struct _Efl_Ui_Textpath_Segment Efl_Ui_Textpath_Segment;
 typedef struct _Efl_Ui_Textpath_Data Efl_Ui_Textpath_Data;
+
+struct _Efl_Ui_Textpath_Point
+{
+   double x;
+   double y;
+};
+
+struct _Efl_Ui_Textpath_Line
+{
+   Efl_Ui_Textpath_Point start;
+   Efl_Ui_Textpath_Point end;
+};
 
 struct _Efl_Ui_Textpath_Segment
 {
    EINA_INLIST;
    int length;
-   Eina_Bezier bezier;
+   Efl_Gfx_Path_Command_Type type;
+   union
+     {
+        Eina_Bezier bezier;
+        Efl_Ui_Textpath_Line line;
+     };
 };
 
 
@@ -213,6 +232,7 @@ _draw_text_on_path(Efl_Ui_Textpath_Data *pd, double px0, double py0, double ctrl
    evas_map_free(map);
 }
 
+/*
 static void
 _bezier_segment_store(Efl_Ui_Textpath_Data *pd, double px0, double py0,
                       double ctrl_x0, double ctrl_y0,
@@ -238,18 +258,126 @@ _bezier_segment_store(Efl_Ui_Textpath_Data *pd, double px0, double py0,
 
    pd->total_length += len;
    ERR("bezier point: %.1f %.1f; len: %d; total_length: %d", px0, py0, len, pd->total_length);
+}*/
+
+
+static void
+_segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double slice_len, int w1, int w2, int cmp, Evas_Map *map, Eina_Bool final, Eina_Bezier bezier)
+{
+   ERR("In: slice_no: %d, slice_len: %.2f, from: %d, to: %d, cur mp: %d", slice_no, slice_len, w1, w1, cmp);
+
+   int x = 0, y = 0, w = 0, h = 0;
+   int i, len, seg_len;
+   double u0, u1, v0, v1;
+   double dist, t, dt;
+   double px, py, px2, py2;
+   double rad;
+   Eina_Vector2 vec, nvec, vec0, vec1, vec2, vec3;
+   Eina_Matrix2 mat;
+
+   len = w2 - w1;
+   efl_gfx_size_get(pd->text_obj, &w, &h);
+   seg_len = eina_bezier_length_get(&bezier);
+   //dt = 1.0 / (double) pd->slice;
+   dt = len / (seg_len * (double) slice_no);
+   //dist = ((double) w / (double) pd->slice);
+   //dist = ((double) w / (double) pd->slice);
+   //dist = slice_len;
+   dist = len / (double)slice_no;
+    //Compute Beziers.
+
+   //length = eina_bezier_length_get(&bezier);
+   rad = _deg_to_rad(90);
+   eina_matrix2_values_set(&mat, cos(rad), -sin(rad), sin(rad), cos(rad));
+
+   //index 0: v0, v3
+   eina_bezier_values_get(&bezier, NULL, NULL, NULL, NULL, NULL, NULL, &px2, &py2);
+   t = 0;
+   eina_bezier_point_at(&bezier, t, &px, &py);
+   eina_bezier_point_at(&bezier, t + dt, &px2, &py2);
+
+   vec.x = (px2 - px);
+   vec.y = (py2 - py);
+   eina_vector2_normalize(&nvec, &vec);
+
+   eina_vector2_transform(&vec, &mat, &nvec);
+   eina_vector2_normalize(&nvec, &vec);
+   eina_vector2_scale(&vec, &nvec, ((double) h) * 0.5);
+
+   vec1.x = (vec.x + px);
+   vec1.y = (vec.y + py);
+   vec2.x = (-vec.x + px);
+   vec2.y = (-vec.y + py);
+
+   //add points to map
+   for (i = 0; i < slice_no; i++)
+     {
+        //v0, v3
+        vec0.x = vec1.x;
+        vec0.y = vec1.y;
+        vec3.x = vec2.x;
+        vec3.y = vec2.y;
+
+        //v1, v2
+        t = ((double) (i + 1) * dt);
+        eina_bezier_point_at(&bezier, t, &px, &py);
+        eina_bezier_point_at(&bezier, t + dt, &px2, &py2);
+
+        vec.x = (px2 - px);
+        vec.y = (py2 - py);
+        eina_vector2_normalize(&nvec, &vec);
+
+        eina_vector2_transform(&vec, &mat, &nvec);
+        eina_vector2_normalize(&nvec, &vec);
+        eina_vector2_scale(&vec, &nvec, ((double) h) * 0.5);
+
+        vec1.x = (vec.x + px);
+        vec1.y = (vec.y + py);
+        vec2.x = (-vec.x + px);
+        vec2.y = (-vec.y + py);
+
+
+        evas_map_point_coord_set(map, cmp + i * 4, (int) vec0.x + x, (int) vec0.y + y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4 + 1, (int) vec1.x + x, (int) vec1.y + y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4 + 2, (int) vec2.x + x, (int) vec2.y + y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4 + 3, (int) vec3.x + x, (int) vec3.y + y, 0);
+
+        //UV
+        u0 = w1 + i * dist;
+        u1 = u0 + dist;
+        v0 = (double) 0;
+        v1 = (double) h;
+
+        evas_map_point_image_uv_set(map, cmp + i * 4, u0, v0);
+        evas_map_point_image_uv_set(map, cmp + i * 4 + 1, u1, v0);
+        evas_map_point_image_uv_set(map, cmp + i * 4 + 2, u1, v1);
+        evas_map_point_image_uv_set(map, cmp + i * 4 + 3, u0, v1);
+
+	//if (i < 5)
+	{
+	    ERR("map(%d): %d %d :: %d %d :: %d %d :: %d %d", cmp + i*4, (int)vec0.x + x, (int)vec0.y + y, (int)vec1.x + x, (int)vec1.y + y, (int)vec2.x + x, (int)vec2.y + y, (int)vec3.x + x, (int)vec3.y + y);
+	    ERR("map uv: %.1f %.1f :: %.1f %.1f", u0, v0, u1, v1);
+	}
+     }
 }
 
 
 static void
-_text_on_line_draw(Efl_Ui_Textpath_Data *pd, double x1, double y1, double x2, double y2)
+//_text_on_line_draw(Efl_Ui_Textpath_Data *pd, double x1, double y1, double x2, double y2)
+_text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *map, Efl_Ui_Textpath_Line line)
 {
+   double x1, x2, y1, y2;
+   x1 = line.start.x;
+   y1 = line.start.y;
+   x2 = line.end.x;
+   y2 = line.end.y;
+
    //test: line
-   Eo *line = evas_object_line_add(evas_object_evas_get(pd->text_obj));
-   efl_gfx_size_set(line, 500, 500);
-   efl_gfx_color_set(line, 255, 255, 0, 255);
-   efl_gfx_visible_set(line, EINA_TRUE);
-   evas_object_line_xy_set(line, x1, y1, x2, y2);
+   Eo *ln = evas_object_line_add(evas_object_evas_get(pd->text_obj));
+   efl_gfx_size_set(ln, 500, 500);
+   efl_gfx_color_set(ln, 255, 255, 0, 255);
+   efl_gfx_visible_set(ln, EINA_TRUE);
+   evas_object_line_xy_set(ln, x1, y1, x2, y2);
    //
    Evas_Coord x, y, w, h;
    efl_gfx_geometry_get(pd->text_obj, &x, &y, &w, &h);
@@ -261,35 +389,134 @@ _text_on_line_draw(Efl_Ui_Textpath_Data *pd, double x1, double y1, double x2, do
    cosa = (x2 - x1) / len;
 
    h = h / 2;
-   Evas_Map *map = evas_map_new(4);
-   evas_map_point_coord_set(map, 3, x1 - h * sina, y1 + h * cosa, 0);
-   evas_map_point_coord_set(map, 2, x2 - h * sina, y2 + h * cosa, 0);
-   evas_map_point_coord_set(map, 1, x2 + h * sina, y2 - h * cosa, 0);
-   evas_map_point_coord_set(map, 0, x1 + h * sina, y1 - h * cosa, 0);
+   //Evas_Map *map = evas_map_new(4);
+   evas_map_point_coord_set(map, cmp + 3, x1 - h * sina, y1 + h * cosa, 0);
+   evas_map_point_coord_set(map, cmp + 2, x2 - h * sina, y2 + h * cosa, 0);
+   evas_map_point_coord_set(map, cmp + 1, x2 + h * sina, y2 - h * cosa, 0);
+   evas_map_point_coord_set(map, cmp + 0, x1 + h * sina, y1 - h * cosa, 0);
 
    h *= 2;
    //w = len < w ? len : w;
-   evas_map_point_image_uv_set(map, 0, 0, 0);
-   evas_map_point_image_uv_set(map, 1, w, 0);
-   evas_map_point_image_uv_set(map, 2, w, h);
-   evas_map_point_image_uv_set(map, 3, 0, h);
+   evas_map_point_image_uv_set(map, cmp + 0, w1, 0);
+   evas_map_point_image_uv_set(map, cmp + 1, w2 - w1, 0);
+   evas_map_point_image_uv_set(map, cmp + 2, w2 - w1, h);
+   evas_map_point_image_uv_set(map, cmp + 3, 0, h);
 
-   Evas_Object *proxy = evas_object_image_filled_add(evas_object_evas_get(pd->text_obj));
+}
+
+static int
+_map_point_calc(Efl_Ui_Textpath_Data *pd)
+{
+   int map_no = 0;
+   Efl_Ui_Textpath_Segment *seg;
+
+   EINA_INLIST_FOREACH(pd->segments, seg)
+     {
+        if (seg->type == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
+          {
+             map_no++;
+          }
+        else if (seg->type == EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO)
+          {
+             int no = pd->slice_no * seg->length / (double)pd->total_length;
+             map_no += no;
+          }
+     }
+   map_no *= 4;
+
+   return map_no;
+}
+
+static void
+_text_draw(Eo *obj, Efl_Ui_Textpath_Data *pd)
+{
+   Efl_Ui_Textpath_Segment *seg;
+   Evas_Map *map;
+   double slice_unit, slice_len;
+   int w, h, w1, w2;
+   int remained_w;
+   int total_slice;
+   int cur_map_point = 0;
+   int drawn_slice;
+   Evas *e;
+   Evas_Object *proxy;
+
+   efl_gfx_size_get(pd->text_obj, &w, &h);
+   slice_unit = (double)pd->slice_no / pd->total_length;
+   slice_len = 1.0 / slice_unit;
+   total_slice = w / slice_len + 1;
+   remained_w = w;
+
+   int map_no = _map_point_calc(pd);
+   ERR("map poins no: %d", map_no);
+   if (map_no == 0) return;
+   map = evas_map_new(map_no);
+
+   EINA_INLIST_FOREACH(pd->segments, seg)
+     {
+        int len = seg->length;
+        w1 = w - remained_w;
+        w2 = w1 + len;
+        remained_w -= len;
+        if (seg->type == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
+          {
+             drawn_slice += 1;
+             _text_on_line_draw(pd, w1, w2, cur_map_point, map, seg->line);
+             cur_map_point += 4;
+          }
+        else
+          {
+             int slice_no = len * slice_unit + 1;
+             slice_no = pd->slice_no * seg->length / (double)pd->total_length;
+             slice_len = seg->length / slice_no;
+             if (remained_w == 0)
+               slice_no = total_slice - drawn_slice;
+             drawn_slice += slice_no;
+             _segment_draw(pd, slice_no, slice_len, w1, w2, cur_map_point, map, EINA_FALSE, seg->bezier);
+             cur_map_point += slice_no * 4;
+          }
+     }
+   
+   /*
+   //Proxy Object
+   e = evas_object_evas_get(pd->text_obj);
+   proxy = evas_object_image_filled_add(e);
+   //if (pd->proxy)
+   //    evas_object_del(pd->proxy);
+   pd->proxy = proxy;
    evas_object_image_source_set(proxy, pd->text_obj);
    efl_gfx_visible_set(proxy, EINA_TRUE);
 
+   ////
+   //efl_gfx_size_set(proxy, w, h);
+   //efl_gfx_position_set(proxy, 50, 50);
+   ////
+
    evas_object_map_enable_set(proxy, EINA_TRUE);
    evas_object_map_set(proxy, map);
+   */
+   evas_object_map_enable_set(pd->text_obj, EINA_TRUE);
+   evas_object_map_set(pd->text_obj, map);
+   //evas_map_free(map);
 }
 
 
 static void
-_path_draw(Evas_Object *obj, Efl_Ui_Textpath_Data *pd)
+_path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    ERR("In");
 
    const Efl_Gfx_Path_Command_Type *cmd;
    const double *points;
+   Efl_Ui_Textpath_Segment *seg;
+
+   //delete previous segment list
+   EINA_INLIST_FREE(pd->segments, seg)
+     {
+        pd->segments = eina_inlist_remove(pd->segments, EINA_INLIST_GET(seg));
+        free(seg);
+     }
+   pd->total_length = 0;
    efl_gfx_path_get(obj, &cmd, &points);
    if (cmd)
      {
@@ -321,9 +548,25 @@ _path_draw(Evas_Object *obj, Efl_Ui_Textpath_Data *pd)
                   pos++;
                   py1 = points[pos];
 
-                  _bezier_segment_store(pd, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
+                  //_bezier_segment_store(pd, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
                   //draw text on path
                   //_draw_text_on_path(pd, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
+
+                  Eina_Bezier bz;
+                  eina_bezier_values_set(&bz, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
+                  Efl_Ui_Textpath_Segment *seg = malloc(sizeof(Efl_Ui_Textpath_Segment));
+                  if (!seg)
+                    {
+                       ERR("Failed to allocate segment");
+                       px0 = px1;
+                       py0 = py1;
+                       continue;
+                    }
+                  seg->length = eina_bezier_length_get(&bz);
+                  seg->bezier = bz;
+                  seg->type = EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO;
+                  pd->segments = eina_inlist_append(pd->segments, EINA_INLIST_GET(seg));
+                  pd->total_length += seg->length;
 
                   //move points
                   px0 = px1;
@@ -337,7 +580,23 @@ _path_draw(Evas_Object *obj, Efl_Ui_Textpath_Data *pd)
                   py1 = points[pos];
                   ERR("line: %.1f %.1f :: %.1f %.1f", px0, py0, px1, py1);
 
-                  _text_on_line_draw(pd, px0, py0, px1, py1);
+                  Efl_Ui_Textpath_Segment *seg = malloc(sizeof(Efl_Ui_Textpath_Segment));
+                  if (!seg)
+                    {
+                       ERR("Failed to allocate segment");
+                       px0 = px1;
+                       py0 = py1;
+                    }
+                  seg->type = EFL_GFX_PATH_COMMAND_TYPE_LINE_TO;
+                  seg->line.start.x = px0;
+                  seg->line.start.y = py0;
+                  seg->line.end.x = px1;
+                  seg->line.end.y = py1;
+                  seg->length = sqrt((px1 - px0)*(px1 - px0) + (py1 - py0)*(py1 - py0));
+                  pd->segments = eina_inlist_append(pd->segments, EINA_INLIST_GET(seg));
+                  pd->total_length += seg->length;
+
+                  //_text_on_line_draw(pd, px0, py0, px1, py1);
                }
              cmd++;
           }
@@ -532,7 +791,8 @@ static void
 _sizing_eval(Evas_Object *obj, Efl_Ui_Textpath_Data *pd)
 {
    //_circle_draw(obj, pd);
-   _path_draw(obj, pd);
+   _path_data_get(obj, pd);
+   _text_draw(obj, pd);
 }
 
 static void
