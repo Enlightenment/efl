@@ -47,6 +47,12 @@ const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
+const Elm_Layout_Part_Alias_Description _content_aliases_main_menu_submenu[] =
+{
+   {"bottom", "elm.swallow.slot.bottom"},
+   {NULL, NULL}
+};
+
 #define ELM_PRIV_HOVER_SIGNALS(cmd) \
    cmd(SIG_CLICKED, "clicked", "") \
    cmd(SIG_DISMISSED, "dismissed", "") \
@@ -674,8 +680,13 @@ _elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *pd, Eina_Bool vis)
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_hover_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *_pd EINA_UNUSED)
+_elm_hover_elm_layout_content_aliases_get(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
+   const char *style = elm_widget_style_get(obj);
+
+   // main_menu_submenu only has a single slot "bottom"
+   if (style && strstr(style, "main_menu_submenu"))
+     return _content_aliases_main_menu_submenu;
    return _content_aliases;
 }
 
@@ -806,7 +817,7 @@ _elm_hover_best_content_location_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *
      }
    else if (pref_axis == ELM_HOVER_AXIS_VERTICAL)
      {
-        if (spc_t < spc_b) return (_HOV_BOTTOM)->swallow;
+        if (spc_t <= spc_b) return (_HOV_BOTTOM)->swallow;
         else return (_HOV_TOP)->swallow;
      }
 
