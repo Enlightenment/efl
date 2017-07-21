@@ -534,8 +534,8 @@ efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
     const char *ret;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, NULL);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop->x, NULL);
     EINA_SAFETY_ON_TRUE_RETURN_VAL(strncmp(key, "X-", 2), NULL);
+    if (!desktop->x) return NULL;
 
     eina_lock_take(&_lock);
     ret = eina_hash_find(desktop->x, key);
@@ -557,7 +557,7 @@ efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
     Eina_Bool ret;
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, EINA_FALSE);
     EINA_SAFETY_ON_TRUE_RETURN_VAL(strncmp(key, "X-", 2), EINA_FALSE);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop->x, EINA_FALSE);
+    if (!desktop->x) return EINA_FALSE;
 
     eina_lock_take(&_lock);
     ret = eina_hash_del_by_key(desktop->x, key);
