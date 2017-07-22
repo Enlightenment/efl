@@ -193,9 +193,7 @@ EAPI int                 ecore_audio_shutdown(void);
 
 #include <ecore_audio_obj_in_tone.h>
 
-#if HAVE_PULSE
-# include <ecore_audio_obj_out_pulse.h>
-#endif
+#include <ecore_audio_obj_out_pulse.h>
 
 /**
  * @}
