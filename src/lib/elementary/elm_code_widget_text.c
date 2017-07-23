@@ -199,14 +199,21 @@ static void
 _elm_code_widget_text_insert_single(Elm_Code_Widget *widget, Elm_Code *code,
                                     unsigned int col, unsigned int row, const char *text, unsigned int len)
 {
+   Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
    unsigned int position, newcol;
 
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    line = elm_code_file_line_get(code->file, row);
    position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
    elm_code_line_text_insert(line, position, text, len);
 
    newcol = elm_code_widget_line_text_column_width_to_position(widget, line, position + len);
+
+   // if we are making a line longer than before then we need to resize
+   if (newcol > pd->col_count)
+     _elm_code_widget_resize(widget, line);
+
    elm_obj_code_widget_cursor_position_set(widget, row, newcol);
 }
 
@@ -286,8 +293,6 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
      _elm_code_widget_text_insert_multi(widget, code, col, row, text, length);
    elm_obj_code_widget_cursor_position_get(widget, &end_row, &end_col);
 
-   // a workaround for when the cursor position would be off the line width
-   _elm_code_widget_resize(widget, line);
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    if (undo)

@@ -1890,28 +1890,11 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
    w = 0;
    h = elm_code_file_lines_get(pd->code->file);
 
-   if (newline)
+   EINA_LIST_FOREACH(pd->code->file->lines, item, line)
      {
-        line = eina_list_data_get(pd->code->file->lines);
-        if (line)
-          {
-             line_width = elm_code_widget_line_text_column_width_get(widget, newline);
-             w = (int) line_width + gutter + 1;
-          }
         line_width = elm_code_widget_line_text_column_width_get(widget, line);
         if ((int) line_width + gutter + 1 > w)
-          {
-             w = (int) line_width + gutter + 1;
-          }
-     }
-   else
-     {
-        EINA_LIST_FOREACH(pd->code->file->lines, item, line)
-          {
-             line_width = elm_code_widget_line_text_column_width_get(widget, line);
-             if ((int) line_width + gutter + 1 > w)
-               w = (int) line_width + gutter + 1;
-          }
+          w = (int) line_width + gutter + 1;
      }
 
    _elm_code_widget_ensure_n_grid_rows(widget, h);
@@ -1920,13 +1903,16 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
      ww = w*cw;
    if (h*ch > wh)
      wh = h*ch;
-   if (cw > 0)
-     pd->col_count = ww/cw + 1;
+
+   if (cw > 0 && ww/cw > w)
+     pd->col_count = ww/cw;
+   else
+     pd->col_count = w;
 
    EINA_LIST_FOREACH(pd->grids, item, grid)
      {
         evas_object_textgrid_size_set(grid, pd->col_count, 1);
-        evas_object_size_hint_min_set(grid, w*cw, ch);
+        evas_object_size_hint_min_set(grid, ww, ch);
      }
 
    if (!newline)
@@ -1940,7 +1926,6 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
 
         return;
      }
-   _elm_code_widget_fill_line(widget, line);
 
    if (pd->gravity_x == 1.0 || pd->gravity_y == 1.0)
      _elm_code_widget_scroll_by(widget,
