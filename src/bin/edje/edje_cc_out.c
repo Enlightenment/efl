@@ -2527,9 +2527,12 @@ data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
      }
    else
      {
+        double fsize = eina_file_size_get(f);
+
+        if (fsize < 0.0) fsize = 0.0;
         INF("Wrote %9i bytes (%4iKb) for \"%s\" license entry compress: [real: %2.1f%%]",
             bytes, (bytes + 512) / 1024, license,
-            100 - (100 * (double)bytes) / ((double)(eina_file_size_get(f))));
+            100.0 - ((100.0 * (double)bytes) / fsize));
      }
 
    eina_file_map_free(f, m);
