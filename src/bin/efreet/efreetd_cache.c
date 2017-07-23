@@ -389,7 +389,7 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
 static Eina_Bool
 desktop_cache_update_cache_cb(void *data EINA_UNUSED)
 {
-   Eina_Strbuf *file = eina_strbuf_new();
+   Eina_Strbuf *file;
 
    desktop_cache_timer = NULL;
 
@@ -399,6 +399,7 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
         return ECORE_CALLBACK_CANCEL;
      }
    desktop_queue = EINA_FALSE;
+   file = eina_strbuf_new();
 
    if (desktop_change_monitors) eina_hash_free(desktop_change_monitors);
    if (desktop_change_monitors_mon) eina_hash_free(desktop_change_monitors_mon);
