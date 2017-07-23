@@ -4431,7 +4431,7 @@ _local_elm_cnp_selection_set(Evas_Object *obj EINA_UNUSED,
    free(_local_selinfo[selection].sel.buf);
    _local_selinfo[selection].format = format;
    _local_selinfo[selection].sel.buf = malloc(buflen + 1);
-   if (_local_selinfo[selection].sel.buf)
+   if ((_local_selinfo[selection].sel.buf) && (selbuf))
      {
         memcpy(_local_selinfo[selection].sel.buf, selbuf, buflen);
         _local_selinfo[selection].sel.buf[buflen] = 0;
