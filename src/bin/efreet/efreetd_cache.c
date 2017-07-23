@@ -183,13 +183,13 @@ subdir_cache_save(void)
    Eina_Tmpstr *tmpstr = NULL;
    int tmpfd;
 
-   buf = eina_strbuf_new();
-   if (!buf) return;
-
    // only if subdirs need saving... and we have subdirs.
    if (!subdir_need_save) return;
    if (!subdir_cache) return;
    if (!subdir_cache->dirs) return;
+
+   buf = eina_strbuf_new();
+   if (!buf) return;
 
    // save to tmp file first
    eina_strbuf_append_printf(buf, "%s/efreet/subdirs_%s.eet.XXXXXX.cache",
