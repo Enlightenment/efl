@@ -246,7 +246,8 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
 
    _evas_focus_dispatch_event(obj, seat, EINA_TRUE);
  end:
-   _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
+   if (obj->layer)
+     _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
    return EINA_TRUE;
 }
 
