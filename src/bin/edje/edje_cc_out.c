@@ -3610,7 +3610,7 @@ _data_model_id_update(Eina_List *models_unused_list)
 #define PART_DESC_MODEL_ID_UPDATE \
    EINA_LIST_FOREACH(models_unused_list, l3, iui) \
      { \
-        if (part_desc_mesh_node->mesh_node.mesh.id == iui->old_id) \
+        if ((iui) && (part_desc_mesh_node->mesh_node.mesh.id == iui->old_id)) \
           { \
              part_desc_mesh_node->mesh_node.mesh.id = iui->new_id; \
              break; \
