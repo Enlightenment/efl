@@ -48,6 +48,7 @@ _efl_ui_grid_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED
      {
         WRN("Grid.Static size must be set before using! Default to 100x100.");
         efl_pack_grid_size_set(obj, 100, 100);
+        if (!gd->req_cols || !gd->req_rows) goto err;
      }
    vwl = gd->req_cols;
    vhl = gd->req_rows;
@@ -71,7 +72,7 @@ _efl_ui_grid_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED
         efl_gfx_position_set(gi->object, x1, y1);
         efl_gfx_size_set(gi->object, x2 - x1, y2 - y1);
      }
-
+err:
    efl_event_thaw(e);
 }
 
