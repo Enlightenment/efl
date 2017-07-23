@@ -2897,7 +2897,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
                   // of the main loop for better energy efficiency, I guess.
                   pd->poll_high = efl_add(EFL_LOOP_TIMER_CLASS, event->object,
                                           efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _poll_trigger, EFL_LOOP_EVENT_POLL_HIGH),
-                                          efl_loop_timer_interval_set(efl_added, 1/60));
+                                          efl_loop_timer_interval_set(efl_added, 1.0/60.0));
                }
              ++pd->pollers.high;
           }
