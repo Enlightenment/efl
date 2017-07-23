@@ -2889,6 +2889,15 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
           {
              ++pd->idlers;
           }
+        // XXX: all the below are kind of bad. ecore_pollers were special.
+        // they all woke up at the SAME time based on interval, (all pollers
+        // of interval 1 woke up together, those with 2 woke up when 1 and
+        // 2 woke up, 4 woke up together along with 1 and 2 etc.
+        // the below means they will just go off whenever but at a pre
+        // defined interval - 1/60th, 6 and 66 seconds. not really great
+        // pollers probably should be less frequent that 1/60th even on poll
+        // high, medium probably down to 1-2 sec and low - yes maybe 30 or 60
+        // sec... still - not timed to wake up together. :(
         else if (array[i].desc == EFL_LOOP_EVENT_POLL_HIGH)
           {
              if (!pd->poll_high)
