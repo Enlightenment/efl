@@ -261,6 +261,7 @@ _cpufreq_on_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, voi
      {
         _eina_debug_sysmon_reset = 1;
         _eina_debug_sysmon_active = 1;
+        // this is intended. taking this lock allows sysmon to run
         eina_lock_release(&_sysmon_lock);
      }
    return EINA_TRUE;
@@ -271,6 +272,7 @@ _cpufreq_off_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, vo
 {
    if (_eina_debug_sysmon_active)
      {
+        // this is intended. taking this lock blocks sysmod from running
         eina_lock_take(&_sysmon_lock);
         _eina_debug_sysmon_active = 0;
      }
