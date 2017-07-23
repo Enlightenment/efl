@@ -593,7 +593,11 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
              eina_module_free(en);
              continue;
           }
-
+        // this is intentional. the above module load if it succeeds
+        // registers the evas module below in the table that we then
+        // lookup in the hash... and then load that as a 2nd stage.
+        // since we will never unload a module once used it doesnt matter
+        // what happens to the handle anyway.
         em = eina_hash_find(evas_modules[type], name);
         if (em)
           {
