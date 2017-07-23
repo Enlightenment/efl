@@ -232,6 +232,8 @@ _trace_cb(void *data EINA_UNUSED)
 
    // take a lock on grabbing thread debug info like backtraces
    eina_spinlock_take(&_eina_debug_thread_lock);
+   // too many threads (over 1 million) !!!!
+   if (_eina_debug_thread_active_num > (1024 * 1024)) goto err;
    // reset our "stack" of memory se use to dump thread info into
    _eina_debug_chunk_tmp_reset();
    // get an array of pointers for the backtrace array for main + th
