@@ -3519,7 +3519,7 @@ _data_image_id_update(Eina_List *images_unused_list)
 #define PART_DESC_IMAGE_ID_UPDATE \
    EINA_LIST_FOREACH(images_unused_list, l3, iui) \
      { \
-        if (part_desc_image->image.id == iui->old_id) \
+        if ((iui) && (part_desc_image->image.id == iui->old_id)) \
           { \
              part_desc_image->image.id = iui->new_id; \
              break; \
@@ -3530,7 +3530,7 @@ _data_image_id_update(Eina_List *images_unused_list)
         tween_id = part_desc_image->image.tweens[desc_it]; \
         EINA_LIST_FOREACH(images_unused_list, l3, iui) \
           { \
-             if (tween_id->id == iui->old_id) \
+             if ((iui) && (tween_id->id == iui->old_id)) \
                { \
                   tween_id->id = iui->new_id; \
                   break; \
@@ -3541,7 +3541,7 @@ _data_image_id_update(Eina_List *images_unused_list)
 #define PART_DESC_PROXY_ID_UPDATE \
    EINA_LIST_FOREACH(images_unused_list, l3, iui) \
      { \
-        if (part_desc_mesh_node->mesh_node.texture.id == iui->old_id) \
+        if ((iui) && (part_desc_mesh_node->mesh_node.texture.id == iui->old_id)) \
           { \
              part_desc_mesh_node->mesh_node.texture.id = iui->new_id; \
              break; \
@@ -3586,7 +3586,7 @@ _data_image_id_update(Eina_List *images_unused_list)
           {
              EINA_LIST_FOREACH(images_unused_list, l3, iui)
                {
-                  if (entry->id == iui->old_id)
+                  if ((iui) && (entry->id == iui->old_id))
                     {
                        entry->id = iui->new_id;
                        break;
