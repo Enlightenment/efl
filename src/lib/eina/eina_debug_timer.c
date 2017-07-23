@@ -78,7 +78,8 @@ end:
    t->rel_time = t->timeout - prev_time;
    if (!t2) _timers = eina_list_append(_timers, t);
    else _timers = eina_list_prepend_relative(_timers, t, t2);
-   write(pipeToThread[1], &c, 1);
+   if (write(pipeToThread[1], &c, 1) != 1)
+     e_debug("EINA DEBUG ERROR: Can't wake up thread for debug timer");
 }
 
 static void *
