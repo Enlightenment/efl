@@ -279,6 +279,8 @@ struct _Elput_Manager
      } cached;
    int output_w, output_h;
 
+   int drm_opens;
+
    Elput_Input input;
    Eina_Bool del : 1;
 };

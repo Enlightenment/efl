@@ -84,6 +84,7 @@ _cb_device_paused(void *data, const Eldbus_Message *msg)
    uint32_t maj, min;
 
    em = data;
+   if (!em->drm_opens) return;
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
@@ -93,6 +94,20 @@ _cb_device_paused(void *data, const Eldbus_Message *msg)
 
    if (eldbus_message_arguments_get(msg, "uus", &maj, &min, &type))
      {
+        /* If we opened a device during probing then we're still going
+         * to get a "gone" callback when we release it, so we'd better
+         * eat that instead of treating it like losing the drm device
+         * we currently have open, and crapping up libinput's internals
+         * for a nice deferred explosion at shutdown...
+         *
+         * FIXME: do this better?
+         */
+        if ((em->drm_opens > 1) && (maj == 226) && !strcmp(type, "gone"))
+          {
+             em->drm_opens--;
+             return;
+          }
+
         if (!strcmp(type, "pause"))
           _logind_device_pause_complete(em, maj, min);
 
@@ -606,6 +621,9 @@ _logind_open(Elput_Manager *em, const char *path, int flags)
 
    fd = _logind_device_take(em, major(st.st_rdev), minor(st.st_rdev));
    if (fd < 0) return fd;
+
+   if (major(st.st_rdev) == 226) //DRM_MAJOR
+     em->drm_opens++;
 
    fl = fcntl(fd, F_GETFL);
    if (fl < 0) goto err;
