@@ -2,7 +2,7 @@ group { name: "elm/textpath/base/default";
 alias: "elm/textpath/text/default";
    styles {
       style { name: "textpath_style";
-         base: "font="FN" font_size=12 text_class=tb_plain wrap=none align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FN" font_size=16 text_class=tb_plain wrap=none align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
@@ -10,12 +10,12 @@ alias: "elm/textpath/text/default";
    }
    parts {
       part { name: "test";
-         type: RECT;
+         type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to: "elm.text";
             rel2.to: "elm.text";
-            color: 255 255 0 100;
+            //color: 255 255 0 100;
             //min: 1 1;
             //max: 0 0;
          }

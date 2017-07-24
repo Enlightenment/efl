@@ -8,13 +8,6 @@ class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
    [[Efl Ui Textpath class]]
    legacy_prefix: elm_textpath;
    methods {
-      @property path {
-         [[The path to place text.
-           Currently, it only supports circle and points paths.]]
-         values {
-            path: Efl.Gfx.Path;
-         }
-      }
       circle_set {
          [[Set a circle with given center, radius, and start angle.]]
          params {
@@ -65,6 +58,7 @@ class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
       Elm.Layout.sizing_eval;
       Efl.Text.text {get; set;}
       Efl.Part.part;
+      Elm.Widget.theme_apply;
    }
    events {
    }

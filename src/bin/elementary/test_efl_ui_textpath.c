@@ -43,8 +43,13 @@ elm_main(int argc, char *argv[])
     //efl_gfx_path_append_line_to(txtpath, 200, 300);
 
     efl_ui_textpath_ellipsis_set(txtpath, EINA_TRUE);
-    efl_gfx_geometry_set(txtpath, 0, 0, 200, 200);
+    //efl_gfx_geometry_set(txtpath, 0, 0, 200, 200);
     efl_gfx_visible_set(txtpath, EINA_TRUE);
+
+    //Geometry set/get: does not work!!!
+    Evas_Coord x, y, w, h;
+    efl_gfx_geometry_get(txtpath, &x, &y, &w, &h);
+    printf("geo: %d %d %d %d\n", x, y, w, h);
 
     printf("text by efl: %s\n", efl_text_get(txtpath));
     printf("text by elm: %s\n", elm_object_text_get(txtpath));

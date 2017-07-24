@@ -89,9 +89,9 @@ _transform_coord(double x, double y, double rad, double cx, double cy,
 }
 
 static void
-_textpath_ellipsis_enable_set(Efl_Ui_Textpath_Data *pd, int length, Eina_Bool enabled)
+_textpath_ellipsis_set(Efl_Ui_Textpath_Data *pd, Eina_Bool enabled)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(pd->text_obj, wd);
+   //ELM_WIDGET_DATA_GET_OR_RETURN(pd->text_obj, wd);
 
    Eina_Strbuf *buf = eina_strbuf_new();
    if (enabled)
@@ -104,161 +104,12 @@ _textpath_ellipsis_enable_set(Efl_Ui_Textpath_Data *pd, int length, Eina_Bool en
      }
    const char *format = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
-   edje_object_part_text_style_user_pop(wd->resize_obj, "elm.text");
-   edje_object_part_text_style_user_push(wd->resize_obj, "elm.text", format);
+   //edje_object_part_text_style_user_pop(wd->resize_obj, "elm.text");
+   //edje_object_part_text_style_user_push(wd->resize_obj, "elm.text", format);
+   edje_object_part_text_style_user_pop(pd->text_obj, "elm.text");
+   edje_object_part_text_style_user_push(pd->text_obj, "elm.text", format);
    ERR("set format: %s", format);
 }
-
-
-
-static void
-_draw_text_on_path(Efl_Ui_Textpath_Data *pd, double px0, double py0, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1, double px1, double py1)
-{
-   ERR("In");
-   int x = 0, y = 0, w = 0, h = 0;
-   int i;
-   double u0, u1, v0, v1;
-   double dist, t, dt;
-   double px, py, px2, py2;
-   double rad;
-   Eina_Vector2 vec, nvec, vec0, vec1, vec2, vec3;
-   Eina_Matrix2 mat;
-   Evas *e;
-   Evas_Object *proxy;
-
-   e = evas_object_evas_get(pd->text_obj);
-   efl_gfx_size_get(pd->text_obj, &w, &h);
-   dt = 1.0 / (double) pd->slice_no;
-   dist = ((double) w / (double) pd->slice_no);
-    //Compute Beziers.
-   Eina_Bezier bezier;
-   eina_bezier_values_set(&bezier, px0, py0,
-                                   ctrl_x0, ctrl_y0,
-                                   ctrl_x1, ctrl_y1,
-                                   px1, py1);
-
-   //length = eina_bezier_length_get(&bezier);
-   rad = _deg_to_rad(90);
-   eina_matrix2_values_set(&mat, cos(rad), -sin(rad), sin(rad), cos(rad));
-
-   //index 0: v0, v3
-   t = 0;
-   eina_bezier_point_at(&bezier, t, &px, &py);
-   eina_bezier_point_at(&bezier, t + dt, &px2, &py2);
-
-   vec.x = (px2 - px);
-   vec.y = (py2 - py);
-   eina_vector2_normalize(&nvec, &vec);
-
-   eina_vector2_transform(&vec, &mat, &nvec);
-   eina_vector2_normalize(&nvec, &vec);
-   eina_vector2_scale(&vec, &nvec, ((double) h) * 0.5);
-
-   vec1.x = (vec.x + px);
-   vec1.y = (vec.y + py);
-   vec2.x = (-vec.x + px);
-   vec2.y = (-vec.y + py);
-
-   //Proxy Object
-   proxy = evas_object_image_filled_add(e);
-   //if (pd->proxy)
-   //    evas_object_del(pd->proxy);
-   pd->proxy = proxy;
-   efl_gfx_size_set(proxy, w, h);
-   evas_object_image_source_set(proxy, pd->content);
-   //efl_gfx_visible_set(proxy, EINA_TRUE);
-
-   ////
-   efl_gfx_position_set(proxy, 50, 50);
-   ////
-
-   Evas_Map *map = evas_map_new(pd->slice_no * 4);
-
-
-   for (i = 0; i < pd->slice_no; i++)
-     {
-        //v0, v3
-        vec0.x = vec1.x;
-        vec0.y = vec1.y;
-        vec3.x = vec2.x;
-        vec3.y = vec2.y;
-
-        //v1, v2
-        t = ((double) (i + 1) * dt);
-        eina_bezier_point_at(&bezier, t, &px, &py);
-        eina_bezier_point_at(&bezier, t + dt, &px2, &py2);
-
-        vec.x = (px2 - px);
-        vec.y = (py2 - py);
-        eina_vector2_normalize(&nvec, &vec);
-
-        eina_vector2_transform(&vec, &mat, &nvec);
-        eina_vector2_normalize(&nvec, &vec);
-        eina_vector2_scale(&vec, &nvec, ((double) h) * 0.5);
-
-        vec1.x = (vec.x + px);
-        vec1.y = (vec.y + py);
-        vec2.x = (-vec.x + px);
-        vec2.y = (-vec.y + py);
-
-
-        evas_map_point_coord_set(map, i * 4, (int) vec0.x + x, (int) vec0.y + y, 0);
-        evas_map_point_coord_set(map, i * 4 + 1, (int) vec1.x + x, (int) vec1.y + y, 0);
-        evas_map_point_coord_set(map, i * 4 + 2, (int) vec2.x + x, (int) vec2.y + y, 0);
-        evas_map_point_coord_set(map, i * 4 + 3, (int) vec3.x + x, (int) vec3.y + y, 0);
-
-        //UV
-        u0 = (((double) i) * dist);
-        u1 = (u0 + dist);
-        v0 = (double) 0;
-        v1 = (double) h;
-
-        evas_map_point_image_uv_set(map, i * 4, u0, v0);
-        evas_map_point_image_uv_set(map, i * 4 + 1, u1, v0);
-        evas_map_point_image_uv_set(map, i * 4 + 2, u1, v1);
-        evas_map_point_image_uv_set(map, i * 4 + 3, u0, v1);
-
-	if (i < 5)
-	{
-	    ERR("map: %d %d :: %d %d :: %d %d :: %d %d", (int)vec0.x + x, (int)vec0.y + y, (int)vec1.x + x, (int)vec1.y + y, (int)vec2.x + x, (int)vec2.y + y, (int)vec3.x + x, (int)vec3.y + y);
-	    ERR("map uv: %.1f %.1f :: %.1f %.1f", u0, v0, u1, v1);
-	}
-     }
-
-   evas_object_map_enable_set(pd->text_obj, EINA_TRUE);
-   evas_object_map_set(pd->text_obj, map);
-   //evas_object_map_enable_set(proxy, EINA_TRUE);
-   //evas_object_map_set(proxy, map);
-   evas_map_free(map);
-}
-
-/*
-static void
-_bezier_segment_store(Efl_Ui_Textpath_Data *pd, double px0, double py0,
-                      double ctrl_x0, double ctrl_y0,
-                      double ctrl_x1, double ctrl_y1,
-                      double px1, double py1)
-{
-   Eina_Bezier bz;
-   eina_bezier_values_set(&bz, px0, py0,
-                          ctrl_x0, ctrl_y0,
-                          ctrl_x1, ctrl_y1,
-                          px1, py1);
-   int len = eina_bezier_length_get(&bz);
-   Efl_Ui_Textpath_Segment *seg = malloc(sizeof(Efl_Ui_Textpath_Segment));
-   if (!seg)
-     {
-        ERR("Failed to allocate segment");
-        return;
-     }
-   seg->length = len;
-   seg->bezier = bz;
-
-   pd->segments = eina_inlist_append(pd->segments, EINA_INLIST_GET(seg));
-
-   pd->total_length += len;
-   ERR("bezier point: %.1f %.1f; len: %d; total_length: %d", px0, py0, len, pd->total_length);
-}*/
 
 
 static void
@@ -353,17 +204,16 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double slice_len, int w1, 
         evas_map_point_image_uv_set(map, cmp + i * 4 + 2, u1, v1);
         evas_map_point_image_uv_set(map, cmp + i * 4 + 3, u0, v1);
 
-	//if (i < 5)
-	{
-	    ERR("map(%d): %d %d :: %d %d :: %d %d :: %d %d", cmp + i*4, (int)vec0.x + x, (int)vec0.y + y, (int)vec1.x + x, (int)vec1.y + y, (int)vec2.x + x, (int)vec2.y + y, (int)vec3.x + x, (int)vec3.y + y);
-	    ERR("map uv: %.1f %.1f :: %.1f %.1f", u0, v0, u1, v1);
-	}
+        if (i < 3)
+          {
+             ERR("map(%d): %d %d :: %d %d :: %d %d :: %d %d", cmp + i*4, (int)vec0.x + x, (int)vec0.y + y, (int)vec1.x + x, (int)vec1.y + y, (int)vec2.x + x, (int)vec2.y + y, (int)vec3.x + x, (int)vec3.y + y);
+             ERR("map uv: %.1f %.1f :: %.1f %.1f", u0, v0, u1, v1);
+          }
      }
 }
 
 
 static void
-//_text_on_line_draw(Efl_Ui_Textpath_Data *pd, double x1, double y1, double x2, double y2)
 _text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *map, Efl_Ui_Textpath_Line line)
 {
    double x1, x2, y1, y2;
@@ -479,25 +329,6 @@ _text_draw(Eo *obj, Efl_Ui_Textpath_Data *pd)
           }
         w1 = w2;
      }
-   
-   /*
-   //Proxy Object
-   e = evas_object_evas_get(pd->text_obj);
-   proxy = evas_object_image_filled_add(e);
-   //if (pd->proxy)
-   //    evas_object_del(pd->proxy);
-   pd->proxy = proxy;
-   evas_object_image_source_set(proxy, pd->text_obj);
-   efl_gfx_visible_set(proxy, EINA_TRUE);
-
-   ////
-   //efl_gfx_size_set(proxy, w, h);
-   //efl_gfx_position_set(proxy, 50, 50);
-   ////
-
-   evas_object_map_enable_set(proxy, EINA_TRUE);
-   evas_object_map_set(proxy, map);
-   */
    evas_object_map_enable_set(pd->text_obj, EINA_TRUE);
    evas_object_map_set(pd->text_obj, map);
    //evas_map_free(map);
@@ -551,10 +382,6 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
                   pos++;
                   py1 = points[pos];
 
-                  //_bezier_segment_store(pd, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
-                  //draw text on path
-                  //_draw_text_on_path(pd, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
-
                   Eina_Bezier bz;
                   eina_bezier_values_set(&bz, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
                   Efl_Ui_Textpath_Segment *seg = malloc(sizeof(Efl_Ui_Textpath_Segment));
@@ -599,7 +426,6 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
                   pd->segments = eina_inlist_append(pd->segments, EINA_INLIST_GET(seg));
                   pd->total_length += seg->length;
 
-                  //_text_on_line_draw(pd, px0, py0, px1, py1);
                }
              cmd++;
           }
@@ -649,7 +475,7 @@ _circle_draw(Evas_Object *eo, Efl_Ui_Textpath_Data *pd)
              w = circum;
              ERR("turn on ellipsis");
              evas_object_resize(pd->text_obj, circum, h);
-             _textpath_ellipsis_enable_set(pd, circum, EINA_TRUE);
+             _textpath_ellipsis_set(pd, EINA_TRUE);
              ERR("Ellipsis: '%s'", elm_object_text_get(pd->text_obj));
           }*/
         ////
@@ -686,10 +512,6 @@ _circle_draw(Evas_Object *eo, Efl_Ui_Textpath_Data *pd)
    evas_object_show(proxy);*/
 
    evas_object_move(pd->text_obj, 100, 100);
-   //efl_gfx_visible_set(proxy, EINA_TRUE);
-   //Test
-   //return;
-   //
 
    //to revert direction
    //radius = -radius;
@@ -756,22 +578,6 @@ _circle_draw(Evas_Object *eo, Efl_Ui_Textpath_Data *pd)
    //evas_object_map_set(proxy, map);
    evas_object_map_enable_set(pd->text_obj, EINA_TRUE);
    evas_object_map_set(pd->text_obj, map);
-   /*
-   evas_object_size_hint_min_get(pd->content, &w, &h);
-   Evas_Map *m = evas_map_new(4);
-   ERR("Test: map with only 4 points: 10-100; 10-80, w,h: %d %d", w, h);
-   evas_object_geometry_get(pd->text_obj, &x, &y, &w, &h);
-   ERR("layout geo: %d %d %d %d", x, y, w, h);
-   evas_map_point_coord_set(m, 0, 10, 10, 0);
-   evas_map_point_coord_set(m, 1, 100, 10, 0);
-   evas_map_point_coord_set(m, 2, 100, 90, 0);
-   evas_map_point_coord_set(m, 3, 10, 90, 0);
-   evas_map_point_image_uv_set(m, 0, 0, 0);
-   evas_map_point_image_uv_set(m, 1, w, 0);
-   evas_map_point_image_uv_set(m, 2, w, h);
-   evas_map_point_image_uv_set(m, 3, 0, h);
-   //evas_object_map_enable_set(pd->text_obj, EINA_TRUE);
-   //evas_object_map_set(pd->text_obj, m);*/
    evas_map_free(map);
 
    //debug
@@ -793,8 +599,8 @@ _circle_draw(Evas_Object *eo, Efl_Ui_Textpath_Data *pd)
 static void
 _sizing_eval(Evas_Object *obj, Efl_Ui_Textpath_Data *pd)
 {
-   //_circle_draw(obj, pd);
-   _path_data_get(obj, pd);
+   ////_circle_draw(obj, pd);
+   //_path_data_get(obj, pd);
    _text_draw(obj, pd);
 }
 
@@ -805,30 +611,47 @@ _content_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    _sizing_eval(obj, pd);
 }
 
+static void
+_ellipsis_set(Efl_Ui_Textpath_Data *pd)
+{
+   if (!pd->text_obj) return;
+
+   Evas_Coord w = 0, h = 0;
+   Eina_Bool is_ellipsis = EINA_FALSE;
+
+   efl_gfx_size_get(pd->text_obj, &w, &h);
+   if (pd->ellipsis)
+     {
+        if (w > pd->total_length)
+          {
+             is_ellipsis = EINA_TRUE;
+             w = pd->total_length;
+             ERR("enable ellipsis");
+          }
+     }
+   evas_object_resize(pd->text_obj, w, h);
+   _textpath_ellipsis_set(pd, is_ellipsis);
+}
+
+static void
+_path_changed_cb(void *data, const Efl_Event *event)
+{
+    ERR("Path changed");
+    EFL_UI_TEXTPATH_DATA_GET(data, sd);
+
+    _path_data_get(data, sd);
+}
+
 //exposed API
 EOLIAN static void
 _efl_ui_textpath_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    ERR("In");
    _sizing_eval(obj, pd);
-
-
-
-   /*ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   const Evas_Object *tb;
-   Evas_Coord tb_w, tb_h;
-   tb = edje_object_part_object_get(wd->resize_obj, "elm.text");
-   evas_object_textblock_size_native_get(tb, &tb_w, &tb_h);
-   //evas_object_size_hint_min_set(wd->resize_obj, tb_w, tb_h);
-   //evas_object_size_hint_max_set(wd->resize_obj, tb_w, tb_h);
-   //evas_object_resize(obj, tb_w, tb_h);
-   //evas_object_size_hint_min_set(obj, tb_w, tb_h);
-   ERR("tb size: %d %d", tb_w, tb_h);*/
-
 }
 
 static Eina_Bool
-_textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *sd, const char *part, const char *text)
+_textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part, const char *text)
 {
    ERR("in: part: %s, text: %s", part, text);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -840,7 +663,8 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *sd, const char *part,
 
    efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), text);
 
-   elm_layout_text_set(sd->text_obj, NULL, text);
+   edje_object_part_text_set(pd->text_obj, "elm.text", text);
+   //elm_layout_text_set(pd->text_obj, NULL, text);
    if (int_ret)
      {
         //elm_obj_layout_sizing_eval(obj);
@@ -851,16 +675,19 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *sd, const char *part,
    //tb = edje_object_part_object_get(wd->resize_obj, "elm.text");
    //evas_object_textblock_size_native_get(tb, &tb_w, &tb_h);
    //evas_object_size_hint_min_set(obj, tb_w, tb_h);
-   ELM_WIDGET_DATA_GET_OR_RETURN(sd->text_obj, twd, EINA_FALSE);
-   tb = edje_object_part_object_get(twd->resize_obj, "elm.text");
+   //ELM_WIDGET_DATA_GET_OR_RETURN(pd->text_obj, twd, EINA_FALSE);
+   //tb = edje_object_part_object_get(twd->resize_obj, "elm.text");
+   tb = edje_object_part_object_get(pd->text_obj, "elm.text");
    evas_object_textblock_size_native_get(tb, &tb_w, &tb_h);
    //??? layout sizing_eval also does min set based on the edje size calc
-   evas_object_size_hint_min_set(sd->text_obj, tb_w, tb_h);
+   evas_object_size_hint_min_set(pd->text_obj, tb_w, tb_h);
    //FIXME: if we dont resize layout obj, size of 0
    //and map does not work.
-   evas_object_resize(sd->text_obj, tb_w, tb_h);
+   evas_object_resize(pd->text_obj, tb_w, tb_h);
    ERR("tb size: %d %d", tb_w, tb_h);
    //
+
+   _ellipsis_set(pd);
    elm_obj_layout_sizing_eval(obj);
 
 
@@ -878,49 +705,16 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *sd, const char *part,
 
 
 EOLIAN static Eina_Bool
-_efl_ui_textpath_text_set(Eo *obj, Efl_Ui_Textpath_Data *sd, const char *part, const char *text)
+_efl_ui_textpath_text_set(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part, const char *text)
 {
    ERR("in: part: %s, text: %s", part, text);
-   return _textpath_text_set_internal(obj, sd, part, text);
-
-   /*ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   Eina_Bool int_ret = EINA_TRUE;
-
-   if (!text) text = "";
-   //set format
-   //_textpath_format_set(wd->resize_obj, sd->format);
-
-   efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), text);
-
-   elm_layout_text_set(sd->text_obj, NULL, text);
-   if (int_ret)
-     {
-        //elm_obj_layout_sizing_eval(obj);
-     }
-   //
-   const Evas_Object *tb;
-   Evas_Coord tb_w = 0, tb_h = 0;
-   //tb = edje_object_part_object_get(wd->resize_obj, "elm.text");
-   //evas_object_textblock_size_native_get(tb, &tb_w, &tb_h);
-   //evas_object_size_hint_min_set(obj, tb_w, tb_h);
-   ELM_WIDGET_DATA_GET_OR_RETURN(sd->text_obj, twd, EINA_FALSE);
-   tb = edje_object_part_object_get(twd->resize_obj, "elm.text");
-   evas_object_textblock_size_native_get(tb, &tb_w, &tb_h);
-   //??? layout sizing_eval also does min set based on the edje size calc
-   evas_object_size_hint_min_set(sd->text_obj, tb_w, tb_h);
-   //FIXME: if we dont resize layout obj, size of 0
-   //and map does not work.
-   evas_object_resize(sd->text_obj, tb_w, tb_h);
-   ERR("tb size: %d %d", tb_w, tb_h);
-   //
-   elm_obj_layout_sizing_eval(obj);
-   return int_ret;*/
+   return _textpath_text_set_internal(obj, pd, part, text);
 }
 
 EOLIAN static const char *
-_efl_ui_textpath_text_get(Eo *obj, Efl_Ui_Textpath_Data *sd, const char *part)
+_efl_ui_textpath_text_get(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part)
 {
-   return elm_layout_text_get(sd->text_obj, part);
+   return elm_layout_text_get(pd->text_obj, part);
 }
 
 EOLIAN static void
@@ -939,15 +733,40 @@ _efl_ui_textpath_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Textpath_Data *priv)
    //elm_layout_text_set(obj, NULL, "");
    //elm_layout_sizing_eval(obj);
 
-   priv->text_obj = elm_layout_add(obj);
+   /*priv->text_obj = elm_layout_add(obj);
    if (!elm_layout_theme_set(priv->text_obj, "textpath", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout");
    elm_layout_text_set(priv->text_obj, NULL, "Test");
    evas_object_move(priv->text_obj, 100, 100);
+   evas_object_show(priv->text_obj);*/
+
+
+   priv->text_obj = edje_object_add(evas_object_evas_get(obj));
+   //priv->text_obj = wd->resize_obj;
+   elm_widget_theme_object_set(obj, priv->text_obj, "textpath", "base",
+                               elm_widget_style_get(obj));
+   edje_object_part_text_set(priv->text_obj, "elm.text", "test text");
+   evas_object_size_hint_weight_set(priv->text_obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(priv->text_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   //test
+   /*const Evas_Object *tb;
+   Evas_Coord tb_w, tb_h;
+   tb = edje_object_part_object_get(priv->text_obj, "elm.text");
+   evas_object_textblock_size_native_get(tb, &tb_w, &tb_h);
+   evas_object_size_hint_min_set(priv->text_obj, tb_w, tb_h);
+   evas_object_size_hint_max_set(priv->text_obj, tb_w, tb_h);
+   evas_object_resize(priv->text_obj, tb_w, tb_h);
+   evas_object_size_hint_min_set(priv->text_obj, tb_w, tb_h);
+   ERR("tb size: %d %d", tb_w, tb_h);
+   //evas_object_resize(priv->text_obj, 100, 100);
+   */
+   //
    evas_object_show(priv->text_obj);
-   //priv->text_obj = edje_object_add(evas_object_evas_get(obj));
-   //elm_widget_theme_object_set(obj, priv->text_obj, "textpath", "text", elm_widget_style_get(obj));
-   //edje_object_part_text_set(priv->text_obj, "elm.text", "test text");
+
+   evas_object_smart_member_add(priv->text_obj, obj);
+   elm_widget_sub_object_add(obj, priv->text_obj);
+
+   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _path_changed_cb, obj);
 }
 
 //why? to support legacy...???
@@ -975,6 +794,7 @@ _efl_ui_textpath_efl_object_destructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    if (pd->content) evas_object_del(pd->content);
    if (pd->text) free(pd->text);
+   if (pd->text_obj) evas_object_del(pd->text_obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
@@ -988,6 +808,22 @@ EOLIAN static const char *
 _efl_ui_textpath_efl_text_text_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    return elm_layout_text_get(pd->text_obj, "elm.text");
+}
+
+EOLIAN static Elm_Theme_Apply
+_efl_ui_textpath_elm_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
+{
+   ERR("theme set");
+   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+
+   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+
+   elm_widget_theme_object_set(obj, pd->text_obj, "textpath", "base",
+                               elm_widget_style_get(obj));
+   //need to set ellipsis again
+
+   return int_ret;
 }
 
 #if 0
@@ -1034,22 +870,6 @@ _efl_ui_textpath_efl_text_text_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
    return pd->text;
 }
 #endif
-
-//we cannot know the internal of efl_gfx_path
-//therefore, we cannot draw text on it.
-//cannot support this api
-EOLIAN static Efl_Gfx_Path *
-_efl_ui_textpath_path_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
-{
-    return pd->path;
-}
-
-EOLIAN static void
-_efl_ui_textpath_path_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Efl_Gfx_Path *path)
-{
-    pd->path = path;
-}
-//////
 
 EOLIAN static void
 _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double y, double radius, double start_angle)
@@ -1123,35 +943,8 @@ _efl_ui_textpath_ellipsis_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool ellip
    if (pd->ellipsis == ellipsis) return;
    pd->ellipsis = ellipsis;
 
-   ///
-   if (!pd->text_obj) return; //FIXME: add process in text_set
-   Evas_Coord w = 0, h = 0;
-   double circum;
-   Eina_Bool is_ellipsis = EINA_FALSE;
+   _ellipsis_set(pd);
 
-   evas_object_size_hint_min_get(pd->text_obj, &w, &h);
-   efl_gfx_size_get(pd->text_obj, &w, &h);
-   circum = 2 * PI * (pd->circle.radius - h / 2);
-   if (pd->ellipsis)
-     {
-        is_ellipsis = EINA_TRUE;
-        if ((w > circum) && (circum > 0))
-          w = circum;
-        ERR("enable ellipsis");
-     }
-   /*if (pd->ellipsis)
-     {
-        if (w > circum)
-          {
-             evas_object_resize(pd->text_obj, circum, h);
-             _textpath_ellipsis_enable_set(pd, circum, EINA_TRUE);
-             elm_layout_sizing_eval(pd->text_obj);
-          }
-     }*/
-   evas_object_resize(pd->text_obj, w, h);
-   _textpath_ellipsis_enable_set(pd, circum, is_ellipsis);
-   elm_layout_sizing_eval(pd->text_obj);
-   //
    _sizing_eval(obj, pd);
 }
 
