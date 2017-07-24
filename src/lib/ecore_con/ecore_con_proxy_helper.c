@@ -177,6 +177,11 @@ _efl_net_proxy_helper_proxy_add(int id, const char *url)
                        proxies[n - 1] = strdup(url);
                        proxies[n] = NULL;
                     }
+                  else
+                    {
+                       ERR("Out of memory allocating proxies in helper");
+                       goto err;
+                    }
                }
              else
                {
@@ -190,6 +195,7 @@ _efl_net_proxy_helper_proxy_add(int id, const char *url)
                   eina_thread_queue_send_done(req->thq, ref);
                }
           }
+err:
         locks--;
      }
    eina_spinlock_release(&_efl_net_proxy_helper_queue_lock);
