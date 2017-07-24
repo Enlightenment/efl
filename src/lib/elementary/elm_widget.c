@@ -338,10 +338,9 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      {
         if (manager != obj)
           {
-             pd->focus.manager = manager;
-
              if (!pd->logical.parent) return;
 
+             pd->focus.manager = manager;
              pd->focus.logical = !want_full;
 
              if (!elm_obj_widget_focus_register(obj, pd->focus.manager,
