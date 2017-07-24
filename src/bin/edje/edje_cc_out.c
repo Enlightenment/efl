@@ -2529,7 +2529,7 @@ data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
      {
         double fsize = eina_file_size_get(f);
 
-        if (fsize < 0.0) fsize = 0.0;
+        if (fsize <= 0.0) fsize = 1.0;
         INF("Wrote %9i bytes (%4iKb) for \"%s\" license entry compress: [real: %2.1f%%]",
             bytes, (bytes + 512) / 1024, license,
             100.0 - ((100.0 * (double)bytes) / fsize));
@@ -2617,7 +2617,7 @@ data_thread_authors(void *data, Ecore_Thread *thread EINA_UNUSED)
      {
         double fsize = eina_file_size_get(f);
 
-        if (fsize < 0.0) fsize = 0.0;
+        if (fsize <= 0.0) fsize = 1.0;
         INF("Wrote %9i bytes (%4iKb) for \"%s\" authors entry compress: [real: %2.1f%%]",
             bytes, (bytes + 512) / 1024, license,
             100.0 - ((100.0 * (double)bytes) / fsize));
