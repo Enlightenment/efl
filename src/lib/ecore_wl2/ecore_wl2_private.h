@@ -450,7 +450,12 @@ struct _Ecore_Wl2_Input
         Eina_Bool repeating : 1;
      } repeat;
 
-   Ecore_Wl2_Offer *drag, *selection;
+   struct
+   {
+      Ecore_Wl2_Offer *offer;
+      uint32_t enter_serial;
+      Ecore_Window window_id;
+   } drag, selection;
 
    unsigned int seat_version;
    unsigned int id;

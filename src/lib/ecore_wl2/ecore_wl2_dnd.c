@@ -251,46 +251,42 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
 
    if (offer)
      {
-        input->drag = wl_data_offer_get_user_data(offer);
+        input->drag.offer = wl_data_offer_get_user_data(offer);
 
-        if (!input->drag)
-          {
-             ERR("Userdata of offer not found");
-             return;
-          }
-
-        input->drag->serial = serial;
-        input->drag->window_id = window->id;
+        input->drag.offer->serial = serial;
+        input->drag.offer->window_id = window->id;
 
         if (input->display->wl.data_device_manager_version >=
             WL_DATA_OFFER_SET_ACTIONS_SINCE_VERSION)
           {
-             ecore_wl2_offer_actions_set(input->drag,
-                ECORE_WL2_DRAG_ACTION_MOVE | ECORE_WL2_DRAG_ACTION_COPY,
-                ECORE_WL2_DRAG_ACTION_MOVE);
+             if (input->drag.offer)
+               ecore_wl2_offer_actions_set(input->drag.offer,
+                  ECORE_WL2_DRAG_ACTION_MOVE | ECORE_WL2_DRAG_ACTION_COPY,
+                  ECORE_WL2_DRAG_ACTION_MOVE);
           }
      }
    else
      {
-        input->drag = NULL;
+        input->drag.offer = NULL;
      }
+   input->drag.enter_serial = serial;
+   input->drag.window_id = window->id;
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_Enter));
    if (!ev) return;
 
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
-   if (input->drag)
-     ev->win = input->drag->window_id;
+   ev->win = input->drag.window_id;
 
    ev->x = x;
    ev->y = y;
-   ev->offer = input->drag;
+   ev->offer = input->drag.offer;
    ev->seat = input->id;
    ev->display = input->display;
    ev->display->refs++;
 
-   ecore_event_add(ECORE_WL2_EVENT_DND_ENTER, ev, _unset_serial, input->drag);
+   ecore_event_add(ECORE_WL2_EVENT_DND_ENTER, ev, _unset_serial, input->drag.offer);
 }
 
 static void
@@ -310,22 +306,26 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
 {
    Ecore_Wl2_Event_Dnd_Leave *ev;
 
+   EINA_SAFETY_ON_TRUE_RETURN(!input->drag.enter_serial);
+
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_Leave));
    if (!ev) return;
 
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
-   ev->win = input->drag->window_id;
-   ev->offer = input->drag;
-   ev->offer->ref++;
+   ev->win = input->drag.window_id;
+   ev->offer = input->drag.offer;
+   if (ev->offer)
+     ev->offer->ref++;
    ev->seat = input->id;
    ev->display = input->display;
    ev->display->refs++;
 
-   input->drag->window_id = 0;
+   input->drag.window_id = 0;
+   input->drag.enter_serial = 0;
+   input->drag.offer = NULL;
    ecore_event_add(ECORE_WL2_EVENT_DND_LEAVE, ev, _delay_offer_destroy, ev->offer);
-   input->drag = NULL;
 }
 
 void
@@ -339,20 +339,21 @@ _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, uint32_t serial)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_Motion));
    if (!ev) return;
 
-   input->drag->serial = serial;
+   if (input->drag.offer)
+     input->drag.offer->serial = serial;
 
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
-   ev->win = input->drag->window_id;
+   ev->win = input->drag.window_id;
    ev->x = x;
    ev->y = y;
-   ev->offer = input->drag;
+   ev->offer = input->drag.offer;
    ev->seat = input->id;
    ev->display = input->display;
    ev->display->refs++;
 
-   ecore_event_add(ECORE_WL2_EVENT_DND_MOTION, ev, _unset_serial, input->drag);
+   ecore_event_add(ECORE_WL2_EVENT_DND_MOTION, ev, _unset_serial, input->drag.offer);
 }
 
 void
@@ -366,10 +367,10 @@ _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
-   ev->win = input->drag->window_id;
+   ev->win = input->drag.window_id;
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
-   ev->offer = input->drag;
+   ev->offer = input->drag.offer;
    ev->seat = input->id;
    ev->display = input->display;
    ev->display->refs++;
@@ -382,11 +383,12 @@ _ecore_wl2_dnd_selection(Ecore_Wl2_Input *input, struct wl_data_offer *offer)
 {
    Ecore_Wl2_Event_Seat_Selection *ev;
 
-   if (input->selection) _ecore_wl2_offer_unref(input->selection);
-   input->selection = NULL;
+   if (input->selection.offer) _ecore_wl2_offer_unref(input->selection.offer);
+   input->selection.offer = NULL;
 
    if (offer)
-     input->selection = wl_data_offer_get_user_data(offer);
+     input->selection.offer = wl_data_offer_get_user_data(offer);
+   input->selection.enter_serial = input->display->serial;
    ev = malloc(sizeof(Ecore_Wl2_Event_Seat_Selection));
    EINA_SAFETY_ON_NULL_RETURN(ev);
    ev->seat = input->id;
@@ -539,7 +541,7 @@ ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
 
-   return input->selection;
+   return input->selection.offer;
 }
 
 EAPI uint32_t
@@ -911,8 +913,8 @@ _ecore_wl2_offer_unref(Ecore_Wl2_Offer *offer)
         offer->mimetypes = NULL;
      }
 
-   if (offer->input->drag == offer) offer->input->drag = NULL;
-   if (offer->input->selection == offer) offer->input->selection = NULL;
+   if (offer->input->drag.offer == offer) offer->input->drag.offer = NULL;
+   if (offer->input->selection.offer == offer) offer->input->selection.offer = NULL;
 
    free(offer);
 }
