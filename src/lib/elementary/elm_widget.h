@@ -434,6 +434,7 @@ typedef struct _Elm_Widget_Smart_Data
 
    struct {
      Efl_Ui_Focus_Manager *manager; //manager which is currently regsitered in
+     Efl_Ui_Focus_Object *parent; //the parent where it is currently registered
      Eina_Bool logical;
    } focus;
    struct {

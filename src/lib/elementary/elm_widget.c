@@ -291,7 +291,7 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
    Eina_Bool should = EINA_FALSE;
    Eina_Bool want_full = EINA_FALSE;
-   Efl_Ui_Focus_Manager *manager = efl_ui_focus_user_manager_get(obj);
+   Efl_Ui_Focus_Manager *manager = pd->manager.manager;
 
    //there are two reasons to be registered, the child count is bigger than 0, or the widget is flagged to be able to handle focus
    if (pd->can_focus)
@@ -331,22 +331,25 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      {
         efl_ui_focus_manager_unregister(pd->focus.manager, obj);
         pd->focus.manager = NULL;
+        pd->focus.parent = NULL;
      }
 
    //now register in the manager
    if (should && !pd->focus.manager)
      {
-        if (manager != obj)
+        if (manager && manager != obj)
           {
              if (!pd->logical.parent) return;
 
              pd->focus.manager = manager;
              pd->focus.logical = !want_full;
+             pd->focus.parent = pd->logical.parent;
 
              if (!elm_obj_widget_focus_register(obj, pd->focus.manager,
-                  pd->logical.parent, &pd->focus.logical))
+                  pd->focus.parent, &pd->focus.logical))
                {
                   pd->focus.manager = NULL;
+                  pd->focus.parent = NULL;
                }
           }
      }
@@ -354,6 +357,7 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      {
         efl_ui_focus_manager_unregister(pd->focus.manager, obj);
         pd->focus.manager = NULL;
+        pd->focus.parent = NULL;
      }
 }
 
@@ -402,6 +406,7 @@ static void
 _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
    Efl_Ui_Focus_Object *old_parent, *old_manager;
+   Efl_Ui_Focus_Object *old_registered_parent, *old_registered_manager;
 
    old_parent = _logical_parent_eval(obj, pd);
    old_manager = _focus_manager_eval(obj, pd);
@@ -420,19 +425,21 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
         _focus_state_eval(pd->logical.parent, new_pd);
      }
 
+   old_registered_parent = pd->focus.parent;
+   old_registered_manager = pd->focus.manager;
+
    _focus_state_eval(obj, pd);
 
-   if (old_parent != pd->logical.parent)
+   if (old_registered_parent != pd->focus.parent)
      {
         efl_event_callback_call(obj,
-             EFL_UI_FOCUS_USER_EVENT_LOGICAL_CHANGED, old_parent);
+             EFL_UI_FOCUS_USER_EVENT_LOGICAL_CHANGED, old_registered_parent);
      }
 
-   if (old_manager != pd->manager.manager)
+   if (old_registered_manager != pd->focus.manager)
      {
-        //emit signal
         efl_event_callback_call(obj,
-             EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, old_manager);
+             EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, old_registered_manager);
      }
 
 }
@@ -780,7 +787,7 @@ _elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vi
 
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
-   _focus_state_eval(obj, pd);
+   _full_eval(obj, pd);
 
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
@@ -1715,7 +1722,7 @@ _elm_widget_can_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool can_focu
         efl_event_callback_array_del(obj, focus_callbacks(), NULL);
      }
      if (efl_finalized_get(obj))
-       _focus_state_eval(obj, sd);
+       _full_eval(obj, sd);
 }
 
 EOLIAN static Eina_Bool
@@ -6200,7 +6207,7 @@ _elm_widget_efl_object_finalize(Eo *obj, Elm_Widget_Smart_Data *pd)
 
   eo = efl_finalize(efl_super(obj, MY_CLASS));
 
-  _focus_state_eval(obj, pd);
+  _full_eval(obj, pd);
 
   return eo;
 }
@@ -6483,13 +6490,13 @@ _elm_widget_efl_object_provider_find(Eo *obj, Elm_Widget_Smart_Data *pd, const E
 EOLIAN static Efl_Ui_Focus_Manager*
 _elm_widget_efl_ui_focus_user_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   return pd->logical.parent;
+   return pd->focus.parent;
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
 _elm_widget_efl_ui_focus_user_manager_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   return pd->manager.manager;
+   return pd->focus.manager;
 }
 
 EOLIAN static Eina_Rectangle
