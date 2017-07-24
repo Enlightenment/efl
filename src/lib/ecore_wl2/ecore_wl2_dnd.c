@@ -316,14 +316,16 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
-   ev->win = input->drag->window_id;
+   if (input->drag)
+     ev->win = input->drag->window_id;
    ev->offer = input->drag;
    ev->offer->ref++;
    ev->seat = input->id;
    ev->display = input->display;
    ev->display->refs++;
 
-   input->drag->window_id = 0;
+   if (input->drag)
+     input->drag->window_id = 0;
    ecore_event_add(ECORE_WL2_EVENT_DND_LEAVE, ev, _delay_offer_destroy, ev->offer);
    input->drag = NULL;
 }
@@ -339,12 +341,14 @@ _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, uint32_t serial)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_Motion));
    if (!ev) return;
 
-   input->drag->serial = serial;
+   if (input->drag)
+     input->drag->serial = serial;
 
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
-   ev->win = input->drag->window_id;
+   if (input->drag)
+     ev->win = input->drag->window_id;
    ev->x = x;
    ev->y = y;
    ev->offer = input->drag;
@@ -366,7 +370,8 @@ _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
-   ev->win = input->drag->window_id;
+   if (input->drag)
+     ev->win = input->drag->window_id;
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
    ev->offer = input->drag;
