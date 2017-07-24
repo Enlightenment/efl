@@ -210,6 +210,7 @@ _ecore_exe_win32_io_poll_notify(void *data EINA_UNUSED,
                        exe->pipe_read.data_buf = b;
                        exe->pipe_read.data_size += trep->buf_size;
                     }
+                  else ERR("Out of memory in reading exe pipe data");
                }
              event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_READ);
              if (event_data)
@@ -239,6 +240,7 @@ _ecore_exe_win32_io_poll_notify(void *data EINA_UNUSED,
                        exe->pipe_error.data_buf = b;
                        exe->pipe_error.data_size += trep->buf_size;
                     }
+                  else ERR("Out of memory in reading exe pipe data");
                }
              event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_ERROR);
              if (event_data)
@@ -634,10 +636,17 @@ _impl_ecore_exe_event_data_get(Ecore_Exe      *obj,
 
                        if (count >= max)
                          {
+                            Ecore_Exe_Event_Data_Line *lines;
+
                             max += 10;
-                            e->lines = realloc
-                              (e->lines,
-                               sizeof(Ecore_Exe_Event_Data_Line) * (max + 1));
+                            lines = realloc (e->lines,
+                                             sizeof(Ecore_Exe_Event_Data_Line) * (max + 1));
+                            if (lines) e->lines = lines;
+                            else
+                              {
+                                 ERR("Out of memory in allocating exe lines");
+                                 break;
+                              }
                          }
 
                        if ((i >= 1) && (inbuf[i - 1] == '\r')) end = i - 1;
@@ -655,15 +664,23 @@ _impl_ecore_exe_event_data_get(Ecore_Exe      *obj,
                   if (count != 0) e->size = last;
                   if (flags & ECORE_EXE_PIPE_READ)
                     {
-                       exe->pipe_read.data_size = i - last;
                        exe->pipe_read.data_buf = malloc(exe->pipe_read.data_size);
-                       memcpy(exe->pipe_read.data_buf, c, exe->pipe_read.data_size);
+                       if (exe->pipe_read.data_buf)
+                         {
+                            exe->pipe_read.data_size = i - last;
+                            memcpy(exe->pipe_read.data_buf, c, exe->pipe_read.data_size);
+                         }
+                       else ERR("Out of memory in allocating exe pipe data");
                     }
                   else
                     {
-                       exe->pipe_error.data_size = i - last;
                        exe->pipe_error.data_buf = malloc(exe->pipe_error.data_size);
-                       memcpy(exe->pipe_error.data_buf, c, exe->pipe_error.data_size);
+                       if (exe->pipe_error.data_buf)
+                         {
+                            exe->pipe_error.data_size = i - last;
+                            memcpy(exe->pipe_error.data_buf, c, exe->pipe_error.data_size);
+                         }
+                       else ERR("Out of memory in allocating exe pipe data");
                     }
                }
              if (count == 0) /* No lines to send, cancel the event. */
