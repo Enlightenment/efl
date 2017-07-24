@@ -668,9 +668,17 @@ _impl_ecore_exe_event_data_get(Ecore_Exe      *obj,
             {
                if (count >= max)
                {
+                  Ecore_Exe_Event_Data_Line *lines;
+
                   /* In testing, the lines seem to arrive in batches of 500 to 1000 lines at most, roughly speaking. */
                    max += 10; /* FIXME: Maybe keep track of the largest number of lines ever sent, and add half that many instead of 10. */
-                   e->lines = realloc(e->lines, sizeof(Ecore_Exe_Event_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
+                   lines = realloc(e->lines, sizeof(Ecore_Exe_Event_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
+                   if (!lines)
+                   {
+                      ERR("Out of memory adding exe data lines to event");
+                      break;
+                   }
+                   e->lines = lines;
                }
                /* raster said to leave the line endings as line endings, however -
                 * This is line buffered mode, we are not dealing with binary here, but lines.
@@ -1149,7 +1157,10 @@ _ecore_exe_data_generic_handler(void             *data,
                  inbuf_num += num;
               }
             else // realloc fails and returns NULL.
-               inbuf = temp;
+              {
+                 ERR("Out of memory in exe generic data handler");
+                 inbuf = temp;
+              }
          }
          else
          { /* No more data to read. */
