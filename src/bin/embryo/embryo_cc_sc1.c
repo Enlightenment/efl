@@ -2511,12 +2511,13 @@ declargs(symbol * sym)
 					 * have a default value */
 		  if ((sym->usage & uPROTOTYPED) == 0)
 		    {
+		       arginfo *tmp;
 		       /* redimension the argument list, add the entry */
-		       sym->dim.arglist =
-			  (arginfo *) realloc(sym->dim.arglist,
-					      (argcnt + 2) * sizeof(arginfo));
-		       if (!sym->dim.arglist)
+		       tmp = realloc(sym->dim.arglist,
+				     (argcnt + 2) * sizeof(arginfo));
+		       if (!tmp)
 			  error(103);	/* insufficient memory */
+		       sym->dim.arglist = tmp;
 		       sym->dim.arglist[argcnt] = arg;
 		       sym->dim.arglist[argcnt + 1].ident = 0;	/* keep the list
 								 * terminated */
@@ -2548,12 +2549,13 @@ declargs(symbol * sym)
 		     tags[numtags++] = 0;	/* default tag */
 		  if ((sym->usage & uPROTOTYPED) == 0)
 		    {
+		       arginfo *tmp;
 		       /* redimension the argument list, add the entry iVARARGS */
-		       sym->dim.arglist =
-			  (arginfo *) realloc(sym->dim.arglist,
-					      (argcnt + 2) * sizeof(arginfo));
-		       if (!sym->dim.arglist)
+		       tmp = realloc(sym->dim.arglist,
+				     (argcnt + 2) * sizeof(arginfo));
+		       if (!tmp)
 			  error(103);	/* insufficient memory */
+		       sym->dim.arglist = tmp;
 		       sym->dim.arglist[argcnt + 1].ident = 0;	/* keep the list
 								 * terminated */
 		       sym->dim.arglist[argcnt].ident = iVARARGS;
