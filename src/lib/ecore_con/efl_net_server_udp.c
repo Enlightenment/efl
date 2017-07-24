@@ -340,6 +340,15 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
      {
         void *tmp = realloc(buf, r);
         if (tmp) buf = tmp;
+        else
+          {
+             Eina_Error err = efl_net_socket_error_get();
+
+             free(buf);
+             ERR("Out of memory on efl net udp data incoming");
+             efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+             return;
+          }
      }
    slice = (Eina_Rw_Slice){.mem = buf, .len = r };
 
