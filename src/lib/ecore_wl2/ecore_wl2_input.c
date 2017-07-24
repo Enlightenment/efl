@@ -1691,8 +1691,8 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
      wl_data_source_destroy(input->data.selection.source);
    if (input->data.drag.source)
      wl_data_source_destroy(input->data.drag.source);
-   if (input->drag) _ecore_wl2_offer_unref(input->drag);
-   if (input->selection) _ecore_wl2_offer_unref(input->selection);
+   if (input->drag.offer) _ecore_wl2_offer_unref(input->drag.offer);
+   if (input->selection.offer) _ecore_wl2_offer_unref(input->selection.offer);
    if (input->data.device) wl_data_device_destroy(input->data.device);
 
    if (input->xkb.state) xkb_state_unref(input->xkb.state);
