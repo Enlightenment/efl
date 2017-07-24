@@ -69,6 +69,8 @@ struct _Efl_Ui_Textpath_Data {
 
    Eina_Inlist *segments;
    int total_length;
+
+   Evas_Object *clip;
 };
 
 #define EFL_UI_TEXTPATH_DATA_GET(o, sd) \
@@ -766,6 +768,11 @@ _efl_ui_textpath_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Textpath_Data *priv)
    evas_object_smart_member_add(priv->text_obj, obj);
    elm_widget_sub_object_add(obj, priv->text_obj);
 
+   priv->clip = evas_object_rectangle_add(obj);
+   evas_object_color_set(priv->clip, 255, 255, 0, 100);
+   evas_object_show(priv->clip);
+   evas_object_clip_set(priv->text_obj, priv->clip);
+
    efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _path_changed_cb, obj);
 }
 
@@ -824,6 +831,28 @@ _efl_ui_textpath_elm_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
    //need to set ellipsis again
 
    return int_ret;
+}
+
+EOLIAN static void
+_efl_ui_textpath_efl_gfx_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Evas_Coord x, Evas_Coord y)
+{
+   ERR("set position: textpath: %d %d", x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   if (pd->text_obj)
+     {
+        ERR("move text_obj to: %d %d", x, y);
+        efl_gfx_position_set(pd->text_obj, x, y);
+     }
+   efl_gfx_position_set(pd->clip, x, y);
+}
+
+EOLIAN static void
+_efl_ui_textpath_efl_gfx_size_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Evas_Coord w, Evas_Coord h)
+{
+   ERR("size set: %d %d", w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   ///
+   efl_gfx_size_set(pd->clip, w, h);
 }
 
 #if 0
