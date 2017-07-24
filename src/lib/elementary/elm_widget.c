@@ -420,6 +420,8 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
         _focus_state_eval(pd->logical.parent, new_pd);
      }
 
+   _focus_state_eval(obj, pd);
+
    if (old_parent != pd->logical.parent)
      {
         efl_event_callback_call(obj,
@@ -433,7 +435,6 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
              EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, old_manager);
      }
 
-   _focus_state_eval(obj, pd);
 }
 
 /**
