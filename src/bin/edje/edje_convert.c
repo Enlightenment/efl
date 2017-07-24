@@ -192,7 +192,11 @@ _edje_collection_program_add(Edje_Program ***array,
    Edje_Program **tmp;
 
    tmp = realloc(*array, sizeof (Edje_Program*) * (*count + 1));
-   if (!tmp) return;
+   if (!tmp)
+     {
+        error_and_abort(ef, "Not enough memory");
+        return;
+     }
 
    tmp[(*count)++] = add;
    *array = tmp;
