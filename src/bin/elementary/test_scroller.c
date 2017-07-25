@@ -564,7 +564,7 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
 
    /* { */
-   for (i = 0; i < 3; i++)
+   /*for (i = 0; i < 3; i++)
      {
         bt = elm_button_add(win);
         elm_object_text_set(bt, "Vertical");
@@ -575,19 +575,19 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
         evas_object_show(bt);
 
         if (i == 0) bounce->it1 = bt;
-     }
+     }*/
    /* } */
 
    /* { */
-   sc = elm_scroller_add(win);
+   /*sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, 0.5);
    elm_scroller_bounce_set(sc, EINA_TRUE, EINA_FALSE);
    elm_scroller_content_min_limit(sc, 0, 1);
    elm_box_pack_end(bx, sc);
-   evas_object_show(sc);
+   evas_object_show(sc);*/
 
-   bx2 = elm_box_add(win);
+   /*bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
 
    for (i = 0; i < 10; i++)
@@ -600,11 +600,11 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
      }
 
    elm_object_content_set(sc, bx2);
-   evas_object_show(bx2);
+   evas_object_show(bx2);*/
    /* } */
 
    /* { */
-   for (i = 0; i < 3; i++)
+   /*for (i = 0; i < 3; i++)
      {
         bt = elm_button_add(win);
         elm_object_text_set(bt, "Vertical");
@@ -613,11 +613,11 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
         elm_box_pack_end(bx, bt);
         evas_object_show(bt);
-     }
+     }*/
    /* } */
 
    /* { */
-   tb = elm_table_add(win);
+   /*tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, tb);
@@ -631,9 +631,9 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, sc, 0, 0, 1, 1);
-   evas_object_show(sc);
+   evas_object_show(sc);*/
 
-   tb2 = elm_table_add(win);
+   /*tb2 = elm_table_add(win);
 
    for (j = 0; j < 16; j++)
      {
@@ -648,10 +648,10 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
      }
 
    elm_object_content_set(sc, tb2);
-   evas_object_show(tb2);
+   evas_object_show(tb2);*/
    /* } */
 
-   for (i = 0; i < 24; i++)
+   for (i = 0; i < 15; i++)
      {
         bt = elm_button_add(win);
         elm_object_text_set(bt, "Vertical");
@@ -663,6 +663,26 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
         if (i == 23) bounce->it2 = bt;
      }
+    Evas_Object *txtpath = efl_add(EFL_UI_TEXTPATH_CLASS, win);
+    efl_ui_textpath_autofit_set(txtpath, EINA_TRUE);
+
+    efl_text_set(txtpath, "abcdef and more you can see from this test");
+   //efl_ui_textpath_circle_set(txtpath, 200, 200, 100, 0);
+    //efl_gfx_path_append_circle(txtpath, 200, 200, 100);
+
+    efl_gfx_path_append_arc(txtpath, 0, 0, 100, 100, 0, -90);
+    efl_gfx_path_append_line_to(txtpath, 0, 0);
+    //efl_gfx_path_append_move_to(txtpath, 200, 300);
+    //efl_gfx_path_append_line_to(txtpath, 300, 350);
+
+    //efl_gfx_path_append_move_to(txtpath, 100, 100);
+    //efl_gfx_path_append_line_to(txtpath, 200, 300);
+
+    efl_ui_textpath_ellipsis_set(txtpath, EINA_TRUE);
+    //efl_gfx_geometry_set(txtpath, 0, 0, 200, 200);
+    efl_gfx_visible_set(txtpath, EINA_TRUE);
+    elm_box_pack_end(bx, txtpath);
+
 
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -672,20 +692,22 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(bx);
    evas_object_show(sc);
 
+   printf("%s %d: win: %p, scroller: %p, box: %p, textpath: %p\n", __func__, __LINE__, win, sc, bx, txtpath);
+
    bounce->scroller = sc;
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320, 300);
    evas_object_show(win);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _scroll2_del_cb, bounce);
 
-   if (getenv("ELM_TEST_AUTOBOUNCE"))
+   /*if (getenv("ELM_TEST_AUTOBOUNCE"))
      {
         bounce->autobounce = 1;
         bounce->bounce_max = atoi(getenv("ELM_TEST_AUTOBOUNCE"));
         bounce->timer = ecore_timer_add(0.5, _bounce_cb, bounce);
         _bounce_cb(bounce);
-     }
+     }*/
 }
 
 static Ecore_Timer *_timer = NULL;
