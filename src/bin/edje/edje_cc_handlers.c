@@ -1154,7 +1154,7 @@ New_Statement_Handler statement_handlers_short[] =
              render; -> no_render: 0;
              norender; -> no_render: 1;
              required; -> required: 1;
-             norequired; -> norequired: 0;
+             norequired; -> required: 0;
              scale; -> scale: 1;
              noscale; -> scale: 0;
              desc {
