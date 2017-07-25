@@ -3664,6 +3664,32 @@ _evas_object_image_surface_get(Evas_Object_Protected_Data *obj, Eina_Bool create
    return pd->engine_data;
 }
 
+EOLIAN static Eina_Strbuf *
+_efl_canvas_image_internal_efl_object_debug_name_override(Eo *eo_obj, Evas_Image_Data *o, Eina_Strbuf *sb)
+{
+   sb = efl_debug_name_override(efl_super(eo_obj, MY_CLASS), sb);
+   if (o->cur->u.f)
+     {
+        const char *fname = o->cur->mmaped_source ?
+                 eina_file_filename_get(o->cur->u.f) : o->cur->u.file;
+        eina_strbuf_append_printf(sb, ":file='%s',key='%s'", fname, o->cur->key);
+     }
+   else if (o->pixels && o->pixels->func.get_pixels)
+     {
+        eina_strbuf_append_printf(sb, ":get_pixels=%p:dirty=%d",
+                                  o->pixels->func.get_pixels, o->dirty_pixels);
+     }
+   else if (o->cur->source)
+     {
+        eina_strbuf_append_printf(sb, ":proxy_source=%p", o->cur->source);
+     }
+   else
+     {
+        eina_strbuf_append_printf(sb, ":unknown_image");
+     }
+   return sb;
+}
+
 #define EFL_CANVAS_IMAGE_INTERNAL_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_image_internal_efl_object_dbg_info_get)
 

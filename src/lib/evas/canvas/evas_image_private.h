@@ -84,8 +84,8 @@ struct _Evas_Object_Image_State
    Evas_Canvas3D_Scene *scene;
 
    union {
-      const char    *file;
-      Eina_File     *f;
+      const char    *file; // used if !mmaped_source
+      Eina_File     *f; // used if mmaped_source
    } u;
    const char    *key;
    int            frame;
