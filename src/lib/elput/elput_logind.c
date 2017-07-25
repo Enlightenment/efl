@@ -649,6 +649,7 @@ _logind_close(Elput_Manager *em, int fd)
    int ret;
 
    ret = fstat(fd, &st);
+   close(fd);
    if (ret < 0) return;
 
    if (!S_ISCHR(st.st_mode)) return;
