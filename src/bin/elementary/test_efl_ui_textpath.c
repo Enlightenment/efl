@@ -31,11 +31,11 @@ elm_main(int argc, char *argv[])
     //elm_object_text_set(txtpath, "abcd&lt;eghi&gt;j");
     //efl_text_set(txtpath, "abcd&lt;eghi&gt;j more and more, so long to make it ellipsis? No, it is not enough, want to see more?xy");
 
-    //efl_ui_textpath_circle_set(txtpath, 0, 0, 100, 0);
+    efl_ui_textpath_circle_set(txtpath, 0, 0, 100, 180, EFL_UI_TEXTPATH_DIRECTION_CCW);
     //efl_gfx_path_append_circle(txtpath, 200, 200, 100);
 
-    efl_gfx_path_append_arc(txtpath, 0, 0, 100, 100, 0, -90);
-    efl_gfx_path_append_line_to(txtpath, 100, 150);
+    //efl_gfx_path_append_arc(txtpath, 0, 0, 100, 100, 0, -90);
+    //efl_gfx_path_append_line_to(txtpath, 100, 150);
 
     //efl_gfx_path_append_move_to(txtpath, 200, 300);
     //efl_gfx_path_append_line_to(txtpath, 300, 350);
@@ -44,7 +44,7 @@ elm_main(int argc, char *argv[])
     //efl_gfx_path_append_line_to(txtpath, 200, 300);
 
     efl_ui_textpath_ellipsis_set(txtpath, EINA_TRUE);
-    efl_ui_textpath_autofit_set(txtpath, EINA_FALSE);
+    //efl_ui_textpath_autofit_set(txtpath, EINA_FALSE);
     efl_gfx_geometry_set(txtpath, 120, 120, 200, 200);
     efl_gfx_visible_set(txtpath, EINA_TRUE);
 

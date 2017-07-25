@@ -19,7 +19,7 @@
 
 #define PI 3.14159265
 #define SLICE_MAX 200
-#define SLICE_DEFAULT_NO 69
+#define SLICE_DEFAULT_NO 99
 
 typedef struct _Efl_Ui_Textpath_Point Efl_Ui_Textpath_Point;
 typedef struct _Efl_Ui_Textpath_Line Efl_Ui_Textpath_Line;
@@ -62,7 +62,7 @@ struct _Efl_Ui_Textpath_Data {
         double radius;
         double start_angle;
    } circle;
-   Efl_Ui_Textpath_Orientation ori;
+   Efl_Ui_Textpath_Direction direction;
    int slice_no;
    Eina_Bool autofit;
    Eina_Bool ellipsis;
@@ -844,8 +844,8 @@ _efl_ui_textpath_efl_object_constructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
    ERR("in");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->autofit = EINA_TRUE;
-   pd->slice_no = 99;
-   pd->ori = EFL_UI_TEXTPATH_ORIENTATION_LEFT_TO_RIGHT;
+   pd->slice_no = SLICE_DEFAULT_NO;
+   pd->direction = EFL_UI_TEXTPATH_DIRECTION_CW;
 
    return obj;
 }
@@ -966,11 +966,12 @@ _efl_ui_textpath_efl_text_text_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
 #endif
 
 EOLIAN static void
-_efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double y, double radius, double start_angle)
+_efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double y, double radius, double start_angle, Efl_Ui_Textpath_Direction direction)
 {
    if (pd->circle.x == x && pd->circle.y == y &&
        pd->circle.radius == radius &&
-       pd->circle.start_angle == start_angle)
+       pd->circle.start_angle == start_angle &&
+       pd->direction == direction)
      {
         ERR("Same circle");
         return;
@@ -979,8 +980,19 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
    pd->circle.y = y;
    pd->circle.radius = radius;
    pd->circle.start_angle = start_angle;
-   
-   efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2, radius * 2,  start_angle, -360);
+   pd->direction = direction;
+
+   if (direction == EFL_UI_TEXTPATH_DIRECTION_CW)
+     {
+        efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2,
+                                radius * 2,  start_angle, -360);
+     }
+   else
+     {
+        efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2,
+                                radius * 2,  start_angle, 360);
+     }
+
 
    if (pd->content)
      {
@@ -988,19 +1000,6 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
      }
 
    _sizing_eval(obj, pd);
-}
-
-EOLIAN static Efl_Ui_Textpath_Orientation
-_efl_ui_textpath_orientation_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
-{
-    return pd->ori;
-}
-
-EOLIAN static void
-_efl_ui_textpath_orientation_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Efl_Ui_Textpath_Orientation orientation)
-{
-    if (pd->ori == orientation) return;
-    pd->ori = orientation;
 }
 
 EOLIAN static Eina_Bool

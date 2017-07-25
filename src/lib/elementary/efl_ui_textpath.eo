@@ -1,6 +1,6 @@
-enum Efl.Ui.Textpath.Orientation {
-     left_to_right,
-     right_to_left
+enum Efl.Ui.Textpath.Direction {
+     cw,
+     ccw
 }
 
 class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
@@ -15,13 +15,7 @@ class Efl.Ui.Textpath (Elm.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
             @in y: double;
             @in radius: double;
             @in start_angle: double;
-         }
-      }
-      @property orientation {
-         [[The orientation where text is placed:
-           left-to-right or right-to-left]]
-         values {
-            orient: Efl.Ui.Textpath.Orientation;
+            @in direction: Efl.Ui.Textpath.Direction;
          }
       }
       @property autofit {
