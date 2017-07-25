@@ -26,7 +26,7 @@ static void _child_remove(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
 static void _item_calc(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
 static void _layout_realize(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
 static void _layout_unrealize(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
-static Eina_Bool _update_items(Eo *, Efl_Ui_List_Data */*, Eina_Bool*/);
+static Eina_Bool _update_items(Eo *, Efl_Ui_List_Data * /*, Eina_Bool*/);
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
@@ -51,15 +51,11 @@ _efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd,
    Evas_Coord ox, oy, ow, oh, cw;
    Efl_Ui_List_Data *pd = psd->wpd;
    Efl_Ui_List_Item *litem;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
 
    fprintf(stderr, "%s %s:%d x %d y %d\n", __func__, __FILE__, __LINE__, x, y); fflush(stderr);
-   
    EINA_SAFETY_ON_NULL_RETURN(pd);
    if (((x == pd->pan.x) && (y == pd->pan.y))) return;
 
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__, i); fflush(stderr);
    evas_object_geometry_get(pd->obj, &ox, &oy, &ow, &oh);
    if (_horiz(pd->orient))
      {
@@ -72,24 +68,19 @@ _efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd,
         cw = oh / 4;
      }
 
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__, i); fflush(stderr);
    pd->pan.x = x;
    pd->pan.y = y;
 
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__, i); fflush(stderr);
    if (abs(pd->pan.move_diff) > cw)
      {
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__, i); fflush(stderr);
         pd->pan.move_diff = 0;
         _update_items(obj, pd/*, EINA_FALSE*/);
      }
    else
      {
-       fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__, i); fflush(stderr);
-       _efl_ui_list_custom_layout(pd->obj);
+        EINA_INARRAY_FOREACH(&pd->items.array, litem)
+          evas_object_move(litem->layout, (litem->x + 0 - pd->pan.x), (litem->y + 0 - pd->pan.y));
      }
-   /* EINA_ARRAY_ITER_NEXT(pd->items, i, litem, iterator) */
-   /*   evas_object_move(litem->layout, (litem->x + 0 - pd->pan.x), (litem->y + 0 - pd->pan.y)); */
 }
 
 EOLIAN static void
@@ -186,8 +177,6 @@ _child_removed_cb(void *data, const Efl_Event *event)
    Efl_Model_Children_Event* evt = event->info;
    Efl_Ui_List *obj = data;
    Efl_Ui_List_Item *item;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
 
    EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd);
    /* pd->item_count--; */
@@ -322,7 +311,6 @@ _count_then(void * data, Efl_Event const* event)
    int *count = ((Efl_Future_Event_Success*)event->info)->value;
 
    pd->item_count = *count;
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    _update_items(pd->obj, pd/*, EINA_TRUE*/);
 }
 
@@ -393,6 +381,54 @@ _child_remove(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    /* free(item); */
 }
 
+static int
+_find_item_by_layout(const void *data1, const void *data2)
+{
+   Efl_Ui_List_Item *item = data2;
+   Eo *layout = data1;
+
+   if (item->layout == layout)
+     return 0;
+
+   return -1;
+}
+
+static void
+_on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
+                    Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Efl_Ui_List_Item *item, *members;
+   Efl_Ui_List_Data *pd = data;
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
+   int idx = eina_inarray_search(&pd->items.array, obj, _find_item_by_layout);
+   if (idx < 0) {
+     printf ("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOoo\n");
+     return;
+   }
+
+   members = pd->items.array.members;
+   item = &members[idx];
+
+   if(_horiz(pd->orient))
+     {
+        pd->realized.w -= item->minw;
+        /* TODO:calculate new minh */
+        //if(pd->realized.h < item->minh)
+        //  pd->realized.h = item->minh;
+     }
+   else
+     {
+        pd->realized.h -= item->minh;
+        /* TODO:calculate new minw */
+        //if(pd->realized.w < item->minw)
+        //  pd->realized.w = item->minw;
+     }
+
+   _item_calc(pd, item);
+   evas_object_smart_changed(pd->obj);
+}
+
 static void
 _layout_realize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
 {
@@ -413,11 +449,13 @@ _layout_realize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    /* efl_event_callback_add(item->layout, ELM_WIDGET_EVENT_UNFOCUSED, _on_item_unfocused, item); */
    /* evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item); */
    /* evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item); */
+   /* evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item); */
 
    if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
      efl_ui_model_connect(item->layout, "signal/elm,state,%v", "selected");
 
-   /* _item_calc(pd, item); */
+    _item_calc(pd, item);
+   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, pd);
 }
 
 static void
@@ -447,6 +485,22 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    /* evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item); */
    /* evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item); */
    efl_ui_model_connect(item->layout, "signal/elm,state,%v", NULL);
+
+   if(_horiz(pd->orient))
+     {
+        pd->realized.w -= item->minw;
+        /* TODO:calculate new minh */
+        //if(pd->realized.h < item->minh)
+        //  pd->realized.h = item->minh;
+     }
+   else
+     {
+        pd->realized.h -= item->minh;
+        /* TODO:calculate new minw */
+        //if(pd->realized.w < item->minw)
+        //  pd->realized.w = item->minw;
+     }
+
 
    evt.child = item->model;
    evt.layout = item->layout;
@@ -1026,7 +1080,6 @@ _efl_ui_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_Data *pd)
 EOLIAN static Eo *
 _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
 {
-
    {
       Efl_Ui_Focus_Manager *manager;
 
@@ -1045,7 +1098,7 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LIST);
 
    eina_inarray_setup(&pd->items.array, sizeof(Efl_Ui_List_Item), 0);
-   
+
    pd->style = eina_stringshare_add(elm_widget_style_get(obj));
 
    pd->orient = EFL_ORIENT_DOWN;
@@ -1403,7 +1456,7 @@ _item_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    int pad[4];
 
    efl_gfx_size_hint_combined_min_get(item->layout, &old_w, &old_h);
-   edje_object_size_min_calc(elm_layout_edje_get(item->layout), &item->minw, &item->minh);
+   //edje_object_size_min_calc(elm_layout_edje_get(item->layout), &item->minw, &item->minh);
    efl_gfx_size_hint_margin_get(item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
    efl_gfx_size_hint_weight_get(item->layout, &item->wx, &item->wy);
 
@@ -1419,6 +1472,19 @@ _item_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
 
    pd->weight.x += item->wx;
    pd->weight.y += item->wy;
+
+   if(_horiz(pd->orient))
+     {
+        pd->realized.w += item->minw;
+        if(pd->realized.h < item->minh)
+          pd->realized.h = item->minh;
+     }
+   else
+     {
+        pd->realized.h += item->minh;
+        if(pd->realized.w < item->minw)
+          pd->realized.w = item->minw;
+     }
 }
 
 static Eina_Bool
@@ -1430,7 +1496,7 @@ _update_items(Eo *obj, Efl_Ui_List_Data *pd/*, Eina_Bool recalc*/)
    Eina_Bool horz = _horiz(pd->orient);
 
    printf("_update_items\n");
-   
+
    assert(!pd->future);
    /* if (pd->future) */
    /*    efl_future_cancel(pd->future); */
@@ -1560,18 +1626,14 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(ui_list, wd);
 
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
-   
    evas_object_geometry_get(ui_list, &boxx, &boxy, &boxw, &boxh);
    efl_gfx_size_hint_margin_get(ui_list, &boxl, &boxr, &boxt, &boxb);
 
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    scale = evas_object_scale_get(ui_list);
    // Box align: used if "item has max size and fill" or "no item has a weight"
    // Note: cells always expand on the orthogonal direction
    box_align[0] = pd->align.h;
    box_align[1] = pd->align.v;
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if (box_align[0] < 0)
      {
         box_fill[0] = EINA_TRUE;
@@ -1583,9 +1645,7 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
         box_align[1] = 0.5;
      }
 
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    count = eina_inarray_count(&pd->items.array);
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    /* if (!count) */
    /*   { */
@@ -1593,7 +1653,6 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
    /*      return; */
    /*   } */
 
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    elm_interface_scrollable_content_viewport_geometry_get
               (ui_list, NULL, NULL, &ow, &oh);
    // box outer margin
@@ -1605,12 +1664,10 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
    int average_item_size = eina_inarray_count(&pd->items.array) ? (/*horz*/ EINA_FALSE ? pd->realized.w : pd->realized.h) / eina_inarray_count(&pd->items.array) : AVERAGE_SIZE_INIT;
    if(!average_item_size)
      average_item_size = AVERAGE_SIZE_INIT;
-   
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+
    // total space & available space
    if (horiz)
      {
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         length = boxw;
         want = pd->realized.w;
         pad = pd->pad.scalable ? (pd->pad.h * scale) : pd->pad.h;
@@ -1627,7 +1684,6 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
      }
    else
      {
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         length = boxh;
         want = pd->realized.h;
         pad = pd->pad.scalable ? (pd->pad.v * scale) : pd->pad.v;
@@ -1645,15 +1701,12 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
 
    evas_object_size_hint_min_set(wd->resize_obj, pd->minw, pd->minh);
 
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if (extra < 0) extra = 0;
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    weight[0] = pd->weight.x;
    weight[1] = pd->weight.y;
    if (EINA_DBL_EQ(weight[!horiz], 0))
      {
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         if (box_fill[!horiz])
           {
              // box is filled, set all weights to be equal
@@ -1667,9 +1720,8 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
         weight[!horiz] = count;
      }
 
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    cur_pos += average_item_size * pd->realized.start;
-   fprintf(stderr, "%s %s:%d array count %d\n", __func__, __FILE__, __LINE__, eina_inarray_count(&pd->items.array)); fflush(stderr);
+   fprintf(stderr, "%s %s:%d array count %d average_item_size=%d\n", __func__, __FILE__, __LINE__, eina_inarray_count(&pd->items.array), average_item_size); fflush(stderr);
 
    // scan all items, get their properties, calculate total weight & min size
    EINA_INARRAY_FOREACH(&pd->items.array, litem)
@@ -1678,15 +1730,14 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
         double align[2];
         int item_pad[4], max[2];
 
-        _item_calc(pd, litem);
-        
-        fprintf(stderr, "%s %s:%d item %p layout %p\n", __func__, __FILE__, __LINE__, litem, litem->layout); fflush(stderr);
+        //_item_calc(pd, litem);
+        //fprintf(stderr, "%s %s:%d item %p layout %p\n", __func__, __FILE__, __LINE__, litem, litem->layout); fflush(stderr);
         assert(litem->layout != NULL);
         efl_gfx_size_hint_align_get(litem->layout, &align[0], &align[1]);
         efl_gfx_size_hint_max_get(litem->layout, &max[0], &max[1]);
         efl_gfx_size_hint_margin_get(litem->layout, &item_pad[0], &item_pad[1], &item_pad[2], &item_pad[3]);
 
-        fprintf(stderr, "%s %s:%d align[0] %f align[1] %f max[0] %d max[1] %d item_pad[0] %d item_pad[1] %d item_pad[2] %d item_pad[3] %d\n", __func__, __FILE__, __LINE__, (float)align[0], (float)align[1], max[0], max[1], item_pad[0], item_pad[1], item_pad[2], item_pad[3]); fflush(stderr);        
+        //fprintf(stderr, "%s %s:%d align[0] %f align[1] %f max[0] %d max[1] %d item_pad[0] %d item_pad[1] %d item_pad[2] %d item_pad[3] %d\n", __func__, __FILE__, __LINE__, (float)align[0], (float)align[1], max[0], max[1], item_pad[0], item_pad[1], item_pad[2], item_pad[3]); fflush(stderr);        
 
         if (align[0] < 0) align[0] = -1;
         if (align[1] < 0) align[1] = -1;
@@ -1780,34 +1831,14 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
 
         evas_object_geometry_set(litem->layout, (x + 0 - pd->pan.x), (y + 0 - pd->pan.y), w, h);
 
-        fprintf(stderr, "x: %.2f y: %.2f w: %.2f h: %.2f old x: %.2f old y: %.2f old w: %.2f old h: %.2f\n"
-                , (x + 0 - pd->pan.x), (y + 0 - pd->pan.y), (float)w, (float)h
-                , (float)litem->x, (float)litem->y, (float)litem->w, (float)litem->h); fflush(stderr);
-        if(horiz)
-          pd->realized.w -= litem->w;
-        else
-          pd->realized.h -= litem->h;
-
         litem->x = x;
         litem->y = y;
-        litem->w = w;
-        litem->h = h;
 
-        if(horiz)
-          {
-             pd->realized.w += w;
-             if(pd->realized.h < h)
-               pd->realized.h = h;
-          }
-        else
-          {
-             pd->realized.h += h;
-             if(pd->realized.w < w)
-               pd->realized.w = w;
-          }
-
-        printf("obj=%d currpos=%.2f moved to X=%.2f, Y=%.2f average_item_size %d\n", litem->index, cur_pos, x, y
-               , eina_inarray_count(&pd->items.array) ? (/*horz*/ EINA_FALSE ? pd->realized.w : pd->realized.h) / eina_inarray_count(&pd->items.array) : AVERAGE_SIZE_INIT);
+//        fprintf(stderr, "x: %.2f y: %.2f w: %.2f h: %.2f old x: %.2f old y: %.2f old w: %.2f old h: %.2f\n"
+//                , (x + 0 - pd->pan.x), (y + 0 - pd->pan.y), (float)w, (float)h
+//               , (float)litem->x, (float)litem->y, (float)litem->w, (float)litem->h); fflush(stderr);
+//        printf("obj=%d currpos=%.2f moved to X=%.2f, Y=%.2f average_item_size %d\n", litem->index, cur_pos, x, y
+//               , eina_inarray_count(&pd->items.array) ? (/*horz*/ EINA_FALSE ? pd->realized.w : pd->realized.h) / eina_inarray_count(&pd->items.array) : AVERAGE_SIZE_INIT);
      }
 }
 
