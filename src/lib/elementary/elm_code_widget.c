@@ -969,6 +969,24 @@ _elm_code_widget_clicked_readonly_cb(Elm_Code_Widget *widget, unsigned int row)
 }
 
 static void
+_mouse_selection_paste_at_position(Elm_Code_Widget *widget,
+                                   unsigned int row, unsigned int col)
+{
+   char *text;
+
+   if (elm_code_widget_selection_is_empty(widget))
+     return;
+
+   text = elm_code_widget_selection_text_get(widget);
+   elm_code_widget_selection_clear(widget);
+
+   elm_code_widget_cursor_position_set(widget, row, col);
+   elm_code_widget_text_at_cursor_insert(widget, text);
+
+   free(text);
+}
+
+static void
 _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                void *event_info)
 {
@@ -986,10 +1004,18 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
 
    ctrl = evas_key_modifier_is_set(event->modifiers, "Control");
    shift = evas_key_modifier_is_set(event->modifiers, "Shift");
-   if (event->button == 3 && !ctrl)
+   if (!ctrl)
      {
-        _popup_menu_show(widget, event->canvas.x, event->canvas.y);
-        return;
+        if (event->button == 3)
+          {
+             _popup_menu_show(widget, event->canvas.x, event->canvas.y);
+             return;
+          }
+	else if (event->button == 2)
+          {
+             _mouse_selection_paste_at_position(widget, row, col);
+             return;
+          }
      }
 
    if (!shift)
