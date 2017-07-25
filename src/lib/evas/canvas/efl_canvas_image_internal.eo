@@ -10,6 +10,7 @@ abstract Efl.Canvas.Image.Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Interna
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.finalize;
+      Efl.Object.debug_name_override;
       Efl.File.save;
       Efl.Orientation.orientation { get; set; }
       Efl.Flipable.flip { get; set; }
