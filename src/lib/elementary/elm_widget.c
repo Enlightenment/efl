@@ -405,11 +405,11 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 static void
 _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
-   Efl_Ui_Focus_Object *old_parent, *old_manager;
+   Efl_Ui_Focus_Object *old_parent;
    Efl_Ui_Focus_Object *old_registered_parent, *old_registered_manager;
 
    old_parent = _logical_parent_eval(obj, pd);
-   old_manager = _focus_manager_eval(obj, pd);
+   _focus_manager_eval(obj, pd);
 
    if (old_parent)
      {
