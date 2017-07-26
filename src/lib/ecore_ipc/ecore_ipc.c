@@ -386,6 +386,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
    char *address = NULL;
    Eina_Error err;
 #ifdef EFL_NET_SERVER_UNIX_CLASS
+   Eina_Bool local_system = EINA_FALSE;
    mode_t old_mask = 0, new_mask = 0;
 #endif
 
@@ -415,6 +416,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
         /* ecore_con didn't create leading directories for LOCAL_SYSTEM */
 
         new_mask = 0;
+        local_system = EINA_TRUE;
 
         svr->server = efl_add(EFL_NET_SERVER_UNIX_CLASS, ecore_main_loop_get());
         EINA_SAFETY_ON_NULL_GOTO(svr->server, error_server);
@@ -477,9 +479,36 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
 
    efl_event_callback_array_add(svr->server, _ecore_ipc_server_cbs(), svr);
 
+   if (efl_isa(svr->server, EFL_NET_SERVER_FD_CLASS))
+     {
+        efl_net_server_fd_close_on_exec_set(svr->server, EINA_TRUE);
+        efl_net_server_fd_reuse_address_set(svr->server, EINA_TRUE);
+        efl_net_server_fd_reuse_port_set(svr->server, EINA_TRUE);
+     }
+
+   if (efl_isa(svr->server, EFL_NET_SERVER_TCP_CLASS))
+     {
+        /* old ecore_con did not map ipv4 to ipv6... */
+        efl_net_server_tcp_ipv6_only_set(svr->server, EINA_TRUE);
+     }
+   else if (efl_isa(svr->server, EFL_NET_SERVER_SSL_CLASS))
+     {
+        /* old ecore_con did not map ipv4 to ipv6... */
+        efl_net_server_ssl_ipv6_only_set(svr->server, EINA_TRUE);
+        efl_net_server_ssl_close_on_exec_set(svr->server, EINA_TRUE);
+        efl_net_server_ssl_reuse_address_set(svr->server, EINA_TRUE);
+        efl_net_server_ssl_reuse_port_set(svr->server, EINA_TRUE);
+     }
+
 #ifdef EFL_NET_SERVER_UNIX_CLASS
    if (efl_isa(svr->server, EFL_NET_SERVER_UNIX_CLASS))
-     old_mask = umask(new_mask);
+     {
+        old_mask = umask(new_mask);
+        efl_net_server_unix_unlink_before_bind_set(svr->server, EINA_TRUE);
+        efl_net_server_unix_leading_directories_create_set(svr->server,
+                                                           EINA_TRUE,
+                                                           local_system ? 0755 : 0700);
+     }
 #endif
 
    err = efl_net_server_serve(svr->server, address);
