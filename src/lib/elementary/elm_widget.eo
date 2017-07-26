@@ -766,7 +766,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          params {
             manager : Efl.Ui.Focus.Manager; [[The manager to register against]]
             logical : Efl.Ui.Focus.Object; [[The logical parent to use]]
-            logical_flag : ptr(bool); [[reference to the flag indicating if the should be logical or not change this flag to the value you have it registered]]
+            @inout logical_flag : bool; [[reference to the flag indicating if the should be logical or not change this flag to the value you have it registered]]
          }
          return : bool; [[return $true or $false if the registration was successfull or not]]
       }
