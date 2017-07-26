@@ -634,7 +634,6 @@ _remote_server_create(void)
 
    {
       Eo *inner_server = efl_net_server_simple_inner_server_get(_remote_server);
-      efl_net_server_fd_close_on_exec_set(inner_server, EINA_TRUE);
       efl_net_server_fd_reuse_address_set(inner_server, EINA_TRUE);
    }
    efl_event_callback_add(_remote_server, EFL_NET_SERVER_EVENT_CLIENT_ADD, _client_add, NULL);

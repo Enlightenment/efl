@@ -652,7 +652,6 @@ main(int argc, char **argv)
    if (cls == EFL_NET_SERVER_TCP_CLASS)
      {
         efl_net_server_tcp_ipv6_only_set(server, ipv6_only);
-        efl_net_server_fd_close_on_exec_set(server, EINA_TRUE); /* recommended */
         efl_net_server_fd_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
         efl_net_server_fd_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
 
@@ -672,7 +671,6 @@ main(int argc, char **argv)
           efl_net_server_udp_multicast_join(server, str);
 
 
-        efl_net_server_fd_close_on_exec_set(server, EINA_TRUE); /* recommended */
         efl_net_server_fd_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
         efl_net_server_fd_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
         if (socket_activated) efl_net_server_fd_socket_activate(server, address);
@@ -704,7 +702,6 @@ main(int argc, char **argv)
 
         efl_net_server_ssl_context_set(server, ssl_ctx);
 
-        efl_net_server_ssl_close_on_exec_set(server, EINA_TRUE); /* recommended */
         efl_net_server_ssl_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
         efl_net_server_ssl_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
         if (socket_activated) efl_net_server_ssl_socket_activate(server, address);

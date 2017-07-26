@@ -312,7 +312,6 @@ main(int argc, char **argv)
 
    server = efl_add(EFL_NET_SERVER_TCP_CLASS, ecore_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
                     efl_net_server_tcp_ipv6_only_set(efl_added, EINA_FALSE), /* optional, but helps testing IPv4 on IPv6 servers */
-                    efl_net_server_fd_close_on_exec_set(efl_added, EINA_TRUE), /* recommended */
                     efl_net_server_fd_reuse_address_set(efl_added, EINA_TRUE), /* optional, but nice for testing */
                     efl_net_server_fd_reuse_port_set(efl_added, EINA_TRUE), /* optional, but nice for testing... not secure unless you know what you're doing */
                     efl_event_callback_array_add(efl_added, server_cbs(), NULL)); /* mandatory to have "client,add" in order to be useful */

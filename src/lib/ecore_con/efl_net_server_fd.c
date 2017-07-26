@@ -100,6 +100,7 @@ EOLIAN static Efl_Object *
 _efl_net_server_fd_efl_object_constructor(Eo *o, Efl_Net_Server_Fd_Data *pd)
 {
    pd->family = AF_UNSPEC;
+   pd->close_on_exec = EINA_TRUE;
    return efl_constructor(efl_super(o, MY_CLASS));
 }
 
