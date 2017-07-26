@@ -7,7 +7,13 @@ static void
 on_click(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
          void *event_info EINA_UNUSED)
 {
-   elm_exit();
+   //elm_exit();
+}
+
+static void
+_button_clicked_cb(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+    printf("%s %d: clicked by edje\n\n", __func__, __LINE__);
 }
 
 EAPI_MAIN int
@@ -31,6 +37,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    evas_object_resize(btn, 120, 30);
    evas_object_move(btn, 60, 15);
    evas_object_show(btn);
+
+   //elm_object_signal_callback_add(btn, "elm,action,click", "*",
+   edje_object_signal_callback_add(elm_layout_edje_get(btn), "elm,action,click", "*",
+	   _button_clicked_cb, btn);
 
    evas_object_resize(win, 240, 60);
    evas_object_show(win);

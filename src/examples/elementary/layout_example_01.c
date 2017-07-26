@@ -66,8 +66,12 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    // Adding layout and filling it with widgets
    layout = elm_layout_add(win);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, layout);
-   snprintf(buf, sizeof(buf), "%s/examples/layout_example.edj", elm_app_data_dir_get());
+   //elm_win_resize_object_add(win, layout);
+   //evas_object_resize(layout, 100, 100);
+   evas_object_size_hint_min_set(layout, 100, 100);
+   evas_object_move(layout, 0, 0);
+   //snprintf(buf, sizeof(buf), "%s/examples/layout_example.edj", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/layout_example.edj", ".");
    elm_layout_file_set(layout, buf, "example/mylayout");
    evas_object_show(layout);
 
@@ -128,6 +132,32 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_object_text_set(bt2, "Delete All");
    elm_object_part_content_set(layout, SWALLOW, bt2);
    evas_object_smart_callback_add(bt2, "clicked", _swallow_btn_cb, layout);
+
+
+   //proxy of layout: OK
+   //proxy of mapped object: No
+   Evas_Object *proxy = evas_object_image_filled_add(evas_object_evas_get(layout));
+   //Evas_Object *proxy = evas_object_image_add(evas_object_evas_get(layout)); //must be filled image
+   evas_object_image_source_set(proxy, layout);
+   evas_object_resize(proxy, 100, 100);
+   evas_object_move(proxy, 200, 200);
+   evas_object_show(proxy);
+
+   //map of layout: OK
+   Evas_Coord x, y, w, h;
+   evas_object_geometry_get(layout, &x, &y, &w, &h);
+   printf("layout geo: %d %d %d %d\n", x, y, w, h);
+   Evas_Map *m = evas_map_new(4);
+   evas_map_point_coord_set(m, 0, 100, 100, 0);
+   evas_map_point_coord_set(m, 1, 200, 100, 0);
+   evas_map_point_coord_set(m, 2, 100, 200, 0);
+   evas_map_point_coord_set(m, 3, 0, 200, 0);
+   evas_map_point_image_uv_set(m, 0, 0, 0);
+   evas_map_point_image_uv_set(m, 1, 100, 0);
+   evas_map_point_image_uv_set(m, 2, 100, 100);
+   evas_map_point_image_uv_set(m, 3, 0, 100);
+   evas_object_map_enable_set(layout, EINA_TRUE);
+   evas_object_map_set(layout, m);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);

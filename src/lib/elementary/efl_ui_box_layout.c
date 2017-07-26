@@ -15,6 +15,9 @@ struct _Item_Calc
    int max[2];
    int pad[4];
    int want[2];
+   Efl_Gfx_Size_Hint_Aspect aspect;
+   int aw, ah;
+   int min[2];
    int id;
 };
 
@@ -77,6 +80,23 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         efl_gfx_size_hint_margin_get(o, &item->pad[0], &item->pad[1], &item->pad[2], &item->pad[3]);
         efl_gfx_size_hint_max_get(o, &item->max[0], &item->max[1]);
         efl_gfx_size_hint_combined_min_get(o, &item->want[0], &item->want[1]);
+        efl_gfx_size_hint_aspect_get(o, &item->aspect, &item->aw, &item->ah);
+        efl_gfx_size_hint_min_get(0, &item->min[0], &item->min[1]);
+        if (item->aw == 0 || item->ah == 0)
+          {
+             item->aw = item->ah = 0;
+             item->aspect = EFL_GFX_SIZE_HINT_ASPECT_NONE;
+          }
+
+        //aspect ratio support
+        //lam sao de tinh chi tinh min + van support aspect ratio???
+        //if (item->aspect == EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL ||
+        //    item->aspect == EFL_GFX_SIZE_HINT_ASPECT_BOTH)
+          {
+             int minh = item->want[0] * item->ah / item->aw;
+             if (item->want[1] < minh)
+               item->want[1] = minh;
+          }
 
         if (item->weight[0] < 0) item->weight[0] = 0;
         if (item->weight[1] < 0) item->weight[1] = 0;
@@ -121,6 +141,60 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    boxx += boxl;
    boxy += boxt;
 
+
+   //support aspect ratio
+   /*id = 0;
+   WRN("before: wantw: %d, wanth: %d", wantw, wanth);
+   EINA_LIST_FOREACH(bd->children, li, opt)
+     {
+        item = &items[id];
+        if (horiz)
+          {
+             wantw -= item->want[0];
+             if (item->aspect == EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
+               {
+                  //item->want[0] = item->min[0];
+                  item->want[1] = item->want[0] * item->aw / item->ah;
+               }
+             else if (item->aspect == EFL_GFX_SIZE_HINT_ASPECT_VERTICAL)
+               {
+                  item->want[1] = wanth;
+                  item->want[0] = wanth * item->aw / item->ah;
+               }
+             else if (item->aspect == EFL_GFX_SIZE_HINT_ASPECT_BOTH)
+               {
+                  item->want[1] = wanth;
+                  item->want[0] = wanth * item->aw / item->ah;
+               }
+             wantw += item->want[0];
+          }
+        else
+          {
+             wanth -= item->want[1];
+             if (item->aspect == EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
+               {
+                  item->want[0] = wantw;
+                  item->want[1] = wantw * item->ah / item->aw;
+               }
+             else if (item->aspect == EFL_GFX_SIZE_HINT_ASPECT_VERTICAL)
+               {
+                  //item->want[1] = item->min[1];
+                  item->want[0] = item->want[1] * item->aw / item->ah;
+               }
+             else if (item->aspect == EFL_GFX_SIZE_HINT_ASPECT_BOTH)
+               {
+                  item->want[0] = wantw;
+                  item->want[1] = wantw * item->ah / item->ah;
+               }
+             wanth += item->want[1];
+          }
+
+        id++;
+     }
+   WRN("after:  wantw: %d, wanth: %d", wantw, wanth);
+   */
+   //////
+
    // total space & available space
    if (horiz)
      {
@@ -141,6 +215,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    // available space. if <0 we overflow
    extra = length - want;
 
+   /*
    if (horiz)
      {
         evas_object_size_hint_min_set(ui_box,
@@ -152,7 +227,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         evas_object_size_hint_min_set(ui_box,
                                       wantw + boxl + boxr,
                                       wanth + pad * (count - 1) + boxt + boxb);
-     }
+     }*/
 
    if (extra < 0) extra = 0;
 
@@ -169,6 +244,40 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
              cur_pos = extra * box_align[!horiz];
           }
         weight[!horiz] = count;
+     }
+
+   double cx, cy, cw, ch, x, y, w, h;
+   //work on items having aspect ratio first
+   for (id = 0; id < count; id++)
+     {
+        item = &items[id];
+        if (item->aspect)
+          {
+             if (horiz)
+               {
+                  ch = boxh;
+                  if (ch > item->max[1])
+                    ch = item->max[1];
+                  cw = ch * item->aw / item->ah;
+                  if (cw > item->max[0])
+                    {
+                       cw = item->max[0];
+                       ch = cw * item->ah / item->aw;
+                    }
+               }
+             else
+               {
+                  cw = boxw;
+                  if (cw > item->max[0])
+                    cw = item->max[0];
+                  ch = cw * item->ah / item->aw;
+                  if (ch > item->max[1])
+                    {
+                       ch = item->max[1];
+                       cw = ch * item->aw / item->ah;
+                    }
+               }
+          }
      }
 
    for (id = 0; id < count; id++)
@@ -220,6 +329,14 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
              w = item->want[0] - item->pad[0] - item->pad[1];
              x = cx + ((cw - w) * item->align[0]) + item->pad[0];
           }
+        //aspect ratio
+        if (item->aspect)
+          {
+             h = w * item->ah / item->aw;
+             if (h > wanth)
+               wanth = h;
+          }
+        /////
 
         // vertically
         if (item->max[1] < INT_MAX)
@@ -244,9 +361,29 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
              h = item->want[1] - item->pad[2] - item->pad[3];
              y = cy + ((ch - h) * item->align[1]) + item->pad[2];
           }
+        if (item->aspect)
+          {
+             w = h * item->aw / item->ah;
+             cur_pos = cur_pos - cw + w;
+             if (w > wantw)
+               wantw = w;
+          }
 
         //DBG("[%2d/%2d] cell: %.0f,%.0f %.0fx%.0f item: %.0f,%.0f %.0fx%.0f",
         //    id, count, cx, cy, cw, ch, x, y, w, h);
         evas_object_geometry_set(item->obj, x, y, w, h);
+     }
+
+   if (horiz)
+     {
+        evas_object_size_hint_min_set(ui_box,
+                                      wantw + boxl + boxr + pad * (count - 1),
+                                      wanth + boxt + boxb);
+     }
+   else
+     {
+        evas_object_size_hint_min_set(ui_box,
+                                      wantw + boxl + boxr,
+                                      wanth + pad * (count - 1) + boxt + boxb);
      }
 }
