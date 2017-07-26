@@ -265,6 +265,10 @@ color_classes {
       color: WIN_DEFAULT_BASIC;
       desc: "Base of a frame widget";
    }
+   color_class { name: "frame";
+      color: FN_COL_DISABLE;
+      desc: "Base of a frame widget";
+   }
    color_class { name: "scroller_bg";
       color: WIN_DEFAULT_BASIC;
       desc: "Background of a scroller widget";

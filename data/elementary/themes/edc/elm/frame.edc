@@ -1,4 +1,10 @@
 group { name: "elm/frame/base/default";
+   styles {
+      style { name: "frame_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom color_class=frame text_class=frame left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    images.image: "shadow_square_tiny.png" COMP;
    images.image: "vgrad_med_curved.png" COMP;
    images.image: "bevel_out.png" COMP;
@@ -57,11 +63,10 @@ group { name: "elm/frame/base/default";
             FIXED_SIZE(3, 11)
          }
       }
-      part { name: "elm.text"; type: TEXT;
+      part { name: "elm.text"; type: TEXTBLOCK;
          scale: 1;
-         effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color_class: "frame";
+            //color_class: "frame";
             rel1.relative: 1.0 0.0;
             rel1.offset: 1 2;
             rel1.to_x: "edge1";
@@ -69,9 +74,10 @@ group { name: "elm/frame/base/default";
             rel2.offset: -3 1;
             rel2.to_x: "edge2";
             align: 0.0 0.0;
-            color: FN_COL_DISABLE;
-            text { font: FNBD; size: 10;
-               text_class: "frame";
+            //color: FN_COL_DISABLE;
+            text { style: "frame_style";
+               //text_class: "frame";
+               font: FNBD; size: 10;
                align: 0.0 0.0;
                min: 0 1;
             }
