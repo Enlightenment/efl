@@ -3,6 +3,12 @@ group { name: "elm/map/base/default";
 }
 
 group { name: "elm/map/marker/radio/default";
+   styles {
+      style { name: "map_radio_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=map_radio color_class=map_radio left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    data.item: "size_w" 35;
    data.item: "size_h" 35;
    data.item: "size_max_w" 35;
@@ -31,16 +37,15 @@ group { name: "elm/map/marker/radio/default";
             rel2.offset: 0 0;
          }
       }
-      part { name: "elm.text"; type: TEXT;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK;
          description { state: "default" 0.0;
             fixed: 1 1;
             rel1.to: "elm.icon";
             rel2.to: "elm.icon";
-            color_class: "map_radio";
-            color: FN_COL_DISABLE_SHADOW;
-            text { font: FNBD; size: 10;
-               text_class: "map_radio";
+            //color_class: "map_radio";
+            //color: FN_COL_DISABLE;
+            text { style: "map_radio_style";
+               font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
             }
@@ -50,6 +55,12 @@ group { name: "elm/map/marker/radio/default";
 }
 
 group { name: "elm/map/marker/empty/default";
+   styles {
+      style { name: "map_empty_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=map_empty color_class=map_empty left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    data.item: "size_w" 16;
    data.item: "size_h" 16;
    data.item: "size_max_w" 24;
@@ -67,15 +78,15 @@ group { name: "elm/map/marker/empty/default";
             rel2.to: "knob";
          }
       }
-      part { name: "elm.text"; type: TEXT;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK;
+         //effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
             rel1.to: "knob";
             rel2.to: "knob";
-            color_class: "map_empty";
-            color: FN_COL_DEFAULT;
-            text { font: FNBD; size: 10;
-               text_class: "map_empty";
+            //color_class: "map_empty";
+            //color: FN_COL_DEFAULT;
+            text { style: "map_style";
+               font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
             }
@@ -97,6 +108,12 @@ group { name: "elm/map/circle/base/default";
 }
 
 group { name: "elm/map/scale/base/default";
+   styles {
+      style { name: "map_scale_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=map_scale color_class=map_scale left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    data.item: "size_w" 100;
    data.item: "size_h" 22;
    images.image: "map_scale.png" COMP;
@@ -108,15 +125,16 @@ group { name: "elm/map/scale/base/default";
             image.normal: "map_scale.png";
          }
       }
-      part { name: "elm.text"; type: TEXT;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK;
+         //effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
             rel1.offset: 6 5;
             rel2.offset: -7 -5;
-            color_class: "map_scale";
-            color: FN_COL_DEFAULT;
-            text { font: FNBD; size: 10;
-               text_class: "map_scale";
+            //color_class: "map_scale";
+            //color: FN_COL_DEFAULT;
+            text { style: "map_scale_style";
+               //text_class: "map_scale";
+               font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
                align: 0.0 0.0;

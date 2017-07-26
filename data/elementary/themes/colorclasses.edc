@@ -40,6 +40,18 @@ color_classes {
       color: FN_COL_DEFAULT;
       desc: "Info text while resizing a window";
    }
+   color_class { name: "map_radio";
+      color: FN_COL_DISABLE_SHADOW;
+      desc: "Base color of a map";
+   }
+   color_class { name: "map_empty";
+      color: FN_COL_DEFAULT;
+      desc: "Base color of a menu";
+   }
+   color_class { name: "map_scale";
+      color: FN_COL_DEFAULT;
+      desc: "Base color of a menu";
+   }
    color_class { name: "menu_base";
       color: WIN_DEFAULT_BASIC;
       desc: "Base color of a menu";
