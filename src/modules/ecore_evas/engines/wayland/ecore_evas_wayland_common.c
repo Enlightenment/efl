@@ -1909,7 +1909,10 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
              einfo->www_avail = !!wdata->win->www_surface;
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
-             evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+             if (ECORE_EVAS_PORTRAIT(ee))
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h + fh, ee->w + fw);
           }
      }
 
