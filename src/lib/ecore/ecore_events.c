@@ -616,12 +616,12 @@ ecore_event_type_flush_internal(int type, ...)
    va_list args;
    Eina_Bool wrong_type = EINA_FALSE;
 
+   // In case of an empty list of event
+   if (type == ECORE_EVENT_NONE) return;
+
    eina_inarray_step_set(&types, sizeof (Eina_Inarray), sizeof (int), 4);
 
    eina_inarray_push(&types, &type);
-
-   // In case of an empty list of event
-   if (type == ECORE_EVENT_NONE) return;
 
    va_start(args, type);
    do
@@ -641,7 +641,11 @@ ecore_event_type_flush_internal(int type, ...)
         wrong_type = EINA_TRUE;
      }
 
-   if (wrong_type) return ;
+   if (wrong_type)
+     {
+        eina_inarray_flush(&types);
+        return ;
+     }
 
    EINA_INLIST_FOREACH_SAFE((Eina_Inlist *) events, l, event)
      {
