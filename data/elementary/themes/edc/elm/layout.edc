@@ -1,5 +1,11 @@
 /* application with a main content area with a back button and title area */
 group { name: "elm/layout/application/content-back";
+   styles {
+      style { name: "layout_style";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    parts {
       part { name: "elm.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -89,7 +95,7 @@ group { name: "elm/layout/application/content-back";
             }
          }
       }
-      part { name: "elm.text.title"; type: TEXT;
+      part { name: "elm.text.title"; type: TEXTBLOCK;
          effect: SHADOW BOTTOM;
          scale: 1;
          clip_to: "title_clipper";
@@ -105,8 +111,8 @@ group { name: "elm/layout/application/content-back";
                relative: 0.0 1.0;
                offset: -3 -1;
             }
-            color: FN_COL_DEFAULT;
-            text { font: FNBD; size: 10;
+            text { style: "layout_style";
+               font: FNBD; size: 10;
             }
          }
       }
@@ -230,7 +236,7 @@ group { name: "elm/layout/application/content-back-next";
             target: "next_clipper";
          }
       }
-      part { name: "elm.text.title"; type: TEXT;
+      part { name: "elm.text.title"; type: TEXTBLOCK;
          effect: SHADOW BOTTOM;
          scale: 1;
          clip_to: "title_clipper";
@@ -246,8 +252,8 @@ group { name: "elm/layout/application/content-back-next";
                relative: 0.0 1.0;
                offset: -3 -1;
             }
-            color: FN_COL_DEFAULT;
-            text { font: FNBD; size: 10;
+            text { style: "layout_style";
+               font: FNBD; size: 10;
             }
          }
       }
@@ -510,7 +516,7 @@ group { name: "elm/layout/application/titlebar";
             target: "elm.swallow.end";
          }
       }
-      part { name: "elm.text"; type: TEXT;
+      part { name: "elm.text"; type: TEXTBLOCK;
          effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
@@ -522,8 +528,8 @@ group { name: "elm/layout/application/titlebar";
                to: "elm.swallow.end";
                relative: 0.0 1.0;
             }
-            color: FN_COL_DEFAULT;
-            text { font: FNBD; size: 10;
+            text { style: "layout_style";
+               font: FNBD; size: 10;
             }
          }
       }
