@@ -1,4 +1,14 @@
 group { name: "elm/radio/base/default";
+   styles {
+      style { name: "radio_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=radio color_class=radio_text left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "radio_disabled_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=radio color_class=radio_text_disabled left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    images.image: "inset_shadow_circle_tiny.png" COMP;
    images.image: "inset_circle_tiny.png" COMP;
    images.image: "sym_radio_alum.png" COMP;
@@ -142,14 +152,14 @@ group { name: "elm/radio/base/default";
             min: 16 16;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer.content"; type: TEXTBLOCK; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
-            text { font: FN; size: 10;
+            text { style: "radio_style";
+               font: FN; size: 10;
                min: 0 0;
-               text_class: "radio_text";
             }
          }
          description { state: "visible" 0.0;
@@ -173,26 +183,25 @@ group { name: "elm/radio/base/default";
             }
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel1.to_x: "elm.swallow.content";
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "radio_text";
-            text { font: FN; size: 10;
+            text { style: "radio_style";
+              font: FN; size: 10;
               min: 0 0;
               align: 0.0 0.5;
-              text_class: "radio";
+              //text_class: "radio";
             }
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color_class: "radio_text_disabled";
-            color3: 255 255 255 255;
+            //color_class: "radio_text_disabled";
+            //color3: 255 255 255 255;
+            text.style: "radio_disabled_style";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -202,8 +211,9 @@ group { name: "elm/radio/base/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
-            color_class: "radio_text_disabled";
-            color3: 255 255 255 255;
+            //color_class: "radio_text_disabled";
+            //color3: 255 255 255 255;
+            text.style: "radio_disabled_style";
             visible: 1;
             text.min: 1 1;
             text.ellipsis: -1;
