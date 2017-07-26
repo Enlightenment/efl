@@ -481,7 +481,6 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
 
    if (efl_isa(svr->server, EFL_NET_SERVER_FD_CLASS))
      {
-        efl_net_server_fd_close_on_exec_set(svr->server, EINA_TRUE);
         efl_net_server_fd_reuse_address_set(svr->server, EINA_TRUE);
         efl_net_server_fd_reuse_port_set(svr->server, EINA_TRUE);
      }
@@ -495,7 +494,6 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
      {
         /* old ecore_con did not map ipv4 to ipv6... */
         efl_net_server_ssl_ipv6_only_set(svr->server, EINA_TRUE);
-        efl_net_server_ssl_close_on_exec_set(svr->server, EINA_TRUE);
         efl_net_server_ssl_reuse_address_set(svr->server, EINA_TRUE);
         efl_net_server_ssl_reuse_port_set(svr->server, EINA_TRUE);
      }

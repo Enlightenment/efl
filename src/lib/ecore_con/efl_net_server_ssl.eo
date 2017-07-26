@@ -71,7 +71,7 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
         @property close_on_exec {
             [[Controls Close-on-Exec() using FD_CLOEXEC.
 
-              Children socket will inherit the server's setting by
+              Children socket will not inherit the server's setting by
               default. One can change the behavior using each instance
               @Efl.Io.Closer.close_on_exec.set.
             ]]

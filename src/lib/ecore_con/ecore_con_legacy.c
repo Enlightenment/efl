@@ -1496,11 +1496,9 @@ _ecore_con_server_server_set(Ecore_Con_Server *svr, Eo *server)
 
    if (efl_isa(inner_server, EFL_NET_SERVER_FD_CLASS))
      {
-        efl_net_server_fd_close_on_exec_set(inner_server, EINA_TRUE);
         efl_net_server_fd_reuse_address_set(inner_server, EINA_TRUE);
         efl_net_server_fd_reuse_port_set(inner_server, EINA_TRUE);
      }
-
    if (efl_isa(inner_server, EFL_NET_SERVER_TCP_CLASS))
      {
         /* old ecore_con did not map ipv4 to ipv6... */
@@ -1516,7 +1514,6 @@ _ecore_con_server_server_set(Ecore_Con_Server *svr, Eo *server)
      {
         /* old ecore_con did not map ipv4 to ipv6... */
         efl_net_server_ssl_ipv6_only_set(inner_server, EINA_TRUE);
-        efl_net_server_ssl_close_on_exec_set(inner_server, EINA_TRUE);
         efl_net_server_ssl_reuse_address_set(inner_server, EINA_TRUE);
         efl_net_server_ssl_reuse_port_set(inner_server, EINA_TRUE);
      }
