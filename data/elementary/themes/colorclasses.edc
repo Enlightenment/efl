@@ -20,6 +20,10 @@ color_classes {
       color: FN_COL_DEFAULT_SOFT_SHADOW;
       desc: "Title of an active window frame";
    }
+   color_class { name: "border_title_active_sub";
+      color: FN_COL_DEFAULT_SOFT_SHADOW;
+      desc: "Title of an active window frame";
+   }
    color_class { name: "border_frame";
       color: WIN_DEFAULT_BASIC;
       desc: "Base of an inactive window frame";
