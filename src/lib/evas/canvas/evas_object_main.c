@@ -207,6 +207,9 @@ _efl_canvas_object_efl_object_finalize(Eo *eo_obj, Evas_Object_Protected_Data *o
    if (!EVAS_OBJECT_DATA_ALIVE(obj)) goto end;
    if (obj->legacy.ctor) goto end;
 
+   if (!obj->legacy.weight_set)
+     efl_gfx_size_hint_weight_set(eo_obj, 1.0, 1.0);
+
    if (obj->legacy.visible_set /* && ... */)
      {
         obj->legacy.finalized = EINA_TRUE;
@@ -1628,6 +1631,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_weight_get(Eo *eo_obj EINA_UNUSED, Eva
 EOLIAN static void
 _efl_canvas_object_efl_gfx_size_hint_hint_weight_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double x, double y)
 {
+   obj->legacy.weight_set = 1;
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
