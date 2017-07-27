@@ -8,6 +8,16 @@
  */
 
 group { name: "elm/border/base/default";
+   styles {
+      style { name: "border_title_bar_style";
+         base: STL_COL_PRIMER" font="FNBD" font_size=10 style=shadow,bottom color_class=border_title text_class=title_bar left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "border_title_bar_active_style";
+         base: STL_COL_PRIMER" font="FNBD" font_size=10 style=soft_shadow,bottom color_class=border_title text_class=title_bar left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_out.png" COMP;
@@ -221,9 +231,9 @@ group { name: "elm/border/base/default";
             fill.smooth: 0;
          }
       }
-      text {  "elm.text.title"; nomouse;
+      part { name: "elm.text.title"; type: TEXTBLOCK; nomouse;
          scale: 1;
-         effect: SHADOW BOTTOM;
+         //effect: SHADOW BOTTOM;
          clip: "top_clip";
          desc { "default";
             rel1.relative: 1.0 0.0;
@@ -235,10 +245,10 @@ group { name: "elm/border/base/default";
             rel2.to_x: "elm.event.minimize";
             rel2.to_y: "shadow_spacer";
             align: 0.5 0.0;
-            color_class: "border_title";
-            color3: 255 255 255 255;
-            text { font: FNBD; size: 10;
-               text_class: "title_bar";
+            //color_class: "border_title";
+            //color3: 255 255 255 255;
+            text { style: "border_title_bar_style";
+               //text_class: "title_bar";
                align: 0.5 0.0;
                min: 0 1;
             }
@@ -249,9 +259,9 @@ group { name: "elm/border/base/default";
             visible: 0;
          }
       }
-      text {  "title2"; nomouse;
+      part { name: "title2"; type: TEXTBLOCK; nomouse;
          scale: 1;
-         effect: SOFT_SHADOW BOTTOM;
+         //effect: SOFT_SHADOW BOTTOM;
          clip: "top_clip";
          desc { "default";
             rel1.relative: 1.0 0.0;
@@ -263,11 +273,12 @@ group { name: "elm/border/base/default";
             rel2.to_x: "elm.event.minimize";
             rel2.to_y: "shadow_spacer";
             align: 0.5 0.0;
-            color_class: "border_title_active";
-            color3: 255 255 255 255;
-            text { font: FNBD; size: 10;
+            //color_class: "border_title_active";
+            //color3: 255 255 255 255;
+            text { 
+               style: "border_title_bar_active_style";
                text_source: "elm.text.title";
-               text_class: "title_bar";
+               //text_class: "title_bar";
                align: 0.5 0.0;
                min: 0 1;
             }
@@ -997,7 +1008,7 @@ group { name: "elm/border/base/default";
 group { name: "elm/border/dialog/default";
    inherit:   "elm/border/base/default";
    parts {
-      text {  "elm.text.title";
+      part { name: "elm.text.title"; type: TEXTBLOCK;
          clip: "top_clip";
          desc { "default";
             rel2.to_x: "elm.event.close";
@@ -1007,7 +1018,7 @@ group { name: "elm/border/dialog/default";
             visible: 0;
          }
       }
-      text {  "title2";
+      part { name: "title2"; type: TEXTBLOCK;
          desc { "default";
             rel2.to_x: "elm.event.close";
          }
