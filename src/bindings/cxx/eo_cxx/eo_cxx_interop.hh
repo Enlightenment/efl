@@ -245,6 +245,10 @@ T* convert_inout_impl(T& v, tag<T, T*>)
 {
   return v;
 }
+inline Eina_Bool convert_inout_impl(bool v, tag<bool, Eina_Bool>)
+{
+  return v ? EINA_TRUE : EINA_FALSE;
+}
 inline void* convert_inout_impl(void* v, tag<void, void>)
 {
   return v;
