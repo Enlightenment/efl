@@ -1,4 +1,18 @@
 group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
+   styles {
+      style { name: "colorclass_style";
+         base: "font="FN" font_size=10 color=#ffffff left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "colortext_style";
+         base: STL_COL_PRIMER" font="FNBD" font_size=12 color_class=elm_colorclass_text left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "colortext_radio";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 text_class=radio left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    parts {
       rect { "clip"; }
       rect { "remote_fader";
@@ -105,16 +119,15 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
             rel2.to: "elm.swallow.list";
          }
       }
-      text { "elm.text";
+      part { name: "elm.text"; type: TEXTBLOCK;
          scale;
          desc { hid;
-            color: FN_COL_DEFAULT_BASIC;
+            //color: FN_COL_DEFAULT_BASIC;
             rel1.relative: 0.1 0.1;
             rel2.relative: 0.9 0.9;
-            text { font: FN; size: 10;
+            text { style: "colorclass_style";
               min: 1 1;
               ellipsis: -1;
-              fit: 1 0;
             }
          }
          desc { "vis"; inherit: "default"; vis; }
@@ -259,7 +272,7 @@ group { "colorclass/colors"; program_source: "elm"; nobroadcast;
             fixed: 1 1;
          }
       }
-      text { "colortext";
+      part { name: "colortext"; type: TEXTBLOCK;
          scale;
          desc { align: 0 0;
             rel1.to_y: "colors";
@@ -268,7 +281,8 @@ group { "colorclass/colors"; program_source: "elm"; nobroadcast;
             rel2.relative: 1 0;
             fixed: 1 1;
             color_class: "elm_colorclass_text";
-            text { font: FNBD; size: 12;
+            text { style: "colortext_style";
+              //font: FNBD; size: 12;
               min: 1 1;
               ellipsis: -1;
               text: "ABC123abc!@#";
@@ -337,7 +351,8 @@ group { "colorclass/color1"; nomouse; nobroadcast;
             fixed: 1 1;
          }
       }
-      text { "text"; clip: "clip";
+      part { name: "text"; type: TEXTBLOCK;
+         clip: "clip";
          effect: SHADOW BOTTOM;
          scale: 1;
          desc { align: 0 0.5;
@@ -348,10 +363,9 @@ group { "colorclass/color1"; nomouse; nobroadcast;
             rel2.relative: 0 1;
             fixed: 1 1;
             color: FN_COL_DEFAULT_BASIC;
-            text { font: FN; size: 10;
+            text { style: "colortext_radio";
               min: 1 1;
               ellipsis: -1;
-              text_class: "radio";
               text: "Base";
             }
          }
@@ -366,7 +380,7 @@ group { "colorclass/color2"; inherit: "colorclass/color1";
             color_class: "elm_colorclass_color2";
          }
       }
-      text { "text";
+      part { name: "text"; type: TEXTBLOCK;
          desc { "default";
             text.text: "Outline";
          }
@@ -381,7 +395,7 @@ group { "colorclass/color3"; inherit: "colorclass/color1";
             color_class: "elm_colorclass_color3";
          }
       }
-      text { "text";
+      part { name: "text"; type: TEXTBLOCK;
          desc { "default";
             text.text: "Shadow";
          }
