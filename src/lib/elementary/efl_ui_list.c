@@ -381,6 +381,55 @@ _child_remove(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    /* free(item); */
 }
 
+static void
+_item_min_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item, Evas_Coord h, Evas_Coord w)
+{
+   Efl_Ui_List_Item *litem;
+   Evas_Coord min;
+
+   if(_horiz(pd->orient))
+     {
+        pd->realized.w -= item->minw;
+        pd->realized.w += w;
+        if(pd->realized.h <= h)
+          pd->realized.h = h;
+        else if (pd->realized.h == item->minh)
+          {
+             pd->realized.h = h;
+             EINA_INARRAY_FOREACH(&pd->items.array, litem)
+               {
+                  if (pd->realized.h < litem->minh)
+                    pd->realized.h = litem->minh;
+
+                  if (litem != item && litem->minh == item->minh)
+                    break;
+               }
+          }
+     }
+   else
+     {
+        pd->realized.h -= item->minh;
+        pd->realized.h += h;
+        if(pd->realized.w <= w)
+          pd->realized.w = w;
+        else if (pd->realized.w == item->minw)
+          {
+             pd->realized.w = w;
+             EINA_INARRAY_FOREACH(&pd->items.array, litem)
+               {
+                  if (pd->realized.w < litem->minw)
+                    pd->realized.w = litem->minw;
+
+                  if (litem != item && litem->minw == item->minw)
+                    break;
+               }
+          }
+     }
+
+   item->minw = w;
+   item->minh = h;
+}
+
 static int
 _find_item_by_layout(const void *data1, const void *data2)
 {
@@ -402,28 +451,11 @@ _on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN(pd);
 
    int idx = eina_inarray_search(&pd->items.array, obj, _find_item_by_layout);
-   if (idx < 0) {
-     printf ("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOoo\n");
+   if (idx < 0)
      return;
-   }
 
    members = pd->items.array.members;
    item = &members[idx];
-
-   if(_horiz(pd->orient))
-     {
-        pd->realized.w -= item->minw;
-        /* TODO:calculate new minh */
-        //if(pd->realized.h < item->minh)
-        //  pd->realized.h = item->minh;
-     }
-   else
-     {
-        pd->realized.h -= item->minh;
-        /* TODO:calculate new minw */
-        //if(pd->realized.w < item->minw)
-        //  pd->realized.w = item->minw;
-     }
 
    _item_calc(pd, item);
    evas_object_smart_changed(pd->obj);
@@ -486,21 +518,8 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    /* evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item); */
    efl_ui_model_connect(item->layout, "signal/elm,state,%v", NULL);
 
-   if(_horiz(pd->orient))
-     {
-        pd->realized.w -= item->minw;
-        /* TODO:calculate new minh */
-        //if(pd->realized.h < item->minh)
-        //  pd->realized.h = item->minh;
-     }
-   else
-     {
-        pd->realized.h -= item->minh;
-        /* TODO:calculate new minw */
-        //if(pd->realized.w < item->minw)
-        //  pd->realized.w = item->minw;
-     }
-
+   /* TODO:calculate new min */
+   _item_min_calc(pd, item, 0, 0);
 
    evt.child = item->model;
    evt.layout = item->layout;
@@ -530,6 +549,7 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
      item->layout = efl_add(ELM_LAYOUT_CLASS, pd->obj);
    item->future = NULL;
    item->index = idx + pd->realized.start;
+   item->minw = item->minh = 0;
 
    elm_widget_sub_object_add(pd->obj, item->layout);
    evas_object_smart_member_add(item->layout, pd->pan.obj);
@@ -1279,7 +1299,8 @@ _efl_ui_list_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
    return EINA_FALSE;
 }
 
-static Eina_Bool _key_action_move(Evas_Object *obj, const char *params)
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
 {
    EFL_UI_LIST_DATA_GET_OR_RETURN_VAL(obj, pd, EINA_FALSE);
    const char *dir = params;
@@ -1368,7 +1389,8 @@ static Eina_Bool _key_action_move(Evas_Object *obj, const char *params)
    return EINA_TRUE;
 }
 
-static Eina_Bool _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+static Eina_Bool
+_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    EFL_UI_LIST_DATA_GET_OR_RETURN_VAL(obj, pd, EINA_FALSE);
 
@@ -1377,7 +1399,8 @@ static Eina_Bool _key_action_select(Evas_Object *obj, const char *params EINA_UN
    return EINA_TRUE;
 }
 
-static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
+static Eina_Bool
+_key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    return _efl_ui_list_item_select_clear(obj);
 }
@@ -1452,39 +1475,24 @@ _efl_ui_list_item_select_set(Efl_Ui_List_Item *item, Eina_Bool selected)
 static void
 _item_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
 {
-   Evas_Coord old_w, old_h;
+   Evas_Coord minw, minh;
    int pad[4];
 
-   efl_gfx_size_hint_combined_min_get(item->layout, &old_w, &old_h);
-   //edje_object_size_min_calc(elm_layout_edje_get(item->layout), &item->minw, &item->minh);
+   efl_gfx_size_hint_combined_min_get(item->layout, &minw, &minh);
    efl_gfx_size_hint_margin_get(item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
    efl_gfx_size_hint_weight_get(item->layout, &item->wx, &item->wy);
 
-   if (old_w > item->minw) item->minw = old_w;
-   if (old_h > item->minh) item->minh = old_h;
-
    if (item->wx < 0) item->wx = 0;
    if (item->wy < 0) item->wy = 0;
-   evas_object_size_hint_min_set(item->layout, item->minw, item->minh);
 
-   item->minw += pad[0] + pad[1];
-   item->minh += pad[2] + pad[3];
+   minw += pad[0] + pad[1];
+   minh += pad[2] + pad[3];
 
    pd->weight.x += item->wx;
    pd->weight.y += item->wy;
 
-   if(_horiz(pd->orient))
-     {
-        pd->realized.w += item->minw;
-        if(pd->realized.h < item->minh)
-          pd->realized.h = item->minh;
-     }
-   else
-     {
-        pd->realized.h += item->minh;
-        if(pd->realized.w < item->minw)
-          pd->realized.w = item->minw;
-     }
+   _item_min_calc(pd, item, minh, minw);
+   evas_object_size_hint_min_set(item->layout, minw, minh);
 }
 
 static Eina_Bool
@@ -1582,7 +1590,7 @@ _update_items(Eo *obj, Efl_Ui_List_Data *pd/*, Eina_Bool recalc*/)
        pd->future = efl_model_children_slice_get(pd->model, want_slice_start, want_slice);
        efl_future_then(pd->future, &_children_then, &_children_error, NULL, pd);
      }
-   
+
    /* else */
    /*   { */
    /*     while (pd->realized.slice < (int)eina_array_count(pd->items)) */
