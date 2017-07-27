@@ -79,6 +79,13 @@ _efl_canvas_object_efl_object_debug_name_override(Eo *eo_obj, Evas_Object_Protec
         eina_strbuf_append_printf(sb, "%s%s:(%d,%d %dx%d)", norend, clip,
                                   obj->cur->geometry.x, obj->cur->geometry.y,
                                   obj->cur->geometry.w, obj->cur->geometry.h);
+        if ((obj->cur->color.r != 255) || (obj->cur->color.g != 255) ||
+            (obj->cur->color.b != 255) || (obj->cur->color.a != 255))
+          {
+             eina_strbuf_append_printf(sb, ":rgba(%d,%d,%d,%d)",
+                                       obj->cur->color.r, obj->cur->color.g,
+                                       obj->cur->color.b, obj->cur->color.a);
+          }
      }
    else
      {
