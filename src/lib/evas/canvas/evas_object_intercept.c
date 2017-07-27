@@ -100,10 +100,13 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
      {
       case EVAS_OBJECT_INTERCEPT_CB_VISIBLE:
         i = !!va_arg(args, int);
-        if (i == obj->cur->visible) return 1;
-        if (!obj->interceptors) return 0;
-        if (i) blocked = evas_object_intercept_call_show(eo_obj, obj);
-        else blocked = evas_object_intercept_call_hide(eo_obj, obj);
+        if (obj->interceptors)
+          {
+             if (i) blocked = evas_object_intercept_call_show(eo_obj, obj);
+             else blocked = evas_object_intercept_call_hide(eo_obj, obj);
+          }
+        if (!blocked && (i == obj->cur->visible))
+          blocked = 1;
         break;
 
       case EVAS_OBJECT_INTERCEPT_CB_MOVE:
