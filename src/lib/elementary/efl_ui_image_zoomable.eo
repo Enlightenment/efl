@@ -68,6 +68,8 @@ class Efl.Ui.Image.Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
       Efl.File.file { get; set; }
       Efl.Orientation.orientation { get; set; }
       Efl.Flipable.flip { get; set; }
+      Edje.Object.group_size_min { get; }
+      Edje.Object.group_size_max { get; }
    }
    events {
       press; [[Called when photocam got pressed]]

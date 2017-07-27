@@ -1570,6 +1570,24 @@ _efl_ui_image_zoomable_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Imag
    if (h) *h = pd->size.imh;
 }
 
+EOLIAN static void
+_efl_ui_image_zoomable_edje_object_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, int *w, int *h)
+{
+   if (sd->edje)
+     edje_object_size_min_get(sd->edje, w, h);
+   else
+     efl_gfx_size_hint_combined_min_get(sd->img, w, h);
+}
+
+EOLIAN static void
+_efl_ui_image_zoomable_edje_object_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, int *w, int *h)
+{
+   if (sd->edje)
+     edje_object_size_max_get(sd->edje, w, h);
+   else
+     evas_object_size_hint_max_get(sd->img, w, h);
+}
+
 static Eina_Bool
 _img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
                const char *file, const Eina_File *f, const char *group,
