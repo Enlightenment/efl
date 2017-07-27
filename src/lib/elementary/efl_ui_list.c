@@ -203,6 +203,21 @@ _focused_element(void *data EINA_UNUSED, const Efl_Event *event)
    EINA_SAFETY_ON_NULL_RETURN(pd);
    printf("item focused\n");
 
+   Efl_Ui_List_Item *item = data;
+   EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
+
+   pd->focused = item;
+
+   if (!_elm_config->item_select_on_focus_disable && !item->selected)
+     _efl_ui_list_item_select_set(item, EINA_TRUE);
+}
+
+static void
+_on_item_unfocused(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_List_Item *item = data;
+   EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
+
    if (!_elm_config->item_select_on_focus_disable)
      _efl_ui_list_item_select_set(pd, focused, EINA_TRUE);
 }
@@ -214,8 +229,8 @@ _long_press_cb(void *data)
 
    item->long_timer = NULL;
    item->longpressed = EINA_TRUE;
-   /* if (item->layout) */
-   /*   efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_LONGPRESSED, NULL); */
+   if (item->layout)
+     efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_LONGPRESSED, item);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -226,18 +241,26 @@ _on_item_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUS
    Evas_Event_Mouse_Down *ev = event_info;
    Efl_Ui_List_Item *item = data;
 
-   EFL_UI_LIST_DATA_GET_OR_RETURN(item->obj, pd);
+   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p evas: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->list, evas); fflush(stderr);
+   
+   EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
 
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) pd->on_hold = EINA_TRUE;
    else pd->on_hold = EINA_FALSE;
    if (pd->on_hold) return;
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    item->down = EINA_TRUE;
-   item->longpressed = EINA_FALSE;
+   assert(item->longpressed == EINA_FALSE);
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    ecore_timer_del(item->long_timer);
-   /* item->long_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press_cb, item); */
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   item->long_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press_cb, item);
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 }
 
 static void
@@ -246,26 +269,40 @@ _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED
    Evas_Event_Mouse_Down *ev = event_info;
    Efl_Ui_List_Item *item = data;
 
-   EFL_UI_LIST_DATA_GET_OR_RETURN(item->obj, pd);
+   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p evas: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->list, evas); fflush(stderr);
+   
+   EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
 
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) pd->on_hold = EINA_TRUE;
    else pd->on_hold = EINA_FALSE;
    if (pd->on_hold || !item->down) return;
 
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   
    item->down = EINA_FALSE;
    ELM_SAFE_FREE(item->long_timer, ecore_timer_del);
 
-   if (item->longpressed)
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   
+   if (!item->longpressed)
      {
-        item->longpressed = EINA_FALSE;
-        return;
-     }
+       fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+       if (pd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS && item->selected)
+         return;
+       fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    if (pd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS && item->selected)
      return;
 
-   _efl_ui_list_item_select_set(pd, item->layout, EINA_TRUE);
+   /* _efl_ui_list_item_select_set(pd, item->layout, EINA_TRUE); */
+   _efl_ui_list_item_select_set(item, EINA_TRUE);
+   /*   } */
+   /* else */
+   /*   item->longpressed = EINA_FALSE; */
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 }
 
 static void
@@ -277,18 +314,24 @@ _item_selected_then(void * data, Efl_Event const* event)
    const Eina_Value_Type *vtype;
    Eina_Value *value = (Eina_Value *)((Efl_Future_Event_Success*)event->info)->value;
 
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    item->future = NULL;
    vtype = eina_value_type_get(value);
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
      {
+       fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eina_value_get(value, &selected);
         Eina_Bool s = (strcmp(selected, "selected") ? EINA_FALSE : EINA_TRUE);
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
         if (item->selected == s) return;
         item->selected = s;
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
-        EFL_UI_LIST_DATA_GET_OR_RETURN(item->obj, pd);
+        EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         /* if (item->selected) */
         /*   pd->selected = eina_list_append(pd->selected, item); */
         /* else */
@@ -315,7 +358,7 @@ _count_error(void * data, Efl_Event const* event EINA_UNUSED)
 }
 
 static void
-_item_property_then(void * data, Efl_Event const* event)
+_item_style_property_then(void * data, Efl_Event const* event)
 {
    Efl_Ui_List_Item *item = data;
    EINA_SAFETY_ON_NULL_RETURN(item);
@@ -351,15 +394,15 @@ _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
 
    if (!evt->changed_properties) return;
 
-   /* sprop = eina_stringshare_add(SELECTED_PROP); */
-   /* EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it) */
-   /*   { */
-   /*      if (prop == sprop) */
-   /*        { */
-   /*           item->future = efl_model_property_get(item->model, sprop); */
-   /*           efl_future_then(item->future, &_item_selected_then, &_item_property_error, NULL, item); */
-   /*        } */
-   /*   } */
+   sprop = eina_stringshare_add(SELECTED_PROP);
+   EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
+     {
+        if (prop == sprop)
+          {
+             item->future = efl_model_property_get(item->model, sprop);
+             efl_future_then(item->future, &_item_selected_then, &_item_property_error, NULL, item);
+          }
+     }
 }
 
 static void
@@ -386,7 +429,7 @@ _item_min_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item, Evas_Coord h, Evas_
         pd->realized.w += w;
         if(pd->realized.h <= h)
           pd->realized.h = h;
-        else if (pd->realized.h == item->minh)
+        else if (pd->realized.h < item->minh)
           {
              pd->realized.h = h;
              EINA_INARRAY_FOREACH(&pd->items.array, litem)
@@ -459,19 +502,15 @@ _layout_realize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
 {
    Efl_Ui_List_Item_Event evt;
 
-   efl_ui_view_model_set(item->layout, item->model); //XXX: move to realize??
+   efl_ui_view_model_set(item->layout, item->model);
 
    evt.child = item->model;
    evt.layout = item->layout;
    evt.index = item->index;
 
-   /* efl_event_callback_add(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item); //XXX move to elm_layout obj?? */
-   efl_event_callback_call(item->obj, EFL_UI_LIST_EVENT_ITEM_REALIZED, &evt);
+   efl_event_callback_call(item->list, EFL_UI_LIST_EVENT_ITEM_REALIZED, &evt);
 
    evas_object_show(item->layout);
-
-   /* evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item); */
-   /* evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item); */
 
    if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
      efl_ui_model_connect(item->layout, "signal/elm,state,%v", "selected");
@@ -500,10 +539,6 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
 /*        pd->selected = eina_list_remove(pd->selected, item); */
      }
 
-   /* efl_event_callback_del(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item); */
-   /* evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item); */
-   /* evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item); */
-
    efl_ui_model_connect(item->layout, "signal/elm,state,%v", NULL);
 
    /* TODO:calculate new min */
@@ -512,13 +547,24 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    evt.child = item->model;
    evt.layout = item->layout;
    evt.index = item->index;
-   efl_event_callback_call(item->obj, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
+   efl_event_callback_call(item->list, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
    efl_ui_view_model_set(item->layout, NULL);
 
    efl_unref(item->model);
 
    evas_object_hide(item->layout);
    evas_object_move(item->layout, -9999, -9999);
+}
+
+static void
+_child_transient_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item)
+{
+   efl_event_callback_add(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item);
+
+   /* efl_event_callback_add(item->layout, ELM_WIDGET_EVENT_FOCUSED, _on_item_focused, item); */
+   /* efl_event_callback_add(item->layout, ELM_WIDGET_EVENT_UNFOCUSED, _on_item_unfocused, item); */
+   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item);
+   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
 }
 
 static void
@@ -529,8 +575,9 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
 
    assert(model != NULL);
    assert(item->layout == NULL);
+   assert(item->list == NULL);
 
-   item->obj = pd->obj;
+   item->list = efl_ref(pd->obj);
    item->model = efl_ref(model);
    if(eina_inarray_count(recycle_layouts))
      item->layout = *(void**)eina_inarray_pop(recycle_layouts);
@@ -549,16 +596,30 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
    if (_efl_model_properties_has(item->model, style_prop))
      {
         item->future = efl_model_property_get(item->model, style_prop);
-        /* efl_future_then(item->future, &_item_property_then, &_item_property_error, NULL, item); */
+        efl_future_then(item->future, &_item_style_property_then, &_item_property_error, NULL, item);
      }
    eina_stringshare_del(style_prop);
 //
    _layout_realize(pd, item);
+
+   _child_transient_setup(pd, item);
+}
+
+static void
+_child_transient_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item)
+{
+   efl_event_callback_del(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item);
+   /* efl_event_callback_del(item->layout, ELM_WIDGET_EVENT_FOCUSED, _on_item_focused, item); */
+   /* efl_event_callback_del(item->layout, ELM_WIDGET_EVENT_UNFOCUSED, _on_item_unfocused, item); */
+   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item);
+   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
 }
 
 static void
 _child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item, Eina_Inarray* recycle_layouts)
 {
+  _child_transient_release(pd, item);
+  
   fprintf(stderr, "%s %s:%d layout %p\n", __func__, __FILE__, __LINE__, item->layout); fflush(stderr);
   _layout_unrealize(pd, item);
   if(item->future)
@@ -574,6 +635,8 @@ _child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item, Eina_Inarray* recyc
   else
     pd->realized.h -= item->h;
   fprintf(stderr, "%s %s:%d layout %p\n", __func__, __FILE__, __LINE__, item->layout); fflush(stderr);
+  efl_unref(item->list);
+  item->list = NULL;
 }
 
 static void
@@ -660,10 +723,22 @@ _children_then(void * data, Efl_Event const* event)
      {
        if(from_begin != to_begin)
          {
-           fprintf(stderr, "%s %s:%d moving from: %d to %d with size %d\n", __func__, __FILE__, __LINE__, from_begin, to_begin, copy_size); fflush(stderr);
-            memmove(&((Efl_Ui_List_Item*)pd->items.array.members)[to_begin],
-                    &((Efl_Ui_List_Item*)pd->items.array.members)[from_begin],
-                    copy_size*sizeof(Efl_Ui_List_Item));
+            fprintf(stderr, "%s %s:%d moving from: %d to %d with size %d\n", __func__, __FILE__, __LINE__, from_begin, to_begin, copy_size); fflush(stderr);
+            Efl_Ui_List_Item* from_first = pd->items.array.members;
+            Efl_Ui_List_Item* to_first = pd->items.array.members;
+            from_first += from_begin;
+            to_first += to_begin;
+            Efl_Ui_List_Item* from_last = from_first + copy_size;
+            Efl_Ui_List_Item* to_last = to_first + copy_size;
+            memmove(to_first, from_first, copy_size*sizeof(Efl_Ui_List_Item));
+            for(;from_first != from_last;++from_first)
+              {
+                _child_transient_release(pd, from_first);
+              }
+            for(;to_first != to_last;++to_first)
+              {
+                _child_transient_setup(pd, to_first);
+              }
          }
        fprintf(stderr, "%s %s:%d old len: %d\n", __func__, __FILE__, __LINE__, pd->items.array.len); fflush(stderr);
        fprintf(stderr, "%s %s:%d zeoring %p %d size %d\n", __func__, __FILE__, __LINE__
@@ -681,9 +756,20 @@ _children_then(void * data, Efl_Event const* event)
      {
        Efl_Ui_List_Item* data = calloc(1, pd->outstanding_slice.slice*sizeof(Efl_Ui_List_Item));
        fprintf(stderr, "new members allocated: %p\n", data);
-       memcpy(&data[to_begin],
-              &((Efl_Ui_List_Item*)pd->items.array.members)[from_begin], 
-              copy_size*sizeof(Efl_Ui_List_Item));
+       Efl_Ui_List_Item* from_first = pd->items.array.members;
+       from_first += from_begin;
+       Efl_Ui_List_Item* to_first = data + to_begin;
+       Efl_Ui_List_Item* from_last = from_first + copy_size;
+       Efl_Ui_List_Item* to_last = to_first + copy_size;
+       memcpy(to_first, from_first, copy_size*sizeof(Efl_Ui_List_Item));
+       for(;from_first != from_last;++from_first)
+         {
+            _child_transient_release(pd, from_first);
+         }
+       for(;to_first != to_last;++to_first)
+         {
+            _child_transient_setup(pd, to_first);
+         }
        free(pd->items.array.members);
        pd->items.array.members = data;
        pd->items.array.len = pd->items.array.max = pd->outstanding_slice.slice;
@@ -850,7 +936,7 @@ _children_error(void * data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
 {
    Efl_Ui_List_Slice *sd = data;
    Efl_Ui_List_Data *pd = sd->pd;
-   pd->future = NULL;
+   /* pd->future = NULL; */
    /* free(data); */
 }
 
@@ -1242,17 +1328,17 @@ _efl_ui_list_elm_interface_atspi_accessible_children_get(Eo *obj, Efl_Ui_List_Da
 EOLIAN int
 _efl_ui_list_elm_interface_atspi_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
-   return eina_list_count(pd->selected);
+   return 0;// eina_list_count(pd->selected);
 }
 
 EOLIAN Eo*
 _efl_ui_list_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_idx)
 {
-   Efl_Ui_List_Item *item = eina_list_nth(pd->selected, child_idx);
-   if (!item)
+   /* Efl_Ui_List_Item *item = eina_list_nth(pd->selected, child_idx); */
+   /* if (!item) */
      return NULL;
 
-   return item->layout;
+   /* return item->layout; */
 }
 
 EOLIAN Eina_Bool
@@ -1271,12 +1357,21 @@ _efl_ui_list_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Efl
 EOLIAN Eina_Bool
 _efl_ui_list_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_index)
 {
-   Efl_Ui_List_Item *item = eina_list_nth(pd->selected, child_index);
-   if (item)
-     {
-        _efl_ui_list_item_select_set(pd, item->layout, EINA_FALSE);
-        return EINA_TRUE;
-     }
+/* <<<<<<< HEAD */
+/*    Efl_Ui_List_Item *item = eina_list_nth(pd->selected, child_index); */
+/*    if (item) */
+/*      { */
+/*         _efl_ui_list_item_select_set(pd, item->layout, EINA_FALSE); */
+/*         return EINA_TRUE; */
+/*      } */
+/* ======= */
+/*    /\* Efl_Ui_List_Item *item = eina_list_nth(pd->selected, child_index); *\/ */
+/*    /\* if (item) *\/ */
+/*    /\*   { *\/ */
+/*    /\*      _efl_ui_list_item_select_set(item, EINA_FALSE); *\/ */
+/*    /\*      return EINA_TRUE; *\/ */
+/*    /\*   } *\/ */
+/* >>>>>>> 8515afc5db... elm: WIP for selection in efl_ui_list */
    return EINA_FALSE;
 }
 
@@ -1469,33 +1564,51 @@ _efl_ui_list_item_select_set(Efl_Ui_List_Data *pd, Eo* layout, Eina_Bool selecte
    Eina_Stringshare *sprop, *svalue;
    Eo *model;
 
-   selected = !!selected;
-   if (!layout || (pd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->list); fflush(stderr);   
+
+   assert(item != NULL);
+   
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+
+   EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+
+   if ((pd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
        (pd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      return;
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
-   model = efl_ui_view_model_get(layout);
-   if (model) return;
+   selected = !!selected;
+   /* if (!item->model || item->selected == selected) return; */
+   assert(item->model != NULL);
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    sprop = eina_stringshare_add(SELECTED_PROP);
    svalue = (selected ? eina_stringshare_add("selected") : eina_stringshare_add("unselected"));
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    if (_efl_model_properties_has(model, sprop))
      {
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         Eina_Value v;
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eina_value_setup(&v, EINA_VALUE_TYPE_STRINGSHARE);
         eina_value_set(&v, svalue);
-        efl_model_property_set(model, sprop, &v);
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+        efl_model_property_set(item->model, sprop, &v);
         eina_value_flush(&v);
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
      }
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    eina_stringshare_del(sprop);
    eina_stringshare_del(svalue);
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    /* //TODO I need call this event or catch only by model connect event? */
-   /* if (selected) */
-   /*   efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_SELECTED, NULL); */
-   /* else */
-   /*   efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_UNSELECTED, NULL); */
+   if (selected)
+     efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_SELECTED, item);
+   else
+     efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_UNSELECTED, item);
 }
 
 static void
@@ -1531,9 +1644,9 @@ _update_items(Eo *obj, Efl_Ui_List_Data *pd/*, Eina_Bool recalc*/)
 
    printf("_update_items\n");
 
-   assert(!pd->future);
-   /* if (pd->future) */
-   /*    efl_future_cancel(pd->future); */
+   /* assert(!pd->future); */
+   if (pd->future)
+      efl_future_cancel(pd->future);
 
    /* if (pd->items) */
    /*   count = eina_array_count(pd->items); */

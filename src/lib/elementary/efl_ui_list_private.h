@@ -16,7 +16,7 @@ typedef struct _Efl_Ui_List_Item Efl_Ui_List_Item;
 
 struct _Efl_Ui_List_Item
 {
-   Eo                   *obj;
+   Efl_Ui_List          *list;
    Efl_Model            *model;
    Elm_Layout           *layout;
    Efl_Future           *future;
@@ -65,7 +65,7 @@ struct _Efl_Ui_List_Data
    } pan;
 
    Efl_Ui_Layout_Factory        *factory;
-   Eina_List                    *selected;
+  //Eina_List                    *selected;
    struct {
      Eina_Inarray               array;
    } items;
