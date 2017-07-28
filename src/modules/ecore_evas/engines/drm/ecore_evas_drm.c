@@ -680,7 +680,7 @@ _drm_last_tick_get(Ecore_Evas *ee)
    long sec, usec;
 
    edata = ee->engine.data;
-   if (!ecore_drm2_output_blanktime_get(edata->output, &sec, &usec))
+   if (!ecore_drm2_output_blanktime_get(edata->output, 0, &sec, &usec))
      return -1.0;
 
    return sec + usec / 1000000.0;
