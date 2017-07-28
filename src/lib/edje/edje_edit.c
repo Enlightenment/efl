@@ -8129,7 +8129,7 @@ edje_edit_size_class_add(Evas_Object *obj, const char *name)
 
    s->name = eina_stringshare_add(name);
    /* set default values for max */
-   s->maxh = -1;
+   s->maxw = -1;
    s->maxh = -1;
 
    ed->file->size_classes = eina_list_append(ed->file->size_classes, s);
