@@ -429,8 +429,6 @@ open_tag(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_Obj
      return open_method(content, length, is_open_empty);
    else if (!strncmp(content, PROPERTY_TAG, PROPERTY_TAG_LENGTH) && iface)
      return open_property(content, length);
-   else if (!strncmp(content, ANNOTATION_TAG, ANNOTATION_TAG_LENGTH) && iface)
-     return EINA_TRUE;
 
    printf("Warning: Tag not handled:\n");
    for (i = 0; i < length; i++)
