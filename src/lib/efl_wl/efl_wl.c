@@ -2277,36 +2277,31 @@ comp_surface_smart_show(Evas_Object *obj)
 static void
 comp_surface_smart_hide(Evas_Object *obj)
 {
-   Comp_Surface *cs = evas_object_smart_data_get(obj);
-   Eina_List *l;
-   Evas_Object *o;
+   Comp_Surface *lcs, *cs = evas_object_smart_data_get(obj);
 
    evas_object_hide(cs->clip);
    cs->mapped = 0;
 
    if (!cs->shell.activated) return;
    cs->shell.activated = 0;
-   if (cs->shell.grabs)
+   if (cs->shell.grabs && cs->role)
      zxdg_popup_v6_send_popup_done(cs->role);
    if (cs->parent && cs->shell.popup) return;
    /* attempt to revert focus based on stacking order */
-   l = evas_object_smart_members_get(evas_object_smart_parent_get(obj));
-   EINA_LIST_FREE(l, o)
+   if (cs->parent)
      {
-        Comp_Surface *lcs;
-        if (o == obj) continue;
-        if (!evas_object_visible_get(o)) continue;
-        if (o == cs->c->clip) continue;
-        if (o == cs->c->events) continue;
-        if (!eina_streq(evas_object_type_get(o), "comp_surface")) continue;
-        lcs = evas_object_smart_data_get(o);
-        if ((!lcs->shell.surface) || (!lcs->role)) continue;
-        lcs->shell.activated = 1;
-        if (lcs->shell.popup)
-          evas_object_raise(lcs->obj);
-        else
-          shell_surface_send_configure(lcs);
-        return;
+        EINA_INLIST_REVERSE_FOREACH(cs->parent->children, lcs)
+          {
+             if (lcs == cs) continue;
+             if (!evas_object_visible_get(lcs->obj)) continue;
+             if ((!lcs->shell.surface) || (!lcs->role)) continue;
+             lcs->shell.activated = 1;
+             if (lcs->shell.popup)
+               evas_object_raise(lcs->obj);
+             else
+               shell_surface_send_configure(lcs);
+             return;
+          }
      }
    if (cs->c->seats)
      comp_seats_redo_enter(cs->c, NULL);
