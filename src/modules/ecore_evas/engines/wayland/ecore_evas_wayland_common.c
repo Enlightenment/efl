@@ -28,7 +28,7 @@ struct _EE_Wl_Device
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
-static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[14];
+static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[20];
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 static void _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize);
@@ -540,6 +540,53 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
 
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+ static Eina_Bool
+_ecore_evas_wl_common_cb_aux_hint_supported(void *data  EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Wl2_Event_Aux_Hint_Supported *ev;
+   Eina_Stringshare *hint;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   ev = event;
+   ee = ecore_event_window_match(ev->win);
+   if (!ee) return ECORE_CALLBACK_PASS_ON;
+   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   wdata = ee->engine.data;
+   EINA_LIST_FREE(ee->prop.aux_hint.supported_list, hint) eina_stringshare_del(hint);
+   ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
+   return ECORE_CALLBACK_RENEW;
+}
+
+ static Eina_Bool
+_ecore_evas_wl_common_cb_aux_hint_allowed(void *data  EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Wl2_Event_Aux_Hint_Allowed *ev;
+   Eina_List *l;
+   Ecore_Evas_Aux_Hint *aux;
+
+   ev = event;
+   ee = ecore_event_window_match(ev->win);
+   if (!ee) return ECORE_CALLBACK_PASS_ON;
+   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+
+   EINA_LIST_FOREACH(ee->prop.aux_hint.hints, l, aux)
+     {
+        if (aux->id == ev->id)
+          {
+             aux->allowed = 1;
+             if (!aux->notified)
+               {
+                  _ecore_evas_wl_common_state_update(ee);
+                  aux->notified = 1;
+                }
+             break;
+          }
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1080,6 +1127,12 @@ _ecore_evas_wl_common_init(void)
    _ecore_evas_wl_event_hdls[13] =
      ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_ROTATE,
                              _ecore_evas_wl_common_cb_window_rotate, NULL);
+   _ecore_evas_wl_event_hdls[14] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_AUX_HINT_ALLOWED,
+                             _ecore_evas_wl_common_cb_aux_hint_allowed, NULL);
+   _ecore_evas_wl_event_hdls[15] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_AUX_HINT_SUPPORTED,
+                             _ecore_evas_wl_common_cb_aux_hint_supported, NULL);
 
    ecore_event_evas_init();
 
@@ -1307,6 +1360,18 @@ _ecore_evas_wl_common_pointer_device_xy_get(const Ecore_Evas *ee, const Efl_Inpu
    input = ecore_wl2_display_input_find(ecore_wl2_window_display_get(wdata->win), evas_device_seat_id_get(seat));
    EINA_SAFETY_ON_NULL_RETURN(input);
    ecore_wl2_input_pointer_xy_get(input, x, y);
+}
+
+ void
+_ecore_evas_wl_common_aux_hints_supported_update(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   wdata = ee->engine.data;
+   ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
 }
 
 static void

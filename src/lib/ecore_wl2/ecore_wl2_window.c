@@ -555,15 +555,9 @@ _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
 
         window->surface_id =
           wl_proxy_get_id((struct wl_proxy *)window->surface);
+        if (window->display->wl.efl_aux_hints)
+          efl_aux_hints_get_supported_aux_hints(window->display->wl.efl_aux_hints, window->surface);
      }
-}
-
-static void
-_ecore_wl2_aux_hint_free(Ecore_Wl2_Aux_Hint *ehint)
-{
-   eina_stringshare_del(ehint->hint);
-   eina_stringshare_del(ehint->val);
-   free(ehint);
 }
 
 static void
@@ -708,13 +702,20 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    window->configure_ack = NULL;
 }
 
+void
+_ecore_wl_window_aux_hint_free(Ecore_Wl2_Window *win)
+{
+   const char *supported;
+   EINA_LIST_FREE(win->supported_aux_hints, supported)
+     if (supported) eina_stringshare_del(supported);
+}
+
 EAPI void
 ecore_wl2_window_free(Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Display *display;
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Subsurface *subsurf;
-   Ecore_Wl2_Aux_Hint *ehint;
    Eina_Inlist *tmp;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
@@ -727,8 +728,7 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_free(subsurf);
 
-   EINA_INLIST_FOREACH_SAFE(window->supported_aux_hints, tmp, ehint)
-     _ecore_wl2_aux_hint_free(ehint);
+   _ecore_wl_window_aux_hint_free(window);
 
    if (window->uuid && window->surface && window->display->wl.session_recovery)
      zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
@@ -1456,80 +1456,47 @@ ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, in
 }
 
 EAPI Eina_List *
-ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *window)
+ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *win)
 {
-   Eina_List *ret = NULL;
-   Ecore_Wl2_Aux_Hint *ehint;
+   Eina_List *res = NULL;
+   Eina_List *ll;
+   char *supported_hint = NULL;
+   const char *hint = NULL;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+   if (!win) return NULL;
+   if (!win->surface) return NULL;
 
-   EINA_INLIST_FOREACH(window->supported_aux_hints, ehint)
-     ret = eina_list_append(ret, eina_stringshare_add(ehint->val));
-
-   return ret;
-}
-
-EAPI void
-ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *window, int id, const char *hint, const char *val)
-{
-   Ecore_Wl2_Aux_Hint *ehint;
-
-   EINA_SAFETY_ON_NULL_RETURN(window);
-
-   ehint = calloc(1, sizeof(Ecore_Wl2_Aux_Hint));
-   if (!ehint) return;
-
-   ehint->id = id;
-   ehint->hint = eina_stringshare_add(hint);
-   ehint->val = eina_stringshare_add(val);
-
-   window->supported_aux_hints =
-     eina_inlist_append(window->supported_aux_hints, EINA_INLIST_GET(ehint));
-}
-
-EAPI void
-ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, const char *val)
-{
-   Eina_Inlist *tmp;
-   Ecore_Wl2_Aux_Hint *ehint;
-
-   EINA_SAFETY_ON_NULL_RETURN(window);
-
-   EINA_INLIST_FOREACH_SAFE(window->supported_aux_hints, tmp, ehint)
+   EINA_LIST_FOREACH(win->supported_aux_hints, ll, supported_hint)
      {
-        if (ehint->id == id)
-          {
-             eina_stringshare_replace(&ehint->val, val);
-             break;
-          }
+        hint = eina_stringshare_add(supported_hint);
+        res = eina_list_append(res, hint);
      }
+   return res;
 }
 
 EAPI void
-ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id)
+ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *win, int id, const char *hint, const char *val)
 {
-   Eina_Inlist *tmp;
-   Ecore_Wl2_Aux_Hint *ehint;
-
-   EINA_SAFETY_ON_NULL_RETURN(window);
-
-   EINA_INLIST_FOREACH_SAFE(window->supported_aux_hints, tmp, ehint)
-     {
-        if (ehint->id == id)
-          {
-             window->supported_aux_hints =
-               eina_inlist_remove(window->supported_aux_hints,
-                                  EINA_INLIST_GET(ehint));
-
-             eina_stringshare_del(ehint->hint);
-             eina_stringshare_del(ehint->val);
-             free(ehint);
-
-             break;
-          }
-     }
+   if (!win) return;
+   if ((win->surface) && (win->display->wl.efl_aux_hints))
+     efl_aux_hints_add_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, hint, val);
 }
 
+EAPI void
+ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *win, int id, const char *val)
+{
+   if (!win) return;
+   if ((win->surface) && (win->display->wl.efl_aux_hints))
+     efl_aux_hints_change_aux_hint(win->display->wl.efl_aux_hints, win->surface, id, val);
+}
+
+EAPI void
+ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *win, int id)
+{
+   if (!win) return;
+   if ((win->surface) && (win->display->wl.efl_aux_hints))
+     efl_aux_hints_del_aux_hint(win->display->wl.efl_aux_hints, win->surface, id);
+}
 EAPI void
 ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool focus_skip)
 {
