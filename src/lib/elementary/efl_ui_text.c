@@ -178,6 +178,7 @@ struct _Efl_Ui_Text_Rectangle
 };
 
 #define MY_CLASS EFL_UI_TEXT_CLASS
+#define MY_CLASS_PFX efl_ui_text
 #define MY_CLASS_NAME "Efl.Ui.Text"
 #define MY_CLASS_NAME_LEGACY "elm_entry"
 
@@ -3327,12 +3328,6 @@ _efl_ui_text_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Ev
      evas_object_raise(sd->hit_rect);
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description *
-_efl_ui_text_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd EINA_UNUSED)
-{
-   return _content_aliases;
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_text_elm_layout_theme_enable(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd EINA_UNUSED)
 {
@@ -5372,8 +5367,11 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, ELM_LAYOUT, Efl_Ui_Text_
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+
 #define EFL_UI_TEXT_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_text)
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_text), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS()
 
 #include "efl_ui_text.eo.c"
 

@@ -27,7 +27,6 @@ class Efl.Ui.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
       Elm.Widget.widget_event;
-      Elm.Layout.text_aliases { get; }
       Efl.Ui.Nstate.count { set; }
       Efl.Ui.Nstate.value { set; }
       Elm.Interface.Atspi_Accessible.state_set { get; }

@@ -17,6 +17,7 @@
 #include "elm_hoversel.eo.h"
 
 #define MY_CLASS ELM_ENTRY_CLASS
+#define MY_CLASS_PFX elm_entry
 
 #define MY_CLASS_NAME "Elm_Entry"
 #define MY_CLASS_NAME_LEGACY "elm_entry"
@@ -4009,18 +4010,6 @@ _elm_entry_efl_canvas_group_group_member_add(Eo *obj, Elm_Entry_Data *sd, Evas_O
      evas_object_raise(sd->hit_rect);
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_entry_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_sd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description *
-_elm_entry_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
-{
-   return _content_aliases;
-}
-
 EOLIAN static Eina_Bool
 _elm_entry_elm_layout_theme_enable(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
 {
@@ -6081,8 +6070,13 @@ ELM_PART_CONTENT_DEFAULT_SET(elm_entry, "icon")
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define ELM_ENTRY_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_entry), \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_entry)
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_entry), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS()
 
 #include "elm_entry.eo.c"

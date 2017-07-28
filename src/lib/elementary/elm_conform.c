@@ -12,7 +12,7 @@
 #include "elm_widget_layout.h"
 
 #define MY_CLASS ELM_CONFORMANT_CLASS
-
+#define MY_CLASS_PFX elm_conformant
 #define MY_CLASS_NAME "Elm_Conformant"
 #define MY_CLASS_NAME_LEGACY "elm_conformant"
 
@@ -986,12 +986,6 @@ _elm_conformant_elm_widget_widget_parent_set(Eo *obj, Elm_Conformant_Data *sd, E
 #endif
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_conformant_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Conformant_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
-}
-
 EAPI Evas_Object *
 elm_conformant_add(Evas_Object *parent)
 {
@@ -1032,7 +1026,10 @@ _elm_conformant_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+
 #define ELM_CONFORMANT_EXTRA_OPS \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_conformant)
 
 #include "elm_conformant.eo.c"

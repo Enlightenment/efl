@@ -610,4 +610,24 @@ void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
 
 double _elm_atof(const char *s);
 
+/* Internal EO APIs */
+const Elm_Layout_Part_Alias_Description *elm_layout_content_aliases_get(const Eo *obj);
+const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *obj);
+
+#define _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, _typ) \
+   static const Elm_Layout_Part_Alias_Description * \
+   _##_pfx##_##_typ##_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED) \
+   { \
+      return _##_typ##_aliases; \
+   }
+
+#define _ELM_LAYOUT_ALIASES_OPS(_pfx, _typ) \
+   EFL_OBJECT_OP_FUNC(elm_layout_##_typ##_aliases_get, _##_pfx##_##_typ##_aliases_get)
+
+#define ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT() _ELM_LAYOUT_ALIASES_IMPLEMENT(MY_CLASS_PFX, content)
+#define ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()  _ELM_LAYOUT_ALIASES_IMPLEMENT(MY_CLASS_PFX, text)
+
+#define ELM_LAYOUT_CONTENT_ALIASES_OPS() _ELM_LAYOUT_ALIASES_OPS(MY_CLASS_PFX, content)
+#define ELM_LAYOUT_TEXT_ALIASES_OPS() _ELM_LAYOUT_ALIASES_OPS(MY_CLASS_PFX, text)
+
 #endif

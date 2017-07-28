@@ -16,6 +16,7 @@
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_HOVER_CLASS
+#define MY_CLASS_PFX elm_hover
 
 #define MY_CLASS_NAME "Elm_Hover"
 #define MY_CLASS_NAME_LEGACY "elm_hover"
@@ -679,8 +680,8 @@ _elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *pd, Eina_Bool vis)
      }
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_hover_elm_layout_content_aliases_get(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
+static const Elm_Layout_Part_Alias_Description*
+_elm_hover_content_aliases_get(Eo *obj, void *_pd EINA_UNUSED)
 {
    const char *style = elm_widget_style_get(obj);
 
@@ -901,7 +902,11 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, ELM_LAYOUT, Elm_Hover_Data
 
 /* Internal EO APIs and hidden overrides */
 
+// ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT() is overridden with an if()
+// ELM_LAYOUT_CONTENT_ALIASES_OPS() somehow doesn't compile!?
+
 #define ELM_HOVER_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_hover)
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_hover), \
+   _ELM_LAYOUT_ALIASES_OPS(elm_hover, content)
 
 #include "elm_hover.eo.c"

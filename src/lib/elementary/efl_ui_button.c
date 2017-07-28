@@ -14,6 +14,7 @@
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_BUTTON_CLASS
+#define MY_CLASS_PFX efl_ui_button
 
 #define MY_CLASS_NAME "Efl.Ui.Button"
 #define MY_CLASS_NAME_LEGACY "elm_button"
@@ -311,18 +312,6 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
      CRI("Failed to set layout!");
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_button_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_button_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
 EAPI Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
@@ -492,7 +481,12 @@ elm_button_autorepeat_get(const Evas_Object *obj)
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define EFL_UI_BUTTON_EXTRA_OPS \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"

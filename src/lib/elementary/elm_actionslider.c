@@ -17,6 +17,7 @@
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_ACTIONSLIDER_CLASS
+#define MY_CLASS_FPX elm_actionslider
 
 #define MY_CLASS_NAME "Elm_Actionslider"
 #define MY_CLASS_NAME_LEGACY "elm_actionslider"
@@ -534,12 +535,6 @@ _elm_actionslider_efl_canvas_group_group_add(Eo *obj, Elm_Actionslider_Data *pri
    elm_layout_sizing_eval(obj);
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_actionslider_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
 EAPI Evas_Object *
 elm_actionslider_add(Evas_Object *parent)
 {
@@ -673,7 +668,10 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_actionslider, ELM_ACTIONSLIDER, ELM_LAYOUT, Elm_A
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define ELM_ACTIONSLIDER_EXTRA_OPS \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_actionslider)
 
 #include "elm_actionslider.eo.c"

@@ -12,6 +12,7 @@
 #include "elm_widget_panes.h"
 
 #define MY_CLASS ELM_PANES_CLASS
+#define MY_CLASS_PFX elm_panes
 
 #define MY_CLASS_NAME "Elm_Panes"
 #define MY_CLASS_NAME_LEGACY "elm_panes"
@@ -546,12 +547,6 @@ _elm_panes_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Panes_Data 
    return EINA_TRUE;
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_panes_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Panes_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
-}
-
 static void
 _elm_panes_class_constructor(Efl_Class *klass)
 {
@@ -560,7 +555,10 @@ _elm_panes_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+
 #define ELM_PANES_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_OPS(elm_panes)
+   EFL_CANVAS_GROUP_ADD_OPS(elm_panes), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS()
 
 #include "elm_panes.eo.c"

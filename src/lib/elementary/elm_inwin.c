@@ -14,6 +14,7 @@
 #include "elm_widget_layout.h"
 
 #define MY_CLASS ELM_INWIN_CLASS
+#define MY_CLASS_PFX elm_inwin
 
 #define MY_CLASS_NAME "Elm_Inwin"
 #define MY_CLASS_NAME_LEGACY "elm_inwin"
@@ -92,12 +93,6 @@ _elm_inwin_elm_widget_widget_parent_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED,
    elm_win_resize_object_add(parent, obj);
 
    elm_layout_sizing_eval(obj);
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_inwin_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Inwin_Data *pd EINA_UNUSED)
-{
-   return _content_aliases;
 }
 
 EAPI Evas_Object *
@@ -223,7 +218,10 @@ _elm_inwin_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+
 #define ELM_INWIN_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_OPS(elm_inwin)
+   EFL_CANVAS_GROUP_ADD_OPS(elm_inwin), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS()
 
 #include "elm_inwin.eo.c"

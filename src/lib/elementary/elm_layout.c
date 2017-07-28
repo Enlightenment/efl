@@ -17,6 +17,7 @@
 #include <Edje_Edit.h>
 
 #define MY_CLASS ELM_LAYOUT_CLASS
+#define MY_CLASS_PFX elm_layout
 
 #define MY_CLASS_NAME "Elm_Layout"
 #define MY_CLASS_NAME_LEGACY "elm_layout"
@@ -594,18 +595,6 @@ _edje_signal_callback(void *data,
    esd->func(esd->data, esd->obj, emission, source);
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
-}
-
 EOLIAN static Eina_Bool
 _elm_layout_sub_object_add_enable(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
 {
@@ -626,9 +615,9 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj,
    const Elm_Layout_Part_Alias_Description *aliases = NULL;
 
    if (is_text)
-     aliases = elm_obj_layout_text_aliases_get(obj);
+     aliases = elm_layout_text_aliases_get(obj);
    else
-     aliases =  elm_obj_layout_content_aliases_get(obj);
+     aliases =  elm_layout_content_aliases_get(obj);
 
    while (aliases && aliases->alias && aliases->real_part)
      {
@@ -2415,10 +2404,18 @@ ELM_PART_IMPLEMENT_TEXT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_P
 
 /* Internal EO APIs and hidden overrides */
 
+EFL_FUNC_BODY_CONST(elm_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
+EFL_FUNC_BODY_CONST(elm_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
+
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define ELM_LAYOUT_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_layout), \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_layout), \
    ELM_PART_TEXT_DEFAULT_OPS(elm_layout), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_layout_efl_object_dbg_info_get)
 
 #include "elm_layout.eo.c"

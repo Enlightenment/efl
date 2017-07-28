@@ -17,6 +17,7 @@
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_SLIDER_CLASS
+#define MY_CLASS_PFX efl_ui_slider
 
 #define MY_CLASS_NAME "Efl.Ui.Slider"
 #define MY_CLASS_NAME_LEGACY "elm_slider"
@@ -1217,18 +1218,6 @@ _efl_ui_slider_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Slider_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_slider_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_slider_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_slider_efl_ui_range_range_interval_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd)
 {
@@ -1793,7 +1782,12 @@ elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define EFL_UI_SLIDER_EXTRA_OPS \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
 
 #include "efl_ui_slider.eo.c"
