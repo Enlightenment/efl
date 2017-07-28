@@ -1583,6 +1583,49 @@ ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output)
    return output->subpixel;
 }
 
+static void
+_blank_fallback_handler(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec, unsigned int usec, void *data EINA_UNUSED)
+{
+   Ecore_Drm2_Output *output;
+
+   output = data;
+   output->fallback_usec = usec;
+   output->fallback_sec = sec;
+}
+static int
+_blanktime_fallback(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec)
+{
+   drmEventContext ctx;
+   int ret;
+
+   /* Too lazy to loop for > 1, and don't want to block for < 1 */
+   if (sequence != 1) return -1;
+
+   /* If we got here with a flip waiting to complete we can do nothing. */
+   if (output->pending.fb) return -1;
+
+   if (!output->current.fb) return -1;
+
+   memset(&ctx, 0, sizeof(ctx));
+   ctx.version = 2;
+   ctx.page_flip_handler = _blank_fallback_handler;
+   ctx.vblank_handler = NULL;
+
+   ret = sym_drmModePageFlip(output->current.fb->fd, output->crtc_id,
+                             output->current.fb->id, DRM_MODE_PAGE_FLIP_EVENT,
+                             output);
+   if (ret < 0) return -1;
+   do
+     {
+        ret = sym_drmHandleEvent(output->current.fb->fd, &ctx);
+     } while (ret != 0 && errno == EAGAIN);
+   if (ret < 0) return -1;
+
+   *sec = output->fallback_sec;
+   *usec = output->fallback_usec;
+   return 0;
+}
+
 EAPI Eina_Bool
 ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec)
 {
@@ -1597,6 +1640,12 @@ ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *s
   v.request.type = DRM_VBLANK_RELATIVE;
   v.request.sequence = sequence;
   ret = sym_drmWaitVBlank(output->fd, &v);
+  if (ret)
+    {
+       ret = _blanktime_fallback(output, sequence, sec, usec);
+       if (ret) return EINA_FALSE;
+       return EINA_TRUE;
+    }
   if (ret) return EINA_FALSE;
   if (v.reply.tval_sec < 0) return EINA_FALSE;
   if (v.reply.tval_usec < 0) return EINA_FALSE;

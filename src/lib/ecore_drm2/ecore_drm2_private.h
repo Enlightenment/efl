@@ -209,6 +209,8 @@ struct _Ecore_Drm2_Output
    int pipe;
    int x, y, w, h, pw, ph;
 
+   long fallback_sec, fallback_usec;
+
    uint32_t subpixel;
    uint32_t crtc_id, conn_id, conn_type;
    uint32_t scale;
