@@ -47,7 +47,7 @@ _evas_object_event_new(void)
 static inline Eina_Bool
 _evas_object_callback_has_by_type(Evas_Object_Protected_Data *obj, Evas_Callback_Type type)
 {
-   return (obj->callback_mask & (1 << type)) != 0;
+   return (obj->callback_mask & (((uint64_t)1) << type)) != 0;
 }
 
 static inline int

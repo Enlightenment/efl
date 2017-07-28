@@ -708,7 +708,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
           }
         else if ((type = _legacy_evas_callback_type(array[i].desc)) != EVAS_CALLBACK_LAST)
           {
-             obj->callback_mask |= (1 << type);
+             obj->callback_mask |= (((uint64_t)1) << type);
           }
      }
 }
