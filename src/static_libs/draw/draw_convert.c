@@ -315,7 +315,7 @@ _convert_etc2_rgb8_to_argb8888(void *dst, const void *src, int w, int h,
           {
              rg_etc2_rgb8_decode_block(in, bgra);
              for (k = 0; k < 4; k++)
-               memcpy(out + x + k * out_step, bgra + k * 16, 16);
+               memcpy(out + x + k * out_step, bgra + (k * 4), 16);
           }
      }
 
@@ -347,7 +347,7 @@ _convert_etc2_rgba8_to_argb8888(void *dst, const void *src, int w, int h,
           {
              rg_etc2_rgba8_decode_block(in, bgra);
              for (k = 0; k < 4; k++)
-               memcpy(out + x + k * out_step, bgra + k * 16, 16);
+               memcpy(out + x + k * out_step, bgra + (k * 4), 16);
           }
         out += out_step * 4;
      }
