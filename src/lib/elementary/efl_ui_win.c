@@ -6698,6 +6698,15 @@ _efl_ui_win_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Dat
    return evas_seat_key_lock_is_set(m, name, seat);
 }
 
+EOLIAN static Efl_Object *
+_efl_ui_win_efl_object_provider_find(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED,
+                                     const Efl_Object *klass)
+{
+    if (klass == EFL_UI_WIN_CLASS)
+      return obj;
+    return efl_provider_find(efl_super(obj, MY_CLASS), klass);
+}
+
 // See evas_inline.x
 #define _EVAS_COLOR_CLAMP(x, y) do { \
 if (x > y) { x = y; bad = 1; } \
