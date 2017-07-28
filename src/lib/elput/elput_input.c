@@ -162,6 +162,7 @@ _device_event_cb_free(void *data EINA_UNUSED, void *event)
 
    ev = event;
 
+   ev->device->refs--;
    if (ev->type == ELPUT_DEVICE_REMOVED)
      {
         Elput_Seat *seat;
