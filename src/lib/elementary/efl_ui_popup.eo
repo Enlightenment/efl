@@ -1,0 +1,21 @@
+class Efl.Ui.Popup(Efl.Ui.Layout)
+{
+   legacy_prefix: elm_popup;
+   methods {
+       @property parent_window @protected {
+           get {
+              [[Get the parent window of Popup.]]
+           }
+           values {
+               window: Efl.Canvas.Object;
+           }
+       }
+   }
+   implements {
+      class.constructor;
+      Efl.Gfx.position { set; }
+      Elm.Widget.widget_parent { set; }
+      Efl.Container.content { get; set; }
+      Efl.Container.content_unset;
+   }
+}
