@@ -238,7 +238,7 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
    maxw = -1;
    maxh = -1;
    c = eina_list_count(priv->children);
-   if (homogeneous)
+   if (homogeneous || (c == 1))
      {
         Evas_Aspect_Control paspect = -1; //causes overflow
         int pasx = -1, pasy = -1;
