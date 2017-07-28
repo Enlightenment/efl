@@ -83,7 +83,6 @@ _elm_code_widget_undo_change(Evas_Object *widget,
              line = elm_code_file_line_get(pd->code->file, newrow);
              if (newrow != info->end_line)
                {
-                  textlen = remainlen;
                   textlen = elm_code_text_newlinenpos(content, remainlen,
                                                       &nllen);
                   remainlen -= textlen + nllen;
