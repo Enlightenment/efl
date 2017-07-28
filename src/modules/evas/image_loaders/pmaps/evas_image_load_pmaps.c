@@ -350,7 +350,6 @@ pmaps_buffer_plain_update(Pmaps_Buffer *b)
    b->unread[0] = '\0';
    b->unread_len = 0;
 
-   b->buffer[r] = '\0';
    b->current = b->buffer;
    b->end = b->buffer + r;
 
