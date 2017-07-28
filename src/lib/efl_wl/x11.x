@@ -145,8 +145,25 @@ x11_fixes_selection_notify(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event
             }
         if (ev->owner)
           {
-             xconvertselection(ecore_x_display_get(), ECORE_X_ATOM_SELECTION_CLIPBOARD,
-               ECORE_X_ATOM_SELECTION_TARGETS, comp_dnd_atom, ev->win, 0);
+             EINA_LIST_FOREACH(comps, l, c)
+               {
+                  win = ecore_evas_window_get(ecore_evas_ecore_evas_get(c->evas));
+                  if (l != comps)
+                    {
+                       Eina_List *ll;
+                       Comp *c2;
+                       Ecore_X_Window win2 = 0;
+                       EINA_LIST_FOREACH(comps, ll, c2)
+                         {
+                            win2 = ecore_evas_window_get(ecore_evas_ecore_evas_get(c->evas));
+                            if (win == win2) break;
+                            if (l == ll) break;
+                         }
+                       if ((win == win2) && (l != ll)) continue;
+                    }
+                  xconvertselection(ecore_x_display_get(), ECORE_X_ATOM_SELECTION_CLIPBOARD,
+                    ECORE_X_ATOM_SELECTION_TARGETS, comp_dnd_atom, win, 0);
+               }
           }
      }
    return ECORE_CALLBACK_RENEW;
