@@ -881,6 +881,23 @@ _pointer_motion_send(Elput_Device *edev)
 }
 
 static void
+_pointer_motion_relative_fake(struct libinput_event_pointer *event, double dx, double dy)
+{
+   Elput_Event_Pointer_Motion *ev;
+
+   ev = calloc(1, sizeof(Elput_Event_Pointer_Motion));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
+   ev->time_usec = libinput_event_pointer_get_time_usec(event);
+   ev->dx = dx;
+   ev->dy = dy;
+   ev->dx_unaccel = dx;
+   ev->dy_unaccel = dy;
+
+   ecore_event_add(ELPUT_EVENT_POINTER_MOTION, ev, NULL, NULL);
+}
+
+static void
 _pointer_motion_relative(struct libinput_event_pointer *event)
 {
    Elput_Event_Pointer_Motion *ev;
@@ -937,6 +954,7 @@ _pointer_motion_abs(struct libinput_device *idev, struct libinput_event_pointer 
 {
    Elput_Device *edev;
    Elput_Pointer *ptr;
+   double x, y;
 
    edev = libinput_device_get_user_data(idev);
    if (!edev) return EINA_FALSE;
@@ -944,16 +962,22 @@ _pointer_motion_abs(struct libinput_device *idev, struct libinput_event_pointer 
    ptr = _evdev_pointer_get(edev->seat);
    if (!ptr) return EINA_FALSE;
 
-   ptr->seat->pointer.x =
+   x = edev->absx;
+   edev->absx =
      libinput_event_pointer_get_absolute_x_transformed(event, edev->ow);
-   ptr->seat->pointer.y =
+   ptr->seat->pointer.x = edev->absx;
+
+   y = edev->absy;
+   edev->absy =
      libinput_event_pointer_get_absolute_y_transformed(event, edev->oh);
+   ptr->seat->pointer.y = edev->absy;
+
    ptr->timestamp = libinput_event_pointer_get_time(event);
 
    /* TODO: these needs to run a matrix transform based on output */
 
    _pointer_motion_send(edev);
-   _pointer_motion_relative(event);
+   _pointer_motion_relative_fake(event, edev->absx - x, edev->absy - y);
 
    return EINA_TRUE;
 }
