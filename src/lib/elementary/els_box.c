@@ -23,7 +23,7 @@ _box_object_aspect_calc(int *ow, int *oh, int minw, int minh, int maxw, int maxh
         /* set height using aspect+width */
         if (fw) *ow = ww;
         if ((maxw >= 0) && (maxw < *ow)) *ow = maxw;
-        *oh = ratio / *ow;
+        *oh = (1 / ratio) * *ow;
         /* apply min/max */
         if ((maxh >= 0) && (maxh < *oh)) *oh = maxh;
         else if ((minh >= 0) && (minh > *oh)) *oh = minh;
@@ -53,7 +53,7 @@ _box_object_aspect_calc(int *ow, int *oh, int minw, int minh, int maxw, int maxh
         /* set height using aspect+width */
         if (fw) *ow = ww;
         if ((maxw >= 0) && (maxw < *ow)) *ow = maxw;
-        *oh = ratio / *ow;
+        *oh = (1 / ratio) * *ow;
         /* apply min/max */
         if ((maxh >= 0) && (maxh < *oh)) *oh = maxh;
         else if ((minh >= 0) && (minh > *oh)) *oh = minh;
