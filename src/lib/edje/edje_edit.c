@@ -13764,7 +13764,7 @@ _edje_generate_source_state_relative(Edje *ed,
 {
 
    Eina_Bool ret = EINA_TRUE;
-   int attr_amount = 0;
+   int attr_amount;
    int indent_space = strlen(I6);
 
    Eina_Bool relative = EINA_FALSE;
@@ -13888,7 +13888,6 @@ _edje_generate_source_state_relative(Edje *ed,
      }
 
    //Rel 2
-   attr_amount = 0;
    relative = EINA_FALSE;
    offset = EINA_FALSE;
    rel_to = EINA_FALSE;
