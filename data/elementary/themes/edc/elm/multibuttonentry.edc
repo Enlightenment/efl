@@ -1,4 +1,10 @@
 group { name: "elm/multibuttonentry/base/default";
+   styles {
+      style { name: "multibuttonentry_label_style";
+         base: STL_COL_PRIMER" font="FNBD" font_size=10 text_class=multibutton_label color_class=multibuttonentry_label left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    data.item: "horizontal_pad" 0;
    data.item: "vertical_pad" 0;
    data.item: "closed_height" 0;
@@ -29,17 +35,17 @@ group { name: "elm/multibuttonentry/base/default";
 
 group { name: "elm/multibuttonentry/label/default";
    parts {
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
-            color: FN_COL_HIGHLIGHT;
-            color_class: "multibuttonentry_label";
-            text { font: FNBD; size: 10;
+            //color: FN_COL_HIGHLIGHT;
+            //color_class: "multibuttonentry_label";
+            text {
+               style: "multibuttonentry_label_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
-               text_class: "multibuttonentry_label";
             }
             rel1.offset: 2 2;
             rel2.offset: -5 -5;
@@ -49,15 +55,22 @@ group { name: "elm/multibuttonentry/label/default";
 }
 
 group { name: "elm/multibuttonentry/guidetext/default";
+   styles {
+      style { name: "multibuttonentry_guidetext_style";
+         base: "font="FNBD" font_size=10 "STL_COL_DISABLE" text_class=multibutton_label left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    parts {
-      part { name: "elm.text"; type: TEXT;
+      part { name: "elm.text"; type: TEXTBLOCK;
          scale: 1;
-         effect: SHADOW BOTTOM;
+         //effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -4 -4;
-            color: FN_COL_DISABLE;
-            text { font: FNBD; size: 10;
+            //color: FN_COL_DISABLE;
+            text {
+               style: "multibuttonentry_guidetext_style";
                min: 0 1;
                align: 0.0 0.5;
             }
