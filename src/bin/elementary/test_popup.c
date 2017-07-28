@@ -938,3 +938,31 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_resize(win, 480, 400);
    evas_object_show(win);
 }
+
+void
+test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win;
+
+   win = elm_win_util_standard_add("Efl UI Popup", "Efl UI Popup");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+
+   Evas_Object *efl_ui_popup= efl_add(EFL_UI_POPUP_CLASS, win);
+
+   evas_object_move(efl_ui_popup, 80, 80);
+   evas_object_resize(efl_ui_popup, 160, 160);
+   evas_object_show(efl_ui_popup);
+
+   int x, y, w, h;
+   evas_object_geometry_get(efl_ui_popup, &x, &y, &w, &h);
+   printf("efl_ui_popup: %d %d %d %d\n", x, y, w, h);
+
+   Evas_Object *btn = elm_button_add(efl_ui_popup);
+   elm_object_text_set(btn, "Efl.Ui.Popup content");
+   evas_object_show(btn);
+
+   efl_content_set(efl_ui_popup, btn);
+}
