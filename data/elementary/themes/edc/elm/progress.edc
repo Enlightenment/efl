@@ -1,4 +1,26 @@
 group { name: "elm/progressbar/horizontal/default";
+   styles {
+      style { name: "progressbar_text_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=progressbar color_class=progressbar_text left_margin=2 right_margin=2 gfx_filter=glow";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "progress_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 text_class=progressbar_text left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "progressbar_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=progressbar color_class=progressbar_text left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "progress_status_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=glow text_class=progress_status color_class=progress_status left_margin=2 right_margin=2 align=1.0";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "progress_text_disabled_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=progressbar color_class=progressbar_text_disabled left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    images.image: "inset_bar_horiz_base.png" COMP;
    images.image: "inset_bar_horiz_light.png" COMP;
    images.image: "inset_bar_horiz_inside_base.png" COMP;
@@ -91,14 +113,14 @@ group { name: "elm/progressbar/horizontal/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer.content"; type: TEXTBLOCK; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
-            text { font: FN; size: 10;
+            text { style: "progress_style";
                min: 0 0;
-               text_class: "progressbar_text";
+               //text_class: "progressbar_text";
             }
          }
          description { state: "visible" 0.0;
@@ -112,8 +134,8 @@ group { name: "elm/progressbar/horizontal/default";
             }
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -124,12 +146,14 @@ group { name: "elm/progressbar/horizontal/default";
             rel2.to_x: "elm.swallow.content";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "progressbar_text";
-            text { font: FN; size: 10;
-               text_class: "progressbar";
+            //color: FN_COL_DEFAULT;
+            //color_class: "progressbar_text";
+            text {
+               //text_class: "progressbar";
+               style: "progressbar_text_style";
                min: 0 0;
-               align: 0.0 0.5;
+               align: 0.0 0.5; // valign is handled for TEXTBLOCK, so no need
+                               //  to add to a new style.
             }
             visible: 0;
          }
@@ -144,8 +168,9 @@ group { name: "elm/progressbar/horizontal/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color_class: "progressbar_text_disabled";
-            color: FN_COL_DISABLE_LIGHTER_SHADOW;
+            text.style: "progressbar_text_disabled_style";
+            //color_class: "progressbar_text_disabled";
+            //color: FN_COL_DISABLE_LIGHTER_SHADOW;
          }
       }
       part { name: "bg-hi";
@@ -326,21 +351,21 @@ group { name: "elm/progressbar/horizontal/default";
             align: 1.0 0.5;
          }
       }
-      part { name: "elm.text.status"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.status"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
-         effect: GLOW;
+         //effect: GLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
             rel1.to: "inside";
             rel2.to: "inside";
-            color_class: "progress_status";
+            //color_class: "progress_status";
             align: 1.0 0.5;
-            text { font: FN; size: 10;
+            text {
+               style: "progress_status_style";
                min: 0 1;
-               text_class: "progress_status";
                align: 1.0 0.5;
             }
-            color: FN_COL_HIGHLIGHT_CLICKED;
+            //color: FN_COL_HIGHLIGHT_CLICKED;
             visible: 1;
          }
          description { state: "hidden" 0.0;
@@ -649,14 +674,15 @@ group { name: "elm/progressbar/vertical/default";
             rel2.offset: -3 2;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer.content"; type: TEXTBLOCK; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
-            text { font: FN; size: 10;
+            text {
+               style: "progressbar_style";
                min: 0 0;
-               text_class: "progressbar_text";
+               //text_class: "progressbar_text";
             }
          }
          description { state: "visible" 0.0;
@@ -670,8 +696,8 @@ group { name: "elm/progressbar/vertical/default";
             }
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -682,10 +708,10 @@ group { name: "elm/progressbar/vertical/default";
             rel2.to_y: "elm.swallow.content";
             rel2.relative: 1.0 1.0;
             rel2.offset: -3 -1;
-            color: FN_COL_DEFAULT;
-            color_class: "progressbar_text";
-            text { font: FN; size: 10;
-               text_class: "progressbar";
+            //color: FN_COL_DEFAULT;
+            //color_class: "progressbar_text";
+            text {
+               style: "progressbar_style";
                min: 0 0;
                align: 0.5 0.0;
             }
@@ -704,6 +730,7 @@ group { name: "elm/progressbar/vertical/default";
             inherit: "visible" 0.0;
             color_class: "progressbar_text_disabled";
             color: FN_COL_DISABLE_LIGHTER_SHADOW;
+            color: TB_COL_PRIMER;
          }
       }
       part { name: "bg-hi";
@@ -893,21 +920,21 @@ group { name: "elm/progressbar/vertical/default";
             aspect: 1.0 1.0; aspect_preference: NONE;
          }
       }
-      part { name: "elm.text.status"; type: TEXT; mouse_events: 0;
+      part { name: "elm.text.status"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
-         effect: GLOW;
+         //effect: GLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
             rel1.to: "statbox";
             rel2.to: "statbox";
-            color_class: "progress_status";
+            //color_class: "progress_status";
             align: 1.0 0.5;
-            text { font: FN; size: 10;
+            text {
+               style: "progress_status_style";
                min: 0 1;
-               text_class: "progress_status";
                align: 1.0 0.5;
             }
-            color: FN_COL_HIGHLIGHT_CLICKED;
+            //color: FN_COL_HIGHLIGHT_CLICKED;
             visible: 1;
             map.on: 1;
             map.smooth: 0;

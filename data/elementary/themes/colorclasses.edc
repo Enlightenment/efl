@@ -434,6 +434,14 @@ color_classes {
       color: 32 32 32 128;
       desc: "Overlay color for windows with modal children (blocked)";
    }
+   color_class { name: "progress_status";
+      color: FN_COL_HIGHLIGHT_CLICKED;
+      desc: "Progress status text";
+   }
+   color_class { name: "progressbar_text";
+      color: FN_COL_DEFAULT;
+      desc: "Progress text";
+   }
    
 // modules
    color_class { name: "module_label";
