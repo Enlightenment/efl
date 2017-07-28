@@ -157,17 +157,14 @@ evas_object_smart_interface_get(const Evas_Object *eo_obj,
    s = evas_object_smart_smart_get(eo_obj);
    if (!s) return NULL;
 
-   if (s)
+   for (i = 0; i < s->interfaces.size; i++)
      {
-        for (i = 0; i < s->interfaces.size; i++)
-          {
-             const Evas_Smart_Interface *iface;
+        const Evas_Smart_Interface *iface;
 
-             iface = s->interfaces.array[i];
+        iface = s->interfaces.array[i];
 
-             if (iface->name == name)
-                return iface;
-          }
+        if (iface->name == name)
+          return iface;
      }
 
    return NULL;
