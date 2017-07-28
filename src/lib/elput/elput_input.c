@@ -119,8 +119,14 @@ _udev_seat_destroy(Elput_Seat *eseat)
      _evdev_device_destroy(edev);
 
    if (eseat->kbd) _evdev_keyboard_destroy(eseat->kbd);
+   eseat->kbd = NULL;
    if (eseat->ptr) _evdev_pointer_destroy(eseat->ptr);
+   eseat->ptr = NULL;
    if (eseat->touch) _evdev_touch_destroy(eseat->touch);
+   eseat->touch = NULL;
+   if (eseat->manager->input.seats)
+     eseat->manager->input.seats = eina_list_remove(eseat->manager->input.seats, eseat);
+   if (eseat->refs) return;
 
    eina_stringshare_del(eseat->name);
    free(eseat);
@@ -419,12 +425,13 @@ EAPI void
 elput_input_shutdown(Elput_Manager *manager)
 {
    Elput_Seat *seat;
+   Eina_List *l, *ll;
 
    EINA_SAFETY_ON_NULL_RETURN(manager);
 
    ecore_main_fd_handler_del(manager->input.hdlr);
 
-   EINA_LIST_FREE(manager->input.seats, seat)
+   EINA_LIST_FOREACH_SAFE(manager->input.seats, l, ll, seat)
      _udev_seat_destroy(seat);
 
    if (manager->input.thread)
