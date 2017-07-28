@@ -2157,6 +2157,80 @@ EAPI char *edje_object_part_text_unescaped_get(const Edje_Object *obj, const cha
 EAPI void edje_object_part_text_insert(Edje_Object *obj, const char *part, const char *text);
 
 /**
+ * @brief Whether this object is playing or not.
+ *
+ * This property indicates whether the object is running or not. If stopped (or
+ * paused), all transitions are disabled and programs stop running, until
+ * resumed.
+ *
+ * If play is disabled, the object will remain the same, and its parts will not
+ * change state. Note that play can be disabled during a transition between
+ * states, effectively freezing the object in flight. When paused, no events
+ * will be processed or sent.
+ *
+ * Setting to @c true resumes playing from the current state.
+ *
+ * Start or stop playing programs in this object.
+ *
+ * @param[in] play The play state, @c true by default.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_play_set(Evas_Object *obj, Eina_Bool play);
+
+/**
+ * @brief Whether this object is playing or not.
+ *
+ * This property indicates whether the object is running or not. If stopped (or
+ * paused), all transitions are disabled and programs stop running, until
+ * resumed.
+ *
+ * If play is disabled, the object will remain the same, and its parts will not
+ * change state. Note that play can be disabled during a transition between
+ * states, effectively freezing the object in flight. When paused, no events
+ * will be processed or sent.
+ *
+ * Setting to @c true resumes playing from the current state.
+ *
+ * Get the current state of play, @c true by default.
+ *
+ * @return The play state, @c true by default.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_play_get(const Evas_Object *obj);
+
+/**
+ * @brief Transition duration factor.
+ *
+ * This defines a multiplier for the duration of transitions as they are
+ * defined in EDC. By default this factor is 1.0, which means animations play
+ * at the same speed as described in EDC.
+ *
+ * Sets transition duration factor.
+ *
+ * @param[in] scale The transition duration factor.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_transition_duration_factor_set(Evas_Object *obj, double scale);
+
+/**
+ * @brief Transition duration factor.
+ *
+ * This defines a multiplier for the duration of transitions as they are
+ * defined in EDC. By default this factor is 1.0, which means animations play
+ * at the same speed as described in EDC.
+ *
+ * Gets transition duration factor.
+ *
+ * @return The transition duration factor.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI double edje_object_transition_duration_factor_get(const Evas_Object *obj);
+
+/**
  * @}
  */
 #include "edje_object.eo.legacy.h"

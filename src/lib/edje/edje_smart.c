@@ -554,6 +554,72 @@ _edje_object_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object *obs,
      }
 }
 
+EOLIAN Eina_Bool
+_edje_object_efl_player_playable_get(Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN void
+_edje_object_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
+{
+   double t;
+   Eina_List *l;
+   Edje_Running_Program *runp;
+   unsigned short i;
+
+   if (!ed) return;
+   if (ed->delete_me) return;
+   if (play)
+     {
+        if (!ed->paused) return;
+        ed->paused = EINA_FALSE;
+        t = ecore_time_get() - ed->paused_at;
+        EINA_LIST_FOREACH(ed->actions, l, runp)
+          runp->start_time += t;
+     }
+   else
+     {
+        if (ed->paused) return;
+        ed->paused = EINA_TRUE;
+        ed->paused_at = ecore_time_get();
+     }
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp;
+        rp = ed->table_parts[i];
+        if ((rp->part->type == EDJE_PART_TYPE_GROUP) &&
+            ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+             (rp->typedata.swallow)) &&
+            (rp->typedata.swallow->swallowed_object))
+          edje_object_play_set(rp->typedata.swallow->swallowed_object, play);
+     }
+}
+
+EOLIAN Eina_Bool
+_edje_object_efl_player_play_get(Eo *obj EINA_UNUSED, Edje *ed)
+{
+   if (!ed) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   if (ed->paused) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+EOLIAN void
+_edje_object_efl_player_play_speed_set(Eo *obj EINA_UNUSED, Edje *pd , double speed)
+{
+   if (speed <= 0.0) speed = 1.0;
+   pd->duration_scale = 1.0/speed;
+}
+
+EOLIAN double
+_edje_object_efl_player_play_speed_get(Eo *obj EINA_UNUSED, Edje *pd)
+{
+   return 1.0/pd->duration_scale;
+}
+
 /* Internal EO APIs and hidden overrides */
 
 #define EDJE_OBJECT_EXTRA_OPS \
