@@ -111,14 +111,14 @@ static void
 free_buf(Eina_Evlog_Buf *b)
 {
    if (!b->buf) return;
-   b->size = 0;
-   b->top = 0;
 # ifdef HAVE_MMAP
    munmap(b->buf, b->size);
 # else
    free(b->buf);
 # endif
    b->buf = NULL;
+   b->size = 0;
+   b->top = 0;
 }
 
 static inline void *
