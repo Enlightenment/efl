@@ -2,6 +2,28 @@
 #define FLIP_PICKER_MAX_LEN_STR "50"
 
 group { name: "elm/flipselector/base/default";
+   styles {
+      style { name: "flipselector_text_style";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "flipselector_text_disabled_style";
+         base: "font="FN" font_size=10 color=#151515ff style=shadow,bottom shadow_color=#ffffff19 left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "flipselector_text_grey192_style";
+         base: "font="FN" font_size=10 color=#c0c0c0ff style=shadow,bottom shadow_color=#00000080 left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "flipselector_text_grey16_style";
+         base: "font="FN" font_size=10 color=#101010ff style=shadow,bottom shadow_color=#ffffff19 left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "flipselector_text2_style";
+         base: "font="FN" font_size=10 color=#808080ff style=shadow,bottom shadow_color=#00000080 left_margin=2 right_margin=2 align=0.5";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    images.image: "flip_shad.png" COMP;
    images.image: "sym_up_light_normal.png" COMP;
    images.image: "sym_down_light_normal.png" COMP;
@@ -196,7 +218,7 @@ group { name: "elm/flipselector/base/default";
             color: 72 72 72 255;
          }
       }
-      part { name: "bottom_text_prev"; type: TEXT; mouse_events: 0;
+      part { name: "bottom_text_prev"; type: TEXTBLOCK; mouse_events: 0;
          effect: SHADOW BOTTOM;
          clip_to: "bottom_clipper";
          scale: 1;
@@ -209,16 +231,20 @@ group { name: "elm/flipselector/base/default";
             rel2.to_y: "arrow_bottom";
             rel2.relative: 1.0 0.3;
             rel2.offset: -3 -1;
-            text { font: FN; size: 10;
+            text {
+               style: "flipselector_text_style";
                min: 1 1;
                ellipsis: -1;
-               align: 0.5 0.5;
+               align: 0.5 0.5; // valign is handled, but not halign
             }
             color: FN_COL_DEFAULT;
+            color: TB_COL_PRIMER;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
+            text.style: "flipselector_text_disabled_style";
             color: FN_COL_DISABLE;
+            color: TB_COL_PRIMER;
          }
       }
       part { name: "bottom_shadow"; mouse_events: 0;
@@ -268,7 +294,7 @@ group { name: "elm/flipselector/base/default";
             visible: 1;
          }
       }
-      part { name: "elm.bottom"; type: TEXT; mouse_events: 0;
+      part { name: "elm.bottom"; type: TEXTBLOCK; mouse_events: 0;
          effect: SHADOW BOTTOM;
          clip_to: "bottom_clipper";
          scale: 1;
@@ -281,22 +307,28 @@ group { name: "elm/flipselector/base/default";
             rel2.to_y: "arrow_bottom";
             rel2.relative: 1.0 0.3;
             rel2.offset: -3 -1;
-            text { font: FN; size: 10;
+            text {
+               style: "flipselector_text_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
             }
             color: FN_COL_DEFAULT;
+            color: TB_COL_PRIMER;
          }
          description { state: "shrink" 0.0;
             inherit: "default" 0.0;
+            text.style: "flipselector_text2_style";
             color: 128 128 128 255;
+            color: TB_COL_PRIMER;
             visible: 0;
             rel2.relative: 1.0 0.5; /* FIXME: same visual effect? --> MAP! */
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
+            text.style: "flipselector_text_disabled_style";
             color: FN_COL_DISABLE;
+            color: TB_COL_PRIMER;
          }
       }
       part { name: "top_prev"; type: RECT; mouse_events: 0;
@@ -306,7 +338,7 @@ group { name: "elm/flipselector/base/default";
             color: 56 56 56 255;
          }
       }
-      part { name: "top_text_prev"; type: TEXT; mouse_events: 0;
+      part { name: "top_text_prev"; type: TEXTBLOCK; mouse_events: 0;
          effect: SHADOW BOTTOM;
          clip_to: "top_clipper";
          scale: 1;
@@ -319,17 +351,21 @@ group { name: "elm/flipselector/base/default";
             rel2.to_y: "arrow_bottom";
             rel2.relative: 1.0 0.3;
             rel2.offset: -3 -1;
-            text { font: FN; size: 10;
+            text {
+               style: "flipselector_text_grey192_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
                source: "elm.top";
             }
             color: FN_COL_GREY_192;
+            color: TB_COL_PRIMER;
          }
          description { state: "disabled" 0.0;
+            text.style: "flipselector_text_grey16_style";
             inherit: "default" 0.0;
             color: FN_COL_GREY_16;
+            color: TB_COL_PRIMER;
          }
       }
       part { name: "top_shine_prev"; mouse_events: 0;
@@ -355,7 +391,7 @@ group { name: "elm/flipselector/base/default";
             color: 40 40 40 255;
          }
       }
-      part { name: "elm.top"; type: TEXT; mouse_events: 0;
+      part { name: "elm.top"; type: TEXTBLOCK; mouse_events: 0;
          effect: SHADOW BOTTOM;
          clip_to: "top_clipper";
          scale: 1;
@@ -364,12 +400,14 @@ group { name: "elm/flipselector/base/default";
             rel1.offset: 2 2;
             rel2.to: "base";
             rel2.offset: -3 -3;
-            text { font: FN; size: 10;
+            text {
+               style: "flipselector_text_grey192_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
             }
             color: FN_COL_GREY_192;
+            color: TB_COL_PRIMER;
          }
          description { state: "shrink" 0.0;
             inherit: "default" 0.0;
@@ -378,7 +416,9 @@ group { name: "elm/flipselector/base/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
+            text.style: "flipselector_text_grey16_style";
             color: FN_COL_GREY_16;
+            color: TB_COL_PRIMER;
          }
       }
       part { name: "top_shine_cur"; mouse_events: 0;
