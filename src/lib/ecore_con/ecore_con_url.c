@@ -348,7 +348,7 @@ _ecore_con_url_dialer_error(void *data, const Efl_Event *event)
    int status;
 
    status = efl_net_dialer_http_response_status_get(url_con->dialer);
-   if ((status < 500) && (status > 599))
+   if ((status < 500) || (status > 599))
      {
         DBG("HTTP error %d reset to 1", status);
         status = 1; /* not a real HTTP error */
@@ -655,7 +655,7 @@ _ecore_con_url_copier_error(void *data, const Efl_Event *event)
    int status;
 
    status = efl_net_dialer_http_response_status_get(url_con->dialer);
-   if ((status < 500) && (status > 599))
+   if ((status < 500) || (status > 599))
      {
         DBG("HTTP error %d reset to 1", status);
         status = 1; /* not a real HTTP error */
@@ -1337,7 +1337,7 @@ _ecore_con_url_timeout_cb(void *data)
    WRN("HTTP timeout url='%s'", efl_net_dialer_address_dial_get(url_con->dialer));
 
    status = efl_net_dialer_http_response_status_get(url_con->dialer);
-   if ((status < 500) && (status > 599))
+   if ((status < 500) || (status > 599))
      {
         DBG("HTTP error %d reset to 1", status);
         status = 1; /* not a real HTTP error */
