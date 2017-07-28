@@ -182,7 +182,6 @@ struct _Efl_Ui_Win_Data
    void *trap_data;
 
    double       aspect; /* defined as w/h or 0 */
-   int          aspect_w, aspect_h; /* used for the get API */
    int          size_base_w, size_base_h;
    int          size_step_w, size_step_h;
    int          max_w, max_h;
@@ -5703,21 +5702,11 @@ _win_aspect_get(Efl_Ui_Win_Data *sd)
 
 EOLIAN static void
 _efl_ui_win_efl_gfx_size_hint_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
-                                              Efl_Gfx_Size_Hint_Aspect mode EINA_UNUSED, int w, int h)
+                                              Efl_Gfx_Size_Hint_Aspect mode, int w, int h)
 {
-   pd->aspect_w = w;
-   pd->aspect_h = h;
    if (h) _win_aspect_set(pd, (double) w / (double) h);
    else _win_aspect_set(pd, 0.0);
-}
-
-EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_hint_aspect_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
-                                              Efl_Gfx_Size_Hint_Aspect *mode, int *w, int *h)
-{
-   if (mode) *mode = EFL_GFX_SIZE_HINT_ASPECT_NONE;
-   if (w) *w = pd->aspect_w;
-   if (h) *h = pd->aspect_h;
+   efl_gfx_size_hint_aspect_set(efl_super(obj, MY_CLASS), mode, w, h);
 }
 
 EOLIAN static void
