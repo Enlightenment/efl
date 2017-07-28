@@ -173,17 +173,16 @@ eina_array_accessor_free(Eina_Accessor_Array *it)
 }
 
 static Eina_Accessor *
-eina_array_accessor_clone(const Eina_Array *array)
+eina_array_accessor_clone(const Eina_Accessor_Array *it)
 {
    Eina_Accessor_Array *ac;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
-   EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it, NULL);
 
    ac = calloc(1, sizeof (Eina_Accessor_Array));
    if (!ac) return NULL;
 
-   memcpy(ac, array, sizeof(Eina_Accessor_Array));
+   memcpy(ac, it, sizeof(Eina_Accessor_Array));
 
    return &ac->accessor;
 }
