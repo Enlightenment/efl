@@ -458,6 +458,14 @@ color_classes {
       color: FN_COL_HIGHLIGHT;
       desc: "Multibuttoentry label";
    }
+   color_class { name: "bubble_text";
+      color: FN_COL_DEFAULT;
+      desc: "Bubble text";
+   }
+   color_class { name: "bubble_info";
+      color: FN_COL_DISABLE;
+      desc: "Bubble info";
+   }
    
 // modules
    color_class { name: "module_label";
