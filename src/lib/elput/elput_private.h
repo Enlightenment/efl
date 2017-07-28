@@ -231,6 +231,8 @@ struct _Elput_Device
 
    uint32_t ow, oh;
 
+   double absx, absy;
+
    const char *path;
    const char *output_name;
    struct libinput_device *device;
