@@ -11,6 +11,7 @@
 #include "elm_widget_layout.h"
 
 #define MY_CLASS EFL_UI_FRAME_CLASS
+#define MY_CLASS_PFX efl_ui_frame
 #define MY_CLASS_NAME "Efl.Ui.Frame"
 #define MY_CLASS_NAME_LEGACY "elm_frame"
 
@@ -178,18 +179,6 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
    elm_layout_sizing_eval(obj);
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_frame_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_frame_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
 EAPI Evas_Object *
 elm_frame_add(Evas_Object *parent)
 {
@@ -280,7 +269,12 @@ _efl_ui_frame_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define EFL_UI_FRAME_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_frame)
+   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_frame), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS()
 
 #include "efl_ui_frame.eo.c"

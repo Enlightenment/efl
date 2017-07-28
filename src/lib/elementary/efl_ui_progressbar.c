@@ -15,6 +15,7 @@
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_PROGRESSBAR_CLASS
+#define MY_CLASS_PFX efl_ui_progressbar
 
 #define MY_CLASS_NAME "Efl.Ui.Progressbar"
 #define MY_CLASS_NAME_LEGACY "elm_progressbar"
@@ -333,18 +334,6 @@ _efl_ui_progressbar_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Progressbar_Data 
       }
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_progressbar_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_progressbar_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
 }
 
 EAPI Evas_Object *
@@ -691,7 +680,12 @@ _efl_ui_progressbar_internal_part_efl_ui_range_range_value_get(Eo *obj, Elm_Part
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define EFL_UI_PROGRESSBAR_EXTRA_OPS \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"

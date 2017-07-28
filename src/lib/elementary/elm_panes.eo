@@ -121,7 +121,6 @@ class Elm.Panes (Elm.Layout, Efl.Orientation,
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
-      Elm.Layout.content_aliases { get; }
       Efl.Orientation.orientation { get; set; }
    }
    events {

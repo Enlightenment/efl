@@ -11,6 +11,7 @@
 #include "elm_widget_layout.h"
 
 #define MY_CLASS ELM_BG_CLASS
+#define MY_CLASS_PFX elm_bg
 
 #define MY_CLASS_NAME "Elm_Bg"
 #define MY_CLASS_NAME_LEGACY "elm_bg"
@@ -102,12 +103,6 @@ _elm_bg_efl_canvas_group_group_add(Eo *obj, Elm_Bg_Data *priv)
 
    if (!elm_layout_theme_set(obj, "bg", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_bg_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Bg_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
 }
 
 EAPI Evas_Object *
@@ -287,7 +282,10 @@ elm_bg_file_get(const Eo *obj, const char **file, const char **group)
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+
 #define ELM_BG_EXTRA_OPS \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_bg)
 
 #include "elm_bg.eo.c"

@@ -96,7 +96,6 @@ class Elm.Bg (Elm.Layout, Efl.File)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Layout.content_aliases { get; }
       Elm.Layout.sizing_eval;
       Efl.File.file { get; set; }
    }

@@ -15,6 +15,7 @@
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_BUBBLE_CLASS
+#define MY_CLASS_PFX elm_bubble
 
 #define MY_CLASS_NAME "Elm_Bubble"
 #define MY_CLASS_NAME_LEGACY "elm_bubble"
@@ -272,18 +273,6 @@ _elm_bubble_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Bubbl
    return EINA_TRUE;
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_bubble_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Bubble_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_bubble_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Bubble_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
-}
-
 EOLIAN static void
 _elm_bubble_class_constructor(Efl_Class *klass)
 {
@@ -296,9 +285,15 @@ ELM_PART_OVERRIDE_TEXT_SET(elm_bubble, ELM_BUBBLE, ELM_LAYOUT, Elm_Bubble_Data, 
 
 #include "elm_bubble_internal_part.eo.c"
 /* Efl.Part end */
+
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define ELM_BUBBLE_EXTRA_OPS \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_bubble)
 
 #include "elm_bubble.eo.c"

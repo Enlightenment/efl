@@ -65,24 +65,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
             style: string; [[The style to used.]]
          }
       }
-      @property text_aliases @protected {
-      	 [[Text aliases property]]
-         get {
-            legacy: null;
-         }
-         values {
-            aliases: ptr(const(Elm.Layout_Part_Alias_Description)); [[Text aliases]]
-         }
-      }
-      @property content_aliases @protected {
-      	 [[Content aliases property]]
-         get {
-            legacy: null;
-         }
-         values {
-            aliases: ptr(const(Elm.Layout_Part_Alias_Description)); [[Content aliases]]
-         }
-      }
       @property edje {
          get {
             [[Get the edje layout

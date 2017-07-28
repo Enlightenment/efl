@@ -13,6 +13,7 @@
 #include "elm_widget_layout.h"
 
 #define MY_CLASS EFL_UI_RADIO_CLASS
+#define MY_CLASS_PFX efl_ui_radio
 
 #define MY_CLASS_NAME "Efl.Ui.Radio"
 #define MY_CLASS_NAME_LEGACY "elm_radio"
@@ -256,12 +257,6 @@ _efl_ui_radio_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Radio_Data *sd)
    efl_canvas_group_del(efl_super(obj, EFL_UI_CHECK_CLASS));
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_radio_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
 EAPI Evas_Object *
 elm_radio_add(Evas_Object *parent)
 {
@@ -406,7 +401,10 @@ _efl_ui_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Radio
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define EFL_UI_RADIO_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_radio)
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_radio), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS()
 
 #include "efl_ui_radio.eo.c"

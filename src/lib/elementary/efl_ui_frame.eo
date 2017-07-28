@@ -60,8 +60,6 @@ class Efl.Ui.Frame (Elm.Layout, Efl.Ui.Clickable, Efl.Text)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
-      Elm.Layout.text_aliases { get; }
-      Elm.Layout.content_aliases { get; }
       Efl.Text.text { get; set; }
    }
 }

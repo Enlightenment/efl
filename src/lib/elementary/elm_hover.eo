@@ -72,7 +72,6 @@ class Elm.Hover (Elm.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action
       Elm.Widget.sub_object_del;
       Elm.Widget.focus_manager_factory;
       Elm.Layout.sizing_eval;
-      Elm.Layout.content_aliases { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
    }

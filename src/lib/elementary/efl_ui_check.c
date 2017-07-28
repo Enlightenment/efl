@@ -13,6 +13,7 @@
 #include "efl_ui_check_private.h"
 
 #define MY_CLASS EFL_UI_CHECK_CLASS
+#define MY_CLASS_PFX efl_ui_check
 
 #define MY_CLASS_NAME "Efl.Ui.Check"
 #define MY_CLASS_NAME_LEGACY "elm_check"
@@ -322,12 +323,6 @@ _efl_ui_check_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UN
    elm_layout_sizing_eval(obj);
 }
 
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_efl_ui_check_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *_pd EINA_UNUSED)
-{
-   return _text_aliases;
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_check_selected_get(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
@@ -433,7 +428,10 @@ _efl_ui_check_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+
 #define EFL_UI_CHECK_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_check)
+   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_check), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS()
 
 #include "efl_ui_check.eo.c"
