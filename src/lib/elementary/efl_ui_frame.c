@@ -209,6 +209,18 @@ _efl_ui_frame_efl_object_constructor(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static void
+_efl_ui_frame_efl_text_text_set(Eo *obj, Efl_Ui_Frame_Data *pd EINA_UNUSED, const char *text)
+{
+   efl_text_set(efl_part(obj, _text_aliases[0].real_part), text);
+}
+
+EOLIAN static const char *
+_efl_ui_frame_efl_text_text_get(Eo *obj, Efl_Ui_Frame_Data *pd EINA_UNUSED)
+{
+   return efl_text_get(efl_part(obj, _text_aliases[0].real_part));
+}
+
+EOLIAN static void
 _efl_ui_frame_autocollapse_set(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd, Eina_Bool autocollapse)
 {
 
