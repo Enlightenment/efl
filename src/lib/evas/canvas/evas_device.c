@@ -243,8 +243,6 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
           }
      }
 
-   // FIXME: All devices are in the same list, while evas only refs the seats
-   if (parent_dev) efl_ref(dev);
    e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 
