@@ -54,6 +54,7 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    int x, y, w, h;
    int depth, bpp;
    unsigned int format;
+   double offset;
    Ecore_Drm2_Context ctx;
    Ecore_Fd_Handler *hdlr;
    Ecore_Drm2_Device *dev;
@@ -61,6 +62,7 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    Evas_Device *seat;
    Eina_Bool pending : 1;
    Eina_Bool ticking : 1;
+   Eina_Bool once : 1;
 } Ecore_Evas_Engine_Drm_Data;
 
 static int _drm_init_count = 0;
@@ -623,7 +625,8 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
      {
         double t = (double)sec + ((double)usec / 1000000);
 
-        ecore_evas_animator_tick(ee, NULL, t);
+        if (!edata->once) t = ecore_time_get();
+        ecore_evas_animator_tick(ee, NULL, t - edata->offset);
      }
    else if (ret)
      {
@@ -650,13 +653,43 @@ _drm_evas_changed(Ecore_Evas *ee, Eina_Bool changed)
 static void
 _drm_animator_register(Ecore_Evas *ee)
 {
+   double t;
+   long sec, usec;
    Ecore_Evas_Engine_Drm_Data *edata;
+   Eina_Bool r;
 
    if (ee->manual_render)
      ERR("Attempt to schedule tick for manually rendered canvas");
 
    edata = ee->engine.data;
    edata->ticking = EINA_TRUE;
+
+   /* Some graphics stacks appear to lie about their clock sources
+    * so attempt to measure the difference between our clock and the
+    * GPU's source of timestamps once at startup and apply that.
+    * If it's tiny, just assume they're the same clock and it's
+    * measurement error.
+    *
+    * <cedric> what happen when you suspend ?
+    * <cedric> what about drift ?
+    *
+    * If someone could relay the message to cedric that I'm not
+    * talking to him anymore, that would be helpful.
+    */
+   if (!edata->once)
+     {
+        r = ecore_drm2_output_blanktime_get(edata->output, 1, &sec, &usec);
+        if (r)
+          {
+             t = (double)sec + ((double)usec / 1000000.0);
+             edata->offset = t - ecore_time_get();
+             if (fabs(edata->offset) < 0.010)
+               edata->offset = 0.0;
+
+             edata->once = EINA_TRUE;
+          }
+     }
+
    if (!edata->pending && !ee->in_async_render)
      {
         edata->pending = EINA_TRUE;
