@@ -1,5 +1,19 @@
 // === toolbar default base with scrolling arrows etc.
 group { name: "elm/toolbar/base/default";
+   styles {
+      style { name: "toolbar_item_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=toolbar_item color_class=toolbar_item left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "toolbar_item_disabled_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=toolbar_item color_class=toolbar_item_disabled left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "toolbar_item_active_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=glow text_class=toolbar_item color_class=toolbar_item_active left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "bevel_out.png" COMP;
    images.image: "shine.png" COMP;
@@ -592,8 +606,8 @@ group { name: "elm/toolbar/item/default";
             visible: 0;
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          clip_to: "text_clip1";
          description { state: "default" 0.0;
@@ -601,25 +615,27 @@ group { name: "elm/toolbar/item/default";
             rel1.relative: 0.0 1.0;
             rel2.offset: -5 -3;
             align: 0.5 1.0;
-            color: FN_COL_DEFAULT;
-            color_class: "toolbar_item";
-            text { font: FN; size: 10;
+            //color: FN_COL_DEFAULT;
+            //color_class: "toolbar_item";
+            text {
+               style: "toolbar_item_style";
+               //text_class: "toolbar_item";
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
-               text_class: "toolbar_item";
             }
             fixed: 0 1;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
             visible: 0;
-            color_class: "toolbar_item_selected";
+            //color_class: "toolbar_item_selected";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
+            //color: FN_COL_DISABLE;
+            //color_class: "toolbar_item_disabled";
+            text.style: "toolbar_item_disabled_style";
          }
          description { state: "noicon" 0.0;
             inherit: "default" 0.0;
@@ -628,8 +644,9 @@ group { name: "elm/toolbar/item/default";
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
+            text.style: "toolbar_item_disabled_style";
+            //color: FN_COL_DISABLE;
+            //color_class: "toolbar_item_disabled";
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -638,8 +655,8 @@ group { name: "elm/toolbar/item/default";
             fixed: 1 1;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: GLOW;
          scale: 1;
          clip_to: "text_clip1";
          description { state: "default" 0.0;
@@ -647,12 +664,12 @@ group { name: "elm/toolbar/item/default";
             rel1.to: "elm.text";
             rel2.offset: 2 1;
             rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "toolbar_item_active";
-            text { font: FN; size: 10;
+            //color: FN_COL_HIGHLIGHT;
+            //color_class: "toolbar_item_active";
+            text {
+               style: "toolbar_item_active_style";
                text_source: "elm.text";
                align: 0.5 0.5;
-               text_class: "toolbar_item";
             }
             visible: 0;
          }
@@ -684,8 +701,8 @@ group { name: "elm/toolbar/item/default";
             visible: 1;
          }
       }
-      part { name: "elm.text_new"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text_new"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          clip_to: "text_clip2";
          description { state: "default" 0.0;
@@ -693,25 +710,26 @@ group { name: "elm/toolbar/item/default";
             rel1.relative: 0.0 1.0;
             rel2.offset: -5 -3;
             align: 0.5 1.0;
-            color: FN_COL_DEFAULT;
-            color_class: "toolbar_item";
-            text { font: FN; size: 10;
+            //color: FN_COL_DEFAULT;
+            //color_class: "toolbar_item";
+            text {
+               style: "toolbar_item_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
-               text_class: "toolbar_item";
             }
             fixed: 0 1;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
             visible: 0;
-            color_class: "toolbar_item_selected";
+            //color_class: "toolbar_item_selected";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
+            //color: FN_COL_DISABLE;
+            //color_class: "toolbar_item_disabled";
+            text.style: "toolbar_item_disabled_style";
          }
          description { state: "noicon" 0.0;
             inherit: "default" 0.0;
@@ -720,8 +738,9 @@ group { name: "elm/toolbar/item/default";
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
+            //color: FN_COL_DISABLE;
+            //color_class: "toolbar_item_disabled";
+            text.style: "toolbar_item_disabled_style";
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -730,8 +749,8 @@ group { name: "elm/toolbar/item/default";
             fixed: 1 1;
          }
       }
-      part { name: "label2_new"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "label2_new"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: GLOW;
          scale: 1;
          clip_to: "text_clip2";
          description { state: "default" 0.0;
@@ -739,12 +758,12 @@ group { name: "elm/toolbar/item/default";
             rel1.to: "elm.text";
             rel2.offset: 2 1;
             rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "toolbar_item_active";
-            text { font: FN; size: 10;
+            //color: FN_COL_HIGHLIGHT;
+            //color_class: "toolbar_item_active";
+            text {
+               style: "toolbar_item_active_style";
                text_source: "elm.text";
                align: 0.5 0.5;
-               text_class: "toolbar_item";
             }
             visible: 0;
          }
@@ -1221,8 +1240,8 @@ group { name: "elm/toolbar/item/item_horizontal";
             visible: 0;
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          clip_to: "text_clip1";
          description { state: "default" 0.0;
@@ -1231,25 +1250,25 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel1.to_x: "elm.swallow.icon";
             rel2.offset: -5 -3;
             align: 0.0 0.5;
-            color: FN_COL_DEFAULT;
-            color_class: "toolbar_item";
-            text { font: FN; size: 10;
+            //color: FN_COL_DEFAULT;
+            //color_class: "toolbar_item";
+            text {
+               style: "toolbar_item_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.0 0.5;
-               text_class: "toolbar_item";
             }
             fixed: 0 1;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
             visible: 0;
-            color_class: "toolbar_item_selected";
+            //color_class: "toolbar_item_selected";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
+            //color: FN_COL_DISABLE;
+            //color_class: "toolbar_item_disabled";
          }
          description { state: "noicon" 0.0;
             inherit: "default" 0.0;
@@ -1261,8 +1280,8 @@ group { name: "elm/toolbar/item/item_horizontal";
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
+            //color: FN_COL_DISABLE;
+            //color_class: "toolbar_item_disabled";
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -1271,8 +1290,8 @@ group { name: "elm/toolbar/item/item_horizontal";
             fixed: 1 1;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: GLOW;
          scale: 1;
          clip_to: "text_clip1";
          description { state: "default" 0.0;
@@ -1280,10 +1299,11 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel1.to: "elm.text";
             rel2.offset: 2 1;
             rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "toolbar_item_active";
+            //color: FN_COL_HIGHLIGHT;
+            //color_class: "toolbar_item_active";
             align: 0.0 0.5;
-            text { font: FN; size: 10;
+            text {
+               style: "toolbar_item_active_style";
                text_source: "elm.text";
                align: 0.0 0.5;
                text_class: "toolbar_item";
@@ -1318,8 +1338,8 @@ group { name: "elm/toolbar/item/item_horizontal";
             visible: 1;
          }
       }
-      part { name: "elm.text_new"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text_new"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          clip_to: "text_clip2";
          description { state: "default" 0.0;
@@ -1328,9 +1348,10 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel1.to_x: "elm.swallow.icon";
             rel2.offset: -5 -3;
             align: 0.0 0.5;
-            color: FN_COL_DEFAULT;
-            color_class: "toolbar_item";
-            text { font: FN; size: 10;
+            //color: FN_COL_DEFAULT;
+            //color_class: "toolbar_item";
+            text {
+               style: "toolbar_item_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.0 0.5;
@@ -1341,12 +1362,12 @@ group { name: "elm/toolbar/item/item_horizontal";
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
             visible: 0;
-            color_class: "toolbar_item_selected";
+            //color_class: "toolbar_item_selected";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
+            //color: FN_COL_DISABLE;
+            //color_class: "toolbar_item_disabled";
          }
          description { state: "noicon" 0.0;
             inherit: "default" 0.0;
@@ -1356,8 +1377,8 @@ group { name: "elm/toolbar/item/item_horizontal";
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
+            //color: FN_COL_DISABLE;
+            //color_class: "toolbar_item_disabled";
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -1366,8 +1387,8 @@ group { name: "elm/toolbar/item/item_horizontal";
             fixed: 1 1;
          }
       }
-      part { name: "label2_new"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "label2_new"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: GLOW;
          scale: 1;
          clip_to: "text_clip2";
          description { state: "default" 0.0;
@@ -1376,9 +1397,10 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel1.to: "elm.text";
             rel2.offset: 2 1;
             rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "toolbar_item_active";
-            text { font: FN; size: 10;
+            //color: FN_COL_HIGHLIGHT;
+            //color_class: "toolbar_item_active";
+            text {
+               style: "toolbar_item_active_style";
                text_source: "elm.text";
                align: 0.0 0.5;
                text_class: "toolbar_item";

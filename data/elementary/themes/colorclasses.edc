@@ -442,6 +442,18 @@ color_classes {
       color: FN_COL_DEFAULT;
       desc: "Progress text";
    }
+   color_class { name: "toolbar_item";
+      color: FN_COL_DEFAULT;
+      desc: "Progress text";
+   }
+   color_class { name: "toolbar_item_disabled";
+      color: FN_COL_DISABLE;
+      desc: "Progress text";
+   }
+   color_class { name: "toolbar_item_active";
+      color: FN_COL_HIGHLIGHT;
+      desc: "Progress text";
+   }
    
 // modules
    color_class { name: "module_label";
