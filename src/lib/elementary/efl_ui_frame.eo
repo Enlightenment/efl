@@ -1,4 +1,4 @@
-class Efl.Ui.Frame (Elm.Layout, Efl.Ui.Clickable)
+class Efl.Ui.Frame (Elm.Layout, Efl.Ui.Clickable, Efl.Text)
 {
    [[Frame widget
 
@@ -62,5 +62,6 @@ class Efl.Ui.Frame (Elm.Layout, Efl.Ui.Clickable)
       Elm.Widget.focus_direction_manager_is;
       Elm.Layout.text_aliases { get; }
       Elm.Layout.content_aliases { get; }
+      Efl.Text.text { get; set; }
    }
 }
