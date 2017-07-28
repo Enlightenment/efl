@@ -306,7 +306,6 @@ _efl_net_ssl_context_efl_object_finalize(Eo *o, Efl_Net_Ssl_Context_Data *pd)
    cfg.private_keys = &pd->private_keys;
    cfg.certificate_revocation_lists = &pd->certificate_revocation_lists;
    cfg.certificate_authorities = &pd->certificate_authorities;
-   cfg.load_defaults = pd->load_defaults;
 
    err = efl_net_ssl_ctx_setup(&pd->ssl_ctx, cfg);
    if (err)
