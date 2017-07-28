@@ -41,7 +41,7 @@ main(int argc, char *argv[])
    buf = eina_strbuf_new();
    for (i = 1; i < argc; i++)
      {
-        eina_strbuf_append(buf, argv[i]);
+        eina_strbuf_append_escaped(buf, argv[i]);
         if (i + 1 < argc) eina_strbuf_append_char(buf, ' ');
      }
 
