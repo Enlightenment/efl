@@ -166,6 +166,7 @@ _device_event_cb_free(void *data EINA_UNUSED, void *event)
 
    ev = event;
 
+   ev->device->refs--;
    if (ev->type == ELPUT_DEVICE_REMOVED)
      {
         Elput_Seat *seat;
@@ -174,7 +175,6 @@ _device_event_cb_free(void *data EINA_UNUSED, void *event)
         if (seat)
           seat->devices = eina_list_remove(seat->devices, ev->device);
 
-        ev->device->refs--;
         _evdev_device_destroy(ev->device);
      }
 
