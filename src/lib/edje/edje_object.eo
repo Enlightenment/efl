@@ -4,7 +4,8 @@ import edje_types;
 
 class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                    Efl.Observer, Efl.Ui.Base, Efl.Canvas.Layout_Calc,
-                   Efl.Canvas.Layout_Signal, Efl.Canvas.Layout_Group)
+                   Efl.Canvas.Layout_Signal, Efl.Canvas.Layout_Group,
+                   Efl.Player)
 {
    [[Edje object class]]
    legacy_prefix: edje_object;
@@ -20,7 +21,7 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
 
            If animations are disabled, transitions between states (as
            defined in EDC) are then instantaneous. This is conceptually similar
-           to setting the @.transition_duration_factor to an infinitely high
+           to setting the @Efl.Player.play_speed to an infinitely high
            value.
          ]]
          get {
@@ -31,30 +32,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
          values {
             on: bool; [[The animation state, $true by default.]]
-         }
-      }
-      @property play {
-         [[Whether this object is playing or not.
-
-           This property indicates whether the object is running or not. If
-           stopped (or paused), all transitions are disabled and programs
-           stop running, until resumed.
-
-           If play is disabled, the object will remain the same, and its parts
-           will not change state. Note that play can be disabled during a
-           transition between states, effectively freezing the object in
-           flight. When paused, no events will be processed or sent.
-
-           Setting to $true resumes playing from the current state.
-         ]]
-         get {
-            [[Get the current state of play, $true by default.]]
-         }
-         set {
-            [[Start or stop playing programs in this object.]]
-         }
-         values {
-            play: bool; [[The play state, $true by default.]]
          }
       }
       @property perspective {
@@ -85,23 +62,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
             values {
                 ps: ptr(const(Edje.Perspective)); [[The perspective object that will be used.]]
             }
-         }
-      }
-      @property transition_duration_factor {
-         [[Transition duration factor.
-
-           This defines a multiplier for the duration of transitions as they
-           are defined in EDC. By default this factor is 1.0, which means
-           animations play at the same speed as described in EDC.
-         ]]
-         set {
-            [[Sets transition duration factor.]]
-         }
-         get {
-            [[Gets transition duration factor.]]
-         }
-         values {
-            scale: double(1.0); [[The transition duration factor.]]
          }
       }
 
@@ -832,6 +792,9 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       Efl.Container.content_remove;
       Efl.Part.part;
       Efl.Observer.update;
+      Efl.Player.playable { get; }
+      Efl.Player.play { get; set; }
+      Efl.Player.play_speed { get; set; }
    }
    events {
       recalc; [[Edje re-calculated the object.]]

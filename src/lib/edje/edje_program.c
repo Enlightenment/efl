@@ -213,19 +213,6 @@ edje_transition_duration_factor_set(double scale)
    _edje_transition_duration_scale = FROM_DOUBLE(scale);
 }
 
-EOLIAN void
-_edje_object_transition_duration_factor_set(Eo *obj EINA_UNUSED,
-                                            Edje *pd, double scale)
-{
-   pd->duration_scale = scale;
-}
-
-EOLIAN double
-_edje_object_transition_duration_factor_get(Eo *obj EINA_UNUSED, Edje *pd)
-{
-   return pd->duration_scale;
-}
-
 static inline Eina_Bool
 _edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
 {
@@ -295,54 +282,6 @@ _edje_object_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Edje *ed,
    if (ed->delete_me) return;
    if ((!emission) || (!source)) return;
    _edje_emit(ed, emission, source);
-}
-
-/* FIXDOC: Verify/Expand */
-EOLIAN void
-_edje_object_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
-{
-   double t;
-   Eina_List *l;
-   Edje_Running_Program *runp;
-   unsigned short i;
-
-   if (!ed) return;
-   if (ed->delete_me) return;
-   if (play)
-     {
-        if (!ed->paused) return;
-        ed->paused = EINA_FALSE;
-        t = ecore_time_get() - ed->paused_at;
-        EINA_LIST_FOREACH(ed->actions, l, runp)
-          runp->start_time += t;
-     }
-   else
-     {
-        if (ed->paused) return;
-        ed->paused = EINA_TRUE;
-        ed->paused_at = ecore_time_get();
-     }
-
-   for (i = 0; i < ed->table_parts_size; i++)
-     {
-        Edje_Real_Part *rp;
-        rp = ed->table_parts[i];
-        if ((rp->part->type == EDJE_PART_TYPE_GROUP) &&
-            ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
-             (rp->typedata.swallow)) &&
-            (rp->typedata.swallow->swallowed_object))
-          edje_object_play_set(rp->typedata.swallow->swallowed_object, play);
-     }
-}
-
-EOLIAN Eina_Bool
-_edje_object_play_get(Eo *obj EINA_UNUSED, Edje *ed)
-{
-   if (!ed) return EINA_FALSE;
-   if (ed->delete_me) return EINA_FALSE;
-   if (ed->paused) return EINA_FALSE;
-
-   return EINA_TRUE;
 }
 
 /* FIXDOC: Verify/Expand */

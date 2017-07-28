@@ -1121,3 +1121,31 @@ edje_object_calc_force(Edje_Object *obj)
 {
    efl_canvas_layout_calc_force(obj);
 }
+
+EAPI void
+edje_object_play_set(Evas_Object *obj, Eina_Bool play)
+{
+   efl_player_play_set(obj, play);
+}
+
+EAPI Eina_Bool
+edje_object_play_get(const Evas_Object *obj)
+{
+   return efl_player_play_get(obj);
+}
+
+EAPI void
+edje_object_transition_duration_factor_set(Evas_Object *obj, double scale)
+{
+   if (scale <= 0.0) return;
+   efl_player_play_speed_set(obj, 1.0/scale);
+}
+
+EAPI double
+edje_object_transition_duration_factor_get(const Evas_Object *obj)
+{
+   double speed = efl_player_play_speed_get(obj);
+
+   if (speed <= 0.0) speed = 1.0;
+   return 1.0/speed;
+}
