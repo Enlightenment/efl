@@ -1516,7 +1516,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                                                        pdata->seat->x,
                                                        pdata->seat->y);
         /* free our old list of ins */
-        pdata->seat->object.in = eina_list_free(pdata->seat->object.in);
+        eina_list_free(pdata->seat->object.in);
         /* and set up the new one */
         pdata->seat->object.in = ins;
         /* adjust grabbed count by the nuymber of currently held down
@@ -2594,7 +2594,7 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
           }
      }
    /* free our old list of ins */
-   pdata->seat->object.in = eina_list_free(pdata->seat->object.in);
+   eina_list_free(pdata->seat->object.in);
    /* and set up the new one */
    pdata->seat->object.in = ins;
    _evas_post_event_callback_call(eo_e, e, event_id);
