@@ -436,7 +436,7 @@ evas_image_load_file_head_bmp(void *loader_data,
           }
         else if (header.comp == 4) // jpeg - only printer drivers
           goto close_file;
-        else if (header.comp == 3) // png - only printer drivers
+        else if (header.comp == 5) // png - only printer drivers
           goto close_file;
         else
           goto close_file;
@@ -1405,7 +1405,7 @@ evas_image_load_file_data_bmp(void *loader_data,
           {
              goto close_file;
           }
-        else if (header.comp == 3) // png - only printer drivers
+        else if (header.comp == 5) // png - only printer drivers
           {
              goto close_file;
           }
