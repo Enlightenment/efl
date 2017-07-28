@@ -130,14 +130,12 @@ _elm_table_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   Evas_Coord minw = 0, minh = 0, maxw = -1, maxh = -1;
+   Evas_Coord minw = 0, minh = 0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_gfx_size_hint_combined_min_get(wd->resize_obj, &minw, &minh);
-   evas_object_size_hint_max_get(wd->resize_obj, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
 static void
