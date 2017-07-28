@@ -322,9 +322,11 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
         if (pd->recv.used > 0) pd->pending_eos = EINA_TRUE;
         else
           {
-             efl_io_reader_eos_set(dialer, EINA_TRUE);
              if (!efl_io_closer_closed_get(dialer))
-               efl_io_closer_close(dialer);
+               {
+                  efl_io_reader_eos_set(dialer, EINA_TRUE);
+                  efl_io_closer_close(dialer);
+               }
           }
 
         _efl_net_dialer_http_curlm_check_finished_object_remove(&finished, dialer);
