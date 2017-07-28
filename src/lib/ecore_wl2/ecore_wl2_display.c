@@ -95,6 +95,136 @@ static const struct zwp_e_session_recovery_listener _session_listener =
 };
 
 static void
+_aux_hints_supported_aux_hints(void *data, struct efl_aux_hints *aux_hints EINA_UNUSED, struct wl_surface *surface_resource, struct wl_array *hints, uint32_t num_hints)
+{
+   Ecore_Wl2_Display *ewd = data;
+   struct wl_surface *surface = surface_resource;
+   Ecore_Wl2_Window *win = NULL;
+   char *p = NULL;
+   char **str = NULL;
+   const char *hint = NULL;
+   unsigned int i = 0;
+   Ecore_Wl2_Event_Aux_Hint_Supported *ev;
+
+   if (!surface) return;
+   win = _ecore_wl2_display_window_surface_find(ewd, surface_resource);
+   if (!win) return;
+
+   p = hints->data;
+   str = calloc(num_hints, sizeof(char *));
+   if (!str) return;
+
+   while ((const char *)p < ((const char *)hints->data + hints->size))
+     {
+        str[i] = (char *)eina_stringshare_add(p);
+        p += strlen(p) + 1;
+        i++;
+     }
+   for (i = 0; i < num_hints; i++)
+     {
+        hint = eina_stringshare_add(str[i]);
+        win->supported_aux_hints =
+               eina_list_append(win->supported_aux_hints, hint);
+     }
+   if (str)
+     {
+        for (i = 0; i < num_hints; i++)
+          {
+             if (str[i])
+               {
+                  eina_stringshare_del(str[i]);
+                  str[i] = NULL;
+               }
+          }
+        free(str);
+     }
+
+   if (!(ev = calloc(1, sizeof(Ecore_Wl2_Event_Aux_Hint_Supported)))) return;
+   ev->win = win->id;
+   ev->display = ewd;
+   ewd->refs++;
+   ecore_event_add(ECORE_WL2_EVENT_AUX_HINT_SUPPORTED, ev, _display_event_free, NULL);
+}
+
+static void
+_aux_hints_allowed_aux_hint(void *data, struct efl_aux_hints *aux_hints  EINA_UNUSED, struct wl_surface *surface_resource, int id)
+{
+   struct wl_surface *surface = surface_resource;
+   Ecore_Wl2_Window *win = NULL;
+   Ecore_Wl2_Display *ewd = data;
+   Ecore_Wl2_Event_Aux_Hint_Allowed *ev;
+
+   if (!surface) return;
+   win = _ecore_wl2_display_window_surface_find(ewd, surface_resource);
+   if (!win) return;
+
+   if (!(ev = calloc(1, sizeof(Ecore_Wl2_Event_Aux_Hint_Allowed)))) return;
+   ev->win = win->id;
+   ev->id = id;
+   ev->display = ewd;
+   ewd->refs++;
+   ecore_event_add(ECORE_WL2_EVENT_AUX_HINT_ALLOWED, ev, _display_event_free, NULL);
+}
+
+ static void
+_cb_aux_message_free(void *data EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Aux_Message *ev;
+   char *str;
+
+   ev = event;
+   ecore_wl2_display_disconnect(ev->display);
+   eina_stringshare_del(ev->key);
+   eina_stringshare_del(ev->val);
+   EINA_LIST_FREE(ev->options, str)
+      eina_stringshare_del(str);
+   free(ev);
+}
+
+ static void
+_aux_hints_aux_message(void *data, struct efl_aux_hints *aux_hints EINA_UNUSED, struct wl_surface *surface_resource, const char *key, const char *val, struct wl_array *options)
+{
+   Ecore_Wl2_Window *win = NULL;
+   Ecore_Wl2_Event_Aux_Message *ev;
+   char *p = NULL, *str = NULL;
+   Eina_List *opt_list = NULL;
+   Ecore_Wl2_Display *ewd = data;
+
+   if (!surface_resource) return;
+   win = _ecore_wl2_display_window_surface_find(ewd, surface_resource);
+   if (!win) return;
+
+   if (!(ev = calloc(1, sizeof(Ecore_Wl2_Event_Aux_Message)))) return;
+
+   if ((options) && (options->size))
+     {
+        p = options->data;
+        while ((const char *)p < ((const char *)options->data + options->size))
+          {
+             str = (char *)eina_stringshare_add(p);
+             opt_list = eina_list_append(opt_list, str);
+             p += strlen(p) + 1;
+          }
+     }
+
+   ev->win = win->id;
+   ev->key = eina_stringshare_add(key);
+   ev->val = eina_stringshare_add(val);
+   ev->options = opt_list;
+   ev->display = ewd;
+   ewd->refs++;
+
+   ecore_event_add(ECORE_WL2_EVENT_AUX_MESSAGE, ev, _cb_aux_message_free, NULL);
+}
+
+static const struct efl_aux_hints_listener _aux_hints_listener =
+{
+   _aux_hints_supported_aux_hints,
+   _aux_hints_allowed_aux_hint,
+   _aux_hints_aux_message,
+};
+
+static void
 _cb_global_event_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Global *ev;
@@ -185,6 +315,16 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
                            &zwp_e_session_recovery_interface, 1);
         zwp_e_session_recovery_add_listener(ewd->wl.session_recovery,
                                             &_session_listener, ewd);
+     }
+   else if (!strcmp(interface, "efl_aux_hints"))
+     {
+        Ecore_Wl2_Window *window;
+        ewd->wl.efl_aux_hints =
+          wl_registry_bind(registry, id,
+                           &efl_aux_hints_interface, 1);
+        efl_aux_hints_add_listener(ewd->wl.efl_aux_hints, &_aux_hints_listener, ewd);
+        EINA_INLIST_FOREACH(ewd->windows, window)
+          if (window->surface) efl_aux_hints_get_supported_aux_hints(ewd->wl.efl_aux_hints, window->surface);
      }
    else if (!strcmp(interface, "zwp_teamwork"))
      {
@@ -296,6 +436,7 @@ _ecore_wl2_display_globals_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.compositor) wl_compositor_destroy(ewd->wl.compositor);
    if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
    if (ewd->wl.dmabuf) zwp_linux_dmabuf_v1_destroy(ewd->wl.dmabuf);
+   if (ewd->wl.efl_aux_hints) efl_aux_hints_destroy(ewd->wl.efl_aux_hints);
 
    if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
 }

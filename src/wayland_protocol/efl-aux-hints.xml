@@ -1,0 +1,39 @@
+<protocol name="efl_aux_hints">
+
+  <interface name="efl_aux_hints" version="1">
+    <request name="add_aux_hint">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="id" type="int"/>
+      <arg name="hint" type="string"/>
+      <arg name="val" type="string"/>
+    </request>
+    <request name="change_aux_hint">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="id" type="int"/>
+      <arg name="val" type="string"/>
+    </request>
+    <request name="del_aux_hint">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="id" type="int"/>
+    </request>
+    <request name="get_supported_aux_hints">
+      <arg name="surface" type="object" interface="wl_surface"/>
+    </request>
+    <event name="supported_aux_hints">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="hints" type="array"/>
+      <arg name="num_hints" type="uint"/>
+    </event>
+    <event name="allowed_aux_hint">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="id" type="int"/>
+    </event>
+    <event name="aux_message">
+      <arg name="surface" type="object" interface="wl_surface"/>
+      <arg name="key" type="string"/>
+      <arg name="val" type="string"/>
+      <arg name="options" type="array"/>
+    </event>
+  </interface>
+
+</protocol>
