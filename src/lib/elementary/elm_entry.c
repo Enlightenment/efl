@@ -4177,7 +4177,7 @@ elm_entry_entry_set(Evas_Object *obj,
                     const char *entry)
 {
    ELM_ENTRY_CHECK(obj);
-   efl_text_set(efl_part(efl_super(obj, MY_CLASS), "elm.text"), entry);
+   efl_text_set(efl_part(obj, "elm.text"), entry);
 }
 
 EAPI const char *
