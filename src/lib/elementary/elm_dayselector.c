@@ -310,8 +310,6 @@ _elm_dayselector_content_unset(Eo *obj, Elm_Dayselector_Data *sd, const char *it
    it = _item_find(obj, day);
    if (!it) return NULL;
 
-   content = VIEW(it);
-
    content = efl_content_unset(efl_part(efl_super(obj, MY_CLASS), buf));
    if (!content) return NULL;
 
