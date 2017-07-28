@@ -3134,6 +3134,7 @@ shell_surface_popup_impl_destroy(struct wl_resource *resource)
    Comp_Seat *s;
 
    cs->role = NULL;
+   evas_object_hide(cs->obj);
    cs->shell.popup = 0;
    EINA_LIST_FREE(cs->shell.grabs, s)
      if (s->grab == cs)
@@ -3147,7 +3148,6 @@ shell_surface_popup_impl_destroy(struct wl_resource *resource)
    if (cs->children)
      wl_resource_post_error(cs->shell.surface, ZXDG_SHELL_V6_ERROR_DEFUNCT_SURFACES,
                             "popups dismissed out of order");
-   evas_object_hide(cs->obj);
    if (cs->parent)
      comp_surface_reparent(cs, NULL);
 }
