@@ -466,6 +466,18 @@ color_classes {
       color: FN_COL_DISABLE;
       desc: "Bubble info";
    }
+   color_class { name: "list_item";
+      color: FN_COL_DEFAULT;
+      desc: "Text of an inactive list item";
+   }
+   color_class { name: "list_item_selected";
+      color: FN_COL_HIGHLIGHT;
+      desc: "Text of an active list item";
+   }
+   color_class { name: "list_item_disabled";
+      color: FN_COL_DISABLE;
+      desc: "Text of a disabled list item";
+   }
    
 // modules
    color_class { name: "module_label";

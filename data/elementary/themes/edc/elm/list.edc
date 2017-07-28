@@ -114,6 +114,20 @@
    }
 
 group { name: "elm/list/item/default";
+   styles {
+      style { name: "list_item_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=list_item color_class=list_item left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "list_item_disabled_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=list_item color_class=list_item_disabled left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "list_item_selected_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=glow text_class=list_item color_class=list_item_selected left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    images.image: "bevel_curved_horiz_out.png" COMP;
@@ -224,8 +238,8 @@ group { name: "elm/list/item/default";
       }
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 2 3;
@@ -234,13 +248,13 @@ group { name: "elm/list/item/default";
             rel2.offset: -3 -3;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.end";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
-            text { font: FN; size: 10;
+            //color: FN_COL_DEFAULT;
+            //color_class: "list_item";
+            text {
+               style: "list_item_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.0 0.5;
-               text_class: "list_item";
             }
          }
          description { state: "selected" 0.0;
@@ -252,18 +266,18 @@ group { name: "elm/list/item/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to: "elm.text";
             rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
+            //color: FN_COL_DISABLE;
+            //color_class: "list_item_disabled";
+            text {
+               style: "list_item_disabled_style";
                text_source: "elm.text";
                align: 0.0 0.5;
-               text_class: "list_item";
             }
             visible: 0;
          }
@@ -276,20 +290,20 @@ group { name: "elm/list/item/default";
             visible: 1;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "label3"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: 1 1;
             rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
+            //color: FN_COL_HIGHLIGHT;
+            //color_class: "list_item_selected";
+            text {
+               style: "list_item_selected_style";
                text_source: "elm.text";
                align: 0.0 0.5;
-               text_class: "list_item";
             }
             visible: 0;
          }
@@ -535,8 +549,8 @@ group { name: "elm/list/h_item/default";
       }
 
       //##//
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 2 2;
@@ -545,13 +559,13 @@ group { name: "elm/list/h_item/default";
             rel2.offset: -3 -3;
             rel2.relative: 1.0 0.0;
             rel2.to_y: "elm.swallow.end";
-            color: FN_COL_DEFAULT;
-            color_class: "list_item";
-            text { font: FN; size: 10;
+            //color: FN_COL_DEFAULT;
+            //color_class: "list_item";
+            text {
+               style: "list_item_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
-               text_class: "list_item";
             }
          }
          description { state: "selected" 0.0;
@@ -563,18 +577,18 @@ group { name: "elm/list/h_item/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to: "elm.text";
             rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "list_item_disabled";
-            text { font: FN; size: 10;
+            //color: FN_COL_DISABLE;
+            //color_class: "list_item_disabled";
+            text {
+               style: "list_item_disabled_style";
                text_source: "elm.text";
                align: 0.5 0.5;
-               text_class: "list_item";
             }
             visible: 0;
          }
@@ -587,20 +601,20 @@ group { name: "elm/list/h_item/default";
             visible: 1;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "label3"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: 1 1;
             rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "list_item_selected";
-            text { font: FN; size: 10;
+            //color: FN_COL_HIGHLIGHT;
+            //color_class: "list_item_selected";
+            text {
+               style: "list_item_selected_style";
                text_source: "elm.text";
                align: 0.5 0.5;
-               text_class: "list_item";
             }
             visible: 0;
          }
