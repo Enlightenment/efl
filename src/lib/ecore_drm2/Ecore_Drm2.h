@@ -1079,15 +1079,20 @@ EAPI void ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Stat
 /**
  * Get the time of the last vblank
  *
- * Query the display hardware for the time of the last vblank.
+ * Query the display hardware for the time of a vblank, potentially blocking.
+ *
+ * If sequence is 0 the time of the last vblank will be immediately returned,
+ * if it's above zero that number of vblanks will pass before the function
+ * returns.
  *
  * @param output
+ * @param sequence
  * @param sec
  * @param usec
  *
  * @since 1.20
  */
-EAPI Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, long *sec, long *usec);
+EAPI Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec);
 
 # endif
 

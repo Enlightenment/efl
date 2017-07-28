@@ -1584,7 +1584,7 @@ ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output)
 }
 
 EAPI Eina_Bool
-ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, long *sec, long *usec)
+ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec)
 {
   drmVBlank v;
   int ret;
@@ -1595,6 +1595,7 @@ ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, long *sec, long *usec
 
   memset(&v, 0, sizeof(v));
   v.request.type = DRM_VBLANK_RELATIVE;
+  v.request.sequence = sequence;
   ret = sym_drmWaitVBlank(output->fd, &v);
   if (ret) return EINA_FALSE;
   if (v.reply.tval_sec < 0) return EINA_FALSE;
