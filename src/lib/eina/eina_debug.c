@@ -437,6 +437,7 @@ static Eina_Debug_Session *
 _session_create(int fd)
 {
    Eina_Debug_Session *session = calloc(1, sizeof(*session));
+   if (!session) return NULL;
    session->dispatch_cb = eina_debug_dispatch;
    session->fd = fd;
    // start the monitor thread
