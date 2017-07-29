@@ -167,7 +167,7 @@ _efl_net_server_tcp_efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Tcp_
       char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
       Eina_Bool listening;
       Eina_Error err;
-      struct sockaddr_storage *addr;
+      struct sockaddr_storage addr;
       socklen_t addrlen;
       SOCKET fd;
 

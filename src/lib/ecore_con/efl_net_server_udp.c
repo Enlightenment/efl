@@ -213,7 +213,7 @@ _efl_net_server_udp_efl_net_server_fd_socket_activate(Eo *o, Efl_Net_Server_Udp_
    {
       char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
       Eina_Error err;
-      struct sockaddr_storage *addr;
+      struct sockaddr_storage addr;
       socklen_t addrlen;
       SOCKET fd;
 
