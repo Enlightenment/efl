@@ -52,7 +52,7 @@ _eeze_disk_type_find(Eeze_Disk *disk)
         if (!strcmp(test, "usb")) return EEZE_DISK_TYPE_USB;
         return EEZE_DISK_TYPE_UNKNOWN; /* FIXME */
      }
-   if ((!test) && (!filesystem))
+   if (!filesystem)
      test = _walk_children_get_attr(disk->syspath, "ID_BUS", "block", EINA_TRUE);
    if (!test)
      {
