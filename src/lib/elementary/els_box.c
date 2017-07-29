@@ -278,13 +278,13 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
              evas_object_size_hint_max_get(opt->obj, &mnw, &mnh);
              if (mnh >= 0)
                {
-                  if (mnh >= 0) mnh += pad_t + pad_b;
+                  mnh += pad_t + pad_b;
                   if (maxh == -1) maxh = mnh;
                   else if (maxh > mnh) maxh = mnh;
                }
              if (mnw >= 0)
                {
-                  if (mnw >= 0) mnw += pad_l + pad_r;
+                  mnw += pad_l + pad_r;
                   if (maxw == -1) maxw = mnw;
                   else if (maxw > mnw) maxw = mnw;
                }
