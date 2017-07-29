@@ -1638,7 +1638,7 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
         return ((cw > 0) && (ch > 0));
      }
 
-   if (!obj || !obj->cur->clipper) return EINA_TRUE;
+   if (!obj->cur->clipper) return EINA_TRUE;
 
    clipper = obj->cur->clipper;
    if (!clipper->cur->visible) return EINA_FALSE;
