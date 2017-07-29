@@ -891,10 +891,9 @@ _popup_menu_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      {
         if (pd->editable)
           {
-             if (pd->editable)
-               elm_hoversel_item_add
-                 (pd->hoversel, "Paste", NULL, ELM_ICON_NONE,
-                 _popup_menu_paste_cb, obj);
+             elm_hoversel_item_add
+               (pd->hoversel, "Paste", NULL, ELM_ICON_NONE,
+                _popup_menu_paste_cb, obj);
 
           }
         else
