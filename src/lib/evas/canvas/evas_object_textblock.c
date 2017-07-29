@@ -9896,7 +9896,7 @@ _evas_textblock_cursor_break_paragraph(Efl_Text_Cursor_Cursor *cur,
    o->text_nodes = _NODE_TEXT(eina_inlist_append_relative(
                    EINA_INLIST_GET(o->text_nodes),
                    EINA_INLIST_GET(n),
-                   EINA_INLIST_GET(cur->node)));
+                   cur->node ? EINA_INLIST_GET(cur->node) : NULL));
    /* Handle text and format changes. */
    if (cur->node)
      {
