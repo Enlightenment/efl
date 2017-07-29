@@ -941,7 +941,7 @@ command(void)
 		error(8);	/* invalid/non-constant expression */
 	     fline = (int)val;
 
-	     while (*lptr == ' ' && *lptr != '\0')
+	     while (*lptr == ' ')
 	        lptr++;			/* skip whitespace */
 	     if (*lptr == '"')
                {
