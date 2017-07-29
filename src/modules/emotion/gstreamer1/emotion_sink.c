@@ -162,7 +162,7 @@ emotion_video_sink_dispose(GObject* object)
      }
    if (priv->last_buffer)
      {
-        if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
+        gst_buffer_unref(priv->last_buffer);
         priv->last_buffer = NULL;
      }
 
@@ -264,7 +264,7 @@ emotion_video_sink_stop(GstBaseSink* base_sink)
         if (priv->mapped)
           gst_buffer_unmap(priv->last_buffer, &(priv->map_info));
         priv->mapped = EINA_FALSE;
-        if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
+        gst_buffer_unref(priv->last_buffer);
         priv->last_buffer = NULL;
      }
 
