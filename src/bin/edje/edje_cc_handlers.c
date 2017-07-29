@@ -15959,7 +15959,6 @@ edje_cc_handlers_wildcard(void)
              Eina_Bool ret;
 
              if (!had_quote) return EINA_FALSE;
-             free((void*)current_part->name);
              current_part->name = token;
              ret = _part_name_check();
              if (ret)
