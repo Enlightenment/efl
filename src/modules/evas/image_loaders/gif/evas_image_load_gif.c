@@ -738,9 +738,9 @@ open_file:
                               memcpy(thisframe->data, prevframe2->data,
                                      prop->w * prop->h * sizeof(DATA32));
                          }
+                       finfo = thisframe->info;
                     }
                   // now draw this frame on top
-                  finfo = thisframe->info;
                   _clip_coords(prop->w, prop->h, &xin, &yin,
                                finfo->x, finfo->y, finfo->w, finfo->h,
                                &x, &y, &w, &h);
