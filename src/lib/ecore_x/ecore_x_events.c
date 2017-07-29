@@ -1004,7 +1004,6 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
      e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
 
    e->time = _ecore_x_event_last_time;
-   _ecore_x_event_last_time = e->time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_IN, e, NULL, NULL);
 }
 
@@ -1048,7 +1047,6 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
      e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
 
    e->time = _ecore_x_event_last_time;
-   _ecore_x_event_last_time = e->time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_OUT, e, NULL, NULL);
 }
 
