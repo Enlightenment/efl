@@ -582,13 +582,13 @@ eng_image_size_get(void *engine EINA_UNUSED, void *image, int *w, int *h)
        im->orient == EVAS_IMAGE_FLIP_TRANSPOSE ||
        im->orient == EVAS_IMAGE_FLIP_TRANSVERSE)
      {
-        if (w) *w = im->h;
-        if (h) *h = im->w;
+        *w = im->h;
+        *h = im->w;
      }
    else
      {
-        if (w) *w = im->w;
-        if (h) *h = im->h;
+        *w = im->w;
+        *h = im->h;
      }
 }
 
