@@ -296,11 +296,11 @@ eeze_disk_scan(Eeze_Disk *disk)
    if (!disk->cache.vendor)
      disk->cache.vendor = udev_device_get_property_value(disk->device, "ID_VENDOR");
    if (!disk->cache.vendor)
-     if (!disk->cache.vendor) disk->cache.vendor = udev_device_get_sysattr_value(disk->device, "vendor");
+     disk->cache.vendor = udev_device_get_sysattr_value(disk->device, "vendor");
    if (!disk->cache.model)
      disk->cache.model = udev_device_get_property_value(disk->device, "ID_MODEL");
    if (!disk->cache.model)
-     if (!disk->cache.model) disk->cache.model = udev_device_get_sysattr_value(disk->device, "model");
+     disk->cache.model = udev_device_get_sysattr_value(disk->device, "model");
    if (!disk->cache.serial)
      disk->cache.serial = udev_device_get_property_value(disk->device, "ID_SERIAL_SHORT");
    if (!disk->cache.uuid)
