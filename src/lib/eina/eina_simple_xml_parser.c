@@ -351,9 +351,7 @@ eina_simple_xml_parse(const char *buf, unsigned buflen, Eina_Bool strip, Eina_Si
                             type = EINA_SIMPLE_XML_CDATA;
                             toff = sizeof("![CDATA[") - 1;
                          }
-                       else if ((itr + sizeof("<!>") - 1 < itr_end) &&
-                                (!memcmp(itr + 2, "",
-                                         sizeof("") - 1)))
+                       else if (itr + sizeof("<!>") - 1 < itr_end)
                          {
                             type = EINA_SIMPLE_XML_DOCTYPE_CHILD;
                             toff = sizeof("!") - 1;
