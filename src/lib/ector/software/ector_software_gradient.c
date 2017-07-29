@@ -408,8 +408,11 @@ fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int lengt
       }
     else
       {
-         if (t + inc*length < (float)(INT_MAX >> (FIXPT_BITS + 1)) &&
-             t+inc*length > (float)(INT_MIN >> (FIXPT_BITS + 1)))
+         const int vmax = INT_MAX >> (FIXPT_BITS + 1);
+         const int vmin = -vmin;
+         float v = t + (inc *length);
+
+         if ((v < (float)vmax) && (v > (float)(vmin)))
            {
               // we can use fixed point math
               t_fixed = (int)(t * FIXPT_SIZE);
