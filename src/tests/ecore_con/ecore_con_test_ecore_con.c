@@ -520,6 +520,7 @@ START_TEST(ecore_test_ecore_con_shutdown_bef_init)
 {
    int ret;
 
+   eina_init();
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
 
@@ -528,6 +529,7 @@ START_TEST(ecore_test_ecore_con_shutdown_bef_init)
 
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
+   eina_shutdown();
 }
 END_TEST
 
