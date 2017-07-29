@@ -1020,7 +1020,6 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
                        string = compres;
                        free_string = EINA_TRUE;
                     }
-                  else free(compres);
                   compres = NULL;
                }
              else
