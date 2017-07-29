@@ -833,6 +833,11 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
         return NULL;
      }
 
+   if (!getenv("ECORE_EVAS_DRM_GPU_CLOCK_WRONG"))
+     {
+        edata->once = EINA_TRUE;
+        edata->offset = 0.0;
+     }
    edata->x = x;
    edata->y = y;
    edata->w = w;
