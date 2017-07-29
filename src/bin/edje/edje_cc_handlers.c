@@ -15816,7 +15816,7 @@ edje_cc_handlers_pop_notify(const char *token)
      {
         current_program = sequencing;
         ((Edje_Program_Parser*)sequencing)->can_override = EINA_TRUE;
-        current_program_lookups = eina_list_free(current_program_lookups);
+        eina_list_free(current_program_lookups);
         current_program_lookups = sequencing_lookups;
         sequencing_lookups = NULL;
         sequencing = NULL;
