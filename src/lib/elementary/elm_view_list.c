@@ -126,7 +126,6 @@ _item_get_value(View_List_ItemData *idata, const char *part)
               if (i == 1)
                 {
                    idata->values = eina_list_remove(idata->values, vitem);
-                   idata->values = NULL;
                    free(vitem);
                    break;
                 }
