@@ -218,7 +218,7 @@ read_compressed_channel(const unsigned char *map, size_t length, size_t *positio
 
              i += headbyte + 1;
           }
-        else if (headbyte >= -127 && headbyte <= -1)
+        else if (headbyte >= -127)
           {
              int run;
 
