@@ -814,7 +814,7 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 
    if (eldbus_message_error_get(msg, &name, &error_msg))
      {
-        ERR("Error getting all properties of %s %s, error message: %s %s",
+        WRN("Error getting all properties of %s %s, error message: %s %s",
             proxy->obj->name, proxy->obj->path, name, error_msg);
         return;
      }
@@ -824,7 +824,7 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
         char *txt;
 
         if (eldbus_message_arguments_get(msg, "s", &txt))
-          ERR("Error getting data from properties getAll: %s", txt);
+          WRN("Error getting data from properties getAll: %s", txt);
         return;
      }
    eldbus_message_iter_dict_iterate(dict, "sv", _property_iter, proxy);
