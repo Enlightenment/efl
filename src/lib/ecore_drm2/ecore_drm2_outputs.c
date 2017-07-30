@@ -1044,6 +1044,7 @@ ecore_drm2_output_edid_get(Ecore_Drm2_Output *output)
 {
    char *edid_str = NULL;
    unsigned char *blob;
+   unsigned char fallback_blob[128];
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
 
@@ -1053,6 +1054,11 @@ ecore_drm2_output_edid_get(Ecore_Drm2_Output *output)
      {
         EINA_SAFETY_ON_NULL_RETURN_VAL(output->edid.blob, NULL);
         blob = output->edid.blob;
+     }
+   if (!blob)
+     {
+        memset(fallback_blob, 0, sizeof(fallback_blob));
+        blob = fallback_blob;
      }
 
    edid_str = malloc((128 * 2) + 1);
