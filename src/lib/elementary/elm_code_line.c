@@ -70,7 +70,7 @@ EAPI void elm_code_line_split_at(Elm_Code_Line *line, unsigned int position)
 
    content = (char *) elm_code_line_text_get(line, &length); 
    if (!content) return;
-  content = strndup(content, length);
+   content = strndup(content, length);
    if (!content) return;
    elm_code_file_line_insert(line->file, line->number + 1, "", 0, NULL);
    newline = elm_code_file_line_get(line->file, line->number + 1);
