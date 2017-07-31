@@ -401,10 +401,10 @@ _opcodes_unregister_all(Eina_Debug_Session *session)
    _opcode_reply_info *info = NULL;
 
    if (!session) return;
-   session->cbs_length = 0;
    for (i = 0; i < session->cbs_length; i++)
       eina_list_free(session->cbs[i]);
    free(session->cbs);
+   session->cbs_length = 0;
    session->cbs = NULL;
 
    EINA_LIST_FOREACH(session->opcode_reply_infos, l, info)
