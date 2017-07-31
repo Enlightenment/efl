@@ -1019,7 +1019,7 @@ copy_rest_of_line(cpp_reader * pfile)
 	     break;
 	  case '/':
 	     nextc = PEEKC();
-	     if (nextc == '*' || (opts->cplusplus_comments && nextc == '*'))
+	     if (nextc == '*' || opts->cplusplus_comments)
 		goto scan_directive_token;
 	     break;
 	  case '\f':
