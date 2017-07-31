@@ -3929,7 +3929,7 @@ _cb_accel(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
    const char *val = data;
    const char *ss = elm_config_accel_preference_get();
 
-   if ((!ss) || (ss && (strcasecmp(ss, val))))
+   if ((!ss) || (strcasecmp(ss, val)))
      {
         elm_config_accel_preference_set(val);
         elm_config_all_flush();
