@@ -9501,7 +9501,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Efl_Canvas_Text_Data *o,
           }
         last_node->visible = EINA_FALSE;
 
-        if (!itr || (itr && (itr->text_node != n)))
+        if (!itr || (itr->text_node != n))
           {
              /* Remove the PS, and return since it's the end of the node */
              if (_IS_PARAGRAPH_SEPARATOR(o, last_node->format))
