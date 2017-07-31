@@ -822,7 +822,7 @@ _scaled_image_find(Image_Entry *im, int src_x, int src_y, int src_w,
    Evas_Image_Load_Opts  lo;
    Image_Entry          *ret;
 
-   if (((!im->file) || ((!im->file) && (!im->key))) || (!im->data1) ||
+   if ((!im->file) || (!im->data1) ||
        ((src_w == dst_w) && (src_h == dst_h)) ||
        ((!im->flags.alpha) && (!smooth))) return NULL;
 
@@ -902,7 +902,7 @@ evas_cache2_image_scale_load(Image_Entry *im,
        (im->scale_hint != EVAS_IMAGE_SCALE_HINT_DYNAMIC))
      goto parent_out;
 
-   if (((!im->file) || ((!im->file) && (!im->key))) ||
+   if ((!im->file) ||
        ((src_w == 0) || (src_h == 0) || (dst_w == 0) || (dst_h == 0)) ||
        (im->scale_hint == EVAS_IMAGE_SCALE_HINT_DYNAMIC)) goto parent_out;
 
