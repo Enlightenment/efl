@@ -113,6 +113,20 @@ eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mess
    return pending;
 }
 
+Eldbus_Message *
+_eldbus_message_error_get(const Eldbus_Message *msg, const char *error_name, const char *error_msg)
+{
+   int32_t serial;
+
+   serial = dbus_message_get_serial(msg->dbus_msg);
+   if (serial == 0)
+     {
+        return NULL;
+     }
+
+   return eldbus_message_error_new(msg, error_name, error_msg);
+}
+
 /*
  * On success @param msg is unref'd or its ref is stolen by the returned
  * Eldbus_Pending.
@@ -152,15 +166,15 @@ _eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mes
                                         msg->dbus_msg,
                                         &pending->dbus_pending, timeout))
      {
-        error_msg = eldbus_message_error_new(msg, "org.enlightenment.DBus.NoConnection",
-                                            "Eldbus_Connection was closed.");
+        error_msg = _eldbus_message_error_get(msg, "org.enlightenment.DBus.NoConnection",
+                                              "Eldbus_Connection was closed.");
         eldbus_pending_dispatch(pending, error_msg);
         return NULL;
      }
    if (!pending->dbus_pending)
      {
-        error_msg = eldbus_message_error_new(msg, "org.enlightenment.DBus.Error",
-                                             "dbus_pending is NULL.");
+        error_msg = _eldbus_message_error_get(msg, "org.enlightenment.DBus.Error",
+                                              "dbus_pending is NULL.");
         eldbus_pending_dispatch(pending, error_msg);
         return NULL;
      }
@@ -168,9 +182,9 @@ _eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mes
      return pending;
 
    dbus_pending_call_cancel(pending->dbus_pending);
-   error_msg = eldbus_message_error_new(pending->msg_sent,
-                                       "org.enlightenment.DBus.Error",
-                                       "Error when try set callback to message.");
+   error_msg = _eldbus_message_error_get(pending->msg_sent,
+                                         "org.enlightenment.DBus.Error",
+                                         "Error when try set callback to message.");
    eldbus_pending_dispatch(pending, error_msg);
    return NULL;
 }
