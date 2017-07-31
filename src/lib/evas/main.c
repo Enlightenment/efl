@@ -19,36 +19,6 @@ evas_alloc_error(void)
    return _evas_alloc_error;
 }
 
-/* free cached items only in ram for speed reasons. return 0 if can't free */
-int
-evas_mem_free(int mem_required EINA_UNUSED)
-{
-   return 0;
-}
-
-/* start reducing quality of images etc. return 0 if can't free anything */
-int
-evas_mem_degrade(int mem_required EINA_UNUSED)
-{
-   return 0;
-}
-
-void *
-evas_mem_calloc(int size)
-{
-   void *ptr;
-
-   ptr = calloc(1, size);
-   if (ptr) return ptr;
-   MERR_BAD();
-   while ((!ptr) && (evas_mem_free(size))) ptr = calloc(1, size);
-   if (ptr) return ptr;
-   while ((!ptr) && (evas_mem_degrade(size))) ptr = calloc(1, size);
-   if (ptr) return ptr;
-   MERR_FATAL();
-   return NULL;
-}
-
 static void
 _evas_debug_init_from_env(void)
 {

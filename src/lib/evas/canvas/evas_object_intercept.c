@@ -17,7 +17,7 @@ evas_object_intercept_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj->interceptors)
-     obj->interceptors = evas_mem_calloc(sizeof(Evas_Intercept_Func));
+     obj->interceptors = calloc(1, sizeof(Evas_Intercept_Func));
 }
 
 static void
