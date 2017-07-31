@@ -6458,6 +6458,7 @@ EOLIAN static Eina_Bool
 _efl_ui_win_socket_listen(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *svcname, int svcnum, Eina_Bool svcsys)
 {
    if (!sd->ee) return EINA_FALSE;
+   if (sd->type != EFL_UI_WIN_SOCKET_IMAGE) return EINA_FALSE;
 
    if (!ecore_evas_extn_socket_listen(sd->ee, svcname, svcnum, svcsys))
      return EINA_FALSE;
