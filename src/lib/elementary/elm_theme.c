@@ -444,7 +444,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
         eina_strbuf_free(buf);
      }
    p = eina_list_data_get(eina_list_last(names));
-   if ((!p) || ((p) && (strcmp(p, "default"))))
+   if ((!p) || (strcmp(p, "default")))
      {
         p = eina_stringshare_add("default");
         if (p) names = eina_list_append(names, p);
