@@ -314,7 +314,7 @@ _buffer_manager_get(void)
    buffer_manager = calloc(1, sizeof(Buffer_Manager));
    if (!buffer_manager) goto err_alloc;
 
-   fd = open("/dev/dri/renderD128", O_RDWR);
+   fd = open("/dev/dri/renderD128", O_RDWR | O_CLOEXEC);
    if (fd < 0) goto err_drm;
 
    success = _intel_buffer_manager_setup(fd);
