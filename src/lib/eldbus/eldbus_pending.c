@@ -113,7 +113,7 @@ eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mess
    return pending;
 }
 
-Eldbus_Message *
+static Eldbus_Message *
 _eldbus_message_error_get(const Eldbus_Message *msg, const char *error_name, const char *error_msg)
 {
    int32_t serial;
