@@ -78,6 +78,7 @@ _del_cb(void *data, const Efl_Event *ev)
 {
    Evas_Public_Data *e = data;
 
+   e->devices_modified = EINA_TRUE;
    // can not be done in std destructor
    e->devices = eina_list_remove(e->devices, ev->object);
 
@@ -473,9 +474,18 @@ _evas_device_cleanup(Evas *eo_e)
 
    /* If the device is deleted, _del_cb will remove the device
       from the devices list. */
+again:
+   e->devices_modified = EINA_FALSE;
    cpy = eina_list_clone(e->devices);
    EINA_LIST_FREE(cpy, dev)
-     evas_device_del(dev);
+     {
+        evas_device_del(dev);
+        if (e->devices_modified)
+          {
+             eina_list_free(cpy);
+             goto again;
+          }
+     }
 
    /* Not all devices were deleted. The user probably will unref them later.
       Since Evas will be deleted, remove the del callback from them and
