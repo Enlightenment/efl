@@ -42,7 +42,7 @@ ecore_x_xinerama_screen_count_get(void)
 }
 
 EAPI Eina_Bool
-ecore_x_xinerama_screen_geometry_get(int screen,
+ecore_x_xinerama_screen_geometry_get(int screen EINA_UNUSED, // if no xinerama
                                      int *x,
                                      int *y,
                                      int *w,
@@ -89,6 +89,5 @@ ecore_x_xinerama_screen_geometry_get(int screen,
      *h = DisplayHeight(_ecore_x_disp, 0);
 
    return EINA_FALSE;
-   screen = 0;
 }
 
