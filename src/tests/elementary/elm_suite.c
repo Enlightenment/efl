@@ -85,6 +85,7 @@ static const Efl_Test_Case etc[] = {
   { "elm_code_widget_undo", elm_code_test_widget_undo },
   { "elm_focus", elm_test_focus},
   { "elm_focus_sub", elm_test_focus_sub},
+  { "elm_focus_legacy", elm_test_focus_legacy},
   { NULL, NULL }
 };
 
