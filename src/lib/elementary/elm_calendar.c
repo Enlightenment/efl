@@ -710,7 +710,7 @@ _set_headers(Evas_Object *obj)
    static char part[] = "ch_0.text";
    int i;
    struct tm *t;
-   time_t temp;
+   time_t temp = 259200; // the first sunday since epoch
    ELM_CALENDAR_DATA_GET(obj, sd);
 
    elm_layout_freeze(obj);
