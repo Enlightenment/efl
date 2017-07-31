@@ -13,6 +13,7 @@
 #include "elm_priv.h"
 
 typedef struct _Efl_Ui_List_Item Efl_Ui_List_Item;
+typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
 
 struct _Efl_Ui_List_Item
 {
@@ -65,7 +66,7 @@ struct _Efl_Ui_List_Data
    } pan;
 
    Efl_Ui_Layout_Factory        *factory;
-  //Eina_List                    *selected;
+   Eina_List                    *selected_items;
    struct {
      Eina_Inarray               array;
    } items;

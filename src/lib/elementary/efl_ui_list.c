@@ -19,7 +19,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 void _efl_ui_list_custom_layout(Efl_Ui_List *);
-void _efl_ui_list_item_select_set(Efl_Ui_List_Data *, Eo*, Eina_Bool);
+void _efl_ui_list_item_select_set(Efl_Ui_List_Item *, Eina_Bool);
 Eina_Bool _efl_ui_list_item_select_clear(Eo *);
 static Efl_Ui_List_Item *_child_new(Efl_Ui_List_Data *, Efl_Model *);
 static void _child_remove(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
@@ -160,55 +160,49 @@ _efl_model_properties_has(Efl_Model *model, Eina_Stringshare *propfind)
    return ret;
 }
 
+/* static void */
+/* _child_added_cb(void *data, const Efl_Event *event) */
+/* { */
+/*    Efl_Model_Children_Event* evt = event->info; */
+/*    Efl_Ui_List *obj = data; */
+/*    EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd); */
+/*    /\* pd->item_count++; *\/ */
+
+/* //FIXME: the new data is visible? is yes reload sliced children and test if have changes */
+/* //   _child_new(pd, evt->child); */
+/*    evas_object_smart_changed(pd->obj); */
+/* } */
+
+/* static void */
+/* _child_removed_cb(void *data, const Efl_Event *event) */
+/* { */
+/*    Efl_Model_Children_Event* evt = event->info; */
+/*    Efl_Ui_List *obj = data; */
+/*    Efl_Ui_List_Item *item; */
+
+/*    EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd); */
+/*    /\* pd->item_count--; *\/ */
+
+/*    /\* EINA_ARRAY_ITER_NEXT(pd->items.array, i, item, iterator) *\/ */
+/*    /\*   { *\/ */
+/*    /\*      if (item->model == evt->child) *\/ */
+/*    /\*        { *\/ */
+/*    /\*           _child_remove(pd, item); *\/ */
+/*    /\*           //FIXME pd->items = eina_list_remove_list(pd->items, li); *\/ */
+/*    /\*           evas_object_smart_changed(pd->obj); *\/ */
+/*    /\*           break; *\/ */
+/*    /\*        } *\/ */
+/*    /\*   } *\/ */
+/* } */
+
 static void
-_child_added_cb(void *data, const Efl_Event *event)
+_on_item_focused(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   Efl_Model_Children_Event* evt = event->info;
-   Efl_Ui_List *obj = data;
-   EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd);
-   /* pd->item_count++; */
-
-//FIXME: the new data is visible? is yes reload sliced children and test if have changes
-//   _child_new(pd, evt->child);
-   evas_object_smart_changed(pd->obj);
-}
-
-static void
-_child_removed_cb(void *data, const Efl_Event *event)
-{
-   Efl_Model_Children_Event* evt = event->info;
-   Efl_Ui_List *obj = data;
-   Efl_Ui_List_Item *item;
-
-   EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd);
-   /* pd->item_count--; */
-
-   /* EINA_ARRAY_ITER_NEXT(pd->items.array, i, item, iterator) */
-   /*   { */
-   /*      if (item->model == evt->child) */
-   /*        { */
-   /*           _child_remove(pd, item); */
-   /*           //FIXME pd->items = eina_list_remove_list(pd->items, li); */
-   /*           evas_object_smart_changed(pd->obj); */
-   /*           break; */
-   /*        } */
-   /*   } */
-}
-
-static void
-_focused_element(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   Efl_Ui_List_Data *pd = data;
-   Eo *focused = event->info;
-   EINA_SAFETY_ON_NULL_RETURN(pd);
-   printf("item focused\n");
-
    Efl_Ui_List_Item *item = data;
+
    EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
 
-   pd->focused = item;
-
-   if (!_elm_config->item_select_on_focus_disable && !item->selected)
+   if (!_elm_config->item_select_on_focus_disable)
      _efl_ui_list_item_select_set(item, EINA_TRUE);
 }
 
@@ -219,7 +213,7 @@ _on_item_unfocused(void *data, const Efl_Event *event EINA_UNUSED)
    EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
 
    if (!_elm_config->item_select_on_focus_disable)
-     _efl_ui_list_item_select_set(pd, focused, EINA_TRUE);
+     _efl_ui_list_item_select_set(item, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -241,7 +235,7 @@ _on_item_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUS
    Evas_Event_Mouse_Down *ev = event_info;
    Efl_Ui_List_Item *item = data;
 
-   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p evas: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->list, evas); fflush(stderr);
+   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p evas: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->model, item->list, evas); fflush(stderr);
    
    EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
 
@@ -269,7 +263,7 @@ _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED
    Evas_Event_Mouse_Down *ev = event_info;
    Efl_Ui_List_Item *item = data;
 
-   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p evas: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->list, evas); fflush(stderr);
+   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p evas: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->model, item->list, evas); fflush(stderr);
    
    EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
 
@@ -294,14 +288,10 @@ _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED
          return;
        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
-   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS && item->selected)
-     return;
-
-   /* _efl_ui_list_item_select_set(pd, item->layout, EINA_TRUE); */
-   _efl_ui_list_item_select_set(item, EINA_TRUE);
-   /*   } */
-   /* else */
-   /*   item->longpressed = EINA_FALSE; */
+       _efl_ui_list_item_select_set(item, EINA_TRUE);
+     }
+   else
+     item->longpressed = EINA_FALSE;
    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 }
 
@@ -332,10 +322,10 @@ _item_selected_then(void * data, Efl_Event const* event)
 
         EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
         fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
-        /* if (item->selected) */
-        /*   pd->selected = eina_list_append(pd->selected, item); */
-        /* else */
-        /*   pd->selected = eina_list_remove(pd->selected, item); */
+        if (item->selected)
+          pd->selected_items = eina_list_append(pd->selected_items, item);
+        else
+          pd->selected_items = eina_list_remove(pd->selected_items, item);
      }
 }
 
@@ -466,35 +456,15 @@ _item_min_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item, Evas_Coord h, Evas_
    item->minh = h;
 }
 
-static int
-_find_item_by_layout(const void *data1, const void *data2)
-{
-   Efl_Ui_List_Item *item = data2;
-   Eo *layout = data1;
-
-   if (item->layout == layout)
-     return 0;
-
-   return -1;
-}
-
 static void
 _on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
                     Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Efl_Ui_List_Item *item, *members;
-   Efl_Ui_List_Data *pd = data;
-   EINA_SAFETY_ON_NULL_RETURN(pd);
-
-   int idx = eina_inarray_search(&pd->items.array, obj, _find_item_by_layout);
-   if (idx < 0)
-     return;
-
-   members = pd->items.array.members;
-   item = &members[idx];
+   Efl_Ui_List_Item *item = data;
+   EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
 
    _item_calc(pd, item);
-   evas_object_smart_changed(pd->obj);
+   evas_object_smart_changed(item->list);
 }
 
 static void
@@ -515,8 +485,7 @@ _layout_realize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
      efl_ui_model_connect(item->layout, "signal/elm,state,%v", "selected");
 
-    _item_calc(pd, item);
-   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, pd);
+   _item_calc(pd, item);
 }
 
 static void
@@ -529,14 +498,6 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
      {
         efl_future_cancel(item->future);
         item->future = NULL;
-     }
-
-//  elm_obj_widget_focus_set(item->layout, EINA_FALSE);
-
-   if (item->selected)
-     {
-        item->selected = EINA_FALSE;
-/*        pd->selected = eina_list_remove(pd->selected, item); */
      }
 
    efl_ui_model_connect(item->layout, "signal/elm,state,%v", NULL);
@@ -561,10 +522,14 @@ _child_transient_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item)
 {
    efl_event_callback_add(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item);
 
-   /* efl_event_callback_add(item->layout, ELM_WIDGET_EVENT_FOCUSED, _on_item_focused, item); */
-   /* efl_event_callback_add(item->layout, ELM_WIDGET_EVENT_UNFOCUSED, _on_item_unfocused, item); */
+   efl_event_callback_add(item->layout, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _on_item_focused, item);
+   /* efl_event_callback_add(item->layout, EFL_UI_FOCUS_MANAGER_EVENT_UNFOCUSED, _on_item_unfocused, item); */
    evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item);
    evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
+
+   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
+   if (item->selected)
+     pd->selected_items = eina_list_append(pd->selected_items, item);
 }
 
 static void
@@ -609,10 +574,15 @@ static void
 _child_transient_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item)
 {
    efl_event_callback_del(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item);
-   /* efl_event_callback_del(item->layout, ELM_WIDGET_EVENT_FOCUSED, _on_item_focused, item); */
-   /* efl_event_callback_del(item->layout, ELM_WIDGET_EVENT_UNFOCUSED, _on_item_unfocused, item); */
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item);
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
+
+   efl_event_callback_del(item->layout, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _on_item_focused, item);
+   /* efl_event_callback_del(item->layout, EFL_UI_FOCUS_MANAGER_EVENT_UNFOCUSED, _on_item_unfocused, item); */
+
+   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
+   if (item->selected)
+     pd->selected_items = eina_list_remove(pd->selected_items, item);
 }
 
 static void
@@ -1219,7 +1189,6 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
    manager = elm_obj_widget_focus_manager_factory(obj, obj);
    efl_composite_attach(obj, manager);
    _efl_ui_focus_manager_redirect_events_add(manager, obj);
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused_element, pd);
 
    pd->style = eina_stringshare_add(elm_widget_style_get(obj));
 
@@ -1237,7 +1206,7 @@ _efl_ui_list_efl_object_destructor(Eo *obj, Efl_Ui_List_Data *pd)
    efl_unref(pd->model);
    eina_stringshare_del(pd->style);
 
-   efl_event_callback_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused_element, pd);
+   /* efl_event_callback_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused_element, pd); */
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
@@ -1261,8 +1230,8 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *mod
 
    if (pd->model)
      {
-        efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, obj);
-        efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, obj);
+        /* efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, obj); */
+        /* efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, obj); */
         efl_unref(pd->model);
         pd->model = NULL;
      }
@@ -1277,8 +1246,8 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *mod
      {
         pd->model = model;
         efl_ref(pd->model);
-        efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, obj);
-        efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, obj);
+        /* efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, obj); */
+        /* efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, obj); */
         efl_future_then(efl_model_children_count_get(pd->model), &_count_then, &_count_error, NULL, pd);
      }
 }
@@ -1313,14 +1282,12 @@ EOLIAN Eina_List*
 _efl_ui_list_elm_interface_atspi_accessible_children_get(Eo *obj, Efl_Ui_List_Data *pd)
 {
    Efl_Ui_List_Item *litem;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
    Eina_List *ret = NULL, *ret2 = NULL;
 
-   /* EINA_ARRAY_ITER_NEXT(pd->items.array, i, litem, iterator) */
-   /*    ret = eina_list_append(ret, litem->layout); */
+   EINA_INARRAY_FOREACH(&pd->items.array, litem)
+      ret = eina_list_append(ret, litem->layout);
 
-   /* ret2 = elm_interface_atspi_accessible_children_get(efl_super(obj, MY_CLASS)); */
+   ret2 = elm_interface_atspi_accessible_children_get(efl_super(obj, MY_CLASS));
 
    return eina_list_merge(ret, ret2);
 }
@@ -1328,60 +1295,54 @@ _efl_ui_list_elm_interface_atspi_accessible_children_get(Eo *obj, Efl_Ui_List_Da
 EOLIAN int
 _efl_ui_list_elm_interface_atspi_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
-   return 0;// eina_list_count(pd->selected);
+   return eina_list_count(pd->selected_items);
 }
 
 EOLIAN Eo*
-_efl_ui_list_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_idx)
+_efl_ui_list_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_index)
 {
-   /* Efl_Ui_List_Item *item = eina_list_nth(pd->selected, child_idx); */
-   /* if (!item) */
+   /* if(child_index < eina_inlist_count(&pd->items.array)) */
+   /*   { */
+   /*      Efl_Ui_List_Item* items = pd->items.array.members; */
+   /*      return items[child_index].layout; */
+   /*   } */
+   /* else */
      return NULL;
-
-   /* return item->layout; */
 }
 
 EOLIAN Eina_Bool
 _efl_ui_list_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_index)
 {
-   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
-     {
-        /* Efl_Ui_List_Item *item = eina_array_data_get(pd->items.array, child_index); */
-        /* if (item) */
-        /*    _efl_ui_list_item_select_set(item, EINA_TRUE); */
-        /* return EINA_TRUE; */
-     }
+   /* if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE) */
+   /*   { */
+   /*     if(child_index < eina_inlist_count(&pd->items.array)) */
+   /*       { */
+   /*          Efl_Ui_List_Item* items = pd->items.array.members; */
+   /*          _efl_ui_list_item_select_set(&items[child_index], EINA_TRUE); */
+   /*          return EINA_TRUE; */
+   /*       } */
+   /*   } */
    return EINA_FALSE;
 }
 
 EOLIAN Eina_Bool
 _efl_ui_list_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_index)
 {
-/* <<<<<<< HEAD */
 /*    Efl_Ui_List_Item *item = eina_list_nth(pd->selected, child_index); */
 /*    if (item) */
 /*      { */
 /*         _efl_ui_list_item_select_set(pd, item->layout, EINA_FALSE); */
 /*         return EINA_TRUE; */
 /*      } */
-/* ======= */
-/*    /\* Efl_Ui_List_Item *item = eina_list_nth(pd->selected, child_index); *\/ */
-/*    /\* if (item) *\/ */
-/*    /\*   { *\/ */
-/*    /\*      _efl_ui_list_item_select_set(item, EINA_FALSE); *\/ */
-/*    /\*      return EINA_TRUE; *\/ */
-/*    /\*   } *\/ */
-/* >>>>>>> 8515afc5db... elm: WIP for selection in efl_ui_list */
    return EINA_FALSE;
 }
 
 EOLIAN Eina_Bool
 _efl_ui_list_elm_interface_atspi_selection_is_child_selected(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_index)
 {
-   /* Efl_Ui_List_Item *item = eina_array_data_get(pd->items.array, child_index); */
-   /* EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE); */
-   /* return item->selected; */
-  return EINA_FALSE;
+   Efl_Ui_List_Item *item = eina_inarray_nth(&pd->items.array, child_index);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
+   return item->selected;
 }
 
 EOLIAN Eina_Bool
@@ -1516,10 +1477,10 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
    EFL_UI_LIST_DATA_GET_OR_RETURN_VAL(obj, pd, EINA_FALSE);
 
    Eo *focused = efl_ui_focus_manager_focused(pd->manager);
-   if (focused)
-     _efl_ui_list_item_select_set(pd, focused, EINA_TRUE);
+   /* if (focused) */
+   /*   _efl_ui_list_item_select_set(item, EINA_TRUE); */
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -1559,12 +1520,11 @@ _efl_ui_list_item_select_clear(Eo *obj)
 }
 
 void
-_efl_ui_list_item_select_set(Efl_Ui_List_Data *pd, Eo* layout, Eina_Bool selected)
+_efl_ui_list_item_select_set(Efl_Ui_List_Item *item, Eina_Bool selected)
 {
    Eina_Stringshare *sprop, *svalue;
-   Eo *model;
 
-   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->list); fflush(stderr);   
+   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->model, item->model, item->list); fflush(stderr);   
 
    assert(item != NULL);
    
@@ -1587,7 +1547,7 @@ _efl_ui_list_item_select_set(Efl_Ui_List_Data *pd, Eo* layout, Eina_Bool selecte
    svalue = (selected ? eina_stringshare_add("selected") : eina_stringshare_add("unselected"));
    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
-   if (_efl_model_properties_has(model, sprop))
+   if (_efl_model_properties_has(item->model, sprop))
      {
    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         Eina_Value v;
