@@ -987,6 +987,12 @@ _evas_canvas_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
    evas_call_smarts_calculate(eo_e);
 }
 
+Eina_Bool
+_evas_canvas_smart_objects_calculate_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   return !!e->in_smart_calc;
+}
+
 EOLIAN int
 _evas_canvas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
