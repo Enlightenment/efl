@@ -93,9 +93,7 @@ err:
 EAPI Ecore_Drm2_Fb *
 ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo)
 {
-   struct drm_mode_map_dumb marg;
    Ecore_Drm2_Fb *fb;
-   int ret;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL((fd < 0), NULL);
 
@@ -124,16 +122,6 @@ ecore_drm2_fb_gbm_create(int fd, int width, int height, int depth, int bpp, unsi
              ERR("Could not add framebuffer: %m");
              goto err;
           }
-     }
-
-   /* mmap it if we can so screenshots are easy */
-   memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
-   marg.handle = fb->handles[0];
-   ret = sym_drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
-   if (!ret)
-     {
-        fb->mmap = mmap(NULL, fb->sizes[0], PROT_WRITE, MAP_SHARED, fd, marg.offset);
-        if (fb->mmap == MAP_FAILED) fb->mmap = NULL;
      }
    return fb;
 
