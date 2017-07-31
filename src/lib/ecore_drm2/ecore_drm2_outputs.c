@@ -1652,7 +1652,6 @@ ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *s
        if (ret) return EINA_FALSE;
        return EINA_TRUE;
     }
-  if (ret) return EINA_FALSE;
   if (v.reply.tval_sec < 0) return EINA_FALSE;
   if (v.reply.tval_usec < 0) return EINA_FALSE;
 
