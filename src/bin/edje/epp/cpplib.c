@@ -2329,7 +2329,7 @@ special_symbol(HASHNODE * hp, cpp_reader * pfile)
 
 	   if (hp->type == T_BASE_FILE)
 	     {
-		while (CPP_PREV_BUFFER(ip))
+		while (CPP_PREV_BUFFER(ip) != CPP_NULL_BUFFER(pfile))
 		   ip = CPP_PREV_BUFFER(ip);
 	     }
 	   string = ip->nominal_fname;
@@ -2343,7 +2343,7 @@ special_symbol(HASHNODE * hp, cpp_reader * pfile)
 
      case T_INCLUDE_LEVEL:
 	true_indepth = 0;
-	for (ip = CPP_BUFFER(pfile); ip; ip = CPP_PREV_BUFFER(ip))
+	for (ip = CPP_BUFFER(pfile); ip != CPP_NULL_BUFFER(pfile); ip = CPP_PREV_BUFFER(ip))
 	   if (ip->fname)
 	      true_indepth++;
 
@@ -2493,7 +2493,7 @@ initialize_builtins(cpp_reader * pfile)
 	struct tm          *timebuf = timestamp(pfile);
 	cpp_buffer         *pbuffer = CPP_BUFFER(pfile);
 
-	while (CPP_PREV_BUFFER(pbuffer))
+	while (CPP_PREV_BUFFER(pbuffer) != CPP_NULL_BUFFER(pfile))
 	   pbuffer = CPP_PREV_BUFFER(pbuffer);
 	sprintf(directive, " __BASE_FILE__ \"%s\"\n", pbuffer->nominal_fname);
 	output_line_command(pfile, 0, same_file);
@@ -3221,7 +3221,7 @@ do_include(cpp_reader * pfile, struct directive *keyword,
 	     /* We have "filename".  Figure out directory this source
 	      * file is coming from and put it on the front of the list. */
 
-	     for (fp = CPP_BUFFER(pfile); fp; fp = CPP_PREV_BUFFER(fp))
+	     for (fp = CPP_BUFFER(pfile); fp != CPP_NULL_BUFFER(pfile); fp = CPP_PREV_BUFFER(fp))
 	       {
 		  int                 n;
 		  const char         *ep, *nam;
@@ -3286,7 +3286,7 @@ do_include(cpp_reader * pfile, struct directive *keyword,
      {
 	cpp_buffer         *fp;
 
-	for (fp = CPP_BUFFER(pfile); fp; fp = CPP_PREV_BUFFER(fp))
+	for (fp = CPP_BUFFER(pfile); fp != CPP_NULL_BUFFER(pfile); fp = CPP_PREV_BUFFER(fp))
 	   if (fp->fname)
 	     {
 		/* fp->dir is null if the containing file was specified with
@@ -3514,7 +3514,7 @@ do_include(cpp_reader * pfile, struct directive *keyword,
 	  {
 	     cpp_buffer         *buf = CPP_BUFFER(pfile);
 
-	     while ((buf = CPP_PREV_BUFFER(buf)))
+	     while ((buf = CPP_PREV_BUFFER(buf)) != CPP_NULL_BUFFER(pfile))
 		putc('.', stderr);
 	     fprintf(stderr, "%s\n", fname);
 	  }
