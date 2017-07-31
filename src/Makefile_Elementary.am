@@ -1353,7 +1353,8 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_focus_common.c \
 	tests/elementary/elm_test_focus_common.h \
 	tests/elementary/elm_test_focus.c \
-	tests/elementary/elm_test_focus_sub.c
+	tests/elementary/elm_test_focus_sub.c \
+	tests/elementary/elm_test_focus_legacy.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
