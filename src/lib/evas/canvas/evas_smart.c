@@ -32,7 +32,7 @@ evas_smart_class_new(const Evas_Smart_Class *sc)
    /* api does not match abi! for now refuse as we only have 1 version */
    if (sc->version != EVAS_SMART_CLASS_VERSION) return NULL;
 
-   s = evas_mem_calloc(sizeof(Evas_Smart));
+   s = calloc(1, sizeof(Evas_Smart));
    if (!s) return NULL;
 
    s->magic = MAGIC_SMART;

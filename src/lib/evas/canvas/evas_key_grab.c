@@ -35,7 +35,7 @@ evas_key_grab_new(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const ch
 
    if (have_exclusion && exclusive) return NULL;
 
-   g = evas_mem_calloc(sizeof(Evas_Key_Grab));
+   g = calloc(1, sizeof(Evas_Key_Grab));
    if (!g) return NULL;
    g->object = eo_obj;
    g->modifiers = modifiers;
@@ -47,17 +47,8 @@ evas_key_grab_new(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const ch
    g->is_active = EINA_TRUE;
    if (!g->keyname)
      {
-        if (!evas_mem_free(strlen(keyname) + 1))
-          {
-             free(g);
-             return NULL;
-          }
-        g->keyname = strdup(keyname);
-        if (!g->keyname)
-          {
-             free(g);
-             return NULL;
-          }
+        free(g);
+        return NULL;
      }
 
    if (exclusive)

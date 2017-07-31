@@ -1671,8 +1671,6 @@ void evas_object_callback_init(Efl_Canvas_Object *eo_obj, Evas_Object_Protected_
 void evas_object_callback_shutdown(Efl_Canvas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 void evas_object_event_callback_call(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Callback_Type type, void *event_info, int event_id, const Efl_Event_Description *efl_event_desc);
 Eina_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
-int evas_mem_free(int mem_required);
-int evas_mem_degrade(int mem_required);
 void evas_debug_error(void);
 void evas_debug_input_null(void);
 void evas_debug_magic_null(void);
@@ -1722,7 +1720,6 @@ void evas_object_smart_bounding_box_update(Evas_Object_Protected_Data *obj);
 void evas_object_smart_need_bounding_box_update(Evas_Smart_Data *o, Evas_Object_Protected_Data *obj);
 Eina_Bool evas_object_smart_changed_get(Evas_Object *eo_obj);
 void evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s);
-void *evas_mem_calloc(int size);
 void _evas_post_event_callback_call_real(Evas *e, Evas_Public_Data* e_pd, int min_event_id);
 #define _evas_post_event_callback_call(e, pd, id) do { \
    if (!pd->delete_me && pd->post_events) _evas_post_event_callback_call_real(e, pd, id); } while (0)
