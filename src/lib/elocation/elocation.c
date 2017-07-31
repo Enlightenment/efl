@@ -1119,7 +1119,7 @@ elocation_address_get(Elocation_Address *address_shadow)
    if (!address) return EINA_FALSE;
    if (address == address_shadow) return EINA_TRUE;
 
-   address_shadow = address;
+   *address_shadow = *address;
    return EINA_TRUE;
 }
 
@@ -1130,7 +1130,7 @@ elocation_position_get(Elocation_Position *position_shadow)
    if (!position) return EINA_FALSE;
    if (position == position_shadow) return EINA_TRUE;
 
-   position_shadow = position;
+   *position_shadow = *position;
    return EINA_TRUE;
 }
 
@@ -1141,7 +1141,7 @@ elocation_status_get(int *status_shadow)
    if (status < 0) return EINA_FALSE;
    if (&status == status_shadow) return EINA_TRUE;
 
-   status_shadow = &status;
+   *status_shadow = status;
    return EINA_TRUE;
 }
 
