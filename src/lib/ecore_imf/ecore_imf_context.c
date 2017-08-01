@@ -649,6 +649,8 @@ ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx)
      }
 
    ev = malloc(sizeof(Ecore_IMF_Event_Preedit_Start));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
    ev->ctx = ctx;
    ecore_event_add(ECORE_IMF_EVENT_PREEDIT_START,
                    ev, _ecore_imf_event_free_preedit, NULL);
@@ -667,6 +669,8 @@ ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx)
      }
 
    ev = malloc(sizeof(Ecore_IMF_Event_Preedit_End));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
    ev->ctx = ctx;
    ecore_event_add(ECORE_IMF_EVENT_PREEDIT_END,
                    ev, _ecore_imf_event_free_preedit, NULL);
@@ -685,6 +689,8 @@ ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx)
      }
 
    ev = malloc(sizeof(Ecore_IMF_Event_Preedit_Changed));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
    ev->ctx = ctx;
    ecore_event_add(ECORE_IMF_EVENT_PREEDIT_CHANGED,
                    ev, _ecore_imf_event_free_preedit, NULL);
@@ -713,6 +719,8 @@ ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str)
      }
 
    ev = malloc(sizeof(Ecore_IMF_Event_Commit));
+   EINA_SAFETY_ON_NULL_RETURN(ev);
+
    ev->ctx = ctx;
    ev->str = str ? strdup(str) : NULL;
    ecore_event_add(ECORE_IMF_EVENT_COMMIT,

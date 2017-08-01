@@ -306,6 +306,8 @@ ecore_imf_module_register(const Ecore_IMF_Context_Info *info,
      modules = eina_hash_string_superfast_new(EINA_FREE_CB(_ecore_imf_module_free));
 
    module = malloc(sizeof(Ecore_IMF_Module));
+   EINA_SAFETY_ON_NULL_RETURN(module);
+
    module->info = info;
    /* cache imf_module_create as it may be used several times */
    module->create = imf_module_create;
