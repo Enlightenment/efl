@@ -2530,8 +2530,9 @@ _momentum_test(Evas_Object *obj,
         st->line_end.y = pe_local.y;
         st->t_end = pe_local.timestamp;
 
-        if ((fabs(st->info.mx) > ELM_GESTURE_MINIMUM_MOMENTUM) ||
-            (fabs(st->info.my) > ELM_GESTURE_MINIMUM_MOMENTUM))
+        // FIXME: mx,my are int while the momentum is float. Fishy logic here.
+        if ((abs(st->info.mx) > ELM_GESTURE_MINIMUM_MOMENTUM) ||
+            (abs(st->info.my) > ELM_GESTURE_MINIMUM_MOMENTUM))
           state_to_report = ELM_GESTURE_STATE_END;
         else
           state_to_report = ELM_GESTURE_STATE_ABORT;
