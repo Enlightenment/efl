@@ -1106,22 +1106,16 @@ _attr_parse_polygon_points(const char *str, double **points, int *point_count)
    int tmp_count=0;
    int count = 0;
    double num;
-   double *point_array = NULL;
+   double *point_array = NULL, *tmp_array;
 
    while (_parse_number(&str, &num))
      {
         tmp[tmp_count++] = num;
         if (tmp_count == 50)
           {
-             double *tmp;
-
-             tmp = realloc(point_array, (count + tmp_count) * sizeof(double));
-             if (!tmp)
-               {
-                  ERR("allocation for point array failed. out of memory");
-                  abort();
-               }
-             point_array = tmp;
+             tmp_array = realloc(point_array, (count + tmp_count) * sizeof(double));
+             if (!tmp_array) goto error_alloc;
+             point_array = tmp_array;
              memcpy(&point_array[count], tmp, tmp_count * sizeof(double));
              count += tmp_count;
              tmp_count = 0;
@@ -1130,20 +1124,19 @@ _attr_parse_polygon_points(const char *str, double **points, int *point_count)
 
    if (tmp_count > 0)
      {
-        double *tmp;
-
-        tmp = realloc(point_array, (count + tmp_count) * sizeof(double));
-        if (!tmp)
-          {
-             ERR("allocation for point array failed. out of memory");
-             abort();
-          }
-        point_array = tmp;
+        tmp_array = realloc(point_array, (count + tmp_count) * sizeof(double));
+        if (!tmp_array) goto error_alloc;
+        point_array = tmp_array;
         memcpy(&point_array[count], tmp, tmp_count * sizeof(double));
         count += tmp_count;
      }
    *point_count = count;
    *points = point_array;
+   return;
+
+error_alloc:
+   ERR("allocation for point array failed. out of memory");
+   abort();
 }
 
 /* parse the attributes for a polygon element.
