@@ -130,6 +130,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_focus_user.eo \
 	lib/elementary/efl_ui_list.eo \
 	lib/elementary/efl_ui_list_pan.eo \
+	lib/elementary/efl_ui_layout_factory.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
@@ -687,6 +688,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_focus_object.c \
 	lib/elementary/efl_ui_focus_manager_root_focus.c \
 	lib/elementary/efl_ui_list.c \
+	lib/elementary/efl_ui_layout_factory.c \
 	$(NULL)
 
 
