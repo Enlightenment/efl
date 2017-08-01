@@ -1100,7 +1100,7 @@ EAPI void
 ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root,
                                    Ecore_X_Window win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1132,7 +1132,7 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
                                         int w,
                                         int h)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1457,7 +1457,7 @@ ecore_x_e_window_profile_change_send(Ecore_X_Window  root,
                                      Ecore_X_Window  win,
                                      const char     *profile)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    Ecore_X_Atom atom;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1493,7 +1493,7 @@ EAPI void
 ecore_x_e_window_profile_change_request_send(Ecore_X_Window win,
                                              const char    *profile)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    Ecore_X_Atom atom;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1526,7 +1526,7 @@ ecore_x_e_window_profile_change_done_send(Ecore_X_Window root,
                                           Ecore_X_Window win,
                                           const char    *profile)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    Ecore_X_Atom atom;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1629,7 +1629,7 @@ ecore_x_e_comp_sync_supported_get(Ecore_X_Window root)
 EAPI void
 ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1655,7 +1655,7 @@ ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1681,7 +1681,7 @@ ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1707,7 +1707,7 @@ ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_comp_flush_send(Ecore_X_Window win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1733,7 +1733,7 @@ ecore_x_e_comp_flush_send(Ecore_X_Window win)
 EAPI void
 ecore_x_e_comp_dump_send(Ecore_X_Window win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -2288,7 +2288,7 @@ ecore_x_e_window_rotation_change_prepare_done_send(Ecore_X_Window root,
                                                    Ecore_X_Window win,
                                                    int            rot)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -2331,7 +2331,7 @@ ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root,
                                            int            w,
                                            int            h)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 

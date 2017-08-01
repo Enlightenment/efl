@@ -1235,7 +1235,7 @@ EAPI void
 ecore_x_icccm_iconic_request_send(Ecore_X_Window win,
                                   Ecore_X_Window root)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    if (!win)
      return;

@@ -491,7 +491,7 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor,
                               Ecore_X_Atom property,
                               Ecore_X_Time tim)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    XSelectionEvent xnotify;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
