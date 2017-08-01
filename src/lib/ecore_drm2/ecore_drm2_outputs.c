@@ -771,7 +771,6 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
         output->enabled = EINA_FALSE;
      }
 
-   dev->alloc.crtc |= (1 << output->crtc_id);
    dev->alloc.conn |= (1 << output->conn_id);
    dev->outputs = eina_list_append(dev->outputs, output);
 
@@ -906,7 +905,6 @@ _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
         free(mode);
      }
 
-   dev->alloc.crtc &= ~(1 << output->crtc_id);
    dev->alloc.conn &= ~(1 << output->conn_id);
 
    eina_stringshare_del(output->backlight.path);
