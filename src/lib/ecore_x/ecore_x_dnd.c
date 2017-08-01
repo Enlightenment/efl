@@ -469,7 +469,7 @@ _ecore_x_dnd_begin(Ecore_X_Window source,
 static Eina_Bool
 _ecore_x_dnd_drop(Eina_Bool self)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    int status = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -549,7 +549,7 @@ ecore_x_dnd_send_status(Eina_Bool will_accept,
                         Ecore_X_Rectangle rectangle,
                         Ecore_X_Atom action)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -601,7 +601,7 @@ ecore_x_dnd_send_status(Eina_Bool will_accept,
 EAPI void
 ecore_x_dnd_send_finished(void)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
@@ -649,7 +649,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
                   int x,
                   int y)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    Ecore_X_Window win;
    Ecore_X_Window *skip;
    Ecore_X_Xdnd_Position pos;

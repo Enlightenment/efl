@@ -467,7 +467,7 @@ ecore_x_window_ignore_list(int *num)
 EAPI void
 ecore_x_window_delete_request_send(Ecore_X_Window win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    /* sorry sir, deleting the root window doesn't sound like
     * a smart idea.
@@ -522,7 +522,7 @@ ecore_x_window_show(Ecore_X_Window win)
 EAPI void
 ecore_x_window_hide(Ecore_X_Window win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    Window root;
    int idum;
    unsigned int uidum;

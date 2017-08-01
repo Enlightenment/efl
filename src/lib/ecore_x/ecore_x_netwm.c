@@ -351,7 +351,7 @@ ecore_x_netwm_client_active_request(Ecore_X_Window root,
                                     int type,
                                     Ecore_X_Window current_win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!root)
@@ -1500,7 +1500,7 @@ ecore_x_netwm_sync_counter_get(Ecore_X_Window win,
 EAPI void
 ecore_x_netwm_ping_send(Ecore_X_Window win)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    if (!win)
      return;
@@ -1526,7 +1526,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win,
                                 unsigned int serial)
 {
    XSyncValue value;
-   XEvent xev;
+   XEvent xev = { 0 };
 
    if (!win)
      return;
@@ -1556,7 +1556,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window win,
                                  Ecore_X_Window_State s2,
                                  Eina_Bool set)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    if (!win)
      return;
@@ -1590,7 +1590,7 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win,
                                    Ecore_X_Window root,
                                    unsigned int desktop)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    if (!win)
      return;
@@ -1620,7 +1620,7 @@ ecore_x_netwm_moveresize_request_send(Ecore_X_Window win,
                                       Ecore_X_Netwm_Direction direction,
                                       unsigned int button)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    if (!win)
      return;

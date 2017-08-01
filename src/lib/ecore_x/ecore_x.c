@@ -1770,7 +1770,7 @@ ecore_x_window_button_grab(Ecore_X_Window win,
 static void
 _ecore_x_sync_magic_send(int val, Ecore_X_Window swin, int b, int mod, int anymod)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
 
    xev.xclient.type = ClientMessage;
    xev.xclient.serial = 0;
@@ -2138,7 +2138,7 @@ ecore_x_client_message32_send(Ecore_X_Window win,
                               long d3,
                               long d4)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    Eina_Bool ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -2174,7 +2174,7 @@ ecore_x_client_message8_send(Ecore_X_Window win,
                              const void *data,
                              int len)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    Eina_Bool ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -2201,7 +2201,7 @@ ecore_x_mouse_move_send(Ecore_X_Window win,
                         int x,
                         int y)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    XWindowAttributes att;
    Window tw;
    int rx, ry;
@@ -2234,7 +2234,7 @@ ecore_x_mouse_down_send(Ecore_X_Window win,
                         int y,
                         int b)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    XWindowAttributes att;
    Window tw;
    int rx, ry;
@@ -2267,7 +2267,7 @@ ecore_x_mouse_up_send(Ecore_X_Window win,
                       int y,
                       int b)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    XWindowAttributes att;
    Window tw;
    int rx, ry;
@@ -2299,7 +2299,7 @@ ecore_x_mouse_in_send(Ecore_X_Window win,
                       int x,
                       int y)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    XWindowAttributes att;
    Window tw;
    int rx, ry;
@@ -2333,7 +2333,7 @@ ecore_x_mouse_out_send(Ecore_X_Window win,
                       int x,
                       int y)
 {
-   XEvent xev;
+   XEvent xev = { 0 };
    XWindowAttributes att;
    Window tw;
    int rx, ry;
