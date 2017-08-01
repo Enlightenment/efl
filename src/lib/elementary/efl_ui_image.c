@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_CANVAS_LAYOUT_CALC_PROTECTED
 
 #include <Elementary.h>
 
@@ -1192,14 +1193,14 @@ _efl_ui_image_edje_object_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_D
 }
 
 EOLIAN static void
-_efl_ui_image_edje_object_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_canvas_layout_calc_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
      edje_object_calc_force(sd->img);
 }
 
 EOLIAN static void
-_efl_ui_image_edje_object_size_min_calc(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
+_efl_ui_image_efl_canvas_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
 {
    if (sd->edje)
      edje_object_size_min_calc(sd->img, w, h);

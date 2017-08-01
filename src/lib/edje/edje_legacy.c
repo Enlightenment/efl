@@ -1009,3 +1009,53 @@ edje_object_part_text_insert(Eo *obj, const char *part, const char *text)
    if (ed->text_change.func)
      ed->text_change.func(ed->text_change.data, obj, part);
 }
+
+/* Calc interface APIs */
+
+EAPI void
+edje_object_update_hints_set(Edje_Object *obj, Eina_Bool update)
+{
+   efl_canvas_layout_calc_auto_update_hints_set(obj, update);
+}
+
+EAPI Eina_Bool
+edje_object_update_hints_get(const Edje_Object *obj)
+{
+   return efl_canvas_layout_calc_auto_update_hints_get(obj);
+}
+
+EAPI void
+edje_object_size_min_calc(Edje_Object *obj, int *minw, int *minh)
+{
+   efl_canvas_layout_calc_size_min(obj, minw, minh);
+}
+
+EAPI void
+edje_object_size_min_restricted_calc(Edje_Object *obj, int *minw, int *minh, int restrictedw, int restrictedh)
+{
+   efl_canvas_layout_calc_size_min_restricted(obj, minw, minh, restrictedw, restrictedh);
+}
+
+EAPI Eina_Bool
+edje_object_parts_extends_calc(Edje_Object *obj, int *x, int *y, int *w, int *h)
+{
+   return efl_canvas_layout_calc_parts_extends(obj, x, y, w, h);
+}
+
+EAPI int
+edje_object_freeze(Edje_Object *obj)
+{
+   return efl_canvas_layout_calc_freeze(obj);
+}
+
+EAPI int
+edje_object_thaw(Edje_Object *obj)
+{
+   return efl_canvas_layout_calc_thaw(obj);
+}
+
+EAPI void
+edje_object_calc_force(Edje_Object *obj)
+{
+   efl_canvas_layout_calc_force(obj);
+}

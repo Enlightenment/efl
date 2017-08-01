@@ -463,7 +463,7 @@ _edje_object_group_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
 }
 
 EOLIAN int
-_edje_object_calc_freeze(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_canvas_layout_calc_calc_freeze(Eo *obj EINA_UNUSED, Edje *ed)
 {
    unsigned short i;
 
@@ -481,7 +481,7 @@ _edje_object_calc_freeze(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN int
-_edje_object_calc_thaw(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_canvas_layout_calc_calc_thaw(Eo *obj EINA_UNUSED, Edje *ed)
 {
    unsigned short i;
 
@@ -3143,7 +3143,7 @@ _edje_object_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED, Evas_
 }
 
 EOLIAN void
-_edje_object_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_canvas_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
 {
    int pf, pf2;
 
@@ -3166,13 +3166,13 @@ _edje_object_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN void
-_edje_object_size_min_calc(Eo *obj, Edje *_pd EINA_UNUSED, Evas_Coord *minw, Evas_Coord *minh)
+_edje_object_efl_canvas_layout_calc_calc_size_min(Eo *obj, Edje *_pd EINA_UNUSED, Evas_Coord *minw, Evas_Coord *minh)
 {
    edje_object_size_min_restricted_calc(obj, minw, minh, 0, 0);
 }
 
 EOLIAN Eina_Bool
-_edje_object_parts_extends_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Coord xx1 = INT_MAX, yy1 = INT_MAX;
    Evas_Coord xx2 = 0, yy2 = 0;
@@ -3223,7 +3223,7 @@ _edje_object_parts_extends_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *x, Ev
 }
 
 EOLIAN void
-_edje_object_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
+_edje_object_efl_canvas_layout_calc_calc_size_min_restricted(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
 {
    const int CALC_COUNT_LIMIT = 255;
 
@@ -4854,7 +4854,7 @@ _edje_object_preload(Eo *obj, Edje *ed, Eina_Bool cancel)
 }
 
 EOLIAN void
-_edje_object_calc_update_hints_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool update)
+_edje_object_efl_canvas_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool update)
 {
    if (!ed) return;
    if (ed->update_hints == !!update) return;
@@ -4868,7 +4868,7 @@ _edje_object_calc_update_hints_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool upda
 }
 
 EOLIAN Eina_Bool
-_edje_object_calc_update_hints_get(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_canvas_layout_calc_calc_auto_update_hints_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    return ed->update_hints;
 }

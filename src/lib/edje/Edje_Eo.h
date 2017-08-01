@@ -1,5 +1,6 @@
 #include <Efl.h>
 
+#include "efl_canvas_layout_calc.eo.h"
 #include "edje_object.eo.h"
 #include "edje_edit.eo.h"
 
