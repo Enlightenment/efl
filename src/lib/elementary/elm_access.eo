@@ -10,5 +10,6 @@ class Elm.Access (Elm.Widget, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.activate;
       Elm.Widget.on_focus;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Elm.Interface.Atspi_Accessible.state_set { get; }
    }
 }
