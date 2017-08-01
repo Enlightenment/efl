@@ -3,7 +3,7 @@ import edje_types;
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
 class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
-                   Efl.Observer, Efl.Ui.Base)
+                   Efl.Observer, Efl.Ui.Base, Efl.Canvas.Layout_Calc)
 {
    [[Edje object class]]
    legacy_prefix: edje_object;
@@ -139,133 +139,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
                [[The load error code.]]
          }
       }
-
-      /* EDJE CALC APIS BEGIN ---------------------------------------------- */
-      @property calc_update_hints {
-         [[Whether this object updates its size hints automatically.
-
-           By default edje doesn't set size hints on itself. If this property
-           is set to $true, size hints will be updated after recalculation.
-           Be careful, as recalculation may happen often, enabling this
-           property may have a considerable performance impact as other widgets
-           will be notified of the size hints changes.
-
-           A layout recalculation can be triggered by @.size_min_calc(),
-           @.size_min_restricted_calc(), @.parts_extends_calc() or even any
-           other internal event.
-         ]]
-         set {
-            [[Enable or disable auto-update of size hints.]]
-            legacy: edje_object_update_hints_set;
-         }
-         get {
-            [[Whether this object updates its size hints automatically.]]
-            legacy: edje_object_update_hints_get;
-         }
-         values {
-            update: bool(false); [[Whether or not update the size hints.]]
-         }
-      }
-      // FIXME: Prefix with calc_ ?
-      size_min_calc {
-         [[Calculates the minimum required size for a given Edje object.
-
-           This call works exactly as edje_object_size_min_restricted_calc(),
-           with the last two arguments set to 0. Please refer to its
-           documentation, then.
-         ]]
-         // FIXME: Return a 2D size type (no @out values)
-         params {
-            @out minw: int; [[The minimum required width (return value)]]
-            @out minh: int; [[The minimum required height (return value)]]
-         }
-      }
-      // FIXME: Prefix with calc_ ?
-      size_min_restricted_calc {
-         [[Calculates the minimum required size for a given Edje object.
-
-           This call will trigger an internal recalculation of all parts of
-           the object, in order to return its minimum required dimensions for
-           width and height. The user might choose to impose those minimum
-           sizes, making the resulting calculation to get to values equal or
-           larger than $restrictedw and $restrictedh, for width and height,
-           respectively.
-
-           Note: At the end of this call, the object  won't be automatically
-           resized to the new dimensions, but just return the calculated sizes.
-           The caller is the one up to change its geometry or not.
-
-           Warning: Be advised that invisible parts in the object will be taken
-           into account in this calculation.
-         ]]
-         // FIXME: Return a 2D size type (no @out values)
-         params {
-            @out minw: int; [[The minimum required width (return value)]]
-            @out minh: int; [[The minimum required height (return value)]]
-            @in restrictedw: int; [[The minimum width constraint as input,
-                                    $minw can not be lower than this]]
-            @in restrictedh: int; [[The minimum height constraint as input,
-                                    $minh can not be lower than this]]
-         }
-      }
-      // FIXME: Prefix with calc_ ?
-      parts_extends_calc {
-         [[Calculates the geometry of the region, relative to a given Edje
-           object's area, occupied by all parts in the object.
-
-           This function gets the geometry of the rectangle equal to the area
-           required to group all parts in obj's group/collection. The x
-           and y coordinates are relative to the top left corner of the
-           whole obj object's area. Parts placed out of the group's
-           boundaries will also be taken in account, so that x and y
-           may be negative.
-
-           Note: On failure, this function will make all non-$null geometry
-           pointers' pointed variables be set to zero.
-         ]]
-         return: bool; [[$true on success, $false otherwise]]
-         /* FIXME: Return a 2D size type (no @out values) */
-         params {
-            @out x: int; [[The parts region's X coordinate]]
-            @out y: int; [[The parts region's Y coordinate]]
-            @out w: int; [[The parts region's width]]
-            @out h: int; [[The parts region's height]]
-         }
-      }
-      calc_force {
-         [[Forces a Size/Geometry calculation.
-
-           Forces the object to recalculate its layout regardless of
-           freeze/thaw.
-
-           See also @.calc_freeze and @.calc_thaw.
-         ]]
-      }
-      calc_freeze {
-         [[Freezes the Edje object.
-
-           This function puts all changes on hold. Successive freezes will
-           nest, requiring an equal number of thaws.
-
-           See also @.calc_thaw()
-         ]]
-         return: int; [[The frozen state or 0 on error]]
-         legacy: edje_object_freeze;
-      }
-      calc_thaw {
-         [[Thaws the Edje object.
-
-           This function thaws the given Edje object.
-
-           Note: If sucessive freezes were done, an equal number of thaws will
-           be required.
-
-           See also @.calc_freeze()
-         ]]
-         return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
-         legacy: edje_object_thaw;
-      }
-      /* EDJE CALC APIS END ------------------------------------------------ */
 
       /* EDJE GROUP DATA APIS BEGIN ---------------------------------------- */
       @property group_size_min {
@@ -1180,6 +1053,13 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { set; }
       Efl.Canvas.Group.group_calculate;
+      Efl.Canvas.Layout_Calc.calc_auto_update_hints { get; set; }
+      Efl.Canvas.Layout_Calc.calc_size_min;
+      Efl.Canvas.Layout_Calc.calc_size_min_restricted;
+      Efl.Canvas.Layout_Calc.calc_parts_extends;
+      Efl.Canvas.Layout_Calc.calc_freeze;
+      Efl.Canvas.Layout_Calc.calc_thaw;
+      Efl.Canvas.Layout_Calc.calc_force;
       Efl.Ui.Base.mirrored { set; get; }
       Efl.Ui.Base.language { set; get; }
       Efl.Ui.Base.scale { set; get; }

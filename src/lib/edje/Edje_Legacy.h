@@ -214,6 +214,155 @@ EAPI const char *edje_object_part_state_get(const Edje_Object *obj, const char *
 EAPI const Efl_Canvas_Object *edje_object_part_object_get(const Edje_Object *obj, const char * part);
 
 /**
+ * @brief Whether this object updates its size hints automatically.
+ *
+ * By default edje doesn't set size hints on itself. If this property is set to
+ * @c true, size hints will be updated after recalculation. Be careful, as
+ * recalculation may happen often, enabling this property may have a
+ * considerable performance impact as other widgets will be notified of the
+ * size hints changes.
+ *
+ * A layout recalculation can be triggered by @ref edje_object_size_min_calc(),
+ * @ref edje_object_size_min_restricted_calc(),
+ * @ref edje_object_parts_extends_calc() or even any other internal event.
+ *
+ * Enable or disable auto-update of size hints.
+ *
+ * @param[in] update Whether or not update the size hints.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_update_hints_set(Edje_Object *obj, Eina_Bool update);
+
+/**
+ * @brief Whether this object updates its size hints automatically.
+ *
+ * By default edje doesn't set size hints on itself. If this property is set to
+ * @c true, size hints will be updated after recalculation. Be careful, as
+ * recalculation may happen often, enabling this property may have a
+ * considerable performance impact as other widgets will be notified of the
+ * size hints changes.
+ *
+ * A layout recalculation can be triggered by @ref edje_object_size_min_calc(),
+ * @ref edje_object_size_min_restricted_calc(),
+ * @ref edje_object_parts_extends_calc() or even any other internal event.
+ *
+ * Whether this object updates its size hints automatically.
+ *
+ * @return Whether or not update the size hints.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_update_hints_get(const Edje_Object *obj);
+
+/**
+ * @brief Calculates the minimum required size for a given Edje object.
+ *
+ * This call works exactly as edje_object_size_min_restricted_calc(), with the
+ * last two arguments set to 0. Please refer to its documentation, then.
+ *
+ * @param[out] minw The minimum required width (return value)
+ * @param[out] minh The minimum required height (return value)
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_size_min_calc(Edje_Object *obj, int *minw, int *minh);
+
+/**
+ * @brief Calculates the minimum required size for a given Edje object.
+ *
+ * This call will trigger an internal recalculation of all parts of the object,
+ * in order to return its minimum required dimensions for width and height. The
+ * user might choose to impose those minimum sizes, making the resulting
+ * calculation to get to values equal or larger than @c restrictedw and
+ * @c restrictedh, for width and height, respectively.
+ *
+ * @note At the end of this call, the object  won't be automatically resized to
+ * the new dimensions, but just return the calculated sizes. The caller is the
+ * one up to change its geometry or not.
+ *
+ * @warning Be advised that invisible parts in the object will be taken into
+ * account in this calculation.
+ *
+ * @param[out] minw The minimum required width (return value)
+ * @param[out] minh The minimum required height (return value)
+ * @param[in] restrictedw The minimum width constraint as input, @c minw can
+ * not be lower than this
+ * @param[in] restrictedh The minimum height constraint as input, @c minh can
+ * not be lower than this
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_size_min_restricted_calc(Edje_Object *obj, int *minw, int *minh, int restrictedw, int restrictedh);
+
+/**
+ * @brief Calculates the geometry of the region, relative to a given Edje
+ * object's area, occupied by all parts in the object.
+ *
+ * This function gets the geometry of the rectangle equal to the area required
+ * to group all parts in obj's group/collection. The x and y coordinates are
+ * relative to the top left corner of the whole obj object's area. Parts placed
+ * out of the group's boundaries will also be taken in account, so that x and y
+ * may be negative.
+ *
+ * @note On failure, this function will make all non-$null geometry pointers'
+ * pointed variables be set to zero.
+ *
+ * @param[out] x The parts region's X coordinate
+ * @param[out] y The parts region's Y coordinate
+ * @param[out] w The parts region's width
+ * @param[out] h The parts region's height
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_parts_extends_calc(Edje_Object *obj, int *x, int *y, int *w, int *h);
+
+/**
+ * @brief Forces a Size/Geometry calculation.
+ *
+ * Forces the object to recalculate its layout regardless of freeze/thaw.
+ *
+ * See also @ref edje_object_freeze and @ref edje_object_thaw.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_calc_force(Edje_Object *obj);
+
+/**
+ * @brief Freezes the Edje object.
+ *
+ * This function puts all changes on hold. Successive freezes will nest,
+ * requiring an equal number of thaws.
+ *
+ * See also @ref edje_object_thaw()
+ *
+ * @return The frozen state or 0 on error
+ *
+ * @ingroup Edje_Object
+ */
+EAPI int edje_object_freeze(Edje_Object *obj);
+
+/**
+ * @brief Thaws the Edje object.
+ *
+ * This function thaws the given Edje object.
+ *
+ * @note If sucessive freezes were done, an equal number of thaws will be
+ * required.
+ *
+ * See also @ref edje_object_freeze()
+ *
+ * @return The frozen state or 0 if the object is not frozen or on error.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI int edje_object_thaw(Edje_Object *obj);
+
+
+
+/**
  * @ingroup Edje_Object_Communication_Interface_Message
  *
  * @{

@@ -40,6 +40,7 @@
 #endif
 
 #define EFL_CANVAS_OBJECT_PROTECTED
+#define EFL_CANVAS_LAYOUT_CALC_PROTECTED
 
 #include <Eina.h>
 #include <Eet.h>

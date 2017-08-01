@@ -1,0 +1,131 @@
+interface Efl.Canvas.Layout_Calc
+{
+   [[This interface defines a common set of APIs used to trigger calculations
+     with layout objects.
+
+     This defines all the APIs supported by legacy "Edje" object, known in EO
+     API as Efl.Canvas.Layout.
+
+     @since 1.21
+   ]]
+   methods {
+      @property calc_auto_update_hints {
+         [[Whether this object updates its size hints automatically.
+
+           By default edje doesn't set size hints on itself. If this property
+           is set to $true, size hints will be updated after recalculation.
+           Be careful, as recalculation may happen often, enabling this
+           property may have a considerable performance impact as other widgets
+           will be notified of the size hints changes.
+
+           A layout recalculation can be triggered by @.calc_size_min(),
+           @.calc_size_min_restricted(), @.calc_parts_extends() or even any
+           other internal event.
+         ]]
+         set {
+            [[Enable or disable auto-update of size hints.]]
+         }
+         get {
+            [[Whether this object updates its size hints automatically.]]
+         }
+         values {
+            update: bool(false); [[Whether or not update the size hints.]]
+         }
+      }
+      calc_size_min {
+         [[Calculates the minimum required size for a given Edje object.
+
+           This call works exactly as edje_object_size_min_restricted_calc(),
+           with the last two arguments set to 0. Please refer to its
+           documentation, then.
+         ]]
+         // FIXME: Return a 2D size type (no @out values)
+         params {
+            @out minw: int; [[The minimum required width (return value)]]
+            @out minh: int; [[The minimum required height (return value)]]
+         }
+      }
+      calc_size_min_restricted {
+         [[Calculates the minimum required size for a given layout object.
+
+           This call will trigger an internal recalculation of all parts of
+           the object, in order to return its minimum required dimensions for
+           width and height. The user might choose to impose those minimum
+           sizes, making the resulting calculation to get to values equal or
+           larger than $restrictedw and $restrictedh, for width and height,
+           respectively.
+
+           Note: At the end of this call, the object won't be automatically
+           resized to the new dimensions, but just return the calculated sizes.
+           The caller is the one up to change its geometry or not.
+
+           Warning: Be advised that invisible parts in the object will be taken
+           into account in this calculation.
+         ]]
+         // FIXME: Return a 2D size type (no @out values)
+         params {
+            @out minw: int; [[The minimum required width (return value)]]
+            @out minh: int; [[The minimum required height (return value)]]
+            @in restrictedw: int @optional; [[The minimum width constraint as
+                                       input, $minw can not be lower than this]]
+            @in restrictedh: int @optional; [[The minimum height constraint as
+                                       input, $minh can not be lower than this]]
+         }
+      }
+      calc_parts_extends {
+         [[Calculates the geometry of the region, relative to a given layout
+           object's area, occupied by all parts in the object.
+
+           This function gets the geometry of the rectangle equal to the area
+           required to group all parts in obj's group/collection. The x
+           and y coordinates are relative to the top left corner of the
+           whole obj object's area. Parts placed out of the group's
+           boundaries will also be taken in account, so that x and y
+           may be negative.
+
+           Note: On failure, this function will make all non-$null geometry
+           pointers' pointed variables be set to zero.
+         ]]
+         return: bool; [[$true on success, $false otherwise]]
+         /* FIXME: Return a 2D size type (no @out values) */
+         params {
+            @out x: int; [[The parts region's X coordinate]]
+            @out y: int; [[The parts region's Y coordinate]]
+            @out w: int; [[The parts region's width]]
+            @out h: int; [[The parts region's height]]
+         }
+      }
+      calc_freeze {
+         [[Freezes the layout object.
+
+           This function puts all changes on hold. Successive freezes will
+           nest, requiring an equal number of thaws.
+
+           See also @.calc_thaw.
+         ]]
+         return: int; [[The frozen state or 0 on error]]
+      }
+      calc_thaw {
+         [[Thaws the layout object.
+
+           This function thaws (in other words "unfreezes") the given layout
+           object.
+
+           Note: If sucessive freezes were done, an equal number of thaws will
+           be required.
+
+           See also @.calc_freeze.
+         ]]
+         return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
+      }
+      calc_force @protected {
+         [[Forces a Size/Geometry calculation.
+
+           Forces the object to recalculate its layout regardless of
+           freeze/thaw. This API should be used carefully.
+
+           See also @.calc_freeze and @.calc_thaw.
+         ]]
+      }
+   }
+}

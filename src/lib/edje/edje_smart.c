@@ -561,3 +561,4 @@ _edje_object_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object *obs,
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _edje_object_efl_object_dbg_info_get)
 
 #include "edje_object.eo.c"
+#include "efl_canvas_layout_calc.eo.c"
