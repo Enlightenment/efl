@@ -4815,7 +4815,7 @@ fi
 dnl EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_physics}], [ephysics])
 
 if test "x${want_lua_old}" = "xyes"; then
-   EFL_CHECK_LUA_OLD([EDJE_LUA])
+   EFL_CHECK_LUA_OLD([EDJE])
 else
    PKG_CHECK_MODULES([EDJE_LUA], [luajit >= 2.0.0])
 fi

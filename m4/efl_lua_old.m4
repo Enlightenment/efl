@@ -25,6 +25,12 @@ if test "x${requirement_lua}" = "x"; then
       AC_MSG_ERROR([Missing lua 5.1 or 5.2 support])
    fi
 else
-   EFL_DEPEND_PKG([$1], [LUA], [${requirement_lua}])
+   req_found="no"
+   EFL_DEPEND_PKG([$1], [LUA], [${requirement_lua}],
+                  [ req_found="yes" ],
+                  [ req_found="no" ])
+   if test "x${req_found}" = "xyes"; then
+      PKG_CHECK_MODULES([$1]_LUA, [${requirement_lua}])
+   fi
 fi
 ])
