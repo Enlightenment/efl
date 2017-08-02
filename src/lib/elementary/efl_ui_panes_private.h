@@ -23,8 +23,8 @@
 /**
  * Base layout smart data extended with panes instance data.
  */
-typedef struct _Elm_Panes_Data Elm_Panes_Data;
-struct _Elm_Panes_Data
+typedef struct _Efl_Ui_Panes_Data Efl_Ui_Panes_Data;
+struct _Efl_Ui_Panes_Data
 {
    Evas_Object *event;
    struct
@@ -49,11 +49,11 @@ struct _Elm_Panes_Data
  * @}
  */
 
-#define ELM_PANES_DATA_GET(o, sd) \
-  Elm_Panes_Data * sd = efl_data_scope_get(o, ELM_PANES_CLASS)
+#define EFL_UI_PANES_DATA_GET(o, sd) \
+  Efl_Ui_Panes_Data * sd = efl_data_scope_get(o, EFL_UI_PANES_CLASS)
 
-#define ELM_PANES_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_PANES_DATA_GET(o, ptr);                        \
+#define EFL_UI_PANES_DATA_GET_OR_RETURN(o, ptr)         \
+  EFL_UI_PANES_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("No widget data for object %p (%s)",      \
@@ -61,8 +61,8 @@ struct _Elm_Panes_Data
        return;                                       \
     }
 
-#define ELM_PANES_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_PANES_DATA_GET(o, ptr);                         \
+#define EFL_UI_PANES_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  EFL_UI_PANES_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
        CRI("No widget data for object %p (%s)",       \
@@ -70,8 +70,8 @@ struct _Elm_Panes_Data
        return val;                                    \
     }
 
-#define ELM_PANES_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), ELM_PANES_CLASS))) \
+#define EFL_UI_PANES_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_PANES_CLASS))) \
     return
 
 #endif

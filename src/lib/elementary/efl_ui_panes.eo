@@ -1,9 +1,8 @@
-class Elm.Panes (Elm.Layout, Efl.Orientation,
-                 Efl.Ui.Clickable)
+class Efl.Ui.Panes (Elm.Layout, Efl.Orientation,
+                    Efl.Ui.Clickable)
 {
    [[Elementary panes class]]
    legacy_prefix: elm_panes;
-   eo_prefix: elm_obj_panes;
    event_prefix: elm_panes;
    methods {
       @property content_left_size {
