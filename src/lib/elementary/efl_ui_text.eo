@@ -412,7 +412,6 @@ class Efl.Ui.Text (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Widget.disable;
       Elm.Widget.sub_object_del;
       Elm.Widget.focus_next_manager_is;
-      Elm.Layout.theme_enable;
       Elm.Layout.sizing_eval;
       Elm.Layout.signal_callback_add;
       Elm.Layout.signal_callback_del;

@@ -862,12 +862,14 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    const char *t;
    const char *stl_user;
    const char *style = elm_widget_style_get(obj);
+   Elm_Theme_Apply theme_apply;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
 
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+   // Note: We are skipping elm_layout here! This is by design.
+   // This assumes the following inheritance: my_class -> layout -> widget ...
+   theme_apply = elm_obj_widget_theme_apply(efl_cast(obj, ELM_WIDGET_CLASS));
+   if (!theme_apply) return ELM_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));
 
@@ -1001,7 +1003,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    evas_object_unref(obj);
 
-   return int_ret;
+   return theme_apply;
 }
 
 static void
@@ -4008,12 +4010,6 @@ _elm_entry_efl_canvas_group_group_member_add(Eo *obj, Elm_Entry_Data *sd, Evas_O
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
-}
-
-EOLIAN static Eina_Bool
-_elm_entry_elm_layout_theme_enable(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
-{
-   return EINA_FALSE;
 }
 
 EAPI Evas_Object *
