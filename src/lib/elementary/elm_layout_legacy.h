@@ -391,4 +391,32 @@ EAPI Eina_Bool elm_layout_text_set(Evas_Object *obj, const char * part, const ch
  */
 EAPI const char *elm_layout_text_get(const Evas_Object *obj, const char * part);
 
+/**
+ * @brief Set accessibility to all texblock(text) parts in the layout object.
+ *
+ * @param[in] can_access Makes all textblock(text) parts in the layout @c obj
+ * possible to have accessibility. @c true means textblock(text) parts can be
+ * accessible.
+ *
+ * @return @c true on success or @c false on failure. If @c obj is not a proper
+ * layout object, @c false is returned.
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool can_access);
+
+/**
+ * @brief Get accessibility state of texblock(text) parts in the layout object
+ *
+ * @return Makes all textblock(text) parts in the layout @c obj possible to
+ * have accessibility. @c true means textblock(text) parts can be accessible.
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_edje_object_can_access_get(const Evas_Object *obj);
+
 #include "elm_layout.eo.legacy.h"
