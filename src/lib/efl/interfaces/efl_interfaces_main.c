@@ -63,6 +63,12 @@
 #include "interfaces/efl_ui_factory.eo.c"
 #include "interfaces/efl_ui_model_factory_connect.eo.c"
 
+#include "interfaces/efl_ui_draggable.eo.c"
+#include "interfaces/efl_ui_clickable.eo.c"
+#include "interfaces/efl_ui_scrollable.eo.c"
+#include "interfaces/efl_ui_selectable.eo.c"
+#include "interfaces/efl_ui_zoom.eo.c"
+
 EAPI void
 __efl_internal_init(void)
 {
