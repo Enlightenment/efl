@@ -409,7 +409,7 @@ fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int lengt
     else
       {
          const int vmax = INT_MAX >> (FIXPT_BITS + 1);
-         const int vmin = -vmin;
+         const int vmin = -vmax;
          float v = t + (inc *length);
 
          if ((v < (float)vmax) && (v > (float)(vmin)))
