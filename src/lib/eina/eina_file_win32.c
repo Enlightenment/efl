@@ -383,11 +383,12 @@ eina_file_real_close(Eina_File *file)
         free(map);
      }
 
-   if (file->global_map != MAP_FAILED)
-     UnmapViewOfFile(file->global_map);
-
    if (file->handle != INVALID_HANDLE_VALUE)
-     CloseHandle(file->handle);
+     {
+        if (file->global_map != MAP_FAILED)
+          UnmapViewOfFile(file->global_map);
+        CloseHandle(file->handle);
+     }
 }
 
 static void
