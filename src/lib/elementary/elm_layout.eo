@@ -18,7 +18,8 @@ struct Elm.Layout_Part_Alias_Description
 }
 
 class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
-                         Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect)
+                  Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect,
+                  Efl.Canvas.Layout_Calc)
 {
    [[Elementary layout class]]
    legacy_prefix: elm_layout;
@@ -60,16 +61,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
             return: Efl.Canvas.Object; [[An Evas_Object with the edje layout
                                      settings loaded \@ref elm_layout_file_set.]]
          }
-      }
-      freeze {
-         [[Freezes the Elementary layout object.
-
-           This function puts all changes on hold. Successive freezes will
-           nest, requiring an equal number of thaws.
-
-           See also @.thaw.
-         ]]
-         return: int; [[The frozen state or 0 on error.]]
       }
       theme_enable {
       	 [[Enable theme]]
@@ -178,19 +169,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                                         when the signal was emitted.]]
          }
       }
-      thaw {
-         [[Thaws the Elementary object.
-
-           This function thaws the given Edje object and the Elementary
-           sizing calc.
-
-           Note: If sucessives freezes were done, an equal number of
-           thaws will be required.
-
-           See also @.freeze.
-         ]]
-         return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
-      }
       signal_emit {
          [[Send a (Edje) signal to a given layout widget's underlying Edje
            object.
@@ -212,6 +190,8 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Canvas.Group.group_calculate;
+      Efl.Canvas.Layout_Calc.calc_freeze;
+      Efl.Canvas.Layout_Calc.calc_thaw;
       Elm.Widget.focus_direction;
       Elm.Widget.sub_object_add;
       Elm.Widget.theme_apply;

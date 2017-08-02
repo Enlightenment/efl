@@ -128,6 +128,32 @@ EAPI Eina_Bool elm_layout_mmap_set(Eo *obj, const Eina_File *file, const char *g
 EAPI void elm_layout_mmap_get(Eo *obj, const Eina_File **file, const char **group);
 
 /**
+ * @brief Freezes the Elementary layout object.
+ *
+ * This function puts all changes on hold. Successive freezes will nest,
+ * requiring an equal number of thaws.
+ *
+ * See also @ref elm_layout_thaw.
+ *
+ * @return The frozen state or 0 on error.
+ */
+EAPI int elm_layout_freeze(Evas_Object *obj);
+
+/**
+ * @brief Thaws the Elementary object.
+ *
+ * This function thaws the given Edje object and the Elementary sizing calc.
+ *
+ * @note If sucessives freezes were done, an equal number of thaws will be
+ * required.
+ *
+ * See also @ref elm_layout_freeze.
+ *
+ * @return The frozen state or 0 if the object is not frozen or on error.
+ */
+EAPI int elm_layout_thaw(Evas_Object *obj);
+
+/**
  * @brief Append child to layout box part.
  *
  * Once the object is appended, it will become child of the layout. Its
