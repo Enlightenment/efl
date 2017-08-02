@@ -651,11 +651,14 @@ _shot_file_get(Efl_Ui_Win_Data *sd)
                     {
                        size_t size = sizeof(char) * (strlen(tmp) + 16);
                        repname = malloc(size);
-                       strncpy(repname, tmp, dotptr - tmp);
-                       snprintf(repname + (dotptr - tmp), size -
-                                (dotptr - tmp), "%03i",
-                                sd->shot.shot_counter + 1);
-                       strcat(repname, dotptr);
+                       if (repname)
+                         {
+                            strncpy(repname, tmp, dotptr - tmp);
+                            snprintf(repname + (dotptr - tmp), size -
+                                     (dotptr - tmp), "%03i",
+                                     sd->shot.shot_counter + 1);
+                            strcat(repname, dotptr);
+                         }
                        free(tmp);
                        return repname;
                     }
@@ -666,6 +669,7 @@ _shot_file_get(Efl_Ui_Win_Data *sd)
    if (!sd->shot.repeat_count) return strdup("out.png");
 
    repname = malloc(sizeof(char) * 24);
+   if (!repname) return NULL;
    snprintf(repname, sizeof(char) * 24, "out%03i.png",
             sd->shot.shot_counter + 1);
 
