@@ -47,6 +47,8 @@
 #define FN_COL_OUTLINE_TRANSPARENT 255 255 255 0; color2: 0 0 0 0; color3: 0 0 0 0;
 #define FN_COL_OUTLINE_DEFAULT 255 255 255 255; color2: 0 0 0 128; color3: 0 0 0 24;
 
+#define TB_COL_PRIMER 255 255 255 255; color2: 255 255 255 255; color3: 255 255 255 255;
+
 #define ENABLED_TEXTBLOCK_TAGS                                             \
    tag: "em" "+ font_style=Oblique";                                       \
    tag: "hilight" "+ font_weight=Bold style=glow glow_color=#3399ff80";    \
