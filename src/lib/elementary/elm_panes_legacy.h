@@ -45,4 +45,4 @@ EAPI void elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
  */
 EAPI Eina_Bool elm_panes_horizontal_get(const Evas_Object *obj);
 
-#include "elm_panes.eo.legacy.h"
+#include "efl_ui_panes.eo.legacy.h"

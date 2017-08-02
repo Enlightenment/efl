@@ -432,7 +432,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    }
 
    /* FIXME: No panes in EO APIs. */
-   o = split = efl_add(ELM_PANES_CLASS, win,
+   o = split = efl_add(EFL_UI_PANES_CLASS, win,
                        efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
                        efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
                        efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL));
