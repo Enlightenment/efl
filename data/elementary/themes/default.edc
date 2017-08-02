@@ -1,5 +1,6 @@
 #include "macros.edc"
 
+efl_version: 1 20;
 externals.external: "elm";
 
 // theme api version. from 1.10 on we will check version to avoid
