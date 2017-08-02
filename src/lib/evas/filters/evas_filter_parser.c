@@ -2231,26 +2231,29 @@ static inline void
 _lua_import_path_get(char *path, size_t len, const char *name)
 {
    const char *pfx = _evas_module_datadir_get();
-   size_t r;
+   size_t r = 0;
 
 #ifdef FILTERS_DEBUG
    // This is a hack to fetch the most recent file from source
    char *sep = evas_file_path_join("", "");
    char *src = strdup(__FILE__);
-   char *slash = strrchr(src, *sep);
    struct stat st;
-   if (slash)
+   if (sep && src)
      {
-        *slash = '\0';
-        if (*src == '/')
-          r = snprintf(path, len - 1, "%s/lua/%s.lua", src, name);
-        else // abs_srcdir is unknown here
-           r =  snprintf(path, len - 1, "%s/src/%s/lua/%s.lua", PACKAGE_BUILD_DIR, src, name);
-        if (r >= len) path[len - 1] = '\0';
+        char *slash = strrchr(src, *sep);
+        if (slash)
+          {
+             *slash = '\0';
+             if (*src == '/')
+               r = snprintf(path, len - 1, "%s/lua/%s.lua", src, name);
+             else // abs_srcdir is unknown here
+               r = snprintf(path, len - 1, "%s/src/%s/lua/%s.lua", PACKAGE_BUILD_DIR, src, name);
+             if (r >= len) path[len - 1] = '\0';
+          }
      }
    free(sep);
    free(src);
-   if (!stat(path, &st)) return;
+   if (r && !stat(path, &st)) return;
 #endif
 
    r = snprintf(path, len - 1, "%s/filters/lua/%s.lua", pfx ? pfx : ".", name);
