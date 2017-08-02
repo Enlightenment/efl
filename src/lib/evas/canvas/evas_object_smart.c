@@ -148,12 +148,7 @@ evas_object_smart_interface_get(const Evas_Object *eo_obj,
    Evas_Smart *s;
    unsigned int i;
 
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-
-   if (!efl_isa(eo_obj, EFL_CANVAS_GROUP_CLASS)) return NULL;
-
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, NULL);
    s = evas_object_smart_smart_get(eo_obj);
    if (!s) return NULL;
 
@@ -175,14 +170,9 @@ evas_object_smart_interface_data_get(const Evas_Object *eo_obj,
                                      const Evas_Smart_Interface *iface)
 {
    unsigned int i;
-   Evas_Smart_Data *obj;
    Evas_Smart *s;
 
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-
-   obj = efl_data_scope_get(eo_obj, MY_CLASS);
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, NULL);
    s = evas_object_smart_smart_get(eo_obj);
    if (!s) return NULL;
 
@@ -191,7 +181,7 @@ evas_object_smart_interface_data_get(const Evas_Object *eo_obj,
         for (i = 0; i < s->interfaces.size; i++)
           {
              if (iface == s->interfaces.array[i])
-                return obj->interface_privates[i];
+                return o->interface_privates[i];
           }
      }
 
@@ -677,11 +667,9 @@ _evas_object_smart_move_relative_internal(Evas_Smart_Data *o, Evas_Coord dx, Eva
 EAPI void
 evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Coord dx, Evas_Coord dy)
 {
-   Evas_Smart_Data *o;
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
 
    if ((dx == 0) && (dy == 0)) return;
-   if (!efl_isa(eo_obj, MY_CLASS)) return;
-   o = efl_data_scope_get(eo_obj, MY_CLASS);
    _evas_object_smart_move_relative_internal(o, dx, dy);
 }
 
@@ -768,12 +756,7 @@ evas_object_smart_callback_add(Evas_Object *eo_obj, const char *event, Evas_Smar
 EAPI void
 evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, Evas_Callback_Priority priority, Evas_Smart_Cb func, const void *data)
 {
-   Evas_Smart_Data *o;
-
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   o = efl_data_scope_get(eo_obj, MY_CLASS);
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
 
    if (!event) return;
    if (!func) return;
@@ -793,16 +776,12 @@ evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, 
 EAPI void *
 evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smart_Cb func)
 {
-   Evas_Smart_Data *o;
    _eo_evas_smart_cb_info *info;
 
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return NULL;
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, NULL);
 
    if (!event) return NULL;
+
    const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
 
    EINA_INLIST_FOREACH(o->callbacks, info)
@@ -824,15 +803,11 @@ evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smar
 EAPI void *
 evas_object_smart_callback_del_full(Evas_Object *eo_obj, const char *event, Evas_Smart_Cb func, const void *data)
 {
-   Evas_Smart_Data *o;
    _eo_evas_smart_cb_info *info;
 
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, NULL);
+
    if (!event) return NULL;
-   o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return NULL;
 
    const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
 
