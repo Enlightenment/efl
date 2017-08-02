@@ -466,10 +466,14 @@ static void
 _elm_code_widget_fill(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
+   unsigned int height;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   height = elm_code_widget_lines_visible_get(widget);
+   if (height > elm_code_file_lines_get(pd->code->file))
+     height = elm_code_file_lines_get(pd->code->file);
 
-   _elm_code_widget_fill_update(widget, 1, elm_code_file_lines_get(pd->code->file), NULL);
+   _elm_code_widget_fill_update(widget, 1, height, NULL);
 }
 
 static void
