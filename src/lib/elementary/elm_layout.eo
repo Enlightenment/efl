@@ -26,29 +26,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
    event_prefix: elm_layout;
    data: Elm_Layout_Smart_Data;
    methods {
-      @property edje_object_can_access {
-         set {
-            [[Set accessibility to all texblock(text) parts in the layout
-              object.
-
-              @since 1.7
-            ]]
-            return: bool; [[$true on success or $false on failure. If $obj
-                            is not a proper layout object, $false is returned.]]
-         }
-         get {
-            [[Get accessibility state of texblock(text) parts in the layout
-              object
-
-              @since 1.7
-            ]]
-         }
-         values {
-            can_access: bool; [[Makes all textblock(text) parts in the layout
-                                $obj possible to have accessibility. $true
-                                means textblock(text) parts can be accessible.]]
-         }
-      }
       @property theme {
          set {
             [[Set the edje group from the elementary theme that will be used
