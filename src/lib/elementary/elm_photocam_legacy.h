@@ -1,4 +1,4 @@
-#include "canvas/efl_ui_zoom.eo.legacy.h"
+#include "interfaces/efl_ui_zoom.eo.legacy.h"
 
 /**
  * @brief Add a new Photocam object
