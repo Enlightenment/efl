@@ -502,6 +502,9 @@ ecore_x_image_to_argb_convert(void *src,
    };
    int mode = 0;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
+
    sbpp *= 8;
 
    n = vis->map_entries;
