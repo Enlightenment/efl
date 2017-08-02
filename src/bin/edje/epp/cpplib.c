@@ -2347,7 +2347,7 @@ special_symbol(HASHNODE * hp, cpp_reader * pfile)
 	   if (ip->fname)
 	      true_indepth++;
 
-	bufx = (char *)alloca(8);	/* Eight bytes ought to be more than enough */
+	bufx = (char *)alloca(12);	// 12 bytes - more than enough
 	sprintf(bufx, "%d", true_indepth - 1);
 	buf = bufx;
 	break;
