@@ -160,6 +160,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.disable;
+      Elm.Widget.sub_object_add;
       Elm.Widget.translate;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
@@ -167,7 +168,6 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
       Efl.Ui.Menu.first_item { get; }
       Efl.Ui.Menu.last_item { get; }
       Efl.Ui.Menu.items { get; }
-      Elm.Layout.sub_object_add_enable;
       Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }

@@ -544,7 +544,6 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Widget.widget_event;
       Elm.Widget.focused_item { get; }
       Elm.Widget.item_loop_enabled { get; set; }
-      Elm.Layout.sub_object_add_enable;
       Elm.Layout.sizing_eval;
       Elm.Interface_Scrollable.bounce_allow { get; set; }
       Elm.Interface_Scrollable.policy { get; set; }

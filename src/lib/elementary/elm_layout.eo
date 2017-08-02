@@ -114,11 +114,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                                           callback function.]]
          }
       }
-      sub_object_add_enable {
-      	 [[Enable sub object add]]
-         legacy: null;
-         return: bool; [[$true on success, $false otherwise]]
-      }
       data_get @const {
          [[Get the edje data from the given layout.
 

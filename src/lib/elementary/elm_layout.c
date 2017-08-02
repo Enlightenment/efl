@@ -499,13 +499,9 @@ _elm_layout_elm_widget_sub_object_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_U
    int_ret = elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
-   Eina_Bool enable = EINA_TRUE;
-   enable = elm_obj_layout_sub_object_add_enable(obj);
-
-   if (EINA_TRUE == enable)
-     evas_object_event_callback_add
-       (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-         _on_sub_object_size_hint_change, obj);
+   evas_object_event_callback_add
+         (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+          _on_sub_object_size_hint_change, obj);
 
    return EINA_TRUE;
 }
@@ -588,12 +584,6 @@ _edje_signal_callback(void *data,
    Edje_Signal_Data *esd = data;
 
    esd->func(esd->data, esd->obj, emission, source);
-}
-
-EOLIAN static Eina_Bool
-_elm_layout_sub_object_add_enable(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
