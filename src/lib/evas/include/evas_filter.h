@@ -32,9 +32,9 @@
 # endif
 #endif /* ! _WIN32 */
 
-//#ifdef DEBUG
+#ifdef DEBUG
 # define FILTERS_DEBUG
-//#endif
+#endif
 
 typedef struct _Evas_Filter_Instruction Evas_Filter_Instruction;
 typedef struct _Evas_Filter_Buffer Evas_Filter_Buffer;
