@@ -1,6 +1,6 @@
 class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
                     Elm.Interface.Atspi_Widget_Action,
-                    Efl.Ui.Scrollable)
+                    Efl.Ui.Scrollable, Efl.Container)
 {
    [[Elementary scroller class]]
    legacy_prefix: elm_scroller;
@@ -45,6 +45,8 @@ class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
+      Efl.Container.content { get; set; }
+      Efl.Container.content_unset;
       Elm.Widget.theme_apply;
       Elm.Widget.activate;
       Elm.Widget.focus_next_manager_is;
