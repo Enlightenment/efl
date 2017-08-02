@@ -2017,7 +2017,7 @@ comp_surface_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 {
    Evas_Event_Mouse_Move *ev = event_info;
    Comp_Surface *cs = data;
-   Eina_List *l, *ll;
+   Eina_List *l = NULL, *ll;
    struct wl_resource *res;
    int x, y;
    Comp_Seat *s;
