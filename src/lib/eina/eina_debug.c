@@ -311,7 +311,18 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
 
    uint64_t info_64;
    memcpy(&info_64, buffer, sizeof(uint64_t));
-   info_64 = SWAP_64(info_64);
+   // This is super dodgey. like really dodgey. it HAPPENS to work on
+   // little endian. definitely on 64bit because the SWAP is a nop and the
+   // pointer the buffer points to can be just used as-is, but if this
+   // was bigendian the swap would mess up the ptr and crash (on 64bit) as
+   // it'd swap everything around. on little endian 32bit it will happen to
+   // work as it takes the lower 32bits, but on big endian... bork bork.
+   //
+   // so obviously... don't swap, then it'll always take the LOWER 32bits
+   // on 32bit and should work... since buffer obviously is pointing to
+   // a 64bit type that contains a pointer to something... and on 64bit it'll
+   // just work as-is as sizes match.
+//   info_64 = SWAP_64(info_64);
    info = (_opcode_reply_info *)info_64;
 
    if (!info) return EINA_FALSE;
