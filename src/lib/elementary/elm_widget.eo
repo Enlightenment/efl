@@ -31,7 +31,7 @@ struct @extern Elm.Theme; [[Elementary theme]]
 
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
                      Elm.Interface.Atspi_Component, Efl.Ui.Focus.User,
-                     Efl.Ui.Focus.Object, Efl.Ui.Base)
+                     Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor)
 {
    [[Elementary widget abstract class]]
    legacy_prefix: elm_widget;
@@ -811,6 +811,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       Efl.Ui.Base.scale { get; set; }
       Efl.Ui.Base.mirrored { get; set; }
       Efl.Ui.Base.mirrored_automatic { get; set; }
+      Efl.Ui.Cursor.cursor { get; set; }
+      Efl.Ui.Cursor.cursor_style { get; set; }
+      Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
    }
    events {
       moved; [[Called when widget moved]]
