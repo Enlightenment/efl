@@ -100,6 +100,8 @@ _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
    uint64_t old_total = pd->progress.total;
 
    _COPIER_DBG(o, pd);
+   /* FIXME: Remove this wref once efl_promise is able to handle recursive cases. */
+   efl_wref_del(pd->job, &pd->job);
    pd->job = NULL; /* XXX TODO this should be NULL-ified by efl_promise before calling this function */
 
    efl_ref(o);
