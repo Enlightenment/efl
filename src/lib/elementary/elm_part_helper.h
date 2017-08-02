@@ -4,7 +4,7 @@
 #include "elm_layout_internal_part.eo.h"
 
 //#define ELM_PART_HOOK do { ERR("%p:%s [%d]", pd->obj, pd->part, (int) pd->temp); } while(0)
-#define ELM_PART_HOOK
+#define ELM_PART_HOOK do {} while(0)
 
 #define ELM_PART_REF(obj, pd) do { if (!(pd->temp++)) efl_ref(obj); } while(0)
 #define ELM_PART_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) efl_del(obj); } } while(0)
