@@ -122,6 +122,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_text_editable.eo \
 	lib/elementary/efl_config_global.eo \
 	lib/elementary/efl_ui_clock.eo \
+	lib/elementary/efl_ui_cursor.eo \
 	lib/elementary/efl_ui_image_factory.eo \
 	lib/elementary/efl_ui_focus_manager.eo \
 	lib/elementary/efl_ui_focus_manager_sub.eo \

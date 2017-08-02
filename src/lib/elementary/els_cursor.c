@@ -636,15 +636,16 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
                                   _elm_cursor_del, cur);
 }
 
-EAPI void
-elm_object_cursor_set(Evas_Object *obj, const char *cursor)
+EOLIAN void
+_elm_widget_efl_ui_cursor_cursor_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
+                                     const char *cursor)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_object_sub_cursor_set(obj, obj, cursor);
 }
 
-EAPI const char *
-elm_object_cursor_get(const Evas_Object *obj)
+EOLIAN const char *
+_elm_widget_efl_ui_cursor_cursor_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj, NULL);
    return cur->cursor_name;
@@ -712,8 +713,9 @@ elm_object_cursor_unset(Evas_Object *obj)
    free(cur);
 }
 
-EAPI void
-elm_object_cursor_style_set(Evas_Object *obj, const char *style)
+EOLIAN void
+_elm_widget_efl_ui_cursor_cursor_style_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
+                                           const char *style)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj);
 
@@ -739,8 +741,8 @@ elm_object_cursor_style_set(Evas_Object *obj, const char *style)
      }
 }
 
-EAPI const char *
-elm_object_cursor_style_get(const Evas_Object *obj)
+EOLIAN const char *
+_elm_widget_efl_ui_cursor_cursor_style_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj, NULL);
    return cur->style ? cur->style : "default";
@@ -761,8 +763,9 @@ elm_cursor_theme(Elm_Cursor *cur)
      _elm_cursor_set_hot_spots(cur);
 }
 
-EAPI void
-elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search)
+EOLIAN void
+_elm_widget_efl_ui_cursor_cursor_theme_search_enabled_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
+                                                          Eina_Bool theme_search)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj);
    cur->theme_search = theme_search;
@@ -770,10 +773,11 @@ elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_sea
    _elm_cursor_cur_set(cur);
 }
 
-EAPI Eina_Bool
-elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj)
+EOLIAN Eina_Bool
+_elm_widget_efl_ui_cursor_cursor_theme_search_enabled_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj, EINA_FALSE);
    return cur->theme_search;
 }
 
+#include "efl_ui_cursor.eo.c"
