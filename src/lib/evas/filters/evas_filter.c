@@ -295,6 +295,8 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
         Evas_Filter_Buffer *in, *out;
 
         in = cmd->input;
+        EINA_SAFETY_ON_NULL_GOTO(in, alloc_fail);
+
         in->cleanup = EINA_FALSE;
         if (!in->w && !in->h)
           {
@@ -325,6 +327,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
                   return EINA_FALSE;
                }
 
+             EINA_SAFETY_ON_NULL_GOTO(in, alloc_fail);
              if (in->w) sw = in->w;
              if (in->h) sh = in->h;
 
