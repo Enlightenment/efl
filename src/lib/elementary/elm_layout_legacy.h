@@ -419,4 +419,95 @@ EAPI Eina_Bool elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool
  */
 EAPI Eina_Bool elm_layout_edje_object_can_access_get(const Evas_Object *obj);
 
+/**
+ * @brief Sets if the cursor set should be searched on the theme or should use
+ * the provided by the engine, only.
+ *
+ * @note Before you set if should look on theme you should define a cursor with
+ * @ref elm_layout_part_cursor_set. By default it will only look for cursors
+ * provided by the engine.
+ *
+ * @param[in] part_name A part from loaded edje group.
+ * @param[in] engine_only If cursors should be just provided by the engine
+ * ($true) or should also search on widget's theme as well ($false)
+ *
+ * @return @c true on success or @c false on failure, that may be part not
+ * exists or it did not had a cursor set.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only);
+
+/**
+ * @brief Get a specific cursor engine_only for an edje part.
+ *
+ * @param[in] part_name A part from loaded edje group.
+ *
+ * @return Whenever the cursor is just provided by engine or also from theme.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name);
+
+/**
+ * @brief Sets a specific cursor for an edje part.
+ *
+ * @param[in] part_name A part from loaded edje group.
+ * @param[in] cursor Cursor name to use, see Elementary_Cursor.h.
+ *
+ * @return @c true on success or @c false on failure, that may be part not
+ * exists or it has "mouse_events: 0".
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor);
+
+/**
+ * @brief Get the cursor to be shown when mouse is over an edje part.
+ *
+ * @param[in] part_name A part from loaded edje group.
+ *
+ * @return Cursor name
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI const char *elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name);
+
+/**
+ * @brief Sets a specific cursor style for an edje part.
+ *
+ * @param[in] part_name A part from loaded edje group.
+ * @param[in] style The theme style to use (default, transparent, ...).
+ *
+ * @return @c true on success or @c false on failure, that may be part not
+ * exists or it did not had a cursor set.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style);
+
+/**
+ * @brief Get a specific cursor style for an edje part.
+ *
+ * @param[in] part_name A part from loaded edje group.
+ *
+ * @return The theme style in use, defaults to "default". If the object does
+ * not have a cursor set, then @c null is returned.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI const char *elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name);
+
+/**
+ * @brief Unsets a cursor previously set with @ref elm_layout_part_cursor_set.
+ *
+ * @param[in] part_name A part from loaded edje group, that had a cursor set
+ * wit @ref elm_layout_part_cursor_set.
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);
+
 #include "elm_layout.eo.legacy.h"

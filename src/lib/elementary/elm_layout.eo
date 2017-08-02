@@ -61,31 +61,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                                      settings loaded \@ref elm_layout_file_set.]]
          }
       }
-      part_cursor_engine_only_set {
-         [[Sets if the cursor set should be searched on the theme or should
-           use the provided by the engine, only.
-
-           Note: Before you set if should look on theme you should define a
-           cursor with @.part_cursor_set. By default it will only look for
-           cursors provided by the engine.
-         ]]
-         return: bool; [[$true on success or $false on failure, that may be
-                         part not exists or it did not had a cursor set.]]
-         params {
-            @in part_name: string; [[A part from loaded edje group.]]
-            @in engine_only: bool; [[If cursors should be just provided by
-                                     the engine ($true) or should also search
-                                     on widget's theme as well ($false)]]
-         }
-      }
-      part_cursor_engine_only_get @const {
-         [[Get a specific cursor engine_only for an edje part.]]
-         return: bool; [[Whenever the cursor is just provided by engine
-                         or also from theme.]]
-         params {
-            @in part_name: string; [[A part from loaded edje group.]]
-         }
-      }
       freeze {
          [[Freezes the Elementary layout object.
 
@@ -136,25 +111,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
             @in height: bool; [[Restrict minimum size ot the current height.]]
          }
       }
-      part_cursor_style_set {
-         [[Sets a specific cursor style for an edje part.]]
-         return: bool; [[$true on success or $false on failure, that may be
-                         part not exists or it did not had a cursor set.]]
-         params {
-            @in part_name: string; [[A part from loaded edje group.]]
-            @in style: string; [[The theme style to use (default,
-                                       transparent, ...).]]
-         }
-      }
-      part_cursor_style_get @const {
-         [[Get a specific cursor style for an edje part.]]
-         return: string; [[The theme style in use, defaults to "default".
-                                 If the object does not have a cursor set,
-                                 then $null is returned.]]
-         params {
-            @in part_name: string; [[A part from loaded edje group.]]
-         }
-      }
       signal_callback_add {
          [[Add a callback for a (Edje) signal emitted by a layout widget's
            underlying Edje object.
@@ -170,22 +126,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                                         when the signal is emitted.]]
             @in data: void_ptr @optional; [[A pointer to data to pass in to the
                                           callback function.]]
-         }
-      }
-      part_cursor_set {
-         [[Sets a specific cursor for an edje part.]]
-         return: bool; [[$true on success or $false on failure, that may be
-                         part not exists or it has "mouse_events: 0".]]
-         params {
-            @in part_name: string; [[A part from loaded edje group.]]
-            @in cursor: string; [[Cursor name to use, see Elementary_Cursor.h.]]
-         }
-      }
-      part_cursor_get @const {
-         [[Get the cursor to be shown when mouse is over an edje part.]]
-         return: string; [[Cursor name]]
-         params {
-            @in part_name: string; [[A part from loaded edje group.]]
          }
       }
       sub_object_add_enable {
@@ -263,15 +203,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
          params {
             @in emission: string; [[The signal's name string.]]
             @in source: string; [[The signal's source string.]]
-         }
-      }
-      part_cursor_unset {
-         [[Unsets a cursor previously set with @.part_cursor_set.]]
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in part_name: string; [[A part from loaded edje group,
-                                           that had a cursor set wit
-                                           @.part_cursor_set.]]
          }
       }
    }

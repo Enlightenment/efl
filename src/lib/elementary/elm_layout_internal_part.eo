@@ -1,4 +1,5 @@
-class Elm.Layout.Internal.Part (Efl.Object, Efl.Container, Efl.Text)
+class Elm.Layout.Internal.Part (Efl.Object, Efl.Container, Efl.Text,
+                                Efl.Ui.Cursor)
 {
    [[Elementary layout internal part class]]
    data: Elm_Part_Data;
@@ -7,5 +8,8 @@ class Elm.Layout.Internal.Part (Efl.Object, Efl.Container, Efl.Text)
       Efl.Container.content { get; set; }
       Efl.Container.content_unset;
       Efl.Text.text { set; get; }
+      Efl.Ui.Cursor.cursor { get; set; }
+      Efl.Ui.Cursor.cursor_style { get; set; }
+      Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
    }
 }

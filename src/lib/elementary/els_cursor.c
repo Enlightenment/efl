@@ -636,12 +636,13 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
                                   _elm_cursor_del, cur);
 }
 
-EOLIAN void
+EOLIAN Eina_Bool
 _elm_widget_efl_ui_cursor_cursor_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
                                      const char *cursor)
 {
-   EINA_SAFETY_ON_NULL_RETURN(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    elm_object_sub_cursor_set(obj, obj, cursor);
+   return EINA_TRUE;
 }
 
 EOLIAN const char *
@@ -713,21 +714,24 @@ elm_object_cursor_unset(Evas_Object *obj)
    free(cur);
 }
 
-EOLIAN void
+EOLIAN Eina_Bool
 _elm_widget_efl_ui_cursor_cursor_style_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
                                            const char *style)
 {
-   ELM_CURSOR_GET_OR_RETURN(cur, obj);
+   ELM_CURSOR_GET_OR_RETURN(cur, obj, EINA_FALSE);
 
    if (!eina_stringshare_replace(&cur->style, style))
      ERR("Could not set current style=%s", style);
 
-   if (cur->use_engine) return;
+   if (cur->use_engine) return EINA_FALSE;
 
    if (!cur->obj)
      {
         if (!_elm_cursor_obj_add(cur->owner, cur))
-          ERR("Could not create cursor object");
+          {
+             ERR("Could not create cursor object");
+             return EINA_FALSE;
+          }
         else
           _elm_cursor_set_hot_spots(cur);
      }
@@ -735,10 +739,15 @@ _elm_widget_efl_ui_cursor_cursor_style_set(Evas_Object *obj, Elm_Widget_Smart_Da
      {
         if (!_elm_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
                                    style))
-          ERR("Could not apply the theme to the cursor style=%s", style);
+          {
+             ERR("Could not apply the theme to the cursor style=%s", style);
+             return EINA_FALSE;
+          }
         else
           _elm_cursor_set_hot_spots(cur);
      }
+
+   return EINA_TRUE;
 }
 
 EOLIAN const char *
@@ -763,14 +772,15 @@ elm_cursor_theme(Elm_Cursor *cur)
      _elm_cursor_set_hot_spots(cur);
 }
 
-EOLIAN void
+EOLIAN Eina_Bool
 _elm_widget_efl_ui_cursor_cursor_theme_search_enabled_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
                                                           Eina_Bool theme_search)
 {
-   ELM_CURSOR_GET_OR_RETURN(cur, obj);
+   ELM_CURSOR_GET_OR_RETURN(cur, obj, EINA_FALSE);
    cur->theme_search = theme_search;
    ELM_SAFE_FREE(cur->obj, evas_object_del);
    _elm_cursor_cur_set(cur);
+   return EINA_TRUE;
 }
 
 EOLIAN Eina_Bool

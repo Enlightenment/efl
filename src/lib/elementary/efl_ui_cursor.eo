@@ -38,8 +38,11 @@ interface Efl.Ui.Cursor ()
               If $cursor is $null this function will reset the cursor
               to the default one.
             ]]
+            return: bool; [[$true if successful.]]
          }
-         get { [[Returns the current cursor name.]] }
+         get {
+            [[Returns the current cursor name.]]
+         }
          values {
             cursor: string @nullable; [[The cursor name, defined either
                                         by the display system or the theme.]]
@@ -52,6 +55,13 @@ interface Efl.Ui.Cursor ()
            The cursor should be set with @.cursor.set first before
            setting its style with this property.
          ]]
+         set {
+            [[Sets a style for the current cursor. Call after @.cursor.set.]]
+            return: bool; [[$true if successful.]]
+         }
+         get {
+            [[Returns the current cursor style name.]]
+         }
          values {
             style: string; [[A specific style to use, eg. default,
                              transparent, ....]]
@@ -63,6 +73,13 @@ interface Efl.Ui.Cursor ()
            If $false, the cursor may only come from the render engine,
            i.e. from the display manager.
          ]]
+         set {
+            [[Enables or disables theme cursors.]]
+            return: bool; [[$true if successful.]]
+         }
+         get {
+            [[Returns the current state of theme cursors search.]]
+         }
          values {
             allow: bool(true); [[Whether to use theme cursors.]]
          }
