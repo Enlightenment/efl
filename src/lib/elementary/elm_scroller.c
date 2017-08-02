@@ -869,6 +869,24 @@ _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
    return ret;
 }
 
+EOLIAN static Eina_Bool
+_elm_scroller_efl_container_content_set(Eo *obj, Elm_Scroller_Data *sd, Eo *content)
+{
+   return _elm_scroller_content_set(obj, sd, "default", content);
+}
+
+EOLIAN static Eo *
+_elm_scroller_efl_container_content_get(Eo *obj, Elm_Scroller_Data *sd)
+{
+   return _elm_scroller_content_get(obj, sd, "default");
+}
+
+EOLIAN static Eo *
+_elm_scroller_efl_container_content_unset(Eo *obj, Elm_Scroller_Data *sd)
+{
+   return _elm_scroller_content_unset(obj, sd, "default");
+}
+
 static void
 _elm_scroller_content_min_limit_cb(Evas_Object *obj,
                                    Eina_Bool w,
@@ -1462,6 +1480,7 @@ ELM_PART_OVERRIDE(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm
 ELM_PART_OVERRIDE_CONTENT_SET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
+// FIXME: should be "content" but "default" was legacy API
 ELM_PART_CONTENT_DEFAULT_SET(elm_scroller, "default")
 #include "elm_scroller_internal_part.eo.c"
 
