@@ -3,6 +3,20 @@ group { name: "elm/button/base/default";
    alias: "elm/button/base/naviframe/back_btn/pager";
    images.image: "button_normal.png" COMP;
    images.image: "button_clicked.png" COMP;
+   styles {
+      style { name: "button_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom color_class=button_text text_class=button align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "button_pressed_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom color_class=button_text_pressed text_class=button align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "button_disabled_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom color_class=button_text_disabled text_class=button align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
 #define ICON     1
 #define LABEL    2
 #define MASK     3
@@ -179,12 +193,13 @@ group { name: "elm/button/base/default";
             visible: 1;
          }
       }
-      text { "sizer.content"; nomouse;
+      part { name: "sizer.content"; type: TEXTBLOCK;
          scale: 1;
          desc { "default";
 //            fixed: 1 1;
             visible: 0;
-            text { font: FN; size: 10;
+            text { style: "button_style";
+               font: FN; size: 10;
                min: 0 0;
                text_class: "button_text";
             }
@@ -210,8 +225,7 @@ group { name: "elm/button/base/default";
             }
          }
       }
-      text { "elm.text"; nomouse;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK;
          scale: 1;
          desc { "default";
             rel1.offset: 0 5;
@@ -220,15 +234,14 @@ group { name: "elm/button/base/default";
             rel1.to_y: "base";
             rel2.offset: -8 -8;
             rel2.to: "base";
-            color_class: "button_text";
-            color3: 255 255 255 255;
-            text { font: FN; size: 10;
+            //color_class: "button_text";
+            //color3: 255 255 255 255;
+            text { style: "button_style";
+               font: FN; size: 10;
                align: 0.5 0.5;
-               min: 0 0;
+               min: 0 1;
                text_class: "button";
             }
-            visible: 0;
-            fixed: 1 1;
          }
          desc { "visible";
             inherit: "default";
@@ -241,11 +254,12 @@ group { name: "elm/button/base/default";
          desc { "pressed_visible";
             inherit: "default";
             rel1.offset: 2 5;
+            text.style: "button_pressed_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
             fixed: 0 0;
-            color_class: "button_text_pressed";
+            //color_class: "button_text_pressed";
          }
          desc { "textonly";
             inherit: "default";
@@ -256,17 +270,19 @@ group { name: "elm/button/base/default";
          }
          desc { "pressed_textonly";
             inherit: "default";
+            text.style: "button_pressed_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
             fixed: 0 0;
-            color_class: "button_text_pressed";
+            //color_class: "button_text_pressed";
          }
          desc { "disabled_visible";
             inherit: "default";
             rel1.offset: 2 5;
-            color_class: "button_text_disabled";
-            color3: 255 255 255 255;
+            //color_class: "button_text_disabled";
+            //color3: 255 255 255 255;
+            text.style: "button_disabled_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -274,8 +290,9 @@ group { name: "elm/button/base/default";
          }
          desc { "disabled_textonly";
             inherit: "default";
-            color_class: "button_text_disabled";
-            color3: 255 255 255 255;
+            //color_class: "button_text_disabled";
+            //color3: 255 255 255 255;
+            text.style: "button_disabled_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -406,6 +423,16 @@ group { name: "elm/button/base/default";
 }
 
 group { name: "elm/button/base/anchor";
+   styles {
+      style { name: "button_anchor_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=glow text_class=button_anchor color_class=button_text_anchor left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "button_anchor_disabled_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=glow text_class=button_anchor color_class=button_text_anchor_disabled left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
    images.image: "horizontal_separated_bar_small_glow.png" COMP;
 #define ICON     1
 #define LABEL    2
@@ -533,11 +560,12 @@ group { name: "elm/button/base/anchor";
             visible: 1;
          }
       }
-      text { "sizer.content"; nomouse;
+      part { name: "sizer.content"; type: TEXTBLOCK;
          scale: 1;
          desc { "default";
             visible: 0;
-            text { font: FN; size: 10;
+            text { style: "button_style";
+               font: FN; size: 10;
                min: 0 0;
                text_class: "button_text";
             }
@@ -563,8 +591,7 @@ group { name: "elm/button/base/anchor";
             }
          }
       }
-      text { "elm.text"; nomouse;
-         effect: GLOW;
+      part { name: "elm.text"; type: TEXTBLOCK; nomouse;
          scale: 1;
          desc { "default";
             rel1.offset: -2 0;
@@ -573,13 +600,12 @@ group { name: "elm/button/base/anchor";
             rel1.to_y: "base";
             rel2.offset: -1 -1;
             rel2.to: "base";
-            color_class: "button_text_anchor";
-            color2: 255 255 255 255;
-            color3: 255 255 255 255;
-            text { font: FN; size: 10;
+            //color_class: "button_text_anchor";
+            text { style: "button_anchor_style";
+               font: FN; size: 10;
                align: 0.5 0.5;
-               min: 0 0;
-               text_class: "button_anchor";
+               min: 0 1;
+               //text_class: "button_anchor";
             }
             visible: 0;
          }
@@ -599,34 +625,36 @@ group { name: "elm/button/base/anchor";
          desc { "disabled_visible";
             inherit: "default";
             rel1.offset: 0 0;
-            color_class: "button_text_anchor_disabled";
+            //color_class: "button_text_anchor_disabled";
+            text.style: "button_anchor_disabled_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_textonly";
             inherit: "default";
-            color_class: "button_text_anchor_disabled";
+            //color_class: "button_text_anchor_disabled";
+            text.style: "button_anchor_disabled_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
       }
-      text { "text2"; nomouse;
-         effect: GLOW;
+      part { name: "text2"; type: TEXTBLOCK; nomouse;
          scale: 1;
          desc { "default";
             fixed: 1 1;
             rel1.to: "elm.text";
             rel2.to: "elm.text";
-            color_class: "button_text_anchor";
-            color2: 255 255 255 255;
-            color3: 255 255 255 255;
-            text { font: FN; size: 10;
+            //color_class: "button_text_anchor";
+            //color2: 255 255 255 255;
+            //color3: 255 255 255 255;
+            text { style: "button_anchor_style";
+               font: FN; size: 10;
                text_source: "elm.text";
                min: 1 1;
                ellipsis: -1;
-               text_class: "button_anchor";
+               //text_class: "button_anchor";
             }
             visible: 0;
          }
@@ -928,10 +956,21 @@ group { name: "elm/button/base/hoversel_vertical/default";
    alias: "elm/button/base/hoversel_horizontal/default";
    alias: "elm/button/base/hoversel_horizontal/entry";
 
+   styles {
+      style { name: "hoversel_vertical_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=hoversel color_class=hoversel_text left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "hoversel_vertical_disabled_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=hoversel color_class=hoversel_text_disabled left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
+
    images.image: "vertical_separated_bar_glow.png" COMP;
    
    parts {
-      text { "elm.text";
+      part { name: "elm.text"; type: TEXTBLOCK;
          desc { "default";
             rel1.offset: 0 5;
             rel1.relative: 1.0 0.0;
@@ -941,9 +980,10 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel2.to_x: "select_line";
             rel2.offset: -3 -8;
             rel2.relative: 0.0 1.0;
-            text.text_class: "hoversel";
+            text.style: "hoversel_vertical_style";
+            //text.text_class: "hoversel";
             text.ellipsis: -1;
-            color3: 255 255 255 255;
+            //color3: 255 255 255 255;
             fixed: 1 1;
          }
          desc { "visible";
@@ -964,7 +1004,8 @@ group { name: "elm/button/base/hoversel_vertical/default";
          desc { "disabled_visible";
             inherit: "default";
             rel1.offset: 5 5;
-            color_class: "hoversel_text_disabled";
+            //color_class: "hoversel_text_disabled";
+            text.style: "hoversel_vertical_disabled_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -972,7 +1013,8 @@ group { name: "elm/button/base/hoversel_vertical/default";
          }
          desc { "disabled_textonly";
             inherit: "default";
-            color_class: "hoversel_text_disabled";
+            //color_class: "hoversel_text_disabled";
+            text.style: "hoversel_vertical_disabled_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -1022,6 +1064,18 @@ group { name: "elm/button/base/hoversel_vertical/default";
 
 group { name: "elm/button/base/hoversel_vertical_entry/default";
    alias: "elm/button/base/hoversel_vertical_entry/entry";
+
+   styles {
+      style { name: "hoversel_vertical_entry_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom text_class=hoversel color_class=hoversel_text left_margin=2 right_margin=2";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "hoversel_item_active_style";
+         base: STL_COL_PRIMER" font="FN" font_size=10 style=glow text_class=hoversel color_class=hoversel_item left_margin=2 right_margin=2 align=center";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
+
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_horiz_out.png" COMP;
    images.image: "shadow_rounded_horiz.png" COMP;
@@ -1160,14 +1214,15 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             visible: 1;
          }
       }
-      text { "sizer.content"; nomouse;
+      part { name: "sizer.content"; type: TEXTBLOCK; nomouse;
          scale: 1;
          desc { "default";
             fixed: 1 1;
             visible: 0;
-            text { font: FN; size: 10;
+            text { style: "hoversel_vertical_style";
+               font: FN; size: 10;
                min: 0 0;
-               text_class: "button_text";
+               //text_class: "button_text";
             }
          }
          desc { "visible";
@@ -1207,8 +1262,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             rel2.to: "base";
          }
       }
-      text { "elm.text"; nomouse;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; nomouse;
          scale: 1;
          clip_to: "click_clip";
          desc { "default";
@@ -1216,9 +1270,10 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             rel2.offset: -8 -8;
             rel1.to: "text_container";
             rel2.to: "text_container";
-            color_class: "hoversel_text";
-            color3: 255 255 255 255;
-            text { font: FN; size: 10;
+            //color_class: "hoversel_text";
+            //color3: 255 255 255 255;
+            text { style: "hoversel_vertical_style";
+               font: FN; size: 10;
                align: 0.0 0.5;
                min: 0 0;
                text_class: "button";
@@ -1241,20 +1296,21 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          desc { "disabled_visible";
             inherit: "default";
             rel1.offset: 2 5;
-            color_class: "hoversel_text_disabled";
+            //color_class: "hoversel_text_disabled";
+            text.style: "button_hoversel_disabled_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_textonly";
             inherit: "default";
-            color_class: "hoversel_text_disabled";
+            text.style: "button_hoversel_disabled_style";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
       }
-      text { "label3"; nomouse;
+      part { name: "label3"; type: TEXTBLOCK; nomouse;
          effect: GLOW;
          scale: 1;
          desc { "default";
@@ -1263,13 +1319,13 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             rel1.to: "elm.text";
             rel2.offset: 2 1;
             rel2.to: "elm.text";
-            color_class: "hoversel_item_active";
-            color2: 255 255 255 255;
-            color3: 255 255 255 255;
-            text { font: FN; size: 10;
+            //color_class: "hoversel_item_active";
+            //color2: 255 255 255 255;
+            //color3: 255 255 255 255;
+            text { style: "hoversel_item_active_style";
+               font: FN; size: 10;
                text_source: "elm.text";
                align: -1 0.5;
-               text_class: "hoversel_item";
             }
             visible: 0;
          }
@@ -1654,6 +1710,18 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
    group { name: "elm/button/base/spinner/default";
       alias: "elm/button/base/spinner/colorselector/default";
       alias: "elm/button/base/spinner/vertical";
+
+      styles {
+           style { name: "spinner_style";
+base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom color_class=spinner text_class=spinner left_margin=2 right_margin=2";
+      ENABLED_TEXTBLOCK_TAGS
+           }
+           style { name: "spinner_disabled_style";
+base: STL_COL_PRIMER" font="FN" font_size=10 style=shadow,bottom color_class=spinner_disabled text_class=spinner left_margin=2 right_margin=2";
+      ENABLED_TEXTBLOCK_TAGS
+           }
+      }
+
       parts {
          part { name: "bg";
             type: SPACER;
@@ -1662,24 +1730,26 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
             }
          }
          part { name: "elm.text";
-            type: TEXT;
+            type: TEXTBLOCK;
             scale: 1;
-            effect: SHADOW BOTTOM;
+            //effect: SHADOW BOTTOM;
             description { state: "default" 0.0;
-               color: FN_COL_DEFAULT;
-               color_class: "spinner";
+               //color: FN_COL_DEFAULT;
+               //color_class: "spinner";
                rel1.to: "bg";
                rel2.to: "bg";
-               text { font: FN; size: 10;
+               text { style: "spinner_style";
+                  font: FN; size: 10;
                   min: 1 1;
-                  text_class: "spinner";
+                  //text_class: "spinner";
                   ellipsis: -1;
                }
             }
             description { state: "disabled" 0.0;
                inherit: "default" 0.0 ;
-               color: FN_COL_DISABLE;
-               color_class: "spinner_disabled";
+               //color: FN_COL_DISABLE;
+               //color_class: "spinner_disabled";
+               text.style: "spinner_disabled_style";
             }
          }
          part { name: "over";

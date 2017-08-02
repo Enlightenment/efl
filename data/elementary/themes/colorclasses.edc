@@ -277,6 +277,14 @@ color_classes {
       color: 0 0 0 0;
       desc: "Background of a spinner widget";
    }
+   color_class { name: "spinner";
+      color: FN_COL_DEFAULT;
+      desc: "Background of a spinner widget";
+   }
+   color_class { name: "spinner_disabled";
+      color: FN_COL_DISABLE;
+      desc: "Background of a spinner widget";
+   }
    color_class { name: "radio_text";
       color: FN_COL_DEFAULT;
       desc: "Text of a radio widget's label";
