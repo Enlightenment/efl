@@ -3210,27 +3210,16 @@ _elm_genlist_elm_widget_widget_event(Eo *obj, Elm_Genlist_Data *sd, Evas_Object 
    return EINA_TRUE;
 }
 
-/* This function disables the specific code of the layout sub object add.
- * Only the widget sub_object_add is called.
- */
-EOLIAN static Eina_Bool
-_elm_genlist_elm_layout_sub_object_add_enable(Eo *obj EINA_UNUSED, Elm_Genlist_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 EOLIAN static Eina_Bool
 _elm_genlist_elm_widget_sub_object_add(Eo *obj, Elm_Genlist_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   // FIXME: THIS COMMENT IS INVALID! WE ARE NOT SKIPPING ELM_LAYOUT!
-
    /* skipping layout's code, which registers size hint changing
     * callback on sub objects. this is here because items'
     * content_get() routines may change hints on the objects after
     * creation, thus issuing TOO MANY sizing_eval()'s here. they are
     * not needed at here anyway, so let's skip listening to those
     * hints changes */
-   return elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
+   return elm_obj_widget_sub_object_add(efl_cast(obj, ELM_WIDGET_CLASS), sobj);
 }
 
 EOLIAN static Eina_Bool
@@ -3238,20 +3227,14 @@ _elm_genlist_elm_widget_sub_object_del(Eo *obj, Elm_Genlist_Data *sd, Evas_Objec
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   // FIXME: THIS COMMENT IS INVALID! WE ARE NOT SKIPPING ELM_LAYOUT!
-
    /* XXX: hack -- also skipping sizing recalculation on
     * sub-object-del. genlist's crazy code paths (like groups and
     * such) seem to issue a whole lot of deletions and Evas bitches
     * about too many recalculations */
    sd->on_sub_del = EINA_TRUE;
-
    int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
-   if (!int_ret) return EINA_FALSE;
-
    sd->on_sub_del = EINA_FALSE;
-
-   return EINA_TRUE;
+   return int_ret;
 }
 
 /*
