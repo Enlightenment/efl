@@ -376,19 +376,13 @@ _elm_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
 EOLIAN static Elm_Theme_Apply
 _elm_layout_elm_widget_theme_apply(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Elm_Theme_Apply theme_apply = ELM_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
-   /* The following lines are here to support entry design; the _theme function
-    * of entry needs to call directly the widget _theme function */
-   Eina_Bool enable = EINA_TRUE;
-   enable = elm_obj_layout_theme_enable(obj);
-   if (!enable) return int_ret;
+   theme_apply = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   if (!theme_apply) return ELM_THEME_APPLY_FAILED;
 
-   int_ret = _elm_layout_theme_internal(obj, sd) & int_ret;
-
-   return int_ret;
+   theme_apply &= _elm_layout_theme_internal(obj, sd);
+   return theme_apply;
 }
 
 static void *
@@ -598,12 +592,6 @@ _edje_signal_callback(void *data,
 
 EOLIAN static Eina_Bool
 _elm_layout_sub_object_add_enable(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_layout_theme_enable(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
