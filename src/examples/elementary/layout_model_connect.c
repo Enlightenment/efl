@@ -146,7 +146,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_box_pack_end(bxr, priv->bt);
    elm_object_text_set(priv->bt, "update model");
    evas_object_smart_callback_add(priv->bt, "clicked", _update_cb, priv);
-   edje_obj_signal_callback_add(priv->bt, "test*" , "*", _signal_cb, priv);
+   edje_object_signal_callback_add(priv->bt, "test*" , "*", _signal_cb, priv);
    efl_ui_model_connect(priv->bt, "signal/test-%v", "size");
    evas_object_show(priv->bt);
 

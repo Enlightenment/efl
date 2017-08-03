@@ -562,3 +562,4 @@ _edje_object_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object *obs,
 
 #include "edje_object.eo.c"
 #include "efl_canvas_layout_calc.eo.c"
+#include "efl_canvas_layout_signal.eo.c"

@@ -1,0 +1,146 @@
+/*
+  Edje signaling interface.
+
+  Note: This API must be manually bound in other languages as this uses function
+  pointers! This is by design, to keep the API simplhe API simple.
+
+  If function pointers really become allowed in EO this needs to be altered to
+  match that.
+*/
+
+//type Edje.Signal_Cb: __undefined_type; [[Edje signal callback type]]
+
+type Efl.Signal_Cb: __undefined_type; [[Signal callback.]]
+
+interface Efl.Canvas.Layout_Signal
+{
+   [[Layouts asynchronous messaging and signaling interface.
+
+     @since 1.21
+   ]]
+   methods {
+      // FIXME: There is no message_handler in EO!
+      message_send {
+         [[Sends an (Edje) message to a given Edje object
+
+           This function sends an Edje message to obj and to all of its child
+           objects, if it has any (swallowed objects are one kind of child
+           object). Only a few types are supported:
+             - int,
+             - float/double,
+             - string/stringshare,
+             - arrays of int, float, double or strings.
+
+           Messages can go both ways, from code to theme, or theme to code.
+
+           The id argument as a form of code and theme defining a common
+           interface on message communication. One should define the same IDs on
+           both code and EDC declaration, to individualize messages (binding
+           them to a given context).
+         ]]
+         params {
+            @in id: int; [[A identification number for the message to be sent]]
+            @in msg: const(generic_value); [[The message's payload]]
+         }
+      }
+      signal_callback_add {
+         [[Adds a callback for an arriving Edje signal, emitted by
+           a given Edje object.
+
+           Edje signals are one of the communication interfaces between code and
+           a given Edje object's theme. With signals, one can communicate two
+           string values at a time, which are:
+           - "emission" value: the name of the signal, in general
+           - "source" value: a name for the signal's context, in general
+
+           Signals can go both ways, from code to theme, or theme to code.
+
+           Though there are those common uses for the two strings, one is free
+           to use them however they like.
+
+           Signal callback registration is powerful, in the way that blobs may
+           be used to match multiple signals at once. All the "*?[\" set of
+           $fnmatch() operators can be used, both for emission and source.
+
+           Edje has internal signals it will emit, automatically, on various
+           actions taking place on group parts. For example, the mouse cursor
+           being moved, pressed, released, etc., over a given part's area, all
+           generate individual signals.
+
+           With something like emission = "mouse,down,*", source = "button.*"
+           where "button.*" is the pattern for the names of parts implementing
+           buttons on an interface, you'd be registering for notifications on
+           events of mouse buttons being pressed down on either of those parts
+           (those events all have the "mouse,down," common prefix on their
+           names, with a suffix giving the button number). The actual emission
+           and source strings of an event will be passed in as the emission and
+           source parameters of the callback function (e.g. "mouse,down,2" and
+           "button.close"), for each of those events.
+
+           See also the Edje Data Collection Reference for EDC files.
+
+           See @.signal_emit on how to emit signals from code to a an object
+           See @.signal_callback_del.
+         ]]
+         params {
+            @in emission: string; [[The signal's "emission" string]]
+            @in source: string; [[The signal's "source" string]]
+            @in func: Efl.Signal_Cb;
+               [[The callback function to be executed when the signal is emitted.]]
+            @in data: void_ptr; [[A pointer to data to pass to $func.]]
+         }
+         return: bool; [[$true in case of success, $false in case of error.]]
+      }
+      signal_callback_del {
+         [[Removes a signal-triggered callback from an object.
+
+           This function removes a callback, previously attached to the emission
+           of a signal, from the object  obj. The parameters emission, source
+           and func must match exactly those passed to a previous call to
+           @.signal_callback_add().
+
+           See @.signal_callback_add.
+         ]]
+         params {
+            @in emission: string; [[The signal's "emission" string]]
+            @in source: string; [[The signal's "source" string]]
+            @in func: Efl.Signal_Cb;
+               [[The callback function to be executed when the signal is emitted.]]
+            @in data: void_ptr; [[A pointer to data to pass to $func.]]
+         }
+         return: bool; [[$true in case of success, $false in case of error.]]
+      }
+      signal_emit {
+         [[Sends/emits an Edje signal to this layout.
+
+           This function sends a signal to the object. An Edje program, at the
+           EDC specification level, can respond to a signal by having declared
+           matching "signal" and "source" fields on its block.
+
+           See also the Edje Data Collection Reference for EDC files.
+
+           See @.signal_callback_add() for more on Edje signals.
+         ]]
+         params {
+            @in emission: string; [[The signal's "emission" string]]
+            @in source: string; [[The signal's "source" string]]
+         }
+      }
+      signal_process {
+         [[Processes an object's messages and signals queue.
+
+           This function goes through the object message queue processing the
+           pending messages for this specific Edje object. Normally they'd be
+           processed only at idle time.
+
+           If $recurse is $true, this function will be called recursively on all
+           subobjects.
+         ]]
+         // FIXME: Should be $true by default!
+         params {
+            recurse: bool @optional; [[Whether to process messages on children
+                                       objects.]]
+         }
+      }
+   }
+}

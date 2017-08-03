@@ -169,12 +169,11 @@ _edje_signal_callback_grow(Edje_Signal_Callback_Group *gp)
    return gp;
 }
 
-void
-_edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
+Eina_Bool
+_edje_signal_callback_push(Edje_Signal_Callback_Group *gp,
                            const char *sig, const char *src,
                            Edje_Signal_Cb func, void *data, Eina_Bool propagate)
 {
-   Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group *)cgp;
    unsigned int i;
    Edje_Signal_Callback_Flags flags;
    Edje_Signal_Callback_Matches *tmp;
@@ -195,7 +194,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
           {
              _edje_signal_callback_unset(gp, i);
              _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
-             return;
+             return EINA_TRUE;
           }
      }
 
@@ -211,7 +210,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
              Edje_Signal_Callback_Matches *tmp_dup =
                (Edje_Signal_Callback_Matches *)
                _edje_signal_callback_matches_dup(tmp);
-             if (!tmp_dup) return;
+             if (!tmp_dup) return EINA_FALSE;
              EINA_REFCOUNT_UNREF(tmp)
                (void) 0; // do nothing because if refcount == 1 handle above.
              gp->matches = tmp = tmp_dup;
@@ -226,7 +225,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
           {
              _edje_signal_callback_unset(gp, i);
              _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
-             return;
+             return EINA_TRUE;
           }
      }
 
@@ -234,6 +233,8 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
    // Set propagate and just_added flags
    _edje_signal_callback_set(gp, tmp->matches_count - 1,
                              sig, src, func, data, flags);
+
+   return EINA_TRUE;
 }
 
 const Edje_Signal_Callback_Group *
@@ -300,17 +301,15 @@ _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp)
    free(gp);
 }
 
-void *
-_edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
+Eina_Bool
+_edje_signal_callback_disable(Edje_Signal_Callback_Group *gp,
                               const char *sig, const char *src,
                               Edje_Signal_Cb func, void *data)
 {
-   Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group *)cgp;
    unsigned int i;
 
-   if (!gp || !gp->matches) return NULL;
+   if (!gp || !gp->matches) return EINA_FALSE;
 
-   // FIXME: Shall we check DELETE_ME flags ?
    for (i = 0; i < gp->matches->matches_count; ++i)
      {
         if (sig == gp->matches->matches[i].signal &&
@@ -320,26 +319,12 @@ _edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
             !gp->flags[i].delete_me)
           {
              gp->flags[i].delete_me = EINA_TRUE;
-             return gp->custom_data[i];
+             //return gp->custom_data[i];
+             return EINA_TRUE;
           }
      }
 
-   if (data == NULL)
-     {
-        for (i = 0; i < gp->matches->matches_count; ++i)
-          {
-             if (sig == gp->matches->matches[i].signal &&
-                 src == gp->matches->matches[i].source &&
-                 func == gp->matches->matches[i].func &&
-                 !gp->flags[i].delete_me)
-               {
-                  gp->flags[i].delete_me = EINA_TRUE;
-                  return gp->custom_data[i];
-               }
-          }
-     }
-
-   return NULL;
+   return EINA_FALSE;
 }
 
 static void
