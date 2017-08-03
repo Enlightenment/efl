@@ -1571,7 +1571,7 @@ _efl_ui_image_zoomable_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Imag
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_edje_object_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, int *w, int *h)
+_efl_ui_image_zoomable_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, int *w, int *h)
 {
    if (sd->edje)
      edje_object_size_min_get(sd->edje, w, h);
@@ -1580,7 +1580,7 @@ _efl_ui_image_zoomable_edje_object_group_size_min_get(Eo *obj EINA_UNUSED, Efl_U
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_edje_object_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, int *w, int *h)
+_efl_ui_image_zoomable_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, int *w, int *h)
 {
    if (sd->edje)
      edje_object_size_max_get(sd->edje, w, h);
