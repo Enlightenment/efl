@@ -180,7 +180,6 @@ _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const ch
 output_err:
    ecore_drm2_device_close(edata->dev);
 open_err:
-   ecore_drm2_device_free(edata->dev);
    ecore_drm2_shutdown();
 init_err:
    return --_drm_init_count;
@@ -194,7 +193,6 @@ _ecore_evas_drm_shutdown(Ecore_Evas_Engine_Drm_Data *edata)
 
    ecore_drm2_outputs_destroy(edata->dev);
    ecore_drm2_device_close(edata->dev);
-   ecore_drm2_device_free(edata->dev);
    ecore_drm2_shutdown();
    ecore_event_evas_shutdown();
    EINA_LIST_FREE(handlers, h)
