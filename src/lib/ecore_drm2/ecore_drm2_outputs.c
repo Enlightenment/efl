@@ -771,7 +771,6 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
         output->enabled = EINA_FALSE;
      }
 
-   dev->alloc.conn |= (1 << output->conn_id);
    dev->outputs = eina_list_append(dev->outputs, output);
 
    _output_debug(output, conn);
@@ -784,16 +783,37 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
    return EINA_TRUE;
 }
 
+static Ecore_Drm2_Output *
+_output_find_by_con(Ecore_Drm2_Device *dev, uint32_t id)
+{
+   Ecore_Drm2_Output *output;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     if (output->conn_id == id) return output;
+
+   return NULL;
+}
+
 static void
 _outputs_update(Ecore_Drm2_Device *dev)
 {
+   Ecore_Drm2_Output *output;
+   Eina_List *l, *ll;
    drmModeRes *res;
    drmModeConnector *conn;
-   uint32_t connected = 0, disconnected = 0;
+   uint32_t *connected;
    int i = 0, x = 0, y = 0;
 
    res = sym_drmModeGetResources(dev->fd);
    if (!res) return;
+
+   connected = calloc(res->count_connectors, sizeof(uint32_t));
+   if (!connected)
+     {
+        sym_drmModeFreeResources(res);
+        return;
+     }
 
    for (i = 0; i < res->count_connectors; i++)
      {
@@ -802,9 +822,8 @@ _outputs_update(Ecore_Drm2_Device *dev)
 
         if (conn->connection != DRM_MODE_CONNECTED) goto next;
 
-        connected |= (1 << res->connectors[i]);
-
-        if (!(dev->alloc.conn & (1 << res->connectors[i])))
+        connected[i] = res->connectors[i];
+        if (!_output_find_by_con(dev, res->connectors[i]))
           {
              if (dev->outputs)
                {
@@ -827,41 +846,31 @@ next:
 
    sym_drmModeFreeResources(res);
 
-   disconnected = (dev->alloc.conn & ~connected);
-   if (disconnected)
+   EINA_LIST_FOREACH_SAFE(dev->outputs, l, ll, output)
      {
-        Ecore_Drm2_Output *output;
-        Eina_List *l;
+        Eina_Bool disconnected = EINA_TRUE;
 
-        EINA_LIST_FOREACH(dev->outputs, l, output)
+        for (i = 0; i < res->count_connectors; i++)
+          if (connected[i] == output->conn_id)
+            {
+               disconnected = EINA_FALSE;
+               break;
+            }
+
+        if (disconnected)
           {
-             if (disconnected & (1 << output->conn_id))
-               {
-                  disconnected &= ~(1 << output->conn_id);
-                  output->connected = EINA_FALSE;
-                  output->enabled = EINA_FALSE;
-                  _output_event_send(output);
-               }
+             output->connected = EINA_FALSE;
+             output->enabled = EINA_FALSE;
+             _output_event_send(output);
+          }
+        else
+          {
+             output->connected = EINA_TRUE;
+             output->enabled = EINA_TRUE;
+             _output_event_send(output);
           }
      }
-
-   connected = (dev->alloc.conn & connected);
-   if (connected)
-     {
-        Ecore_Drm2_Output *output;
-        Eina_List *l;
-
-        EINA_LIST_FOREACH(dev->outputs, l, output)
-          {
-             if (connected & (1 << output->conn_id))
-               {
-                  connected &= ~(1 << output->conn_id);
-                  output->connected = EINA_TRUE;
-                  output->enabled = EINA_TRUE;
-                  _output_event_send(output);
-               }
-          }
-     }
+   free(connected);
 }
 
 static void
@@ -874,7 +883,7 @@ _cb_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUS
 }
 
 static void
-_output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
+_output_destroy(Ecore_Drm2_Device *dev EINA_UNUSED, Ecore_Drm2_Output *output)
 {
    Ecore_Drm2_Output_Mode *mode;
    Ecore_Drm2_Plane *plane;
@@ -904,8 +913,6 @@ _output_destroy(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output)
           sym_drmModeDestroyPropertyBlob(output->fd, mode->id);
         free(mode);
      }
-
-   dev->alloc.conn &= ~(1 << output->conn_id);
 
    eina_stringshare_del(output->backlight.path);
    eina_stringshare_del(output->name);

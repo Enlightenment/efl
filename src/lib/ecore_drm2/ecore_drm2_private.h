@@ -276,11 +276,6 @@ struct _Ecore_Drm2_Device
 
    struct
      {
-        uint32_t conn;
-     } alloc;
-
-   struct
-     {
         uint32_t width, height;
      } min, max;
 
