@@ -166,30 +166,17 @@ EAPI int ecore_drm2_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Context *drm
  */
 
 /**
- * Try to find a drm device on a given seat
+ * Try to open the Ecore_Drm2_Device for a given seat
  *
  * @param seat
  * @param tty
- * @param sync
  *
- * @return A newly allocated Ecore_Drm2_Device on success, NULL otherwise
- *
- * @ingroup Ecore_Drm2_Device_Group
- * @since 1.18
- */
-EAPI Ecore_Drm2_Device *ecore_drm2_device_find(const char *seat, unsigned int tty);
-
-/**
- * Try to open a given Ecore_Drm2_Device
- *
- * @param device
- *
- * @return A valid file descriptor if open succeeds, -1 otherwise.
+ * @return An Ecore_Drm2_Device or NULL on failure.
  *
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI int ecore_drm2_device_open(Ecore_Drm2_Device *device);
+EAPI Ecore_Drm2_Device *ecore_drm2_device_open(const char *seat, unsigned int tty);
 
 /**
  * Close an open Ecore_Drm2_Device
