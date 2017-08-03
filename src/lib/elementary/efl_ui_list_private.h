@@ -64,6 +64,7 @@ struct _Efl_Ui_List_Data
       Evas_Object               *obj;
    } pan;
 
+   Efl_Ui_Layout_Factory        *factory;
    Eina_List                    *selected;
    struct {
      Eina_Inarray               array;

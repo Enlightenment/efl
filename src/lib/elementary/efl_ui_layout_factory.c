@@ -18,7 +18,7 @@ typedef struct _Efl_Ui_Layout_Factory_Data
 } Efl_Ui_Layout_Factory_Data;
 
 Eina_Bool
-_model_connect(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+_model_connect(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata)
 {
    Eo *layout = fdata;
    Eina_Stringshare *name = key;
@@ -48,28 +48,26 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
 {
    Eina_Array_Iterator iterator;
    Eo *layout;
-   int i;
-
-   EINA_ARRAY_ITER_NEXT(pd->layouts, i, layout, iterator)
-     efl_parent_set(layout, NULL);
-
-   eina_array_free(pd->layouts);
+   unsigned int i;
 
    eina_stringshare_del(pd->klass);
    eina_stringshare_del(pd->group);
    eina_stringshare_del(pd->style);
 
+   EINA_ARRAY_ITER_NEXT(pd->layouts, i, layout, iterator)
+     efl_parent_set(layout, NULL);
+
+   eina_array_free(pd->layouts);
    eina_hash_free(pd->connects);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Efl_Gfx *
-_efl_ui_layout_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Layout_Factory_Data *pd
+_efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd
                                                         , Efl_Model *model, Efl_Gfx *parent)
 {
    Efl_Gfx *layout;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
    if (eina_array_count(pd->layouts))
@@ -85,7 +83,6 @@ _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Layout_Factory_Data
      }
 
    efl_ui_view_model_set(layout, model);
-
    return layout;
 }
 
@@ -101,7 +98,6 @@ _efl_ui_layout_factory_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_
                                                                         , const char *name, const char *property)
 {
    Eina_Stringshare *ss_name, *ss_prop;
-
    ss_name = eina_stringshare_add(name);
 
    if (property == NULL)

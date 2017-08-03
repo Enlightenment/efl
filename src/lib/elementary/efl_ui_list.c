@@ -201,6 +201,7 @@ _focused_element(void *data EINA_UNUSED, const Efl_Event *event)
    Efl_Ui_List_Data *pd = data;
    Eo *focused = event->info;
    EINA_SAFETY_ON_NULL_RETURN(pd);
+   printf("item focused\n");
 
    if (!_elm_config->item_select_on_focus_disable)
      _efl_ui_list_item_select_set(pd, focused, EINA_TRUE);
@@ -531,10 +532,11 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
 
    item->obj = pd->obj;
    item->model = efl_ref(model);
-   if(eina_inarray_count(recycle_layouts))
-     item->layout = *(void**)eina_inarray_pop(recycle_layouts);
-   else
-     item->layout = efl_add(ELM_LAYOUT_CLASS, pd->obj);
+//   if(eina_inarray_count(recycle_layouts))
+//     item->layout = *(void**)eina_inarray_pop(recycle_layouts);
+//   else
+//     item->layout = efl_add(ELM_LAYOUT_CLASS, pd->obj);
+   item->layout = efl_ui_factory_create(pd->factory, item->model, pd->obj);
    item->future = NULL;
    item->index = idx + pd->realized.start;
    item->minw = item->minh = 0;
@@ -563,8 +565,9 @@ _child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item, Eina_Inarray* recyc
     efl_future_cancel(item->future);
   efl_unref(item->model);
   // discard elm_layout to thrash to be able to reuse it
-  assert(item->layout != NULL);
-  eina_inarray_push(recycle_layouts, &item->layout);
+//  assert(item->layout != NULL);
+//  eina_inarray_push(recycle_layouts, &item->layout);
+  efl_ui_factory_release(pd->factory, item->layout);
   item->layout = NULL;
   if(_horiz(pd->orient))
     pd->realized.w -= item->w;
@@ -907,7 +910,10 @@ _efl_ui_list_elm_widget_on_focus(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED, Elm_
    //TODO: with no focused focus first visible element
 
    if (!efl_ui_focus_manager_focused(pd->manager))
+   {
+     printf(">>>> no item focused\n");
      efl_ui_focus_manager_focus(pd->manager, obj);
+   }
 
    return elm_obj_widget_on_focus(efl_super(obj, MY_CLASS), item);
 }
@@ -1136,6 +1142,7 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
 
    pd->style = eina_stringshare_add(elm_widget_style_get(obj));
 
+   pd->factory = NULL;
    pd->orient = EFL_ORIENT_DOWN;
    pd->align.h = 0;
    pd->align.v = 0;
@@ -1151,6 +1158,16 @@ _efl_ui_list_efl_object_destructor(Eo *obj, Efl_Ui_List_Data *pd)
 
    efl_event_callback_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused_element, pd);
    efl_destructor(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_ui_list_layout_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Efl_Ui_Factory *factory)
+{
+   //TODO: clean all current layouts??
+   if (pd->factory)
+     efl_unref(pd->factory);
+
+   pd->factory = efl_ref(factory);
 }
 
 EOLIAN static void
@@ -1170,6 +1187,10 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *mod
      }
 
    _efl_ui_list_children_free(obj, pd);
+
+
+   if (!pd->factory)
+     pd->factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, obj);
 
    if (model)
      {

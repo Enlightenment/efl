@@ -35,6 +35,13 @@ class Efl.Ui.List (Elm.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
             style: stringshare;
          }
       }
+      @property layout_factory {
+         [[Listview layout factory set.]]
+         set {}
+         values {
+            factory: Efl.Ui.Factory; [[The factory.]]
+         }
+      }
    }
    events {
       item,realized : Efl.Ui.List.Item_Event;
