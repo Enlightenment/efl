@@ -702,10 +702,11 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    window->configure_ack = NULL;
 }
 
-void
-_ecore_wl_window_aux_hint_free(Ecore_Wl2_Window *win)
+static void
+_ecore_wl2_window_aux_hint_free(Ecore_Wl2_Window *win)
 {
    const char *supported;
+
    EINA_LIST_FREE(win->supported_aux_hints, supported)
      if (supported) eina_stringshare_del(supported);
 }
@@ -728,7 +729,7 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_free(subsurf);
 
-   _ecore_wl_window_aux_hint_free(window);
+   _ecore_wl2_window_aux_hint_free(window);
 
    if (window->uuid && window->surface && window->display->wl.session_recovery)
      zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
