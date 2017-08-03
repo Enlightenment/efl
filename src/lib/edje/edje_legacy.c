@@ -51,14 +51,76 @@ edje_object_part_state_get(const Edje_Object *obj, const char * part, double *va
 EAPI void
 edje_object_message_signal_process(Edje_Object *obj)
 {
-   edje_obj_message_signal_process(obj, EINA_FALSE);
+   efl_canvas_layout_signal_process(obj, EINA_FALSE);
 }
 
 /* since 1.20 */
 EAPI void
 edje_object_message_signal_recursive_process(Edje_Object *obj)
 {
-   edje_obj_message_signal_process(obj, EINA_TRUE);
+   efl_canvas_layout_signal_process(obj, EINA_TRUE);
+}
+
+EAPI void
+edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+{
+   efl_canvas_layout_signal_callback_add(obj, emission, source, (Efl_Signal_Cb) func, data);
+}
+
+EAPI void *
+edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+{
+   Edje_Signal_Callback_Group *gp;
+   Edje *ed = _edje_fetch(obj);
+   Eina_Bool ok;
+
+   if (!ed || ed->delete_me) return NULL;
+
+   gp = (Edje_Signal_Callback_Group *) ed->callbacks;
+   if (!gp) return NULL;
+
+   emission = eina_stringshare_add(emission);
+   source = eina_stringshare_add(source);
+
+   ok = _edje_signal_callback_disable(gp, emission, source, func, data);
+
+   // Legacy only
+   if (!ok && !data)
+     {
+        for (unsigned i = 0; i < gp->matches->matches_count; ++i)
+          {
+             if (emission == gp->matches->matches[i].signal &&
+                 source == gp->matches->matches[i].source &&
+                 func == gp->matches->matches[i].func &&
+                 !gp->flags[i].delete_me)
+               {
+                  gp->flags[i].delete_me = EINA_TRUE;
+                  //return gp->custom_data[i];
+                  break;
+               }
+          }
+     }
+
+   eina_stringshare_del(emission);
+   eina_stringshare_del(source);
+
+   // Note: This function seems to have returned NULL since ~2013, despite
+   // what the documentation says.
+   return NULL;
+}
+
+EAPI void *
+edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func)
+{
+   // Legacy del_full seems to have been sloppy with NULL data, as that would
+   // match the first callback found. Keeping this legacy behaviour unchanged.
+   return edje_object_signal_callback_del_full(obj, emission, source, func, NULL);
+}
+
+EAPI void
+edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
+{
+   efl_canvas_layout_signal_emit(obj, emission, source);
 }
 
 EAPI Eina_Bool

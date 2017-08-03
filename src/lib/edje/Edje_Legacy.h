@@ -52,6 +52,64 @@
 EAPI Evas_Object *edje_object_add                 (Evas *evas);
 
 /**
+ * @brief Adds a callback for an arriving Edje signal, emitted by a given Edje
+ * object.
+ *
+ * Edje signals are one of the communication interfaces between code and a
+ * given Edje object's theme. With signals, one can communicate two string
+ * values at a time, which are: - "emission" value: the name of the signal, in
+ * general - "source" value: a name for the signal's context, in general
+ *
+ * Though there are those common uses for the two strings, one is free to use
+ * them however they like.
+ *
+ * Signal callback registration is powerful, in the way that  blobs may be used
+ * to match multiple signals at once. All the "*?[\" set of @c fnmatch()
+ * operators can be used, both for emission and source.
+ *
+ * Edje has  internal signals it will emit, automatically, on various actions
+ * taking place on group parts. For example, the mouse cursor being moved,
+ * pressed, released, etc., over a given part's area, all generate individual
+ * signals.
+ *
+ * By using something like edje_object_signal_callback_add(obj, "mouse,down,*",
+ * "button.*", signal_cb, NULL); being @ref "button.*" the pattern for the
+ * names of parts implementing buttons on an interface, you'd be registering
+ * for notifications on events of mouse buttons being pressed down on either of
+ * those parts (those events all have the @"mouse,down," common prefix on their
+ * names, with a suffix giving the button number). The actual emission and
+ * source strings of an event will be passed in as the  emission and  source
+ * parameters of the callback function (e.g. "mouse,down,2" and
+ * @"button.close"), for each of those events.
+ *
+ * @note See @ref edcref "the syntax" for EDC files See also
+ * @ref edje_object_signal_emit() on how to emits Edje signals from code to a
+ * an object @ref edje_object_signal_callback_del_full()
+ *
+ * @param[in] emission The signal's "emission" string
+ * @param[in] source The signal's "source" string
+ * @param[in] func The callback function to be executed when the signal is
+ * emitted.
+ * @param[in] data A pointer to data to pass in to func.
+ */
+EAPI void edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+
+/**
+ * @brief Sends/emits an Edje signal to a given Edje object
+ *
+ * This function sends a signal to the object  obj. An Edje program, at obj's
+ * EDC specification level, can respond to a signal by having declared matching
+ * @'signal' and @'source' fields on its block (see @ref edcref "the syntax"
+ * for EDC files).
+ *
+ * See also @ref edje_object_signal_callback_add() for more on Edje signals.
+ *
+ * @param[in] emission The signal's "emission" string
+ * @param[in] source The signal's "source" string
+ */
+EAPI void edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source);
+
+/**
  * @brief Removes a signal-triggered callback from an object.
  *
  * @param obj A valid Evas_Object handle.

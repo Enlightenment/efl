@@ -3,7 +3,8 @@ import edje_types;
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
 class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
-                   Efl.Observer, Efl.Ui.Base, Efl.Canvas.Layout_Calc)
+                   Efl.Observer, Efl.Ui.Base, Efl.Canvas.Layout_Calc,
+                   Efl.Canvas.Layout_Signal)
 {
    [[Edje object class]]
    legacy_prefix: edje_object;
@@ -237,154 +238,6 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
          }
       }
       /* EDJE GROUP DATA APIS END ------------------------------------------ */
-
-      /* MESSAGE & SIGNAL APIS BEGIN --------------------------------------- */
-      message_send {
-         [[Sends an (Edje) message to a given Edje object
-
-           This function sends an Edje message to obj and to all of its
-           child objects, if it has any (swallowed objects are one kind of
-           child object). Only a few types are supported:
-             - int,
-             - float/double,
-             - string/stringshare,
-             - arrays of int, float, double or strings.
-
-           The id argument as a form of code and theme defining a common
-           interface on message communication. One should define the same IDs
-           on both code and EDC declaration, to individualize messages
-           (binding them to a given context).
-         ]]
-         params {
-            @in id: int; [[A identification number for the message to be sent]]
-            @in msg: const(generic_value); [[The message's payload]]
-         }
-         legacy: null;
-      }
-      signal_callback_add {
-         [[Adds a callback for an arriving Edje signal, emitted by
-           a given Edje object.
-
-           Edje signals are one of the communication interfaces between
-            code and a given Edje object's theme. With signals, one can
-           communicate two string values at a time, which are:
-           - "emission" value: the name of the signal, in general
-           - "source" value: a name for the signal's context, in general
-
-           Though there are those common uses for the two strings, one is free
-           to use them however they like.
-
-           Signal callback registration is powerful, in the way that  blobs
-           may be used to match multiple signals at once. All the
-           "*?[\" set of $fnmatch() operators can be used, both for
-           emission and source.
-
-           Edje has  internal signals it will emit, automatically, on
-           various actions taking place on group parts. For example, the mouse
-           cursor being moved, pressed, released, etc., over a given part's
-           area, all generate individual signals.
-
-           By using something like
-           edje_object_signal_callback_add(obj, "mouse,down,*", "button.*",
-           signal_cb, NULL);
-           being \@ref "button.*" the pattern for the names of parts implementing
-           buttons on an interface, you'd be registering for notifications on
-           events of mouse buttons being pressed down on either of those parts
-           (those events all have the @"mouse,down," common prefix on their
-           names, with a suffix giving the button number). The actual emission
-           and source strings of an event will be passed in as the  emission
-           and  source parameters of the callback function (e.g.
-           "mouse,down,2" and @"button.close"), for each of those events.
-
-           Note: See \@ref edcref "the syntax" for EDC files
-           See also @.signal_emit() on how to emits Edje signals from
-           code to a an object
-           \@ref edje_object_signal_callback_del_full()]]
-           /* FIXME-doc
-            * This function adds a callback function to a signal emitted by  obj, to
-            * be issued every time an EDC program like the following
-            * @code
-            * program
-            *   {
-            *      name: "emit_example";
-            *      action: SIGNAL_EMIT "a_signal" "a_source";
-            *   }
-            * @endcode
-            * is run, if emission and source are given those same values,
-            * here.
-            */
-
-         params {
-            @in emission: string; [[The signal's "emission" string]]
-            @in source: string; [[The signal's "source" string]]
-            @in func: Edje.Signal_Cb; [[The callback function to be executed when the signal is
-                                        emitted.]]
-            @in data: void_ptr; [[A pointer to data to pass in to func.]]
-         }
-      }
-      signal_callback_del {
-         [[Removes a signal-triggered callback from an object.
-
-           This function removes a callback, previously attached to the
-           emission of a signal, from the object  obj. The parameters
-           emission,  source and  func must match exactly those passed to
-           a previous call to edje_object_signal_callback_add(). The data
-           pointer that was passed to this call will be returned.
-
-           See also @.signal_callback_add().
-           \@ref edje_object_signal_callback_del_full().]]
-
-         legacy: null;
-         return: void_ptr; [[The data pointer]]
-         params {
-            @in emission: string; [[The emission string.]]
-            @in source: string; [[The source string.]]
-            @in func: Edje.Signal_Cb; [[The callback function.]]
-            @in data: void_ptr; [[The callback function.]]
-         }
-      }
-      signal_emit {
-         [[Sends/emits an Edje signal to a given Edje object
-
-           This function sends a signal to the object  obj. An Edje program,
-           at obj's EDC specification level, can respond to a signal by
-           having declared matching @'signal' and @'source' fields on its
-           block (see \@ref edcref "the syntax" for EDC files).
-
-           See also @.signal_callback_add() for more on Edje signals.]]
-           /* FIXME-doc
-            * @code
-            * program
-            *   {
-            *      name: "a_program";
-            *      signal: "a_signal";
-            *      source: "";
-            *      action: ...
-            *   }
-            * @endcode
-            */
-         params {
-            @in emission: string; [[The signal's "emission" string]]
-            @in source: string; [[The signal's "source" string]]
-         }
-      }
-      message_signal_process {
-         [[Processes an object's message queue.
-
-           This function goes through the object message queue processing the
-           pending messages for this specific Edje object. Normally they'd
-           be processed only at idle time.
-
-           If $recurse is $true, this function will be called recursively
-           on all subobjects.
-         ]]
-         params {
-            recurse: bool @optional; [[Whether to process messages on children
-                                       objects.]]
-         }
-         legacy: null;
-      }
-      /* MESSAGE & SIGNAL APIS END ----------------------------------------- */
 
       /* CLASS APIS BEGIN -------------------------------------------------- */
       @property global_color_class @class {
@@ -1060,6 +913,11 @@ class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
       Efl.Canvas.Layout_Calc.calc_freeze;
       Efl.Canvas.Layout_Calc.calc_thaw;
       Efl.Canvas.Layout_Calc.calc_force;
+      Efl.Canvas.Layout_Signal.message_send;
+      Efl.Canvas.Layout_Signal.signal_callback_add;
+      Efl.Canvas.Layout_Signal.signal_callback_del;
+      Efl.Canvas.Layout_Signal.signal_emit;
+      Efl.Canvas.Layout_Signal.signal_process;
       Efl.Ui.Base.mirrored { set; get; }
       Efl.Ui.Base.language { set; get; }
       Efl.Ui.Base.scale { set; get; }

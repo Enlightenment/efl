@@ -3,6 +3,7 @@
 
 edje_eolian_files = \
 	lib/edje/efl_canvas_layout_calc.eo \
+	lib/edje/efl_canvas_layout_signal.eo \
 	lib/edje/edje_object.eo \
 	lib/edje/efl_canvas_layout_internal.eo \
 	lib/edje/efl_canvas_layout_internal_box.eo \

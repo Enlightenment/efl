@@ -226,102 +226,75 @@ _edje_object_transition_duration_factor_get(Eo *obj EINA_UNUSED, Edje *pd)
    return pd->duration_scale;
 }
 
-void
-edje_object_propagate_callback_add(Evas_Object *obj, void (*func)(void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+static inline Eina_Bool
+_edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
 {
+   Edje_Signal_Callback_Group *gp;
    const char *sig;
    const char *src;
-   Edje *ed;
-
-   ed = _edje_fetch(obj);
-   if (!ed) return;
-   if (ed->delete_me) return;
+   Eina_Bool ok;
 
    if (!ed->callbacks)
      ed->callbacks = _edje_signal_callback_alloc();
-   if (!ed->callbacks) return;
+   if (!ed->callbacks) return EINA_FALSE;
 
-   sig = eina_stringshare_add("*");
-   src = eina_stringshare_add("*");
+   sig = eina_stringshare_add(emission);
+   src = eina_stringshare_add(source);
 
-   if (ed->callbacks)
-     _edje_signal_callback_push(ed->callbacks,
-                                sig, src,
-                                func, data,
-                                EINA_TRUE);
+   gp = (Edje_Signal_Callback_Group *) ed->callbacks;
+   ok = _edje_signal_callback_push(gp, sig, src, func, data, EINA_TRUE);
 
    eina_stringshare_del(sig);
    eina_stringshare_del(src);
+
+   return ok;
+}
+
+void
+edje_object_propagate_callback_add(Evas_Object *obj, Efl_Signal_Cb func, void *data)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed || ed->delete_me) return;
+   _edje_object_signal_callback_add(ed, "*", "*", func, data);
+}
+
+EOLIAN Eina_Bool
+_edje_object_efl_canvas_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+{
+   return _edje_object_signal_callback_add(ed, emission, source, func, data);
+}
+
+EOLIAN Eina_Bool
+_edje_object_efl_canvas_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+{
+   Edje_Signal_Callback_Group *gp;
+   Eina_Bool ok;
+
+   if (ed->delete_me) return EINA_FALSE;
+   if ((!emission) || (!source) || (!func)) return EINA_FALSE;
+
+   gp = (Edje_Signal_Callback_Group *) ed->callbacks;
+   if (!gp) return EINA_FALSE;
+
+   emission = eina_stringshare_add(emission);
+   source = eina_stringshare_add(source);
+
+   ok = _edje_signal_callback_disable(gp, emission, source, func, data);
+
+   eina_stringshare_del(emission);
+   eina_stringshare_del(source);
+
+   return ok;
 }
 
 EOLIAN void
-_edje_object_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+_edje_object_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source)
 {
-   if ((!emission) || (!source) || (!func)) return;
-
-   if (!ed) return;
    if (ed->delete_me) return;
-
-   emission = eina_stringshare_add(emission);
-   source = eina_stringshare_add(source);
-
-   if (!ed->callbacks)
-     ed->callbacks = _edje_signal_callback_alloc();
-   if (!ed->callbacks) return;
-
-   _edje_signal_callback_push(ed->callbacks,
-                              emission, source,
-                              func, data, EINA_FALSE);
-
-   eina_stringshare_del(emission);
-   eina_stringshare_del(source);
-}
-
-EAPI void *
-edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func)(void *data, Evas_Object *o, const char *emission, const char *source))
-{
-   if (!obj) return NULL;
-   void *ret = NULL;
-   ret = edje_obj_signal_callback_del(obj, emission, source, (Edje_Signal_Cb)func, NULL);
-   return ret;
-}
-
-EOLIAN void *
-_edje_object_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
-{
-   if ((!emission) || (!source) || (!func)) return NULL;
-   if (!ed) return NULL;
-   if (ed->delete_me) return NULL;
-
-   emission = eina_stringshare_add(emission);
-   source = eina_stringshare_add(source);
-
-   _edje_signal_callback_disable(ed->callbacks,
-                                 emission, source,
-                                 func, data);
-
-   eina_stringshare_del(emission);
-   eina_stringshare_del(source);
-
-   return NULL;
-}
-
-EAPI void *
-edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
-{
-   if (!obj) return NULL;
-   void *ret = NULL;
-   ret = edje_obj_signal_callback_del(obj, emission, source, func, data);
-   return ret;
-}
-
-EOLIAN void
-_edje_object_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source)
-{
    if ((!emission) || (!source)) return;
-   if (!ed) return;
-   if (ed->delete_me) return;
-   _edje_emit(ed, (char *)emission, (char *)source);
+   _edje_emit(ed, emission, source);
 }
 
 /* FIXDOC: Verify/Expand */

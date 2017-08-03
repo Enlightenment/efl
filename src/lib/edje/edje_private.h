@@ -2469,13 +2469,13 @@ void  _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed);
 
 const Edje_Signal_Callback_Group *_edje_signal_callback_alloc(void);
 void _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp);
-void _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
-                                const char *signal, const char *source,
-                                Edje_Signal_Cb func, void *data,
-                                Eina_Bool propagate);
-void *_edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
-                                    const char *signal, const char *source,
-                                    Edje_Signal_Cb func, void *data);
+Eina_Bool _edje_signal_callback_push(Edje_Signal_Callback_Group *cgp,
+                                     const char *signal, const char *source,
+                                     Edje_Signal_Cb func, void *data,
+                                     Eina_Bool propagate);
+Eina_Bool _edje_signal_callback_disable(Edje_Signal_Callback_Group *cgp,
+                                        const char *signal, const char *source,
+                                        Edje_Signal_Cb func, void *data);
 
 EAPI void _edje_edd_init(void);
 EAPI void _edje_edd_shutdown(void);
