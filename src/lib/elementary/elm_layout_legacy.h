@@ -41,6 +41,21 @@ typedef struct _Elm_Layout_Part_Alias_Description Elm_Layout_Part_Alias_Descript
 EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
 
 /**
+ * @brief Get the edje data from the given layout.
+ *
+ * This function fetches data specified inside the edje theme of this layout.
+ * This function return NULL if data is not found.
+ *
+ * In EDC this comes from a data block within the group block that @c obj was
+ * loaded from.
+ *
+ * @param[in] key The data key.
+ *
+ * @return The edje data string.
+ */
+EAPI const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
+
+/**
  * @brief Add a callback for a (Edje) signal emitted by a layout widget's
  * underlying Edje object.
  *
