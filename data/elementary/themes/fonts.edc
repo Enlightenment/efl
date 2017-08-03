@@ -114,3 +114,10 @@
    tag: "line_added" "+ color=#002800";                                    \
    tag: "line_removed" "+ color=#300504";                                  \
    tag: "line_changed" "+ color=#201200";
+
+#define STL_COL_PLAIN "color=#ffffff"
+#define STL_COL_DEFAULT "color=#ffffff style=shadow,bottom shadow_color=#00000080"
+#define STL_COL_HIGHLIGHT "color=#3399ffff style=glow glow_color=#3399ff18 glow2_color=#3399ff12"
+#define STL_COL_DISABLE "color=#151515ff style=shadow,bottom shadow_color=#ffffff19"
+#define STL_COL_WHITE_GLOW "color=#fff glow_color=#ffffff18 glow2_color=#ffffff12"
+
