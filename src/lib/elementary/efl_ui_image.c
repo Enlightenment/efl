@@ -1168,7 +1168,7 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
 }
 
 EOLIAN static void
-_efl_ui_image_edje_object_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char *emission, const char *source)
+_efl_ui_image_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char *emission, const char *source)
 {
    if (sd->edje)
      edje_object_signal_emit(sd->img, emission, source);

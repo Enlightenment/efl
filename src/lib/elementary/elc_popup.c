@@ -503,7 +503,7 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
 }
 
 EOLIAN static void
-_elm_popup_elm_layout_signal_emit(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, const char *emission, const char *source)
+_elm_popup_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, const char *emission, const char *source)
 {
    elm_layout_signal_emit(sd->main_layout, emission, source);
 }

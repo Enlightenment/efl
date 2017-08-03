@@ -41,6 +41,60 @@ typedef struct _Elm_Layout_Part_Alias_Description Elm_Layout_Part_Alias_Descript
 EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
 
 /**
+ * @brief Add a callback for a (Edje) signal emitted by a layout widget's
+ * underlying Edje object.
+ *
+ * This function connects a callback function to a signal emitted by the
+ * underlying Edje object of @c obj. Globs are accepted in either the emission
+ * or source strings.
+ *
+ * @param[in] emission The signal's name string.
+ * @param[in] source The signal's source string.
+ * @param[in] func The callback function to be executed when the signal is
+ * emitted.
+ * @param[in] data A pointer to data to pass in to the callback function.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI void elm_layout_signal_callback_add(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+
+/**
+ * @brief Remove a signal-triggered callback from a given layout widget.
+ *
+ * This function removes the last callback attached to a signal emitted by the
+ * undelying Edje object of @c obj, with parameters @c emission, @c source and
+ * @c func matching exactly those passed to a previous call to
+ * @ref elm_layout_signal_callback_add. The data pointer that was passed to
+ * this call will be returned.
+ *
+ * @param[in] emission The signal's name string.
+ * @param[in] source The signal's source string.
+ * @param[in] func The callback function being executed when the signal was
+ * emitted.
+ *
+ * @return The data pointer of the signal callback (passed on
+ * @ref elm_layout_signal_callback_add) or @c null on errors.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI void *elm_layout_signal_callback_del(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func);
+
+/**
+ * @brief Send a (Edje) signal to a given layout widget's underlying Edje
+ * object.
+ *
+ * This function sends a signal to the underlying Edje object of @c obj. An
+ * Edje program on that Edje object's definition can respond to a signal by
+ * specifying matching 'signal' and 'source' fields.
+ *
+ * @param[in] emission The signal's name string.
+ * @param[in] source The signal's source string.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI void elm_layout_signal_emit(Elm_Layout *obj, const char *emission, const char *source);
+
+/**
  * @brief Get the edje layout
  *
  * This returns the edje object. It is not expected to be used to then swallow

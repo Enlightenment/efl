@@ -69,6 +69,7 @@ struct _Elm_Entry_Data
    Elm_Input_Hints                       input_hints;
    Edje_Cursor                           sel_handler_cursor;
    void                                 *input_panel_imdata;
+   Eina_List                            *edje_signals;
    int                                   input_panel_imdata_len;
    int                                   input_panel_layout_variation;
    int                                   validators;

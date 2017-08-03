@@ -954,6 +954,9 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
+      Efl.Canvas.Layout_Signal.signal_callback_add;
+      Efl.Canvas.Layout_Signal.signal_callback_del;
+      Efl.Canvas.Layout_Signal.signal_emit;
       Elm.Widget.activate;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
@@ -963,9 +966,6 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Widget.sub_object_del;
       Elm.Widget.focus_next_manager_is;
       Elm.Layout.sizing_eval;
-      Elm.Layout.signal_callback_add;
-      Elm.Layout.signal_callback_del;
-      Elm.Layout.signal_emit;
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.bounce_allow { set; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
