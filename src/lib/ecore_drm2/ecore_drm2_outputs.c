@@ -1664,3 +1664,22 @@ ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *s
   *usec = v.reply.tval_usec;
   return EINA_TRUE;
 }
+
+EAPI void
+ecore_drm2_output_info_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, int *h, unsigned int *refresh)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if (refresh) *refresh = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_TRUE_RETURN(!output->current_mode);
+
+   if (w) *w = output->current_mode->width;
+   if (h) *h = output->current_mode->height;
+   if (refresh) *refresh = output->current_mode->refresh;
+   if (x) *x = output->x;
+   if (y) *y = output->y;
+}
