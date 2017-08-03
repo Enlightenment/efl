@@ -347,7 +347,7 @@ _elm_label_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, const char *l
    if (int_ret)
      {
         sd->lastw = -1;
-        elm_obj_layout_sizing_eval(obj);
+        elm_layout_sizing_eval(obj);
         _label_slide_change(obj);
      }
    return int_ret;

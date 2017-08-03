@@ -182,7 +182,7 @@ _efl_ui_radio_elm_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
     * whenever we can changed the theme API */
    _icon_signal_emit(obj);
 
-   elm_obj_layout_sizing_eval(obj);
+   elm_layout_sizing_eval(obj);
 
    return int_ret;
 }

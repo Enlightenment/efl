@@ -126,7 +126,7 @@ _efl_ui_check_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNU
 
    _icon_signal_emit(obj);
 
-   elm_obj_layout_sizing_eval(obj);
+   elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -188,7 +188,7 @@ _efl_ui_check_elm_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUSED)
     * we can changed the theme API */
    _icon_signal_emit(obj);
 
-   elm_obj_layout_sizing_eval(obj);
+   elm_layout_sizing_eval(obj);
 
    return int_ret;
 }
