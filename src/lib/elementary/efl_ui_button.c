@@ -114,7 +114,7 @@ _icon_signal_emit(Evas_Object *obj)
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
-   elm_obj_layout_sizing_eval(obj);
+   elm_layout_sizing_eval(obj);
 }
 
 /* FIXME: replicated from elm_layout just because button's icon spot

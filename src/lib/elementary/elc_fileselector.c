@@ -2013,7 +2013,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    priv->files_view = _files_list_add(obj);
    elm_object_part_content_set(obj, "elm.swallow.files", priv->files_view);
 
-   elm_obj_layout_sizing_eval(obj);
+   elm_layout_sizing_eval(obj);
 
    _focus_chain_update(obj, priv);
 }

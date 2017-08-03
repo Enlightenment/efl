@@ -57,7 +57,7 @@ _state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
    sprintf(buf, "elm,state,changed,%d", sd->state);
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
-   elm_obj_layout_sizing_eval(obj);
+   elm_layout_sizing_eval(obj);
    efl_event_callback_legacy_call(obj, EFL_UI_NSTATE_EVENT_STATE_CHANGED, NULL);
 }
 

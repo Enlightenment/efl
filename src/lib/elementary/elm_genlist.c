@@ -440,7 +440,7 @@ _item_content_realize(Elm_Gen_Item *it,
 
                   // FIXME : Layout need sizing eval before group calculate
                   if (efl_class_get(content) == ELM_LAYOUT_CLASS)
-                    elm_obj_layout_sizing_eval(content);
+                    elm_layout_sizing_eval(content);
 
                   _widget_calculate_recursive(content);
                }
