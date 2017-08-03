@@ -11,19 +11,28 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
    data: Elm_Layout_Smart_Data;
    methods {
       @property theme {
+         [[The theme of this widget, defines which edje group will be used.
+
+           Based on the type of widget ($klass), a given $group and a
+           $style (usually "default"), the edje group name will be formed
+           for this object.
+         ]]
          set {
-            [[Set the edje group from the elementary theme that will be used
+            [[Sets the edje group from the elementary theme that will be used
               as layout.
 
-              Note that $style will be the new style of $obj too, as in an
-              \@ref elm_object_style_set call.
+              Note that $style will be the new style of this object, as in an
+              @Elm.Widget.style.
+
+              If this returns $false the widget is very likely to become
+              non-functioning.
             ]]
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
-            klass: string; [[The class of the group.]]
-            group: string; [[The group.]]
-            style: string; [[The style to used.]]
+            klass: string; [[The class of the group, eg. "button".]]
+            group: string("base"); [[The group, eg. "base".]]
+            style: string("default"); [[The style to used, eg "default".]]
          }
       }
       sizing_eval {
