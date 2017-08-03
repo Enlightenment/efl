@@ -701,7 +701,6 @@ ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *device)
    int ret;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, -1);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL((device->fd < 0), -1);
 
    ret = sym_drmGetCap(device->fd, DRM_CAP_TIMESTAMP_MONOTONIC, &caps);
    if ((ret == 0) && (caps == 1))
@@ -717,7 +716,6 @@ ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *device, int *width, int *he
    int ret;
 
    EINA_SAFETY_ON_NULL_RETURN(device);
-   EINA_SAFETY_ON_TRUE_RETURN((device->fd < 0));
 
    if (width)
      {
@@ -857,7 +855,6 @@ ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device)
    int ret;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, EINA_FALSE);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL((device->fd < 0), EINA_FALSE);
 
    ret = sym_drmGetCap(device->fd, DRM_CAP_DUMB_PREFER_SHADOW, &caps);
    if ((ret == 0) && (caps == 1))
