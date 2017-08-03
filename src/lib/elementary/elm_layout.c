@@ -1616,12 +1616,28 @@ elm_layout_edje_get(const Eo *obj)
    return wd->resize_obj;
 }
 
-EOLIAN static const char*
-_elm_layout_data_get(const Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *key)
+EOLIAN static const char *
+_elm_layout_efl_canvas_layout_group_group_data_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *key)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   return edje_object_data_get(wd->resize_obj, key);
+   return efl_canvas_layout_group_data_get(wd->resize_obj, key);
+}
+
+EOLIAN static void
+_elm_layout_efl_canvas_layout_group_group_size_min_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, int *w, int *h)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   efl_canvas_layout_group_size_min_get(wd->resize_obj, w, h);
+}
+
+EOLIAN static void
+_elm_layout_efl_canvas_layout_group_group_size_max_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, int *w, int *h)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   efl_canvas_layout_group_size_max_get(wd->resize_obj, w, h);
 }
 
 /* layout's sizing evaluation is deferred. evaluation requests are
@@ -2442,6 +2458,12 @@ EAPI void
 elm_layout_signal_emit(Elm_Layout *obj, const char *emission, const char *source)
 {
    efl_canvas_layout_signal_emit(obj, emission, source);
+}
+
+EAPI const char *
+elm_layout_data_get(const Evas_Object *obj, const char *key)
+{
+   return efl_canvas_layout_group_data_get(obj, key);
 }
 
 /* End of legacy only */

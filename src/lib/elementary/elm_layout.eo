@@ -2,7 +2,8 @@ import edje_types;
 
 class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                   Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect,
-                  Efl.Canvas.Layout_Calc, Efl.Canvas.Layout_Signal)
+                  Efl.Canvas.Layout_Calc, Efl.Canvas.Layout_Signal,
+                  Efl.Canvas.Layout_Group)
 {
    [[Elementary layout class]]
    legacy_prefix: elm_layout;
@@ -70,20 +71,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
             @in height: bool; [[Restrict minimum size ot the current height.]]
          }
       }
-      data_get @const {
-         [[Get the edje data from the given layout.
-
-           This function fetches data specified inside the edje theme of
-           this layout. This function return NULL if data is not found.
-
-           In EDC this comes from a data block within the group block that
-           $obj was loaded from.
-         ]]
-         return: string; [[The edje data string.]]
-         params {
-            @in key: string; [[The data key.]]
-         }
-      }
    }
    implements {
       class.constructor;
@@ -98,6 +85,9 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Canvas.Layout_Signal.signal_emit;
       //Efl.Canvas.Layout_Signal.message_send;
       //Efl.Canvas.Layout_Signal.signal_process;
+      Efl.Canvas.Layout_Group.group_data { get; }
+      Efl.Canvas.Layout_Group.group_size_min { get; }
+      Efl.Canvas.Layout_Group.group_size_max { get; }
       Elm.Widget.focus_direction;
       Elm.Widget.sub_object_add;
       Elm.Widget.theme_apply;
