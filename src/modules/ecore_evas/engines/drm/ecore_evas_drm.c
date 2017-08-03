@@ -148,14 +148,8 @@ _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const ch
 
    if (!device) device = "seat0";
 
-   edata->dev = ecore_drm2_device_find(device, 0);
+   edata->dev = ecore_drm2_device_open(device, 0);
    if (!edata->dev)
-     {
-        ERR("Failed to create device");
-        goto dev_err;
-     }
-
-   if (ecore_drm2_device_open(edata->dev) < 0)
      {
         ERR("Failed to open device");
         goto open_err;
@@ -187,7 +181,6 @@ output_err:
    ecore_drm2_device_close(edata->dev);
 open_err:
    ecore_drm2_device_free(edata->dev);
-dev_err:
    ecore_drm2_shutdown();
 init_err:
    return --_drm_init_count;

@@ -593,43 +593,29 @@ _drm2_atomic_state_free(Ecore_Drm2_Atomic_State *state)
 }
 
 EAPI Ecore_Drm2_Device *
-ecore_drm2_device_find(const char *seat, unsigned int tty)
+ecore_drm2_device_open(const char *seat, unsigned int tty)
 {
-   Ecore_Drm2_Device *dev;
+   Ecore_Drm2_Device *device;
 
-   dev = calloc(1, sizeof(Ecore_Drm2_Device));
-   if (!dev) return NULL;
+   device = calloc(1, sizeof(Ecore_Drm2_Device));
+   if (!device) return NULL;
 
-   dev->em = elput_manager_connect(seat, tty);
-   if (!dev->em)
+   device->em = elput_manager_connect(seat, tty);
+   if (!device->em)
      {
         ERR("Could not connect to input manager");
         goto man_err;
      }
 
-   dev->path = _drm2_device_find(dev->em, seat);
-   if (!dev->path)
+   device->path = _drm2_device_find(device->em, seat);
+   if (!device->path)
      {
         ERR("Could not find drm device on seat %s", seat);
         goto path_err;
      }
 
-   return dev;
-
-path_err:
-   elput_manager_disconnect(dev->em);
-man_err:
-   free(dev);
-   return NULL;
-}
-
-EAPI int
-ecore_drm2_device_open(Ecore_Drm2_Device *device)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(device, -1);
-
    device->fd = elput_manager_open(device->em, device->path, -1);
-   if (device->fd < 0) goto open_err;
+   if (device->fd < 0) goto path_err;
 
    if (!elput_input_init(device->em))
      {
@@ -681,12 +667,15 @@ ecore_drm2_device_open(Ecore_Drm2_Device *device)
      ecore_event_handler_add(ELPUT_EVENT_DEVICE_CHANGE,
                              _cb_device_change, device);
 
-   return device->fd;
+   return device;
 
 input_err:
    elput_manager_close(device->em, device->fd);
-open_err:
-   return -1;
+path_err:
+   elput_manager_disconnect(device->em);
+man_err:
+   free(device);
+   return NULL;
 }
 
 EAPI void
