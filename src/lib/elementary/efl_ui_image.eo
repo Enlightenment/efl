@@ -45,8 +45,9 @@ struct Efl.Ui.Image.Error
 class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View, 
                  Elm.Interface.Atspi_Image, Elm.Interface.Atspi_Widget_Action,
-                 Edje.Object, Efl.Orientation, Efl.Flipable,
-                 Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Canvas.Layout_Calc)
+                 Efl.Orientation, Efl.Flipable,
+                 Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Canvas.Layout_Calc,
+                 Efl.Canvas.Layout_Group, Efl.Canvas.Layout_Signal)
 {
    [[ Efl UI image class]]
    event_prefix: efl_ui_image;
@@ -136,8 +137,9 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }
       Efl.Canvas.Layout_Signal.signal_emit;
-      Edje.Object.group_size_min { get; }
-      Edje.Object.group_size_max { get; }
+      Efl.Canvas.Layout_Group.group_size_min { get; }
+      Efl.Canvas.Layout_Group.group_size_max { get; }
+      //Efl.Canvas.Layout_Group.group_data { get; }
       Efl.Canvas.Layout_Calc.calc_size_min;
       Efl.Canvas.Layout_Calc.calc_force;
       Efl.Canvas.Object.clip { set; }

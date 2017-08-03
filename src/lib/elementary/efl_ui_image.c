@@ -1175,7 +1175,7 @@ _efl_ui_image_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_I
 }
 
 EOLIAN static void
-_efl_ui_image_edje_object_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
+_efl_ui_image_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
 {
    if (sd->edje)
      edje_object_size_min_get(sd->img, w, h);
@@ -1184,7 +1184,7 @@ _efl_ui_image_edje_object_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_D
 }
 
 EOLIAN static void
-_efl_ui_image_edje_object_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
+_efl_ui_image_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
 {
    if (sd->edje)
      edje_object_size_max_get(sd->img, w, h);

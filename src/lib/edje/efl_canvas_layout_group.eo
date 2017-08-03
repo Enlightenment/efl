@@ -1,0 +1,105 @@
+interface Efl.Canvas.Layout_Group
+{
+   [[APIs representing static data from a group in an edje file.
+
+     @since 1.21
+   ]]
+   methods {
+      @property group_size_min {
+         get {
+            [[Gets the minimum size specified -- as an EDC property -- for a
+              given Edje object
+
+              This function retrieves the obj object's minimum size values, as
+              declared in its EDC group definition. For instance, for an Edje
+              object of minimum size 100x100 pixels:
+              collections {
+                 group {
+                    name: "a_group";
+                    min: 100 100;
+                 }
+              }
+
+              Note: If the $min EDC property was not declared for this object,
+              this call will return 0x0.
+
+              Note: On failure, this function also return 0x0.
+
+              See also @.group_size_max.
+            ]]
+            legacy: edje_object_size_min_get;
+         }
+         values {
+            minw: int; [[Pointer to a variable where to store the minimum width]]
+            minh: int; [[Pointer to a variable where to store the minimum height]]
+         }
+      }
+      @property group_size_max {
+         get {
+            [[Gets the maximum size specified -- as an EDC property -- for a
+              given Edje object
+
+              This function retrieves the object's maximum size values, as
+              declared in its EDC group definition. For instance, for an Edje
+              object of maximum size 100x100 pixels:
+              collections {
+                 group {
+                    name: "a_group";
+                    max: 100 100;
+                 }
+              }
+
+              Note: If the $max EDC property was not declared for the object,
+              this call will return the maximum size a given Edje object may
+              have, for each axis.
+
+              Note: On failure, this function will return 0x0.
+
+              See also @.group_size_min.
+            ]]
+            legacy: edje_object_size_max_get;
+         }
+         values {
+            maxw: int; [[The maximum width]]
+            maxh: int; [[The maximum height]]
+         }
+      }
+      @property group_data {
+         get {
+            [[Retrives an EDC data field's value from a given Edje object's group.
+
+              This function fetches an EDC data field's value, which is declared
+              on the objects building EDC file, under its group. EDC data blocks
+              are most commonly used to pass arbitrary parameters from an
+              application's theme to its code.
+
+              EDC data fields always hold  strings as values, hence the return
+              type of this function. Check the complete "syntax reference" for
+              EDC files.
+
+              This is how a data item is defined in EDC:
+              collections {
+                 group {
+                    name: "a_group";
+                    data {
+                       item: "key1" "value1";
+                       item: "key2" "value2";
+                    }
+                 }
+              }
+
+              Warning: Do not confuse this call with edje_file_data_get(), which
+              queries for a global EDC data field on an EDC declaration file.
+            ]]
+            legacy: edje_object_data_get;
+         }
+         keys {
+            key: string; [[The data field's key string]]
+         }
+         values {
+            val: string; [[The data's value string.]]
+         }
+      }
+   }
+}
+

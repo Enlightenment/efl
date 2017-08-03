@@ -453,7 +453,7 @@ _edje_object_efl_ui_base_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 }
 
 EOLIAN const char *
-_edje_object_group_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
+_edje_object_efl_canvas_layout_group_group_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
 {
    if (!key) return NULL;
    if (!ed->collection) return NULL;
@@ -3097,7 +3097,7 @@ _edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
 }
 
 EOLIAN void
-_edje_object_group_size_min_get(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh)
+_edje_object_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh)
 {
    if ((!ed) || (!ed->collection))
      {
@@ -3110,7 +3110,7 @@ _edje_object_group_size_min_get(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw,
 }
 
 EOLIAN void
-_edje_object_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED, Evas_Coord *maxw, Evas_Coord *maxh)
+_edje_object_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    if ((!ed) || (!ed->collection))
      {

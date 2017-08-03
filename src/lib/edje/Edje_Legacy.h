@@ -2161,3 +2161,4 @@ EAPI void edje_object_part_text_insert(Edje_Object *obj, const char *part, const
  */
 #include "edje_object.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"
+#include "efl_canvas_layout_group.eo.legacy.h"
