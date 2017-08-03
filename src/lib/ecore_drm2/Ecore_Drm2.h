@@ -718,6 +718,21 @@ EAPI unsigned int ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output
 EAPI void ecore_drm2_output_resolution_get(Ecore_Drm2_Output *output, int *w, int *h, unsigned int *refresh);
 
 /**
+ * Get the geometry and refresh rate for a given output
+ *
+ * @param output
+ * @param *x
+ * @param *y
+ * @param *w
+ * @param *h
+ * @param *refresh
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.21
+ */
+EAPI void ecore_drm2_output_info_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, int *h, unsigned int *refresh);
+
+/**
  * Get if an output can be used on a given crtc
  *
  * This function will loop the possible crtcs of an encoder to determine if
