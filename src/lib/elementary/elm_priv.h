@@ -610,6 +610,13 @@ void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
 
 double _elm_atof(const char *s);
 
+// elm_layout and elm_entry LEGACY signal API (returned the user data pointer)
+void _elm_layout_signal_callback_add_legacy(Eo *obj, Eo *edje, Eina_List **p_edje_signals, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+void *_elm_layout_signal_callback_del_legacy(Eo *obj, Eo *edje, Eina_List **p_edje_signals, const char *emission, const char *source, Edje_Signal_Cb func);
+void _elm_entry_signal_callback_add_legacy(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data);
+void *_elm_entry_signal_callback_del_legacy(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb);
+
+
 /* Internal EO APIs */
 const Elm_Layout_Part_Alias_Description *elm_layout_content_aliases_get(const Eo *obj);
 const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *obj);

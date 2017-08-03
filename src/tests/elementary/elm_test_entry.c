@@ -21,6 +21,53 @@ START_TEST (elm_entry_del)
 }
 END_TEST
 
+void
+_dummy_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
+          const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+}
+
+START_TEST (elm_entry_signal_callback)
+{
+   Evas_Object *win, *entry;
+   void *data;
+   int k;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+
+   entry = elm_entry_add(win);
+
+   for (k = 1; k < 10; k++)
+     {
+        int *val = malloc(sizeof(int));
+        *val = 42 * k;
+        elm_layout_signal_callback_add(entry, "sig", "src", _dummy_cb, val);
+     }
+
+   data = elm_layout_signal_callback_del(entry, "notsig", "notsrc", _dummy_cb);
+   fail_if(data);
+
+   // this test verifies that the legacy wrapper returns the proper data
+   // the eo API requires the data as input to "del()"
+   for (k = 1; k < 10; k++)
+     {
+        int *val;
+        data = elm_layout_signal_callback_del(entry, "sig", "src", _dummy_cb);
+        fail_if(!data);
+        val = (int *)data;
+        ck_assert_int_ne(*val, 0);
+        ck_assert_int_eq((*val) % 42, 0);
+        free(data);
+     }
+
+   data = elm_layout_signal_callback_del(entry, "sig", "src", _dummy_cb);
+   fail_if(data);
+
+   elm_shutdown();
+}
+END_TEST
+
 START_TEST (elm_entry_atspi_text_char_get)
 {
    Evas_Object *win, *entry;
@@ -350,6 +397,7 @@ END_TEST
 void elm_test_entry(TCase *tc)
 {
    tcase_add_test(tc, elm_entry_del);
+   tcase_add_test(tc, elm_entry_signal_callback);
    tcase_add_test(tc, elm_entry_atspi_text_char_get);
    tcase_add_test(tc, elm_entry_atspi_text_char_count);
    tcase_add_test(tc, elm_entry_atspi_text_string_get_char);

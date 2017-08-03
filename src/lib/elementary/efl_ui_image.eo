@@ -135,7 +135,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Flipable.flip { get; set; }
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }
-      Edje.Object.signal_emit;
+      Efl.Canvas.Layout_Signal.signal_emit;
       Edje.Object.group_size_min { get; }
       Edje.Object.group_size_max { get; }
       Efl.Canvas.Layout_Calc.calc_size_min;

@@ -2,7 +2,7 @@ import edje_types;
 
 class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                   Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect,
-                  Efl.Canvas.Layout_Calc)
+                  Efl.Canvas.Layout_Calc, Efl.Canvas.Layout_Signal)
 {
    [[Elementary layout class]]
    legacy_prefix: elm_layout;
@@ -70,23 +70,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
             @in height: bool; [[Restrict minimum size ot the current height.]]
          }
       }
-      signal_callback_add {
-         [[Add a callback for a (Edje) signal emitted by a layout widget's
-           underlying Edje object.
-
-           This function connects a callback function to a signal emitted by
-           the underlying Edje object of $obj. Globs are accepted in either
-           the emission or source strings.
-         ]]
-         params {
-            @in emission: string; [[The signal's name string.]]
-            @in source: string; [[The signal's source string.]]
-            @in func: Edje.Signal_Cb; [[The callback function to be executed
-                                        when the signal is emitted.]]
-            @in data: void_ptr @optional; [[A pointer to data to pass in to the
-                                          callback function.]]
-         }
-      }
       data_get @const {
          [[Get the edje data from the given layout.
 
@@ -96,54 +79,9 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
            In EDC this comes from a data block within the group block that
            $obj was loaded from.
          ]]
-         /* FIXME-doc
-         @code
-         collections {
-         group {
-         name: "a_group";
-         data {
-         item: "key1" "value1";
-         item: "key2" "value2";
-         }
-         }
-         }
-         @endcode
-         */
          return: string; [[The edje data string.]]
          params {
             @in key: string; [[The data key.]]
-         }
-      }
-      signal_callback_del {
-         [[Remove a signal-triggered callback from a given layout widget.
-
-           This function removes the last callback attached to a signal
-           emitted by the undelying Edje object of $obj, with parameters
-           $emission, $source and $func matching exactly those passed to a
-           previous call to @.signal_callback_add. The data pointer that
-           was passed to this call will be returned.
-         ]]
-         return: void_ptr; [[The data pointer of the signal callback (passed on
-                           @.signal_callback_add) or $null on errors.]]
-         params {
-            @in emission: string; [[The signal's name string.]]
-            @in source: string; [[The signal's source string.]]
-            @in func: Edje.Signal_Cb; [[The callback function being executed
-                                        when the signal was emitted.]]
-         }
-      }
-      signal_emit {
-         [[Send a (Edje) signal to a given layout widget's underlying Edje
-           object.
-
-           This function sends a signal to the underlying Edje object of
-           $obj. An Edje program on that Edje object's definition can
-           respond to a signal by specifying matching 'signal' and
-           'source' fields.
-         ]]
-         params {
-            @in emission: string; [[The signal's name string.]]
-            @in source: string; [[The signal's source string.]]
          }
       }
    }
@@ -155,6 +93,11 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Layout_Calc.calc_freeze;
       Efl.Canvas.Layout_Calc.calc_thaw;
+      Efl.Canvas.Layout_Signal.signal_callback_add;
+      Efl.Canvas.Layout_Signal.signal_callback_del;
+      Efl.Canvas.Layout_Signal.signal_emit;
+      //Efl.Canvas.Layout_Signal.message_send;
+      //Efl.Canvas.Layout_Signal.signal_process;
       Elm.Widget.focus_direction;
       Elm.Widget.sub_object_add;
       Elm.Widget.theme_apply;

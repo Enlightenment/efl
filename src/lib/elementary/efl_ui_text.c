@@ -2573,69 +2573,43 @@ _markup_filter_cb(void *data,
 }
 
 EOLIAN static void
-_efl_ui_text_elm_layout_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source)
+_efl_ui_text_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source)
 {
    /* always pass to both edje objs */
-   edje_object_signal_emit(sd->entry_edje, emission, source);
-   edje_object_message_signal_process(sd->entry_edje);
+   efl_canvas_layout_signal_emit(sd->entry_edje, emission, source);
+
+   // FIXME: This should not be here!
+   efl_canvas_layout_signal_process(sd->entry_edje, EINA_TRUE);
 
    if (sd->scr_edje)
      {
-        edje_object_signal_emit(sd->scr_edje, emission, source);
-        edje_object_message_signal_process(sd->scr_edje);
+        efl_canvas_layout_signal_emit(sd->scr_edje, emission, source);
+        efl_canvas_layout_signal_process(sd->scr_edje, EINA_TRUE); // FIXME
      }
 }
 
-EOLIAN static void
-_efl_ui_text_elm_layout_signal_callback_add (Eo *obj, Efl_Ui_Text_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+EOLIAN static Eina_Bool
+_efl_ui_text_efl_canvas_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
-   Evas_Object *ro;
+   Eina_Bool ok;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   ro = wd->resize_obj;
-
-   wd->resize_obj = sd->entry_edje;
-
-   elm_obj_layout_signal_callback_add
-     (efl_super(obj, MY_CLASS), emission, source, func_cb, data);
-
+   ok = efl_canvas_layout_signal_callback_add(sd->entry_edje, emission, source, func_cb, data);
    if (sd->scr_edje)
-     {
-        wd->resize_obj = sd->scr_edje;
+     ok = efl_canvas_layout_signal_callback_add(sd->scr_edje, emission, source, func_cb, data);
 
-        elm_obj_layout_signal_callback_add
-              (efl_super(obj, MY_CLASS), emission, source, func_cb, data);
-     }
-
-   wd->resize_obj = ro;
+   return ok;
 }
 
-EOLIAN static void *
-_efl_ui_text_elm_layout_signal_callback_del(Eo *obj, Efl_Ui_Text_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb)
+EOLIAN static Eina_Bool
+_efl_ui_text_efl_canvas_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
-   Evas_Object *ro;
-   void *data = NULL;
+   Eina_Bool ok;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-
-   ro = wd->resize_obj;
-
-   wd->resize_obj = sd->entry_edje;
-
-   data = elm_obj_layout_signal_callback_del
-         (efl_super(obj, MY_CLASS), emission, source, func_cb);
-
+   ok = efl_canvas_layout_signal_callback_del(sd->entry_edje, emission, source, func_cb, data);
    if (sd->scr_edje)
-     {
-        wd->resize_obj = sd->scr_edje;
+     ok = efl_canvas_layout_signal_callback_del(sd->scr_edje, emission, source, func_cb, data);
 
-        data = elm_obj_layout_signal_callback_del
-              (efl_super(obj, MY_CLASS), emission, source, func_cb);
-     }
-
-   wd->resize_obj = ro;
-   return data;
+   return ok;
 }
 
 #if 0

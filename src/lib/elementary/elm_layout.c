@@ -912,67 +912,33 @@ _elm_layout_theme_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *klass, con
 }
 
 EOLIAN static void
-_elm_layout_signal_emit(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source)
+_elm_layout_efl_canvas_layout_signal_signal_emit(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source)
 {
+   // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   edje_object_signal_emit(wd->resize_obj, emission, source);
+   efl_canvas_layout_signal_emit(wd->resize_obj, emission, source);
 }
 
-EOLIAN static void
-_elm_layout_signal_callback_add(Eo *obj, Elm_Layout_Smart_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+EOLIAN static Eina_Bool
+_elm_layout_efl_canvas_layout_signal_signal_callback_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
 {
-   Edje_Signal_Data *esd;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   esd = ELM_NEW(Edje_Signal_Data);
-   if (!esd) return;
-
-   esd->obj = obj;
-   esd->func = func_cb;
-   esd->emission = eina_stringshare_add(emission);
-   esd->source = eina_stringshare_add(source);
-   esd->data = data;
-   sd->edje_signals = eina_list_append(sd->edje_signals, esd);
-
-   edje_object_signal_callback_add
-     (wd->resize_obj, emission, source,
-     _edje_signal_callback, esd);
+   // Don't do anything else than call forward here
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   return efl_canvas_layout_signal_callback_add(wd->resize_obj, emission, source, func, data);
 }
 
-EOLIAN static void*
-_elm_layout_signal_callback_del(Eo *obj, Elm_Layout_Smart_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb)
+EOLIAN static Eina_Bool
+_elm_layout_efl_canvas_layout_signal_signal_callback_del(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
-   Edje_Signal_Data *esd = NULL;
-   void *data = NULL;
-   Eina_List *l;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-
-   EINA_LIST_FOREACH(sd->edje_signals, l, esd)
-     {
-        if ((esd->func == func_cb) && (!strcmp(esd->emission, emission)) &&
-            (!strcmp(esd->source, source)))
-          {
-             sd->edje_signals = eina_list_remove_list(sd->edje_signals, l);
-             eina_stringshare_del(esd->emission);
-             eina_stringshare_del(esd->source);
-             data = esd->data;
-
-             edje_object_signal_callback_del_full
-               (wd->resize_obj, emission, source,
-               _edje_signal_callback, esd);
-
-             free(esd);
-
-             return data; /* stop at 1st match */
-
-          }
-     }
-
-   return NULL;
+   // Don't do anything else than call forward here
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   return efl_canvas_layout_signal_callback_add(wd->resize_obj, emission, source, func, data);
 }
+
+// TODO:
+// - message_send
+// - message_signal_process
+// and also message handler (not implemented yet as an EO interface!)
 
 EAPI Eina_Bool
 elm_layout_content_set(Evas_Object *obj,
@@ -2377,6 +2343,105 @@ EAPI int
 elm_layout_thaw(Evas_Object *obj)
 {
    return efl_canvas_layout_calc_thaw(obj);
+}
+
+void
+_elm_layout_signal_callback_add_legacy(Eo *obj, Eo *edje, Eina_List **p_edje_signals,
+                                       const char *emission, const char *source,
+                                       Edje_Signal_Cb func, void *data)
+{
+   Edje_Signal_Data *esd;
+
+   esd = ELM_NEW(Edje_Signal_Data);
+   if (!esd) return;
+
+   esd->obj = obj;
+   esd->func = func;
+   esd->emission = eina_stringshare_add(emission);
+   esd->source = eina_stringshare_add(source);
+   esd->data = data;
+   *p_edje_signals = eina_list_append(*p_edje_signals, esd);
+
+   efl_canvas_layout_signal_callback_add(edje, emission, source,
+                                         _edje_signal_callback, esd);
+}
+
+EAPI void
+elm_layout_signal_callback_add(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+{
+   Elm_Layout_Smart_Data *sd;
+
+   if (!emission || !source) return;
+
+   if (efl_isa(obj, ELM_ENTRY_CLASS))
+     {
+        _elm_entry_signal_callback_add_legacy(obj, emission, source, func, data);
+        return;
+     }
+
+   sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   _elm_layout_signal_callback_add_legacy(obj, wd->resize_obj, &sd->edje_signals,
+                                          emission, source, func, data);
+}
+
+void *
+_elm_layout_signal_callback_del_legacy(Eo *obj EINA_UNUSED, Eo *edje, Eina_List **p_edje_signals,
+                                       const char *emission, const char *source,
+                                       Edje_Signal_Cb func)
+{
+   Edje_Signal_Data *esd = NULL;
+   void *data = NULL;
+   Eina_List *l;
+
+   if (!emission || !source) return NULL;
+
+   EINA_LIST_FOREACH(*p_edje_signals, l, esd)
+     {
+        if ((esd->func == func) && (!strcmp(esd->emission, emission)) &&
+            (!strcmp(esd->source, source)))
+          {
+             *p_edje_signals = eina_list_remove_list(*p_edje_signals, l);
+
+             efl_canvas_layout_signal_callback_del(edje, emission, source,
+                                                   _edje_signal_callback, esd);
+
+             eina_stringshare_del(esd->emission);
+             eina_stringshare_del(esd->source);
+             data = esd->data;
+             free(esd);
+
+             return data; /* stop at 1st match */
+          }
+     }
+
+   return NULL;
+}
+
+EAPI void *
+elm_layout_signal_callback_del(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func)
+{
+   Elm_Layout_Smart_Data *sd;
+
+   if (!emission || !source) return NULL;
+
+   if (efl_isa(obj, ELM_ENTRY_CLASS))
+     return _elm_entry_signal_callback_del_legacy(obj, emission, source, func);
+
+   sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return NULL;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   return _elm_layout_signal_callback_del_legacy(obj, wd->resize_obj, &sd->edje_signals,
+                                                 emission, source, func);
+}
+
+EAPI void
+elm_layout_signal_emit(Elm_Layout *obj, const char *emission, const char *source)
+{
+   efl_canvas_layout_signal_emit(obj, emission, source);
 }
 
 /* End of legacy only */
