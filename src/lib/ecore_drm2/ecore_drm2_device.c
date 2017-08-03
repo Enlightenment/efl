@@ -682,17 +682,9 @@ EAPI void
 ecore_drm2_device_close(Ecore_Drm2_Device *device)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
-   EINA_SAFETY_ON_TRUE_RETURN(device->fd < 0);
 
    elput_input_shutdown(device->em);
    elput_manager_close(device->em, device->fd);
-}
-
-EAPI void
-ecore_drm2_device_free(Ecore_Drm2_Device *device)
-{
-   EINA_SAFETY_ON_NULL_RETURN(device);
-
    if (_ecore_drm2_use_atomic)
      _drm2_atomic_state_free(device->state);
 

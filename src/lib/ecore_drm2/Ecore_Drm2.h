@@ -189,16 +189,6 @@ EAPI Ecore_Drm2_Device *ecore_drm2_device_open(const char *seat, unsigned int tt
 EAPI void ecore_drm2_device_close(Ecore_Drm2_Device *device);
 
 /**
- * Free a given Ecore_Drm2_Device
- *
- * @param device
- *
- * @ingroup Ecore_Drm2_Device_Group
- * @since 1.18
- */
-EAPI void ecore_drm2_device_free(Ecore_Drm2_Device *device);
-
-/**
  * Get the type of clock used by a given Ecore_Drm2_Device
  *
  * @param device
