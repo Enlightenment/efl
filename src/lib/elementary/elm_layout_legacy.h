@@ -12,6 +12,26 @@
 EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
 
 /**
+ * @brief Get the edje layout
+ *
+ * This returns the edje object. It is not expected to be used to then swallow
+ * objects via @ref edje_object_part_swallow for example. Use @ref
+ * elm_layout_content_set instead so child object handling and sizing is done
+ * properly.
+ *
+ * @note This function should only be used if you really need to call some low
+ * level Edje function on this edje object. All the common stuff (setting text,
+ * emitting signals, hooking callbacks to signals, etc.) can be done with
+ * proper elementary functions.
+ *
+ * @return An Evas_Object with the edje layout settings loaded @ref
+ * elm_layout_file_set.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Efl_Canvas_Object *elm_layout_edje_get(const Evas_Object *obj);
+
+/**
  * Get the list of swallow parts of a given container widget
  *
  * @param obj The layout object

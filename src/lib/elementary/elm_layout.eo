@@ -43,25 +43,6 @@ class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
             style: string; [[The style to used.]]
          }
       }
-      @property edje {
-         get {
-            [[Get the edje layout
-
-              This returns the edje object. It is not expected to be used
-              to then swallow objects via \@ref edje_object_part_swallow
-              for example. Use \@ref elm_layout_content_set instead so
-              child object handling and sizing is done properly.
-
-              Note: This function should only be used if you really need
-              to call some low level Edje function on this edje object.
-              All the common stuff (setting text, emitting signals,
-              hooking callbacks to signals, etc.) can be done with
-              proper elementary functions.
-            ]]
-            return: Efl.Canvas.Object; [[An Evas_Object with the edje layout
-                                     settings loaded \@ref elm_layout_file_set.]]
-         }
-      }
       sizing_eval {
          [[Eval sizing.
 

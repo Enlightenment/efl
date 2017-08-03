@@ -1641,9 +1641,10 @@ _elm_layout_table_clear(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Ei
    return EINA_TRUE;
 }
 
-EOLIAN static Evas_Object*
-_elm_layout_edje_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+EAPI Evas_Object*
+elm_layout_edje_get(const Eo *obj)
 {
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, MY_CLASS), NULL);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    return wd->resize_obj;
