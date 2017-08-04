@@ -1447,6 +1447,7 @@ _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
    wdata = ee->engine.data;
    if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel)
      wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, w, h);
+   _ecore_evas_wl_common_resize(ee, ee->w, ee->h);
 }
 
 static void
@@ -1462,6 +1463,7 @@ _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
    wdata = ee->engine.data;
    if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel)
      wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, w, h);
+   _ecore_evas_wl_common_resize(ee, ee->w, ee->h);
 }
 
 static void
@@ -1475,6 +1477,7 @@ _ecore_evas_wl_common_size_base_set(Ecore_Evas *ee, int w, int h)
    if ((ee->prop.base.w == w) && (ee->prop.base.h == h)) return;
    ee->prop.base.w = w;
    ee->prop.base.h = h;
+   _ecore_evas_wl_common_resize(ee, ee->w, ee->h);
 }
 
 static void
@@ -1488,6 +1491,7 @@ _ecore_evas_wl_common_size_step_set(Ecore_Evas *ee, int w, int h)
    if ((ee->prop.step.w == w) && (ee->prop.step.h == h)) return;
    ee->prop.step.w = w;
    ee->prop.step.h = h;
+   _ecore_evas_wl_common_resize(ee, ee->w, ee->h);
 }
 
 static void
@@ -1498,6 +1502,7 @@ _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect)
    if (!ee) return;
    if (EINA_FLT_EQ(ee->prop.aspect, aspect)) return;
    ee->prop.aspect = aspect;
+   _ecore_evas_wl_common_resize(ee, ee->w, ee->h);
 }
 
 static void
