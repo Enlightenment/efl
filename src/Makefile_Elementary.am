@@ -147,6 +147,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_pagecontrol.eo \
 	lib/elementary/efl_ui_pagescroller.eo \
 	lib/elementary/efl_page_transition.eo \
+	lib/elementary/efl_page_transition_scroll.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
@@ -321,6 +322,7 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_widget_pagecontrol.h \
 	lib/elementary/efl_ui_widget_pagescroller.h \
 	lib/elementary/efl_page_transition.h \
+	lib/elementary/efl_page_transition_scroll.h \
 	lib/elementary/elm_code_syntax.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
@@ -724,6 +726,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_pagecontrol.c \
 	lib/elementary/efl_ui_pagescroller.c \
 	lib/elementary/efl_page_transition.c \
+	lib/elementary/efl_page_transition_scroll.c \
 	$(NULL)
 
 

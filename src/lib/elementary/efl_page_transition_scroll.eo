@@ -1,0 +1,7 @@
+class Efl.Page.Transition.Scroll (Efl.Page.Transition)
+{
+   [[Efl ui pagescroller effect scroll class]]
+   implements {
+      Efl.Page.Transition.update;
+   }
+}
