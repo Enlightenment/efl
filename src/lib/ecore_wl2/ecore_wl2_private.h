@@ -515,6 +515,7 @@ void _ecore_wl2_window_www_surface_init(Ecore_Wl2_Window *window);
 void _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window);
 
 void _ecore_wl2_offer_unref(Ecore_Wl2_Offer *offer);
+Eina_Bool _ecore_wl2_display_sync_get(void);
 
 EAPI extern int _ecore_wl2_event_window_www;
 EAPI extern int _ecore_wl2_event_window_www_drag;
