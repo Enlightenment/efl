@@ -122,6 +122,15 @@ EAPI void efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set);
  * @param set Whether to enable min/max setting
  */
 EAPI void efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set);
+
+/**
+ * Add an externally-managed global to the compositor
+ * @note The external implementation is expected to restrict access to authorized
+ * clients
+ * @see wl_global_create() docs
+ * @since 1.21
+ */
+EAPI void *efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb);
 #endif
 
 #endif
