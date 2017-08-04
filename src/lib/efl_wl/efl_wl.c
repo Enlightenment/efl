@@ -144,6 +144,7 @@ typedef struct Comp
    Eina_Bool x11_selection : 1;
    Eina_Bool rtl : 1;
    Eina_Bool aspect : 1;
+   Eina_Bool minmax : 1;
 } Comp;
 
 typedef struct Comp_Data_Device_Source Comp_Data_Device_Source;
@@ -1168,6 +1169,19 @@ shell_surface_activate_recurse(Comp_Surface *cs)
 }
 
 static void
+shell_surface_minmax_update(Comp_Surface *cs)
+{
+   int w, h;
+
+   if (!cs) return;
+   if (!cs->c->minmax) return;
+   evas_object_size_hint_min_get(cs->obj, &w, &h);
+   evas_object_size_hint_min_set(cs->c->obj, w, h);
+   evas_object_size_hint_max_get(cs->obj, &w, &h);
+   evas_object_size_hint_max_set(cs->c->obj, w, h);
+}
+
+static void
 shell_surface_aspect_update(Comp_Surface *cs)
 {
    Evas_Aspect_Control aspect;
@@ -1225,6 +1239,7 @@ shell_surface_send_configure(Comp_Surface *cs)
           if (ccs->shell.surface && ccs->role && ccs->shell.popup)
             ccs->shell.activated = cs->shell.activated;
         shell_surface_aspect_update(cs);
+        shell_surface_minmax_update(cs);
      }
    else
      shell_surface_deactivate_recurse(cs);
@@ -3080,10 +3095,25 @@ static void
 shell_surface_toplevel_move(){}
 static void
 shell_surface_toplevel_resize(){}
+
 static void
-shell_surface_toplevel_set_max_size(){}
+shell_surface_toplevel_set_max_size(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t w, int32_t h)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(resource);
+   evas_object_size_hint_max_set(cs->obj, w, h);
+   if (cs == cs->c->active_surface)
+     shell_surface_minmax_update(cs);
+}
+
 static void
-shell_surface_toplevel_set_min_size(){}
+shell_surface_toplevel_set_min_size(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t w, int32_t h)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(resource);
+   evas_object_size_hint_min_set(cs->obj, w, h);
+   if (cs == cs->c->active_surface)
+     shell_surface_minmax_update(cs);
+}
+
 static void
 shell_surface_toplevel_set_maximized(){}
 static void
@@ -5372,4 +5402,21 @@ efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set)
      shell_surface_aspect_update(c->active_surface);
    else
      evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_NONE, 0, 0);
+}
+
+void
+efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   c->minmax = !!set;
+   if (c->minmax)
+     shell_surface_minmax_update(c->active_surface);
+   else
+     {
+        evas_object_size_hint_min_set(obj, 0, 0);
+        evas_object_size_hint_max_set(obj, -1, -1);
+     }
 }

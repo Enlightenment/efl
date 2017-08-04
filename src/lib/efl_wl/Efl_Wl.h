@@ -114,6 +114,14 @@ EAPI void efl_wl_scale_set(Evas_Object *obj, double scale);
  * @param set Whether to enable aspect setting
  */
 EAPI void efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set);
+
+/**
+ * Transfer min/max hints from top-most surface onto the efl_wl object
+ *
+ * @param obj The compositor widget
+ * @param set Whether to enable min/max setting
+ */
+EAPI void efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set);
 #endif
 
 #endif
