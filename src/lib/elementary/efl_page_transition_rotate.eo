@@ -1,0 +1,7 @@
+class Efl.Page.Transition.Rotate (Efl.Page.Transition)
+{
+   [[Efl ui pagescroller effect rotate class]]
+   implements {
+      Efl.Page.Transition.update;
+   }
+}
