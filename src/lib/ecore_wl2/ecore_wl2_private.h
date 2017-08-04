@@ -170,6 +170,8 @@ struct _Ecore_Wl2_Window
    uint32_t configure_serial;
    void (*configure_ack)(struct xdg_surface *surface, uint32_t serial);
    void (*zxdg_configure_ack)(struct zxdg_surface_v6 *surface, uint32_t serial);
+   void (*zxdg_set_min_size)(struct zxdg_toplevel_v6 *toplevel, int32_t w, int32_t h);
+   void (*zxdg_set_max_size)(struct zxdg_toplevel_v6 *toplevel, int32_t w, int32_t h);
 
    Eina_Rectangle saved;
    Eina_Rectangle geometry;

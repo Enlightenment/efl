@@ -459,8 +459,8 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
         if (window->class)
           zxdg_toplevel_v6_set_app_id(window->zxdg_toplevel, window->class);
 
-        zxdg_toplevel_v6_set_min_size(window->zxdg_toplevel, 1, 1);
-        zxdg_toplevel_v6_set_max_size(window->zxdg_toplevel, 32767, 32767);
+        window->zxdg_set_min_size = zxdg_toplevel_v6_set_min_size;
+        window->zxdg_set_max_size = zxdg_toplevel_v6_set_max_size;
 
         window->zxdg_configure_ack = zxdg_surface_v6_ack_configure;
         _ecore_wl2_window_type_set(window);
