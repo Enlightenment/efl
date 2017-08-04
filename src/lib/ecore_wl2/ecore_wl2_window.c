@@ -356,14 +356,13 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
       case ECORE_WL2_WINDOW_TYPE_TOPLEVEL:
         if (win->zxdg_surface)
           {
-             struct zxdg_toplevel_v6 *ptop;
+             struct zxdg_toplevel_v6 *ptop = NULL;
 
              if (win->parent)
                ptop = win->parent->zxdg_toplevel;
-             else
-               ptop = NULL;
 
-             zxdg_toplevel_v6_set_parent(win->zxdg_toplevel, ptop);
+             if (ptop)
+               zxdg_toplevel_v6_set_parent(win->zxdg_toplevel, ptop);
           }
         else if (win->xdg_surface)
           xdg_surface_set_parent(win->xdg_surface, NULL);
