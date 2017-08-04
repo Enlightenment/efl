@@ -118,6 +118,9 @@ typedef struct Comp
    Evas_Object *clip;
    Evas_Object *events;
 
+   Eina_Hash *exes;
+   Ecore_Event_Handler *exe_handler;
+
    Eina_Inlist *surfaces;
    unsigned int surfaces_count;
    Eina_Hash *client_surfaces;
@@ -425,6 +428,22 @@ array_clear(Eina_Array **arr)
      evas_object_del(eina_array_pop(a));
    eina_array_free(a);
    *arr = NULL;
+}
+
+static inline Eina_Bool
+client_allowed_check(Comp *c, struct wl_client *client)
+{
+   pid_t p;
+   int32_t pid;
+   Eina_Bool err;
+
+   wl_client_get_credentials(client, &p, NULL, NULL);
+   if (p == getpid()) return EINA_TRUE;
+   pid = p;
+   err = (!c->exes) || !eina_hash_find(c->exes, &pid);
+   if (err)
+     wl_client_post_no_memory(client);
+   return !err;
 }
 
 static inline void
@@ -2450,6 +2469,8 @@ comp_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
    struct wl_resource *res;
 
+   if (!client_allowed_check(data, client)) return;
+
    res = wl_resource_create(client, &wl_compositor_interface, version, id);
    wl_resource_set_implementation(res, &comp_interface, data, NULL);
 }
@@ -2595,6 +2616,7 @@ subcomp_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id
 {
    struct wl_resource *res;
 
+   if (!client_allowed_check(data, client)) return;
    res = wl_resource_create(client, &wl_subcompositor_interface, version, id);
    wl_resource_set_implementation(res, &subcomp_interface, data, NULL);
 }
@@ -2932,6 +2954,7 @@ data_device_manager_bind(struct wl_client *client, void *data, uint32_t version,
 {
    struct wl_resource *res;
 
+   if (!client_allowed_check(data, client)) return;
    res = wl_resource_create(client, &wl_data_device_manager_interface, MIN(3, version), id);
    wl_resource_set_implementation(res, &data_device_manager_interface, data, NULL);
 }
@@ -2980,6 +3003,7 @@ output_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
    Comp_Surface *cs;
    struct wl_resource *res;
 
+   if (!client_allowed_check(data, client)) return;
    res = wl_resource_create(client, &wl_output_interface, version, id);
    c->output_resources = eina_list_append(c->output_resources, res);
    wl_resource_set_implementation(res, NULL, data, output_unbind);
@@ -3403,6 +3427,7 @@ shell_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
    struct wl_resource *res;
    Shell_Data *sd;
 
+   if (!client_allowed_check(data, client)) return;
    sd = calloc(1, sizeof(Shell_Data));
    sd->c = c;
    c->shells = eina_inlist_append(c->shells, EINA_INLIST_GET(sd));
@@ -3750,6 +3775,7 @@ seat_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
    struct wl_resource *res;
    Comp_Seat *s = data;
 
+   if (!client_allowed_check(s->c, client)) return;
    res = wl_resource_create(client, &wl_seat_interface, version, id);
    s->resources = eina_list_append(s->resources, res);
    if (s->c->active_surface)
@@ -4962,6 +4988,8 @@ comp_smart_del(Evas_Object *obj)
    evas_event_callback_del_full(c->evas, EVAS_CALLBACK_RENDER_PRE, (Evas_Event_Cb)comp_render_pre, c);
    evas_event_callback_del_full(c->evas, EVAS_CALLBACK_RENDER_POST, (Evas_Event_Cb)comp_render_post, c);
    efl_event_callback_array_del(c->evas, comp_device_cbs(), c);
+   ecore_event_handler_del(c->exe_handler);
+   eina_hash_free(c->exes);
    comps = eina_list_remove(comps, c);
    free(c);
    if (!comps)
@@ -5093,6 +5121,18 @@ comp_smart_init(void)
    }
 }
 
+static Eina_Bool
+exe_event_del(void *data, int t EINA_UNUSED, Ecore_Exe_Event_Del *ev)
+{
+   Comp *c = data;
+   int32_t pid = ev->pid;
+
+   if (!eina_streq(ecore_exe_tag_get(ev->exe), "__efl_wl")) return ECORE_CALLBACK_RENEW;
+
+   eina_hash_del_by_key(c->exes, &pid);
+   return ECORE_CALLBACK_RENEW;
+}
+
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 __attribute__ ((visibility("hidden")))
@@ -5153,6 +5193,11 @@ efl_wl_run(Evas_Object *obj, const char *cmd)
 
    if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
    c = evas_object_smart_data_get(obj);
+   if (!c->exes)
+     c->exes = eina_hash_int32_new(NULL);
+   if (!c->exe_handler)
+     c->exe_handler =
+       ecore_event_handler_add(ECORE_EXE_EVENT_DEL, (Ecore_Event_Handler_Cb)exe_event_del, c);
    disp = getenv("DISPLAY");
    if (disp) disp = strdup(disp);
    unsetenv("DISPLAY");
@@ -5177,6 +5222,12 @@ efl_wl_run(Evas_Object *obj, const char *cmd)
      }
    free(env);
    free(disp);
+   if (exe)
+     {
+        int32_t pid = ecore_exe_pid_get(exe);
+        ecore_exe_tag_set(exe, "__efl_wl");
+        eina_hash_add(c->exes, &pid, exe);
+     }
    return exe;
 }
 
