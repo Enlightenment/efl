@@ -1,0 +1,25 @@
+enum Efl.Ui.Pagecontrol.Effect
+{
+   [[Efl UI Pagecontrol Page Transition Effect]]
+   scroll, [[Linear scroll effect]]
+   cube, [[3D cube effect]]
+}
+
+class Efl.Ui.Pagecontrol (Elm.Widget, Efl.Pack.Linear)
+{
+   [[Elementary pagecontrol class]]
+   event_prefix: efl_ui_pagecontrol;
+   eo_prefix: efl_ui_pagecontrol;
+   implements {
+      Efl.Object.constructor;
+      Efl.Gfx.size { set; }
+      Efl.Gfx.position { set; }
+      Efl.Container.content_count;
+      Efl.Pack.Linear.pack_end;
+      Efl.Pack.Linear.pack_content_get;
+      Efl.Pack.Linear.pack_index_get;
+   }
+   events {
+      updated; [[Called when pagecontrol is scrolled]]
+   }
+}
