@@ -737,6 +737,13 @@ EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
 EAPI int ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window);
 
 /**
+ * @see evas_object_size_hint_aspect_set
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.21
+ */
+EAPI void ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int aspect);
+
+/**
  * Show a given Ecore_Wl2_Window
  *
  * @param window The Ecore_Wl2_Window to show

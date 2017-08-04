@@ -5,6 +5,7 @@
 #include "ecore_wl2_private.h"
 
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
+#include "efl-hints-client-protocol.h"
 
 static Eina_Hash *_server_displays = NULL;
 static Eina_Hash *_client_displays = NULL;
@@ -336,6 +337,16 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
      _ecore_wl2_output_add(ewd, id);
    else if (!strcmp(interface, "wl_seat"))
      _ecore_wl2_input_add(ewd, id, version);
+   else if (!strcmp(interface, "efl_hints"))
+     {
+        Ecore_Wl2_Window *window;
+
+        ewd->wl.efl_hints = wl_registry_bind(registry, id, &efl_hints_interface, 1);
+        EINA_INLIST_FOREACH(ewd->windows, window)
+          if (window->zxdg_toplevel && window->aspect.set)
+            efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel,
+              window->aspect.w, window->aspect.h, window->aspect.aspect);
+     }
 
 event:
    /* allocate space for event structure */
@@ -437,6 +448,7 @@ _ecore_wl2_display_globals_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
    if (ewd->wl.dmabuf) zwp_linux_dmabuf_v1_destroy(ewd->wl.dmabuf);
    if (ewd->wl.efl_aux_hints) efl_aux_hints_destroy(ewd->wl.efl_aux_hints);
+   if (ewd->wl.efl_hints) efl_hints_destroy(ewd->wl.efl_hints);
 
    if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
 }

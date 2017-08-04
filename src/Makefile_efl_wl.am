@@ -15,7 +15,9 @@ nodist_lib_efl_wl_libefl_wl_la_SOURCES = \
 lib/efl_wl/linux-dmabuf-unstable-v1-protocol.c \
 lib/efl_wl/linux-dmabuf-unstable-v1-server-protocol.h \
 lib/efl_wl/xdg-shell-unstable-v6-protocol.c \
-lib/efl_wl/xdg-shell-unstable-v6-server-protocol.h
+lib/efl_wl/xdg-shell-unstable-v6-server-protocol.h \
+lib/efl_wl/efl-hints-protocol.c \
+lib/efl_wl/efl-hints-server-protocol.h
 
 lib_efl_wl_libefl_wl_la_CPPFLAGS = -I$(top_builddir)/lib/efl @EFL_WL_CFLAGS@
 lib_efl_wl_libefl_wl_la_LIBADD = @EFL_WL_LIBS@

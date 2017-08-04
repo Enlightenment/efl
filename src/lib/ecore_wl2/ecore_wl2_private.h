@@ -96,6 +96,7 @@ struct _Ecore_Wl2_Display
         struct zwp_e_session_recovery *session_recovery;
         struct efl_aux_hints *efl_aux_hints;
         struct zwp_teamwork *teamwork;
+        struct efl_hints *efl_hints;
         int compositor_version;
      } wl;
 
@@ -179,6 +180,13 @@ struct _Ecore_Wl2_Window
    Eina_Rectangle input_rect;
 
    Ecore_Wl2_Window_Type type;
+
+   struct
+   {
+      int w, h;
+      unsigned int aspect;
+      Eina_Bool set : 1;
+   } aspect;
 
    Eina_Inlist *subsurfs;
    Eina_List *supported_aux_hints;
