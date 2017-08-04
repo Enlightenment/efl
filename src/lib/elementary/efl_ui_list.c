@@ -548,7 +548,7 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
      item->layout = *(void**)eina_inarray_pop(recycle_layouts);
    else
      item->layout = efl_ui_factory_create(pd->factory, item->model, pd->obj);
-     //item->layout = efl_add(ELM_LAYOUT_CLASS, pd->obj);
+   fprintf(stderr, "using layout (new or not) %p\n", item->layout); fflush(stderr);
    item->future = NULL;
    item->index = idx + pd->realized.start;
    item->minw = item->minh = 0;
@@ -791,114 +791,39 @@ _children_then(void * data, Efl_Event const* event)
        removing_after++;
      }
 
+   {
+      Elm_Layout **layout;
+      EINA_INARRAY_FOREACH(&recycle_layouts, layout)
+        {
+           efl_unref(*layout);
+        }
+      free(recycle_layouts.members);
+   }
    _efl_ui_list_custom_layout(pd->obj);
-   
-   /* count = eina_array_count(pd->items.array); */
-
-   /* if (sd->slicestart < pd->realized.start) */
-   /*   { */
-   /*      diff = pd->realized.start - sd->newstart; */
-   /*      diff = diff > count ? count : diff; */
-   /*      idx = count - diff; */
-   /*      if (diff) */
-   /*        { */
-   /*           Efl_Ui_List_Item **cacheit; */
-   /*           size_t s = sizeof(Efl_Ui_List_Item *); */
-
-   /*           cacheit = calloc(diff, s); */
-   /*           memcpy(cacheit, array->data+idx, diff * s); */
-
-   /*           for (i = idx; i < count; ++i) */
-   /*             { */
-   /*                item = eina_array_data_get(array, i); */
-   /*                _layout_unrealize(pd, item); */
-   /*             } */
-   /*           memmove(array->data+diff, array->data, idx * s); */
-   /*           memcpy(array->data, cacheit, diff * s); */
-   /*           free(cacheit); */
-   /*        } */
-   /*      idx = 0; */
-   /*   } */
-   /* else */
-   /*   { */
-   /*      diff = sd->newstart - pd->realized.start; */
-   /*      diff = diff > count ? count : diff; */
-   /*      idx = count - diff; */
-   /*      if (diff) */
-   /*        { */
-   /*           Efl_Ui_List_Item **cacheit; */
-   /*           size_t s = sizeof(Efl_Ui_List_Item *); */
-
-   /*           cacheit = calloc(diff, s); */
-   /*           memcpy(cacheit, array->data, diff * s); */
-
-   /*           for (i = 0; i < diff; ++i) */
-   /*             { */
-   /*                item = eina_array_data_get(array, i); */
-   /*                _layout_unrealize(pd, item); */
-   /*             } */
-   /*           memmove(array->data, array->data+diff, idx * s); */
-   /*           memcpy(array->data+idx, cacheit, diff * s); */
-   /*           free(cacheit); */
-   /*        } */
-   /*   } */
-
-   /* pd->realized.start = sd->newstart; */
-   /*   EINA_ACCESSOR_FOREACH(acc, i, child_model) */
-   /*     { */
-   /*        if (idx < eina_array_count(array)) */
-   /*          { */
-   /*             item = eina_array_data_get(array, idx); */
-   /*             item->model = efl_ref(child_model); */
-   /*             item->index = sd->newstart + idx - 1; */
-
-   /*             if (horz) */
-   /*               pd->realized.w -= item->minw; */
-   /*             else */
-   /*               pd->realized.h -= item->minh; */
-
-   /*             _layout_realize(pd, item); */
-   /*          } */
-   /*        else */
-   /*          { */
-   /*             item = _child_new(pd, child_model); */
-   /*             eina_array_push(pd->items, item); */
-   /*          } */
-   /*        if (horz) */
-   /*          { */
-   /*             pd->realized.w += item->minw; */
-   /*             if (item->minh > pd->realized.h) */
-   /*               pd->realized.h = item->minh; */
-   /*          } */
-   /*        else */
-   /*          { */
-   /*             pd->realized.h += item->minh; */
-   /*             if (item->minw > pd->realized.w) */
-   /*               pd->realized.w = item->minw; */
-   /*          } */
-   /*        ++idx; */
-   /*     } */
-
-   /* pd->avsom = horz ? pd->realized.w : pd->realized.h; */
-   /* free(sd); */
-   /* pd->average_item_size = pd->avsom / eina_array_count(pd->items); */
-   /* evas_object_smart_changed(pd->obj); */
 }
 
 static void
 _efl_ui_list_children_free(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
+   Eina_Inarray recycle_layouts;
+
    Efl_Ui_List_Item *item;
-   unsigned int i;
+   Elm_Layout** layout;
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
-
-   /* if(!pd->items.array) return; */
+   eina_inarray_setup(&recycle_layouts, sizeof(Elm_Layout*), 0);
 
    EINA_INARRAY_FOREACH(&pd->items.array, item)
-     _layout_unrealize(pd, item);
+     {
+       _child_release(pd, item, &recycle_layouts);
+     }
 
-   /* eina_array_clean(pd->items.array); */
+   eina_inarray_resize(&pd->items.array, 0);
+   EINA_INARRAY_FOREACH(&recycle_layouts, layout)
+     {
+       efl_unref(*layout);
+     }
+   free(recycle_layouts.members);
 }
 
 static void
@@ -1134,6 +1059,7 @@ _efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSE
 
    elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_DISABLED);
    pd->pan.obj = efl_add(MY_PAN_CLASS, evas_object_evas_get(obj));
+   fprintf(stderr, "new PAN %p\n", pd->pan.obj); fflush(stderr);
    pan_data = efl_data_scope_get(pd->pan.obj, MY_PAN_CLASS);
    efl_data_ref(obj, MY_CLASS);
    pan_data->wobj = obj;
@@ -1155,8 +1081,6 @@ _efl_ui_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_Data *pd)
 {
    _efl_ui_list_children_free(obj, pd);
 
-//   eina_inarray_free(pd->items.array);
-
    ELM_SAFE_FREE(pd->pan.obj, evas_object_del);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
@@ -1169,6 +1093,7 @@ _efl_ui_list_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Efl_Ui_List_D
      pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, obj,
      efl_ui_focus_manager_root_set(efl_added, root)
    );
+   fprintf(stderr, "new focus manager %p\n", pd->manager); fflush(stderr);
 
    return pd->manager;
 }
@@ -1349,14 +1274,12 @@ EOLIAN Eina_Bool
 _efl_ui_list_elm_interface_atspi_selection_all_children_select(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
    Efl_Ui_List_Item *item;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
 
    if (pd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)
      return EINA_FALSE;
 
-   /* EINA_ARRAY_ITER_NEXT(pd->items.array, i, item, iterator) */
-   /*    _efl_ui_list_item_select_set(item, EINA_TRUE); */
+   EINA_INARRAY_FOREACH(&pd->items.array, item)
+      _efl_ui_list_item_select_set(item, EINA_TRUE);
 
    return EINA_TRUE;
 }
@@ -1370,8 +1293,8 @@ _efl_ui_list_elm_interface_atspi_selection_clear(Eo *obj EINA_UNUSED, Efl_Ui_Lis
    if (pd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)
      return EINA_FALSE;
 
-   /* EINA_LIST_FOREACH(pd->selected, l, item) */
-   /*    _efl_ui_list_item_select_set(item, EINA_FALSE); */
+   EINA_LIST_FOREACH(pd->selected_items, l, item)
+      _efl_ui_list_item_select_set(item, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -1513,8 +1436,8 @@ _efl_ui_list_item_select_clear(Eo *obj)
    Efl_Ui_List_Item *item;
    EFL_UI_LIST_DATA_GET_OR_RETURN_VAL(obj, pd, EINA_FALSE);
 
-   /* EINA_LIST_FOREACH(pd->selected, li, item) */
-   /*    _efl_ui_list_item_select_set(item, EINA_FALSE); */
+   EINA_LIST_FOREACH(pd->selected_items, li, item)
+      _efl_ui_list_item_select_set(item, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -1634,42 +1557,6 @@ _update_items(Eo *obj, Efl_Ui_List_Data *pd/*, Eina_Bool recalc*/)
           want_slice_start = 0;
      }
 
-   /* if (!recalc && newstart == pd->realized.start && slice == pd->realized.slice) */
-   /*   return EINA_FALSE; */
-
-   /* if (count) */
-   /*   { */
-   /*      if (newstart < pd->realized.start) */
-   /*        { */
-   /*           if(pd->realized.start - newstart < slice) */
-   /*               slice = pd->realized.start - newstart; */
-   /*        } */
-   /*      else if (newstart < pd->realized.start + count) */
-   /*        { */
-   /*           slicestart = pd->realized.start + count; */
-   /*           slice -= slicestart - newstart; */
-   /*        } */
-   /*   } */
-
-   /* if (slicestart + want_slice > pd->item_count) */
-   /*   { */
-   /*     int aux = (slicestart + slice - 1) - pd->item_count; */
-   /*     slice -= aux; */
-   /*     newstart = newstart - aux > 1 ? newstart - aux : 1; */
-   /*   } */
-
-   /* if (slice > 0) */
-   /*   { */
-   /*      sd = malloc(sizeof(Efl_Ui_List_Slice)); */
-   /*      sd->pd = pd; */
-   /*      sd->slicestart = slicestart; */
-   /*      sd->newstart = newstart; */
-   /*      sd->newslice = slice; */
-
-   /*      pd->future = efl_model_children_slice_get(pd->model, slicestart, slice); */
-   /*      efl_future_then(pd->future, &_children_then, &_children_error, NULL, sd); */
-   /*   } */
-
    assert(want_slice_start >= 0);
    if(want_slice < 8)
      want_slice = 8;
@@ -1690,29 +1577,6 @@ _update_items(Eo *obj, Efl_Ui_List_Data *pd/*, Eina_Bool recalc*/)
        efl_future_then(pd->future, &_children_then, &_children_error, NULL, pd);
      }
 
-   /* else */
-   /*   { */
-   /*     while (pd->realized.slice < (int)eina_array_count(pd->items)) */
-   /*       { */
-   /*          item = eina_array_pop(pd->items); */
-   /*          if (!item) break; */
-   /*          if (horz) */
-   /*            pd->realized.w -= item->minw; */
-   /*          else */
-   /*            pd->realized.h -= item->minh; */
-   /*          _child_remove(pd, item); */
-   /*       } */
-   /*     pd->avsom = horz ? pd->realized.w : pd->realized.h; */
-   /*     if (eina_array_count(pd->items)) */
-   /*       pd->average_item_size = pd->avsom / eina_array_count(pd->items); */
-
-   /*     return EINA_FALSE; */
-   /*   } */
-
-   /* pd->realized.slice = slice; */
-   /* if (!pd->items) */
-   /*   pd->items = eina_array_new(slice); */
-   
      return EINA_TRUE;
 }
 
@@ -1754,12 +1618,6 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
      }
 
    count = eina_inarray_count(&pd->items.array);
-
-   /* if (!count) */
-   /*   { */
-   /*      evas_object_size_hint_min_set(wd->resize_obj, 0, 0); */
-   /*      return; */
-   /*   } */
 
    elm_interface_scrollable_content_viewport_geometry_get
               (ui_list, NULL, NULL, &ow, &oh);
