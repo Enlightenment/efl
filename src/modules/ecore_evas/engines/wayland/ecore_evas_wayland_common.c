@@ -1434,27 +1434,34 @@ _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *
 static void
 _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
 {
+   Ecore_Evas_Engine_Wl_Data *wdata;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
+
    if (w < 0) w = 0;
    if (h < 0) h = 0;
    if ((ee->prop.min.w == w) && (ee->prop.min.h == h)) return;
    ee->prop.min.w = w;
    ee->prop.min.h = h;
+   wdata = ee->engine.data;
+   if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel)
+     wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, w, h);
 }
 
 static void
 _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
 {
+   Ecore_Evas_Engine_Wl_Data *wdata;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if (w < 0) w = 0;
-   if (h < 0) h = 0;
    if ((ee->prop.max.w == w) && (ee->prop.max.h == h)) return;
    ee->prop.max.w = w;
    ee->prop.max.h = h;
+   wdata = ee->engine.data;
+   if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel)
+     wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, w, h);
 }
 
 static void
