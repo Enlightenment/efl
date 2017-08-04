@@ -855,26 +855,7 @@ found:
 static Eina_Bool
 _ecore_wl2_display_sync_get(void)
 {
-   Ecore_Wl2_Display *sewd;
-   Eina_Iterator *itr;
-   Eina_Bool ret = EINA_TRUE;
-   void *data;
-
-   if (eina_hash_population(_server_displays) < 1) return ret;
-
-   itr = eina_hash_iterator_data_new(_server_displays);
-   while (eina_iterator_next(itr, &data))
-     {
-        sewd = (Ecore_Wl2_Display *)data;
-        if (sewd->pid == getpid())
-          {
-             ret = EINA_FALSE;
-             break;
-          }
-     }
-   eina_iterator_free(itr);
-
-   return ret;
+   return !_server_displays || !eina_hash_population(_server_displays);
 }
 
 EAPI Ecore_Wl2_Display *
