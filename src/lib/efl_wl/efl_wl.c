@@ -3659,7 +3659,7 @@ seat_ptr_set_cursor(struct wl_client *client, struct wl_resource *resource, uint
    if (s->ptr.enter_serial - serial > UINT32_MAX / 2) return;
    if (surface_resource)
      cs = wl_resource_get_user_data(surface_resource);
-   if (cs && cs->role)
+   if (cs && cs->role && (!cs->cursor))
      {
         wl_resource_post_error(surface_resource,
                                WL_POINTER_ERROR_ROLE, "surface already has role");
@@ -3686,7 +3686,10 @@ seat_ptr_set_cursor(struct wl_client *client, struct wl_resource *resource, uint
                  seat_ptr_inherit(s, dev);
                ecore_evas_cursor_device_unset(ee, dev);
                if (cs)
-                 ecore_evas_object_cursor_device_set(ee, dev, cs->obj, EVAS_LAYER_MAX, x, y);
+                 {
+                    cs->role = cs->res;
+                    ecore_evas_object_cursor_device_set(ee, dev, cs->obj, EVAS_LAYER_MAX, x, y);
+                 }
             }
      }
    if (cs)
@@ -4774,9 +4777,10 @@ comp_mouse_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
    seat_ptr_inherit(s, ev->dev);
    ecore_evas_cursor_device_unset(ecore_evas_ecore_evas_get(e), ev->dev);
    if (s->ptr.efl.obj) evas_object_hide(s->ptr.efl.obj);
-   if (s->ptr.cursor.surface)
-     ecore_evas_object_cursor_device_set(ecore_evas_ecore_evas_get(e), ev->dev,
-       s->ptr.cursor.surface->obj, EVAS_LAYER_MAX, s->ptr.cursor.x, s->ptr.cursor.y);
+   if (!s->ptr.cursor.surface) return;
+   s->ptr.cursor.surface->role = s->ptr.cursor.surface->res;
+   ecore_evas_object_cursor_device_set(ecore_evas_ecore_evas_get(e), ev->dev,
+     s->ptr.cursor.surface->obj, EVAS_LAYER_MAX, s->ptr.cursor.x, s->ptr.cursor.y);
 }
 
 static void
@@ -4833,7 +4837,11 @@ comp_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
           s->ptr.efl.obj, s->ptr.efl.layer, s->ptr.efl.x, s->ptr.efl.y);
         seat_ptr_del(s, NULL, NULL, NULL);
      }
-   if (s->ptr.cursor.surface) evas_object_hide(s->ptr.cursor.surface->obj);
+   if (s->ptr.cursor.surface)
+     {
+        s->ptr.cursor.surface->role = NULL;
+        evas_object_hide(s->ptr.cursor.surface->obj);
+     }
    if ((!s->drag.res) || (!s->drag.source) || s->drag.source->proxy) return;
    if (s->drag.enter) comp_surface_send_data_device_leave(s->drag.enter, s);
    if (s->drag.surface)
