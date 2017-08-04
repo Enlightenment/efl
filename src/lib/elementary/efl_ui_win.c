@@ -3105,7 +3105,19 @@ _elm_ee_wlwin_get(const Ecore_Evas *ee)
 static void
 _elm_win_wlwindow_get(Efl_Ui_Win_Data *sd)
 {
+   Ecore_Wl2_Window *pwin = sd->wl.win;
    sd->wl.win = _elm_ee_wlwin_get(sd->ee);
+   if (sd->wl.win != pwin)
+     {
+        char buf[128];
+        int id;
+
+        snprintf(buf, sizeof(buf), "%u||%p", getpid(), sd->wl.win);
+        eina_stringshare_replace(&sd->stack_id, buf);
+        id = ecore_evas_aux_hint_id_get(sd->ee, "stack_id");
+        if (id >= 0) ecore_evas_aux_hint_val_set(sd->ee, id, sd->stack_id);
+        else ecore_evas_aux_hint_add(sd->ee, "stack_id", sd->stack_id);
+     }
 }
 
 void
@@ -5037,6 +5049,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           {
            case ELM_WIN_BASIC:
            case ELM_WIN_DIALOG_BASIC:
+           case ELM_WIN_NAVIFRAME_BASIC:
            case ELM_WIN_SPLASH:
            case ELM_WIN_TOOLBAR:
            case ELM_WIN_UTILITY:
@@ -6433,7 +6446,15 @@ _efl_ui_win_stack_master_id_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const 
    eina_stringshare_replace(&(sd->stack_master_id), id);
 #ifdef HAVE_ELEMENTARY_X
    if (sd->x.xwin) _elm_win_xwin_update(sd);
+   else
 #endif
+     {
+        int num = ecore_evas_aux_hint_id_get(sd->ee, "stack_master_id");
+        if (num >= 0)
+          ecore_evas_aux_hint_val_set(sd->ee, num, id);
+        else
+          ecore_evas_aux_hint_add(sd->ee, "stack_master_id", id);
+     }
 }
 
 EOLIAN static const char *
@@ -6445,8 +6466,14 @@ _efl_ui_win_stack_master_id_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 EOLIAN static void
 _efl_ui_win_stack_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool base)
 {
+   int num;
    if (sd->shown) return;
    sd->stack_base = !!base;
+   num = ecore_evas_aux_hint_id_get(sd->ee, "stack_base");
+   if (num >= 0)
+     ecore_evas_aux_hint_val_set(sd->ee, num, sd->stack_base ? "1" : "0");
+   else
+     ecore_evas_aux_hint_add(sd->ee, "stack_base", sd->stack_base ? "1" : "0");
 }
 
 EOLIAN static Eina_Bool
@@ -6517,8 +6544,13 @@ _efl_ui_win_stack_pop_to(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
           }
         ecore_x_ungrab();
      }
+   else
 #endif
-   // wayland - needs to be a special compositor request
+     {
+        int num = ecore_evas_aux_hint_id_get(sd->ee, "stack_pop_to");
+        if (num >= 0) ecore_evas_aux_hint_val_set(sd->ee, num, "1");
+        else ecore_evas_aux_hint_add(sd->ee, "stack_pop_to", "1");
+     }
    // win32/osx ?
 }
 
