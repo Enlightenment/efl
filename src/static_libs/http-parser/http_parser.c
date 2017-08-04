@@ -2119,6 +2119,12 @@ http_parser_parse_url(const char *buf, size_t buflen, int is_connect,
       case s_req_server_with_at:
         found_at = 1;
 
+#ifndef __has_attribute
+# define __has_attribute(x) 0
+#endif
+#if __has_attribute(fallthrough)
+       __attribute__((fallthrough));
+#endif
       /* FALLTROUGH */
       case s_req_server:
         uf = UF_HOST;
