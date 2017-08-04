@@ -150,6 +150,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_page_transition_scroll.eo \
 	lib/elementary/efl_page_transition_cube.eo \
 	lib/elementary/efl_page_transition_rotate.eo \
+	lib/elementary/efl_ui_pageindicator.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
@@ -327,6 +328,7 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_page_transition_scroll.h \
 	lib/elementary/efl_page_transition_cube.h \
 	lib/elementary/efl_page_transition_rotate.h \
+	lib/elementary/efl_ui_widget_pageindicator.h \
 	lib/elementary/elm_code_syntax.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
@@ -733,6 +735,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_page_transition_scroll.c \
 	lib/elementary/efl_page_transition_cube.c \
 	lib/elementary/efl_page_transition_rotate.c \
+	lib/elementary/efl_ui_pageindicator.c \
 	$(NULL)
 
 

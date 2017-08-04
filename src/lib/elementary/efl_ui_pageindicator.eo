@@ -1,0 +1,17 @@
+class Efl.Ui.Pageindicator (Elm.Widget)
+{
+   [[Efl ui pageindicator class]]
+   event_prefix: efl_ui_pageindicator;
+   eo_prefix: efl_ui_pageindicator;
+   methods {
+      bind {
+         [[Bind a pagecontrol object to the indicator]]
+         params {
+            @in pagecontrol: Efl.Ui.Pagecontrol; [[Pagecontrol to bind]]
+         }
+      }
+   }
+   implements {
+      Efl.Gfx.size { set; }
+   }
+}
