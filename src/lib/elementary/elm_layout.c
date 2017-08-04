@@ -1231,6 +1231,7 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
           {
              if (!text)
                {
+                  _text_signal_emit(sd, sub_d, EINA_FALSE);
                   eina_stringshare_del(sub_d->part);
                   free(sub_d);
                   edje_object_part_text_escaped_set
@@ -1258,7 +1259,7 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
         sd->subs = eina_list_append(sd->subs, sub_d);
      }
 
-   _text_signal_emit(sd, sub_d, !!text);
+   _text_signal_emit(sd, sub_d, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
 
