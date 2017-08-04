@@ -1,6 +1,13 @@
 ==========
-EFL 1.20.0
+EFL 1.20.1
 ==========
+
+Changes since 1.20.0:
+---------------------
+
+Fixes:
+
+   * efl_wl: fix typo in file name to make sure xml file lands in dist
 
 Changes since 1.19.0:
 ---------------------
