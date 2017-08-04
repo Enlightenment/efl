@@ -3136,7 +3136,13 @@ get_directive_token(cpp_reader * pfile)
 	  case CPP_POP:
 	     if (!CPP_IS_MACRO_BUFFER(CPP_BUFFER(pfile)))
 		return token;
-	     /* ... else fall though ... */
+#ifndef __has_attribute
+# define __has_attribute(x) 0
+#endif
+#if __has_attribute(fallthrough)
+             __attribute__((fallthrough));
+#endif
+             /* ... else fall though ... */
 	  case CPP_HSPACE:
 	  case CPP_COMMENT:
 	     CPP_SET_WRITTEN(pfile, old_written);
@@ -4300,6 +4306,12 @@ skip_if_group(cpp_reader * pfile, int any)
 			  validate_else(pfile,
 					kt->type ==
 					T_ELSE ? "#else" : "#endif");
+#ifndef __has_attribute
+# define __has_attribute(x) 0
+#endif
+#if __has_attribute(fallthrough)
+                       __attribute__((fallthrough));
+#endif
                        /* this fall through is intened */
 		    case T_ELIF:
 		       if (pfile->if_stack == CPP_BUFFER(pfile)->if_stack)
@@ -6748,7 +6760,14 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 		    {
 		       opts->out_fname = "";
 		       break;
-		    }		/* else fall through into error */
+		    }
+#ifndef __has_attribute
+# define __has_attribute(x) 0
+#endif
+#if __has_attribute(fallthrough)
+                  __attribute__((fallthrough));
+#endif
+                  /* else fall through into error */
 	       default:
 		  return i;
 	       }
