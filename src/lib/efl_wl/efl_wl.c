@@ -5397,6 +5397,7 @@ efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set)
 
    if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
    c = evas_object_smart_data_get(obj);
+   if (c->aspect == (!!set)) return;
    c->aspect = !!set;
    if (c->aspect)
      shell_surface_aspect_update(c->active_surface);
@@ -5411,6 +5412,7 @@ efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set)
 
    if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
    c = evas_object_smart_data_get(obj);
+   if (c->minmax == (!!set)) return;
    c->minmax = !!set;
    if (c->minmax)
      shell_surface_minmax_update(c->active_surface);
