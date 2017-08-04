@@ -617,6 +617,24 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
 }
 
  static Eina_Bool
+_ecore_evas_wl_common_cb_aux_message(void *data  EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Wl2_Event_Aux_Message *ev;
+
+   ev = event;
+   ee = ecore_event_window_match(ev->win);
+   if (!ee) return ECORE_CALLBACK_PASS_ON;
+   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (eina_streq(ev->key, "stack_del"))
+     {
+        if (ee->func.fn_delete_request)
+          ee->func.fn_delete_request(ee);
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+ static Eina_Bool
 _ecore_evas_wl_common_cb_aux_hint_supported(void *data  EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
@@ -1229,6 +1247,9 @@ _ecore_evas_wl_common_init(void)
    _ecore_evas_wl_event_hdls[16] =
      ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE,
                              _ecore_evas_wl_common_cb_iconify_state_change, NULL);
+   _ecore_evas_wl_event_hdls[15] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_AUX_MESSAGE,
+                             _ecore_evas_wl_common_cb_aux_message, NULL);
 
    ecore_event_evas_init();
 
@@ -2454,6 +2475,8 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
 
    wdata->win = ecore_wl2_window_new(ewd, p, x, y, w + fw, h + fh);
    ee->prop.window = ecore_wl2_window_id_get(wdata->win);
+   ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
+   ecore_evas_aux_hint_add(ee, "wm.policy.win.msg.use", "1");
 
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
