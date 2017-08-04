@@ -99,6 +99,7 @@ typedef struct Comp_Buffer
    int x, y, w, h;
    struct wl_listener destroy_listener;
    struct wl_shm_buffer *shm_buffer;
+   struct wl_shm_pool *pool;
    struct linux_dmabuf_buffer *dmabuf_buffer;
    Eina_Bool dbg : 1;
 } Comp_Buffer;
@@ -1254,6 +1255,7 @@ comp_surface_buffer_detach(Comp_Buffer **pbuffer)
    eina_list_free(buffer->renders);
    wl_list_remove(&buffer->destroy_listener.link);
    //if (buffer->dbg) fprintf(stderr, "BUFFER(%d) RELEASE\n", wl_resource_get_id(buffer->res));
+   if (buffer->pool) wl_shm_pool_unref(buffer->pool);
    wl_resource_queue_event(buffer->res, WL_BUFFER_RELEASE);
    free(buffer);
    *pbuffer = NULL;
@@ -1301,6 +1303,7 @@ comp_surface_commit_image_state(Comp_Surface *cs, Comp_Buffer *buffer, Evas_Obje
         //if (cs->subsurface)
           //fprintf(stderr, "SET CB\n");
         evas_object_image_pixels_get_callback_set(o, comp_surface_pixels_get, cs);
+        buffer->pool = wl_shm_buffer_ref_pool(buffer->shm_buffer);
      }
    else
      {
