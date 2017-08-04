@@ -555,7 +555,11 @@ _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window)
         window->surface_id =
           wl_proxy_get_id((struct wl_proxy *)window->surface);
         if (window->display->wl.efl_aux_hints)
-          efl_aux_hints_get_supported_aux_hints(window->display->wl.efl_aux_hints, window->surface);
+          {
+             efl_aux_hints_get_supported_aux_hints(window->display->wl.efl_aux_hints, window->surface);
+             if (_ecore_wl2_display_sync_get())
+               wl_display_roundtrip(window->display->wl.display);
+          }
      }
 }
 
@@ -618,10 +622,10 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    win->opaque.h = h;
 
    win->pending.configure = EINA_TRUE;
-   _ecore_wl2_window_surface_create(win);
-
    display->windows =
      eina_inlist_append(display->windows, EINA_INLIST_GET(win));
+
+   _ecore_wl2_window_surface_create(win);
 
    return win;
 }
