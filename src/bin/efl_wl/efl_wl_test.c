@@ -30,6 +30,16 @@ dostuff(void *data)
    return EINA_FALSE;
 }
 
+static void
+hints_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int w, h;
+   Evas_Aspect_Control aspect;
+
+   evas_object_size_hint_aspect_get(obj, &aspect, &w, &h);
+   evas_object_size_hint_aspect_set(data, aspect, w, h);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -50,8 +60,10 @@ main(int argc, char *argv[])
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    o = efl_wl_add(evas_object_evas_get(win));
+   efl_wl_aspect_set(o, 1);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, hints_changed, win);
    elm_win_resize_object_add(win, o);
    evas_object_show(o);
    evas_object_show(win);
