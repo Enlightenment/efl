@@ -38,6 +38,10 @@ hints_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_inf
 
    evas_object_size_hint_aspect_get(obj, &aspect, &w, &h);
    evas_object_size_hint_aspect_set(data, aspect, w, h);
+   evas_object_size_hint_min_get(obj, &w, &h);
+   evas_object_size_hint_min_set(data, w, h);
+   evas_object_size_hint_max_get(obj, &w, &h);
+   evas_object_size_hint_max_set(data, w, h);
 }
 
 int
@@ -61,6 +65,7 @@ main(int argc, char *argv[])
 
    o = efl_wl_add(evas_object_evas_get(win));
    efl_wl_aspect_set(o, 1);
+   efl_wl_minmax_set(o, 1);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, hints_changed, win);
