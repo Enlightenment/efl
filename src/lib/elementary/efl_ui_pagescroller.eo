@@ -1,0 +1,17 @@
+class Efl.Ui.Pagescroller (Efl.Ui.Pagecontrol)
+{
+   [[Efl ui pagescroller class]]
+   event_prefix: efl_ui_pagescroller;
+   eo_prefix: efl_ui_pagescroller;
+   methods {
+      @property transition {
+         [[Page transition effect]]
+         values {
+            transition: Efl.Page.Transition; [[transition effect]]
+         }
+      }
+   }
+   implements {
+      Efl.Gfx.size { set; }
+   }
+}
