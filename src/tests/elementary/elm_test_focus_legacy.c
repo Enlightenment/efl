@@ -5,33 +5,62 @@
 //          elm_object_focus_get(btn[0]));
 //   fflush(stdout);
 
-static void __focused_cb(void *data, Evas_Object *obj, void *event_info)
+
+// Create a window
+static Evas_Object *_win_create(Evas_Object *parent, int w, int h, Eina_Bool visible);
+// Window focused callback function. This should be the start point of the focus tests
+static void _win_focused_cb(void *data, Evas_Object *obj, void *event_info);
+// Focus Test functions
+static void focus_test_next(Evas_Object *top, Evas_Object *next, Elm_Object_Item *next_item, Elm_Focus_Direction dir);
+
+
+static void focus_test_next(Evas_Object *top, Evas_Object *next, Elm_Object_Item *next_item, Elm_Focus_Direction dir)
+{
+   elm_object_focus_next(top, dir);
+   ck_assert(elm_object_focused_object_get(top) == next);
+
+   if (next_item)
+     ck_assert(elm_object_item_focus_get(next_item) == EINA_TRUE);
+}
+
+static void _win_focused_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object **btn = (Evas_Object **)data;
-   int i;
 
    elm_object_focus_set(btn[0], EINA_TRUE);
    ck_assert_int_eq(elm_object_focus_get(btn[0]), 1);
 
-   elm_object_focus_next(obj, ELM_FOCUS_RIGHT);
-   ck_assert(elm_object_focused_object_get(obj) == btn[1]);
+   // Focus Set test
 
-   elm_object_focus_next(obj, ELM_FOCUS_DOWN);
-   ck_assert(elm_object_focused_object_get(obj) == btn[2]);
+   // Focus Next with API test
+   focus_test_next(obj, btn[1], NULL, ELM_FOCUS_RIGHT);
+   focus_test_next(obj, btn[2], NULL, ELM_FOCUS_DOWN);
+   focus_test_next(obj, btn[4], NULL, ELM_FOCUS_DOWN);
+   focus_test_next(obj, btn[3], NULL, ELM_FOCUS_RIGHT);
+   focus_test_next(obj, btn[1], NULL, ELM_FOCUS_UP);
+   focus_test_next(obj, btn[0], NULL, ELM_FOCUS_LEFT);
 
-   elm_object_focus_next(obj, ELM_FOCUS_DOWN);
-   ck_assert(elm_object_focused_object_get(obj) == btn[4]);
+   // Focus Next with Key event test
 
-   elm_object_focus_next(obj, ELM_FOCUS_RIGHT);
-   ck_assert(elm_object_focused_object_get(obj) == btn[3]);
+   // Focus Revert test with new win show/hide
 
-   elm_object_focus_next(obj, ELM_FOCUS_UP);
-   ck_assert(elm_object_focused_object_get(obj) == btn[1]);
+   // Focus Revert test with focused object delete
 
-   elm_object_focus_next(obj, ELM_FOCUS_LEFT);
-   ck_assert(elm_object_focused_object_get(obj) == btn[1]);
 
    elm_exit();
+}
+
+static Evas_Object *_win_create(Evas_Object *parent, int w, int h, Eina_Bool visible)
+{
+   Evas_Object *win;
+
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                 efl_text_set(efl_added, "Focus Test1"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+   efl_gfx_size_set(win, w, h);
+   efl_gfx_visible_set(win, visible);
+
+   return win;
 }
 
 START_TEST(focus_next_test1)
@@ -42,13 +71,8 @@ START_TEST(focus_next_test1)
    elm_init(1, NULL);
 
    // creating window
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
-                 efl_text_set(efl_added, "Focus Test1"),
-                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
-
-   evas_object_smart_callback_add(win, "focused", __focused_cb, btn);
-   efl_gfx_size_set(win, 500, 500);
-   efl_gfx_visible_set(win, 1);
+   win = _win_create(NULL, 500, 500, EINA_TRUE);
+   evas_object_smart_callback_add(win, "focused", _win_focused_cb, btn);
 
    // creating buttons
    //////////////////////////////////////////
