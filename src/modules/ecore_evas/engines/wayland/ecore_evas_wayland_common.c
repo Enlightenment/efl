@@ -174,7 +174,7 @@ static void
 _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
-   int ow, oh;
+   int ow, oh, ew, eh;
    int diff = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -189,6 +189,8 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
    /* TODO: wayland client can resize the ecore_evas directly.
     * In the future, we will remove ee->req value in wayland backend */
+   ew = ee->w;
+   eh = ee->h;
    ee->w = w;
    ee->h = h;
 
@@ -197,7 +199,6 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         int fw = 0, fh = 0;
         int maxw = 0, maxh = 0;
         int minw = 0, minh = 0;
-        double a = 0.0;
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
@@ -224,75 +225,6 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
                maxh = (ee->prop.max.h + fw);
           }
 
-        /* adjust size using aspect */
-        if ((ee->prop.base.w >= 0) && (ee->prop.base.h >= 0))
-          {
-             int bw, bh;
-
-             bw = (w - ee->prop.base.w);
-             bh = (h - ee->prop.base.h);
-             if (bw < 1) bw = 1;
-             if (bh < 1) bh = 1;
-             a = ((double)bw / (double)bh);
-
-             if ((!EINA_FLT_EQ(ee->prop.aspect, 0.0) &&
-                  (a < ee->prop.aspect)))
-               {
-                  if ((h < ee->h) > 0)
-                    bw = bh * ee->prop.aspect;
-                  else
-                    bw = bw / ee->prop.aspect;
-
-                  w = bw + ee->prop.base.w;
-                  h = bh + ee->prop.base.h;
-               }
-             else if ((!EINA_FLT_EQ(ee->prop.aspect, 0.0)) &&
-                      (a > ee->prop.aspect))
-               {
-                  bw = bh * ee->prop.aspect;
-                  w = bw + ee->prop.base.w;
-               }
-          }
-        else
-          {
-             a = ((double)w / (double)h);
-             if ((!EINA_FLT_EQ(ee->prop.aspect, 0.0)) &&
-                 (a < ee->prop.aspect))
-               {
-                  if ((h < ee->h) > 0)
-                    w = h * ee->prop.aspect;
-                  else
-                    h = w / ee->prop.aspect;
-               }
-             else if ((!EINA_FLT_EQ(ee->prop.aspect, 0.0)) &&
-                      (a > ee->prop.aspect))
-               w = h * ee->prop.aspect;
-          }
-
-        if (!ee->prop.maximized)
-          {
-             /* calc new size using base size & step size */
-             if (ee->prop.step.w > 0)
-               {
-                  if (ee->prop.base.w >= 0)
-                    w = (ee->prop.base.w +
-                         (((w - ee->prop.base.w) / ee->prop.step.w) *
-                             ee->prop.step.w));
-                  else
-                    w = (minw + (((w - minw) / ee->prop.step.w) * ee->prop.step.w));
-               }
-
-             if (ee->prop.step.h > 0)
-               {
-                  if (ee->prop.base.h >= 0)
-                    h = (ee->prop.base.h +
-                         (((h - ee->prop.base.h) / ee->prop.step.h) *
-                             ee->prop.step.h));
-                  else
-                    h = (minh + (((h - minh) / ee->prop.step.h) * ee->prop.step.h));
-               }
-          }
-
         if ((maxw > 0) && (w > maxw))
           w = maxw;
         else if (w < minw)
@@ -302,6 +234,64 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
           h = maxh;
         else if (h < minh)
           h = minh;
+
+        if (!ee->prop.maximized)
+          {
+             /* calc new size using base size & step size */
+             if (ee->prop.step.w > 1)
+               {
+                  int bw = ee->prop.base.w ?: minw;
+                  w = (bw + (((w - bw) / ee->prop.step.w) * ee->prop.step.w));
+               }
+
+             if (ee->prop.step.h > 1)
+               {
+                  int bh = ee->prop.base.h ?: minh;
+                  h = (bh + (((h - bh) / ee->prop.step.h) * ee->prop.step.h));
+               }
+
+             if (!wdata->win->display->wl.efl_hints && EINA_DBL_NONZERO(ee->prop.aspect))
+               {
+                  /* copied from e_client.c */
+                  Evas_Aspect_Control aspect;
+                  int aw, ah;
+                  double val, a = (double)w / h;
+
+                  if (fabs(a - ee->prop.aspect) > 0.001)
+                    {
+                       int step_w = ee->prop.step.w ?: 1, step_h = ee->prop.step.h ?: 1;
+                       if (wdata->resizing || wdata->win->resizing)
+                         ew = wdata->cw, eh = wdata->ch;
+                       if (abs(w - ew) > abs(h - eh))
+                         aspect = EVAS_ASPECT_CONTROL_HORIZONTAL;
+                       else
+                         aspect = EVAS_ASPECT_CONTROL_VERTICAL;
+                       switch (aspect)
+                         {
+                          case EVAS_ASPECT_CONTROL_HORIZONTAL:
+                            val = ((h - (w / ee->prop.aspect)) * step_h) / step_h;
+                            if (val > 0)
+                              ah = ceil(val);
+                            else
+                              ah = floor(val);
+                            if ((h - ah > minh) || (minh < 1))
+                              {
+                                 h -= ah;
+                                 break;
+                              }
+                          default:
+                            val = (((h * ee->prop.aspect) - w) * step_w) / step_w;
+                            if (val > 0)
+                              aw = ceil(val);
+                            else
+                              aw = floor(val);
+                            if ((w + aw < maxw) || (maxw < 1))
+                              w += aw;
+                            break;
+                         }
+                    }
+               }
+          }
 
         ee->w = w;
         ee->h = h;
@@ -435,6 +425,9 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    wdata = ee->engine.data;
    if (!wdata) return ECORE_CALLBACK_PASS_ON;
 
+   if ((!wdata->win->resizing) && (!wdata->resizing))
+     wdata->cw = wdata->ch = 0;
+
    prev_max = ee->prop.maximized;
    prev_full = ee->prop.fullscreen;
    ee->prop.maximized =
@@ -481,7 +474,17 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    nh -= fh;
 
    if (ee->prop.fullscreen || (ee->req.w != nw) || (ee->req.h != nh))
-     _ecore_evas_wl_common_resize(ee, nw, nh);
+     {
+        if (wdata->win->resizing || wdata->resizing)
+          {
+             if ((wdata->cw != nw) || (wdata->ch != nh))
+               _ecore_evas_wl_common_resize(ee, nw, nh);
+             wdata->cw = nw, wdata->ch = nh;
+          }
+        else
+          _ecore_evas_wl_common_resize(ee, nw, nh);
+     }
+   wdata->resizing = wdata->win->resizing;
 
    if (ee->prop.wm_rot.supported)
      {
