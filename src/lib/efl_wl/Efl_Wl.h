@@ -106,6 +106,14 @@ EAPI void efl_wl_rotate(Evas_Object *obj, Efl_Wl_Rotation rot, Eina_Bool rtl);
  * @param scale The scale factor to set
  */
 EAPI void efl_wl_scale_set(Evas_Object *obj, double scale);
+
+/**
+ * Transfer aspect hints from top-most surface onto the efl_wl object
+ *
+ * @param obj The compositor widget
+ * @param set Whether to enable aspect setting
+ */
+EAPI void efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set);
 #endif
 
 #endif

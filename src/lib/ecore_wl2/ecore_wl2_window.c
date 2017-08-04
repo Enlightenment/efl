@@ -3,6 +3,7 @@
 #endif
 
 #include "ecore_wl2_private.h"
+#include "efl-hints-client-protocol.h"
 
 void
 _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
@@ -472,6 +473,9 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
         if (window->fullscreen)
           zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
+        if (window->aspect.set && window->display->wl.efl_hints)
+          efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel,
+            window->aspect.w, window->aspect.h, window->aspect.aspect);
 
         wl_surface_commit(window->surface);
      }
@@ -1534,4 +1538,21 @@ ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
    return window->floating;
+}
+
+EAPI void
+ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int aspect)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   EINA_SAFETY_ON_TRUE_RETURN(w < 1);
+   EINA_SAFETY_ON_TRUE_RETURN(h < 1);
+   if ((window->aspect.aspect == aspect) &&
+     (window->aspect.w == w) &&
+     (window->aspect.h == h)) return;
+   window->aspect.w = w;
+   window->aspect.h = h;
+   window->aspect.aspect = aspect;
+   window->aspect.set = 1;
+   if (window->display->wl.efl_hints && window->zxdg_toplevel)
+     efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel, w, h, aspect);
 }

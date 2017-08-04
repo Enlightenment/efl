@@ -33,7 +33,9 @@ lib/ecore_wl2/linux-dmabuf-unstable-v1-client-protocol.h \
 lib/ecore_wl2/xdg-shell-unstable-v6-client-protocol.h \
 lib/ecore_wl2/xdg-shell-unstable-v6-protocol.c \
 lib/ecore_wl2/text-input-unstable-v1-client-protocol.h \
-lib/ecore_wl2/text-input-unstable-v1-protocol.c
+lib/ecore_wl2/text-input-unstable-v1-protocol.c \
+lib/ecore_wl2/efl-hints-client-protocol.h \
+lib/ecore_wl2/efl-hints-protocol.c
 
 lib_ecore_wl2_libecore_wl2_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WL2_CFLAGS@
 lib_ecore_wl2_libecore_wl2_la_LIBADD = @ECORE_WL2_LIBS@
@@ -56,6 +58,8 @@ lib/ecore_wl2/efl-aux-hints-client-protocol.h \
  lib/ecore_wl2/session-recovery-protocol.c \
  lib/ecore_wl2/session-recovery-client-protocol.h \
  lib/ecore_wl2/text-input-unstable-v1-client-protocol.h \
- lib/ecore_wl2/text-input-unstable-v1-protocol.c
+ lib/ecore_wl2/text-input-unstable-v1-protocol.c \
+lib/ecore_wl2/efl-hints-client-protocol.h \
+lib/ecore_wl2/efl-hints-protocol.c
 
 endif

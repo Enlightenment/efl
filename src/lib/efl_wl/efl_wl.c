@@ -16,6 +16,7 @@
 
 #include <wayland-server.h>
 #include "xdg-shell-unstable-v6-server-protocol.h"
+#include "efl-hints-server-protocol.h"
 #include "dmabuf.h"
 
 #include "Ecore_Evas.h"
@@ -142,6 +143,7 @@ typedef struct Comp
    Eina_Bool data_device_proxy : 1;
    Eina_Bool x11_selection : 1;
    Eina_Bool rtl : 1;
+   Eina_Bool aspect : 1;
 } Comp;
 
 typedef struct Comp_Data_Device_Source Comp_Data_Device_Source;
@@ -1166,6 +1168,18 @@ shell_surface_activate_recurse(Comp_Surface *cs)
 }
 
 static void
+shell_surface_aspect_update(Comp_Surface *cs)
+{
+   Evas_Aspect_Control aspect;
+   int w, h;
+
+   if (!cs) return;
+   if (!cs->c->aspect) return;
+   evas_object_size_hint_aspect_get(cs->obj, &aspect, &w, &h);
+   evas_object_size_hint_aspect_set(cs->c->obj, aspect, w, h);
+}
+
+static void
 shell_surface_send_configure(Comp_Surface *cs)
 {
    uint32_t serial, *s;
@@ -1210,6 +1224,7 @@ shell_surface_send_configure(Comp_Surface *cs)
         EINA_INLIST_FOREACH(cs->children, ccs)
           if (ccs->shell.surface && ccs->role && ccs->shell.popup)
             ccs->shell.activated = cs->shell.activated;
+        shell_surface_aspect_update(cs);
      }
    else
      shell_surface_deactivate_recurse(cs);
@@ -4895,6 +4910,32 @@ EFL_CALLBACKS_ARRAY_DEFINE(comp_device_cbs,
   { EFL_CANVAS_EVENT_DEVICE_REMOVED, comp_device_del });
 
 static void
+hints_set_aspect(struct wl_client *client, struct wl_resource *resource, struct wl_resource *surface, uint32_t width, uint32_t height, uint32_t aspect)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(surface);
+   evas_object_size_hint_aspect_set(cs->obj, aspect, width, height);
+   if (cs == cs->c->active_surface)
+     shell_surface_aspect_update(cs);
+}
+
+static const struct efl_hints_interface hints_interface =
+{
+   hints_set_aspect,
+};
+
+static void
+efl_hints_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+{
+   struct wl_resource *res;
+
+   if (!client_allowed_check(data, client)) return;
+   res = wl_resource_create(client, &efl_hints_interface, version, id);
+   wl_resource_set_implementation(res, &hints_interface, data, NULL);
+}
+
+
+
+static void
 comp_smart_add(Evas_Object *obj)
 {
    Comp *c;
@@ -4930,6 +4971,7 @@ comp_smart_add(Evas_Object *obj)
    wl_global_create(c->display, &wl_output_interface, 2, c, output_bind);
    wl_global_create(c->display, &zxdg_shell_v6_interface, 1, c, shell_bind);
    wl_global_create(c->display, &wl_data_device_manager_interface, 3, c, data_device_manager_bind);
+   wl_global_create(c->display, &efl_hints_interface, 1, c, efl_hints_bind);
    wl_display_init_shm(c->display);
 
    if (env)
@@ -5316,4 +5358,18 @@ efl_wl_scale_set(Evas_Object *obj, double scale)
    EINA_LIST_FOREACH(c->output_resources, l, res)
      if (wl_resource_get_version(res) >= WL_OUTPUT_SCALE_SINCE_VERSION)
        wl_output_send_scale(res, lround(c->scale));
+}
+
+void
+efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   c->aspect = !!set;
+   if (c->aspect)
+     shell_surface_aspect_update(c->active_surface);
+   else
+     evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_NONE, 0, 0);
 }
