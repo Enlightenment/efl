@@ -532,11 +532,11 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
 
    item->obj = pd->obj;
    item->model = efl_ref(model);
-//   if(eina_inarray_count(recycle_layouts))
-//     item->layout = *(void**)eina_inarray_pop(recycle_layouts);
-//   else
-//     item->layout = efl_add(ELM_LAYOUT_CLASS, pd->obj);
-   item->layout = efl_ui_factory_create(pd->factory, item->model, pd->obj);
+   if(eina_inarray_count(recycle_layouts))
+     item->layout = *(void**)eina_inarray_pop(recycle_layouts);
+   else
+     item->layout = efl_ui_factory_create(pd->factory, item->model, pd->obj);
+     //item->layout = efl_add(ELM_LAYOUT_CLASS, pd->obj);
    item->future = NULL;
    item->index = idx + pd->realized.start;
    item->minw = item->minh = 0;
@@ -565,8 +565,8 @@ _child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item, Eina_Inarray* recyc
     efl_future_cancel(item->future);
   efl_unref(item->model);
   // discard elm_layout to thrash to be able to reuse it
-//  assert(item->layout != NULL);
-//  eina_inarray_push(recycle_layouts, &item->layout);
+  assert(item->layout != NULL);
+  eina_inarray_push(recycle_layouts, &item->layout);
   efl_ui_factory_release(pd->factory, item->layout);
   item->layout = NULL;
   if(_horiz(pd->orient))
