@@ -5907,6 +5907,10 @@ _efl_ui_win_efl_gfx_size_hint_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Da
    if (h) _win_aspect_set(pd, (double) w / (double) h);
    else _win_aspect_set(pd, 0.0);
    efl_gfx_size_hint_aspect_set(efl_super(obj, MY_CLASS), mode, w, h);
+#ifdef HAVE_ELEMENTARY_WL2
+   if (pd->wl.win)
+     ecore_wl2_window_aspect_set(pd->wl.win, w, h, mode);
+#endif
 }
 
 EOLIAN static void
