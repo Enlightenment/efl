@@ -1345,7 +1345,8 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
           {
              //if (cs->subsurface)
                //fprintf(stderr, "BUFFER(%d) COMMIT %d\n", wl_resource_get_id(buffer->res), wl_resource_get_id(cs->res));
-             if ((!cs->post_render_queue) && ((!cs->buffer[1]) || (!cs->buffer[1]->post_renders)))
+             if ((!cs->c->rendering) && (!cs->post_render_queue) &&
+               ((!cs->buffer[1]) || (!cs->buffer[1]->post_renders)))
                comp_surface_buffer_detach(&cs->buffer[1]);
           }
         else
@@ -3895,6 +3896,8 @@ comp_render_pre(Comp *c, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
      {
         Comp_Buffer *buffer;
 //if (cs->subsurface) fprintf(stderr, "RENDER PRE\n");
+
+        comp_surface_buffer_detach(&cs->buffer[1]);
         cs->buffer[1] = cs->buffer[0];
         cs->buffer[0] = NULL;
         cs->render_queue = 0;
