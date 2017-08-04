@@ -5420,3 +5420,14 @@ efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set)
         evas_object_size_hint_max_set(obj, -1, -1);
      }
 }
+
+EAPI void *
+efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(interface, NULL);
+   c = evas_object_smart_data_get(obj);
+   return wl_global_create(c->display, interface, version, data, bind_cb);
+}
