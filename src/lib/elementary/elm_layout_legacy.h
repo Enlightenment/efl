@@ -71,7 +71,7 @@ EAPI const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_signal_callback_add(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+EAPI void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
 /**
  * @brief Remove a signal-triggered callback from a given layout widget.
@@ -92,7 +92,7 @@ EAPI void elm_layout_signal_callback_add(Elm_Layout *obj, const char *emission, 
  *
  * @ingroup Elm_Layout
  */
-EAPI void *elm_layout_signal_callback_del(Elm_Layout *obj, const char *emission, const char *source, Edje_Signal_Cb func);
+EAPI void *elm_layout_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
 
 /**
  * @brief Send a (Edje) signal to a given layout widget's underlying Edje
@@ -107,7 +107,7 @@ EAPI void *elm_layout_signal_callback_del(Elm_Layout *obj, const char *emission,
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_signal_emit(Elm_Layout *obj, const char *emission, const char *source);
+EAPI void elm_layout_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 
 /**
  * @brief Get the edje layout
