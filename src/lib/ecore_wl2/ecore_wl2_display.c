@@ -852,7 +852,7 @@ found:
    return ewd;
 }
 
-static Eina_Bool
+Eina_Bool
 _ecore_wl2_display_sync_get(void)
 {
    return !_server_displays || !eina_hash_population(_server_displays);
