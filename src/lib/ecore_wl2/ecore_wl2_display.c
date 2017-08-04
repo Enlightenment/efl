@@ -852,7 +852,7 @@ found:
    return ewd;
 }
 
-static Eina_Bool
+Eina_Bool
 _ecore_wl2_display_sync_get(void)
 {
    Ecore_Wl2_Display *sewd;
