@@ -1,0 +1,7 @@
+class Efl.Page.Transition.Cube (Efl.Page.Transition)
+{
+   [[Efl ui pagescroller effect cube class]]
+   implements {
+      Efl.Page.Transition.update;
+   }
+}
