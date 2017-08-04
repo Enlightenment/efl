@@ -77,7 +77,7 @@ _drm2_device_modeset_capable(int fd)
    int ret = EINA_TRUE;
    drmModeRes *res;
 
-   res = drmModeGetResources(fd);
+   res = sym_drmModeGetResources(fd);
    if (!res)
      return EINA_FALSE;
 
@@ -86,7 +86,7 @@ _drm2_device_modeset_capable(int fd)
        res->count_encoders <= 0)
      ret = EINA_FALSE;
 
-   drmModeFreeResources(res);
+   sym_drmModeFreeResources(res);
 
    return ret;
 }
