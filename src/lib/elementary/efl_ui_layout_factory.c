@@ -74,15 +74,16 @@ _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_
      {
         layout = eina_array_pop(pd->layouts);
         efl_parent_set(layout, parent);
+        efl_ui_view_model_set(layout, model);
      }
    else
      {
         layout = efl_add(ELM_LAYOUT_CLASS, parent);
-        eina_hash_foreach(pd->connects, _model_connect, layout);
+        efl_ui_view_model_set(layout, model);
         elm_layout_theme_set(layout, pd->klass, pd->group, pd->style);
+        eina_hash_foreach(pd->connects, _model_connect, layout);
      }
 
-   efl_ui_view_model_set(layout, model);
    return layout;
 }
 

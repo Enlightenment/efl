@@ -25,14 +25,14 @@ static void
 _realized_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
-   //elm_layout_theme_set(ie->layout, "list", "item", "default");
 
-   evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_widget_can_focus_set(ie->layout, EINA_TRUE);
+   if (!ie->layout) return;
 
-   //efl_ui_model_connect(ie->layout, "elm.text", "name");
-   //efl_ui_model_connect(ie->layout, "signal/elm,state,%v", "odd_style");
+   Elm_Layout *layout = ie->layout;
+
+   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_widget_can_focus_set(layout, EINA_TRUE);
 }
 
 /*
@@ -52,7 +52,6 @@ _make_model()
    Efl_Model_Item *model, *child;
    unsigned int i, s;
    char buf[256];
-   strdup(buf);
 
    model = efl_add(EFL_MODEL_ITEM_CLASS, NULL);
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
@@ -86,12 +85,12 @@ elm_main(int argc, char **argv)
    elm_win_autodel_set(win, EINA_TRUE);
 
    model = _make_model();
-   li = efl_add(EFL_UI_LIST_CLASS, win, efl_ui_view_model_set(efl_added, model));
 
-   factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, li);
-   efl_ui_model_connect(factory, "elm.text", "name");
+   factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
+   efl_ui_layout_factory_theme_config(factory, "list", "item", "default");
+   li = efl_add(EFL_UI_LIST_CLASS, win, efl_ui_view_model_set(efl_added, model));
    efl_ui_model_connect(factory, "signal/elm,state,%v", "odd_style");
-   efl_ui_list_theme_config(factory, "list", "item", "default");
+   efl_ui_model_connect(factory, "elm.text", "name");
    efl_ui_list_layout_factory_set(li, factory);
 
    efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_cb, NULL);

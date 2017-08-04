@@ -832,7 +832,6 @@ _children_then(void * data, Efl_Event const* event)
 static void
 _efl_ui_list_children_free(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
-   Eina_Array_Iterator iterator;
    Efl_Ui_List_Item *item;
    unsigned int i;
 
@@ -840,12 +839,8 @@ _efl_ui_list_children_free(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 
    /* if(!pd->items.array) return; */
 
-   /* EINA_ARRAY_ITER_NEXT(pd->items.array, i, item, iterator) */
-   /*   { */
-   /*      _layout_unrealize(pd, item); */
-   /*      free(item); */
-   /*      item = NULL; */
-   /*   } */
+   EINA_INARRAY_FOREACH(&pd->items.array, item)
+     _layout_unrealize(pd, item);
 
    /* eina_array_clean(pd->items.array); */
 }
@@ -1102,12 +1097,12 @@ _efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSE
 EOLIAN static void
 _efl_ui_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_Data *pd)
 {
-   /* _efl_ui_list_children_free(obj, pd); */
+   _efl_ui_list_children_free(obj, pd);
 
-   /* eina_array_free(pd->items.array); */
+//   eina_inarray_free(pd->items.array);
 
-   /* ELM_SAFE_FREE(pd->pan.obj, evas_object_del); */
-   /* efl_canvas_group_del(efl_super(obj, MY_CLASS)); */
+   ELM_SAFE_FREE(pd->pan.obj, evas_object_del);
+   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
