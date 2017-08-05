@@ -310,10 +310,10 @@ group { name: "elm/check/base/dayselector/default";
       }
       part {
          name: "elm.text";
-         type: TEXT;
+         type: TEXTBLOCK;
          mouse_events: 0;
          scale: 1;
-         effect: SHADOW BOTTOM;
+         //effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
             rel1 {
                to: "left_padding";
@@ -324,13 +324,14 @@ group { name: "elm/check/base/dayselector/default";
                relative: 0.0 1.0;
             }
             text {
+               style: "button_style";
                font: FN;
                size: 10;
                min: 1 1;
                ellipsis: -1;
-               text_class: "button";
+               //text_class: "button";
             }
-            color: FN_COL_DEFAULT;
+            //color: FN_COL_DEFAULT;
          }
          description { state: "weekend_default" 0.0;
             inherit: "default" 0.0;
@@ -355,24 +356,25 @@ group { name: "elm/check/base/dayselector/default";
       }
       part {
          name: "text2";
-         type: TEXT;
+         type: TEXTBLOCK;
          mouse_events: 0;
          scale: 1;
-         effect: GLOW;
+         //effect: GLOW;
          description { state: "default" 0.0;
             rel1.to: "elm.text";
             rel1.offset: 0 -1;
             rel2.to: "elm.text";
             rel2.offset: -1 -2;
             text {
+               style: "button_pressed_style";
                font: FN;
                size: 10;
                min: 1 1;
                ellipsis: -1;
                text_source: "elm.text";
-               text_class: "button";
+               //text_class: "button";
             }
-            color: FN_COL_HIGHLIGHT;
+            //color: FN_COL_HIGHLIGHT;
             visible: 0;
          }
          description { state: "weekend_default" 0.0;
