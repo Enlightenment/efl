@@ -299,20 +299,32 @@ _edje_object_animation_set(Eo *obj, Edje *ed, Eina_Bool on)
    if (!on)
      {
         Eina_List *newl = NULL;
-        const void *data;
+        Edje_Running_Program *data;
 
         EINA_LIST_FOREACH(ed->actions, l, data)
-          newl = eina_list_append(newl, data);
+          {
+             data->ref++;
+             newl = eina_list_append(newl, data);
+          }
         while (newl)
           {
              Edje_Running_Program *runp;
 
              runp = eina_list_data_get(newl);
              newl = eina_list_remove(newl, eina_list_data_get(newl));
+             runp->ref--;
              _edje_program_run_iterate(runp, runp->start_time + TO_DOUBLE(runp->program->tween.time));
              if (_edje_block_break(ed))
                {
-                  eina_list_free(newl);
+                 EINA_LIST_FREE(newl, data)
+                    {
+                       data->ref--;
+                       if ((data->delete_me) && (data->ref == 0))
+                         {
+                            _edje_program_run_cleanup(ed, data);
+                            free(data);
+                         }
+                    }
                   goto break_prog;
                }
           }
@@ -434,7 +446,14 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
         //	_edje_emit(ed, "program,stop", runp->program->name);
         if (_edje_block_break(ed))
           {
-             if (!ed->walking_actions) free(runp);
+             if (!ed->walking_actions)
+               {
+                  if (runp->ref == 0)
+                    {
+                       _edje_program_run_cleanup(ed, runp);
+                       free(runp);
+                    }
+               }
              goto break_prog;
           }
         EINA_LIST_FOREACH(runp->program->after, l, pa)
@@ -447,14 +466,22 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
                   if (pr) _edje_program_run(ed, pr, 0, "", "");
                   if (_edje_block_break(ed))
                     {
-                       if (!ed->walking_actions) free(runp);
+                       if ((!ed->walking_actions) && (runp->ref == 0))
+                         {
+                            _edje_program_run_cleanup(ed, runp);
+                            free(runp);
+                         }
                        goto break_prog;
                     }
                }
           }
         _edje_util_thaw(ed);
         _edje_unref(ed);
-        if (!ed->walking_actions) free(runp);
+        if ((!ed->walking_actions) && (runp->ref == 0))
+          {
+             _edje_program_run_cleanup(ed, runp);
+             free(runp);
+          }
         _edje_unblock(ed);
         return EINA_FALSE;
      }
@@ -513,7 +540,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
    //   _edje_emit(ed, "program,stop", pname);
    _edje_util_thaw(ed);
    _edje_unref(ed);
-   if (free_runp) free(runp);
+   if ((free_runp) && (runp->ref == 0)) free(runp);
 }
 
 #ifdef HAVE_EPHYSICS
