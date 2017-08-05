@@ -2058,6 +2058,7 @@ struct _Edje_Running_Program
    Edje           *edje;
    Edje_Program   *program;
    double          start_time;
+   unsigned short  ref;
    Eina_Bool       delete_me : 1;
 };
 
