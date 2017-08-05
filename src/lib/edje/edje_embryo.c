@@ -4500,6 +4500,26 @@ _edje_embryo_fn_swallow_has_content(Embryo_Program *ep, Embryo_Cell *params)
    return 1;
 }
 
+/* get_part_id(part[]) */
+static Embryo_Cell
+_edje_embryo_fn_echo(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *p;
+
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   GETSTR(p, params[1]);
+   if (!p) return -1;
+   fprintf(stderr,
+           "<EDJE ECHO> [%llx | %s:%s]: %s\n",
+           (unsigned long long)((uintptr_t)ed),
+           ed->path,
+           ed->group,
+           p);
+   return 0;
+}
+
 void
 _edje_embryo_script_init(Edje_Part_Collection *edc)
 {
@@ -4631,6 +4651,7 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
 #endif
 
    embryo_program_native_call_add(ep, "swallow_has_content", _edje_embryo_fn_swallow_has_content);
+   embryo_program_native_call_add(ep, "echo", _edje_embryo_fn_echo);
 }
 
 void
