@@ -387,35 +387,51 @@ _edje_timer_cb(void *data, const Efl_Event *event EINA_UNUSED)
    _edje_util_freeze(ed);
    if ((!ed->paused) && (!ed->delete_me))
      {
-        const void *tmp;
+        Edje_Running_Program *tmp;
 
         ed->walking_actions = EINA_TRUE;
         EINA_LIST_FOREACH(ed->actions, l, tmp)
-          newl = eina_list_append(newl, tmp);
+          {
+             tmp->ref++;
+             newl = eina_list_append(newl, tmp);
+          }
         while (newl)
           {
              Edje_Running_Program *runp;
 
              runp = eina_list_data_get(newl);
              newl = eina_list_remove(newl, eina_list_data_get(newl));
+             runp->ref--;
              if (!runp->delete_me)
                _edje_program_run_iterate(runp, t);
              if (_edje_block_break(ed))
                {
-                  eina_list_free(newl);
+                  EINA_LIST_FREE(newl, tmp)
+                    {
+                       tmp->ref--;
+                       if ((tmp->delete_me) && (tmp->ref == 0))
+                         {
+                            _edje_program_run_cleanup(ed, tmp);
+                            free(tmp);
+                         }
+                    }
                   newl = NULL;
                   goto break_prog;
                }
           }
         EINA_LIST_FOREACH(ed->actions, l, tmp)
-          newl = eina_list_append(newl, tmp);
+          {
+             tmp->ref++;
+             newl = eina_list_append(newl, tmp);
+          }
         while (newl)
           {
              Edje_Running_Program *runp;
 
              runp = eina_list_data_get(newl);
              newl = eina_list_remove(newl, eina_list_data_get(newl));
-             if (runp->delete_me)
+             runp->ref--;
+             if ((runp->delete_me) && (runp->ref == 0))
                {
                   _edje_program_run_cleanup(ed, runp);
                   free(runp);
