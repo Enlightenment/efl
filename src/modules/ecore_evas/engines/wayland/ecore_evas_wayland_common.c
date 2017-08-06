@@ -279,6 +279,8 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
                                  h -= ah;
                                  break;
                               }
+                            EINA_FALLTHROUGH;
+                            /* no break */
                           default:
                             val = (((h * ee->prop.aspect) - w) * step_w) / step_w;
                             if (val > 0)
