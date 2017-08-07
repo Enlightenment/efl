@@ -1642,6 +1642,8 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
           {
              // FIXME: Maybe leaking some chain stuff from copy above?
              ERR("Failed to override functions for %p", eo_id);
+             if (obj->opt->vtable == vtable)
+               EO_OPTIONAL_COW_SET(obj, vtable, NULL);
              free(vtable);
              goto err;
           }
