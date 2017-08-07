@@ -150,9 +150,7 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
         return NULL;
      }
 
-   if (w && h)
-     eng_window_resurf(gw);
-   else
+   if (!gw->gl_context)
      {
         eng_gl_symbols(gw->egl_disp);
 
@@ -164,8 +162,9 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
         gw->gl_context->egldisp = gw->egl_disp;
         gw->gl_context->eglctxt = gw->egl_context;
         eng_window_use(gw);
-
      }
+   if (w && h)
+     eng_window_resurf(gw);
    return gw;
 }
 
