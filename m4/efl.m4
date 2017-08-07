@@ -26,7 +26,7 @@ m4_define([v_maj], [$1])dnl
 m4_define([v_min], [$2])dnl
 m4_define([v_mic], [$3])dnl
 m4_define([dev_version], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
-m4_define([v_time], m4_esyscmd([(git log --format=%ci -1 2>/dev/null || date "+%Y-%m-%d %H:%M:%S %z") | tr -d '\n']))dnl
+m4_define([v_time], m4_esyscmd([(git log --format=%ci -1 2>/dev/null || date -u -d@${SOURCE_DATE_EPOCH:-$(date +%s)} "+%Y-%m-%d %H:%M:%S %z") | tr -d '\n']))dnl
 m4_define([v_rev], m4_if($4, dev, [dev_version], [0]))dnl
 m4_define([v_rel], [])dnl
 m4_define([def_build_profile], m4_if($4, dev, [dev], [release]))dnl
