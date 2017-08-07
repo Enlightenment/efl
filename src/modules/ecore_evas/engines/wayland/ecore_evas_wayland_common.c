@@ -1193,31 +1193,11 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
+_ecore_evas_wl_common_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-
-   ee->req.x = x;
-   ee->req.y = y;
-
-   if ((ee->x != x) || (ee->y != y))
-     {
-        ee->x = x;
-        ee->y = y;
-        if (ee->func.fn_move) ee->func.fn_move(ee);
-     }
-}
-
-static void
-_ecore_evas_wl_common_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
-{
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!ee) return;
-   if ((ee->x != x) || (ee->y != y))
-     _ecore_evas_wl_common_move(ee, x, y);
    if ((ee->w != w) || (ee->h != h))
      _ecore_evas_wl_common_resize(ee, w, h);
 }
@@ -2225,7 +2205,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // unsticky_set
    NULL, // pre_render_set
    NULL, // post_render_set
-   _ecore_evas_wl_common_move,
+   NULL,
    NULL, // managed_move
    _ecore_evas_wl_common_resize,
    _ecore_evas_wl_common_move_resize,
@@ -2355,8 +2335,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
    ee->driver = engine_name;
    if (disp_name) ee->name = strdup(disp_name);
 
-   ee->x = x;
-   ee->y = y;
    ee->w = w;
    ee->h = h;
    ee->req.x = ee->x;
