@@ -261,21 +261,7 @@ evas_thread_shutdown(void)
           }
      }
 
-#if defined(__APPLE__) && defined(__MACH__)
-   /*
-    * FIXME
-    *
-    * MacOS currently undergo a fatal issue on shutdown: pthread_join()
-    * crashes. I still have no clue why... Sue to the imminent release,
-    * let's NOT join this thread: do nothing at all!
-    *
-    * THIS IS A TERRIBLE KLUDGE. IT MUST NOT STAY AFTER THE RELEASE OCCURS!
-    *
-    * FIXME
-    */
-#else
    eina_thread_join(evas_thread_worker);
-#endif
 timeout_shutdown:
    eina_lock_free(&evas_thread_queue_lock);
    eina_condition_free(&evas_thread_queue_condition);
