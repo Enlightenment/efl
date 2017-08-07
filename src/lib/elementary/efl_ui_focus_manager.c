@@ -359,6 +359,8 @@ _calculate_node(Efl_Ui_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *node, Dimens
          }
 
      }
+   eina_iterator_free(nodes);
+   nodes = NULL;
 }
 
 #ifdef CALC_DEBUG
