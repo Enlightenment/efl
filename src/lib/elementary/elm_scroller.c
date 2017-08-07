@@ -1490,6 +1490,7 @@ ELM_PART_CONTENT_DEFAULT_SET(elm_scroller, "default")
 
 #define ELM_SCROLLER_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_scroller), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_scroller), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_scroller)
 
 #include "elm_scroller.eo.c"

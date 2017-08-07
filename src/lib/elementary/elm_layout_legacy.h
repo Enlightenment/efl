@@ -56,6 +56,45 @@ EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
 EAPI const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
 
 /**
+ * @brief Eval sizing.
+ *
+ * Manually forces a sizing re-evaluation. This is useful when the minimum size
+ * required by the edje theme of this layout has changed. The change on the
+ * minimum size required by the edje theme is not immediately reported to the
+ * elementary layout, so one needs to call this function in order to tell the
+ * widget (layout) that it needs to reevaluate its own size.
+ *
+ * The minimum size of the theme is calculated based on minimum size of parts,
+ * the size of elements inside containers like box and table, etc. All of this
+ * can change due to state changes, and that's when this function should be
+ * called.
+ *
+ * Also note that a standard signal of "size,eval" "elm" emitted from the edje
+ * object will cause this to happen too.
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI void elm_layout_sizing_eval(Evas_Object *obj);
+
+/**
+ * @brief Request sizing reevaluation, restricted to current width and/or
+ * height.
+ *
+ * Useful mostly when there are TEXTBLOCK parts defining the height of the
+ * object and nothing else restricting it to a minimum width. Calling this
+ * function will restrict the minimum size in the Edje calculation to whatever
+ * size it the layout has at the moment.
+ *
+ * @param[in] width Restrict minimum size to the current width.
+ * @param[in] height Restrict minimum size ot the current height.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI void elm_layout_sizing_restricted_eval(Elm_Layout *obj, Eina_Bool width, Eina_Bool height);
+
+/**
  * @brief Add a callback for a (Edje) signal emitted by a layout widget's
  * underlying Edje object.
  *

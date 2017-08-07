@@ -1645,7 +1645,7 @@ _elm_layout_efl_canvas_layout_group_group_size_max_get(Eo *obj, Elm_Layout_Smart
  * queued up and only flag the object as 'changed'. when it comes to
  * Evas's rendering phase, it will be addressed, finally (see
  * _elm_layout_smart_calculate()). */
-EOLIAN static void
+static void
 _elm_layout_sizing_eval(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    if (sd->frozen) return;
@@ -1655,9 +1655,12 @@ _elm_layout_sizing_eval(Eo *obj, Elm_Layout_Smart_Data *sd)
    evas_object_smart_changed(obj);
 }
 
-EOLIAN static void
-_elm_layout_sizing_restricted_eval(Eo *obj, Elm_Layout_Smart_Data *sd, Eina_Bool w, Eina_Bool h)
+EAPI void
+elm_layout_sizing_restricted_eval(Eo *obj, Eina_Bool w, Eina_Bool h)
 {
+   Elm_Layout_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+
+   if (!sd) return;
    sd->restricted_calc_w = !!w;
    sd->restricted_calc_h = !!h;
 
@@ -2570,6 +2573,7 @@ ELM_PART_IMPLEMENT_TEXT_GET(elm_layout, ELM_LAYOUT, Elm_Layout_Smart_Data, Elm_P
 
 /* Internal EO APIs and hidden overrides */
 
+EAPI EFL_VOID_FUNC_BODY(elm_layout_sizing_eval)
 EFL_FUNC_BODY_CONST(elm_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
 EFL_FUNC_BODY_CONST(elm_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
 
@@ -2582,6 +2586,7 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
    ELM_PART_TEXT_DEFAULT_OPS(elm_layout), \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _elm_layout_sizing_eval), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_layout_efl_object_dbg_info_get)
 
 #include "elm_layout.eo.c"

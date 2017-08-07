@@ -250,7 +250,6 @@ class Efl.Ui.Clock (Elm.Layout)
       Elm.Widget.disable;
       Elm.Widget.on_focus;
       Elm.Widget.translate;
-      Elm.Layout.sizing_eval;
    }
    events {
       changed; [[Called when clock changed]]

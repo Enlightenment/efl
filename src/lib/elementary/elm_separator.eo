@@ -10,6 +10,5 @@ class Elm.Separator (Elm.Layout, Efl.Orientation)
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
       Efl.Orientation.orientation { get; set; }
-      Elm.Layout.sizing_eval;
    }
 }

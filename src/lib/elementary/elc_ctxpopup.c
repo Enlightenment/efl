@@ -1585,6 +1585,7 @@ ELM_PART_CONTENT_DEFAULT_SET(elm_ctxpopup, "default")
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_CTXPOPUP_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_ctxpopup), \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_ctxpopup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_ctxpopup)
 

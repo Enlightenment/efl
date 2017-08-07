@@ -2082,6 +2082,7 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_naviframe, ELM_NAVIFRAME, ELM_LAYOUT, Elm_Navifra
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_NAVIFRAME_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_naviframe), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_naviframe)
 
 #include "elm_naviframe_item.eo.c"

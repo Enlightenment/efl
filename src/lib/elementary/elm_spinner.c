@@ -1766,6 +1766,7 @@ _elm_spinner_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Spinner_Data *
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SPINNER_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_spinner), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_spinner)
 
 #include "elm_spinner.eo.c"

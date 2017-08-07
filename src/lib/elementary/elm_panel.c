@@ -1497,6 +1497,7 @@ ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_PANEL_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_panel), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_panel)
 
 #include "elm_panel.eo.c"

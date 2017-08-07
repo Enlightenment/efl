@@ -1205,6 +1205,7 @@ _efl_ui_clock_class_constructor(Efl_Class *klass)
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_CLOCK_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_clock), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_clock)
 
 #include "efl_ui_clock.eo.c"

@@ -619,6 +619,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_dayselector, ELM_DAYSELECTOR, ELM_LAYOUT, El
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_DAYSELECTOR_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_dayselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_dayselector)
 
 #include "elm_dayselector.eo.c"

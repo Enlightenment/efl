@@ -690,6 +690,7 @@ ELM_PART_CONTENT_DEFAULT_SET(elm_fileselector_entry, "button icon")
 
 #define ELM_FILESELECTOR_ENTRY_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_fileselector_entry), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_fileselector_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_entry)
 
 #include "elm_fileselector_entry.eo.c"

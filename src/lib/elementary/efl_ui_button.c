@@ -487,6 +487,7 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
 #define EFL_UI_BUTTON_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_button), \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"

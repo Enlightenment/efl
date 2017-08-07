@@ -686,6 +686,7 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
 #define EFL_UI_PROGRESSBAR_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_progressbar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"
