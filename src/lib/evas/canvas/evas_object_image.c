@@ -1495,7 +1495,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
    if (obj->layer && obj->layer->evas)
      {
-        if (o->engine_data)
+        if (o->engine_data && ENDT)
           {
              if (o->preloading)
                {
@@ -1504,7 +1504,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
                }
              ENFN->image_free(ENDT, o->engine_data);
           }
-        if (o->engine_data_prep)
+        if (o->engine_data_prep && ENDT)
           {
              ENFN->image_free(ENDT, o->engine_data_prep);
           }
