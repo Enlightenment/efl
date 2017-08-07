@@ -711,6 +711,7 @@ _efl_ui_focus_manager_update_order(Eo *obj, Efl_Ui_Focus_Manager_Data *pd, Efl_U
    eina_list_free(node_order);
    eina_list_free(trash);
 
+   eina_list_free(T(pnode).children);
    T(pnode).children = eina_list_merge(node_order_clean, not_ordered);
 
    return;
@@ -751,6 +752,7 @@ _efl_ui_focus_manager_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
         return EINA_FALSE;
      }
 
+   eina_list_free(T(pnode).children);
    T(pnode).children = node_order;
 
    return EINA_TRUE;
