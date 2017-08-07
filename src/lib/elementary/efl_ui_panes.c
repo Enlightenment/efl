@@ -37,10 +37,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
+   //XXX: change elm.swallow.left/right to *.first/second in new theme.
    {"left", "elm.swallow.left"},
    {"right", "elm.swallow.right"},
    {"top", "elm.swallow.left"},
    {"bottom", "elm.swallow.right"},
+   {"first", "elm.swallow.left"},
+   {"second", "elm.swallow.right"},
    {NULL, NULL}
 };
 
