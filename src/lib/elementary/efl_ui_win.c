@@ -4423,7 +4423,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    alpha = sd->application_alpha || sd->theme_alpha;
    borderless = sd->csd.need_borderless || (!sd->csd.need) || sd->fullscreen;
    maximized = sd->maximized;
-   shadow = sd->csd.need_shadow && (!sd->fullscreen) && (!sd->maximized);
+   shadow = sd->csd.need_shadow && (!sd->fullscreen) && (!sd->maximized) && (!borderless);
    if (alpha && borderless) shadow = 0;
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
