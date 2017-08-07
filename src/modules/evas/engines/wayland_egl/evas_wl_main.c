@@ -111,7 +111,13 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
      }
 
    if (context == EGL_NO_CONTEXT) context = gw->egl_context;
-
+   if (eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE,
+                 EGL_NO_SURFACE, gw->egl_context) == EGL_FALSE)
+     {
+        ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
+        eng_window_free(gw);
+        return NULL;
+     }
    vendor = glGetString(GL_VENDOR);
    renderer = glGetString(GL_RENDERER);
    version = glGetString(GL_VERSION);
@@ -148,13 +154,6 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
      eng_window_resurf(gw);
    else
      {
-        if (eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE,
-                      EGL_NO_SURFACE, gw->egl_context) == EGL_FALSE)
-          {
-             ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
-             eng_window_free(gw);
-             return NULL;
-          }
         eng_gl_symbols(gw->egl_disp);
 
         if (!(gw->gl_context = glsym_evas_gl_common_context_new()))
