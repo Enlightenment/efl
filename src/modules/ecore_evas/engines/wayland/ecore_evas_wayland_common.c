@@ -1462,6 +1462,8 @@ _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
    if ((ee->prop.max.w == w) && (ee->prop.max.h == h)) return;
    ee->prop.max.w = w;
    ee->prop.max.h = h;
