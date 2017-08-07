@@ -7009,10 +7009,13 @@ _efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o, const char *key,
    ts = _style_by_key_find(o, key);
 
    if (!ts && !style)
-      return;
+     {
+        return;
+     }
 
    if (ts && !style)
      {
+        // Delete the style
         if (!key)
           {
              evas_textblock_style_set(ts, "");
@@ -7023,28 +7026,23 @@ _efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o, const char *key,
              ts->objects = eina_list_remove(ts->objects, eo_obj);
              evas_textblock_style_free(ts);
           }
-
-        goto end;
      }
-   else if (!ts)
+   else if (!ts && style)
      {
         Evas_Textblock_Style *tmp = NULL;
+
+        // No entry for respective key, so create one.
         ts = evas_textblock_style_new();
-        _textblock_style_generic_set(eo_obj, ts, &tmp);
-     }
-
-   evas_textblock_style_set(ts, style);
-
-   if (!key)
-     {
-        o->style = ts;
-     }
-   else
-     {
+        evas_textblock_style_set(ts, style);
         ts->key = eina_stringshare_add(key);
         o->styles = eina_list_append(o->styles, ts);
+        _textblock_style_generic_set(eo_obj, ts, &tmp);
      }
-end:
+   else if (ts && style)
+     {
+        evas_textblock_style_set(ts, style);
+     }
+
    o->format_changed = EINA_TRUE;
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, eo_obj);
