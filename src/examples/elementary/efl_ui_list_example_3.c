@@ -83,8 +83,15 @@ _bt_del_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
    l = elm_interface_atspi_selection_selected_child_get(priv->list1, 0);
    printf("selection %p\n", l);
-   child = efl_ui_view_model_get(l);
-   efl_model_child_del(priv->model, child);
+   if(l)
+     {
+       child = efl_ui_view_model_get(l);
+       efl_model_child_del(priv->model, child);
+     }
+   else
+     {
+       printf("no selection\n");
+     }
 }
 
 static void
