@@ -190,22 +190,8 @@ _elm_module_unload(Elm_Module *m)
    if (m->module)
      {
         if (m->shutdown_func) m->shutdown_func(m);
-#if defined(__APPLE__) && defined(__MACH__)
-	/*
-	 * FIXME
-	 *
-	 * MacOS currently undergo a fatal issue on shutdown: dlsym()
-	 * crashes. I still have no clue why... Sue to the imminent release,
-	 * let's NOT shutdown the module. Do nothing...
-	 *
-	 * THIS IS A TERRIBLE KLUDGE. IT MUST NOT STAY AFTER THE RELEASE OCCURS!
-	 *
-	 * FIXME
-	 */
-#else
         eina_module_unload(m->module);
         eina_module_free(m->module);
-#endif
         m->module = NULL;
      }
    m->shutdown_func = NULL;
