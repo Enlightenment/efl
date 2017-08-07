@@ -87,11 +87,13 @@ elm_main(int argc, char **argv)
    model = _make_model();
 
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
-   efl_ui_layout_factory_theme_config(factory, "list", "item", "default");
-   li = efl_add(EFL_UI_LIST_CLASS, win, efl_ui_view_model_set(efl_added, model));
    efl_ui_model_connect(factory, "signal/elm,state,%v", "odd_style");
    efl_ui_model_connect(factory, "elm.text", "name");
+   efl_ui_layout_factory_theme_config(factory, "list", "item", "default");
+
+   li = efl_add(EFL_UI_LIST_CLASS, win);
    efl_ui_list_layout_factory_set(li, factory);
+   efl_ui_view_model_set(li, model);
 
    efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_cb, NULL);
 //   efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, _unrealized_cb, NULL);

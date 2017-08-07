@@ -511,8 +511,6 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    efl_event_callback_call(item->list, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
    efl_ui_view_model_set(item->layout, NULL);
 
-   efl_unref(item->model);
-
    evas_object_hide(item->layout);
    evas_object_move(item->layout, -9999, -9999);
 }
@@ -542,7 +540,7 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
    assert(item->layout == NULL);
    assert(item->list == NULL);
 
-   item->list = efl_ref(pd->obj);
+   item->list = pd->obj;
    item->model = efl_ref(model);
    if(eina_inarray_count(recycle_layouts))
      item->layout = *(void**)eina_inarray_pop(recycle_layouts);
@@ -589,7 +587,7 @@ static void
 _child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item, Eina_Inarray* recycle_layouts)
 {
   _child_transient_release(pd, item);
-  
+
   fprintf(stderr, "%s %s:%d layout %p\n", __func__, __FILE__, __LINE__, item->layout); fflush(stderr);
   _layout_unrealize(pd, item);
   if(item->future)
@@ -605,7 +603,6 @@ _child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item, Eina_Inarray* recyc
   else
     pd->realized.h -= item->h;
   fprintf(stderr, "%s %s:%d layout %p\n", __func__, __FILE__, __LINE__, item->layout); fflush(stderr);
-  efl_unref(item->list);
   item->list = NULL;
 }
 
@@ -631,11 +628,10 @@ _children_then(void * data, Efl_Event const* event)
        removing_before = pd->realized.slice;
        removing_after = -pd->outstanding_slice.slice;
      }
-   
+
    eina_inarray_setup(&recycle_layouts, sizeof(Elm_Layout*), 0);
 
    fprintf(stderr, "_children_then removing_before %d removing_after %d\n", removing_before, removing_after); fflush(stderr);
-   
    EINA_SAFETY_ON_NULL_RETURN(pd);
 
    pd->future = NULL;
@@ -644,7 +640,6 @@ _children_then(void * data, Efl_Event const* event)
    ELM_WIDGET_DATA_GET_OR_RETURN(pd->obj, wd);
 
    assert(pd->realized.slice == eina_inarray_count(&pd->items.array));
-   
    // received slice start is after older slice start
    if(removing_before > 0)
      {
@@ -688,7 +683,7 @@ _children_then(void * data, Efl_Event const* event)
      }
 
    fprintf(stderr, "%s %s:%d from_begin %d to_begin: %d copy_size %d\n", __func__, __FILE__, __LINE__, from_begin, to_begin, copy_size); fflush(stderr);
-     
+
    if(removing_after + removing_before >= 0)
      {
        if(from_begin != to_begin)
@@ -764,7 +759,7 @@ _children_then(void * data, Efl_Event const* event)
        _child_setup(pd, item, model, &recycle_layouts, idx);
 
        fprintf(stderr, "%s %s:%d initializing item %d %p layout %p\n", __func__, __FILE__, __LINE__, idx + pd->realized.start, item, item->layout); fflush(stderr);
-       
+
        idx++;
        removing_before++;
      }
@@ -775,7 +770,7 @@ _children_then(void * data, Efl_Event const* event)
        Efl_Ui_List_Item* members = pd->items.array.members;
        Efl_Ui_List_Item* item = &members[idx];
 
-       fprintf(stderr, "%s %s:%d initializing item (idx %d) %d %p layout %p\n", __func__, __FILE__, __LINE__, idx, idx + pd->realized.start, item, item->layout); fflush(stderr);       
+       fprintf(stderr, "%s %s:%d initializing item (idx %d) %d %p layout %p\n", __func__, __FILE__, __LINE__, idx, idx + pd->realized.start, item, item->layout); fflush(stderr);
 
        // initialize item
        void* model = NULL;
@@ -786,7 +781,6 @@ _children_then(void * data, Efl_Event const* event)
        _child_setup(pd, item, model, &recycle_layouts, idx);
 
        fprintf(stderr, "%s %s:%d initializing item (idx %d) %d %p layout %p\n", __func__, __FILE__, __LINE__, idx, idx + pd->realized.start, item, item->layout); fflush(stderr);
-       
        idx++;
        removing_after++;
      }
@@ -795,7 +789,7 @@ _children_then(void * data, Efl_Event const* event)
       Elm_Layout **layout;
       EINA_INARRAY_FOREACH(&recycle_layouts, layout)
         {
-           efl_unref(*layout);
+           efl_ui_factory_release(pd->factory, *layout);
         }
       free(recycle_layouts.members);
    }
@@ -821,7 +815,7 @@ _efl_ui_list_children_free(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
    eina_inarray_resize(&pd->items.array, 0);
    EINA_INARRAY_FOREACH(&recycle_layouts, layout)
      {
-       efl_unref(*layout);
+       efl_ui_factory_release(pd->factory, *layout);
      }
    free(recycle_layouts.members);
 }
@@ -876,7 +870,6 @@ _efl_ui_list_select_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Elm_Obje
    /*           efl_ui_model_connect(item->layout, "signal/elm,state,%v", NULL); */
    /*        } */
    /*   } */
-
    pd->select_mode = mode;
 }
 
@@ -970,7 +963,6 @@ _efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Evas_Coord w, Evas_
 
    efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
    evas_object_resize(pd->hit_rect, w, h);
-
 
    if (_horiz(pd->orient))
      {
@@ -1088,13 +1080,11 @@ _efl_ui_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_Data *pd)
 EOLIAN static Efl_Ui_Focus_Manager*
 _efl_ui_list_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
-
    if (!pd->manager)
      pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CLASS, obj,
-     efl_ui_focus_manager_root_set(efl_added, root)
-   );
-   fprintf(stderr, "new focus manager %p\n", pd->manager); fflush(stderr);
+                          efl_ui_focus_manager_root_set(efl_added, root));
 
+   fprintf(stderr, "new focus manager %p\n", pd->manager); fflush(stderr);
    return pd->manager;
 }
 
@@ -1447,10 +1437,9 @@ _efl_ui_list_item_select_set(Efl_Ui_List_Item *item, Eina_Bool selected)
 {
    Eina_Stringshare *sprop, *svalue;
 
-   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->model, item->model, item->list); fflush(stderr);   
+   fprintf(stderr, "%s %s:%d item: %p layout: %p model: %p list: %p\n", __func__, __FILE__, __LINE__, item, item->layout, item->model, item->model, item->list); fflush(stderr);
 
    assert(item != NULL);
-   
    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
@@ -1468,21 +1457,15 @@ _efl_ui_list_item_select_set(Efl_Ui_List_Item *item, Eina_Bool selected)
 
    sprop = eina_stringshare_add(SELECTED_PROP);
    svalue = (selected ? eina_stringshare_add("selected") : eina_stringshare_add("unselected"));
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    if (_efl_model_properties_has(item->model, sprop))
      {
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         Eina_Value v;
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eina_value_setup(&v, EINA_VALUE_TYPE_STRINGSHARE);
         eina_value_set(&v, svalue);
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         efl_model_property_set(item->model, sprop, &v);
         eina_value_flush(&v);
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
      }
-   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    eina_stringshare_del(sprop);
    eina_stringshare_del(svalue);
    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
@@ -1524,8 +1507,6 @@ _update_items(Eo *obj, Efl_Ui_List_Data *pd/*, Eina_Bool recalc*/)
    Evas_Coord w = 0, h = 0;
    Efl_Ui_List_Item *item;
    Eina_Bool horz = _horiz(pd->orient);
-
-   printf("_update_items\n");
 
    /* assert(!pd->future); */
    if (pd->future)
