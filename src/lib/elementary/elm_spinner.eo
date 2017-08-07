@@ -154,7 +154,6 @@ class Elm.Spinner (Elm.Layout, Efl.Ui.Spin,
       Elm.Widget.focus_direction;
       Elm.Widget.on_focus;
       Elm.Widget.widget_event;
-      Elm.Layout.sizing_eval;
       Efl.Ui.Spin.min_max { get; set; }
       Efl.Ui.Spin.step { get; set; }
       Efl.Ui.Spin.value { get; set; }

@@ -153,7 +153,6 @@ class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
       Efl.Canvas.Layout_Signal.signal_emit;
-      Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
    }

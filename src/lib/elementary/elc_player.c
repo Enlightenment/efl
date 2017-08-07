@@ -718,6 +718,7 @@ ELM_PART_CONTENT_DEFAULT_SET(elm_player, "video")
 
 #define ELM_PLAYER_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_player), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_player), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_player)
 
 #include "elm_player.eo.c"

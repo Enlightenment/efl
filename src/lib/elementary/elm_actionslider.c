@@ -672,6 +672,7 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
 
 #define ELM_ACTIONSLIDER_EXTRA_OPS \
    ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_actionslider), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_actionslider)
 
 #include "elm_actionslider.eo.c"

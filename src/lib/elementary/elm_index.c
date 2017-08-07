@@ -1766,6 +1766,7 @@ _elm_index_item_elm_interface_atspi_widget_action_elm_actions_get(Eo *eo_it EINA
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_INDEX_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_index), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_index)
 
 #include "elm_index_item.eo.c"

@@ -1944,6 +1944,7 @@ ELM_PART_CONTENT_DEFAULT_SET(elm_popup, "default")
 
 #define ELM_POPUP_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_popup), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_popup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup)
 
 #include "elm_popup.eo.c"

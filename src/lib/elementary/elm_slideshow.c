@@ -737,6 +737,7 @@ _elm_slideshow_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SLIDESHOW_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_slideshow), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_slideshow)
 
 #include "elm_slideshow_item.eo.c"

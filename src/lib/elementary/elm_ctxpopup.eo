@@ -168,7 +168,6 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
       Efl.Ui.Menu.first_item { get; }
       Efl.Ui.Menu.last_item { get; }
       Efl.Ui.Menu.items { get; }
-      Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
       Efl.Orientation.orientation { get; set; }

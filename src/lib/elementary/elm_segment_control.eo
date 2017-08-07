@@ -143,7 +143,6 @@ class Elm.Segment_Control (Elm.Layout)
       Elm.Widget.access;
       Elm.Widget.disable;
       Elm.Widget.translate;
-      Elm.Layout.sizing_eval;
    }
    events {
       changed; [[Called when segment control changed]]

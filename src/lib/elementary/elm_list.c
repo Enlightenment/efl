@@ -3298,6 +3298,7 @@ _elm_list_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_LIST_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_list), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_list)
 
 #include "elm_list.eo.c"

@@ -67,7 +67,6 @@ class Efl.Ui.Video (Elm.Layout, Efl.File,
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.widget_event;
-      Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
 }

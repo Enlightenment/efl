@@ -2730,6 +2730,7 @@ _elm_color_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Color_Ite
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_COLORSELECTOR_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_colorselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_colorselector)
 
 #include "elm_colorselector.eo.c"

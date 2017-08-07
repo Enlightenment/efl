@@ -5341,6 +5341,7 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
 
 #define EFL_UI_TEXT_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_text), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_text), \
    ELM_LAYOUT_CONTENT_ALIASES_OPS()
 
 #include "efl_ui_text.eo.c"

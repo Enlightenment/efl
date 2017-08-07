@@ -2143,6 +2143,7 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_multibuttonentry, ELM_MULTIBUTTONENTRY, ELM_LAYOU
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_MULTIBUTTONENTRY_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_multibuttonentry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_multibuttonentry)
 
 #include "elm_multibuttonentry_item.eo.c"

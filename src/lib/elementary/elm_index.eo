@@ -227,7 +227,6 @@ class Elm.Index (Elm.Layout, Efl.Orientation,
       Elm.Widget.access;
       Elm.Widget.focus_next;
       Efl.Orientation.orientation { get; set; }
-      Elm.Layout.sizing_eval;
       Elm.Interface.Atspi_Accessible.children { get; }
    }
    events {

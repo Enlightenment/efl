@@ -643,6 +643,7 @@ ELM_PART_OVERRIDE_TEXT_SET(elm_label, ELM_LABEL, ELM_LAYOUT, Elm_Label_Data, Elm
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_LABEL_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_label), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_label)
 
 #include "elm_label.eo.c"

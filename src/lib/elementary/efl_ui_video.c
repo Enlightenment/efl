@@ -473,6 +473,7 @@ elm_video_play_position_get(const Evas_Object *obj)
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_VIDEO_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_video), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_video)
 
 #include "efl_ui_video.eo.c"

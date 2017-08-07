@@ -929,6 +929,7 @@ _elm_flipselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_FLIPSELECTOR_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_flipselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_flipselector)
 
 #include "elm_flipselector_item.eo.c"

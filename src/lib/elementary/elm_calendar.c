@@ -2341,6 +2341,7 @@ _elm_calendar_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_CALENDAR_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_calendar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_calendar)
 
 #include "elm_calendar.eo.c"

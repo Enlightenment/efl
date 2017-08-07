@@ -8711,6 +8711,7 @@ _elm_genlist_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_GENLIST_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_genlist), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_genlist)
 
 #define ELM_GENLIST_PAN_EXTRA_OPS \

@@ -145,6 +145,7 @@ _elm_separator_class_constructor(Efl_Class *klass)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SEPARATOR_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_separator), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_separator)
 
 #include "elm_separator.eo.c"

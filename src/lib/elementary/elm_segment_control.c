@@ -844,6 +844,7 @@ _elm_segment_control_class_constructor(Efl_Class *klass)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SEGMENT_CONTROL_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_segment_control), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_segment_control)
 
 #include "elm_segment_control_item.eo.c"
