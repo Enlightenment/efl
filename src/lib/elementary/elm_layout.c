@@ -2196,6 +2196,19 @@ EOLIAN static void _elm_layout_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+EOLIAN static void
+_elm_layout_efl_canvas_layout_signal_message_send(Eo *obj, Elm_Layout_Smart_Data *pd EINA_UNUSED, int id, const Eina_Value msg)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_canvas_layout_signal_message_send(wd->resize_obj, id, msg);
+}
+
+EOLIAN static void
+_elm_layout_efl_canvas_layout_signal_signal_process(Eo *obj, Elm_Layout_Smart_Data *pd EINA_UNUSED, Eina_Bool recurse)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_canvas_layout_signal_process(wd->resize_obj, recurse);
+}
 
 
 /* Legacy APIs */
