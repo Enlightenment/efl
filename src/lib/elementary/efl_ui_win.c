@@ -1460,14 +1460,17 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd)
 {
    int ox, oy, ow, oh;
    int cx, cy, cw, ch;
+   int w, h;
 
    if (!sd->frame_obj) return;
    _elm_win_opaque_dirty(sd);
    _elm_win_frame_geometry_adjust(sd);
    evas_object_geometry_get(sd->frame_obj, &ox, &oy, &ow, &oh);
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.content", &cx, &cy, &cw, &ch);
-   if (_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch))
-     _elm_win_resize_objects_eval(sd->obj, EINA_TRUE);
+   if (!_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch)) return;
+   _elm_win_frame_geometry_adjust(sd);
+   evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
+   TRAP(sd, resize, w, h);
 }
 
 static void
