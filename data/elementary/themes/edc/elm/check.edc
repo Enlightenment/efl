@@ -1,4 +1,29 @@
 group { name: "elm/check/base/default";
+   styles {
+      style { name: "check_style";
+              base: STL_COL_PRIMER" style=shadow,bottom ellipsis=1.0 text_class=check_text";
+      }
+      style { name: "check_text_style";
+              base: STL_COL_PRIMER" style=shadow,bottom ellipsis=1.0 text_class=check color_class=check_text";
+      }
+      style { name: "check_text_disabled_style";
+              base: STL_COL_PRIMER" style=shadow,bottom ellipsis=1.0 text_class=check_text_disabled color_class=check_text_disabled";
+      }
+      style { name: "check_on_style";
+              base: STL_COL_PRIMER" style=glow ellipsis=1.0 text_class=check_on_text color_class=check_on_text";
+      } 
+      style { name: "check_on_text_disabled_style";
+              base: STL_COL_PRIMER" style=shadow,bottom ellipsis=1.0 text_class=check_on_text color_class=check_on_text_disabled";
+      } 
+      style { name: "check_off_style";
+      } 
+      style { name: "check_off_text_style";
+              base: STL_COL_PRIMER" style=shadow,bottom style=shadow,bottom ellipsis=1.0 text_class=check_off_text color_class=check_off_text";
+      } 
+      style { name: "check_off_text_disabled_style";
+              base: STL_COL_PRIMER" style=shadow,bottom ellipsis=1.0 text_class=check_off_text color_class=check_off_text_disabled";
+      } 
+   }
    images.image: "inset_shadow_tiny.png" COMP;
    images.image: "bevel_in.png" COMP;
    images.image: "sym_check_alum.png" COMP;
@@ -175,14 +200,15 @@ group { name: "elm/check/base/default";
             min: 16 16;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer.content"; type: TEXTBLOCK; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
             text { font: FN; size: 10;
+               style: "check_text_style";
                min: 0 0;
-               text_class: "check_text";
+               //text_class: "check_text";
             }
          }
          description { state: "visible" 0.0;
@@ -206,26 +232,28 @@ group { name: "elm/check/base/default";
             }
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel1.to_x: "elm.swallow.content";
             rel1.relative: 1.0 0.0;
             rel2.offset: -3 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "check_text";
+            //color: FN_COL_DEFAULT;
+            //color_class: "check_text";
             text { font: FN; size: 10;
+              style: "check_text_style";
               min: 0 0;
               align: 0.0 0.5;
-              text_class: "check";
+              //text_class: "check";
             }
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color_class: "check_text_disabled";
-            color3: 255 255 255 255;
+            text.style: "check_text_disabled_style";
+            //color_class: "check_text_disabled";
+            //color3: 255 255 255 255;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -235,8 +263,9 @@ group { name: "elm/check/base/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
-            color_class: "check_text_disabled";
-            color3: 255 255 255 255;
+            text.style: "check_text_disabled_style";
+            //color_class: "check_text_disabled";
+            //color3: 255 255 255 255;
             visible: 1;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -494,8 +523,8 @@ group { name: "elm/check/base/toggle";
             color: 64 64 64 255;
          }
       }
-      part { name: "elm.offtext"; type: TEXT; mouse_events:  0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.offtext"; type: TEXTBLOCK; mouse_events:  0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          clip_to: "tog_clip";
          description { state: "default" 0.0;
@@ -503,23 +532,25 @@ group { name: "elm/check/base/toggle";
             rel1.to: "button";
             rel1.relative: 1.0 0.0;
             rel2.to: "offrect";
-            color: FN_COL_DEFAULT;
-            color_class: "check_off_text";
+            //color: FN_COL_DEFAULT;
+            //color_class: "check_off_text";
             text { font: FN; size: 10;
+               style: "check_off_text_style";
                min: 0 1;
                align: 0.5 0.5;
-               text_class: "check_off_text";
+               //text_class: "check_off_text";
                text: "OFF";
             }
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color_class: "check_off_text_disabled";
-            color3: 255 255 255 255;
+            text.style: "check_off_text_disabled_style";
+            //color_class: "check_off_text_disabled";
+            //color3: 255 255 255 255;
          }
       }
-      part { name: "elm.ontext"; type: TEXT; mouse_events:  0;
-         effect: GLOW;
+      part { name: "elm.ontext"; type: TEXTBLOCK; mouse_events:  0;
+         //effect: GLOW;
          scale: 1;
          clip_to: "tog_clip";
          description { state: "default" 0.0;
@@ -529,20 +560,22 @@ group { name: "elm/check/base/toggle";
             rel2.to: "button";
             rel2.relative: 0.0 1.0;
             rel2.offset: -1 -2;
-            color_class: "check_on_text";
-            color2: 255 255 255 255;
-            color3: 255 255 255 255;
+            //color_class: "check_on_text";
+            //color2: 255 255 255 255;
+            //color3: 255 255 255 255;
             text { font: FN; size: 10;
+               style: "check_on_style";
                min: 0 1;
                align: 0.5 0.5;
-               text_class: "check_on_text";
+               //text_class: "check_on_text";
                text: "ON";
             }
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color_class: "check_on_text_disabled";
-            color3: 255 255 255 255;
+            text.style: "check_on_text_disabled_style";
+            //color_class: "check_on_text_disabled";
+            //color3: 255 255 255 255;
          }
       }
       part { name: "shadow"; mouse_events: 0;
@@ -679,14 +712,15 @@ group { name: "elm/check/base/toggle";
             min: 16 16;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer.content"; type: TEXTBLOCK; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
             text { font: FN; size: 10;
+               style: "check_style";
                min: 0 0;
-               text_class: "check_text";
+               //text_class: "check_text";
             }
          }
          description { state: "visible" 0.0;
@@ -710,8 +744,8 @@ group { name: "elm/check/base/toggle";
             }
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to_x: "elm.swallow.content";
@@ -720,18 +754,20 @@ group { name: "elm/check/base/toggle";
             rel2.to_x: "tog";
             rel2.relative: 0.0 1.0;
             rel2.offset: -5 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "check_text";
+            //color: FN_COL_DEFAULT;
+            //color_class: "check_text";
             text { font: FN; size: 10;
+              style: "check_text_style";
               min: 0 0;
               align: 0.0 0.5;
-              text_class: "check";
+              //text_class: "check";
             }
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color_class: "check_text_disabled";
-            color3: 255 255 255 255;
+            text.style: "check_text_disabled_style";
+            //color_class: "check_text_disabled";
+            //color3: 255 255 255 255;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -741,8 +777,9 @@ group { name: "elm/check/base/toggle";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
-            color_class: "check_text_disabled";
-            color3: 255 255 255 255;
+            text.style: "check_text_disabled_style"; 
+            //color_class: "check_text_disabled";
+            //color3: 255 255 255 255;
             visible: 1;
             text.min: 1 1;
             text.ellipsis: -1;
