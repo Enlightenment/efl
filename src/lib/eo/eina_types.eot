@@ -62,3 +62,84 @@ struct @extern Eina.Rw_Slice {
 }
 
 struct @extern Eina.Value.Type; [[Eina value type]]
+
+struct @extern Eina.Future; [[Eina_Future handle]]
+struct @extern Eina.Promise; [[Eina_Promise handle]]
+struct @extern @free(eina_future_desc_flush) Eina_Future_Desc; [[A struct used to define a callback and data for a future.]]
+struct @extern @free(eina_future_cb_easy_desc_flush) Eina_Future_Cb_Easy_Desc; [[A struct with callbacks to be used by eina_future_cb_easy_from_desc() and eina_future_cb_easy()]]
+struct @extern Eina_Future_Cb_Console_Desc; [[A struct used to define the prefix and suffix to be printed
+                                              along side the a future value. This struct is used by
+                                              eina_future_cb_console_from_desc()]]
+struct @extern Eina_Future_Schedule_Entry; [[A struct that represents an scheduled event.
+                                             This struct may be used by Eina to cancel
+                                             a scheduled future.]]
+struct @extern Eina.Future.Scheduler; [[This struct is used as a bridge between Eina and the future scheduler.
+                                        By using the provided functions Eina can schedule futures resolutions,
+                                        rejections and cancelations to a safe context.]]
+
+function @extern Eina.Future.Cb {
+    params {
+       value: const(generic_value); [[An Eina_Value which contains the operation result. Before using
+                                      the value, its type must be checked in order to avoid errors. This is needed, because
+                                      if an operation fails the Eina_Value type will be EINA_VALUE_TYPE_ERROR
+                                      which is a different type than the expected operation result.]]
+       dead_ptr: const(ptr(Eina.Future)); [[A pointer to the future that was completed]]
+    }
+    return: generic_value; [[An Eina_Value to pass to the next Eina_Future in the chain (if any).
+                             If there is no need to convert the received value, it's recommended
+                             to pass-thru value argument. If you need to convert to a different type
+                             or generate a new value, use eina_value_setup() on another Eina_Value
+                             and return it. By returning an promise Eina_Value (eina_promise_as_value()) the
+                             whole chain will wait until the promise is resolved in order to continue its execution.
+                             Note that the value contents must survive this function scope,
+                             that is, do not use stack allocated blobs, arrays, structures or types that
+                             keeps references to memory you give. Values will be automatically cleaned up
+                             using eina_value_flush() once they are unused (no more future or futures
+                             returned a new value).]]
+};
+
+function @extern Eina.Promise.Cancel.Cb {
+   params {
+     dead_promise: const(ptr(Eina.Promise)); [[The canceled promise.]]
+   }
+};
+
+function @extern Eina.Future.Success.Cb {
+   params {
+      value: const(generic_value); [[The operation result]]
+   }
+   return: generic_value;  [[An Eina_Value to pass to the next Eina_Future in the chain (if any).
+                             If there is no need to convert the received value, it's recommended
+                             to pass-thru value argument. If you need to convert to a different type
+                             or generate a new value, use eina_value_setup() on another Eina_Value
+                             and return it. By returning an promise Eina_Value (eina_promise_as_value()) the
+                             whole chain will wait until the promise is resolved in order to continue its execution.
+                             Note that the value contents must survive this function scope,
+                             that is, do not use stack allocated blobs, arrays, structures or types that
+                             keeps references to memory you give. Values will be automatically cleaned up
+                             using eina_value_flush() once they are unused (no more future or futures
+                             returned a new value).]]
+};
+
+function @extern Eina.Future.Error.Cb {
+   params {
+      error: const(Eina.Error); [[The operation error]]
+   }
+   return: generic_value;  [[An Eina_Value to pass to the next Eina_Future in the chain (if any).
+                             If there is no need to convert the received value, it's recommended
+                             to pass-thru value argument. If you need to convert to a different type
+                             or generate a new value, use eina_value_setup() on another Eina_Value
+                             and return it. By returning an promise Eina_Value (eina_promise_as_value()) the
+                             whole chain will wait until the promise is resolved in order to continue its execution.
+                             Note that the value contents must survive this function scope,
+                             that is, do not use stack allocated blobs, arrays, structures or types that
+                             keeps references to memory you give. Values will be automatically cleaned up
+                             using eina_value_flush() once they are unused (no more future or futures
+                             returned a new value).]]
+};
+
+function @extern Eina.Future.Free.Cb {
+   params {
+      dead_future: const(ptr(Eina.Future)); [[The future that was freed]]
+   }
+};
