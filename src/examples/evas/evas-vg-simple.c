@@ -378,13 +378,13 @@ _interpolation_key_handle(void  *data EINA_UNUSED,
         puts(basic_shape_menu);
         return;
      }
-   if (strcmp(ev->key, "e") == 0) /* print help */
+   if (strcmp(ev->key, "e") == 0) /* exit */
      {
         _on_delete(d.ee);
         return;
      }
 
-   if (strcmp(ev->key, "b") == 0) /* print help */
+   if (strcmp(ev->key, "b") == 0) /* back to main menu */
      {
         _main_menu();
         return;
