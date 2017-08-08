@@ -128,6 +128,11 @@ group { name: "elm/colorselector/palette/default";
 }
 
 group { name: "elm/colorselector/picker/base/default";
+   styles {
+      style { name: "colorselector_plain_style";
+              base: STL_COL_PLAIN" ellipsis=1.0";
+      }
+   }
    parts {
       part { name: "elm.swallow.picker"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -138,7 +143,7 @@ group { name: "elm/colorselector/picker/base/default";
             }
          }
       }
-      part { name: "elm.label.red"; type: TEXT;
+      part { name: "elm.label.red"; type: TEXTBLOCK;
          description { state: "default" 0.0;
             align: 1.0 0.0;
             min: 15 0;
@@ -148,6 +153,7 @@ group { name: "elm/colorselector/picker/base/default";
                to: "elm.swallow.red";
             }
             text {
+               style: "colorselector_plain_style";
                font: "Sans";
                size: 10;
                ellipsis: -1;
@@ -161,7 +167,7 @@ group { name: "elm/colorselector/picker/base/default";
             max: 60 20;
          }
       }
-      part { name: "elm.label.green"; type: TEXT;
+      part { name: "elm.label.green"; type: TEXTBLOCK;
          description { state: "default" 0.0;
             min: 15 0;
             max: 15 -1;
@@ -174,6 +180,7 @@ group { name: "elm/colorselector/picker/base/default";
                to: "elm.swallow.green";
             }
             text {
+               style: "colorselector_plain_style";
                font: "Sans";
                size: 10;
                ellipsis: -1;
@@ -191,7 +198,7 @@ group { name: "elm/colorselector/picker/base/default";
             }
          }
       }
-      part { name: "elm.label.blue"; type: TEXT;
+      part { name: "elm.label.blue"; type: TEXTBLOCK;
          description { state: "default" 0.0;
             min: 15 0;
             max: 15 -1;
@@ -204,6 +211,7 @@ group { name: "elm/colorselector/picker/base/default";
                to: "elm.swallow.blue";
             }
             text {
+               style: "colorselector_plain_style";
                font: "Sans";
                size: 10;
                ellipsis: -1;
@@ -221,7 +229,7 @@ group { name: "elm/colorselector/picker/base/default";
             }
          }
       }
-      part { name: "elm.label.alpha"; type: TEXT;
+      part { name: "elm.label.alpha"; type: TEXTBLOCK;
          description { state: "default" 0.0;
             min: 15 0;
             max: 15 -1;
@@ -234,6 +242,7 @@ group { name: "elm/colorselector/picker/base/default";
                to: "elm.swallow.alpha";
             }
             text {
+               style: "colorselector_plain_style";
                font: "Sans";
                size: 10;
                ellipsis: -1;
