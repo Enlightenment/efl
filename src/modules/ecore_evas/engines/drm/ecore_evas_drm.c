@@ -246,7 +246,7 @@ _drm_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
    Ecore_Evas_Engine_Drm_Data *edata;
 
    edata = ee->engine.data;
-   ecore_drm2_output_geometry_get(edata->output, x, y, w, h);
+   ecore_drm2_output_info_get(edata->output, x, y, w, h, NULL);
 }
 
 static void
@@ -490,7 +490,7 @@ _drm_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
         edata->w = ee->w;
         edata->h = ee->h;
 
-        ecore_drm2_output_geometry_get(edata->output, NULL, NULL, &ow, &oh);
+        ecore_drm2_output_info_get(edata->output, NULL, NULL, &ow, &oh, NULL);
         if ((ow == 0) || (oh == 0))
           {
              ow = ee->w;

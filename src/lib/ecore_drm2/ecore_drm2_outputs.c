@@ -1118,18 +1118,6 @@ ecore_drm2_output_find(Ecore_Drm2_Device *device, int x, int y)
 }
 
 EAPI void
-ecore_drm2_output_geometry_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, int *h)
-{
-   EINA_SAFETY_ON_NULL_RETURN(output);
-   EINA_SAFETY_ON_TRUE_RETURN(!output->enabled);
-
-   if (x) *x = output->x;
-   if (y) *y = output->y;
-   if (w) *w = output->current_mode->width;
-   if (h) *h = output->current_mode->height;
-}
-
-EAPI void
 ecore_drm2_output_dpi_get(Ecore_Drm2_Output *output, int *xdpi, int *ydpi)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
