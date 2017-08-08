@@ -41,6 +41,11 @@ group { name: "elm/diskselector/base/default";
 }
 
 group { name: "elm/diskselector/item/default";
+   styles {
+      style { name: "diskselector_plain_style";
+              base: STL_COL_PLAIN" ellipsis=1.0";
+      }
+   }
 
    data {
       item: "len_threshold" "14";
@@ -103,7 +108,7 @@ group { name: "elm/diskselector/item/default";
          }
       }
       part { name: "elm.text";
-         type: TEXT;
+         type: TEXTBLOCK;
          scale: 1;
          description { state: "default" 0.0;
             rel1.relative: 1 0.0;
@@ -111,6 +116,7 @@ group { name: "elm/diskselector/item/default";
             rel2.relative: 1.0 1.0;
             visible: 0;
             text {
+               style: "diskselector_plain_style";
                font: "Sans,Edje-Vera";
                size: 10;
                align: 0.5 0.5;
@@ -259,7 +265,7 @@ group { name: "elm/diskselector/item/datetime/default";
       item: "min_width" "-1";
    }
    parts {
-     part { name: "elm.text"; type: TEXT;
+     part { name: "elm.text"; type: TEXTBLOCK;
         mouse_events: 0;
         scale: 1;
         description { state: "default" 0.0;
@@ -268,6 +274,7 @@ group { name: "elm/diskselector/item/datetime/default";
            color: FN_COL_GREY_172;
            visible: 1;
            text {
+              style: "diskselector_plain_style";
               font: "Sans,Edje-Vera";
               size: 10;
               min: 1 1;
