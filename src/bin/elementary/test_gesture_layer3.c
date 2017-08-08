@@ -217,7 +217,7 @@ pic_obj_keep_inframe(void *_po)
      po->bx = 480 - (po->bw / 2);
 
    if (my < 0)
-     po->by = 0 - (po->bw / 2);
+     po->by = 0 - (po->bh / 2);
    else if (my > 800)
      po->by = 800 - (po->bh / 2);
 }
