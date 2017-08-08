@@ -47,6 +47,8 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
+static void _set_min_size_new(void *data);
+
 EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_panes_elm_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
 {
@@ -173,6 +175,99 @@ _on_unpressed(void *data,
      }
 }
 
+EOLIAN static void
+_efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   Eo *first_content, *second_content;
+   int minw, minh;
+
+   first_content = efl_content_get(efl_part(obj, "first"));
+   second_content = efl_content_get(efl_part(obj, "second"));
+
+   if (first_content)
+     efl_gfx_size_hint_combined_min_get(first_content, &sd->first_minw, &sd->first_minh);
+     //TODO: use this for allow cropping?
+     //efl_gfx_size_hint_min_get(first_content, &sd->first_minw, &sd->first_minh);
+   if (second_content)
+     efl_gfx_size_hint_combined_min_get(second_content, &sd->second_minw, &sd->second_minh);
+     //TODO: use this for allow cropping
+     //efl_gfx_size_hint_min_get(second_content, &sd->second_minw, &sd->second_minh);
+
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+     {
+        edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
+                                             MAX(sd->first_minw, sd->second_minw),
+                                             sd->first_minh + sd->second_minh);
+     }
+   else
+     {
+        edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
+                                             sd->first_minw + sd->second_minw,
+                                             MAX(sd->first_minh, sd->second_minh));
+     }
+
+   efl_gfx_size_hint_min_set(obj, minw, minh);
+   _set_min_size_new(obj);
+}
+
+static void
+_set_min_size_new(void *data)
+{
+   Eo *obj = data;
+   EFL_UI_PANES_DATA_GET(obj, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   int first_minw = sd->first_minw, first_minh = sd->first_minh;
+   int second_minw = sd->second_minw, second_minh = sd->second_minh;
+   int w, h;
+   double first_min_relative_size = 0.0, second_min_relative_size = 0.0;
+
+   evas_object_geometry_get(wd->resize_obj, NULL, NULL, &w, &h);
+
+   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+     {
+        if (first_minh + second_minh > h)
+          {
+             first_min_relative_size = first_minh/(first_minh + second_minh);
+             second_min_relative_size = second_minh/(first_minh + second_minh);
+          }
+        else
+          {
+             if (h > 0)
+               {
+                  first_min_relative_size = first_minh/(double)h;
+                  second_min_relative_size = second_minh/(double)h;
+               }
+          }
+        edje_object_part_drag_value_set(wd->resize_obj, "right_constraint",
+                                        0.0, 1.0 - second_min_relative_size);
+        edje_object_part_drag_value_set(wd->resize_obj, "left_constraint",
+                                        0.0, first_min_relative_size);
+     }
+   else
+     {
+        if (first_minw + second_minw > w)
+          {
+             first_min_relative_size = first_minw/(first_minw + second_minw);
+             second_min_relative_size = second_minw/(first_minw + second_minw);
+          }
+        else
+          {
+             if (w > 0)
+               {
+                  first_min_relative_size = first_minw/(double)w;
+                  second_min_relative_size = second_minw/(double)w;
+               }
+          }
+        edje_object_part_drag_value_set(wd->resize_obj, "right_constraint",
+                                        1.0 - second_min_relative_size, 0.0);
+        edje_object_part_drag_value_set(wd->resize_obj, "left_constraint",
+                                        first_min_relative_size, 0.0);
+     }
+}
+
 static void
 _set_min_size(void *data)
 {
@@ -203,6 +298,7 @@ _set_min_size(void *data)
      }
 }
 
+//TODO: call this in legacy api implementation
 static void
 _update_fixed_sides(void *data)
 {
@@ -242,6 +338,7 @@ _update_fixed_sides(void *data)
         if (sd->orientation == EFL_ORIENT_VERTICAL && (w > 0))
            sd->left_min_relative_size = sd->left_min_size / (double)w;
      }
+
    _set_min_size(data);
 }
 
@@ -251,7 +348,9 @@ _on_resize(void *data,
            Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
-  _update_fixed_sides(data);
+   //TODO: needs a flag to enable the old behaviour
+  //_update_fixed_sides(data);
+   _set_min_size_new(data);
 }
 
 EOLIAN static void
@@ -562,7 +661,8 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX);
 
 #define EFL_UI_PANES_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_panes), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX)
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panes)
 
 
 #include "efl_ui_panes.eo.c"

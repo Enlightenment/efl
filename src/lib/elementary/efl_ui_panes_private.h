@@ -37,6 +37,8 @@ struct _Efl_Ui_Panes_Data
    Efl_Orient            orientation;
    double                left_min_relative_size;
    double                right_min_relative_size;
+   int                   first_minw, first_minh;
+   int                   second_minw, second_minh;
    Evas_Coord            left_min_size;
    Evas_Coord            right_min_size;
    Eina_Bool             double_clicked : 1;
