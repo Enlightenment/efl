@@ -89,6 +89,12 @@ _ecore_pa_io_new(pa_mainloop_api *api, int fd, pa_io_event_flags_t flags, pa_io_
    pa_io_event *event;
 
    event = calloc(1, sizeof(pa_io_event));
+   if (!event)
+     {
+        ERR("Failed to allocate memory!");
+        return NULL;
+     }
+
    event->mainloop = api;
    event->userdata = userdata;
    event->callback = cb;
@@ -176,6 +182,12 @@ _ecore_pa_time_new(pa_mainloop_api *api, const struct timeval *tv, pa_time_event
    double interval;
 
    event = calloc(1, sizeof(pa_time_event));
+   if (!event)
+     {
+        ERR("Failed to allocate memory!");
+        return NULL;
+     }
+
    event->mainloop = api;
    event->userdata = userdata;
    event->callback = cb;
@@ -263,6 +275,12 @@ _ecore_pa_defer_new(pa_mainloop_api *api, pa_defer_event_cb_t cb, void *userdata
    pa_defer_event *event;
 
    event = calloc(1, sizeof(pa_defer_event));
+   if (!event)
+     {
+        ERR("Failed to allocate memory!");
+        return NULL;
+     }
+
    event->mainloop = api;
    event->userdata = userdata;
    event->callback = cb;
