@@ -514,7 +514,7 @@ _on_sub_obj_del(void *data, const Efl_Event *event)
    if (event->object == sd->resize_obj)
      {
         /* already dels sub object */
-        elm_widget_resize_object_set(sd->obj, NULL, EINA_TRUE);
+        elm_widget_resize_object_set(sd->obj, NULL);
      }
    else if (event->object == sd->hover_obj)
      {
@@ -1594,23 +1594,17 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
    return EINA_TRUE;
 }
 
-/*
- * @internal
- *
- * a resize object is added to and deleted from the smart member and the sub object
- * of the parent if the third argument, Eina_Bool sub_obj, is set as EINA_TRUE.
- */
+/* protected function - for widget developers only */
 EOLIAN static void
-_elm_widget_resize_object_set(Eo *obj, Elm_Widget_Smart_Data *sd,
-                             Evas_Object *sobj,
-                             Eina_Bool sub_obj)
+_elm_widget_resize_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eo *sobj)
 {
    Evas_Object *parent;
 
    if (sd->resize_obj == sobj) return;
+   EINA_SAFETY_ON_TRUE_RETURN(sobj && !efl_isa(sobj, EFL_CANVAS_OBJECT_CLASS));
 
    // orphan previous resize obj
-   if (sd->resize_obj && sub_obj)
+   if (sd->resize_obj)
      {
         evas_object_clip_unset(sd->resize_obj);
         evas_object_smart_member_del(sd->resize_obj);
@@ -1635,17 +1629,14 @@ _elm_widget_resize_object_set(Eo *obj, Elm_Widget_Smart_Data *sd,
         if (sdp)
           {
              if (sdp->resize_obj == sobj)
-               elm_widget_resize_object_set(parent, NULL, sub_obj);
-             else if (sub_obj)
+               elm_widget_resize_object_set(parent, NULL);
+             else
                elm_widget_sub_object_del(parent, sobj);
           }
      }
-   if (sub_obj)
-     {
-        elm_widget_sub_object_add(obj, sobj);
-        evas_object_smart_member_add(sobj, obj);
-     }
 
+   elm_widget_sub_object_add(obj, sobj);
+   evas_object_smart_member_add(sobj, obj);
    _smart_reconfigure(sd);
 }
 

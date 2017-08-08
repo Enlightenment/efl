@@ -176,7 +176,7 @@ _efl_ui_box_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED
    Evas *e = evas_object_evas_get(obj);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   elm_widget_resize_object_set(obj, evas_object_box_add(e), EINA_TRUE);
+   elm_widget_resize_object_set(obj, evas_object_box_add(e));
    evas_object_box_layout_set(wd->resize_obj, _evas_box_custom_layout, obj, NULL);
 
    evas_object_event_callback_add(wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);

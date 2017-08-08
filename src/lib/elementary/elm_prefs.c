@@ -1168,7 +1168,7 @@ _elm_prefs_efl_file_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, cons
         return EINA_FALSE;
      }
 
-   elm_widget_resize_object_set(obj, sd->root->w_obj, EINA_TRUE);
+   elm_widget_resize_object_set(obj, sd->root->w_obj);
 
    _elm_prefs_values_get_default(sd->root, EINA_FALSE);
 

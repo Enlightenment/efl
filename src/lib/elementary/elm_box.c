@@ -370,9 +370,7 @@ EOLIAN static void
 _elm_box_efl_canvas_group_group_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   elm_widget_resize_object_set(obj,
-                                evas_object_box_add(evas_object_evas_get(obj)),
-                                EINA_TRUE);
+   elm_widget_resize_object_set(obj, evas_object_box_add(evas_object_evas_get(obj)));
 
    evas_object_box_layout_set(wd->resize_obj, _elm_box_custom_layout,
                               obj, NULL);

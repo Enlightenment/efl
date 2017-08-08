@@ -122,7 +122,7 @@ _elm_plug_efl_canvas_group_group_add(Eo *obj, void *sd EINA_UNUSED)
    p_obj = ecore_evas_extn_plug_new(ee);
    if (!p_obj) return;
 
-   elm_widget_resize_object_set(obj, p_obj, EINA_TRUE);
+   elm_widget_resize_object_set(obj, p_obj);
 
    evas_object_event_callback_add
      (wd->resize_obj, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up,

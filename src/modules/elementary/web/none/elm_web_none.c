@@ -50,7 +50,7 @@ _elm_web_none_efl_canvas_group_group_add(Eo *obj, Elm_Web_None_Data *_pd EINA_UN
 
    resize_obj = elm_label_add(obj);
    elm_object_text_set(resize_obj, "WebKit not supported!");
-   elm_widget_resize_object_set(obj, resize_obj, EINA_TRUE);
+   elm_widget_resize_object_set(obj, resize_obj);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);

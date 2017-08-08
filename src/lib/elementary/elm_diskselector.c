@@ -1282,7 +1282,7 @@ _elm_diskselector_efl_canvas_group_group_add(Eo *obj, Elm_Diskselector_Data *pri
    evas_event_freeze(evas);
 
    edje = edje_object_add(evas);
-   elm_widget_resize_object_set(obj, edje, EINA_TRUE);
+   elm_widget_resize_object_set(obj, edje);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 

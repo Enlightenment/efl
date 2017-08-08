@@ -168,7 +168,7 @@ _elm_table_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
    elm_widget_sub_object_parent_add(obj);
 
    table = evas_object_table_add(evas_object_evas_get(obj));
-   elm_widget_resize_object_set(obj, table, EINA_TRUE);
+   elm_widget_resize_object_set(obj, table);
 
    evas_object_event_callback_add
      (table, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);

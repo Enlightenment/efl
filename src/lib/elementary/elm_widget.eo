@@ -52,7 +52,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          values {
             sobj: Efl.Canvas.Object @nullable;
                [[A canvas object (often a $Efl.Canvas.Layout object).]]
-            sub_obj: bool; [[$true if sub object exists, $false otherwise]]
          }
       }
 
