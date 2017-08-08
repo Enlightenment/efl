@@ -1,4 +1,4 @@
-class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
+class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
                     Elm.Interface.Atspi_Widget_Action,
                     Efl.Ui.Scrollable, Efl.Container)
 {

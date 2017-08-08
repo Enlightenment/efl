@@ -1,7 +1,7 @@
 #ifndef _ELM_PART_HELPER_H
 #define _ELM_PART_HELPER_H
 
-#include "elm_layout_internal_part.eo.h"
+#include "efl_ui_layout_internal_part.eo.h"
 
 //#define ELM_PART_HOOK do { ERR("%p:%s [%d]", pd->obj, pd->part, (int) pd->temp); } while(0)
 #define ELM_PART_HOOK do {} while(0)
@@ -104,7 +104,7 @@ _ ## type ## _internal_part_efl_text_text_get(Eo *obj, partdata *pd) \
 #define ELM_PART_TEXT_DEFAULT_OPS(type) \
    EFL_OBJECT_OP_FUNC(elm_widget_default_text_part_get, _ ## type ## _default_text_part_get)
 
-// For widgets that inherit from something with parts (eg. from Elm.Layout)
+// For widgets that inherit from something with parts (eg. from Efl.Ui.Layout)
 #define ELM_PART_OVERRIDE(type, TYPE, SUPER, typedata, partdata) \
 static EOLIAN Efl_Object * \
 _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \

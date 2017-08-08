@@ -1,7 +1,7 @@
 type slider_func_type: __undefined_type; [[Elementary slider function type]]
 type slider_freefunc_type: __undefined_type; [[Elementary slider free function type]]
 
-class Efl.Ui.Slider (Elm.Layout, Efl.Ui.Range,
+class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range,
                      Efl.Orientation,
                      Elm.Interface.Atspi.Value,
                      Elm.Interface.Atspi_Widget_Action)

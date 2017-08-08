@@ -282,10 +282,10 @@ elm_bg_file_get(const Eo *obj, const char **file, const char **group)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define ELM_BG_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_bg), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_bg)
 

@@ -36,7 +36,7 @@ enum Elm.List.Mode
    last [[Indicates error if returned by elm_list_mode_get().]]
 }
 
-class Elm.List (Elm.Layout, Elm.Interface_Scrollable,
+class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
                 Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
                 Efl.Ui.Clickable, Efl.Ui.Selectable)
 {

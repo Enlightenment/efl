@@ -1,4 +1,4 @@
-class Elm.Segment_Control (Elm.Layout)
+class Elm.Segment_Control (Efl.Ui.Layout)
 {
    [[Elementary segment control class]]
    legacy_prefix: elm_segment_control;

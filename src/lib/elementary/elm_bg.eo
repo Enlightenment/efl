@@ -13,7 +13,7 @@ enum Elm.Bg.Option
   last  [[Sentinel value to indicate last enum field during iteration. Also used to indicate errors]]
 }
 
-class Elm.Bg (Elm.Layout, Efl.File)
+class Elm.Bg (Efl.Ui.Layout, Efl.File)
 {
    [[The bg (background) widget is used for setting (solid) background decorations
 

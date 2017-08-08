@@ -2,7 +2,7 @@ import elm_general;
 import elm_list;
 import elm_genlist_item;
 
-class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
+class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                    Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
                    Efl.Ui.Selectable)
 {

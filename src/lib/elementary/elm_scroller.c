@@ -1476,10 +1476,10 @@ _elm_scroller_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, ELM_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_scroller, ELM_SCROLLER, EFL_UI_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_scroller, ELM_SCROLLER, EFL_UI_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_scroller, ELM_SCROLLER, EFL_UI_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, EFL_UI_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
 // FIXME: should be "content" but "default" was legacy API
 ELM_PART_CONTENT_DEFAULT_SET(elm_scroller, "default")
 #include "elm_scroller_internal_part.eo.c"

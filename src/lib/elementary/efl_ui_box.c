@@ -494,7 +494,7 @@ _box_item_iterator_next(Box_Item_Iterator *it, void **data)
    return EINA_TRUE;
 }
 
-static Elm_Layout *
+static Eo *
 _box_item_iterator_get_container(Box_Item_Iterator *it)
 {
    return it->object;

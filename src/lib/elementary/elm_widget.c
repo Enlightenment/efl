@@ -158,7 +158,7 @@ _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *eo_it)
      {
         Elm_Widget_Item_Data *it = efl_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
 
-        if (efl_isa(it->view, ELM_LAYOUT_CLASS))
+        if (efl_isa(it->view, EFL_UI_LAYOUT_CLASS))
           str = edje_object_data_get(elm_layout_edje_get(it->view), "focus_highlight");
         else
           str = edje_object_data_get(it->view, "focus_highlight");
@@ -4535,7 +4535,7 @@ elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
         if (!(target_hl_part = edje_object_data_get(edje_obj, "focus_part")))
           return;
      }
-   else if (obj && efl_isa(obj, ELM_LAYOUT_CLASS))
+   else if (obj && efl_isa(obj, EFL_UI_LAYOUT_CLASS))
      {
         edje_obj = elm_layout_edje_get(obj);
         if (!(target_hl_part = elm_layout_data_get(obj, "focus_part")))

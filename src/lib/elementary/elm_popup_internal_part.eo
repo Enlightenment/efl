@@ -1,4 +1,4 @@
-class Elm.Popup.Internal.Part (Elm.Layout.Internal.Part, Efl.Text)
+class Elm.Popup.Internal.Part (Efl.Ui.Layout.Internal.Part, Efl.Text)
 {
    [[Elementary popup internal part class]]
    data: null;

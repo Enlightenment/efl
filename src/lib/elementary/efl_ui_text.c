@@ -1029,7 +1029,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
-   efl_event_callback_legacy_call(obj, ELM_LAYOUT_EVENT_THEME_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    evas_object_unref(obj);
 
@@ -5327,9 +5327,9 @@ _efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED,
 #if 0
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_entry, EFL_UI_TEXT, ELM_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, EFL_UI_TEXT, ELM_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, ELM_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_entry, EFL_UI_TEXT, EFL_UI_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, EFL_UI_TEXT, EFL_UI_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, EFL_UI_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
 #include "elm_entry_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -5337,12 +5337,12 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, ELM_LAYOUT, Efl_Ui_Text_
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_TEXT_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_text), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_text), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS()
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_text.eo.c"
 

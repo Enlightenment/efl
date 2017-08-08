@@ -1,4 +1,4 @@
-class Elm.Player (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
+class Elm.Player (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary player class]]
    legacy_prefix: elm_player;

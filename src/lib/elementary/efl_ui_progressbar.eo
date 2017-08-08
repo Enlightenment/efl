@@ -1,4 +1,4 @@
-class Efl.Ui.Progressbar (Elm.Layout, Efl.Ui.Range,
+class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range,
                           Efl.Orientation)
 {
    [[Elementary progressbar class]]

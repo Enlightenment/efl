@@ -1,4 +1,4 @@
-class Elm.Inwin (Elm.Layout, Efl.Ui.Focus.Manager)
+class Elm.Inwin (Efl.Ui.Layout, Efl.Ui.Focus.Manager)
 {
    [[Elementary inwin class]]
    legacy_prefix: elm_inwin;

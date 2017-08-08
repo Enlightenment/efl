@@ -8,7 +8,7 @@ enum Elm.Panel.Orient
    right [[Panel (dis)appears from the right]]
 }
 
-class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
+class Elm.Panel (Efl.Ui.Layout, Elm.Interface_Scrollable,
                  Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary panel class]]

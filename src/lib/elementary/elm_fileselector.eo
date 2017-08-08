@@ -1,4 +1,4 @@
-class Elm.Fileselector (Elm.Layout, Elm.Interface.Fileselector,
+class Elm.Fileselector (Efl.Ui.Layout, Elm.Interface.Fileselector,
                         Elm.Interface.Atspi_Widget_Action,
                         Efl.Ui.Clickable, Efl.Ui.Selectable)
 {

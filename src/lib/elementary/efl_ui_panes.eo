@@ -1,4 +1,4 @@
-class Efl.Ui.Panes (Elm.Layout, Efl.Orientation,
+class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Orientation,
                     Efl.Ui.Clickable)
 {
    [[Elementary panes class]]

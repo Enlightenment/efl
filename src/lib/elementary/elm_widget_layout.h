@@ -64,9 +64,9 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_Bool             restricted_calc_w : 1; /**< This is a flag to support edje restricted_calc in w axis. */
    Eina_Bool             restricted_calc_h : 1; /**< This is a flag to support edje restricted_calc in y axis. */
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
-   Eina_Bool             destructed_is : 1; /**< This flag indicates if Elm_Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
-   Eina_Bool             file_set : 1; /**< This flag indicates if Elm_Layout source is set from a file*/
-   Eina_Bool             view_updated : 1; /**< This flag indicates to Elm_Layout don't update model in text_set */
+   Eina_Bool             destructed_is : 1; /**< This flag indicates if Efl.Ui.Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
+   Eina_Bool             file_set : 1; /**< This flag indicates if Efl.Ui.Layout source is set from a file*/
+   Eina_Bool             view_updated : 1; /**< This flag indicates to Efl.Ui.Layout don't update model in text_set */
 } Elm_Layout_Smart_Data;
 
 /**
@@ -74,10 +74,10 @@ typedef struct _Elm_Layout_Smart_Data
  */
 
 #define ELM_LAYOUT_DATA_GET(o, sd) \
-  Elm_Layout_Smart_Data * sd = efl_data_scope_get(o, ELM_LAYOUT_CLASS)
+  Elm_Layout_Smart_Data * sd = efl_data_scope_get(o, EFL_UI_LAYOUT_CLASS)
 
 #define ELM_LAYOUT_CHECK(obj)                            \
-  if (EINA_UNLIKELY(!efl_isa(obj, ELM_LAYOUT_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_CLASS))) \
     return
 
 #endif

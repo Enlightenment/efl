@@ -646,12 +646,12 @@ _efl_ui_progressbar_class_constructor(Efl_Class *klass)
 }
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(efl_ui_progressbar, EFL_UI_PROGRESSBAR, ELM_LAYOUT, Efl_Ui_Progressbar_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(efl_ui_progressbar, EFL_UI_PROGRESSBAR, EFL_UI_LAYOUT, Efl_Ui_Progressbar_Data, Elm_Part_Data)
 
 static EOLIAN Eina_Bool
 _efl_ui_progressbar_internal_part_efl_container_content_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Efl_Gfx *content)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
    ELM_PART_RETURN_VAL(_efl_ui_progressbar_content_set(pd->obj, sd, pd->part, content));
 }
@@ -659,7 +659,7 @@ _efl_ui_progressbar_internal_part_efl_container_content_set(Eo *obj, Elm_Part_Da
 EOLIAN static void
 _efl_ui_progressbar_internal_part_efl_ui_range_range_value_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, double val)
 {
-  Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+  Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
   _progressbar_part_value_set(pd->obj, sd, pd->part, val);
@@ -668,7 +668,7 @@ _efl_ui_progressbar_internal_part_efl_ui_range_range_value_set(Eo *obj, Elm_Part
 EOLIAN static double
 _efl_ui_progressbar_internal_part_efl_ui_range_range_value_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
    return _progressbar_part_value_get(sd, pd->part);
@@ -680,12 +680,12 @@ _efl_ui_progressbar_internal_part_efl_ui_range_range_value_get(Eo *obj, Elm_Part
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_PROGRESSBAR_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_progressbar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar)
 

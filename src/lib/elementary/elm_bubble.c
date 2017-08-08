@@ -242,6 +242,7 @@ _elm_bubble_efl_object_constructor(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED)
 EOLIAN static void
 _elm_bubble_pos_set(Eo *obj, Elm_Bubble_Data *sd, Elm_Bubble_Pos pos)
 {
+   /* FIXME: Why is this dealing with layout data directly? */
    ELM_LAYOUT_DATA_GET(obj, ld);
 
    if (pos < ELM_BUBBLE_POS_TOP_LEFT || pos > ELM_BUBBLE_POS_BOTTOM_RIGHT)
@@ -280,20 +281,20 @@ _elm_bubble_class_constructor(Efl_Class *klass)
 }
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(elm_bubble, ELM_BUBBLE, ELM_LAYOUT, Elm_Bubble_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_bubble, ELM_BUBBLE, ELM_LAYOUT, Elm_Bubble_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_bubble, ELM_BUBBLE, EFL_UI_LAYOUT, Elm_Bubble_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_bubble, ELM_BUBBLE, EFL_UI_LAYOUT, Elm_Bubble_Data, Elm_Part_Data)
 
 #include "elm_bubble_internal_part.eo.c"
 /* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define ELM_BUBBLE_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_bubble), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_bubble)
 

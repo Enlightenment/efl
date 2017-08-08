@@ -1,4 +1,4 @@
-class Efl.Ui.Progressbar.Internal.Part (Elm.Layout.Internal.Part, Efl.Ui.Range)
+class Efl.Ui.Progressbar.Internal.Part (Efl.Ui.Layout.Internal.Part, Efl.Ui.Range)
 {
    [[Elementary progressbar internal part class]]
    data: Elm_Part_Data;

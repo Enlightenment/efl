@@ -41,7 +41,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_interface_fileselector.eo \
 	lib/elementary/elm_interface_scrollable.eo \
 	lib/elementary/elm_label.eo \
-	lib/elementary/elm_layout.eo \
+	lib/elementary/efl_ui_layout.eo \
 	lib/elementary/elm_list.eo \
 	lib/elementary/elm_map.eo \
 	lib/elementary/elm_map_pan.eo \
@@ -92,6 +92,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_box_stack.eo \
 	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_grid_static.eo \
+	lib/elementary/efl_ui_layout_internal_part.eo \
 	lib/elementary/efl_ui_layout_internal_box.eo \
 	lib/elementary/efl_ui_layout_internal_table.eo \
 	lib/elementary/efl_ui_button_internal_part.eo \
@@ -101,7 +102,6 @@ elm_public_eolian_files = \
 	lib/elementary/elm_fileselector_entry_internal_part.eo \
 	lib/elementary/elm_flip_internal_part.eo \
 	lib/elementary/elm_hover_internal_part.eo \
-	lib/elementary/elm_layout_internal_part.eo \
 	lib/elementary/elm_mapbuf_internal_part.eo \
 	lib/elementary/elm_naviframe_internal_part.eo \
 	lib/elementary/elm_notify_internal_part.eo \
@@ -430,7 +430,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_label_legacy.h \
 	lib/elementary/elm_layout.h \
 	lib/elementary/elm_layout_common.h \
-	lib/elementary/elm_layout_eo.h \
 	lib/elementary/elm_layout_legacy.h \
 	lib/elementary/elm_list.h \
 	lib/elementary/elm_list_eo.h \
@@ -618,8 +617,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_interface_scrollable.c \
 	lib/elementary/elm_inwin.c \
 	lib/elementary/elm_label.c \
-	lib/elementary/elm_layout.c \
-	lib/elementary/elm_layout_pack.c \
+	lib/elementary/efl_ui_layout.c \
+	lib/elementary/efl_ui_layout_pack.c \
 	lib/elementary/elm_list.c \
 	lib/elementary/elm_main.c \
 	lib/elementary/elm_map.c \

@@ -437,8 +437,8 @@ EFL_TEXT_PART_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(efl_ui_button, EFL_UI_BUTTON, ELM_LAYOUT, Efl_Ui_Button_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_button, EFL_UI_BUTTON, ELM_LAYOUT, Efl_Ui_Button_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(efl_ui_button, EFL_UI_BUTTON, EFL_UI_LAYOUT, Efl_Ui_Button_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_button, EFL_UI_BUTTON, EFL_UI_LAYOUT, Efl_Ui_Button_Data, Elm_Part_Data)
 #include "efl_ui_button_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -481,12 +481,12 @@ elm_button_autorepeat_get(const Evas_Object *obj)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_BUTTON_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_button), \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 

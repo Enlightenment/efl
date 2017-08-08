@@ -32,7 +32,7 @@ START_TEST(elm_layout_swallows)
    elm_init(1, NULL);
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
 
-   ly = efl_add(ELM_LAYOUT_CLASS, win);
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
    elm_layout_file_set(ly, buf, "layout");
    evas_object_show(ly);
@@ -69,7 +69,7 @@ START_TEST(elm_layout_model_connect)
    elm_init(1, NULL);
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
 
-   ly = efl_add(ELM_LAYOUT_CLASS, win);
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
    elm_layout_file_set(ly, buf, "layout");
    evas_object_show(ly);

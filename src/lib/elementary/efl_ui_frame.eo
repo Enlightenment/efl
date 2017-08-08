@@ -1,4 +1,4 @@
-class Efl.Ui.Frame (Elm.Layout, Efl.Ui.Clickable, Efl.Text)
+class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text)
 {
    [[Frame widget
 

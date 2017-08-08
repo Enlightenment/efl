@@ -1929,12 +1929,12 @@ _elm_popup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Popup_Data 
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, ELM_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_popup, ELM_POPUP, EFL_UI_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_popup, ELM_POPUP, EFL_UI_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_popup, ELM_POPUP, EFL_UI_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_popup, ELM_POPUP, EFL_UI_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_popup, ELM_POPUP, EFL_UI_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, EFL_UI_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_popup, "default")
 #include "elm_popup_internal_part.eo.c"
 

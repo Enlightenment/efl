@@ -1,4 +1,4 @@
-class Elm.Multibuttonentry.Internal.Part (Elm.Layout.Internal.Part, Efl.Text)
+class Elm.Multibuttonentry.Internal.Part (Efl.Ui.Layout.Internal.Part, Efl.Text)
 {
    [[Elementary multibuttonentry internal part class]]
    data: null;

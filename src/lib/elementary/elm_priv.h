@@ -632,11 +632,11 @@ const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *o
 #define _ELM_LAYOUT_ALIASES_OPS(_pfx, _typ) \
    EFL_OBJECT_OP_FUNC(elm_layout_##_typ##_aliases_get, _##_pfx##_##_typ##_aliases_get)
 
-#define ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT() _ELM_LAYOUT_ALIASES_IMPLEMENT(MY_CLASS_PFX, content)
-#define ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()  _ELM_LAYOUT_ALIASES_IMPLEMENT(MY_CLASS_PFX, text)
+#define ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, content)
+#define ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, text)
 
-#define ELM_LAYOUT_CONTENT_ALIASES_OPS() _ELM_LAYOUT_ALIASES_OPS(MY_CLASS_PFX, content)
-#define ELM_LAYOUT_TEXT_ALIASES_OPS() _ELM_LAYOUT_ALIASES_OPS(MY_CLASS_PFX, text)
+#define ELM_LAYOUT_CONTENT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, content)
+#define ELM_LAYOUT_TEXT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, text)
 
 #define ELM_LAYOUT_SIZING_EVAL_OPS(_pfx) \
    EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _##_pfx##_elm_layout_sizing_eval)

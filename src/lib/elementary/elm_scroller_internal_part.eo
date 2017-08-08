@@ -1,4 +1,4 @@
-class Elm.Scroller.Internal.Part (Elm.Layout.Internal.Part)
+class Elm.Scroller.Internal.Part (Efl.Ui.Layout.Internal.Part)
 {
    [[Elementary scroller internal part class]]
    data: null;

@@ -12,7 +12,7 @@ enum Elm.Colorselector.Mode
    all [[All possible color selector is displayed.]]
 }
 
-class Elm.Colorselector (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
+class Elm.Colorselector (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
                          Efl.Ui.Clickable)
 {
    [[Elementary colorselector class]]

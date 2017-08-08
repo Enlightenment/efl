@@ -1,4 +1,4 @@
-class Elm.Index (Elm.Layout, Efl.Orientation,
+class Elm.Index (Efl.Ui.Layout, Efl.Orientation,
                  Efl.Ui.Clickable, Efl.Ui.Selectable)
 {
    [[elementary index class]]
