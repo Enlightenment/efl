@@ -940,7 +940,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
    _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
 
-   ecore_drm2_output_crtc_size_get(edata->output, &mw, &mh);
+   ecore_drm2_output_info_get(edata->output, NULL, NULL, &mw, &mh, NULL);
 
    ecore_drm2_device_calibrate(edata->dev, mw, mh);
    ecore_drm2_device_pointer_max_set(edata->dev, mw, mh);

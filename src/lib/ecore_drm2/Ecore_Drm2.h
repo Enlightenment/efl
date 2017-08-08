@@ -516,18 +516,6 @@ EAPI unsigned int ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output);
 EAPI Ecore_Drm2_Fb *ecore_drm2_output_latest_fb_get(Ecore_Drm2_Output *output);
 
 /**
- * Get the size of the crtc for a given output
- *
- * @param output
- * @param *w
- * @param *h
- *
- * @ingroup Ecore_Drm2_Output_Group
- * @since 1.18
- */
-EAPI void ecore_drm2_output_crtc_size_get(Ecore_Drm2_Output *output, int *w, int *h);
-
-/**
  * Get if a given output is marked as the primary output
  *
  * @param output
