@@ -28,7 +28,7 @@ struct _EE_Wl_Device
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
-static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[20];
+static Ecore_Event_Handler *_ecore_evas_wl_event_hdls[17];
 
 static void _ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 static void _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int resize);
@@ -588,7 +588,7 @@ _ecore_evas_wl_common_cb_aux_hint_allowed(void *data  EINA_UNUSED, int type EINA
                {
                   _ecore_evas_wl_common_state_update(ee);
                   aux->notified = 1;
-                }
+               }
              break;
           }
      }
@@ -1080,6 +1080,26 @@ _ecore_evas_wl_common_cb_seat_capabilities_changed(void *d EINA_UNUSED, int t EI
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_ecore_evas_wl_common_cb_iconify_state_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Wl2_Event_Window_Iconify_State_Change *ev;
+
+   ev = event;
+   ee = ecore_event_window_match(ev->win);
+   if (!ee) return ECORE_CALLBACK_PASS_ON;
+   if (!ev->force) return ECORE_CALLBACK_PASS_ON;
+   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+
+   if (ee->prop.iconified == ev->iconified)
+     return ECORE_CALLBACK_PASS_ON;
+
+   ee->prop.iconified = ev->iconified;
+   _ecore_evas_wl_common_state_update(ee);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 static int
 _ecore_evas_wl_common_init(void)
 {
@@ -1138,6 +1158,9 @@ _ecore_evas_wl_common_init(void)
    _ecore_evas_wl_event_hdls[15] =
      ecore_event_handler_add(ECORE_WL2_EVENT_AUX_HINT_SUPPORTED,
                              _ecore_evas_wl_common_cb_aux_hint_supported, NULL);
+   _ecore_evas_wl_event_hdls[16] =
+     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE,
+                             _ecore_evas_wl_common_cb_iconify_state_change, NULL);
 
    ecore_event_evas_init();
 
