@@ -116,7 +116,6 @@ static inline void _vtable_chain_write_prepare(Dich_Chain1 *dst);
 static inline void
 _vtable_chain_merge(Dich_Chain1 *dst, const Dich_Chain1 *src)
 {
-   Eina_Bool writeable = EINA_FALSE;
    size_t j;
    const op_type_funcs *sf = src->chain2->funcs;
    op_type_funcs *df = dst->chain2->funcs;
@@ -131,12 +130,8 @@ _vtable_chain_merge(Dich_Chain1 *dst, const Dich_Chain1 *src)
      {
         if (sf->func && memcmp(df, sf, sizeof(*df)))
           {
-             if (!writeable)
-               {
-                  _vtable_chain_write_prepare(dst);
-                  df = dst->chain2->funcs + j;
-               }
-
+             _vtable_chain_write_prepare(dst);
+             df = dst->chain2->funcs + j;
              memcpy(df, sf, sizeof(*df));
           }
      }
@@ -1141,6 +1136,14 @@ _vtable_init(Eo_Vtable *vtable, size_t size)
    vtable->chain = calloc(vtable->size, sizeof(*vtable->chain));
 }
 
+static void
+_vtable_free(Eo_Vtable *vtable)
+{
+   if (!vtable) return;
+   eina_freeq_ptr_main_add(vtable, EINA_FREE_CB(_vtable_func_clean_all), 0);
+   eina_freeq_ptr_main_add(vtable, free, sizeof(*vtable));
+}
+
 static Eina_Bool
 _eo_class_mro_has(const _Efl_Class *klass, const _Efl_Class *find)
 {
@@ -1640,11 +1643,12 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
 
         if (!_eo_class_funcs_set(vtable, ops, obj->klass, klass, 0, EINA_TRUE))
           {
-             // FIXME: Maybe leaking some chain stuff from copy above?
-             ERR("Failed to override functions for %p", eo_id);
+             ERR("Failed to override functions for %s@%p. All previous "
+                 "overrides have been reset.", obj->klass->desc->name, eo_id);
              if (obj->opt->vtable == vtable)
                EO_OPTIONAL_COW_SET(obj, vtable, NULL);
-             free(vtable);
+             else
+               _vtable_free(vtable);
              goto err;
           }
 
@@ -1654,7 +1658,7 @@ efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
      {
         if (obj->opt->vtable)
           {
-             eina_freeq_ptr_main_add(obj->opt->vtable, free, 0);
+             _vtable_free(obj->opt->vtable);
              EO_OPTIONAL_COW_SET(obj, vtable, NULL);
           }
      }
