@@ -235,7 +235,7 @@ _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA_U
 int
 main(void)
 {
-   // Unless Evas 3D supports Software renderer, we set gl backend forcely.
+   // Unless Evas 3D supports Software renderer, we force use of the gl backend.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
 
    Scene_Data data;

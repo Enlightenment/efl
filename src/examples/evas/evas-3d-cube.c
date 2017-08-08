@@ -218,7 +218,7 @@ _scene_setup(Scene_Data *data)
 int
 main(void)
 {
-   // Unless Evas 3D supports Software renderer, we set gl backend forcely.
+   // Unless Evas 3D supports Software renderer, we force use of the gl backend.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
 
    Scene_Data data;
