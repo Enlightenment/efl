@@ -123,7 +123,10 @@ static struct _Cursor_Id _cursors[] =
    CURSOR(ELM_CURSOR_WATCH              , WATCH              , ECORE_COCOA_CURSOR_DEFAULT),
    CURSOR(ELM_CURSOR_XTERM              , XTERM              , ECORE_COCOA_CURSOR_IBEAM)
 };
+
+#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_COCOA) || defined(HAVE_ELEMENTARY_WIN32)
 static const int _cursors_count = sizeof(_cursors)/sizeof(struct _Cursor_Id);
+#endif
 
 #define ELM_CURSOR_GET_OR_RETURN(cur, obj, ...)         \
   Elm_Cursor *cur;                                      \
