@@ -76,6 +76,7 @@ ecore_idler_example \
 ecore_imf_example \
 ecore_job_example \
 ecore_poller_example \
+ecore_promise2_example \
 ecore_server_bench \
 ecore_thread_example \
 ecore_time_functions_example \
@@ -292,6 +293,9 @@ endif
 ecore_poller_example_SOURCES = ecore_poller_example.c
 ecore_poller_example_LDADD = $(ECORE_COMMON_LDADD)
 
+ecore_promise2_example_SOURCES = ecore_promise2_example.c
+ecore_promise2_example_LDADD = $(ECORE_COMMON_LDADD)
+
 ecore_server_bench_SOURCES = ecore_server_bench.c
 ecore_server_bench_LDADD = $(ECORE_CON_COMMON_LDADD)
 
@@ -425,6 +429,7 @@ ecore_job_example.c \
 ecore_pipe_gstreamer_example.c \
 ecore_pipe_simple_example.c \
 ecore_poller_example.c \
+ecore_promise2_example.c \
 ecore_server_bench.c \
 ecore_thread_example.c \
 ecore_time_functions_example.c \

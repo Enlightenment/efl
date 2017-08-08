@@ -226,6 +226,7 @@ tests/ecore/ecore_test_ecore_thread_eina_thread_queue.c \
 tests/ecore/ecore_test_ecore_input.c \
 tests/ecore/ecore_test_ecore_file.c \
 tests/ecore/ecore_test_promise.c \
+tests/ecore/ecore_test_promise2.c \
 tests/ecore/ecore_test_job.c \
 tests/ecore/ecore_test_args.c \
 tests/ecore/ecore_suite.h
