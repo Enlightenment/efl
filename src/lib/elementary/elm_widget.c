@@ -3133,53 +3133,6 @@ _elm_widget_parent_highlight_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool h
 }
 
 EOLIAN static void
-_elm_widget_signal_emit(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source)
-{
-   if (evas_object_smart_type_check(obj, "elm_layout"))
-     elm_layout_signal_emit(obj, emission, source);
-   else if (evas_object_smart_type_check(obj, "elm_icon"))
-     {
-        WRN("Deprecated function. This functionality on icon objects"
-            " will be dropped on a next release.");
-        _elm_icon_signal_emit(obj, emission, source);
-     }
-}
-
-EOLIAN static void
-_elm_widget_signal_callback_add(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
-{
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   if (evas_object_smart_type_check(obj, "elm_layout"))
-     elm_layout_signal_callback_add(obj, emission, source, func, data);
-   else if (evas_object_smart_type_check(obj, "elm_icon"))
-     {
-        WRN("Deprecated function. This functionality on icon objects"
-            " will be dropped on a next release.");
-
-        _elm_icon_signal_callback_add(obj, emission, source, func, data);
-     }
-}
-
-EOLIAN static void*
-_elm_widget_signal_callback_del(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func)
-{
-   void *data = NULL;
-
-   if (evas_object_smart_type_check(obj, "elm_layout"))
-     data = elm_layout_signal_callback_del(obj, emission, source, func);
-   else if (evas_object_smart_type_check(obj, "elm_icon"))
-     {
-        WRN("Deprecated function. This functionality on icon objects"
-            " will be dropped on a next release.");
-
-        data = _elm_icon_signal_callback_del(obj, emission, source, func);
-     }
-
-   return data;
-}
-
-EOLIAN static void
 _elm_widget_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool focus)
 {
    if (!sd->focused)
@@ -4123,7 +4076,7 @@ _elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *ed
      {
         char buf[128];
         snprintf(buf, sizeof(buf), "elm,state,orient,%d", sd->orient_mode);
-        elm_obj_widget_signal_emit(obj, buf, "elm");
+        elm_widget_signal_emit(obj, buf, "elm");
      }
 
    return ret;
@@ -4702,7 +4655,7 @@ _elm_widget_orientation_set(Eo *obj, Elm_Widget_Smart_Data *sd, int orient_mode)
      {
         char buf[128];
         snprintf(buf, sizeof(buf), "elm,state,orient,%d", orient_mode);
-        elm_obj_widget_signal_emit(obj, buf, "elm");
+        elm_widget_signal_emit(obj, buf, "elm");
      }
 }
 
@@ -6585,6 +6538,56 @@ elm_widget_content_part_unset(Evas_Object *obj,
         if (!part) return NULL;
      }
    return efl_content_unset(efl_part(obj, part));
+}
+
+EAPI void
+elm_widget_signal_emit(Eo *obj, const char *emission, const char *source)
+{
+   ELM_WIDGET_CHECK(obj);
+   if (evas_object_smart_type_check(obj, "elm_layout"))
+     elm_layout_signal_emit(obj, emission, source);
+   else if (evas_object_smart_type_check(obj, "elm_icon"))
+     {
+        WRN("Deprecated function. This functionality on icon objects"
+            " will be dropped on a next release.");
+        _elm_icon_signal_emit(obj, emission, source);
+     }
+}
+
+EAPI void
+elm_widget_signal_callback_add(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+{
+   ELM_WIDGET_CHECK(obj);
+   EINA_SAFETY_ON_NULL_RETURN(func);
+   if (evas_object_smart_type_check(obj, "elm_layout"))
+     elm_layout_signal_callback_add(obj, emission, source, func, data);
+   else if (evas_object_smart_type_check(obj, "elm_icon"))
+     {
+        WRN("Deprecated function. This functionality on icon objects"
+            " will be dropped on a next release.");
+
+        _elm_icon_signal_callback_add(obj, emission, source, func, data);
+     }
+}
+
+EAPI void *
+elm_widget_signal_callback_del(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func)
+{
+   void *data = NULL;
+
+   ELM_WIDGET_CHECK(obj) NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+   if (evas_object_smart_type_check(obj, "elm_layout"))
+     data = elm_layout_signal_callback_del(obj, emission, source, func);
+   else if (evas_object_smart_type_check(obj, "elm_icon"))
+     {
+        WRN("Deprecated function. This functionality on icon objects"
+            " will be dropped on a next release.");
+
+        data = _elm_icon_signal_callback_del(obj, emission, source, func);
+     }
+
+   return data;
 }
 
 

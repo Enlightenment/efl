@@ -534,15 +534,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      signal_callback_add {
-      	 [[Add signal callback]]
-         params {
-            @in emission: string; [[Signal emission]]
-            @in source: string; [[Signal source]]
-            @in func: Edje.Signal_Cb; [[Signal callback]]
-            @in data: void_ptr; [[Data pointer]]
-         }
-      }
       focus_next_manager_is {
          [['Virtual' function which checks if handling of passing focus to sub-objects is supported by widget.]]
          return: bool; [[$true on success, $false otherwise]]
@@ -691,22 +682,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @out direction: Efl.Canvas.Object; [[Direction]]
             @out direction_item: Elm.Widget.Item; [[Direction item]]
             @out weight: double; [[Weight]]
-         }
-      }
-      signal_callback_del {
-      	  [[Delete signal callback]]
-         return: void_ptr; [[Handle to deleted callback]]
-         params {
-            @in emission: string; [[Signal emission]]
-            @in source: string; [[Signal source]]
-            @in func: Edje.Signal_Cb; [[Callback function]]
-         }
-      }
-      signal_emit {
-      	 [[Emit signal on widget]]
-         params {
-            @in emission: string; [[Signal string]]
-            @in source: string; [[Signal source]]
          }
       }
       disable {
