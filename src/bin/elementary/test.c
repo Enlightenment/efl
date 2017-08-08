@@ -194,6 +194,7 @@ void test_menu2(void *data, Evas_Object *obj, void *event_info);
 void test_panel(void *data, Evas_Object *obj, void *event_info);
 void test_panel2(void *data, Evas_Object *obj, void *event_info);
 void test_panes(void *data, Evas_Object *obj, void *event_info);
+void test_panes_minsize(void *data, Evas_Object *obj, void *event_info);
 void test_calendar(void *data, Evas_Object *obj, void *event_info);
 void test_calendar2(void *data, Evas_Object *obj, void *event_info);
 void test_calendar3(void *data, Evas_Object *obj, void *event_info);
@@ -1000,7 +1001,7 @@ add_tests:
    ADD_TEST(NULL, "Dividers", "Panel", test_panel);
    ADD_TEST(NULL, "Dividers", "Panel Scrollable", test_panel2);
    ADD_TEST(NULL, "Dividers", "Panes", test_panes);
-
+   ADD_TEST(NULL, "Dividers", "Panes minsize", test_panes_minsize);
    //------------------------------//
    ADD_TEST(NULL, "Standardization", "Conformant", test_conformant);
    ADD_TEST(NULL, "Standardization", "Conformant 2", test_conformant2);
