@@ -1287,9 +1287,14 @@ _eina_value_type_int_convert_to(const Eina_Value_Type *type EINA_UNUSED, const E
             convert == EINA_VALUE_TYPE_STRING)
      {
         const char *other_mem;
-        char buf[64];
-        snprintf(buf, sizeof(buf), "%d", v);
-        other_mem = buf; /* required due &buf == buf */
+        if (type != EINA_VALUE_TYPE_ERROR)
+          {
+             char buf[64];
+             snprintf(buf, sizeof(buf), "%d", v);
+             other_mem = buf; /* required due &buf == buf */
+          }
+        else
+             other_mem = eina_error_msg_get(v);
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
    else
@@ -4785,6 +4790,20 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_BASICS[] = {
     _eina_value_type_ulong_vset,
     _eina_value_type_ulong_pset,
     _eina_value_type_ulong_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(Eina_Error),
+    "Eina_Error",
+    _eina_value_type_int_setup,
+    _eina_value_type_int_flush,
+    _eina_value_type_int_copy,
+    _eina_value_type_int_compare,
+    _eina_value_type_int_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_int_vset,
+    _eina_value_type_int_pset,
+    _eina_value_type_int_pget
   }
 };
 
@@ -4992,11 +5011,12 @@ eina_value_init(void)
    EINA_VALUE_TYPE_STRINGSHARE = _EINA_VALUE_TYPE_BASICS + 12;
    EINA_VALUE_TYPE_STRING      = _EINA_VALUE_TYPE_BASICS + 13;
    EINA_VALUE_TYPE_TIMESTAMP   = _EINA_VALUE_TYPE_BASICS +  14;
+   EINA_VALUE_TYPE_ERROR       = _EINA_VALUE_TYPE_BASICS +  15;
 
    _EINA_VALUE_TYPE_BASICS_START = _EINA_VALUE_TYPE_BASICS +  0;
-   _EINA_VALUE_TYPE_BASICS_END   = _EINA_VALUE_TYPE_BASICS + 14;
+   _EINA_VALUE_TYPE_BASICS_END   = _EINA_VALUE_TYPE_BASICS + 15;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((sizeof(_EINA_VALUE_TYPE_BASICS)/sizeof(_EINA_VALUE_TYPE_BASICS[0])) == 15, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((sizeof(_EINA_VALUE_TYPE_BASICS)/sizeof(_EINA_VALUE_TYPE_BASICS[0])) == 16, EINA_FALSE);
 
 
    EINA_VALUE_TYPE_ARRAY = &_EINA_VALUE_TYPE_ARRAY;
@@ -5068,6 +5088,7 @@ eina_value_shutdown(void)
 EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_START = NULL;
 EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END = NULL;
 
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ERROR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_USHORT = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UINT = NULL;
