@@ -785,12 +785,6 @@ EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, El
 EAPI Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_reconfigure(Evas_Object *obj);
 
-/**
- * Function to operate on a given widget's scrollabe children when necessary.
- * @warning free the returned list with eina_list_free().
- */
-EAPI Eina_List       *elm_widget_scrollable_children_get(const Evas_Object *obj);
-
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
 EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
