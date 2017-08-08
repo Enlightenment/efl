@@ -235,6 +235,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             sobj: Efl.Canvas.Object @nullable; [[Hover sub object]]
          }
       }
+      /* internal only - most objects use data = null as they work on
+         themselves except scroller itself */
       @property on_show_region_hook {
       	 [[Region hook on show property]]
          set {
@@ -244,6 +246,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             data: void_ptr @optional; [[Data pointer]]
          }
       }
+      /* this is a part api */
       @property domain_part_text_translatable {
       	 [[Translate domain text part property]]
          set {
@@ -270,14 +273,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             part: string; [[Part name]]
             domain: string; [[Domain name]]
             label: string; [[Label]]
-         }
-      }
-      @property scrollable_children {
-         get {
-            [[Function to operate on a given widget's scrollable children when necessary.
-
-              Warning: free the returned list with eina_list_free().]]
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[List of scrollable children]]
          }
       }
       @property scroll_hold {

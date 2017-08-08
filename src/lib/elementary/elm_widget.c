@@ -3510,25 +3510,6 @@ _elm_widget_parents_bounce_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, 
    while (parent_obj);
 }
 
-EOLIAN static Eina_List*
-_elm_widget_scrollable_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
-{
-   Eina_List *ret;
-   ret = NULL;
-
-   Eina_List *l;
-   Evas_Object *child;
-
-
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
-     {
-        if (elm_widget_is(child) && _elm_scrollable_is(child))
-          ret = eina_list_append(ret, child);
-     }
-
-   return ret;
-}
-
 EOLIAN static void
 _elm_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
@@ -3539,15 +3520,14 @@ _elm_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
            elm_interface_scrollable_hold_set(obj, EINA_TRUE);
         else
           {
-             Eina_List *scr_children, *l;
              Evas_Object *child;
+             Eina_List *l;
 
-             scr_children = elm_widget_scrollable_children_get(obj);
-             EINA_LIST_FOREACH(scr_children, l, child)
+             EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
-                  elm_interface_scrollable_hold_set(child, EINA_TRUE);
+                  if (elm_widget_is(child) && _elm_scrollable_is(child))
+                    elm_interface_scrollable_hold_set(child, EINA_TRUE);
                }
-             eina_list_free(scr_children);
           }
      }
    if (sd->parent_obj) elm_obj_widget_scroll_hold_push(sd->parent_obj);
@@ -3564,15 +3544,14 @@ _elm_widget_scroll_hold_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
            elm_interface_scrollable_hold_set(obj, EINA_FALSE);
         else
           {
-             Eina_List *scr_children, *l;
              Evas_Object *child;
+             Eina_List *l;
 
-             scr_children = elm_widget_scrollable_children_get(obj);
-             EINA_LIST_FOREACH(scr_children, l, child)
+             EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
-                  elm_interface_scrollable_hold_set(child, EINA_FALSE);
+                  if (elm_widget_is(child) && _elm_scrollable_is(child))
+                    elm_interface_scrollable_hold_set(child, EINA_FALSE);
                }
-             eina_list_free(scr_children);
           }
      }
    if (sd->parent_obj) elm_obj_widget_scroll_hold_pop(sd->parent_obj);
@@ -3595,15 +3574,14 @@ _elm_widget_scroll_freeze_push(Eo *obj, Elm_Widget_Smart_Data *sd)
            elm_interface_scrollable_freeze_set(obj, EINA_TRUE);
         else
           {
-             Eina_List *scr_children, *l;
              Evas_Object *child;
+             Eina_List *l;
 
-             scr_children = elm_widget_scrollable_children_get(obj);
-             EINA_LIST_FOREACH(scr_children, l, child)
+             EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
-                  elm_interface_scrollable_freeze_set(child, EINA_TRUE);
+                  if (elm_widget_is(child) && _elm_scrollable_is(child))
+                    elm_interface_scrollable_freeze_set(child, EINA_TRUE);
                }
-             eina_list_free(scr_children);
           }
      }
    if (sd->parent_obj) elm_obj_widget_scroll_freeze_push(sd->parent_obj);
@@ -3620,15 +3598,14 @@ _elm_widget_scroll_freeze_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
            elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
         else
           {
-             Eina_List *scr_children, *l;
              Evas_Object *child;
+             Eina_List *l;
 
-             scr_children = elm_widget_scrollable_children_get(obj);
-             EINA_LIST_FOREACH(scr_children, l, child)
+             EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
-                  elm_interface_scrollable_freeze_set(child, EINA_FALSE);
+                  if (elm_widget_is(child) && _elm_scrollable_is(child))
+                    elm_interface_scrollable_freeze_set(child, EINA_FALSE);
                }
-             eina_list_free(scr_children);
           }
      }
    if (sd->parent_obj) elm_obj_widget_scroll_freeze_pop(sd->parent_obj);
@@ -4045,13 +4022,12 @@ _elm_widget_drag_child_locked_y_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *
 EOLIAN static void
 _elm_widget_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Bool enable EINA_UNUSED)
 {
-	return;
 }
 
 EOLIAN static Eina_Bool
 _elm_widget_item_loop_enabled_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
-	return EINA_FALSE;
+   return EINA_FALSE;
 }
 
 EOLIAN static Elm_Theme_Apply
