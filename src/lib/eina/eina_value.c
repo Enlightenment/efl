@@ -167,7 +167,7 @@ _eina_value_type_uchar_convert_to(const Eina_Value_Type *type EINA_UNUSED, const
         short other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -315,7 +315,7 @@ _eina_value_type_ushort_convert_to(const Eina_Value_Type *type EINA_UNUSED, cons
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -465,7 +465,7 @@ _eina_value_type_uint_convert_to(const Eina_Value_Type *type EINA_UNUSED, const 
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         if (EINA_UNLIKELY(v > (unsigned int)eina_value_int_max))
@@ -619,7 +619,7 @@ _eina_value_type_ulong_convert_to(const Eina_Value_Type *type EINA_UNUSED, const
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         if (EINA_UNLIKELY(v > (unsigned int)eina_value_int_max))
@@ -778,7 +778,7 @@ _eina_value_type_uint64_convert_to(const Eina_Value_Type *type EINA_UNUSED, cons
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         if (EINA_UNLIKELY(v > (unsigned int)eina_value_int_max))
@@ -936,7 +936,7 @@ _eina_value_type_char_convert_to(const Eina_Value_Type *type EINA_UNUSED, const 
         short other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -1094,7 +1094,7 @@ _eina_value_type_short_convert_to(const Eina_Value_Type *type EINA_UNUSED, const
         short other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -1258,7 +1258,7 @@ _eina_value_type_int_convert_to(const Eina_Value_Type *type EINA_UNUSED, const E
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -1424,7 +1424,7 @@ _eina_value_type_long_convert_to(const Eina_Value_Type *type EINA_UNUSED, const 
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_int_min))
@@ -1597,7 +1597,7 @@ _eina_value_type_int64_convert_to(const Eina_Value_Type *type EINA_UNUSED, const
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_int_min))
@@ -1776,7 +1776,7 @@ _eina_value_type_float_convert_to(const Eina_Value_Type *type EINA_UNUSED, const
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_int_min))
@@ -1957,7 +1957,7 @@ _eina_value_type_double_convert_to(const Eina_Value_Type *type EINA_UNUSED, cons
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_int_min))
@@ -2123,7 +2123,7 @@ _eina_value_type_string_common_convert_to(const Eina_Value_Type *type EINA_UNUSE
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem;
         if ((sscanf(v, "%d", &other_mem) != 1) &&
@@ -3438,7 +3438,7 @@ _eina_value_type_timeval_convert_to(const Eina_Value_Type *type EINA_UNUSED, con
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_INT)
+   else if ((convert == EINA_VALUE_TYPE_INT) || (convert == EINA_VALUE_TYPE_ERROR))
      {
         int other_mem = v.tv_sec;
         if (EINA_UNLIKELY(v.tv_sec < eina_value_int_min))
@@ -4554,6 +4554,20 @@ _eina_value_type_optional_pget(const Eina_Value_Type *type EINA_UNUSED, const vo
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_eina_value_type_eina_error_convert_to(const Eina_Value_Type *type, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
+       convert == EINA_VALUE_TYPE_STRING)
+     {
+        const Eina_Error v = *(const Eina_Error *)type_mem;
+        const char *msg = eina_error_msg_get(v);
+        return eina_value_type_pset(convert, convert_mem, &msg);
+     }
+
+   return _eina_value_type_int_convert_to(type, convert, type_mem, convert_mem);
+}
+
 EAPI const Eina_Value_Type _EINA_VALUE_TYPE_OPTIONAL = {
   EINA_VALUE_TYPE_VERSION,
   sizeof(Eina_Value_Union),
@@ -4785,6 +4799,20 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_BASICS[] = {
     _eina_value_type_ulong_vset,
     _eina_value_type_ulong_pset,
     _eina_value_type_ulong_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(Eina_Error),
+    "Eina_Error",
+    _eina_value_type_int_setup,
+    _eina_value_type_int_flush,
+    _eina_value_type_int_copy,
+    _eina_value_type_int_compare,
+    _eina_value_type_eina_error_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_int_vset,
+    _eina_value_type_int_pset,
+    _eina_value_type_int_pget
   }
 };
 
@@ -4992,11 +5020,12 @@ eina_value_init(void)
    EINA_VALUE_TYPE_STRINGSHARE = _EINA_VALUE_TYPE_BASICS + 12;
    EINA_VALUE_TYPE_STRING      = _EINA_VALUE_TYPE_BASICS + 13;
    EINA_VALUE_TYPE_TIMESTAMP   = _EINA_VALUE_TYPE_BASICS +  14;
+   EINA_VALUE_TYPE_ERROR       = _EINA_VALUE_TYPE_BASICS +  15;
 
    _EINA_VALUE_TYPE_BASICS_START = _EINA_VALUE_TYPE_BASICS +  0;
-   _EINA_VALUE_TYPE_BASICS_END   = _EINA_VALUE_TYPE_BASICS + 14;
+   _EINA_VALUE_TYPE_BASICS_END   = _EINA_VALUE_TYPE_BASICS + 15;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((sizeof(_EINA_VALUE_TYPE_BASICS)/sizeof(_EINA_VALUE_TYPE_BASICS[0])) == 15, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((sizeof(_EINA_VALUE_TYPE_BASICS)/sizeof(_EINA_VALUE_TYPE_BASICS[0])) == 16, EINA_FALSE);
 
 
    EINA_VALUE_TYPE_ARRAY = &_EINA_VALUE_TYPE_ARRAY;
@@ -5068,6 +5097,7 @@ eina_value_shutdown(void)
 EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_START = NULL;
 EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END = NULL;
 
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ERROR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_USHORT = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UINT = NULL;
