@@ -476,20 +476,6 @@ EAPI Eina_Bool ecore_drm2_output_backlight_get(Ecore_Drm2_Output *output);
 EAPI Ecore_Drm2_Output *ecore_drm2_output_find(Ecore_Drm2_Device *device, int x, int y);
 
 /**
- * Get the geometry of a given output
- *
- * @param output
- * @param x
- * @param y
- * @param w
- * @param h
- *
- * @ingroup Ecore_Drm2_Output_Group
- * @since 1.18
- */
-EAPI void ecore_drm2_output_geometry_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, int *h);
-
-/**
  * Get the dpi of a given output
  *
  * @param output
