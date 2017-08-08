@@ -29,148 +29,257 @@ static int _evas_loader_jp2k_log_dom = -1;
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_evas_loader_jp2k_log_dom, __VA_ARGS__)
 
+#define J2K_CODESTREAM_MAGIC "\xff\x4f\xff\x51"
+#define JP2_MAGIC "\x0d\x0a\x87\x0a"
+#define JP2_RFC3745_MAGIC "\x00\x00\x00\x0c\x6a\x50\x20\x20\x0d\x0a\x87\x0a"
+
+typedef struct
+{
+   unsigned char *base;
+   size_t length;
+   size_t idx;
+} Map_St;
+
 typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
 struct _Evas_Loader_Internal
 {
-  Eina_File *f;
-  Evas_Image_Load_Opts *opts;
+   Eina_File *f;
+   Evas_Image_Load_Opts *opts;
 };
 
 static void
-_jp2k_error_cb(const char *msg EINA_UNUSED, void *data EINA_UNUSED)
+_jp2k_quiet_callback(const char *msg, void *client_data)
 {
-//   ERR("OpenJPEG internal error: '%s'.", msg);
+   (void)msg;
+   (void)client_data;
 }
 
-static void
-_jp2k_warning_cb(const char *msg EINA_UNUSED, void *data EINA_UNUSED)
+static OPJ_SIZE_T
+_jp2k_read_fn(void *buf, OPJ_SIZE_T size, void *data)
 {
-//   WRN("OpenJPEG internal warning: '%s'.", msg);
+   Map_St *map = data;
+   OPJ_SIZE_T offset;
+
+   offset = map->length - map->idx;
+   if (offset == 0)
+     return (OPJ_SIZE_T)-1;
+   if (offset > size)
+     offset = size;
+   memcpy(buf, map->base + map->idx, offset);
+   map->idx += offset;
+
+   return offset;
 }
 
-static void
-_jp2k_info_cb(const char *msg EINA_UNUSED, void *data EINA_UNUSED)
+static OPJ_OFF_T
+_jp2k_seek_cur_fn(OPJ_OFF_T size, void *data)
 {
-//   INF("OpenJPEG internal information: '%s'.", msg);
+   Map_St *map = data;
+
+   if (size > (OPJ_OFF_T)(map->length - map->idx))
+     size = (OPJ_OFF_T)(map->length - map->idx);
+
+   map->idx += size;
+
+   return map->idx;
+}
+
+static OPJ_BOOL
+_jp2k_seek_set_fn(OPJ_OFF_T size, void *data)
+{
+   Map_St *map = data;
+
+   if (size > (OPJ_OFF_T)map->length)
+     return OPJ_FALSE;
+
+   map->idx = size;
+
+   return OPJ_TRUE;
 }
 
 static Eina_Bool
 evas_image_load_file_head_jp2k_internal(unsigned int *w, unsigned int *h,
 					unsigned char *alpha,
-					Evas_Image_Load_Opts *opts EINA_UNUSED,
                                         void *map, size_t length,
                                         int *error)
 {
-   opj_event_mgr_t event_mgr;
-   opj_dparameters_t params;
-   opj_dinfo_t *info;
-   opj_cio_t *cio;
-   opj_image_t *image;
-   int format;
-   int k;
-   const unsigned char sig_j2k[2] =
-     { 0xff, 0x4f };
-   const unsigned char sig_jp2[10] =
-     { 0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a };
+   Map_St map_st;
+   opj_dparameters_t core;
+   opj_codec_t *codec;
+   opj_stream_t *st;
+   opj_image_t* image;
+   OPJ_CODEC_FORMAT cfmt;
 
-   if (length < 2)
+   map_st.base = map;
+   map_st.length = length;
+   map_st.idx = 0;
+
+   /* default parameters */
+   memset(&core, 0, sizeof(opj_dparameters_t));
+   opj_set_default_decoder_parameters(&core);
+
+   /* magic check */
+   cfmt = OPJ_CODEC_UNKNOWN;
+   if (map_st.length >= 4)
      {
+        if (memcmp(map_st.base, J2K_CODESTREAM_MAGIC, 4) == 0)
+          cfmt = OPJ_CODEC_J2K;
+        else if ((memcmp(map_st.base, JP2_MAGIC, 4) == 0) ||
+                 ((map_st.length >= 12) && (memcmp(map_st.base, JP2_RFC3745_MAGIC, 12) == 0)))
+          cfmt = OPJ_CODEC_JP2;
+     }
+
+   if (cfmt == OPJ_CODEC_UNKNOWN)
+     {
+        ERR("jpeg200 file format invalid");
         *error = EVAS_LOAD_ERROR_GENERIC;
         return EINA_FALSE;
      }
 
-   if ((length >= 2) && (!memcmp(map, sig_j2k, 2))) format = CODEC_J2K;
-   else if ((length >= 10) && (!memcmp(map, sig_jp2, 10))) format = CODEC_JP2;
-   else return EINA_FALSE;
-
-   memset(&event_mgr, 0, sizeof(event_mgr));
-   event_mgr.error_handler = _jp2k_error_cb;
-   event_mgr.warning_handler = _jp2k_warning_cb;
-   event_mgr.info_handler = _jp2k_info_cb;
-
-   opj_set_default_decoder_parameters(&params);
-   info = opj_create_decompress(format);
-   if (!info)
+   /* codec */
+   codec = opj_create_decompress(cfmt);
+   if (!codec)
      {
+        ERR("can't create codec");
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return EINA_FALSE;
      }
-   opj_set_event_mgr((opj_common_ptr)info, &event_mgr, NULL);
-   opj_setup_decoder(info, &params);
-
-   cio = opj_cio_open((opj_common_ptr)info, map, length);
-   if (!cio)
+   opj_set_info_handler(codec, _jp2k_quiet_callback, NULL);
+   opj_set_warning_handler(codec, _jp2k_quiet_callback, NULL);
+   opj_set_error_handler(codec, _jp2k_quiet_callback, NULL);
+   if (!opj_setup_decoder(codec, &core))
      {
+        ERR("can't setup decoder");
+        opj_destroy_codec(codec);
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return EINA_FALSE;
+     }
+   //opj_codec_set_threads(codec, 0)
+
+   /* stream */
+   st = opj_stream_create(OPJ_J2K_STREAM_CHUNK_SIZE, OPJ_TRUE);
+   if (!st)
+     {
+        ERR("can't create stream");
+        opj_destroy_codec(codec);
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return EINA_FALSE;
      }
 
-   image = opj_decode(info, cio);
-   if (!image)
-     {
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        return EINA_FALSE;
-     }
+   opj_stream_set_user_data(st, &map_st, NULL);
+   opj_stream_set_user_data_length(st, map_st.length);
+   opj_stream_set_read_function(st, _jp2k_read_fn);
+   opj_stream_set_skip_function(st, _jp2k_seek_cur_fn);
+   opj_stream_set_seek_function(st, _jp2k_seek_set_fn);
 
-   for (k = 1; k < image->numcomps; k++)
-     {
-        if (image->comps[k].w != image->comps[0].w)
-          goto free_image;
-        if (image->comps[k].h != image->comps[0].h)
-          goto free_image;
-        if (image->comps[k].prec > 8)
-          goto free_image;
-    }
-
-   *w = image->comps[0].w;
-   *h = image->comps[0].h;
+   opj_read_header(st, codec, &image);
+   *w = image->x1 - image->x0;
+   *h = image->y1 - image->y0;
    *alpha = ((image->numcomps == 4) || (image->numcomps == 2)) ? 1 : 0;
    *error = EVAS_LOAD_ERROR_NONE;
 
    opj_image_destroy(image);
-   opj_cio_close(cio);
-   opj_destroy_decompress(info);
+   opj_stream_destroy(st);
+   opj_destroy_codec(codec);
 
    return EINA_TRUE;
-
- free_image:
-   *error = EVAS_LOAD_ERROR_GENERIC;
-   opj_image_destroy(image);
-   opj_cio_close(cio);
-   opj_destroy_decompress(info);
-
-   return EINA_FALSE;
 }
 
 static Eina_Bool
-evas_image_load_file_data_jp2k_internal(Evas_Image_Load_Opts *opts EINA_UNUSED,
-					Evas_Image_Property *prop EINA_UNUSED,
-					void *pixels,
+evas_image_load_file_data_jp2k_internal(void *pixels,
                                         void *map, size_t length,
                                         int *error)
 {
-   opj_dparameters_t params;
-   opj_dinfo_t *info;
-   opj_cio_t *cio;
-   opj_image_t *image;
+   Map_St map_st;
+   opj_dparameters_t core;
+   opj_codec_t *codec;
+   opj_stream_t *st;
+   opj_image_t* image;
    unsigned int *iter;
-   int format;
+   OPJ_CODEC_FORMAT cfmt;
    int idx;
-   const unsigned char sig_j2k[2] =
-     { 0xff, 0x4f };
-   const unsigned char sig_jp2[10] =
-     { 0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a };
 
-   if ((length >= 2) && (!memcmp(map, sig_j2k, 2))) format = CODEC_J2K;
-   else if ((length >= 10) && (!memcmp(map, sig_jp2, 10))) format = CODEC_JP2;
-   else return EINA_FALSE;
+   map_st.base = map;
+   map_st.length = length;
+   map_st.idx = 0;
 
-   opj_set_default_decoder_parameters(&params);
-   info = opj_create_decompress(format);
-   opj_set_event_mgr((opj_common_ptr)info, NULL, NULL);
-   opj_setup_decoder(info, &params);
-   cio = opj_cio_open((opj_common_ptr)info, map, length);
-   image = opj_decode(info, cio);
+   /* default parameters */
+   memset(&core, 0, sizeof(opj_dparameters_t));
+   opj_set_default_decoder_parameters(&core);
+   core.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
+
+   /* magic check */
+   cfmt = OPJ_CODEC_UNKNOWN;
+   if (map_st.length >= 4)
+     {
+        if (memcmp(map_st.base, J2K_CODESTREAM_MAGIC, 4) == 0)
+          cfmt = OPJ_CODEC_J2K;
+        else if ((memcmp(map_st.base, JP2_MAGIC, 4) == 0) ||
+                 ((map_st.length >= 12) && (memcmp(map_st.base, JP2_RFC3745_MAGIC, 12) == 0)))
+          cfmt = OPJ_CODEC_JP2;
+     }
+
+   if (cfmt == OPJ_CODEC_UNKNOWN)
+     {
+        ERR("jpeg200 file format invalid\n");
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        return EINA_FALSE;
+     }
+
+   /* codec */
+   codec = opj_create_decompress(cfmt);
+   if (!codec)
+     {
+        ERR("can't create codec\n");
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return EINA_FALSE;
+     }
+   opj_set_info_handler(codec, _jp2k_quiet_callback, NULL);
+   opj_set_warning_handler(codec, _jp2k_quiet_callback, NULL);
+   opj_set_error_handler(codec, _jp2k_quiet_callback, NULL);
+   if (!opj_setup_decoder(codec, &core))
+     {
+        ERR("can't setup decoder\n");
+        opj_destroy_codec(codec);
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return EINA_FALSE;
+     }
+   //opj_codec_set_threads(codec, 0)
+
+   /* stream */
+   st = opj_stream_create(OPJ_J2K_STREAM_CHUNK_SIZE, OPJ_TRUE);
+   if (!st)
+     {
+        ERR("can't create stream\n");
+        opj_destroy_codec(codec);
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return EINA_FALSE;
+     }
+
+   opj_stream_set_user_data(st, &map_st, NULL);
+   opj_stream_set_user_data_length(st, map_st.length);
+   opj_stream_set_read_function(st, _jp2k_read_fn);
+   opj_stream_set_skip_function(st, _jp2k_seek_cur_fn);
+   opj_stream_set_seek_function(st, _jp2k_seek_set_fn);
+
+   if (!opj_read_header(st, codec, &image))
+     {
+        ERR("can not read image header\n");
+        opj_stream_destroy(st);
+        opj_destroy_codec(codec);
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        return EINA_FALSE;
+     }
+
+   if (!(opj_decode(codec, st, image) && opj_end_decompress(codec, st)))
+     {
+        ERR("can not decode image\n");
+        opj_image_destroy(image);
+        opj_stream_destroy(st);
+        opj_destroy_codec(codec);
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        return EINA_FALSE;
+     }
 
    iter = pixels;
    idx = 0;
@@ -190,8 +299,8 @@ evas_image_load_file_data_jp2k_internal(Evas_Image_Load_Opts *opts EINA_UNUSED,
         int r;
         int g;
         int b;
-        int i;
-        int j;
+        unsigned int i;
+        unsigned int j;
 
         for (j = 0; j < image->comps[0].h; j++)
           {
@@ -235,8 +344,8 @@ evas_image_load_file_data_jp2k_internal(Evas_Image_Load_Opts *opts EINA_UNUSED,
      {
         int a;
         int g;
-        int i;
-        int j;
+        unsigned int i;
+        unsigned int j;
 
         for (j = 0; j < image->comps[0].h; j++)
           {
@@ -263,8 +372,8 @@ evas_image_load_file_data_jp2k_internal(Evas_Image_Load_Opts *opts EINA_UNUSED,
      }
 
    opj_image_destroy(image);
-   opj_cio_close(cio);
-   opj_destroy_decompress(info);
+   opj_stream_destroy(st);
+   opj_destroy_codec(codec);
 
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
@@ -303,12 +412,10 @@ evas_image_load_file_head_jp2k(void *loader_data,
                                int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
-   Evas_Image_Load_Opts *opts;
    Eina_File *f;
    void *map;
    Eina_Bool val;
 
-   opts = loader->opts;
    f = loader->f;
 
    map = eina_file_map_all(f, EINA_FILE_RANDOM);
@@ -320,7 +427,6 @@ evas_image_load_file_head_jp2k(void *loader_data,
 
    val = evas_image_load_file_head_jp2k_internal(&prop->w, &prop->h,
 						 &prop->alpha,
-						 opts,
                                                  map, eina_file_size_get(f),
                                                  error);
 
@@ -331,18 +437,16 @@ evas_image_load_file_head_jp2k(void *loader_data,
 
 static Eina_Bool
 evas_image_load_file_data_jp2k(void *loader_data,
-                               Evas_Image_Property *prop,
+                               Evas_Image_Property *prop EINA_UNUSED,
 			       void *pixels,
 			       int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
-   Evas_Image_Load_Opts *opts;
    Eina_File *f;
    void *map;
    Eina_Bool val = EINA_FALSE;
 
    f = loader->f;
-   opts = loader->opts;
 
    map = eina_file_map_all(f, EINA_FILE_WILLNEED);
    if (!map)
@@ -351,7 +455,7 @@ evas_image_load_file_data_jp2k(void *loader_data,
         goto on_error;
      }
 
-   val = evas_image_load_file_data_jp2k_internal(opts, prop, pixels,
+   val = evas_image_load_file_data_jp2k_internal(pixels,
                                                  map, eina_file_size_get(f),
                                                  error);
 
