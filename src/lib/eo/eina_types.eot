@@ -62,3 +62,7 @@ struct @extern Eina.Rw_Slice {
 }
 
 struct @extern Eina.Value.Type; [[Eina value type]]
+
+struct @extern Eina.Future.Scheduler; [[This struct is used as a bridge between Eina and the future scheduler.
+                                        By using the provided functions Eina can schedule futures resolutions,
+                                        rejections and cancelations to a safe context.]]

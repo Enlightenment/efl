@@ -159,6 +159,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(file);
    S(safepointer);
    S(slstr);
+   S(promise);
 #undef S
 
 struct eina_desc_setup
@@ -205,6 +206,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(file),
    S(safepointer),
    S(slstr),
+   S(promise),
 #undef S
 };
 static const size_t _eina_desc_setup_len = sizeof(_eina_desc_setup) /
@@ -305,7 +307,6 @@ eina_init(void)
    eina_cpu_count_internal();
 
    eina_log_timing(_eina_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
-
    _eina_main_count = 1;
    eina_evlog("-eina_init", NULL, 0.0, NULL);
    return 1;

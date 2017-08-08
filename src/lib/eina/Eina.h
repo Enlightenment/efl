@@ -273,6 +273,7 @@ extern "C" {
 #include <eina_freeq.h>
 #include <eina_slstr.h>
 #include <eina_debug.h>
+#include <eina_promise.h>
 
 #undef EAPI
 #define EAPI

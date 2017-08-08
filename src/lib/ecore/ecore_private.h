@@ -187,6 +187,10 @@ void         _ecore_idle_enterer_call(Eo *loop);
 
 void         _ecore_idle_exiter_call(Eo *loop);
 
+
+Eina_Future_Scheduler *_ecore_event_future_scheduler_get(void);
+
+Eina_Bool    _ecore_event_init(void);
 void         _ecore_event_shutdown(void);
 int          _ecore_event_exist(void);
 Ecore_Event *_ecore_event_add(int type,
@@ -381,6 +385,9 @@ void ecore_loop_future_unregister(Efl_Loop *l, Efl_Future *f);
 void ecore_loop_promise_register(Efl_Loop *l, Efl_Promise *p);
 void ecore_loop_promise_unregister(Efl_Loop *l, Efl_Promise *p);
 void ecore_loop_promise_fulfill(Efl_Promise *p);
+
+Eina_Bool efl_promise2_init(void);
+void efl_promise2_shutdown(void);
 
 // access to direct input cb
 #define ECORE_EVAS_INTERNAL

@@ -3286,5 +3286,12 @@ _efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
    return &version;
 }
 
+EOLIAN static Eina_Future_Scheduler *
+_efl_loop_future_scheduler_get(Eo *obj EINA_UNUSED,
+                               Efl_Loop_Data *pd EINA_UNUSED)
+{
+   return _ecore_event_future_scheduler_get();
+}
+
 
 #include "efl_loop.eo.c"

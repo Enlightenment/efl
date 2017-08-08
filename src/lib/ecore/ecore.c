@@ -251,6 +251,7 @@ ecore_init(void)
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    if (!ecore_mempool_init()) goto shutdown_mempool;
+   if (!_ecore_event_init()) goto shutdown_mempool;
    _ecore_main_loop_init();
 
    vpath = efl_add(EFL_VPATH_CORE_CLASS, NULL);
