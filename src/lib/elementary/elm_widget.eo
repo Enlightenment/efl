@@ -39,6 +39,23 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
    event_prefix: elm_widget;
    data: Elm_Widget_Smart_Data;
    methods {
+      @property resize_object @protected {
+         [[This is the internal canvas object managed by a widget.
+
+           This property is protected as it is meant for widget implementations
+           only, to set and access the internal canvas object. Do use this
+           function unless you're implementing a widget.
+         ]]
+         set {
+            [[Sets the new resize object for this widget.]]
+         }
+         values {
+            sobj: Efl.Canvas.Object @nullable;
+               [[A canvas object (often a $Efl.Canvas.Layout object).]]
+            sub_obj: bool; [[$true if sub object exists, $false otherwise]]
+         }
+      }
+
       @property focus {
       	 [[Focus property]]
          values {
@@ -239,15 +256,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          values {
             rotation: int; [[Orientation]]
-         }
-      }
-      @property resize_object {
-      	 [[Resize object property]]
-         set {
-         }
-         values {
-            sobj: Efl.Canvas.Object @nullable; [[Object]]
-            sub_obj: bool; [[$true if sub object exists, $false otherwise]]
          }
       }
       @property domain_translatable_part_text {
