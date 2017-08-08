@@ -20,7 +20,7 @@ EOLIAN static Elm_Theme_Apply
 _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   ELM_LAYOUT_DATA_GET(obj, ld);
+   EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    if (sd->orientation == EFL_ORIENT_HORIZONTAL)
      eina_stringshare_replace(&ld->group, "horizontal");

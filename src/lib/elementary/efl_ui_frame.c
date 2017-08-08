@@ -146,7 +146,7 @@ _on_frame_clicked(void *data,
 EOLIAN static void
 _efl_ui_frame_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Frame_Data *sd)
 {
-   ELM_LAYOUT_DATA_GET(obj, ld);
+   EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    if (ld->needs_size_calc)
      {

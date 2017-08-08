@@ -1020,7 +1020,7 @@ _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED
 EOLIAN static void
 _elm_scroller_custom_widget_base_theme_set(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, const char *klass, const char *group)
 {
-   ELM_LAYOUT_DATA_GET(obj, ld);
+   EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    EINA_SAFETY_ON_NULL_RETURN(klass);
    EINA_SAFETY_ON_NULL_RETURN(group);

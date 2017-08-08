@@ -448,7 +448,7 @@ _elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   ELM_LAYOUT_DATA_GET(obj, ld);
+   EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    _index_box_clear(obj, 0);
    _index_box_clear(obj, 1);
