@@ -1,4 +1,15 @@
 group { name: "elm/menu/item/default";
+   styles {
+      style { name: "menu_item_style";
+              base: STL_COL_PRIMER" style=shadow,bottom ellipsis=1.0 color_class=menu_item text_class=menu_item";
+      }
+      style { name: "menu_item_disabled_style";
+              base: STL_COL_PRIMER" style=shadow,bottom ellipsis=1.0 color_class=menu_item_disabled text_class=menu_item";
+      }
+      style { name: "menu_item_active_style";
+              base: STL_COL_PRIMER" style=glow ellipsis=1.0 color_class=menu_item_active text_class=menu_item";
+      }
+   }
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_horiz_out.png" COMP;
    images.image: "shadow_rounded_horiz.png" COMP;
@@ -71,8 +82,8 @@ group { name: "elm/menu/item/default";
             align: 1.0 0.5;
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events:  0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events:  0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to_x: "elm.swallow.content";
@@ -81,12 +92,13 @@ group { name: "elm/menu/item/default";
             rel2.to_x: "arrowspace";
             rel2.offset: -6 -1;
             rel2.relative: 0.0 1.0;
-            color: FN_COL_DEFAULT;
+            //color: FN_COL_DEFAULT;
             text { font: FN; size: 10;
+               style: "menu_item_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.0 0.5;
-               text_class: "menu_item";
+               //text_class: "menu_item";
             }
          }
          description { state: "active" 0.0;
@@ -98,18 +110,19 @@ group { name: "elm/menu/item/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to: "elm.text";
             rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "menu_item_disabled";
+            //color: FN_COL_DISABLE;
+            //color_class: "menu_item_disabled";
             text { font: FN; size: 10;
+               style: "menu_item_disabled_style";
                text_source: "elm.text";
                align: 0.0 0.5;
-               text_class: "menu_item";
+               //text_class: "menu_item";
             }
             visible: 0;
          }
@@ -122,20 +135,21 @@ group { name: "elm/menu/item/default";
             visible: 1;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "label3"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: 2 1;
             rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "menu_item_active";
+            //color: FN_COL_HIGHLIGHT;
+            //color_class: "menu_item_active";
             text { font: FN; size: 10;
+               style: "menu_item_active_style";
                text_source: "elm.text";
                align: 0.0 0.5;
-               text_class: "menu_item";
+               //text_class: "menu_item";
             }
             visible: 0;
          }
@@ -450,8 +464,8 @@ group { name: "elm/menu/main_menu_submenu/default";
             align: 1.0 0.5;
          }
       }
-      part { name: "elm.text"; type: TEXT; mouse_events:  0;
-         effect: SHADOW BOTTOM;
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events:  0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to_x: "elm.swallow.content";
@@ -460,12 +474,13 @@ group { name: "elm/menu/main_menu_submenu/default";
             rel2.to_x: "arrowspace";
             rel2.offset: -6 -1;
             rel2.relative: 0.0 1.0;
-            color: FN_COL_DEFAULT;
+            //color: FN_COL_DEFAULT;
             text { font: FN; size: 10;
+               style: "menu_item_style";
                min: 1 1;
                ellipsis: -1;
                align: 0.0 0.5;
-               text_class: "menu_item";
+               //text_class: "menu_item";
             }
          }
          description { state: "active" 0.0;
@@ -477,18 +492,19 @@ group { name: "elm/menu/main_menu_submenu/default";
             visible: 0;
          }
       }
-      part { name: "label2"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
+      part { name: "label2"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to: "elm.text";
             rel2.to: "elm.text";
-            color: FN_COL_DISABLE;
-            color_class: "menu_item_disabled";
+            //color: FN_COL_DISABLE;
+            //color_class: "menu_item_disabled";
             text { font: FN; size: 10;
+               style: "menu_item_disabled_style";
                text_source: "elm.text";
                align: 0.0 0.5;
-               text_class: "menu_item";
+               //text_class: "menu_item";
             }
             visible: 0;
          }
@@ -501,20 +517,21 @@ group { name: "elm/menu/main_menu_submenu/default";
             visible: 1;
          }
       }
-      part { name: "label3"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
+      part { name: "label3"; type: TEXTBLOCK; mouse_events: 0;
+         //effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: -2 -3;
             rel1.to: "elm.text";
             rel2.offset: 2 1;
             rel2.to: "elm.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "menu_item_active";
+            //color: FN_COL_HIGHLIGHT;
+            //color_class: "menu_item_active";
             text { font: FN; size: 10;
+               style: "menu_item_active_style";
                text_source: "elm.text";
                align: 0.0 0.5;
-               text_class: "menu_item";
+               //text_class: "menu_item";
             }
             visible: 0;
          }
