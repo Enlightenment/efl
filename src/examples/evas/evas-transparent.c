@@ -46,14 +46,14 @@ static const char *commands = \
   "\tm - turn off alpha"
   "\th - print help\n";
 
-struct exemple_data
+struct example_data
 {
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *bg;
 };
 
-static struct exemple_data d;
+static struct example_data d;
 
 /* Keyboard event callback routine, to enable toggling transparency on
  * and off.

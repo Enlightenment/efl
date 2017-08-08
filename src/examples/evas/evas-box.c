@@ -45,14 +45,14 @@ static const char *commands = \
   "\tShift + NUMBER - remove the child object at that position in the box\n"
   "\th - print help\n";
 
-struct exemple_data
+struct example_data
 {
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *bg, *box, *border;
 };
 
-static struct exemple_data d;
+static struct example_data d;
 
 static void /* custom 'diagonal' layout */
 _custom_layout(Evas_Object          *o,
