@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_WIDGET_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -56,6 +57,25 @@ static const Elm_Action key_actions[] = {
    {"item_pop", _key_action_item_pop},
    {NULL, NULL}
 };
+
+EOLIAN static void
+_elm_naviframe_elm_widget_resize_object_set(Eo *obj, Elm_Naviframe_Data *pd EINA_UNUSED,
+                                            Efl_Canvas_Object *sobj, Eina_Bool sub_obj)
+{
+   if (!sobj || !efl_finalized_get(obj)) goto super;
+   EINA_SAFETY_ON_TRUE_RETURN(sub_obj);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (wd->resize_obj == sobj) return;
+
+   // Detach the previous page as resize object to avoid any modifications to
+   // it by the widget implementation. This preserves clip, smart membership,
+   // focus, etc...
+   wd->resize_obj = NULL;
+
+super:
+   elm_obj_widget_resize_object_set(efl_super(obj, MY_CLASS), sobj, EINA_TRUE);
+}
 
 static void
 _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item_Data *it)
