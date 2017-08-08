@@ -1564,7 +1564,7 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 // A11Y Accessibility - END
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(efl_ui_slider, EFL_UI_SLIDER, ELM_LAYOUT, Efl_Ui_Slider_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(efl_ui_slider, EFL_UI_SLIDER, EFL_UI_LAYOUT, Efl_Ui_Slider_Data, Elm_Part_Data)
 
 static Eina_Bool
 _efl_ui_slider_content_set(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
@@ -1580,7 +1580,7 @@ _efl_ui_slider_content_set(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED, const c
 static EOLIAN Eina_Bool
 _efl_ui_slider_internal_part_efl_container_content_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Efl_Gfx *content)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
    ELM_PART_RETURN_VAL(_efl_ui_slider_content_set(pd->obj, sd, pd->part, content));
 }
@@ -1621,7 +1621,7 @@ _span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int w, int h)
 EOLIAN void
 _efl_ui_slider_internal_part_efl_gfx_size_hint_hint_min_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, int w, int h)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
 
    _span_size_set(pd->obj, sd, w, h);
@@ -1630,7 +1630,7 @@ _efl_ui_slider_internal_part_efl_gfx_size_hint_hint_min_set(Eo *obj, Elm_Part_Da
 EOLIAN void
 _efl_ui_slider_internal_part_efl_gfx_size_hint_hint_min_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, int *w, int *h)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, ELM_LAYOUT_INTERNAL_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
 
    if (_is_horizontal(sd->orientation))
@@ -1782,12 +1782,12 @@ elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_SLIDER_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_slider), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
 

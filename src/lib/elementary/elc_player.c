@@ -707,8 +707,8 @@ _elm_player_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
 
 /* Efl.Part implementation */
 
-ELM_PART_OVERRIDE(elm_player, ELM_PLAYER, ELM_LAYOUT, Elm_Player_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_player, ELM_PLAYER, ELM_LAYOUT, Elm_Player_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_player, ELM_PLAYER, EFL_UI_LAYOUT, Elm_Player_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_player, ELM_PLAYER, EFL_UI_LAYOUT, Elm_Player_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_player, "video")
 #include "elm_player_internal_part.eo.c"
 

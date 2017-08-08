@@ -18,9 +18,9 @@ struct _Elm_Layout_Part_Alias_Description
   const char *alias; /**< Alternate name for a given (real) part. Calls
                       * receiving this string as a part name will be translated
                       * to the string at
-                      * Elm.Layout_Part_Proxies_Description::real_part */
+                      * Efl.Ui.Layout_Part_Proxies_Description::real_part */
   const char *real_part; /**< Target part name for the alias set on
-                          * Elm.Layout_Part_Proxies_Description::real_part. An
+                          * Efl.Ui.Layout_Part_Proxies_Description::real_part. An
                           * example of usage would be "default" on that field,
                           * with "elm.content.swallow" on this one */
 };
@@ -92,7 +92,7 @@ EAPI void elm_layout_sizing_eval(Evas_Object *obj);
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_sizing_restricted_eval(Elm_Layout *obj, Eina_Bool width, Eina_Bool height);
+EAPI void elm_layout_sizing_restricted_eval(Evas_Object *obj, Eina_Bool width, Eina_Bool height);
 
 /**
  * @brief Add a callback for a (Edje) signal emitted by a layout widget's
@@ -693,4 +693,4 @@ EAPI const char *elm_layout_part_cursor_style_get(const Evas_Object *obj, const 
  */
 EAPI Eina_Bool elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);
 
-#include "elm_layout.eo.legacy.h"
+#include "efl_ui_layout.eo.legacy.h"

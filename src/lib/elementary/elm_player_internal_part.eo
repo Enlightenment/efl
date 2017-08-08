@@ -1,4 +1,4 @@
-class Elm.Player.Internal.Part (Elm.Layout.Internal.Part)
+class Elm.Player.Internal.Part (Efl.Ui.Layout.Internal.Part)
 {
    [[Elementary player internal part class]]
    data: null;

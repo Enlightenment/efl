@@ -428,10 +428,10 @@ _efl_ui_check_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_CHECK_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_check), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS()
+   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_check.eo.c"

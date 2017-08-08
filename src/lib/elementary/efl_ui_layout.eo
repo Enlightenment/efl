@@ -1,14 +1,12 @@
 import edje_types;
 
-class Elm.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
+class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                   Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect,
                   Efl.Canvas.Layout_Calc, Efl.Canvas.Layout_Signal,
                   Efl.Canvas.Layout_Group)
 {
    [[Elementary layout class]]
    legacy_prefix: elm_layout;
-   eo_prefix: elm_obj_layout;
-   event_prefix: elm_layout;
    data: Elm_Layout_Smart_Data;
    methods {
       @property theme {

@@ -1,4 +1,4 @@
-class Efl.Ui.Slider.Internal.Part (Elm.Layout.Internal.Part, Efl.Gfx.Size.Hint)
+class Efl.Ui.Slider.Internal.Part (Efl.Ui.Layout.Internal.Part, Efl.Gfx.Size.Hint)
 {
    [[Elementary slider internal part class]]
    data: Elm_Part_Data;

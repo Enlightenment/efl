@@ -8,7 +8,7 @@ enum Elm.Ctxpopup.Direction
    unknown [[Ctxpopup does not determine it's direction yet.]]
 }
 
-class Elm.Ctxpopup (Elm.Layout, Elm.Interface.Atspi_Widget_Action,
+class Elm.Ctxpopup (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
                     Efl.Orientation, Efl.Ui.Menu)
 {
    [[Elementary context popup class]]

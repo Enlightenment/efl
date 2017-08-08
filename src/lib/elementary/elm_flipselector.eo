@@ -1,4 +1,4 @@
-class Elm.Flipselector (Elm.Layout, Efl.Ui.Spin,
+class Elm.Flipselector (Efl.Ui.Layout, Efl.Ui.Spin,
                         Elm.Interface.Atspi_Widget_Action,
                         Efl.Ui.Selectable)
 {

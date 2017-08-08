@@ -896,7 +896,7 @@ _iterator_next(Border_Elements_Iterator *it, void **data)
    return EINA_FALSE;
 }
 
-static Elm_Layout *
+static Eo *
 _iterator_get_container(Border_Elements_Iterator *it)
 {
    return it->object;

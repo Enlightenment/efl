@@ -48,7 +48,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
         var screen_name = tweets[i].user.screen_name;
         var text = tweets[i].text;
 
-        var layout = new efl.Elm.Layout(win);
+        var layout = new efl.Efl.Ui.Layout(win);
         var filename = path.join(__dirname, 'twitter_example_01.edj');
         layout.setFile(filename, "tweet");
 

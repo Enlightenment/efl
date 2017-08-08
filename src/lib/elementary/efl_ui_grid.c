@@ -552,7 +552,7 @@ _grid_item_iterator_next(Grid_Item_Iterator *it, void **data)
    return EINA_TRUE;
 }
 
-static Elm_Layout *
+static Eo *
 _grid_item_iterator_get_container(Grid_Item_Iterator *it)
 {
    return it->object;

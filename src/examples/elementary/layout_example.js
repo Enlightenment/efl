@@ -12,7 +12,7 @@ box.setHintWeight(1.0, 1.0);
 win.setContent(box);
 box.setVisible(true);
 
-ly = new Elm.Layout(box);
+ly = new Efl.Ui.Layout(box);
 
 if (!ly.setTheme("layout", "application", "titlebar"))
 {
@@ -41,7 +41,7 @@ end_container = ly.part('elm.swallow.end').cast('Efl.Container');
 end_container.setContent(bt);
 ly.emitSignal('elm,state,end,visible', 'elm');
 
-ly = new Elm.Layout(box);
+ly = new Efl.Ui.Layout(box);
 filename = path.join(__dirname, 'layout_example.edj');
 ly.setFile(filename, 'example/mylayout');
 ly.setHintWeight(1.0, 1.0);

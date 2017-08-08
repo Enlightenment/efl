@@ -1,4 +1,4 @@
-class Elm.Naviframe (Elm.Layout, Elm.Interface.Atspi_Widget_Action)
+class Elm.Naviframe (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary naviframe class]]
    legacy_prefix: elm_naviframe;

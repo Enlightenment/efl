@@ -659,19 +659,19 @@ _elm_actionslider_class_constructor(Efl_Class *klass)
 }
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(elm_actionslider, ELM_ACTIONSLIDER, ELM_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_actionslider, ELM_ACTIONSLIDER, ELM_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_GET(elm_actionslider, ELM_ACTIONSLIDER, ELM_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_actionslider, ELM_ACTIONSLIDER, EFL_UI_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_actionslider, ELM_ACTIONSLIDER, EFL_UI_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_actionslider, ELM_ACTIONSLIDER, EFL_UI_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
 
 #include "elm_actionslider_internal_part.eo.c"
 /* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define ELM_ACTIONSLIDER_EXTRA_OPS \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_actionslider), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_actionslider)
 

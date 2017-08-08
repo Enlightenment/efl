@@ -1,4 +1,4 @@
-class Elm.Dayselector.Internal.Part (Elm.Layout.Internal.Part)
+class Elm.Dayselector.Internal.Part (Efl.Ui.Layout.Internal.Part)
 {
    [[Elementary dayselector internal part class]]
    data: null;

@@ -3234,8 +3234,8 @@ _elm_fileselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_fileselector, ELM_FILESELECTOR, ELM_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector, ELM_FILESELECTOR, ELM_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_fileselector, ELM_FILESELECTOR, EFL_UI_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector, ELM_FILESELECTOR, EFL_UI_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
 #include "elm_fileselector_internal_part.eo.c"
 
 /* Efl.Part end */

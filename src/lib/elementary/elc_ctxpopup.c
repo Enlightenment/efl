@@ -1573,10 +1573,10 @@ _elm_ctxpopup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Ctxpopup
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, ELM_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_ctxpopup, ELM_CTXPOPUP, EFL_UI_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_ctxpopup, ELM_CTXPOPUP, EFL_UI_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_ctxpopup, ELM_CTXPOPUP, EFL_UI_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, EFL_UI_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_ctxpopup, "default")
 #include "elm_ctxpopup_internal_part.eo.c"
 

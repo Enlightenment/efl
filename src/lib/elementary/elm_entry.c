@@ -999,7 +999,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
-   efl_event_callback_legacy_call(obj, ELM_LAYOUT_EVENT_THEME_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    evas_object_unref(obj);
 
@@ -6060,11 +6060,11 @@ _elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Entry_Data *sd)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_GET(elm_entry, ELM_ENTRY, ELM_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_entry, "icon")
 #include "elm_entry_internal_part.eo.c"
 
@@ -6072,14 +6072,14 @@ ELM_PART_CONTENT_DEFAULT_SET(elm_entry, "icon")
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT()
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT()
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define ELM_ENTRY_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_entry), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_entry)
 
 #include "elm_entry.eo.c"

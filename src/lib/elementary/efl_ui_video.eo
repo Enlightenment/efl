@@ -1,4 +1,4 @@
-class Efl.Ui.Video (Elm.Layout, Efl.File,
+class Efl.Ui.Video (Efl.Ui.Layout, Efl.File,
                  Efl.Player, Elm.Interface.Atspi_Widget_Action)
 {
    [[Efl UI video class]]

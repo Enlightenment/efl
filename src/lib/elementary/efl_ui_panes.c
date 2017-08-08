@@ -555,11 +555,11 @@ _efl_ui_panes_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT();
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX);
 
 #define EFL_UI_PANES_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_panes), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS()
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX)
 
 
 #include "efl_ui_panes.eo.c"
