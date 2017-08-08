@@ -273,7 +273,7 @@ AC_CHECK_HEADER([openjpeg.h], [have_dep="yes"])
 
 if test "x${have_dep}" = "xyes" ; then
    AC_CHECK_LIB([openjp2],
-      [opj_cio_open],
+      [opj_stream_create],
       [
        evas_image_loader_[]$1[]_libs="-lopenjp2"
        have_dep="yes"
@@ -282,21 +282,11 @@ if test "x${have_dep}" = "xyes" ; then
 fi
 
 if test "x${have_dep}" = "xno" ; then
-   PKG_CHECK_EXISTS([libopenjpeg1 >= 1.5],
+   PKG_CHECK_EXISTS([libopenjp2 >= 2.0],
       [
        have_dep="yes"
        have_dep_pc="yes"
-       requirement="libopenjpeg1 >= 1.5"
-      ],
-      [have_dep="no"])
-fi
-
-if test "x${have_dep}" = "xno" ; then
-   PKG_CHECK_EXISTS([libopenjpeg >= 1.5],
-      [
-       have_dep="yes"
-       have_dep_pc="yes"
-       requirement="libopenjpeg >= 1.5"
+       requirement="libopenjp2 >= 2.0"
       ],
       [have_dep="no"])
 fi
