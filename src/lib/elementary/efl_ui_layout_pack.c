@@ -18,15 +18,15 @@
 #include "../evas/canvas/evas_table.eo.h"
 
 /* layout internals for box & table */
-Eina_Bool    _efl_ui_layout_box_append(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child);
-Eina_Bool    _efl_ui_layout_box_prepend(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child);
-Eina_Bool    _efl_ui_layout_box_insert_before(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child, const Evas_Object *reference);
-Eina_Bool    _efl_ui_layout_box_insert_at(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child, unsigned int pos);
-Evas_Object *_efl_ui_layout_box_remove(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child);
-Eina_Bool    _efl_ui_layout_box_remove_all(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eina_Bool clear);
-Eina_Bool    _efl_ui_layout_table_pack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
-Evas_Object *_efl_ui_layout_table_unpack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child);
-Eina_Bool    _efl_ui_layout_table_clear(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eina_Bool clear);
+Eina_Bool    _efl_ui_layout_box_append(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child);
+Eina_Bool    _efl_ui_layout_box_prepend(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child);
+Eina_Bool    _efl_ui_layout_box_insert_before(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child, const Evas_Object *reference);
+Eina_Bool    _efl_ui_layout_box_insert_at(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child, unsigned int pos);
+Evas_Object *_efl_ui_layout_box_remove(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child);
+Eina_Bool    _efl_ui_layout_box_remove_all(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Eina_Bool clear);
+Eina_Bool    _efl_ui_layout_table_pack(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+Evas_Object *_efl_ui_layout_table_unpack(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child);
+Eina_Bool    _efl_ui_layout_table_clear(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Eina_Bool clear);
 
 #define BOX_CLASS   EFL_UI_LAYOUT_INTERNAL_BOX_CLASS
 #define TABLE_CLASS EFL_UI_LAYOUT_INTERNAL_TABLE_CLASS
@@ -38,7 +38,7 @@ typedef struct _Part_Item_Iterator Part_Item_Iterator;
 struct _Layout_Part_Data
 {
    Efl_Ui_Layout         *obj; // no ref
-   Elm_Layout_Smart_Data *sd;  // data xref
+   Efl_Ui_Layout_Data    *sd;  // data xref
    Eina_Stringshare      *part;
    unsigned char          temp;
 };

@@ -51,7 +51,7 @@ _efl_ui_panes_elm_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
    Evas_Coord minw = 0, minh = 0;
 
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   ELM_LAYOUT_DATA_GET(obj, ld);
+   EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    if (sd->orientation == EFL_ORIENT_HORIZONTAL)
      eina_stringshare_replace(&ld->group, "horizontal");

@@ -24,7 +24,7 @@
 
 Eo *_efl_ui_layout_pack_proxy_get(Efl_Ui_Layout *obj, Edje_Part_Type type, const char *part);
 static void _efl_model_properties_changed_cb(void *, const Efl_Event *);
-static Eina_Bool _efl_ui_layout_part_cursor_unset(Elm_Layout_Smart_Data *sd, const char *part_name);
+static Eina_Bool _efl_ui_layout_part_cursor_unset(Efl_Ui_Layout_Data *sd, const char *part_name);
 
 static const char SIG_THEME_CHANGED[] = "theme,changed";
 const char SIG_LAYOUT_FOCUSED[] = "focused";
@@ -63,18 +63,18 @@ static const char *_efl_ui_layout_swallow_parts[] = {
 
 /* these are data operated by layout's class functions internally, and
  * should not be messed up by inhering classes */
-typedef struct _Elm_Layout_Sub_Object_Data   Elm_Layout_Sub_Object_Data;
-typedef struct _Elm_Layout_Sub_Object_Cursor Elm_Layout_Sub_Object_Cursor;
-typedef struct _Elm_Layout_Sub_Iterator      Elm_Layout_Sub_Iterator;
+typedef struct _Efl_Ui_Layout_Sub_Object_Data   Efl_Ui_Layout_Sub_Object_Data;
+typedef struct _Efl_Ui_Layout_Sub_Object_Cursor Efl_Ui_Layout_Sub_Object_Cursor;
+typedef struct _Efl_Ui_Layout_Sub_Iterator      Efl_Ui_Layout_Sub_Iterator;
 
-struct _Elm_Layout_Sub_Iterator
+struct _Efl_Ui_Layout_Sub_Iterator
 {
    Eina_Iterator  iterator;
    Eina_Iterator *real_iterator;
    Efl_Ui_Layout *object;
 };
 
-struct _Elm_Layout_Sub_Object_Data
+struct _Efl_Ui_Layout_Sub_Object_Data
 {
    const char  *part;
    Evas_Object *obj;
@@ -101,7 +101,7 @@ struct _Elm_Layout_Sub_Object_Data
    } p;
 };
 
-struct _Elm_Layout_Sub_Object_Cursor
+struct _Efl_Ui_Layout_Sub_Object_Cursor
 {
    Evas_Object *obj;
    const char  *part;
@@ -111,11 +111,11 @@ struct _Elm_Layout_Sub_Object_Cursor
    Eina_Bool    engine_only : 1;
 };
 
-typedef struct _Elm_Layout_Sub_Property_Future Elm_Layout_Sub_Property_Future;
-struct _Elm_Layout_Sub_Property_Future
+typedef struct _Efl_Ui_Layout_Sub_Property_Future Efl_Ui_Layout_Sub_Property_Future;
+struct _Efl_Ui_Layout_Sub_Property_Future
 {
-   Elm_Layout_Smart_Data *pd;
-   Eina_Array            *name_arr;
+   Efl_Ui_Layout_Data *pd;
+   Eina_Array         *name_arr;
 };
 
 static void
@@ -129,7 +129,7 @@ _on_sub_object_size_hint_change(void *data,
 }
 
 static void
-_part_cursor_free(Elm_Layout_Sub_Object_Cursor *pc)
+_part_cursor_free(Efl_Ui_Layout_Sub_Object_Cursor *pc)
 {
    eina_stringshare_del(pc->part);
    eina_stringshare_del(pc->style);
@@ -139,7 +139,7 @@ _part_cursor_free(Elm_Layout_Sub_Object_Cursor *pc)
 }
 
 static void
-_sizing_eval(Evas_Object *obj, Elm_Layout_Smart_Data *sd)
+_sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
 {
    Evas_Coord minh = -1, minw = -1;
    Evas_Coord rest_w = 0, rest_h = 0;
@@ -159,8 +159,8 @@ _sizing_eval(Evas_Object *obj, Elm_Layout_Smart_Data *sd)
 
 /* common content cases for layout objects: icon and text */
 static inline void
-_icon_signal_emit(Elm_Layout_Smart_Data *sd,
-                  Elm_Layout_Sub_Object_Data *sub_d,
+_icon_signal_emit(Efl_Ui_Layout_Data *sd,
+                  Efl_Ui_Layout_Sub_Object_Data *sub_d,
                   Eina_Bool visible)
 {
    char buf[1024];
@@ -192,8 +192,8 @@ _icon_signal_emit(Elm_Layout_Smart_Data *sd,
 }
 
 static inline void
-_text_signal_emit(Elm_Layout_Smart_Data *sd,
-                  Elm_Layout_Sub_Object_Data *sub_d,
+_text_signal_emit(Efl_Ui_Layout_Data *sd,
+                  Efl_Ui_Layout_Sub_Object_Data *sub_d,
                   Eina_Bool visible)
 {
    char buf[1024];
@@ -228,10 +228,10 @@ _text_signal_emit(Elm_Layout_Smart_Data *sd,
 }
 
 static void
-_parts_signals_emit(Elm_Layout_Smart_Data *sd)
+_parts_signals_emit(Efl_Ui_Layout_Data *sd)
 {
    const Eina_List *l;
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -241,7 +241,7 @@ _parts_signals_emit(Elm_Layout_Smart_Data *sd)
 }
 
 static void
-_part_cursor_part_apply(const Elm_Layout_Sub_Object_Cursor *pc)
+_part_cursor_part_apply(const Efl_Ui_Layout_Sub_Object_Cursor *pc)
 {
    elm_object_cursor_set(pc->obj, pc->cursor);
    elm_object_cursor_style_set(pc->obj, pc->style);
@@ -249,11 +249,11 @@ _part_cursor_part_apply(const Elm_Layout_Sub_Object_Cursor *pc)
 }
 
 static void
-_parts_cursors_apply(Elm_Layout_Smart_Data *sd)
+_parts_cursors_apply(Efl_Ui_Layout_Data *sd)
 {
    const Eina_List *l;
    const char *file, *group;
-   Elm_Layout_Sub_Object_Cursor *pc;
+   Efl_Ui_Layout_Sub_Object_Cursor *pc;
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    edje_object_file_get(wd->resize_obj, &file, &group);
@@ -309,7 +309,7 @@ _efl_ui_layout_highlight_in_theme(Evas_Object *obj)
 
 static Eina_Bool
 _visuals_refresh(Evas_Object *obj,
-                 Elm_Layout_Smart_Data *sd)
+                 Efl_Ui_Layout_Data *sd)
 {
    Eina_Bool ret = EINA_FALSE;
 
@@ -335,7 +335,7 @@ _visuals_refresh(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_disable(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+_efl_ui_layout_elm_widget_disable(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -350,7 +350,7 @@ _efl_ui_layout_elm_widget_disable(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSE
 }
 
 static Elm_Theme_Apply
-_efl_ui_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    Elm_Theme_Apply ret = ELM_THEME_APPLY_FAILED;
 
@@ -374,7 +374,7 @@ _efl_ui_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
 }
 
 EOLIAN static Elm_Theme_Apply
-_efl_ui_layout_elm_widget_theme_apply(Eo *obj, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_elm_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    Elm_Theme_Apply theme_apply = ELM_THEME_APPLY_FAILED;
 
@@ -388,13 +388,13 @@ _efl_ui_layout_elm_widget_theme_apply(Eo *obj, Elm_Layout_Smart_Data *sd)
 static void *
 _efl_ui_layout_list_data_get(const Eina_List *list)
 {
-   Elm_Layout_Sub_Object_Data *sub_d = eina_list_data_get(list);
+   Efl_Ui_Layout_Sub_Object_Data *sub_d = eina_list_data_get(list);
 
    return sub_d->obj;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_layout_elm_widget_on_focus(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -423,7 +423,7 @@ _efl_ui_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUS
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+_efl_ui_layout_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
    if (!elm_widget_can_focus_get(obj))
      return EINA_TRUE;
@@ -437,8 +437,8 @@ _access_focus_list_sort_cb(const void *data1, const void *data2)
    Evas_Coord_Point p1, p2;
    Evas_Object *obj1, *obj2;
 
-   obj1 = ((Elm_Layout_Sub_Object_Data *)data1)->obj;
-   obj2 = ((Elm_Layout_Sub_Object_Data *)data2)->obj;
+   obj1 = ((Efl_Ui_Layout_Sub_Object_Data *)data1)->obj;
+   obj2 = ((Efl_Ui_Layout_Sub_Object_Data *)data2)->obj;
 
    evas_object_geometry_get(obj1, &p1.x, &p1.y, NULL, NULL);
    evas_object_geometry_get(obj2, &p2.x, &p2.y, NULL, NULL);
@@ -455,7 +455,7 @@ static const Eina_List *
 _access_focus_list_sort(Eina_List *origin)
 {
    Eina_List *l, *temp = NULL;
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    EINA_LIST_FOREACH(origin, l, sub_d)
      temp = eina_list_sorted_insert(temp, _access_focus_list_sort_cb, sub_d);
@@ -467,7 +467,7 @@ _access_focus_list_sort(Eina_List *origin)
  * child objects, but still inheriting from elm_layout, just set its
  * focus_next smart function back to NULL */
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_focus_next(Eo *obj, Elm_Layout_Smart_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+_efl_ui_layout_elm_widget_focus_next(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
@@ -490,7 +490,7 @@ _efl_ui_layout_elm_widget_focus_next(Eo *obj, Elm_Layout_Smart_Data *sd, Elm_Foc
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_sub_object_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_layout_elm_widget_sub_object_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -507,10 +507,10 @@ _efl_ui_layout_elm_widget_sub_object_add(Eo *obj, Elm_Layout_Smart_Data *_pd EIN
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_sub_object_del(Eo *obj, Elm_Layout_Smart_Data *sd, Evas_Object *sobj)
+_efl_ui_layout_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_Data *sd, Evas_Object *sobj)
 {
    Eina_List *l;
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -544,7 +544,7 @@ _efl_ui_layout_elm_widget_sub_object_del(Eo *obj, Elm_Layout_Smart_Data *sd, Eva
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+_efl_ui_layout_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
    if (!elm_widget_can_focus_get(obj))
      return EINA_TRUE;
@@ -553,7 +553,7 @@ _efl_ui_layout_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_La
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_focus_direction(Eo *obj, Elm_Layout_Smart_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+_efl_ui_layout_elm_widget_focus_direction(Eo *obj, Efl_Ui_Layout_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
@@ -637,14 +637,14 @@ _box_reference_del(void *data,
                    Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
-   Elm_Layout_Sub_Object_Data *sub_d = data;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d = data;
    sub_d->p.box.reference = NULL;
 }
 
 static Evas_Object *
 _sub_box_remove(Evas_Object *obj,
-                Elm_Layout_Smart_Data *sd,
-                Elm_Layout_Sub_Object_Data *sub_d)
+                Efl_Ui_Layout_Data *sd,
+                Efl_Ui_Layout_Sub_Object_Data *sub_d)
 {
    Evas_Object *child = sub_d->obj; /* sub_d will die in
                                      * _efl_ui_layout_smart_sub_object_del */
@@ -669,7 +669,7 @@ _sub_box_remove(Evas_Object *obj,
 }
 
 static Eina_Bool
-_sub_box_is(const Elm_Layout_Sub_Object_Data *sub_d)
+_sub_box_is(const Efl_Ui_Layout_Sub_Object_Data *sub_d)
 {
    switch (sub_d->type)
      {
@@ -686,8 +686,8 @@ _sub_box_is(const Elm_Layout_Sub_Object_Data *sub_d)
 
 static Evas_Object *
 _sub_table_remove(Evas_Object *obj,
-                  Elm_Layout_Smart_Data *sd,
-                  Elm_Layout_Sub_Object_Data *sub_d)
+                  Efl_Ui_Layout_Data *sd,
+                  Efl_Ui_Layout_Sub_Object_Data *sub_d)
 {
    Evas_Object *child;
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd, NULL);
@@ -718,7 +718,7 @@ _on_size_evaluate_signal(void *data,
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_group_group_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+_efl_ui_layout_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
    Evas_Object *edje;
 
@@ -739,10 +739,10 @@ _efl_ui_layout_efl_canvas_group_group_add(Eo *obj, Elm_Layout_Smart_Data *_pd EI
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_group_group_del(Eo *obj, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Elm_Layout_Sub_Object_Data *sub_d;
-   Elm_Layout_Sub_Object_Cursor *pc;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Cursor *pc;
    Edje_Signal_Data *esd;
    Evas_Object *child;
    Eina_List *l;
@@ -804,7 +804,7 @@ _efl_ui_layout_efl_canvas_group_group_del(Eo *obj, Elm_Layout_Smart_Data *sd)
 /* rewrite or extend this one on your derived class as to suit your
  * needs */
 EOLIAN static void
-_efl_ui_layout_efl_canvas_group_group_calculate(Eo *obj, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    if (sd->needs_size_calc)
      {
@@ -813,12 +813,12 @@ _efl_ui_layout_efl_canvas_group_group_calculate(Eo *obj, Elm_Layout_Smart_Data *
      }
 }
 
-static Elm_Layout_Sub_Object_Cursor *
-_parts_cursors_find(Elm_Layout_Smart_Data *sd,
+static Efl_Ui_Layout_Sub_Object_Cursor *
+_parts_cursors_find(Efl_Ui_Layout_Data *sd,
                     const char *part)
 {
    const Eina_List *l;
-   Elm_Layout_Sub_Object_Cursor *pc;
+   Efl_Ui_Layout_Sub_Object_Cursor *pc;
 
    EINA_LIST_FOREACH(sd->parts_cursors, l, pc)
      {
@@ -833,7 +833,7 @@ _parts_cursors_find(Elm_Layout_Smart_Data *sd,
  * widget inheriting from elm_layout */
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_file_file_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *file, const char *group)
+_efl_ui_layout_efl_file_file_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *file, const char *group)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -857,7 +857,7 @@ _efl_ui_layout_efl_file_file_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char 
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_file_file_get(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED, const char **file, const char **group)
+_efl_ui_layout_efl_file_file_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char **file, const char **group)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    edje_object_file_get(wd->resize_obj, file, group);
@@ -865,7 +865,7 @@ _efl_ui_layout_efl_file_file_get(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
 
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_file_mmap_set(Eo *obj, Elm_Layout_Smart_Data *sd, const Eina_File *file, const char *group)
+_efl_ui_layout_efl_file_mmap_set(Eo *obj, Efl_Ui_Layout_Data *sd, const Eina_File *file, const char *group)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -889,14 +889,14 @@ _efl_ui_layout_efl_file_mmap_set(Eo *obj, Elm_Layout_Smart_Data *sd, const Eina_
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_file_mmap_get(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED, const Eina_File **file, const char **group)
+_efl_ui_layout_efl_file_mmap_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const Eina_File **file, const char **group)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    efl_file_mmap_get(wd->resize_obj, file, group);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_theme_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *klass, const char *group, const char *style)
+_efl_ui_layout_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, const char *group, const char *style)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -912,7 +912,7 @@ _efl_ui_layout_theme_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *klass, 
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_signal_signal_emit(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source)
+_efl_ui_layout_efl_canvas_layout_signal_signal_emit(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source)
 {
    // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -920,7 +920,7 @@ _efl_ui_layout_efl_canvas_layout_signal_signal_emit(Eo *obj, Elm_Layout_Smart_Da
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_canvas_layout_signal_signal_callback_add(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+_efl_ui_layout_efl_canvas_layout_signal_signal_callback_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
 {
    // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -928,7 +928,7 @@ _efl_ui_layout_efl_canvas_layout_signal_signal_callback_add(Eo *obj, Elm_Layout_
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_canvas_layout_signal_signal_callback_del(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+_efl_ui_layout_efl_canvas_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
    // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -945,7 +945,7 @@ elm_layout_content_set(Evas_Object *obj,
                        const char *swallow,
                        Evas_Object *content)
 {
-   ELM_LAYOUT_CHECK(obj) EINA_FALSE;
+   EFL_UI_LAYOUT_CHECK(obj) EINA_FALSE;
    if (!swallow)
      {
         swallow = elm_widget_default_content_part_get(obj);
@@ -955,9 +955,9 @@ elm_layout_content_set(Evas_Object *obj,
 }
 
 static Eina_Bool
-_efl_ui_layout_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *content)
+_efl_ui_layout_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *content)
 {
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
    const Eina_List *l;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -999,7 +999,7 @@ _efl_ui_layout_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part,
              return EINA_FALSE;
           }
 
-        sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+        sub_d = ELM_NEW(Efl_Ui_Layout_Sub_Object_Data);
         if (!sub_d)
           {
              ERR("failed to allocate memory!");
@@ -1026,7 +1026,7 @@ EAPI Evas_Object *
 elm_layout_content_get(const Evas_Object *obj,
                        const char *swallow)
 {
-   ELM_LAYOUT_CHECK(obj) NULL;
+   EFL_UI_LAYOUT_CHECK(obj) NULL;
    if (!swallow)
      {
         swallow = elm_widget_default_content_part_get(obj);
@@ -1036,10 +1036,10 @@ elm_layout_content_get(const Evas_Object *obj,
 }
 
 static Evas_Object*
-_efl_ui_layout_content_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
+_efl_ui_layout_content_get(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 {
    const Eina_List *l;
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
      return NULL;
@@ -1061,14 +1061,14 @@ EAPI Evas_Object *
 elm_layout_content_unset(Evas_Object *obj,
                          const char *swallow)
 {
-   ELM_LAYOUT_CHECK(obj) NULL;
+   EFL_UI_LAYOUT_CHECK(obj) NULL;
    return efl_content_unset(efl_part(obj, swallow));
 }
 
 static Evas_Object*
-_efl_ui_layout_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
+_efl_ui_layout_content_unset(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 {
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
    const Eina_List *l;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
@@ -1104,25 +1104,25 @@ _efl_ui_layout_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd, const char *par
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_container_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, Evas_Object *content)
+_efl_ui_layout_efl_container_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, Evas_Object *content)
 {
    return _efl_ui_layout_content_set(obj, sd, NULL, content);
 }
 
 EOLIAN static Evas_Object*
-_efl_ui_layout_efl_container_content_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_efl_container_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd)
 {
    return _efl_ui_layout_content_get(obj, sd, NULL);
 }
 
 EOLIAN static Evas_Object*
-_efl_ui_layout_efl_container_content_unset(Eo *obj, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_efl_container_content_unset(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    return _efl_ui_layout_content_unset(obj, sd, NULL);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_container_content_remove(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
+_efl_ui_layout_efl_container_content_remove(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
                                          Efl_Gfx *content)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -1142,10 +1142,10 @@ _efl_ui_layout_efl_container_content_remove(Eo *obj, Elm_Layout_Smart_Data *sd E
 EAPI Eina_List *
 elm_layout_content_swallow_list_get(const Evas_Object *obj)
 {
-   ELM_LAYOUT_CHECK(obj) NULL;
+   EFL_UI_LAYOUT_CHECK(obj) NULL;
    Eina_List *ret = NULL;
-   Elm_Layout_Sub_Object_Data *sub_d = NULL;
-   Elm_Layout_Smart_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Layout_Sub_Object_Data *sub_d = NULL;
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Eina_List *l = NULL;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
@@ -1158,9 +1158,9 @@ elm_layout_content_swallow_list_get(const Evas_Object *obj)
 }
 
 static Eina_Bool
-_sub_iterator_next(Elm_Layout_Sub_Iterator *it, void **data)
+_sub_iterator_next(Efl_Ui_Layout_Sub_Iterator *it, void **data)
 {
-   Elm_Layout_Sub_Object_Data *sub;
+   Efl_Ui_Layout_Sub_Object_Data *sub;
 
    if (!eina_iterator_next(it->real_iterator, (void **)&sub))
      return EINA_FALSE;
@@ -1170,22 +1170,22 @@ _sub_iterator_next(Elm_Layout_Sub_Iterator *it, void **data)
 }
 
 static Efl_Ui_Layout *
-_sub_iterator_get_container(Elm_Layout_Sub_Iterator *it)
+_sub_iterator_get_container(Efl_Ui_Layout_Sub_Iterator *it)
 {
    return it->object;
 }
 
 static void
-_sub_iterator_free(Elm_Layout_Sub_Iterator *it)
+_sub_iterator_free(Efl_Ui_Layout_Sub_Iterator *it)
 {
    eina_iterator_free(it->real_iterator);
    free(it);
 }
 
 static Eina_Iterator *
-_sub_iterator_create(Eo *eo_obj, Elm_Layout_Smart_Data *sd)
+_sub_iterator_create(Eo *eo_obj, Efl_Ui_Layout_Data *sd)
 {
-   Elm_Layout_Sub_Iterator *it;
+   Efl_Ui_Layout_Sub_Iterator *it;
 
    it = calloc(1, sizeof(*it));
    if (!it) return NULL;
@@ -1203,24 +1203,24 @@ _sub_iterator_create(Eo *eo_obj, Elm_Layout_Smart_Data *sd)
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_layout_efl_container_content_iterate(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_efl_container_content_iterate(Eo *eo_obj EINA_UNUSED, Efl_Ui_Layout_Data *sd)
 {
    return _sub_iterator_create(eo_obj, sd);
 }
 
 EOLIAN static int
-_efl_ui_layout_efl_container_content_count(Eo *eo_obj EINA_UNUSED, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_efl_container_content_count(Eo *eo_obj EINA_UNUSED, Efl_Ui_Layout_Data *sd)
 {
    return eina_list_count(sd->subs);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const char *text)
+_efl_ui_layout_text_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const char *text)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    Eina_List *l;
-   Elm_Layout_Sub_Object_Data *sub_d = NULL;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d = NULL;
 
    if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
      return EINA_FALSE;
@@ -1252,7 +1252,7 @@ _efl_ui_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, co
 
    if (!sub_d)
      {
-        sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+        sub_d = ELM_NEW(Efl_Ui_Layout_Sub_Object_Data);
         if (!sub_d) return EINA_FALSE;
         sub_d->type = TEXT;
         sub_d->part = eina_stringshare_add(part);
@@ -1286,7 +1286,7 @@ _efl_ui_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, co
 }
 
 EOLIAN static const char*
-_efl_ui_layout_text_get(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED, const char *part)
+_efl_ui_layout_text_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -1297,7 +1297,7 @@ _efl_ui_layout_text_get(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED, const ch
 }
 
 static void
-_layout_box_subobj_init(Elm_Layout_Smart_Data *sd, Elm_Layout_Sub_Object_Data *sub_d, const char *part, Evas_Object *child)
+_layout_box_subobj_init(Efl_Ui_Layout_Data *sd, Efl_Ui_Layout_Sub_Object_Data *sub_d, const char *part, Evas_Object *child)
 {
    sub_d->part = eina_stringshare_add(part);
    sub_d->obj = child;
@@ -1306,9 +1306,9 @@ _layout_box_subobj_init(Elm_Layout_Smart_Data *sd, Elm_Layout_Sub_Object_Data *s
 }
 
 Eina_Bool
-_efl_ui_layout_box_append(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child)
+_efl_ui_layout_box_append(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child)
 {
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -1326,7 +1326,7 @@ _efl_ui_layout_box_append(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, 
         return EINA_FALSE;
      }
 
-   sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   sub_d = ELM_NEW(Efl_Ui_Layout_Sub_Object_Data);
    if (!sub_d)
      {
         ERR("failed to allocate memory!");
@@ -1343,9 +1343,9 @@ _efl_ui_layout_box_append(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, 
 }
 
 Eina_Bool
-_efl_ui_layout_box_prepend(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child)
+_efl_ui_layout_box_prepend(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child)
 {
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -1363,7 +1363,7 @@ _efl_ui_layout_box_prepend(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part,
         return EINA_FALSE;
      }
 
-   sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   sub_d = ELM_NEW(Efl_Ui_Layout_Sub_Object_Data);
    if (!sub_d)
      {
         ERR("failed to allocate memory!");
@@ -1380,9 +1380,9 @@ _efl_ui_layout_box_prepend(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part,
 }
 
 Eina_Bool
-_efl_ui_layout_box_insert_before(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child, const Evas_Object *reference)
+_efl_ui_layout_box_insert_before(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child, const Evas_Object *reference)
 {
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -1401,7 +1401,7 @@ _efl_ui_layout_box_insert_before(Eo *obj, Elm_Layout_Smart_Data *sd, const char 
         return EINA_FALSE;
      }
 
-   sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   sub_d = ELM_NEW(Efl_Ui_Layout_Sub_Object_Data);
    if (!sub_d)
      {
         ERR("failed to allocate memory!");
@@ -1422,9 +1422,9 @@ _efl_ui_layout_box_insert_before(Eo *obj, Elm_Layout_Smart_Data *sd, const char 
 }
 
 Eina_Bool
-_efl_ui_layout_box_insert_at(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child, unsigned int pos)
+_efl_ui_layout_box_insert_at(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child, unsigned int pos)
 {
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (!edje_object_part_box_insert_at
@@ -1442,7 +1442,7 @@ _efl_ui_layout_box_insert_at(Eo *obj, Elm_Layout_Smart_Data *sd, const char *par
         return EINA_FALSE;
      }
 
-   sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   sub_d = ELM_NEW(Efl_Ui_Layout_Sub_Object_Data);
    if (!sub_d)
      {
         ERR("failed to allocate memory!");
@@ -1460,7 +1460,7 @@ _efl_ui_layout_box_insert_at(Eo *obj, Elm_Layout_Smart_Data *sd, const char *par
 }
 
 Evas_Object *
-_efl_ui_layout_box_remove(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child)
+_efl_ui_layout_box_remove(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child)
 {
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
@@ -1468,7 +1468,7 @@ _efl_ui_layout_box_remove(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, 
 
 
    const Eina_List *l;
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -1481,13 +1481,13 @@ _efl_ui_layout_box_remove(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, 
 }
 
 Eina_Bool
-_efl_ui_layout_box_remove_all(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eina_Bool clear)
+_efl_ui_layout_box_remove_all(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Eina_Bool clear)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, EINA_FALSE);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
    Eina_List *lst;
 
    lst = eina_list_clone(sd->subs);
@@ -1511,9 +1511,9 @@ _efl_ui_layout_box_remove_all(Eo *obj, Elm_Layout_Smart_Data *sd, const char *pa
 }
 
 Eina_Bool
-_efl_ui_layout_table_pack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
+_efl_ui_layout_table_pack(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -1534,7 +1534,7 @@ _efl_ui_layout_table_pack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, 
         return EINA_FALSE;
      }
 
-   sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   sub_d = ELM_NEW(Efl_Ui_Layout_Sub_Object_Data);
    if (!sub_d)
      {
         ERR("failed to allocate memory!");
@@ -1558,14 +1558,14 @@ _efl_ui_layout_table_pack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, 
 }
 
 Evas_Object *
-_efl_ui_layout_table_unpack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Evas_Object *child)
+_efl_ui_layout_table_unpack(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child)
 {
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(child, NULL);
 
    const Eina_List *l;
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -1580,13 +1580,13 @@ _efl_ui_layout_table_unpack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part
 }
 
 Eina_Bool
-_efl_ui_layout_table_clear(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eina_Bool clear)
+_efl_ui_layout_table_clear(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Eina_Bool clear)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, EINA_FALSE);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   Elm_Layout_Sub_Object_Data *sub_d;
+   Efl_Ui_Layout_Sub_Object_Data *sub_d;
    Eina_List *lst;
 
    lst = eina_list_clone(sd->subs);
@@ -1618,7 +1618,7 @@ elm_layout_edje_get(const Eo *obj)
 }
 
 EOLIAN static const char *
-_efl_ui_layout_efl_canvas_layout_group_group_data_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *key)
+_efl_ui_layout_efl_canvas_layout_group_group_data_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *key)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -1626,7 +1626,7 @@ _efl_ui_layout_efl_canvas_layout_group_group_data_get(Eo *obj, Elm_Layout_Smart_
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_group_group_size_min_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, int *w, int *h)
+_efl_ui_layout_efl_canvas_layout_group_group_size_min_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, int *w, int *h)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1634,7 +1634,7 @@ _efl_ui_layout_efl_canvas_layout_group_group_size_min_get(Eo *obj, Elm_Layout_Sm
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_group_group_size_max_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, int *w, int *h)
+_efl_ui_layout_efl_canvas_layout_group_group_size_max_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, int *w, int *h)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1646,7 +1646,7 @@ _efl_ui_layout_efl_canvas_layout_group_group_size_max_get(Eo *obj, Elm_Layout_Sm
  * Evas's rendering phase, it will be addressed, finally (see
  * _efl_ui_layout_smart_calculate()). */
 static void
-_elm_layout_sizing_eval(Eo *obj, Elm_Layout_Smart_Data *sd)
+_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    if (sd->frozen) return;
    if (sd->needs_size_calc) return;
@@ -1658,7 +1658,7 @@ _elm_layout_sizing_eval(Eo *obj, Elm_Layout_Smart_Data *sd)
 EAPI void
 elm_layout_sizing_restricted_eval(Eo *obj, Eina_Bool w, Eina_Bool h)
 {
-   Elm_Layout_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   Efl_Ui_Layout_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
 
    if (!sd) return;
    sd->restricted_calc_w = !!w;
@@ -1668,7 +1668,7 @@ elm_layout_sizing_restricted_eval(Eo *obj, Eina_Bool w, Eina_Bool h)
 }
 
 EOLIAN static int
-_efl_ui_layout_efl_canvas_layout_calc_calc_freeze(Eo *obj, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_efl_canvas_layout_calc_calc_freeze(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
 
@@ -1680,7 +1680,7 @@ _efl_ui_layout_efl_canvas_layout_calc_calc_freeze(Eo *obj, Elm_Layout_Smart_Data
 }
 
 EOLIAN static int
-_efl_ui_layout_efl_canvas_layout_calc_calc_thaw(Eo *obj, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_efl_canvas_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
 
@@ -1694,10 +1694,10 @@ _efl_ui_layout_efl_canvas_layout_calc_calc_thaw(Eo *obj, Elm_Layout_Smart_Data *
 }
 
 static Eina_Bool
-_efl_ui_layout_part_cursor_set(Elm_Layout_Smart_Data *sd, const char *part_name, const char *cursor)
+_efl_ui_layout_part_cursor_set(Efl_Ui_Layout_Data *sd, const char *part_name, const char *cursor)
 {
    Evas_Object *part_obj;
-   Elm_Layout_Sub_Object_Cursor *pc;
+   Efl_Ui_Layout_Sub_Object_Cursor *pc;
    Eo *obj = sd->obj;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -1750,11 +1750,11 @@ _efl_ui_layout_part_cursor_set(Elm_Layout_Smart_Data *sd, const char *part_name,
 }
 
 static const char *
-_efl_ui_layout_part_cursor_get(Elm_Layout_Smart_Data *sd, const char *part_name)
+_efl_ui_layout_part_cursor_get(Efl_Ui_Layout_Data *sd, const char *part_name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, NULL);
 
-   Elm_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
+   Efl_Ui_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, NULL);
 
@@ -1762,12 +1762,12 @@ _efl_ui_layout_part_cursor_get(Elm_Layout_Smart_Data *sd, const char *part_name)
 }
 
 static Eina_Bool
-_efl_ui_layout_part_cursor_unset(Elm_Layout_Smart_Data *sd, const char *part_name)
+_efl_ui_layout_part_cursor_unset(Efl_Ui_Layout_Data *sd, const char *part_name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);
 
    Eina_List *l;
-   Elm_Layout_Sub_Object_Cursor *pc;
+   Efl_Ui_Layout_Sub_Object_Cursor *pc;
 
    EINA_LIST_FOREACH(sd->parts_cursors, l, pc)
      {
@@ -1784,11 +1784,11 @@ _efl_ui_layout_part_cursor_unset(Elm_Layout_Smart_Data *sd, const char *part_nam
 }
 
 static Eina_Bool
-_efl_ui_layout_part_cursor_style_set(Elm_Layout_Smart_Data *sd, const char *part_name, const char *style)
+_efl_ui_layout_part_cursor_style_set(Efl_Ui_Layout_Data *sd, const char *part_name, const char *style)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);
 
-   Elm_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
+   Efl_Ui_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
 
@@ -1799,11 +1799,11 @@ _efl_ui_layout_part_cursor_style_set(Elm_Layout_Smart_Data *sd, const char *part
 }
 
 static const char*
-_efl_ui_layout_part_cursor_style_get(Elm_Layout_Smart_Data *sd, const char *part_name)
+_efl_ui_layout_part_cursor_style_get(Efl_Ui_Layout_Data *sd, const char *part_name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, NULL);
 
-   Elm_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
+   Efl_Ui_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, NULL);
 
@@ -1811,11 +1811,11 @@ _efl_ui_layout_part_cursor_style_get(Elm_Layout_Smart_Data *sd, const char *part
 }
 
 static Eina_Bool
-_efl_ui_layout_part_cursor_engine_only_set(Elm_Layout_Smart_Data *sd, const char *part_name, Eina_Bool engine_only)
+_efl_ui_layout_part_cursor_engine_only_set(Efl_Ui_Layout_Data *sd, const char *part_name, Eina_Bool engine_only)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);
 
-   Elm_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
+   Efl_Ui_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
 
@@ -1826,11 +1826,11 @@ _efl_ui_layout_part_cursor_engine_only_set(Elm_Layout_Smart_Data *sd, const char
 }
 
 static Eina_Bool
-_efl_ui_layout_part_cursor_engine_only_get(Elm_Layout_Smart_Data *sd, const char *part_name)
+_efl_ui_layout_part_cursor_engine_only_get(Efl_Ui_Layout_Data *sd, const char *part_name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);
 
-   Elm_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
+   Efl_Ui_Layout_Sub_Object_Cursor *pc = _parts_cursors_find(sd, part_name);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
 
@@ -1840,7 +1840,7 @@ _efl_ui_layout_part_cursor_engine_only_get(Elm_Layout_Smart_Data *sd, const char
 EAPI Eina_Bool
 elm_layout_edje_object_can_access_set(Eo *obj, Eina_Bool can_access)
 {
-   Elm_Layout_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   Efl_Ui_Layout_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    sd->can_access = !!can_access;
    return EINA_TRUE;
@@ -1849,13 +1849,13 @@ elm_layout_edje_object_can_access_set(Eo *obj, Eina_Bool can_access)
 EAPI Eina_Bool
 elm_layout_edje_object_can_access_get(const Eo *obj)
 {
-   Elm_Layout_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   Efl_Ui_Layout_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    return sd->can_access;
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_object_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, Efl_Dbg_Info *root)
+_efl_ui_layout_efl_object_dbg_info_get(Eo *eo_obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Efl_Dbg_Info *root)
 {
    efl_dbg_info_get(efl_super(eo_obj, MY_CLASS), root);
    ELM_WIDGET_DATA_GET_OR_RETURN(eo_obj, wd);
@@ -1883,7 +1883,7 @@ _efl_ui_layout_efl_object_dbg_info_get(Eo *eo_obj, Elm_Layout_Smart_Data *_pd EI
 static void
 _prop_future_error_cb(void* data, Efl_Event const*event EINA_UNUSED)
 {
-   Elm_Layout_Sub_Property_Future *sub_pp = data;
+   Efl_Ui_Layout_Sub_Property_Future *sub_pp = data;
    Eina_Array_Iterator iterator;
    Eina_Stringshare  *name;
    unsigned int i = 0;
@@ -1896,7 +1896,7 @@ _prop_future_error_cb(void* data, Efl_Event const*event EINA_UNUSED)
 }
 
 static void
-_view_update(Elm_Layout_Smart_Data *pd, const char *name, const char *property)
+_view_update(Efl_Ui_Layout_Data *pd, const char *name, const char *property)
 {
    Eina_Strbuf *buf;
 
@@ -1920,8 +1920,8 @@ _view_update(Elm_Layout_Smart_Data *pd, const char *name, const char *property)
 static void
 _prop_future_then_cb(void* data, Efl_Event const*event)
 {
-   Elm_Layout_Sub_Property_Future *sub_pp = data;
-   Elm_Layout_Smart_Data *pd = sub_pp->pd;
+   Efl_Ui_Layout_Sub_Property_Future *sub_pp = data;
+   Efl_Ui_Layout_Data *pd = sub_pp->pd;
    Eina_Accessor *value_acc = (Eina_Accessor *)((Efl_Future_Event_Success*)event->info)->value;
    Eina_Value *value;
    Eina_Stringshare *name;
@@ -1954,9 +1954,9 @@ _prop_future_then_cb(void* data, Efl_Event const*event)
 }
 
 static void
-_efl_ui_layout_view_model_update(Elm_Layout_Smart_Data *pd)
+_efl_ui_layout_view_model_update(Efl_Ui_Layout_Data *pd)
 {
-   Elm_Layout_Sub_Property_Future *sub_pp;
+   Efl_Ui_Layout_Sub_Property_Future *sub_pp;
    Efl_Future **future_arr, **f, *future_all;
    Eina_Hash_Tuple *tuple;
    Eina_Iterator *it_p;
@@ -1970,7 +1970,7 @@ _efl_ui_layout_view_model_update(Elm_Layout_Smart_Data *pd)
    future_arr = alloca((size + 1) * sizeof(Efl_Future*));
    f = future_arr;
 
-   sub_pp = ELM_NEW(Elm_Layout_Sub_Property_Future);
+   sub_pp = ELM_NEW(Efl_Ui_Layout_Sub_Property_Future);
    sub_pp->pd = pd;
    sub_pp->name_arr = eina_array_new(size);
 
@@ -1992,7 +1992,7 @@ _efl_ui_layout_view_model_update(Elm_Layout_Smart_Data *pd)
 static void
 _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
 {
-   Elm_Layout_Smart_Data *pd = data;
+   Efl_Ui_Layout_Data *pd = data;
    Efl_Model_Property_Event *evt = event->info;
    Eina_Stringshare *ss_prop;
    Eina_Hash_Tuple *tuple;
@@ -2025,10 +2025,10 @@ _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
 
    if (eina_array_count(names))
      {
-         Elm_Layout_Sub_Property_Future *sub_pp;
+         Efl_Ui_Layout_Sub_Property_Future *sub_pp;
          Efl_Future *future_all;
 
-         sub_pp = ELM_NEW(Elm_Layout_Sub_Property_Future);
+         sub_pp = ELM_NEW(Efl_Ui_Layout_Sub_Property_Future);
          sub_pp->pd = pd;
          sub_pp->name_arr = names;
 
@@ -2042,7 +2042,7 @@ _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *pd, Efl_Model *model)
+_efl_ui_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd, Efl_Model *model)
 {
    if (pd->model)
      {
@@ -2093,13 +2093,13 @@ _efl_ui_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data 
 }
 
 EOLIAN static Efl_Model *
-_efl_ui_layout_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *pd)
+_efl_ui_layout_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd)
 {
    return pd->model;
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *pd, const char *name, const char *property)
+_efl_ui_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd, const char *name, const char *property)
 {
    EINA_SAFETY_ON_NULL_RETURN(name);
    Eina_Stringshare *ss_name, *ss_prop;
@@ -2125,7 +2125,7 @@ _efl_ui_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Elm_Layout_Smar
 
    if (pd->model)
      {
-         Elm_Layout_Sub_Property_Future *sub_pp = ELM_NEW(Elm_Layout_Sub_Property_Future);
+         Efl_Ui_Layout_Sub_Property_Future *sub_pp = ELM_NEW(Efl_Ui_Layout_Sub_Property_Future);
          Efl_Future *futures[2] = {NULL,};
          Efl_Future *future_all = NULL;
 
@@ -2141,7 +2141,7 @@ _efl_ui_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Elm_Layout_Smar
 
 
 EOLIAN static void
-_efl_ui_layout_efl_ui_model_factory_connect_connect(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *pd,
+_efl_ui_layout_efl_ui_model_factory_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd,
                 const char *name, Efl_Ui_Factory *factory)
 {
    EINA_SAFETY_ON_NULL_RETURN(name);
@@ -2180,7 +2180,7 @@ elm_layout_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_efl_ui_layout_efl_object_constructor(Eo *obj, Elm_Layout_Smart_Data *sd)
+_efl_ui_layout_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    sd->obj = obj;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
@@ -2197,14 +2197,14 @@ EOLIAN static void _efl_ui_layout_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_signal_message_send(Eo *obj, Elm_Layout_Smart_Data *pd EINA_UNUSED, int id, const Eina_Value msg)
+_efl_ui_layout_efl_canvas_layout_signal_message_send(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, int id, const Eina_Value msg)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    efl_canvas_layout_signal_message_send(wd->resize_obj, id, msg);
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_signal_signal_process(Eo *obj, Elm_Layout_Smart_Data *pd EINA_UNUSED, Eina_Bool recurse)
+_efl_ui_layout_efl_canvas_layout_signal_signal_process(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, Eina_Bool recurse)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    efl_canvas_layout_signal_process(wd->resize_obj, recurse);
@@ -2402,7 +2402,7 @@ _elm_layout_signal_callback_add_legacy(Eo *obj, Eo *edje, Eina_List **p_edje_sig
 EAPI void
 elm_layout_signal_callback_add(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
-   Elm_Layout_Smart_Data *sd;
+   Efl_Ui_Layout_Data *sd;
 
    if (!emission || !source) return;
 
@@ -2456,7 +2456,7 @@ _elm_layout_signal_callback_del_legacy(Eo *obj EINA_UNUSED, Eo *edje, Eina_List 
 EAPI void *
 elm_layout_signal_callback_del(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func)
 {
-   Elm_Layout_Smart_Data *sd;
+   Efl_Ui_Layout_Data *sd;
 
    if (!emission || !source) return NULL;
 
@@ -2489,7 +2489,7 @@ elm_layout_data_get(const Evas_Object *obj, const char *key)
 /* Efl.Part implementation */
 
 static EOLIAN Efl_Object *
-_efl_ui_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED,
+_efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
                           const char *part)
 {
    Edje_Part_Type type;
@@ -2520,7 +2520,7 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSE
 }
 
 static const char *
-_efl_ui_layout_default_content_part_get(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED)
+_efl_ui_layout_default_content_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
 {
    const char *part = NULL;
    if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
@@ -2529,7 +2529,7 @@ _efl_ui_layout_default_content_part_get(const Eo *obj, Elm_Layout_Smart_Data *sd
 }
 
 static const char *
-_efl_ui_layout_default_text_part_get(const Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED)
+_efl_ui_layout_default_text_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
 {
    const char *part = NULL;
    if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
@@ -2573,12 +2573,12 @@ _efl_ui_layout_internal_part_efl_ui_cursor_cursor_theme_search_enabled_get(Eo *o
    ELM_PART_RETURN_VAL(!_efl_ui_layout_part_cursor_engine_only_get(pd->sd, pd->part));
 }
 
-ELM_PART_IMPLEMENT_DESTRUCTOR(efl_ui_layout, EFL_UI_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_layout, EFL_UI_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_layout, EFL_UI_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_layout, EFL_UI_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_TEXT_SET(efl_ui_layout, EFL_UI_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_TEXT_GET(efl_ui_layout, EFL_UI_LAYOUT, Elm_Layout_Smart_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_DESTRUCTOR(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_TEXT_SET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_TEXT_GET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data, Elm_Part_Data)
 #include "efl_ui_layout_internal_part.eo.c"
 
 /* Efl.Part end */

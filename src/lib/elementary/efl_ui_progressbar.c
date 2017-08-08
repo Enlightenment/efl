@@ -194,7 +194,7 @@ EOLIAN static Elm_Theme_Apply
 _efl_ui_progressbar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *sd)
 {
    Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
-   ELM_LAYOUT_DATA_GET(obj, ld);
+   EFL_UI_LAYOUT_DATA_GET(obj, ld);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
 
    if (_is_horizontal(sd->orientation))

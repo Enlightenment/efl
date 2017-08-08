@@ -243,7 +243,7 @@ EOLIAN static void
 _elm_bubble_pos_set(Eo *obj, Elm_Bubble_Data *sd, Elm_Bubble_Pos pos)
 {
    /* FIXME: Why is this dealing with layout data directly? */
-   ELM_LAYOUT_DATA_GET(obj, ld);
+   EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    if (pos < ELM_BUBBLE_POS_TOP_LEFT || pos > ELM_BUBBLE_POS_BOTTOM_RIGHT)
      return;
