@@ -274,8 +274,7 @@ _elm_photo_efl_canvas_group_group_add(Eo *obj, Elm_Photo_Data *priv)
 
    _sizing_eval(obj);
 
-   elm_widget_resize_object_set
-       (obj, edje_object_add(evas_object_evas_get(obj)), EINA_TRUE);
+   elm_widget_resize_object_set(obj, edje_object_add(evas_object_evas_get(obj)));
 
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "photo", "base", "default");

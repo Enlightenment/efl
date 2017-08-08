@@ -1355,7 +1355,7 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
      {
         elm_layout_content_unset(obj, "elm.swallow.content");
 
-        elm_widget_resize_object_set(obj, NULL, EINA_TRUE);
+        elm_widget_resize_object_set(obj, NULL);
         elm_widget_sub_object_add(obj, sd->panel_edje);
 
         if (!sd->scr_edje)
@@ -1375,7 +1375,7 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
                sd->handler_size = (int) (elm_object_scale_get(obj)) * (atoi(handler_size));
           }
 
-        elm_widget_resize_object_set(obj, sd->scr_edje, EINA_TRUE);
+        elm_widget_resize_object_set(obj, sd->scr_edje);
 
         if (!sd->hit_rect)
           {
@@ -1454,10 +1454,10 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
         evas_object_event_callback_del(sd->scr_event, EVAS_CALLBACK_MOUSE_UP,
                                        _event_mouse_up);
 
-        elm_widget_resize_object_set(obj, NULL, EINA_TRUE);
+        elm_widget_resize_object_set(obj, NULL);
         elm_widget_sub_object_add(obj, sd->scr_edje);
 
-        elm_widget_resize_object_set(obj, sd->panel_edje, EINA_TRUE);
+        elm_widget_resize_object_set(obj, sd->panel_edje);
 
         elm_layout_content_unset(sd->scr_ly, "elm.swallow.content");
         elm_layout_content_set(obj, "elm.swallow.content", sd->bx);

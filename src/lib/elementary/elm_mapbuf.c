@@ -278,7 +278,7 @@ _elm_mapbuf_efl_canvas_group_group_add(Eo *obj, Elm_Mapbuf_Data *priv)
    Evas_Object *rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    int i;
 
-   elm_widget_resize_object_set(obj, rect, EINA_TRUE);
+   elm_widget_resize_object_set(obj, rect);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);

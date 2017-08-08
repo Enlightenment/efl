@@ -60,10 +60,9 @@ static const Elm_Action key_actions[] = {
 
 EOLIAN static void
 _elm_naviframe_elm_widget_resize_object_set(Eo *obj, Elm_Naviframe_Data *pd EINA_UNUSED,
-                                            Efl_Canvas_Object *sobj, Eina_Bool sub_obj)
+                                            Efl_Canvas_Object *sobj)
 {
    if (!sobj || !efl_finalized_get(obj)) goto super;
-   EINA_SAFETY_ON_TRUE_RETURN(sub_obj);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (wd->resize_obj == sobj) return;
@@ -74,7 +73,7 @@ _elm_naviframe_elm_widget_resize_object_set(Eo *obj, Elm_Naviframe_Data *pd EINA
    wd->resize_obj = NULL;
 
 super:
-   elm_obj_widget_resize_object_set(efl_super(obj, MY_CLASS), sobj, EINA_TRUE);
+   elm_obj_widget_resize_object_set(efl_super(obj, MY_CLASS), sobj);
 }
 
 static void
@@ -82,7 +81,7 @@ _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item_Data *it)
 {
    if (it)
      {
-        elm_widget_resize_object_set(obj, VIEW(it), EINA_FALSE);
+        elm_widget_resize_object_set(obj, VIEW(it));
         evas_object_raise(VIEW(it));
      }
 }
@@ -1833,7 +1832,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
              evas_object_freeze_events_set(VIEW(prev_it), EINA_TRUE);
           }
 
-        elm_widget_resize_object_set(obj, VIEW(prev_it), EINA_FALSE);
+        elm_widget_resize_object_set(obj, VIEW(prev_it));
 
         /* these 2 signals MUST take place simultaneously */
         elm_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");

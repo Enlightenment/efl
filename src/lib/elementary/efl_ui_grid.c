@@ -227,7 +227,7 @@ _efl_ui_grid_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Grid_Data *pd)
    custom->parent = obj;
 
    evas_object_table_homogeneous_set(table, EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE);
-   elm_widget_resize_object_set(obj, table, EINA_TRUE);
+   elm_widget_resize_object_set(obj, table);
 
    evas_object_event_callback_add
          (table, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _table_size_hints_changed, obj);

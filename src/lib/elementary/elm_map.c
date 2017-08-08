@@ -4094,7 +4094,7 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
    elm_widget_sub_object_parent_add(obj);
 
    edje = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_resize_object_set(obj, edje, EINA_TRUE);
+   elm_widget_resize_object_set(obj, edje);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 

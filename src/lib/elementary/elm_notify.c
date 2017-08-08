@@ -684,7 +684,7 @@ _elm_notify_allow_events_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool allow)
      {
         sd->block_events = elm_layout_add(obj);
         _block_events_theme_apply(obj);
-        elm_widget_resize_object_set(obj, sd->block_events, EINA_TRUE);
+        elm_widget_resize_object_set(obj, sd->block_events);
         evas_object_stack_above(sd->notify, sd->block_events);
         elm_layout_signal_callback_add
           (sd->block_events, "elm,action,click", "elm",

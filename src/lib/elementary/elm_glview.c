@@ -231,7 +231,7 @@ _elm_glview_efl_canvas_group_group_add(Eo *obj, Elm_Glview_Data *priv EINA_UNUSE
 
    // Create image to render Evas_GL Surface
    img = evas_object_image_filled_add(evas_object_evas_get(obj));
-   elm_widget_resize_object_set(obj, img, EINA_TRUE);
+   elm_widget_resize_object_set(obj, img);
    evas_object_image_size_set(img, 1, 1);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
