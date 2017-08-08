@@ -48,6 +48,15 @@ struct _Ecore_Event
 };
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Event);
 
+typedef struct _Ecore_Future_Schedule_Entry
+{
+   Eina_Future_Schedule_Entry base;
+   Eina_Future_Scheduler_Cb cb;
+   Eina_Future *future;
+   Ecore_Event *event;
+   Eina_Value value;
+} Ecore_Future_Schedule_Entry;
+
 static int events_num = 0;
 static Ecore_Event *events = NULL;
 static Ecore_Event *event_current = NULL;
@@ -68,6 +77,10 @@ static int event_filters_delete_me = 0;
 static int event_id_max = ECORE_EVENT_COUNT;
 static int ecore_raw_event_type = ECORE_EVENT_NONE;
 static void *ecore_raw_event_event = NULL;
+static Ecore_Event_Handler *future_handler = NULL;
+static int ECORE_EV_FUTURE_ID = -1;
+static Eina_Mempool *mp_future_schedule_entry = NULL;
+static Eina_Bool shutting_down = EINA_FALSE;
 
 static void  _ecore_event_purge_deleted(void);
 static void *_ecore_event_del(Ecore_Event *event);
@@ -268,6 +281,100 @@ _ecore_event_handler_del(Ecore_Event_Handler *event_handler)
    return event_handler->data;
 }
 
+static Eina_Bool
+ecore_future_dispatched(void *data EINA_UNUSED, int type  EINA_UNUSED, void *event)
+{
+   Ecore_Future_Schedule_Entry *entry = event;
+   entry->event = NULL;
+   entry->cb(entry->future, entry->value);
+   return EINA_FALSE;
+}
+
+static void
+ecore_future_free(void *user_data, void *func_data EINA_UNUSED)
+{
+   Ecore_Future_Schedule_Entry *entry = user_data;
+   /*
+     In case entry->event is not NULL, it means
+     that ecore is shutting down. In this case,
+     we must cancel the future otherwise Eina may
+     try to use it and lead to crashes.
+    */
+   if (entry->event)
+     {
+        eina_future_cancel(entry->future);
+        eina_value_flush(&entry->value);
+     }
+   eina_mempool_free(mp_future_schedule_entry, entry);
+}
+
+static Eina_Future_Schedule_Entry *
+ecore_future_schedule(Eina_Future_Scheduler *sched, Eina_Future_Scheduler_Cb cb, Eina_Future *future, Eina_Value value)
+{
+   Ecore_Future_Schedule_Entry *entry = eina_mempool_malloc(mp_future_schedule_entry,
+                                                            sizeof(Ecore_Future_Schedule_Entry));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(entry, NULL);
+   entry->base.scheduler = sched;
+   entry->cb = cb;
+   entry->future = future;
+   entry->value = value;
+   entry->event = ecore_event_add(ECORE_EV_FUTURE_ID, entry, ecore_future_free, entry);
+   EINA_SAFETY_ON_NULL_GOTO(entry->event, err);
+   return &entry->base;
+
+  err:
+   eina_mempool_free(mp_future_schedule_entry, entry);
+   return NULL;
+}
+
+static void
+ecore_future_recall(Eina_Future_Schedule_Entry *s_entry)
+{
+   if (shutting_down) return;
+   Ecore_Future_Schedule_Entry *entry = (Ecore_Future_Schedule_Entry *)s_entry;
+   EINA_SAFETY_ON_NULL_RETURN(entry->event);
+   ecore_event_del(entry->event);
+   eina_value_flush(&entry->value);
+   entry->event = NULL;
+}
+
+static Eina_Future_Scheduler ecore_future_scheduler = {
+   .schedule = ecore_future_schedule,
+   .recall = ecore_future_recall,
+};
+
+Eina_Future_Scheduler *
+_ecore_event_future_scheduler_get(void)
+{
+   return &ecore_future_scheduler;
+}
+
+Eina_Bool
+_ecore_event_init(void)
+{
+   const char *choice = getenv("EINA_MEMPOOL");
+   if ((!choice) || (!choice[0])) choice = "chained_mempool";
+
+   shutting_down = EINA_FALSE;
+   ECORE_EV_FUTURE_ID = ecore_event_type_new();
+   future_handler = ecore_event_handler_add(ECORE_EV_FUTURE_ID, ecore_future_dispatched, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(future_handler, err_handler);
+   //FIXME: Is 512 too high?
+   mp_future_schedule_entry = eina_mempool_add(choice, "Ecore_Future_Event",
+                                               NULL, sizeof(Ecore_Future_Schedule_Entry),
+                                               512);
+   EINA_SAFETY_ON_NULL_GOTO(mp_future_schedule_entry, err_pool);
+
+   return EINA_TRUE;
+
+ err_pool:
+   ecore_event_handler_del(future_handler);
+   future_handler = NULL;
+ err_handler:
+   ECORE_EV_FUTURE_ID = -1;
+   return EINA_FALSE;
+}
+
 void
 _ecore_event_shutdown(void)
 {
@@ -275,6 +382,9 @@ _ecore_event_shutdown(void)
    Ecore_Event_Handler *eh;
    Ecore_Event_Filter *ef;
 
+   shutting_down = EINA_TRUE;
+   ecore_event_handler_del(future_handler);
+   future_handler = NULL;
    while (events) _ecore_event_del(events);
    event_current = NULL;
    for (i = 0; i < event_handlers_num; i++)
@@ -301,6 +411,7 @@ _ecore_event_shutdown(void)
    event_filters_delete_me = 0;
    event_filter_current = NULL;
    event_filter_event_current = NULL;
+   ECORE_EV_FUTURE_ID = -1;
 }
 
 int
