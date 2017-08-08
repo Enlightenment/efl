@@ -25,7 +25,7 @@
 #define IMAGE_SIZE_W 256
 #define IMAGE_SIZE_H 256
 
-struct exemple_data
+struct example_data
 {
    Ecore_Evas  *ee;
    Evas        *evas;
@@ -45,7 +45,7 @@ struct exemple_data
 
 static const char *img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/cube1.png";
 
-static struct exemple_data d =
+static struct example_data d =
 { NULL, NULL, NULL, NULL, NULL, 62, 62, 262, 62, 262, 262, 62, 262,
   EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE };
 
