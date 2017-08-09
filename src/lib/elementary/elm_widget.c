@@ -1187,16 +1187,16 @@ _elm_widget_access(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, 
 {
 }
 
-EAPI Elm_Theme_Apply
+EAPI Efl_Ui_Theme_Apply
 elm_widget_theme(Evas_Object *obj)
 {
    const Eina_List *l;
    Evas_Object *child;
    Elm_Tooltip *tt;
    Elm_Cursor *cur;
-   Elm_Theme_Apply ret = ELM_THEME_APPLY_SUCCESS;
+   Efl_Ui_Theme_Apply ret = EFL_UI_THEME_APPLY_SUCCESS;
 
-   API_ENTRY return ELM_THEME_APPLY_FAILED;
+   API_ENTRY return EFL_UI_THEME_APPLY_FAILED;
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      if (_elm_widget_is(child))
@@ -1209,7 +1209,7 @@ elm_widget_theme(Evas_Object *obj)
    EINA_LIST_FOREACH(sd->cursors, l, cur)
      elm_cursor_theme(cur);
 
-   Elm_Theme_Apply ret2 = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply ret2 = EFL_UI_THEME_APPLY_FAILED;
    ret2 = elm_obj_widget_theme_apply(obj);
    ret &= ret2;
 
@@ -1261,14 +1261,14 @@ elm_widget_theme_specific(Evas_Object *obj,
    elm_obj_widget_theme_apply(obj);
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_widget_theme_apply(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    _elm_widget_mirrored_reload(obj);
    if (elm_widget_disabled_get(obj))
      elm_widget_disabled_internal(obj, elm_widget_disabled_get(obj));
 
-   return ELM_THEME_APPLY_SUCCESS;
+   return EFL_UI_THEME_APPLY_SUCCESS;
 }
 
 /**
@@ -3928,13 +3928,13 @@ _elm_widget_theme_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->theme;
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_widget_style_set(Eo *obj, Elm_Widget_Smart_Data *sd, const char *style)
 {
    if (eina_stringshare_replace(&sd->style, style))
       return elm_widget_theme(obj);
 
-   return ELM_THEME_APPLY_SUCCESS;
+   return EFL_UI_THEME_APPLY_SUCCESS;
 }
 
 EOLIAN static const char*
@@ -4030,13 +4030,13 @@ _elm_widget_item_loop_enabled_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd
    return EINA_FALSE;
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
 {
-   Elm_Theme_Apply ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
+   Efl_Ui_Theme_Apply ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
    if (!ret)
      {
-        return ELM_THEME_APPLY_FAILED;
+        return EFL_UI_THEME_APPLY_FAILED;
      }
 
    if (sd->orient_mode != -1)

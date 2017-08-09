@@ -1530,18 +1530,18 @@ _elm_toolbar_highlight_in_theme(Evas_Object *obj)
      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
 {
    Elm_Toolbar_Item_Data *it;
    double scale = 0;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
-   if (sd->delete_me) return ELM_THEME_APPLY_SUCCESS;
+   if (sd->delete_me) return EFL_UI_THEME_APPLY_SUCCESS;
 
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "toolbar", "base",

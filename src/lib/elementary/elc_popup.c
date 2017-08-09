@@ -355,7 +355,7 @@ _populate_theme_scroll(Elm_Popup_Data *sd)
    sd->theme_scroll = EINA_FALSE;
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
 {
    Elm_Popup_Item_Data *it;
@@ -429,7 +429,7 @@ _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
    /* access */
    if (_elm_config->access_mode) _access_obj_process(obj, EINA_TRUE);
 
-   return ELM_THEME_APPLY_SUCCESS;
+   return EFL_UI_THEME_APPLY_SUCCESS;
 }
 
 static void

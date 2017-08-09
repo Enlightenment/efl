@@ -855,21 +855,21 @@ _elm_entry_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
 
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *str;
    const char *t;
    const char *stl_user;
    const char *style = elm_widget_style_get(obj);
-   Elm_Theme_Apply theme_apply;
+   Efl_Ui_Theme_Apply theme_apply;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
    // Note: We are skipping elm_layout here! This is by design.
    // This assumes the following inheritance: my_class -> layout -> widget ...
    theme_apply = elm_obj_widget_theme_apply(efl_cast(obj, ELM_WIDGET_CLASS));
-   if (!theme_apply) return ELM_THEME_APPLY_FAILED;
+   if (!theme_apply) return EFL_UI_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));
 
@@ -949,7 +949,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    if (sd->scroll)
      {
-        Elm_Theme_Apply ok = ELM_THEME_APPLY_FAILED;
+        Efl_Ui_Theme_Apply ok = EFL_UI_THEME_APPLY_FAILED;
 
         elm_interface_scrollable_mirrored_set(obj, efl_ui_mirrored_get(obj));
 

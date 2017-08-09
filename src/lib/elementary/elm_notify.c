@@ -19,7 +19,7 @@
 #define MY_CLASS_NAME "Elm_Notify"
 #define MY_CLASS_NAME_LEGACY "elm_notify"
 
-static Elm_Theme_Apply
+static Efl_Ui_Theme_Apply
 _notify_theme_apply(Evas_Object *obj)
 {
    const char *style = elm_widget_style_get(obj);
@@ -140,12 +140,12 @@ _sizing_eval(Evas_Object *obj)
    evas_object_resize(obj, w, h);
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 {
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
