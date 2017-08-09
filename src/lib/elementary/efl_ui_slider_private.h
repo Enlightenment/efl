@@ -47,7 +47,7 @@ struct _Efl_Ui_Slider_Data
 
    Evas_Coord            size;
    Evas_Coord            downx, downy;
-   Efl_Orient            orientation;
+   Efl_Ui_Dir            dir;
 
    double                intvl_from, intvl_to;
 
