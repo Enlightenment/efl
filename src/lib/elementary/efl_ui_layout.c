@@ -900,6 +900,12 @@ _efl_ui_layout_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, con
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
+   if (!wd->legacy && efl_finalized_get(obj))
+     {
+        ERR("Efl.Ui.Layout.theme can only be set before finalize!");
+        return EFL_UI_THEME_APPLY_FAILED;
+     }
+
    if (sd->file_set) sd->file_set = EINA_FALSE;
    eina_stringshare_replace(&(sd->klass), klass);
    eina_stringshare_replace(&(sd->group), group);

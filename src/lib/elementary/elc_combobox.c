@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_WIDGET_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -354,15 +355,15 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    //hover-parent
    sd->hover_parent = elm_object_top_widget_get(obj);
 
+   snprintf(buf, sizeof(buf), "combobox_vertical/%s", elm_widget_style_get(obj));
+
    //hover
-   sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent);
+   sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent,
+                       elm_obj_widget_style_set(efl_added, buf));
    evas_object_layer_set(sd->hover, EVAS_LAYER_MAX);
    efl_ui_mirrored_automatic_set(sd->hover, EINA_FALSE);
    elm_hover_target_set(sd->hover, obj);
    elm_widget_sub_object_add(obj, sd->hover);
-   snprintf(buf, sizeof(buf), "combobox_vertical/%s",
-              elm_widget_style_get(obj));
-   elm_object_style_set(sd->hover, buf);
 
    efl_event_callback_add
      (sd->hover, EFL_UI_EVENT_CLICKED, _on_hover_clicked, obj);
@@ -382,7 +383,8 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
 
    // This is the genlist object that will take over the genlist call
-   sd->genlist = gl = efl_add(ELM_GENLIST_CLASS, obj);
+   sd->genlist = gl = efl_add(ELM_GENLIST_CLASS, obj,
+                              elm_obj_widget_style_set(efl_added, buf));
    elm_genlist_filter_set(gl, NULL);
    efl_ui_mirrored_automatic_set(gl, EINA_FALSE);
    efl_ui_mirrored_set(gl, efl_ui_mirrored_get(obj));
@@ -394,10 +396,10 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_genlist_homogeneous_set(gl, EINA_TRUE);
    elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    elm_table_pack(sd->tbl, gl, 0, 0, 1, 1);
-   elm_object_style_set(gl, buf);
 
    // This is the entry object that will take over the entry call
-   sd->entry = entry = efl_add(ELM_ENTRY_CLASS, obj);
+   sd->entry = entry = efl_add(ELM_ENTRY_CLASS, obj,
+                               elm_obj_widget_style_set(efl_added, buf));
    efl_ui_mirrored_automatic_set(entry, EINA_FALSE);
    efl_ui_mirrored_set(entry, efl_ui_mirrored_get(obj));
    elm_scroller_policy_set(entry, ELM_SCROLLER_POLICY_OFF,
@@ -409,7 +411,6 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    evas_object_show(entry);
 
    elm_object_part_content_set(obj, "elm.swallow.content", entry);
-   elm_object_style_set(entry, buf);
 
    efl_composite_attach(obj, gl);
    efl_composite_attach(obj, entry);

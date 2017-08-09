@@ -468,6 +468,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     on_create : 1; /**< This is true when the widget is on creation(general widget constructor). */
    Eina_Bool                     on_destroy: 1; /**< This is true when the widget is on destruction(general widget destructor). */
    Eina_Bool                     provider_lookup : 1; /**< This is true when efl_provider_find is currently walking the tree */
+   Eina_Bool                     legacy : 1; /**< Widget was created with a legacy API, not efl_add() */
 } Elm_Widget_Smart_Data;
 
 /**
@@ -849,6 +850,14 @@ _elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
      ret = elm_widget_sub_object_add(elm_widget_top_get(obj), sobj);
 
    return ret;
+}
+
+static inline Eina_Bool
+elm_widget_is_legacy(const Eo *obj)
+{
+   Elm_Widget_Smart_Data *sd = (Elm_Widget_Smart_Data *)
+         efl_data_scope_safe_get(obj, ELM_WIDGET_CLASS);
+   return sd ? sd->legacy : EINA_FALSE;
 }
 
 /* to be used by INTERNAL classes on Elementary, so that the widgets

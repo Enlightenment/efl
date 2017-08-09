@@ -68,7 +68,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
            The style can only be set before @Efl.Object.finalize, which means
            at construction time of the object (inside $efl_add in C).
          ]]
-         set {
+         set @protected {
             [[Can only be called during construction, before finalize.]]
             return: Efl.Ui.Theme.Apply(0);
                [[Whether the style was successfully applied or not, see
