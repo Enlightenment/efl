@@ -139,7 +139,6 @@ _efl_input_pointer_efl_input_event_reset(Eo *obj, Efl_Input_Pointer_Data *pd)
    _efl_input_pointer_free(pd);
    memset(pd, 0, sizeof(*pd));
    pd->eo = obj;
-   pd->wheel.dir = EFL_ORIENT_VERTICAL;
    pd->fake = fake;
 }
 
@@ -312,16 +311,16 @@ _efl_input_pointer_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED, Efl_Input_
 }
 
 EOLIAN static void
-_efl_input_pointer_wheel_direction_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Efl_Orient dir)
+_efl_input_pointer_wheel_horizontal_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Eina_Bool dir)
 {
-   _efl_input_value_mark(pd, EFL_INPUT_VALUE_WHEEL_DIRECTION);
-   pd->wheel.dir = dir;
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_WHEEL_HORIZONTAL);
+   pd->wheel.horizontal = !!dir;
 }
 
-EOLIAN static Efl_Orient
-_efl_input_pointer_wheel_direction_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+EOLIAN static Eina_Bool
+_efl_input_pointer_wheel_horizontal_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
-   return pd->wheel.dir;
+   return pd->wheel.horizontal;
 }
 
 EOLIAN static void
@@ -524,11 +523,8 @@ _efl_input_pointer_value_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Ef
       case EFL_INPUT_VALUE_WHEEL_ANGLE:
         return EINA_FALSE; // TODO
 
-      case EFL_INPUT_VALUE_WHEEL_DIRECTION:
-        if (EINA_DBL_EQ(val, 0.0))
-          pd->wheel.dir = EFL_ORIENT_VERTICAL;
-        else
-          pd->wheel.dir = EFL_ORIENT_HORIZONTAL;
+      case EFL_INPUT_VALUE_WHEEL_HORIZONTAL:
+        pd->wheel.horizontal = (((int) val) == 1);
         break;
 
       case EFL_INPUT_VALUE_SLIDER:
@@ -623,8 +619,8 @@ _efl_input_pointer_value_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Ef
       case EFL_INPUT_VALUE_WHEEL_ANGLE:
         return 0.0; // TODO (emulate??)
 
-      case EFL_INPUT_VALUE_WHEEL_DIRECTION:
-        return (pd->wheel.dir == EFL_ORIENT_HORIZONTAL) ? 1.0 : 0.0;
+      case EFL_INPUT_VALUE_WHEEL_HORIZONTAL:
+        return (double) pd->wheel.horizontal;
 
       case EFL_INPUT_VALUE_SLIDER:
         return 0.0; // TODO

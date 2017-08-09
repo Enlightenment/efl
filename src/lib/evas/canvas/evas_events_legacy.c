@@ -246,7 +246,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
         {
            TYPE_CHK(MOUSE_WHEEL);
            Evas_Event_Mouse_Wheel *e = _event_alloc(ev->legacy);
-           e->direction =  (ev->wheel.dir == EFL_ORIENT_HORIZONTAL) ? 1 : 0;
+           e->direction = ev->wheel.horizontal;
            e->z = ev->wheel.z;
            e->canvas.x = ev->cur.x;
            e->canvas.y = ev->cur.y;

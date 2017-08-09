@@ -4778,7 +4778,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
    ev->timestamp = info->timestamp;
    _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
    ev->wheel.z = info->z;
-   ev->wheel.dir = info->direction ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL;
+   ev->wheel.horizontal = !!info->direction;
    if (info->dev) ev->device = efl_ref(info->dev);
    else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_TYPE_MOUSE));
    efl_input_pointer_finalize(evt);
