@@ -382,6 +382,9 @@ void ecore_loop_promise_register(Efl_Loop *l, Efl_Promise *p);
 void ecore_loop_promise_unregister(Efl_Loop *l, Efl_Promise *p);
 void ecore_loop_promise_fulfill(Efl_Promise *p);
 
+Eina_Bool efl_promise2_init(void);
+void efl_promise2_shutdown(void);
+
 // access to direct input cb
 #define ECORE_EVAS_INTERNAL
 

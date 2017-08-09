@@ -251,6 +251,7 @@ ecore_init(void)
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    if (!ecore_mempool_init()) goto shutdown_mempool;
+   if (!efl_promise2_init()) goto shutdown_promise;
    _ecore_main_loop_init();
 
    vpath = efl_add(EFL_VPATH_CORE_CLASS, NULL);
@@ -330,6 +331,8 @@ ecore_init(void)
 
    return _ecore_init_count;
 
+ shutdown_promise:
+   efl_promise2_shutdown();
 shutdown_mempool:
    ecore_mempool_shutdown();
    efl_object_shutdown();
@@ -357,6 +360,8 @@ ecore_shutdown(void)
        }
      if (_ecore_init_count-- != _ecore_init_count_threshold)
        goto end;
+
+     efl_promise2_shutdown();
 
      ecore_system_modules_unload();
 
