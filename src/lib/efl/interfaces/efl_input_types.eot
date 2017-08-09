@@ -132,8 +132,8 @@ enum Efl.Input.Value {
    wheel_delta, [[Delta movement of the wheel in discrete steps (int).
                   Default: 0.]]
    wheel_angle, [[Delta movement of the wheel in radians. Default: 0.]]
-   wheel_direction, [[Direction of the wheel (horizontal = 1 or vertical = 0).
-                      Default: 0. Prefer the property $wheel_direction to read.]]
+   wheel_horizontal, [[Direction of the wheel (horizontal = 1 or vertical = 0).
+                       Default: 0. Prefer the property $wheel_horizontal to read.]]
    slider,     [[Current position of the slider on the tool. Range: [-1, 1].
                  Default: 0.]]
 }

@@ -40,8 +40,8 @@ struct _Efl_Input_Pointer_Data
     */
    Eina_Vector2    cur, prev, raw, norm;
    struct {
-      Efl_Orient   dir;
       int          z;
+      Eina_Bool    horizontal;
    } wheel;
    Efl_Gfx                    *source; /* could it be ecore? */
    Efl_Input_Device           *device;
