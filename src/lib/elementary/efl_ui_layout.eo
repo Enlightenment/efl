@@ -1,5 +1,3 @@
-import edje_types;
-
 class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                      Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect,
                      Efl.Canvas.Layout_Calc, Efl.Canvas.Layout_Signal,
@@ -14,6 +12,10 @@ class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
            Based on the type of widget ($klass), a given $group and a
            $style (usually "default"), the edje group name will be formed
            for this object.
+
+           Widgets that inherit from this class will call this function
+           automatically so it should not be called by applications, unless
+           you are dealing directly with a @Efl.Ui.Layout object.
          ]]
          set {
             [[Sets the edje group from the elementary theme that will be used
