@@ -473,6 +473,8 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,
    char buf[PATH_MAX];
    Photo_Object *po;
    po = calloc(1, sizeof(*po));
+   if (!po) return NULL;
+
    po->base_zoom = po->zoom = BASE_ZOOM;
 
    if (ic)
@@ -559,6 +561,7 @@ test_gesture_layer3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    int ind = 0;
    Photo_Object **photo_array;
    photo_array = calloc(4, sizeof(*photo_array));
+   if (!photo_array) return;
 
    w = 480;
    h = 800;
