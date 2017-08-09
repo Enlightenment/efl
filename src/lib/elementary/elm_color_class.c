@@ -216,6 +216,8 @@ _colorclass_activate(void *data, const Efl_Event *event)
    else
      {
         cc->current = calloc(1, sizeof(Colorclass)); //actually Elm_Color_Overlay
+        if (!cc->current) return;
+
         memcpy(cc->current, ecc, sizeof(Elm_Color_Overlay));
         cc->current->name = eina_stringshare_ref(ecc->name);
      }
@@ -687,6 +689,8 @@ elm_color_class_editor_add(Evas_Object *obj)
              Colorclass *lcc;
 
              ecc2 = malloc(sizeof(Edje_Color_Class));
+             if (!ecc2) continue;
+
              memcpy(ecc2, ecc, sizeof(Edje_Color_Class));
              ecc2->name = eina_stringshare_add(ecc->name);
              if (tl_cb)
@@ -815,6 +819,8 @@ elm_color_class_util_edje_file_list(Eina_File *f)
    EINA_ITERATOR_FOREACH(it, ecc)
      {
         ecc2 = malloc(sizeof(Edje_Color_Class));
+        if (!ecc2) continue;
+
         memcpy(ecc2, ecc, sizeof(Edje_Color_Class));
         ecc2->name = eina_stringshare_add(ecc->name);
         if (tl_cb)
