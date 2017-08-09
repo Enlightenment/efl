@@ -334,6 +334,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                  efl_ui_win_alpha_set(efl_added, 1));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
+                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                  efl_gfx_size_hint_weight_set(efl_added, 1, 1),
                  efl_content_set(win, efl_added));
 

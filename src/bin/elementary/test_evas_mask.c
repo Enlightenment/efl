@@ -113,7 +113,7 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                  efl_ui_win_autodel_set(efl_added, 1));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_orientation_set(efl_added, EFL_ORIENT_DOWN),
+                 efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0));
    efl_content_set(win, box);
 
@@ -156,7 +156,7 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    efl_content_set(efl_part(ly, "content"), gl);
 
    box2 = efl_add(EFL_UI_BOX_CLASS, win,
-                  efl_orientation_set(efl_added, EFL_ORIENT_RIGHT),
+                  efl_ui_direction_set(efl_added, EFL_UI_DIR_LTR),
                   efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
                   efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
                   efl_pack(box, efl_added));

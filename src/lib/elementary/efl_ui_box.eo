@@ -1,7 +1,20 @@
 class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout,
-                  Efl.Orientation)
+                  Efl.Ui.Direction)
 {
-   [[Efl UI box class]]
+   [[The box widget.
+
+     A box arranges objects in a linear fashion, governed by a layout function
+     that defines the details of this arrangement.
+
+     By default, the box will use an internal function to set the layout to
+     a single row, either vertical or horizontal. This layout is affected
+     by a number of parameters. The values given by @Efl.Pack.pack_padding.set
+     and @Efl.Pack.pack_align.set and the hints set to each object in the box.
+
+     FIXME:
+     THIS CLASS NEEDS GOOD UP TO DATE DOCUMENTATION. LEGACY BOX AND UI BOX
+     BEHAVE SLIGHTLY DIFFERENTLY AND USE VASTLY DIFFERENT APIS.
+   ]]
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
@@ -11,7 +24,7 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout,
       Elm.Widget.focus_next;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Orientation.orientation { get; set; }
+      Efl.Ui.Direction.direction { get; set; }
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;

@@ -225,7 +225,8 @@ test_win_inline(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
-   box = efl_add(EFL_UI_BOX_CLASS, win);
+   box = efl_add(EFL_UI_BOX_CLASS, win,
+                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, box);
 

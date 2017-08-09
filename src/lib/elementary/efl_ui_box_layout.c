@@ -28,7 +28,8 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    int wantw = 0, wanth = 0; // requested size
    int boxx, boxy, boxw, boxh;
    Item_Calc *items, *item;
-   Eina_Bool horiz = _horiz(pd->orient), zeroweight = EINA_FALSE;
+   Eina_Bool horiz = efl_ui_dir_is_horizontal(pd->dir, EINA_FALSE);
+   Eina_Bool zeroweight = EINA_FALSE;
    int id = 0, count, boxl = 0, boxr = 0, boxt = 0, boxb = 0;
    int length, want, pad, extra = 0, rounding = 0;
    double cur_pos = 0, weight[2] = { 0, 0 }, scale;
