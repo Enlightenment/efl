@@ -112,6 +112,9 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
 
         e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) +
                    strlen(keyname) + (compose ? strlen(compose) : 0) + 3);
+        if (!e)
+          return;
+
         e->keyname = (char *)(e + 1);
         e->key = e->keyname + strlen(keyname) + 1;
         e->compose = (compose) ? e->key + strlen(key) + 1 : NULL;
@@ -362,6 +365,8 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
      {
         Ecore_Event_Mouse_Move *ev;
         ev = calloc(1,sizeof(Ecore_Event_Mouse_Move));
+        if (!ev)
+          return;
         ev->x = dev->mouse.x;
         ev->y = dev->mouse.y;
         ev->root.x = ev->x;
@@ -373,6 +378,8 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
      {
         Ecore_Event_Mouse_Button *ev;
         ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+        if (!ev)
+          return;
         ev->x = dev->mouse.x;
         ev->y = dev->mouse.y;
         ev->root.x = ev->x;
@@ -385,6 +392,8 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
      {
         Ecore_Event_Mouse_Button *ev;
         ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+        if (!ev)
+          return;
         ev->x = dev->mouse.x;
         ev->y = dev->mouse.y;
         ev->root.x = ev->x;
