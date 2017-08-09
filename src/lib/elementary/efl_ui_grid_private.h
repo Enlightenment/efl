@@ -34,7 +34,7 @@ struct _Efl_Ui_Grid_Data
 
    int req_cols, req_rows; // requested - 0 means infinite
    int last_col, last_row; // only used by linear apis
-   Efl_Orient dir1, dir2;  // must be orthogonal (H,V or V,H)
+   Efl_Ui_Dir dir1, dir2;  // must be orthogonal (H,V or V,H)
    struct {
       double h, v;
       Eina_Bool scalable: 1;
@@ -49,11 +49,5 @@ struct _Grid_Item_Iterator
    Eina_List     *list;
    Efl_Ui_Grid    *object;
 };
-
-static inline Eina_Bool
-_horiz(Efl_Orient dir)
-{
-   return dir % 180 == EFL_ORIENT_RIGHT;
-}
 
 #endif

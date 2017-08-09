@@ -274,8 +274,8 @@ _efl_ui_grid_efl_object_constructor(Eo *obj, Efl_Ui_Grid_Data *pd)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
-   pd->dir1 = EFL_ORIENT_RIGHT;
-   pd->dir2 = EFL_ORIENT_DOWN;
+   pd->dir1 = EFL_UI_DIR_RIGHT;
+   pd->dir2 = EFL_UI_DIR_DOWN;
    pd->last_col = -1;
    pd->last_row = -1;
    pd->req_cols = 0;
@@ -474,7 +474,7 @@ _item_remove(Efl_Ui_Grid *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx *subobj)
      }
    if (last)
      {
-        if (_horiz(pd->dir1))
+        if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
           {
              pd->last_col = last->col + last->col_span - 1;
              pd->last_row = last->row;
@@ -634,61 +634,52 @@ _efl_ui_grid_efl_pack_grid_grid_contents_get(Eo *obj, Efl_Ui_Grid_Data *pd EINA_
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient orient)
+_efl_ui_grid_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Dir dir)
 {
-   EINA_SAFETY_ON_FALSE_RETURN((orient % 90) == 0);
+   pd->dir1 = dir;
 
-   pd->dir1 = orient;
-
-   /* if both orientations are either horizontal or vertical, need to adjust
-    * secondary orientation (dir2) */
-   if (_horiz(pd->dir1) == _horiz(pd->dir2))
+   /* if both directions are either horizontal or vertical, need to adjust
+    * secondary direction (dir2) */
+   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE) ==
+       efl_ui_dir_is_horizontal(pd->dir2, EINA_FALSE))
      {
-        if (!_horiz(pd->dir1))
-          pd->dir2 = EFL_ORIENT_RIGHT;
+        if (!efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
+          pd->dir2 = EFL_UI_DIR_RIGHT;
         else
-          pd->dir2 = EFL_ORIENT_DOWN;
+          pd->dir2 = EFL_UI_DIR_DOWN;
      }
 
    efl_pack_layout_request(obj);
 }
 
-EOLIAN static Efl_Orient
-_efl_ui_grid_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
+EOLIAN static Efl_Ui_Dir
+_efl_ui_grid_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
    return pd->dir1;
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_grid_grid_orientation_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Orient primary, Efl_Orient secondary)
+_efl_ui_grid_efl_pack_grid_grid_direction_set(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Dir primary, Efl_Ui_Dir secondary)
 {
-   EINA_SAFETY_ON_FALSE_RETURN((primary % 90) == 0);
-   EINA_SAFETY_ON_FALSE_RETURN((secondary % 90) == 0);
-
    pd->dir1 = primary;
    pd->dir2 = secondary;
 
-   if (_horiz(pd->dir1) == _horiz(pd->dir2))
+   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE) ==
+       efl_ui_dir_is_horizontal(pd->dir2, EINA_FALSE))
      {
-        ERR("specified two orientations in the same axis, secondary orientation "
+        ERR("specified two directions in the same axis, secondary directions "
             " is reset to a valid default");
-        switch (pd->dir1)
-          {
-           case EFL_ORIENT_DOWN:
-           case EFL_ORIENT_UP:
-             pd->dir2 = EFL_ORIENT_RIGHT;
-             break;
-           default:
-             pd->dir2 = EFL_ORIENT_DOWN;
-             break;
-          }
+        if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
+          pd->dir2 = EFL_UI_DIR_DOWN;
+        else
+          pd->dir2 = EFL_UI_DIR_RIGHT;
      }
 
    efl_pack_layout_request(obj);
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_grid_grid_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Orient *primary, Efl_Orient *secondary)
+_efl_ui_grid_efl_pack_grid_grid_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Ui_Dir *primary, Efl_Ui_Dir *secondary)
 {
    if (primary) *primary = pd->dir1;
    if (secondary) *secondary = pd->dir2;
@@ -770,7 +761,7 @@ _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx *su
    int col = pd->last_col;
    int row = pd->last_row;
 
-   if (_horiz(pd->dir1))
+   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
      {
         col++;
         if (pd->req_cols && (col >= pd->req_cols))

@@ -1,5 +1,5 @@
 class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout,
-                   Efl.Orientation)
+                   Efl.Ui.Direction)
 {
    [[Efl UI grid class]]
    implements {
@@ -12,7 +12,7 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout,
       Elm.Widget.theme_apply;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Orientation.orientation { get; set; }
+      Efl.Ui.Direction.direction { get; set; }
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
@@ -25,7 +25,7 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout,
       Efl.Pack.Grid.grid_size { get; set; }
       Efl.Pack.Grid.grid_columns { get; set; }
       Efl.Pack.Grid.grid_rows { get; set; }
-      Efl.Pack.Grid.grid_orientation { get; set; }
+      Efl.Pack.Grid.grid_direction { get; set; }
       Efl.Pack.Linear.pack_end;
       Efl.Pack.Layout.layout_update;
       Efl.Pack.Layout.layout_request;

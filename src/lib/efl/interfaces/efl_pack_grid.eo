@@ -71,16 +71,17 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
             rows: int; [[Number of rows]]
          }
       }
-      @property grid_orientation {
-         [[Primary and secondary up/left/right/down orientations for linear apis.
+      @property grid_direction {
+         [[Primary and secondary up/left/right/down directions for linear apis.
 
-           Default is right and down. Overrides @Efl.Orientation.orientation.
+           Default is horizontal and vertical.
+           This overrides @Efl.Ui.Direction.direction.
          ]]
          set {}
          get {}
          values {
-            primary: Efl.Orient; [[Primary orientation]]
-            secondary: Efl.Orient; [[Secondary orientation]]
+            primary: Efl.Ui.Dir(Efl.Ui.Dir.horizontal); [[Primary direction]]
+            secondary: Efl.Ui.Dir(Efl.Ui.Dir.vertical); [[Secondary direction]]
          }
       }
    }
