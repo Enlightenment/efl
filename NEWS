@@ -2,6 +2,26 @@
 EFL 1.20.1
 ==========
 
+Changes since 1.20.1:
+---------------------
+
+Fixes:
+
+   * ecore-wl2: pass display to aux hint event_adds
+   * ecore-wl2: don't send null set_parent requests for every window
+   * ecore-wl2: sync aux hints after window creation
+   * efl-wl: block connection attempts from unmanaged clients
+   * wayland: fix min/max size setting
+   * efl-wl: do shm pool ref/unref for bm safety
+   * ecore-evas-wayland: update size when size hints are changed
+   * efl-wl: add handling for commit during canvas render
+   * efl-wl: set cursor surface roles
+   * theme: clip start gadget arrow to intended clipper
+   * edje crash with run program references - fix
+   * elm_win: simplify/fix recalc logic when changing csd
+   * elm_win: set shadow geometry based on borderless state
+   * ecore glib support - if we are not the main ctx owner loop to acquire
+
 Changes since 1.20.0:
 ---------------------
 
