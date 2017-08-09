@@ -2620,6 +2620,16 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
           fmt->gfx_filter = calloc(1, sizeof(Efl_Canvas_Text_Filter));
         eina_stringshare_replace(&fmt->gfx_filter->name, param);
      }
+
+   fmt->color.glow.r = fmt->color.outline.r;
+   fmt->color.glow.g = fmt->color.outline.g;
+   fmt->color.glow.b = fmt->color.outline.b;
+   fmt->color.glow.a = fmt->color.outline.a;
+
+   fmt->color.glow2.r = fmt->color.shadow.r;
+   fmt->color.glow2.g = fmt->color.shadow.g;
+   fmt->color.glow2.b = fmt->color.shadow.b;
+   fmt->color.glow2.a = fmt->color.shadow.a;
 }
 
 /**
