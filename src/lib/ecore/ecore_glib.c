@@ -193,11 +193,8 @@ _ecore_glib_select(int             ecore_fds,
 
    ctx = g_main_context_default();
 
-   if (!g_main_context_acquire(ctx))
-     {
-        while (!g_main_context_is_owner(ctx))
-          g_thread_yield();
-     }
+   while (!g_main_context_acquire(ctx))
+     g_thread_yield();
 
 #if GLIB_CHECK_VERSION(2,32,0)
    g_rec_mutex_lock(_ecore_glib_select_lock);
