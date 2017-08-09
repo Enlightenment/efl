@@ -48,7 +48,8 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
    homo = pd->homogenous;
    maxsize = pd->max_size;
 
-   if (_horiz(efl_orientation_get(obj)))
+   // This makes it horizontal by default, as opposed to the standard box.
+   if (efl_ui_dir_is_horizontal(efl_ui_direction_get(obj), EINA_TRUE))
      {
         if (homo)
           {

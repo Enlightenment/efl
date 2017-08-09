@@ -330,14 +330,14 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                  efl_ui_win_autodel_set(efl_added, 1));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_orientation_set(efl_added, EFL_ORIENT_DOWN),
+                 efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0));
 
    efl_content_set(win, box);
 
    {
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
-                     efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL),
+                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_size_hint_align_set(efl_added, -1.0, 0.0));
       efl_pack(box, box2);
@@ -374,7 +374,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    {
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
-                     efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL),
+                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
                      efl_pack_padding_set(efl_added, 5, 5, 1),
@@ -445,6 +445,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_content_set(efl_part(split, "top"), flip);
 
       box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
+                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
                      efl_pack_align_set(efl_added, 0.5, 0.5));
@@ -460,6 +461,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_pack(box2, o);
 
       o = box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
+                         efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                          efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
                          efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
                          efl_pack_align_set(efl_added, 0.5, 0.5));

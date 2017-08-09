@@ -232,7 +232,6 @@ _efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
-   pd->orient = EFL_ORIENT_RIGHT;
    pd->align.h = 0.5;
    pd->align.v = 0.5;
 
@@ -532,29 +531,34 @@ _efl_ui_box_efl_container_content_iterate(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUS
 }
 
 EOLIAN static void
-_efl_ui_box_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Orient dir)
+_efl_ui_box_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Ui_Dir dir)
 {
    switch (dir)
      {
-      case EFL_ORIENT_UP:
-      case EFL_ORIENT_DOWN:
-        pd->orient = EFL_ORIENT_DOWN;
+      case EFL_UI_DIR_RTL:
+        // FIXME: Should be inverted!
+      case EFL_UI_DIR_HORIZONTAL:
+      case EFL_UI_DIR_LTR:
+        pd->dir = EFL_UI_DIR_HORIZONTAL;
         break;
 
-      case EFL_ORIENT_RIGHT:
-      case EFL_ORIENT_LEFT:
+      case EFL_UI_DIR_UP:
+        // FIXME: Should be inverted!
+      case EFL_UI_DIR_DOWN:
+      case EFL_UI_DIR_VERTICAL:
+      case EFL_UI_DIR_DEFAULT:
       default:
-        pd->orient = EFL_ORIENT_RIGHT;
+        pd->dir = EFL_UI_DIR_VERTICAL;
         break;
      }
 
    efl_pack_layout_request(obj);
 }
 
-EOLIAN static Efl_Orient
-_efl_ui_box_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
+EOLIAN static Efl_Ui_Dir
+_efl_ui_box_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
 {
-   return pd->orient;
+   return pd->dir;
 }
 
 EOLIAN static void

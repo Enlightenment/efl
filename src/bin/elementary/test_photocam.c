@@ -811,7 +811,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-                efl_orientation_set(efl_added, EFL_ORIENT_DOWN),
+                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN),
                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
                 efl_content_set(win, efl_added));
 

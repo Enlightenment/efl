@@ -132,7 +132,8 @@ flow_check_cb(void *data, const Efl_Event *event)
    efl_pack_unpack_all(box);
    efl_del(box);
 
-   box = efl_add(chk ? EFL_UI_BOX_FLOW_CLASS : EFL_UI_BOX_CLASS, win);
+   box = efl_add(chk ? EFL_UI_BOX_FLOW_CLASS : EFL_UI_BOX_CLASS, win,
+                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
    efl_content_set(parent, box);
    efl_key_wref_set(win, "box", box);
 
@@ -145,7 +146,7 @@ horiz_check_cb(void *data, const Efl_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    Eo *box = efl_key_wref_get(data, "box");
-   efl_orientation_set(box, chk ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL);
+   efl_ui_direction_set(box, chk ? EFL_UI_DIR_HORIZONTAL : EFL_UI_DIR_VERTICAL);
 }
 
 static void
@@ -221,9 +222,9 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
    efl_gfx_size_set(win, 600, 400);
 
-   vbox = efl_add(EFL_UI_BOX_CLASS, win);
+   vbox = efl_add(EFL_UI_BOX_CLASS, win,
+                  efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
-   efl_orientation_set(vbox, EFL_ORIENT_DOWN);
    efl_gfx_size_hint_weight_set(vbox, 1, 1);
    efl_gfx_size_hint_margin_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
@@ -237,14 +238,15 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(vbox, f);
    efl_gfx_visible_set(f, 1);
 
-   hbox = efl_add(EFL_UI_BOX_CLASS, win);
+   hbox = efl_add(EFL_UI_BOX_CLASS, win,
+                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
    elm_object_content_set(f, hbox);
    efl_pack_padding_set(hbox, 10, 0, EINA_TRUE);
 
 
    /* weights radio group */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
+                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_pack(hbox, bx);
 
@@ -297,7 +299,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* misc */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
+                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -351,7 +353,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* user min size setter */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
+                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -377,7 +379,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* inner box padding */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
+                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -403,7 +405,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* outer margin */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
+                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
@@ -429,7 +431,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    /* Box align */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-               efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
+                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
@@ -475,7 +477,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(vbox, f);
    efl_gfx_visible_set(f, 1);
 
-   bx = efl_add(EFL_UI_BOX_CLASS, win);
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+                efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
    efl_key_wref_set(win, "box", bx);
    efl_pack_padding_set(bx, 10, 10, EINA_TRUE);
    efl_gfx_size_hint_align_set(bx, 0.5, 0.5);

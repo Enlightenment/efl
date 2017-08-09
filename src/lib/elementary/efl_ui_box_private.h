@@ -21,7 +21,7 @@ typedef struct _Box_Item_Iterator Box_Item_Iterator;
 
 struct _Efl_Ui_Box_Data
 {
-   Efl_Orient orient;
+   Efl_Ui_Dir dir;
    Eina_Bool homogeneous : 1;
    Eina_Bool delete_me : 1;
    Eina_Bool recalc : 1;
@@ -43,11 +43,5 @@ struct _Box_Item_Iterator
    Eina_Iterator *real_iterator;
    Efl_Ui_Box    *object;
 };
-
-static inline Eina_Bool
-_horiz(Efl_Orient dir)
-{
-   return dir % 180 == EFL_ORIENT_RIGHT;
-}
 
 #endif

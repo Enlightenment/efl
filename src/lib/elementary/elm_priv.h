@@ -641,6 +641,21 @@ const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *o
 #define ELM_LAYOUT_SIZING_EVAL_OPS(_pfx) \
    EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _##_pfx##_elm_layout_sizing_eval)
 
+static inline Eina_Bool
+efl_ui_dir_is_horizontal(Efl_Ui_Dir dir, Eina_Bool def_val)
+{
+   switch (dir)
+     {
+      case EFL_UI_DIR_DEFAULT: return !!def_val;
+      case EFL_UI_DIR_HORIZONTAL: return EINA_TRUE;
+      case EFL_UI_DIR_VERTICAL: return EINA_FALSE;
+      case EFL_UI_DIR_LTR: return EINA_TRUE;
+      case EFL_UI_DIR_RTL: return EINA_TRUE;
+      case EFL_UI_DIR_DOWN: return EINA_FALSE;
+      case EFL_UI_DIR_UP: return EINA_FALSE;
+     }
+}
+
 #undef EAPI
 #define EAPI
 
