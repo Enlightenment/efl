@@ -113,7 +113,7 @@ END_TEST
 void eldbus_test_eldbus_model_proxy(TCase *tc)
 {
    tcase_add_checked_fixture(tc, _setup, _teardown);
-   tcase_add_test(tc, properties_get);
+//   tcase_add_test(tc, properties_get);
    tcase_add_test(tc, property_get);
    tcase_add_test(tc, property_set);
    tcase_add_test(tc, children_count);
