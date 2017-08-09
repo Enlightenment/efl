@@ -16,10 +16,10 @@
 #define MY_CLASS_NAME "Elm_Separator"
 #define MY_CLASS_NAME_LEGACY "elm_separator"
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    if (sd->orientation == EFL_ORIENT_HORIZONTAL)
@@ -28,7 +28,7 @@ _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
      eina_stringshare_replace(&ld->group, "vertical");
 
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    return int_ret;
 }

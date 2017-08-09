@@ -41,6 +41,23 @@ typedef struct _Elm_Layout_Part_Alias_Description Elm_Layout_Part_Alias_Descript
 EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
 
 /**
+ * @brief Set the edje group from the elementary theme that will be used as
+ * layout.
+ *
+ * Note that @c style will be the new style of @c obj too, as in an @ref
+ * elm_object_style_set call.
+ *
+ * @param[in] klass The class of the group.
+ * @param[in] group The group.
+ * @param[in] style The style to used.
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Elm_Layout
+ */
+EAPI Eina_Bool elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, const char *style);
+
+/**
  * @brief Get the edje data from the given layout.
  *
  * This function fetches data specified inside the edje theme of this layout.

@@ -1,3 +1,17 @@
+enum Efl.Ui.Theme.Apply
+{
+   [[Return error code when setting the style on a widget.]]
+   failed = 0,  [[Failed to apply theme. The widget may become unusable.]]
+   default = 1, [[Successfully applied the default style. The widget may
+                  look different from the rest of the UI if a custom theme
+                  is in use, but it should be usable.]]
+   success = 3  [[Successfully applied the requested style from the current
+                  theme.]]
+}
+
+
+/* The below Elm names need to be cleaned up... */
+
 struct Elm.Event.Policy_Changed
 {
    [[Data on the event when an Elementary policy has changed]]

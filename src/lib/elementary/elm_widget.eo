@@ -18,14 +18,6 @@ enum Elm.Activate
    back, [[Activate back]]
 }
 
-enum Elm.Theme.Apply
-{
-   [[Return codes when a Elementary theme is applied]]
-   failed = 0, [[Failed to apply theme]]
-   default = 1, [[Default return value]]
-   success = 3 [[Success to apply theme]]
-}
-
 struct Elm.Tooltip; [[Elementary tooltip]]
 struct @extern Elm.Theme; [[Elementary theme]]
 
@@ -63,6 +55,32 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          ]]
          values {
             disabled: bool(false); [[$true if the widget is disabled.]]
+         }
+      }
+      @property style {
+         [[The widget style to use.
+
+           Styles define different look and feel for widgets, and may provide
+           different parts for layout-based widgets. Styles vary from widget
+           to widget and may be defined by other themes by means of extensions
+           and overlays.
+
+           The style can only be set before @Efl.Object.finalize, which means
+           at construction time of the object (inside $efl_add in C).
+         ]]
+         set {
+            [[Can only be called during construction, before finalize.]]
+            return: Efl.Ui.Theme.Apply(0);
+               [[Whether the style was successfully applied or not, see
+                 the values of @Efl.Ui.Theme.Apply for more information.]]
+         }
+         get {
+            [[Returns the current style of a widget.]]
+         }
+         values {
+            style: string;
+               [[Name of the style to use. Refer to each widget's documentation
+                 for the available style names, or to the themes in use.]]
          }
       }
 
@@ -117,17 +135,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       	 [[Orientation mode disabled or enabled]]
          values {
             disabled: bool; [[$true if orientation mode is disabled, $false otherwise]]
-         }
-      }
-      @property style {
-      	 [[Theme style]]
-         set {
-            return: Elm.Theme.Apply; [[Theme style]]
-         }
-         get {
-         }
-         values {
-            style: string; [[Style name]]
          }
       }
       @property focus_custom_chain {
@@ -218,7 +225,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       @property theme_object {
       	 [[Theme object property]]
          set {
-            return: Elm.Theme.Apply; [[Theme apply]]
+            return: Efl.Ui.Theme.Apply; [[Theme apply]]
          }
          values {
             edj: Efl.Canvas.Object; [[Edje object]]
@@ -678,7 +685,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
       theme_apply {
          [['Virtual' function on the widget being re-themed.]]
-         return: Elm.Theme.Apply; [[Theme apply]]
+         return: Efl.Ui.Theme.Apply; [[Theme apply]]
       }
       focus_direction_get @const {
       	 [[Get focus direction]]

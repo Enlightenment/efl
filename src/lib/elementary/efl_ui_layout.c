@@ -349,12 +349,12 @@ _efl_ui_layout_elm_widget_disable(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
    return EINA_TRUE;
 }
 
-static Elm_Theme_Apply
+static Efl_Ui_Theme_Apply
 _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Elm_Theme_Apply ret = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply ret = EFL_UI_THEME_APPLY_FAILED;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
    /* function already prints error messages, if any */
    if (!sd->file_set)
@@ -368,18 +368,18 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
      efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    if (!_visuals_refresh(obj, sd))
-     ret = ELM_THEME_APPLY_FAILED;
+     ret = EFL_UI_THEME_APPLY_FAILED;
 
    return ret;
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_layout_elm_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Elm_Theme_Apply theme_apply = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply theme_apply = EFL_UI_THEME_APPLY_FAILED;
 
    theme_apply = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!theme_apply) return ELM_THEME_APPLY_FAILED;
+   if (!theme_apply) return EFL_UI_THEME_APPLY_FAILED;
 
    theme_apply &= _efl_ui_layout_theme_internal(obj, sd);
    return theme_apply;
@@ -895,7 +895,7 @@ _efl_ui_layout_efl_file_mmap_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, co
    efl_file_mmap_get(wd->resize_obj, file, group);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_layout_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, const char *group, const char *style)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -905,10 +905,7 @@ _efl_ui_layout_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, con
    eina_stringshare_replace(&(sd->group), group);
    eina_stringshare_replace(&(wd->style), style);
 
-   if (_efl_ui_layout_theme_internal(obj, sd))
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
+   return _efl_ui_layout_theme_internal(obj, sd);
 }
 
 EOLIAN static void
@@ -2481,6 +2478,15 @@ EAPI const char *
 elm_layout_data_get(const Evas_Object *obj, const char *key)
 {
    return efl_canvas_layout_group_data_get(obj, key);
+}
+
+EAPI Eina_Bool
+elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, const char *style)
+{
+   Efl_Ui_Theme_Apply ta;
+
+   ta = efl_ui_layout_theme_set(obj, klass, group, style);
+   return (ta != EFL_UI_THEME_APPLY_FAILED);
 }
 
 /* End of legacy only */

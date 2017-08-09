@@ -62,14 +62,14 @@ _elm_hoversel_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
    return EINA_TRUE;
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 {
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    Eina_List *l;
    Elm_Object_Item *eo_item;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
    char buf[4096];
    const char *style;
@@ -85,7 +85,7 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
    eina_stringshare_replace(&(wd->style), buf);
 
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    eina_stringshare_replace(&(wd->style), style);
 

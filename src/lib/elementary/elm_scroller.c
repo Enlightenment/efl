@@ -403,12 +403,12 @@ _mirrored_set(Evas_Object *obj,
    elm_interface_scrollable_mirrored_set(obj, mirrored);
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_scroller_elm_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 

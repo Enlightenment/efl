@@ -275,7 +275,7 @@ _elm_theme_data_find(Elm_Theme *th, const char *key)
    return NULL;
 }
 
-Elm_Theme_Apply
+Efl_Ui_Theme_Apply
 _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style)
 {
    Elm_Theme *th = NULL;
@@ -295,13 +295,13 @@ _elm_theme_object_icon_set(Evas_Object *o,
    return _elm_theme_icon_set(th, o, group, style);
 }
 
-Elm_Theme_Apply
+Efl_Ui_Theme_Apply
 _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style)
 {
    Eina_File *file;
    char buf2[1024];
 
-   if ((!clas) || (!group) || (!style) || !o) return ELM_THEME_APPLY_FAILED;
+   if ((!clas) || (!group) || (!style) || !o) return EFL_UI_THEME_APPLY_FAILED;
    if (!th) th = &(theme_default);
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, group, style);
    if (!eina_hash_find(th->cache_style_load_failed, buf2))
@@ -309,7 +309,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
         file = _elm_theme_group_file_find(th, buf2);
         if (file)
           {
-             if (edje_object_mmap_set(o, file, buf2)) return ELM_THEME_APPLY_SUCCESS;
+             if (edje_object_mmap_set(o, file, buf2)) return EFL_UI_THEME_APPLY_SUCCESS;
              else
                {
                   INF("could not set theme group '%s' from file '%s': %s",
@@ -333,7 +333,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
                {
                   INF("could not set theme style '%s', fallback to default",
                       style);
-                  return ELM_THEME_APPLY_DEFAULT;
+                  return EFL_UI_THEME_APPLY_DEFAULT;
                }
              else
                {
@@ -346,7 +346,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
         //style not found, add to the not found list
         eina_hash_add(th->cache_style_load_failed, buf2, (void *)1);
      }
-   return ELM_THEME_APPLY_FAILED;
+   return EFL_UI_THEME_APPLY_FAILED;
 }
 
 Eina_Bool

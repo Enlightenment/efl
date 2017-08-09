@@ -165,16 +165,16 @@ _efl_ui_check_elm_widget_widget_event(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSE
    return EINA_TRUE;
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_check_elm_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUSED)
 {
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, ELM_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
 
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (efl_ui_nstate_value_get(obj) == 0)
      elm_layout_signal_emit(obj, "elm,state,check,off", "elm");

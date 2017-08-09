@@ -542,10 +542,10 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
                     "",style ? : "default");
      }
 
-   Elm_Theme_Apply th_ret =
+   Efl_Ui_Theme_Apply th_ret =
       elm_widget_theme_object_set(WIDGET(it), view, "genlist", buf,
                                   elm_widget_style_get(WIDGET(it)));
-   if (th_ret == ELM_THEME_APPLY_FAILED)
+   if (th_ret == EFL_UI_THEME_APPLY_FAILED)
      {
         ERR("%s is not a valid genlist item style. "
             "Automatically falls back into default style.",
@@ -3439,16 +3439,16 @@ _mirrored_set(Evas_Object *obj,
    elm_interface_scrollable_mirrored_set(obj, rtl);
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_genlist_elm_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
 {
    Item_Block *itb;
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    Eina_List *l;
    Elm_Gen_Item *it;
 
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));
    _mirrored_set(obj, efl_ui_mirrored_get(obj));

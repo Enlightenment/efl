@@ -439,13 +439,13 @@ _index_priority_change(void *data, Elm_Index_Item_Data *it)
      }
 }
 
-EOLIAN static Elm_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply
 _elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
 {
    Evas_Coord minw = 0, minh = 0;
    Elm_Object_Item *eo_item;
 
-   Elm_Theme_Apply int_ret = ELM_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    EFL_UI_LAYOUT_DATA_GET(obj, ld);
@@ -459,7 +459,7 @@ _elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
      eina_stringshare_replace(&ld->group, "base/vertical");
 
    int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return ELM_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->event_rect[0], minw, minh);

@@ -4,7 +4,6 @@ class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                      Efl.Canvas.Layout_Group)
 {
    [[Elementary layout class]]
-   legacy_prefix: elm_layout;
    methods {
       @property theme {
          [[The theme of this widget, defines which edje group will be used.
@@ -19,20 +18,27 @@ class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
          ]]
          set {
             [[Sets the edje group from the elementary theme that will be used
-              as layout.
-
-              Note that $style will be the new style of this object, as in an
-              @Elm.Widget.style.
+              as layout. Note that $style will be the new style of this object,
+              as in an @Elm.Widget.style. As a consequence this function can
+              only be called during construction of the object, before finalize.
 
               If this returns $false the widget is very likely to become
               non-functioning.
             ]]
-            return: bool; [[$true on success, $false otherwise]]
+            return: Efl.Ui.Theme.Apply(0);
+               [[Whether the style was successfully applied or not, see
+                 the values of @Efl.Ui.Theme.Apply for more information.]]
          }
+         /*
+         TODO:
+         get {
+            [[Get information about the current theme in use.]]
+         }
+         */
          values {
             klass: string; [[The class of the group, eg. "button".]]
             group: string("base"); [[The group, eg. "base".]]
-            style: string("default"); [[The style to used, eg "default".]]
+            style: string("default"); [[The style to use, eg "default".]]
          }
       }
    }
