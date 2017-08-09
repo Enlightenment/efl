@@ -3,6 +3,7 @@
 #endif
 
 #include <Elementary.h>
+#include "elm_module_helper.h"
 
 // module api funcs needed
 EAPI int

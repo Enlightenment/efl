@@ -111,6 +111,7 @@ _elm_module_find_as(const char *as)
 
    if (!_elm_module_load(m))
      {
+        ERR("Failed to load elementary module: '%s': %m", m->as);
         _elm_module_del(m);
         return NULL;
      }
