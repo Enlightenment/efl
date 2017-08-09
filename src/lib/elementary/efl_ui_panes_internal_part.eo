@@ -1,0 +1,18 @@
+class Efl.Ui.Panes.Internal.Part (Efl.Ui.Layout.Internal.Part)
+{
+   [[Elementary Panes internal part class]]
+   data: Elm_Part_Data;
+   methods {
+      @property allow_user_size_hints {
+          [[allow user to set size hints to be respected and ignore combined min size.
+            If this flag is set, the minimum size set by @Efl.Gfx.Size.Hint.hint_min.set is respected forcefully. 
+          ]]
+          values {
+             allow: bool;
+          }
+      }
+   }
+   implements {
+   }
+}
+

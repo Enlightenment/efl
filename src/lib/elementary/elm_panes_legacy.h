@@ -45,4 +45,48 @@ EAPI void elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
  */
 EAPI Eina_Bool elm_panes_horizontal_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the absolute minimum size of panes widget's left side.
+ *
+ * @note If displayed vertically, left content is displayed at top.
+ *
+ * @param[in] size Value representing minimum size of left side in pixels.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI void elm_panes_content_left_min_size_set(Evas_Object *obj, int size);
+
+/**
+ * @brief Set the absolute minimum size of panes widget's left side.
+ *
+ * @note If displayed vertically, left content is displayed at top.
+ *
+ * @return Value representing minimum size of left side in pixels.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI int elm_panes_content_left_min_size_get(const Evas_Object *obj);
+
+/**
+ * @brief Control the absolute minimum size of panes widget's right side.
+ *
+ * @note If displayed vertically, right content is displayed at bottom.
+ *
+ * @param[in] size Value representing minimum size of right side in pixels.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI void elm_panes_content_right_min_size_set(Evas_Object *obj, int size);
+
+/**
+ * @brief Control the absolute minimum size of panes widget's right side.
+ *
+ * @note If displayed vertically, right content is displayed at bottom.
+ *
+ * @return Value representing minimum size of right side in pixels.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI int elm_panes_content_right_min_size_get(const Evas_Object *obj);
+
 #include "efl_ui_panes.eo.legacy.h"
