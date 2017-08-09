@@ -121,3 +121,4 @@
 #define STL_COL_DISABLE "color=#151515ff style=shadow,bottom shadow_color=#ffffff19"
 #define STL_COL_WHITE_GLOW "color=#fff glow_color=#ffffff18 glow2_color=#ffffff12"
 
+#define STL_COL_PRIMER "color=#fff outline_color=#fff shadow_color=#fff"
