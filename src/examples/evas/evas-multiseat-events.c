@@ -159,7 +159,7 @@ _pointer_wheel_cb(void *data EINA_UNUSED, const Efl_Event *event)
    seat = efl_input_device_seat_get(efl_input_device_get(ev));
 
    printf("Wheel: '%i,%i' on object %s from seat %s\n",
-          efl_input_pointer_wheel_direction_get(ev),
+          efl_input_pointer_wheel_horizontal_get(ev),
           efl_input_pointer_wheel_delta_get(ev),
           evas_object_name_get(event->object),
           efl_name_get(seat));

@@ -147,10 +147,10 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
             val: bool; [[$true if the button press was a triple click, $false otherwise]]
          }
       }
-      @property wheel_direction {
-         [[Direction of the wheel.]]
+      @property wheel_horizontal {
+         [[Direction of the wheel, usually vertical.]]
          values {
-            dir: Efl.Orient; [[Horizontal or Vertical only.]]
+            horizontal: bool(false); [[If $true this was a horizontal wheel.]]
          }
       }
       @property wheel_delta {

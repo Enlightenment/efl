@@ -1970,7 +1970,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
          _efl_input_value_mask(EFL_INPUT_VALUE_X) |
          _efl_input_value_mask(EFL_INPUT_VALUE_Y) |
          _efl_input_value_mask(EFL_INPUT_VALUE_WHEEL_DELTA) |
-         _efl_input_value_mask(EFL_INPUT_VALUE_WHEEL_DIRECTION);
+         _efl_input_value_mask(EFL_INPUT_VALUE_WHEEL_HORIZONTAL);
 
    if (e->is_frozen) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
@@ -2036,7 +2036,7 @@ evas_event_feed_mouse_wheel(Eo *eo_e, int direction, int z, unsigned int timesta
 
    if (!ev) return;
 
-   ev->wheel.dir = direction ? EFL_ORIENT_HORIZONTAL : EFL_ORIENT_VERTICAL;
+   ev->wheel.horizontal = !!direction;
    ev->wheel.z = z;
    ev->timestamp = timestamp;
    ev->data = (void *) data;

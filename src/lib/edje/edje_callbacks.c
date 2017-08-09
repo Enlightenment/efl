@@ -363,7 +363,7 @@ _edje_mouse_wheel_signal_cb(void *data, const Efl_Event *event)
         if (!(ev->event_flags) || !(rp->ignore_flags & ev->event_flags))
           {
              snprintf(buf, sizeof(buf), "mouse,wheel,%i,%i",
-                      ev->wheel.dir == EFL_ORIENT_HORIZONTAL ? 1 : 0,
+                      ev->wheel.horizontal,
                       (ev->wheel.z < 0) ? (-1) : (1));
              _edje_seat_emit(ed, ev->device, buf, rp->part->name);
           }
