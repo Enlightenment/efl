@@ -1,5 +1,4 @@
-class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range,
-                          Efl.Orientation)
+class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction)
 {
    [[Elementary progressbar class]]
    methods {
@@ -57,7 +56,7 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range,
       Efl.Ui.Range.span_size { get; set; }
       Efl.Ui.Range.range_value { get; set; }
       Efl.Ui.Range.range_unit_format { get; set; }
-      Efl.Orientation.orientation { get; set; }
+      Efl.Ui.Direction.direction { get; set; }
       Efl.Part.part;
    }
    events {
