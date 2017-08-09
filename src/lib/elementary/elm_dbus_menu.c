@@ -953,6 +953,8 @@ _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *obj,
      }
 
    sd->dbus_menu->app_menu_data = malloc(sizeof(Callback_Data));
+   if (!sd->dbus_menu->app_menu_data) return;
+
    cd = sd->dbus_menu->app_menu_data;
    cd->result_cb = result_cb;
    cd->data = data;
