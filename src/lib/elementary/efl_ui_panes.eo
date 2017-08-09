@@ -5,26 +5,28 @@ class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Orientation,
    legacy_prefix: elm_panes;
    event_prefix: elm_panes;
    methods {
-      @property content_left_size {
-         [[Set the size proportion of panes widget's left side.
+      @property split_ratio {
+         [[Set the split ratio between panes widget first and second parts.
 
            By default it's homogeneous, i.e., both sides have the same size.
 
            If something different is required, it can be set with this function.
-           For example, if the left content should be displayed over
-           75% of the panes size, $size should be passed as 0.75.
-           This way, right content will be resized to 25% of panes size.
+           For example, if the first content should be displayed over
+           75% of the panes size, $ratio should be passed as 0.75.
+           This way, second content will be resized to 25% of panes size.
 
-           If displayed vertically, left content is displayed at top, and
-           right content at bottom.
+           If displayed vertically, first content is displayed at top, and
+           second content at bottom.
 
-           Note: This proportion will change when user drags the panes bar.]]
-         set {
-         }
-         get {
-         }
+           Note: This ratio will change when user drags the panes bar.]]
+           set {
+             legacy: null;
+           }
+           get {
+             legacy: null;
+           }
          values {
-            size: double; [[Value between 0.0 and 1.0 representing size proportion of left side.]]
+            ratio: double; [[Value between 0.0 and 1.0 representing split ratio between panes first and second parts.]]
          }
       }
       @property fixed {
@@ -39,54 +41,6 @@ class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Orientation,
             fixed: bool; [[Use $true to fix the left and right panes sizes and make
             them not to be resized by user interaction. Use $false to make them
             resizable.]]
-         }
-      }
-      @property content_right_size {
-         [[Set the size proportion of panes widget's right side.
-
-           By default it's homogeneous, i.e., both sides have the same size.
-
-           If something different is required, it can be set with this function.
-           For example, if the right content should be displayed over
-           75% of the panes size, $size should be passed as 0.75.
-           This way, left content will be resized to 25% of panes size.
-
-           If displayed vertically, left content is displayed at top, and
-           right content at bottom.
-
-           Note: This proportion will change when user drags the panes bar.]]
-         set {
-         }
-         get {
-         }
-         values {
-            size: double; [[Value between 0.0 and 1.0 representing size proportion of right side.]]
-         }
-      }
-      @property content_left_min_relative_size {
-         [[Controls the relative minimum size of panes widget's left side.
-
-           proportion of minimum size of left side.
-
-           Note: If displayed vertically, left content is displayed at top.]]
-         set {
-         }
-         get {
-         }
-         values {
-            size: double; [[Value between 0.0 and 1.0 representing size proportion of minimum size of left side.]]
-         }
-      }
-      @property content_right_min_relative_size {
-         [[Set the relative minimum size of panes widget's right side.
-
-           Note: If displayed vertically, right content is displayed at bottom.]]
-         set {
-         }
-         get {
-         }
-         values {
-            size: double; [[Value between 0.0 and 1.0 representing size proportion of minimum size of right side.]]
          }
       }
    }

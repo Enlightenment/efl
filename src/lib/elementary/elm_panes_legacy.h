@@ -89,4 +89,143 @@ EAPI void elm_panes_content_right_min_size_set(Evas_Object *obj, int size);
  */
 EAPI int elm_panes_content_right_min_size_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the size proportion of panes widget's right side.
+ *
+ * By default it's homogeneous, i.e., both sides have the same size.
+ *
+ * If something different is required, it can be set with this function. For
+ * example, if the right content should be displayed over 75% of the panes
+ * size, @c size should be passed as 0.75. This way, left content will be
+ * resized to 25% of panes size.
+ *
+ * If displayed vertically, left content is displayed at top, and right content
+ * at bottom.
+ *
+ * @note This proportion will change when user drags the panes bar.
+ *
+ * @param[in] size Value between 0.0 and 1.0 representing size proportion of
+ * right side.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI void elm_panes_content_right_size_set(Evas_Object *obj, double size);
+
+/**
+ * @brief Set the size proportion of panes widget's right side.
+ *
+ * By default it's homogeneous, i.e., both sides have the same size.
+ *
+ * If something different is required, it can be set with this function. For
+ * example, if the right content should be displayed over 75% of the panes
+ * size, @c size should be passed as 0.75. This way, left content will be
+ * resized to 25% of panes size.
+ *
+ * If displayed vertically, left content is displayed at top, and right content
+ * at bottom.
+ *
+ * @note This proportion will change when user drags the panes bar.
+ *
+ * @return Value between 0.0 and 1.0 representing size proportion of right
+ * side.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI double elm_panes_content_right_size_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the size proportion of panes widget's left side.
+ *
+ * By default it's homogeneous, i.e., both sides have the same size.
+ *
+ * If something different is required, it can be set with this function. For
+ * example, if the left content should be displayed over 75% of the panes size,
+ * @c size should be passed as 0.75. This way, right content will be resized to
+ * 25% of panes size.
+ *
+ * If displayed vertically, left content is displayed at top, and right content
+ * at bottom.
+ *
+ * @note This proportion will change when user drags the panes bar.
+ *
+ * @param[in] size Value between 0.0 and 1.0 representing size proportion of
+ * left side.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI void elm_panes_content_left_size_set(Evas_Object *obj, double size);
+
+/**
+ * @brief Set the size proportion of panes widget's left side.
+ *
+ * By default it's homogeneous, i.e., both sides have the same size.
+ *
+ * If something different is required, it can be set with this function. For
+ * example, if the left content should be displayed over 75% of the panes size,
+ * @c size should be passed as 0.75. This way, right content will be resized to
+ * 25% of panes size.
+ *
+ * If displayed vertically, left content is displayed at top, and right content
+ * at bottom.
+ *
+ * @note This proportion will change when user drags the panes bar.
+ *
+ * @return Value between 0.0 and 1.0 representing size proportion of left side.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI double elm_panes_content_left_size_get(const Evas_Object *obj);
+
+/**
+ * @brief Controls the relative minimum size of panes widget's left side.
+ *
+ * proportion of minimum size of left side.
+ *
+ * @note If displayed vertically, left content is displayed at top.
+ *
+ * @param[in] size Value between 0.0 and 1.0 representing size proportion of
+ * minimum size of left side.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI void elm_panes_content_left_min_relative_size_set(Evas_Object *obj, double size);
+
+/**
+ * @brief Controls the relative minimum size of panes widget's left side.
+ *
+ * proportion of minimum size of left side.
+ *
+ * @note If displayed vertically, left content is displayed at top.
+ *
+ * @return Value between 0.0 and 1.0 representing size proportion of minimum
+ * size of left side.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI double elm_panes_content_left_min_relative_size_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the relative minimum size of panes widget's right side.
+ *
+ * @note If displayed vertically, right content is displayed at bottom.
+ *
+ * @param[in] size Value between 0.0 and 1.0 representing size proportion of
+ * minimum size of right side.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI void elm_panes_content_right_min_relative_size_set(Evas_Object *obj, double size);
+
+/**
+ * @brief Set the relative minimum size of panes widget's right side.
+ *
+ * @note If displayed vertically, right content is displayed at bottom.
+ *
+ * @return Value between 0.0 and 1.0 representing size proportion of minimum
+ * size of right side.
+ *
+ * @ingroup Efl_Ui_Panes
+ */
+EAPI double elm_panes_content_right_min_relative_size_get(const Evas_Object *obj);
+
 #include "efl_ui_panes.eo.legacy.h"

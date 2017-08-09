@@ -251,6 +251,10 @@ _set_min_size_new(void *data)
                   second_min_relative_size = second_minh/(double)h;
                }
           }
+
+        first_min_relative_size = MAX(sd->first_min_split_ratio, first_min_relative_size);
+        second_min_relative_size = MAX(sd->second_min_split_ratio, second_min_relative_size);
+
         edje_object_part_drag_value_set(wd->resize_obj, "right_constraint",
                                         0.0, 1.0 - second_min_relative_size);
         edje_object_part_drag_value_set(wd->resize_obj, "left_constraint",
@@ -271,6 +275,10 @@ _set_min_size_new(void *data)
                   second_min_relative_size = second_minw/(double)w;
                }
           }
+
+        first_min_relative_size = MAX(sd->first_min_split_ratio, first_min_relative_size);
+        second_min_relative_size = MAX(sd->second_min_split_ratio, second_min_relative_size);
+
         edje_object_part_drag_value_set(wd->resize_obj, "right_constraint",
                                         1.0 - second_min_relative_size, 0.0);
         edje_object_part_drag_value_set(wd->resize_obj, "left_constraint",
@@ -484,14 +492,12 @@ elm_panes_content_right_unset(Evas_Object *obj)
 }
 
 EOLIAN static double
-_efl_ui_panes_content_left_size_get(Eo *obj, Efl_Ui_Panes_Data *sd)
+_efl_ui_panes_split_ratio_get(Eo *obj, Efl_Ui_Panes_Data *sd)
 {
    double w, h;
-
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0.0);
 
-   edje_object_part_drag_value_get
-     (wd->resize_obj, "elm.bar", &w, &h);
+   edje_object_part_drag_value_get(wd->resize_obj, "elm.bar", &w, &h);
 
    if (sd->orientation == EFL_ORIENT_HORIZONTAL)
      return h;
@@ -499,31 +505,17 @@ _efl_ui_panes_content_left_size_get(Eo *obj, Efl_Ui_Panes_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_panes_content_left_size_set(Eo *obj, Efl_Ui_Panes_Data *sd, double size)
+_efl_ui_panes_split_ratio_set(Eo *obj, Efl_Ui_Panes_Data *sd, double ratio)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (size < 0.0) size = 0.0;
-   else if (size > 1.0) size = 1.0;
+   if (ratio < 0.0) ratio = 0.0;
+   else if (ratio > 1.0) ratio = 1.0;
 
    if (sd->orientation == EFL_ORIENT_HORIZONTAL)
-     edje_object_part_drag_value_set
-       (wd->resize_obj, "elm.bar", 0.0, size);
+     edje_object_part_drag_value_set(wd->resize_obj, "elm.bar", 0.0, ratio);
    else
-     edje_object_part_drag_value_set
-       (wd->resize_obj, "elm.bar", size, 0.0);
-}
-
-EOLIAN static double
-_efl_ui_panes_content_right_size_get(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UNUSED)
-{
-   return 1.0 - elm_panes_content_left_size_get(obj);
-}
-
-EOLIAN static void
-_efl_ui_panes_content_right_size_set(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UNUSED, double size)
-{
-   elm_panes_content_left_size_set(obj, (1.0 - size));
+     edje_object_part_drag_value_set(wd->resize_obj, "elm.bar", ratio, 0.0);
 }
 
 EOLIAN static void
@@ -600,36 +592,6 @@ _efl_ui_panes_fixed_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
    return sd->fixed;
 }
 
-EOLIAN static void
-_efl_ui_panes_content_left_min_relative_size_set(Eo *obj, Efl_Ui_Panes_Data *_pd, double size)
-{
-   _pd->left_min_relative_size = size;
-   if (_pd->left_min_relative_size < 0) _pd->left_min_relative_size = 0;
-   _pd->left_min_size_is_relative = EINA_TRUE;
-   _update_fixed_sides(obj);
-}
-
-EOLIAN static double
-_efl_ui_panes_content_left_min_relative_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *_pd)
-{
-   return _pd->left_min_relative_size;
-}
-
-EOLIAN static void
-_efl_ui_panes_content_right_min_relative_size_set(Eo *obj, Efl_Ui_Panes_Data *_pd, double size)
-{
-   _pd->right_min_relative_size = size;
-   if (_pd->right_min_relative_size < 0) _pd->right_min_relative_size = 0;
-   _pd->right_min_size_is_relative = EINA_TRUE;
-   _update_fixed_sides(obj);
-}
-
-EOLIAN static double
-_efl_ui_panes_content_right_min_relative_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *_pd)
-{
-   return _pd->right_min_relative_size;
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_panes_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *_pd EINA_UNUSED)
 {
@@ -685,6 +647,41 @@ _efl_ui_panes_internal_part_allow_user_size_hints_get(Eo *obj, Elm_Part_Data *_p
    return ret;
 }
 
+EOLIAN static double
+_efl_ui_panes_internal_part_min_split_ratio_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
+   Efl_Ui_Panes_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PANES_CLASS);
+   double ret = 0.0;
+
+   if (!strcmp(pd->part, "first"))
+     ret = sd->first_min_split_ratio;
+   else if (!strcmp(pd->part, "second"))
+     ret = sd->second_min_split_ratio;
+
+   return ret;
+}
+
+EOLIAN static void
+_efl_ui_panes_internal_part_min_split_ratio_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, double ratio)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
+   Efl_Ui_Panes_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PANES_CLASS);
+
+   if (!strcmp(pd->part, "first"))
+     {
+        sd->first_min_split_ratio = ratio;
+        if (sd->first_min_split_ratio < 0) sd->first_min_split_ratio = 0;
+        _set_min_size_new(pd->obj);
+     }
+   else if (!strcmp(pd->part, "second"))
+     {
+        sd->second_min_split_ratio = ratio;
+        if (sd->second_min_split_ratio < 0) sd->second_min_split_ratio = 0;
+        _set_min_size_new(pd->obj);
+     }
+}
+
 #include "efl_ui_panes_internal_part.eo.c"
 
 /* Efl.Part end */
@@ -733,6 +730,65 @@ elm_panes_content_right_min_size_get(const Evas_Object *obj)
 {
    EFL_UI_PANES_DATA_GET(obj, sd);
    return sd->right_min_size;
+}
+
+EAPI double
+elm_panes_content_left_size_get(const Evas_Object *obj)
+{
+   return efl_ui_panes_split_ratio_get(obj);
+}
+
+EAPI void
+elm_panes_content_left_size_set(Evas_Object *obj, double size)
+{
+   efl_ui_panes_split_ratio_set(obj, size);
+}
+
+EAPI double
+elm_panes_content_right_size_get(const Evas_Object *obj)
+{
+   return 1.0 - elm_panes_content_left_size_get(obj);
+}
+
+EAPI void
+elm_panes_content_right_size_set(Evas_Object *obj, double size)
+{
+   elm_panes_content_left_size_set(obj, (1.0 - size));
+}
+
+EAPI void
+elm_panes_content_left_min_relative_size_set(Evas_Object *obj, double size)
+{
+   EFL_UI_PANES_DATA_GET(obj, sd);
+   sd->left_min_relative_size = size;
+   if (sd->left_min_relative_size < 0) sd->left_min_relative_size = 0;
+   sd->left_min_size_is_relative = EINA_TRUE;
+   _update_fixed_sides(obj);
+}
+
+EAPI double
+elm_panes_content_left_min_relative_size_get(const Evas_Object *obj)
+{
+   EFL_UI_PANES_DATA_GET(obj, sd);
+   return sd->left_min_relative_size;
+}
+
+EAPI void
+elm_panes_content_right_min_relative_size_set(Evas_Object *obj, double size)
+{
+   EFL_UI_PANES_DATA_GET(obj, sd);
+
+   sd->right_min_relative_size = size;
+   if (sd->right_min_relative_size < 0) sd->right_min_relative_size = 0;
+   sd->right_min_size_is_relative = EINA_TRUE;
+   _update_fixed_sides(obj);
+}
+
+EAPI double
+elm_panes_content_right_min_relative_size_get(const Evas_Object *obj)
+{
+   EFL_UI_PANES_DATA_GET(obj, sd);
+   return sd->right_min_relative_size;
 }
 
 /* Legacy APIs end  */
