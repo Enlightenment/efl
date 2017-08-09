@@ -97,6 +97,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_layout_internal_table.eo \
 	lib/elementary/efl_ui_button_internal_part.eo \
 	lib/elementary/elm_ctxpopup_internal_part.eo \
+	lib/elementary/efl_ui_panes_internal_part.eo \
 	lib/elementary/elm_dayselector_internal_part.eo \
 	lib/elementary/elm_entry_internal_part.eo \
 	lib/elementary/elm_fileselector_entry_internal_part.eo \

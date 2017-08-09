@@ -89,30 +89,6 @@ class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Orientation,
             size: double; [[Value between 0.0 and 1.0 representing size proportion of minimum size of right side.]]
          }
       }
-      @property content_left_min_size {
-         [[Set the absolute minimum size of panes widget's left side.
-
-           Note: If displayed vertically, left content is displayed at top.]]
-         set {
-         }
-         get {
-         }
-         values {
-            size: int; [[Value representing minimum size of left side in pixels.]]
-         }
-      }
-      @property content_right_min_size {
-         [[Control the absolute minimum size of panes widget's right side.
-
-           Note: If displayed vertically, right content is displayed at bottom.]]
-         set {
-         }
-         get {
-         }
-         values {
-            size: int; [[Value representing minimum size of right side in pixels.]]
-         }
-      }
    }
    implements {
       class.constructor;
@@ -121,6 +97,7 @@ class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Orientation,
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
       Efl.Orientation.orientation { get; set; }
+      Efl.Part.part;
    }
    events {
       press; [[Called when panes got pressed]]

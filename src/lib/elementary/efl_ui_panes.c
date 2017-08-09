@@ -11,6 +11,9 @@
 #include "elm_widget_layout.h"
 #include "efl_ui_panes_private.h"
 
+#include "efl_ui_panes_internal_part.eo.h"
+#include "elm_part_helper.h"
+
 #define MY_CLASS EFL_UI_PANES_CLASS
 #define MY_CLASS_PFX efl_ui_panes
 
@@ -187,13 +190,20 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
    second_content = efl_content_get(efl_part(obj, "second"));
 
    if (first_content)
-     efl_gfx_size_hint_combined_min_get(first_content, &sd->first_minw, &sd->first_minh);
-     //TODO: use this for allow cropping?
-     //efl_gfx_size_hint_min_get(first_content, &sd->first_minw, &sd->first_minh);
+     {
+        if (!sd->first_allow_user_hints)
+          efl_gfx_size_hint_combined_min_get(first_content, &sd->first_minw, &sd->first_minh);
+        else
+          efl_gfx_size_hint_min_get(first_content, &sd->first_minw, &sd->first_minh);
+     }
+
    if (second_content)
-     efl_gfx_size_hint_combined_min_get(second_content, &sd->second_minw, &sd->second_minh);
-     //TODO: use this for allow cropping
-     //efl_gfx_size_hint_min_get(second_content, &sd->second_minw, &sd->second_minh);
+     {
+        if (!sd->second_allow_user_hints)
+          efl_gfx_size_hint_combined_min_get(second_content, &sd->second_minw, &sd->second_minh);
+        else
+          efl_gfx_size_hint_min_get(second_content, &sd->second_minw, &sd->second_minh);
+     }
 
    if (sd->orientation == EFL_ORIENT_HORIZONTAL)
      {
@@ -298,7 +308,6 @@ _set_min_size(void *data)
      }
 }
 
-//TODO: call this in legacy api implementation
 static void
 _update_fixed_sides(void *data)
 {
@@ -348,9 +357,10 @@ _on_resize(void *data,
            Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
-   //TODO: needs a flag to enable the old behaviour
-  //_update_fixed_sides(data);
-   _set_min_size_new(data);
+  EFL_UI_PANES_DATA_GET(data, sd);
+
+  if (sd->legacy_use) _update_fixed_sides(data);
+  else _set_min_size_new(data);
 }
 
 EOLIAN static void
@@ -390,7 +400,8 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
    sd->left_min_size = 0;
    sd->right_min_relative_size = 0;
    sd->left_min_relative_size = 0;
-   _update_fixed_sides(obj);
+   if (sd->legacy_use) _update_fixed_sides(obj);
+   else _set_min_size_new(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -415,7 +426,12 @@ EAPI Evas_Object *
 elm_panes_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   Evas_Object *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   EFL_UI_PANES_DATA_GET(obj, sd);
+
+   sd->legacy_use = EINA_TRUE;
+
+   return obj;
 }
 
 EOLIAN static Eo *
@@ -520,7 +536,8 @@ _efl_ui_panes_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Panes_Data *sd, Ef
 
    sd->orientation = dir;
    elm_obj_widget_theme_apply(obj);
-   _update_fixed_sides(obj);
+   if (sd->legacy_use) _update_fixed_sides(obj);
+   else _set_min_size_new(obj);
 
    elm_panes_content_left_size_set(obj, size);
 }
@@ -613,36 +630,6 @@ _efl_ui_panes_content_right_min_relative_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Pa
    return _pd->right_min_relative_size;
 }
 
-EOLIAN static void
-_efl_ui_panes_content_left_min_size_set(Eo *obj, Efl_Ui_Panes_Data *_pd, Evas_Coord size)
-{
-   _pd->left_min_size = size;
-   if (_pd->left_min_size < 0) _pd->left_min_size = 0;
-   _pd->left_min_size_is_relative = EINA_FALSE;
-   _update_fixed_sides(obj);
-}
-
-EOLIAN static Evas_Coord
-_efl_ui_panes_content_left_min_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *_pd)
-{
-   return _pd->left_min_size;
-}
-
-EOLIAN static void
-_efl_ui_panes_content_right_min_size_set(Eo *obj, Efl_Ui_Panes_Data *_pd, Evas_Coord size)
-{
-   _pd->right_min_size = size;
-   if (_pd->right_min_size < 0) _pd->right_min_size = 0;
-   _pd->right_min_size_is_relative = EINA_FALSE;
-   _update_fixed_sides(obj);
-}
-
-EOLIAN static Evas_Coord
-_efl_ui_panes_content_right_min_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *_pd)
-{
-   return _pd->right_min_size;
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_panes_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *_pd EINA_UNUSED)
 {
@@ -655,6 +642,53 @@ _efl_ui_panes_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(efl_ui_panes, EFL_UI_PANES, EFL_UI_LAYOUT, Efl_Ui_Panes_Data, Elm_Part_Data)
+
+EOLIAN static void
+_efl_ui_panes_internal_part_allow_user_size_hints_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Eina_Bool allow)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
+   Efl_Ui_Panes_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PANES_CLASS);
+
+   if (!strcmp(pd->part, "first"))
+     {
+        if (sd->first_allow_user_hints == allow) return;
+        sd->first_allow_user_hints = allow;
+        _set_min_size_new(pd->obj);
+     }
+   else if (!strcmp(pd->part, "second"))
+     {
+        if (sd->second_allow_user_hints == allow) return;
+        sd->second_allow_user_hints = allow;
+        _set_min_size_new(pd->obj);
+     }
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_panes_internal_part_allow_user_size_hints_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
+{
+   Eina_Bool ret = EINA_FALSE;
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
+   Efl_Ui_Panes_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PANES_CLASS);
+
+   if (!strcmp(pd->part, "first"))
+     {
+        ret = sd->first_allow_user_hints;
+     }
+   else if (!strcmp(pd->part, "second"))
+     {
+        ret = sd->second_allow_user_hints;
+     }
+
+   return ret;
+}
+
+#include "efl_ui_panes_internal_part.eo.c"
+
+/* Efl.Part end */
+
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX);
@@ -664,5 +698,43 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX);
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panes)
 
+/* Legacy APIs */
+EAPI void
+elm_panes_content_left_min_size_set(Evas_Object *obj, int size)
+{
+   EFL_UI_PANES_DATA_GET(obj, sd);
+
+   sd->left_min_size = size;
+   if (sd->left_min_size < 0) sd->left_min_size = 0;
+   sd->left_min_size_is_relative = EINA_FALSE;
+   _update_fixed_sides(obj);
+}
+
+EAPI int
+elm_panes_content_left_min_size_get(const Evas_Object *obj)
+{
+   EFL_UI_PANES_DATA_GET(obj, sd);
+   return sd->left_min_size;
+}
+
+EAPI void
+elm_panes_content_right_min_size_set(Evas_Object *obj, int size)
+{
+   EFL_UI_PANES_DATA_GET(obj, sd);
+
+   sd->right_min_size = size;
+   if (sd->right_min_size < 0) sd->right_min_size = 0;
+   sd->right_min_size_is_relative = EINA_FALSE;
+   _update_fixed_sides(obj);
+}
+
+EAPI int
+elm_panes_content_right_min_size_get(const Evas_Object *obj)
+{
+   EFL_UI_PANES_DATA_GET(obj, sd);
+   return sd->right_min_size;
+}
+
+/* Legacy APIs end  */
 
 #include "efl_ui_panes.eo.c"
