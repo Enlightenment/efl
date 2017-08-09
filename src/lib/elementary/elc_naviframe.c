@@ -616,8 +616,16 @@ end:
    // make sure there is no more reference to this item.
    EINA_LIST_FOREACH(sd->ops, l, nfo)
      {
-        if (nfo->related == nit) nfo->related = NULL;
-        if (nfo->self == nit) nfo->self = NULL;
+        /* If an transition is cancelled by deleting an item, then the pair
+         * transition also should be cancelled.
+         * This case can happen when an item is deleted by elm_object_item_del()
+         * right after the item is newly pushed.
+         */
+        if ((nfo->self == nit) || (nfo->related == nit))
+          {
+             nfo->self = NULL;
+             nfo->related = NULL;
+          }
      }
 
    _item_free(nit);
