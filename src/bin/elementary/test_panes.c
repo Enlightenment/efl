@@ -117,7 +117,8 @@ test_panes_minsize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    panes = efl_add(EFL_UI_PANES_CLASS, win,
                    efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
-                   efl_content_set(win, efl_added)
+                   efl_content_set(win, efl_added),
+                   efl_ui_panes_split_ratio_set(efl_added, 0.7)
                   );
 
    efl_add(EFL_UI_BUTTON_CLASS, win,

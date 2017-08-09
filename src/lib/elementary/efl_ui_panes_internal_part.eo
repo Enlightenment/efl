@@ -11,6 +11,17 @@ class Efl.Ui.Panes.Internal.Part (Efl.Ui.Layout.Internal.Part)
              allow: bool;
           }
       }
+      @property min_split_ratio {
+        [[Controls the relative minimum size of panes widget's part.
+
+          If @Efl.Gfx.Size.Hint.hint_min.set is also used along with @.min_split_ratio.set, maximum value is set as
+          minimum size to part.
+
+          ]]
+        values {
+           size: double; [[Value between 0.0 and 1.0 representing size proportion of first part's minimum size.]]
+        }
+      }
    }
    implements {
    }
