@@ -66,23 +66,37 @@ _progress_status_free(Efl_Ui_Progress_Status *ps)
 }
 
 static inline Eina_Bool
-_is_horizontal(Efl_Orient orientation)
+_is_horizontal(Efl_Ui_Dir dir)
 {
-   if (orientation == EFL_ORIENT_LEFT ||
-       orientation == EFL_ORIENT_RIGHT)
+   return efl_ui_dir_is_horizontal(dir, EINA_TRUE);
+}
+
+static inline Eina_Bool
+_is_inverted(Efl_Ui_Dir dir)
+{
+   if ((dir == EFL_UI_DIR_LEFT) || (dir == EFL_UI_DIR_UP))
      return EINA_TRUE;
 
    return EINA_FALSE;
 }
 
-static inline Eina_Bool
-_is_inverted(Efl_Orient orientation)
+static Efl_Ui_Dir
+_direction_get(Eina_Bool horizontal, Eina_Bool inverted)
 {
-   if (orientation == EFL_ORIENT_LEFT ||
-       orientation == EFL_ORIENT_UP)
-     return EINA_TRUE;
-
-   return EINA_FALSE;
+   if (horizontal)
+     {
+        if (inverted)
+          return EFL_UI_DIR_LEFT;
+        else
+          return EFL_UI_DIR_RIGHT;
+     }
+   else
+     {
+        if (inverted)
+          return EFL_UI_DIR_UP;
+        else
+          return EFL_UI_DIR_DOWN;
+     }
 }
 
 static void
@@ -122,16 +136,16 @@ _val_set(Evas_Object *obj)
    Eina_List *l;
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)
-      {
-         pos = ps->val;
-         if ((!rtl && _is_inverted(sd->orientation)) ||
-              (rtl && ((sd->orientation == EFL_ORIENT_UP) ||
-                (sd->orientation == EFL_ORIENT_RIGHT))))
-            pos = MAX_RATIO_LVL - pos;
+     {
+        pos = ps->val;
+        if ((!rtl && _is_inverted(sd->dir)) ||
+            (rtl && ((sd->dir == EFL_UI_DIR_UP) ||
+                     (sd->dir == EFL_UI_DIR_RIGHT))))
+          pos = MAX_RATIO_LVL - pos;
 
-         edje_object_part_drag_value_set
-           (wd->resize_obj, ps->part_name, pos, pos);
-      }
+        edje_object_part_drag_value_set
+              (wd->resize_obj, ps->part_name, pos, pos);
+     }
 }
 
 EOLIAN static void
@@ -197,7 +211,7 @@ _efl_ui_progressbar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *sd)
    EFL_UI_LAYOUT_DATA_GET(obj, ld);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
-   if (_is_horizontal(sd->orientation))
+   if (_is_horizontal(sd->dir))
      eina_stringshare_replace(&ld->group, "horizontal");
    else eina_stringshare_replace(&ld->group, "vertical");
 
@@ -215,7 +229,7 @@ _efl_ui_progressbar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *sd)
    if (((sd->units) || (sd->unit_format_func)) && (!sd->pulse))
      elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
 
-   if (_is_horizontal(sd->orientation))
+   if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
        (sd->spacer, (double)sd->size * efl_ui_scale_get(obj) *
        elm_config_scale_get(), 1);
@@ -224,7 +238,7 @@ _efl_ui_progressbar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *sd)
        (sd->spacer, 1, (double)sd->size * efl_ui_scale_get(obj) *
        elm_config_scale_get());
 
-   if (_is_inverted(sd->orientation))
+   if (_is_inverted(sd->dir))
      elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
    else
      elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
@@ -287,7 +301,7 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   priv->orientation = EFL_ORIENT_RIGHT;
+   priv->dir = EFL_UI_DIR_RIGHT;
    priv->units = eina_stringshare_add("%.0f %%");
    priv->val = MIN_RATIO_LVL;
 
@@ -372,17 +386,17 @@ _efl_ui_progressbar_pulse_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data 
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Efl_Orient dir)
+_efl_ui_progressbar_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Efl_Ui_Dir dir)
 {
-   sd->orientation = dir;
+   sd->dir = dir;
 
    elm_obj_widget_theme_apply(obj);
 }
 
-EOLIAN static Efl_Orient
-_efl_ui_progressbar_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+EOLIAN static Efl_Ui_Dir
+_efl_ui_progressbar_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
-   return sd->orientation;
+   return sd->dir;
 }
 
 EOLIAN static void
@@ -392,7 +406,7 @@ _efl_ui_progressbar_efl_ui_range_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data 
 
    sd->size = size;
 
-   if (_is_horizontal(sd->orientation))
+   if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
        (sd->spacer, (double)sd->size * efl_ui_scale_get(obj) *
        elm_config_scale_get(), 1);
@@ -568,41 +582,22 @@ elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type
    elm_layout_sizing_eval(obj);
 }
 
-static Efl_Orient
-_orientation_get(Eina_Bool horizontal, Eina_Bool inverted)
-{
-   if (horizontal)
-     {
-        if (inverted)
-          return EFL_ORIENT_LEFT;
-        else
-          return EFL_ORIENT_RIGHT;
-     }
-   else
-     {
-        if (inverted)
-          return EFL_ORIENT_UP;
-        else
-          return EFL_ORIENT_DOWN;
-     }
-}
-
 EAPI void
 elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
-   Efl_Orient dir;
+   Efl_Ui_Dir dir;
    EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
 
-   dir = _orientation_get(horizontal, _is_inverted(sd->orientation));
+   dir = _direction_get(horizontal, _is_inverted(sd->dir));
 
-   efl_orientation_set(obj, dir);
+   efl_ui_direction_set(obj, dir);
 }
 
 EAPI Eina_Bool
 elm_progressbar_horizontal_get(const Evas_Object *obj)
 {
-   Efl_Orient dir;
-   dir = efl_orientation_get(obj);
+   Efl_Ui_Dir dir;
+   dir = efl_ui_direction_get(obj);
 
    return _is_horizontal(dir);
 }
@@ -610,19 +605,19 @@ elm_progressbar_horizontal_get(const Evas_Object *obj)
 EAPI void
 elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
-   Efl_Orient dir;
+   Efl_Ui_Dir dir;
    EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
 
-   dir = _orientation_get(_is_horizontal(sd->orientation), inverted);
+   dir = _direction_get(_is_horizontal(sd->dir), inverted);
 
-   efl_orientation_set(obj, dir);
+   efl_ui_direction_set(obj, dir);
 }
 
 EAPI Eina_Bool
 elm_progressbar_inverted_get(const Evas_Object *obj)
 {
-   Efl_Orient dir;
-   dir = efl_orientation_get(obj);
+   Efl_Ui_Dir dir;
+   dir = efl_ui_direction_get(obj);
 
    return _is_inverted(dir);
 }

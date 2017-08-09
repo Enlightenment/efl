@@ -34,7 +34,7 @@ struct _Efl_Ui_Progressbar_Data
    Evas_Coord            size; /**< Width or height of progressbar */
    double                val; /**< Value of progressbar */
 
-   Efl_Orient            orientation; /**< Orientation of the progressbar  */
+   Efl_Ui_Dir            dir; /**< Orientation of the progressbar  */
    Eina_Bool             pulse : 1; /**< Whether object is put in the pulsing mode */
    Eina_Bool             pulse_state : 1; /**< To start the pulsing animation, otherwise to stop it */
    Eina_List            *progress_status; /**< The list of _Elm_Progress_Status. To save the progress value(in percentage) each part of given progress bar */
