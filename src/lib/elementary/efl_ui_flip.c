@@ -2092,20 +2092,45 @@ _efl_ui_flip_interaction_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd)
    return sd->intmode;
 }
 
-static int
-_orient_dir_xlate(Efl_Orient dir)
+static Efl_Ui_Dir
+_flip_dir_to_efl_ui_dir(Elm_Flip_Direction dir)
 {
-   if      (dir == EFL_ORIENT_UP)    return ELM_FLIP_DIRECTION_UP;
-   else if (dir == EFL_ORIENT_DOWN)  return ELM_FLIP_DIRECTION_DOWN;
-   else if (dir == EFL_ORIENT_LEFT)  return ELM_FLIP_DIRECTION_LEFT;
-   else if (dir == EFL_ORIENT_RIGHT) return ELM_FLIP_DIRECTION_RIGHT;
-   return 0;
+   switch (dir)
+     {
+      case ELM_FLIP_DIRECTION_RIGHT: return EFL_UI_DIR_RIGHT;
+      case ELM_FLIP_DIRECTION_DOWN: return EFL_UI_DIR_DOWN;
+      case ELM_FLIP_DIRECTION_LEFT: return EFL_UI_DIR_LEFT;
+      case ELM_FLIP_DIRECTION_UP: return EFL_UI_DIR_UP;
+     }
+   ERR("Invalid value for Elm_Flip_Direction: %d", (int) dir);
+   return EFL_UI_DIR_DEFAULT;
+}
+
+static Elm_Flip_Direction
+_efl_ui_dir_to_flip_dir(Efl_Ui_Dir dir)
+{
+   switch (dir)
+     {
+      case EFL_UI_DIR_RIGHT:
+      case EFL_UI_DIR_HORIZONTAL:
+        return ELM_FLIP_DIRECTION_RIGHT;
+      case EFL_UI_DIR_DOWN:
+        return ELM_FLIP_DIRECTION_DOWN;
+      case EFL_UI_DIR_LEFT:
+        return ELM_FLIP_DIRECTION_LEFT;
+      case EFL_UI_DIR_UP:
+      case EFL_UI_DIR_VERTICAL:
+      case EFL_UI_DIR_DEFAULT:
+        return ELM_FLIP_DIRECTION_UP;
+     }
+   ERR("Invalid value for Efl_Ui_Dir: %d", (int) dir);
+   return ELM_FLIP_DIRECTION_UP;
 }
 
 EOLIAN static void
-_efl_ui_flip_interaction_direction_enabled_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Orient dir, Eina_Bool enabled)
+_efl_ui_flip_interaction_direction_enabled_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Ui_Dir dir, Eina_Bool enabled)
 {
-   int i = _orient_dir_xlate(dir);;
+   int i = _efl_ui_dir_to_flip_dir(dir);
    int area;
 
    enabled = !!enabled;
@@ -2125,15 +2150,15 @@ _efl_ui_flip_interaction_direction_enabled_set(Eo *obj, Efl_Ui_Flip_Data *sd, Ef
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_interaction_direction_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Efl_Orient dir)
+_efl_ui_flip_interaction_direction_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Efl_Ui_Dir dir)
 {
-   return sd->dir_enabled[_orient_dir_xlate(dir)];
+   return sd->dir_enabled[_efl_ui_dir_to_flip_dir(dir)];
 }
 
 EOLIAN static void
-_efl_ui_flip_interaction_direction_hitsize_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Orient dir, double hitsize)
+_efl_ui_flip_interaction_direction_hitsize_set(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Ui_Dir dir, double hitsize)
 {
-   int i = _orient_dir_xlate(dir);
+   int i = _efl_ui_dir_to_flip_dir(dir);
 
 
    if (hitsize < 0.0)
@@ -2229,9 +2254,9 @@ _content_removed(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
 }
 
 EOLIAN static double
-_efl_ui_flip_interaction_direction_hitsize_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Efl_Orient dir)
+_efl_ui_flip_interaction_direction_hitsize_get(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Efl_Ui_Dir dir)
 {
-   int i = _orient_dir_xlate(dir);
+   int i = _efl_ui_dir_to_flip_dir(dir);
 
    return sd->dir_hitsize[i];
 }
@@ -2343,54 +2368,32 @@ _efl_ui_flip_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-static Efl_Orient
-_to_efl_orientation(Elm_Flip_Direction dir)
-{
-   Efl_Orient res;
-   switch (dir)
-      {
-        case ELM_FLIP_DIRECTION_RIGHT:
-           res = EFL_ORIENT_RIGHT;
-           break;
-        case ELM_FLIP_DIRECTION_DOWN:
-           res = EFL_ORIENT_DOWN;
-           break;
-        case ELM_FLIP_DIRECTION_LEFT:
-           res = EFL_ORIENT_LEFT;
-           break;
-        default:
-           res = EFL_ORIENT_UP;
-           break;
-      }
-   return res;
-}
-
 EAPI void 
 elm_flip_interaction_direction_hitsize_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, double hitsize)
 {
-   Efl_Orient orient = _to_efl_orientation(dir);
-   efl_ui_flip_interaction_direction_hitsize_set((Efl_Ui_Flip *)obj, orient, hitsize);
+   Efl_Ui_Dir uidir = _flip_dir_to_efl_ui_dir(dir);
+   efl_ui_flip_interaction_direction_hitsize_set(obj, uidir, hitsize);
 }
 
 EAPI double 
 elm_flip_interaction_direction_hitsize_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir)
 {
-   Efl_Orient orient = _to_efl_orientation(dir);
-   return efl_ui_flip_interaction_direction_hitsize_get((Efl_Ui_Flip *)obj, orient);
+   Efl_Ui_Dir uidir = _flip_dir_to_efl_ui_dir(dir);
+   return efl_ui_flip_interaction_direction_hitsize_get(obj, uidir);
 }
 
 EOAPI void 
 elm_flip_interaction_direction_enabled_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, Eina_Bool enabled)
 {
-   Efl_Orient orient = _to_efl_orientation(dir);
-   efl_ui_flip_interaction_direction_enabled_set((Efl_Ui_Flip *)obj, orient, enabled);
+   Efl_Ui_Dir uidir = _flip_dir_to_efl_ui_dir(dir);
+   efl_ui_flip_interaction_direction_enabled_set(obj, uidir, enabled);
 }
 
 EOAPI Eina_Bool 
 elm_flip_interaction_direction_enabled_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir)
 {
-   Efl_Orient orient = _to_efl_orientation(dir);
-   return efl_ui_flip_interaction_direction_enabled_get((Efl_Ui_Flip *)obj, orient);
+   Efl_Ui_Dir uidir = _flip_dir_to_efl_ui_dir(dir);
+   return efl_ui_flip_interaction_direction_enabled_get(obj, uidir);
 }
 
 /* Efl.Part begin */

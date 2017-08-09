@@ -87,7 +87,7 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
          ]]
          legacy: null;
          params {
-            @in dir: Efl.Orient; [[The hit area to set.]]
+            @in dir: Efl.Ui.Dir; [[The hit area to set.]]
             @in hitsize: double; [[The amount of that dimension (0.0 to 1.0) to use.]]
          }
       }
@@ -96,7 +96,7 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
          return: double; [[The size set for that direction.]]
          legacy: null;
          params {
-            @in dir: Efl.Orient; [[The direction to check.]]
+            @in dir: Efl.Ui.Dir; [[The direction to check.]]
          }
       }
       interaction_direction_enabled_set {
@@ -113,7 +113,7 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
          ]]
          legacy: null;
          params {
-            @in dir: Efl.Orient; [[The direction to change.]]
+            @in dir: Efl.Ui.Dir; [[The direction to change.]]
             @in enabled: bool; [[If that direction is enabled or not.]]
          }
       }
@@ -122,7 +122,7 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
          return: bool; [[If that direction is enabled or not.]]
          legacy: null;
          params {
-            @in dir: Efl.Orient; [[The direction to check.]]
+            @in dir: Efl.Ui.Dir; [[The direction to check.]]
          }
       }
       go {
