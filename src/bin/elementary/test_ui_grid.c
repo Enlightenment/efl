@@ -585,7 +585,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_visible_set(f, 1);
 
    efl_pack_grid_columns_set(grid, 4);
-   efl_pack_grid_orientation_set(grid, EFL_ORIENT_RIGHT, EFL_ORIENT_DOWN);
+   efl_pack_grid_direction_set(grid, EFL_UI_DIR_RIGHT, EFL_UI_DIR_DOWN);
    efl_gfx_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_content_set(f, grid);
    efl_gfx_visible_set(grid, 1);

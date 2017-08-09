@@ -653,6 +653,7 @@ efl_ui_dir_is_horizontal(Efl_Ui_Dir dir, Eina_Bool def_val)
       case EFL_UI_DIR_RTL: return EINA_TRUE;
       case EFL_UI_DIR_DOWN: return EINA_FALSE;
       case EFL_UI_DIR_UP: return EINA_FALSE;
+      default: return !!def_val;
      }
 }
 
