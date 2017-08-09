@@ -82,6 +82,8 @@ infra_data *
 _infra_data_alloc(void)
 {
    infra_data *infra = malloc(sizeof(infra_data));
+   if (!infra) return NULL;
+
    infra->icons = calloc(N_GESTURE_TYPE, sizeof(icon_properties ));
    infra->colortimer = NULL;
 
