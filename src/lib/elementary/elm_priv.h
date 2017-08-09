@@ -641,4 +641,7 @@ const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *o
 #define ELM_LAYOUT_SIZING_EVAL_OPS(_pfx) \
    EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _##_pfx##_elm_layout_sizing_eval)
 
+#undef EAPI
+#define EAPI
+
 #endif

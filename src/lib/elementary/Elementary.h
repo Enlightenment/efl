@@ -285,4 +285,7 @@ EAPI extern Elm_Version *elm_version;
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif
