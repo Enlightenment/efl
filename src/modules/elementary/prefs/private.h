@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include "Elementary.h"
+#include "elm_module_helper.h"
 
 #undef CRI
 #undef ERR

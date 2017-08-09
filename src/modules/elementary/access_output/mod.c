@@ -3,6 +3,7 @@
 #endif
 
 #include <Elementary.h>
+#include "elm_module_helper.h"
 
 /* to enable this module
 export ELM_MODULES="access_output>access/api"

@@ -5,6 +5,7 @@
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "efl_ui_clock_private.h"
+#include "elm_module_helper.h"
 
 #define CLOCK_FIELD_COUNT       8
 #define FIELD_FORMAT_LEN        3

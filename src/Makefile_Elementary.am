@@ -722,6 +722,7 @@ endif
 EXTRA_DIST2 += \
 	lib/elementary/elm_factory.h \
 	lib/elementary/elm_factory.c \
+	lib/elementary/elm_module_helper.h \
 	$(top_srcdir)/elm_intro.h.in
 
 ### Binary
