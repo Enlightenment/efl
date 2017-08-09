@@ -234,6 +234,8 @@ _eet_data_load(Elm_Prefs_Data *prefs_data,
    EINA_LIST_FREE(values->values, it)
      {
         Elm_Prefs_Data_Item *item = malloc(sizeof(*item));
+        if (!item) continue;
+
         Eina_Bool skip        = EINA_FALSE;
         Eina_Bool set_err     = EINA_FALSE;
         Eina_Bool setup_err   = EINA_FALSE;
