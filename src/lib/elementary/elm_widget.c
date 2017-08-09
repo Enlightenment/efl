@@ -3931,6 +3931,12 @@ _elm_widget_theme_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 EOLIAN static Efl_Ui_Theme_Apply
 _elm_widget_style_set(Eo *obj, Elm_Widget_Smart_Data *sd, const char *style)
 {
+   if (!sd->legacy && efl_finalized_get(obj))
+     {
+        ERR("Efl.Ui.Widget.style can only be set before finalize!");
+        return EFL_UI_THEME_APPLY_FAILED;
+     }
+
    if (eina_stringshare_replace(&sd->style, style))
       return elm_widget_theme(obj);
 
@@ -6154,6 +6160,14 @@ _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
    sd->on_destroy = EINA_FALSE;
 }
 
+/* internal eo */
+static void
+_elm_widget_legacy_ctor(Eo *obj, Elm_Widget_Smart_Data *sd)
+{
+   efl_canvas_object_legacy_ctor(efl_super(obj, MY_CLASS));
+   sd->legacy = EINA_TRUE;
+}
+
 EOLIAN static Eina_Strbuf *
 _elm_widget_efl_object_debug_name_override(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Strbuf *sb)
 {
@@ -6570,6 +6584,7 @@ ELM_PART_TEXT_DEFAULT_GET(elm_widget, NULL)
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_widget), \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_widget), \
    ELM_PART_TEXT_DEFAULT_OPS(elm_widget), \
+   EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _elm_widget_legacy_ctor), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _elm_widget_efl_object_dbg_info_get)
 
 #include "elm_widget_item.eo.c"
