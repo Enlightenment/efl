@@ -264,44 +264,26 @@ dnl use: EVAS_CHECK_LOADER_DEP_JP2K(loader, want_static[, ACTION-IF-FOUND[, ACTI
 AC_DEFUN([EVAS_CHECK_LOADER_DEP_JP2K],
 [
 
+requirement=""
 have_dep="no"
-have_dep_pc="no"
 evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
 
-AC_CHECK_HEADER([openjpeg.h], [have_dep="yes"])
-
-if test "x${have_dep}" = "xyes" ; then
-   AC_CHECK_LIB([openjp2],
-      [opj_stream_create],
-      [
-       evas_image_loader_[]$1[]_libs="-lopenjp2"
-       have_dep="yes"
-      ],
-      [have_dep="no"])
-fi
-
-if test "x${have_dep}" = "xno" ; then
-   PKG_CHECK_EXISTS([libopenjp2 >= 2.0],
-      [
-       have_dep="yes"
-       have_dep_pc="yes"
-       requirement="libopenjp2 >= 2.0"
-      ],
-      [have_dep="no"])
-fi
+PKG_CHECK_EXISTS([libopenjp2 >= 2.0],
+   [
+    have_dep="yes"
+    requirement="libopenjp2 >= 2.0"
+   ],
+   [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then
    if test "x$2" = "xstatic" ; then
       requirements_pc_evas="${requirement} ${requirements_pc_evas}"
       requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
-      requirements_libs_evas="${evas_image_loader_[]$1[]_libs} ${requirements_libs_evas}"
    fi
-   if test "x${have_dep_pc}" = "xyes" ; then
-      PKG_CHECK_MODULES([JP2K], [${requirement}])
-      evas_image_loader_[]$1[]_cflags="${JP2K_CFLAGS}"
-      evas_image_loader_[]$1[]_libs="${JP2K_LIBS}"
-   fi
+   PKG_CHECK_MODULES([JP2K], [${requirement}])
+   evas_image_loader_[]$1[]_cflags="${JP2K_CFLAGS}"
+   evas_image_loader_[]$1[]_libs="${JP2K_LIBS}"
 fi
 
 AC_SUBST([evas_image_loader_$1_cflags])
