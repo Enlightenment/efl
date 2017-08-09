@@ -19,6 +19,8 @@ enum Efl.Ui.Dir
    rtl,        [[Horizontal, right-to-left direction.]]
    down,       [[Vertical, top-to-bottom direction.]]
    up,         [[Vertical, bottom-to-top direction.]]
+   right = Efl.Ui.Dir.ltr, [[Right is an alias for LTR.]]
+   left = Efl.Ui.Dir.rtl, [[Left is an alias for RTL.]]
 }
 
 interface Efl.Ui.Direction
