@@ -1,8 +1,7 @@
 type slider_func_type: __undefined_type; [[Elementary slider function type]]
 type slider_freefunc_type: __undefined_type; [[Elementary slider free function type]]
 
-class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range,
-                     Efl.Orientation,
+class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
                      Elm.Interface.Atspi.Value,
                      Elm.Interface.Atspi_Widget_Action)
 {
@@ -128,7 +127,7 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range,
       Efl.Ui.Range.range_min_max {get; set; }
       Efl.Ui.Range.range_interval_enabled { get; set; }
       Efl.Ui.Range.range_interval { get; set; }
-      Efl.Orientation.orientation { get; set; }
+      Efl.Ui.Direction.direction { get; set; }
       Elm.Interface.Atspi.Value.value_and_text { get; set; }
       Elm.Interface.Atspi.Value.range { get; }
       Elm.Interface.Atspi.Value.increment { get; }
