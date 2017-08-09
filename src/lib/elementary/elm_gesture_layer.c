@@ -838,6 +838,8 @@ _event_history_add(Evas_Object *obj,
    ELM_GESTURE_LAYER_DATA_GET(obj, sd);
 
    ev = malloc(sizeof(Event_History));
+   if (!ev) return EINA_FALSE;
+
    ev->event = _event_info_copy(event, event_type);  /* Freed on
                                                       * _event_history_clear */
    ev->event_type = event_type;
@@ -1848,6 +1850,8 @@ _tap_gesture_test(Evas_Object *obj,
    if (!st) /* Allocated once on first time */
      {
         st = calloc(1, sizeof(Taps_Type));
+        if (!st) return;
+
         gesture->data = st;
         _tap_gestures_test_reset(gesture);
      }
@@ -2094,6 +2098,8 @@ _n_long_tap_test(Evas_Object *obj,
    if (!st) /* Allocated once on first time */
      {
         st = calloc(1, sizeof(Long_Tap_Type));
+        if (!st) return;
+
         gesture->data = st;
         _n_long_tap_test_reset(gesture);
      }
@@ -2392,6 +2398,8 @@ _momentum_test(Evas_Object *obj,
    if (!st) /* Allocated once on first time */
      {
         st = calloc(1, sizeof(Momentum_Type));
+        if (!st) return;
+
         gesture->data = st;
         _momentum_test_reset(gesture);
      }
@@ -2678,6 +2686,8 @@ _n_line_test(Evas_Object *obj,
    if (!st)
      {
         st = calloc(1, sizeof(Line_Type));
+        if (!st) return;
+
         gesture->data = st;
      }
 
@@ -3198,6 +3208,8 @@ _zoom_with_wheel_test(Evas_Object *obj,
    if (!st) /* Allocated once on first time, used for zoom intermediate data */
      {
         st = calloc(1, sizeof(Zoom_Type));
+        if (!st) return;
+
         gesture_zoom->data = st;
         _zoom_test_reset(gesture_zoom);
      }
@@ -3342,6 +3354,8 @@ _zoom_test(Evas_Object *obj,
    if (!st) /* Allocated once on first time, used for zoom data */
      {
         st = calloc(1, sizeof(Zoom_Type));
+        if (!st) return;
+
         gesture_zoom->data = st;
         _zoom_test_reset(gesture_zoom);
      }
@@ -3590,6 +3604,8 @@ _rotate_test(Evas_Object *obj,
    if (!st) /* Allocated once on first time */
      {
        st = calloc(1, sizeof(Rotate_Type));
+       if (!st) return;
+
        gesture->data = st;
        _rotate_test_reset(gesture);
      }
