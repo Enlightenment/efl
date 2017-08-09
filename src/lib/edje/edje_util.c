@@ -864,6 +864,8 @@ _edje_object_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
                                         color_class, mode, r, g, b, a);
           }
 
+        _edje_textblock_styles_cache_free(ed, NULL, color_class);
+        _edje_textblock_style_all_update(ed);
         _edje_recalc(ed);
         _edje_emit(ed, "color_class,set", color_class);
      }
@@ -930,6 +932,8 @@ _edje_object_color_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = EINA_TRUE;
 #endif
+   _edje_textblock_styles_cache_free(ed, NULL, color_class);
+   _edje_textblock_style_all_update(ed);
    _edje_recalc(ed);
    _edje_emit(ed, "color_class,del", color_class);
 }
@@ -969,6 +973,8 @@ _edje_object_color_class_clear(const Eo *obj EINA_UNUSED, Edje *ed)
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = EINA_TRUE;
 #endif
+   _edje_textblock_styles_cache_free(ed, NULL, color_class);
+   _edje_textblock_style_all_update(ed);
    _edje_recalc(ed);
 
    EINA_LIST_FREE(fdata.list, color_class)

@@ -520,7 +520,7 @@ _edje_object_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object *obs,
      }
    else if (obs == _edje_text_class_member)
      {
-        _edje_textblock_styles_cache_free(ed, key);
+        _edje_textblock_styles_cache_free(ed, key, NULL);
         _edje_textblock_style_all_update(ed);
 #ifdef EDJE_CALC_CACHE
         ed->text_part_change = EINA_TRUE;
