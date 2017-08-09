@@ -194,6 +194,8 @@ EAPI void elm_gesture_layer_tap_longpress_cb_add(Evas_Object *obj, Elm_Gesture_S
    if (!info)
      {
         info = calloc(1, sizeof(*info));
+        if (!info) return;
+
         info->obj = obj;
         elm_gesture_layer_cb_add(obj, ELM_GESTURE_N_TAPS, ELM_GESTURE_STATE_START, _tap_long_single_tap_start_cb, info);
         elm_gesture_layer_cb_add(obj, ELM_GESTURE_N_TAPS, ELM_GESTURE_STATE_ABORT, _tap_long_single_tap_abort_cb, info);
