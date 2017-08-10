@@ -494,8 +494,9 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 
 EOLIAN static Eina_Bool
 _elm_combobox_elm_widget_widget_event(Eo *obj, Elm_Combobox_Data *sd,
-                               Evas_Object *src EINA_UNUSED,
-                               Evas_Callback_Type type, void *event_info)
+                                      const Efl_Event *eo_event EINA_UNUSED,
+                                      Evas_Object *src EINA_UNUSED,
+                                      Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    if (!sd || !sd->hover) return EINA_FALSE;

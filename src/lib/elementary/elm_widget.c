@@ -111,6 +111,7 @@ static void
 _on_sub_obj_hide(void *data, const Efl_Event *event);
 static void
 _propagate_event(void *data, const Efl_Event *event);
+static Eina_Bool elm_widget_event_propagate(Evas_Object *obj, const Efl_Event *eo_event, Evas_Callback_Type type, void *event_info, Evas_Event_Flags *event_flags);
 
 EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
                           { EFL_EVENT_DEL, _on_sub_obj_del },
@@ -1026,7 +1027,7 @@ _propagate_event(void *data EINA_UNUSED, const Efl_Event *event)
      return;
 
    prev_flags = *event_flags;
-   elm_widget_event_propagate(obj, type, event_info.any, event_flags);
+   elm_widget_event_propagate(obj, event, type, event_info.any, event_flags);
    if (prev_flags != *event_flags)
      efl_input_event_flags_set(event->info, *event_flags);
 }
@@ -2001,8 +2002,9 @@ elm_widget_event_callback_del(Eo *obj, Elm_Event_Cb func, const void *data)
    return NULL;
 }
 
-EAPI Eina_Bool
-elm_widget_event_propagate(Eo *obj, Evas_Callback_Type type, void *event_info,
+static Eina_Bool
+elm_widget_event_propagate(Eo *obj, const Efl_Event *eo_event,
+                           Evas_Callback_Type type, void *event_info,
                            Evas_Event_Flags *event_flags)
 {
    Evas_Object *parent = obj;
@@ -2023,7 +2025,7 @@ elm_widget_event_propagate(Eo *obj, Evas_Callback_Type type, void *event_info,
              continue;
           }
 
-        int_ret = elm_obj_widget_event(parent, obj, type, event_info);
+        int_ret = elm_obj_widget_event(parent, eo_event, obj, type, event_info);
         if (int_ret) return EINA_TRUE;
 
         EINA_LIST_FOREACH_SAFE(sd->event_cb, l, l_prev, ecd)
@@ -6208,7 +6210,7 @@ _elm_widget_disable(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *source EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
+_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *source EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    return EINA_FALSE;
 }

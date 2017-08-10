@@ -1570,7 +1570,7 @@ _key_action_item_pop(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_naviframe_elm_widget_widget_event(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_naviframe_elm_widget_widget_event(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void)src;
    Evas_Event_Key_Down *ev = event_info;
