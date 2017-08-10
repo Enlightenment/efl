@@ -1326,6 +1326,58 @@ _elm_ctxpopup_item_efl_object_constructor(Eo *obj, Elm_Ctxpopup_Item_Data *it)
 }
 
 EOLIAN static Elm_Object_Item*
+_elm_ctxpopup_item_insert_before(Eo *obj, Elm_Ctxpopup_Data *sd, Elm_Object_Item *eo_before, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
+{
+   Eo *eo_item;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_before, NULL);
+   ELM_CTXPOPUP_ITEM_DATA_GET(eo_before, before_it);
+   ELM_CTXPOPUP_ITEM_CHECK_OR_RETURN(before_it,  NULL);
+
+   if (!before_it->list_item) return NULL;
+
+   eo_item = efl_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(efl_added, func, data));
+   if (!eo_item) return NULL;
+
+   ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);
+
+   item->list_item =
+     elm_list_item_insert_before(sd->list, before_it->list_item, label, icon, NULL, _item_wrap_cb, item);
+   efl_ref(item->list_item);
+   sd->items = eina_list_prepend_relative(sd->items, eo_item, eo_before);
+
+   if (sd->visible) elm_layout_sizing_eval(obj);
+
+   return eo_item;
+}
+
+EOLIAN static Elm_Object_Item*
+_elm_ctxpopup_item_insert_after(Eo *obj, Elm_Ctxpopup_Data *sd, Elm_Object_Item *eo_after, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
+{
+   Eo *eo_item;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_after, NULL);
+   ELM_CTXPOPUP_ITEM_DATA_GET(eo_after, after_it);
+   ELM_CTXPOPUP_ITEM_CHECK_OR_RETURN(after_it,  NULL);
+
+   if (!after_it->list_item) return NULL;
+
+   eo_item = efl_add(ELM_CTXPOPUP_ITEM_CLASS, obj, elm_obj_ctxpopup_item_init(efl_added, func, data));
+   if (!eo_item) return NULL;
+
+   ELM_CTXPOPUP_ITEM_DATA_GET(eo_item, item);
+
+   item->list_item =
+     elm_list_item_insert_after(sd->list, after_it->list_item, label, icon, NULL, _item_wrap_cb, item);
+   efl_ref(item->list_item);
+   sd->items = eina_list_append_relative(sd->items, eo_item, eo_after);
+
+   if (sd->visible) elm_layout_sizing_eval(obj);
+
+   return eo_item;
+}
+
+EOLIAN static Elm_Object_Item*
 _elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
    Eo *eo_item;

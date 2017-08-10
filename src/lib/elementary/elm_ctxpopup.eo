@@ -113,9 +113,42 @@ class Elm.Ctxpopup (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
       clear {
          [[Clear all items in the given ctxpopup object.]]
       }
+      item_insert_before {
+         [[Insert a new item to a ctxpopup object before item $before.
+
+           See also elm_object_content_set.
+
+           @since 1.21
+         ]]
+         return: Elm.Widget.Item; [[A handle to the item added or $null, on errors.]]
+
+         params {
+            @in before: Elm.Widget.Item; [[The ctxpopup item to insert before.]]
+            @in label: string; [[The Label of the new item]]
+            @in icon: Efl.Canvas.Object @optional; [[Icon to be set on new item]]
+            @in func: Evas_Smart_Cb @optional; [[Convenience function called when item selected]]
+            @in data: const(void_ptr) @optional; [[Data passed to $func]]
+         }
+      }
+      item_insert_after {
+         [[Insert a new item to a ctxpopup object after item $after.
+
+           See also elm_object_content_set.
+
+           @since 1.21
+         ]]
+         return: Elm.Widget.Item; [[A handle to the item added or $null, on errors.]]
+
+         params {
+            @in after: Elm.Widget.Item; [[The ctxpopup item to insert after.]]
+            @in label: string; [[The Label of the new item]]
+            @in icon: Efl.Canvas.Object @optional; [[Icon to be set on new item]]
+            @in func: Evas_Smart_Cb @optional; [[Convenience function called when item selected]]
+            @in data: const(void_ptr) @optional; [[Data passed to $func]]
+         }
+      }
       item_append {
          [[Add a new item to a ctxpopup object.
-
 
            Warning:Ctxpopup can't hold both an item list and a content at the same
            time. When an item is added, any previous content will be removed.
