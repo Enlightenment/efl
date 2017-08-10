@@ -67,6 +67,34 @@ database_enum_add(Eolian_Typedecl *tp)
    database_decl_add(tp->full_name, EOLIAN_DECL_ENUM, tp->base.file, tp);
 }
 
+static const Eina_Bool _ownable_types[] = {
+    EINA_FALSE, /* unknown */
+    EINA_FALSE, /* void */
+    EINA_FALSE, /* regular */
+    EINA_TRUE,  /* complex */
+    EINA_TRUE,  /* pointer */
+    EINA_TRUE,  /* class */
+    EINA_TRUE,  /* static array */
+    EINA_TRUE,  /* terminated array */
+    EINA_FALSE  /* undefined */
+};
+
+Eina_Bool
+database_type_is_ownable(const Eolian_Type *tp)
+{
+   if (tp->is_ptr)
+     return EINA_TRUE;
+   if (tp->type == EOLIAN_TYPE_REGULAR)
+     {
+        int kwid = eo_lexer_keyword_str_to_id(tp->name);
+        const char *ct = eo_lexer_get_c_type(kwid);
+        if (!ct)
+          return EINA_FALSE;
+        return (ct[strlen(ct) - 1] == '*');
+     }
+   return _ownable_types[tp->type];
+}
+
 static void
 _buf_add_suffix(Eina_Strbuf *buf, const char *suffix)
 {
@@ -77,13 +105,19 @@ _buf_add_suffix(Eina_Strbuf *buf, const char *suffix)
 }
 
 void
-database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
+database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name,
+                     Eolian_C_Type_Type ctype)
 {
-   if ((tp->type == EOLIAN_TYPE_REGULAR
-     || tp->type == EOLIAN_TYPE_COMPLEX
-     || tp->type == EOLIAN_TYPE_VOID
+   if ((tp->type == EOLIAN_TYPE_COMPLEX
      || tp->type == EOLIAN_TYPE_CLASS)
      && tp->is_const)
+     {
+        eina_strbuf_append(buf, "const ");
+     }
+   if ((tp->type == EOLIAN_TYPE_REGULAR
+     || tp->type == EOLIAN_TYPE_VOID)
+     && tp->is_const
+     && ((ctype != EOLIAN_C_TYPE_RETURN) || database_type_is_ownable(tp)))
      {
         eina_strbuf_append(buf, "const ");
      }
@@ -111,9 +145,10 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
    else
      {
         /* handles arrays and pointers as they all serialize to pointers */
-        database_type_to_str(tp->base_type, buf, NULL);
+        database_type_to_str(tp->base_type, buf, NULL, EOLIAN_C_TYPE_DEFAULT);
         _buf_add_suffix(buf, "*");
-        if (tp->is_const) eina_strbuf_append(buf, " const");
+        if (tp->is_const && (ctype != EOLIAN_C_TYPE_RETURN))
+          eina_strbuf_append(buf, " const");
      }
    if (tp->type == EOLIAN_TYPE_COMPLEX || tp->type == EOLIAN_TYPE_CLASS)
      _buf_add_suffix(buf, "*");
@@ -140,7 +175,7 @@ _stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
    eina_strbuf_append(buf, " { ");
    EINA_LIST_FOREACH(tp->field_list, l, sf)
      {
-        database_type_to_str(sf->type, buf, sf->name);
+        database_type_to_str(sf->type, buf, sf->name, EOLIAN_C_TYPE_DEFAULT);
         eina_strbuf_append(buf, "; ");
      }
    eina_strbuf_append(buf, "}");
@@ -212,7 +247,8 @@ _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 
    Eina_Strbuf *fulln = eina_strbuf_new();
    _append_name(tp, fulln);
-   database_type_to_str(tp->base_type, buf, eina_strbuf_string_get(fulln));
+   database_type_to_str(tp->base_type, buf, eina_strbuf_string_get(fulln),
+                        EOLIAN_C_TYPE_DEFAULT);
    eina_strbuf_free(fulln);
 }
 
