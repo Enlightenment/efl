@@ -327,15 +327,16 @@ _list_item_cb7(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 {
    Evas_Object *ctxpopup;
    Evas_Coord x,y;
+   Elm_Object_Item *item;
 
    if (list_mouse_down > 0) return;
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
    evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
 
-   elm_ctxpopup_item_append(ctxpopup, "Disable this item", NULL, _ctxpopup_item_disable_cb, ctxpopup);
-   elm_ctxpopup_item_append(ctxpopup, "Delete this ctxpopup", NULL, _ctxpopup_item_delete_cb, ctxpopup);
-   elm_ctxpopup_item_append(ctxpopup, "Another item", NULL, _ctxpopup_item_cb, NULL);
+   item = elm_ctxpopup_item_prepend(ctxpopup, "Disable this item", NULL, _ctxpopup_item_disable_cb, ctxpopup);
+   elm_ctxpopup_item_insert_before(ctxpopup, item, "Delete this ctxpopup", NULL, _ctxpopup_item_delete_cb, ctxpopup);
+   elm_ctxpopup_item_insert_after(ctxpopup, item, "Another item", NULL, _ctxpopup_item_cb, NULL);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
