@@ -9,13 +9,27 @@ enum Elm.Ctxpopup.Direction
 }
 
 class Elm.Ctxpopup (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
-                    Efl.Orientation, Efl.Ui.Menu)
+                    Efl.Ui.Menu)
 {
    [[Elementary context popup class]]
    legacy_prefix: elm_ctxpopup;
    eo_prefix: elm_obj_ctxpopup;
    event_prefix: elm_ctxpopup;
    methods {
+      @property horizontal {
+         set {
+            [[Change the ctxpopup's orientation to horizontal or vertical.]]
+         }
+         get {
+            [[Get the value of current ctxpopup object's orientation.
+
+              See also @.horizontal.set.
+            ]]
+         }
+         values {
+            horizontal: bool; [[$true for horizontal mode, $false for vertical.]]
+         }
+      }
       @property auto_hide_disabled {
          set {
             [[Set ctxpopup auto hide mode triggered by ctxpopup policy.
@@ -203,7 +217,6 @@ class Elm.Ctxpopup (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
       Efl.Ui.Menu.items { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
-      Efl.Orientation.orientation { get; set; }
       Efl.Part.part;
    }
    events {
