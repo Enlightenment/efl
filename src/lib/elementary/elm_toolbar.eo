@@ -23,7 +23,7 @@ enum Elm.Toolbar.Shrink_Mode
    last [[Indicates error if returned by elm_toolbar_shrink_mode_get()]]
 }
 
-class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
+class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Ui.Direction,
                    Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
                    Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Menu)
 {
@@ -329,7 +329,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Orientation,
       Elm.Widget.widget_event;
       Elm.Widget.focus_highlight_geometry_get;
       Elm.Widget.focused_item { get; }
-      Efl.Orientation.orientation { get; set; }
+      Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $horizontal.]] }
       Elm.Widget.focus_register;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Elm.Interface.Atspi_Accessible.children { get; }
