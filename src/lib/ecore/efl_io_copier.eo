@@ -192,8 +192,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
                [[Changes line delimiter to use. If empty, no delimiter is to be used]]
             }
             values {
-                // TODO: eolian generates wrong type for getter with const(Eina.Slice)
-                slice: Eina.Slice; [[The contents may contain \0 and will be copied]]
+                slice: const(Eina.Slice); [[The contents may contain \0 and will be copied]]
             }
         }
 
