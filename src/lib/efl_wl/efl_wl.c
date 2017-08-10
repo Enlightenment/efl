@@ -5262,6 +5262,18 @@ comp_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
    return EINA_TRUE;
 }
 
+void
+comp_dmabuf_formats_query(void *compositor EINA_UNUSED, int **formats EINA_UNUSED, int *num_formats)
+{
+   *num_formats = 0;
+}
+
+void
+comp_dmabuf_modifiers_query(void *compositor EINA_UNUSED, int format EINA_UNUSED, uint64_t **modifiers EINA_UNUSED, int *num_modifiers)
+{
+   *num_modifiers = 0;
+}
+
 Evas_Object *
 efl_wl_add(Evas *e)
 {
