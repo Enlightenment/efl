@@ -536,10 +536,48 @@ group { "elm/popup/base/view";
 group { "elm/popup/base/event_bg";
    parts {
       rect { "base";
-         repeat;
          desc { "default";
-            color: 0 255 0 128;
+            color: 0 0 0 64;
          }
+         desc { "show_image";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.swallow.image";
+         desc { "default";
+            rel.to: "base";
+            hid;
+         }
+         desc { "show_image";
+            inherit: "default";
+            vis;
+         }
+      }
+      rect { "block";
+         desc { "default";
+            rel.to: "base";
+            color: 0 0 0 0;
+         }
+      }
+   }
+
+   programs {
+      program {
+         signal: "elm,state,image,visible"; source: "elm";
+         action: STATE_SET "show_image" 0.0;
+         target: "base";
+         target: "elm.swallow.image";
+      }
+      program {
+         signal: "elm,state,image,hidden"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         target: "elm.swallow.image";
+      }
+      program {
+         signal: "mouse,clicked,1"; source: "block";
+         action: SIGNAL_EMIT "elm,action,clicked" "elm";
       }
    }
 }
