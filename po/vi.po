@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-08-10 08:04+0900\n"
 "PO-Revision-Date: 2015-09-29 18:06+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: General\n"
@@ -236,7 +236,7 @@ msgstr "Âm Nhạc"
 msgid "Pictures"
 msgstr "Hình Ảnh"
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr "Video"
 
@@ -257,14 +257,14 @@ msgid "OK"
 msgstr "Đồng Ý"
 
 #: src/lib/elementary/elc_fileselector.c:2256
-#: src/lib/elementary/elm_entry.c:1732 src/lib/elementary/elm_entry.c:1757
+#: src/lib/elementary/elm_entry.c:1735 src/lib/elementary/elm_entry.c:1760
 msgid "Cancel"
 msgstr "Hủy"
 
-#: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:278
-#: src/lib/elementary/efl_ui_check.c:212 src/lib/elementary/elm_gengrid.c:1470
+#: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:279
+#: src/lib/elementary/efl_ui_check.c:213 src/lib/elementary/elm_gengrid.c:1470
 #: src/lib/elementary/elm_genlist.c:1738 src/lib/elementary/elm_list.c:2176
-#: src/lib/elementary/efl_ui_radio.c:214
+#: src/lib/elementary/efl_ui_radio.c:215
 #: src/lib/elementary/elm_segment_control.c:529
 #: src/lib/elementary/elm_spinner.c:1020 src/lib/elementary/elm_toolbar.c:2347
 msgid "State: Disabled"
@@ -282,20 +282,20 @@ msgstr "Nhãn Của Bộ Nhập Nhiều Nút"
 msgid "multi button entry item"
 msgstr "Mục Của Bộ Nhập Nhiều Nút"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr "Bộ Nhập Nhiều Nút"
 
-#: src/lib/elementary/elc_naviframe.c:442
+#: src/lib/elementary/elc_naviframe.c:461
 msgid "Title"
 msgstr "Đề Mục"
 
-#: src/lib/elementary/elc_naviframe.c:993
-#: src/lib/elementary/elc_naviframe.c:1211
+#: src/lib/elementary/elc_naviframe.c:1020
+#: src/lib/elementary/elc_naviframe.c:1238
 msgid "Back"
 msgstr "Quay Lại"
 
-#: src/lib/elementary/elc_naviframe.c:1309
+#: src/lib/elementary/elc_naviframe.c:1336
 msgid "Next"
 msgstr "Tiếp"
 
@@ -307,15 +307,15 @@ msgstr "Tiêu Đề Hộp Thoại"
 msgid "Popup Body Text"
 msgstr "Văn Bản Thân Hộp Thoại"
 
-#: src/lib/elementary/elm_bubble.c:199
+#: src/lib/elementary/elm_bubble.c:200
 msgid "Bubble"
 msgstr "Bubble"
 
-#: src/lib/elementary/efl_ui_button.c:69
+#: src/lib/elementary/efl_ui_button.c:70
 msgid "Clicked"
 msgstr "Đã Nhấp"
 
-#: src/lib/elementary/efl_ui_button.c:303
+#: src/lib/elementary/efl_ui_button.c:304
 msgid "Button"
 msgstr "Nút"
 
@@ -359,21 +359,21 @@ msgstr "Lịch Tháng"
 msgid "calendar year"
 msgstr "Lịch Năm"
 
-#: src/lib/elementary/efl_ui_check.c:64 src/lib/elementary/efl_ui_check.c:225
-#: src/lib/elementary/efl_ui_radio.c:118 src/lib/elementary/efl_ui_radio.c:215
+#: src/lib/elementary/efl_ui_check.c:65 src/lib/elementary/efl_ui_check.c:226
+#: src/lib/elementary/efl_ui_radio.c:119 src/lib/elementary/efl_ui_radio.c:216
 msgid "State: On"
 msgstr "Trạng Thái: Bật"
 
-#: src/lib/elementary/efl_ui_check.c:75 src/lib/elementary/efl_ui_check.c:237
-#: src/lib/elementary/efl_ui_radio.c:217
+#: src/lib/elementary/efl_ui_check.c:76 src/lib/elementary/efl_ui_check.c:238
+#: src/lib/elementary/efl_ui_radio.c:218
 msgid "State: Off"
 msgstr "Trạng Thái: Tắt"
 
-#: src/lib/elementary/efl_ui_check.c:221 src/lib/elementary/efl_ui_check.c:234
+#: src/lib/elementary/efl_ui_check.c:222 src/lib/elementary/efl_ui_check.c:235
 msgid "State"
 msgstr "Trạng Thái"
 
-#: src/lib/elementary/efl_ui_check.c:315
+#: src/lib/elementary/efl_ui_check.c:316
 msgid "Check"
 msgstr "Chọn"
 
@@ -421,7 +421,7 @@ msgstr "Mục Của Bảng Chọn Màu"
 msgid "default:LTR"
 msgstr "Mặc Định: Trái Sang Phải"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
 msgstr "Mục Của Bảng Chọn Ngày"
 
@@ -429,23 +429,23 @@ msgstr "Mục Của Bảng Chọn Ngày"
 msgid "diskselector item"
 msgstr "Mục Của Bộ Chọn Đĩa"
 
-#: src/lib/elementary/elm_entry.c:1722
+#: src/lib/elementary/elm_entry.c:1725
 msgid "Cut"
 msgstr "Cắt"
 
-#: src/lib/elementary/elm_entry.c:1725
+#: src/lib/elementary/elm_entry.c:1728
 msgid "Copy"
 msgstr "Sao Chép"
 
-#: src/lib/elementary/elm_entry.c:1729 src/lib/elementary/elm_entry.c:1751
+#: src/lib/elementary/elm_entry.c:1732 src/lib/elementary/elm_entry.c:1754
 msgid "Paste"
 msgstr "Dán"
 
-#: src/lib/elementary/elm_entry.c:1744
+#: src/lib/elementary/elm_entry.c:1747
 msgid "Select"
 msgstr "Chọn"
 
-#: src/lib/elementary/elm_entry.c:3833
+#: src/lib/elementary/elm_entry.c:3842
 msgid "Entry"
 msgstr "Bộ Nhập"
 
@@ -465,31 +465,31 @@ msgstr "Mục Của Bộ Chỉ Mục"
 msgid "Label"
 msgstr "Nhãn"
 
-#: src/lib/elementary/elm_panel.c:85
+#: src/lib/elementary/elm_panel.c:82
 msgid "state: opened"
 msgstr "Trạng Thái: Mở"
 
-#: src/lib/elementary/elm_panel.c:86
+#: src/lib/elementary/elm_panel.c:83
 msgid "state: closed"
 msgstr "Trạng Thái: Đóng"
 
-#: src/lib/elementary/elm_panel.c:126
+#: src/lib/elementary/elm_panel.c:123
 msgid "A panel is open"
 msgstr "Một Bảng Đang Mở"
 
-#: src/lib/elementary/elm_panel.c:128
+#: src/lib/elementary/elm_panel.c:125
 msgid "Double tap to close panel menu"
 msgstr "Nhấn kép để đóng bảng chọn"
 
-#: src/lib/elementary/elm_panel.c:180
+#: src/lib/elementary/elm_panel.c:177
 msgid "panel button"
 msgstr "Nút Bảng"
 
-#: src/lib/elementary/efl_ui_progressbar.c:313
+#: src/lib/elementary/efl_ui_progressbar.c:314
 msgid "progressbar"
 msgstr "Thanh Trạng Thái"
 
-#: src/lib/elementary/efl_ui_radio.c:243
+#: src/lib/elementary/efl_ui_radio.c:244
 msgid "Radio"
 msgstr "Đài"
 
@@ -506,7 +506,7 @@ msgstr "Trạng Thái: Chưa Chọn"
 msgid "Segment Control Item"
 msgstr "Mục Điều Khiển Đoạn"
 
-#: src/lib/elementary/efl_ui_slider.c:1198
+#: src/lib/elementary/efl_ui_slider.c:1199
 msgid "slider"
 msgstr "Thanh Trượt"
 
