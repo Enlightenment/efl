@@ -605,6 +605,11 @@ T convert_to_return(T value, tag<T, T>)
 {
   return value;
 }
+template <typename U, typename T>
+T convert_to_return(U const value, tag<U const, T>)
+{
+  return value;
+}
 template <typename T>
 T& convert_to_return(T* value, tag<T*, T&>)
 {
