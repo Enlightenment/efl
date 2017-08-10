@@ -564,7 +564,7 @@ _wheel_indicator_timer_cb(void *data)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
 

@@ -905,7 +905,7 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_widget_event(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_toolbar_elm_widget_widget_event(Eo *obj, Elm_Toolbar_Data *sd, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    (void) type;

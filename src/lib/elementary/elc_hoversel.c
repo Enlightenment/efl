@@ -995,13 +995,13 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_hoversel_elm_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_hoversel_elm_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
    (void) src;
    Eina_Bool int_ret = EINA_FALSE;
    Evas_Event_Key_Down *ev = event_info;
 
-   int_ret = elm_obj_widget_event(efl_super(obj, MY_CLASS), src, type, event_info);
+   int_ret = elm_obj_widget_event(efl_super(obj, MY_CLASS), eo_event, src, type, event_info);
    if (int_ret) return EINA_FALSE;
 
    if (!sd || !sd->hover) return EINA_FALSE;

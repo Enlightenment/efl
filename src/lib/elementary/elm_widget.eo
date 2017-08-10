@@ -497,13 +497,14 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
       widget_event {
          [['Virtual' function handling input events on the widget.]]
-         legacy: elm_widget_event;
          params {
+            @in eo_event: const(ptr(Efl.Event)); [[EO event info with an Efl.Input.Event]]
             @in source: Efl.Canvas.Object; [[Source object]]
             @in type: Evas.Callback_Type; [[Callback type]]
             @in event_info: void_ptr; [[Event info]]
          }
          return: bool; [[$true on success, $false otherwise]]
+         legacy: null;
       }
       access {
          [['Virtual' function on the widget being set access.]]
