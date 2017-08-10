@@ -58,7 +58,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
    eina_strbuf_append(buf, legacy ? "EAPI " : "EOAPI ");
    if (rtp)
      {
-        Eina_Stringshare *rtps = eolian_type_c_type_get(rtp);
+        Eina_Stringshare *rtps = eolian_type_c_type_get(rtp, EOLIAN_C_TYPE_RETURN);
         eina_strbuf_append(buf, rtps);
         if (rtps[strlen(rtps) - 1] != '*')
           eina_strbuf_append_char(buf, ' ');
@@ -96,7 +96,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
         {
            const Eolian_Type *prt = eolian_parameter_type_get(pr);
            const char *prn = eolian_parameter_name_get(pr);
-           Eina_Stringshare *prtn = eolian_type_c_type_get(prt);
+           Eina_Stringshare *prtn = eolian_type_c_type_get(prt, EOLIAN_C_TYPE_PARAM);
            ++nidx;
            if (!first)
              eina_strbuf_append(buf, ", ");
@@ -130,7 +130,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
              const Eolian_Type *prt = eolian_parameter_type_get(pr);
              const Eolian_Typedecl *ptd = eolian_type_typedecl_get(prt);
              const char *prn = eolian_parameter_name_get(pr);
-             Eina_Stringshare *prtn = eolian_type_c_type_get(prt);
+             Eina_Stringshare *prtn = eolian_type_c_type_get(prt, EOLIAN_C_TYPE_PARAM);
 
              if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
                {
