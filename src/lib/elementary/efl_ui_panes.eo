@@ -1,4 +1,4 @@
-class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Orientation,
+class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Ui.Direction,
                     Efl.Ui.Clickable)
 {
    [[Elementary panes class]]
@@ -50,7 +50,7 @@ class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Orientation,
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
-      Efl.Orientation.orientation { get; set; }
+      Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
       Efl.Part.part;
    }
    events {

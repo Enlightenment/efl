@@ -34,7 +34,7 @@ struct _Efl_Ui_Panes_Data
       Eina_Bool move;
    } move;
 
-   Efl_Orient            orientation;
+   Efl_Ui_Dir            dir;
    double                left_min_relative_size;
    double                right_min_relative_size;
    int                   first_minw, first_minh;

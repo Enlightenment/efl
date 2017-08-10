@@ -128,7 +128,7 @@ test_panes_minsize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
           );
 
    panes_h = efl_add(EFL_UI_PANES_CLASS, win,
-                     efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL),
+                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                      efl_content_set(efl_part(panes, "second"), efl_added)
                     );
    efl_add(EFL_UI_BUTTON_CLASS, win,
