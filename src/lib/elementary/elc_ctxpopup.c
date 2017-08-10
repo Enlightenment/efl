@@ -899,6 +899,31 @@ _elm_ctxpopup_item_elm_widget_item_part_content_get(Eo *eo_ctxpopup_it EINA_UNUS
      return elm_object_item_part_content_get(ctxpopup_it->list_item, "start");
 }
 
+EOLIAN static Evas_Object *
+_elm_ctxpopup_item_elm_widget_item_part_content_unset(Eo *eo_ctxpopup_it EINA_UNUSED,
+                                                      Elm_Ctxpopup_Item_Data *ctxpopup_it,
+                                                      const char *part)
+{
+   Evas_Object *content = NULL;
+
+   if ((part) && (strcmp(part, "icon"))
+       && (strcmp(part, "start"))
+       && (strcmp(part, "end"))) return NULL;
+
+   ELM_CTXPOPUP_DATA_GET(WIDGET(ctxpopup_it), sd);
+
+   if ((part) && (!strcmp(part, "end")))
+     content = elm_object_item_part_content_unset(ctxpopup_it->list_item, "end");
+   else
+     content = elm_object_item_part_content_unset(ctxpopup_it->list_item, "start");
+
+   sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
+
+   if (sd->visible) elm_layout_sizing_eval(WIDGET(ctxpopup_it));
+
+   return content;
+}
+
 EOLIAN static void
 _elm_ctxpopup_item_elm_widget_item_disable(Eo *eo_ctxpopup_it,
                                            Elm_Ctxpopup_Item_Data *ctxpopup_it)
