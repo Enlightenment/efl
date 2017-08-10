@@ -365,9 +365,7 @@ _on_resize(void *data,
            Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
-  EFL_UI_PANES_DATA_GET(data, sd);
-
-  if (sd->legacy_use) _update_fixed_sides(data);
+  if (elm_widget_is_legacy(data)) _update_fixed_sides(data);
   else _set_min_size_new(data);
 }
 
@@ -409,7 +407,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
    sd->left_min_size = 0;
    sd->right_min_relative_size = 0;
    sd->left_min_relative_size = 0;
-   if (sd->legacy_use) _update_fixed_sides(obj);
+   if (elm_widget_is_legacy(obj)) _update_fixed_sides(obj);
    else _set_min_size_new(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -435,12 +433,7 @@ EAPI Evas_Object *
 elm_panes_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
-   EFL_UI_PANES_DATA_GET(obj, sd);
-
-   sd->legacy_use = EINA_TRUE;
-
-   return obj;
+   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -530,7 +523,7 @@ _efl_ui_panes_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Panes_Data *sd, Efl
 
    sd->dir = dir;
    elm_obj_widget_theme_apply(obj);
-   if (sd->legacy_use) _update_fixed_sides(obj);
+   if (elm_widget_is_legacy(obj)) _update_fixed_sides(obj);
    else _set_min_size_new(obj);
 
    elm_panes_content_left_size_set(obj, size);
