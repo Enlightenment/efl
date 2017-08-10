@@ -159,6 +159,8 @@ _list_item_cb3(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    elm_object_item_disabled_set(it, EINA_TRUE);
    _ctxpopup_item_new(ctxpopup, "Embryo", NULL);
    _ctxpopup_item_new(ctxpopup, "Edje", NULL);
+   it = _ctxpopup_item_new(ctxpopup, "Never Show", NULL);
+   elm_object_item_del(it);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_move(ctxpopup, x, y);
