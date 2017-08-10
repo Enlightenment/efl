@@ -1001,7 +1001,7 @@ add_tests:
    ADD_TEST(NULL, "Dividers", "Panel", test_panel);
    ADD_TEST(NULL, "Dividers", "Panel Scrollable", test_panel2);
    ADD_TEST(NULL, "Dividers", "Panes", test_panes);
-   ADD_TEST(NULL, "Dividers", "Panes minsize", test_panes_minsize);
+   ADD_TEST(NULL, "Dividers", "Efl.Ui.Panes", test_panes_minsize);
    //------------------------------//
    ADD_TEST(NULL, "Standardization", "Conformant", test_conformant);
    ADD_TEST(NULL, "Standardization", "Conformant 2", test_conformant2);
