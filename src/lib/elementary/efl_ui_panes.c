@@ -61,7 +61,7 @@ _efl_ui_panes_elm_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
-   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      eina_stringshare_replace(&ld->group, "horizontal");
    else
      eina_stringshare_replace(&ld->group, "vertical");
@@ -205,7 +205,7 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
           efl_gfx_size_hint_min_get(second_content, &sd->second_minw, &sd->second_minh);
      }
 
-   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      {
         edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
                                              MAX(sd->first_minw, sd->second_minw),
@@ -236,7 +236,7 @@ _set_min_size_new(void *data)
 
    evas_object_geometry_get(wd->resize_obj, NULL, NULL, &w, &h);
 
-   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      {
         if (first_minh + second_minh > h)
           {
@@ -300,7 +300,7 @@ _set_min_size(void *data)
         sizer = sizer / sum;
         sizel = sizel / sum;
      }
-   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      {
         edje_object_part_drag_value_set
            (wd->resize_obj, "right_constraint", 0.0, (1 - sizer));
@@ -326,7 +326,7 @@ _update_fixed_sides(void *data)
 
    if (sd->right_min_size_is_relative)
      {
-        if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+        if (sd->dir == EFL_UI_DIR_HORIZONTAL)
            sd->right_min_size = (int)(h * sd->right_min_relative_size);
         else
            sd->right_min_size =(int)(w * sd->right_min_relative_size);
@@ -334,15 +334,15 @@ _update_fixed_sides(void *data)
    else
      {
         sd->right_min_relative_size = 0;
-        if (sd->orientation == EFL_ORIENT_HORIZONTAL && (h > 0))
+        if (sd->dir == EFL_UI_DIR_HORIZONTAL && (h > 0))
               sd->right_min_relative_size = sd->right_min_size / (double)h;
-        if (sd->orientation == EFL_ORIENT_VERTICAL && (w > 0))
+        if (sd->dir == EFL_UI_DIR_VERTICAL && (w > 0))
               sd->right_min_relative_size = sd->right_min_size / (double)w;
      }
 
    if(sd->left_min_size_is_relative)
      {
-        if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+        if (sd->dir == EFL_UI_DIR_HORIZONTAL)
              sd->left_min_size = (int)(h * sd->left_min_relative_size);
         else
            sd->left_min_size = (int)(w * sd->left_min_relative_size);
@@ -350,9 +350,9 @@ _update_fixed_sides(void *data)
    else
      {
         sd->left_min_relative_size = 0;
-        if (sd->orientation == EFL_ORIENT_HORIZONTAL && (h > 0))
+        if (sd->dir == EFL_UI_DIR_HORIZONTAL && (h > 0))
            sd->left_min_relative_size = sd->left_min_size / (double)h;
-        if (sd->orientation == EFL_ORIENT_VERTICAL && (w > 0))
+        if (sd->dir == EFL_UI_DIR_VERTICAL && (w > 0))
            sd->left_min_relative_size = sd->left_min_size / (double)w;
      }
 
@@ -499,7 +499,7 @@ _efl_ui_panes_split_ratio_get(Eo *obj, Efl_Ui_Panes_Data *sd)
 
    edje_object_part_drag_value_get(wd->resize_obj, "elm.bar", &w, &h);
 
-   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      return h;
    else return w;
 }
@@ -512,21 +512,22 @@ _efl_ui_panes_split_ratio_set(Eo *obj, Efl_Ui_Panes_Data *sd, double ratio)
    if (ratio < 0.0) ratio = 0.0;
    else if (ratio > 1.0) ratio = 1.0;
 
-   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      edje_object_part_drag_value_set(wd->resize_obj, "elm.bar", 0.0, ratio);
    else
      edje_object_part_drag_value_set(wd->resize_obj, "elm.bar", ratio, 0.0);
 }
 
 EOLIAN static void
-_efl_ui_panes_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Panes_Data *sd, Efl_Orient dir)
+_efl_ui_panes_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Panes_Data *sd, Efl_Ui_Dir dir)
 {
-   if ((dir != EFL_ORIENT_HORIZONTAL) && (dir != EFL_ORIENT_VERTICAL))
-     return;
-
    double size = elm_panes_content_left_size_get(obj);
+   if (efl_ui_dir_is_horizontal(dir, EINA_FALSE))
+     dir = EFL_UI_DIR_HORIZONTAL;
+   else
+     dir = EFL_UI_DIR_VERTICAL;
 
-   sd->orientation = dir;
+   sd->dir = dir;
    elm_obj_widget_theme_apply(obj);
    if (sd->legacy_use) _update_fixed_sides(obj);
    else _set_min_size_new(obj);
@@ -534,31 +535,31 @@ _efl_ui_panes_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Panes_Data *sd, Ef
    elm_panes_content_left_size_set(obj, size);
 }
 
-EOLIAN static Efl_Orient
-_efl_ui_panes_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
+EOLIAN static Efl_Ui_Dir
+_efl_ui_panes_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
 {
-   return sd->orientation;
+   return sd->dir;
 }
 
 EAPI void
 elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
-   Efl_Orient orient;
+   Efl_Ui_Dir dir;
 
    if (horizontal)
-     orient = EFL_ORIENT_HORIZONTAL;
+     dir = EFL_UI_DIR_HORIZONTAL;
    else
-     orient = EFL_ORIENT_VERTICAL;
+     dir = EFL_UI_DIR_VERTICAL;
 
-   efl_orientation_set(obj, orient);
+   efl_ui_direction_set(obj, dir);
 }
 
 EAPI Eina_Bool
 elm_panes_horizontal_get(const Evas_Object *obj)
 {
-   Efl_Orient orient = efl_orientation_get(obj);
+   Efl_Ui_Dir dir = efl_ui_direction_get(obj);
 
-   if (orient == EFL_ORIENT_HORIZONTAL)
+   if (dir == EFL_UI_DIR_HORIZONTAL)
      return EINA_TRUE;
 
    return EINA_FALSE;
