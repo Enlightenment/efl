@@ -729,7 +729,7 @@ M.Type = Node:clone {
     end,
 
     c_type_get = function(self)
-        return self.type:c_type_get()
+        return self.type:c_type_get(eolian.c_type_type.DEFAULT)
     end,
 
     name_get = function(self)

@@ -94,7 +94,7 @@ end
 local typeconv = function(tps, expr, isin)
     if tps:type_get() == type_type.POINTER then
         local base = tps:base_type_get()
-        local f = (isin and known_ptr_in or known_ptr_out)[base:c_type_get()]
+        local f = (isin and known_ptr_in or known_ptr_out)[base:c_type_get(eolian.c_type_type.DEFAULT)]
         if f then return f(expr) end
         return build_calln(tps, expr, isin)
     end
@@ -180,7 +180,7 @@ local Method = Node:clone {
         local proto = {
             name    = meth:name_get()
         }
-        proto.ret_type = rett and rett:c_type_get() or "void"
+        proto.ret_type = rett and rett:c_type_get(eolian.c_type_type.RETURN) or "void"
         local args, cargs, vargs = { "self" }, {}, {}
         proto.args, proto.cargs, proto.vargs = args, cargs, vargs
         local rets = {}
@@ -198,7 +198,7 @@ local Method = Node:clone {
 
         for v in pars do
             local dir, tps, nm = v:direction_get(), v:type_get(), kw_t(v:name_get())
-            local tp = tps:c_type_get()
+            local tp = tps:c_type_get(eolian.c_type_type.PARAM)
             if dir == param_dir.OUT or dir == param_dir.INOUT then
                 if dir == param_dir.INOUT then
                     args[#args + 1] = nm
@@ -275,7 +275,7 @@ local Property = Method:clone {
             nkeys   = #keys,
             nvals   = #vals
         }
-        proto.ret_type = rett and rett:c_type_get() or "void"
+        proto.ret_type = rett and rett:c_type_get(eolian.c_type_type.RETURN) or "void"
         local args, cargs, vargs = { "self" }, {}, {}
         proto.args, proto.cargs, proto.vargs = args, cargs, vargs
         local rets = {}
@@ -290,7 +290,7 @@ local Property = Method:clone {
             for i, v in ipairs(keys) do
                 local nm  = kw_t(v:name_get())
                 local tps = v:type_get()
-                local tp  = tps:c_type_get()
+                local tp  = tps:c_type_get(eolian.c_type_type.PARAM)
                 args [#args  + 1] = nm
                 cargs[#cargs + 1] = tp .. " " .. nm
                 vargs[#vargs + 1] = typeconv(tps, nm, true)
@@ -302,13 +302,13 @@ local Property = Method:clone {
             if self.isget then
                 if #vals == 1 and not rett then
                     local tps = vals[1]:type_get()
-                    proto.ret_type = tps:c_type_get()
+                    proto.ret_type = tps:c_type_get(eolian.c_type_type.PARAM)
                     rets[#rets + 1] = typeconv(tps, "v", false)
                 else
                     for i, v in ipairs(vals) do
                         local dir, tps, nm = v:direction_get(), v:type_get(),
                             kw_t(v:name_get())
-                        local tp = tps:c_type_get()
+                        local tp = tps:c_type_get(eolian.c_type_type.PARAM)
                         cargs [#cargs  + 1] = tp .. " *" .. nm
                         vargs [#vargs  + 1] = nm
                         allocs[#allocs + 1] = { tp, nm }
@@ -319,7 +319,7 @@ local Property = Method:clone {
                 for i, v in ipairs(vals) do
                     local dir, tps, nm = v:direction_get(), v:type_get(),
                         kw_t(v:name_get())
-                    local tp = tps:c_type_get()
+                    local tp = tps:c_type_get(eolian.c_type_type.PARAM)
                     args [#args  + 1] = nm
                     cargs[#cargs + 1] = tp .. " " .. nm
                     vargs[#vargs + 1] = typeconv(tps, nm, true)
