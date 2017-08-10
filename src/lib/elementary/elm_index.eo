@@ -1,4 +1,4 @@
-class Elm.Index (Efl.Ui.Layout, Efl.Orientation,
+class Elm.Index (Efl.Ui.Layout, Efl.Ui.Direction,
                  Efl.Ui.Clickable, Efl.Ui.Selectable)
 {
    [[elementary index class]]
@@ -8,10 +8,6 @@ class Elm.Index (Efl.Ui.Layout, Efl.Orientation,
    methods {
       @property autohide_disabled {
          [[Enable or disable auto hiding feature for a given index widget.]]
-         set {
-         }
-         get {
-         }
          values {
             disabled: bool; [[$true to disable auto hiding, $false to enable]]
          }
@@ -20,10 +16,6 @@ class Elm.Index (Efl.Ui.Layout, Efl.Orientation,
          [[Enable or disable omit feature for a given index widget.
 
            @since 1.8]]
-         set {
-         }
-         get {
-         }
          values {
             enabled: bool; [[$true to enable omit feature, $false to disable]]
          }
@@ -32,10 +24,6 @@ class Elm.Index (Efl.Ui.Layout, Efl.Orientation,
          [[Control standard_priority group of index. Priority group will be shown as many items as it can, and other group will be shown one character only.
 
            @since 1.16]]
-         set {
-         }
-         get {
-         }
          values {
             priority: int; [[$priority target priority value in index]]
          }
@@ -44,10 +32,6 @@ class Elm.Index (Efl.Ui.Layout, Efl.Orientation,
          [[Set a delay change time for index object.
 
            Note: delay time is 0.2 sec by default.]]
-         set {
-         }
-         get {
-         }
          values {
             dtime: double; [[The delay change time to set.]]
          }
@@ -56,10 +40,6 @@ class Elm.Index (Efl.Ui.Layout, Efl.Orientation,
          [[Control the indicator as to be disabled.
 
            In Index widget, Indicator notes popup text, which shows a letter has been selecting.]]
-         set {
-         }
-         get {
-         }
          values {
             disabled: bool; [[$true to disable it, $false to enable it]]
          }
@@ -68,10 +48,6 @@ class Elm.Index (Efl.Ui.Layout, Efl.Orientation,
          [[Set the items level for a given index widget.
 
            See: elm_index_item_level_get()]]
-         set {
-         }
-         get {
-         }
          values {
             level: int; [[$0 or $1, the currently implemented levels.]]
          }
@@ -226,7 +202,7 @@ class Elm.Index (Efl.Ui.Layout, Efl.Orientation,
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.access;
       Elm.Widget.focus_next;
-      Efl.Orientation.orientation { get; set; }
+      Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
       Elm.Interface.Atspi_Accessible.children { get; }
    }
    events {

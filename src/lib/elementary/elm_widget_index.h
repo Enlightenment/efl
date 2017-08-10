@@ -33,7 +33,7 @@ struct _Elm_Index_Data
                                   * small */
    Eina_List            *omit;
 
-   Efl_Orient            orientation;
+   Efl_Ui_Dir            dir;
    int                   level;
    Evas_Coord            dx, dy;
    Ecore_Timer          *delay;
