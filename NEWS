@@ -21,6 +21,7 @@ Fixes:
    * elm_win: simplify/fix recalc logic when changing csd
    * elm_win: set shadow geometry based on borderless state
    * ecore glib support - if we are not the main ctx owner loop to acquire
+   * evas: Fix crash in E (T5868)
 
 Changes since 1.20.0:
 ---------------------
