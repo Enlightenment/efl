@@ -217,9 +217,9 @@ struct type_def
    type_def(variant_type original_type, std::string c_type)
      : original_type(original_type), c_type(c_type) {}
 
-   type_def(Eolian_Type const* eolian_type, Eolian_Unit const* unit)
+   type_def(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
    {
-     set(eolian_type, unit);
+     set(eolian_type, unit, ctype);
    }
    void set(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype);
 };
@@ -293,7 +293,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
          Eolian_Type const* stp = eolian_type_base_type_get(eolian_type);
          while (stp)
            {
-              complex.subtypes.push_back({stp, unit});
+              complex.subtypes.push_back({stp, unit, EOLIAN_C_TYPE_DEFAULT});
               stp = eolian_type_next_type_get(stp);
            }
          original_type = complex;
@@ -348,7 +348,7 @@ struct parameter_def
   parameter_def(parameter_direction direction, type_def type, std::string param_name, std::string c_type)
     : direction(std::move(direction)), type(std::move(type)), param_name(std::move(param_name)), c_type(std::move(c_type)) {}
   parameter_def(Eolian_Function_Parameter const* param, Eolian_Unit const* unit)
-    : type( ::eolian_parameter_type_get(param), unit)
+    : type( ::eolian_parameter_type_get(param), unit, EOLIAN_C_TYPE_PARAM)
     , param_name( ::eolian_parameter_name_get(param))
     , c_type( ::eolian_type_c_type_get(::eolian_parameter_type_get(param), EOLIAN_C_TYPE_PARAM))
   {
@@ -565,7 +565,7 @@ struct event_def
   event_def(type_def type, std::string name, std::string c_name, bool beta, bool protect)
     : type(type), name(name), c_name(c_name), beta(beta), protect(protect) {}
   event_def(Eolian_Event const* event, Eolian_Unit const* unit)
-    : type( ::eolian_event_type_get(event) ? eina::optional<type_def>{{::eolian_event_type_get(event), unit}} : eina::optional<type_def>{})
+    : type( ::eolian_event_type_get(event) ? eina::optional<type_def>{{::eolian_event_type_get(event), unit, EOLIAN_C_TYPE_DEFAULT}} : eina::optional<type_def>{})
     , name( ::eolian_event_name_get(event))
     , c_name( ::eolian_event_c_name_get(event))
     , beta( ::eolian_event_is_beta(event))
