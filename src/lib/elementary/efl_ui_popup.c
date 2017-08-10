@@ -13,6 +13,16 @@
 #define MY_CLASS_NAME "Efl.Ui.Popup"
 #define MY_CLASS_NAME_LEGACY "elm_popup"
 
+static void
+_bg_clicked_cb(void *data,
+                  Evas_Object *o EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
+{
+   Evas_Object *obj = data;
+   efl_event_callback_legacy_call(obj, EFL_UI_POPUP_EVENT_BG_CLICKED, NULL);
+}
+
 EOLIAN static void
 _efl_ui_popup_efl_gfx_position_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Position2D pos)
 {
@@ -94,6 +104,8 @@ _efl_ui_popup_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Data *pd)
    elm_widget_theme_object_set(obj, pd->event_bg, "popup", "base", "event_bg");
    evas_object_smart_member_add(pd->event_bg, obj);
    evas_object_stack_below(pd->event_bg, wd->resize_obj);
+
+   edje_object_signal_callback_add(pd->event_bg, "elm,action,clicked", "*", _bg_clicked_cb, obj);
 }
 
 EOLIAN static void
@@ -116,6 +128,42 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
+}
+
+EOLIAN static void
+_efl_ui_popup_bg_set(Eo *obj, Efl_Ui_Popup_Data *pd, const char* file, const char* group)
+{
+   Evas_Object *prev_obj = edje_object_part_swallow_get(pd->event_bg, "elm.swallow.image");
+   if (prev_obj)
+   {
+     edje_object_part_unswallow(pd->event_bg, prev_obj);
+     evas_object_del(prev_obj);
+   }
+
+   Evas_Object *image = elm_image_add(obj);
+   Eina_Bool ret = elm_image_file_set(image, file, group);
+   if (!ret)
+   {
+      edje_object_signal_emit(pd->event_bg, "elm,state,image,hidden", "elm");
+      evas_object_del(image);
+      return;
+   }
+   edje_object_part_swallow(pd->event_bg, "elm.swallow.image", image);
+   edje_object_signal_emit(pd->event_bg, "elm,state,image,visible", "elm");
+}
+
+EOLIAN static void
+_efl_ui_popup_bg_repeat_events_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Eina_Bool repeat)
+{
+   pd->bg_repeat_events = repeat;
+
+   evas_object_repeat_events_set(pd->event_bg, repeat);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_popup_bg_repeat_events_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+{
+  return pd->bg_repeat_events;
 }
 
 EOLIAN static void
