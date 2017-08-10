@@ -28,7 +28,7 @@ test_separator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_show(bt);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, EINA_TRUE);
+   elm_separator_horizontal_set(sp, EINA_TRUE); // by default, separator is vertical, we must set it horizontal
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
