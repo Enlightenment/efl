@@ -402,6 +402,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
      (wd->resize_obj, EVAS_CALLBACK_RESIZE,
      _on_resize, obj);
 
+   sd->dir = EFL_UI_DIR_VERTICAL;
    sd->right_min_size_is_relative = EINA_TRUE;
    sd->left_min_size_is_relative = EINA_TRUE;
    sd->right_min_size = 0;
