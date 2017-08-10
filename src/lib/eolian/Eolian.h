@@ -236,6 +236,13 @@ typedef enum
 
 typedef enum
 {
+   EOLIAN_C_TYPE_DEFAULT = 0,
+   EOLIAN_C_TYPE_PARAM,
+   EOLIAN_C_TYPE_RETURN
+} Eolian_C_Type_Type;
+
+typedef enum
+{
    EOLIAN_EXPR_UNKNOWN = 0,
    EOLIAN_EXPR_INT,
    EOLIAN_EXPR_UINT,
@@ -1883,6 +1890,7 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
  * @brief Get the full C type name of the given type.
  *
  * @param[in] tp the type.
+ * @param[in] ctype the context within which the C type string will be used.
  * @return The C type name assuming @c tp is not NULL.
  *
  * You're responsible for the stringshare.
@@ -1891,7 +1899,7 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
+EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
 
 /*
  * @brief Get the name of the given type. For regular or complex types, this

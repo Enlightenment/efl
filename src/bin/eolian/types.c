@@ -42,7 +42,8 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
                 Eina_Stringshare *ct = NULL;
                 if (eolian_type_type_get(mtp) == EOLIAN_TYPE_STATIC_ARRAY)
                   {
-                     ct = eolian_type_c_type_get(eolian_type_base_type_get(mtp));
+                     ct = eolian_type_c_type_get(eolian_type_base_type_get(mtp),
+                                                 EOLIAN_C_TYPE_DEFAULT);
                      eina_strbuf_append_printf(buf, "  %s%s%s[%zu];",
                         ct, strchr(ct, '*') ? "" : " ",
                         eolian_typedecl_struct_field_name_get(memb),
@@ -50,7 +51,7 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
                   }
                 else
                   {
-                     ct = eolian_type_c_type_get(mtp);
+                     ct = eolian_type_c_type_get(mtp, EOLIAN_C_TYPE_DEFAULT);
                      eina_strbuf_append_printf(buf, "  %s%s%s;",
                         ct, strchr(ct, '*') ? "" : " ",
                         eolian_typedecl_struct_field_name_get(memb));
@@ -145,7 +146,7 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
              eina_strbuf_append(buf, "void ");
            else
              {
-                Eina_Stringshare *ct = eolian_type_c_type_get(rtp);
+                Eina_Stringshare *ct = eolian_type_c_type_get(rtp, EOLIAN_C_TYPE_RETURN);
                 eina_strbuf_append_printf(buf, "%s ", ct);
              }
 
@@ -162,7 +163,7 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
              {
                 const Eolian_Typedecl *ptd = eolian_type_typedecl_get(eolian_parameter_type_get(param));
                 Eina_Stringshare *pn = eolian_parameter_name_get(param);
-                Eina_Stringshare *pt = eolian_type_c_type_get(eolian_parameter_type_get(param));
+                Eina_Stringshare *pt = eolian_type_c_type_get(eolian_parameter_type_get(param), EOLIAN_C_TYPE_PARAM);
 
                 if (!pn)
                   pn = ""; // FIXME add some kind of param1/param2 control for null?
@@ -221,7 +222,7 @@ _var_generate(const Eolian_Unit *src, const Eolian_Variable *vr, Eina_Bool legac
      }
    else
      {
-        Eina_Stringshare *ct = eolian_type_c_type_get(vt);
+        Eina_Stringshare *ct = eolian_type_c_type_get(vt, EOLIAN_C_TYPE_DEFAULT);
         eina_strbuf_append_printf(buf, "EWAPI extern %s %s;", ct, fn);
         eina_stringshare_del(ct);
      }
@@ -314,7 +315,7 @@ void eo_gen_types_source_gen(const Eolian_Unit *src,
         eina_str_toupper(&fn);
 
         const Eolian_Type *vt = eolian_variable_base_type_get(vr);
-        Eina_Stringshare *ct = eolian_type_c_type_get(vt);
+        Eina_Stringshare *ct = eolian_type_c_type_get(vt, EOLIAN_C_TYPE_DEFAULT);
         eina_strbuf_append_printf(buf, "EWAPI %s %s = ", ct, fn);
         eina_stringshare_del(ct);
         free(fn);

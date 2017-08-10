@@ -137,7 +137,7 @@ _append_defval(const Eolian_Unit *src, Eina_Strbuf *buf,
         free(sn);
         return;
      }
-   Eina_Stringshare *ctp = eolian_type_c_type_get(btp);
+   Eina_Stringshare *ctp = eolian_type_c_type_get(btp, EOLIAN_C_TYPE_DEFAULT);
    if (strchr(ctp, '*'))
      {
         eina_strbuf_append(buf, "NULL");
@@ -207,7 +207,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
         {
            const char *prn = eolian_parameter_name_get(pr);
            const Eolian_Type *pt = eolian_parameter_type_get(pr);
-           Eina_Stringshare *ptn = eolian_type_c_type_get(pt);
+           Eina_Stringshare *ptn = eolian_type_c_type_get(pt, EOLIAN_C_TYPE_PARAM);
 
            if (eina_strbuf_length_get(params))
              eina_strbuf_append(params, ", ");
@@ -245,7 +245,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
              const Eolian_Expression *dfv = eolian_parameter_default_value_get(pr);
              const char *prn = eolian_parameter_name_get(pr);
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
-             Eina_Stringshare *ptn = eolian_type_c_type_get(pt);
+             Eina_Stringshare *ptn = eolian_type_c_type_get(pt, EOLIAN_C_TYPE_PARAM);
              const Eolian_Typedecl *ptd = eolian_type_typedecl_get(pt);
 
              Eina_Bool had_star = ptn[strlen(ptn) - 1] == '*';
@@ -317,7 +317,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
    if (impl_same_class && eolian_implement_is_pure_virtual(impl, ftype))
      impl_need = EINA_FALSE;
 
-   Eina_Stringshare *rtpn = rtp ? eolian_type_c_type_get(rtp)
+   Eina_Stringshare *rtpn = rtp ? eolian_type_c_type_get(rtp, EOLIAN_C_TYPE_RETURN)
                                 : eina_stringshare_add("void");
 
    char *cname = NULL, *cnamel = NULL, *ocnamel = NULL;
@@ -828,7 +828,7 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
         {
            const char *prn = eolian_parameter_name_get(pr);
            const Eolian_Type *pt = eolian_parameter_type_get(pr);
-           Eina_Stringshare *ptn = eolian_type_c_type_get(pt);
+           Eina_Stringshare *ptn = eolian_type_c_type_get(pt, EOLIAN_C_TYPE_PARAM);
 
            eina_strbuf_append(params, ", ");
            eina_strbuf_append(params, prn);
@@ -858,7 +858,7 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
              const char *prn = eolian_parameter_name_get(pr);
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
              const Eolian_Typedecl *ptd = eolian_type_typedecl_get(pt);
-             Eina_Stringshare *ptn = eolian_type_c_type_get(pt);
+             Eina_Stringshare *ptn = eolian_type_c_type_get(pt, EOLIAN_C_TYPE_PARAM);
 
              if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
                {
@@ -938,7 +938,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
    eina_strbuf_append(buf, "EOLIAN static ");
    if (rtp)
      {
-        Eina_Stringshare *rtpn = eolian_type_c_type_get(rtp);
+        Eina_Stringshare *rtpn = eolian_type_c_type_get(rtp, EOLIAN_C_TYPE_RETURN);
         eina_strbuf_append(buf, rtpn);
         eina_stringshare_del(rtpn);
      }

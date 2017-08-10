@@ -355,7 +355,7 @@ eolian_typedecl_is_extern(const Eolian_Typedecl *tp)
 }
 
 EAPI Eina_Stringshare *
-eolian_type_c_type_get(const Eolian_Type *tp)
+eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype EINA_UNUSED)
 {
    Eina_Stringshare *ret;
    Eina_Strbuf *buf;
