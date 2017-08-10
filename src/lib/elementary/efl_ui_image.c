@@ -226,7 +226,7 @@ _efl_ui_image_internal_sizing_eval(Evas_Object *obj, Efl_Ui_Image_Data *sd)
           }
 
         //3. Calculate offset according to align value
-        if (!sd->legacy_align)
+        if (!elm_widget_is_legacy(obj))
           {
              offset_x = ((sd->img_w - w) * sd->align_x);
              offset_y = ((sd->img_h - h) * sd->align_y);
@@ -578,7 +578,7 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   if (sd->legacy_align)
+   if (elm_widget_is_legacy(obj))
      efl_event_callback_del(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
                             _on_size_hints_changed, sd);
    ecore_timer_del(sd->anim_timer);
@@ -855,7 +855,6 @@ elm_image_add(Evas_Object *parent)
    Evas_Object *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
    EFL_UI_IMAGE_DATA_GET(obj, priv);
 
-   priv->legacy_align = EINA_TRUE;
    efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_size_hints_changed, priv);
 
    return obj;
@@ -1566,7 +1565,6 @@ _efl_ui_image_scalable_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool
 EOLIAN static void
 _efl_ui_image_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double align_y)
 {
-   sd->legacy_align = EINA_FALSE;
    if (align_x > 1.0)
      align_x = 1.0;
    else if (align_x < 0.0)
