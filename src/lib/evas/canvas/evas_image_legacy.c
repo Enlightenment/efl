@@ -694,7 +694,7 @@ evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
    pixels = ENFN->image_data_get(ENDT, o->engine_data, for_writing, &data, &o->load_error, &tofree);
 
    /* if we fail to get engine_data, we have to return NULL */
-   if (!pixels) return NULL;
+   if (!pixels || !data) goto error;
 
    if (!tofree)
      {
