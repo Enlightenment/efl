@@ -684,38 +684,10 @@ _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
      }
 }
 
-static const Eina_Bool _ownable_types[] = {
-    EINA_FALSE, /* unknown */
-    EINA_FALSE, /* void */
-    EINA_FALSE, /* regular */
-    EINA_TRUE,  /* complex */
-    EINA_TRUE,  /* pointer */
-    EINA_TRUE,  /* class */
-    EINA_TRUE,  /* static array */
-    EINA_TRUE,  /* terminated array */
-    EINA_FALSE  /* undefined */
-};
-
-static Eina_Bool
-_type_is_ownable(Eolian_Type *tp)
-{
-   if (tp->is_ptr)
-     return EINA_TRUE;
-   if (tp->type == EOLIAN_TYPE_REGULAR)
-     {
-        int kwid = eo_lexer_keyword_str_to_id(tp->name);
-        const char *ct = eo_lexer_get_c_type(kwid);
-        if (!ct)
-          return EINA_FALSE;
-        return (ct[strlen(ct) - 1] == '*');
-     }
-   return _ownable_types[tp->type];
-}
-
 static Eina_Bool
 _type_is_terminatable(Eolian_Type *tp)
 {
-   if (_type_is_ownable(tp))
+   if (database_type_is_ownable(tp))
      return EINA_TRUE;
    if (tp->type == EOLIAN_TYPE_REGULAR)
      {
@@ -769,7 +741,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            check_next(ls, '(');
            eo_lexer_context_push(ls);
            def = parse_type_void(ls, allow_ref, EINA_FALSE);
-           if (!_type_is_ownable(def))
+           if (!database_type_is_ownable(def))
              {
                 eo_lexer_context_restore(ls);
                 eo_lexer_syntax_error(ls, "ownable type expected");
@@ -789,7 +761,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            check_next(ls, '(');
            eo_lexer_context_push(ls);
            def = parse_type_void(ls, allow_ref, EINA_FALSE);
-           if (!_type_is_ownable(def))
+           if (!database_type_is_ownable(def))
              {
                 eo_lexer_context_restore(ls);
                 eo_lexer_syntax_error(ls, "freeable type expected");
