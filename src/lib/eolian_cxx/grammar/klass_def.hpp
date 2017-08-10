@@ -221,7 +221,7 @@ struct type_def
    {
      set(eolian_type, unit);
    }
-   void set(Eolian_Type const* eolian_type, Eolian_Unit const* unit);
+   void set(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype);
 };
 
 struct get_qualifier_visitor
@@ -249,9 +249,9 @@ inline bool operator!=(type_def const& lhs, type_def const& rhs)
         
 type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void"};
         
-inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit)
+inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
 {
-   c_type = ::eolian_type_c_type_get(eolian_type);
+   c_type = ::eolian_type_c_type_get(eolian_type, ctype);
    // ::eina_stringshare_del(stringshare); // this crashes
    switch( ::eolian_type_type_get(eolian_type))
      {
@@ -350,7 +350,7 @@ struct parameter_def
   parameter_def(Eolian_Function_Parameter const* param, Eolian_Unit const* unit)
     : type( ::eolian_parameter_type_get(param), unit)
     , param_name( ::eolian_parameter_name_get(param))
-    , c_type( ::eolian_type_c_type_get(::eolian_parameter_type_get(param)))
+    , c_type( ::eolian_type_c_type_get(::eolian_parameter_type_get(param), EOLIAN_C_TYPE_PARAM))
   {
      Eolian_Parameter_Dir direction = ::eolian_parameter_direction_get(param);
      switch(direction)
@@ -439,7 +439,7 @@ struct function_def
     Eolian_Type const* r_type = ::eolian_function_return_type_get(function, type);
     name = ::eolian_function_name_get(function);
     if(r_type)
-      return_type.set(r_type, unit);
+      return_type.set(r_type, unit, EOLIAN_C_TYPE_RETURN);
      if(type == EOLIAN_METHOD)
        {
           for(efl::eina::iterator<Eolian_Function_Parameter> param_iterator ( ::eolian_function_parameters_get(function))
