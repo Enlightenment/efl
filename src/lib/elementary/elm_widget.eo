@@ -1,4 +1,3 @@
-import edje_types;
 import elm_general;
 import efl_input_types;
 
