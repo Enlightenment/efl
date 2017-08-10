@@ -6,6 +6,7 @@ struct _Efl_Ui_Popup_Data
 {
    Evas_Object *win_parent;
    Evas_Object *event_bg;
+   Eina_Bool    bg_repeat_events : 1;
 };
 
 #endif

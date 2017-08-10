@@ -939,10 +939,38 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(win);
 }
 
+static void
+_bg_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
+{
+   printf("Popup's background is clicked.\n");
+}
+
+static void
+_image_change_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
+{
+   static int k = 0;
+
+   if (k == 0)
+     {
+        char buf[PATH_MAX];
+        snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
+        efl_ui_popup_bg_set(data, buf, NULL);
+        efl_ui_popup_bg_repeat_events_set(data, EINA_TRUE);
+     }
+   else
+     {
+        efl_ui_popup_bg_set(data, NULL, NULL);
+        efl_ui_popup_bg_repeat_events_set(data, EINA_FALSE);
+     }
+   k = !k;
+}
+
 void
 test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win;
+   Evas_Object *win, *btn;
 
    win = elm_win_util_standard_add("Efl UI Popup", "Efl UI Popup");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -950,7 +978,15 @@ test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "bg repeat events test");
+   evas_object_move(btn, 0, 0);
+   evas_object_resize(btn, 150, 150);
+   evas_object_show(btn);
+
    Evas_Object *efl_ui_popup= efl_add(EFL_UI_POPUP_CLASS, win);
+
+   evas_object_smart_callback_add(efl_ui_popup, "bg,clicked", _bg_clicked, NULL);
 
    evas_object_move(efl_ui_popup, 80, 80);
    evas_object_resize(efl_ui_popup, 160, 160);
@@ -960,8 +996,9 @@ test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_geometry_get(efl_ui_popup, &x, &y, &w, &h);
    printf("efl_ui_popup: %d %d %d %d\n", x, y, w, h);
 
-   Evas_Object *btn = elm_button_add(efl_ui_popup);
+   btn = elm_button_add(efl_ui_popup);
    elm_object_text_set(btn, "Efl.Ui.Popup content");
+   evas_object_smart_callback_add(btn, "clicked", _image_change_btn_cb, efl_ui_popup);
    evas_object_show(btn);
 
    efl_content_set(efl_ui_popup, btn);
