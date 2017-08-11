@@ -531,7 +531,7 @@ _efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Calc_D
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, EINA_FALSE);
 
    if (redirect)
-     EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(redirect, MY_CLASS), EINA_FALSE);
+     EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(redirect, EFL_UI_FOCUS_MANAGER_INTERFACE), EINA_FALSE);
 
    F_DBG("Manager: %p register %p %p %p", obj, child, parent, redirect);
 
@@ -567,7 +567,7 @@ _efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd,
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, EINA_FALSE);
 
    if (redirect)
-     EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(redirect, MY_CLASS), EINA_FALSE);
+     EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(redirect, EFL_UI_FOCUS_MANAGER_INTERFACE), EINA_FALSE);
 
    F_DBG("Manager: %p register %p %p %p", obj, child, parent, redirect);
 
