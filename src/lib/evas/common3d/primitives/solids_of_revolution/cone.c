@@ -53,7 +53,7 @@ _set_default_cone(Evas_Canvas3D_Mesh *mesh,
              tangents[num].z = 0.0;
 
              tex_coord[num].x = i / (float)(vccount - 1) * tex_scale.x;
-             tex_coord[num].y = (float)((j + 1) / 2) * tex_scale.y / 2.0;
+             tex_coord[num].y = ((j + 1) / 2.0) * tex_scale.y / 2.0;
           }
      }
 
