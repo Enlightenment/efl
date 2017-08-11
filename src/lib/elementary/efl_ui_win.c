@@ -4433,7 +4433,11 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
      }
 
    if ((sd->type == ELM_WIN_INLINED_IMAGE) ||
-       (sd->type == ELM_WIN_SOCKET_IMAGE))
+       (sd->type == ELM_WIN_SOCKET_IMAGE) ||
+       (sd->type == ELM_WIN_TOOLTIP) ||
+       (sd->type == ELM_WIN_COMBO) ||
+       (sd->type == ELM_WIN_MENU) ||
+       (sd->type == ELM_WIN_POPUP_MENU))
      {
         sd->csd.need_shadow = EINA_FALSE;
         sd->csd.need_borderless = EINA_TRUE;
@@ -4652,6 +4656,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    Eina_Stringshare *accel = NULL;
    Eina_Bool is_gl_accel;
    int i, p = 0;
+   int parent_id = 0;
 
    Efl_Ui_Win_Data tmp_sd;
 
@@ -4918,6 +4923,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #endif
                }
           }
+        if (parent) parent_id = elm_win_window_id_get(parent);
         for (i = 0; i < p; i++)
           {
              if (!strcmp(enginelist[i], ELM_SOFTWARE_X11))
@@ -4953,9 +4959,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
                     tmp_sd.ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 0, 0);
                }
              else if (!strcmp(enginelist[i], ELM_WAYLAND_SHM))
-               tmp_sd.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 0, 0, 0);
+               tmp_sd.ee = ecore_evas_wayland_shm_new(NULL, parent_id, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_WAYLAND_EGL))
-               tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 0, 0, 0);
+               tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, parent_id, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_WIN32))
                tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_DDRAW))

@@ -1985,6 +1985,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
+        ecore_wl2_window_geometry_set(wdata->win, 0, 0, ee->w, ee->h);
         ecore_wl2_window_show(wdata->win);
         ecore_wl2_window_alpha_set(wdata->win, ee->alpha);
 
