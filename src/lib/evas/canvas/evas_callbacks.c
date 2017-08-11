@@ -485,7 +485,7 @@ evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type 
 EAPI void *
 evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Event_Cb_Wrapper_Info *info;
 
    if (!obj) return NULL;
@@ -512,7 +512,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 EAPI void *
 evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Event_Cb_Wrapper_Info *info;
 
    if (!obj) return NULL;
@@ -568,7 +568,7 @@ evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callb
 EAPI void *
 evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Event_Cb_Wrapper_Info *info;
 
    if (!e) return NULL;
@@ -595,7 +595,7 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 EAPI void *
 evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Event_Cb_Wrapper_Info *info;
 
    if (!e) return NULL;
