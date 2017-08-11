@@ -192,7 +192,7 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
 
    if (first_content)
      {
-        if (!sd->first_allow_user_hints)
+        if (!sd->first_hint_min_allow)
           efl_gfx_size_hint_combined_min_get(first_content, &sd->first_minw, &sd->first_minh);
         else
           efl_gfx_size_hint_min_get(first_content, &sd->first_minw, &sd->first_minh);
@@ -200,7 +200,7 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
 
    if (second_content)
      {
-        if (!sd->second_allow_user_hints)
+        if (!sd->second_hint_min_allow)
           efl_gfx_size_hint_combined_min_get(second_content, &sd->second_minw, &sd->second_minh);
         else
           efl_gfx_size_hint_min_get(second_content, &sd->second_minw, &sd->second_minh);
@@ -603,27 +603,27 @@ _efl_ui_panes_class_constructor(Efl_Class *klass)
 ELM_PART_OVERRIDE(efl_ui_panes, EFL_UI_PANES, EFL_UI_LAYOUT, Efl_Ui_Panes_Data, Elm_Part_Data)
 
 EOLIAN static void
-_efl_ui_panes_internal_part_allow_user_size_hints_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Eina_Bool allow)
+_efl_ui_panes_internal_part_hint_min_allow_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Eina_Bool allow)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
    Efl_Ui_Panes_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PANES_CLASS);
 
    if (!strcmp(pd->part, "first"))
      {
-        if (sd->first_allow_user_hints == allow) return;
-        sd->first_allow_user_hints = allow;
+        if (sd->first_hint_min_allow == allow) return;
+        sd->first_hint_min_allow = allow;
         elm_layout_sizing_eval(pd->obj);
      }
    else if (!strcmp(pd->part, "second"))
      {
-        if (sd->second_allow_user_hints == allow) return;
-        sd->second_allow_user_hints = allow;
+        if (sd->second_hint_min_allow == allow) return;
+        sd->second_hint_min_allow = allow;
         elm_layout_sizing_eval(pd->obj);
      }
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_panes_internal_part_allow_user_size_hints_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
+_efl_ui_panes_internal_part_hint_min_allow_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
 {
    Eina_Bool ret = EINA_FALSE;
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
@@ -631,11 +631,11 @@ _efl_ui_panes_internal_part_allow_user_size_hints_get(Eo *obj, Elm_Part_Data *_p
 
    if (!strcmp(pd->part, "first"))
      {
-        ret = sd->first_allow_user_hints;
+        ret = sd->first_hint_min_allow;
      }
    else if (!strcmp(pd->part, "second"))
      {
-        ret = sd->second_allow_user_hints;
+        ret = sd->second_hint_min_allow;
      }
 
    return ret;

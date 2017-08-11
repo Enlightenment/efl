@@ -47,8 +47,8 @@ struct _Efl_Ui_Panes_Data
    Eina_Bool             fixed : 1;
    Eina_Bool             left_min_size_is_relative : 1;
    Eina_Bool             right_min_size_is_relative : 1;
-   Eina_Bool             first_allow_user_hints : 1;
-   Eina_Bool             second_allow_user_hints : 1;
+   Eina_Bool             first_hint_min_allow : 1;
+   Eina_Bool             second_hint_min_allow : 1;
 };
 
 /**
