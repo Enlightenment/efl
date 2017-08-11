@@ -131,6 +131,18 @@ EAPI void efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set);
  * @since 1.21
  */
 EAPI void *efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb);
+
+/**
+ * Extract a child surface from the compositor
+ *
+ * An extracted surface can be freely manipulated by external code.
+ * @note size hints must be respected, and the extracted object must not be externally deleted
+ *
+ * @param surface The surface to extract
+ * @return True if the surface was successfully extracted
+ * @since 1.21
+ */
+EAPI Eina_Bool efl_wl_surface_extract(Evas_Object *surface);
 #endif
 
 #endif
