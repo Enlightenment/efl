@@ -1222,8 +1222,8 @@ _ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
         return NULL;
      }
 
-   _ecore_main_fdh_poll_del(fd_handler);
    fd_handler->delete_me = EINA_TRUE;
+   _ecore_main_fdh_poll_del(fd_handler);
    fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fd_handler);
    if (fd_handler->prep_func && fd_handlers_with_prep)
      fd_handlers_with_prep = eina_list_remove(fd_handlers_with_prep, fd_handler);
@@ -1882,8 +1882,8 @@ _ecore_main_fd_handlers_bads_rem(void)
                        ERR("Fd function err returned 0, remove it");
                        if (!fdh->delete_me)
                          {
-                            _ecore_main_fdh_poll_del(fdh);
                             fdh->delete_me = EINA_TRUE;
+                            _ecore_main_fdh_poll_del(fdh);
                             fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
                          }
                        found++;
@@ -1895,8 +1895,8 @@ _ecore_main_fd_handlers_bads_rem(void)
                   ERR("Problematic fd found at %d! setting it for delete", fdh->fd);
                   if (!fdh->delete_me)
                     {
-                       _ecore_main_fdh_poll_del(fdh);
                        fdh->delete_me = EINA_TRUE;
+                       _ecore_main_fdh_poll_del(fdh);
                        fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
                     }
 
@@ -2006,8 +2006,8 @@ _ecore_main_fd_handlers_call(void)
                      {
                         if (!fdh->delete_me)
                           {
-                             _ecore_main_fdh_poll_del(fdh);
                              fdh->delete_me = EINA_TRUE;
+                             _ecore_main_fdh_poll_del(fdh);
                              fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
                           }
                      }
@@ -2087,6 +2087,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
            fdh = fd_handlers;
            fd_handlers = (Ecore_Fd_Handler *)eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
                                                                 EINA_INLIST_GET(fdh));
+           fdh->delete_me = 1;
            _ecore_main_fdh_poll_del(fdh);
            ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
            ecore_fd_handler_mp_free(fdh);
