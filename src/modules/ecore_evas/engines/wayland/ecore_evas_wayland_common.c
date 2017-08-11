@@ -194,6 +194,17 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    ee->w = w;
    ee->h = h;
 
+   if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel && wdata->win->pending.min)
+     {
+        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ee->prop.min.w, ee->prop.min.h);
+        wdata->win->pending.min = 0;
+     }
+   if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel && wdata->win->pending.max)
+     {
+        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, ee->prop.max.w, ee->prop.max.h);
+        wdata->win->pending.max = 0;
+     }
+
    if (!ee->prop.fullscreen)
      {
         int fw = 0, fh = 0;
@@ -1451,7 +1462,12 @@ _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
    ee->prop.min.h = h;
    wdata = ee->engine.data;
    if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel)
-     wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, w, h);
+     {
+        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, w, h);
+        wdata->win->pending.min = 0;
+     }
+   else
+     wdata->win->pending.min = 1;
    _ecore_evas_wl_common_resize(ee, ee->w, ee->h);
 }
 
@@ -1469,7 +1485,12 @@ _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
    ee->prop.max.h = h;
    wdata = ee->engine.data;
    if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel)
-     wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, w, h);
+     {
+        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, w, h);
+        wdata->win->pending.max = 0;
+     }
+   else
+     wdata->win->pending.max = 1;
    _ecore_evas_wl_common_resize(ee, ee->w, ee->h);
 }
 
@@ -1976,6 +1997,17 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
    if (wdata->win)
      {
         int fw, fh;
+
+        if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel && wdata->win->pending.min)
+          {
+             wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ee->prop.min.w, ee->prop.min.h);
+             wdata->win->pending.min = 0;
+          }
+        if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel && wdata->win->pending.max)
+          {
+             wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, ee->prop.max.w, ee->prop.max.h);
+             wdata->win->pending.max = 0;
+          }
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
