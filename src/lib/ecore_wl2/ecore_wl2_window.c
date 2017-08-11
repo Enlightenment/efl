@@ -296,7 +296,6 @@ _ecore_wl2_window_zxdg_popup_create(Ecore_Wl2_Window *win)
    struct zxdg_positioner_v6 *pos;
 
    EINA_SAFETY_ON_NULL_RETURN(win->parent);
-   EINA_SAFETY_ON_NULL_RETURN(win->grab);
    pos = zxdg_shell_v6_create_positioner(win->display->wl.zxdg_shell);
    if (!pos) return;
 
@@ -312,8 +311,9 @@ _ecore_wl2_window_zxdg_popup_create(Ecore_Wl2_Window *win)
                                win->parent->zxdg_surface, pos);
 
    zxdg_positioner_v6_destroy(pos);
-   zxdg_popup_v6_grab(win->zxdg_popup, win->grab->wl.seat,
-                      wl_display_get_serial(win->display->wl.display));
+   if (win->grab)
+     zxdg_popup_v6_grab(win->zxdg_popup, win->grab->wl.seat,
+                        wl_display_get_serial(win->display->wl.display));
    zxdg_popup_v6_set_user_data(win->zxdg_popup, win);
    zxdg_popup_v6_add_listener(win->zxdg_popup, &_zxdg_popup_listener, win);
 
@@ -448,30 +448,43 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
         zxdg_surface_v6_add_listener(window->zxdg_surface,
                                      &_zxdg_surface_listener, window);
 
-        window->zxdg_toplevel =
-          zxdg_surface_v6_get_toplevel(window->zxdg_surface);
-        zxdg_toplevel_v6_set_user_data(window->zxdg_toplevel, window);
-        zxdg_toplevel_v6_add_listener(window->zxdg_toplevel,
-                                      &_zxdg_toplevel_listener, window);
-
-        if (window->title)
-          zxdg_toplevel_v6_set_title(window->zxdg_toplevel, window->title);
-        if (window->class)
-          zxdg_toplevel_v6_set_app_id(window->zxdg_toplevel, window->class);
-
-        window->zxdg_set_min_size = zxdg_toplevel_v6_set_min_size;
-        window->zxdg_set_max_size = zxdg_toplevel_v6_set_max_size;
-
         window->zxdg_configure_ack = zxdg_surface_v6_ack_configure;
-        _ecore_wl2_window_type_set(window);
-
         window->pending.configure = EINA_TRUE;
 
-        if (window->maximized)
-          zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
+        if (window->type == ECORE_WL2_WINDOW_TYPE_MENU)
+          _ecore_wl2_window_zxdg_popup_create(window);
+        else
+          {
+             window->zxdg_toplevel =
+               zxdg_surface_v6_get_toplevel(window->zxdg_surface);
+             zxdg_toplevel_v6_set_user_data(window->zxdg_toplevel, window);
+             zxdg_toplevel_v6_add_listener(window->zxdg_toplevel,
+                                           &_zxdg_toplevel_listener, window);
 
-        if (window->fullscreen)
-          zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
+             if (window->title)
+               zxdg_toplevel_v6_set_title(window->zxdg_toplevel, window->title);
+             if (window->class)
+               zxdg_toplevel_v6_set_app_id(window->zxdg_toplevel, window->class);
+
+             window->zxdg_set_min_size = zxdg_toplevel_v6_set_min_size;
+             window->zxdg_set_max_size = zxdg_toplevel_v6_set_max_size;
+
+             {
+                struct zxdg_toplevel_v6 *ptop = NULL;
+
+                if (window->parent)
+                  ptop = window->parent->zxdg_toplevel;
+
+                if (ptop)
+                  zxdg_toplevel_v6_set_parent(window->zxdg_toplevel, ptop);
+             }
+
+             if (window->maximized)
+               zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
+
+             if (window->fullscreen)
+               zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
+          }
 
         wl_surface_commit(window->surface);
      }
