@@ -1059,6 +1059,18 @@ EAPI Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int se
 
 EAPI int ecore_drm2_device_fd_get(Ecore_Drm2_Device *device);
 
+/**
+ * Check if there's a pageflip in progress for an output
+ *
+ * Checks whether an output has submit a flip but not yet had
+ * a callback completion event for that flip yet.
+ *
+ * @param output
+ * @return Whether there's a flip in progress or not
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_drm2_output_pending_get(Ecore_Drm2_Output *output);
+
 # endif
 
 #endif
