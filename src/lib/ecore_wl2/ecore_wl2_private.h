@@ -201,6 +201,8 @@ struct _Ecore_Wl2_Window
    struct
      {
         Eina_Bool configure : 1;
+        Eina_Bool min : 1;
+        Eina_Bool max : 1;
      } pending;
 
    struct
