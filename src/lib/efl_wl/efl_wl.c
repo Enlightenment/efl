@@ -3531,7 +3531,7 @@ seat_keymap_update(Comp_Seat *s)
 {
    char *str;
    Eina_Tmpstr *file;
-   struct wl_resource *res;
+   Eina_List *l;
    Eina_Iterator *it;
    xkb_mod_mask_t latched = 0, locked = 0;
 
@@ -3587,8 +3587,13 @@ seat_keymap_update(Comp_Seat *s)
    free(str);
 
    it = eina_hash_iterator_data_new(s->kbd.resources);
-   EINA_ITERATOR_FOREACH(it, res)
-     wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, s->kbd.keymap_fd, s->kbd.keymap_mem_size);
+   EINA_ITERATOR_FOREACH(it, l)
+     {
+        Eina_List *ll;
+        struct wl_resource *res;
+        EINA_LIST_FOREACH(l, ll, res)
+          wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, s->kbd.keymap_fd, s->kbd.keymap_mem_size);
+     }
    eina_iterator_free(it);
 }
 
