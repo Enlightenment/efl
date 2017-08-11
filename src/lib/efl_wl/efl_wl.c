@@ -4177,6 +4177,7 @@ comp_seats_proxy(Comp *c)
         s = calloc(1, sizeof(Comp_Seat));
         s->c = c;
         s->dev = dev;
+        s->kbd.keymap_fd = -1;
         efl_ref(s->dev);
         if (c->parent_disp)
           comp_seat_proxy_update(s);
