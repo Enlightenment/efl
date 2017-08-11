@@ -461,7 +461,7 @@ _coord_to_region_convert(Elm_Map_Data *sd,
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   zoom = floor(log(size / sd->size.tile) / log(2));
+   zoom = floor(log((double)size / sd->size.tile) / log(2));
    if ((sd->src_tile) && (sd->src_tile->coord_to_geo))
      {
         if (sd->src_tile->coord_to_geo
@@ -489,7 +489,7 @@ _region_to_coord_convert(Elm_Map_Data *sd,
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   zoom = floor(log(size / 256) / log(2));
+   zoom = floor(log((double)size / 256) / log(2));
    if ((sd->src_tile) && (sd->src_tile->geo_to_coord))
      {
         if (sd->src_tile->geo_to_coord
@@ -1120,15 +1120,15 @@ _zoom_do(Elm_Map_Data *sd,
         double sx, sy;
 
         if (vw > ow) sx = 0.5;
-        else sx = (double)(vx + (double)(vw / 2)) / ow;
+        else sx = (vx + ((double)vw / 2)) / ow;
         if (vh > oh) sy = 0.5;
-        else sy = (double)(vy + (double)(vh / 2)) / oh;
+        else sy = (vy + ((double)vh / 2)) / oh;
 
         if (sx > 1.0) sx = 1.0;
         if (sy > 1.0) sy = 1.0;
 
-        x = ceil((sx * sd->size.w) - (vw / 2));
-        y = ceil((sy * sd->size.h) - (vh / 2));
+        x = ceil((sx * sd->size.w) - ((double)vw / 2));
+        y = ceil((sy * sd->size.h) - ((double)vh / 2));
         if (x < 0) x = 0;
         else if (x > (sd->size.w - vw))
           x = sd->size.w - vw;
