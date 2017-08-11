@@ -4161,9 +4161,6 @@ _elm_win_frame_cb_menu(void *data,
    if (sd->wl.win->zxdg_toplevel)
      zxdg_toplevel_v6_show_window_menu(sd->wl.win->zxdg_toplevel,
                                        ecore_wl2_input_seat_get(input), 0, x, y);
-   else if (sd->wl.win->xdg_surface)
-     xdg_surface_show_window_menu(sd->wl.win->xdg_surface,
-                                  ecore_wl2_input_seat_get(input), 0, x, y);
 #else
    (void)sd;
 #endif

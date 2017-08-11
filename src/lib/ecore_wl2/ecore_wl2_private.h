@@ -10,9 +10,6 @@
 #define EFL_TEAMWORK_VERSION 2
 # include "teamwork-client-protocol.h"
 
-# include "xdg-shell-unstable-v5-client-protocol.h"
-# define XDG_V5_UNSTABLE_VERSION 5
-
 # include "session-recovery-client-protocol.h"
 
 # include "xdg-shell-unstable-v6-client-protocol.h"
@@ -90,7 +87,6 @@ struct _Ecore_Wl2_Display
         int data_device_manager_version;
         struct wl_shm *shm;
         struct zwp_linux_dmabuf_v1 *dmabuf;
-        struct xdg_shell *xdg_shell;
         struct zxdg_shell_v6 *zxdg_shell;
         struct www *www;
         struct zwp_e_session_recovery *session_recovery;
@@ -159,8 +155,6 @@ struct _Ecore_Wl2_Window
    const char *role;
 
    struct wl_surface *surface;
-   struct xdg_surface *xdg_surface;
-   struct xdg_popup *xdg_popup;
    struct www_surface *www_surface;
    struct zxdg_surface_v6 *zxdg_surface;
    struct zxdg_toplevel_v6 *zxdg_toplevel;
@@ -169,7 +163,6 @@ struct _Ecore_Wl2_Window
    Eina_Stringshare *uuid;
 
    uint32_t configure_serial;
-   void (*configure_ack)(struct xdg_surface *surface, uint32_t serial);
    void (*zxdg_configure_ack)(struct zxdg_surface_v6 *surface, uint32_t serial);
    void (*zxdg_set_min_size)(struct zxdg_toplevel_v6 *toplevel, int32_t w, int32_t h);
    void (*zxdg_set_max_size)(struct zxdg_toplevel_v6 *toplevel, int32_t w, int32_t h);

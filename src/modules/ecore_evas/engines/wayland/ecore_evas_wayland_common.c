@@ -463,9 +463,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
              if (wdata->win->zxdg_configure_ack)
                wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
                                               wdata->win->configure_serial);
-             else if (wdata->win->configure_ack)
-               wdata->win->configure_ack(wdata->win->xdg_surface,
-                                         wdata->win->configure_serial);
              wdata->win->configure_serial = 0;
              wl_surface_commit(wdata->win->surface);
           }
@@ -1662,9 +1659,6 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
    if (wdata->win->zxdg_configure_ack && wdata->win->configure_serial)
      wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
                                     wdata->win->configure_serial);
-   else if (wdata->win->configure_ack && wdata->win->configure_serial)
-     wdata->win->configure_ack(wdata->win->xdg_surface,
-                               wdata->win->configure_serial);
    wdata->win->configure_serial = 0;
 
    /* Surviving bits of WWW - track interesting state we might want
