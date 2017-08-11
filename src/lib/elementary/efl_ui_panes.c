@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_GFX_SIZE_HINT_PROTECTED
 
 #include <Elementary.h>
 
@@ -207,18 +208,16 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
 
    if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      {
-        edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
-                                             MAX(sd->first_minw, sd->second_minw),
-                                             sd->first_minh + sd->second_minh);
+        minw = MAX(sd->first_minw, sd->second_minw);
+        minh = sd->first_minh + sd->second_minh;
      }
    else
      {
-        edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
-                                             sd->first_minw + sd->second_minw,
-                                             MAX(sd->first_minh, sd->second_minh));
+        minw = sd->first_minw + sd->second_minw;
+        minh = MAX(sd->first_minh, sd->second_minh);
      }
 
-   efl_gfx_size_hint_min_set(obj, minw, minh);
+   efl_gfx_size_hint_restricted_min_set(obj, minw, minh);
    _set_min_size_new(obj);
 }
 
@@ -613,13 +612,13 @@ _efl_ui_panes_internal_part_allow_user_size_hints_set(Eo *obj, Elm_Part_Data *_p
      {
         if (sd->first_allow_user_hints == allow) return;
         sd->first_allow_user_hints = allow;
-        _set_min_size_new(pd->obj);
+        elm_layout_sizing_eval(pd->obj);
      }
    else if (!strcmp(pd->part, "second"))
      {
         if (sd->second_allow_user_hints == allow) return;
         sd->second_allow_user_hints = allow;
-        _set_min_size_new(pd->obj);
+        elm_layout_sizing_eval(pd->obj);
      }
 }
 
