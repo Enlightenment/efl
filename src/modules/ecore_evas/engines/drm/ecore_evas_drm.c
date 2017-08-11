@@ -54,6 +54,7 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    int depth, bpp;
    unsigned int format;
    double offset;
+   double tick_job_timestamp;
    Ecore_Drm2_Context ctx;
    Ecore_Fd_Handler *hdlr;
    Ecore_Drm2_Device *dev;
@@ -61,6 +62,7 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    Evas_Device *seat;
    Eina_Bool ticking : 1;
    Eina_Bool once : 1;
+   Ecore_Job *tick_job;
 } Ecore_Evas_Engine_Drm_Data;
 
 static int _drm_init_count = 0;
@@ -631,6 +633,18 @@ _drm_evas_changed(Ecore_Evas *ee, Eina_Bool changed)
 }
 
 static void
+_tick_job(void *data)
+{
+   Ecore_Evas_Engine_Drm_Data *edata;
+   Ecore_Evas *ee;
+
+   ee = data;
+   edata = ee->engine.data;
+   edata->tick_job = NULL;
+   ecore_evas_animator_tick(ee, NULL, edata->tick_job_timestamp);
+}
+
+static void
 _drm_animator_register(Ecore_Evas *ee)
 {
    double t;
@@ -642,7 +656,6 @@ _drm_animator_register(Ecore_Evas *ee)
      ERR("Attempt to schedule tick for manually rendered canvas");
 
    edata = ee->engine.data;
-   edata->ticking = EINA_TRUE;
 
    /* Some graphics stacks appear to lie about their clock sources
     * so attempt to measure the difference between our clock and the
@@ -670,8 +683,24 @@ _drm_animator_register(Ecore_Evas *ee)
           }
      }
 
+   if (edata->tick_job) ERR("Double animator register");
+   else
+   if (!edata->ticking &&
+       !(ecore_drm2_output_pending_get(edata->output) || ee->in_async_render))
+     {
+        r = ecore_drm2_output_blanktime_get(edata->output, 0, &sec, &usec);
+        if (r)
+          {
+             edata->tick_job_timestamp = (double)sec
+                                       + ((double)usec / 1000000);
+             edata->tick_job = ecore_job_add(_tick_job, ee);
+          }
+     }
+
    if (!ecore_drm2_output_pending_get(edata->output) && !ee->in_async_render)
      ecore_drm2_fb_flip(NULL, edata->output);
+
+   edata->ticking = EINA_TRUE;
 }
 
 static void
@@ -681,6 +710,12 @@ _drm_animator_unregister(Ecore_Evas *ee)
 
    edata = ee->engine.data;
    edata->ticking = EINA_FALSE;
+   if (edata->tick_job)
+     {
+        ERR("Animator unregister before first tick");
+        ecore_job_del(edata->tick_job);
+        edata->tick_job = NULL;
+     }
 }
 
 static double
