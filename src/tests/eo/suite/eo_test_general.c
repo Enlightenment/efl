@@ -337,6 +337,7 @@ START_TEST(efl_data_safe_fetch)
    fail_if(efl_data_scope_safe_get(obj, SIMPLE2_CLASS) != NULL);
    fail_if(efl_data_scope_safe_get(NULL, EFL_OBJECT_CLASS) != NULL);
    efl_unref(obj);
+   fail_if(efl_data_scope_safe_get(obj, SIMPLE3_CLASS) != NULL);
 
    efl_object_shutdown();
 }
