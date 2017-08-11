@@ -59,7 +59,6 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    Ecore_Drm2_Device *dev;
    Ecore_Drm2_Output *output;
    Evas_Device *seat;
-   Eina_Bool pending : 1;
    Eina_Bool ticking : 1;
    Eina_Bool once : 1;
 } Ecore_Evas_Engine_Drm_Data;
@@ -608,8 +607,6 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
 
    ret = ecore_drm2_fb_flip_complete(edata->output);
 
-   edata->pending = EINA_FALSE;
-
    if (edata->ticking)
      {
         double t = (double)sec + ((double)usec / 1000000);
@@ -618,10 +615,7 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
         ecore_evas_animator_tick(ee, NULL, t - edata->offset);
      }
    else if (ret)
-     {
-        edata->pending = EINA_TRUE;
-        ecore_drm2_fb_flip(NULL, edata->output);
-     }
+     ecore_drm2_fb_flip(NULL, edata->output);
 }
 
 static void
@@ -632,11 +626,8 @@ _drm_evas_changed(Ecore_Evas *ee, Eina_Bool changed)
    if (changed) return;
 
    edata = ee->engine.data;
-   if (edata->ticking && !edata->pending)
-     {
-        edata->pending = EINA_TRUE;
-        ecore_drm2_fb_flip(NULL, edata->output);
-     }
+   if (edata->ticking && !ecore_drm2_output_pending_get(edata->output))
+     ecore_drm2_fb_flip(NULL, edata->output);
 }
 
 static void
@@ -679,11 +670,8 @@ _drm_animator_register(Ecore_Evas *ee)
           }
      }
 
-   if (!edata->pending && !ee->in_async_render)
-     {
-        edata->pending = EINA_TRUE;
-        ecore_drm2_fb_flip(NULL, edata->output);
-     }
+   if (!ecore_drm2_output_pending_get(edata->output) && !ee->in_async_render)
+     ecore_drm2_fb_flip(NULL, edata->output);
 }
 
 static void
