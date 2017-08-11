@@ -642,7 +642,7 @@ _efl_ui_panes_internal_part_hint_min_allow_get(Eo *obj, Elm_Part_Data *_pd EINA_
 }
 
 EOLIAN static double
-_efl_ui_panes_internal_part_min_split_ratio_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
+_efl_ui_panes_internal_part_split_ratio_min_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
    Efl_Ui_Panes_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PANES_CLASS);
@@ -657,7 +657,7 @@ _efl_ui_panes_internal_part_min_split_ratio_get(Eo *obj, Elm_Part_Data *_pd EINA
 }
 
 EOLIAN static void
-_efl_ui_panes_internal_part_min_split_ratio_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, double ratio)
+_efl_ui_panes_internal_part_split_ratio_min_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, double ratio)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_INTERNAL_PART_CLASS);
    Efl_Ui_Panes_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PANES_CLASS);
