@@ -487,8 +487,11 @@ _elm_scroller_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Scroller_Data *sd, 
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Scroller_Data *_pd EINA_UNUSED)
+_elm_scroller_elm_widget_focus_direction_manager_is(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED)
 {
+   if (!elm_widget_child_can_focus_get(obj))
+     return EINA_FALSE;
+
    return EINA_TRUE;
 }
 
