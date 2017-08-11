@@ -1895,10 +1895,11 @@ install_loaderjp2kpkgLTLIBRARIES = install-loaderjp2kpkgLTLIBRARIES
 $(install_loaderjp2kpkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_evas_image_loaders_jp2k_module_la_SOURCES = modules/evas/image_loaders/jp2k/evas_image_load_jp2k.c
-modules_evas_image_loaders_jp2k_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+modules_evas_image_loaders_jp2k_module_la_CPPFLAGS = \
+@evas_image_loader_jp2k_cflags@ \
+-I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
-@EVAS_CFLAGS@ \
-@evas_image_loader_jp2k_cflags@
+@EVAS_CFLAGS@
 modules_evas_image_loaders_jp2k_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
 @evas_image_loader_jp2k_libs@
