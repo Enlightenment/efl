@@ -4969,7 +4969,7 @@ static void
 comp_smart_add(Evas_Object *obj)
 {
    Comp *c;
-   char *env;
+   char *env, *dbg = NULL;
 
    c = calloc(1, sizeof(Comp));
    c->wayland_time_base = ecore_loop_time_get();
@@ -4977,7 +4977,19 @@ comp_smart_add(Evas_Object *obj)
    evas_object_smart_data_set(obj, c);
    env = getenv("WAYLAND_DISPLAY");
    if (env) env = strdup(env);
+
+   if (getenv("EFL_WL_DEBUG"))
+     {
+        dbg = eina_strdup(getenv("WAYLAND_DEBUG"));
+        setenv("WAYLAND_DEBUG", "1", 1);
+     }
    c->disp = ecore_wl2_display_create(NULL);
+   if (getenv("EFL_WL_DEBUG"))
+     {
+        if (dbg) setenv("WAYLAND_DEBUG", dbg, 1);
+        else unsetenv("WAYLAND_DEBUG");
+        free(dbg);
+     }
    c->env = eina_strdup(getenv("WAYLAND_DISPLAY"));
    if (env) setenv("WAYLAND_DISPLAY", env, 1);
    else unsetenv("WAYLAND_DISPLAY");
