@@ -167,7 +167,7 @@ _make_model()
      {
         child = efl_model_child_add(model);
 
-        i%2 ? eina_value_set(&vstyle, "default") : eina_value_set(&vstyle, "odd");
+        i%2 ? eina_value_set(&vstyle, "even") : eina_value_set(&vstyle, "odd");
         efl_model_property_set(child, "odd_style", &vstyle);
 
         eina_value_set(&vtext, texts[(i % len)]);

@@ -53,7 +53,7 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_List            *subs; /**< List of Elm_Layout_Sub_Object_Data structs, to hold the actual sub objects such as text, content and the children of box and table. */
    Eina_List            *edje_signals; /**< The list of edje signal callbacks. */
    Eina_List            *parts_cursors; /**< The list of cursor names of layout parts. This is a list of Elm_Layout_Sub_Object_Cursor struct. */
-   Eina_Hash            *prop_connect; /**< The hash of properties connected to layout parts. */
+   Eina_List            *prop_connect; /**< The list of properties connected to layout parts. */
    Eina_Hash            *factories; /**< The hash with parts connected to factories. */
    Efl_Model            *model; /**< The model */
    const char           *klass; /**< 1st identifier of an edje object group which is used in theme_set. klass and group are used together. */

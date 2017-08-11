@@ -16,7 +16,7 @@
 
 const char *styles[] = {
         "odd",
-        "default"
+        "even"
    };
 
 char edj_path[PATH_MAX];

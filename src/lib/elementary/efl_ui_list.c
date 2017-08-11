@@ -172,7 +172,7 @@ _child_added_cb(void *data, const Efl_Event *event)
 
    if(index >= 0 && index <= pd->realized.slice)
      _insert_at(pd, index, evt->child);
-   
+
    evas_object_smart_changed(pd->obj);
    _efl_ui_list_custom_layout(pd->obj);
 }
@@ -478,14 +478,9 @@ _layout_realize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    evt.child = item->model;
    evt.layout = item->layout;
    evt.index = item->index;
-
    efl_event_callback_call(item->list, EFL_UI_LIST_EVENT_ITEM_REALIZED, &evt);
 
    evas_object_show(item->layout);
-
-   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
-     efl_ui_model_connect(item->layout, "signal/elm,state,%v", "selected");
-
    _item_calc(pd, item);
 }
 
@@ -500,8 +495,6 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
         efl_future_cancel(item->future);
         item->future = NULL;
      }
-
-   efl_ui_model_connect(item->layout, "signal/elm,state,%v", NULL);
 
    /* TODO:calculate new min */
    _item_min_calc(pd, item, 0, 0);
@@ -546,7 +539,11 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
    if(recycle_layouts && eina_inarray_count(recycle_layouts))
      item->layout = *(void**)eina_inarray_pop(recycle_layouts);
    else
-     item->layout = efl_ui_factory_create(pd->factory, item->model, pd->obj);
+     {
+        item->layout = efl_ui_factory_create(pd->factory, item->model, pd->obj);
+        if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
+          efl_ui_model_connect(item->layout, "signal/elm,state,%v", "selected");
+     }
    fprintf(stderr, "using layout (new or not) %p\n", item->layout); fflush(stderr);
    item->future = NULL;
    item->index = idx + pd->realized.start;
@@ -614,7 +611,7 @@ _remove_at(Efl_Ui_List_Data* pd, int index)
 {
    Efl_Ui_List_Item *to_first, *from_first;
    int i, j;
-  
+
    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    // fits, just move around
    to_first = pd->items.array.members;
@@ -651,7 +648,7 @@ _insert_at(Efl_Ui_List_Data* pd, int index, Efl_Model* child)
 {
   Efl_Ui_List_Item *to_first, *from_first;
   int i;
-  
+
   if(pd->items.array.len != pd->items.array.max)
     {
       // fits, just move around
@@ -899,7 +896,6 @@ _children_then(void * data, Efl_Event const* event)
      }
 
    _resize_children(pd, removing_before, removing_after, acc);
-   
    _efl_ui_list_custom_layout(pd->obj);
 }
 
