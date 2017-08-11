@@ -44,6 +44,10 @@ static const char *exts[] = {
 #ifdef BUILD_LOADER_TGV
   ,"tgv"
 #endif
+#ifdef BUILD_LOADER_JP2K
+  ,"jp2"
+  ,"j2k"
+#endif
 };
 
 START_TEST(evas_object_image_loader)
@@ -331,6 +335,7 @@ START_TEST(evas_object_image_orient)
 }
 END_TEST
 
+#ifdef BUILD_LOADER_TGV
 START_TEST(evas_object_image_tgv_loader_data)
 {
    Evas *e = _setup_evas();
@@ -387,6 +392,7 @@ START_TEST(evas_object_image_tgv_loader_data)
    evas_shutdown();
 }
 END_TEST
+#endif
 
 START_TEST(evas_object_image_all_loader_data)
 {
@@ -812,16 +818,72 @@ START_TEST(evas_object_image_map_unmap)
 }
 END_TEST
 
+#if BUILD_LOADER_JP2K
+START_TEST(evas_object_image_jp2k_loader_data)
+{
+   Evas *e = _setup_evas();
+   Evas_Object *obj, *ref;
+   Eina_Strbuf *str;
+
+   const char *files[] = {
+     "train.j2k",
+     "flower.jp2"
+   };
+   unsigned int i;
+
+   obj = evas_object_image_add(e);
+   ref = evas_object_image_add(e);
+   str = eina_strbuf_new();
+
+   for (i = 0; i < sizeof (files) / sizeof (files[0]); i++)
+     {
+        int w, h, r_w, r_h;
+        const uint32_t *d, *r_d;
+
+        eina_strbuf_append_printf(str, "%s/%s", TESTS_IMG_DIR, files[i]);
+        evas_object_image_file_set(obj, eina_strbuf_string_get(str), NULL);
+        fail_if(evas_object_image_load_error_get(obj) != EVAS_LOAD_ERROR_NONE);
+        evas_object_image_size_get(obj, &w, &h);
+        d = evas_object_image_data_get(obj, EINA_FALSE);
+
+        eina_strbuf_reset(str);
+
+        eina_strbuf_append_printf(str, "%s/%s.png", TESTS_IMG_DIR, files[i]);
+        evas_object_image_file_set(ref, eina_strbuf_string_get(str), NULL);
+        fail_if(evas_object_image_load_error_get(ref) != EVAS_LOAD_ERROR_NONE);
+        evas_object_image_size_get(ref, &r_w, &r_h);
+        r_d = evas_object_image_data_get(ref, EINA_FALSE);
+
+        eina_strbuf_reset(str);
+
+        fail_if(w != r_w || h != r_h);
+        fail_if(memcmp(d, r_d, w * h * 4));
+     }
+
+   evas_object_del(obj);
+   evas_object_del(ref);
+
+   eina_strbuf_free(str);
+
+   evas_free(e);
+   evas_shutdown();
+}
+END_TEST
+#endif
+
 void evas_test_image_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_image_defaults);
    tcase_add_test(tc, evas_object_image_loader);
    tcase_add_test(tc, evas_object_image_loader_orientation);
    tcase_add_test(tc, evas_object_image_orient);
-#if BUILD_LOADER_TGV && BUILD_LOADER_PNG
-   tcase_add_test(tc, evas_object_image_tgv_loader_data);
-#endif
 #if BUILD_LOADER_PNG
+# if BUILD_LOADER_TGV
+   tcase_add_test(tc, evas_object_image_tgv_loader_data);
+# endif
+# if BUILD_LOADER_JP2K
+   tcase_add_test(tc, evas_object_image_jp2k_loader_data);
+# endif
    tcase_add_test(tc, evas_object_image_all_loader_data);
    tcase_add_test(tc, evas_object_image_buggy);
    tcase_add_test(tc, evas_object_image_map_unmap);
