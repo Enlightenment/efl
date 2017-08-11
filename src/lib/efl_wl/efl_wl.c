@@ -1183,6 +1183,8 @@ shell_surface_minmax_update(Comp_Surface *cs)
    evas_object_size_hint_min_get(cs->obj, &w, &h);
    evas_object_size_hint_min_set(cs->c->obj, w, h);
    evas_object_size_hint_max_get(cs->obj, &w, &h);
+   if (!w) w = -1;
+   if (!h) h = -1;
    evas_object_size_hint_max_set(cs->c->obj, w, h);
 }
 
