@@ -2352,7 +2352,7 @@ comp_surface_smart_hide(Evas_Object *obj)
 
    if (!cs->shell.activated) return;
    cs->shell.activated = 0;
-   if (cs->shell.grabs && cs->role)
+   if (cs->shell.popup && cs->role)
      zxdg_popup_v6_send_popup_done(cs->role);
    if (cs->parent && cs->shell.popup) return;
    /* attempt to revert focus based on stacking order */
