@@ -26,7 +26,7 @@ _set_default_cylinder(Evas_Canvas3D_Mesh *mesh,
           {
              num = i + j * vccount;
 
-             vertices[num].z = -0.5 + (float)(j / 3);
+             vertices[num].z = -0.5 + j / 3.0;
              if ((j == 0) || (j == 5))
                {
                   vertices[num].x = vertices[num].y = 0.0;
@@ -46,7 +46,7 @@ _set_default_cylinder(Evas_Canvas3D_Mesh *mesh,
              else
                {
                   normals[num].x = normals[num].y = 0.0;
-                  normals[num].z = -1.0 + (float)(j / 2);
+                  normals[num].z = -1.0 + j / 2.0;
                }
 
              tangents[num].x = cosfi;
@@ -54,7 +54,7 @@ _set_default_cylinder(Evas_Canvas3D_Mesh *mesh,
              tangents[num].z = 0.0;
 
              tex_coord[num].x = i / (float)(vccount - 1) * tex_scale.x;
-             tex_coord[num].y = (float)((j + 1) / 2) * tex_scale.y / 3.0;
+             tex_coord[num].y = ((j + 1) / 2.0) * tex_scale.y / 3.0;
           }
      }
 
