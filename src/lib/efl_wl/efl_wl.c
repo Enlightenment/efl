@@ -3887,9 +3887,8 @@ comp_gl_init(Comp *c)
    c->glsfc = evas_gl_surface_create(c->gl, c->glcfg, 1, 1);
    evas_gl_make_current(c->gl, c->glsfc, c->glctx);
    c->glapi = evas_gl_context_api_get(c->gl, c->glctx);
-   if (c->glapi->evasglBindWaylandDisplay)
-     c->glapi->evasglBindWaylandDisplay(c->gl, c->display);
-   else
+   if ((!c->glapi->evasglBindWaylandDisplay) ||
+       (!c->glapi->evasglBindWaylandDisplay(c->gl, c->display)))
      comp_gl_shutdown(c);
 }
 
