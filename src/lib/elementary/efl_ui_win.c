@@ -59,6 +59,14 @@ static const Elm_Win_Trap *trap = NULL;
        return __VA_ARGS__;                           \
     }
 
+// Ecore_Evas callbacks are unsafe unlike EO calls. As a consequence a user
+// callback (eg evas cb, efl event cb, ...) could be triggered that deletes the
+// object. This macro ensures the sd data is still valid after a foreign call.
+#define ELM_WIN_DATA_ALIVE_CHECK(_obj, _sd, ...) do { \
+   _sd = efl_data_scope_safe_get(_obj, MY_CLASS); \
+   if (EINA_UNLIKELY(!(_sd))) { return __VA_ARGS__; } \
+   } while (0)
+
 #define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : _elm_config->engine)
 
 typedef struct _Efl_Ui_Win_Data Efl_Ui_Win_Data;
@@ -800,9 +808,7 @@ static Efl_Ui_Win_Data *
 _elm_win_associate_get(const Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_data_get(ee, "elm_win");
-   if (!obj) return NULL;
-   ELM_WIN_DATA_GET(obj, sd);
-   return sd;
+   return efl_data_scope_safe_get(obj, MY_CLASS);
 }
 
 /* Interceptors Callbacks */
@@ -871,17 +877,21 @@ _elm_win_move(Ecore_Evas *ee)
 {
    Efl_Ui_Win_Data *sd = _elm_win_associate_get(ee);
    int x, y;
+   Eo *obj;
 
    if (!sd) return;
+   obj = sd->obj;
 
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    sd->screen.x = x;
    sd->screen.y = y;
    efl_event_callback_legacy_call(sd->obj, EFL_GFX_EVENT_MOVE, NULL);
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    evas_nochange_push(evas_object_evas_get(sd->obj));
    sd->response++;
    sd->req_xy = EINA_FALSE;
    evas_object_move(sd->obj, x, y);
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    sd->response--;
    evas_nochange_pop(evas_object_evas_get(sd->obj));
 }
@@ -932,13 +942,17 @@ static void
 _elm_win_pre_render(Ecore_Evas *ee)
 {
    Efl_Ui_Win_Data *sd = _elm_win_associate_get(ee);
+   Eo *obj;
+
    if (!sd) return;
+   obj = sd->obj;
 
    _elm_win_throttle_ok = EINA_TRUE;
    if (!sd->first_draw)
      {
         sd->first_draw = EINA_TRUE;
         _elm_win_frame_obj_update(sd);
+        ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
      }
    if (sd->deferred_resize_job)
      _elm_win_resize_job(sd->obj);
@@ -967,6 +981,7 @@ _elm_win_mouse_in(Ecore_Evas *ee)
         sd->pointer.visible = EINA_TRUE;
         sd->pointer.surf = ecore_wl2_window_surface_get(sd->pointer.win);
         _elm_win_wl_cursor_set(sd->obj, NULL);
+        //ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         ecore_evas_show(sd->pointer.ee);
      }
 #endif
@@ -1207,6 +1222,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    obj = sd->obj;
 
    _elm_widget_top_win_focused_set(obj, EINA_TRUE);
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    if (sd->type != ELM_WIN_FAKE)
      {
         if (!elm_widget_focus_order_get(obj))
@@ -1227,9 +1243,9 @@ _elm_win_focus_in(Ecore_Evas *ee)
                evas_object_focus_set(obj, EINA_TRUE);
           }
      }
-   // FIXME: the event is deprecated but still in use.
-   // Has to be removed in EFL2.0
+
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    sd->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    _elm_win_frame_style_update(sd, 0, 1);
@@ -1257,9 +1273,9 @@ _elm_win_focus_out(Ecore_Evas *ee)
    obj = sd->obj;
 
    _elm_widget_top_win_focused_set(obj, EINA_FALSE);
-   // FIXME: the event is deprecated but still in use.
-   // Has to be removed in EFL2.0
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    evas_object_smart_callback_call(obj, SIG_FOCUS_OUT, NULL);
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    sd->focus_highlight.cur.visible = EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    if (!sd->resizing)
@@ -1523,6 +1539,7 @@ _elm_win_state_change(Ecore_Evas *ee)
         ch_profile = _internal_elm_win_profile_set(sd, profile);
      }
 
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    if (sd->wm_rot.use)
      {
         if (sd->rot != ecore_evas_rotation_get(sd->ee))
@@ -1536,6 +1553,7 @@ _elm_win_state_change(Ecore_Evas *ee)
 
    if ((ch_withdrawn) || (ch_iconified))
      {
+        ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         if (sd->withdrawn)
           efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_WITHDRAWN, NULL);
         else if (sd->iconified)
@@ -1567,6 +1585,7 @@ _elm_win_state_change(Ecore_Evas *ee)
 #endif
    if (ch_fullscreen)
      {
+        ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_frame_style_update(sd, 0, 1);
         if (sd->fullscreen)
           {
@@ -1582,6 +1601,7 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
    if (ch_maximized)
      {
+        ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_frame_style_update(sd, 0, 1);
         if (sd->maximized)
           {
@@ -1598,6 +1618,7 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
    if (ch_profile)
      {
+        ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_profile_update(sd);
      }
    if (ch_wm_rotation)
@@ -1605,8 +1626,10 @@ _elm_win_state_change(Ecore_Evas *ee)
         efl_gfx_size_hint_restricted_min_set(obj, -1, -1);
         efl_gfx_size_hint_max_set(obj, -1, -1);
 #ifdef HAVE_ELEMENTARY_X
+        ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_xwin_update(sd);
 #endif
+        ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         elm_widget_orientation_set(obj, sd->rot);
         efl_event_callback_legacy_call
           (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
@@ -3026,11 +3049,13 @@ _elm_win_delete_request(Ecore_Evas *ee)
    sd->autodel_clear = &autodel;
    evas_object_ref(obj);
    efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_DELETE_REQUEST, NULL);
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    if (sd->autohide)
      evas_object_hide(obj);
-   // FIXME: if above callback deletes - then the below will be invalid
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    if (_elm_config->atspi_mode)
      elm_interface_atspi_window_destroyed_signal_emit(obj);
+   ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    if (autodel) evas_object_del(obj);
    else sd->autodel_clear = NULL;
    evas_object_unref(obj);
