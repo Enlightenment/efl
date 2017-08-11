@@ -151,7 +151,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
                                         evas_object_box_layout_stack);
 
    elm_box_layout_set(bx, evas_object_box_layout_horizontal, NULL, NULL);
-   _test_box_transition_change(&tdata);
+   //_test_box_transition_change(&tdata);
 
    evas_object_resize(win, 300, 320);
    evas_object_show(win);

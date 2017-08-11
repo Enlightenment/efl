@@ -18,6 +18,7 @@ typedef enum {
    TWO
 } Weight_Mode;
 
+/*
 static void
 weights_cb(void *data, const Efl_Event *event)
 {
@@ -210,6 +211,7 @@ custom_check_cb(void *data, const Efl_Event *event)
    // function was just overridden.
    efl_pack_layout_request(box);
 }
+*/
 
 void
 test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -231,7 +233,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
 
    /* controls */
-   f = elm_frame_add(win);
+   /*f = elm_frame_add(win);
    elm_object_text_set(f, "Controls");
    efl_gfx_size_hint_align_set(f, -1, -1);
    efl_gfx_size_hint_weight_set(f, 1, 0);
@@ -244,7 +246,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_gfx_visible_set(hbox, 1);
 
 
-   /* weights radio group */
+   /* weights radio group *
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
@@ -298,7 +300,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_radio_value_set(chk, NONE);
 
 
-   /* misc */
+   /* misc *
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
@@ -353,7 +355,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_gfx_visible_set(o, 1);
 
 
-   /* user min size setter */
+   /* user min size setter *
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
@@ -380,7 +382,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_gfx_visible_set(o, 1);
 
 
-   /* inner box padding */
+   /* inner box padding *
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
@@ -407,7 +409,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_gfx_visible_set(o, 1);
 
 
-   /* outer margin */
+   /* outer margin *
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
@@ -434,7 +436,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_gfx_visible_set(o, 1);
 
 
-   /* Box align */
+   /* Box align *
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                efl_orientation_set(efl_added, EFL_ORIENT_DOWN));
    efl_gfx_size_hint_align_set(bx, 0, -1);
@@ -472,7 +474,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_step_set(o, 0.1);
    elm_slider_value_set(o, 0.5);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_visible_set(o, 1);*/
 
 
    /* contents */
@@ -493,13 +495,14 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Btn1");
+   efl_gfx_size_hint_weight_set(o, 1, 1);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Button 2");
    efl_gfx_size_hint_align_set(o, -1, -1);
-   efl_gfx_size_hint_aspect_set(o, EFL_GFX_SIZE_HINT_ASPECT_BOTH, 2, 1);
+   efl_gfx_size_hint_aspect_set(o, EFL_GFX_SIZE_HINT_ASPECT_BOTH, 3, 1);
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
 
