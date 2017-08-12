@@ -518,6 +518,7 @@ text_input_preedit_styling(void *data,
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)data;
    Ecore_IMF_Preedit_Attr *attr = calloc(1, sizeof(*attr));
+   if (!attr) return;
 
    switch (style)
      {
@@ -864,8 +865,11 @@ wayland_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx,
         EINA_LIST_FOREACH(imcontext->preedit_attrs, l, a)
           {
              attr = malloc(sizeof(*attr));
-             attr = memcpy(attr, a, sizeof(*attr));
-             *attrs = eina_list_append(*attrs, attr);
+             if (attr)
+               {
+                  attr = memcpy(attr, a, sizeof(*attr));
+                  *attrs = eina_list_append(*attrs, attr);
+               }
           }
      }
 
@@ -1101,9 +1105,11 @@ WaylandIMContext *
 wayland_im_context_new(struct zwp_text_input_manager_v1 *text_input_manager)
 {
    WaylandIMContext *context = calloc(1, sizeof(WaylandIMContext));
-
-   EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "new context created");
-   context->text_input_manager = text_input_manager;
+   if (context)
+     {
+        EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "new context created");
+        context->text_input_manager = text_input_manager;
+     }
 
    return context;
 }
