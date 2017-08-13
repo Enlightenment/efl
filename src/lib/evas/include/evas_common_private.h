@@ -1346,11 +1346,11 @@ void evas_common_rgba_image_scalecache_item_unref(Image_Entry *ie);
 
 /*****************************************************************************/
 
-#undef EAPI
-#define EAPI
-
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif
