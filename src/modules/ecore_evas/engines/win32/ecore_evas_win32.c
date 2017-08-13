@@ -920,7 +920,7 @@ _ecore_evas_win32_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj,
 }
 
 static void
-_ecore_evas_win32_object_cursor_unset(Ecore_Evas *ee)
+_ecore_evas_win32_object_cursor_unset(Ecore_Evas *ee EINA_UNUSED)
 {
    ecore_win32_cursor_show(EINA_TRUE);
 }
@@ -1114,7 +1114,7 @@ _ecore_evas_win32_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int 
 {
    Eina_Iterator *iter;
    Ecore_Win32_Monitor *ewm;
-   Ecore_Win32_Monitor *m;
+   Ecore_Win32_Monitor *m = NULL;
    unsigned int dist;
    int lx;
    int ly;
@@ -1143,6 +1143,20 @@ _ecore_evas_win32_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int 
      }
    eina_iterator_free(iter);
 
+   if (!m)
+     {
+        HDC dc;
+
+        if (x) *x = 0;
+        if (y) *y = 0;
+        dc = GetDC(NULL);
+        if (w) *w = GetDeviceCaps(dc, HORZRES);
+        if (h) *h = GetDeviceCaps(dc, VERTRES);
+        ReleaseDC(NULL, dc);
+
+        return;
+     }
+
    if (x)
      *x = m->desktop.x;
    if (y)
@@ -1159,7 +1173,7 @@ _ecore_evas_win32_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
    Eina_Iterator *iter;
    Ecore_Win32_Monitor *ewm;
    unsigned int dist;
-   int x_dpi;
+   int x_dpi = -1;
    int y_dpi;
    int lx;
    int ly;
@@ -1188,6 +1202,16 @@ _ecore_evas_win32_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
           }
      }
    eina_iterator_free(iter);
+
+   if (x_dpi == -1)
+     {
+        HDC dc;
+
+        dc = GetDC(NULL);
+        x_dpi = GetDeviceCaps(dc, LOGPIXELSX);
+        y_dpi = GetDeviceCaps(dc, LOGPIXELSY);
+        ReleaseDC(NULL, dc);
+     }
 
    if (xdpi)
      *xdpi = x_dpi;
