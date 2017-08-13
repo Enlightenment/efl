@@ -17,7 +17,6 @@ _find_gdiob(HDC dc, BITMAPINFO_GDI *bitmap_info, int depth, int w, int h, void *
    int                sz;
    int                lbytes;
    int                bpp;
-   int                fitness = 0x7fffffff;
 
    bpp = depth >> 3;
    if (bpp == 3) bpp = 4;
@@ -25,28 +24,18 @@ _find_gdiob(HDC dc, BITMAPINFO_GDI *bitmap_info, int depth, int w, int h, void *
    sz = lbytes * h;
    EINA_LIST_FOREACH(gdipool, l, gdiob2)
      {
-	int szdif;
-
         if ((gdiob2->dc != dc) ||
             (gdiob2->bitmap_info != bitmap_info) ||
             (gdiob2->depth != depth))
 	  continue;
-	szdif = gdiob2->psize - sz;
-	if (szdif < 0) continue;
-	if (szdif == 0)
+	if (gdiob2->psize == sz)
 	  {
 	     gdiob = gdiob2;
 	     gdil = l;
 	     goto have_gdiob;
 	  }
-	if (szdif < fitness)
-	  {
-	     fitness = szdif;
-	     gdiob = gdiob2;
-	     gdil = l;
-	  }
      }
-   if ((fitness > (100 * 100)) || (!gdiob))
+   if (!gdiob)
      return evas_software_gdi_output_buffer_new(dc, bitmap_info, depth, w, h, data);
 
    have_gdiob:
@@ -319,8 +308,10 @@ evas_software_gdi_outbuf_new_region_for_update(Outbuf *buf,
 /*                                     w, h, NULL); */
      }
    if ((buf->priv.gdi.region) || (buf->priv.destination_alpha))
-     /* FIXME: faster memset! */
-     memset(im->image.data, 0, w * h * sizeof(DATA32));
+     {
+        /* FIXME: faster memset! */
+        /* memset(im->image.data, 0, w * h * sizeof(DATA32)); */
+     }
 
    buf->priv.pending_writes = eina_list_append(buf->priv.pending_writes, im);
    return im;
