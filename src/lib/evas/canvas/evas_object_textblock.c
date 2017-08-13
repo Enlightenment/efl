@@ -12921,9 +12921,16 @@ evas_object_textblock_init(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_text_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED)
+_efl_canvas_text_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Text_Data *o)
 {
+   Evas_Textblock_Style *style;
    evas_object_textblock_free(eo_obj);
+   EINA_LIST_FREE(o->styles, style)
+     {
+        style->objects = eina_list_remove(style->objects, eo_obj);
+        evas_textblock_style_free(style);
+     }
+
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
