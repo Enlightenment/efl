@@ -2196,5 +2196,9 @@ _gfx_to_evas_render_op(Efl_Gfx_Render_Op rop)
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
+
 #endif
 
