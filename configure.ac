@@ -285,8 +285,10 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([win32-dll disable-static pic-only])
 EFL_INIT
 
-CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"
-LDFLAGS="${LDFLAGS} -fPIC -DPIC"
+if ! test "x${have_win32}" = "xyes" ; then
+   CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"
+   LDFLAGS="${LDFLAGS} -fPIC -DPIC"
+fi
 
 ### gettext
 
