@@ -558,7 +558,7 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Ei
    else
      wl_surface_attach(wls, NULL, 0, 0);
 
-   wl_surface_commit(wls);
+   ecore_wl2_window_commit(s->info->info.wl2_win, EINA_TRUE);
 
    leaf->busy = EINA_TRUE;
    leaf->drawn = EINA_TRUE;
