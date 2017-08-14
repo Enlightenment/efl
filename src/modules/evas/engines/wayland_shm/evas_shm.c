@@ -63,7 +63,6 @@ struct _Shm_Surface
 {
    struct wl_display *disp;
    struct wl_shm *shm;
-   struct wl_surface *surface;
    int w, h;
    int num_buff;
    int compositor_version;
@@ -537,6 +536,7 @@ _evas_shm_surface_data_get(Surface *s, int *w, int *h)
 void
 _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Eina_Bool hidden)
 {
+   struct wl_surface *wls;
    Shm_Surface *surf;
    Shm_Leaf *leaf;
 
@@ -546,19 +546,19 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Ei
    leaf = surf->current;
    if (!leaf) return;
 
-   if (!surf->surface) return;
+   wls = ecore_wl2_window_surface_get(s->info->info.wl2_win);
 
    if (!hidden)
      {
-        wl_surface_attach(surf->surface, leaf->data->buffer, 0, 0);
+        wl_surface_attach(wls, leaf->data->buffer, 0, 0);
 
-        _evas_surface_damage(surf->surface, surf->compositor_version,
+        _evas_surface_damage(wls, surf->compositor_version,
                              leaf->w, leaf->h, rects, count);
      }
    else
-     wl_surface_attach(surf->surface, NULL, 0, 0);
+     wl_surface_attach(wls, NULL, 0, 0);
 
-   wl_surface_commit(surf->surface);
+   wl_surface_commit(wls);
 
    leaf->busy = EINA_TRUE;
    leaf->drawn = EINA_TRUE;
@@ -567,17 +567,16 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Ei
 }
 
 Eina_Bool
-_evas_shm_surface_surface_set(Surface *s, struct wl_shm *wl_shm, struct zwp_linux_dmabuf_v1 *wl_dmabuf EINA_UNUSED, struct wl_surface *wl_surface)
+_evas_shm_surface_surface_set(Surface *s, struct wl_shm *wl_shm, struct zwp_linux_dmabuf_v1 *wl_dmabuf EINA_UNUSED)
 {
    Shm_Surface *surf;
 
    surf = s->surf.shm;
 
-   if ((surf->shm == wl_shm) && (surf->surface == wl_surface))
+   if ((surf->shm == wl_shm))
      return EINA_FALSE;
 
    surf->shm = wl_shm;
-   surf->surface = wl_surface;
    return EINA_TRUE;
 }
 
@@ -596,7 +595,6 @@ _evas_shm_surface_create(Surface *s, int w, int h, int num_buff)
    surf->h = h;
    surf->disp = s->info->info.wl_display;
    surf->shm = s->info->info.wl_shm;
-   surf->surface = ecore_wl2_window_surface_get(s->info->info.wl2_win);
    surf->num_buff = num_buff;
    surf->alpha = s->info->info.destination_alpha;
    surf->compositor_version = s->info->info.compositor_version;

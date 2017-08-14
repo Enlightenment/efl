@@ -72,7 +72,6 @@ struct _Dmabuf_Surface
    Surface *surface;
    struct wl_display *wl_display;
    struct zwp_linux_dmabuf_v1 *dmabuf;
-   struct wl_surface *wl_surface;
    int compositor_version;
 
    Dmabuf_Buffer *current;
@@ -480,6 +479,7 @@ _create_succeeded(void *data,
                  struct zwp_linux_buffer_params_v1 *params,
                  struct wl_buffer *new_buffer)
 {
+   struct wl_surface *wls;
    Dmabuf_Buffer *b = data;
 
    b->wl_buffer = new_buffer;
@@ -500,10 +500,11 @@ _create_succeeded(void *data,
    if (b != b->surface->pre) return;
 
    /* This buffer was drawn into before it had a handle */
-   wl_surface_attach(b->surface->wl_surface, b->wl_buffer, 0, 0);
-   _evas_surface_damage(b->surface->wl_surface, b->surface->compositor_version,
+   wls = ecore_wl2_window_surface_get(b->surface->surface->info->info.wl2_win);
+   wl_surface_attach(wls, b->wl_buffer, 0, 0);
+   _evas_surface_damage(wls, b->surface->compositor_version,
                         b->w, b->h, NULL, 0);
-   wl_surface_commit(b->surface->wl_surface);
+   wl_surface_commit(wls);
    b->surface->pre = NULL;
    b->busy = EINA_FALSE;
 }
@@ -668,6 +669,7 @@ _evas_dmabuf_surface_assign(Surface *s)
 static void
 _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Eina_Bool hidden)
 {
+   struct wl_surface *wls;
    Dmabuf_Surface *surface;
    Dmabuf_Buffer *b;
 
@@ -694,16 +696,17 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count,
      }
    surface->pre = NULL;
 
+   wls = ecore_wl2_window_surface_get(s->info->info.wl2_win);
    if (!hidden)
      {
-        wl_surface_attach(surface->wl_surface, b->wl_buffer, 0, 0);
-        _evas_surface_damage(surface->wl_surface, surface->compositor_version,
+        wl_surface_attach(wls, b->wl_buffer, 0, 0);
+        _evas_surface_damage(wls, surface->compositor_version,
                              b->w, b->h, rects, count);
      }
    else
-     wl_surface_attach(surface->wl_surface, NULL, 0, 0);
+     wl_surface_attach(wls, NULL, 0, 0);
 
-   wl_surface_commit(surface->wl_surface);
+   wl_surface_commit(wls);
 }
 
 static Dmabuf_Buffer *
@@ -758,17 +761,16 @@ _evas_dmabuf_surface_destroy(Surface *s)
 }
 
 Eina_Bool
-_evas_dmabuf_surface_surface_set(Surface *s, struct wl_shm *wl_shm EINA_UNUSED, struct zwp_linux_dmabuf_v1 *wl_dmabuf, struct wl_surface *wl_surface)
+_evas_dmabuf_surface_surface_set(Surface *s, struct wl_shm *wl_shm EINA_UNUSED, struct zwp_linux_dmabuf_v1 *wl_dmabuf)
 {
    Dmabuf_Surface *surf;
 
    surf = s->surf.dmabuf;
 
-   if ((surf->dmabuf == wl_dmabuf) && (surf->wl_surface == wl_surface))
+   if ((surf->dmabuf == wl_dmabuf))
      return EINA_FALSE;
 
    surf->dmabuf = wl_dmabuf;
-   surf->wl_surface = wl_surface;
    return EINA_TRUE;
 }
 
@@ -788,7 +790,6 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    surf->surface = s;
    surf->wl_display = s->info->info.wl_display;
    surf->dmabuf = s->info->info.wl_dmabuf;
-   surf->wl_surface = ecore_wl2_window_surface_get(s->info->info.wl2_win);
    surf->alpha = s->info->info.destination_alpha;
    surf->compositor_version = s->info->info.compositor_version;
 
