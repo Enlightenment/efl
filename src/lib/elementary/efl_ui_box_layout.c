@@ -552,7 +552,80 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                }
              else
                {
-                  //FIXME: add handling for vertical case
+                  //consider aspect, min, max, fill
+                  int w1 = item->want[0];
+                  int h1 = item->want[1];
+                  if (weight[1] > 0)
+                    h1 = item->want[1] + extra * item->weight[1] / weight[1];
+                  w1 = h1 * item->aw / item->ah;
+                  D("w h: %d %d, want: %d %d, extra: %d, weight: %.1f / %.1f", w1, h1, item->want[0], item->want[1], extra, item->weight[1], weight[1]);
+                  if (w1 < item->want[0]) //how?
+                    {
+                       w1 = item->want[0];
+                       h1 = w1 * item->ah / item->aw;
+                       D("w h: %d %d", w1, h1);
+                    }
+                  if (item->aspect == EFL_GFX_SIZE_HINT_ASPECT_BOTH ||
+                      item->aspect == EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
+                    {
+                       if (w1 > boxw)
+                         {
+                            w1 = boxw;
+                            h1 = w1 * item->ah / item->aw;
+                         }
+                    }
+
+                  //aspect and max
+                  double mar = 0.0;
+                  //if ((item->max[0] != INT_MAX) && (item->max[1] != INT_MAX))
+                  //if max = 0, max is set to INT_MAX, what is correct behaviour for max = 0?
+                  if (item->max[1] != 0)
+                    {
+                       mar = item->max[0] / (double)item->max[1];
+                       D("mar: %.2f, max: %d %d", mar, item->max[0], item->max[1]);
+                       if (item->ah > 0)
+                         {
+                            double ar = item->aw / (double)item->ah;
+                            D("ar: %.2f, mar: %.2f", ar, mar);
+                            if (ar < mar)
+                              {
+                                 if (h1 > item->max[1])
+                                   {
+                                      h1 = item->max[1];
+                                      w1 = h1 * item->aw / item->ah;
+                                   }
+                                 D("w, h: %d %d", w1, h1);
+                              }
+                            else
+                              {
+                                 if (w1 > item->max[0])
+                                   {
+                                      w1 = item->max[0];
+                                      h1 = w1 * item->ah / item->aw;
+                                   }
+                                 D("w, h: %d %d", w1, h1);
+                              }
+                         }
+                    }
+                  w = w1 - item->pad[0] - item->pad[1];
+                  h = h1 - item->pad[2] - item->pad[3];
+                  if (item->align[0] < 0)
+                    {
+                       x = cx + (cw - w) * 0.5 + item->pad[0];
+                    }
+                  else
+                    {
+                       x = cx + (cw - w) * item->align[0] + item->pad[0];
+                    }
+                  if (item->align[1] < 0)
+                    {
+                       y = cy + (ch - h) * 0.5 + item->pad[2];
+                    }
+                  else
+                    {
+                       y = cy + (ch - h) * item->align[1] + item->pad[2];
+                    }
+                  D("verical: w, h: %d %d, extra: %d", w1, h1, extra);
                }
           }
         else
