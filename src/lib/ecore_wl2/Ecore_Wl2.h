@@ -361,6 +361,8 @@ typedef struct Ecore_Wl2_Event_Aux_Message
 
 typedef void (*Ecore_Wl2_Bind_Cb)(struct wl_client *client, void *data, uint32_t version, uint32_t id);
 typedef void (*Ecore_Wl2_Unbind_Cb)(struct wl_resource *resource);
+typedef void (*Ecore_Wl2_Frame_Cb)(Ecore_Wl2_Window *win, uint32_t timestamp, void *data);
+typedef struct _Ecore_Wl2_Frame_Cb_Handle Ecore_Wl2_Frame_Cb_Handle;
 
 EAPI extern int ECORE_WL2_EVENT_DISCONNECT; /** @since 1.18 */
 EAPI extern int ECORE_WL2_EVENT_CONNECT; /** @since 1.18 */
@@ -1901,6 +1903,27 @@ EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
  * @since 1.20
  */
 EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
+
+/**
+ * Add a callback that fires when the window's surface_frame callback fires
+ *
+ * @window the window to add a callback on
+ * @cb The callback
+ * @data user data to provide to the callback handler
+ *
+ * @since 1.20
+ */
+EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb cb, void *data);
+
+/**
+ * delete a callback that fires when the window's surface_frame callback fires
+ *
+ * @window the window to add a callback on
+ * @cb The callback handle
+ *
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle);
 
 # endif
 

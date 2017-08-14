@@ -140,6 +140,13 @@ struct _Ecore_Wl2_Aux_Hint
    const char *hint, *val;
 };
 
+struct _Ecore_Wl2_Frame_Cb_Handle
+{
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Frame_Cb cb;
+   void *data;
+};
+
 struct _Ecore_Wl2_Window
 {
    EINA_INLIST;
@@ -184,6 +191,7 @@ struct _Ecore_Wl2_Window
 
    Eina_Inlist *subsurfs;
    Eina_List *supported_aux_hints;
+   Eina_List *frame_callbacks;
 
    Eina_Bool moving : 1;
    Eina_Bool minimized : 1;

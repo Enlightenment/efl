@@ -538,6 +538,12 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
         window->commit_pending = EINA_FALSE;
      }
 
+   if (window->callback)
+     {
+        wl_callback_destroy(window->callback);
+        window->callback = NULL;
+     }
+
    window->configure_serial = 0;
    window->zxdg_configure_ack = NULL;
    window->zxdg_set_min_size = NULL;
@@ -572,6 +578,9 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
      _ecore_wl2_subsurf_free(subsurf);
 
    _ecore_wl2_window_aux_hint_free(window);
+
+   if (window->callback) wl_callback_destroy(window->callback);
+   window->callback = NULL;
 
    if (window->uuid && window->surface && window->display->wl.session_recovery)
      zwp_e_session_recovery_destroy_uuid(window->display->wl.session_recovery,
@@ -1344,6 +1353,26 @@ ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int
      efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel, w, h, aspect);
 }
 
+static void
+_frame_cb(void *data, struct wl_callback *callback, uint32_t timestamp)
+{
+   Ecore_Wl2_Frame_Cb_Handle *cb;
+   Ecore_Wl2_Window *window;
+   Eina_List *l, *ll;
+
+   window = data;
+   window->commit_pending = EINA_FALSE;
+   wl_callback_destroy(callback);
+   window->callback = NULL;
+   EINA_LIST_FOREACH_SAFE(window->frame_callbacks, l, ll, cb)
+     cb->cb(window, timestamp, cb->data);
+}
+
+static struct wl_callback_listener _frame_listener =
+{
+   _frame_cb
+};
+
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
@@ -1363,4 +1392,28 @@ EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
    return window->commit_pending;
+}
+
+EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb cb, void *data)
+{
+   Ecore_Wl2_Frame_Cb_Handle *callback;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cb, NULL);
+
+   callback = malloc(sizeof(*callback));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(callback, NULL);
+   callback->cb = cb;
+   callback->data = data;
+   callback->win = window;
+   window->frame_callbacks = eina_list_append(window->frame_callbacks, callback);
+   return callback;
+}
+
+EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
+{
+   EINA_SAFETY_ON_NULL_RETURN(handle);
+
+   handle->win->frame_callbacks = eina_list_remove(handle->win->frame_callbacks, handle);
+   free(handle);
 }
