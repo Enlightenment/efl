@@ -1,6 +1,8 @@
 #ifndef _EVAS_ENGINE_WAYLAND_COMMON_H
 # define _EVAS_ENGINE_WAYLAND_COMMON_H
 
+#include "Ecore_Wl2.h"
+
 typedef struct _Evas_Engine_Info_Wayland Evas_Engine_Info_Wayland;
 
 struct _Evas_Engine_Info_Wayland
