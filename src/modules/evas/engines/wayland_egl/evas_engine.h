@@ -57,7 +57,7 @@ struct _Outbuf
 {
    struct wl_display *disp;
    struct wl_egl_window *win;
-   struct wl_surface *surface;
+   Ecore_Wl2_Window *wl2_win;
    int w, h;
    int depth, screen, rot, alpha;
 

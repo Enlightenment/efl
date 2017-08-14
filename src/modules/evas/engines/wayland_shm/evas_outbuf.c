@@ -639,8 +639,11 @@ _evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_
 void
 _evas_outbuf_redraws_clear(Outbuf *ob)
 {
+   struct wl_surface *wls;
+
    if (!ob->priv.rect_count) return;
-   if (ob->info->info.wl_surface)
+   wls = ecore_wl2_window_surface_get(ob->info->info.wl2_win);
+   if (wls)
      ob->surface->funcs.post(ob->surface, ob->priv.rects, ob->priv.rect_count, ob->hidden);
    free(ob->priv.rects);
    ob->priv.rect_count = 0;

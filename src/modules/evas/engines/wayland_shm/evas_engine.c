@@ -175,10 +175,12 @@ eng_update(void *engine, void *data, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *einfo = info;
    Render_Engine *re = data;
+   struct wl_surface *surf;
 
-   if (!einfo->info.wl_surface) return 0;
+   surf = ecore_wl2_window_surface_get(einfo->info.wl2_win);
+   if (!surf) return 0;
 
-   _evas_outbuf_surface_set(re->generic.ob, einfo->info.wl_shm, einfo->info.wl_dmabuf, einfo->info.wl_surface);
+   _evas_outbuf_surface_set(re->generic.ob, einfo->info.wl_shm, einfo->info.wl_dmabuf, surf);
 
    eng_output_resize(engine, data, w, h);
 

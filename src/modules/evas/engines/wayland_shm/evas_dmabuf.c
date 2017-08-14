@@ -788,7 +788,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    surf->surface = s;
    surf->wl_display = s->info->info.wl_display;
    surf->dmabuf = s->info->info.wl_dmabuf;
-   surf->wl_surface = s->info->info.wl_surface;
+   surf->wl_surface = ecore_wl2_window_surface_get(s->info->info.wl2_win);
    surf->alpha = s->info->info.destination_alpha;
    surf->compositor_version = s->info->info.compositor_version;
 

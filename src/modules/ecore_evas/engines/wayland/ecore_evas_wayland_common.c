@@ -136,7 +136,7 @@ _ee_display_unset(Ecore_Evas *ee)
    if (!einfo) return;
 
    einfo->info.wl_display = NULL;
-   einfo->info.wl_surface = NULL;
+   einfo->info.wl2_win = NULL;
 
    wdata = ee->engine.data;
    if (!strcmp(ee->driver, "wayland_egl"))
@@ -1663,7 +1663,7 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
    einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(evas);
    if (!einfo) return;
 
-   surf = einfo->info.wl_surface;
+   surf = ecore_wl2_window_surface_get(einfo->info.wl2_win);
    if (!surf) return;
 
    wdata = ee->engine.data;
@@ -2018,7 +2018,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
         einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
         if (einfo)
           {
-             einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
+             einfo->info.wl2_win = wdata->win;
              einfo->info.hidden = wdata->win->pending.configure; //EINA_FALSE;
              einfo->www_avail = !!wdata->win->www_surface;
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
@@ -2147,7 +2147,7 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
           ecore_wl2_display_compositor_version_get(wdata->display);
         einfo->info.destination_alpha = EINA_TRUE;
         einfo->info.rotation = ee->rotation;
-        einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
+        einfo->info.wl2_win = wdata->win;
 
         if (wdata->reset_pending)
           {
@@ -2447,7 +2447,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
              einfo->info.destination_alpha = EINA_TRUE;
              einfo->info.rotation = ee->rotation;
              einfo->info.depth = 32;
-             einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
+             einfo->info.wl2_win = wdata->win;
              einfo->info.wl_dmabuf = ecore_wl2_display_dmabuf_get(ewd);
              einfo->info.wl_shm = ecore_wl2_display_shm_get(ewd);
              einfo->info.compositor_version =
