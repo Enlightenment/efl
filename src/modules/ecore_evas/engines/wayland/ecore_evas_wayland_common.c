@@ -475,7 +475,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
                wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
                                               wdata->win->configure_serial);
              wdata->win->configure_serial = 0;
-             wl_surface_commit(wdata->win->surface);
+             ecore_wl2_window_commit(wdata->win, EINA_TRUE);
           }
         return ECORE_CALLBACK_RENEW;
      }

@@ -504,7 +504,7 @@ _create_succeeded(void *data,
    wl_surface_attach(wls, b->wl_buffer, 0, 0);
    _evas_surface_damage(wls, b->surface->compositor_version,
                         b->w, b->h, NULL, 0);
-   wl_surface_commit(wls);
+   ecore_wl2_window_commit(b->surface->surface->info->info.wl2_win, EINA_TRUE);
    b->surface->pre = NULL;
    b->busy = EINA_FALSE;
 }
@@ -706,7 +706,7 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count,
    else
      wl_surface_attach(wls, NULL, 0, 0);
 
-   wl_surface_commit(wls);
+   ecore_wl2_window_commit(s->info->info.wl2_win, EINA_TRUE);
 }
 
 static Dmabuf_Buffer *
