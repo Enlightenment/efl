@@ -56,13 +56,19 @@
 #include "Eio.h"
 
 #ifdef _WIN32
+# ifdef _WIN64
 typedef struct __stat64 _eio_stat_t;
-#define _eio_stat(p, b) _stat64(p, b)
-#define _eio_lstat(p, b) _stat64(p, b)
+#  define _eio_stat(p, b) _stat64(p, b)
+#  define _eio_lstat(p, b) _stat64(p, b)
+# else
+typedef struct _stat _eio_stat_t;
+#  define _eio_stat(p, b) _stat(p, b)
+#  define _eio_lstat(p, b) _stat(p, b)
+# endif
 #else
 typedef struct stat _eio_stat_t;
-#define _eio_stat(p, b) stat(p, b)
-#define _eio_lstat(p, b) lstat(p, b)
+# define _eio_stat(p, b) stat(p, b)
+# define _eio_lstat(p, b) lstat(p, b)
 
 # include <grp.h>
 # include <pwd.h>
