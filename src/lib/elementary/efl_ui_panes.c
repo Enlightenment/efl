@@ -428,13 +428,6 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
    elm_layout_sizing_eval(obj);
 }
 
-EAPI Evas_Object *
-elm_panes_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
-}
-
 EOLIAN static Eo *
 _efl_ui_panes_efl_object_constructor(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UNUSED)
 {
@@ -444,44 +437,6 @@ _efl_ui_panes_efl_object_constructor(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UNUSED
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SPLIT_PANE);
 
    return obj;
-}
-
-EINA_DEPRECATED EAPI void
-elm_panes_content_left_set(Evas_Object *obj,
-                           Evas_Object *content)
-{
-   elm_layout_content_set(obj, "left", content);
-}
-
-EINA_DEPRECATED EAPI void
-elm_panes_content_right_set(Evas_Object *obj,
-                            Evas_Object *content)
-{
-   elm_layout_content_set(obj, "right", content);
-}
-
-EINA_DEPRECATED EAPI Evas_Object *
-elm_panes_content_left_get(const Evas_Object *obj)
-{
-   return elm_layout_content_get(obj, "left");
-}
-
-EINA_DEPRECATED EAPI Evas_Object *
-elm_panes_content_right_get(const Evas_Object *obj)
-{
-   return elm_layout_content_get(obj, "right");
-}
-
-EINA_DEPRECATED EAPI Evas_Object *
-elm_panes_content_left_unset(Evas_Object *obj)
-{
-   return elm_layout_content_unset(obj, "left");
-}
-
-EINA_DEPRECATED EAPI Evas_Object *
-elm_panes_content_right_unset(Evas_Object *obj)
-{
-   return elm_layout_content_unset(obj, "right");
 }
 
 EOLIAN static double
@@ -532,30 +487,6 @@ EOLIAN static Efl_Ui_Dir
 _efl_ui_panes_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
 {
    return sd->dir;
-}
-
-EAPI void
-elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
-{
-   Efl_Ui_Dir dir;
-
-   if (horizontal)
-     dir = EFL_UI_DIR_HORIZONTAL;
-   else
-     dir = EFL_UI_DIR_VERTICAL;
-
-   efl_ui_direction_set(obj, dir);
-}
-
-EAPI Eina_Bool
-elm_panes_horizontal_get(const Evas_Object *obj)
-{
-   Efl_Ui_Dir dir = efl_ui_direction_get(obj);
-
-   if (dir == EFL_UI_DIR_HORIZONTAL)
-     return EINA_TRUE;
-
-   return EINA_FALSE;
 }
 
 EOLIAN static void
@@ -690,6 +621,14 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX);
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panes)
 
 /* Legacy APIs */
+
+EAPI Evas_Object *
+elm_panes_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+}
+
 EAPI void
 elm_panes_content_left_min_size_set(Evas_Object *obj, int size)
 {
@@ -783,6 +722,68 @@ elm_panes_content_right_min_relative_size_get(const Evas_Object *obj)
 {
    EFL_UI_PANES_DATA_GET(obj, sd);
    return sd->right_min_relative_size;
+}
+
+EAPI void
+elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Efl_Ui_Dir dir;
+
+   if (horizontal)
+     dir = EFL_UI_DIR_HORIZONTAL;
+   else
+     dir = EFL_UI_DIR_VERTICAL;
+
+   efl_ui_direction_set(obj, dir);
+}
+
+EAPI Eina_Bool
+elm_panes_horizontal_get(const Evas_Object *obj)
+{
+   Efl_Ui_Dir dir = efl_ui_direction_get(obj);
+
+   if (dir == EFL_UI_DIR_HORIZONTAL)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+EINA_DEPRECATED EAPI void
+elm_panes_content_left_set(Evas_Object *obj,
+                           Evas_Object *content)
+{
+   elm_layout_content_set(obj, "left", content);
+}
+
+EINA_DEPRECATED EAPI void
+elm_panes_content_right_set(Evas_Object *obj,
+                            Evas_Object *content)
+{
+   elm_layout_content_set(obj, "right", content);
+}
+
+EINA_DEPRECATED EAPI Evas_Object *
+elm_panes_content_left_get(const Evas_Object *obj)
+{
+   return elm_layout_content_get(obj, "left");
+}
+
+EINA_DEPRECATED EAPI Evas_Object *
+elm_panes_content_right_get(const Evas_Object *obj)
+{
+   return elm_layout_content_get(obj, "right");
+}
+
+EINA_DEPRECATED EAPI Evas_Object *
+elm_panes_content_left_unset(Evas_Object *obj)
+{
+   return elm_layout_content_unset(obj, "left");
+}
+
+EINA_DEPRECATED EAPI Evas_Object *
+elm_panes_content_right_unset(Evas_Object *obj)
+{
+   return elm_layout_content_unset(obj, "right");
 }
 
 /* Legacy APIs end  */
