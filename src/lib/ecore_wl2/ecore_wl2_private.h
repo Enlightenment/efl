@@ -155,6 +155,7 @@ struct _Ecore_Wl2_Window
    const char *role;
 
    struct wl_surface *surface;
+   struct wl_callback *callback;
    struct www_surface *www_surface;
    struct zxdg_surface_v6 *zxdg_surface;
    struct zxdg_toplevel_v6 *zxdg_toplevel;
@@ -198,6 +199,8 @@ struct _Ecore_Wl2_Window
 
    Eina_Bool focus_skip : 1;
    Eina_Bool floating : 1;
+
+   Eina_Bool commit_pending : 1;
 
    struct
      {

@@ -1873,6 +1873,24 @@ EAPI void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
  */
 EAPI void ecore_wl2_session_recovery_disable(void);
 
+/**
+ * Commit the surface of a wayland window.
+ *
+ * If flush is set this generates a wl_surface_commit(), otherwise it is
+ * expected that some other call in the very near future (such as
+ * eglSwapBuffers) will cause an implicit flush.
+ *
+ * A surface that has been commit will be in the "pending" state until
+ * the compositor tells us it's time to draw again via a frame callback.
+ *
+ * @surface surface to commit
+ * @flush EINA_TRUE if we need to flush immediately.
+ *
+ * @since 1.20
+ */
+EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
+
+/**
 # endif
 
 # undef EAPI
