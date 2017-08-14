@@ -1239,9 +1239,11 @@ modules_evas_engines_wayland_egl_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/
 -I$(top_srcdir)/src/modules/evas/engines/wayland_egl \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_common \
 @EVAS_CFLAGS@ \
+@ECORE_WL2_CFLAGS@ \
 @evas_engine_wayland_egl_cflags@
 modules_evas_engines_wayland_egl_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
+@USE_ECORE_WL2_LIBS@ \
 @evas_engine_wayland_egl_libs@
 modules_evas_engines_wayland_egl_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_engines_wayland_egl_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
@@ -1294,9 +1296,11 @@ modules_evas_engines_wayland_shm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/
 -I$(top_srcdir)/src/static_libs/libdrm \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_common \
 @EVAS_CFLAGS@ \
+@ECORE_WL2_CFLAGS@ \
 @evas_engine_wayland_shm_cflags@
 modules_evas_engines_wayland_shm_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
+@USE_ECORE_WL2_LIBS@ \
 @evas_engine_wayland_shm_libs@
 modules_evas_engines_wayland_shm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_engines_wayland_shm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
