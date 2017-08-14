@@ -298,9 +298,9 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    WRN("total weight: %.1f %.1f, extra: %.1f", weight[0], weight[1], extra);
    if (extra < 0) extra = 0;
 
-   double cx, cy, cw, ch, x, y, w, h;
+   //double cx, cy, cw, ch, x, y, w, h;
    //work on items having aspect ratio first
-   for (id = 0; id < count; id++)
+   /*for (id = 0; id < count; id++)
      {
         item = &items[id];
         if (item->aspect >= EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
@@ -332,12 +332,12 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                     }
 
                   //aspect and fill: aspect does not respect fill
-                  /*if (item->align[1] < 0) //should check in first place
-                    {
-                       h1 = boxh;
-                       w1 = h1 * item->aw / item->ah;
-                       D("w, h: %d %d", w1, h1);
-                    }*/
+                  //if (item->align[1] < 0) //should check in first place
+                  //  {
+                  //     h1 = boxh;
+                  //     w1 = h1 * item->aw / item->ah;
+                  //     D("w, h: %d %d", w1, h1);
+                  //  }
 
                   //aspect and max
                   double mar = 0.0;
@@ -374,15 +374,15 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                   extra -= item->want[0] - old_w;
                   weight[0] -= item->weight[0];
                   D("horiz: w, h: %d %d, extra: %d", w1, h1, extra);
-                  /*ch = boxh;
-                  if (ch > item->max[1])
-                    ch = item->max[1];
-                  cw = ch * item->aw / item->ah;
-                  if (cw > item->max[0])
-                    {
-                       cw = item->max[0];
-                       ch = cw * item->ah / item->aw;
-                    }*/
+                  //ch = boxh;
+                  //if (ch > item->max[1])
+                  //  ch = item->max[1];
+                  //cw = ch * item->aw / item->ah;
+                  //if (cw > item->max[0])
+                  //  {
+                  //     cw = item->max[0];
+                  //     ch = cw * item->ah / item->aw;
+                  //  }
                }
              else
                {
@@ -406,18 +406,18 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                   item->want[1] = h1;
                   extra -= item->want[1] - old_h;
                   weight[1] -= item->weight[1];
-                  /*cw = boxw;
-                  if (cw > item->max[0])
-                    cw = item->max[0];
-                  ch = cw * item->ah / item->aw;
-                  if (ch > item->max[1])
-                    {
-                       ch = item->max[1];
-                       cw = ch * item->aw / item->ah;
-                    }*/
+                  //cw = boxw;
+                  //if (cw > item->max[0])
+                  //  cw = item->max[0];
+                  //ch = cw * item->ah / item->aw;
+                  //if (ch > item->max[1])
+                  //  {
+                  //     ch = item->max[1];
+                  //     cw = ch * item->aw / item->ah;
+                  //  }
                }
           }
-     }
+     }*/
 
    if (EINA_DBL_EQ(weight[!horiz], 0))
      {
@@ -447,118 +447,178 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
           {
              cx = boxx + cur_pos;
              cy = boxy;
-             //phan phoi extra cho cac items
-             if (item->aspect >= EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
-               {
-                  cw = item->want[0];
-                  ch = item->want[1];
-               }
-             else
-               {
-                  cw = item->want[0] + rounding + (zeroweight ? 1.0 : item->weight[0]) * extra / weight[0];
-                  ch = boxh;
-               }
+             cw = item->want[0] + rounding + (zeroweight ? 1.0 : item->weight[0]) * extra / weight[0];
+             ch = boxh;
              cur_pos += cw + pad;
           }
         else
           {
              cx = boxx;
              cy = boxy + cur_pos;
-             if (item->aspect >= EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
-               {
-                  cw = item->want[0];
-                  ch = item->want[1];
-               }
-             else
-               {
-                  cw = boxw;
-                  ch = item->want[1] + rounding + (zeroweight ? 1.0 : item->weight[1]) * extra / weight[1];
-               }
+             cw = boxw;
+             ch = item->want[1] + rounding + (zeroweight ? 1.0 : item->weight[1]) * extra / weight[1];
              cur_pos += ch + pad;
           }
 
-        // horizontally
-        if (item->max[0] < INT_MAX)
+        if (item->aspect >= EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
           {
-             if (item->aspect < EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
-               w = MIN(MAX(item->want[0] - item->pad[0] - item->pad[1], item->max[0]), cw);
-             else
-               w = item->want[0];
-             if (item->align[0] < 0)
+             if (horiz)
                {
-                  // bad case: fill+max are not good together
-                  x = cx + ((cw - w) * box_align[0]) + item->pad[0];
+                  //consider aspect, min, max, fill
+                  //int old_w = item->want[0];
+                  int w1 = item->want[0];
+                  int h1 = item->want[1];
+                  if (weight[0] > 0)
+                    w1 = item->want[0] + extra * item->weight[0] / weight[0];
+                  h1 = w1 * item->ah / item->aw;
+                  D("w h: %d %d, want: %d %d, extra: %d, weight: %.1f / %.1f", w1, h1, item->want[0], item->want[1], extra, item->weight[0], weight[0]);
+                  if (h1 < item->want[1]) //how?
+                    {
+                       h1 = item->want[1];
+                       w1 = h1 * item->aw / item->ah;
+                       D("w h: %d %d", w1, h1);
+                    }
+                  if (item->aspect == EFL_GFX_SIZE_HINT_ASPECT_BOTH ||
+                      item->aspect == EFL_GFX_SIZE_HINT_ASPECT_VERTICAL)
+                    {
+                       if (h1 > boxh)
+                         {
+                            h1 = boxh;
+                            w1 = h1 * item->aw / item->ah;
+                         }
+                    }
+
+                  //aspect and fill: aspect does not respect fill
+                  /*if (item->align[1] < 0) //should check in first place
+                    {
+                    h1 = boxh;
+                    w1 = h1 * item->aw / item->ah;
+                    D("w, h: %d %d", w1, h1);
+                    }*/
+
+                  //aspect and max
+                  double mar = 0.0;
+                  if ((item->max[0] != INT_MAX) && (item->max[1] != INT_MAX))
+                    {
+                       mar = item->max[0] / (double)item->max[1];
+                       D("mar: %.2f, max: %d %d", mar, item->max[0], item->max[1]);
+                       if (item->ah > 0)
+                         {
+                            double ar = item->aw / (double)item->ah;
+                            D("ar: %.2f, mar: %.2f", ar, mar);
+                            if (ar < mar)
+                              {
+                                 if (h1 > item->max[1])
+                                   {
+                                      h1 = item->max[1];
+                                      w1 = h1 * item->aw / item->ah;
+                                   }
+                                 D("w, h: %d %d", w1, h1);
+                              }
+                            else
+                              {
+                                 if (w1 > item->max[0])
+                                   {
+                                      w1 = item->max[0];
+                                      h1 = w1 * item->ah / item->aw;
+                                   }
+                                 D("w, h: %d %d", w1, h1);
+                              }
+                         }
+                    }
+                  w = w1 - item->pad[0] - item->pad[1];
+                  h = h1 - item->pad[2] - item->pad[3];
+                  if (item->align[0] < 0)
+                    {
+                       x = cx + (cw - w) * 0.5 + item->pad[0];
+                    }
+                  else
+                    {
+                       x = cx + (cw - w) * item->align[0] + item->pad[0];
+                    }
+                  if (item->align[1] < 0)
+                    {
+                       y = cy + (ch - h) * 0.5 + item->pad[2];
+                    }
+                  else
+                    {
+                       y = cy + (ch - h) * item->align[1] + item->pad[2];
+                    }
+                  //item->want[0] = w1;
+                  //item->want[1] = h1;
+                  //extra -= item->want[0] - old_w;
+                  //weight[0] -= item->weight[0];
+                  D("horiz: w, h: %d %d, extra: %d", w1, h1, extra);
                }
              else
                {
+                  //FIXME: add handling for vertical case
+               }
+          }
+        else
+          {
+             // horizontally
+             if (item->max[0] < INT_MAX)
+               {
+                  w = MIN(MAX(item->want[0] - item->pad[0] - item->pad[1], item->max[0]), cw);
+                  if (item->align[0] < 0)
+                    {
+                       // bad case: fill+max are not good together
+                       x = cx + ((cw - w) * box_align[0]) + item->pad[0];
+                    }
+                  else
+                    {
+                       x = cx + ((cw - w) * item->align[0]) + item->pad[0];
+                       D("x: %.1f, cx: %.1f", x, cx);
+                    }
+               }
+             else if (item->align[0] < 0)
+               {
+                  // fill x
+                  w = cw - item->pad[0] - item->pad[1];
+                  x = cx + item->pad[0];
+                  D("x: %.1f, cx: %.1f", x, cx);
+               }
+             else
+               {
+                  //lam sao support align + weight???
+                  //w = item->want[0] - item->pad[0] - item->pad[1];
+                  if (item->weight[0] > 0)
+                    w = cw - item->pad[0] - item->pad[1];
+                  else
+                    w = item->want[0] - item->pad[0] - item->pad[1];
                   x = cx + ((cw - w) * item->align[0]) + item->pad[0];
                   D("x: %.1f, cx: %.1f", x, cx);
                }
-          }
-        else if (item->align[0] < 0)
-          {
-             // fill x
-             if (item->aspect < EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
-               w = cw - item->pad[0] - item->pad[1];
-             else
-               w = item->want[0];
-             x = cx + item->pad[0];
-             D("x: %.1f, cx: %.1f", x, cx);
-          }
-        else
-          {
-             //lam sao support align + weight???
-             //w = item->want[0] - item->pad[0] - item->pad[1];
-             w = cw - item->pad[0] - item->pad[1];
-             x = cx + ((cw - w) * item->align[0]) + item->pad[0];
-             D("x: %.1f, cx: %.1f", x, cx);
-          }
-        //aspect ratio
-        /*if (item->aspect)
-          {
-          h = w * item->ah / item->aw;
-          if (h > wanth)
-          wanth = h;
-          }*/
-        /////
 
-        // vertically
-        if (item->max[1] < INT_MAX)
-          {
-             if (item->aspect < EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
-               h = MIN(MAX(item->want[1] - item->pad[2] - item->pad[3], item->max[1]), ch);
-             else
-               h = item->want[1];
-             if (item->align[1] < 0)
+             // vertically
+             if (item->max[1] < INT_MAX)
                {
-                  // bad case: fill+max are not good together
-                  y = cy + ((ch - h) * box_align[1]) + item->pad[2];
+                  h = MIN(MAX(item->want[1] - item->pad[2] - item->pad[3], item->max[1]), ch);
+                  if (horiz && item->align[1] < 0)
+                    {
+                       // bad case: fill+max are not good together
+                       y = cy + ((ch - h) * box_align[1]) + item->pad[2];
+                    }
+                  else
+                    y = cy + ((ch - h) * item->align[1]) + item->pad[2];
+               }
+             else if (item->align[1] < 0)
+               {
+                  // fill y
+                  h = ch - item->pad[2] - item->pad[3];
+                  y = cy + item->pad[2];
                }
              else
-               y = cy + ((ch - h) * item->align[1]) + item->pad[2];
+               {
+                  //h = item->want[1] - item->pad[2] - item->pad[3];
+                  if (!horiz && item->weight[1] > 0)
+                    h = ch - item->pad[2] - item->pad[3];
+                  else
+                    h = item->want[1] - item->pad[2] - item->pad[3];
+                  y = cy + ((ch - h) * item->align[1]) + item->pad[2];
+               }
           }
-        else if (item->align[1] < 0)
-          {
-             // fill y
-             if (item->aspect < EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
-               h = ch - item->pad[2] - item->pad[3];
-             else
-               h = item->want[1];
-             y = cy + item->pad[2];
-          }
-        else
-          {
-             h = item->want[1] - item->pad[2] - item->pad[3];
-             y = cy + ((ch - h) * item->align[1]) + item->pad[2];
-          }
-        /*if (item->aspect)
-          {
-          w = h * item->aw / item->ah;
-          cur_pos = cur_pos - cw + w;
-        //if (w > wantw)
-        //  wantw = w;
-        wantw += w;
-        }*/
 
         //DBG("[%2d/%2d] cell: %.0f,%.0f %.0fx%.0f item: %.0f,%.0f %.0fx%.0f",
         //    id, count, cx, cy, cw, ch, x, y, w, h);
