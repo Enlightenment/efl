@@ -279,11 +279,13 @@ evgl_eng_native_window_create(void *data)
    Render_Engine *re;
    Outbuf *ob;
    struct wl_egl_window *win;
+   struct wl_surface *wls;
 
    if (!(re = (Render_Engine *)data)) return NULL;
    if (!(ob = eng_get_ob(re))) return NULL;
 
-   if (!(win = wl_egl_window_create(ob->info->info.wl_surface, 1, 1)))
+   wls = ecore_wl2_window_surface_get(ob->info->info.wl2_win);
+   if (!(win = wl_egl_window_create(wls, 1, 1)))
      {
         ERR("Could not create wl_egl window");
         return NULL;
@@ -671,6 +673,7 @@ static int
 eng_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *inf = info;
+   struct wl_surface *wls;
    Render_Engine *re = data;
    Outbuf *ob;
 
@@ -689,13 +692,14 @@ eng_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int w, uns
         return 1;
      }
 
-   if (!inf->info.wl_surface && (ob->egl_surface != EGL_NO_SURFACE))
+   wls = ecore_wl2_window_surface_get(inf->info.wl2_win);
+   if (!wls && (ob->egl_surface != EGL_NO_SURFACE))
      {
         eglDestroySurface(ob->egl_disp, ob->egl_surface);
         eglMakeCurrent(ob->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE,
                        EGL_NO_CONTEXT);
         ob->egl_surface = EGL_NO_SURFACE;
-        ob->surface = NULL;
+        ob->wl2_win = NULL;
         evas_render_engine_software_generic_update(&re->generic.software,
                                                    NULL, w, h);
         return 1;
@@ -705,7 +709,7 @@ eng_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int w, uns
      {
         ob->info = inf;
         if ((ob->info->info.wl_display != ob->disp) ||
-            (ob->info->info.wl_surface != ob->surface) ||
+            (ob->info->info.wl2_win != ob->wl2_win) ||
             /* FIXME: comment out below line.
              * since there is no place set the info->info.win for now,
              * it causes renew the window unnecessarily.

@@ -29,10 +29,10 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
    gw->h = h;
    gw->swap_mode = swap_mode;
    gw->disp = einfo->info.wl_display;
+   gw->wl2_win = einfo->info.wl2_win;
    if (display && (display != gw->disp))
      context = EGL_NO_CONTEXT;
    display = gw->disp;
-   gw->surface = einfo->info.wl_surface;
    gw->depth = einfo->info.depth;
    gw->alpha = einfo->info.destination_alpha;
    gw->rot = einfo->info.rotation;
@@ -277,15 +277,18 @@ eng_window_unsurf(Outbuf *gw)
 void 
 eng_window_resurf(Outbuf *gw)
 {
+   struct wl_surface *wls;
+
    if (gw->surf) return;
    if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", gw);
    if ((!gw->w) || (!gw->h)) return;
    if (!gw->win)
      {
+        wls = ecore_wl2_window_surface_get(gw->wl2_win);
         if ((gw->rot == 0) || (gw->rot == 180))
-          gw->win = wl_egl_window_create(gw->surface, gw->w, gw->h);
+          gw->win = wl_egl_window_create(wls, gw->w, gw->h);
         else if ((gw->rot == 90) || (gw->rot == 270))
-          gw->win = wl_egl_window_create(gw->surface, gw->h, gw->w);
+          gw->win = wl_egl_window_create(wls, gw->h, gw->w);
      }
 
    gw->egl_surface =

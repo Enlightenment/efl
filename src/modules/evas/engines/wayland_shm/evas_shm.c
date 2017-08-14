@@ -596,7 +596,7 @@ _evas_shm_surface_create(Surface *s, int w, int h, int num_buff)
    surf->h = h;
    surf->disp = s->info->info.wl_display;
    surf->shm = s->info->info.wl_shm;
-   surf->surface = s->info->info.wl_surface;
+   surf->surface = ecore_wl2_window_surface_get(s->info->info.wl2_win);
    surf->num_buff = num_buff;
    surf->alpha = s->info->info.destination_alpha;
    surf->compositor_version = s->info->info.compositor_version;

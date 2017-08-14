@@ -18,7 +18,7 @@ struct _Evas_Engine_Info_Wayland
         struct wl_shm *wl_shm;
         struct zwp_linux_dmabuf_v1 *wl_dmabuf;
         struct wl_display *wl_display;
-        struct wl_surface *wl_surface;
+        Ecore_Wl2_Window *wl2_win;
         int depth, rotation, edges;
         int compositor_version;
         Eina_Bool destination_alpha : 1;
