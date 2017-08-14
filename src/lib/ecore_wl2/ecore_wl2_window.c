@@ -1357,3 +1357,10 @@ EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
 
    if (flush) wl_surface_commit(window->surface);
 }
+
+EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
+
+   return window->commit_pending;
+}
