@@ -1891,6 +1891,17 @@ EAPI void ecore_wl2_session_recovery_disable(void);
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
 
 /**
+ * Check if a wayland window's surface is in the pending state.
+ *
+ * A surface is pending if it's been commit but we haven't received a
+ * frame callback for it yet.  This mean's we're not ready to draw yet.
+ *
+ * @return whether the window's surface is pending or not.
+ *
+ * @since 1.20
+ */
+EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
+
 # endif
 
 # undef EAPI
