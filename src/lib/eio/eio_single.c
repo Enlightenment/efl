@@ -155,7 +155,7 @@ static void
 _eio_file_lstat(void *data, Ecore_Thread *thread)
 {
    Eio_File_Stat *s = data;
-   struct stat buf;
+   _eio_stat_t buf;
 
    if (_eio_lstat(s->path, &buf) != 0)
      eio_file_thread_error(&s->common, thread);
