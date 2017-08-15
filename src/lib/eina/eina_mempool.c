@@ -91,11 +91,12 @@ _new_va(const char *name,
    SBP(shutdown);
 #undef SBP
 
-   if (be->repack)
+   if (be->repack || be->from)
      {
         mp->backend2 = calloc(1, sizeof (Eina_Mempool_Backend_ABI2));
-        if (mp->backend2)
-          mp->backend2->repack = be->repack;
+        if (!mp->backend2) goto on_error;
+        mp->backend2->repack = be->repack;
+        mp->backend2->from = be->from;
      }
 
    mp->backend_data = mp->backend.init(context, options, args);

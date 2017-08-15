@@ -169,7 +169,7 @@ static inline void  eina_mempool_free(Eina_Mempool *mp, void *element) EINA_ARG_
  * @see Eina_Mempool_Repack_Cb
  * @see _Eina_Mempool_Backend
  */
-EAPI void	        eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void           eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Runs a garbage collection cycle.
@@ -177,6 +177,17 @@ EAPI void	        eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb c
  * @param[in] mp The mempool
  */
 EAPI void           eina_mempool_gc(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Check if a pointer is a valid element from the mempool
+ *
+ * @param[in] mp The mempool
+ * @param[in] element The data to free
+ * @return #EINA_TRUE if the element is a valid element of the mempool, #EINA_FALSE otherwise
+ *
+ * @since 1.20
+ */
+static inline Eina_Bool eina_mempool_from(Eina_Mempool *mp, void *element);
 
 /**
  * @brief Has the backend update its internal statistics.

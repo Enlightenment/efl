@@ -52,6 +52,10 @@ struct _Eina_Mempool_Backend
     * available in the backend.
     * @see Eina_Mempool_Repack_Cb */
    void (*repack)(void *data, Eina_Mempool_Repack_Cb cb, void *cb_data);
+   /** Function to check is a valid element from a mempool.
+    * @see eina_mempool_from
+    */
+   Eina_Bool (*from)(void *data, void *element);
 };
 
 struct _Eina_Mempool_Backend_ABI1
@@ -69,6 +73,7 @@ struct _Eina_Mempool_Backend_ABI1
 struct _Eina_Mempool_Backend_ABI2
 {
    void (*repack)(void *data, Eina_Mempool_Repack_Cb cb, void *cb_data);
+   Eina_Bool (*from)(void *data, void *element);
 };
 
 struct _Eina_Mempool
@@ -102,6 +107,13 @@ static inline void
 eina_mempool_free(Eina_Mempool *mp, void *element)
 {
    if (element) mp->backend.free(mp->backend_data, element);
+}
+
+static inline Eina_Bool
+eina_mempool_from(Eina_Mempool *mp, void *element)
+{
+   if (!element) return EINA_FALSE;
+   return mp->backend2->from(mp->backend_data, element);
 }
 
 static inline unsigned int
