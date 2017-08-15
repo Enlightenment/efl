@@ -78,50 +78,6 @@ eina_mempool_pass_through(int request)
 }
 #endif
 
-#ifdef EINA_BUILD_FIXED_BITMAP
-static void
-eina_mempool_fixed_bitmap(int request)
-{
-   Eina_Mempool *mp;
-
-   mp = eina_mempool_add("fixed_bitmap", "test", NULL, sizeof (int));
-   _eina_mempool_bench(mp, request);
-   eina_mempool_del(mp);
-}
-#endif
-
-#ifdef EINA_BUILD_EMEMOA_FIXED
-static void
-eina_mempool_ememoa_fixed(int request)
-{
-   Eina_Mempool *mp;
-
-   mp = eina_mempool_add("ememoa_fixed", "test", NULL, sizeof (int), 8, 0);
-   _eina_mempool_bench(mp, request);
-   eina_mempool_del(mp);
-}
-#endif
-
-#ifdef EINA_BUILD_EMEMOA_UNKNOWN
-static void
-eina_mempool_ememoa_unknown(int request)
-{
-   Eina_Mempool *mp;
-
-   mp = eina_mempool_add("ememoa_unknown",
-                         "test",
-                         NULL,
-                         0,
-                         2,
-                         sizeof (int),
-                         8,
-                         sizeof (int) * 2,
-                         8);
-   _eina_mempool_bench(mp, request);
-   eina_mempool_del(mp);
-}
-#endif
-
 #ifdef EINA_BENCH_HAVE_GLIB
 static void
 eina_mempool_glib(int request)
@@ -164,21 +120,6 @@ eina_bench_mempool(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "pass through",
                            EINA_BENCHMARK(
                               eina_mempool_pass_through),    10, 10000, 10);
-#endif
-#ifdef EINA_BUILD_FIXED_BITMAP
-   eina_benchmark_register(bench, "fixed bitmap",
-                           EINA_BENCHMARK(
-                              eina_mempool_fixed_bitmap),    10, 10000, 10);
-#endif
-#ifdef EINA_BUILD_EMEMOA_FIXED
-   eina_benchmark_register(bench, "ememoa fixed",
-                           EINA_BENCHMARK(
-                              eina_mempool_ememoa_fixed),    10, 10000, 10);
-#endif
-#ifdef EINA_BUILD_EMEMOA_UNKNOWN
-   eina_benchmark_register(bench, "ememoa unknown",
-                           EINA_BENCHMARK(
-                              eina_mempool_ememoa_unknown),  10, 10000, 10);
 #endif
 #ifdef EINA_BENCH_HAVE_GLIB
    eina_benchmark_register(bench, "gslice",
