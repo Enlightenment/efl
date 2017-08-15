@@ -39,6 +39,13 @@ eina_pass_through_free(EINA_UNUSED void *data, void *ptr)
    free(ptr);
 }
 
+static Eina_Bool
+eina_pass_through_from(EINA_UNUSED void *data, void *ptr)
+{
+   // Good luck
+   return EINA_TRUE;
+}
+
 static void *
 eina_pass_through_realloc(EINA_UNUSED void *data, void *ptr, unsigned int size)
 {
@@ -68,7 +75,8 @@ static Eina_Mempool_Backend _eina_pass_through_mp_backend = {
    NULL,
    NULL,
    &eina_pass_through_shutdown,
-   NULL
+   NULL,
+   &eina_pass_through_from
 };
 
 Eina_Bool pass_through_init(void)
@@ -87,4 +95,3 @@ EINA_MODULE_INIT(pass_through_init);
 EINA_MODULE_SHUTDOWN(pass_through_shutdown);
 
 #endif /* ! EINA_STATIC_BUILD_PASS_THROUGH */
-
