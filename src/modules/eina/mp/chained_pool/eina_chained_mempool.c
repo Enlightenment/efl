@@ -371,6 +371,66 @@ eina_chained_mempool_free(void *data, void *ptr)
    return;
 }
 
+static Eina_Bool
+eina_chained_mempool_from(void *data, void *ptr)
+{
+   Chained_Mempool *pool = data;
+   Eina_Rbtree *r;
+   Chained_Pool *p;
+   Eina_Trash *t;
+   void *pmem;
+   Eina_Bool ret = EINA_FALSE;
+
+   // look 4 pool
+   if (!eina_spinlock_take(&pool->mutex))
+     {
+#ifdef EINA_HAVE_DEBUG_THREADS
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
+#endif
+     }
+
+   // searching for the right mempool
+   r = eina_rbtree_inline_lookup(pool->root, ptr, 0, _eina_chained_mp_pool_key_cmp, NULL);
+
+   // related mempool not found
+   if (!r) goto end;
+
+   p = EINA_RBTREE_CONTAINER_GET(r, Chained_Pool);
+
+   // pool mem base
+   pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));
+
+   // is it in pool mem?
+   if (ptr < pmem)
+     {
+#ifdef DEBUG
+        ERR("%p is inside the private part of %p pool from %p '%s' Chained_Mempool (could be the sign of a buffer underrun).", ptr, p, pool, pool->name);
+#endif
+        goto end;
+     }
+
+   // is it really a pointer returned by malloc
+   if ((((unsigned char *)ptr) - (unsigned char *)(p + 1)) % pool->item_alloc)
+     {
+#ifdef DEBUG
+        ERR("%p is %lu bytes inside a pointer served by %p '%s' Chained_Mempool (You are freeing the wrong pointer man !).",
+            ptr, ((((unsigned char *)ptr) - (unsigned char *)(p + 1)) % pool->item_alloc), pool, pool->name);
+#endif
+        goto end;
+     }
+
+   // Check if the pointer was freed
+   for (t = p->base; t != NULL; t = t->next)
+     if (t == ptr) goto end;
+
+   // Seems like we have a valid pointer actually
+   ret = EINA_TRUE;
+
+ end:
+   eina_spinlock_release(&pool->mutex);
+   return ret;
+}
+
 static void
 eina_chained_mempool_repack(void *data,
 			    Eina_Mempool_Repack_Cb cb,
@@ -566,7 +626,8 @@ static Eina_Mempool_Backend _eina_chained_mp_backend = {
    NULL,
    NULL,
    &eina_chained_mempool_shutdown,
-   &eina_chained_mempool_repack
+   &eina_chained_mempool_repack,
+   &eina_chained_mempool_from
 };
 
 Eina_Bool chained_init(void)
