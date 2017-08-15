@@ -35,13 +35,7 @@
 static inline size_t
 eina_value_util_type_size(const Eina_Value_Type *type)
 {
-   if (type == EINA_VALUE_TYPE_INT) return sizeof(int32_t);
-   if (type == EINA_VALUE_TYPE_UCHAR) return sizeof(unsigned char);
-   if ((type == EINA_VALUE_TYPE_STRING) || (type == EINA_VALUE_TYPE_STRINGSHARE)) return sizeof(char*);
-   if (type == EINA_VALUE_TYPE_TIMESTAMP) return sizeof(time_t);
-   if (type == EINA_VALUE_TYPE_ARRAY) return sizeof(Eina_Value_Array);
-   if (type == EINA_VALUE_TYPE_DOUBLE) return sizeof(double);
-   if (type == EINA_VALUE_TYPE_STRUCT) return sizeof(Eina_Value_Struct);
+   if (type) return type->value_size;
    return 0;
 }
 
