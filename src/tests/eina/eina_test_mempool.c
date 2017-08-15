@@ -56,7 +56,8 @@ _mempool_shutdown(void)
 }
 
 static void
-_eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
+_eina_mempool_test(Eina_Mempool *mp,
+                   Eina_Bool with_realloc, Eina_Bool with_gc, Eina_Bool accurate_from)
 {
    int *tbl[512];
    int i;
@@ -67,6 +68,8 @@ _eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
      {
         tbl[i] = eina_mempool_malloc(mp, sizeof (int));
         fail_if(!tbl[i]);
+        if (accurate_from)
+          fail_if(eina_mempool_from(mp, tbl[i]) != EINA_TRUE);
         *tbl[i] = i;
      }
 
@@ -74,7 +77,11 @@ _eina_mempool_test(Eina_Mempool *mp, Eina_Bool with_realloc, Eina_Bool with_gc)
         fail_if(*tbl[i] != i);
 
    for (i = 0; i < 256; ++i)
+     {
         eina_mempool_free(mp, tbl[i]);
+        if (accurate_from)
+          fail_if(eina_mempool_from(mp, tbl[i]) != EINA_FALSE);
+     }
 
    if (with_realloc)
       fail_if(eina_mempool_realloc(mp, tbl[500], 25) == NULL);
@@ -98,7 +105,7 @@ START_TEST(eina_mempool_chained_mempool)
    _mempool_init();
 
    mp = eina_mempool_add("chained_mempool", "test", NULL, sizeof (int), 256);
-   _eina_mempool_test(mp, EINA_FALSE, EINA_FALSE);
+   _eina_mempool_test(mp, EINA_FALSE, EINA_FALSE, EINA_TRUE);
 
    _mempool_shutdown();
 }
@@ -113,7 +120,7 @@ START_TEST(eina_mempool_pass_through)
    _mempool_init();
 
    mp = eina_mempool_add("pass_through", "test", NULL, sizeof (int), 8, 0);
-   _eina_mempool_test(mp, EINA_TRUE, EINA_FALSE);
+   _eina_mempool_test(mp, EINA_TRUE, EINA_FALSE, EINA_FALSE);
 
    _mempool_shutdown();
 }
