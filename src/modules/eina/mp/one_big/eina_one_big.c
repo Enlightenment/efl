@@ -193,6 +193,62 @@ eina_one_big_free(void *data, void *ptr)
    eina_lock_release(&pool->mutex);
 }
 
+static Eina_Bool
+eina_one_big_from(void *data, void *ptr)
+{
+   One_Big *pool = data;
+   Eina_Bool r = EINA_FALSE;
+
+   if (!eina_lock_take(&pool->mutex))
+     {
+#ifdef EINA_HAVE_DEBUG_THREADS
+        assert(eina_thread_equal(pool->self, eina_thread_self()));
+#endif
+     }
+
+   if ((void *)pool->base <= ptr
+       && ptr < (void *)(pool->base + (pool->max * pool->item_size)))
+     {
+        Eina_Trash *t;
+        // Part of the bigger area
+
+        // Check if it is a properly aligned element
+        if (((unsigned char *)ptr - (unsigned char *) pool->base) % pool->item_size)
+          {
+#ifdef DEBUG
+             ERR("%p is %lu bytes inside a pointer served by %p '%s' One_Big_Mempool (You are freeing the wrong pointer man !).",
+                 ptr, ((unsigned char *)ptr - (unsigned char *) pool->base) % pool->item_size, pool, pool->name);
+#endif
+             goto end;
+          }
+
+        // Check if the pointer was freed
+        for (t = pool->empty; t != NULL; t = t->next)
+          if (t == ptr) goto end;
+
+        // Everything seems correct
+        r = EINA_TRUE;
+     }
+   else
+     {
+        Eina_Inlist *it, *il;
+        // Part of the smaller items inlist
+
+        il = OVER_MEM_TO_LIST(pool, ptr);
+
+        for (it = pool->over_list; it != NULL; it = it->next)
+          if (it == il)
+            {
+               r = EINA_TRUE;
+               break;
+            }
+     }
+
+ end:
+   eina_lock_release(&pool->mutex);
+   return r;
+}
+
 static void *
 eina_one_big_realloc(EINA_UNUSED void *data,
                      EINA_UNUSED void *element,
@@ -307,7 +363,8 @@ static Eina_Mempool_Backend _eina_one_big_mp_backend = {
    NULL,
    NULL,
    &eina_one_big_shutdown,
-   NULL
+   NULL,
+   &eina_one_big_from
 };
 
 Eina_Bool one_big_init(void)
@@ -340,4 +397,3 @@ EINA_MODULE_INIT(one_big_init);
 EINA_MODULE_SHUTDOWN(one_big_shutdown);
 
 #endif /* ! EINA_STATIC_BUILD_ONE_BIG */
-
