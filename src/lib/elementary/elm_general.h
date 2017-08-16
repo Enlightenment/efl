@@ -20,6 +20,14 @@
 
 #include "elm_general.eot.h"
 
+#define ELM_FOCUS_PREVIOUS EFL_UI_FOCUS_DIRECTION_PREVIOUS
+#define ELM_FOCUS_NEXT EFL_UI_FOCUS_DIRECTION_NEXT
+#define ELM_FOCUS_UP EFL_UI_FOCUS_DIRECTION_UP
+#define ELM_FOCUS_DOWN EFL_UI_FOCUS_DIRECTION_DOWN
+#define ELM_FOCUS_RIGHT EFL_UI_FOCUS_DIRECTION_RIGHT
+#define ELM_FOCUS_LEFT EFL_UI_FOCUS_DIRECTION_LEFT
+typedef Efl_Ui_Focus_Direction Elm_Focus_Direction;
+
 /**
  * Defines couple of standard Evas_Object layers to be used
  * with evas_object_layer_set().

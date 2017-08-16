@@ -46,7 +46,7 @@ _efl_ui_focus_layer_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus_Layer_Data *
    if (!pd->cycle)
      return NULL;
 
-   if ((direction == EFL_UI_FOCUS_DIRECTION_PREV) || (direction == EFL_UI_FOCUS_DIRECTION_NEXT))
+   if ((direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS ) || (direction == EFL_UI_FOCUS_DIRECTION_NEXT))
      efl_ui_focus_manager_focus_set(pd->manager, obj);
 
    return efl_ui_focus_manager_focus_get(obj);

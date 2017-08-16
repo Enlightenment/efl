@@ -1,17 +1,4 @@
-enum Efl.Ui.Focus.Direction {
-    [[Those values are describing a direction from the position of view from
-      one item.
-
-      @since 1.20
-    ]]
-    right = 0, [[Coordinate-wise the next element on the right-hand side]]
-    left = 1, [[Coordinate-wise the next element on the left-hand side]]
-    down = 2, [[Coordinate-wise the next element downward]]
-    up = 3, [[Coorinate-wise the next element upwards]]
-    next = 4, [[Logically-wise the next item in the logical tree]]
-    prev = 5, [[Logically-wise the prev item in the logical tree]]
-    last = 6 [[Last value for this enum, do not use]]
-}
+import elm_general;
 
 struct Efl.Ui.Focus.Relations {
     [[Structure holding the graph of relations between focussable objects.

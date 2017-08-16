@@ -216,7 +216,7 @@ START_TEST(logical_chain)
    i-= 2;
    for (; i > 0; --i)
      {
-        ck_assert_ptr_eq(logical_chain[i], efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_PREV));
+        ck_assert_ptr_eq(logical_chain[i], efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_PREVIOUS));
      }
    elm_shutdown();
 }
