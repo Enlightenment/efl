@@ -218,7 +218,10 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
           }
         else
           {
-             w = item->want[0] - item->pad[0] - item->pad[1];
+             if (horiz && item->weight[0] > 0)
+               w = cw - item->pad[0] - item->pad[1];
+             else
+               w = item->want[0] - item->pad[0] - item->pad[1];
              x = cx + ((cw - w) * item->align[0]) + item->pad[0];
           }
 
@@ -242,7 +245,10 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
           }
         else
           {
-             h = item->want[1] - item->pad[2] - item->pad[3];
+             if (!horiz && item->weight[1] > 0)
+               h = ch - item->pad[2] - item->pad[3];
+             else
+               h = item->want[1] - item->pad[2] - item->pad[3];
              y = cy + ((ch - h) * item->align[1]) + item->pad[2];
           }
 
