@@ -161,7 +161,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_view_list_model_set(priv.treeview, priv.treemodel);
    _widget_init(genlist);
    elm_object_part_content_set(panes, "left", genlist);
-   efl_ui_panes_content_left_size_set(panes, 0.3);
+   elm_panes_content_left_size_set(panes, 0.3);
 
    vpanes = elm_panes_add(win);
    _widget_init(vpanes);

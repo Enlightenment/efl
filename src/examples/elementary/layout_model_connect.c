@@ -119,7 +119,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_view_list_model_set(priv->fileview, priv->model);
    _widget_init(genlist);
    elm_object_part_content_set(panes, "left", genlist);
-   efl_ui_panes_content_left_size_set(panes, 0.3);
+   elm_panes_content_left_size_set(panes, 0.3);
    efl_event_callback_add(priv->fileview, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, _list_selected_cb, priv);
 
    bxr = elm_box_add(win);
