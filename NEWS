@@ -1,6 +1,58 @@
 ==========
-EFL 1.19.1
+EFL 1.19.2
 ==========
+
+Changes since 1.19.1:
+---------------------
+
+Fixes:
+
+   * elm_code: fix cursor position and carriage return at EOF behaviour
+   * elm_win: do not require mouse buttons to be pressed to activate csd move/resize
+   * eina_tiler: use int size matching Eina_Rectangle internally to avoid overflow
+   * elm_entry: request both text and markup when pasting
+   * ecore-evas: account for framespace when processing mouse movement
+   * ecore-wl2: split data offers into selection and drag
+   * ecore-wl2: handle case where session recovery listener triggers on dead surface
+   * ecore-wl2: correctly refcount display objects during events
+   * ecore-wl2: remove ERR when trying to find the focused window id
+   * ecore-wl2: do not offer a null mime first in ecore_wl2_offer_mimes_set()
+   * ecore-wl2: use nonblocking event flush when disconnecting a client
+   * ecore-evas-wayland: do not trigger resize operation when performing rotation
+   * ecore-wl2: add copyright info to code copied from libX11
+   * ecore-wl2: block key->string translation when appropriate
+   * ecore-wl2: permit null drag icon window in ecore_wl2_dnd_drag_start()
+   * elput: use unrounded coords for subpixel struct members in events
+   * ecore-evas: only apply cursor object cache for default pointer
+   * ecore-evas: clear cursor object cache when setting default cursor
+   * elput: store output w/h and apply to devices on creation
+   * evas: better handle async device creation of default mouse
+   * elm_code: Allow multibyte characters to be entered (T5496)
+   * ecore-wl2: do not unref non-matching input device upon removal
+   * evas: redo pointer data to be per-seat instead of per-device
+   * ecore-audio: unset DISPLAY conditionally before processing pulse events (T2599)
+   * ecore-ipc: don't return dead clients in ecore_ipc_server_clients_get (T5383)
+   * efreet: don't raise ERR on empty file in efreet_xml_new()
+   * ecore-evas: block buffer canvas events during deletion
+   * evas_box: add safety check for adding box children to multiple boxes
+   * elm_cursor: store and reapply non-elm cursors when setting an elm cursor
+   * ecore-wl2: do not send exit event on disconnect if servers exist
+   * evas: check object layer existence before deref to avoid crash
+   * eina_log: make a log level of 0 disable the log domain
+   * elm_list/genlist/gengrid: don't unselect items when moving the mouse out of them
+   * eina - fix eina_file_virtualize to copy data to an aligned addr
+   * edje_cc: Add copy item for proxy part
+   * ecore-wl2: add display object refs for windows
+   * ecore-wl2: create surfaces once compositor global is bound
+   * elm_entry: don't update PRIMARY selection under wayland
+   * eina: fix eina_tiler_equal to not always return true
+   * ecore-evas-wayland: destroy frame callback on hide
+   * elm_win: do not implement aspect_get()
+   * elm_box: use correct aspect ratio for HORIZONTAL layout
+   * elm_table: do not propagate max size
+   * elput: unref devices in post event cb
+   * elput: fix seat cleanup
+   * elput: add refcounting for seats/devices
 
 Changes since 1.19.0:
 ---------------------
