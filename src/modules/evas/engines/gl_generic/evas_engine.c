@@ -4,9 +4,7 @@
 #include "software/Ector_Software.h"
 #include "cairo/Ector_Cairo.h"
 #include "gl/Ector_GL.h"
-#include "evas_ector_buffer.eo.h"
-#include "evas_ector_gl_buffer.eo.h"
-#include "evas_ector_gl_image_buffer.eo.h"
+#include "evas_ector_gl.h"
 #include "filters/gl_engine_filter.h"
 
 #if defined HAVE_DLSYM && ! defined _WIN32

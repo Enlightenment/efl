@@ -648,6 +648,7 @@ modules/evas/engines/software_generic/evas_native_tbm.c \
 modules/evas/engines/software_generic/evas_native_dmabuf.c \
 modules/evas/engines/software_generic/evas_ector_software_buffer.c \
 modules/evas/engines/software_generic/evas_native_common.h \
+modules/evas/engines/software_generic/evas_ector_software.h \
 $(GFX_FILTER_SW_FILES)
 lib_evas_libevas_la_LIBADD +=
 lib_evas_libevas_la_CPPFLAGS += -I$(top_srcdir)/src/lib/ector \
@@ -843,6 +844,7 @@ GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c \
 modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h \
 modules/evas/engines/gl_generic/Evas_Engine_GL_Shared.h \
+modules/evas/engines/gl_generic/evas_ector_gl.h \
 modules/evas/engines/gl_generic/evas_ector_gl_buffer.c \
 modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.c \
 modules/evas/engines/gl_generic/filters/gl_engine_filter.h \

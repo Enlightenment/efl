@@ -3,7 +3,7 @@
 
 #include "evas_filter_private.h"
 #include "evas_gl_common.h"
-#include "evas_ector_buffer.eo.h"
+#include "../evas_ector_gl.h"
 #include "../Evas_Engine_GL_Generic.h"
 
 extern int _evas_engine_GL_log_dom;

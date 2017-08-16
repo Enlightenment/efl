@@ -9,8 +9,7 @@
 
 #include <software/Ector_Software.h>
 #include "cairo/Ector_Cairo.h"
-#include "evas_ector_buffer.eo.h"
-#include "evas_ector_software_buffer.eo.h"
+#include "evas_ector_software.h"
 #include "draw.h"
 #include "evas_filter_private.h"
 

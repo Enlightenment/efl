@@ -5,9 +5,7 @@
 #include <software/Ector_Software.h>
 #include "evas_common_private.h"
 #include "evas_private.h"
-
-#include "evas_ector_buffer.eo.h"
-#include "evas_ector_software_buffer.eo.h"
+#include "evas_ector_software.h"
 
 #define MY_CLASS EVAS_ECTOR_SOFTWARE_BUFFER_CLASS
 
