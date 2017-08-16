@@ -12,9 +12,7 @@
 #include <software/Ector_Software.h>
 #include <gl/Ector_GL.h>
 #include "Evas_Engine_GL_Generic.h"
-
-#include "evas_ector_buffer.eo.h"
-#include "evas_ector_gl_image_buffer.eo.h"
+#include "evas_ector_gl.h"
 #include "evas_gl_private.h"
 
 #define MY_CLASS EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS
