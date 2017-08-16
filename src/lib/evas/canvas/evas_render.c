@@ -2865,6 +2865,8 @@ evas_render_pre(Evas *eo_e, Evas_Public_Data *evas)
 {
    Eo *eo_obj;
 
+   if (!evas->finalize_objects) return; // avoid evlog
+
    // Finalize EO objects now
    eina_evlog("+render_pre_objects_finalize", eo_e, 0.0, NULL);
 
@@ -2903,8 +2905,6 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
 
    eina_evlog("+render_setup", eo_e, 0.0, NULL);
    RD(level, "  [--- UPDATE %i %i %ix%i\n", ux, uy, uw, uh);
-
-   evas_render_pre(eo_e, evas);
 
    off_x = cx - ux;
    off_y = cy - uy;
@@ -3140,6 +3140,9 @@ evas_render_updates_internal(Evas *eo_e,
    if (evas_cserve2_use_get())
       evas_cserve2_dispatch();
 #endif
+
+   evas_render_pre(eo_e, evas);
+
    eina_evlog("+render_calc", eo_e, 0.0, NULL);
    evas_call_smarts_calculate(eo_e);
    eina_evlog("-render_calc", eo_e, 0.0, NULL);
