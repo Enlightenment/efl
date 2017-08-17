@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131086;
+  value "config_version" int: 131087;
   value "entry_select_allow" uchar: 1;
   value "engine" string: "";
   value "vsync" uchar: 0;
@@ -1515,7 +1515,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elm_Image";
+        value "name" string: "Efl.Ui.Image";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -1919,7 +1919,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elm_Photocam";
+        value "name" string: "Efl.Ui.Image_Zoomable";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -2426,7 +2426,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elm_Video";
+        value "name" string: "Efl.Ui.Video";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
@@ -2461,7 +2461,7 @@ group "Elm_Config" struct {
         }
      }
      group "Elm_Config_Bindings_Widget" struct {
-        value "name" string: "Elm_Win";
+        value "name" string: "Efl.Ui.Win";
         group "key_bindings" list {
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
