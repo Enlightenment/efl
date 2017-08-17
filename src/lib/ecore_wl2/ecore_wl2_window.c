@@ -79,14 +79,10 @@ _ecore_wl2_window_deactivate_send(Ecore_Wl2_Window *window)
 }
 
 static void
-_zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA_UNUSED, uint32_t serial)
+_configure_complete(Ecore_Wl2_Window *window)
 {
-   Ecore_Wl2_Window *window;
    Ecore_Wl2_Event_Window_Configure_Complete *ev;
 
-   window = data;
-   window->configure_serial = serial;
-   if (!window->pending.configure) return;
    window->pending.configure = EINA_FALSE;
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Configure_Complete));
@@ -94,6 +90,19 @@ _zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA
 
    ev->win = window->id;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE, ev, NULL, NULL);
+
+}
+
+static void
+_zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA_UNUSED, uint32_t serial)
+{
+   Ecore_Wl2_Window *window;
+
+   window = data;
+   window->configure_serial = serial;
+   if (!window->pending.configure) return;
+
+   _configure_complete(window);
 }
 
 static const struct zxdg_surface_v6_listener _zxdg_surface_listener =
