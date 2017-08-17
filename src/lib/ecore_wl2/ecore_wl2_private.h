@@ -162,6 +162,7 @@ struct _Ecore_Wl2_Window
    const char *role;
 
    struct wl_surface *surface;
+   struct wl_buffer *buffer;
    struct wl_callback *callback;
    struct www_surface *www_surface;
    struct zxdg_surface_v6 *zxdg_surface;
@@ -225,6 +226,7 @@ struct _Ecore_Wl2_Window
         int *available_rots;
         unsigned int count;
      } wm_rot;
+   Eina_Bool has_buffer : 1;
 };
 
 struct _Ecore_Wl2_Output

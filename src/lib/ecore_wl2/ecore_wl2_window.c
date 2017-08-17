@@ -1417,3 +1417,15 @@ EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
    handle->win->frame_callbacks = eina_list_remove(handle->win->frame_callbacks, handle);
    free(handle);
 }
+
+EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, struct wl_buffer *buffer, int x, int y, Eina_Bool implicit)
+{
+   EINA_SAFETY_ON_NULL_RETURN(win);
+   EINA_SAFETY_ON_NULL_RETURN(win->surface);
+
+   /* FIXME: Haven't given any thought to x and y since we always use 0... */
+   if (!implicit) wl_surface_attach(win->surface, buffer, x, y);
+   win->buffer = buffer;
+   if (!implicit && !buffer) win->has_buffer = EINA_FALSE;
+   else win->has_buffer = EINA_TRUE;
+}
