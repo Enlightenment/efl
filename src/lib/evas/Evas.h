@@ -99,7 +99,7 @@
 
    For example, if in the above scene, the windowing system requires the
    application to redraw the area from 0, 0 to 50, 50 (also referred as
-   "expose event"), then the programmer must calculate manually the
+   "expose event"), then the programmer must manually calculate the
    updates and repaint it again:
 
    @verbatim
@@ -126,8 +126,8 @@
    100 pixels is around 40000 useless writes! You could write
    code to calculate the overlapping areas and avoid painting then, but
    then it should be mixed with the "expose event" handling mentioned
-   above and you quickly realize that the initially simpler method became
-   really complex.
+   above and you quickly realize that the initially simpler method becomes
+   very complex.
 
    Evas is a structural system in which the programmer creates and
    manages display objects and their properties, and as a result of this
@@ -165,7 +165,7 @@
    This lets you think in a more natural way when dealing with
    a display, and saves time and effort of working out how to load and
    display images, render given the current display system, and so on. Since
-   Evas also is portable across different display systems, this also
+   Evas is also portable across different display systems, this also
    gives you the ability to have their code ported and
    displayed on different display systems with very little work.
 

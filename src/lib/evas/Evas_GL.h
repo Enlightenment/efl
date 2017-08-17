@@ -924,7 +924,7 @@ EAPI Evas_GL_Surface         *evas_gl_current_surface_get (Evas_GL *evas_gl) EIN
  * @param[out] context  Optional return value for the current context
  * @param[out] surface  Optional return value for the current surface
  *
- * @return The current Evas GL, ie. the last Evas GL passed to evas_gl_make_current
+ * @return The current Evas GL, i.e. the last Evas GL passed to evas_gl_make_current
  *
  * @see evas_gl_make_current
  *
@@ -4798,7 +4798,7 @@ typedef unsigned long long EvasGLTime;
 /* @brief Attribute list terminator
  * 0 is also accepted as an attribute terminator.
  * Evas_GL will ensure that the attribute list is always properly terminated
- * (eg. using EGL_NONE for EGL backends) and the values are supported by the
+ * (e.g. using EGL_NONE for EGL backends) and the values are supported by the
  * backends.
  */
 #define EVAS_GL_NONE                            0x3038
@@ -4847,7 +4847,7 @@ typedef unsigned long long EvasGLTime;
  * The values are the same as EGL error codes - @c EGL_SUCCESS.
  *
  * Some of the values may be set directly by Evas GL when an obvious error was
- * detected (eg. @c NULL pointers or invalid dimensions), otherwise Evas GL will
+ * detected (e.g. @c NULL pointers or invalid dimensions), otherwise Evas GL will
  * call the backend's GetError() function and translate to a valid @c EVAS_GL_
  * error code.
  *
@@ -5214,8 +5214,9 @@ struct _Evas_GL_API
     *
     * Requires the @c EVAS_GL_image extension.
     *
-    * @note Unlike in pure EGL, the display pointer needs not be passed in, as
-    * Evas GL will use the same EGLDisplay as used in the create function.
+    * @note Unlike in pure EGL, the display pointer doesn't need to be
+    * passed in, as Evas GL will use the same EGLDisplay as used in the
+    * create function.
     */
    void         (*evasglDestroyImage) (EvasGLImage image);
    /** @} */
@@ -5248,7 +5249,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     * @li @c EVAS_GL_NATIVE_SURFACE_TIZEN (Tizen platform only):<br/>
     * Requires the @c EVAS_GL_TIZEN_image_native_surface extension.
     *
-    * @note Evas_GL_API must have version 2 or more.
+    * @note Evas_GL_API must have version 2 or higher.
     *
     * @since 1.12
     */
@@ -5259,7 +5260,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    /**
     * @name OpenGL-ES 1.1
     *
-    * Evas_GL_API version 2 or more.
+    * Evas_GL_API version 2 or higher.
     *
     * The following functions are some of the standard OpenGL-ES 1.0 functions,
     * that are not also present in the @ref gles2 "OpenGL-ES 2.0 APIs".
@@ -5360,7 +5361,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    /**
     * @name OpenGL-ES 1.1 extensions
     *
-    * Evas_GL_API version 2 or more.
+    * Evas_GL_API version 2 or higher.
     *
     * OpenGL-ES 1.1 specifies a set of extensions on top of OpenGL-ES 1.0.
     * When available, Evas GL will expose these extensions with the following
@@ -5571,7 +5572,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     * @param sync        A valid sync object created by evasglCreateSync
     * @param timeout     A relative timeout in nanoseconds
     *
-    * @note Requires the extension @c EGL_KHR_reusable_sync, similarly to eglClientWaitSyncKHR.
+    * @note Requires the extension @c EGL_KHR_reusable_sync, similar to eglClientWaitSyncKHR.
     *
     * @return @c EVAS_GL_TIMEOUT_EXPIRED if the sync failed and timeout was reached,
     *         @c EVAS_GL_CONDITION_SATISFIED if the sync was signaled,
@@ -5587,7 +5588,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     * @param evas_gl     The current Evas_GL connection
     * @param sync        A valid sync object created by evasglCreateSync
     *
-    * @note Requires the extension @c EGL_KHR_reusable_sync or @c EGL_KHR_wait_sync, similarly to eglSignalSyncKHR.
+    * @note Requires the extension @c EGL_KHR_reusable_sync or @c EGL_KHR_wait_sync, similar to eglSignalSyncKHR.
     *
     * @return @c EINA_TRUE in case of success, or
     *         @c EINA_FALSE in case of failure (in which case evas_gl_error_get() should return an error code)
@@ -5635,7 +5636,7 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    /**
     * @name Evas GL Wayland functions
     *
-    * Evas_GL_API version 3 or more.
+    * Evas_GL_API version 3 or higher.
     *
     * @since 1.13
     * @{ */
