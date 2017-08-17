@@ -221,16 +221,6 @@ typedef Eo Efl_Future;
 #include "efl_interface.eo.h"
 #define EO_CLASS EFL_OBJECT_CLASS
 
-/**
- * @struct _Efl_Event
- * A parameter passed in event callbacks holding extra event parameters.
- */
-typedef struct _Efl_Event {
-   Efl_Object *object; /**< The object the event was called on. */
-   const Efl_Event_Description *desc; /**< The event description. */
-   void *info; /**< Extra event information passed by the event caller. */
-} Efl_Event;
-
 /** An event callback prototype. */
 typedef void (*Efl_Event_Cb)(void *data, const Efl_Event *event);
 
