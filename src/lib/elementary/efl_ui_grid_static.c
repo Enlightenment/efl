@@ -1,7 +1,7 @@
 #include "efl_ui_grid_private.h"
 
 #define MY_CLASS EFL_UI_GRID_STATIC_CLASS
-#define MY_CLASS_NAME "Efl.Ui.Grid.Static"
+#define MY_CLASS_NAME "Efl.Ui.Grid_Static"
 #define MY_CLASS_NAME_LEGACY "elm_grid"
 
 EOLIAN static Eo *
@@ -46,7 +46,7 @@ _efl_ui_grid_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED
 
    if (!gd->req_cols || !gd->req_rows)
      {
-        WRN("Grid.Static size must be set before using! Default to 100x100.");
+        WRN("Grid_Static size must be set before using! Default to 100x100.");
         efl_pack_grid_size_set(obj, 100, 100);
         if (!gd->req_cols || !gd->req_rows) goto err;
      }

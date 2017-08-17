@@ -19,7 +19,7 @@
 #define MY_CLASS EFL_UI_LAYOUT_CLASS
 #define MY_CLASS_PFX efl_ui_layout
 
-#define MY_CLASS_NAME "Elm_Layout"
+#define MY_CLASS_NAME "Efl.Ui.Layout"
 #define MY_CLASS_NAME_LEGACY "elm_layout"
 
 Eo *_efl_ui_layout_pack_proxy_get(Efl_Ui_Layout *obj, Edje_Part_Type type, const char *part);

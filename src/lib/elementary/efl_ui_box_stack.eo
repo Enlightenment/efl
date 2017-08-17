@@ -1,4 +1,4 @@
-class Efl.Ui.Box.Stack (Efl.Ui.Box, Efl.Pack.Layout)
+class Efl.Ui.Box_Stack (Efl.Ui.Box, Efl.Pack.Layout)
 {
    [[A custom layout engine for @Efl.Ui.Box that stacks items.
 

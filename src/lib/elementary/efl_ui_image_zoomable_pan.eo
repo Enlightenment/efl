@@ -1,4 +1,4 @@
-class Efl.Ui.Image.Zoomable.Pan (Elm.Pan)
+class Efl.Ui.Image_Zoomable_Pan (Elm.Pan)
 {
    [[Elementary photocom pan class]]
    legacy_prefix: elm_photocam_pan;

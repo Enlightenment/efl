@@ -11,7 +11,7 @@
 
 #define MY_CLASS EFL_UI_CLOCK_CLASS
 
-#define MY_CLASS_NAME "Efl_Ui_Clock"
+#define MY_CLASS_NAME "Efl.Ui.Clock"
 #define MY_CLASS_NAME_LEGACY "efl_ui_clock"
 
 #ifdef HAVE_LOCALE_H
