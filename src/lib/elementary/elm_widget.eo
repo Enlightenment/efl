@@ -239,9 +239,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
       @property widget_parent @protected {
          [[The internal widget parent]]
-         set {
-            legacy: elm_widget_parent_set; /* Needed because we don't do duplication removal for legacy names. */
-         }
+         set {}
          get {
             legacy: elm_widget_parent_get; /* Needed because we don't do duplication removal for legacy names. */
          }
