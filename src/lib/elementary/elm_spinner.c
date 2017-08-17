@@ -727,30 +727,25 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
+_elm_spinner_elm_widget_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Event_Key_Down *ev = event_info;
-   Evas_Event_Mouse_Wheel *mev = event_info;
+   Eo *ev = eo_event->info;
 
-   if (type == EVAS_CALLBACK_KEY_DOWN)
+   if (efl_input_processed_get(ev)) return EINA_FALSE;
+   if (eo_event->desc == EFL_EVENT_KEY_DOWN)
      {
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
         if (sd->spin_timer) _spin_stop(obj);
         else return EINA_FALSE;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (type == EVAS_CALLBACK_KEY_UP)
+   else if (eo_event->desc == EFL_EVENT_KEY_UP)
      {
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
         if (sd->spin_timer) _spin_stop(obj);
         else return EINA_FALSE;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
+   else if (eo_event->desc == EFL_EVENT_POINTER_WHEEL)
      {
-        if (mev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
         sd->interval = sd->first_interval;
-        if (mev->z < 0)
+        if (efl_input_pointer_wheel_delta_get(ev) < 0)
           {
              sd->spin_speed = sd->step;
              elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
@@ -761,10 +756,10 @@ _elm_spinner_elm_widget_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, 
              elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
           }
         _spin_value(obj);
-        mev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else return EINA_FALSE;
 
+   efl_input_processed_set(ev, EINA_TRUE);
    return EINA_TRUE;
 }
 
