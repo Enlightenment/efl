@@ -3796,6 +3796,91 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_BLOB = {
   _eina_value_type_blob_pget
 };
 
+static Eina_Bool
+_eina_value_type_value_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
+{
+   Eina_Value *v = mem;
+   memset(v, 0, sizeof(Eina_Value));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_value_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
+{
+   Eina_Value *v = mem;
+   eina_value_flush(v);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_value_copy(const Eina_Value_Type *type EINA_UNUSED, const void *src, void *dst)
+{
+   const Eina_Value *v_src = src;
+   Eina_Value *v_dst = dst;
+   return eina_value_copy(v_src, v_dst);
+}
+
+static int
+_eina_value_type_value_compare(const Eina_Value_Type *type EINA_UNUSED, const void *a, const void *b)
+{
+   const Eina_Value *v1 = a;
+   const Eina_Value *v2 = b;
+   return eina_value_compare(v1, v2);
+}
+
+static Eina_Bool
+_eina_value_type_value_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   const Eina_Value *v = type_mem;
+   return eina_value_type_convert_to(v->type, convert, eina_value_memory_get(v), convert_mem);
+}
+
+static Eina_Bool
+_eina_value_type_value_convert_from(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, void *type_mem, const void *convert_mem)
+{
+   Eina_Value *v = type_mem;
+   return eina_value_type_convert_from(v->type, convert, eina_value_memory_get(v), convert_mem);
+}
+
+static Eina_Bool
+_eina_value_type_value_vset(const Eina_Value_Type *type EINA_UNUSED, void *mem, va_list args)
+{
+   Eina_Value *dst = mem;
+   Eina_Value src = va_arg(args, Eina_Value);
+   return eina_value_copy(&src, dst);
+}
+
+static Eina_Bool
+_eina_value_type_value_pset(const Eina_Value_Type *type EINA_UNUSED, void *mem, const void *ptr)
+{
+   Eina_Value *dst = mem;
+   const Eina_Value *src = ptr;
+   return eina_value_copy(src, dst);
+}
+
+static Eina_Bool
+_eina_value_type_value_pget(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
+{
+   const Eina_Value *src = mem;
+   Eina_Value *dst = ptr;
+   return eina_value_copy(src, dst);
+}
+
+static const Eina_Value_Type _EINA_VALUE_TYPE_VALUE = {
+  EINA_VALUE_TYPE_VERSION,
+  sizeof(Eina_Value),
+  "Eina_Value",
+  _eina_value_type_value_setup,
+  _eina_value_type_value_flush,
+  _eina_value_type_value_copy,
+  _eina_value_type_value_compare,
+  _eina_value_type_value_convert_to,
+  _eina_value_type_value_convert_from,
+  _eina_value_type_value_vset,
+  _eina_value_type_value_pset,
+  _eina_value_type_value_pget
+};
+
 static int
 _eina_value_struct_operations_binsearch_cmp(const void *pa, const void *pb)
 {
@@ -5042,6 +5127,9 @@ eina_value_init(void)
    EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = &_EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH;
    EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE = &_EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE;
 
+   EINA_VALUE_TYPE_VALUE = &_EINA_VALUE_TYPE_VALUE;
+
+
    return EINA_TRUE;
 
  on_init_fail_hash:
@@ -5097,6 +5185,7 @@ eina_value_shutdown(void)
 EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_START = NULL;
 EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END = NULL;
 
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_VALUE = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ERROR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_USHORT = NULL;
