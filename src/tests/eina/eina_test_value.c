@@ -2873,6 +2873,73 @@ START_TEST(eina_value_test_optional_struct_members)
 }
 END_TEST
 
+START_TEST(eina_value_test_value)
+{
+   Eina_Value composed, v;
+   const int ivalue = 3500;
+   int i;
+   const char *str;
+
+   eina_init();
+
+   fail_if(!eina_value_setup(&composed, EINA_VALUE_TYPE_VALUE));
+   fail_if(!eina_value_setup(&v, EINA_VALUE_TYPE_INT));
+   fail_if(!eina_value_set(&v, ivalue));
+   fail_if(!eina_value_set(&composed, v));
+
+   fail_if(!eina_value_get(&composed, &v));
+   fail_if(!eina_value_get(&v, &i));
+   fail_if(i != ivalue);
+
+   eina_value_flush(&v);
+   fail_if(!eina_value_setup(&v, EINA_VALUE_TYPE_STRING));
+   fail_if(!eina_value_convert(&composed, &v));
+   fail_if(!eina_value_get(&v, &str));
+   ck_assert_str_eq(str, "3500");
+
+   eina_value_flush(&v);
+   fail_if(!eina_value_copy(&composed, &v));
+   fail_if(eina_value_compare(&composed, &v));
+
+   eina_value_flush(&v);
+   eina_value_flush(&composed);
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_value_test_value_string)
+{
+   Eina_Value composed, v, str_v;
+   const char *msg = "A string", *str;
+
+   eina_init();
+
+   fail_if(!eina_value_setup(&composed, EINA_VALUE_TYPE_VALUE));
+   fail_if(!eina_value_setup(&v, EINA_VALUE_TYPE_STRING));
+   fail_if(!eina_value_set(&v, msg));
+   fail_if(!eina_value_set(&composed, v));
+
+   eina_value_flush(&v);
+   fail_if(!eina_value_copy(&composed, &v));
+   fail_if(eina_value_compare(&composed, &v));
+
+   fail_if(!eina_value_get(&composed, &str_v));
+   fail_if(!eina_value_get(&str_v, &str));
+   ck_assert_str_eq(str, msg);
+   eina_value_flush(&str_v);
+
+   str = NULL;
+   fail_if(!eina_value_get(&v, &str_v));
+   fail_if(!eina_value_get(&str_v, &str));
+   ck_assert_str_eq(str, msg);
+
+   eina_value_flush(&str_v);
+   eina_value_flush(&composed);
+   eina_value_flush(&v);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_value(TCase *tc)
 {
@@ -2901,4 +2968,6 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_optional_int);
    tcase_add_test(tc, eina_value_test_optional_string);
    tcase_add_test(tc, eina_value_test_optional_struct_members);
+   tcase_add_test(tc, eina_value_test_value);
+   tcase_add_test(tc, eina_value_test_value_string);
 }
