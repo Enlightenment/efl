@@ -1662,7 +1662,7 @@ _elm_widget_hover_object_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eva
 }
 
 EOLIAN static void
-_elm_widget_can_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool can_focus)
+_elm_widget_focus_allow_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool can_focus)
 {
    can_focus = !!can_focus;
 
@@ -1716,7 +1716,7 @@ _elm_widget_can_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool can_focu
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_can_focus_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_elm_widget_focus_allow_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    return sd->can_focus;
 }
