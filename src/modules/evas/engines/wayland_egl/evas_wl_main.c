@@ -516,6 +516,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_
    glsym_evas_gl_common_context_done(ob->gl_context);
    eglSwapInterval(ob->egl_disp, 0);
 
+   ecore_wl2_window_buffer_attach(ob->wl2_win, NULL, 0, 0, EINA_TRUE);
    ecore_wl2_window_commit(ob->wl2_win, EINA_FALSE);
 
    if ((glsym_eglSwapBuffersWithDamage) && (surface_damage) &&
