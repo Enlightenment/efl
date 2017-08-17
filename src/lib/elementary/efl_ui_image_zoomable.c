@@ -1017,14 +1017,14 @@ _key_action_zoom(Evas_Object *obj, const char *params)
    if (!strcmp(dir, "in"))
      {
         zoom = elm_photocam_zoom_get(obj);
-        zoom -= 0.5;
+        zoom /= 1.5;
         elm_photocam_zoom_mode_set(obj, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
         elm_photocam_zoom_set(obj, zoom);
      }
    else if (!strcmp(dir, "out"))
      {
         zoom = elm_photocam_zoom_get(obj);
-        zoom += 0.5;
+        zoom *= 1.5;
         elm_photocam_zoom_mode_set(obj, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
         elm_photocam_zoom_set(obj, zoom);
      }
