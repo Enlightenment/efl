@@ -479,6 +479,7 @@ _create_succeeded(void *data,
                  struct zwp_linux_buffer_params_v1 *params,
                  struct wl_buffer *new_buffer)
 {
+   Ecore_Wl2_Window *win;
    struct wl_surface *wls;
    Dmabuf_Buffer *b = data;
 
@@ -500,8 +501,9 @@ _create_succeeded(void *data,
    if (b != b->surface->pre) return;
 
    /* This buffer was drawn into before it had a handle */
-   wls = ecore_wl2_window_surface_get(b->surface->surface->info->info.wl2_win);
-   wl_surface_attach(wls, b->wl_buffer, 0, 0);
+   win = b->surface->surface->info->info.wl2_win;
+   wls = ecore_wl2_window_surface_get(win);
+   ecore_wl2_window_buffer_attach(win, b->wl_buffer, 0, 0, EINA_FALSE);
    _evas_surface_damage(wls, b->surface->compositor_version,
                         b->w, b->h, NULL, 0);
    ecore_wl2_window_commit(b->surface->surface->info->info.wl2_win, EINA_TRUE);
@@ -672,6 +674,7 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count,
    struct wl_surface *wls;
    Dmabuf_Surface *surface;
    Dmabuf_Buffer *b;
+   Ecore_Wl2_Window *win;
 
    surface = s->surf.dmabuf;
    b = surface->current;
@@ -696,10 +699,11 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count,
      }
    surface->pre = NULL;
 
-   wls = ecore_wl2_window_surface_get(s->info->info.wl2_win);
+   win = s->info->info.wl2_win;
+   wls = ecore_wl2_window_surface_get(win);
    if (!hidden)
      {
-        wl_surface_attach(wls, b->wl_buffer, 0, 0);
+        ecore_wl2_window_buffer_attach(win, b->wl_buffer, 0, 0, EINA_FALSE);
         _evas_surface_damage(wls, surface->compositor_version,
                              b->w, b->h, rects, count);
      }
