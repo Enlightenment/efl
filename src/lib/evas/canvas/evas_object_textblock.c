@@ -15720,4 +15720,3 @@ _efl_canvas_text_efl_text_cursor_cursor_free(Eo *eo_obj EINA_UNUSED, Efl_Canvas_
 }
 
 #include "canvas/efl_canvas_text.eo.c"
-#include "efl/interfaces/efl_text_cursor.eo.c"
