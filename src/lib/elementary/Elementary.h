@@ -271,6 +271,7 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_image.eo.h>
 # include <efl_ui_win.eo.h>
 # include <efl_ui_win_inlined.eo.h>
+# include <efl_ui_win_socket.eo.h>
 # include <efl_ui_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
 # include <efl_ui_text_editable.eo.h>

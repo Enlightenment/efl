@@ -39,18 +39,7 @@ enum Efl.Ui.Win.Type
    dnd, [[Used to indicate the window is a representation of an object being
           dragged across different windows, or even applications. Typically
           used with elm_win_override_set().]]
-
-   /* FIXME: The below types are to be removed */
-   socket_image = 15, [[The window is rendered onto an image buffer and can be shown
-                        other process's plug image object. No actual window is
-                        created for this type, instead the window and all of its
-                        contents will be rendered to an image buffer and can be
-                        shown other process's plug image object.
-                      ]]
-   fake = 16, [[This window was created using a pre-existing canvas. The window
-                widget can be deleted, but the canvas must be managed externally.
-                @since 1.13
-              ]]
+   /* Some types have been removed from EO. Skipping to 17. */
    naviframe_basic = 17 [[Used for naviframe style replacement with a back
                           button instead of a close button.
                           @since 1.19
@@ -787,22 +776,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
 
            This will try and delete all the windows in the stack that
            are above the window.]]
-      }
-      socket_listen {
-         [[Create a socket to provide the service for Plug widget.]]
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in svcname: string; [[The name of the service to be advertised.
-                                         Eensure that it is unique (when combined with
-                                         $svcnum) otherwise creation may fail.]]
-            @in svcnum: int; [[A number (any value, 0 being the common default) to
-                               differentiate multiple instances of services with
-                               the same name.]]
-            @in svcsys: bool; [[A boolean that if true, specifies to create a
-                                system-wide service all users can connect to,
-                                otherwise the service is private to the user
-                                id that created the service.]]
-         }
       }
       activate {
          [[Activate a window object.
