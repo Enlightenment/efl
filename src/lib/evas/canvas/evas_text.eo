@@ -9,9 +9,9 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
       @property shadow_color {
          [[Controls the shadow color for the given text object.
 
-           Shadow effects, which are fading colors decorating the text
-           underneath it, will just be shown if the object is set to one of
-           the following styles:
+           Shadow effects are fading colors decorating the text
+           underneath it.  They will be shown if the object is set to
+           one of the following styles:
 
            - $EVAS_TEXT_STYLE_TYPE_SHADOW
            - $EVAS_TEXT_STYLE_TYPE_OUTLINE_SHADOW
@@ -75,7 +75,7 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
       @property outline_color {
          [[Controls the outline color for the given text object.
 
-           Outline effects (colored lines around text glyphs) will just be
+           Outline effects (colored lines around text glyphs) will be
            shown if the object is set to one of the following styles:
            - $EVAS_TEXT_STYLE_TYPE_OUTLINE
            - $EVAS_TEXT_STYLE_TYPE_SOFT_OUTLINE
@@ -96,9 +96,10 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
       @property glow2_color {
          [[Sets the 'glow 2' color for the given text object.
 
-           'Glow 2' effects, which are glowing colors decorating the text's
-           (immediate) surroundings, will just be shown if the object is set
-           to the $EVAS_TEXT_STYLE_TYPE_GLOW style. See also @.glow_color.
+           'Glow 2' effects are glowing colors decorating the text's
+           (immediate) surroundings.  They will be shown if the object
+           is set to the $EVAS_TEXT_STYLE_TYPE_GLOW style. See also
+           @.glow_color.
          ]]
          set {
          }
@@ -144,8 +145,8 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Fi
       @property glow_color {
          [[Sets the glow color for the given text object.
 
-           Glow effects, which are glowing colors decorating the text's
-           surroundings, will just be shown if the object is set to the
+           Glow effects are glowing colors decorating the text's
+           surroundings.  They will be shown if the object is set to the
            $EVAS_TEXT_STYLE_TYPE_GLOW style.
 
            Note: Glow effects are placed from a short distance of the text
