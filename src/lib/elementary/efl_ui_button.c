@@ -172,22 +172,6 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_button_elm_widget_widget_event(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
-{
-   (void) src;
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 static void
 _on_clicked_signal(void *data,
                    Evas_Object *obj EINA_UNUSED,
@@ -433,6 +417,9 @@ _efl_ui_button_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 EFL_TEXT_PART_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 /* Efl.Part begin */

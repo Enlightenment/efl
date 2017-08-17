@@ -98,6 +98,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    ELM_PLAYER_DATA_GET(obj, sd);
    const char *dir = params;
 
+   if (!sd->video) return EINA_FALSE;
    _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "left"))
      {
@@ -136,28 +137,12 @@ _key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    ELM_PLAYER_DATA_GET(obj, sd);
 
+   if (!sd->video) return EINA_FALSE;
    if (elm_video_is_playing_get(sd->video))
      elm_video_pause(sd->video);
    else
      elm_video_play(sd->video);
 
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_player_elm_widget_widget_event(Eo *obj, Elm_Player_Data *sd, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-   (void) src;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (!sd->video) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
 
@@ -704,6 +689,10 @@ _elm_player_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
    };
    return &atspi_actions[0];
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_player, Elm_Player_Data)
 
 /* Efl.Part implementation */
 

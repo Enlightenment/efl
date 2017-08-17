@@ -3246,6 +3246,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    Eina_Bool mirrored = efl_ui_mirrored_get(obj);
    Elm_Focus_Direction direction;
 
+   if (!sd->items) return EINA_FALSE;
    elm_interface_scrollable_content_pos_get(obj, &x, &y);
    elm_interface_scrollable_step_size_get(obj, &step_x, &step_y);
    elm_interface_scrollable_page_size_get(obj, &page_x, &page_y);
@@ -3358,6 +3359,8 @@ static Eina_Bool
 _key_action_select(Evas_Object *obj, const char *params)
 {
    ELM_GENGRID_DATA_GET(obj, sd);
+   if (!sd->items) return EINA_FALSE;
+
    Elm_Object_Item *eo_it = elm_object_focused_item_get(obj);
    if (!eo_it) return EINA_TRUE;
    ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
@@ -3410,24 +3413,8 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    ELM_GENGRID_DATA_GET(obj, sd);
 
-   if (!_all_items_deselect(sd)) return EINA_FALSE;
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_gengrid_elm_widget_widget_event(Eo *obj, Elm_Gengrid_Data *sd, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-   (void) src;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   if (!_all_items_deselect(sd)) return EINA_FALSE;
    return EINA_TRUE;
 }
 
@@ -5729,6 +5716,10 @@ _elm_gengrid_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
      }
    return EINA_FALSE;
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_gengrid, Elm_Gengrid_Data)
 
 /* Internal EO APIs and hidden overrides */
 

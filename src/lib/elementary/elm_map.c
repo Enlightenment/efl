@@ -4068,22 +4068,6 @@ _key_action_zoom(Evas_Object *obj, const char *params)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_elm_map_elm_widget_widget_event(Eo *obj, Elm_Map_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   (void) src;
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 EOLIAN static void
 _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
 {
@@ -5631,6 +5615,10 @@ _elm_map_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, 
    };
    return &atspi_actions[0];
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_map, Elm_Map_Data)
 
 /* Internal EO APIs and hidden overrides */
 

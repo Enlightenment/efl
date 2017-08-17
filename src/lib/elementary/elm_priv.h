@@ -641,6 +641,20 @@ const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *o
 #define ELM_LAYOUT_SIZING_EVAL_OPS(_pfx) \
    EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _##_pfx##_elm_layout_sizing_eval)
 
+#define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
+EOLIAN static Eina_Bool \
+_##_pfx##_elm_widget_widget_event(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED) \
+{ \
+   Evas_Event_Key_Down *ev; \
+   if (eo_event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE; \
+   if (efl_input_processed_get(eo_event->info)) return EINA_FALSE; \
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE; \
+   ev = efl_input_legacy_info_get(eo_event->info); \
+   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions)) return EINA_FALSE; \
+   efl_input_processed_set(eo_event->info, EINA_TRUE); \
+   return EINA_TRUE; \
+}
+
 static inline Eina_Bool
 efl_ui_dir_is_horizontal(Efl_Ui_Dir dir, Eina_Bool def_val)
 {

@@ -895,30 +895,13 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
+   if (!sd->items) return EINA_FALSE;
    if (sd->focused_item)
      {
         ELM_TOOLBAR_ITEM_DATA_GET(sd->focused_item, focus_it);
         _item_select(focus_it);
      }
 
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_widget_event(Eo *obj, Elm_Toolbar_Data *sd, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   (void) src;
-   (void) type;
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (!sd->items) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
 
@@ -4185,6 +4168,10 @@ elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
 {
    return ELM_ICON_LOOKUP_FDO_THEME;
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_toolbar, Elm_Toolbar_Data)
 
 /* Internal EO APIs and hidden overrides */
 

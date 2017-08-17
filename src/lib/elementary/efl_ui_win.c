@@ -1766,21 +1766,6 @@ _key_action_move(Evas_Object *obj, const char *params)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_win_elm_widget_widget_event(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME_LEGACY, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 /* forward events sent to evas to the window */
 static void
 _evas_event_key_cb(void *data, const Efl_Event *ev)
@@ -8207,6 +8192,10 @@ elm_win_teamwork_uri_open(Efl_Ui_Win *obj EINA_UNUSED, const char *uri EINA_UNUS
 {
    ERR("Calling deprecrated function '%s'", __FUNCTION__);
 }
+
+/* Internal EO APIs and hidden overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_win, Efl_Ui_Win_Data)
 
 /* Internal EO APIs and hidden overrides */
 

@@ -10,7 +10,6 @@
 
 #define MY_CLASS EFL_UI_NSTATE_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Nstate"
-#define MY_CLASS_NAME_LEGACY "efl_ui_nstate"
 
 
 typedef struct
@@ -158,21 +157,6 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_nstate_elm_widget_widget_event(Eo *obj, Efl_Ui_Nstate_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME_LEGACY, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 EOLIAN static void
 _efl_ui_nstate_activate(Eo *obj, Efl_Ui_Nstate_Data *_pd)
 {
@@ -185,6 +169,10 @@ _efl_ui_nstate_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_nstate, Efl_Ui_Nstate_Data)
 
 /* Internal EO APIs and hidden overrides */
 

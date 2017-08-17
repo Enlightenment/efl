@@ -964,6 +964,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    Eina_List *l = NULL;
    const char *dir = params;
 
+   if (!sd->selected_item) return EINA_TRUE;
    _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "prev"))
      {
@@ -993,29 +994,6 @@ _key_action_move(Evas_Object *obj, const char *params)
           sd->scroller_move_idle_enterer = ecore_idle_enterer_before_add(_scroller_move, obj);
      }
 
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_diskselector_elm_widget_widget_event(Eo *obj, Elm_Diskselector_Data *sd, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down  *ev = event_info;
-
-   (void) src;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!sd->selected_item)
-     {
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        return EINA_TRUE;
-     }
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
 
@@ -1834,6 +1812,10 @@ _elm_diskselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
    };
    return &atspi_actions[0];
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_diskselector, Elm_Diskselector_Data)
 
 /* Internal EO APIs and hidden overrides */
 

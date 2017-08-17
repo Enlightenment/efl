@@ -1504,22 +1504,6 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_elm_popup_elm_widget_widget_event(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   (void)src;
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 EOLIAN static void
 _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
 {
@@ -1928,6 +1912,10 @@ _elm_popup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Popup_Data 
 
    return ret;
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_popup, Elm_Popup_Data)
 
 /* Efl.Part begin */
 

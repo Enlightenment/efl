@@ -728,22 +728,6 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_image_elm_widget_widget_event(Eo *obj, Efl_Ui_Image_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   (void) src;
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME_LEGACY, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 // TODO: remove this function after using the widget's scale value instead of image's scale value, 
 
 static void
@@ -2268,6 +2252,10 @@ elm_image_aspect_fixed_get(const Evas_Object *obj)
    EFL_UI_IMAGE_DATA_GET(obj, sd);
    return sd->aspect_fixed;
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_image, Efl_Ui_Image_Data)
 
 /* Internal EO APIs and hidden overrides */
 

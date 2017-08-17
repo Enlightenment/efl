@@ -107,25 +107,6 @@ _key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_video_elm_widget_widget_event(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   (void) src;
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME_LEGACY, ev, key_actions))
-     {
-        INF("keyname: '%s' not handled", ev->key);
-        return EINA_FALSE;
-     }
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 EOLIAN static void
 _efl_ui_video_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Video_Data *sd)
 {
@@ -469,6 +450,10 @@ elm_video_play_position_get(const Evas_Object *obj)
 {
    return efl_player_position_get(obj);
 }
+
+/* Internal EO APIs and hidden overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_video, Efl_Ui_Video_Data)
 
 /* Internal EO APIs and hidden overrides */
 

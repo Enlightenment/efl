@@ -130,22 +130,6 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_radio_elm_widget_widget_event(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   (void) src;
-   Evas_Event_Key_Down *ev = event_info;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 /* FIXME: replicated from elm_layout just because radio's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
@@ -398,6 +382,10 @@ _efl_ui_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Radio
 
    return ret;
 }
+
+/* Internal EO APIs and hidden overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_radio, Efl_Ui_Radio_Data)
 
 /* Internal EO APIs and hidden overrides */
 

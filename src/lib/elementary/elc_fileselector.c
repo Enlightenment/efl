@@ -306,22 +306,6 @@ _key_action_backspace(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_widget_event(Eo *obj, Elm_Fileselector_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-   (void) src;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 /***  GENLIST/GENGRID "MODEL"  ***/
 static char *
 _itc_text_get(void *data,
@@ -3231,6 +3215,9 @@ _elm_fileselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
    return &atspi_actions[0];
 }
 
+/* Internal EO APIs and hidden overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_fileselector, Elm_Fileselector_Data)
 
 /* Efl.Part begin */
 
@@ -3239,6 +3226,7 @@ ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector, ELM_FILESELECTOR, EFL_UI_LAYOUT, El
 #include "elm_fileselector_internal_part.eo.c"
 
 /* Efl.Part end */
+
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_FILESELECTOR_EXTRA_OPS \

@@ -934,6 +934,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    ELM_HOVERSEL_DATA_GET(obj, sd);
    const char *dir = params;
 
+   if (!sd->hover) return EINA_FALSE;
    _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "down") || !strcmp(dir, "right"))
      {
@@ -983,6 +984,8 @@ _key_action_move(Evas_Object *obj, const char *params)
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
+   ELM_HOVERSEL_DATA_GET(obj, sd);
+   if (!sd->hover) return EINA_FALSE;
    _activate(obj);
    return EINA_TRUE;
 }
@@ -990,29 +993,22 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 static Eina_Bool
 _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
+   ELM_HOVERSEL_DATA_GET(obj, sd);
+   if (!sd->hover) return EINA_FALSE;
    elm_hoversel_hover_end(obj);
    return EINA_TRUE;
 }
 
+// _hoversel_elm_widget_widget_event()
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(hoversel, Elm_Hoversel_Data)
+
 EOLIAN static Eina_Bool
 _elm_hoversel_elm_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   (void) src;
-   Eina_Bool int_ret = EINA_FALSE;
-   Evas_Event_Key_Down *ev = event_info;
+   if (elm_obj_widget_event(efl_super(obj, MY_CLASS), eo_event, src, type, event_info))
+     return EINA_TRUE; // note: this was FALSE but likely wrong
 
-   int_ret = elm_obj_widget_event(efl_super(obj, MY_CLASS), eo_event, src, type, event_info);
-   if (int_ret) return EINA_FALSE;
-
-   if (!sd || !sd->hover) return EINA_FALSE;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
+   return _hoversel_elm_widget_widget_event(obj, sd, eo_event, src, type, event_info);
 }
 
 static void
