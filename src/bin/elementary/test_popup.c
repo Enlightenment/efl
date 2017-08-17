@@ -967,6 +967,48 @@ _image_change_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
    k = !k;
 }
 
+static void
+_center_align_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   efl_ui_popup_align_set(data, EFL_UI_POPUP_ALIGN_CENTER);
+}
+
+static void
+_left_align_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   efl_ui_popup_align_set(data, EFL_UI_POPUP_ALIGN_LEFT);
+}
+
+static void
+_right_align_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   efl_ui_popup_align_set(data, EFL_UI_POPUP_ALIGN_RIGHT);
+}
+
+static void
+_top_align_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   efl_ui_popup_align_set(data, EFL_UI_POPUP_ALIGN_TOP);
+}
+
+static void
+_bottom_align_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   efl_ui_popup_align_set(data, EFL_UI_POPUP_ALIGN_BOTTOM);
+}
+
+static void
+_position_set_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   efl_ui_popup_position_set(data, 0, 0);
+}
+
 void
 test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -975,7 +1017,7 @@ test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    win = elm_win_util_standard_add("Efl UI Popup", "Efl UI Popup");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 500, 500);
    evas_object_show(win);
 
    btn = elm_button_add(win);
@@ -988,7 +1030,6 @@ test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    evas_object_smart_callback_add(efl_ui_popup, "bg,clicked", _bg_clicked, NULL);
 
-   evas_object_move(efl_ui_popup, 80, 80);
    evas_object_resize(efl_ui_popup, 160, 160);
    evas_object_show(efl_ui_popup);
 
@@ -1000,6 +1041,54 @@ test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_object_text_set(btn, "Efl.Ui.Popup content");
    evas_object_smart_callback_add(btn, "clicked", _image_change_btn_cb, efl_ui_popup);
    evas_object_show(btn);
+
+   Evas_Object *center_btn;
+   center_btn = elm_button_add(win);
+   elm_object_text_set(center_btn, "Center Align");
+   evas_object_move(center_btn, 0, 300);
+   evas_object_resize(center_btn, 100, 50);
+   evas_object_show(center_btn);
+   evas_object_smart_callback_add(center_btn, "clicked", _center_align_cb, efl_ui_popup);
+
+   Evas_Object *left_btn;
+   left_btn = elm_button_add(win);
+   elm_object_text_set(left_btn, "Left Align");
+   evas_object_move(left_btn, 100, 300);
+   evas_object_resize(left_btn, 100, 50);
+   evas_object_show(left_btn);
+   evas_object_smart_callback_add(left_btn, "clicked", _left_align_cb, efl_ui_popup);
+
+   Evas_Object *right_btn;
+   right_btn = elm_button_add(win);
+   elm_object_text_set(right_btn, "Right Align");
+   evas_object_move(right_btn, 200, 300);
+   evas_object_resize(right_btn, 100, 50);
+   evas_object_show(right_btn);
+   evas_object_smart_callback_add(right_btn, "clicked", _right_align_cb, efl_ui_popup);
+
+   Evas_Object *top_btn;
+   top_btn = elm_button_add(win);
+   elm_object_text_set(top_btn, "Top Align");
+   evas_object_move(top_btn, 0, 350);
+   evas_object_resize(top_btn, 100, 50);
+   evas_object_show(top_btn);
+   evas_object_smart_callback_add(top_btn, "clicked", _top_align_cb, efl_ui_popup);
+
+   Evas_Object *bottom_btn;
+   bottom_btn = elm_button_add(win);
+   elm_object_text_set(bottom_btn, "Bottom Align");
+   evas_object_move(bottom_btn, 100, 350);
+   evas_object_resize(bottom_btn, 100, 50);
+   evas_object_show(bottom_btn);
+   evas_object_smart_callback_add(bottom_btn, "clicked", _bottom_align_cb, efl_ui_popup);
+
+   Evas_Object *position_btn;
+   position_btn = elm_button_add(win);
+   elm_object_text_set(position_btn, "Position Set");
+   evas_object_move(position_btn, 200, 350);
+   evas_object_resize(position_btn, 100, 50);
+   evas_object_show(position_btn);
+   evas_object_smart_callback_add(position_btn, "clicked", _position_set_cb, efl_ui_popup);
 
    efl_content_set(efl_ui_popup, btn);
 }

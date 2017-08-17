@@ -1,6 +1,14 @@
+enum Efl.Ui.Popup.Align {
+    none = 0,
+    center,
+    left,
+    right,
+    top,
+    bottom
+}
+
 class Efl.Ui.Popup(Efl.Ui.Layout)
 {
-   legacy_prefix: elm_popup;
    methods {
        @property parent_window @protected {
          get {
@@ -29,6 +37,26 @@ class Efl.Ui.Popup(Efl.Ui.Layout)
          }
          values {
             repeat: bool; [[If $true, events are passed to lower objects.]]
+         }
+      }
+      @property position {
+        set {
+           [[Set the current popup position.]]
+        }
+        values {
+          x: int;
+          y: int;
+        }
+      }
+      @property align {
+         set {
+            [[ Set the popup alignment.]]
+         }
+         get {
+            [[ Get the current popup alignment.]]
+         }
+         values {
+             type: Efl.Ui.Popup.Align;
          }
       }
    }
