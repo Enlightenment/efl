@@ -251,11 +251,11 @@ EAPI const Eina_List *elput_manager_seats_get(Elput_Manager *manager);
 /**
  * Set which window to use for this input manager
  *
- * @brief This function should be used to specify which window to set on the
- *        input manager. Setting a window on the input manager is done so that
- *        when we raise events (mouse movement, keyboard key, etc) then
- *        this window is passed to the event structure as the window which
- *        the event occured on.
+ * This function should be used to specify which window to set on the
+ * input manager. Setting a window on the input manager is done so that
+ * when we raise events (mouse movement, keyboard key, etc) then this
+ * window is passed to the event structure as the window which the event
+ * occured on.
  *
  * @param manager
  * @param window
@@ -441,10 +441,11 @@ EAPI void elput_input_pointer_accel_profile_set(Elput_Manager *manager, const ch
  */
 
 /**
- * Enable or disable tap-and-drag on this device. When enabled, a
- * single-finger tap immediately followed by a finger down results in a
- * button down event, subsequent finger motion thus triggers a drag. The
- * button is released on finger up.
+ * Enable or disable tap-and-drag on this device.
+ *
+ * When enabled, a single-finger tap immediately followed by a finger
+ * down results in a button down event, subsequent finger motion thus
+ * triggers a drag. The button is released on finger up.
  *
  * @param device
  * @param enabled
@@ -457,7 +458,7 @@ EAPI void elput_input_pointer_accel_profile_set(Elput_Manager *manager, const ch
 EAPI Eina_Bool elput_touch_drag_enabled_set(Elput_Device *device, Eina_Bool enabled);
 
 /**
- * Get if tap-and-drag is enabled on this device
+ * Get if tap-and-drag is enabled on this device.
  *
  * @param device
  *
@@ -469,10 +470,12 @@ EAPI Eina_Bool elput_touch_drag_enabled_set(Elput_Device *device, Eina_Bool enab
 EAPI Eina_Bool elput_touch_drag_enabled_get(Elput_Device *device);
 
 /**
- * Enable or disable drag-lock during tapping on a device. When enabled,
- * a finger may be lifted and put back on the touchpad within a timeout and
- * the drag process continues. When disabled, lifting the finger during a
- * tap-and-drag will immediately stop the drag.
+ * Enable or disable drag-lock during tapping on a device.
+ *
+ * When enabled, a finger may be lifted and put back on the touchpad
+ * within a timeout and the drag process continues. When disabled,
+ * lifting the finger during a tap-and-drag will immediately stop the
+ * drag.
  *
  * @param device
  * @param enabled
@@ -485,7 +488,7 @@ EAPI Eina_Bool elput_touch_drag_enabled_get(Elput_Device *device);
 EAPI Eina_Bool elput_touch_drag_lock_enabled_set(Elput_Device *device, Eina_Bool enabled);
 
 /**
- * Get if drag-lock is enabled on this device
+ * Get if drag-lock is enabled on this device.
  *
  * @param device
  *
@@ -497,8 +500,10 @@ EAPI Eina_Bool elput_touch_drag_lock_enabled_set(Elput_Device *device, Eina_Bool
 EAPI Eina_Bool elput_touch_drag_lock_enabled_get(Elput_Device *device);
 
 /**
- * Enable or disable touchpad dwt (disable-while-typing) feature. When enabled, the
- * device will be disabled while typing and for a short period after.
+ * Enable or disable touchpad dwt (disable-while-typing) feature.
+ *
+ * When enabled, the device will be disabled while typing and for a
+ * short period after.
  *
  * @param device
  * @param enabled
@@ -523,8 +528,10 @@ EAPI Eina_Bool elput_touch_dwt_enabled_set(Elput_Device *device, Eina_Bool enabl
 EAPI Eina_Bool elput_touch_dwt_enabled_get(Elput_Device *device);
 
 /**
- * Set the scroll method used for this device. The scroll method defines when
- * to generate scroll axis events instead of pointer motion events.
+ * Set the scroll method used for this device.
+ *
+ * The scroll method defines when to generate scroll axis events instead
+ * of pointer motion events.
  *
  * @param device
  * @param method
@@ -549,8 +556,10 @@ EAPI Eina_Bool elput_touch_scroll_method_set(Elput_Device *device, int method);
 EAPI int elput_touch_scroll_method_get(Elput_Device *device);
 
 /**
- * Set the button click method for a device. The button click method defines
- * when to generate software emulated buttons
+ * Set the button click method for a device.
+ *
+ * The button click method defines when to generate software emulated
+ * buttons
  *
  * @param device
  * @param method
@@ -605,7 +614,7 @@ EAPI Eina_Bool elput_touch_tap_enabled_get(Elput_Device *device);
  *
  * Functions for getting attributes of devices
  */
- 
+
 /**
  * Get the seat object for a device
  * @param dev
@@ -641,7 +650,7 @@ EAPI Eina_Stringshare *elput_device_output_name_get(Elput_Device *device);
  *
  * Functions for getting attributes of seats
  */
- 
+
 /**
  * Get the list of devices on a given seat
  *
