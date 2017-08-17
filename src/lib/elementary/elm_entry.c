@@ -107,7 +107,7 @@ _entry_win_get(Evas_Object *obj)
    Evas_Object *top;
    top = elm_widget_top_get(obj);
    if ((!elm_win_window_id_get(top)) && (elm_win_type_get(top) == ELM_WIN_INLINED_IMAGE))
-     top = elm_widget_parent2_get(top);
+     top = efl_ui_win_inlined_parent_get(top);
    return top;
 }
 

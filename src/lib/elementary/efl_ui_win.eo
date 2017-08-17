@@ -39,29 +39,22 @@ enum Efl.Ui.Win.Type
    dnd, [[Used to indicate the window is a representation of an object being
           dragged across different windows, or even applications. Typically
           used with elm_win_override_set().]]
-   inlined_image, [[The window is rendered onto an image buffer. No actual
-                    window is created for this type, instead the window and
-                    all of its contents will be rendered to an image buffer.
-                    This allows to have children window inside a parent one
-                    just like any other object would be, and do other things
-                    like applying \@ref Evas_Map effects to it. This is the only
-                    type of window that requires the parent parameter of
-                    \@ref elm_win_add to be a valid @Efl.Canvas.Object.]]
-   socket_image, [[The window is rendered onto an image buffer and can be shown
-                   other process's plug image object. No actual window is
-                   created for this type, instead the window and all of its
-                   contents will be rendered to an image buffer and can be
-                   shown other process's plug image object.
-                 ]]
-   fake, [[This window was created using a pre-existing canvas. The window
-          widget can be deleted, but the canvas must be managed externally.
 
-          @since 1.13
-        ]]
-   naviframe_basic [[Used for naviframe style replacement with a back
-                     button instead of a close button.
-                     @since 1.19
-                    ]]
+   /* FIXME: The below types are to be removed */
+   socket_image = 15, [[The window is rendered onto an image buffer and can be shown
+                        other process's plug image object. No actual window is
+                        created for this type, instead the window and all of its
+                        contents will be rendered to an image buffer and can be
+                        shown other process's plug image object.
+                      ]]
+   fake = 16, [[This window was created using a pre-existing canvas. The window
+                widget can be deleted, but the canvas must be managed externally.
+                @since 1.13
+              ]]
+   naviframe_basic = 17 [[Used for naviframe style replacement with a back
+                          button instead of a close button.
+                          @since 1.19
+                        ]]
 }
 
 enum Efl.Ui.Win.Keyboard_Mode

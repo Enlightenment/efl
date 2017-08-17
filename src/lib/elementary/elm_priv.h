@@ -616,6 +616,7 @@ void *_elm_layout_signal_callback_del_legacy(Eo *obj, Eo *edje, Eina_List **p_ed
 void _elm_entry_signal_callback_add_legacy(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data);
 void *_elm_entry_signal_callback_del_legacy(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb);
 
+void efl_ui_win_inlined_parent_set(Eo *obj, Efl_Canvas_Object *parent);
 
 /* Internal EO APIs */
 const Elm_Layout_Part_Alias_Description *elm_layout_content_aliases_get(const Eo *obj);

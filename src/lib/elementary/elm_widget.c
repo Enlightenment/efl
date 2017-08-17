@@ -1952,18 +1952,6 @@ elm_widget_parent_widget_get(const Evas_Object *obj)
    return parent;
 }
 
-EOLIAN static Evas_Object *
-_elm_widget_parent2_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
-{
-   return sd->parent2;
-}
-
-EOLIAN static void
-_elm_widget_parent2_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Object *parent)
-{
-   sd->parent2 = parent;
-}
-
 EAPI void
 elm_widget_event_callback_add(Eo *obj, Elm_Event_Cb func, const void *data)
 {
@@ -3211,6 +3199,13 @@ _elm_widget_focused_object_clear(Eo *obj, Elm_Widget_Smart_Data *sd)
    sd->focused = EINA_FALSE;
    if (sd->top_win_focused)
      elm_obj_widget_on_focus(obj, NULL);
+}
+
+static Eo *
+elm_widget_parent2_get(Eo *obj)
+{
+   if (!efl_isa(obj, EFL_UI_WIN_INLINED_CLASS)) return NULL;
+   return efl_ui_win_inlined_parent_get(obj);
 }
 
 EOLIAN static void
