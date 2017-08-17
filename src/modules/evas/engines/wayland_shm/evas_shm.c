@@ -555,8 +555,6 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Ei
         _evas_surface_damage(wls, surf->compositor_version,
                              leaf->w, leaf->h, rects, count);
      }
-   else
-     wl_surface_attach(wls, NULL, 0, 0);
 
    ecore_wl2_window_commit(s->info->info.wl2_win, EINA_TRUE);
 
