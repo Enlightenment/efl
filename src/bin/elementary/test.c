@@ -718,7 +718,7 @@ add_tests:
    ADD_TEST(NULL, "New Containers", "Ui.Box", test_ui_box);
    ADD_TEST(NULL, "New Containers", "Ui.Grid", test_ui_grid);
    ADD_TEST(NULL, "New Containers", "Ui.Grid Linear", test_ui_grid_linear);
-   ADD_TEST(NULL, "New Containers", "Ui.Grid.Static", test_grid_static);
+   ADD_TEST(NULL, "New Containers", "Ui.Grid_Static", test_grid_static);
 
    //------------------------------//
    ADD_TEST(NULL, "New Events", "Event Refeed", test_events);

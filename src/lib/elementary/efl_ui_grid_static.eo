@@ -1,4 +1,4 @@
-class Efl.Ui.Grid.Static (Efl.Ui.Grid)
+class Efl.Ui.Grid_Static (Efl.Ui.Grid)
 {
    [[Efl UI grid static class]]
    data: null;

@@ -13,12 +13,12 @@
 
 #define MY_PAN_CLASS EFL_UI_IMAGE_ZOOMABLE_PAN_CLASS
 
-#define MY_PAN_CLASS_NAME "Efl.Ui.Image.Zoomable.Pan"
+#define MY_PAN_CLASS_NAME "Efl.Ui.Image_Zoomable_Pan"
 #define MY_PAN_CLASS_NAME_LEGACY "elm_photocam_pan"
 
 #define MY_CLASS EFL_UI_IMAGE_ZOOMABLE_CLASS
 
-#define MY_CLASS_NAME "Efl.Ui.Image.Zoomable"
+#define MY_CLASS_NAME "Efl.Ui.Image_Zoomable"
 #define MY_CLASS_NAME_LEGACY "elm_photocam"
 
 /*
