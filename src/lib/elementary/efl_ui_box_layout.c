@@ -15,6 +15,8 @@ struct _Item_Calc
    int max[2];
    int pad[4];
    int want[2];
+   Efl_Gfx_Size_Hint_Aspect aspect_type;
+   int aspect[2];
    int id;
 };
 
@@ -78,6 +80,53 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         efl_gfx_size_hint_margin_get(o, &item->pad[0], &item->pad[1], &item->pad[2], &item->pad[3]);
         efl_gfx_size_hint_max_get(o, &item->max[0], &item->max[1]);
         efl_gfx_size_hint_combined_min_get(o, &item->want[0], &item->want[1]);
+        efl_gfx_size_hint_aspect_get(o, &item->aspect_type, &item->aspect[0], &item->aspect[1]);
+
+        if (item->aspect[0] <= 0 || item->aspect[1] <= 0)
+          {
+             if (item->aspect_type >= EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
+               ERR("Invalid aspect parameter for obj: %p", item->obj);
+             item->aspect[0] = item->aspect[1] = 0;
+             item->aspect_type = EFL_GFX_SIZE_HINT_ASPECT_NONE;
+          }
+
+        if (item->aspect_type >= EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
+          {
+             double w, h;
+
+             w = item->want[0];
+             h = w * item->aspect[1] / item->aspect[0];
+             if (h < item->want[1])
+               {
+                  h = item->want[1];
+                  w = h * item->aspect[0] / item->aspect[1];
+               }
+
+             if (horiz)
+               {
+                  if ((item->align[1] < 0) && (h < boxh))
+                    {
+                       double w1, h1;
+                       h1 = item->max[1] > 0 ? MIN(boxh, item->max[1]) : boxh;
+                       h1 = MAX(h, h1);
+                       w1 = h1 * item->aspect[0] / item->aspect[1];
+                       w = item->max[0] > 0 ? MIN(w1, item->max[0]) : w1;
+                    }
+               }
+             else
+               {
+                  if ((item->align[0] < 0) && (w < boxw))
+                    {
+                       double w1, h1;
+                       w1 = item->max[0] > 0 ? MIN(boxw, item->max[0]) : boxw;
+                       w1 = MAX(w, w1);
+                       h1 = w1 * item->aspect[1] / item->aspect[0];
+                       h = item->max[1] > 0 ? MIN(h1, item->max[1]) : h1;
+                    }
+               }
+             item->want[0] = w;
+             item->want[1] = h;
+          }
 
         if (item->weight[0] < 0) item->weight[0] = 0;
         if (item->weight[1] < 0) item->weight[1] = 0;
@@ -90,8 +139,8 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         if (item->want[0] < 0) item->want[0] = 0;
         if (item->want[1] < 0) item->want[1] = 0;
 
-        if (item->max[0] <= 0) item->max[0] = INT_MAX;
-        if (item->max[1] <= 0) item->max[1] = INT_MAX;
+        if (item->max[0] < 0) item->max[0] = INT_MAX;
+        if (item->max[1] < 0) item->max[1] = INT_MAX;
         if (item->max[0] < item->want[0]) item->max[0] = item->want[0];
         if (item->max[1] < item->want[1]) item->max[1] = item->want[1];
 
@@ -198,58 +247,145 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
              cur_pos += ch + pad;
           }
 
-        // horizontally
-        if (item->max[0] < INT_MAX)
+        if (item->aspect_type >= EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
           {
-             w = MIN(MAX(item->want[0] - item->pad[0] - item->pad[1], item->max[0]), cw);
-             if (item->align[0] < 0)
+             if (horiz)
                {
-                  // bad case: fill+max are not good together
-                  x = cx + ((cw - w) * box_align[0]) + item->pad[0];
-               }
-             else
-               x = cx + ((cw - w) * item->align[0]) + item->pad[0];
-          }
-        else if (item->align[0] < 0)
-          {
-             // fill x
-             w = cw - item->pad[0] - item->pad[1];
-             x = cx + item->pad[0];
-          }
-        else
-          {
-             if (horiz && item->weight[0] > 0)
-               w = cw - item->pad[0] - item->pad[1];
-             else
-               w = item->want[0] - item->pad[0] - item->pad[1];
-             x = cx + ((cw - w) * item->align[0]) + item->pad[0];
-          }
+                  w = item->want[0];
+                  h = item->want[1];
+                  if (weight[0] > 0)
+                    w = item->want[0] + extra * item->weight[0] / weight[0];
+                  h = w * item->aspect[1] / item->aspect[0];
 
-        // vertically
-        if (item->max[1] < INT_MAX)
-          {
-             h = MIN(MAX(item->want[1] - item->pad[2] - item->pad[3], item->max[1]), ch);
-             if (item->align[1] < 0)
-               {
-                  // bad case: fill+max are not good together
-                  y = cy + ((ch - h) * box_align[1]) + item->pad[2];
+                  if (item->aspect_type == EFL_GFX_SIZE_HINT_ASPECT_BOTH ||
+                      item->aspect_type == EFL_GFX_SIZE_HINT_ASPECT_VERTICAL)
+                    {
+                       if (h > boxh)
+                         {
+                            h = boxh;
+                            w = h * item->aspect[0] / item->aspect[1];
+                         }
+                    }
                }
              else
-               y = cy + ((ch - h) * item->align[1]) + item->pad[2];
-          }
-        else if (item->align[1] < 0)
-          {
-             // fill y
-             h = ch - item->pad[2] - item->pad[3];
-             y = cy + item->pad[2];
+               {
+                  w = item->want[0];
+                  h = item->want[1];
+                  if (weight[1] > 0)
+                    h = item->want[1] + extra * item->weight[1] / weight[1];
+                  w = h * item->aspect[0] / item->aspect[1];
+
+                  if (item->aspect_type == EFL_GFX_SIZE_HINT_ASPECT_BOTH ||
+                      item->aspect_type == EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
+                    {
+                       if (w > boxw)
+                         {
+                            w = boxw;
+                            h = w * item->aspect[1] / item->aspect[0];
+                         }
+                    }
+               }
+
+             if ((item->max[0] != INT_MAX) && (item->max[1] != INT_MAX))
+               {
+                  double mar, ar;
+                  mar = item->max[0] / (double)item->max[1];
+                  ar = item->aspect[0] / (double)item->aspect[1];
+                  if (ar < mar)
+                    {
+                       if (h > item->max[1])
+                         {
+                            h = item->max[1];
+                            w = h * item->aspect[0] / item->aspect[1];
+                         }
+                    }
+                  else
+                    {
+                       if (w > item->max[0])
+                         {
+                            w = item->max[0];
+                            h = w * item->aspect[1] / item->aspect[0];
+                         }
+                    }
+               }
+             else if (item->max[0] != INT_MAX)
+               {
+                  w = MIN(w, MAX(item->want[0], item->max[0]));
+                  h = w * item->aspect[1] / item->aspect[0];
+               }
+             else
+               {
+                  h = MIN(h, MAX(item->want[1], item->max[1]));
+                  w = h * item->aspect[0] / item->aspect[1];
+               }
+             w = w - item->pad[0] - item->pad[1];
+             h = h - item->pad[2] - item->pad[3];
+
+             if (item->align[0] < 0)
+               x = cx + (cw - w) * 0.5 + item->pad[0];
+             else
+               x = cx + (cw - w) * item->align[0] + item->pad[0];
+
+             if (item->align[1] < 0)
+               y = cy + (ch - h) * 0.5 + item->pad[2];
+             else
+               y = cy + (ch - h) * item->align[1] + item->pad[2];
           }
         else
           {
-             if (!horiz && item->weight[1] > 0)
-               h = ch - item->pad[2] - item->pad[3];
+             // horizontally
+             if (item->max[0] < INT_MAX)
+               {
+                  w = MIN(MAX(item->want[0] - item->pad[0] - item->pad[1], item->max[0]), cw);
+                  if (item->align[0] < 0)
+                    {
+                       // bad case: fill+max are not good together
+                       x = cx + ((cw - w) * box_align[0]) + item->pad[0];
+                    }
+                  else
+                    x = cx + ((cw - w) * item->align[0]) + item->pad[0];
+               }
+             else if (item->align[0] < 0)
+               {
+                  // fill x
+                  w = cw - item->pad[0] - item->pad[1];
+                  x = cx + item->pad[0];
+               }
              else
-               h = item->want[1] - item->pad[2] - item->pad[3];
-             y = cy + ((ch - h) * item->align[1]) + item->pad[2];
+               {
+                  if (horiz && item->weight[0] > 0)
+                    w = cw - item->pad[0] - item->pad[1];
+                  else
+                    w = item->want[0] - item->pad[0] - item->pad[1];
+                  x = cx + ((cw - w) * item->align[0]) + item->pad[0];
+               }
+
+             // vertically
+             if (item->max[1] < INT_MAX)
+               {
+                  h = MIN(MAX(item->want[1] - item->pad[2] - item->pad[3], item->max[1]), ch);
+                  if (item->align[1] < 0)
+                    {
+                       // bad case: fill+max are not good together
+                       y = cy + ((ch - h) * box_align[1]) + item->pad[2];
+                    }
+                  else
+                    y = cy + ((ch - h) * item->align[1]) + item->pad[2];
+               }
+             else if (item->align[1] < 0)
+               {
+                  // fill y
+                  h = ch - item->pad[2] - item->pad[3];
+                  y = cy + item->pad[2];
+               }
+             else
+               {
+                  if (!horiz && item->weight[1] > 0)
+                    h = ch - item->pad[2] - item->pad[3];
+                  else
+                    h = item->want[1] - item->pad[2] - item->pad[3];
+                  y = cy + ((ch - h) * item->align[1]) + item->pad[2];
+               }
           }
 
         //DBG("[%2d/%2d] cell: %.0f,%.0f %.0fx%.0f item: %.0f,%.0f %.0fx%.0f",
