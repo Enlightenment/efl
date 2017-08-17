@@ -1,0 +1,23 @@
+class Efl.Ui.Win_Inlined (Efl.Ui.Win)
+{
+   [[An inlined window.
+
+     The window is rendered onto an image buffer. No actual window is created,
+     instead the window and all of its contents will be rendered to an image
+     buffer. This allows to have children window inside a parent one just like
+     any other object would be, and do other things like applying map effects
+     to it. This window must have a valid @Efl.Canvas.Object parent.
+   ]]
+   methods {
+      @property inlined_parent {
+         [[This property holds the parent object in the parent canvas.]]
+         get {}
+         values {
+            parent: Efl.Canvas.Object; [[An object in the parent canvas.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.finalize;
+   }
+}

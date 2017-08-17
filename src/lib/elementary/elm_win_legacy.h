@@ -67,7 +67,7 @@ typedef Efl_Ui_Win_Type       Elm_Win_Type;
 #define ELM_WIN_NOTIFICATION         EFL_UI_WIN_NOTIFICATION
 #define ELM_WIN_COMBO                EFL_UI_WIN_COMBO
 #define ELM_WIN_DND                  EFL_UI_WIN_DND
-#define ELM_WIN_INLINED_IMAGE        EFL_UI_WIN_INLINED_IMAGE
+#define ELM_WIN_INLINED_IMAGE        14
 #define ELM_WIN_SOCKET_IMAGE         EFL_UI_WIN_SOCKET_IMAGE
 #define ELM_WIN_FAKE                 EFL_UI_WIN_FAKE
 #define ELM_WIN_NAVIFRAME_BASIC      EFL_UI_WIN_NAVIFRAME_BASIC

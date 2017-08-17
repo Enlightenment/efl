@@ -425,12 +425,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             return: Efl.Canvas.Object; [[Current focused or $null, if there is no focused object.]]
          }
       }
-      @property parent2 {
-      	 [[Second parent property]]
-         values {
-            parent: Efl.Canvas.Object @nullable; [[Second parent]]
-         }
-      }
       @property part_text {
       	 [[Part text property]]
          keys {

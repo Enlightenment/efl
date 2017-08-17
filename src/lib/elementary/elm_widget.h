@@ -383,7 +383,6 @@ typedef struct _Elm_Widget_Smart_Data
 {
    Evas_Object                  *obj; /**< object pointer for this widget smart data */
    Evas_Object                  *parent_obj; /**< parent object of a widget in the elementary tree */
-   Evas_Object                  *parent2; /**< parent object for an inlined window */
    Evas_Coord                    x, y, w, h;
    Eina_List                    *subobjs; /**< list of widgets' sub objects in the elementary tree */
    Evas_Object                  *resize_obj; /**< an unique object for each widget that shows the look of a widget. Resize object's geometry is same as the widget. This resize object is different from that of window's resize object. */
@@ -692,8 +691,6 @@ EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Boo
 EAPI void             elm_widget_focus_set(Evas_Object *obj, Eina_Bool focus);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
-EAPI Evas_Object     *elm_widget_parent2_get(const Evas_Object *obj);
-EAPI void             elm_widget_parent2_set(Evas_Object *obj, Evas_Object *parent);
 EAPI void             elm_widget_focus_steal(Evas_Object *obj, Elm_Object_Item *next_item);
 EAPI Evas_Object     *elm_widget_newest_focus_order_get(const Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);

@@ -2897,13 +2897,16 @@ _wl_default_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj)
 
    if (obj)
      {
-
         // FIXME (there might be a better solution):
         // In case of inwin, we want to use the main wl2 window for cnp, but obj
         // obj belongs to the buffer canvas, so the default seat for obj does not
         // match the window win.
-        parent2 = elm_widget_parent2_get(elm_widget_top_get(obj));
-        if (parent2) obj = elm_widget_top_get(parent2) ?: parent2;
+        Eo *top = elm_widget_top_get(obj);
+        if (efl_isa(top, EFL_UI_WIN_INLINED_CLASS))
+          {
+             parent2 = efl_ui_win_inlined_parent_get(top);
+             if (parent2) obj = elm_widget_top_get(parent2) ?: parent2;
+          }
         /* fake win means canvas seat id will not match protocol seat id */
         ewin = elm_win_get(obj);
         if (elm_win_type_get(ewin) == ELM_WIN_FAKE) obj = NULL;

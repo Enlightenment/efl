@@ -9,6 +9,7 @@
 #define EFL_GFX_SIZE_HINT_PROTECTED
 #define EFL_CANVAS_OBJECT_BETA
 #define EFL_CANVAS_OBJECT_PROTECTED
+#define EFL_UI_WIN_INLINED_PROTECTED
 #define EFL_UI_WIN_BETA
 
 #include <Elementary.h>
@@ -4626,8 +4627,6 @@ _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
 static Eo *
 _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_Win_Type type)
 {
-   sd->obj = obj; // in ctor
-
    Evas_Object *parent = NULL;
    Evas *e;
    const Eina_List *l;
@@ -4642,6 +4641,13 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 
    Efl_Ui_Win_Data tmp_sd;
 
+   if ((sd->type == ELM_WIN_INLINED_IMAGE) &&
+       !efl_isa(obj, EFL_UI_WIN_INLINED_CLASS))
+     {
+        ERR("Failed to create an inlined window!");
+        return NULL;
+     }
+
    parent = efl_parent_get(obj);
 
    /* just to store some data while trying out to create a canvas */
@@ -4650,7 +4656,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    is_gl_accel = _elm_config_accel_preference_parse
          (_efl_ui_win_accel(sd), &accel, &gl_depth, &gl_stencil, &gl_msaa);
 
-   switch (type)
+   switch ((int) type)
      {
       case ELM_WIN_FAKE:
         tmp_sd.ee = sd->ee;
@@ -5119,7 +5125,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    evas_object_pass_events_set(obj, EINA_TRUE);
 
    if (type == ELM_WIN_INLINED_IMAGE)
-     elm_widget_parent2_set(obj, parent);
+     efl_ui_win_inlined_parent_set(obj, parent);
 
    /* use own version of ecore_evas_object_associate() that does TRAP() */
    ecore_evas_data_set(sd->ee, "elm_win", obj);
@@ -5374,7 +5380,9 @@ _efl_ui_win_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_
 EOLIAN static Eo *
 _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
 {
-   /* Do nothing. */
+   /* UGLY HACK: Do nothing. */
+   pd->obj = obj;
+
    /* XXX: We are calling the constructor chain from the finalizer. It's
     * really bad and hacky. Needs fixing. */
    pd->manager = elm_obj_widget_focus_manager_factory(obj, obj);
@@ -7958,6 +7966,13 @@ elm_win_aspect_get(const Eo *obj)
 EAPI Evas_Object *
 elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
+   if (type == ELM_WIN_INLINED_IMAGE)
+     {
+        return efl_add(EFL_UI_WIN_INLINED_CLASS, parent,
+                       efl_canvas_object_legacy_ctor(efl_added),
+                       efl_ui_win_name_set(efl_added, name));
+     }
+
    return efl_add(MY_CLASS, parent,
                  efl_canvas_object_legacy_ctor(efl_added),
                  efl_ui_win_name_set(efl_added, name),
