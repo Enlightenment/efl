@@ -2050,6 +2050,8 @@ _key_action_move(Evas_Object *obj, const char *params)
    char colorbar_s[128];
    const char *dir = params;
 
+   if (!sd->selected) sd->selected = sd->items;
+   if (!sd->focus_items) sd->focus_items = sd->items;
    _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "left"))
      {
@@ -2151,6 +2153,8 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
+   if (!sd->selected) sd->selected = sd->items;
+   if (!sd->focus_items) sd->focus_items = sd->items;
    if (sd->focused == ELM_COLORSELECTOR_PALETTE)
      {
         Elm_Object_Item *eo_item = NULL;
@@ -2161,25 +2165,6 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
      }
 
    return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_colorselector_elm_widget_widget_event(Eo *obj, Elm_Colorselector_Data *sd, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-   (void) src;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (!sd) return EINA_FALSE;
-   if (!sd->selected) sd->selected = sd->items;
-   if (!sd->focus_items) sd->focus_items = sd->items;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
 }
 
 static Eina_Bool _elm_colorselector_smart_focus_next_enable = EINA_FALSE;
@@ -2733,6 +2718,10 @@ _elm_color_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Color_Ite
    free(accessible_name);
    return it->base->accessible_name;
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_colorselector, Elm_Colorselector_Data)
 
 /* Internal EO APIs and hidden overrides */
 

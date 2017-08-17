@@ -529,22 +529,6 @@ _elm_flipselector_efl_ui_spin_value_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Da
    elm_flipselector_item_selected_set(it, EINA_TRUE);
 }
 
-EOLIAN static Eina_Bool
-_elm_flipselector_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-   (void) src;
-
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
 static Eina_Bool
 _signal_val_up(void *data)
 {
@@ -925,6 +909,10 @@ _elm_flipselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA
    };
    return &atspi_actions[0];
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_flipselector, Elm_Flipselector_Data)
 
 /* Internal EO APIs and hidden overrides */
 

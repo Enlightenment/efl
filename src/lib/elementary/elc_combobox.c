@@ -482,6 +482,7 @@ static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    ELM_COMBOBOX_DATA_GET(obj, sd);
+   if (!sd->hover) return EINA_FALSE;
    if (!sd->expanded)
      elm_combobox_hover_begin(obj);
    else
@@ -489,23 +490,6 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
         efl_event_callback_legacy_call(sd->genlist, EFL_UI_EVENT_PRESSED, sd->item);
         elm_entry_cursor_end_set(sd->entry);
      }
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_combobox_elm_widget_widget_event(Eo *obj, Elm_Combobox_Data *sd,
-                                      const Efl_Event *eo_event EINA_UNUSED,
-                                      Evas_Object *src EINA_UNUSED,
-                                      Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-   if (!sd || !sd->hover) return EINA_FALSE;
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-     return EINA_FALSE;
-
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
 
@@ -560,6 +544,10 @@ _elm_combobox_efl_gfx_size_set(Eo *obj, Elm_Combobox_Data *pd, Evas_Coord w, Eva
    if (pd->count > 0) _table_resize(obj);
    efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
 }
+
+/* Internal EO APIs and hidden overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_combobox, Elm_Combobox_Data)
 
 /* Internal EO APIs and hidden overrides */
 
