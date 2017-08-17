@@ -183,6 +183,16 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
+
+   Evas_Coord w, h;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+
+   if ((minw > w) && (minh < h))
+     evas_object_resize(obj, minw, h);
+   else if ((minw < w) && (minh > h))
+     evas_object_resize(obj, w, minh);
+   else if ((minw > w) && (minh > h))
+     evas_object_resize(obj, minw, minh);
 }
 
 EOLIAN static void
