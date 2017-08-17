@@ -30,20 +30,51 @@ _efl_ui_popup_efl_gfx_position_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, E
 }
 
 static void
-_parent_geom_cb(void *data, const Efl_Event *ev)
+_calc_align(Efl_Ui_Popup_Data *pd)
 {
-   Evas_Object *event_bg = data;
    Evas_Coord x, y, w, h;
-   evas_object_geometry_get(ev->object, &x, &y, &w, &h);
+   evas_object_geometry_get(pd->win_parent, &x, &y, &w, &h);
 
-   if (efl_isa(ev->object, EFL_UI_WIN_CLASS))
+   x = 0;
+   y = 0;
+
+   evas_object_move(pd->event_bg, x, y);
+   evas_object_resize(pd->event_bg, w, h);
+
+   Evas_Coord pw, ph;
+   evas_object_geometry_get(pd->self, NULL, NULL, &pw, &ph);
+
+   Efl_Ui_Popup_Align align;
+   align = efl_ui_popup_align_get(pd->self);
+
+   switch (align)
      {
-        x = 0;
-        y = 0;
+        case EFL_UI_POPUP_ALIGN_CENTER:
+           evas_object_move(pd->self, x + ((w - pw ) / 2), y + ((h - ph) / 2));
+        break;
+        case EFL_UI_POPUP_ALIGN_LEFT:
+           evas_object_move(pd->self, x, y + ((h - ph) / 2));
+        break;
+        case EFL_UI_POPUP_ALIGN_RIGHT:
+           evas_object_move(pd->self, x + (w - pw), ((h - ph) / 2));
+        break;
+        case EFL_UI_POPUP_ALIGN_TOP:
+           evas_object_move(pd->self, x + ((w - pw) / 2), y);
+        break;
+        case EFL_UI_POPUP_ALIGN_BOTTOM:
+           evas_object_move(pd->self, x + ((w - pw) / 2), y + (h - ph));
+        break;
+        default:
+        break;
      }
+}
 
-   evas_object_move(event_bg, x, y);
-   evas_object_resize(event_bg, w, h);
+
+static void
+_parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Ui_Popup_Data *pd = data;
+   _calc_align(pd);
 }
 
 EOLIAN static void
@@ -61,8 +92,8 @@ _efl_ui_popup_elm_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_U
    evas_object_move(pd->event_bg, x, y);
    evas_object_resize(pd->event_bg, w, h);
 
-   efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb, pd->event_bg);
-   efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb, pd->event_bg);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb, pd);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb, pd);
 }
 
 EOLIAN static Eina_Bool
@@ -89,6 +120,26 @@ _efl_ui_popup_parent_window_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
    return pd->win_parent;
 }
 
+EOLIAN void
+_efl_ui_popup_position_set(Eo *obj, Efl_Ui_Popup_Data *pd, int x, int y)
+{
+   evas_object_move(obj, x, y);
+   pd->align = EFL_UI_POPUP_ALIGN_NONE;
+}
+
+EOLIAN static void
+_efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Efl_Ui_Popup_Align type)
+{
+   pd->align = type;
+   _calc_align(pd);
+}
+
+EOLIAN static Efl_Ui_Popup_Align
+_efl_ui_popup_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+{
+   return pd->align;
+}
+
 EOLIAN static void
 _efl_ui_popup_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
@@ -97,6 +148,8 @@ _efl_ui_popup_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Data *pd)
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
+   pd->self = obj;
+   
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_layout_theme_set(obj, "popup", "base", "view");
 
@@ -106,14 +159,16 @@ _efl_ui_popup_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Data *pd)
    evas_object_stack_below(pd->event_bg, wd->resize_obj);
 
    edje_object_signal_callback_add(pd->event_bg, "elm,action,clicked", "*", _bg_clicked_cb, obj);
+
+   pd->align = EFL_UI_POPUP_ALIGN_CENTER;
 }
 
 EOLIAN static void
 _efl_ui_popup_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_SAFE_FREE(pd->event_bg, evas_object_del);
-   efl_event_callback_del(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb, pd->event_bg);
-   efl_event_callback_del(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb, pd->event_bg);
+   efl_event_callback_del(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb, pd);
+   efl_event_callback_del(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb, pd);
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
