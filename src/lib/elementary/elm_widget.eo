@@ -413,15 +413,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             return: Elm.Widget.Item; [[Focused item]]
          }
       }
-      @property parents_bounce {
-      	 [[Parents bounce property]]
-         get {
-         }
-         values {
-            horiz: bool; [[$true if parents bounce horizontally, $false otherwise]]
-            vert: bool; [[$true if parents bounce vertically, $false otherwise]]
-         }
-      }
       @property highlight {
       	 [[Highlight property]]
          get {

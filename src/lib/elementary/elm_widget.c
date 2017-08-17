@@ -3485,30 +3485,6 @@ _elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Ev
 }
 
 EOLIAN static void
-_elm_widget_parents_bounce_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Bool *horiz, Eina_Bool *vert)
-{
-   Evas_Object *parent_obj = obj;
-   Eina_Bool h = EINA_FALSE, v = EINA_FALSE;
-
-   *horiz = EINA_FALSE;
-   *vert = EINA_FALSE;
-
-   do
-     {
-        parent_obj = elm_widget_parent_get(parent_obj);
-        if ((!parent_obj) || (!_elm_widget_is(parent_obj))) break;
-
-        if (_elm_scrollable_is(parent_obj))
-          {
-             elm_interface_scrollable_bounce_allow_get(parent_obj, &h, &v);
-             if (h) *horiz = EINA_TRUE;
-             if (v) *vert = EINA_TRUE;
-          }
-     }
-   while (parent_obj);
-}
-
-EOLIAN static void
 _elm_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    sd->scroll_hold++;
