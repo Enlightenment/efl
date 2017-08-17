@@ -101,6 +101,24 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          return: bool; [[$true on success, $false otherwise]]
          legacy: null;
       }
+      @property orientation_mode_disabled {
+         [[Whether the widget's automatic orientation is disabled or not.
+
+           Orientation mode is used for widgets to change their style or send
+           signals based on the canvas rotation (i.e. the window orientation).
+           If the orientation mode is enabled, the widget will emit signals
+           such as "elm,state,orient,N" where $N is one of 0, 90, 180, 270,
+           depending on the window orientation. Such signals may be handled by
+           the theme in order to provide a different look for the widget based
+           on the canvas orientation.
+
+           By default orientation mode is enabled, which means this property
+           is $false.
+         ]]
+         values {
+            disabled: bool(false); [[$true if the orientation mode is disabled.]]
+         }
+      }
 
       @property focus {
       	 [[Focus property]]
@@ -147,12 +165,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       	 [[Highlight ignore]]
          values {
             ignore: bool; [[$true if highlights are ignored, $false otherwise]]
-         }
-      }
-      @property orientation_mode_disabled {
-      	 [[Orientation mode disabled or enabled]]
-         values {
-            disabled: bool; [[$true if orientation mode is disabled, $false otherwise]]
          }
       }
       @property focus_custom_chain {
