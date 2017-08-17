@@ -635,7 +635,6 @@ struct _Elm_Widget_Item_Data
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
 EAPI Evas_Object     *elm_widget_add(Evas_Smart *, Evas_Object *);
-EAPI void             elm_widget_parent_set(Evas_Object *, Evas_Object *);
 EAPI Eina_Bool        elm_widget_api_check(int ver);
 EAPI Eina_Bool        elm_widget_access(Evas_Object *obj, Eina_Bool is_access);
 EAPI Efl_Ui_Theme_Apply  elm_widget_theme(Evas_Object *obj);
