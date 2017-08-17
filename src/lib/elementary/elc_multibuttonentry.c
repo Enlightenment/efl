@@ -971,12 +971,8 @@ _item_new(Elm_Multibuttonentry_Data *sd,
 //FIXME: having an empty event handling function and reacting on Evas
 //events on specific objects is crazy, someone should fix that.
 EOLIAN static Eina_Bool
-_elm_multibuttonentry_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *ev)
+_elm_multibuttonentry_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED)
 {
-   (void)src;
-   (void)type;
-   (void)ev;
-
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) return EINA_FALSE;
 

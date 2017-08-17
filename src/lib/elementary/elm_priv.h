@@ -643,7 +643,7 @@ const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *o
 
 #define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
 EOLIAN static Eina_Bool \
-_##_pfx##_elm_widget_widget_event(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED) \
+_##_pfx##_elm_widget_widget_event(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED) \
 { \
    Evas_Event_Key_Down *ev; \
    if (eo_event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE; \

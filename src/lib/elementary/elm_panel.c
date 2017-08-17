@@ -761,10 +761,10 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(panel, Elm_Panel_Data)
 
 EOLIAN static Eina_Bool
-_elm_panel_elm_widget_widget_event(Eo *obj, Elm_Panel_Data *pd, const Efl_Event *eo_event, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_panel_elm_widget_widget_event(Eo *obj, Elm_Panel_Data *pd, const Efl_Event *eo_event, Evas_Object *src)
 {
    if (src != obj) return EINA_FALSE;
-   return _panel_elm_widget_widget_event(obj, pd, eo_event, src, type, event_info);
+   return _panel_elm_widget_widget_event(obj, pd, eo_event, src);
 }
 
 static Eina_Bool
