@@ -2066,6 +2066,40 @@ err:
    return EINA_FALSE;
 }
 
+// those widgets changed name over time, breaking key bindings
+typedef struct _Widget_Class_Name_Map {
+   const char *const legacy;
+   const char *const newname;
+} Widget_Class_Name_Map;
+
+static const Widget_Class_Name_Map _widget_class_name_map [] = {
+{ "elm_win", "Efl.Ui.Win" },
+{ "elm_image", "Efl.Ui.Image" },
+{ "elm_video", "Efl.Ui.Video" },
+{ "elm_photocam", "Efl.Ui.Image_Zoomable" },
+};
+
+static void
+_elm_key_bindings_update(Elm_Config *cfg, Elm_Config *syscfg EINA_UNUSED)
+{
+   for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(_widget_class_name_map); k++)
+     {
+        const Widget_Class_Name_Map *cmap = &_widget_class_name_map[k];
+        Elm_Config_Bindings_Widget *wb;
+        Eina_List *l;
+
+        // find old name in local memory and replace with new name
+        EINA_LIST_FOREACH(cfg->bindings, l, wb)
+          {
+             if (wb->name && !strcasecmp(wb->name, cmap->legacy))
+               {
+                  eina_stringshare_replace(&wb->name, cmap->newname);
+                  break;
+               }
+          }
+     }
+}
+
 static void
 _config_update(void)
 {
@@ -2180,6 +2214,11 @@ _config_update(void)
    IFCFG(0x000e)
    _elm_config->entry_select_allow = EINA_TRUE;
    IFCFGEND
+
+   IFCFG(0x000f)
+   _elm_key_bindings_update(_elm_config, tcfg);
+   IFCFGEND
+
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
