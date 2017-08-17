@@ -524,7 +524,7 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
         _ecore_wl2_window_show_send(window);
      }
    else
-     window->pending.configure = EINA_FALSE;
+     _configure_complete(window);
 }
 
 EAPI void
