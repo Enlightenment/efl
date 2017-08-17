@@ -75,6 +75,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_widget.eo \
 	lib/elementary/efl_ui_win.eo \
 	lib/elementary/efl_ui_win_inlined.eo \
+	lib/elementary/efl_ui_win_socket.eo \
 	lib/elementary/elm_widget_item.eo \
 	lib/elementary/elm_color_item.eo \
 	lib/elementary/elm_dayselector_item.eo \
@@ -666,6 +667,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_widget.c \
 	lib/elementary/efl_ui_win.c \
 	lib/elementary/efl_ui_win_inlined.c \
+	lib/elementary/efl_ui_win_socket.c \
 	lib/elementary/elm_helper.c \
 	lib/elementary/els_box.c \
 	lib/elementary/els_cursor.c \

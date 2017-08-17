@@ -6486,18 +6486,6 @@ _efl_ui_win_stack_pop_to(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
    // win32/osx ?
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_win_socket_listen(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *svcname, int svcnum, Eina_Bool svcsys)
-{
-   if (!sd->ee) return EINA_FALSE;
-   if (sd->type != EFL_UI_WIN_SOCKET_IMAGE) return EINA_FALSE;
-
-   if (!ecore_evas_extn_socket_listen(sd->ee, svcname, svcnum, svcsys))
-     return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
 EAPI Eina_Bool
 elm_win_trap_set(const Elm_Win_Trap *t)
 {
@@ -7901,16 +7889,6 @@ elm_win_window_id_get(const Evas_Object *obj)
    return _elm_win_window_id_get(sd);
 }
 
-EAPI void
-elm_win_fake_canvas_set(Evas_Object *obj, Ecore_Evas *oee)
-{
-   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   if (!sd) return;
-
-   sd->ee = oee;
-   _elm_win_need_frame_adjust(sd, ecore_evas_engine_name_get(oee));
-}
-
 EAPI Evas_Object *
 elm_win_main_menu_get(Evas_Object *obj)
 {
@@ -7963,17 +7941,29 @@ elm_win_aspect_get(const Eo *obj)
 
 /* legacy APIs */
 
+static void
+_fake_canvas_set(Evas_Object *obj, Ecore_Evas *oee)
+{
+   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
+   sd->ee = oee;
+   _elm_win_need_frame_adjust(sd, ecore_evas_engine_name_get(oee));
+}
+
 EAPI Evas_Object *
 elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
-   if (type == ELM_WIN_INLINED_IMAGE)
+   const Efl_Class *klass = MY_CLASS;
+
+   switch ((int) type)
      {
-        return efl_add(EFL_UI_WIN_INLINED_CLASS, parent,
-                       efl_canvas_object_legacy_ctor(efl_added),
-                       efl_ui_win_name_set(efl_added, name));
+      case ELM_WIN_INLINED_IMAGE: klass = EFL_UI_WIN_INLINED_CLASS; break;
+      case ELM_WIN_SOCKET_IMAGE: klass = EFL_UI_WIN_SOCKET_CLASS; break;
+      default: break;
      }
 
-   return efl_add(MY_CLASS, parent,
+   return efl_add(klass, parent,
                  efl_canvas_object_legacy_ctor(efl_added),
                  efl_ui_win_name_set(efl_added, name),
                  efl_ui_win_type_set(efl_added, type));
@@ -7984,7 +7974,7 @@ elm_win_fake_add(Ecore_Evas *ee)
 {
    return efl_add(MY_CLASS, NULL,
                  efl_canvas_object_legacy_ctor(efl_added),
-                 elm_win_fake_canvas_set(efl_added, ee),
+                 _fake_canvas_set(efl_added, ee),
                  efl_ui_win_name_set(efl_added, NULL),
                  efl_ui_win_type_set(efl_added, ELM_WIN_FAKE));
 }
@@ -8169,7 +8159,20 @@ elm_win_keygrab_unset(Elm_Win *obj, const char *key,
                                    EFL_INPUT_MODIFIER_NONE);
 }
 
+EAPI Eina_Bool
+elm_win_socket_listen(Efl_Ui_Win *obj, const char *svcname, int svcnum, Eina_Bool svcsys)
+{
+   return efl_ui_win_socket_listen(obj, svcname, svcnum, svcsys);
+}
+
 // deprecated
+
+EAPI void
+elm_win_fake_canvas_set(Evas_Object *obj EINA_UNUSED, Ecore_Evas *oee EINA_UNUSED)
+{
+   ERR("Calling deprecrated function '%s'", __FUNCTION__);
+}
+
 EAPI void
 elm_win_name_set(Evas_Object *obj, const char *name)
 {

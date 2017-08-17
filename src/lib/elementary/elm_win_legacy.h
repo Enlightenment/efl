@@ -68,8 +68,8 @@ typedef Efl_Ui_Win_Type       Elm_Win_Type;
 #define ELM_WIN_COMBO                EFL_UI_WIN_COMBO
 #define ELM_WIN_DND                  EFL_UI_WIN_DND
 #define ELM_WIN_INLINED_IMAGE        14
-#define ELM_WIN_SOCKET_IMAGE         EFL_UI_WIN_SOCKET_IMAGE
-#define ELM_WIN_FAKE                 EFL_UI_WIN_FAKE
+#define ELM_WIN_SOCKET_IMAGE         15
+#define ELM_WIN_FAKE                 16 /**< See elm_win_fake_add(). @since 1.13 */
 #define ELM_WIN_NAVIFRAME_BASIC      EFL_UI_WIN_NAVIFRAME_BASIC
 
 typedef Efl_Ui_Win_Keyboard_Mode        Elm_Win_Keyboard_Mode;
@@ -1028,8 +1028,10 @@ EAPI Evas_Object *elm_win_inlined_image_object_get(const Evas_Object *obj);
  * @param[in] oee
  *
  * @ingroup Elm_Win
+ *
+ * @deprecated
  */
-EAPI void elm_win_fake_canvas_set(Evas_Object *obj, Ecore_Evas *oee);
+EAPI void elm_win_fake_canvas_set(Evas_Object *obj, Ecore_Evas *oee) EINA_DEPRECATED;
 
 /**
  * Get the Ecore_Window of an Evas_Object
@@ -1129,3 +1131,20 @@ EAPI Eina_Bool elm_win_keygrab_unset(Elm_Win *obj, const char *key, Evas_Modifie
  * @since 1.20
  */
 EAPI Evas_Object *elm_win_get(Evas_Object *obj);
+
+/**
+ * @brief Create a socket to provide the service for Plug widget.
+ *
+ * @param[in] svcname The name of the service to be advertised. Eensure that it
+ * is unique (when combined with @c svcnum) otherwise creation may fail.
+ * @param[in] svcnum A number (any value, 0 being the common default) to
+ * differentiate multiple instances of services with the same name.
+ * @param[in] svcsys A boolean that if true, specifies to create a system-wide
+ * service all users can connect to, otherwise the service is private to the
+ * user id that created the service.
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI Eina_Bool elm_win_socket_listen(Efl_Ui_Win *obj, const char *svcname, int svcnum, Eina_Bool svcsys);

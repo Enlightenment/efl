@@ -1,0 +1,31 @@
+class Efl.Ui.Win_Socket (Efl.Ui.Win)
+{
+   [[An off-screen window to be displayed in a remote process.
+
+     The window is rendered onto an image buffer to be displayed in another
+     process' plug image object. No actual window is created for this type. The
+     window contents can then be sent over a socket so that another process
+     displays it inside a plug image.
+   ]]
+   methods {
+      socket_listen {
+         [[Create a socket to provide the service for Plug widget.]]
+         return: bool; [[$true on success, $false otherwise]]
+         params {
+            @in svcname: string; [[The name of the service to be advertised.
+                                   Ensure that it is unique (when combined with
+                                   $svcnum) otherwise creation may fail.]]
+            @in svcnum: int; [[A number (any value, 0 being the common default)
+                               to differentiate multiple instances of services
+                               with the same name.]]
+            @in svcsys: bool; [[A boolean that if true, specifies to create a
+                                system-wide service all users can connect to,
+                                otherwise the service is private to the user
+                                id that created the service.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.finalize;
+   }
+}
