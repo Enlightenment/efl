@@ -650,7 +650,7 @@ ecore_evas_sdl_new_internal(const char* name, int w, int h, int fullscreen,
 EAPI Ecore_Evas*
 ecore_evas_sdl16_new_internal(const char* name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int fullscreen EINA_UNUSED, int hwsurface EINA_UNUSED, int noframe EINA_UNUSED, int alpha EINA_UNUSED)
 {
-   ERR("OUTCH !");
+   ERR("OUCH !");
    return NULL;
 }
 
