@@ -119,13 +119,59 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             disabled: bool(false); [[$true if the orientation mode is disabled.]]
          }
       }
-
+      // FIXME: This property may be simply removed from EO (replaced by focus manager stuff)
       @property focus {
-      	 [[Focus property]]
+         [[Whether the object is focused for inputs.
+
+           If an object is focused it will be the first to receive keyboard
+           inputs. Only visible, non-disabled objects can be focused.
+
+           Focus can be disabled by setting @.focus_allow to $false.
+         ]]
+         set {
+            [[Set or unsets the focus on this widget.
+
+              Note: When you set focus to this object, if it can handle focus,
+              will take the focus away from the one who had it previously and
+              will, for now on, be the one receiving input events. Unsetting
+              focus will remove the focus from this object, passing it back to
+              the previous element as defined by the focus manager policy.
+            ]]
+         }
+         get {
+            [[Gets whether this object is currently focused.]]
+         }
          values {
-            focus: bool; [[$true if the widget has focus, $false otherwise]]
+            focus: bool(false); [[Whether the object is focused.]]
          }
       }
+      // FIXME: focus_allow? can_focus? focusable?
+      // FIXME: should it be protected? i.e. only set by the widget itself?
+      @property focus_allow {
+         [[The ability for a widget to be focused.
+
+           Unfocusable objects do nothing when programmatically focused. The
+           nearest focusable parent object the one really getting focus. Also,
+           when they receive mouse input, they will get the event, but not take
+           away the focus from where it was previously.
+
+           Note: Objects which are meant to be interacted with by input events
+           are created able to be focused, by default. All the others are not.
+
+           This property's default value depends on the widget (eg. a box is
+           not focusable, but a button is).
+         ]]
+         set {
+            legacy: elm_widget_can_focus_set;
+         }
+         get {
+            legacy: elm_widget_can_focus_get;
+         }
+         values {
+            can_focus: bool; [[Whether the object is focusable.]]
+         }
+      }
+
       @property drag_lock_y {
       	 [[Lock the Y axis from being dragged]]
          values {
@@ -183,23 +229,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             values {
                objs: const(list<Efl.Canvas.Object>); [[Chain of objects]]
             }
-         }
-      }
-      @property can_focus {
-         [[The ability for an Elementary object to be focused.
-
-           Unfocusable objects do nothing when programmatically
-           focused, being the nearest focusable parent object the one
-           really getting focus. Also, when they receive mouse input, they
-           will get the event, but not take away the focus from where it
-           was previously.
-
-           Note: Objects which are meant to be interacted with by input
-           events are created able to be focused, by default. All the
-           others are not.]]
-         values {
-            can_focus: bool; [[$true if the object can be focused,
-                               $false if not.]]
          }
       }
       @property highlight_in_theme {
@@ -295,7 +324,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
       }
       @property orientation {
-      	 [[Widget orientation]]
+         [[Widget orientation]]
          set {
          }
          values {
