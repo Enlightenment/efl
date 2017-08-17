@@ -68,7 +68,7 @@ evas_common_rectangle_draw_prepare(Cutout_Rects **reuse, const RGBA_Image *dst, 
        evas_common_draw_context_clip_clip(dc, x, y, w, h);
        /* our clip is 0 size.. abort */
        if ((dc->clip.w > 0) && (dc->clip.h > 0))
-	 *reuse = evas_common_draw_context_apply_cutouts(dc, *reuse);
+         *reuse = evas_common_draw_context_apply_cutouts(dc, *reuse);
      }
 
    return EINA_TRUE;
@@ -87,8 +87,8 @@ evas_common_rectangle_draw_do(const Cutout_Rects *reuse,
    if (!reuse)
      {
         evas_common_draw_context_clip_clip(dc,
-					   clip->x, clip->y,
-					   clip->w, clip->h);
+                                           clip->x, clip->y,
+                                           clip->w, clip->h);
         rectangle_draw_internal(dst, dc, x, y, w, h);
         return;
      }
@@ -120,18 +120,18 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_RECT
    pixman_op_t op = PIXMAN_OP_SRC; // _EVAS_RENDER_COPY
-   
+
    if (dc->render_op == _EVAS_RENDER_BLEND)
      op = PIXMAN_OP_OVER;
 
    if ((dst->pixman.im) && (dc->col.pixman_color_image))
      {
-        pixman_image_composite(op, dc->col.pixman_color_image, NULL, 
-                               dst->pixman.im, x, y, 0, 0, 
+        pixman_image_composite(op, dc->col.pixman_color_image, NULL,
+                               dst->pixman.im, x, y, 0, 0,
                                x, y, w, h);
      }
    else
-# endif     
+# endif
 #endif
      {
         if (mask_ie)
