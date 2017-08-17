@@ -536,6 +536,7 @@ _evas_shm_surface_data_get(Surface *s, int *w, int *h)
 void
 _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Eina_Bool hidden)
 {
+   Ecore_Wl2_Window *win;
    struct wl_surface *wls;
    Shm_Surface *surf;
    Shm_Leaf *leaf;
@@ -546,11 +547,12 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Ei
    leaf = surf->current;
    if (!leaf) return;
 
-   wls = ecore_wl2_window_surface_get(s->info->info.wl2_win);
+   win = s->info->info.wl2_win;
+   wls = ecore_wl2_window_surface_get(win);
 
    if (!hidden)
      {
-        wl_surface_attach(wls, leaf->data->buffer, 0, 0);
+        ecore_wl2_window_buffer_attach(win, leaf->data->buffer, 0, 0, EINA_FALSE);
 
         _evas_surface_damage(wls, surf->compositor_version,
                              leaf->w, leaf->h, rects, count);
