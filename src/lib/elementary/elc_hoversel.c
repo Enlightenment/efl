@@ -1003,12 +1003,12 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(hoversel, Elm_Hoversel_Data)
 
 EOLIAN static Eina_Bool
-_elm_hoversel_elm_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_hoversel_elm_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
 {
-   if (elm_obj_widget_event(efl_super(obj, MY_CLASS), eo_event, src, type, event_info))
+   if (elm_obj_widget_event(efl_super(obj, MY_CLASS), eo_event, src))
      return EINA_TRUE; // note: this was FALSE but likely wrong
 
-   return _hoversel_elm_widget_widget_event(obj, sd, eo_event, src, type, event_info);
+   return _hoversel_elm_widget_widget_event(obj, sd, eo_event, src);
 }
 
 static void

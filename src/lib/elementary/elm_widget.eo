@@ -4,7 +4,6 @@ import efl_input_types;
 /* FIXME: This shouldn't be here. */
 type list_data_get_func_type: __undefined_type; [[Elementary list data get function type]]
 type region_hook_func_type: __undefined_type; [[Elementary region hook function type]]
-type @extern Evas.Callback_Type: __undefined_type; [[Evas event type]]
 
 enum Elm.Activate
 {
@@ -81,6 +80,26 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
                [[Name of the style to use. Refer to each widget's documentation
                  for the available style names, or to the themes in use.]]
          }
+      }
+      widget_event @protected {
+         [[Virtual function handling input events on the widget.
+
+           This method should return $true if the event has been processed.
+           Only key down, key up and pointer wheel events will be propagated
+           through this function.
+
+           It is common for the event to be also marked as processed as in
+           @Efl.Input.Event.processed, if this operation was successful. This
+           makes sure other widgets will not also process this input event.
+         ]]
+         params {
+            @in eo_event: const(ptr(Efl.Event));
+               [[EO event struct with an Efl.Input.Event as info.]]
+            @in source: Efl.Canvas.Object;
+               [[Source object where the event originated. Often same as this.]]
+         }
+         return: bool; [[$true on success, $false otherwise]]
+         legacy: null;
       }
 
       @property focus {
@@ -492,17 +511,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
       focus_direction_manager_is {
          [['Virtual' function which checks if handling of passing focus to sub-objects in given direction is supported by widget.]]
-         return: bool; [[$true on success, $false otherwise]]
-         legacy: null;
-      }
-      widget_event {
-         [['Virtual' function handling input events on the widget.]]
-         params {
-            @in eo_event: const(ptr(Efl.Event)); [[EO event info with an Efl.Input.Event]]
-            @in source: Efl.Canvas.Object; [[Source object]]
-            @in type: Evas.Callback_Type; [[Callback type]]
-            @in event_info: void_ptr; [[Event info]]
-         }
          return: bool; [[$true on success, $false otherwise]]
          legacy: null;
       }

@@ -567,13 +567,13 @@ _wheel_indicator_timer_cb(void *data)
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(slider, Efl_Ui_Slider_Data)
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd, const Efl_Event *eo_event, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
 {
    Eo *ev = eo_event->info;
 
    if (eo_event->desc == EFL_EVENT_KEY_DOWN)
      {
-        _slider_elm_widget_widget_event(obj, sd, eo_event, src, type, event_info);
+        _slider_elm_widget_widget_event(obj, sd, eo_event, src);
      }
    else if (eo_event->desc == EFL_EVENT_KEY_UP)
      {

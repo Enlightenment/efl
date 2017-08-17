@@ -109,9 +109,7 @@ static void
 _on_sub_obj_del(void *data, const Efl_Event *event);
 static void
 _on_sub_obj_hide(void *data, const Efl_Event *event);
-static void
-_propagate_event(void *data, const Efl_Event *event);
-static Eina_Bool elm_widget_event_propagate(Evas_Object *obj, const Efl_Event *eo_event, Evas_Callback_Type type, void *event_info, Evas_Event_Flags *event_flags);
+static void _propagate_event(void *data, const Efl_Event *eo_event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
                           { EFL_EVENT_DEL, _on_sub_obj_del },
@@ -984,11 +982,9 @@ _propagate_y_drag_lock(Evas_Object *obj,
      }
 }
 
-static void
-_propagate_event(void *data EINA_UNUSED, const Efl_Event *event)
+static Eina_Bool
+_propagate_event_legacy(Eo *parent, const Efl_Event *event, Eo *obj, Elm_Event_Cb_Data *ecd)
 {
-   Eo *obj = event->object;
-   INTERNAL_ENTRY;
    Evas_Callback_Type type;
    Evas_Event_Flags *event_flags, prev_flags;
    union {
@@ -998,38 +994,40 @@ _propagate_event(void *data EINA_UNUSED, const Efl_Event *event)
       void                   *any;
    } event_info;
 
-   if ((evas_focus_get(evas_object_evas_get(obj)) != elm_widget_top_get(obj)) &&
-       efl_isa(obj, EFL_UI_WIN_CLASS))
-     return;
-
    if (event->desc == EFL_EVENT_KEY_DOWN)
      {
         event_info.down = efl_input_legacy_info_get(event->info);
-        EINA_SAFETY_ON_NULL_RETURN(event_info.down);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(event_info.down, EINA_FALSE);
         type = EVAS_CALLBACK_KEY_DOWN;
         event_flags = &event_info.down->event_flags;
      }
    else if (event->desc == EFL_EVENT_KEY_UP)
      {
         event_info.up = efl_input_legacy_info_get(event->info);
-        EINA_SAFETY_ON_NULL_RETURN(event_info.up);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(event_info.up, EINA_FALSE);
         type = EVAS_CALLBACK_KEY_UP;
         event_flags = &event_info.up->event_flags;
      }
    else if (event->desc == EFL_EVENT_POINTER_WHEEL)
      {
         event_info.wheel = efl_input_legacy_info_get(event->info);
-        EINA_SAFETY_ON_NULL_RETURN(event_info.wheel);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(event_info.wheel, EINA_FALSE);
         type = EVAS_CALLBACK_MOUSE_WHEEL;
         event_flags = &event_info.wheel->event_flags;
      }
    else
-     return;
+     return EINA_FALSE;
 
    prev_flags = *event_flags;
-   elm_widget_event_propagate(obj, event, type, event_info.any, event_flags);
-   if (prev_flags != *event_flags)
-     efl_input_event_flags_set(event->info, *event_flags);
+   if (ecd->func((void *)ecd->data, parent, obj, type, event_info.any) ||
+       (event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD)))
+     {
+        if (prev_flags != *event_flags)
+          efl_input_event_flags_set(event->info, *event_flags);
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
 }
 
 /**
@@ -2002,22 +2000,22 @@ elm_widget_event_callback_del(Eo *obj, Elm_Event_Cb func, const void *data)
    return NULL;
 }
 
-static Eina_Bool
-elm_widget_event_propagate(Eo *obj, const Efl_Event *eo_event,
-                           Evas_Callback_Type type, void *event_info,
-                           Evas_Event_Flags *event_flags)
+static void
+_propagate_event(void *data EINA_UNUSED, const Efl_Event *eo_event)
 {
+   Evas_Object *obj = eo_event->object;
    Evas_Object *parent = obj;
    Elm_Event_Cb_Data *ecd;
    Eina_List *l, *l_prev;
 
-   while (parent &&
-          (!(event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))))
-     {
-        ELM_WIDGET_CHECK(parent) EINA_FALSE;
-        Elm_Widget_Smart_Data *sd = efl_data_scope_get(parent, MY_CLASS);
+   if ((evas_focus_get(evas_object_evas_get(obj)) != elm_widget_top_get(obj)) &&
+       efl_isa(obj, EFL_UI_WIN_CLASS))
+     return;
 
-        Eina_Bool int_ret = EINA_FALSE;
+   while (parent && !efl_input_processed_get(eo_event->info))
+     {
+        Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(parent, MY_CLASS);
+        if (!sd) return;
 
         if (elm_widget_disabled_get(obj))
           {
@@ -2025,19 +2023,17 @@ elm_widget_event_propagate(Eo *obj, const Efl_Event *eo_event,
              continue;
           }
 
-        int_ret = elm_obj_widget_event(parent, eo_event, obj, type, event_info);
-        if (int_ret) return EINA_TRUE;
+        if (elm_obj_widget_event(parent, eo_event, obj))
+          return;
 
         EINA_LIST_FOREACH_SAFE(sd->event_cb, l, l_prev, ecd)
           {
-             if (ecd->func((void *)ecd->data, parent, obj, type, event_info) ||
-                 (event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD)))
-                return EINA_TRUE;
+             if (_propagate_event_legacy(parent, eo_event, obj, ecd))
+               return;
           }
+
         parent = sd->parent_obj;
      }
-
-   return EINA_FALSE;
 }
 
 /**
@@ -6210,7 +6206,7 @@ _elm_widget_disable(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *source EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
+_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *source EINA_UNUSED)
 {
    return EINA_FALSE;
 }
