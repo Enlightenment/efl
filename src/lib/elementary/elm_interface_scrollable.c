@@ -2930,6 +2930,30 @@ _elm_scroll_can_scroll(Elm_Scrollable_Smart_Interface_Data *sid,
    return EINA_FALSE;
 }
 
+static inline void
+_elm_widget_parents_bounce_get(Eo *obj, Eina_Bool *horiz, Eina_Bool *vert)
+{
+   Evas_Object *parent_obj = obj;
+   Eina_Bool h = EINA_FALSE, v = EINA_FALSE;
+
+   *horiz = EINA_FALSE;
+   *vert = EINA_FALSE;
+
+   do
+     {
+        parent_obj = elm_widget_parent_get(parent_obj);
+        if ((!parent_obj) || (!efl_isa(parent_obj, ELM_WIDGET_CLASS))) break;
+
+        if (efl_isa(parent_obj, ELM_INTERFACE_SCROLLABLE_MIXIN))
+          {
+             elm_interface_scrollable_bounce_allow_get(parent_obj, &h, &v);
+             if (h) *horiz = EINA_TRUE;
+             if (v) *vert = EINA_TRUE;
+          }
+     }
+   while (parent_obj);
+}
+
 static Eina_Bool
 _elm_scroll_post_event_move(void *data,
                             Evas *e EINA_UNUSED)
@@ -2940,7 +2964,7 @@ _elm_scroll_post_event_move(void *data,
 
    if (!sid->down.want_dragged) return EINA_TRUE;
 
-   elm_widget_parents_bounce_get(sid->obj, &horiz, &vert);
+   _elm_widget_parents_bounce_get(sid->obj, &horiz, &vert);
    if (sid->down.hold_parent)
      {
         if ((sid->down.dir_x) && (horiz || !sid->bounce_horiz) &&
