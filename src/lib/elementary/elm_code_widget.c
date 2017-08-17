@@ -1734,16 +1734,18 @@ _elm_code_widget_scroll_event_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED,
-                                         Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
+_elm_code_widget_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED, const Efl_Event *eo_event,
+                                         Evas_Object *src EINA_UNUSED, Evas_Callback_Type type EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Event_Key_Down *ev = event_info;
+   Eo *ev = eo_event->info;
 
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   if (efl_input_processed_get(ev)) return EINA_FALSE;
+   if (eo_event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE;
 
-   if (!strcmp(ev->key, "BackSpace"))
+   // FIXME: This should use key bindings and the standard implementation!
+   if (eina_streq(efl_input_key_get(ev), "BackSpace"))
      {
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        efl_input_processed_set(ev, EINA_TRUE);
         return EINA_TRUE;
      }
 

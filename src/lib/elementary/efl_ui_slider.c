@@ -563,38 +563,33 @@ _wheel_indicator_timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
+// _slider_elm_widget_widget_event
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(slider, Efl_Ui_Slider_Data)
+
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd, const Efl_Event *eo_event, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
-   (void) src;
+   Eo *ev = eo_event->info;
 
-   if (type == EVAS_CALLBACK_KEY_DOWN)
+   if (eo_event->desc == EFL_EVENT_KEY_DOWN)
      {
-        Evas_Event_Key_Down *ev = event_info;
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-        if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
-          return EINA_FALSE;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        _slider_elm_widget_widget_event(obj, sd, eo_event, src, type, event_info);
      }
-   else if (type == EVAS_CALLBACK_KEY_UP)
+   else if (eo_event->desc == EFL_EVENT_KEY_UP)
      {
-          _popup_hide(obj, NULL, NULL, NULL);
+        _popup_hide(obj, NULL, NULL, NULL);
         return EINA_FALSE;
      }
-   else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
+   else if (eo_event->desc == EFL_EVENT_POINTER_WHEEL)
      {
-        Evas_Event_Mouse_Wheel *mev = event_info;
-        if (mev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-
-        if (mev->z < 0) _drag_up(obj, NULL, NULL, NULL);
+        if (efl_input_processed_get(ev)) return EINA_FALSE;
+        if (efl_input_pointer_wheel_delta_get(ev) < 0)
+          _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
-        mev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        _popup_show(obj, NULL, NULL, NULL);
-        _slider_update(obj, EINA_TRUE);
+        efl_input_processed_set(ev, EINA_TRUE);
+        ELM_SAFE_FREE(sd->wheel_indicator_timer, ecore_timer_del);
         sd->wheel_indicator_timer =
            ecore_timer_add(0.5, _wheel_indicator_timer_cb, obj);
-        return EINA_TRUE;
 
      }
    else return EINA_FALSE;
