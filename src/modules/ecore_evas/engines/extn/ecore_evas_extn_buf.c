@@ -55,7 +55,7 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
      {
         b->lockfd = eina_file_mkstemp("ee-lock-XXXXXX", &tmp);
         if (b->lockfd < 0) goto err;
-        b->lock = eina_stringshare_add(file);
+        b->lock = eina_stringshare_add(tmp);
         if (!b->lock) goto err;
         b->fd = shm_open(b->file, O_RDWR | O_CREAT | O_EXCL, mode);
         if (b->fd < 0) goto err;
@@ -68,9 +68,10 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
      }
    b->addr = mmap(NULL, b->size, prot, MAP_SHARED, b->fd, 0);
    if (b->addr == MAP_FAILED) goto err;
+   eina_tmpstr_del(tmp);
    return b;
 err:
-   if (tmp) eina_tmpstr_del(tmp);
+   eina_tmpstr_del(tmp);
    _extnbuf_free(b);
    return NULL;
 }
@@ -129,7 +130,7 @@ _extnbuf_lock(Extnbuf *b, int *w, int *h, int *stride)
              filelock.l_whence = SEEK_SET;
              filelock.l_start = 0;
              filelock.l_len = 0;
-             if (fcntl(b->lockfd, F_SETLKW, &filelock) == -1)
+             if (fcntl(b->lockfd, F_SETLK, &filelock) == -1)
                {
                   ERR("lock take fail");
                   return NULL;
