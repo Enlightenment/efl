@@ -29,6 +29,11 @@ group { name: "e/widgets/dialog/main";
             image.normal: "separator_horiz.png";
             fill.smooth: 0;
             fixed: 0 1;
+            link.base: "e,state,buttons,on" "e";
+         }
+         desc { "hid"; hid;
+            image.normal: "separator_horiz.png";
+            link.base: "e,state,buttons,off" "e";
          }
       }
       part { name: "e.swallow.icon"; type: SWALLOW;
@@ -51,14 +56,23 @@ group { name: "e/widgets/dialog/main";
          description { state: "default" 0.0;
             rel1.offset: 4 4;
             rel1.to_x: "base";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -5 -8;
-            rel2.to_y: "e.swallow.buttons";
+            rel2.to: "button.spacer";
          }
          description { state: "icon" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "e.swallow.icon";
+         }
+      }
+      spacer { "button.spacer";
+         desc {
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -5 -8;
+            rel2.to_y: "e.swallow.buttons";
+            link.base: "e,state,buttons,on" "e";
+         }
+         desc { "hid";
+            link.base: "e,state,buttons,off" "e";
          }
       }
       part { name: "e.swallow.buttons"; type: SWALLOW;
@@ -70,6 +84,7 @@ group { name: "e/widgets/dialog/main";
             rel2.offset: -5 -5;
             fixed: 0 1;
          }
+         desc { "hid"; hid; }
       }
    }
    programs {
