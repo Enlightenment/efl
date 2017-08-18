@@ -234,7 +234,7 @@ _colorclass_activate(void *data, const Efl_Event *event)
 static void
 _colorclass_apply(Colorclass_UI *cc)
 {
-   if (cc->changed && (!cc->change_reset))
+   if ((cc->changed && (!cc->change_reset)) || cc->exist)
      _elm_config->color_overlays = eina_list_prepend(_elm_config->color_overlays, cc->current);
    else
      {
