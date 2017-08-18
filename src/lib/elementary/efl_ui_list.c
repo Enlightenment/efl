@@ -170,7 +170,6 @@ _child_added_cb(void *data, const Efl_Event *event)
      _insert_at(pd, index, evt->child);
 
    evas_object_smart_changed(pd->obj);
-   _efl_ui_list_custom_layout(pd->obj);
 }
 
 static void
@@ -185,7 +184,6 @@ _child_removed_cb(void *data, const Efl_Event *event)
      _remove_at(pd, index);
 
    evas_object_smart_changed(pd->obj);
-   _efl_ui_list_custom_layout(pd->obj);
 }
 
 static void
@@ -406,8 +404,10 @@ _on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
                     Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Efl_Ui_List_Item *item = data;
-   EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
+   EINA_SAFETY_ON_NULL_RETURN(item);
+//   if (obj != item->layout) { printf("NOOOOOOOOOOOOOOOOOOOOOO\n"); return; }
 
+   EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
    _item_calc(pd, item);
    evas_object_smart_changed(item->list);
 }
@@ -483,9 +483,13 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
      item->layout = *(void**)eina_inarray_pop(recycle_layouts);
    else
      {
+        Eina_Stringshare *sselected = eina_stringshare_add("selected");
         item->layout = efl_ui_factory_create(pd->factory, item->model, pd->obj);
-        if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
+
+        if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE && _efl_model_properties_has(item->model, sselected))
           efl_ui_model_connect(item->layout, "signal/elm,state,%v", "selected");
+
+        eina_stringshare_del(sselected);
      }
    item->future = NULL;
    item->index = idx + pd->realized.start;
@@ -511,13 +515,13 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
 static void
 _child_transient_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item)
 {
+   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
    efl_event_callback_del(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item);
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item);
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
 
    efl_event_callback_del(item->layout, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _on_item_focused, item);
 
-   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
    if (item->selected)
      pd->selected_items = eina_list_remove(pd->selected_items, item);
 }
@@ -526,6 +530,7 @@ static void
 _child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item, Eina_Inarray* recycle_layouts)
 {
   _child_transient_release(pd, item);
+  item->list = NULL;
 
   _layout_unrealize(pd, item);
   if(item->future)
@@ -542,7 +547,6 @@ _child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item, Eina_Inarray* recyc
     pd->realized.w -= item->w;
   else
     pd->realized.h -= item->h;
-  item->list = NULL;
 }
 
 static void
@@ -699,11 +703,12 @@ _resize_children(Efl_Ui_List_Data* pd, int removing_before, int removing_after,
             to_first += to_begin;
             Efl_Ui_List_Item* from_last = from_first + copy_size;
             Efl_Ui_List_Item* to_last = to_first + copy_size;
-            memmove(to_first, from_first, copy_size*sizeof(Efl_Ui_List_Item));
+            Efl_Ui_List_Item* from_first_t = from_first;
             for(;from_first != from_last;++from_first)
               {
                 _child_transient_release(pd, from_first);
               }
+            memmove(to_first, from_first_t, copy_size*sizeof(Efl_Ui_List_Item));
             for(;to_first != to_last;++to_first)
               {
                 _child_transient_setup(pd, to_first);
@@ -802,7 +807,7 @@ _children_then(void * data, Efl_Event const* event)
      }
 
    _resize_children(pd, removing_before, removing_after, acc);
-   _efl_ui_list_custom_layout(pd->obj);
+   evas_object_smart_changed(pd->obj);
 }
 
 static void
@@ -948,7 +953,7 @@ _efl_ui_list_efl_gfx_position_set(Eo *obj, Efl_Ui_List_Data *pd, Evas_Coord x, E
 
    evas_object_move(pd->hit_rect, x, y);
    evas_object_move(pd->pan.obj, x - pd->pan.x, y - pd->pan.y);
-   _efl_ui_list_custom_layout(obj);
+   evas_object_smart_changed(pd->obj);
 }
 
 EOLIAN static void
@@ -982,7 +987,7 @@ _efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Evas_Coord w, Evas_
    if (load && _update_items(obj, pd))
      return;
 
-   _efl_ui_list_custom_layout(obj);
+   evas_object_smart_changed(pd->obj);
 }
 
 EOLIAN static void
