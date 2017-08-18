@@ -35,6 +35,58 @@ static void _ecore_evas_wl_common_rotation_set(Ecore_Evas *ee, int rotation, int
 
 /* local functions */
 static void
+_anim_cb_tick(Ecore_Wl2_Window *win EINA_UNUSED, uint32_t timestamp EINA_UNUSED, void *data)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Wl_Data *edata;
+
+   edata = ee->engine.data;
+
+   if (!edata->ticking) return;
+
+   ecore_evas_animator_tick(ee, NULL, ecore_loop_time_get());
+}
+
+static void
+_ecore_evas_wl_common_animator_register(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Wl_Data *edata;
+
+   edata = (Ecore_Evas_Engine_Wl_Data *)ee->engine.data;
+
+   EINA_SAFETY_ON_TRUE_RETURN(edata->ticking);
+
+   edata->frame = ecore_wl2_window_frame_callback_add(edata->win,
+                                                      _anim_cb_tick, ee);
+   if (!ecore_wl2_window_pending_get(edata->win) && !ee->in_async_render)
+     ecore_wl2_window_commit(edata->win, EINA_TRUE);
+   edata->ticking = EINA_TRUE;
+}
+
+static void
+_ecore_evas_wl_common_animator_unregister(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Wl_Data *edata;
+
+   edata = ee->engine.data;
+   edata->ticking = EINA_FALSE;
+   ecore_wl2_window_frame_callback_del(edata->frame);
+   edata->frame = NULL;
+}
+
+static void
+_ecore_evas_wl_common_evas_changed(Ecore_Evas *ee, Eina_Bool changed)
+{
+   Ecore_Evas_Engine_Wl_Data *edata;
+
+   if (changed) return;
+
+   edata = (Ecore_Evas_Engine_Wl_Data *)ee->engine.data;
+   if (edata->ticking && !ecore_wl2_window_pending_get(edata->win))
+     ecore_wl2_window_commit(edata->win, EINA_TRUE);
+}
+
+static void
 _ecore_evas_wl_common_state_update(Ecore_Evas *ee)
 {
    if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
@@ -158,8 +210,6 @@ _ecore_evas_wl_common_cb_disconnect(void *data EINA_UNUSED, int type EINA_UNUSED
         Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
 
         if (wdata->display != ev->display) continue;
-        if (wdata->anim_callback) wl_callback_destroy(wdata->anim_callback);
-        wdata->anim_callback = NULL;
         wdata->sync_done = EINA_FALSE;
         wdata->defer_show = EINA_TRUE;
         ee->visible = EINA_FALSE;
@@ -475,7 +525,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
                wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
                                               wdata->win->configure_serial);
              wdata->win->configure_serial = 0;
-             ecore_wl2_window_commit(wdata->win, EINA_TRUE);
           }
         return ECORE_CALLBACK_RENEW;
      }
@@ -552,6 +601,8 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
    einfo->info.hidden = EINA_FALSE;
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
+
+   ecore_evas_manual_render_set(ee, 0);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1210,7 +1261,8 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    ee_list = eina_list_remove(ee_list, ee);
 
    eina_list_free(wdata->regen_objs);
-   if (wdata->anim_callback) wl_callback_destroy(wdata->anim_callback);
+   if (wdata->frame) ecore_wl2_window_frame_callback_del(wdata->frame);
+   wdata->frame = NULL;
    ecore_event_handler_del(wdata->sync_handler);
    if (wdata->win) ecore_wl2_window_free(wdata->win);
    ecore_wl2_display_disconnect(wdata->display);
@@ -1635,45 +1687,20 @@ _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore)
 }
 
 static void
-_anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
-{
-   Ecore_Evas *ee = data;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   wdata = ee->engine.data;
-   wl_callback_destroy(callback);
-   wdata->anim_callback = NULL;
-   ecore_evas_manual_render_set(ee, 0);
-}
-
-static const struct wl_callback_listener _anim_listener =
-{
-   _anim_cb_animate
-};
-
-static void
 _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
-   struct wl_surface *surf;
    int fx, fy;
 
    einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(evas);
    if (!einfo) return;
 
-   surf = ecore_wl2_window_surface_get(einfo->info.wl2_win);
-   if (!surf) return;
-
    wdata = ee->engine.data;
    if (!wdata) return;
 
    if (wdata->win->pending.configure) return;
-
-   wdata->anim_callback = wl_surface_frame(surf);
-   wl_callback_add_listener(wdata->anim_callback, &_anim_listener, ee);
-   ecore_evas_manual_render_set(ee, 1);
 
    if (!ecore_wl2_window_shell_surface_exists(wdata->win)) return;
 
@@ -2027,6 +2054,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
              else
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->h + fh, ee->w + fw);
+             ecore_evas_manual_render(ee);
           }
      }
 
@@ -2076,9 +2104,6 @@ _ecore_evas_wl_common_hide(Ecore_Evas *ee)
    ee->visible = 0;
    ee->should_be_visible = 0;
    ee->draw_ok = EINA_FALSE;
-   if (wdata->anim_callback) wl_callback_destroy(wdata->anim_callback);
-   wdata->anim_callback = NULL;
-   ecore_evas_manual_render_set(ee, 0);
 
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
@@ -2318,10 +2343,10 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
 
    NULL, // aux_hints_set
 
-   NULL, // fn_animator_register
-   NULL, // fn_animator_unregister
+   _ecore_evas_wl_common_animator_register,
+   _ecore_evas_wl_common_animator_unregister,
 
-   NULL, // fn_evas_changed
+   _ecore_evas_wl_common_evas_changed,
    NULL, //fn_focus_device_set
    NULL, //fn_callback_focus_device_in_set
    NULL, //fn_callback_focus_device_out_set
@@ -2490,6 +2515,8 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
      ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);
 
    ee_list = eina_list_append(ee_list, ee);
+
+   ecore_evas_manual_render_set(ee, 1);
 
    return ee;
 

@@ -41,7 +41,7 @@ struct _Ecore_Evas_Engine_Wl_Data
    Ecore_Event_Handler *sync_handler;
    int fx, fy, fw, fh;
    Eina_Rectangle content;
-   struct wl_callback *anim_callback;
+   Ecore_Wl2_Frame_Cb_Handle *frame;
    int x_rel;
    int y_rel;
    uint32_t timestamp;
@@ -64,6 +64,7 @@ struct _Ecore_Evas_Engine_Wl_Data
    Eina_Bool defer_show : 1;
    Eina_Bool reset_pending : 1;
    Eina_Bool activated : 1;
+   Eina_Bool ticking : 1;
 };
 
 /**
