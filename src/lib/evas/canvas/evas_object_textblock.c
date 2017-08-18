@@ -977,9 +977,9 @@ _nodes_clear(const Evas_Object *eo_obj)
  * @param fmt the format to be cleaned, must not be NULL.
  */
 static void
-_format_unref_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
+_format_unref_free(Evas_Object_Protected_Data *evas_o, Evas_Object_Textblock_Format *fmt)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = evas_o;
    fmt->ref--;
    if (fmt->ref > 0) return;
    if (fmt->font.fdesc) evas_font_desc_unref(fmt->font.fdesc);
@@ -1015,7 +1015,10 @@ _image_safe_unref(Evas_Public_Data *e, void *image, Eina_Bool async)
  * @param it the layout item to be freed
  */
 static void
-_item_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Line *ln, Evas_Object_Textblock_Item *it)
+_item_free(Evas_Public_Data *evas,
+      Efl_Canvas_Text_Data *o,
+      Evas_Object_Protected_Data *evas_o,
+      Evas_Object_Textblock_Line *ln, Evas_Object_Textblock_Item *it)
 {
    if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
      {
@@ -1024,12 +1027,10 @@ _item_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Line *ln, Evas_Objec
         evas_common_text_props_content_unref(&ti->text_props);
         if (EINA_UNLIKELY(ti->gfx_filter != NULL))
           {
-             Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-
              if (ti->gfx_filter->output)
                {
-                  Evas *eo_evas = evas_object_evas_get(eo_obj);
-                  Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
+                  //Evas *eo_evas = evas_object_evas_get(eo_obj);
+                  //Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
                   Eina_Bool async = ti->gfx_filter->do_async;
 
                   _image_safe_unref(evas, ti->gfx_filter->output, async);
@@ -1051,7 +1052,7 @@ _item_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Line *ln, Evas_Objec
 
         if (fi->item) eina_stringshare_del(fi->item);
      }
-   _format_unref_free(eo_obj, it->format);
+   _format_unref_free(evas_o, it->format);
    if (ln)
      {
         ln->items = (Evas_Object_Textblock_Item *) eina_inlist_remove(
@@ -2843,6 +2844,8 @@ struct _Ctxt
 {
    Evas_Object *obj;
    Efl_Canvas_Text_Data *o;
+   Evas_Object_Protected_Data *evas_o;
+   Evas_Public_Data *evas;
 
    Evas_Object_Textblock_Paragraph *paragraphs;
    Evas_Object_Textblock_Paragraph *par;
@@ -2884,12 +2887,11 @@ static Evas_Object_Textblock_Format_Item *_layout_do_format(const Evas_Object *o
  * @param fmt The format to adjust - NOT NULL.
  */
 static void
-_layout_format_ascent_descent_adjust(const Evas_Object *eo_obj,
+_layout_format_ascent_descent_adjust(Evas_Object_Protected_Data *obj,
       Evas_Coord *maxascent, Evas_Coord *maxdescent,
       Evas_Object_Textblock_Format *fmt)
 {
    int ascent, descent;
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (fmt->font.font)
      {
@@ -2928,7 +2930,7 @@ _layout_format_ascent_descent_adjust(const Evas_Object *eo_obj,
 }
 
 static void
-_layout_item_max_ascent_descent_calc(const Evas_Object *eo_obj,
+_layout_item_max_ascent_descent_calc(Evas_Object_Protected_Data *obj,
       Evas_Coord *maxascent, Evas_Coord *maxdescent,
       Evas_Object_Textblock_Item *it, Textblock_Position position)
 {
@@ -2954,8 +2956,6 @@ _layout_item_max_ascent_descent_calc(const Evas_Object *eo_obj,
           }
         else
           {
-             Evas_Object_Protected_Data *obj =
-                efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
              asc = ENFN->font_max_ascent_get(ENDT,
                    it->format->font.font);
           }
@@ -2976,8 +2976,6 @@ _layout_item_max_ascent_descent_calc(const Evas_Object *eo_obj,
           }
         else
           {
-             Evas_Object_Protected_Data *obj =
-                efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
              desc = ENFN->font_max_descent_get(ENDT,
                    it->format->font.font);
           }
@@ -2997,7 +2995,7 @@ _layout_item_max_ascent_descent_calc(const Evas_Object *eo_obj,
  * @param position The position inside the textblock
  */
 static void
-_layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
+_layout_item_ascent_descent_adjust(Evas_Object_Protected_Data *obj,
       Evas_Coord *ascent, Evas_Coord *descent,
       Evas_Object_Textblock_Item *it, Evas_Object_Textblock_Format *fmt)
 {
@@ -3029,13 +3027,11 @@ _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
      {
         if (fmt)
           {
-             Evas_Object_Protected_Data *obj =
-               efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
              asc = ENFN->font_ascent_get(ENDT, fmt->font.font);
              desc = ENFN->font_descent_get(ENDT, fmt->font.font);
           }
      }
-   if (fmt) _layout_format_ascent_descent_adjust(eo_obj, &asc, &desc, fmt);
+   if (fmt) _layout_format_ascent_descent_adjust(obj, &asc, &desc, fmt);
 
    if (asc > *ascent) *ascent = asc;
    if (desc > *descent) *descent = desc;
@@ -3215,11 +3211,10 @@ _layout_update_bidi_props(const Efl_Canvas_Text_Data *o,
  * Free the visual lines in the paragraph (logical items are kept)
  */
 static void
-_paragraph_clear(const Evas_Object *obj,
+_paragraph_clear(Evas_Public_Data *evas,
+      Efl_Canvas_Text_Data *o, Evas_Object_Protected_Data *obj,
       Evas_Object_Textblock_Paragraph *par)
 {
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(obj, MY_CLASS);
-
    while (par->lines)
      {
         Evas_Object_Textblock_Line *ln;
@@ -3239,7 +3234,7 @@ _paragraph_clear(const Evas_Object *obj,
                   if (ti->parent.ln == ln)
                     {
                        o->hyphen_items = eina_list_remove_list(o->hyphen_items, i);
-                       _item_free(obj, NULL, _ITEM(ti));
+                       _item_free(evas, o, obj, NULL, _ITEM(ti));
                     }
                }
           }
@@ -3253,16 +3248,17 @@ _paragraph_clear(const Evas_Object *obj,
  * Free the layout paragraph and all of it's lines and logical items.
  */
 static void
-_paragraph_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Paragraph *par)
+_paragraph_free(Evas_Public_Data *evas,
+      Efl_Canvas_Text_Data *o, Evas_Object_Protected_Data *obj,
+      Evas_Object_Textblock_Paragraph *par)
 {
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   _paragraph_clear(eo_obj, par);
+   _paragraph_clear(evas, o, obj, par);
 
      {
         Evas_Object_Textblock_Item *it;
         EINA_LIST_FREE(par->logical_items, it)
           {
-             _item_free(eo_obj, NULL, it);
+             _item_free(evas, o, obj, NULL, it);
           }
      }
 #ifdef BIDI_SUPPORT
@@ -3286,13 +3282,13 @@ _paragraph_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Paragraph *par)
  * @param pars the paragraphs to clean - Not NULL.
  */
 static void
-_paragraphs_clear(const Evas_Object *eo_obj, Evas_Object_Textblock_Paragraph *pars)
+_paragraphs_clear(Ctxt *c)
 {
    Evas_Object_Textblock_Paragraph *par;
 
-   EINA_INLIST_FOREACH(EINA_INLIST_GET(pars), par)
+   EINA_INLIST_FOREACH(EINA_INLIST_GET(c->paragraphs), par)
      {
-        _paragraph_clear(eo_obj, par);
+        _paragraph_clear(c->evas, c->o, c->evas_o, par);
      }
 }
 
@@ -3302,14 +3298,13 @@ _paragraphs_clear(const Evas_Object *eo_obj, Evas_Object_Textblock_Paragraph *pa
  * _paragraphs_clear is that the latter keeps the logical items and the par
  * items, while the former frees them as well.
  *
- * @param obj the evas object - Not NULL.
- * @param pars the paragraphs to clean - Not NULL.
+ * @param c the context - Not NULL.
  */
 static void
-_paragraphs_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Paragraph *pars)
+_paragraphs_free(Evas_Public_Data *evas,
+      Efl_Canvas_Text_Data *o, Evas_Object_Protected_Data *obj,
+      Evas_Object_Textblock_Paragraph *pars)
 {
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-
    o->num_paragraphs = 0;
 
    while (pars)
@@ -3318,7 +3313,7 @@ _paragraphs_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Paragraph *par
 
         par = (Evas_Object_Textblock_Paragraph *) pars;
         pars = (Evas_Object_Textblock_Paragraph *)eina_inlist_remove(EINA_INLIST_GET(pars), EINA_INLIST_GET(par));
-        _paragraph_free(eo_obj, par);
+        _paragraph_free(evas, o, obj, par);
      }
 }
 
@@ -3411,7 +3406,7 @@ _layout_format_pop(Ctxt *c, const char *format)
         if (((format[0] == '/') && !format[1]) ||
               !format[0])
           {
-             _format_unref_free(c->obj, fmt);
+             _format_unref_free(c->evas_o, fmt);
              c->format_stack =
                 eina_list_remove_list(c->format_stack, c->format_stack);
           }
@@ -3436,13 +3431,13 @@ _layout_format_pop(Ctxt *c, const char *format)
                   if (_FORMAT_IS_CLOSER_OF(
                            fmt->fnode->orig_format, format + 1, len - 1))
                     {
-                       _format_unref_free(c->obj, fmt);
+                       _format_unref_free(c->evas_o, fmt);
                        break;
                     }
                   else
                     {
                        redo_nodes = eina_list_prepend(redo_nodes, fmt->fnode);
-                       _format_unref_free(c->obj, fmt);
+                       _format_unref_free(c->evas_o, fmt);
                     }
                }
           }
@@ -3640,12 +3635,11 @@ _layout_line_reorder(Evas_Object_Textblock_Line *line)
 
 /* FIXME: doc */
 static void
-_layout_calculate_format_item_size(const Evas_Object *eo_obj,
+_layout_calculate_format_item_size(Evas_Object_Protected_Data *obj,
       const Evas_Object_Textblock_Format_Item *fi,
       Evas_Coord *maxascent, Evas_Coord *maxdescent,
       Evas_Coord *_y, Evas_Coord *_w, Evas_Coord *_h)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    /* Adjust sizes according to current line height/scale */
    Evas_Coord w, h;
    const char *p, *s;
@@ -3759,9 +3753,9 @@ _layout_last_line_max_descent_adjust_calc(Ctxt *c, const Evas_Object_Textblock_P
                {
                   Evas_Coord asc = 0, desc = 0;
                   Evas_Coord maxasc = 0, maxdesc = 0;
-                  _layout_item_ascent_descent_adjust(c->obj, &asc, &desc,
+                  _layout_item_ascent_descent_adjust(c->evas_o, &asc, &desc,
                         it, it->format);
-                  _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
+                  _layout_item_max_ascent_descent_calc(c->evas_o, &maxasc, &maxdesc,
                         it, c->position);
 
                   if (desc > c->descent)
@@ -3807,7 +3801,7 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    /* If there are no text items yet, calc ascent/descent
     * according to the current format. */
    if (c->ascent + c->descent == 0)
-      _layout_item_ascent_descent_adjust(c->obj, &c->ascent, &c->descent,
+      _layout_item_ascent_descent_adjust(c->evas_o, &c->ascent, &c->descent,
             NULL, fmt);
 
 #ifdef BIDI_SUPPORT
@@ -3822,7 +3816,7 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
           {
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (!fi->formatme) goto loop_advance;
-             _layout_calculate_format_item_size(c->obj, fi, &c->ascent,
+             _layout_calculate_format_item_size(c->evas_o, fi, &c->ascent,
                    &c->descent, &fi->y, &fi->parent.w, &fi->parent.h);
              fi->parent.adv = fi->parent.w;
           }
@@ -3831,9 +3825,9 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              Evas_Coord asc = 0, desc = 0;
              Evas_Coord maxasc = 0, maxdesc = 0;
 
-             _layout_item_ascent_descent_adjust(c->obj, &asc, &desc,
+             _layout_item_ascent_descent_adjust(c->evas_o, &asc, &desc,
                    it, it->format);
-             _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
+             _layout_item_max_ascent_descent_calc(c->evas_o, &maxasc, &maxdesc,
                    it, c->position);
 
              if (asc > c->ascent)
@@ -4099,7 +4093,7 @@ _layout_item_merge_and_free(Ctxt *c,
    item1->parent.merge = EINA_FALSE;
    item1->parent.visually_deleted = EINA_FALSE;
 
-   _item_free(c->obj, NULL, _ITEM(item2));
+   _item_free(c->evas, c->o, c->evas_o, NULL, _ITEM(item2));
 }
 
 /**
@@ -4116,7 +4110,7 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    const Evas_Object_Textblock_Format *fmt = ti->parent.format;
    int shad_sz = 0, shad_dst = 0, out_sz = 0;
    int dx = 0, minx = 0, maxx = 0, shx1, shx2;
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = c->evas_o;
 
    if (fmt->font.font)
      {
@@ -4860,7 +4854,7 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                }
              else
                {
-                  _item_free(c->obj, NULL, _ITEM(c->hyphen_ti));
+                  _item_free(c->evas, c->o, c->evas_o, NULL, _ITEM(c->hyphen_ti));
                   c->hyphen_ti = NULL;
                }
           }
@@ -4965,7 +4959,7 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         /* hyphen item cleanup */
         if (!found_hyphen && c->hyphen_ti)
           {
-             _item_free(c->obj, NULL, _ITEM(c->hyphen_ti));
+             _item_free(c->evas, c->o, c->evas_o, NULL, _ITEM(c->hyphen_ti));
              c->hyphen_ti = NULL;
           }
 
@@ -5115,7 +5109,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
    size_t len = 1; /* The length of _ellip_str */
 
    /* We can free it here, cause there's only one ellipsis item per tb. */
-   if (c->o->ellip_ti) _item_free(c->obj, NULL, _ITEM(c->o->ellip_ti));
+   if (c->o->ellip_ti) _item_free(c->evas, c->o, c->evas_o, NULL, _ITEM(c->o->ellip_ti));
    c->o->ellip_ti = ellip_ti = _layout_text_item_new(c, cur_it->format);
    ellip_ti->parent.text_node = cur_it->text_node;
    ellip_ti->parent.text_pos = cur_it->text_pos;
@@ -5127,7 +5121,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 
    if (ellip_ti->parent.format->font.font)
      {
-        Evas_Object_Protected_Data *obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
+        Evas_Object_Protected_Data *obj = c->evas_o;
         /* It's only 1 char anyway, we don't need the run end. */
         (void) ENFN->font_run_end_get(ENDT,
               ellip_ti->parent.format->font.font, &script_fi, &cur_fi,
@@ -5327,7 +5321,7 @@ _item_get_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, Evas_Coord x, Evas_Coo
 {
    int pos = -1;
    Evas_Object_Textblock_Text_Item *ti;
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = c->evas_o;
 
    ti = (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(it) : NULL;
    if (ti && ti->parent.format->font.font)
@@ -5513,7 +5507,7 @@ _layout_par(Ctxt *c)
           {
              Eina_List *itr, *itr_next;
              Evas_Object_Textblock_Item *ititr, *prev_it = NULL;
-             _paragraph_clear(c->obj, c->par);
+             _paragraph_clear(c->evas, c->o, c->evas_o, c->par);
              EINA_LIST_FOREACH_SAFE(c->par->logical_items, itr, itr_next, ititr)
                {
                   if (ititr->merge && prev_it &&
@@ -5587,7 +5581,7 @@ _layout_par(Ctxt *c)
         it->x = c->x;
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
-             _layout_item_ascent_descent_adjust(c->obj, &c->ascent,
+             _layout_item_ascent_descent_adjust(c->evas_o, &c->ascent,
                    &c->descent, it, it->format);
           }
         else
@@ -5600,10 +5594,10 @@ _layout_par(Ctxt *c)
                   /* If there are no text items yet, calc ascent/descent
                    * according to the current format. */
                   if (c->ascent + c->descent == 0)
-                     _layout_item_ascent_descent_adjust(c->obj, &c->ascent,
+                     _layout_item_ascent_descent_adjust(c->evas_o, &c->ascent,
                            &c->descent, it, it->format);
 
-                  _layout_calculate_format_item_size(c->obj, fi, &c->ascent,
+                  _layout_calculate_format_item_size(c->evas_o, fi, &c->ascent,
                         &c->descent, &fi->y, &fi->parent.w, &fi->parent.h);
                   fi->parent.adv = fi->parent.w;
                }
@@ -5633,14 +5627,14 @@ _layout_par(Ctxt *c)
                {
                   int ascent = 0, descent = 0, maxasc = 0, maxdesc = 0;
 
-                  _layout_item_ascent_descent_adjust(c->obj, &ascent, &descent,
+                  _layout_item_ascent_descent_adjust(c->evas_o, &ascent, &descent,
                         it, it->format);
 
                   if (c->position == TEXTBLOCK_POSITION_START)
-                     _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
+                     _layout_item_max_ascent_descent_calc(c->evas_o, &maxasc, &maxdesc,
                            it, TEXTBLOCK_POSITION_SINGLE);
                   else
-                     _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
+                     _layout_item_max_ascent_descent_calc(c->evas_o, &maxasc, &maxdesc,
                            it, TEXTBLOCK_POSITION_END);
 
                   if (ascent > maxasc) maxasc = ascent;
@@ -6062,7 +6056,7 @@ static void
 _layout_text_append_item_free(Ctxt *c, Layout_Text_Append_Queue *item)
 {
    if (item->format)
-      _format_unref_free(c->obj, item->format);
+      _format_unref_free(c->evas_o, item->format);
    free(item);
 }
 
@@ -6141,7 +6135,7 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
                        c->paragraphs = (Evas_Object_Textblock_Paragraph *)
                           eina_inlist_remove(EINA_INLIST_GET(c->paragraphs),
                                 EINA_INLIST_GET(c->par));
-                       _paragraph_free(eo_obj, c->par);
+                       _paragraph_free(c->evas, c->o, c->evas_o, c->par);
 
                        c->par = tmp_par;
                     }
@@ -6157,7 +6151,7 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
                        c->paragraphs = (Evas_Object_Textblock_Paragraph *)
                           eina_inlist_remove(EINA_INLIST_GET(c->paragraphs),
                                 EINA_INLIST_GET(prev_par));
-                       _paragraph_free(eo_obj, prev_par);
+                       _paragraph_free(c->evas, c->o, c->evas_o, prev_par);
                     }
                   else
                     {
@@ -6231,7 +6225,7 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
                        _layout_text_append_commit(c, &queue, n, rel);
                     }
 
-                  _format_unref_free(c->obj, pfmt);
+                  _format_unref_free(c->evas_o, pfmt);
 
                   if ((c->have_underline2) || (c->have_underline))
                     {
@@ -6279,7 +6273,7 @@ _layout_pre(Ctxt *c, int *style_pad_l, int *style_pad_r, int *style_pad_t,
              c->paragraphs = (Evas_Object_Textblock_Paragraph *)
                 eina_inlist_remove(EINA_INLIST_GET(c->paragraphs),
                       EINA_INLIST_GET(c->par));
-             _paragraph_free(eo_obj, c->par);
+             _paragraph_free(c->evas, c->o, c->evas_o, c->par);
 
              c->par = tmp_par;
           }
@@ -6312,6 +6306,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    Ctxt ctxt, *c;
+   Evas *eo_e;
    int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
 
    LYDBG("ZZ: layout %p %4ix%4i | w=%4i | last_w=%4i --- '%s'\n", eo_obj, w, h, obj->cur->geometry.w, o->last_w, o->markup_text);
@@ -6346,6 +6341,11 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
         _layout_obstacles_update(c);
         c->handle_obstacles = EINA_TRUE;
      }
+
+   c->evas_o = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   eo_e = evas_object_evas_get(eo_obj);
+   c->evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+
    /* Start of logical layout creation */
    /* setup default base style */
      {
@@ -6446,7 +6446,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
            while (c->par)
              {
                 c->par->visible = 0;
-                _paragraph_clear(c->obj, c->par);
+                _paragraph_clear(c->evas, c->o, c->evas_o, c->par);
                 c->par = (Evas_Object_Textblock_Paragraph *)
                    EINA_INLIST_GET(c->par)->next;
              }
@@ -6469,7 +6469,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
      {
         c->fmt = c->format_stack->data;
         c->format_stack = eina_list_remove_list(c->format_stack, c->format_stack);
-        _format_unref_free(c->obj, c->fmt);
+        _format_unref_free(c->evas_o, c->fmt);
      }
 
    if (w_ret) *w_ret = c->wmax;
@@ -6493,7 +6493,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
         o->style_pad.r = style_pad_r;
         o->style_pad.t = style_pad_t;
         o->style_pad.b = style_pad_b;
-        _paragraphs_clear(eo_obj, c->paragraphs);
+        _paragraphs_clear(c);
         LYDBG("ZZ: ... layout #2\n");
         _layout(eo_obj, w, h, w_ret, h_ret);
         efl_event_callback_call((Eo *) eo_obj, EFL_CANVAS_TEXT_EVENT_STYLE_INSETS_CHANGED, NULL);
@@ -8083,7 +8083,7 @@ _layout_hyphen_item_new(Ctxt *c, const Evas_Object_Textblock_Text_Item *cur_ti)
 
    if (c->hyphen_ti)
      {
-        _item_free(c->obj, NULL, _ITEM(c->hyphen_ti));
+        _item_free(c->evas, c->o, c->evas_o, NULL, _ITEM(c->hyphen_ti));
      }
    c->hyphen_ti = hyphen_ti = _layout_text_item_new(c, cur_ti->parent.format);
    hyphen_ti->parent.text_node = cur_ti->parent.text_node;
@@ -8096,7 +8096,7 @@ _layout_hyphen_item_new(Ctxt *c, const Evas_Object_Textblock_Text_Item *cur_ti)
 
    if (hyphen_ti->parent.format->font.font)
      {
-        Evas_Object_Protected_Data *obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
+        Evas_Object_Protected_Data *obj = c->evas_o;
         /* It's only 1 char anyway, we don't need the run end. */
         (void) ENFN->font_run_end_get(ENDT,
               hyphen_ti->parent.format->font.font, &script_fi, &cur_fi,
@@ -12528,13 +12528,17 @@ _evas_object_textblock_clear(Evas_Object *eo_obj)
    Eina_List *l;
    Efl_Text_Cursor_Cursor *cur;
    Efl_Text_Cursor_Cursor *co;
+   Evas *eo_e;
+   Evas_Public_Data *evas;
 
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   eo_e = evas_object_evas_get(eo_obj);
+   evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    evas_object_async_block(obj);
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    if (o->paragraphs)
      {
-        _paragraphs_free(eo_obj, o->paragraphs);
+        _paragraphs_free(evas, o, obj, o->paragraphs);
         o->paragraphs = NULL;
      }
 
@@ -12636,6 +12640,8 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj,
    Evas_Object_Textblock_Item *it, *last_it = NULL;
    Eina_List *i;
    Eina_Bool is_bidi = EINA_FALSE;
+   Evas_Object_Protected_Data *obj =
+      efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    it = eina_list_data_get(items);
    *w = 0;
@@ -12647,7 +12653,7 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj,
          * according to the current format. */
         if (it->format)
           {
-             _layout_item_ascent_descent_adjust(eo_obj, &asc, &desc,
+             _layout_item_ascent_descent_adjust(obj, &asc, &desc,
                                                 it, it->format);
           }
 
@@ -12683,15 +12689,15 @@ _size_native_calc_line_finalize(const Evas_Object *eo_obj,
 
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (!fi->formatme) goto loop_advance;
-             _layout_calculate_format_item_size(eo_obj, fi, ascent,
+             _layout_calculate_format_item_size(obj, fi, ascent,
                    descent, &fy, &fw, &fh);
           }
         else
           {
              Evas_Coord maxasc = 0, maxdesc = 0;
-             _layout_item_ascent_descent_adjust(eo_obj, ascent, descent,
+             _layout_item_ascent_descent_adjust(obj, ascent, descent,
                    it, it->format);
-             _layout_item_max_ascent_descent_calc(eo_obj, &maxasc, &maxdesc,
+             _layout_item_max_ascent_descent_calc(obj, &maxasc, &maxdesc,
                    it, position);
 
              if (maxasc > *ascent)
@@ -12725,6 +12731,8 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
    Evas_Object_Textblock_Item *it;
    Eina_List *line_items = NULL;
    Evas_Coord w = 0, y = 0, wmax = 0, h = 0, ascent = 0, descent = 0;
+   Evas_Object_Protected_Data *obj =
+      efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
 #ifdef BIDI_SUPPORT
    if (par->is_bidi)
@@ -12759,16 +12767,16 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
                   /* If there are no text items yet, calc ascent/descent
                    * according to the current format. */
                   if ((ascent + descent) == 0)
-                     _layout_item_ascent_descent_adjust(eo_obj, &ascent,
+                     _layout_item_ascent_descent_adjust(obj, &ascent,
                            &descent, it, it->format);
 
-                  _layout_calculate_format_item_size(eo_obj, fi, &ascent,
+                  _layout_calculate_format_item_size(obj, fi, &ascent,
                         &descent, &fy, &fw, &fh);
                }
           }
         else
           {
-             _layout_item_ascent_descent_adjust(eo_obj, &ascent,
+             _layout_item_ascent_descent_adjust(obj, &ascent,
                    &descent, it, it->format);
           }
      }
@@ -12928,6 +12936,7 @@ static void
 evas_object_textblock_free(Evas_Object *eo_obj)
 {
    Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl_Canvas_Text_Filter_Program *prg;
    Evas_Filter_Data_Binding *db;
 
@@ -12964,7 +12973,14 @@ evas_object_textblock_free(Evas_Object *eo_obj)
         free(cur);
      }
    if (o->repch) eina_stringshare_del(o->repch);
-   if (o->ellip_ti) _item_free(eo_obj, NULL, _ITEM(o->ellip_ti));
+   if (o->ellip_ti)
+     {
+        Evas *eo_e;
+        Evas_Public_Data *evas;
+        eo_e = evas_object_evas_get(eo_obj);
+        evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+        _item_free(evas, o, obj, NULL, _ITEM(o->ellip_ti));
+     }
    if (o->bidi_delimiters) eina_stringshare_del(o->bidi_delimiters);
    _format_command_shutdown();
 
