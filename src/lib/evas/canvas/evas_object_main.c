@@ -2254,7 +2254,11 @@ _evas_canvas_object_top_at_xy_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Eva
              if ((!include_hidden_objects) && (!obj->cur->visible)) continue;
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, 1, 1)) &&
-                 (!obj->clip.clipees)) return eo_obj;
+                 (!obj->clip.clipees) &&
+                 RECTS_INTERSECT(xx, yy, 1, 1,
+                   obj->cur->geometry.x, obj->cur->geometry.y,
+                   obj->cur->geometry.w, obj->cur->geometry.h))
+               return eo_obj;
           }
      }
    return NULL;
@@ -2303,7 +2307,10 @@ _evas_canvas_object_top_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data 
              if ((!include_hidden_objects) && (!obj->cur->visible)) continue;
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, ww, hh)) &&
-                 (!obj->clip.clipees)) return eo_obj;
+                 (!obj->clip.clipees) &&
+                 RECTS_INTERSECT(xx, yy, ww, hh,
+                   obj->cur->geometry.x, obj->cur->geometry.y,
+                   obj->cur->geometry.w, obj->cur->geometry.h)) return eo_obj;
           }
      }
    return NULL;
@@ -2399,7 +2406,15 @@ _evas_canvas_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e,
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(eo_obj, obj, xx, yy, ww, hh)) &&
                  (!obj->clip.clipees))
-               in = eina_list_prepend(in, eo_obj);
+               {
+                  if (!RECTS_INTERSECT(xx, yy, ww, hh,
+                                       obj->cur->geometry.x,
+                                       obj->cur->geometry.y,
+                                       obj->cur->geometry.w,
+                                       obj->cur->geometry.h))
+                    continue;
+                  in = eina_list_prepend(in, eo_obj);
+               }
           }
      }
    return in;
