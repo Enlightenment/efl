@@ -157,6 +157,10 @@ _ecore_sdl_event_key(SDL_Event *event, double timestamp)
    return NULL;
 }
 
+/**
+ * Poll SDL for mouse, keyboard, and window events, and add corresponding events to ecore.
+ * @ingroup Ecore_SDL_Library_Group
+ */
 EAPI void
 ecore_sdl_feed_events(void)
 {
