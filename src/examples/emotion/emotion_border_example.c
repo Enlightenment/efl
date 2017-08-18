@@ -234,8 +234,8 @@ main(int argc, const char *argv[])
    return 0;
 
 error:
-   fprintf(stderr, "you got to have at least one evas engine built and linked"
-                   " up to ecore-evas for this example to run properly.\n");
+   fprintf(stderr, "error: Requires at least one Evas engine built and linked"
+                   " to ecore-evas for this example to run properly.\n");
 
    EINA_LIST_FREE(filenames, curfile)
       eina_stringshare_del(eina_list_data_get(curfile));
