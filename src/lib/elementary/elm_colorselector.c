@@ -1857,6 +1857,16 @@ _palette_colors_load(Evas_Object *obj)
    sd->config_load = EINA_TRUE;
 }
 
+static inline void
+_palette_box_prepare(Eo *o, Eina_Bool legacy)
+{
+   if (legacy) efl_canvas_object_legacy_ctor(o);
+   efl_ui_direction_set(o, EFL_UI_DIR_HORIZONTAL);
+   efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_gfx_visible_set(o, EINA_FALSE);
+}
+
 static void
 _create_colorpalette(Evas_Object *obj)
 {
@@ -1870,10 +1880,7 @@ _create_colorpalette(Evas_Object *obj)
 
    if (sd->palette_box) return;
    sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj,
-                             efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL),
-                             efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                             efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
-                             efl_gfx_visible_set(efl_added, EINA_FALSE));
+                             _palette_box_prepare(efl_added, wd->legacy));
 
    hpadstr = edje_object_data_get(wd->resize_obj, "horizontal_pad");
    if (hpadstr) h_pad = atoi(hpadstr);
