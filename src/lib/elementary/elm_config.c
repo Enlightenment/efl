@@ -1926,9 +1926,12 @@ _elm_config_profile_save(const char *profile)
    Elm_Config_Derived *derived;
    char buf[4096], buf2[4096];
    int ok = 0, ret;
-   const char *err;
+   const char *err, *s;
    Eet_File *ef;
    size_t len;
+
+   if ((s = getenv("ELM_PROFILE_NOSAVE")) && atoi(s))
+     return EINA_TRUE;
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
    if (len + 1 >= sizeof(buf))
