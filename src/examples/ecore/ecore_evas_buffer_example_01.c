@@ -112,8 +112,8 @@ main(void)
    return 0;
 
 error:
-   fprintf(stderr, "You got to have at least one Evas engine built"
-                   " and linked up to ecore-evas for this example to run"
+   fprintf(stderr, "error: Requires at least one Evas engine built"
+                   " and linked to ecore-evas for this example to run"
                    " properly.\n");
    ecore_evas_shutdown();
    return -1;

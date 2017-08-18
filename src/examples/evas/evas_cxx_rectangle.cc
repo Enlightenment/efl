@@ -32,8 +32,8 @@ int main()
    if (!ee)
      {
         fprintf(stderr,
-                "you got to have at least one evas engine built and linked"
-                " up to ecore-evas for this example to run properly.\n");
+                "error: Requires at least one Evas engine built and linked"
+                " to ecore-evas for this example to run properly.\n");
         ::ecore_evas_free(ee);
         return -1;
      }
