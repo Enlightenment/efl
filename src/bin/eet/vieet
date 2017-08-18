@@ -14,18 +14,29 @@ die() {
 }
 
 usage() {
-    die "Usage: vieet <eet file> [section]"
+    die "Usage: vieet [-r] <eet file> [section]"
 }
 
+READONLY=0
 EETFILE="$1"
 SECTION="$2"
+ARGCNT=2
 
 if [ $# -eq 1 ]; then
+    if [ "$1" = "-h" ]; then usage; fi
+    echo "Available sections:"
     eet -l "$EETFILE"
     exit $?
 fi
 
-if [ $# -ne 2 ]; then
+if [ "$1" = "-r" ]; then
+    READONLY=1
+    EETFILE=$2
+    SECTION=$3
+    ARGCNT=3
+fi
+
+if [ $# -ne $ARGCNT ]; then
     usage
 fi
 
@@ -52,6 +63,7 @@ while [ $DONE -ne 1 ]
 do
     $EDITOR $TFILE
 
+    if [ $READONLY -eq 1 ]; then break; fi
     eet -e "$EETFILE" "$SECTION" "$TFILE" 1
     if [ $? -ne 0 ]; then
         echo "Failed compiling eet file."
