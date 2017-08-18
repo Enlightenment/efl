@@ -106,6 +106,7 @@ typedef struct _Elput_Keyboard_Info
      {
         xkb_mod_index_t shift;
         xkb_mod_index_t caps;
+        xkb_mod_index_t num;
         xkb_mod_index_t ctrl;
         xkb_mod_index_t alt;
         xkb_mod_index_t altgr;
