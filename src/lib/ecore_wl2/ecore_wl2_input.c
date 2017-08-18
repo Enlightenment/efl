@@ -1152,14 +1152,23 @@ _keyboard_cb_modifiers(void *data, struct wl_keyboard *keyboard EINA_UNUSED, uns
      input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
    if (mask & input->xkb.win_mask)
      input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_WIN;
+   if (mask & input->xkb.altgr_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
+   if (mask & input->xkb.scroll_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_SCROLL;
+   if (mask & input->xkb.num_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_NUM;
+   if (mask & input->xkb.caps_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_CAPS;
+
+
+   mask = xkb_state_serialize_mods(input->xkb.state, XKB_STATE_MODS_LOCKED);
    if (mask & input->xkb.scroll_mask)
      input->keyboard.modifiers |= ECORE_EVENT_LOCK_SCROLL;
    if (mask & input->xkb.num_mask)
      input->keyboard.modifiers |= ECORE_EVENT_LOCK_NUM;
    if (mask & input->xkb.caps_mask)
      input->keyboard.modifiers |= ECORE_EVENT_LOCK_CAPS;
-   if (mask & input->xkb.altgr_mask)
-     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
 }
 
 static void

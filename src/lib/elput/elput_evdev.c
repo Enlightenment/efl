@@ -82,6 +82,13 @@ _keyboard_modifiers_update(Elput_Keyboard *kbd, Elput_Seat *seat)
      seat->modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
    if (mask & kbd->info->mods.caps)
      seat->modifiers |= ECORE_EVENT_MODIFIER_CAPS;
+   if (mask & kbd->info->mods.num)
+     seat->modifiers |= ECORE_EVENT_MODIFIER_NUM;
+
+   if (kbd->mods.locked & kbd->info->mods.caps)
+     seat->modifiers |= ECORE_EVENT_LOCK_CAPS;
+   if (kbd->mods.locked & kbd->info->mods.num)
+     seat->modifiers |= ECORE_EVENT_LOCK_NUM;
 
    if (xkb_state_led_index_is_active(kbd->state, kbd->info->leds.num))
      leds |= ELPUT_LED_NUM;
@@ -121,6 +128,8 @@ _keyboard_info_create(struct xkb_keymap *keymap)
      1 << xkb_keymap_mod_get_index(info->keymap.map, XKB_MOD_NAME_SHIFT);
    info->mods.caps =
      1 << xkb_keymap_mod_get_index(info->keymap.map, XKB_MOD_NAME_CAPS);
+   info->mods.num =
+     1 << xkb_keymap_mod_get_index(info->keymap.map, "Mod2");
    info->mods.ctrl =
      1 << xkb_keymap_mod_get_index(info->keymap.map, XKB_MOD_NAME_CTRL);
    info->mods.alt =
