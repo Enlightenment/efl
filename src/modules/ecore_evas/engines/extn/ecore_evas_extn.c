@@ -56,6 +56,7 @@ struct _Extn
       Eina_Bool alpha : 1;
    } b[NBUF];
    int cur_b; // current buffer (b) being displayed or rendered to
+   int prev_b; // the last buffer (b) that was rendered
    struct {
       Eina_Bool   done : 1; /* need to send change done event to the client(plug) */
    } profile;
@@ -1499,6 +1500,7 @@ _ecore_evas_socket_switch(void *data, void *dest_buf EINA_UNUSED)
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
    Extn *extn = bdata->data;
 
+   extn->prev_b = extn->cur_b;
    extn->cur_b++;
    if (extn->cur_b >= NBUF) extn->cur_b = 0;
    bdata->pixels = _extnbuf_data_get(extn->b[extn->cur_b].buf,
@@ -1535,10 +1537,10 @@ _ecore_evas_ews_update_image(void *data, Evas *e EINA_UNUSED, void *event_info)
    Ecore_Ipc_Client *client;
    Eina_Rectangle *r;
    Eina_List *l;
-   int cur_b;
+   int prev_b;
 
-   cur_b = extn->cur_b;
-   _extnbuf_unlock(extn->b[cur_b].buf);
+   prev_b = extn->prev_b;
+   _extnbuf_unlock(extn->b[prev_b].buf);
 
    EINA_LIST_FOREACH(post->updated_area, l, r)
      {
@@ -1556,7 +1558,7 @@ _ecore_evas_ews_update_image(void *data, Evas *e EINA_UNUSED, void *event_info)
 
    EINA_LIST_FOREACH(extn->ipc.clients, l, client)
      ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0,
-                           cur_b, NULL, 0);
+                           prev_b, NULL, 0);
    if (extn->profile.done)
      {
         _ecore_evas_extn_socket_window_profile_change_done_send(ee);
@@ -1606,8 +1608,7 @@ _ipc_client_add(void *data, int type EINA_UNUSED, void *event)
    ipc2.x = 0; ipc2.y = 0; ipc2.w = ee->w; ipc2.h = ee->h;
    ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc2,
                          sizeof(ipc2));
-   prev_b = extn->cur_b - 1;
-   if (prev_b < 0) prev_b = NBUF - 1;
+   prev_b = extn->prev_b;
    ecore_ipc_client_send(e->client, MAJOR, OP_UPDATE_DONE, 0, 0,
                          prev_b, NULL, 0);
    _ecore_evas_extn_event(ee, ECORE_EVAS_EXTN_CLIENT_ADD);
