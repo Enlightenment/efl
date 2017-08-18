@@ -238,7 +238,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    ee = ecore_evas_new(NULL, 0, 0, W, H, NULL);
    if (!ee)
      {
-        fprintf(stderr, "Coult not create the Ecore_Evas\n");
+        fprintf(stderr, "Could not create the Ecore_Evas\n");
         goto err_ee;
      }
 
