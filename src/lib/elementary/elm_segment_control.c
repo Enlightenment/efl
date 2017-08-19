@@ -633,6 +633,10 @@ _elm_segment_control_efl_canvas_group_group_del(Eo *obj, Elm_Segment_Control_Dat
 {
    Elm_Object_Item *eo_it;
 
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
+                                       _on_move_resize, obj);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE,
+                                       _on_move_resize, obj);
    EINA_LIST_FREE(sd->items, eo_it)
      {
         efl_del(eo_it);
