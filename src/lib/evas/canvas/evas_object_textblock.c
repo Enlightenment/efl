@@ -2868,6 +2868,7 @@ struct _Ctxt
    Textblock_Position position;
    Evas_Textblock_Align_Auto align_auto : 2;
    Eina_Bool width_changed : 1;
+   Eina_Bool handle_obstacles : 1;
 };
 
 static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, Eina_List *rel);
@@ -5461,9 +5462,6 @@ _layout_par(Ctxt *c)
    char *line_breaks = NULL;
    char *word_breaks = NULL;
 
-   /* Obstacles logic */
-   Eina_Bool handle_obstacles = EINA_FALSE;
-
    if (!c->par->logical_items)
      return 2;
 
@@ -5505,13 +5503,6 @@ _layout_par(Ctxt *c)
 
              if (c->par->last_fw > c->wmax) c->wmax = c->par->last_fw;
              return 0;
-          }
-
-        /* Update all obstacles */
-        if (c->o->obstacle_changed || c->width_changed)
-          {
-             _layout_obstacles_update(c);
-             handle_obstacles = EINA_TRUE;
           }
 
         c->par->text_node->dirty = EINA_FALSE;
@@ -5618,7 +5609,7 @@ _layout_par(Ctxt *c)
                }
           }
 
-        if (handle_obstacles && !obs)
+        if (c->handle_obstacles && !obs)
           {
              obs = _layout_item_obstacle_get(c, it);
           }
@@ -6349,6 +6340,12 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    c->obs_infos = NULL;
    c->hyphen_ti = NULL;
 
+   /* Update all obstacles */
+   if (c->o->obstacle_changed || c->width_changed)
+     {
+        _layout_obstacles_update(c);
+        c->handle_obstacles = EINA_TRUE;
+     }
    /* Start of logical layout creation */
    /* setup default base style */
      {
