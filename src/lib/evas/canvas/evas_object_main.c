@@ -1870,9 +1870,10 @@ _efl_canvas_object_efl_gfx_visible_get(Eo *eo_obj EINA_UNUSED,
 {
    if (!EVAS_OBJECT_DATA_ALIVE(obj)) return EINA_FALSE;
 #if 0
-   // Try to return TRUE when an object is an EO object but not yet finalized.
-   // This is disabled as it leads to render bugs.
-   if (!obj->legacy.ctor && !obj->legacy.finalized && !obj->legacy.visible_set)
+   // Try to return TRUE when an object is an EO object (must be finalized,
+   // otherwise we can't know for sure if it's legacy or not).
+   // Note: This was disabled as it used to lead to render bugs.
+   if (obj->legacy.finalized && !obj->legacy.ctor && !obj->legacy.visible_set)
      return EINA_TRUE;
 #endif
    return obj->cur->visible;
