@@ -204,7 +204,7 @@ _set_render_policy_callback(Evas_Object *obj)
         break;
 
       case ELM_GLVIEW_RENDER_POLICY_ALWAYS:
-        if (evas_object_image_pixels_dirty_get(wd->resize_obj))
+        if (evas_object_image_pixels_dirty_get(wd->resize_obj) && !sd->render_idle_enterer)
           sd->render_idle_enterer = efl_event_callback_priority_add(ecore_main_loop_get(),
                                                                    EFL_LOOP_EVENT_IDLE_ENTER,
                                                                    EFL_CALLBACK_PRIORITY_BEFORE,
