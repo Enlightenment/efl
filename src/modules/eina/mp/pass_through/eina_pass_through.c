@@ -40,7 +40,7 @@ eina_pass_through_free(EINA_UNUSED void *data, void *ptr)
 }
 
 static Eina_Bool
-eina_pass_through_from(EINA_UNUSED void *data, void *ptr)
+eina_pass_through_from(EINA_UNUSED void *data, void *ptr EINA_UNUSED)
 {
    // Good luck
    return EINA_TRUE;
