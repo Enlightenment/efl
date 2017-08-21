@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 
 #include "efl_page_transition_cube.h"
-#include "efl_ui_widget_pagecontrol.h"
+#include "efl_ui_widget_pagescroller.h"
 
 
 static void
@@ -37,7 +37,7 @@ _map_uv_set(Evas_Object *obj, Evas_Map *map)
 static void
 _cube_effect(Evas_Object *obj, Evas_Object *target, double t, int c)
 {
-   EFL_UI_PAGECONTROL_DATA_GET(obj, sd);
+   EFL_UI_PAGESCROLLER_DATA_GET(obj, sd);
 
    Evas_Map *map;
    double p, deg;

@@ -1,10 +1,3 @@
-enum Efl.Ui.Pagecontrol.Effect
-{
-   [[Efl UI Pagecontrol Page Transition Effect]]
-   scroll, [[Linear scroll effect]]
-   cube, [[3D cube effect]]
-}
-
 class Efl.Ui.Pagecontrol (Elm.Widget, Efl.Pack.Linear)
 {
    [[Elementary pagecontrol class]]

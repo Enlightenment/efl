@@ -9,7 +9,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_widget_pageindicator.h"
-#include "efl_ui_widget_pagecontrol.h"
+#include "efl_ui_widget_pagescroller.h"
 
 
 EOLIAN static void
@@ -28,7 +28,7 @@ _updated(void *data, const Efl_Event *event)
 {
    Efl_Ui_Pageindicator *obj = data;
    EFL_UI_PAGEINDICATOR_DATA_GET(obj, pd);
-   EFL_UI_PAGECONTROL_DATA_GET(event->object, pcd);
+   EFL_UI_PAGESCROLLER_DATA_GET(event->object, pcd);
 
    Eina_List *l;
    Pageindicator *item, *curr = NULL, *next = NULL;
@@ -41,7 +41,6 @@ _updated(void *data, const Efl_Event *event)
    int p1, p2;
    p1 = pcd->page;
    curr = eina_list_nth(pd->items, p1);
-   //ERR("page %d item %p", p1, curr);
    if (curr)
      efl_vg_interpolate(curr->vector, pd->on, pd->off, pcd->ratio);
 
@@ -49,7 +48,6 @@ _updated(void *data, const Efl_Event *event)
      {
         p2 = (p1 + 1 + pcd->cnt) % pcd->cnt;
         next = eina_list_nth(pd->items, p2);
-        //ERR("page %d item %p", p2, next);
      }
    if (next)
      efl_vg_interpolate(next->vector, pd->off, pd->on, pcd->ratio);
@@ -58,15 +56,15 @@ _updated(void *data, const Efl_Event *event)
 EOLIAN static void
 _efl_ui_pageindicator_bind(Eo *obj,
                            Efl_Ui_Pageindicator_Data *pd,
-                           Efl_Ui_Pagecontrol *target)
+                           Efl_Ui_Pagescroller *target)
 {
-   //FIXME should add a listener which respond to efl_pack of pagecontrol
+   //FIXME should add a listener which respond to efl_pack of pagescroller
    Pageindicator *item;
    int i;
 
    pd->target.obj = target;
    pd->target.cnt = efl_content_count(target);
-   EFL_UI_PAGECONTROL_DATA_GET(pd->target.obj, pcd);
+   EFL_UI_PAGESCROLLER_DATA_GET(pd->target.obj, pcd);
 
    //FIXME use efl_content_iterate
    for (i = 0; i < pd->target.cnt; i++)
@@ -90,7 +88,7 @@ _efl_ui_pageindicator_bind(Eo *obj,
         efl_pack_end(pd->box, item->object);
      }
 
-   efl_event_callback_add(pd->target.obj, EFL_UI_PAGECONTROL_EVENT_UPDATED,
+   efl_event_callback_add(pd->target.obj, EFL_UI_PAGESCROLLER_EVENT_UPDATED,
                           _updated, obj); 
 }
 

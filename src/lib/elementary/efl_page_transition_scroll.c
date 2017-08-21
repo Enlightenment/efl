@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 
 #include "efl_page_transition_scroll.h"
-#include "efl_ui_widget_pagecontrol.h"
+#include "efl_ui_widget_pagescroller.h"
 
 
 EOLIAN static void
@@ -21,7 +21,7 @@ _efl_page_transition_scroll_efl_page_transition_update(Eo *obj EINA_UNUSED,
    Evas_Object *parent = efl_parent_get(target);
 
    //FIXME do this somewhere else
-   EFL_UI_PAGECONTROL_DATA_GET(parent, sd);
+   EFL_UI_PAGESCROLLER_DATA_GET(parent, sd);
    efl_gfx_visible_set(sd->viewport.foreclip, EINA_TRUE);
    efl_gfx_visible_set(sd->viewport.backclip, EINA_TRUE);
 

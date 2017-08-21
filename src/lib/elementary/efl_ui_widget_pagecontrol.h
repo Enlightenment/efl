@@ -49,6 +49,7 @@ typedef struct _Efl_Ui_Pagecontrol_Data
    int                   page;
    double                ratio;
 
+   Efl_Orient            orientation;
    Eina_Bool             move_started : 1;
    Eina_Bool             map_enabled : 1;
 

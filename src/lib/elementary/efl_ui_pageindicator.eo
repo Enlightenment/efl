@@ -5,9 +5,9 @@ class Efl.Ui.Pageindicator (Elm.Widget)
    eo_prefix: efl_ui_pageindicator;
    methods {
       bind {
-         [[Bind a pagecontrol object to the indicator]]
+         [[Bind a pagescroller object to the indicator]]
          params {
-            @in pagecontrol: Efl.Ui.Pagecontrol; [[Pagecontrol to bind]]
+            @in pagescroller: Efl.Ui.Pagescroller;
          }
       }
    }

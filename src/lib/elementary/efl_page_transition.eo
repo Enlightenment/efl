@@ -2,15 +2,6 @@ class Efl.Page.Transition (Efl.Object)
 {
    [[Efl ui pagescroller transition effect class]]
    methods {
-      @property target {
-         set {
-         }
-         get {
-         }
-         values {
-            target: Efl.Canvas.Object; [[Target object]]
-         }
-      }
       update {
          [[transition effect update]]
          params {

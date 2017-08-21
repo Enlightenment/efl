@@ -1,4 +1,4 @@
-class Efl.Ui.Pagescroller (Efl.Ui.Pagecontrol)
+class Efl.Ui.Pagescroller (Elm.Widget, Efl.Pack.Linear, Efl.Orientation)
 {
    [[Efl ui pagescroller class]]
    event_prefix: efl_ui_pagescroller;
@@ -10,8 +10,42 @@ class Efl.Ui.Pagescroller (Efl.Ui.Pagecontrol)
             transition: Efl.Page.Transition; [[transition effect]]
          }
       }
+      @property current_page {
+         [[Set the currently selected page]]
+         set {
+            values {
+               index: int;
+               animation: bool;
+               jump: bool; [[If $true, shows transition effect only once]]
+            }
+         }
+         get {
+            return: int;
+         }
+      }
+      @property scroll_block {
+         values {
+            prev: bool;
+            next: bool;
+         }
+      }
+      @property loop {
+         values {
+            loop_enabled: bool;
+         }
+      }
    }
    implements {
+      Efl.Object.constructor;
       Efl.Gfx.size { set; }
+      Efl.Gfx.position { set; }
+      Efl.Container.content_count;
+      Efl.Pack.Linear.pack_end;
+      Efl.Pack.Linear.pack_content_get;
+      Efl.Pack.Linear.pack_index_get;
+      Efl.Orientation.orientation { set; get; }
+   }
+   events {
+      updated; [[Called when pagescroller is scrolled]]
    }
 }
