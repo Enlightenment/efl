@@ -496,10 +496,12 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
        return;
      }
 
-   edje_object_size_min_calc(elm_layout_edje_get(sd->main_layout), &minw, &minh);
-
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   if (sd->main_layout)
+     {
+        edje_object_size_min_calc(elm_layout_edje_get(sd->main_layout), &minw, &minh);
+        evas_object_size_hint_min_set(obj, minw, minh);
+        evas_object_size_hint_max_set(obj, -1, -1);
+     }
 }
 
 EOLIAN static void
