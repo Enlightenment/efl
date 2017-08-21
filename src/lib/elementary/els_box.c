@@ -184,7 +184,7 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
              if (horizontal)
                {
                   /* use min size to start */
-                  ww = *rw;
+                  ww = mnw;
                   if ((expand > 0) && (wx > 0.0))
                     {
                        /* add remaining container value after applying weight hint */
@@ -195,7 +195,7 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
                }
              else
                {
-                  hh = *rh;
+                  hh = mnh;
                   if ((expand > 0) && (wy > 0.0))
                     {
                        oh = ((h - cminh) * wy) / expand;
@@ -334,8 +334,12 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
              /* aspect can only be accurately calculated after the full (non-aspected) min size of the box has
               * been calculated due to the use of this min size during aspect calculations
               */
+             int aminw = minw;
+             int aminh = minh;
              _smart_extents_padding_calc(priv, &minw, &minh, &maxw, &maxh, horizontal);
-             _smart_extents_non_homogeneous_calc(priv, w, h, &minw, &minh, &maxw, &maxh, expand, horizontal, 1);
+             _smart_extents_non_homogeneous_calc(priv, w, h, &aminw, &aminh, &maxw, &maxh, expand, horizontal, 1);
+             if (horizontal) minh = aminh;
+             else minw = aminw;
           }
      }
    _smart_extents_padding_calc(priv, &minw, &minh, &maxw, &maxh, horizontal);
