@@ -41,9 +41,9 @@ group { name: "e/widgets/dialog/main";
             align: 0.0 0.5;
             rel1.relative: 0.0 0.0;
             rel1.offset: 4 4;
-            rel2.relative: 0.0 0.0;
-            rel2.offset: 4 -8;
-            rel2.to_y: "e.swallow.buttons";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -1 0;
+            rel2.to_y: "button.spacer";
             fixed: 1 0;
             visible: 0;
          }
@@ -56,7 +56,7 @@ group { name: "e/widgets/dialog/main";
          description { state: "default" 0.0;
             rel1.offset: 4 4;
             rel1.to_x: "base";
-            rel2.to: "button.spacer";
+            rel2.to_y: "button.spacer";
          }
          description { state: "icon" 0.0;
             inherit: "default" 0.0;
@@ -73,6 +73,7 @@ group { name: "e/widgets/dialog/main";
          }
          desc { "hid";
             link.base: "e,state,buttons,off" "e";
+            minmul: 0 0;
          }
       }
       part { name: "e.swallow.buttons"; type: SWALLOW;
