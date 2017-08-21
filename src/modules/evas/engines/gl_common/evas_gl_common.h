@@ -858,16 +858,15 @@ __evas_gl_errdyn(int err, const char *file, const char *func, int line, const ch
    if (!sym) sym = dlsym(RTLD_DEFAULT, "__evas_gl_err");
    sym(err, file, func, line, op);
 }
-# define GLERRV(op) \
-  { \
+# define GLERRV(op) do { \
       int __gl_err = glGetError(); \
       if (__gl_err != GL_NO_ERROR) \
         __evas_gl_errdyn(__gl_err, __FILE__, __FUNCTION__, __LINE__, op); \
-   }
+   } while (0)
 /* Redefine common gl funcs */
 # ifndef GL_ERRORS_NODEF
 #  ifndef GL_ERRORS_TRACE
-#   define GL_ERROR_TRACE(f, _args, ...) do { f(__VA_ARGS__); GLERRV(#f); } while(0)
+#   define GL_ERROR_TRACE(f, _args, ...) do { GLERRV("Uncaught error before this point:"); f(__VA_ARGS__); GLERRV(#f); } while(0)
 #   define GL_ERROR_TRACE_RET(t, f, _args, ...) ({ t _r = f(__VA_ARGS__); GLERRV(#f); _r; })
 #  else
 #   define GL_ERROR_TRACE(f, _args, ...) do { DBG("%s(%s);", #f, _args); f(__VA_ARGS__); GLERRV(#f); } while(0)
@@ -904,6 +903,7 @@ __evas_gl_errdyn(int err, const char *file, const char *func, int line, const ch
 #  define glTexParameterf(...) GL_ERROR_TRACE(glTexParameterf, #__VA_ARGS__, __VA_ARGS__)
 #  define glTexParameteri(...) GL_ERROR_TRACE(glTexParameteri, #__VA_ARGS__, __VA_ARGS__)
 #  define glTexSubImage2D(...) GL_ERROR_TRACE(glTexSubImage2D, #__VA_ARGS__, __VA_ARGS__)
+#  define glTexImage2D(...) GL_ERROR_TRACE(glTexImage2D, #__VA_ARGS__, __VA_ARGS__)
 #  define glUniform1f(...) GL_ERROR_TRACE(glUniform1f, #__VA_ARGS__, __VA_ARGS__)
 #  define glUniform1i(...) GL_ERROR_TRACE(glUniform1i, #__VA_ARGS__, __VA_ARGS__)
 #  define glUniform2fv(...) GL_ERROR_TRACE(glUniform2fv, #__VA_ARGS__, __VA_ARGS__)
