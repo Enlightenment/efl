@@ -1245,7 +1245,7 @@ modules_evas_engines_wayland_egl_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
 @USE_ECORE_WL2_LIBS@ \
 @evas_engine_wayland_egl_libs@
-modules_evas_engines_wayland_egl_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_engines_wayland_egl_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@ lib/ecore_wl2/libecore_wl2.la
 modules_evas_engines_wayland_egl_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_engines_wayland_egl_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
@@ -1302,7 +1302,7 @@ modules_evas_engines_wayland_shm_module_la_LIBADD = \
 @USE_EVAS_LIBS@ \
 @USE_ECORE_WL2_LIBS@ \
 @evas_engine_wayland_shm_libs@
-modules_evas_engines_wayland_shm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_engines_wayland_shm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@ lib/ecore_wl2/libecore_wl2.la
 modules_evas_engines_wayland_shm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_engines_wayland_shm_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
