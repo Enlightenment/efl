@@ -536,13 +536,9 @@ _elm_scroller_elm_widget_focus_direction(Eo *obj, Elm_Scroller_Data *sd, const E
 }
 
 static void
-_show_region_hook(void *data,
-                  Evas_Object *content_obj)
+_show_region_hook(void *data, Evas_Object *content_obj EINA_UNUSED, Eina_Rectangle r)
 {
-   Evas_Coord x, y, w, h;
-
-   elm_widget_show_region_get(content_obj, &x, &y, &w, &h);
-   elm_interface_scrollable_content_region_show(data, x, y, w, h);
+   elm_interface_scrollable_content_region_show(data, r.x, r.y, r.w, r.h);
 }
 
 static void
@@ -564,7 +560,7 @@ _elm_scroller_elm_widget_sub_object_del(Eo *obj, Elm_Scroller_Data *sd, Evas_Obj
    if (sobj == sd->content)
      {
         if (elm_widget_is(sobj))
-          elm_widget_on_show_region_hook_set(sd->content, NULL, NULL);
+          elm_widget_on_show_region_hook_set(sd->content, NULL, NULL, NULL);
 
         sd->content = NULL;
      }
@@ -741,7 +737,7 @@ _loop_content_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *content)
         evas_object_size_hint_align_set(sd->contents, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
         elm_widget_sub_object_add(obj, sd->contents);
-        elm_widget_on_show_region_hook_set(sd->contents, _show_region_hook, obj);
+        elm_widget_on_show_region_hook_set(sd->contents, obj, _show_region_hook, NULL);
 
         efl_ui_mirrored_automatic_set(sd->contents, EINA_FALSE);
         efl_ui_mirrored_set(sd->contents, EINA_FALSE);
@@ -796,7 +792,7 @@ _elm_scroller_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas
    if (content)
      {
         if (elm_widget_is(content))
-          elm_widget_on_show_region_hook_set(content, _show_region_hook, obj);
+          elm_widget_on_show_region_hook_set(content, obj, _show_region_hook, NULL);
         elm_widget_sub_object_add(obj, content);
 
         if (sd->loop_h || sd->loop_v)
@@ -1373,7 +1369,7 @@ elm_scroller_loop_set(Evas_Object *obj,
                {
                   elm_interface_scrollable_content_set(obj, sd->contents);
                   elm_widget_sub_object_add(obj, sd->contents);
-                  elm_widget_on_show_region_hook_set(sd->contents, _show_region_hook, obj);
+                  elm_widget_on_show_region_hook_set(sd->contents, obj, _show_region_hook, NULL);
                }
           }
         else

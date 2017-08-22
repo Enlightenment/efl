@@ -1234,12 +1234,9 @@ _efl_ui_text_elm_widget_on_focus_region(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *s
 }
 
 static void
-_show_region_hook(void *data EINA_UNUSED,
-                  Evas_Object *obj)
+_show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rectangle r)
 {
-   Evas_Coord x, y, w, h;
-   elm_widget_show_region_get(obj, &x, &y, &w, &h);
-   elm_interface_scrollable_content_region_show(obj, x, y, w, h);
+   elm_interface_scrollable_content_region_show(obj, r.x, r.y, r.w, r.h);
 }
 
 EOLIAN static Eina_Bool
@@ -3731,7 +3728,7 @@ _efl_ui_text_scrollable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool scroll)
            elm_interface_scrollable_policy_set(obj, sd->policy_h, sd->policy_v);
         elm_interface_scrollable_content_set(obj, sd->entry_edje);
         elm_interface_scrollable_content_viewport_resize_cb_set(obj, _efl_ui_text_content_viewport_resize_cb);
-        elm_widget_on_show_region_hook_set(obj, _show_region_hook, NULL);
+        elm_widget_on_show_region_hook_set(obj, NULL, _show_region_hook, NULL);
      }
    else
      {
@@ -3747,7 +3744,7 @@ _efl_ui_text_scrollable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool scroll)
 
         elm_interface_scrollable_objects_set(obj, sd->entry_edje, sd->hit_rect);
 
-        elm_widget_on_show_region_hook_set(obj, NULL, NULL);
+        elm_widget_on_show_region_hook_set(obj, NULL, NULL, NULL);
      }
    _update_decorations(obj);
    elm_obj_widget_theme_apply(obj);
