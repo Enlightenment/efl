@@ -69,13 +69,6 @@ EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
 static void _access_increment_decrement_info_say(Evas_Object *obj,
                                                  Eina_Bool is_incremented);
 
-typedef enum _Elm_Spinner_Format_Type
-{
-   SPINNER_FORMAT_FLOAT,
-   SPINNER_FORMAT_INT,
-   SPINNER_FORMAT_INVALID
-} Elm_Spinner_Format_Type;
-
 static Eina_Bool
 _is_valid_digit(char x)
 {
@@ -547,8 +540,8 @@ _text_insert(const char *text, const char *input, int pos)
 static void
 _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
 {
-   const char *str, *new_str;
-   char *insert;
+   const char *str, *point;
+   char *insert, *new_str = NULL;
    double val;
    int max_len, len;
 
@@ -564,20 +557,32 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
    insert = *text;
    new_str = _text_insert(str, insert, elm_entry_cursor_pos_get(obj));
    if (!new_str) return;
-
    max_len = log10(fabs(sd->val_max)) + 1;
-   len = evas_string_char_len_get(new_str);
-   if (len < max_len)
+
+   if (sd->format_type == SPINNER_FORMAT_INT)
      {
-        ELM_SAFE_FREE(new_str, free);
-        return;
+        len = strlen(new_str);
+        if (len < max_len) goto end;
+     }
+   else if (sd->format_type == SPINNER_FORMAT_FLOAT)
+     {
+        point = strchr(new_str, '.');
+        if (point)
+          {
+             if ((int) strlen(point + 1) > sd->decimal_points)
+               {
+                  *insert = 0;
+                  goto end;
+               }
+          }
      }
 
    val = strtod(new_str, NULL);
-   ELM_SAFE_FREE(new_str, free);
-
    if ((val < sd->val_min) || (val > sd->val_max))
      *insert = 0;
+
+end:
+   free(new_str);
 }
 
 static void
@@ -1480,22 +1485,22 @@ EOLIAN static void
 _elm_spinner_label_format_set(Eo *obj, Elm_Spinner_Data *sd, const char *fmt)
 {
    Elm_Spinner_Format_Type type;
-   if (fmt)
+
+   if (!fmt) fmt = "%.0f";
+   type = _is_label_format_integer(fmt);
+   if (type == SPINNER_FORMAT_INVALID)
      {
-        type = _is_label_format_integer(fmt);
-        if (type == SPINNER_FORMAT_INVALID)
-          {
-             ERR("format:\"%s\" is Invalid, cannot be set", fmt);
-             return;
-          }
-        else if (type == SPINNER_FORMAT_FLOAT)
-          {
-             sd->decimal_points = _decimal_points_get(fmt);
-          }
+        ERR("format:\"%s\" is invalid, cannot be set", fmt);
+        return;
+     }
+   else if (type == SPINNER_FORMAT_FLOAT)
+     {
+        sd->decimal_points = _decimal_points_get(fmt);
      }
 
    eina_stringshare_replace(&sd->label, fmt);
 
+   sd->format_type = type;
    _label_write(obj);
    elm_layout_sizing_eval(obj);
    _entry_accept_filter_add(obj);

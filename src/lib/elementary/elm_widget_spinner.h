@@ -25,6 +25,14 @@
 /**
  * Base layout smart data extended with spinner instance data.
  */
+
+typedef enum _Elm_Spinner_Format_Type
+{
+   SPINNER_FORMAT_FLOAT,
+   SPINNER_FORMAT_INT,
+   SPINNER_FORMAT_INVALID
+} Elm_Spinner_Format_Type;
+
 typedef struct _Elm_Spinner_Data    Elm_Spinner_Data;
 struct _Elm_Spinner_Data
 {
@@ -41,6 +49,7 @@ struct _Elm_Spinner_Data
    Ecore_Timer          *longpress_timer; /**< a timer to detect long press. After lonpress timeout,
                                           start continuous change of values until mouse up */
    Eina_List            *special_values;
+   Elm_Spinner_Format_Type format_type;
 
    Eina_Bool             entry_visible : 1;
    Eina_Bool             entry_reactivate : 1;
