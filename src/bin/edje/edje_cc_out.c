@@ -2685,8 +2685,9 @@ data_write(void)
             "invalid calculation mechanism for textblock parts, where the value "
             "of text min/max was not properly taken into account. You might "
             "want to consider adding \"efl_version: %d %d;\" in your EDC "
-            "\"collections\" block, and then check the sizing for all textblock "
-            "parts that specify text min/max values.",
+            "file (before the \"collections\" block), and then check the sizing "
+            "for all textblock parts that specify text min/max values (the bool "
+            "defined as description.text.{min,max}).",
             EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
      }
 
