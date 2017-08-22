@@ -202,33 +202,39 @@ static void
 _expand_format(char *dt_fmt)
 {
    char *ptr, *expanded_fmt, ch;
-   unsigned int idx = 0, len = 0;
+   unsigned int idx, len = 0;
    char buf[EFL_UI_CLOCK_MAX_FORMAT_LEN] = {0, };
-   Eina_Bool fmt_char = EINA_FALSE;
+   Eina_Bool fmt_char, fmt_expanded;
 
-   ptr = dt_fmt;
-   while ((ch = *ptr))
-     {
-        if ((fmt_char) && (strchr(multifield_formats, ch)))
-          {
-             /* replace the multi-field format characters with
-              * corresponding expanded format */
-             expanded_fmt = _expanded_fmt_str_get(ch);
-             len = strlen(expanded_fmt);
-             buf[--idx] = 0;
-             strncat(buf, expanded_fmt, len);
-             idx += len;
-          }
-        else buf[idx++] = ch;
+   do {
+     idx = 0;
+     fmt_char = EINA_FALSE;
+     fmt_expanded = EINA_FALSE;
+     ptr = dt_fmt;
+     while ((ch = *ptr))
+       {
+          if ((fmt_char) && (strchr(multifield_formats, ch)))
+            {
+               /* replace the multi-field format characters with
+                * corresponding expanded format */
+               expanded_fmt = _expanded_fmt_str_get(ch);
+               len = strlen(expanded_fmt);
+               if (len > 0) fmt_expanded = EINA_TRUE;
+               buf[--idx] = 0;
+               strncat(buf, expanded_fmt, len);
+               idx += len;
+            }
+          else buf[idx++] = ch;
 
-        if (ch == '%') fmt_char = EINA_TRUE;
-        else fmt_char = EINA_FALSE;
+          if (ch == '%') fmt_char = EINA_TRUE;
+          else fmt_char = EINA_FALSE;
 
-        ptr++;
-     }
+          ptr++;
+       }
 
-   buf[idx] = 0;
-   strncpy(dt_fmt, buf, EFL_UI_CLOCK_MAX_FORMAT_LEN);
+     buf[idx] = 0;
+     strncpy(dt_fmt, buf, EFL_UI_CLOCK_MAX_FORMAT_LEN);
+   } while (fmt_expanded);
 }
 
 static void
