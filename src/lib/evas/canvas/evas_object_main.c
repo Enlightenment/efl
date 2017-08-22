@@ -101,10 +101,12 @@ _evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj, Evas_Object_Point
 static void
 _evas_device_del_cb(void *data, const Efl_Event *ev)
 {
-   Evas_Object_Protected_Data *obj = data;
-   Evas_Object_Pointer_Data *pdata = _evas_object_pointer_data_find(obj,
-                                                                    ev->object);
+   Evas_Object_Protected_Data *obj;
+   Evas_Object_Pointer_Data *pdata;
 
+   obj = efl_data_scope_safe_get(data, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   pdata = _evas_object_pointer_data_find(obj, ev->object);
    if (!pdata) return;
    _evas_object_pointer_grab_del(obj, pdata);
 }
@@ -119,7 +121,7 @@ _evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
        (obj->layer) && (obj->layer->evas))
      pdata->evas_pdata->seat->object.in = eina_list_remove(pdata->evas_pdata->seat->object.in, obj->object);
    efl_event_callback_del(pdata->evas_pdata->pointer, EFL_EVENT_DEL,
-                          _evas_device_del_cb, obj);
+                          _evas_device_del_cb, obj->object);
    EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
      events->pointer_grabs = eina_inlist_remove(events->pointer_grabs, EINA_INLIST_GET(pdata));
    EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
@@ -144,7 +146,7 @@ _evas_object_pointer_data_add(Evas_Pointer_Data *evas_pdata,
 
    efl_event_callback_priority_add(evas_pdata->pointer, EFL_EVENT_DEL,
                                    EFL_CALLBACK_PRIORITY_BEFORE,
-                                   _evas_device_del_cb, obj);
+                                   _evas_device_del_cb, obj->object);
    return pdata;
 }
 
