@@ -1027,13 +1027,9 @@ _size_hints_changed_cb(void *data,
 /* FIXME: take off later. maybe this show region coords belong in the
  * interface (new api functions, set/get)? */
 static void
-_show_region_hook(void *data EINA_UNUSED,
-                  Evas_Object *obj)
+_show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rectangle r)
 {
-   Evas_Coord x, y, w, h;
-
-   elm_widget_show_region_get(obj, &x, &y, &w, &h);
-   elm_interface_scrollable_content_region_set(obj, x, y, w, h);
+   elm_interface_scrollable_content_region_set(obj, r.x, r.y, r.w, r.h);
 }
 
 EOLIAN static Eina_Bool
@@ -2432,7 +2428,7 @@ _elm_list_efl_canvas_group_group_add(Eo *obj, Elm_List_Data *priv)
    elm_interface_atspi_accessible_type_set(priv->box, ELM_ATSPI_TYPE_DISABLED);
 
    /* FIXME: change this ugly code path later */
-   elm_widget_on_show_region_hook_set(priv->box, _show_region_hook, obj);
+   elm_widget_on_show_region_hook_set(priv->box, obj, _show_region_hook, NULL);
    elm_widget_sub_object_add(obj, priv->box);
 
    elm_interface_scrollable_content_set(obj, priv->box);

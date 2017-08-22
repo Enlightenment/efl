@@ -3462,18 +3462,14 @@ _elm_genlist_elm_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
 /* FIXME: take off later. maybe this show region coords belong in the
  * interface (new api functions, set/get)? */
 static void
-_show_region_hook(void *data EINA_UNUSED,
-                  Evas_Object *obj)
+_show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rectangle r)
 {
-   Evas_Coord x, y, w, h;
-
    ELM_GENLIST_DATA_GET_OR_RETURN(obj, sd);
 
-   elm_widget_show_region_get(obj, &x, &y, &w, &h);
    //x & y are screen coordinates, Add with pan coordinates
-   x += sd->pan_x;
-   y += sd->pan_y;
-   elm_interface_scrollable_content_region_show(obj, x, y, w, h);
+   r.x += sd->pan_x;
+   r.y += sd->pan_y;
+   elm_interface_scrollable_content_region_show(obj, r.x, r.y, r.w, r.h);
 }
 
 static void
@@ -5602,7 +5598,7 @@ _elm_genlist_efl_canvas_group_group_add(Eo *obj, Elm_Genlist_Data *priv)
    evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_widget_on_show_region_hook_set(obj, _show_region_hook, NULL);
+   elm_widget_on_show_region_hook_set(obj, NULL, _show_region_hook, NULL);
 
    if (!elm_layout_theme_set
        (obj, "genlist", "base", elm_widget_style_get(obj)))

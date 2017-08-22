@@ -1341,10 +1341,17 @@ _elm_widget_efl_ui_base_mirrored_automatic_set(Eo *obj, Elm_Widget_Smart_Data *s
 }
 
 EOLIAN static void
-_elm_widget_on_show_region_hook_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, region_hook_func_type func, void *data)
+_elm_widget_on_show_region_hook_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, void *data, Efl_Ui_Scrollable_On_Show_Region func, Eina_Free_Cb func_free_cb)
 {
+   if ((sd->on_show_region_data == data) && (sd->on_show_region == func))
+     return;
+
+   if (sd->on_show_region_data && sd->on_show_region_data_free)
+     sd->on_show_region_data_free(sd->on_show_region_data);
+
    sd->on_show_region = func;
    sd->on_show_region_data = data;
+   sd->on_show_region_data_free = func_free_cb;
 }
 
 /*
@@ -3396,8 +3403,8 @@ _elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord x, Ev
    sd->rh = h;
    if (sd->on_show_region)
      {
-        sd->on_show_region
-           (sd->on_show_region_data, obj);
+        const Eina_Rectangle r = { x, y, w, h };
+        sd->on_show_region(sd->on_show_region_data, obj, r);
 
         if (_elm_scrollable_is(obj))
           {
@@ -3427,8 +3434,8 @@ _elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord x, Ev
 
         if (sd->on_show_region)
           {
-             sd->on_show_region
-               (sd->on_show_region_data, parent_obj);
+             const Eina_Rectangle r = { x, y, w, h };
+             sd->on_show_region(sd->on_show_region_data, parent_obj, r);
           }
      }
    while (parent_obj);

@@ -313,7 +313,7 @@ typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
 
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
 
-typedef void (*region_hook_func_type)(void *data, Evas_Object *obj);
+typedef void (*region_hook_func_type)(void *data, Evas_Object *obj, Eina_Rectangle region);
 typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
 #include "elm_widget.eo.h"
@@ -424,8 +424,8 @@ typedef struct _Elm_Widget_Smart_Data
     * handling the request of showing a specific region from an inner
     * widget (mainly issued by entries, on cursor moving) */
    void                         *on_show_region_data;
-   void                        (*on_show_region)(void *data,
-                                                 Evas_Object *obj);
+   Efl_Ui_Scrollable_On_Show_Region on_show_region;
+   Eina_Free_Cb                  on_show_region_data_free;
 
    int                           orient_mode; /* -1 is disabled */
    Elm_Focus_Move_Policy         focus_move_policy;
@@ -640,7 +640,7 @@ EAPI Eina_Bool        elm_widget_access(Evas_Object *obj, Eina_Bool is_access);
 EAPI Efl_Ui_Theme_Apply  elm_widget_theme(Evas_Object *obj);
 EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
 EAPI void             elm_widget_translate(Evas_Object *obj);
-EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data);
+EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void *data, Efl_Ui_Scrollable_On_Show_Region func, Eina_Free_Cb data_free);
 EAPI Eina_Bool        elm_widget_sub_object_parent_add(Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);

@@ -3,7 +3,14 @@ import efl_input_types;
 
 /* FIXME: This shouldn't be here. */
 type list_data_get_func_type: __undefined_type; [[Elementary list data get function type]]
-type region_hook_func_type: __undefined_type; [[Elementary region hook function type]]
+
+function Efl.Ui.Scrollable_On_Show_Region
+{
+   params {
+      @in obj: Efl.Canvas.Object;
+      @in region: Eina.Rectangle;
+   }
+};
 
 enum Elm.Activate
 {
@@ -172,6 +179,15 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
       }
 
+      /* Not sure if the following are internal only? */
+      @property on_show_region_hook {
+         [[Region hook on show property]]
+         set {}
+         values {
+            func: Efl.Ui.Scrollable_On_Show_Region @nullable; [[Region hook function]]
+         }
+      }
+
       @property drag_lock_y {
       	 [[Lock the Y axis from being dragged]]
          values {
@@ -297,17 +313,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          values {
             sobj: Efl.Canvas.Object @nullable; [[Hover sub object]]
-         }
-      }
-      /* internal only - most objects use data = null as they work on
-         themselves except scroller itself */
-      @property on_show_region_hook {
-      	 [[Region hook on show property]]
-         set {
-         }
-         values {
-            func: region_hook_func_type @nullable; [[Region hook function]]
-            data: void_ptr @optional; [[Data pointer]]
          }
       }
       /* this is a part api */
