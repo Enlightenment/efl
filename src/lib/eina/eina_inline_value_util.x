@@ -129,6 +129,118 @@ eina_value_type_offset(const Eina_Value_Type *type, unsigned int base)
 
 /**
  * @brief Create a new #Eina_Value containing the passed parameter
+ * @param c The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_uchar_new(unsigned char c)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_UCHAR);
+   if (v) eina_value_set(v, c);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param s The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_ushort_new(unsigned short s)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_USHORT);
+   if (v) eina_value_set(v, s);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param i The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_uint_new(unsigned int i)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_UINT);
+   if (v) eina_value_set(v, i);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param l The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_ulong_new(unsigned long l)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_ULONG);
+   if (v) eina_value_set(v, l);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param i The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_uint64_new(uint64_t i)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_UINT64);
+   if (v) eina_value_set(v, i);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param c The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_char_new(char c)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_CHAR);
+   if (v) eina_value_set(v, c);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param s The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_short_new(short s)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_SHORT);
+   if (v) eina_value_set(v, s);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
  * @param i The value to use
  * @return The #Eina_Value
  * @since 1.21
@@ -140,6 +252,54 @@ eina_value_int_new(int i)
 
    v = eina_value_new(EINA_VALUE_TYPE_INT);
    if (v) eina_value_set(v, i);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param l The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_long_new(long l)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_LONG);
+   if (v) eina_value_set(v, l);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param i The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_int64_new(int64_t i)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_INT64);
+   if (v) eina_value_set(v, i);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param f The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_float_new(float f)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_FLOAT);
+   if (v) eina_value_set(v, f);
    return v;
 }
 
@@ -220,6 +380,22 @@ eina_value_time_new(time_t t)
 
    v = eina_value_new(EINA_VALUE_TYPE_TIMESTAMP);
    if (v) eina_value_set(v, t);
+   return v;
+}
+
+/**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param err The error code
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_error_new(Eina_Error err)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_ERROR);
+   if (v) eina_value_set(v, err);
    return v;
 }
 
