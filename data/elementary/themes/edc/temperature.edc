@@ -117,7 +117,6 @@ group { name: "e/gadget/thermal/main";
    alias: "e/gadget/thermal/main_vert";
    images.image: "therm_content.png" COMP;
    images.image: "therm_shadow.png" COMP;
-   images.image: "therm_shine.png" COMP;
    script {
     public message(Msg_Type:type, id, ...) {
        if ((type == MSG_FLOAT) && (id == 1)) {
@@ -147,13 +146,6 @@ group { name: "e/gadget/thermal/main";
             rel1.to: "base";
             rel2.to: "base";
             image.normal: "therm_content.png";
-         }
-      }
-      part { name: "overlay";
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "therm_shine.png";
          }
       }
       part { name: "fade_clip"; type: RECT;

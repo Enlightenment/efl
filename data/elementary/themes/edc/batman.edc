@@ -2,11 +2,9 @@ group { name: "e/gadget/batman/main";
    alias: "e/gadget/batman/main_vert";
    images.image: "bat_shadow.png" COMP;
    images.image: "bat_base.png" COMP;
-   images.image: "bat_shine.png" COMP;
    images.image: "bat_bottom0.png" COMP;
-   images.image: "bat_bottom1.png" COMP;
    images.image: "bat_top0.png" COMP;
-   images.image: "bat_top1.png" COMP;
+   images.image: "batman_overlay.png" COMP;
    images.image: "glow_med_white.png" COMP;
    script {
       public message(Msg_Type:type, id, ...) {
@@ -58,7 +56,9 @@ group { name: "e/gadget/batman/main";
       part { name: "fill_region"; type: SPACER;
          description { state: "default" 0.0;
             rel1.to: "bg";
+            rel1.offset: 1 0;
             rel2.to: "bg";
+            rel2.offset: -2 -1;
          }
       }
       part { name: "pwr"; type: SPACER;
@@ -134,30 +134,14 @@ group { name: "e/gadget/batman/main";
             color: 51 153 255 255;
          }
       }
-      part { name: "top-shine";
-         clip_to: "pulse_clip";
-         description { state: "default" 0.0;
-            rel1.to: "top";
-            rel2.to: "top";
-            image.normal: "bat_top1.png";
-         }
-      }
-      part { name: "bottom-shine";
-         clip_to: "pulse_clip";
-         description { state: "default" 0.0;
-            rel1.to: "bottom";
-            rel2.to: "bottom";
-            image.normal: "bat_bottom1.png";
-         }
-      }
-      part { name: "shine";
+      part { name: "overlay";
          clip_to: "pulse_clip";
          description { state: "default" 0.0;
             rel1.to: "bg";
-            rel1.offset: 0 -6;
+            rel1.offset: 0 0;
             rel2.to: "bg";
-            rel2.offset: -1 5;
-            image.normal: "bat_shine.png";
+            rel2.offset: -1 -1;
+            image.normal: "batman_overlay.png";
             image.border: 0 0 7 7;
          }
       }

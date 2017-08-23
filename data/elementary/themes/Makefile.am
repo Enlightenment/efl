@@ -168,6 +168,7 @@ elementary/themes/img/bat_shadow.png \
 elementary/themes/img/bat_shine.png \
 elementary/themes/img/bat_top0.png \
 elementary/themes/img/bat_top1.png \
+elementary/themes/img/batman_overlay.png \
 elementary/themes/img/bevel_curved_horiz_out.png \
 elementary/themes/img/bevel_curved_vert_out.png \
 elementary/themes/img/bevel_dark_in.png \
