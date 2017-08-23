@@ -1856,9 +1856,13 @@ _elm_widget_highlight_ignore_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->highlight_ignore;
 }
 
-EOLIAN static void
-_elm_widget_highlight_in_theme_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eina_Bool highlight)
+/** @internal */
+EAPI void
+elm_widget_highlight_in_theme_set(Eo *obj, Eina_Bool highlight)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    sd->highlight_in_theme = !!highlight;
    /* FIXME: if focused, it should switch from one mode to the other */
 }
@@ -1875,21 +1879,33 @@ _elm_widget_highlight_in_theme_update(Eo *obj)
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_highlight_in_theme_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+/** @internal */
+EAPI Eina_Bool
+elm_widget_highlight_in_theme_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
+
    return sd->highlight_in_theme;
 }
 
-EOLIAN static void
-_elm_widget_access_highlight_in_theme_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eina_Bool highlight)
+/** @internal */
+EAPI void
+elm_widget_access_highlight_in_theme_set(Eo *obj, Eina_Bool highlight)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    sd->access_highlight_in_theme = !!highlight;
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_access_highlight_in_theme_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+/** @internal */
+EAPI Eina_Bool
+elm_widget_access_highlight_in_theme_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
+
    return sd->access_highlight_in_theme;
 }
 
