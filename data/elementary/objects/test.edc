@@ -901,4 +901,36 @@ collections {
 
       }
    }
+   group { "efl_ui_popup_scroll_content";
+      parts {
+         rect { "base";
+            desc { "default";
+               min: 200 200;
+               color: 255 0 0 255;
+            }
+         }
+         rect { "top";
+            desc { "default";
+               fixed: 0 1;
+               min: 100 20;
+               color: 255 255 0 255;
+               rel1.to: "base";
+               rel2.to: "base";
+               rel2.relative: 1.0 0.0;
+               align: 0.5 0;
+            }
+         }
+         rect { "bottom";
+            desc { "default";
+              fixed: 0 1;
+              min: 100 20;
+              color: 255 255 0 255;
+              rel1.to: "base";
+              rel2.to: "base";
+              rel1.relative: 0.0 1.0;
+              align: 0.5 1.0;
+           }
+         }
+      }
+   }
 }
