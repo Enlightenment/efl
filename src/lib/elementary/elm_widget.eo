@@ -270,21 +270,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
       }
 
-      sub_object_add {
-         [['Virtual' function handling sub objects being added.]]
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in sobj: Efl.Canvas.Object; [[Sub object]]
-         }
-      }
-      sub_object_del {
-         [['Virtual' function handling sub objects being removed.]]
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in sobj: Efl.Canvas.Object; [[Object to be deleted]]
-         }
-      }
-
       /* Translation & Text API. */
       translate @protected {
          [[Virtual function handling language changes.]]
@@ -337,6 +322,34 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
 
       /* Internal hooks. */
+      widget_sub_object_add @protected {
+         [[Virtual function handling sub objects being added.
+
+           Sub objects can be any canvas object, not necessarily widgets.
+
+           See also @.widget_parent.
+         ]]
+         params {
+            @in sub_obj: Efl.Canvas.Object;
+               [[Sub object to be added. Not necessarily a widget itself.]]
+         }
+         return: bool; [[Indicates if the operation succeeded.]]
+         legacy: elm_widget_sub_object_add;
+      }
+      widget_sub_object_del @protected {
+         [[Virtual function handling sub objects being removed.
+
+           Sub objects can be any canvas object, not necessarily widgets.
+
+           See also @.widget_parent.
+         ]]
+         params {
+            @in sub_obj: Efl.Canvas.Object;
+               [[Sub object to be removed. Should be a child of this widget.]]
+         }
+         return: bool; [[Indicates if the operation succeeded.]]
+         legacy: elm_widget_sub_object_del;
+      }
       @property orientation {
          [[Widget orientation]]
          set {

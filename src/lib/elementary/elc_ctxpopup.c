@@ -599,12 +599,12 @@ _base_shift_by_arrow(Evas_Object *arrow,
 }
 
 EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_elm_ctxpopup_elm_widget_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
-   /* Skipping elm_layout sub_object_add in order to ignore size hint changes.
+   /* Skipping elm_layout widget_sub_object_add in order to ignore size hint changes.
     * Note: It is not clear WHY we are doing this. Same reason as genlist?
     */
-   return elm_obj_widget_sub_object_add(efl_cast(obj, ELM_WIDGET_CLASS), sobj);
+   return elm_widget_sub_object_add(efl_cast(obj, ELM_WIDGET_CLASS), sobj);
 }
 
 EOLIAN static void

@@ -75,10 +75,10 @@ _elm_mapbuf_content_unset_internal(Elm_Mapbuf_Data *sd, Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_elm_widget_sub_object_del(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *sobj)
+_elm_mapbuf_elm_widget_widget_sub_object_del(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)

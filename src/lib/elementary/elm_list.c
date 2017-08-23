@@ -1289,13 +1289,13 @@ _elm_list_elm_widget_on_focus(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *item 
 }
 
 EOLIAN static Eina_Bool
-_elm_list_elm_widget_sub_object_del(Eo *obj, Elm_List_Data *sd, Evas_Object *sobj)
+_elm_list_elm_widget_widget_sub_object_del(Eo *obj, Elm_List_Data *sd, Evas_Object *sobj)
 {
    const Eina_List *l;
    Elm_Object_Item *eo_it;
 
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if ((sobj == sd->box) || (sobj == obj)) goto end;

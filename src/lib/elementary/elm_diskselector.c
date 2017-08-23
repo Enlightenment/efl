@@ -873,14 +873,14 @@ _elm_diskselector_elm_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_diskselector_elm_widget_sub_object_del(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *sobj)
+_elm_diskselector_elm_widget_widget_sub_object_del(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
    Elm_Diskselector_Item_Data *it;
    const Eina_List *l;
 
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->items, l, it)

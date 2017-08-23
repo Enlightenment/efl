@@ -176,7 +176,7 @@ class Elm.Popup (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.focus_next;
       Elm.Widget.widget_parent { set; }
       Elm.Widget.translate;
-      Elm.Widget.sub_object_del;
+      Elm.Widget.widget_sub_object_del;
       Elm.Widget.widget_event;
       Efl.Canvas.Layout_Signal.signal_emit;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }

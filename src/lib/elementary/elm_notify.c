@@ -199,10 +199,10 @@ _changed_size_hints_cb(void *data,
 }
 
 EOLIAN static Eina_Bool
-_elm_notify_elm_widget_sub_object_del(Eo *obj, Elm_Notify_Data *sd, Evas_Object *sobj)
+_elm_notify_elm_widget_widget_sub_object_del(Eo *obj, Elm_Notify_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)

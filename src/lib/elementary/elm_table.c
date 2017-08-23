@@ -148,11 +148,11 @@ _on_size_hints_changed(void *data,
 }
 
 EOLIAN static Eina_Bool
-_elm_table_elm_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *child)
+_elm_table_elm_widget_widget_sub_object_del(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *child)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), child);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), child);
    if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);

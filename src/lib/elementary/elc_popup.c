@@ -511,12 +511,12 @@ _elm_popup_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Elm_Popup_D
 }
 
 EOLIAN static Eina_Bool
-_elm_popup_elm_widget_sub_object_del(Eo *obj, Elm_Popup_Data *sd, Evas_Object *sobj)
+_elm_popup_elm_widget_widget_sub_object_del(Eo *obj, Elm_Popup_Data *sd, Evas_Object *sobj)
 {
    Elm_Popup_Item_Data *it;
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->title_icon)

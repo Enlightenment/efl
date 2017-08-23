@@ -3197,7 +3197,7 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_genlist_elm_widget_sub_object_add(Eo *obj, Elm_Genlist_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_elm_genlist_elm_widget_widget_sub_object_add(Eo *obj, Elm_Genlist_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    /* skipping layout's code, which registers size hint changing
     * callback on sub objects. this is here because items'
@@ -3205,11 +3205,11 @@ _elm_genlist_elm_widget_sub_object_add(Eo *obj, Elm_Genlist_Data *_pd EINA_UNUSE
     * creation, thus issuing TOO MANY sizing_eval()'s here. they are
     * not needed at here anyway, so let's skip listening to those
     * hints changes */
-   return elm_obj_widget_sub_object_add(efl_cast(obj, ELM_WIDGET_CLASS), sobj);
+   return elm_widget_sub_object_add(efl_cast(obj, ELM_WIDGET_CLASS), sobj);
 }
 
 EOLIAN static Eina_Bool
-_elm_genlist_elm_widget_sub_object_del(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *sobj)
+_elm_genlist_elm_widget_widget_sub_object_del(Eo *obj, Elm_Genlist_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -3218,7 +3218,7 @@ _elm_genlist_elm_widget_sub_object_del(Eo *obj, Elm_Genlist_Data *sd, Evas_Objec
     * such) seem to issue a whole lot of deletions and Evas bitches
     * about too many recalculations */
    sd->on_sub_del = EINA_TRUE;
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    sd->on_sub_del = EINA_FALSE;
    return int_ret;
 }
