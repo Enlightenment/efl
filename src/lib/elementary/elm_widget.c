@@ -1913,16 +1913,14 @@ _elm_widget_focused_object_get(Eo *obj, Elm_Widget_Smart_Data *sd)
 }
 
 EOLIAN static Evas_Object*
-_elm_widget_top_get(Eo *obj, Elm_Widget_Smart_Data *sd)
+_elm_widget_widget_top_get(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    if (sd->parent_obj)
      {
-        Evas_Object *ret = NULL;
         if (!efl_isa(sd->parent_obj, ELM_WIDGET_CLASS)) return NULL;
-        ret = elm_obj_widget_top_get((Eo *) sd->parent_obj);
-        return ret;
+        return elm_obj_widget_top_get(sd->parent_obj);
      }
-   return (Evas_Object *)obj;
+   return obj;
 }
 
 EAPI Eina_Bool

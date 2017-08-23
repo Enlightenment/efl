@@ -177,6 +177,48 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             can_focus: bool; [[Whether the object is focusable.]]
          }
       }
+      @property widget_parent @protected {
+         [[The internal parent of this widget.
+
+           @Elm.Widget objects have a parent hierarchy that may differ slightly
+           from their @Efl.Object or @Efl.Canvas.Object hierarchy. This is
+           meant for internal handling.
+
+           See also @.widget_top.
+         ]]
+         set {}
+         get {
+            legacy: elm_widget_parent_get; /* internal in legacy */
+         }
+         values {
+            parent: Elm.Widget @nullable; [[Widget parent object]]
+         }
+      }
+      @property widget_top {
+         [[Root widget in the widget hierarchy.
+
+           This returns the top widget, in terms of widget hierarchy. This is
+           usually a window ($Efl.Ui.Win). This function walks the list of
+           @.widget_parent.
+
+           If this widget has no parent (in terms of widget hierarchy) this
+           will return $null.
+
+           Note: This may not be a display manager window in case of nested
+           canvases. If a "real" window is required, then you might want to
+           verify that the returned object is a $Efl.Ui.Win_Inlined, and then
+           get $Efl.Ui.Win_Inlined.inlined_parent to find an object in the
+           master window.
+
+           See also @.widget_parent.
+         ]]
+         get {
+            legacy: elm_widget_top_get; /* internal in legacy */
+         }
+         values {
+            top: Elm.Widget; [[Top widget, usually a window.]]
+         }
+      }
 
       /* Not sure if the following are internal only? */
       @property on_show_region_hook {
@@ -250,16 +292,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       	 [[Highlight in theme property]]
          values {
             highlight: bool; [[$true if widget gets hightlight, $false otherwise]]
-         }
-      }
-      @property widget_parent @protected {
-         [[The internal widget parent]]
-         set {}
-         get {
-            legacy: elm_widget_parent_get; /* Needed because we don't do duplication removal for legacy names. */
-         }
-         values {
-            parent: Efl.Canvas.Object @nullable; [[Widget parent object]]
          }
       }
       @property access_info {
@@ -383,12 +415,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             y: int; [[Y coordinate]]
             w: int; [[Width]]
             h: int; [[Height]]
-         }
-      }
-      @property top {
-      	 [[Top widget property]]
-         get {
-            return: Efl.Canvas.Object; [[Top widget]]
          }
       }
       @property focus_order {
@@ -730,12 +756,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in sobj: Efl.Canvas.Object; [[Object to be deleted]]
-         }
-      }
-      tooltip_add {
-      	 [[Add tooltip to widget]]
-         params {
-            @in tt: ptr(Elm.Tooltip); [[Tooltip]]
          }
       }
       focus_region_show @const {
