@@ -345,14 +345,14 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            elm_colorselector_palette_color_add(efl_added, 0, 64, 64, 64),
            elm_colorselector_palette_color_add(efl_added, 0, 0, 0, 0),
            efl_event_callback_add(efl_added, ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, _colorsel_cb, win),
-           efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
+           efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
            efl_pack(box, efl_added));
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, win,
            efl_file_set(efl_added, buf, NULL),
            efl_gfx_size_hint_min_set(efl_added, 64, 64),
-           efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
+           efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _file_cb, win),
            efl_pack(box, efl_added));
 
@@ -360,7 +360,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    efl_add(EFL_UI_IMAGE_CLASS, win,
            efl_file_set(efl_added, buf, NULL),
            efl_gfx_size_hint_min_set(efl_added, 64, 64),
-           efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
+           efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _image_cb, win),
            efl_pack(box, efl_added));
 

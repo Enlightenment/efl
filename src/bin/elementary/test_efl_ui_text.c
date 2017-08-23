@@ -30,9 +30,6 @@ _create_label(Eo *win, Eo *bx)
    en = efl_add(EFL_UI_TEXT_CLASS, win);
    printf("Added Efl.Ui.Text object\n");
    efl_ui_text_interactive_editable_set(en, EINA_FALSE);
-
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, en);
    return en;
 }
@@ -201,8 +198,6 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    efl_ui_text_interactive_editable_set(en, EINA_TRUE);
    efl_ui_text_scrollable_set(en, EINA_TRUE);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, en);
    elm_object_focus_set(en, EINA_TRUE);
 

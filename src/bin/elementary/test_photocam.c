@@ -812,12 +812,12 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN),
-                efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
                 efl_content_set(win, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, bx,
            efl_text_set(efl_added, "Clicking the image will play/pause animation."),
            efl_ui_text_interactive_editable_set(efl_added, EINA_FALSE),
+           efl_gfx_size_hint_weight_set(efl_added, 1, 0),
            efl_canvas_text_style_set(efl_added, NULL, "DEFAULT='align=center font=Sans font_size=10 color=#fff wrap=word'"),
            efl_pack(bx, efl_added)
           );
@@ -825,8 +825,6 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    snprintf(buf, sizeof(buf), "%s/images/animated_logo.gif", elm_app_data_dir_get());
    zoomable = efl_add(EFL_UI_IMAGE_ZOOMABLE_CLASS, win,
                       efl_file_set(efl_added, buf, NULL),
-                      efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
-                      efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
                       efl_pack(bx, efl_added),
                       efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _zoomable_clicked_cb, NULL)
                      );
