@@ -4149,14 +4149,27 @@ comp_seat_proxy_update(Comp_Seat *s)
 {
    Eina_Iterator *it;
    Ecore_Wl2_Input *input;
-   Eina_Bool drm;
+   Ecore_Wl2_Window *win;
+   int n = 0, i = 0;
 
    if (s->seat) return;
-   drm = !ecore_evas_wayland2_window_get(ecore_evas_ecore_evas_get(s->c->evas));
+   win = ecore_evas_wayland2_window_get(ecore_evas_ecore_evas_get(s->c->evas));
+   if (win)
+     {
+        Ecore_Wl2_Display *ewd = ecore_wl2_window_display_get(win);
+        it = ecore_wl2_display_inputs_get(ewd);
+        EINA_ITERATOR_FOREACH(it, input)
+          {
+             if (ecore_wl2_input_seat_id_get(input) == evas_device_seat_id_get(s->dev))
+               break;
+             n++;
+          }
+        eina_iterator_free(it);
+     }
    it = ecore_wl2_display_inputs_get(s->c->parent_disp);
    EINA_ITERATOR_FOREACH(it, input)
      {
-        if (drm)
+        if (!win)
           {
              if (eina_streq(ecore_wl2_input_name_get(input), evas_device_name_get(s->dev)))
                {
@@ -4164,14 +4177,12 @@ comp_seat_proxy_update(Comp_Seat *s)
                   break;
                }
           }
-        else
+        else if (i == n)
           {
-             if (ecore_wl2_input_seat_id_get(input) == evas_device_seat_id_get(s->dev))
-               {
-                  s->seat = input;
-                  break;
-               }
+             s->seat = input;
+             break;
           }
+        i++;
      }
    eina_iterator_free(it);
 }
