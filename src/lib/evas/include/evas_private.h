@@ -1262,6 +1262,7 @@ struct _Evas_Object_Protected_Data
       Eina_Bool                ctor : 1; // used legacy constructor
       Eina_Bool                visible_set : 1; // visibility manually set
       Eina_Bool                weight_set : 1; // weight manually set
+      Eina_Bool                align_set : 1; // align manually set
       Eina_Bool                finalized : 1; // object fully constructed
    } legacy;
 
