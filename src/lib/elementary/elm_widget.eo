@@ -273,12 +273,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             }
          }
       }
-      @property highlight_in_theme {
-      	 [[Highlight in theme property]]
-         values {
-            highlight: bool; [[$true if widget gets hightlight, $false otherwise]]
-         }
-      }
       @property access_info {
       	 [[Accessibility information]]
          values {
@@ -289,12 +283,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       	 [[Drag lock on X axis]]
          values {
             lock: bool; [[$true if drag is locked on X axis, $false otherwise]]
-         }
-      }
-      @property access_highlight_in_theme {
-         [[Accessibility highlight in theme]]
-         values {
-            highlight: bool; [[$true if highlighted, $false otherwise]]
          }
       }
       @property focus_region_show_mode {
