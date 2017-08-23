@@ -3993,16 +3993,18 @@ _layout_text_item_new(Ctxt *c EINA_UNUSED, Evas_Object_Textblock_Format *fmt)
  */
 static int
 _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti, int width_offset)
+      const Evas_Object_Textblock_Text_Item *ti,
+      Evas_Coord w, Evas_Coord from_x, int width_offset)
 {
    if (fmt->font.font)
      {
         Evas_Coord x;
-        x = c->w - c->o->style_pad.l - c->o->style_pad.r - c->marginl -
-           c->marginr - c->x - ti->x_adjustment;
+        Evas_Object_Protected_Data *obj = c->evas_o;
+
+        x = w - c->o->style_pad.l - c->o->style_pad.r - c->marginl -
+           c->marginr - from_x - ti->x_adjustment;
         if (x < 0)
           x = 0;
-        Evas_Object_Protected_Data *obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
         return ENFN->font_last_up_to_pos(ENDT, fmt->font.font,
               &ti->text_props, x, 0, width_offset);
      }
@@ -4764,7 +4766,8 @@ _layout_update_par(Ctxt *c)
 static int
 _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, size_t line_start,
-      const char *breaks)
+      const char *breaks,
+      Evas_Coord w, Evas_Coord from_x)
 {
    int wrap;
    size_t uwrap;
@@ -4777,7 +4780,8 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
            wrap = 0;
         else
-           wrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), 0);
+           wrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it),
+                w, from_x, 0);
 
         if (wrap < 0)
            return -1;
@@ -4817,7 +4821,8 @@ _layout_word_end(const char *breaks, size_t pos, size_t len)
 static int
 _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, size_t line_start,
-      const char *breaks, const char *wordbreaks)
+      const char *breaks, const char *wordbreaks,
+      Evas_Coord w, Evas_Coord from_x)
 {
    size_t wrap;
    size_t orig_wrap;
@@ -4835,17 +4840,14 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
            swrap = 0;
         else
           {
-             Evas_Coord cw;
-
              /* Get cutoff */
-             swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), 0);
+             swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), 0,
+                   w, from_x);
 
              /* Get cutoff considering an additional hyphen item */
-             cw = c->w;
              c->hyphen_ti = _layout_hyphen_item_new(c, _ITEM_TEXT(it));
-             c->w -= c->hyphen_ti->parent.w;
-             hyphen_swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), c->hyphen_ti->parent.w);
-             c->w = cw;
+             hyphen_swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it),
+                  w - c->hyphen_ti->parent.w, from_x, c->hyphen_ti->parent.w);
 
              /* Stronger condition than '< 0' for hyphenations */
              if (hyphen_swrap >= 2)
@@ -4974,13 +4976,15 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
    /* Hyphenation falls-back to char wrapping at start of line */
    return _layout_get_charwrap(c, fmt, it,
-         line_start, breaks);
+         line_start, breaks, w, from_x);
 }
 
 static int
 _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, Eina_Bool mixed_wrap,
-      size_t line_start, const char *breaks, Eina_Bool scan_fwd)
+      size_t line_start, const char *breaks,
+      Evas_Coord w, Evas_Coord from_x,
+      Eina_Bool scan_fwd)
 {
    Eina_Bool wrap_after = EINA_FALSE;
    size_t wrap;
@@ -4995,7 +4999,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
            swrap = 0;
         else
-           swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), 0);
+           swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it), w, from_x, 0);
         /* Avoiding too small textblocks to even contain one char.
          * FIXME: This can cause breaking inside ligatures. */
 
@@ -5052,7 +5056,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         if (mixed_wrap)
           {
              return _layout_get_charwrap(c, fmt, it,
-                   line_start, breaks);
+                   line_start, breaks, w, from_x);
           }
         else
           {
@@ -5083,20 +5087,24 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 static int
 _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, size_t line_start,
-      const char *breaks, Eina_Bool allow_scan_fwd)
+      const char *breaks,
+      Evas_Coord w, Evas_Coord from_x,
+      Eina_Bool allow_scan_fwd)
 {
    return _layout_get_word_mixwrap_common(c, fmt, it, EINA_FALSE, line_start,
-         breaks, allow_scan_fwd);
+         breaks, w, from_x, allow_scan_fwd);
 }
 
 /* -1 means no wrap */
 static int
 _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, size_t line_start,
-      const char *breaks, Eina_Bool allow_scan_fwd)
+      const char *breaks,
+      Evas_Coord w, Evas_Coord from_x,
+      Eina_Bool allow_scan_fwd)
 {
    return _layout_get_word_mixwrap_common(c, fmt, it, EINA_TRUE, line_start,
-         breaks, allow_scan_fwd);
+         breaks, w, from_x, allow_scan_fwd);
 }
 
 static Evas_Object_Textblock_Text_Item *
@@ -5157,13 +5165,14 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 {
    Evas_Object_Textblock_Text_Item *ti, *ellip_ti;
    Evas_Object_Textblock_Item *last_it, *prev_it;
-   Evas_Coord save_cx, save_cw, ellip_w;
+   Evas_Coord save_cx, ellip_w;
+   Evas_Coord temp_w;
    int wrap;
    ellip_ti = _layout_ellipsis_item_new(c, it);
    prev_it = last_it = it;
 
    save_cx = c->x;
-   save_cw = c->w;
+   temp_w = c->w;
    ellip_w = ellip_ti->parent.w;
 #ifdef BIDI_SUPPORT
    // XXX: with RTL considerations in mind, we need to take max(adv, w) as the
@@ -5174,10 +5183,10 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
         ellip_w = ellip_ti->parent.adv;
      }
 #endif
-   c->w -= ellip_w;
+   temp_w -= ellip_w;
 
    /* If there is no enough space for ellipsis item, remove all of items */
-   if (c->w <= 0)
+   if (temp_w <= 0)
      {
         while (c->ln->items)
           {
@@ -5195,7 +5204,8 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
           {
              ti = _ITEM_TEXT(last_it);
 
-             wrap = _layout_text_cutoff_get(c, last_it->format, ti, ellip_ti->parent.w);
+             wrap = _layout_text_cutoff_get(c, last_it->format, ti,
+                  temp_w, c->x, ellip_ti->parent.w);
 
              if ((wrap > 0) && !IS_AT_END(ti, (size_t) wrap))
                {
@@ -5224,7 +5234,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
              /* We will ignore format items. ex) tab
               * But, if there is <item> tag and size is acceptable, we have to insert it to line. */
              if (!strncmp(_ITEM_FORMAT(last_it)->item, "item", 4) &&
-                 ((c->w - c->o->style_pad.l - c->o->style_pad.r - c->marginl - c->marginr) >= (c->x + last_it->adv)))
+                 ((temp_w - c->o->style_pad.l - c->o->style_pad.r - c->marginl - c->marginr) >= (c->x + last_it->adv)))
                {
                   break;
                }
@@ -5245,9 +5255,9 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
              /* We need to renew ellipsis item.
               * Because, base format is changed to last_it.
               * We can't reuse it. */
-             c->w += ellip_ti->parent.w;
+             temp_w += ellip_ti->parent.w;
              ellip_ti = _layout_ellipsis_item_new(c, last_it);
-             c->w -= ellip_ti->parent.w;
+             temp_w -= ellip_ti->parent.w;
              c->x -= last_it->adv;
              if (c->x < 0)
                c->x = 0;
@@ -5256,7 +5266,6 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
      }
 
    c->x = save_cx;
-   c->w = save_cw;
    /* If we should add this item, do it */
    if (last_it == it)
      {
@@ -5730,26 +5739,27 @@ _layout_par(Ctxt *c)
                         * was pushed forward by an obstacle once, as there
                         * is a chance it will fit in the next lines. */
                        Eina_Bool allow_scan_fwd = (!obs && !item_preadv);
-                       Evas_Coord save_cw = c->w;
+                       Evas_Coord cw = c->w;
                        if (obs)
                          {
-                            c->w = obs->x;
+                            cw -= obs->w;
                          }
                        if (it->format->wrap_word)
                           wrap = _layout_get_wordwrap(c, it->format, it,
-                                line_start, line_breaks, allow_scan_fwd);
+                                line_start, line_breaks,
+                                cw, c->x, allow_scan_fwd);
                        else if (it->format->wrap_char)
                           wrap = _layout_get_charwrap(c, it->format, it,
-                                line_start, line_breaks);
+                                line_start, line_breaks, cw, c->x);
                        else if (it->format->wrap_mixed)
                           wrap = _layout_get_mixedwrap(c, it->format, it,
-                                line_start, line_breaks, allow_scan_fwd);
+                                line_start, line_breaks, cw, c->x, allow_scan_fwd);
                        else if (it->format->wrap_hyphenation)
                           wrap = _layout_get_hyphenationwrap(c, it->format, it,
-                                line_start, line_breaks, word_breaks);
+                                line_start, line_breaks, word_breaks,
+                                cw, c->x);
                        else
                           wrap = -1;
-                       c->w = save_cw;
                     }
 
                   /* If it's before the item, rollback and apply.
