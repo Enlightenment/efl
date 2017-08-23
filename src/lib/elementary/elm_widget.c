@@ -110,6 +110,7 @@ _on_sub_obj_del(void *data, const Efl_Event *event);
 static void
 _on_sub_obj_hide(void *data, const Efl_Event *event);
 static void _propagate_event(void *data, const Efl_Event *eo_event);
+static void _elm_widget_focus_tree_unfocusable_handle(Eo *obj);
 
 EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
                           { EFL_EVENT_DEL, _on_sub_obj_del },
@@ -1774,7 +1775,7 @@ _elm_widget_tree_unfocusable_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool t
    tree_unfocusable = !!tree_unfocusable;
    if (sd->tree_unfocusable == tree_unfocusable) return;
    sd->tree_unfocusable = tree_unfocusable;
-   elm_widget_focus_tree_unfocusable_handle(obj);
+   _elm_widget_focus_tree_unfocusable_handle(obj);
 
    //focus state eval on all children
    _full_eval_children(obj, sd);
@@ -4333,8 +4334,8 @@ _elm_widget_focus_mouse_up_handle(Eo *obj, Elm_Widget_Smart_Data *pd)
      }
 }
 
-EOLIAN static void
-_elm_widget_focus_tree_unfocusable_handle(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+static void
+_elm_widget_focus_tree_unfocusable_handle(Eo *obj)
 {
    if (!elm_widget_parent_get(obj))
      elm_widget_focused_object_clear(obj);
@@ -4345,7 +4346,7 @@ _elm_widget_focus_tree_unfocusable_handle(Eo *obj, Elm_Widget_Smart_Data *_pd EI
 EOLIAN static void
 _elm_widget_focus_disabled_handle(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
-   elm_widget_focus_tree_unfocusable_handle(obj);
+   _elm_widget_focus_tree_unfocusable_handle(obj);
 }
 
 EOLIAN static unsigned int

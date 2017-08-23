@@ -509,9 +509,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
-      focus_tree_unfocusable_handle {
-         [[Handle focus tree unfocusable]]
-      }
       focus_custom_chain_prepend {
          [[Prepend object to custom focus chain.
 
