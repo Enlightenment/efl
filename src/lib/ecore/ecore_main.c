@@ -2157,8 +2157,8 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
    _efl_loop_timer_enable_new();
    if (_efl_loop_timers_exists() || t >= 0)
      {
-       double t1 = _efl_loop_timer_next_get();
-       if(t < 0 || (t1 >= 0 && t1 < t)) t = t1;
+       double tnext = _efl_loop_timer_next_get();
+       if (t < 0 || (tnext >= 0 && tnext < t)) t = tnext;
        DBG("Should awake after %f", t);
        
        if (t >= 0.0)
