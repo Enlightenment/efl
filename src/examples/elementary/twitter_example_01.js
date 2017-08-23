@@ -34,8 +34,8 @@ tweet_box.setHintAlign(-1.0, -1.0);
 tweet_box.setPackPadding(0.0, 30.0, true);
 box.packEnd(tweet_box);
 
-tweet_box_orient = tweet_box.cast("Efl.Orientation");
-tweet_box_orient.setOrientation(efl.Efl.Orient.VERTICAL);
+tweet_box_orient = tweet_box.cast("Efl.Ui.Direction");
+tweet_box_orient.setOrientation(efl.Efl.Ui.Dir.VERTICAL);
 
 icon_array = new Array();
 

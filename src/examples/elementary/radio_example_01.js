@@ -10,7 +10,7 @@ win.setText("Radio");
 win.setAutohide(true);
 
 bx = new efl.Efl.Ui.Box(win);
-bx.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+bx.cast("Efl.Ui.Direction").setDirection(efl.Efl.Ui.Dir.HORIZONTAL);
 bx.setHintWeight(1.0, 1.0);
 win.setContent(bx);
 bx.setVisible(true);

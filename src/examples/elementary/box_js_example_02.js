@@ -27,8 +27,8 @@ win.setContent(bigbox);
 
 bx = new efl.Efl.Ui.Box(win);
 bx.setHintWeight(1.0, 1.0);
-bx_orient = bx.cast("Efl.Orientation");
-bx_orient.setOrientation(efl.Efl.Orient.VERTICAL);
+bx_orient = bx.cast("Efl.Ui.Direction");
+bx_orient.setOrientation(efl.Efl.Ui.Dir.VERTICAL);
 bigbox.packEnd(bx);
 bx.setVisible(true);
 
@@ -47,8 +47,8 @@ bt.on('clicked', _clear_cb);
 bx = new efl.Efl.Ui.Box(win)
 bx.setHintWeight(1.0, 1.0);
 bx.setHintAlign(-1.0, -1.0);
-bx_orient = bx.cast("Efl.Orientation");
-bx_orient.setOrientation(efl.Efl.Orient.HORIZONTAL);
+bx_orient = bx.cast("Efl.Ui.Direction");
+bx_orient.setDirection(efl.Efl.Ui.Dir.HORIZONTAL);
 bigbox.packEnd(bx);
 bx.setVisible(true);
 

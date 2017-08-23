@@ -89,7 +89,7 @@ win.setContent(box);
 box.setVisible(true);
 
 box_initial = new efl.Efl.Ui.Box(win);
-box_initial.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+box_initial.cast("Efl.Ui.Direction").setDirection(efl.Efl.Ui.Dir.HORIZONTAL);
 box_initial.setHintWeight(1.0, 0.0);
 box.packEnd(box_initial);
 box_initial.setVisible(true);
@@ -114,7 +114,7 @@ btn3.setVisible(true);
 btn3.on('clicked', _btn_options_cb);
 
 box_gap = new efl.Efl.Ui.Box(win);
-box_gap.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+box_gap.cast("Efl.Ui.Direction").setDirection(efl.Efl.Ui.Dir.HORIZONTAL);
 box_gap.setHintWeight(1.0, 0.0);
 box.packEnd(box_gap);
 box_gap.setVisible(true);
@@ -151,7 +151,7 @@ icon_up.setIcon("arrow_up");
 setIcon(up, icon_up);
 
 box_inferior = new efl.Efl.Ui.Box(win);
-box_inferior.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+box_inferior.cast("Efl.Ui.Direction").setDirection(efl.Efl.Ui.Dir.HORIZONTAL);
 box_inferior.setHintWeight(1.0, 1.0);
 box_inferior.setHintAlign(-1.0, -1.0);
 box.packEnd(box_inferior);
