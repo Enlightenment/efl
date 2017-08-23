@@ -21,7 +21,7 @@ state_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 }
 
 static void
-state_changed_cb2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+state_changed_cb2(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj) == EINA_FALSE)
       elm_object_text_set(obj, NULL);
