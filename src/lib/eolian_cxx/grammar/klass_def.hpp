@@ -171,16 +171,16 @@ get(klass_name const& klass)
         
 struct regular_type_def
 {
-   regular_type_def() : is_undefined(false) {}
+   regular_type_def() : is_undefined(false), is_function_ptr(false) {}
    regular_type_def(std::string base_type, qualifier_def qual, std::vector<std::string> namespaces
-                    , bool is_undefined = false)
+                    , bool is_undefined = false, bool is_function_ptr = false)
      : base_type(std::move(base_type)), base_qualifier(qual), namespaces(std::move(namespaces))
-     , is_undefined(is_undefined) {}
+     , is_undefined(is_undefined), is_function_ptr(is_function_ptr) {}
   
    std::string base_type;
    qualifier_def base_qualifier;
    std::vector<std::string> namespaces;
-   bool is_undefined;
+   bool is_undefined, is_function_ptr;
 };
 
 inline bool operator==(regular_type_def const& rhs, regular_type_def const& lhs)
@@ -262,6 +262,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
        {
          bool is_undefined = false;
          Eolian_Typedecl const* decl = eolian_type_typedecl_get(eolian_type);
+         bool is_function_ptr = decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_FUNCTION_POINTER;
          if(decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_ALIAS)
            {
              Eolian_Type const* aliased = eolian_typedecl_base_type_get(decl);
@@ -277,7 +278,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
          for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
                , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
            namespaces.push_back(&*namespace_iterator);
-         original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, is_undefined}};
+         original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, is_undefined, is_function_ptr}};
        }
        break;
      case EOLIAN_TYPE_CLASS:
