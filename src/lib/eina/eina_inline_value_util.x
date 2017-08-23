@@ -25,15 +25,85 @@
 #include <time.h>
 #include <string.h>
 
+/* original names were too long, _util was removed.
+ * since they were static inline, a macro is enough
+ */
+
+/**
+ * Legacy compat: calls eina_value_type_size()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_type_size eina_value_type_size
+/**
+ * Legacy compat: calls eina_value_type_offset()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_type_offset eina_value_type_offset
+/**
+ * Legacy compat: calls eina_value_int_new()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_int_new eina_value_int_new
+/**
+ * Legacy compat: calls eina_value_double_new()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_double_new eina_value_double_new
+/**
+ * Legacy compat: calls eina_value_bool_new()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_bool_new eina_value_bool_new
+/**
+ * Legacy compat: calls eina_value_string_new()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_string_new eina_value_string_new
+/**
+ * Legacy compat: calls eina_value_stringshare_new()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_stringshare_new eina_value_stringshare_new
+/**
+ * Legacy compat: calls eina_value_time_new()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_time_new eina_value_time_new
+/**
+ * Legacy compat: calls eina_value_dup()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_dup eina_value_dup
+/**
+ * Legacy compat: calls eina_value_stringshare_copy()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_stringshare_copy eina_value_stringshare_copy
+/**
+ * Legacy compat: calls eina_value_string_copy()
+ * @deprecated
+ * @since 1.12
+ */
+#define eina_value_util_string_copy eina_value_string_copy
 
 /**
  * @brief Get size of #Eina_Value_Type based on C type
  * @param type The type to get the size of
  * @return The size of the type
- * @since 1.12
+ * @since 1.21
  */
 static inline size_t
-eina_value_util_type_size(const Eina_Value_Type *type)
+eina_value_type_size(const Eina_Value_Type *type)
 {
    if (type) return type->value_size;
    return 0;
@@ -44,13 +114,13 @@ eina_value_util_type_size(const Eina_Value_Type *type)
  * @param type The type to get the offset of
  * @param base The existing base size
  * @return The offset of the type
- * @since 1.12
+ * @since 1.21
  */
 static inline unsigned int
-eina_value_util_type_offset(const Eina_Value_Type *type, unsigned int base)
+eina_value_type_offset(const Eina_Value_Type *type, unsigned int base)
 {
    unsigned size, padding;
-   size = eina_value_util_type_size(type);
+   size = eina_value_type_size(type);
    if (!(base % size))
      return base;
    padding = ( (base > size) ? (base - size) : (size - base));
@@ -61,10 +131,10 @@ eina_value_util_type_offset(const Eina_Value_Type *type, unsigned int base)
  * @brief Create a new #Eina_Value containing the passed parameter
  * @param i The value to use
  * @return The #Eina_Value
- * @since 1.12
+ * @since 1.21
  */
 static inline Eina_Value *
-eina_value_util_int_new(int i)
+eina_value_int_new(int i)
 {
    Eina_Value *v;
 
@@ -77,10 +147,10 @@ eina_value_util_int_new(int i)
  * @brief Create a new #Eina_Value containing the passed parameter
  * @param d The value to use
  * @return The #Eina_Value
- * @since 1.12
+ * @since 1.21
  */
 static inline Eina_Value *
-eina_value_util_double_new(double d)
+eina_value_double_new(double d)
 {
    Eina_Value *v;
 
@@ -93,10 +163,10 @@ eina_value_util_double_new(double d)
  * @brief Create a new #Eina_Value containing the passed parameter
  * @param b The value to use
  * @return The #Eina_Value
- * @since 1.12
+ * @since 1.21
  */
 static inline Eina_Value *
-eina_value_util_bool_new(Eina_Bool b)
+eina_value_bool_new(Eina_Bool b)
 {
    Eina_Value *v;
 
@@ -109,10 +179,10 @@ eina_value_util_bool_new(Eina_Bool b)
  * @brief Create a new #Eina_Value containing the passed parameter
  * @param str The value to use
  * @return The #Eina_Value
- * @since 1.12
+ * @since 1.21
  */
 static inline Eina_Value *
-eina_value_util_string_new(const char *str)
+eina_value_string_new(const char *str)
 {
    Eina_Value *v;
 
@@ -125,10 +195,10 @@ eina_value_util_string_new(const char *str)
  * @brief Create a new #Eina_Value containing the passed parameter
  * @param str The value to use
  * @return The #Eina_Value
- * @since 1.12
+ * @since 1.21
  */
 static inline Eina_Value *
-eina_value_util_stringshare_new(const char *str)
+eina_value_stringshare_new(const char *str)
 {
    Eina_Value *v;
 
@@ -141,10 +211,10 @@ eina_value_util_stringshare_new(const char *str)
  * @brief Create a new #Eina_Value containing the passed parameter
  * @param t The value to use
  * @return The #Eina_Value
- * @since 1.12
+ * @since 1.21
  */
 static inline Eina_Value *
-eina_value_util_time_new(time_t t)
+eina_value_time_new(time_t t)
 {
    Eina_Value *v;
 
@@ -157,10 +227,10 @@ eina_value_util_time_new(time_t t)
  * @brief Create a new #Eina_Value containing the passed parameter
  * @param val The value to use
  * @return The #Eina_Value
- * @since 1.12
+ * @since 1.21
  */
 static inline Eina_Value *
-eina_value_util_dup(const Eina_Value *val)
+eina_value_dup(const Eina_Value *val)
 {
    Eina_Value *v;
 
@@ -175,13 +245,15 @@ eina_value_util_dup(const Eina_Value *val)
  * @param val The value to copy
  * @param str The pointer to copy the stringshare to
  * @return @c EINA_TRUE on success
- * @since 1.12
+ * @since 1.21
  */
 static inline Eina_Bool
-eina_value_util_stringshare_copy(const Eina_Value *val, Eina_Stringshare **str)
+eina_value_stringshare_copy(const Eina_Value *val, Eina_Stringshare **str)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(val, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
+   *str = NULL;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(val->type == EINA_VALUE_TYPE_STRINGSHARE, EINA_FALSE);
    if (!eina_value_get(val, str)) return EINA_FALSE;
    eina_stringshare_ref(*str);
    return EINA_TRUE;
@@ -192,14 +264,16 @@ eina_value_util_stringshare_copy(const Eina_Value *val, Eina_Stringshare **str)
  * @param val The value to copy
  * @param str The pointer to copy the string to
  * @return @c EINA_TRUE on success
- * @since 1.12
+ * @since 1.21
  */
 static inline Eina_Bool
-eina_value_util_string_copy(const Eina_Value *val, char **str)
+eina_value_string_copy(const Eina_Value *val, char **str)
 {
    char *s;
    EINA_SAFETY_ON_NULL_RETURN_VAL(val, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
+   *str = NULL;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((val->type == EINA_VALUE_TYPE_STRINGSHARE || val->type == EINA_VALUE_TYPE_STRING), EINA_FALSE);
    if (!eina_value_get(val, &s)) return EINA_FALSE;
    *str = s ? strdup(s) : NULL;
    return EINA_TRUE;
