@@ -23,7 +23,6 @@ enum Elm.Activate
    back, [[Activate back]]
 }
 
-struct Elm.Tooltip; [[Elementary tooltip]]
 struct @extern Elm.Theme; [[Elementary theme]]
 
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
@@ -634,12 +633,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
       scroll_freeze_pop {
          [[Pop scroller freeze]]
-      }
-      tooltip_del {
-      	 [[Delet widget tooltip]]
-         params {
-            @in tt: ptr(Elm.Tooltip); [[Tooltip to be deleted]]
-         }
       }
       focus_next_get @const {
       	 [[Get next focus item]]

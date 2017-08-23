@@ -3929,15 +3929,21 @@ _elm_widget_style_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return ret;
 }
 
-EOLIAN static void
-_elm_widget_tooltip_add(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Tooltip *tt)
+EAPI void
+elm_widget_tooltip_add(Eo *obj, Elm_Tooltip *tt)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    sd->tooltips = eina_list_append(sd->tooltips, tt);
 }
 
-EOLIAN static void
-_elm_widget_tooltip_del(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Tooltip *tt)
+EAPI void
+elm_widget_tooltip_del(Eo *obj, Elm_Tooltip *tt)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    sd->tooltips = eina_list_remove(sd->tooltips, tt);
 }
 
