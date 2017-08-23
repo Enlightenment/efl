@@ -1240,7 +1240,7 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rectangle r)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_text_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool ret = EINA_FALSE;
    /* unfortunately entry doesn't follow the signal pattern
@@ -1255,7 +1255,7 @@ _efl_ui_text_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSE
         elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
      }
 
-   ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!ret) return EINA_FALSE;
 
    return EINA_TRUE;

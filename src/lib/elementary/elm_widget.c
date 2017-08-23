@@ -1376,7 +1376,7 @@ elm_widget_sub_object_parent_add(Evas_Object *sobj)
         return EINA_FALSE;
      }
 
-   return elm_obj_widget_sub_object_add(parent, sobj);
+   return elm_widget_sub_object_add(parent, sobj);
 }
 
 /*
@@ -1393,7 +1393,7 @@ elm_widget_sub_object_parent_add(Evas_Object *sobj)
  * @see elm_widget_sub_object_parent_add()
  */
 EOLIAN static Eina_Bool
-_elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
+_elm_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(obj);
 
@@ -1515,7 +1515,7 @@ end:
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
+_elm_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
 {
    Evas_Object *sobj_parent;
 

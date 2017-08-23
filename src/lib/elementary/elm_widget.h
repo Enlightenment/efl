@@ -361,10 +361,10 @@ typedef struct _Elm_Widget_Smart_Class
                                        Elm_Object_Item **target_item,
                                        double *weight); /**< 'Virtual' function handling passing focus to sub-objects <b>given a direction, in degrees</b> */
 
-   Eina_Bool        (*sub_object_add)(Evas_Object *obj,
+   Eina_Bool        (*widget_sub_object_add)(Evas_Object *obj,
                                       Evas_Object *sobj); /**< 'Virtual' function handling sub objects being added */
 
-   Eina_Bool        (*sub_object_del)(Evas_Object *obj,
+   Eina_Bool        (*widget_sub_object_del)(Evas_Object *obj,
                                       Evas_Object *sobj); /**< 'Virtual' function handling sub objects being removed */
    void             (*access)(Evas_Object *obj,
                               Eina_Bool is_access); /**< 'Virtual' function on the widget being set access */

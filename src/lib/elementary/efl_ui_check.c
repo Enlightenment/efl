@@ -117,11 +117,11 @@ _efl_ui_check_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Check
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
 EOLIAN static Eina_Bool
-_efl_ui_check_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_check_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);

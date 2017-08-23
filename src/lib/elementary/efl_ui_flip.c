@@ -168,14 +168,14 @@ _changed_size_hints_cb(void *data,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_elm_widget_sub_object_add(Eo *obj, Efl_Ui_Flip_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_flip_elm_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Flip_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
    if (evas_object_data_get(sobj, "elm-parent") == obj)
      return EINA_TRUE;
 
-   int_ret = elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    evas_object_data_set(sobj, "_elm_leaveme", sobj);
@@ -188,12 +188,12 @@ _efl_ui_flip_elm_widget_sub_object_add(Eo *obj, Efl_Ui_Flip_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Flip_Data *sd, Evas_Object *sobj)
+_efl_ui_flip_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Flip_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
 
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->front.content)

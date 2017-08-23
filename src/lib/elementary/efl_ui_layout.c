@@ -490,13 +490,13 @@ _efl_ui_layout_elm_widget_focus_next(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Focus_
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_sub_object_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_layout_elm_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
    if (evas_object_data_get(sobj, "elm-parent") == obj) return EINA_TRUE;
 
-   int_ret = elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    evas_object_event_callback_add
@@ -507,7 +507,7 @@ _efl_ui_layout_elm_widget_sub_object_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_U
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_Data *sd, Evas_Object *sobj)
+_efl_ui_layout_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_Data *sd, Evas_Object *sobj)
 {
    Eina_List *l;
    Efl_Ui_Layout_Sub_Object_Data *sub_d;
@@ -520,7 +520,7 @@ _efl_ui_layout_elm_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_Data *sd, Evas_O
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
      _on_sub_object_size_hint_change, obj);
 
-   int_ret = elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
    if (sd->destructed_is) return EINA_TRUE;
 
@@ -647,7 +647,7 @@ _sub_box_remove(Evas_Object *obj,
                 Efl_Ui_Layout_Sub_Object_Data *sub_d)
 {
    Evas_Object *child = sub_d->obj; /* sub_d will die in
-                                     * _efl_ui_layout_smart_sub_object_del */
+                                     * _efl_ui_layout_smart_widget_sub_object_del */
 
    if (sub_d->type == BOX_INSERT_BEFORE)
      evas_object_event_callback_del_full
@@ -692,7 +692,7 @@ _sub_table_remove(Evas_Object *obj,
    Evas_Object *child;
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd, NULL);
 
-   child = sub_d->obj; /* sub_d will die in _efl_ui_layout_smart_sub_object_del */
+   child = sub_d->obj; /* sub_d will die in _efl_ui_layout_smart_widget_sub_object_del */
 
    edje_object_part_table_unpack
      (wd->resize_obj, sub_d->part, child);
@@ -1088,7 +1088,7 @@ _efl_ui_layout_content_unset(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
              if (!sub_d->obj) return NULL;
 
              content = sub_d->obj; /* sub_d will die in
-                                    * _efl_ui_layout_smart_sub_object_del */
+                                    * _efl_ui_layout_smart_widget_sub_object_del */
 
              if (!_elm_widget_sub_object_redirect_to_top(obj, content))
                {

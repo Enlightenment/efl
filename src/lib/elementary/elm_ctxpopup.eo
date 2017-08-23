@@ -207,7 +207,7 @@ class Elm.Ctxpopup (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.disable;
-      Elm.Widget.sub_object_add;
+      Elm.Widget.widget_sub_object_add;
       Elm.Widget.translate;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
