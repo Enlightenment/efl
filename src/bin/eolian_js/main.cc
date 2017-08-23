@@ -311,9 +311,9 @@ _function_return_is_missing(Eolian_Function const* func, Eolian_Function_Type fu
 }
 
 bool
-_type_is_generatable(const Eolian_Type *tp, bool add_pointer)
+_type_is_generatable(const Eolian_Type *tp, bool add_pointer, Eolian_C_Type_Type c_type_type)
 {
-   std::string c_type = eolian_type_c_type_get(tp);
+   std::string c_type = eolian_type_c_type_get(tp, c_type_type);
 
    if (add_pointer)
        c_type += " *";
@@ -343,7 +343,7 @@ _function_is_generatable(const Eolian_Function *function, Eolian_Function_Type f
      {
         auto tp = ::eolian_parameter_type_get(parameter);
         bool add_pointer = eolian_parameter_direction_get(parameter) != EOLIAN_IN_PARAM;
-        if (!_type_is_generatable(tp, add_pointer))
+        if (!_type_is_generatable(tp, add_pointer, EOLIAN_C_TYPE_PARAM))
           return false;
 
         if (eolian_type_is_ptr(tp) && _function_belongs_to(function, "Efl.Object"))
@@ -352,7 +352,7 @@ _function_is_generatable(const Eolian_Function *function, Eolian_Function_Type f
 
    auto rtp = ::eolian_function_return_type_get(function, ftp);
 
-   return rtp ? _type_is_generatable(rtp, false) : true;
+   return rtp ? _type_is_generatable(rtp, false, EOLIAN_C_TYPE_RETURN) : true;
 }
 
 bool
