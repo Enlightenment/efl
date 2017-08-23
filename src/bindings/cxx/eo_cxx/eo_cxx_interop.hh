@@ -22,6 +22,11 @@ template <typename T>
 struct in_traits<T, typename std::enable_if<eo::is_eolian_object<T>::value>::type> { typedef T type; };
 template <typename T>
 struct in_traits<T, typename std::enable_if<std::is_fundamental<T>::value>::type> { typedef T type; };
+template <typename R, typename...Args>
+struct in_traits<R(*)(Args...)>
+{
+  typedef std::function<R(Args...)> type;
+};
 template <>
 struct in_traits<eina::string_view> { typedef eina::string_view type; };
 template <>
@@ -285,7 +290,25 @@ auto convert_inout(V& object) -> decltype(impl::convert_inout_impl(object, impl:
     
 template <typename T, typename U, bool Own = false, typename V>
 T convert_to_c(V&& object);
-    
+
+template <typename F, typename T>
+void* data_function_ptr_to_c(T function)
+{
+  return nullptr;
+}
+
+template <typename F, typename T>
+F function_ptr_to_c()
+{
+  return nullptr;
+}
+
+template <typename F, typename T>
+Eina_Free_Cb free_function_ptr_to_c()
+{
+  return nullptr;
+}
+
 namespace impl {
 
 template <typename U, typename T, typename V>
@@ -548,6 +571,17 @@ template <typename T>
 T* convert_to_c_impl(T const* p, tag<T*, T const*>) // needed for property_get
 {
   return const_cast<T*>(p);
+}
+template <typename R, typename...Args>
+typename std::add_pointer<R(Args...)>::type
+convert_to_c_impl(std::function<R(Args...)> 
+                  , tag
+                  <
+                  typename std::add_pointer<R(Args...)>::type
+                  , std::function<R(Args...)>
+                  >) // needed for property_get
+{
+  return nullptr; // not implemented naked functions
 }
 }
 
