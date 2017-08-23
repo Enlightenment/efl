@@ -5056,7 +5056,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 
 #ifdef HAVE_ELEMENTARY_WL2
    _elm_win_wlwindow_get(sd);
-   if (eina_streq(engine, ELM_WAYLAND_SHM) || eina_streq(engine, ELM_WAYLAND_EGL))
+   if (sd->wl.win)
      {
         Ecore_Wl2_Window_Type wtype;
         sd->wl.configure_handler =
