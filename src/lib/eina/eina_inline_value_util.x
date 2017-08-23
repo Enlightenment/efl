@@ -400,6 +400,278 @@ eina_value_error_new(Eina_Error err)
 }
 
 /**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param c The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_uchar_init(unsigned char c)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_UCHAR))
+     eina_value_set(&v, c);
+   return v;
+}
+
+/**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param s The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_ushort_init(unsigned short s)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_USHORT))
+     eina_value_set(&v, s);
+   return v;
+}
+
+/**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param i The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_uint_init(unsigned int i)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_UINT))
+     eina_value_set(&v, i);
+   return v;
+}
+
+/**
+ * @brief Create a new #EinaInitializeining the passed parameter
+ * @param l The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_ulong_init(unsigned long l)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_ULONG))
+     eina_value_set(&v, l);
+   return v;
+}
+
+/**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param i The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_uint64_init(uint64_t i)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_UINT64))
+     eina_value_set(&v, i);
+   return v;
+}
+
+/**
+ * @brief Create a new #EinaInitializeining the passed parameter
+ * @param c The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_char_init(char c)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_CHAR))
+     eina_value_set(&v, c);
+   return v;
+}
+
+/**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param s The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_short_init(short s)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_SHORT))
+     eina_value_set(&v, s);
+   return v;
+}
+
+/**
+ * @brief Create a new #EinaInitializeining the passed parameter
+ * @param i The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_int_init(int i)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_INT))
+     eina_value_set(&v, i);
+   return v;
+}
+
+/**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param l The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_long_init(long l)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_LONG))
+     eina_value_set(&v, l);
+   return v;
+}
+
+/**
+ * @brief Create a new #EinaInitializeining the passed parameter
+ * @param i The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_int64_init(int64_t i)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_INT64))
+     eina_value_set(&v, i);
+   return v;
+}
+
+/**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param f The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_float_init(float f)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_FLOAT))
+     eina_value_set(&v, f);
+   return v;
+}
+
+/**
+ * @brief Create a new #EinaInitializeining the passed parameter
+ * @param d The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_double_init(double d)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_DOUBLE))
+     eina_value_set(&v, d);
+   return v;
+}
+
+/**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param b The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_bool_init(Eina_Bool b)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_UCHAR))
+     eina_value_set(&v, b);
+   return v;
+}
+
+/**
+ * @brief Create a new #EinaInitializeining the passed parameter
+ * @param str The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_string_init(const char *str)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_STRING))
+     eina_value_set(&v, str);
+   return v;
+}
+
+/**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param str The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_stringshare_init(const char *str)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_STRINGSHARE))
+     eina_value_set(&v, str);
+   return v;
+}
+
+/**
+ * @brief Create a new #EinaInitializeining the passed parameter
+ * @param t The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_time_init(time_t t)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_TIMESTAMP))
+     eina_value_set(&v, t);
+   return v;
+}
+
+/**
+ * @brief Initialize #Eina_Value containing the passed parameter
+ * @param err The error code
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_error_init(Eina_Error err)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_ERROR))
+     eina_value_set(&v, err);
+   return v;
+}
+
+/**
  * @brief Create a new #Eina_Value containing the passed parameter
  * @param val The value to use
  * @return The #Eina_Value
