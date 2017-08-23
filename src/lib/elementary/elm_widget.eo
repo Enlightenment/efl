@@ -326,14 +326,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             wstyle: string; [[Widget style]]
          }
       }
-      @property hover_object {
-      	 [[Hover object property]]
-         set {
-         }
-         values {
-            sobj: Efl.Canvas.Object @nullable; [[Hover sub object]]
-         }
-      }
       /* this is a part api */
       @property domain_part_text_translatable {
       	 [[Translate domain text part property]]

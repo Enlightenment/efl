@@ -1654,9 +1654,12 @@ _elm_widget_resize_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eo *sobj)
  * exchanging a hover object, of cleaning the old hover "target"
  * before
  */
-EOLIAN static void
-_elm_widget_hover_object_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
+EAPI void
+elm_widget_hover_object_set(Eo *obj, Evas_Object *sobj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    if (sd->hover_obj)
      {
         _callbacks_del(sd->hover_obj, obj);
