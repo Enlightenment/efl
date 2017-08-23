@@ -1850,15 +1850,23 @@ elm_widget_can_focus_child_list_get(const Eo *obj)
    return child_list;
 }
 
-EOLIAN static void
-_elm_widget_highlight_ignore_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eina_Bool ignore)
+/** @internal */
+EAPI void
+elm_widget_highlight_ignore_set(Eo *obj, Eina_Bool ignore)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    sd->highlight_ignore = !!ignore;
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_highlight_ignore_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+/** @internal */
+EAPI Eina_Bool
+elm_widget_highlight_ignore_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
+
    return sd->highlight_ignore;
 }
 

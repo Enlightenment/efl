@@ -223,12 +223,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             th: ptr(Elm.Theme) @nullable; [[Elementary theme]]
          }
       }
-      @property highlight_ignore {
-         [[Highlight ignore]]
-         values {
-            ignore: bool; [[$true if highlights are ignored, $false otherwise]]
-         }
-      }
       @property theme_object @beta {
       	 [[Theme object property]]
          set {
