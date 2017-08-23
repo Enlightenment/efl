@@ -233,6 +233,7 @@ _ecore_wl2_input_mouse_wheel_send(Ecore_Wl2_Input *input, unsigned int axis, int
    ev->modifiers = input->keyboard.modifiers;
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
+   value /= 10;
 
    if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL)
      {
