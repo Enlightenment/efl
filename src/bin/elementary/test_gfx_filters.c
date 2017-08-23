@@ -431,11 +431,10 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
         elm_colorselector_palette_color_add(o, colors[k].r, colors[k].g, colors[k].b, colors[k].a);
    }
 
-   /* FIXME: No panes in EO APIs. */
    o = split = efl_add(EFL_UI_PANES_CLASS, win,
                        efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
                        efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                       efl_orientation_set(efl_added, EFL_ORIENT_HORIZONTAL));
+                       efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
    efl_pack(box, split);
 
    {
