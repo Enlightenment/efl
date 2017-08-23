@@ -111,24 +111,6 @@ interface Efl.Gfx.Size.Hint
             h: int; [[Integer to use as the maximum height hint.]]
          }
       }
-      @property hint_request {
-         [[Hints for the object's optimum size.
-
-           This is not a size enforcement in any way, it's just a hint
-           that should be used whenever appropriate.
-
-           Values 0 will be treated as unset hint components, when
-           queried by managers.
-
-           Note: This property is meant to be set by applications and not by
-           EFL itself. Very few containers actually implement support for
-           this requested size, see @.hint_min instead.
-         ]]
-         values {
-            w: int; [[Integer to use as the preferred width hint.]]
-            h: int; [[Integer to use as the preferred height hint.]]
-         }
-      }
       @property hint_restricted_min {
          [[Internal hints for an object's minimum size.
 
