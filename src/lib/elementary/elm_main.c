@@ -737,7 +737,6 @@ elm_quicklaunch_init(int    argc,
 
    eet_init();
    ecore_init();
-   edje_init();
 
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_init();
@@ -794,26 +793,26 @@ elm_quicklaunch_sub_init(int    argc,
    if (_elm_sub_init_count > 1) return _elm_sub_init_count;
    if (quicklaunch_on)
      {
-        _elm_config_init();
-#ifdef SEMI_BROKEN_QUICKLAUNCH
-        return _elm_sub_init_count;
-#endif
+//        _elm_config_init();
+//#ifdef SEMI_BROKEN_QUICKLAUNCH
+//        return _elm_sub_init_count;
+//#endif
      }
 
    if (!quicklaunch_on)
      {
         ecore_app_args_set(argc, (const char **)argv);
-        evas_init();
+        ecore_evas_init(); // FIXME: check errors
+        edje_init();
+        elm_color_class_init();
         _elm_module_init();
         _elm_config_init();
         _elm_config_sub_init();
-        ecore_evas_init(); // FIXME: check errors
         ecore_imf_init();
         ecore_con_init();
         ecore_con_url_init();
         _elm_prefs_initted = _elm_prefs_init();
         _elm_ews_wm_init();
-        elm_color_class_init();
      }
    return _elm_sub_init_count;
 }
@@ -825,23 +824,25 @@ elm_quicklaunch_sub_shutdown(void)
    if (_elm_sub_init_count > 0) return _elm_sub_init_count;
    if (quicklaunch_on)
      {
-#ifdef SEMI_BROKEN_QUICKLAUNCH
-        return _elm_sub_init_count;
-#endif
+//#ifdef SEMI_BROKEN_QUICKLAUNCH
+//        return _elm_sub_init_count;
+//#endif
      }
    if (!quicklaunch_on)
      {
         _elm_win_shutdown();
-        _elm_module_shutdown();
-        if (_elm_prefs_initted)
-          _elm_prefs_shutdown();
         _elm_ews_wm_shutdown();
         ecore_con_url_shutdown();
         ecore_con_shutdown();
         ecore_imf_shutdown();
+        edje_shutdown();
         ecore_evas_shutdown();
         _elm_config_sub_shutdown();
-        evas_shutdown();
+        _elm_config_shutdown();
+        _elm_module_shutdown();
+        if (_elm_prefs_initted)
+          _elm_prefs_shutdown();
+        elm_color_class_shutdown();
      }
    return _elm_sub_init_count;
 }
@@ -864,9 +865,6 @@ elm_quicklaunch_shutdown(void)
    ELM_SAFE_FREE(_elm_lib_dir, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_appname, free);
 
-   _elm_config_shutdown();
-   elm_color_class_shutdown();
-
    ELM_SAFE_FREE(_elm_exit_handler, ecore_event_handler_del);
 
    _elm_theme_shutdown();
@@ -878,15 +876,14 @@ elm_quicklaunch_shutdown(void)
    _elm_unneed_elocation();
    _elm_unneed_ethumb();
    _elm_unneed_web();
-   eio_shutdown();
-   ecore_file_shutdown();
 
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_shutdown();
 #endif
    _elm_emotion_shutdown();
 
-   edje_shutdown();
+   ecore_file_shutdown();
+   eio_init();
    ecore_shutdown();
    eet_shutdown();
 
