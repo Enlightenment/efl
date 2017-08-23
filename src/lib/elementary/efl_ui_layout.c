@@ -1240,6 +1240,7 @@ _efl_ui_layout_text_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const
                   edje_object_part_text_escaped_set
                     (wd->resize_obj, part, NULL);
                   sd->subs = eina_list_remove_list(sd->subs, l);
+                  elm_layout_sizing_eval(obj);
                   return EINA_TRUE;
                }
              else

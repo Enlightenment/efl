@@ -20,6 +20,15 @@ state_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    printf("State Pointer Value: %d\n", eb);
 }
 
+static void
+state_changed_cb2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   if (elm_check_state_get(obj) == EINA_FALSE)
+      elm_object_text_set(obj, NULL);
+   else
+      elm_object_text_set(obj, "text is visible when check state is true.");
+}
+
 void
 test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -105,6 +114,13 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
    evas_object_show(ic);
+
+   ck = elm_check_add(win);
+   elm_box_pack_end(bx, ck);
+   elm_object_text_set(ck, "text is visible when check state is true.");
+   elm_check_state_set(ck, EINA_TRUE);
+   evas_object_show(ck);
+   evas_object_smart_callback_add(ck, "changed", state_changed_cb2, NULL);
 
    evas_object_show(win);
 }
