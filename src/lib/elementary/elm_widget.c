@@ -1821,13 +1821,15 @@ elm_widget_tree_unfocusable_get(const Eo *obj)
  *
  * @ingroup Widget
  */
-EOLIAN static Eina_List*
-_elm_widget_can_focus_child_list_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+EAPI Eina_List*
+elm_widget_can_focus_child_list_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    const Eina_List *l;
    Eina_List *child_list = NULL;
    Evas_Object *child;
 
+   if (!sd) return NULL;
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         if (!_elm_widget_is(child)) continue;
@@ -1918,9 +1920,13 @@ _elm_widget_focus_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return (sd->focused && sd->top_win_focused);
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_highlight_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+/** @internal */
+EAPI Eina_Bool
+elm_widget_highlight_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
+
    return sd->highlighted;
 }
 
@@ -4387,12 +4393,14 @@ _elm_widget_focus_order_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->focus_order;
 }
 
-EOLIAN static Evas_Object*
-_elm_widget_newest_focus_order_get(const Eo *obj, Elm_Widget_Smart_Data *sd, unsigned int *newest_focus_order, Eina_Bool can_focus_only)
+EAPI Evas_Object*
+elm_widget_newest_focus_order_get(const Eo *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    const Eina_List *l;
    Evas_Object *child, *cur, *best;
 
+   if (!sd) return NULL;
    if (!evas_object_visible_get(obj)
        || (elm_widget_disabled_get(obj))
        || (elm_widget_tree_unfocusable_get(obj)))
