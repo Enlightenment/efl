@@ -16,7 +16,7 @@
 #define EVAS_OBJECT_DATA_GET(eo_o) \
    efl_data_scope_get((eo_o), EFL_CANVAS_OBJECT_CLASS)
 #define EVAS_OBJECT_DATA_SAFE_GET(eo_o) \
-   (((eo_o) && efl_isa((eo_o), EFL_CANVAS_OBJECT_CLASS)) ? efl_data_scope_get((eo_o), EFL_CANVAS_OBJECT_CLASS) : NULL)
+   efl_data_scope_safe_get((eo_o), EFL_CANVAS_OBJECT_CLASS)
 
 static inline Eina_Bool
 _evas_render_has_map(Evas_Object_Protected_Data *obj)
