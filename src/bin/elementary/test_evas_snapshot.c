@@ -30,8 +30,6 @@ _image_create(Eo *win, const char *path)
 {
    return efl_add(EFL_UI_IMAGE_CLASS, win,
                   efl_file_set(efl_added, path, NULL),
-                  efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
                   efl_gfx_size_hint_min_set(efl_added, 20, 20));
 }
 
@@ -127,9 +125,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                  efl_ui_win_autodel_set(efl_added, 1));
 
    grid = efl_add(EFL_UI_GRID_CLASS, win,
-                  efl_pack_padding_set(efl_added, 5, 5, 1),
-                  efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0));
+                  efl_pack_padding_set(efl_added, 5, 5, 1));
    efl_content_set(win, grid);
 
    // Objects below the snapshot
@@ -149,8 +145,6 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    snap = efl_add(EFL_CANVAS_SNAPSHOT_CLASS, win,
                   efl_gfx_filter_program_set(efl_added, filter, "filter"),
                   efl_gfx_filter_data_set(efl_added, "radius", "tonumber(5)", EINA_TRUE),
-                  efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
-                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
                   efl_pack_grid(grid, efl_added, 1, 1, GRID_SIZE - 2, GRID_SIZE - 2));
 
    // Objects above snapshot
@@ -177,7 +171,6 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            elm_slider_min_max_set(efl_added, 0, 64),
            elm_slider_value_set(efl_added, 5),
            elm_slider_unit_format_set(efl_added, "%.0f px"),
-           efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack_grid(grid, efl_added, 0, GRID_SIZE, GRID_SIZE, 1),
            efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _radius_set, win));
@@ -189,28 +182,24 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle animation"),
-           efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _anim_toggle, win));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Save to file"),
-           efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _save_image, win));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Map"),
-           efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_map, win));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Close"),
-           efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
            efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack(box, efl_added),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _close_do, win));

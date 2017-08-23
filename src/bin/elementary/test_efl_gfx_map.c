@@ -52,8 +52,6 @@ test_efl_gfx_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    /* image with a min size */
    snprintf(buf, sizeof(buf), "%s/images/rock_02.jpg", elm_app_data_dir_get());
    img = efl_add(EFL_UI_IMAGE_CLASS, win,
-                 efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
-                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
                  efl_gfx_size_hint_min_set(efl_added, 64, 64),
                  efl_file_set(efl_added, buf, NULL));
    efl_ui_image_scale_type_set(img, EFL_UI_IMAGE_SCALE_TYPE_FILL);

@@ -110,8 +110,7 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                 efl_event_callback_add(efl_added, EFL_EVENT_DEL, _win_del, api));
 
-   gd = efl_add(EFL_UI_GRID_STATIC_CLASS, win,
-                efl_gfx_size_hint_weight_set(efl_added, 1, 1));
+   gd = efl_add(EFL_UI_GRID_STATIC_CLASS, win);
    efl_content_set(win, gd);
    api->data.grid = gd;
 

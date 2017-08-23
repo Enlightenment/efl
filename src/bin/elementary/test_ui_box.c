@@ -225,7 +225,6 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
-   efl_gfx_size_hint_weight_set(vbox, 1, 1);
    efl_gfx_size_hint_margin_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
 

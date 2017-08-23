@@ -408,8 +408,6 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_visible_set(grid, 1);
 
    objects[i++] = o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
-   efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_gfx_size_hint_min_set(o, 10, 10);
    efl_gfx_color_set(o, 64, 96, 128, 255);
    efl_pack_grid(grid, o, 0, 0, 3, 1);
@@ -506,7 +504,6 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
-   efl_gfx_size_hint_weight_set(vbox, 1, 1);
    efl_gfx_size_hint_margin_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
    efl_gfx_visible_set(vbox, 1);
