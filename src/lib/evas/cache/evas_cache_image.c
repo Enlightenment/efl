@@ -394,20 +394,9 @@ _evas_cache_image_async_heavy(void *data)
 }
 
 static void
-_evas_cache_image_async_end(void *data)
+_evas_cache_image_preloaded_notify(Image_Entry *ie)
 {
-   Image_Entry *ie = (Image_Entry *)data;
-   Image_Entry_Task *task;
    Evas_Cache_Target *tmp;
-
-   evas_cache_image_ref(ie);
-   ie->cache->preload = eina_list_remove(ie->cache->preload, ie);
-   ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
-   ie->preload = NULL;
-   ie->flags.preload_done = ie->flags.loaded;
-   ie->flags.updated_data = 1;
-
-   ie->flags.preload_pending = 0;
 
    while ((tmp = ie->targets))
      {
@@ -427,6 +416,24 @@ _evas_cache_image_async_end(void *data)
           }
         free(tmp);
      }
+}
+
+static void
+_evas_cache_image_async_end(void *data)
+{
+   Image_Entry *ie = (Image_Entry *)data;
+   Image_Entry_Task *task;
+
+   evas_cache_image_ref(ie);
+   ie->cache->preload = eina_list_remove(ie->cache->preload, ie);
+   ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
+   ie->preload = NULL;
+   ie->flags.preload_done = ie->flags.loaded;
+   ie->flags.updated_data = 1;
+
+   ie->flags.preload_pending = 0;
+
+   _evas_cache_image_preloaded_notify(ie);
 
    EINA_LIST_FREE(ie->tasks, task)
      if (task != &dummy_task) free(task);
