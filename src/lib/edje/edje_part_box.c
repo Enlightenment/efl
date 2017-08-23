@@ -195,23 +195,23 @@ _efl_canvas_layout_internal_box_efl_container_content_count(Eo *obj, void *_pd E
    RETURN_VAL(evas_obj_box_count(pd->rp->object));
 }
 
-EOLIAN static Efl_Orient
-_efl_canvas_layout_internal_box_efl_orientation_orientation_get(Eo *obj, void *_pd EINA_UNUSED)
+EOLIAN static Efl_Ui_Dir
+_efl_canvas_layout_internal_box_efl_ui_direction_direction_get(Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
    const Edje_Part_Description_Box *desc =
          (Edje_Part_Description_Box *) pd->rp->chosen_description;
 
    if (!desc || !desc->box.layout)
-     RETURN_VAL(EFL_ORIENT_NONE);
+     RETURN_VAL(EFL_UI_DIR_DEFAULT);
 
    if (!strncmp(desc->box.layout, "vertical", 8))
-     RETURN_VAL(EFL_ORIENT_VERTICAL);
+     RETURN_VAL(EFL_UI_DIR_VERTICAL);
    else if (!strncmp(desc->box.layout, "horizontal", 10))
-     RETURN_VAL(EFL_ORIENT_HORIZONTAL);
+     RETURN_VAL(EFL_UI_DIR_HORIZONTAL);
 
    WRN("unknown orientation '%s'", desc->box.layout);
-   RETURN_VAL(EFL_ORIENT_NONE);
+   RETURN_VAL(EFL_UI_DIR_DEFAULT);
 }
 
 #include "efl_canvas_layout_internal_box.eo.c"
