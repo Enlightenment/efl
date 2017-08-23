@@ -150,14 +150,13 @@ _img_new(Evas_Object *obj)
 }
 
 static void
-_efl_ui_image_internal_sizing_eval(Evas_Object *obj, Efl_Ui_Image_Data *sd)
+_image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
 {
-   if (!sd->img) return;
 
-   if (efl_isa(sd->img, EDJE_OBJECT_CLASS))
+   if (efl_isa(img, EDJE_OBJECT_CLASS))
      {
-        evas_object_move(sd->img, sd->img_x, sd->img_y);
-        evas_object_resize(sd->img, sd->img_w, sd->img_h);
+        evas_object_move(img, sd->img_x, sd->img_y);
+        evas_object_resize(img, sd->img_w, sd->img_h);
 
         evas_object_move(sd->hit_rect, sd->img_x, sd->img_y);
         evas_object_resize(sd->hit_rect, sd->img_w, sd->img_h);
@@ -169,7 +168,7 @@ _efl_ui_image_internal_sizing_eval(Evas_Object *obj, Efl_Ui_Image_Data *sd)
         int iw = 0, ih = 0, offset_x = 0, offset_y = 0;
 
         //1. Get the original image size (iw x ih)
-        evas_object_image_size_get(sd->img, &iw, &ih);
+        evas_object_image_size_get(img, &iw, &ih);
 
         iw = ((double)iw) * sd->scale;
         ih = ((double)ih) * sd->scale;
@@ -232,7 +231,7 @@ _efl_ui_image_internal_sizing_eval(Evas_Object *obj, Efl_Ui_Image_Data *sd)
           }
         else
           {
-             evas_object_size_hint_align_get(obj, &alignh, &alignv);
+             evas_object_size_hint_align_get(sd->self, &alignh, &alignv);
              if (EINA_DBL_EQ(alignh, EVAS_HINT_FILL)) alignh = 0.5;
              if (EINA_DBL_EQ(alignv, EVAS_HINT_FILL)) alignv = 0.5;
 
@@ -247,7 +246,7 @@ _efl_ui_image_internal_sizing_eval(Evas_Object *obj, Efl_Ui_Image_Data *sd)
         if (offset_x >= 0) offset_x = 0;
         if (offset_y >= 0) offset_y = 0;
 
-        evas_object_image_fill_set(sd->img, offset_x, offset_y, w, h);
+        evas_object_image_fill_set(img, offset_x, offset_y, w, h);
 
         if (offset_x < 0)
           {
@@ -260,12 +259,20 @@ _efl_ui_image_internal_sizing_eval(Evas_Object *obj, Efl_Ui_Image_Data *sd)
              h = sd->img_h;
           }
 
-        evas_object_move(sd->img, x, y);
-        evas_object_resize(sd->img, w, h);
+        evas_object_move(img, x, y);
+        evas_object_resize(img, w, h);
 
         evas_object_move(sd->hit_rect, x, y);
         evas_object_resize(sd->hit_rect, w, h);
      }
+}
+
+static void
+_efl_ui_image_internal_sizing_eval(Evas_Object *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   if (!sd->img) return;
+   _image_sizing_eval(sd, sd->img);
+   if (sd->prev_img) _image_sizing_eval(sd, sd->prev_img);
 }
 
 static inline void
