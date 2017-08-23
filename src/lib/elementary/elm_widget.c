@@ -1732,9 +1732,12 @@ _elm_widget_focus_allow_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->can_focus;
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_child_can_focus_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+EAPI Eina_Bool
+elm_widget_child_can_focus_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
+
    return sd->child_can_focus;
 }
 
@@ -3128,9 +3131,13 @@ _elm_widget_focus_next_item_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, 
      sd->item_focus_left = next_item;
 }
 
-EOLIAN static void
-_elm_widget_parent_highlight_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool highlighted)
+/** @internal */
+EAPI void
+elm_widget_parent_highlight_set(Eo *obj, Eina_Bool highlighted)
 {
+   Elm_Widget_Smart_Data *sd =efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    highlighted = !!highlighted;
 
    Evas_Object *o = elm_widget_parent_get(obj);

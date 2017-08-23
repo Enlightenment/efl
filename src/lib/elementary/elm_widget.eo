@@ -291,14 +291,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             mode: Elm.Focus.Region.Show_Mode; [[Focus region show mode]]
          }
       }
-      @property parent_highlight {
-      	 [[Parent highlight property]]
-         set {
-         }
-         values {
-            highlighted: bool; [[$true if highlighted, $false otherwise]]
-         }
-      }
       @property theme_object {
       	 [[Theme object property]]
          set {
@@ -356,12 +348,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          [[Control item loop feature.]]
          values {
             enable: bool; [[$true if item loop is enabled, $false otherwise]]
-         }
-      }
-      @property child_can_focus {
-      	 [[Child can focus property]]
-         get {
-            return: bool; [[$true if child can focus, $false otherwise]]
          }
       }
       @property scroll_freeze {
