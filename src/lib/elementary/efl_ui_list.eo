@@ -69,7 +69,7 @@ class Efl.Ui.List (Elm.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
 //      Elm.Widget.focus_direction_manager_is;
 //      Elm.Widget.focus_register;
 //      Elm.Widget.focus_next;
-      Elm.Widget.on_focus;
+//      Elm.Widget.on_focus;
 //      Elm.Widget.activate;
 //      Elm.Widget.focused_item { get; }
 //      Elm.Widget.focused_object { get; }
