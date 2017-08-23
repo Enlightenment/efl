@@ -8,6 +8,7 @@
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_CANVAS_OBJECT_BETA
 #define EFL_INPUT_EVENT_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 
@@ -3674,6 +3675,13 @@ _elm_widget_theme_set(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Theme *th)
      }
 }
 
+/* beta in eo */
+EAPI void
+elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th)
+{
+   elm_obj_widget_theme_set(obj, th);
+}
+
 EOLIAN static void
 _elm_widget_part_text_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *part, const char *label)
 {
@@ -3941,6 +3949,13 @@ _elm_widget_theme_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->theme;
 }
 
+/* beta in eo */
+EAPI Elm_Theme *
+elm_widget_theme_get(const Evas_Object *obj)
+{
+   return elm_obj_widget_theme_get(obj);
+}
+
 EOLIAN static Efl_Ui_Theme_Apply
 _elm_widget_style_set(Eo *obj, Elm_Widget_Smart_Data *sd, const char *style)
 {
@@ -4072,6 +4087,13 @@ _elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *ed
      }
 
    return ret;
+}
+
+/* beta in eo */
+EAPI Efl_Ui_Theme_Apply
+elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
+{
+   return elm_obj_widget_theme_object_set(obj, edj, wname, welement, wstyle);
 }
 
 static void
