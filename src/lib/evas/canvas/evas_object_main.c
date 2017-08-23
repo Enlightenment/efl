@@ -210,6 +210,9 @@ _efl_canvas_object_efl_object_finalize(Eo *eo_obj, Evas_Object_Protected_Data *o
    if (!obj->legacy.weight_set)
      efl_gfx_size_hint_weight_set(eo_obj, 1.0, 1.0);
 
+   if (!obj->legacy.align_set)
+     efl_gfx_size_hint_align_set(eo_obj, -1.0, -1.0);
+
    if (obj->legacy.visible_set /* && ... */)
      {
         obj->legacy.finalized = EINA_TRUE;
@@ -1605,6 +1608,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_align_set(Eo *eo_obj, Evas_Object_Prot
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
+   if (!obj->legacy.align_set) obj->legacy.align_set = 1;
    if (EINA_UNLIKELY(!obj->size_hints))
      {
         if (EINA_DBL_EQ(x, 0.5) && EINA_DBL_EQ(y, 0.5)) return;
@@ -1635,10 +1639,10 @@ _efl_canvas_object_efl_gfx_size_hint_hint_weight_get(Eo *eo_obj EINA_UNUSED, Eva
 EOLIAN static void
 _efl_canvas_object_efl_gfx_size_hint_hint_weight_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double x, double y)
 {
-   obj->legacy.weight_set = 1;
    if (obj->delete_me)
      return;
    evas_object_async_block(obj);
+   if (!obj->legacy.weight_set) obj->legacy.weight_set = 1;
    if (EINA_UNLIKELY(!obj->size_hints))
      {
         if (EINA_DBL_EQ(x, 0.0) && EINA_DBL_EQ(y, 0.0)) return;
