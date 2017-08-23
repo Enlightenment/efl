@@ -6602,7 +6602,7 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
               * focused object **/
              unsigned int order = 0;
              Evas_Object *target;
-             target = elm_obj_widget_newest_focus_order_get(win, &order, EINA_TRUE);
+             target = elm_widget_newest_focus_order_get(win, &order, EINA_TRUE);
              if (target)
                elm_interface_atspi_accessible_state_changed_signal_emit(target, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
           }

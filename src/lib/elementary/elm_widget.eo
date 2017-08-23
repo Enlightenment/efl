@@ -380,22 +380,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             return: int; [[FIXME]]
          }
       }
-      @property can_focus_child_list {
-      	 [[Can focus children list]]
-         get {
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[List of children which can focus]]
-         }
-      }
       @property focused_item {
          get {
             [[Get the focused widget item.]]
             return: Elm.Widget.Item; [[Focused item]]
-         }
-      }
-      @property highlight {
-      	 [[Highlight property]]
-         get {
-            return: bool; [[$true if widget is highlight, $false otherwise]]
          }
       }
       @property focused_object {
@@ -411,14 +399,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          values {
             label: string; [[Label]]
-         }
-      }
-      newest_focus_order_get @const {
-      	 [[Get newest focus in order]]
-         return: Efl.Canvas.Object; [[Handle to focused widget]]
-         params {
-            @out newest_focus_order: uint; [[Newest focus order]]
-            @in can_focus_only: bool; [[$true only us widgets which can focus, $false otherweise]]
          }
       }
       scroll_hold_push {
