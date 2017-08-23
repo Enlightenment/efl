@@ -448,7 +448,7 @@ _ismultiglob(const char *match)
 }
 
 EOLIAN static Efl_Object *
-_efl_object_name_find(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *search)
+_efl_object_name_find(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *search)
 {
    Eo *child;
    _Eo_Object *child_eo;
