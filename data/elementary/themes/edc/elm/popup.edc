@@ -141,6 +141,14 @@ group { name: "elm/label/base/popup/default";
          tag: "whitecolor" "+ color=#fff";
          tag: "tab" "\t";
       }
+      style { name: "popup_title_style_ellipsis";
+         base: "font="FNBD" font_size=10 text_class=label align=center color=#fff color_class=popup_title_text style=shadow,bottom shadow_color=#00000080 ellipsis=1.0 wrap=mixed";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" text_class=label_light";
+         tag: "b" "+ font="FNBD" text_class=label_light";
+         tag: "whitecolor" "+ color=#fff";
+         tag: "tab" "\t";
+      }
    }
    parts {
       part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
@@ -533,6 +541,91 @@ group { "elm/popup/base/view";
    }
 }
 
+group { "elm/popup/base/alert";
+   images.image: "rounded_square.png" COMP;
+   parts {
+      image { "bg";
+         desc { "default";
+            min: 100 100;
+            image.border: 15 15 15 15;
+            image.normal: "rounded_square.png";
+                  }
+      }
+      spacer { "base";
+         desc { "default";
+            rel.to: "bg";
+            rel1.offset: 10 10;
+            rel2.offset: -11 -11;
+         }
+      }
+      rect { "title_bg";
+         desc { "default";
+            fixed: 0 1;
+            min: 0 0;
+            rel.to: "base";
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
+            color: 0 0 0 0;
+         }
+         desc { "title_visible";
+            inherit: "default";
+            min: 0 20;
+         }
+      }
+      textblock { "elm.text.title";
+         scale;
+         desc { "default";
+            fixed: 1 1;
+            text {
+              style: "popup_title_style_ellipsis";
+            }
+            rel.to: "title_bg";
+            hid;
+         }
+         desc { "title_visible";
+            inherit: "default";
+            vis;
+         }
+      }
+      swallow { "buttons";
+         desc { "default";
+            fixed: 0 1;
+            rel.to: "base";
+            rel1.relative: 0.0 1.0;
+            align: 0.5 1.0;
+            min: 0 0;
+         }
+         desc { "button_visible";
+            inherit: "default";
+            min: 0 30;
+         }
+      }
+      swallow { "elm.swallow.content";
+         desc { "default";
+            rel1.to_x: "base";
+            rel1.to_y: "title_bg";
+            rel2.to_x: "base";
+            rel2.to_y: "buttons";
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 0.0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,title,show"; source: "elm";
+         action: STATE_SET "title_visible" 0.0;
+         target: "title_bg";
+         target: "elm.text.title";
+      }
+      program {
+         signal: "elm,buttons,show"; source: "elm";
+         action: STATE_SET "button_visible" 0.0;
+         target: "buttons";
+      }
+   }
+}
+
 group { "elm/popup/base/event_bg";
    parts {
       rect { "base";
@@ -578,6 +671,76 @@ group { "elm/popup/base/event_bg";
       program {
          signal: "mouse,clicked,1"; source: "block";
          action: SIGNAL_EMIT "elm,action,clicked" "elm";
+      }
+   }
+}
+
+group { "elm/popup/base/button1";
+   parts {
+      swallow { "elm.swallow.button1";
+      }
+   }
+}
+
+group { "elm/popup/base/button2";
+   parts {
+      spacer { "div1";
+         desc { "default";
+            rel1.relative: 0.5 0.5;
+            rel2.relative: 0.5 0.5;
+            min: 5 5;
+         }
+      }
+      swallow { "elm.swallow.button1";
+         desc { "default";
+            rel2.to_x: "div1";
+            rel2.relative: 0.0 1.0;
+         }
+      }
+      swallow { "elm.swallow.button2";
+         desc { "default";
+            rel1.to_x: "div1";
+            rel1.relative: 1.0 0.0;
+         }
+      }
+   }
+}
+
+group { "elm/popup/base/button3";
+   parts {
+      spacer { "div1";
+         desc { "default";
+            rel1.relative: 0.333 0.5;
+            rel2.relative: 0.333 0.5;
+            min: 5 5;
+         }
+      }
+      spacer { "div2";
+         desc { "default";
+            rel1.relative: 0.666 0.5;
+            rel2.relative: 0.666 0.5;
+            min: 5 5;
+         }
+      }
+      swallow { "elm.swallow.button1";
+         desc { "default";
+            rel2.to_x: "div1";
+            rel2.relative: 0.0 1.0;
+         }
+      }
+      swallow { "elm.swallow.button2";
+         desc { "default";
+            rel1.to_x: "div1";
+            rel2.to_x: "div2";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 0.0 1.0;
+         }
+      }
+      swallow { "elm.swallow.button3";
+         desc { "default";
+            rel1.to_x: "div2";
+            rel1.relative: 1.0 0.0;
+         }
       }
    }
 }
