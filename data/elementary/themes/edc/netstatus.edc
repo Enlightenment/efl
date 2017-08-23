@@ -14,15 +14,17 @@ group { name: "e/gadget/netstatus/main";
             new txper = getarg(6);
             // new txmax = getarg(7);
 
-            new Float:val = rxper / 100.0;
-            custom_state(PART:"rx_clip", "default", 0.0);
-            set_state_val(PART:"rx_clip", STATE_REL1, 0.0, 1.0 - val);
-            set_state(PART:"rx_clip", "custom", 0.0);
+            new val = rxper + 155;
+            if (val == 155) val = 0;
+            custom_state(PART:"rx", "default", 0.0);
+            set_state_val(PART:"rx", STATE_COLOR, 255, 255, 255, val);
+            set_state(PART:"rx", "custom", 0.0);
 
-            val = txper / 100.0;
-            custom_state(PART:"tx_clip", "default", 0.0);
-            set_state_val(PART:"tx_clip", STATE_REL1, 0.0, 1.0 - val);
-            set_state(PART:"tx_clip", "custom", 0.0);
+            val = txper + 155;
+            if (val == 155) val = 0;
+            custom_state(PART:"tx", "default", 0.0);
+            set_state_val(PART:"tx", STATE_COLOR, 255, 255, 255, val);
+            set_state(PART:"tx", "custom", 0.0);
          }
       }
    }
@@ -34,40 +36,14 @@ group { name: "e/gadget/netstatus/main";
             image.normal: "netstatus_base.png";
          }
       }
-      part { name: "rx_spacer"; type: SPACER;
-         description { state: "default" 0.0;
-            rel1.relative: 0.32 0.33;
-            rel2.relative: 0.98 0.78;
-         }
-      }
-      part { name: "rx_clip"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "rx_spacer";
-            rel2.to: "rx_spacer";
-         }
-      }
       part { name: "rx"; type: IMAGE;
-          clip_to: "rx_clip";
           description { state: "default" 0.0;
              rel1.to: "base";
              rel2.to: "base";
              image.normal: "netstatus_rx.png";
           }
       }
-      part { name: "tx_spacer"; type: SPACER;
-         description { state: "default" 0.0;
-            rel1.relative: 0.04 0.08;
-            rel2.relative: 0.68 0.50;
-         }
-      }
-      part { name: "tx_clip"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "tx_spacer";
-            rel2.to: "tx_spacer";
-         }
-      }
       part { name: "tx"; type: IMAGE;
-          clip_to: "tx_clip";
           description { state: "default" 0.0;
              rel1.to: "base";
              rel2.to: "base";
