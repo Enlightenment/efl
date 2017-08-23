@@ -270,15 +270,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
       }
 
-      /* Probably not required with eo find */
-      name_find @const {
-      	 [[Find widget by name]]
-         return: Efl.Canvas.Object; [[Widget]]
-         params {
-            @in name: string; [[Widget name]]
-            @in recurse: int; [[Depth in the tree to search for the widget]]
-         }
-      }
       sub_object_add {
          [['Virtual' function handling sub objects being added.]]
          return: bool; [[$true on success, $false otherwise]]

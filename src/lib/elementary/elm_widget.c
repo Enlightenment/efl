@@ -4246,23 +4246,23 @@ elm_widget_type_check(const Evas_Object *obj,
    return EINA_FALSE;
 }
 
-static Evas_Object *
-_widget_name_find(const Evas_Object *obj,
-                  const char *name,
-                  int recurse)
+/** @internal */
+EAPI Evas_Object *
+elm_widget_name_find(const Eo *obj, const char *name, int recurse)
 {
    Eina_List *l;
    Evas_Object *child;
    const char *s;
    INTERNAL_ENTRY NULL;
 
+   if (!name) return NULL;
    if (!_elm_widget_is(obj)) return NULL;
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         s = evas_object_name_get(child);
         if ((s) && (!strcmp(s, name))) return child;
         if ((recurse != 0) &&
-            ((child = _widget_name_find(child, name, recurse - 1))))
+            ((child = elm_widget_name_find(child, name, recurse - 1))))
           return child;
      }
    if (sd->hover_obj)
@@ -4270,17 +4270,10 @@ _widget_name_find(const Evas_Object *obj,
         s = evas_object_name_get(sd->hover_obj);
         if ((s) && (!strcmp(s, name))) return sd->hover_obj;
         if ((recurse != 0) &&
-            ((child = _widget_name_find(sd->hover_obj, name, recurse - 1))))
+            ((child = elm_widget_name_find(sd->hover_obj, name, recurse - 1))))
           return child;
      }
    return NULL;
-}
-
-EOLIAN static Evas_Object*
-_elm_widget_name_find(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *name, int recurse)
-{
-   if (!name) return NULL;
-   return _widget_name_find(obj, name, recurse);
 }
 
 /**
