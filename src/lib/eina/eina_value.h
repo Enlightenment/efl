@@ -305,6 +305,16 @@
 typedef struct _Eina_Value Eina_Value;
 
 /**
+ * @def EINA_VALUE_EMPTY
+ *
+ * This is simply a value with all memory zeroed. It may be used
+ * to safely initialize or return a value without a type.
+ *
+ * @since 1.21
+ */
+#define EINA_VALUE_EMPTY ((Eina_Value){ 0 })
+
+/**
  * @typedef Eina_Value_Type
  * Describes the data contained by the value.
  *

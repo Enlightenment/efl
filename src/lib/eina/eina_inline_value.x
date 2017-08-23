@@ -136,6 +136,7 @@ eina_value_flush(Eina_Value *value)
    const Eina_Value_Type *type;
    void *mem;
 
+   if (!value || !value->type) return;
    EINA_VALUE_TYPE_CHECK_RETURN(value);
 
    type = value->type;
