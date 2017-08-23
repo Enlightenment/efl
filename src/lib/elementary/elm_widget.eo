@@ -246,18 +246,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             style: string; [[The name of the focus highlight style.]]
          }
       }
-      @property tree_unfocusable {
-         [[Make the elementary object and its children to be unfocusable (or focusable).
-           If the tree is set as unfocusable, newest focused object which is not in
-           this tree will get focus.
-           This API can be helpful for an object to be deleted.
-           When an object will be deleted soon, it and its children may not want to
-           get focus (by focus reverting or by other focus controls).
-           Then, just use this API before deleting.]]
-         values {
-            tree_unfocusable: bool; [[$true for unfocusable, $false for focusable.]]
-         }
-      }
       @property theme {
       	 [[Widget theme]]
          values {

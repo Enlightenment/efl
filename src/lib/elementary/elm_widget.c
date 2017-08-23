@@ -1769,9 +1769,12 @@ _full_eval_children(Eo *obj, Elm_Widget_Smart_Data *sd)
  *
  * @ingroup Widget
  */
-EOLIAN static void
-_elm_widget_tree_unfocusable_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool tree_unfocusable)
+EAPI void
+elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
+
    tree_unfocusable = !!tree_unfocusable;
    if (sd->tree_unfocusable == tree_unfocusable) return;
    sd->tree_unfocusable = tree_unfocusable;
@@ -1791,9 +1794,12 @@ _elm_widget_tree_unfocusable_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool t
  *
  * @ingroup Widget
  */
-EOLIAN static Eina_Bool
-_elm_widget_tree_unfocusable_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+EAPI Eina_Bool
+elm_widget_tree_unfocusable_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
+
    return sd->tree_unfocusable;
 }
 
