@@ -754,7 +754,6 @@ EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
 EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_mouse_up_handle(Evas_Object *obj);
-EAPI void             elm_widget_focus_tree_unfocusable_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_disabled_handle(Evas_Object *obj);
 EAPI unsigned int     elm_widget_focus_order_get(const Evas_Object *obj);
 EAPI void             elm_widget_activate(Evas_Object *obj, Elm_Activate act);
