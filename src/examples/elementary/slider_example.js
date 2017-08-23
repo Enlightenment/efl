@@ -6,7 +6,7 @@ win.setText("Slider Example");
 win.setAutohide(true);
 
 bx = new efl.Efl.Ui.Box(win);
-bx.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.HORIZONTAL);
+bx.cast("Efl.Ui.Direction").setDirection(efl.Efl.Ui.Dir.HORIZONTAL);
 bx.setHintWeight(1.0, 1.0);
 win.setContent(bx);
 bx.setVisible(true);
@@ -66,7 +66,7 @@ sl.setVisible(true);
 
 /* vertical with indicator format func */
 sl = new efl.Elm.Slider(win);
-sl.cast("Efl.Orientation").setOrientation(efl.Efl.Orient.VERTICAL);
+sl.cast("Efl.Ui.Direction").setDirection(efl.Efl.Ui.Dir.VERTICAL);
 //indicator_format = function()
 //                  {
 //                      indicator = new char[32];
