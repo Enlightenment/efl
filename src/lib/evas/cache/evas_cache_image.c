@@ -1466,22 +1466,7 @@ evas_cache_image_preload_data(Image_Entry *im, const Eo *target,
        (((im->flags.loaded) && (img->image.data)) ||
         (im->flags.textured && !im->flags.updated_data)))
      {
-        Evas_Cache_Target *tmp;
-
-        while ((tmp = im->targets))
-          {
-             im->targets = (Evas_Cache_Target *)
-               eina_inlist_remove(EINA_INLIST_GET(im->targets),
-                                  EINA_INLIST_GET(im->targets));
-             if (tmp->simple_cb)
-               {
-                  if (!tmp->delete_me)
-                    {
-                       tmp->simple_cb(tmp->simple_data);
-                    }
-               }
-             free(tmp);
-          }
+        _evas_cache_image_preloaded_notify(im);
         evas_object_inform_call_image_preloaded((Evas_Object*)target);
         evas_cache_image_drop(im);
         return;
