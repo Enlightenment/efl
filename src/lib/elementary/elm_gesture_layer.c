@@ -3739,9 +3739,9 @@ _rotate_test(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_gesture_layer_elm_widget_disable(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED)
+_elm_gesture_layer_elm_widget_on_disabled_update(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED, Eina_Bool disabled)
 {
-   if (elm_widget_disabled_get(obj))
+   if (disabled)
      _callbacks_unregister(obj);
    else
      _callbacks_register(obj);

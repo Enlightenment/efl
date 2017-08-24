@@ -247,7 +247,7 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
-      Elm.Widget.disable;
+      Elm.Widget.on_disabled_update;
       Elm.Widget.on_focus;
       Elm.Widget.translate;
    }

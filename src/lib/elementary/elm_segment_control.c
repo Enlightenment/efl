@@ -245,11 +245,10 @@ _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *s
 }
 
 EOLIAN static Eina_Bool
-_elm_segment_control_elm_widget_disable(Eo *obj, Elm_Segment_Control_Data *sd)
+_elm_segment_control_elm_widget_on_disabled_update(Eo *obj, Elm_Segment_Control_Data *sd, Eina_Bool disabled)
 {
-   Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_disable(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+     return EINA_FALSE;
 
    _update_list(sd);
 

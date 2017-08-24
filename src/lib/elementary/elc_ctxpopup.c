@@ -1091,16 +1091,12 @@ _elm_ctxpopup_item_efl_object_destructor(Eo *eo_ctxpopup_it,
 }
 
 EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_disable(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_elm_widget_on_disabled_update(Eo *obj, Elm_Ctxpopup_Data *sd, Eina_Bool disabled)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+     return EINA_FALSE;
 
-   int_ret = elm_obj_widget_disable(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
-   if (sd->list)
-     elm_object_disabled_set(sd->list, elm_widget_disabled_get(obj));
-   else if (sd->content)
-     elm_object_disabled_set(sd->content, elm_widget_disabled_get(obj));
+   elm_object_disabled_set(sd->list ?: sd->content, disabled);
 
    return EINA_TRUE;
 }

@@ -239,18 +239,13 @@ _elm_fileselector_entry_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_D
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_entry_elm_widget_disable(Eo *obj, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_elm_widget_on_disabled_update(Eo *obj, Elm_Fileselector_Entry_Data *sd, Eina_Bool disabled)
 {
-   Eina_Bool val;
+   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+     return EINA_FALSE;
 
-   Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_disable(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
-
-   val = elm_widget_disabled_get(obj);
-
-   elm_widget_disabled_set(sd->button, val);
-   elm_widget_disabled_set(sd->entry, val);
+   elm_widget_disabled_set(sd->button, disabled);
+   elm_widget_disabled_set(sd->entry, disabled);
 
    return EINA_TRUE;
 }

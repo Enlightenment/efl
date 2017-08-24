@@ -6313,7 +6313,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
                          efl_ui_scale_get(obj) * elm_config_scale_get());
 
    efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
-   ret = elm_obj_widget_disable(obj);
+   ret = elm_obj_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
 
    if (!ret) int_ret = EFL_UI_THEME_APPLY_FAILED;
 

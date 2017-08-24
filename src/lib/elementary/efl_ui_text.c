@@ -843,32 +843,27 @@ _get_drop_format(Evas_Object *obj)
 
 /* we can't reuse layout's here, because it's on entry_edje only */
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_disable(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_elm_widget_on_disabled_update(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool disabled)
 {
+   const char *emission ;
+
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
                        _dnd_leave_cb, NULL,
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
-   if (elm_object_disabled_get(obj))
+
+   emission = disabled ? "elm,state,disabled" : "elm,state,enabled";
+   edje_object_signal_emit(sd->entry_edje, emission, "elm");
+   if (sd->scroll)
      {
-        edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
-        if (sd->scroll)
-          {
-             edje_object_signal_emit(sd->scr_edje, "elm,state,disabled", "elm");
-             elm_interface_scrollable_freeze_set(obj, EINA_TRUE);
-          }
-        sd->disabled = EINA_TRUE;
+        edje_object_signal_emit(sd->scr_edje, emission, "elm");
+        elm_interface_scrollable_freeze_set(obj, disabled);
      }
-   else
+   sd->disabled = disabled;
+
+   if (!disabled)
      {
-        edje_object_signal_emit(sd->entry_edje, "elm,state,enabled", "elm");
-        if (sd->scroll)
-          {
-             edje_object_signal_emit(sd->scr_edje, "elm,state,enabled", "elm");
-             elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
-          }
-        sd->disabled = EINA_FALSE;
         sd->drop_format = _get_drop_format(obj);
         elm_drop_target_add(obj, sd->drop_format,
                             _dnd_enter_cb, NULL,

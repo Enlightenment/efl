@@ -530,19 +530,18 @@ _efl_ui_clock_elm_widget_on_focus(Eo *obj, Efl_Ui_Clock_Data *sd, Elm_Object_Ite
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_clock_elm_widget_disable(Eo *obj, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_elm_widget_on_disabled_update(Eo *obj, Efl_Ui_Clock_Data *sd, Eina_Bool disabled)
 {
    Clock_Field *field;
    unsigned int idx = 0;
-   Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_disable(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+     return EINA_FALSE;
 
    for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
-        elm_object_disabled_set(field->item_obj, elm_object_disabled_get(obj));
+        elm_object_disabled_set(field->item_obj, disabled);
      }
    return EINA_TRUE;
 }
