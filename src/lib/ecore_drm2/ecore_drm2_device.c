@@ -783,6 +783,14 @@ ecore_drm2_device_pointer_accel_speed_set(Ecore_Drm2_Device *device, double spee
 }
 
 EAPI void
+ecore_drm2_device_pointer_accel_profile_set(Ecore_Drm2_Device *device, uint32_t profile)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   elput_input_pointer_accel_profile_set(device->em, NULL, profile);
+}
+
+EAPI void
 ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int window)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);
