@@ -1413,6 +1413,19 @@ eina_value_struct_setup(Eina_Value *value, const Eina_Value_Struct_Desc *sdesc)
    return EINA_TRUE;
 }
 
+static inline const Eina_Value_Struct_Desc *
+eina_value_struct_desc_get(const Eina_Value *value)
+{
+   const Eina_Value_Struct *st;
+
+   EINA_VALUE_TYPE_STRUCT_CHECK_RETURN_VAL(value, NULL);
+   st = (const Eina_Value_Struct *)eina_value_memory_get(value);
+   if ((!st) || (!st->desc))
+     return NULL;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(st->desc->version == EINA_VALUE_STRUCT_DESC_VERSION, NULL);
+   return st->desc;
+}
+
 static inline void *
 eina_value_struct_member_memory_get(const Eina_Value_Struct *st, const Eina_Value_Struct_Member *member)
 {
