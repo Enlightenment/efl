@@ -3,8 +3,6 @@ group { name: "e/gadget/cpumonitor/main";
    parts {
       part { name: "e.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
-            aspect: 1 1;
-            aspect_preference: BOTH;
          }
       }
    }
