@@ -3,8 +3,9 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_WIDGET_BETA
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
@@ -692,7 +693,7 @@ _access_obj_process(Elm_Segment_Control_Data *sd, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_segment_control_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd, Eina_Bool acs)
+_elm_segment_control_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd, Eina_Bool acs)
 {
    _elm_segment_control_smart_focus_next_enable = acs;
    _access_obj_process(sd, _elm_segment_control_smart_focus_next_enable);

@@ -246,6 +246,29 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             txt: string @nullable; [[Accessibility text description]]
          }
       }
+      on_access_activate @protected @beta {
+         [[Hook function called when widget is activated through accessibility.
+
+           This meant to be overridden by subclasses to support accessibility.
+           This is an unstable API.
+         ]]
+         params {
+            @in act: Elm.Activate; [[Type of activation.]]
+         }
+         return: bool; [[$true on success, $false otherwise]]
+         legacy: null; /* FIXME: legacy API does extra work */
+      }
+      on_access_update @protected @beta {
+         [[Hook function called when accessibility is changed on the widget.
+
+           This meant to be overridden by subclasses to support accessibility.
+           This is an unstable API.
+         ]]
+         params {
+            @in enable: bool; [[$true if accessibility is enabled.]]
+         }
+         legacy: null; /* FIXME: legacy API does extra work */
+      }
 
       /* Drag API */
       @property drag_lock_x {
@@ -399,25 +422,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          ]]
          return: Efl.Ui.Theme.Apply; [[Indicates success, and if the current
                                        theme or default theme was used.]]
-      }
-      on_access_activate @protected @beta {
-         [[Hook function called when widget is activated through accessibility.
-
-           This meant to be overridden by subclasses to support accessibility.
-           This is an unstable API.
-         ]]
-         params {
-            @in act: Elm.Activate; [[Type of activation.]]
-         }
-         return: bool; [[$true on success, $false otherwise]]
-         legacy: null; /* the legacy API has not the same number of parameter to we don't generate it. */
-      }
-      access {
-         [['Virtual' function on the widget being set access.]]
-         params {
-            @in acs: bool; [[$true if access is set, $false otherwise]]
-         }
-         legacy: null;
       }
       on_focus {
          [['Virtual' function handling focus in/out events on the widget]]

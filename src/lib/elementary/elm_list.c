@@ -6,6 +6,7 @@
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 
@@ -2523,7 +2524,7 @@ _elm_list_efl_canvas_group_group_member_add(Eo *obj, Elm_List_Data *sd, Evas_Obj
 }
 
 EOLIAN static void
-_elm_list_elm_widget_access(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Eina_Bool acs)
+_elm_list_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Eina_Bool acs)
 {
    Eina_List *elist = NULL;
    Elm_Object_Item *eo_it;

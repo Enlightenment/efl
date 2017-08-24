@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 
@@ -990,7 +991,7 @@ _elm_panel_efl_canvas_group_group_member_add(Eo *obj, Elm_Panel_Data *sd, Evas_O
 }
 
 EOLIAN static void
-_elm_panel_elm_widget_access(Eo *obj, Elm_Panel_Data *_pd, Eina_Bool is_access)
+_elm_panel_elm_widget_on_access_update(Eo *obj, Elm_Panel_Data *_pd, Eina_Bool is_access)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Elm_Panel_Data *sd = _pd;

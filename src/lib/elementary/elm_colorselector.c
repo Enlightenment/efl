@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -2273,7 +2274,7 @@ _elm_colorselector_elm_widget_focus_highlight_geometry_get(const Eo *obj EINA_UN
 }
 
 EOLIAN static void
-_elm_colorselector_elm_widget_access(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_elm_colorselector_elm_widget_on_access_update(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _elm_colorselector_smart_focus_next_enable = acs;
    _access_obj_process(obj, _elm_colorselector_smart_focus_next_enable);

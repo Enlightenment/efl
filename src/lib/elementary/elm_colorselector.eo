@@ -113,7 +113,7 @@ class Elm.Colorselector (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_highlight_geometry_get;
-      Elm.Widget.access;
+      Elm.Widget.on_access_update;
       Elm.Widget.widget_event;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Elm.Interface.Atspi_Accessible.children { get; }

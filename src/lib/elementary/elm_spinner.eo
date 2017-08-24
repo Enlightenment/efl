@@ -149,7 +149,7 @@ class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin,
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
+      Elm.Widget.on_access_update;
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction;
       Elm.Widget.on_focus;

@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include <ctype.h>
@@ -1404,7 +1405,7 @@ _elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd, Elm_Focus_Dir
 }
 
 EOLIAN static void
-_elm_spinner_elm_widget_access(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_elm_spinner_elm_widget_on_access_update(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _elm_spinner_smart_focus_next_enable = acs;
    _access_spinner_register(obj, _elm_spinner_smart_focus_next_enable);

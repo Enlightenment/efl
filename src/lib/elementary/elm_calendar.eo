@@ -415,7 +415,7 @@ class Elm.Calendar (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
+      Elm.Widget.on_access_update;
       Elm.Widget.focus_next;
       Elm.Widget.on_focus;
       Elm.Widget.widget_event;

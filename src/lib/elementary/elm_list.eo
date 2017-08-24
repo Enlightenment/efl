@@ -436,7 +436,7 @@ class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
+      Elm.Widget.on_access_update;
       Elm.Widget.focus_highlight_geometry_get;
       Elm.Widget.focus_next;
       Elm.Widget.on_disabled_update;

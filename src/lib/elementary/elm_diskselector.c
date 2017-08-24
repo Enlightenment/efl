@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -1432,7 +1433,7 @@ _elm_diskselector_efl_canvas_group_group_member_add(Eo *obj, Elm_Diskselector_Da
 }
 
 EOLIAN static void
-_elm_diskselector_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_elm_diskselector_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _elm_diskselector_smart_focus_next_enable = acs;
 }
