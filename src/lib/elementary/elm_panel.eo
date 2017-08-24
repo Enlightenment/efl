@@ -82,7 +82,7 @@ class Elm.Panel (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
-      Elm.Widget.disable;
+      Elm.Widget.on_disabled_update;
       Elm.Widget.access;
       Elm.Widget.widget_event;
       Elm.Widget.on_focus_region;

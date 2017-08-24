@@ -1033,13 +1033,12 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rectangle r)
 }
 
 EOLIAN static Eina_Bool
-_elm_list_elm_widget_disable(Eo *obj, Elm_List_Data *sd)
+_elm_list_elm_widget_on_disabled_update(Eo *obj, Elm_List_Data *sd, Eina_Bool disabled)
 {
-   Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_disable(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EINA_FALSE;
+   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+     return EINA_FALSE;
 
-   if (elm_widget_disabled_get(obj))
+   if (disabled)
      {
         elm_widget_scroll_freeze_push(obj);
         elm_widget_scroll_hold_push(obj);

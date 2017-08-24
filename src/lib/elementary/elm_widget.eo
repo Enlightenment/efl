@@ -54,6 +54,21 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
            disabled widgets shall not respond to any input events. This is
            $false by default, meaning the widget is enabled.
          ]]
+         set {
+            [[Enables or disables this widget.
+
+              Disabling a widget will disable all its children recursively,
+              but only this widget will be marked as disabled internally.
+            ]]
+         }
+         get {
+            [[Returns whether the widget is disabled.
+
+              This will return $true if any widget in the parent hierarchy
+              is disabled. Re-enabling that parent may in turn change the
+              disabled state of this widget.
+            ]]
+         }
          values {
             disabled: bool(false); [[$true if the widget is disabled.]]
          }
@@ -362,6 +377,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
            will emit the signal "elm,state,orient,$R" will be emitted (where $R
            is the rotation angle in degrees).
 
+           Note: This function may be called even if the orientation has not
+           actually changed, like when a widget needs to be reconfigured.
+
            See also @Efl.Orientation.orientation.set.
          ]]
          params {
@@ -369,9 +387,16 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
                @.orientation_mode_disabled is $true.]]
          }
       }
-      disable {
-         [['Virtual' function on the widget being disabled.]]
-         return: bool; [[$true on success, $false otherwise]]
+      on_disabled_update @protected {
+         [[Virtual function called when the widget becomes disabled.
+
+           This may be triggered even if this widget is not disabled, as the
+           parent widget could be disabled and propagate its state.
+         ]]
+         params {
+            disabled: bool; [[The new value of @.disabled.]]
+         }
+         return: bool; [[Indicates if the operation succeeded.]]
       }
       theme_apply {
          [['Virtual' function on the widget being re-themed.]]

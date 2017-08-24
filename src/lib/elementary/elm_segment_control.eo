@@ -141,7 +141,7 @@ class Elm.Segment_Control (Efl.Ui.Layout)
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.access;
-      Elm.Widget.disable;
+      Elm.Widget.on_disabled_update;
       Elm.Widget.translate;
    }
    events {

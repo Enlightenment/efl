@@ -327,7 +327,7 @@ _visuals_refresh(Evas_Object *obj,
 
    _efl_ui_layout_highlight_in_theme(obj);
 
-   ret = elm_obj_widget_disable(obj);
+   ret = elm_obj_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
 
    elm_layout_sizing_eval(obj);
 
@@ -335,11 +335,13 @@ _visuals_refresh(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_disable(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
+_efl_ui_layout_elm_widget_on_disabled_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Eina_Bool disabled)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   if (elm_object_disabled_get(obj))
+   // Not calling efl_super here: Elm.Widget simply returns false.
+
+   if (disabled)
      edje_object_signal_emit
        (wd->resize_obj, "elm,state,disabled", "elm");
    else

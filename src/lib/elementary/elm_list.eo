@@ -439,7 +439,7 @@ class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Elm.Widget.access;
       Elm.Widget.focus_highlight_geometry_get;
       Elm.Widget.focus_next;
-      Elm.Widget.disable;
+      Elm.Widget.on_disabled_update;
       Elm.Widget.on_focus;
       Elm.Widget.translate;
       Elm.Widget.widget_sub_object_del;
