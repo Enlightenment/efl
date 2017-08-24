@@ -1,2 +1,4 @@
 // ----------------------------------------------------------------------------
 // All the below types are for Efl Animation
+
+struct Efl.Animation.Object.Running_Event_Info; [[Information of running event]]

@@ -35,6 +35,10 @@ class Efl.Animation (Efl.Object)
       is_deleted @protected {
          return: bool; [[$true if animation is deleted, $false otherwise.]]
       }
+      object_create {
+         [[Create object of the animation.]]
+         return: Efl.Animation.Object; [[Created object of the animation]]
+      }
    }
    implements {
       Efl.Object.constructor;

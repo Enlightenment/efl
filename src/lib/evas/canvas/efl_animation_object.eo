@@ -1,0 +1,48 @@
+import efl_animation_types;
+
+class Efl.Animation.Object (Efl.Object)
+{
+   [[Efl animation object class]]
+   data: Efl_Animation_Object_Data;
+   methods {
+      @property auto_del {
+         set {
+         }
+         get {
+         }
+         values {
+            auto_del: bool; [[$true to delete animation object automatically when animation is finished or animation is cancelled, $false otherwise.]]
+         }
+      }
+      start {
+         [[Start animation.]]
+      }
+      cancel {
+         [[Cancel animation.]]
+      }
+      is_deleted @protected {
+         return: bool; [[$true if animation object is deleted, $false otherwise.]]
+      }
+      target_state_save @protected {
+         [[Save the state of the target.]]
+      }
+      target_state_reset @protected {
+         [[Reset the state of the target to the previously saved state.]]
+      }
+      progress_set @protected {
+         [[Display the moment of animation according to the given progress.]]
+         params {
+            @in progress: double; [[The value between 0.0 and 1.0 which indicates the progress of the animation]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+   events {
+      started; [[Animation is started.]]
+      running; [[Animation is running.]]
+      ended; [[Animation is ended.]]
+   }
+}
