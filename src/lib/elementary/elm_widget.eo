@@ -398,9 +398,19 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          return: bool; [[Indicates if the operation succeeded.]]
       }
-      theme_apply {
-         [['Virtual' function on the widget being re-themed.]]
-         return: Efl.Ui.Theme.Apply; [[Theme apply]]
+      theme_apply @protected {
+         [[Virtual function called when the widget needs to re-apply its theme.
+
+           This may be called when the object is first created, or whenever
+           the widget is modified in any way that may require a reload of the
+           theme. This may include but is not limited to scale, theme, or
+           mirrored mode changes.
+
+           Note: even widgets not based on layouts may override this method
+           to handle widget updates (scale, mirrored mode, etc...).
+         ]]
+         return: Efl.Ui.Theme.Apply; [[Indicates success, and if the current
+                                       theme or default theme was used.]]
       }
       activate {
          [['Virtual' function to activate widget.]]

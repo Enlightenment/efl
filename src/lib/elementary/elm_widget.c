@@ -1209,9 +1209,7 @@ elm_widget_theme(Evas_Object *obj)
    EINA_LIST_FOREACH(sd->cursors, l, cur)
      elm_cursor_theme(cur);
 
-   Efl_Ui_Theme_Apply ret2 = EFL_UI_THEME_APPLY_FAILED;
-   ret2 = elm_obj_widget_theme_apply(obj);
-   ret &= ret2;
+   ret &= elm_obj_widget_theme_apply(obj);
 
    return ret;
 }
