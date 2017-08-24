@@ -768,7 +768,6 @@ EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const 
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
 EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *txt);
 EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
-EAPI void             elm_widget_orientation_set(Evas_Object *obj, int rotation);
 EAPI Elm_Object_Item *elm_widget_focused_item_get(const Evas_Object *obj);
 EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);

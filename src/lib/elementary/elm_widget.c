@@ -1424,7 +1424,7 @@ _elm_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Objec
         _full_eval(sobj, sdc);
 
         if (!sdc->on_create)
-          elm_obj_widget_orientation_set(sobj, sd->orient_mode);
+          elm_obj_widget_on_orientation_update(sobj, sd->orient_mode);
         else
           sdc->orient_mode = sd->orient_mode;
 
@@ -4643,7 +4643,7 @@ _elm_widget_orientation_mode_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Ei
         if (!sd_parent) orient_mode = 0;
         else orient_mode = sd_parent->orient_mode;
      }
-   elm_obj_widget_orientation_set(obj, orient_mode);
+   elm_obj_widget_on_orientation_update(obj, orient_mode);
 }
 
 EOLIAN static Eina_Bool
@@ -4654,7 +4654,7 @@ _elm_widget_orientation_mode_disabled_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_
 }
 
 EOLIAN static void
-_elm_widget_orientation_set(Eo *obj, Elm_Widget_Smart_Data *sd, int orient_mode)
+_elm_widget_on_orientation_update(Eo *obj, Elm_Widget_Smart_Data *sd, int orient_mode)
 {
    Evas_Object *child;
    Eina_List *l;
@@ -4664,7 +4664,7 @@ _elm_widget_orientation_set(Eo *obj, Elm_Widget_Smart_Data *sd, int orient_mode)
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      {
         if (elm_widget_is(child))
-          elm_obj_widget_orientation_set(child, orient_mode);
+          elm_obj_widget_on_orientation_update(child, orient_mode);
      }
 
    if (orient_mode != -1)

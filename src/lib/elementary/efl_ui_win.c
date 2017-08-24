@@ -1631,7 +1631,7 @@ _elm_win_state_change(Ecore_Evas *ee)
         _elm_win_xwin_update(sd);
 #endif
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
-        elm_widget_orientation_set(obj, sd->rot);
+        elm_obj_widget_on_orientation_update(obj, sd->rot);
         efl_event_callback_legacy_call
           (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
         efl_event_callback_legacy_call
@@ -6050,7 +6050,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    _elm_win_xwin_update(sd);
 #endif
    _elm_win_frame_obj_update(sd);
-   elm_widget_orientation_set(obj, rotation);
+   elm_obj_widget_on_orientation_update(obj, rotation);
    efl_event_callback_legacy_call
      (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
 }
