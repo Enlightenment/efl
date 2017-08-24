@@ -435,6 +435,18 @@ EAPI void elput_input_keyboard_group_set(Elput_Manager *manager, int group);
 EAPI void elput_input_pointer_accel_profile_set(Elput_Manager *manager, const char *seat, uint32_t profile);
 
 /**
+ * Set the pointer acceleration speed
+ *
+ * @param manager
+ * @param seat
+ * @param speed
+ *
+ * @ingroup Elput_Input_Group
+ * @since 1.21
+ */
+EAPI void elput_input_pointer_accel_speed_set(Elput_Manager *manager, const char *seat, double speed);
+
+/**
  * @defgroup Elput_Touch_Group Configuration of touch devices
  *
  * Functions related to configuration of touch devices
