@@ -83,6 +83,19 @@ EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
 #define EFL_CANVAS_GROUP_ADD_OPS(kls) EFL_OBJECT_OP_FUNC(efl_canvas_group_add, _##kls##_efl_canvas_group_group_add)
 #define EFL_CANVAS_GROUP_ADD_DEL_OPS(kls) EFL_CANVAS_GROUP_ADD_OPS(kls), EFL_CANVAS_GROUP_DEL_OPS(kls)
 
+/* Efl.Animation.Object */
+EOAPI void efl_animation_object_target_set(Eo *obj, Efl_Canvas_Object *target);
+EOAPI Efl_Canvas_Object *efl_animation_object_target_get(const Eo *obj);
+
+EOAPI void efl_animation_object_final_state_keep_set(Eo *obj, Eina_Bool state_keep);
+EOAPI Eina_Bool efl_animation_object_final_state_keep_get(const Eo *obj);
+
+EOAPI void efl_animation_object_duration_set(Eo *obj, double duration);
+EOAPI double efl_animation_object_duration_get(const Eo *obj);
+
+EWAPI extern const Efl_Event_Description _EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED;
+#define EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED (&(_EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED))
+/* Efl.Animation.Object END */
 
 #ifdef __cplusplus
 }
