@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -211,7 +212,7 @@ _elm_bubble_efl_canvas_group_group_add(Eo *obj, Elm_Bubble_Data *priv)
 }
 
 EOLIAN static void
-_elm_bubble_elm_widget_access(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, Eina_Bool is_access)
+_elm_bubble_elm_widget_on_access_update(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, Eina_Bool is_access)
 {
    ELM_BUBBLE_CHECK(obj);
 

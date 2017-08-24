@@ -6,6 +6,7 @@
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -1611,7 +1612,7 @@ _elm_popup_elm_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object
 }
 
 EOLIAN static void
-_elm_popup_elm_widget_access(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, Eina_Bool is_access)
+_elm_popup_elm_widget_on_access_update(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, Eina_Bool is_access)
 {
    _access_obj_process(obj, is_access);
 }

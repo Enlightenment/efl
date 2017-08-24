@@ -1176,14 +1176,14 @@ elm_widget_access(Evas_Object *obj,
           ret &= elm_widget_access(child, is_access);
      }
 
-   elm_obj_widget_access(obj, is_access);
+   elm_obj_widget_on_access_update(obj, is_access);
    efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_ACCESS_CHANGED, NULL);
 
    return ret;
 }
 
 EOLIAN static void
-_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Bool is_access EINA_UNUSED)
+_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Bool is_access EINA_UNUSED)
 {
 }
 
@@ -3901,9 +3901,7 @@ _elm_widget_focus_reconfigure(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 EOLIAN static void
 _elm_widget_access_info_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, const char *txt)
 {
-   eina_stringshare_del(sd->access_info);
-   if (!txt) sd->access_info = NULL;
-   else sd->access_info = eina_stringshare_add(txt);
+   eina_stringshare_replace(&sd->access_info, txt);
 }
 
 EOLIAN static const char*

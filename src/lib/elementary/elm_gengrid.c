@@ -6,6 +6,7 @@
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -4264,7 +4265,7 @@ _access_obj_process(Elm_Gengrid_Data * sd, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_gengrid_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Eina_Bool acs)
+_elm_gengrid_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Eina_Bool acs)
 {
    _elm_gengrid_smart_focus_next_enable = acs;
    _access_obj_process(sd, _elm_gengrid_smart_focus_next_enable);

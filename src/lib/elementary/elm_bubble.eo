@@ -42,7 +42,7 @@ class Elm.Bubble (Efl.Ui.Layout, Efl.Ui.Clickable)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
+      Elm.Widget.on_access_update;
       Efl.Part.part;
    }
 }

@@ -165,7 +165,7 @@ class Elm.Clock (Efl.Ui.Layout)
       Efl.Object.constructor;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.access;
+      Elm.Widget.on_access_update;
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
    }

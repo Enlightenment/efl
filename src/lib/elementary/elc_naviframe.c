@@ -6,6 +6,7 @@
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define ELM_WIDGET_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -1570,7 +1571,7 @@ _key_action_item_pop(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_naviframe_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Eina_Bool is_access)
+_elm_naviframe_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Eina_Bool is_access)
 {
    Elm_Naviframe_Item_Data *it;
 
