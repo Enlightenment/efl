@@ -1,5 +1,4 @@
 import elm_general;
-import efl_input_types;
 
 function Efl.Ui.Scrollable_On_Show_Region
 {
