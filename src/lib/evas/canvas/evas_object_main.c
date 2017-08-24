@@ -2180,11 +2180,12 @@ _efl_canvas_object_efl_object_provider_find(Eo *eo_obj EINA_UNUSED, Evas_Object_
 {
    if (klass == EVAS_CANVAS_CLASS)
      {
-        if ((obj->delete_me) || (!obj->layer)) return NULL;
+        if ((obj->delete_me) || (!obj->layer)) goto fallback;
         return obj->layer->evas->evas;
      }
    else if (klass == EFL_LOOP_CLASS)
      return ecore_main_loop_get();
+fallback:
    return efl_provider_find(efl_super(eo_obj, MY_CLASS), klass);
 }
 
