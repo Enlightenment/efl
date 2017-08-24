@@ -51,7 +51,12 @@
  * @}
  */
 
+#include "canvas/efl_animation_types.eot.h"
+
 #include "canvas/efl_canvas_object.eo.h"
+
+#include "canvas/efl_animation.eo.h"
+
 #endif /* EFL_EO_API_SUPPORT */
 
 #if defined(EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
