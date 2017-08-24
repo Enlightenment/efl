@@ -3047,6 +3047,16 @@ static inline Eina_Bool eina_value_struct_setup(Eina_Value *value,
                                                 const Eina_Value_Struct_Desc *desc) EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @brief Checks for a struct and get its description.
+ * @param value Value object
+ * @return structure description, with all members and size.
+ * on failure, #NULL is returned.
+ *
+ * @since 1.21
+ */
+static inline const Eina_Value_Struct_Desc *eina_value_struct_desc_get(const Eina_Value *value) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Sets the generic value in an struct member.
  * @param value Source value object
  * @param name Name to find the member
