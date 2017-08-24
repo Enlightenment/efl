@@ -866,6 +866,9 @@ _efl_ui_list_children_free(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
      {
        efl_ui_factory_release(pd->factory, *layout);
      }
+
+   pd->realized.slice = 0;
+   pd->realized.start = 0;
    free(recycle_layouts.members);
 }
 
