@@ -116,7 +116,7 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
       Elm.Widget.theme_apply;
-      Elm.Widget.activate;
+      Elm.Widget.on_access_activate;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_focus;

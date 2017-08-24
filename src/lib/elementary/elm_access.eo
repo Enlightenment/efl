@@ -7,7 +7,7 @@ class Elm.Access (Elm.Widget, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.activate;
+      Elm.Widget.on_access_activate;
       Elm.Widget.on_focus;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }

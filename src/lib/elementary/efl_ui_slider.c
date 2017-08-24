@@ -6,6 +6,7 @@
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 
@@ -601,7 +602,7 @@ _efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd, const Ef
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_activate(Eo *obj, Efl_Ui_Slider_Data *sd, Elm_Activate act)
+_efl_ui_slider_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Slider_Data *sd, Elm_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (act == ELM_ACTIVATE_DEFAULT) return EINA_FALSE;

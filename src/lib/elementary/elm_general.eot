@@ -203,3 +203,15 @@ enum Elm.Icon.Type
    file, [[Icon is of type file]]
    standard [[Icon is of type standard]]
 }
+
+/* 'on_access_activate' is beta API in the Widget class */
+enum Elm.Activate
+{
+   [[Accessibility ]]
+   default = 0, [[Activate default]]
+   up, [[Activate up]]
+   down, [[Activate down]]
+   right, [[Activate right]]
+   left, [[Activate left]]
+   back, [[Activate back]]
+}

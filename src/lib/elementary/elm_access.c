@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -84,7 +85,7 @@ _access_action_callback_call(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_access_elm_widget_activate(Eo *obj, void *_pd EINA_UNUSED, Elm_Activate act)
+_elm_access_elm_widget_on_access_activate(Eo *obj, void *_pd EINA_UNUSED, Elm_Activate act)
 {
    int type = ELM_ACCESS_ACTION_FIRST;
 

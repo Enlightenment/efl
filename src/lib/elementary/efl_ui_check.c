@@ -6,6 +6,7 @@
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_NSTATE_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -132,7 +133,7 @@ _efl_ui_check_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Check_Data *_pd E
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_check_elm_widget_activate(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *_pd EINA_UNUSED, Elm_Activate act)
+_efl_ui_check_elm_widget_on_access_activate(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *_pd EINA_UNUSED, Elm_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;

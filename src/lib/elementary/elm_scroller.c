@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 
@@ -262,7 +263,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_elm_widget_activate(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, Elm_Activate act)
+_elm_scroller_elm_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, Elm_Activate act)
 {
    Evas_Coord x = 0;
    Evas_Coord y = 0;

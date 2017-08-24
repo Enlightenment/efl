@@ -23,7 +23,7 @@ class Efl.Ui.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.activate;
+      Elm.Widget.on_access_activate;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_sub_object_del;
       Elm.Widget.widget_event;
