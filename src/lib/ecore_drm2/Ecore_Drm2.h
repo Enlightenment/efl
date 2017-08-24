@@ -273,6 +273,17 @@ EAPI void ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int w
 EAPI void ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h);
 
 /**
+ * Set pointer acceleration speed
+ *
+ * @param device
+ * @param speed
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.21
+ */
+EAPI void ecore_drm2_device_pointer_accel_speed_set(Ecore_Drm2_Device *device, double speed);
+
+/**
  * Set pointer value rotation
  *
  * @param device
