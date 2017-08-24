@@ -42,14 +42,15 @@ _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 EOLIAN static Eina_Bool
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *redirect)
 {
+   Eina_Bool ret = EINA_FALSE;
    if (efl_ui_focus_manager_calc_register(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
         pd->none_logicals = eina_list_append(pd->none_logicals, child);
-        return EINA_TRUE;
+        ret = EINA_TRUE;
      }
    if (child != pd->rect)
      _state_eval(obj, pd);
-   return EINA_FALSE;
+   return ret;
 }
 
 EOLIAN static void
