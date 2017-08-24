@@ -24,6 +24,21 @@
  * An image object may also be made valid source and destination for
  * drag and drop actions, through the elm_image_editable_set() call.
  *
+ * If the image source size is bigger than maximum texture size of the GPU (or also of
+ * the software rendering code too), evas can't render it because of such a limitation.
+ * If evas just magically always downscales on load if it's too big, then the user has a new bug:
+ * "the image is blurry". Potentially any image can cause issue.
+ * What if the image is too big to allocate memory for it?
+ * A 30000x30000 image will need just a bit under 4GB of RAM to store it.
+ * Texture size limitations are something every game developer has to deal with game engines,
+ * OpenGL, D3D etc. You can get the maximum image size evas can possibly handle by
+ * the calling evas_image_max_size_get() function. If the image size is bigger than this,
+ * you can try using load options to pre-scale down on load to lower quality.
+ * So use the elm_image_prescale_set() function to scale the image down.
+ * Another option is to use the Photocam widget. Photocam solves this issue
+ * by loading the prices as needed asynchronously in tiles and automatically using pre-scaling as well
+ * So use Photocam if you expect to load very large images.
+ *
  * Signals that you can add callbacks for are:
  *
  * @li @c "drop" - This is called when a user has dropped an image
